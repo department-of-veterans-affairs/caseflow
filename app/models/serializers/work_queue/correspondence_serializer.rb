@@ -33,5 +33,4 @@ class WorkQueue::CorrespondenceSerializer
   attribute :correspondence_appeal_ids do |object|
     object.appeal_ids.map(&:to_s)
   end
-
 end

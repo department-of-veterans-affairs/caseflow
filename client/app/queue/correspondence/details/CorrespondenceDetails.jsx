@@ -61,14 +61,16 @@ const CorrespondenceDetails = (props) => {
         </div>
           <div>
               <h2>Existing Appeals</h2>
-              <CaseListTable
-                  appeals={appeals}
-                  paginate="true"
-                  showCheckboxes
-                  taskRelatedAppealIds={props.correspondence.correspondenceAppealIds}
-                  disabled
-                  enableTopPagination
-              />
+              <AppSegment filledBackground noMarginTop>
+                  <CaseListTable
+                      appeals={appeals}
+                      paginate="true"
+                      showCheckboxes
+                      taskRelatedAppealIds={props.correspondence.correspondenceAppealIds}
+                      disabled
+                      enableTopPagination
+                  />
+              </AppSegment>
           </div>
       </React.Fragment>
     );
