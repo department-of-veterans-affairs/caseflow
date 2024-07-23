@@ -25,12 +25,14 @@ class CorrespondenceDetailsController < CorrespondenceController
       .new(correspondence)
       .serializable_hash[:data][:attributes]
       .merge(general_information)
+      .merge(mail_tasks)
   end
 
   def build_json_response
     {
       correspondence: @correspondence,
       general_information: general_information,
+      mailTasks: mail_tasks,
       corres_docs: @correspondence[:correspondenceDocuments]
     }
   end
@@ -38,5 +40,13 @@ class CorrespondenceDetailsController < CorrespondenceController
   # overriding method to allow users to access the correspondence details page
   def verify_correspondence_access
     true
+  end
+
+  private
+
+  def mail_tasks
+    {
+      mailTasks: @correspondence.correspondence_mail_tasks.completed.map(&:label)
+    }
   end
 end
