@@ -105,13 +105,26 @@ RSpec.describe CaseDistributionLever, :all_dbs do
     end
   end
 
-  context "#aoj_affinity_days" do
+  context ".aoj_affinity_days" do
+    let(:aoj_affinity_days_case_distribution) do
+      create(:case_distribution_lever,
+             :aoj_affinity_days)
+      end
+    let(:other_case_distribution) do
+      create(:case_distribution_lever,
+             :cavc_affinity_days)
+      end
+
+    it "only returns value with aoj affinity days" do
+      lever = described_class.new
+      expect(lever.aoj_affinity_days).to eq(aoj_affinity_days_case_distribution)
+    end
   end
 
-  context "#aoj_cavc_affinity" do
+  context ".aoj_cavc_affinity" do
   end
 
-  context "#aoj_aod_affinity" do
+  context ".aoj_aod_affinity" do
   end
 
   context "constants" do
