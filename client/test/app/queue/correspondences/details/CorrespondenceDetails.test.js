@@ -13,6 +13,37 @@ jest.mock('redux', () => ({
   bindActionCreators: () => jest.fn().mockImplementation(() => Promise.resolve(true)),
 }));
 
+jest.mock('app/queue/CaseListTable', () => ({ appeals }) => (
+  <div className="case-list-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Docket Number</th>
+          <th>Appellant Name</th>
+          <th>Appeal Status</th>
+          <th>Appeal Type</th>
+          <th>Number of Issues</th>
+          <th>Decision Date</th>
+          <th>Appeal Location</th>
+        </tr>
+      </thead>
+      <tbody>
+        {appeals.map((appeal, index) => (
+          <tr key={index}>
+            <td>{appeal.docketNumber}</td>
+            <td>{appeal.appellantFullName}</td>
+            <td>{appeal.status}</td>
+            <td>{appeal.appealType}</td>
+            <td>{appeal.issueCount}</td>
+            <td>{appeal.decisionDate}</td>
+            <td>{appeal.location}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+));
+
 let initialState = {
   correspondence: correspondenceData
 };
@@ -47,14 +78,45 @@ describe('CorrespondenceDetails', () => {
   });
 
   it('displays the correspondence tasks correctly', () => {
+        render(
+            <Provider store={store}>
+                <CorrespondenceDetails {...props} />
+            </Provider>
+        );
+
+        expect(screen.getByText('Completed Mail Tasks')).toBeInTheDocument();
+        expect(screen.getByText('Task 1')).toBeInTheDocument();
+        expect(screen.getByText('Task 2')).toBeInTheDocument();
+    });
+
+  it('renders correspondenceTasks correctly', () => {
     render(
       <Provider store={store}>
         <CorrespondenceDetails {...props} />
       </Provider>
     );
 
-    expect(screen.getByText('Completed Mail Tasks')).toBeInTheDocument();
-    expect(screen.getByText('Task 1')).toBeInTheDocument();
-    expect(screen.getByText('Task 2')).toBeInTheDocument();
+    // Check if the header and AppSegment are rendered correctly
+    expect(screen.getByText('Existing Appeals')).toBeInTheDocument();
+
+    // Check if the CaseListTable is rendered correctly using class name
+    const caseListTable = screen.getByRole('table');
+
+    expect(caseListTable).toBeInTheDocument();
+
+    // Check if table columns are rendered correctly
+    const headers = ['Docket Number',
+      'Appellant Name',
+      'Appeal Status',
+      'Appeal Type',
+      'Number of Issues',
+      'Decision Date',
+      'Appeal Location'
+    ];
+
+    headers.forEach((header) => {
+      expect(screen.getByText(header)).toBeInTheDocument();
+    });
   });
+
 });
