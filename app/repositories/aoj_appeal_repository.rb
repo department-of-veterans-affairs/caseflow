@@ -165,5 +165,4 @@ class AojAppealRepository < AppealRepository
     end
   end
   # :nocov:
-  # rubocop:enable Metrics/ClassLength
 end

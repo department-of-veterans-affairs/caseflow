@@ -54,6 +54,7 @@ class AojLegacyDocket < LegacyDocket
     end.compact
   end
 
+  # rubocop:disable Metrics/ParameterLists
   def distribute_nonpriority_appeals(distribution,
                                      style: "push",
                                      genpop: "any",
@@ -74,6 +75,7 @@ class AojLegacyDocket < LegacyDocket
       dist_case
     end.compact
   end
+  # rubocop:enable Metrics/ParameterLists
 
   private
 
