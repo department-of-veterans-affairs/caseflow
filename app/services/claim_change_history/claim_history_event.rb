@@ -124,15 +124,7 @@ class ClaimHistoryEvent
 
       request_event_type = "request_#{change_data['issue_modification_request_status']}"
 
-      # if decided date is nil and status is cancelled then we should display edited info and edited user.
-      event_hash = {
-        "event_date" => change_data["decided_at"] ||
-                        change_data["issue_modification_request_edited_at"] ||
-                        change_data["issue_modification_request_updated_at"],
-        "event_user_name" => change_data["decider"] || change_data["requestor"],
-        "user_facility" => change_data["decider_station_id"] || change_data["requestor_station_id"],
-        "event_user_css_id" => change_data["decider_css_id"] || change_data["requestor_css_id"]
-      }
+      event_hash = request_issue_modification_event_hash(change_data)
 
       change_data = issue_attributes_for_request_type_addition(change_data["request_type"], change_data)
       issue_modification_decision_event.push from_change_data(request_event_type.to_sym, change_data.merge(event_hash))
@@ -145,24 +137,17 @@ class ClaimHistoryEvent
       issue_modification_status = []
       issue_modification_request_id = change_data["issue_modification_request_id"]
 
+      pending_system_hash_events = pending_system_hash
+        .merge("event_date" => change_data["issue_modification_request_updated_at"])
+
       if !issue_modification_request_id.nil?
-        pending_system_hash = {
-          "event_date" => change_data["issue_modification_request_created_at"],
-          "event_user_name" => "System",
-          "event_type" => "pending"
-        }
-        issue_modification_status.push from_change_data(:pending, change_data.merge(pending_system_hash))
+        issue_modification_status.push from_change_data(:pending, change_data.merge(pending_system_hash_events))
       end
 
       # if assign is present in the aggregated_claim_status it means task should still be in pending status
       # hence, in progress status should not be added
       unless assign_status_present?(change_data)
-        pending_system_hash = {
-          "event_date" => change_data["issue_modification_request_updated_at"],
-          "event_user_name" => "System",
-          "event_type" => "in_progress"
-        }
-        issue_modification_status.push from_change_data(:in_progress, change_data.merge(pending_system_hash))
+        issue_modification_status.push from_change_data(:in_progress, change_data.merge(pending_system_hash_events))
       end
       issue_modification_status
     end
@@ -187,20 +172,7 @@ class ClaimHistoryEvent
 
         versions.map do |version|
           event_date_hash = { "event_date" => version["updated_at"][index], "event_user_name" => "System" }
-          change_data["requested_issue_type"] =
-            version["nonrating_issue_category"][index] unless version["nonrating_issue_category"].nil?
-          change_data["requested_issue_description"] =
-            version["nonrating_issue_description"][index] unless version["nonrating_issue_description"].nil?
-          change_data["remove_original_issue"] =
-            version["remove_original_issue"][index] unless version["remove_original_issue"].nil?
-          change_data["modification_request_reason"] =
-            version["request_reason"][index] unless version["request_reason"].nil?
-          change_data["requested_decision_date"] =
-            version["decision_date"][index] unless version["decision_date"].nil?
-          change_data["decision_reason"] =
-            version["decision_reason"][index] unless version["decision_reason"].nil?
-          change_data["issue_modification_request_withdrawal_date"] =
-            version["withdrawal_date"][index] unless version["withdrawal_date"].nil?
+          change_data = update_change_data_from_version(change_data, version, index)
           index += 1
           edited_events.push from_change_data(event_type, change_data.merge(event_date_hash))
         end
@@ -374,6 +346,40 @@ class ClaimHistoryEvent
       }[task_status]
     end
 
+    # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    def update_change_data_from_version(change_data, version, index)
+      data = change_data
+      unless version["nonrating_issue_category"].nil?
+        data["requested_issue_type"] = version["nonrating_issue_category"][index]
+      end
+
+      unless version["nonrating_issue_description"].nil?
+        data["requested_issue_description"] = version["nonrating_issue_description"][index]
+      end
+
+      unless version["remove_original_issue"].nil?
+        data["remove_original_issue"] = version["remove_original_issue"][index]
+      end
+
+      unless version["request_reason"].nil?
+        data["modification_request_reason"] = version["request_reason"][index]
+      end
+
+      unless version["decision_date"].nil?
+        data["requested_decision_date"] = version["decision_date"][index]
+      end
+
+      unless version["decision_reason"].nil?
+        data["decision_reason"] = version["decision_reason"][index]
+      end
+
+      unless version["withdrawal_date"].nil?
+        data["issue_modification_request_withdrawal_date"] = version["withdrawal_date"][index]
+      end
+      data
+    end
+    # rubocop:enable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
     def event_from_version(changes, index, change_data)
       # If there is no task status change in the set of papertrail changes, ignore the object
       if changes["status"]
@@ -448,6 +454,25 @@ class ClaimHistoryEvent
       else
         update_event_hash(change_data).merge("event_date" => change_data["request_issue_created_at"])
       end
+    end
+
+    def request_issue_modification_event_hash(change_data)
+      # if decided date is nil and status is cancelled then we should display edited info and edited user.
+      {
+        "event_date" => change_data["decided_at"] ||
+          change_data["issue_modification_request_edited_at"] ||
+          change_data["issue_modification_request_updated_at"],
+        "event_user_name" => change_data["decider"] || change_data["requestor"],
+        "user_facility" => change_data["decider_station_id"] || change_data["requestor_station_id"],
+        "event_user_css_id" => change_data["decider_css_id"] || change_data["requestor_css_id"]
+      }
+    end
+
+    def pending_system_hash
+      {
+        "event_user_name" => "System",
+        "event_type" => "in_progress"
+      }
     end
 
     def timestamp_within_seconds?(first_date, second_date, time_in_seconds)
@@ -562,6 +587,7 @@ class ClaimHistoryEvent
     [Constants::BGS_FACILITY_CODES[user_facility], " (", user_facility, ")"].join
   end
 
+  # rubocop:disable Metrics/MethodLength
   def readable_event_type
     {
       in_progress: "Claim status - In progress",
@@ -586,6 +612,7 @@ class ClaimHistoryEvent
       request_edited: "Edit of request - issue #{request_type}"
     }[event_type]
   end
+  # rubocop:enable Metrics/MethodLength
 
   def issue_event?
     ISSUE_EVENTS.include?(event_type)

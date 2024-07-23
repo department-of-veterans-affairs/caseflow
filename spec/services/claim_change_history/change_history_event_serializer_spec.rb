@@ -43,23 +43,33 @@ describe ChangeHistoryEventSerializer do
         type: :change_history_event,
         attributes: {
           claimType: "Higher-Level Review",
+          readableEventType: "Claim created",
           claimantName: events[0].claimant_name,
-          details:
-          {
-            benefitType: "vha",
-            decisionDate: nil,
-            decisionDescription: nil,
-            disposition: nil,
-            dispositionDate: nil,
-            issueDescription: nil,
-            issueType: nil,
-            withdrawalRequestDate: nil
-          },
+          eventUser: "L. Roth",
           eventDate: events[0].event_date,
           eventType: :claim_creation,
-          eventUser: "L. Roth",
-          readableEventType: "Claim created",
-          taskID: vha_task.id
+          taskID: vha_task.id,
+          requestType: nil,
+          details:
+            {
+              benefitType: "vha",
+              decisionDate: nil,
+              decisionDescription: nil,
+              disposition: nil,
+              dispositionDate: nil,
+              issueDescription: nil,
+              issueType: nil,
+              withdrawalRequestDate: nil
+            },
+          modificationRequestDetails:
+            {
+              benefitType: "vha",
+              issueModificationRequestWithdrawalDate: nil,
+              modificationRequestReason: nil,
+              newDecisionDate: nil,
+              newIssueDescription: nil,
+              newIssueType: nil
+            }
         }
       },
       {
@@ -67,6 +77,7 @@ describe ChangeHistoryEventSerializer do
         type: :change_history_event,
         attributes: {
           claimType: "Higher-Level Review",
+          readableEventType: "Added issue",
           claimantName: events[1].claimant_name,
           details:
           {
@@ -79,11 +90,20 @@ describe ChangeHistoryEventSerializer do
             issueType: "Other",
             withdrawalRequestDate: nil
           },
+          modificationRequestDetails:
+          {
+            benefitType: "vha",
+            issueModificationRequestWithdrawalDate: nil,
+            modificationRequestReason: nil,
+            newDecisionDate: nil,
+            newIssueDescription: nil,
+            newIssueType: nil
+          },
           eventDate: events[1].event_date,
           eventType: :added_issue,
           eventUser: "L. Roth",
-          readableEventType: "Added issue",
-          taskID: vha_task.id
+          taskID: vha_task.id,
+          requestType: nil
         }
       }
     ]

@@ -217,13 +217,28 @@ class BusinessLine < Organization
           FROM
               versions
           INNER JOIN tasks ON tasks.id = versions.item_id
+          WHERE versions.item_type IN ('Task')
+            AND tasks.assigned_to_type = 'Organization'
+            AND tasks.assigned_to_id = '#{parent.id.to_i}'
+          GROUP BY
+              versions.item_id, versions.item_type
+        ), imr_version_agg AS (SELECT
+              versions.item_id,
+              versions.item_type,
+              ARRAY_AGG(versions.object_changes ORDER BY versions.id) AS object_changes_array,
+              MAX(CASE
+                  WHEN versions.object_changes LIKE '%closed_at:%' THEN versions.whodunnit
+                  ELSE NULL
+              END) AS version_closed_by_id
+          FROM
+              versions
+          INNER JOIN tasks ON tasks.id = versions.item_id
           INNER JOIN issue_modification_requests ON issue_modification_requests.id = versions.item_id
           WHERE versions.item_type IN ('Task', 'IssueModificationRequest')
             AND tasks.assigned_to_type = 'Organization'
             AND tasks.assigned_to_id = '#{parent.id.to_i}'
           GROUP BY
-              versions.item_id, versions.item_type
-        )
+              versions.item_id, versions.item_type)
         SELECT tasks.id AS task_id,
           get_claim_status.current_claim_status,
           -- CASE
@@ -314,7 +329,7 @@ class BusinessLine < Organization
         LEFT JOIN users decision_users_completed_by ON decision_users_completed_by.id = tasks.completed_by_id
         LEFT JOIN users requestor ON COALESCE(imr.requestor_id,imr_addition.requestor_id) = requestor.id
         LEFT JOIN users decider ON COALESCE(imr.decider_id,imr_addition.decider_id) = decider.id
-        LEFT JOIN versions_agg itv ON itv.item_type = 'IssueModificationRequest' AND itv.item_id = COALESCE(imr.id,imr_addition.id)
+        LEFT JOIN imr_version_agg itv ON itv.item_type = 'IssueModificationRequest' AND itv.item_id = COALESCE(imr.id,imr_addition.id)
         INNER JOIN LATERAL (
           SELECT array_agg(status) current_claim_status FROM issue_modification_requests imr WHERE
             imr.decision_review_id = request_issues.decision_review_id
