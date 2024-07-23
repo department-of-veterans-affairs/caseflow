@@ -44,14 +44,15 @@ class HearingTimeService
       end
     end
 
-    def time_to_string(time)
-      return time if time.is_a?(String)
-
+    def time_to_string(time, hearing)
       datetime = time.to_datetime
-      "#{pad_time(datetime.hour)}:#{pad_time(datetime.min)}"
+
+      tz = ActiveSupport::TimeZone::MAPPING.key(hearing.regional_office_timezone)
+
+      "#{datetime.strftime('%l:%M %p')} #{tz}".lstrip
     end
 
-    def convert_scheduled_time_to_utc(time_string)
+    def convert_scheduled_time_to_utc(time_string, scheduled_date)
       if time_string.present?
         # Find the AM/PM index value in the string
         index = time_string.include?("AM") ? time_string.index("AM") + 2 : time_string.index("PM") + 2
@@ -59,7 +60,11 @@ class HearingTimeService
         # Generate the scheduled_time in UTC and update the scheduled_time_string
         scheduled_time = time_string[0..index].strip
         timezone = time_string[index..-1].strip
-        return Time.use_zone(timezone) { Time.zone.parse(scheduled_time) }.utc
+
+        ### This is hardcoded. We do not want this hardcoded in the future
+        timezone = ActiveSupport::TimeZone::MAPPING[timezone]
+        scheduled_date_time = "#{scheduled_date} #{scheduled_time}"
+        return Time.use_zone(timezone) { Time.zone.parse(scheduled_date_time) }.utc
       end
       nil
     end
@@ -80,11 +85,11 @@ class HearingTimeService
   end
 
   def scheduled_time_string
-    self.class.time_to_string(local_time)
+    self.class.time_to_string(local_time, @hearing)
   end
 
   def central_office_time_string
-    self.class.time_to_string(central_office_time)
+    self.class.time_to_string(central_office_time, @hearing)
   end
 
   def local_time
