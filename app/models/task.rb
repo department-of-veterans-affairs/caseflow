@@ -26,8 +26,7 @@ class Task < CaseflowRecord
 
   has_many :attorney_case_reviews, dependent: :destroy
   has_many :task_timers, dependent: :destroy
-  has_many :correspondences_appeals_tasks
-  has_many :correspondence_appeals, through: :correspondences_appeals_tasks
+  has_one :correspondence_appeal, through: :correspondences_appeals_tasks
   has_one :cached_appeal, ->(task) { where(appeal_type: task.appeal_type) }, foreign_key: :appeal_id
 
   validates :assigned_to, :appeal, :type, :status, presence: true
