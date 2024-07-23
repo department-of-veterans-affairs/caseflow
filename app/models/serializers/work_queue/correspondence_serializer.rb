@@ -11,6 +11,7 @@ class WorkQueue::CorrespondenceSerializer
   attribute :va_date_of_receipt
   attribute :nod
   attribute :status
+  attribute :veteran_id
   attribute :correspondence_documents do |object|
     object.correspondence_documents.map do |document|
       WorkQueue::CorrespondenceDocumentSerializer.new(document).serializable_hash[:data][:attributes]
@@ -28,4 +29,9 @@ class WorkQueue::CorrespondenceSerializer
   attribute :veteran_file_number do |object|
     object.veteran&.file_number
   end
+
+  attribute :correspondence_appeal_ids do |object|
+    object.appeal_ids.map(&:to_s)
+  end
+
 end
