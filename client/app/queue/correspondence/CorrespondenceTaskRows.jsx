@@ -88,22 +88,28 @@ class CorrespondenceTaskRows extends React.PureComponent {
     super(props);
 
     this.state = {
-      taskInstructionsIsVisible: {},
+      taskInstructionsIsVisible: [],
       showEditNodDateModal: false,
       activeTasks: [...props.taskList],
     };
   }
 
-  toggleTaskInstructionsVisibility = (task) => {
-    const previousState = Object.assign(
-      {},
-      this.state.taskInstructionsIsVisible
-    );
+  toggleTaskInstructionsVisibility = (taskKey) => {
 
-    previousState[task.uniqueId] = previousState[task.uniqueId] ?
-      !previousState[task.uniqueId] :
-      true;
-    this.setState({ taskInstructionsIsVisible: previousState });
+    // console.log(taskKey)
+    // console.log(this.state.taskInstructionsIsVisible)
+    if (this.state.taskInstructionsIsVisible.includes(taskKey)) {
+      const state = this.state.taskInstructionsIsVisible;
+
+      const index = this.state.taskInstructionsIsVisible.indexOf(taskKey);
+      state.splice(index, 1);
+      this.setState({ taskInstructionsIsVisible: [...state] });
+    }
+    else {
+      const state = this.state.taskInstructionsIsVisible;
+      state.push(taskKey);
+      this.setState({ taskInstructionsIsVisible: [...state]});
+    }
   };
 
   daysSinceTaskAssignmentListItem = (task) => {
@@ -156,7 +162,6 @@ class CorrespondenceTaskRows extends React.PureComponent {
 
   assignedToListItem = (task) => {
     const assignee = task.assigneeName;
-    console.log(task)
 
     return (
       <div className="cf-row-wrapper">
@@ -170,7 +175,6 @@ class CorrespondenceTaskRows extends React.PureComponent {
     `${firstName.substring(0, 1)}. ${lastName}`;
 
   assignedByListItem = (task) => {
-    console.log(task)
     return task.assignedBy ? (
       <div className="cf-row-wrapper">
         <dt>{'ASSIGNED TO(R)'}</dt>
@@ -401,10 +405,15 @@ class CorrespondenceTaskRows extends React.PureComponent {
       return null;
     }
 
+    // console.log(this.state.taskInstructionsIsVisible)
+
+    console.log(this.state.taskInstructionsIsVisible)
+
+    console.log(this.state.taskInstructionsIsVisible.includes(task.label))
     return (
       <div className="cf-row-wrapper">
-        {this.state.taskInstructionsIsVisible[task.uniqueId] && (
-          <React.Fragment key={`${task.uniqueId}instructions_text`}>
+        {this.state.taskInstructionsIsVisible.includes(task.label) && (
+          <React.Fragment key={`${task.assignedOn}${task.label}`}>
             {!establishmentTask(task) &&
             <dt style={{ width: '100%' }}>
               {COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}
@@ -424,7 +433,7 @@ class CorrespondenceTaskRows extends React.PureComponent {
               COPY.TASK_SNAPSHOT_HIDE_TASK_INSTRUCTIONS_LABEL :
               COPY.TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL
           }
-          onClick={() => this.toggleTaskInstructionsVisibility(task)}
+          onClick={() => this.toggleTaskInstructionsVisibility(task.label)}
         />
       </div>
     );
