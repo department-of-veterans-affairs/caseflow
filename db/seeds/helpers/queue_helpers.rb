@@ -68,6 +68,10 @@ module QueueHelpers
       pages: rand(1..30),
       correspondence_id: correspondence.id
     )
+
+    Document.find_or_create_by!(
+      vbms_document_id: doc_type[:id]
+    )
   end
 
   # :reek:UtilityFunction
