@@ -72,7 +72,7 @@ module Seeds
 
     def create_ac_3_appeals
       # A non-SSC AVLJ that Only has 4 priority cases where they held the last hearing and signed the most recent decision
-      avlj = User.find_by(css_id: "NONSSCAN03")
+      avlj = VACOLS::Staff.find_by(stafkey: "NONSSCAN03")
       signing_avlj = avlj
 
       create(:legacy_signed_appeal, :type_cavc_remand, avlj_judge: avlj)
