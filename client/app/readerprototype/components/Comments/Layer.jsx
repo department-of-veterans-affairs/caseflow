@@ -168,7 +168,7 @@ const Layer = (props) => {
         className={DIV_STYLING}
       >
         {children}
-        {placingAnnotationIconPageCoords?.pageIndex === pageNumber && (
+        {isPlacingAnnotation && placingAnnotationIconPageCoords?.pageIndex === pageNumber && (
           <Icon
             draggable
             rotation={-rotationDegrees}

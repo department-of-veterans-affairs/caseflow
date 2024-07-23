@@ -11,6 +11,9 @@ import DeleteModal from './components/Comments/DeleteModal';
 import ShareModal from './components/Comments/ShareModal';
 import { getNextDocId, getPrevDocId, getRotationDeg, selectedDoc, selectedDocIndex } from './util/documentUtil';
 import { docViewerStyles } from './util/layoutUtil';
+import { CATEGORIES } from '../reader/analytics';
+import { useDispatch } from 'react-redux';
+import { stopPlacingAnnotation } from '../reader/AnnotationLayer/AnnotationActions';
 
 const ZOOM_LEVEL_MIN = 20;
 const ZOOM_LEVEL_MAX = 300;
@@ -22,6 +25,8 @@ const DocumentViewer = (props) => {
   const [rotateDeg, setRotateDeg] = useState('0deg');
   const [showSearchBar, setShowSearchBar] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(100);
+  const dispatch = useDispatch();
+
   const currentDocumentId = Number(props.match.params.docId);
 
   useEffect(() => {
@@ -34,6 +39,12 @@ const DocumentViewer = (props) => {
       if (event.metaKey && event.code === 'KeyF') {
         event.preventDefault();
         setShowSearchBar(true);
+      }
+
+      if (event.altKey && event.code === 'Backspace') {
+        window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'back-to-claims-folder');
+        dispatch(stopPlacingAnnotation('from-back-to-documents'));
+        props.history.push(props.documentPathBase);
       }
     };
 
@@ -62,10 +73,7 @@ const DocumentViewer = (props) => {
     <div>
       <div className="cf-pdf-page-container-prototype">
         <div className="sidebarContainer" {...docViewerStyles.sidebarContainer}>
-          <ReaderSidebar
-            doc={doc}
-            documents={props.allDocuments}
-          />
+          <ReaderSidebar doc={doc} documents={props.allDocuments} />
         </div>
         <div className="cf-pdf-container" {...docViewerStyles.documentContainer}>
           <div className="cf-pdf-toolbar-prototype">
@@ -118,6 +126,7 @@ DocumentViewer.propTypes = {
   allDocuments: PropTypes.array.isRequired,
   documentPathBase: PropTypes.string,
   showPdf: PropTypes.func,
+  history: PropTypes.any,
 };
 
 export default DocumentViewer;
