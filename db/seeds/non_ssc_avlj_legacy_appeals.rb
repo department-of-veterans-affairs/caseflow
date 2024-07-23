@@ -72,11 +72,16 @@ module Seeds
 
     def create_ac_3_appeals
       # A non-SSC AVLJ that Only has 4 priority cases where they held the last hearing and signed the most recent decision
-      avlj = user.find_by(css_id: "NONSSCAN03")
-      create_legacy_appeal(priority=true, avlj, 200.days.ago, avlj)
-      create_legacy_appeal(priority=true, avlj, 100.days.ago, avlj)
-      create_legacy_appeal(priority=true, avlj, 50.days.ago, avlj)
-      create_legacy_appeal(priority=true, avlj, 10.days.ago, avlj)
+      avlj = User.find_by(css_id: "NONSSCAN03")
+      signing_avlj = avlj
+
+      create(:legacy_signed_appeal, :type_cavc_remand, avlj_judge: avlj)
+
+
+      # create_legacy_appeal(priority=true, avlj, 200.days.ago, avlj)
+      # create_legacy_appeal(priority=true, avlj, 100.days.ago, avlj)
+      # create_legacy_appeal(priority=true, avlj, 50.days.ago, avlj)
+      # create_legacy_appeal(priority=true, avlj, 10.days.ago, avlj)
     end
 
     def create_ac_4_appeals
@@ -242,54 +247,58 @@ module Seeds
       'RO17'
     end
 
-    def create_legacy_appeal(priority, avlj, docket_date, signing_avlj=nil)
+    # def create_legacy_appeal(priority, avlj, docket_date, signing_avlj=nil)
+    #   legacy_appeal = create(:legacy_signed_appeal)
+
+    #   if priority
+
       #TODO: modify this method to work properly for this ticket's needs
-      # BRIEFF.BFD19 = docket_date
-      if signing_avlj
-        brieff = create_brieff(signing_avlj, docket_date) #this may or may not need to be developed depending on how the factory works
-      end
+      # # BRIEFF.BFD19 = docket_date
+      # if signing_avlj
+      #   brieff = create_brieff(signing_avlj, docket_date) #this may or may not need to be developed depending on how the factory works
+      # end
 
-      Timecop.travel(docket_date)
-      veteran = create_demo_veteran_for_legacy_appeal
+      # Timecop.travel(docket_date)
+      # veteran = create_demo_veteran_for_legacy_appeal
 
-      correspondent = create(:correspondent,
-                            snamef: veteran.first_name, snamel: veteran.last_name,
-                            ssalut: "", ssn: veteran.file_number)
+      # correspondent = create(:correspondent,
+      #                       snamef: veteran.first_name, snamel: veteran.last_name,
+      #                       ssalut: "", ssn: veteran.file_number)
 
-      if signing_avlj
-        vacols_case = priority ? create_signed_priority_video_vacols_case(veteran,
-                                          correspondent,
-                                          avlj,
-                                          docket_date,
-                                          signing_avlj,
-                                          brieff) :
-                                  create_signed_non_priority_video_vacols_case(veteran,
-                                  correspondent,
-                                  avlj,
-                                  docket_date,
-                                  signing_avlj,
-                                  brieff)
-      else
-        vacols_case = priority ? create_priority_video_vacols_case(veteran,
-                                          correspondent,
-                                          avlj,
-                                          docket_date) :
-                                  create_non_priority_video_vacols_case(veteran,
-                                  correspondent,
-                                  avlj,
-                                  docket_date)
-      end
+      # if signing_avlj
+      #   vacols_case = priority ? create_signed_priority_video_vacols_case(veteran,
+      #                                     correspondent,
+      #                                     avlj,
+      #                                     docket_date,
+      #                                     signing_avlj,
+      #                                     brieff) :
+      #                             create_signed_non_priority_video_vacols_case(veteran,
+      #                             correspondent,
+      #                             avlj,
+      #                             docket_date,
+      #                             signing_avlj,
+      #                             brieff)
+      # else
+      #   vacols_case = priority ? create_priority_video_vacols_case(veteran,
+      #                                     correspondent,
+      #                                     avlj,
+      #                                     docket_date) :
+      #                             create_non_priority_video_vacols_case(veteran,
+      #                             correspondent,
+      #                             avlj,
+      #                             docket_date)
+      # end
 
-      legacy_appeal = create(
-        :legacy_appeal,
-        :with_root_task,
-        vacols_case: vacols_case,
-        closest_regional_office: demo_regional_office
-      )
+      # legacy_appeal = create(
+      #   :legacy_appeal,
+      #   :with_root_task,
+      #   vacols_case: vacols_case,
+      #   closest_regional_office: demo_regional_office
+      # )
 
-      create(:available_hearing_locations, demo_regional_office, appeal: legacy_appeal)
-      Timecop.return
-    end
+      # create(:available_hearing_locations, demo_regional_office, appeal: legacy_appeal)
+      # Timecop.return
+    # end
 
     def create_priority_video_vacols_case(veteran, correspondent, associated_judge, days_ago)
       create(
@@ -356,43 +365,6 @@ module Seeds
     end
 
     def assign_last_hearing_to_avlj #maybe needed?
-    end
-
-    def create_brieff(avlj)
-      # BRIEFF
-        # Provide access to legacy appeal decisions for more complete appeals history queries
-  # JOIN_PREVIOUS_APPEALS = "
-  # left join (
-  #     select B.BFKEY as PREV_BFKEY, B.BFCORLID as PREV_BFCORLID, B.BFDDEC as PREV_BFDDEC,
-  #     B.BFMEMID as PREV_DECIDING_JUDGE, B.BFAC as PREV_TYPE_ACTION, F.TINUM as PREV_TINUM,
-  #     F.TITRNUM as PREV_TITRNUM
-  #     from BRIEFF B
-  #     inner join FOLDER F on F.TICKNUM = B.BFKEY
-  #     where B.BFMPRO = 'HIS' and B.BFMEMID not in ('000', '888', '999') and B.BFATTID is not null
-  #   ) PREV_APPEAL
-  #     on PREV_APPEAL.PREV_BFKEY != BRIEFF.BFKEY and PREV_APPEAL.PREV_BFCORLID = BRIEFF.BFCORLID
-  #     and PREV_APPEAL.PREV_TINUM = BRIEFF.TINUM and PREV_APPEAL.PREV_TITRNUM = BRIEFF.TITRNUM
-  #     and PREV_APPEAL.PREV_BFDDEC = BRIEFF.BFDPDCN
-  # "
-
-  # def self.appeals_tied_to_non_ssc_avljs
-  #   query = <<-SQL
-  #     with non_ssc_avljs as (
-  #       #{VACOLS::Staff::NON_SSC_AVLJS}
-  #     )
-  #     #{SELECT_READY_TO_DISTRIBUTE_APPEALS_ORDER_BY_BFD19}
-  #     where APPEALS.VLJ in (select * from non_ssc_avljs)
-  #     and (
-  #       APPEALS.PREV_DECIDING_JUDGE is null or
-  #       (
-  #         APPEALS.PREV_DECIDING_JUDGE = APPEALS.VLJ
-  #         AND APPEALS.HEARING_DATE <= APPEALS.PREV_BFDDEC
-  #       )
-  #     )
-  #     order by BFD19
-  #   SQL
-
-  # B.BFMEMID as PREV_DECIDING_JUDGE
     end
 
     def create_second_hearing_for_legacy_appeal(legacy_appeal, avlj)
