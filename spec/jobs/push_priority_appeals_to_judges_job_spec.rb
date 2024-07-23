@@ -431,7 +431,6 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
         # Ensure we distributed all available ready cases from any docket that are not tied to a judge
         distributed_cases = DistributedCase.where(distribution: subject)
-        byebug
         expect(distributed_cases.count).to eq priority_count
         expect(distributed_cases.map(&:priority).uniq.compact).to match_array [true]
         expect(distributed_cases.map(&:genpop).uniq.compact).to match_array [true]
