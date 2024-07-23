@@ -41,9 +41,24 @@ class ExternalApi::VBMSService
   end
 
   def self.update_document_in_vbms(appeal, uploadable_document)
-    @vbms_client ||= init_vbms_client
-    response = initialize_update(appeal, uploadable_document)
-    update_document(appeal.veteran_file_number, response.updated_document_token, uploadable_document.pdf_location)
+    if FeatureToggle.enabled?(:use_ce_api)
+      file_update_payload = ClaimEvidenceFileUpdatePayload.new(
+        date_va_received_document: Time.zone.now,
+        document_type_id: uploadable_document.document_type_id,
+        file_content: File.read(uploadable_document.pdf_location),
+        file_content_source: uploadable_document.source
+      )
+
+      VeteranFileUpdater.update_veteran_file(
+        veteran_file_number: appeal.veteran_file_number,
+        file_uuid: uploadable_document.document_version_reference_id,
+        file_update_payload: file_update_payload
+      )
+    else
+      @vbms_client ||= init_vbms_client
+      response = initialize_update(appeal, uploadable_document)
+      update_document(appeal.veteran_file_number, response.updated_document_token, uploadable_document.pdf_location)
+    end
   end
 
   def self.upload_document_to_vbms(appeal, uploadable_document)
