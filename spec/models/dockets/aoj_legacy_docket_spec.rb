@@ -4,6 +4,8 @@ describe AojLegacyDocket do
   before do
     create(:case_distribution_lever, :request_more_cases_minimum)
     create(:case_distribution_lever, :nod_adjustment)
+    create(:case_distribution_lever, :disable_legacy_non_priority)
+    create(:case_distribution_lever, :disable_legacy_priority)
     create(:case_distribution_lever, :cavc_affinity_days)
     create(:case_distribution_lever, :cavc_aod_affinity_days)
   end
