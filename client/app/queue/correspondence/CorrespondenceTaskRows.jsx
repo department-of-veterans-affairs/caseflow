@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 import { css } from 'glamor';
 import React from 'react';
 import moment from 'moment';
@@ -9,13 +8,10 @@ import { CancelIcon } from '../../components/icons/CancelIcon';
 import { GrayDotIcon } from '../../components/icons/GrayDotIcon';
 import { GreenCheckmarkIcon } from '../../components/icons/GreenCheckmarkIcon';
 import { COLORS } from '../../constants/AppConstants';
-import { sortCaseTimelineEvents, timelineEventsFromAppeal } from '../utils';
+import { sortCaseTimelineEvents } from '../utils';
 import CaseDetailsDescriptionList from '../components/CaseDetailsDescriptionList';
 import ActionsDropdown from '../components/ActionsDropdown';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
-import DecisionDateTimeLine from '../components/DecisionDateTimeLine';
-import { SubstituteAppellantTimelineEvent } from '../substituteAppellant/timelineEvent/SubstituteAppellantTimelineEvent'; // eslint-disable-line max-len
-import { SubstitutionProcessedTimelineEvent } from '../substituteAppellant/timelineEvent/SubstitutionProcessedTimelineEvent'; // eslint-disable-line max-len
 
 export const grayLineStyling = css({
   width: '5px',
@@ -108,27 +104,7 @@ class CorrespondenceTaskRows extends React.PureComponent {
     }
   };
 
-  daysSinceTaskAssignmentListItem = (task) => {
-    if (task) {
-      const today = moment().startOf('day');
-      const dateAssigned = moment(task.assignedOn);
-      const dayCountSinceAssignment = today.diff(dateAssigned, 'days');
-
-      return (
-        <React.Fragment>
-          <dt>{COPY.TASK_SNAPSHOT_DAYS_SINCE_ASSIGNMENT_LABEL}</dt>
-          <dd>{dayCountSinceAssignment}</dd>
-        </React.Fragment>
-      );
-    }
-
-    return null;
-  };
-
   assignedOnListItem = (task) => {
-    if (task.closedAt) {
-      return null;
-    }
 
     return task.assignedOn ? (
       <div className="cf-row-wrapper">
@@ -136,24 +112,6 @@ class CorrespondenceTaskRows extends React.PureComponent {
         <dd>{moment(task.assignedOn).format('MM/DD/YYYY')}</dd>
       </div>
     ) : null;
-  };
-
-  closedAtListItem = (task) => {
-    return task.closedAt ? (
-      <div className="cf-row-wrapper">
-        <dt>{COPY.TASK_SNAPSHOT_TASK_COMPLETED_DATE_LABEL}</dt>
-        <dd>{moment(task.closedAt).format('MM/DD/YYYY')}</dd>
-      </div>
-    ) : null;
-  };
-
-  cancelledAtListItem = (task) => {
-    return (
-      <div className="cf-row-wrapper">
-        <dt>{COPY.TASK_SNAPSHOT_TASK_CANCELLED_DATE_LABEL}</dt>
-        <dd>{moment(task.closedAt).format('MM/DD/YYYY')}</dd>
-      </div>
-    );
   };
 
   assignedToListItem = (task) => {
@@ -164,82 +122,6 @@ class CorrespondenceTaskRows extends React.PureComponent {
         <dd>{task.assignedTo}</dd>
       </div>
     );
-  };
-
-  getAbbrevName = ({ firstName, lastName }) =>
-    `${firstName.substring(0, 1)}. ${lastName}`;
-
-  assignedByListItem = (task) => {
-    return task.assignedBy ? (
-      <div className="cf-row-wrapper">
-        <dt>ASSIGNED TO(R)</dt>
-        <dd>task.assignedBy</dd>
-      </div>
-    ) : null;
-  };
-
-  cancelledByListItem = (task) => {
-    const canceler = task.cancelledBy?.cssId;
-
-    return canceler ? (
-      <div className="cf-row-wrapper">
-        <dt>{COPY.TASK_SNAPSHOT_TASK_CANCELER_LABEL}</dt>
-        <dd>{canceler}</dd>
-      </div>
-    ) : null;
-  };
-
-  cancelReasonListItem = (task) => {
-    const reason = task.cancelReason;
-    const reasonLabel = COPY.TASK_SNAPSHOT_CANCEL_REASONS[reason];
-
-    return reasonLabel ? <div className="cf-row-wrapper"><dt>{COPY.TASK_SNAPSHOT_TASK_CANCEL_REASON_LABEL}</dt>
-      <dd>{reasonLabel}</dd></div> : null;
-  }
-
-  splitAtListItem = (task) => {
-    return (
-      <div className="cf-row-wrapper">
-        <dt>{[COPY.TASK_SNAPSHOT_TASK_COMPLETED_DATE_LABEL, <br />, moment(task.closedAt).format('MM/DD/YYYY')]}</dt>
-      </div>
-    );
-  };
-
-  splitByListItem = (task) => {
-    const spliter = task.cancelledBy?.cssId;
-
-    if (spliter) {
-      return (
-        <div className="cf-row-wrapper">
-          <dt>{COPY.TASK_SPLIT_BY}</dt>
-          <dd>{spliter}</dd>
-        </div>
-      );
-    }
-
-    return null;
-  };
-
-  splitInstruction = () => {
-    // return <div className="cf-row-wrapper"><dt>{COPY.TASK_SPLIT_INSTRUCTION}</dt></div>;
-  }
-
-  splitReasonListItem = (task) => {
-    const reason = task.cancelReason;
-
-    return reason ? <div className="cf-row-wrapper"><dt>{COPY.TASK_SPLIT_REASON}</dt>
-      <dd>{reason}</dd></div> : null;
-  }
-
-  hearingRequestTypeConvertedBy = (task) => {
-    const convertedBy = task.convertedBy?.cssId;
-
-    return convertedBy ? (
-      <div className="cf-row-wrapper">
-        <dt>{COPY.TASK_SNAPSHOT_HEARING_REQUEST_CONVERTER_LABEL}</dt>
-        <dd>{convertedBy}</dd>
-      </div>
-    ) : null;
   };
 
   taskLabelListItem = (task) => {
@@ -330,46 +212,11 @@ class CorrespondenceTaskRows extends React.PureComponent {
 
   showActionsSection = (task) => task && !this.props.hideDropdown;
 
-  hearingRequestTypeConvertedAtListItem = (task) => {
-    return task.convertedOn ? (
-      <div className="cf-row-wrapper">
-        <dt>{COPY.TASK_SNAPSHOT_HEARING_REQUEST_CONVERTED_ON_LABEL}</dt>
-        <dd>{moment(task.convertedOn).format('MM/DD/YYYY')}</dd>
-      </div>
-    ) : null;
-  };
-
-  closedOrCancelledAtListItem = (task) => {
-    if (isCancelled(task)) {
-      return this.cancelledAtListItem(task);
-    }
-
-    return task.type === 'ChangeHearingRequestTypeTask' ?
-      this.hearingRequestTypeConvertedAtListItem(task) :
-      this.closedAtListItem(task);
-  };
-
-  showTimelineDescriptionSplitItems = (task) => {
-    return (
-      <React.Fragment>
-        {this.splitByListItem(task)}
-        {this.splitInstruction(task)}
-        {this.splitReasonListItem(task)}
-      </React.Fragment>
-    );
-  };
-
-  showTimelineDescriptionItems = (task, timeline) => {
-    if (task.type === 'ChangeHearingRequestTypeTask' && timeline) {
-      return this.hearingRequestTypeConvertedBy(task);
-    }
+  showTimelineDescriptionItems = (task) => {
 
     return (
       <React.Fragment>
         {task.type !== 'IssuesUpdateTask' && this.assignedToListItem(task)}
-        {this.assignedByListItem(task)}
-        {this.cancelledByListItem(task)}
-        {this.cancelReasonListItem(task)}
         {this.taskLabelListItem(task)}
         {this.taskInstructionsListItem(task)}
       </React.Fragment>
@@ -397,7 +244,6 @@ class CorrespondenceTaskRows extends React.PureComponent {
         >
           <CaseDetailsDescriptionList>
             {this.assignedOnListItem(task)}
-            {this.closedOrCancelledAtListItem(task)}
           </CaseDetailsDescriptionList>
 
         </td>
@@ -424,7 +270,7 @@ class CorrespondenceTaskRows extends React.PureComponent {
         >
           <CaseDetailsDescriptionList>
             {timeline && timelineTitle}
-            {this.showTimelineDescriptionItems(task, timeline)}
+            {this.showTimelineDescriptionItems(task)}
           </CaseDetailsDescriptionList>
 
         </td>
@@ -437,123 +283,25 @@ class CorrespondenceTaskRows extends React.PureComponent {
     );
   };
 
-  toggleEditNodDateModal = () =>
-    this.setState((state) => ({
-      showEditNodDateModal: !state.showEditNodDateModal,
-    }));
-
-  handleNODDateChange = () => {
-    this.toggleEditNodDateModal();
-  };
-
-  // Certain events are only relevant to full timeline view
-  timelineOnly = (eventType) =>
-    [
-      'decisionDate',
-      'substitutionDate',
-      'substitutionProcessed',
-      'nodDateUpdate',
-    ].includes(eventType);
-
-  timelineComponent = (componentProps) => {
-    const componentMap = {
-      decisionDate: DecisionDateTimeLine,
-      substitutionDate: SubstituteAppellantTimelineEvent,
-      substitutionProcessed: SubstitutionProcessedTimelineEvent
-    };
-    const ComponentName = componentMap[componentProps.timelineEvent?.type];
-
-    return ComponentName ? <ComponentName {...componentProps} /> : null;
-  };
-
   render = () => {
-    const { appeal, taskList, timeline } = this.props;
+    const { appeal, taskList } = this.props;
     // Non-tasks are only relevant for the main Case Timeline
-    const eventsFromAppeal = timeline ?
-      timelineEventsFromAppeal({ appeal }) :
-      [];
     const sortedTimelineEvents = sortCaseTimelineEvents(
       taskList,
-      eventsFromAppeal
     );
 
     return (
       <React.Fragment key={appeal.externalId}>
         {sortedTimelineEvents.map((timelineEvent, index) => {
-          if (timeline && this.timelineOnly(timelineEvent.type)) {
-            return this.timelineComponent({
-              timelineEvent,
-              appeal,
-              timeline,
-              taskList,
-              index,
-              key: `${timelineEvent?.type}-${index}`
-            });
-          }
-
           const templateConfig = {
             task: timelineEvent,
             index,
-            timeline,
             sortedTimelineEvents,
             appeal,
           };
 
           return this.taskTemplate(templateConfig);
         })}
-
-        {/* Tasks and decision dates won't be in chronological order unless added to task list
-          to return under render function*/}
-        {timeline && appeal.isLegacyAppeal && (
-          <tr>
-            <td className="taskContainerStyling taskTimeTimelineContainerStyling">
-              {appeal.form9Date ?
-                moment(appeal.form9Date).format('MM/DD/YYYY') :
-                null}
-            </td>
-            <td
-              {...taskInfoWithIconTimelineContainer}
-              className={appeal.form9Date ? '' : 'greyDotStyling'}
-            >
-              {appeal.form9Date ? <GreenCheckmarkIcon /> : <GrayDotIcon size={25} />}
-              {appeal.nodDate && (
-                <div className="grayLineStyling grayLineTimelineStyling" />
-              )}
-            </td>
-            <td className="taskContainerStyling taskInformationTimelineContainerStyling">
-              {appeal.form9Date ?
-                COPY.CASE_TIMELINE_FORM_9_RECEIVED :
-                COPY.CASE_TIMELINE_FORM_9_PENDING}
-            </td>
-          </tr>
-        )}
-        {timeline && appeal.nodDate && (
-          <tr>
-            <td className="taskContainerStyling taskTimeTimelineContainerStyling">
-              {moment(appeal.nodDate).format('MM/DD/YYYY')}
-            </td>
-            <td className="taskInfoWithIconContainer taskInfoWithIconTimelineContainer">
-              <GreenCheckmarkIcon />
-            </td>
-            <td className="taskContainerStyling taskInformationTimelineContainerStyling">
-              {COPY.CASE_TIMELINE_NOD_RECEIVED} <br />
-              {this.props.editNodDateEnabled && (
-                <React.Fragment>
-                  <p>
-                    <Button
-                      type="button"
-                      linkStyling
-                      styling={css({ paddingLeft: '0' })}
-                      onClick={this.toggleEditNodDateModal}
-                    >
-                      {COPY.CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY}
-                    </Button>
-                  </p>
-                </React.Fragment>
-              )}
-            </td>
-          </tr>
-        )}
       </React.Fragment>
     );
   };
@@ -561,11 +309,9 @@ class CorrespondenceTaskRows extends React.PureComponent {
 
 CorrespondenceTaskRows.propTypes = {
   appeal: PropTypes.object,
-  editNodDateEnabled: PropTypes.bool,
   hideDropdown: PropTypes.bool,
   taskList: PropTypes.array,
   timeline: PropTypes.bool,
 };
 
 export default CorrespondenceTaskRows;
-/* eslint-enable max-lines */

@@ -45,7 +45,6 @@ const CorrespondenceCaseTimeline = (props) => {
             organizations={props.organizations}
             appeal={props.correspondence}
             taskList={formatTaskData()}
-            editNodDateEnabled
             statusSplit
           />
         </tbody>
