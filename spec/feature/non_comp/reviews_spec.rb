@@ -539,11 +539,11 @@ feature "NonComp Reviews Queue", :postgres do
 
       # Check that task counts are being transmitted correctly from backend
       expect(page).to have_content("Board Grant (1)")
-      expect(page).to have_content("Higher-Level Review (3)")
+      expect(page).to have_content("Higher-Level Review (2)")
       expect(page).to have_content("Remand (1)")
 
       find("label", text: "Higher-Level Review").click
-      expect(page).to have_content("Higher-Level Review")
+      expect(page).to have_content("Higher-Level Review", count: 2)
       expect(page).to_not have_content("Board Grant")
       expect(page).to_not have_content("Remand")
       find(".cf-clear-filters-link").click

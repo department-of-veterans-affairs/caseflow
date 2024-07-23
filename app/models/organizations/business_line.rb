@@ -145,7 +145,7 @@ class BusinessLine < Organization
 
     def task_type_query_helper(join_association)
       Task.send(parent.tasks_query_type[query_type])
-        .select("tasks.id AS tasks_id, tasks.type AS task_type")
+        .select("tasks.id AS task_id, tasks.type AS task_type")
         .joins(join_association)
         .joins(issue_modification_request_join)
         .where(query_constraints)
@@ -154,15 +154,16 @@ class BusinessLine < Organization
 
     def task_type_board_grant_helper
       Task.send(parent.tasks_query_type[query_type])
-        .select("tasks.id AS tasks_id, tasks.type AS task_type, 'Appeal' AS decision_review_type")
+        .select("tasks.id AS task_id, tasks.type AS task_type, 'Appeal' AS decision_review_type")
         .joins(board_grant_effectuation_task_appeals_requests_join)
         .joins(issue_modification_request_join)
         .where(board_grant_effectuation_task_constraints)
+        .where(issue_modification_request_filter)
     end
 
     def issue_type_query_helper(join_association)
       Task.send(parent.tasks_query_type[query_type])
-        .select("tasks.id as tasks_id, request_issues.nonrating_issue_category as issue_category")
+        .select("tasks.id as task_id, request_issues.nonrating_issue_category AS issue_category")
         .joins(join_association)
         .joins(issue_modification_request_join)
         .where(query_constraints)
@@ -182,11 +183,11 @@ class BusinessLine < Organization
       task_count = ActiveRecord::Base.connection.execute <<-SQL
         WITH task_review_issues AS (
             #{hlr_query.to_sql}
-          UNION ALL
+          UNION
             #{sc_query.to_sql}
-          UNION ALL
+          UNION
             #{appeals_query.to_sql}
-          UNION ALL
+          UNION
             #{board_grant_query.to_sql}
         )
         SELECT task_type, decision_review_type, COUNT(1)
@@ -687,10 +688,6 @@ class BusinessLine < Organization
       decision_reviews_on_request_issues({ ama_appeal: :request_issues }, sub_type_alias)
     end
 
-    # def remands_on_request_issues
-    #   decision_reviews_on_request_issues(remand: :request_issues)
-    # end
-
     # Specific case for BoardEffectuationGrantTasks to include them in the result set
     # if the :board_grant_effectuation_task FeatureToggle is enabled for the current user.
     def board_grant_effectuation_tasks
@@ -723,21 +720,6 @@ class BusinessLine < Organization
         .group(group_by_columns)
         .arel
     end
-
-    # def combined_decision_review_tasks_query
-    #   union_query = Arel::Nodes::UnionAll.new(
-    #     Arel::Nodes::UnionAll.new(
-    #       Arel::Nodes::UnionAll.new(
-    #         higher_level_reviews_on_request_issues,
-    #         supplemental_claims_on_request_issues
-    #       ),
-    #       remands_on_request_issues
-    #     ),
-    #     ama_appeals_query
-    #   )
-
-    #   Arel::Nodes::As.new(union_query, Task.arel_table)
-    # end
 
     def combined_decision_review_tasks_query
       union_query = Arel::Nodes::UnionAll.new(
