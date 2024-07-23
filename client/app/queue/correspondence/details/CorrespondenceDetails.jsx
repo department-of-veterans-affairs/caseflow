@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import TabWindow from '../../../components/TabWindow';
 import CopyTextButton from '../../../components/CopyTextButton';
 import { loadCorrespondence } from '../correspondenceReducer/correspondenceActions';
-import LoadingDataDisplay from '../../../components/LoadingDataDisplay';
 import ApiUtil from '../../../util/ApiUtil';
 import CaseListTable from 'app/queue/CaseListTable';
 import { prepareAppealForSearchStore } from 'app/queue/utils';
-
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
@@ -59,19 +57,19 @@ const CorrespondenceDetails = (props) => {
             </ul>
           </AppSegment>
         </div>
-          <div>
-              <h2>Existing Appeals</h2>
-              <AppSegment filledBackground noMarginTop>
-                  <CaseListTable
-                      appeals={appeals}
-                      paginate="true"
-                      showCheckboxes
-                      taskRelatedAppealIds={props.correspondence.correspondenceAppealIds}
-                      disabled
-                      enableTopPagination
-                  />
-              </AppSegment>
-          </div>
+        <div className="correspondence-existing-appeals">
+          <h2>Existing Appeals</h2>
+          <AppSegment filledBackground noMarginTop>
+            <CaseListTable
+              appeals={appeals}
+              paginate="true"
+              showCheckboxes
+              taskRelatedAppealIds={props.correspondence.correspondenceAppealIds}
+              disabled
+              enableTopPagination
+            />
+          </AppSegment>
+        </div>
       </React.Fragment>
     );
   };

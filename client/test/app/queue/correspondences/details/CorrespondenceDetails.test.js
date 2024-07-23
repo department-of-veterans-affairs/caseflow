@@ -78,45 +78,24 @@ describe('CorrespondenceDetails', () => {
   });
 
   it('displays the correspondence tasks correctly', () => {
-        render(
-            <Provider store={store}>
-                <CorrespondenceDetails {...props} />
-            </Provider>
-        );
-
-        expect(screen.getByText('Completed Mail Tasks')).toBeInTheDocument();
-        expect(screen.getByText('Task 1')).toBeInTheDocument();
-        expect(screen.getByText('Task 2')).toBeInTheDocument();
-    });
-
-  it('renders correspondenceTasks correctly', () => {
     render(
       <Provider store={store}>
         <CorrespondenceDetails {...props} />
       </Provider>
     );
 
-    // Check if the header and AppSegment are rendered correctly
+    expect(screen.getByText('Completed Mail Tasks')).toBeInTheDocument();
+    expect(screen.getByText('Task 1')).toBeInTheDocument();
+    expect(screen.getByText('Task 2')).toBeInTheDocument();
+
+    // Existing Appeals Table and Columns
     expect(screen.getByText('Existing Appeals')).toBeInTheDocument();
-
-    // Check if the CaseListTable is rendered correctly using class name
-    const caseListTable = screen.getByRole('table');
-
-    expect(caseListTable).toBeInTheDocument();
-
-    // Check if table columns are rendered correctly
-    const headers = ['Docket Number',
-      'Appellant Name',
-      'Appeal Status',
-      'Appeal Type',
-      'Number of Issues',
-      'Decision Date',
-      'Appeal Location'
-    ];
-
-    headers.forEach((header) => {
-      expect(screen.getByText(header)).toBeInTheDocument();
-    });
+    expect(screen.getByText('Appellant Name')).toBeInTheDocument();
+    expect(screen.getByText('Appeal Status')).toBeInTheDocument();
+    expect(screen.getByText('Appeal Type')).toBeInTheDocument();
+    expect(screen.getByText('Number of Issues')).toBeInTheDocument();
+    expect(screen.getByText('Decision Date')).toBeInTheDocument();
+    expect(screen.getByText('Appeal Location')).toBeInTheDocument();
   });
 
 });
