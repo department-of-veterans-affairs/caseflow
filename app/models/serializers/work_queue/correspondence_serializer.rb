@@ -25,7 +25,8 @@ class WorkQueue::CorrespondenceSerializer
       task.type == "ReviewPackageTask" ||
         task.type == "CorrespondenceIntakeTask" ||
         task.type == "CorrespondenceRootTask" ||
-        task.type == "RemovePackageTask"
+        task.type == "RemovePackageTask" ||
+        task.type == "EfolderUploadFailedTask"
     end
 
     # next unless filtered_tasks.empty?
@@ -38,7 +39,7 @@ class WorkQueue::CorrespondenceSerializer
         # binding.pry
         tasks <<
           {
-            type: task.type,
+            type: task.label,
             assigned_to: task.assigned_to_type == "Organization" ? task.assigned_to.name : task.assigned_to.css_id,
             assigned_at: task.assigned_at.strftime("%m/%d/%Y"),
             instructions: task.instructions,
