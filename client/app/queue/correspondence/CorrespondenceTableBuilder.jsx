@@ -316,10 +316,11 @@ const CorrespondenceTableBuilder = (props) => {
     };
   };
 
-  const tabsFromConfig = (config) =>
-    (config.tabs || []).map((tabConfig) =>
+  const tabsFromConfig = (config) => {
+    return (config.tabs || []).map((tabConfig) =>
       taskTableTabFactory(tabConfig, config)
     );
+  };
 
   const config = queueConfig();
 

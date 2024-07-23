@@ -25,17 +25,21 @@ const CorrespondenceDetails = (props) => {
   useEffect(() => {
     ApiUtil.get('/search', { query: { veteran_ids: correspondence.veteranId } }).
       then((response) => {
-        let searchStoreAppeal = prepareAppealForSearchStore(response.body.appeals)
-        let appeall = searchStoreAppeal.appeals
-        let appealldetail = searchStoreAppeal.appealDetails
-        let hashKeys = Object.keys(appeall);
-        let appealsArray = []
+        const searchStoreAppeal = prepareAppealForSearchStore(response.body.appeals);
+        const appeall = searchStoreAppeal.appeals;
+        const appealldetail = searchStoreAppeal.appealDetails;
+        const hashKeys = Object.keys(appeall);
+        const appealsArray = [];
+
         hashKeys.map((key) => {
-         let combinedHash = {...appeall[key], ...appealldetail[key] }
-         appealsArray.push(combinedHash)
-        })
-        setAppeals(appealsArray)
-    });
+          const combinedHash = { ...appeall[key], ...appealldetail[key] };
+
+          appealsArray.push(combinedHash);
+
+          return appealsArray;
+        });
+        setAppeals(appealsArray);
+      });
   });
 
   const correspondenceTasks = () => {
@@ -55,6 +59,17 @@ const CorrespondenceDetails = (props) => {
             </ul>
           </AppSegment>
         </div>
+          <div>
+              <h2>Existing Appeals</h2>
+              <CaseListTable
+                  appeals={appeals}
+                  paginate="true"
+                  showCheckboxes
+                  taskRelatedAppealIds={props.correspondence.correspondenceAppealIds}
+                  disabled
+                  enableTopPagination
+              />
+          </div>
       </React.Fragment>
     );
   };
@@ -113,7 +128,8 @@ CorrespondenceDetails.propTypes = {
   correspondence: PropTypes.object,
   loadCorrespondenceStatus: PropTypes.func,
   correspondenceStatus: PropTypes.object,
-  correspondence_appeal_ids: PropTypes.bool
+  correspondence_appeal_ids: PropTypes.bool,
+  enableTopPagination: PropTypes.bool
 };
 
 export default CorrespondenceDetails;
