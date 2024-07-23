@@ -1,19 +1,42 @@
-import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import TabWindow from '../../../components/TabWindow';
 import CopyTextButton from '../../../components/CopyTextButton';
 import { loadCorrespondence } from '../correspondenceReducer/correspondenceActions';
+import LoadingDataDisplay from '../../../components/LoadingDataDisplay';
+import ApiUtil from '../../../util/ApiUtil';
+import CaseListTable from 'app/queue/CaseListTable';
+import { prepareAppealForSearchStore } from 'app/queue/utils';
+
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
   const correspondence = props.correspondence;
   const mailTasks = props.correspondence.mailTasks;
 
+  const [appeals, setAppeals] = useState([]);
+
   useEffect(() => {
     dispatch(loadCorrespondence(correspondence));
   }, []);
+
+  useEffect(() => {
+    ApiUtil.get('/search', { query: { veteran_ids: correspondence.veteranId } }).
+      then((response) => {
+        let searchStoreAppeal = prepareAppealForSearchStore(response.body.appeals)
+        let appeall = searchStoreAppeal.appeals
+        let appealldetail = searchStoreAppeal.appealDetails
+        let hashKeys = Object.keys(appeall);
+        let appealsArray = []
+        hashKeys.map((key) => {
+         let combinedHash = {...appeall[key], ...appealldetail[key] }
+         appealsArray.push(combinedHash)
+        })
+        setAppeals(appealsArray)
+    });
+  });
 
   const correspondenceTasks = () => {
     return (
@@ -89,7 +112,8 @@ CorrespondenceDetails.propTypes = {
   loadCorrespondence: PropTypes.func,
   correspondence: PropTypes.object,
   loadCorrespondenceStatus: PropTypes.func,
-  correspondenceStatus: PropTypes.object
+  correspondenceStatus: PropTypes.object,
+  correspondence_appeal_ids: PropTypes.bool
 };
 
 export default CorrespondenceDetails;
