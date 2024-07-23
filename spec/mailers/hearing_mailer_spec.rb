@@ -1120,7 +1120,7 @@ describe HearingMailer do
     # legacy hearing is scheduled at 11:30am in the regional office's time zone
     expected_legacy_times = {
       ro_and_recipient_both_eastern: "11:30am EST",
-      ro_and_recipient_both_pacific: "11:30am PST",
+      ro_and_recipient_both_pacific: "8:30am PST",
       ro_eastern_recipient_pacific: "8:30am PST"
     }
 
