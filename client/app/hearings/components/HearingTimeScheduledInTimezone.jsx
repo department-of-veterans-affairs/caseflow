@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { timeWithTimeZone } from '../utils';
+import { zoneName } from '../utils';
 
 export const HearingTimeScheduledInTimezone = ({
   hearing,
@@ -13,9 +13,10 @@ export const HearingTimeScheduledInTimezone = ({
   primaryLabel,
   showRegionalOfficeName,
 }) => {
-  const timeInScheduledTimezone = timeWithTimeZone(hearing.scheduledFor, hearing.scheduledInTimezone);
+  const timeInScheduledTimezone = zoneName(hearing.scheduledTimeString, hearing.scheduledInTimezone, 'z');
 
-  const coTime = timeWithTimeZone(hearing.scheduledFor, 'America/New_York');
+  // Calculate the central office time
+  const coTime = zoneName(hearing.scheduledTimeString, 'America/New_York', 'z');
 
   const primaryTime = primaryLabel === 'RO' ? timeInScheduledTimezone : coTime;
   const secondaryTime = primaryLabel === 'RO' ? coTime : timeInScheduledTimezone;
@@ -53,9 +54,6 @@ HearingTimeScheduledInTimezone.defaultProps = {
   showRegionalOfficeName: false,
   showRequestType: false,
   breakCharacter: ' /',
-  labelClasses: '',
-  paragraphClasses: '',
-  primaryLabel: '',
 };
 
 HearingTimeScheduledInTimezone.propTypes = {
@@ -71,7 +69,6 @@ HearingTimeScheduledInTimezone.propTypes = {
     isVirtual: PropTypes.bool,
     scheduledInTimezone: PropTypes.string.isRequired,
     regionalOfficeName: PropTypes.string,
-    scheduledFor: PropTypes.string,
   }),
   // Show the number of issues related to the given hearing.
   showIssueCount: PropTypes.bool,
