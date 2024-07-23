@@ -12,10 +12,8 @@ import { COLORS } from '../../constants/AppConstants';
 import { sortCaseTimelineEvents, timelineEventsFromAppeal } from '../utils';
 import CaseDetailsDescriptionList from '../components/CaseDetailsDescriptionList';
 import ActionsDropdown from '../components/ActionsDropdown';
-import OnHoldLabel from '../components/OnHoldLabel';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import DecisionDateTimeLine from '../components/DecisionDateTimeLine';
-import ReactMarkdown from 'react-markdown';
 import { SubstituteAppellantTimelineEvent } from '../substituteAppellant/timelineEvent/SubstituteAppellantTimelineEvent'; // eslint-disable-line max-len
 import { SubstitutionProcessedTimelineEvent } from '../substituteAppellant/timelineEvent/SubstitutionProcessedTimelineEvent'; // eslint-disable-line max-len
 
@@ -95,20 +93,18 @@ class CorrespondenceTaskRows extends React.PureComponent {
   }
 
   toggleTaskInstructionsVisibility = (taskKey) => {
-
-    // console.log(taskKey)
-    // console.log(this.state.taskInstructionsIsVisible)
     if (this.state.taskInstructionsIsVisible.includes(taskKey)) {
       const state = this.state.taskInstructionsIsVisible;
 
       const index = this.state.taskInstructionsIsVisible.indexOf(taskKey);
+
       state.splice(index, 1);
       this.setState({ taskInstructionsIsVisible: [...state] });
-    }
-    else {
+    } else {
       const state = this.state.taskInstructionsIsVisible;
+
       state.push(taskKey);
-      this.setState({ taskInstructionsIsVisible: [...state]});
+      this.setState({ taskInstructionsIsVisible: [...state] });
     }
   };
 
@@ -161,14 +157,13 @@ class CorrespondenceTaskRows extends React.PureComponent {
   };
 
   assignedToListItem = (task) => {
-    const assignee = task.assigneeName;
 
     return (
       <div className="cf-row-wrapper">
         <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt>
         <dd>{task.assignedTo}</dd>
       </div>
-    )
+    );
   };
 
   getAbbrevName = ({ firstName, lastName }) =>
@@ -177,8 +172,8 @@ class CorrespondenceTaskRows extends React.PureComponent {
   assignedByListItem = (task) => {
     return task.assignedBy ? (
       <div className="cf-row-wrapper">
-        <dt>{'ASSIGNED TO(R)'}</dt>
-        <dd>{'task.assignedBy'}</dd>
+        <dt>ASSIGNED TO(R)</dt>
+        <dd>task.assignedBy</dd>
       </div>
     ) : null;
   };
@@ -201,8 +196,6 @@ class CorrespondenceTaskRows extends React.PureComponent {
     return reasonLabel ? <div className="cf-row-wrapper"><dt>{COPY.TASK_SNAPSHOT_TASK_CANCEL_REASON_LABEL}</dt>
       <dd>{reasonLabel}</dd></div> : null;
   }
-
-
 
   splitAtListItem = (task) => {
     return (
@@ -267,116 +260,6 @@ class CorrespondenceTaskRows extends React.PureComponent {
       return <br />;
     }
 
-    // We aren't allowing ReactMarkdown to do full HTML parsing, so we'll convert any `<br>`
-    // or newline characters to the Markdown standard of two spaces followed by \n
-    const formatBreaks = (text = '') => {
-      // Somehow the contents are occasionally an array, at least in tests
-      // Here we'll format the individual items, then just join to ensure we return string
-      if (Array.isArray(text)) {
-        return text.
-          map((item) => item.replace(/<br>|(?<! {2})\n/g, '  \n')).
-          join(' ');
-      }
-
-      // Normally this should just be a string
-      return text.replace(/<br>|(?<! {2})\n/g, '  \n');
-    };
-
-    const renderMstLabel = (mstText, style) => {
-      if (mstText) {
-        return <React.Fragment>
-          <h5 style={style}>Reason for Change (MST):</h5>
-          <small>{mstText}</small>
-        </React.Fragment>;
-      }
-    };
-
-    const renderPactLabel = (pactText, style) => {
-      if (pactText) {
-        return <React.Fragment>
-          <h5 style={style}>Reason for Change (PACT):</h5>
-          <small>{pactText}</small>
-        </React.Fragment>;
-      }
-    };
-
-    // formatting used for IssueUpdate task instructions.
-    const formatIssueUpdateBreaks = (text = '') => {
-      const divStyle = { marginTop: '1rem' };
-      const hStyle = { marginTop: '1.5rem', marginBottom: '0rem', fontWeight: 'bold' };
-
-      if (Array.isArray(text)) {
-        // text array indexes
-        // 0: change_type,
-        // 1: benefit_type,
-        // 2: issue description,
-        // 3: original special issues list
-        // 4: updated special issues list
-        // 5: mst edit reason (not currently implemented)
-        // 6: pact edit reason (not currently implemented)
-        return (
-          <div style={divStyle}>
-            <b>{text[0]}:</b>
-            {text[1] &&
-              <React.Fragment>
-                <div style={divStyle}>
-                  Benefit type: {text[1]}
-                </div>
-              </React.Fragment>}
-            <div style={divStyle}>
-              <div style={{ whiteSpace: 'pre-line' }}>
-                {text[2]}
-              </div>
-            </div>
-            {text[4] ?
-              <React.Fragment>
-                <h5 style={hStyle}>Original:</h5>
-                <div style={divStyle}>
-                  <small>{text[3]}</small>
-                </div>
-                <h5 style={hStyle}>Updated:</h5>
-                <div style={divStyle}>
-                  <small>{text[4]}</small>
-                </div>
-              </React.Fragment> :
-              <div style={divStyle}>
-                {text[3]}
-              </div>}
-            {renderMstLabel(text[5], hStyle)}
-            {renderPactLabel(text[6], hStyle)}
-          </div>
-        );
-      }
-    };
-
-    const formatEstablishmentBreaks = (text = '') => {
-      const divStyle = { marginTop: '1rem' };
-      const hStyle = { marginTop: '1rem', marginBottom: '0rem', fontWeight: 'bold' };
-
-      if (Array.isArray(text)) {
-        const content = text.map((issue, index) =>
-        // issue array indexes:
-        // 0: Issue description
-        // 1: Benefit Type
-        // 2: Original special issues (empty string unless issue originated in VBMS
-        //    AND mst/pact designation changes by intake user)
-        // 3: Special issues (Either added by intake user or originating in VBMS - if left unaltered during intake)
-          <div key={index}>
-            <p>hi</p>
-            {/* Condition where a prior decision from vbms with mst/pact designation was updated in intake process */}
-
-            {/* No horizontal rule after the last issue */}
-          </div>
-        );
-
-        return (
-          <div>
-            {content}
-          </div>
-        );
-      }
-    };
-
     // We specify the same 2.4rem margin-bottom as paragraphs to each set of instructions
     // to ensure a consistent margin between instruction content and the "Hide" button
     const divStyles = { marginBottom: '2.4rem', marginTop: '1em' };
@@ -390,9 +273,7 @@ class CorrespondenceTaskRows extends React.PureComponent {
               style={divStyles}
               className="task-instructions"
             >
-              {
-                <p>{text}</p>
-              }
+              <p>{text}</p>
             </div>
           </React.Fragment>
         ))}
@@ -405,11 +286,6 @@ class CorrespondenceTaskRows extends React.PureComponent {
       return null;
     }
 
-    // console.log(this.state.taskInstructionsIsVisible)
-
-    console.log(this.state.taskInstructionsIsVisible)
-
-    console.log(this.state.taskInstructionsIsVisible.includes(task.label))
     return (
       <div className="cf-row-wrapper">
         {this.state.taskInstructionsIsVisible.includes(task.label) && (

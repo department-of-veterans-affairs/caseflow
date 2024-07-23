@@ -17,11 +17,14 @@ const CorrespondenceDetails = (props) => {
   }, []);
 
   const correspondenceAndAppealTaskComponents = <>
-    <section className='task-not-related-title'>Tasks not related to an appeal</section>
+    <section className="task-not-related-title">Tasks not related to an appeal</section>
     <div className="correspondence-case-timeline-container">
-      <CorrespondenceCaseTimeline organizations={props.organizations} userCssId={props.userCssId} correspondence={props.correspondence} />
-      </div>
-      </>;
+      <CorrespondenceCaseTimeline
+        organizations={props.organizations}
+        userCssId={props.userCssId}
+        correspondence={props.correspondence} />
+    </div>
+  </>;
 
   const tabList = [
     {
@@ -74,7 +77,9 @@ const CorrespondenceDetails = (props) => {
 
 CorrespondenceDetails.propTypes = {
   loadCorrespondence: PropTypes.func,
-  correspondence: PropTypes.object
+  correspondence: PropTypes.object,
+  organizations: PropTypes.array,
+  userCssId: PropTypes.string
 };
 
 export default CorrespondenceDetails;

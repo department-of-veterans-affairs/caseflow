@@ -18,7 +18,6 @@ const CorrespondenceCaseTimeline = (props) => {
     }
 
     if (props.userCssId === task.assigned_to) {
-
       return actions;
     }
 
@@ -57,7 +56,9 @@ const CorrespondenceCaseTimeline = (props) => {
 
 CorrespondenceCaseTimeline.propTypes = {
   loadCorrespondence: PropTypes.func,
-  correspondence: PropTypes.object
+  correspondence: PropTypes.object,
+  organizations: PropTypes.array,
+  userCssId: PropTypes.string
 };
 
 export default CorrespondenceCaseTimeline;
