@@ -98,7 +98,6 @@ describe ExternalApi::VBMSService do
       let(:mock_file_update_payload) { instance_double(ClaimEvidenceFileUpdatePayload) }
 
       it "calls the CE API" do
-        expect(File).to receive(:read).and_return("pdf byte string")
         expect(ClaimEvidenceFileUpdatePayload).to receive(:new).and_return(mock_file_update_payload)
         expect(VeteranFileUpdater)
           .to receive(:update_veteran_file)

@@ -66,7 +66,7 @@ class ExternalApi::VBMSService
       file_update_payload = ClaimEvidenceFileUpdatePayload.new(
         date_va_received_document: Time.zone.now,
         document_type_id: uploadable_document.document_type_id,
-        file_content: File.read(uploadable_document.pdf_location),
+        file_content_path: uploadable_document.pdf_location,
         file_content_source: uploadable_document.source
       )
 
