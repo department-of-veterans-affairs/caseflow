@@ -152,6 +152,24 @@ class BusinessLine < Organization
         .where(issue_modification_request_filter)
     end
 
+    def task_type_board_grant_helper
+      Task.send(parent.tasks_query_type[query_type])
+        .select("tasks.id AS tasks_id, tasks.type AS task_type, 'Appeal' AS decision_review_type")
+        .joins(board_grant_effectuation_task_appeals_requests_join)
+        .joins(issue_modification_request_join)
+        .where(board_grant_effectuation_task_constraints)
+    end
+
+    def issue_type_query_helper(join_association)
+      Task.send(parent.tasks_query_type[query_type])
+        .select("tasks.id as tasks_id, request_issues.nonrating_issue_category as issue_category")
+        .joins(join_association)
+        .joins(issue_modification_request_join)
+        .where(query_constraints)
+        .where(issue_modification_request_filter)
+    end
+
+    # rubocop:disable Metrics/MethodLength
     def task_type_count
       appeals_query = task_type_query_helper(ama_appeal: :request_issues)
         .select("'Appeal' AS decision_review_type")
@@ -159,6 +177,7 @@ class BusinessLine < Organization
         .select("'HigherLevelReview' AS decision_review_type")
       sc_query = task_type_query_helper(supplemental_claim: :request_issues)
         .select("supplemental_claims.type AS decision_review_type")
+      board_grant_query = task_type_board_grant_helper
 
       task_count = ActiveRecord::Base.connection.execute <<-SQL
         WITH task_review_issues AS (
@@ -167,6 +186,8 @@ class BusinessLine < Organization
             #{sc_query.to_sql}
           UNION ALL
             #{appeals_query.to_sql}
+          UNION ALL
+            #{board_grant_query.to_sql}
         )
         SELECT task_type, decision_review_type, COUNT(1)
         FROM task_review_issues
@@ -180,16 +201,6 @@ class BusinessLine < Organization
       end
     end
 
-    def issue_type_query_helper(join_association)
-      Task.send(parent.tasks_query_type[query_type])
-        .select("tasks.id as tasks_id, request_issues.nonrating_issue_category as issue_category")
-        .joins(join_association)
-        .joins(issue_modification_request_join)
-        .where(query_constraints)
-        .where(issue_modification_request_filter)
-    end
-
-    # rubocop:disable Metrics/MethodLength
     def issue_type_count
       appeals_query = issue_type_query_helper(ama_appeal: :request_issues)
       hlr_query = issue_type_query_helper(higher_level_review: :request_issues)

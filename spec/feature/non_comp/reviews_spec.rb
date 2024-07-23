@@ -539,7 +539,7 @@ feature "NonComp Reviews Queue", :postgres do
 
       # Check that task counts are being transmitted correctly from backend
       expect(page).to have_content("Board Grant (1)")
-      expect(page).to have_content("Higher-Level Review (2)")
+      expect(page).to have_content("Higher-Level Review (3)")
       expect(page).to have_content("Remand (1)")
 
       find("label", text: "Higher-Level Review").click
@@ -999,7 +999,7 @@ feature "NonComp Reviews Queue", :postgres do
       pagination = page.find(class: "cf-pagination-pages", match: :first)
       pagination.find("Button", text: "2", match: :first).click
 
-      expect(page).to have_content("Viewing 16-30 of 33 total")
+      expect(page).to have_content("Viewing 16-30 of 34 total")
 
       # Navigate to another tab
       click_button("Incomplete Tasks")
@@ -1031,9 +1031,11 @@ feature "NonComp Reviews Queue", :postgres do
       expect(page).to have_content("Issue Type")
       expect(page).to have_content("Higher-Level Review", count: 4)
       expect(page).to have_content("Board Grant")
+      expect(page).to have_content("Remand")
       expect(page).to have_content(veteran_a.name)
       expect(page).to have_content(veteran_b.name)
       expect(page).to have_content(veteran_c.name)
+      expect(page).to have_content(veteran_remand.name)
       expect(page).to have_content(veteran_a_on_hold.name)
       expect(page).to have_content(veteran_b_on_hold.name)
       expect(page).to have_content(vet_id_column_header)
@@ -1044,7 +1046,7 @@ feature "NonComp Reviews Queue", :postgres do
 
       # ordered by assigned_at descending
       expect(page).to have_content(
-        /#{veteran_b.name}.+\s#{veteran_c.name}.+\s#{veteran_a.name}/
+        /#{veteran_b.name}.+\s#{veteran_remand.name}.+\s#{veteran_c.name}.+\s#{veteran_a.name}/
       )
 
       click_on "Completed Tasks"
