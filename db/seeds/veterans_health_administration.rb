@@ -87,6 +87,7 @@ module Seeds
     def create_sc_remand(benefit_type, claimant_type)
       sc = create(
         :remand,
+        :with_decision_remanded,
         benefit_type: benefit_type,
         claimant_type: claimant_type,
         number_of_claimants: 1
