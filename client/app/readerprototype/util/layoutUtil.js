@@ -7,6 +7,19 @@ export const pdfDocumentStyles = css({
   height: '100%',
 });
 
+// .cf-pdf-container {
+//   position: absolute;
+//   top: 0;
+//   bottom: 0;
+//   right: 380px;
+//   left: 0;
+
+//   &.hidden-sidebar {
+//     right: 0;
+//     width: 100%;
+//   }
+// }
+
 export const docViewerStyles = {
   sidebarContainer: css({
     width: '20%',

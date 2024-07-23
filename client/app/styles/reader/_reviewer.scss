@@ -591,20 +591,7 @@ input[type='search'].cf-search-input-with-close {
 }
 
 .cf-sidebar-wrapper-prototype {
-  flex-direction: column;
-  text-align: left;
   background: $caseflow-background;
-  border-top: 1px solid $color-gray-lighter;
-  z-index: 5;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  height: 100%;
-
-  &.hidden-sidebar {
-    width: 0;
-    min-width: 0;
-  }
 
   .cf-sidebar-accordion {
     height: calc(100% - 120px);
@@ -635,7 +622,81 @@ input[type='search'].cf-search-input-with-close {
   margin: 0 0 0 18px;
 }
 
-.cf-pdf-toolbar-prototype {
+
+#pdfContainer {
+  position: relative;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-items: start;
+}
+
+#readerPrototype {
+  position: absolute;
+  top: 4em;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  min-height: 400px;
+  z-index: 0;
+}
+
+.cf-readerpro-container {
+  display: flex;
+  // flex-direction: row;
+  // flex: 1;
+  height: 100%;
+}
+
+.cf-readerpro-pdf-container {
+  position: relative;
+  flex: 1;
+  // overflow-y: auto;
+}
+
+.cf-readerpro-sidebar-container {
+  // flex: 0 0 12em;
+}
+
+#footerPrototype {
+  bottom: 0;
+
+  background: $color-gray-dark;
+  width: 100%;
+  height: 50px;
+  color: $color-white;
+  font-size: 15px;
+  max-width: 100%;
+  display: flex;
+  justify-content: space-between;
+  position: absolute;
+  align-items: center;
+  opacity: 1;
+  padding: 15px 23px 15px 15px;
+  // .cf-pdf-scroll-view is 5, .cf-search-bar is 6
+  z-index: 7;
+
+  .category-icons-and-doc-type {
+    display: flex;
+    justify-content: center;
+  }
+
+  button {
+    display: flex;
+
+    $button-label-spacing: 10px;
+
+    .left-button-label {
+      margin-left: $button-label-spacing;
+    }
+
+    .right-button-label {
+      margin-right: $button-label-spacing;
+    }
+}
+}
+.cf-readerpro-toolbar-container {
   background: $color-gray-dark;
   width: 100%;
   height: 50px;
@@ -654,13 +715,4 @@ input[type='search'].cf-search-input-with-close {
     display: flex;
     justify-content: center;
   }
-}
-
-#pdfContainer {
-  position: relative;
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: center;
-  flex-wrap: wrap;
-  align-items: start;
 }

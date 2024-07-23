@@ -202,7 +202,7 @@ const Layer = (props) => {
 };
 
 Layer.propTypes = {
-  zoomLevel: PropTypes.number,
+  zoomLevel: PropTypes.string,
   pageNumber: PropTypes.number,
   isVisible: PropTypes.bool,
   documentId: PropTypes.number,

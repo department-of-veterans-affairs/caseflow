@@ -10,7 +10,7 @@ import ApiUtil from '../../util/ApiUtil';
 import Page from './Page';
 import TextLayer from './TextLayer';
 
-const PdfDocument = ({ fileUrl, rotateDeg, setNumPages, zoomLevel, documentId }) => {
+const PdfDocument = ({ getPageNumFromScrollTop, fileUrl, rotateDeg, setNumPages, zoomLevel, documentId }) => {
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
 
@@ -66,20 +66,22 @@ const PdfDocument = ({ fileUrl, rotateDeg, setNumPages, zoomLevel, documentId })
   }, [pdfDoc]);
 
   return (
-    <div id="pdfContainer" className={containerClass}>
-      {pdfPages.map((page, index) => (
-        <Page
-          scale={zoomLevel}
-          page={page}
-          rotation={rotateDeg}
-          key={`page-${index}`}
-          renderItem={(childProps) => (
-            <Layer documentId={documentId} zoomLevel={zoomLevel} {...childProps}>
-              <TextLayer page={page} />
-            </Layer>
-          )}
-        />
-      ))}
+    <div className="cf-pdf-scroll-view" onScroll={getPageNumFromScrollTop}>
+      <div id="pdfContainer" className={containerClass}>
+        {pdfPages.map((page, index) => (
+          <Page
+            scale={parseInt(zoomLevel, 10)}
+            page={page}
+            rotation={rotateDeg}
+            key={`page-${index}`}
+            renderItem={(childProps) => (
+              <Layer documentId={documentId} zoomLevel={zoomLevel} {...childProps}>
+                <TextLayer page={page} />
+              </Layer>
+            )}
+          />
+        ))}
+      </div>
     </div>
   );
 };
@@ -90,6 +92,7 @@ PdfDocument.propTypes = {
   setNumPages: PropTypes.func,
   zoomLevel: PropTypes.string,
   documentId: PropTypes.number,
+  getPageNumFromScrollTop: PropTypes.func
 };
 
 export default PdfDocument;

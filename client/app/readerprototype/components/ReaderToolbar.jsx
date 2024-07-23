@@ -27,8 +27,8 @@ const ReaderToolbar = ({
   rotateDocument,
   toggleSearchBar,
   showSearchBar,
-  // hideSidebar,
-  // toggleSidebar
+  showSideBar,
+  setShowSideBar
 }) => {
   // eslint-disable-next-line no-unused-vars
   const [_searchTerm, setSearchTerm] = useState(null);
@@ -45,106 +45,108 @@ const ReaderToolbar = ({
 
   return (
     <>
-      <div {...docToolbarStyles.toolbar} {...docToolbarStyles.toolbarLeft}>
-        {showClaimsFolderNavigation && (
-          <Link to={`${documentPathBase}`} name="backToClaimsFolder" button="matte">
-            <LeftChevronIcon /> &nbsp; Back
-          </Link>
-        )}
-      </div>
-      <div {...docToolbarStyles.toolbar} {...docToolbarStyles.toolbarCenter}>
-        <span className="category-icons-and-doc-type">
-          <span className="cf-pdf-doc-category-icons">
-            <DocumentCategoryIcons doc={doc} />
-          </span>
-          <span className="cf-pdf-doc-type-button-container">
-            <Link
-              name="newTab"
-              ariaLabel="open document in new tab"
-              target="_blank"
-              button="matte"
-              onClick={() => handleClickDocumentTypeLink()}
-              href={
-                window.location.pathname.includes('prototype')
-                  ? `/reader/appeal${documentPathBase}/${doc.id}/prototype`
-                  : `/reader/appeal${documentPathBase}/${doc.id}`
-              }
-            >
-              <h1 className="cf-pdf-vertically-center cf-non-stylized-header">
-                <span title="Open in new tab">{doc.type}</span>
-                <span className="cf-pdf-external-link-icon">
-                  <ExternalLinkIcon />
-                </span>
-              </h1>
+      <div className="cf-readerpro-toolbar-container">
+        <div {...docToolbarStyles.toolbar} {...docToolbarStyles.toolbarLeft}>
+          {showClaimsFolderNavigation && (
+            <Link to={`${documentPathBase}`} name="backToClaimsFolder" button="matte">
+              <LeftChevronIcon /> &nbsp; Back
             </Link>
+          )}
+        </div>
+        <div {...docToolbarStyles.toolbar} {...docToolbarStyles.toolbarCenter}>
+          <span className="category-icons-and-doc-type">
+            <span className="cf-pdf-doc-category-icons">
+              <DocumentCategoryIcons doc={doc} />
+            </span>
+            <span className="cf-pdf-doc-type-button-container">
+              <Link
+                name="newTab"
+                ariaLabel="open document in new tab"
+                target="_blank"
+                button="matte"
+                onClick={() => handleClickDocumentTypeLink()}
+                href={
+                  window.location.pathname.includes('prototype') ?
+                  `/reader/appeal${documentPathBase}/${doc.id}/prototype` :
+                  `/reader/appeal${documentPathBase}/${doc.id}`
+                }
+              >
+                <h1 className="cf-pdf-vertically-center cf-non-stylized-header">
+                  <span title="Open in new tab">{doc.type}</span>
+                  <span className="cf-pdf-external-link-icon">
+                    <ExternalLinkIcon />
+                  </span>
+                </h1>
+              </Link>
+            </span>
           </span>
-        </span>
-      </div>
-      <div {...docToolbarStyles.toolbar} {...docToolbarStyles.toolbarRight}>
-        <span className="cf-pdf-button-text">Zoom:</span>
-        <span className="cf-pdf-button-text">&nbsp;&nbsp;{`${zoomLevel}%`}</span>
-        <Button
-          name="zoomOut"
-          classNames={['cf-pdf-button cf-pdf-spaced-buttons-left']}
-          onClick={() => setZoomOutLevel()}
-          disabled={disableZoomOut}
-          ariaLabel="zoom out"
-        >
-          <i className="fa fa-minus" aria-hidden="true" />
-        </Button>
-        <Button
-          name="zoomIn"
-          classNames={['cf-pdf-button cf-pdf-spaced-buttons-left']}
-          onClick={() => setZoomInLevel()}
-          disabled={disableZoomIn}
-          ariaLabel="zoom in"
-        >
-          <i className="fa fa-plus" aria-hidden="true" />
-        </Button>
-        <Button
-          name="zoomReset"
-          classNames={['cf-pdf-button cf-pdf-spaced-buttons-left']}
-          onClick={() => resetZoomLevel()}
-          ariaLabel="fit to screen"
-        >
-          <FitToScreenIcon />
-        </Button>
-        <Button
-          name="rotation"
-          classNames={['cf-pdf-button cf-pdf-spaced-buttons-left']}
-          onClick={() => rotateDocument()}
-          ariaLabel="rotate document"
-        >
-          <RotateIcon />
-        </Button>
-        <span className="cf-pdf-spaced-buttons">|</span>
-        <Button
-          name="download"
-          classNames={['cf-pdf-button cf-pdf-download-icon']}
-          onClick={() => openDownloadLink(doc)}
-          ariaLabel="download pdf"
-        >
-          <DownloadIcon />
-        </Button>
-        <Button
-          name="search"
-          classNames={['cf-pdf-button cf-pdf-search usa-search usa-search-small cf-pdf-spaced-buttons-left']}
-          ariaLabel="search text"
-          type="submit"
-          onClick={onToggleSearchBar}
-        >
-          <SearchIcon />
-        </Button>
-        {/* {hideSidebar &&
-        (<span {...docToolbarStyles.openSidebarMenu}>
+        </div>
+        <div {...docToolbarStyles.toolbar} {...docToolbarStyles.toolbarRight}>
+          <span className="cf-pdf-button-text">Zoom:</span>
+          <span className="cf-pdf-button-text">&nbsp;&nbsp;{`${zoomLevel}%`}</span>
+          <Button
+            name="zoomOut"
+            classNames={['cf-pdf-button cf-pdf-spaced-buttons-left']}
+            onClick={() => setZoomOutLevel()}
+            disabled={disableZoomOut}
+            ariaLabel="zoom out"
+          >
+            <i className="fa fa-minus" aria-hidden="true" />
+          </Button>
+          <Button
+            name="zoomIn"
+            classNames={['cf-pdf-button cf-pdf-spaced-buttons-left']}
+            onClick={() => setZoomInLevel()}
+            disabled={disableZoomIn}
+            ariaLabel="zoom in"
+          >
+            <i className="fa fa-plus" aria-hidden="true" />
+          </Button>
+          <Button
+            name="zoomReset"
+            classNames={['cf-pdf-button cf-pdf-spaced-buttons-left']}
+            onClick={() => resetZoomLevel()}
+            ariaLabel="fit to screen"
+          >
+            <FitToScreenIcon />
+          </Button>
+          <Button
+            name="rotation"
+            classNames={['cf-pdf-button cf-pdf-spaced-buttons-left']}
+            onClick={() => rotateDocument()}
+            ariaLabel="rotate document"
+          >
+            <RotateIcon />
+          </Button>
+          <span className="cf-pdf-spaced-buttons">|</span>
+          <Button
+            name="download"
+            classNames={['cf-pdf-button cf-pdf-download-icon']}
+            onClick={() => openDownloadLink(doc)}
+            ariaLabel="download pdf"
+          >
+            <DownloadIcon />
+          </Button>
+          <Button
+            name="search"
+            classNames={['cf-pdf-button cf-pdf-search usa-search usa-search-small cf-pdf-spaced-buttons-left']}
+            ariaLabel="search text"
+            type="submit"
+            onClick={onToggleSearchBar}
+          >
+            <SearchIcon />
+          </Button>
+          {!showSideBar &&
+        (<span>
           <Button
             name="open sidebar menu"
             classNames={['cf-pdf-button']}
-            onClick={() => toggleSidebar()}>
+            onClick={() => setShowSideBar()}>
             <strong> Open menu </strong>
           </Button>
         </span>)
-      } */}
+          }
+        </div>
       </div>
     </>
   );
@@ -165,6 +167,8 @@ ReaderToolbar.propTypes = {
   toggleSidebar: PropTypes.func,
   toggleSearchBar: PropTypes.func,
   showSearchBar: PropTypes.bool,
+  showSideBar: PropTypes.bool,
+  setShowSideBar: PropTypes.func
 };
 
 export default ReaderToolbar;
