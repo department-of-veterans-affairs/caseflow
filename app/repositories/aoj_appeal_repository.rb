@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class AojAppealRepository < AppealRepository
-
   # :nocov:
 
   class << self
