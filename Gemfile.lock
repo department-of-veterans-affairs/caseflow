@@ -65,6 +65,7 @@ GIT
       faraday
       faraday-multipart
       httpi
+      rack (< 3)
       railties
       webmock (~> 3.11.0)
 
