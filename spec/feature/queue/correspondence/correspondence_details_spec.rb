@@ -26,7 +26,7 @@ RSpec.feature("The Correspondence Details page") do
       expect(page).to have_link("View all correspondence")
 
       # Record status
-      expect(page).to have_content("Record status: Pending")
+      expect(page).to have_content("Record status:")
 
       # Tabs
       expect(page).to have_content("Correspondence and Appeal Tasks")
@@ -55,6 +55,29 @@ RSpec.feature("The Correspondence Details page") do
 
       # Verify the user is routed to /unauthorized
       expect(page).to have_content("Drat!")
+    end
+  end
+
+  context "correspondence record status matches correspondence root task status" do
+    before do
+      InboundOpsTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user, roles: ["Inbound Ops Team"])
+      FeatureToggle.enable!(:correspondence_queue)
+      @completed_correspondence = create(:correspondence)
+    end
+
+    it "checks default match of pending" do
+      visit "/queue/correspondence/#{@completed_correspondence.uuid}"
+      expect(page).to have_content("Record status: Pending")
+    end
+
+    it "checks that status has been updated to completed" do
+      complete_root_task = CorrespondenceRootTask.find_by(appeal_id: @completed_correspondence.id)
+      complete_root_task.update!(assigned_to: current_user, status: "completed")
+      complete_root_task.save!
+      visit "/queue/correspondence/#{@completed_correspondence.uuid}"
+      # Record status - Completed
+      expect(page).to have_content("Record status: Completed")
     end
   end
 

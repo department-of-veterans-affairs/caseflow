@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import TabWindow from '../../../components/TabWindow';
@@ -10,7 +10,7 @@ import CorrespondenceCaseTimeline from '../CorrespondenceCaseTimeline';
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
-  const correspondence = useSelector((state) => state.correspondence);
+  const correspondence = props.correspondence;
 
   useEffect(() => {
     dispatch(loadCorrespondence(correspondence));
@@ -63,7 +63,7 @@ const CorrespondenceDetails = (props) => {
           </div>
           <p><a href="/under_construction">View all correspondence</a></p>
           <div></div>
-          <p className="last-item"><b>Record status: </b> Pending</p>
+          <p className="last-item"><b>Record status: </b>{props.correspondence.status}</p>
         </div>
         <TabWindow
           name="tasks-tabwindow"
@@ -80,6 +80,8 @@ CorrespondenceDetails.propTypes = {
   correspondence: PropTypes.object,
   organizations: PropTypes.array,
   userCssId: PropTypes.string
+  loadCorrespondenceStatus: PropTypes.func,
+  correspondenceStatus: PropTypes.object
 };
 
 export default CorrespondenceDetails;
