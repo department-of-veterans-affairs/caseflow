@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "./scripts/enable_features_dev.rb"
-class Test::LoadTestingController < ApplicationController
+class Test::LoadTestController < ApplicationController
   before_action :check_environment
 
   def index
@@ -17,9 +17,11 @@ class Test::LoadTestingController < ApplicationController
 
   def find_features
     all_features = AllFeatureToggles.new.call.flatten.uniq.sort
-    all_features.map! { |feature| feature.split(",")[0] }
-    all_features.map!(&:to_sym)
-    all_features.map! { |feature| [feature, FeatureToggle.enabled?(feature)] }.to_h
+    all_features.map! do |feature|
+      sym_feature = feature.split(",")[0].to_sym
+      [sym_feature, FeatureToggle.enabled?(sym_feature)]
+    end
+    all_features.to_h
   end
 
   def find_functions

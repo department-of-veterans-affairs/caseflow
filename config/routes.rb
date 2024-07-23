@@ -442,7 +442,8 @@ Rails.application.routes.draw do
   namespace :test do
     get "/error", to: "users#show_error"
     get "/seeds", to: "test_seeds#seeds" # test seed buttons routes
-    get "/load-test", to: "load_testing#index"
+
+    resources :load_test, only: [:index]
 
     resources :hearings, only: [:index]
 
