@@ -114,7 +114,9 @@ class ClaimHistoryEvent
         "event_user_css_id" => change_data["requestor_css_id"]
       }
 
-      change_data = issue_attributes_for_request_type_addition(request_type, change_data)
+      if request_type == "addition"
+        change_data = issue_attributes_for_request_type_addition(change_data)
+      end
 
       issue_modification_events.push from_change_data(request_type.to_sym, change_data.merge(event_hash))
     end
@@ -128,7 +130,10 @@ class ClaimHistoryEvent
 
       event_hash = request_issue_modification_event_hash(change_data)
 
-      change_data = issue_attributes_for_request_type_addition(change_data["request_type"], change_data)
+      if change_data["request_type"] == "addition"
+        change_data = issue_attributes_for_request_type_addition(change_data)
+      end
+
       issue_modification_decision_event.push from_change_data(request_event_type.to_sym, change_data.merge(event_hash))
       issue_modification_decision_event
     end
@@ -164,13 +169,13 @@ class ClaimHistoryEvent
 
     def create_edited_request_issue_events(change_data)
       edited_events = []
-      versions = parse_versions(change_data["imr_versions"])
+      imr_versions = parse_versions(change_data["imr_versions"])
 
       index = 0
-      if versions.present?
+      if imr_versions.present?
         event_type = :request_edited
         event_date_hash = {}
-        versions.map do |version|
+        imr_versions.map do |version|
           event_date_hash = { "event_date" => version["updated_at"][index], "event_user_name" => "System" }
           change_data = update_change_data_from_version(change_data, version, index)
 
@@ -251,9 +256,7 @@ class ClaimHistoryEvent
       issue_events
     end
 
-    def issue_attributes_for_request_type_addition(event_type, change_data)
-      return change_data if event_type != "addition"
-
+    def issue_attributes_for_request_type_addition(change_data)
       # addition should not have issue_type that is pre-existing
       issue_data = {
         "nonrating_issue_category" => nil,
