@@ -34,7 +34,7 @@ class UpdateSeniorCounsel < ActiveRecord::Migration[6.0]
         url: "supervisory-senior-council"
       )
     rescue StandardError => error
-      puts "Error reverting names, types, and URLs: #{error.message}"
+      puts "Error reverting names, types, and URL: #{error.message}"
       raise ActiveRecord::Rollback
     end
   end
