@@ -268,7 +268,7 @@ class DecisionIssue < CaseflowRecord
   end
 
   def determine_remand_creation_type
-    remand = if decision_review == Appeal.name
+    if decision_review == Appeal.name
       Remand.create!(
         veteran_file_number: veteran_file_number,
         decision_review_remanded: decision_review,
