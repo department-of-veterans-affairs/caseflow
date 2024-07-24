@@ -29,7 +29,9 @@ describe "AssocationWrapper" do
                  [:attorney_case_reviews, "AttorneyCaseReview", nil, nil, nil],
                  [:task_timers, "TaskTimer", nil, nil, nil],
                  [:cached_appeal, "CachedAppeal", nil, nil, nil],
-                 [:correspondence, "Correspondence", "Correspondence", nil, nil]
+                 [:correspondence, "Correspondence", "Correspondence", nil, nil],
+                 [:correspondence_appeals, "CorrespondenceAppeal", nil, nil, nil],
+                 [:correspondences_appeals_tasks, "CorrespondencesAppealsTask", nil, nil, nil]
                ]
         expect(subject.select_associations.map { |assoc| [assoc.name, assoc.options[:primary_key]] }).to match_array [
           [:versions, nil],
@@ -47,7 +49,9 @@ describe "AssocationWrapper" do
           [:legacy_appeal, nil],
           [:higher_level_review, nil],
           [:supplemental_claim, nil],
-          [:correspondence, nil]
+          [:correspondence, nil],
+          [:correspondence_appeals, nil],
+          [:correspondences_appeals_tasks, nil]
         ]
         expect(subject.select_associations.map { |assoc| [assoc.name, assoc.options[:foreign_key]] }).to match_array [
           [:versions, nil],
@@ -65,7 +69,9 @@ describe "AssocationWrapper" do
           [:legacy_appeal, "appeal_id"],
           [:higher_level_review, "appeal_id"],
           [:supplemental_claim, "appeal_id"],
-          [:correspondence, "appeal_id"]
+          [:correspondence, "appeal_id"],
+          [:correspondence_appeals, nil],
+          [:correspondences_appeals_tasks, nil]
         ]
 
         map_foreign_keys = lambda { |assoc|
@@ -90,6 +96,8 @@ describe "AssocationWrapper" do
           [:higher_level_review, true, false, "appeal_id", "higher_level_review_id", nil],
           [:supplemental_claim, true, false, "appeal_id", "supplemental_claim_id", nil],
           [:correspondence, true, false, "appeal_id", "correspondence_id", nil],
+          [:correspondence_appeals, false, false, "correspondence_appeal_id", "correspondence_appeal_id", nil],
+          [:correspondences_appeals_tasks, false, false, "task_id", "correspondences_appeals_task_id", nil],
           # has_many declared in Task
           # Note: JudgeCaseReview is not listed; that `belongs_to` association can be traced from JudgeCaseReview
           [:attorney_case_reviews, false, false, "task_id", "attorney_case_review_id", nil],
