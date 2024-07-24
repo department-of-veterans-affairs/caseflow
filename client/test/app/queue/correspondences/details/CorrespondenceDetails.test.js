@@ -7,10 +7,15 @@ import { correspondenceData } from 'test/data/correspondence';
 import { applyMiddleware, createStore } from 'redux';
 import rootReducer from 'app/queue/reducers';
 import thunk from 'redux-thunk';
+import ApiUtil from 'app/util/ApiUtil';
+import { prepareAppealForSearchStore } from 'app/queue/utils';
 
 jest.mock('redux', () => ({
   ...jest.requireActual('redux'),
   bindActionCreators: () => jest.fn().mockImplementation(() => Promise.resolve(true)),
+}));
+jest.mock('app/queue/utils', () => ({
+  prepareAppealForSearchStore: jest.fn()
 }));
 
 jest.mock('app/queue/CaseListTable', () => ({ appeals }) => (
@@ -48,6 +53,7 @@ let initialState = {
   correspondence: correspondenceData
 };
 const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+const getSpy = jest.spyOn(ApiUtil, 'get');
 
 describe('CorrespondenceDetails', () => {
   const props = {
@@ -60,6 +66,13 @@ describe('CorrespondenceDetails', () => {
 
   beforeEach(() => {
     store.dispatch = jest.fn();
+
+    getSpy.mockImplementation(() => Promise.resolve({ body: {} }));
+
+    prepareAppealForSearchStore.mockReturnValue({
+      appeals: {},
+      appealDetails: {}
+    });
   });
 
   it('renders the component', () => {
