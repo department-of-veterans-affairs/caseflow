@@ -203,7 +203,6 @@ FactoryBot.define do
             factory :legacy_signed_appeal do
               transient do
                 judge { nil }
-                aod { false}
                 signing_avlj { nil }
                 attorney { nil }
                 cavc { false }
@@ -255,19 +254,6 @@ FactoryBot.define do
                     :case_issue,
                     issue.attributes.except("isskey", "issaduser", "issadtime", "issmduser", "issmdtime", "issdcls"),
                     issdc: "3"
-                  )
-                end
-
-                aod_appeal = if evaluator.aod
-                  create(
-                    :case,
-                    :aod,
-                    params
-                  )
-                else
-                  create(
-                    :case,
-                    params
                   )
                 end
 
@@ -370,13 +356,6 @@ FactoryBot.define do
       bfac { "7" }
     end
 
-    trait :type_aod do
-      aod { "1" }
-    end
-
-    trait :type_non_aod do
-      aod { "0" }
-    end
 
     trait :certified do
       transient do
