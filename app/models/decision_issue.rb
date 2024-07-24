@@ -250,28 +250,38 @@ class DecisionIssue < CaseflowRecord
     # Checking our assumption that approx_decision_date will always be populated for Decision Issues
     fail "approx_decision_date is required to create a DTA Supplemental Claim" unless approx_decision_date
 
-    # If decision_review == hlr -> SC.create, else Remand.create ???
-    remand = Remand.create!(
-      veteran_file_number: veteran_file_number,
-      decision_review_remanded: decision_review,
-      benefit_type: benefit_type,
-      legacy_opt_in_approved: decision_review.legacy_opt_in_approved,
-      veteran_is_not_claimant: decision_review.veteran_is_not_claimant,
-      receipt_date: approx_decision_date
-    )
+    if decision_review == Appeal.name
+      sc = Remand.create!(
+        veteran_file_number: veteran_file_number,
+        decision_review_remanded: decision_review,
+        benefit_type: benefit_type,
+        legacy_opt_in_approved: decision_review.legacy_opt_in_approved,
+        veteran_is_not_claimant: decision_review.veteran_is_not_claimant,
+        receipt_date: approx_decision_date
+      )
+    else
+      sc = SupplementalClaim.create!(
+        veteran_file_number: veteran_file_number,
+        decision_review_remanded: decision_review,
+        benefit_type: benefit_type,
+        legacy_opt_in_approved: decision_review.legacy_opt_in_approved,
+        veteran_is_not_claimant: decision_review.veteran_is_not_claimant,
+        receipt_date: approx_decision_date
+      )
+    end
     fail AppealDTAPayeeCodeError, decision_review.id unless dta_payee_code
 
-    remand.create_claimant!(
+    sc.create_claimant!(
       participant_id: decision_review.claimant_participant_id,
       payee_code: dta_payee_code,
       type: decision_review.claimant.type
     )
 
-    remand
+    sc
   rescue AppealDTAPayeeCodeError
-    # mark remand as failed
-    remand.update_error!("No payee code")
-    decision_review.update_error!("DTA Remand creation failed")
+    # mark SC as failed
+    sc.update_error!("No payee code")
+    decision_review.update_error!("DTA SC creation failed")
     raise
   end
 end
