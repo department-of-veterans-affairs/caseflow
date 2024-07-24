@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import TabWindow from '../../../components/TabWindow';
@@ -8,17 +8,39 @@ import { loadCorrespondence } from '../correspondenceReducer/correspondenceActio
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
-  const correspondence = useSelector((state) => state.correspondence);
+  const correspondence = props.correspondence;
+  const mailTasks = props.correspondence.mailTasks;
 
   useEffect(() => {
     dispatch(loadCorrespondence(correspondence));
   }, []);
 
+  const correspondenceTasks = () => {
+    return (
+      <React.Fragment>
+        <div className="correspondence-mail-tasks">
+          <h2>Completed Mail Tasks</h2>
+          <AppSegment filledBackground noMarginTop>
+            <ul className={`${mailTasks.length > 2 ? 'grid-list' : ''}`}>
+              {
+                mailTasks.length > 0 ?
+                  mailTasks.map((item, index) => (
+                    <li key={index}>{item}</li>
+                  )) :
+                  <li>No previously completed mail tasks prior to intake.</li>
+              }
+            </ul>
+          </AppSegment>
+        </div>
+      </React.Fragment>
+    );
+  };
+
   const tabList = [
     {
       disable: false,
       label: 'Correspondence and Appeal Tasks',
-      page: 'Information about Correspondence/Appeal Tasks'
+      page: correspondenceTasks()
     },
     {
       disable: false,
@@ -51,7 +73,7 @@ const CorrespondenceDetails = (props) => {
           </div>
           <p><a href="/under_construction">View all correspondence</a></p>
           <div></div>
-          <p className="last-item"><b>Record status: </b> Pending</p>
+          <p className="last-item"><b>Record status: </b>{props.correspondence.status}</p>
         </div>
         <TabWindow
           name="tasks-tabwindow"
@@ -65,7 +87,9 @@ const CorrespondenceDetails = (props) => {
 
 CorrespondenceDetails.propTypes = {
   loadCorrespondence: PropTypes.func,
-  correspondence: PropTypes.object
+  correspondence: PropTypes.object,
+  loadCorrespondenceStatus: PropTypes.func,
+  correspondenceStatus: PropTypes.object
 };
 
 export default CorrespondenceDetails;
