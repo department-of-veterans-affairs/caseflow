@@ -1,5 +1,5 @@
 class UpdateSeniorCounsel < ActiveRecord::Migration[6.0]
-  def change
+  def up
     ActiveRecord::Base.transaction do
       # Use direct SQL update to bypass STI mechanism
       ActiveRecord::Base.connection.execute(
@@ -18,5 +18,8 @@ class UpdateSeniorCounsel < ActiveRecord::Migration[6.0]
       puts "Error updating names, types, and URLs: #{error.message}"
       raise ActiveRecord::Rollback
     end
+  end
+  def down
+
   end
 end
