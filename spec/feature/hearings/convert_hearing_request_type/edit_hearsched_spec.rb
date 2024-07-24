@@ -345,7 +345,7 @@ RSpec.feature "Convert hearing request type" do
         FeatureToggle.disable!(:schedule_veteran_virtual_hearing)
       end
 
-      scenario do
+      scenario "scheduling and receiving hearing notifications" do
         visit "/queue/appeals/#{video_appeal.external_id}"
 
         step "schedule hearing as a video hearing without providing participant email addresses" do
@@ -369,7 +369,7 @@ RSpec.feature "Convert hearing request type" do
         end
 
         step "appellant receives email notification" do
-          sleep 5
+          expect(page).to have_content("You have successfully scheduled #{video_appeal.veteran.name}'s hearing.")
 
           hearing = video_appeal.reload.hearings.first
 
@@ -385,7 +385,7 @@ RSpec.feature "Convert hearing request type" do
         end
 
         step "representative recives email notification" do
-          sleep 5
+          expect(page).to have_content("You have successfully updated #{video_appeal.veteran.name}'s hearing.")
 
           hearing = video_appeal.reload.hearings.first
 

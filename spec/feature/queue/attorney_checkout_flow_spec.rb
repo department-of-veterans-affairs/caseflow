@@ -212,18 +212,22 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
       expect(page).to have_content(other_issue_text)
 
-      click_on "Continue"
+      safe_click "#button-next-button"
+      expect(page).to have_content("Select Remand Reasons")
+      expect(page).to have_content("Issue 1 of 2")
 
       find_field("Service treatment records", visible: false).sibling("label").click
 
-      click_on "Continue"
-      # For some reason clicking too quickly on the next remand reason breaks the test.
-      # Adding sleeps is bad... but I'm not sure how else to get this to work.
-      sleep 1
+      safe_click "#button-next-button"
 
-      all("label", text: "No medical examination", visible: false, count: 2)[1].click
+      expect(page).to have_content("Select Remand Reasons")
+      expect(page).to have_content("Issue 2 of 2")
 
-      click_on "Continue"
+      within all("div.remand-reasons-options")[1] do
+        javascript_click(find_field("No medical examination", visible: false).sibling("label"))
+      end
+
+      find("#button-next-button").send_keys(:return)
 
       expect(page).to have_content("Submit Draft Decision for Review")
 
@@ -235,7 +239,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       safe_click "#select-judge"
       click_dropdown(index: 0)
 
-      click_on "Continue"
+      safe_click "#button-next-button"
       expect(page).to have_content(COPY::NO_CASES_IN_QUEUE_MESSAGE)
 
       expect(page.current_path).to eq("/queue")
@@ -280,25 +284,24 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       all("button", text: "Edit", count: 4)[0].click
       fill_in "Text Box", with: updated_decision_issue_text
       click_on "Save"
-      click_on "Continue"
+      safe_click "#button-next-button"
 
       expect(page).to have_content("Review Remand Reasons")
+      expect(page).to have_content("Issue 1 of 2")
 
-      click_on "Continue"
+      find("#button-next-button").send_keys(:return)
+      expect(page).to have_content("Review Remand Reasons")
       expect(page).to have_content("Issue 2 of 2")
       expect(find("input", id: "2-no_medical_examination", visible: false).checked?).to eq(true)
-      # Again, hate to add a sleep, but for some reason clicking continue too soon doesn't go
-      # to the next page. I think it's related to how we're using continue to load the next
-      # section of the remand reason screen.
-      sleep 1
 
-      click_on "Continue"
+      find("#button-next-button").send_keys(:return)
 
       expect(page).to have_content("Evaluate Decision")
 
       find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
       find("label", text: "5 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['outstanding']}").click
-      click_on "Continue"
+
+      find("#button-next-button").send_keys(:return)
 
       expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
 
@@ -423,6 +426,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
           click_on "Continue"
           expect(page).to have_content(COPY::SPECIAL_ISSUES_NONE_CHOSEN_TITLE)
         end
+
         scenario "a special issue is chosen" do
           visit "/queue"
           click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
@@ -461,34 +465,36 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         issue_dispositions[3].click
         page.find("div", class: "cf-select__option", text: "Stay").click
 
-        click_on "Continue"
+        find("#button-next-button").send_keys(:return)
 
         expect(page).to have_content("Select Remand Reasons")
         expect(page).to have_content(appeal.issues.first.note)
+        expect(page).to have_selector(".remand-reasons-options")
+        expect(page).to have_content("Issue 1 of 2")
 
-        all("label", text: "Current findings", count: 1)[0].click
-        all("label", text: "After certification", count: 1)[0].click
+        within all("div.remand-reasons-options")[0] do
+          safe_click_element(find_field("Current findings", visible: false).sibling("label"))
+          safe_click_element(find_field("After certification", visible: false).sibling("label"))
+        end
 
-        click_on "Continue"
+        find("#button-next-button").send_keys(:return)
 
+        # Should still be on remand reasons page, but should have added second issue form
+        expect(page).to have_selector(".remand-reasons-options", minimum: 2)
         expect(page).to have_content("Select Remand Reasons")
         expect(page).to have_content(appeal.issues.second.note)
+        expect(page).to have_content("Issue 2 of 2")
 
-        # I know we're not supposed to sleep in tests, but this is the only
-        # thing that allows the tests to pass consistently. I think the issue is
-        # that after pressing "Continue" above, the page is moving and we have
-        # to wait until it stops moving before clicking on the checkboxes.
-        # Otherwise, it's not always able to click on the right checkboxes. If
-        # someone knows a better way to wait for the page to stop moving, please
-        # change this.
-        sleep 1
+        # Add remand reasons for issue 2
+        within all("div.remand-reasons-options")[1] do
+          javascript_click(find_field("Current findings", visible: false).sibling("label"))
+          javascript_click(find_field("Nexus opinion", visible: false).sibling("label"))
+          javascript_click(all("label", text: "Before certification", count: 2)[0])
+          javascript_click(all("label", text: "After certification", count: 2)[1])
+        end
 
-        all("label", text: "Current findings", count: 2)[1].click
-        all("label", text: "Nexus opinion", count: 2)[1].click
-        all("label", text: "Before certification", count: 3)[1].click
-        all("label", text: "After certification", count: 3)[2].click
+        find("#button-next-button").send_keys(:return)
 
-        click_on "Continue"
         expect(page).to have_content("Submit Draft Decision for Review")
 
         fill_in "document_id", with: invalid_document_id
