@@ -69,7 +69,7 @@ module QueueHelpers
       correspondence_id: correspondence.id
     )
 
-    #This is a placeholder until CorrespondenceDocuments are available via the CMP integration.
+    # This is a placeholder until CorrespondenceDocuments are available via the CMP integration.
     Document.find_or_create_by!(
       vbms_document_id: doc_type[:id]
     )
