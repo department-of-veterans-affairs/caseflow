@@ -368,9 +368,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         expect(distributed_cases.count).to eq priority_count
         expect(distributed_cases.map(&:priority).uniq.compact).to match_array [true]
         expect(distributed_cases.map(&:genpop).uniq.compact).to match_array [true]
-        # rubocop:disable Layout/LineLength
-        expect(distributed_cases.pluck(:docket).uniq).to match_array(Constants::AMA_DOCKETS.keys.unshift("legacy", "aoj_legacy"))
-        # rubocop:enable Layout/LineLength
+        expect(distributed_cases.pluck(:docket).uniq).to match_array(Constants::AMA_DOCKETS.keys.unshift("legacy"))
+
         expect(distributed_cases.group(:docket).count.values.uniq).to match_array [4]
       end
 
@@ -405,10 +404,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         expect(distributed_cases.count).to eq priority_count
         expect(distributed_cases.map(&:priority).uniq.compact).to match_array [true]
         expect(distributed_cases.map(&:genpop).uniq.compact).to match_array [true]
-        # rubocop:disable Layout/LineLength
-        expect(distributed_cases.pluck(:docket).uniq).to match_array(Constants::AMA_DOCKETS.keys.unshift("legacy", "aoj_legacy"))
-        # rubocop:enable Layout/LineLength
-        expect(distributed_cases.group(:docket).count.values.uniq).to match_array [4]
+        expect(distributed_cases.pluck(:docket).uniq).to match_array(Constants::AMA_DOCKETS.keys.unshift("legacy"))
+        expect(distributed_cases.group(:docket).count.values.uniq).to match_array [4, 8]
       end
 
       it "distributes cases to each judge based on their priority target" do

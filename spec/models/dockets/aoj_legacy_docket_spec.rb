@@ -24,8 +24,8 @@ describe AojLegacyDocket do
   end
 
   context "#docket_type" do
-    it "is aoj legacy" do
-      expect(subject.docket_type).to eq "aoj_legacy"
+    it "is legacy" do
+      expect(subject.docket_type).to eq "legacy"
     end
   end
 
@@ -308,7 +308,7 @@ describe AojLegacyDocket do
         end
       end
 
-      it "calls AppealRepository.distribute_nonpriority_appeals and returns cases" do
+      it "calls AojAppealRepository.distribute_nonpriority_appeals and returns cases" do
         expect(AojAppealRepository).to receive(:distribute_nonpriority_appeals)
           .with(judge, genpop, range, limit, bust_backlog)
           .and_return(two_cases_as_hashes)

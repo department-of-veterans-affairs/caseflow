@@ -36,30 +36,12 @@ class AojAppealRepository < AppealRepository
       end
     end
 
-    def nod_count
-      MetricsService.record("VACOLS: nod_count",
-                            name: "nod_count",
-                            service: :vacols) do
-        VACOLS::AojCaseDocket.nod_count
-      end
-    end
-
     def regular_non_aod_docket_count
       MetricsService.record("VACOLS: regular_non_aod_docket_count",
                             name: "regular_non_aod_docket_count",
                             service: :vacols) do
         VACOLS::AojCaseDocket.regular_non_aod_docket_count
       end
-    end
-
-    def latest_docket_month
-      result = MetricsService.record("VACOLS: latest_docket_month",
-                                     name: "latest_docket_month",
-                                     service: :vacols) do
-        VACOLS::AojCaseDocket.docket_date_of_nth_appeal_in_case_storage(7000)
-      end
-
-      result.beginning_of_month
     end
 
     def docket_counts_by_month
@@ -110,14 +92,6 @@ class AojAppealRepository < AppealRepository
       end
     end
 
-    def nonpriority_decisions_per_year
-      MetricsService.record("VACOLS: nonpriority_decisions_per_year",
-                            name: "nonpriority_decisions_per_year",
-                            service: :vacols) do
-        VACOLS::AojCaseDocket.nonpriority_decisions_per_year
-      end
-    end
-
     def distribute_priority_appeals(judge, genpop, limit)
       MetricsService.record("VACOLS: distribute_priority_appeals",
                             name: "distribute_priority_appeals",
@@ -140,27 +114,6 @@ class AojAppealRepository < AppealRepository
                             service: :vacols) do
         VACOLS::AojCaseDocket.ready_to_distribute_appeals
       end
-    end
-
-    private
-
-    # NOTE: this should be called within a transaction where you are closing an appeal
-    def close_associated_hearings(case_record)
-      # Only scheduled hearings need to be closed
-      case_record.case_hearings.where(clsdate: nil, hearing_disp: nil).update_all(
-        clsdate: VacolsHelper.local_time_with_utc_timezone,
-        hearing_disp: VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:cancelled]
-      )
-    end
-
-    # NOTE: this should be called within a transaction where you are closing an appeal
-    def close_associated_diary_notes(case_record, user)
-      case_record.notes.where(tskdcls: nil).update_all(
-        tskdcls: VacolsHelper.local_time_with_utc_timezone,
-        tskmdtm: VacolsHelper.local_time_with_utc_timezone,
-        tskmdusr: user.regional_office,
-        tskstat: "C"
-      )
     end
   end
   # :nocov:

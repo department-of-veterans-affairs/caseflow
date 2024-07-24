@@ -215,27 +215,27 @@ describe VACOLS::AojCaseDocket, :all_dbs do
       4.times do
         create(:case,
                bfddec: 6.months.ago,
-               bfac: "1",
+               bfac: "3",
                bfdc: "1")
       end
 
       4.times do
         create(:case,
                bfddec: 6.months.ago,
-               bfac: "1",
+               bfac: "3",
                bfdc: "3")
       end
 
       2.times do
         create(:case,
                bfddec: 6.months.ago,
-               bfac: "1",
+               bfac: "3",
                bfdc: "4")
       end
 
       create(:case,
              bfddec: 13.months.ago,
-             bfac: "1",
+             bfac: "3",
              bfdc: "1")
 
       create(:case,
@@ -246,7 +246,7 @@ describe VACOLS::AojCaseDocket, :all_dbs do
       create(:case,
              :aod,
              bfddec: 6.months.ago,
-             bfac: "1",
+             bfac: "3",
              bfdc: "3")
     end
 
