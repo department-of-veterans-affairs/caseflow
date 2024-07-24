@@ -204,7 +204,7 @@ FactoryBot.define do
 
               transient do
                 judge { nil }
-                avlj_judge { nil }
+                signing_avlj { nil }
                 attorney { nil }
                 cavc { false }
                 appeal_affinity { true }
@@ -221,8 +221,7 @@ FactoryBot.define do
 
               after(:create) do |new_case, evaluator|
                 original_judge = evaluator.judge || create(:user, :judge, :with_vacols_judge_record).vacols_staff
-                signing_judge_sattyid = evaluator.avlj_judge.present? ? evaluator.avlj_judge.sattyid : original_judge.sattyid
-                puts "##################### signing_judge_sattyid #{signing_judge_sattyid} #####################"
+                signing_judge_sattyid = evaluator.signing_avlj.present? ? evaluator.signing_avlj.sattyid : original_judge.sattyid
 
                 original_attorney = evaluator.attorney || create(:user, :with_vacols_attorney_record).vacols_staff
 
