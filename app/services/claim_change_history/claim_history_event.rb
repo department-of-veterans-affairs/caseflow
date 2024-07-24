@@ -159,7 +159,6 @@ class ClaimHistoryEvent
 
     def create_last_version_events(change_data, last_version)
       edited_events = []
-
       last_version["status"].map.with_index do |status, index|
         if status == "assigned"
           edited_events.push(*create_pending_status_events(change_data, last_version["updated_at"][index]))
@@ -221,56 +220,17 @@ class ClaimHistoryEvent
       end
     end
 
-    # when issue_modification_request_status is anything other than assigned then we add a pending status
-    # as it was once in pending status.
-    def create_pending_status_events(change_data)
-      byebug
-      issue_modification_status = []
-      issue_modification_request_id = change_data["issue_modification_request_id"]
-
+    def create_pending_status_events(change_data, event_date)
       pending_system_hash_events = pending_system_hash
-        .merge("event_date" => change_data["issue_modification_request_updated_at"])
+        .merge("event_date" => event_date)
 
-      byebug
-      if !issue_modification_request_id.nil?
-        issue_modification_status.push from_change_data(:pending, change_data.merge(pending_system_hash_events))
+      same_transaction = timestamp_within_seconds?(change_data["issue_modification_request_created_at"],
+                                                   change_data["previous_imr_created_at"],
+                                                   ISSUE_MODIFICATION_REQUEST_CREATION_WINDOW)
+
+      if change_data["previous_imr_created_at"].nil? || !same_transaction
+        from_change_data(:pending, change_data.merge(pending_system_hash_events))
       end
-
-      # if assign is present in the aggregated_claim_status it means task should still be in pending status
-      # hence, in progress status should not be added
-      unless assign_status_present?(change_data)
-        issue_modification_status.push from_change_data(:in_progress, change_data.merge(pending_system_hash_events))
-      end
-      issue_modification_status
-    end
-
-    # if current_claim_status has one or more 'assigned' then task should never be in progress state
-    def assign_status_present?(change_data)
-      byebug
-      return false if change_data["current_claim_status"].nil?
-
-      change_data["current_claim_status"].include?("assigned")
-    end
-
-    def create_edited_request_issue_events(change_data)
-      # return if change_data["issue_modification_request_edited_at"].nil?
-
-      edited_events = []
-      versions = parse_versions(change_data["imr_versions"])
-
-      index = 0
-      if versions.present?
-        event_type = :request_edited
-        event_date_hash = {}
-
-        versions.map do |version|
-          event_date_hash = { "event_date" => version["updated_at"][index], "event_user_name" => "System" }
-          change_data = update_change_data_from_version(change_data, version, index)
-          index += 1
-          edited_events.push from_change_data(event_type, change_data.merge(event_date_hash))
-        end
-      end
-      edited_events
     end
 
     # rubocop:disable Metrics/MethodLength
@@ -743,7 +703,6 @@ class ClaimHistoryEvent
     @claim_type = change_data["appeal_type"]
     @assigned_at = change_data["assigned_at"]
     @days_waiting = change_data["days_waiting"]
-    @current_claim_status = change_data["current_claim_status"]
   end
 
   def parse_intake_attributes(change_data)
@@ -791,14 +750,6 @@ class ClaimHistoryEvent
       @requestor = change_data["requestor"]
       @decider = change_data["decider"]
     end
-  end
-
-  def retrieve_current_claim_status(change_data)
-    return change_data["task_status"] if change_data["current_claim_status"].nil?
-
-    is_assign_present = change_data["current_claim_status"].include?("assigned")
-
-    is_assign_present ? "pending" : change_data["task_status"]
   end
 
   ############ CSV and Serializer Helpers ############

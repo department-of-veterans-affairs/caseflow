@@ -233,6 +233,19 @@ describe ClaimHistoryEvent do
     }
   end
 
+  let(:issue_modification_edited_attribute) do
+    {
+      event_type: :request_edited,
+      request_type: :addition,
+      issue_type: "Clothing Allowance",
+      new_issue_type: "Caregiver | Tier Level",
+      new_issue_description: "modifiedvalue",
+      new_decision_date: "2024-07-07",
+      modification_request_reason: "Addition is the only request issue-modifiedvalue Z",
+      event_user_name: "Monte Mann"
+    }
+  end
+
   describe "class methods" do
     describe ".from_change_data" do
       subject { described_class.from_change_data(event_type, change_data) }

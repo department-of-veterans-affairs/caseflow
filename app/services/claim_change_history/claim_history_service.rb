@@ -35,7 +35,6 @@ class ClaimHistoryService
     reset_processing_attributes
     all_data = business_line.change_history_rows(@filters)
     all_data.entries.each do |change_data|
-      byebug
       process_request_issue_update_events(change_data)
       process_request_issue_events(change_data)
       process_decision_issue_and_task_events(change_data)
@@ -44,7 +43,6 @@ class ClaimHistoryService
       process_task_events(change_data) unless change_data["task_status"] == "completed"
     end
     # Compact and sort in place to reduce garbage collection
-
     @events.compact!
     @events.sort_by! do |event|
       [
@@ -276,32 +274,18 @@ class ClaimHistoryService
 
     # no matter what the status is if request_modification_request was made then pending status has to be present.
     if task_id &&
-       !@processed_issue_modification_task_ids.include?(task_id)
-
+       !@processed_issue_modification_task_ids.include?(task_id) &&
+       change_data["issue_modification_request_status"] == "assigned"
       @processed_issue_modification_task_ids.add(task_id)
-      save_events(ClaimHistoryEvent.create_pending_status_events(change_data))
+
+      save_events(
+        ClaimHistoryEvent.create_pending_status_events(change_data,
+                                                       change_data["issue_modification_request_created_at"])
+      )
     end
   end
 
   def ensure_array(variable)
     variable.is_a?(Array) ? variable : [variable]
-  end
-
-  def modified_event_type_filter
-    @filters[:events].map { |ef| issue_modification_event_type_request_mapper(ef.to_s) || ef }
-  end
-
-  # this should probably be removed and event type coming from frontend can be modified.
-  def issue_modification_event_type_request_mapper(event_type)
-    {
-      "requested_issue_modification" => :modification,
-      "requested_issue_addition" => :addition,
-      "requested_issue_removal" => :removal,
-      "requested_issue_withdrawal" => :withdrawal,
-      "approval_of_request" => :request_approved,
-      "rejection_of_request" => :request_rejected,
-      "cancellation_of_request" => :request_cancelled,
-      "edit_of_request" => :request_edited
-    }[event_type]
   end
 end

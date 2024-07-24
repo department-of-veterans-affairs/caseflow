@@ -217,7 +217,7 @@ class BusinessLine < Organization
           FROM
               versions
           INNER JOIN tasks ON tasks.id = versions.item_id
-          WHERE versions.item_type IN ('Task')
+          WHERE versions.item_type = 'Task'
             AND tasks.assigned_to_type = 'Organization'
             AND tasks.assigned_to_id = '#{parent.id.to_i}'
           GROUP BY
@@ -226,17 +226,11 @@ class BusinessLine < Organization
               versions.item_id,
               versions.item_type,
               ARRAY_AGG(versions.object_changes ORDER BY versions.id) AS object_changes_array,
-              MAX(CASE
-                  WHEN versions.object_changes LIKE '%closed_at:%' THEN versions.whodunnit
-                  ELSE NULL
-              END) AS version_closed_by_id
+              MIN(versions.id) first_id
           FROM
               versions
-          INNER JOIN tasks ON tasks.id = versions.item_id
           INNER JOIN issue_modification_requests ON issue_modification_requests.id = versions.item_id
-          WHERE versions.item_type IN ('Task', 'IssueModificationRequest')
-            AND tasks.assigned_to_type = 'Organization'
-            AND tasks.assigned_to_id = '#{parent.id.to_i}'
+          WHERE versions.item_type = 'IssueModificationRequest'
           GROUP BY
               versions.item_id, versions.item_type
         ), imr_version_agg AS (SELECT
@@ -276,9 +270,9 @@ class BusinessLine < Organization
             NULLIF(CONCAT(people.first_name, ' ', people.last_name), ' '),
             bgs_attorneys.name
           ) AS claimant_name,
-          COALESCE(imr.id, imr_addition.id) AS issue_modification_request_id,
-          COALESCE(imr.nonrating_issue_category,imr_addition.nonrating_issue_category) AS requested_issue_type,
-          COALESCE(imr.nonrating_issue_description,imr_addition.nonrating_issue_description) As requested_issue_description,
+          imr.id AS issue_modification_request_id,
+          imr.nonrating_issue_category AS requested_issue_type,
+          imr.nonrating_issue_description As requested_issue_description,
           imr.remove_original_issue,
           imr.request_reason AS modification_request_reason,
           imr.decision_date AS requested_decision_date,

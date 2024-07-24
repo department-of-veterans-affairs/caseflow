@@ -61,10 +61,6 @@
     {
       "label": "Cancelled",
       "id": "cancelled"
-    },
-    {
-      "label": "Pending",
-      "id": "pending"
     }
   ],
   "SPECIFIC_EVENT_OPTIONS": [
