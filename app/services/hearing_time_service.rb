@@ -32,13 +32,17 @@ class HearingTimeService
       time = Time.parse(date_and_time_string).utc
       time -= 1.hour if Time.zone.parse(date_and_time_string).dst?
       utc_time_string = "#{time.year}-#{time.month}-#{time.day} #{time.hour}:#{time.min} UTC"
-      formatted_string = utc_time_string.in_time_zone(VacolsHelper::VACOLS_DEFAULT_TIMEZONE).strftime("%F %H:%M %z")
+      utc_time_string.in_time_zone(VacolsHelper::VACOLS_DEFAULT_TIMEZONE).strftime("%F %H:%M %z")
     end
 
     def time_to_string(time, hearing)
       datetime = time.to_datetime
 
-      tz = ActiveSupport::TimeZone::MAPPING.key(hearing.regional_office_timezone)
+      tz = if hearing.scheduled_in_timezone
+             ActiveSupport::TimeZone::MAPPING.key(hearing.scheduled_in_timezone)
+           else
+             ActiveSupport::TimeZone::MAPPING.key(hearing.regional_office_timezone)
+           end
 
       "#{datetime.strftime('%l:%M %p')} #{tz}".lstrip
     end
@@ -79,7 +83,7 @@ class HearingTimeService
   end
 
   def central_office_time_string
-    self.class.time_to_string(central_office_time, @hearing)
+    "#{central_office_time.to_datetime.strftime('%l:%M %p')} Eastern Time (US & Canada)".lstrip
   end
 
   def local_time
