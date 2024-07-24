@@ -296,7 +296,6 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
             expect(distributed_cases.map(&:docket)).to match_array expected_array2
             expect(distributed_cases.map(&:priority).uniq).to match_array [true]
             expect(distributed_cases.map(&:genpop).uniq).to match_array [false, true]
-
           end
         end
 
@@ -376,7 +375,6 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
                         :with_appeal_affinity,
                         docket_type: Constants.AMA_DOCKETS.hearing,
                         affinity_start_date: i.months.ago,
-                        docket_type: Constants.AMA_DOCKETS.hearing,
                         receipt_date: 1.month.ago)
         appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: i.months.ago)
         appeal.reload
