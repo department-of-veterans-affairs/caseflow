@@ -33,7 +33,6 @@ class SupplementalClaim < ClaimReview
     when HigherLevelReview.name
       create_issues!(build_request_issues_from_remand)
     end
-
   end
 
   def decision_review_remanded?

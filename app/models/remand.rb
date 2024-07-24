@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 class Remand < SupplementalClaim
-
   def create_issues
     create_issues!(build_request_issues)
   end
+
+  private
 
   def build_request_issues
     remanded_decision_issues_needing_request_issues.map do |remand_decision_issue|
