@@ -370,7 +370,7 @@ ActiveRecord::Schema.define(version: 2024_07_19_162419) do
 
   create_table "case_distribution_levers", comment: "A generalized table for Case Distribution lever records within caseflow", force: :cascade do |t|
     t.json "algorithms_used", comment: "stores an array of which algorithms the lever is used in. There are some UI niceties that are implemented to indicate which algorithm is used."
-    t.string "control_group", comment: "supports the exclusion table that has toggles that control multiple levers"
+    t.json "control_group", comment: "supports the exclusion table that has toggles that control multiple levers"
     t.datetime "created_at", null: false
     t.string "data_type", null: false, comment: "Indicates which type of record either BOOLEAN/RADIO/COMBO"
     t.text "description", comment: "Indicates the description of the Lever"
@@ -1144,32 +1144,6 @@ ActiveRecord::Schema.define(version: 2024_07_19_162419) do
     t.index ["user_id"], name: "unique_index_to_avoid_multiple_intakes", unique: true, where: "(completed_at IS NULL)"
     t.index ["veteran_file_number"], name: "index_intakes_on_veteran_file_number"
     t.index ["veteran_id"], name: "index_intakes_on_veteran_id"
-  end
-
-  create_table "issue_modification_requests", comment: "A database table to store issue modification requests for a decision review for altering or adding additional request_issues", force: :cascade do |t|
-    t.string "benefit_type", comment: "This will primarily apply when the request type is an addition, indicating the benefit type of the issue that will be created if the modification request is approved."
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "decided_at", comment: "Timestamp when the decision was made by the decider/admin. it can be approved or denied date."
-    t.bigint "decider_id", comment: "The user who decides approval/denial of the issue modification request."
-    t.date "decision_date", comment: "The decision date of the request issue that is being modified"
-    t.text "decision_reason", comment: "The reason behind the approve/denial of the modification request provided by the user (admin) that is acting on the request."
-    t.bigint "decision_review_id", comment: "The decision review that this issue modification request belongs to"
-    t.string "decision_review_type"
-    t.datetime "edited_at", comment: "Timestamp when the requestor or decider edits the issue modification request."
-    t.string "nonrating_issue_category", comment: "The nonrating issue category of the request issue that is being modified or added by the request"
-    t.string "nonrating_issue_description", comment: "The nonrating issue description of the request issue that is being modified or added by the request"
-    t.boolean "remove_original_issue", default: false, comment: "flag to indicate if the original issue was removed or not."
-    t.bigint "request_issue_id", comment: "Specifies the request issue targeted by the modification request."
-    t.text "request_reason", comment: "The reason behind the modification request provided by the user initiating it."
-    t.string "request_type", default: "addition", comment: "The type of issue modification request. The possible types are addition, modification, withdrawal and cancelled."
-    t.bigint "requestor_id", comment: "The user who requests modification or addition of request issues"
-    t.string "status", default: "assigned", comment: "The status of the issue modifications request. The possible status values are assigned, approved, denied, and cancelled"
-    t.datetime "updated_at", precision: 6, null: false
-    t.datetime "withdrawal_date", comment: "The withdrawal date for issue modification requests with a request type of withdrawal"
-    t.index ["decider_id"], name: "index_issue_modification_requests_on_decider_id"
-    t.index ["decision_review_type", "decision_review_id"], name: "index_issue_modification_requests_decision_review"
-    t.index ["request_issue_id"], name: "index_issue_modification_requests_on_request_issue_id"
-    t.index ["requestor_id"], name: "index_issue_modification_requests_on_requestor_id"
   end
 
   create_table "job_execution_times", id: :serial, force: :cascade do |t|
@@ -2055,46 +2029,6 @@ ActiveRecord::Schema.define(version: 2024_07_19_162419) do
     t.index ["created_by_id"], name: "index_vbms_distributions_on_created_by_id"
     t.index ["updated_by_id"], name: "index_vbms_distributions_on_updated_by_id"
     t.index ["vbms_communication_package_id"], name: "index_vbms_distributions_on_vbms_communication_package_id"
-  end
-
-  create_table "vbms_ext_claim", primary_key: "CLAIM_ID", id: :decimal, precision: 38, force: :cascade do |t|
-    t.string "ALLOW_POA_ACCESS", limit: 5
-    t.decimal "CLAIMANT_PERSON_ID", precision: 38
-    t.datetime "CLAIM_DATE"
-    t.string "CLAIM_SOJ", limit: 25
-    t.integer "CONTENTION_COUNT"
-    t.datetime "CREATEDDT", null: false
-    t.string "EP_CODE", limit: 25
-    t.datetime "ESTABLISHMENT_DATE"
-    t.datetime "EXPIRATIONDT"
-    t.string "INTAKE_SITE", limit: 25
-    t.datetime "LASTUPDATEDT", null: false
-    t.string "LEVEL_STATUS_CODE", limit: 25
-    t.datetime "LIFECYCLE_STATUS_CHANGE_DATE"
-    t.string "LIFECYCLE_STATUS_NAME", limit: 50
-    t.string "ORGANIZATION_NAME", limit: 100
-    t.string "ORGANIZATION_SOJ", limit: 25
-    t.string "PAYEE_CODE", limit: 25
-    t.string "POA_CODE", limit: 25
-    t.integer "PREVENT_AUDIT_TRIG", limit: 2, default: 0, null: false
-    t.string "PRE_DISCHARGE_IND", limit: 5
-    t.string "PRE_DISCHARGE_TYPE_CODE", limit: 10
-    t.string "PRIORITY", limit: 10
-    t.string "PROGRAM_TYPE_CODE", limit: 10
-    t.string "RATING_SOJ", limit: 25
-    t.string "SERVICE_TYPE_CODE", limit: 10
-    t.string "SUBMITTER_APPLICATION_CODE", limit: 25
-    t.string "SUBMITTER_ROLE_CODE", limit: 25
-    t.datetime "SUSPENSE_DATE"
-    t.string "SUSPENSE_REASON_CODE", limit: 25
-    t.string "SUSPENSE_REASON_COMMENTS", limit: 1000
-    t.decimal "SYNC_ID", precision: 38, null: false
-    t.string "TEMPORARY_CLAIM_SOJ", limit: 25
-    t.string "TYPE_CODE", limit: 25
-    t.decimal "VERSION", precision: 38, null: false
-    t.decimal "VETERAN_PERSON_ID", precision: 15
-    t.index ["CLAIM_ID"], name: "claim_id_index"
-    t.index ["LEVEL_STATUS_CODE"], name: "level_status_code_index"
   end
 
   create_table "vbms_uploaded_documents", force: :cascade do |t|
