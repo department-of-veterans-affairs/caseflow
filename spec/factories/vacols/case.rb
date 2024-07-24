@@ -201,15 +201,18 @@ FactoryBot.define do
             # This factory uses the :aod trait to mark it AOD instead of a transient attribute
             # Pass `tied_to: false` to create an original appeal without a previous hearing
             factory :legacy_signed_appeal do
+
               transient do
                 judge { nil }
-                avlj_judge { nil }
+                signing_avlj { nil }
                 attorney { nil }
                 cavc { false }
                 appeal_affinity { true }
                 affinity_start_date { 2.months.ago }
                 tied_to { true }
               end
+
+
 
               status_active
 
@@ -218,7 +221,8 @@ FactoryBot.define do
 
               after(:create) do |new_case, evaluator|
                 original_judge = evaluator.judge || create(:user, :judge, :with_vacols_judge_record).vacols_staff
-                signing_judge = evaluator.avlj_judge || original_judge
+                signing_judge_sattyid = evaluator.signing_avlj.present? ? evaluator.signing_avlj.sattyid : original_judge.sattyid
+
                 original_attorney = evaluator.attorney || create(:user, :with_vacols_attorney_record).vacols_staff
 
                 new_case.correspondent.update!(ssn: new_case.bfcorlid.chomp("S")) unless new_case.correspondent.ssn
@@ -267,7 +271,7 @@ FactoryBot.define do
                   bfd19: new_case.bfd19,
                   bfcurloc: "99",
                   bfddec: new_case.bfdpdcn,
-                  bfmemid: signing_judge.sattyid,
+                  bfmemid: signing_judge_sattyid,
                   bfattid: original_attorney.sattyid,
                   folder: original_folder,
                   correspondent: new_case.correspondent,
