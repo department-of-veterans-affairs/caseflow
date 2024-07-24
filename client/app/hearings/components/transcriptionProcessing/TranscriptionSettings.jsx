@@ -399,6 +399,7 @@ export default class TranscriptionSettings extends React.PureComponent {
   );
 }
 
+
 TranscriptionSettings.propTypes = {
   contractors: PropTypes.array.isRequired,
 };
