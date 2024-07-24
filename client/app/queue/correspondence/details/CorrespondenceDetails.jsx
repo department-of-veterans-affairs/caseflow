@@ -100,7 +100,7 @@ CorrespondenceDetails.propTypes = {
   loadCorrespondence: PropTypes.func,
   correspondence: PropTypes.object,
   organizations: PropTypes.array,
-  userCssId: PropTypes.string
+  userCssId: PropTypes.string,
   loadCorrespondenceStatus: PropTypes.func,
   correspondenceStatus: PropTypes.object
 };
