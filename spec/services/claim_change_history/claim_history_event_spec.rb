@@ -48,7 +48,33 @@ describe ClaimHistoryEvent do
       "event_date" => change_data_event_date,
       "task_versions" => version_changes,
       "days_waiting" => 25,
-      "task_closed_at" => "2023-10-19 22:47:16.233187"
+      "task_closed_at" => "2023-10-19 22:47:16.233187",
+      "issue_modification_request_id" => 61,
+      "requested_issue_type" => "Caregiver | Tier Level",
+      "requested_issue_description" => "test",
+      "remove_original_issue" => nil,
+      "modification_request_reason" => "Testing",
+      "requested_decision_date" => "2024-07-07",
+      "request_type" => request_type,
+      "issue_modification_request_status" => "cancelled",
+      "decision_reason" => nil,
+      "decider_id" => nil,
+      "requestor_id" => "2000006012",
+      "decided_at" => nil,
+      "issue_modification_request_created_at" => "2024-07-22 15:57:55.574809",
+      "issue_modification_request_updated_at" => "2024-07-22 15:58:42.908194",
+      "issue_modification_request_edited_at" => nil,
+      "issue_modification_request_withdrawal_date" => nil,
+      "decision_review_id" => 65,
+      "decision_review_type" => "HigherLevelReview",
+      "requestor" => "Monte Mann",
+      "requestor_station_id" => "741",
+      "requestor_css_id" => "ACBAUERVVHAH",
+      "decider" => nil,
+      "decider_station_id" => nil,
+      "decider_css_id" => nil,
+      "imr_versions" => imr_versions,
+      "current_claim_status" => current_claim_status
     }
   end
 
@@ -62,8 +88,11 @@ describe ClaimHistoryEvent do
   let(:change_data_decision_date) { "2023-05-31" }
   let(:change_data_decision_date_added_at) { Time.zone.parse("2023-10-19 22:48:25.281657") }
   let(:version_changes) { nil }
+  let(:imr_versions) { nil }
+  let(:request_type) { :addition }
   let(:request_issue_update_time) { Time.zone.parse("2023-10-19 22:47:16.233187") }
   let(:request_issue_created_at) { Time.zone.parse("2023-10-19 22:45:43.108934") }
+  let(:current_claim_status) { ["assigned"] }
   let(:event_attribute_data) do
     {
       assigned_at: Time.zone.parse("2023-10-19 22:47:16.222148"),
@@ -116,6 +145,19 @@ describe ClaimHistoryEvent do
     }
   end
 
+  let(:issue_modification_request_attribute_data) do
+    {
+      request_type: request_type,
+      new_issue_type: "Caregiver | Tier Level",
+      new_issue_description: "test",
+      new_decision_date: "2024-07-07",
+      modification_request_reason: "Testing",
+      decision_reason: nil,
+      decided_at_date: nil,
+      issue_modification_request_withdrawal_date: nil
+    }
+  end
+
   let(:intake_event_data) do
     {
       event_date: change_data["intake_completed_at"],
@@ -131,6 +173,14 @@ describe ClaimHistoryEvent do
       event_user_name: change_data["update_user_name"],
       user_facility: change_data["update_user_station_id"],
       event_user_css_id: change_data["update_user_css_id"]
+    }
+  end
+
+  let(:pending_attribute_data) do
+    {
+      event_type: :pending,
+      claimant_name: "Bob Smithboehm",
+      event_user_name: "System"
     }
   end
 
@@ -162,6 +212,25 @@ describe ClaimHistoryEvent do
         let(:event_type) { :invalid_event }
         it "should raise InvalidEventType error" do
           expect { subject }.to raise_error(InvalidEventType)
+        end
+      end
+
+      context "when the event type is request addition" do
+        let(:event_type) { :addition }
+
+        it "should create an instance with issue request addition" do
+          claim_history_event = subject
+
+          expect_attributes(claim_history_event, issue_modification_request_attribute_data)
+        end
+      end
+
+      context "when the event type is request modification" do
+        let(:event_type) { :modification }
+        let(:request_type) { :modification }
+        it "should create an instance with issue request addition" do
+          claim_history_event = subject
+          expect_attributes(claim_history_event, issue_modification_request_attribute_data)
         end
       end
     end
@@ -631,6 +700,35 @@ describe ClaimHistoryEvent do
       end
     end
 
+    describe ".create_pending_status_events" do
+      subject { described_class.create_pending_status_events(change_data) }
+
+      context "if the request issue was added during intake without a decision date" do
+        let(:event_type) { :pending }
+
+        it "should return one row of pending event" do
+          expect(subject.count).to eq(1)
+          expect_attributes(subject[0], pending_attribute_data)
+        end
+      end
+
+      context "should return both pending and in progress status" do
+        before do
+          # The example change_data request_issue was added during an update so adjust the time to match the intake
+          # Also set the decision date added at to be the same time
+          change_data["current_claim_status"] = %w[approved rejected]
+        end
+
+        let(:current_claim_status) { %w[assigned rejected] }
+        subject { described_class.create_pending_status_events(change_data) }
+
+        it "should return both pending and in progress status" do
+          expect(subject.count).to eq(2)
+          expect_attributes(subject[0], pending_attribute_data)
+        end
+      end
+    end
+
     describe "helper class methods" do
       describe ".retrieve_issue_data" do
         before do
@@ -782,7 +880,8 @@ describe ClaimHistoryEvent do
             event_instance.readable_task_status, event_instance.days_waiting, event_instance.readable_claim_type,
             event_instance.readable_facility_name, event_instance.readable_user_name,
             event_instance.readable_event_date, event_instance.readable_event_type,
-            event_instance.send(:issue_or_status_information), event_instance.send(:disposition_information)
+            event_instance.send(:issue_or_status_information), event_instance.send(:issue_modification_request_information),
+            event_instance.send(:disposition_information)
           ]
         end
 
@@ -912,7 +1011,16 @@ describe ClaimHistoryEvent do
           added_issue: "Added issue",
           withdrew_issue: "Withdrew issue",
           removed_issue: "Removed issue",
-          added_decision_date: "Added decision date"
+          added_decision_date: "Added decision date",
+          cancelled: "Claim closed",
+          addition: "Requested issue addition",
+          removal: "Requested issue removal",
+          modification: "Requested issue modification",
+          withdrawal: "Requested issue withdrawal",
+          request_approved: "Approval of the request - issue addition",
+          request_rejected: "Rejection of the request- issue addition",
+          request_cancelled: "Cancellation of request",
+          request_edited: "Edit of request - issue addition"
         }
 
         event_types.each do |event_type, readable_name|

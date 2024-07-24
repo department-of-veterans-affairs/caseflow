@@ -363,6 +363,7 @@ describe ChangeHistoryReporter do
 
       it "returns a csv string with the column headers, filters, and event rows" do
         rows = CSV.parse(subject)
+        byebug
         expect(rows.count).to eq(2 + events.length)
         expect(rows[0]).to eq([])
         expect(rows[1]).to eq(column_headers)
