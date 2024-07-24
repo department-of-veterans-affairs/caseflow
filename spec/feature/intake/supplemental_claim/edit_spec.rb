@@ -655,8 +655,6 @@ feature "Supplemental Claim Edit issues", :all_dbs do
         expect(withdrawn_issue).to_not be_nil
         expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
 
-        # sleep 1
-
         # reload to verify that the new issues populate the form
         visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
 
