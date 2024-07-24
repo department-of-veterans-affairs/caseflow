@@ -35,7 +35,6 @@ class ClaimHistoryService
     all_data = business_line.change_history_rows(@filters)
 
     all_data.entries.each do |change_data|
-      byebug
       process_request_issue_update_events(change_data)
       process_request_issue_events(change_data)
       process_decision_issue_and_task_events(change_data)

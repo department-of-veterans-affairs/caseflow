@@ -135,14 +135,12 @@ class ClaimHistoryEvent
     # when issue_modification_request_status is anything other than assigned then we add a pending status
     # as it was once in pending status.
     def create_pending_status_events(change_data)
-      byebug
       issue_modification_status = []
       issue_modification_request_id = change_data["issue_modification_request_id"]
 
       pending_system_hash_events = pending_system_hash
         .merge("event_date" => change_data["issue_modification_request_updated_at"])
 
-      byebug
       if !issue_modification_request_id.nil?
         issue_modification_status.push from_change_data(:pending, change_data.merge(pending_system_hash_events))
       end
@@ -157,7 +155,6 @@ class ClaimHistoryEvent
 
     # if current_claim_status has one or more 'assigned' then task should never be in progress state
     def assign_status_present?(change_data)
-      byebug
       return false if change_data["current_claim_status"].nil?
 
       change_data["current_claim_status"].include?("assigned")
