@@ -33,7 +33,6 @@ class WorkQueue::CorrespondenceSerializer
 
     if !filtered_tasks.empty?
       filtered_tasks.each do |task|
-        # binding.pry
         tasks <<
           {
             type: task.label,
