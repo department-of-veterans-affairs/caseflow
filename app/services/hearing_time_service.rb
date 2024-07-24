@@ -14,7 +14,7 @@ class HearingTimeService
       # vacols-formatted scheduled_for
       return update_params if update_params[:scheduled_time_string].nil?
 
-      scheduled_for = legacy_formatted_scheduled_for(
+      scheduled_for = legacy_formatted_scheduled_for_with_dst_offset(
         date_string: hearing&.hearing_day&.scheduled_for&.to_s,
         time_string: update_params[:scheduled_time_string]
       )
@@ -27,10 +27,17 @@ class HearingTimeService
       remove_time_string_params(update_params).merge(scheduled_time: update_params[:scheduled_time_string])
     end
 
-    def legacy_formatted_scheduled_for(time_string:, date_string:)
+    def legacy_formatted_scheduled_for_with_dst_offset(time_string:, date_string:)
       date_and_time_string = "#{date_string} #{time_string}"
       time = Time.parse(date_and_time_string).utc
       time -= 1.hour if Time.zone.parse(date_and_time_string).dst?
+      utc_time_string = "#{time.year}-#{time.month}-#{time.day} #{time.hour}:#{time.min} UTC"
+      utc_time_string.in_time_zone(VacolsHelper::VACOLS_DEFAULT_TIMEZONE).strftime("%F %H:%M %z")
+    end
+
+    def legacy_formatted_scheduled_for(time_string:, date_string:)
+      date_and_time_string = "#{date_string} #{time_string}"
+      time = Time.parse(date_and_time_string).utc
       utc_time_string = "#{time.year}-#{time.month}-#{time.day} #{time.hour}:#{time.min} UTC"
       utc_time_string.in_time_zone(VacolsHelper::VACOLS_DEFAULT_TIMEZONE).strftime("%F %H:%M %z")
     end
