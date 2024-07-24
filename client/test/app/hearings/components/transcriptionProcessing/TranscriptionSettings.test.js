@@ -1,7 +1,7 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter as Router } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore, compose } from 'redux';
@@ -81,5 +81,14 @@ describe('work assignment toggle', () => {
       expect(toggles[1].textContent).toBe('On');
       expect(toggles[2].textContent).toBe('Off');
     });
+  });
+});
+
+describe('weekly transcription count calculations', () => {
+  it('give correct values', () => {
+    renderTranscriptionSettings();
+    expect(screen.getByText('7 of 150')).toBeInTheDocument();
+    expect(screen.getByText('0 of 0')).toBeInTheDocument();
+    expect(screen.getByText('2 of 120')).toBeInTheDocument();
   });
 });
