@@ -12,7 +12,6 @@ import { SearchIcon } from '../../components/icons/SearchIcon';
 import DocumentCategoryIcons from '../../reader/DocumentCategoryIcons';
 
 import { handleClickDocumentTypeLink, openDownloadLink } from '../util/documentUtil';
-import { docToolbarStyles } from '../util/layoutUtil';
 
 const ReaderToolbar = ({
   resetZoomLevel,
@@ -27,8 +26,8 @@ const ReaderToolbar = ({
   rotateDocument,
   toggleSearchBar,
   showSearchBar,
-  // hideSidebar,
-  // toggleSidebar
+  showSideBar,
+  toggleSideBar
 }) => {
   // eslint-disable-next-line no-unused-vars
   const [_searchTerm, setSearchTerm] = useState(null);
@@ -44,15 +43,15 @@ const ReaderToolbar = ({
   };
 
   return (
-    <>
-      <div {...docToolbarStyles.toolbar} {...docToolbarStyles.toolbarLeft}>
+    <div id="prototype-toolbar" className="cf-pdf-header cf-pdf-toolbar">
+      <div className="toolbar-section">
         {showClaimsFolderNavigation && (
           <Link to={`${documentPathBase}`} name="backToClaimsFolder" button="matte">
             <LeftChevronIcon /> &nbsp; Back
           </Link>
         )}
       </div>
-      <div {...docToolbarStyles.toolbar} {...docToolbarStyles.toolbarCenter}>
+      <div className="toolbar-section">
         <span className="category-icons-and-doc-type">
           <span className="cf-pdf-doc-category-icons">
             <DocumentCategoryIcons doc={doc} />
@@ -65,9 +64,9 @@ const ReaderToolbar = ({
               button="matte"
               onClick={() => handleClickDocumentTypeLink()}
               href={
-                window.location.pathname.includes('prototype')
-                  ? `/reader/appeal${documentPathBase}/${doc.id}/prototype`
-                  : `/reader/appeal${documentPathBase}/${doc.id}`
+                window.location.pathname.includes('prototype') ?
+                  `/reader/appeal${documentPathBase}/${doc.id}/prototype` :
+                  `/reader/appeal${documentPathBase}/${doc.id}`
               }
             >
               <h1 className="cf-pdf-vertically-center cf-non-stylized-header">
@@ -80,7 +79,7 @@ const ReaderToolbar = ({
           </span>
         </span>
       </div>
-      <div {...docToolbarStyles.toolbar} {...docToolbarStyles.toolbarRight}>
+      <div className="toolbar-section">
         <span className="cf-pdf-button-text">Zoom:</span>
         <span className="cf-pdf-button-text">&nbsp;&nbsp;{`${zoomLevel}%`}</span>
         <Button
@@ -135,18 +134,18 @@ const ReaderToolbar = ({
         >
           <SearchIcon />
         </Button>
-        {/* {hideSidebar &&
-        (<span {...docToolbarStyles.openSidebarMenu}>
-          <Button
-            name="open sidebar menu"
-            classNames={['cf-pdf-button']}
-            onClick={() => toggleSidebar()}>
-            <strong> Open menu </strong>
-          </Button>
-        </span>)
-      } */}
+        {!showSideBar &&
+          (<span>
+            <Button
+              name="open sidebar menu"
+              classNames={['cf-pdf-button']}
+              onClick={() => toggleSideBar()}>
+              <strong> Open menu </strong>
+            </Button>
+          </span>)
+        }
       </div>
-    </>
+    </div>
   );
 };
 
@@ -161,8 +160,8 @@ ReaderToolbar.propTypes = {
   disableZoomIn: PropTypes.bool,
   zoomLevel: PropTypes.number,
   rotateDocument: PropTypes.func,
-  hideSidebar: PropTypes.bool,
-  toggleSidebar: PropTypes.func,
+  showSideBar: PropTypes.bool,
+  toggleSideBar: PropTypes.func,
   toggleSearchBar: PropTypes.func,
   showSearchBar: PropTypes.bool,
 };

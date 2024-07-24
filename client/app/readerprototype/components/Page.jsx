@@ -19,10 +19,10 @@ const Page = ({ page, rotation = '0deg', renderItem, scale }) => {
   }, [canvasRef.current, viewport]);
 
   return (
-    <div id={`canvasContainer-${page.pageNumber}`} className={`${wrapperStyle} canvas-wrapper-prototype`}>
+    <div id={`canvasWrapper-${page.pageNumber}`} className={`${wrapperStyle} prototype-canvas-wrapper`}>
       <canvas
         id={`canvas-${page.pageNumber}`}
-        className="canvas-container-prototype"
+        className="prototype-canvas"
         ref={canvasRef}
         height={viewport.height}
         width={viewport.width}

@@ -5,15 +5,15 @@ export const renderPage = async (pdfPage) => {
   const pdfContainer = document.getElementById('pdfContainer');
   const canvasWrapper = document.createElement('div');
 
-  canvasWrapper.setAttribute('id', `canvasContainer-${pdfPage.pageNumber}`);
-  canvasWrapper.className = 'canvas-wrapper-prototype';
+  canvasWrapper.setAttribute('id', `canvasWrapper-${pdfPage.pageNumber}`);
+  canvasWrapper.className = 'prototype-canvas-wrapper';
   pdfContainer.appendChild(canvasWrapper);
 
   const canvas = document.createElement('canvas');
   const textLayer = document.createElement('div');
 
   canvas.setAttribute('id', `canvas-${pdfPage.pageNumber}`);
-  canvas.className = 'canvas-container-prototype';
+  canvas.className = 'prototype-canvas';
   canvasWrapper.appendChild(canvas);
   canvasWrapper.appendChild(textLayer);
 
