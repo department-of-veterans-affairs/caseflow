@@ -106,14 +106,6 @@ RSpec.describe CaseDistributionLever, :all_dbs do
   end
 
   context ".aoj_affinity_days" do
-    let(:aoj_affinity_days_case_distribution) do
-      create(:case_distribution_lever,
-             :aoj_affinity_days)
-      end
-    let(:other_case_distribution) do
-      create(:case_distribution_lever,
-             :cavc_affinity_days)
-      end
 
     it "only returns value with aoj affinity days" do
       aoj_affinity_days = CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.aoj_affinity_days)
