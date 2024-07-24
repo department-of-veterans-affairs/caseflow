@@ -27,7 +27,7 @@ import { useDispatch } from 'react-redux';
 import { setOpenedAccordionSections } from '../../reader/PdfViewer/PdfViewerActions';
 
 const ReaderSidebar = ({
-  // appeal,
+  appeal,
   doc,
   documents,
   toggleSideBar,
@@ -65,7 +65,7 @@ const ReaderSidebar = ({
         >
           <AccordionSection title="Document information">
             <SideBarDocumentInformation
-              // appeal={appeal}
+              appeal={appeal}
               doc={doc}
             />
           </AccordionSection>
@@ -154,7 +154,7 @@ ReaderSidebar.propTypes = {
     receivedAt: PropTypes.string,
     type: PropTypes.string,
   }),
-  documents: PropTypes.object,
+  documents: PropTypes.array,
   showSideBar: PropTypes.bool,
   toggleSideBar: PropTypes.func,
 };
