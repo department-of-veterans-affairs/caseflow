@@ -343,22 +343,42 @@ class VACOLS::CaseDocket < VACOLS::Record
     appeals.map { |appeal| appeal["bfdloout"] }
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength, Metrics/AbcSize
   def self.age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
     priority_cdl_query = generate_priority_case_distribution_lever_query
     priority_cdl_aod_query = generate_priority_case_distribution_lever_aod_query
     conn = connection
 
-    query = <<-SQL
-      #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
-      where (VLJ = ? or #{ineligible_judges_sattyid_cache} or VLJ is null or #{priority_cdl_query} or #{priority_cdl_aod_query})
-    SQL
+    query = if CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.infinite &&
+               CaseDistributionLever.cavc_affinity_days == Constants.ACD_LEVERS.infinite
+              <<-SQL
+              #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
+              where (VLJ = ? or #{ineligible_judges_sattyid_cache} or VLJ is null
+              or ((PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache(true)} or #{vacols_judges_with_exclude_appeals_from_affinity})
+              and (#{priority_cdl_query} or #{priority_cdl_aod_query})))
+              SQL
+            else
+              <<-SQL
+              #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
+              where (VLJ = ? or #{ineligible_judges_sattyid_cache} or VLJ is null or #{priority_cdl_query} or #{priority_cdl_aod_query})
+              SQL
+            end
 
-    fmtd_query = sanitize_sql_array([
-                                      query,
-                                      judge.vacols_attorney_id,
-                                      judge.vacols_attorney_id,
-                                      judge.vacols_attorney_id
-                                    ])
+    fmtd_query = if CaseDistributionLever.cavc_aod_affinity_days != Constants.ACD_LEVERS.infinite &&
+                    CaseDistributionLever.cavc_affinity_days != Constants.ACD_LEVERS.infinite
+                   sanitize_sql_array([
+                                        query,
+                                        judge.vacols_attorney_id,
+                                        judge.vacols_attorney_id,
+                                        judge.vacols_attorney_id
+                                      ])
+                 else
+                   sanitize_sql_array([
+                                        query,
+                                        judge.vacols_attorney_id,
+                                        judge.vacols_attorney_id
+                                      ])
+                end
 
     appeals = conn.exec_query(fmtd_query).to_a
 
@@ -371,7 +391,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     appeals.map { |appeal| appeal["bfd19"] }
   end
-  # rubocop:enable
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength, Metrics/AbcSize
 
   def self.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
     conn = connection
@@ -613,8 +633,7 @@ class VACOLS::CaseDocket < VACOLS::Record
       "((PREV_DECIDING_JUDGE = ? or PREV_DECIDING_JUDGE is null or PREV_DECIDING_JUDGE is not null)
       and AOD = '0' and BFAC = '7')"
     elsif CaseDistributionLever.cavc_affinity_days == "infinite"
-      "((PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache(true)} or
-        #{vacols_judges_with_exclude_appeals_from_affinity}) and AOD = '0' and BFAC = '7')"
+      "(AOD = '0' and BFAC = '7')"
     else
       "VLJ = ?"
     end
@@ -626,8 +645,7 @@ class VACOLS::CaseDocket < VACOLS::Record
       "((PREV_DECIDING_JUDGE = ? or PREV_DECIDING_JUDGE is null or PREV_DECIDING_JUDGE is not null)
       and AOD = '1' and BFAC = '7' )"
     elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.infinite
-      "((PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache(true)} or
-      #{vacols_judges_with_exclude_appeals_from_affinity}) and AOD = '1' and BFAC = '7' )"
+      "(AOD = '1' and BFAC = '7')"
     else
       "VLJ = ?"
     end
