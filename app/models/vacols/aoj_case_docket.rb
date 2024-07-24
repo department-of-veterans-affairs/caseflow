@@ -225,7 +225,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket
             AND AOD IN ('G', 'Y')
           group by FOLDER_NR
         ) AOD_HEARINGS on AOD_HEARINGS.FOLDER_NR = BFKEY
-        where BFMPRO <> 'HIS' and BFD19 is not null
+        where BFMPRO <> 'HIS' and BFD19 is not null and BFAC = '3'
       )
       group by PRIORITY, READY
     SQL
