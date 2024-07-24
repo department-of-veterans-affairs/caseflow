@@ -9,7 +9,9 @@ Object {
         data-css-818q9q=""
       >
         <span>
-          <a>
+          <a
+            href="/transcription_files"
+          >
             &lt; 
             Back to Transcription queue
           </a>
@@ -582,7 +584,9 @@ Object {
       data-css-818q9q=""
     >
       <span>
-        <a>
+        <a
+          href="/transcription_files"
+        >
           &lt; 
           Back to Transcription queue
         </a>
