@@ -26,16 +26,25 @@ import IssueTags from './IssueTags';
 import { useDispatch } from 'react-redux';
 import { setOpenedAccordionSections } from '../../reader/PdfViewer/PdfViewerActions';
 
-const ReaderSidebar = (doc, documents, hideSidebar, toggleSidebar) => {
+const ReaderSidebar = ({
+  // appeal,
+  doc,
+  documents,
+  toggleSideBar,
+}) => {
   const [isKeyboardModalOpen, setIsKeyboardModalOpen] = useState(false);
   const dispatch = useDispatch();
 
   const onAccordionOpenOrClose = (openedSections) => dispatch(setOpenedAccordionSections(openedSections, []));
 
   return (
-    <div className="cf-sidebar-wrapper-prototype">
+    <nav id="prototype-sidebar">
       <div className="cf-sidebar-header">
-        <Button name="hide menu" classNames={['cf-pdf-button']} id="hide-menu-header" onClick={() => toggleSidebar()}>
+        <Button name="hide menu"
+          classNames={['cf-pdf-button']}
+          id="hide-menu-header"
+          onClick={() => toggleSideBar()}
+        >
           <h2 className="cf-non-stylized-header">
             Hide menu <i className="fa fa-chevron-right" aria-hidden="true" />
           </h2>
@@ -61,13 +70,16 @@ const ReaderSidebar = (doc, documents, hideSidebar, toggleSidebar) => {
             />
           </AccordionSection>
           <AccordionSection title="Categories">
-            <SideBarCategories doc={doc?.doc} documents={documents} />
+            <SideBarCategories
+              doc={doc}
+              documents={documents}
+            />
           </AccordionSection>
           <AccordionSection title="Issue tags">
-            <IssueTags doc={doc?.doc} />
+            <IssueTags doc={doc} />
           </AccordionSection>
           <AccordionSection title="Comments" id="comments-header">
-            <Comments documentId={doc?.doc?.id} />
+            <Comments documentId={doc.id} />
           </AccordionSection>
         </Accordion>
       </div>
@@ -129,11 +141,12 @@ const ReaderSidebar = (doc, documents, hideSidebar, toggleSidebar) => {
           </Modal>
         </div>
       )}
-    </div>
+    </nav>
   );
 };
 
 ReaderSidebar.propTypes = {
+  appeal: PropTypes.object,
   doc: PropTypes.shape({
     content_url: PropTypes.string,
     filename: PropTypes.string,
@@ -141,8 +154,9 @@ ReaderSidebar.propTypes = {
     receivedAt: PropTypes.string,
     type: PropTypes.string,
   }),
-  hideSidebar: PropTypes.bool,
-  toggleSidebar: PropTypes.func,
+  documents: PropTypes.object,
+  showSideBar: PropTypes.bool,
+  toggleSideBar: PropTypes.func,
 };
 
 export default ReaderSidebar;
