@@ -93,7 +93,7 @@ Object {
               >
                 4:00 AM MDT
               </span>
-
+              
               <br />
               6:00 AM EDT
             </p>
@@ -106,26 +106,26 @@ Object {
             class="time-slot-card-label"
           >
             Bob Smith
-
+             
             <span
               style="margin: 0px 2px;"
             >
               ·
             </span>
-
+             
             Veteran ID: 500000003
           </span>
           <div
             class="time-slot-details"
           >
             1 issue
-
+             
             <span
               style="margin: 0px 5px;"
             >
               ·
             </span>
-
+             
             <span
               aria-describedby="badge-200628-4"
               aria-label=""
@@ -149,7 +149,7 @@ Object {
                 role="tooltip"
               >
                 <style>
-
+                  
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -223,26 +223,26 @@ Object {
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
                 </style>
                 Hearing Request
               </div>
             </span>
-
+             
             200628-4
-
+             
             <span
               style="margin: 0px 5px;"
             >
               ·
             </span>
-
+             
             <span
               style="margin: 0px 5px;"
             >
               ·
             </span>
-
+             
             <span
               aria-describedby="tooltip-id"
               aria-label=""
@@ -265,7 +265,7 @@ Object {
                 role="tooltip"
               >
                 <style>
-
+                  
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -339,7 +339,7 @@ Object {
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
                 </style>
                 AMERICAN LEGION
               </div>
@@ -351,23 +351,23 @@ Object {
             <span>
               Original
             </span>
-
+             
             <span
               style="margin: 0px 5px;"
             >
               ·
             </span>
-
+             
             <span>
               Central
             </span>
-
+             
             <span
               style="margin: 0px 5px;"
             >
               ·
             </span>
-
+             
             <a
               href="/queue/appeals/005334f7-b5c6-490c-a310-7dc5db22c8c3/?hearingDate=2020-08-15&regionalOffice=RO17"
               id="005334f7-b5c6-490c-a310-7dc5db22c8c3"
@@ -402,26 +402,26 @@ Object {
             class="time-slot-card-label"
           >
             Tom Brady
-
+             
             <span
               style="margin: 0px 2px;"
             >
               ·
             </span>
-
+             
             Veteran ID: 100000005
           </span>
           <div
             class="time-slot-details"
           >
             1 issue
-
+             
             <span
               style="margin: 0px 5px;"
             >
               ·
             </span>
-
+             
             <span
               aria-describedby="badge-200624-613"
               aria-label=""
@@ -445,7 +445,7 @@ Object {
                 role="tooltip"
               >
                 <style>
-
+                  
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -519,26 +519,26 @@ Object {
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
                 </style>
                 Legacy
               </div>
             </span>
-
+             
             200624-613
-
+             
             <span
               style="margin: 0px 5px;"
             >
               ·
             </span>
-
+             
             <span
               style="margin: 0px 5px;"
             >
               ·
             </span>
-
+             
             <span
               aria-describedby="tooltip-id"
               aria-label=""
@@ -561,7 +561,7 @@ Object {
                 role="tooltip"
               >
                 <style>
-
+                  
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -635,7 +635,7 @@ Object {
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
                 </style>
                 AMERICAN LEGION
               </div>
@@ -647,23 +647,23 @@ Object {
             <span>
               Original
             </span>
-
+             
             <span
               style="margin: 0px 5px;"
             >
               ·
             </span>
-
+             
             <span>
               Video
             </span>
-
+             
             <span
               style="margin: 0px 5px;"
             >
               ·
             </span>
-
+             
             <a
               href="/queue/appeals/0bf0263c-d863-4405-9b2e-f55cff77c6c3/?hearingDate=2020-08-15&regionalOffice=RO17"
               id="0bf0263c-d863-4405-9b2e-f55cff77c6c3"
@@ -698,26 +698,26 @@ Object {
             class="time-slot-card-label"
           >
             Tom Brady
-
+             
             <span
               style="margin: 0px 2px;"
             >
               ·
             </span>
-
+             
             Veteran ID: 100000005
           </span>
           <div
             class="time-slot-details"
           >
             0 issues
-
+             
             <span
               style="margin: 0px 5px;"
             >
               ·
             </span>
-
+             
             <span
               aria-describedby="badge-200624-614"
               aria-label=""
@@ -741,7 +741,7 @@ Object {
                 role="tooltip"
               >
                 <style>
-
+                  
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -815,26 +815,26 @@ Object {
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
                 </style>
                 Hearing Request
               </div>
             </span>
-
+             
             200624-614
-
+             
             <span
               style="margin: 0px 5px;"
             >
               ·
             </span>
-
+             
             <span
               style="margin: 0px 5px;"
             >
               ·
             </span>
-
+             
             <span
               aria-describedby="tooltip-id"
               aria-label=""
@@ -857,7 +857,7 @@ Object {
                 role="tooltip"
               >
                 <style>
-
+                  
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -931,7 +931,7 @@ Object {
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
                 </style>
                 AMERICAN LEGION
               </div>
@@ -943,23 +943,23 @@ Object {
             <span>
               Original
             </span>
-
+             
             <span
               style="margin: 0px 5px;"
             >
               ·
             </span>
-
+             
             <span>
               Video
             </span>
-
+             
             <span
               style="margin: 0px 5px;"
             >
               ·
             </span>
-
+             
             <a
               href="/queue/appeals/0bf0263c-d863-4405-9b2e-f55cff77c6c4/?hearingDate=2020-08-15&regionalOffice=RO17"
               id="0bf0263c-d863-4405-9b2e-f55cff77c6c4"
@@ -987,7 +987,7 @@ Object {
             >
               4:00 AM MDT
             </span>
-
+            
             <br />
             6:00 AM EDT
           </p>
@@ -1000,26 +1000,26 @@ Object {
           class="time-slot-card-label"
         >
           Bob Smith
-
+           
           <span
             style="margin: 0px 2px;"
           >
             ·
           </span>
-
+           
           Veteran ID: 500000003
         </span>
         <div
           class="time-slot-details"
         >
           1 issue
-
+           
           <span
             style="margin: 0px 5px;"
           >
             ·
           </span>
-
+           
           <span
             aria-describedby="badge-200628-4"
             aria-label=""
@@ -1043,7 +1043,7 @@ Object {
               role="tooltip"
             >
               <style>
-
+                
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -1117,26 +1117,26 @@ Object {
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
               </style>
               Hearing Request
             </div>
           </span>
-
+           
           200628-4
-
+           
           <span
             style="margin: 0px 5px;"
           >
             ·
           </span>
-
+           
           <span
             style="margin: 0px 5px;"
           >
             ·
           </span>
-
+           
           <span
             aria-describedby="tooltip-id"
             aria-label=""
@@ -1159,7 +1159,7 @@ Object {
               role="tooltip"
             >
               <style>
-
+                
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -1233,7 +1233,7 @@ Object {
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
               </style>
               AMERICAN LEGION
             </div>
@@ -1245,23 +1245,23 @@ Object {
           <span>
             Original
           </span>
-
+           
           <span
             style="margin: 0px 5px;"
           >
             ·
           </span>
-
+           
           <span>
             Central
           </span>
-
+           
           <span
             style="margin: 0px 5px;"
           >
             ·
           </span>
-
+           
           <a
             href="/queue/appeals/005334f7-b5c6-490c-a310-7dc5db22c8c3/?hearingDate=2020-08-15&regionalOffice=RO17"
             id="005334f7-b5c6-490c-a310-7dc5db22c8c3"
@@ -1296,26 +1296,26 @@ Object {
           class="time-slot-card-label"
         >
           Tom Brady
-
+           
           <span
             style="margin: 0px 2px;"
           >
             ·
           </span>
-
+           
           Veteran ID: 100000005
         </span>
         <div
           class="time-slot-details"
         >
           1 issue
-
+           
           <span
             style="margin: 0px 5px;"
           >
             ·
           </span>
-
+           
           <span
             aria-describedby="badge-200624-613"
             aria-label=""
@@ -1339,7 +1339,7 @@ Object {
               role="tooltip"
             >
               <style>
-
+                
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -1413,26 +1413,26 @@ Object {
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
               </style>
               Legacy
             </div>
           </span>
-
+           
           200624-613
-
+           
           <span
             style="margin: 0px 5px;"
           >
             ·
           </span>
-
+           
           <span
             style="margin: 0px 5px;"
           >
             ·
           </span>
-
+           
           <span
             aria-describedby="tooltip-id"
             aria-label=""
@@ -1455,7 +1455,7 @@ Object {
               role="tooltip"
             >
               <style>
-
+                
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -1529,7 +1529,7 @@ Object {
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
               </style>
               AMERICAN LEGION
             </div>
@@ -1541,23 +1541,23 @@ Object {
           <span>
             Original
           </span>
-
+           
           <span
             style="margin: 0px 5px;"
           >
             ·
           </span>
-
+           
           <span>
             Video
           </span>
-
+           
           <span
             style="margin: 0px 5px;"
           >
             ·
           </span>
-
+           
           <a
             href="/queue/appeals/0bf0263c-d863-4405-9b2e-f55cff77c6c3/?hearingDate=2020-08-15&regionalOffice=RO17"
             id="0bf0263c-d863-4405-9b2e-f55cff77c6c3"
@@ -1592,26 +1592,26 @@ Object {
           class="time-slot-card-label"
         >
           Tom Brady
-
+           
           <span
             style="margin: 0px 2px;"
           >
             ·
           </span>
-
+           
           Veteran ID: 100000005
         </span>
         <div
           class="time-slot-details"
         >
           0 issues
-
+           
           <span
             style="margin: 0px 5px;"
           >
             ·
           </span>
-
+           
           <span
             aria-describedby="badge-200624-614"
             aria-label=""
@@ -1635,7 +1635,7 @@ Object {
               role="tooltip"
             >
               <style>
-
+                
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -1709,26 +1709,26 @@ Object {
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
               </style>
               Hearing Request
             </div>
           </span>
-
+           
           200624-614
-
+           
           <span
             style="margin: 0px 5px;"
           >
             ·
           </span>
-
+           
           <span
             style="margin: 0px 5px;"
           >
             ·
           </span>
-
+           
           <span
             aria-describedby="tooltip-id"
             aria-label=""
@@ -1751,7 +1751,7 @@ Object {
               role="tooltip"
             >
               <style>
-
+                
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -1825,7 +1825,7 @@ Object {
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
               </style>
               AMERICAN LEGION
             </div>
@@ -1837,23 +1837,23 @@ Object {
           <span>
             Original
           </span>
-
+           
           <span
             style="margin: 0px 5px;"
           >
             ·
           </span>
-
+           
           <span>
             Video
           </span>
-
+           
           <span
             style="margin: 0px 5px;"
           >
             ·
           </span>
-
+           
           <a
             href="/queue/appeals/0bf0263c-d863-4405-9b2e-f55cff77c6c4/?hearingDate=2020-08-15&regionalOffice=RO17"
             id="0bf0263c-d863-4405-9b2e-f55cff77c6c4"

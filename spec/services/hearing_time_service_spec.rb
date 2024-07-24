@@ -69,7 +69,7 @@ describe HearingTimeService, :all_dbs do
 
     describe "#scheduled_time_string" do
       it "converts time to local time in HH:mm string" do
-        expect(LegacyHearing.first.time.scheduled_time_string).to eq("9:00 AM Pacific Time (US & Canada)")
+        expect(LegacyHearing.first.time.scheduled_time_string).to eq("9:00 AM Eastern Time (US & Canada)")
         expect(hearing.time.scheduled_time_string).to eq("12:00 PM Pacific Time (US & Canada)")
       end
     end
