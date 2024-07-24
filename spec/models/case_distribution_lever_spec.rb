@@ -106,7 +106,6 @@ RSpec.describe CaseDistributionLever, :all_dbs do
   end
 
   context ".aoj_affinity_days" do
-
     it "only returns value with aoj affinity days" do
       aoj_affinity_days = CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.aoj_affinity_days)
 
