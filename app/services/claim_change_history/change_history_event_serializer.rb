@@ -33,7 +33,12 @@ class ChangeHistoryEventSerializer
       newIssueDescription: object&.new_issue_description,
       newDecisionDate: object&.new_decision_date,
       modificationRequestReason: object&.modification_request_reason,
-      issueModificationRequestWithdrawalDate: object&.issue_modification_request_withdrawal_date
+      issueModificationRequestWithdrawalDate: object&.issue_modification_request_withdrawal_date,
+      removeOriginalIssue: object&.remove_original_issue,
+      issueModificationRequestStatus: object&.issue_modification_request_status,
+      requestor: object&.requestor,
+      decider: object&.decider,
+      decidedAtDate: object&.decided_at_date
     }
   end
 end

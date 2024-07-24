@@ -17,7 +17,8 @@ class ClaimHistoryEvent
               :task_status, :disposition_date, :intake_completed_date, :event_user_name,
               :event_user_css_id, :new_issue_type, :new_issue_description, :new_decision_date,
               :modification_request_reason, :request_type, :decision_reason, :decided_at_date,
-              :current_claim_status, :issue_modification_request_withdrawal_date
+              :current_claim_status, :issue_modification_request_withdrawal_date, :requestor,
+              :decider, :remove_original_issue, :issue_modification_request_status
 
   EVENT_TYPES = [
     :completed_disposition,
@@ -147,6 +148,7 @@ class ClaimHistoryEvent
 
       # if assign is present in the aggregated_claim_status it means task should still be in pending status
       # hence, in progress status should not be added
+
       unless assign_status_present?(change_data)
         issue_modification_status.push from_change_data(:in_progress, change_data.merge(pending_system_hash_events))
       end
@@ -161,8 +163,6 @@ class ClaimHistoryEvent
     end
 
     def create_edited_request_issue_events(change_data)
-      # return if change_data["issue_modification_request_edited_at"].nil?
-
       edited_events = []
       versions = parse_versions(change_data["imr_versions"])
 
@@ -170,11 +170,10 @@ class ClaimHistoryEvent
       if versions.present?
         event_type = :request_edited
         event_date_hash = {}
-
         versions.map do |version|
           event_date_hash = { "event_date" => version["updated_at"][index], "event_user_name" => "System" }
           change_data = update_change_data_from_version(change_data, version, index)
-          index += 1
+
           edited_events.push from_change_data(event_type, change_data.merge(event_date_hash))
         end
       end
@@ -698,6 +697,10 @@ class ClaimHistoryEvent
       @decision_reason = change_data["decision_reason"]
       @decided_at_date = change_data["decided_at"]
       @issue_modification_request_withdrawal_date = change_data["issue_modification_request_withdrawal_date"]
+      @remove_original_issue = change_data["remove_original_issue"]
+      @requestor = change_data["requestor"]
+      @decider = change_data["decider"]
+      @issue_modification_request_status = change_data["issue_modification_request_status"]
     end
   end
 

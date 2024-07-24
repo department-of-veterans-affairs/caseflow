@@ -393,12 +393,12 @@ class BusinessLine < Organization
        LEFT JOIN intakes ON tasks.appeal_type = intakes.detail_type
        AND intakes.detail_id = tasks.appeal_id
        LEFT JOIN issue_modification_requests imr ON imr.decision_review_id = tasks.appeal_id
-          AND imr.decision_review_type = 'HigherLevelReview'
+          AND imr.decision_review_type = 'SupplementalClaim'
           AND imr.request_issue_id = request_issues.id
        LEFT JOIN LATERAL (
           SELECT * FROM issue_modification_requests imr_add
           where imr_add.decision_review_id = tasks.appeal_id
-            AND imr_add.decision_review_type = 'HigherLevelReview'
+            AND imr_add.decision_review_type = 'SupplementalClaim'
             AND imr_add.request_type = 'addition'
 				) imr_addition on true
        LEFT JOIN request_issues_updates ON request_issues_updates.review_type = tasks.appeal_type

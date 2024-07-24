@@ -33,7 +33,6 @@ class ClaimHistoryService
     # Reset the instance attributes from the last time build_events was ran
     reset_processing_attributes
     all_data = business_line.change_history_rows(@filters)
-
     all_data.entries.each do |change_data|
       process_request_issue_update_events(change_data)
       process_request_issue_events(change_data)
@@ -251,8 +250,8 @@ class ClaimHistoryService
     if issue_modification_request_id && !is_processed
       @processed_issue_modification_request_ids.add(issue_modification_request_id)
       save_events(ClaimHistoryEvent.create_issue_modification_request_event(change_data))
-      save_events(ClaimHistoryEvent.create_edited_request_issue_events(change_data))
       save_events(ClaimHistoryEvent.create_issue_modification_decision_event(change_data))
+      save_events(ClaimHistoryEvent.create_edited_request_issue_events(change_data))
     end
 
     # no matter what the status is if request_modification_request was made then pending status has to be present.
