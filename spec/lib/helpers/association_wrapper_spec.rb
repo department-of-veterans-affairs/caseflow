@@ -12,7 +12,6 @@ describe "AssocationWrapper" do
       end
       it "returns associations with other tables" do
         expect(subject.select_associations.map do |assoc|
-          # binding.pry
                  [assoc.name, assoc.class_name, assoc.options[:class_name], assoc.polymorphic?, assoc.foreign_type]
                end).to match_array [
                 [:versions, "PaperTrail::Version", "PaperTrail::Version", nil, nil],
@@ -34,46 +33,46 @@ describe "AssocationWrapper" do
                 [:correspondence_appeal, "CorrespondenceAppeal", nil, nil, nil],
                 [:cached_appeal, "CachedAppeal", nil, nil, nil]
                ]
-# binding.pry
-        # expect(subject.select_associations.map { |assoc| [assoc.name, assoc.options[:primary_key]] }).to match_array [
-        #   [:versions, nil],
-        #   [:parent, "id"],
-        #   [:children, "id"],
-        #   [:assigned_to, nil],
-        #   [:assigned_by, nil],
-        #   [:cancelled_by, nil],
-        #   [:completed_by, nil],
-        #   [:appeal, nil],
-        #   [:ama_appeal, nil],
-        #   [:legacy_appeal, nil],
-        #   [:higher_level_review, nil],
-        #   [:supplemental_claim, nil],
-        #   [:correspondence, nil],
-        #   [:attorney_case_reviews, nil],
-        #   [:task_timers, nil],
-        #   [:correspondences_appeals_task, nil],
-        #   [:correspondence_appeal, nil],
-        #   [:cached_appeal, nil]
-        # ]
-        # expect(subject.select_associations.map { |assoc| [assoc.name, assoc.options[:foreign_key]] }).to match_array [
-        #   [:versions, nil],
-        #   [:parent, "parent_id"],
-        #   [:assigned_to, nil],
-        #   [:assigned_by, nil],
-        #   [:cancelled_by, nil],
-        #   [:completed_by, nil],
-        #   [:appeal, nil],
-        #   [:ama_appeal, "appeal_id"],
-        #   [:legacy_appeal, "appeal_id"],
-        #   [:higher_level_review, "appeal_id"],
-        #   [:supplemental_claim, "appeal_id"],
-        #   [:correspondence, "appeal_id"],
-        #   [:attorney_case_reviews, nil],
-        #   [:task_timers, nil],
-        #   [:correspondences_appeals_task, nil],
-        #   [:correspondence_appeal, nil],
-        #   [:cached_appeal, :appeal_id]
-        # ]
+        expect(subject.select_associations.map { |assoc| [assoc.name, assoc.options[:primary_key]] }).to match_array [
+          [:versions, nil],
+          [:parent, "id"],
+          [:children, "id"],
+          [:assigned_to, nil],
+          [:assigned_by, nil],
+          [:cancelled_by, nil],
+          [:completed_by, nil],
+          [:appeal, nil],
+          [:ama_appeal, nil],
+          [:legacy_appeal, nil],
+          [:higher_level_review, nil],
+          [:supplemental_claim, nil],
+          [:correspondence, nil],
+          [:attorney_case_reviews, nil],
+          [:task_timers, nil],
+          [:correspondences_appeals_task, nil],
+          [:correspondence_appeal, nil],
+          [:cached_appeal, nil]
+        ]
+        expect(subject.select_associations.map { |assoc| [assoc.name, assoc.options[:foreign_key]] }).to match_array [
+          [:versions, nil],
+          [:parent, "parent_id"],
+          [:children, "parent_id"],
+          [:assigned_to, nil],
+          [:assigned_by, nil],
+          [:cancelled_by, nil],
+          [:completed_by, nil],
+          [:appeal, nil],
+          [:ama_appeal, "appeal_id"],
+          [:legacy_appeal, "appeal_id"],
+          [:higher_level_review, "appeal_id"],
+          [:supplemental_claim, "appeal_id"],
+          [:correspondence, "appeal_id"],
+          [:attorney_case_reviews, nil],
+          [:task_timers, nil],
+          [:correspondences_appeals_task, nil],
+          [:correspondence_appeal, nil],
+          [:cached_appeal, :appeal_id]
+        ]
 
         map_foreign_keys = lambda { |assoc|
           [assoc.name, assoc.belongs_to?, assoc.has_one?,
