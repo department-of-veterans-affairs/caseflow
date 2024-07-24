@@ -1,7 +1,7 @@
+import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import Layer from './Comments/Layer';
-import { css } from 'glamor';
 
 import * as PDFJS from 'pdfjs-dist';
 PDFJS.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.js';
@@ -88,7 +88,7 @@ PdfDocument.propTypes = {
   fileUrl: PropTypes.string,
   rotateDeg: PropTypes.string,
   setNumPages: PropTypes.func,
-  zoomLevel: PropTypes.string,
+  zoomLevel: PropTypes.number,
   documentId: PropTypes.number,
 };
 
