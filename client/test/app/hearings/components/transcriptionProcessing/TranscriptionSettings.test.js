@@ -85,7 +85,7 @@ describe('work assignment toggle', () => {
 });
 
 describe('weekly transcription count calculations', () => {
-  it('give correct values', () => {
+  it('gives correct values', () => {
     renderTranscriptionSettings();
     expect(screen.getByText('7 of 150')).toBeInTheDocument();
     expect(screen.getByText('0 of 0')).toBeInTheDocument();

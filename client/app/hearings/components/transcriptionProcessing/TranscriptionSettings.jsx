@@ -283,7 +283,7 @@ export default class TranscriptionSettings extends React.PureComponent {
         const index = contractors.findIndex((updatedContractor) => updatedContractor.id === contractor.id);
 
         // eslint-disable-next-line camelcase
-        contractors[index] = res.body?.transcription_contractor;
+        contractors[index] = { ...contractor, ...res.body?.transcription_contractor };
         this.setState({ contractors });
       });
   }
