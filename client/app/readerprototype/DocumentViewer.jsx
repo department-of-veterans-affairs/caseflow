@@ -6,8 +6,9 @@ import ReaderFooter from './components/ReaderFooter';
 import ReaderSearchBar from './components/ReaderSearchBar';
 import ReaderSidebar from './components/ReaderSidebar';
 import ReaderToolbar from './components/ReaderToolbar';
+import { bindActionCreators } from 'redux';
 
-import { useDispatch } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { CATEGORIES } from '../reader/analytics';
 import { stopPlacingAnnotation } from '../reader/AnnotationLayer/AnnotationActions';
 import { fetchAppealDetails } from '../reader/PdfViewer/PdfViewerActions';
@@ -29,9 +30,10 @@ const DocumentViewer = (props) => {
   const dispatch = useDispatch();
 
   const currentDocumentId = Number(props.match.params.docId);
-  // const appeal = () => dispatch(fetchAppealDetails(props.match.params.vacolsId))();
 
   useEffect(() => {
+    props.fetchAppealDetails(props.match.params.vacolsId);
+
     const keyHandler = (event) => {
       if (event.key === 'Escape') {
         event.preventDefault();
@@ -97,7 +99,7 @@ const DocumentViewer = (props) => {
             key={`${doc.content_url}`}
             rotateDeg={rotateDeg}
             setNumPages={setNumPages}
-            zoomLevel={`${zoomLevel}`}
+            zoomLevel={zoomLevel}
             documentId={currentDocumentId}
           />
         </div>
@@ -116,7 +118,7 @@ const DocumentViewer = (props) => {
       { showSideBar &&
           (
             <ReaderSidebar
-              // appeal={appeal}
+              appeal={props.appeal}
               doc={doc}
               documents={props.allDocuments}
               toggleSideBar={() => setShowSideBar(false)}
@@ -129,11 +131,28 @@ const DocumentViewer = (props) => {
   );
 };
 
+const mapStateToProps = (state) => ({
+  appeal: state.pdfViewer.loadedAppeal
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  ...bindActionCreators({
+    fetchAppealDetails
+  }, dispatch),
+});
+
+export default connect(
+  mapStateToProps, mapDispatchToProps
+)(DocumentViewer);
+
 DocumentViewer.propTypes = {
-  allDocuments: PropTypes.object,
+  appeal: PropTypes.object,
+  allDocuments: PropTypes.array,
   documentPathBase: PropTypes.string,
-  showPdf: PropTypes.func,
+  featureToggles: PropTypes.object,
+  fetchAppealDetails: PropTypes.func,
   history: PropTypes.any,
+  showPdf: PropTypes.func,
 };
 
-export default DocumentViewer;
+// export default DocumentViewer;
