@@ -287,6 +287,5 @@ class DecisionIssue < CaseflowRecord
         receipt_date: approx_decision_date
       )
     end
-    remand
   end
 end
