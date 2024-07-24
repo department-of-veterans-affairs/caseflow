@@ -99,6 +99,7 @@ Rails.application.routes.draw do
       namespace :v1 do
         post '/decision_review_created', to: 'decision_review_created#decision_review_created'
         post '/decision_review_created_error',  to: 'decision_review_created#decision_review_created_error'
+        patch '/decision_review_updated/:event_id', to: 'decision_review_updated#decision_review_updated'
       end
     end
 
