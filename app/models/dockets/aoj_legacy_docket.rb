@@ -13,12 +13,27 @@ class AojLegacyDocket < LegacyDocket
     LegacyAppeal.aoj_appeal_repository.ready_to_distribute_appeals
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity
+  def count(priority: nil, ready: nil)
+    counts_by_priority_and_readiness.inject(0) do |sum, row|
+      next sum unless (priority.nil? || (priority ? 1 : 0) == row["priority"]) &&
+                      (ready.nil? || (ready ? 1 : 0) == row["ready"])
+
+      sum + row["n"]
+    end
+  end
+  # rubocop:enable Metrics/CyclomaticComplexity
+
   def genpop_priority_count
     LegacyAppeal.aoj_appeal_repository.genpop_priority_count
   end
 
   def not_genpop_priority_count
     LegacyAppeal.aoj_appeal_repository.not_genpop_priority_count
+  end
+
+  def weight
+    count(priority: false) + nod_count * CaseDistributionLever.nod_adjustment
   end
 
   def ready_priority_appeal_ids
@@ -140,5 +155,9 @@ class AojLegacyDocket < LegacyDocket
 
   def counts_by_priority_and_readiness
     @counts_by_priority_and_readiness ||= LegacyAppeal.aoj_appeal_repository.docket_counts_by_priority_and_readiness
+  end
+
+  def nod_count
+    @nod_count ||= LegacyAppeal.aoj_appeal_repository.nod_count
   end
 end
