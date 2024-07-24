@@ -25,13 +25,16 @@ class SupplementalClaim < ClaimReview
     end
   end
 
-  # def create_remand_issues!
-  #   create_issues!(build_request_issues_from_remand)
-  # end
-
   def create_remand_issues!
-    remand = Remand.new
-    remand.create_issues
+    case decision_review_remanded
+    when HigherLevelReview.name
+      #create_issues!(build_request_issues_from_remand)
+    when Appeal.name
+      # get remand and call remand.create_issues ??
+      appeal_remand = Remand.find_by(decision_review_remanded: decision_review_remanded, type: Remand.name)
+      appeal_remand.create_issues
+    end
+
   end
 
   def decision_review_remanded?
@@ -119,6 +122,8 @@ class SupplementalClaim < ClaimReview
       limited_poa_access: issue.limited_poa_access
     )
   end
+
+  # leave this here for HLR? decision_review.rb#288
 
   # def build_request_issues_from_remand
   #   remanded_decision_issues_needing_request_issues.map do |remand_decision_issue|

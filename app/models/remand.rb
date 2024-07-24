@@ -9,7 +9,7 @@ class Remand < SupplementalClaim
   def build_request_issues
     remanded_decision_issues_needing_request_issues.map do |remand_decision_issue|
       RequestIssue.new(
-        decision_review: self,
+        decision_review: decision_review_remanded,
         contested_decision_issue_id: remand_decision_issue.id,
         contested_rating_issue_reference_id: remand_decision_issue.rating_issue_reference_id,
         contested_rating_issue_profile_date: remand_decision_issue.rating_profile_date,
@@ -22,6 +22,6 @@ class Remand < SupplementalClaim
   end
 
   def remanded_decision_issues_needing_request_issues
-    decision_issues.remanded.uncontested.where(benefit_type: benefit_type)
+    decision_review_remanded.decision_issues.remanded.uncontested.where(benefit_type: benefit_type)
   end
 end

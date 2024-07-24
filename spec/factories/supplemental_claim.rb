@@ -286,20 +286,7 @@ FactoryBot.define do
 
     factory :remand, class: Remand do
       type { Remand.name }
-      decision_review_remanded { create(:appeal) }
-
-      trait :with_decision_remanded do
-        after(:create) do |sc|
-          create(
-            :decision_issue,
-            decision_review: sc,
-            request_issues: sc.request_issues,
-            benefit_type: sc.benefit_type,
-            disposition: "remanded",
-            caseflow_decision_date: 5.days.ago.to_date
-          )
-        end
-      end
+      decision_review_remanded { create(:appeal, :with_decision_issue) }
     end
   end
 end

@@ -250,7 +250,8 @@ class DecisionIssue < CaseflowRecord
     # Checking our assumption that approx_decision_date will always be populated for Decision Issues
     fail "approx_decision_date is required to create a DTA Supplemental Claim" unless approx_decision_date
 
-    sc = SupplementalClaim.create!(
+    # If decision_review == hlr -> SC.create, else Remand.create ???
+    remand = Remand.create!(
       veteran_file_number: veteran_file_number,
       decision_review_remanded: decision_review,
       benefit_type: benefit_type,
@@ -260,17 +261,17 @@ class DecisionIssue < CaseflowRecord
     )
     fail AppealDTAPayeeCodeError, decision_review.id unless dta_payee_code
 
-    sc.create_claimant!(
+    remand.create_claimant!(
       participant_id: decision_review.claimant_participant_id,
       payee_code: dta_payee_code,
       type: decision_review.claimant.type
     )
 
-    sc
+    remand
   rescue AppealDTAPayeeCodeError
-    # mark SC as failed
-    sc.update_error!("No payee code")
-    decision_review.update_error!("DTA SC creation failed")
+    # mark remand as failed
+    remand.update_error!("No payee code")
+    decision_review.update_error!("DTA Remand creation failed")
     raise
   end
 end
