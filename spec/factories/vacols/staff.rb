@@ -133,6 +133,12 @@ FactoryBot.define do
       smemgrp { generated_smemgrp_not_equal_to_sattyid }
     end
 
+    trait :ssc_avlj do
+      svlj { "A" }
+      sattyid { generated_sattyid }
+      smemgrp { sattyid }
+    end
+
     after(:build) do |staff, evaluator|
       if evaluator.user&.full_name
         staff.snamef = evaluator.user.full_name.split(" ").first

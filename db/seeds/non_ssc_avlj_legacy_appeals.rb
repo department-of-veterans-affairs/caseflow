@@ -28,6 +28,7 @@ module Seeds
       create_non_ssc_avlj("NONSSCAN10", "Non SSC AVLJ110")
       create_ssc_avlj("SSCA11", "SSC AVLJ1")
       create_non_ssc_avlj("NONSSCAN12", "Non SSC AVLJ12")
+      create_ssc_avlj("SSCAVLJLGC", "SSC AVLJ12")
       create_non_ssc_avlj("NONSSCAN13", "Non SSC AVLJ13")
 
       create_non_ssc_avlj("SIGNAVLJLGC", "NonSSC Signing AVLJ1") #singing_avlj
@@ -37,19 +38,19 @@ module Seeds
     def create_legacy_appeals
       # the naming comes from the acceptance criteria of APPEALS-45208
       #TODO: Rename these methods
-      create_ac_1_appeals #TEAM 1
-      create_ac_2_appeals #TEAM 1
+      # create_ac_1_appeals #TEAM 1
+      # create_ac_2_appeals #TEAM 1
       # create_ac_3_appeals #TEAM 2
       # create_ac_4_appeals #TEAM 2
-      create_ac_5_appeals #TEAM 1
+      # create_ac_5_appeals #TEAM 1
       # create_ac_6_appeals #TEAM 2
       # create_ac_7_appeals #TEAM 2
       # create_ac_8_appeals #TEAM 2
       # create_ac_9_appeals #TEAM 2
       # create_ac_10_appeals #TEAM 2
-      create_ac_11_appeals #TEAM 1
-      # create_ac_12_appeals #TEAM 3
-      # create_ac_13_appeals #TEAM 3
+      # create_ac_11_appeals #TEAM 1
+      create_ac_12_appeals
+      create_ac_13_appeals
     end
 
     def create_ac_1_appeals
@@ -195,19 +196,23 @@ module Seeds
 
     def create_ac_12_appeals
       # A non-SSC AVLJ that has 4 appeals where the non-SSC AVLJ held a hearing first, but a second hearing was held by an SSC AVLJ.
-# These cases should NOT be returned to the board
+      # These cases should NOT be returned to the board
       avlj = User.find_by(css_id: "NONSSCAN12")
       ssc_avlj = User.find_by(css_id: "SSCAVLJLGC")
-      create_legacy_appeal(priority=true, avlj, docket_date)
+      docket_date = 90.days.ago
+      legacy_appeal = create_legacy_appeal(priority=true, avlj, docket_date)
       create_second_hearing_for_legacy_appeal(legacy_appeal, docket_date, ssc_avlj)
 
-      create_legacy_appeal(priority=false, avlj, docket_date)
+      docket_date = 60.days.ago
+      legacy_appeal = create_legacy_appeal(priority=false, avlj, docket_date)
       create_second_hearing_for_legacy_appeal(legacy_appeal, docket_date, ssc_avlj)
 
-      create_legacy_appeal(priority=true, avlj, docket_date)
+      docket_date = 30.days.ago
+      legacy_appeal = create_legacy_appeal(priority=true, avlj, docket_date)
       create_second_hearing_for_legacy_appeal(legacy_appeal, docket_date, ssc_avlj)
 
-      create_legacy_appeal(priority=false, avlj, docket_date)
+      docket_date = 15.days.ago
+      legacy_appeal = create_legacy_appeal(priority=false, avlj, docket_date)
       create_second_hearing_for_legacy_appeal(legacy_appeal, docket_date, ssc_avlj)
     end
 
@@ -215,16 +220,20 @@ module Seeds
       # A non-SSC AVLJ that has 4 appeals where the non-SSC AVLJ held a hearing first, but a second hearing was held by different non-SSC AVLJ.
       avlj = User.find_by(css_id: "NONSSCAN13")
       avlj2 = User.find_by(css_id: "AVLJLGC2")
-      create_legacy_appeal(priority=true, avlj, docket_date)
+      docket_date = 90.days.ago
+      legacy_appeal = create_legacy_appeal(priority=true, avlj, docket_date)
       create_second_hearing_for_legacy_appeal(legacy_appeal, docket_date, avlj2)
 
-      create_legacy_appeal(priority=false, avlj, docket_date)
+      docket_date = 60.days.ago
+      legacy_appeal = create_legacy_appeal(priority=false, avlj, docket_date)
       create_second_hearing_for_legacy_appeal(legacy_appeal, docket_date, avlj2)
 
-      create_legacy_appeal(priority=true, avlj, docket_date)
+      docket_date = 30.days.ago
+      legacy_appeal = create_legacy_appeal(priority=true, avlj, docket_date)
       create_second_hearing_for_legacy_appeal(legacy_appeal, docket_date, avlj2)
 
-      create_legacy_appeal(priority=false, avlj, docket_date)
+      docket_date = 15.days.ago
+      legacy_appeal = create_legacy_appeal(priority=false, avlj, docket_date)
       create_second_hearing_for_legacy_appeal(legacy_appeal, docket_date, avlj2)
     end
 
@@ -234,8 +243,8 @@ module Seeds
     end
 
     def create_ssc_avlj(css_id, full_name)
-      # User.find_by_css_id(css_id) ||
-      #   create(:user, :ssc_avlj_user, css_id: css_id, full_name: full_name) #to be devolped
+      User.find_by_css_id(css_id) ||
+        create(:user, :ssc_avlj_user, css_id: css_id, full_name: full_name)
     end
 
     def demo_regional_office
@@ -289,6 +298,7 @@ module Seeds
 
       create(:available_hearing_locations, demo_regional_office, appeal: legacy_appeal)
       Timecop.return
+      legacy_appeal
     end
 
     def create_priority_video_vacols_case(veteran, correspondent, associated_judge, days_ago)
@@ -395,8 +405,15 @@ module Seeds
   # B.BFMEMID as PREV_DECIDING_JUDGE
     end
 
-    def create_second_hearing_for_legacy_appeal(legacy_appeal, avlj)
+    def create_second_hearing_for_legacy_appeal(legacy_appeal, docket_date, avlj)
+      case_hearing = create(
+        :case_hearing,
+        :disposition_held,
+        folder_nr: legacy_appeal.vacols_id,
+        hearing_date: docket_date.to_date,
+        user: avlj
+      )
+      create(:legacy_hearing, appeal: legacy_appeal, case_hearing: case_hearing)
     end
-
   end
 end
