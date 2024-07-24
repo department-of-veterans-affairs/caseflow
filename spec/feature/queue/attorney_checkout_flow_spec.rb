@@ -223,6 +223,9 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       expect(page).to have_content("Select Remand Reasons")
       expect(page).to have_content("Issue 2 of 2")
 
+      click_on "Continue"
+      all("label", text: "No medical examination", visible: false, count: 2, wait: 2)[1].click
+
       within all("div.remand-reasons-options")[1] do
         javascript_click(find_field("No medical examination", visible: false).sibling("label"))
       end
@@ -494,6 +497,11 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         end
 
         find("#button-next-button").send_keys(:return)
+
+        all("label", text: "Current findings", count: 2, wait: 2)[1].click
+        all("label", text: "Nexus opinion", count: 2)[1].click
+        all("label", text: "Before certification", count: 3)[1].click
+        all("label", text: "After certification", count: 3)[2].click
 
         expect(page).to have_content("Submit Draft Decision for Review")
 

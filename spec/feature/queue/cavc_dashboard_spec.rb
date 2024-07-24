@@ -73,7 +73,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
 
       expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}"
       click_button "CAVC Dashboard"
-      expect(page).not_to have_content("Abandoned")
+      expect(page.has_no_content?("Abandoned")).to eq(true)
     end
 
     it "cancel modal functions properly when changes have not been saved" do

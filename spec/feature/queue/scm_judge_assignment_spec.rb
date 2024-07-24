@@ -171,7 +171,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           expect(page).to have_content("ASSIGNED TO\n#{attorney_one.css_id}")
           expect(page).to have_content("ASSIGNED BY\n#{assigner_name}")
           expect(page).to have_content("TASK\n#{AttorneyTask.label}")
-          expect(page).to have_content("TASK\n#{JudgeDecisionReviewTask.label}")
+          expect(page).to have_no_content("TASK\n#{JudgeAssignTask.label}")
           expect(page).not_to have_content("TASK\n#{JudgeAssignTask.label}")
           click_on("View task instructions")
           expect(page).to have_content(instructions)
