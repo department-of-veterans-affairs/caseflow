@@ -26,11 +26,10 @@ class SupplementalClaim < ClaimReview
   end
 
   def create_remand_issues!
-    case decision_review_remanded.class
-    when Appeal
+    if decision_review_remanded_type == Appeal.name
       appeal_remand = find_by(decision_review_remanded: decision_review_remanded, type: Remand.name)
       appeal_remand.create_issues
-    when HigherLevelReview
+    else
       create_issues!(build_request_issues_from_remand)
     end
   end

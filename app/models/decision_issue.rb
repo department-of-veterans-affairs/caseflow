@@ -268,8 +268,8 @@ class DecisionIssue < CaseflowRecord
   end
 
   def determine_remand_creation_type
-    if decision_review == Appeal.name
-      remand = Remand.create!(
+    remand = if decision_review == Appeal.name
+      Remand.create!(
         veteran_file_number: veteran_file_number,
         decision_review_remanded: decision_review,
         benefit_type: benefit_type,
@@ -278,7 +278,7 @@ class DecisionIssue < CaseflowRecord
         receipt_date: approx_decision_date
       )
     else
-      remand = SupplementalClaim.create!(
+      SupplementalClaim.create!(
         veteran_file_number: veteran_file_number,
         decision_review_remanded: decision_review,
         benefit_type: benefit_type,
