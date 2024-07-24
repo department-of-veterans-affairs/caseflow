@@ -259,7 +259,6 @@ FactoryBot.define do
                   )
                 end
 
-                puts "@@@@@@@@@@@@@@@@@@@@@@@@@ signing_judge_sattyid #{signing_judge_sattyid} @@@@@@@@@@@@@@@@@@@@@@@@@"
                 original_case = create(
                   :case,
                   :status_complete,
@@ -279,7 +278,6 @@ FactoryBot.define do
                   case_issues: original_issues
                 )
 
-                puts "%%%%%%%%%%%%%%%%%%%%%% original_case #{original_case.bfmemid} %%%%%%%%%%%%%%%%%%%%%%"
                 if evaluator.tied_to
                   create(
                     :case_hearing,
