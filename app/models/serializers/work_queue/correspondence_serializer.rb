@@ -29,10 +29,7 @@ class WorkQueue::CorrespondenceSerializer
         task.type == "EfolderUploadFailedTask"
     end
 
-    # next unless filtered_tasks.empty?
     tasks = []
-
-    # next unless !filtered_tasks.empty?
 
     if !filtered_tasks.empty?
       filtered_tasks.each do |task|
@@ -43,6 +40,7 @@ class WorkQueue::CorrespondenceSerializer
             assigned_to: task.assigned_to_type == "Organization" ? task.assigned_to.name : task.assigned_to.css_id,
             assigned_at: task.assigned_at.strftime("%m/%d/%Y"),
             instructions: task.instructions,
+            assigned_to_type: task.assigned_to_type
           }
       end
     end

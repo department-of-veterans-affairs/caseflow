@@ -1310,7 +1310,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
 .correspondence-case-timeline-container {
   border: 1px solid $color-gray-darker;
-  width: fit-content;
+  min-height: 200px;
   padding-left: 30px;
 }
 
