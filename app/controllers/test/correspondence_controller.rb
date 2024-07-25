@@ -8,6 +8,10 @@ class Test::CorrespondenceController < ApplicationController
   before_action :verify_access, only: [:index]
   before_action :verify_feature_toggle, only: [:index]
 
+  VALID_CE_API_VBMS_DOCUMENT_TYPE_IDS = [
+    163, 1186, 1320, 1333, 1348, 1458, 1608, 1643, 1754
+  ].freeze
+
   def index
     render_access_error unless verify_access && access_allowed?
   end
@@ -133,7 +137,7 @@ class Test::CorrespondenceController < ApplicationController
       uuid: SecureRandom.uuid,
       correspondence_id: correspondence.id,
       document_type: doc_type,
-      vbms_document_type_id: doc_type,
+      vbms_document_type_id: VALID_CE_API_VBMS_DOCUMENT_TYPE_IDS.sample,
       pages: rand(1..30)
     )
   end
