@@ -37,7 +37,7 @@ class WorkQueue::CorrespondenceSerializer
         tasks <<
           {
             type: task.label,
-            assigned_to: task.assigned_to_type == "Organization" ? task.assigned_to.name : task.assigned_to.css_id,
+            assigned_to: (task.assigned_to_type == "Organization") ? task.assigned_to.name : task.assigned_to.css_id,
             assigned_at: task.assigned_at.strftime("%m/%d/%Y"),
             instructions: task.instructions,
             assigned_to_type: task.assigned_to_type
