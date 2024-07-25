@@ -21,7 +21,7 @@ describe SupplementalClaim, :postgres do
       benefit_type: benefit_type,
       legacy_opt_in_approved: legacy_opt_in_approved,
       veteran_is_not_claimant: veteran_is_not_claimant,
-      decision_review_remanded: decision_review_remanded,
+      decision_review_remanded: decision_review_remanded
     )
   end
 
@@ -127,7 +127,7 @@ describe SupplementalClaim, :postgres do
         benefit_type: benefit_type,
         legacy_opt_in_approved: legacy_opt_in_approved,
         veteran_is_not_claimant: veteran_is_not_claimant,
-        decision_review_remanded: decision_review_remanded,
+        decision_review_remanded: decision_review_remanded
       )
     end
     subject { supplemental_claim.create_remand_issues! }
