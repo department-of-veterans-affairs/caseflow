@@ -154,6 +154,7 @@ describe Api::V1::VaNotifyController, type: :controller do
       post :notifications_update, params: payload_sms
 
       perform_enqueued_jobs { ProcessNotificationStatusUpdatesJob.perform_later }
+      binding.pry
       expect(notification_sms.reload.sms_notification_status).to eq("created")
     end
   end

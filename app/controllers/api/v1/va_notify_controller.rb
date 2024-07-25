@@ -23,7 +23,9 @@ class Api::V1::VaNotifyController < Api::ApplicationController
   end
 
   def required_params
-    id_param, notification_type_param, to_param, status_param, status_reason_param = params.require([:id, :notification_type, :to, :status, :status_reason])
+    id_param, notification_type_param,
+    to_param, status_param,
+    status_reason_param = params.require([:id, :notification_type, :to, :status, :status_reason])
     {
       external_id: id_param,
       notification_type: notification_type_param,
@@ -54,7 +56,7 @@ class Api::V1::VaNotifyController < Api::ApplicationController
 
   def send_sqs_message
     sqs = SqsService.sqs_client
-    send_message_result = sqs.send_message(build_sqs_message)
+    sqs.send_message(build_sqs_message)
   end
 
   def log_error(error)
