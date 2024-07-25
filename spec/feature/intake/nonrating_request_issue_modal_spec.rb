@@ -53,6 +53,7 @@ feature "Nonrating Request Issue Modal", :postgres do
     visit_and_test_categories(included_category, excluded_category, benefit_type, mst_pact)
   end
 
+  # rubocop:disable Metrics/AbcSize
   def visit_and_test_categories(included_category, excluded_category, benefit_type, mst_pact)
     visit "/intake"
     click_intake_continue
@@ -68,15 +69,18 @@ feature "Nonrating Request Issue Modal", :postgres do
     )
 
     click_intake_finish
-    expect(page).to have_content("Intake completed") if %w[compensation pension].include?(benefit_type)
-
-    # hesitate just a little so non-comp background tasks can finish.
-    sleep 1
+    expect(page).to have_text("Loading...")
+    if benefit_type == "vha"
+      expect(page).to have_content("Success!")
+    else
+      expect(page).to have_content("Intake completed")
+    end
 
     expect(RequestIssue.find_by(
              nonrating_issue_category: included_category
            )).to_not be_nil
   end
+  # rubocop:enable Metrics/AbcSize
 
   context "when it is a claim review" do
     it "Shows the correct issue categories by benefit type" do

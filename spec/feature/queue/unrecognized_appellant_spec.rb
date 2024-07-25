@@ -151,7 +151,7 @@ feature "Unrecognized appellants", :postgres do
 
     it "should not show the edit information button if there's a POA already" do
       reload_case_detail_page appeal_with_recognized_appellant.uuid
-      expect(page).not_to have_content("Edit Information")
+      expect(page.has_no_content?("Edit Information")).to eq(true)
     end
 
     context "update POA information" do

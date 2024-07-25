@@ -2,6 +2,9 @@
 
 RSpec.feature "Team management page", :postgres do
   let(:user) { create(:user) }
+  # rubocop:disable Layout/LineLength
+  let(:team_management_text) { "*When the box is checked, the judge will not receive appeals with which there is an existing affinity relationship. Any appeal with an affinity relationship to that judge will immediately be released for distribution to any judge once the appeal is ready to distribute. Appeals that are tied (e.g., legacy hearing) are unaffected by this value." }
+  # rubocop:enable Layout/LineLength
 
   before do
     Bva.singleton.add_user(user)
@@ -65,7 +68,7 @@ RSpec.feature "Team management page", :postgres do
           expect(page).to have_content(error_message)
 
           find("button", text: "Cancel").click
-          expect(page).not_to have_content(error_message)
+          expect(page.has_no_content?(error_message)).to eq(true)
         end
       end
 
@@ -101,7 +104,7 @@ RSpec.feature "Team management page", :postgres do
           expect(page).to have_content(error_message)
 
           find("button", text: "Cancel").click
-          expect(page).not_to have_content(error_message)
+          expect(page.has_no_content?(error_message)).to eq(true)
         end
 
         step "try to add a Private Bar with the same participant id" do
@@ -113,7 +116,8 @@ RSpec.feature "Team management page", :postgres do
           expect(page).to have_content(error_message)
 
           find("button", text: "Cancel").click
-          expect(page).not_to have_content(error_message)
+
+          expect(page.has_no_content?(error_message)).to eq(true)
         end
       end
     end
@@ -149,6 +153,20 @@ RSpec.feature "Team management page", :postgres do
   describe "Toggling distribution toggles for a judge team" do
     let!(:judge_team) { JudgeTeam.create_for_judge(create(:user)) }
 
+    shared_examples "when acd_exclude_from_affinity toggle is off" do
+      before { FeatureToggle.disable!(:acd_exclude_from_affinity) }
+      after { FeatureToggle.enable!(:acd_exclude_from_affinity) }
+
+      # rubocop:disable Layout/LineLength
+      scenario "user cannot view or change Exclude from Affinity Appeals toggle" do
+        visit("/team_management")
+        expect(page).to have_content("Judge Teams")
+        expect(page.has_no_content?("*When the box is checked, the judge will not receive appeals with which there is an existing affinity relationship. Any appeal with an affinity relationship to that judge will immediately be released for distribution to any judge once the appeal is ready to distribute. Appeals that are tied (e.g., legacy hearing) are unaffected by this value.")).to eq(true)
+        expect(page).not_to have_field("excludeJudgeFromAffinityCases-#{judge_team.id}", visible: false, disabled: false)
+        expect(page.has_no_content?("Exclude Judge")).to eq(true)
+      end
+    end
+
     context "when user is in Bva organization" do
       before { FeatureToggle.enable!(:acd_exclude_from_affinity) }
       scenario "user can view priority push availablity, but cannot change it" do
@@ -167,11 +185,10 @@ RSpec.feature "Team management page", :postgres do
         expect(judge_team.reload.accepts_priority_pushed_cases).to be true
       end
 
-      # rubocop:disable Layout/LineLength
       scenario "user can view and change Exclude from Affinity Appeals toggle" do
         visit("/team_management")
         expect(page).to have_content("Judge Teams")
-        expect(page).to have_content("*When the box is checked, the judge will not receive appeals with which there is an existing affinity relationship. Any appeal with an affinity relationship to that judge will immediately be released for distribution to any judge once the appeal is ready to distribute. Appeals that are tied (e.g., legacy hearing) are unaffected by this value.")
+        expect(page).to have_content(team_management_text)
         expect(page).to have_field("excludeJudgeFromAffinityCases-#{judge_team.id}", visible: false, disabled: false)
 
         expect(judge_team.reload.exclude_appeals_from_affinity).to be false
@@ -183,19 +200,8 @@ RSpec.feature "Team management page", :postgres do
         expect(judge_team.reload.exclude_appeals_from_affinity).to be true
       end
 
-      context "when acd_exclude_from_affinity toggle is off" do
-        before { FeatureToggle.disable!(:acd_exclude_from_affinity) }
-
-        scenario "user cannot view or change Exclude from Affinity Appeals toggle" do
-          visit("/team_management")
-          expect(page).to have_content("Judge Teams")
-          expect(page).not_to have_content("*When the box is checked, the judge will not receive appeals with which there is an existing affinity relationship. Any appeal with an affinity relationship to that judge will immediately be released for distribution to any judge once the appeal is ready to distribute. Appeals that are tied (e.g., legacy hearing) are unaffected by this value.")
-          expect(page).not_to have_field("excludeJudgeFromAffinityCases-#{judge_team.id}", visible: false, disabled: false)
-          expect(page).not_to have_content("Exclude Judge")
-        end
-      end
+      it_behaves_like "when acd_exclude_from_affinity toggle is off"
     end
-    # rubocop:enable Layout/LineLength
 
     context "when the user is a dvc" do
       before do
@@ -249,11 +255,10 @@ RSpec.feature "Team management page", :postgres do
         expect(judge_team.reload.ama_only_request).to be true
       end
 
-      # rubocop:disable Layout/LineLength
       scenario "user can toggle Exclude from Affinity Appeals" do
         visit("/team_management")
         expect(page).to have_content("Judge Teams")
-        expect(page).to have_content("*When the box is checked, the judge will not receive appeals with which there is an existing affinity relationship. Any appeal with an affinity relationship to that judge will immediately be released for distribution to any judge once the appeal is ready to distribute. Appeals that are tied (e.g., legacy hearing) are unaffected by this value.")
+        expect(page).to have_content(team_management_text)
 
         # Should be false by default
         expect(judge_team.reload.exclude_appeals_from_affinity).to be false
@@ -266,17 +271,7 @@ RSpec.feature "Team management page", :postgres do
         expect(judge_team.reload.exclude_appeals_from_affinity).to be true
       end
 
-      context "when acd_exclude_from_affinity toggle is off" do
-        before { FeatureToggle.disable!(:acd_exclude_from_affinity) }
-
-        scenario "user cannot view or change Exclude from Affinity Appeals toggle" do
-          visit("/team_management")
-          expect(page).to have_content("Judge Teams")
-          expect(page).not_to have_content("*When the box is checked, the judge will not receive appeals with which there is an existing affinity relationship. Any appeal with an affinity relationship to that judge will immediately be released for distribution to any judge once the appeal is ready to distribute. Appeals that are tied (e.g., legacy hearing) are unaffected by this value.")
-          expect(page).not_to have_field("excludeJudgeFromAffinityCases-#{judge_team.id}", visible: false, disabled: false)
-          expect(page).not_to have_content("Exclude Judge")
-        end
-      end
+      it_behaves_like "when acd_exclude_from_affinity toggle is off"
       # rubocop:enable Layout/LineLength
     end
   end

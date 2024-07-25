@@ -1405,8 +1405,6 @@ feature "Higher Level Review Edit issues", :all_dbs do
         expect(withdrawn_issue).to_not be_nil
         expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
 
-        sleep 1
-
         # reload to verify that the new issues populate the form
         visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
 
@@ -1523,10 +1521,9 @@ feature "Higher Level Review Edit issues", :all_dbs do
         expect(page).to have_content(COPY::CORRECT_REQUEST_ISSUES_REMOVE_CASEFLOW_TITLE)
         expect(page).to have_content(COPY::CORRECT_REQUEST_ISSUES_REMOVE_CASEFLOW_TEXT)
         click_intake_confirm
-        sleep 1
 
-        expect(current_path).to eq("/decision_reviews/education")
         expect(page).to have_content("Edit Completed")
+        expect(current_path).to eq("/decision_reviews/education")
       end
     end
 

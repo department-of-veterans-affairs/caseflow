@@ -69,6 +69,16 @@ module FeatureHelper
     page.first(selector).click
   end
 
+  def safe_click_element(element)
+    scroll_to(element)
+    element.click
+  end
+
+  # You should never use this unless you absolutely have to
+  def javascript_click(element)
+    page.execute_script("arguments[0].click();", element.native)
+  end
+
   def click_label(label_for)
     safe_click("label[for='#{label_for}']")
   end

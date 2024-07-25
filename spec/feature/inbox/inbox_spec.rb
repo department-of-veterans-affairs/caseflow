@@ -50,7 +50,7 @@ feature "Inbox", :postgres do
         visit "/inbox"
 
         expect(page).to have_content("unable to complete")
-        expect(page).not_to have_content("some PII")
+        expect(page.has_no_content?("some PII")).to eq(true)
       end
     end
 

@@ -742,8 +742,12 @@ describe LegacyAppeal, :all_dbs do
   end
 
   context "#location_history" do
-    let(:vacols_case) do
+    let!(:vacols_case) do
       create(:case).tap { |vcase| vcase.update_vacols_location!(first_location) }
+    end
+
+    let!(:vacol_case_second_location) do
+      vacols_case.update_vacols_location!(second_location)
     end
 
     let(:first_location) { "96" }
@@ -755,10 +759,6 @@ describe LegacyAppeal, :all_dbs do
       # since VACOLS sets time internally via Oracle it does not respect Timecop.
       Timecop.return
 
-      vacols_case.update_vacols_location!(second_location)
-
-      # small hesitation so date column sorts correctly
-      sleep 1
       vacols_case.update_vacols_location!(third_location)
     end
 
