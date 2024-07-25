@@ -379,7 +379,7 @@ export default class TranscriptionSettings extends React.PureComponent {
     <>
       <div {...returnLinkStyle}>
         <span>
-          <Link linkStyling>&lt; {COPY.TRANSCRIPTION_QUEUE_LINK}</Link>
+          <Link linkStyling to="/transcription_files">&lt; {COPY.TRANSCRIPTION_QUEUE_LINK}</Link>
           &nbsp;
         </span>
       </div>
