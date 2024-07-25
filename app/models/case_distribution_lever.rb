@@ -73,6 +73,10 @@ class CaseDistributionLever < ApplicationRecord
     value == Constants.ACD_LEVERS.infinite
   end
 
+  def aoj_affinity_days
+    
+  end
+
   private
 
   def value_matches_data_type
