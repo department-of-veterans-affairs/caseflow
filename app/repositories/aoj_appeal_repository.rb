@@ -36,14 +36,6 @@ class AojAppealRepository < AppealRepository
       end
     end
 
-    def age_of_n_oldest_genpop_priority_appeals(num)
-      MetricsService.record("VACOLS: age_of_n_oldest_genpop_priority_appeals",
-                            name: "age_of_n_oldest_genpop_priority_appeals",
-                            service: :vacols) do
-        VACOLS::AojCaseDocket.age_of_n_oldest_genpop_priority_appeals(num)
-      end
-    end
-
     def age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
       MetricsService.record("VACOLS: age_of_n_oldest_nonpriority_appeals_available_to_judge",
                             name: "age_of_n_oldest_nonpriority_appeals_available_to_judge",

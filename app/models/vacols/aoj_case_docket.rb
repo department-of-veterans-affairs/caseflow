@@ -251,21 +251,6 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket
     connection.exec_query(query).to_a.size
   end
 
-  def self.age_of_n_oldest_genpop_priority_appeals(num)
-    conn = connection
-
-    query = <<-SQL
-      #{SELECT_PRIORITY_APPEALS}
-      where (VLJ is null or #{ineligible_judges_sattyid_cache} or #{ineligible_judges_sattyid_cache(true)})
-      and (PREV_TYPE_ACTION = '7' or AOD = '1') and rownum <= ?
-    SQL
-
-    fmtd_query = sanitize_sql_array([query, num])
-
-    appeals = conn.exec_query(fmtd_query).to_a
-    appeals.map { |appeal| appeal["bfdloout"] }
-  end
-
   def self.age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
     conn = connection
 
