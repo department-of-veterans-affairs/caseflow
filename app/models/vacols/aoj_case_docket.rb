@@ -4,7 +4,6 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket
   # :nocov:
   self.table_name = "brieff"
 
-  # {Update??}
   LOCK_READY_APPEALS = "
     select BFCURLOC from BRIEFF
     where BRIEFF.BFMPRO = 'ACT' and BRIEFF.BFCURLOC in ('81', '83')
@@ -393,7 +392,6 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket
           PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
         from (
           #{SELECT_READY_APPEALS_ADDITIONAL_COLS}
-          #{priority_condition}
         ) BRIEFF
         #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
         #{JOIN_PREVIOUS_APPEALS}
@@ -402,6 +400,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket
       left join CORRES on APPEALS.BFCORKEY = CORRES.STAFKEY
       left join STAFF on APPEALS.VLJ = STAFF.STAFKEY
       where APPEALS.BFD19 <= TO_DATE('#{date}', 'YYYY-MM-DD HH24:MI:SS')
+      #{priority_condition}
       order by BFD19
     SQL
 

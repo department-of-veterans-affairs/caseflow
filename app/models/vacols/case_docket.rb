@@ -9,7 +9,6 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   HEARING_BACKLOG_LIMIT = 30
 
-  # {Update??}
   LOCK_READY_APPEALS = "
     select BFCURLOC from BRIEFF
     where BRIEFF.BFMPRO = 'ACT' and BRIEFF.BFCURLOC in ('81', '83')
