@@ -627,7 +627,7 @@ feature "Intake", :all_dbs do
             find("label", text: "Compensation", match: :prefer_exact).click
           end
 
-          expect(page).not_to have_content("Check the Veteran's profile for invalid information")
+          expect(page.has_no_content?("Check the Veteran's profile for invalid information")).to eq(true)
         end
       end
 

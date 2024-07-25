@@ -175,7 +175,8 @@ feature "Appeal Intake", :all_dbs do
     click_intake_finish
 
     expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
-    expect(page).not_to have_content("It may take up to 24 hours for the claim to establish")
+    # expect(page).not_to have_content("It may take up to 24 hours for the claim to establish")
+    expect(page.has_no_content?("It may take up to 24 hours for the claim to establish")).to eq(true)
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES_SHORT.appeal} created:")
     expect(page).to have_content("Issue: Active Duty Adjustments - Description for Active Duty Adjustments")
 
