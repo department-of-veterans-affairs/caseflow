@@ -124,15 +124,19 @@ class ExternalApi::VaBoxService
     end
   end
 
+  # rubocop:disable Metrics/MethodLength
   def upload_single_file(file_path, folder_id)
     url = "https://upload.box.com/api/2.0/files/content"
     uri = URI.parse(url)
 
-    request = Net::HTTP::Post::Multipart.new(uri.path,
-                                             "file" => UploadIO.new(File.new(file_path), "application/zip", File
-                                             .basename(file_path)),
-                                             "attributes" => { name: File.basename(file_path), parent: { id: folder_id } }
-                                             .to_json)
+    request = Net::HTTP::Post::Multipart.new(
+      uri.path,
+      "file" => UploadIO.new(File.new(file_path), "application/zip", File.basename(file_path)),
+      "attributes" => {
+        name: File.basename(file_path),
+        parent: { id: folder_id }
+      }.to_json
+    )
     request["Authorization"] = "Bearer #{@access_token}"
 
     http = Net::HTTP.new(uri.host, uri.port)
@@ -150,6 +154,7 @@ class ExternalApi::VaBoxService
   rescue StandardError => error
     log_error(error)
   end
+  # rubocop:enable Metrics/MethodLength
 
   def chunkify_and_upload(file_path, folder_id)
     chunk_paths = split_file(file_path)
