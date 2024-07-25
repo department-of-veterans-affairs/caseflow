@@ -86,7 +86,7 @@ describe ExternalApi::VBMSService do
         document_type_id: 1,
         pdf_location: "/path/to/test/location",
         source: "my_source",
-        document_version_reference_id: "12345"
+        document_series_reference_id: "{12345}"
       )
     end
     let(:appeal) { create(:appeal) }
@@ -112,7 +112,7 @@ describe ExternalApi::VBMSService do
     end
 
     context "with use_ce_api feature toggle disabled" do
-      let(:mock_init_update_response) { double(updated_document_token: "12345") }
+      let(:mock_init_update_response) { double(updated_document_token: "document-token") }
 
       it "calls the SOAP API implementation" do
         expect(FeatureToggle).to receive(:enabled?).with(:use_ce_api).and_return(false)
@@ -120,7 +120,7 @@ describe ExternalApi::VBMSService do
         expect(described).to receive(:initialize_update).and_return(mock_init_update_response)
         expect(described).to receive(:update_document).with(
           appeal.veteran_file_number,
-          "12345",
+          "document-token",
           "/path/to/test/location"
         )
 
