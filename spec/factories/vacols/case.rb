@@ -314,7 +314,7 @@ FactoryBot.define do
         else
           VACOLS::Folder.find_by(tinum: evaluator.docket_number).update!(titrnum: "123456789S")
         end
-        puts "~~~~~~~~~~~~~ #{evaluator.tied_judge.inspect} ~~~~~~~~~~~~"
+
         create(
           :case_hearing,
           :disposition_held,
