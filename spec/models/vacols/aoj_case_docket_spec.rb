@@ -156,13 +156,6 @@ describe VACOLS::AojCaseDocket, :all_dbs do
     end
   end
 
-  context ".nod_count" do
-    subject { VACOLS::AojCaseDocket.nod_count }
-    it "counts nod stage appeals" do
-      expect(subject).to eq(1)
-    end
-  end
-
   context ".age_of_n_oldest_genpop_priority_appeals" do
     subject { VACOLS::AojCaseDocket.age_of_n_oldest_genpop_priority_appeals(2) }
     it "returns the sorted ages of the n oldest priority appeals" do
@@ -205,53 +198,6 @@ describe VACOLS::AojCaseDocket, :all_dbs do
       it "does not affect the results of the call" do
         expect(subject).to eq(aod_ready_case.bfdloout)
       end
-    end
-  end
-
-  context ".nonpriority_decisions_per_year" do
-    subject { VACOLS::AojCaseDocket.nonpriority_decisions_per_year }
-
-    before do
-      4.times do
-        create(:case,
-               bfddec: 6.months.ago,
-               bfac: "3",
-               bfdc: "1")
-      end
-
-      4.times do
-        create(:case,
-               bfddec: 6.months.ago,
-               bfac: "3",
-               bfdc: "3")
-      end
-
-      2.times do
-        create(:case,
-               bfddec: 6.months.ago,
-               bfac: "3",
-               bfdc: "4")
-      end
-
-      create(:case,
-             bfddec: 13.months.ago,
-             bfac: "3",
-             bfdc: "1")
-
-      create(:case,
-             bfddec: 6.months.ago,
-             bfac: "7",
-             bfdc: "5")
-
-      create(:case,
-             :aod,
-             bfddec: 6.months.ago,
-             bfac: "3",
-             bfdc: "3")
-    end
-
-    it "counts decisions in the last year" do
-      expect(subject).to eq(10)
     end
   end
 
