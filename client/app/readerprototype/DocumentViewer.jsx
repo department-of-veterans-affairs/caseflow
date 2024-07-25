@@ -6,12 +6,10 @@ import ReaderFooter from './components/ReaderFooter';
 import ReaderSearchBar from './components/ReaderSearchBar';
 import ReaderSidebar from './components/ReaderSidebar';
 import ReaderToolbar from './components/ReaderToolbar';
-import { bindActionCreators } from 'redux';
 
-import { connect, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { CATEGORIES } from '../reader/analytics';
 import { stopPlacingAnnotation } from '../reader/AnnotationLayer/AnnotationActions';
-import { fetchAppealDetails } from '../reader/PdfViewer/PdfViewerActions';
 import DeleteModal from './components/Comments/DeleteModal';
 import ShareModal from './components/Comments/ShareModal';
 import { getNextDocId, getPrevDocId, getRotationDeg, selectedDoc, selectedDocIndex } from './util/documentUtil';
@@ -32,8 +30,6 @@ const DocumentViewer = (props) => {
   const currentDocumentId = Number(props.match.params.docId);
 
   useEffect(() => {
-    props.fetchAppealDetails(props.match.params.vacolsId);
-
     const keyHandler = (event) => {
       if (event.key === 'Escape') {
         event.preventDefault();
@@ -75,7 +71,7 @@ const DocumentViewer = (props) => {
 
   return (
     <div id="prototype-reader" className="cf-pdf-page-container">
-      <div className="prototype-reader-main">
+      <div id="prototype-reader-main">
         <ReaderToolbar
           disableZoomIn={zoomLevel === ZOOM_LEVEL_MAX}
           disableZoomOut={zoomLevel === ZOOM_LEVEL_MIN}
@@ -118,10 +114,10 @@ const DocumentViewer = (props) => {
       { showSideBar &&
           (
             <ReaderSidebar
-              appeal={props.appeal}
               doc={doc}
               documents={props.allDocuments}
               toggleSideBar={() => setShowSideBar(false)}
+              vacolsId={props.match.params.vacolsId}
             />
           )
       }
@@ -131,22 +127,7 @@ const DocumentViewer = (props) => {
   );
 };
 
-const mapStateToProps = (state) => ({
-  appeal: state.pdfViewer.loadedAppeal
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  ...bindActionCreators({
-    fetchAppealDetails
-  }, dispatch),
-});
-
-export default connect(
-  mapStateToProps, mapDispatchToProps
-)(DocumentViewer);
-
 DocumentViewer.propTypes = {
-  appeal: PropTypes.object,
   allDocuments: PropTypes.array,
   documentPathBase: PropTypes.string,
   featureToggles: PropTypes.object,
@@ -155,4 +136,4 @@ DocumentViewer.propTypes = {
   showPdf: PropTypes.func,
 };
 
-// export default DocumentViewer;
+export default DocumentViewer;
