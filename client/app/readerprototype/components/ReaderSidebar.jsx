@@ -153,7 +153,7 @@ ReaderSidebar.propTypes = {
   documents: PropTypes.array,
   showSideBar: PropTypes.bool,
   toggleSideBar: PropTypes.func,
-  vacolsId: PropTypes.any
+  vacolsId: PropTypes.string
 };
 
 export default ReaderSidebar;
