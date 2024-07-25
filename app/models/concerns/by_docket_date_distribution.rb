@@ -131,7 +131,7 @@ module ByDocketDateDistribution
   end
 
   def num_oldest_priority_appeals_for_judge_by_docket(distribution, num)
-    return {} unless !num.nil? && num > 0
+    return {} unless num > 0
 
     mapped_dockets = dockets.flat_map do |sym, docket|
       docket.age_of_n_oldest_priority_appeals_available_to_judge(
