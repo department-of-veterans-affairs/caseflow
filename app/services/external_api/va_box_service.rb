@@ -118,8 +118,10 @@ class ExternalApi::VaBoxService
     file_size = File.size(file_path)
 
     if file_size <= CHUNK_SIZE
+      Rails.logger.info("Uploading single file: #{file_path}")
       upload_single_file(file_path, folder_id)
     else
+      Rails.logger.info("Chunkifying and uploading file: #{file_path}")
       chunkify_and_upload(file_path, folder_id)
     end
   end
