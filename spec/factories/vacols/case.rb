@@ -204,6 +204,7 @@ FactoryBot.define do
               transient do
                 judge { nil }
                 signing_avlj { nil }
+                assigned_avlj { nil }
                 attorney { nil }
                 cavc { false }
                 appeal_affinity { true }
@@ -219,7 +220,7 @@ FactoryBot.define do
               after(:create) do |new_case, evaluator|
                 original_judge = evaluator.judge || create(:user, :judge, :with_vacols_judge_record).vacols_staff
                 signing_sattyid =
-                  evaluator.signing_avlj.present? ? evaluator.signing_avlj.sattyid : original_judge.sattyid
+                  evaluator.signing_avlj.present? ? evaluator.signing_avlj.vacols_staff.sattyid : original_judge.sattyid
 
                 original_attorney = evaluator.attorney || create(:user, :with_vacols_attorney_record).vacols_staff
 
@@ -282,7 +283,7 @@ FactoryBot.define do
                     :disposition_held,
                     folder_nr: original_case.bfkey,
                     hearing_date: original_case.bfddec - 1.month,
-                    user: User.find_by_css_id(original_judge.sdomainid)
+                    user: evaluator.assigned_avlj || User.find_by_css_id(original_judge.sdomainid)
                   )
                 end
 
@@ -313,7 +314,7 @@ FactoryBot.define do
         else
           VACOLS::Folder.find_by(tinum: evaluator.docket_number).update!(titrnum: "123456789S")
         end
-
+        puts "~~~~~~~~~~~~~ #{evaluator.tied_judge.inspect} ~~~~~~~~~~~~"
         create(
           :case_hearing,
           :disposition_held,
