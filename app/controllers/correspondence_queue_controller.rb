@@ -37,6 +37,7 @@ class CorrespondenceQueueController < CorrespondenceController
     respond_to do |format|
       format.html do
         @inbound_ops_team_users = User.inbound_ops_team_users.pluck(:css_id)
+        @inbound_ops_team_non_admin = inbound_ops_team_non_admins
         correspondence_team_html_response(inbound_ops_team_user, task_ids, tab)
       end
       format.json { correspondence_team_json_response }
@@ -54,6 +55,11 @@ class CorrespondenceQueueController < CorrespondenceController
     elsif %w[continue_later cancel_intake].include?(action_type)
       intake_cancel_message(action_type)
     end
+  end
+
+  def inbound_ops_team_non_admins
+    all_iot = User.inbound_ops_team_users.reject(&:admin?)
+    all_iot.pluck(:css_id)
   end
 
   def action_type

@@ -129,7 +129,7 @@ const CorrespondenceCases = (props) => {
         className = {`cf-margin-left-2rem img reassign ${styles.optSelect}`}
         label="Assign to person"
         onChangeMethod={(val) => setSelectedMailTeamUser(val.value)}
-        options={buildMailUserData(props.inboundOpsTeamUsers)}
+        options={buildMailUserData(props.inboundOpsTeamNonAdmin)}
       />
     </div>);
 
@@ -269,6 +269,7 @@ const CorrespondenceCases = (props) => {
         {config &&
         <CorrespondenceTableBuilder
           inboundOpsTeamUsers={props.inboundOpsTeamUsers}
+          inboundOpsTeamNonAdmin={props.inboundOpsTeamNonAdmin}
           isInboundOpsTeamUser={props.isInboundOpsTeamUser}
           isInboundOpsSuperuser={props.isInboundOpsSuperuser}
           isInboundOpsSupervisor={props.isInboundOpsSupervisor} />}
@@ -321,6 +322,7 @@ CorrespondenceCases.propTypes = {
   currentAction: PropTypes.object,
   configUrl: PropTypes.string,
   inboundOpsTeamUsers: PropTypes.arrayOf(string),
+  inboundOpsTeamNonAdmin: PropTypes.arrayOf(string),
   responseType: PropTypes.string,
   responseHeader: PropTypes.string,
   responseMessage: PropTypes.string,
