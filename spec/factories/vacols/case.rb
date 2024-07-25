@@ -357,7 +357,6 @@ FactoryBot.define do
       bfac { "7" }
     end
 
-
     trait :certified do
       transient do
         certification_date { 1.day.ago }
