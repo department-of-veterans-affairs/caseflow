@@ -37,6 +37,7 @@ class CorrespondenceQueueController < CorrespondenceController
     respond_to do |format|
       format.html do
         @inbound_ops_team_users = User.inbound_ops_team_users.pluck(:css_id)
+        @inbound_ops_team_non_admin = User.inbound_ops_team_users.select(&:inbound_ops_team_user?).pluck(:css_id)
         correspondence_team_html_response(inbound_ops_team_user, task_ids, tab)
       end
       format.json { correspondence_team_json_response }
