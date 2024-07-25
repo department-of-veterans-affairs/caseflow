@@ -3,11 +3,20 @@ import { render } from '@testing-library/react';
 import { TranscriptionFileDispatchTable } from '../../../../app/hearings/components/TranscriptionFileDispatchTable';
 import TRANSCRIPTION_FILE_DISPATCH_CONFIG from '../../../../constants/TRANSCRIPTION_FILE_DISPATCH_CONFIG';
 import { unassignedColumns } from '../../../../app/hearings/components/TranscriptionFileDispatchTabs';
+import ApiUtil from '../../../../app/util/ApiUtil';
+
+const getSpy = jest.spyOn(ApiUtil, 'get');
 
 const setupUnassignedTable = () =>
-  render(<TranscriptionFileDispatchTable columns={unassignedColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)} />);
+  render(<TranscriptionFileDispatchTable
+    columns={unassignedColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
+    selectFilesForPackage={() => []} />);
 
 describe('TranscriptionFileDispatchTable', () => {
+  beforeEach(() => {
+    getSpy.mockImplementation(() => Promise.resolve({ body: [] }));
+  });
+
   describe('UnassignedTab', () => {
 
     it('matches snaphot', () => {
