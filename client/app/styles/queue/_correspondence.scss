@@ -1357,6 +1357,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
       position: relative;
       padding: 10px;
       margin-bottom: 0;
+      display: block;
 
       &:last-child {
         border: none;
@@ -1370,6 +1371,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
     li {
       border-bottom: none;
+      display: block;
     }
 
     li:nth-child(1),
