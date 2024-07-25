@@ -10,7 +10,7 @@ describe Api::V1::VaNotifyController, type: :controller do
   let(:sqs_client) { SqsService.sqs_client }
   let(:api_key) { ApiKey.create!(consumer_name: "API Consumer").key_string }
   let!(:appeal) { create(:appeal) }
-  let!(:queue) { create_queue('receive_notifications', true) }
+  let!(:queue) { create_queue("receive_notifications", true) }
   let!(:notification_email) do
     create(
       :notification,
@@ -40,8 +40,8 @@ describe Api::V1::VaNotifyController, type: :controller do
   let(:default_payload) do
     {
       id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      to: 'to',
-      status_reason: 'status_reason',
+      to: "to",
+      status_reason: "status_reason",
       body: "string",
       completed_at: "2023-04-17T12:38:48.699Z",
       created_at: "2023-04-17T12:38:48.699Z",
@@ -62,14 +62,14 @@ describe Api::V1::VaNotifyController, type: :controller do
       sent_by: "string",
       status: "created",
       subject: "string",
-      notification_type: "",
+      notification_type: ""
     }
   end
 
   let(:error_payload1) do
     {
       id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      to: 'to',
+      to: "to",
       status_reason: nil,
       body: "string",
       completed_at: "2023-04-17T12:38:48.699Z",
@@ -91,15 +91,15 @@ describe Api::V1::VaNotifyController, type: :controller do
       sent_by: "string",
       status: "created",
       subject: "string",
-      notification_type: "",
+      notification_type: ""
     }
   end
 
   let(:error_payload2) do
     {
       id: nil,
-      to: 'to',
-      status_reason: 'status_reason',
+      to: "to",
+      status_reason: "status_reason",
       body: "string",
       completed_at: "2023-04-17T12:38:48.699Z",
       created_at: "2023-04-17T12:38:48.699Z",
@@ -120,7 +120,7 @@ describe Api::V1::VaNotifyController, type: :controller do
       sent_by: "string",
       status: "created",
       subject: "string",
-      notification_type: "",
+      notification_type: ""
     }
   end
 
@@ -162,8 +162,8 @@ describe Api::V1::VaNotifyController, type: :controller do
     let(:payload_fake) do
       {
         id: "fake",
-        to: 'to',
-        status_reason: 'status_reason',
+        to: "to",
+        status_reason: "status_reason",
         body: "string",
         completed_at: "2023-04-17T12:38:48.699Z",
         created_at: "2023-04-17T12:38:48.699Z",
@@ -208,7 +208,7 @@ describe Api::V1::VaNotifyController, type: :controller do
     end
   end
 
-  context 'payload missing required params' do
+  context "payload missing required params" do
     before { Seeds::NotificationEvents.new.seed! }
 
     let(:payload_email) do
@@ -217,7 +217,7 @@ describe Api::V1::VaNotifyController, type: :controller do
       end
     end
 
-    it 'is missing the id and properly errors out' do
+    it "is missing the id and properly errors out" do
       request.headers["Authorization"] = "Bearer #{api_key}"
       post :notifications_update, params: payload_email
 

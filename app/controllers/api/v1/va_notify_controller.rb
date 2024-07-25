@@ -10,7 +10,7 @@ class Api::V1::VaNotifyController < Api::ApplicationController
     send "notification_update"
   rescue StandardError => error
     log_error(error)
-    return render json: { error: error.message }, status: :bad_request
+    render json: { error: error.message }, status: :bad_request
   end
 
   private
@@ -38,7 +38,7 @@ class Api::V1::VaNotifyController < Api::ApplicationController
   end
 
   def build_sqs_message
-    sqs_url = SqsService.find_queue_url_by_name(name: 'receive_notifications')
+    sqs_url = SqsService.find_queue_url_by_name(name: "receive_notifications")
 
     message_body = required_params.to_json
 
