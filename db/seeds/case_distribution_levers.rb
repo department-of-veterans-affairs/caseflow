@@ -412,7 +412,7 @@ module Seeds
                 unit: ""
               }
             ],
-            is_disabled_in_ui: false
+            is_disabled_in_ui: false,
             min_value: 0,
             max_value: 999,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
