@@ -217,7 +217,7 @@ class BusinessLine < Organization
           FROM
               versions
           INNER JOIN tasks ON tasks.id = versions.item_id
-          WHERE versions.item_type IN ('Task')
+          WHERE versions.item_type = 'Task'
             AND tasks.assigned_to_type = 'Organization'
             AND tasks.assigned_to_id = '#{parent.id.to_i}'
           GROUP BY
@@ -232,11 +232,8 @@ class BusinessLine < Organization
               END) AS version_closed_by_id
           FROM
               versions
-          INNER JOIN tasks ON tasks.id = versions.item_id
           INNER JOIN issue_modification_requests ON issue_modification_requests.id = versions.item_id
-          WHERE versions.item_type IN ('Task', 'IssueModificationRequest')
-            AND tasks.assigned_to_type = 'Organization'
-            AND tasks.assigned_to_id = '#{parent.id.to_i}'
+          WHERE versions.item_type = 'IssueModificationRequest'
           GROUP BY
               versions.item_id, versions.item_type)
         SELECT tasks.id AS task_id,

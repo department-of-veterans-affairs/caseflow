@@ -102,7 +102,7 @@ class ClaimHistoryService
     return new_events if @filters[:events].blank?
 
     new_events.select do |event|
-      event && ensure_array(modified_event_type_filter).include?(event.event_type)
+      event && ensure_array(@filters[:events]).include?(event.event_type)
     end
   end
 
@@ -269,19 +269,5 @@ class ClaimHistoryService
 
   def modified_event_type_filter
     @filters[:events].map { |ef| issue_modification_event_type_request_mapper(ef.to_s) || ef }
-  end
-
-  # this should probably be removed and event type coming from frontend can be modified.
-  def issue_modification_event_type_request_mapper(event_type)
-    {
-      "requested_issue_modification" => :modification,
-      "requested_issue_addition" => :addition,
-      "requested_issue_removal" => :removal,
-      "requested_issue_withdrawal" => :withdrawal,
-      "approval_of_request" => :request_approved,
-      "rejection_of_request" => :request_rejected,
-      "cancellation_of_request" => :request_cancelled,
-      "edit_of_request" => :request_edited
-    }[event_type]
   end
 end
