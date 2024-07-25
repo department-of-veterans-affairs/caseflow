@@ -25,6 +25,7 @@ class ChangeHistoryFilterParser
 
   private
 
+  # rubocop:disable Metrics/MethodLength
   def events_filter_helper
     event_mapping = {
       "added_decision_date" => :added_decision_date,
@@ -51,6 +52,7 @@ class ChangeHistoryFilterParser
 
     filter_params[:events]&.values&.map { |event_type| event_mapping[event_type] }&.flatten
   end
+  # rubocop:enable Metrics/MethodLength
 
   def task_status_filter_helper
     status_mapping = {
