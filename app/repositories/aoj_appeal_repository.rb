@@ -36,22 +36,6 @@ class AojAppealRepository < AppealRepository
       end
     end
 
-    def regular_non_aod_docket_count
-      MetricsService.record("VACOLS: regular_non_aod_docket_count",
-                            name: "regular_non_aod_docket_count",
-                            service: :vacols) do
-        VACOLS::AojCaseDocket.regular_non_aod_docket_count
-      end
-    end
-
-    def docket_counts_by_month
-      MetricsService.record("VACOLS: docket_counts_by_month",
-                            name: "docket_counts_by_month",
-                            service: :vacols) do
-        VACOLS::AojCaseDocket.docket_counts_by_month
-      end
-    end
-
     def age_of_n_oldest_genpop_priority_appeals(num)
       MetricsService.record("VACOLS: age_of_n_oldest_genpop_priority_appeals",
                             name: "age_of_n_oldest_genpop_priority_appeals",
