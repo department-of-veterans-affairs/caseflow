@@ -17,8 +17,10 @@ import COPY from '../../COPY';
 import Pagination from 'app/components/Pagination/Pagination';
 
 class CaseListTable extends React.PureComponent {
-
-  state = { currentPage: this.props.currentPage };
+  constructor(props) {
+    super(props);
+    this.state = { currentPage: props.currentPage };
+  }
 
   componentWillUnmount = () => this.props.clearCaseListSearch();
 
@@ -40,6 +42,7 @@ class CaseListTable extends React.PureComponent {
                   defaultValue={this.props.taskRelatedAppealIds.includes(appeal.id)}
                   hideLabel
                   onChange={(checked) => this.props.checkboxOnChange(appeal.id, checked)}
+                  disabled={this.props.disabled || false}
                 />
               </div>
             );
@@ -166,6 +169,7 @@ class CaseListTable extends React.PureComponent {
                 styling={this.props.styling}
               />
             }
+            enableTopPagination = {this.props.enableTopPagination || false}
           />
         </div> :
         <Table
@@ -191,7 +195,9 @@ CaseListTable.propTypes = {
   userRole: PropTypes.string,
   userCssId: PropTypes.string,
   currentPage: PropTypes.number,
-  updatePageHandlerCallback: PropTypes.func
+  updatePageHandlerCallback: PropTypes.func,
+  disabled: PropTypes.bool,
+  enableTopPagination: PropTypes.bool
 };
 
 CaseListTable.defaultProps = {

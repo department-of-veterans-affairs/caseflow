@@ -7,11 +7,46 @@ import { correspondenceData } from 'test/data/correspondence';
 import { applyMiddleware, createStore } from 'redux';
 import rootReducer from 'app/queue/reducers';
 import thunk from 'redux-thunk';
+import { prepareAppealForSearchStore } from 'app/queue/utils';
 
 jest.mock('redux', () => ({
   ...jest.requireActual('redux'),
   bindActionCreators: () => jest.fn().mockImplementation(() => Promise.resolve(true)),
 }));
+jest.mock('app/queue/utils', () => ({
+  prepareAppealForSearchStore: jest.fn()
+}));
+
+jest.mock('app/queue/CaseListTable', () => ({ appeals }) => (
+  <div className="case-list-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Docket Number</th>
+          <th>Appellant Name</th>
+          <th>Appeal Status</th>
+          <th>Appeal Type</th>
+          <th>Number of Issues</th>
+          <th>Decision Date</th>
+          <th>Appeal Location</th>
+        </tr>
+      </thead>
+      <tbody>
+        {appeals.map((appeal, index) => (
+          <tr key={index}>
+            <td>{appeal.docketNumber}</td>
+            <td>{appeal.appellantFullName}</td>
+            <td>{appeal.status}</td>
+            <td>{appeal.appealType}</td>
+            <td>{appeal.issueCount}</td>
+            <td>{appeal.decisionDate}</td>
+            <td>{appeal.location}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+));
 
 let initialState = {
   correspondence: correspondenceData
@@ -23,12 +58,32 @@ describe('CorrespondenceDetails', () => {
     correspondence: {
       veteranFullName: 'John Doe',
       veteranFileNumber: '123456789',
-      mailTasks: ['Task 1', 'Task 2']
+      mailTasks: ['Task 1', 'Task 2'],
+      appeals_information: {
+        appeals: [
+          {
+            id: 1,
+            type: 'appeal',
+            attributes: {
+              assigned_to_location: 'Mail',
+              appellant_full_name: 'John Doe',
+              type: 'Original',
+              docket_number: '123-456'
+            }
+          }
+        ],
+        claim_reviews: []
+      }
     }
   };
 
   beforeEach(() => {
     store.dispatch = jest.fn();
+
+    prepareAppealForSearchStore.mockReturnValue({
+      appeals: {},
+      appealDetails: {}
+    });
   });
 
   it('renders the component', () => {
@@ -56,5 +111,15 @@ describe('CorrespondenceDetails', () => {
     expect(screen.getByText('Completed Mail Tasks')).toBeInTheDocument();
     expect(screen.getByText('Task 1')).toBeInTheDocument();
     expect(screen.getByText('Task 2')).toBeInTheDocument();
+
+    // Existing Appeals Table and Columns
+    expect(screen.getByText('Existing Appeals')).toBeInTheDocument();
+    expect(screen.getByText('Appellant Name')).toBeInTheDocument();
+    expect(screen.getByText('Appeal Status')).toBeInTheDocument();
+    expect(screen.getByText('Appeal Type')).toBeInTheDocument();
+    expect(screen.getByText('Number of Issues')).toBeInTheDocument();
+    expect(screen.getByText('Decision Date')).toBeInTheDocument();
+    expect(screen.getByText('Appeal Location')).toBeInTheDocument();
   });
+
 });
