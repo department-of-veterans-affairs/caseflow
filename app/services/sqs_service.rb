@@ -18,7 +18,7 @@ class SqsService
     #
     # @return [String] The full URL of the SQS queue whose name contains the substring provided.
     def find_queue_url_by_name(name:, check_fifo: false)
-      url = sqs_client.list_queues.queue_urls.find { _1.include? name }
+      url = sqs_client.list_queues.queue_urls.find { _1.include?(name) && _1.include?(ENV["DEPLOY_ENV"]) }
 
       fail Caseflow::Error::SqsQueueNotFoundError, "The #{name} SQS queue is missing in this environment." unless url
 
