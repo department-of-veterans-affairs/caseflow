@@ -44,7 +44,7 @@ class Api::V1::VaNotifyController < Api::ApplicationController
 
     message_body = required_params.to_json
 
-    message_json = {
+    {
       queue_url: sqs_url,
       message_body: message_body,
       message_deduplication_id: Digest::SHA256.hexdigest(message_body),
