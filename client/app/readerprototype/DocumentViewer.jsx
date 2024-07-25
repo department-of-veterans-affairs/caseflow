@@ -10,7 +10,6 @@ import ReaderToolbar from './components/ReaderToolbar';
 import { useDispatch } from 'react-redux';
 import { CATEGORIES } from '../reader/analytics';
 import { stopPlacingAnnotation } from '../reader/AnnotationLayer/AnnotationActions';
-import { fetchAppealDetails } from '../reader/PdfViewer/PdfViewerActions';
 import DeleteModal from './components/Comments/DeleteModal';
 import ShareModal from './components/Comments/ShareModal';
 import { getNextDocId, getPrevDocId, getRotationDeg, selectedDoc, selectedDocIndex } from './util/documentUtil';
@@ -29,7 +28,6 @@ const DocumentViewer = (props) => {
   const dispatch = useDispatch();
 
   const currentDocumentId = Number(props.match.params.docId);
-  // const appeal = () => dispatch(fetchAppealDetails(props.match.params.vacolsId))();
 
   useEffect(() => {
     const keyHandler = (event) => {
@@ -73,7 +71,7 @@ const DocumentViewer = (props) => {
 
   return (
     <div id="prototype-reader" className="cf-pdf-page-container">
-      <div className="prototype-reader-main">
+      <div id="prototype-reader-main">
         <ReaderToolbar
           disableZoomIn={zoomLevel === ZOOM_LEVEL_MAX}
           disableZoomOut={zoomLevel === ZOOM_LEVEL_MIN}
@@ -97,7 +95,7 @@ const DocumentViewer = (props) => {
             key={`${doc.content_url}`}
             rotateDeg={rotateDeg}
             setNumPages={setNumPages}
-            zoomLevel={`${zoomLevel}`}
+            zoomLevel={zoomLevel}
             documentId={currentDocumentId}
           />
         </div>
@@ -116,10 +114,10 @@ const DocumentViewer = (props) => {
       { showSideBar &&
           (
             <ReaderSidebar
-              // appeal={appeal}
               doc={doc}
               documents={props.allDocuments}
               toggleSideBar={() => setShowSideBar(false)}
+              vacolsId={props.match.params.vacolsId}
             />
           )
       }
@@ -130,10 +128,12 @@ const DocumentViewer = (props) => {
 };
 
 DocumentViewer.propTypes = {
-  allDocuments: PropTypes.object,
+  allDocuments: PropTypes.array,
   documentPathBase: PropTypes.string,
-  showPdf: PropTypes.func,
+  featureToggles: PropTypes.object,
+  fetchAppealDetails: PropTypes.func,
   history: PropTypes.any,
+  showPdf: PropTypes.func,
 };
 
 export default DocumentViewer;

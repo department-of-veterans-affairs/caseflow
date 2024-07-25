@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Accordion } from '../../components/Accordion';
 import AccordionSection from '../../components/AccordionSection';
@@ -23,19 +23,26 @@ import SideBarCategories from '../../reader/SideBarCategories';
 import Comments from './Comments';
 import SideBarDocumentInformation from '../../reader/SideBarDocumentInformation';
 import IssueTags from './IssueTags';
-import { useDispatch } from 'react-redux';
-import { setOpenedAccordionSections } from '../../reader/PdfViewer/PdfViewerActions';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchAppealDetails, setOpenedAccordionSections } from '../../reader/PdfViewer/PdfViewerActions';
+import { appealSelector } from '../selectors';
 
 const ReaderSidebar = ({
-  // appeal,
   doc,
   documents,
   toggleSideBar,
+  vacolsId
 }) => {
   const [isKeyboardModalOpen, setIsKeyboardModalOpen] = useState(false);
   const dispatch = useDispatch();
 
   const onAccordionOpenOrClose = (openedSections) => dispatch(setOpenedAccordionSections(openedSections, []));
+
+  useEffect(() => {
+    dispatch(fetchAppealDetails(vacolsId));
+  }, []);
+
+  const appeal = useSelector(appealSelector);
 
   return (
     <nav id="prototype-sidebar">
@@ -51,21 +58,11 @@ const ReaderSidebar = ({
         </Button>
       </div>
 
-      <div
-        className="cf-sidebar-accordion"
-        id="cf-sidebar-accordion"
-        // ref={(commentListElement) => {
-        //   commentListElement = commentListElement;
-        // }}
-      >
-        <Accordion
-          style="outline"
-          onChange={onAccordionOpenOrClose}
-          // activeKey={props.openedAccordionSections}
-        >
+      <div className="cf-sidebar-accordion" id="cf-sidebar-accordion">
+        <Accordion style="outline" onChange={onAccordionOpenOrClose}>
           <AccordionSection title="Document information">
             <SideBarDocumentInformation
-              // appeal={appeal}
+              appeal={appeal}
               doc={doc}
             />
           </AccordionSection>
@@ -146,7 +143,6 @@ const ReaderSidebar = ({
 };
 
 ReaderSidebar.propTypes = {
-  appeal: PropTypes.object,
   doc: PropTypes.shape({
     content_url: PropTypes.string,
     filename: PropTypes.string,
@@ -154,9 +150,10 @@ ReaderSidebar.propTypes = {
     receivedAt: PropTypes.string,
     type: PropTypes.string,
   }),
-  documents: PropTypes.object,
+  documents: PropTypes.array,
   showSideBar: PropTypes.bool,
   toggleSideBar: PropTypes.func,
+  vacolsId: PropTypes.string
 };
 
 export default ReaderSidebar;
