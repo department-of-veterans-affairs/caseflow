@@ -73,6 +73,7 @@ class ExternalApi::VaBoxService
 
   private
 
+  # rubocop:disable Metrics/MethodLength
   def fetch_jwt_access_token
     url = "#{BASE_URL}/oauth2/token"
     payload = {
@@ -111,6 +112,7 @@ class ExternalApi::VaBoxService
   rescue StandardError => error
     log_error(error)
   end
+  # rubocop:enable Metrics/MethodLength
 
   def upload_file(file_path, folder_id)
     file_size = File.size(file_path)
@@ -127,8 +129,10 @@ class ExternalApi::VaBoxService
     uri = URI.parse(url)
 
     request = Net::HTTP::Post::Multipart.new(uri.path,
-                                             "file" => UploadIO.new(File.new(file_path), "application/zip", File.basename(file_path)),
-                                             "attributes" => { name: File.basename(file_path), parent: { id: folder_id } }.to_json)
+                                             "file" => UploadIO.new(File.new(file_path), "application/zip", File
+                                             .basename(file_path)),
+                                             "attributes" => { name: File.basename(file_path), parent: { id: folder_id } }
+                                             .to_json)
     request["Authorization"] = "Bearer #{@access_token}"
 
     http = Net::HTTP.new(uri.host, uri.port)
@@ -150,7 +154,7 @@ class ExternalApi::VaBoxService
   def chunkify_and_upload(file_path, folder_id)
     chunk_paths = split_file(file_path)
 
-    chunk_paths.each_with_index do |chunk_path, index|
+    chunk_paths.each_with_index do |chunk_path, _index|
       upload_single_file(chunk_path, folder_id)
       File.delete(chunk_path) # Clean up the chunk file after upload
     end
