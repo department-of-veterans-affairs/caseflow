@@ -17,7 +17,10 @@ RSpec.describe CaseDistributionLever, :all_dbs do
        ama_evidence_submission_docket_time_goals
        ama_hearing_docket_time_goals
        ama_hearing_start_distribution_prior_to_goals
-       ama_evidence_submission_start_distribution_prior_to_goals]
+       ama_evidence_submission_start_distribution_prior_to_goals
+       aoj_affinity_days
+       aoj_aod_affinity_days
+       aoj_cavc_affinity_days]
   end
   let!(:float_levers) do
     %w[maximum_direct_review_proportion minimum_legacy_proportion nod_adjustment]
@@ -114,9 +117,19 @@ RSpec.describe CaseDistributionLever, :all_dbs do
   end
 
   context ".aoj_cavc_affinity" do
+    it "only returns value with aoj cavc affinity" do
+      aoj_cavc_affinity_days = CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.aoj_cavc_affinity_days)
+
+      expect(aoj_cavc_affinity_days.value).to eq(CaseDistributionLever.aoj_cavc_affinity)
+    end
   end
 
   context ".aoj_aod_affinity" do
+    it "only returns value with aoj aod affinity" do
+      aoj_aod_affinity_days = CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.aoj_aod_affinity_days)
+
+      expect(aoj_aod_affinity_days.value).to eq(CaseDistributionLever.aoj_aod_affinity)
+    end
   end
 
   context "constants" do
