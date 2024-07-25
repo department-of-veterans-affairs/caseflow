@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import TabWindow from '../../../components/TabWindow';
 import CopyTextButton from '../../../components/CopyTextButton';
 import { loadCorrespondence } from '../correspondenceReducer/correspondenceActions';
+import COPY from "../../../../COPY.json";
 import CaseListTable from 'app/queue/CaseListTable';
 import { prepareAppealForSearchStore } from 'app/queue/utils';
 
@@ -37,13 +38,18 @@ const CorrespondenceDetails = (props) => {
         <div className="correspondence-mail-tasks">
           <h2>Completed Mail Tasks</h2>
           <AppSegment filledBackground noMarginTop>
-            <ul className={`${mailTasks.length > 2 ? 'grid-list' : ''}`}>
+            <ul
+              className={`${mailTasks.length > 2 ? 'grid-list' : ''}`}
+              aria-label={COPY.CORRESPONDENCE_DETAILS.COMPLETED_MAIL_TASKS}
+            >
               {
                 mailTasks.length > 0 ?
                   mailTasks.map((item, index) => (
-                    <li key={index}>{item}</li>
+                    <li key={index} aria-label={`Task ${index + 1}: ${item}`} >{item}</li>
                   )) :
-                  <li>No previously completed mail tasks prior to intake.</li>
+                  <li aria-label={COPY.CORRESPONDENCE_DETAILS.NO_COMPLETED_MAIL_TASKS}>
+                    {COPY.CORRESPONDENCE_DETAILS.NO_COMPLETED_MAIL_TASKS}
+                  </li>
               }
             </ul>
           </AppSegment>
