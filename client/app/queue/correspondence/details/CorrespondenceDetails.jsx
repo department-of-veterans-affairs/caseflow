@@ -11,7 +11,6 @@ import CorrespondenceCaseTimeline from '../CorrespondenceCaseTimeline';
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
   const correspondence = props.correspondence;
-  const mailTasks = props.correspondence.mailTasks;
 
   useEffect(() => {
     dispatch(loadCorrespondence(correspondence));
@@ -26,26 +25,6 @@ const CorrespondenceDetails = (props) => {
         correspondence={props.correspondence} />
     </div>
   </>;
-  const correspondenceTasks = () => {
-    return (
-      <React.Fragment>
-        <div className="correspondence-mail-tasks">
-          <h2>Completed Mail Tasks</h2>
-          <AppSegment filledBackground noMarginTop>
-            <ul className={`${mailTasks.length > 2 ? 'grid-list' : ''}`}>
-              {
-                mailTasks.length > 0 ?
-                  mailTasks.map((item, index) => (
-                    <li key={index}>{item}</li>
-                  )) :
-                  <li>No previously completed mail tasks prior to intake.</li>
-              }
-            </ul>
-          </AppSegment>
-        </div>
-      </React.Fragment>
-    );
-  };
 
   const tabList = [
     {

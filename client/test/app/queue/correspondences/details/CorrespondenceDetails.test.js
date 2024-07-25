@@ -20,10 +20,20 @@ const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
 
 describe('CorrespondenceDetails', () => {
   const props = {
+    organizations: ['Inbound Ops Team'],
     correspondence: {
       veteranFullName: 'John Doe',
       veteranFileNumber: '123456789',
-      mailTasks: ['Task 1', 'Task 2']
+      mailTasks: ['Task 1', 'Task 2'],
+      tasksUnrelatedToAppeal: [{
+        type: 'FOIA request',
+        assigned_to: 'CAVC Litigation Support',
+        assigned_at: '07/23/2024',
+        instructions: [
+          'cavc'
+        ],
+        assigned_to_type: 'Organization'
+      }]
     }
   };
 
@@ -53,8 +63,6 @@ describe('CorrespondenceDetails', () => {
       </Provider>
     );
 
-    expect(screen.getByText('Completed Mail Tasks')).toBeInTheDocument();
-    expect(screen.getByText('Task 1')).toBeInTheDocument();
-    expect(screen.getByText('Task 2')).toBeInTheDocument();
+    expect(screen.getByText('Tasks not related to an appeal')).toBeInTheDocument();
   });
 });
