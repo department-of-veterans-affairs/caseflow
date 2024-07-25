@@ -12,6 +12,7 @@ require "fileutils"
 class ExternalApi::VaBoxService
   BASE_URL = "https://api.box.com"
   FILES_URI = "#{BASE_URL}/2.0/files"
+  CHUNK_SIZE = 50 * 1024 * 1024 # 50 MB
 
   def initialize(client_secret:, client_id:, enterprise_id:, private_key:, passphrase:)
     @client_secret = client_secret
@@ -112,6 +113,16 @@ class ExternalApi::VaBoxService
   end
 
   def upload_file(file_path, folder_id)
+    file_size = File.size(file_path)
+
+    if file_size <= CHUNK_SIZE
+      upload_single_file(file_path, folder_id)
+    else
+      chunkify_and_upload(file_path, folder_id)
+    end
+  end
+
+  def upload_single_file(file_path, folder_id)
     url = "https://upload.box.com/api/2.0/files/content"
     uri = URI.parse(url)
 
@@ -134,6 +145,34 @@ class ExternalApi::VaBoxService
     end
   rescue StandardError => error
     log_error(error)
+  end
+
+  def chunkify_and_upload(file_path, folder_id)
+    chunk_paths = split_file(file_path)
+
+    chunk_paths.each_with_index do |chunk_path, index|
+      upload_single_file(chunk_path, folder_id)
+      File.delete(chunk_path) # Clean up the chunk file after upload
+    end
+  end
+
+  def split_file(file_path)
+    chunk_paths = []
+    file_size = File.size(file_path)
+    num_chunks = (file_size.to_f / CHUNK_SIZE).ceil
+
+    File.open(file_path, "rb") do |file|
+      num_chunks.times do |i|
+        chunk_path = "#{file_path}.part#{i}"
+        chunk_paths << chunk_path
+
+        File.open(chunk_path, "wb") do |chunk_file|
+          chunk_file.write(file.read(CHUNK_SIZE))
+        end
+      end
+    end
+
+    chunk_paths
   end
 
   def log_error(error)
