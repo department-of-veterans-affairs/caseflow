@@ -94,13 +94,10 @@ describe "Backfill early AMA appeal" do
 
       # Use `req_issues.pluck(:contested_issue_description)` to map to decision in the "BVA Decision" document
       # and populate the following to be used to create DecisionIssues:
-      descriptions = [
-        "Decision for insomnia disorder issue is denied. <Pasted decision from decision doc>",
-        "Service connection for eczema is denied. <Pasted decision from decision doc>",
-        "Service connection for gastroesophageal reflux disease (GERD) is granted. <Pasted decision from decision doc>",
-        "Service connection for sleep apnea disorder is remanded. <Pasted decision from decision doc>"
-      ]
+
+      descriptions = COPY::BACKFILL_EARLY_AMA_APPEALS_DESCRIPTION
       dispositions = %w[denied denied allowed remanded]
+
       # See Case Details page for Appeal 39 (8c6cc397-6bb9-4673-b94b-908c31c6f419) for full decision description text.
       req_issues.each_with_index do |req_issue, index|
         new_di = DecisionIssue.create!(
