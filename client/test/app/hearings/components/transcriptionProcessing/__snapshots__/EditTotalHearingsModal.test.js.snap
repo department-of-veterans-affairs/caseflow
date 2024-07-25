@@ -362,7 +362,7 @@ Object {
                   </strong>
                 </p>
                 <div
-                  class="cf-form-textinput  usa-input-error "
+                  class="cf-form-textinput   "
                 >
                   <label
                     for="current_goal"
@@ -371,12 +371,6 @@ Object {
                       Hearings per week
                     </span>
                   </label>
-                  <span
-                    class="usa-input-error-message"
-                    tabindex="0"
-                  >
-                    Value must be between 1 and 1000.
-                  </span>
                   <div
                     class="input-container"
                   >
@@ -409,8 +403,7 @@ Object {
             </span>
             <span>
               <button
-                class="cf-push-right usa-button-disabled usa-button"
-                disabled=""
+                class="usa-button usa-button-primary cf-push-right usa-button"
                 id="Edit-total-hearings-per-week-button-id-1"
                 type="button"
               >
@@ -487,7 +480,7 @@ Object {
                 </strong>
               </p>
               <div
-                class="cf-form-textinput  usa-input-error "
+                class="cf-form-textinput   "
               >
                 <label
                   for="current_goal"
@@ -496,12 +489,6 @@ Object {
                     Hearings per week
                   </span>
                 </label>
-                <span
-                  class="usa-input-error-message"
-                  tabindex="0"
-                >
-                  Value must be between 1 and 1000.
-                </span>
                 <div
                   class="input-container"
                 >
@@ -534,8 +521,7 @@ Object {
           </span>
           <span>
             <button
-              class="cf-push-right usa-button-disabled usa-button"
-              disabled=""
+              class="usa-button usa-button-primary cf-push-right usa-button"
               id="Edit-total-hearings-per-week-button-id-1"
               type="button"
             >
@@ -669,7 +655,7 @@ Object {
                   </strong>
                 </p>
                 <div
-                  class="cf-form-textinput  usa-input-error "
+                  class="cf-form-textinput   "
                 >
                   <label
                     for="current_goal"
@@ -678,12 +664,6 @@ Object {
                       Hearings per week
                     </span>
                   </label>
-                  <span
-                    class="usa-input-error-message"
-                    tabindex="0"
-                  >
-                    Value must be between 1 and 1000.
-                  </span>
                   <div
                     class="input-container"
                   >
@@ -716,8 +696,7 @@ Object {
             </span>
             <span>
               <button
-                class="cf-push-right usa-button-disabled usa-button"
-                disabled=""
+                class="usa-button usa-button-primary cf-push-right usa-button"
                 id="Edit-total-hearings-per-week-button-id-1"
                 type="button"
               >
@@ -794,7 +773,7 @@ Object {
                 </strong>
               </p>
               <div
-                class="cf-form-textinput  usa-input-error "
+                class="cf-form-textinput   "
               >
                 <label
                   for="current_goal"
@@ -803,12 +782,6 @@ Object {
                     Hearings per week
                   </span>
                 </label>
-                <span
-                  class="usa-input-error-message"
-                  tabindex="0"
-                >
-                  Value must be between 1 and 1000.
-                </span>
                 <div
                   class="input-container"
                 >
@@ -841,8 +814,7 @@ Object {
           </span>
           <span>
             <button
-              class="cf-push-right usa-button-disabled usa-button"
-              disabled=""
+              class="usa-button usa-button-primary cf-push-right usa-button"
               id="Edit-total-hearings-per-week-button-id-1"
               type="button"
             >
@@ -976,7 +948,7 @@ Object {
                   </strong>
                 </p>
                 <div
-                  class="cf-form-textinput  usa-input-error "
+                  class="cf-form-textinput   "
                 >
                   <label
                     for="current_goal"
@@ -985,12 +957,6 @@ Object {
                       Hearings per week
                     </span>
                   </label>
-                  <span
-                    class="usa-input-error-message"
-                    tabindex="0"
-                  >
-                    Value must be between 1 and 1000.
-                  </span>
                   <div
                     class="input-container"
                   >
@@ -1023,8 +989,7 @@ Object {
             </span>
             <span>
               <button
-                class="cf-push-right usa-button-disabled usa-button"
-                disabled=""
+                class="usa-button usa-button-primary cf-push-right usa-button"
                 id="Edit-total-hearings-per-week-button-id-1"
                 type="button"
               >
@@ -1101,7 +1066,7 @@ Object {
                 </strong>
               </p>
               <div
-                class="cf-form-textinput  usa-input-error "
+                class="cf-form-textinput   "
               >
                 <label
                   for="current_goal"
@@ -1110,12 +1075,6 @@ Object {
                     Hearings per week
                   </span>
                 </label>
-                <span
-                  class="usa-input-error-message"
-                  tabindex="0"
-                >
-                  Value must be between 1 and 1000.
-                </span>
                 <div
                   class="input-container"
                 >
@@ -1148,8 +1107,7 @@ Object {
           </span>
           <span>
             <button
-              class="cf-push-right usa-button-disabled usa-button"
-              disabled=""
+              class="usa-button usa-button-primary cf-push-right usa-button"
               id="Edit-total-hearings-per-week-button-id-1"
               type="button"
             >

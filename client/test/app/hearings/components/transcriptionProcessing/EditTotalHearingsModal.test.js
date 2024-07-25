@@ -126,5 +126,20 @@ describe('Add edit totalhearings form', () => {
     );
   });
 
+  test('dispays an error when submitting a goal under range', () => {
+    testContractor.current_goal = 0;
+    renderEditTotalHearingsModal();
+    clickSubmissionButton(COPY.MODAL_CONFIRM_BUTTON);
+
+    expect(screen.getByText(COPY.TRANSCRIPTION_SETTINGS_EDIT_TOTAL_HEARINGS_VALIDATION)).toBeInTheDocument();
+  });
+
+  test('dispays an error when submitting a goal over range', () => {
+    testContractor.current_goal = 1001;
+    renderEditTotalHearingsModal();
+    clickSubmissionButton(COPY.MODAL_CONFIRM_BUTTON);
+
+    expect(screen.getByText(COPY.TRANSCRIPTION_SETTINGS_EDIT_TOTAL_HEARINGS_VALIDATION)).toBeInTheDocument();
+  });
 });
 
