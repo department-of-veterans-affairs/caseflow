@@ -53,12 +53,11 @@ FactoryBot.define do
         create(:hearing_task_association,
                hearing: hearing,
                hearing_task: hearing_task)
-        appeal.tasks.find_by(type: :ScheduleHearingTask).completed!
         assign_hearing_disposition_task = create(:assign_hearing_disposition_task,
-                                                 :completed,
                                                  parent: hearing_task,
                                                  appeal: appeal)
-        appeal.tasks.find_by(type: :DistributionTask).update!(status: :on_hold)
+        appeal.tasks.find_by(type: :ScheduleHearingTask).completed!
+        appeal.tasks.open.where(type: :DistributionTask).last.update!(status: :on_hold)
         assign_hearing_disposition_task.hold!
       end
     end
