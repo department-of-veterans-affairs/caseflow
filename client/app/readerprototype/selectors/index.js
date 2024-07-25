@@ -1,6 +1,8 @@
 import { createSelector } from 'reselect';
 import values from 'lodash/values';
 
+export const appealSelector = (state) => state.pdfViewer.loadedAppeal;
+
 export const categorySelector = (state) => state.pdfViewer.categorySelector;
 
 export const tagSelector = (state) => state.pdfViewer.tagOptions;
