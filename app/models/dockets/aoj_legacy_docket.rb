@@ -51,27 +51,6 @@ class AojLegacyDocket < LegacyDocket
     LegacyAppeal.aoj_appeal_repository.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
   end
 
-  def ready_priority_nonpriority_legacy_appeals(priority: false)
-    value = priority ? CaseDistributionLever.disable_legacy_priority : CaseDistributionLever.disable_legacy_non_priority
-    !value
-  end
-
-  # rubocop:disable Metrics/ParameterLists
-  def distribute_appeals(distribution, style: "push", priority: false, genpop: "any", limit: 1, range: nil)
-    return [] unless should_distribute?(distribution, style: style, genpop: genpop)
-
-    if priority
-      return [] unless ready_priority_nonpriority_legacy_appeals(priority: true)
-
-      distribute_priority_appeals(distribution, style: style, genpop: genpop, limit: limit)
-    else
-      return [] unless ready_priority_nonpriority_legacy_appeals(priority: false)
-
-      distribute_nonpriority_appeals(distribution, style: style, genpop: genpop, limit: limit, range: range)
-    end
-  end
-  # rubocop:enable Metrics/ParameterLists
-
   def distribute_priority_appeals(distribution, style: "push", genpop: "any", limit: 1)
     return [] unless should_distribute?(distribution, style: style, genpop: genpop)
 
