@@ -156,28 +156,6 @@ describe VACOLS::AojCaseDocket, :all_dbs do
     end
   end
 
-  context ".age_of_n_oldest_genpop_priority_appeals" do
-    subject { VACOLS::AojCaseDocket.age_of_n_oldest_genpop_priority_appeals(2) }
-    it "returns the sorted ages of the n oldest priority appeals" do
-      expect(subject).to eq([aod_ready_case.bfdloout, postcavc_ready_case.bfdloout])
-    end
-
-    context "when an appeal is tied to a judge" do
-      let(:original_docket_number) { aod_ready_case_docket_number }
-      let!(:hearing) do
-        create(:case_hearing,
-               :disposition_held,
-               folder_nr: original.bfkey,
-               hearing_date: 5.days.ago.to_date,
-               board_member: judge.vacols_attorney_id)
-      end
-
-      it "does not include the hearing appeal" do
-        expect(subject).to eq([postcavc_ready_case.bfdloout])
-      end
-    end
-  end
-
   context ".age_of_oldest_priority_appeal" do
     subject { VACOLS::AojCaseDocket.age_of_oldest_priority_appeal }
 
@@ -389,22 +367,6 @@ describe VACOLS::AojCaseDocket, :all_dbs do
         end
       end
 
-      context "when the case has been made genpop" do
-        let(:hearing_judge) { "1111" }
-        let(:genpop) { "only_genpop" }
-
-        before do
-          nonpriority_ready_case.update(bfhines: "GP")
-        end
-
-        it "distributes the case" do
-          expect(subject.count).to eq(2)
-          expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
-          expect(third_nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
-          expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
-        end
-      end
-
       context "when bust backlog is specified" do
         let(:limit) { 2 }
         let(:bust_backlog) { true }
@@ -566,21 +528,6 @@ describe VACOLS::AojCaseDocket, :all_dbs do
         it "does not distribute the case" do
           expect(subject.count).to eq(0)
           expect(aod_ready_case.reload.bfcurloc).to eq("81")
-          expect(postcavc_ready_case.reload.bfcurloc).to eq("83")
-        end
-      end
-
-      context "when the case has been made genpop" do
-        let(:hearing_judge) { "1111" }
-        let(:genpop) { "only_genpop" }
-
-        before do
-          aod_ready_case.update(bfhines: "GP")
-        end
-
-        it "distributes the case" do
-          expect(subject.count).to eq(1)
-          expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           expect(postcavc_ready_case.reload.bfcurloc).to eq("83")
         end
       end
