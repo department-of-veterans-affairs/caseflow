@@ -25,21 +25,13 @@ const CorrespondenceDetails = (props) => {
             <ul
               className={`${mailTasks.length > 2 ? 'grid-list' : ''}`}
               aria-label={COPY.CORRESPONDENCE_DETAILS.COMPLETED_MAIL_TASKS}
-              role="list"
             >
               {
                 mailTasks.length > 0 ?
                   mailTasks.map((item, index) => (
-                    <li
-                      key={index}
-                      role="listitem"
-                      aria-label={item}
-                    >{item}</li>
+                    <li key={index} aria-label={`Task ${index + 1}: ${item}`} >{item}</li>
                   )) :
-                  <li
-                    aria-label={COPY.CORRESPONDENCE_DETAILS.NO_COMPLETED_MAIL_TASKS}
-                    role="listitem"
-                  >
+                  <li aria-label={COPY.CORRESPONDENCE_DETAILS.NO_COMPLETED_MAIL_TASKS}>
                     {COPY.CORRESPONDENCE_DETAILS.NO_COMPLETED_MAIL_TASKS}
                   </li>
               }
