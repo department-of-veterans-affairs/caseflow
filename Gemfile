@@ -85,6 +85,7 @@ gem "tzinfo", "1.2.10"
 gem "uglifier", ">= 1.3.0"
 gem "validates_email_format_of"
 gem "ziptz"
+gem 'boxr'
 
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
