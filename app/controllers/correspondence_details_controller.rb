@@ -26,6 +26,7 @@ class CorrespondenceDetailsController < CorrespondenceController
       .serializable_hash[:data][:attributes]
       .merge(general_information)
       .merge(mail_tasks)
+      .merge(appeals)
   end
 
   def build_json_response
@@ -43,6 +44,14 @@ class CorrespondenceDetailsController < CorrespondenceController
   end
 
   private
+
+  def appeals
+    case_search_results = CaseSearchResultsForCaseflowVeteranId.new(
+      caseflow_veteran_ids: [@correspondence.veteran_id], user: current_user
+    ).search_call
+
+    { appeals_information: case_search_results.extra[:case_search_results] }
+  end
 
   def mail_tasks
     {

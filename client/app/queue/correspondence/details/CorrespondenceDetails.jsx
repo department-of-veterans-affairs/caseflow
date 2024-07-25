@@ -7,16 +7,67 @@ import CopyTextButton from '../../../components/CopyTextButton';
 import { loadCorrespondence } from '../correspondenceReducer/correspondenceActions';
 import CorrespondenceCaseTimeline from '../CorrespondenceCaseTimeline';
 // import { CaseTimeline } from '../../CaseTimeline';
+import CaseListTable from 'app/queue/CaseListTable';
+import { prepareAppealForSearchStore } from 'app/queue/utils';
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
   const correspondence = props.correspondence;
+  const mailTasks = props.correspondence.mailTasks;
+  const appealsResult = props.correspondence.appeals_information;
+  const appeals = [];
+  const searchStoreAppeal = prepareAppealForSearchStore(appealsResult.appeals);
+  const appeall = searchStoreAppeal.appeals;
+  const appealldetail = searchStoreAppeal.appealDetails;
+  const hashKeys = Object.keys(appeall);
+
+  hashKeys.map((key) => {
+    const combinedHash = { ...appeall[key], ...appealldetail[key] };
+
+    appeals.push(combinedHash);
+
+    return appeals;
+  });
 
   useEffect(() => {
     dispatch(loadCorrespondence(correspondence));
   }, []);
 
+  const correspondenceTasks = () => {
+    return (
+      <React.Fragment>
+        <div className="correspondence-mail-tasks">
+          <h2>Completed Mail Tasks</h2>
+          <AppSegment filledBackground noMarginTop>
+            <ul className={`${mailTasks.length > 2 ? 'grid-list' : ''}`}>
+              {
+                mailTasks.length > 0 ?
+                  mailTasks.map((item, index) => (
+                    <li key={index}>{item}</li>
+                  )) :
+                  <li>No previously completed mail tasks prior to intake.</li>
+              }
+            </ul>
+          </AppSegment>
+        </div>
+        <div className="correspondence-existing-appeals">
+          <h2>Existing Appeals</h2>
+          <AppSegment filledBackground noMarginTop>
+            <CaseListTable
+              appeals={appeals}
+              paginate="true"
+              showCheckboxes
+              taskRelatedAppealIds={props.correspondence.correspondenceAppealIds}
+              disabled
+              enableTopPagination
+            />
+          </AppSegment>
+        </div>
+      </React.Fragment>
+    );
+  };
   const correspondenceAndAppealTaskComponents = <>
+    {correspondenceTasks()}
     <section className="task-not-related-title">Tasks not related to an appeal</section>
     <div className="correspondence-case-timeline-container">
       <CorrespondenceCaseTimeline
@@ -25,6 +76,7 @@ const CorrespondenceDetails = (props) => {
         correspondence={props.correspondence} />
     </div>
   </>;
+
 
   const tabList = [
     {
@@ -81,7 +133,9 @@ CorrespondenceDetails.propTypes = {
   organizations: PropTypes.array,
   userCssId: PropTypes.string,
   loadCorrespondenceStatus: PropTypes.func,
-  correspondenceStatus: PropTypes.object
+  correspondenceStatus: PropTypes.object,
+  correspondence_appeal_ids: PropTypes.bool,
+  enableTopPagination: PropTypes.bool
 };
 
 export default CorrespondenceDetails;
