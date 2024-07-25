@@ -1,17 +1,24 @@
-require 'net/http'
-require 'json'
-require 'jwt'
-require 'openssl'
-require 'securerandom'
-require 'net/http/post/multipart'
-require 'mime/types'
+# frozen_string_literal: true
+
+require "net/http"
+require "json"
+require "jwt"
+require "openssl"
+require "securerandom"
+require "net/http/post/multipart"
+require "mime/types"
+require "fileutils"
 
 class ExternalApi::VaBoxService
   BASE_URL = "https://api.box.com"
   FILES_URI = "#{BASE_URL}/2.0/files"
 
-  def initialize(config:)
-    @config = config
+  def initialize(client_secret:, client_id:, enterprise_id:, private_key:, passphrase:)
+    @client_secret = client_secret
+    @client_id = client_id
+    @enterprise_id = enterprise_id
+    @private_key = private_key
+    @passphrase = passphrase
   end
 
   def initialized?
@@ -20,12 +27,12 @@ class ExternalApi::VaBoxService
 
   def fetch_access_token
     response = fetch_jwt_access_token
-    @access_token = response['access_token']
+    @access_token = response["access_token"]
 
-    if response['expires_in'] <= Time.now.to_i
+    if response["expires_in"] <= Time.now.to_i
       # Fetch a new JWT access token
       response = fetch_jwt_access_token
-      @access_token = response['access_token']
+      @access_token = response["access_token"]
     end
   end
 
@@ -33,65 +40,63 @@ class ExternalApi::VaBoxService
     upload_file(file_path, folder_id)
   end
 
-  def public_get_current_user
-    get_current_user
-  end
-
   def public_folder_details(folder_id)
     get_folder_collaborations(folder_id)
   end
 
+  def download_file(file_id, destination_path)
+    download_url = "#{FILES_URI}/#{file_id}/content"
+    uri = URI.parse(download_url)
 
-  def get_current_user
-    uri = URI('https://api.box.com/2.0/users/me')
-    req = Net::HTTP::Get.new(uri)
-    req['Authorization'] = "Bearer #{@access_token}"
+    request = Net::HTTP::Get.new(uri)
+    request["Authorization"] = "Bearer #{@access_token}"
 
-    req_options = {
-      use_ssl: uri.scheme == 'https'
-    }
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
 
-    res = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
-      http.request(req)
-    end
+    response = http.request(request)
 
-    if res.code == "200"
-      body = JSON.parse(res.body)
-      puts "Role: #{body['role']}"
-      puts "Status: #{body['status']}"
-      body
+    if response.code == "200" || response.code == "302"
+      File.open(destination_path, "wb") do |file|
+        file.write(response.body)
+      end
+      Rails.logger.info("File downloaded successfully to #{destination_path}")
     else
-      raise "Error: #{res.body}"
+      Rails.logger.info("Failed to download the file. Response code: #{response.code}")
+      Rails.logger.info("Response body: #{response.body}")
+      fail "Error: #{response.body}"
     end
+  rescue StandardError => error
+    log_error(error)
   end
+
+  private
 
   def fetch_jwt_access_token
     url = "#{BASE_URL}/oauth2/token"
     payload = {
-      iss: @config[:client_id],
-      sub: @config[:enterprise_id],
-      box_sub_type: 'enterprise',
+      iss: @client_id,
+      sub: @enterprise_id,
+      box_sub_type: "enterprise",
       aud: url,
       jti: SecureRandom.uuid,
       exp: (Time.now.utc + 60).to_i
     }
 
-    key_content = @config[:private_key]
-    passphrase = @config[:passphrase]
-    rsa_private = OpenSSL::PKey::RSA.new(key_content, passphrase)
-    token = JWT.encode(payload, rsa_private, 'RS256')
+    rsa_private = OpenSSL::PKey::RSA.new(@private_key, @passphrase)
+    token = JWT.encode(payload, rsa_private, "RS256")
 
     body = {
-      grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+      grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
       assertion: token,
-      client_id: @config[:client_id],
-      client_secret: @config[:client_secret]
+      client_id: @client_id,
+      client_secret: @client_secret
     }
 
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
-    request = Net::HTTP::Post.new(uri.request_uri, { 'Content-Type' => 'application/json' })
+    request = Net::HTTP::Post.new(uri.request_uri, { "Content-Type" => "application/json" })
     request.body = body.to_json
 
     response = http.request(request)
@@ -100,8 +105,10 @@ class ExternalApi::VaBoxService
       body = JSON.parse(response.body)
       body
     else
-      raise "Error: #{response.body}"
+      fail "Error: #{response.body}"
     end
+  rescue StandardError => error
+    log_error(error)
   end
 
   def upload_file(file_path, folder_id)
@@ -109,11 +116,9 @@ class ExternalApi::VaBoxService
     uri = URI.parse(url)
 
     request = Net::HTTP::Post::Multipart.new(uri.path,
-      "file" => UploadIO.new(File.new(file_path), "application/zip", File.basename(file_path)),
-      "attributes" => { name: File.basename(file_path), parent: { id: folder_id } }.to_json
-    )
+                                             "file" => UploadIO.new(File.new(file_path), "application/zip", File.basename(file_path)),
+                                             "attributes" => { name: File.basename(file_path), parent: { id: folder_id } }.to_json)
     request["Authorization"] = "Bearer #{@access_token}"
-    request["As-User"] = @config[:as_user] if @config[:as_user]
 
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
@@ -124,59 +129,15 @@ class ExternalApi::VaBoxService
       body = JSON.parse(response.body)
       body
     else
-      puts "As-User: #{@config[:as_user]}"
-      puts "Response code: #{response.code}"
-      puts "Response body: #{response.body}"
-      raise "Error: #{response.body}"
+      Rails.logger.info("Response body: #{response.body}")
+      fail "Error: #{response.body}"
     end
+  rescue StandardError => error
+    log_error(error)
   end
 
-  def get_folder_collaborations(folder_id)
-  url = "#{BASE_URL}/2.0/folders/#{folder_id}/collaborations"
-  uri = URI.parse(url)
-
-  request = Net::HTTP::Get.new(uri.request_uri)
-  request["Authorization"] = "Bearer #{@access_token}"
-
-  http = Net::HTTP.new(uri.host, uri.port)
-  http.use_ssl = true
-
-  response = http.request(request)
-
-    if response.code == "200"
-      body = JSON.parse(response.body)
-      body['entries'].each do |collaboration|
-      puts "Collaboration ID: #{collaboration['id']}"
-      puts "Access level: #{collaboration['accessible_by']['type']}"
-      puts "Role: #{collaboration['role']}"
-    end
-    body
-    else
-      raise "Error: #{response.body}"
-    end
-  end
-
-  def get_child_folders(parent_folder_id)
-  url = "#{BASE_URL}/2.0/folders/#{parent_folder_id}/items"
-  uri = URI.parse(url)
-
-  request = Net::HTTP::Get.new(uri.request_uri)
-  request["Authorization"] = "Bearer #{@access_token}"
-
-  http = Net::HTTP.new(uri.host, uri.port)
-  http.use_ssl = true
-
-  response = http.request(request)
-
-  if response.code == "200"
-    body = JSON.parse(response.body)
-    child_folders = body['entries'].select { |item| item['type'] == 'folder' }
-    child_folders
-  else
-    raise "Error: #{response.body}"
+  def log_error(error)
+    Rails.logger.error(error.message)
+    Rails.logger.error(error.backtrace.join("\n"))
   end
 end
-
-end
-
-
