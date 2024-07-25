@@ -15,7 +15,7 @@ describe SupplementalClaim, :postgres do
   let(:decision_review_remanded) { nil }
 
   let(:supplemental_claim) do
-    SupplementalClaim.new(
+    Remand.new(
       veteran_file_number: veteran_file_number,
       receipt_date: receipt_date,
       benefit_type: benefit_type,
