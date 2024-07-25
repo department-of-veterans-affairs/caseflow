@@ -48,7 +48,7 @@ class CorrespondenceDetailsController < CorrespondenceController
       caseflow_veteran_ids: [@correspondence.veteran_id], user: current_user
     ).search_call
 
-    {appeals_information: case_search_results.extra[:case_search_results]}
+    { appeals_information: case_search_results.extra[:case_search_results] }
   end
 
   def mail_tasks
