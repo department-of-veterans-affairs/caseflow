@@ -73,10 +73,6 @@ class CaseDistributionLever < ApplicationRecord
     value == Constants.ACD_LEVERS.infinite
   end
 
-  def aoj_affinity_days
-    
-  end
-
   private
 
   def value_matches_data_type
@@ -149,6 +145,21 @@ class CaseDistributionLever < ApplicationRecord
       end
 
       super
+    end
+
+    def aoj_affinity_days
+      aoj_affinity_days_lever = CaseDistributionLever.find_by(item: Constants.DISTRIBUTION.aoj_affinity_days)
+      aoj_affinity_days_lever.value
+    end
+
+    def aoj_cavc_affinity
+      aoj_cavc_affinity_days_lever = CaseDistributionLever.find_by(item: Constants.DISTRIBUTION.aoj_cavc_affinity_days)
+      aoj_cavc_affinity_days_lever.value
+    end
+
+    def aoj_aod_affinity
+      aoj_aod_affinity_days_lever = CaseDistributionLever.find_by(item: Constants.DISTRIBUTION.aoj_aod_affinity_days)
+      aoj_aod_affinity_days_lever.value
     end
 
     def update_acd_levers(current_levers, current_user)
