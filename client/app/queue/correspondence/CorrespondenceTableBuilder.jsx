@@ -356,7 +356,6 @@ CorrespondenceTableBuilder.propTypes = {
   isVhaOrg: PropTypes.bool,
   featureToggles: PropTypes.object,
   inboundOpsTeamUsers: PropTypes.array,
-  inboundOpsTeamNonAdmin: PropTypes.array,
   selectedTasks: PropTypes.array,
   isInboundOpsTeamUser: PropTypes.bool,
   isInboundOpsSuperuser: PropTypes.bool,
