@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_06_13_202232) do
+ActiveRecord::Schema.define(version: 2024_07_18_184151) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -733,6 +733,14 @@ ActiveRecord::Schema.define(version: 2024_06_13_202232) do
     t.bigint "veteran_id", comment: "Foreign key to veterans table"
     t.index ["correspondence_type_id"], name: "index_correspondences_on_correspondence_type_id"
     t.index ["veteran_id"], name: "index_correspondences_on_veteran_id"
+  end
+
+  create_table "correspondences_appeals_tasks", force: :cascade do |t|
+    t.bigint "correspondence_id"
+    t.datetime "created_at", null: false
+    t.bigint "task_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["task_id"], name: "index_correspondences_appeals_tasks_on_task_id"
   end
 
   create_table "decision_documents", force: :cascade do |t|
@@ -2453,6 +2461,8 @@ ActiveRecord::Schema.define(version: 2024_06_13_202232) do
   add_foreign_key "correspondence_relations", "correspondences", column: "related_correspondence_id"
   add_foreign_key "correspondences", "correspondence_types"
   add_foreign_key "correspondences", "veterans"
+  add_foreign_key "correspondences_appeals_tasks", "correspondences"
+  add_foreign_key "correspondences_appeals_tasks", "tasks"
   add_foreign_key "dispatch_tasks", "legacy_appeals", column: "appeal_id"
   add_foreign_key "dispatch_tasks", "users"
   add_foreign_key "distributed_cases", "distributions"

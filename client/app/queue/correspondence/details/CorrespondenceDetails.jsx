@@ -5,11 +5,27 @@ import PropTypes from 'prop-types';
 import TabWindow from '../../../components/TabWindow';
 import CopyTextButton from '../../../components/CopyTextButton';
 import { loadCorrespondence } from '../correspondenceReducer/correspondenceActions';
+import CaseListTable from 'app/queue/CaseListTable';
+import { prepareAppealForSearchStore } from 'app/queue/utils';
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
   const correspondence = props.correspondence;
   const mailTasks = props.correspondence.mailTasks;
+  const appealsResult = props.correspondence.appeals_information;
+  const appeals = [];
+  const searchStoreAppeal = prepareAppealForSearchStore(appealsResult.appeals);
+  const appeall = searchStoreAppeal.appeals;
+  const appealldetail = searchStoreAppeal.appealDetails;
+  const hashKeys = Object.keys(appeall);
+
+  hashKeys.map((key) => {
+    const combinedHash = { ...appeall[key], ...appealldetail[key] };
+
+    appeals.push(combinedHash);
+
+    return appeals;
+  });
 
   useEffect(() => {
     dispatch(loadCorrespondence(correspondence));
@@ -30,6 +46,19 @@ const CorrespondenceDetails = (props) => {
                   <li>No previously completed mail tasks prior to intake.</li>
               }
             </ul>
+          </AppSegment>
+        </div>
+        <div className="correspondence-existing-appeals">
+          <h2>Existing Appeals</h2>
+          <AppSegment filledBackground noMarginTop>
+            <CaseListTable
+              appeals={appeals}
+              paginate="true"
+              showCheckboxes
+              taskRelatedAppealIds={props.correspondence.correspondenceAppealIds}
+              disabled
+              enableTopPagination
+            />
           </AppSegment>
         </div>
       </React.Fragment>
@@ -89,7 +118,9 @@ CorrespondenceDetails.propTypes = {
   loadCorrespondence: PropTypes.func,
   correspondence: PropTypes.object,
   loadCorrespondenceStatus: PropTypes.func,
-  correspondenceStatus: PropTypes.object
+  correspondenceStatus: PropTypes.object,
+  correspondence_appeal_ids: PropTypes.bool,
+  enableTopPagination: PropTypes.bool
 };
 
 export default CorrespondenceDetails;
