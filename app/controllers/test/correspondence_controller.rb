@@ -131,13 +131,13 @@ class Test::CorrespondenceController < ApplicationController
   end
 
   def create_correspondence_document(veteran, correspondence)
-    doc_type = Caseflow::DocumentTypes::TYPES.keys.sample
+    doc_type = VALID_CE_API_VBMS_DOCUMENT_TYPE_IDS.sample
     CorrespondenceDocument.find_or_create_by(
       document_file_number: veteran.file_number,
       uuid: SecureRandom.uuid,
       correspondence_id: correspondence.id,
       document_type: doc_type,
-      vbms_document_type_id: VALID_CE_API_VBMS_DOCUMENT_TYPE_IDS.sample,
+      vbms_document_type_id: doc_type,
       pages: rand(1..30)
     )
   end
