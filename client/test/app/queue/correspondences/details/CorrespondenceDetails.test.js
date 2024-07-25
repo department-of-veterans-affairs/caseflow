@@ -7,7 +7,6 @@ import { correspondenceData } from 'test/data/correspondence';
 import { applyMiddleware, createStore } from 'redux';
 import rootReducer from 'app/queue/reducers';
 import thunk from 'redux-thunk';
-import ApiUtil from 'app/util/ApiUtil';
 import { prepareAppealForSearchStore } from 'app/queue/utils';
 
 jest.mock('redux', () => ({
@@ -53,21 +52,33 @@ let initialState = {
   correspondence: correspondenceData
 };
 const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-const getSpy = jest.spyOn(ApiUtil, 'get');
 
 describe('CorrespondenceDetails', () => {
   const props = {
     correspondence: {
       veteranFullName: 'John Doe',
       veteranFileNumber: '123456789',
-      mailTasks: ['Task 1', 'Task 2']
+      mailTasks: ['Task 1', 'Task 2'],
+      appeals_information: {
+        appeals: [
+          {
+            id: 1,
+            type: 'appeal',
+            attributes: {
+              assigned_to_location: 'Mail',
+              appellant_full_name: 'John Doe',
+              type: 'Original',
+              docket_number: '123-456'
+            }
+          }
+        ],
+        claim_reviews: []
+      }
     }
   };
 
   beforeEach(() => {
     store.dispatch = jest.fn();
-
-    getSpy.mockImplementation(() => Promise.resolve({ body: {} }));
 
     prepareAppealForSearchStore.mockReturnValue({
       appeals: {},
