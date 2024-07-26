@@ -33,6 +33,16 @@ export const saveCurrentIntake = (currentIntake, data, onSave) => (dispatch) => 
     });
 };
 
+export const loadVetCorrespondence = (vetCorrespondences) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.LOAD_VET_CORRESPONDENCE,
+      payload: {
+        vetCorrespondences
+      }
+    });
+  };
+
 export const loadCorrespondence = (correspondence) =>
   (dispatch) => {
     dispatch({
