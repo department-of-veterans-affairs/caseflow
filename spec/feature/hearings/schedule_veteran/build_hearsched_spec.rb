@@ -472,27 +472,27 @@ RSpec.feature "Schedule Veteran For A Hearing" do
           expect(page).to have_content("You have successfully assigned")
 
           new_hearing = hearing_day.reload.open_hearings.first
-          scheduled_time = new_hearing.scheduled_for.in_time_zone("America/Denver").strftime("%I:%M")
+          scheduled_time = new_hearing.scheduled_for.in_time_zone("America/Denver").strftime("%H:%M")
           expect(scheduled_time).to eq(expected_time)
         end
       end
 
       context "Hearing time field based first slot time" do
         context "first slot time is null" do
-          let(:expected_time) { "12:30" }
+          let(:expected_time) { "11:30" }
           include_examples "hearing time display"
         end
 
         context "first slot time is '08:30'" do
           let(:first_slot_time) { "10:30" }
-          let(:expected_time) { "08:30" }
+          let(:expected_time) { "07:30" }
           let(:readonly_time_text) { "8:30 AM Mountain / 10:30 AM Eastern" }
           include_examples "hearing time display"
         end
 
         context "first slot time is '12:30'" do
           let(:first_slot_time) { "14:30" }
-          let(:expected_time) { "12:30" }
+          let(:expected_time) { "11:30" }
           let(:readonly_time_text) { "12:30 PM Mountain / 2:30 PM Eastern" }
           include_examples "hearing time display"
         end
@@ -868,22 +868,22 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       end
     end
 
-    shared_examples "change from Central hearing" do
+    shared_examples "change from Central hearing" do |time, slots = false|
       include_context "central_hearing"
       include_context "hearing subtree"
 
       before { cache_appeals }
 
-      it_behaves_like "scheduling a virtual hearing", "C", "11:00"
+      it_behaves_like "scheduling a virtual hearing", "C", time, slots
     end
 
-    shared_examples "change from Video hearing" do
+    shared_examples "change from Video hearing" do |time, slots = false|
       include_context "video_hearing"
       include_context "hearing subtree"
 
       before { cache_appeals }
 
-      it_behaves_like "scheduling a virtual hearing", "RO39", "10:30"
+      it_behaves_like "scheduling a virtual hearing", "RO39", time, slots
     end
 
     shared_examples "withdraw a hearing" do
@@ -1071,9 +1071,9 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
         it_behaves_like "an appeal where there is an open hearing"
 
-        it_behaves_like "change from Central hearing"
+        it_behaves_like "change from Central hearing", "11:00"
 
-        it_behaves_like "change from Video hearing"
+        it_behaves_like "change from Video hearing", "10:30"
 
         it_behaves_like "withdraw a hearing"
       end
@@ -1106,9 +1106,9 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
       it_behaves_like "an appeal where there is an open hearing"
 
-      it_behaves_like "change from Central hearing"
+      it_behaves_like "change from Central hearing", "11:00 AM", "slot"
 
-      it_behaves_like "change from Video hearing"
+      it_behaves_like "change from Video hearing", "10:30 AM", "slot"
 
       it_behaves_like "withdraw a hearing"
     end

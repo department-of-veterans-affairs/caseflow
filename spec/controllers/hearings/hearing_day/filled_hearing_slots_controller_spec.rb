@@ -50,8 +50,14 @@ RSpec.describe Hearings::HearingDay::FilledHearingSlotsController, type: :contro
         expect(response_body["filled_hearing_slots"].size).to eq 2
         expect(response_body["filled_hearing_slots"].first.keys).to match_array(expected_keys)
         expect(response_body["filled_hearing_slots"].second.keys).to match_array(expected_keys)
+
+        slots = if Time.zone.now.in_time_zone("America/New_York").zone == "EDT"
+                  ["9:30 AM Eastern Time (US & Canada)", "12:00 PM Eastern Time (US & Canada)"]
+                else
+                  ["8:30 AM Eastern Time (US & Canada)", "12:00 PM Eastern Time (US & Canada)"]
+                end
         expect(response_body["filled_hearing_slots"].map { |res| res["hearing_time"] })
-          .to match_array(["08:30", "12:00"])
+          .to match_array(slots)
         expect(response_body["filled_hearing_slots"].map { |res| res["issue_count"] })
           .to match_array([ama_hearing.current_issue_count, legacy_hearing.current_issue_count])
         expect(response_body["filled_hearing_slots"].map { |res| res["docket_number"] })

@@ -309,7 +309,7 @@ describe AssignHearingDispositionTask, :all_dbs do
               new_hearing_attrs: {
                 hearing_day_id: HearingDay.first.id,
                 hearing_location: { facility_id: "vba_370", distance: 10 },
-                scheduled_time_string: "12:30"
+                scheduled_time_string: "12:30 PM Eastern Time (US & Canada)"
               }
             }
           }
@@ -349,7 +349,7 @@ describe AssignHearingDispositionTask, :all_dbs do
               new_hearing_attrs: {
                 hearing_day_id: HearingDay.first.id,
                 hearing_location: { facility_id: "vba_370", distance: 10 },
-                scheduled_time_string: "12:30"
+                scheduled_time_string: "12:30 PM Eastern Time (US & Canada)"
               }
             }
           }

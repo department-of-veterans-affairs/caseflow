@@ -1,30 +1,30 @@
 {
   "central": [
     {
-      "displayText": "9:00 am",
-      "value": "09:00"
+      "displayText": "9:00 AM Eastern Time (US & Canada)",
+      "value": "09:00 AM Eastern Time (US & Canada)"
     },
     {
-      "displayText": "1:00 pm",
-      "value": "13:00"
+      "displayText": "1:00 PM Eastern Time (US & Canada)",
+      "value": "1:00 PM Eastern Time (US & Canada)"
     },
     {
       "displayText": "Other",
-      "value": "other"
+      "value": "Other"
     }
   ],
   "default": [
     {
-      "displayText": "8:30 am",
-      "value": "08:30"
+      "displayText": "8:30 AM",
+      "value": "8:30 AM"
     },
     {
-      "displayText": "12:30 pm",
-      "value": "12:30"
+      "displayText": "12:30 PM",
+      "value": "12:30 PM"
     },
     {
       "displayText": "Other",
-      "value": "other"
+      "value": "Other"
     }
   ]
 }
