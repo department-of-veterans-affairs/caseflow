@@ -17,10 +17,7 @@ gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git"
 gem "bootsnap", require: false
 gem "browser"
 gem "business_time", "~> 0.9.3"
-
-# TODO: lock caseflow gem to latest ref on master after merging https://github.com/department-of-veterans-affairs/caseflow-commons/pull/225
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", branch: "AlecK/APPEALS-43566"
-
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "9bd3635fbd8094d25160669f38d8699e2f1d7a98"
 gem "connect_mpi", git: "https://github.com/department-of-veterans-affairs/connect-mpi.git", ref: "a3a58c64f85b980a8b5ea6347430dd73a99ea74c"
 gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "9807d9c9f0f3e3494a60b6693dc4f455c1e3e922"
 gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
