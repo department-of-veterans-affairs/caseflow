@@ -6,12 +6,6 @@ import TabWindow from '../../components/TabWindow';
 import { tabConfig } from './TranscriptionFileDispatchTabs';
 import Alert from '../../components/Alert';
 
-const alertStyle = css({
-  '& .usa-alert': {
-    paddingBottom: '2rem'
-  }
-});
-
 const defaultAlert = {
   title: '',
   message: '',
@@ -26,8 +20,8 @@ export const TranscriptionFileDispatchView = () => {
     setSelectedFiles(files.filter((file) => file.status === 'selected'));
     if (files.filter((file) => file.status === 'locked').length) {
       setAlert({
-        title: 'Another user is in the assignment queue.  Some files may not be available for assignment',
-        message: '',
+        title: 'Another user is in the assignment queue.',
+        message: 'Some files may not be available for assignment.',
         type: 'warning'
       });
     } else {
@@ -42,13 +36,11 @@ export const TranscriptionFileDispatchView = () => {
   return (
     <>
       {alert.title && (
-        <div {...alertStyle}>
-          <Alert
-            title={alert.title}
-            message={alert.message}
-            type={alert.type}
-          />
-        </div>
+        <Alert
+          title={alert.title}
+          message={alert.message}
+          type={alert.type}
+        />
       )}
 
       <AppSegment filledBackground >
