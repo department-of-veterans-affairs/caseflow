@@ -27,6 +27,7 @@ describe AutoAssignableUserFinder do
     allow(mock_sensitivity_checker).to receive(:fetch_veteran_info) do |vbms_id|
       bgs.fetch_veteran_info(vbms_id)
     end
+    FeatureToggle.enable!(:correspondence_queue)
   end
 
   def generate_assigned_review_package_tasks(amount:, user:)
@@ -176,9 +177,9 @@ describe AutoAssignableUserFinder do
 
       context "when super user has NO available capacity" do
         before do
-          create(:merge_package_task)
-          create(:reassign_package_task)
-          create(:split_package_task)
+          create(:merge_package_task, assigned_to: super_user)
+          create(:reassign_package_task, assigned_to: super_user)
+          create(:split_package_task, assigned_to: super_user)
           generate_assigned_review_package_tasks(
             amount: CorrespondenceAutoAssignmentLever.max_capacity - 3,
             user: super_user

@@ -30,7 +30,7 @@ describe CorrespondenceDocument, :postgres do
       end
     end
 
-    context "when correspondence documents doesn't have 10182" do
+    context "when correspondence documents don't have 10182" do
       it "updates correspondence nod to false" do
         document.update!(vbms_document_type_id: 150)
         expect(document.correspondence.nod).to eq false
