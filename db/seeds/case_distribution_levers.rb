@@ -386,13 +386,13 @@ module Seeds
             title: Constants.DISTRIBUTION.aoj_aod_affinity_days_title,
             description: "Sets the number of days legacy remand Returned appeals that are also AOD (and may or may not have been CAVC at one time) respect the affinity before distributing the appeal to any available jduge. Affects appeals with hearing held when the remanding judge is not the hearing judge, or any legacy AOD + AOD appeal with no hearing held (whether or not it had been CAVC at one time).",
             data_type: Constants.ACD_LEVERS.data_types.radio,
-            value: "21",
+            value: "14",
             unit: Constants.ACD_LEVERS.days,
             options: [
               {
                 item: Constants.ACD_LEVERS.value,
                 data_type: Constants.ACD_LEVERS.data_types.number,
-                value: 21,
+                value: 14,
                 text: "Attempt distribution to current judge for max of:",
                 unit: Constants.ACD_LEVERS.days,
                 selected: true
@@ -424,13 +424,13 @@ module Seeds
             title: Constants.DISTRIBUTION.aoj_cavc_affinity_days_title,
             description: "Sets the number of days AOJ appeals that were CAVC at some time respect the affinity before the appeal is distributed to any available judge. This applies to any AOJ + CAVC appeal with no hearing held, or those with a hearing held when the remanding judge is not the hearing judge.",
             data_type: Constants.ACD_LEVERS.data_types.radio,
-            value: "14",
+            value: "21",
             unit: Constants.ACD_LEVERS.days,
             options: [
               {
                 item: Constants.ACD_LEVERS.value,
                 data_type: Constants.ACD_LEVERS.data_types.number,
-                value: 14,
+                value: 21,
                 text: "Attempt distribution to current judge for max of:",
                 unit: Constants.ACD_LEVERS.days,
                 selected: true

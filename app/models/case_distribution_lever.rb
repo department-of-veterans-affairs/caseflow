@@ -147,21 +147,6 @@ class CaseDistributionLever < ApplicationRecord
       super
     end
 
-    def aoj_affinity_days
-      aoj_affinity_days_lever = CaseDistributionLever.find_by(item: Constants.DISTRIBUTION.aoj_affinity_days)
-      aoj_affinity_days_lever.value
-    end
-
-    def aoj_cavc_affinity
-      aoj_cavc_affinity_days_lever = CaseDistributionLever.find_by(item: Constants.DISTRIBUTION.aoj_cavc_affinity_days)
-      aoj_cavc_affinity_days_lever.value
-    end
-
-    def aoj_aod_affinity
-      aoj_aod_affinity_days_lever = CaseDistributionLever.find_by(item: Constants.DISTRIBUTION.aoj_aod_affinity_days)
-      aoj_aod_affinity_days_lever.value
-    end
-
     def update_acd_levers(current_levers, current_user)
       grouped_levers = current_levers.index_by { |lever| lever["id"] }
       previous_levers = CaseDistributionLever.where(id: grouped_levers.keys).index_by { |lever| lever["id"] }
