@@ -22,10 +22,9 @@ const CorrespondenceDetails = (props) => {
     if (correspondence.correspondenceAppealIds.includes(appeal.id)) {
       return filteredAppeals.push(appeal);
     }
-
     return unfilteredAppeals.push(appeal);
-
   });
+
   filteredAppeals = filteredAppeals.sort((leftAppeal, rightAppeal) => leftAppeal.id - rightAppeal.id);
   unfilteredAppeals = unfilteredAppeals.sort((leftAppeal, rightAppeal) => leftAppeal.id - rightAppeal.id);
   const sortedAppeals = filteredAppeals.concat(unfilteredAppeals);
@@ -37,9 +36,7 @@ const CorrespondenceDetails = (props) => {
 
   hashKeys.map((key) => {
     const combinedHash = { ...appeall[key], ...appealldetail[key] };
-
     appeals.push(combinedHash);
-
     return appeals;
   });
 
