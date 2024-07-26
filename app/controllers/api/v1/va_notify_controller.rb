@@ -7,20 +7,14 @@ class Api::V1::VaNotifyController < Api::ApplicationController
   #
   # Response: Update corresponding Notification status
   def notifications_update
-    send "notification_update"
+    send_sqs_message
+    render json: { message: "#{required_params[:notification_type_param]} Notification successfully updated: ID #{required_params[:id]}" }
   rescue StandardError => error
-    log_error(error)
+    log_error(error, params["id"], params["notification_type"])
     render json: { error: error.message }, status: :bad_request
   end
 
   private
-
-  def notification_update
-    send_sqs_message
-    render json: { message: "Email Notification successfully updated: ID #{required_params[:id]}" }
-  rescue StandardError => error
-    raise error
-  end
 
   def required_params
     id_param, notification_type_param,
@@ -32,8 +26,7 @@ class Api::V1::VaNotifyController < Api::ApplicationController
       receipient: to_param,
       status: status_param,
       status_reason: status_reason_param,
-      message: "#{notification_type_param} notification successfully updated: ID #{id_param}",
-      "#{notification_type_param}_update": "#{id_param}:#{status_param}"
+      message: "#{notification_type_param} notification successfully updated: ID #{id_param}"
     }
   rescue StandardError => error
     raise error
@@ -48,7 +41,7 @@ class Api::V1::VaNotifyController < Api::ApplicationController
       queue_url: sqs_url,
       message_body: message_body,
       message_deduplication_id: Digest::SHA256.hexdigest(message_body),
-      message_group_id: "VANotifyStatusUpdate"
+      message_group_id: Constants.VA_NOTIFY_CONSTANTS.message_group_id
     }
   rescue StandardError => error
     raise error
@@ -59,8 +52,10 @@ class Api::V1::VaNotifyController < Api::ApplicationController
     sqs.send_message(build_sqs_message)
   end
 
-  def log_error(error)
-    Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
+  def log_error(error, external_id, notification_type)
+    Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}\n \
+                       external_id: #{external_id}\n \
+                       notification_type: #{notification_type}")
     Raven.capture_exception(error)
   end
 end

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  File: README
+  
+    &mdash; Documentation by YARD 0.9.27
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "README";
+  relpath = '';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="_index.html">Index</a> &raquo; 
+    <span class="title">File: README</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><div id='filecontents'><h1 id="caseflow">Caseflow</h1>
+<p><a href="https://knapsackpro.com/dashboard/organizations/1654/projects/1260/test_suites/1783/builds?utm_campaign=organization-id-1654&amp;utm_content=test-suite-id-1783&amp;utm_medium=readme&amp;utm_source=knapsack-pro-badge&amp;utm_term=project-id-1260"><img src="https://img.shields.io/badge/Knapsack%20Pro-Parallel%20%2F%20Caseflow%20RSpec%20Tests-%230074ff" alt="Knapsack Pro Parallel CI builds for Caseflow RSpec Tests" /></a></p>
+
+<p>Caseflow is a suite of web-based tools to manage VA appeals. It’s currently in development by the Appeals Modernization team (est. 2016). It will replace the current system of record for appeals, the Veterans Appeals Control and Location System (VACOLS), which was created in 1979 on now-outdated infrastructure. Additionally, Caseflow will allow the Board of Veterans’ Appeals to process appeals under the new guidelines created by the Veterans Appeals Improvement and Modernization Act of 2017, which goes into effect February 14th, 2019.</p>
+
+<p>The Appeals Modernization team’s mission is to empower employees with technology to increase timely, accurate appeals decisions and improve the Veteran experience. Most of the team’s products live here, in the main Caseflow repository.</p>
+
+<h1 id="table-of-contents">Table of Contents</h1>
+
+<ul>
+  <li><a href="#caseflow">Caseflow</a>
+    <ul>
+      <li><a href="#caseflow-products-in-heavy-development">Caseflow products in heavy development</a>
+        <ul>
+          <li><a href="#intake">Intake</a></li>
+          <li><a href="#queue">Queue</a></li>
+          <li><a href="#reader">Reader</a></li>
+          <li><a href="#hearings">Hearings</a></li>
+        </ul>
+      </li>
+      <li><a href="#caseflow-products-in-a-mature-state">Caseflow products in a mature state</a>
+        <ul>
+          <li><a href="#dispatch">Dispatch</a></li>
+          <li><a href="#api">API</a></li>
+          <li><a href="#certification">Certification</a></li>
+        </ul>
+      </li>
+      <li><a href="#other-caseflow-products">Other Caseflow Products</a></li>
+      <li><a href="#developer-setup">Developer Setup</a>
+        <ul>
+          <li><a href="#github">Github</a></li>
+          <li><a href="#machine-setup">Machine setup</a>
+            <ul>
+              <li>Windows
+                <ul>
+                  <li><a href="WINDOWS_10.md">Windows 10 + WSL</a></li>
+                  <li><a href="WINDOWS_11.md">Windows 11 + WSL</a></li>
+                </ul>
+              </li>
+              <li>Mac
+                <ul>
+                  <li><a href="MAC_M1.md">Mac M1/M2</a></li>
+                  <li><a href="MAC_INTEL.md">Mac Intel</a></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><a href="#test-coverage">Test Coverage</a></li>
+      <li><a href="#debugging-facols-setup">Debugging FACOLS setup</a></li>
+      <li><a href="#monitoring">Monitoring</a></li>
+      <li><a href="#roles">Roles</a></li>
+      <li><a href="#running-caseflow-connected-to-external-depedencies">Running Caseflow connected to external depedencies</a></li>
+      <li><a href="#dev-caseflow-usage-tweaks">Dev Caseflow Usage Tweaks</a>
+        <ul>
+          <li><a href="#changing-between-test-users">Changing between test users</a></li>
+          <li><a href="#feature-toggle-and-functions">Feature Toggle and Functions</a></li>
+          <li><a href="#out-of-service">Out of Service</a></li>
+          <li><a href="#degraded-service">Degraded Service</a></li>
+        </ul>
+      </li>
+      <li><a href="#documentation">Documentation</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="caseflow-products-in-heavy-development">Caseflow products in heavy development</h2>
+
+<h3 id="intake">Intake</h3>
+
+<p>Tracking Appeals Modernization Act reviews in a single system.</p>
+
+<h3 id="queue">Queue</h3>
+
+<p>Workflow management at the Board of Veterans’ Appeals.</p>
+
+<h3 id="reader">Reader</h3>
+
+<p>Increases the speed with which attorneys and Veterans Law Judges (VLJs)
+review and annotate electronic case files.</p>
+
+<h3 id="hearings">Hearings</h3>
+
+<p>Scheduling and supporting Board of Veterans’ Appeals hearings.</p>
+
+<h2 id="caseflow-products-in-a-mature-state">Caseflow products in a mature state</h2>
+
+<h3 id="dispatch">Dispatch</h3>
+
+<p>Facilitates the transfer of cases from the Agency of Original Jurisdiction (AOJ) to
+the Board of Veterans’ Appeals (the Board).</p>
+
+<h3 id="hearing-prep">Hearing Prep</h3>
+
+<p>Improving the timeliness and Veteran experience of Board hearings.</p>
+
+<h3 id="api">API</h3>
+
+<p>Providing Veterans transparent information about the status of their appeal</p>
+
+<h3 id="certification">Certification</h3>
+
+<p>Facilitates the transfer of cases from the Agency of Original Jurisdiction (AOJ) to the Board of Veterans’ Appeals (the Board).</p>
+
+<h2 id="other-caseflow-products">Other Caseflow Products</h2>
+<p>| Product | GitHub Repository | Contiuous Integration Tests |
+| — | — | —|
+| Caseflow | <a href="https://github.com/department-of-veterans-affairs/caseflow">caseflow</a> | <a href="https://circleci.com/gh/department-of-veterans-affairs/caseflow">CircleCI - Caseflow</a> |
+| eFolder Express | <a href="https://github.com/department-of-veterans-affairs/caseflow-efolder">caseflow-efolder</a> | <a href="https://circleci.com/gh/department-of-veterans-affairs/caseflow-efolder">Circle CI - eFolder</a> |
+| Commons | <a href="https://github.com/department-of-veterans-affairs/caseflow-commons">caseflow-commons</a> | <a href="https://travis-ci.org/department-of-veterans-affairs/caseflow-commons">Travis CI - Commons</a> |</p>
+
+<h2 id="developer-setup">Developer Setup</h2>
+
+<h3 id="github">Github</h3>
+
+<h4 id="organization">Organization</h4>
+
+<p>Request an invite to the <a href="https://github.com/department-of-veterans-affairs">department-of-veterans-affairs</a> organization</p>
+
+<h4 id="git-2-factor-authentication">Git 2-factor authentication</h4>
+
+<p>We are using 2-factor authentication with Github so, for example, when you access a repository using Git on the command line using commands like git clone, git fetch, git pull or git push with HTTPS URLs, you must provide your GitHub username and your personal access token when prompted for a username and password. Follow directions <a href="https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/">here</a> on how to do that.</p>
+
+<h2 id="machine-setup">Machine setup</h2>
+
+<ul>
+  <li>Windows
+    <ul>
+      <li><a href="WINDOWS_10.md">Windows 10 + WSL</a></li>
+      <li><a href="WINDOWS_11.md">Windows 11 + WSL</a></li>
+    </ul>
+  </li>
+  <li>Mac
+    <ul>
+      <li><a href="MAC_M1.md">Mac M1/M2</a></li>
+      <li><a href="MAC_INTEL.md">Mac Intel</a></li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h2 id="test-coverage">Test Coverage</h2>
+
+<p>We use the <a href="https://github.com/colszowka/simplecov">simplecov</a> gem to evaluate test coverage as part of the CircleCI process.</p>
+
+<p>If you see a test coverage failure at CircleCI, you can evaluate test coverage locally for the affected files using
+the <a href="https://github.com/grosser/single_cov">single_cov</a> gem.</p>
+
+<p>Locally, add the below statement to the first line of any rspec file:</p>
+
+<p><code>
+SingleCov.covered!
+</code></p>
+
+<p>and run that file under rspec.</p>
+
+<p><code>
+SINGLE_COV=true bundle exec rspec spec/path/to/file_spec.rb
+</code></p>
+
+<p>Missing test coverage will be reported automatically at the end of the test run.</p>
+
+<hr />
+
+<h2 id="debugging-facols-setup">Debugging FACOLS setup</h2>
+<p>See debugging steps as well as more information about FACOLS in our <a href="https://github.com/department-of-veterans-affairs/caseflow/wiki/FACOLS#debugging-facols">wiki</a> or join the DSVA slack channel #appeals-development.</p>
+
+<p>Review the <a href="docs/FACOLS.md">FACOLS documentation</a> for details.</p>
+
+<h2 id="monitoring">Monitoring</h2>
+<p>We use NewRelic to monitor the app. By default, it’s disabled locally. To enable it, do:</p>
+
+<p><code>
+NEW_RELIC_LICENSE_KEY='&lt;key as displayed on NewRelic.com&gt;' NEW_RELIC_AGENT_ENABLED=true bundle exec foreman start
+</code></p>
+
+<p>You may wish to do this if you are debugging our NewRelic integration, for instance.</p>
+
+<hr />
+
+<h2 id="roles">Roles</h2>
+
+<p>When a VA employee logs in through the VA’s unified login system (CSS) a session begins with the user.
+Within this session the user gets a set of roles. These roles determine what pages a user has access to.
+In dev mode, we don’t log in with CSS and instead take on the <a href="#changing-between-test-users">identity of a user in the database</a>.</p>
+
+<h2 id="running-caseflow-connected-to-external-depedencies">Running Caseflow connected to external depedencies</h2>
+<p>To test the app connected to external dependencies, you’ll need to set up Oracle, decrypt the environment variables, install staging gems, and run the app.</p>
+
+<h2 id="environment-variables">Environment variables</h2>
+
+<p>First you’ll need to install ansible-vault and credstash.
+<code>sh
+pip install ansible-vault
+pip install credstash
+</code>
+For more credstash setup, follow <a href="https://github.com/department-of-veterans-affairs/appeals-deployment/blob/master/docs/credstash.md#using-credstash">the doc</a></p>
+
+<p>We’ll need to obtain the Ansible vault password using credstash:</p>
+
+<p><code>sh
+export VAULT_PASSWORD=$(credstash -t appeals-credstash get devops.vault_pass)
+</code></p>
+
+<p>Clone the <a href="https://github.com/department-of-veterans-affairs/appeals-deployment/">appeals-deployment</a> repo, and run:</p>
+
+<p><code>sh
+./decrypt.sh $VAULT_PASSWORD
+</code></p>
+
+<p>In order to load these environment variables, run:</p>
+
+<p><code>sh
+source /path/to/appeals-deployment/decrypted/uat/env.sh
+</code></p>
+
+<h3 id="install-staging-gems">Install staging gems</h3>
+<p>Install the gems required to run the app connected to VBMS and VACOLS:</p>
+
+<p><code>sh
+bundle install --with staging
+</code></p>
+
+<h3 id="run-the-app">Run the app</h3>
+
+<p><code>sh
+bundle exec rails s -e staging
+</code></p>
+
+<hr />
+
+<h2 id="dev-caseflow-usage-tweaks">Dev Caseflow Usage Tweaks</h2>
+
+<h3 id="changing-between-test-users">Changing between test users</h3>
+
+<p>Select ‘Switch User’ from the dropdown or navigate to
+<a href="http://localhost:3000/test/users">http://localhost:3000/dev/users</a>. You can use
+this page to switch to any user that is currently in the database. The users’ names specify
+what roles they have and therefore what pages they can access. To add new users with new
+roles, you should seed them in the database via the seeds.rb file. The css_id of the user
+should be a comma separated list of roles you want that user to have.</p>
+
+<p>In order to impersonate other user, the user will need to have Global Admin role.
+(To grant a role refer to https://github.com/department-of-veterans-affairs/caseflow-commons#functions)
+On test/users page, switch to a user that has Global Admin role. <code>Log in as user</code> interface
+will show up where you will have to specify User ID and Station ID.</p>
+
+<p>This page also contains links to different parts of the site to make dev-ing faster. Please
+add more links and users as needed.</p>
+
+<h3 id="feature-toggle-and-functions">Feature Toggle and Functions</h3>
+
+<p>See <a href="https://github.com/department-of-veterans-affairs/caseflow-commons">Caseflow Commons</a></p>
+
+<h3 id="out-of-service">Out of Service</h3>
+
+<p>To enable and disable ‘Out of Service’ feature using <code>rails c</code>. Example usage:</p>
+
+<p>```
+# enable globally
+Rails.cache.write(“out_of_service”, true)</p>
+
+<h1 id="enable-for-certification-only">enable for certification only</h1>
+<p>Rails.cache.write(“certification_out_of_service”, true)</p>
+
+<h1 id="enable-for-dispatch-only">enable for dispatch only</h1>
+<p>Rails.cache.write(“dispatch_out_of_service”, true)</p>
+
+<h1 id="enable-for-hearings-only">enable for hearings only</h1>
+<p>Rails.cache.write(“hearings_out_of_service”, true)</p>
+
+<h1 id="enable-for-reader-only">enable for reader only</h1>
+<p>Rails.cache.write(“reader_out_of_service”, true)</p>
+
+<h1 id="to-disable-eg">to disable, e.g.</h1>
+<p>Rails.cache.write(“certification_out_of_service”, false)
+```</p>
+
+<h3 id="degraded-service">Degraded Service</h3>
+<p>We show a “Degraded Service” banner across all Caseflow applications automatically when <a href="https://github.com/department-of-veterans-affairs/caseflow-monitor">Caseflow Monitor</a> detects that our dependencies may be down. To enable this banner manually, overriding our automatic checks, run the following code from the Rails console:
+<code>
+Rails.cache.write(:degraded_service_banner, :always_show)
+</code></p>
+
+<p>When the dependencies have recovered, switch the banner back to automatic mode:
+<code>
+Rails.cache.write(:degraded_service_banner, :auto)
+</code></p>
+
+<p><em>DANGER</em>: If Caseflow Monitor is incorrectly reporting a dependency issue, you can disable the “Degraded Service” banner with the following code:
+<code>
+Rails.cache.write(:degraded_service_banner, :never_show)
+</code></p>
+
+<p>When Caseflow Monitor starts working again, switch the banner back to automatic mode:
+<code>
+Rails.cache.write(:degraded_service_banner, :auto)
+</code></p>
+
+<hr />
+
+<h2 id="documentation">Documentation</h2>
+
+<p>We have a lot of technical documentation spread over a lot of different repositories. Here is a non-exhaustive mapping of where to find documentation:</p>
+
+<ul>
+  <li><a href="https://github.com/department-of-veterans-affairs/caseflow/tree/master/docs">Local Caseflow Setup</a></li>
+  <li><a href="https://github.com/department-of-veterans-affairs/appeals-qa/tree/master/docs">Test data setup in lower environments</a></li>
+  <li><a href="https://github.com/department-of-veterans-affairs/appeals-deployment/tree/master/docs">Caseflow specific devops documentation</a> This folder also contains our <a href="https://github.com/department-of-veterans-affairs/appeals-deployment/blob/master/docs/first-responder-manual.md">first responder manual</a>, which is super in understanding our production systems.</li>
+  <li><a href="https://github.com/department-of-veterans-affairs/devops/tree/master/docs">Non-Caseflow specific devops documentation</a>. This documentation is shared with the vets.gov team, so not all of it is relevant.</li>
+  <li><a href="https://github.com/department-of-veterans-affairs/appeals-design-research/tree/master/Project%20Folders">Project documentation</a></li>
+</ul>
+</div></div>
+
+      <div id="footer">
+  Generated on Fri Jul 26 07:11:06 2024 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.27 (ruby-2.7.3).
+</div>
+
+    </div>
+  </body>
+</html>

@@ -62,7 +62,7 @@ describe Api::V1::VaNotifyController, type: :controller do
       sent_by: "string",
       status: "created",
       subject: "string",
-      notification_type: ""
+      notification_type: "Email"
     }
   end
 
@@ -91,7 +91,7 @@ describe Api::V1::VaNotifyController, type: :controller do
       sent_by: "string",
       status: "created",
       subject: "string",
-      notification_type: ""
+      notification_type: "Email"
     }
   end
 
@@ -120,7 +120,7 @@ describe Api::V1::VaNotifyController, type: :controller do
       sent_by: "string",
       status: "created",
       subject: "string",
-      notification_type: ""
+      notification_type: "Emailx"
     }
   end
 
