@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Api::V1::VaNotifyController < Api::ApplicationController
-  # Purpose: POST request to VA Notify API to update status for a Notification entry
+  # Purpose: POST request to VA Notify API to update status for a Notification entry.
   #
   # Params: Params content can be found at https://vajira.max.gov/browse/APPEALS-21021
   #
