@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import TabWindow from '../../../components/TabWindow';
 import CopyTextButton from '../../../components/CopyTextButton';
 import { loadCorrespondence } from '../correspondenceReducer/correspondenceActions';
-import COPY from "../../../../COPY.json";
+import COPY from '../../../../COPY.json';
 import CaseListTable from 'app/queue/CaseListTable';
 import { prepareAppealForSearchStore } from 'app/queue/utils';
 
@@ -19,9 +19,10 @@ const CorrespondenceDetails = (props) => {
   let unfilteredAppeals = [];
 
   appealsResult.appeals.map((appeal) => {
-    if (correspondence.correspondenceAppealIds.includes(appeal.id)) {
+    if (correspondence.correspondenceAppealIds?.includes(appeal.id)) {
       return filteredAppeals.push(appeal);
     }
+
     return unfilteredAppeals.push(appeal);
   });
 
@@ -36,7 +37,9 @@ const CorrespondenceDetails = (props) => {
 
   hashKeys.map((key) => {
     const combinedHash = { ...appeall[key], ...appealldetail[key] };
+
     appeals.push(combinedHash);
+
     return appeals;
   });
 
