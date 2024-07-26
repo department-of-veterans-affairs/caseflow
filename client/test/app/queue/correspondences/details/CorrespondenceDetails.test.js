@@ -7,14 +7,15 @@ import { correspondenceData } from 'test/data/correspondence';
 import { applyMiddleware, createStore } from 'redux';
 import rootReducer from 'app/queue/reducers';
 import thunk from 'redux-thunk';
-import { prepareAppealForSearchStore } from 'app/queue/utils';
+import { prepareAppealForSearchStore, sortCaseTimelineEvents } from 'app/queue/utils';
 
 jest.mock('redux', () => ({
   ...jest.requireActual('redux'),
   bindActionCreators: () => jest.fn().mockImplementation(() => Promise.resolve(true)),
 }));
 jest.mock('app/queue/utils', () => ({
-  prepareAppealForSearchStore: jest.fn()
+  prepareAppealForSearchStore: jest.fn(),
+  sortCaseTimelineEvents: jest.fn()
 }));
 
 jest.mock('app/queue/CaseListTable', () => ({ appeals }) => (
@@ -68,6 +69,15 @@ describe('CorrespondenceDetails', () => {
           'cavc'
         ],
         assigned_to_type: 'Organization'
+      },
+      {
+        type: 'Cavc request',
+        assigned_to: 'CAVC Litigation Support',
+        assigned_at: '07/23/2024',
+        instructions: [
+          'other cavc'
+        ],
+        assigned_to_type: 'Organization'
       }],
       appeals_information: {
         appeals: [
@@ -94,6 +104,18 @@ describe('CorrespondenceDetails', () => {
       appeals: {},
       appealDetails: {}
     });
+    sortCaseTimelineEvents.mockReturnValue(
+      [{
+        "assignedOn": "07/23/2024",
+        "assignedTo": "Litigation Support",
+        "label": "Status inquiry",
+        "instructions": [
+            "stat inq"
+        ],
+        "availableActions": []
+    }]
+    )
+
   });
 
   it('renders the component', () => {
@@ -109,14 +131,6 @@ describe('CorrespondenceDetails', () => {
     expect(screen.getByText('Package Details')).toBeInTheDocument();
     expect(screen.getByText('Response Letters')).toBeInTheDocument();
     expect(screen.getByText('Associated Prior Mail')).toBeInTheDocument();
-  });
-
-  it('displays the correspondence tasks correctly', () => {
-    render(
-      <Provider store={store}>
-        <CorrespondenceDetails {...props} />
-      </Provider>
-    );
 
     expect(screen.getByText('Tasks not related to an appeal')).toBeInTheDocument();
     expect(screen.getByText('Completed Mail Tasks')).toBeInTheDocument();
@@ -131,6 +145,4 @@ describe('CorrespondenceDetails', () => {
     expect(screen.getByText('Number of Issues')).toBeInTheDocument();
     expect(screen.getByText('Decision Date')).toBeInTheDocument();
     expect(screen.getByText('Appeal Location')).toBeInTheDocument();
-  });
-
-});
+  })});
