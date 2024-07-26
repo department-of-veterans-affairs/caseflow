@@ -1,75 +1,135 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
+// import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import { css } from 'glamor';
+import FilterIcon from './icons/FilterIcon';
 
 const datePickerStyle = css({
-  position: 'relative',
-});
-
-const iconStyle = css({
-  padding: '0.5em',
   display: 'table-cell',
-  background: '#EEE',
-  width: '15px',
-  height: '15px',
-  cursor: 'pointer',
-  left: '10px',
-  fontSize: '15px',
+  paddingLeft: '1rem',
+  paddingTop: '0.3rem',
+  verticalAlign: 'middle',
   position: 'relative',
+  '& svg': {
+    cursor: 'pointer'
+  }
 });
 
 const menuStyle = css({
   position: 'absolute',
   background: 'white',
   right: 0,
-  top: '35px',
+  top: '52px',
   width: '200px',
   height: '200px',
   border: '1px solid #CCC',
   padding: '1rem'
 });
 
-export const DatePicker = (props) => {
-  const [open, setOpen] = useState(false);
-  const [rootElement, setRootElement] = useState(null);
-
-  const {
-    onChange
-  } = props;
-
-  const toggleDropdown = () => setOpen(!open);
-
-  const onGlobalClick = (event) => {
-    if (rootElement && !rootElement.contains(event.target)) {
-      setOpen(false);
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener('click', onGlobalClick, true);
-
-    return () => {
-      document.removeEventListener('click', onGlobalClick);
+class DatePicker extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {
+      open: false,
+      mode: 'between',
+      startDate: '',
+      endDate: '',
     };
-  }, []);
+  }
 
-  return (
-    <span {...datePickerStyle} ref={(rootElem) => {
-      setRootElement(rootElem);
-    }}>
-      <div {...iconStyle} onClick={toggleDropdown}>C</div>
-      {open &&
-      <div {...menuStyle}>
-        <div>Date picker...</div>
-        <div><button onClick={onChange}>Test</button></div>
-      </div>
+  apply() {
+    const { onChange } = this.props;
+
+    if (onChange) {
+      onChange(`${this.state.mode },${ this.state.startDate },${ this.state.endDate}`);
+    }
+  }
+
+  toggleDropdown = () => {
+    this.setState({ open: !this.state.open });
+
+    if (!this.state.open) {
+      const { values } = this.props;
+      const splitValues = values[0].split(',');
+
+      if (splitValues) {
+        this.setState({ mode: splitValues[0], startDate: splitValues[1], endDate: splitValues[2] });
       }
-    </span>
-  );
-};
+    }
+  }
+
+  hideDropdown = () => this.setState({ open: false });
+
+  componentDidMount() {
+    document.addEventListener('click', this.onGlobalClick, true);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('click', this.onGlobalClick);
+  }
+
+  onGlobalClick = (event) => {
+    if (!this.rootElem) {
+      return;
+    }
+
+    const clickIsInsideThisComponent = this.rootElem.contains(event.target);
+
+    if (!clickIsInsideThisComponent) {
+      this.hideDropdown();
+    }
+  }
+
+  isFilterOpen = () => {
+    // const { columnName, filteredByList } = this.props;
+
+    return this.state.open;
+  }
+
+  render() {
+    return <span {...datePickerStyle} ref={(rootElem) => {
+      this.rootElem = rootElem;
+    }}>
+      <FilterIcon
+        aria-label={this.props.label}
+        label={this.props.label}
+        getRef={this.props.getRef}
+        selected={this.isFilterOpen()}
+        handleActivate={this.toggleDropdown} />
+
+      {this.state.open &&
+          <div {...menuStyle}>
+            <div>
+              <input
+                label="Start date"
+                name="start-date"
+                defaultValue={this.state.startDate}
+                type="date"
+                onChange={(event) => this.setState({ startDate: event.target.value })}
+              />
+            </div>
+            <div>
+              <input
+                label="End date"
+                name="end-date"
+                defaultValue={this.state.endDate}
+                type="date"
+                onChange={(event) => this.setState({ endDate: event.target.value })}
+              />
+            </div>
+            <div><button disabled={this.state.startDate === '' || this.state.endDate === ''}
+              onClick={() => this.apply()}>Apply</button></div>
+          </div>
+      }
+    </span>;
+  }
+}
 
 DatePicker.propTypes = {
   onChange: PropTypes.func,
+  values: PropTypes.array,
+  getRef: PropTypes.func,
+  label: PropTypes.string
 };
 
 export default DatePicker;

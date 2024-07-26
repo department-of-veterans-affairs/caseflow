@@ -160,7 +160,7 @@ export const hearingDateColumn = () => {
     enableFilter: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.HEARING_DATE.filterable,
     anyFiltersAreSet: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.HEARING_DATE.anyFiltersAreSet,
     label: 'filter by hearing date',
-    columnName: 'hearingDate',
+    columnName: 'Hearing Date',
     valueName: 'Hearing Date',
     valueFunction: (transcriptionFile) => transcriptionFile.hearingDate,
     backendCanSort: true,

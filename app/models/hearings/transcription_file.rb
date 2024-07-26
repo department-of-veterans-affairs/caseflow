@@ -63,6 +63,12 @@ class TranscriptionFile < CaseflowRecord
     where(filter_parts.join(" OR "), stream_types)
   }
 
+  scope :filter_by_hearing_dates, lambda { |values|
+    start_date = values[0] + " 00:00:00"
+    end_date = values[1] + " 23:59:59"
+    where(Arel.sql("scheduled_for >= '" + start_date + "' AND scheduled_for <= '" + end_date + "'"))
+  }
+
   scope :order_by_id, ->(direction) { order(Arel.sql("id " + direction)) }
   scope :order_by_hearing_date, ->(direction) { order(Arel.sql("scheduled_for " + direction)) }
   scope :order_by_hearing_type, ->(direction) { order(Arel.sql("hearing_type " + direction)) }

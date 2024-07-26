@@ -135,13 +135,15 @@ class TableFilter extends React.PureComponent {
   //
   // Adds the text (string) for a filtered value to an internal list. The list holds all the
   // values to filter by.
-  updateSelectedFilter = (value, columnName) => {
+  updateSelectedFilter = (value, columnName, resetValue) => {
     const { filteredByList } = this.props;
     const filtersForColumn = _.get(filteredByList, String(columnName));
     let newFilters = [];
 
     if (filtersForColumn) {
-      if (filtersForColumn.includes(value)) {
+      if (resetValue) {
+        newFilters = value;
+      } else if (filtersForColumn.includes(value)) {
         newFilters = _.pull(filtersForColumn, value);
       } else {
         newFilters = filtersForColumn.concat([value]);
@@ -220,7 +222,7 @@ class TableFilter extends React.PureComponent {
               addClearFiltersRow>
               <FilterOption
                 options={filterOptions}
-                setSelectedValue={(value) => this.updateSelectedFilter(value, columnName)} />
+                setSelectedValue={(value) => this.updateSelectedFilter(value, columnName, false)} />
             </QueueDropdownFilter>
           }
         </span>
@@ -238,17 +240,18 @@ class TableFilter extends React.PureComponent {
             type="date"
             value=""
             ariaLabelText="date-selector"
-            onChange={(value) => this.updateSelectedFilter(formatDate(value), columnName)} />
+            onChange={(value) => this.updateSelectedFilter(formatDate(value), columnName, false)} />
         </span>
       );
     } else if (filterType === 'date-picker') {
-      filter = (
-        <span>
-          <DatePicker
-            value=""
-            ariaLabelText="date-picker"
-            onChange={(value) => this.updateSelectedFilter(value, columnName)} />
-        </span>
+
+      const dates = _.get(this.props.filteredByList, String(columnName));
+
+      filter = (<DatePicker
+        values={dates}
+        getRef={this.props.getFilterIconRef}
+        label={this.filterIconAriaLabel()}
+        onChange={(value) => this.updateSelectedFilter(value, columnName, true)} />
       );
     } else {
       filter = renderFilterIcon();
