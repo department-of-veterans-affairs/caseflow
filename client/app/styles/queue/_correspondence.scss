@@ -1333,12 +1333,15 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   border: 1px solid $color-gray-darker;
   min-height: 200px;
   padding-left: 30px;
+
 }
 
 .task-not-related-title {
   font-size: 115%;
   margin-bottom: 20px;
   font-weight: bold;
+  margin-top: 30px;
+  margin-bottom: 20px;
 }
 
 .correspondence-mail-tasks {
@@ -1394,5 +1397,6 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
   h2 {
     margin-bottom: 20px;
+
   }
 }
