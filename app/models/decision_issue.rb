@@ -267,6 +267,8 @@ class DecisionIssue < CaseflowRecord
     raise
   end
 
+  # Create a Remand if the decision review is an Appeal.
+  # HLRs will still create remands as SupplementalClaims as of (APPEALS-41559)
   def determine_remand_creation_type
     if decision_review_type == Appeal.name
       Remand.create!(
