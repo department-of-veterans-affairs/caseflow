@@ -41,14 +41,14 @@ const CorrespondenceDetails = (props) => {
           <AppSegment filledBackground noMarginTop>
             <ul
               className={`${mailTasks.length > 2 ? 'grid-list' : ''}`}
-              aria-label={COPY.CORRESPONDENCE_DETAILS.COMPLETED_MAIL_TASKS}
+              aria-label={COPY.CORRESPONDENCE_DETAILS.COMPLETED_MAIL_TASKS} role="list" aria-live="polite"
             >
               {
                 mailTasks.length > 0 ?
                   mailTasks.map((item, index) => (
-                    <li key={index} aria-label={`Task ${index + 1}: ${item}`} >{item}</li>
+                    <li key={index} role="listitem" aria-label={`Task ${index + 1}: ${item}`} >{item}</li>
                   )) :
-                  <li aria-label={COPY.CORRESPONDENCE_DETAILS.NO_COMPLETED_MAIL_TASKS}>
+                  <li aria-label= {COPY.CORRESPONDENCE_DETAILS.NO_COMPLETED_MAIL_TASKS} role="listitem">
                     {COPY.CORRESPONDENCE_DETAILS.NO_COMPLETED_MAIL_TASKS}
                   </li>
               }
