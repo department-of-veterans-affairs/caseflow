@@ -5,7 +5,8 @@ import PropTypes from 'prop-types';
 import TabWindow from '../../../components/TabWindow';
 import CopyTextButton from '../../../components/CopyTextButton';
 import { loadCorrespondence } from '../correspondenceReducer/correspondenceActions';
-import COPY from "../../../../COPY.json";
+import CorrespondenceCaseTimeline from '../CorrespondenceCaseTimeline';
+import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
 import { prepareAppealForSearchStore } from 'app/queue/utils';
 
@@ -40,14 +41,14 @@ const CorrespondenceDetails = (props) => {
           <AppSegment filledBackground noMarginTop>
             <ul
               className={`${mailTasks.length > 2 ? 'grid-list' : ''}`}
-              aria-label={COPY.CORRESPONDENCE_DETAILS.COMPLETED_MAIL_TASKS}
+              aria-label={COPY.CORRESPONDENCE_DETAILS.COMPLETED_MAIL_TASKS} role="list" aria-live="polite"
             >
               {
                 mailTasks.length > 0 ?
                   mailTasks.map((item, index) => (
-                    <li key={index} aria-label={`Task ${index + 1}: ${item}`} >{item}</li>
+                    <li key={index} role="listitem" aria-label={`Task ${index + 1}: ${item}`} >{item}</li>
                   )) :
-                  <li aria-label={COPY.CORRESPONDENCE_DETAILS.NO_COMPLETED_MAIL_TASKS}>
+                  <li aria-label= {COPY.CORRESPONDENCE_DETAILS.NO_COMPLETED_MAIL_TASKS} role="listitem">
                     {COPY.CORRESPONDENCE_DETAILS.NO_COMPLETED_MAIL_TASKS}
                   </li>
               }
@@ -70,12 +71,22 @@ const CorrespondenceDetails = (props) => {
       </React.Fragment>
     );
   };
+  const correspondenceAndAppealTaskComponents = <>
+    {correspondenceTasks()}
+    <section className="task-not-related-title">Tasks not related to an appeal</section>
+    <div className="correspondence-case-timeline-container">
+      <CorrespondenceCaseTimeline
+        organizations={props.organizations}
+        userCssId={props.userCssId}
+        correspondence={props.correspondence} />
+    </div>
+  </>;
 
   const tabList = [
     {
       disable: false,
       label: 'Correspondence and Appeal Tasks',
-      page: correspondenceTasks()
+      page: correspondenceAndAppealTaskComponents
     },
     {
       disable: false,
@@ -114,7 +125,7 @@ const CorrespondenceDetails = (props) => {
           name="tasks-tabwindow"
           tabs={tabList}
         />
-
+        <td className="taskContainerStyling taskInformationTimelineContainerStyling"></td>
       </AppSegment>
     </>
   );
@@ -123,6 +134,8 @@ const CorrespondenceDetails = (props) => {
 CorrespondenceDetails.propTypes = {
   loadCorrespondence: PropTypes.func,
   correspondence: PropTypes.object,
+  organizations: PropTypes.array,
+  userCssId: PropTypes.string,
   loadCorrespondenceStatus: PropTypes.func,
   correspondenceStatus: PropTypes.object,
   correspondence_appeal_ids: PropTypes.bool,
