@@ -82,7 +82,6 @@ const CorrespondenceDetails = (props) => {
     </div>
   </>;
 
-
   const tabList = [
     {
       disable: false,
