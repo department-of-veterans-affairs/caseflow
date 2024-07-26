@@ -3,7 +3,7 @@
 class VACOLS::Record < ApplicationRecord
   self.abstract_class = true
 
-  establish_connection "#{Rails.env}_vacols".to_sym
+  establish_connection :vacols
   ActiveSupport.run_load_hooks(:active_record_vacols, VACOLS::Record)
 
   # This method calculates the appropriate date & timezone

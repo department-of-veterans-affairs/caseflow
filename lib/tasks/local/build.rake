@@ -21,7 +21,7 @@ namespace :local do
     puts ""
 
     puts ">>> 04/08 Creating development and test caseflow databases"
-    system("RAILS_ENV=development bundle exec rake db:create") || abort
+    system("RAILS_ENV=development bundle exec rake db:create:primary") || abort
 
     puts ">>> 05/08 Seeding FACOLS"
     system("RAILS_ENV=development bundle exec rake local:vacols:seed") || abort
@@ -30,7 +30,7 @@ namespace :local do
     system("RAILS_ENV=test bundle exec rake spec:setup_vacols") || abort
 
     puts ">>> 07/08 Loading schema and seeding local caseflow database"
-    system("RAILS_ENV=development bundle exec rake db:schema:load db:seed") || abort
+    system("RAILS_ENV=development bundle exec rake db:schema:load:primary db:seed") || abort
 
     puts ">>> 08/08 Enabling feature flags"
     system("bundle exec rails runner scripts/enable_features_dev.rb") || abort
