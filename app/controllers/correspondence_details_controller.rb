@@ -4,6 +4,8 @@ class CorrespondenceDetailsController < CorrespondenceController
   include CorrespondenceControllerConcern
 
   def correspondence_details
+    @organizations = current_user.organizations.pluck(:name)
+    @correspondence = WorkQueue::CorrespondenceSerializer
     set_instance_variables
 
     respond_to do |format|
