@@ -14,6 +14,8 @@ class ExternalApi::VaBoxService
   FILES_URI = "#{BASE_URL}/2.0/files"
   CHUNK_SIZE = 50 * 1024 * 1024 # 50 MB
 
+  attr_reader :client_secret, :client_id, :enterprise_id, :private_key, :passphrase
+
   def initialize(client_secret:, client_id:, enterprise_id:, private_key:, passphrase:)
     @client_secret = client_secret
     @client_id = client_id
@@ -39,10 +41,6 @@ class ExternalApi::VaBoxService
 
   def public_upload_file(file_path, folder_id)
     upload_file(file_path, folder_id)
-  end
-
-  def public_folder_details(folder_id)
-    get_folder_collaborations(folder_id)
   end
 
   def download_file(file_id, destination_path)
