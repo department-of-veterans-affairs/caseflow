@@ -113,7 +113,7 @@ RSpec.feature "Postpone hearing" do
     end
   end
 
-  context "with schedule direct to video/virtual feature disabled", skip: "This functionality is no longer in use." do
+  context "with schedule direct to video/virtual feature disabled" do
     # Ensure the feature flag is disabled before testing
     before do
       FeatureToggle.disable!(:schedule_veteran_virtual_hearing)
@@ -125,6 +125,7 @@ RSpec.feature "Postpone hearing" do
 
       # Run the AMA scenarios
       it_behaves_like "an AMA appeal"
+
       scenario "when rescheduling" do
         visit "/queue/appeals/#{appeal.external_id}"
 
@@ -135,7 +136,7 @@ RSpec.feature "Postpone hearing" do
         expect(page).to_not have_content("Finding hearing locations", wait: 30)
         click_dropdown(name: "appealHearingLocation", index: 0)
         click_dropdown(name: "hearingDate", index: 0)
-        find(".cf-form-radio-option", text: "8:30 AM").click
+        find(".cf-form-radio-option", text: "8:30 am").click
         click_button("Submit")
 
         expect(page).to have_content("You have successfully assigned")
@@ -148,7 +149,7 @@ RSpec.feature "Postpone hearing" do
       end
     end
 
-    context "for a Legacy appeal", skip: "This functionality is no longer in use." do
+    context "for a Legacy appeal" do
       include_context "legacy_appeal"
 
       scenario "when rescheduling on the same day" do
@@ -161,7 +162,7 @@ RSpec.feature "Postpone hearing" do
         expect(page).to_not have_content("Finding hearing locations", wait: 30)
         click_dropdown(name: "appealHearingLocation", index: 0)
         click_dropdown(name: "hearingDate", index: 0)
-        find(".cf-form-radio-option", text: "8:30 AM").click
+        find(".cf-form-radio-option", text: "8:30 am").click
         click_button("Submit")
 
         expect(page).to have_content("You have successfully assigned")

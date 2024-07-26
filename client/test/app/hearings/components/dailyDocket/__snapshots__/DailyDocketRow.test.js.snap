@@ -241,8 +241,6 @@ exports[`DailyDocketRow renders correctly for non virtual, DVC  1`] = `
            /
           <br />
           8:30 AM CDT
-          <br />
-          St. Paul regional office
         </p>
         <p>
           12
@@ -832,8 +830,6 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
            /
           <br />
           8:30 AM CDT
-          <br />
-          St. Paul regional office
         </p>
         <p>
           12
@@ -1203,15 +1199,16 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
                 class="cf-form-radio-option"
               >
                 <input
+                  checked=""
                   disabled=""
-                  id="hearingTime0_8:30 AM Central Time (US & Canada)"
+                  id="hearingTime0_08:30"
                   name="hearingTime0"
                   type="radio"
-                  value="8:30 AM Central Time (US & Canada)"
+                  value="08:30"
                 />
                 <label
                   class="disabled"
-                  for="hearingTime0_8:30 AM Central Time (US & Canada)"
+                  for="hearingTime0_08:30"
                 >
                   8:30 AM Central Time (US & Canada) / 9:30 AM Eastern Time (US & Canada)
                 </label>
@@ -1221,14 +1218,14 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
               >
                 <input
                   disabled=""
-                  id="hearingTime0_12:30 PM Central Time (US & Canada)"
+                  id="hearingTime0_12:30"
                   name="hearingTime0"
                   type="radio"
-                  value="12:30 PM Central Time (US & Canada)"
+                  value="12:30"
                 />
                 <label
                   class="disabled"
-                  for="hearingTime0_12:30 PM Central Time (US & Canada)"
+                  for="hearingTime0_12:30"
                 >
                   12:30 PM Central Time (US & Canada) / 1:30 PM Eastern Time (US & Canada)
                 </label>
@@ -1237,16 +1234,15 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
                 class="cf-form-radio-option"
               >
                 <input
-                  checked=""
                   disabled=""
-                  id="hearingTime0_Other"
+                  id="hearingTime0_other"
                   name="hearingTime0"
                   type="radio"
-                  value="Other"
+                  value="other"
                 />
                 <label
                   class="disabled"
-                  for="hearingTime0_Other"
+                  for="hearingTime0_other"
                 >
                   Other
                 </label>
@@ -1254,79 +1250,6 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
             </div>
           </fieldset>
         </span>
-        <div
-          class=""
-        >
-          <div
-            class="cf-form-dropdown dropdown-optionalHearingTime0"
-          >
-            <label
-              class="question-label usa-sr-only"
-              for="optional-hearing-time-0"
-              id="optional-hearing-time-0-label"
-            >
-              <strong>
-                <span>
-                  Hearing Time
-                </span>
-              </strong>
-            </label>
-            <div
-              class="cf-select"
-            >
-              <div
-                class="cf-select--is-disabled css-14jk2my-container"
-              >
-                <div
-                  class="cf-select__control cf-select__control--is-disabled css-1fhf3k1-control"
-                >
-                  <div
-                    class="cf-select__value-container css-g1d714-ValueContainer"
-                  >
-                    <div
-                      class="cf-select__placeholder css-1wa3eu0-placeholder"
-                    >
-                      Select a time
-                    </div>
-                    <input
-                      aria-autocomplete="list"
-                      class="css-62g3xt-dummyInput"
-                      disabled=""
-                      id="optional-hearing-time-0"
-                      readonly=""
-                      tabindex="0"
-                      value=""
-                    />
-                  </div>
-                  <div
-                    class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
-                  >
-                    <span
-                      class="cf-select__indicator-separator css-109onse-indicatorSeparator"
-                    />
-                    <div
-                      aria-hidden="true"
-                      class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
-                    >
-                      <svg
-                        aria-hidden="true"
-                        class="css-6q0nyr-Svg"
-                        focusable="false"
-                        height="20"
-                        viewBox="0 0 20 20"
-                        width="20"
-                      >
-                        <path
-                          d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
-                        />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -1493,8 +1416,6 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
            /
           <br />
           8:30 AM CDT
-          <br />
-          St. Paul regional office
         </p>
         <p>
           12
@@ -1806,15 +1727,16 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
                 class="cf-form-radio-option"
               >
                 <input
+                  checked=""
                   disabled=""
-                  id="hearingTime0_8:30 AM Central Time (US & Canada)"
+                  id="hearingTime0_08:30"
                   name="hearingTime0"
                   type="radio"
-                  value="8:30 AM Central Time (US & Canada)"
+                  value="08:30"
                 />
                 <label
                   class="disabled"
-                  for="hearingTime0_8:30 AM Central Time (US & Canada)"
+                  for="hearingTime0_08:30"
                 >
                   8:30 AM Central Time (US & Canada) / 9:30 AM Eastern Time (US & Canada)
                 </label>
@@ -1824,14 +1746,14 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
               >
                 <input
                   disabled=""
-                  id="hearingTime0_12:30 PM Central Time (US & Canada)"
+                  id="hearingTime0_12:30"
                   name="hearingTime0"
                   type="radio"
-                  value="12:30 PM Central Time (US & Canada)"
+                  value="12:30"
                 />
                 <label
                   class="disabled"
-                  for="hearingTime0_12:30 PM Central Time (US & Canada)"
+                  for="hearingTime0_12:30"
                 >
                   12:30 PM Central Time (US & Canada) / 1:30 PM Eastern Time (US & Canada)
                 </label>
@@ -1840,16 +1762,15 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
                 class="cf-form-radio-option"
               >
                 <input
-                  checked=""
                   disabled=""
-                  id="hearingTime0_Other"
+                  id="hearingTime0_other"
                   name="hearingTime0"
                   type="radio"
-                  value="Other"
+                  value="other"
                 />
                 <label
                   class="disabled"
-                  for="hearingTime0_Other"
+                  for="hearingTime0_other"
                 >
                   Other
                 </label>
@@ -1857,79 +1778,6 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
             </div>
           </fieldset>
         </span>
-        <div
-          class=""
-        >
-          <div
-            class="cf-form-dropdown dropdown-optionalHearingTime0"
-          >
-            <label
-              class="question-label usa-sr-only"
-              for="optional-hearing-time-0"
-              id="optional-hearing-time-0-label"
-            >
-              <strong>
-                <span>
-                  Hearing Time
-                </span>
-              </strong>
-            </label>
-            <div
-              class="cf-select"
-            >
-              <div
-                class="cf-select--is-disabled css-14jk2my-container"
-              >
-                <div
-                  class="cf-select__control cf-select__control--is-disabled css-1fhf3k1-control"
-                >
-                  <div
-                    class="cf-select__value-container css-g1d714-ValueContainer"
-                  >
-                    <div
-                      class="cf-select__placeholder css-1wa3eu0-placeholder"
-                    >
-                      Select a time
-                    </div>
-                    <input
-                      aria-autocomplete="list"
-                      class="css-62g3xt-dummyInput"
-                      disabled=""
-                      id="optional-hearing-time-0"
-                      readonly=""
-                      tabindex="0"
-                      value=""
-                    />
-                  </div>
-                  <div
-                    class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
-                  >
-                    <span
-                      class="cf-select__indicator-separator css-109onse-indicatorSeparator"
-                    />
-                    <div
-                      aria-hidden="true"
-                      class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
-                    >
-                      <svg
-                        aria-hidden="true"
-                        class="css-6q0nyr-Svg"
-                        focusable="false"
-                        height="20"
-                        viewBox="0 0 20 20"
-                        width="20"
-                      >
-                        <path
-                          d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
-                        />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -2127,8 +1975,6 @@ exports[`DailyDocketRow renders correctly for non virtual, attorney 1`] = `
            /
           <br />
           8:30 AM CDT
-          <br />
-          St. Paul regional office
         </p>
         <p>
           12
@@ -2718,8 +2564,6 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
            /
           <br />
           8:30 AM CDT
-          <br />
-          St. Paul regional office
         </p>
         <p>
           12
@@ -3089,15 +2933,16 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
                 class="cf-form-radio-option"
               >
                 <input
+                  checked=""
                   disabled=""
-                  id="hearingTime0_8:30 AM Central Time (US & Canada)"
+                  id="hearingTime0_08:30"
                   name="hearingTime0"
                   type="radio"
-                  value="8:30 AM Central Time (US & Canada)"
+                  value="08:30"
                 />
                 <label
                   class="disabled"
-                  for="hearingTime0_8:30 AM Central Time (US & Canada)"
+                  for="hearingTime0_08:30"
                 >
                   8:30 AM Central Time (US & Canada) / 9:30 AM Eastern Time (US & Canada)
                 </label>
@@ -3107,14 +2952,14 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
               >
                 <input
                   disabled=""
-                  id="hearingTime0_12:30 PM Central Time (US & Canada)"
+                  id="hearingTime0_12:30"
                   name="hearingTime0"
                   type="radio"
-                  value="12:30 PM Central Time (US & Canada)"
+                  value="12:30"
                 />
                 <label
                   class="disabled"
-                  for="hearingTime0_12:30 PM Central Time (US & Canada)"
+                  for="hearingTime0_12:30"
                 >
                   12:30 PM Central Time (US & Canada) / 1:30 PM Eastern Time (US & Canada)
                 </label>
@@ -3123,16 +2968,15 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
                 class="cf-form-radio-option"
               >
                 <input
-                  checked=""
                   disabled=""
-                  id="hearingTime0_Other"
+                  id="hearingTime0_other"
                   name="hearingTime0"
                   type="radio"
-                  value="Other"
+                  value="other"
                 />
                 <label
                   class="disabled"
-                  for="hearingTime0_Other"
+                  for="hearingTime0_other"
                 >
                   Other
                 </label>
@@ -3140,79 +2984,6 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
             </div>
           </fieldset>
         </span>
-        <div
-          class=""
-        >
-          <div
-            class="cf-form-dropdown dropdown-optionalHearingTime0"
-          >
-            <label
-              class="question-label usa-sr-only"
-              for="optional-hearing-time-0"
-              id="optional-hearing-time-0-label"
-            >
-              <strong>
-                <span>
-                  Hearing Time
-                </span>
-              </strong>
-            </label>
-            <div
-              class="cf-select"
-            >
-              <div
-                class="cf-select--is-disabled css-14jk2my-container"
-              >
-                <div
-                  class="cf-select__control cf-select__control--is-disabled css-1fhf3k1-control"
-                >
-                  <div
-                    class="cf-select__value-container css-g1d714-ValueContainer"
-                  >
-                    <div
-                      class="cf-select__placeholder css-1wa3eu0-placeholder"
-                    >
-                      Select a time
-                    </div>
-                    <input
-                      aria-autocomplete="list"
-                      class="css-62g3xt-dummyInput"
-                      disabled=""
-                      id="optional-hearing-time-0"
-                      readonly=""
-                      tabindex="0"
-                      value=""
-                    />
-                  </div>
-                  <div
-                    class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
-                  >
-                    <span
-                      class="cf-select__indicator-separator css-109onse-indicatorSeparator"
-                    />
-                    <div
-                      aria-hidden="true"
-                      class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
-                    >
-                      <svg
-                        aria-hidden="true"
-                        class="css-6q0nyr-Svg"
-                        focusable="false"
-                        height="20"
-                        viewBox="0 0 20 20"
-                        width="20"
-                      >
-                        <path
-                          d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
-                        />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -3410,8 +3181,6 @@ exports[`DailyDocketRow renders correctly for non virtual, judge 1`] = `
            /
           <br />
           8:30 AM CDT
-          <br />
-          St. Paul regional office
         </p>
         <p>
           12
@@ -4001,8 +3770,6 @@ exports[`DailyDocketRow renders correctly for virtual 1`] = `
            /
           <br />
           8:30 AM CDT
-          <br />
-          St. Paul regional office
         </p>
         <p>
           4
@@ -4415,12 +4182,12 @@ exports[`DailyDocketRow renders correctly for virtual 1`] = `
                   class="cf-select__control cf-select__control--is-disabled css-1fhf3k1-control"
                 >
                   <div
-                    class="cf-select__value-container css-g1d714-ValueContainer"
+                    class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
                   >
                     <div
-                      class="cf-select__placeholder css-1wa3eu0-placeholder"
+                      class="cf-select__single-value cf-select__single-value--is-disabled css-107lb6w-singleValue"
                     >
-                      Select a time
+                      8:30 AM Central Time (US & Canada) / 9:30 AM Eastern Time (US & Canada)
                     </div>
                     <input
                       aria-autocomplete="list"

@@ -9,7 +9,6 @@ import Button from '../../../components/Button';
 import SmallLoader from '../../../components/SmallLoader';
 import { LOGO_COLORS } from '../../../constants/AppConstants';
 import { TimeModal } from '../modalForms/TimeModal';
-import TIMEZONES from '../../../../constants/TIMEZONES';
 
 export const TimeSlot = ({
   scheduledHearingsList,
@@ -59,10 +58,7 @@ export const TimeSlot = ({
   const handleChange = (time, custom = false) => {
     setSelected(time);
     setIsCustomTime(custom);
-    // Time zone name is expected in tasks#update. Similar to HearingTime component
-    const tzName = Object.keys(TIMEZONES).find((key) => TIMEZONES[key] === roTimezone) || 'Eastern Time (US & Canada)';
-
-    onChange('scheduledTimeString', `${time.tz(roTimezone).format('h:mm A')} ${tzName}`);
+    onChange('scheduledTimeString', time.tz(roTimezone).format('HH:mm'));
   };
 
   // Create a hearing Time ID to associate the label with the appropriate form element

@@ -42,5 +42,4 @@ class Api::V2::HearingSerializer
   attribute :zip_code do |hearing|
     hearing.hearing_location_or_regional_office.zip_code
   end
-  attribute :scheduled_in_timezone
 end

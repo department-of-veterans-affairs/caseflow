@@ -29,22 +29,6 @@ describe HearingRepository, :all_dbs do
     end
   end
 
-  context ".fix_hearings_timezone" do
-    let(:valid_tz) { "10:30 PM Eastern Time (US & Canada)" }
-    let(:invalid_tz) { "This is not a timezone" }
-
-    subject { HearingRepository.fix_hearings_timezone(valid_tz) }
-
-    it "returns the shortened timezone name" do
-      expect(subject).to eq("America/New_York")
-    end
-    it "throws an error if the timezone is invalid" do
-      expect do
-        HearingRepository.fix_hearings_timezone(invalid_tz)
-      end.to raise_error(TZInfo::UnknownTimezone)
-    end
-  end
-
   context ".slot_new_hearing" do
     let(:legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
     let(:staff_record) { create(:staff) }
@@ -57,9 +41,10 @@ describe HearingRepository, :all_dbs do
     it "slots hearing at correct time" do
       HearingRepository.slot_new_hearing(
         hearing_day_id: hearing_day.id,
-        scheduled_time_string: "09:00 AM Eastern Time (US & Canada)",
+        scheduled_time_string: "09:00",
         appeal: legacy_appeal
       )
+
       expect(VACOLS::CaseHearing.find_by(vdkey: hearing_day.id)
         .hearing_date.to_datetime.in_time_zone("UTC").hour).to eq(9)
     end
@@ -83,7 +68,7 @@ describe HearingRepository, :all_dbs do
         expect do
           HearingRepository.slot_new_hearing(
             hearing_day_id: hearing_day.id,
-            scheduled_time_string: "9:30 AM UTC",
+            scheduled_time_string: "9:30",
             appeal: legacy_appeal
           )
         end.to raise_error(HearingRepository::HearingDayFull)
@@ -94,40 +79,12 @@ describe HearingRepository, :all_dbs do
           HearingRepository.slot_new_hearing(
             {
               hearing_day_id: hearing_day.id,
-              scheduled_time_string: "9:30 AM UTC",
+              scheduled_time_string: "9:30",
               appeal: legacy_appeal
             },
             override_full_hearing_day_validation: true
           )
         end.not_to raise_error
-      end
-    end
-
-    context "for scheduled_in_timezone" do
-      let!(:ama_appeal) { create(:appeal) }
-      let(:ama_attrs) do
-        {
-          hearing_day_id: hearing_day.id,
-          appeal: ama_appeal,
-          scheduled_time_string: "08:30 PM Central Time (US & Canada)"
-        }
-      end
-      let(:legacy_attrs) do
-        {
-          hearing_day_id: hearing_day.id,
-          appeal: legacy_appeal,
-          scheduled_time_string: "08:30 PM Central Time (US & Canada)"
-        }
-      end
-      it "shows up for AMA hearings" do
-        HearingRepository.slot_new_hearing(ama_attrs)
-
-        expect(ama_appeal.hearings.last.scheduled_in_timezone).to eq("America/Chicago")
-      end
-      it "shows up for legacy hearings" do
-        HearingRepository.slot_new_hearing(legacy_attrs)
-
-        expect(legacy_appeal.hearings.last.scheduled_in_timezone).to eq("America/Chicago")
       end
     end
   end
