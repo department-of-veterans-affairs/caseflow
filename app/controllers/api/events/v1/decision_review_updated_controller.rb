@@ -20,15 +20,12 @@ class Api::Events::V1::DecisionReviewUpdatedController < Api::ApplicationControl
   # rubocop:disable Layout/LineLength
   def decision_review_updated
     consumer_event_id = dru_params[:event_id]
-    event = DecisionReviewCreatedEvent.find_by(id: dru_params[:event_id])
+    event = DecisionReviewCreatedEvent.find_by(id: consumer_event_id)
 
     return render json: { message: "Record not found in Caseflow" }, status: :not_found unless Event.exists_and_is_completed?(consumer_event_id)
 
-    # claim_id = drc_params[:claim_id]
-    # headers = request.headers
-    # consumer_and_claim_ids = { consumer_event_id: consumer_event_id, reference_id: claim_id }
-    event.update!()
-    Events::DecisionReviewUpdated.update!()
+    headers = request.headers
+    Events::DecisionReviewUpdated.update!(event, headers, drc_params)
     render json: { message: "DecisionReviewCreatedEvent successfully updated" }, status: :ok
   rescue Caseflow::Error::RedisLockFailed => error
     render json: { message: error.message }, status: :conflict
@@ -39,9 +36,9 @@ class Api::Events::V1::DecisionReviewUpdatedController < Api::ApplicationControl
 
   private
 
-  def drc_error_params
-    params.permit(:event_id, :errored_claim_id, :error)
-  end
+  # def drc_error_params
+  #   params.permit(:event_id, :errored_claim_id, :error)
+  # end
 
   # rubocop:disable Metrics/MethodLength
   def dru_params
