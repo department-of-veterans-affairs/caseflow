@@ -9,8 +9,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: 4c04f19bd6703d9b8b240cadad36455db9cedae8
-  branch: AlecK/APPEALS-43566
+  revision: 9bd3635fbd8094d25160669f38d8699e2f1d7a98
+  ref: 9bd3635fbd8094d25160669f38d8699e2f1d7a98
   specs:
     caseflow (0.4.8)
       aws-sdk-s3
