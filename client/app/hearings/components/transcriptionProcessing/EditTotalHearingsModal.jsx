@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable max-statements-per-line */
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Modal from '../../../components/Modal';
 import TextField from '../../../components/TextField';
@@ -44,7 +44,7 @@ const modalContentStyles = css({
 export const EditTotalHearingsModal = ({ onCancel, onConfirm, transcriptionContractor }) => {
   const [formData, setFormData] = useState(transcriptionContractor);
   const [serverError, setServerError] = useState(false);
-  const [formValid, setFormValid] = useState(false);
+  const [formValid, setFormValid] = useState(true);
   const title = COPY.TRANSCRIPTION_SETTINGS_EDIT_TOTAL_HEARINGS_MODAL_TITLE;
 
   const updateContractorTotalHearings = (contractorFormData) => {
@@ -72,21 +72,20 @@ export const EditTotalHearingsModal = ({ onCancel, onConfirm, transcriptionContr
       });
   };
 
-  const handleConfirm = () => {
-    updateContractorTotalHearings(formData);
-  };
-
   const validateForm = () => {
     const currentGoal = parseInt(formData.current_goal, 10);
+    const valid = currentGoal >= 1 && currentGoal <= 1000;
 
-    setFormValid(
-      currentGoal >= 1 && currentGoal <= 1000
-    );
+    setFormValid(valid);
+
+    return valid;
   };
 
-  useEffect(() => {
-    validateForm();
-  }, [formData]);
+  const handleConfirm = () => {
+    if (validateForm()) {
+      updateContractorTotalHearings(formData);
+    }
+  };
 
   const handleChange = (name, value) => {
     setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
@@ -105,7 +104,6 @@ export const EditTotalHearingsModal = ({ onCancel, onConfirm, transcriptionContr
           classNames: ['usa-button', 'usa-button-primary'],
           name: COPY.MODAL_CONFIRM_BUTTON,
           onClick: handleConfirm,
-          disabled: !formValid,
         },
       ]}
       closeHandler={onCancel}
@@ -125,7 +123,7 @@ export const EditTotalHearingsModal = ({ onCancel, onConfirm, transcriptionContr
           name="current_goal"
           defaultValue={formData.current_goal}
 
-          errorMessage={!formData.current_goal || !formValid ? COPY.TRANSCRIPTION_SETTINGS_EDIT_TOTAL_HEARINGS_VALIDATION : null}
+          errorMessage={formValid ? null : COPY.TRANSCRIPTION_SETTINGS_EDIT_TOTAL_HEARINGS_VALIDATION}
 
           onChange={(value) => handleChange('current_goal', value)} />
       </div>
