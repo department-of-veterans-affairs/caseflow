@@ -179,7 +179,6 @@ def nod_doc
   }
 end
 
-# rubocop:disable Metrics/MethodLength
 def non_nod_docs
   [
     {
@@ -200,4 +199,3 @@ def non_nod_docs
     }
   ]
 end
-# rubocop:enable Metrics/MethodLength
