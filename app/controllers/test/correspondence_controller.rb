@@ -8,6 +8,10 @@ class Test::CorrespondenceController < ApplicationController
   before_action :verify_access, only: [:index]
   before_action :verify_feature_toggle, only: [:index]
 
+  VALID_CE_API_VBMS_DOCUMENT_TYPE_IDS = [
+    163, 1186, 1320, 1333, 1348, 1458, 1608, 1643, 1754
+  ].freeze
+
   def index
     render_access_error unless verify_access && access_allowed?
   end
@@ -127,7 +131,7 @@ class Test::CorrespondenceController < ApplicationController
   end
 
   def create_correspondence_document(veteran, correspondence)
-    doc_type = Caseflow::DocumentTypes::TYPES.keys.sample
+    doc_type = VALID_CE_API_VBMS_DOCUMENT_TYPE_IDS.sample
     CorrespondenceDocument.find_or_create_by(
       document_file_number: veteran.file_number,
       uuid: SecureRandom.uuid,
