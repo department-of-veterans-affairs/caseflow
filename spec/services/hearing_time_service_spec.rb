@@ -12,7 +12,9 @@ describe HearingTimeService, :all_dbs do
       create(
         :legacy_hearing,
         regional_office: "RO43",
-        scheduled_for: Time.use_zone("America/New_York") { Time.zone.now.change(hour: 12, min: 0) }
+        scheduled_for: Time.use_zone("America/New_York") { Time.zone.now.change(hour: 12, min: 0) },
+        scheduled_in_timezone: "America/Los_Angeles",
+        hearing_day: create(:hearing_day, scheduled_for: Time.use_zone("America/Los_Angeles") { Time.zone.now })
       )
     end
   end
@@ -40,10 +42,8 @@ describe HearingTimeService, :all_dbs do
       end
 
       it "returns scheduled_for parameter in ET and removes scheduled_time_string param" do
-        expected_scheduled_for = Time.use_zone("America/New_York") do
-          time = legacy_hearing.scheduled_for.to_datetime
-          Time.zone.local(time.year, time.month, time.day, 13, 30)
-        end
+        time = legacy_hearing.scheduled_for.in_time_zone("America/New_York") + 1.5.hours
+        expected_scheduled_for = time.strftime("%F %H:%M %z")
         expected_params = { scheduled_for: expected_scheduled_for }
         expect(HearingTimeService.build_legacy_params_with_time(legacy_hearing, params)).to eq(expected_params)
         expect(params).to eq(scheduled_time_string: "01:30 PM Eastern Time (US & Canada)")
@@ -62,14 +62,14 @@ describe HearingTimeService, :all_dbs do
             min: 0
           )
         end
-        expect(LegacyHearing.first.time.local_time).to eq(expected_time)
+        expect(LegacyHearing.first.time.local_time).to eq(expected_time - 3.hours)
         expect(hearing.time.local_time).to eq(expected_time)
       end
     end
 
     describe "#scheduled_time_string" do
       it "converts time to local time in HH:mm string" do
-        expect(LegacyHearing.first.time.scheduled_time_string).to eq("12:00 PM Pacific Time (US & Canada)")
+        expect(LegacyHearing.first.time.scheduled_time_string).to eq("9:00 AM Eastern Time (US & Canada)")
         expect(hearing.time.scheduled_time_string).to eq("12:00 PM Pacific Time (US & Canada)")
       end
     end
@@ -78,14 +78,14 @@ describe HearingTimeService, :all_dbs do
       it "changes to central office timezone (ET)" do
         expected_time = Time.use_zone("America/New_York") { Time.zone.now.change(hour: 15, min: 0) }
         expect(hearing.time.central_office_time).to eq(expected_time)
-        expect(LegacyHearing.first.time.central_office_time).to eq(expected_time)
+        expect(LegacyHearing.first.time.central_office_time).to eq(expected_time - 3.hours)
       end
     end
 
     describe "#central_office_time_string" do
       it "changes to central office timezone (ET)" do
-        expect(hearing.time.central_office_time_string).to eq("3:00 PM Pacific Time (US & Canada)")
-        expect(LegacyHearing.first.time.central_office_time_string).to eq("3:00 PM Pacific Time (US & Canada)")
+        expect(hearing.time.central_office_time_string).to eq("3:00 PM Eastern Time (US & Canada)")
+        expect(LegacyHearing.first.time.central_office_time_string).to eq("12:00 PM Eastern Time (US & Canada)")
       end
     end
 
