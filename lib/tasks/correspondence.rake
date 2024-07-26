@@ -179,17 +179,8 @@ def nod_doc
   }
 end
 
-# rubocop:disable Metrics/MethodLength
 def non_nod_docs
   [
-    {
-      id: 1419,
-      description: "Reissuance Beneficiary Notification Letter"
-    },
-    {
-      id: 1430,
-      description: "Bank Letter Beneficiary"
-    },
     {
       id: 1448,
       description: "VR-69 Chapter 36 Decision Letter"
@@ -208,4 +199,3 @@ def non_nod_docs
     }
   ]
 end
-# rubocop:enable Metrics/MethodLength
