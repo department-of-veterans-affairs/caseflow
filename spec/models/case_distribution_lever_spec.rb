@@ -120,7 +120,7 @@ RSpec.describe CaseDistributionLever, :all_dbs do
     it "only returns value with aoj cavc affinity" do
       aoj_cavc_affinity_days = CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.aoj_cavc_affinity_days)
 
-      expect(aoj_cavc_affinity_days.value.to_i).to eq(CaseDistributionLever.aoj_cavc_affinity)
+      expect(aoj_cavc_affinity_days.value.to_i).to eq(CaseDistributionLever.aoj_cavc_affinity_days)
     end
   end
 
@@ -128,7 +128,7 @@ RSpec.describe CaseDistributionLever, :all_dbs do
     it "only returns value with aoj aod affinity" do
       aoj_aod_affinity_days = CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.aoj_aod_affinity_days)
 
-      expect(aoj_aod_affinity_days.value.to_i).to eq(CaseDistributionLever.aoj_aod_affinity)
+      expect(aoj_aod_affinity_days.value.to_i).to eq(CaseDistributionLever.aoj_aod_affinity_days)
     end
   end
 
