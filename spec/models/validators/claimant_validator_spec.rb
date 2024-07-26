@@ -81,5 +81,31 @@ describe ClaimantValidator, :postgres do
         expect(subject[:claimant]).to contain_exactly(ClaimantValidator::ERRORS[:claimant_city_invalid])
       end
     end
+    context "decision_review_created_event claimant is missing address" do
+      let(:decision_review2) do
+        HigherLevelReview.new(benefit_type: "compensation", veteran_file_number: veteran.file_number)
+      end
+      let(:person) { Person.find_or_create_by_participant_id("12345678") }
+      let(:person_event_record) do
+        EventRecord.create!(event: event2, evented_record: person)
+      end
+      let(:claimant2) do
+        Claimant.new(
+          decision_review: decision_review2,
+          participant_id: "12345678",
+          payee_code: payee_code,
+          type: type
+        )
+      end
+      let(:address_line_1) { nil }
+      let(:event2) { DecisionReviewCreatedEvent.create!(reference_id: "2") }
+      let(:decision_review_event_record) do
+        EventRecord.create!(event: event2, evented_record: decision_review2)
+      end
+
+      it "creates no error" do
+        expect(subject[:claimant2]).to be_empty
+      end
+    end
   end
 end
