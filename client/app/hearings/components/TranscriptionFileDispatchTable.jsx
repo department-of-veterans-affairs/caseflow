@@ -65,7 +65,6 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
   const getFileStatuses = () => {
     ApiUtil.get('/hearings/transcription_files/locked').
       then((response) => {
-        console.log(response)
         if (!selectingFile) {
           setSelectedFiles(response.body);
           selectFilesForPackage(response.body);
