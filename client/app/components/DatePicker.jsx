@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-// import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import { css } from 'glamor';
 import FilterIcon from './icons/FilterIcon';
 
@@ -46,9 +45,10 @@ class DatePicker extends React.PureComponent {
   }
 
   toggleDropdown = () => {
-    this.setState({ open: !this.state.open });
+    const open = !this.state.open;
 
-    if (!this.state.open) {
+    this.setState({ open });
+    if (open) {
       const { values } = this.props;
       const splitValues = values[0].split(',');
 
@@ -81,8 +81,6 @@ class DatePicker extends React.PureComponent {
   }
 
   isFilterOpen = () => {
-    // const { columnName, filteredByList } = this.props;
-
     return this.state.open;
   }
 
