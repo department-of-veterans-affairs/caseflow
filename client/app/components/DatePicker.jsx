@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import FilterIcon from './icons/FilterIcon';
+import SearchableDropdown from '../components/SearchableDropdown';
 
 const datePickerStyle = css({
   display: 'table-cell',
@@ -9,6 +10,7 @@ const datePickerStyle = css({
   paddingTop: '0.3rem',
   verticalAlign: 'middle',
   position: 'relative',
+  fontWeight: 'normal',
   '& svg': {
     cursor: 'pointer'
   }
@@ -19,10 +21,35 @@ const menuStyle = css({
   background: 'white',
   right: 0,
   top: '52px',
-  width: '200px',
-  height: '200px',
+  width: '250px',
   border: '1px solid #CCC',
-  padding: '1rem'
+  '& .input-wrapper': {
+    padding: '0 1rem 2.5rem',
+    '& input': {
+      margin: '0'
+    },
+    '& label': {
+      padding: '0 0 8px 0',
+      margin: '0'
+    }
+  },
+  '& .clear-wrapper': {
+    borderBottom: '1px solid #d6d7d9',
+    textAlign: 'center',
+    padding: '2rem',
+    marginBottom: '2rem',
+    '& a': {
+      cursor: 'pointer'
+    }
+  },
+  '& .button-wrapper': {
+    borderTop: '1px solid #d6d7d9',
+    textAlign: 'center',
+    padding: '0.75rem',
+    '& button': {
+      margin: '0'
+    }
+  }
 });
 
 class DatePicker extends React.PureComponent {
@@ -30,7 +57,7 @@ class DatePicker extends React.PureComponent {
     super(props);
     this.state = {
       open: false,
-      mode: 'between',
+      mode: '',
       startDate: '',
       endDate: '',
     };
@@ -84,6 +111,29 @@ class DatePicker extends React.PureComponent {
     return this.state.open;
   }
 
+  buttonDisabled = () => {
+    let disabled = true;
+
+    if (this.state.mode === 'between') {
+      disabled = this.state.startDate === '' || this.state.endDate === '';
+    } else if (this.state.mode !== '') {
+      disabled = this.state.startDate === '';
+    }
+
+    return disabled;
+  }
+
+  clearFilter = () => {
+    this.setState({ mode: '', startDate: '', endDate: '' });
+  }
+
+  updateMode = (mode) => {
+    this.setState({ mode });
+    if (mode !== 'between') {
+      this.setState({ endDate: '' });
+    }
+  }
+
   render() {
     return <span {...datePickerStyle} ref={(rootElem) => {
       this.rootElem = rootElem;
@@ -97,26 +147,52 @@ class DatePicker extends React.PureComponent {
 
       {this.state.open &&
           <div {...menuStyle}>
-            <div>
-              <input
-                label="Start date"
-                name="start-date"
-                defaultValue={this.state.startDate}
-                type="date"
-                onChange={(event) => this.setState({ startDate: event.target.value })}
-              />
+            <div className="clear-wrapper">
+              <a onClick={() => this.clearFilter()}>Clear filter</a>
             </div>
-            <div>
-              <input
-                label="End date"
-                name="end-date"
-                defaultValue={this.state.endDate}
-                type="date"
-                onChange={(event) => this.setState({ endDate: event.target.value })}
-              />
+            <div className="input-wrapper">
+              <SearchableDropdown
+                name="Date filter parameters"
+                options={[
+                  { value: 'between', label: 'Between these dates' },
+                  { value: 'before', label: 'Before this date' },
+                  { value: 'after', label: 'After this date' },
+                  { value: 'on', label: 'On this date' }
+                ]}
+                searchable
+                onChange={(option) => this.updateMode(option.value)}
+                filterOption={() => true}
+                value={this.state.mode} />
             </div>
-            <div><button disabled={this.state.startDate === '' || this.state.endDate === ''}
-              onClick={() => this.apply()}>Apply</button></div>
+
+            {this.state.mode !== '' &&
+              <div className="input-wrapper">
+                <label htmlFor="start-date">{this.state.mode === 'between' ? 'From' : 'Date'}</label>
+                <input
+                  name="start-date"
+                  defaultValue={this.state.startDate}
+                  type="date"
+                  onChange={(event) => this.setState({ startDate: event.target.value })}
+                />
+              </div>
+            }
+
+            {this.state.mode === 'between' &&
+              <div className="input-wrapper">
+                <label htmlFor="end-date">To</label>
+                <input
+                  label="End date"
+                  name="end-date"
+                  defaultValue={this.state.endDate}
+                  type="date"
+                  onChange={(event) => this.setState({ endDate: event.target.value })}
+                />
+              </div>
+            }
+            <div className="button-wrapper">
+              <button disabled={this.buttonDisabled()}
+                onClick={() => this.apply()}>Apply Filter</button>
+            </div>
           </div>
       }
     </span>;
