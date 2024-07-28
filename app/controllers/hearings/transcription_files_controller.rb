@@ -84,7 +84,7 @@ class Hearings::TranscriptionFilesController < ApplicationController
           @transcription_files = @transcription_files.filter_by_types(filter_hash["val"].split("|"))
         end
         if filter_hash["col"] == "hearingDateColumn"
-          #@transcription_files = @transcription_files.filter_by_hearing_dates(filter_hash["val"].split("|"))
+          @transcription_files = @transcription_files.filter_by_hearing_dates(filter_hash["val"].split(","))
         end
       end
     end

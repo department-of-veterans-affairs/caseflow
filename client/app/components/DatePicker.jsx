@@ -203,7 +203,8 @@ DatePicker.propTypes = {
   onChange: PropTypes.func,
   values: PropTypes.array,
   getRef: PropTypes.func,
-  label: PropTypes.string
+  label: PropTypes.string,
+  filterSettings: PropTypes.object,
 };
 
 export default DatePicker;

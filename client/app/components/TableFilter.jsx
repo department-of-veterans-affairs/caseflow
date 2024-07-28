@@ -246,12 +246,14 @@ class TableFilter extends React.PureComponent {
     } else if (filterType === 'date-picker') {
 
       const dates = _.get(this.props.filteredByList, String(columnName));
+      const filterSettings = this.props.filterSettings || {};
 
       filter = (<DatePicker
         values={dates}
         getRef={this.props.getFilterIconRef}
         label={this.filterIconAriaLabel()}
-        onChange={(value) => this.updateSelectedFilter(value, columnName, true)} />
+        onChange={(value) => this.updateSelectedFilter(value, columnName, true)}
+        filterSettings={filterSettings} />
       );
     } else {
       filter = renderFilterIcon();
@@ -283,6 +285,7 @@ TableFilter.propTypes = {
   multiValueDelimiter: PropTypes.string,
   dateFilter: PropTypes.bool,
   filterType: PropTypes.string,
+  filterSettings: PropTypes.object,
 };
 
 export default TableFilter;

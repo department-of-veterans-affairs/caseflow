@@ -64,9 +64,22 @@ class TranscriptionFile < CaseflowRecord
   }
 
   scope :filter_by_hearing_dates, lambda { |values|
-    start_date = values[0] + " 00:00:00"
-    end_date = values[1] + " 23:59:59"
-    where(Arel.sql("scheduled_for >= '" + start_date + "' AND scheduled_for <= '" + end_date + "'"))
+    mode = values[0]
+    if mode == "between"
+      start_date = values[1] + " 00:00:00"
+      end_date = values[2] + " 23:59:59"
+      where(Arel.sql("scheduled_for >= '" + start_date + "' AND scheduled_for <= '" + end_date + "'"))
+    elsif mode == "before"
+      date = values[1] + " 00:00:00"
+      where(Arel.sql("scheduled_for < '" + date + "'"))
+    elsif mode == "after"
+      date = values[1] + " 23:59:59"
+      where(Arel.sql("scheduled_for > '" + date + "'"))
+    elsif mode == "on"
+      start_date = values[1] + " 00:00:00"
+      end_date = values[1] + " 23:59:59"
+      where(Arel.sql("scheduled_for >= '" + start_date + "' AND scheduled_for <= '" + end_date + "'"))
+    end
   }
 
   scope :order_by_id, ->(direction) { order(Arel.sql("id " + direction)) }
