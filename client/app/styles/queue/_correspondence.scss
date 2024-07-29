@@ -31,6 +31,12 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   }
 }
 
+.external-link-icon-wrapper {
+  margin-left: 5px;
+  position: relative;
+  top: 3px;
+}
+
 .cf-pdf-preview-container {
   width: 100%;
   max-width: 1800px;
