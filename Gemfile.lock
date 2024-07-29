@@ -1529,8 +1529,6 @@ GEM
       database_cleaner-core (~> 2.0.0)
     database_cleaner-core (2.0.1)
     date (3.3.3)
-    ddtrace (0.34.1)
-      msgpack
     debase (0.2.4.1)
       debase-ruby_core_source (>= 0.10.2)
     debase-ruby_core_source (0.10.14)
@@ -1544,7 +1542,6 @@ GEM
       thor (~> 0.19)
     diff-lcs (1.3)
     docile (1.1.5)
-    dogstatsd-ruby (4.4.0)
     dotenv (2.7.5)
     dotenv-rails (2.7.5)
       dotenv (= 2.7.5)
@@ -1615,6 +1612,9 @@ GEM
       rchardet (~> 1.8)
     globalid (1.1.0)
       activesupport (>= 5.0)
+    google-protobuf (3.25.3)
+    googleapis-common-protos-types (1.14.0)
+      google-protobuf (~> 3.18)
     govdelivery-tms (2.8.4)
       activesupport
       faraday
@@ -1751,6 +1751,82 @@ GEM
       faraday (>= 0.9)
       sawyer (~> 0.8.0, >= 0.5.3)
     open4 (1.3.4)
+    opentelemetry-api (1.1.0)
+    opentelemetry-common (0.19.7)
+      opentelemetry-api (~> 1.0)
+    opentelemetry-exporter-otlp (0.24.2)
+      google-protobuf (~> 3.19)
+      googleapis-common-protos-types (~> 1.3)
+      opentelemetry-api (~> 1.1)
+      opentelemetry-common (~> 0.19.6)
+      opentelemetry-sdk (~> 1.2)
+      opentelemetry-semantic_conventions
+    opentelemetry-instrumentation-action_pack (0.5.0)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-instrumentation-base (~> 0.21.0)
+      opentelemetry-instrumentation-rack (~> 0.21)
+    opentelemetry-instrumentation-action_view (0.4.0)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-instrumentation-active_support (~> 0.1)
+      opentelemetry-instrumentation-base (~> 0.20)
+    opentelemetry-instrumentation-active_job (0.4.0)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-instrumentation-base (~> 0.21.0)
+    opentelemetry-instrumentation-active_model_serializers (0.19.1)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-instrumentation-base (~> 0.21.0)
+    opentelemetry-instrumentation-active_record (0.5.0)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-instrumentation-base (~> 0.21.0)
+      ruby2_keywords
+    opentelemetry-instrumentation-active_support (0.3.0)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-instrumentation-base (~> 0.21.0)
+    opentelemetry-instrumentation-aws_sdk (0.3.2)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-instrumentation-base (~> 0.21.0)
+    opentelemetry-instrumentation-base (0.21.1)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-registry (~> 0.1)
+    opentelemetry-instrumentation-concurrent_ruby (0.20.1)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-instrumentation-base (~> 0.21.0)
+    opentelemetry-instrumentation-faraday (0.22.0)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-common (~> 0.19.3)
+      opentelemetry-instrumentation-base (~> 0.21.0)
+    opentelemetry-instrumentation-http (0.21.0)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-instrumentation-base (~> 0.21.0)
+    opentelemetry-instrumentation-http_client (0.21.0)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-common (~> 0.19.3)
+      opentelemetry-instrumentation-base (~> 0.21.0)
+    opentelemetry-instrumentation-net_http (0.21.1)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-common (~> 0.19.3)
+      opentelemetry-instrumentation-base (~> 0.21.0)
+    opentelemetry-instrumentation-rack (0.22.1)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-common (~> 0.19.3)
+      opentelemetry-instrumentation-base (~> 0.21.0)
+    opentelemetry-instrumentation-rails (0.25.0)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-instrumentation-action_pack (~> 0.5.0)
+      opentelemetry-instrumentation-action_view (~> 0.4.0)
+      opentelemetry-instrumentation-active_job (~> 0.4.0)
+      opentelemetry-instrumentation-active_record (~> 0.5.0)
+      opentelemetry-instrumentation-active_support (~> 0.3.0)
+      opentelemetry-instrumentation-base (~> 0.21.0)
+    opentelemetry-registry (0.2.0)
+      opentelemetry-api (~> 1.1)
+    opentelemetry-sdk (1.2.1)
+      opentelemetry-api (~> 1.1)
+      opentelemetry-common (~> 0.19.3)
+      opentelemetry-registry (~> 0.2)
+      opentelemetry-semantic_conventions
+    opentelemetry-semantic_conventions (1.10.0)
+      opentelemetry-api (~> 1.0)
     paper_trail (12.3.0)
       activerecord (>= 5.2)
       request_store (~> 1.1)
@@ -1840,8 +1916,8 @@ GEM
       redis-namespace (~> 1.0)
     redis-mutex (4.0.2)
       redis-classy (~> 2.0)
-    redis-namespace (1.6.0)
-      redis (>= 3.0.4)
+    redis-namespace (1.11.0)
+      redis (>= 4)
     redis-rack (2.0.4)
       rack (>= 1.5, < 3)
       redis-store (>= 1.2, < 2)
@@ -1918,6 +1994,7 @@ GEM
     ruby-plsql (0.8.0)
     ruby-prof (1.4.1)
     ruby-progressbar (1.13.0)
+    ruby2_keywords (0.0.5)
     ruby_dep (1.5.0)
     ruby_parser (3.20.3)
       sexp_processor (~> 4.16)
@@ -2070,10 +2147,8 @@ DEPENDENCIES
   countries
   danger (~> 6.2.2)
   database_cleaner-active_record (= 2.0.0)
-  ddtrace
   debase
   derailed_benchmarks
-  dogstatsd-ruby
   dotenv-rails
   dry-schema (~> 1.4)
   factory_bot_rails (~> 5.2)
@@ -2096,6 +2171,21 @@ DEPENDENCIES
   multiverse
   newrelic_rpm
   nokogiri (>= 1.11.0.rc4)
+  opentelemetry-exporter-otlp
+  opentelemetry-instrumentation-action_pack
+  opentelemetry-instrumentation-action_view
+  opentelemetry-instrumentation-active_job
+  opentelemetry-instrumentation-active_model_serializers
+  opentelemetry-instrumentation-active_record
+  opentelemetry-instrumentation-aws_sdk
+  opentelemetry-instrumentation-concurrent_ruby
+  opentelemetry-instrumentation-faraday
+  opentelemetry-instrumentation-http
+  opentelemetry-instrumentation-http_client
+  opentelemetry-instrumentation-net_http
+  opentelemetry-instrumentation-rack
+  opentelemetry-instrumentation-rails
+  opentelemetry-sdk
   paper_trail (~> 12.0)
   parallel
   paranoia (~> 2.2)
@@ -2114,7 +2204,7 @@ DEPENDENCIES
   rb-readline
   react_on_rails (= 11.3.0)
   redis-mutex
-  redis-namespace
+  redis-namespace (~> 1.11.0)
   redis-rails (~> 5.0.2)
   request_store
   roo (~> 2.7)
@@ -2157,4 +2247,4 @@ DEPENDENCIES
   ziptz
 
 BUNDLED WITH
-   2.4.22
+   2.4.19

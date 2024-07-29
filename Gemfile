@@ -22,8 +22,6 @@ gem "connect_mpi", git: "https://github.com/department-of-veterans-affairs/conne
 gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "9807d9c9f0f3e3494a60b6693dc4f455c1e3e922"
 gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
 gem "countries"
-gem "ddtrace"
-gem "dogstatsd-ruby"
 gem "dry-schema", "~> 1.4"
 gem "fast_jsonapi"
 gem "fuzzy_match"
@@ -38,6 +36,29 @@ gem "moment_timezone-rails"
 gem "multiverse"
 gem "newrelic_rpm"
 gem "nokogiri", ">= 1.11.0.rc4"
+
+# gem "opentelemetry-exporter-otlp"
+# gem "opentelemetry-instrumentation-all"
+# gem "opentelemetry-sdk"
+
+gem "opentelemetry-sdk", require: false
+gem "opentelemetry-exporter-otlp", require: false
+gem "opentelemetry-instrumentation-rack", require: false
+gem "opentelemetry-instrumentation-rails", require: false
+gem "opentelemetry-instrumentation-active_job", require: false
+gem "opentelemetry-instrumentation-action_pack", require: false
+gem "opentelemetry-instrumentation-active_record", require: false
+gem "opentelemetry-instrumentation-action_view", require: false
+gem "opentelemetry-instrumentation-active_model_serializers", require: false
+gem "opentelemetry-instrumentation-aws_sdk", require: false
+gem "opentelemetry-instrumentation-concurrent_ruby", require: false
+gem "opentelemetry-instrumentation-faraday", require: false
+gem "opentelemetry-instrumentation-http", require: false
+gem "opentelemetry-instrumentation-http_client", require: false
+gem "opentelemetry-instrumentation-net_http", require: false
+# gem "opentelemetry-instrumentation-pg", require: false
+# gem "opentelemetry-instrumentation-redis", require: false
+
 gem "paper_trail", "~> 12.0"
 # Used to speed up reporting
 gem "parallel"
@@ -62,7 +83,7 @@ gem "rainbow"
 # React
 gem "react_on_rails", "11.3.0"
 gem "redis-mutex"
-gem "redis-namespace"
+gem "redis-namespace", "~> 1.11.0"
 gem "redis-rails", "~> 5.0.2"
 gem "request_store"
 gem "roo", "~> 2.7"
