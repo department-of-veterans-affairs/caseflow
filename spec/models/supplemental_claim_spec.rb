@@ -120,8 +120,9 @@ describe SupplementalClaim, :postgres do
   end
 
   context "create_remand_issues!" do
+    let(:classifier) { Remand }
     let(:supplemental_claim) do
-      Remand.new(
+      classifier.new(
         veteran_file_number: veteran_file_number,
         receipt_date: receipt_date,
         benefit_type: benefit_type,

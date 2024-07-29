@@ -115,8 +115,6 @@ class SupplementalClaim < ClaimReview
     )
   end
 
-  # leave this here for HLR? decision_review.rb#288
-
   def build_request_issues_from_remand
     remanded_decision_issues_needing_request_issues.map do |remand_decision_issue|
       RequestIssue.new(
