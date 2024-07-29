@@ -16,7 +16,22 @@ const CorrespondenceDetails = (props) => {
   const mailTasks = props.correspondence.mailTasks;
   const appealsResult = props.correspondence.appeals_information;
   const appeals = [];
-  const searchStoreAppeal = prepareAppealForSearchStore(appealsResult.appeals);
+  let filteredAppeals = [];
+  let unfilteredAppeals = [];
+
+  appealsResult.appeals.map((appeal) => {
+    if (correspondence.correspondenceAppealIds?.includes(appeal.id)) {
+      return filteredAppeals.push(appeal);
+    }
+
+    return unfilteredAppeals.push(appeal);
+  });
+
+  filteredAppeals = filteredAppeals.sort((leftAppeal, rightAppeal) => leftAppeal.id - rightAppeal.id);
+  unfilteredAppeals = unfilteredAppeals.sort((leftAppeal, rightAppeal) => leftAppeal.id - rightAppeal.id);
+  const sortedAppeals = filteredAppeals.concat(unfilteredAppeals);
+
+  const searchStoreAppeal = prepareAppealForSearchStore(sortedAppeals);
   const appeall = searchStoreAppeal.appeals;
   const appealldetail = searchStoreAppeal.appealDetails;
   const hashKeys = Object.keys(appeall);
