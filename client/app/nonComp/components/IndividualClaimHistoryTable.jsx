@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import QueueTable from '../../queue/QueueTable';
 import BENEFIT_TYPES from 'constants/BENEFIT_TYPES';
 import { formatDateStr } from 'app/util/DateUtil';
 import PropTypes from 'prop-types';
+import StringUtil from 'app/util/StringUtil';
+
+const { capitalizeFirst } = StringUtil;
 
 const IndividualClaimHistoryTable = (props) => {
 
@@ -53,6 +56,57 @@ const IndividualClaimHistoryTable = (props) => {
     </React.Fragment>;
   };
 
+  const RequestedIssueFragment = (details) => {
+    return <React.Fragment>
+      <b>Benefit type: </b>{BENEFIT_TYPES[details.benefitType]}<br />
+      <b>Issue type: </b>{details.newIssueType}<br />
+      <b>Issue description: </b>{details.newIssueDescription}<br />
+      <b>Decision date: </b>{formatDecisionDate(details.newDecisionDate)}<br />
+      <b>{capitalizeFirst(details.requestType)} request reason: </b>{details.modificationRequestReason}<br />
+    </React.Fragment>;
+  };
+
+  const WithdrawalRequestedIssueFormat = (details) => {
+    return <>
+      <RequestedIssueFragment {...details} />
+      <b>Withdrawal request date: </b>{formatDecisionDate(details.issueModificationRequestWithdrawalDate)}<br />
+    </>;
+  };
+
+  const RequestedIssueModificationFragment = (details) => {
+    return <React.Fragment>
+      <b>Benefit type: </b>{BENEFIT_TYPES[details.benefitType]}<br />
+      <b>Current issue type: </b>{details.newIssueType}<br />
+      <b>Current issue description: </b>{details.newIssueDescription}<br />
+      <b>Current Decision date: </b>{formatDecisionDate(details.newDecisionDate)}<br />
+      <b>New issue type: </b>{details.newIssueType}<br />
+      <b>New issue description: </b>{details.newIssueDescription}<br />
+      <b>New Decision date: </b>{formatDecisionDate(details.newDecisionDate)}<br />
+      <b>{capitalizeFirst(details.requestType)} request reason: </b>{details.modificationRequestReason}<br />
+    </React.Fragment>;
+  };
+
+  const RemoveOriginalIssueFragment = (details) => {
+    return details.requestType === 'modification' ? <React.Fragment>
+      <b>Remove original issue: </b>{details.removeOriginalIssue ? 'Yes' : 'No' }<br />
+    </React.Fragment> : <></>;
+  };
+
+  const RequestedIssueDecisionFragement = (details) => {
+    return <React.Fragment>
+      <b>Request Decision: </b>{details.issueModificationRequestStatus}<br />
+      <RemoveOriginalIssueFragment />
+      <b>Request originated by: </b>{details.requestor}<br />
+      <br></br>
+      <b>View original request</b>
+      <b>Current Decision date: </b>{formatDecisionDate(details.newDecisionDate)}<br />
+      <b>New issue type: </b>{details.newIssueType}<br />
+      <b>New issue description: </b>{details.newIssueDescription}<br />
+      <b>New Decision date: </b>{formatDecisionDate(details.newDecisionDate)}<br />
+      <b>{capitalizeFirst(details.requestType)} request reason: </b>{details.modificationRequestReason}<br />
+    </React.Fragment>;
+  };
+
   const AddedIssueWithDateFragment = (details) => {
     return <React.Fragment>
       <AddedIssueFragment {...details} />
@@ -93,12 +147,56 @@ const IndividualClaimHistoryTable = (props) => {
     </React.Fragment>;
   };
 
-  const DetailsFragment = (row) => {
+  const OriginalDetailsFragments = (row) => {
+    const { readableEventType, details, modificationRequestDetails } = row;
+
+    const requestDetails = { ...modificationRequestDetails, requestType: row.requestType };
+    const requestModificationDetails = { ...details, ...requestDetails };
     let component = null;
+    const [isOpen, setIsOpen] = useState(false);
 
-    const { readableEventType, details } = row;
+    const toggle = () => {
+      setIsOpen((isOpen) => !isOpen);
+    };
 
-    const detailsExtended = { ...details, eventDate: row.eventDate };
+    switch (readableEventType) {
+    case 'Requested issue modification':
+      component = <RequestedIssueModificationFragment {...requestModificationDetails} />;
+      break;
+    case `Edit of request - issue ${row.requestType}`:
+      component = <RequestedIssueModificationFragment {...requestModificationDetails} />;
+      break;
+    case `Approval of the request - issue ${row.requestType}`:
+      component = <RequestedIssueDecisionFragement {...requestModificationDetails} />;
+      break;
+    default:
+      return null;
+    };
+
+    return (
+      <div>
+        <a onClick={toggle} style={{ cursor: 'pointer'}}>{`${isOpen ? 'Hide' : 'View' } original request`}</a>
+        {isOpen &&
+          <div>
+            {component}
+          </div>}
+      </div>
+    );
+  };
+
+  const DetailsFragment = (row) => {
+    console.log(row, "row");
+    let component = null;
+    const [isOpen, setIsOpen] = useState(false);
+
+    const toggle = () => {
+      setIsOpen((isOpen) => !isOpen);
+    };
+    const { readableEventType, details, modificationRequestDetails } = row;
+
+    const detailsExtended = { ...details, eventDate: row.eventDate, eventType: row.eventType };
+
+    const requestDetails = { ...modificationRequestDetails, requestType: row.requestType };
 
     switch (readableEventType) {
     case 'Claim created':
@@ -131,13 +229,35 @@ const IndividualClaimHistoryTable = (props) => {
     case 'Removed issue':
       component = <RemovedIssueFragment {...detailsExtended} />;
       break;
+    case 'Cancellation of request':
+      component = <RequestedIssueFragment {...requestDetails} />;
+      break;
+    case 'Requested issue removal':
+      component = <RequestedIssueFragment {...requestDetails} />;
+      break;
+    case 'Requested issue addition':
+      component = <RequestedIssueFragment {...requestDetails} />;
+      break;
+    case 'Requested issue withdrawal':
+      component = <WithdrawalRequestedIssueFormat {...requestDetails} />;
+      break;
     default:
       return null;
     }
 
-    return <p>
-      {component}
-    </p>;
+    return (
+      <div>
+        <p>{component}</p>
+        {/* <OriginalDetailsFragments {...requestDetails} /> */}
+        <div>
+        <a onClick={toggle} style={{ cursor: 'pointer'}}>{`${isOpen ? 'Hide' : 'View' } original request`}</a>
+        {isOpen &&
+          <div>
+            {component}
+          </div>}
+      </div>
+      </div>
+    );
   };
 
   const dateSort = (row) => {
