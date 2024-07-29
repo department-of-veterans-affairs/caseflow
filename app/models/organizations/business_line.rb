@@ -227,9 +227,13 @@ class BusinessLine < Organization
               versions.item_type,
               ARRAY_AGG(versions.object_changes ORDER BY versions.id) AS object_changes_array,
               MAX(CASE
-                  WHEN versions.object_changes LIKE '%closed_at:%' THEN versions.whodunnit
+                  WHEN versions.object_changes LIKE '%updated_at:%' THEN versions.whodunnit
                   ELSE NULL
-              END) AS version_closed_by_id
+              END) AS version_updated_by_id,
+              MAX(CASE
+                WHEN versions.object_changes LIKE '%status:%' THEN 1
+                ELSE 0
+            END) AS version_has_status
           FROM
               versions
           INNER JOIN issue_modification_requests ON issue_modification_requests.id = versions.item_id
@@ -237,7 +241,7 @@ class BusinessLine < Organization
           GROUP BY
               versions.item_id, versions.item_type)
         SELECT tasks.id AS task_id,
-          get_claim_status.current_claim_status,
+          check_imr_current_status.is_assigned_present,
           tasks.status AS task_status,
           request_issues.id AS request_issue_id,
           request_issues_updates.created_at AS request_issue_update_time, decision_issues.description AS decision_description,
@@ -263,31 +267,37 @@ class BusinessLine < Organization
             NULLIF(CONCAT(people.first_name, ' ', people.last_name), ' '),
             bgs_attorneys.name
           ) AS claimant_name,
-          COALESCE(imr.id, imr_addition.id) AS issue_modification_request_id,
-          COALESCE(imr.nonrating_issue_category,imr_addition.nonrating_issue_category) AS requested_issue_type,
-          COALESCE(imr.nonrating_issue_description,imr_addition.nonrating_issue_description) As requested_issue_description,
+          imr.id AS issue_modification_request_id,
+          imr.nonrating_issue_category AS requested_issue_type,
+          imr.nonrating_issue_description As requested_issue_description,
           imr.remove_original_issue,
-          COALESCE(imr.request_reason,imr_addition.request_reason) AS modification_request_reason,
-          COALESCE(imr.decision_date,imr_addition.decision_date) AS requested_decision_date,
-          COALESCE(imr.request_type,imr_addition.request_type) AS request_type,
-          COALESCE(imr.status,imr_addition.status) AS issue_modification_request_status,
-          COALESCE(imr.decision_reason,imr_addition.decision_reason) AS decision_reason,
-          COALESCE(imr.decider_id,imr_addition.decider_id) decider_id,
-          COALESCE(imr.requestor_id,imr_addition.requestor_id) as requestor_id,
-          COALESCE(imr.decided_at,imr_addition.decided_at) AS decided_at,
-          COALESCE(imr.created_at,imr_addition.created_at) AS issue_modification_request_created_at,
-          COALESCE(imr.updated_at,imr_addition.updated_at) AS issue_modification_request_updated_at,
-          COALESCE(imr.edited_at,imr_addition.edited_at) AS issue_modification_request_edited_at,
-          COALESCE(imr.withdrawal_date,imr_addition.withdrawal_date) AS issue_modification_request_withdrawal_date,
-          COALESCE(imr.decision_review_id,imr_addition.decision_review_id) AS decision_review_id,
-          COALESCE(imr.decision_review_type,imr_addition.decision_review_type) AS decision_review_type,
+          imr.request_reason AS modification_request_reason,
+          imr.decision_date AS requested_decision_date,
+          imr.request_type AS request_type,
+          imr.status AS issue_modification_request_status,
+          imr.decision_reason AS decision_reason,
+          imr.decider_id decider_id,
+          imr.requestor_id as requestor_id,
+          imr.decided_at AS decided_at,
+          imr.created_at AS issue_modification_request_created_at,
+          imr.updated_at AS issue_modification_request_updated_at,
+          imr.edited_at AS issue_modification_request_edited_at,
+          imr.withdrawal_date AS issue_modification_request_withdrawal_date,
+          imr.decision_review_id AS decision_review_id,
+          imr.decision_review_type AS decision_review_type,
           requestor.full_name AS requestor,
           requestor.station_id AS requestor_station_id,
           requestor.css_id AS requestor_css_id,
           decider.full_name AS decider,
           decider.station_id AS decider_station_id,
           decider.css_id AS decider_css_id,
-          itv.object_changes_array AS imr_versions
+          itv.object_changes_array AS imr_versions,
+          updator.station_id AS updator_station_id,
+          updator.full_name  AS updator_user_name,
+          updator.css_id  AS updator_user_css_id,
+          CASE WHEN itv.version_has_status = 1 THEN true ELSE false END version_has_status,
+          imr.created_at_lag as previous_imr_created_at,
+          imr.decided_at_lag as previous_imr_decided_at
         FROM tasks
         INNER JOIN request_issues ON request_issues.decision_review_type = tasks.appeal_type
         AND request_issues.decision_review_id = tasks.appeal_id
@@ -295,15 +305,22 @@ class BusinessLine < Organization
         AND tasks.appeal_id = higher_level_reviews.id
         INNER JOIN intakes ON tasks.appeal_type = intakes.detail_type
         AND intakes.detail_id = tasks.appeal_id
-        LEFT JOIN issue_modification_requests imr ON imr.decision_review_id = tasks.appeal_id
-          AND imr.decision_review_type = 'HigherLevelReview'
-          AND imr.request_issue_id = request_issues.id
         LEFT JOIN LATERAL (
+        SELECT * ,
+          lag(a.created_at,1) over (ORDER BY id) created_at_lag,
+          lag(a.decided_at,1) over (ORDER BY id) decided_at_lag
+        FROM (
+          SELECT * FROM issue_modification_requests imr
+          WHERE imr.decision_review_id = tasks.appeal_id
+            AND imr.decision_review_type = 'HigherLevelReview'
+            AND imr.request_issue_id = request_issues.id
+            UNION ALL
           SELECT * FROM issue_modification_requests imr_add
-          where imr_add.decision_review_id = tasks.appeal_id
-            AND imr_add.decision_review_type = 'HigherLevelReview'
-            AND imr_add.request_type = 'addition'
-				) imr_addition on true
+            where imr_add.decision_review_id = tasks.appeal_id
+              AND imr_add.decision_review_type = 'HigherLevelReview'
+              AND imr_add.request_type = 'addition'
+              ) a
+				) imr  on true
         LEFT JOIN request_issues_updates ON request_issues_updates.review_type = tasks.appeal_type
         AND request_issues_updates.review_id = tasks.appeal_id
         LEFT JOIN request_decision_issues ON request_decision_issues.request_issue_id = request_issues.id
@@ -320,113 +337,138 @@ class BusinessLine < Organization
         LEFT JOIN users update_users ON request_issues_updates.user_id = update_users.id
         LEFT JOIN users decision_users ON decision_users.id = tv.version_closed_by_id::int
         LEFT JOIN users decision_users_completed_by ON decision_users_completed_by.id = tasks.completed_by_id
-        LEFT JOIN users requestor ON COALESCE(imr.requestor_id,imr_addition.requestor_id) = requestor.id
-        LEFT JOIN users decider ON COALESCE(imr.decider_id,imr_addition.decider_id) = decider.id
-        LEFT JOIN imr_version_agg itv ON itv.item_type = 'IssueModificationRequest' AND itv.item_id = COALESCE(imr.id,imr_addition.id)
+        LEFT JOIN users requestor ON imr.requestor_id = requestor.id
+        LEFT JOIN users decider ON imr.decider_id = decider.id
+        LEFT JOIN imr_version_agg itv ON itv.item_type = 'IssueModificationRequest' AND itv.item_id = imr.id
+        LEFT JOIN users updator ON updator.id = itv.version_updated_by_id::int
         INNER JOIN LATERAL (
-          SELECT array_agg(status) current_claim_status FROM issue_modification_requests imr WHERE
-            imr.decision_review_id = request_issues.decision_review_id
-            AND imr.decision_review_type = request_issues.decision_review_type
-        ) get_claim_status on true
+            SELECT CASE
+              WHEN EXISTS (
+                SELECT 1
+                FROM issue_modification_requests imr
+                WHERE imr.decision_review_id = request_issues.decision_review_id
+                  AND imr.decision_review_type = 'HigherLevelReview'
+                  AND imr.status = 'assigned'
+              ) THEN true
+              ELSE false
+         END AS is_assigned_present
+        ) check_imr_current_status on true
         WHERE tasks.type = 'DecisionReviewTask'
         AND tasks.assigned_to_type = 'Organization'
         AND tasks.assigned_to_id = '#{parent.id.to_i}'
         #{sanitized_filters}
-       UNION ALL
-       SELECT tasks.id AS task_id, get_claim_status.current_claim_status, tasks.status AS task_status, request_issues.id AS request_issue_id,
-         request_issues_updates.created_at AS request_issue_update_time, decision_issues.description AS decision_description,
-         request_issues.benefit_type AS request_issue_benefit_type, request_issues_updates.id AS request_issue_update_id,
-         request_issues.created_at AS request_issue_created_at, request_decision_issues.created_at AS request_decision_created_at,
-         intakes.completed_at AS intake_completed_at, update_users.full_name AS update_user_name, tasks.created_at AS task_created_at,
-         intake_users.full_name AS intake_user_name, update_users.station_id AS update_user_station_id, tasks.closed_at AS task_closed_at,
-         intake_users.station_id AS intake_user_station_id, decision_issues.created_at AS decision_created_at,
-         COALESCE(decision_users.station_id, decision_users_completed_by.station_id) AS decision_user_station_id,
-         COALESCE(decision_users.full_name, decision_users_completed_by.full_name) AS decision_user_name,
-         COALESCE(decision_users.css_id, decision_users_completed_by.css_id) AS decision_user_css_id,
-         intake_users.css_id AS intake_user_css_id, update_users.css_id AS update_user_css_id,
-         request_issues_updates.before_request_issue_ids, request_issues_updates.after_request_issue_ids,
-         request_issues_updates.withdrawn_request_issue_ids, request_issues_updates.edited_request_issue_ids,
-         decision_issues.caseflow_decision_date, request_issues.decision_date_added_at,
-         tasks.appeal_type, tasks.appeal_id, request_issues.nonrating_issue_category, request_issues.nonrating_issue_description,
-         request_issues.decision_date, decision_issues.disposition, tasks.assigned_at, request_issues.unidentified_issue_text,
-         request_decision_issues.decision_issue_id, request_issues.closed_at AS request_issue_closed_at,
-         tv.object_changes_array AS task_versions, (CURRENT_TIMESTAMP::date - tasks.assigned_at::date) AS days_waiting,
-         COALESCE(intakes.veteran_file_number, supplemental_claims.veteran_file_number) AS veteran_file_number,
-         COALESCE(
-           NULLIF(CONCAT(unrecognized_party_details.name, ' ', unrecognized_party_details.last_name), ' '),
-           NULLIF(CONCAT(people.first_name, ' ', people.last_name), ' '),
-           bgs_attorneys.name
-         ) AS claimant_name,
-          COALESCE(imr.id, imr_addition.id) AS issue_modification_request_id,
-          COALESCE(imr.nonrating_issue_category,imr_addition.nonrating_issue_category) AS requested_issue_type,
-          COALESCE(imr.nonrating_issue_description,imr_addition.nonrating_issue_description) As requested_issue_description,
-          imr.remove_original_issue,
-          COALESCE(imr.request_reason,imr_addition.request_reason) AS modification_request_reason,
-          COALESCE(imr.decision_date,imr_addition.decision_date) AS requested_decision_date,
-          COALESCE(imr.request_type,imr_addition.request_type) AS request_type,
-          COALESCE(imr.status,imr_addition.status) AS issue_modification_request_status,
-          COALESCE(imr.decision_reason,imr_addition.decision_reason) AS decision_reason,
-          COALESCE(imr.decider_id,imr_addition.decider_id) decider_id,
-          COALESCE(imr.requestor_id,imr_addition.requestor_id) as requestor_id,
-          COALESCE(imr.decided_at,imr_addition.decided_at) AS decided_at,
-          COALESCE(imr.created_at,imr_addition.created_at) AS issue_modification_request_created_at,
-          COALESCE(imr.updated_at,imr_addition.updated_at) AS issue_modification_request_updated_at,
-          COALESCE(imr.edited_at,imr_addition.edited_at) AS issue_modification_request_edited_at,
-          COALESCE(imr.withdrawal_date,imr_addition.withdrawal_date) AS issue_modification_request_withdrawal_date,
-          COALESCE(imr.decision_review_id,imr_addition.decision_review_id) AS decision_review_id,
-          COALESCE(imr.decision_review_type,imr_addition.decision_review_type) AS decision_review_type,
-          requestor.full_name AS requestor,
-          requestor.station_id AS requestor_station_id,
-          requestor.css_id AS requestor_css_id,
-          decider.full_name AS decider,
-          decider.station_id AS decider_station_id,
-          decider.css_id AS decider_css_id,
-          itv.object_changes_array AS imr_versions
-       FROM tasks
-       INNER JOIN request_issues ON request_issues.decision_review_type = tasks.appeal_type
-       AND request_issues.decision_review_id = tasks.appeal_id
-       INNER JOIN supplemental_claims ON tasks.appeal_type = 'SupplementalClaim'
-       AND tasks.appeal_id = supplemental_claims.id
-       LEFT JOIN intakes ON tasks.appeal_type = intakes.detail_type
-       AND intakes.detail_id = tasks.appeal_id
-       LEFT JOIN issue_modification_requests imr ON imr.decision_review_id = tasks.appeal_id
+      UNION ALL
+      SELECT tasks.id AS task_id, check_imr_current_status.is_assigned_present, tasks.status AS task_status, request_issues.id AS request_issue_id,
+        request_issues_updates.created_at AS request_issue_update_time, decision_issues.description AS decision_description,
+        request_issues.benefit_type AS request_issue_benefit_type, request_issues_updates.id AS request_issue_update_id,
+        request_issues.created_at AS request_issue_created_at, request_decision_issues.created_at AS request_decision_created_at,
+        intakes.completed_at AS intake_completed_at, update_users.full_name AS update_user_name, tasks.created_at AS task_created_at,
+        intake_users.full_name AS intake_user_name, update_users.station_id AS update_user_station_id, tasks.closed_at AS task_closed_at,
+        intake_users.station_id AS intake_user_station_id, decision_issues.created_at AS decision_created_at,
+        COALESCE(decision_users.station_id, decision_users_completed_by.station_id) AS decision_user_station_id,
+        COALESCE(decision_users.full_name, decision_users_completed_by.full_name) AS decision_user_name,
+        COALESCE(decision_users.css_id, decision_users_completed_by.css_id) AS decision_user_css_id,
+        intake_users.css_id AS intake_user_css_id, update_users.css_id AS update_user_css_id,
+        request_issues_updates.before_request_issue_ids, request_issues_updates.after_request_issue_ids,
+        request_issues_updates.withdrawn_request_issue_ids, request_issues_updates.edited_request_issue_ids,
+        decision_issues.caseflow_decision_date, request_issues.decision_date_added_at,
+        tasks.appeal_type, tasks.appeal_id, request_issues.nonrating_issue_category, request_issues.nonrating_issue_description,
+        request_issues.decision_date, decision_issues.disposition, tasks.assigned_at, request_issues.unidentified_issue_text,
+        request_decision_issues.decision_issue_id, request_issues.closed_at AS request_issue_closed_at,
+        tv.object_changes_array AS task_versions, (CURRENT_TIMESTAMP::date - tasks.assigned_at::date) AS days_waiting,
+        COALESCE(intakes.veteran_file_number, supplemental_claims.veteran_file_number) AS veteran_file_number,
+        COALESCE(
+          NULLIF(CONCAT(unrecognized_party_details.name, ' ', unrecognized_party_details.last_name), ' '),
+          NULLIF(CONCAT(people.first_name, ' ', people.last_name), ' '),
+          bgs_attorneys.name
+        ) AS claimant_name,
+         imr.id AS issue_modification_request_id,
+         imr.nonrating_issue_category AS requested_issue_type,
+         imr.nonrating_issue_description As requested_issue_description,
+         imr.remove_original_issue,
+         imr.request_reason AS modification_request_reason,
+         imr.decision_date AS requested_decision_date,
+         imr.request_type AS request_type,
+         imr.status AS issue_modification_request_status,
+         imr.decision_reason AS decision_reason,
+         imr.decider_id AS decider_id,
+         imr.requestor_id AS requestor_id,
+         imr.decided_at AS decided_at,
+         imr.created_at AS issue_modification_request_created_at,
+         imr.updated_at  AS issue_modification_request_updated_at,
+         imr.edited_at AS issue_modification_request_edited_at,
+         imr.withdrawal_date  AS issue_modification_request_withdrawal_date,
+         imr.decision_review_id  AS decision_review_id,
+         imr.decision_review_type AS decision_review_type,
+         requestor.full_name AS requestor,
+         requestor.station_id AS requestor_station_id,
+         requestor.css_id AS requestor_css_id,
+         decider.full_name AS decider,
+         decider.station_id AS decider_station_id,
+         decider.css_id AS decider_css_id,
+         itv.object_changes_array AS imr_versions,
+         updator.station_id AS updator_station_id,
+         updator.full_name  AS updator_user_name,
+         updator.css_id  AS updator_user_css_id,
+         CASE WHEN itv.version_has_status = 1 THEN true ELSE false END version_has_status,
+         imr.created_at_lag as previous_imr_created_at,
+         imr.decided_at_lag as previous_imr_decided_at
+      FROM tasks
+      INNER JOIN request_issues ON request_issues.decision_review_type = tasks.appeal_type
+      AND request_issues.decision_review_id = tasks.appeal_id
+      INNER JOIN supplemental_claims ON tasks.appeal_type = 'SupplementalClaim'
+      AND tasks.appeal_id = supplemental_claims.id
+      LEFT JOIN intakes ON tasks.appeal_type = intakes.detail_type
+      AND intakes.detail_id = tasks.appeal_id
+      LEFT JOIN LATERAL (
+      SELECT * , lag(a.created_at,1) over (ORDER BY id) created_at_lag, lag(a.decided_at,1) over (ORDER BY id) decided_at_lag
+      FROM (
+        SELECT * FROM issue_modification_requests imr
+        WHERE imr.decision_review_id = tasks.appeal_id
           AND imr.decision_review_type = 'SupplementalClaim'
           AND imr.request_issue_id = request_issues.id
-       LEFT JOIN LATERAL (
-          SELECT * FROM issue_modification_requests imr_add
+          UNION ALL
+        SELECT * FROM issue_modification_requests imr_add
           where imr_add.decision_review_id = tasks.appeal_id
             AND imr_add.decision_review_type = 'SupplementalClaim'
-            AND imr_add.request_type = 'addition'
-				) imr_addition on true
-       LEFT JOIN request_issues_updates ON request_issues_updates.review_type = tasks.appeal_type
-       AND request_issues_updates.review_id = tasks.appeal_id
-       LEFT JOIN request_decision_issues ON request_decision_issues.request_issue_id = request_issues.id
-       LEFT JOIN decision_issues ON decision_issues.decision_review_id = tasks.appeal_id
-       AND decision_issues.decision_review_type = tasks.appeal_type AND decision_issues.id = request_decision_issues.decision_issue_id
-       LEFT JOIN claimants ON claimants.decision_review_id = tasks.appeal_id
-       AND claimants.decision_review_type = tasks.appeal_type
-       LEFT JOIN versions_agg tv ON tv.item_type = 'Task' AND tv.item_id = tasks.id
-       LEFT JOIN people ON claimants.participant_id = people.participant_id
-       LEFT JOIN bgs_attorneys ON claimants.participant_id = bgs_attorneys.participant_id
-       LEFT JOIN unrecognized_appellants ON claimants.id = unrecognized_appellants.claimant_id
-       LEFT JOIN unrecognized_party_details ON unrecognized_appellants.unrecognized_party_detail_id = unrecognized_party_details.id
-       LEFT JOIN users intake_users ON intakes.user_id = intake_users.id
-       LEFT JOIN users update_users ON request_issues_updates.user_id = update_users.id
-       LEFT JOIN users decision_users ON decision_users.id = tv.version_closed_by_id::int
-       LEFT JOIN users decision_users_completed_by ON decision_users_completed_by.id = tasks.completed_by_id
-       LEFT JOIN users requestor ON COALESCE(imr.requestor_id,imr_addition.requestor_id) = requestor.id
-       LEFT JOIN users decider ON COALESCE(imr.decider_id,imr_addition.decider_id) = decider.id
-       LEFT JOIN imr_version_agg itv ON itv.item_type = 'IssueModificationRequest' AND itv.item_id = COALESCE(imr.id,imr_addition.id)
+            AND imr_add.request_type = 'addition') a
+				) imr on true
+      LEFT JOIN request_issues_updates ON request_issues_updates.review_type = tasks.appeal_type
+      AND request_issues_updates.review_id = tasks.appeal_id
+      LEFT JOIN request_decision_issues ON request_decision_issues.request_issue_id = request_issues.id
+      LEFT JOIN decision_issues ON decision_issues.decision_review_id = tasks.appeal_id
+      AND decision_issues.decision_review_type = tasks.appeal_type AND decision_issues.id = request_decision_issues.decision_issue_id
+      LEFT JOIN claimants ON claimants.decision_review_id = tasks.appeal_id
+      AND claimants.decision_review_type = tasks.appeal_type
+      LEFT JOIN versions_agg tv ON tv.item_type = 'Task' AND tv.item_id = tasks.id
+      LEFT JOIN people ON claimants.participant_id = people.participant_id
+      LEFT JOIN bgs_attorneys ON claimants.participant_id = bgs_attorneys.participant_id
+      LEFT JOIN unrecognized_appellants ON claimants.id = unrecognized_appellants.claimant_id
+      LEFT JOIN unrecognized_party_details ON unrecognized_appellants.unrecognized_party_detail_id = unrecognized_party_details.id
+      LEFT JOIN users intake_users ON intakes.user_id = intake_users.id
+      LEFT JOIN users update_users ON request_issues_updates.user_id = update_users.id
+      LEFT JOIN users decision_users ON decision_users.id = tv.version_closed_by_id::int
+      LEFT JOIN users decision_users_completed_by ON decision_users_completed_by.id = tasks.completed_by_id
+      LEFT JOIN users requestor ON imr.requestor_id  = requestor.id
+      LEFT JOIN users decider ON  imr.decider_id  = decider.id
+      LEFT JOIN imr_version_agg itv ON itv.item_type = 'IssueModificationRequest' AND itv.item_id = imr.id
+      LEFT JOIN users updator ON updator.id = itv.version_updated_by_id::int
        INNER JOIN LATERAL (
-          SELECT array_agg(status) current_claim_status FROM issue_modification_requests imr WHERE
-            imr.decision_review_id = request_issues.decision_review_id
-            AND imr.decision_review_type = request_issues.decision_review_type
-
-        ) get_claim_status on true
-       WHERE tasks.type = 'DecisionReviewTask'
-       AND tasks.assigned_to_type = 'Organization'
-       AND tasks.assigned_to_id = '#{parent.id.to_i}'
-       #{sanitized_filters}
+             SELECT CASE
+           WHEN EXISTS (
+             SELECT 1
+             FROM issue_modification_requests imr
+             WHERE imr.decision_review_id = request_issues.decision_review_id
+             AND imr.decision_review_type = 'SupplementalClaim'
+               AND imr.status = 'assigned'
+           ) THEN true
+           ELSE false
+       END AS is_assigned_present
+         ) check_imr_current_status on true
+      WHERE tasks.type = 'DecisionReviewTask'
+      AND tasks.assigned_to_type = 'Organization'
+      AND tasks.assigned_to_id = '#{parent.id.to_i}'
+      #{sanitized_filters}
       SQL
 
       ActiveRecord::Base.transaction do

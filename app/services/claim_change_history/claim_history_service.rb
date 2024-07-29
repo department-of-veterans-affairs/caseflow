@@ -43,6 +43,8 @@ class ClaimHistoryService
     end
     # Compact and sort in place to reduce garbage collection
 
+    # byebug
+
     @events.compact!
     @events.sort_by! do |event|
       [
@@ -67,6 +69,7 @@ class ClaimHistoryService
     @processed_decision_issue_ids.clear
     @processed_request_issue_ids.clear
     @processed_issue_modification_request_ids.clear
+    @processed_issue_modification_task_ids.clear
     @events.clear
   end
 
@@ -239,6 +242,7 @@ class ClaimHistoryService
     end
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def process_request_issue_modification_events(change_data)
     issue_modification_request_id = change_data["issue_modification_request_id"]
 
@@ -250,18 +254,22 @@ class ClaimHistoryService
     if issue_modification_request_id && !is_processed
       @processed_issue_modification_request_ids.add(issue_modification_request_id)
       save_events(ClaimHistoryEvent.create_issue_modification_request_event(change_data))
-      save_events(ClaimHistoryEvent.create_issue_modification_decision_event(change_data))
       save_events(ClaimHistoryEvent.create_edited_request_issue_events(change_data))
     end
-
-    # no matter what the status is if request_modification_request was made then pending status has to be present.
+    # if imr version doesn't have status it means, imr has been made but no action yet taken from admin
     if task_id &&
-       !@processed_issue_modification_task_ids.include?(task_id)
+       !@processed_issue_modification_task_ids.include?(task_id) &&
+       !change_data["version_has_status"] && !is_processed
 
       @processed_issue_modification_task_ids.add(task_id)
-      save_events(ClaimHistoryEvent.create_pending_status_events(change_data))
+
+      save_events(
+        ClaimHistoryEvent.create_pending_status_events(change_data,
+                                                       change_data["issue_modification_request_created_at"])
+      )
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def ensure_array(variable)
     variable.is_a?(Array) ? variable : [variable]

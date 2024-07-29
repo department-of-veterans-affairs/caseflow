@@ -18,7 +18,8 @@ class ClaimHistoryEvent
               :event_user_css_id, :new_issue_type, :new_issue_description, :new_decision_date,
               :modification_request_reason, :request_type, :decision_reason, :decided_at_date,
               :current_claim_status, :issue_modification_request_withdrawal_date, :requestor,
-              :decider, :remove_original_issue, :issue_modification_request_status
+              :decider, :remove_original_issue, :issue_modification_request_status, :version_has_status,
+              :imr_created_at_lag, :imr_decided_at_lag
 
   EVENT_TYPES = [
     :completed_disposition,
@@ -38,7 +39,7 @@ class ClaimHistoryEvent
     :withdrawal,
     :removal,
     :request_approved,
-    :request_rejected,
+    :request_denied,
     :request_cancelled,
     :request_edited
   ].freeze
@@ -74,13 +75,14 @@ class ClaimHistoryEvent
     :withdrawal,
     :removal,
     :request_approved,
-    :request_rejected,
+    :request_denied,
     :request_cancelled,
     :request_edited
   ].freeze
 
   REQUEST_ISSUE_TIME_WINDOW = 15
   STATUS_EVENT_TIME_WINDOW = 2
+  ISSUE_MODIFICATION_REQUEST_CREATION_WINDOW = 15
 
   class << self
     def from_change_data(event_type, change_data)
@@ -121,68 +123,90 @@ class ClaimHistoryEvent
       issue_modification_events.push from_change_data(request_type.to_sym, change_data.merge(event_hash))
     end
 
-    # when issue modification requested are decided then an event is created based on that.
-    def create_issue_modification_decision_event(change_data)
-      issue_modification_decision_event = []
-      return if change_data["issue_modification_request_status"] == "assigned"
+    # 2 seconds are being added for testing and sorting purposes.
+    def create_edited_request_issue_events(change_data)
+      edited_events = []
+      imr_versions = parse_versions(change_data["imr_versions"])
 
-      request_event_type = "request_#{change_data['issue_modification_request_status']}"
+      if imr_versions.present?
+        *rest_of_versions, last_version = imr_versions
+        edited_events.push(*create_event_from_rest_of_versions(change_data, rest_of_versions))
+        edited_events.push(*create_last_version_events(change_data, last_version))
 
-      event_hash = request_issue_modification_event_hash(change_data)
+      else
+        create_pending_status_events(change_data, change_data["issue_modification_request_updated_at"])
+      end
+      edited_events
+    end
+
+    def create_event_from_rest_of_versions(change_data, edited_versions)
+      edit_of_request_events = []
+      event_type = :request_edited
+      event_date_hash = {}
+
+      edited_versions.map do |version|
+        event_date_hash = {
+          "event_date" => version["updated_at"][0],
+          "event_user_name" => change_data["updator_user_name"]
+        }
+
+        change_data = update_change_data_from_version(change_data, version, 0)
+        edit_of_request_events.push(*from_change_data(event_type, change_data.merge(event_date_hash)))
+      end
+      edit_of_request_events
+    end
+
+    def create_last_version_events(change_data, last_version)
+      edited_events = []
+      if last_version["status"].present?
+        last_version["status"].map.with_index do |status, index|
+          # byebug
+          if status == "assigned"
+            edited_events.push(*create_pending_status_events(change_data, last_version["updated_at"][index]))
+          else
+            edited_events.push(*create_request_issue_decision_events(change_data, last_version, status, index))
+          end
+        end
+      end
+      edited_events
+    end
+
+    def create_request_issue_decision_events(change_data, last_version, event, index)
+      events = []
+      decision_event_hash = pending_system_hash
+        .merge("event_date" => last_version["updated_at"][index] + 1.second)
+        .merge("event_user_name" => change_data["updator_user_name"])
 
       if change_data["request_type"] == "addition"
         change_data = issue_attributes_for_request_type_addition(change_data)
       end
 
-      issue_modification_decision_event.push from_change_data(request_event_type.to_sym, change_data.merge(event_hash))
-      issue_modification_decision_event
+      request_event_type = "request_#{event}"
+
+      events.push from_change_data(request_event_type.to_sym, change_data.merge(decision_event_hash))
+
+      # in case of multipe issue modification request and all been approved, only first one will have decided_at_lag nil
+      # which will create only one in-progress event.
+      if %w[cancelled denied approved].include?(event) && change_data["previous_imr_decided_at"].nil?
+        in_progress_system_hash_events = pending_system_hash
+          .merge("event_date" => last_version["updated_at"][index] + 2.seconds, "current_claim_status" => "in_progress")
+
+        events.push from_change_data(:in_progress, change_data.merge(in_progress_system_hash_events))
+      end
+      events
     end
 
-    # when issue_modification_request_status is anything other than assigned then we add a pending status
-    # as it was once in pending status.
-    def create_pending_status_events(change_data)
-      issue_modification_status = []
-      issue_modification_request_id = change_data["issue_modification_request_id"]
-
+    def create_pending_status_events(change_data, event_date)
       pending_system_hash_events = pending_system_hash
-        .merge("event_date" => change_data["issue_modification_request_updated_at"])
+        .merge("event_date" => event_date)
 
-      if !issue_modification_request_id.nil?
-        issue_modification_status.push from_change_data(:pending, change_data.merge(pending_system_hash_events))
+      same_transaction = timestamp_within_seconds?(change_data["issue_modification_request_created_at"],
+                                                   change_data["previous_imr_created_at"],
+                                                   ISSUE_MODIFICATION_REQUEST_CREATION_WINDOW)
+
+      if change_data["previous_imr_created_at"].nil? || !same_transaction
+        from_change_data(:pending, change_data.merge(pending_system_hash_events))
       end
-
-      # if assign is present in the aggregated_claim_status it means task should still be in pending status
-      # hence, in progress status should not be added
-
-      unless assign_status_present?(change_data)
-        issue_modification_status.push from_change_data(:in_progress, change_data.merge(pending_system_hash_events))
-      end
-      issue_modification_status
-    end
-
-    # if current_claim_status has one or more 'assigned' then task should never be in progress state
-    def assign_status_present?(change_data)
-      return false if change_data["current_claim_status"].nil?
-
-      change_data["current_claim_status"].include?("assigned")
-    end
-
-    def create_edited_request_issue_events(change_data)
-      edited_events = []
-      imr_versions = parse_versions(change_data["imr_versions"])
-
-      index = 0
-      if imr_versions.present?
-        event_type = :request_edited
-        event_date_hash = {}
-        imr_versions.map do |version|
-          event_date_hash = { "event_date" => version["updated_at"][index], "event_user_name" => "System" }
-          change_data = update_change_data_from_version(change_data, version, index)
-
-          edited_events.push from_change_data(event_type, change_data.merge(event_date_hash))
-        end
-      end
-      edited_events
     end
 
     # rubocop:disable Metrics/MethodLength
@@ -610,7 +634,7 @@ class ClaimHistoryEvent
       modification: "Requested issue modification",
       withdrawal: "Requested issue withdrawal",
       request_approved: "Approval of the request - issue #{request_type}",
-      request_rejected: "Rejection of the request- issue #{request_type}",
+      request_denied: "Rejection of the request- issue #{request_type}",
       request_cancelled: "Cancellation of request",
       request_edited: "Edit of request - issue #{request_type}"
     }[event_type]
@@ -653,7 +677,7 @@ class ClaimHistoryEvent
 
   def parse_task_attributes(change_data)
     @task_id = change_data["task_id"]
-    @task_status = retrieve_current_claim_status(change_data)
+    @task_status = change_data["is_assigned_present"] ? "pending" : change_data["task_status"]
     @claim_type = change_data["appeal_type"]
     @assigned_at = change_data["assigned_at"]
     @days_waiting = change_data["days_waiting"]
@@ -704,15 +728,10 @@ class ClaimHistoryEvent
       @requestor = change_data["requestor"]
       @decider = change_data["decider"]
       @issue_modification_request_status = change_data["issue_modification_request_status"]
+      @version_has_status = change_data["version_has_status"]
+      @imr_created_at_lag = change_data["previous_imr_created_at"]
+      @imr_decided_at_lag = change_data["previous_imr_decided_at"]
     end
-  end
-
-  def retrieve_current_claim_status(change_data)
-    return change_data["task_status"] if change_data["current_claim_status"].nil?
-
-    is_assign_present = change_data["current_claim_status"].include?("assigned")
-
-    is_assign_present ? "pending" : change_data["task_status"]
   end
 
   ############ CSV and Serializer Helpers ############

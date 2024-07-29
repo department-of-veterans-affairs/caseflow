@@ -61,7 +61,7 @@ describe ClaimHistoryEvent do
       "decider_id" => nil,
       "requestor_id" => "2000006012",
       "decided_at" => nil,
-      "issue_modification_request_created_at" => "2024-07-22 15:57:55.574809",
+      "issue_modification_request_created_at" => issue_modification_request_created_at,
       "issue_modification_request_updated_at" => "2024-07-22 15:58:42.908194",
       "issue_modification_request_edited_at" => nil,
       "issue_modification_request_withdrawal_date" => nil,
@@ -74,7 +74,9 @@ describe ClaimHistoryEvent do
       "decider_station_id" => nil,
       "decider_css_id" => nil,
       "imr_versions" => imr_versions,
-      "current_claim_status" => current_claim_status
+      "version_has_status" => false,
+      "previous_imr_created_at" => nil,
+      "updator_user_name" => "Monte Mann"
     }
   end
 
@@ -93,6 +95,7 @@ describe ClaimHistoryEvent do
   let(:request_issue_update_time) { Time.zone.parse("2023-10-19 22:47:16.233187") }
   let(:request_issue_created_at) { Time.zone.parse("2023-10-19 22:45:43.108934") }
   let(:issue_modification_request_created_at) { Time.zone.parse("2023-10-20 22:47:16.233187") }
+  let(:previous_imr_created_at) { Time.zone.parse("2023-10-19 22:47:16.233187") }
   let(:current_claim_status) { [] }
   let(:decision_reason) { nil }
   let(:decider_id) { nil }
@@ -122,28 +125,6 @@ describe ClaimHistoryEvent do
       withdrawal_request_date: Time.zone.parse("2023-10-16 22:47:16.233187")
     }
   end
-
-  # let(:issue_modification_request) do
-  #   {
-  #     "current_claim_status" => %w[assigned],
-  #     "issue_modification_request_created_at" => issue_modification_request_created_at,
-  #     "requestor" => "Bob Smith",
-  #     "requestor_station_id" => "283",
-  #     "requestor_css_id" => "200_000_601_3",
-  #     "issue_modification_request_id" => 1,
-  #     "requested_issue_type" => "Other",
-  #     "requested_issue_description" => "i need to add this new issue type",
-  #     "modification_request_reason" => nil,
-  #     "requested_decision_date" => Time.zone.parse("2023-10-20 22:47:16.233187"),
-  #     "issue_modification_request_status" => %w[assigned],
-  #     "request_type" => request_type,
-  #     "decision_reason" => decision_reason,
-  #     "decider_id" => decider_id,
-  #     "decided_at" => decided_at,
-  #     "decision_review_id" => 65,
-  #     "decision_review_type" => "HigherLevelReview"
-  #   }
-  # end
 
   let(:status_event_attribute_data) do
     {
@@ -229,11 +210,24 @@ describe ClaimHistoryEvent do
   let(:issue_modification_response_attribute) do
     {
       event_type: :request_approved,
-      request_type: :modification,
+      request_type: :addition,
       new_issue_type: "Caregiver | Tier Level",
-      new_issue_description: "test",
+      new_issue_description: "First value",
       new_decision_date: "2024-07-07",
-      modification_request_reason: "Testing"
+      modification_request_reason: "Addition is the only request issue"
+    }
+  end
+
+  let(:issue_modification_edited_attribute) do
+    {
+      event_type: :request_edited,
+      request_type: :addition,
+      issue_type: "Clothing Allowance",
+      new_issue_type: "Caregiver | Tier Level",
+      new_issue_description: "First value",
+      new_decision_date: "2024-07-07",
+      modification_request_reason: "Addition is the only request issue",
+      event_user_name: "Monte Mann"
     }
   end
 
@@ -754,42 +748,34 @@ describe ClaimHistoryEvent do
     end
 
     describe ".create_pending_status_events" do
-      subject { described_class.create_pending_status_events(change_data) }
+      let(:event_date) { change_data["issue_modification_request_created_at"] }
 
-      context "if assigned status was present in the issue modification requests" do
-        let(:event_type) { :pending }
-        let(:current_claim_status) { ["assigned"] }
+      subject { described_class.create_pending_status_events(change_data, event_date) }
 
-        it "should return one single of pending event" do
-          expect(subject.count).to eq(1)
-          expect_attributes(subject[0], pending_attribute_data)
+      it "should return one pending event" do
+        expect_attributes(subject, pending_attribute_data)
+      end
+
+      context "it should return pending event if issue modification requests are made in two different days" do
+        before do
+          change_data["previous_imr_created_at"] = previous_imr_created_at
+        end
+
+        it "should return one pending event" do
+          expect_attributes(subject, pending_attribute_data)
         end
       end
 
-      context "if there are more than one issue modification request among which one of them is assigned." do
+      context "it should not pending event if issue modification requests are made in same transaction" do
+        let(:previous_imr_created_at) { issue_modification_request_created_at }
+
         before do
-          change_data["current_claim_status"] = %w[assigned rejected approved]
+          change_data["previous_imr_created_at"] = previous_imr_created_at
+          change_data["issue_modification_request_created_at"] = issue_modification_request_created_at
         end
 
-        subject { described_class.create_pending_status_events(change_data) }
-
-        it "should return single row of pending event" do
-          expect(subject.count).to eq(1)
-          expect_attributes(subject[0], pending_attribute_data)
-        end
-      end
-
-      context "if there are more than one issue modification request none of them are in assigned status." do
-        before do
-          change_data["current_claim_status"] = %w[cancelled rejected approved]
-        end
-
-        subject { described_class.create_pending_status_events(change_data) }
-
-        it "should return one row of pending status and one row of in_progress status" do
-          expect(subject.count).to eq(2)
-          expect_attributes(subject[0], pending_attribute_data)
-          expect_attributes(subject[1], in_progress_attribute_data)
+        it "should return one pending event" do
+          expect(subject).to be_nil
         end
       end
     end
@@ -801,46 +787,6 @@ describe ClaimHistoryEvent do
 
       it "should return single event with request_type passed as the request_type" do
         verify_attributes_and_count(subject, 1, modification_attribute_data)
-      end
-    end
-
-    describe ".create_issue_modification_decision_event" do
-      let(:request_type) { :modification }
-      before do
-        change_data["current_claim_status"] = %w[approved]
-        change_data["decided_at_date"] = "2024-07-15"
-        change_data["decision_reason"] = "I think this is good"
-        change_data["issue_modification_request_status"] = "approved"
-        change_data["decider"] = "VHA Admin"
-      end
-
-      subject { described_class.create_issue_modification_decision_event(change_data) }
-
-      it "should return single event with event type request_approved" do
-        verify_attributes_and_count(subject, 1, issue_modification_response_attribute)
-      end
-
-      it "should return single event with event type request_rejected" do
-        change_data["current_claim_status"] = %w[rejected]
-        change_data["issue_modification_request_status"] = "rejected"
-        issue_modification_response_attribute[:event_type] = :request_rejected
-
-        verify_attributes_and_count(subject, 1, issue_modification_response_attribute)
-      end
-
-      it "should return single event with event type request_cancelled" do
-        change_data["current_claim_status"] = %w[cancelled]
-        change_data["issue_modification_request_status"] = "cancelled"
-        issue_modification_response_attribute[:event_type] = :request_cancelled
-
-        verify_attributes_and_count(subject, 1, issue_modification_response_attribute)
-      end
-
-      it "should return nil" do
-        change_data["current_claim_status"] = %w[assigned]
-        change_data["issue_modification_request_status"] = "assigned"
-
-        expect(subject).to be_nil
       end
     end
 
@@ -869,26 +815,16 @@ describe ClaimHistoryEvent do
         "updated_at:\n" \
         "- 2024-07-19 22:45:43.148742000 Z\n" \
         "- 2024-07-19 22:47:16.222311778 Z\n" \
-        "\",---\n" \
-        "status:\n" \
-        "- assigned\n" \
-        "- completed\n" \
-        "decided_at::\n" \
-        "- \n" \
-        "- 2024-07-19 22:48:25.322988083 Z\n" \
-        "updated_at:\n" \
-        "- 2024-07-19 22:47:16.222311000 Z\n" \
-        "- 2024-07-19 22:48:25.324023984 Z\n" \
         "\"}"
       end
       subject { described_class.create_edited_request_issue_events(change_data) }
 
       it "returns request_edited event type with multiple events" do
-        expect(subject.count).to be(3)
-        subject.map do |each_subject|
-          expect(each_subject.event_type).to eq(:request_edited)
-          expect(each_subject.event_user_name).to eq("System")
-        end
+        expect(subject.count).to be(4)
+        expect_attributes(subject[0], issue_modification_edited_attribute)
+        expect_attributes(subject[1], pending_attribute_data)
+        expect_attributes(subject[2], issue_modification_response_attribute)
+        expect_attributes(subject[3], in_progress_attribute_data)
       end
     end
 
@@ -1182,7 +1118,7 @@ describe ClaimHistoryEvent do
           modification: "Requested issue modification",
           withdrawal: "Requested issue withdrawal",
           request_approved: "Approval of the request - issue addition",
-          request_rejected: "Rejection of the request- issue addition",
+          request_denied: "Rejection of the request- issue addition",
           request_cancelled: "Cancellation of request",
           request_edited: "Edit of request - issue addition"
         }
