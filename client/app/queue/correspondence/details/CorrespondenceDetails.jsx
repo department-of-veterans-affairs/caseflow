@@ -8,6 +8,7 @@ import { loadCorrespondence } from '../correspondenceReducer/correspondenceActio
 import CorrespondenceCaseTimeline from '../CorrespondenceCaseTimeline';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
+// import TaskSnapshot from '../../TaskSnapshot';
 import { prepareAppealForSearchStore } from 'app/queue/utils';
 
 const CorrespondenceDetails = (props) => {
@@ -94,6 +95,10 @@ const CorrespondenceDetails = (props) => {
         organizations={props.organizations}
         userCssId={props.userCssId}
         correspondence={props.correspondence} />
+      {/* <TaskSnapshot
+      // appeals={appeals}
+
+        /> */}
     </div>
   </>;
 
