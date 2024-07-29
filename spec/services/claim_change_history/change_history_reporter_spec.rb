@@ -149,14 +149,12 @@ describe ChangeHistoryReporter do
         new_event = removed_issue_event.clone
         new_event.instance_variable_set(:@event_type, :pending)
         new_event.instance_variable_set(:@task_status, "assigned")
-        new_event.instance_variable_set(:@current_claim_status, ["assigned"])
         new_event
       end
       let(:issue_modification_request_event) do
         new_event = pending_issue_event.clone
         new_event.instance_variable_set(:@event_type, :modification)
         new_event.instance_variable_set(:@task_status, "assigned")
-        new_event.instance_variable_set(:@current_claim_status, ["assigned"])
         new_event
       end
 

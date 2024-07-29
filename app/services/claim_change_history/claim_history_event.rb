@@ -17,7 +17,7 @@ class ClaimHistoryEvent
               :task_status, :disposition_date, :intake_completed_date, :event_user_name,
               :event_user_css_id, :new_issue_type, :new_issue_description, :new_decision_date,
               :modification_request_reason, :request_type, :decision_reason, :decided_at_date,
-              :current_claim_status, :issue_modification_request_withdrawal_date, :requestor,
+              :issue_modification_request_withdrawal_date, :requestor,
               :decider, :remove_original_issue, :issue_modification_request_status, :version_has_status,
               :imr_created_at_lag, :imr_decided_at_lag
 
@@ -160,21 +160,22 @@ class ClaimHistoryEvent
       edited_events = []
       if last_version["status"].present?
         last_version["status"].map.with_index do |status, index|
-          # byebug
           if status == "assigned"
             edited_events.push(*create_pending_status_events(change_data, last_version["updated_at"][index]))
           else
-            edited_events.push(*create_request_issue_decision_events(change_data, last_version, status, index))
+            edited_events.push(*create_request_issue_decision_events(
+              change_data, last_version["updated_at"][index], status
+            ))
           end
         end
       end
       edited_events
     end
 
-    def create_request_issue_decision_events(change_data, last_version, event, index)
+    def create_request_issue_decision_events(change_data, event_date, event)
       events = []
       decision_event_hash = pending_system_hash
-        .merge("event_date" => last_version["updated_at"][index] + 1.second)
+        .merge("event_date" => event_date)
         .merge("event_user_name" => change_data["updator_user_name"])
 
       if change_data["request_type"] == "addition"
@@ -189,7 +190,7 @@ class ClaimHistoryEvent
       # which will create only one in-progress event.
       if %w[cancelled denied approved].include?(event) && change_data["previous_imr_decided_at"].nil?
         in_progress_system_hash_events = pending_system_hash
-          .merge("event_date" => last_version["updated_at"][index] + 2.seconds, "current_claim_status" => "in_progress")
+          .merge("event_date" => event_date)
 
         events.push from_change_data(:in_progress, change_data.merge(in_progress_system_hash_events))
       end
@@ -681,7 +682,6 @@ class ClaimHistoryEvent
     @claim_type = change_data["appeal_type"]
     @assigned_at = change_data["assigned_at"]
     @days_waiting = change_data["days_waiting"]
-    @current_claim_status = change_data["current_claim_status"]
   end
 
   def parse_intake_attributes(change_data)

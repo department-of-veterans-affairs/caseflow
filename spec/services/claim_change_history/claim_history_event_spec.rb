@@ -96,7 +96,7 @@ describe ClaimHistoryEvent do
   let(:request_issue_created_at) { Time.zone.parse("2023-10-19 22:45:43.108934") }
   let(:issue_modification_request_created_at) { Time.zone.parse("2023-10-20 22:47:16.233187") }
   let(:previous_imr_created_at) { Time.zone.parse("2023-10-19 22:47:16.233187") }
-  let(:current_claim_status) { [] }
+
   let(:decision_reason) { nil }
   let(:decider_id) { nil }
   let(:decided_at) { nil }
