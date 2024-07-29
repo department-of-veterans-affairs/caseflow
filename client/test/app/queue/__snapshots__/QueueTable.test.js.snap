@@ -400,6 +400,7 @@ exports[`QueueTable HeaderRow Can filter when using task pages API and column ha
           enableFilterTextTransform={true}
           filterOptions={Array []}
           filterOptionsFromApi={Array []}
+          filterType=""
           header="Third"
           tableData={
             Array [

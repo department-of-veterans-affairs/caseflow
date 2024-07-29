@@ -77,10 +77,13 @@ class DatePicker extends React.PureComponent {
     this.setState({ open });
     if (open) {
       const { values } = this.props;
-      const splitValues = values[0].split(',');
 
-      if (splitValues) {
-        this.setState({ mode: splitValues[0], startDate: splitValues[1], endDate: splitValues[2] });
+      if (values) {
+        const splitValues = values[0].split(',');
+
+        if (splitValues) {
+          this.setState({ mode: splitValues[0], startDate: splitValues[1], endDate: splitValues[2] });
+        }
       }
     }
   }
@@ -167,8 +170,10 @@ class DatePicker extends React.PureComponent {
 
             {this.state.mode !== '' &&
               <div className="input-wrapper">
-                <label htmlFor="start-date">{this.state.mode === 'between' ? 'From' : 'Date'}</label>
+                <label aria-label="start-date"
+                  htmlFor="start-date">{this.state.mode === 'between' ? 'From' : 'Date'}</label>
                 <input
+                  id="start-date"
                   name="start-date"
                   defaultValue={this.state.startDate}
                   type="date"
@@ -179,9 +184,9 @@ class DatePicker extends React.PureComponent {
 
             {this.state.mode === 'between' &&
               <div className="input-wrapper">
-                <label htmlFor="end-date">To</label>
+                <label aria-label="end-date" htmlFor="end-date">To</label>
                 <input
-                  label="End date"
+                  id="end-date"
                   name="end-date"
                   defaultValue={this.state.endDate}
                   type="date"
