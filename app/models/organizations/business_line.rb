@@ -106,9 +106,6 @@ class BusinessLine < Organization
       "SupplementalClaim" => Task.arel_table[:appeal_type]
         .eq("SupplementalClaim")
         .and(Task.arel_table[:type].eq(DecisionReviewTask.name))
-        .and(Arel.sql("sub_type").not_eq("Remand")),
-      "Remand" => Arel.sql("sub_type").eq("Remand")
-        .and(Task.arel_table[:type].eq(DecisionReviewTask.name))
     }.freeze
 
     DEFAULT_ORDERING_HASH = {
@@ -143,69 +140,35 @@ class BusinessLine < Organization
         .order(order_clause)
     end
 
-    def task_type_query_helper(join_association)
-      Task.send(parent.tasks_query_type[query_type])
-        .select("tasks.id AS task_id, tasks.type AS task_type")
-        .joins(join_association)
-        .joins(issue_modification_request_join)
-        .where(query_constraints)
-        .where(issue_modification_request_filter)
-    end
-
-    def task_type_board_grant_helper
-      Task.send(parent.tasks_query_type[query_type])
-        .select("tasks.id AS task_id, tasks.type AS task_type, 'Appeal' AS decision_review_type")
-        .joins(board_grant_effectuation_task_appeals_requests_join)
-        .joins(issue_modification_request_join)
-        .where(board_grant_effectuation_task_constraints)
-        .where(issue_modification_request_filter)
-    end
-
-    def issue_type_query_helper(join_association)
-      Task.send(parent.tasks_query_type[query_type])
-        .select("tasks.id as task_id, request_issues.nonrating_issue_category AS issue_category")
-        .joins(join_association)
-        .joins(issue_modification_request_join)
-        .where(query_constraints)
-        .where(issue_modification_request_filter)
+    def task_type_count
+      Task.select(Task.arel_table[:type])
+        .from(combined_decision_review_tasks_query)
+        .group(Task.arel_table[:type], Task.arel_table[:appeal_type])
+        .count
     end
 
     # rubocop:disable Metrics/MethodLength
-    def task_type_count
-      appeals_query = task_type_query_helper(ama_appeal: :request_issues)
-        .select("'Appeal' AS decision_review_type")
-      hlr_query = task_type_query_helper(higher_level_review: :request_issues)
-        .select("'HigherLevelReview' AS decision_review_type")
-      sc_query = task_type_query_helper(supplemental_claim: :request_issues)
-        .select("supplemental_claims.type AS decision_review_type")
-      board_grant_query = task_type_board_grant_helper
-
-      task_count = ActiveRecord::Base.connection.execute <<-SQL
-        WITH task_review_issues AS (
-            #{hlr_query.to_sql}
-          UNION
-            #{sc_query.to_sql}
-          UNION
-            #{appeals_query.to_sql}
-          UNION
-            #{board_grant_query.to_sql}
-        )
-        SELECT task_type, decision_review_type, COUNT(1)
-        FROM task_review_issues
-        GROUP BY task_type, decision_review_type;
-      SQL
-
-      task_count.reduce({}) do |acc, item|
-        key = [item["task_type"], item["decision_review_type"]]
-        acc[key] = (acc[key] || 0) + item["count"]
-        acc
-      end
-    end
-
+    # rubocop:disable Metrics/AbcSize
     def issue_type_count
-      appeals_query = issue_type_query_helper(ama_appeal: :request_issues)
-      hlr_query = issue_type_query_helper(higher_level_review: :request_issues)
-      sc_query = issue_type_query_helper(supplemental_claim: :request_issues)
+      shared_select_statement = "tasks.id as tasks_id, request_issues.nonrating_issue_category as issue_category"
+      appeals_query = Task.send(parent.tasks_query_type[query_type])
+        .select(shared_select_statement)
+        .joins(ama_appeal: :request_issues)
+        .joins(issue_modification_request_join)
+        .where(query_constraints)
+        .where(issue_modification_request_filter)
+      hlr_query = Task.send(parent.tasks_query_type[query_type])
+        .select(shared_select_statement)
+        .joins(supplemental_claim: :request_issues)
+        .joins(issue_modification_request_join)
+        .where(query_constraints)
+        .where(issue_modification_request_filter)
+      sc_query = Task.send(parent.tasks_query_type[query_type])
+        .select(shared_select_statement)
+        .joins(higher_level_review: :request_issues)
+        .joins(issue_modification_request_join)
+        .where(query_constraints)
+        .where(issue_modification_request_filter)
 
       nonrating_issue_count = ActiveRecord::Base.connection.execute <<-SQL
         WITH task_review_issues AS (
@@ -234,6 +197,7 @@ class BusinessLine < Organization
 
       issue_count_options
     end
+    # rubocop:enable Metrics/AbcSize
 
     def change_history_rows
       # Generate all of the filter queries to be used in both the HLR and SC block
@@ -664,7 +628,7 @@ class BusinessLine < Organization
     def group_by_columns
       "tasks.id, uuid, veterans.participant_id, veterans.ssn, veterans.first_name, veterans.last_name, "\
       "unrecognized_party_details.name, unrecognized_party_details.last_name, people.first_name, people.last_name, "\
-      "veteran_is_not_claimant, bgs_attorneys.name, sub_type"
+      "veteran_is_not_claimant, bgs_attorneys.name"
     end
 
     # Uses an array to insert the searched text into all of the searchable fields since it's the same text for all
@@ -674,26 +638,21 @@ class BusinessLine < Organization
     end
 
     def higher_level_reviews_on_request_issues
-      sub_type_alias = "'HigherLevelReview' AS sub_type"
-      decision_reviews_on_request_issues({ higher_level_review: :request_issues }, sub_type_alias)
+      decision_reviews_on_request_issues(higher_level_review: :request_issues)
     end
 
     def supplemental_claims_on_request_issues
-      sub_type_alias = "supplemental_claims.type AS sub_type"
-      decision_reviews_on_request_issues({ supplemental_claim: :request_issues }, sub_type_alias)
+      decision_reviews_on_request_issues(supplemental_claim: :request_issues)
     end
 
     def appeals_on_request_issues
-      sub_type_alias = "'Appeal' as sub_type"
-      decision_reviews_on_request_issues({ ama_appeal: :request_issues }, sub_type_alias)
+      decision_reviews_on_request_issues(ama_appeal: :request_issues)
     end
 
     # Specific case for BoardEffectuationGrantTasks to include them in the result set
     # if the :board_grant_effectuation_task FeatureToggle is enabled for the current user.
     def board_grant_effectuation_tasks
-      sub_type_alias = "'Appeal' as sub_type"
       decision_reviews_on_request_issues(board_grant_effectuation_task_appeals_requests_join,
-                                         sub_type_alias,
                                          board_grant_effectuation_task_constraints)
     end
 
@@ -708,8 +667,8 @@ class BusinessLine < Organization
       appeals_on_request_issues
     end
 
-    def decision_reviews_on_request_issues(join_constraint, subclass_type_alias, where_constraints = query_constraints)
-      Task.select(union_select_statements.append(subclass_type_alias))
+    def decision_reviews_on_request_issues(join_constraint, where_constraints = query_constraints)
+      Task.select(union_select_statements)
         .send(parent.tasks_query_type[query_type])
         .joins(join_constraint)
         .joins(*union_query_join_clauses)
