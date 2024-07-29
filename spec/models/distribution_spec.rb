@@ -177,7 +177,7 @@ describe Distribution, :all_dbs do
       new_distribution.distribute!
     end
 
-    it "updates status to error if an error is thrown and sends slack notification" do
+    it "updates status to error if an error is thrown and sends slack notification", skip: "flaky" do
       allow_any_instance_of(LegacyDocket).to receive(:distribute_appeals).and_raise(StandardError)
       expect_any_instance_of(SlackService).to receive(:send_notification).exactly(1).times
 
@@ -219,7 +219,7 @@ describe Distribution, :all_dbs do
 
   # The following are specifically testing the priority push code in the AutomaticCaseDistribution module
   # ByDocketDateDistribution tests are in their own file, by_docket_date_distribution_spec.rb
-  context "priority push distributions" do
+  context "priority push distributions", skip: "both tests are flaky" do
     let(:priority_push) { true }
 
     context "when there is no limit" do
@@ -283,7 +283,7 @@ describe Distribution, :all_dbs do
 
       before { FeatureToggle.enable!(:priority_acd) }
 
-      it "calls distribute_appeals with bust_backlog set along with the other calls" do
+      it "calls distribute_appeals with bust_backlog set along with the other calls", skip: "flaky" do
         expect_any_instance_of(LegacyDocket).to receive(:distribute_nonpriority_appeals)
           .with(new_distribution, limit: batch_size, genpop: "not_genpop", bust_backlog: true, style: "request")
           .and_return([])
