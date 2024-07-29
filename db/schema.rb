@@ -736,7 +736,7 @@ ActiveRecord::Schema.define(version: 2024_07_18_184151) do
   end
 
   create_table "correspondences_appeals_tasks", force: :cascade do |t|
-    t.bigint "correspondence_id"
+    t.bigint "correspondence_appeal_id"
     t.datetime "created_at", null: false
     t.bigint "task_id", null: false
     t.datetime "updated_at", null: false
@@ -2461,7 +2461,7 @@ ActiveRecord::Schema.define(version: 2024_07_18_184151) do
   add_foreign_key "correspondence_relations", "correspondences", column: "related_correspondence_id"
   add_foreign_key "correspondences", "correspondence_types"
   add_foreign_key "correspondences", "veterans"
-  add_foreign_key "correspondences_appeals_tasks", "correspondences"
+  add_foreign_key "correspondences_appeals_tasks", "correspondence_appeals"
   add_foreign_key "correspondences_appeals_tasks", "tasks"
   add_foreign_key "dispatch_tasks", "legacy_appeals", column: "appeal_id"
   add_foreign_key "dispatch_tasks", "users"
