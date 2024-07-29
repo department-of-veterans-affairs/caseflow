@@ -76,7 +76,7 @@ const Description = ({ text, searchPrompt }) => {
 };
 
 // This maps the component to render for each tab
-export const tabConfig = (buildPackage, selectFilesForPackage, files) => [
+export const tabConfig = (openPackageModal, selectFilesForPackage, files) => [
   {
     label: COPY.CASE_LIST_TABLE_UNASSIGNED_LABEL,
     page: <>
@@ -104,7 +104,7 @@ export const tabConfig = (buildPackage, selectFilesForPackage, files) => [
       <div className="file-select" style={{ marginTop: '-2em' }}>
         <h2>{files} file{files === 1 ? '' : 's'} selected</h2>
         <div className="button-row" style={styles.buttonStyles}>
-          <Button disabled={files === 0} onClick={buildPackage}>Package files</Button>
+          <Button disabled={files === 0} onClick={() => openPackageModal()}>Package files</Button>
           <Button linkStyling>Cancel</Button>
         </div>
       </div>

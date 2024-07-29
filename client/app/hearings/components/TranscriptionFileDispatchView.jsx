@@ -5,6 +5,7 @@ import { css } from 'glamor';
 import TabWindow from '../../components/TabWindow';
 import { tabConfig } from './TranscriptionFileDispatchTabs';
 import Alert from '../../components/Alert';
+import PackageFilesModal from './transcriptionProcessing/PackageFilesModal';
 
 const defaultAlert = {
   title: '',
@@ -15,6 +16,7 @@ const defaultAlert = {
 export const TranscriptionFileDispatchView = () => {
   const [alert, setAlert] = useState(defaultAlert);
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [packageModalConfig, setPackageModalConfig] = useState({ opened: false });
 
   const selectFilesForPackage = (files) => {
     setSelectedFiles(files.filter((file) => file.status === 'selected'));
@@ -31,6 +33,14 @@ export const TranscriptionFileDispatchView = () => {
 
   const buildPackage = () => {
     // build the package
+  };
+
+  const openPackageModal = () => {
+    setPackageModalConfig({ opened: true });
+  };
+
+  const closePackageModal = () => {
+    setPackageModalConfig({ opened: false });
   };
 
   return (
@@ -50,8 +60,9 @@ export const TranscriptionFileDispatchView = () => {
           name="transcription-tabwindow"
           defaultPage={0}
           fullPage={false}
-          tabs={tabConfig(buildPackage, selectFilesForPackage, selectedFiles.length)}
+          tabs={tabConfig(openPackageModal, selectFilesForPackage, selectedFiles.length)}
         />
+        { packageModalConfig.opened && <PackageFilesModal onCancel={closePackageModal} />}
       </AppSegment>
     </>
   );
