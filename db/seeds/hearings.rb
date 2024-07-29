@@ -242,8 +242,8 @@ module Seeds
       appeal = create_legacy_appeal(day)
 
       scheduled_for = HearingTimeService.legacy_formatted_scheduled_for(
-        scheduled_for: day.scheduled_for.in_time_zone,
-        scheduled_time_string: scheduled_time_string_est
+        date_string: day.scheduled_for.in_time_zone.to_s,
+        time_string: scheduled_time_string_est
       )
 
       case_hearing = create(

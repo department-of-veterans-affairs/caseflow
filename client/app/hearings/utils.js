@@ -322,8 +322,8 @@ export const splitSelectedTime = (time) => {
   const selectedTime = splitTimeString === -1 ? time : time.slice(0, splitTimeString + 2).trim();
   const selectedTimeZone = splitTimeString === -1 ? null : time.slice(splitTimeString + 2).trim();
 
-  return [selectedTime, selectedTimeZone]
-}
+  return [selectedTime, selectedTimeZone];
+};
 
 /**
  * Method to get the Timezone label of a Timezone value
@@ -349,7 +349,7 @@ export const zoneName = (time, name, format) => {
 
     // Return the value if it is not a valid time
     return moment(selectedTime, 'h:mm A').isValid() ? `${moment.tz(selectedTime, 'h:mm a', originTimeZone).tz(timezone).
-    format(`h:mm A ${format || ''}`)}${label}` : selectedTime;
+      format(`h:mm A ${format || ''}`)}${label}` : selectedTime;
   }
 
   // Return the value if it is not a valid time
@@ -363,7 +363,7 @@ export const zoneName = (time, name, format) => {
  * @param {string} timeZone -- Name of timezone. Default 'America/New_York'
  * @returns {string} -- Formatted time in 'h:mm A z'
  */
-export const timeWithTimeZone = (dateTime, timeZone = 'America/New_York') =>{
+export const timeWithTimeZone = (dateTime, timeZone = 'America/New_York') => {
   return moment(dateTime).tz(timeZone).
     format('h:mm A z');
 };
@@ -405,10 +405,11 @@ export const hearingTimeOptsWithZone = (options, local) =>
     moment.tz.setDefault();
 
     const displayLocalTime = local && localTime !== time;
+
     // For the Hearing Time dropdown, the value passed should include the AM/PM and timezone context
     return {
       ...item,
-      ['value']: displayLocalTime ? `${localTime}` : time,
+      value: displayLocalTime ? `${localTime}` : time,
       [label]: displayLocalTime ? `${localTime} / ${time}` : time
     };
   });
@@ -441,7 +442,7 @@ export const timezones = (time, roTimezone) => {
     const getAmTime = time.search('AM');
     const splitTimeString = getAmTime < 0 ? time.search('PM') : getAmTime;
 
-    const selectedTime = splitTimeString === -1 ? time : time.slice(0,splitTimeString + 2).trim();
+    const selectedTime = splitTimeString === -1 ? time : time.slice(0, splitTimeString + 2).trim();
     const selectedTimeZone = splitTimeString === -1 ? null : time.slice(splitTimeString + 2).trim();
 
     time = selectedTime;

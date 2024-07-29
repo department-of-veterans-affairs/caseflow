@@ -51,18 +51,20 @@ class HearingRepository
       end
     end
 
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def slot_new_hearing(attrs, override_full_hearing_day_validation: false)
       hearing_day = HearingDay.find(attrs[:hearing_day_id])
-      processed_scheduled_time = HearingTimeService.convert_scheduled_time_to_utc(attrs[:scheduled_time_string],
-                                                                                  hearing_day.scheduled_for)
+      processed_scheduled_time = HearingTimeService.convert_scheduled_time_to_utc(
+        time_string: attrs[:scheduled_time_string],
+        date_string: hearing_day.scheduled_for.to_s
+      )
 
       fail HearingDayFull if !override_full_hearing_day_validation && hearing_day.hearing_day_full?
 
       if attrs[:appeal].is_a?(LegacyAppeal)
         scheduled_for = HearingTimeService.legacy_formatted_scheduled_for(
-          scheduled_for: hearing_day.scheduled_for,
-          scheduled_time_string: processed_scheduled_time
+          date_string: hearing_day.scheduled_for.to_s,
+          time_string: processed_scheduled_time
         )
         vacols_hearing = create_vacols_hearing(
           hearing_day: hearing_day,
@@ -86,7 +88,7 @@ class HearingRepository
         )
       end
     end
-    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     def load_vacols_data(hearing)
       vacols_record = MetricsService.record("VACOLS: HearingRepository.load_vacols_data: #{hearing.vacols_id}",
@@ -312,11 +314,15 @@ class HearingRepository
     #
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def vacols_attributes(hearing, vacols_record)
-      date = HearingMapper.datetime_based_on_type(
-        datetime: vacols_record.hearing_date,
-        regional_office: regional_office_for_scheduled_timezone(hearing, vacols_record),
-        type: vacols_record.hearing_type
-      )
+      date = if hearing.scheduled_in_timezone
+               VacolsHelper.normalize_vacols_datetime(vacols_record.hearing_date)
+             else
+               HearingMapper.datetime_based_on_type(
+                 datetime: vacols_record.hearing_date,
+                 regional_office: regional_office_for_scheduled_timezone(hearing, vacols_record),
+                 type: vacols_record.hearing_type
+               )
+             end
 
       {
         vacols_record: vacols_record,
