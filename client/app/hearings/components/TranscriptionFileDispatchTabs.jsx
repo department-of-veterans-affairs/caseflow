@@ -82,7 +82,7 @@ export const tabConfig = (buildPackage, selectFilesForPackage, files) => [
     page: <>
       <div className="tab-description" style={{ ...styles.rowstyles, marginTop: '-0.1em' }} >
             Transcription owned by the Transcription Team are unassigned to a contractor:
-        <Link>
+        <Link linkStyling to="/find_by_contractor">
           <span style={styles.linkStyles}>
                   Transcription settings
             <ExternalLinkIcon style={styles.linkIconStyles} color={COLORS.PRIMARY} size={ICON_SIZES.SMALL} />
