@@ -430,7 +430,13 @@ describe DecisionIssue, :postgres do
 
         context "when type is HLR" do
           let(:decision_review) { create(:higher_level_review) }
-          before { decision_review.create_claimant!(participant_id: "98765", payee_code: "00", type: "VeteranClaimant") }
+          before do
+            decision_review.create_claimant!(
+              participant_id: "98765",
+              payee_code: "00", type:
+              "VeteranClaimant"
+            )
+          end
 
           it "creates a SupplementalClaim class" do
             expect(subject.type).to eq(SupplementalClaim.name)
