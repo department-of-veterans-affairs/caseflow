@@ -117,7 +117,7 @@ describe VirtualHearings::CreateConferenceJob do
 
     include_examples "sent email event objects are created"
 
-    it "logs success to datadog" do
+    it "logs success to Dynatrace" do
       expect(MetricsService).to receive(:increment_counter).with(
         hash_including(
           metric_name: "created_conference.successful",
@@ -188,7 +188,7 @@ describe VirtualHearings::CreateConferenceJob do
         expect(virtual_hearing.establishment.processed?).to eq(false)
       end
 
-      it "logs failure to datadog" do
+      it "logs failure to Dynatrace" do
         expect(MetricsService).to receive(:increment_counter).with(
           hash_including(
             metric_name: "created_conference.failed",

@@ -114,7 +114,7 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
       allow_any_instance_of(UpdateCachedAppealsAttributesJob).to receive(:cache_ama_appeals).and_raise("Some error")
     end
 
-    it "increments the job error Datadog gauge" do
+    it "increments the job error Dynatrace gauge" do
       allow(MetricsService).to receive(:increment_counter) do |args|
         emitted_gauges.push(args)
       end
