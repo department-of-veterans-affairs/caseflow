@@ -1,3 +1,47 @@
 {
-  
+  "event_id": 1,
+  "css_id": "CSEM123",
+  "detail_type": "HigherLevelReview",
+  "station": "123",
+  "claim_review": {
+    "auto_remand": true,
+    "remand_source_id": 1001,
+    "informal_conference": false,
+    "same_office": true,
+    "legacy_opt_in_approved": false
+  },
+  "end_product_establishments": {
+    "development_item_reference_id": "DEV123",
+    "reference_id": "REF123"
+  },
+  "request_issues": [
+    {
+      "id": 1,
+      "benefit_type": "compensation",
+      "closed_at": 1625151600,
+      "closed_status": "withdrawn",
+      "contention_reference_id": 101,
+      "contested_issue_description": "Service connection for PTSD",
+      "contested_rating_issue_diagnostic_code": "9411",
+      "contested_rating_issue_reference_id": "REF9411",
+      "contested_rating_issue_profile_date": 1625076000,
+      "contested_decision_issue_id": 201,
+      "decision_date": "2023-07-01",
+      "ineligible_due_to_id": 301,
+      "ineligible_reason": "duplicate",
+      "is_unidentified": false,
+      "unidentified_issue_text": "N/A",
+      "nonrating_issue_category": "education",
+      "nonrating_issue_description": "Chapter 35 benefits",
+      "nonrating_issue_bgs_id": "BGS123",
+      "nonrating_issue_bgs_source": "source",
+      "ramp_claim_id": "RAMP123",
+      "rating_issue_associated_at": 1625076000,
+      "untimely_exemption": false,
+      "untimely_exemption_notes": "N/A",
+      "vacols_id": "VAC123",
+      "vacols_sequence_id": 123,
+      "veteran_participant_id": "VET123"
+    }
+  ]
 }
