@@ -1667,6 +1667,8 @@ GEM
       hana (~> 1.3)
       regexp_parser (~> 1.5)
       uri_template (~> 0.7)
+    jwt (2.8.1)
+      base64
     kaminari (1.2.1)
       activesupport (>= 4.1.0)
       kaminari-actionview (= 1.2.1)
@@ -2102,11 +2104,14 @@ DEPENDENCIES
   icalendar
   immigrant
   json_schemer (~> 0.2.16)
+  jwt
   kaminari
   knapsack_pro (~> 3.8)
   logstasher
   meta_request
+  mime-types
   moment_timezone-rails
+  multipart-post
   multiverse
   newrelic_rpm
   nokogiri (>= 1.11.0.rc4)

@@ -161,3 +161,10 @@ end
 gem "json_schemer", "~> 0.2.16"
 
 gem "rcredstash", "~> 1.1.0"
+
+gem "jwt"
+
+gem "multipart-post"
+
+gem "mime-types"
+
