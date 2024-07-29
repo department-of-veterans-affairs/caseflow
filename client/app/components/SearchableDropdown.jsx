@@ -35,6 +35,7 @@ const CustomOption = (props) => {
     ...props.innerProps,
     role: 'option',
     'aria-disabled': props.selectProps.isDisabled,
+    'aria-selected': props.isSelected,
   };
 
   return <components.Option {...props} innerProps={innerProps} />;
@@ -301,6 +302,7 @@ export class SearchableDropdown extends React.Component {
               }
               styles={customStyles}
               {...addCreatableOptions}
+              aria-live="polite"
             />
           </div>
         </div>
