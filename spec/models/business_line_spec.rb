@@ -29,18 +29,6 @@ describe BusinessLine do
       end
     end
 
-    context "Remand tasks" do
-      let!(:task_filters) { ["col=decisionReviewType&val=Remand"] }
-
-      it "Returning only Remand tasks" do
-        expect(
-          subject.all? do |task|
-            task.type == DecisionReviewTask.name && task.appeal.type == Remand.name
-          end
-        ).to eq true
-      end
-    end
-
     context "Veteran Record Request tasks" do
       let!(:task_filters) { ["col=decisionReviewType&val=VeteranRecordRequest"] }
 
@@ -67,6 +55,7 @@ describe BusinessLine do
         it "Attempting to return only Board Grant Effectuation tasks amounts to either only completed tasks
           or any empty result" do
           tasks = subject
+
           expect(tasks.empty? || tasks.all?(&:completed?)).to eq true
         end
       end
@@ -138,10 +127,6 @@ describe BusinessLine do
       create_list(:higher_level_review_task, 5, assigned_to: business_line)
     end
 
-    let!(:remand_tasks_on_active_decision_reviews) do
-      create_list(:remand_vha_task, 5, assigned_to: business_line)
-    end
-
     let!(:board_grant_effectuation_tasks) do
       tasks = create_list(:board_grant_effectuation_task, 5, assigned_to: business_line)
 
@@ -180,13 +165,12 @@ describe BusinessLine do
       after { FeatureToggle.disable!(:board_grant_effectuation_task) }
 
       it "All tasks associated with active decision reviews and BoardGrantEffectuationTasks are included" do
-        expect(subject.size).to eq 25
+        expect(subject.size).to eq 20
         expect(subject.map(&:id)).to match_array(
           (veteran_record_request_on_active_appeals +
             board_grant_effectuation_tasks +
             hlr_tasks_on_active_decision_reviews +
-            sc_tasks_on_active_decision_reviews +
-            remand_tasks_on_active_decision_reviews
+            sc_tasks_on_active_decision_reviews
           ).pluck(:id)
         )
       end
@@ -198,12 +182,11 @@ describe BusinessLine do
       before { FeatureToggle.disable!(:board_grant_effectuation_task) }
 
       it "All tasks associated with active decision reviews are included, but not BoardGrantEffectuationTasks" do
-        expect(subject.size).to eq 20
+        expect(subject.size).to eq 15
         expect(subject.map(&:id)).to match_array(
           (veteran_record_request_on_active_appeals +
             hlr_tasks_on_active_decision_reviews +
-            sc_tasks_on_active_decision_reviews +
-            remand_tasks_on_active_decision_reviews
+            sc_tasks_on_active_decision_reviews
           ).pluck(:id)
         )
       end
@@ -262,14 +245,6 @@ describe BusinessLine do
       )
     end
 
-    let!(:completed_remand_tasks) do
-      add_veteran_and_request_issues_to_decision_reviews(
-        complete_all_tasks(
-          create_list(:remand_task, 5, assigned_to: business_line)
-        )
-      )
-    end
-
     let!(:open_sc_tasks) do
       add_veteran_and_request_issues_to_decision_reviews(
         create_list(:supplemental_claim_task, 5, assigned_to: business_line)
@@ -320,13 +295,12 @@ describe BusinessLine do
       let!(:task_filters) { nil }
 
       it "All completed tasks are included in results" do
-        expect(subject.size).to eq 25
+        expect(subject.size).to eq 20
         expect(subject.map(&:id)).to match_array(
           (completed_hlr_tasks +
             completed_sc_tasks +
             completed_board_grant_effectuation_tasks +
-            completed_veteran_record_requests +
-            completed_remand_tasks
+            completed_veteran_record_requests
           ).pluck(:id)
         )
       end
@@ -420,10 +394,6 @@ describe BusinessLine do
         create_list(:supplemental_claim_vha_task, 5, assigned_to: business_line)
       end
 
-      let!(:remand_tasks_on_active_decision_reviews) do
-        create_list(:remand_vha_task, 5, assigned_to: business_line)
-      end
-
       # Set some on hold tasks as well
       let!(:on_hold_sc_tasks_on_active_decision_reviews) do
         tasks = create_list(:supplemental_claim_vha_task, 5, assigned_to: business_line)
@@ -473,14 +443,13 @@ describe BusinessLine do
         after { FeatureToggle.disable!(:board_grant_effectuation_task) }
 
         it "All tasks associated with active decision reviews and BoardGrantEffectuationTasks are included" do
-          expect(subject.size).to eq 30
+          expect(subject.size).to eq 25
           expect(subject.map(&:id)).to match_array(
             (veteran_record_request_on_active_appeals +
               board_grant_effectuation_tasks +
               hlr_tasks_on_active_decision_reviews +
               sc_tasks_on_active_decision_reviews +
-              on_hold_sc_tasks_on_active_decision_reviews +
-              remand_tasks_on_active_decision_reviews
+              on_hold_sc_tasks_on_active_decision_reviews
             ).pluck(:id)
           )
         end
@@ -492,13 +461,12 @@ describe BusinessLine do
         before { FeatureToggle.disable!(:board_grant_effectuation_task) }
 
         it "All tasks associated with active decision reviews are included, but not BoardGrantEffectuationTasks" do
-          expect(subject.size).to eq 25
+          expect(subject.size).to eq 20
           expect(subject.map(&:id)).to match_array(
             (veteran_record_request_on_active_appeals +
               hlr_tasks_on_active_decision_reviews +
               sc_tasks_on_active_decision_reviews +
-              on_hold_sc_tasks_on_active_decision_reviews +
-              remand_tasks_on_active_decision_reviews
+              on_hold_sc_tasks_on_active_decision_reviews
             ).pluck(:id)
           )
         end
