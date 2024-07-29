@@ -24,12 +24,15 @@ class WorkQueue::CorrespondenceSerializer
 
   attribute :tasks_unrelated_to_appeal do |object|
     filtered_tasks = object.tasks.reject do |task|
-      task.type == "ReviewPackageTask" ||
-        task.type == "CorrespondenceIntakeTask" ||
-        task.type == "CorrespondenceRootTask" ||
-        task.type == "RemovePackageTask" ||
-        task.type == "EfolderUploadFailedTask" ||
-        task.class.superclass.name == "CorrespondenceMailTask"
+      task.type == ReviewPackageTask.name ||
+        task.type == CorrespondenceIntakeTask.name ||
+        task.type == CorrespondenceRootTask.name ||
+        task.type == RemovePackageTask.name ||
+        task.type == EfolderUploadFailedTask.name ||
+        task.type == AssociatedWithClaimsFolderMailTask.name ||
+        task.type == AddressChangeMailTask.name ||
+        task.type == EvidenceOrArgumentMailTask.name ||
+        task.type == VacolsUpdatedMailTask.name
     end
 
     tasks = []
