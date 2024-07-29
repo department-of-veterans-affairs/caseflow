@@ -31,11 +31,28 @@ class Api::Events::V1::DecisionReviewUpdatedController < Api::ApplicationControl
   rescue StandardError => error
     render json: { message: error.message }, status: :unprocessable_entity
   end
+
+  def decision_review_updated_error
+    event_id = dru_error_params[:event_id]
+    errored_claim_id = dru_error_params[:errored_claim_id]
+    error_message = dru_error_params[:error]
+    ::Events::DecisionReviewUpdatedError.handle_service_error(event_id, errored_claim_id, error_message)
+    render json: { message: "Decision Review Updated Error Saved in Caseflow" }, status: :created
+  rescue Caseflow::Error::RedisLockFailed => error
+    render json: { message: error.message }, status: :conflict
+  rescue StandardError => error
+    render json: { message: error.message }, status: :unprocessable_entity
+  end
   # rubocop:enable Layout/LineLength
 
   private
 
   # rubocop:disable Metrics/MethodLength
+
+  def dru_error_params
+    params.permit(:event_id, :errored_claim_id, :error)
+  end
+
   def dru_params
     params.permit(:event_id,
                   :claim_id,
