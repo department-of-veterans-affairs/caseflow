@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe CavcCorrespondenceCorrespondenceTask, :postgres do
   let(:user) { create(:user) }
   let(:inbound_ops_team) { InboundOpsTeam.singleton }
