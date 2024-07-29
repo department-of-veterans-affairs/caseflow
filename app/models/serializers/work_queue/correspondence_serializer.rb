@@ -28,7 +28,8 @@ class WorkQueue::CorrespondenceSerializer
         task.type == "CorrespondenceIntakeTask" ||
         task.type == "CorrespondenceRootTask" ||
         task.type == "RemovePackageTask" ||
-        task.type == "EfolderUploadFailedTask"
+        task.type == "EfolderUploadFailedTask" ||
+        task.class.superclass.name == "CorrespondenceMailTask"
     end
 
     tasks = []
