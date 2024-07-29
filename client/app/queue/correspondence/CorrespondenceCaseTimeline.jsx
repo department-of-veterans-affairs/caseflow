@@ -9,7 +9,6 @@ const CorrespondenceCaseTimeline = (props) => {
     const modifiedUserLabel = isAssignedToOrg === 'Organization' ? 'Assign to person' : 'Re-assign to person';
 
     actions.push({ value: 'changeTask', label: 'Change task type' });
-    actions.push({ value: 'changeTask', label: 'Change task type' });
     actions.push({ value: 'changeTask', label: 'Assign to team' });
     actions.push({ value: 'changeTask', label: modifiedUserLabel });
     actions.push({ value: 'changeTask', label: 'Mark task complete' });
