@@ -433,8 +433,8 @@ describe DecisionIssue, :postgres do
           before do
             decision_review.create_claimant!(
               participant_id: "98765",
-              payee_code: "00", type:
-              "VeteranClaimant"
+              payee_code: "00",
+              type: "VeteranClaimant"
             )
           end
 
