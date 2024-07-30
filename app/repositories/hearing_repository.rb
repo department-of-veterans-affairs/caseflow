@@ -43,14 +43,13 @@ class HearingRepository
       fail HearingDayFull if !override_full_hearing_day_validation && hearing_day.hearing_day_full?
 
       if attrs[:appeal].is_a?(LegacyAppeal)
-        scheduled_for = HearingTimeService.legacy_formatted_scheduled_for(
-          scheduled_for: hearing_day.scheduled_for,
-          scheduled_time_string: attrs[:scheduled_time_string]
-        )
         vacols_hearing = create_vacols_hearing(
           hearing_day: hearing_day,
           appeal: attrs[:appeal],
-          scheduled_for: scheduled_for,
+          scheduled_for: HearingDatetimeService.datetime_helper(
+            hearing_day.scheduled_for,
+            attrs[:scheduled_time_string]
+          ),
           scheduled_in_timezone: HearingDatetimeService.timezone_from_time_string(attrs[:scheduled_time_string]),
           hearing_location_attrs: attrs[:hearing_location_attrs],
           notes: attrs[:notes]
@@ -299,11 +298,12 @@ class HearingRepository
     #
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def vacols_attributes(hearing, vacols_record)
-      date = HearingMapper.datetime_based_on_type(
-        datetime: vacols_record.hearing_date,
-        regional_office: regional_office_for_scheduled_timezone(hearing, vacols_record),
-        type: vacols_record.hearing_type
-      )
+      # date = HearingMapper.datetime_based_on_type(
+      #   datetime: vacols_record.hearing_date,
+      #   regional_office: regional_office_for_scheduled_timezone(hearing, vacols_record),
+      #   type: vacols_record.hearing_type
+      # )
+      date = vacols_record.hearing_date.in_time_zone(hearing.scheduled_in_timezone)
 
       {
         vacols_record: vacols_record,
@@ -338,7 +338,7 @@ class HearingRepository
     def create_vacols_hearing(attrs)
       vacols_record = VACOLS::CaseHearing.create_hearing!(
         folder_nr: attrs[:appeal].vacols_id,
-        hearing_date: VacolsHelper.format_datetime_with_utc_timezone(attrs[:scheduled_for]),
+        hearing_date: attrs[:scheduled_for],
         vdkey: attrs[:hearing_day].id,
         hearing_type: attrs[:hearing_day].request_type,
         room: attrs[:hearing_day].room,

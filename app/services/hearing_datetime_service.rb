@@ -61,6 +61,11 @@ class HearingDatetimeService
   end
 
   def scheduled_for
-    @hearing.scheduled_datetime.in_time_zone(@hearing.scheduled_in_timezone)
+    case @hearing.class
+    when Hearing
+      @hearing.scheduled_datetime.in_time_zone(@hearing.scheduled_in_timezone)
+    when LegacyHearing
+      VACOLS::CaseHearing.find(@hearing.vacols_id).hearing_date.in_time_zone(@hearing.scheduled_in_timezone)
+    end
   end
 end

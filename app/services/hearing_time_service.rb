@@ -61,11 +61,11 @@ class HearingTimeService
   end
 
   def scheduled_time_string
-    self.class.time_to_string(local_time, @hearing)
+    self.class.time_to_string(local_time)
   end
 
   def central_office_time_string
-    self.class.time_to_string(central_office_time, @hearing)
+    self.class.time_to_string(central_office_time)
   end
 
 def local_time

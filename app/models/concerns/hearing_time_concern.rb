@@ -7,7 +7,7 @@ module HearingTimeConcern
            to: :time
 
   def time
-    @time ||= if scheduled_datetime.present?
+    @time ||= if self.class == LegacyHearing || scheduled_datetime.present?
                 HearingDatetimeService.new(hearing: self)
               else
                 HearingTimeService.new(hearing: self)
