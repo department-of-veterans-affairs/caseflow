@@ -26,8 +26,7 @@ class Api::V1::VaNotifyController < Api::ApplicationController
       notification_type: notification_type_param,
       receipient: to_param,
       status: status_param,
-      status_reason: status_reason_param,
-      message: "#{notification_type_param} notification successfully updated: ID #{id_param}"
+      status_reason: status_reason_param
     }
   rescue StandardError => error
     raise error
