@@ -229,6 +229,7 @@ Rails.application.routes.draw do
     namespace :hearing_day do
       get '/:hearing_day_id/filled_hearing_slots', to: "filled_hearing_slots#index"
     end
+    get 'find_by_contractor/available_contractors', to: "transcription_contractors#available_contractors"
     resources :find_by_contractor, controller: "transcription_contractors", except: [:edit, :new]
   end
   get '/hearings/dockets', to: redirect("/hearings/schedule")

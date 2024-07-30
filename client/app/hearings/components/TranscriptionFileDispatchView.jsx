@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import QueueOrganizationDropdown from '../../queue/components/QueueOrganizationDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { css } from 'glamor';
@@ -6,6 +6,7 @@ import TabWindow from '../../components/TabWindow';
 import { tabConfig } from './TranscriptionFileDispatchTabs';
 import Alert from '../../components/Alert';
 import PackageFilesModal from './transcriptionProcessing/PackageFilesModal';
+import ApiUtil from '../../util/ApiUtil';
 
 const defaultAlert = {
   title: '',
@@ -17,6 +18,13 @@ export const TranscriptionFileDispatchView = () => {
   const [alert, setAlert] = useState(defaultAlert);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [packageModalConfig, setPackageModalConfig] = useState({ opened: false });
+  const [contractors, setContractors] = useState([]);
+
+  const getContractors = () => {
+    ApiUtil.get('/hearings/find_by_contractor/available_contractors').
+      // eslint-disable-next-line camelcase
+      then((response) => setContractors(response.body?.transcription_contractors));
+  };
 
   const selectFilesForPackage = (files) => {
     setSelectedFiles(files.filter((file) => file.status === 'selected'));
@@ -43,6 +51,10 @@ export const TranscriptionFileDispatchView = () => {
     setPackageModalConfig({ opened: false });
   };
 
+  useEffect(() => {
+    getContractors();
+  }, []);
+
   return (
     <>
       {alert.title && (
@@ -62,7 +74,7 @@ export const TranscriptionFileDispatchView = () => {
           fullPage={false}
           tabs={tabConfig(openPackageModal, selectFilesForPackage, selectedFiles.length)}
         />
-        { packageModalConfig.opened && <PackageFilesModal onCancel={closePackageModal} />}
+        { packageModalConfig.opened && <PackageFilesModal onCancel={closePackageModal} contractors={contractors} />}
       </AppSegment>
     </>
   );

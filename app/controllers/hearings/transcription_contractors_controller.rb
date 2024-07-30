@@ -6,14 +6,19 @@ class Hearings::TranscriptionContractorsController < ApplicationController
   rescue_from ActiveRecord::RecordNotFound, with: :render_record_not_found
   rescue_from ActionController::ParameterMissing, with: :render_record_not_found
   rescue_from ActiveRecord::RecordInvalid, with: :render_record_invalid
-  before_action :verify_access_to_hearings
+  # before_action :verify_transcription_user
+  # before_action :verify_access_to_hearings, except: [:available_contractors]
 
   def index
     respond_to do |format|
+      # roles = ["Hearing Prep", "Edit HearSched", "Build HearSched", "RO ViewHearSched"]
       format.html do
-        render "hearings/index"
+        # if current_user && roles.any? { |r| current_user.can?(r) }
+          render "hearings/index"
+        # else
+        #   redirect_to "/hearings/transcription_files"
+        # end
       end
-
       format.json do
         @transcription_contractors = TranscriptionContractor.all
         counts = Transcription.count_for_this_week
@@ -22,6 +27,11 @@ class Hearings::TranscriptionContractorsController < ApplicationController
         render json: { transcription_contractors: transcription_contractor_json }
       end
     end
+  end
+
+  def available_contractors
+    contractors = TranscriptionContractor.where(is_available_for_work: true).select(:id, :name)
+    render json: { transcription_contractors: contractors }
   end
 
   def show
@@ -78,5 +88,9 @@ class Hearings::TranscriptionContractorsController < ApplicationController
               :name,
               :phone,
               :poc)
+  end
+
+  def simplified_params
+    params.require(:simplified)
   end
 end

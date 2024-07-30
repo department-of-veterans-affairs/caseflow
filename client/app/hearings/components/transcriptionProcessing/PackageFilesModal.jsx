@@ -1,11 +1,12 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import Modal from '../../../components/Modal';
 import COPY from '../../../../COPY';
 import { RadioField } from '../../../components/RadioField';
 import { SearchableDropdown } from '../../../components/SearchableDropdown';
 
-const PackageFilesModal = ({ onCancel }) => {
+const PackageFilesModal = ({ onCancel, contractors }) => {
+
   const renderWorkOrder = () => {
     return (
       <div>
@@ -54,10 +55,19 @@ const PackageFilesModal = ({ onCancel }) => {
     ];
   };
 
+  const contractorOptions = () => {
+    return contractors.map((contractor) => {
+      return {
+        label: contractor.name,
+        value: contractor.id
+      };
+    });
+  };
+
   const renderContractors = () => {
     return <SearchableDropdown
       name=<strong>Contractor</strong>
-      options={[]}
+      options={contractorOptions()}
     />;
   };
 
@@ -95,7 +105,8 @@ const PackageFilesModal = ({ onCancel }) => {
 };
 
 PackageFilesModal.propTypes = {
-  onCancel: PropTypes.func
+  onCancel: PropTypes.func,
+  contractors: PropTypes.object
 };
 
 export default PackageFilesModal;
