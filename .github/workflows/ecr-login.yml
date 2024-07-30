@@ -4,6 +4,11 @@ on:
   # Every 6 hours, the password validity is 12 hours
   schedule:
     - cron:  '0 */6 * * *'
+
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   login:
     runs-on: ubuntu-latest
