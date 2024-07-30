@@ -60,6 +60,10 @@ class HearingUpdateForm < BaseHearingUpdateForm
       representative_name: representative_name,
       room: room,
       scheduled_time: scheduled_time_string,
+      scheduled_datetime: HearingDatetimeService.datetime_helper(
+        hearing&.hearing_day&.scheduled_for,
+        scheduled_time_string
+      ),
       summary: summary,
       transcript_requested: transcript_requested,
       transcript_sent_date: transcript_sent_date,
