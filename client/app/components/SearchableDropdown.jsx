@@ -49,6 +49,7 @@ const CustomInput = (props) => {
     'aria-owns': `${kebabCase(props.selectProps.name)}-listbox`,
     'aria-expanded': props.selectProps.menuIsOpen,
     'aria-haspopup': true,
+    'aria-live': 'polite',
   };
 
   return <components.Input {...props} {...innerProps} />;
