@@ -30,7 +30,11 @@ describe Api::V3::Issues::Ama::VeteransController, :postgres, type: :request do
     end
 
     context "when feature is enabled" do
-      before { FeatureToggle.enable!(:api_v3_ama_issues) }
+      before do
+        FeatureToggle.enable!(:api_v3_ama_issues)
+        allow(Rails.logger).to receive(:info)
+        expect(Rails.logger).to receive(:info)
+      end
       after { FeatureToggle.disable!(:api_v3_ama_issues) }
 
       context "when the api key is missing in the header" do
@@ -86,11 +90,6 @@ describe Api::V3::Issues::Ama::VeteransController, :postgres, type: :request do
         end
 
         context "when there is no error" do
-          before do
-            allow(Rails.logger).to receive(:info)
-            expect(Rails.logger).to receive(:info).with(/FINISHED Retrieving AMA Request Issues for Veteran:/)
-          end
-
           context "when a veteran is found - but has no request issues" do
             let(:vet) { create(:veteran) }
             it "should return empty request issues array for veteran" do
@@ -101,6 +100,27 @@ describe Api::V3::Issues::Ama::VeteransController, :postgres, type: :request do
               expect(response).to have_http_status(200)
               response_hash = JSON.parse(response.body)
               expect(response_hash["request_issues"].empty?).to eq true
+            end
+          end
+
+          context "when a veteran is found - has request issues" do
+            let(:vet) { create(:veteran) }
+            let!(:request_issues) do
+              [
+                create(:request_issue, :with_associated_decision_issue, veteran_participant_id: vet.participant_id),
+                create(:request_issue, :with_associated_decision_issue, decision_date: Time.zone.now, veteran_participant_id: vet.participant_id)
+              ]
+            end
+
+            it "should return request issues array" do
+              get(
+                "/api/v3/issues/ama/find_by_veteran/#{vet.participant_id}",
+                headers: authorization_header
+              )
+              response_hash = JSON.parse(response.body)
+              expect(response).to have_http_status(200)
+              expect(response_hash["request_issues"].empty?).to eq false
+              expect(response_hash["request_issues"][0]["claim_errors"]).to eq []
             end
           end
 

@@ -52,6 +52,7 @@ plugins:
           mass_threshold: 81
     exclude_patterns:
     - 'db/migrate/*'
+    - 'db/etl_migrate/*'
     - 'app/controllers/idt/api/v2/appeals_controller.rb'
     - 'spec/controllers/idt/api/v2/appeals_controller_spec.rb'
     - 'spec/controllers/idt/api/appeals_controller_spec.rb'
@@ -79,6 +80,7 @@ plugins:
         enabled: false
     exclude_patterns:
     - 'db/migrate/*'
+    - 'db/etl_migrate/*'
     - 'app/jobs/dispatch_email_job.rb'
     - 'app/mailers/dispatch_mailer.rb'
   rubocop:
@@ -115,6 +117,7 @@ plugins:
 
 exclude_patterns:
   - 'db/schema.rb'
+  - 'db/etl_schema.rb'
   - 'db/seeds.rb'
   - 'db/scripts/*'
   - 'node_modules/**/*'
