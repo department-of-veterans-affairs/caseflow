@@ -170,4 +170,7 @@ Rails.application.configure do
   config.efolder_key = "token"
 
   config.google_analytics_account = "UA-74789258-5"
+
+  # Appeals Consumer
+  config.hosts << "host.docker.internal"
 end
