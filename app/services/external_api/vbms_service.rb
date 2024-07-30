@@ -136,7 +136,8 @@ class ExternalApi::VBMSService
         date_va_received_document: Time.current.strftime("%Y-%m-%d"),
         document_type_id: uploadable_document.document_type_id,
         file_content_path: uploadable_document.pdf_location,
-        file_content_source: uploadable_document.source
+        file_content_source: uploadable_document.source,
+        subject: uploadable_document.document_subject.presence || uploadable_document.document_type
       )
 
       file_uuid = uploadable_document.document_series_reference_id.delete("{}")
