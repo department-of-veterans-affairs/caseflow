@@ -35,7 +35,7 @@ const CustomOption = (props) => {
     ...props.innerProps,
     role: 'option',
     'aria-disabled': props.selectProps.isDisabled,
-    'aria-selected': props.isSelected,
+    'aria-selected': props.selectProps.isSelected,
   };
 
   return <components.Option {...props} innerProps={innerProps} />;
