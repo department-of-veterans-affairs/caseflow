@@ -15,4 +15,13 @@ class CorrespondenceMailTask < CorrespondenceTask
       instructions: params[:instructions]
     )
   end
+
+  # this should have more guard clauses similar to available_actions in task.rb
+  def available_actions(user)
+    return [] unless user
+
+    [
+      Constants.TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.to_h
+    ]
+  end
 end

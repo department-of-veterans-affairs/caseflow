@@ -716,6 +716,9 @@ class QueueApp extends React.PureComponent {
     />
   );
 
+  routedCorrespondenceCancelTaskModal = (props) => (
+    <CancelTaskModal {...props.match.params} />
+  );
   routedCorrespondenceCases = (props) => (
     <CorrespondenceCases {...props.match.params}
       {...this.props}
@@ -998,6 +1001,17 @@ class QueueApp extends React.PureComponent {
               path="/queue/correspondence/:correspondence_uuid/intake"
               title={`${PAGE_TITLES.CORRESPONDENCE_INTAKE}`}
               render={this.routedCorrespondenceIntake}
+            />
+
+            <PageRoute
+              exact
+              path={
+                '/queue/correspondence/:correspondence_uuid/' +
+            `(${TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.value
+            })`
+              }
+              title={`${PAGE_TITLES.CANCEL_TASK} | Caseflow`}
+              render={this.routedCorrespondenceCancelTaskModal}
             />
 
             {motionToVacateRoutes.page}
