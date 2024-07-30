@@ -4,6 +4,8 @@ Rails.application.routes.draw do
   mount Rswag::Ui::Engine => "/api-docs"
   mount Rswag::Api::Engine => "/api-docs"
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
+  # The priority is based upon order of creation: first created -> highest priority.
+  # See how all your routes lay out with "rake routes".
 
   resources :sessions, only: [:new, :update]
   resources :certifications, path_names: { new: "new/:vacols_id" } do
@@ -94,15 +96,7 @@ Rails.application.routes.draw do
         get "vacols_issues", to: redirect("api-docs/v3/vacols_issues.yaml")
       end
     end
-
-    namespace :events do
-      namespace :v1 do
-        post '/decision_review_created', to: 'decision_review_created#decision_review_created'
-        post '/decision_review_created_error',  to: 'decision_review_created#decision_review_created_error'
-      end
-    end
-
-    get "metadata", to: 'metadata#index'
+    get "metadata", to: "metadata#index"
   end
 
   namespace :idt do

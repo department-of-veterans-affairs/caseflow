@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class CaseSearchResultsForDocketNumber < ::CaseSearchResultsBase
+  validate :veterans_exist, if: :current_user_is_vso_employee?
+
   def initialize(docket_number:, user:)
     super(user: user)
     @docket_number = docket_number.to_s if docket_number
@@ -19,10 +21,6 @@ class CaseSearchResultsForDocketNumber < ::CaseSearchResultsBase
   private
 
   attr_reader :docket_number
-
-  def validation_hook
-    validate_veterans_exist if current_user_is_vso_employee?
-  end
 
   def not_found_error
     {

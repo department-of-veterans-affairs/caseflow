@@ -1,31 +1,26 @@
 # frozen_string_literal: true
 
-# @note For use with `ActiveSupport::Deprecation.behavior=` or `Rails.application.config.active_support.deprecation=`
+# @note For use with `ActiveSupport::Deprecation.behavior=`.
 module DeprecationWarnings
-  class ProductionHandler
+  class ProductionHandler < BaseHandler
     APP_NAME = "caseflow"
-    SLACK_ALERT_TITLE = "Deprecation Warning - #{APP_NAME} (#{ENV['DEPLOY_ENV']})"
     SLACK_ALERT_CHANNEL = "#appeals-deprecation-alerts"
 
     class << self
-      # Adhere to `.call` signature expected by `ActiveSupport::Deprecation.behavior=`.
-      #   https://github.com/rails/rails/blob/a4581b53aae93a8dd3205abae0630398cbce9204/activesupport/lib/active_support/deprecation/behaviors.rb#L70-L71
       # :reek:LongParameterList
       def call(message, callstack, deprecation_horizon, gem_name)
+        emit_warning_to_application_logs(message)
         emit_warning_to_sentry(message, callstack, deprecation_horizon, gem_name)
         emit_warning_to_slack_alerts_channel(message)
       rescue StandardError => error
         Raven.capture_exception(error)
       end
 
-      # Must respond to `.arity` to play nice with `ActiveSupport::Deprecation.behavior=`
-      #   and return number of arguments accepted by `.call`.
-      #   https://github.com/rails/rails/blob/a4581b53aae93a8dd3205abae0630398cbce9204/activesupport/lib/active_support/deprecation/behaviors.rb#L101
-      def arity
-        method(:call).arity
-      end
-
       private
+
+      def emit_warning_to_application_logs(message)
+        Rails.logger.warn(message)
+      end
 
       # :reek:LongParameterList
       def emit_warning_to_sentry(message, callstack, deprecation_horizon, gem_name)
@@ -49,7 +44,9 @@ module DeprecationWarnings
       end
 
       def emit_warning_to_slack_alerts_channel(message)
-        SlackService.new.send_notification(message, SLACK_ALERT_TITLE, SLACK_ALERT_CHANNEL)
+        slack_alert_title = "Deprecation Warning - #{APP_NAME} (#{ENV['DEPLOY_ENV']})"
+
+        SlackService.new.send_notification(message, slack_alert_title, SLACK_ALERT_CHANNEL)
       end
     end
   end
