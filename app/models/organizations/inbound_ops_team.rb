@@ -26,4 +26,9 @@ class InboundOpsTeam < Organization
   def selectable_in_queue?
     false
   end
+
+  def can_receive_task?(task)
+    return false if task.assigned_to == self
+    return false if task.assigned_to.is_a?(User) && task.parent && task.parent.assigned_to == self
+  end
 end
