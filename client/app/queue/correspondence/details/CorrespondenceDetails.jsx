@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import TabWindow from '../../../components/TabWindow';
 import CopyTextButton from '../../../components/CopyTextButton';
 import { loadCorrespondence } from '../correspondenceReducer/correspondenceActions';
+import CorrespondenceCaseTimeline from '../CorrespondenceCaseTimeline';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
 import { prepareAppealForSearchStore } from 'app/queue/utils';
@@ -16,7 +17,22 @@ const CorrespondenceDetails = (props) => {
   const mailTasks = props.correspondence.mailTasks;
   const appealsResult = props.correspondence.appeals_information;
   const appeals = [];
-  const searchStoreAppeal = prepareAppealForSearchStore(appealsResult.appeals);
+  let filteredAppeals = [];
+  let unfilteredAppeals = [];
+
+  appealsResult.appeals.map((appeal) => {
+    if (correspondence.correspondenceAppealIds?.includes(appeal.id)) {
+      return filteredAppeals.push(appeal);
+    }
+
+    return unfilteredAppeals.push(appeal);
+  });
+
+  filteredAppeals = filteredAppeals.sort((leftAppeal, rightAppeal) => leftAppeal.id - rightAppeal.id);
+  unfilteredAppeals = unfilteredAppeals.sort((leftAppeal, rightAppeal) => leftAppeal.id - rightAppeal.id);
+  const sortedAppeals = filteredAppeals.concat(unfilteredAppeals);
+
+  const searchStoreAppeal = prepareAppealForSearchStore(sortedAppeals);
   const appeall = searchStoreAppeal.appeals;
   const appealldetail = searchStoreAppeal.appealDetails;
   const hashKeys = Object.keys(appeall);
@@ -41,14 +57,14 @@ const CorrespondenceDetails = (props) => {
           <AppSegment filledBackground noMarginTop>
             <ul
               className={`${mailTasks.length > 2 ? 'grid-list' : ''}`}
-              aria-label={COPY.CORRESPONDENCE_DETAILS.COMPLETED_MAIL_TASKS}
+              aria-label={COPY.CORRESPONDENCE_DETAILS.COMPLETED_MAIL_TASKS} role="list" aria-live="polite"
             >
               {
                 mailTasks.length > 0 ?
                   mailTasks.map((item, index) => (
-                    <li key={index} aria-label={`Task ${index + 1}: ${item}`} >{item}</li>
+                    <li key={index} role="listitem" aria-label={`Task ${index + 1}: ${item}`} >{item}</li>
                   )) :
-                  <li aria-label={COPY.CORRESPONDENCE_DETAILS.NO_COMPLETED_MAIL_TASKS}>
+                  <li aria-label= {COPY.CORRESPONDENCE_DETAILS.NO_COMPLETED_MAIL_TASKS} role="listitem">
                     {COPY.CORRESPONDENCE_DETAILS.NO_COMPLETED_MAIL_TASKS}
                   </li>
               }
@@ -71,6 +87,16 @@ const CorrespondenceDetails = (props) => {
       </React.Fragment>
     );
   };
+  const correspondenceAndAppealTaskComponents = <>
+    {correspondenceTasks()}
+    <section className="task-not-related-title">Tasks not related to an appeal</section>
+    <div className="correspondence-case-timeline-container">
+      <CorrespondenceCaseTimeline
+        organizations={props.organizations}
+        userCssId={props.userCssId}
+        correspondence={props.correspondence} />
+    </div>
+  </>;
 
   const correspondencePackageDetails = () => {
     return (
@@ -114,7 +140,7 @@ const CorrespondenceDetails = (props) => {
     {
       disable: false,
       label: 'Correspondence and Appeal Tasks',
-      page: correspondenceTasks()
+      page: correspondenceAndAppealTaskComponents
     },
     {
       disable: false,
@@ -153,7 +179,7 @@ const CorrespondenceDetails = (props) => {
           name="tasks-tabwindow"
           tabs={tabList}
         />
-
+        <td className="taskContainerStyling taskInformationTimelineContainerStyling"></td>
       </AppSegment>
     </>
   );
@@ -162,6 +188,8 @@ const CorrespondenceDetails = (props) => {
 CorrespondenceDetails.propTypes = {
   loadCorrespondence: PropTypes.func,
   correspondence: PropTypes.object,
+  organizations: PropTypes.array,
+  userCssId: PropTypes.string,
   loadCorrespondenceStatus: PropTypes.func,
   correspondenceStatus: PropTypes.object,
   correspondence_appeal_ids: PropTypes.bool,

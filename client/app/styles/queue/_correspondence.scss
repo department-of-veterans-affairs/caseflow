@@ -31,6 +31,12 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   }
 }
 
+.external-link-icon-wrapper {
+  margin-left: 5px;
+  position: relative;
+  top: 3px;
+}
+
 .cf-pdf-preview-container {
   width: 100%;
   max-width: 1800px;
@@ -1332,6 +1338,20 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   .last-item {
     margin-left: auto;
   }
+}
+
+.correspondence-case-timeline-container {
+  border: 1px solid $color-gray-darker;
+  min-height: 200px;
+  padding-left: 30px;
+
+}
+
+.task-not-related-title {
+  font-size: 115%;
+  margin-bottom: 20px;
+  font-weight: bold;
+  margin-top: 30px;
 }
 
 .correspondence-mail-tasks {

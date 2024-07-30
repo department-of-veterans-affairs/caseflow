@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Checkbox from '../../../../../components/Checkbox';
 import RadioField from '../../../../../components/RadioField';
+import { COLORS } from '../../../../../constants/AppConstants';
+import { ExternalLinkIcon } from 'app/components/icons/ExternalLinkIcon';
 import CorrespondencePaginationWrapper from '../../../CorrespondencePaginationWrapper';
 import { AddLetter } from '../AddCorrespondence/AddLetter';
 import {
@@ -111,7 +113,14 @@ class AddCorrespondenceView extends React.Component {
         ),
         valueFunction: () => (
           <span className="va-package-document-type-item">
-            <p>{correspondence.packageDocumentType}</p>
+            <p>
+              <a href={`/queue/correspondence/${correspondence.uuid}`} rel="noopener noreferrer" target="_blank">
+                {correspondence?.nod ? 'NOD' : 'Non-NOD'}
+                <span className="external-link-icon-wrapper">
+                  <ExternalLinkIcon color={COLORS.FOCUS_OUTLINE} />
+                </span>
+              </a>
+            </p>
           </span>
         )
       },
