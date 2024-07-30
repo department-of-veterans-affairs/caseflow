@@ -78,6 +78,10 @@ class HearingRepository
           hearing_day_id: hearing_day.id,
           hearing_location_attributes: attrs[:hearing_location_attrs] || {},
           scheduled_time: attrs[:scheduled_time_string],
+          scheduled_datetime: datetime_helper(
+            hearing_day.scheduled_for,
+            attrs[:scheduled_time_string]
+          ),
           scheduled_in_timezone: fix_hearings_timezone(attrs[:scheduled_time_string]),
           override_full_hearing_day_validation: override_full_hearing_day_validation,
           notes: attrs[:notes]
@@ -368,6 +372,12 @@ class HearingRepository
       hearing.scheduled_in_timezone = attrs[:scheduled_in_timezone]
       hearing.save!
       hearing
+    end
+
+    # returns Time object in the timezone specified in the supplied scheduled_time_string
+    def datetime_helper(date_string, time_string)
+      time_without_zone = time_string.split(" ", 3).take(2).join(" ")
+      "#{date_string} #{time_without_zone}".in_time_zone(fix_hearings_timezone(time_string))
     end
   end
 end
