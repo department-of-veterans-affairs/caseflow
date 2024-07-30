@@ -135,6 +135,7 @@ feature "Supplemental Claim Intake", :all_dbs do
     find("#cf-payee-code").send_keys :enter
 
     select_agree_to_withdraw_legacy_issues(false)
+    select_filed_by_va_gov(false)
 
     # DateSelector component has been updated to not allow future dates to be selected at all
     # fill_in "What is the Receipt Date of this form?", with: (Time.zone.today + 1.day).mdY
@@ -153,7 +154,7 @@ feature "Supplemental Claim Intake", :all_dbs do
     expect(find("#different-claimant-option_true", visible: false)).to be_checked
     expect(find_field("Baz Qux, Child", visible: false)).to be_checked
     expect(find("#legacy-opt-in_false", visible: false)).to be_checked
-
+    select_filed_by_va_gov(false)
     click_intake_continue
 
     expect(page).to have_current_path("/intake/add_issues")
@@ -211,6 +212,16 @@ feature "Supplemental Claim Intake", :all_dbs do
 
     expect(intake.detail.end_product_establishments.count).to eq(2)
 
+    ratings_end_product_establishment = EndProductEstablishment.find_by(
+      source: intake.detail,
+      code: "040SCR"
+    )
+
+    expect(ratings_end_product_establishment).to have_attributes(
+      claimant_participant_id: "5382910293",
+      payee_code: "11"
+    )
+
     # ratings end product
     expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
       claim_hash: {
@@ -220,9 +231,9 @@ feature "Supplemental Claim Intake", :all_dbs do
         claim_type: "Claim",
         station_of_jurisdiction: current_user.station_id,
         date: supplemental_claim.receipt_date.to_date,
-        end_product_modifier: "042",
+        end_product_modifier: ratings_end_product_establishment.end_product.modifier,
         end_product_label: "Supplemental Claim Rating",
-        end_product_code: "040SCR",
+        end_product_code: ratings_end_product_establishment.code,
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false,
         claimant_participant_id: "5382910293",
@@ -234,11 +245,12 @@ feature "Supplemental Claim Intake", :all_dbs do
       user: current_user
     )
 
-    ratings_end_product_establishment = intake.detail.end_product_establishments.find do |epe|
-      epe.code == "040SCR"
-    end
+    nonratings_end_product_establishment = EndProductEstablishment.find_by(
+      source: intake.detail,
+      code: "040SCNR"
+    )
 
-    expect(ratings_end_product_establishment).to have_attributes(
+    expect(nonratings_end_product_establishment).to have_attributes(
       claimant_participant_id: "5382910293",
       payee_code: "11"
     )
@@ -252,9 +264,9 @@ feature "Supplemental Claim Intake", :all_dbs do
         claim_type: "Claim",
         station_of_jurisdiction: current_user.station_id,
         date: supplemental_claim.receipt_date.to_date,
-        end_product_modifier: "041",
+        end_product_modifier: nonratings_end_product_establishment.end_product.modifier,
         end_product_label: "Supplemental Claim Nonrating",
-        end_product_code: "040SCNR",
+        end_product_code: nonratings_end_product_establishment.code,
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false,
         claimant_participant_id: "5382910293",
@@ -264,15 +276,6 @@ feature "Supplemental Claim Intake", :all_dbs do
       },
       veteran_hash: intake.veteran.to_vbms_hash,
       user: current_user
-    )
-
-    nonratings_end_product_establishment = intake.detail.end_product_establishments.find do |epe|
-      epe.code == "040SCNR"
-    end
-
-    expect(nonratings_end_product_establishment).to have_attributes(
-      claimant_participant_id: "5382910293",
-      payee_code: "11"
     )
 
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
@@ -360,7 +363,8 @@ feature "Supplemental Claim Intake", :all_dbs do
     test_veteran,
     is_comp: true,
     legacy_opt_in_approved: false,
-    veteran_is_not_claimant: false
+    veteran_is_not_claimant: false,
+    filed_by_va_gov: false
   )
 
     supplemental_claim = SupplementalClaim.create!(
@@ -368,7 +372,8 @@ feature "Supplemental Claim Intake", :all_dbs do
       receipt_date: receipt_date,
       benefit_type: is_comp ? "compensation" : "education",
       legacy_opt_in_approved: legacy_opt_in_approved,
-      veteran_is_not_claimant: veteran_is_not_claimant
+      veteran_is_not_claimant: veteran_is_not_claimant,
+      filed_by_va_gov: filed_by_va_gov
     )
 
     intake = SupplementalClaimIntake.create!(
@@ -380,7 +385,8 @@ feature "Supplemental Claim Intake", :all_dbs do
 
     VeteranClaimant.create!(
       decision_review: supplemental_claim,
-      participant_id: test_veteran.participant_id
+      participant_id: test_veteran.participant_id,
+      payee_code: "11"
     )
 
     supplemental_claim.start_review!
@@ -438,7 +444,7 @@ feature "Supplemental Claim Intake", :all_dbs do
     let(:active_epe) { create(:end_product_establishment, :active) }
 
     let!(:timely_ratings) { generate_timely_rating(veteran, receipt_date, duplicate_reference_id) }
-    let!(:rating_with_old_decisions) { generate_rating_with_old_decisions(veteran, receipt_date) }
+    let!(:rating_with_old_decisions) { generate_rating_with_old_decisions(veteran) }
     let(:old_rating_decision_text) { "Bone (Right arm broken) is denied." }
     let!(:untimely_rating_from_ramp) do
       generate_untimely_rating_from_ramp(veteran, receipt_date, old_reference_id, with_associated_claims: true)

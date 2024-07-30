@@ -314,7 +314,7 @@ describe('QueueTable', () => {
 
       // Test each cell individually
       row.find('td').map((element, i) => {
-        expect(element.prop('role')).toEqual('cell');
+        expect(element.prop('role')).toEqual('gridcell');
         expect(element.text()).toEqual(tableData[0][baseColumns[i].valueName]);
       });
     });

@@ -49,7 +49,7 @@ class ApplicationController < ApplicationBaseController
       err = Caseflow::Error::SerializableError.new(code: code, message: err.to_s)
     end
 
-    DataDogService.increment_counter(
+    MetricsService.increment_counter(
       metric_group: "errors",
       metric_name: "non_critical",
       app_name: RequestStore[:application],
@@ -105,21 +105,85 @@ class ApplicationController < ApplicationBaseController
   helper_method :logo_path
 
   def application_urls
-    urls = [{
-      title: "Queue",
-      link: "/queue"
-    }]
-    if current_user.hearings_user?
-      urls << {
-        title: "Hearings",
-        link: "/hearings/schedule"
-      }
-    end
+    urls = []
+    urls << queue_application_url
+
+    urls << hearing_application_url if current_user.hearings_user?
+
+    manage_urls_for_vha(urls) if current_user.vha_employee?
 
     # Only return the URL list if the user has applications to switch between
-    (urls.length > 1) ? urls : nil
+    if urls.length > 1
+      return urls.sort_by { |url| url[:sort_order] || url.count + 1 }
+    end
+
+    nil
   end
   helper_method :application_urls
+
+  def manage_urls_for_vha(urls)
+    urls << case_search_url
+    urls << decision_reviews_vha_url
+    urls << intake_application_url if current_user.intake_user?
+    urls.reject! { |url| url[:title] == "Queue" } if current_user.roles.include?("Case Details")
+  end
+
+  def decision_reviews_vha_url
+    {
+      title: "Decision Review Queue",
+      link: "/decision_reviews/vha",
+      prefix: "VHA",
+      sort_order: 2
+    }
+  end
+
+  def intake_application_url
+    {
+      title: "Intake",
+      link: "/intake",
+      sort_order: 1
+    }
+  end
+
+  def queue_application_url
+    {
+      title: "Queue",
+      link: "/queue",
+      sort_order: 3
+    }
+  end
+
+  def case_distribution_url
+    {
+      title: "Case Distribution Controls",
+      link: "/case-distribution-controls",
+      sort_order: 6
+    }
+  end
+
+  def test_seeds_url
+    {
+      title: "Test Seeds",
+      link: "/test/seeds",
+      sort_order: 7
+    }
+  end
+
+  def hearing_application_url
+    {
+      title: "Hearings",
+      link: "/hearings/schedule",
+      sort_order: 5
+    }
+  end
+
+  def case_search_url
+    {
+      title: "Search cases",
+      link: "/search",
+      sort_order: 4
+    }
+  end
 
   def defult_menu_items
     [
@@ -154,12 +218,30 @@ class ApplicationController < ApplicationBaseController
 
   def admin_menu_items
     admin_urls = []
-    admin_urls.concat(manage_teams_menu_items) if current_user&.administered_teams&.any?
-    admin_urls.push(manage_users_menu_item) if current_user&.can_view_user_management?
+    add_team_management_items(admin_urls)
+    add_user_management_items(admin_urls)
+    add_case_distribution_item(admin_urls)
+
+    admin_urls.flatten
+  end
+
+  def add_team_management_items(admin_urls)
     if current_user&.can_view_team_management? || current_user&.can_view_judge_team_management?
       admin_urls.unshift(manage_all_teams_menu_item)
     end
-    admin_urls.flatten
+  end
+
+  def add_user_management_items(admin_urls)
+    admin_urls.concat(manage_teams_menu_items) if current_user&.administered_teams&.any?
+    admin_urls.push(manage_users_menu_item) if current_user&.can_view_user_management?
+  end
+
+  def add_case_distribution_item(admin_urls)
+    admin_urls.push(case_distribution_url) if current_user&.organizations&.any?(&:users_can_view_levers?)
+  end
+
+  def add_test_seeds_item(admin_urls)
+    admin_urls.push(test_seeds_url) if current_user&.organizations&.any?(&:users_can_view_levers?)
   end
 
   def dropdown_urls
@@ -198,10 +280,16 @@ class ApplicationController < ApplicationBaseController
   end
 
   def case_search_home_page
-    return false if current_user.admin?
-    return false if current_user.organization_queue_user? || current_user.vso_employee?
-    return false if current_user.attorney_in_vacols? || current_user.judge_in_vacols?
-    return false if current_user.colocated_in_vacols?
+    invalid_user_types = [
+      current_user.admin?,
+      current_user.organization_queue_user?,
+      current_user.vso_employee?,
+      current_user.attorney_in_vacols?,
+      current_user.judge_in_vacols?,
+      current_user.colocated_in_vacols?
+    ]
+
+    return false if invalid_user_types.any?
 
     true
   end
@@ -331,6 +419,11 @@ class ApplicationController < ApplicationBaseController
     "/feedback"
   end
   helper_method :feedback_url
+
+  def efolder_express_url
+    Rails.application.config.efolder_url.to_s
+  end
+  helper_method :efolder_express_url
 
   def help_url
     {

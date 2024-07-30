@@ -65,6 +65,23 @@ describe('NumberField', () => {
     consoleErrorSpy.mockClear();
   });
 
+  it('passes along other input props', async () => {
+    const props = {
+      name: 'bar',
+      readOnly: true,
+      placeholder: 'foo bar',
+      title: 'input title',
+      disabled: true
+    };
+    const { input } = setup(props);
+
+    expect(input).toHaveAttribute('name', props.name);
+    expect(input.readOnly).toBe(props.readOnly);
+    expect(input.disabled).toBe(props.disabled);
+    expect(input).toHaveAttribute('placeholder', props.placeholder);
+    expect(input).toHaveAttribute('title', props.title);
+  });
+
   // This functionality doesn't seem to be used, is likely deprecated
   describe('allows non-integer input when isInteger is false', () => {
     it('accepts a decimal', async () => {

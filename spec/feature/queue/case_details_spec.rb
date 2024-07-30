@@ -153,7 +153,7 @@ RSpec.feature "Case details", :all_dbs do
         expect(details_link.text).to eq(COPY::CASE_DETAILS_HEARING_DETAILS_LINK_COPY)
       end
 
-      context "the user has a VSO role", skip: "re-enable when pagination is fixed" do
+      context "the user has a VSO role" do
         let!(:vso) { create(:vso, name: "VSO", role: "VSO", url: "vso-url", participant_id: "8054") }
         let!(:vso_user) { create(:user, :vso_role) }
         let!(:vso_task) { create(:ama_vso_task, :in_progress, assigned_to: vso, appeal: appeal) }
@@ -569,7 +569,7 @@ RSpec.feature "Case details", :all_dbs do
         visit "/queue/appeals/#{appeal.uuid}"
         expect(page).to have_content("Refresh POA")
         click_on "Refresh POA"
-        expect(page).to have_content("POA Updated Successfully")
+        expect(page).to have_content(COPY::POA_UPDATED_SUCCESSFULLY)
         expect(page).to have_content("POA last refreshed on 01/01/2020")
       end
 
@@ -637,7 +637,8 @@ RSpec.feature "Case details", :all_dbs do
       end
     end
 
-    context "veteran records have been merged and Veteran has multiple active phone numbers in SHARE" do
+    context "veteran records have been merged and Veteran has multiple active phone numbers in SHARE",
+            skip: "This test fails in GHA but not locally" do
       let!(:appeal) do
         create(
           :legacy_appeal,
@@ -649,27 +650,45 @@ RSpec.feature "Case details", :all_dbs do
           )
         )
       end
+      # some of the below values are hardcoded in the veteran factory
+      let!(:inflated_bgs_veteran_record) do
+        { first_name: appeal.veteran.first_name,
+          last_name: appeal.veteran.last_name,
+          date_of_birth: 30.years.ago.to_date.strftime("%m/%d/%Y"),
+          date_of_death: nil,
+          name_suffix: appeal.veteran.name_suffix,
+          sex: "M",
+          address_line1: "1234 Main Street",
+          country: "USA",
+          zip_code: "12345",
+          state: "FL",
+          city: "Orlando",
+          file_number: appeal.veteran.file_number,
+          ssn: appeal.veteran.ssn,
+          email_address: "#{appeal.veteran.first_name}.#{appeal.veteran.last_name}@test.com",
+          ptcpnt_id: appeal.veteran.participant_id,
+          participant_id: appeal.veteran.participant_id }
+      end
+      let!(:bgs) { Fakes::BGSService.new }
 
       before do
-        Fakes::BGSService.inaccessible_appeal_vbms_ids = []
-        Fakes::BGSService.inaccessible_appeal_vbms_ids << appeal.veteran_file_number
+        bgs.class.mark_veteran_not_accessible(appeal.veteran_file_number)
         allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info)
           .and_raise(BGS::ShareError, "NonUniqueResultException")
       end
 
-      scenario "access the appeal's case details", skip: "flake" do
+      scenario "access the appeal's case details" do
+        reload_case_detail_page(appeal.external_id)
+        using_wait_time(5) do
+          expect(page).to have_content(COPY::DUPLICATE_PHONE_NUMBER_TITLE)
+        end
+
+        bgs.inaccessible_appeal_vbms_ids = []
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info)
+          .and_return(inflated_bgs_veteran_record)
+
         visit "/queue/appeals/#{appeal.external_id}"
-
-        expect(page).to have_content(COPY::DUPLICATE_PHONE_NUMBER_TITLE)
-
-        cache_key = Fakes::BGSService.new.can_access_cache_key(current_user, appeal.veteran_file_number)
-        expect(Rails.cache.exist?(cache_key)).to eq(false)
-
-        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_call_original
-        Fakes::BGSService.inaccessible_appeal_vbms_ids = []
-        visit "/queue/appeals/#{appeal.external_id}"
-
-        expect(Rails.cache.exist?(cache_key)).to eq(true)
+        expect(page).to have_content(appeal.veteran_full_name)
       end
     end
   end
@@ -1110,7 +1129,10 @@ RSpec.feature "Case details", :all_dbs do
       }
     end
     let!(:rating_request_issue) { create(:request_issue, rating_request_issue_attributes) }
-    let!(:appeal_serializer) { WorkQueue::AppealSerializer.new(appeal, params: { user: current_user }).serializable_hash }
+    let!(:appeal_serializer) do
+      WorkQueue::AppealSerializer.new(appeal, params: { user: current_user }).serializable_hash
+    end
+
     before do
       User.authenticate!(user: current_user)
       FeatureToggle.enable!(:split_appeal_workflow)
@@ -1136,7 +1158,10 @@ RSpec.feature "Case details", :all_dbs do
       }
     end
     let!(:rating_request_issue) { create(:request_issue, rating_request_issue_attributes) }
-    let!(:appeal_serializer) { WorkQueue::AppealSerializer.new(appeal, params: { user: current_user }).serializable_hash }
+    let!(:appeal_serializer) do
+      WorkQueue::AppealSerializer.new(appeal, params: { user: current_user }).serializable_hash
+    end
+
     before do
       User.authenticate!(user: current_user)
       FeatureToggle.enable!(:split_appeal_workflow)
@@ -1505,7 +1530,6 @@ RSpec.feature "Case details", :all_dbs do
   describe "contested claim" do
     before { FeatureToggle.enable!(:indicator_for_contested_claims) }
     after { FeatureToggle.disable!(:indicator_for_contested_claims) }
-
 
     it "should show the contested claim badge" do
       request_issues = [create(:request_issue,
@@ -2156,8 +2180,8 @@ RSpec.feature "Case details", :all_dbs do
           User.authenticate!(user: non_occoai_user)
         end
         it "the 'CAVC Dashboard' button is not visible on the page" do
-          visit "/queue/appeals/#{cavc_appeal.external_id}"
-          page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
+          reload_case_detail_page cavc_appeal.external_id
+
           expect(page).to_not have_content(COPY::CAVC_DASHBOARD_BUTTON_TEXT)
         end
       end
@@ -2168,8 +2192,8 @@ RSpec.feature "Case details", :all_dbs do
           User.authenticate!(user: occ_user)
         end
         it "the 'CAVC Dashboard' button is visible on the page" do
-          visit "/queue/appeals/#{cavc_appeal.external_id}"
-          page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
+          reload_case_detail_page cavc_appeal.external_id
+
           expect(page).to have_content(COPY::CAVC_DASHBOARD_BUTTON_TEXT)
         end
       end
@@ -2180,9 +2204,98 @@ RSpec.feature "Case details", :all_dbs do
           User.authenticate!(user: oai_user)
         end
         it "the 'CAVC Dashboard' button is visible on the page" do
-          visit "/queue/appeals/#{cavc_appeal.external_id}"
-          page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
+          reload_case_detail_page cavc_appeal.external_id
+
           expect(page).to have_content(COPY::CAVC_DASHBOARD_BUTTON_TEXT)
+        end
+      end
+    end
+
+    describe "MST and PACT issues" do
+      let!(:mst_appeal) do
+        create(
+          :appeal,
+          number_of_claimants: 1,
+          request_issues: [
+            create(
+              :request_issue,
+              benefit_type: "compensation",
+              mst_status: true,
+              pact_status: false,
+              nonrating_issue_description: "description here",
+              notes: "issue notes here"
+            )
+          ]
+        )
+      end
+      let!(:pact_appeal) do
+        create(
+          :appeal,
+          number_of_claimants: 1,
+          request_issues: [
+            create(
+              :request_issue,
+              benefit_type: "compensation",
+              mst_status: false,
+              pact_status: true,
+              nonrating_issue_description: "description here",
+              notes: "issue notes here"
+            )
+          ]
+        )
+      end
+
+      let(:intake_user) { create(:user, css_id: "BVA_INTAKE_USER", station_id: "101") }
+
+      context "when there is a pact issue prechecked" do
+        before do
+          FeatureToggle.enable!(:mst_identification)
+          FeatureToggle.enable!(:pact_identification)
+          BvaIntake.singleton.add_user(intake_user)
+          User.authenticate!(user: intake_user)
+        end
+
+        after do
+          FeatureToggle.disable!(:mst_identification)
+          FeatureToggle.disable!(:pact_identification)
+        end
+
+        it "the page shows the Special Issues: PACT Badge" do
+          visit "/queue/appeals/#{pact_appeal.external_id}"
+          page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
+          expect(page).to have_content("Special Issues: PACT")
+        end
+
+        it "the page does not show the Special Issues: MST Badge" do
+          visit "/queue/appeals/#{pact_appeal.external_id}"
+          page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
+          expect(page).to_not have_content("Special Issues: MST")
+        end
+      end
+
+      context "when there is an mst issue prechecked" do
+        before do
+          BvaIntake.singleton.add_user(intake_user)
+          User.authenticate!(user: intake_user)
+          FeatureToggle.enable!(:mst_identification)
+          FeatureToggle.enable!(:pact_identification)
+        end
+
+        after do
+          FeatureToggle.disable!(:mst_identification)
+          FeatureToggle.disable!(:pact_identification)
+        end
+
+        it "the page shows the Special Issues: MST Badge" do
+          visit "/queue/appeals/#{mst_appeal.external_id}"
+          page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
+          expect(page).to have_content("Special Issues: MST")
+        end
+
+        it "the page does not show the Special Issues: PACT Badge" do
+          visit "/queue/appeals/#{mst_appeal.external_id}"
+          page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
+          expect(page).to_not have_content("Special Issues: PACT")
         end
       end
     end

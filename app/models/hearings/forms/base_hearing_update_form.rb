@@ -69,7 +69,7 @@ class BaseHearingUpdateForm
 
   private
 
-  def datadog_metric_info
+  def custom_metric_info
     {
       app_name: RequestStore[:application],
       metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME
@@ -328,6 +328,7 @@ class BaseHearingUpdateForm
     update_judge_recipient
   end
 
+  # rubocop:disable Metrics/MethodLength
   def create_or_update_email_recipients
     if appellant_email.present?
       hearing.create_or_update_recipients(
@@ -355,6 +356,7 @@ class BaseHearingUpdateForm
       )
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   def create_or_update_virtual_hearing
     # TODO: All of this is not atomic :(. Revisit later, since Rails 6 offers an upsert.
@@ -365,20 +367,20 @@ class BaseHearingUpdateForm
     end
 
     # Merge the hearing ID into the DataDog metrics
-    updated_metric_info = datadog_metric_info.merge(attrs: { hearing_id: hearing&.id })
+    updated_metric_info = custom_metric_info.merge(attrs: { hearing_id: hearing&.id })
 
     # Handle the status toggle of the virtual hearing
     if virtual_hearing_cancelled?
       virtual_hearing.update!(request_cancelled: true)
       update_email_recipients
-      DataDogService.increment_counter(metric_name: "cancelled_virtual_hearing.successful", **updated_metric_info)
+      MetricsService.increment_counter(metric_name: "cancelled_virtual_hearing.successful", **updated_metric_info)
     elsif !virtual_hearing_created?
       virtual_hearing.establishment.restart!
       update_email_recipients
-      DataDogService.increment_counter(metric_name: "updated_virtual_hearing.successful", **updated_metric_info)
+      MetricsService.increment_counter(metric_name: "updated_virtual_hearing.successful", **updated_metric_info)
     else
       VirtualHearingEstablishment.create!(virtual_hearing: virtual_hearing)
-      DataDogService.increment_counter(metric_name: "created_virtual_hearing.successful", **updated_metric_info)
+      MetricsService.increment_counter(metric_name: "created_virtual_hearing.successful", **updated_metric_info)
     end
   end
 

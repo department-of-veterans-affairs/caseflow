@@ -174,7 +174,8 @@ feature "Intake Review Page", :postgres do
             :supplemental_claim,
             veteran_file_number: veteran.file_number,
             receipt_date: receipt_date,
-            legacy_opt_in_approved: false
+            legacy_opt_in_approved: false,
+            filed_by_va_gov: true
           )
         end
 
@@ -490,7 +491,7 @@ feature "Intake Review Page", :postgres do
     end
 
     context "Current user is a member of the VHA business line" do
-      let(:vha_business_line) { create(:business_line, name: benefit_type_label, url: "vha") }
+      let(:vha_business_line) { VhaBusinessLine.singleton }
       let(:current_user) { create(:user, roles: ["Admin Intake"]) }
 
       before do
@@ -602,6 +603,7 @@ def check_no_relationships_behavior
   expect(page).to_not have_content("What is the payee code for this claimant?")
 end
 
+# rubocop:disable Metrics/AbcSize
 def check_deceased_veteran_claimant(intake)
   visit "/intake"
 
@@ -640,6 +642,7 @@ def check_deceased_veteran_claimant(intake)
     expect(page).to_not have_content(COPY::DECEASED_CLAIMANT_TITLE)
   end
 end
+# rubocop:enable Metrics/AbcSize
 
 def check_deceased_veteran_cant_be_payee
   visit "/intake"

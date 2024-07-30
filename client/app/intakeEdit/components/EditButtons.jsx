@@ -8,12 +8,13 @@ import PropTypes from 'prop-types';
 
 import Button from '../../components/Button';
 import IssueCounter from '../../intake/components/IssueCounter';
-import { issueCountSelector } from '../../intake/selectors';
+import { getOpenPendingIssueModificationRequests, issueCountSelector } from '../../intake/selectors';
 import { requestIssuesUpdate } from '../actions/edit';
 import { REQUEST_STATE, VBMS_BENEFIT_TYPES } from '../../intake/constants';
 import SaveAlertConfirmModal from './SaveAlertConfirmModal';
 import COPY from '../../../COPY';
 import { sprintf } from 'sprintf-js';
+import SPECIALTY_CASE_TEAM_BENEFIT_TYPES from 'constants/SPECIALTY_CASE_TEAM_BENEFIT_TYPES';
 
 class SaveButtonUnconnected extends React.Component {
   constructor(props) {
@@ -25,19 +26,42 @@ class SaveButtonUnconnected extends React.Component {
         issueChangeModal: false,
         unidentifiedIssueModal: false,
         reviewRemovedModal: false,
-        correctionIssueModal: false
+        correctionIssueModal: false,
+        moveToSctModal: false,
+        moveToDistributionModal: false
       }
     };
   }
 
   validate = () => {
     // do validation and show modals
+
     let showModals = {
       issueChangeModal: false,
       unidentifiedIssueModal: false,
       reviewRemovedModal: false,
-      correctionIssueModal: false
+      correctionIssueModal: false,
+      moveToSctModal: false,
+      moveToDistributionModal: false
     };
+
+    // Specialty Case Team (SCT) logic for movement of appeals based on additional and removal of SCT request issues
+    const specialtyCaseTeamBenefitTypes = Object.keys(SPECIALTY_CASE_TEAM_BENEFIT_TYPES);
+    const addedIssuesHasSCTIssue = this.props.state.addedIssues.some((issue) =>
+      specialtyCaseTeamBenefitTypes.includes(issue.benefitType) && !issue.withdrawalPending);
+    const originalIssuesHasSCTIssue = this.props.originalIssues.some((issue) =>
+      specialtyCaseTeamBenefitTypes.includes(issue.benefitType));
+    const hasDistributionTaskAndSCTFeatureToggle = this.props.hasDistributionTask &&
+     this.props.specialtyCaseTeamDistribution;
+
+    if (addedIssuesHasSCTIssue && !originalIssuesHasSCTIssue && hasDistributionTaskAndSCTFeatureToggle) {
+      showModals.moveToSctModal = true;
+    }
+
+    if (!addedIssuesHasSCTIssue && originalIssuesHasSCTIssue && hasDistributionTaskAndSCTFeatureToggle &&
+        this.props.hasSpecialtyCaseTeamAssignTask) {
+      showModals.moveToDistributionModal = true;
+    }
 
     if (this.state.originalIssueNumber !== this.props.state.addedIssues.length) {
       if (this.props.state.addedIssues.length === 0) {
@@ -79,7 +103,33 @@ class SaveButtonUnconnected extends React.Component {
     return this.state.showModals.correctionIssueModal &&
       !this.state.showModals.reviewRemovedModal &&
       !this.state.showModals.issueChangeModal &&
-      !this.state.showModals.unidentifiedIssueModal;
+      !this.state.showModals.unidentifiedIssueModal &&
+      !this.state.showModals.moveToSctModal;
+  }
+
+  showMoveToSctModal = () => {
+    if (!this.props.specialtyCaseTeamDistribution) {
+      return false;
+    }
+
+    return this.state.showModals.moveToSctModal &&
+      !this.state.showModals.reviewRemovedModal &&
+      !this.state.showModals.issueChangeModal &&
+      !this.state.showModals.unidentifiedIssueModal &&
+      !this.state.showModals.correctionIssueModal;
+  }
+
+  showMoveToDistributionModal = () => {
+    if (!this.props.specialtyCaseTeamDistribution) {
+      return false;
+    }
+
+    return this.state.showModals.moveToDistributionModal &&
+      !this.state.showModals.reviewRemovedModal &&
+      !this.state.showModals.issueChangeModal &&
+      !this.state.showModals.unidentifiedIssueModal &&
+      !this.state.showModals.correctionIssueModal &&
+      !this.state.showModals.moveToSctModal;
   }
 
   confirmModal = (modalToClose) => {
@@ -110,7 +160,11 @@ class SaveButtonUnconnected extends React.Component {
       veteranValid,
       processedInCaseflow,
       withdrawalDate,
-      receiptDate
+      receiptDate,
+      benefitType,
+      pendingIssueModificationRequests,
+      originalPendingIssueModificationRequests,
+      openIssueModificationRequests
     } = this.props;
 
     const invalidVeteran = !veteranValid && (_.some(
@@ -125,15 +179,28 @@ class SaveButtonUnconnected extends React.Component {
       addedIssues, (issue) => !issue.withdrawalPending
     ) || validateWithdrawDateError;
 
-    const saveDisabled = _.isEqual(
-      addedIssues, originalIssues
-    ) || invalidVeteran || !withdrawDateValid;
-
     const withdrawReview = !_.isEmpty(addedIssues) && _.every(
       addedIssues, (issue) => issue.withdrawalPending || issue.withdrawalDate
     );
 
-    const saveButtonText = withdrawReview ? COPY.CORRECT_REQUEST_ISSUES_WITHDRAW : COPY.CORRECT_REQUEST_ISSUES_SAVE;
+    const hasPendingAdditionRequests = openIssueModificationRequests.some((issueModificationRequest) => {
+      return issueModificationRequest.requestType === 'addition';
+    }) && (_.isEmpty(addedIssues) || withdrawReview);
+
+    const saveDisabled = (_.isEqual(addedIssues, originalIssues) &&
+       _.isEqual(pendingIssueModificationRequests, originalPendingIssueModificationRequests)) ||
+      invalidVeteran ||
+      !withdrawDateValid || hasPendingAdditionRequests;
+
+    let saveButtonText;
+
+    if (benefitType === 'vha' && _.every(addedIssues, (issue) => (
+      issue.withdrawalDate || issue.withdrawalPending) || issue.decisionDate
+    ) && _.isEmpty(openIssueModificationRequests)) {
+      saveButtonText = withdrawReview ? COPY.CORRECT_REQUEST_ISSUES_WITHDRAW : COPY.CORRECT_REQUEST_ISSUES_ESTABLISH;
+    } else {
+      saveButtonText = withdrawReview ? COPY.CORRECT_REQUEST_ISSUES_WITHDRAW : COPY.CORRECT_REQUEST_ISSUES_SAVE;
+    }
 
     const originalIssueNumberCopy = sprintf(COPY.CORRECT_REQUEST_ISSUES_ORIGINAL_NUMBER, this.state.originalIssueNumber,
       pluralize('issue', this.state.originalIssueNumber), this.props.state.addedIssues.length);
@@ -141,7 +208,6 @@ class SaveButtonUnconnected extends React.Component {
     const removeReviewBody = processedInCaseflow ?
       <React.Fragment>
         <p>{COPY.CORRECT_REQUEST_ISSUES_REMOVE_CASEFLOW_TEXT}</p>
-        <p>{COPY.CORRECT_REQUEST_ISSUES_REMOVE_CASEFLOW_TEXT_CONFIRM}</p>
       </React.Fragment> :
       <React.Fragment><p>{COPY.CORRECT_REQUEST_ISSUES_REMOVE_VBMS_TEXT}</p></React.Fragment>;
 
@@ -184,6 +250,22 @@ class SaveButtonUnconnected extends React.Component {
         <p>{COPY.CORRECT_REQUEST_ISSUES_ESTABLISH_MODAL_TEXT}</p>
       </SaveAlertConfirmModal>}
 
+      { this.showMoveToSctModal() && <SaveAlertConfirmModal
+        title={COPY.MOVE_TO_SCT_MODAL_TITLE}
+        buttonText={COPY.MODAL_MOVE_BUTTON}
+        onClose={() => this.closeModal('moveToSctModal')}
+        onConfirm={() => this.confirmModal('moveToSctModal')} >
+        <p>{COPY.MOVE_TO_SCT_MODAL_BODY}</p>
+      </SaveAlertConfirmModal>}
+
+      { this.showMoveToDistributionModal() && <SaveAlertConfirmModal
+        title={COPY.MOVE_TO_DISTRIBUTION_MODAL_TITLE}
+        buttonText={COPY.MODAL_MOVE_BUTTON}
+        onClose={() => this.closeModal('moveToDistributionModal')}
+        onConfirm={() => this.confirmModal('moveToDistributionModal')} >
+        <p>{COPY.MOVE_TO_DISTRIBUTION_MODAL_BODY}</p>
+      </SaveAlertConfirmModal>}
+
       <Button
         name="submit-update"
         onClick={this.validate}
@@ -211,8 +293,15 @@ SaveButtonUnconnected.propTypes = {
   receiptDate: PropTypes.string,
   requestIssuesUpdate: PropTypes.func,
   formType: PropTypes.string,
+  benefitType: PropTypes.string,
   claimId: PropTypes.string,
   history: PropTypes.object,
+  hasDistributionTask: PropTypes.bool,
+  hasSpecialtyCaseTeamAssignTask: PropTypes.bool,
+  specialtyCaseTeamDistribution: PropTypes.bool,
+  pendingIssueModificationRequests: PropTypes.array,
+  originalPendingIssueModificationRequests: PropTypes.array,
+  openIssueModificationRequests: PropTypes.array,
   state: PropTypes.shape({
     addedIssues: PropTypes.array
   })
@@ -222,6 +311,7 @@ const SaveButton = connect(
   (state) => ({
     claimId: state.claimId,
     formType: state.formType,
+    benefitType: state.benefitType,
     addedIssues: state.addedIssues,
     originalIssues: state.originalIssues,
     requestStatus: state.requestStatus,
@@ -230,6 +320,12 @@ const SaveButton = connect(
     processedInCaseflow: state.processedInCaseflow,
     withdrawalDate: state.withdrawalDate,
     receiptDate: state.receiptDate,
+    hasDistributionTask: state.hasDistributionTask,
+    hasSpecialtyCaseTeamAssignTask: state.hasSpecialtyCaseTeamAssignTask,
+    specialtyCaseTeamDistribution: state.featureToggles.specialtyCaseTeamDistribution,
+    pendingIssueModificationRequests: state.pendingIssueModificationRequests,
+    openIssueModificationRequests: getOpenPendingIssueModificationRequests(state),
+    originalPendingIssueModificationRequests: state.originalPendingIssueModificationRequests,
     state
   }),
   (dispatch) => bindActionCreators({

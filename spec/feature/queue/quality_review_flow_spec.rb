@@ -57,6 +57,9 @@ RSpec.feature "Quality Review workflow", :all_dbs do
     let!(:qr_instructions) { "Fix this case!" }
 
     before do
+      FeatureToggle.enable!(:mst_identification)
+      FeatureToggle.enable!(:pact_identification)
+
       ["Reba Janowiec", "Lee Jiang", "Pearl Jurs"].each do |judge_name|
         create(
           :staff,
@@ -140,9 +143,6 @@ RSpec.feature "Quality Review workflow", :all_dbs do
 
         find(".cf-select__control", text: "Select an action").click
         find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h[:label]).click
-
-        find("label", text: "No Special Issues").click
-        click_on "Continue"
 
         expect(page).to have_content("Add decisions")
         all("button", text: "+ Add decision", count: 1)[0].click
@@ -251,7 +251,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
         click_dropdown(text: Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label)
         click_dropdown(prompt: COPY::COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL, text: hold_length)
         fill_in("instructions", with: "placing task on hold")
-        click_on(COPY::MODAL_SUBMIT_BUTTON)
+        click_on(COPY::MODAL_PUT_TASK_ON_HOLD_BUTTON)
         expect(page).to have_content(format(COPY::COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION, veteran_name, hold_length))
       end
 

@@ -1,21 +1,29 @@
 # frozen_string_literal: true
 
 class SlackService
-  DEFAULT_CHANNEL = "#appeals-job-alerts"
+  DEFAULT_CHANNEL = case Rails.deploy_env
+                    when :prod
+                      "#appeals-job-alerts"
+                    when :prodtest
+                      "#appeals-prodtest-alerts"
+                    else
+                      "#appeals-uat-alerts"
+                    end
+
   COLORS = {
     error: "#ff0000",
     info: "#cccccc",
     warn: "#ffff00"
   }.freeze
 
-  def initialize(url:)
+  def initialize(url: ENV["SLACK_DISPATCH_ALERT_URL"])
     @url = url
   end
 
   attr_reader :url
 
   def send_notification(msg, title = "", channel = DEFAULT_CHANNEL)
-    return unless url && (aws_env != "uat")
+    return unless url && (aws_env == "uat" || aws_env == "prodtest" || aws_env == "prod")
 
     slack_msg = format_slack_msg(msg, title, channel)
 

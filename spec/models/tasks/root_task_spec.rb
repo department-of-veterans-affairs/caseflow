@@ -28,6 +28,14 @@ describe RootTask, :postgres do
         expect(subject).to eq([])
       end
     end
+
+    context "when the appeal is a legacy appeal" do
+      it "mail team members still have the option to add mail tasks" do
+        allow(user).to receive(:organizations).and_return([MailTeam.singleton])
+
+        expect(subject).to eq([root_task.build_action_hash(Constants.TASK_ACTIONS.CREATE_MAIL_TASK.to_h, user)])
+      end
+    end
   end
 
   describe ".update_children_status_after_closed" do

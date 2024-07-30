@@ -1,6 +1,6 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import Mark from 'mark.js';
+import uuid, { v4 as uuidv4 } from 'uuid';
 
 import CommentLayer from './CommentLayer';
 import { connect } from 'react-redux';
@@ -12,11 +12,12 @@ import { bindActionCreators } from 'redux';
 import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, SEARCH_BAR_HEIGHT, PAGE_DIMENSION_SCALE, PAGE_MARGIN } from './constants';
 import { pageNumberOfPageIndex } from './utils';
 import * as PDFJS from 'pdfjs-dist';
-import { collectHistogram } from '../util/Metrics';
+import { recordMetrics, recordAsyncMetrics, storeMetrics } from '../util/Metrics';
 
 import { css } from 'glamor';
 import classNames from 'classnames';
 import { COLORS } from '../constants/AppConstants';
+import { pdfPagePropTypes } from 'app/constants/pdfPagePropTypes';
 
 const markStyle = css({
   '& mark': {
@@ -34,7 +35,18 @@ export class PdfPage extends React.PureComponent {
     this.isDrawing = false;
     this.renderTask = null;
     this.marks = [];
-    this.measureTimeStartMs = null;
+
+    this.metricsAttributes = {
+      documentId: this.props.documentId,
+      numPagesInDoc: null,
+      pageIndex: this.props.pageIndex,
+      file: this.props.file,
+      documentType: this.props.documentType,
+      prefetchDisabled: this.props.featureToggles.prefetchDisabled,
+      overscan: this.props.windowingOverscan,
+      isPageVisible: this.props.isVisible,
+      name: null
+    };
   }
 
   getPageContainerRef = (pageContainer) => (this.pageContainer = pageContainer);
@@ -121,16 +133,17 @@ export class PdfPage extends React.PureComponent {
     this.renderTask = page.render(options);
 
     // Call PDFJS to actually draw the page.
-    return this.renderTask.promise.then(() => {
-      this.isDrawing = false;
+    return this.renderTask.promise.
+      then(() => {
+        this.isDrawing = false;
 
-      // If the scale has changed, draw the page again at the latest scale.
-      if (currentScale !== this.props.scale && page) {
-        return this.drawPage(page);
-      }
-    }).
-      catch(() => {
-        // We might need to do something else here.
+        // If the scale has changed, draw the page again at the latest scale.
+        if (currentScale !== this.props.scale && page) {
+          return this.drawPage(page);
+        }
+      }).
+      catch((error) => {
+        console.error(`${uuid.v4()} : render ${this.props.file} : ${error}`);
         this.isDrawing = false;
       });
   };
@@ -155,10 +168,6 @@ export class PdfPage extends React.PureComponent {
   };
 
   componentDidUpdate = (prevProps) => {
-    if (this.props.isPageVisible && !prevProps.isPageVisible) {
-      this.measureTimeStartMs = performance.now();
-    }
-
     if (prevProps.scale !== this.props.scale && this.page) {
       this.drawPage(this.page);
     }
@@ -181,6 +190,7 @@ export class PdfPage extends React.PureComponent {
   };
 
   drawText = (page, text) => {
+
     if (!this.textLayer) {
       return;
     }
@@ -210,32 +220,71 @@ export class PdfPage extends React.PureComponent {
   setUpPage = () => {
     // eslint-disable-next-line no-underscore-dangle
     if (this.props.pdfDocument && !this.props.pdfDocument._transport.destroyed) {
-      this.props.pdfDocument.
-        getPage(pageNumberOfPageIndex(this.props.pageIndex)).
-        then((page) => {
-          this.page = page;
 
-          this.getText(page).then((text) => {
-            this.drawText(page, text);
-          });
+      const pageMetricData = {
+        message: `Getting PDF page ${this.props.pageIndex + 1} from PDFJS document`,
+        product: 'reader',
+        type: 'performance',
+        data: this.props.metricsAttributes,
+        eventId: this.props.metricsIdentifier
+      };
 
-          this.drawPage(page).then(() => {
-            collectHistogram({
-              group: 'front_end',
-              name: 'pdf_page_render_time_in_ms',
-              value: this.measureTimeStartMs ? performance.now() - this.measureTimeStartMs : 0,
-              appName: 'Reader',
-              attrs: {
-                overscan: this.props.windowingOverscan,
-                documentType: this.props.documentType,
-                pageCount: this.props.pdfDocument.pdfInfo?.numPages
-              }
-            });
-          });
-        }).
-        catch(() => {
-          // We might need to do something else here.
+      const pageAndTextFeatureToggle = this.props.featureToggles.metricsPdfStorePages;
+      const document = this.props.pdfDocument;
+      const pageIndex = pageNumberOfPageIndex(this.props.pageIndex);
+      const pageResult = recordAsyncMetrics(document.getPage(pageIndex), pageMetricData, pageAndTextFeatureToggle);
+
+      pageResult.then((page) => {
+        this.page = page;
+
+        const textMetricData = {
+          message: `Storing PDF page ${this.props.pageIndex + 1} text in Redux`,
+          product: 'reader',
+          type: 'performance',
+          data: this.props.metricsAttributes,
+          eventId: this.props.metricsIdentifier
+        };
+
+        const readerRenderText = {
+          uuid: uuidv4(),
+          message: `Rendering PDF page ${this.props.pageIndex + 1} text`,
+          type: 'performance',
+          product: 'reader',
+          data: this.props.metricsAttributes,
+          eventId: this.props.metricsIdentifier
+        };
+
+        const textResult = recordAsyncMetrics(this.getText(page), textMetricData, pageAndTextFeatureToggle);
+
+        textResult.then((text) => {
+          recordMetrics(this.drawText(page, text), readerRenderText,
+            this.props.featureToggles.metricsReaderRenderText);
         });
+
+        this.drawPage(page).then();
+      }).catch((error) => {
+        const id = uuid.v4();
+        const data = {
+          documentId: this.props.documentId,
+          documentType: this.props.documentType,
+          file: this.props.file,
+          prefetchDisabled: this.props.featureToggles.prefetchDisabled
+        };
+        const message = `${id} : setUpPage ${this.props.file} : ${error}`;
+
+        console.error(message);
+        if (pageAndTextFeatureToggle) {
+          storeMetrics(
+            id,
+            data,
+            { message,
+              type: 'error',
+              product: 'browser',
+            },
+            this.props.metricsIdentifier
+          );
+        }
+      });
     }
   };
 
@@ -325,39 +374,7 @@ export class PdfPage extends React.PureComponent {
   }
 }
 
-PdfPage.propTypes = {
-  currentMatchIndex: PropTypes.any,
-  documentId: PropTypes.number,
-  documentType: PropTypes.any,
-  file: PropTypes.string,
-  getTextLayerRef: PropTypes.func,
-  handleSelectCommentIcon: PropTypes.func,
-  isDrawing: PropTypes.any,
-  isFileVisible: PropTypes.bool,
-  isPageVisible: PropTypes.any,
-  isPlacingAnnotation: PropTypes.any,
-  isVisible: PropTypes.bool,
-  matchesPerPage: PropTypes.shape({
-    length: PropTypes.any
-  }),
-  page: PropTypes.shape({
-    cleanup: PropTypes.func
-  }),
-  pageDimensions: PropTypes.any,
-  pageIndex: PropTypes.number,
-  pageIndexWithMatch: PropTypes.any,
-  pdfDocument: PropTypes.object,
-  placingAnnotationIconPageCoords: PropTypes.object,
-  relativeIndex: PropTypes.any,
-  rotate: PropTypes.number,
-  rotation: PropTypes.number,
-  scale: PropTypes.number,
-  searchBarHidden: PropTypes.bool,
-  searchText: PropTypes.string,
-  setDocScrollPosition: PropTypes.func,
-  setSearchIndexToHighlight: PropTypes.func,
-  windowingOverscan: PropTypes.string
-};
+PdfPage.propTypes = pdfPagePropTypes;
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators(

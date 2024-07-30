@@ -44,6 +44,7 @@ class VACOLS::Note < VACOLS::Record
       "#{bfkey}D#{count + 1}"
     end
 
+    # rubocop:disable Metrics/MethodLength
     def create!(note)
       validate!(note)
 
@@ -70,6 +71,7 @@ class VACOLS::Note < VACOLS::Record
       end
       primary_key
     end
+    # rubocop:enable Metrics/MethodLength
 
     def find_active_by_user_and_type(note)
       VACOLS::Note.find_by(

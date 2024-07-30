@@ -98,8 +98,41 @@ class ClaimReview < DecisionReview
     business_line.add_user(RequestStore.store[:current_user])
   end
 
+  def handle_issues_with_no_decision_date!
+    # Guard clause to only perform this update for VHA claim reviews for now
+    return nil if benefit_type != "vha"
+
+    review_task = tasks.find { |task| task.is_a?(DecisionReviewTask) }
+
+    return nil unless review_task&.open?
+
+    if request_issues_without_decision_dates?
+      review_task&.on_hold!
+    elsif !request_issues_without_decision_dates?
+      review_task&.assigned!
+    end
+  end
+
+  def request_issues_without_decision_dates?
+    request_issues.active.any? { |issue| issue.decision_date.blank? }
+  end
+
   def create_business_line_tasks!
     create_decision_review_task! if processed_in_caseflow?
+
+    tasks.reload
+
+    handle_issues_with_no_decision_date!
+  end
+
+  def redirect_url
+    if vha_claim? && request_issues_without_decision_dates?
+      "#{business_line.tasks_url}?tab=incomplete"
+    elsif vha_claim? && pending_issue_modification_requests.any?
+      "#{business_line.tasks_url}?tab=pending"
+    else
+      business_line.tasks_url
+    end
   end
 
   # Idempotent method to create all the artifacts for this claim.
@@ -173,6 +206,10 @@ class ClaimReview < DecisionReview
 
   def active_status?
     active?
+  end
+
+  def vha_claim?
+    benefit_type == "vha"
   end
 
   def search_table_ui_hash
@@ -268,6 +305,14 @@ class ClaimReview < DecisionReview
 
   def cleared_nonrating_ep?
     processed? && cleared_end_products.any?(&:nonrating?)
+  end
+
+  def sct_appeal?
+    false
+  end
+
+  def task_in_progress?
+    tasks.any?(&:active?)
   end
 
   private

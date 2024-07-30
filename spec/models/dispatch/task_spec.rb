@@ -56,7 +56,7 @@ describe Dispatch::Task, :postgres do
     let!(:unassigned_task) { FakeTask.create!(aasm_state: :unassigned, prepared_at: Date.yesterday) }
     let!(:reviewed_task) { FakeTask.create!(aasm_state: :reviewed, prepared_at: Date.yesterday) }
 
-    it { is_expected.to eq([unassigned_task, reviewed_task]) }
+    it { is_expected.to match_array [unassigned_task, reviewed_task] }
   end
 
   context ".completed_on" do
@@ -79,7 +79,7 @@ describe Dispatch::Task, :postgres do
     end
 
     # .sort added in case ActiveRecord returns tasks out of order in subject
-    it { is_expected.to eq([task_completed_this_morning, task_completed_tonight].sort) }
+    it { is_expected.to match_array [task_completed_this_morning, task_completed_tonight] }
   end
 
   context ".completed_success" do

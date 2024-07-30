@@ -121,10 +121,11 @@ class ExternalApi::EfolderService
     Rails.application.config.efolder_key.to_s
   end
 
+  # rubocop:disable Metrics/MethodLength
   def self.send_efolder_request(endpoint, user, headers = {}, method: :get)
     DBService.release_db_connections
 
-    url = URI.escape(efolder_base_url + endpoint)
+    url = URI::DEFAULT_PARSER.escape(efolder_base_url + endpoint)
     request = HTTPI::Request.new(url)
     request.open_timeout = 600 # seconds
     request.read_timeout = 600 # seconds
@@ -146,4 +147,5 @@ class ExternalApi::EfolderService
       end
     end
   end
+  # rubocop:enable Metrics/MethodLength
 end

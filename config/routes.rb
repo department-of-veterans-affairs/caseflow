@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  mount Rswag::Ui::Engine => '/api-docs'
+  mount Rswag::Api::Engine => '/api-docs'
+  # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
@@ -21,12 +24,38 @@ Rails.application.routes.draw do
 
   resources :certification_cancellations, only: [:show, :create]
 
+  constraints(lambda { |request| Rails.env.demo? || Rails.env.test? || Rails.env.development? }) do
+    get 'acd-controls', :to => 'case_distribution_levers#acd_lever_index'
+    get 'acd-controls/test', :to => 'case_distribution_levers_tests#acd_lever_index_test'
+
+    namespace :case_distribution_levers_tests do
+      get 'appeals_ready_to_distribute'
+      get 'appeals_non_priority_ready_to_distribute'
+      get 'appeals_distributed'
+      get 'ineligible_judge_list'
+      post 'run_demo_aod_hearing_seeds'
+      post 'run_demo_non_aod_hearing_seeds'
+      post 'run-demo-ama-docket-goals'
+      post 'run-demo-docket-priority'
+    end
+  end
+
+  get 'case-distribution-controls', :to => 'case_distribution_levers#acd_lever_index'
+
+  resources :case_distribution_levers, only: [] do
+    collection do
+      post :update_levers
+      get :levers
+    end
+  end
+
   namespace :api do
     namespace :v1 do
       resources :appeals, only: :index
       resources :jobs, only: :create
       post 'mpi', to: 'mpi#veteran_updates'
       post 'va_notify_update', to: 'va_notify#notifications_update'
+      post 'cmp', to: 'cmp#upload'
     end
     namespace :v2 do
       resources :appeals, only: :index
@@ -49,10 +78,20 @@ Rails.application.routes.draw do
         resources :intake_statuses, only: :show
         get 'legacy_appeals', to: "legacy_appeals#index"
       end
+      namespace :issues do
+        namespace :ama do
+          get "find_by_veteran/:participant_id", to: "veterans#show"
+        end
+        namespace :vacols do
+          get 'find_by_veteran', to: "veterans#show" # passing in ssn/vfn as a header
+        end
+      end
     end
     namespace :docs do
       namespace :v3, defaults: { format: 'json' } do
-        get 'decision_reviews', to: 'docs#decision_reviews'
+        get 'decision_reviews', to: redirect('api-docs/v3/decision_reviews.yaml')
+        get "ama_issues", to: redirect('api-docs/v3/ama_issues.yaml')
+        get "vacols_issues", to: redirect('api-docs/v3/vacols_issues.yaml')
       end
     end
     get "metadata", to: 'metadata#index'
@@ -80,6 +119,7 @@ Rails.application.routes.draw do
         post 'appeals/:appeal_id/outcode', to: 'appeals#outcode'
         get 'appeals/:appeal_id/documents', to: 'appeals#appeal_documents'
         get 'appeals/:appeal_id/documents/:document_id', to: 'appeals#appeals_single_document'
+        get 'distributions/:distribution_id', to: 'distributions#distribution'
       end
     end
   end
@@ -88,7 +128,12 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :histogram, only: :create
     end
+    namespace :v2 do
+      resources :logs, only: :create
+    end
+    get 'dashboard' => 'dashboard#show'
   end
+
 
   namespace :dispatch do
     get "/", to: redirect("/dispatch/establish-claim")
@@ -247,11 +292,17 @@ Rails.application.routes.draw do
   end
   match '/supplemental_claims/:claim_id/edit/:any' => 'supplemental_claims#edit', via: [:get]
 
-  resources :decision_reviews, param: :business_line_slug, only: [] do
+  resources :decision_reviews, param: :business_line_slug do
     resources :tasks, controller: :decision_reviews, param: :task_id, only: [:show, :update] do
+      member do
+        get :history
+        get :power_of_attorney
+        patch :update_power_of_attorney
+      end
     end
+    get "report", to: "decision_reviews#generate_report", on: :member, as: :report, format: false
+    get "/(*all)", to: "decision_reviews#index"
   end
-  match '/decision_reviews/:business_line_slug' => 'decision_reviews#index', via: [:get]
 
   resources :unrecognized_appellants, only: [:update] do
     resource :power_of_attorney, only: [:update], controller: :unrecognized_appellants, action: :update_power_of_attorney
@@ -331,6 +382,7 @@ Rails.application.routes.draw do
   end
 
   resources :judge_assign_tasks, only: [:create]
+  resources :specialty_case_team_assign_tasks, only: [:create]
 
   resources :bulk_task_assignments, only: [:create]
 
@@ -359,9 +411,6 @@ Rails.application.routes.draw do
 
   get 'whats-new' => 'whats_new#show'
 
-  get 'dispatch/stats(/:interval)', to: 'dispatch_stats#show', as: 'dispatch_stats'
-  get 'stats', to: 'stats#show'
-
   match '/intake/:any' => 'intakes#index', via: [:get]
 
   get "styleguide", to: "styleguide#show"
@@ -384,9 +433,15 @@ Rails.application.routes.draw do
   post "docket_switches", to: "docket_switches#create"
   post "docket_switches/address_ruling", to: "docket_switches#address_ruling"
 
+  scope path: 'seeds', as: 'seeds' do
+    post 'run-demo', to: 'test_docket_seeds#seed_dockets'
+    get 'reset_all_appeals', to: 'test_docket_seeds#reset_all_appeals'
+  end
+
   # :nocov:
   namespace :test do
     get "/error", to: "users#show_error"
+    get "/seeds", to: "test_seeds#seeds" # test seed buttons routes
 
     resources :hearings, only: [:index]
 
@@ -395,6 +450,7 @@ Rails.application.routes.draw do
       post "/set_user/:id", to: "users#set_user", as: "set_user"
       post "/set_end_products", to: "users#set_end_products", as: 'set_end_products'
       post "/reseed", to: "users#reseed", as: "reseed"
+      post "/optional_seed", to: "users#optional_seed", as: "optional_seed"
       get "/data", to: "users#data"
     end
     post "/log_in_as_user", to: "users#log_in_as_user", as: "log_in_as_user"

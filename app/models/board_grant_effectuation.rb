@@ -14,7 +14,7 @@ class BoardGrantEffectuation < CaseflowRecord
   belongs_to :end_product_establishment
 
   validates :granted_decision_issue, presence: true
-  before_save :hydrate_from_granted_decision_issue, on: :create
+  before_save :hydrate_from_granted_decision_issue
 
   END_PRODUCT_CODES = {
     rating: "030BGR",

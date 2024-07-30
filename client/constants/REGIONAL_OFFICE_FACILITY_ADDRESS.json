@@ -416,7 +416,7 @@
       "timezone" : "America/Chicago"
    },
    "vba_351" : {
-      "address_1" : "122 Eastside Blvd.",
+      "address_1" : "125 South Main Street.",
       "address_2" : null,
       "address_3" : null,
       "city" : "Muskogee",
@@ -440,15 +440,6 @@
       "city" : "North Las Vegas",
       "state" : "NV",
       "zip" : "89086",
-      "timezone" : "America/Los_Angeles"
-   },
-   "vc_0505V" : {
-      "address_1" : "7455 W. Washington Ave.",
-      "address_2" : null,
-      "address_3" : null,
-      "city" : "Las Vegas",
-      "state" : "NV",
-      "zip" : "89128",
       "timezone" : "America/Los_Angeles"
    },
    "vba_355" : {
@@ -578,12 +569,12 @@
       "timezone" : "America/Denver"
    },
    "vba_452" : {
-      "address_1" : "5500 E Kellogg",
-      "address_2" : "Bldg. 61",
+      "address_1" : "9111 E. Douglas Ave.",
+      "address_2" : "Suite 200",
       "address_3" : null,
       "city" : "Wichita",
       "state" : "KS",
-      "zip" : "67218",
+      "zip" : "67207",
       "timezone" : "America/Chicago"
    },
    "vba_459" : {
@@ -720,6 +711,15 @@
       "state" : "MS",
       "zip" : "39531",
       "timezone" : "America/Chicago"
+   },
+   "vc_0742V" :{
+      "address_1" : "1118 Burlington Street",
+      "address_2" : null,
+      "address_3" : null,
+      "city" : "Holdrege",
+      "state" : "NE",
+      "zip" : "68949-1705",
+      "timezone" : "America/New_York"
    },
    "vha_402GA" : {
       "address_1" : "163 Van Buren Road",
@@ -1085,7 +1085,7 @@
       "address_1" : "913 Northwest Garden Valley Boulevard",
       "address_2" : null,
       "address_3" : null,
-      "city" : "Rosenburg",
+      "city" : "Roseburg",
       "state" : "OR",
       "zip" : "97471-6523",
       "timezone" : "America/Los_Angeles"
@@ -1100,7 +1100,7 @@
       "timezone" : "America/Los_Angeles"
    },
    "vha_653GA" : {
-      "address_1" : "2191 Marion Street",
+      "address_1" : "2191 Marion Ave",
       "address_2" : "",
       "address_3" : null,
       "city" : "North Bend",
@@ -1115,6 +1115,15 @@
       "city" : "Brookings",
       "state" : "OR",
       "zip" : "97415-9702",
+      "timezone" : "America/Los_Angeles"
+   },
+   "vha_653QA" : {
+      "address_1" : "211 E 7th Ave",
+      "address_2" : null,
+      "address_3" : "Suite 118",
+      "city" : "Eugene",
+      "state" : "OR",
+      "zip" : "97401",
       "timezone" : "America/Los_Angeles"
    },
    "vha_657GJ" : {
@@ -1297,6 +1306,15 @@
       "zip" : "97601-6417",
       "timezone" : "America/Los_Angeles"
    },
+   "vha_692GB" : {
+      "address_1" : "1877 Williams Hwy",
+      "address_2" : null,
+      "address_3" : null,
+      "city" : "Grants Pass",
+      "state" : "OR",
+      "zip" : "97527",
+      "timezone" : "America/Los_Angeles"
+   },
    "vha_693" : {
       "address_1" : "1111 East End Boulevard",
       "address_2" : null,
@@ -1334,12 +1352,12 @@
       "timezone" : "America/Chicago"
    },
    "vha_740GA" : {
-      "address_1" : "2106 Treasure Hills Boulevard",
+      "address_1" : "2601 Veteran Drive",
       "address_2" : null,
       "address_3" : null,
       "city" : "Harlingen",
       "state" : "TX",
-      "zip" : "78550-8736",
+      "zip" : "78550",
       "timezone" : "America/Chicago"
    },
    "vha_740GB" : {

@@ -122,7 +122,7 @@ describe PostSendInitialNotificationLetterHoldingTask do
         post_task.save!
         end_date = tt.updated_at
         start_date = tt.created_at
-        expect((end_date - start_date).to_i / 1.day).to eq(12)
+        expect(((end_date - start_date) / 1.day).round).to eq(12)
       end
 
       it "shows the difference when time moves into the future if the task isn't closed" do
@@ -134,7 +134,7 @@ describe PostSendInitialNotificationLetterHoldingTask do
         expect(post_task.reload.status).to_not eq("cancelled")
         expect(post_task.reload.status).to_not eq("completed")
 
-        expect((Time.zone.now - post_task.created_at).to_i / 1.day).to eq(100)
+        expect(((Time.zone.now - post_task.created_at).to_f / 1.day).round).to eq(100)
       end
     end
 
@@ -154,13 +154,13 @@ describe PostSendInitialNotificationLetterHoldingTask do
         end_date = tt.updated_at
         start_date = tt.created_at
 
-        expect((end_date - start_date).to_i / 1.day).to eq(12)
+        expect(((end_date - start_date) / 1.day).round).to eq(12)
 
         # set the time 100 days into the future
         Timecop.travel(now + 100.days)
 
         # expect the same days on hold as before
-        expect((end_date - start_date).to_i / 1.day).to eq(12)
+        expect(((end_date - start_date) / 1.day).round).to eq(12)
       end
 
       it "returns the same on hold time because the task was cancelled" do
@@ -173,13 +173,13 @@ describe PostSendInitialNotificationLetterHoldingTask do
         post_task.status = "cancelled"
         post_task.save!
 
-        expect((post_task.closed_at - post_task.created_at).to_i / 1.day).to eq(12)
+        expect(((post_task.closed_at - post_task.created_at) / 1.day).round).to eq(12)
 
         # set the time 100 days into the future
         Timecop.travel(now + 100.days)
 
         # expect the same days on hold as before
-        expect((post_task.closed_at - post_task.created_at).to_i / 1.day).to eq(12)
+        expect(((post_task.closed_at - post_task.created_at) / 1.day).round).to eq(12)
       end
     end
   end
@@ -196,9 +196,11 @@ describe PostSendInitialNotificationLetterHoldingTask do
       )
     end
 
+    before { Timecop.travel(Time.zone.local(2020, 9, 1, 18, 0, 0)) }
+
     context "The TaskTimer for the hold period was not created yet" do
       it "returns the end date period" do
-        expect((post_task.timer_ends_at - post_task.created_at.prev_day).to_i / 1.day).to eq(hold_days)
+        expect((post_task.timer_ends_at - post_task.created_at).round / 1.day).to eq(hold_days)
       end
     end
 
@@ -214,11 +216,11 @@ describe PostSendInitialNotificationLetterHoldingTask do
       it "returns the same max hold period using the TaskTimer dates" do
         tt = TaskTimer.find_by(task_id: post_task.id)
         expect(tt.task_id).to eq(post_task.id)
-        expect((post_task.timer_ends_at - post_task.created_at.prev_day).to_i / 1.day).to eq(hold_days)
+        expect((post_task.timer_ends_at - post_task.created_at).round / 1.day).to eq(hold_days)
 
         # confirm the values are being pulled from the TaskTimer
-        calculate_max_hold = (tt.submitted_at - post_task.created_at.prev_day).to_i / 1.day
-        expect((post_task.timer_ends_at - post_task.created_at.prev_day).to_i / 1.day).to eq(calculate_max_hold)
+        calculate_max_hold = (tt.submitted_at - post_task.created_at).round / 1.day
+        expect((post_task.timer_ends_at - post_task.created_at).round / 1.day).to eq(calculate_max_hold)
       end
     end
   end

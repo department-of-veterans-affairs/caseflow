@@ -5,7 +5,11 @@ module HasBusinessLine
 
   def business_line
     business_line_name = Constants::BENEFIT_TYPES[benefit_type]
-    @business_line ||= BusinessLine.find_or_create_by(name: business_line_name) { |org| org.url = benefit_type }
+    @business_line ||= if benefit_type == "vha"
+                         VhaBusinessLine.singleton
+                       else
+                         BusinessLine.find_or_create_by(name: business_line_name) { |org| org.url = benefit_type }
+                       end
   end
 
   def processed_in_vbms?

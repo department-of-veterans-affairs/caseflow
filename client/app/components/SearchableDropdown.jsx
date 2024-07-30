@@ -7,6 +7,7 @@ import _, { isPlainObject, isNull, kebabCase, isEmpty, isString } from 'lodash';
 import classNames from 'classnames';
 import { css } from 'glamor';
 import { FormLabel } from './FormLabel';
+import { DoubleArrowIcon } from 'app/components/icons/DoubleArrowIcon';
 
 const TAG_ALREADY_EXISTS_MSG = 'Tag already exists';
 const NO_RESULTS_TEXT = 'Not an option';
@@ -52,6 +53,14 @@ const CustomInput = (props) => {
   return <components.Input {...props} {...innerProps} />;
 };
 
+const DoubleArrowDropdownIndicator = (props) => {
+  return (
+    <components.DropdownIndicator {...props}>
+      <DoubleArrowIcon />
+    </components.DropdownIndicator>
+  );
+};
+
 export class SearchableDropdown extends React.Component {
   constructor(props) {
     super(props);
@@ -79,7 +88,11 @@ export class SearchableDropdown extends React.Component {
     // event.composedPath() is [html, document, Window] when clicking the scroll bar and more when clicking content
     // this stops the menu from closing if a user clicks to use the scroll bar with the menu open
     if ((this.wrapperRef && !this.wrapperRef.contains(event.target) &&
-     event.composedPath()[2] !== window && this.state.isExpanded) || event.key === 'Escape') {
+     event.composedPath()[2] !== window && this.state.isExpanded)) {
+      this.setState({
+        isExpanded: true
+      });
+    } else if (event.key === 'Escape') {
       this.setState({
         isExpanded: true
       });
@@ -87,9 +100,10 @@ export class SearchableDropdown extends React.Component {
     }
   }
 
-  // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps = (nextProps) => {
-    this.setState({ value: nextProps.value });
+  componentDidUpdate = (prevProps) => {
+    if (prevProps.value !== this.props.value) {
+      this.setState({ value: this.props.value });
+    }
   };
 
   onChange = (value) => {
@@ -157,6 +171,7 @@ export class SearchableDropdown extends React.Component {
       options,
       defaultOptions,
       defaultValue,
+      doubleArrow,
       filterOption,
       isClearable,
       inputRef,
@@ -235,6 +250,14 @@ export class SearchableDropdown extends React.Component {
     const handleNoOptions = () =>
       noResultsText ?? (creatable ? null : NO_RESULTS_TEXT);
 
+    const replacedComponents = {
+      Input: CustomInput,
+      MenuList: CustomMenuList,
+      Option: CustomOption,
+      ...(doubleArrow && { DropdownIndicator: DoubleArrowDropdownIndicator }),
+      ...(doubleArrow && { IndicatorSeparator: null })
+    };
+
     return (
       <div className={errorMessage ? 'usa-input-error' : ''} ref={this.setWrapperRef}>
         <div className={dropdownClasses} {...dropdownStyling}>
@@ -246,7 +269,7 @@ export class SearchableDropdown extends React.Component {
           )}
           <div className="cf-select">
             <SelectComponent
-              components={{ Input: CustomInput, MenuList: CustomMenuList, Option: CustomOption }}
+              components={replacedComponents}
               name={name}
               classNamePrefix="cf-select"
               inputId={`${kebabCase(name)}`}
@@ -391,6 +414,7 @@ SearchableDropdown.propTypes = {
     PropTypes.arrayOf(PropTypes.object),
   ]),
   dropdownStyling: PropTypes.object,
+  doubleArrow: PropTypes.bool,
   errorMessage: PropTypes.string,
   filterOption: PropTypes.func,
 
@@ -402,6 +426,7 @@ SearchableDropdown.propTypes = {
     PropTypes.func,
     // Or the instance of a DOM native element (see the note about SSR)
     PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
+    PropTypes.shape({ current: PropTypes.instanceOf(Object) }),
   ]),
   label: PropTypes.string,
   strongLabel: PropTypes.bool,
@@ -424,7 +449,7 @@ SearchableDropdown.propTypes = {
   searchable: PropTypes.bool,
   selfManageValueState: PropTypes.bool,
   styling: PropTypes.object,
-  value: PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array]),
+  value: PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array, PropTypes.number]),
 };
 
 /* eslint-disable no-undefined */

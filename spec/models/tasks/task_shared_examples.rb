@@ -69,7 +69,7 @@ shared_examples_for "sort by Appeal Type column" do
     # postgres ascending sort sorts booleans [true, false] as [false, true]. We want is_aod appeals to show up
     # first so we sort descending on is_aod
     expected_order = CachedAppeal.order(
-      "is_aod desc, CASE WHEN case_type = 'Court Remand' THEN 0 ELSE 1 END, docket_number asc"
+      Arel.sql("is_aod desc, CASE WHEN case_type = 'Court Remand' THEN 0 ELSE 1 END, docket_number asc")
     )
     expect(expected_order.first.is_aod).to eq true
     expect(expected_order.first.case_type).to eq Constants.AMA_STREAM_TYPES.court_remand.titlecase

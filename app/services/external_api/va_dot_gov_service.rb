@@ -14,8 +14,8 @@ require "digest"
 #
 class ExternalApi::VADotGovService
   BASE_URL = ENV["VA_DOT_GOV_API_URL"] || ""
-  FACILITY_IDS_ENDPOINT = "va_facilities/v0/ids"
-  FACILITIES_ENDPOINT = "va_facilities/v0/facilities"
+  FACILITY_IDS_ENDPOINT = "va_facilities/v1/ids"
+  FACILITIES_ENDPOINT = "va_facilities/v1/facilities"
   ADDRESS_VALIDATION_ENDPOINT = "address_validation/v1/validate"
 
   class << self
@@ -34,7 +34,7 @@ class ExternalApi::VADotGovService
     def get_distance(lat:, long:, ids:)
       send_facilities_requests(
         ids: ids,
-        query: { lat: lat, long: long, ids: ids.join(",") }
+        query: { lat: lat, long: long, facilityIds: ids.join(",") }
       )
     end
 
@@ -50,7 +50,7 @@ class ExternalApi::VADotGovService
     def get_facility_data(ids:)
       send_facilities_requests(
         ids: ids,
-        query: { ids: ids.join(",") }
+        query: { facilityIds: ids.join(",") }
       )
     end
 
@@ -125,6 +125,67 @@ class ExternalApi::VADotGovService
       ExternalApi::VADotGovService::AddressValidationResponse.new(response)
     end
 
+    # Verifies a veteran's zip code and returns its associated geographic coordinates in latitude and longitude.
+    #
+    # @param zip_code [String] A veteran's five-digit zip code
+    #
+    # @return        [ExternalApi::VADotGovService::AddressValidationResponse]
+    #   A wrapper around the VA.gov API response that includes the geocode (latitude and longitude) associated
+    #   with the veteran's zip code.
+    #
+    #   Note: The response will include an "AddressCouldNotBeFound" and "lowConfidenceScore" messages
+    #
+    # API Documentation: https://developer.va.gov/explore/verification/docs/address_validation
+    #
+    # Expected JSON Response from API:
+    #
+    # ```
+    # {
+    #   "messages": [
+    #     {
+    #       "code": "ADDRVAL112",
+    #       "key": "AddressCouldNotBeFound",
+    #       "text": "The Address could not be found",
+    #       "severity": "WARN"
+    #     },
+    #     {
+    #       "code": "ADDR306",
+    #       "key": "lowConfidenceScore",
+    #       "text": "VaProfile Validation Failed: Confidence Score less than 80",
+    #       "severity": "WARN"
+    #     }
+    #   ],
+    #   "address": {
+    #     "addressLine1": "Address",
+    #     "zipCode5": "string",
+    #     "stateProvince": {},
+    #     "country": {
+    #       "name": "United States",
+    #       "code": "USA",
+    #       "fipsCode": "US",
+    #       "iso2Code": "US",
+    #       "iso3Code": "USA"
+    #     }
+    #   },
+    #   "geocode": {
+    #     "calcDate": "2023-10-12T20:27:04Z",
+    #     "latitude": 40.7029,
+    #     "longitude": -73.8868
+    #   },
+    #   "addressMetaData": {
+    #     "confidenceScore": 0.0,
+    #     "addressType": "Domestic",
+    #     "deliveryPointValidation": "MISSING_ZIP",
+    #     "validationKey": 359084376
+    #   }
+    # }
+    # ```
+    def validate_zip_code(address)
+      response = send_va_dot_gov_request(zip_code_validation_request(address))
+
+      ExternalApi::VADotGovService::ZipCodeValidationResponse.new(response)
+    end
+
     # Gets full list of facility IDs available from the VA.gov API
     #
     # @param ids [Array<String, Symbol>] facility ids to check
@@ -143,6 +204,7 @@ class ExternalApi::VADotGovService
     # Queries the VA.gov facilities API.
     #
     # @note Results are cached for 2 hours.
+    #   distances values in the meta field are only returned if a lat and long are provided.
     #
     # @param query [Hash] query parameters
     #
@@ -154,117 +216,284 @@ class ExternalApi::VADotGovService
     # Expected JSON Response from API:
     #
     # ```
-    # {
-    #   "data": [
-    #     {
-    #       "id": "vha_688",
-    #       "type": "va_facilities",
-    #       "attributes": {
-    #         "name": "Washington VA Medical Center",
-    #         "classification": "VA Medical Center (VAMC)",
-    #         "website": "http://www.washingtondc.va.gov",
-    #         "address": {
-    #           "mailing": {
-    #             "zip": "20422-0001",
-    #             "city": "Washington",
-    #             "state": "DC",
-    #             "address_1": "50 Irving Street, Northwest",
-    #             "address_2": "string",
-    #             "address_3": "string"
-    #           },
-    #           "physical": {
-    #             "zip": "20422-0001",
-    #             "city": "Washington",
-    #             "state": "DC",
-    #             "address_1": "50 Irving Street, Northwest",
-    #             "address_2": "string",
-    #             "address_3": "string"
-    #           }
-    #         },
-    #         "phone": {
-    #           "fax": "202-555-1212",
-    #           "main": "202-555-1212",
-    #           "pharmacy": "202-555-1212",
-    #           "after_hours": "202-555-1212",
-    #           "patient_advocate": "202-555-1212",
-    #           "mental_health_clinic": "202-555-1212",
-    #           "enrollment_coordinator": "202-555-1212"
-    #         },
-    #         "hours": {
-    #           "monday": "9AM-5PM",
-    #           "tuesday": "9AM-5PM",
-    #           "wednesday": "9AM-5PM",
-    #           "thursday": "9AM-5PM",
-    #           "friday": "9AM-5PM",
-    #           "saturday": "Closed",
-    #           "sunday": "Closed"
-    #         },
-    #         "services": {
-    #           "other": [
-    #             "OnlineScheduling"
-    #           ],
-    #           "health": [
-    #             "Audiology"
-    #           ],
-    #           "benefits": [
-    #             "ApplyingForBenefits"
-    #           ],
-    #           "last_updated": "2018-01-01"
-    #         },
-    #         "satisfaction": {
-    #           "health": {
-    #             "primary_care_urgent": 0.85,
-    #             "primary_care_routine": 0.85,
-    #             "specialty_care_urgent": 0.85,
-    #             "specialty_care_routine": 0.85
-    #           },
-    #           "effective_date": "2018-01-01"
-    #         },
-    #         "mobile": false,
-    #         "visn": "20",
-    #         "facility_type": "va_benefits_facility",
-    #         "lat": 38.9311137,
-    #         "long": -77.0109110499999,
-    #         "wait_times": {
-    #           "health": [
-    #             {
-    #               "service": "Audiology",
-    #               "new": 10,
-    #               "established": 5
+    #   {
+    #     "data": [
+    #         {
+    #             "id": "vha_688",
+    #             "type": "va_facilities",
+    #             "attributes": {
+    #                 "name": "Washington VA Medical Center",
+    #                 "facilityType": "va_health_facility",
+    #                 "classification": "VA Medical Center (VAMC)",
+    #                 "parent": {
+    #                     "id": "vha_688",
+    #                     "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688"
+    #                 },
+    #                 "website": "https://www.va.gov/washington-dc-health-care/locations/washington-va-medical-center/",
+    #                 "lat": 38.929401,
+    #                 "long": -77.0111955,
+    #                 "timeZone": "America/New_York",
+    #                 "address": {
+    #                     "physical": {
+    #                         "zip": "20422-0001",
+    #                         "city": "Washington",
+    #                         "state": "DC",
+    #                         "address1": "50 Irving Street, Northwest"
+    #                     }
+    #                 },
+    #                 "phone": {
+    #                     "fax": "202-745-8530",
+    #                     "main": "202-745-8000",
+    #                     "pharmacy": "202-745-8235",
+    #                     "afterHours": "202-745-8000",
+    #                     "patientAdvocate": "202-745-8588",
+    #                     "enrollmentCoordinator": "202-745-8000 x56333"
+    #                 },
+    #                 "hours": {
+    #                     "monday": "24/7",
+    #                     "tuesday": "24/7",
+    #                     "wednesday": "24/7",
+    #                     "thursday": "24/7",
+    #                     "friday": "24/7",
+    #                     "saturday": "24/7",
+    #                     "sunday": "24/7"
+    #                 },
+    #                 "operationalHoursSpecialInstructions": [
+    #                     "Normal business hours are Monday through Friday, 8:00 a.m. to 4:30 p.m."
+    #                 ],
+    #                 "services": {
+    #                     "health": [
+    #                         {
+    #                             "name": "Advice nurse",
+    #                             "serviceId": "adviceNurse",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/adviceNurse"
+    #                         },
+    #                         {
+    #                             "name": "Anesthesia",
+    #                             "serviceId": "anesthesia",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/anesthesia"
+    #                         },
+    #                         {
+    #                             "name": "Audiology and speech",
+    #                             "serviceId": "audiology",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/audiology"
+    #                         },
+    #                         {
+    #                             "name": "Cardiology",
+    #                             "serviceId": "cardiology",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/cardiology"
+    #                         },
+    #                         {
+    #                             "name": "CaregiverSupport",
+    #                             "serviceId": "caregiverSupport",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/caregiverSupport"
+    #                         },
+    #                         {
+    #                             "name": "COVID-19 vaccines",
+    #                             "serviceId": "covid19Vaccine",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/covid19Vaccine"
+    #                         },
+    #                         {
+    #                             "name": "Dental/oral surgery",
+    #                             "serviceId": "dental",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/dental"
+    #                         },
+    #                         {
+    #                             "name": "Dermatology",
+    #                             "serviceId": "dermatology",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/dermatology"
+    #                         },
+    #                         {
+    #                             "name": "Emergency care",
+    #                             "serviceId": "emergencyCare",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/emergencyCare"
+    #                         },
+    #                         {
+    #                             "name": "Gastroenterology",
+    #                             "serviceId": "gastroenterology",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/gastroenterology"
+    #                         },
+    #                         {
+    #                             "name": "Geriatrics",
+    #                             "serviceId": "geriatrics",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/geriatrics"
+    #                         },
+    #                         {
+    #                             "name": "Gynecology",
+    #                             "serviceId": "gynecology",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/gynecology"
+    #                         },
+    #                         {
+    #                             "name": "Hematology/oncology",
+    #                             "serviceId": "hematology",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/hematology"
+    #                         },
+    #                         {
+    #                             "name": "Homeless Veteran care",
+    #                             "serviceId": "homeless",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/homeless"
+    #                         },
+    #                         {
+    #                             "name": "Palliative and hospice care",
+    #                             "serviceId": "hospice",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/hospice"
+    #                         },
+    #                         {
+    #                             "name": "Hospital medicine",
+    #                             "serviceId": "hospitalMedicine",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/hospitalMedicine"
+    #                         },
+    #                         {
+    #                             "name": "Laboratory and pathology",
+    #                             "serviceId": "laboratory",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/laboratory"
+    #                         },
+    #                         {
+    #                             "name": "LGBTQ+ Veteran care",
+    #                             "serviceId": "lgbtq",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/lgbtq"
+    #                         },
+    #                         {
+    #                             "name": "MentalHealth",
+    #                             "serviceId": "mentalHealth",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/mentalHealth"
+    #                         },
+    #                         {
+    #                             "name": "Minority Veteran care",
+    #                             "serviceId": "minorityCare",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/minorityCare"
+    #                         },
+    #                         {
+    #                             "name": "Nutrition, food, and dietary care",
+    #                             "serviceId": "nutrition",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/nutrition"
+    #                         },
+    #                         {
+    #                             "name": "Ophthalmology",
+    #                             "serviceId": "ophthalmology",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/ophthalmology"
+    #                         },
+    #                         {
+    #                             "name": "Optometry",
+    #                             "serviceId": "optometry",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/optometry"
+    #                         },
+    #                         {
+    #                             "name": "Orthopedics",
+    #                             "serviceId": "orthopedics",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/orthopedics"
+    #                         },
+    #                         {
+    #                             "name": "Patient advocates",
+    #                             "serviceId": "patientAdvocates",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/patientAdvocates"
+    #                         },
+    #                         {
+    #                             "name": "Pharmacy",
+    #                             "serviceId": "pharmacy",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/pharmacy"
+    #                         },
+    #                         {
+    #                             "name": "Physical medicine and rehabilitation",
+    #                             "serviceId": "physicalMedicine",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/physicalMedicine"
+    #                         },
+    #                         {
+    #                             "name": "Podiatry",
+    #                             "serviceId": "podiatry",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/podiatry"
+    #                         },
+    #                         {
+    #                             "name": "Primary care",
+    #                             "serviceId": "primaryCare",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/primaryCare"
+    #                         },
+    #                         {
+    #                             "name": "Psychology",
+    #                             "serviceId": "psychology",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/psychology"
+    #                         },
+    #                         {
+    #                             "name": "Rehabilitation and extended care",
+    #                             "serviceId": "rehabilitation",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/rehabilitation"
+    #                         },
+    #                         {
+    #                             "name": "Suicide prevention",
+    #                             "serviceId": "suicidePrevention",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/suicidePrevention"
+    #                         },
+    #                         {
+    #                             "name": "Surgery",
+    #                             "serviceId": "surgery",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/surgery"
+    #                         },
+    #                         {
+    #                             "name": "Returning service member care",
+    #                             "serviceId": "transitionCounseling",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/transitionCounseling"
+    #                         },
+    #                         {
+    #                             "name": "Transplant surgery",
+    #                             "serviceId": "transplantSurgery",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/transplantSurgery"
+    #                         },
+    #                         {
+    #                             "name": "Urology",
+    #                             "serviceId": "urology",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/urology"
+    #                         },
+    #                         {
+    #                             "name": "Women Veteran care",
+    #                             "serviceId": "womensHealth",
+    #                             "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services/womensHealth"
+    #                         }
+    #                     ],
+    #                     "link": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities/vha_688/services",
+    #                     "lastUpdated": "2024-03-03"
+    #                 },
+    #                 "satisfaction": {
+    #                     "health": {
+    #                         "primaryCareUrgent": 0.7699999809265137,
+    #                         "primaryCareRoutine": 0.7300000190734863,
+    #                         "specialtyCareUrgent": 0.6499999761581421,
+    #                         "specialtyCareRoutine": 0.699999988079071
+    #                     },
+    #                     "effectiveDate": "2024-02-08"
+    #                 },
+    #                 "mobile": false,
+    #                 "operatingStatus": {
+    #                     "code": "NORMAL",
+    #                     "supplementalStatus": [
+    #                         {
+    #                             "id": "COVID_MEDIUM",
+    #                             "label": "COVID-19 health protection: Levels medium"
+    #                         }
+    #                     ]
+    #                 },
+    #                 "visn": "5"
     #             }
-    #           ],
-    #           "effective_date": "2018-01-01"
-    #         },
-    #         "active_status": "A",
-    #         "operating_status": {
-    #           "code": "NORMAL",
-    #           "additional_info": "string"
     #         }
-    #       }
-    #     }
-    #   ],
-    #   "links": {
-    #     "related": "string",
-    #     "self": "string",
-    #     "first": "string",
-    #     "prev": "string",
-    #     "next": "string",
-    #     "last": "string"
-    #   },
-    #   "meta": {
-    #     "pagination": {
-    #       "current_page": 1,
-    #       "per_page": 10,
-    #       "total_pages": 217,
-    #       "total_entries": 2162
+    #     ],
+    #     "links": {
+    #         "self": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities?facilityIds=vha_688",
+    #         "first": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities?facilityIds=vha_688",
+    #         "last": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities?facilityIds=vha_688"
     #     },
-    #     "distances": [
-    #       {
-    #         "id": "string",
-    #         "distance": 0
-    #       }
-    #     ]
-    #   }
+    #     "meta": {
+    #         "pagination": {
+    #             "currentPage": 1,
+    #             "perPage": 10,
+    #             "totalPages": 1,
+    #             "totalEntries": 1
+    #         },
+    #         "distances": [
+    #             {
+    #                 "id": "vha_688",
+    #                 "distance": 5522.71
+    #             }
+    #         ]
+    #     }
     # }
     # ```
     def send_facilities_request(query:)
@@ -328,7 +557,7 @@ class ExternalApi::VADotGovService
     end
 
     def send_va_dot_gov_request(query: {}, headers: {}, endpoint:, method: :get, body: nil)
-      url = URI.escape(BASE_URL + endpoint)
+      url = URI::DEFAULT_PARSER.escape(BASE_URL + endpoint)
       request = HTTPI::Request.new(url)
       request.query = query
       request.open_timeout = 30
@@ -375,7 +604,7 @@ class ExternalApi::VADotGovService
             city: address.city,
             zipCode5: address.zip,
             zipCode4: address.zip4,
-            international_postal_code: address.international_postal_code,
+            internationalPostalCode: address.international_postal_code,
             stateProvince: { name: address.state_name, code: address.state },
             requestCountry: { countryName: address.country_name, countryCode: address.country },
             addressPOU: address.address_pou
@@ -388,8 +617,34 @@ class ExternalApi::VADotGovService
       }
     end
 
+    # Builds a request for the VA.gov veteran address validation endpoint using only the veteran's five-digit zip code.
+    # This will return "AddressCouldNotBeFound" and "lowConfidenceScore" messages. However, given a valid zip code, the
+    # response body will include valid coordinates for latitude and longitude.
+    #
+    # Note 1: Hard code placeholder string for addressLine1 to avoid "InvalidRequestStreetAddress" error
+    # Note 2: Include country name to ensure foreign addresses are properly handled
+    #
+    # @param address [Address] The veteran's address
+    #
+    # @return        [Hash] The payload to send to the VA.gov API
+    def zip_code_validation_request(address)
+      {
+        body: {
+          requestAddress: {
+            addressLine1: "address",
+            zipCode5: address.zip,
+            requestCountry: { countryName: address.country }
+          }
+        },
+        headers: {
+          "Content-Type": "application/json", Accept: "application/json"
+        },
+        endpoint: ADDRESS_VALIDATION_ENDPOINT, method: :post
+      }
+    end
+
     def track_pages(pages)
-      DataDogService.emit_gauge(
+      MetricsService.emit_gauge(
         metric_group: "service",
         metric_name: "pages_requested",
         metric_value: pages,

@@ -6,10 +6,6 @@ class AppealsWithMoreThanOneOpenHearingTaskChecker < DataIntegrityChecker
     build_report(appeals_with_more_than_one_open_hearing_task)
   end
 
-  def slack_channel
-    "#appeals-tango"
-  end
-
   private
 
   HELP_DOCUMENT_LINK = "https://github.com/department-of-veterans-affairs/appeals-deployment/" \

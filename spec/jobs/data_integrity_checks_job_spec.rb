@@ -40,7 +40,7 @@ describe DataIntegrityChecksJob do
     allow(slack_service).to receive(:send_notification) { |msg| slack_messages << msg }
 
     @emitted_gauges = []
-    allow(DataDogService).to receive(:emit_gauge) do |args|
+    allow(MetricsService).to receive(:emit_gauge) do |args|
       @emitted_gauges.push(args)
     end
 
@@ -130,8 +130,7 @@ describe DataIntegrityChecksJob do
 
         expect(slack_service).to have_received(:send_notification).with(
           "Error running ExpiredAsyncJobsChecker. See Sentry event sentry_12345",
-          "ExpiredAsyncJobsChecker",
-          "#appeals-foxtrot"
+          "ExpiredAsyncJobsChecker"
         )
         expect(@raven_called).to eq(true)
       end

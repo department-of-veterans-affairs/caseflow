@@ -28,7 +28,11 @@ class ClaimReviewController < ApplicationController
   end
 
   def update
-    if request_issues_update.perform!
+    if issues_modification_request_updater.non_admin_actions?
+      process_and_render_issue_non_admin_issue_modification_requests
+    elsif issues_modification_request_updater.admin_actions?
+      process_and_render_issue_admin_issue_modification_requests
+    elsif request_issues_update.perform!
       render_success
     else
       render json: { error_code: request_issues_update.error_code }, status: :unprocessable_entity
@@ -54,6 +58,14 @@ class ClaimReviewController < ApplicationController
 
   def source_type
     fail "Must override source_type"
+  end
+
+  def issues_modification_request_updater
+    @issues_modification_request_updater ||= IssueModificationRequests::Updater.new(
+      user: current_user,
+      review: claim_review,
+      issue_modifications_data: params[:issue_modification_requests]
+    )
   end
 
   def request_issues_update
@@ -94,7 +106,7 @@ class ClaimReviewController < ApplicationController
     if claim_review.processed_in_caseflow?
       set_flash_success_message
 
-      render json: { redirect_to: claim_review.business_line.tasks_url,
+      render json: { redirect_to: claim_review.redirect_url,
                      beforeIssues: request_issues_update.before_issues.map(&:serialize),
                      afterIssues: request_issues_update.after_issues.map(&:serialize),
                      withdrawnIssues: request_issues_update.withdrawn_issues.map(&:serialize) }
@@ -133,27 +145,93 @@ class ClaimReviewController < ApplicationController
   end
 
   def review_edited_message
-    "You have successfully " + [added_issues, removed_issues, withdrawn_issues].compact.to_sentence + "."
+    "You have successfully #{[added_issues, removed_issues, withdrawn_issues].compact.to_sentence}."
+  end
+
+  def vha_edited_decision_date_message
+    COPY::VHA_ADD_DECISION_DATE_TO_ISSUE_SUCCESS_MESSAGE
+  end
+
+  def vha_pending_reviews_message
+    "#{claimant_name}'s #{claim_review.class.review_title} was saved."
+  end
+
+  def vha_edited_title
+    "You have successfully edited #{claimant_name}'s #{claim_review.class.review_title}"
+  end
+
+  def vha_edited_message
+    "The claim has been modified."
+  end
+
+  def claimant_name
+    if claim_review.veteran_is_not_claimant
+      claim_review.claimant.try(:name)
+    else
+      claim_review.veteran_full_name
+    end
+  end
+
+  def vha_flash_message
+    issues_without_decision_date = (request_issues_update.after_issues -
+                                request_issues_update.edited_issues -
+                                request_issues_update.removed_or_withdrawn_issues)
+      .select { |issue| issue.decision_date.blank? && !issue.withdrawn? }
+
+    if claim_review.pending_issue_modification_requests.any?
+      vha_pending_reviews_message_hash
+    elsif issues_without_decision_date.empty?
+      { title: vha_edited_title, message: vha_edited_message }
+    elsif request_issues_update.edited_issues.any?
+      { title: "Edit Completed", message: vha_edited_decision_date_message }
+    else
+      decisions_message_hash_builder(vha_edited_message, review_edited_message)
+    end
   end
 
   def set_flash_success_message
-    flash[:edited] = if request_issues_update.after_issues.empty?
-                       decisions_removed_message
+    flash[:custom] = if request_issues_update.after_issues.empty?
+                       decisions_removed_hash
                      elsif (request_issues_update.after_issues - request_issues_update.withdrawn_issues).empty?
-                       review_withdrawn_message
+                       decisions_withdrawn_hash
+                     elsif claim_review.vha_claim?
+                       vha_flash_message
                      else
-                       review_edited_message
+                       { title: "Edit Completed", message: review_edited_message }
                      end
   end
 
+  def decisions_message_hash_builder(vha_message, default_message)
+    if claim_review.vha_claim?
+      { title: vha_edited_title, message: vha_message }
+    else
+      { title: "Edit Completed", message: default_message }
+    end
+  end
+
+  def decisions_removed_hash
+    decisions_message_hash_builder("The claim has been removed.", decisions_removed_message)
+  end
+
+  def decisions_withdrawn_hash
+    decisions_message_hash_builder("The claim has been withdrawn.", review_withdrawn_message)
+  end
+
+  def vha_pending_reviews_message_hash
+    if current_user.vha_business_line_admin_user?
+      { title: vha_edited_title, message: vha_edited_message }
+    else
+      { title: "You have successfully submitted a request.", message: vha_pending_reviews_message }
+    end
+  end
+
   def decisions_removed_message
-    claimant_name = claim_review.veteran_full_name
     "You have successfully removed #{claim_review.class.review_title} for #{claimant_name}
     (ID: #{claim_review.veteran.ssn})."
   end
 
   def review_withdrawn_message
-    "You have successfully withdrawn a review."
+    COPY::CLAIM_REVIEW_WITHDRAWN_MESSAGE
   end
 
   def claim_label_edit_params
@@ -170,5 +248,33 @@ class ClaimReviewController < ApplicationController
     )
     ep_update.perform!
     ep_update
+  end
+
+  def process_and_render_issue_non_admin_issue_modification_requests
+    issues_modification_request_updater.non_admin_process!
+    render_success
+  rescue StandardError => error
+    render_error(error)
+  end
+
+  def process_and_render_issue_admin_issue_modification_requests
+    # If there are no approvals, then we can just deny the requests. We do not need to process request_issues_updates
+    if issues_modification_request_updater.admin_approvals?
+      if request_issues_update.can_be_performed?
+        issues_modification_request_updater.admin_process!
+        if request_issues_update.perform!
+          return render_success
+        end
+      end
+
+      # Fallback return error since it fell through
+      render json: { error_code: request_issues_update.error_code }, status: :unprocessable_entity
+    else
+      # Only denied requests to just run the process and return success unless it errors
+      issues_modification_request_updater.admin_process!
+      render_success
+    end
+  rescue StandardError => error
+    render_error(error)
   end
 end

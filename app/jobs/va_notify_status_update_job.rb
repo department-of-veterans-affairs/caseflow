@@ -13,7 +13,7 @@ class VANotifyStatusUpdateJob < CaseflowJob
   # Params: None
   #
   # Retuns: None
-  def perform
+  def perform # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
     notifications_not_processed.each do |notification|
       sms_external_id = notification.sms_notification_external_id
       email_external_id = notification.email_notification_external_id

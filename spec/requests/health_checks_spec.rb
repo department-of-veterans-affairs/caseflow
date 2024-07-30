@@ -9,7 +9,7 @@ describe "Health Check API" do
     it "should pass health check" do
       get "/health-check"
 
-      expect(response).to be_success
+      expect(response).to be_successful
 
       json = JSON.parse(response.body)
       expect(json["healthy"]).to eq(true)

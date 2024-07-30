@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 feature "attorney checkout flow when appeal has withdrawn request issues", :all_dbs do
+  before do
+    FeatureToggle.enable!(:mst_identification)
+    FeatureToggle.enable!(:pact_identification)
+  end
   it "displays withdrawn status on case details page" do
     appeal = create(:appeal)
     judge = create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge")
@@ -13,10 +17,6 @@ feature "attorney checkout flow when appeal has withdrawn request issues", :all_
     expect(page).to have_content("Disposition: Withdrawn", wait: 10)
 
     select_decision_ready_for_review
-    if !find("#no_special_issues", visible: false).checked?
-      find("label", text: "No Special Issues").click
-    end
-    click_on "Continue"
     click_add_decision_on_first_issue
 
     expect_disposition_dropdown_to_be_preselected_with_withdrawn

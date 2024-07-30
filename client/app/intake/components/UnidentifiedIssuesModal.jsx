@@ -6,6 +6,9 @@ import TextField from '../../components/TextField';
 import DateSelector from '../../components/DateSelector';
 import { validateDateNotInFuture, isTimely } from '../util/issues';
 import Checkbox from '../../components/Checkbox';
+import { generateSkipButton } from '../util/buttonUtils';
+import Alert from 'app/components/Alert';
+import { VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER } from 'app/../COPY';
 
 class UnidentifiedIssuesModal extends React.Component {
   constructor(props) {
@@ -14,8 +17,18 @@ class UnidentifiedIssuesModal extends React.Component {
     this.state = {
       description: '',
       notes: '',
-      verifiedUnidentifiedIssue: false
+      verifiedUnidentifiedIssue: false,
+      userIsVhaAdmin: props.intakeData.userIsVhaAdmin,
+      isTaskInProgress: props.intakeData.taskInProgress,
+      benefitType: props.intakeData.benefitType
     };
+  }
+
+  vhaHlrOrSC() {
+    const { benefitType } = this.state;
+    const { formType } = this.props;
+
+    return ((formType === 'higher_level_review' || formType === 'supplemental_claim') && benefitType === 'vha');
   }
 
   onAddIssue = () => {
@@ -58,6 +71,9 @@ class UnidentifiedIssuesModal extends React.Component {
   };
 
   errorOnDecisionDate = (value) => {
+    if (typeof (value) === 'undefined') {
+      return null;
+    }
     if (value.length === 10) {
       const error = validateDateNotInFuture(value) ? null : 'Decision date cannot be in the future.';
 
@@ -71,16 +87,20 @@ class UnidentifiedIssuesModal extends React.Component {
 
   saveDisabled = () => {
 
-    const description = this.isDescriptionValid(this.state.description);
-    const decisionDate = this.state.decisionDate && !this.errorOnDecisionDate(this.state.decisionDate);
+    const descriptionIsValid = this.isDescriptionValid(this.state.description);
+    const decisionDateIsValid = Boolean(this.state.decisionDate) && !this.errorOnDecisionDate(this.state.decisionDate);
+    const isDecisionDateRequired = this.vhaHlrOrSC() && this.state.userIsVhaAdmin && this.state.isTaskInProgress;
     const notes = this.state.notes;
 
     if (this.state.verifiedUnidentifiedIssue) {
-      return !(description && decisionDate && notes);
+      return !(descriptionIsValid && decisionDateIsValid && notes);
     }
 
-    return !description;
-
+    // if Decision date is not required then we need to verify if there is any error in the decision date field
+    // this.errorOnDecisionDate returns null if no error is present.
+    return isDecisionDateRequired ?
+      !(descriptionIsValid && decisionDateIsValid) :
+      !(descriptionIsValid && !this.errorOnDecisionDate(this.state.decisionDate));
   }
 
   getModalButtons() {
@@ -98,23 +118,24 @@ class UnidentifiedIssuesModal extends React.Component {
       }
     ];
 
-    if (this.props.onSkip) {
-      btns.push({
-        classNames: ['usa-button', 'usa-button-secondary', 'no-matching-issues'],
-        name: this.props.skipText,
-        onClick: this.props.onSkip
-      });
-    }
+    generateSkipButton(btns, this.props);
 
     return btns;
   }
 
   getDecisionDate() {
-    const { decisionDate } = this.state;
+    const { decisionDate, userIsVhaAdmin, isTaskInProgress } = this.state;
 
     return (
       <React.Fragment>
-        <div className="decision-date">
+        {(userIsVhaAdmin && isTaskInProgress && this.vhaHlrOrSC()) ?
+          <Alert
+            message={VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER}
+            type="info"
+          /> :
+          null
+        }
+        <div className="decision-date" style={{ marginTop: '20px' }}>
           <DateSelector
             name="decision-date"
             label="Decision date"
@@ -123,7 +144,11 @@ class UnidentifiedIssuesModal extends React.Component {
             errorMessage={this.state.dateError}
             onChange={this.decisionDateOnChange}
             type="date"
-            optional={!this.state.verifiedUnidentifiedIssue}
+            optional={
+              !this.state.verifiedUnidentifiedIssue &&
+              !(userIsVhaAdmin && isTaskInProgress &&
+                this.vhaHlrOrSC())
+            }
           />
         </div>
 
@@ -188,7 +213,9 @@ UnidentifiedIssuesModal.propTypes = {
   featureToggles: PropTypes.object,
   intakeData: PropTypes.object,
   formType: PropTypes.string,
-  editPage: PropTypes.bool
+  editPage: PropTypes.bool,
+  userIsVhaAdmin: PropTypes.bool,
+  isTaskInProgress: PropTypes.bool,
 };
 
 UnidentifiedIssuesModal.defaultProps = {

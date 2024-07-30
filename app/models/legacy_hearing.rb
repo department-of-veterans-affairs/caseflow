@@ -35,10 +35,13 @@ class LegacyHearing < CaseflowRecord
   include UpdatedByUserConcern
   include HearingConcern
   include HasHearingEmailRecipientsConcern
+
+  # VA Notify Hooks
   prepend HearingScheduled
   prepend HearingWithdrawn
   prepend HearingPostponed
   prepend HearingScheduledInError
+  prepend HearingHeld
 
   # When these instance variable getters are called, first check if we've
   # fetched the values from VACOLS. If not, first fetch all values and save them
@@ -268,6 +271,18 @@ class LegacyHearing < CaseflowRecord
     end
   end
 
+  # :reek:FeatureEnvy
+  def prepare_worksheet_issues
+    worksheet_issues = []
+    appeal.worksheet_issues.each_with_index do |wi, idx|
+      worksheet_issues.push(wi.attributes)
+      issue = appeal.issues.find { |iss| iss.vacols_sequence_id.to_i == wi[:vacols_sequence_id].to_i }
+      worksheet_issues[idx][:mst_status] = issue&.mst_status
+      worksheet_issues[idx][:pact_status] = issue&.pact_status
+    end
+    worksheet_issues
+  end
+
   def quick_to_hash(current_user_id)
     ::LegacyHearingSerializer.quick(
       self,
@@ -324,7 +339,9 @@ class LegacyHearing < CaseflowRecord
   # we want to fetch it from BGS, save it to the DB, then return it
   def military_service
     super || begin
-      update(military_service: veteran.periods_of_service.join("\n")) if persisted? && veteran
+      if !HearingDay.find_by(id: hearing_day_vacols_id).nil? || !HearingDay.find_by(id: hearing_day_id).nil?
+        update(military_service: veteran.periods_of_service.join("\n")) if persisted? && veteran
+      end
       super
     end
   end
@@ -383,6 +400,7 @@ class LegacyHearing < CaseflowRecord
     update_appeal_states_on_hearing_scheduled_in_error
     update_appeal_states_on_hearing_postponed
     update_appeal_states_on_hearing_withdrawn
+    update_appeal_states_on_hearing_held
   end
 
   def assign_created_by_user

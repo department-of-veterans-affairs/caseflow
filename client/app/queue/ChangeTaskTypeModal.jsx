@@ -29,20 +29,29 @@ class ChangeTaskTypeModal extends React.PureComponent {
 
     this.state = {
       typeOption: null,
-      instructions: ''
+      instructions: '',
     };
   }
 
   validateForm = () => Boolean(this.state.typeOption) && Boolean(this.state.instructions);
 
+  prependUrlToInstructions = () => {
+
+    if (this.isHearingRequestMailTask()) {
+      return (`**DETAILS:** \n ${this.state.instructions}`);
+    }
+
+    return this.state.instructions;
+  };
+
   buildPayload = () => {
-    const { typeOption, instructions } = this.state;
+    const { typeOption } = this.state;
 
     return {
       data: {
         task: {
           type: typeOption.value,
-          instructions
+          instructions: this.prependUrlToInstructions()
         }
       }
     };
@@ -68,15 +77,15 @@ class ChangeTaskTypeModal extends React.PureComponent {
       });
   }
 
+  isHearingRequestMailTask = () => (this.state.typeOption?.value || '').match(/Hearing.*RequestMailTask/);
+
   actionForm = () => {
-    const { highlightFormItems } = this.props;
     const { instructions, typeOption } = this.state;
 
     return <React.Fragment>
       <div>
         <div {...marginTop(4)}>
           <SearchableDropdown
-            errorMessage={highlightFormItems && !typeOption ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
             name={COPY.CHANGE_TASK_TYPE_ACTION_LABEL}
             placeholder="Select an action type"
             options={taskActionData(this.props).options}
@@ -85,7 +94,6 @@ class ChangeTaskTypeModal extends React.PureComponent {
         </div>
         <div {...marginTop(4)}>
           <TextareaField
-            errorMessage={highlightFormItems && !instructions ? COPY.INSTRUCTIONS_ERROR_FIELD_REQUIRED : null}
             name={COPY.CHANGE_TASK_TYPE_INSTRUCTIONS_LABEL}
             onChange={(value) => this.setState({ instructions: value })}
             value={instructions} />
@@ -103,6 +111,8 @@ class ChangeTaskTypeModal extends React.PureComponent {
       title={COPY.CHANGE_TASK_TYPE_SUBHEAD}
       button={COPY.CHANGE_TASK_TYPE_SUBHEAD}
       pathAfterSubmit={`/queue/appeals/${this.props.appealId}`}
+      submitButtonClassNames={['usa-button']}
+      submitDisabled={!this.validateForm()}
     >
       {error && <Alert title={error.title} type="error">
         {error.detail}
@@ -118,7 +128,6 @@ ChangeTaskTypeModal.propTypes = {
     title: PropTypes.string,
     detail: PropTypes.string
   }),
-  highlightFormItems: PropTypes.bool,
   highlightInvalidFormItems: PropTypes.func,
   onReceiveAmaTasks: PropTypes.func,
   requestPatch: PropTypes.func,
@@ -130,7 +139,6 @@ ChangeTaskTypeModal.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  highlightFormItems: state.ui.highlightFormItems,
   error: state.ui.messages.error,
   appeal: appealWithDetailSelector(state, ownProps),
   task: taskById(state, { taskId: ownProps.taskId })

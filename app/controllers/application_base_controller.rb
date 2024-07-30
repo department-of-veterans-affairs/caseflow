@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Rails/ApplicationController
 class ApplicationBaseController < ActionController::Base
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
@@ -55,3 +56,4 @@ class ApplicationBaseController < ActionController::Base
     end
   end
 end
+# rubocop:enable Rails/ApplicationController

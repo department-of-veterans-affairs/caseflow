@@ -136,12 +136,13 @@ class VhaMembershipRequestMailBuilder < MembershipRequestMailBuilder
   end
 
   def organization_vha?(organization)
-    vha_organization_types = [VhaCamo, VhaCaregiverSupport, VhaProgramOffice, VhaRegionalOffice]
-    organization.url == "vha" || vha_organization_types.any? { |vha_org| organization.is_a?(vha_org) }
+    vha_organization_types = [VhaBusinessLine, VhaCamo, VhaCaregiverSupport, VhaProgramOffice, VhaRegionalOffice]
+    vha_organization_types.any? { |vha_org| organization.is_a?(vha_org) }
   end
 
   def belongs_to_vha_org?
-    requestor.organizations.any? { |org| org.url == "vha" }
+    # requestor.organizations.any? { |org| org.url == "vha" }
+    requestor.member_of_organization?(VhaBusinessLine.singleton)
   end
 
   def single_request

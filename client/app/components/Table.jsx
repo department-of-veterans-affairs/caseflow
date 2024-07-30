@@ -136,7 +136,7 @@ class Row extends React.PureComponent {
     const rowId = props.footer ? 'footer' : props.rowId;
     const rowClassnameCondition = classnames(!props.footer && props.rowClassNames(props.rowObject));
 
-    return <tr id={`table-row-${rowId}`} className={rowClassnameCondition}>
+    return <tr tabIndex={0} id={`table-row-${rowId}`} className={rowClassnameCondition}>
       {getColumns(props).
         filter((column) => getCellSpan(props.rowObject, column) > 0).
         map((column, columnNumber) =>
@@ -295,7 +295,9 @@ HeaderRow.propTypes = {
 
 Row.propTypes = {
   footer: PropTypes.bool,
-  rowId: PropTypes.string,
+  rowId: PropTypes.oneOfType([
+    PropTypes.number,
+    PropTypes.string]),
   rowClassNames: PropTypes.func,
   rowObject: PropTypes.object.isRequired
 };

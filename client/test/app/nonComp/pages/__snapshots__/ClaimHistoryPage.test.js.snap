@@ -1,0 +1,798 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`] = `
+<div>
+  <div
+    class="individual-claim-history"
+  >
+    <div
+      class="sc-bdfBwQ bDdaSe"
+    >
+       
+      <a
+        href="/15497"
+      >
+        <b>
+          <u>
+            &lt; Back to Decision Review
+          </u>
+        </b>
+      </a>
+    </div>
+    <div>
+      <section
+        class="cf-app-segment cf-app-segment--alt"
+      >
+        <div>
+          <h1>
+            Jane Smith
+          </h1>
+          <div
+            class="cf-table-wrapper"
+          >
+            <div
+              class="cf-pagination"
+            >
+              <div
+                class="cf-pagination-summary"
+              >
+                Viewing 1-8 of 8 total
+              </div>
+              <div
+                class="cf-pagination-pages"
+              />
+            </div>
+            <table
+              aria-describedby="case-table-description"
+              aria-label="Appeals"
+              class="usa-table-borderless claim-history-table-border-fix"
+              id="individual_claim_history_table"
+              role="grid"
+            >
+              <caption
+                class="usa-sr-only"
+                id="case-table-description"
+              >
+                Individual claim history
+              </caption>
+              <thead>
+                <tr
+                  role="row"
+                >
+                  <th
+                    aria-sort="descending"
+                    class=""
+                    role="columnheader"
+                    scope="col"
+                  >
+                    <span
+                      aria-label="Date and Time"
+                      data-css-9shxm7=""
+                    >
+                      <span>
+                        Date and Time
+                      </span>
+                      <span
+                        aria-label="Sort by Date and Time"
+                        data-css-ilmt4b=""
+                        role="button"
+                        tabindex="0"
+                      >
+                        <svg
+                          class="table-icon"
+                          height="17"
+                          version="1.1"
+                          viewBox="0 0 13 16"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <g
+                            fill="none"
+                            fill-rule="evenodd"
+                            stroke="none"
+                            stroke-width="1"
+                          >
+                            <g
+                              fill-rule="nonzero"
+                            >
+                              <g
+                                fill="#0071bc"
+                                transform="translate(2.000000, 1.000000)"
+                              >
+                                <g
+                                  transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                                >
+                                  <path
+                                    d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                  />
+                                </g>
+                              </g>
+                              <g
+                                fill="#d6d7d9"
+                                transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+                              >
+                                <g
+                                  transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                                >
+                                  <path
+                                    d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                  />
+                                </g>
+                              </g>
+                            </g>
+                          </g>
+                        </svg>
+                      </span>
+                    </span>
+                  </th>
+                  <th
+                    aria-labelledby="header-eventUser"
+                    class=""
+                    role="columnheader"
+                    scope="col"
+                  >
+                    <span
+                      aria-label="User"
+                      data-css-9shxm7=""
+                    >
+                      <span
+                        id="header-eventUser"
+                      >
+                        User
+                      </span>
+                      <span
+                        aria-label="Sort by User"
+                        data-css-ilmt4b=""
+                        role="button"
+                        tabindex="0"
+                      >
+                        <svg
+                          class="table-icon"
+                          height="17"
+                          version="1.1"
+                          viewBox="0 0 13 16"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <g
+                            fill="none"
+                            fill-rule="evenodd"
+                            stroke="none"
+                            stroke-width="1"
+                          >
+                            <g
+                              fill-rule="nonzero"
+                            >
+                              <g
+                                fill="#d6d7d9"
+                                transform="translate(2.000000, 1.000000)"
+                              >
+                                <g
+                                  transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                                >
+                                  <path
+                                    d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                  />
+                                </g>
+                              </g>
+                              <g
+                                fill="#d6d7d9"
+                                transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+                              >
+                                <g
+                                  transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                                >
+                                  <path
+                                    d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                  />
+                                </g>
+                              </g>
+                            </g>
+                          </g>
+                        </svg>
+                      </span>
+                      <span
+                        data-css-ilmt4b=""
+                      >
+                        <svg
+                          aria-label="Filter by User"
+                          class="table-icon unselected-filter-icon"
+                          height="20"
+                          role="button"
+                          tabindex="0"
+                          viewBox="0 0 21 21"
+                        >
+                          <g
+                            fill="none"
+                            fill-rule="evenodd"
+                            stroke="none"
+                            stroke-width="1"
+                          >
+                            <g>
+                              <rect
+                                class="unselected-filter-icon-border-1"
+                                fill="#fff"
+                                fill-rule="nonzero"
+                                height="20"
+                                rx="2"
+                                stroke="#212121"
+                                width="20"
+                                x="0.5"
+                                y="0.5"
+                              />
+                              <path
+                                class="unselected-filter-icon-inner-1"
+                                d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667 11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667 9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2 4.69666834,5.83333333 5.01323019,5.83333333 L15.9697874,5.83333333 C16.303936,5.83333333 16.4446301,6.2 16.2335889,6.4 Z"
+                                fill="#212121"
+                              />
+                            </g>
+                          </g>
+                        </svg>
+                      </span>
+                    </span>
+                  </th>
+                  <th
+                    aria-labelledby="header-readableEventType"
+                    class=""
+                    role="columnheader"
+                    scope="col"
+                  >
+                    <span
+                      aria-label="Activity"
+                      data-css-9shxm7=""
+                    >
+                      <span
+                        id="header-readableEventType"
+                      >
+                        Activity
+                      </span>
+                      <span
+                        aria-label="Sort by Activity"
+                        data-css-ilmt4b=""
+                        role="button"
+                        tabindex="0"
+                      >
+                        <svg
+                          class="table-icon"
+                          height="17"
+                          version="1.1"
+                          viewBox="0 0 13 16"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <g
+                            fill="none"
+                            fill-rule="evenodd"
+                            stroke="none"
+                            stroke-width="1"
+                          >
+                            <g
+                              fill-rule="nonzero"
+                            >
+                              <g
+                                fill="#d6d7d9"
+                                transform="translate(2.000000, 1.000000)"
+                              >
+                                <g
+                                  transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                                >
+                                  <path
+                                    d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                  />
+                                </g>
+                              </g>
+                              <g
+                                fill="#d6d7d9"
+                                transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+                              >
+                                <g
+                                  transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                                >
+                                  <path
+                                    d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                  />
+                                </g>
+                              </g>
+                            </g>
+                          </g>
+                        </svg>
+                      </span>
+                      <span
+                        data-css-ilmt4b=""
+                      >
+                        <svg
+                          aria-label="Filter by Activity"
+                          class="table-icon unselected-filter-icon"
+                          height="20"
+                          role="button"
+                          tabindex="0"
+                          viewBox="0 0 21 21"
+                        >
+                          <g
+                            fill="none"
+                            fill-rule="evenodd"
+                            stroke="none"
+                            stroke-width="1"
+                          >
+                            <g>
+                              <rect
+                                class="unselected-filter-icon-border-1"
+                                fill="#fff"
+                                fill-rule="nonzero"
+                                height="20"
+                                rx="2"
+                                stroke="#212121"
+                                width="20"
+                                x="0.5"
+                                y="0.5"
+                              />
+                              <path
+                                class="unselected-filter-icon-inner-1"
+                                d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667 11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667 9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2 4.69666834,5.83333333 5.01323019,5.83333333 L15.9697874,5.83333333 C16.303936,5.83333333 16.4446301,6.2 16.2335889,6.4 Z"
+                                fill="#212121"
+                              />
+                            </g>
+                          </g>
+                        </svg>
+                      </span>
+                    </span>
+                  </th>
+                  <th
+                    class=""
+                    role="columnheader"
+                    scope="col"
+                  >
+                    <span
+                      aria-label="Details"
+                      data-css-9shxm7=""
+                    >
+                      <span>
+                        Details
+                      </span>
+                    </span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody
+                class=""
+              >
+                <tr
+                  class=""
+                  id="table-row-42cf428c-802d-45e6-a82a-fec4ba81ed59"
+                  role="row"
+                >
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    02/23/2024, 13:57
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    V. 
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    Removed issue
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    <p>
+                      <b>
+                        Benefit type: 
+                      </b>
+                      Veterans Health Administration
+                      <br />
+                      <b>
+                        Issue type: 
+                      </b>
+                      Other
+                      <br />
+                      <b>
+                        Issue description: 
+                      </b>
+                      issue added after removing unidentified issues
+                      <br />
+                      <b>
+                        Decision date: 
+                      </b>
+                      09/12/2023
+                      <br />
+                      <b>
+                        Removed issue date: 
+                      </b>
+                      02/23/2024
+                    </p>
+                  </td>
+                </tr>
+                <tr
+                  class=""
+                  id="table-row-50939ea7-0ef9-4382-af16-83c37b5ce6ad"
+                  role="row"
+                >
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    02/23/2024, 13:57
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    V. 
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    Added issue
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    <p>
+                      <b>
+                        Benefit type: 
+                      </b>
+                      Veterans Health Administration
+                      <br />
+                      <b>
+                        Issue type: 
+                      </b>
+                      Beneficiary Travel
+                      <br />
+                      <b>
+                        Issue description: 
+                      </b>
+                      go fly
+                      <br />
+                      <b>
+                        Decision date: 
+                      </b>
+                      02/23/2024
+                      <br />
+                    </p>
+                  </td>
+                </tr>
+                <tr
+                  class=""
+                  id="table-row-a4a3ba54-0386-4efe-aa26-4bebc759bca0"
+                  role="row"
+                >
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    12/12/2023, 17:59
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    S. User
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    Removed issue
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    <p>
+                      <b>
+                        Benefit type: 
+                      </b>
+                      Veterans Health Administration
+                      <br />
+                      <b>
+                        Issue type: 
+                      </b>
+                      <br />
+                      <b>
+                        Issue description: 
+                      </b>
+                      unidentified issue description
+                      <br />
+                      <b>
+                        Decision date: 
+                      </b>
+                      No decision date
+                      <br />
+                      <b>
+                        Removed issue date: 
+                      </b>
+                      12/12/2023
+                    </p>
+                  </td>
+                </tr>
+                <tr
+                  class=""
+                  id="table-row-eddde370-0714-4905-b6b0-5672e14bb588"
+                  role="row"
+                >
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    12/12/2023, 17:59
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    S. User
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    Added issue
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    <p>
+                      <b>
+                        Benefit type: 
+                      </b>
+                      Veterans Health Administration
+                      <br />
+                      <b>
+                        Issue type: 
+                      </b>
+                      Other
+                      <br />
+                      <b>
+                        Issue description: 
+                      </b>
+                      issue added after removing unidentified issues
+                      <br />
+                      <b>
+                        Decision date: 
+                      </b>
+                      09/12/2023
+                      <br />
+                    </p>
+                  </td>
+                </tr>
+                <tr
+                  class=""
+                  id="table-row-529ccae8-3764-4a99-8b21-a090cd99c07d"
+                  role="row"
+                >
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    12/12/2023, 12:59
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    System
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    Claim status - In progress
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    <p>
+                      Claim can be processed.
+                    </p>
+                  </td>
+                </tr>
+                <tr
+                  class=""
+                  id="table-row-803a103c-207b-4f71-9391-b168964c73ed"
+                  role="row"
+                >
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    12/09/2023, 17:59
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    L. Roth
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    Added issue - No decision date
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    <p>
+                      <b>
+                        Benefit type: 
+                      </b>
+                      Veterans Health Administration
+                      <br />
+                      <b>
+                        Issue type: 
+                      </b>
+                      <br />
+                      <b>
+                        Issue description: 
+                      </b>
+                      unidentified issue description
+                      <br />
+                      <b>
+                        Decision date: 
+                      </b>
+                      No decision date
+                      <br />
+                    </p>
+                  </td>
+                </tr>
+                <tr
+                  class=""
+                  id="table-row-93b5cb42-136d-44a3-9e96-b18eb0397291"
+                  role="row"
+                >
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    12/09/2023, 12:59
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    System
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    Claim status - Incomplete
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    <p>
+                      Claim cannot be processed until decision date is entered.
+                    </p>
+                  </td>
+                </tr>
+                <tr
+                  class=""
+                  id="table-row-1b5dc8c8-c1ea-4596-a51c-73cc8ecd45b5"
+                  role="row"
+                >
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    12/09/2023, 17:59
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    L. Roth
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    Claim created
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    <p>
+                      Claim created.
+                    </p>
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot />
+            </table>
+            <div
+              class="cf-pagination"
+            >
+              <div
+                class="cf-pagination-summary"
+              >
+                Viewing 1-8 of 8 total
+              </div>
+              <div
+                class="cf-pagination-pages"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+`;

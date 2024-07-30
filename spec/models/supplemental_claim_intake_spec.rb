@@ -9,7 +9,7 @@ describe SupplementalClaimIntake, :all_dbs do
   let(:veteran_file_number) { "64205555" }
   let(:user) { Generators::User.build }
   let(:detail) { nil }
-  let!(:veteran) { Generators::Veteran.build(file_number: "64205555") }
+  let!(:veteran) { Generators::Veteran.build(file_number: "64205555").save! }
   let(:completed_at) { nil }
   let(:completion_started_at) { nil }
 
@@ -94,16 +94,9 @@ describe SupplementalClaimIntake, :all_dbs do
         veteran_file_number: "64205555",
         receipt_date: 3.days.ago,
         benefit_type: benefit_type,
-        legacy_opt_in_approved: legacy_opt_in_approved
-      )
-    end
-
-    let!(:claimant) do
-      create(
-        :claimant,
-        decision_review: detail,
-        payee_code: "00",
-        participant_id: "1234"
+        legacy_opt_in_approved: legacy_opt_in_approved,
+        veteran_is_not_claimant: true,
+        claimant_type: :other_claimant
       )
     end
 
@@ -132,7 +125,7 @@ describe SupplementalClaimIntake, :all_dbs do
           end_product_code: "040SCR",
           gulf_war_registry: false,
           suppress_acknowledgement_letter: false,
-          claimant_participant_id: claimant.participant_id,
+          claimant_participant_id: detail.claimant.participant_id,
           limited_poa_code: nil,
           limited_poa_access: nil,
           status_type_code: "PEND"

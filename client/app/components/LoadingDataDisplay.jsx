@@ -4,16 +4,39 @@ import PropTypes from 'prop-types';
 import LoadingScreen from './LoadingScreen';
 import StatusMessage from './StatusMessage';
 import COPY from '../../COPY';
+import { recordAsyncMetrics } from '../util/Metrics';
+import { ExternalLinkIcon } from './icons';
+import { css } from 'glamor';
+import Link from './Link';
+
+const ICON_POSITION_FIX = css({ position: 'relative', top: 3 });
 
 const PROMISE_RESULTS = {
   SUCCESS: 'SUCCESS',
   FAILURE: 'FAILURE'
 };
 
+const ESCALATION_FORM_URL = 'https://leaf.va.gov/VBA/335/sensitive_level_access_request/';
+
 const accessDeniedTitle = { title: COPY.ACCESS_DENIED_TITLE };
 const accessDeniedMsg = <div>
-        It looks like you do not have the necessary level of access to view this information.<br />
-        Please check with your application administrator before trying again.</div>;
+  VBA employs a sensitive access system and to access records at any designated level requires approval for the same or
+  higher-level access.<br />
+  You are receiving this message because you do not have an authorized access level required to view this page.<br />
+  <br />
+  To request access, please click the button below
+  <div>
+    <Link href={ESCALATION_FORM_URL}>
+      <button className="btn btn-default">Request Access &nbsp;
+        <span {...ICON_POSITION_FIX}><ExternalLinkIcon /></span>
+      </button>
+    </Link>
+  </div>
+  <br />
+  If you have any questions or need assistance with the request form linked above,
+  please contact the Restricted Portfolio Management team at
+  <a href="mailto:VBA.RPM@va.gov">VBA.RPM@va.gov</a>.
+</div>;
 
 const duplicateNumberTitle = { title: COPY.DUPLICATE_PHONE_NUMBER_TITLE };
 const duplicateNumberMsg = <div>
@@ -42,10 +65,23 @@ class LoadingDataDisplay extends React.PureComponent {
 
     this.setState({ promiseStartTimeMs: Date.now() });
 
+    const metricData = {
+      message: this.props.loadingComponentProps?.message || 'loading screen',
+      type: 'performance',
+      data: {
+        failStatusMessageProps: this.props.failStatusMessageProps,
+        loadingComponentProps: this.props.loadingComponentProps,
+        slowLoadMessage: this.props.slowLoadMessage,
+        slowLoadThresholdMs: this.props.slowLoadThresholdMs,
+        timeoutMs: this.props.timeoutMs,
+        prefetchDisabled: this.props.prefetchDisabled
+      }
+    };
+
     // Promise does not give us a way to "un-then" and stop listening
     // when the component unmounts. So we'll leave this reference dangling,
     // but at least we can use this._isMounted to avoid taking action if necessary.
-    promise.then(
+    recordAsyncMetrics(promise, metricData, this.props.metricsLoadScreen).then(
       () => {
         if (!this._isMounted) {
           return;
@@ -93,9 +129,8 @@ class LoadingDataDisplay extends React.PureComponent {
     this._isMounted = false;
   }
 
-  // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    if (this.props.createLoadPromise.toString() !== nextProps.createLoadPromise.toString()) {
+  componentDidUpdate(prevProps) {
+    if (this.props.createLoadPromise.toString() !== prevProps.createLoadPromise.toString()) {
       throw new Error("Once LoadingDataDisplay is instantiated, you can't change the createLoadPromise function.");
     }
   }
@@ -162,7 +197,9 @@ LoadingDataDisplay.propTypes = {
   loadingComponentProps: PropTypes.object,
   slowLoadMessage: PropTypes.string,
   slowLoadThresholdMs: PropTypes.number,
-  timeoutMs: PropTypes.number
+  timeoutMs: PropTypes.number,
+  metricsLoadScreen: PropTypes.bool,
+  prefetchDisabled: PropTypes.bool,
 };
 
 LoadingDataDisplay.defaultProps = {
@@ -173,7 +210,8 @@ LoadingDataDisplay.defaultProps = {
   errorComponent: StatusMessage,
   loadingComponentProps: {},
   failStatusMessageProps: {},
-  failStatusMessageChildren: DEFAULT_UNKNOWN_ERROR_MSG
+  failStatusMessageChildren: DEFAULT_UNKNOWN_ERROR_MSG,
+  metricsLoadScreen: false,
 };
 
 export default LoadingDataDisplay;

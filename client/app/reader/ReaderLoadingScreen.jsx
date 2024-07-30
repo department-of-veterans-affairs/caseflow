@@ -32,8 +32,7 @@ export class ReaderLoadingScreen extends React.Component {
         this.props.onReceiveAnnotations(annotations);
       }).
       catch((err) => {
-        // allow HTTP errors to fall on the floor via the console.
-        console.error(new Error(`Problem with GET /reader/appeal/${this.props.vacolsId}/documents?json ${err}`));
+        throw err;
       });
   }
 
@@ -52,7 +51,9 @@ export class ReaderLoadingScreen extends React.Component {
       failStatusMessageProps={{
         title: 'Unable to load documents'
       }}
-      failStatusMessageChildren={failStatusMessageChildren}>
+      failStatusMessageChildren={failStatusMessageChildren}
+      metricsLoadScreen={this.props.featureToggles.metricsLoadScreen}
+      prefetchDisabled={this.props.featureToggles.prefetchDisabled}>
       {this.props.children}
     </LoadingDataDisplay>;
 
@@ -66,7 +67,8 @@ ReaderLoadingScreen.propTypes = {
   onReceiveAnnotations: PropTypes.func,
   onReceiveDocs: PropTypes.func,
   onReceiveManifests: PropTypes.func,
-  vacolsId: PropTypes.string
+  vacolsId: PropTypes.string,
+  featureToggles: PropTypes.object
 };
 
 const mapStateToProps = (state) => ({

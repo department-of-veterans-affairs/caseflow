@@ -317,7 +317,7 @@ export class PdfUI extends React.Component {
         </span>
       </div>
       <div>
-        <DocumentSearch file={this.props.doc.content_url} />
+        <DocumentSearch file={this.props.doc.content_url} featureToggles={this.props.featureToggles} />
         <Pdf
           documentId={this.props.doc.id}
           documentPathBase={this.props.documentPathBase}
@@ -330,6 +330,8 @@ export class PdfUI extends React.Component {
           onPageChange={this.onPageChange}
           prefetchFiles={this.props.prefetchFiles}
           resetJumpToPage={this.props.resetJumpToPage}
+          featureToggles={this.props.featureToggles}
+          renderStartTime={this.props.renderStartTime}
         />
       </div>
       { this.getPdfFooter() }
@@ -405,5 +407,6 @@ PdfUI.propTypes = {
   showPdf: PropTypes.func,
   stopPlacingAnnotation: PropTypes.func,
   togglePdfSidebar: PropTypes.func,
-  toggleSearchBar: PropTypes.any
+  toggleSearchBar: PropTypes.any,
+  renderStartTime: PropTypes.any
 };

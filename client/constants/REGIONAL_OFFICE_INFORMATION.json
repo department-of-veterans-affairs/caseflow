@@ -157,7 +157,7 @@
     "timezone": "America/New_York",
     "hold_hearings": true,
     "facility_locator_id": "vba_317",
-    "alternate_locations": ["vba_317a", "vc_0742V"]
+    "alternate_locations": ["vc_0742V"]
   },
   "RO18": {
     "label": "Winston-Salem regional office",
@@ -477,6 +477,7 @@
     "alternate_locations": [
       "vha_653",
       "vha_653BY",
+      "vha_653QA",
       "vba_347",
       "vha_653GB",
       "vha_648GA",
@@ -484,7 +485,8 @@
       "vha_687GC",
       "vha_653GA",
       "vba_346",
-      "vha_692"
+      "vha_692",
+      "vha_692GB"
     ]
   },
   "RO49": {
@@ -530,7 +532,7 @@
     "timezone": "America/Los_Angeles",
     "hold_hearings": true,
     "facility_locator_id": "vba_354",
-    "alternate_locations": ["vha_593", "vc_0505V"]
+    "alternate_locations": ["vha_593"]
   },
   "RO55": {
     "label": "San Juan regional office",

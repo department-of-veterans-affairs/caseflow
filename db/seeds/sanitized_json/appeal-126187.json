@@ -6378,7 +6378,7 @@
     },
     {
       "id": 222,
-      "type": "BusinessLine",
+      "type": "VhaBusinessLine",
       "name": "Veterans Health Administration",
       "role": null,
       "url": "vha",

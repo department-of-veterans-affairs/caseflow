@@ -7,6 +7,7 @@
 class PushPriorityAppealsToJudgesJob < CaseflowJob
   # For time_ago_in_words()
   include ActionView::Helpers::DateHelper
+  include RunAsyncable
 
   queue_with_priority :low_priority
   application_attr :queue
@@ -18,30 +19,32 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
 
     @genpop_distributions = distribute_genpop_priority_appeals
 
+    perform_later_or_now(UpdateAppealAffinityDatesJob)
+
     send_job_report
   rescue StandardError => error
     start_time ||= Time.zone.now # temporary fix to get this job to succeed
     duration = time_ago_in_words(start_time)
     slack_msg = "<!here>\n [ERROR] after running for #{duration}: #{error.message}"
-    slack_service.send_notification(slack_msg, self.class.name, "#appeals-job-alerts")
+    slack_service.send_notification(slack_msg, self.class.name)
     log_error(error)
   ensure
-    datadog_report_runtime(metric_group_name: "priority_appeal_push_job")
+    metrics_service_report_runtime(metric_group_name: "priority_appeal_push_job")
   end
 
   def send_job_report
-    slack_service.send_notification(slack_report.join("\n"), self.class.name, "#appeals-job-alerts")
+    slack_service.send_notification(slack_report.join("\n"), self.class.name)
   end
 
-  def slack_report
+  def slack_report # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     report = []
     if use_by_docket_date?
-      total_cases = @genpop_distributions.map(&:distributed_batch_size).sum
+      total_cases = @genpop_distributions.map(&:distributed_cases_count).sum
       report << "*Number of cases distributed*: " \
                 "#{total_cases}"
     else
-      tied_distributions_sum = @tied_distributions.map(&:distributed_batch_size).sum
-      genpop_distributions_sum = @genpop_distributions.map(&:distributed_batch_size).sum
+      tied_distributions_sum = @tied_distributions.map(&:distributed_cases_count).sum
+      genpop_distributions_sum = @genpop_distributions.map(&:distributed_cases_count).sum
       report << "*Number of cases tied to judges distributed*: " \
                 "#{tied_distributions_sum}"
       report << "*Number of general population cases distributed*: " \
@@ -57,14 +60,12 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     docket_coordinator.dockets.each_pair do |sym, docket|
       report << "*Number of #{sym} appeals _not_ distributed*: #{docket.count(priority: true, ready: true)}"
     end
-    unless disable_legacy?
-      report << "*Number of Legacy Hearing Non Genpop appeals _not_ distributed*: #{legacy_not_genpop_count}"
-    end
+    report << "*Number of Legacy Hearing Non Genpop appeals _not_ distributed*: #{legacy_not_genpop_count}"
 
     report << ""
     report << "*Debugging information*"
     report << "Priority Target: #{priority_target}"
-    report << "Previous monthly distributions {judge_id=>count}: #{priority_distributions_this_month_for_eligible_judges}"
+    report << "Previous monthly distributions {judge_id=>count}: #{priority_distributions_this_month_for_eligible_judges}" # rubocop:disable Layout/LineLength
 
     if appeals_not_distributed.values.flatten.any?
       add_stuck_appeals_to_report(report, appeals_not_distributed)
@@ -170,7 +171,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     @priority_distributions_this_month_for_all_judges ||= priority_distributions_this_month
       .pluck(:judge_id, :statistics)
       .group_by(&:first)
-      .map { |judge_id, arr| [judge_id, arr.flat_map(&:last).map { |stats| stats["batch_size"] }.sum] }.to_h
+      .transform_values { |arr| arr.flat_map(&:last).map { |stats| stats["batch_size"] }.sum }
   end
 
   def priority_distributions_this_month
@@ -179,10 +180,6 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
 
   def use_by_docket_date?
     FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
-  end
-
-  def disable_legacy?
-    FeatureToggle.enabled?(:acd_disable_legacy_distributions, user: RequestStore.store[:current_user])
   end
 
   def legacy_not_genpop_count

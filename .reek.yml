@@ -74,7 +74,6 @@ detectors:
       - Api::ApplicationController#upstream_known_error
       - AppealAvailableHearingLocations#suggested_hearing_location
       - AppealTaskHistory#build_events
-      - ApplicationRecord#as_hash
       - AssignHearingDispositionTask#reschedule_or_schedule_later
       - AsyncableJobsReporter
       - CachedAppealService#cache_ama_appeals
@@ -199,6 +198,7 @@ detectors:
       - UpdateCachedAppealsAttributesJob
       - Veteran
       - LegacyDocket
+      - Test::UsersController
   TooManyConstants:
     exclude:
       - Fakes::BGSServicePOA
@@ -252,6 +252,7 @@ detectors:
       - Reporter#percent
       - SanitizedJsonConfiguration
       - ScheduleHearingTaskPager#sorted_tasks
+      - UpdatePOAConcern
       - VBMSCaseflowLogger#log
       - LegacyDocket
   UnusedParameters:
@@ -277,6 +278,13 @@ directories:
       enabled: false
   "app/mailers":
     InstanceVariableAssumption:
+      enabled: false
+  "db/seeds":
+    InstanceVariableAssumption:
+      enabled: false
+    TooManyInstanceVariables:
+      enabled: false
+    DataClump:
       enabled: false
 
 ### Excluding directories

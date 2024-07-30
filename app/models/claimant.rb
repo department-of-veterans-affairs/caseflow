@@ -7,17 +7,18 @@
 class Claimant < CaseflowRecord
   include HasDecisionReviewUpdatedSince
 
-  include BelongsToPolymorphicAppealConcern
-  belongs_to_polymorphic_appeal :decision_review
+  include ClaimantBelongsToPolymorphicAppealConcern
 
   belongs_to :person, primary_key: :participant_id, foreign_key: :participant_id
   has_one :unrecognized_appellant, lambda { |claimant|
     where(id: UnrecognizedAppellant.order(:id).find_by(claimant: claimant)&.id)
   }, dependent: :destroy
 
+  # rubocop:disable Rails/UniqueValidationWithoutIndex
   validates :participant_id,
             uniqueness: { scope: [:decision_review_id, :decision_review_type],
                           on: :create }
+  # rubocop:enable Rails/UniqueValidationWithoutIndex
 
   delegate :advanced_on_docket?,
            :advanced_on_docket_based_on_age?,

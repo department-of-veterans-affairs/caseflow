@@ -7,7 +7,6 @@ class UpdateAppellantRepresentationJob < CaseflowJob
   include ActionView::Helpers::DateHelper
   queue_with_priority :low_priority
   application_attr :queue
-
   APP_NAME = "caseflow_job"
   METRIC_GROUP_NAME = UpdateAppellantRepresentationJob.name.underscore
   TOTAL_NUMBER_OF_APPEALS_TO_UPDATE = 1000
@@ -82,7 +81,7 @@ class UpdateAppellantRepresentationJob < CaseflowJob
 
   def increment_task_count(task_effect, appeal_id, count = 1)
     count.times do
-      DataDogService.increment_counter(
+      MetricsService.increment_counter(
         app_name: APP_NAME,
         metric_group: METRIC_GROUP_NAME,
         metric_name: "tasks",
@@ -105,6 +104,6 @@ class UpdateAppellantRepresentationJob < CaseflowJob
 
     slack_service.send_notification("[ERROR] #{msg}", self.class.to_s)
 
-    datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)
+    metrics_service_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   end
 end

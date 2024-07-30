@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 describe Api::V1::VaNotifyController, type: :controller do
-  before do
-    Seeds::NotificationEvents.new.seed!
-  end
+  include ActiveJob::TestHelper
+
+  before { Seeds::NotificationEvents.new.seed! }
+
   let(:api_key) { ApiKey.create!(consumer_name: "API Consumer").key_string }
   let!(:appeal) { create(:appeal) }
   let!(:notification_email) do
@@ -12,7 +13,7 @@ describe Api::V1::VaNotifyController, type: :controller do
       appeals_id: appeal.uuid,
       appeals_type: "Appeal",
       event_date: "2023-02-27 13:11:51.91467",
-      event_type: "Quarterly Notification",
+      event_type: Constants.EVENT_TYPE_FILTERS.quarterly_notification,
       notification_type: "Email",
       notified_at: "2023-02-28 14:11:51.91467",
       email_notification_external_id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
@@ -25,7 +26,7 @@ describe Api::V1::VaNotifyController, type: :controller do
       appeals_id: appeal.uuid,
       appeals_type: "Appeal",
       event_date: "2023-02-27 13:11:51.91467",
-      event_type: "Quarterly Notification",
+      event_type: Constants.EVENT_TYPE_FILTERS.quarterly_notification,
       notification_type: "Email",
       notified_at: "2023-02-28 14:11:51.91467",
       sms_notification_external_id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
@@ -69,8 +70,10 @@ describe Api::V1::VaNotifyController, type: :controller do
     it "updates status of notification" do
       request.headers["Authorization"] = "Bearer #{api_key}"
       post :notifications_update, params: payload_email
-      notification_email.reload
-      expect(notification_email.email_notification_status).to eq("created")
+
+      perform_enqueued_jobs { ProcessNotificationStatusUpdatesJob.perform_later }
+
+      expect(notification_email.reload.email_notification_status).to eq("created")
     end
   end
 
@@ -84,8 +87,10 @@ describe Api::V1::VaNotifyController, type: :controller do
     it "updates status of notification" do
       request.headers["Authorization"] = "Bearer #{api_key}"
       post :notifications_update, params: payload_sms
-      notification_sms.reload
-      expect(notification_sms.sms_notification_status).to eq("created")
+
+      perform_enqueued_jobs { ProcessNotificationStatusUpdatesJob.perform_later }
+
+      expect(notification_sms.reload.sms_notification_status).to eq("created")
     end
   end
 
@@ -128,10 +133,16 @@ describe Api::V1::VaNotifyController, type: :controller do
       }
     end
 
-    it "updates status of notification" do
+    it "Update job raises error if UUID is passed in for a non-existant notification" do
+      expect_any_instance_of(ProcessNotificationStatusUpdatesJob).to receive(:log_error) do |_job, error|
+        expect(error.message).to eq("No notification matches UUID #{payload_fake.dig(:id)}")
+      end
+
       request.headers["Authorization"] = "Bearer #{api_key}"
       post :notifications_update, params: payload_fake
-      expect(response.status).to eq(500)
+      expect(response.status).to eq(200)
+
+      perform_enqueued_jobs { ProcessNotificationStatusUpdatesJob.perform_later }
     end
   end
 end

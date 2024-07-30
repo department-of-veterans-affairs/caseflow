@@ -14,7 +14,10 @@ describe IssueMapper do
         level_2: "03",
         level_3: nil,
         note: "k" * 120,
-        vacols_user_id: "TEST1"
+        vacols_user_id: "TEST1",
+        mst_status: "Y",
+        pact_status: "Y"
+
       }
     end
 
@@ -32,7 +35,9 @@ describe IssueMapper do
           isslev3: nil,
           issdesc: "k" * 100,
           issaduser: "TEST1",
-          issadtime: VacolsHelper.local_time_with_utc_timezone
+          issadtime: VacolsHelper.local_time_with_utc_timezone,
+          issmst: "Y",
+          isspact: "Y"
         }
       end
 
@@ -63,7 +68,9 @@ describe IssueMapper do
           isslev3: nil,
           issdesc: "k" * 100,
           issmduser: "TEST1",
-          issmdtime: VacolsHelper.local_time_with_utc_timezone
+          issmdtime: VacolsHelper.local_time_with_utc_timezone,
+          issmst: "Y",
+          isspact: "Y"
         }
       end
 

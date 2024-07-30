@@ -239,18 +239,22 @@ SAN FRANCISCO, CA 94103
                   </FormLabel>
                 </strong>
               </label>
-              <input
-                className={
-                  Array [
-                    "cf-form-textinput cf-inline-field",
-                  ]
-                }
-                id="Appellant Email (for these notifications only)"
-                name="Appellant Email (for these notifications only)"
-                onBlur={[Function]}
-                onChange={[Function]}
-                type="text"
-              />
+              <div
+                className="input-container"
+              >
+                <input
+                  className={
+                    Array [
+                      "cf-form-textinput cf-inline-field",
+                    ]
+                  }
+                  id="Appellant Email (for these notifications only)"
+                  name="Appellant Email (for these notifications only)"
+                  onBlur={[Function]}
+                  onChange={[Function]}
+                  type="text"
+                />
+              </div>
             </div>
           </TextField>
           <HelperText
@@ -17044,18 +17048,22 @@ SAN FRANCISCO, CA 94103
                   </FormLabel>
                 </strong>
               </label>
-              <input
-                className={
-                  Array [
-                    "cf-form-textinput cf-inline-field",
-                  ]
-                }
-                id="Veteran Email (for these notifications only)"
-                name="Veteran Email (for these notifications only)"
-                onBlur={[Function]}
-                onChange={[Function]}
-                type="text"
-              />
+              <div
+                className="input-container"
+              >
+                <input
+                  className={
+                    Array [
+                      "cf-form-textinput cf-inline-field",
+                    ]
+                  }
+                  id="Veteran Email (for these notifications only)"
+                  name="Veteran Email (for these notifications only)"
+                  onBlur={[Function]}
+                  onChange={[Function]}
+                  type="text"
+                />
+              </div>
             </div>
           </TextField>
           <HelperText
@@ -17468,18 +17476,22 @@ exports[`Appellant Does not display address when formFieldsOnly = true 1`] = `
                   </FormLabel>
                 </strong>
               </label>
-              <input
-                className={
-                  Array [
-                    "cf-form-textinput cf-inline-field",
-                  ]
-                }
-                id="Appellant Email (for these notifications only)"
-                name="Appellant Email (for these notifications only)"
-                onBlur={[Function]}
-                onChange={[Function]}
-                type="text"
-              />
+              <div
+                className="input-container"
+              >
+                <input
+                  className={
+                    Array [
+                      "cf-form-textinput cf-inline-field",
+                    ]
+                  }
+                  id="Appellant Email (for these notifications only)"
+                  name="Appellant Email (for these notifications only)"
+                  onBlur={[Function]}
+                  onChange={[Function]}
+                  type="text"
+                />
+              </div>
             </div>
           </TextField>
           <HelperText
@@ -17722,18 +17734,22 @@ SAN FRANCISCO, CA 94103
                   </FormLabel>
                 </strong>
               </label>
-              <input
-                className={
-                  Array [
-                    "cf-form-textinput cf-inline-field",
-                  ]
-                }
-                id="Veteran Email (for these notifications only)"
-                name="Veteran Email (for these notifications only)"
-                onBlur={[Function]}
-                onChange={[Function]}
-                type="text"
-              />
+              <div
+                className="input-container"
+              >
+                <input
+                  className={
+                    Array [
+                      "cf-form-textinput cf-inline-field",
+                    ]
+                  }
+                  id="Veteran Email (for these notifications only)"
+                  name="Veteran Email (for these notifications only)"
+                  onBlur={[Function]}
+                  onChange={[Function]}
+                  type="text"
+                />
+              </div>
             </div>
           </TextField>
           <HelperText

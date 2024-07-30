@@ -8,7 +8,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_PATHS } from '../intake/constants';
-import { EditAddIssuesPage } from '../intake/pages/addIssues';
+import { EditAddIssuesPage } from '../intake/pages/addIssues/addIssues';
 import SplitAppealView from '../intake/pages/SplitAppealView';
 import DecisionReviewEditCompletedPage from '../intake/pages/decisionReviewEditCompleted';
 import Message from './pages/message';
@@ -20,6 +20,7 @@ import SplitAppealProgressBar from '../intake/components/SplitAppealProgressBar'
 import SplitButtons from './components/SplitButtons';
 import IntakeAppealContext from './components/IntakeAppealContext';
 import ReviewAppealView from '../intake/pages/ReviewAppealView';
+import PendingIssueModificationBanner from './components/PendingIssueModificationRequestBanner';
 
 const textAlignRightStyling = css({
   textAlign: 'right',
@@ -127,6 +128,7 @@ export const IntakeEditFrame = (props) => {
           }}
           userDisplayName={props.userDisplayName}
           dropdownUrls={props.dropdownUrls}
+          applicationUrls={props.applicationUrls}
           topMessage={topMessage}
           defaultUrl="/"
         >
@@ -134,6 +136,12 @@ export const IntakeEditFrame = (props) => {
             <Route exact path={PAGE_PATHS.CREATE_SPLIT} component={SplitAppealProgressBar} />
             <Route exact path={PAGE_PATHS.REVIEW_SPLIT} component={SplitAppealProgressBar} />
             <Provider>
+              <PageRoute
+                exact
+                path={PAGE_PATHS.BEGIN}
+                title="Edit Claim Issues | Caseflow Intake"
+                component={PendingIssueModificationBanner}
+              />
               <AppSegment filledBackground>
                 <div>
                   <PageRoute
@@ -273,10 +281,12 @@ IntakeEditFrame.propTypes = {
     requestIssues: PropTypes.array
   }),
   dropdownUrls: PropTypes.array,
+  applicationUrls: PropTypes.array,
   userDisplayName: PropTypes.string,
   appeal: PropTypes.object,
   claimId: PropTypes.string,
   user: PropTypes.string,
+  isLegacy: PropTypes.bool,
   routerTestProps: PropTypes.object,
   router: PropTypes.object
 };

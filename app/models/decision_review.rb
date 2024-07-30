@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class DecisionReview < CaseflowRecord
+  include AppealConcern
   include CachedAttributes
   include Asyncable
 
@@ -9,12 +10,23 @@ class DecisionReview < CaseflowRecord
   attr_reader :saving_review
 
   has_many :request_issues, as: :decision_review, dependent: :destroy
+  has_many :issue_modification_requests, as: :decision_review, dependent: :destroy
   has_many :claimants, as: :decision_review, dependent: :destroy
   has_many :request_decision_issues, through: :request_issues
   has_many :decision_issues, as: :decision_review, dependent: :destroy
   has_many :tasks, as: :appeal, dependent: :destroy
   has_many :request_issues_updates, as: :review, dependent: :destroy
   has_one :intake, as: :detail
+
+  delegate :power_of_attorney, to: :claimant, allow_nil: true
+  delegate :representative_name,
+           :representative_type,
+           :representative_address,
+           :representative_email_address,
+           :poa_last_synced_at,
+           :update_cached_attributes!,
+           :save_with_updated_bgs_record!,
+           to: :power_of_attorney, allow_nil: true
 
   cache_attribute :cached_serialized_ratings, cache_key: :ratings_cache_key, expires_in: 1.day do
     ratings_with_issues_or_decisions.map(&:serialize)
@@ -91,6 +103,10 @@ class DecisionReview < CaseflowRecord
     end
   end
 
+  def bgs_power_of_attorney
+    claimant&.is_a?(BgsRelatedClaimant) ? power_of_attorney : nil
+  end
+
   def serialized_ratings
     return unless receipt_date
     return unless can_contest_rating_issues?
@@ -109,7 +125,7 @@ class DecisionReview < CaseflowRecord
   end
 
   def number_of_issues
-    request_issues.count
+    request_issues.active.count
   end
 
   def external_id
@@ -246,6 +262,10 @@ class DecisionReview < CaseflowRecord
     @active_nonrating_request_issues ||= RequestIssue.nonrating.active
       .where(veteran_participant_id: veteran.participant_id)
       .where.not(id: request_issues.map(&:id))
+  end
+
+  def pending_issue_modification_requests
+    issue_modification_requests.includes(:request_issue, :requestor, :decider).select(&:assigned?)
   end
 
   # do not confuse ui_hash with serializer. ui_hash for intake and intakeEdit. serializer for work queue.

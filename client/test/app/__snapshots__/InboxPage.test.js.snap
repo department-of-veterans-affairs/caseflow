@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`InboxPage rendering with an empty inbox renders correctly 1`] = `
+<div>
+  <div
+    class="cf-txt-c"
+  >
+    <h1>
+      Success! You have no unread messages.
+    </h1>
+  </div>
+</div>
+`;

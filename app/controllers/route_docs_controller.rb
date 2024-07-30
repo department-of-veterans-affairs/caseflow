@@ -5,6 +5,7 @@ class RouteDocsController < ApplicationController
     SOURCE_URL_PREFIX = "https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/controllers/"
 
     attr_reader :rails_route
+
     delegate :defaults, :verb, to: :rails_route
 
     def initialize(rails_route)
@@ -56,7 +57,9 @@ class RouteDocsController < ApplicationController
 
   def index
     all_routes = Rails.application.routes.routes.map(&method(:documented_route))
-    @routes = all_routes.compact.sort_by { |rt| [(rt.schema.present? ? 0 : 1), rt.path] }
+    @routes = all_routes.compact
+      .filter { |route| route.schema.present? }
+      .sort_by { |rt| [(rt.schema.present? ? 0 : 1), rt.path] }
   end
 
   private

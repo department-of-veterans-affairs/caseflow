@@ -422,31 +422,77 @@ exports[`MTVJudgeDisposition with denied disposition selected renders correctly 
           </div>
         </div>
       </div>
-      <div
-        class="mtv-review-hyperlink cf-margin-bottom-2rem   "
+      <fieldset
+        class="mtv-vacate-type cf-form-radio "
       >
-        <label
-          for="hyperlink"
+        <legend
+          class=""
         >
           <strong>
             <span>
-              Insert Caseflow Reader document hyperlink to denial draft
+              What type of vacate?
+               
               <span
-                class="cf-optional"
+                class="cf-required"
               >
-                Optional
+                 Required
               </span>
             </span>
           </strong>
-        </label>
-        <input
-          class="mtv-review-hyperlink,cf-margin-bottom-2rem"
-          id="hyperlink"
-          name="hyperlink"
-          type="text"
-          value=""
-        />
-      </div>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="vacate-type_vacate_and_readjudication"
+              name="vacate_type"
+              type="radio"
+              value="vacate_and_readjudication"
+            />
+            <label
+              class=""
+              for="vacate-type_vacate_and_readjudication"
+            >
+              Vacate and Readjudication (1 document)
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="vacate-type_straight_vacate"
+              name="vacate_type"
+              type="radio"
+              value="straight_vacate"
+            />
+            <label
+              class=""
+              for="vacate-type_straight_vacate"
+            >
+              Straight Vacate (1 document)
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="vacate-type_vacate_and_de_novo"
+              name="vacate_type"
+              type="radio"
+              value="vacate_and_de_novo"
+            />
+            <label
+              class=""
+              for="vacate-type_vacate_and_de_novo"
+            >
+              Vacate and De Novo (2 documents)
+            </label>
+          </div>
+        </div>
+      </fieldset>
       <div
         class="cf-form-textarea"
       >
@@ -456,7 +502,7 @@ exports[`MTVJudgeDisposition with denied disposition selected renders correctly 
         >
           <strong>
             <span>
-              Provide context and instructions on which issues should be denied
+              Provide context and instructions on which issues should be granted
               <span
                 class="cf-optional"
               >
@@ -470,14 +516,114 @@ exports[`MTVJudgeDisposition with denied disposition selected renders correctly 
           name="instructions"
         />
       </div>
+      <div
+        class=""
+      >
+        <div
+          class="cf-form-dropdown dropdown-attorney"
+          data-css-33yksw=""
+        >
+          <label
+            class="question-label"
+            for="attorney"
+            id="attorney-label"
+          >
+            <strong>
+              <span>
+                Assign to decisions attorney
+              </span>
+            </strong>
+          </label>
+          <div
+            class="cf-select"
+          >
+            <div
+              class=" css-2b097c-container"
+            >
+              <div
+                class="cf-select__control css-yk16xz-control"
+              >
+                <div
+                  class="cf-select__value-container css-g1d714-ValueContainer"
+                >
+                  <div
+                    class="cf-select__placeholder css-1wa3eu0-placeholder"
+                  >
+                    Select attorney
+                  </div>
+                  <div
+                    class="css-81nyic-Input"
+                  >
+                    <div
+                      class="cf-select__input"
+                      style="display: inline-block;"
+                    >
+                      <input
+                        aria-autocomplete="list"
+                        aria-expanded="false"
+                        aria-haspopup="true"
+                        aria-labelledby="attorney-label"
+                        aria-owns="attorney-listbox"
+                        autocapitalize="none"
+                        autocomplete="off"
+                        autocorrect="off"
+                        id="attorney"
+                        role="combobox"
+                        spellcheck="false"
+                        style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                        tabindex="0"
+                        type="text"
+                        value=""
+                      />
+                      <div
+                        style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                >
+                  <span
+                    class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                  />
+                  <div
+                    aria-hidden="true"
+                    class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      class="css-6q0nyr-Svg"
+                      focusable="false"
+                      height="20"
+                      viewBox="0 0 20 20"
+                      width="20"
+                    >
+                      <path
+                        d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <input
+                name="attorney"
+                type="hidden"
+                value=""
+              />
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
     <div
       class="controls cf-app-segment"
     >
       <span>
         <button
-          class="cf-right-side usa-button"
+          class="cf-right-side usa-button-disabled usa-button"
           data-css-wn5k45=""
+          disabled=""
           id="button-submit"
           type="button"
         >
@@ -685,31 +831,77 @@ exports[`MTVJudgeDisposition with dismissed disposition selected renders correct
           </div>
         </div>
       </div>
-      <div
-        class="mtv-review-hyperlink cf-margin-bottom-2rem   "
+      <fieldset
+        class="mtv-vacate-type cf-form-radio "
       >
-        <label
-          for="hyperlink"
+        <legend
+          class=""
         >
           <strong>
             <span>
-              Insert Caseflow Reader document hyperlink to dismissal draft
+              What type of vacate?
+               
               <span
-                class="cf-optional"
+                class="cf-required"
               >
-                Optional
+                 Required
               </span>
             </span>
           </strong>
-        </label>
-        <input
-          class="mtv-review-hyperlink,cf-margin-bottom-2rem"
-          id="hyperlink"
-          name="hyperlink"
-          type="text"
-          value=""
-        />
-      </div>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="vacate-type_vacate_and_readjudication"
+              name="vacate_type"
+              type="radio"
+              value="vacate_and_readjudication"
+            />
+            <label
+              class=""
+              for="vacate-type_vacate_and_readjudication"
+            >
+              Vacate and Readjudication (1 document)
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="vacate-type_straight_vacate"
+              name="vacate_type"
+              type="radio"
+              value="straight_vacate"
+            />
+            <label
+              class=""
+              for="vacate-type_straight_vacate"
+            >
+              Straight Vacate (1 document)
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="vacate-type_vacate_and_de_novo"
+              name="vacate_type"
+              type="radio"
+              value="vacate_and_de_novo"
+            />
+            <label
+              class=""
+              for="vacate-type_vacate_and_de_novo"
+            >
+              Vacate and De Novo (2 documents)
+            </label>
+          </div>
+        </div>
+      </fieldset>
       <div
         class="cf-form-textarea"
       >
@@ -719,7 +911,7 @@ exports[`MTVJudgeDisposition with dismissed disposition selected renders correct
         >
           <strong>
             <span>
-              Provide context and instructions on which issues should be dismissed
+              Provide context and instructions on which issues should be granted
               <span
                 class="cf-optional"
               >
@@ -733,14 +925,114 @@ exports[`MTVJudgeDisposition with dismissed disposition selected renders correct
           name="instructions"
         />
       </div>
+      <div
+        class=""
+      >
+        <div
+          class="cf-form-dropdown dropdown-attorney"
+          data-css-33yksw=""
+        >
+          <label
+            class="question-label"
+            for="attorney"
+            id="attorney-label"
+          >
+            <strong>
+              <span>
+                Assign to decisions attorney
+              </span>
+            </strong>
+          </label>
+          <div
+            class="cf-select"
+          >
+            <div
+              class=" css-2b097c-container"
+            >
+              <div
+                class="cf-select__control css-yk16xz-control"
+              >
+                <div
+                  class="cf-select__value-container css-g1d714-ValueContainer"
+                >
+                  <div
+                    class="cf-select__placeholder css-1wa3eu0-placeholder"
+                  >
+                    Select attorney
+                  </div>
+                  <div
+                    class="css-81nyic-Input"
+                  >
+                    <div
+                      class="cf-select__input"
+                      style="display: inline-block;"
+                    >
+                      <input
+                        aria-autocomplete="list"
+                        aria-expanded="false"
+                        aria-haspopup="true"
+                        aria-labelledby="attorney-label"
+                        aria-owns="attorney-listbox"
+                        autocapitalize="none"
+                        autocomplete="off"
+                        autocorrect="off"
+                        id="attorney"
+                        role="combobox"
+                        spellcheck="false"
+                        style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                        tabindex="0"
+                        type="text"
+                        value=""
+                      />
+                      <div
+                        style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                >
+                  <span
+                    class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                  />
+                  <div
+                    aria-hidden="true"
+                    class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      class="css-6q0nyr-Svg"
+                      focusable="false"
+                      height="20"
+                      viewBox="0 0 20 20"
+                      width="20"
+                    >
+                      <path
+                        d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <input
+                name="attorney"
+                type="hidden"
+                value=""
+              />
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
     <div
       class="controls cf-app-segment"
     >
       <span>
         <button
-          class="cf-right-side usa-button"
+          class="cf-right-side usa-button-disabled usa-button"
           data-css-wn5k45=""
+          disabled=""
           id="button-submit"
           type="button"
         >
@@ -764,8 +1056,6 @@ exports[`MTVJudgeDisposition with dismissed disposition selected renders correct
   </div>
 </div>
 `;
-
-exports[`MTVJudgeDisposition with granted disposition selected passes a11y 1`] = `<div />`;
 
 exports[`MTVJudgeDisposition with granted disposition selected renders correctly 1`] = `
 <div>
@@ -1330,47 +1620,6 @@ exports[`MTVJudgeDisposition with partially_granted disposition selected renders
           </div>
         </div>
       </fieldset>
-      <fieldset
-        class="checkbox-wrapper-issues cf-form-checkboxes cf-checkbox-group"
-      >
-        <legend
-          class=""
-        >
-          <strong>
-            <span>
-              Which issues would you like to vacate?
-            </span>
-          </strong>
-        </legend>
-        <div
-          class="checkbox"
-        >
-          <input
-            id="1"
-            name="1"
-            type="checkbox"
-          />
-          <label
-            for="1"
-          >
-            1. This is a description of the decision
-          </label>
-        </div>
-        <div
-          class="checkbox"
-        >
-          <input
-            id="2"
-            name="2"
-            type="checkbox"
-          />
-          <label
-            for="2"
-          >
-            2. This is a description of another decision
-          </label>
-        </div>
-      </fieldset>
       <div
         style="max-width: 46rem; margin-bottom: 1.5em;"
       >
@@ -1480,7 +1729,7 @@ exports[`MTVJudgeDisposition with partially_granted disposition selected renders
         >
           <strong>
             <span>
-              Provide context and instructions on which issues should be partially_granted
+              Provide context and instructions on which issues should be granted
               <span
                 class="cf-optional"
               >

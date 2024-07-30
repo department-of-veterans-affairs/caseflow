@@ -138,10 +138,10 @@ BoardGrantUnconnected.propTypes = {
 
 const BoardGrant = connect(
   (state) => ({
-    appeal: state.appeal,
-    businessLine: state.businessLine,
-    task: state.task,
-    decisionIssuesStatus: state.decisionIssuesStatus
+    appeal: state.nonComp.appeal,
+    businessLine: state.nonComp.businessLine,
+    task: state.nonComp.task,
+    decisionIssuesStatus: state.nonComp.decisionIssuesStatus
   })
 )(BoardGrantUnconnected);
 

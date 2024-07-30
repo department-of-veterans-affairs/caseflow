@@ -38,4 +38,8 @@ class RatingProfileDisability < SimpleDelegator
       evaluation[:conv_begin_dt] || evaluation[:begin_dt] || evaluation[:dis_dt] || Time.zone.local(0)
     end
   end
+
+  def special_issues
+    @special_issues ||= Array.wrap(self[:disability_special_issues])
+  end
 end

@@ -42,3 +42,24 @@ export const basic = Template.bind({});
 
 export const WithSkipButton = Template.bind({});
 WithSkipButton.args = { ...defaultArgs, onSkip: () => true };
+
+export const VhaBenefitType = Template.bind({});
+VhaBenefitType.args = {
+  ...defaultArgs,
+  intakeData: {
+    activeNonratingRequestIssues: [],
+    benefitType: 'vha'
+  }
+};
+
+export const withDecisionDateRequiredBanner = Template.bind({});
+withDecisionDateRequiredBanner.args = {
+  ...defaultArgs,
+  intakeData: {
+    activeNonratingRequestIssues: [],
+    benefitType: 'vha',
+    taskInProgress: true
+  },
+  userIsVhaAdmin: true,
+  formType: 'higher_level_review'
+};

@@ -41,15 +41,9 @@ const ERRORS = {
 };
 
 export class SignAndCertify extends React.Component {
-  // TODO: updating state in UNSAFE_componentWillMount is
-  // sometimes thought of as an anti-pattern.
-  // is there a better way to do this?
-  UNSAFE_componentWillMount() {
-    this.props.updateProgressBar();
-  }
-
   /* eslint class-methods-use-this: ["error", { "exceptMethods": ["componentDidMount"] }] */
   componentDidMount() {
+    this.props.updateProgressBar();
     window.scrollTo(0, 0);
   }
 
@@ -267,5 +261,11 @@ SignAndCertify.propTypes = {
   erroredFields: PropTypes.array,
   scrollToError: PropTypes.bool,
   match: PropTypes.object.isRequired,
-  certificationStatus: PropTypes.string
+  certificationStatus: PropTypes.string,
+  updateProgressBar: PropTypes.func,
+  showValidationErrors: PropTypes.func,
+  certificationUpdateStart: PropTypes.func,
+  loading: PropTypes.bool,
+  serverError: PropTypes.bool,
+  updateSucceeded: PropTypes.bool
 };

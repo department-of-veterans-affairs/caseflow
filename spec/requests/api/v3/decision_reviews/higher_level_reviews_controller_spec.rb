@@ -180,7 +180,6 @@ describe Api::V3::DecisionReviews::HigherLevelReviewsController, :all_dbs, type:
         "/api/v3/decision_reviews/higher_level_reviews/#{uuid}",
         headers: authorization_header
       )
-
       request_issue = JSON.parse(response.body)["included"].find { |obj| obj["type"] == "RequestIssue" }["attributes"]
       rating_issue = rating.issues.find { |issue| issue.reference_id == request_issue["ratingIssueId"] }
 

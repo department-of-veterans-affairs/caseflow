@@ -1,573 +1,1053 @@
 # frozen_string_literal: true
 
-describe HearingRequestDocket, :all_dbs do
-  describe "#age_of_n_oldest_genpop_priority_appeals" do
-    let(:judge_user) { create(:user, last_login_at: Time.zone.now) }
-    let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
+describe HearingRequestDocket, :postgres do
+  before do
+    # these were the defaut values at time of writing tests but can change over time, so ensure they are set
+    # back to what the tests were originally written for
+    create(:case_distribution_lever, :ama_hearing_case_affinity_days, value: "60")
+    create(:case_distribution_lever, :ama_hearing_case_aod_affinity_days, value: "14")
+    create(:case_distribution_lever, :request_more_cases_minimum)
+    create(:case_distribution_lever, :batch_size_per_attorney)
+    create(:case_distribution_lever, :cavc_affinity_days)
+    create(:case_distribution_lever, :cavc_aod_affinity_days)
+    create(:case_distribution_lever, :ama_hearing_docket_time_goals)
+    create(:case_distribution_lever, :ama_hearing_start_distribution_prior_to_goals)
 
-    subject { HearingRequestDocket.new.age_of_n_oldest_genpop_priority_appeals(10) }
+    FeatureToggle.enable!(:acd_distribute_by_docket_date)
 
-    it "only returns priority, distributable, hearing docket appeals that match the following conditions:
-        where the most recent held hearing was not tied to an active judge
-        OR
-        appeals that have no hearings at all
-        appeals that have no hearings with disposition held" do
-      create_appeals_that_should_not_be_returned_by_query
+    # these were the defaut values at time of writing tests but can change over time, so ensure they are set
+    # back to what the tests were originally written for
+    CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_case_affinity_days).update!(value: "60")
+    CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days).update!(value: "14")
+    CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_docket_time_goals).update!(value: 60)
+    CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_start_distribution_prior_to_goals)
+      .update!(is_toggle_active: true)
+  end
 
-      # base conditions = priority, distributable, hearing docket
-      first_appeal = matching_all_base_conditions_with_no_hearings
-      second_appeal = matching_all_base_conditions_with_no_held_hearings
-      third_appeal = matching_all_base_conditions_with_most_recent_hearing_tied_to_other_judge_but_not_held
-      fourth_appeal = matching_all_base_conditions_with_most_recent_held_hearing_not_tied_to_any_judge
-      fifth_appeal = matching_all_conditions_except_not_tied_to_judge
-      recent_hearing_tied_to_judge = matching_all_base_conditions_with_most_recent_held_hearing_tied_to_judge
+  context "#ready_priority_appeals" do
+    let(:docket) { HearingRequestDocket.new }
+    let!(:ready_priority_appeal) { create_ready_aod_appeal }
+    let!(:ready_nonpriority_appeal) { create_ready_nonpriority_appeal }
+    let!(:not_ready_priority_appeal) { create_not_ready_aod_appeal }
 
-      result = [first_appeal, second_appeal, third_appeal, fourth_appeal, fifth_appeal, recent_hearing_tied_to_judge]
-        .map(&:ready_for_distribution_at).map(&:to_s)
-
-      # For some reason, in Circle CI, the datetimes are not matching exactly to the millisecond
-      expect(subject.map(&:to_s)).to match_array(result)
+    it "returns only ready priority appeals" do
+      allow(docket).to receive(:ready_priority_nonpriority_appeals).and_return([ready_priority_appeal])
+      expect(docket.ready_priority_nonpriority_appeals(priority: true, ready: true))
+        .to match_array([ready_priority_appeal])
     end
   end
 
-  describe "#distribute_appeals" do
+  context "#ready_nonpriority_appeals" do
+    let(:docket) { HearingRequestDocket.new }
+    let!(:ready_priority_appeal) { create_ready_aod_appeal }
+    let!(:not_ready_nonpriority_appeal) { create_not_ready_nonpriority_appeal }
+    let!(:ready_nonpriority_appeal) { create_ready_nonpriority_appeal }
+
+    before { ready_nonpriority_appeal.update!(receipt_date: 10.days.ago) }
+    subject { docket.ready_priority_nonpriority_appeals(priority: false, ready: true) }
+
+    it "returns only ready nonpriority appeals" do
+      expect(subject).to match_array([ready_nonpriority_appeal])
+    end
+
+    context "when appeals receipt date is not within the time goal" do
+      before do
+        CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_docket_time_goals).update!(value: 160)
+      end
+
+      it "returns an empty results" do
+        expect(subject).to eq([])
+      end
+    end
+
+    context "when appeals receipt date is within the time goal" do
+      let!(:ready_nonpriority_appeal_1) { create_ready_nonpriority_appeal }
+
+      before do
+        CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_docket_time_goals).update!(value: 90)
+        ready_nonpriority_appeal_1.update!(receipt_date: 40.days.ago)
+      end
+
+      it "returns only receipt_date nonpriority appeals with in the time goal" do
+        result = subject
+        expect(result).to include(ready_nonpriority_appeal_1)
+        expect(result).not_to include(ready_nonpriority_appeal)
+      end
+    end
+  end
+
+  context "age_of_n methods" do
+    let(:requesting_judge) { create(:user, :judge, :with_vacols_judge_record) }
+    let(:excluded_judge) { create(:user, :judge, :with_vacols_judge_record) }
+
+    let!(:ready_aod_appeal_tied_to_judge) do
+      create_ready_aod_appeal(tied_judge: requesting_judge, created_date: 7.days.ago)
+    end
+    let!(:ready_nonpriority_appeal_tied_to_judge) do
+      create_ready_nonpriority_appeal(tied_judge: requesting_judge, created_date: 5.days.ago)
+    end
+    let!(:ready_aod_appeal_tied_to_excluded_judge) do
+      create_ready_aod_appeal(tied_judge: excluded_judge, created_date: 3.days.ago)
+    end
+    let!(:ready_nonpriority_appeal_tied_to_excluded_judge) do
+      create_ready_nonpriority_appeal(tied_judge: excluded_judge, created_date: 1.day.ago)
+    end
+    let!(:ready_aod_appeal_hearing_cancelled) do
+      create_ready_aod_appeal_hearing_cancelled(created_date: 2.days.ago)
+    end
+    let!(:ready_nonpriority_appeal_hearing_cancelled) do
+      create_ready_nonpriority_appeal_hearing_cancelled(created_date: 2.days.ago)
+    end
+
+    context "#age_of_n_oldest_priority_appeals_available_to_judge" do
+      context "with exclude from affintiy set" do
+        before do
+          FeatureToggle.enable!(:acd_exclude_from_affinity)
+          JudgeTeam.for_judge(excluded_judge).update!(exclude_appeals_from_affinity: true)
+        end
+
+        subject { HearingRequestDocket.new.age_of_n_oldest_priority_appeals_available_to_judge(requesting_judge, 3) }
+
+        it "returns the receipt_date field of the oldest hearing priority appeals ready for distribution" do
+          expect(subject).to match_array(
+            [ready_aod_appeal_tied_to_judge.receipt_date,
+             ready_aod_appeal_tied_to_excluded_judge.receipt_date,
+             ready_aod_appeal_hearing_cancelled.receipt_date]
+          )
+        end
+      end
+
+      context "without exclude from affinity set" do
+        subject { HearingRequestDocket.new.age_of_n_oldest_priority_appeals_available_to_judge(requesting_judge, 3) }
+
+        it "returns the receipt_date field of the oldest hearing priority appeals ready for distribution" do
+          expect(subject).to match_array([ready_aod_appeal_hearing_cancelled.receipt_date])
+        end
+      end
+    end
+
+    context "#age_of_n_oldest_nonpriority_appeals_available_to_judge" do
+      context "with exclude from affinity set" do
+        before do
+          FeatureToggle.enable!(:acd_exclude_from_affinity)
+          JudgeTeam.for_judge(excluded_judge).update!(exclude_appeals_from_affinity: true)
+        end
+
+        subject do
+          HearingRequestDocket.new.age_of_n_oldest_nonpriority_appeals_available_to_judge(requesting_judge, 3)
+        end
+
+        it "returns the receipt_date field of the oldest hearing nonpriority appeals ready for distribution" do
+          expect(subject).to match_array(
+            [ready_nonpriority_appeal_tied_to_judge.receipt_date,
+             ready_nonpriority_appeal_tied_to_excluded_judge.receipt_date,
+             ready_nonpriority_appeal_hearing_cancelled.receipt_date]
+          )
+        end
+      end
+
+      context "without exclude from affinity set" do
+        subject do
+          HearingRequestDocket.new.age_of_n_oldest_nonpriority_appeals_available_to_judge(requesting_judge, 3)
+        end
+
+        it "returns the receipt_date field of the oldest hearing nonpriority appeals ready for distribution" do
+          expect(subject).to match_array([ready_nonpriority_appeal_hearing_cancelled.receipt_date])
+        end
+      end
+    end
+
+    context "when cases don't have an appeal_affinity record" do
+      let(:other_judge) { create(:user, :judge, :with_vacols_judge_record) }
+      let!(:ready_aod_appeal_tied_to_judge_without_appeal_affinity) do
+        create_ready_aod_appeal_no_appeal_affinity(tied_judge: requesting_judge, created_date: 7.days.ago)
+      end
+      let!(:ready_aod_appeal_tied_to_other_judge_without_appeal_affinity) do
+        create_ready_aod_appeal_no_appeal_affinity(tied_judge: other_judge, created_date: 7.days.ago)
+      end
+      let!(:ready_nonpriority_appeal_tied_to_judge_without_appeal_affinity) do
+        create_ready_nonpriority_appeal_no_appeal_affinity(tied_judge: requesting_judge, created_date: 5.days.ago)
+      end
+      let!(:ready_nonpriority_appeal_tied_to_other_judge_without_appeal_affinity) do
+        create_ready_nonpriority_appeal_no_appeal_affinity(tied_judge: other_judge, created_date: 5.days.ago)
+      end
+
+      before { FeatureToggle.enable!(:acd_exclude_from_affinity) }
+
+      subject { described_class.new }
+
+      it "priority appeals tied to the requesting judge are still selected" do
+        expect(subject.age_of_n_oldest_priority_appeals_available_to_judge(requesting_judge, 3)).to match_array(
+          [ready_aod_appeal_tied_to_judge.receipt_date,
+           ready_aod_appeal_tied_to_judge_without_appeal_affinity.receipt_date,
+           ready_aod_appeal_hearing_cancelled.receipt_date]
+        )
+      end
+
+      it "nonpriority appeals tied to the requesting judge are still selected" do
+        expect(subject.age_of_n_oldest_nonpriority_appeals_available_to_judge(requesting_judge, 3)).to match_array(
+          [ready_nonpriority_appeal_tied_to_judge.receipt_date,
+           ready_nonpriority_appeal_tied_to_judge_without_appeal_affinity.receipt_date,
+           ready_nonpriority_appeal_hearing_cancelled.receipt_date]
+        )
+      end
+    end
+  end
+
+  context "when the distribution contains Specialty Case Team appeals" do
+    subject do
+      HearingRequestDocket.new.distribute_appeals(distribution, priority: false, limit: limit, genpop: "any")
+    end
+
     let(:distribution_judge) { create(:user, last_login_at: Time.zone.now) }
     let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: distribution_judge.css_id) }
     let!(:distribution) { Distribution.create!(judge: distribution_judge) }
 
-    context "nonpriority appeals and not_genpop" do
-      subject do
-        HearingRequestDocket.new.distribute_appeals(
-          distribution, priority: false, limit: 10, genpop: "not_genpop"
-        )
-      end
+    let(:limit) { 15 }
 
-      it "only distributes nonpriority, distributable, hearing docket cases
-          where the most recent held hearing is tied to the distribution judge
-          but doesn't exceed affinity threshold" do
-        # commenting out parts of the test because setting hearing_case_affinity_days to 0 means cases can no longer be
-        # tied to judges
-        # When completing work under https://vajira.max.gov/browse/APPEALS-8311 this should be cleaned up or removed
-
-        create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge
-        matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
-
-        # This is the only one that is still considered tied (we want only non_genpop)
-        appeal = create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
-
-        # This appeal should not be returned because it is now considered genpop
-        outside_affinity = create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge_outside_affinity
-
-        tasks = subject
-
-        distributed_appeals = distribution_judge.reload.tasks.map(&:appeal)
-
-        expect(tasks.length).to eq(0)
-        # expect(tasks.first.class).to eq(DistributedCase)
-        # expect(tasks.first.genpop).to eq false
-        # expect(tasks.first.genpop_query).to eq "not_genpop"
-        # expect(distribution.distributed_cases.length).to eq(1)
-        # expect(distribution_judge.reload.tasks.map(&:appeal)).to eq([appeal])
-
-        # If hearing date exceeds specified days for affinity, appeal no longer tied to judge
-        expect(distributed_appeals).not_to include(outside_affinity)
-      end
+    let!(:vha_appeals) do
+      (1..5).map { create_nonpriority_distributable_vha_hearing_appeal_not_tied_to_any_judge }
     end
 
-    context "priority appeals and not_genpop" do
-      subject do
-        HearingRequestDocket.new.distribute_appeals(
-          distribution, priority: true, limit: 10, genpop: "not_genpop"
-        )
-      end
-
-      it "only distributes priority, distributable, hearing docket cases
-          where the most recent held hearing is tied to the distribution judge" do
-        # commenting out parts of the test because setting hearing_case_affinity_days to 0 means cases can no longer be
-        # tied to judges
-        # When completing work under https://vajira.max.gov/browse/APPEALS-8311 this should be cleaned up or removed
-
-        # appeals that should not be returned
-        create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge
-        create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
-        matching_all_base_conditions_with_most_recent_hearing_tied_to_other_judge_but_not_held
-        matching_all_base_conditions_with_most_recent_hearing_tied_to_distribution_judge_but_not_held
-        matching_all_base_conditions_with_most_recent_held_hearing_not_tied_to_any_judge
-        matching_all_base_conditions_with_most_recent_held_hearing_tied_to_other_judge
-
-        # appeals that should be returned
-        appeal = matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
-        another = matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
-
-        tasks = subject
-
-        expect(tasks.length).to eq(0)
-        # expect(tasks.first.class).to eq(DistributedCase)
-        # expect(tasks.first.genpop).to eq false
-        # expect(tasks.first.genpop_query).to eq "not_genpop"
-        # expect(distribution.distributed_cases.length).to eq(2)
-        # expect(distribution_judge.reload.tasks.map(&:appeal)).to match_array([appeal, another])
-        expect(distribution_judge.reload.tasks.map(&:appeal).length).to eq(0)
-      end
+    let!(:non_vha_appeals) do
+      (1..20).map { create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge }
     end
 
-    context "priority appeals and genpop 'any'" do
-      let(:limit) { 10 }
-
-      subject do
-        HearingRequestDocket.new.distribute_appeals(
-          distribution, priority: true, limit: limit, genpop: "any"
-        )
+    context "when specialty_case_team_distribution feature toggle is enabled" do
+      before do
+        FeatureToggle.enable!(:specialty_case_team_distribution)
       end
-
-      it "only distributes priority, distributable, hearing docket cases
-          that are either genpop or not genpop" do
-        # will be included
-        not_tied = create_priority_distributable_hearing_appeal_not_tied_to_any_judge
-        tied = matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
-        outside_affinity = matching_all_base_conditions_with_most_recent_held_hearing_outside_affinity
-        inside_affinity = matching_all_base_conditions_with_most_recent_held_hearing_tied_to_judge
-        expected_result = [tied, not_tied, outside_affinity, inside_affinity]
-
-        # won't be included
-        create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
-        create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge
-
-        tasks = subject
-
-        expect(tasks.map(&:case_id)).to match_array(expected_result.map(&:uuid))
-        expect(tasks.first.class).to eq(DistributedCase)
-        expect(tasks.first.genpop).to eq true
-        expect(tasks.first.genpop_query).to eq "any"
-        expect(tasks.second.genpop).to eq true
-        expect(tasks.second.genpop_query).to eq "any"
-        expect(distribution.distributed_cases.length).to eq(expected_result.length)
-        expect(distribution_judge.reload.tasks.map(&:appeal)).to match_array(expected_result)
-      end
-
-      context "when the limit is one" do
-        let(:limit) { 1 }
-
-        it "only distributes priority, distributable, hearing docket cases
-          that are either genpop or not genpop" do
-          num_days = Constants.DISTRIBUTION.hearing_case_affinity_days + 1
-          days_ago = Time.zone.now.days_ago(num_days)
-
-          # This one will be included
-          not_tied = create_priority_distributable_hearing_appeal_not_tied_to_any_judge
-          not_tied.tasks.find_by(type: DistributionTask.name).update(assigned_at: days_ago)
-          not_tied.reload
-
-          # This would have been included, except for limit
-          matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
-
-          tasks = subject
-
-          # We expect only as many as the limit
-          expect(tasks.length).to eq(limit)
-          expect(tasks.first.class).to eq(DistributedCase)
-          expect(tasks.first.genpop).to eq true
-          expect(tasks.first.genpop_query).to eq "any"
-          expect(distribution.distributed_cases.length).to eq(limit)
-          expect(distribution_judge.reload.tasks.map(&:appeal)).to match_array([not_tied])
-        end
-      end
-    end
-
-    context "nonpriority appeals and genpop 'any'" do
-      subject do
-        HearingRequestDocket.new.distribute_appeals(
-          distribution, priority: false, limit: 10, genpop: "any"
-        )
-      end
-
-      it "only distributes nonpriority, distributable, hearing docket cases
-          that are either genpop or not genpop" do
-        # won't be included
-        create_priority_distributable_hearing_appeal_not_tied_to_any_judge
-        non_distributable = matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
-
-        # will be included
-        tied = create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
-        not_tied = create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge
-        no_held_hearings = non_priority_with_no_held_hearings
-        no_hearings = non_priority_with_no_hearings
-        outside_affinity = create_nonpriority_distributable_hearing_appeal_tied_to_other_judge_outside_affinity
-        inside_affinity = create_nonpriority_unblocked_hearing_appeal_within_affinity
-
-        expected_result = [tied, not_tied, no_held_hearings, no_hearings, outside_affinity, inside_affinity]
-
-        tasks = subject
-
-        appeal_ids = tasks.map(&:case_id)
-        expect(appeal_ids).to match_array(expected_result.map(&:uuid))
-        expect(appeal_ids).to_not include(non_distributable.uuid)
-        expect(tasks.first.class).to eq(DistributedCase)
-        expect(tasks.first.genpop).to eq true
-        expect(tasks.first.genpop_query).to eq "any"
-        expect(tasks.second.genpop).to eq true
-        expect(tasks.second.genpop_query).to eq "any"
-        expect(distribution.distributed_cases.length).to eq(expected_result.length)
-        expect(distribution_judge.reload.tasks.map(&:appeal))
-          .to match_array(expected_result)
-      end
-    end
-
-    context "priority appeals and only_genpop" do
-      subject do
-        HearingRequestDocket.new.distribute_appeals(
-          distribution, priority: true, limit: 10, genpop: "only_genpop"
-        )
-      end
-
-      it "only distributes priority, distributable, hearing docket, genpop cases" do
-        # will be included
-        outside_affinity = matching_all_base_conditions_with_most_recent_held_hearing_outside_affinity
-        no_held_hearings = matching_all_base_conditions_with_no_held_hearings
-        no_hearings = matching_all_base_conditions_with_no_hearings
-        recent_hearing_tied_to_judge = matching_all_base_conditions_with_most_recent_held_hearing_tied_to_judge
-        another = matching_all_conditions_except_not_tied_to_judge
-
-        expected_result = [outside_affinity, no_held_hearings, no_hearings, recent_hearing_tied_to_judge, another]
-
-        # won't be included
-        create_appeals_that_should_not_be_returned_by_query
-        create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
-        create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge
-
-        tasks = subject
-
-        expect(tasks.length).to eq(expected_result.length)
-        expect(tasks.first.class).to eq(DistributedCase)
-        expect(tasks.first.genpop).to eq true
-        expect(tasks.first.genpop_query).to eq "only_genpop"
-        expect(distribution.distributed_cases.length).to eq(expected_result.length)
-        expect(distribution_judge.reload.tasks.map(&:appeal))
-          .to match_array(expected_result)
-      end
-    end
-
-    context "nonpriority appeals and only_genpop" do
-      subject do
-        HearingRequestDocket.new.distribute_appeals(
-          distribution, priority: false, limit: 10, genpop: "only_genpop"
-        )
-      end
-
-      it "only distributes nonpriority, distributable, hearing docket, genpop cases" do
-        # won't be included
-        create_priority_distributable_hearing_appeal_not_tied_to_any_judge
-        matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
-
-        # will be included
-        appeal = create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge
-        no_held_hearings = non_priority_with_no_held_hearings
-        no_hearings = non_priority_with_no_hearings
-        outside_affinity = create_nonpriority_distributable_hearing_appeal_tied_to_other_judge_outside_affinity
-        inside_affinity = create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
-
-        expected_result = [appeal, no_held_hearings, no_hearings, outside_affinity, inside_affinity]
-
-        tasks = subject
-
-        expect(tasks.length).to eq(expected_result.length)
-        expect(tasks.first.class).to eq(DistributedCase)
-        expect(tasks.map(&:genpop).uniq).to eq [true]
-        expect(tasks.map(&:genpop_query).uniq).to eq ["only_genpop"]
-        expect(distribution.distributed_cases.length).to eq(expected_result.length)
-        expect(distribution_judge.reload.tasks.map(&:appeal))
-          .to match_array(expected_result)
-      end
-    end
-
-    context "when an appeal already has a distribution" do
-      subject do
-        HearingRequestDocket.new.distribute_appeals(distribution, priority: false, limit: 10, genpop: "any")
+      after do
+        FeatureToggle.disable!(:specialty_case_team_distribution)
       end
 
       it "does not fail, renames conflicting already distributed appeals, and distributes the legitimate appeals" do
-        number_of_already_distributed_appeals = 1
-        total_number_of_appeals = 10
-        total_number_of_appeals.times { create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge }
-
-        previous_distribution_judge = create(:user, last_login_at: Time.zone.now)
-        create(:staff, :judge_role, sdomainid: previous_distribution_judge.css_id)
-        previous_distribution = Distribution.create!(judge: previous_distribution_judge)
-        HearingRequestDocket.new.distribute_appeals(previous_distribution,
-                                                    priority: false,
-                                                    limit: number_of_already_distributed_appeals,
-                                                    genpop: "any")
-        distributed_appeals = DistributionTask.closed.take(number_of_already_distributed_appeals).map(&:appeal)
-        distributed_appeals.each do |distributed_appeal|
-          DistributionTask.create!(appeal: distributed_appeal, parent: distributed_appeal.root_task)
-        end
-
-        expect(Raven).to receive(:capture_message).once
-
         subject
 
-        expect(DistributionTask.open.count).to eq(0)
+        expect(DistributionTask.open.count).to eq(5)
         distributed_cases = DistributedCase.where(distribution: distribution)
-        expect(distributed_cases.count).to eq(total_number_of_appeals)
-        expect(
-          distributed_cases.where(case_id: distributed_appeals.map(&:uuid)).count
-        ).to eq(number_of_already_distributed_appeals)
-        expect(
-          DistributedCase.where("case_id LIKE ?", "#{distributed_appeals.first.uuid}-redistributed-%").count
-        ).to eq 1
+        expect(distributed_cases.count).to eq(20)
+        expect(distributed_cases.count(&:sct_appeal)).to eq(5)
+      end
+    end
+
+    context "when specialty_case_team_distribution feature toggle is disabled" do
+      before do
+        FeatureToggle.disable!(:specialty_case_team_distribution)
+      end
+
+      it "does not fail, renames conflicting already distributed appeals, and distributes the legitimate appeals" do
+        subject
+
+        # It should only distribute 15 appeals due to the limit so 10 should remain in the ready to distribute state
+        expect(DistributionTask.open.count).to eq(10)
+        distributed_cases = DistributedCase.where(distribution: distribution)
+        expect(distributed_cases.count).to eq(15)
+        expect(distributed_cases.count(&:sct_appeal)).to eq(0)
       end
     end
   end
 
-  describe "#count" do
-    context "priority and readiness for distribution not specified" do
-      it "returns all hearing docket appeals" do
-        matching_all_conditions_except_priority_and_ready_for_distribution
-        non_priority_with_no_held_hearings
-        create_priority_distributable_hearing_appeal_not_tied_to_any_judge
+  context "#genpop_priority_count" do
+    let(:excluded_judge) { create(:user, :judge, :with_vacols_judge_record) }
+    let(:ineligible_judge) { create(:user, :judge, :inactive) }
 
-        expect(HearingRequestDocket.new.count).to eq 3
+    let!(:ready_tied_aod_appeal) do
+      create_ready_aod_appeal(created_date: 7.days.ago)
+    end
+    let!(:ready_tied_nonpriority_appeal) do
+      create_ready_nonpriority_appeal(created_date: 7.days.ago)
+    end
+    let!(:ready_tied_to_excluded_aod_appeal) do
+      create_ready_aod_appeal(tied_judge: excluded_judge, created_date: 7.days.ago)
+    end
+    let!(:ready_tied_to_excluded_nonpriority_appeal) do
+      create_ready_nonpriority_appeal(tied_judge: excluded_judge, created_date: 7.days.ago)
+    end
+    let!(:ready_tied_to_ineligible_aod_appeal) do
+      create_ready_aod_appeal(tied_judge: ineligible_judge, created_date: 7.days.ago)
+    end
+    let!(:ready_tied_to_ineligible_nonpriority_appeal) do
+      create_ready_nonpriority_appeal(tied_judge: ineligible_judge, created_date: 7.days.ago)
+    end
+    let!(:ready_aod_appeal_hearing_cancelled) do
+      create_ready_aod_appeal_hearing_cancelled(created_date: 7.days.ago)
+    end
+    let!(:ready_nonpriority_appeal_hearing_cancelled) do
+      create_ready_nonpriority_appeal_hearing_cancelled(created_date: 7.days.ago)
+    end
+
+    subject { HearingRequestDocket.new.genpop_priority_count }
+
+    context "with exclude from affinity enabled" do
+      before do
+        FeatureToggle.enable!(:acd_exclude_from_affinity)
+        JudgeTeam.for_judge(excluded_judge).update!(exclude_appeals_from_affinity: true)
+      end
+
+      it { is_expected.to eq 2 }
+    end
+
+    context "with exclude from affinity disabled" do
+      it { is_expected.to eq 1 }
+    end
+
+    context "with ineligible judges enabled" do
+      before do
+        FeatureToggle.enable!(:acd_cases_tied_to_judges_no_longer_with_board)
+        IneligibleJudgesJob.new.perform_now
+      end
+
+      it { is_expected.to eq 2 }
+    end
+
+    context "with ineligible judges disabled" do
+      before { IneligibleJudgesJob.new.perform_now }
+
+      it { is_expected.to eq 1 }
+    end
+  end
+
+  context "no_held_hearings" do
+    before { FeatureToggle.enable!(:acd_exclude_from_affinity) }
+
+    let!(:judge_1) { create(:user, :judge, :with_vacols_judge_record) }
+    let!(:judge_2) { create(:user, :judge, :with_vacols_judge_record) }
+
+    let!(:appeal_1_hearing) do
+      create(:appeal,
+             :hearing_docket,
+             :with_post_intake_tasks,
+             :held_hearing_and_ready_to_distribute,
+             tied_judge: judge_1)
+    end
+
+    let!(:appeal_2_hearing) do
+      create(:appeal,
+             :hearing_docket,
+             :with_post_intake_tasks,
+             :held_hearing_and_ready_to_distribute,
+             tied_judge: judge_1)
+    end
+
+    let!(:hearing) { create(:hearing, :postponed, appeal: appeal_2_hearing) }
+
+    it "appeals with a held hearing aren't distributed to genpop" do
+      one_result = HearingRequestDocket.new.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge_1, 3)
+      expect(one_result.count).to eq(2)
+      two_result = HearingRequestDocket.new.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge_2, 3)
+      expect(two_result.count).to eq(0)
+    end
+  end
+
+  context "limit appeals class methods" do
+    let(:appeal_1_week_old) { create_ready_aod_appeal(created_date: 1.week.ago) }
+    let(:appeal_4_weeks_old) { create_ready_aod_appeal(created_date: 4.weeks.ago) }
+    let(:appeal_2_weeks_old) { create_ready_nonpriority_appeal(created_date: 2.weeks.ago) }
+    let(:appeal_3_weeks_old) { create_ready_nonpriority_appeal(created_date: 3.weeks.ago) }
+    let!(:array_1) { [appeal_1_week_old, appeal_4_weeks_old] }
+    let!(:array_2) { [appeal_2_weeks_old, appeal_3_weeks_old] }
+
+    context "#limit_genpop_appeals" do
+      subject { HearingRequestDocket.limit_genpop_appeals([array_1, array_2], 2) }
+
+      it "correctly applies limit" do
+        # This method does not flatten them, only removes the newest appeals to the limit from the 2d array
+        expect(subject).to match_array([[appeal_4_weeks_old], [appeal_3_weeks_old]])
       end
     end
 
-    context "priority: true and ready: true" do
-      it "only returns hearing docket appeals that are priority and ready for distribution" do
-        matching_all_conditions_except_priority_and_ready_for_distribution
-        non_priority_with_no_held_hearings
-        create_priority_distributable_hearing_appeal_not_tied_to_any_judge
+    context "#limit_only_genpop_appeals" do
+      subject { HearingRequestDocket.limit_only_genpop_appeals([*array_1, *array_2], 2) }
 
-        expect(HearingRequestDocket.new.count(priority: true, ready: true)).to eq 1
+      context "with exclude from affinity enabled" do
+        before { FeatureToggle.enable!(:acd_exclude_from_affinity) }
+
+        it "correctly flattens the arrays and applies limit" do
+          result = HearingRequestDocket.limit_only_genpop_appeals([array_1, array_2], 2)
+          expect(result).to match_array([appeal_4_weeks_old, appeal_3_weeks_old])
+        end
+
+        it "handles empty arrays" do
+          result = HearingRequestDocket.limit_only_genpop_appeals([array_1, []], 2)
+          expect(result).to match_array([appeal_1_week_old, appeal_4_weeks_old])
+        end
       end
-    end
 
-    context "age_of_n_oldest_priority_appeals_available_to_judge" do
-      let(:judge_user) { create(:user) }
-      subject { HearingRequestDocket.new.age_of_n_oldest_priority_appeals_available_to_judge(:judge_user, 3) }
-
-      it "returns the receipt_date field of the oldest hearing priority appeals ready for distribution" do
-        appeal = create_priority_distributable_hearing_appeal_not_tied_to_any_judge
-        expect(HearingRequestDocket.new.count(priority: true, ready: true)).to eq 1
-        expect(subject).to eq([appeal.receipt_date])
-      end
-    end
-
-    context "age_of_n_oldest_nonpriority_appeals_available_to_judge" do
-      let(:judge_user) { create(:user) }
-      subject { HearingRequestDocket.new.age_of_n_oldest_nonpriority_appeals_available_to_judge(:judge_user, 3) }
-
-      it "returns the receipt_date field of the oldest hearing nonpriority appeals ready for distribution" do
-        appeal = create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge
-        expect(HearingRequestDocket.new.count(priority: false, ready: true)).to eq 1
-        expect(subject).to eq([appeal.receipt_date])
+      it "correctly flattens the arrays and applies limit" do
+        expect(subject).to match_array([appeal_4_weeks_old, appeal_3_weeks_old])
       end
     end
   end
 
-  private
+  context "#distribute_appeals" do
+    let!(:requesting_judge_no_attorneys) { create(:user, :judge, :with_vacols_judge_record) }
+    let!(:requesting_judge_with_attorneys) { create(:user, :judge, :with_vacols_judge_record) }
+    let!(:other_judge) { create(:user, :judge, :with_vacols_judge_record) }
+    let!(:excluded_judge) { create(:user, :judge, :with_vacols_judge_record) }
+    let!(:ineligible_judge) { create(:user, :judge, :with_vacols_judge_record, :inactive) }
 
-  def create_appeals_that_should_not_be_returned_by_query
-    # matching_all_conditions_except_not_tied_to_judge
-    matching_all_conditions_except_priority
-    matching_all_conditions_except_ready_for_distribution
-    matching_all_conditions_except_priority_and_ready_for_distribution
-    matching_only_priority_and_ready_for_distribution
+    let!(:requesting_judge_attorney) { create(:user, :with_vacols_attorney_record) }
+
+    let(:priority) { false }
+    let!(:distribution) { Distribution.create!(judge: requesting_judge_no_attorneys) }
+
+    before do
+      # Makes this judge team follow the batch_size calculation
+      JudgeTeam.for_judge(requesting_judge_with_attorneys).add_user(requesting_judge_attorney)
+      # This feature toggle being off will cause the query to not distribute tied cases
+      FeatureToggle.enable!(:acd_exclude_from_affinity)
+    end
+
+    subject do
+      HearingRequestDocket.new.distribute_appeals(
+        distribution, priority: priority, genpop: "only_genpop", limit: 15, style: "request"
+      )
+    end
+
+    context "ama_hearing_case_affinity_days" do
+      let!(:ready_nonpriority_tied_to_requesting_judge_in_window) do
+        create_ready_nonpriority_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 15.days.ago)
+      end
+      let!(:ready_nonpriority_tied_to_requesting_judge_out_of_window_45_days) do
+        create_ready_nonpriority_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 45.days.ago)
+      end
+      let!(:ready_nonpriority_tied_to_requesting_judge_out_of_window_100_days) do
+        create_ready_nonpriority_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 100.days.ago)
+      end
+      let!(:ready_nonpriority_tied_to_other_judge_in_window) do
+        create_ready_nonpriority_appeal(tied_judge: other_judge, created_date: 15.days.ago)
+      end
+      let!(:ready_nonpriority_tied_to_other_judge_out_of_window_45_days) do
+        create_ready_nonpriority_appeal(tied_judge: other_judge, created_date: 45.days.ago)
+      end
+      let!(:ready_nonpriority_tied_to_other_judge_out_of_window_100_days) do
+        create_ready_nonpriority_appeal(tied_judge: other_judge, created_date: 100.days.ago)
+      end
+      let!(:ready_nonpriority_hearing_cancelled) do
+        create_ready_nonpriority_appeal_hearing_cancelled(created_date: 10.days.ago)
+      end
+
+      context "lever is set to omit" do
+        before do
+          CaseDistributionLever
+            .find_by_item(Constants.DISTRIBUTION.ama_hearing_case_affinity_days)
+            .update!(value: "omit")
+        end
+
+        it "distributes all appeals regardless of tied judge" do
+          expect(subject.map(&:case_id)).to match_array(
+            [ready_nonpriority_tied_to_requesting_judge_in_window.uuid,
+             ready_nonpriority_tied_to_requesting_judge_out_of_window_45_days.uuid,
+             ready_nonpriority_tied_to_requesting_judge_out_of_window_100_days.uuid,
+             ready_nonpriority_tied_to_other_judge_in_window.uuid,
+             ready_nonpriority_tied_to_other_judge_out_of_window_45_days.uuid,
+             ready_nonpriority_tied_to_other_judge_out_of_window_100_days.uuid,
+             ready_nonpriority_hearing_cancelled.uuid]
+          )
+        end
+      end
+
+      context "lever is set to a numeric value (30)" do
+        before do
+          CaseDistributionLever
+            .find_by_item(Constants.DISTRIBUTION.ama_hearing_case_affinity_days)
+            .update!(value: "30")
+        end
+
+        it "distributes appeals that exceed affinity value or are tied to the requesting judge or are genpop" do
+          expect(subject.map(&:case_id)).to match_array(
+            [ready_nonpriority_tied_to_requesting_judge_in_window.uuid,
+             ready_nonpriority_tied_to_requesting_judge_out_of_window_45_days.uuid,
+             ready_nonpriority_tied_to_requesting_judge_out_of_window_100_days.uuid,
+             ready_nonpriority_tied_to_other_judge_out_of_window_45_days.uuid,
+             ready_nonpriority_tied_to_other_judge_out_of_window_100_days.uuid,
+             ready_nonpriority_hearing_cancelled.uuid]
+          )
+        end
+      end
+
+      context "lever is set to a numeric value (90)" do
+        before do
+          CaseDistributionLever
+            .find_by_item(Constants.DISTRIBUTION.ama_hearing_case_affinity_days)
+            .update!(value: "90")
+        end
+
+        it "distributes appeals that exceed affinity value or are tied to the requesting judge or are genpop" do
+          expect(subject.map(&:case_id)).to match_array(
+            [ready_nonpriority_tied_to_requesting_judge_in_window.uuid,
+             ready_nonpriority_tied_to_requesting_judge_out_of_window_45_days.uuid,
+             ready_nonpriority_tied_to_requesting_judge_out_of_window_100_days.uuid,
+             ready_nonpriority_tied_to_other_judge_out_of_window_100_days.uuid,
+             ready_nonpriority_hearing_cancelled.uuid]
+          )
+        end
+      end
+
+      context "lever is set to infinite" do
+        before do
+          CaseDistributionLever
+            .find_by_item(Constants.DISTRIBUTION.ama_hearing_case_affinity_days)
+            .update!(value: "infinite")
+        end
+
+        it "distributes only genpop appeals or appeals tied to the requesting judge" do
+          expect(subject.map(&:case_id)).to match_array(
+            [ready_nonpriority_tied_to_requesting_judge_in_window.uuid,
+             ready_nonpriority_tied_to_requesting_judge_out_of_window_45_days.uuid,
+             ready_nonpriority_tied_to_requesting_judge_out_of_window_100_days.uuid,
+             ready_nonpriority_hearing_cancelled.uuid]
+          )
+        end
+      end
+    end
+
+    # all of these are currently failing
+    context "ama_hearing_case_aod_affinity_days" do
+      let!(:ready_aod_tied_to_requesting_judge_in_window) do
+        create_ready_aod_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 10.days.ago)
+      end
+      let!(:ready_aod_tied_to_requesting_judge_out_of_window_20_days) do
+        create_ready_aod_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 20.days.ago)
+      end
+      let!(:ready_aod_tied_to_requesting_judge_out_of_window_40_days) do
+        create_ready_aod_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 40.days.ago)
+      end
+      let!(:ready_aod_tied_to_other_judge_in_window) do
+        create_ready_aod_appeal(tied_judge: other_judge, created_date: 10.days.ago)
+      end
+      let!(:ready_aod_tied_to_other_judge_out_of_window_20_days) do
+        create_ready_aod_appeal(tied_judge: other_judge, created_date: 20.days.ago)
+      end
+      let!(:ready_aod_tied_to_other_judge_out_of_window_40_days) do
+        create_ready_aod_appeal(tied_judge: other_judge, created_date: 40.days.ago)
+      end
+      let!(:ready_aod_hearing_cancelled) do
+        create_ready_aod_appeal_hearing_cancelled(created_date: 10.days.ago)
+      end
+
+      let(:priority) { true }
+
+      context "lever is set to omit" do
+        before do
+          CaseDistributionLever
+            .find_by_item(Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days)
+            .update!(value: "omit")
+        end
+
+        it "distributes all appeals regardless of tied judge" do
+          expect(subject.map(&:case_id)).to match_array(
+            [ready_aod_tied_to_requesting_judge_in_window.uuid,
+             ready_aod_tied_to_requesting_judge_out_of_window_20_days.uuid,
+             ready_aod_tied_to_requesting_judge_out_of_window_40_days.uuid,
+             ready_aod_tied_to_other_judge_in_window.uuid,
+             ready_aod_tied_to_other_judge_out_of_window_20_days.uuid,
+             ready_aod_tied_to_other_judge_out_of_window_40_days.uuid,
+             ready_aod_hearing_cancelled.uuid]
+          )
+        end
+      end
+
+      context "lever is set to a numeric value (15)" do
+        before do
+          CaseDistributionLever
+            .find_by_item(Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days)
+            .update!(value: "15")
+        end
+
+        it "distributes appeals that exceed affinity value or are tied to the requesting judge or are genpop" do
+          expect(subject.map(&:case_id)).to match_array(
+            [ready_aod_tied_to_requesting_judge_in_window.uuid,
+             ready_aod_tied_to_requesting_judge_out_of_window_20_days.uuid,
+             ready_aod_tied_to_requesting_judge_out_of_window_40_days.uuid,
+             ready_aod_tied_to_other_judge_out_of_window_20_days.uuid,
+             ready_aod_tied_to_other_judge_out_of_window_40_days.uuid,
+             ready_aod_hearing_cancelled.uuid]
+          )
+        end
+      end
+
+      context "lever is set to a numeric value (30)" do
+        before do
+          CaseDistributionLever
+            .find_by_item(Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days)
+            .update!(value: "30")
+        end
+
+        it "distributes appeals that exceed affinity value or are tied to the requesting judge or are genpop" do
+          expect(subject.map(&:case_id)).to match_array(
+            [ready_aod_tied_to_requesting_judge_in_window.uuid,
+             ready_aod_tied_to_requesting_judge_out_of_window_20_days.uuid,
+             ready_aod_tied_to_requesting_judge_out_of_window_40_days.uuid,
+             ready_aod_tied_to_other_judge_out_of_window_40_days.uuid,
+             ready_aod_hearing_cancelled.uuid]
+          )
+        end
+      end
+
+      context "lever is set to infinite" do
+        before do
+          CaseDistributionLever
+            .find_by_item(Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days)
+            .update!(value: "infinite")
+        end
+
+        it "distributes only genpop appeals or appeals tied to the requesting judge" do
+          expect(subject.map(&:case_id)).to match_array(
+            [ready_aod_tied_to_requesting_judge_in_window.uuid,
+             ready_aod_tied_to_requesting_judge_out_of_window_20_days.uuid,
+             ready_aod_tied_to_requesting_judge_out_of_window_40_days.uuid,
+             ready_aod_hearing_cancelled.uuid]
+          )
+        end
+      end
+    end
+
+    # there is no test currently for "toggle off" because the toggle off is causing errors during distribution
+    context "acd_exclude_from_affinity" do
+      context "toggle on" do
+        before do
+          FeatureToggle.enable!(:acd_exclude_from_affinity)
+          JudgeTeam.for_judge(excluded_judge).update!(exclude_appeals_from_affinity: true)
+          CaseDistributionLever
+            .find_by_item(Constants.DISTRIBUTION.ama_hearing_case_affinity_days)
+            .update!(value: "30")
+        end
+
+        let!(:ready_nonpriority_tied_to_requesting_judge_in_window) do
+          create_ready_nonpriority_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 15.days.ago)
+        end
+        let!(:ready_nonpriority_tied_to_requesting_judge_out_of_window) do
+          create_ready_nonpriority_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 45.days.ago)
+        end
+        let!(:ready_nonpriority_tied_to_excluded_judge_in_window) do
+          create_ready_nonpriority_appeal(tied_judge: excluded_judge, created_date: 15.days.ago)
+        end
+        let!(:ready_nonpriority_tied_to_excluded_judge_out_of_window) do
+          create_ready_nonpriority_appeal(tied_judge: excluded_judge, created_date: 45.days.ago)
+        end
+        let!(:ready_nonpriority_hearing_cancelled) do
+          create_ready_nonpriority_appeal_hearing_cancelled(created_date: 10.days.ago)
+        end
+
+        it "includes excluded judge appeals in affinity window" do
+          expect(subject.map(&:case_id)).to match_array(
+            [ready_nonpriority_tied_to_requesting_judge_in_window.uuid,
+             ready_nonpriority_tied_to_requesting_judge_out_of_window.uuid,
+             ready_nonpriority_tied_to_excluded_judge_in_window.uuid,
+             ready_nonpriority_tied_to_excluded_judge_out_of_window.uuid,
+             ready_nonpriority_hearing_cancelled.uuid]
+          )
+        end
+      end
+    end
+
+    context "ineligible judge appeals" do
+      before do
+        CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_case_affinity_days).update!(value: "30")
+        IneligibleJudgesJob.new.perform_now
+      end
+
+      let!(:ready_nonpriority_tied_to_requesting_judge_in_window) do
+        create_ready_nonpriority_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 15.days.ago)
+      end
+      let!(:ready_nonpriority_tied_to_requesting_judge_out_of_window) do
+        create_ready_nonpriority_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 45.days.ago)
+      end
+      let!(:ready_nonpriority_tied_to_ineligible_judge_in_window) do
+        create_ready_nonpriority_appeal(tied_judge: ineligible_judge, created_date: 15.days.ago)
+      end
+      let!(:ready_nonpriority_tied_to_ineligible_judge_out_of_window) do
+        create_ready_nonpriority_appeal(tied_judge: ineligible_judge, created_date: 45.days.ago)
+      end
+      let!(:ready_nonpriority_hearing_cancelled) do
+        create_ready_nonpriority_appeal_hearing_cancelled(created_date: 10.days.ago)
+      end
+
+      context "with toggle on" do
+        before { FeatureToggle.enable!(:acd_cases_tied_to_judges_no_longer_with_board) }
+
+        it "includes ineligible judge appeals in affinity window" do
+          expect(subject.map(&:case_id)).to match_array(
+            [ready_nonpriority_tied_to_requesting_judge_in_window.uuid,
+             ready_nonpriority_tied_to_requesting_judge_out_of_window.uuid,
+             ready_nonpriority_tied_to_ineligible_judge_in_window.uuid,
+             ready_nonpriority_tied_to_ineligible_judge_out_of_window.uuid,
+             ready_nonpriority_hearing_cancelled.uuid]
+          )
+        end
+      end
+
+      context "with toggle off" do
+        before { FeatureToggle.disable!(:acd_cases_tied_to_judges_no_longer_with_board) }
+
+        it "does not include ineligible judge appeals in affinity window" do
+          expect(subject.map(&:case_id)).to match_array(
+            [ready_nonpriority_tied_to_requesting_judge_in_window.uuid,
+             ready_nonpriority_tied_to_requesting_judge_out_of_window.uuid,
+             ready_nonpriority_tied_to_ineligible_judge_out_of_window.uuid,
+             ready_nonpriority_hearing_cancelled.uuid]
+          )
+        end
+      end
+    end
+
+    context "with multiple levers enabled and appeals meeting each criteria" do
+      # ready non-aod appeals
+      let!(:ready_cavc_appeal_tied_to_requesting_judge_in_window) do
+        create_ready_cavc_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 7.days.ago)
+      end
+      let!(:ready_cavc_appeal_tied_to_requesting_judge_out_of_window_21_days) do
+        create_ready_cavc_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 21.days.ago)
+      end
+      let!(:ready_cavc_appeal_tied_to_other_judge_in_window) do
+        create_ready_cavc_appeal(tied_judge: other_judge, created_date: 7.days.ago)
+      end
+      let!(:ready_cavc_appeal_tied_to_other_judge_out_of_window_21_days) do
+        create_ready_cavc_appeal(tied_judge: other_judge, created_date: 21.days.ago)
+      end
+
+      # ready aod appeals
+      let!(:ready_aod_tied_to_requesting_judge_in_window) do
+        create_ready_aod_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 10.days.ago)
+      end
+      let!(:ready_aod_tied_to_requesting_judge_out_of_window_20_days) do
+        create_ready_aod_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 20.days.ago)
+      end
+      let!(:ready_aod_tied_to_other_judge_in_window) do
+        create_ready_aod_appeal(tied_judge: other_judge, created_date: 10.days.ago)
+      end
+      let!(:ready_aod_tied_to_other_judge_out_of_window_20_days) do
+        create_ready_aod_appeal(tied_judge: other_judge, created_date: 20.days.ago)
+      end
+      let!(:ready_aod_tied_to_requesting_judge_no_appeal_affinity) do
+        create_ready_aod_appeal_no_appeal_affinity(tied_judge: requesting_judge_no_attorneys,
+                                                   created_date: 10.days.ago)
+      end
+
+      # appeal which is always genpop
+      let!(:ready_aod_hearing_cancelled) do
+        create_ready_aod_appeal_hearing_cancelled(created_date: 10.days.ago)
+      end
+
+      let!(:sct_ready_priority_appeal_not_tied_to_a_judge) do
+        create_priority_distributable_vha_hearing_appeal_not_tied_to_any_judge
+      end
+
+      before do
+        FeatureToggle.enable!(:specialty_case_team_distribution)
+        CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_case_affinity_days).update!(value: "30")
+        CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.cavc_affinity_days).update!(value: "14")
+        CaseDistributionLever
+          .find_by_item(Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days)
+          .update!(value: "15")
+      end
+
+      context "for priority appeals" do
+        let(:priority) { true }
+
+        it "distributes appeals as expected" do
+          expect(subject.map(&:case_id)).to match_array(
+            [ready_cavc_appeal_tied_to_requesting_judge_in_window.uuid,
+             ready_cavc_appeal_tied_to_requesting_judge_out_of_window_21_days.uuid,
+             ready_cavc_appeal_tied_to_other_judge_out_of_window_21_days.uuid,
+             ready_aod_tied_to_requesting_judge_in_window.uuid,
+             ready_aod_tied_to_requesting_judge_out_of_window_20_days.uuid,
+             ready_aod_tied_to_other_judge_out_of_window_20_days.uuid,
+             ready_aod_tied_to_requesting_judge_no_appeal_affinity.uuid,
+             ready_aod_hearing_cancelled.uuid,
+             sct_ready_priority_appeal_not_tied_to_a_judge.uuid]
+          )
+          expect(sct_ready_priority_appeal_not_tied_to_a_judge.specialty_case_team_assign_task?).to be true
+        end
+      end
+    end
   end
 
-  def matching_all_base_conditions_with_no_hearings
-    create(:appeal,
-           :advanced_on_docket_due_to_age,
-           :ready_for_distribution,
-           docket_type: Constants.AMA_DOCKETS.hearing)
-  end
+  context "CAVC and Hearing affinities combined" do
+    let!(:original_judge) { create(:user, :judge, :with_vacols_judge_record, css_id: "ORIG_JUDGE") }
+    let!(:hearing_judge) { create(:user, :judge, :with_vacols_judge_record, css_id: "HEAR_JUDGE") }
+    let!(:request_judge) { create(:user, :judge, :with_vacols_judge_record, css_id: "REQ_JUDGE") }
+    let!(:other_judge) { create(:user, :judge, :with_vacols_judge_record, css_id: "OTHER_JUDGE") }
+    let!(:cavc_hearing_appeal_with_new_hearing) do
+      create_cavc_hearing_appeal_with_new_hearing(
+        original_judge: original_judge,
+        hearing_judge: hearing_judge,
+        other_judge: other_judge,
+        created_date: 4.years.ago
+      )
+    end
 
-  def non_priority_with_no_hearings
-    create(:appeal,
-           :denied_advance_on_docket,
-           :ready_for_distribution,
-           docket_type: Constants.AMA_DOCKETS.hearing)
-  end
+    before { FeatureToggle.enable!(:acd_exclude_from_affinity) }
 
-  def matching_all_base_conditions_with_no_held_hearings
-    appeal = create(:appeal,
-                    :advanced_on_docket_due_to_age,
-                    :ready_for_distribution,
-                    docket_type: Constants.AMA_DOCKETS.hearing)
-    create(:hearing, judge: nil, disposition: "no_show", appeal: appeal)
-    appeal
-  end
+    subject { described_class.new }
 
-  def non_priority_with_no_held_hearings
-    appeal = create(:appeal,
-                    :denied_advance_on_docket,
-                    :ready_for_distribution,
-                    docket_type: Constants.AMA_DOCKETS.hearing)
-    create(:hearing, judge: nil, disposition: "no_show", appeal: appeal)
-    appeal
-  end
+    context "when within the CAVC and Hearing affinity windows" do
+      before { cavc_hearing_appeal_with_new_hearing.appeal_affinity.update!(affinity_start_date: 5.days.ago) }
 
-  def matching_all_conditions_except_not_tied_to_judge
-    appeal = create(:appeal,
-                    :ready_for_distribution,
-                    :advanced_on_docket_due_to_motion,
-                    docket_type: Constants.AMA_DOCKETS.hearing)
-    hearing = create(:hearing,
-                     judge: nil,
-                     disposition: "held",
-                     appeal: appeal)
-    hearing.update(judge: judge_with_team)
-    appeal
-  end
+      it "distributes to only the original judge", :aggregate_failures do
+        o_j_res = subject.age_of_n_oldest_priority_appeals_available_to_judge(original_judge, 3)
+        expect(o_j_res.length).to eq 1
 
-  def matching_all_conditions_except_priority
-    appeal = create(:appeal,
-                    :denied_advance_on_docket,
-                    :ready_for_distribution,
-                    docket_type: Constants.AMA_DOCKETS.hearing)
-    create(:hearing, judge: nil, disposition: "held", appeal: appeal)
-    appeal = create(:appeal,
-                    :inapplicable_aod_motion,
-                    :ready_for_distribution,
-                    docket_type: Constants.AMA_DOCKETS.hearing)
-    create(:hearing, judge: nil, disposition: "held", appeal: appeal)
-    appeal = create(:appeal,
-                    :ready_for_distribution,
-                    docket_type: Constants.AMA_DOCKETS.hearing)
-    create(:hearing, judge: nil, disposition: "held", appeal: appeal)
-  end
+        h_j_res = subject.age_of_n_oldest_priority_appeals_available_to_judge(hearing_judge, 3)
+        expect(h_j_res.length).to eq 0
 
-  def matching_all_conditions_except_ready_for_distribution
-    appeal = create(:appeal,
-                    :advanced_on_docket_due_to_age,
-                    :with_post_intake_tasks,
-                    docket_type: Constants.AMA_DOCKETS.hearing)
-    create(:hearing, judge: nil, disposition: "held", appeal: appeal)
-  end
+        r_j_res = subject.age_of_n_oldest_priority_appeals_available_to_judge(request_judge, 3)
+        expect(r_j_res.length).to eq 0
+      end
+    end
 
-  def matching_all_conditions_except_priority_and_ready_for_distribution
-    appeal = create(:appeal,
-                    :with_post_intake_tasks,
-                    docket_type: Constants.AMA_DOCKETS.hearing)
-    create(:hearing, judge: nil, disposition: "held", appeal: appeal)
-  end
+    context "when out of CAVC affinity window but within Hearing affinity window" do
+      before { cavc_hearing_appeal_with_new_hearing.appeal_affinity.update!(affinity_start_date: 35.days.ago) }
 
-  def matching_only_priority_and_ready_for_distribution
-    create(:appeal,
-           :advanced_on_docket_due_to_age,
-           :with_post_intake_tasks,
-           docket_type: Constants.AMA_DOCKETS.direct_review)
-  end
+      it "distributes to original or hearing judge" do
+        o_j_res1 = subject.age_of_n_oldest_priority_appeals_available_to_judge(original_judge, 3)
+        expect(o_j_res1.length).to eq 1
 
-  def matching_all_base_conditions_with_most_recent_held_hearing_outside_affinity
-    num_days = Constants.DISTRIBUTION.hearing_case_affinity_days + 1
-    days_ago = Time.zone.now.days_ago(num_days)
-    most_recent = create(:hearing_day, scheduled_for: days_ago)
-    appeal = create(:appeal,
-                    :ready_for_distribution,
-                    :advanced_on_docket_due_to_motion,
-                    docket_type: Constants.AMA_DOCKETS.hearing)
-    hearing = create(:hearing,
-                     judge: nil,
-                     disposition: "held",
-                     appeal: appeal,
-                     transcript_sent_date: 1.day.ago,
-                     hearing_day: most_recent)
-    hearing.update(judge: judge_with_team)
+        h_j_res1 = subject.age_of_n_oldest_priority_appeals_available_to_judge(hearing_judge, 3)
+        expect(h_j_res1.length).to eq 1
 
-    # Artificially set the `assigned_at` of DistributionTask so it's in the past
-    DistributionTask.find_by(appeal: appeal).update!(assigned_at: days_ago)
+        r_j_res1 = subject.age_of_n_oldest_priority_appeals_available_to_judge(request_judge, 3)
+        expect(r_j_res1.length).to eq 0
+      end
+    end
 
-    appeal
-  end
+    context "when out of both CAVC and Hearing affinity windows" do
+      before { cavc_hearing_appeal_with_new_hearing.appeal_affinity.update!(affinity_start_date: 75.days.ago) }
 
-  def create_priority_distributable_hearing_appeal_not_tied_to_any_judge
-    appeal = create(:appeal,
-                    :ready_for_distribution,
-                    :advanced_on_docket_due_to_motion,
-                    docket_type: Constants.AMA_DOCKETS.hearing)
-    create(:hearing, judge: nil, disposition: "held", appeal: appeal)
-    appeal
+      it "distributes to any judge", :aggregate_failures do
+        o_j_res2 = subject.age_of_n_oldest_priority_appeals_available_to_judge(original_judge, 3)
+        expect(o_j_res2.length).to eq 1
+
+        h_j_res2 = subject.age_of_n_oldest_priority_appeals_available_to_judge(hearing_judge, 3)
+        expect(h_j_res2.length).to eq 1
+
+        r_j_res2 = subject.age_of_n_oldest_priority_appeals_available_to_judge(request_judge, 3)
+        expect(r_j_res2.length).to eq 1
+      end
+    end
   end
 
   # rubocop:disable Metrics/AbcSize
-  def create_nonpriority_unblocked_hearing_appeal_within_affinity
-    appeal = create(:appeal,
-                    :with_post_intake_tasks,
-                    :held_hearing,
-                    :denied_advance_on_docket,
-                    docket_type: Constants.AMA_DOCKETS.hearing,
-                    created_at: 95.days.ago, # accounting for evidence submission window for better realism
-                    adding_user: judge_with_team)
-
-    # Complete the ScheduleHearingTask to set up legit tree for when hearing would be created
-    ScheduleHearingTask.find_by(appeal: appeal)
-      .update!(status: Constants.TASK_STATUSES.completed, closed_at: 90.days.ago)
-
-    # Complete EvidenceSubmissionWindowTask and TranscriptionTask for 90 days after hearing
-    EvidenceSubmissionWindowTask.find_by(appeal: appeal)
-      .update!(status: Constants.TASK_STATUSES.completed, closed_at: 5.days.ago)
-
-    TranscriptionTask.find_by(appeal: appeal)
-      .update!(status: Constants.TASK_STATUSES.completed, closed_at: 5.days.ago)
-
-    # Artificially set the `assigned_at` of DistributionTask so it's in the past
-    DistributionTask.find_by(appeal: appeal).update!(
-      status: Constants.TASK_STATUSES.assigned,
-      assigned_at: 5.days.ago
+  def create_cavc_hearing_appeal_with_new_hearing(
+    original_judge: nil, hearing_judge: nil, other_judge: nil, created_date: 4.years.ago
+  )
+    Timecop.travel(created_date)
+    source = create(
+      :appeal,
+      :dispatched,
+      :hearing_docket,
+      associated_judge: original_judge
     )
-
-    # Ensure hearing tied to judge
-    Hearing.find_by(appeal: appeal).update!(judge: judge_with_team)
-
-    appeal
+    Timecop.travel(1.year.from_now)
+    remand = create(:cavc_remand, source_appeal: source).remand_appeal
+    Timecop.return
+    Timecop.travel(6.months.ago)
+    remand.tasks.where(type: SendCavcRemandProcessedLetterTask.name).first.completed!
+    create(:appeal_affinity, appeal: remand)
+    Timecop.travel(1.month.from_now)
+    jat = JudgeAssignTaskCreator.new(appeal: remand, judge: other_judge, assigned_by_id: other_judge.id).call
+    create(:colocated_task, :schedule_hearing, parent: jat, assigned_by: other_judge).completed!
+    Timecop.travel(1.month.from_now)
+    create(:hearing, :held, appeal: remand, judge: hearing_judge, adding_user: User.system_user)
+    Timecop.travel(3.months.from_now)
+    remand.tasks.where(type: AssignHearingDispositionTask.name).last.completed!
+    Timecop.return
+    remand
   end
   # rubocop:enable Metrics/AbcSize
 
-  def create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
-    appeal = create(:appeal,
-                    :ready_for_distribution,
-                    :denied_advance_on_docket,
-                    docket_type: Constants.AMA_DOCKETS.hearing)
-
-    most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
-    hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
-    hearing.update(judge: distribution_judge)
-
+  def create_ready_aod_appeal(tied_judge: nil, created_date: 1.year.ago)
+    Timecop.travel(created_date)
+    appeal = create(
+      :appeal,
+      :hearing_docket,
+      :advanced_on_docket_due_to_age,
+      :with_post_intake_tasks,
+      :held_hearing_and_ready_to_distribute,
+      :with_appeal_affinity,
+      tied_judge: tied_judge || create(:user, :judge, :with_vacols_judge_record)
+    )
+    Timecop.return
     appeal
   end
 
-  def create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge_outside_affinity
-    num_days = Constants.DISTRIBUTION.hearing_case_affinity_days + 1
-    days_ago = Time.zone.now.days_ago(num_days)
-    appeal = create(:appeal,
-                    :ready_for_distribution,
-                    :denied_advance_on_docket,
-                    docket_type: Constants.AMA_DOCKETS.hearing)
-
-    most_recent = create(:hearing_day, scheduled_for: days_ago)
-    hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
-    hearing.update(judge: distribution_judge)
-
-    # Artificially set the `assigned_at` of DistributionTask so it's in the past
-    DistributionTask.find_by(appeal: appeal).update!(assigned_at: days_ago)
-
+  def create_ready_aod_appeal_no_appeal_affinity(tied_judge: nil, created_date: 1.year.ago)
+    Timecop.travel(created_date)
+    appeal = create(
+      :appeal,
+      :hearing_docket,
+      :advanced_on_docket_due_to_age,
+      :with_post_intake_tasks,
+      :held_hearing_and_ready_to_distribute,
+      tied_judge: tied_judge || create(:user, :judge, :with_vacols_judge_record)
+    )
+    Timecop.return
     appeal
   end
 
-  def create_nonpriority_distributable_hearing_appeal_tied_to_other_judge_outside_affinity
-    num_days = Constants.DISTRIBUTION.hearing_case_affinity_days + 1
-    days_ago = Time.zone.now.days_ago(num_days)
+  def create_ready_cavc_appeal(tied_judge: nil, created_date: 1.year.ago)
+    Timecop.travel(created_date - 6.months)
+    if tied_judge
+      judge = tied_judge
+      attorney = JudgeTeam.for_judge(judge)&.attorneys&.first || create(:user, :with_vacols_attorney_record)
+    else
+      judge = create(:user, :judge, :with_vacols_judge_record)
+      attorney = create(:user, :with_vacols_attorney_record)
+    end
+
+    source_appeal = create(
+      :appeal,
+      :hearing_docket,
+      :held_hearing,
+      :tied_to_judge,
+      :dispatched,
+      # associated_judge and tied_judge are both required to satisfy different traits
+      associated_judge: judge,
+      associated_attorney: attorney,
+      tied_judge: judge
+    )
+
+    Timecop.travel(6.months.from_now)
+    cavc_remand = create(
+      :cavc_remand,
+      source_appeal: source_appeal
+    )
+    remand_appeal = cavc_remand.remand_appeal
+    distribution_tasks = remand_appeal.tasks.select { |task| task.is_a?(DistributionTask) }
+    (distribution_tasks.flat_map(&:descendants) - distribution_tasks).each(&:completed!)
+    create(:appeal_affinity, appeal: remand_appeal)
+    Timecop.return
+
+    remand_appeal
+  end
+
+  def create_ready_nonpriority_appeal(tied_judge: nil, created_date: 1.year.ago)
+    Timecop.travel(created_date)
+    appeal = create(
+      :appeal,
+      :hearing_docket,
+      :with_post_intake_tasks,
+      :held_hearing_and_ready_to_distribute,
+      :with_appeal_affinity,
+      tied_judge: tied_judge || create(:user, :judge, :with_vacols_judge_record)
+    )
+    Timecop.return
+    appeal
+  end
+
+  def create_ready_nonpriority_appeal_no_appeal_affinity(tied_judge: nil, created_date: 1.year.ago)
+    Timecop.travel(created_date)
+    appeal = create(
+      :appeal,
+      :hearing_docket,
+      :with_post_intake_tasks,
+      :held_hearing_and_ready_to_distribute,
+      tied_judge: tied_judge || create(:user, :judge, :with_vacols_judge_record)
+    )
+    Timecop.return
+    appeal
+  end
+
+  def create_not_ready_aod_appeal(created_date: 1.year.ago)
+    Timecop.travel(created_date)
+    appeal = create(
+      :appeal,
+      :hearing_docket,
+      :advanced_on_docket_due_to_age,
+      :with_post_intake_tasks
+    )
+    Timecop.return
+    appeal
+  end
+
+  def create_not_ready_cavc_appeal(tied_judge: nil, created_date: 1.year.ago)
+    Timecop.travel(created_date - 6.months)
+    if tied_judge
+      judge = tied_judge
+      attorney = JudgeTeam.for_judge(judge)&.attorneys&.first || create(:user, :with_vacols_attorney_record)
+    else
+      judge = create(:user, :judge, :with_vacols_judge_record)
+      attorney = create(:user, :with_vacols_attorney_record)
+    end
+
+    source_appeal = create(
+      :appeal,
+      :hearing_docket,
+      :held_hearing,
+      :tied_to_judge,
+      :dispatched,
+      # associated_judge and tied_judge are both required to satisfy different traits
+      associated_judge: judge,
+      associated_attorney: attorney,
+      tied_judge: judge
+    )
+
+    Timecop.travel(6.months.from_now)
+    cavc_remand = create(
+      :cavc_remand,
+      source_appeal: source_appeal
+    )
+    Timecop.return
+
+    cavc_remand.remand_appeal
+  end
+
+  def create_not_ready_nonpriority_appeal(created_date: 1.year.ago)
+    Timecop.travel(created_date)
+    appeal = create(
+      :appeal,
+      :hearing_docket,
+      :with_post_intake_tasks
+    )
+    Timecop.return
+    appeal
+  end
+
+  def create_ready_aod_appeal_hearing_cancelled(created_date: 1.year.ago)
+    Timecop.travel(created_date)
+    appeal = create(
+      :appeal,
+      :hearing_docket,
+      :with_post_intake_tasks,
+      :advanced_on_docket_due_to_age,
+      :cancelled_hearing_and_ready_to_distribute
+    )
+    Timecop.return
+    appeal
+  end
+
+  def create_ready_nonpriority_appeal_hearing_cancelled(created_date: 1.year.ago)
+    Timecop.travel(created_date)
+    appeal = create(
+      :appeal,
+      :hearing_docket,
+      :with_post_intake_tasks,
+      :cancelled_hearing_and_ready_to_distribute
+    )
+    appeal.tasks.find_by(type: ScheduleHearingTask.name).cancelled!
+    Timecop.return
+    appeal
+  end
+
+  def create_nonpriority_distributable_vha_hearing_appeal_not_tied_to_any_judge
     appeal = create(:appeal,
                     :ready_for_distribution,
                     :denied_advance_on_docket,
+                    :with_vha_issue,
                     docket_type: Constants.AMA_DOCKETS.hearing)
+    create(:hearing, judge: nil, disposition: "held", appeal: appeal)
+    appeal
+  end
 
-    most_recent = create(:hearing_day, scheduled_for: days_ago)
-    hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
-    hearing.update(judge: judge_with_team)
-
-    # Artificially set the `assigned_at` of DistributionTask to exceed affinity threshold
-    DistributionTask.find_by(appeal: appeal).update!(assigned_at: days_ago)
-
+  def create_priority_distributable_vha_hearing_appeal_not_tied_to_any_judge
+    appeal = create(:appeal,
+                    :ready_for_distribution,
+                    :advanced_on_docket_due_to_age,
+                    :with_vha_issue,
+                    docket_type: Constants.AMA_DOCKETS.hearing)
+    create(:hearing, judge: nil, disposition: "held", appeal: appeal)
     appeal
   end
 
@@ -578,103 +1058,5 @@ describe HearingRequestDocket, :all_dbs do
                     docket_type: Constants.AMA_DOCKETS.hearing)
     create(:hearing, judge: nil, disposition: "held", appeal: appeal)
     appeal
-  end
-
-  def matching_all_base_conditions_with_most_recent_held_hearing_tied_to_judge
-    appeal = create(:appeal,
-                    :ready_for_distribution,
-                    :advanced_on_docket_due_to_motion,
-                    docket_type: Constants.AMA_DOCKETS.hearing)
-    most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
-    hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
-    hearing.update(judge: judge_with_team)
-
-    not_tied = create(:hearing_day, scheduled_for: 2.days.ago)
-    create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: not_tied)
-    appeal
-  end
-
-  def matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
-    appeal = create(:appeal,
-                    :ready_for_distribution,
-                    :advanced_on_docket_due_to_motion,
-                    docket_type: Constants.AMA_DOCKETS.hearing)
-    most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
-    hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
-    hearing.update(judge: distribution_judge)
-
-    not_tied = create(:hearing_day, scheduled_for: 2.days.ago)
-    create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: not_tied)
-    appeal
-  end
-
-  def matching_all_base_conditions_with_most_recent_held_hearing_not_tied_to_any_judge
-    appeal = create(:appeal,
-                    :ready_for_distribution,
-                    :advanced_on_docket_due_to_motion,
-                    docket_type: Constants.AMA_DOCKETS.hearing)
-    most_recent = create(:hearing_day, scheduled_for: 3.days.ago)
-    create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
-
-    tied_hearing_day = create(:hearing_day, scheduled_for: 4.days.ago)
-    hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: tied_hearing_day)
-    hearing.update(judge: judge_with_team)
-
-    appeal
-  end
-
-  def matching_all_base_conditions_with_most_recent_hearing_tied_to_other_judge_but_not_held
-    appeal = create(:appeal,
-                    :ready_for_distribution,
-                    :advanced_on_docket_due_to_motion,
-                    docket_type: Constants.AMA_DOCKETS.hearing)
-
-    most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
-    hearing = create(:hearing, judge: nil, disposition: "cancelled", appeal: appeal, hearing_day: most_recent)
-    hearing.update(judge: judge_with_team)
-
-    older_hearing_day = create(:hearing_day, scheduled_for: 2.days.ago)
-    create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: older_hearing_day)
-
-    appeal
-  end
-
-  def matching_all_base_conditions_with_most_recent_hearing_tied_to_distribution_judge_but_not_held
-    appeal = create(:appeal,
-                    :ready_for_distribution,
-                    :advanced_on_docket_due_to_motion,
-                    docket_type: Constants.AMA_DOCKETS.hearing)
-
-    most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
-    hearing = create(:hearing, judge: nil, disposition: "cancelled", appeal: appeal, hearing_day: most_recent)
-    hearing.update(judge: distribution_judge)
-
-    older_hearing_day = create(:hearing_day, scheduled_for: 2.days.ago)
-    create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: older_hearing_day)
-
-    appeal
-  end
-
-  def matching_all_base_conditions_with_most_recent_held_hearing_tied_to_other_judge
-    appeal = create(:appeal,
-                    :ready_for_distribution,
-                    :advanced_on_docket_due_to_motion,
-                    docket_type: Constants.AMA_DOCKETS.hearing)
-
-    most_recent_hearing_day = create(:hearing_day, scheduled_for: 1.day.ago)
-    hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent_hearing_day)
-    hearing.update(judge: judge_with_team)
-
-    older_hearing_day = create(:hearing_day, scheduled_for: 2.days.ago)
-    hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: older_hearing_day)
-    hearing.update(judge: distribution_judge)
-
-    appeal
-  end
-
-  def judge_with_team
-    active_judge = create(:user, last_login_at: Time.zone.now)
-    JudgeTeam.create_for_judge(active_judge)
-    active_judge
   end
 end

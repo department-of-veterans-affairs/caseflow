@@ -67,13 +67,18 @@ class Idt::V1::AppealDetailsSerializer
 
   attribute :badges do |object|
     if object.is_a?(LegacyAppeal)
-      nil
+      {
+        mst: !!object.mst?,
+        pact: !!object.pact?
+      }
     else
       {
         contested_claim: object.contested_claim?,
         fnod: object.veteran_appellant_deceased?,
         hearing: object.hearings.any?(&:held?),
-        overtime: object.overtime?
+        overtime: object.overtime?,
+        mst: object.mst?,
+        pact: object.pact?
       }
     end
   end

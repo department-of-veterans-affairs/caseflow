@@ -31,7 +31,18 @@ module Caseflow::Error
   class EfolderAccessForbidden < EfolderError; end
   class ClientRequestError < EfolderError; end
 
+  class PriorityEndProductSyncError < StandardError
+    def ignorable?
+      true
+    end
+  end
+
   class VaDotGovAPIError < SerializableError; end
+  class ErrorCreatingNewRequest < SerializableError; end
+  class ErrorModifyingExistingRequest < SerializableError; end
+  class ErrorOpenModifyingExistingRequest < SerializableError; end
+  class ErrorApprovingExistingRequest < SerializableError; end
+  class ErrorDenyingExistingRequest < SerializableError; end
   class VaDotGovRequestError < VaDotGovAPIError; end
   class VaDotGovServerError < VaDotGovAPIError; end
   class VaDotGovLimitError < VaDotGovAPIError; end
@@ -40,7 +51,7 @@ module Caseflow::Error
   class VaDotGovInvalidInputError < VaDotGovAPIError; end
   class VaDotGovMultipleAddressError < VaDotGovAPIError; end
   class VaDotGovNullAddressError < StandardError; end
-  class VaDotGovForeignVeteranError < StandardError; end
+  class VaDotGovForeignVeteranError < SerializableError; end
 
   class FetchHearingLocationsJobError < SerializableError; end
 
@@ -101,6 +112,14 @@ module Caseflow::Error
       @task_type = args[:task_type]
       @code = args[:code] || 400
       @message = args[:message] || "Task status has to be 'assigned' on create for #{@task_type}"
+    end
+  end
+
+  class InvalidTaskTypeOnTaskCreate < SerializableError
+    def initialize(args)
+      @task_type = args[:task_type]
+      @code = args[:code] || 400
+      @message = args[:message] || "#{@task_type} is not an assignable task type"
     end
   end
 
@@ -340,6 +359,7 @@ module Caseflow::Error
   class AttributeNotLoaded < StandardError; end
   class VeteranNotFound < StandardError; end
   class AppealNotFound < StandardError; end
+  class MissingRecipientInfo < StandardError; end
 
   class EstablishClaimFailedInVBMS < StandardError
     attr_reader :error_code
@@ -447,4 +467,34 @@ module Caseflow::Error
   class VANotifyInternalServerError < VANotifyApiError; end
   class VANotifyRateLimitError < VANotifyApiError; end
   class EmptyQueueError < StandardError; end
+  class InvalidNotificationStatusFormat < StandardError; end
+  class NotificationInitializationError < SerializableError
+    attr_accessor :message
+
+    def initialize(args = {})
+      @message = args[:message]
+    end
+  end
+
+  # Pacman errors
+  class PacmanApiError < StandardError
+    include Caseflow::Error::ErrorSerializer
+    attr_accessor :code, :message
+  end
+  class PacmanBadRequestError < PacmanApiError; end
+  class PacmanForbiddenError < PacmanApiError; end
+  class PacmanNotFoundError < PacmanApiError; end
+  class PacmanInternalServerError < PacmanApiError; end
+
+  class SyncLockFailed < StandardError
+    def ignorable?
+      true
+    end
+  end
+
+  class MaximumBatchSizeViolationError < StandardError
+    def initialize(msg = "The batch size of jobs must not exceed 10")
+      super(msg)
+    end
+  end
 end

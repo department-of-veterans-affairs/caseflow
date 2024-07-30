@@ -43,9 +43,13 @@ class ScheduleHearingTask < Task
   end
 
   def create_parent_hearing_task
+    return true unless parent
+
     if parent.type != HearingTask.name
       self.parent = HearingTask.create(appeal: appeal, parent: parent)
     end
+
+    true
   end
 
   def verify_vso_can_change_hearing_to_virtual!(params)
@@ -121,7 +125,7 @@ class ScheduleHearingTask < Task
 
     hearing_admin_actions = available_hearing_user_actions(user)
 
-    if (assigned_to &.== user) || HearingsManagement.singleton.user_has_access?(user)
+    if (assigned_to&.== user) || HearingsManagement.singleton.user_has_access?(user)
       schedule_hearing_action = if FeatureToggle.enabled?(:schedule_veteran_virtual_hearing, user: user)
                                   Constants.TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE
                                 else
@@ -202,6 +206,10 @@ class ScheduleHearingTask < Task
     elsif params[:status] == Constants.TASK_STATUSES.cancelled
       # If we are cancelling the schedule hearing task, we need to withdraw the request
       created_tasks << withdraw_hearing(parent)
+
+      cancel_redundant_hearing_req_mail_tasks_of_type(HearingWithdrawalRequestMailTask)
+
+      created_tasks
     end
 
     # Return the created tasks

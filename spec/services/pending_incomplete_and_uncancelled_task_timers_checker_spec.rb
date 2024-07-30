@@ -13,7 +13,6 @@ describe PendingIncompleteAndUncancelledTaskTimersChecker do
 
       expect(subject.report?).to eq(true)
       expect(subject.report).to match("1 pending and incomplete")
-      expect(subject.slack_channel).to eq("#appeals-job-alerts")
     end
   end
 end

@@ -231,8 +231,8 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           # Only 2 of these are relevant to the AMA appeal.
           # AttorneyCaseReviews affect the "documents" attribute, so only 2 documents are returned.
           expect(AttorneyCaseReview.count).to eq 3
-          expect(AttorneyCaseReview.pluck(:appeal_type).uniq).to match_array %w[Appeal LegacyAppeal]
-          expect(AttorneyCaseReview.pluck(:appeal_id).uniq.size).to eq 1
+          expect(AttorneyCaseReview.all.map(&:appeal_type).uniq).to match_array %w[Appeal LegacyAppeal]
+          expect(AttorneyCaseReview.all.map(&:appeal_id).uniq.size).to eq 1
 
           tasks.first.update(assigned_at: 5.days.ago)
           tasks.second.update(assigned_at: 15.days.ago)
@@ -731,22 +731,22 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
     let(:params) do
       {
         "request_address": {
-          "address_line_1": "string",
-          "address_line_2": "string",
-          "address_line_3": "string",
+          "addressLine1": "string",
+          "addressLine2": "string",
+          "addressLine3": "string",
           "city": "string",
-          "zip_code_5": "string",
-          "zip_code_4": "string",
-          "international_postal_code": "string",
-          "state_province": {
+          "zipCode5": "string",
+          "zipCode4": "string",
+          "internationalPostalCode": "string",
+          "stateProvince": {
             "name": "string",
             "code": "string"
           },
-          "request_country": {
-            "country_name": "string",
-            "country_code": "string"
+          "requestCountry": {
+            "countryName": "string",
+            "countryCode": "string"
           },
-          "address_pou": "RESIDENCE/CHOICE"
+          "addressPOU": "RESIDENCE/CHOICE"
         }
       }
     end

@@ -220,10 +220,11 @@ export const setOrganizations = (organizations) => ({
   payload: { organizations }
 });
 
-export const setActiveOrganization = (id, name, isVso, userCanBulkAssign) => ({
+export const setActiveOrganization = (id, type, name, isVso, userCanBulkAssign) => ({
   type: ACTIONS.SET_ACTIVE_ORGANIZATION,
   payload: {
     id,
+    type,
     name,
     isVso,
     userCanBulkAssign
@@ -248,6 +249,11 @@ export const setUserIsVsoEmployee = (userIsVsoEmployee) => ({
 export const setUserIsCamoEmployee = (userIsCamoEmployee) => ({
   type: ACTIONS.SET_USER_IS_CAMO_EMPLOYEE,
   payload: { userIsCamoEmployee }
+});
+
+export const setUserIsSCTCoordinator = (userIsSCTCoordinator) => ({
+  type: ACTIONS.SET_USER_IS_SCT_COORDINATOR,
+  payload: { userIsSCTCoordinator }
 });
 
 export const setFeedbackUrl = (feedbackUrl) => ({

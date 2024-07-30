@@ -16,4 +16,6 @@ class WorkQueue::LegacyIssueSerializer
   attribute :labels
   attribute(:readjudication) { false }
   attribute :remand_reasons
+  attribute(:mst_status) { |object| FeatureToggle.enabled?(:mst_identification) ? object.mst_status : false }
+  attribute(:pact_status) { |object| FeatureToggle.enabled?(:pact_identification) ? object.pact_status : false }
 end

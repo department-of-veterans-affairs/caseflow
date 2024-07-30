@@ -1,4 +1,5 @@
-Resolves #{jira issue link}
+<!-- Change JIRA-12345 to reflect the URL of the Jira item this PR is associated with -->
+Resolves [Jira Issue Title](https://jira.devops.va.gov/browse/JIRA-12345)
 
 # Description
 Please explain the changes you made here.
@@ -7,7 +8,8 @@ Please explain the changes you made here.
 - [ ] Code compiles correctly
 
 ## Testing Plan
-1. Go to #{jira issue link} or list them below
+<!-- Change JIRA-12345 to reflect the URL of the location of the test plan(s) for this PR -->
+1. Go to [Jira Issue/Test Plan Link](https://jira.devops.va.gov/browse/JIRA-12345) or list them below
 
 - [ ] For feature branches merging into master: Was this deployed to UAT?
 
@@ -19,7 +21,7 @@ Please explain the changes you made here.
  ---|---
 
 ## Storybook Story
-*For Frontend (Presentationa) Components*
+*For Frontend (Presentation) Components*
 * [ ] Add a [Storybook](https://github.com/department-of-veterans-affairs/caseflow/wiki/Documenting-React-Components-with-Storybook) file alongside the component file (e.g. create `MyComponent.stories.js` alongside `MyComponent.jsx`)
 * [ ] Give it a title that reflects the component's location within the overall Caseflow hierarchy
 * [ ] Write a separate story (within the same file) for each discrete variation of the component

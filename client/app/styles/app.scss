@@ -21,10 +21,12 @@
 @import 'queue/_timeline.scss';
 @import 'queue/_evaluate_decision.scss';
 @import 'queue/_assigned_cases.scss';
+@import 'queue/assign_to_view';
 @import 'queue/_cavc_dashboard.scss';
 @import '_task_tree.scss';
 @import 'react/_react_styles_root.scss';
 @import '_team_management.scss';
+@import 'caseDistribution/_case_distribution.scss';
 
 @import '~react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 

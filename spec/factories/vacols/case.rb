@@ -175,6 +175,19 @@ FactoryBot.define do
                 end
               end
 
+              factory :case_with_multi_decision do
+                bfddec { 1.day.ago }
+
+                transient do
+                  decision_document do
+                    [
+                      create(:document, type: "BVA Decision", received_at: 1.day.ago),
+                      create(:document, type: "BVA Decision", received_at: 1.day.ago)
+                    ]
+                  end
+                end
+              end
+
               factory :case_with_old_decision do
                 bfddec { 1.day.ago }
 
@@ -200,7 +213,12 @@ FactoryBot.define do
       end
 
       after(:create) do |vacols_case, evaluator|
-        VACOLS::Folder.find_by(tinum: evaluator.docket_number).update!(titrnum: "123456789S")
+        if evaluator.correspondent&.ssn
+          VACOLS::Folder.find_by(tinum: evaluator.docket_number).update!(titrnum: evaluator.correspondent.ssn)
+        else
+          VACOLS::Folder.find_by(tinum: evaluator.docket_number).update!(titrnum: "123456789S")
+        end
+
         create(
           :case_hearing,
           :disposition_held,
@@ -245,6 +263,16 @@ FactoryBot.define do
       bfcurloc { "81" }
       bfdnod { 13.months.ago.to_date }
       bfd19 { 1.year.ago.to_date }
+    end
+
+    trait :with_appeal_affinity do
+      transient do
+        affinity_start_date { Time.zone.now }
+      end
+
+      after(:create) do |appeal, evaluator|
+        create(:appeal_affinity, appeal: appeal, affinity_start_date: evaluator.affinity_start_date)
+      end
     end
 
     trait :status_remand do

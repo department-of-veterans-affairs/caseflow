@@ -1,6 +1,23 @@
 # frozen_string_literal: true
 
 describe QueueConfig, :postgres do
+  let(:expected_tab_hash_keys) do
+    [
+      :label,
+      :name,
+      :description,
+      :columns,
+      :allow_bulk_assign,
+      :contains_legacy_tasks,
+      :tasks,
+      :task_page_count,
+      :total_task_count,
+      :task_page_endpoint_base_path,
+      :defaultSort,
+      :hide_from_queue_table_view
+    ]
+  end
+
   describe ".new" do
     let(:arguments) { { assignee: assignee } }
 
@@ -94,21 +111,7 @@ describe QueueConfig, :postgres do
 
         it "has the correct shape for each tab hash" do
           subject.each do |tab|
-            expect(tab.keys).to match_array(
-              [
-                :label,
-                :name,
-                :description,
-                :columns,
-                :allow_bulk_assign,
-                :contains_legacy_tasks,
-                :tasks,
-                :task_page_count,
-                :total_task_count,
-                :task_page_endpoint_base_path,
-                :defaultSort
-              ]
-            )
+            expect(tab.keys).to match_array(expected_tab_hash_keys)
           end
         end
 
@@ -171,21 +174,7 @@ describe QueueConfig, :postgres do
 
         it "has the correct shape for each tab hash" do
           subject.each do |tab|
-            expect(tab.keys).to match_array(
-              [
-                :label,
-                :name,
-                :description,
-                :columns,
-                :allow_bulk_assign,
-                :contains_legacy_tasks,
-                :tasks,
-                :task_page_count,
-                :total_task_count,
-                :task_page_endpoint_base_path,
-                :defaultSort
-              ]
-            )
+            expect(tab.keys).to match_array(expected_tab_hash_keys)
           end
         end
 
@@ -213,21 +202,7 @@ describe QueueConfig, :postgres do
 
         it "has the correct shape for each tab hash" do
           subject.each do |tab|
-            expect(tab.keys).to match_array(
-              [
-                :label,
-                :name,
-                :description,
-                :columns,
-                :allow_bulk_assign,
-                :contains_legacy_tasks,
-                :tasks,
-                :task_page_count,
-                :total_task_count,
-                :task_page_endpoint_base_path,
-                :defaultSort
-              ]
-            )
+            expect(tab.keys).to match_array(expected_tab_hash_keys)
           end
         end
 
@@ -250,7 +225,7 @@ describe QueueConfig, :postgres do
 
           expect(tabs[0][:description]).to eq(COPY::USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION)
           expect(tabs[1][:description]).to eq(COPY::USER_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION)
-          expect(tabs[2][:description]).to eq(COPY::QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION)
+          expect(tabs[2][:description]).to eq(COPY::QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION)
         end
 
         context "when the user does not use the task pages API" do

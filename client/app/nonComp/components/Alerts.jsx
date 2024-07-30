@@ -11,6 +11,11 @@ export class ErrorAlert extends React.PureComponent {
         body: 'The dispositions for this task could not be saved.' +
               ' Please try submitting again. If the problem persists, please contact the Caseflow team' +
               ' via the VA Enterprise Service Desk at 855-673-4357 or by creating a ticket via YourIT.'
+      },
+      pendingModificationRequests: {
+        title: 'This case has pending issue modification requests',
+        body: 'The dispositions for this task could not be saved.' +
+              ' Please resolve all pending issue modification requests before trying to disposition this claim again'
       }
     }[this.props.errorCode];
 
@@ -44,7 +49,15 @@ SuccessAlert.propTypes = {
   successCode: PropTypes.string
 };
 
+// method to list MST/PACT edits
+const listChanges = (editList) => {
+  const divStyle = { margin: '.1rem' };
+
+  return editList.map((value) => <div style={divStyle}><li>{value}</li></div>);
+};
+
 export class FlashAlerts extends React.PureComponent {
+
   render() {
     let alerts = this.props.flash.map((flash, idx) => {
       let flashMsg;
@@ -57,6 +70,11 @@ export class FlashAlerts extends React.PureComponent {
         flashMsg = <Alert key={idx} title="Error" type="error" lowerMargin>{flash[1]}</Alert>;
       } else if (flash[0] === 'edited') {
         flashMsg = <Alert key={idx} title="Edit Completed" type="success" lowerMargin>{flash[1]}</Alert>;
+      } else if (flash[0] === 'mst_pact_edited') {
+      // eslint-disable-next-line max-len
+        flashMsg = <Alert key={idx} title="You have successfully updated issues on this appeal" type="success" lowerMargin>{listChanges(flash[1])}</Alert>;
+      } else if (flash[0] === 'custom') {
+        flashMsg = <Alert key={idx} title={flash[1].title} type="success" lowerMargin>{flash[1].message}</Alert>;
       } else if (flash[0] === 'show_vha_org_join_info') {
         flashMsg = <VhaJoinOrgAlert />;
       }

@@ -8,6 +8,9 @@
     inbox: {
       messages: messages,
       pagination: pagination
+    },
+    featureToggles: {
+      metricsBrowserError: FeatureToggle.enabled?(:metrics_browser_error, user: current_user)
     }
   }) %>
 <% end %>

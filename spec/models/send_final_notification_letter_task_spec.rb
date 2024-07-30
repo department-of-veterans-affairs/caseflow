@@ -17,9 +17,9 @@ describe SendFinalNotificationLetterTask do
   include_examples "verify_user_can_create"
 
   describe ".available_actions" do
-    let(:final_notification_letter_task) {
+    let(:final_notification_letter_task) do
       task_class.create!(appeal: distribution_task.appeal, parent_id: distribution_task.id, assigned_to: cob_team)
-    }
+    end
 
     let(:available_task_actions) do
       [

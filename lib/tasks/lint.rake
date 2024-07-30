@@ -5,12 +5,15 @@ require "rainbow"
 
 desc "shortcut to run all linting tools, at the same time."
 task(:lint).clear
-task :lint do
+task :lint do # rubocop:disable Rails/RakeEnvironment
   puts "running scss-lint..."
   scss_result = ShellCommand.run("scss-lint --color")
 
   puts "running fasterer..."
   fasterer_result = ShellCommand.run("bundle exec fasterer")
+
+  puts "running rubocop..."
+  rubocop_result = ShellCommand.run("bundle exec rubocop")
 
   puts "\nrunning eslint..."
   eslint_cmd = ENV["CI"] ? "lint" : "lint:fix"
@@ -21,7 +24,7 @@ task :lint do
   prettier_result = ShellCommand.run("cd ./client && yarn run #{prettier_cmd}")
 
   puts "\n"
-  if scss_result && eslint_result && fasterer_result && prettier_result
+  if scss_result && eslint_result && fasterer_result && prettier_result && rubocop_result
     puts Rainbow("Passed. Everything looks stylish! " \
       "But there may have been auto-corrections that you now need to check in.").green
   else

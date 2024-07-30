@@ -93,7 +93,7 @@ const AddCavcDatesModal = ({ appealId, decisionType, error, highlightInvalid, hi
   />;
 
   const instructionsTextField = <TextareaField
-    label={COPY.CAVC_INSTRUCTIONS_LABEL}
+    label={COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}
     name="context-and-instructions-textBox"
     value={instructions}
     onChange={(val) => setInstructions(val)}
@@ -130,7 +130,7 @@ const mapStateToProps = (state, ownProps) => ({
   highlightInvalid: state.ui.highlightFormItems,
   error: state.ui.messages.error,
   // eslint-disable-next-line camelcase
-  decisionType: state.queue.appealDetails[ownProps.appealId].cavcRemand?.cavc_decision_type
+  decisionType: state.queue.appealDetails[ownProps.appealId]?.cavcRemand?.cavc_decision_type
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
