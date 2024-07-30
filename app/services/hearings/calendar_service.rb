@@ -8,6 +8,11 @@ require "icalendar/tzinfo"
 # emails.
 
 class Hearings::CalendarService
+  class CalendarEventView < ActionView::Base
+    include Hearings::CalendarTemplateHelper
+    include Hearings::AppellantNameHelper
+  end
+
   class << self
     # Sent when first switching a video hearing to a virtual hearing,
     # and also when the scheduled time for an existing virtual hearing
@@ -95,10 +100,24 @@ class Hearings::CalendarService
     end
 
     def render_virtual_hearing_calendar_event_template(email_recipient_info, event_type, locals)
-      template_name =
-        "hearing_mailer/calendar_events/#{email_recipient_info.title.downcase}_#{event_type}_event_description"
+      lookup_context = ActionView::Base.build_lookup_context(ActionController::Base.view_paths)
+      context = CalendarEventView.new(lookup_context)
 
-      ApplicationController.render(template: template_name, locals: locals)
+      # Some *~ magic ~* here. The recipient title is used to determine which template to load:
+      #
+      #              judge_confirmation_event_description
+      #     representative_confirmation_event_description
+      #            veteran_confirmation_event_description
+      #
+      # representative_changed_to_video_event_description
+      #        veteran_changed_to_video_event_description
+
+      template_name = "#{email_recipient_info.title.downcase}_#{event_type}_event_description"
+
+      context.render(
+        template: "hearing_mailer/calendar_events/#{template_name}",
+        locals: locals
+      )
     end
   end
 end

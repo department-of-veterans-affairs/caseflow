@@ -8,6 +8,7 @@ class ApplicationBaseController < ActionController::Base
 
   include TrackRequestId
 
+  force_ssl if: :ssl_enabled?
   before_action :check_out_of_service
   before_action :strict_transport_security
 
@@ -32,6 +33,10 @@ class ApplicationBaseController < ActionController::Base
 
   def check_out_of_service
     render "out_of_service", layout: "application" if Rails.cache.read("out_of_service")
+  end
+
+  def ssl_enabled?
+    Rails.env.production?
   end
 
   def strict_transport_security
