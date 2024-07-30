@@ -1145,4 +1145,5 @@ feature "Appeal Edit issues", :all_dbs do
       end
     end
   end
-end
+  end
+  end
