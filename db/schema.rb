@@ -870,26 +870,6 @@ ActiveRecord::Schema.define(version: 2024_06_13_202232) do
     t.index ["user_id"], name: "index_end_product_updates_on_user_id"
   end
 
-  create_table "event_records", comment: "Stores records that are created or updated by an event from the Appeals-Consumer application.", force: :cascade do |t|
-    t.datetime "created_at", null: false, comment: "Automatic timestamp when row was created"
-    t.integer "event_id", null: false, comment: "ID of the Event that created or updated this record."
-    t.bigint "evented_record_id", null: false
-    t.string "evented_record_type", null: false
-    t.datetime "updated_at", null: false, comment: "Automatic timestamp whenever the record changes"
-    t.index ["evented_record_type", "evented_record_id"], name: "index_event_record_on_evented_record"
-  end
-
-  create_table "events", comment: "Stores events from the Appeals-Consumer application that are processed by Caseflow", force: :cascade do |t|
-    t.datetime "completed_at", comment: "Timestamp of when event was successfully completed"
-    t.datetime "created_at", null: false, comment: "Automatic timestamp when row was created"
-    t.string "error", comment: "Error message captured during a failed event"
-    t.jsonb "info", default: {}
-    t.string "reference_id", null: false, comment: "Id of Event Record being referenced within the Appeals Consumer Application"
-    t.string "type", null: false, comment: "Type of Event (e.g. DecisionReviewCreatedEvent)"
-    t.datetime "updated_at", null: false, comment: "Automatic timestamp whenever the record changes"
-    t.index ["info"], name: "index_events_on_info", using: :gin
-  end
-
   create_table "form8s", id: :serial, force: :cascade do |t|
     t.string "_initial_appellant_name"
     t.string "_initial_appellant_relationship"
@@ -1668,7 +1648,6 @@ ActiveRecord::Schema.define(version: 2024_06_13_202232) do
     t.boolean "mst_status", default: false, comment: "Indicates if issue is related to Military Sexual Trauma (MST)"
     t.text "mst_status_update_reason_notes", comment: "The reason for why Request Issue is Military Sexual Trauma (MST)"
     t.string "nonrating_issue_bgs_id", comment: "If the contested issue is a nonrating issue, this is the nonrating issue's reference id. Will be nil if this request issue contests a decision issue."
-    t.string "nonrating_issue_bgs_source", comment: "Name of Table in Corporate Database where the nonrating issue is stored. This datapoint is correlated with the nonrating_issue_bgs_id."
     t.string "nonrating_issue_category", comment: "The category selected for nonrating request issues. These vary by business line."
     t.string "nonrating_issue_description", comment: "The user entered description if the issue is a nonrating issue"
     t.text "notes", comment: "Notes added by the Claims Assistant when adding request issues. This may be used to capture handwritten notes on the form, or other comments the CA wants to capture."
@@ -2291,7 +2270,6 @@ ActiveRecord::Schema.define(version: 2024_06_13_202232) do
   add_foreign_key "end_product_establishments", "users"
   add_foreign_key "end_product_updates", "end_product_establishments"
   add_foreign_key "end_product_updates", "users"
-  add_foreign_key "event_records", "events", name: "event_records_event_id_fk"
   add_foreign_key "hearing_appeal_stream_snapshots", "legacy_appeals", column: "appeal_id"
   add_foreign_key "hearing_appeal_stream_snapshots", "legacy_hearings", column: "hearing_id"
   add_foreign_key "hearing_days", "users", column: "created_by_id"
