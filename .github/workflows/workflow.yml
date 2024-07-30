@@ -38,7 +38,7 @@ jobs:
           - 6379:6379
 
       facols_db:
-        image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:latest
+        image: 065403089830.dkr.ecr.us-gov-west-1.amazonaws.com/facols:latest
         credentials:
           username: AWS
           password: ${{ secrets.ECR_PASSWORD }}
@@ -52,7 +52,7 @@ jobs:
         ci_node_index: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 
     container:
-      image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
+      image: 065403089830.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
       options: --privileged # Necessary for Rspec to run with our configuration within GHA
       credentials:
         username: AWS
@@ -266,7 +266,7 @@ jobs:
     if: true
     runs-on: ubuntu-latest
     container:
-      image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
+      image: 065403089830.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
       credentials:
         username: AWS
         password: ${{ secrets.ECR_PASSWORD }}
@@ -328,7 +328,7 @@ jobs:
     if: true
     runs-on: ubuntu-latest
     container:
-      image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
+      image: 065403089830.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
       credentials:
         username: AWS
         password: ${{ secrets.ECR_PASSWORD }}
