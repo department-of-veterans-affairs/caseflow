@@ -1,4 +1,4 @@
-class UpdateSupplementalClaimsTypeColumn < Caseflow::Migration[6.0]
+class BackFillSupplementalClaimsTypeColumn < Caseflow::Migration[6.0]
   def up
     safety_assured do
       execute <<-SQL
