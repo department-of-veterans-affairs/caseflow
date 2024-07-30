@@ -118,11 +118,8 @@ describe ExternalApi::VBMSService do
         expect(FeatureToggle).to receive(:enabled?).with(:use_ce_api).and_return(false)
         expect(described).to receive(:init_vbms_client)
         expect(described).to receive(:initialize_update).and_return(mock_init_update_response)
-        expect(described).to receive(:update_document).with(
-          appeal.veteran_file_number,
-          "document-token",
-          "/path/to/test/location"
-        )
+        expect(described).to receive(:send_and_log_request)
+          .with(appeal.veteran_file_number, instance_of(VBMS::Requests::UpdateDocument))
 
         described.update_document_in_vbms(appeal, fake_document)
       end
