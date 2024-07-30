@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { css } from 'glamor';
 import QueueTable from '../../queue/QueueTable';
 import BENEFIT_TYPES from 'constants/BENEFIT_TYPES';
 import { formatDateStr } from 'app/util/DateUtil';
@@ -20,6 +21,12 @@ const IndividualClaimHistoryTable = (props) => {
       hour: '2-digit',
       minute: '2-digit' });
   };
+
+  const tableNumberStyling = css({
+    '& tr > td:first-child': {
+      verticalAlign: 'top',
+    }
+  });
 
   const formatDecisionDate = (date) => {
     if (date) {
@@ -171,7 +178,7 @@ const IndividualClaimHistoryTable = (props) => {
       break;
     default:
       return null;
-    };
+    }
 
     return (
       <div>
@@ -185,13 +192,8 @@ const IndividualClaimHistoryTable = (props) => {
   };
 
   const DetailsFragment = (row) => {
-    console.log(row, "row");
     let component = null;
-    const [isOpen, setIsOpen] = useState(false);
 
-    const toggle = () => {
-      setIsOpen((isOpen) => !isOpen);
-    };
     const { readableEventType, details, modificationRequestDetails } = row;
 
     const detailsExtended = { ...details, eventDate: row.eventDate, eventType: row.eventType };
@@ -248,14 +250,7 @@ const IndividualClaimHistoryTable = (props) => {
     return (
       <div>
         <p>{component}</p>
-        {/* <OriginalDetailsFragments {...requestDetails} /> */}
-        <div>
-        <a onClick={toggle} style={{ cursor: 'pointer'}}>{`${isOpen ? 'Hide' : 'View' } original request`}</a>
-        {isOpen &&
-          <div>
-            {component}
-          </div>}
-      </div>
+        { modificationRequestDetails.length > 0 ? <OriginalDetailsFragments {...requestDetails} /> : null }
       </div>
     );
   };
@@ -316,6 +311,7 @@ const IndividualClaimHistoryTable = (props) => {
     summary="Individual claim history"
     getKeyForRow={(_rowNumber, event) => event.id}
     enablePagination
+    bodyStyling={tableNumberStyling}
     useTaskPagesApi={false}
     defaultSort= {{
       sortColName: 'eventDate',
