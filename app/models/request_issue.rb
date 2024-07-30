@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "time"
 ##
 # When a veteran submits their form for an Appeal, Supplemental Claim, or Higher Level Review, they list the prior
 # decisions that they want to contest. These are intaken into Caseflow as request issues.  Request issues can also
@@ -820,8 +821,16 @@ class RequestIssue < CaseflowRecord
   #
   # In order to prevent browser/API automatic time zone changes from altering it, we
   # re-retrieve the value from the cache and save it to the DB as a string. Yikes.
+
   def set_contested_rating_issue_profile_date
-    self.contested_rating_issue_profile_date ||= contested_rating_issue&.profile_date
+    if contested_rating_issue_profile_date.blank?
+      self.contested_rating_issue_profile_date = contested_rating_issue&.profile_date
+    end
+
+    if contested_rating_issue_profile_date.present?
+      parsed_date = Time.zone.parse(contested_rating_issue_profile_date)
+      self.contested_rating_issue_profile_date = parsed_date.utc
+    end
   end
 
   # TODO: extend this to cover nonrating request issues
