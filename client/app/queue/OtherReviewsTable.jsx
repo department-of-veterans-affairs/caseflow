@@ -7,7 +7,6 @@ import { css } from 'glamor';
 
 import Table from '../components/Table';
 import { clearCaseListSearch } from './CaseList/CaseListActions';
-import BadgeArea from '../components/badges/BadgeArea';
 
 import COPY from '../../COPY';
 import CLAIM_REVIEW_TEXT from '../../constants/CLAIM_REVIEW_TEXT';
@@ -63,85 +62,67 @@ class OtherReviewsTable extends React.PureComponent {
 
   getKeyForRow = (rowNumber, object) => `${object.reviewType}-${object.claimId}`;
 
-  getColumns = () => {
-    const { featureToggles } = this.props;
-
-    // Check if disable_ama_eventing is false to determine whether to show the BadgeArea column
-    const showBadgeAreaColumn = !featureToggles.disable_ama_eventing;
-
-    const columns = [
-      {
-        header: COPY.OTHER_REVIEWS_TABLE_APPELLANT_NAME_COLUMN_TITLE,
-        valueFunction: (review) => review.claimantNames.length > 0 ?
-          review.claimantNames.join(', ') :
-          review.veteranFullName
-      },
-      {
-        header: COPY.OTHER_REVIEWS_TABLE_REVIEW_TYPE_COLUMN_TITLE,
-        valueFunction: (review) => (
-          <React.Fragment>
-            <Link
-              name="edit-issues"
-              href={review.editIssuesUrl}
-              target="_blank">
-              {_.startCase(review.reviewType)}
-            </Link>
-          </React.Fragment>
-        )
-      },
-      {
-        header: COPY.OTHER_REVIEWS_TABLE_RECEIPT_DATE_COLUMN_TITLE,
-        valueFunction: (review) => <DateString date={review.receiptDate} />
-      },
-      {
-        header: COPY.OTHER_REVIEWS_TABLE_EP_CODE_COLUMN_TITLE,
-        valueFunction: (review) => {
-          if (review.endProductStatuses && review.endProductStatuses.length > 0) {
-            if (review.endProductStatuses.length > 1) {
-              return review.endProductStatuses.map((endProduct, i) => (
-                <SubdividedTableRow key={i} rowNumber={i}>
-                  {endProduct.ep_code}
-                </SubdividedTableRow>
-              ));
-            }
-            const endProduct = review.endProductStatuses[0];
-
-            return endProduct.ep_code;
-          }
-
-          return <em>{COPY[CLAIM_REVIEW_TEXT[review.reviewType]]}</em>;
-        }
-      },
-      {
-        header: COPY.OTHER_REVIEWS_TABLE_EP_STATUS_COLUMN_TITLE,
-        valueFunction: (review) => {
-          if (review.endProductStatuses && review.endProductStatuses.length > 0) {
-            if (review.endProductStatuses.length > 1) {
-              return review.endProductStatuses.map((endProduct, i) => (
-                <SubdividedTableRow key={i} rowNumber={i}>
-                  {endProduct.ep_status}
-                </SubdividedTableRow>
-              ));
-            }
-            const endProduct = review.endProductStatuses[0];
-
-            return endProduct.ep_status;
-          }
-
-          return '';
-        }
+  getColumns = () => [
+    {
+      header: COPY.OTHER_REVIEWS_TABLE_APPELLANT_NAME_COLUMN_TITLE,
+      valueFunction: (review) => review.claimantNames.length > 0 ?
+        review.claimantNames.join(', ') :
+        review.veteranFullName
+    },
+    {
+      header: COPY.OTHER_REVIEWS_TABLE_REVIEW_TYPE_COLUMN_TITLE,
+      valueFunction: (review) => {
+        return <React.Fragment>
+          <Link
+            name="edit-issues"
+            href={review.editIssuesUrl}
+            target="_blank">
+            {_.startCase(review.reviewType)}
+          </Link>
+        </React.Fragment>;
       }
-    ];
+    },
+    {
+      header: COPY.OTHER_REVIEWS_TABLE_RECEIPT_DATE_COLUMN_TITLE,
+      valueFunction: (review) => <DateString date={review.receiptDate} />
+    },
+    {
+      header: COPY.OTHER_REVIEWS_TABLE_EP_CODE_COLUMN_TITLE,
+      valueFunction: (review) => {
+        if (review.endProductStatuses && review.endProductStatuses.length > 0) {
+          if (review.endProductStatuses.length > 1) {
+            return review.endProductStatuses.map((endProduct, i) => {
+              return <SubdividedTableRow rowNumber={i}>
+                {endProduct.ep_code}
+              </SubdividedTableRow>;
+            });
+          }
+          const endProduct = review.endProductStatuses[0];
 
-    // Conditionally include the BadgeArea column at the start of row based on showBadgeAreaColumn
-    if (showBadgeAreaColumn) {
-      columns.unshift({
-        valueFunction: (review) => <BadgeArea review={review} />
-      });
+          return endProduct.ep_code;
+        }
+
+        return <em>{COPY[CLAIM_REVIEW_TEXT[review.reviewType]]}</em>;
+      }
+    },
+    {
+      header: COPY.OTHER_REVIEWS_TABLE_EP_STATUS_COLUMN_TITLE,
+      valueFunction: (review) => {
+        if (review.endProductStatuses && review.endProductStatuses.length > 0) {
+          if (review.endProductStatuses.length > 1) {
+            return review.endProductStatuses.map((endProduct, i) => {
+              return <SubdividedTableRow rowNumber={i}>{endProduct.ep_status}</SubdividedTableRow>;
+            });
+          }
+          const endProduct = review.endProductStatuses[0];
+
+          return endProduct.ep_status;
+        }
+
+        return '';
+      }
     }
-
-    return columns;
-  };
+  ];
 
   render = () => {
     if (this.props.reviews.length === 0) {
@@ -167,14 +148,12 @@ OtherReviewsTable.propTypes = {
   reviews: PropTypes.arrayOf(PropTypes.object).isRequired,
   veteranName: PropTypes.string,
   styling: PropTypes.object,
-  clearCaseListSearch: PropTypes.func,
-  featureToggles: PropTypes.object
+  clearCaseListSearch: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
   userCssId: state.ui.userCssId,
-  userRole: state.ui.userRole,
-  featureToggles: state.ui.featureToggles
+  userRole: state.ui.userRole
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

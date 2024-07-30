@@ -242,8 +242,8 @@ class NonratingRequestIssueModal extends React.Component {
     const { category } = this.state;
 
     const options = intakeData.activeNonratingRequestIssues.
-      filter(() => {
-        return category;
+      filter((issue) => {
+        return category && issue.category === category.value;
       }).
       map((issue) => {
         return {

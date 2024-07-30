@@ -48,12 +48,11 @@ class ClaimantValidator
     decision_review.errors[:veteran_is_not_claimant] << ERRORS[:claimant_required]
   end
 
-  # added conditional to check if claimant is NOT from a decision_review_created_event
   def validate_claimant_address
-    if claimant.address_line_1.nil? && !claimant&.from_decision_review_created_event?
+    if claimant.address_line_1.nil?
       errors[:address] << ERRORS[:blank]
       decision_review.errors[:claimant] << ERRORS[:claimant_address_required]
-    elsif !claimant_address_lines_valid? && !claimant&.from_decision_review_created_event?
+    elsif !claimant_address_lines_valid?
       errors[:address] << ERRORS[:invalid]
       decision_review.errors[:claimant] << ERRORS[:claimant_address_invalid]
     end
