@@ -1,0 +1,38 @@
+import { useState } from "react";
+import { Meta, Story, Preview, Props } from "@storybook/addon-docs/blocks";
+import { action } from "@storybook/addon-actions";
+import { boolean, text, select } from "@storybook/addon-knobs";
+
+import { VSOHearingEmail } from "./VSOHearingEmail";
+
+export const defaultProps = {};
+
+<Meta
+  title="Hearings/Components/Details/VSOHearingEmail"
+  component={VSOHearingEmail}
+/>
+
+# Email Display
+
+<Preview>
+  <Story name="Normal">
+    {() => {
+      const [value, setValue] = useState("");
+      return (
+        <div style={{ width: 500 }}>
+          <VirtualHearingEmail
+            label={text("Label", "Email", "knobs")}
+            email={text("Email", "something@gmail.com", "knobs")}
+            error={text("Error Message", "", "knobs")}
+            emailType={select("Email Type", ['appellantEmail', 'representativeEmail'], "appellantEmail", "knobs")}
+            readOnly={boolean('Read-Only', false, 'knobs')}
+            disabled={boolean('Disabled', false, 'knobs')}
+            required={boolean('Required', false, 'knobs')}
+          />
+        </div>
+      );
+    }}
+  </Story>
+</Preview>
+
+<Props of={VSOHearingEmail} />

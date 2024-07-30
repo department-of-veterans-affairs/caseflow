@@ -81,7 +81,7 @@ export const AddEditDecisionIssueModal = ({
       <br />
       <h3>{COPY.DECISION_ISSUE_MODAL_DESCRIPTION}</h3>
       <TextareaField
-        errorMessage={highlight && !decisionIssue.description ? 'This field is required' : null}
+        errorMessage={highlight && !decisionIssue.description ? 'Text Box field is required' : null}
         label={COPY.DECISION_ISSUE_MODAL_DESCRIPTION_EXAMPLE}
         name="Text Box"
         onChange={(description) => {

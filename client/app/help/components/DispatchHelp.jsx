@@ -1,10 +1,14 @@
 import React from 'react';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 class DispatchHelp extends React.Component {
 
   render() {
     /* eslint-disable max-len */
     return <div className="cf-help-content">
+
+      <p><Link href="/help">Go Back</Link></p>
+
       <h1 id="#top">Welcome to the Dispatch Help page!</h1>
       <p>
         Here you will find <a href="#training-videos"> Training Videos</a> and <a href="#faq"> FAQs</a> for Dispatch. If you need help with a topic not covered on this page,

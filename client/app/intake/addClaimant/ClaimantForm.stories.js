@@ -23,7 +23,7 @@ const data = Array.from({ length: totalRecords }, () => ({
   },
 }));
 
-export const performQuery = async (search = '') => {
+const performQuery = async (search = '') => {
   const regex = RegExp(search, 'i');
 
   return data.filter((item) => regex.test(item.name));
@@ -75,5 +75,16 @@ EditClaimant.parameters = {
   docs: {
     storyDescription:
       'This is used to edit the unrecognized appellant associated with the appeal'
+  }
+};
+
+export const HlrScAddClaimant = Template.bind({});
+HlrScAddClaimant.args = {
+  formType: 'higher_level_review',
+};
+HlrScAddClaimant.parameters = {
+  docs: {
+    storyDescription:
+      'This is used to add claimants not already associated with a higher level review or supplemental claim'
   }
 };

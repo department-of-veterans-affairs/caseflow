@@ -8,10 +8,12 @@ class DataIntegrityChecksJob < CaseflowJob
     DecisionReviewTasksForInactiveAppealsChecker
     DecisionDateChecker
     AppealsWithMoreThanOneOpenHearingTaskChecker
+    MultipleOpenRootChildTaskChecker
     ExpiredAsyncJobsChecker
     LegacyAppealsWithNoVacolsCase
     OpenHearingTasksWithoutActiveDescendantsChecker
     OpenTasksWithClosedAtChecker
+    OpenTasksWithParentNotOnHold
     PendingIncompleteAndUncancelledTaskTimersChecker
     ReviewsWithDuplicateEpErrorChecker
     StuckAppealsChecker

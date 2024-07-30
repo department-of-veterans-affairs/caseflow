@@ -26,6 +26,7 @@ const ContestedClaimBadge = (props) => {
     color={COLORS.PURPLE}
     tooltipText={docketTooltipText ? docketTooltipText : tooltipText}
     id={`cc-${appeal.id}`}
+    ariaLabel="contested claim"
   />;
 };
 

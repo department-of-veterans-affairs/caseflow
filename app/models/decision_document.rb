@@ -4,6 +4,7 @@ class DecisionDocument < CaseflowRecord
   include Asyncable
   include UploadableDocument
   include HasAppealUpdatedSince
+  prepend AppealDecisionMailed
 
   class NoFileError < StandardError; end
   class NotYetSubmitted < StandardError; end
@@ -66,7 +67,7 @@ class DecisionDocument < CaseflowRecord
 
     if appeal.is_a?(Appeal)
       create_board_grant_effectuations!
-      fail NotImplementedError if appeal.claimant.is_a?(OtherClaimant)
+      fail NotImplementedError if appeal.claimant&.unrecognized_claimant?
 
       # We do not want to process Board Grant Effectuations or create remand supplemental claims
       # for appeals with unrecognized appellants because claim establishment
@@ -74,6 +75,8 @@ class DecisionDocument < CaseflowRecord
       process_board_grant_effectuations!
       appeal.create_remand_supplemental_claims!
     end
+
+    send_outcode_email(appeal)
 
     processed!
   rescue StandardError => error
@@ -163,5 +166,22 @@ class DecisionDocument < CaseflowRecord
     return true unless processed? || decision_date.future?
 
     false
+  end
+
+  def send_outcode_email(appeal)
+    return if !FeatureToggle.enabled?(:send_email_for_dispatched_appeals)
+
+    if appeal.power_of_attorney.present?
+      if appeal.is_a?(Appeal)
+        email_address = appeal.power_of_attorney.representative_email_address
+      elsif appeal.is_a?(LegacyAppeal)
+        email_address = appeal.power_of_attorney.bgs_representative_email_address
+      end
+      DispatchEmailJob.new(appeal: appeal, type: "dispatch", email_address: email_address).call
+    else
+      message = "No BVA Dispatch POA notification email was sent because no POA is defined"
+      log = { class: self.class, appeal_id: appeal.id, message: message }
+      Rails.logger.warn("BVADispatchEmail #{log}")
+    end
   end
 end

@@ -178,4 +178,32 @@ describe AsyncableJobsController, :postgres, type: :controller do
       end
     end
   end
+
+  describe "#start_job" do
+    before do
+      allow(user).to receive(:admin?) { true }
+    end
+
+    let(:user) { create(:default_user) }
+
+    it "starts job" do
+      post(:start_job, params: { job_type: "stats_collector" })
+
+      expect(response.status).to eq 200
+    end
+
+    it "fails" do
+      allow(StatsCollectorJob).to receive(:perform_now).and_raise("boom")
+
+      post(:start_job, params: { job_type: "stats_collector" })
+
+      expect(response.status).to eq 200
+    end
+
+    it "unrecognized job" do
+      post(:start_job, params: { job_type: "fake" })
+
+      expect(response).to have_http_status(:unprocessable_entity)
+    end
+  end
 end

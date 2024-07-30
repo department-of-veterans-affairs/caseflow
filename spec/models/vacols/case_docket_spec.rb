@@ -3,6 +3,7 @@
 describe VACOLS::CaseDocket, :all_dbs do
   before do
     FeatureToggle.enable!(:test_facols)
+    FeatureToggle.enable!(:acd_disable_legacy_lock_ready_appeals)
   end
 
   after do
@@ -47,7 +48,7 @@ describe VACOLS::CaseDocket, :all_dbs do
   let!(:another_nonpriority_ready_case) do
     create(
       :case,
-      bfd19: 1.year.ago,
+      bfd19: 11.months.ago,
       bfac: "1",
       bfmpro: "ACT",
       bfcurloc: "83",
@@ -84,7 +85,7 @@ describe VACOLS::CaseDocket, :all_dbs do
   let!(:postcavc_ready_case) do
     create(:case,
            :aod,
-           bfd19: 1.year.ago,
+           bfd19: 11.months.ago,
            bfac: "7",
            bfmpro: "ACT",
            bfcurloc: "83",
@@ -132,7 +133,7 @@ describe VACOLS::CaseDocket, :all_dbs do
   context ".age_of_n_oldest_genpop_priority_appeals" do
     subject { VACOLS::CaseDocket.age_of_n_oldest_genpop_priority_appeals(2) }
     it "returns the sorted ages of the n oldest priority appeals" do
-      expect(subject).to eq([aod_ready_case_ready_time, 2.days.ago].map(&:to_date))
+      expect(subject).to eq([aod_ready_case.bfdloout, postcavc_ready_case.bfdloout])
     end
 
     context "when an appeal is tied to a judge" do
@@ -146,7 +147,7 @@ describe VACOLS::CaseDocket, :all_dbs do
       end
 
       it "does not include the hearing appeal" do
-        expect(subject).to eq([2.days.ago.to_date])
+        expect(subject).to eq([postcavc_ready_case.bfdloout])
       end
     end
   end
@@ -155,7 +156,7 @@ describe VACOLS::CaseDocket, :all_dbs do
     subject { VACOLS::CaseDocket.age_of_oldest_priority_appeal }
 
     it "returns the oldest priority appeal ready at date" do
-      expect(subject).to eq(aod_ready_case_ready_time.to_date)
+      expect(subject).to eq(aod_ready_case.bfdloout)
     end
 
     context "when an appeal is tied to a judge" do
@@ -169,7 +170,7 @@ describe VACOLS::CaseDocket, :all_dbs do
       end
 
       it "does not affect the results of the call" do
-        expect(subject).to eq(aod_ready_case_ready_time.to_date)
+        expect(subject).to eq(aod_ready_case.bfdloout)
       end
     end
   end
@@ -477,14 +478,6 @@ describe VACOLS::CaseDocket, :all_dbs do
         expect(subject.count).to eq(1)
         expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
         expect(postcavc_ready_case.reload.bfcurloc).to eq("83")
-      end
-      context "when the expected order is reversed" do
-        let(:aod_ready_case_ready_time) { 1.day.ago }
-        it "orders by ready time, not docket date" do
-          expect(subject.count).to eq(1)
-          expect(aod_ready_case.reload.bfcurloc).to eq("81")
-          expect(postcavc_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
-        end
       end
     end
 

@@ -9,20 +9,20 @@
 <% end %>
 
 <%= content_for :date_time do %>
-  <%= render "hearing_mailer/sections/date_time" %>
-<% end %>
-
-<%= content_for :how_to_join do %>
-  <%= render "hearing_mailer/sections/how_to_join" %>
+  <%= render "hearing_mailer/sections/date_time", updated: true %>
 <% end %>
 
 <%= content_for :test_your_connection do %>
   <%= render "hearing_mailer/sections/test_your_connection" %>
 <% end %>
 
-<% content_for :help_desk do %>
-  <%= render "hearing_mailer/sections/help_desk" %>
+<%= content_for :how_to_join do %>
+  <%= render "hearing_mailer/sections/how_to_join", updated: true %>
 <% end %>
+
+<%# <% content_for :help_desk do %>
+  <%# <%= render "hearing_mailer/sections/help_desk" %> 
+<%# <% end %>
 
 <% content_for :rescheduling_or_canceling_your_hearing do %>
   <%= render "hearing_mailer/sections/rescheduling_or_canceling_your_hearing" %>

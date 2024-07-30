@@ -7,6 +7,15 @@ export const CERTIFICATION_DATA_POLLING_INTERVAL = 5000;
 export const CERTIFICATION_DATA_OVERALL_TIMEOUT = 180000;
 export const PRINT_WINDOW_TIMEOUT_IN_MS = 300;
 
+// Icon Sizes
+export const ICON_SIZES = {
+  XSMALL: 10,
+  SMALL: 17,
+  MEDIUM: 20,
+  LARGE: 40,
+  XLARGE: 55
+};
+
 export const COLORS = {
   ...COMMON_COLORS,
   BASE: '#212121',

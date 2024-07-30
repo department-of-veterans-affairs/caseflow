@@ -1,4 +1,3 @@
-import { formatTasks } from '../util';
 import { ACTIONS, DECISION_ISSUE_UPDATE_STATUS } from '../constants';
 import { update } from '../../util/ReducerUtil';
 
@@ -7,8 +6,6 @@ export const mapDataToInitialState = function(props = {}) {
 
   let state = serverNonComp;
 
-  state.inProgressTasks = formatTasks(serverNonComp.inProgressTasks);
-  state.completedTasks = formatTasks(serverNonComp.completedTasks);
   state.selectedTask = null;
   state.decisionIssuesStatus = {};
 
@@ -32,10 +29,9 @@ export const nonCompReducer = (state = mapDataToInitialState(), action) => {
           $set: DECISION_ISSUE_UPDATE_STATUS.SUCCEED
         },
         claimantName: { $set: action.payload.claimant },
-        errorCode: { $set: null }
+        errorCode: { $set: null },
       },
-      inProgressTasks: { $set: action.payload.inProgressTasks },
-      completedTasks: { $set: action.payload.completedTasks }
+      taskFilterDetails: { $set: action.payload.taskFilterDetails }
     });
   }
   case ACTIONS.TASK_UPDATE_DECISION_ISSUES_FAIL:

@@ -87,6 +87,46 @@ describe LegacyDocket do
     end
   end
 
+  context "#age_of_n_oldest_priority_appeals_available_to_judge" do
+    let(:judge) { create(:user, :with_vacols_judge_record) }
+    subject { LegacyDocket.new.age_of_n_oldest_priority_appeals_available_to_judge(judge, 3) }
+
+    it "returns the receipt_date(BFD19) field of the oldest legacy priority appeals ready for distribution" do
+      appeal = create_priority_distributable_legacy_appeal_not_tied_to_judge
+      expect(subject).to eq([appeal.bfd19])
+    end
+  end
+
+  context "#age_of_n_oldest_nonpriority_appeals_available_to_judge" do
+    let(:judge) { create(:user, :with_vacols_judge_record) }
+    subject { LegacyDocket.new.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, 3) }
+
+    it "returns the receipt_date(BFD19) field of the oldest legacy nonpriority appeals ready for distribution" do
+      appeal = create_nonpriority_distributable_legacy_appeal_not_tied_to_judge
+      expect(subject).to eq([appeal.bfd19])
+    end
+  end
+
+  context "#age_of_oldest_priority_appeal" do
+    context "use_by_docket_date is true" do
+      before { FeatureToggle.enable!(:acd_distribute_by_docket_date) }
+      after { FeatureToggle.disable!(:acd_distribute_by_docket_date) }
+      subject { LegacyDocket.new.age_of_oldest_priority_appeal }
+      it "returns the receipt_date(BFD19) field of the oldest legacy priority appeals ready for distribution" do
+        appeal = create_priority_distributable_legacy_appeal_not_tied_to_judge
+        expect(subject).to eq(appeal.bfd19.to_date)
+      end
+    end
+
+    context "use by_docket_date is false" do
+      subject { LegacyDocket.new.age_of_oldest_priority_appeal }
+      it "returns the receipt_date(BFDLOOUT) field of the oldest legacy priority appeals ready for distribution" do
+        appeal = create_priority_distributable_legacy_appeal_not_tied_to_judge
+        expect(subject).to eq(appeal.bfdloout)
+      end
+    end
+  end
+
   context "#should_distribute?" do
     let(:judge) { create(:user, :judge, :with_vacols_judge_record) }
     let(:distribution) { Distribution.create!(judge: judge) }
@@ -279,5 +319,30 @@ describe LegacyDocket do
         expect(subject.size).to eq 2
       end
     end
+  end
+
+  def create_priority_distributable_legacy_appeal_not_tied_to_judge
+    create(
+      :case,
+      :aod,
+      bfkey: "12345",
+      bfd19: 1.year.ago,
+      bfac: "3",
+      bfmpro: "ACT",
+      bfcurloc: "81",
+      bfdloout: 3.days.ago
+    )
+  end
+
+  def create_nonpriority_distributable_legacy_appeal_not_tied_to_judge
+    create(
+      :case,
+      bfkey: "12345",
+      bfd19: 1.year.ago,
+      bfac: "3",
+      bfmpro: "ACT",
+      bfcurloc: "81",
+      bfdloout: 3.days.ago
+    )
   end
 end

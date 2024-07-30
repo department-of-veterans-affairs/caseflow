@@ -5,7 +5,8 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { getTextForFile, getTotalMatchesInFile, getCurrentMatchIndex } from './selectors';
 import SearchBar from '../components/SearchBar';
-import { LeftChevron, RightChevron } from '../components/RenderFunctions';
+import { LeftChevronIcon } from '../components/icons/LeftChevronIcon';
+import { RightChevronIcon } from '../components/icons/RightChevronIcon';
 import Button from '../components/Button';
 import { hideSearchBar, showSearchBar } from './PdfViewer/PdfViewerActions';
 import { searchText, getDocumentText, updateSearchIndex, setSearchIndexToHighlight, setSearchIndex, setSearchIsLoading
@@ -159,7 +160,7 @@ export class DocumentSearch extends React.PureComponent {
         classNames={['cf-increment-search-match', 'cf-prev-match']}
         onClick={this.prevMatch}>
         <div style={{ transform: 'translateY(5px) translateX(-0.5rem)' }}>
-          <LeftChevron />
+          <LeftChevronIcon />
           <span className="usa-sr-only">Previous Match</span>
         </div>
       </Button>
@@ -167,7 +168,7 @@ export class DocumentSearch extends React.PureComponent {
         classNames={['cf-increment-search-match', 'cf-next-match']}
         onClick={this.nextMatch}>
         <div style={{ transform: 'translateY(5px) translateX(-0.5rem)' }}>
-          <RightChevron />
+          <RightChevronIcon />
           <span className="usa-sr-only">Next Match</span>
         </div>
       </Button>

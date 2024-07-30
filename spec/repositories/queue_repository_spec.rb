@@ -47,7 +47,7 @@ describe QueueRepository, :all_dbs do
         expect(decass.demdusr).to eq judge_staff.slogid
         expect(decass.deadtim).to eq VacolsHelper.local_date_with_utc_timezone
         expect(decass.dedeadline).to eq VacolsHelper.local_date_with_utc_timezone + 30.days
-        expect(decass.deassign).to eq VacolsHelper.local_date_with_utc_timezone
+        expect(decass.deassign).to eq VacolsHelper.local_time_with_utc_timezone
       end
     end
 
@@ -77,7 +77,7 @@ describe QueueRepository, :all_dbs do
         expect(decass.demdusr).to eq scm_staff.slogid
         expect(decass.deadtim).to eq VacolsHelper.local_date_with_utc_timezone
         expect(decass.dedeadline).to eq VacolsHelper.local_date_with_utc_timezone + 30.days
-        expect(decass.deassign).to eq VacolsHelper.local_date_with_utc_timezone
+        expect(decass.deassign).to eq VacolsHelper.local_time_with_utc_timezone
       end
     end
 
@@ -150,7 +150,7 @@ describe QueueRepository, :all_dbs do
         note: "something",
         document_id: "123456789",
         modifying_user: attorney.vacols_uniq_id,
-        reassigned_to_judge_date: VacolsHelper.local_date_with_utc_timezone
+        reassigned_to_judge_date: VacolsHelper.local_time_with_utc_timezone
       }
     end
 
@@ -175,7 +175,7 @@ describe QueueRepository, :all_dbs do
         expect(decass.deatcom).to eq "something"
         expect(decass.demdusr).to eq attorney.vacols_uniq_id
         expect(decass.demdtim).to eq VacolsHelper.local_date_with_utc_timezone
-        expect(decass.dereceive).to eq VacolsHelper.local_date_with_utc_timezone
+        expect(decass.dereceive).to eq VacolsHelper.local_time_with_utc_timezone
         expect(vacols_case.reload.bfcurloc).to eq judge.vacols_uniq_id
       end
     end
@@ -255,7 +255,7 @@ describe QueueRepository, :all_dbs do
         expect(decass.demdusr).to eq judge_staff.slogid
         expect(decass.deadtim).to eq date_added
         expect(decass.dedeadline).to eq VacolsHelper.local_date_with_utc_timezone + 30.days
-        expect(decass.deassign).to eq VacolsHelper.local_date_with_utc_timezone
+        expect(decass.deassign).to eq VacolsHelper.local_time_with_utc_timezone
       end
     end
 

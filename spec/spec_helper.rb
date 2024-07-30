@@ -12,6 +12,8 @@ else
 end
 if ENV["CI"]
   require "rspec/retry"
+  require 'rspec/github' #GitHub Action Formatter
+
   # Repeat all failed feature tests in CI twice
   RSpec.configure do |config|
     # show retry status in spec process
@@ -22,8 +24,12 @@ if ENV["CI"]
     config.around :each, type: :feature do |ex|
       ex.run_with_retry retry: 2
     end
+
+    #Github Actions Formatter
+    config.add_formatter RSpec::Github::Formatter
   end
 end
+
 require File.expand_path("../config/environment", __dir__)
 require "rspec/rails"
 
@@ -51,6 +57,7 @@ require "rspec/rails"
 ActiveRecord::Migration.maintain_test_schema!
 
 RSpec.configure do |config|
+
   # Allows us to use shorthand FactoryBot methods.
   config.include FactoryBot::Syntax::Methods
 

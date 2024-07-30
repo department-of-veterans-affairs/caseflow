@@ -82,11 +82,17 @@ feature "NonComp Dispositions Task Page", :postgres do
     let(:business_line_url) { "decision_reviews/nca" }
     let(:dispositions_url) { "#{business_line_url}/tasks/#{in_progress_task.id}" }
     let(:arbitrary_decision_date) { "01/01/2019" }
+
+    let(:vet_id_column_value) { veteran.ssn }
+
     before do
       User.stub = user
       non_comp_org.add_user(user)
       setup_prior_claim_with_payee_code(decision_review, veteran, "00")
+      FeatureToggle.enable!(:decision_review_queue_ssn_column)
     end
+
+    after { FeatureToggle.disable!(:decision_review_queue_ssn_column) }
 
     context "decision_review is a Supplemental Claim" do
       let(:decision_review) do
@@ -131,7 +137,39 @@ feature "NonComp Dispositions Task Page", :postgres do
       visit dispositions_url
 
       click_on "Cancel"
-      expect(page).to have_current_path("/#{business_line_url}")
+      expect(page).to have_current_path("/#{business_line_url}", ignore_query: true)
+    end
+
+    context "the complete button enables only after a decision date and disposition are set" do
+      before do
+        visit dispositions_url
+      end
+
+      scenario "neither disposition nor date is set" do
+        expect(page).to have_button("Complete", disabled: true)
+      end
+
+      scenario "only date is set" do
+        fill_in "decision-date", with: arbitrary_decision_date
+        expect(page).to have_button("Complete", disabled: true)
+      end
+
+      scenario "only disposition is set" do
+        fill_in_disposition(0, "Granted")
+        fill_in_disposition(1, "DTA Error", "test description")
+        fill_in_disposition(2, "Denied", "denied")
+
+        expect(page).to have_button("Complete", disabled: true)
+      end
+
+      scenario "both disposition and date are set" do
+        fill_in "decision-date", with: arbitrary_decision_date
+        fill_in_disposition(0, "Granted")
+        fill_in_disposition(1, "DTA Error", "test description")
+        fill_in_disposition(2, "Denied", "denied")
+
+        expect(page).to have_button("Complete", disabled: false)
+      end
     end
 
     scenario "saves decision issues for eligible request issues" do
@@ -154,7 +192,7 @@ feature "NonComp Dispositions Task Page", :postgres do
       expect(page).to have_content("Decision Completed")
       # should redirect to business line's completed tab
       expect(page.current_path).to eq "/#{business_line_url}"
-      expect(page).to have_content(veteran.participant_id)
+      expect(page).to have_content(vet_id_column_value)
 
       # verify database updated
       dissues = decision_review.reload.decision_issues
@@ -175,7 +213,7 @@ feature "NonComp Dispositions Task Page", :postgres do
       find_disabled_disposition("Denied", "denied")
 
       # decision date should be saved
-      expect(page).to have_css("input[value='#{arbitrary_decision_date}']")
+      expect(page).to have_css("input[value='#{arbitrary_decision_date.to_date.strftime('%Y-%m-%d')}']")
     end
 
     context "when there is an error saving" do
@@ -189,6 +227,7 @@ feature "NonComp Dispositions Task Page", :postgres do
         fill_in_disposition(0, "Granted")
         fill_in_disposition(1, "Granted", "test description")
         fill_in_disposition(2, "Denied", "denied")
+        fill_in "decision-date", with: arbitrary_decision_date
 
         click_on "Complete"
         expect(page).to have_content("Something went wrong")
@@ -206,6 +245,62 @@ feature "NonComp Dispositions Task Page", :postgres do
       scenario "goes back to intake" do
         visit dispositions_url
         expect(page).to have_link("Edit Issues", href: decision_review.reload.caseflow_only_edit_issues_url)
+      end
+    end
+  end
+
+  context "Decision Review Task Page for High level Claims" do
+    before do
+      User.stub = user
+      vha_org.add_user(user)
+      Timecop.travel(Time.zone.local(2023, 0o2, 0o1))
+    end
+
+    after do
+      Timecop.return
+    end
+
+    let!(:vha_org) { create(:business_line, name: "Veterans Health Administration", url: "vha") }
+    let(:user) { create(:default_user) }
+    let(:veteran) { create(:veteran) }
+    let(:decision_date) { Time.zone.now + 10.days }
+
+    let!(:in_progress_task) do
+      create(:higher_level_review, :with_vha_issue, :create_business_line, benefit_type: "vha", veteran: veteran)
+    end
+
+    let(:business_line_url) { "decision_reviews/vha" }
+    let(:dispositions_url) { "#{business_line_url}/tasks/#{in_progress_task.id}" }
+
+    it "vha decision Review workflow" do
+      step "submit button should be disabled and cancel returns back to business line" do
+        visit dispositions_url
+        expect(page).to have_button("Complete", disabled: true)
+        click_on "Cancel"
+        expect(page).to have_current_path("/#{business_line_url}", ignore_query: true)
+      end
+
+      step "completing a task should redirect to completed task tab" do
+        visit dispositions_url
+        fill_in "decision-date", with: decision_date.strftime("%m/%d/%Y")
+        fill_in_disposition(0, "Granted", "granted")
+        scroll_to(page, align: :bottom)
+        expect(page).to have_button("Complete", disabled: false)
+        click_button("Complete")
+        expect(page).to have_current_path("/#{business_line_url}?tab=completed&page=1")
+      end
+
+      step "completed Decision review task should have specific decision date provided during completion" do
+        visit dispositions_url
+        expect(page).to have_selector("h1", text: "Veterans Health Administration")
+        expect(page).to have_content(veteran.name)
+        expect(page.find("textarea").disabled?).to be true
+
+        disposition_dropdown = page.find("div.cf-select")
+        expect(disposition_dropdown).to have_content("Granted")
+        expect(disposition_dropdown).to have_css(".cf-select--is-disabled")
+        expect(page).to have_text(COPY::DISPOSITION_DECISION_DATE_LABEL)
+        expect(page.find_by_id("decision-date").value).to have_content(decision_date.strftime("%Y-%m-%d"))
       end
     end
   end

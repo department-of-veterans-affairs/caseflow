@@ -52,7 +52,7 @@
   }
 
   .row-two {
-    margin: 1rem 0;
+    margin: 1rem auto 0;
   }
 }
 
@@ -69,9 +69,15 @@
 }
 
 .cf-noncomp-search {
-  min-width: 300px;
-  margin-right: -40px;
-  margin-bottom: 20px;
+  min-width: 500px;
+  margin-right: 0;
+
+  .cf-search-ahead {
+    .cf-search-input-with-close {
+      width: 100%;
+      max-width: 55rem;
+    }
+  }
 }
 
 .cf-noncomp-queue-completed-task {
@@ -90,6 +96,11 @@
 
     .cf-disposition {
       margin-top: 1.7rem;
+      max-width: 45rem;
+
+      .cf-optional {
+        font-weight: bold;
+      }
     }
 
     textarea:disabled {
@@ -106,4 +117,17 @@
 
 .cf-cancel-link {
   margin-right: 2rem;
+}
+
+.usa-search-small {
+  max-width: none;
+
+  label {
+    margin-bottom: 1rem;
+  }
+}
+
+.cf-pagination-pages {
+  margin-top: 20px;
+  clear: right;
 }

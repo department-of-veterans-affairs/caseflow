@@ -11,7 +11,7 @@ describe QualityReviewCaseSelector, :all_dbs do
       #   type: [QualityReviewTask.name, BvaDispatchTask.name],
       #   created_at: 2.month.ago.beginning_of_month..2.month.ago.end_of_month
       # ).count
-      let(:complete_cases_count) { 850 }
+      let(:complete_cases_count) { 1600 }
       let!(:qr_tasks) do
         complete_cases_count.times do
           create(:qr_task) if QualityReviewCaseSelector.select_case_for_quality_review?
@@ -19,7 +19,7 @@ describe QualityReviewCaseSelector, :all_dbs do
       end
 
       it "should hit at least the monthly minimum of QR tasks" do
-        expect(QualityReviewTask.count).to be >= 130
+        expect(QualityReviewTask.count).to be >= 164
       end
     end
 

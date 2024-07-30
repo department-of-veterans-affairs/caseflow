@@ -15,9 +15,10 @@ module HearingSerializerBase
       new(object, **params)
     end
 
-    def worksheet(object, **params)
+    def worksheet(object, user, **params)
       params[:params] ||= {}
       params[:params][:worksheet] = true
+      params[:params][:user] = user
 
       new(object, **params)
     end

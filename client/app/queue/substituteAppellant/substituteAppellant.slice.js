@@ -43,7 +43,9 @@ const initialState = {
     substitutionDate: null,
     participantId: null,
     closedTaskIds: [],
-    openTaskIds: []
+    openTaskIds: [],
+    // ids to cancel when options are unchecked
+    cancelledTaskIds: []
   },
 
   /**

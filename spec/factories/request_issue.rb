@@ -55,6 +55,10 @@ FactoryBot.define do
       closed_status { :withdrawn }
     end
 
+    trait :is_predocket_needed do
+      is_predocket_needed { false }
+    end
+
     trait :requires_processing do
       decision_sync_submitted_at { (RequestIssue.processing_retry_interval_hours + 1).hours.ago }
       decision_sync_last_submitted_at { (RequestIssue.processing_retry_interval_hours + 1).hours.ago }
@@ -79,7 +83,8 @@ FactoryBot.define do
 
         request_issue.update!(
           contested_decision_issue_id: decision_issue.id,
-          contested_issue_description: decision_issue.description
+          contested_issue_description: decision_issue.description,
+          is_predocket_needed: evaluator.is_predocket_needed
         )
       end
     end
@@ -102,7 +107,8 @@ FactoryBot.define do
 
         request_issue.update!(
           contested_decision_issue_id: decision_issue.id,
-          contested_issue_description: decision_issue.description
+          contested_issue_description: decision_issue.description,
+          is_predocket_needed: evaluator.is_predocket_needed
         )
       end
     end

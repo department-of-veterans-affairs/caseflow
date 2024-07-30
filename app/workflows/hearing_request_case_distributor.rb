@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class HearingRequestCaseDistributor
+  include DistributionConcern
+
   def initialize(appeals:, genpop:, distribution:, priority:)
     @appeals = appeals
     @genpop = genpop
@@ -9,20 +11,33 @@ class HearingRequestCaseDistributor
   end
 
   def call
-    appeals_to_distribute.map do |appeal, genpop_value|
-      Distribution.transaction do
-        rename_any_existing_distributed_case(appeal)
-        task = create_judge_assign_task_for_appeal(appeal)
+    # The DistributedCases model validates genpop and genpop_query for a hearing or legacy case. These methods
+    # will create one array for the appeals and one for their genpop values with matching indexes
+    appeals_for_tasks = appeals_to_distribute.flatten.select { |obj| obj.is_a?(Appeal) }
+    genpop_values = appeals_to_distribute.flatten.reject { |obj| obj.is_a?(Appeal) }
+
+    # Creates JudgeAssignTasks for the appeals, then zip the genpop_values into the array for creating
+    # the DistributedCases
+    tasks = assign_judge_tasks_for_appeals(appeals_for_tasks, @distribution.judge).zip(genpop_values)
+
+    tasks.map do |task, genpop_value|
+      next if task.nil?
+
+      # If a distributed case already exists for this appeal, alter the existing distributed case's case id.
+      # This is modeled after the allow! method in the redistributed_case model
+      distributed_case = DistributedCase.find_by(case_id: task.appeal.uuid)
+      if distributed_case && task.appeal.can_redistribute_appeal?
+        distributed_case.flag_redistribution(task)
+        distributed_case.rename_for_redistribution!
+        new_dist_case = create_distribution_case_for_task(task, genpop_value)
+
+        # In a race condition for distributions, two JudgeAssignTasks will be created; this cancels the first one
+        cancel_previous_judge_assign_task(task.appeal, @distribution.judge.id)
+        # Returns the new DistributedCase as expected by calling methods; case in elsif is implicitly returned
+        new_dist_case
+      elsif !distributed_case
         create_distribution_case_for_task(task, genpop_value)
       end
-    end
-  end
-
-  def rename_any_existing_distributed_case(appeal)
-    existing_case = DistributedCase.find_by(case_id: appeal.uuid)
-    if existing_case
-      Raven.capture_message("Redistributing appeal #{appeal.uuid} to #{distribution.judge.css_id}")
-      existing_case.rename_for_redistribution!
     end
   end
 
@@ -32,11 +47,6 @@ class HearingRequestCaseDistributor
 
   def appeals_to_distribute
     not_genpop_appeals.map { |appeal| [appeal, false] }.concat(only_genpop_appeals.map { |appeal| [appeal, true] })
-  end
-
-  def create_judge_assign_task_for_appeal(appeal)
-    assigned_by_id = appeal.tasks.of_type(:DistributionTask).first.assigned_to_id
-    JudgeAssignTaskCreator.new(appeal: appeal, judge: distribution.judge, assigned_by_id: assigned_by_id).call
   end
 
   def create_distribution_case_for_task(task, genpop_value)

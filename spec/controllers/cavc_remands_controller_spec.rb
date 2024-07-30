@@ -31,7 +31,7 @@ RSpec.describe CavcRemandsController, type: :controller do
     let(:represented_by_attorney) { true }
     let(:cavc_judge_full_name) { Constants::CAVC_JUDGE_FULL_NAMES.first }
     let(:cavc_decision_type) { Constants::CAVC_DECISION_TYPES["remand"] }
-    let(:remand_subtype) { Constants::CAVC_REMAND_SUBTYPES["jmr"] }
+    let(:remand_subtype) { Constants::CAVC_REMAND_SUBTYPES["jmr_jmpr"] }
     let(:decision_date) { 5.days.ago.to_date }
     let(:judgement_date) { 4.days.ago.to_date }
     let(:mandate_date) { 3.days.ago.to_date }
@@ -93,7 +93,7 @@ RSpec.describe CavcRemandsController, type: :controller do
     end
 
     context "with a Lit Support User" do
-      context "when sub-type is JMR with insufficient parameters" do
+      context "when sub-type is JMR/JMPR with insufficient parameters" do
         let(:cavc_docket_number) { nil }
         it "does not create the CAVC remand" do
           expect { subject }.to raise_error do |error|
@@ -102,7 +102,7 @@ RSpec.describe CavcRemandsController, type: :controller do
         end
       end
 
-      context "when sub-type is JMR with correct parameters" do
+      context "when sub-type is JMR/JMPR with correct parameters" do
         include_examples "creates a remand depending on the sub-type"
       end
 

@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :bgs_power_of_attorney do
-    sequence(:claimant_participant_id)
+    claimant_participant_id { generate :participant_id }
     sequence(:poa_participant_id)
     representative_name { "POA Name" }
     representative_type { "VSO" }

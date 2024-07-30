@@ -1,5 +1,5 @@
 <h3>
-  Date and Time
+  <%= "New" if defined?(updated) && updated == true %> Date and Time
 </h3>
 <p>
 <% if @recipient_info.title == HearingEmailRecipient::RECIPIENT_TITLES[:judge] %>

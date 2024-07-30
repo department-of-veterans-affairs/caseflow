@@ -7,6 +7,25 @@ class WorkQueue::AppealSerializer
   attribute :assigned_attorney
   attribute :assigned_judge
 
+  attribute :appellant_hearing_email_recipient do |object|
+    object.email_recipients.find_by(type: "AppellantHearingEmailRecipient")
+  end
+  attribute :representative_hearing_email_recipient do |object|
+    object.email_recipients.find_by(type: "RepresentativeHearingEmailRecipient")
+  end
+
+  attribute :appellant_email_address do |object|
+    object.appellant ? object.appellant.email_address : "Cannot Find Appellant"
+  end
+
+  attribute :current_user_email do |_, params|
+    params[:user]&.email
+  end
+
+  attribute :current_user_timezone do |_, params|
+    params[:user]&.timezone
+  end
+
   attribute :contested_claim, &:contested_claim?
 
   attribute :issues do |object|
@@ -45,6 +64,15 @@ class WorkQueue::AppealSerializer
     end
   end
 
+  attribute :substitute_appellant_claimant_options do |object|
+    object.veteran&.relationships.map do |relation|
+      {
+        displayText: "#{relation.first_name} #{relation.last_name}, #{relation.relationship_type}",
+        value: relation.participant_id
+      }
+    end
+  end
+
   attribute :nod_date_updates do |object|
     object.nod_date_updates.map do |nod_date_update|
       WorkQueue::NodDateUpdateSerializer.new(nod_date_update).serializable_hash[:data][:attributes]
@@ -60,7 +88,7 @@ class WorkQueue::AppealSerializer
     # in addition to those on the new/target appeal; this avoids copying them to new appeal stream
     associated_hearings = []
 
-    if object.substitution_appeal?
+    if object.separate_appeal_substitution?
       associated_hearings = hearings(object.appellant_substitution.source_appeal, params)
     end
 
@@ -114,7 +142,7 @@ class WorkQueue::AppealSerializer
   end
 
   attribute :appellant_phone_number do |object|
-    object.claimant.is_a?(OtherClaimant) ? object.claimant&.phone_number : nil
+    object.claimant&.unrecognized_claimant? ? object.claimant&.phone_number : nil
   end
 
   attribute :appellant_email_address do |object|
@@ -130,11 +158,11 @@ class WorkQueue::AppealSerializer
   end
 
   attribute :appellant_party_type do |appeal|
-    appeal.claimant.is_a?(OtherClaimant) ? appeal.claimant&.party_type : nil
+    appeal.claimant&.unrecognized_claimant? ? appeal.claimant&.party_type : nil
   end
 
   attribute :unrecognized_appellant_id do |appeal|
-    appeal.claimant.is_a?(OtherClaimant) ? appeal.claimant&.unrecognized_appellant&.id : nil
+    appeal.claimant&.unrecognized_claimant? ? appeal.claimant&.unrecognized_appellant&.id : nil
   end
 
   attribute :has_poa do |appeal|
@@ -145,6 +173,11 @@ class WorkQueue::AppealSerializer
     if object.cavc_remand
       WorkQueue::CavcRemandSerializer.new(object.cavc_remand).serializable_hash[:data][:attributes]
     end
+  end
+
+  attribute :show_post_cavc_stream_msg do |object|
+    cavc_remand = CavcRemand.find_by(source_appeal_id: object.id)
+    cavc_remand.present? && cavc_remand.cavc_remands_appellant_substitution.present?
   end
 
   attribute :remand_source_appeal_id do |appeal|
@@ -171,6 +204,14 @@ class WorkQueue::AppealSerializer
   attribute :veteran_death_date
 
   attribute :veteran_file_number
+
+  attribute :veteran_participant_id do |object|
+    object&.veteran&.participant_id
+  end
+
+  attribute :efolder_link do
+    ENV["CLAIM_EVIDENCE_EFOLDER_BASE_URL"]
+  end
 
   attribute :veteran_full_name do |object|
     object.veteran ? object.veteran.name.formatted(:readable_full) : "Cannot locate"
@@ -253,5 +294,22 @@ class WorkQueue::AppealSerializer
     object.switched_dockets.map do |docket_switch|
       WorkQueue::DocketSwitchSerializer.new(docket_switch).serializable_hash[:data][:attributes]
     end
+  end
+
+  attribute :has_notifications do |object|
+    @all_notifications = Notification.where(appeals_id: object.uuid.to_s, appeals_type: "Appeal")
+    @allowed_notifications = @all_notifications.where(email_notification_status: nil)
+      .or(@all_notifications.where.not(email_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))
+      .merge(@all_notifications.where(sms_notification_status: nil)
+      .or(@all_notifications.where.not(sms_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))).any?
+  end
+
+  attribute :cavc_remands_with_dashboard do |appeal|
+    @remands_with_dashboard = CavcRemand.where(source_appeal_id: appeal.id, cavc_decision_type:
+    [
+      Constants.CAVC_DECISION_TYPES.other_dismissal,
+      Constants.CAVC_DECISION_TYPES.affirmed,
+      Constants.CAVC_DECISION_TYPES.settlement
+    ]).count
   end
 end

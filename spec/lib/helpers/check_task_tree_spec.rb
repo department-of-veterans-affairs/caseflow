@@ -6,6 +6,15 @@ describe "CheckTaskTree" do
   let(:errors) { CheckTaskTree.call(appeal, verbose: false).first }
   let(:appeal) { create(:appeal) }
 
+  context "when run against a legacy appeal" do
+    let(:legacy_appeal) { create(:legacy_appeal) }
+    subject { CheckTaskTree.new(legacy_appeal).check }
+    it "aborts with message and returns nil" do
+      expect { subject }.to output(/This checker is only for AMA appeals/).to_stdout
+      expect(subject).to eq nil
+    end
+  end
+
   describe "CheckTaskTree#patch_classes" do
     before do
       CheckTaskTree.patch_classes
@@ -284,6 +293,23 @@ describe "CheckTaskTree" do
         end
         it { is_expected.not_to be_blank }
         include_examples "has error message", /There should be no more than 1 open org task of type .*BvaDispatchTask/
+      end
+    end
+    describe "#open_exclusive_root_children_tasks" do
+      subject { CheckTaskTree.new(appeal).open_exclusive_root_children_tasks }
+      let(:appeal) { create(:appeal, :at_bva_dispatch) }
+      context "when tasks are correct" do
+        it "returns no errors" do
+          expect(errors).to be_empty
+        end
+      end
+
+      context "when tasks are invalid" do
+        let(:judge_task) { appeal.tasks.assigned_to_any_user.find_by_type(:JudgeDecisionReviewTask) }
+        before { judge_task.assigned! }
+        it { is_expected.not_to be_blank }
+        include_examples "has error message",
+                         /There should be no more than 1 open among these root-children tasks:.*JudgeDecisionReviewTask/
       end
     end
   end

@@ -101,4 +101,12 @@ class WorkQueue::LegacyTaskSerializer
 
     task ? { requested_at: task.assigned_at, received_at: task.closed_at } : {}
   end
+
+  attribute :instructions do |object|
+    if object.class == JudgeLegacyDecisionReviewTask
+      [object.appeal.attorney_case_review&.note].compact
+    else
+      []
+    end
+  end
 end

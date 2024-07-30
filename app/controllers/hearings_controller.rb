@@ -3,8 +3,12 @@
 class HearingsController < HearingsApplicationController
   include HearingsConcerns::VerifyAccess
 
-  before_action :verify_access_to_hearings, except: [:show]
-  before_action :verify_access_to_reader_or_hearings, only: [:show]
+  skip_before_action :deny_vso_access, only: [:show, :update]
+
+  before_action :verify_access_to_hearings, except: [:show, :update]
+  before_action :verify_access_to_hearings_details, only: [:show]
+  before_action :verify_access_to_hearings_update, only: [:update]
+  before_action :check_vso_representation, only: [:show, :update]
   before_action :set_hearing_day, only: [:index]
 
   rescue_from ActiveRecord::RecordNotFound do |error|
@@ -34,7 +38,7 @@ class HearingsController < HearingsApplicationController
   end
 
   def show
-    render json: { data: hearing.to_hash_for_worksheet(current_user.id) }
+    render json: { data: hearing.to_hash_for_worksheet(current_user) }
   end
 
   def update

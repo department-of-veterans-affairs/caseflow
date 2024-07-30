@@ -148,16 +148,43 @@ describe('OrgRow', () => {
         });
       });
 
-      it('allows editing of requested case distribution dropdown', async () => {
-        setup(props);
+      describe('request cases dropdown', () => {
+        const labelText = 'requestedDistribution-1';
+        const dropdownOpts = requestCasesOpts.map((opt) => opt.label);
+        const testOpts = [
+          { label: requestCasesOpts[0].label, payload: { ama_only_request: false } },
+          { label: requestCasesOpts[1].label, payload: { ama_only_request: true } },
+        ];
 
-        // Try to open menu
-        await selectEvent.openMenu(screen.getByLabelText('requestedDistribution-1'));
+        it('allows editing of requested case distribution dropdown', async () => {
+          setup(props);
 
-        ['AMA cases only'].forEach((choice) => {
-          expect(screen.queryByText(choice)).toBeInTheDocument();
+          // Try to open menu
+          await selectEvent.openMenu(screen.getByLabelText('requestedDistribution-1'));
+
+          ['AMA cases only'].forEach((choice) => {
+            expect(screen.queryByText(choice)).toBeInTheDocument();
+          });
+        });
+
+        it.each(testOpts)('correctly fires callback for $label', async ({ label, payload }) => {
+          const { container } = setup(props);
+
+          const control = container.getElementsByClassName(`dropdown-${labelText}`)[0];
+
+          // Try to open menu
+          await selectEvent.openMenu(within(control).getByLabelText(labelText));
+
+          // Select "AMA cases only"
+          await selectEvent.select(
+            within(control).getByLabelText(labelText),
+            label
+          );
+
+          expect(onUpdate).toHaveBeenLastCalledWith(judgeTeam.id, payload);
         });
       });
+
     });
   });
 

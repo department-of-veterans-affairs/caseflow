@@ -392,3 +392,16 @@ select {
   margin-left: 1.5em;
   text-indent: -1.7em;
 }
+
+.skip-link {
+  margin-left: 1rem;
+  position: absolute;
+  transform: translateX(-200%);
+  transition: transform 0.3s;
+  margin-top: 10px;
+
+  &:focus {
+    position: fixed;
+    transform: translateX(0);
+  }
+}

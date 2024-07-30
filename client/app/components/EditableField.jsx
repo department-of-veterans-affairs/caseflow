@@ -86,7 +86,7 @@ export const EditableField = (props) => {
     <div className={classNames(className, { 'usa-input-error': errorMessage })}>
       <strong>{label}</strong>
       {actionLinks}<br />
-      {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
+      {errorMessage && <span className="usa-input-error-message" tabIndex={0}>{errorMessage}</span>}
       {textDisplay}
     </div>
   );

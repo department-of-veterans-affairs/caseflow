@@ -22,6 +22,11 @@ describe Docket, :all_dbs do
              :with_post_intake_tasks,
              docket_type: Constants.AMA_DOCKETS.direct_review)
     end
+    let!(:evidence_docket_appeal) do
+      create(:appeal,
+             :evidence_submission_docket,
+             :with_post_intake_tasks)
+    end
 
     # priority
     let!(:aod_age_appeal) do
@@ -74,6 +79,36 @@ describe Docket, :all_dbs do
           expect(subject).to include aod_age_appeal
           expect(subject).to include aod_motion_appeal
           expect(subject).to include cavc_appeal
+        end
+      end
+
+      context "when there is a judge and the distribution is not_genpop" do
+        let(:other_judge) { create(:user, :judge, :with_judge_team) }
+
+        let(:cavc_remand) { cavc_appeal.cavc_remand }
+        let(:source_appeal) { cavc_remand.source_appeal }
+        let(:judge_decision_review_task) do
+          source_appeal.tasks.where(
+            type: "JudgeDecisionReviewTask",
+            status: "completed"
+          ).first
+        end
+
+        context "when called for another judge who has no affinity" do
+          subject { DirectReviewDocket.new.appeals(ready: true, genpop: "not_genpop", judge: other_judge) }
+
+          it "returns no appeals" do
+            expect(subject.count.size).to eq 0
+          end
+        end
+
+        context "when called for the judge with affinity" do
+          let(:judge) { judge_decision_review_task.assigned_to }
+          subject { DirectReviewDocket.new.appeals(ready: true, genpop: "not_genpop", judge: judge) }
+
+          it "returns only the cavc appeal" do
+            expect(subject).to match_array([cavc_appeal])
+          end
         end
       end
 
@@ -244,6 +279,30 @@ describe Docket, :all_dbs do
       end
     end
 
+    context "age_of_n_oldest_priority_appeals_available_to_judge" do
+      let(:judge) { create(:user, :with_vacols_judge_record) }
+
+      subject { DirectReviewDocket.new.age_of_n_oldest_priority_appeals_available_to_judge(judge, 5) }
+
+      it "returns the receipt_date field of the oldest direct review priority appeals ready for distribution" do
+        expect(subject.length).to eq(3)
+        expect(subject).to eq([aod_age_appeal.receipt_date, aod_motion_appeal.receipt_date, cavc_appeal.receipt_date])
+      end
+    end
+
+    context "age_of_n_oldest_nonpriority_appeals_available_to_judge" do
+      let(:judge) { create(:user, :with_vacols_judge_record) }
+
+      subject { DirectReviewDocket.new.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, 5) }
+
+      it "returns the receipt_date field of the oldest direct review priority appeals ready for distribution" do
+        expect(subject.length).to eq(3)
+        expect(subject).to eq(
+          [appeal.receipt_date, denied_aod_motion_appeal.receipt_date, inapplicable_aod_motion_appeal.receipt_date]
+        )
+      end
+    end
+
     context "age_of_oldest_priority_appeal" do
       let(:docket) { DirectReviewDocket.new }
 
@@ -294,7 +353,87 @@ describe Docket, :all_dbs do
       end
     end
 
-    context "distribute_appeals" do
+    context "distribute_appeals for CAVC" do
+      let(:cavc_distribution_task) { cavc_appeal.tasks.where(type: DistributionTask.name).first }
+      let(:cavc_remand) { cavc_appeal.cavc_remand }
+      let(:source_appeal) { cavc_remand.source_appeal }
+      let(:judge_decision_review_task) do
+        source_appeal.tasks.where(
+          type: "JudgeDecisionReviewTask",
+          status: "completed"
+        ).first
+      end
+
+      context "when the cavc remand is within affinity (< 21 days)" do
+        let(:first_judge) { create(:user, :judge, :with_vacols_judge_record) }
+        let(:first_distribution) { Distribution.create!(judge: first_judge) }
+
+        let(:second_judge) { judge_decision_review_task.assigned_to }
+        let(:second_distribution) { Distribution.create!(judge: second_judge) }
+
+        before do
+          cavc_distribution_task.update!(assigned_at: Time.zone.now)
+        end
+
+        it "is distributed only to the issuing judge" do
+          # priority: true would normally return CAVC tasks, so if not for affinity, this should include it:
+          dist_cases = DirectReviewDocket.new.distribute_appeals(
+            first_distribution,
+            genpop: "not_genpop",
+            priority: true,
+            limit: 3
+          )
+          expect(dist_cases.map(&:case_id)).not_to include(cavc_appeal.uuid)
+
+          # But because of affinity, it sticks to this judge user:
+          dist_cases = DirectReviewDocket.new.distribute_appeals(
+            second_distribution,
+            genpop: "not_genpop",
+            priority: true,
+            limit: 3
+          )
+          expect(dist_cases.map(&:case_id)).to include(cavc_appeal.uuid)
+        end
+      end
+
+      context "when the cavc remand is outside of affinity (>= 21 days)" do
+        let(:first_judge) { judge_decision_review_task.assigned_to }
+        let(:first_distribution) { Distribution.create!(judge: first_judge) }
+
+        let(:second_judge) { create(:user, :judge, :with_vacols_judge_record) }
+        let(:second_distribution) { Distribution.create!(judge: second_judge) }
+
+        before do
+          cavc_distribution_task.update!(assigned_at: (Constants.DISTRIBUTION.cavc_affinity_days + 1).days.ago)
+        end
+
+        context "when genpop: not_genpop is set" do
+          it "is not distributed because it is now genpop" do
+            dist_cases = DirectReviewDocket.new.distribute_appeals(
+              first_distribution,
+              genpop: "not_genpop",
+              priority: true,
+              limit: 3
+            )
+
+            expect(dist_cases.map(&:case_id)).not_to include(cavc_appeal.uuid)
+          end
+        end
+
+        context "when genpop is not 'not_genpop' (i.e., is genpop)" do
+          it "is distributed to the first available judge" do
+            dist_cases = DirectReviewDocket.new.distribute_appeals(
+              second_distribution,
+              genpop: "any",
+              priority: true,
+              limit: 3
+            )
+
+            expect(dist_cases.map(&:case_id)).to include(cavc_appeal.uuid)
+          end
+        end
+      end
+
       context "priority appeals" do
         subject { DirectReviewDocket.new.distribute_appeals(distribution, priority: true, limit: 3) }
 
@@ -303,15 +442,15 @@ describe Docket, :all_dbs do
         let!(:distribution) { Distribution.create!(judge: judge_user) }
 
         it "distributes the priority appeals" do
-          tasks = subject
-
-          expect(tasks.length).to eq(3)
-          expect(tasks.first.class).to eq(DistributedCase)
-          expect(distribution.distributed_cases.length).to eq(3)
+          distributed_cases = subject
+          # cavc_appeal is priority, but out of affinity and thus not included:
+          expected_appeal_ids = [aod_age_appeal.uuid, aod_motion_appeal.uuid]
+          expect(distributed_cases.map(&:case_id)).to match_array(expected_appeal_ids)
+          expect(distributed_cases.first.class).to eq(DistributedCase)
+          expect(distribution.distributed_cases.map(&:case_id)).to eq(expected_appeal_ids)
           judge_appeals = judge_user.reload.tasks.map(&:appeal)
           expect(judge_appeals).to include(aod_age_appeal)
           expect(judge_appeals).to include(aod_motion_appeal)
-          expect(judge_appeals).to include(cavc_appeal)
         end
       end
     end

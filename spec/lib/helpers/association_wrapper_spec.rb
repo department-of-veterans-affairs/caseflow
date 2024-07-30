@@ -20,14 +20,15 @@ describe "AssocationWrapper" do
                  [:assigned_to, "AssignedTo", nil, true, "assigned_to_type"],
                  [:assigned_by, "User", "User", nil, nil],
                  [:cancelled_by, "User", "User", nil, nil],
+                 [:completed_by, "User", "User", nil, nil],
                  [:appeal, "Appeal", nil, true, "appeal_type"],
-                 [:attorney_case_reviews, "AttorneyCaseReview", nil, nil, nil],
-                 [:task_timers, "TaskTimer", nil, nil, nil],
-                 [:cached_appeal, "CachedAppeal", nil, nil, nil],
                  [:ama_appeal, "Appeal", "Appeal", nil, nil],
                  [:legacy_appeal, "LegacyAppeal", "LegacyAppeal", nil, nil],
+                 [:supplemental_claim, "SupplementalClaim", "SupplementalClaim", nil, nil],
                  [:higher_level_review, "HigherLevelReview", "HigherLevelReview", nil, nil],
-                 [:supplemental_claim, "SupplementalClaim", "SupplementalClaim", nil, nil]
+                 [:attorney_case_reviews, "AttorneyCaseReview", nil, nil, nil],
+                 [:task_timers, "TaskTimer", nil, nil, nil],
+                 [:cached_appeal, "CachedAppeal", nil, nil, nil]
                ]
         expect(subject.select_associations.map { |assoc| [assoc.name, assoc.options[:primary_key]] }).to match_array [
           [:versions, nil],
@@ -36,6 +37,7 @@ describe "AssocationWrapper" do
           [:assigned_to, nil],
           [:assigned_by, nil],
           [:cancelled_by, nil],
+          [:completed_by, nil],
           [:appeal, nil],
           [:attorney_case_reviews, nil],
           [:task_timers, nil],
@@ -52,6 +54,7 @@ describe "AssocationWrapper" do
           [:assigned_to, nil],
           [:assigned_by, nil],
           [:cancelled_by, nil],
+          [:completed_by, nil],
           [:appeal, nil],
           [:attorney_case_reviews, nil],
           [:task_timers, nil],
@@ -76,6 +79,7 @@ describe "AssocationWrapper" do
           [:assigned_to, true, false, "assigned_to_id", "assigned_to_id", "assigned_to_type"],
           [:assigned_by, true, false, "assigned_by_id", "user_id", nil],
           [:cancelled_by, true, false, "cancelled_by_id", "user_id", nil],
+          [:completed_by, true, false, "completed_by_id", "user_id", nil],
           [:appeal, true, false, "appeal_id", "appeal_id", "appeal_type"],
           # belongs_to created dynamically by BelongsToPolymorphicAppealConcern
           [:ama_appeal, true, false, "appeal_id", "appeal_id", nil],
@@ -124,7 +128,7 @@ describe "AssocationWrapper" do
     context "for Task class" do
       let(:target_class) { Task }
       it "returns fieldnames associated with User records" do
-        expect(subject).to match_array %w[assigned_by_id cancelled_by_id]
+        expect(subject).to match_array %w[assigned_by_id cancelled_by_id completed_by_id]
       end
     end
     context "for Hearing class" do

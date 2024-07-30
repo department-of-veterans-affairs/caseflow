@@ -77,7 +77,7 @@ class CaseListView extends React.PureComponent {
     const doesSearchHaveAnyResults = (appealsCount + claimReviewsCount > 0);
 
     if (!doesSearchHaveAnyResults) {
-      return <div>
+      return <div tabIndex={0}>
         {this.searchPageHeading()}
         <hr {...horizontalRuleStyling} />
         <p><Link href="/help">Caseflow Help</Link></p>

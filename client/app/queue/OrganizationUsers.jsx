@@ -15,6 +15,7 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import COPY from '../../COPY';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
+import MembershipRequestTable from './MembershipRequestTable';
 
 const userStyle = css({
   margin: '.5rem 0 .5rem',
@@ -52,11 +53,14 @@ export default class OrganizationUsers extends React.PureComponent {
       judgeTeam: null,
       organizationUsers: [],
       remainingUsers: [],
+      membershipRequests: [],
       loading: true,
       error: null,
+      success: null,
       addingUser: null,
       changingAdminRights: {},
       removingUser: {},
+      isVhaOrg: false
     };
   }
 
@@ -67,7 +71,9 @@ export default class OrganizationUsers extends React.PureComponent {
         judgeTeam: response.body.judge_team,
         dvcTeam: response.body.dvc_team,
         organizationUsers: response.body.organization_users.data,
+        membershipRequests: response.body.membership_requests,
         remainingUsers: [],
+        isVhaOrg: response.body.isVhaOrg,
         loading: false
       });
     }, (error) => {
@@ -106,6 +112,7 @@ export default class OrganizationUsers extends React.PureComponent {
       this.setState({
         organizationUsers: [...this.state.organizationUsers, response.body.users.data[0]],
         remainingUsers: this.state.remainingUsers.filter((user) => user.id !== value.id),
+        membershipRequests: this.state.membershipRequests.filter((mr) => parseInt(mr.userId, 10) !== parseInt(value.id, 10)),
         addingUser: null
       });
     }, (error) => {
@@ -240,7 +247,7 @@ export default class OrganizationUsers extends React.PureComponent {
       const { dvc, admin } = user.attributes;
       const style = i === 0 ? topUserStyle : userStyle;
 
-      return <React.Fragment>
+      return <React.Fragment key={user.id}>
         <li key={user.id} {...style}>{this.formatName(user)}
           { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
           { dvcTeam && dvc && <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong> }
@@ -289,6 +296,41 @@ export default class OrganizationUsers extends React.PureComponent {
     </React.Fragment>;
   }
 
+  membershipRequestHandler = (value) => {
+    const [requestId, requestAction] = value.split('-');
+    const data = { id: requestId, requestAction };
+
+    ApiUtil.patch(`/membership_requests/${requestId}`, { data }).then((response) => {
+      const { membershipRequest, updatedUser } = response.body;
+      const titleMessage = sprintf(COPY.MEMBERSHIP_REQUEST_ACTION_SUCCESS_TITLE, membershipRequest.status, membershipRequest.userName);
+      const bodyMessage = sprintf(COPY.MEMBERSHIP_REQUEST_ACTION_SUCCESS_MESSAGE, membershipRequest.status === 'approved' ? 'granted' : 'denied', membershipRequest.orgName);
+
+      const newState = {
+        membershipRequests: this.state.membershipRequests.filter((request) => request.id !== membershipRequest.id),
+        success: {
+          title: titleMessage,
+          body: bodyMessage,
+        },
+      };
+
+      // Only update the list of organization users on the page if the request was approved
+      if (membershipRequest.status === 'approved') {
+        newState.organizationUsers = [...this.state.organizationUsers, updatedUser];
+        newState.remainingUsers = this.state.remainingUsers.filter((user) => user.id !== updatedUser.id);
+      }
+
+      this.setState(newState);
+
+    }, (error) => {
+      this.setState({
+        error: {
+          title: `Failed to take action for the users request to join ${this.state.organizationName}`,
+          body: error.message
+        }
+      });
+    });
+  };
+
   render = () => <LoadingDataDisplay
     createLoadPromise={this.loadingPromise}
     loadingComponentProps={{
@@ -298,6 +340,9 @@ export default class OrganizationUsers extends React.PureComponent {
     failStatusMessageProps={{
       title: COPY.USER_MANAGEMENT_INITIAL_LOAD_ERROR_TITLE
     }}>
+    { this.state.success && <Alert title={this.state.success.title} type="success">
+      {this.state.success.body}
+    </Alert>}
     <AppSegment filledBackground>
       { this.state.error && <Alert title={this.state.error.title} type="error">
         {this.state.error.body}
@@ -306,6 +351,11 @@ export default class OrganizationUsers extends React.PureComponent {
         <h1>{ this.state.judgeTeam ? sprintf(COPY.USER_MANAGEMENT_JUDGE_TEAM_PAGE_TITLE, this.state.organizationName) :
           this.state.dvcTeam ? sprintf(COPY.USER_MANAGEMENT_DVC_TEAM_PAGE_TITLE, this.state.organizationName) :
             sprintf(COPY.USER_MANAGEMENT_PAGE_TITLE, this.state.organizationName) }</h1>
+        {this.state.isVhaOrg && (<>
+          <MembershipRequestTable requests={this.state.membershipRequests} membershipRequestActionHandler={this.membershipRequestHandler} />
+          <div style={{ paddingBottom: '7rem' }}></div>
+        </>
+        )}
         {this.mainContent()}
       </div>
     </AppSegment>

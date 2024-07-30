@@ -189,7 +189,7 @@ RSpec.describe Idt::Api::V1::VeteransController, :all_dbs, type: :controller do
           message = JSON.parse(response.body)["message"]
 
           expect(response.status).to eq 422
-          expect(message).to eq "Please enter a file number in the 'FILENUMBER' header"
+          expect(message).to include "Please enter a file number in the 'FILENUMBER' header"
         end
       end
 
@@ -201,7 +201,7 @@ RSpec.describe Idt::Api::V1::VeteransController, :all_dbs, type: :controller do
           response_body = JSON.parse(response.body)
 
           expect(response.status).to eq 404
-          expect(response_body["message"]).to eq "Record not found"
+          expect(response_body["message"]).to include "Record not found"
         end
       end
     end

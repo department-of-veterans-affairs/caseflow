@@ -159,4 +159,16 @@ RSpec.feature "Hearing worksheet for Hearing Prep", :all_dbs do
       expect(find_field("Deny", visible: false)).to be_checked
     end
   end
+
+  context "while accessing as a VSO user" do
+    let!(:vso_user) { create(:user, :vso_role) }
+    let(:ama_hearing) { create(:hearing, :with_tasks) }
+
+    before { User.authenticate!(user: vso_user) }
+
+    scenario "they are denied access" do
+      visit "/hearings/" + ama_hearing.external_id.to_s + "/worksheet"
+      expect(page).to have_content(COPY::UNAUTHORIZED_PAGE_ACCESS_MESSAGE)
+    end
+  end
 end

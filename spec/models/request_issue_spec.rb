@@ -26,6 +26,7 @@ describe RequestIssue, :all_dbs do
   let(:ineligible_reason) { nil }
   let(:edited_description) { nil }
   let(:covid_timeliness_exempt) { nil }
+  let(:is_predocket_needed) { false }
 
   let(:review) do
     create(
@@ -99,7 +100,8 @@ describe RequestIssue, :all_dbs do
       closed_status: closed_status,
       ineligible_reason: ineligible_reason,
       edited_description: edited_description,
-      covid_timeliness_exempt: covid_timeliness_exempt
+      covid_timeliness_exempt: covid_timeliness_exempt,
+      is_predocket_needed: is_predocket_needed
     )
   end
 
@@ -117,7 +119,8 @@ describe RequestIssue, :all_dbs do
       closed_at: closed_at,
       closed_status: closed_status,
       ineligible_reason: ineligible_reason,
-      edited_description: edited_description
+      edited_description: edited_description,
+      is_predocket_needed: is_predocket_needed
     )
   end
 
@@ -132,7 +135,8 @@ describe RequestIssue, :all_dbs do
       decision_sync_processed_at: decision_sync_processed_at,
       end_product_establishment: end_product_establishment,
       contention_reference_id: nonrating_contention_reference_id,
-      benefit_type: benefit_type
+      benefit_type: benefit_type,
+      is_predocket_needed: is_predocket_needed
     )
   end
 
@@ -505,6 +509,36 @@ describe RequestIssue, :all_dbs do
         expect(nonrating_request_issue.requires_record_request_task?).to eq true
       end
     end
+
+    context "issue benefit type is education" do
+      let(:benefit_type) { "education" }
+
+      let!(:request_issues_pre_docket) { create(:request_issue, is_predocket_needed: true, benefit_type: benefit_type) }
+      let!(:request_issues_not_pre_docket) do
+        create(:request_issue, is_predocket_needed: false, benefit_type: benefit_type)
+      end
+
+      context "education pre-docketing is enabled" do
+        before { FeatureToggle.enable!(:edu_predocket_appeals) }
+        after { FeatureToggle.disable!(:edu_predocket_appeals) }
+
+        it "does require a record request task when is_predocket_needed is false" do
+          expect(request_issues_not_pre_docket.requires_record_request_task?).to eq true
+        end
+
+        it "does not require a record request task when is_predocket_needed is true" do
+          expect(request_issues_pre_docket.requires_record_request_task?).to eq false
+        end
+      end
+
+      context "education pre-docketing is disabled" do
+        before { FeatureToggle.disable!(:edu_predocket_appeals) }
+
+        it "does require a record request task " do
+          expect(request_issues_not_pre_docket.requires_record_request_task?).to eq true
+        end
+      end
+    end
   end
 
   context ".requires_processing" do
@@ -653,6 +687,31 @@ describe RequestIssue, :all_dbs do
     end
   end
 
+  context ".active when request issue has been split off a appeal and is nil or 'in_progress' after split" do
+    subject { RequestIssue.active }
+
+    let!(:active_request_issue) { create(:request_issue, split_issue_status: nil) }
+    let!(:split_request_issue) { create(:request_issue, split_issue_status: "in_progress") }
+
+    it "filters by whether the split_issue_status is nil" do
+      expect(active_request_issue.split_issue_status).to be(nil)
+      expect(split_request_issue.split_issue_status).to eq("in_progress")
+      expect(subject.find_by(id: active_request_issue.id)).to eq(active_request_issue)
+      expect(subject.find_by(id: split_request_issue.id)).to eq(split_request_issue)
+    end
+  end
+
+  context "Request issues from original appeal are inactive when they don't go to a split appeal" do
+    subject { RequestIssue.active }
+
+    let!(:on_hold_request_issue) { create(:request_issue, split_issue_status: "on_hold") }
+
+    it "filters by whether the split_issue_status is on_hold" do
+      expect(on_hold_request_issue.split_issue_status).to eq("on_hold")
+      expect(subject.find_by(id: on_hold_request_issue.id)).to eq(nil)
+    end
+  end
+
   context ".active_or_decided_or_withdrawn" do
     subject { RequestIssue.active_or_decided_or_withdrawn }
 
@@ -666,6 +725,61 @@ describe RequestIssue, :all_dbs do
       expect(subject.find_by(id: decided_request_issue.id)).to_not be_nil
       expect(subject.find_by(id: withdrawn_request_issue.id)).to_not be_nil
       expect(subject.find_by(id: open_eligible_request_issue.id)).to_not be_nil
+    end
+  end
+
+  context ".predocket_needed on an education issue" do
+    before { FeatureToggle.enable!(:edu_predocket_appeals) }
+    after { FeatureToggle.disable!(:edu_predocket_appeals) }
+
+    context "is_predocket_needed is true" do
+      let!(:request_issue) { create(:request_issue, benefit_type: "education", is_predocket_needed: true) }
+
+      it "retrieves issues marked for pre-docketing" do
+        expect(request_issue.predocket_needed?).to eq(true)
+      end
+    end
+
+    context "is_predocket_needed is false" do
+      let!(:request_issue) { create(:request_issue, benefit_type: "education", is_predocket_needed: false) }
+
+      it "predocket_needed? returns false" do
+        expect(request_issue.predocket_needed?).to eq(false)
+      end
+    end
+
+    context "is_predocket_needed is nil" do
+      let!(:request_issue) { create(:request_issue, benefit_type: "education", is_predocket_needed: nil) }
+
+      it "predocket_needed? also returns false" do
+        expect(request_issue.predocket_needed?).to eq(false)
+      end
+    end
+  end
+
+  context ".predocket_needed on a vha issue" do
+    context "is_predocket_needed is true" do
+      let!(:request_issue) { create(:request_issue, benefit_type: "vha", is_predocket_needed: true) }
+
+      it "retrieves issues marked for pre-docketing" do
+        expect(request_issue.predocket_needed?).to eq(true)
+      end
+    end
+
+    context "is_predocket_needed is false" do
+      let!(:request_issue) { create(:request_issue, benefit_type: "vha", is_predocket_needed: false) }
+
+      it "predocket_needed? returns false" do
+        expect(request_issue.predocket_needed?).to eq(false)
+      end
+    end
+
+    context "is_predocket_needed is nil" do
+      let!(:request_issue) { create(:request_issue, benefit_type: "vha", is_predocket_needed: nil) }
+
+      it "predocket_needed? also returns false" do
+        expect(request_issue.predocket_needed?).to eq(false)
+      end
     end
   end
 
@@ -877,7 +991,8 @@ describe RequestIssue, :all_dbs do
         contested_decision_issue_id: contested_decision_issue_id,
         ineligible_reason: "untimely",
         ineligible_due_to_id: 345,
-        rating_issue_diagnostic_code: "2222"
+        rating_issue_diagnostic_code: "2222",
+        is_predocket_needed: is_predocket_needed
       }
     end
 
@@ -950,6 +1065,18 @@ describe RequestIssue, :all_dbs do
           contested_issue_description: nil,
           nonrating_issue_description: nil,
           unidentified_issue_text: "decision text"
+        )
+      end
+    end
+
+    context "when is_predocket_needed is set" do
+      let(:is_predocket_needed) { true }
+
+      it do
+        is_expected.to have_attributes(
+          is_predocket_needed: true,
+          contested_issue_description: nil,
+          nonrating_issue_description: nil
         )
       end
     end

@@ -441,7 +441,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
           click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
           expect(page).to have_css(
             ".usa-alert-error",
-            text: "Mapping service is temporarily unavailable. Please try again later."
+            text: "Service is temporarily unavailable, please try again later."
           )
         end
       end

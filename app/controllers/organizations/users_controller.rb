@@ -11,14 +11,16 @@ class Organizations::UsersController < OrganizationsController
           organization_name: organization.name,
           judge_team: organization.type == JudgeTeam.name,
           dvc_team: organization.type == DvcTeam.name,
-          organization_users: json_administered_users(organization_users)
+          organization_users: json_administered_users(organization_users),
+          membership_requests: pending_membership_requests,
+          isVhaOrg: vha_organization?
         }
       end
     end
   end
 
   def create
-    organization.add_user(user_to_modify)
+    organization.add_user(user_to_modify, current_user)
 
     render json: { users: json_administered_users([user_to_modify]) }, status: :ok
   end
@@ -67,6 +69,24 @@ class Organizations::UsersController < OrganizationsController
 
   def organization_url
     params[:organization_url]
+  end
+
+  def pending_membership_requests
+    # Serialize the Membership Requests and extract the attributes
+    if vha_organization?
+      MembershipRequestSerializer.new(organization.membership_requests.includes(:requestor).assigned.order(:created_at),
+                                      is_collection: true)
+        .serializable_hash[:data]
+        .map { |hash| hash[:attributes] }
+    else
+      []
+    end
+  end
+
+  def vha_organization?
+    vha_predocket_org_types = [::VhaCaregiverSupport, ::VhaCamo, ::VhaProgramOffice]
+    # Check if the org is any of the types above or has the url vha for the general VHA BusinessLine object
+    organization.url == "vha" || vha_predocket_org_types.any? { |org_type| organization.is_a?(org_type) }
   end
 
   def json_users(users)

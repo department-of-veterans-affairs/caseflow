@@ -236,6 +236,9 @@ export const commonStateFromServerIntake = (serverIntake) => {
     veteranValid: {
       $set: serverIntake.veteranValid
     },
+    homelessness: {
+      $set: serverIntake.homelessness
+    },
     veteranInvalidFields: {
       $set: {
         veteranMissingFields: serverIntake.veteranInvalidFields.veteran_missing_fields.join(', '),

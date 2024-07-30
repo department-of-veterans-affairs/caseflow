@@ -130,8 +130,8 @@ RSpec.feature "ColocatedTask", :all_dbs do
         find("div", class: "cf-select__option", text: "#{hold_duration_days} days").click
         click_on(COPY::MODAL_SUBMIT_BUTTON)
 
-        # Instructions field is required
-        expect(page).to have_content(COPY::FORM_ERROR_FIELD_REQUIRED)
+        # Notes field is required
+        expect(page).to have_content(COPY::NOTES_ERROR_FIELD_REQUIRED)
 
         # Add instructions and try again
         fill_in("instructions", with: "some text")
@@ -187,7 +187,7 @@ RSpec.feature "ColocatedTask", :all_dbs do
       find("button", text: COPY::CHANGE_TASK_TYPE_SUBHEAD).click
 
       # Instructions field is required
-      expect(page).to have_content(COPY::FORM_ERROR_FIELD_REQUIRED)
+      expect(page).to have_content(COPY::INSTRUCTIONS_ERROR_FIELD_REQUIRED)
 
       # Add instructions and try again
       instructions = generate_words(5)

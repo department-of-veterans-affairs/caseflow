@@ -30,6 +30,14 @@ class WorkQueue::AppellantSubstitutionSerializer
     object.source_appeal&.uuid
   end
 
+  attribute :histories do |object|
+    if FeatureToggle.enabled?(:cavc_remand_granted_substitute_appellant)
+      object.histories.map do |history|
+        WorkQueue::AppellantSubstitutionHistorySerializer.new(history).serializable_hash[:data][:attributes]
+      end
+    end
+  end
+
   # Uncomment the following as needed and write corresponding tests
 
   # attribute :source_decision_issues do |object|

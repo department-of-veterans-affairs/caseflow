@@ -121,5 +121,16 @@ describe('TabWindow', () => {
     tabs.find('#main-tab-1').simulate('click');
     expect(onChange).toHaveBeenCalledWith(1);
   });
+
+  test('renders tabs with one tab if alwaysShowTabs is true', () => {
+    const tabs = mount(
+      <TabWindow
+        tabs={[tabList[0]]}
+        alwaysShowTabs
+      />
+    );
+
+    expect(tabs.find('button.cf-tab')).toHaveLength(1);
+  });
 });
 /* eslint-enable dot-location */

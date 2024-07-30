@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import format from 'date-fns/format';
 import { css } from 'glamor';
 
-import { GreenCheckmark } from 'app/components/RenderFunctions';
+import { GreenCheckmarkIcon } from 'app/components/icons/GreenCheckmarkIcon';
 import { grayLineTimelineStyling } from 'app/queue/components/TaskRows';
 
 import { COLORS } from 'app/constants/AppConstants';
@@ -37,7 +37,7 @@ export const SubstitutionProcessedTimelineEvent = ({ timelineEvent }) => {
         <div>{formattedDate}</div>
       </td>
       <td className="taskInfoWithIconContainer taskInfoWithIconTimelineContainer">
-        <GreenCheckmark />
+        <GreenCheckmarkIcon />
         <div {...grayLineTimelineStyling} />
       </td>
       <td className="taskContainerStyling taskInformationTimelineContainerStyling">
@@ -47,14 +47,30 @@ export const SubstitutionProcessedTimelineEvent = ({ timelineEvent }) => {
             <span>Completed by:</span>
             {timelineEvent.createdBy}
           </div>
-          <div>
-            <span>Original appellant (veteran):</span>
-            {timelineEvent.originalAppellantFullName}
-          </div>
-          <div>
-            <span>Current appellant (substitution):</span>
-            {timelineEvent.substituteFullName}
-          </div>
+          { timelineEvent.originalAppellantFullName &&
+            <div>
+              <span>Original appellant (veteran):</span>
+              {timelineEvent.originalAppellantFullName}
+            </div>
+          }
+          { timelineEvent.originalAppellantSubstituteFullName &&
+            <div>
+              <span>Original appellant (substitution):</span>
+              {timelineEvent.originalAppellantSubstituteFullName}
+            </div>
+          }
+          { timelineEvent.currentAppellantSubstituteFullName &&
+            <div>
+              <span>Current appellant (substitution):</span>
+              {timelineEvent.currentAppellantSubstituteFullName}
+            </div>
+          }
+          { timelineEvent.currentAppellantFullName &&
+            <div>
+              <span>Current appellant (veteran):</span>
+              {timelineEvent.currentAppellantFullName}
+            </div>
+          }
         </div>
       </td>
     </tr>
@@ -67,7 +83,9 @@ SubstitutionProcessedTimelineEvent.propTypes = {
       PropTypes.instanceOf(Date),
     ]),
     createdBy: PropTypes.string,
-    substituteFullName: PropTypes.string,
     originalAppellantFullName: PropTypes.string,
+    currentAppellantSubstituteFullName: PropTypes.string,
+    originalAppellantSubstituteFullName: PropTypes.string,
+    currentAppellantFullName: PropTypes.string
   }),
 };

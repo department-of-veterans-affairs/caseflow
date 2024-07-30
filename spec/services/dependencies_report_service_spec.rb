@@ -1,106 +1,87 @@
 # frozen_string_literal: true
 
 describe DependenciesReportService do
-  DEPENDENCIES_REPORT_WITH_OUTAGES = <<-'EOF'.strip_heredoc.freeze
-    {
-      "BGS":{"name":"BGS","up_rate_5":100.0},
-      "VACOLS":{"name":"VACOLS","up_rate_5":10.0},
-      "VBMS":{"name":"VBMS","up_rate_5":49.0},
-      "VBMS.FindDocumentVersionReference":{"name":"VBMS.FindDocumentVersionReference",
-        "up_rate_5":100.0}
-    }
-  EOF
-  DEPENDENCIES_REPORT_WITHOUT_OUTAGES = <<-'EOF'.strip_heredoc.freeze
-    {
-      "BGS":{"name":"BGS","up_rate_5":100.0},
-      "VACOLS":{"name":"VACOLS","up_rate_5":100.0},
-      "VBMS":{"name":"VBMS","up_rate_5":51.0},
-      "VBMS.FindDocumentVersionReference":{"name":"VBMS.FindDocumentVersionReference",
-        "up_rate_5":100.0}
-    }
-  EOF
-  context "when there is an outage" do
+  DEPENDENCIES_REPORT_WITH_OUTAGES = %w[BGS VACOLS].freeze
+  DEPENDENCIES_REPORT_WITHOUT_OUTAGES = [].freeze
+
+  before(:each) do
+    Rails.cache.clear
+  end
+
+  subject { DependenciesReportService.dependencies_report }
+
+  context "when there is an outage for only one system" do
     before do
-      Rails.cache.write(:dependencies_report, DEPENDENCIES_REPORT_WITH_OUTAGES)
+      Rails.cache.write(:degraded_service_banner_bgs, :display)
     end
 
-    it "returns degraded services" do
-      expect(DependenciesReportService.degraded_dependencies).to eq %w[VACOLS VBMS]
-      expect(DependenciesReportService.dependencies_report.present?).to be_truthy
+    it "returns one degraded systems" do
+      is_expected.to eq %w[BGS]
     end
   end
 
-  context "when there is no outage" do
+  context "when there is an outage for multiple systems" do
     before do
-      Rails.cache.write(:dependencies_report, DEPENDENCIES_REPORT_WITHOUT_OUTAGES)
+      Rails.cache.write(:degraded_service_banner_bgs, :display)
+      Rails.cache.write(:degraded_service_banner_vacols, :display)
     end
 
-    it "returns no outage" do
-      expect(DependenciesReportService.degraded_dependencies).to be_empty
-      expect(DependenciesReportService.dependencies_report.present?).to be_falsey
+    it "returns muliple systems" do
+      is_expected.to eq DEPENDENCIES_REPORT_WITH_OUTAGES
     end
   end
 
-  # needed to reach 90% test coverage
-  context "when dependencies report is invalid" do
+  context "when there is no system outages" do
     before do
-      Rails.cache.write(:dependencies_report,
-                        "This isn't JSON")
+      Rails.cache.write(:degraded_service_banner_bgs, :hide)
+      Rails.cache.write(:degraded_service_banner_vbms, :hide)
+      Rails.cache.write(:degraded_service_banner_vva, :hide)
+      Rails.cache.write(:degraded_service_banner_vacols, :hide)
+      Rails.cache.write(:degraded_service_banner_gov_delivery, :hide)
+      Rails.cache.write(:degraded_service_banner_va_dot_gov, :hide)
     end
 
-    it "returns no outage" do
-      expect(DependenciesReportService.dependencies_report.present?).to be_falsey
+    it "returns an empty array" do
+      is_expected.to eq DEPENDENCIES_REPORT_WITHOUT_OUTAGES
     end
   end
 
-  context "when the degraded service banner has been enabled manually" do
+  context "when there is an invalid value written to cache" do
     before do
-      Rails.cache.write(:degraded_service_banner, :always_show)
+      Rails.cache.write(:degraded_service_banner_bgs, :invalid_entry)
     end
 
-    it "returns degraded service" do
-      expect(DependenciesReportService.dependencies_report.present?).to be_truthy
+    it "returns and empty array" do
+      is_expected.to eq DEPENDENCIES_REPORT_WITHOUT_OUTAGES
     end
   end
 
-  context "when the degraded service banner has been disabled manually" do
-    before do
-      Rails.cache.write(:dependencies_report, DEPENDENCIES_REPORT_WITH_OUTAGES)
-      Rails.cache.write(:degraded_service_banner, :never_show)
-    end
+  context "whenever there is an error raised when accessing the Rails cache" do
+    before { allow(Rails.cache).to receive(:read_multi).and_raise(StandardError, error_status) }
 
-    it "returns no outage" do
-      expect(DependenciesReportService.dependencies_report.present?).to be_falsey
+    let(:error_status) { "Could not retrieve statuses" }
+
+    it "logs the error and returns false" do
+      expect(Rails.logger).to receive(:warn).with(
+        "Exception thrown while checking dependency "\
+        "status: #{error_status}"
+      )
+
+      is_expected.to eq false
     end
   end
 
-  context "when the degraded service banner has been set to auto" do
-    before do
-      Rails.cache.write(:degraded_service_banner, :auto)
+  context "throws error" do
+    it "when Rails.cache fails" do
+      allow(Rails.cache).to receive(:read_multi).and_raise("boom")
+      expect(DependenciesReportService.dependencies_report).to eq false
     end
+  end
 
-    context "when there is an outage" do
-      before do
-        Rails.cache.write(:dependencies_report, DEPENDENCIES_REPORT_WITH_OUTAGES)
-      end
-
-      it "returns degraded services" do
-        expect(DependenciesReportService.degraded_dependencies).to eq %w[VACOLS VBMS]
-        expect(DependenciesReportService.dependencies_report.present?).to be_truthy
-      end
-    end
-
-    context "when there is no outage" do
-      before do
-        Rails.cache.write(
-          :dependencies_report, DEPENDENCIES_REPORT_WITHOUT_OUTAGES
-        )
-      end
-
-      it "returns no outage" do
-        expect(DependenciesReportService.degraded_dependencies).to be_empty
-        expect(DependenciesReportService.dependencies_report.present?).to be_falsey
-      end
+  context "throws error" do
+    it "when Rails.cache fails" do
+      allow(Rails.cache).to receive(:read_multi).and_raise("boom")
+      expect(DependenciesReportService.dependencies_report).to eq false
     end
   end
 end

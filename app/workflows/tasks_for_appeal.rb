@@ -21,7 +21,7 @@ class TasksForAppeal
 
     # Prevent VSOs from viewing tasks for this appeal assigned to anybody or team at the Board.
     # VSO users will be able to see other VSO's tasks because we don't store that membership information in Caseflow.
-    return tasks_visible_to_vso_employee if user.vso_employee?
+    return (tasks_visible_to_vso_employee | tasks_actionable_to_vso_employee).compact if user.vso_employee?
 
     # DecisionReviewTask tasks are meant to be viewed on the /decision_reviews/:line-of-business route only.
     # This change filters them out from the Queue page
@@ -50,6 +50,14 @@ class TasksForAppeal
       task.assigned_to.is_a?(Representative) || task.assigned_to_vso_user? || user == task.assigned_to ||
         (task.is_a?(HearingTask) && task&.hearing&.disposition == Constants.HEARING_DISPOSITION_TYPES.held) ||
         task.is_a?(DistributionTask)
+    end
+  end
+
+  def tasks_actionable_to_vso_employee
+    appeal.tasks
+      .includes(*task_includes)
+      .select do |task|
+      (task.is_a?(HearingTask) && task&.hearing&.disposition.nil?) || task.is_a?(ScheduleHearingTask)
     end
   end
 

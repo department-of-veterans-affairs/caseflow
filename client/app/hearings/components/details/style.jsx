@@ -156,7 +156,7 @@ export const input8px = css({
   },
 });
 
-export const virtualHearingModalStyles = css({
+export const emailConfirmationModalStyles = css({
   '& pre': {
     margin: '5px 0'
   }

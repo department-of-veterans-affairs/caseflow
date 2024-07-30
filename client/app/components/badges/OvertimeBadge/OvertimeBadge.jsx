@@ -21,7 +21,8 @@ class OvertimeBadge extends React.PureComponent {
       This case has been approved to be worked in overtime hours
     </div>;
 
-    return <Badge name="overtime" displayName="OT" color={COLORS.GREY_DARK} tooltipText={tooltipText} id={appeal.id} />;
+    return <Badge name="overtime" displayName="OT" color={COLORS.GREY_DARK} tooltipText={tooltipText} id={appeal.id}
+      ariaLabel="overtime" />;
   }
 }
 

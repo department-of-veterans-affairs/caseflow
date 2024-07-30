@@ -4,7 +4,6 @@ exports[`LoadingDataDisplay displays loading state initally 1`] = `
 <div>
   <section
     class="cf-app-segment cf-app-segment--alt"
-    role="main"
   >
     <div
       data-css-1ogvp9u=""

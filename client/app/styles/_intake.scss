@@ -100,19 +100,47 @@
   color: $color-gray-dark;
   width: 750px;
   max-height: 95%;
+  font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+  font-weight: 400;
+
+  p {
+    font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+    font-size: 1.8rem;
+    color: $color-black;
+  }
 
   h1 {
     text-align: center;
     border-bottom: 1px solid $color-gray-lighter;
+    font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+    font-weight: 800;
   }
 
   h2 {
     margin-bottom: 10px;
+    font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+    font-weight: 800;
   }
 
   .cf-form-radio-options {
     margin-top: 0;
     margin-bottom: 14px;
+  }
+
+  .question-label {
+    font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+  }
+
+  .add-nonrating-request-issue {
+    font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+  }
+
+  .add-nonrating-request-issue-description {
+    font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+  }
+
+  .cf-benefit-type {
+    margin-bottom: 2%;
   }
 
   .cf-form-radio {
@@ -338,5 +366,22 @@
 
   p {
     margin: .5rem 0;
+  }
+}
+
+.cf-benefit-type {
+  .cf-form-radio-option {
+    display: inline;
+
+    [type=radio]:disabled + label::before {
+      background: $color-gray-lightest;
+      box-shadow: 0 0 0 2px $color-gray-lightest, 0 0 0 3px $color-gray-lighter;
+      cursor: not-allowed;
+    }
+  }
+
+  .cf-radio-option-tooltip {
+    max-width: 600px;
+    word-spacing: -1px;
   }
 }

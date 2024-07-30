@@ -1,0 +1,105 @@
+.cf-cavc-dashboard {
+  .cf-tab-navigation {
+    display: flex;
+    flex-wrap: wrap-reverse;
+
+    button {
+      flex: 0 0 250px;
+      margin-bottom: -1px;
+    }
+  }
+
+  .cavc-tab-panel:focus {
+    outline: none;
+  }
+
+  .cf-tab {
+    width: 250px;
+    border-bottom: 1px solid $color-gray-light;
+
+    div {
+      width: 100%;
+    }
+
+    &.cf-active {
+      border-bottom: 1px solid $color-primary;
+      // needed for active tab's border to be on top of all other surrounding borders
+      position: relative;
+      z-index: 1;
+    }
+  }
+
+  .cf-active + .cf-tab {
+    border-left: 1px solid $color-gray-light;
+  }
+
+  .cf-form-textinput {
+    font-weight: normal;
+    color: inherit;
+    margin-bottom: 0;
+
+    // the <TextField component assigns .cf-form-textinput to both the parent div and input element,
+    // so nesting the class within itself is required to fix the double margin
+    .cf-form-textinput {
+      margin-bottom: 20px;
+    }
+  }
+
+  .dash-li {
+    margin-bottom: 60px;
+  }
+
+  .dash-button-remove {
+    display: block;
+    margin-left: auto;
+    margin-right: 0;
+    padding-right: 0;
+  }
+
+  // the following two rules are very specific for the "remove basis" button in decision reasons
+  // left padding + margin should equal 7.5rem
+  div.usa-accordion-content > div > div > div > .dash-basis-group {
+    @media screen and (max-width: 899px) {
+      button {
+        padding: 0 2rem;
+        margin: 1rem 0;
+        margin-left: 5.5rem;
+      }
+    }
+  }
+
+  // left padding + margin should equal 5rem
+  div.usa-accordion-content > div > div > .dash-basis-group {
+    @media screen and (max-width: 899px) {
+      button {
+        padding: 0 2rem;
+        margin: 1rem 0;
+        margin-left: 3rem;
+      }
+    }
+  }
+
+  div.dash-text-input {
+    width: 46rem;
+    margin-bottom: 4rem;
+  }
+
+  .dash-basis-group {
+    display: flex;
+    align-items: end;
+    margin-bottom: 2rem;
+
+    .cf-form-dropdown {
+      width: 46rem;
+    }
+
+    button {
+      line-height: 1.5;
+    }
+
+    @media screen and (max-width: 899px) {
+      flex-direction: column;
+      align-items: start;
+    }
+  }
+}

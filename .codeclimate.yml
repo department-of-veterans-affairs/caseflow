@@ -52,6 +52,12 @@ plugins:
           mass_threshold: 50
     exclude_patterns:
     - 'db/migrate/*'
+    - 'app/controllers/idt/api/v2/appeals_controller.rb'
+    - 'spec/controllers/idt/api/v2/appeals_controller_spec.rb'
+    - 'spec/controllers/idt/api/appeals_controller_spec.rb'
+    - 'spec/controllers/tasks_controller_spec.rb'
+    - 'spec/controllers/decision_reviews_controller_spec.rb'
+    - 'spec/models/hearings/conference_link_spec.rb'
   eslint:
     enabled: true
   fixme:
@@ -73,6 +79,8 @@ plugins:
         enabled: false
     exclude_patterns:
     - 'db/migrate/*'
+    - 'app/jobs/dispatch_email_job.rb'
+    - 'app/mailers/dispatch_mailer.rb'
   rubocop:
     enabled: true
     channel: rubocop-0-79

@@ -108,15 +108,25 @@ class HearingTimeService
 
   # hearing time in poa timezone
   def poa_time
-    representative_tz = @hearing.virtual_hearing&.representative_tz
+    # Check if there's a recipient, and if it has a timezone, it it does use that to set tz
+    representative_tz_from_recipient = @hearing.representative_recipient&.timezone
+    return normalized_time(representative_tz_from_recipient) if representative_tz_from_recipient.present?
+    # If there's a virtual hearing, use that tz even if it's empty
+    return normalized_time(@hearing.virtual_hearing[:representative_tz]) if @hearing.virtual_hearing.present?
 
-    normalized_time(representative_tz)
+    # No recipient and no virtual hearing? Use the normalized_time fallback
+    normalized_time(nil)
   end
 
   # hearing time in appellant timezone
   def appellant_time
-    appellant_tz = @hearing.virtual_hearing&.appellant_tz
+    # Check if there's a recipient, and if it has a timezone, it it does use that to set tz
+    appellant_tz_from_recipient = @hearing.appellant_recipient&.timezone
+    return normalized_time(appellant_tz_from_recipient) if appellant_tz_from_recipient.present?
+    # If there's a virtual hearing, use that tz even if it's empty
+    return normalized_time(@hearing.virtual_hearing[:appellant_tz]) if @hearing.virtual_hearing.present?
 
-    normalized_time(appellant_tz)
+    # No recipient and no virtual hearing? Use the normalized_time fallback
+    normalized_time(nil)
   end
 end

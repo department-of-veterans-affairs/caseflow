@@ -1,32 +1,53 @@
 import React from 'react';
 import WrenchIcon from './WrenchIcon';
 import ApiUtil from '../util/ApiUtil';
+import { listWithOxfordComma } from '../2.0/utils/banner/format';
+import COPY from '../../COPY';
 import * as AppConstants from '../constants/AppConstants';
 
 /*
  * Caseflow Performance Degradation Banner.
  * Shared between all Certification pages.
  * Notifies users if dependencies may be experiencing an outage .
- *
+ * Updated to display one ore more systems when experiencing outages.
  */
 export default class PerformanceDegradationBanner extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      showBanner: false,
-      isRequesting: false
+      isRequesting: false,
+      services: [],
     };
+  }
 
-    this.dependencies = {
-      certification: ['BGS.AddressService', 'BGS.OrganizationPoaService', 'BGS.PersonFilenumberService',
-        'BGS.VeteranService', 'VACOLS', 'VBMS', 'VBMS.FindDocumentVersionReference'],
-      reader: ['VBMS', 'VACOLS'],
-      hearing: ['VACOLS'],
-      dispatch: ['BGS.BenefitsService', 'VBMS', 'VACOLS'],
-      other: ['BGS.AddressService', 'BGS.BenefitsService', 'BGS.ClaimantFlashesService', 'BGS.OrganizationPoaService',
-        'BGS.PersonFilenumberService', 'BGS.VeteranService', 'VACOLS', 'VBMS', 'VBMS.FindDocumentVersionReference',
-        'VVA']
-    };
+  // generates banner text prefix by formatting the services list for proper grammar
+  getBannerTextPrefix() {
+    const { services } = this.state;
+
+    // formats a list following oxford comma grammar
+    return listWithOxfordComma(services);
+  }
+
+  // formats banner text suffix with proper grammer
+  formatBannerTextSuffix(services) {
+    return this.suffix = (services.length > 1 ? COPY.DEGRADED_SYSTEM_PLURAL : COPY.DEGRADED_SYSTEM_SINGULAR);
+
+  }
+
+  // generates banner text suffix with proper grammar
+  getBannerTextSuffix() {
+    const { services } = this.state;
+
+    return this.formatBannerTextSuffix(services);
+  }
+
+  // generates banner text
+  getBannerText() {
+    return (
+      <span className="banner-text">
+        <b>{this.getBannerTextPrefix()}</b> {this.getBannerTextSuffix()}
+      </span>
+    );
   }
 
   checkDependencies() {
@@ -36,26 +57,18 @@ export default class PerformanceDegradationBanner extends React.Component {
       return;
     }
 
-    this.appName = Object.keys(this.dependencies).filter((key) => {
-      return window.location.pathname.includes(key);
-    })[0] || 'other';
-
     this.setState({ isRequesting: true });
     ApiUtil.get('/dependencies-check').
       then((data) => {
         let report = data.body.dependencies_report;
-        // Each app has a relevant report
-        let outageAffectingCurrentApp = report.filter((key) => {
-          return this.dependencies[this.appName].includes(key);
-        });
 
         this.setState({
-          showBanner: Boolean(outageAffectingCurrentApp.length > 0),
-          isRequesting: false
+          services: report,
+          isRequesting: false,
         });
       }, () => {
         this.setState({
-          showBanner: false,
+          services: [],
           isRequesting: false
         });
       });
@@ -75,18 +88,14 @@ export default class PerformanceDegradationBanner extends React.Component {
   }
 
   render() {
-
     return <div>
-      { this.state.showBanner &&
+      {this.state.services.length > 0 &&
         <div className="usa-banner">
           <div className="usa-grid usa-banner-inner">
             <div className="banner-icon">
               <WrenchIcon />
             </div>
-            <span className="banner-text">
-              We've detected technical issues in our system.
-              You can continue working, though some users may experience delays.
-            </span>
+            {this.getBannerText()}
           </div>
         </div>
       }

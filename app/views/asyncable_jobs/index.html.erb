@@ -10,7 +10,8 @@
       models: AsyncableJobs.models.map(&:name),
       pagination: pagination,
       fetchedAt: Time.zone.now,
-      asyncableJobKlass: allowed_params[:asyncable_job_klass]
+      asyncableJobKlass: allowed_params[:asyncable_job_klass],
+      supportedJobs: supported_jobs
     }
   }) %>
 <% end %>

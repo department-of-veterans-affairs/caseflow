@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:hl7="urn:hl7-org:v3"
+	xmlns:mvs="http://appeals.cf.va.gov/MpiVeteranService/"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="MpiUpdateVeteran"
+	targetNamespace="http://appeals.cf.va.gov/MpiVeteranService/">
+	<wsdl:types>
+		<xsd:schema targetNamespace="http://appeals.cf.va.gov/MpiVeteranService/">
+			<xsd:import namespace="urn:hl7-org:v3"
+				schemaLocation="https://raw.githubusercontent.com/department-of-veterans-affairs/caseflow/feature/APPEALS-8729/docs/wsdl/IdMHL7v3.xsd" />
+			<xsd:element name="UpdateVeteran">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="PRPA_IN201302UV02"
+							type="hl7:PRPA_IN201302UV02" minOccurs="0" maxOccurs="unbounded" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="UpdateVeteranResponse">
+				<xsd:complexType/>
+			</xsd:element>
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="UpdateVeteranRequest">
+		<wsdl:part element="mvs:UpdateVeteran" name="parameters" />
+	</wsdl:message>
+	<wsdl:message name="UpdateVeteranResponse">
+		<wsdl:part element="mvs:UpdateVeteranResponse" name="parameters" />
+	</wsdl:message>
+	<wsdl:portType name="MpiUpdateVeteran">
+		<wsdl:operation name="UpdateVeteran">
+			<wsdl:input message="mvs:UpdateVeteranRequest" />
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="MpiUpdateVeteranSOAP"
+		type="mvs:MpiUpdateVeteran">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="UpdateVeteran">
+			<soap:operation
+				soapAction="http://appeals.cf.va.gov/MpiVeteranService/UpdateVeteran" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="MpiUpdateVeteran">
+		<wsdl:port binding="mvs:MpiUpdateVeteranSOAP"
+			name="MpiUpdateVeteranSOAP">
+			<soap:address location="https://mpi-api.uat.appeals.va.gov/" />
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

@@ -2,3 +2,4 @@
 --require spec_helper
 --require rails_helper
 --format documentation
+--format RSpec::Github::Formatter

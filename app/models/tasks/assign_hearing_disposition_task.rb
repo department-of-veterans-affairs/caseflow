@@ -21,6 +21,9 @@
 ##
 class AssignHearingDispositionTask < Task
   include RunAsyncable
+  prepend HearingWithdrawn
+  prepend HearingPostponed
+  prepend HearingScheduledInError
 
   validates :parent, presence: true, parentTask: { task_type: HearingTask }, on: :create
   delegate :hearing, to: :hearing_task, allow_nil: true
@@ -31,7 +34,7 @@ class AssignHearingDispositionTask < Task
   class HearingDispositionNotHeld < StandardError; end
   class HearingAssociationMissing < StandardError
     def initialize(hearing_task_id)
-      super(format(COPY::HEARING_TASK_ASSOCIATION_MISSING_MESASAGE, hearing_task_id))
+      super(format(COPY::HEARING_TASK_ASSOCIATION_MISSING_MESSAGE, hearing_task_id))
     end
   end
 

@@ -1,0 +1,253 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`VhaHelp renders the help page 1`] = `
+<div>
+  <div
+    class="cf-help-content"
+  >
+    <p>
+      <a
+        href="/help"
+      >
+        Go Back
+      </a>
+    </p>
+    <div>
+      <h1
+        id="#top"
+      >
+         Welcome to the VHA Help page! 
+      </h1>
+      <p>
+        Here you will find
+        <a
+          href="#training-videos"
+        >
+           Training Videos 
+        </a>
+        and
+        <a
+          href="#faq"
+        >
+           Frequently Asked Questions (FAQs) 
+        </a>
+        for VHA, as well as links to the Training Guide and the Quick Reference Guide 
+      </p>
+    </div>
+    <div
+      class="cf-help-divider"
+    />
+    <div>
+      <h1
+        id="training-videos"
+      >
+         Training Videos
+      </h1>
+      <p>
+         Training video for business lines 
+      </p>
+    </div>
+    <div
+      class="cf-help-divider"
+    />
+    <div>
+      <h1
+        id="faq"
+      >
+         Frequently Asked Questions 
+      </h1>
+    </div>
+    <div
+      class="cf-help-divider"
+    />
+    <h1>
+       1. How do I access the VHA team?
+    </h1>
+    <p>
+       If you need access to a VHA team, please fill out the form below. 
+    </p>
+    <h2>
+       Select which VHA groups you need access to 
+    </h2>
+    <form
+      class="css-1mi17b"
+    >
+      <fieldset>
+        <legend>
+          <strong>
+            General Access
+          </strong>
+        </legend>
+        <div
+          class="checkbox-wrapper-vhaAccess cf-form-checkboxes"
+        >
+          <div
+            class="cf-form-checkbox"
+          >
+            <input
+              aria-label="vhaAccess"
+              id="vhaAccess"
+              name="vhaAccess"
+              type="checkbox"
+            />
+            <label
+              for="vhaAccess"
+            >
+              <span
+                class=""
+              >
+                VHA
+              </span>
+               
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>
+          <strong>
+            Specialized Access
+          </strong>
+        </legend>
+        <fieldset
+          class="checkbox-wrapper-preDocketOrgsAccess cf-form-checkboxes cf-checkbox-group-inline"
+        >
+          <legend
+            class="hidden-field"
+          >
+            <span>
+              preDocketOrgsAccess
+            </span>
+          </legend>
+          <div
+            class="checkbox"
+          >
+            <input
+              id="vhaCAMO"
+              name="vhaCAMO"
+              type="checkbox"
+            />
+            <label
+              for="vhaCAMO"
+            >
+              VHA CAMO
+            </label>
+          </div>
+          <div
+            class="checkbox"
+          >
+            <input
+              id="vhaCaregiverSupportProgram"
+              name="vhaCaregiverSupportProgram"
+              type="checkbox"
+            />
+            <label
+              for="vhaCaregiverSupportProgram"
+            >
+              VHA Caregiver Support Program
+            </label>
+          </div>
+        </fieldset>
+      </fieldset>
+      <div
+        style="min-height: 51px;"
+      />
+      <div
+        class="cf-form-textarea"
+      >
+        <label
+          class="question-label"
+          for="membership-request-instructions-textBox"
+        >
+          <span>
+            Reason for access
+            <span
+              class="cf-optional"
+            >
+              Optional
+            </span>
+          </span>
+        </label>
+        <textarea
+          id="membership-request-instructions-textBox"
+          name="membership-request-instructions-textBox"
+        />
+      </div>
+      <span>
+        <button
+          class="cf-submit usa-button-disabled usa-button"
+          disabled=""
+          id="submit-submit-request"
+          type="submit"
+        >
+          Submit
+        </button>
+      </span>
+    </form>
+  </div>
+</div>
+`;
+
+exports[`VhaHelp renders the help page for a user that is not logged in 1`] = `
+<div>
+  <div
+    class="cf-help-content"
+  >
+    <p>
+      <a
+        href="/help"
+      >
+        Go Back
+      </a>
+    </p>
+    <div>
+      <h1
+        id="#top"
+      >
+         Welcome to the VHA Help page! 
+      </h1>
+      <p>
+        Here you will find
+        <a
+          href="#training-videos"
+        >
+           Training Videos 
+        </a>
+        and
+        <a
+          href="#faq"
+        >
+           Frequently Asked Questions (FAQs) 
+        </a>
+        for VHA, as well as links to the Training Guide and the Quick Reference Guide 
+      </p>
+    </div>
+    <div
+      class="cf-help-divider"
+    />
+    <div>
+      <h1
+        id="training-videos"
+      >
+         Training Videos
+      </h1>
+      <p>
+         Training video for business lines 
+      </p>
+    </div>
+    <div
+      class="cf-help-divider"
+    />
+    <div>
+      <h1
+        id="faq"
+      >
+         Frequently Asked Questions 
+      </h1>
+    </div>
+    <div
+      class="cf-help-divider"
+    />
+  </div>
+</div>
+`;

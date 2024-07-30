@@ -25,6 +25,8 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :appeals, only: :index
       resources :jobs, only: :create
+      post 'mpi', to: 'mpi#veteran_updates'
+      post 'va_notify_update', to: 'va_notify#notifications_update'
     end
     namespace :v2 do
       resources :appeals, only: :index
@@ -36,6 +38,9 @@ Rails.application.routes.draw do
           get "contestable_issues(/:benefit_type)", to: "contestable_issues#index"
         end
         resources :higher_level_reviews, only: [:create, :show]
+        namespace :supplemental_claims do
+          get "contestable_issues(/:benefit_type)", to: "contestable_issues#index"
+        end
         resources :supplemental_claims, only: [:create, :show]
         namespace :appeals do
           get 'contestable_issues', to: "contestable_issues#index"
@@ -63,8 +68,18 @@ Rails.application.routes.draw do
         post 'appeals/:appeal_id/outcode', to: 'appeals#outcode'
         post 'appeals/:appeal_id/upload_document', to: 'upload_vbms_document#create'
         get 'judges', to: 'judges#index'
+        post 'upload_document', to: 'upload_vbms_document#create'
         get 'user', to: 'users#index'
         get 'veterans', to: 'veterans#details'
+        post 'addresses/validate', to: 'appeals#validate'
+      end
+
+      namespace :v2 do
+        get 'appeals', to: 'appeals#details'
+        get 'appeals/:appeal_id', to: 'appeals#reader_appeal'
+        post 'appeals/:appeal_id/outcode', to: 'appeals#outcode'
+        get 'appeals/:appeal_id/documents', to: 'appeals#appeal_documents'
+        get 'appeals/:appeal_id/documents/:document_id', to: 'appeals#appeals_single_document'
       end
     end
   end
@@ -142,7 +157,11 @@ Rails.application.routes.draw do
   end
   match '/appeals/:appeal_id/edit/:any' => 'appeals#edit', via: [:get]
 
+  get '/appeals/:appeals_id/notifications' => 'appeals#fetch_notification_list'
+
   get '/task_tree/:appeal_type/:appeal_id' => 'task_tree#show'
+
+  post '/appeals/:appeal_id/split' => 'split_appeal#split_appeal'
 
   get '/explain/appeals/:appeal_id' => 'explain#show'
 
@@ -168,8 +187,8 @@ Rails.application.routes.draw do
   get '/hearings/dockets', to: redirect("/hearings/schedule")
   get 'hearings/schedule', to: "hearings/hearing_day#index"
   get 'hearings/schedule/add_hearing_day', to: "hearings/hearing_day#index"
-  get 'hearings/:hearing_id/details', to: "hearings_application#show_hearing_index"
-  get 'hearings/:hearing_id/worksheet', to: "hearings_application#show_hearing_index"
+  get 'hearings/:hearing_id/details', to: "hearings_application#show_hearing_details_index"
+  get 'hearings/:hearing_id/worksheet', to: "hearings_application#show_hearing_worksheet_index"
   get 'hearings/:id/virtual_hearing_job_status', to: 'hearings#virtual_hearing_job_status'
   get 'hearings/schedule/docket/:id', to: "hearings/hearing_day#index"
   get 'hearings/schedule/docket/:id/edit', to: "hearings/hearing_day#index"
@@ -198,7 +217,7 @@ Rails.application.routes.draw do
   get 'hearing_prep/help' => 'help#hearings'
   get 'intake/help' => 'help#intake'
   get 'queue/help' => 'help#queue'
-
+  get 'vha/help' => 'help#vha'
 
   root 'home#index'
 
@@ -242,7 +261,9 @@ Rails.application.routes.draw do
     resources :jobs, controller: :asyncable_jobs, param: :id, only: [:index, :show, :update]
     post "jobs/:id/note", to: "asyncable_jobs#add_note"
   end
+
   match '/jobs' => 'asyncable_jobs#index', via: [:get]
+  post "/asyncable_jobs/start_job", to: "asyncable_jobs#start_job"
 
   scope path: "/inbox" do
     get "/", to: "inbox#index"
@@ -262,9 +283,26 @@ Rails.application.routes.draw do
   scope path: '/queue' do
     get '/', to: 'queue#index'
     get '/appeals/:vacols_id', to: 'queue#index'
+    get '/appeals/:appealId/notifications', to: 'queue#index'
+    get '/appeals/:appeal_id/cavc_dashboard', to: 'cavc_dashboard#index'
     get '/appeals/:vacols_id/tasks/:task_id/schedule_veteran', to: 'queue#index' # Allow direct navigation from the Hearings App
     get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
     get '/:user_id(*rest)', to: 'legacy_tasks#index'
+  end
+
+  # requests to CAVC Dashboard that don't require an appeal_id should go here
+  scope path: "/cavc_dashboard" do
+    get "/cavc_decision_reasons", to: "cavc_dashboard#cavc_decision_reasons"
+    get "/cavc_selection_bases", to: "cavc_dashboard#cavc_selection_bases"
+    patch "/update", to: "cavc_dashboard#update_data"
+    post "/save", to: "cavc_dashboard#save"
+  end
+
+  # allow requests for CAVC Dashboard to go through /cavc_dashboard/:appeal_id/* to declutter the queue path above
+  resources :cavc_dashboard, param: :appeal_id do
+    member do
+      get "/", to: "cavc_dashboard#index"
+    end
   end
 
   resources :team_management, only: [:index, :update]
@@ -308,6 +346,8 @@ Rails.application.routes.draw do
   end
   get '/organizations/:url/modal(*rest)', to: 'organizations#show'
   get '/organizations(*rest)', to: 'organizations#org_index'
+
+  resources :membership_requests, only: [:create, :update]
 
   post '/case_reviews/:task_id/complete', to: 'case_reviews#complete'
   patch '/case_reviews/:id', to: 'case_reviews#update'
@@ -363,4 +403,9 @@ Rails.application.routes.draw do
   # :nocov:
 
   get "/route_docs", to: "route_docs#index"
+
+  get "/admin", to: "admin#index"
+  get "admin/veteran_extract", to: "admin#veteran_extract"
+  get "/mpi", to: "mpi#index"
+  post "/mpi/search", to: "mpi#search"
 end

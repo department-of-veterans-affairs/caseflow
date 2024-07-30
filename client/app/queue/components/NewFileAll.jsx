@@ -1,13 +1,13 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { NewFileIcon } from '../../components/RenderFunctions';
+import { NewFileIcon } from '../../components/icons/NewFileIcon';
 import Tooltip from '../../components/Tooltip';
 import { bindActionCreators } from 'redux';
 import { getNewDocumentsForTask } from '../QueueActions';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 
 import _ from 'lodash';
-
 class NewFileAll extends React.Component {
   componentDidMount = () => {
     const {
@@ -37,6 +37,12 @@ class NewFileAll extends React.Component {
 
   }
 }
+
+NewFileAll.propTypes = {
+  tasks: PropTypes.array,
+  documentObjects: PropTypes.array,
+  getNewDocumentsForTask: PropTypes.func
+};
 
 const mapStateToProps = (state, ownProps) => {
   // Get only the document objects for the give appeal IDs

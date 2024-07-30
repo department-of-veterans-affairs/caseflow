@@ -7,7 +7,6 @@ exports[`MTVJudgeDisposition default view renders correctly 1`] = `
   >
     <section
       class="cf-app-segment cf-app-segment--alt"
-      role="main"
     >
       <h1>
         Address Abellona Valtas's Motion to Vacate
@@ -247,7 +246,6 @@ exports[`MTVJudgeDisposition with denied disposition selected renders correctly 
   >
     <section
       class="cf-app-segment cf-app-segment--alt"
-      role="main"
     >
       <h1>
         Address Abellona Valtas's Motion to Vacate
@@ -511,7 +509,6 @@ exports[`MTVJudgeDisposition with dismissed disposition selected renders correct
   >
     <section
       class="cf-app-segment cf-app-segment--alt"
-      role="main"
     >
       <h1>
         Address Abellona Valtas's Motion to Vacate
@@ -768,6 +765,8 @@ exports[`MTVJudgeDisposition with dismissed disposition selected renders correct
 </div>
 `;
 
+exports[`MTVJudgeDisposition with granted disposition selected passes a11y 1`] = `<div />`;
+
 exports[`MTVJudgeDisposition with granted disposition selected renders correctly 1`] = `
 <div>
   <div
@@ -775,7 +774,6 @@ exports[`MTVJudgeDisposition with granted disposition selected renders correctly
   >
     <section
       class="cf-app-segment cf-app-segment--alt"
-      role="main"
     >
       <h1>
         Address Abellona Valtas's Motion to Vacate
@@ -1185,7 +1183,6 @@ exports[`MTVJudgeDisposition with partially_granted disposition selected renders
   >
     <section
       class="cf-app-segment cf-app-segment--alt"
-      role="main"
     >
       <h1>
         Address Abellona Valtas's Motion to Vacate

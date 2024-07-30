@@ -342,12 +342,12 @@ class SanitizedJsonConfiguration
       User.find_by_css_id(obj_hash["css_id"])
     elsif klass == Organization
       # The url may need to be converted into a clean url
-      Organization.find_by_url(obj_hash["url"])
+      Organization.unscoped.find_by_url(obj_hash["url"])
     elsif klass == Appeal
       # uuid is not a uniq index, so can't rely on importer to do it automatically
       Appeal.find_by(uuid: obj_hash["uuid"])
     elsif [Organization, Veteran, Person].include?(klass)
-      # Let importer find it using the fallback: klass.find_by(unique_field: obj_hash[unique_field])
+      # Let importer find it using the fallback: klass.unscoped.find_by(unique_field: obj_hash[unique_field])
       nil
     end
   end

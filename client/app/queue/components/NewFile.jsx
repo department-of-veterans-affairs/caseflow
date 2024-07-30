@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { NewFileIcon } from '../../components/RenderFunctions';
+import PropTypes from 'prop-types';
+import { NewFileIcon } from '../../components/icons/NewFileIcon';
 import Tooltip from '../../components/Tooltip';
 import { bindActionCreators } from 'redux';
 import { getNewDocumentsForAppeal, getNewDocumentsForTask } from '../QueueActions';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 
 class NewFile extends React.Component {
   componentDidMount = () => {
@@ -27,6 +28,15 @@ class NewFile extends React.Component {
     return null;
   }
 }
+
+NewFile.propTypes = {
+  docsLoading: PropTypes.bool,
+  isForTask: PropTypes.bool,
+  getNewDocumentsForTask: PropTypes.func,
+  getNewDocumentsForAppeal: PropTypes.func,
+  docs: PropTypes.any,
+  externalId: PropTypes.any
+};
 
 const mapStateToProps = (state, ownProps) => {
   const documentObject = ownProps.isForTask ?

@@ -45,6 +45,7 @@ feature "Unrecognized appellants", :postgres do
     after { FeatureToggle.disable!(:edit_unrecognized_appellant) }
     it "allows for editing of the first name of the unrecognized appellant" do
       visit "/queue/appeals/#{appeal_with_unrecognized_appellant.uuid}"
+      page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
       click_on "Edit Information"
 
       expect(page).to have_content("Edit Appellant Information")

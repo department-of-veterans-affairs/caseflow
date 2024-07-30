@@ -336,7 +336,7 @@ class SelectDispositionsView extends React.PureComponent {
         <TextareaField
           labelStyling={textAreaStyle}
           styling={textAreaStyle}
-          errorMessage={highlightModal && !decisionIssue.description ? 'This field is required' : null}
+          errorMessage={highlightModal && !decisionIssue.description ? 'Text box field is required' : null}
           label={COPY.DECISION_ISSUE_MODAL_DESCRIPTION_EXAMPLE}
           name="Text Box"
           onChange={(issueDescription) => {
@@ -370,7 +370,7 @@ class SelectDispositionsView extends React.PureComponent {
           placeholder={COPY.DECISION_ISSUE_MODAL_BENEFIT_TYPE}
           hideLabel
           errorMessage={highlightModal && !this.validBenefitType(decisionIssue.benefit_type) ?
-            'This field is required' : null}
+            'Benefit type field is required' : null}
           value={decisionIssue.benefit_type}
           options={_.map(BENEFIT_TYPES, (value, key) => ({ label: value,
             value: key }))}

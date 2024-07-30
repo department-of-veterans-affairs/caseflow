@@ -132,7 +132,6 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
             }
           >
             <Link
-              disabled={false}
               target="_blank"
             >
               <a
@@ -146,14 +145,16 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                   data-css-32srrr=""
                 >
                    
-                  <ExternalLink
-                    fill="#0071bc"
+                  <ExternalLinkIcon
+                    className=""
+                    color="#0071bc"
+                    size={20}
                   >
                     <svg
-                      height="16px"
+                      className=""
+                      height={20}
                       version="1.1"
                       viewBox="0 0 18 16"
-                      width="18px"
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <g
@@ -181,7 +182,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                         </g>
                       </g>
                     </svg>
-                  </ExternalLink>
+                  </ExternalLinkIcon>
                 </span>
               </a>
             </Link>
@@ -216,6 +217,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
             >
               <CopyToClipboard
                 aria-describedby="tooltip-Copy VLJ Link"
+                aria-label=""
                 data-event="focus mouseenter"
                 data-event-off="mouseleave keydown"
                 data-for="tooltip-Copy VLJ Link"
@@ -225,7 +227,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
               >
                 <button
                   aria-describedby="tooltip-Copy VLJ Link"
-                  aria-label="Copy VLJ Link"
+                  aria-label=""
                   className="cf-apppeal-id"
                   data-css-cjlnsd=""
                   data-event="focus mouseenter"
@@ -238,16 +240,20 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                 >
                   Copy VLJ Link
                    
-                  <ClipboardIcon>
+                  <ClipboardIcon
+                    className=""
+                    color="#5b616b"
+                    size={17}
+                  >
                     <svg
-                      height="16"
+                      className=""
+                      height={17}
                       viewBox="0 0 21 21"
-                      width="16"
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <path
                         d="M13.346 2.578h-2.664v-1.29C10.682.585 10.08 0 9.35 0H6.66c-.728 0-1.33.584-1.33 1.29v1.288H2.663v2.577h10.682V2.578zm-4.02 0H6.66v-1.29h2.665v1.29zm6.685 3.89V3.234a.665.665 0 0 0-.678-.656H14v1.29h.68v2.576H6.66v9.046H1.333V3.867h.68v-1.29H.678a.665.665 0 0 0-.68.657v12.913c0 .365.302.656.68.656h6.006v3.867h9.35l3.996-3.867V6.468h-4.02zm0 12.378v-2.043h2.112l-2.11 2.043zm2.665-3.356H14.68v3.867H7.992v-11.6h10.682v7.733z"
-                        fill="#5B616B"
+                        fill="#5b616b"
                         fillRule="evenodd"
                       />
                     </svg>
@@ -255,9 +261,10 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                 </button>
               </CopyToClipboard>
               <span
-                data-css-15opktr=""
+                data-css-as2zk0=""
               >
                 <ReactTooltip
+                  className="cf-tooltip"
                   clickable={false}
                   effect="solid"
                   id="tooltip-Copy VLJ Link"
@@ -465,7 +472,6 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
             }
           >
             <Link
-              disabled={false}
               target="_blank"
             >
               <a
@@ -479,14 +485,16 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                   data-css-32srrr=""
                 >
                    
-                  <ExternalLink
-                    fill="#0071bc"
+                  <ExternalLinkIcon
+                    className=""
+                    color="#0071bc"
+                    size={20}
                   >
                     <svg
-                      height="16px"
+                      className=""
+                      height={20}
                       version="1.1"
                       viewBox="0 0 18 16"
-                      width="18px"
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <g
@@ -514,7 +522,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                         </g>
                       </g>
                     </svg>
-                  </ExternalLink>
+                  </ExternalLinkIcon>
                 </span>
               </a>
             </Link>
@@ -549,6 +557,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
             >
               <CopyToClipboard
                 aria-describedby="tooltip-Copy Guest Link"
+                aria-label=""
                 data-event="focus mouseenter"
                 data-event-off="mouseleave keydown"
                 data-for="tooltip-Copy Guest Link"
@@ -558,7 +567,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
               >
                 <button
                   aria-describedby="tooltip-Copy Guest Link"
-                  aria-label="Copy Guest Link"
+                  aria-label=""
                   className="cf-apppeal-id"
                   data-css-cjlnsd=""
                   data-event="focus mouseenter"
@@ -571,16 +580,20 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                 >
                   Copy Guest Link
                    
-                  <ClipboardIcon>
+                  <ClipboardIcon
+                    className=""
+                    color="#5b616b"
+                    size={17}
+                  >
                     <svg
-                      height="16"
+                      className=""
+                      height={17}
                       viewBox="0 0 21 21"
-                      width="16"
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <path
                         d="M13.346 2.578h-2.664v-1.29C10.682.585 10.08 0 9.35 0H6.66c-.728 0-1.33.584-1.33 1.29v1.288H2.663v2.577h10.682V2.578zm-4.02 0H6.66v-1.29h2.665v1.29zm6.685 3.89V3.234a.665.665 0 0 0-.678-.656H14v1.29h.68v2.576H6.66v9.046H1.333V3.867h.68v-1.29H.678a.665.665 0 0 0-.68.657v12.913c0 .365.302.656.68.656h6.006v3.867h9.35l3.996-3.867V6.468h-4.02zm0 12.378v-2.043h2.112l-2.11 2.043zm2.665-3.356H14.68v3.867H7.992v-11.6h10.682v7.733z"
-                        fill="#5B616B"
+                        fill="#5b616b"
                         fillRule="evenodd"
                       />
                     </svg>
@@ -588,9 +601,10 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                 </button>
               </CopyToClipboard>
               <span
-                data-css-4jj7wk=""
+                data-css-1qgqh7a=""
               >
                 <ReactTooltip
+                  className="cf-tooltip"
                   clickable={false}
                   effect="solid"
                   id="tooltip-Copy Guest Link"
@@ -1050,6 +1064,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
       "name": "John Smith",
       "userCanAssignHearingSchedule": false,
       "userCanVsoHearingSchedule": true,
+      "userVsoEmployee": true,
     }
   }
   virtualHearing={
@@ -1203,6 +1218,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
           "name": "John Smith",
           "userCanAssignHearingSchedule": false,
           "userCanVsoHearingSchedule": true,
+          "userVsoEmployee": true,
         }
       }
       virtualHearing={
@@ -1361,6 +1377,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
               "name": "John Smith",
               "userCanAssignHearingSchedule": false,
               "userCanVsoHearingSchedule": true,
+              "userVsoEmployee": true,
             }
           }
           virtualHearing={
@@ -1510,6 +1527,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
                 "name": "John Smith",
                 "userCanAssignHearingSchedule": false,
                 "userCanVsoHearingSchedule": true,
+                "userVsoEmployee": true,
               }
             }
             virtualHearing={
@@ -1531,7 +1549,6 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
             }
           >
             <Link
-              disabled={false}
               href="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
               target="_blank"
             >
@@ -1547,14 +1564,16 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
                   data-css-32srrr=""
                 >
                    
-                  <ExternalLink
-                    fill="#0071bc"
+                  <ExternalLinkIcon
+                    className=""
+                    color="#0071bc"
+                    size={20}
                   >
                     <svg
-                      height="16px"
+                      className=""
+                      height={20}
                       version="1.1"
                       viewBox="0 0 18 16"
-                      width="18px"
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <g
@@ -1582,7 +1601,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
                         </g>
                       </g>
                     </svg>
-                  </ExternalLink>
+                  </ExternalLinkIcon>
                 </span>
               </a>
             </Link>
@@ -1617,6 +1636,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
             >
               <CopyToClipboard
                 aria-describedby="tooltip-Copy Guest Link"
+                aria-label=""
                 data-event="focus mouseenter"
                 data-event-off="mouseleave keydown"
                 data-for="tooltip-Copy Guest Link"
@@ -1626,7 +1646,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
               >
                 <button
                   aria-describedby="tooltip-Copy Guest Link"
-                  aria-label="Copy Guest Link"
+                  aria-label=""
                   className="cf-apppeal-id"
                   data-css-cjlnsd=""
                   data-event="focus mouseenter"
@@ -1639,16 +1659,20 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
                 >
                   Copy Guest Link
                    
-                  <ClipboardIcon>
+                  <ClipboardIcon
+                    className=""
+                    color="#5b616b"
+                    size={17}
+                  >
                     <svg
-                      height="16"
+                      className=""
+                      height={17}
                       viewBox="0 0 21 21"
-                      width="16"
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <path
                         d="M13.346 2.578h-2.664v-1.29C10.682.585 10.08 0 9.35 0H6.66c-.728 0-1.33.584-1.33 1.29v1.288H2.663v2.577h10.682V2.578zm-4.02 0H6.66v-1.29h2.665v1.29zm6.685 3.89V3.234a.665.665 0 0 0-.678-.656H14v1.29h.68v2.576H6.66v9.046H1.333V3.867h.68v-1.29H.678a.665.665 0 0 0-.68.657v12.913c0 .365.302.656.68.656h6.006v3.867h9.35l3.996-3.867V6.468h-4.02zm0 12.378v-2.043h2.112l-2.11 2.043zm2.665-3.356H14.68v3.867H7.992v-11.6h10.682v7.733z"
-                        fill="#5B616B"
+                        fill="#5b616b"
                         fillRule="evenodd"
                       />
                     </svg>
@@ -1656,9 +1680,10 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
                 </button>
               </CopyToClipboard>
               <span
-                data-css-4jj7wk=""
+                data-css-1qgqh7a=""
               >
                 <ReactTooltip
+                  className="cf-tooltip"
                   clickable={false}
                   effect="solid"
                   id="tooltip-Copy Guest Link"

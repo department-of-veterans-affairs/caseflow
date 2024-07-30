@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :correspondent, class: VACOLS::Correspondent do
-    sequence(:stafkey)
+    stafkey { generate :vacols_correspondent_key }
 
     snamef { "Joshua" }
     snamel { "Chamberlain" }

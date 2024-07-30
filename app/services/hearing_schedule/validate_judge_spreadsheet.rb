@@ -29,7 +29,11 @@ class HearingSchedule::ValidateJudgeSpreadsheet
 
     # we get the name in the format "Last, First"
     split_name = name.split(", ")
-    full_name = "#{split_name.last} #{split_name.first}"
+    # below is full_name before hotfix
+    # full_name = "#{split_name.last} #{split_name.first}"
+
+    # hotfix for APPEALS-2320 below
+    full_name = FullName.new(split_name.last, nil, split_name.first).formatted(:readable_short)
 
     user.full_name.casecmp?(full_name)
   end

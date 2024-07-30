@@ -34,6 +34,10 @@ class WorkQueue::TaskSerializer
     }
   end
 
+  attribute :completed_by do |object|
+    object.try(:completed_by).try(:css_id) unless object.appeal.is_a?(LegacyAppeal)
+  end
+
   attribute :assigned_to do |object|
     assignee = object.try(:unscoped_assigned_to)
 
@@ -174,5 +178,19 @@ class WorkQueue::TaskSerializer
 
   attribute :unscheduled_hearing_notes do |object|
     object.try(:unscheduled_hearing_notes)
+  end
+
+  attribute :appeal_receipt_date do |object|
+    object.appeal.is_a?(LegacyAppeal) ? nil : object.appeal.try(:receipt_date)
+  end
+
+  attribute :days_since_last_status_change, &:calculated_last_change_duration
+  attribute :days_since_board_intake, &:calculated_duration_from_board_intake
+
+  attribute :owned_by do |object|
+    case object.assigned_to_type
+    when "Organization" then object.assigned_to&.name
+    when "User" then object.assigned_to&.css_id
+    end
   end
 end

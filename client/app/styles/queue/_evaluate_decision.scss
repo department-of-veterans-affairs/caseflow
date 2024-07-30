@@ -1,0 +1,56 @@
+.case-timeline {
+  display: flex;
+
+  .case-type {
+    width: 15%;
+  }
+
+  .attorney-assigned {
+    width: 30%;
+  }
+}
+
+
+
+.grayLineContainer {
+  text-align: center;
+  border: none;
+  padding: 0;
+  position: relative;
+  vertical-align: top;
+  width: 15px;
+
+  .grayLineStyling {
+    width: 5px;
+    background: $color-gray-dark;
+    margin: auto;
+    position: absolute;
+    top: 0;
+    left: 45.5%;
+    bottom: 0;
+  }
+}
+
+.attorneyTaskContainer {
+  border: none;
+  vertical-align: top;
+  padding-bottom: 1rem;
+  width: 85%;
+}
+
+.attorneyTaskTimelineContainer {
+  border: none;
+  padding-left: '25px';
+}
+
+@media screen and (max-width: 1200px) {
+  .case-timeline {
+    flex-direction: column;
+    grid-gap: 10px;
+
+    .case-type,
+    .attorney-assigned {
+      width: 100%;
+    }
+  }
+}

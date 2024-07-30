@@ -22,6 +22,16 @@ export const organizationClaimant = {
   ...sharedClaimantInfo,
 };
 
+// There is a possible case involving the redux store where the claimant object can have leftover information
+// from a previous submission. This is used to test for that specific case.
+export const leftoverSubmissionInformationClaimant = {
+  partyType: 'organization',
+  organization: 'Organization of Vet Helpers',
+  firstName: 'Jane',
+  middleName: 'McClaimant',
+  ...sharedClaimantInfo
+};
+
 const sharedPoaInfo = {
   address1: '321 Main St',
   address2: 'Suite 5',

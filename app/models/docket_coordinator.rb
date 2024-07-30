@@ -2,12 +2,18 @@
 
 class DocketCoordinator
   def dockets
-    @dockets ||= {
+    all_dockets = {
       legacy: LegacyDocket.new,
       direct_review: DirectReviewDocket.new,
       evidence_submission: EvidenceSubmissionDocket.new,
       hearing: HearingRequestDocket.new
     }
+
+    if FeatureToggle.enabled?(:acd_disable_legacy_distributions, user: RequestStore.store[:current_user])
+      all_dockets.delete(:legacy)
+    end
+
+    @dockets ||= all_dockets
   end
 
   def docket_proportions
@@ -96,6 +102,13 @@ class DocketCoordinator
       .sum
   end
 
+  def nonpriority_count
+    @nonpriority_count ||= dockets
+      .values
+      .map { |docket| docket.count(priority: false, ready: true) }
+      .sum
+  end
+
   def genpop_priority_count
     @genpop_priority_count ||= dockets.values.map(&:genpop_priority_count).sum
   end
@@ -111,6 +124,14 @@ class DocketCoordinator
 
   def due_direct_review_proportion
     direct_review_due_count.to_f / docket_margin_net_of_priority
+  end
+
+  def legacy_hearing_nonpriority_count(judge)
+    VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge_count(judge)
+  end
+
+  def legacy_hearing_priority_count(judge)
+    VACOLS::CaseDocket.priority_hearing_cases_for_judge_count(judge)
   end
 
   private

@@ -16208,12 +16208,12 @@ exports[`Fields Display timezone and divider for Central 1`] = `
               </SearchableDropdown>
             </Timezone>
             <HelperText
-              label="The hearing time in email notifications is calculated based on the timezone"
+              label="The hearing time in email notifications is calculated based on the timezone."
             >
               <div
                 className="helper-text"
               >
-                The hearing time in email notifications is calculated based on the timezone
+                The hearing time in email notifications is calculated based on the timezone.
               </div>
             </HelperText>
           </div>
@@ -16224,9 +16224,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
               disabled={false}
               email="tom.brady@caseflow.gov"
               emailType="appellantEmailAddress"
+              helperLabel="This email address will be used to send notifications for this hearing only."
               label="Veteran Email"
               optional={true}
               required={false}
+              showHelper={true}
             >
               <TextField
                 className={
@@ -16275,6 +16277,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                     }
                     id="Veteran Email"
                     name="Veteran Email"
+                    onBlur={[Function]}
                     onChange={[Function]}
                     readOnly={false}
                     type="text"
@@ -32396,12 +32399,12 @@ exports[`Fields Display timezone and divider for Central 1`] = `
               </SearchableDropdown>
             </Timezone>
             <HelperText
-              label="The hearing time in email notifications is calculated based on the timezone"
+              label="The hearing time in email notifications is calculated based on the timezone."
             >
               <div
                 className="helper-text"
               >
-                The hearing time in email notifications is calculated based on the timezone
+                The hearing time in email notifications is calculated based on the timezone.
               </div>
             </HelperText>
           </div>
@@ -32412,8 +32415,10 @@ exports[`Fields Display timezone and divider for Central 1`] = `
               disabled={false}
               email="tom.brady@caseflow.gov"
               emailType="representativeEmailAddress"
+              helperLabel="This email address will be used to send notifications for this hearing only."
               label="POA/Representative Email"
               optional={true}
+              showHelper={true}
               update={[Function]}
             >
               <TextField
@@ -32463,6 +32468,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                     }
                     id="POA/Representative Email"
                     name="POA/Representative Email"
+                    onBlur={[Function]}
                     onChange={[Function]}
                     readOnly={false}
                     type="text"
@@ -48696,12 +48702,12 @@ exports[`Fields Display timezone and divider for Video 1`] = `
               </SearchableDropdown>
             </Timezone>
             <HelperText
-              label="The hearing time in email notifications is calculated based on the timezone"
+              label="The hearing time in email notifications is calculated based on the timezone."
             >
               <div
                 className="helper-text"
               >
-                The hearing time in email notifications is calculated based on the timezone
+                The hearing time in email notifications is calculated based on the timezone.
               </div>
             </HelperText>
           </div>
@@ -48712,9 +48718,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
               disabled={false}
               email="tom.brady@caseflow.gov"
               emailType="appellantEmailAddress"
+              helperLabel="This email address will be used to send notifications for this hearing only."
               label="Veteran Email"
               optional={true}
               required={false}
+              showHelper={true}
             >
               <TextField
                 className={
@@ -48763,6 +48771,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                     }
                     id="Veteran Email"
                     name="Veteran Email"
+                    onBlur={[Function]}
                     onChange={[Function]}
                     readOnly={false}
                     type="text"
@@ -64884,12 +64893,12 @@ exports[`Fields Display timezone and divider for Video 1`] = `
               </SearchableDropdown>
             </Timezone>
             <HelperText
-              label="The hearing time in email notifications is calculated based on the timezone"
+              label="The hearing time in email notifications is calculated based on the timezone."
             >
               <div
                 className="helper-text"
               >
-                The hearing time in email notifications is calculated based on the timezone
+                The hearing time in email notifications is calculated based on the timezone.
               </div>
             </HelperText>
           </div>
@@ -64900,8 +64909,10 @@ exports[`Fields Display timezone and divider for Video 1`] = `
               disabled={false}
               email="tom.brady@caseflow.gov"
               emailType="representativeEmailAddress"
+              helperLabel="This email address will be used to send notifications for this hearing only."
               label="POA/Representative Email"
               optional={true}
+              showHelper={true}
               update={[Function]}
             >
               <TextField
@@ -64951,6 +64962,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                     }
                     id="POA/Representative Email"
                     name="POA/Representative Email"
+                    onBlur={[Function]}
                     onChange={[Function]}
                     readOnly={false}
                     type="text"

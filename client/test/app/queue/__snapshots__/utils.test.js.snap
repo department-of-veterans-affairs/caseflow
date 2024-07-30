@@ -170,8 +170,8 @@ Array [
   Object {
     "createdAt": 2021-05-12T04:00:00.000Z,
     "createdBy": "Clark Bard",
+    "currentAppellantSubstituteFullName": "Testy McTesterson",
     "originalAppellantFullName": "Jane Doe",
-    "substituteFullName": "Testy McTesterson",
     "type": "substitutionProcessed",
   },
 ]

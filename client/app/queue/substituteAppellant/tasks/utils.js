@@ -58,7 +58,7 @@ export const nonAutomatedTasksToHide = [
 
 export const closedTasksToHide = [...automatedTasks, ...nonAutomatedTasksToHide, ...mailTasks, ...hearingAdminActions];
 // This may be refined after user testing...
-export const openTasksToHide = [...nonAutomatedTasksToHide];
+export const openTasksToHide = [...nonAutomatedTasksToHide, ...automatedTasks];
 
 // Generic function to determine if a task (`current`) is a descendent of another task (`target`)
 // allItems is object keyed to a specified id
@@ -292,15 +292,19 @@ export const calculateEvidenceSubmissionEndDate = ({
   veteranDateOfDeath: veteranDateOfDeathStr,
   selectedTasks,
 }) => {
-  const substitutionDate = parseISO(substitutionDateStr);
-  const veteranDateOfDeath = parseISO(veteranDateOfDeathStr);
   const evidenceSubmissionTask = selectedTasks.find(
     (task) => task.type === 'EvidenceSubmissionWindowTask'
   );
 
-  if (!evidenceSubmissionTask?.timerEndsAt) {
+  if (!evidenceSubmissionTask?.timerEndsAt || !veteranDateOfDeathStr) {
+    console.error('Error: Either the evidence submission task timer end date or the veteran date of death is missing');
+
     return null;
   }
+
+  const substitutionDate = parseISO(substitutionDateStr);
+  const veteranDateOfDeath = parseISO(veteranDateOfDeathStr);
+
   const timerEndsAt = evidenceSubmissionTask.timerEndsAt;
   const timerEndsAtDate = parseISO(timerEndsAt);
 

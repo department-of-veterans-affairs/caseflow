@@ -1,0 +1,27 @@
+import { Meta, Story, Canvas, Preview } from '@storybook/addon-docs/blocks';
+import * as icons from '../../app/components/icons/index.js';
+const Icons = Object.values(icons);
+console.log(Icons)
+
+<Meta title="Commons/Components/Icons/AllIcons" />
+
+# Icons
+
+Each Icon is its own component and takes at least 3 props - size, color, and className. The size prop sets the height of the component. The width is set automatically within the SVG element found in each component. 
+The color prop sets the fill color within the SVG element. The className prop sets the className found on the SVG element in the component. 
+
+Some icons will have more than 3 props. Some icons have no props. The ones with no props are Font Awesome icons that are used enough to deserve their own component.
+
+The default size (height) for each icon is 20px.
+
+## All Icons
+
+<Canvas>
+  <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+    {Icons.map(Icon => 
+      <div style={{ height: '3em', width: '3em', padding: '10px', margin: '3px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#dfdfdf' }}>
+        <Icon />
+      </div>
+    )}
+  </div>
+</Canvas>

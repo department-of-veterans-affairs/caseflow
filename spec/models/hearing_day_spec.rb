@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 describe HearingDay, :all_dbs do
+  before do
+    allow(ENV).to receive(:[]).and_call_original
+    allow(ENV).to receive(:fetch).and_call_original
+  end
+
   context "#create" do
     let(:test_hearing_date_vacols) do
       current_date = Time.zone.today
@@ -537,8 +542,33 @@ describe HearingDay, :all_dbs do
       subject { HearingDayRange.new(schedule_period.start_date, schedule_period.end_date).load_days }
 
       it do
-        expect(subject.size).to eql(970)
+        expect(subject.size).to eql(978)
       end
+    end
+  end
+
+  context "hearing day conference link doesnt exist" do
+    before do
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return "mysecretkey"
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return "example.va.gov"
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return "/sample"
+    end
+
+    let(:hearing_day) do
+      RequestStore[:current_user] = User.create(css_id: "BVASCASPER1", station_id: 101)
+      create(
+        :hearing_day,
+        id: 1,
+        request_type: HearingDay::REQUEST_TYPES[:central],
+        scheduled_for: Time.zone.local(2019, 5, 15).to_date,
+        room: "1"
+      )
+    end
+
+    subject { hearing_day.conference_link }
+
+    it "Does not have a existing conference link so creates a new one" do
+      expect(subject.hearing_day_id).to eq(hearing_day.id)
     end
   end
 end

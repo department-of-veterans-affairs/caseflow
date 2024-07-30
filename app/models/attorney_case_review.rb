@@ -37,11 +37,26 @@ class AttorneyCaseReview < CaseflowRecord
       task.parent.update(assigned_to_id: reviewing_judge_id)
     end
     task.parent.update(assigned_by_id: task.assigned_to_id)
+    if note && !note.nil?
+      labeled_note = note_label + note
+      task.parent.append_instruction(labeled_note)
+    end
     update_issue_dispositions_in_caseflow!
   end
 
   def written_by_name
     attorney.full_name
+  end
+
+  def note_label
+    # Adding prefix and markup for better formatting of notes appended to judge task
+    if task.is_a?(AttorneyRewriteTask)
+      "**#{COPY::ATTORNEY_REWRITE_TASK_NOTES_PREFIX}**\n"
+    elsif task.is_a?(AttorneyTask)
+      "**#{COPY::ATTORNEY_TASK_NOTES_PREFIX}**\n"
+    else
+      ""
+    end
   end
 
   private
@@ -59,7 +74,7 @@ class AttorneyCaseReview < CaseflowRecord
         overtime: overtime,
         note: note,
         modifying_user: modifying_user,
-        reassigned_to_judge_date: VacolsHelper.local_date_with_utc_timezone
+        reassigned_to_judge_date: VacolsHelper.local_time_with_utc_timezone
       }
     )
   end

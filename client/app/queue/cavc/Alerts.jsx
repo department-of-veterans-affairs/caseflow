@@ -6,14 +6,9 @@ import Alert from 'app/components/Alert';
 
 const bottomInfoStyling = css({ marginBottom: '4rem' });
 
-export const JmrIssuesBanner = React.memo(() => (
+export const JmrJmprIssuesBanner = React.memo(() => (
   <Alert type="info" styling={bottomInfoStyling} scrollOnAlert={false}>
-    {COPY.JMR_SELECTION_ISSUE_INFO_BANNER}
-  </Alert>
-));
-export const JmprIssuesBanner = React.memo(() => (
-  <Alert type="info" styling={bottomInfoStyling} scrollOnAlert={false}>
-    {COPY.JMPR_SELECTION_ISSUE_INFO_BANNER}
+    {COPY.JMR_JMPR_SELECTION_ISSUE_INFO_BANNER}
   </Alert>
 ));
 export const MdrIssuesBanner = React.memo(() => (

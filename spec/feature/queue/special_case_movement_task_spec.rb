@@ -93,7 +93,7 @@ RSpec.feature "SpecialCaseMovementTask", :all_dbs do
 
         # Validate before moving on
         click_on "Continue"
-        expect(page).to have_content(COPY::FORM_ERROR_FIELD_REQUIRED)
+        expect(page).to have_content(COPY::INSTRUCTIONS_ERROR_FIELD_REQUIRED)
         find("label", text: "Death dismissal").click
         fill_in("cancellationInstructions", with: "Instructions for cancellation")
         click_on "Continue"

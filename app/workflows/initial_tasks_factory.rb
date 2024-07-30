@@ -4,6 +4,8 @@
 # Factory to create tasks for a new appeal based on appeal characteristics.
 
 class InitialTasksFactory
+  include TasksFactoryConcern
+
   def initialize(appeal)
     @appeal = appeal
     @root_task = RootTask.find_or_create_by!(appeal: appeal)
@@ -23,6 +25,9 @@ class InitialTasksFactory
     create_vso_tracking_tasks
     ActiveRecord::Base.transaction do
       create_subtasks! if @appeal.original? || @appeal.cavc? || @appeal.appellant_substitution?
+      if @appeal.contested_claim? && FeatureToggle.enabled?(:cc_appeal_workflow)
+        send_initial_notification_letter
+      end
     end
     maybe_create_translation_task
   end
@@ -37,7 +42,7 @@ class InitialTasksFactory
     end
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/CyclomaticComplexity
   def create_subtasks!
     distribution_task # ensure distribution_task exists
 
@@ -61,11 +66,30 @@ class InitialTasksFactory
       end
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def distribution_task
     @distribution_task ||= @appeal.tasks.open.find_by(type: :DistributionTask) ||
                            DistributionTask.create!(appeal: @appeal, parent: @root_task)
+  end
+
+  def send_initial_notification_letter
+    # depending on the docket type, create cooresponding task as parent task
+    case @appeal.docket_type
+    when "evidence_submission"
+      parent_task = @appeal.tasks.find_by(type: "EvidenceSubmissionWindowTask")
+    when "hearing"
+      parent_task = @appeal.tasks.find_by(type: "ScheduleHearingTask")
+    when "direct_review"
+      parent_task = distribution_task
+    end
+    @send_initial_notification_letter ||= @appeal.tasks.open.find_by(type: :SendInitialNotificationLetterTask) ||
+                                          SendInitialNotificationLetterTask.create!(
+                                            appeal: @appeal,
+                                            parent: parent_task,
+                                            assigned_to: Organization.find_by_url("clerk-of-the-board"),
+                                            assigned_by: RequestStore[:current_user]
+                                          ) unless parent_task.nil?
   end
 
   def create_ihp_task
@@ -94,7 +118,7 @@ class InitialTasksFactory
     when "DistributionTask"
       distribution_task
     when "EvidenceSubmissionWindowTask"
-      evidence_submission_window_task(source_task, creation_params)
+      create_evidence_submission_window_task(@appeal, source_task, creation_params)
     when "InformalHearingPresentationTask"
       handle_substitution_ihp_task_and_poa
     when "ScheduleHearingTask"
@@ -102,31 +126,6 @@ class InitialTasksFactory
     else
       excluded_attrs = %w[status closed_at placed_on_hold_at]
       source_task.copy_with_ancestors_to_stream(@appeal, extra_excluded_attributes: excluded_attrs)
-    end
-  end
-
-  def evidence_submission_window_task(source_task, creation_params)
-    unless creation_params["hold_end_date"]
-      fail "Expecting hold_end_date creation parameter for EvidenceSubmissionWindowTask from #{source_task.id}"
-    end
-
-    # Ensure we properly handle time zone of submitted end date
-    evidence_submission_hold_end_date = Time.find_zone("UTC").parse(creation_params["hold_end_date"])
-
-    if @appeal.docket_type == "hearing"
-      excluded_attrs = %w[status closed_at placed_on_hold_at]
-      new_task = source_task.copy_with_ancestors_to_stream(
-        @appeal,
-        new_attributes: { end_date: evidence_submission_hold_end_date },
-        extra_excluded_attributes: excluded_attrs
-      )
-      EvidenceSubmissionWindowTask.create_timer(new_task)
-    else
-      EvidenceSubmissionWindowTask.create!(
-        appeal: @appeal,
-        parent: distribution_task,
-        end_date: evidence_submission_hold_end_date
-      )
     end
   end
 
@@ -176,7 +175,8 @@ class InitialTasksFactory
     case @cavc_remand.remand_subtype
     when Constants.CAVC_REMAND_SUBTYPES.mdr
       MdrTask.create_with_hold(cavc_task)
-    when Constants.CAVC_REMAND_SUBTYPES.jmr, Constants.CAVC_REMAND_SUBTYPES.jmpr
+    when Constants.CAVC_REMAND_SUBTYPES.jmr, Constants.CAVC_REMAND_SUBTYPES.jmpr,
+      Constants.CAVC_REMAND_SUBTYPES.jmr_jmpr
       SendCavcRemandProcessedLetterTask.create!(appeal: @appeal, parent: cavc_task)
     else
       fail "Unsupported remand subtype: #{@cavc_remand.remand_subtype}"

@@ -205,7 +205,7 @@ describe AttorneyCaseReview, :all_dbs do
     let(:work_product) { "OMO - IME" }
     let(:document_id) { "M1234567.1234" }
     let(:padded_document_id) { "     #{document_id}    " }
-    let(:note) { "something" }
+    let(:note) { "attorney_notes_content" }
     let(:task_id) { create(:ama_attorney_task, assigned_by: judge, assigned_to: attorney).id }
     let(:params) do
       {
@@ -466,7 +466,30 @@ describe AttorneyCaseReview, :all_dbs do
           expect(attorney_task.appeal.attorney_case_reviews).to eq [case_review]
           expect(attorney_task.appeal.judge_case_reviews).to eq []
         end
-        it "should check for erroneous AMA states"
+
+        it "updates judge task with attorney notes" do
+          label = Regexp.escape("**#{COPY::ATTORNEY_TASK_NOTES_PREFIX}**\n")
+          expect(judge_task.reload.instructions).not_to include a_string_matching(/#{label}/)
+          expect(judge_task.reload.instructions).not_to include a_string_matching(/#{note}/)
+
+          subject
+
+          expect(judge_task.reload.instructions).to include a_string_matching(/#{label}/)
+          expect(judge_task.reload.instructions).to include a_string_matching(/#{note}/)
+        end
+
+        context "with attorney rewrite task" do
+          let(:task_id) { create(:ama_attorney_rewrite_task, assigned_by: judge, assigned_to: attorney).id }
+
+          it "updates judge task with attorney notes" do
+            label = Regexp.escape("**#{COPY::ATTORNEY_REWRITE_TASK_NOTES_PREFIX}**\n")
+            expect(judge_task.reload.instructions).not_to include a_string_matching(/#{label}/)
+            expect(judge_task.reload.instructions).not_to include a_string_matching(/#{note}/)
+            subject
+            expect(judge_task.reload.instructions).to include a_string_matching(/#{label}/)
+            expect(judge_task.reload.instructions).to include a_string_matching(/#{note}/)
+          end
+        end
       end
     end
   end

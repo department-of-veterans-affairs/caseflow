@@ -27,6 +27,7 @@ import {
   TEAM_MANAGEMENT_ADD_VHA_PROGRAM_OFFICE_TEAM_LABEL,
   TEAM_MANAGEMENT_ADD_VHA_REGIONAL_OFFICE_TEAM_LABEL,
   TEAM_MANAGEMENT_ADD_OTHER_TEAM_LABEL,
+  TEAM_MANAGEMENT_ADD_EDUCATION_RPO_LABEL,
 } from 'app/../COPY';
 import { OrgSection } from './OrgSection';
 import { clearStatus, fetchTeamManagement, updateOrg } from './teamManagement.slice';
@@ -45,6 +46,7 @@ export const TeamManagement = React.memo(({
   privateBars,
   vhaProgramOffices,
   vhaRegionalOffices,
+  educationRpos,
   otherOrgs,
   onAddDvcTeam,
   onAddJudgeTeam,
@@ -130,10 +132,14 @@ export const TeamManagement = React.memo(({
             <OrgHeader>{TEAM_MANAGEMENT_ADD_VHA_PROGRAM_OFFICE_TEAM_LABEL}</OrgHeader>
             <OrgList orgs={vhaProgramOffices} statuses={statuses} />
           </OrgSection> }
-
           { vhaRegionalOffices && <OrgSection>
             <OrgHeader>{TEAM_MANAGEMENT_ADD_VHA_REGIONAL_OFFICE_TEAM_LABEL}</OrgHeader>
             <OrgList orgs={vhaRegionalOffices} statuses={statuses} />
+          </OrgSection> }
+
+          { educationRpos && <OrgSection>
+            <OrgHeader>{TEAM_MANAGEMENT_ADD_EDUCATION_RPO_LABEL}</OrgHeader>
+            <OrgList orgs={educationRpos} statuses={statuses} />
           </OrgSection> }
 
           { otherOrgs && <OrgSection>
@@ -165,6 +171,7 @@ TeamManagement.propTypes = {
   onAddIhpWritingVso: PropTypes.func,
   onAddPrivateBar: PropTypes.func,
   onLookupParticipantId: PropTypes.func,
+  educationRpos: PropTypes.array,
   onOrgUpdate: PropTypes.func,
   statuses: PropTypes.shape({
     [PropTypes.string]: PropTypes.shape({
@@ -185,6 +192,7 @@ export const TeamManagementWrapper = () => {
     vsos,
     vhaProgramOffices,
     vhaRegionalOffices,
+    educationRpos,
     otherOrgs
   } = useSelector((state) => state.teamManagement.data);
   const { statuses } = useSelector((state) => state.teamManagement);
@@ -217,6 +225,7 @@ export const TeamManagementWrapper = () => {
     vsos,
     vhaProgramOffices,
     vhaRegionalOffices,
+    educationRpos,
     otherOrgs,
     success,
     error,

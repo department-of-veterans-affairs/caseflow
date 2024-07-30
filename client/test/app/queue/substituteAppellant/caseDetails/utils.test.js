@@ -194,14 +194,10 @@ describe('supportsSubstitutionPostDispatch', () => {
     docketName: 'direct_review',
     isLegacyAppeal: false,
   };
-  const featureToggles = {
-    hearings_substitution_death_dismissal: true,
-  };
   const defaults = {
     appeal,
     currentUserOnClerkOfTheBoard: true,
     hasSubstitution: false,
-    featureToggles,
     userIsCobAdmin: false,
   };
 
@@ -287,27 +283,10 @@ describe('supportsSubstitutionPostDispatch', () => {
   describe('with hearing docket', () => {
     const hearingAppeal = { ...appeal, docketName: 'hearing' };
 
-    describe('without hearings_substitution_death_dismissal feature toggle', () => {
-      it('returns false', () => {
-        const args = {
-          ...defaults,
-          appeal: hearingAppeal,
-          featureToggles: {
-            ...featureToggles,
-            hearings_substitution_death_dismissal: false,
-          },
-        };
+    it('returns true', () => {
+      const args = { ...defaults, appeal: hearingAppeal };
 
-        expect(supportsSubstitutionPostDispatch(args)).toBe(false);
-      });
-    });
-
-    describe('with hearings_substitution_death_dismissal feature toggle', () => {
-      it('returns true', () => {
-        const args = { ...defaults, appeal: hearingAppeal };
-
-        expect(supportsSubstitutionPostDispatch(args)).toBe(true);
-      });
+      expect(supportsSubstitutionPostDispatch(args)).toBe(true);
     });
   });
 });

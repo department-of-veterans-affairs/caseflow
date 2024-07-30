@@ -1,5 +1,8 @@
 {
     "remand": "Remand",
-    "straight_reversal": "Straight reversal",
-    "death_dismissal": "Death dismissal"
+    "straight_reversal": "Straight Reversal",
+    "death_dismissal": "Death Dismissal",
+    "other_dismissal": "Dismissal, other than Death",
+    "affirmed": "Affirmed",
+    "settlement": "Settlement"
   }

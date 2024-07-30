@@ -1,7 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { ClipboardIcon } from '../components/RenderFunctions';
+import { ClipboardIcon } from '../components/icons/ClipboardIcon';
 import CopyToClipboard from 'react-copy-to-clipboard';
+import PropTypes from 'prop-types';
 
 export class Header extends React.Component {
   render() {
@@ -33,6 +34,12 @@ export class Header extends React.Component {
     </div>;
   }
 }
+
+Header.propTypes = {
+  veteranName: PropTypes.string,
+  vbmsId: PropTypes.number,
+  serverError: PropTypes.string
+};
 
 const mapStateToProps = (state) => ({
   veteranName: state.veteranName,

@@ -10,7 +10,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import PropTypes from 'prop-types';
 import DropdownButton from '../../components/DropdownButton';
 import Alert from '../../components/Alert';
-import { DownloadIcon } from '../../components/RenderFunctions';
+import { DownloadIcon } from '../../components/icons/DownloadIcon';
 import { COLORS } from '../../constants/AppConstants';
 import { SPREADSHEET_TYPES } from '../constants';
 

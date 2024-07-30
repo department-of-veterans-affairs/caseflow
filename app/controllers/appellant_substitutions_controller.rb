@@ -18,6 +18,7 @@ class AppellantSubstitutionsController < ApplicationController
     poa_participant_id: nil,
     # blank or empty values for these params will fail the required validation, so put them here instead
     selected_task_ids: [],
+    cancelled_task_ids: [],
     task_params: {}
   }.freeze
 

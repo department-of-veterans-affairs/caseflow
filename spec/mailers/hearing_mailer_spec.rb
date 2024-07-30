@@ -188,7 +188,7 @@ describe HearingMailer do
   end
 
   shared_examples "appellant virtual reminder intro" do
-    it "displays video hearing reminder email intro" do
+    it "displays virtual hearing reminder email intro" do
       expect(subject.body).to include("You're scheduled for a hearing with a " \
         "Veterans Law Judge of the Board of Veterans' Appeals.")
     end
@@ -206,7 +206,7 @@ describe HearingMailer do
     it "displays central hearing reminder email intro" do
       expect(subject.body).to include("You're scheduled for a hearing with a Veterans Law Judge of " \
         "the Board of Veterans' Appeals. You will arrive at " \
-        "#{hearing.hearing_location_or_regional_office.full_address} and the Judge will meet with you in person")
+        "#{hearing.hearing_location_or_regional_office.full_address} and the Judge will meet with you in person.")
     end
   end
 
@@ -262,7 +262,7 @@ describe HearingMailer do
   shared_examples "representative virtual reminder sections" do
     it "displays virtual reminder email sections" do
       # How to Join section
-      expect(subject.body).to include("How to Join")
+      expect(subject.body).to include("How to Join on Hearing Day")
 
       # Test your Connection section
       expect(subject.body).to include("Test Your Connection")
@@ -337,9 +337,9 @@ describe HearingMailer do
 
   shared_examples "appellant shared 60-day reminder details sections" do
     it "displays shared additional reminder details sections" do
-      expect(subject.body).to include("What if I miss my hearing?")
-      expect(subject.body).to include("What if I need to reschedule my hearing?")
-      expect(subject.body).to include("What if I need to withdraw (cancel) my hearing?")
+      expect(subject.body).to include("What if I wish to reschedule my hearing?")
+      expect(subject.body).to include("What if I fail to appear for my hearing?")
+      expect(subject.body).to include("What if I wish to withdraw my hearing?")
 
       if virtual_hearing.nil?
         expect(subject.body).to include("What is a virtual tele-hearing?")
@@ -357,9 +357,9 @@ describe HearingMailer do
 
   shared_examples "appellant shared 30-day reminder details sections" do
     it "displays shared additional reminder details sections" do
-      expect(subject.body).to include("What if I miss my hearing?")
-      expect(subject.body).to include("What if I need to reschedule my hearing?")
-      expect(subject.body).to include("What if I need to withdraw (cancel) my hearing?")
+      expect(subject.body).to include("What if I wish to reschedule my hearing?")
+      expect(subject.body).to include("What if I fail to appear for my hearing?")
+      expect(subject.body).to include("What if I wish to withdraw my hearing?")
 
       if virtual_hearing.nil?
         expect(subject.body).to include("What is a virtual tele-hearing?")
@@ -419,10 +419,6 @@ describe HearingMailer do
         end
 
         describe "#link" do
-          it "is host link" do
-            expect(subject.html_part.body).to include(virtual_hearing.host_link)
-          end
-
           it "is in correct format" do
             expect(virtual_hearing.host_link).to eq(
               "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
@@ -476,10 +472,6 @@ describe HearingMailer do
         end
 
         describe "#link" do
-          it "is host link" do
-            expect(subject.html_part.body).to include(virtual_hearing.host_link)
-          end
-
           it "is in correct format" do
             expect(virtual_hearing.host_link).to eq(
               "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
@@ -775,7 +767,7 @@ describe HearingMailer do
 
           it "has the correct subject line" do
             expect(subject.subject).to eq(
-              "Reminder: Your Board hearing is Tue, Jan 21 at " \
+              "Reminder: Your hearing is Tue, Jan 21 at " \
               "#{expected_ama_times[:ro_and_recipient_both_eastern]} – Do Not Reply"
             )
           end
@@ -786,7 +778,7 @@ describe HearingMailer do
 
           it "has the correct subject line" do
             expect(subject.subject).to eq(
-              "Reminder: Your Board hearing is Tue, Jan 21 at " \
+              "Reminder: Your hearing is Tue, Jan 21 at " \
               "#{expected_ama_times[:ro_and_recipient_both_pacific]} – Do Not Reply"
             )
           end
@@ -797,7 +789,7 @@ describe HearingMailer do
 
           it "has the correct subject line" do
             expect(subject.subject).to eq(
-              "Reminder: Your Board hearing is Tue, Jan 21 at " \
+              "Reminder: Your hearing is Tue, Jan 21 at " \
               "#{expected_ama_times[:ro_eastern_recipient_pacific]} – Do Not Reply"
             )
           end
@@ -806,7 +798,7 @@ describe HearingMailer do
         context "appellant_tz is not present" do
           it "has the correct subject line" do
             expect(subject.subject).to eq(
-              "Reminder: Your Board hearing is Tue, Jan 21 at " \
+              "Reminder: Your hearing is Tue, Jan 21 at " \
               "#{expected_ama_times[:ro_and_recipient_both_eastern]} – Do Not Reply"
             )
           end
@@ -1030,7 +1022,7 @@ describe HearingMailer do
 
           it "has the correct subject line" do
             expect(subject.subject).to eq(
-              "Reminder: Your Board hearing is Tue, Jan 21 at " \
+              "Reminder: Your hearing is Tue, Jan 21 at " \
               "#{expected_legacy_times[:ro_and_recipient_both_eastern]} – Do Not Reply"
             )
           end
@@ -1041,7 +1033,7 @@ describe HearingMailer do
 
           it "has the correct subject line" do
             expect(subject.subject).to eq(
-              "Reminder: Your Board hearing is Tue, Jan 21 at " \
+              "Reminder: Your hearing is Tue, Jan 21 at " \
               "#{expected_legacy_times[:ro_and_recipient_both_pacific]} – Do Not Reply"
             )
           end
@@ -1052,7 +1044,7 @@ describe HearingMailer do
 
           it "has the correct subject line" do
             expect(subject.subject).to eq(
-              "Reminder: Your Board hearing is Tue, Jan 21 at " \
+              "Reminder: Your hearing is Tue, Jan 21 at " \
               "#{expected_legacy_times[:ro_eastern_recipient_pacific]} – Do Not Reply"
             )
           end
@@ -1061,7 +1053,7 @@ describe HearingMailer do
         context "appellant_tz is not present" do
           it "has the correct subject line" do
             expect(subject.subject).to eq(
-              "Reminder: Your Board hearing is Tue, Jan 21 at " \
+              "Reminder: Your hearing is Tue, Jan 21 at " \
               "#{expected_legacy_times[:ro_and_recipient_both_eastern]} – Do Not Reply"
             )
           end
@@ -1255,14 +1247,6 @@ describe HearingMailer do
         end
 
         describe "#link" do
-          it "has the test link" do
-            expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient_info.title))
-          end
-
-          it "is guest link" do
-            expect(subject.html_part.body).to include(virtual_hearing.guest_link)
-          end
-
           it "is in correct format" do
             expect(virtual_hearing.guest_link).to eq(
               "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \

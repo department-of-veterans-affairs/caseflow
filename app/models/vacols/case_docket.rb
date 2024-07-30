@@ -62,7 +62,7 @@ class VACOLS::CaseDocket < VACOLS::Record
   "
 
   SELECT_READY_APPEALS = "
-    select BFKEY, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD
+    select BFKEY, BFD19, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD
     from BRIEFF
     #{VACOLS::Case::JOIN_AOD}
     #{JOIN_MAIL_BLOCKS_DISTRIBUTION}
@@ -71,6 +71,8 @@ class VACOLS::CaseDocket < VACOLS::Record
     where BRIEFF.BFMPRO = 'ACT'
       and BRIEFF.BFCURLOC in ('81', '83')
       and BRIEFF.BFBOX is null
+      and BRIEFF.BFAC is not null
+      and BRIEFF.BFD19 is not null
       and MAIL_BLOCKS_DISTRIBUTION = 0
       and DIARY_BLOCKS_DISTRIBUTION = 0
   "
@@ -102,7 +104,22 @@ class VACOLS::CaseDocket < VACOLS::Record
         ) BRIEFF
         #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
       )
-  "
+    "
+
+  SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19 = "
+    select BFKEY, BFD19, BFDLOOUT, VLJ
+      from (
+        select BFKEY, BFD19, BFDLOOUT,
+          case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
+        from (
+          #{SELECT_READY_APPEALS}
+            and (BFAC = '7' or AOD = '1')
+          order by BFDLOOUT
+        ) BRIEFF
+        #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+        order by BFD19
+      )
+    "
 
   SELECT_NONPRIORITY_APPEALS = "
     select BFKEY, BFDLOOUT, VLJ, DOCKET_INDEX
@@ -115,6 +132,21 @@ class VACOLS::CaseDocket < VACOLS::Record
         order by case when substr(TINUM, 1, 2) between '00' and '29' then 1 else 0 end, TINUM
       ) BRIEFF
       #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+    )
+  "
+
+  SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19 = "
+    select BFKEY, BFD19, BFDLOOUT, VLJ, DOCKET_INDEX
+    from (
+      select BFKEY, BFD19, BFDLOOUT, rownum DOCKET_INDEX,
+        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
+      from (
+        #{SELECT_READY_APPEALS}
+          and BFAC <> '7' and AOD = '0'
+        order by case when substr(TINUM, 1, 2) between '00' and '29' then 1 else 0 end, TINUM
+      ) BRIEFF
+      #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+      order by BFD19
     )
   "
 
@@ -155,6 +187,15 @@ class VACOLS::CaseDocket < VACOLS::Record
     query = <<-SQL
       #{SELECT_PRIORITY_APPEALS}
       where VLJ is null
+    SQL
+
+    connection.exec_query(query).to_hash.count
+  end
+
+  def self.not_genpop_priority_count
+    query = <<-SQL
+      #{SELECT_PRIORITY_APPEALS}
+      where VLJ is not null
     SQL
 
     connection.exec_query(query).to_hash.count
@@ -243,6 +284,36 @@ class VACOLS::CaseDocket < VACOLS::Record
     appeals.map { |appeal| appeal["bfdloout"] }
   end
 
+  def self.age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
+    conn = connection
+
+    query = <<-SQL
+      #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
+      where (VLJ = ? or VLJ is null)
+      and rownum <= ?
+    SQL
+
+    fmtd_query = sanitize_sql_array([query, judge.vacols_attorney_id, num])
+
+    appeals = conn.exec_query(fmtd_query).to_hash
+    appeals.map { |appeal| appeal["bfd19"] }
+  end
+
+  def self.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
+    conn = connection
+
+    query = <<-SQL
+      #{SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19}
+      where (VLJ = ? or VLJ is null)
+      and rownum <= ?
+    SQL
+
+    fmtd_query = sanitize_sql_array([query, judge.vacols_attorney_id, num])
+
+    appeals = conn.exec_query(fmtd_query).to_hash
+    appeals.map { |appeal| appeal["bfd19"] }
+  end
+
   def self.age_of_oldest_priority_appeal
     query = <<-SQL
       #{SELECT_PRIORITY_APPEALS}
@@ -254,6 +325,17 @@ class VACOLS::CaseDocket < VACOLS::Record
     connection.exec_query(fmtd_query).to_hash.first&.fetch("bfdloout")
   end
 
+  def self.age_of_oldest_priority_appeal_by_docket_date
+    query = <<-SQL
+      #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
+      where rownum <= ?
+    SQL
+
+    fmtd_query = sanitize_sql_array([query, 1])
+
+    connection.exec_query(fmtd_query).to_hash.first&.fetch("bfd19")
+  end
+
   def self.nonpriority_decisions_per_year
     joins(VACOLS::Case::JOIN_AOD)
       .where(
@@ -261,6 +343,16 @@ class VACOLS::CaseDocket < VACOLS::Record
         1.year.ago.to_date
       )
       .count
+  end
+
+  def self.priority_hearing_cases_for_judge_count(judge)
+    query = <<-SQL
+      #{SELECT_PRIORITY_APPEALS}
+      where (VLJ = ?)
+    SQL
+
+    fmtd_query = sanitize_sql_array([query, judge.vacols_attorney_id])
+    connection.exec_query(fmtd_query).count
   end
 
   def self.nonpriority_hearing_cases_for_judge_count(judge)
@@ -281,25 +373,34 @@ class VACOLS::CaseDocket < VACOLS::Record
   def self.distribute_nonpriority_appeals(judge, genpop, range, limit, bust_backlog, dry_run = false)
     fail(DocketNumberCentennialLoop, COPY::MAX_LEGACY_DOCKET_NUMBER_ERROR_MESSAGE) if Time.zone.now.year >= 2030
 
-    # Docket numbers begin with the two digit year. The Board of Veterans Appeals was created in 1930.
-    # Although there are no new legacy appeals after 2019, an old appeal can be reopened through a finding
-    # of clear and unmistakable error, which would result in a brand new docket number being assigned.
-    # An updated docket number format will need to be in place for legacy appeals by 2030 in order
-    # to ensure that docket numbers are sorted correctly.
+    if use_by_docket_date?
+      query = <<-SQL
+        #{SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19}
+        where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
+        and (DOCKET_INDEX <= ? or 1 = ?)
+        and rownum <= ?
+      SQL
+    else
+      # Docket numbers begin with the two digit year. The Board of Veterans Appeals was created in 1930.
+      # Although there are no new legacy appeals after 2019, an old appeal can be reopened through a finding
+      # of clear and unmistakable error, which would result in a brand new docket number being assigned.
+      # An updated docket number format will need to be in place for legacy appeals by 2030 in order
+      # to ensure that docket numbers are sorted correctly.
 
-    # When requesting to bust the backlog of cases tied to a judge, distribute enough cases to get down to 30 while
-    # still respecting the enforced limit on how many cases can be distributed
-    if bust_backlog
-      number_of_hearings_over_limit = nonpriority_hearing_cases_for_judge_count(judge) - HEARING_BACKLOG_LIMIT
-      limit = (number_of_hearings_over_limit > 0) ? [number_of_hearings_over_limit, limit].min : 0
+      # When requesting to bust the backlog of cases tied to a judge, distribute enough cases to get down to 30 while
+      # still respecting the enforced limit on how many cases can be distributed
+      if bust_backlog
+        number_of_hearings_over_limit = nonpriority_hearing_cases_for_judge_count(judge) - HEARING_BACKLOG_LIMIT
+        limit = (number_of_hearings_over_limit > 0) ? [number_of_hearings_over_limit, limit].min : 0
+      end
+
+      query = <<-SQL
+        #{SELECT_NONPRIORITY_APPEALS}
+        where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
+        and (DOCKET_INDEX <= ? or 1 = ?)
+        and rownum <= ?
+      SQL
     end
-
-    query = <<-SQL
-      #{SELECT_NONPRIORITY_APPEALS}
-      where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
-      and (DOCKET_INDEX <= ? or 1 = ?)
-      and rownum <= ?
-    SQL
 
     fmtd_query = sanitize_sql_array([
                                       query,
@@ -316,11 +417,19 @@ class VACOLS::CaseDocket < VACOLS::Record
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists
 
   def self.distribute_priority_appeals(judge, genpop, limit, dry_run = false)
-    query = <<-SQL
-      #{SELECT_PRIORITY_APPEALS}
-      where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
-      and (rownum <= ? or 1 = ?)
-    SQL
+    if use_by_docket_date?
+      query = <<-SQL
+        #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
+        where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
+        and (rownum <= ? or 1 = ?)
+      SQL
+    else
+      query = <<-SQL
+        #{SELECT_PRIORITY_APPEALS}
+        where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
+        and (rownum <= ? or 1 = ?)
+      SQL
+    end
 
     fmtd_query = sanitize_sql_array([
                                       query,
@@ -343,7 +452,8 @@ class VACOLS::CaseDocket < VACOLS::Record
       if dry_run
         conn.exec_query(query).to_hash
       else
-        conn.execute(LOCK_READY_APPEALS)
+        conn.execute(LOCK_READY_APPEALS) unless FeatureToggle.enabled?(:acd_disable_legacy_lock_ready_appeals)
+
         appeals = conn.exec_query(query).to_hash
         return appeals if appeals.empty?
 
@@ -357,5 +467,9 @@ class VACOLS::CaseDocket < VACOLS::Record
         appeals
       end
     end
+  end
+
+  def self.use_by_docket_date?
+    FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
   end
 end

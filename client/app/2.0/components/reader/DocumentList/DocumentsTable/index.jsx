@@ -5,7 +5,8 @@ import { useDispatch } from 'react-redux';
 
 // Local Dependencies
 import Table from 'app/components/Table';
-import { SortArrowUp, SortArrowDown } from 'app/components/RenderFunctions';
+import { SortArrowDownIcon } from 'app/components/icons/SortArrowDownIcon';
+import { SortArrowUpIcon } from 'app/components/icons/SortArrowUpIcon';
 import { commentHeaders, documentHeaders } from 'components/reader/DocumentList/DocumentsTable/Columns';
 import { documentRows } from 'utils/reader';
 import { selectCurrentPdfLocally } from 'app/reader/Documents/DocumentsActions';
@@ -45,7 +46,7 @@ export const DocumentsTable = ({ show, ...props }) => {
     // Sort Functions
     sortBy: props.filterCriteria.sort.sortBy,
     sortLabel: `Sorted ${props.filterCriteria.sort.sortAscending ? 'ascending' : 'descending'}`,
-    sortIcon: props.filterCriteria.sort.sortAscending ? <SortArrowUp /> : <SortArrowDown />,
+    sortIcon: props.filterCriteria.sort.sortAscending ? <SortArrowUpIcon /> : <SortArrowDownIcon />,
     // Filter Functions
     setPdf: (doc) => dispatch(selectCurrentPdfLocally(doc.id)),
   };

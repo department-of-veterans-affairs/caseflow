@@ -40,8 +40,8 @@ class VhaProgramOffice < Organization
     Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
     Constants.QUEUE_CONFIG.COLUMNS.TASK_OWNER.name,
     # Constants.QUEUE_CONFIG.COLUMNS.VAMC_OWNER.name,
-    Constants.QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name
-    # Constants.QUEUE_CONFIG.COLUMNS.LAST_ACTION.name,
-    # Constants.QUEUE_CONFIG.COLUMNS.BOARD_INTAKE.name
+    Constants.QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name,
+    Constants.QUEUE_CONFIG.COLUMNS.LAST_ACTION.name,
+    Constants.QUEUE_CONFIG.COLUMNS.BOARD_INTAKE.name
   ].compact
 end

@@ -6,7 +6,7 @@ FactoryBot.define do
     represented_by_attorney { true }
     cavc_judge_full_name { Constants::CAVC_JUDGE_FULL_NAMES.first }
     cavc_decision_type { Constants::CAVC_DECISION_TYPES["remand"] }
-    remand_subtype { Constants::CAVC_REMAND_SUBTYPES["jmr"] }
+    remand_subtype { Constants::CAVC_REMAND_SUBTYPES["jmr_jmpr"] }
     decision_date { 30.days.ago.to_date }
     judgement_date { 30.days.ago.to_date }
     mandate_date { 30.days.ago.to_date }

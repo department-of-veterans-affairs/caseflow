@@ -45,6 +45,12 @@ FactoryBot.define do
       end
     end
 
+    trait :ready_for_review do
+      after(:create) do |task|
+        task.parent.update_columns(status: Constants.TASK_STATUSES.assigned)
+      end
+    end
+
     trait :on_hold do
       started_at { rand(20..30).days.ago }
       placed_on_hold_at { rand(1..10).days.ago }
@@ -296,6 +302,23 @@ FactoryBot.define do
         assigned_by { nil }
       end
 
+      factory :supplemental_claim_task, class: DecisionReviewTask do
+        appeal { create(:supplemental_claim, benefit_type: "nca") }
+        assigned_by { nil }
+      end
+
+      factory :higher_level_review_vha_task, class: DecisionReviewTask do
+        appeal { create(:higher_level_review, :with_vha_issue, benefit_type: "vha") }
+        assigned_by { nil }
+        assigned_to { BusinessLine.where(name: "Veterans Health Administration").first }
+      end
+
+      factory :supplemental_claim_vha_task, class: DecisionReviewTask do
+        appeal { create(:supplemental_claim, :with_vha_issue, benefit_type: "vha") }
+        assigned_by { nil }
+        assigned_to { BusinessLine.where(name: "Veterans Health Administration").first }
+      end
+
       factory :distribution_task, class: DistributionTask do
         parent { appeal.root_task || create(:root_task, appeal: appeal) }
         assigned_by { nil }
@@ -471,6 +494,10 @@ FactoryBot.define do
         assigned_by { nil }
       end
 
+      factory :hearing_admin_action_foia_privacy_request_task, class: HearingAdminActionFoiaPrivacyRequestTask do
+        assigned_by { nil }
+      end
+
       factory :hearing_admin_action_verify_address_task, class: HearingAdminActionVerifyAddressTask do
         assigned_by { nil }
       end
@@ -490,6 +517,7 @@ FactoryBot.define do
 
       factory :pre_docket_task, class: PreDocketTask do
         parent { create(:root_task, appeal: appeal) }
+        assigned_to { BvaIntake.singleton }
         assigned_by { nil }
       end
 
@@ -498,9 +526,35 @@ FactoryBot.define do
         assigned_by { nil }
       end
 
+      factory :assess_documentation_task_predocket, class: AssessDocumentationTask do
+        parent { create(:pre_docket_task, assigned_to: assigned_to, appeal: appeal) }
+        assigned_by { nil }
+      end
+
       factory :vha_document_search_task, class: VhaDocumentSearchTask do
         parent { create(:pre_docket_task, appeal: appeal) }
         assigned_to { VhaCamo.singleton }
+        assigned_by do
+          User.find_by_css_id("INTAKE_USER") ||
+            create(:user, css_id: "INTAKE_USER").tap { |user| BvaIntake.singleton.add_user(user) }
+        end
+      end
+
+      factory :vha_document_search_task_with_assigned_to, class: VhaDocumentSearchTask do
+        parent { create(:pre_docket_task, assigned_to: assigned_to, appeal: appeal) }
+        assigned_to { :assigned_to }
+        assigned_by { nil }
+      end
+
+      factory :education_document_search_task, class: EducationDocumentSearchTask do
+        parent { create(:pre_docket_task, appeal: appeal, assigned_to: BvaIntake.singleton) }
+        assigned_to { EducationEmo.singleton }
+        assigned_by { nil }
+      end
+
+      factory :education_assess_documentation_task, class: EducationAssessDocumentationTask do
+        parent { create(:education_document_search_task, appeal: appeal) }
+        assigned_to { EducationRpo.first }
         assigned_by { nil }
       end
 
@@ -559,14 +613,20 @@ FactoryBot.define do
 
       factory :denied_motion_to_vacate_task, class: DeniedMotionToVacateTask do
         parent { create(:abstract_motion_to_vacate_task, appeal: appeal) }
-        assigned_by { create(:user, full_name: "Judge User", css_id: "JUDGE_1") }
-        assigned_to { create(:user, full_name: "Motions Attorney", css_id: "LIT_SUPPORT_ATTY_1") }
+        assigned_by { User.find_by_css_id("JUDGE_1") || create(:user, full_name: "Judge User", css_id: "JUDGE_1") }
+        assigned_to do
+          User.find_by_css_id("LIT_SUPPORT_ATTY_1") ||
+            create(:user, full_name: "Motions Attorney", css_id: "LIT_SUPPORT_ATTY_1")
+        end
       end
 
       factory :dismissed_motion_to_vacate_task, class: DismissedMotionToVacateTask do
         parent { create(:abstract_motion_to_vacate_task, appeal: appeal) }
-        assigned_by { create(:user, full_name: "Judge User", css_id: "JUDGE_1") }
-        assigned_to { create(:user, full_name: "Motions Attorney", css_id: "LIT_SUPPORT_ATTY_1") }
+        assigned_by { User.find_by_css_id("JUDGE_1") || create(:user, full_name: "Judge User", css_id: "JUDGE_1") }
+        assigned_to do
+          User.find_by_css_id("LIT_SUPPORT_ATTY_1") ||
+            create(:user, full_name: "Motions Attorney", css_id: "LIT_SUPPORT_ATTY_1")
+        end
       end
     end
   end

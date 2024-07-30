@@ -16,14 +16,18 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
         attributes: {
           claimant: { name: hlr.veteran_full_name, relationship: "self" },
           appeal: { id: hlr.id.to_s, isLegacyAppeal: false, issueCount: 0, activeRequestIssues: [] },
+          veteran_ssn: veteran.ssn,
           veteran_participant_id: veteran.participant_id,
           assigned_on: task.assigned_at,
+          assigned_at: task.assigned_at,
           closed_at: task.closed_at,
           started_at: task.started_at,
           tasks_url: "/decision_reviews/nco",
           id: task.id,
           created_at: task.created_at,
-          type: "Higher-Level Review"
+          issue_count: 0,
+          type: "Higher-Level Review",
+          business_line: non_comp_org.url
         }
       }
       expect(subject.serializable_hash[:data]).to eq(serializable_hash)
@@ -41,14 +45,18 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
           attributes: {
             claimant: { name: "claimant", relationship: "Unknown" },
             appeal: { id: hlr.id.to_s, isLegacyAppeal: false, issueCount: 0, activeRequestIssues: [] },
+            veteran_ssn: veteran.ssn,
             veteran_participant_id: veteran.participant_id,
             assigned_on: task.assigned_at,
+            assigned_at: task.assigned_at,
             closed_at: task.closed_at,
             started_at: task.started_at,
             tasks_url: "/decision_reviews/nco",
             id: task.id,
             created_at: task.created_at,
-            type: "Higher-Level Review"
+            issue_count: 0,
+            type: "Higher-Level Review",
+            business_line: non_comp_org.url
           }
         }
         expect(subject.serializable_hash[:data]).to eq(serializable_hash)
@@ -76,14 +84,18 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
           attributes: {
             claimant: { name: claimant.name, relationship: "Veteran" },
             appeal: { id: hlr.id.to_s, isLegacyAppeal: false, issueCount: 0, activeRequestIssues: [] },
+            veteran_ssn: veteran.ssn,
             veteran_participant_id: veteran.participant_id,
             assigned_on: task.assigned_at,
+            assigned_at: task.assigned_at,
             closed_at: task.closed_at,
             started_at: task.started_at,
             tasks_url: "/decision_reviews/nco",
             id: task.id,
             created_at: task.created_at,
-            type: "Higher-Level Review"
+            issue_count: 0,
+            type: "Higher-Level Review",
+            business_line: non_comp_org.url
           }
         }
         expect(subject.serializable_hash[:data]).to eq(serializable_hash)

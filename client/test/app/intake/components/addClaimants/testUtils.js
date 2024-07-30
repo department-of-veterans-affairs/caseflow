@@ -11,6 +11,14 @@ export const relationshipOpts = [
   { value: 'other', label: 'Other' },
 ];
 
+export const relationshipOptsHlrSc = [
+  { value: 'attorney', label: 'Attorney (previously or currently)' },
+  { value: 'child', label: 'Child' },
+  { value: 'spouse', label: 'Spouse' },
+  { value: 'healthcare_provider', label: 'Healthcare Provider' },
+  { value: 'other', label: 'Other' },
+];
+
 const organization = 'Tista';
 const street1 = '1000 Monticello';
 const city = 'Washington';
@@ -34,7 +42,7 @@ export const fillForm = async () => {
   await userEvent.type(screen.getByRole('textbox', { name: /City/i }), city);
 
   // select state
-  await selectEvent.select(screen.getByLabelText('State'), [STATES[7].label]);
+  await selectEvent.select(screen.getByRole('combobox', { name: /state/i }), [STATES[7].label]);
 
   // Enter zip
   await userEvent.type(screen.getByRole('textbox', { name: /Zip/i }), zip);

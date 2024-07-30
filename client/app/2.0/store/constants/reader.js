@@ -1,7 +1,7 @@
 import React from 'react';
 
 // Local Dependencies
-import { CategoryIcon } from 'app/components/RenderFunctions';
+import { CategoryIcon } from 'app/components/icons/CategoryIcon';
 
 export const CATEGORIES = {
   VIEW_DOCUMENT_PAGE: 'Document Viewer',

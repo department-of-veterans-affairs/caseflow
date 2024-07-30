@@ -37,4 +37,5 @@ class Intake::RequestIssueSerializer
     object.end_product_establishment&.status_cleared?
   end
   attribute :benefit_type
+  attribute :is_predocket_needed
 end

@@ -1,4 +1,4 @@
-import { formatDate, formatDateStr, doDatesMatch, formatArrayOfDateStrings } from '../../../app/util/DateUtil';
+import { formatDate, formatDateStr, formatDateStrUtc, doDatesMatch, formatArrayOfDateStrings } from '../../../app/util/DateUtil';
 
 describe('DateUtil', () => {
   describe('.formatDate', () => {
@@ -8,7 +8,7 @@ describe('DateUtil', () => {
       expect(formatDate(date.toISOString())).toBe('01/02/2017');
     });
     it('must be a ISO8601 string', () => {
-      let badISOString = function() {
+      let badISOString = function () {
         formatDate('1/2/2017');
       };
 
@@ -26,6 +26,20 @@ describe('DateUtil', () => {
     it('returns a date formatted mm/dd/yyyy', () => {
       expect(formatDateStr('2017-04-24')).toBe('04/24/2017');
       expect(formatDateStr('1/2/2017')).toBe('01/02/2017');
+    });
+  });
+
+  describe('.formatDateStrUtc', () => {
+    it('returns a ISO8601 formatted date when expected output format is passed.', () => {
+      expect(formatDateStrUtc('2017-04-24', 'YYYY-MM-DD')).toBe('2017-04-24');
+      expect(formatDateStrUtc('1/12/2017', 'YYYY-MM-DD')).toBe('2017-01-12');
+      expect(formatDateStrUtc('2017 April 24', 'YYYY-MM-DD')).toBe('2017-04-24');
+    });
+
+    it('returns a date formatted mm/dd/yyyy if no params are passed', () => {
+      expect(formatDateStrUtc('2017-04-24')).toBe('04/24/2017');
+      expect(formatDateStrUtc('2017/04/24')).toBe('04/24/2017');
+      expect(formatDateStrUtc('2017 April 24')).toBe('04/24/2017');
     });
   });
 

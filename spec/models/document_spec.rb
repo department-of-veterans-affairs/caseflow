@@ -288,6 +288,33 @@ describe Document, :postgres do
     end
   end
 
+  COLUMNS_TO_MERGE = [
+    :type,
+    :received_at,
+    :upload_date,
+    :vbms_document_id,
+    :series_id
+  ].freeze
+
+  COLUMNS_TO_UPDATE = [
+    :category_medical,
+    :category_other,
+    :category_procedural,
+    :previous_document_version_id
+  ].freeze
+
+  context "#bulk_merge_and_update" do
+    it "should only the following columnds #{COLUMNS_TO_UPDATE}" do
+      Document::COLUMNS_TO_UPDATE.should match_array(COLUMNS_TO_UPDATE)
+    end
+  end
+
+  context "#bulk_merge_and_save" do
+    it "should save the following columnds #{COLUMNS_TO_MERGE}" do
+      Document::COLUMNS_TO_MERGE.should match_array(COLUMNS_TO_MERGE)
+    end
+  end
+
   context "#serve!" do
     before do
       File.delete(file) if File.exist?(file)

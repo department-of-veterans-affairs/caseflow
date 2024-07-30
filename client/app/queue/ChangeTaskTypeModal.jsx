@@ -85,7 +85,7 @@ class ChangeTaskTypeModal extends React.PureComponent {
         </div>
         <div {...marginTop(4)}>
           <TextareaField
-            errorMessage={highlightFormItems && !instructions ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
+            errorMessage={highlightFormItems && !instructions ? COPY.INSTRUCTIONS_ERROR_FIELD_REQUIRED : null}
             name={COPY.CHANGE_TASK_TYPE_INSTRUCTIONS_LABEL}
             onChange={(value) => this.setState({ instructions: value })}
             value={instructions} />

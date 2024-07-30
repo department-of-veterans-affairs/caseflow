@@ -40,6 +40,7 @@ RSpec.describe AppellantSubstitutionsController, type: :controller do
         substitute_participant_id: substitute_participant_id,
         poa_participant_id: poa_participant_id,
         selected_task_ids: [],
+        cancelled_task_ids: [],
         task_params: {}
       }
     end

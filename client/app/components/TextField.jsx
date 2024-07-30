@@ -11,6 +11,7 @@ const labelTextStyling = css({
 
 export const TextField = (props) => {
   const handleChange = (event) => props.onChange?.(event.target.value);
+  const handleBlur = (event) => props.onBlur?.(event.target.value);
 
   const {
     errorMessage,
@@ -63,7 +64,7 @@ export const TextField = (props) => {
   return (
     <div className={textInputClass.join(' ')}>
       {dateErrorMessage && (
-        <span className="usa-input-error-message">{dateErrorMessage}</span>
+        <span className="usa-input-error-message" tabIndex={0}>{dateErrorMessage}</span>
       )}
       {label !== false && (
         <label htmlFor={name}>
@@ -72,7 +73,7 @@ export const TextField = (props) => {
       )}
       {labelText && <p {...labelTextStyling}>{labelText}</p>}
       {errorMessage && (
-        <span className="usa-input-error-message">{errorMessage}</span>
+        <span className="usa-input-error-message" tabIndex={0}>{errorMessage}</span>
       )}
       {props.fixedInput ? (
         <p>{value}</p>
@@ -84,6 +85,7 @@ export const TextField = (props) => {
           id={name}
           onChange={handleChange}
           onKeyPress={onKeyPress}
+          onBlur={handleBlur}
           type={type}
           defaultValue={defaultValue}
           value={adjustedVal}
@@ -165,6 +167,7 @@ TextField.propTypes = {
    * @param {string | number} value The current value of the component
    */
   onChange: PropTypes.func,
+  onBlur: PropTypes.func,
   title: PropTypes.string,
   onKeyPress: PropTypes.func,
   strongLabel: PropTypes.bool,

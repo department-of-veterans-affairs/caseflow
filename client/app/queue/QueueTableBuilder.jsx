@@ -17,13 +17,14 @@ import {
   boardIntakeColumn,
   completedToNameColumn,
   daysOnHoldColumn,
-  daysSinceLastColumn,
+  daysSinceLastActionColumn,
   daysSinceIntakeColumn,
+  receiptDateColumn,
   daysWaitingColumn,
   detailsColumn,
   docketNumberColumn,
   documentIdColumn,
-  // lastActionColumn,
+  lastActionColumn,
   issueCountColumn,
   readerLinkColumn,
   readerLinkColumnWithNewDocsIcon,
@@ -32,7 +33,6 @@ import {
   taskOwnerColumn,
   taskCompletedDateColumn,
   typeColumn,
-  // taskOwnerColumn,
   vamcOwnerColumn
 } from './components/TaskTableColumns';
 import { tasksWithAppealsFromRawTasks } from './utils';
@@ -97,7 +97,7 @@ class QueueTableBuilder extends React.PureComponent {
       [QUEUE_CONFIG.COLUMNS.DAYS_ON_HOLD.name]: daysOnHoldColumn(
         requireDasRecord
       ),
-      [QUEUE_CONFIG.COLUMNS.DAYS_SINCE_LAST.name]: daysSinceLastColumn(
+      [QUEUE_CONFIG.COLUMNS.DAYS_SINCE_LAST_ACTION.name]: daysSinceLastActionColumn(
         requireDasRecord
       ),
       [QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name]: daysWaitingColumn(
@@ -127,15 +127,13 @@ class QueueTableBuilder extends React.PureComponent {
         filterOptions
       ),
       [QUEUE_CONFIG.COLUMNS.BOARD_INTAKE.name]: boardIntakeColumn(
+        filterOptions
+      ),
+      [QUEUE_CONFIG.COLUMNS.LAST_ACTION.name]: lastActionColumn(
         tasks,
         filterOptions
       ),
-      // [QUEUE_CONFIG.COLUMNS.LAST_ACTION.name]: lastActionColumn(
-      //   tasks,
-      //   filterOptions
-      // ),
       [QUEUE_CONFIG.COLUMNS.TASK_OWNER.name]: taskOwnerColumn(
-        tasks,
         filterOptions
       ),
       [QUEUE_CONFIG.COLUMNS.VAMC_OWNER.name]: vamcOwnerColumn(
@@ -146,8 +144,8 @@ class QueueTableBuilder extends React.PureComponent {
       [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNED_BY.name]: assignedByColumn(),
       [QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name]: taskCompletedDateColumn(),
       [QUEUE_CONFIG.COLUMNS.TASK_TYPE.name]: taskColumn(tasks, filterOptions),
-      // [QUEUE_CONFIG.COLUMNS.TASK_OWNER.name]: taskOwnerColumn(tasks, filterOptions),
-      [QUEUE_CONFIG.COLUMNS.DAYS_SINCE_INTAKE.name]: daysSinceIntakeColumn(requireDasRecord)
+      [QUEUE_CONFIG.COLUMNS.DAYS_SINCE_INTAKE.name]: daysSinceIntakeColumn(requireDasRecord),
+      [QUEUE_CONFIG.COLUMNS.RECEIPT_DATE_INTAKE.name]: receiptDateColumn(),
     };
 
     return functionForColumn[column.name];
@@ -179,6 +177,15 @@ class QueueTableBuilder extends React.PureComponent {
       );
     }
 
+    // Setup default sorting.
+    const defaultSort = {};
+
+    // If there is no sort by column in the pagination options, then use the tab config default sort
+    // eslint-disable-next-line camelcase
+    if (!paginationOptions?.sort_by) {
+      Object.assign(defaultSort, tabConfig.defaultSort);
+    }
+
     return {
       label: sprintf(tabConfig.label, totalTaskCount),
       page: (
@@ -201,6 +208,7 @@ class QueueTableBuilder extends React.PureComponent {
             tabPaginationOptions={
               paginationOptions.tab === tabConfig.name && paginationOptions
             }
+            defaultSort={defaultSort}
             useTaskPagesApi={
               config.use_task_pages_api && !tabConfig.contains_legacy_tasks
             }

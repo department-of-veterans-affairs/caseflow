@@ -15,22 +15,16 @@ import COPY from '../../../COPY';
 import Alert from '../../components/Alert';
 import UnidentifiedIssueAlert from '../components/UnidentifiedIssueAlert';
 
-const checkIssuesForVha = (requestIssues) => {
-  let hasVhaIssues = false;
+const checkIssuesForVhaPredocket = (requestIssues) =>
+  requestIssues.some((ri) => ri.benefitType === 'vha' && ri.isPreDocketNeeded === true);
 
-  requestIssues.forEach((ri) => {
-    if (ri.benefitType === 'vha') {
-      hasVhaIssues = true;
-    }
-  });
-
-  return hasVhaIssues;
-};
+const checkIfPreDocketed = (requestIssues) =>
+  requestIssues.some((ri) => ri.isPreDocketNeeded === true);
 
 const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, editIssuesUrl, completedReview }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
   const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
-  const vhaHasIssues = checkIssuesForVha(requestIssues);
+  const vhaHasIssues = checkIssuesForVhaPredocket(requestIssues);
 
   const leadMessageArr = [
     `${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been submitted.`
@@ -67,7 +61,7 @@ const getChecklistItems = (featureToggles, formType, requestIssues, isInformalCo
   if (formType === 'appeal') {
     let statusMessage = 'Appeal created:';
 
-    if (checkIssuesForVha(requestIssues) && featureToggles.vhaPreDocketAppeals) {
+    if (checkIssuesForVhaPredocket(requestIssues)) {
       statusMessage = 'Appeal created and sent to VHA for document assessment.';
     }
 
@@ -169,11 +163,9 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       return <SmallLoader message="Creating task..." spinnerColor={LOGO_COLORS.CERTIFICATION.ACCENT} />;
     }
 
-    let title = 'Intake completed';
-
-    if (checkIssuesForVha(requestIssues) && featureToggles.vhaPreDocketAppeals) {
-      title = 'Appeal recorded in pre-docket queue';
-    }
+    let title = checkIfPreDocketed(requestIssues) ?
+      'Appeal recorded in pre-docket queue' :
+      'Intake completed';
 
     const deceasedVeteranAlert = () => {
       return (

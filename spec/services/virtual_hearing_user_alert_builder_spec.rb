@@ -2,7 +2,7 @@
 
 describe VirtualHearingUserAlertBuilder do
   let(:veteran) { create(:veteran, first_name: "Serrif", last_name: "Gnest") }
-  let(:appeal) { create(:appeal, :hearing_docket, veteran_file_number: veteran.file_number) }
+  let(:appeal) { create(:appeal, :hearing_docket, veteran: veteran) }
   let(:hearing) { create(:hearing, appeal: appeal) }
   let!(:virtual_hearing) do
     create(

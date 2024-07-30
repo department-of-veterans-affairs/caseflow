@@ -707,7 +707,26 @@ class Fakes::BGSService
     RequestStore[:current_user]
   end
 
+  def generate_random_file_number
+    Kernel.srand(1)
+    value = rand(700_000_000...733_792_224).to_s
+
+    # make sure the value is unique for both file number and participant id
+    while BgsPowerOfAttorney.find_by(file_number: value).nil? == false &&
+          BgsPowerOfAttorney.find_by(poa_participant_id: value).nil? == false
+
+      value = rand(700_000_000...733_792_224).to_s
+    end
+    # return the value
+    value
+  end
+
   def default_power_of_attorney_record
+    # generate random file number and participant id to prevent unique id collisions
+    # with test data
+    file_number = generate_random_file_number
+    poa_participant_id = generate_random_file_number
+
     {
       file_number: "633792224",
       power_of_attorney:
@@ -765,6 +784,7 @@ class Fakes::BGSService
       city_nm: FakeConstants.BGS_SERVICE.DEFAULT_CITY,
       cntry_nm: FakeConstants.BGS_SERVICE.DEFAULT_COUNTRY,
       efctv_dt: 15.days.ago.to_formatted_s(:short_date),
+      email_addrs_txt: "jamie.fakerton@caseflowdemo.com",
       jrn_dt: 15.days.ago.to_formatted_s(:short_date),
       jrn_lctn_id: "283",
       jrn_obj_id: "SHARE  - PCAN",

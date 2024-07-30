@@ -1,8 +1,14 @@
 # frozen_string_literal: true
 
 RSpec.describe "Hearing Day", :all_dbs, type: :request do
+  URL_HOST = "example.va.gov"
+  URL_PATH = "/sample"
+  PIN_KEY = "mysecretkey"
+
   before do
     Timecop.freeze(Time.utc(2019, 1, 1, 0, 0, 0))
+    allow(ENV).to receive(:[]).and_call_original
+    allow(ENV).to receive(:fetch).and_call_original
   end
 
   let!(:user) do
@@ -78,7 +84,9 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
 
     it "Create new adhoc Travel hearing day and do not assign a room" do
       post "/hearings/hearing_day", params: { request_type: HearingDay::REQUEST_TYPES[:travel],
-                                              scheduled_for: "17-Jan-2019", assign_room: false }
+                                              scheduled_for: "17-Jan-2019",
+                                              regional_office: "RO27",
+                                              assign_room: false }
       expect(response).to be_successful
       actual_date = Date.parse(JSON.parse(response.body)["hearing"]["scheduled_for"])
       expect(actual_date).to eq(Date.new(2019, 1, 17))
@@ -120,8 +128,7 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
     it "Create new adhoc hearing day on a full day. Room assignment not required, hence is empty string." do
       mar_hearing_days
 
-      post "/hearings/hearing_day", params: { regional_office: "RO10",
-                                              request_type: HearingDay::REQUEST_TYPES[:central],
+      post "/hearings/hearing_day", params: { request_type: HearingDay::REQUEST_TYPES[:central],
                                               scheduled_for: "14-Mar-2019", assign_room: false }
       expect(response).to be_successful
       actual_date = Date.parse(JSON.parse(response.body)["hearing"]["scheduled_for"])
@@ -143,6 +150,11 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
   end
 
   describe "Show a hearing day with its children hearings" do
+    before do
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return "mysecretkey"
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return "example.va.gov"
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return "/sample"
+    end
     let!(:regional_office) do
       create(:staff, stafkey: "RO13", stc4: 11)
     end

@@ -8,6 +8,7 @@ import { formatDateStr, formatDateStrUtc } from '../../util/DateUtil';
 import InlineForm from '../../components/InlineForm';
 import DateSelector from '../../components/DateSelector';
 import Button from '../../components/Button';
+import COPY from '../../../COPY';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextareaField from '../../components/TextareaField';
 
@@ -15,7 +16,8 @@ import { DISPOSITION_OPTIONS, DECISION_ISSUE_UPDATE_STATUS } from '../constants'
 import {
   formatDecisionIssuesFromRequestIssues,
   formatRequestIssuesWithDecisionIssues,
-  buildDispositionSubmission } from '../util';
+  buildDispositionSubmission
+} from '../util';
 
 class NonCompDecisionIssue extends React.PureComponent {
   constructor(props) {
@@ -63,8 +65,20 @@ class NonCompDecisionIssue extends React.PureComponent {
           <div className="desc">{issue.description}</div>
           <div className="date"><strong>Prior decision date:</strong> {issueDate}.</div>
         </div>
-        <div className="usa-width-two-thirds">
-          <div><strong>Decision description</strong> <span className="cf-optional">Optional</span></div>
+        <div className="cf-disposition">
+          <strong>Disposition</strong>
+          <SearchableDropdown
+            readOnly={disabled}
+            name={`disposition-issue-${index}`}
+            label={`disposition-issue-${index}`}
+            hideLabel
+            placeholder="Select or enter..."
+            options={this.dispositionOptions()}
+            value={this.props.decisionDisposition}
+            onChange={this.handleDispositionChange} />
+        </div>
+        <div className="cf-disposition">
+          <div><strong>Decision description</strong><span className="cf-optional">Optional</span></div>
           <TextareaField name={`description-issue-${index}`}
             label={`description-issue-${index}`}
             hideLabel
@@ -72,17 +86,7 @@ class NonCompDecisionIssue extends React.PureComponent {
             disabled={disabled}
             onChange={this.handleDescriptionChange} />
         </div>
-        <div className="usa-width-one-third cf-disposition">
-          <SearchableDropdown
-            readOnly={disabled}
-            name={`disposition-issue-${index}`}
-            label={`disposition-issue-${index}`}
-            hideLabel
-            placeholder="Select Disposition"
-            options={this.dispositionOptions()}
-            value={this.props.decisionDisposition}
-            onChange={this.handleDispositionChange} />
-        </div>
+
       </div>
     </div>;
   }
@@ -92,12 +96,10 @@ class NonCompDispositions extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    let today = formatDateStr(new Date());
-
     this.state = {
       requestIssues: formatRequestIssuesWithDecisionIssues(
         this.props.task.appeal.activeRequestIssues, this.props.appeal.decisionIssues),
-      decisionDate: today,
+      decisionDate: '',
       isFilledOut: false
     };
   }
@@ -161,7 +163,7 @@ class NonCompDispositions extends React.PureComponent {
     let decisionDate = this.state.decisionDate;
 
     if (appeal.decisionIssues.length > 0) {
-      decisionDate = formatDateStrUtc(appeal.decisionIssues[0].approxDecisionDate);
+      decisionDate = formatDateStrUtc(appeal.decisionIssues[0].approxDecisionDate, 'YYYY-MM-DD');
     }
 
     let editIssuesLink = null;
@@ -190,7 +192,7 @@ class NonCompDispositions extends React.PureComponent {
             <div>Review each issue and assign the appropriate dispositions.</div>
           </div>
           <div className="usa-width-one-half cf-txt-r">
-            { editIssuesLink }
+            {editIssuesLink}
           </div>
         </div>
         <div className="cf-decision-list">
@@ -211,7 +213,7 @@ class NonCompDispositions extends React.PureComponent {
         <div className="cf-decision-date">
           <InlineForm>
             <DateSelector
-              label="Thank you for completing your decision in Caseflow. Please indicate the decision date."
+              label={COPY.DISPOSITION_DECISION_DATE_LABEL}
               name="decision-date"
               value={decisionDate}
               onChange={this.handleDecisionDate}
@@ -221,7 +223,7 @@ class NonCompDispositions extends React.PureComponent {
           </InlineForm>
         </div>
       </div>
-      { completeDiv }
+      {completeDiv}
       {this.establishmentCredits()}
     </div>;
   }

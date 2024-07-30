@@ -37,7 +37,12 @@ export default class HearingsApp extends React.PureComponent {
       userCanAddVirtualHearingDays,
       userCanViewFnodBadgeInHearings,
       userId,
-      userCssId
+      userCssId,
+      userIsJudge,
+      userIsDvc,
+      userIsHearingManagement,
+      userIsBoardAttorney,
+      userIsHearingAdmin
     } = this.props;
 
     return Object.freeze({
@@ -51,7 +56,12 @@ export default class HearingsApp extends React.PureComponent {
       userCanAddVirtualHearingDays,
       userCanViewFnodBadgeInHearings,
       userId,
-      userCssId
+      userCssId,
+      userIsJudge,
+      userIsDvc,
+      userIsHearingManagement,
+      userIsBoardAttorney,
+      userIsHearingAdmin
     });
   };
 
@@ -223,5 +233,10 @@ HearingsApp.propTypes = {
   userVsoEmployee: PropTypes.bool,
   userRole: PropTypes.string,
   userId: PropTypes.number,
-  userCssId: PropTypes.string
+  userCssId: PropTypes.string,
+  userIsJudge: PropTypes.bool,
+  userIsDvc: PropTypes.bool,
+  userIsHearingManagement: PropTypes.bool,
+  userIsBoardAttorney: PropTypes.bool,
+  userIsHearingAdmin: PropTypes.bool
 };

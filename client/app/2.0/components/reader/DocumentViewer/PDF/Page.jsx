@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import { Comments } from 'components/reader/DocumentViewer/Comments';
 import { pageNumber } from 'utils/reader';
 import { markStyles, pdfPageStyles } from 'styles/reader/Document/PDF';
-import { CommentSymbol } from 'app/components/RenderFunctions';
+import { ReaderCommentIcon } from 'app/components/icons/ReaderCommentIcon';
 import { showPage } from 'store/reader/documentViewer';
 
 /**
@@ -75,7 +75,7 @@ export const Page = ({
                 top: '50%'
               }}
             >
-              <CommentSymbol />
+              <ReaderCommentIcon />
             </div>
           )}
           <div className="cf-pdf-annotationLayer">

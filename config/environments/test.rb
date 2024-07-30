@@ -76,7 +76,7 @@ Rails.application.configure do
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 
-  ENV["VA_DOT_GOV_API_URL"] = "https://staging-api.va.gov/"
+  ENV["VA_DOT_GOV_API_URL"] = "https://sandbox-api.va.gov/"
 
   # For testing uncertification methods
   ENV["TEST_USER_ID"] = "TEST_USER_ID"
@@ -84,8 +84,32 @@ Rails.application.configure do
   ENV["FULL_GRANT_IDS"] = "VACOLS123,VACOLS234,VACOLS345,VACOLS456"
   ENV["PARTIAL_AND_REMAND_IDS"] = "VACOLS321,VACOLS432,VACOLS543,VACOLS654"
 
+  ENV["AWS_ACCESS_KEY_ID"] ||= "dummykeyid"
+  ENV["AWS_SECRET_ACCESS_KEY"] ||= "dummysecretkey"
+
   config.active_job.queue_adapter = :test
 
   # Disable SqlTracker from creating tmp/sql_tracker-*.json files -- https://github.com/steventen/sql_tracker/pull/10
   SqlTracker::Config.enabled = false
+
+  # VA Notify evnironment variables
+  ENV["VA_NOTIFY_API_URL"] ||= "https://staging-api.va.gov/vanotify"
+  ENV["VA_NOTIFY_API_KEY"] ||= "secret-key"
+  ENV["VA_NOTIFY_SERVICE_ID"] ||= "fake-service-id"
+  ENV["VA_NOTIFY_TOKEN_ALG"] ||= "my-secret-algorithm"
+  ENV["VA_NOTIFY_STATUS_UPDATE_BATCH_LIMIT"] ||= "650"
+
+  # One time Appeal States migration for Legacy & AMA Appeal Batch Sizes
+  ENV["STATE_MIGRATION_JOB_BATCH_SIZE"] ||= "1000"
+
+  # Quarterly Notifications Batch Sizes
+  ENV["QUARTERLY_NOTIFICATIONS_JOB_BATCH_SIZE"] ||= "1000"
+
+  # Travel Board Sync Batch Size
+  ENV["TRAVEL_BOARD_HEARING_SYNC_BATCH_LIMIT"] ||= "250"
+
+  # Notifications page eFolder link
+  ENV["CLAIM_EVIDENCE_EFOLDER_BASE_URL"] ||= "https://vefs-claimevidence-ui-uat.stage8.bip.va.gov"
+
+  ENV['TEST_VACOLS_HOST'] ||= "localhost"
 end

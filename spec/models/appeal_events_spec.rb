@@ -120,7 +120,7 @@ describe AppealEvents, :all_dbs do
     context "remand return event" do
       subject do
         events.find do |event|
-          event.type == :remand_return && event.date == AppealRepository.normalize_vacols_date(2.days.ago)
+          event.type == :remand_return
         end
       end
 

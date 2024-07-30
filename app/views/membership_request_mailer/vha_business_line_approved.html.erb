@@ -1,0 +1,18 @@
+<%= render "intro" %>
+
+<%= content_for :content do %>
+  <p>
+    We approved your request for access to VHA pages within Caseflow.
+  </p>
+
+  <p style="padding-top:20px">
+    <b> You now have access to the following groups' pages: </b>
+  </p>
+
+  <% @accessible_groups.each do |accessible_group| %>
+    <p> <%= accessible_group %> </p>
+  <% end %>
+<% end %>
+
+<%= render "help" %>
+<%= render "vha_signature" %>

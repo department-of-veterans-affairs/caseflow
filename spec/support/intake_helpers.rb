@@ -32,6 +32,7 @@ module IntakeHelpers
 
   def start_higher_level_review(
     test_veteran,
+    is_comp: true,
     receipt_date: 1.day.ago,
     claim_participant_id: nil,
     legacy_opt_in_approved: false,
@@ -46,7 +47,7 @@ module IntakeHelpers
       informal_conference: informal_conference,
       filed_by_va_gov: false,
       same_office: false,
-      benefit_type: benefit_type,
+      benefit_type: is_comp ? benefit_type : "education",
       legacy_opt_in_approved: legacy_opt_in_approved,
       veteran_is_not_claimant: claim_participant_id.present?
     )
@@ -81,13 +82,14 @@ module IntakeHelpers
     legacy_opt_in_approved: false,
     claim_participant_id: nil,
     benefit_type: "compensation",
-    no_claimant: false
+    no_claimant: false,
+    is_comp: true
   )
 
     supplemental_claim = SupplementalClaim.create!(
       veteran_file_number: test_veteran.file_number,
       receipt_date: receipt_date,
-      benefit_type: benefit_type,
+      benefit_type: is_comp ? benefit_type : "education",
       legacy_opt_in_approved: legacy_opt_in_approved,
       veteran_is_not_claimant: claim_participant_id.present?
     )
@@ -121,12 +123,15 @@ module IntakeHelpers
     claim_participant_id: nil,
     legacy_opt_in_approved: false,
     no_claimant: false,
-    intake_user: User.authenticate!(roles: ["Mail Intake"])
+    intake_user: User.authenticate!(roles: ["Mail Intake"]),
+    docket_type: Constants.AMA_DOCKETS.evidence_submission,
+    original_hearing_request_type: nil
   )
     appeal = Appeal.create!(
       veteran_file_number: test_veteran.file_number,
       receipt_date: receipt_date,
-      docket_type: Constants.AMA_DOCKETS.evidence_submission,
+      docket_type: docket_type,
+      original_hearing_request_type: original_hearing_request_type,
       legacy_opt_in_approved: legacy_opt_in_approved,
       veteran_is_not_claimant: claim_participant_id.present?,
       filed_by_va_gov: false
@@ -262,12 +267,21 @@ module IntakeHelpers
     EndProductEstablishment.find_by(source: claim_review).reference_id
   end
 
+  def select_intake_nonrating_benefit_type(benefit_type)
+    if page.has_css?("#issue-benefit-type", wait: 0)
+      fill_in "Benefit type", with: benefit_type
+      find("#issue-benefit-type").send_keys :enter
+    end
+  end
+
+  # rubocop:disable Metrics/ParameterLists
   def add_intake_nonrating_issue(
     benefit_type: "Compensation",
     category: "Active Duty Adjustments",
     description: "Some description",
     date: "01/01/2016",
-    legacy_issues: false
+    legacy_issues: false,
+    is_predocket_needed: false
   )
     add_button_text = legacy_issues ? "Next" : "Add this issue"
     expect(page.text).to match(/Does issue \d+ match any of these non-rating issue categories?/)
@@ -280,6 +294,12 @@ module IntakeHelpers
       find("#issue-benefit-type").send_keys :enter
     end
 
+    if page.has_css?("div.cf-is-predocket-needed", wait: 1)
+      within_fieldset("Is pre-docketing needed for this issue?") do
+        find("label", text: is_predocket_needed ? "Yes" : "No", match: :prefer_exact).click
+      end
+    end
+
     fill_in "Issue category", with: category
     find("#issue-category").send_keys :enter
     fill_in "Issue description", with: description
@@ -287,10 +307,11 @@ module IntakeHelpers
     expect(page).to have_button(add_button_text, disabled: false)
     safe_click ".add-issue"
   end
+  # rubocop:enable Metrics/ParameterLists
 
   def add_intake_vha_issue(
     benefit_type: "Veterans Health Administration",
-    category: "Caregiver",
+    category: "Caregiver | Eligibility",
     description: "Some description",
     date: "01/01/2016",
     legacy_issues: false
@@ -985,6 +1006,18 @@ module IntakeHelpers
     within_fieldset("Did the Veteran check the \"OPT-IN from SOC/SSOC\" box on the form?") do
       find("label", text: withdraw ? "Yes" : "N/A", match: :prefer_exact).click
     end
+  end
+
+  def navigate_to_review_page(
+    form_name,
+    veteran_search_query: create(:veteran).file_number
+  )
+    visit "/intake"
+    select_form(form_name)
+    safe_click ".cf-submit.usa-button"
+
+    fill_in search_bar_title, with: veteran_search_query
+    click_on "Search"
   end
 end
 # rubocop:enable Metrics/ModuleLength

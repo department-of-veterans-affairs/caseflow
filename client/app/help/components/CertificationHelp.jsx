@@ -1,10 +1,14 @@
 import React from 'react';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 class CertificationHelp extends React.Component {
 
   render() {
     /* eslint-disable max-len */
     return <div className="cf-help-content">
+
+      <p><Link href="/help">Go Back</Link></p>
+
       <h1>Welcome to the Certification Help page!</h1>
       <p>Here you will find <a href="#training-videos"> Training Videos</a> and <a href="#faq"> Frequently Asked Questions (FAQs)</a> for Certification, as well as links to the <a target="_blank" href="/assets/certificationV2_trainingguide-adb1cf699372fb0f9730fbff6d476d3751bf06077d3b09feae376670439dfce0.pdf">Training Guide</a> and the  <a target="_blank" href="/assets/certificationV2_quickreference-076e9b955b964f4fe8d2f164b5c898f77a0b389a4b018312256700e9ee718d2c.pdf">Quick Reference</a>. These items are provided to assist you as you access and use Certification. If you require further assistance after reviewing these items, please contact the Caseflow Product Support Team by phone (1-844-876-5548) or email <a href="mailto:caseflow@va.gov">(caseflow@va.gov)</a>. We look forward to assisting you.
       </p>

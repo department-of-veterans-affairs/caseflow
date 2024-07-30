@@ -7,6 +7,8 @@ class VACOLS::Decass < VACOLS::Record
 
   attribute :deatcom, :ascii_string, limit: 350
   attribute :debmcom, :ascii_string, limit: 600
+  attribute :deassign, :datetime
+  attribute :dereceive, :datetime
 
   validates :defolder, :deatty, :deteam, :deadusr, :deadtim, presence: true, on: :create
 

@@ -7,6 +7,7 @@ exports[`OvertimeBadge renders correctly 1`] = `
   >
     <span
       aria-describedby="badge-undefined"
+      aria-label="overtime"
       currentitem="false"
       data-css-13kydni=""
       data-event="focus mouseenter"
@@ -18,7 +19,7 @@ exports[`OvertimeBadge renders correctly 1`] = `
       OT
     </span>
     <span
-      data-css-1urwbxe=""
+      data-css-12sli69=""
     >
       <div
         class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"

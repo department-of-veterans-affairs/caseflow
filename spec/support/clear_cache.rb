@@ -25,6 +25,6 @@ RSpec.configure do |config|
 end
 
 def delete_matched(namespace:)
-  redis = Redis.current
+  redis = Redis.new(url: Rails.application.secrets.redis_url_cache)
   redis.scan_each(match: "#{namespace}:*") { |key| redis.del(key) }
 end

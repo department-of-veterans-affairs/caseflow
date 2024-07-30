@@ -19,7 +19,7 @@ class VhaCamoCompletedTasksTab < QueueTab
   end
 
   def tasks
-    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).active
+    active_tasks
   end
 
   def column_names

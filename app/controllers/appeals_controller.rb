@@ -8,6 +8,7 @@ class AppealsController < ApplicationController
     :index,
     :power_of_attorney,
     :show_case_list,
+    :fetch_notification_list,
     :show,
     :veteran,
     :most_recent_hearing
@@ -43,6 +44,40 @@ class AppealsController < ApplicationController
         ).call
 
         render_search_results_as_json(result)
+      end
+    end
+  end
+
+  def fetch_notification_list
+    appeals_id = params[:appeals_id]
+    respond_to do |format|
+      format.json do
+        results = find_notifications_by_appeals_id(appeals_id)
+        render json: results
+      end
+      format.pdf do
+        request.headers["HTTP_PDF"]
+        appeal = get_appeal_object(appeals_id)
+        date = Time.zone.now.strftime("%Y-%m-%d %H.%M")
+        begin
+          if !appeal.nil?
+            pdf = PdfExportService.create_and_save_pdf("notification_report_pdf_template", appeal)
+            send_data pdf, filename: "Notification Report " + appeals_id + " " + date + ".pdf", type: "application/pdf", disposition: :attachment
+          else
+            raise ActionController::RoutingError.new('Appeal Not Found')
+          end
+        rescue StandardError => error
+          uuid = SecureRandom.uuid
+          Rails.logger.error(error.to_s + "Error ID: " + uuid)
+          Raven.capture_exception(error, extra: { error_uuid: uuid })
+          render json: { "errors": ["message": uuid] }, status: :internal_server_error
+        end
+      end
+      format.csv do
+        raise ActionController::ParameterMissing.new('Bad Format')
+      end
+      format.html do
+        raise ActionController::ParameterMissing.new('Bad Format')
       end
     end
   end
@@ -144,6 +179,16 @@ class AppealsController < ApplicationController
 
   def update
     if request_issues_update.perform!
+      # if cc appeal, create SendInitialNotificationLetterTask
+      if appeal.contested_claim? && FeatureToggle.enabled?(:cc_appeal_workflow)
+        # check if an existing letter task is open
+        existing_letter_task_open = appeal.tasks.any? do |task|
+          task.class == SendInitialNotificationLetterTask && task.status == "assigned"
+        end
+        # create SendInitialNotificationLetterTask unless one is open
+        send_initial_notification_letter unless existing_letter_task_open
+      end
+
       set_flash_success_message
 
       render json: {
@@ -264,6 +309,25 @@ class AppealsController < ApplicationController
     end
   end
 
+  def send_initial_notification_letter
+    # depending on the docket type, create cooresponding task as parent task
+    case appeal.docket_type
+    when "evidence_submission"
+      parent_task = @appeal.tasks.find_by(type: "EvidenceSubmissionWindowTask")
+    when "hearing"
+      parent_task = @appeal.tasks.find_by(type: "ScheduleHearingTask")
+    when "direct_review"
+      parent_task = @appeal.tasks.find_by(type: "DistributionTask")
+    end
+    @send_initial_notification_letter ||= @appeal.tasks.open.find_by(type: :SendInitialNotificationLetterTask) ||
+                                          SendInitialNotificationLetterTask.create!(
+                                            appeal: @appeal,
+                                            parent: parent_task,
+                                            assigned_to: Organization.find_by_url("clerk-of-the-board"),
+                                            assigned_by: RequestStore[:current_user]
+                                          ) unless parent_task.nil?
+  end
+
   def power_of_attorney_data
     {
       representative_type: appeal.representative_type,
@@ -297,4 +361,38 @@ class AppealsController < ApplicationController
       message: "Something went wrong"
     }, status: :unprocessable_entity
   end
+
+  # Purpose: Fetches all notifications for an appeal
+  #
+  # Params: appeals_id (vacols_id OR uuid)
+  #
+  # Response: Returns an array of all retrieved notifications
+  def find_notifications_by_appeals_id(appeals_id)
+    # Retrieve notifications based on appeals_id, excluding statuses of 'No participant_id' & 'No claimant'
+    @all_notifications = Notification.where(appeals_id: appeals_id)
+    @allowed_notifications = @all_notifications.where(email_notification_status: nil)
+      .or(@all_notifications.where.not(email_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))
+      .merge(@all_notifications.where(sms_notification_status: nil)
+      .or(@all_notifications.where.not(sms_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"])))
+    # If no notifications were found, return an empty array, else return serialized notifications
+    if @allowed_notifications == []
+      []
+    else
+      WorkQueue::NotificationSerializer.new(@allowed_notifications).serializable_hash[:data]
+    end
+  end
+
+  # Notification report pdf template only accepts the Appeal or Legacy Appeal object
+  # Finds appeal object using appeals id passed through url params
+  def get_appeal_object(appeals_id)
+    type = Notification.find_by(appeals_id: appeals_id)&.appeals_type
+    if type == "LegacyAppeal"
+      LegacyAppeal.find_by(vacols_id: appeals_id)
+    elsif type == "Appeal"
+      Appeal.find_by(uuid: appeals_id)
+    elsif !type.nil?
+      nil
+    end
+  end
 end
+

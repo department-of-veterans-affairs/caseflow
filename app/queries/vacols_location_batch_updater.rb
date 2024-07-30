@@ -7,6 +7,7 @@ class VacolsLocationBatchUpdater
     @location = location
     @vacols_ids = vacols_ids
     @user_id = (user_id.presence || "DSUSER").upcase
+    @update_time = VacolsHelper.local_time_with_utc_timezone
   end
 
   # rubocop:disable Metrics/MethodLength
@@ -17,18 +18,18 @@ class VacolsLocationBatchUpdater
                           service: :vacols,
                           name: "batch_update_vacols_location") do
       conn.transaction do
-        conn.execute(sanitize_sql_array([<<-SQL, location, vacols_ids]))
+        conn.execute(sanitize_sql_array([<<-SQL, @update_time, location, @update_time, vacols_ids]))
           update BRIEFF
-          set BFDLOCIN = SYSDATE,
+          set BFDLOCIN = ?,
               BFCURLOC = ?,
-              BFDLOOUT = SYSDATE,
+              BFDLOOUT = ?,
               BFORGTIC = NULL
           where BFKEY in (?)
         SQL
 
-        conn.execute(sanitize_sql_array([<<-SQL, user_id, vacols_ids]))
+        conn.execute(sanitize_sql_array([<<-SQL, @update_time, user_id, vacols_ids]))
           update PRIORLOC
-          set LOCDIN = SYSDATE,
+          set LOCDIN = ?,
               LOCSTRCV = ?,
               LOCEXCEP = 'Y'
           where LOCKEY in (?) and LOCDIN is null
@@ -37,7 +38,9 @@ class VacolsLocationBatchUpdater
         insert_strs = vacols_ids.map do |vacols_id|
           sanitize_sql_array(
             [
-              "into PRIORLOC (LOCDOUT, LOCDTO, LOCSTTO, LOCSTOUT, LOCKEY) values (SYSDATE, SYSDATE, ?, ?, ?)",
+              "into PRIORLOC (LOCDOUT, LOCDTO, LOCSTTO, LOCSTOUT, LOCKEY) values (?, ?, ?, ?, ?)",
+              @update_time,
+              @update_time,
               location,
               user_id,
               vacols_id

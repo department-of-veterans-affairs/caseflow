@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :claimant do
     sequence(:decision_review_id)
-    sequence(:participant_id)
+    participant_id { generate :participant_id }
     association :decision_review, factory: :appeal
 
     initialize_with do

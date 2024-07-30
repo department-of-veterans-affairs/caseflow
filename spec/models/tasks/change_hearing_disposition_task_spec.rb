@@ -39,5 +39,14 @@ describe ChangeHearingDispositionTask, :postgres do
         expect(subject.available_actions_unwrapper(hearings_management_user).count).to eq 0
       end
     end
+
+    context "the appeal already has a ChangeHearingDispositionTask associated with it" do
+      before do
+        ChangeHearingDispositionTask.create!(**task_params)
+      end
+      it "raises an error" do
+        expect { subject }.to raise_error(Caseflow::Error::DuplicateOrgTask)
+      end
+    end
   end
 end

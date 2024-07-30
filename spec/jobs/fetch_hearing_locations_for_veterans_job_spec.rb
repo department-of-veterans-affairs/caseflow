@@ -95,7 +95,7 @@ describe FetchHearingLocationsForVeteransJob do
         it "returns only appeals with scheduled hearings tasks without an admin action or who are in location 57" do
           job.create_schedule_hearing_tasks
           expect(job.appeals.pluck(:id)).to contain_exactly(
-            legacy_appeal.id, legacy_appeal_2.id, appeal.id, LegacyAppeal.last.id
+            legacy_appeal.id, legacy_appeal_2.id, appeal.id
           )
         end
       end

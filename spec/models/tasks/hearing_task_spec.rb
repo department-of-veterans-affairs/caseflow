@@ -126,7 +126,7 @@ describe HearingTask, :postgres do
     end
 
     context "ama appeal" do
-      let(:appeal) { create(:appeal, veteran_file_number: veteran.file_number) }
+      let(:appeal) { create(:appeal, veteran: veteran) }
       let!(:hearing) { create(:hearing, appeal: appeal, disposition: nil) }
       let!(:vso) do
         Vso.create(

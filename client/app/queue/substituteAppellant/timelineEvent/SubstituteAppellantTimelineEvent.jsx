@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { GreenCheckmark } from 'app/components/RenderFunctions';
+import { GreenCheckmarkIcon } from 'app/components/icons/GreenCheckmarkIcon';
 import { grayLineTimelineStyling } from 'app/queue/components/TaskRows';
 import format from 'date-fns/format';
 
@@ -20,7 +20,7 @@ export const SubstituteAppellantTimelineEvent = ({ timelineEvent }) => {
         <div>{formattedSubstutionDate}</div>
       </td>
       <td className="taskInfoWithIconContainer taskInfoWithIconTimelineContainer">
-        <GreenCheckmark />
+        <GreenCheckmarkIcon />
         <div {...grayLineTimelineStyling} />
       </td>
       <td className="taskContainerStyling taskInformationTimelineContainerStyling">

@@ -65,6 +65,10 @@ class ApplicationController < ApplicationBaseController
 
   def current_user
     @current_user ||= begin
+      if User.first_time_logging_in?(session)
+        flash.now[:show_vha_org_join_info] = true
+      end
+
       user = User.from_session(session)
       RequestStore.store[:current_user] = user
       user

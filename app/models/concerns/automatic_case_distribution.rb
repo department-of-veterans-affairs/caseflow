@@ -1,21 +1,12 @@
 # frozen_string_literal: true
 
 # rubocop:disable Metrics/ModuleLength
+# This is Proportions Algorithm
 module AutomaticCaseDistribution
   extend ActiveSupport::Concern
-
-  delegate :dockets,
-           :docket_proportions,
-           :priority_count,
-           :direct_review_due_count,
-           :total_batch_size,
-           to: :docket_coordinator
+  include CaseDistribution
 
   private
-
-  def docket_coordinator
-    @docket_coordinator ||= DocketCoordinator.new
-  end
 
   def priority_push_distribution(limit = nil)
     @appeals = []
@@ -88,13 +79,6 @@ module AutomaticCaseDistribution
     end
   end
 
-  def collect_appeals
-    appeals = yield
-    @rem -= appeals.count
-    @appeals += appeals
-    appeals
-  end
-
   def distribute_limited_priority_appeals_from_all_dockets(limit, style: "push")
     num_oldest_priority_appeals_by_docket(limit).each do |docket, number_of_appeals_to_distribute|
       collect_appeals do
@@ -114,7 +98,8 @@ module AutomaticCaseDistribution
       direct_review_proportion: docket_proportions[:direct_review],
       evidence_submission_proportion: docket_proportions[:evidence_submission],
       hearing_proportion: docket_proportions[:hearing],
-      nonpriority_iterations: @nonpriority_iterations
+      nonpriority_iterations: @nonpriority_iterations,
+      algorithm: "proportions"
     }
   end
 
@@ -143,11 +128,6 @@ module AutomaticCaseDistribution
         end
         @remaining_docket_proportions[docket] = 0 if appeals.count < number_of_appeals_to_distribute
       end
-  end
-
-  def priority_target
-    proportion = [priority_count.to_f / total_batch_size, 1.0].reject(&:nan?).min
-    (proportion * batch_size).ceil
   end
 
   def docket_margin_net_of_priority

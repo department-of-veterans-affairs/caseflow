@@ -211,6 +211,7 @@ exports[`TextareaField Displays error message when present 1`] = `
     </label>
     <span
       className="usa-input-error-message"
+      tabIndex={0}
     >
       Something went wrong
     </span>

@@ -50,8 +50,14 @@ FactoryBot.define do
 
     hearing_day_id { case_hearing.vdkey }
     vacols_id { case_hearing.hearing_pkseq }
-    created_by { create(:user) }
-    updated_by { create(:user) }
+    created_by do
+      User.find_by_css_id("ID_FACT_LEGACYHEARING") ||
+        create(:user, css_id: "ID_FACT_LEGACYHEARING", full_name: "Joe LegacyHearingFactory User")
+    end
+    updated_by do
+      User.find_by_css_id("ID_FACT_LEGACYHEARING") ||
+        create(:user, css_id: "ID_FACT_LEGACYHEARING", full_name: "Joe LegacyHearingFactory User")
+    end
     virtual_hearing { nil }
 
     trait :with_tasks do

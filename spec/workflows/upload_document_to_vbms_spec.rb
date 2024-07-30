@@ -13,7 +13,7 @@ describe UploadDocumentToVbms, :postgres do
     create(
       :vbms_uploaded_document,
       uploaded_to_vbms_at: uploaded_to_vbms_at,
-      appeal: appeal,
+      veteran_file_number: appeal.veteran_file_number,
       processed_at: processed_at,
       file: "JVBERi0xLjMNCiXi48/TDQoNCjEgMCBvYmoNCjw8DQovVHlwZSAvQ2F0YW"
     )
@@ -24,7 +24,7 @@ describe UploadDocumentToVbms, :postgres do
 
   describe "#pdf_location" do
     it "fetches file from s3 and returns temporary location" do
-      pdf_name = "appeal-#{document.appeal.external_id}-doc-#{document.id}.pdf"
+      pdf_name = "veteran-#{document.veteran_file_number}-doc-#{document.id}.pdf"
       expect(Caseflow::Fakes::S3Service).to receive(:fetch_file)
       expect(doc_to_upload.pdf_location)
         .to eq File.join(Rails.root, "tmp", "pdfs", pdf_name)
@@ -49,11 +49,23 @@ describe UploadDocumentToVbms, :postgres do
     end
   end
 
+  describe "#s3_location" do
+    context "fetches a bucket name based on document type" do
+      it "changes based on specific document types" do
+        document.document_type = "BVA Case Notifications"
+        expect(doc_to_upload.send(:s3_location)).to include("notification-reports")
+      end
+      it "defaults to idt-uploaded-documents" do
+        expect(doc_to_upload.send(:s3_location)).to include("idt-uploaded-documents")
+      end
+    end
+  end
+
   context "#call" do
     subject { doc_to_upload.call }
 
     before do
-      allow(VBMSService).to receive(:upload_document_to_vbms).and_call_original
+      allow(VBMSService).to receive(:upload_document_to_vbms_veteran).and_call_original
     end
 
     context "the document has already been uploaded" do
@@ -61,7 +73,7 @@ describe UploadDocumentToVbms, :postgres do
 
       it "does not reupload the document" do
         subject
-        expect(VBMSService).to_not have_received(:upload_document_to_vbms)
+        expect(VBMSService).to_not have_received(:upload_document_to_vbms_veteran)
       end
     end
 
@@ -69,10 +81,9 @@ describe UploadDocumentToVbms, :postgres do
       it "uploads document" do
         subject
 
-        expect(VBMSService).to have_received(:upload_document_to_vbms).with(
-          document.appeal, doc_to_upload
+        expect(VBMSService).to have_received(:upload_document_to_vbms_veteran).with(
+          document.veteran_file_number, doc_to_upload
         )
-
         expect(document.uploaded_to_vbms_at).to eq(Time.zone.now)
         expect(document.processed_at).to_not be_nil
         expect(document.submitted_at).to eq(Time.zone.now)
@@ -81,7 +92,7 @@ describe UploadDocumentToVbms, :postgres do
 
     context "when there was an upload error" do
       before do
-        allow(VBMSService).to receive(:upload_document_to_vbms).and_raise("Some VBMS error")
+        allow(VBMSService).to receive(:upload_document_to_vbms_veteran).and_raise("Some VBMS error")
       end
 
       it "saves document as attempted but not processed and saves the error" do
@@ -101,7 +112,7 @@ describe UploadDocumentToVbms, :postgres do
 
         subject
 
-        expect(VBMSService).to_not have_received(:upload_document_to_vbms)
+        expect(VBMSService).to_not have_received(:upload_document_to_vbms_veteran)
         expect(document.submitted_at).to be_nil
         expect(document.processed_at).to_not be_nil
       end
@@ -110,7 +121,7 @@ describe UploadDocumentToVbms, :postgres do
 
   context "#cache_file" do
     it "stores the file in S3" do
-      expected_path = "idt-uploaded-documents/appeal-#{document.appeal.external_id}-doc-#{document.id}.pdf"
+      expected_path = "idt-uploaded-documents/veteran-#{document.veteran_file_number}-doc-#{document.id}.pdf"
 
       expect(S3Service).to receive(:store_file).with(expected_path, /PDF/)
 

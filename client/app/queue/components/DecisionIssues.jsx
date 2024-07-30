@@ -4,7 +4,7 @@ import { css } from 'glamor';
 import { COLORS } from '../../constants/AppConstants';
 import Button from '../../components/Button';
 import ISSUE_DISPOSITIONS_BY_ID from '../../../constants/ISSUE_DISPOSITIONS_BY_ID';
-import { LinkSymbol } from '../../components/RenderFunctions';
+import { LinkIcon } from '../../components/icons/LinkIcon';
 import HearingWorksheetAmaIssues from '../../hearings/components/hearingWorksheet/HearingWorksheetAmaIssues';
 
 const TEXT_INDENTATION = '10px';
@@ -108,7 +108,7 @@ export default class DecisionIssues extends React.PureComponent {
               </div>
               {linkedDecisionIssue && (
                 <div {...noteDiv} {...verticalSpaceDiv}>
-                  <LinkSymbol /> Added to {decisionIssue.request_issue_ids.length} issues
+                  <LinkIcon /> Added to {decisionIssue.request_issue_ids.length} issues
                 </div>
               )}
             </div>

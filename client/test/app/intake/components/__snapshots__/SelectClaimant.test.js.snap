@@ -127,7 +127,7 @@ exports[`SelectClaimant with formType 'appeal' nonVeteranClaimants enabled rende
           <strong>
             <span>
               <p
-                id="claimantLabel"
+                id="nonListedClaimantLabel"
                 style="margin-top: 8.95px; margin-bottom: -25px;"
               >
                 Please select the claimant listed on the form. If the claimant is not listed, please select "Claimant not listed" and add their information in the next step.

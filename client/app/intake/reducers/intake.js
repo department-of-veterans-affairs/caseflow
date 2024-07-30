@@ -17,9 +17,6 @@ const updateFromServerIntake = (state, serverIntake) => {
     editIssuesUrl: {
       $set: serverIntake.editIssuesUrl
     },
-    unreadMessages: {
-      $set: serverIntake.unread_messages
-    },
     veteran: {
       name: {
         $set: serverIntake.veteran_name
@@ -33,7 +30,7 @@ const updateFromServerIntake = (state, serverIntake) => {
       isDeceased: {
         $set: serverIntake.veteran_is_deceased
       }
-    }
+    },
   });
 };
 
@@ -57,7 +54,6 @@ export const mapDataToInitialIntake = (data = { serverIntake: {} }) => (
       pids: null
     },
     cancelModalVisible: false,
-    unreadMessages: false,
     veteran: {
       name: '',
       formName: '',
@@ -67,7 +63,8 @@ export const mapDataToInitialIntake = (data = { serverIntake: {} }) => (
     requestStatus: {
       fileNumberSearch: REQUEST_STATE.NOT_STARTED,
       cancel: REQUEST_STATE.NOT_STARTED
-    }
+    },
+    splitAppeal: null
   }, data.serverIntake)
 );
 
@@ -217,6 +214,18 @@ export const intakeReducer = (state = mapDataToInitialIntake(), action) => {
   case ACTIONS.TOGGLE_CANCEL_MODAL:
     return update(state, {
       $toggle: ['cancelModalVisible']
+    });
+  case ACTIONS.SPLIT_APPEAL_SUCCESS:
+    return update(state, {
+      splitAppeal: {
+        $set: REQUEST_STATE.SUCCEEDED
+      }
+    });
+  case ACTIONS.SPLIT_APPEAL_FAILURE:
+    return update(state, {
+      splitAppeal: {
+        $set: REQUEST_STATE.FAILED
+      }
     });
   default:
     return state;

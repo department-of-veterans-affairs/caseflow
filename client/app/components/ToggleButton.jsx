@@ -19,7 +19,8 @@ export default class ToggleButton extends React.Component {
       return React.cloneElement(child, {
         classNames: active === child.props.name ? ['usa-button'] : ['usa-button-secondary'],
         onClick: this.handleClick(child.props.name),
-        role: 'tab'
+        role: child.props.role ?? 'tab',
+        ariaLabel: child.props.name
       }
       );
     });

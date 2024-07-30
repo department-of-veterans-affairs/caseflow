@@ -21,6 +21,10 @@ const ValidatorsUtil = {
     return !dateRegex.test(value);
   },
 
+  futureDate(value) {
+    return value && Date.parse(value) > new Date();
+  },
+
   validSSN: (input) => input.match(/\d{9}/) || input.match(/\d{3}-\d{2}-\d{4}$/),
   validFileNum: (input) => input.match(/\d{7,8}$/),
   validDocketNum: (input) => input.match(/\d{6}-{1}\d+$/),

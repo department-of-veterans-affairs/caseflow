@@ -14,13 +14,17 @@ describe ClaimReview, :postgres do
   let(:veteran_participant_id) { "123456" }
   let(:veteran_date_of_death) { nil }
   let!(:veteran) do
-    Generators::Veteran.build(
+    vet = Generators::Veteran.build(
       file_number: veteran_file_number,
       first_name: "James",
       last_name: "Bond",
       participant_id: veteran_participant_id,
       date_of_death: veteran_date_of_death
     )
+
+    vet.save!
+
+    vet
   end
 
   let(:receipt_date) { ama_test_start_date + 1 }

@@ -7,6 +7,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 // Local Dependencies
 import { recordSearch, fetchDocuments } from 'utils/reader';
 import { documentListScreen } from 'store/reader/selectors';
+import { documentListScreenMemoized } from 'store/reader/selectorsMemoized';
 import {
   setSearch,
   clearSearch as clear,
@@ -35,7 +36,8 @@ import { selectComment } from 'store/reader/annotationLayer';
 
 const DocumentList = (props) => {
   // Get the Document List state
-  const state = useSelector(documentListScreen);
+  const state = props.featureToggles.readerSelectorsMemoized ?
+  useSelector(documentListScreenMemoized) : useSelector(documentListScreen);
 
   // Create the Dispatcher
   const dispatch = useDispatch();

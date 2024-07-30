@@ -58,10 +58,12 @@ class ChangeHearingRequestTypeTask < Task
 
   def update_from_params(params, user)
     payload_values = params.delete(:business_payloads)&.dig(:values)
-
     if payload_values&.[](:changed_hearing_request_type).present?
       update_appeal_and_self(payload_values, params)
-
+      # check if email recipients need to be created/updated
+      if payload_values.key?(:email_recipients)
+        create_or_update_hearing_email_recipients(payload_values)
+      end
       [self]
     elsif params[:status] == Constants.TASK_STATUSES.cancelled
       cancel_self_and_hearing_task_parents_without_callbacks
@@ -100,6 +102,47 @@ class ChangeHearingRequestTypeTask < Task
     end
 
     perform_later_or_now(Hearings::GeomatchAndCacheAppealJob, appeal_id: appeal.id, appeal_type: appeal.class.name)
+  end
+
+  def create_or_update_appellant_email_recipients(payload_values)
+    app_recipient = appeal.email_recipients.find_by(type: "AppellantHearingEmailRecipient")
+    # create HER object for appellant
+    if app_recipient.blank?
+      AppellantHearingEmailRecipient.create!(
+        email_address: payload_values[:email_recipients][:appellant_email],
+        timezone: payload_values[:email_recipients][:appellant_tz],
+        appeal: appeal
+      )
+    else
+      # update recipient if it already exists in the appeal
+      app_recipient.update!(
+        email_address: payload_values[:email_recipients][:appellant_email],
+        timezone: payload_values[:email_recipients][:appellant_tz]
+      )
+    end
+  end
+
+  def create_or_update_representative_email_recipients(payload_values)
+    rep_recipient = appeal.email_recipients.find_by(type: "RepresentativeHearingEmailRecipient")
+    if rep_recipient.blank?
+      # create HER object for representative
+      RepresentativeHearingEmailRecipient.create!(
+        email_address: payload_values[:email_recipients][:representative_email],
+        timezone: payload_values[:email_recipients][:representative_tz],
+        appeal: appeal
+      )
+    else
+      # update recipient if it already exists in the appeal
+      rep_recipient.update!(
+        email_address: payload_values[:email_recipients][:representative_email],
+        timezone: payload_values[:email_recipients][:representative_tz]
+      )
+    end
+  end
+
+  def create_or_update_hearing_email_recipients(payload_values)
+    create_or_update_appellant_email_recipients(payload_values)
+    create_or_update_representative_email_recipients(payload_values)
   end
 
   def set_assignee

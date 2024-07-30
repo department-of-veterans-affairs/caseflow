@@ -16,11 +16,13 @@ import commonComponentsReducer from '../components/common/reducers';
 import mtvReducer from './mtv/reducers';
 import docketSwitchReducer from './docketSwitch/docketSwitchSlice';
 import substituteAppellantReducer from './substituteAppellant/substituteAppellant.slice';
+import editCavRemandReducer from './cavc/editCavcRemand.slice';
 
 // TODO: Remove this when we move entirely over to the appeals search.
 import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
 
 import editClaimantReducer from './editAppellantInformation/editAppellantInformationSlice';
+import cavcDashboardReducer from './cavcDashboard/cavcDashboardReducer';
 
 export const initialState = {
   judges: {},
@@ -801,7 +803,9 @@ const rootReducer = combineReducers({
   docketSwitch: docketSwitchReducer,
   mtv: mtvReducer,
   substituteAppellant: substituteAppellantReducer,
-  editClaimantReducer
+  cavcRemand: editCavRemandReducer,
+  editClaimantReducer,
+  cavcDashboard: cavcDashboardReducer
 });
 
 export default timeFunction(

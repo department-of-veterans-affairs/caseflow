@@ -46,7 +46,8 @@ const propTypes = {
   unmountOnExit: PropTypes.bool,
 
   onChange: PropTypes.func,
-  tabPanelTabIndex: PropTypes.number
+  tabPanelTabIndex: PropTypes.number,
+  tabPanelClassName: PropTypes.string
 };
 
 export const Tabs = ({
@@ -59,7 +60,8 @@ export const Tabs = ({
   unmountOnExit = false,
   keyNav = true,
   onChange,
-  tabPanelTabIndex
+  tabPanelTabIndex,
+  tabPanelClassName
 }) => {
   const renderTabs = (child) => {
     const { title, value, disabled = false } = child.props;
@@ -75,7 +77,13 @@ export const Tabs = ({
     const { value, children: contents } = child.props;
 
     return (
-      <Tab.Panel value={value} key={value} fullWidth={fullWidth} tabPanelTabIndex={tabPanelTabIndex}>
+      <Tab.Panel
+        value={value}
+        key={value}
+        fullWidth={fullWidth}
+        tabPanelTabIndex={tabPanelTabIndex}
+        className={tabPanelClassName}
+      >
         {contents}
       </Tab.Panel>
     );

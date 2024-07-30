@@ -3,7 +3,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 // Local Dependencies
-import { ChevronDown, ChevronUp } from 'app/components/RenderFunctions';
+import { ChevronDownIcon } from 'app/components/icons/ChevronDownIcon';
+import { ChevronUpIcon } from 'app/components/icons/ChevronUpIcon';
 import Button from 'app/components/Button';
 
 /**
@@ -26,7 +27,7 @@ export const CommentIndicator = ({ comments, toggleComment, doc }) => {
         onClick={() => toggleComment(doc.id, doc.listComments)}
       >
         {commentsCount}
-        {doc.listComments ? <ChevronUp /> : <ChevronDown />}
+        {doc.listComments ? <ChevronUpIcon /> : <ChevronDownIcon />}
       </Button>
       }
     </span>
