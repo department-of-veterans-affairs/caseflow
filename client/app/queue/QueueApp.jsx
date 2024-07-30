@@ -18,6 +18,7 @@ import {
   setCanEditCavcDashboards,
   setCanViewCavcDashboards,
   setFeatureToggles,
+  setMeetingType,
   setUserId,
   setUserRole,
   setUserCssId,
@@ -123,6 +124,7 @@ class QueueApp extends React.PureComponent {
     this.props.setCanEditAod(this.props.canEditAod);
     this.props.setCanEditNodDate(this.props.userCanViewEditNodDate);
     this.props.setUserIsCobAdmin(this.props.userIsCobAdmin);
+    this.props.setMeetingType(this.props.conferenceProvider);
     this.props.setCanEditCavcRemands(this.props.canEditCavcRemands);
     this.props.setCanEditCavcDashboards(this.props.canEditCavcDashboards);
     this.props.setCanViewCavcDashboards(this.props.canViewCavcDashboards);
@@ -616,6 +618,7 @@ class QueueApp extends React.PureComponent {
     <OrganizationUsers {...props.match.params}
       organizationPermissions={this.props.organizationPermissions}
       orgnizationUserPermissions={this.props.userPermissions}
+      conferenceSelectionVisibility = {this.props.featureToggles.conference_selection_visibility}
     />
   );
 
@@ -1026,7 +1029,8 @@ class QueueApp extends React.PureComponent {
               render={this.routedAssignToUser}
             />
             <Route
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.value
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.value
                 }`}
               render={this.routedAssignToSingleTeam}
             />
@@ -1239,7 +1243,8 @@ class QueueApp extends React.PureComponent {
             />
             <PageRoute
               exact
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.MARK_COMPLETE.value
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.MARK_COMPLETE.value
                 }`}
               title={`${PAGE_TITLES.MARK_TASK_COMPLETE} | Caseflow`}
               render={this.routedCompleteTaskModal}
@@ -1569,6 +1574,8 @@ QueueApp.propTypes = {
   canEditCavcDashboards: PropTypes.bool,
   canViewCavcDashboards: PropTypes.bool,
   userIsCobAdmin: PropTypes.bool,
+  conferenceProvider: PropTypes.string,
+  setMeetingType: PropTypes.string
   correspondence: PropTypes.object,
   correspondenceTypes: PropTypes.array,
   hasEfolderFailedTask: PropTypes.bool,
@@ -1590,6 +1597,7 @@ const mapDispatchToProps = (dispatch) =>
       setCanEditAod,
       setCanEditNodDate,
       setUserIsCobAdmin,
+      setMeetingType,
       setCanEditCavcRemands,
       setCanEditCavcDashboards,
       setCanViewCavcDashboards,
