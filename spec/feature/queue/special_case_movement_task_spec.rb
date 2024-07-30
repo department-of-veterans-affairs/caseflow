@@ -60,7 +60,7 @@ RSpec.feature "SpecialCaseMovementTask", :all_dbs do
       let(:appeal) { create(:appeal, :with_post_intake_tasks, :hearing_docket, veteran: veteran) }
       let(:dist_task) { appeal.tasks.find_by(type: DistributionTask.name) }
       let!(:blocking_mail_task) do
-        DeathCertificateMailTask.create!(appeal: appeal, parent: dist_task, assigned_to: MailTeam.singleton)
+        DeathCertificateMailTask.create!(appeal: appeal, parent: dist_task, assigned_to: InboundOpsTeam.singleton)
       end
       let!(:blocking_mail_child_task) do
         DeathCertificateMailTask.create!(appeal: appeal, parent: blocking_mail_task, assigned_to: Colocated.singleton)
@@ -69,7 +69,7 @@ RSpec.feature "SpecialCaseMovementTask", :all_dbs do
         DeathCertificateMailTask.create!(appeal: appeal, parent: blocking_mail_child_task, assigned_to: colocated_user)
       end
       let!(:non_blocking_mail_task) do
-        AodMotionMailTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: MailTeam.singleton)
+        AodMotionMailTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: InboundOpsTeam.singleton)
       end
 
       let(:bva_admin) { create(:user, email: "admin@va.gov") }
