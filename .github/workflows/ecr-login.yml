@@ -45,6 +45,6 @@ jobs:
       credentials:
         username: AWS
         # Here is the password retrieved as a secret that is set by the `login` job
-        password: ${{ secrets.ECR_PASSWORD }}
+        password: ${{ secrets.ECR_PASSWORD_2 }}
     steps:
       - run: echo "Inside a container pulled from ECR!!"
