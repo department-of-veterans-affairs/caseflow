@@ -511,6 +511,19 @@ FactoryBot.define do
         assigned_to { VhaBusinessLine.singleton }
       end
 
+      factory :remand_vha_task, class: DecisionReviewTask do
+        appeal do
+          create(
+            :remand,
+            :with_vha_issue,
+            benefit_type: "vha",
+            claimant_type: :veteran_claimant
+          )
+        end
+        assigned_by { nil }
+        assigned_to { VhaBusinessLine.singleton }
+      end
+
       factory :supplemental_claim_vha_task_incomplete, class: DecisionReviewTask do
         appeal do
           create(
