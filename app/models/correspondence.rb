@@ -48,8 +48,8 @@ class Correspondence < CaseflowRecord
                        EvidenceOrArgumentMailTask.name, VacolsUpdatedMailTask.name])
   end
 
-  def review_package_task
-    ReviewPackageTask.find_by(appeal_id: id, appeal_type: type)
+  def open_review_package_task
+    ReviewPackageTask.open.find_by(appeal_id: id, appeal_type: type)
   end
 
   def open_intake_task
@@ -58,6 +58,10 @@ class Correspondence < CaseflowRecord
 
   def root_task
     CorrespondenceRootTask.find_by(appeal_id: id, appeal_type: type)
+  end
+
+  def package_action_tasks
+    CorrespondenceTask.where(appeal_id: id)&.package_action_tasks
   end
 
   def cancel_task_tree_for_appeal_intake
@@ -72,7 +76,9 @@ class Correspondence < CaseflowRecord
     veteran.name
   end
 
+  # statuses ordered to reduce query times
   def status
+    return Constants.CORRESPONDENCE_STATUSES.unassigned if unassigned?
     # Closed
     return "Completed" if root_task.completed? || tasks.open.none?
 
@@ -85,5 +91,32 @@ class Correspondence < CaseflowRecord
   def self.prior_mail(veteran_id, uuid)
     includes([:veteran, :correspondence_type])
       .where(veteran_id: veteran_id).where.not(uuid: uuid)
+  end
+
+  # private
+
+  # logic for handling correspondence statuses
+  # unassigned if
+  def unassigned?
+    open_review_package_task&.status == Constants.TASK_STATUSES.unassigned
+  end
+
+  # assigned if open (assigned or on hold) review package task or intake task
+  def assigned?
+    !unassigned? && (open_review_package_task.nil? || !open_intake_task.nil?)
+  end
+
+  # action required if the correspondence has a package action task with a status of 'assigned'
+  def action_required?
+    package_action_tasks&.any? { |task| task&.assigned? }
+  end
+
+  def pending?
+
+  end
+
+  # completed if root task is closed or no open children tasks
+  def completed?
+    root_task.completed? || root_task.children.open.blank?
   end
 end
