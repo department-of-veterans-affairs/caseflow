@@ -41,7 +41,7 @@ jobs:
         image: 065403089830.dkr.ecr.us-gov-west-1.amazonaws.com/facols:latest
         credentials:
           username: AWS
-          password: ${{ secrets.ECR_PASSWORD_2 }}
+          password: ${{ secrets.VAEC_ECR_PASSWORD }}
         ports:
           - 1521:1521
 
@@ -56,7 +56,7 @@ jobs:
       options: --privileged # Necessary for Rspec to run with our configuration within GHA
       credentials:
         username: AWS
-        password: ${{ secrets.ECR_PASSWORD_2 }}
+        password: ${{ secrets.VAEC_ECR_PASSWORD }}
 
       env:
         DBUS_SESSION_BUS_ADDRESS: /dev/null
@@ -269,7 +269,7 @@ jobs:
       image: 065403089830.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
       credentials:
         username: AWS
-        password: ${{ secrets.ECR_PASSWORD_2 }}
+        password: ${{ secrets.VAEC_ECR_PASSWORD }}
       env:
         DBUS_SESSION_BUS_ADDRESS: /dev/null
         RAILS_ENV: test
@@ -331,7 +331,7 @@ jobs:
       image: 065403089830.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
       credentials:
         username: AWS
-        password: ${{ secrets.ECR_PASSWORD_2 }}
+        password: ${{ secrets.VAEC_ECR_PASSWORD }}
 
     steps:
       - name: Checkout
