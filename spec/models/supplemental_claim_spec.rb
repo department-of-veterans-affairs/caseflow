@@ -25,6 +25,17 @@ describe SupplementalClaim, :postgres do
     )
   end
 
+  let(:remand) do
+    Remand.new(
+      veteran_file_number: veteran_file_number,
+      receipt_date: receipt_date,
+      benefit_type: benefit_type,
+      legacy_opt_in_approved: legacy_opt_in_approved,
+      veteran_is_not_claimant: veteran_is_not_claimant,
+      decision_review_remanded: decision_review_remanded
+    )
+  end
+
   let!(:intake) do
     create(:intake, user: current_user, detail: supplemental_claim, veteran_file_number: veteran_file_number)
   end
@@ -46,6 +57,8 @@ describe SupplementalClaim, :postgres do
 
         it "is valid" do
           is_expected.to be true
+          expect(supplemental_claim.type).to eq(SupplementalClaim.name)
+          expect(remand.type).to eq(Remand.name)
         end
 
         context "invalid Veteran" do
