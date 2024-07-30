@@ -62,26 +62,7 @@ class ExternalApi::VBMSService
   end
 
   def self.update_document_in_vbms(appeal, uploadable_document)
-    if FeatureToggle.enabled?(:use_ce_api)
-      file_update_payload = ClaimEvidenceFileUpdatePayload.new(
-        date_va_received_document: Time.current.strftime("%Y-%m-%d"),
-        document_type_id: uploadable_document.document_type_id,
-        file_content_path: uploadable_document.pdf_location,
-        file_content_source: uploadable_document.source
-      )
-
-      file_uuid = uploadable_document.document_series_reference_id.delete("{}")
-
-      VeteranFileUpdater.update_veteran_file(
-        veteran_file_number: appeal.veteran_file_number,
-        file_uuid: file_uuid,
-        file_update_payload: file_update_payload
-      )
-    else
-      @vbms_client ||= init_vbms_client
-      response = initialize_update(appeal, uploadable_document)
-      update_document(appeal.veteran_file_number, response.updated_document_token, uploadable_document.pdf_location)
-    end
+    update_document(appeal, uploadable_document)
   end
 
   def self.upload_document_to_vbms(appeal, uploadable_document)
@@ -148,13 +129,35 @@ class ExternalApi::VBMSService
     send_and_log_request(appeal.veteran_file_number, request)
   end
 
-  def self.update_document(vbms_id, upload_token, filepath)
-    request = VBMS::Requests::UpdateDocument.new(
-      upload_token: upload_token,
-      filepath: filepath
-    )
-    send_and_log_request(vbms_id, request)
+  # rubocop:disable Metrics/MethodLength
+  def self.update_document(appeal, uploadable_document)
+    if FeatureToggle.enabled?(:use_ce_api)
+      file_update_payload = ClaimEvidenceFileUpdatePayload.new(
+        date_va_received_document: Time.current.strftime("%Y-%m-%d"),
+        document_type_id: uploadable_document.document_type_id,
+        file_content_path: uploadable_document.pdf_location,
+        file_content_source: uploadable_document.source,
+        subject: uploadable_document.document_subject.presence || uploadable_document.document_type
+      )
+
+      file_uuid = uploadable_document.document_series_reference_id.delete("{}")
+
+      VeteranFileUpdater.update_veteran_file(
+        veteran_file_number: appeal.veteran_file_number,
+        file_uuid: file_uuid,
+        file_update_payload: file_update_payload
+      )
+    else
+      @vbms_client ||= init_vbms_client
+      response = initialize_update(appeal, uploadable_document)
+      request = VBMS::Requests::UpdateDocument.new(
+        upload_token: response.updated_document_token,
+        filepath: uploadable_document.pdf_location
+      )
+      send_and_log_request(appeal.veteran_file_number, request)
+    end
   end
+  # rubocop:enable Metrics/MethodLength
 
   def self.clean_document(location)
     File.delete(location)
