@@ -79,6 +79,9 @@ RUN source $NVM_DIR/nvm.sh \
 ENV NODE_PATH $NVM_INSTALL_PATH/lib/node_modules
 ENV PATH $NVM_INSTALL_PATH/bin:$PATH
 
+# Set NODE_OPTIONS to use legacy OpenSSL provider
+ENV NODE_OPTIONS=--openssl-legacy-provider
+
 RUN apt install -y ${CASEFLOW} &&  \
     curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
