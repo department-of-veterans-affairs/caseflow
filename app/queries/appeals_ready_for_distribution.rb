@@ -12,6 +12,7 @@ class AppealsReadyForDistribution
     target_distro_date: "Target Distro Date",
     days_before_goal_date: "Days Before Goal Date",
     hearing_judge: "Hearing Judge",
+    original_judge: "Original Deciding Judge",
     veteran_file_number: "Veteran File number",
     veteran_name: "Veteran",
     affinity_start_date: "Affinity Start Date"
@@ -53,9 +54,7 @@ class AppealsReadyForDistribution
 
   def self.legacy_rows(appeals, sym)
     appeals.map do |appeal|
-      veteran_name = FullName.new(appeal["snamef"], nil, appeal["snamel"]).to_s
       vlj_name = FullName.new(appeal["vlj_namef"], nil, appeal["vlj_namel"]).to_s
-      hearing_judge = vlj_name.empty? ? nil : vlj_name
       appeal_affinity = AppealAffinity.find_by(case_id: appeal["bfkey"], case_type: "VACOLS::Case")
 
       {
@@ -67,9 +66,10 @@ class AppealsReadyForDistribution
         ready_for_distribution_at: appeal["bfdloout"],
         target_distro_date: "N/A",
         days_before_goal_date: "N/A",
-        hearing_judge: hearing_judge,
+        hearing_judge: vlj_name.empty? ? nil : vlj_name,
+        original_judge: appeal["prev_deciding_judge"].nil? ? nil : legacy_original_deciding_judge(appeal),
         veteran_file_number: appeal["ssn"] || appeal["bfcorlid"],
-        veteran_name: veteran_name,
+        veteran_name: FullName.new(appeal["snamef"], nil, appeal["snamel"]).to_s,
         affinity_start_date: appeal_affinity&.affinity_start_date
       }
     end
@@ -92,6 +92,7 @@ class AppealsReadyForDistribution
         target_distro_date: priority_appeal ? "N/A" : target_distro_date(appeal.receipt_date, docket),
         days_before_goal_date: priority_appeal ? "N/A" : days_before_goal_date(appeal.receipt_date, docket),
         hearing_judge: hearing_judge,
+        original_judge: appeal.cavc? ? ama_cavc_original_deciding_judge(appeal) : nil,
         veteran_file_number: appeal.veteran_file_number,
         veteran_name: appeal.veteran&.name.to_s,
         affinity_start_date: appeal.appeal_affinity&.affinity_start_date
@@ -127,5 +128,17 @@ class AppealsReadyForDistribution
     return nil if target_date.nil?
 
     target_date - docket.start_distribution_prior_to_goal.try(:value).to_i.days
+  end
+
+  def self.ama_cavc_original_deciding_judge(appeal)
+    source_appeal_id = CavcRemand.find_by(remand_appeal: appeal).source_appeal_id
+
+    Task.find_by(appeal_id: source_appeal_id, appeal_type: Appeal.name, type: JudgeDecisionReviewTask.name)
+      &.assigned_to&.css_id
+  end
+
+  def self.legacy_original_deciding_judge(appeal)
+    staff = VACOLS::Staff.find_by(sattyid: appeal["prev_deciding_judge"])
+    staff&.sdomainid || appeal["prev_deciding_judge"]
   end
 end

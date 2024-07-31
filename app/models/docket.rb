@@ -190,7 +190,7 @@ class Docket
   end
 
   def adjust_for_affinity(scope, judge)
-    scope.genpop.or(scope.non_genpop_for_judge(judge))
+    scope.genpop_with_case_distribution_lever.or(scope.non_genpop_with_case_distribution_lever(judge))
   end
 
   def scoped_for_priority(scope)
