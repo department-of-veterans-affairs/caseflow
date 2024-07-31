@@ -45,7 +45,7 @@ class CorrespondenceTask < Task
       RemovePackageTask.name,
       SplitPackageTask.name,
       MergePackageTask.name
-    ]
+    ].freeze
   end
 
   def verify_org_task_unique

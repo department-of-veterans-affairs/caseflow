@@ -44,7 +44,7 @@ class Correspondence < CaseflowRecord
 
   def tasks_not_related_to_an_appeal
     # work in progress!!!
-    CorrespondenceMailTask.where(appeal_id: id, appeal_type: type)
+    CorrespondenceMailTask.open.where(appeal_id: id, appeal_type: type)
   end
 
   def correspondence_mail_tasks
@@ -66,7 +66,7 @@ class Correspondence < CaseflowRecord
   end
 
   def package_action_tasks
-    CorrespondenceTask.where(appeal_id: id)&.package_action_tasks
+    CorrespondenceTask.package_action_tasks.open.where(appeal_id: id)
   end
 
   def cancel_task_tree_for_appeal_intake
@@ -98,17 +98,15 @@ class Correspondence < CaseflowRecord
       .where(veteran_id: veteran_id).where.not(uuid: uuid)
   end
 
-  # private
-
   # logic for handling correspondence statuses
-  # unassigned if
+  # unassigned if review package task is unassigned
   def unassigned?
     open_review_package_task&.status == Constants.TASK_STATUSES.unassigned
   end
 
-  # assigned if open (assigned or on hold) review package task or intake task
+  # assigned if open (assigned or on hold status) review package task or intake task
   def assigned?
-    !unassigned? && (open_review_package_task.nil? || !open_intake_task.nil?)
+    !unassigned? && (!open_review_package_task.blank? || !open_intake_task.blank?)
   end
 
   # action required if the correspondence has a package action task with a status of 'assigned'
@@ -117,7 +115,7 @@ class Correspondence < CaseflowRecord
   end
 
   def pending?
-
+    !tasks_not_related_to_an_appeal.blank?
   end
 
   # completed if root task is closed or no open children tasks
