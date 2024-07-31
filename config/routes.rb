@@ -33,6 +33,7 @@ Rails.application.routes.draw do
       get 'appeals_non_priority_ready_to_distribute'
       get 'appeals_distributed'
       get 'ineligible_judge_list'
+      get 'return_legacy_appeals_to_board'
       post 'run_demo_aod_hearing_seeds'
       post 'run_demo_non_aod_hearing_seeds'
       post 'run-demo-ama-docket-goals'

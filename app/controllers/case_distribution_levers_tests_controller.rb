@@ -66,6 +66,20 @@ class CaseDistributionLeversTestsController < ApplicationController
     send_data csv_data, filename: filename
   end
 
+  def return_legacy_appeals_to_board
+    ReturnLegacyAppealsToBoardJob.perform_now
+    csv_data = ReturnedAppealsToBoardQuery.process(is_return_appeal: true)
+
+    # Get the current date and time for dynamic filename
+    current_datetime = Time.zone.now.strftime("%Y%m%d-%H%M")
+
+    # Set dynamic filename with current date and time
+    filename = "return_legacy_appeals_to_board_#{current_datetime}.csv"
+
+    # Send CSV as a response with dynamic filename
+    send_data csv_data, filename: filename
+  end
+
   def appeals_distributed
     # change this to the correct class
     csv_data = AppealsDistributed.process
