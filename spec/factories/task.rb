@@ -431,6 +431,11 @@ FactoryBot.define do
         assigned_by { nil }
       end
 
+      factory :remand_task, class: DecisionReviewTask do
+        appeal { create(:remand, benefit_type: "nca") }
+        assigned_by { nil }
+      end
+
       factory :supplemental_claim_poa_task, class: DecisionReviewTask do
         appeal do
           create(:supplemental_claim,
