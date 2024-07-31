@@ -83,7 +83,7 @@ const PackageFilesModal = ({ onCancel, contractors }) => {
 
   return (
     <Modal
-      title="Package Files"
+      title="Package files"
       buttons={[
         {
           classNames: ['cf-modal-link', 'cf-btn-link'],
