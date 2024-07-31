@@ -4,7 +4,7 @@ class HearingDatetimeService
   CENTRAL_OFFICE_TIMEZONE = "America/New_York"
 
   class << self
-     # returns Time object in the timezone specified in the supplied scheduled_time_string
+    # returns Time object in the timezone specified in the supplied scheduled_time_string
     def datetime_helper(date_string, time_string)
       time_without_zone = time_string.split(" ", 3).take(2).join(" ")
       "#{date_string} #{time_without_zone}".in_time_zone(timezone_from_time_string(time_string))
@@ -53,7 +53,7 @@ class HearingDatetimeService
   def scheduled_time_string
     tz = ActiveSupport::TimeZone::MAPPING.key(@hearing.scheduled_in_timezone)
 
-    "#{local_time.strftime("%l:%M %p")} #{tz}".lstrip
+    "#{local_time.strftime('%l:%M %p')} #{tz}".lstrip
   end
 
   # the below methods could potentially be moved to Hearings::CalendarTemplateHelper
