@@ -22,30 +22,6 @@ class LegacyHearingUpdateForm < BaseHearingUpdateForm
 
   private
 
-  # def hearing_updates
-  #   updates = {
-  #     aod: aod,
-  #     bva_poc: bva_poc,
-  #     disposition: disposition,
-  #     hearing_location_attributes: hearing_location_attributes,
-  #     hold_open: hold_open,
-  #     judge_id: judge_id,
-  #     military_service: military_service,
-  #     notes: notes,
-  #     prepped: prepped,
-  #     representative_name: representative_name,
-  #     room: room,
-  #     scheduled_for: scheduled_for,
-  #     scheduled_time_string: scheduled_time_string,
-  #     summary: summary,
-  #     transcript_requested: transcript_requested,
-  #     witness: witness,
-  #     email_recipients_attributes: email_recipients_attributes
-  #   }.compact
-
-  #   HearingTimeService.build_legacy_params_with_time(hearing, updates)
-  # end
-
   def hearing_updates
     {
       aod: aod,
@@ -59,10 +35,7 @@ class LegacyHearingUpdateForm < BaseHearingUpdateForm
       prepped: prepped,
       representative_name: representative_name,
       room: room,
-      scheduled_for: HearingDatetimeService.datetime_helper(
-        hearing&.hearing_day&.scheduled_for,
-        scheduled_time_string
-      ),
+      scheduled_for: hearing.time.legacy_scheduled_for(scheduled_time_string),
       summary: summary,
       transcript_requested: transcript_requested,
       witness: witness,

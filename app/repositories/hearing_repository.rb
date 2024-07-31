@@ -298,13 +298,6 @@ class HearingRepository
     #
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def vacols_attributes(hearing, vacols_record)
-      # date = HearingMapper.datetime_based_on_type(
-      #   datetime: vacols_record.hearing_date,
-      #   regional_office: regional_office_for_scheduled_timezone(hearing, vacols_record),
-      #   type: vacols_record.hearing_type
-      # )
-      date = vacols_record.hearing_date.in_time_zone(hearing.scheduled_in_timezone)
-
       {
         vacols_record: vacols_record,
         appeal_vacols_id: vacols_record.folder_nr,
@@ -327,7 +320,7 @@ class HearingRepository
         appellant_last_name: vacols_record.sspare1,
         room: vacols_record.room,
         request_type: vacols_record.hearing_type,
-        scheduled_for: date,
+        scheduled_for: vacols_record.hearing_date,
         hearing_day_vacols_id: vacols_record.vdkey,
         bva_poc: vacols_record.vdbvapoc,
         judge_id: hearing.user_id
