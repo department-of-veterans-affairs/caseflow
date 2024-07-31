@@ -19,7 +19,6 @@ class CorrespondenceMailTask < CorrespondenceTask
   def available_actions(user)
     return [] unless user
 
-    # binding.pry
     options = [
       Constants.TASK_ACTIONS.CHANGE_CORR_TASK_TYPE.to_h,
       Constants.TASK_ACTIONS.ASSIGN_CORR_TASK_TO_TEAM.to_h,
@@ -28,7 +27,6 @@ class CorrespondenceMailTask < CorrespondenceTask
       Constants.TASK_ACTIONS.CANCEL_CORR_TASK.to_h
     ]
 
-    # binding.pry
     if user.is_a? Organization
       options.insert(2, Constants.TASK_ACTIONS.ASSIGN_CORR_TASK_TO_PERSON.to_h)
     else
