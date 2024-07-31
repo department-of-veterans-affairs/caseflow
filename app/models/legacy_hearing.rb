@@ -360,6 +360,20 @@ class LegacyHearing < CaseflowRecord
     end
   end
 
+    def scheduled_for
+    perform_vacols_request unless @vacols_load_status == :success
+
+    return nil unless @scheduled_for
+
+    return @scheduled_for.in_time_zone(scheduled_in_timezone) if try(:scheduled_in_timezone)
+
+    HearingMapper.datetime_based_on_type(
+      datetime: @scheduled_for,
+      regional_office: HearingRepository.regional_office_for_scheduled_timezone(self, vacols_record),
+      type: vacols_record.hearing_type
+    )
+  end
+
   class << self
     def venues
       RegionalOffice::CITIES.merge(RegionalOffice::SATELLITE_OFFICES)
@@ -387,20 +401,6 @@ class LegacyHearing < CaseflowRecord
       end
 
       hearing
-    end
-
-    def scheduled_for
-      perform_vacols_request unless @vacols_load_status == :success
-
-      return nil unless @scheduled_for
-
-      return @scheduled_for.in_time_zone(scheduled_in_timezone) if try(:scheduled_in_timezone)
-
-      HearingMapper.datetime_based_on_type(
-        datetime: @scheduled_for,
-        regional_office: HearingRepository.regional_office_for_scheduled_timezone(self, vacols_record),
-        type: vacols_record.hearing_type
-      )
     end
   end
 

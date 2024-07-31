@@ -35,7 +35,7 @@ class HearingDatetimeService
   end
 
   def legacy_scheduled_for(time_string)
-    datetime_helper(@hearing&.hearing_day&.scheduled_for, time_string)
+    self.class.datetime_helper(@hearing&.hearing_day&.scheduled_for, time_string)
   end
 
   def poa_time
