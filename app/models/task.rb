@@ -633,6 +633,11 @@ class Task < CaseflowRecord
     end
   end
 
+  def can_be_received_by?(team)
+    return false if assigned_to == team
+    return false if assigned_to.is_a?(User) && parent && parent.assigned_to == team
+  end
+
   # rubocop:disable Metrics/AbcSize
   def reassign(reassign_params, current_user)
     # We do not validate the number of tasks in this scenario because when a

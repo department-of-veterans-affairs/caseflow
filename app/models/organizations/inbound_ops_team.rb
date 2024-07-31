@@ -26,4 +26,8 @@ class InboundOpsTeam < Organization
   def selectable_in_queue?
     false
   end
+
+  def can_receive_task?(task)
+    task.can_be_received_by?(self)
+  end
 end
