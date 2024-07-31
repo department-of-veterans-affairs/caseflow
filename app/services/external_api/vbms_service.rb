@@ -66,15 +66,51 @@ class ExternalApi::VBMSService
   end
 
   def self.upload_document_to_vbms(appeal, uploadable_document)
-    @vbms_client ||= init_vbms_client
-    response = initialize_upload(appeal, uploadable_document)
-    upload_document(appeal.veteran_file_number, response.upload_token, uploadable_document.pdf_location)
+    if FeatureToggle.enabled?(:use_ce_api)
+      filename = SecureRandom.uuid + File.basename(uploadable_document.pdf_location)
+      file_upload_payload = ClaimEvidenceFileUploadPayload.new(
+        content_name: filename,
+        content_source: uploadable_document.source,
+        date_va_received_document: Time.current.strftime("%Y-%m-%d"),
+        document_type_id: uploadable_document.document_type_id,
+        subject: uploadable_document.document_type,
+        new_mail: true
+      )
+      VeteranFileUpload.upload_veteran_file(
+        file_path: uploadable_document.pdf_location,
+        veteran_file_number: appeal.veteran_file_number,
+        doc_info: file_upload_payload
+      )
+
+    else
+      @vbms_client ||= init_vbms_client
+      response = initialize_upload(appeal, uploadable_document)
+      upload_document(appeal.veteran_file_number, response.upload_token, uploadable_document.pdf_location)
+    end
   end
 
   def self.upload_document_to_vbms_veteran(veteran_file_number, uploadable_document)
-    @vbms_client ||= init_vbms_client
-    response = initialize_upload_veteran(veteran_file_number, uploadable_document)
-    upload_document(veteran_file_number, response.upload_token, uploadable_document.pdf_location)
+    if FeatureToggle.enabled?(:use_ce_api)
+      filename = SecureRandom.uuid + File.basename(uploadable_document.pdf_location)
+      file_upload_payload = ClaimEvidenceFileUploadPayload.new(
+        content_name: filename,
+        content_source: uploadable_document.source,
+        date_va_received_document: Time.current.strftime("%Y-%m-%d"),
+        document_type_id: uploadable_document.document_type_id,
+        subject: uploadable_document.document_subject.presence || uploadable_document.document_type,
+        new_mail: true
+      )
+
+      VeteranFileUpload.upload_veteran_file(
+        file_path: uploadable_document.pdf_location,
+        veteran_file_number: veteran_file_number,
+        doc_info: file_upload_payload
+      )
+    else
+      @vbms_client ||= init_vbms_client
+      response = initialize_upload_veteran(veteran_file_number, uploadable_document)
+      upload_document(veteran_file_number, response.upload_token, uploadable_document.pdf_location)
+    end
   end
 
   def self.initialize_upload(appeal, uploadable_document)
@@ -111,11 +147,13 @@ class ExternalApi::VBMSService
   end
 
   def self.upload_document(vbms_id, upload_token, filepath)
-    request = VBMS::Requests::UploadDocument.new(
-      upload_token: upload_token,
-      filepath: filepath
-    )
-    send_and_log_request(vbms_id, request)
+    if !FeatureToggle.enabled?(:use_ce_api)
+      request = VBMS::Requests::UploadDocument.new(
+        upload_token: upload_token,
+        filepath: filepath
+      )
+      send_and_log_request(vbms_id, request)
+    end
   end
 
   def self.initialize_update(appeal, uploadable_document)
