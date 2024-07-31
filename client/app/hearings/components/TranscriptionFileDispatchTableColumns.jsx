@@ -167,7 +167,8 @@ export const hearingDateColumn = () => {
     getSortValue: (transcriptionFile) => transcriptionFile.hearingDate,
     filterType: 'date-picker',
     filterSettings: {
-      buttons: false
+      buttons: false,
+      position: 'left'
     }
   };
 };

@@ -5,22 +5,27 @@ import FilterIcon from './icons/FilterIcon';
 import SearchableDropdown from '../components/SearchableDropdown';
 
 const datePickerStyle = css({
-  display: 'table-cell',
   paddingLeft: '1rem',
   paddingTop: '0.3rem',
   verticalAlign: 'middle',
   position: 'relative',
   fontWeight: 'normal',
+  top: '0.15rem',
   '& svg': {
     cursor: 'pointer'
+  },
+  '& .date-picker.right': {
+    right: 0,
+  },
+  '& .date-picker.left': {
+    left: '10px',
   }
 });
 
 const menuStyle = css({
   position: 'absolute',
   background: 'white',
-  right: 0,
-  top: '52px',
+  top: '24px',
   width: '250px',
   border: '1px solid #CCC',
   '& .input-wrapper': {
@@ -55,11 +60,15 @@ const menuStyle = css({
 class DatePicker extends React.PureComponent {
   constructor(props) {
     super(props);
+
+    const position = (props.settings && props.settings.position) || 'left';
+
     this.state = {
       open: false,
       mode: '',
       startDate: '',
       endDate: '',
+      position
     };
   }
 
@@ -149,7 +158,7 @@ class DatePicker extends React.PureComponent {
         handleActivate={this.toggleDropdown} />
 
       {this.state.open &&
-          <div {...menuStyle}>
+          <div className={`date-picker ${this.state.position}`} {...menuStyle}>
             <div className="clear-wrapper">
               <a onClick={() => this.clearFilter()}>Clear filter</a>
             </div>
@@ -209,7 +218,7 @@ DatePicker.propTypes = {
   values: PropTypes.array,
   getRef: PropTypes.func,
   label: PropTypes.string,
-  filterSettings: PropTypes.object,
+  settings: PropTypes.object,
 };
 
 export default DatePicker;
