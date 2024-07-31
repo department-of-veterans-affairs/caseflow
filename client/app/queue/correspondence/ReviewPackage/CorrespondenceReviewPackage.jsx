@@ -240,20 +240,24 @@ export const CorrespondenceReviewPackage = (props) => {
           </div>
           <div className="cf-push-right">
             { (props.correspondence.nod && !isReadOnly) && (
-              <Button
-                name="Intake appeal"
-                classNames={['usa-button-secondary', 'correspondence-intake-appeal-button']}
-                onClick={intakeAppeal}
-              />
+              <span className="correspondence-button-wrapper">
+                <Button
+                  name="Intake appeal"
+                  classNames={['usa-button-secondary', 'correspondence-intake-appeal-button']}
+                  onClick={intakeAppeal}
+                />
+              </span>
             )}
-            <a href={intakeLink}>
-              <Button
-                name="Create record"
-                classNames={['usa-button-primary']}
-                onClick={intakeLink}
-                disabled={disableButton}
-              />
-            </a>
+            <span>
+              <a href={intakeLink}>
+                <Button
+                  name="Create record"
+                  classNames={['usa-button-primary']}
+                  onClick={intakeLink}
+                  disabled={disableButton}
+                />
+              </a>
+            </span>
           </div>
         </div>
       </React.Fragment>
