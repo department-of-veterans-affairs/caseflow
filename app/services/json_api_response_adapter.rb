@@ -55,7 +55,6 @@ class JsonApiResponseAdapter
   end
 
   def document_upload_response(file_json)
-    # binding.pry
     OpenStruct.new(
       upload_document_response: {
         "@new_document_version_ref_id": file_json["currentVersionUuid"],
