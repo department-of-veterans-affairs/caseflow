@@ -146,6 +146,18 @@ describe FetchHearingLocationsForVeteransJob do
         end
       end
 
+      context "when BGS server is down" do
+        let(:server_error) { Caseflow::Error::VaDotGovServerError.new(code: 500, message: "ServerError") }
+        before(:each) do
+          allow_any_instance_of(VaDotGovAddressValidator).to(
+            receive(:update_closest_ro_and_ahls).and_raise(server_error)
+          )
+        end
+        it "Raises ServerError and discards the job" do
+          expect { FetchHearingLocationsForVeteransJob.new.perform }.to raise_error(server_error)
+        end
+      end
+
       context "when API limit is reached" do
         let(:limit_error) { Caseflow::Error::VaDotGovLimitError.new(code: 500, message: "Error") }
 
