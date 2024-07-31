@@ -100,7 +100,7 @@ const CorrespondenceDetails = (props) => {
 
   const correspondencePackageDetails = () => {
     return (
-      <React.Fragment>
+      <>
         <div className="correspondence-package-details">
           <h2 className="correspondence-h2">General Information</h2>
           <table className="corr-table-borderless gray-border">
@@ -132,7 +132,7 @@ const CorrespondenceDetails = (props) => {
             </tbody>
           </table>
         </div>
-      </React.Fragment>
+      </>
     );
   };
 
