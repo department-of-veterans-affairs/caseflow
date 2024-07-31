@@ -38,8 +38,8 @@ class HearingDatetimeService
     self.class.datetime_helper(@hearing&.hearing_day&.scheduled_for, time_string)
   end
 
-  def poa_time
-    binding.pry
+  def ama_scheduled_for(_time_string)
+    nil
   end
 
   def central_office_time
@@ -56,20 +56,36 @@ class HearingDatetimeService
     "#{local_time.strftime("%l:%M %p")} #{tz}".lstrip
   end
 
+  # the below methods could potentially be moved to Hearings::CalendarTemplateHelper
+
+  def normalized_time(timezone)
+    return local_time if timezone.nil?
+
+    # throws an error here if timezone is invalid
+    local_time.in_time_zone(timezone)
+  end
+
+  # hearing time in poa timezone
+  def poa_time
+    # Check if there's a recipient, and if it has a timezone, it it does use that to set tz
+    representative_tz_from_recipient = @hearing.representative_recipient&.timezone
+    return normalized_time(representative_tz_from_recipient) if representative_tz_from_recipient.present?
+    # If there's a virtual hearing, use that tz even if it's empty
+    return normalized_time(@hearing.virtual_hearing[:representative_tz]) if @hearing.virtual_hearing.present?
+
+    # No recipient and no virtual hearing? Use the normalized_time fallback
+    normalized_time(nil)
+  end
+
+  # hearing time in appellant timezone
   def appellant_time
-    binding.pry
-  end
+    # Check if there's a recipient, and if it has a timezone, it it does use that to set tz
+    appellant_tz_from_recipient = @hearing.appellant_recipient&.timezone
+    return normalized_time(appellant_tz_from_recipient) if appellant_tz_from_recipient.present?
+    # If there's a virtual hearing, use that tz even if it's empty
+    return normalized_time(@hearing.virtual_hearing[:appellant_tz]) if @hearing.virtual_hearing.present?
 
-  def time_to_string(time)
-    binding.pry
-  end
-
-  def scheduled_for
-    case @hearing.class
-    when Hearing
-      @hearing.scheduled_datetime.in_time_zone(@hearing.scheduled_in_timezone)
-    when LegacyHearing
-      VACOLS::CaseHearing.find(@hearing.vacols_id).hearing_date.in_time_zone(@hearing.scheduled_in_timezone)
-    end
+    # No recipient and no virtual hearing? Use the normalized_time fallback
+    normalized_time(nil)
   end
 end
