@@ -59,7 +59,7 @@ class HearingUpdateForm < BaseHearingUpdateForm
       prepped: prepped,
       representative_name: representative_name,
       room: room,
-      scheduled_time: scheduled_time_string,
+      scheduled_time: hearing.time.ama_scheduled_for(scheduled_time_string),
       scheduled_datetime: hearing.time.class.datetime_helper(
         hearing&.hearing_day&.scheduled_for,
         scheduled_time_string
