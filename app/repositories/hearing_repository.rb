@@ -142,6 +142,35 @@ class HearingRepository
       ama_sent_hearing_email_events + legacy_sent_hearing_email_events
     end
 
+    # Gets the regional office to use when mapping the VACOLS hearing date to
+    # the local scheduled time.
+    #
+    # @note Avoid triggering an indirect additional VACOLS load by avoiding calls to the
+    #   `hearing` parameter.
+    #
+    # @note This mirrors `LegacyHearing#regional_office_key`, but is designed to avoid
+    #   calls to any VACOLS accessors because those would trigger an additional
+    #   query to VACOLS.
+    #
+    #   The only call here that has the potential to trigger a VACOLS query is
+    #   the call to `LegacyHearing#hearing_day`, which can make a call to VACOLS
+    #   if the value is not cached in Caseflow.
+    #
+    # @param hearing       [LegacyHearing] an uninitialized Caseflow legacy hearing
+    # @param vacols_record [VACOLS::CaseHearing] a VACOLS case hearing
+    #
+    # @return [RegionalOffice]
+    #   A hash of setter names on a `LegacyHearing` to values
+    def regional_office_for_scheduled_timezone(hearing, vacols_record)
+      ro_key = if vacols_record.hearing_type == HearingDay::REQUEST_TYPES[:travel] || hearing.hearing_day.nil?
+                 vacols_record.hearing_venue
+               else
+                 hearing.hearing_day&.regional_office || "C"
+               end
+
+      RegionalOffice.find!(ro_key) if ro_key.present?
+    end
+
     private
 
     # Returns a where clause that can be used to find all hearings that occur within
@@ -254,35 +283,6 @@ class HearingRepository
         end
 
       legacy_maybe_ready.flatten
-    end
-
-    # Gets the regional office to use when mapping the VACOLS hearing date to
-    # the local scheduled time.
-    #
-    # @note Avoid triggering an indirect additional VACOLS load by avoiding calls to the
-    #   `hearing` parameter.
-    #
-    # @note This mirrors `LegacyHearing#regional_office_key`, but is designed to avoid
-    #   calls to any VACOLS accessors because those would trigger an additional
-    #   query to VACOLS.
-    #
-    #   The only call here that has the potential to trigger a VACOLS query is
-    #   the call to `LegacyHearing#hearing_day`, which can make a call to VACOLS
-    #   if the value is not cached in Caseflow.
-    #
-    # @param hearing       [LegacyHearing] an uninitialized Caseflow legacy hearing
-    # @param vacols_record [VACOLS::CaseHearing] a VACOLS case hearing
-    #
-    # @return [RegionalOffice]
-    #   A hash of setter names on a `LegacyHearing` to values
-    def regional_office_for_scheduled_timezone(hearing, vacols_record)
-      ro_key = if vacols_record.hearing_type == HearingDay::REQUEST_TYPES[:travel] || hearing.hearing_day.nil?
-                 vacols_record.hearing_venue
-               else
-                 hearing.hearing_day&.regional_office || "C"
-               end
-
-      RegionalOffice.find!(ro_key) if ro_key.present?
     end
 
     # Maps attributes on a VACOLS case hearing to attributes on a Caseflow legacy hearing.
