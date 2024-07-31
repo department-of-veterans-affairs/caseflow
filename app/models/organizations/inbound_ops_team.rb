@@ -28,7 +28,6 @@ class InboundOpsTeam < Organization
   end
 
   def can_receive_task?(task)
-    return false if task.assigned_to == self
-    return false if task.assigned_to.is_a?(User) && task.parent && task.parent.assigned_to == self
+    task.can_be_received_by?(self)
   end
 end
