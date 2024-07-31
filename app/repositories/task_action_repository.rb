@@ -2,7 +2,6 @@
 
 class TaskActionRepository # rubocop:disable Metrics/ClassLength
   class << self
-
     def change_corr_task_type
       # stubbed
     end
