@@ -145,8 +145,8 @@ feature "Appeal Edit issues", :all_dbs do
       add_intake_rating_issue(issue_description, "a new comment")
       expect(page).to have_content(issue_description)
       expect(page).to_not have_content(
-        Constants.INELIGIBLE_REQUEST_ISSUES.duplicate_of_rating_issue_in_active_review.gsub("{review_title}", "Appeal")
-      )
+                            Constants.INELIGIBLE_REQUEST_ISSUES.duplicate_of_rating_issue_in_active_review.gsub("{review_title}", "Appeal")
+                          )
       expect(page).to have_content("When you finish making changes, click \"Save\" to continue")
 
       # issue note was added
@@ -203,9 +203,9 @@ feature "Appeal Edit issues", :all_dbs do
       expect(page).not_to have_content("Loading this case")
       expect(page).to have_content(veteran.name)
       expect(RequestIssue.find_by(
-               benefit_type: "education",
-               decision_review: appeal
-             )).to_not be_nil
+        benefit_type: "education",
+        decision_review: appeal
+      )).to_not be_nil
     end
 
     # originally added in https://github.com/department-of-veterans-affairs/caseflow/pull/10241
@@ -306,8 +306,8 @@ feature "Appeal Edit issues", :all_dbs do
         add_intake_rating_issue("intervertebral disc syndrome") # ineligible issue
 
         expect(page).to have_content(
-          "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}"
-        )
+                          "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}"
+                        )
 
         click_intake_add_issue
         add_intake_rating_issue("Back pain")
@@ -336,8 +336,8 @@ feature "Appeal Edit issues", :all_dbs do
         li_optin = ri_with_optin.legacy_issue_optin
         expect(li_optin.optin_processed_at).to_not be_nil
         expect(VACOLS::CaseIssue.find_by(isskey: "vacols1", issseq: 1).issdc).to eq(
-          LegacyIssueOptin::VACOLS_DISPOSITION_CODE
-        )
+                                                                                   LegacyIssueOptin::VACOLS_DISPOSITION_CODE
+                                                                                 )
 
         # Check rollback
         visit "appeals/#{appeal.uuid}/edit/"
@@ -351,8 +351,8 @@ feature "Appeal Edit issues", :all_dbs do
         expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
         expect(li_optin.reload.rollback_processed_at).to_not be_nil
         expect(VACOLS::CaseIssue.find_by(isskey: "vacols1", issseq: 1).issdc).to eq(
-          li_optin.original_disposition_code
-        )
+                                                                                   li_optin.original_disposition_code
+                                                                                 )
 
         expect(ineligible_ri.reload.closed_status).to eq("removed")
       end
@@ -373,8 +373,8 @@ feature "Appeal Edit issues", :all_dbs do
         add_intake_rating_issue("ankylosis of hip")
 
         expect(page).to have_content(
-          "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn}"
-        )
+                          "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn}"
+                        )
 
         safe_click("#button-submit-update")
         safe_click ".confirm"
@@ -382,20 +382,20 @@ feature "Appeal Edit issues", :all_dbs do
         expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
 
         expect(RequestIssue.find_by(
-                 contested_issue_description: "Left knee granted",
-                 ineligible_reason: :legacy_issue_not_withdrawn,
-                 vacols_id: "vacols1",
-                 vacols_sequence_id: "1"
-               )).to_not be_nil
+          contested_issue_description: "Left knee granted",
+          ineligible_reason: :legacy_issue_not_withdrawn,
+          vacols_id: "vacols1",
+          vacols_sequence_id: "1"
+        )).to_not be_nil
       end
     end
   end
 
-  context "User is a member of the Supervisory Senior Council" do
+  context "User is a member of the Supervisory Senior Counsel" do
     before do
       User.authenticate!(user: current_user)
       FeatureToggle.enable!(:split_appeal_workflow)
-      OrganizationsUser.make_user_admin(current_user, SupervisorySeniorCouncil.singleton)
+      OrganizationsUser.make_user_admin(current_user, SupervisorySeniorCounsel.singleton)
     end
 
     after { FeatureToggle.disable!(:split_appeal_workflow) }
@@ -453,7 +453,6 @@ feature "Appeal Edit issues", :all_dbs do
           # expect the continue button to be disabled
           expect(page).to have_button("Continue", disabled: true)
 
-
           context "User is a member of the Supervisory Senior Counsel" do
             let!(:organization) { SupervisorySeniorCounsel.singleton }
             let!(:current_user) { create(:user, roles: ["Mail Intake"]) }
@@ -482,14 +481,13 @@ feature "Appeal Edit issues", :all_dbs do
                      benefit_type: "Education")
             end
 
-                  # The cancel button goes back to the edit page
+            # The cancel button goes back to the edit page
             click_button("Cancel")
             expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}")
           end
 
           step "If no issues and no reason are selected on the split appeal page, the Continue button is disabled" do
             visit("/appeals/#{appeal2.uuid}/edit/create_split")
-
 
             # expect issue descriptions to display
             expect(page).to have_content("PTSD denied")
@@ -559,7 +557,7 @@ feature "Appeal Edit issues", :all_dbs do
           expect(page).to have_current_path("/appeals/#{appeal.uuid}/edit/review_split")
         end
 
-      # scenario "When the user accesses the review_split page, the page renders as expected" do
+        # scenario "When the user accesses the review_split page, the page renders as expected" do
         scenario "Review split page behavior" do
           step "When the user accesses the review_split page, the page renders as expected" do
             skill_form(appeal2)
@@ -743,8 +741,8 @@ feature "Appeal Edit issues", :all_dbs do
         expect(page).to have_content("Check the Veteran's profile for invalid information")
         expect(page).to have_content("Please fill in the following fields in the Veteran's profile in VBMS or")
         expect(page).to have_content(
-          "the corporate database, then retry establishing the EP in Caseflow: country"
-        )
+                          "the corporate database, then retry establishing the EP in Caseflow: country"
+                        )
         expect(page).to have_content("This Veteran's address is too long. Please edit it in VBMS or SHARE")
         expect(page).to have_button("Save", disabled: true)
         click_remove_intake_issue_dropdown("Left knee granted")
@@ -838,8 +836,8 @@ feature "Appeal Edit issues", :all_dbs do
           click_withdraw_intake_issue_dropdown("PTSD denied")
 
           expect(page).to have_content(
-            /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawal pending/i
-          )
+                            /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawal pending/i
+                          )
           expect(page).to have_content("Please include the date the withdrawal was requested")
 
           expect(page).to have_button("Save", disabled: true)
@@ -861,8 +859,8 @@ feature "Appeal Edit issues", :all_dbs do
           visit "appeals/#{appeal.uuid}/edit/"
 
           expect(page).to have_content(
-            /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: #{request_issue_decision_mdY}\s*Withdrawn on/i
-          )
+                            /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: #{request_issue_decision_mdY}\s*Withdrawn on/i
+                          )
         end
 
         step "show alert when withdrawal date is not valid" do
@@ -870,8 +868,8 @@ feature "Appeal Edit issues", :all_dbs do
           fill_in "withdraw-date", with: 50.days.ago.to_date.mdY
 
           expect(page).to have_content(
-            "We cannot process your request. Please select a date after the Appeal's receipt date."
-          )
+                            "We cannot process your request. Please select a date after the Appeal's receipt date."
+                          )
           expect(page).to have_button("Withdraw", disabled: true)
 
           fill_in "withdraw-date", with: 2.years.from_now.to_date.mdY
@@ -926,8 +924,8 @@ feature "Appeal Edit issues", :all_dbs do
         click_withdraw_intake_issue_dropdown("PTSD denied")
 
         expect(page).to have_content(
-          /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawal pending/i
-        )
+                          /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawal pending/i
+                        )
         expect(page).to have_content("Please include the date the withdrawal was requested")
 
         expect(page).to have_button("Save", disabled: true)
@@ -1102,9 +1100,9 @@ feature "Appeal Edit issues", :all_dbs do
           safe_click ".confirm"
           expect(page).to have_content("You have successfully updated issues on this appeal")
           expect(page).to have_content(
-            "The appeal for #{appeal3.claimant.name} " \
-            "(ID: #{appeal3.veteran.file_number}) has been moved to the SCT queue."
-          )
+                            "The appeal for #{appeal3.claimant.name} " \
+                              "(ID: #{appeal3.veteran.file_number}) has been moved to the SCT queue."
+                          )
         end
 
         step "remove VHA issue and add non-VHA issue" do
@@ -1126,9 +1124,9 @@ feature "Appeal Edit issues", :all_dbs do
           safe_click ".confirm"
           expect(page).to have_content("You have successfully updated issues on this appeal")
           expect(page).to have_content(
-            "The appeal for #{appeal3.claimant.name} " \
-            "(ID: #{appeal3.veteran.file_number}) has been moved to the regular distribution pool."
-          )
+                            "The appeal for #{appeal3.claimant.name} " \
+                              "(ID: #{appeal3.veteran.file_number}) has been moved to the regular distribution pool."
+                          )
           expect(page).to have_current_path("/queue/appeals/#{appeal3.uuid}")
 
           # Verify task tree status
