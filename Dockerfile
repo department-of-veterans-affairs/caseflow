@@ -63,7 +63,7 @@ RUN apt-get install -y wget && \
 RUN echo "/usr/local/lib64" >> /etc/ld.so.conf.d/openssl.conf && ldconfig
 
 # Verify OpenSSL version
-RUN echo "------- OpenSSL version after --------"
+RUN echo "------- OpenSSL version after 1--------"
 RUN openssl version
 
 # Install node
@@ -81,6 +81,9 @@ ENV PATH $NVM_INSTALL_PATH/bin:$PATH
 
 # Set NODE_OPTIONS to use legacy OpenSSL provider
 ENV NODE_OPTIONS=--openssl-legacy-provider
+
+RUN echo "------- OpenSSL version after 2--------"
+RUN openssl version
 
 RUN apt install -y ${CASEFLOW} &&  \
     curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
