@@ -6,6 +6,8 @@ class HearingDatetimeService
   class << self
     # returns Time object in the timezone specified in the supplied scheduled_time_string
     def datetime_helper(date_string, time_string)
+      return nil unless date_string && time_string
+
       time_without_zone = time_string.split(" ", 3).take(2).join(" ")
       "#{date_string} #{time_without_zone}".in_time_zone(timezone_from_time_string(time_string))
     end
