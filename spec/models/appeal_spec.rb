@@ -278,14 +278,15 @@ describe Appeal, :all_dbs do
 
     let!(:not_remanded_decision_issue) { create(:decision_issue, decision_review: appeal) }
 
-    it "creates supplemental claim, request issues, and starts processing" do
+    it "creates remand, request issues, and starts processing" do
       subject
 
-      remanded_supplemental_claims = SupplementalClaim.where(decision_review_remanded: appeal)
+      remanded_supplemental_claims = Remand.where(decision_review_remanded: appeal)
 
       expect(remanded_supplemental_claims.count).to eq(2)
 
       vbms_remand = remanded_supplemental_claims.find_by(benefit_type: "compensation")
+      expect(vbms_remand.type).to eq(Remand.name)
       expect(vbms_remand).to have_attributes(
         receipt_date: decision_date.to_date
       )
@@ -297,6 +298,7 @@ describe Appeal, :all_dbs do
       expect(vbms_remand.tasks).to be_empty
 
       caseflow_remand = remanded_supplemental_claims.find_by(benefit_type: "nca")
+      expect(caseflow_remand.type).to eq(Remand.name)
       expect(caseflow_remand).to have_attributes(
         receipt_date: decision_date.to_date
       )
