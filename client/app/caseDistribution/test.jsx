@@ -257,6 +257,17 @@ class CaseDistributionTest extends React.PureComponent {
                             </li>
                           </ul>
                           <hr />
+                          <h2 id="async_jobs">Async Jobs</h2>
+                          <ul>
+                            <li>
+                              <a href="/case_distribution_levers_tests/return_legacy_appeals_to_board?csv=1">
+                                <Button classNames={['usa-button-active']}>
+                                Return Legacy Appeals to Board CSV
+                                </Button>
+                              </a>
+                            </li>
+                          </ul>
+                          <hr />
                           <h2 id="run_seeds">Run Seed Files</h2>
                           <ul>
                             <li>
