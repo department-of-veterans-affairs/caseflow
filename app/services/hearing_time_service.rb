@@ -19,6 +19,14 @@ class HearingTimeService
     @hearing = hearing
   end
 
+  def ama_scheduled_for(time_string)
+    date = @hearing&.hearing_day&.scheduled_for
+    time_without_zone = time_string.split(" ", 3).take(2).join(" ")
+    time = "2000-01-01 #{time_without_zone}".in_time_zone(timezone_from_time_string(time_string))
+    time -= 1.hour if date.to_time.dst?
+    time.utc
+  end
+
   def legacy_scheduled_for(time_string)
     date_string = @hearing&.hearing_day&.scheduled_for
     time_without_zone = time_string.split(" ", 3).take(2).join(" ")
