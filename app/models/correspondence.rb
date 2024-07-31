@@ -43,7 +43,6 @@ class Correspondence < CaseflowRecord
   end
 
   def tasks_not_related_to_an_appeal
-    # work in progress!!!
     CorrespondenceMailTask.open.where(appeal_id: id, appeal_type: type)
   end
 
