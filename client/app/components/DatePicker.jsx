@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import FilterIcon from './icons/FilterIcon';
 import SearchableDropdown from '../components/SearchableDropdown';
+import COPY from '../../COPY';
 
 const datePickerStyle = css({
   paddingLeft: '1rem',
@@ -160,16 +161,16 @@ class DatePicker extends React.PureComponent {
       {this.state.open &&
           <div className={`date-picker ${this.state.position}`} {...menuStyle}>
             <div className="clear-wrapper">
-              <a onClick={() => this.clearFilter()}>Clear filter</a>
+              <a onClick={() => this.clearFilter()}>{COPY.DATE_PICKER_CLEAR}</a>
             </div>
             <div className="input-wrapper">
               <SearchableDropdown
-                name="Date filter parameters"
+                name={COPY.DATE_PICKER_DROPDOWN_LABEL}
                 options={[
-                  { value: 'between', label: 'Between these dates' },
-                  { value: 'before', label: 'Before this date' },
-                  { value: 'after', label: 'After this date' },
-                  { value: 'on', label: 'On this date' }
+                  { value: 'between', label: COPY.DATE_PICKER_DROPDOWN_BETWEEN },
+                  { value: 'before', label: COPY.DATE_PICKER_DROPDOWN_BEFORE },
+                  { value: 'after', label: COPY.DATE_PICKER_DROPDOWN_AFTER },
+                  { value: 'on', label: COPY.DATE_PICKER_DROPDOWN_ON }
                 ]}
                 searchable
                 onChange={(option) => this.updateMode(option.value)}
@@ -180,7 +181,8 @@ class DatePicker extends React.PureComponent {
             {this.state.mode !== '' &&
               <div className="input-wrapper">
                 <label aria-label="start-date"
-                  htmlFor="start-date">{this.state.mode === 'between' ? 'From' : 'Date'}</label>
+                  htmlFor="start-date">
+                  {this.state.mode === 'between' ? COPY.DATE_PICKER_FROM : COPY.DATE_PICKER_DATE}</label>
                 <input
                   id="start-date"
                   name="start-date"
@@ -193,7 +195,7 @@ class DatePicker extends React.PureComponent {
 
             {this.state.mode === 'between' &&
               <div className="input-wrapper">
-                <label aria-label="end-date" htmlFor="end-date">To</label>
+                <label aria-label="end-date" htmlFor="end-date">{COPY.DATE_PICKER_TO}</label>
                 <input
                   id="end-date"
                   name="end-date"
@@ -205,7 +207,7 @@ class DatePicker extends React.PureComponent {
             }
             <div className="button-wrapper">
               <button disabled={this.buttonDisabled()}
-                onClick={() => this.apply()}>Apply Filter</button>
+                onClick={() => this.apply()}>{COPY.DATE_PICKER_APPLY}</button>
             </div>
           </div>
       }
