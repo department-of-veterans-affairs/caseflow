@@ -1,0 +1,41 @@
+<%= content_for :intro do %>
+  <p>
+    Attn:
+  </p>
+  <p>
+    Caseflow attempted to <%= @explanation %> and received a fatal error.
+  </p>
+<% end %>
+
+<%= content_for :content do %>
+  <ul>
+  <% @details.each do |key, value|%>
+    <li>
+    <% if value.respond_to?(:has_key?) %>
+      <% if value[:link] %>
+        <a href=<%= value[:link] %>><%= key.to_s.titlecase %></a>
+      <% else %>
+        <%= key.to_s.titlecase %>:
+          <ul>
+            <% value.each do |k, v| %>
+              <li><%= k.to_s.titlecase %>: <%= v %></li>
+            <% end%>
+          </ul>
+      <% end %>
+    <% else %>
+      <%= key.to_s.titlecase %>: <%= value || "N/A" %>
+    <% end %>
+    </li>
+  <% end %>
+  </ul>
+<% end %>
+
+<%= content_for :signature do %>
+  <p>
+    Please investigate this issue further to ensure <%= @outro %>. Direct any questions to OITAppealsHelpDesk@va.gov.
+  </p>
+  <p>
+    Sincerely,<br/>
+    The Board of Veterans' Appeals
+  </p>
+<% end %>

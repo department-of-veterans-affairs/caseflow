@@ -5,7 +5,7 @@ require "digest"
 ##
 # Service for generating new guest and host virtual hearings links
 ##
-class VirtualHearings::LinkService
+class VirtualHearings::PexipLinkService
   class PINKeyMissingError < StandardError; end
   class URLHostMissingError < StandardError; end
   class URLPathMissingError < StandardError; end
