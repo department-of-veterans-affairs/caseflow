@@ -125,7 +125,11 @@ class DecisionReview < CaseflowRecord
   end
 
   def number_of_issues
-    request_issues.active.count
+    request_issues.count(&:active?)
+  end
+
+  def issue_categories
+    request_issues.select(&:active?).map(&:nonrating_issue_category)
   end
 
   def external_id
