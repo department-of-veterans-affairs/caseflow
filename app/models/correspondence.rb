@@ -81,18 +81,6 @@ class Correspondence < CaseflowRecord
     veteran.name
   end
 
-  # statuses ordered to reduce query times
-  def status
-    return Constants.CORRESPONDENCE_STATUSES.unassigned if unassigned?
-    # Closed
-    return "Completed" if root_task.completed? || tasks.open.none?
-
-    # Pending
-    return "Pending" if tasks.open.any?
-
-    # Future workflows if needed to change status
-  end
-
   def self.prior_mail(veteran_id, uuid)
     includes([:veteran, :correspondence_type])
       .where(veteran_id: veteran_id).where.not(uuid: uuid)

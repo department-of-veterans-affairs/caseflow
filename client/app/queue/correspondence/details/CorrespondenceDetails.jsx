@@ -120,6 +120,10 @@ const CorrespondenceDetails = (props) => {
     }
   ];
 
+  const correspondenceStatus = () => {
+    return props.correspondence.completeStatus ? 'Completed' : 'Pending';
+  };
+
   return (
     <>
       <AppSegment filledBackground extraClassNames="app-segment-cd-details">
@@ -134,7 +138,7 @@ const CorrespondenceDetails = (props) => {
           </div>
           <p><a href="/under_construction">View all correspondence</a></p>
           <div></div>
-          <p className="last-item"><b>Record status: </b>{props.correspondence.status}</p>
+          <p className="last-item"><b>Record status: </b>{correspondenceStatus()}</p>
         </div>
         <TabWindow
           name="tasks-tabwindow"
