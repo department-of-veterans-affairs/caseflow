@@ -576,15 +576,15 @@
     "func": "mark_corr_task_complete"
   },
 
-"RETURN_TO_INBOUND_OPS": {
+  "RETURN_TO_INBOUND_OPS": {
     "label": "Return to Inbound Ops",
     "value": "return_to_inbound_ops",
     "func": "return_to_inbound_ops"
-},
+  },
 
-"CANCEL_CORR_TASK": {
-  "label": "Cancel task",
+  "CANCEL_CORR_TASK": {
+    "label": "Cancel task",
     "value": "cancel_task",
     "func": "cancel_corr_task"
-}
+  }
 }
