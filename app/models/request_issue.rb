@@ -418,6 +418,33 @@ class RequestIssue < CaseflowRecord
     closed_at if withdrawn?
   end
 
+  def removed?
+    closed_status == "removed"
+  end
+
+  # check for any RequestIssuesUpdates on the associated DecisionReview
+  def any_updates?
+    decision_review.request_issues_updates.any?
+  end
+
+  # Retrieve all Updates tied to the DecisionReview (Appeal, HLR/SC)
+  def fetch_request_issues_updates
+    decision_review.request_issues_updates if any_updates?
+  end
+
+  def fetch_removed_by_user
+    if removed? && any_updates?
+      riu = fetch_request_issues_updates
+
+      relevant_update = riu.find do |update|
+        update.removed_issues.any? { |issue| issue.id == id }
+      end
+
+      # Return the user_id from the relevant update, if found
+      User.find(relevant_update&.user_id)
+    end
+  end
+
   def serialize
     Intake::RequestIssueSerializer.new(self).serializable_hash[:data][:attributes]
   end

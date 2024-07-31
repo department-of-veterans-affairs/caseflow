@@ -63,8 +63,8 @@ describe Api::V3::Issues::Ama::RequestIssueSerializer, :postgres do
       expect(serialized_request_issue.key?(:nonrating_issue_description)).to eq true
       expect(serialized_request_issue.key?(:notes)).to eq true
       expect(serialized_request_issue.key?(:ramp_claim_id)).to eq true
-      # expect(serialized_request_issue.key?(:removed_by_css_id)).to eq true
-      # expect(serialized_request_issue.key?(:removed_by_station_id)).to eq true
+      expect(serialized_request_issue.key?(:removed_by_css_id)).to eq true
+      expect(serialized_request_issue.key?(:removed_by_station_id)).to eq true
       expect(serialized_request_issue.key?(:split_issue_status)).to eq true
       expect(serialized_request_issue.key?(:untimely_exemption)).to eq true
       expect(serialized_request_issue.key?(:untimely_exemption_notes)).to eq true

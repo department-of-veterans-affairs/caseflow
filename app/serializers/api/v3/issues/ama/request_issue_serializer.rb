@@ -122,20 +122,13 @@ class Api::V3::Issues::Ama::RequestIssueSerializer
   #   end
   # end
 
-  # attribute :removed_by_css_id do |object|
-  #   if object&.closed_status == "removed"
-  #     object&.end_product_establishment&.user&.css_id
-  #   end
-  # end
+  attribute :removed_by_css_id do |object|
+    object&.fetch_removed_by_user&.css_id
+  end
 
-  # attribute :removed_by_station_id do |object|
-  #   if object&.closed_status == "removed"
-  #     object&.end_product_establishment&.user&.station_id
-  #   end
-
-  #   # need to iterate through object&.decision_review&.request_issues_updates
-  #   # find the latest index that contains the current RequestIssue id in the BEFORE list but not the AFTER list AND check that the updated_at for the RIU matches the
-  # end
+  attribute :removed_by_station_id do |object|
+    object&.fetch_removed_by_user&.station_id
+  end
 
   # attribute :withdrawn_by_css_id do |object|
   #   if object&.closed_status == "withdrawn"
