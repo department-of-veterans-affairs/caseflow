@@ -39,6 +39,77 @@ FactoryBot.define do
       roles { ["Admin Intake"] }
     end
 
+    factory :inbound_ops_team_supervisor do
+      after(:create) do |user|
+        InboundOpsTeam.singleton.add_user(user)
+        MailTeam.singleton.add_user(user)
+        OrganizationsUser.find_or_create_by!(organization: InboundOpsTeam.singleton, user: user).update!(admin: true)
+        User.authenticate!(user: current_user)
+      end
+    end
+
+    factory :correspondence_auto_assignable_user do
+      after(:create) do |u|
+        # Member of InboundOpsTeam
+        org_user = OrganizationsUser.find_or_create_by!(organization: InboundOpsTeam.singleton, user: u)
+
+        org_permission = OrganizationPermission.find_or_create_by!(
+          organization: InboundOpsTeam.singleton,
+          permission: Constants.ORGANIZATION_PERMISSIONS.auto_assign
+        ) do |op|
+          op.enabled = true
+          op.description = "Auto-Assignment"
+        end
+
+        # Has auto-assign permission
+        OrganizationUserPermission.find_or_create_by!(
+          organization_permission: org_permission,
+          organizations_user: org_user
+        ) do |oup|
+          oup.permitted = true
+        end
+      end
+
+      trait :super_user do
+        after(:create) do |u|
+          OrganizationsUser.find_or_create_by!(organization: InboundOpsTeam.singleton, user: u).update!(admin: true)
+          permission = OrganizationPermission.find_or_create_by!(
+            permission: Constants.ORGANIZATION_PERMISSIONS.superuser,
+            organization: InboundOpsTeam.singleton,
+            enabled: true,
+            description: "Superuser: Split, Merge, Reassign"
+          )
+
+          OrganizationUserPermission.find_or_create_by!(
+            organization_permission: permission,
+            permitted: true,
+            organizations_user: OrganizationsUser.find_or_create_by(user_id: u.id)
+          )
+        end
+      end
+
+      trait :nod_enabled do
+        after(:create) do |u|
+          org_user = OrganizationsUser.find_or_create_by!(organization: InboundOpsTeam.singleton, user: u)
+
+          org_permission = OrganizationPermission.find_or_create_by!(
+            organization: InboundOpsTeam.singleton,
+            permission: Constants.ORGANIZATION_PERMISSIONS.receive_nod_mail
+          ) do |op|
+            op.enabled = true
+            op.description = "Receive \"NOD Mail\""
+          end
+
+          OrganizationUserPermission.find_or_create_by!(
+            organization_permission: org_permission,
+            organizations_user: org_user
+          ) do |oup|
+            oup.permitted = true
+          end
+        end
+      end
+    end
+
     trait :inactive do
       status { "inactive" }
     end
