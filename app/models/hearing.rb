@@ -228,7 +228,7 @@ def scheduled_for
     #     scheduled_time_in_updated_by_timezone.sec
     #   )
     # end
-   "#{hearing_day.scheduled_for} #{scheduled_time.strftime("%l:%M %p %z")}".in_time_zone("UTC")
+   "#{hearing_day.scheduled_for} #{scheduled_time.strftime("%l:%M %p %z")}".in_time_zone(regional_office_timezone)
   end
 
   def scheduled_for_past?
