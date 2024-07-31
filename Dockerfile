@@ -48,16 +48,16 @@ RUN apt -y update && \
 RUN echo "------- OpenSSL version before --------"
 RUN openssl version
 
-# Install OpenSSL 3 from source
+# Install OpenSSL 3.2.0 from source
 RUN apt-get install -y wget && \
-    wget https://www.openssl.org/source/openssl-3.0.0.tar.gz && \
-    tar -zxf openssl-3.0.0.tar.gz && \
-    cd openssl-3.0.0 && \
+    wget https://www.openssl.org/source/openssl-3.2.0.tar.gz && \
+    tar -zxf openssl-3.2.0.tar.gz && \
+    cd openssl-3.2.0 && \
     ./config && \
     make && \
     make install && \
     cd .. && \
-    rm -rf openssl-3.0.0 openssl-3.0.0.tar.gz
+    rm -rf openssl-3.2.0 openssl-3.2.0.tar.gz
 
 # Add OpenSSL libraries to the runtime linker path
 RUN echo "/usr/local/lib64" >> /etc/ld.so.conf.d/openssl.conf && ldconfig
@@ -80,7 +80,7 @@ ENV NODE_PATH $NVM_INSTALL_PATH/lib/node_modules
 ENV PATH $NVM_INSTALL_PATH/bin:$PATH
 
 # Set NODE_OPTIONS to use legacy OpenSSL provider
-ENV NODE_OPTIONS=--openssl-legacy-provider
+# ENV NODE_OPTIONS=--openssl-legacy-provider
 
 RUN echo "------- OpenSSL version after 2--------"
 RUN openssl version
