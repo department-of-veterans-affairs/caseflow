@@ -89,4 +89,35 @@ describe Api::V3::Issues::Ama::RequestIssueSerializer, :postgres do
       expect(serialized_decision_issue.key?(:updated_at)).to eq true
     end
   end
+
+  describe "converting to UTC" do
+    let(:decision_issue) { create(:decision_issue, rating_profile_date: rating_profile_date) }
+    let(:request_issue) { create(:request_issue, decision_issues: [decision_issue]) }
+    let(:serialized_hash) { described_class.new(request_issue).serializable_hash }
+    let(:serialized_decision_issue) { serialized_hash[:data][:attributes][:decision_issues].first }
+
+    context "when rating_profile_date is present" do
+      let(:rating_profile_date) { "2023-07-31T12:34:56Z" }
+
+      it "converts the rating_profile_date to UTC" do
+        expect(serialized_decision_issue[:rating_profile_date]).to eq(Time.parse(rating_profile_date).utc)
+      end
+    end
+
+    context "when rating_profile_date is blank" do
+      let(:rating_profile_date) { "" }
+
+      it "sets the rating_profile_date to nil" do
+        expect(serialized_decision_issue[:rating_profile_date]).to be_nil
+      end
+    end
+
+    context "when rating_profile_date is nil" do
+      let(:rating_profile_date) { nil }
+
+      it "sets the rating_profile_date to nil" do
+        expect(serialized_decision_issue[:rating_profile_date]).to be_nil
+      end
+    end
+  end
 end

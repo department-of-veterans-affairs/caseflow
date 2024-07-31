@@ -10,7 +10,7 @@
 #   `Api::V3::Issues::Ama::RequestIssueSerializer.new(
 #      RequestIssue.includes(:decision_issues).page(2), include: [:decision_issues]
 #   ).serializable_hash.to_json`
-require 'time'
+require "time"
 class Api::V3::Issues::Ama::RequestIssueSerializer
   include FastJsonapi::ObjectSerializer
 
@@ -63,7 +63,7 @@ class Api::V3::Issues::Ama::RequestIssueSerializer
         end_product_last_action_date: di.end_product_last_action_date,
         percent_number: di.percent_number,
         rating_issue_reference_id: di.rating_issue_reference_id,
-        rating_profile_date: di.rating_profile_date ? Time.parse(di.rating_profile_date).utc : nil,
+        rating_profile_date: format_rating_profile_date(di.rating_profile_date),
         rating_promulgation_date: di.rating_promulgation_date,
         subject_text: di.subject_text,
         updated_at: di.updated_at
@@ -137,5 +137,13 @@ class Api::V3::Issues::Ama::RequestIssueSerializer
     if object&.closed_status == "withdrawn"
       object&.end_product_establishment&.user&.station_id
     end
+  end
+
+
+  def self.format_rating_profile_date(date)
+    return nil if date.blank?
+    return Time.parse(date).utc if date.is_a?(String)
+
+    date.utc
   end
 end

@@ -178,7 +178,7 @@ class DecisionIssue < CaseflowRecord
       contested_decision_issue_id: id,
       contested_rating_issue_diagnostic_code: diagnostic_code,
       contested_rating_issue_reference_id: rating_issue_reference_id,
-      contested_rating_issue_profile_date: rating_profile_date.blank? ? nil : rating_profile_date.utc,
+      contested_rating_issue_profile_date: format_rating_profile_date(rating_profile_date),
       contested_issue_description: description,
       nonrating_issue_category: nonrating_issue_category,
       benefit_type: benefit_type,
@@ -187,6 +187,13 @@ class DecisionIssue < CaseflowRecord
       mst_status: mst_status,
       pact_status: pact_status
     )
+  end
+
+  def format_rating_profile_date(date)
+    return nil if date.blank?
+    return Time.parse(date).utc if date.is_a?(String)
+
+    date.utc
   end
 
   private

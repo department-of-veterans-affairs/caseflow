@@ -436,16 +436,37 @@ describe DecisionIssue, :postgres do
     end
 
     context "when rating_profile_date is present" do
-      let(:rating_profile_date) { Time.zone.local(2024, 7, 29, 12, 0, 0) }
+      # let(:rating_profile_date) { Time.zone.local(2024, 7, 29, 12, 0, 0) }
+      let(:rating_profile_date) { "2023-07-31T12:34:56Z" }
 
       it "converts rating_profile_date to UTC" do
         request_issue = decision_issue.create_contesting_request_issue!(appeal)
 
-        expect(request_issue.contested_rating_issue_profile_date.to_s).to eq(rating_profile_date.utc.to_s)
+        expect(request_issue.contested_rating_issue_profile_date.to_s).to eq("2023-07-31 12:34:56 UTC")
       end
     end
 
-    context "when all attributes are present" do
+    context "when rating_profile_date is empty line" do
+      let(:rating_profile_date) { "" }
+
+      it "returns nil" do
+        request_issue = decision_issue.create_contesting_request_issue!(appeal)
+
+        expect(request_issue.contested_rating_issue_profile_date).to eq(nil)
+      end
+    end
+
+    context "when rating_profile_date is line of spaces" do
+      let(:rating_profile_date) { "    " }
+
+      it "returns nil" do
+        request_issue = decision_issue.create_contesting_request_issue!(appeal)
+
+        expect(request_issue.contested_rating_issue_profile_date).to eq(nil)
+      end
+    end
+
+    context "when other attributes are present" do
       let(:rating_profile_date) { Time.zone.local(2024, 7, 29, 12, 0, 0) }
       let(:decision_issue) do
         create(:decision_issue,
