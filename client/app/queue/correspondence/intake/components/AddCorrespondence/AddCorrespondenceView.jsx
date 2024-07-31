@@ -117,7 +117,7 @@ class AddCorrespondenceView extends React.Component {
               <a href={`/queue/correspondence/${correspondence.uuid}`} rel="noopener noreferrer" target="_blank">
                 {correspondence?.nod ? 'NOD' : 'Non-NOD'}
                 <span className="external-link-icon-wrapper">
-                  <ExternalLinkIcon color={COLORS.FOCUS_OUTLINE} />
+                  <ExternalLinkIcon color={COLORS.PRIMARY} />
                 </span>
               </a>
             </p>
