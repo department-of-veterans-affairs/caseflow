@@ -149,11 +149,19 @@ class DecisionDocument < CaseflowRecord
 
     response = VBMSService.upload_document_to_vbms(appeal, self)
 
-    update!(
-      uploaded_to_vbms_at: Time.zone.now,
-      document_version_reference_id: response.dig(:upload_document_response, :@new_document_version_ref_id),
-      document_series_reference_id: response.dig(:upload_document_response, :@document_series_ref_id)
-    )
+    if FeatureToggle.enabled?(:use_ce_api)
+      document.update!(
+        uploaded_to_vbms_at: Time.zone.now,
+        document_version_reference_id: response[:currentVersionUuid],
+        document_series_reference_id: response[:uuid]
+      )
+    else
+      document.update!(
+        uploaded_to_vbms_at: Time.zone.now,
+        document_version_reference_id: response.dig(:upload_document_response, :@new_document_version_ref_id),
+        document_series_reference_id: response.dig(:upload_document_response, :@document_series_ref_id)
+      )
+    end
   end
 
   def s3_location
