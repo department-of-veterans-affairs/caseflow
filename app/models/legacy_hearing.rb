@@ -360,7 +360,7 @@ class LegacyHearing < CaseflowRecord
     end
   end
 
-    def scheduled_for
+  def scheduled_for
     perform_vacols_request unless @vacols_load_status == :success
 
     return nil unless @scheduled_for

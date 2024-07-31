@@ -7,7 +7,7 @@ module HearingTimeConcern
            to: :time
 
   def time
-    @time ||= if self.is_a?(LegacyHearing) && scheduled_in_timezone || try(:scheduled_datetime)
+    @time ||= if is_a?(LegacyHearing) && scheduled_in_timezone || try(:scheduled_datetime)
                 HearingDatetimeService.new(hearing: self)
               else
                 HearingTimeService.new(hearing: self)

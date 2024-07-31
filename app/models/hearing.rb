@@ -188,7 +188,7 @@ class Hearing < CaseflowRecord
       .first
   end
 
-def scheduled_for
+  def scheduled_for
     return nil unless hearing_day
 
     if scheduled_datetime.present? && scheduled_in_timezone.present?
@@ -230,7 +230,7 @@ def scheduled_for
     #     scheduled_time_in_updated_by_timezone.sec
     #   )
     # end
-   "#{hearing_day.scheduled_for} #{scheduled_time.strftime("%l:%M %p %z")}".in_time_zone(regional_office_timezone)
+    "#{hearing_day.scheduled_for} #{scheduled_time.strftime('%l:%M %p %z')}".in_time_zone(regional_office_timezone)
   end
 
   def scheduled_for_past?

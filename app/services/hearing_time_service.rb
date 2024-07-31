@@ -9,7 +9,7 @@ class HearingTimeService
   CENTRAL_OFFICE_TIMEZONE = "America/New_York"
 
   class << self
-     # do not update scheduled_datetime field through this service
+    # do not update scheduled_datetime field through this service
     def datetime_helper(_date_string, _time_string)
       nil
     end
