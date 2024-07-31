@@ -1006,7 +1006,7 @@ class QueueApp extends React.PureComponent {
             <PageRoute
               exact
               path={
-                '/queue/correspondence/:correspondence_uuid/' +
+                '/queue/correspondence/:correspondence_uuid/tasks/:task_id/' +
             `(${TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.value
             })`
               }
