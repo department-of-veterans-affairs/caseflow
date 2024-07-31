@@ -215,19 +215,20 @@ def scheduled_for
     # then assemble and return a TimeWithZone object cast to the regional
     # office's time zone.
 
-    updated_by_timezone = updated_by&.timezone || Time.zone.name
-    scheduled_time_in_updated_by_timezone = scheduled_time.utc.in_time_zone(updated_by_timezone)
+    # updated_by_timezone = updated_by&.timezone || Time.zone.name
+    # scheduled_time_in_updated_by_timezone = scheduled_time.utc.in_time_zone(updated_by_timezone)
 
-    Time.use_zone(regional_office_timezone) do
-      Time.zone.local(
-        hearing_day.scheduled_for.year,
-        hearing_day.scheduled_for.month,
-        hearing_day.scheduled_for.day,
-        scheduled_time_in_updated_by_timezone.hour,
-        scheduled_time_in_updated_by_timezone.min,
-        scheduled_time_in_updated_by_timezone.sec
-      )
-    end
+    # Time.use_zone(regional_office_timezone) do
+    #   Time.zone.local(
+    #     hearing_day.scheduled_for.year,
+    #     hearing_day.scheduled_for.month,
+    #     hearing_day.scheduled_for.day,
+    #     scheduled_time_in_updated_by_timezone.hour,
+    #     scheduled_time_in_updated_by_timezone.min,
+    #     scheduled_time_in_updated_by_timezone.sec
+    #   )
+    # end
+   "#{hearing_day.scheduled_for} #{scheduled_time.strftime("%l:%M %p %z")}".in_time_zone("UTC")
   end
 
   def scheduled_for_past?
