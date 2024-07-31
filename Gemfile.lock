@@ -2051,6 +2051,7 @@ GEM
 PLATFORMS
   x86_64-darwin-21
   x86_64-darwin-22
+  x86_64-darwin-23
   x86_64-linux
 
 DEPENDENCIES
@@ -2168,4 +2169,4 @@ DEPENDENCIES
   ziptz
 
 BUNDLED WITH
-   2.4.19
+   2.4.22
