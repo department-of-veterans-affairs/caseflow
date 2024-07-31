@@ -9,15 +9,19 @@ class IneligibleJudgesJob < CaseflowJob
   application_attr :queue
 
   def perform
-    @start_time ||= Time.zone.now
+    start_time
     case_distribution_ineligible_judges
 
-    log_success(@start_time)
+    log_success(start_time)
   rescue StandardError => error
     log_error(error)
   end
 
   private
+
+  def start_time
+    @start_time ||= Time.zone.now
+  end
 
   # {Grabs both vacols and caseflow ineligible judges then merges into one list with duplicates merged
   # if they have the same CSS_ID/SDOMAINID}
@@ -28,11 +32,11 @@ class IneligibleJudgesJob < CaseflowJob
     Rails.cache.fetch("case_distribution_ineligible_judges", expires_in: 1.week) do
       [*CaseDistributionIneligibleJudges.vacols_judges_with_caseflow_records,
        *CaseDistributionIneligibleJudges.caseflow_judges_with_vacols_records]
-        .group_by { |h| h[:sdomainid] || h[:css_id] }
-        .flat_map do |k, v|
-        next v unless k
+        .group_by { |cached_hash| cached_hash[:sdomainid] || cached_hash[:css_id] }
+        .flat_map do |key, value|
+        next value unless key
 
-        v.reduce(&:merge)
+        value.reduce(&:merge)
       end
     end
   end
