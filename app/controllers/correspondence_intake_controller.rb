@@ -89,6 +89,7 @@ class CorrespondenceIntakeController < CorrespondenceController
 
   def prior_mail
     Correspondence.prior_mail(veteran_by_correspondence.id, corr_intake_params[:correspondence_uuid])
+      .select { |corr| corr.status == "Completed" || corr.status == "Pending" }
   end
 
   def verify_correspondence_intake_access
