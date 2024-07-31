@@ -6,5 +6,5 @@ VeteranFileFetcher = ExternalApi::VeteranFileFetcher
 VeteranFileUpdater = ExternalApi::VeteranFileUpdater
   .new(use_canned_api_responses: ApplicationController.dependencies_faked?, logger: Rails.logger)
 
-VeteranFileUpload = ExternalApi::VeteranFileUpload
+VeteranFileUploader = ExternalApi::VeteranFileUploader
   .new(use_canned_api_responses: ApplicationController.dependencies_faked?, logger: Rails.logger)

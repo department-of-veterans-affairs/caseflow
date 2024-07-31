@@ -2,15 +2,17 @@
 
 describe ExternalApi::VBMSService do
   subject(:described) { described_class }
+  let(:mock_json_adapter) { instance_double(JsonApiResponseAdapter) }
+  before do
+    allow(JsonApiResponseAdapter).to receive(:new).and_return(mock_json_adapter)
+  end
 
   describe ".fetch_document_series_for" do
-    let(:mock_json_adapter) { instance_double(JsonApiResponseAdapter) }
     let(:mock_vbms_document_series_for_appeal) { instance_double(ExternalApi::VbmsDocumentSeriesForAppeal) }
 
     let!(:appeal) { create(:appeal) }
 
     before do
-      allow(JsonApiResponseAdapter).to receive(:new).and_return(mock_json_adapter)
       allow(ExternalApi::VbmsDocumentSeriesForAppeal).to receive(:new).and_return(mock_vbms_document_series_for_appeal)
     end
 
@@ -86,7 +88,8 @@ describe ExternalApi::VBMSService do
         document_type_id: 1,
         pdf_location: "/path/to/test/location",
         source: "my_source",
-        document_series_reference_id: "{12345}"
+        document_series_reference_id: "{12345}",
+        document_subject: "testing1"
       )
     end
     let(:appeal) { create(:appeal) }
@@ -106,6 +109,7 @@ describe ExternalApi::VBMSService do
             file_uuid: "12345",
             file_update_payload: mock_file_update_payload
           )
+        expect(mock_json_adapter).to receive(:adapt_update_document)
 
         described.update_document_in_vbms(appeal, fake_document)
       end
@@ -134,7 +138,9 @@ describe ExternalApi::VBMSService do
           pdf_location: "/path/to/test/location",
           source: "my_source",
           document_type_id: 1,
-          document_type: "test"
+          document_type: "test",
+          subject: "testing1",
+          new_mail: true
         )
       end
       let(:appeal) { create(:appeal) }
@@ -159,12 +165,12 @@ describe ExternalApi::VBMSService do
             new_mail: true
           ).and_return(mock_file_upload_payload)
 
-          expect(VeteranFileUpload).to receive(:upload_veteran_file).with(
+          expect(VeteranFileUploader).to receive(:upload_veteran_file).with(
             file_path: fake_document.pdf_location,
             veteran_file_number: appeal.veteran_file_number,
             doc_info: mock_file_upload_payload
           )
-
+          expect(mock_json_adapter).to receive(:adapt_upload_document)
           described_class.upload_document_to_vbms(appeal, fake_document)
         end
       end

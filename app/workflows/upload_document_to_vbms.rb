@@ -59,16 +59,9 @@ class UploadDocumentToVbms
     return if document.uploaded_to_vbms_at
 
     upload_response = VBMSService.upload_document_to_vbms_veteran(file_number, self)
-    if FeatureToggle.enabled?(:use_ce_api)
-      update!(
-        uploaded_to_vbms_at: Time.zone.now,
-        document_version_reference_id: upload_response[:currentVersionUuid],
-        document_series_reference_id: upload_response[:uuid]
-      )
-    else
-      persist_efolder_version_info(upload_response, :upload_document_response)
-      document.update!(uploaded_to_vbms_at: Time.zone.now)
-    end
+
+    persist_efolder_version_info(upload_response, :upload_document_response)
+    document.update!(uploaded_to_vbms_at: Time.zone.now)
   end
 
   def set_processed_at_to_current_time

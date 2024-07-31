@@ -76,11 +76,12 @@ class ExternalApi::VBMSService
         subject: uploadable_document.document_type,
         new_mail: true
       )
-      VeteranFileUpload.upload_veteran_file(
+      response = VeteranFileUploader.upload_veteran_file(
         file_path: uploadable_document.pdf_location,
         veteran_file_number: appeal.veteran_file_number,
         doc_info: file_upload_payload
       )
+      JsonApiResponseAdapter.new.adapt_upload_document(response)
 
     else
       @vbms_client ||= init_vbms_client
@@ -101,11 +102,12 @@ class ExternalApi::VBMSService
         new_mail: true
       )
 
-      VeteranFileUpload.upload_veteran_file(
+      response = VeteranFileUploader.upload_veteran_file(
         file_path: uploadable_document.pdf_location,
         veteran_file_number: veteran_file_number,
         doc_info: file_upload_payload
       )
+      JsonApiResponseAdapter.new.adapt_upload_document(response)
     else
       @vbms_client ||= init_vbms_client
       response = initialize_upload_veteran(veteran_file_number, uploadable_document)
@@ -180,11 +182,12 @@ class ExternalApi::VBMSService
 
       file_uuid = uploadable_document.document_series_reference_id.delete("{}")
 
-      VeteranFileUpdater.update_veteran_file(
+     response = VeteranFileUpdater.update_veteran_file(
         veteran_file_number: appeal.veteran_file_number,
         file_uuid: file_uuid,
         file_update_payload: file_update_payload
       )
+      JsonApiResponseAdapter.new.adapt_update_document(response)
     else
       @vbms_client ||= init_vbms_client
       response = initialize_update(appeal, uploadable_document)
