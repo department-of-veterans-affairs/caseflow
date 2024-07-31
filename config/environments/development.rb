@@ -98,10 +98,10 @@ Rails.application.configure do
   # Set to true to get the documents from efolder running locally on port 4000.
   config.use_efolder_locally = false
 
-  # set to true to create queues and override the sqs endpiont
+  # set to true to create queues and override the sqs endpoint
   config.sqs_create_queues = true
 
-  config.sqs_endpoint = ENV.has_key?('DOCKERIZED') ? 'http://localstack:4576' : 'http://localhost:4576'
+  config.sqs_endpoint = ENV.has_key?('DOCKERIZED') ? 'http://localstack:4566' : 'http://localhost:4566'
 
   # since we mock aws using localstack, provide dummy creds to the aws gem
   ENV["AWS_ACCESS_KEY_ID"] ||= "dummykeyid"
@@ -120,7 +120,7 @@ Rails.application.configure do
   ENV["REQUEST_ISSUE_DEFAULT_UPPER_BOUND_PER_PAGE"] ||= "50"
 
   # Necessary vars needed to create virtual hearing links
-  # Used by VirtualHearings::LinkService
+  # Used by VirtualHearings::PexipLinkService
   ENV["VIRTUAL_HEARING_PIN_KEY"] ||= "mysecretkey"
   ENV["VIRTUAL_HEARING_URL_HOST"] ||= "example.va.gov"
   ENV["VIRTUAL_HEARING_URL_PATH"] ||= "/sample"

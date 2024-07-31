@@ -1,1 +1,1 @@
-PexipService = (!ApplicationController.dependencies_faked? ? ExternalApi::PexipService : Fakes::PexipService)
+PexipService = (ApplicationController.dependencies_faked? ? Fakes::PexipService : ExternalApi::PexipService)

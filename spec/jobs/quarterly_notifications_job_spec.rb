@@ -2,6 +2,7 @@
 
 describe QuarterlyNotificationsJob, type: :job do
   include ActiveJob::TestHelper
+
   let(:appeal) { create(:appeal, :active) }
   let(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
   let(:vacols_case) { create(:case) }
@@ -48,6 +49,7 @@ describe QuarterlyNotificationsJob, type: :job do
 
       it "pushes a new message" do
         expect_message_to_be_queued
+        expect_message_to_have_status("docketed")
 
         subject
       end
@@ -68,6 +70,7 @@ describe QuarterlyNotificationsJob, type: :job do
 
       it "pushes a new message" do
         expect_message_to_be_queued
+        expect_message_to_have_status("docketed")
 
         subject
       end
@@ -89,6 +92,7 @@ describe QuarterlyNotificationsJob, type: :job do
 
       it "pushes a new message" do
         expect_message_to_be_queued
+        expect_message_to_have_status("Privacy Act Pending")
 
         subject
       end
@@ -109,6 +113,7 @@ describe QuarterlyNotificationsJob, type: :job do
 
       it "pushes a new message" do
         expect_message_to_be_queued
+        expect_message_to_have_status("docketed")
 
         subject
       end
@@ -123,13 +128,14 @@ describe QuarterlyNotificationsJob, type: :job do
           created_by_id: user.id,
           updated_by_id: user.id,
           appeal_docketed: true,
-          hearing_withdrawn: true,
-          scheduled_in_error: true
+          scheduled_in_error: true,
+          privacy_act_pending: true
         )
       end
 
       it "pushes a new message" do
         expect_message_to_be_queued
+        expect_message_to_have_status("Privacy Act Pending")
 
         subject
       end
@@ -150,26 +156,7 @@ describe QuarterlyNotificationsJob, type: :job do
 
       it "pushes a new message" do
         expect_message_to_be_queued
-
-        subject
-      end
-    end
-
-    context "Hearing Scheduled / Privacy Act Pending with ihp task" do
-      let(:hearing) { create(:hearing, :with_tasks) }
-      let!(:appeal_state) do
-        hearing.appeal.appeal_state.tap do
-          _1.update!(
-            appeal_docketed: true,
-            hearing_scheduled: true,
-            privacy_act_pending: true,
-            vso_ihp_pending: true
-          )
-        end
-      end
-
-      it "pushes a new message" do
-        expect_message_to_be_queued
+        expect_message_to_have_status("docketed")
 
         subject
       end
@@ -191,25 +178,7 @@ describe QuarterlyNotificationsJob, type: :job do
 
       it "pushes a new message" do
         expect_message_to_be_queued
-
-        subject
-      end
-    end
-
-    context "Hearing Scheduled with ihp task pending" do
-      let(:hearing) { create(:hearing, :with_tasks) }
-      let!(:appeal_state) do
-        hearing.appeal.appeal_state.tap do
-          _1.update!(
-            appeal_docketed: true,
-            hearing_scheduled: true,
-            vso_ihp_pending: true
-          )
-        end
-      end
-
-      it "pushes a new message" do
-        expect_message_to_be_queued
+        expect_message_to_have_status("VSO IHP Pending / Privacy Act Pending")
 
         subject
       end
@@ -229,6 +198,7 @@ describe QuarterlyNotificationsJob, type: :job do
 
       it "pushes a new message" do
         expect_message_to_be_queued
+        expect_message_to_have_status("Hearing Scheduled /  Privacy Act Pending")
 
         subject
       end
@@ -249,6 +219,7 @@ describe QuarterlyNotificationsJob, type: :job do
 
       it "pushes a new message" do
         expect_message_to_be_queued
+        expect_message_to_have_status("Privacy Act Pending")
 
         subject
       end
@@ -269,6 +240,7 @@ describe QuarterlyNotificationsJob, type: :job do
 
       it "pushes a new message" do
         expect_message_to_be_queued
+        expect_message_to_have_status("VSO IHP Pending")
 
         subject
       end
@@ -286,6 +258,7 @@ describe QuarterlyNotificationsJob, type: :job do
 
         it "pushes a new message" do
           expect_message_to_be_queued
+          expect_message_to_have_status("Hearing Scheduled")
 
           subject
         end
@@ -337,6 +310,17 @@ describe QuarterlyNotificationsJob, type: :job do
           instance_of(NotificationInitializationJob)
         )
       )
+  end
+
+  def expect_message_to_have_status(status)
+    expect_any_instance_of(NotificationInitializationJob)
+      .to receive(:initialize)
+      .with({
+              appeal_id: appeal_state.appeal_id,
+              appeal_type: appeal_state.appeal_type,
+              template_name: Constants.EVENT_TYPE_FILTERS.quarterly_notification,
+              appeal_status: status
+            })
   end
 
   def expect_message_to_not_be_enqueued

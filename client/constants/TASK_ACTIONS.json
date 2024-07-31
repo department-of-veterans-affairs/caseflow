@@ -539,6 +539,10 @@
     "value": "modal/complete_and_withdraw",
     "func": "withdraw_hearing_data"
   },
+  "CORRESPONDENCE_REMOVE_PACKAGE": {
+    "label": "Request to remove package",
+    "value": "temp"
+  },
   "CANCEL_TASK_AND_RETURN_TO_SCT_QUEUE": {
     "label": "Cancel task and return to Specialty Case Team",
     "value": "modal/cancel_task_and_return_to_sct",

@@ -59,6 +59,7 @@ gem "rack", "~> 2.2.6.2"
 gem "rails", "6.0.6.1"
 # Used to colorize output for rake tasks
 gem "rainbow"
+gem "rcredstash", "~> 1.1.0"
 # React
 gem "react_on_rails", "11.3.0"
 gem "redis-mutex"
@@ -68,6 +69,7 @@ gem "request_store"
 gem "roo", "~> 2.7"
 gem "rswag-api"
 gem "rswag-ui"
+gem "rtf"
 gem "ruby_claim_evidence_api", git: "https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git", ref: "fed623802afe7303f4b8b5fe27cff0e903699873"
 # Use SCSS for stylesheets
 gem "sass-rails", "~> 5.0"
@@ -84,6 +86,7 @@ gem "tzinfo", "1.2.10"
 # Use Uglifier as compressor for JavaScript assets
 gem "uglifier", ">= 1.3.0"
 gem "validates_email_format_of"
+gem "webvtt-ruby"
 gem "ziptz"
 
 group :production, :staging, :ssh_forwarding, :development, :test do
@@ -114,8 +117,8 @@ group :test, :development, :demo do
   gem "rails-erd"
   gem "rb-readline"
   gem "rspec"
-  gem "rspec-rails"
   # For CircleCI test metadata analysis
+  gem "rspec-rails"
   gem "rspec_junit_formatter"
   gem "rswag-specs"
   gem "rubocop", "= 0.83", require: false

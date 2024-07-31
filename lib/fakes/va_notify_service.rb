@@ -11,7 +11,7 @@ class Fakes::VANotifyService < ExternalApi::VANotifyService
       docket_number:,
       status: ""
     )
-      fake_notification_response(email_template_id)
+      fake_notification_response(email_template_id, status)
     end
 
     def send_sms_notifications(
@@ -26,7 +26,7 @@ class Fakes::VANotifyService < ExternalApi::VANotifyService
         return bad_participant_id_response
       end
 
-      fake_notification_response(sms_template_id)
+      fake_notification_response(sms_template_id, status)
     end
     # rubocop:enable  Metrics/ParameterLists
 
@@ -102,7 +102,7 @@ class Fakes::VANotifyService < ExternalApi::VANotifyService
       )
     end
 
-    def fake_notification_response(email_template_id)
+    def fake_notification_response(template_id, status)
       HTTPI::Response.new(
         200,
         {},
@@ -111,14 +111,14 @@ class Fakes::VANotifyService < ExternalApi::VANotifyService
           "reference": "string",
           "uri": "string",
           "template": {
-            "id" => email_template_id,
+            "id" => template_id,
             "version" => 0,
             "uri" => "string"
           },
           "scheduled_for": "string",
           "content": {
-            "body" => "string",
-            "subject" => "string"
+            "body" => "Template: #{template_id} - Status: #{status}",
+            "subject" => "Test Subject"
           }
         )
       )

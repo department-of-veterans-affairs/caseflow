@@ -48,6 +48,13 @@ export const setUserIsCobAdmin = (userIsCobAdmin) => ({
   }
 });
 
+export const setMeetingType = (conferenceProvider) => ({
+  type: ACTIONS.SET_CONFERENCE_PROVIDER,
+  payload: {
+    conferenceProvider
+  }
+});
+
 export const setCanViewOvertimeStatus = (canViewOvertimeStatus) => ({
   type: ACTIONS.SET_CAN_VIEW_OVERTIME_STATUS,
   payload: {
@@ -218,6 +225,21 @@ export const setUserCssId = (cssId) => ({
 export const setOrganizations = (organizations) => ({
   type: ACTIONS.SET_ORGANIZATIONS,
   payload: { organizations }
+});
+
+export const setMailTeamUser = (isInboundOpsTeamUser) => ({
+  type: ACTIONS.SET_INBOUND_OPS_TEAM_USER,
+  payload: { isInboundOpsTeamUser }
+});
+
+export const setMailSupervisor = (isInboundOpsSupervisor) => ({
+  type: ACTIONS.SET_INBOUND_OPS_SUPERVISOR,
+  payload: { isInboundOpsSupervisor }
+});
+
+export const setInboundOpsSuperUser = (isInboundOpsSuperuser) => ({
+  type: ACTIONS.SET_INBOUND_OPS_SUPERUSER,
+  payload: { isInboundOpsSuperuser }
 });
 
 export const setActiveOrganization = (id, type, name, isVso, userCanBulkAssign) => ({

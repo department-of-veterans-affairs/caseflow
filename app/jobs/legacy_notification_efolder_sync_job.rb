@@ -40,7 +40,7 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
     LegacyAppeal
       .where(id: RootTask.where(
         appeal_type: "LegacyAppeal",
-        status: "completed",
+        status: Constants.TASK_STATUSES.completed,
         closed_at: 1.day.ago..Time.zone.now
       )
       .pluck(:appeal_id)
