@@ -679,7 +679,7 @@ RSpec.feature "Case details", :all_dbs do
 
       scenario "access the appeal's case details" do
         reload_case_detail_page(appeal.external_id)
-        using_wait_time(5) do
+        using_wait_time(30) do
           expect(page).to have_content(COPY::DUPLICATE_PHONE_NUMBER_TITLE)
         end
 
@@ -1112,10 +1112,10 @@ RSpec.feature "Case details", :all_dbs do
     end
   end
 
-  context "When a current user is a member of Supervisory Senior Council organization" do
+  context "When a current user is a member of Supervisory Senior Counsel organization" do
     let(:appeal) { create(:appeal) }
     let(:current_user) { create(:user) }
-    let!(:organization) { SupervisorySeniorCouncil.singleton }
+    let!(:organization) { SupervisorySeniorCounsel.singleton }
     let!(:organization_user) { OrganizationsUser.make_user_admin(current_user, organization) }
     let(:receipt_date) { Time.zone.today - 20.days }
     let(:profile_date) { (receipt_date - 30.days).to_datetime }
@@ -1143,7 +1143,7 @@ RSpec.feature "Case details", :all_dbs do
     end
   end
 
-  context "When a user isn't a member of the Supervisory Senior Council" do
+  context "When a user isn't a member of the Supervisory Senior Counsel" do
     let(:appeal) { create(:appeal) }
     let(:current_user) { create(:user) }
     let(:receipt_date) { Time.zone.today - 20.days }

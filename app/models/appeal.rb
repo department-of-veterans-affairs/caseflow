@@ -26,6 +26,8 @@ class Appeal < DecisionReview
   has_many :email_recipients, class_name: "HearingEmailRecipient"
   has_many :available_hearing_locations, as: :appeal, class_name: "AvailableHearingLocations"
   has_many :vbms_uploaded_documents, as: :appeal
+  has_many :correspondence_appeals
+  has_many :correspondences, through: :correspondence_appeals
   has_many :notifications, as: :notifiable
 
   # decision_documents is effectively a has_one until post decisional motions are supported
@@ -251,11 +253,15 @@ class Appeal < DecisionReview
 
     category_substrings = %w[Contested Apportionment]
 
-    request_issues.active.any? do |request_issue|
-      category_substrings.any? do |substring|
-        request_issues.active.include?(request_issue) && request_issue.nonrating_issue_category&.include?(substring)
+    request_issues.each do |request_issue|
+      category_substrings.each do |substring|
+        if request_issue.active? && request_issue.nonrating_issue_category&.include?(substring)
+          return true
+        end
       end
     end
+
+    false
   end
 
   # :reek:RepeatedConditionals
@@ -957,6 +963,10 @@ class Appeal < DecisionReview
     end
     return false if relevant_tasks.any?(&:open?)
     return true if relevant_tasks.all?(&:closed?)
+  end
+
+  def open_cavc_task
+    CavcTask.open.where(appeal_id: self.id).any?
   end
 
   def is_legacy?
