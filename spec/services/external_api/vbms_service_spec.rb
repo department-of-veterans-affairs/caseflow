@@ -125,4 +125,70 @@ describe ExternalApi::VBMSService do
       end
     end
   end
+
+  describe ExternalApi::VBMSService do
+    describe ".upload_document_to_vbms" do
+      let(:fake_document) do
+        instance_double(
+          "UploadDocumentToVbms",
+          pdf_location: "/path/to/test/location",
+          source: "my_source",
+          document_type_id: 1,
+          document_type: "test"
+        )
+      end
+      let(:appeal) { create(:appeal) }
+
+      context "with use_ce_api feature toggle enabled" do
+        before { FeatureToggle.enable!(:use_ce_api) }
+        after { FeatureToggle.disable!(:use_ce_api) }
+
+        let(:mock_file_upload_payload) { instance_double("ClaimEvidenceFileUploadPayload") }
+
+        it "calls the CE API" do
+          allow(SecureRandom).to receive(:uuid).and_return("12345")
+          allow(Time).to receive(:current).and_return(Time.parse("2024-07-26"))
+          filename = "12345location"
+
+          expect(ClaimEvidenceFileUploadPayload).to receive(:new).with(
+            content_name: filename,
+            content_source: fake_document.source,
+            date_va_received_document: "2024-07-26",
+            document_type_id: fake_document.document_type_id,
+            subject: fake_document.document_type,
+            new_mail: true
+          ).and_return(mock_file_upload_payload)
+
+          expect(VeteranFileUpload).to receive(:upload_veteran_file).with(
+            file_path: fake_document.pdf_location,
+            veteran_file_number: appeal.veteran_file_number,
+            doc_info: mock_file_upload_payload
+          )
+
+          described_class.upload_document_to_vbms(appeal, fake_document)
+        end
+      end
+
+      context "with use_ce_api feature toggle disabled" do
+        before { FeatureToggle.disable!(:use_ce_api) }
+
+        let(:mock_vbms_client) { instance_double("VBMS::Client") }
+        let(:mock_initialize_upload_response) { double(upload_token: "document-token") }
+
+        it "calls the VBMS client" do
+          allow(described_class).to receive(:init_vbms_client).and_return(mock_vbms_client)
+          allow(described_class).to receive(:initialize_upload)
+            .with(appeal, fake_document).and_return(mock_initialize_upload_response)
+          allow(described_class).to receive(:upload_document)
+            .with(appeal.veteran_file_number, "document-token", fake_document.pdf_location)
+
+          described_class.upload_document_to_vbms(appeal, fake_document)
+
+          expect(described_class).to have_received(:initialize_upload).with(appeal, fake_document)
+          expect(described_class).to have_received(:upload_document)
+            .with(appeal.veteran_file_number, "document-token", fake_document.pdf_location)
+        end
+      end
+    end
+  end
 end
