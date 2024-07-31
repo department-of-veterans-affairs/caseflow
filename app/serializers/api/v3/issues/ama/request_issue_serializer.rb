@@ -70,6 +70,14 @@ class Api::V3::Issues::Ama::RequestIssueSerializer
     end
   end
 
+  # attribute :decision_review do |object|
+  #   object&.decision_review
+  # end
+
+  # attribute :request_issues_updates do |object|
+  #   object&.decision_review&.request_issues_updates
+  # end
+
   attribute :development_item_reference_id do |object|
     object&.end_product_establishment&.development_item_reference_id
   end
@@ -83,58 +91,61 @@ class Api::V3::Issues::Ama::RequestIssueSerializer
   end
 
   attribute :added_by_station_id do |object|
-    object&.end_product_establishment&.user&.station_id
+    object&.decision_review&.intake&.user&.station_id
   end
 
   attribute :added_by_css_id do |object|
-    object&.end_product_establishment&.user&.css_id
+    object&.decision_review&.intake&.user&.css_id
   end
 
-  attribute :corrected_by_station_id do |object|
-    if object&.correction_type.present?
-      object&.end_product_establishment&.user&.station_id
-    end
-  end
+  # attribute :corrected_by_station_id do |object|
+  #   if object&.correction_type.present?
+  #     object&.end_product_establishment&.user&.station_id
+  #   end
+  # end
 
-  attribute :corrected_by_css_id do |object|
-    if object&.correction_type.present?
-      object&.end_product_establishment&.user&.css_id
-    end
-  end
+  # attribute :corrected_by_css_id do |object|
+  #   if object&.correction_type.present?
+  #     object&.end_product_establishment&.user&.css_id
+  #   end
+  # end
 
-  attribute :edited_by_station_id do |object|
-    if object&.edited_description.present?
-      object&.end_product_establishment&.user&.station_id
-    end
-  end
+  # attribute :edited_by_station_id do |object|
+  #   if object&.edited_description.present?
+  #     object&.end_product_establishment&.user&.station_id
+  #   end
+  # end
 
-  attribute :edited_by_css_id do |object|
-    if object&.edited_description.present?
-      object&.end_product_establishment&.user&.css_id
-    end
-  end
+  # attribute :edited_by_css_id do |object|
+  #   if object&.edited_description.present?
+  #     object&.end_product_establishment&.user&.css_id
+  #   end
+  # end
 
-  attribute :removed_by_css_id do |object|
-    if object&.closed_status == "removed"
-      object&.end_product_establishment&.user&.css_id
-    end
-  end
+  # attribute :removed_by_css_id do |object|
+  #   if object&.closed_status == "removed"
+  #     object&.end_product_establishment&.user&.css_id
+  #   end
+  # end
 
-  attribute :removed_by_station_id do |object|
-    if object&.closed_status == "removed"
-      object&.end_product_establishment&.user&.station_id
-    end
-  end
+  # attribute :removed_by_station_id do |object|
+  #   if object&.closed_status == "removed"
+  #     object&.end_product_establishment&.user&.station_id
+  #   end
 
-  attribute :withdrawn_by_css_id do |object|
-    if object&.closed_status == "withdrawn"
-      object&.end_product_establishment&.user&.css_id
-    end
-  end
+  #   # need to iterate through object&.decision_review&.request_issues_updates
+  #   # find the latest index that contains the current RequestIssue id in the BEFORE list but not the AFTER list AND check that the updated_at for the RIU matches the
+  # end
 
-  attribute :withdrawn_by_station_id do |object|
-    if object&.closed_status == "withdrawn"
-      object&.end_product_establishment&.user&.station_id
-    end
-  end
+  # attribute :withdrawn_by_css_id do |object|
+  #   if object&.closed_status == "withdrawn"
+  #     object&.end_product_establishment&.user&.css_id
+  #   end
+  # end
+
+  # attribute :withdrawn_by_station_id do |object|
+  #   if object&.closed_status == "withdrawn"
+  #     object&.end_product_establishment&.user&.station_id
+  #   end
+  # end
 end
