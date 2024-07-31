@@ -822,15 +822,19 @@ class RequestIssue < CaseflowRecord
   # In order to prevent browser/API automatic time zone changes from altering it, we
   # re-retrieve the value from the cache and save it to the DB as a string. Yikes.
 
-  def set_contested_rating_issue_profile_date
-    if contested_rating_issue_profile_date.blank?
-      self.contested_rating_issue_profile_date = contested_rating_issue&.profile_date
-    end
+  # potential converter for request issue
+  # def set_contested_rating_issue_profile_date
+  #   if contested_rating_issue_profile_date.blank?
+  #     self.contested_rating_issue_profile_date = contested_rating_issue&.profile_date
+  #   end
 
-    if contested_rating_issue_profile_date.present?
-      parsed_date = Time.zone.parse(contested_rating_issue_profile_date)
-      self.contested_rating_issue_profile_date = parsed_date.utc
-    end
+  #   if contested_rating_issue_profile_date.present?
+  #     parsed_date = Time.zone.parse(contested_rating_issue_profile_date)
+  #     self.contested_rating_issue_profile_date = parsed_date.utc
+  #   end
+  # end
+  def set_contested_rating_issue_profile_date
+    self.contested_rating_issue_profile_date ||= contested_rating_issue&.profile_date
   end
 
   # TODO: extend this to cover nonrating request issues
