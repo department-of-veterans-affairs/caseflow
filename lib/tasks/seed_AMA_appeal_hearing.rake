@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
-# to create  5 AMA Appeals with hearing type video, run "bundle exec rake 'db:generate_ama_hearing[5, video]'""
-# to create  10 AMA Appeals with hearing type virtual, run "bundle exec rake 'db:generate_ama_hearing[10, virtual]'""
+# to create  5 AMA Appeals with hearing type video, run "bundle exec rake 'db:generate_ama_hearing[5, video, user]'""
+# to create  10 AMA Appeals with hearing type virtual, run "bundle exec rake 'db:generate_ama_hearing[10, virtual, user]'""
 namespace :db do
   desc "Create a seed data for AMA Appeals with hearing type video and virtual"
-  task :generate_ama_hearing, [:number_of_appeals, :hearing_request_type] => :environment do |_, args|
+  task :generate_ama_hearing, [:number_of_appeals, :hearing_request_type, :user_id] => :environment do |_, args|
     num_appeals = args.number_of_appeals.to_i
     HEARING_REQUEST_TYPE = args.hearing_request_type.to_s
-    RequestStore[:current_user] = User.find_by_css_id("BVADWISE")
+    USER_ID = args.user_id
+    RequestStore[:current_user] = User.find_by_css_id(USER_ID)
 
     def create_ama_appeals(file_number, docket_number)
       request_issue = RequestIssue.create!(
@@ -30,11 +31,8 @@ namespace :db do
       appeal.id
     end
 
-    vets = []
+    vets = Veteran.order(Arel.sql('RANDOM()')).first(10)
     list_id = []
-    (1..10).each do |_|
-      vets << Veteran.find(Random.new.rand(1..Veteran.count))
-    end
 
     veterans_file_number = vets[0..10].pluck(:file_number)
     docket_number = 9_000_000
