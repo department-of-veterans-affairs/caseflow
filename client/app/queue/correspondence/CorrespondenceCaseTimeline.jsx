@@ -3,6 +3,15 @@ import PropTypes from 'prop-types';
 import CorrespondenceTaskRows from './CorrespondenceTaskRows';
 const CorrespondenceCaseTimeline = (props) => {
 
+  const getAvailableActions = (task) => {
+    if (props.organizations.includes(task.assigned_to) || props.userCssId === task.assigned_to) {
+      return task.available_actions;
+    }
+
+    return [];
+
+  };
+
   const formatTaskData = () => {
     return (props.correspondence.tasksUnrelatedToAppeal.map((task) => {
       return {
@@ -10,7 +19,7 @@ const CorrespondenceCaseTimeline = (props) => {
         assignedTo: task.assigned_to,
         label: task.type,
         instructions: task.instructions,
-        availableActions: task.available_actions,
+        availableActions: getAvailableActions(task),
         uniqueId: task.uniqueId
       };
     }));

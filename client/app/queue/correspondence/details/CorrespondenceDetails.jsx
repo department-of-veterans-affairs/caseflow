@@ -10,6 +10,7 @@ import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
 // import TaskSnapshot from '../../TaskSnapshot';
 import { prepareAppealForSearchStore } from 'app/queue/utils';
+import moment from 'moment';
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
@@ -102,6 +103,44 @@ const CorrespondenceDetails = (props) => {
     </div>
   </>;
 
+  const correspondencePackageDetails = () => {
+    return (
+      <>
+        <div className="correspondence-package-details">
+          <h2 className="correspondence-h2">General Information</h2>
+          <table className="corr-table-borderless gray-border">
+            <tbody>
+              <tr>
+                <th className="corr-table-borderless-first-item"><strong>Veteran Details</strong></th>
+                <th><strong>Correspondence Type</strong></th>
+                <th><strong>Package Document Type</strong></th>
+                <th className="corr-table-borderless-last-item"><strong>VA DOR</strong></th>
+              </tr>
+              <tr>
+                <td className="corr-table-borderless-first-item">
+                  {props.correspondence.veteranFullName} ({props.correspondence.veteranFileNumber})
+                </td>
+                <td>{props.correspondence.correspondenceType}</td>
+                <td>{props.correspondence.nod ? 'NOD' : 'Non-NOD'}</td>
+                <td className="corr-table-borderless-last-item">
+                  {moment(props.correspondence.vaDateOfReceipt).format('MM/DD/YYYY')}
+                </td>
+              </tr>
+              <tr>
+                <th colSpan={6} className="corr-table-borderless-first-item corr-table-borderless-last-item">
+                  <strong>Notes</strong></th>
+              </tr>
+              <tr>
+                <td colSpan={6} className="corr-table-borderless-first-item corr-table-borderless-last-item">
+                  {props.correspondence.notes}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </>
+    );
+  };
+
   const tabList = [
     {
       disable: false,
@@ -111,7 +150,7 @@ const CorrespondenceDetails = (props) => {
     {
       disable: false,
       label: 'Package Details',
-      page: 'Information about Package Details'
+      page: correspondencePackageDetails()
     },
     {
       disable: false,
