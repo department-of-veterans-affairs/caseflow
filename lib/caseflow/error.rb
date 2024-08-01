@@ -500,4 +500,5 @@ module Caseflow::Error
 
   class SqsUnexpectedQueueTypeError < StandardError; end
   class SqsQueueNotFoundError < StandardError; end
+  class SqsQueueExhaustionError < StandardError; end
 end
