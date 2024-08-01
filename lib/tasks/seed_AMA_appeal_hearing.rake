@@ -13,7 +13,6 @@ namespace :db do
     def create_ama_appeals(file_number, docket_number)
       request_issue = RequestIssue.create!(
         decision_review_type: "Appeal",
-        # decision_review: appeal,
         nonrating_issue_category: "Unknown Issue Categor",
         type: "RequestIssue", benefit_type: "compensation",
         nonrating_issue_description: "testing"
