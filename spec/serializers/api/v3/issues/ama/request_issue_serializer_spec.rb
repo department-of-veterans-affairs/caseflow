@@ -112,11 +112,36 @@ describe Api::V3::Issues::Ama::RequestIssueSerializer, :postgres do
       end
     end
 
+    context "when rating_profile_date is spaces" do
+      let(:rating_profile_date) { "   " }
+
+      it "sets the rating_profile_date to nil" do
+        expect(serialized_decision_issue[:rating_profile_date]).to be_nil
+      end
+    end
+
     context "when rating_profile_date is nil" do
       let(:rating_profile_date) { nil }
 
       it "sets the rating_profile_date to nil" do
         expect(serialized_decision_issue[:rating_profile_date]).to be_nil
+      end
+    end
+
+    context "when rating_profile_date is DateTime" do
+      let(:rating_profile_date) { DateTime.new(2024, 7, 31, 14, 0, 0, "-04:00") }
+
+      it "converts the rating_profile_date to UTC" do
+        expect(serialized_decision_issue[:rating_profile_date]).to eq(rating_profile_date.utc)
+      end
+    end
+
+    context "bidirectional converting" do
+      let(:rating_profile_date) { DateTime.new(2024, 7, 31, 14, 0, 0, "-04:00") }
+      it "converts the rating_profile_date to UTC" do
+        time_zone = "Eastern Time (US & Canada)"
+        localized_time = serialized_decision_issue[:rating_profile_date].in_time_zone(time_zone)
+        expect(localized_time.to_datetime).to eq(rating_profile_date)
       end
     end
   end
