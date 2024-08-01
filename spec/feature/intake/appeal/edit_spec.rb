@@ -133,7 +133,7 @@ feature "Appeal Edit issues", :all_dbs do
     add_intake_rating_issue(issue_description, "a new comment")
     expect(page).to have_content(issue_description)
     expect(page).to_not have_content(
-                          Constants.INELIGIBLE_REQUEST_ISSUES.duplicate_of_rating_issue_in_active_review.gsub("{review_title}", "Appeal")
+      Constants.INELIGIBLE_REQUEST_ISSUES.duplicate_of_rating_issue_in_active_review.gsub("{review_title}", "Appeal")
                         )
     expect(page).to have_content("When you finish making changes, click \"Save\" to continue")
 
@@ -262,7 +262,7 @@ feature "Appeal Edit issues", :all_dbs do
         add_intake_rating_issue("intervertebral disc syndrome") # ineligible issue
 
         expect(page).to have_content(
-                          "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}"
+          "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}"
                         )
 
         click_intake_add_issue
@@ -292,7 +292,7 @@ feature "Appeal Edit issues", :all_dbs do
         li_optin = ri_with_optin.legacy_issue_optin
         expect(li_optin.optin_processed_at).to_not be_nil
         expect(VACOLS::CaseIssue.find_by(isskey: "vacols1", issseq: 1).issdc).to eq(
-                                                                                   LegacyIssueOptin::VACOLS_DISPOSITION_CODE
+          LegacyIssueOptin::VACOLS_DISPOSITION_CODE
                                                                                  )
 
         # Check rollback
@@ -307,7 +307,7 @@ feature "Appeal Edit issues", :all_dbs do
         expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
         expect(li_optin.reload.rollback_processed_at).to_not be_nil
         expect(VACOLS::CaseIssue.find_by(isskey: "vacols1", issseq: 1).issdc).to eq(
-                                                                                   li_optin.original_disposition_code
+          li_optin.original_disposition_code
                                                                                  )
 
         expect(ineligible_ri.reload.closed_status).to eq("removed")
@@ -329,7 +329,7 @@ feature "Appeal Edit issues", :all_dbs do
         add_intake_rating_issue("ankylosis of hip")
 
         expect(page).to have_content(
-                          "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn}"
+          "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn}"
                         )
 
         safe_click("#button-submit-update")
@@ -338,10 +338,10 @@ feature "Appeal Edit issues", :all_dbs do
         expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
 
         expect(RequestIssue.find_by(
-          contested_issue_description: "Left knee granted",
-          ineligible_reason: :legacy_issue_not_withdrawn,
-          vacols_id: "vacols1",
-          vacols_sequence_id: "1"
+                 contested_issue_description: "Left knee granted",
+                 ineligible_reason: :legacy_issue_not_withdrawn,
+                 vacols_id: "vacols1",
+                 vacols_sequence_id: "1"
         )).to_not be_nil
       end
     end
@@ -886,7 +886,7 @@ feature "Appeal Edit issues", :all_dbs do
       expect(page).to have_content("Check the Veteran's profile for invalid information")
       expect(page).to have_content("Please fill in the following fields in the Veteran's profile in VBMS or")
       expect(page).to have_content(
-                        "the corporate database, then retry establishing the EP in Caseflow: country"
+        "the corporate database, then retry establishing the EP in Caseflow: country"
                       )
       expect(page).to have_content("This Veteran's address is too long. Please edit it in VBMS or SHARE")
       expect(page).to have_button("Save", disabled: true)
@@ -973,8 +973,8 @@ feature "Appeal Edit issues", :all_dbs do
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
       expect(page).to_not have_content("Unable to load this case")
       expect(RequestIssue.find_by(
-        benefit_type: "education",
-        veteran_participant_id: nil
+               benefit_type: "education",
+               veteran_participant_id: nil
       )).to_not be_nil
     end
   end
@@ -1048,7 +1048,7 @@ feature "Appeal Edit issues", :all_dbs do
       click_withdraw_intake_issue_dropdown("PTSD denied")
 
       expect(page).to have_content(
-                        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawal pending/i
+        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawal pending/i
                       )
       expect(page).to have_content("Please include the date the withdrawal was requested")
 
@@ -1088,7 +1088,7 @@ feature "Appeal Edit issues", :all_dbs do
 
       expect(page).to_not have_content(/Requested issues\s*[0-9]+\. PTSD denied/i)
       expect(page).to have_content(
-                        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawal pending/i
+        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawal pending/i
                       )
       expect(page).to have_content("Please include the date the withdrawal was requested")
 
@@ -1107,7 +1107,7 @@ feature "Appeal Edit issues", :all_dbs do
       visit "appeals/#{appeal.uuid}/edit/"
 
       expect(page).to have_content(
-                        /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: #{request_issue_decision_mdY}\s*Withdrawn on/i
+        /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: #{request_issue_decision_mdY}\s*Withdrawn on/i
                       )
     end
 
@@ -1132,7 +1132,7 @@ feature "Appeal Edit issues", :all_dbs do
       click_withdraw_intake_issue_dropdown("PTSD denied")
 
       expect(page).to have_content(
-                        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawal pending/i
+        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawal pending/i
                       )
       expect(page).to have_content("Please include the date the withdrawal was requested")
 
@@ -1153,7 +1153,7 @@ feature "Appeal Edit issues", :all_dbs do
       fill_in "withdraw-date", with: 50.days.ago.to_date.mdY
 
       expect(page).to have_content(
-                        "We cannot process your request. Please select a date after the Appeal's receipt date."
+        "We cannot process your request. Please select a date after the Appeal's receipt date."
                       )
       expect(page).to have_button("Save", disabled: true)
 
@@ -1212,8 +1212,8 @@ feature "Appeal Edit issues", :all_dbs do
         expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
 
         expect(RequestIssue.find_by(
-          benefit_type: "compensation",
-          veteran_participant_id: nil
+                 benefit_type: "compensation",
+                 veteran_participant_id: nil
         )).to_not be_nil
 
         visit "appeals/#{appeal.uuid}/edit"
@@ -1448,8 +1448,8 @@ feature "Appeal Edit issues", :all_dbs do
       safe_click ".confirm"
       expect(page).to have_content("You have successfully updated issues on this appeal")
       expect(page).to have_content(
-                        "The appeal for #{appeal3.claimant.name} " \
-                          "(ID: #{appeal3.veteran.file_number}) has been moved to the SCT queue."
+        "The appeal for #{appeal3.claimant.name} " \
+          "(ID: #{appeal3.veteran.file_number}) has been moved to the SCT queue."
                       )
     end
   end
@@ -1506,8 +1506,8 @@ feature "Appeal Edit issues", :all_dbs do
       safe_click ".confirm"
       expect(page).to have_content("You have successfully updated issues on this appeal")
       expect(page).to have_content(
-                        "The appeal for #{appeal3.claimant.name} " \
-                          "(ID: #{appeal3.veteran.file_number}) has been moved to the regular distribution pool."
+        "The appeal for #{appeal3.claimant.name} " \
+          "(ID: #{appeal3.veteran.file_number}) has been moved to the regular distribution pool."
                       )
       expect(page).to have_current_path("/queue/appeals/#{appeal3.uuid}")
 
