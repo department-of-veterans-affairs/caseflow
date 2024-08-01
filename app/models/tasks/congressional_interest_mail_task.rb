@@ -13,7 +13,7 @@ class CongressionalInterestMailTask < MailTask
     LitigationSupport.singleton
   end
 
-  def available_actions(user)
+  def self.available_actions(user)
     return [] unless user
 
     options = [
