@@ -2,9 +2,9 @@
 
 class CorrespondenceRootTask < CorrespondenceTask
   def correspondence_status
+    return Constants.CORRESPONDENCE_STATUSES.action_required if action_required?
     return Constants.CORRESPONDENCE_STATUSES.unassigned if unassigned?
     return Constants.CORRESPONDENCE_STATUSES.assigned if assigned?
-    return Constants.CORRESPONDENCE_STATUSES.action_required if action_required?
     return Constants.CORRESPONDENCE_STATUSES.pending if pending?
     return Constants.CORRESPONDENCE_STATUSES.completed if completed?
   end

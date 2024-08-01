@@ -23,6 +23,10 @@ class Correspondence < CaseflowRecord
     CorrespondenceRootTaskFactory.new(self).create_root_and_sub_tasks!
   end
 
+  def status
+    root_task&.correspondence_status
+  end
+
   def type
     "Correspondence"
   end
@@ -84,29 +88,4 @@ class Correspondence < CaseflowRecord
     includes([:veteran, :correspondence_type])
       .where(veteran_id: veteran_id).where.not(uuid: uuid)
   end
-
-  # # logic for handling correspondence statuses
-  # # unassigned if review package task is unassigned
-  # def unassigned?
-  #   review_package_task&.status == Constants.TASK_STATUSES.unassigned
-  # end
-
-  # # assigned if open (assigned or on hold status) review package task or intake task
-  # def assigned?
-  #   !unassigned? && (!review_package_task.blank? || !open_intake_task.blank?)
-  # end
-
-  # # action required if the correspondence has a package action task with a status of 'assigned'
-  # def action_required?
-  #   package_action_tasks&.any? { |task| task&.assigned? }
-  # end
-
-  # def pending?
-  #   !tasks_not_related_to_an_appeal.blank?
-  # end
-
-  # # completed if root task is closed or no open children tasks
-  # def completed?
-  #   root_task.completed? || root_task.children.open.blank?
-  # end
 end
