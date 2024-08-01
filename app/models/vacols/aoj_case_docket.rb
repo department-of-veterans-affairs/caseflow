@@ -528,9 +528,9 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket
     if case_affinity_days_lever_value_is_selected?(aoj_aod_affinity_lever_value) ||
        aoj_aod_affinity_lever_value == Constants.ACD_LEVERS.omit
       "((PREV_DECIDING_JUDGE = ? or PREV_DECIDING_JUDGE is null or PREV_DECIDING_JUDGE is not null)
-      and AOD = '1' and PREV_TYPE_ACTION = '3' )"
+      and AOD = '1' and PREV_TYPE_ACTION = '7' )"
     elsif aoj_aod_affinity_lever_value == Constants.ACD_LEVERS.infinite
-      "(AOD = '1' and PREV_TYPE_ACTION = '3')"
+      "(AOD = '1' and PREV_TYPE_ACTION = '7')"
     else
       "VLJ = ?"
     end
@@ -575,8 +575,8 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket
   end
 
   def self.tied_to_or_not_aoj_aod?(appeal, judge_sattyid)
-    (appeal["prev_type_action"] != "3" || appeal["aod"] != 1) ||
-      (appeal["prev_type_action"] == "3" && appeal["aod"] == 1 &&
+    (appeal["aod"] != 1) ||
+      (appeal["aod"] == 1 &&
         !appeal["vlj"].blank? &&
         (appeal["vlj"] == appeal["prev_deciding_judge"] || appeal["prev_deciding_judge"].nil?) &&
         appeal["vlj"] == judge_sattyid) ||
