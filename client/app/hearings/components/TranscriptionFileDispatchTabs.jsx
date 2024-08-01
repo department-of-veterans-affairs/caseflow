@@ -85,7 +85,9 @@ export const tabConfig = (buildPackage, selectFilesForPackage, files) => [
         <Link linkStyling to="/find_by_contractor">
           <span style={styles.linkStyles}>
                   Transcription settings
-            <ExternalLinkIcon style={styles.linkIconStyles} color={COLORS.PRIMARY} size={ICON_SIZES.SMALL} />
+            <span style={{marginLeft: '.25em'}}>
+              <ExternalLinkIcon style={styles.linkIconStyles} color={COLORS.PRIMARY} size={ICON_SIZES.SMALL} />
+            </span>
           </span>
         </Link>
       </div>
