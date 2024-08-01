@@ -444,6 +444,7 @@ Rails.application.routes.draw do
     get "/seeds", to: "test_seeds#seeds" # test seed buttons routes
 
     resources :load_test, only: [:index]
+    # post "/load_test", to: "load_test#user", as: "user"
 
     resources :hearings, only: [:index]
 

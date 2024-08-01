@@ -18,7 +18,7 @@ class Test::LoadTestController < ApplicationController
   end
 
   def user
-    set_current_user unless load_tester_already_activated?
+    set_current_user
 
     render json: {
       api_key: generate_api_key,
@@ -67,23 +67,31 @@ class Test::LoadTestController < ApplicationController
     }
   end
 
-  # Private: Checks if the load testing user already has an active session.
-  def load_tester_already_activated?
-    session.to_hash.dig("user", "css_id") == LOAD_TESTING_USER
-  end
-
   # Private: Finds or creates the user for load testing, makes them a system admin
   # so that it can access any area in Caseflow, and stores their information in the
   # current session. This will be reflected in the session cookie.
-  def set_current_user
-    user = User.find_or_create_by(css_id: LOAD_TESTING_USER, station_id: 101)
-    # user update for roles and orgs, in order to gain access to certain endpoints.
-    user.update!(roles: ["Reader", "Admin Intake", "Edit HearSched", "Build HearSched"])
-    Functions.grant!("System Admin", users: [LOAD_TESTING_USER])
 
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
+  def set_current_user
+    user = user.presence || User.find_or_create_by(css_id: LOAD_TESTING_USER, station_id: params[:station_id])
+    # user update in order to gain access to certain endpoints.
+    user.update!(css_id: params[:css_id]) if user.css_id != params[:css_id]
+    user.update!(station_id: params[:station_id]) if params[:station_id] != user.station_id
+    user.update!(regional_office: params[:regional_office]) if params[:regional_office] != user.regional_office
+    user.update!(roles: params[:roles])
+    Functions.grant!(params[:functions], users: [LOAD_TESTING_USER])
+    params[:organizations].each do |org|
+      organization = Organization.find_by_name_or_url(org)
+      organization.add_user(user: user) unless organization.users.include?(user)
+    end
+    params[:feature_toggles].each do |toggle|
+      FeatureToggle.enable!(toggle, users: user) if !FeatureToggle.enabled?(toggle, user: user)
+    end
     session["user"] = user.to_session_hash
+    # Do we want regional_office vs users_regional_office
     session[:regional_office] = user.users_regional_office
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
 
   # Private: Deletes  the load testing API key if it already exists to prevent conflicts
   def ensure_key_does_not_exist_already
