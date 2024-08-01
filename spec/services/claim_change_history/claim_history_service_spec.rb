@@ -13,6 +13,14 @@ describe ClaimHistoryService do
                           benefit_type: "vha",
                           claimant_type: :dependent_claimant))
   end
+  let!(:hlr_task_with_imr) do
+    create(:issue_modification_request,
+           :with_higher_level_review,
+           :edit_of_request,
+           :update_decider,
+           nonrating_issue_category: "Medical and Dental Care Reimbursement")
+  end
+
   let!(:extra_hlr_request_issue) do
     create(:request_issue,
            nonrating_issue_category: "Camp Lejune Family Member",
@@ -88,6 +96,18 @@ describe ClaimHistoryService do
     ]
   end
 
+  let(:expected_imr_event_types) do
+    [
+      :claim_creation,
+      :added_issue,
+      :pending,
+      :addition,
+      :request_edited,
+      :request_approved,
+      :in_progress
+    ]
+  end
+
   before do
     # Remove the versions to setup specific versions
     hlr_task.versions.each(&:delete)
@@ -146,8 +166,8 @@ describe ClaimHistoryService do
         expect(events).to eq(service_instance.events)
 
         # Expect to get back all the combined event types
-        all_event_types = expected_hlr_event_types + expected_sc_event_types
-        expect(events.count).to eq(14)
+        all_event_types = expected_hlr_event_types + expected_sc_event_types + expected_imr_event_types
+        expect(events.count).to eq(21)
         expect(events.map(&:event_type)).to contain_exactly(*all_event_types)
 
         # Verify the issue data is correct for the completed_dispostion events
@@ -165,9 +185,12 @@ describe ClaimHistoryService do
         expect(disposition_events.map(&:disposition_date)).to contain_exactly(*disposition_dates)
 
         # Verify the issue data is correct for all the add issue events
-        added_issue_types = [*disposition_issue_types, "CHAMPVA", "Beneficiary Travel"]
-        added_issue_descriptions = [*disposition_issue_descriptions, "Withdrew CHAMPVA", "VHA issue description "]
-        added_issue_user_names = ["Lauren Roth", "Lauren Roth", "Lauren Roth", "Eleanor Reynolds"]
+        added_issue_types = [*disposition_issue_types, "CHAMPVA", "Beneficiary Travel", "Caregiver | Other"]
+        added_issue_descriptions = [*disposition_issue_descriptions,
+                                    "Withdrew CHAMPVA",
+                                    "VHA issue description ",
+                                    "VHA - Caregiver "]
+        added_issue_user_names = ["Lauren Roth", "Lauren Roth", "Lauren Roth", "Eleanor Reynolds", "Lauren Roth"]
         add_issue_events = events.select do |event|
           event.event_type == :added_issue || event.event_type == :added_issue_without_decision_date
         end
@@ -237,7 +260,10 @@ describe ClaimHistoryService do
 
         it "should only return events for tasks that match the claim type filter" do
           subject
-          expect(service_instance.events.map(&:event_type)).to contain_exactly(*expected_hlr_event_types)
+          expect(service_instance.events.map(&:event_type)).to contain_exactly(
+            *expected_hlr_event_types,
+            *expected_imr_event_types
+          )
         end
 
         context "with no filter matches" do
@@ -255,7 +281,10 @@ describe ClaimHistoryService do
 
         it "should only return events for the tasks that match the task status filter" do
           subject
-          expect(service_instance.events.map(&:event_type)).to contain_exactly(*expected_sc_event_types)
+          expect(service_instance.events.map(&:event_type)).to contain_exactly(
+            *expected_sc_event_types,
+            *expected_imr_event_types
+          )
         end
 
         context "with no filter matches" do
@@ -296,7 +325,7 @@ describe ClaimHistoryService do
 
           it "should return events without a disposition" do
             subject
-            expect(service_instance.events.count).to eq(14)
+            expect(service_instance.events.count).to eq(21)
           end
         end
       end
@@ -308,7 +337,9 @@ describe ClaimHistoryService do
           subject
           expected_event_types = [
             :added_issue,
-            :completed_disposition
+            :completed_disposition,
+            :added_issue,
+            :request_edited
           ]
           expect(service_instance.events.map(&:event_type)).to contain_exactly(*expected_event_types)
         end
@@ -331,7 +362,9 @@ describe ClaimHistoryService do
               :added_issue,
               :completed_disposition,
               :added_issue,
-              :withdrew_issue
+              :withdrew_issue,
+              :added_issue,
+              :request_edited
             ]
             expect(service_instance.events.map(&:event_type)).to contain_exactly(*expected_event_types)
           end
@@ -344,6 +377,7 @@ describe ClaimHistoryService do
         it "should only return events with the specified event types" do
           subject
           expected_event_types = [
+            :added_issue,
             :added_issue,
             :added_issue,
             :added_issue,
@@ -380,7 +414,8 @@ describe ClaimHistoryService do
             subject
             expect(service_instance.events.map(&:event_type)).to contain_exactly(
               *expected_hlr_event_types,
-              *expected_sc_event_types
+              *expected_sc_event_types,
+              *expected_imr_event_types
             )
           end
         end
@@ -408,7 +443,8 @@ describe ClaimHistoryService do
             ]
             expect(service_instance.events.map(&:event_type)).to contain_exactly(
               *filtered_hlr_event_types,
-              *expected_sc_event_types
+              *expected_sc_event_types,
+              *expected_imr_event_types
             )
           end
         end
@@ -432,7 +468,8 @@ describe ClaimHistoryService do
             subject
             expect(service_instance.events.map(&:event_type)).to contain_exactly(
               *(expected_hlr_event_types - [:claim_creation]),
-              *expected_sc_event_types
+              *expected_sc_event_types,
+              *expected_imr_event_types
             )
           end
 
@@ -542,7 +579,8 @@ describe ClaimHistoryService do
           it "should return all events" do
             subject
             expect(service_instance.events.map(&:event_type)).to contain_exactly(*expected_hlr_event_types,
-                                                                                 *expected_sc_event_types)
+                                                                                 *expected_sc_event_types,
+                                                                                 *expected_imr_event_types)
           end
         end
       end
@@ -553,7 +591,8 @@ describe ClaimHistoryService do
 
           it "should only return events for tasks that match the days waiting filter" do
             subject
-            expect(service_instance.events.map(&:event_type)).to contain_exactly(*expected_hlr_event_types)
+            expect(service_instance.events.map(&:event_type)).to contain_exactly(*expected_hlr_event_types,
+                                                                                 *expected_imr_event_types)
           end
         end
 
@@ -666,9 +705,62 @@ describe ClaimHistoryService do
           subject
           expected_event_types = [
             :completed,
+            :in_progress,
             :in_progress
           ]
           expect(service_instance.events.map(&:event_type)).to contain_exactly(*expected_event_types)
+        end
+      end
+
+      context "with issue modification request task id" do
+        let(:filters) { { task_id: hlr_task_with_imr.decision_review.tasks.ids[0] } }
+        it "should only return the filtered events for the specific task ids" do
+          subject
+          expect(service_instance.events.map(&:event_type)).to contain_exactly(*expected_imr_event_types)
+        end
+      end
+
+      context "with multiple filters for task id and event" do
+        let(:filters) do
+          { task_id: hlr_task_with_imr.decision_review.tasks.ids[0], events: [:added_issue, :claim_creation] }
+        end
+
+        it "should only return the filtered events for the specific task ids" do
+          subject
+          expect(service_instance.events.map(&:event_type)).to contain_exactly(:added_issue, :claim_creation)
+        end
+      end
+
+      context "with multiple filters for task id and event" do
+        let(:filters) do
+          { task_id: hlr_task_with_imr.decision_review.tasks.ids[0], events: [:request_edited] }
+        end
+
+        it "should only return the filtered events for the specific task ids" do
+          subject
+          expect(service_instance.events.map(&:event_type)).to contain_exactly(:request_edited)
+        end
+      end
+
+      context "with multiple filters for task id and event" do
+        let(:filters) do
+          { task_id: hlr_task_with_imr.decision_review.tasks.ids[0], events: [:request_approved] }
+        end
+
+        it "should only return the filtered events for the specific task ids" do
+          subject
+          expect(service_instance.events.map(&:event_type)).to contain_exactly(:request_approved)
+        end
+      end
+
+      context "with multiple filters for task id and event" do
+        let(:filters) do
+          { task_id: hlr_task_with_imr.decision_review.tasks.ids[0], events: [:pending] }
+        end
+
+        it "should only return the filtered events for the specific task ids" do
+          subject
+          expect(service_instance.events.map(&:event_type)).to contain_exactly(:pending)
         end
       end
     end

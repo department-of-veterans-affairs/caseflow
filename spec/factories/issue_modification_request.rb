@@ -6,7 +6,7 @@ FactoryBot.define do
     request_reason { Faker::Lorem.sentence }
 
     benefit_type { "vha" }
-    nonrating_issue_category {}
+    nonrating_issue_category { Constants::ISSUE_CATEGORIES["vha"].sample }
     status { "assigned" }
 
     decision_date { Time.zone.today - rand(0..29) }
@@ -17,8 +17,18 @@ FactoryBot.define do
 
     trait :update_decider do
       after(:create) do |imr, evaluator|
-        imr.status = evaluator.status || "approved"
+        imr.status = evaluator.status == "assigned" ? "approved" : evaluator.status
         imr.decider_id = create(:user).id
+        imr.save!
+      end
+    end
+
+    trait :edit_of_request do
+      after(:create) do |imr, evaluator|
+        imr.request_reason = "I edited this request."
+        imr.nonrating_issue_category = evaluator.nonrating_issue_category ||
+                                       Constants::ISSUE_CATEGORIES[evaluator.benefit_type].sample
+        imr.status = evaluator.status
         imr.save!
       end
     end
@@ -57,6 +67,7 @@ FactoryBot.define do
     trait :with_higher_level_review do
       decision_review do
         create(:higher_level_review,
+               :with_intake,
                :with_vha_issue,
                :update_assigned_at,
                :processed,

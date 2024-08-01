@@ -45,7 +45,7 @@ class ChangeHistoryFilterParser
       "requested_issue_removal" => :removal,
       "requested_issue_withdrawal" => :withdrawal,
       "approval_of_request" => :request_approved,
-      "rejection_of_request" => :request_rejected,
+      "rejection_of_request" => :request_denied,
       "cancellation_of_request" => :request_cancelled,
       "edit_of_request" => :request_edited
     }

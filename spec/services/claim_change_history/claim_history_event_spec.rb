@@ -74,9 +74,8 @@ describe ClaimHistoryEvent do
       "decider_station_id" => nil,
       "decider_css_id" => nil,
       "imr_versions" => imr_versions,
-      "version_has_status" => false,
       "previous_imr_created_at" => nil,
-      "updator_user_name" => "Monte Mann"
+      "updater_user_name" => "Monte Mann"
     }
   end
 
@@ -1117,8 +1116,8 @@ describe ClaimHistoryEvent do
           removal: "Requested issue removal",
           modification: "Requested issue modification",
           withdrawal: "Requested issue withdrawal",
-          request_approved: "Approval of the request - issue addition",
-          request_denied: "Rejection of the request- issue addition",
+          request_approved: "Approval of request - issue addition",
+          request_denied: "Rejection of request - issue addition",
           request_cancelled: "Cancellation of request",
           request_edited: "Edit of request - issue addition"
         }

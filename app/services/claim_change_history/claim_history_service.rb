@@ -5,6 +5,7 @@ class ClaimHistoryService
   attr_reader :business_line, :processed_task_ids,
               :processed_request_issue_ids, :processed_request_issue_update_ids,
               :processed_decision_issue_ids, :processed_issue_modification_request_ids,
+              :processed_issue_modification_task_ids,
               :events, :filters
   attr_writer :filters
 
@@ -42,9 +43,6 @@ class ClaimHistoryService
       process_task_events(change_data) unless change_data["task_status"] == "completed"
     end
     # Compact and sort in place to reduce garbage collection
-
-    # byebug
-
     @events.compact!
     @events.sort_by! do |event|
       [
@@ -242,13 +240,11 @@ class ClaimHistoryService
     end
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def process_request_issue_modification_events(change_data)
     issue_modification_request_id = change_data["issue_modification_request_id"]
 
     return unless issue_modification_request_id
 
-    task_id = change_data["task_id"]
     is_processed = @processed_issue_modification_request_ids.include?(issue_modification_request_id)
 
     if issue_modification_request_id && !is_processed
@@ -257,10 +253,18 @@ class ClaimHistoryService
       save_events(ClaimHistoryEvent.create_edited_request_issue_events(change_data))
     end
     # if imr version doesn't have status it means, imr has been made but no action yet taken from admin
+    process_pending_status_event(change_data) if !is_processed
+  end
+
+  # processed_issue_modification_task_id stores all the task id that has already been processed so that it prevents the duplicate entry of
+  # pending event based on change_ data.
+
+  def process_pending_status_event(change_data)
+    task_id = change_data["task_id"]
+
     if task_id &&
        !@processed_issue_modification_task_ids.include?(task_id) &&
-       !change_data["version_has_status"] && !is_processed
-
+       change_data["issue_modification_request_status"] == "assigned"
       @processed_issue_modification_task_ids.add(task_id)
 
       save_events(
@@ -269,13 +273,8 @@ class ClaimHistoryService
       )
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def ensure_array(variable)
     variable.is_a?(Array) ? variable : [variable]
-  end
-
-  def modified_event_type_filter
-    @filters[:events].map { |ef| issue_modification_event_type_request_mapper(ef.to_s) || ef }
   end
 end

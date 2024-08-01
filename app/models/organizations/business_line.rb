@@ -226,14 +226,7 @@ class BusinessLine < Organization
               versions.item_id,
               versions.item_type,
               ARRAY_AGG(versions.object_changes ORDER BY versions.id) AS object_changes_array,
-              MAX(CASE
-                  WHEN versions.object_changes LIKE '%updated_at:%' THEN versions.whodunnit
-                  ELSE NULL
-              END) AS version_updated_by_id,
-              MAX(CASE
-                WHEN versions.object_changes LIKE '%status:%' THEN 1
-                ELSE 0
-            END) AS version_has_status
+              MIN(versions.id) first_id
           FROM
               versions
           INNER JOIN issue_modification_requests ON issue_modification_requests.id = versions.item_id
@@ -241,7 +234,7 @@ class BusinessLine < Organization
           GROUP BY
               versions.item_id, versions.item_type)
         SELECT tasks.id AS task_id,
-          check_imr_current_status.is_assigned_present,
+          imr.is_assigned_present,
           tasks.status AS task_status,
           request_issues.id AS request_issue_id,
           request_issues_updates.created_at AS request_issue_update_time, decision_issues.description AS decision_description,
@@ -292,12 +285,10 @@ class BusinessLine < Organization
           decider.station_id AS decider_station_id,
           decider.css_id AS decider_css_id,
           itv.object_changes_array AS imr_versions,
-          updator.station_id AS updator_station_id,
-          updator.full_name  AS updator_user_name,
-          updator.css_id  AS updator_user_css_id,
-          CASE WHEN itv.version_has_status = 1 THEN true ELSE false END version_has_status,
           imr.created_at_lag as previous_imr_created_at,
-          imr.decided_at_lag as previous_imr_decided_at
+          imr.decided_at_lag as previous_imr_decided_at,
+          created_at_last_imr as last_imr_created_at,
+          v.object_changes as first_static_version
         FROM tasks
         INNER JOIN request_issues ON request_issues.decision_review_type = tasks.appeal_type
         AND request_issues.decision_review_id = tasks.appeal_id
@@ -308,7 +299,9 @@ class BusinessLine < Organization
         LEFT JOIN LATERAL (
         SELECT * ,
           lag(a.created_at,1) over (ORDER BY id) created_at_lag,
-          lag(a.decided_at,1) over (ORDER BY id) decided_at_lag
+          lag(a.decided_at,1) over (ORDER BY id) decided_at_lag,
+          lead(a.created_at,1) over (ORDER BY id) created_at_last_imr,
+          CASE WHEN a.status = 'assigned' THEN true ELSE false END as is_assigned_present
         FROM (
           SELECT * FROM issue_modification_requests imr
           WHERE imr.decision_review_id = tasks.appeal_id
@@ -340,25 +333,13 @@ class BusinessLine < Organization
         LEFT JOIN users requestor ON imr.requestor_id = requestor.id
         LEFT JOIN users decider ON imr.decider_id = decider.id
         LEFT JOIN imr_version_agg itv ON itv.item_type = 'IssueModificationRequest' AND itv.item_id = imr.id
-        LEFT JOIN users updator ON updator.id = itv.version_updated_by_id::int
-        INNER JOIN LATERAL (
-            SELECT CASE
-              WHEN EXISTS (
-                SELECT 1
-                FROM issue_modification_requests imr
-                WHERE imr.decision_review_id = request_issues.decision_review_id
-                  AND imr.decision_review_type = 'HigherLevelReview'
-                  AND imr.status = 'assigned'
-              ) THEN true
-              ELSE false
-         END AS is_assigned_present
-        ) check_imr_current_status on true
+        LEFT JOIN versions v on v.id = itv.first_id
         WHERE tasks.type = 'DecisionReviewTask'
         AND tasks.assigned_to_type = 'Organization'
         AND tasks.assigned_to_id = '#{parent.id.to_i}'
         #{sanitized_filters}
       UNION ALL
-      SELECT tasks.id AS task_id, check_imr_current_status.is_assigned_present, tasks.status AS task_status, request_issues.id AS request_issue_id,
+      SELECT tasks.id AS task_id, imr.is_assigned_present, tasks.status AS task_status, request_issues.id AS request_issue_id,
         request_issues_updates.created_at AS request_issue_update_time, decision_issues.description AS decision_description,
         request_issues.benefit_type AS request_issue_benefit_type, request_issues_updates.id AS request_issue_update_id,
         request_issues.created_at AS request_issue_created_at, request_decision_issues.created_at AS request_decision_created_at,
@@ -407,12 +388,10 @@ class BusinessLine < Organization
          decider.station_id AS decider_station_id,
          decider.css_id AS decider_css_id,
          itv.object_changes_array AS imr_versions,
-         updator.station_id AS updator_station_id,
-         updator.full_name  AS updator_user_name,
-         updator.css_id  AS updator_user_css_id,
-         CASE WHEN itv.version_has_status = 1 THEN true ELSE false END version_has_status,
          imr.created_at_lag as previous_imr_created_at,
-         imr.decided_at_lag as previous_imr_decided_at
+         imr.decided_at_lag as previous_imr_decided_at,
+         created_at_last_imr as last_imr_created_at,
+         v.object_changes  as first_static_version
       FROM tasks
       INNER JOIN request_issues ON request_issues.decision_review_type = tasks.appeal_type
       AND request_issues.decision_review_id = tasks.appeal_id
@@ -421,14 +400,16 @@ class BusinessLine < Organization
       LEFT JOIN intakes ON tasks.appeal_type = intakes.detail_type
       AND intakes.detail_id = tasks.appeal_id
       LEFT JOIN LATERAL (
-      SELECT * , lag(a.created_at,1) over (ORDER BY id) created_at_lag, lag(a.decided_at,1) over (ORDER BY id) decided_at_lag
+      SELECT * , lag(a.created_at,1) over (ORDER BY id) created_at_lag, lag(a.decided_at,1) over (ORDER BY id) decided_at_lag,
+       lead(a.created_at,1) over (ORDER BY id) created_at_last_imr,
+       CASE WHEN a.status = 'assigned' THEN true ELSE false END as is_assigned_present
       FROM (
         SELECT * FROM issue_modification_requests imr
         WHERE imr.decision_review_id = tasks.appeal_id
           AND imr.decision_review_type = 'SupplementalClaim'
           AND imr.request_issue_id = request_issues.id
           UNION ALL
-        SELECT * FROM issue_modification_requests imr_add
+        SELECT *FROM issue_modification_requests imr_add
           where imr_add.decision_review_id = tasks.appeal_id
             AND imr_add.decision_review_type = 'SupplementalClaim'
             AND imr_add.request_type = 'addition') a
@@ -452,19 +433,7 @@ class BusinessLine < Organization
       LEFT JOIN users requestor ON imr.requestor_id  = requestor.id
       LEFT JOIN users decider ON  imr.decider_id  = decider.id
       LEFT JOIN imr_version_agg itv ON itv.item_type = 'IssueModificationRequest' AND itv.item_id = imr.id
-      LEFT JOIN users updator ON updator.id = itv.version_updated_by_id::int
-       INNER JOIN LATERAL (
-             SELECT CASE
-           WHEN EXISTS (
-             SELECT 1
-             FROM issue_modification_requests imr
-             WHERE imr.decision_review_id = request_issues.decision_review_id
-             AND imr.decision_review_type = 'SupplementalClaim'
-               AND imr.status = 'assigned'
-           ) THEN true
-           ELSE false
-       END AS is_assigned_present
-         ) check_imr_current_status on true
+      LEFT JOIN versions v on v.id = itv.first_id
       WHERE tasks.type = 'DecisionReviewTask'
       AND tasks.assigned_to_type = 'Organization'
       AND tasks.assigned_to_id = '#{parent.id.to_i}'

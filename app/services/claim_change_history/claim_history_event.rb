@@ -18,8 +18,8 @@ class ClaimHistoryEvent
               :event_user_css_id, :new_issue_type, :new_issue_description, :new_decision_date,
               :modification_request_reason, :request_type, :decision_reason, :decided_at_date,
               :issue_modification_request_withdrawal_date, :requestor,
-              :decider, :remove_original_issue, :issue_modification_request_status, :version_has_status,
-              :imr_created_at_lag, :imr_decided_at_lag
+              :decider, :remove_original_issue, :issue_modification_request_status,
+              :imr_created_at_lag, :imr_decided_at_lag, :first_static_version
 
   EVENT_TYPES = [
     :completed_disposition,
@@ -82,7 +82,7 @@ class ClaimHistoryEvent
 
   REQUEST_ISSUE_TIME_WINDOW = 15
   STATUS_EVENT_TIME_WINDOW = 2
-  ISSUE_MODIFICATION_REQUEST_CREATION_WINDOW = 15
+  ISSUE_MODIFICATION_REQUEST_CREATION_WINDOW = 60
 
   class << self
     def from_change_data(event_type, change_data)
@@ -108,13 +108,12 @@ class ClaimHistoryEvent
     def create_issue_modification_request_event(change_data)
       issue_modification_events = []
       request_type = change_data["request_type"]
-      event_hash = {
-        "event_date" => change_data["issue_modification_request_created_at"] ||
-                        change_data["issue_modification_request_edited_at"],
-        "event_user_name" => change_data["requestor"],
-        "user_facility" => change_data["requestor_station_id"],
-        "event_user_css_id" => change_data["requestor_css_id"]
-      }
+      event_hash = request_issue_modification_event_hash(change_data)
+
+      if change_data["first_static_version"].present?
+        first_version = parse_versions("{#{change_data['first_static_version']}}")
+        event_hash.merge!(update_event_hash_data_from_version(first_version[0], 0))
+      end
 
       if request_type == "addition"
         change_data = issue_attributes_for_request_type_addition(change_data)
@@ -123,16 +122,18 @@ class ClaimHistoryEvent
       issue_modification_events.push from_change_data(request_type.to_sym, change_data.merge(event_hash))
     end
 
-    # 2 seconds are being added for testing and sorting purposes.
     def create_edited_request_issue_events(change_data)
       edited_events = []
       imr_versions = parse_versions(change_data["imr_versions"])
 
       if imr_versions.present?
         *rest_of_versions, last_version = imr_versions
+        if last_version["status"].present?
+          edited_events.push(*create_last_version_events(change_data, last_version))
+        else
+          rest_of_versions.push(last_version)
+        end
         edited_events.push(*create_event_from_rest_of_versions(change_data, rest_of_versions))
-        edited_events.push(*create_last_version_events(change_data, last_version))
-
       else
         create_pending_status_events(change_data, change_data["issue_modification_request_updated_at"])
       end
@@ -146,11 +147,11 @@ class ClaimHistoryEvent
 
       edited_versions.map do |version|
         event_date_hash = {
-          "event_date" => version["updated_at"][0],
-          "event_user_name" => change_data["updator_user_name"]
+          "event_date" => version["updated_at"][1],
+          "event_user_name" => change_data["requestor"]
         }
 
-        change_data = update_change_data_from_version(change_data, version, 0)
+        event_date_hash.merge!(update_event_hash_data_from_version(version, 1))
         edit_of_request_events.push(*from_change_data(event_type, change_data.merge(event_date_hash)))
       end
       edit_of_request_events
@@ -158,15 +159,13 @@ class ClaimHistoryEvent
 
     def create_last_version_events(change_data, last_version)
       edited_events = []
-      if last_version["status"].present?
-        last_version["status"].map.with_index do |status, index|
-          if status == "assigned"
-            edited_events.push(*create_pending_status_events(change_data, last_version["updated_at"][index]))
-          else
-            edited_events.push(*create_request_issue_decision_events(
-              change_data, last_version["updated_at"][index], status
-            ))
-          end
+      last_version["status"].map.with_index do |status, index|
+        if status == "assigned"
+          edited_events.push(*create_pending_status_events(change_data, last_version["updated_at"][index]))
+        else
+          edited_events.push(*create_request_issue_decision_events(
+            change_data, last_version["updated_at"][index] + 1, status
+          ))
         end
       end
       edited_events
@@ -176,7 +175,7 @@ class ClaimHistoryEvent
       events = []
       decision_event_hash = pending_system_hash
         .merge("event_date" => event_date)
-        .merge("event_user_name" => change_data["updator_user_name"])
+        .merge("event_user_name" => change_data["decider"] || change_data["requestor"])
 
       if change_data["request_type"] == "addition"
         change_data = issue_attributes_for_request_type_addition(change_data)
@@ -188,9 +187,11 @@ class ClaimHistoryEvent
 
       # in case of multipe issue modification request and all been approved, only first one will have decided_at_lag nil
       # which will create only one in-progress event.
-      if %w[cancelled denied approved].include?(event) && change_data["previous_imr_decided_at"].nil?
+      # in case of multiple cancelled for the last event then add in progress otherwise its not necessary
+      if (%w[denied approved].include?(event) && change_data["previous_imr_decided_at"].nil?) ||
+         (event == "cancelled" && change_data["last_imr_created_at"].nil?)
         in_progress_system_hash_events = pending_system_hash
-          .merge("event_date" => event_date)
+          .merge("event_date" => change_data["issue_modification_request_updated_at"] + 1)
 
         events.push from_change_data(:in_progress, change_data.merge(in_progress_system_hash_events))
       end
@@ -375,8 +376,9 @@ class ClaimHistoryEvent
     end
 
     # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-    def update_change_data_from_version(change_data, version, index)
-      data = change_data
+    def update_event_hash_data_from_version(version, index)
+      data = {}
+
       unless version["nonrating_issue_category"].nil?
         data["requested_issue_type"] = version["nonrating_issue_category"][index]
       end
@@ -487,9 +489,7 @@ class ClaimHistoryEvent
     def request_issue_modification_event_hash(change_data)
       # if decided date is nil and status is cancelled then we should display edited info and edited user.
       {
-        "event_date" => change_data["decided_at"] ||
-          change_data["issue_modification_request_edited_at"] ||
-          change_data["issue_modification_request_updated_at"],
+        "event_date" => change_data["issue_modification_request_created_at"],
         "event_user_name" => change_data["decider"] || change_data["requestor"],
         "user_facility" => change_data["decider_station_id"] || change_data["requestor_station_id"],
         "event_user_css_id" => change_data["decider_css_id"] || change_data["requestor_css_id"]
@@ -634,8 +634,8 @@ class ClaimHistoryEvent
       removal: "Requested issue removal",
       modification: "Requested issue modification",
       withdrawal: "Requested issue withdrawal",
-      request_approved: "Approval of the request - issue #{request_type}",
-      request_denied: "Rejection of the request- issue #{request_type}",
+      request_approved: "Approval of request - issue #{request_type}",
+      request_denied: "Rejection of request - issue #{request_type}",
       request_cancelled: "Cancellation of request",
       request_edited: "Edit of request - issue #{request_type}"
     }[event_type]
@@ -676,6 +676,7 @@ class ClaimHistoryEvent
     parse_request_issue_modification_attributes(change_data)
   end
 
+  # :reek:FeatureEnvy
   def parse_task_attributes(change_data)
     @task_id = change_data["task_id"]
     @task_status = change_data["is_assigned_present"] ? "pending" : change_data["task_status"]
@@ -727,10 +728,6 @@ class ClaimHistoryEvent
       @remove_original_issue = change_data["remove_original_issue"]
       @requestor = change_data["requestor"]
       @decider = change_data["decider"]
-      @issue_modification_request_status = change_data["issue_modification_request_status"]
-      @version_has_status = change_data["version_has_status"]
-      @imr_created_at_lag = change_data["previous_imr_created_at"]
-      @imr_decided_at_lag = change_data["previous_imr_decided_at"]
     end
   end
 
@@ -776,8 +773,7 @@ class ClaimHistoryEvent
       completed: "Claim closed.",
       claim_creation: "Claim created.",
       cancelled: "Claim cancelled.",
-      pending: "Claim cannot be processed until VHA admin reviews pending requests.",
-      addition: "What do we want to add here? " # Questions to be asked
+      pending: "Claim cannot be processed until VHA admin reviews pending requests."
     }[event_type]
   end
 
