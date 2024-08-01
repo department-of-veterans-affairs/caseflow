@@ -11,6 +11,7 @@ class WorkQueue::CorrespondenceSerializer
   attribute :va_date_of_receipt
   attribute :nod
   attribute :status
+  attribute :type
   attribute :veteran_id
   attribute :correspondence_documents do |object|
     object.correspondence_documents.map do |document|
@@ -41,7 +42,9 @@ class WorkQueue::CorrespondenceSerializer
             assigned_to: (task.assigned_to_type == "Organization") ? task.assigned_to.name : task.assigned_to.css_id,
             assigned_at: task.assigned_at.strftime("%m/%d/%Y"),
             instructions: task.instructions,
-            assigned_to_type: task.assigned_to_type
+            assigned_to_type: task.assigned_to_type,
+            available_actions: task.available_actions_unwrapper(RequestStore[:current_user]),
+            uniqueId: task.id
           }
       end
     end

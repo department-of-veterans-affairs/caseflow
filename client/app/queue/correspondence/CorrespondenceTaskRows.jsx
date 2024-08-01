@@ -197,7 +197,7 @@ class CorrespondenceTaskRows extends React.PureComponent {
     );
   };
 
-  showActionsListItem = (task, appeal) => {
+  showActionsListItem = (task, correspondence) => {
     if (task.availableActions.length <= 0) {
       return null;
     }
@@ -205,7 +205,11 @@ class CorrespondenceTaskRows extends React.PureComponent {
     return this.showActionsSection(task) ? (
       <div>
         <h3>{COPY.TASK_SNAPSHOT_ACTION_BOX_TITLE}</h3>
-        <ActionsDropdown task={task} appealId={appeal.externalId} />
+        <ActionsDropdown
+          task={task}
+          appealId={correspondence.uuid}
+          type={correspondence.type}
+        />
       </div>
     ) : null;
   };
@@ -229,7 +233,7 @@ class CorrespondenceTaskRows extends React.PureComponent {
       sortedTimelineEvents,
       index,
       timeline,
-      appeal,
+      correspondence,
     } = templateConfig;
 
     const timelineTitle = isCancelled(task) ?
@@ -276,7 +280,7 @@ class CorrespondenceTaskRows extends React.PureComponent {
         </td>
         {!timeline && (
           <td className="taskContainerStyling taskActionsContainerStyling">
-            {this.showActionsListItem(task, appeal)}{' '}
+            {this.showActionsListItem(task, correspondence)}{' '}
           </td>
         )}
       </tr>
@@ -284,20 +288,20 @@ class CorrespondenceTaskRows extends React.PureComponent {
   };
 
   render = () => {
-    const { appeal, taskList } = this.props;
+    const { correspondence, taskList } = this.props;
     // Non-tasks are only relevant for the main Case Timeline
     const sortedTimelineEvents = sortCaseTimelineEvents(
       taskList,
     );
 
     return (
-      <React.Fragment key={appeal.externalId}>
+      <React.Fragment key={correspondence.uuid}>
         {sortedTimelineEvents.map((timelineEvent, index) => {
           const templateConfig = {
             task: timelineEvent,
             index,
             sortedTimelineEvents,
-            appeal,
+            correspondence,
           };
 
           return this.taskTemplate(templateConfig);
@@ -308,7 +312,7 @@ class CorrespondenceTaskRows extends React.PureComponent {
 }
 
 CorrespondenceTaskRows.propTypes = {
-  appeal: PropTypes.object,
+  correspondence: PropTypes.object,
   hideDropdown: PropTypes.bool,
   taskList: PropTypes.array,
   timeline: PropTypes.bool,
