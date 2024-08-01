@@ -208,7 +208,7 @@ const CorrespondenceTableBuilder = (props) => {
             <SearchableDropdown
               name="Assign to Inbound Ops Team user"
               hideLabel
-              options={buildMailUserData(props.inboundOpsTeamUsers)}
+              options={buildMailUserData(props.inboundOpsTeamNonAdmin)}
               onChange={handleMailTeamUserChange}
             />
           </div>
@@ -355,7 +355,7 @@ CorrespondenceTableBuilder.propTypes = {
   userCanBulkAssign: PropTypes.bool,
   isVhaOrg: PropTypes.bool,
   featureToggles: PropTypes.object,
-  inboundOpsTeamUsers: PropTypes.array,
+  inboundOpsTeamNonAdmin: PropTypes.array,
   selectedTasks: PropTypes.array,
   isInboundOpsTeamUser: PropTypes.bool,
   isInboundOpsSuperuser: PropTypes.bool,
