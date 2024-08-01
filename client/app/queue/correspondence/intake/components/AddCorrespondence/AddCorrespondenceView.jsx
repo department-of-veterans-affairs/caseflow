@@ -114,7 +114,7 @@ class AddCorrespondenceView extends React.Component {
         valueFunction: () => (
           <span className="va-package-document-type-item">
             <p>
-              <a href={`/queue/correspondence/${correspondence.uuid}`} rel="noopener noreferrer" target="_blank">
+              <a href={`/queue/correspondence/${correspondence.uuid}`} rel="noopener noreferrer" className='external-link-icon-a' target="_blank">
                 {correspondence?.nod ? 'NOD' : 'Non-NOD'}
                 <span className="external-link-icon-wrapper">
                   <ExternalLinkIcon color={COLORS.PRIMARY} />
