@@ -66,6 +66,11 @@ class CaseDistributionLeversTestsController < ApplicationController
     send_data csv_data, filename: filename
   end
 
+  def run_return_legacy_appeals_to_board
+    ReturnLegacyAppealsToBoardJob.perform_now
+    head :ok
+  end
+
   def appeals_distributed
     # change this to the correct class
     csv_data = AppealsDistributed.process
