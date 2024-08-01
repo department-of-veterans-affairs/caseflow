@@ -5,6 +5,7 @@ import BENEFIT_TYPES from 'constants/BENEFIT_TYPES';
 import { formatDateStr } from 'app/util/DateUtil';
 import PropTypes from 'prop-types';
 import StringUtil from 'app/util/StringUtil';
+import _ from 'lodash';
 
 const { capitalizeFirst } = StringUtil;
 
@@ -21,12 +22,6 @@ const IndividualClaimHistoryTable = (props) => {
       hour: '2-digit',
       minute: '2-digit' });
   };
-
-  const tableNumberStyling = css({
-    '& tr > td:first-child': {
-      verticalAlign: 'top',
-    }
-  });
 
   const formatDecisionDate = (date) => {
     if (date) {
@@ -94,7 +89,7 @@ const IndividualClaimHistoryTable = (props) => {
   };
 
   const RemoveOriginalIssueFragment = (details) => {
-    return details.requestType === 'modification' ? <React.Fragment>
+    return ['addition', 'modification', 'removal', 'withdrawal'].includes(details.requestType) ? <React.Fragment>
       <b>Remove original issue: </b>{details.removeOriginalIssue ? 'Yes' : 'No' }<br />
     </React.Fragment> : <></>;
   };
@@ -102,15 +97,8 @@ const IndividualClaimHistoryTable = (props) => {
   const RequestedIssueDecisionFragement = (details) => {
     return <React.Fragment>
       <b>Request Decision: </b>{details.issueModificationRequestStatus}<br />
-      <RemoveOriginalIssueFragment />
+      <RemoveOriginalIssueFragment {...details} />
       <b>Request originated by: </b>{details.requestor}<br />
-      <br></br>
-      <b>View original request</b>
-      <b>Current Decision date: </b>{formatDecisionDate(details.newDecisionDate)}<br />
-      <b>New issue type: </b>{details.newIssueType}<br />
-      <b>New issue description: </b>{details.newIssueDescription}<br />
-      <b>New Decision date: </b>{formatDecisionDate(details.newDecisionDate)}<br />
-      <b>{capitalizeFirst(details.requestType)} request reason: </b>{details.modificationRequestReason}<br />
     </React.Fragment>;
   };
 
@@ -154,6 +142,40 @@ const IndividualClaimHistoryTable = (props) => {
     </React.Fragment>;
   };
 
+  const RejectedRequestedIssueModificationFragment = (details) => {
+    return <React.Fragment>
+      <b>Benefit type: </b>{BENEFIT_TYPES[details.benefitType]}<br />
+      <b>Issue type: </b>{details.newIssueType}<br />
+      <b>Issue description: </b>{details.newIssueDescription}<br />
+      <b>Decision date: </b>{formatDecisionDate(details.newDecisionDate)}<br />
+      <b>{capitalizeFirst(details.requestType)} request reason: </b>{details.modificationRequestReason}<br />
+    </React.Fragment>;
+  };
+
+  const EditedRequestedIssueModificationFragment = (details) => {
+    return <React.Fragment>
+      <b>Benefit type: </b>{BENEFIT_TYPES[details.benefitType]}<br />
+      <b>Issue type: </b>{details.newIssueType}<br />
+      <b>Issue description: </b>{details.newIssueDescription}<br />
+      <b>Decision date: </b>{formatDecisionDate(details.newDecisionDate)}<br />
+      <b>{capitalizeFirst(details.requestType)} request reason: </b>{details.modificationRequestReason}<br />
+      <b>{capitalizeFirst(details.requestType)} request date: </b>{formatDecisionDate(details.issueModificationRequestWithdrawalDate)}<br />
+    </React.Fragment>;
+  };
+
+  const ApprovalRequestedIssueModificationFragment = (details) => {
+    return <React.Fragment>
+      <b>Benefit type: </b>{BENEFIT_TYPES[details.benefitType]}<br />
+      <b>Current issue type: </b>{details.newIssueType}<br />
+      <b>Current issue description: </b>{details.newIssueDescription}<br />
+      <b>Current Decision date: </b>{formatDecisionDate(details.newDecisionDate)}<br />
+      <b>New issue type: </b>{details.newIssueType}<br />
+      <b>New issue description: </b>{details.newIssueDescription}<br />
+      <b>New Decision date: </b>{formatDecisionDate(details.newDecisionDate)}<br />
+      <b>{capitalizeFirst(details.requestType)} request reason: </b>{details.modificationRequestReason}<br />
+    </React.Fragment>;
+  };
+
   const OriginalDetailsFragments = (row) => {
     const { readableEventType, details, modificationRequestDetails } = row;
 
@@ -167,14 +189,14 @@ const IndividualClaimHistoryTable = (props) => {
     };
 
     switch (readableEventType) {
-    case 'Requested issue modification':
-      component = <RequestedIssueModificationFragment {...requestModificationDetails} />;
+    case `Rejection of request - issue ${row.requestType}`:
+      component = <RejectedRequestedIssueModificationFragment {...requestModificationDetails} />;
       break;
     case `Edit of request - issue ${row.requestType}`:
-      component = <RequestedIssueModificationFragment {...requestModificationDetails} />;
+      component = <EditedRequestedIssueModificationFragment {...requestModificationDetails} />;
       break;
-    case `Approval of the request - issue ${row.requestType}`:
-      component = <RequestedIssueDecisionFragement {...requestModificationDetails} />;
+    case `Approval of request - issue ${row.requestType}`:
+      component = <ApprovalRequestedIssueModificationFragment {...requestModificationDetails} />;
       break;
     default:
       return null;
@@ -182,7 +204,9 @@ const IndividualClaimHistoryTable = (props) => {
 
     return (
       <div>
-        <a onClick={toggle} style={{ cursor: 'pointer'}}>{`${isOpen ? 'Hide' : 'View' } original request`}</a>
+        <div style={{ marginBottom: '15px' }}>
+          <a onClick={toggle} style={{ cursor: 'pointer' }}>{`${isOpen ? 'Hide' : 'View' } original request`}</a>
+        </div>
         {isOpen &&
           <div>
             {component}
@@ -192,6 +216,7 @@ const IndividualClaimHistoryTable = (props) => {
   };
 
   const DetailsFragment = (row) => {
+
     let component = null;
 
     const { readableEventType, details, modificationRequestDetails } = row;
@@ -199,6 +224,7 @@ const IndividualClaimHistoryTable = (props) => {
     const detailsExtended = { ...details, eventDate: row.eventDate, eventType: row.eventType };
 
     const requestDetails = { ...modificationRequestDetails, requestType: row.requestType };
+    const RequestIssueModificationDetails = { ...requestDetails, ...detailsExtended };
 
     switch (readableEventType) {
     case 'Claim created':
@@ -237,20 +263,38 @@ const IndividualClaimHistoryTable = (props) => {
     case 'Requested issue removal':
       component = <RequestedIssueFragment {...requestDetails} />;
       break;
+    case "Requested issue modification":
+      component = <RequestedIssueModificationFragment {...requestDetails} />;
+      break;
     case 'Requested issue addition':
       component = <RequestedIssueFragment {...requestDetails} />;
       break;
     case 'Requested issue withdrawal':
       component = <WithdrawalRequestedIssueFormat {...requestDetails} />;
       break;
+    case `Approval of request - issue ${row.requestType}`:
+      component = <RequestedIssueDecisionFragement {...RequestIssueModificationDetails} />;
+      break;
+    case `Edit of request - issue ${row.requestType}`:
+      component = <RequestedIssueDecisionFragement {...RequestIssueModificationDetails} />;
+      break;
+    case `Rejection of request - issue ${row.requestType}`:
+      component = <RequestedIssueDecisionFragement {...RequestIssueModificationDetails} />;
+      break;
     default:
       return null;
     }
 
+    const chunk = [
+      'request_approved',
+      'request_edited',
+      'request_denied'
+    ];
+
     return (
       <div>
         <p>{component}</p>
-        { modificationRequestDetails.length > 0 ? <OriginalDetailsFragments {...requestDetails} /> : null }
+        { chunk.includes(RequestIssueModificationDetails.eventType) ? <OriginalDetailsFragments {...row} /> : null }
       </div>
     );
   };
@@ -311,7 +355,6 @@ const IndividualClaimHistoryTable = (props) => {
     summary="Individual claim history"
     getKeyForRow={(_rowNumber, event) => event.id}
     enablePagination
-    bodyStyling={tableNumberStyling}
     useTaskPagesApi={false}
     defaultSort= {{
       sortColName: 'eventDate',
