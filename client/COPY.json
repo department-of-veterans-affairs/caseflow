@@ -1,4 +1,3 @@
-
 {
   "CASE_SEARCH_HOME_PAGE_HEADING": "Veteran Case Search",
   "CASE_SEARCH_INPUT_PLACEHOLDER": "Enter a file number, SSN, or AMA docket number",
@@ -1516,5 +1515,6 @@
     }
   },
   "VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_NON_ADMIN": "Requests for issue modifications have been submitted for this case. Dispositions cannot be made until a VHA admin completes review of the requested changes.",
-  "VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_ADMIN": "Requests for issue modifications have been submitted for this case. Dispositions cannot be made until a VHA admin completes review of the requested changes. Click the \"Edit issues\" button above to review the issue modification requests."
+  "VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_ADMIN": "Requests for issue modifications have been submitted for this case. Dispositions cannot be made until a VHA admin completes review of the requested changes. Click the \"Edit issues\" button above to review the issue modification requests.",
+  "REMANDS_NOT_EDITABLE": "Remands can not be edited."
 }

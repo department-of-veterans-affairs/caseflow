@@ -247,6 +247,11 @@ class NonCompDispositions extends React.PureComponent {
             {isBusinessLineAdmin && decisionHasPendingRequestIssues ? null :
               <div className="usa-width-one-whole" style={{ paddingBottom: '30px' }} >{decisionHeaderText}</div>
             }
+            {editIssuesDisabled ?
+              <div className="usa-width-one-whole">
+
+                <Alert type="info" messageStyling={messageStyling} message={COPY.REMANDS_NOT_EDITABLE} />
+              </div> : null}
             {decisionHasPendingRequestIssues ?
               <div className="usa-width-one-whole">
                 <Alert type="info" messageStyling={messageStyling} message={bannerDecisionBannerText} />
