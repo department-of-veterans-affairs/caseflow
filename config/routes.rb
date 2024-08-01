@@ -38,6 +38,7 @@ Rails.application.routes.draw do
       post 'run_demo_non_aod_hearing_seeds'
       post 'run-demo-ama-docket-goals'
       post 'run-demo-docket-priority'
+      post 'run_return_legacy_appeals_to_board'
     end
   end
 
