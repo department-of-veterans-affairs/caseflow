@@ -15,6 +15,14 @@ class JsonApiResponseAdapter
     documents
   end
 
+  def adapt_upload_document(json_response)
+    document_upload_response(JSON.parse(json_response.body))
+  end
+
+  def adapt_update_document(json_response)
+    document_update_response(JSON.parse(json_response.body))
+  end
+
   private
 
   def valid_json_response?(json_response)
@@ -43,6 +51,24 @@ class JsonApiResponseAdapter
       alt_doc_types: nil,
       restricted: nil,
       upload_date: system_data["uploadedDateTime"]
+    )
+  end
+
+  def document_upload_response(file_json)
+    OpenStruct.new(
+      upload_document_response: {
+        "@new_document_version_ref_id": file_json["currentVersionUuid"],
+        "@document_series_ref_id": file_json["uuid"]
+      }
+    )
+  end
+
+  def document_update_response(file_json)
+    OpenStruct.new(
+      update_document_response: {
+        "@new_document_version_ref_id": file_json["currentVersionUuid"],
+        "@document_series_ref_id": file_json["uuid"]
+      }
     )
   end
 end
