@@ -1,5 +1,7 @@
+/* eslint-disable max-lines */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable max-len */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
@@ -16,30 +18,8 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import COPY from '../../COPY';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import MembershipRequestTable from './MembershipRequestTable';
+import OrganizationPermissions from './OrganizationPermissions';
 
-const userStyle = css({
-  margin: '.5rem 0 .5rem',
-  padding: '.5rem 0 .5rem',
-  listStyle: 'none'
-});
-const topUserStyle = css({
-  borderTop: '.1rem solid gray',
-  margin: '.5rem 0 .5rem',
-  padding: '1rem 0 .5rem',
-  listStyle: 'none'
-});
-const topUserBorder = css({
-  borderBottom: '.1rem solid gray',
-});
-const buttonStyle = css({
-  paddingRight: '1rem',
-  display: 'inline-block'
-});
-const buttonContainerStyle = css({
-  borderBottom: '1rem solid gray',
-  borderWidth: '1px',
-  padding: '.5rem 0 2rem',
-});
 const listStyle = css({
   listStyle: 'none'
 });
@@ -195,6 +175,7 @@ export default class OrganizationUsers extends React.PureComponent {
   }
 
   modifyAdminRights = (user, adminFlag) => () => {
+
     const flagName = 'changingAdminRights';
 
     this.modifyUser(user, flagName);
@@ -207,7 +188,6 @@ export default class OrganizationUsers extends React.PureComponent {
       this.modifyUserError(COPY.USER_MANAGEMENT_ADMIN_RIGHTS_CHANGE_ERROR_TITLE, error.message, user, flagName);
     });
   }
-
   asyncLoadUser = (inputValue) => {
     // don't search till we have min length input
     if (inputValue.length < 2) {
@@ -226,7 +206,7 @@ export default class OrganizationUsers extends React.PureComponent {
   }
 
   adminButton = (user, admin) =>
-    <div {...buttonStyle}><Button
+    <div className="button-style"><Button
       name={admin ? COPY.USER_MANAGEMENT_REMOVE_USER_ADMIN_RIGHTS_BUTTON_TEXT : COPY.USER_MANAGEMENT_GIVE_USER_ADMIN_RIGHTS_BUTTON_TEXT}
       id={admin ? `Remove-admin-rights-${user.id}` : `Add-team-admin-${user.id}`}
       classNames={admin ? ['usa-button-secondary'] : ['usa-button-primary']}
@@ -234,7 +214,7 @@ export default class OrganizationUsers extends React.PureComponent {
       onClick={this.modifyAdminRights(user, !admin)} /></div>
 
   removeUserButton = (user) =>
-    <div {...buttonStyle}><Button
+    <div className="button-style"><Button
       name={COPY.USER_MANAGEMENT_REMOVE_USER_FROM_ORG_BUTTON_TEXT}
       id={`Remove-user-${user.id}`}
       classNames={['usa-button-secondary']}
@@ -258,23 +238,38 @@ getFilteredUsers = () => {
   mainContent = () => {
     const judgeTeam = this.state.judgeTeam;
     const dvcTeam = this.state.dvcTeam;
-    const listOfUsers = this.getFilteredUsers().map((user, i) => {
+    const listOfUsers = this.getFilteredUsers().map((user) => {
       const { dvc, admin } = user.attributes;
-      const style = i === 0 ? topUserStyle : userStyle;
 
       return <React.Fragment key={user.id}>
-        <li key={user.id} {...style}>{this.formatName(user)}
-          { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
-          { dvcTeam && dvc && <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong> }
-          { judgeTeam && !admin && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
-          { (judgeTeam || dvcTeam) && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> }
-        </li>
-        { (judgeTeam || dvcTeam) && admin ?
-          <div {...topUserBorder}></div> :
-          <div {...buttonContainerStyle}>
-            { (judgeTeam || dvcTeam) ? '' : this.adminButton(user, admin) }
-            { this.removeUserButton(user) }
-          </div> }
+        <div className={['team-member-container']}>
+          <div className={['team-member-info']}>
+            <div key={user.id} className={['team-member-list-item']}>{this.formatName(user)}
+              { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
+              { dvcTeam && dvc && <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong> }
+              { judgeTeam && !admin && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
+              { (judgeTeam || dvcTeam) && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> }
+            </div>
+            { (judgeTeam || dvcTeam) && admin ?
+              <div className={['top-user-border']}></div> :
+              <div>
+                <div className={['team-member-buttons-container']}>
+                  { (judgeTeam || dvcTeam) ? '' : this.adminButton(user, admin) }
+                  { this.removeUserButton(user) }
+                </div>
+              </div>
+
+            }
+          </div>
+          {(this.props.organizationPermissions.length > 0) && <div className={['team-member-permission-toggles-container']}>
+            <OrganizationPermissions
+              organization={this.props.organization}
+              permissions={this.props.organizationPermissions}
+              user={user}
+              orgUserData={this.state.organizationUsers.find((orgUser) => orgUser.id === user.id)}
+              orgnizationUserPermissions={this.props.orgnizationUserPermissions} />
+          </div>}
+        </div>
       </React.Fragment>;
     });
 
@@ -414,5 +409,7 @@ getFilteredUsers = () => {
 }
 
 OrganizationUsers.propTypes = {
-  organization: PropTypes.string
+  organization: PropTypes.string,
+  organizationPermissions: PropTypes.array,
+  orgnizationUserPermissions: PropTypes.array
 };
