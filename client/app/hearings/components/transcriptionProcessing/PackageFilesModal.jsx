@@ -1,17 +1,49 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Modal from '../../../components/Modal';
 import COPY from '../../../../COPY';
 import { RadioField } from '../../../components/RadioField';
 import { SearchableDropdown } from '../../../components/SearchableDropdown';
+import ApiUtil from 'app/util/ApiUtil';
 
 const PackageFilesModal = ({ onCancel, contractors }) => {
+  const [transcriptionTaskId, setTranscriptionTaskId] = useState(0);
+  const [returnDateOption, setReturnDateOption] = useState(null);
+
+  const getTranscriptionTaskId = () => {
+    ApiUtil.get('/hearings/transcriptions/next_transcription_task_id').
+      // eslint-disable-next-line camelcase
+      then((response) => setTranscriptionTaskId(response.body?.task_id));
+  };
+
+  const generateWorkOrder = (taskId) => {
+    const taskIdString = taskId.toString();
+    const year = new Date().getFullYear().
+      toString();
+
+    let numberOfDigits = taskId.toString().length;
+    let sequencer;
+    let firstSet;
+
+    if (numberOfDigits > 5) {
+      firstSet = year.substring(0, 2) + taskIdString.substring(0, 2);
+      sequencer = taskIdString.substring(2);
+    } else if (numberOfDigits === 5) {
+      firstSet = `${year.substring(0, 2)}0${taskIdString.substring(0, 1)}`;
+      sequencer = taskIdString.substring(1);
+    } else {
+      firstSet = year;
+      sequencer = taskId;
+    }
+
+    return `BVA-${firstSet}-${sequencer}`;
+  };
 
   const renderWorkOrder = () => {
     return (
       <div>
         <strong>Work Order</strong>
-        <p>#BVA20240001</p>
+        <p>{transcriptionTaskId && generateWorkOrder(transcriptionTaskId)}</p>
       </div>
     );
   };
@@ -41,12 +73,12 @@ const PackageFilesModal = ({ onCancel, contractors }) => {
   };
 
   const returnDateOptions = () => {
-    const returnDate = calculateReturnDate(15);
+    const fifteenDayReturnDate = calculateReturnDate(15);
 
     return [
       {
-        displayText: `Return in 15 days (${returnDate})`,
-        value: returnDate
+        displayText: `Return in 15 days (${fifteenDayReturnDate})`,
+        value: fifteenDayReturnDate
       },
       {
         displayText: 'Expedite (Maximum of 5 days)',
@@ -77,9 +109,14 @@ const PackageFilesModal = ({ onCancel, contractors }) => {
         name="returnDateRadioField"
         label=<strong>Return date</strong>
         options={returnDateOptions()}
+        onChange={(value) => setReturnDateOption(value)}
       />
     );
   };
+
+  useEffect(() => {
+    getTranscriptionTaskId();
+  }, []);
 
   return (
     <Modal
