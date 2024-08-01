@@ -19,13 +19,19 @@ class HearingTimeService
     @hearing = hearing
   end
 
+  # TODO: Look at migrating some of the scheduled_time related comments fro mthe Hearing class
+  #  to be here instead.
+  #
+  # In place to allow for pre-existing hearings to be rescheduled effectively if they do not
+  #  have a scheduled_datetime value.
   def ama_scheduled_for(time_string)
     return nil unless time_string
 
-    date = @hearing&.hearing_day&.scheduled_for
+    tz = timezone_from_time_string(time_string)
+
     time_without_zone = time_string.split(" ", 3).take(2).join(" ")
-    time = "2000-01-01 #{time_without_zone}".in_time_zone(timezone_from_time_string(time_string))
-    time -= 1.hour if date.to_time.dst?
+    time = "2000-01-01 #{time_without_zone}".in_time_zone(tz)
+    time -= 1.hour if @hearing&.hearing_day&.scheduled_for.in_time_zone(tz).dst?
     time.utc
   end
 
