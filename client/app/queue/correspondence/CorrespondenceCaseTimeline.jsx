@@ -20,6 +20,7 @@ const CorrespondenceCaseTimeline = (props) => {
         label: task.type,
         instructions: task.instructions,
         availableActions: getAvailableActions(task),
+        uniqueId: task.uniqueId
       };
     }));
   };
@@ -30,7 +31,7 @@ const CorrespondenceCaseTimeline = (props) => {
         <tbody>
           <CorrespondenceTaskRows
             organizations={props.organizations}
-            appeal={props.correspondence}
+            correspondence={props.correspondence}
             taskList={formatTaskData()}
             statusSplit
           />
