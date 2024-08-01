@@ -9,7 +9,7 @@ class CorrespondenceRootTask < CorrespondenceTask
     return Constants.CORRESPONDENCE_STATUSES.completed if completed?
   end
 
-  def open_review_package_task
+  def review_package_task
     children.open.find_by(type: ReviewPackageTask.name)
   end
 
@@ -26,7 +26,12 @@ class CorrespondenceRootTask < CorrespondenceTask
   end
 
   def tasks_not_related_to_an_appeal
-    CorrespondenceMailTask.open.where(appeal_id: appeal_id, appeal_type: appeal_type)
+    CorrespondenceTask.tasks_not_related_to_an_appeal.open.where(appeal_id: appeal_id, appeal_type: appeal_type)
+  end
+
+  # correspondence_mail_tasks are completed upon creation, so no open check
+  def correspondence_mail_tasks
+    CorrespondenceTask.correspondence_mail_tasks.where(appeal_id: appeal_id, appeal_type: appeal_type)
   end
 
   # a correspondence root task is considered closed if it has a closed at
@@ -44,12 +49,12 @@ class CorrespondenceRootTask < CorrespondenceTask
   # logic for handling correspondence statuses
   # unassigned if review package task is unassigned
   def unassigned?
-    open_review_package_task&.status == Constants.TASK_STATUSES.unassigned
+    review_package_task&.status == Constants.TASK_STATUSES.unassigned
   end
 
   # assigned if open (assigned or on hold status) review package task or intake task
   def assigned?
-    !unassigned? && (!open_review_package_task.blank? || !open_intake_task.blank?)
+    !unassigned? && (!review_package_task.blank? || !open_intake_task.blank?)
   end
 
   # action required if the correspondence has a package action task with a status of 'assigned'
@@ -63,6 +68,6 @@ class CorrespondenceRootTask < CorrespondenceTask
 
   # completed if root task is closed or no open children tasks
   def completed?
-    completed? || children.open.blank?
+    status == Constants.TASK_STATUSES.completed || children.open.blank?
   end
 end
