@@ -1,5 +1,6 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
 import _ from 'lodash';
@@ -105,6 +106,8 @@ export class PdfSidebar extends React.Component {
     let comments = [];
 
     const { appeal } = this.props;
+    const sideBarSmall = '250px';
+    const sideBarLarge = '380px';
 
     comments = sortAnnotations(this.props.comments).map((comment, index) => {
       if (comment.editing) {
@@ -146,7 +149,15 @@ export class PdfSidebar extends React.Component {
       'cf-sidebar-wrapper',
       { 'hidden-sidebar': this.props.hidePdfSidebar });
 
-    return <div className={sidebarClass} >
+    const sidebarWrapper = css({
+      width: '28%',
+      minWidth: sideBarSmall,
+      maxWidth: sideBarLarge,
+      '@media(max-width: 920px)': { width: sideBarSmall },
+      '@media(min-width: 1240px)': { width: sideBarLarge }
+    });
+
+    return <div className={sidebarClass} {...sidebarWrapper}>
       <div className="cf-sidebar-header">
         <Button
           name="hide menu"
