@@ -10,7 +10,8 @@ class CorrespondenceTask < Task
   validate :assignee_status_is_valid_on_create, on: :create
 
   scope :package_action_tasks, -> { where(type: package_action_task_names) }
-
+  scope :tasks_not_related_to_an_appeal, -> { where(type: tasks_not_related_to_an_appeal_names) }
+  scope :correspondence_mail_tasks, -> { where(type: correspondence_mail_task_names) }
   delegate :nod, to: :correspondence
 
   class << self
@@ -45,6 +46,29 @@ class CorrespondenceTask < Task
       RemovePackageTask.name,
       SplitPackageTask.name,
       MergePackageTask.name
+    ].freeze
+  end
+
+  def self.tasks_not_related_to_an_appeal_names
+    [
+      CavcCorrespondenceCorrespondenceTask.name,
+      CongressionalInterestCorrespondenceTask.name,
+      DeathCertificateCorrespondenceTask.name,
+      FoiaRequestCorrespondenceTask.name,
+      OtherMotionCorrespondenceTask.name,
+      PowerOfAttorneyRelatedCorrespondenceTask.name,
+      PrivacyActRequestCorrespondenceTask.name,
+      PrivacyComplaintCorrespondenceTask.name,
+      StatusInquiryCorrespondenceTask.name
+    ].freeze
+  end
+
+  def self.correspondence_mail_task_names
+    [
+      AssociatedWithClaimsFolderMailTask.name,
+      AddressChangeMailTask.name,
+      EvidenceOrArgumentMailTask.name,
+      VacolsUpdatedMailTask.name
     ].freeze
   end
 
