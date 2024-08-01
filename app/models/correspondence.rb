@@ -52,7 +52,7 @@ class Correspondence < CaseflowRecord
                        EvidenceOrArgumentMailTask.name, VacolsUpdatedMailTask.name])
   end
 
-  def open_review_package_task
+  def review_package_task
     ReviewPackageTask.open.find_by(appeal_id: id, appeal_type: type)
   end
 
@@ -88,12 +88,12 @@ class Correspondence < CaseflowRecord
   # logic for handling correspondence statuses
   # unassigned if review package task is unassigned
   def unassigned?
-    open_review_package_task&.status == Constants.TASK_STATUSES.unassigned
+    review_package_task&.status == Constants.TASK_STATUSES.unassigned
   end
 
   # assigned if open (assigned or on hold status) review package task or intake task
   def assigned?
-    !unassigned? && (!open_review_package_task.blank? || !open_intake_task.blank?)
+    !unassigned? && (!review_package_task.blank? || !open_intake_task.blank?)
   end
 
   # action required if the correspondence has a package action task with a status of 'assigned'
