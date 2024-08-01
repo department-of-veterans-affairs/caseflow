@@ -25,15 +25,19 @@ describe('DatePicker', () => {
     />);
   };
 
-  it('renders default state correctly', async () => {
-    const { container } = setup();
-
+  const openFilter = async (container) => {
     const filter = container.querySelector('svg');
 
     fireEvent.click(filter);
     await waitFor(() => {
       expect(screen.getByText('Date filter parameters')).toBeInTheDocument();
     });
+  };
+
+  it('renders default state correctly', async () => {
+    const { container } = setup();
+
+    openFilter(container);
 
     expect(container).toMatchSnapshot();
 
@@ -45,12 +49,7 @@ describe('DatePicker', () => {
   it('restores input values correctly', async () => {
     const { container } = setup({ values: ['between,2020-05-14,2024-01-17'] });
 
-    const filter = container.querySelector('svg');
-
-    fireEvent.click(filter);
-    await waitFor(() => {
-      expect(screen.getByText('Date filter parameters')).toBeInTheDocument();
-    });
+    openFilter(container);
 
     expect(container).toMatchSnapshot();
 
@@ -62,12 +61,7 @@ describe('DatePicker', () => {
   it('shows one date field for before mode', async () => {
     const { container } = setup({ values: ['before,2020-05-14,'] });
 
-    const filter = container.querySelector('svg');
-
-    fireEvent.click(filter);
-    await waitFor(() => {
-      expect(screen.getByText('Date filter parameters')).toBeInTheDocument();
-    });
+    openFilter(container);
 
     expect(container).toMatchSnapshot();
   });
@@ -75,12 +69,7 @@ describe('DatePicker', () => {
   it('shows one date field for after mode', async () => {
     const { container } = setup({ values: ['after,2020-05-14,'] });
 
-    const filter = container.querySelector('svg');
-
-    fireEvent.click(filter);
-    await waitFor(() => {
-      expect(screen.getByText('Date filter parameters')).toBeInTheDocument();
-    });
+    openFilter(container);
 
     expect(container).toMatchSnapshot();
   });
@@ -88,12 +77,7 @@ describe('DatePicker', () => {
   it('shows one date field for on mode', async () => {
     const { container } = setup({ values: ['on,2020-05-14,'] });
 
-    const filter = container.querySelector('svg');
-
-    fireEvent.click(filter);
-    await waitFor(() => {
-      expect(screen.getByText('Date filter parameters')).toBeInTheDocument();
-    });
+    openFilter(container);
 
     expect(container).toMatchSnapshot();
   });
@@ -101,17 +85,9 @@ describe('DatePicker', () => {
   it('allows dates to be input and form submitted', async () => {
     const { container } = setup();
 
-    const filter = container.querySelector('svg');
+    openFilter(container);
 
-    fireEvent.click(filter);
-    await waitFor(() => {
-      expect(screen.getByText('Date filter parameters')).toBeInTheDocument();
-    });
-
-    selectFromDropdown(
-      'Date filter parameters',
-      'Between these dates'
-    );
+    selectFromDropdown('Date filter parameters', 'Between these dates');
 
     enterInputValue('start-date', '2020-05-14');
     enterInputValue('end-date', '2024-01-17');
@@ -119,5 +95,15 @@ describe('DatePicker', () => {
     clickSubmissionButton('Apply Filter');
 
     expect(handleChange).toHaveBeenCalledWith('between,2020-05-14,2024-01-17');
+  });
+
+  it('allows the filter to be cleared', async () => {
+    const { container } = setup({ values: ['on,2020-05-14,'] });
+
+    openFilter(container);
+
+    clickSubmissionButton('Clear filter');
+
+    expect(handleChange).toHaveBeenCalledWith('');
   });
 });

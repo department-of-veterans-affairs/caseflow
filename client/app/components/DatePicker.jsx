@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import FilterIcon from './icons/FilterIcon';
 import SearchableDropdown from '../components/SearchableDropdown';
+import Button from '../components/Button';
 import COPY from '../../COPY';
 
 const datePickerStyle = css({
@@ -42,7 +43,7 @@ const menuStyle = css({
   '& .clear-wrapper': {
     borderBottom: '1px solid #d6d7d9',
     textAlign: 'center',
-    padding: '2rem',
+    padding: '1rem',
     marginBottom: '2rem',
     '& a': {
       cursor: 'pointer'
@@ -137,7 +138,13 @@ class DatePicker extends React.PureComponent {
   }
 
   clearFilter = () => {
+    const { onChange } = this.props;
+
     this.setState({ mode: '', startDate: '', endDate: '' });
+
+    if (onChange) {
+      onChange('');
+    }
   }
 
   updateMode = (mode) => {
@@ -161,7 +168,7 @@ class DatePicker extends React.PureComponent {
       {this.state.open &&
           <div className={`date-picker ${this.state.position}`} {...menuStyle}>
             <div className="clear-wrapper">
-              <a onClick={() => this.clearFilter()}>{COPY.DATE_PICKER_CLEAR}</a>
+              <Button linkStyling onClick={() => this.clearFilter()} name={COPY.DATE_PICKER_CLEAR} />
             </div>
             <div className="input-wrapper">
               <SearchableDropdown

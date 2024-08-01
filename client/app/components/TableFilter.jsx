@@ -142,7 +142,9 @@ class TableFilter extends React.PureComponent {
 
     if (filtersForColumn) {
       if (resetValue) {
-        newFilters = [value];
+        if (value !== '') {
+          newFilters = [value];
+        }
       } else if (filtersForColumn.includes(value)) {
         newFilters = _.pull(filtersForColumn, value);
       } else {

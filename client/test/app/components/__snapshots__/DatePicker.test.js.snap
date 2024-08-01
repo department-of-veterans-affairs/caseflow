@@ -41,14 +41,20 @@ exports[`DatePicker renders default state correctly 1`] = `
     </svg>
     <div
       class="date-picker left"
-      data-css-1x0a9sm=""
+      data-css-xvyo68=""
     >
       <div
         class="clear-wrapper"
       >
-        <a>
-          Clear filter
-        </a>
+        <span>
+          <button
+            class="cf-submit cf-btn-link usa-button"
+            id="button-Clear-filter"
+            type="button"
+          >
+            Clear filter
+          </button>
+        </span>
       </div>
       <div
         class="input-wrapper"
@@ -205,14 +211,20 @@ exports[`DatePicker restores input values correctly 1`] = `
     </svg>
     <div
       class="date-picker left"
-      data-css-1x0a9sm=""
+      data-css-xvyo68=""
     >
       <div
         class="clear-wrapper"
       >
-        <a>
-          Clear filter
-        </a>
+        <span>
+          <button
+            class="cf-submit cf-btn-link usa-button"
+            id="button-Clear-filter"
+            type="button"
+          >
+            Clear filter
+          </button>
+        </span>
       </div>
       <div
         class="input-wrapper"
@@ -399,14 +411,20 @@ exports[`DatePicker shows one date field for after mode 1`] = `
     </svg>
     <div
       class="date-picker left"
-      data-css-1x0a9sm=""
+      data-css-xvyo68=""
     >
       <div
         class="clear-wrapper"
       >
-        <a>
-          Clear filter
-        </a>
+        <span>
+          <button
+            class="cf-submit cf-btn-link usa-button"
+            id="button-Clear-filter"
+            type="button"
+          >
+            Clear filter
+          </button>
+        </span>
       </div>
       <div
         class="input-wrapper"
@@ -577,14 +595,20 @@ exports[`DatePicker shows one date field for before mode 1`] = `
     </svg>
     <div
       class="date-picker left"
-      data-css-1x0a9sm=""
+      data-css-xvyo68=""
     >
       <div
         class="clear-wrapper"
       >
-        <a>
-          Clear filter
-        </a>
+        <span>
+          <button
+            class="cf-submit cf-btn-link usa-button"
+            id="button-Clear-filter"
+            type="button"
+          >
+            Clear filter
+          </button>
+        </span>
       </div>
       <div
         class="input-wrapper"
@@ -755,14 +779,20 @@ exports[`DatePicker shows one date field for on mode 1`] = `
     </svg>
     <div
       class="date-picker left"
-      data-css-1x0a9sm=""
+      data-css-xvyo68=""
     >
       <div
         class="clear-wrapper"
       >
-        <a>
-          Clear filter
-        </a>
+        <span>
+          <button
+            class="cf-submit cf-btn-link usa-button"
+            id="button-Clear-filter"
+            type="button"
+          >
+            Clear filter
+          </button>
+        </span>
       </div>
       <div
         class="input-wrapper"
