@@ -11,8 +11,10 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
   def perform
     begin
       returned_appeal_job = create_returned_appeal_job
-      # Here add logic to process legacy appeals and return them to the board goes here
-      complete_returned_appeal_job(returned_appeal_job, "Job completed successfully")
+      # Logic to process legacy appeals and return to the board
+      appeals = LegacyDocket.new.appeals_tied_to_non_ssc_avljs
+      appeals = appeals.sort_by { |appeal| [appeal["priority"], appeal["bfd19"]] } unless appeals.empty?
+      complete_returned_appeal_job(returned_appeal_job, "Job completed successfully", appeals)
       send_job_slack_report
     rescue StandardError => error
       errored_returned_appeal_job(returned_appeal_job, "Job failed with error: #{error.message}")
@@ -36,10 +38,11 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
     )
   end
 
-  def complete_returned_appeal_job(returned_appeal_job, message)
+  def complete_returned_appeal_job(returned_appeal_job, message, appeals)
     returned_appeal_job.update!(
       completed_at: Time.zone.now,
-      stats: { message: message }.to_json
+      stats: { message: message }.to_json,
+      returned_appeals: appeals.map { |appeal| appeal["bfkey"] }
     )
   end
 
