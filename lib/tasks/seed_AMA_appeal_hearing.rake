@@ -13,10 +13,12 @@ namespace :db do
     def create_ama_appeals(file_number, docket_number)
       request_issue = RequestIssue.create!(
         decision_review_type: "Appeal",
+        # decision_review: appeal,
         nonrating_issue_category: "Unknown Issue Categor",
         type: "RequestIssue", benefit_type: "compensation",
         nonrating_issue_description: "testing"
       )
+
       appeal = Appeal.create!(
         docket_type: "hearing",
         original_hearing_request_type: HEARING_REQUEST_TYPE,
@@ -24,10 +26,33 @@ namespace :db do
         veteran_file_number: file_number,
         stream_docket_number: docket_number,
         request_issues: [request_issue],
-        receipt_date: 1.months.ago
+        receipt_date: 1.months.ago,
+        established_at: Time.zone.now,
+        establishment_attempted_at: Time.zone.now,
+        establishment_last_submitted_at: Time.zone.now,
+        establishment_processed_at: Time.zone.now,
+        establishment_submitted_at: Time.zone.now
       )
 
-      InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+      claimant_class_name = appeal.veteran_is_not_claimant ? "DependentClaimant" : "VeteranClaimant"
+      FactoryBot.create_list(
+        :claimant,
+        1,
+        decision_review: appeal,
+        type: claimant_class_name
+      )
+
+      AppealIntake.create(
+        user: RequestStore[:current_user],
+        detail: appeal,
+        veteran_file_number: file_number,
+        started_at: 2.days.ago,
+        completed_at: 1.day.ago,
+        completion_started_at: 1.day.ago,
+        completion_status: "success"
+      )
+
+      appeal.create_tasks_on_intake_success!
       appeal.id
     end
 
@@ -46,7 +71,7 @@ namespace :db do
 
     list_id.each do |current_id|
       current_appeal = Appeal.where(id: current_id)
-      $stdout.puts("queue/appeal/#{current_appeal[0].uuid}")
+      $stdout.puts("queue/appeals/#{current_appeal[0].uuid}")
     end
   end
 end
