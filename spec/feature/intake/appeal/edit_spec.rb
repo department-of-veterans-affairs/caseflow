@@ -134,7 +134,7 @@ feature "Appeal Edit issues", :all_dbs do
     expect(page).to have_content(issue_description)
     expect(page).to_not have_content(
       Constants.INELIGIBLE_REQUEST_ISSUES.duplicate_of_rating_issue_in_active_review.gsub("{review_title}", "Appeal")
-                        )
+    )
     expect(page).to have_content("When you finish making changes, click \"Save\" to continue")
 
     # issue note was added
@@ -263,7 +263,7 @@ feature "Appeal Edit issues", :all_dbs do
 
         expect(page).to have_content(
           "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}"
-                        )
+        )
 
         click_intake_add_issue
         add_intake_rating_issue("Back pain")
@@ -293,7 +293,7 @@ feature "Appeal Edit issues", :all_dbs do
         expect(li_optin.optin_processed_at).to_not be_nil
         expect(VACOLS::CaseIssue.find_by(isskey: "vacols1", issseq: 1).issdc).to eq(
           LegacyIssueOptin::VACOLS_DISPOSITION_CODE
-                                                                                 )
+        )
 
         # Check rollback
         visit "appeals/#{appeal.uuid}/edit/"
@@ -308,7 +308,7 @@ feature "Appeal Edit issues", :all_dbs do
         expect(li_optin.reload.rollback_processed_at).to_not be_nil
         expect(VACOLS::CaseIssue.find_by(isskey: "vacols1", issseq: 1).issdc).to eq(
           li_optin.original_disposition_code
-                                                                                 )
+        )
 
         expect(ineligible_ri.reload.closed_status).to eq("removed")
       end
@@ -330,7 +330,7 @@ feature "Appeal Edit issues", :all_dbs do
 
         expect(page).to have_content(
           "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn}"
-                        )
+        )
 
         safe_click("#button-submit-update")
         safe_click ".confirm"
@@ -342,7 +342,7 @@ feature "Appeal Edit issues", :all_dbs do
                  ineligible_reason: :legacy_issue_not_withdrawn,
                  vacols_id: "vacols1",
                  vacols_sequence_id: "1"
-        )).to_not be_nil
+               )).to_not be_nil
       end
     end
   end
@@ -370,7 +370,7 @@ feature "Appeal Edit issues", :all_dbs do
     # click buttons
     click_on "Add this issue"
     click_on "Save"
-    click_on "Yes, save"
+    click_on "Confirm"
   end
 
   context "A contested claim is added to an evidence submission appeal" do
@@ -887,7 +887,7 @@ feature "Appeal Edit issues", :all_dbs do
       expect(page).to have_content("Please fill in the following fields in the Veteran's profile in VBMS or")
       expect(page).to have_content(
         "the corporate database, then retry establishing the EP in Caseflow: country"
-                      )
+      )
       expect(page).to have_content("This Veteran's address is too long. Please edit it in VBMS or SHARE")
       expect(page).to have_button("Save", disabled: true)
       click_remove_intake_issue_dropdown("Left knee granted")
@@ -975,7 +975,7 @@ feature "Appeal Edit issues", :all_dbs do
       expect(RequestIssue.find_by(
                benefit_type: "education",
                veteran_participant_id: nil
-      )).to_not be_nil
+             )).to_not be_nil
     end
   end
 
@@ -1049,7 +1049,7 @@ feature "Appeal Edit issues", :all_dbs do
 
       expect(page).to have_content(
         /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawal pending/i
-                      )
+      )
       expect(page).to have_content("Please include the date the withdrawal was requested")
 
       expect(page).to have_button("Save", disabled: true)
@@ -1089,7 +1089,7 @@ feature "Appeal Edit issues", :all_dbs do
       expect(page).to_not have_content(/Requested issues\s*[0-9]+\. PTSD denied/i)
       expect(page).to have_content(
         /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawal pending/i
-                      )
+      )
       expect(page).to have_content("Please include the date the withdrawal was requested")
 
       fill_in "withdraw-date", with: withdraw_date
@@ -1108,7 +1108,7 @@ feature "Appeal Edit issues", :all_dbs do
 
       expect(page).to have_content(
         /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: #{request_issue_decision_mdY}\s*Withdrawn on/i
-                      )
+      )
     end
 
     scenario "show alert when issue is added, removed and withdrawn" do
@@ -1133,7 +1133,7 @@ feature "Appeal Edit issues", :all_dbs do
 
       expect(page).to have_content(
         /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawal pending/i
-                      )
+      )
       expect(page).to have_content("Please include the date the withdrawal was requested")
 
       expect(page).to have_button("Save", disabled: true)
@@ -1154,7 +1154,7 @@ feature "Appeal Edit issues", :all_dbs do
 
       expect(page).to have_content(
         "We cannot process your request. Please select a date after the Appeal's receipt date."
-                      )
+      )
       expect(page).to have_button("Save", disabled: true)
 
       fill_in "withdraw-date", with: 2.years.from_now.to_date.mdY
@@ -1214,7 +1214,7 @@ feature "Appeal Edit issues", :all_dbs do
         expect(RequestIssue.find_by(
                  benefit_type: "compensation",
                  veteran_participant_id: nil
-        )).to_not be_nil
+               )).to_not be_nil
 
         visit "appeals/#{appeal.uuid}/edit"
         expect(page.has_no_content?(existing_request_issues.first.description)).to eq(true)
@@ -1340,8 +1340,7 @@ feature "Appeal Edit issues", :all_dbs do
 
       scenario "can add MST/PACT to issues" do
         go_to_queue_edit_issues_page_with_legacy_appeal(legacy_appeal_mst_pact_unchecked)
-        find("select", id: "issue-action-0").click
-        find("option", id: "issue-action-0_edit").click
+        click_edit_intake_issue_dropdown_by_number(1)
         check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
         find(:xpath, "//label[@for='PACT Act']").click(allow_label_click: true, visible: false)
         click_on "Save"
@@ -1353,8 +1352,7 @@ feature "Appeal Edit issues", :all_dbs do
 
       scenario "can remove MST/PACT issues" do
         go_to_queue_edit_issues_page_with_legacy_appeal(legacy_appeal_mst_pact_checked)
-        find("select", id: "issue-action-0").click
-        find("option", id: "issue-action-0_edit").click
+        click_edit_intake_issue_dropdown_by_number(1)
         uncheck("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
         find(:xpath, "//label[@for='PACT Act']").click(allow_label_click: true, visible: false)
         click_on "Save"
@@ -1366,8 +1364,7 @@ feature "Appeal Edit issues", :all_dbs do
 
       scenario "can add and remove only PACT to an issue" do
         go_to_queue_edit_issues_page_with_legacy_appeal(legacy_appeal_mst_pact_unchecked)
-        find("select", id: "issue-action-0").click
-        find("option", id: "issue-action-0_edit").click
+        click_edit_intake_issue_dropdown_by_number(1)
         find(:xpath, "//label[@for='PACT Act']").click(allow_label_click: true, visible: false)
         click_on "Save"
 
@@ -1375,8 +1372,7 @@ feature "Appeal Edit issues", :all_dbs do
         expect(page).to have_content("SPECIAL ISSUES\nPACT")
 
         click_on "Correct issues"
-        find("select", id: "issue-action-0").click
-        find("option", id: "issue-action-0_edit").click
+        click_edit_intake_issue_dropdown_by_number(1)
         find(:xpath, "//label[@for='PACT Act']").click(allow_label_click: true, visible: false)
         click_on "Save"
 
@@ -1386,8 +1382,7 @@ feature "Appeal Edit issues", :all_dbs do
 
       scenario "can add and remove only MST to an issue" do
         go_to_queue_edit_issues_page_with_legacy_appeal(legacy_appeal_mst_pact_unchecked)
-        find("select", id: "issue-action-0").click
-        find("option", id: "issue-action-0_edit").click
+        click_edit_intake_issue_dropdown_by_number(1)
         check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
         click_on "Save"
 
@@ -1395,8 +1390,7 @@ feature "Appeal Edit issues", :all_dbs do
         expect(page).to have_content("SPECIAL ISSUES\nMST")
 
         click_on "Correct issues"
-        find("select", id: "issue-action-0").click
-        find("option", id: "issue-action-0_edit").click
+        click_edit_intake_issue_dropdown_by_number(1)
         uncheck("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
         click_on "Save"
 
@@ -1455,8 +1449,8 @@ feature "Appeal Edit issues", :all_dbs do
       expect(page).to have_content("You have successfully updated issues on this appeal")
       expect(page).to have_content(
         "The appeal for #{appeal3.claimant.name} " \
-          "(ID: #{appeal3.veteran.file_number}) has been moved to the SCT queue."
-                      )
+        "(ID: #{appeal3.veteran.file_number}) has been moved to the SCT queue."
+      )
     end
   end
 
@@ -1513,8 +1507,8 @@ feature "Appeal Edit issues", :all_dbs do
       expect(page).to have_content("You have successfully updated issues on this appeal")
       expect(page).to have_content(
         "The appeal for #{appeal3.claimant.name} " \
-          "(ID: #{appeal3.veteran.file_number}) has been moved to the regular distribution pool."
-                      )
+        "(ID: #{appeal3.veteran.file_number}) has been moved to the regular distribution pool."
+      )
       expect(page).to have_current_path("/queue/appeals/#{appeal3.uuid}")
 
       # Verify task tree status
