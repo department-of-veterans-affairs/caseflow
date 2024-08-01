@@ -20,6 +20,8 @@ class HearingTimeService
   end
 
   def ama_scheduled_for(time_string)
+    return nil unless time_string
+
     date = @hearing&.hearing_day&.scheduled_for
     time_without_zone = time_string.split(" ", 3).take(2).join(" ")
     time = "2000-01-01 #{time_without_zone}".in_time_zone(timezone_from_time_string(time_string))
@@ -28,6 +30,8 @@ class HearingTimeService
   end
 
   def legacy_scheduled_for(time_string)
+    return nil unless time_string
+
     date_string = @hearing&.hearing_day&.scheduled_for
     time_without_zone = time_string.split(" ", 3).take(2).join(" ")
     "#{date_string} #{time_without_zone}".in_time_zone(timezone_from_time_string(time_string))
