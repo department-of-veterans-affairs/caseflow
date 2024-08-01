@@ -51,4 +51,38 @@ describe JsonApiResponseAdapter do
       expect(parsed[1].mime_type).to eq "application/pdf"
     end
   end
+
+  describe "adapt_upload_document" do
+    it "correctly parses an API response" do
+      data_hash = {
+        "currentVersionUuid": "7D6AFD8C-3BF7-4224-93AE-E1F07AC43C71",
+        "uuid": "03223945-468B-4E8A-B79B-82FA73C2D2D9"
+      }.to_json
+
+      expect(api_response).to receive(:body).and_return(data_hash)
+
+      parsed = described.adapt_upload_document(api_response)
+
+      expect(parsed[:upload_document_response][:@new_document_version_ref_id])
+        .to eq "7D6AFD8C-3BF7-4224-93AE-E1F07AC43C71"
+      expect(parsed[:upload_document_response][:@document_series_ref_id]).to eq "03223945-468B-4E8A-B79B-82FA73C2D2D9"
+    end
+  end
+
+  describe "adapt_update_document" do
+    it "correctly parses an API response" do
+      data_hash = {
+        "currentVersionUuid": "7D6AFD8C-3BF7-4224-93AE-E1F07AC43C71",
+        "uuid": "03223945-468B-4E8A-B79B-82FA73C2D2D9"
+      }.to_json
+
+      expect(api_response).to receive(:body).and_return(data_hash)
+
+      parsed = described.adapt_update_document(api_response)
+
+      expect(parsed[:update_document_response][:@new_document_version_ref_id])
+        .to eq "7D6AFD8C-3BF7-4224-93AE-E1F07AC43C71"
+      expect(parsed[:update_document_response][:@document_series_ref_id]).to eq "03223945-468B-4E8A-B79B-82FA73C2D2D9"
+    end
+  end
 end
