@@ -440,7 +440,18 @@ class RequestIssue < CaseflowRecord
         update.removed_issues.any? { |issue| issue.id == id }
       end
 
-      # Return the user_id from the relevant update, if found
+      User.find(relevant_update&.user_id)
+    end
+  end
+
+  def fetch_withdrawn_by_user
+    if withdrawn? && any_updates?
+      riu = fetch_request_issues_updates
+
+      relevant_update = riu.find do |update|
+        update.withdrawn_issues.any? { |issue| issue.id == id }
+      end
+
       User.find(relevant_update&.user_id)
     end
   end

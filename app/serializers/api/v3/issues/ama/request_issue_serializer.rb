@@ -130,15 +130,11 @@ class Api::V3::Issues::Ama::RequestIssueSerializer
     object&.fetch_removed_by_user&.station_id
   end
 
-  # attribute :withdrawn_by_css_id do |object|
-  #   if object&.closed_status == "withdrawn"
-  #     object&.end_product_establishment&.user&.css_id
-  #   end
-  # end
+  attribute :withdrawn_by_css_id do |object|
+    object&.fetch_withdrawn_by_user&.css_id
+  end
 
-  # attribute :withdrawn_by_station_id do |object|
-  #   if object&.closed_status == "withdrawn"
-  #     object&.end_product_establishment&.user&.station_id
-  #   end
-  # end
+  attribute :withdrawn_by_station_id do |object|
+    object&.fetch_withdrawn_by_user&.station_id
+  end
 end

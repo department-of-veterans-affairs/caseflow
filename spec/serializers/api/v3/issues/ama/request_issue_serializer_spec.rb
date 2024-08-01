@@ -73,8 +73,8 @@ describe Api::V3::Issues::Ama::RequestIssueSerializer, :postgres do
       expect(serialized_request_issue.key?(:vacols_sequence_id)).to eq true
       expect(serialized_request_issue.key?(:verified_unidentified_issue)).to eq true
       expect(serialized_request_issue.key?(:veteran_participant_id)).to eq true
-      # expect(serialized_request_issue.key?(:withdrawn_by_css_id)).to eq true
-      # expect(serialized_request_issue.key?(:withdrawn_by_station_id)).to eq true
+      expect(serialized_request_issue.key?(:withdrawn_by_css_id)).to eq true
+      expect(serialized_request_issue.key?(:withdrawn_by_station_id)).to eq true
       expect(serialized_request_issue.key?(:caseflow_considers_decision_review_active)).to eq true
       expect(serialized_request_issue.key?(:caseflow_considers_issue_active)).to eq true
       expect(serialized_request_issue.key?(:caseflow_considers_title_of_active_review)).to eq true
