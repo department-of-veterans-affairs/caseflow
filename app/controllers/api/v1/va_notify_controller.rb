@@ -25,7 +25,7 @@ class Api::V1::VaNotifyController < Api::ApplicationController
     {
       external_id: id_param,
       notification_type: notification_type_param,
-      receipient: to_param,
+      recipient: to_param,
       status: status_param,
       status_reason: status_reason_param
     }
