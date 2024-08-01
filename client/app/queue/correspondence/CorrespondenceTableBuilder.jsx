@@ -208,7 +208,7 @@ const CorrespondenceTableBuilder = (props) => {
             <SearchableDropdown
               name="Assign to Inbound Ops Team user"
               hideLabel
-              options={buildMailUserData(props.inboundOpsTeamUsers)}
+              options={buildMailUserData(props.inboundOpsTeamNonAdmin)}
               onChange={handleMailTeamUserChange}
             />
           </div>
@@ -316,10 +316,11 @@ const CorrespondenceTableBuilder = (props) => {
     };
   };
 
-  const tabsFromConfig = (config) =>
-    (config.tabs || []).map((tabConfig) =>
+  const tabsFromConfig = (config) => {
+    return (config.tabs || []).map((tabConfig) =>
       taskTableTabFactory(tabConfig, config)
     );
+  };
 
   const config = queueConfig();
 
@@ -355,7 +356,7 @@ CorrespondenceTableBuilder.propTypes = {
   userCanBulkAssign: PropTypes.bool,
   isVhaOrg: PropTypes.bool,
   featureToggles: PropTypes.object,
-  inboundOpsTeamUsers: PropTypes.array,
+  inboundOpsTeamNonAdmin: PropTypes.array,
   selectedTasks: PropTypes.array,
   isInboundOpsTeamUser: PropTypes.bool,
   isInboundOpsSuperuser: PropTypes.bool,

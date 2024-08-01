@@ -157,6 +157,19 @@ RSpec.feature("Add Related Correspondence - Correspondence Intake page") do
 
         expect(page.has_button?("Continue")).to be(false)
       end
+
+      it "Verify the package document type link is redirecting to correspondence details page" do
+        veteran = visit_intake_form_with_correspondence_load(return_veteran: true)
+        associate_with_prior_mail_radio_options[:yes].click
+
+        new_window = window_opened_by { all(".va-package-document-type-item")[0].find("a").click }
+
+        within_window new_window do
+          expect(page.has_content?("Completed Mail Tasks")).to be(true)
+          expect(page).to have_content(veteran.last_name.to_s)
+          expect(page).to have_content(veteran.file_number.to_s)
+        end
+      end
     end
   end
 end

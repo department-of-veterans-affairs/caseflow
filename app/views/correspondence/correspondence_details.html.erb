@@ -9,16 +9,16 @@
     dropdownUrls: dropdown_urls,
     applicationUrls: application_urls,
     feedbackUrl: feedback_url,
-    configUrl: '/queue/correspondence/team?json',
+    correspondence: @correspondence,
     flash: flash,
     isInboundOpsUser: current_user.inbound_ops_team_user?,
     isInboundOpsSupervisor: current_user.inbound_ops_team_supervisor?,
     isInboundOpsSuperuser: current_user.inbound_ops_team_superuser?,
     inboundOpsTeamUsers: @inbound_ops_team_users,
-    inboundOpsTeamNonAdmin: @inbound_ops_team_non_admin,
     responseType: @response_type,
     responseHeader: @response_header,
     responseMessage: @response_message,
+    organizations: @organizations,
     featureToggles: {
       correspondence_queue: FeatureToggle.enabled?(:correspondence_queue, user: current_user)
     }

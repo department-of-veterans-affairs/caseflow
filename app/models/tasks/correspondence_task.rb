@@ -101,11 +101,11 @@ class CorrespondenceTask < Task
   end
 
   def task_url
-    # Future: route to the Correspondence Details Page after implementation.
-    if ENV["RAILS_ENV"] == "production"
+    # route to the Correspondence Details Page.
+    if !FeatureToggle.enabled?(:correspondence_queue)
       "/under_construction"
     else
-      "/explain/correspondence/#{correspondence.uuid}/"
+      Constants.CORRESPONDENCE_TASK_URL.CORRESPONDENCE_TASK_DETAIL_URL.sub("uuid", correspondence.uuid)
     end
   end
 

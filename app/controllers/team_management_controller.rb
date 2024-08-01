@@ -120,8 +120,7 @@ class TeamManagementController < ApplicationController
       Representative,
       VhaProgramOffice,
       VhaRegionalOffice,
-      EducationRpo,
-      InboundOpsTeam
+      EducationRpo
     ]
     Organization.order(:name).reject do |org|
       rejected_orgs.any? { |excluded_org| org.is_a?(excluded_org) }
