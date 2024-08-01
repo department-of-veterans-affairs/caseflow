@@ -2,6 +2,8 @@
 
 require "rails_helper"
 
+# rubocop disable:Layout/HashAlignment
+# rubocop disable:Layout/LineLength
 RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controller do
   let!(:current_user) { User.authenticate! }
   let(:api_key) { ApiKey.create!(consumer_name: "API TEST TOKEN") }
@@ -18,13 +20,15 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
       it "returns a 501 status and error message" do
         patch :decision_review_updated, params: { event_id: event_id }
         expect(response).to have_http_status(:not_implemented)
-        expect(JSON.parse(response.body)).to eq({
-          "errors" => [{
-            "status" => "501",
-            "title" => "API is disabled",
-            "detail" => "This endpoint is not supported."
-          }]
-        })
+        expect(JSON.parse(response.body)).to eq(
+          "errors" => [
+            {
+              "status" => "501",
+              "title"  => "API is disabled",
+              "detail" => "This endpoint is not supported."
+            }
+          ]
+        )
       end
     end
 
@@ -209,4 +213,5 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
     request.headers["X-VA-Vet-Middle-Name"] = "Alexander"
   end
 end
-
+# rubocop enable:Layout/HashAlignment
+# rubocop enable:Layout/LineLength
