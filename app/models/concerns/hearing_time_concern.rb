@@ -32,7 +32,7 @@ module HearingTimeConcern
     appellant_tz_from_recipient = appellant_recipient&.timezone
     return normalized_time(appellant_tz_from_recipient) if appellant_tz_from_recipient.present?
     # If there's a virtual hearing, use that tz even if it's empty
-    return normalized_time(virtual_hearing[:appellant_tz]) if hearing.virtual_hearing.present?
+    return normalized_time(virtual_hearing[:appellant_tz]) if virtual_hearing.present?
 
     # No recipient and no virtual hearing? Use the normalized_time fallback
     normalized_time(nil)
