@@ -8,8 +8,9 @@ class Api::V1::VaNotifyController < Api::ApplicationController
   # Response: Update corresponding Notification status
   def notifications_update
     send_sqs_message
-    render json: { message: "#{required_params[:notification_type_param]} \
-                   Notification successfully updated: ID #{required_params[:id]}" }
+    render json: {
+      message: "#{params['notification_type']} Notification successfully updated: ID #{params['id']}"
+    }
   rescue StandardError => error
     log_error(error, params["id"], params["notification_type"])
     render json: { error: error.message }, status: :bad_request
