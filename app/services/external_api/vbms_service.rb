@@ -65,6 +65,7 @@ class ExternalApi::VBMSService
     update_document(appeal, uploadable_document)
   end
 
+  # rubocop:disable Metrics/MethodLength
   def self.upload_document_to_vbms(appeal, uploadable_document)
     if FeatureToggle.enabled?(:use_ce_api)
       filename = SecureRandom.uuid + File.basename(uploadable_document.pdf_location)
@@ -89,7 +90,9 @@ class ExternalApi::VBMSService
       upload_document(appeal.veteran_file_number, response.upload_token, uploadable_document.pdf_location)
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
+  # rubocop:disable Metrics/MethodLength
   def self.upload_document_to_vbms_veteran(veteran_file_number, uploadable_document)
     if FeatureToggle.enabled?(:use_ce_api)
       filename = SecureRandom.uuid + File.basename(uploadable_document.pdf_location)
@@ -114,6 +117,7 @@ class ExternalApi::VBMSService
       upload_document(veteran_file_number, response.upload_token, uploadable_document.pdf_location)
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   def self.initialize_upload(appeal, uploadable_document)
     content_hash = Digest::SHA1.hexdigest(File.read(uploadable_document.pdf_location))
@@ -182,7 +186,7 @@ class ExternalApi::VBMSService
 
       file_uuid = uploadable_document.document_series_reference_id.delete("{}")
 
-     response = VeteranFileUpdater.update_veteran_file(
+      response = VeteranFileUpdater.update_veteran_file(
         veteran_file_number: appeal.veteran_file_number,
         file_uuid: file_uuid,
         file_update_payload: file_update_payload
