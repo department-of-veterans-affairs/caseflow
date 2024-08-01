@@ -2,8 +2,6 @@
 
 require "rails_helper"
 
-# rubocop disable:Layout/HashAlignment
-# rubocop disable:Layout/LineLength
 RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controller do
   let!(:current_user) { User.authenticate! }
   let(:api_key) { ApiKey.create!(consumer_name: "API TEST TOKEN") }
@@ -17,6 +15,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
         request.headers["Authorization"] = "Token token=#{api_key.key_string}"
       end
 
+      # rubocop:disable Layout/HashAlignment
       it "returns a 501 status and error message" do
         patch :decision_review_updated, params: { event_id: event_id }
         expect(response).to have_http_status(:not_implemented)
@@ -30,6 +29,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
           ]
         )
       end
+      # rubocop:enable Layout/HashAlignment
     end
 
     context "when API is enabled" do
@@ -82,13 +82,17 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
         xit "returns a 200 status and success message" do
           patch :decision_review_updated, params: { event_id: event_id }
           expect(response).to have_http_status(:ok)
-          expect(JSON.parse(response.body)).to eq({ "message" => "DecisionReviewCreatedEvent successfully updated" })
+          expect(JSON.parse(response.body)).to eq(
+            { "message" => "DecisionReviewCreatedEvent successfully updated" }
+          )
         end
       end
 
       context "when RedisLockFailed error occurs" do
         before do
-          allow(Events::DecisionReviewUpdated).to receive(:update!).and_raise(Caseflow::Error::RedisLockFailed, "Lock failed")
+          allow(Events::DecisionReviewUpdated).to receive(:update!).and_raise(
+            Caseflow::Error::RedisLockFailed, "Lock failed"
+          )
         end
 
         it "returns a 409 status and error message" do
@@ -134,7 +138,9 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
 
     context "when RedisLockFailed error occurs" do
       before do
-        allow(Events::DecisionReviewUpdatedError).to receive(:handle_service_error).and_raise(Caseflow::Error::RedisLockFailed, "Lock failed")
+        allow(Events::DecisionReviewUpdatedError).to receive(:handle_service_error).and_raise(
+          Caseflow::Error::RedisLockFailed, "Lock failed"
+        )
       end
 
       it "returns a 409 status and error message" do
@@ -146,55 +152,9 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
 
     context "when StandardError occurs" do
       before do
-        allow(Events::DecisionReviewUpdatedError).to receive(:handle_service_error).and_raise(StandardError, "Something went wrong")
-      end
-
-      it "returns a 422 status and error message" do
-        patch :decision_review_updated_error, params: { event_id: event_id }
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(JSON.parse(response.body)).to eq({ "message" => "Something went wrong" })
-      end
-    end
-  end
-
-  describe "PATCH #decision_review_updated_error" do
-    let(:event_id) { 1 }
-    let(:errored_claim_id) { 2 }
-    let(:error_message) { "some error" }
-    let(:dru_error_params) { { event_id: event_id, errored_claim_id: errored_claim_id, error: error_message } }
-
-    before do
-      request.headers["Authorization"] = "Token token=#{api_key.key_string}"
-      allow(controller).to receive(:dru_error_params).and_return(dru_error_params)
-    end
-
-    context "when service error handling is successful" do
-      before do
-        allow(Events::DecisionReviewUpdatedError).to receive(:handle_service_error).with(event_id, errored_claim_id, error_message)
-      end
-
-      it "returns a 201 status and success message" do
-        patch :decision_review_updated_error, params: { event_id: event_id }
-        expect(response).to have_http_status(:created)
-        expect(JSON.parse(response.body)).to eq({ "message" => "Decision Review Updated Error Saved in Caseflow" })
-      end
-    end
-
-    context "when RedisLockFailed error occurs" do
-      before do
-        allow(Events::DecisionReviewUpdatedError).to receive(:handle_service_error).and_raise(Caseflow::Error::RedisLockFailed, "Lock failed")
-      end
-
-      it "returns a 409 status and error message" do
-        patch :decision_review_updated_error, params: { event_id: event_id }
-        expect(response).to have_http_status(:conflict)
-        expect(JSON.parse(response.body)).to eq({ "message" => "Lock failed" })
-      end
-    end
-
-    context "when StandardError occurs" do
-      before do
-        allow(Events::DecisionReviewUpdatedError).to receive(:handle_service_error).and_raise(StandardError, "Something went wrong")
+        allow(Events::DecisionReviewUpdatedError).to receive(:handle_service_error).and_raise(
+          StandardError, "Something went wrong"
+        )
       end
 
       it "returns a 422 status and error message" do
@@ -213,5 +173,3 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
     request.headers["X-VA-Vet-Middle-Name"] = "Alexander"
   end
 end
-# rubocop enable:Layout/HashAlignment
-# rubocop enable:Layout/LineLength
