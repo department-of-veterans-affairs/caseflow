@@ -23,13 +23,7 @@ class WorkQueue::CorrespondenceSerializer
   end
 
   attribute :tasks_unrelated_to_appeal do |object|
-    filtered_tasks = object.tasks.reject do |task|
-      task.type == "ReviewPackageTask" ||
-        task.type == "CorrespondenceIntakeTask" ||
-        task.type == "CorrespondenceRootTask" ||
-        task.type == "RemovePackageTask" ||
-        task.type == "EfolderUploadFailedTask"
-    end
+    filtered_tasks = object.tasks_not_related_to_an_appeal
 
     tasks = []
 
@@ -41,7 +35,8 @@ class WorkQueue::CorrespondenceSerializer
             assigned_to: (task.assigned_to_type == "Organization") ? task.assigned_to.name : task.assigned_to.css_id,
             assigned_at: task.assigned_at.strftime("%m/%d/%Y"),
             instructions: task.instructions,
-            assigned_to_type: task.assigned_to_type
+            assigned_to_type: task.assigned_to_type,
+            available_actions: task&.available_actions(task.assigned_to)
           }
       end
     end

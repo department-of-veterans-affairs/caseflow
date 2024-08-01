@@ -168,9 +168,11 @@ class CorrespondenceTaskRows extends React.PureComponent {
       return null;
     }
 
+    const taskInstructionsVisible = this.state.taskInstructionsIsVisible.includes(task.label);
+
     return (
       <div className="cf-row-wrapper">
-        {this.state.taskInstructionsIsVisible.includes(task.label) && (
+        {taskInstructionsVisible && (
           <React.Fragment key={`${task.assignedOn}${task.label}`}>
             {!establishmentTask(task) &&
             <dt style={{ width: '100%' }}>
@@ -187,7 +189,7 @@ class CorrespondenceTaskRows extends React.PureComponent {
           styling={css({ padding: '0' })}
           id={task.uniqueId}
           name={
-            this.state.taskInstructionsIsVisible[task.uniqueId] ?
+            taskInstructionsVisible ?
               COPY.TASK_SNAPSHOT_HIDE_TASK_INSTRUCTIONS_LABEL :
               COPY.TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL
           }
