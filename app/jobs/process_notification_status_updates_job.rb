@@ -25,7 +25,7 @@ class ProcessNotificationStatusUpdatesJob < CaseflowJob
   queue_with_priority :low_priority
 
   MESSAGE_GROUP_ID = "VANotifyStatusUpdate" # Used to only process messages queued by the status update webhook
-  PROCESSING_LIMIT = 1000 # How many updates to perform per job execution
+  PROCESSING_LIMIT = 5000 # How many updates to perform per job execution
 
   # Consumes messages from the 'receive_notifications' FIFO SQS queue whose 'MessageGroupId'
   # attribute matches MESSAGE_GROUP_ID, and then persists data contained within those messages
@@ -37,6 +37,8 @@ class ProcessNotificationStatusUpdatesJob < CaseflowJob
       number_of_messages_processed = 0
 
       number_of_messages_processed += process_batch_of_messages while number_of_messages_processed < PROCESSING_LIMIT
+    rescue Caseflow::Error::SqsQueueExhaustionError
+      Rails.logger.info("ProcessNotificationStatusUpdatesJob is exiting early due to the queue being empty.")
     rescue StandardError => error
       log_error(error)
       raise error
@@ -74,7 +76,7 @@ class ProcessNotificationStatusUpdatesJob < CaseflowJob
     )
 
     # Exit loop early if there does not seem to be any more messages.
-    return PROCESSING_LIMIT if response.messages.empty?
+    fail Caseflow::Error::SqsQueueExhaustionError if response.messages.empty?
 
     filtered_messages = filter_messages_by_group_id(response.messages)
 
