@@ -137,8 +137,10 @@ class LegacyHearing < CaseflowRecord
   end
 
   def hearing_day_id_refers_to_vacols_row?
-    (original_request_type == HearingDay::REQUEST_TYPES[:central] && scheduled_for.to_date < Date.new(2019, 1, 1)) ||
-      (original_request_type == HearingDay::REQUEST_TYPES[:video] && scheduled_for.to_date < Date.new(2019, 4, 1))
+    perform_vacols_request unless @vacols_load_status == :success
+
+    (original_request_type == HearingDay::REQUEST_TYPES[:central] && @scheduled_for.to_date < Date.new(2019, 1, 1)) ||
+      (original_request_type == HearingDay::REQUEST_TYPES[:video] && @scheduled_for.to_date < Date.new(2019, 4, 1))
   end
 
   def hearing_day_id
