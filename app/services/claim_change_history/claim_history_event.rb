@@ -164,7 +164,7 @@ class ClaimHistoryEvent
           edited_events.push(*create_pending_status_events(change_data, last_version["updated_at"][index]))
         else
           edited_events.push(*create_request_issue_decision_events(
-            change_data, last_version["updated_at"][index] + 1, status
+            change_data, last_version["updated_at"][index], status
           ))
         end
       end
@@ -184,14 +184,13 @@ class ClaimHistoryEvent
       request_event_type = "request_#{event}"
 
       events.push from_change_data(request_event_type.to_sym, change_data.merge(decision_event_hash))
-
       # in case of multipe issue modification request and all been approved, only first one will have decided_at_lag nil
       # which will create only one in-progress event.
       # in case of multiple cancelled for the last event then add in progress otherwise its not necessary
-      if (%w[denied approved].include?(event) && change_data["previous_imr_decided_at"].nil?) ||
-         (event == "cancelled" && change_data["last_imr_created_at"].nil?)
+      if %w[cancelled denied approved].include?(event) && !change_data["is_assigned_present"] &&
+         change_data["last_row"].nil?
         in_progress_system_hash_events = pending_system_hash
-          .merge("event_date" => change_data["issue_modification_request_updated_at"] + 1)
+          .merge("event_date" => change_data["issue_modification_request_updated_at"])
 
         events.push from_change_data(:in_progress, change_data.merge(in_progress_system_hash_events))
       end

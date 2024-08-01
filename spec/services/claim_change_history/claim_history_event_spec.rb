@@ -75,7 +75,8 @@ describe ClaimHistoryEvent do
       "decider_css_id" => nil,
       "imr_versions" => imr_versions,
       "previous_imr_created_at" => nil,
-      "updater_user_name" => "Monte Mann"
+      "updater_user_name" => "Monte Mann",
+      "is_assigned_present" => is_assigned_present
     }
   end
 
@@ -99,6 +100,7 @@ describe ClaimHistoryEvent do
   let(:decision_reason) { nil }
   let(:decider_id) { nil }
   let(:decided_at) { nil }
+  let(:is_assigned_present) { false }
   let(:event_attribute_data) do
     {
       assigned_at: Time.zone.parse("2023-10-19 22:47:16.222148"),
@@ -211,9 +213,9 @@ describe ClaimHistoryEvent do
       event_type: :request_approved,
       request_type: :addition,
       new_issue_type: "Caregiver | Tier Level",
-      new_issue_description: "First value",
+      new_issue_description: "test",
       new_decision_date: "2024-07-07",
-      modification_request_reason: "Addition is the only request issue"
+      modification_request_reason: "Testing"
     }
   end
 
@@ -223,9 +225,9 @@ describe ClaimHistoryEvent do
       request_type: :addition,
       issue_type: "Clothing Allowance",
       new_issue_type: "Caregiver | Tier Level",
-      new_issue_description: "First value",
+      new_issue_description: "modifiedvalue",
       new_decision_date: "2024-07-07",
-      modification_request_reason: "Addition is the only request issue",
+      modification_request_reason: "Addition is the only request issue-modifiedvalue Z",
       event_user_name: "Monte Mann"
     }
   end
@@ -239,7 +241,6 @@ describe ClaimHistoryEvent do
 
         it "should create an instance and not raise an error" do
           claim_history_event = subject
-
           expect_attributes(claim_history_event, status_event_attribute_data)
         end
       end
@@ -748,6 +749,7 @@ describe ClaimHistoryEvent do
 
     describe ".create_pending_status_events" do
       let(:event_date) { change_data["issue_modification_request_created_at"] }
+      let(:is_assigned_present) { true }
 
       subject { described_class.create_pending_status_events(change_data, event_date) }
 
@@ -820,10 +822,11 @@ describe ClaimHistoryEvent do
 
       it "returns request_edited event type with multiple events" do
         expect(subject.count).to be(4)
-        expect_attributes(subject[0], issue_modification_edited_attribute)
-        expect_attributes(subject[1], pending_attribute_data)
-        expect_attributes(subject[2], issue_modification_response_attribute)
-        expect_attributes(subject[3], in_progress_attribute_data)
+
+        expect_attributes(subject[0], pending_attribute_data)
+        expect_attributes(subject[1], issue_modification_response_attribute)
+        expect_attributes(subject[3], issue_modification_edited_attribute)
+        expect_attributes(subject[2], in_progress_attribute_data)
       end
     end
 
