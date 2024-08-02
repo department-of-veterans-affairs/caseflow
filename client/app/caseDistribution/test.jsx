@@ -11,6 +11,7 @@ import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/co
 import CaseSearchLink from '../components/CaseSearchLink';
 import ApiUtil from '../util/ApiUtil';
 import Button from '../components/Button';
+import Alert from 'app/components/Alert';
 
 class CaseDistributionTest extends React.PureComponent {
   constructor(props) {
@@ -20,7 +21,12 @@ class CaseDistributionTest extends React.PureComponent {
       isReseedingNonAod: false,
       isReseedingAmaDocketGoals: false,
       isReseedingDocketPriority: false,
-      isReturnLegacyAppeals: false
+      isReturnLegacyAppeals: false,
+      showLegacyAppealsAlert: false,
+      legacyAppealsAlertType: "success",
+      legacyAppealsAlertMsg: "Successfully Completed Return Legacy Appeals To Board Job.",
+      showAlert: false,
+      alertType: "success",
     };
   }
 
@@ -29,11 +35,16 @@ class CaseDistributionTest extends React.PureComponent {
     ApiUtil.post('/case_distribution_levers_tests/run_demo_aod_hearing_seeds').then(() => {
       this.setState({
         isReseedingAod: false,
+        showAlert: true,
+        alertMsg: "Successfully Completed Seeding Aod Hearing Held Appeals.",
       });
     }, (err) => {
       console.warn(err);
       this.setState({
         isReseedingAod: false,
+        showAlert: true,
+        alertMsg: err,
+        alertType: "error",
       });
     });
   };
@@ -43,11 +54,16 @@ class CaseDistributionTest extends React.PureComponent {
     ApiUtil.post('/case_distribution_levers_tests/run_demo_non_aod_hearing_seeds').then(() => {
       this.setState({
         isReseedingNonAod: false,
+        showAlert: true,
+        alertMsg: "Successfully Completed Seeding Non Aod Hearing Held Appeals.",
       });
     }, (err) => {
       console.warn(err);
       this.setState({
         isReseedingNonAod: false,
+        showAlert: true,
+        alertMsg: err,
+        alertType: "error",
       });
     });
   };
@@ -57,11 +73,16 @@ class CaseDistributionTest extends React.PureComponent {
     ApiUtil.post('/case_distribution_levers_tests/run-demo-ama-docket-goals').then(() => {
       this.setState({
         isReseedingAmaDocketGoals: false,
+        showAlert: true,
+        alertMsg: "Successfully Completed Seeding Ama Docket Time Goal Non Priority Appeals.",
       });
     }, (err) => {
       console.warn(err);
       this.setState({
         isReseedingAmaDocketGoals: false,
+        showAlert: true,
+        alertMsg: err,
+        alertType: "error",
       });
     });
   };
@@ -71,11 +92,16 @@ class CaseDistributionTest extends React.PureComponent {
     ApiUtil.post('/case_distribution_levers_tests/run-demo-docket-priority').then(() => {
       this.setState({
         isReseedingDocketPriority: false,
+        showAlert: true,
+        alertMsg: "Successfully Completed Seeding Docket Type Appeals.",
       });
     }, (err) => {
       console.warn(err);
       this.setState({
         isReseedingDocketPriority: false,
+        showAlert: true,
+        alertMsg: err,
+        alertType: "error",
       });
     });
   };
@@ -85,11 +111,15 @@ class CaseDistributionTest extends React.PureComponent {
     ApiUtil.post('/case_distribution_levers_tests/run_return_legacy_appeals_to_board').then(() => {
       this.setState({
         isReturnLegacyAppeals: false,
+        showLegacyAppealsAlert: true
       });
     }, (err) => {
       console.warn(err);
       this.setState({
         isReturnLegacyAppeals: false,
+        showLegacyAppealsAlert: true,
+        legacyAppealsAlertType: "error",
+        legacyAppealsAlertMsg: err
       });
     });
   };
@@ -273,6 +303,9 @@ class CaseDistributionTest extends React.PureComponent {
                           </ul>
                           <hr />
                           <h2 id="run_seeds">Run Seed Files</h2>
+                          { this.state.showAlert &&
+                            <Alert type={this.state.alertType} scrollOnAlert={false}>{this.state.alertMsg}</Alert>
+                          }
                           <ul>
                             <li>
                               <Button
@@ -309,6 +342,11 @@ class CaseDistributionTest extends React.PureComponent {
                           </ul>
                           <hr />
                           <h2 id="case_movement">Case Movement</h2>
+                          { this.state.showLegacyAppealsAlert &&
+                            <Alert type={this.state.legacyAppealsAlertType} scrollOnAlert={false}>
+                              {this.state.legacyAppealsAlertMsg}
+                            </Alert>
+                          }
                           <ul>
                             <li>
                               <Button classNames={['usa-button-case-movement']}
