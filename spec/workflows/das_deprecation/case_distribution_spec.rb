@@ -2,6 +2,8 @@
 
 describe DasDeprecation::CaseDistribution, :all_dbs do
   let(:judge) { create(:user, css_id: "BVATWARNER", roles: ["Hearing Prep"]) }
+  let!(:cavc_affinity_days_lever) { create(:case_distribution_lever, :cavc_affinity_days) }
+  let!(:cavc_aod_affinity_days_lever) { create(:case_distribution_lever, :cavc_aod_affinity_days) }
   describe "#create_judge_assign_task" do
     context "Non-Priority Legacy Appeal" do
       let!(:legacy_priority_cases) do
