@@ -45,6 +45,20 @@ RSpec.describe CorrespondenceIntakeController, :all_dbs, type: :controller do
 
       expect(response.status).to eq 200
     end
+
+    it "serializes prior mail correctly" do
+      InboundOpsTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
+
+      corres_array1 = (1..4).map { create(:correspondence, veteran: veteran) }
+      corres_array1.map { |corr| corr.root_task.update!(status: "completed") }
+
+      corres_array2 = (1..4).map { create(:correspondence, veteran: veteran) }
+      corres_array2.map { |corr| corr.root_task.update!(status: "assigned") }
+
+      get :intake, params: { correspondence_uuid: correspondence.uuid }
+      expect(controller.instance_variable_get(:@prior_mail).count).to eq(8)
+    end
   end
 
   describe "POST #current_step" do
