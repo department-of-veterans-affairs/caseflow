@@ -76,9 +76,7 @@ class AppealsTiedToNonSscAvljQuery
     end
   end
 
-  private
-
-  def mrsj_name(vacols_case)
+  def self.mrsj_name(vacols_case)
     vacols_staff = vacols_case && vacols_case&.bfmemid ? VACOLS::Staff.find_by(sattyid: vacols_case.bfmemid) : nil
     vacols_staff ? FullName.new(vacols_staff.snamef, nil, vacols_staff.snamel).to_s : ""
   end
