@@ -38,10 +38,10 @@ jobs:
           - 6379:6379
 
       facols_db:
-        image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:latest
+        image: 065403089830.dkr.ecr.us-gov-west-1.amazonaws.com/facols:latest
         credentials:
           username: AWS
-          password: ${{ secrets.ECR_PASSWORD }}
+          password: ${{ secrets.VAEC_ECR_PASSWORD }}
         ports:
           - 1521:1521
 
@@ -52,11 +52,11 @@ jobs:
         ci_node_index: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 
     container:
-      image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
+      image: 065403089830.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
       options: --privileged # Necessary for Rspec to run with our configuration within GHA
       credentials:
         username: AWS
-        password: ${{ secrets.ECR_PASSWORD }}
+        password: ${{ secrets.VAEC_ECR_PASSWORD }}
 
       env:
         DBUS_SESSION_BUS_ADDRESS: /dev/null
@@ -234,6 +234,15 @@ jobs:
         with:
           path: ./tmp/capybara
 
+      - name: Rename examples.txt
+        if: success() || failure()
+        run: mv ./tmp/examples.txt ./tmp/examples-${{matrix.ci_node_index}}.txt
+      - uses: actions/upload-artifact@v3
+        if: success() || failure()
+        name: Upload tmp/examples.txt
+        with:
+          path: ./tmp/examples-${{matrix.ci_node_index}}.txt
+
       - name: Compress test logs
         if: failure()
         run: tar -czvf ./log/test-${{matrix.ci_node_index}}.log.tar.gz ./log/test.log
@@ -243,7 +252,9 @@ jobs:
         with:
           path: ./log/test-${{matrix.ci_node_index}}.log.tar.gz
 
-      - run: cp ./log/bullet.log ./log/bullet-${{matrix.ci_node_index}}.log
+      - name: Rename bullet.log
+        if: success() || failure()
+        run: mv ./log/bullet.log ./log/bullet-${{matrix.ci_node_index}}.log
       - uses: actions/upload-artifact@v3
         if: success() || failure()
         name: bullet-${{matrix.ci_node_index}}.log
@@ -255,10 +266,10 @@ jobs:
     if: true
     runs-on: ubuntu-latest
     container:
-      image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
+      image: 065403089830.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
       credentials:
         username: AWS
-        password: ${{ secrets.ECR_PASSWORD }}
+        password: ${{ secrets.VAEC_ECR_PASSWORD }}
       env:
         DBUS_SESSION_BUS_ADDRESS: /dev/null
         RAILS_ENV: test
@@ -317,10 +328,10 @@ jobs:
     if: true
     runs-on: ubuntu-latest
     container:
-      image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
+      image: 065403089830.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
       credentials:
         username: AWS
-        password: ${{ secrets.ECR_PASSWORD }}
+        password: ${{ secrets.VAEC_ECR_PASSWORD }}
 
     steps:
       - name: Checkout
