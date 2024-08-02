@@ -4,7 +4,6 @@ import DocketTypeBadge from '../../components/DocketTypeBadge';
 import { ExternalLinkIcon } from '../../components/icons/ExternalLinkIcon';
 
 const CorrespondenceTasksAdded = (props) => {
-  console.log(props.)
   return (
     <div className="correspondence-tasks-added ">
       <div className="corr-tasks-added-col first-row">
