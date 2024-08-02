@@ -6,7 +6,7 @@ namespace :local do
     puts ">>> BEGIN local:destroy"
 
     puts ">>> 01/02 Dropping development and test caseflow databases"
-    system("RAILS_ENV=development bundle exec rake db:drop") || abort
+    system("RAILS_ENV=development bundle exec rake db:drop:primary") || abort
 
     puts ">>> 02/02 Tearing down docker volumes"
     # Note: In some cases, there may be dangling images or volumes that

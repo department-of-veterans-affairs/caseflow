@@ -25,7 +25,8 @@ echo "Waiting for Vacols to be ready"
 rake local:vacols:wait_for_connection
 
 echo "Creating DB in PG"
-rake db:setup
+rake db:create:primary
+rake db:schema:load:primary
 
 echo "Seeding Facols"
 rake local:vacols:seed

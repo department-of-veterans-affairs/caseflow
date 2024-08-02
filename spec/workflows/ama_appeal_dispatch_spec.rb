@@ -70,7 +70,10 @@ describe AmaAppealDispatch, :postgres do
       it "does not call #perform_later on MailRequestJob" do
         allow(ProcessDecisionDocumentJob).to receive(:perform_later).and_raise(StandardError)
         expect(MailRequestJob).to_not receive(:perform_later)
-        expect { subject }.to raise_error(StandardError)
+        subject
+      rescue Minitest::UnexpectedError => error # rubocop:disable Lint/SuppressedException
+      ensure
+        expect(error.message).to match("StandardError")
       end
     end
   end
