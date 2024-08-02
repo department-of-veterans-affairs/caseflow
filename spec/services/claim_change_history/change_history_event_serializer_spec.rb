@@ -49,7 +49,6 @@ describe ChangeHistoryEventSerializer do
           eventDate: events[0].event_date,
           eventType: :claim_creation,
           taskID: vha_task.id,
-          requestType: nil,
           details:
             {
               benefitType: "vha",
@@ -64,6 +63,7 @@ describe ChangeHistoryEventSerializer do
           modificationRequestDetails:
             {
               benefitType: "vha",
+              requestType: nil,
               issueModificationRequestWithdrawalDate: nil,
               modificationRequestReason: nil,
               newDecisionDate: nil,
@@ -98,6 +98,7 @@ describe ChangeHistoryEventSerializer do
           modificationRequestDetails:
           {
             benefitType: "vha",
+            requestType: nil,
             issueModificationRequestWithdrawalDate: nil,
             modificationRequestReason: nil,
             newDecisionDate: nil,
@@ -112,8 +113,7 @@ describe ChangeHistoryEventSerializer do
           eventDate: events[1].event_date,
           eventType: :added_issue,
           eventUser: "L. Roth",
-          taskID: vha_task.id,
-          requestType: nil
+          taskID: vha_task.id
         }
       }
     ]
