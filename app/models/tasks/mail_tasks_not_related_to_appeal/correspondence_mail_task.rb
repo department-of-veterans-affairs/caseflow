@@ -2,6 +2,17 @@
 
 # Abstract base class for "tasks not related to an appeal" added to a correspondence during Correspondence Intake.
 class CorrespondenceMailTask < CorrespondenceTask
+
+  class << self
+    # allows inbound ops team users to create tasks in intake
+    def verify_user_can_create!(user, parent)
+      binding.pry
+      return true if InboundOpsTeam.singleton.user_has_access?(user)
+
+      super(user, parent)
+    end
+  end
+
   self.abstract_class = true
 
   def self.create_child_task(parent, current_user, params)
