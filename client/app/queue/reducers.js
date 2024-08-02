@@ -23,8 +23,7 @@ import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
 
 import editClaimantReducer from './editAppellantInformation/editAppellantInformationSlice';
 import cavcDashboardReducer from './cavcDashboard/cavcDashboardReducer';
-import intakeCorrespondenceReducer from './correspondence/correspondenceReducer/correspondenceReducer';
-import reviewPackageReducer from './correspondence/correspondenceReducer/reviewPackageReducer';
+import cachingReducer from './caching/cachingReducer';
 
 export const initialState = {
   judges: {},
@@ -552,7 +551,11 @@ const errorTasksAndAppealsOfAttorney = (state, action) => {
 const setSelectionOfTaskOfUser = (state, action) => {
   const isTaskSelected = update(state.isTaskAssignedToUserSelected[action.payload.userId] || {}, {
     [action.payload.taskId]: {
-      $set: action.payload.selected
+      $set: {
+        selected: action.payload.selected,
+        task: action.payload.task
+      },
+
     }
   });
 
@@ -810,8 +813,7 @@ const rootReducer = combineReducers({
   cavcRemand: editCavRemandReducer,
   editClaimantReducer,
   cavcDashboard: cavcDashboardReducer,
-  intakeCorrespondence: intakeCorrespondenceReducer,
-  reviewPackage: reviewPackageReducer
+  caching: cachingReducer
 });
 
 export default timeFunction(
