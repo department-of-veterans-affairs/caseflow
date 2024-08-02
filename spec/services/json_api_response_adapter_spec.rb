@@ -5,8 +5,6 @@ require "json"
 describe JsonApiResponseAdapter do
   subject(:described) { described_class.new }
 
-  let(:api_response) { instance_double(ExternalApi::Response) }
-
   describe "#adapt_fetch_document_series_for" do
     context "with invalid responses" do
       it "handles blank responses" do
@@ -15,16 +13,8 @@ describe JsonApiResponseAdapter do
         expect(parsed.length).to eq 0
       end
 
-      it "handles blank response bodies" do
-        response = instance_double(ExternalApi::Response, body: nil)
-        parsed = described.adapt_fetch_document_series_for(response)
-
-        expect(parsed.length).to eq 0
-      end
-
-      it "handles response bodies with no files" do
-        response = instance_double(ExternalApi::Response, body: {})
-        parsed = described.adapt_fetch_document_series_for(response)
+      it "handles responses with no files" do
+        parsed = described.adapt_fetch_document_series_for({})
 
         expect(parsed.length).to eq 0
       end
@@ -35,10 +25,7 @@ describe JsonApiResponseAdapter do
       data_hash = JSON.parse(File.read(file))
       file.close
 
-      expect(api_response).to receive(:body)
-        .exactly(3).times.and_return(data_hash)
-
-      parsed = described.adapt_fetch_document_series_for(api_response)
+      parsed = described.adapt_fetch_document_series_for(data_hash)
 
       expect(parsed.length).to eq 2
 
@@ -59,9 +46,7 @@ describe JsonApiResponseAdapter do
         "uuid": "03223945-468B-4E8A-B79B-82FA73C2D2D9"
       }.to_json
 
-      expect(api_response).to receive(:body).and_return(data_hash)
-
-      parsed = described.adapt_upload_document(api_response)
+      parsed = described.adapt_upload_document(data_hash)
 
       expect(parsed[:upload_document_response][:@new_document_version_ref_id])
         .to eq "7D6AFD8C-3BF7-4224-93AE-E1F07AC43C71"
@@ -76,9 +61,7 @@ describe JsonApiResponseAdapter do
         "uuid": "03223945-468B-4E8A-B79B-82FA73C2D2D9"
       }.to_json
 
-      expect(api_response).to receive(:body).and_return(data_hash)
-
-      parsed = described.adapt_update_document(api_response)
+      parsed = described.adapt_update_document(data_hash)
 
       expect(parsed[:update_document_response][:@new_document_version_ref_id])
         .to eq "7D6AFD8C-3BF7-4224-93AE-E1F07AC43C71"
