@@ -27,7 +27,17 @@ class Test::LoadTestController < ApplicationController
   end
 
   def target
-    data_for_testing
+    if params[:target_type].count > 1
+      fail(
+        Caseflow::Error::InvalidParameter,
+        parameter: params[:target_type],
+        message: "Only one search parameter allowed."
+      )
+    end
+    render json: {
+      data_type: params[:target_type],
+      data: data_for_testing
+    }
   end
 
   private
@@ -53,25 +63,30 @@ class Test::LoadTestController < ApplicationController
     Organization.pluck(:name).sort
   end
 
-  # Private: Pull the last persisted appeal.
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def data_for_testing
-    appeal = Appeal.last
-    legacy_appeal_to_test = LegacyAppeal.first
-    review = HigherLevelReview.last
-
-    render json: {
-      appeal: appeal,
-      legacy_appeal: legacy_appeal_to_test,
-      veteran_info: appeal.veteran,
-      review_info: review
-    }
+    case params[:target_type]
+    when "Appeal"
+      data = Appeal.find_by(uuid: params[:appeal_external_id])
+      if data.nil?
+        data = LegacyAppeal.find_by(vacols_id: params[:appeal_external_id])
+      end
+    when "Hearing"
+      data = params[:hearing_external_id].blank? ? Hearing.sample : Hearing.find_hearing_by_uuid_or_vacols_id(params[:hearing_external_id])
+    when "Decision Review"
+      data = params[:decision_review_external_id].blank? ? DecisionReview.sample : DecisionReview.by_uuid(params[:decision_review_external_id])
+    when "Document"
+      data = params[:document_id].blank? ? Document.sample : Document.find_by(id: params[:document_id])
+    when "Metric"
+      data = Metric.sample
+    end
+    fail ActiveRecord::RecordNotFound if data.nil?
   end
 
   # Private: Finds or creates the user for load testing, makes them a system admin
   # so that it can access any area in Caseflow, and stores their information in the
   # current session. This will be reflected in the session cookie.
 
-  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
   def set_current_user
     user = user.presence || User.find_or_create_by(css_id: LOAD_TESTING_USER, station_id: params[:station_id])
     # user update in order to gain access to certain endpoints.
@@ -91,7 +106,7 @@ class Test::LoadTestController < ApplicationController
     # Do we want regional_office vs users_regional_office
     session[:regional_office] = user.users_regional_office
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   # Private: Deletes  the load testing API key if it already exists to prevent conflicts
   def ensure_key_does_not_exist_already
