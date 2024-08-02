@@ -41,13 +41,13 @@ class AppealsTiedToNonSscAvljQuery
     docket_coordinator = DocketCoordinator.new
 
     # Returns Appeals Tied to Non SSC AVLJs
-    appeals_tied_to_non_ssc_avljs = LegacyDocket.new.appeals_tied_to_non_ssc_avljs
+    appeals_tied_to_non_ssc_avljs = ReturnedAppealJob.last
     docket_coordinator.dockets
       .flat_map do |sym, docket|
         appeals = docket.ready_to_distribute_appeals # Returns Ready to Distribute Appeals
 
         # Does not work, returns empty array. Comment out to see CSV populate data.
-        appeals = appeals.select { |appeal| appeals_tied_to_non_ssc_avljs.include?(appeal["bfkey"]) }
+        appeals = appeals.select { |appeal| appeals_tied_to_non_ssc_avljs.returned_appeals.include?(appeal["bfkey"]) }
 
         legacy_rows(appeals, sym)
       end
@@ -58,7 +58,7 @@ class AppealsTiedToNonSscAvljQuery
       veteran_name = FullName.new(appeal["snamef"], nil, appeal["snamel"]).to_s
       vlj_name = FullName.new(appeal["vlj_namef"], nil, appeal["vlj_namel"]).to_s
       hearing_judge = vlj_name.empty? ? nil : vlj_name
-      bfcurloc = VACOLS::Case.find_by(bfkey: appeal["bfkey"]).bfcurloc
+      vacols_case = VACOLS::Case.find_by(bfkey: appeal["bfkey"])
 
       {
         docket_number: appeal["tinum"],
@@ -70,9 +70,16 @@ class AppealsTiedToNonSscAvljQuery
         veteran_name: veteran_name,
         non_ssc_avlj: vlj_name,
         hearing_judge: hearing_judge,
-        most_recent_signing_judge: appeal["bfmemid"], # Need to Look into this more
-        bfcurloc: bfcurloc
+        most_recent_signing_judge: mrsj_name(vacols_case),
+        bfcurloc: vacols_case&.bfcurloc
       }
     end
+  end
+
+  private
+
+  def mrsj_name(vacols_case)
+    vacols_staff = vacols_case && vacols_case&.bfmemid ? VACOLS::Staff.find_by(sattyid: vacols_case.bfmemid) : nil
+    vacols_staff ? FullName.new(vacols_staff.snamef, nil, vacols_staff.snamel).to_s : ""
   end
 end
