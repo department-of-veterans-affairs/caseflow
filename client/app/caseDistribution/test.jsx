@@ -272,7 +272,8 @@ class CaseDistributionTest extends React.PureComponent {
                             </li>
                             <li>
                               <a href="/case_distribution_levers_tests/appeals_tied_to_non_ssc_avlj?csv=1">
-                                <Button classNames={['usa-button-active']}>Download RTD Appeals tied to Non-SSC AVLJs CSV</Button>
+                                <Button classNames={['usa-button-active']}>
+                                  Download RTD Appeals tied to Non-SSC AVLJs CSV</Button>
                               </a>
                             </li>
                           </ul>
