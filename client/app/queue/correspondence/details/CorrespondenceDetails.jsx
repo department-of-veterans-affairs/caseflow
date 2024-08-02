@@ -9,6 +9,7 @@ import CorrespondenceCaseTimeline from '../CorrespondenceCaseTimeline';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
 import { prepareAppealForSearchStore } from 'app/queue/utils';
+import CorrespondenceTasksAdded from '../CorrespondenceTasksAdded';
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
@@ -81,6 +82,8 @@ const CorrespondenceDetails = (props) => {
               disabled
               enableTopPagination
             />
+                <CorrespondenceTasksAdded correspondence={props.correspondence} />
+
           </AppSegment>
         </div>
       </React.Fragment>
@@ -88,6 +91,7 @@ const CorrespondenceDetails = (props) => {
   };
   const correspondenceAndAppealTaskComponents = <>
     {correspondenceTasks()}
+
     <section className="task-not-related-title">Tasks not related to an appeal</section>
     <div className="correspondence-case-timeline-container">
       <CorrespondenceCaseTimeline

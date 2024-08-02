@@ -48,6 +48,10 @@ class WorkQueue::CorrespondenceSerializer
     tasks
   end
 
+  attribute :tasks_added_to_appeal do |object|
+    object.correspondence_appeals.each { |cor_appeal| cor_appeal.tasks }
+  end
+
   attribute :veteran_full_name do |object|
     [object.veteran_full_name&.first_name, object.veteran_full_name&.last_name].join(" ")
   end

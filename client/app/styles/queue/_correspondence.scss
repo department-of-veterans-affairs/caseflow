@@ -1404,3 +1404,31 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
     margin-bottom: 20px;
   }
 }
+
+.correspondence-tasks-added {
+  background-color: $color-gray-inverse-base;
+  padding-left: 2%;
+  margin-top: 1%;
+  flex-direction: row;
+  display: flex;
+  width: 100%;
+}
+
+.corr-tasks-added-col {
+  flex-direction: column;
+  width: 15%;
+
+  // margin-left: 2%;
+
+}
+
+.first-row {
+  // margin-left: 1%;
+  padding-right: 3%;
+  flex-wrap: nowrap;
+  min-width: fit-content;
+}
+
+.case-details-badge {
+  line-height: 10px;
+}
