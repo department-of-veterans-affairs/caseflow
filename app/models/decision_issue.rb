@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "time"
 class DecisionIssue < CaseflowRecord
   include HasDecisionReviewUpdatedSince
 
