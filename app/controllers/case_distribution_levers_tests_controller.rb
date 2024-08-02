@@ -98,6 +98,7 @@ class CaseDistributionLeversTestsController < ApplicationController
 
   def check_environment
     return true if Rails.env.development?
+    return true if Rails.env.test?
     return true if Rails.deploy_env?(:demo)
 
     redirect_to "/unauthorized"
