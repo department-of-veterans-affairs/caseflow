@@ -34,8 +34,8 @@ export const pageCoordsOfRootCoords = ({ x, y }, pageBoundingBox, scale) => ({
 });
 
 export const pageCoordsOfRootCoordsPrototype = ({ x, y }, pageBoundingBox, scale) => ({
-  x: x - pageBoundingBox.left * scale,
-  y: y - pageBoundingBox.top * scale,
+  x: (x - pageBoundingBox.left) * scale,
+  y: (y - pageBoundingBox.top) * scale,
 });
 
 export const rotateCoordinates = ({ x, y }, container, rotation) => {
