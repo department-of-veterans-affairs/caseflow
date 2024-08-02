@@ -134,7 +134,7 @@ class CachedAppealService
   end
 
   def request_issue_counts_for_appeal_ids(appeal_ids)
-    RequestIssue.where(decision_review_id: appeal_ids, decision_review_type: Appeal.name)
+    RequestIssue.active.where(decision_review_id: appeal_ids, decision_review_type: Appeal.name)
       .group(:decision_review_id).count
   end
 
@@ -144,7 +144,10 @@ class CachedAppealService
       .all
       .map do |appeal|
         # Matches front end sorting with no duplicates. Issues associated to same appeal are sorted alphanumerically
-        [appeal.id, appeal.request_issues.map(&:nonrating_issue_category).compact.uniq.sort_by(&:upcase).join(",")]
+        [
+          appeal.id,
+          appeal.request_issues.active.map(&:nonrating_issue_category).compact.uniq.sort_by(&:upcase).join(",")
+        ]
       end
       .to_h
   end

@@ -305,7 +305,7 @@ export const unknownDataTypeStaticLevers = [
 
 export const mockDocketDistributionPriorLevers = [
   {
-    item: 'ama_hearings_start_distribution_prior_to_goals',
+    item: 'ama_hearing_start_distribution_prior_to_goals',
     title: 'AMA Hearings Start Distribution Prior to Goals',
     description: '',
     data_type: 'combination',
@@ -437,7 +437,7 @@ export const testingBatchLeversUpdatedToSave = [
 
 export const mockDocketTimeGoalsLevers = [
   {
-    item: 'ama_hearings_docket_time_goals',
+    item: 'ama_hearing_docket_time_goals',
     title: 'AMA Hearings Docket Time Goals',
     data_type: 'number',
     value: 365,
@@ -473,27 +473,30 @@ export const mockAffinityDaysLevers = [
     title: 'AMA Hearing Case Affinity Days',
     description: 'For non-priority AMA Hearing cases, sets the number of days an AMA Hearing Case is tied to the judge that held the hearing.',
     data_type: 'radio',
-    value: 'option_1',
+    value: 0,
     unit: 'days',
     options: [
       {
-        item: 'option_1',
+        item: 'value',
         data_type: 'number',
         value: 0,
         text: 'Attempt distribution to current judge for max of:',
         unit: 'days',
         min_value: 0,
-        max_value: 100
+        max_value: 100,
+        selected: true
       },
       {
         item: 'infinite',
         value: 'infinite',
-        text: 'Always distribute to current judge'
+        text: 'Always distribute to current judge',
+        selected: false
       },
       {
         item: 'omit',
         value: 'omit',
-        text: 'Omit variable from distribution rules'
+        text: 'Omit variable from distribution rules',
+        selected: false
       }
     ],
     is_toggle_active: false,
@@ -509,29 +512,32 @@ export const mockAffinityDaysLevers = [
     title: 'AMA Hearing Case AOD Affinity Days',
     description: 'Sets the number of days an AMA Hearing appeal that is also AOD will respect the affinity to the most-recent hearing judge before distributing the appeal to any available judge.',
     data_type: 'radio',
-    value: 'option_1',
+    value: 'infinite',
     unit: 'days',
     options: [
       {
-        item: 'option_1',
+        item: 'value',
         data_type: 'text',
         value: 'test',
         text: 'Attempt distribution to current judge for max of:',
-        unit: 'days'
+        unit: 'days',
+        selected: false
       },
       {
         item: 'infinite',
         data_type: '',
         value: 'infinite',
         text: 'Always distribute to current judge',
-        unit: ''
+        unit: '',
+        selected: true
       },
       {
         item: 'omit',
         data_type: '',
         value: 'omit',
         text: 'Omit variable from distribution rules',
-        unit: ''
+        unit: '',
+        selected: false
       }
     ],
     is_toggle_active: false,
@@ -665,7 +671,7 @@ export const mockHistoryPayload = [
 
 export const mockDocketDistributionPriorLeversReturn = [
   {
-    item: 'ama_hearings_start_distribution_prior_to_goals',
+    item: 'ama_hearing_start_distribution_prior_to_goals',
     title: 'AMA Hearings Start Distribution Prior to Goals',
     description: '',
     data_type: 'combination',
@@ -714,7 +720,7 @@ export const mockDocketDistributionPriorLeversReturn = [
   }
 ];
 export const mockCombinationReturn = {
-  item: 'ama_hearings_start_distribution_prior_to_goals',
+  item: 'ama_hearing_start_distribution_prior_to_goals',
   title: 'AMA Hearings Start Distribution Prior to Goals',
   description: '',
   data_type: 'combination',
@@ -755,7 +761,8 @@ export const mockAffinityDaysLeversReturn = [
         text: 'Attempt distribution to current judge for max of:',
         unit: 'days',
         min_value: 0,
-        max_value: 100
+        max_value: 100,
+        selected: true
       },
       {
         item: 'infinite',
@@ -877,4 +884,223 @@ export const mockTextLeverReturn = [
     lever_group: 'batch',
     lever_group_order: 2003
   }
+];
+
+export const mockDocketLevers = [
+  {
+    item: 'disable_ama_priority_legacy',
+    title: 'Test Docket Lever Title 1',
+    description: '',
+    data_type: 'boolean',
+    value: false,
+    unit: '',
+    is_disabled_in_ui: false,
+    algorithms_used: ['proportion', 'docket'],
+    lever_group: 'docket_levers',
+    lever_group_order: 100,
+    control_group: 'priority',
+    options: [
+      {
+        displayText: 'On',
+        name: 'disable_ama_priority_legacy',
+        value: 'true',
+        disabled: false
+      },
+      {
+        displayText: 'Off',
+        name: 'disable_ama_priority_legacy',
+        value: 'false',
+        disabled: false
+      }
+    ]
+  },
+  {
+    item: 'disable_ama_priority_direct_review',
+    title: 'Test Docket Lever Title 2',
+    description: '',
+    data_type: 'boolean',
+    value: false,
+    unit: '',
+    is_disabled_in_ui: false,
+    algorithms_used: ['proportion', 'docket'],
+    lever_group: 'docket_levers',
+    lever_group_order: 101,
+    control_group: 'priority',
+    options: [
+      {
+        displayText: 'On',
+        name: 'disable_ama_priority_direct_review',
+        value: 'true',
+        disabled: false
+      },
+      {
+        displayText: 'Off',
+        name: 'disable_ama_priority_direct_review',
+        value: 'false',
+        disabled: false
+      }
+    ]
+  },
+  {
+    item: 'disable_ama_priority_hearing',
+    title: 'Test Docket Lever Title 3',
+    description: '',
+    data_type: 'boolean',
+    value: false,
+    unit: '',
+    is_disabled_in_ui: false,
+    algorithms_used: ['proportion', 'docket'],
+    lever_group: 'docket_levers',
+    lever_group_order: 102,
+    control_group: 'priority',
+    options: [
+      {
+        displayText: 'On',
+        name: 'disable_ama_priority_hearing',
+        value: 'true',
+        disabled: false
+      },
+      {
+        displayText: 'Off',
+        name: 'disable_ama_priority_hearing',
+        value: 'false',
+        disabled: false
+      }
+    ]
+  },
+  {
+    item: 'disable_ama_priority_evidence_submission',
+    title: 'Test Docket Lever Title 4',
+    description: '',
+    data_type: 'boolean',
+    value: false,
+    unit: '',
+    is_disabled_in_ui: false,
+    algorithms_used: ['proportion', 'docket'],
+    lever_group: 'docket_levers',
+    lever_group_order: 103,
+    control_group: 'priority',
+    options: [
+      {
+        displayText: 'On',
+        name: 'disable_ama_priority_evidence_submission',
+        value: 'true',
+        disabled: false
+      },
+      {
+        displayText: 'Off',
+        name: 'disable_ama_priority_evidence_submission',
+        value: 'false',
+        disabled: false
+      }
+    ]
+  },
+  {
+    item: 'disable_ama_non_priority_legacy',
+    title: 'Test Docket Lever Title 5',
+    description: '',
+    data_type: 'boolean',
+    value: false,
+    unit: '',
+    is_disabled_in_ui: false,
+    algorithms_used: ['proportion', 'docket'],
+    lever_group: 'docket_levers',
+    lever_group_order: 104,
+    control_group: 'non-priority',
+    options: [
+      {
+        displayText: 'On',
+        name: 'disable_ama_non_priority_legacy',
+        value: 'true',
+        disabled: false
+      },
+      {
+        displayText: 'Off',
+        name: 'disable_ama_non_priority_legacy',
+        value: 'false',
+        disabled: false
+      }
+    ]
+  },
+  {
+    item: 'disable_ama_non_priority_direct_review',
+    title: 'Test Docket Lever Title 6',
+    description: '',
+    data_type: 'boolean',
+    value: true,
+    unit: '',
+    is_disabled_in_ui: false,
+    algorithms_used: ['proportion', 'docket'],
+    lever_group: 'docket_levers',
+    lever_group_order: 105,
+    control_group: 'non-priority',
+    options: [
+      {
+        displayText: 'On',
+        name: 'disable_ama_non_priority_direct_review',
+        value: 'true',
+        disabled: false
+      },
+      {
+        displayText: 'Off',
+        name: 'disable_ama_non_priority_direct_review',
+        value: 'false',
+        disabled: false
+      }
+    ]
+  },
+  {
+    item: 'disable_ama_non_priority_hearing',
+    title: 'Test Docket Lever Title 7',
+    description: '',
+    data_type: 'boolean',
+    value: false,
+    unit: '',
+    is_disabled_in_ui: false,
+    algorithms_used: ['proportion', 'docket'],
+    lever_group: 'docket_levers',
+    lever_group_order: 106,
+    control_group: 'non-priority',
+    options: [
+      {
+        displayText: 'On',
+        name: 'disable_ama_non_priority_hearing',
+        value: 'true',
+        disabled: false
+      },
+      {
+        displayText: 'Off',
+        name: 'disable_ama_non_priority_hearing',
+        value: 'false',
+        disabled: false
+      }
+    ]
+  },
+  {
+    item: 'disable_ama_non_priority_evidence_submission',
+    title: 'Test Docket Lever Title 8',
+    description: '',
+    data_type: 'boolean',
+    value: false,
+    unit: '',
+    is_disabled_in_ui: false,
+    algorithms_used: ['proportion', 'docket'],
+    lever_group: 'docket_levers',
+    lever_group_order: 107,
+    control_group: 'non-priority',
+    options: [
+      {
+        displayText: 'On',
+        name: 'disable_ama_non_priority_evidence_submission',
+        value: 'true',
+        disabled: false
+      },
+      {
+        displayText: 'Off',
+        name: 'disable_ama_non_priority_evidence_submission',
+        value: 'false',
+        disabled: false
+      }
+    ]
+  },
 ];

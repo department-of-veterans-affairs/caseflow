@@ -2,15 +2,15 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# Note that this schema.rb definition is the authoritative source for your
-# database schema. If you need to create the application database on another
-# system, you should be using db:schema:load, not running all the migrations
-# from scratch. The latter is a flawed and unsustainable approach (the more migrations
-# you'll amass, the slower it'll run and the greater likelihood for issues).
+# This file is the source Rails uses to define your schema when running `rails
+# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# be faster and is potentially less error prone than running all of your
+# migrations from scratch. Old migrations may fail to apply correctly if those
+# migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_02_15_212016) do
+ActiveRecord::Schema.define(version: 2024_06_13_202232) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -76,6 +76,19 @@ ActiveRecord::Schema.define(version: 2024_02_15_212016) do
     t.string "source"
     t.datetime "updated_at"
     t.string "vbms_id"
+  end
+
+  create_table "appeal_affinities", force: :cascade do |t|
+    t.datetime "affinity_start_date", comment: "The date from which to calculate an appeal's affinity window"
+    t.string "case_id", null: false, comment: "Appeal UUID for AMA or BRIEFF.BFKEY for Legacy"
+    t.string "case_type", null: false, comment: "Appeal type for ActiveRecord Associations"
+    t.datetime "created_at", precision: 6, null: false
+    t.bigint "distribution_id", comment: "The distribution which caused the affinity start date to be set, if by a distribution"
+    t.string "docket", null: false, comment: "The docket of the appeal"
+    t.boolean "priority", null: false, comment: "Priority status (true/false)"
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["case_id", "case_type"], name: "index_appeal_affinities_on_case_id_and_case_type", unique: true
+    t.index ["distribution_id"], name: "index_appeal_affinities_on_distribution_id"
   end
 
   create_table "appeal_series", id: :serial, force: :cascade do |t|
@@ -357,12 +370,12 @@ ActiveRecord::Schema.define(version: 2024_02_15_212016) do
 
   create_table "case_distribution_levers", comment: "A generalized table for Case Distribution lever records within caseflow", force: :cascade do |t|
     t.json "algorithms_used", comment: "stores an array of which algorithms the lever is used in. There are some UI niceties that are implemented to indicate which algorithm is used."
-    t.json "control_group", comment: "supports the exclusion table that has toggles that control multiple levers"
+    t.string "control_group", comment: "supports the exclusion table that has toggles that control multiple levers"
     t.datetime "created_at", null: false
     t.string "data_type", null: false, comment: "Indicates which type of record either BOOLEAN/RADIO/COMBO"
     t.text "description", comment: "Indicates the description of the Lever"
     t.boolean "is_disabled_in_ui", null: false, comment: "Determines behavior in the controls page"
-    t.boolean "is_toggle_active", null: false, comment: "used for the docket time goals, otherwise it is true and unused"
+    t.boolean "is_toggle_active", comment: "used for the docket time goals, otherwise it is true and unused"
     t.string "item", null: false, comment: "Is unique value to identify the Case Distribution lever"
     t.string "lever_group", default: "", null: false, comment: "Case Distribution lever grouping"
     t.integer "lever_group_order", null: false, comment: "determines the order that the lever appears in each section of inputs, and the order in the history table"
@@ -699,11 +712,21 @@ ActiveRecord::Schema.define(version: 2024_02_15_212016) do
     t.string "genpop_query"
     t.boolean "priority"
     t.datetime "ready_at"
+    t.boolean "sct_appeal"
     t.integer "task_id"
     t.datetime "updated_at"
     t.index ["case_id"], name: "index_distributed_cases_on_case_id", unique: true
     t.index ["distribution_id"], name: "index_distributed_cases_on_distribution_id"
     t.index ["updated_at"], name: "index_distributed_cases_on_updated_at"
+  end
+
+  create_table "distribution_stats", comment: "A database table to store a snapshot of variables used during a case distribution event", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "distribution_id", comment: "ID of the associated Distribution"
+    t.json "levers", comment: "Indicates a snapshot of lever values and is_toggle_active for a distribution"
+    t.json "statistics", comment: "Indicates a snapshot of variables used during the distribution"
+    t.datetime "updated_at", null: false
+    t.index ["distribution_id"], name: "index_distribution_stats_on_distribution_id"
   end
 
   create_table "distributions", force: :cascade do |t|
@@ -1123,6 +1146,38 @@ ActiveRecord::Schema.define(version: 2024_02_15_212016) do
     t.index ["veteran_id"], name: "index_intakes_on_veteran_id"
   end
 
+  create_table "issue_modification_requests", comment: "A database table to store issue modification requests for a decision review for altering or adding additional request_issues", force: :cascade do |t|
+    t.string "benefit_type", comment: "This will primarily apply when the request type is an addition, indicating the benefit type of the issue that will be created if the modification request is approved."
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "decided_at", comment: "Timestamp when the decision was made by the decider/admin. it can be approved or denied date."
+    t.bigint "decider_id", comment: "The user who decides approval/denial of the issue modification request."
+    t.date "decision_date", comment: "The decision date of the request issue that is being modified"
+    t.text "decision_reason", comment: "The reason behind the approve/denial of the modification request provided by the user (admin) that is acting on the request."
+    t.bigint "decision_review_id", comment: "The decision review that this issue modification request belongs to"
+    t.string "decision_review_type"
+    t.datetime "edited_at", comment: "Timestamp when the requestor or decider edits the issue modification request."
+    t.string "nonrating_issue_category", comment: "The nonrating issue category of the request issue that is being modified or added by the request"
+    t.string "nonrating_issue_description", comment: "The nonrating issue description of the request issue that is being modified or added by the request"
+    t.boolean "remove_original_issue", default: false, comment: "flag to indicate if the original issue was removed or not."
+    t.bigint "request_issue_id", comment: "Specifies the request issue targeted by the modification request."
+    t.text "request_reason", comment: "The reason behind the modification request provided by the user initiating it."
+    t.string "request_type", default: "addition", comment: "The type of issue modification request. The possible types are addition, modification, withdrawal and cancelled."
+    t.bigint "requestor_id", comment: "The user who requests modification or addition of request issues"
+    t.string "status", default: "assigned", comment: "The status of the issue modifications request. The possible status values are assigned, approved, denied, and cancelled"
+    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "withdrawal_date", comment: "The withdrawal date for issue modification requests with a request type of withdrawal"
+    t.index ["decider_id"], name: "index_issue_modification_requests_on_decider_id"
+    t.index ["decision_review_type", "decision_review_id"], name: "index_issue_modification_requests_decision_review"
+    t.index ["request_issue_id"], name: "index_issue_modification_requests_on_request_issue_id"
+    t.index ["requestor_id"], name: "index_issue_modification_requests_on_requestor_id"
+  end
+
+  create_table "job_execution_times", id: :serial, force: :cascade do |t|
+    t.string "job_name", comment: "Name of the Job whose Last Execution Time is being tracked"
+    t.datetime "last_executed_at", comment: "DateTime value when the Job was Last Executed"
+    t.index ["job_name"], name: "index_job_execution_times_on_job_name", unique: true
+  end
+
   create_table "job_notes", force: :cascade do |t|
     t.datetime "created_at", null: false, comment: "Default created_at/updated_at"
     t.bigint "job_id", null: false, comment: "The job to which the note applies"
@@ -1290,6 +1345,7 @@ ActiveRecord::Schema.define(version: 2024_02_15_212016) do
     t.datetime "created_at", null: false
     t.float "duration", comment: "Time in milliseconds from start to end"
     t.datetime "end", comment: "When metric recording stopped"
+    t.uuid "event_id", comment: "Track metrics for retrieving loading and viewing a single pdf document."
     t.json "metric_attributes", comment: "Store attributes relevant to the metric: OS, browser, etc"
     t.string "metric_class", null: false, comment: "Class of metric, use reflection to find value to populate this"
     t.string "metric_group", default: "service", null: false, comment: "Metric group: service, etc"
@@ -1363,6 +1419,8 @@ ActiveRecord::Schema.define(version: 2024_02_15_212016) do
     t.string "email_notification_status", comment: "Status of the Email Notification"
     t.date "event_date", null: false, comment: "Date of Event"
     t.string "event_type", null: false, comment: "Type of Event"
+    t.bigint "notifiable_id"
+    t.string "notifiable_type"
     t.text "notification_content", comment: "Full Text Content of Notification"
     t.string "notification_type", null: false, comment: "Type of Notification that was created"
     t.datetime "notified_at", comment: "Time Notification was created"
@@ -1372,10 +1430,13 @@ ActiveRecord::Schema.define(version: 2024_02_15_212016) do
     t.string "sms_notification_content", comment: "Full SMS Text Content of Notification"
     t.string "sms_notification_external_id", comment: "VA Notify Notification Id for the sms notification send through their API "
     t.string "sms_notification_status", comment: "Status of SMS/Text Notification"
+    t.string "sms_response_content", comment: "Message body of the sms notification response."
+    t.datetime "sms_response_time", comment: "Date and Time of the sms notification response."
     t.datetime "updated_at", comment: "TImestamp of when Notification was Updated"
     t.index ["appeals_id", "appeals_type"], name: "index_appeals_notifications_on_appeals_id_and_appeals_type"
     t.index ["email_notification_external_id"], name: "index_notifications_on_email_notification_external_id"
     t.index ["email_notification_status"], name: "index_notifications_on_email_notification_status"
+    t.index ["notifiable_type", "notifiable_id"], name: "index_notifications_on_notifiable_type_and_notifiable_id"
     t.index ["participant_id"], name: "index_participant_id"
     t.index ["sms_notification_external_id"], name: "index_notifications_on_sms_notification_external_id"
     t.index ["sms_notification_status"], name: "index_notifications_on_sms_notification_status"
@@ -1386,6 +1447,7 @@ ActiveRecord::Schema.define(version: 2024_02_15_212016) do
     t.boolean "ama_only_push", default: false, comment: "whether a JudgeTeam should only get AMA appeals during the PushPriorityAppealsToJudgesJob"
     t.boolean "ama_only_request", default: false, comment: "whether a JudgeTeam should only get AMA appeals when requesting more cases"
     t.datetime "created_at"
+    t.boolean "exclude_appeals_from_affinity", default: false, null: false, comment: "Used to track whether a judge (team) should have their affinity appeals distributed to any available judge team even if the set amount of time has not elapsed."
     t.string "name"
     t.string "participant_id", comment: "Organizations BGS partipant id"
     t.string "role", comment: "Role users in organization must have, if present"
@@ -2145,6 +2207,7 @@ ActiveRecord::Schema.define(version: 2024_02_15_212016) do
   add_foreign_key "allocations", "schedule_periods"
   add_foreign_key "annotations", "users"
   add_foreign_key "api_views", "api_keys"
+  add_foreign_key "appeal_affinities", "distributions"
   add_foreign_key "appeal_states", "users", column: "created_by_id"
   add_foreign_key "appeal_states", "users", column: "updated_by_id"
   add_foreign_key "appeal_views", "users"
@@ -2196,6 +2259,7 @@ ActiveRecord::Schema.define(version: 2024_02_15_212016) do
   add_foreign_key "dispatch_tasks", "users"
   add_foreign_key "distributed_cases", "distributions"
   add_foreign_key "distributed_cases", "tasks"
+  add_foreign_key "distribution_stats", "distributions"
   add_foreign_key "distributions", "users", column: "judge_id"
   add_foreign_key "docket_switches", "appeals", column: "new_docket_stream_id"
   add_foreign_key "docket_switches", "appeals", column: "old_docket_stream_id"
@@ -2223,6 +2287,9 @@ ActiveRecord::Schema.define(version: 2024_02_15_212016) do
   add_foreign_key "ihp_drafts", "organizations"
   add_foreign_key "intakes", "users"
   add_foreign_key "intakes", "veterans"
+  add_foreign_key "issue_modification_requests", "request_issues"
+  add_foreign_key "issue_modification_requests", "users", column: "decider_id"
+  add_foreign_key "issue_modification_requests", "users", column: "requestor_id"
   add_foreign_key "job_notes", "users"
   add_foreign_key "judge_case_reviews", "users", column: "attorney_id"
   add_foreign_key "judge_case_reviews", "users", column: "judge_id"

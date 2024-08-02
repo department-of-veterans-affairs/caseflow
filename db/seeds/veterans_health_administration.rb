@@ -4,14 +4,6 @@
 
 module Seeds
   class VeteransHealthAdministration < Base
-    PROGRAM_OFFICES = [
-      "Community Care - Payment Operations Management",
-      "Community Care - Veteran and Family Members Program",
-      "Member Services - Health Eligibility Center",
-      "Member Services - Beneficiary Travel",
-      "Prosthetics"
-    ].freeze
-
     CLAIMANT_TYPES = [
       :veteran_claimant,
       :dependent_claimant,
@@ -24,59 +16,17 @@ module Seeds
     BENEFIT_TYPE_LIST = Constants::BENEFIT_TYPES.keys.map(&:to_s).freeze
 
     def seed!
-      setup_camo_org
-      setup_caregiver_org
-      setup_program_offices!
-      create_visn_org_teams!
       create_vha_camo
       create_vha_caregiver
       create_vha_program_office
       create_vha_visn_pre_docket_queue
       create_higher_level_reviews
       create_supplemental_claims
+      create_specialty_case_team_tasks
       add_vha_user_to_be_vha_business_line_member
     end
 
     private
-
-    def setup_camo_org
-      regular_user = create(:user, full_name: "Greg CAMOUser Camo", css_id: "CAMOUSER")
-      admin_user = create(:user, full_name: "Alex CAMOAdmin Camo", css_id: "CAMOADMIN")
-      camo = VhaCamo.singleton
-      camo.add_user(regular_user)
-      OrganizationsUser.make_user_admin(admin_user, camo)
-    end
-
-    def setup_caregiver_org
-      regular_user = create(:user, full_name: "Edward CSPUser Caregiver", css_id: "CAREGIVERUSER")
-      admin_user = create(:user, full_name: "Alvin CSPAdmin Caregiver", css_id: "CAREGIVERADMIN")
-      vha_csp = VhaCaregiverSupport.singleton
-      vha_csp.add_user(regular_user)
-      OrganizationsUser.make_user_admin(admin_user, vha_csp)
-    end
-
-    def setup_program_offices!
-      PROGRAM_OFFICES.each { |name| VhaProgramOffice.create!(name: name, url: name) }
-
-      regular_user = create(:user, full_name: "Stevie VhaProgramOffice Amana", css_id: "VHAPOUSER")
-      admin_user = create(:user, full_name: "Channing VhaProgramOfficeAdmin Katz", css_id: "VHAPOADMIN")
-
-      VhaProgramOffice.all.each do |org|
-        org.add_user(regular_user)
-        OrganizationsUser.make_user_admin(admin_user, org)
-      end
-    end
-
-    def create_visn_org_teams!
-      regular_user = create(:user, full_name: "Stacy VISNUser Smith", css_id: "VISNUSER")
-      admin_user = create(:user, full_name: "Betty VISNAdmin Rose", css_id: "VISNADMIN")
-
-      Constants.VISN_ORG_NAMES.visn_orgs.name.each do |name|
-        visn = VhaRegionalOffice.create!(name: name, url: name)
-        visn.add_user(regular_user)
-        OrganizationsUser.make_user_admin(admin_user, visn)
-      end
-    end
 
     def create_vha_camo
       create_vha_camo_queue_assigned
@@ -186,6 +136,30 @@ module Seeds
     end
 
     # :reek:FeatureEnvy
+    def create_specialty_case_team_action_required
+      tasks = create_list(:specialty_case_team_assign_task, 5, :action_required)
+      tasks.last.appeal.veteran.date_of_death = 2.weeks.ago
+      tasks.last.appeal.veteran.save
+    end
+
+    # :reek:FeatureEnvy
+    def create_specialty_case_team_completed
+      tasks = create_list(:specialty_case_team_assign_task, 5, :completed)
+      tasks.last.appeal.veteran.date_of_death = 2.weeks.ago
+      tasks.last.appeal.veteran.save
+    end
+
+    def create_specialty_case_team_assigned
+      create_list(:specialty_case_team_assign_task, 5)
+    end
+
+    def create_specialty_case_team_tasks
+      create_specialty_case_team_action_required
+      create_specialty_case_team_completed
+      create_specialty_case_team_assigned
+    end
+
+    # :reek:FeatureEnvy
     def create_vha_program_office
       # on_hold and ready_for_review tabs are populated by populating the VISN queues linked to PO orgs
       tabs = [:assigned, :in_progress, :completed]
@@ -209,11 +183,9 @@ module Seeds
         INNER JOIN Organizations o on o.id = ou.organization_id")
         .where("o.type like ?", "Vha%")
         .distinct
-      # organization = BusinessLine.where(name:)
-      # organization = Organization.find_by_name_or_url("Veterans Health Administration")
-      organization = VhaBusinessLine.singleton
+
       user_list.each do |user|
-        organization.add_user(user)
+        VhaBusinessLine.singleton.add_user(user)
       end
     end
   end

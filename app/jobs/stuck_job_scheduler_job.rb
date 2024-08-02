@@ -13,7 +13,8 @@ class StuckJobSchedulerJob < CaseflowJob
     NoAvailableModifiersFixJob,
     PageRequestedByUserFixJob,
     DtaScCreationFailedFixJob,
-    ScDtaForAppealFixJob
+    ScDtaForAppealFixJob,
+    RetryDecisionReviewProcessJob
     # Add stuck jobs here
   ].freeze
 

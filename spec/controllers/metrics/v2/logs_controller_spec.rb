@@ -6,6 +6,7 @@ describe Metrics::V2::LogsController, type: :controller do
     {
       metric: {
         uuid: "PAT123456^CFL200^A",
+        event_id: "PAT123456^CFL200^A",
         name: "",
         group: "",
         message: "",
@@ -42,10 +43,10 @@ describe Metrics::V2::LogsController, type: :controller do
   end
 
   context "with good request and metrics_monitoring feature OFF" do
-    it "does not create a metric and returns 422" do
+    it "does not create a metric and returns 202" do
       expect(Metric).not_to receive(:create_metric_from_rest)
       post :create, params: request_params_javascript
-      expect(response.status).to eq(422)
+      expect(response.status).to eq(202)
     end
   end
 end

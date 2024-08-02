@@ -209,7 +209,7 @@ feature "AmaQueue", :all_dbs do
 
         find(".cf-select__control", text: "Select a type").click
         find("div", class: "cf-select__option", text: "Serious illness").click
-        click_on "Submit"
+        click_button COPY::MODAL_SUBMIT_BUTTON
 
         expect(page).to have_content("AOD status has been granted due to Serious illness")
         expect(page).to have_content("AOD")
@@ -341,7 +341,7 @@ feature "AmaQueue", :all_dbs do
         find("div", class: "cf-select__option", text: other_user.full_name).click
 
         expect(page).to have_content(existing_instruction)
-        click_on "Submit"
+        click_button COPY::MODAL_SUBMIT_BUTTON
 
         expect(page).to have_content("Task assigned to #{other_user_name}")
         expect(translation_task.reload.status).to eq("on_hold")
@@ -354,7 +354,7 @@ feature "AmaQueue", :all_dbs do
         find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h[:label]).click
 
         fill_in "taskInstructions", with: instructions
-        click_on "Submit"
+        click_button COPY::MODAL_SUBMIT_BUTTON
 
         expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE % user_name
         old_task = translation_task.reload.children.find { |task| task.assigned_to == other_user }
@@ -379,7 +379,7 @@ feature "AmaQueue", :all_dbs do
         find("div", class: "cf-select__option", text: other_organization.name).click
         fill_in "taskInstructions", with: instructions
 
-        click_on "Submit"
+        click_button COPY::MODAL_SUBMIT_BUTTON
 
         expect(page).to have_content("Task assigned to #{other_organization.name}")
         expect(Task.last.instructions.first).to eq(instructions)
@@ -549,9 +549,27 @@ feature "AmaQueue", :all_dbs do
       click_dropdown(prompt: "Select a user", text: attorney_user.full_name)
       fill_in(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: "note")
 
-      click_on "Submit"
+      click_button COPY::ASSIGN_TASK_BUTTON
 
       expect(page).to have_content("Assigned 1 task to #{attorney_user.full_name}")
+    end
+
+    def judge_return_to_attorney
+      User.authenticate!(user: judge_user)
+      visit "/queue"
+
+      click_on veteran_full_name
+
+      click_dropdown(
+        prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+        text: Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.label
+      )
+      expect(dropdown_selected_value(find(".cf-modal-body"))).to eq attorney_user.full_name
+      fill_in "taskInstructions", with: "Please fix this"
+
+      click_button COPY::MODAL_SUBMIT_BUTTON
+
+      expect(page).to have_content("Task assigned to #{attorney_user.full_name}")
     end
 
     it "judge can return report to attorney for corrections" do
@@ -615,21 +633,7 @@ feature "AmaQueue", :all_dbs do
       end
 
       step "judge returns case to attorney for corrections" do
-        User.authenticate!(user: judge_user)
-        visit "/queue"
-
-        click_on veteran_full_name
-
-        click_dropdown(
-          prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-          text: Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.label
-        )
-        expect(dropdown_selected_value(find(".cf-modal-body"))).to eq attorney_user.full_name
-        fill_in "taskInstructions", with: "Please fix this"
-
-        click_on "Submit"
-
-        expect(page).to have_content("Task assigned to #{attorney_user.full_name}")
+        judge_return_to_attorney
       end
 
       step "attorney corrects case and returns it to the judge" do
@@ -729,21 +733,7 @@ feature "AmaQueue", :all_dbs do
       end
 
       step "judge returns case to attorney for corrections" do
-        User.authenticate!(user: judge_user)
-        visit "/queue"
-
-        click_on veteran_full_name
-
-        click_dropdown(
-          prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-          text: Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.label
-        )
-        expect(dropdown_selected_value(find(".cf-modal-body"))).to eq attorney_user.full_name
-        fill_in "taskInstructions", with: "Please fix this"
-
-        click_on "Submit"
-
-        expect(page).to have_content("Task assigned to #{attorney_user.full_name}")
+        judge_return_to_attorney
       end
 
       step "attorney corrects case and returns it to the judge" do
@@ -807,7 +797,7 @@ feature "AmaQueue", :all_dbs do
           click_dropdown(prompt: "Select a user", text: judge_user2.full_name)
 
           fill_in "taskInstructions", with: "Going on leave, please manage this case"
-          click_on "Submit"
+          click_button COPY::MODAL_SUBMIT_BUTTON
 
           expect(page).to have_content("Task reassigned to #{judge_user2.full_name}")
         end
@@ -842,7 +832,7 @@ feature "AmaQueue", :all_dbs do
           click_dropdown(prompt: "Select a user", text: attorney_user.full_name)
           fill_in(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: "note")
 
-          click_on "Submit"
+          click_button COPY::ASSIGN_TASK_BUTTON
 
           expect(page).to have_content("Assigned 1 task to #{attorney_user.full_name}")
         end
@@ -911,7 +901,7 @@ feature "AmaQueue", :all_dbs do
           click_dropdown(prompt: "Select a user", text: judge_user2.full_name)
 
           fill_in "taskInstructions", with: "Going on leave, please manage this case"
-          click_on "Submit"
+          click_button COPY::MODAL_SUBMIT_BUTTON
 
           expect(page).to have_content("Task reassigned to #{judge_user2.full_name}")
         end

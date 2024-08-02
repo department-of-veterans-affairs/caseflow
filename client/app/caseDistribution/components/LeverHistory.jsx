@@ -1,14 +1,23 @@
-/* eslint-disable func-style */
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { getLeverHistoryTable } from '../reducers/levers/leversSelector';
 import COPY from '../../../COPY';
+import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 
 const LeverHistory = () => {
 
   const theState = useSelector((state) => state);
 
   const leverHistoryTable = getLeverHistoryTable(theState);
+
+  const displayValue = (value, entry, idx) => {
+    if (entry.leverDataType[idx] === ACD_LEVERS.data_types.radio &&
+          (value.toLowerCase().includes('always') || value.toLowerCase().includes('omit'))) {
+      return `${value}`;
+    }
+
+    return `${value} ${entry.units[idx] === 'null' ? '' : entry.units[idx]}`;
+  };
 
   return (
     <div className="lever-history-styling">
@@ -46,18 +55,18 @@ const LeverHistory = () => {
             </td>
             <td className="history-table-styling entry-previous-values">
               <ol>
-                {entry.previous_values.map((previousValue, idx) => {
+                {entry.previousValues.map((previousValue, idx) => {
                   return <li key={`${index}-${previousValue}-${idx}`}>
-                    {previousValue}{' '}{entry.units[idx]}</li>;
+                    {displayValue(previousValue, entry, idx)}</li>;
                 })
                 }
               </ol>
             </td>
             <td className="history-table-styling entry-updated-values">
               <ol>
-                {entry.updated_values.map((updatedValue, idx) => {
+                {entry.updatedValues.map((updatedValue, idx) => {
                   return <li key={`${index}-${updatedValue}-${idx}`}>
-                    {updatedValue}{' '}{entry.units[idx]}</li>;
+                    {displayValue(updatedValue, entry, idx)}</li>;
                 })
                 }
               </ol>

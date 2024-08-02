@@ -7,6 +7,7 @@ class DecisionReviewsController < ApplicationController
   before_action :verify_access, :react_routed, :set_application
   before_action :verify_veteran_record_access, only: [:show]
   before_action :verify_business_line, only: [:index, :generate_report]
+  before_action :verify_task, only: [:show, :history, :update]
 
   delegate :incomplete_tasks,
            :incomplete_tasks_type_counts,
@@ -14,6 +15,9 @@ class DecisionReviewsController < ApplicationController
            :in_progress_tasks,
            :in_progress_tasks_type_counts,
            :in_progress_tasks_issue_type_counts,
+           :pending_tasks,
+           :pending_tasks_type_counts,
+           :pending_tasks_issue_type_counts,
            :completed_tasks,
            :completed_tasks_type_counts,
            :completed_tasks_issue_type_counts,
@@ -28,7 +32,8 @@ class DecisionReviewsController < ApplicationController
     "issueCountColumn" => "issue_count",
     "issueTypesColumn" => "issue_types_lower",
     "daysWaitingColumn" => "tasks.assigned_at",
-    "completedDateColumn" => "tasks.closed_at"
+    "completedDateColumn" => "tasks.closed_at",
+    "pendingIssueModificationRequests" => "pending_issue_count"
   }.freeze
 
   def index
@@ -43,25 +48,41 @@ class DecisionReviewsController < ApplicationController
   end
 
   def show
-    if task
-      render "show"
-    else
-      render json: { error: "Task #{task_id} not found" }, status: :not_found
+    render "show"
+  end
+
+  def history
+    return requires_admin_access_redirect unless can_generate_claim_history? &&
+                                                 business_line.user_is_admin?(current_user)
+
+    respond_to do |format|
+      format.html { render "show" }
+
+      format.json do
+        task_id = params[:task_id]
+        MetricsService.record("Generate individual claim history report for task #{task_id}",
+                              service: :ClaimHistoryService,
+                              name: "Change History Individual Event") do
+          events = ClaimHistoryService.new(business_line, task_id: task_id).build_events
+
+          render json: ChangeHistoryEventSerializer.new(events).serializable_hash[:data]
+        end
+      end
     end
   end
 
   def update
-    if task
-      if task.complete_with_payload!(decision_issue_params, decision_date, current_user)
-        business_line.tasks.reload
-        render json: { task_filter_details: task_filter_details }, status: :ok
-      else
-        error = StandardError.new(task.error_code)
-        Raven.capture_exception(error, extra: { error_uuid: error_uuid })
-        render json: { error_uuid: error_uuid, error_code: task.error_code }, status: :bad_request
-      end
+    if task.appeal.pending_issue_modification_requests.any?
+      return render json: { error_uuid: error_uuid, error_code: "pendingModificationRequests" }, status: :bad_request
+    end
+
+    if task.complete_with_payload!(decision_issue_params, decision_date, current_user)
+      business_line.tasks.reload
+      render json: { task_filter_details: task_filter_details }, status: :ok
     else
-      render json: { error: "Task #{task_id} not found" }, status: :not_found
+      error = StandardError.new(task.error_code)
+      Raven.capture_exception(error, extra: { error_uuid: error_uuid })
+      render json: { error_uuid: error_uuid, error_code: task.error_code }, status: :bad_request
     end
   end
 
@@ -111,6 +132,9 @@ class DecisionReviewsController < ApplicationController
       when :incomplete
         task_filter_hash[:incomplete] = incomplete_tasks_type_counts
         task_filter_hash[:incomplete_issue_types] = incomplete_tasks_issue_type_counts
+      when :pending
+        task_filter_hash[:pending] = pending_tasks_type_counts
+        task_filter_hash[:pending_issue_types] = pending_tasks_issue_type_counts
       when :in_progress
         task_filter_hash[:in_progress] = in_progress_tasks_type_counts
         task_filter_hash[:in_progress_issue_types] = in_progress_tasks_issue_type_counts
@@ -167,6 +191,7 @@ class DecisionReviewsController < ApplicationController
 
     tasks = case tab_name
             when "incomplete" then incomplete_tasks(pagination_query_params(sort_by_column))
+            when "pending" then pending_tasks(pagination_query_params(sort_by_column))
             when "in_progress" then in_progress_tasks(pagination_query_params(sort_by_column))
             when "completed" then completed_tasks(pagination_query_params(sort_by_column))
             when nil
@@ -215,6 +240,12 @@ class DecisionReviewsController < ApplicationController
       render(Caseflow::Error::ActionForbiddenError.new(
         message: COPY::ACCESS_DENIED_TITLE
       ).serialize_response)
+    end
+  end
+
+  def verify_task
+    unless task&.is_a?(DecisionReviewTask)
+      render json: { error: "Task #{task_id} not found" }, status: :not_found
     end
   end
 

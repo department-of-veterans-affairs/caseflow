@@ -1,26 +1,48 @@
 import React from 'react';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+import rootReducer from 'app/caseDistribution/reducers/root';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SaveModal from 'app/caseDistribution/components/SaveModal';
-import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
-import rootReducer from 'app/caseDistribution/reducers/root';
-import thunk from 'redux-thunk';
 import * as changedLevers from 'app/caseDistribution/reducers/levers/leversSelector';
-import { modalOriginalTestLevers } from '../../../data/adminCaseDistributionLevers';
+
+import {
+  mockBatchLevers,
+  mockDocketDistributionPriorLevers,
+  mockAffinityDaysLevers,
+  mockStaticLevers,
+  mockDocketTimeGoalsLevers,
+} from 'test/data/adminCaseDistributionLevers';
+
+let mockInitialLevers = {
+  static: mockStaticLevers,
+  batch: mockBatchLevers,
+  affinity: mockAffinityDaysLevers,
+  docket_distribution_prior: mockDocketDistributionPriorLevers,
+  docket_time_goal: mockDocketTimeGoalsLevers,
+};
+
 import { loadLevers, setUserIsAcdAdmin } from 'app/caseDistribution/reducers/levers/leversActions';
+
+const initialState = {
+  caseDistributionLevers: {
+    levers: mockInitialLevers,
+    isUserAcdAdmin: true,
+  }
+};
 
 describe('Save Modal', () => {
 
   const getStore = () => createStore(
     rootReducer,
+    initialState,
     applyMiddleware(thunk));
 
   afterEach(() => {
     jest.clearAllMocks();
   });
-
-  let leversOfModalOriginalTestLevers = { batch: modalOriginalTestLevers };
 
   it('renders Save Modal for Admin Users', () => {
     const store = getStore();
@@ -30,7 +52,7 @@ describe('Save Modal', () => {
     });
     let setShowModal = jest.fn().mockImplementation((display) => display);
 
-    store.dispatch(loadLevers(leversOfModalOriginalTestLevers));
+    store.dispatch(loadLevers(mockInitialLevers));
     store.dispatch(setUserIsAcdAdmin(false));
 
     render(
@@ -52,14 +74,14 @@ describe('Save Modal', () => {
       {
         title: 'Alternate Batch Size*',
         backendValue: '50',
-        value: '15',
-        data_type: 'number'
+        data_type: 'number',
+        value: '15'
       },
     ];
 
     jest.spyOn(changedLevers, 'changedLevers').mockReturnValue(changedLeversData);
 
-    store.dispatch(loadLevers(leversOfModalOriginalTestLevers));
+    store.dispatch(loadLevers(mockInitialLevers));
     store.dispatch(setUserIsAcdAdmin(false));
 
     render(
@@ -74,7 +96,7 @@ describe('Save Modal', () => {
     }
   });
 
-  it('displays the changed levers for Affinity Days', async () => {
+  it('displays the changed levers for Affinity Days when infinite radio option is chosen', async () => {
     const store = getStore();
 
     const setShowModal = jest.fn();
@@ -83,36 +105,40 @@ describe('Save Modal', () => {
 
     const changedLeversData = [
       {
-        title: 'AOJ AOD Affinity Days',
-        backendValue: '15',
+        title: 'AMA Hearing Case Affinity Days',
+        backendValue: '21',
         data_type: 'radio',
-        value: 'text',
+        value: 'infinite',
         options: [
           {
-            item: 'text',
-            value: '14',
-            unit: 'days',
-            data_type: 'number'
-          }
-        ]
+            item: 'value',
+            value: '21',
+            text: 'Attempt distribution to current judge for max of:',
+            unit: '',
+            data_type: '',
+          },
+          {
+            item: 'infinite',
+            value: 'infinite',
+            text: 'Always distribute to current judge',
+            unit: '',
+            data_type: '',
+            selected: true,
+          },
+        ],
+        is_toggle_active: true,
       }
     ];
 
     jest.spyOn(changedLevers, 'changedLevers').mockReturnValue(changedLeversData);
 
     jest.mock('app/caseDistribution/utils', () => ({
-      ...jest.requireActual('app/caseDistribution/utls'),
-      findOption: jest.fn(() => {
-        return {
-          item: 'text',
-          backendValue: '10',
-          value: '12',
-          text: 'Option 1',
-          data_type: 'number'
-        };
+      ...jest.requireActual('app/caseDistribution/utils'),
+      findOption: jest.fn((lever, value) => {
+        return lever.options.find((option) => option.item === value) || null;
       }),
     }));
-    store.dispatch(loadLevers(leversOfModalOriginalTestLevers));
+    store.dispatch(loadLevers(mockInitialLevers));
     store.dispatch(setUserIsAcdAdmin(false));
 
     render(
@@ -120,16 +146,16 @@ describe('Save Modal', () => {
         <SaveModal setShowModal={setShowModal} handleConfirmButton={handleConfirmButton} />
       </Provider>
     );
-
+    // This has been changed from value to omit
     for (const leverData of changedLeversData) {
       expect(screen.getByText(leverData.title)).toBeInTheDocument();
       expect(document.querySelector(`#${leverData.item}-title-in-modal`)).toHaveTextContent(leverData.title);
       expect(document.querySelector(`#${leverData.item}-previous-value`)).toHaveTextContent(leverData.backendValue);
-      expect(document.querySelector(`#${leverData.item}-new-value`)).toHaveTextContent(leverData.options[0].value);
+      expect(document.querySelector(`#${leverData.item}-new-value`)).toHaveTextContent(leverData.options[1].text);
     }
   });
 
-  it('displays the changed levers for Affinity Days when a radio option is chosen', async () => {
+  it('displays the changed levers for Affinity Days when omit radio option is chosen', async () => {
     const store = getStore();
 
     const setShowModal = jest.fn();
@@ -138,36 +164,99 @@ describe('Save Modal', () => {
 
     const changedLeversData = [
       {
-        title: 'AOJ AOD Affinity Days',
+        title: 'AMA Hearing Case Affinity Days',
         backendValue: '35',
         data_type: 'radio',
         value: 'omit',
         options: [
           {
+            item: 'value',
+            value: '1',
+            text: 'Literally anything',
+            unit: '',
+            data_type: '',
+          },
+          {
             item: 'omit',
+            value: 'omit',
             text: 'Omit variable from distribution rules',
             unit: '',
-            data_type: ''
-          }
-        ]
+            data_type: '',
+            selected: true,
+          },
+        ],
+        is_toggle_active: true,
       }
     ];
 
     jest.spyOn(changedLevers, 'changedLevers').mockReturnValue(changedLeversData);
 
     jest.mock('app/caseDistribution/utils', () => ({
-      ...jest.requireActual('app/caseDistribution/utls'),
-      findOption: jest.fn(() => {
-        return {
-          item: 'text',
-          backendValue: '10',
-          value: '12',
-          text: 'Option 1',
-          data_type: 'number'
-        };
+      ...jest.requireActual('app/caseDistribution/utils'),
+      findOption: jest.fn((lever, value) => {
+        return lever.options.find((option) => option.item === value) || null;
       }),
     }));
-    store.dispatch(loadLevers(leversOfModalOriginalTestLevers));
+    store.dispatch(loadLevers(mockInitialLevers));
+    store.dispatch(setUserIsAcdAdmin(false));
+
+    render(
+      <Provider store={store}>
+        <SaveModal setShowModal={setShowModal} handleConfirmButton={handleConfirmButton} />
+      </Provider>
+    );
+    // This has been changed from value to omit
+    for (const leverData of changedLeversData) {
+      expect(screen.getByText(leverData.title)).toBeInTheDocument();
+      expect(document.querySelector(`#${leverData.item}-title-in-modal`)).toHaveTextContent(leverData.title);
+      expect(document.querySelector(`#${leverData.item}-previous-value`)).toHaveTextContent(leverData.backendValue);
+      expect(document.querySelector(`#${leverData.item}-new-value`)).toHaveTextContent(leverData.options[1].text);
+    }
+  });
+
+  it('displays the changed levers for Affinity Days when combination radio option is chosen', async () => {
+    const store = getStore();
+
+    const setShowModal = jest.fn();
+
+    const handleConfirmButton = jest.fn();
+
+    const changedLeversData = [
+      {
+        title: 'AMA Hearing Case Affinity Days',
+        backendValue: '35',
+        data_type: 'radio',
+        value: 80,
+        options: [
+          {
+            item: 'infinite',
+            value: 'infinite',
+            text: 'Always distribute to current judge',
+            unit: '',
+            data_type: '',
+          },
+          {
+            item: 'value',
+            data_type: 'number',
+            value: 80,
+            text: 'Attempt distribution to current judge for max of:',
+            unit: 'days',
+            selected: true,
+          },
+        ],
+        is_toggle_active: true,
+      }
+    ];
+
+    jest.spyOn(changedLevers, 'changedLevers').mockReturnValue(changedLeversData);
+
+    jest.mock('app/caseDistribution/utils', () => ({
+      ...jest.requireActual('app/caseDistribution/utils'),
+      findOption: jest.fn((lever, value) => {
+        return lever.options.find((option) => option.item === value) || null;
+      }),
+    }));
+    store.dispatch(loadLevers(mockInitialLevers));
     store.dispatch(setUserIsAcdAdmin(false));
 
     render(
@@ -180,7 +269,7 @@ describe('Save Modal', () => {
       expect(screen.getByText(leverData.title)).toBeInTheDocument();
       expect(document.querySelector(`#${leverData.item}-title-in-modal`)).toHaveTextContent(leverData.title);
       expect(document.querySelector(`#${leverData.item}-previous-value`)).toHaveTextContent(leverData.backendValue);
-      expect(document.querySelector(`#${leverData.item}-new-value`)).toHaveTextContent(leverData.options[0].text);
+      expect(document.querySelector(`#${leverData.item}-new-value`)).toHaveTextContent(leverData.options[1].text);
     }
   });
 
@@ -189,7 +278,7 @@ describe('Save Modal', () => {
 
     const setShowModal = jest.fn();
 
-    store.dispatch(loadLevers(leversOfModalOriginalTestLevers));
+    store.dispatch(loadLevers(mockInitialLevers));
     store.dispatch(setUserIsAcdAdmin(false));
 
     render(
@@ -212,7 +301,7 @@ describe('Save Modal', () => {
 
     const setShowModal = jest.fn();
 
-    store.dispatch(loadLevers(leversOfModalOriginalTestLevers));
+    store.dispatch(loadLevers(mockInitialLevers));
     store.dispatch(setUserIsAcdAdmin(false));
 
     render(
