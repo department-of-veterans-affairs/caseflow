@@ -43,10 +43,12 @@ export const TranscriptionFileDispatchView = () => {
     // build the package
   };
 
+  // Opens the modal
   const openPackageModal = () => {
     setPackageModalConfig({ opened: true });
   };
 
+  // Closes the modal
   const closePackageModal = () => {
     setPackageModalConfig({ opened: false });
   };

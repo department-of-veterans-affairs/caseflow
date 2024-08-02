@@ -11,12 +11,20 @@ const PackageFilesModal = ({ onCancel, contractors }) => {
   const [returnDateValue, setReturnDateValue] = useState('');
   const [contractorId, setContractorId] = useState('');
 
+  /**
+   * Grabs the taskId
+  */
   const getTranscriptionTaskId = () => {
     ApiUtil.get('/hearings/transcriptions/next_transcription_task_id').
       // eslint-disable-next-line camelcase
       then((response) => setTranscriptionTaskId(response.body?.task_id));
   };
 
+  /**
+   * Generates the work order number
+   * @param {number} taskId - The task id for the transcription
+   * @return {string} The generated work order number
+   */
   const generateWorkOrder = (taskId) => {
     const taskIdString = taskId.toString();
     const year = new Date().getFullYear().
@@ -40,6 +48,7 @@ const PackageFilesModal = ({ onCancel, contractors }) => {
     return `BVA-${firstSet}-${sequencer}`;
   };
 
+  // Renders the work order number
   const renderWorkOrder = () => {
     return (
       <div>
@@ -49,6 +58,11 @@ const PackageFilesModal = ({ onCancel, contractors }) => {
     );
   };
 
+  /**
+   * Calculates the expected return date for the radio buttons
+   * @params {number} days - Amount of days from today
+   * @returns {string} The formatted expected return date
+   */
   const calculateReturnDate = (days) => {
     const date = new Date();
 
@@ -73,6 +87,10 @@ const PackageFilesModal = ({ onCancel, contractors }) => {
 
   };
 
+  /**
+   * Creates the radio button options
+   * @returns {object} The radio button options
+   */
   const returnDateOptions = () => {
     const fifteenDayReturnDate = calculateReturnDate(15);
 
@@ -88,6 +106,10 @@ const PackageFilesModal = ({ onCancel, contractors }) => {
     ];
   };
 
+  /**
+   * Creates the contractor options for dropdown
+   * @returns {object} The contractor option
+   */
   const contractorOptions = () => {
     return contractors.map((contractor) => {
       return {
@@ -97,6 +119,7 @@ const PackageFilesModal = ({ onCancel, contractors }) => {
     });
   };
 
+  // Renders the contractors dropdown
   const renderContractors = () => {
     return <SearchableDropdown
       name=<strong>Contractor</strong>
@@ -105,6 +128,7 @@ const PackageFilesModal = ({ onCancel, contractors }) => {
     />;
   };
 
+  // Renders the radio field for return date
   const renderReturnDateSection = () => {
     return (
       <RadioField
