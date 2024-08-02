@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import { Provider } from 'react-redux';
 import CorrespondenceDetails from 'app/queue/correspondence/details/CorrespondenceDetails';
@@ -7,12 +7,14 @@ import { correspondenceData } from 'test/data/correspondence';
 import { applyMiddleware, createStore } from 'redux';
 import rootReducer from 'app/queue/reducers';
 import thunk from 'redux-thunk';
+import moment from 'moment';
 import { prepareAppealForSearchStore, sortCaseTimelineEvents } from 'app/queue/utils';
 
 jest.mock('redux', () => ({
   ...jest.requireActual('redux'),
   bindActionCreators: () => jest.fn().mockImplementation(() => Promise.resolve(true)),
 }));
+
 jest.mock('app/queue/utils', () => ({
   prepareAppealForSearchStore: jest.fn(),
   sortCaseTimelineEvents: jest.fn()
@@ -52,6 +54,7 @@ jest.mock('app/queue/CaseListTable', () => ({ appeals }) => (
 let initialState = {
   correspondence: correspondenceData
 };
+
 const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
 
 describe('CorrespondenceDetails', () => {
@@ -60,6 +63,9 @@ describe('CorrespondenceDetails', () => {
     correspondence: {
       veteranFullName: 'John Doe',
       veteranFileNumber: '123456789',
+      correspondenceType: 'Abeyance',
+      nod: false,
+      notes: 'Note Test',
       mailTasks: ['Task 1', 'Task 2'],
       tasksUnrelatedToAppeal: [{
         type: 'FOIA request',
@@ -106,16 +112,15 @@ describe('CorrespondenceDetails', () => {
     });
     sortCaseTimelineEvents.mockReturnValue(
       [{
-        "assignedOn": "07/23/2024",
-        "assignedTo": "Litigation Support",
-        "label": "Status inquiry",
-        "instructions": [
-            "stat inq"
+        assignedOn: '07/23/2024',
+        assignedTo: 'Litigation Support',
+        label: 'Status inquiry',
+        instructions: [
+          'stat inq'
         ],
-        "availableActions": []
-    }]
-    )
-
+        availableActions: []
+      }]
+    );
   });
 
   it('renders the component', () => {
@@ -124,6 +129,11 @@ describe('CorrespondenceDetails', () => {
         <CorrespondenceDetails {...props} />
       </Provider>
     );
+
+    // const correspondenceAndAppealTasksTab = screen.getByText('Correspondence and Appeal Tasks');
+    const packageDetailsTab = screen.getByText('Package Details');
+    // const responseLettersTab = screen.getByText('Response Letters');
+    // const associatedPriorMailTab = screen.getByText('Associated Prior Mail');
 
     expect(screen.getByText('John Doe')).toBeInTheDocument();
     expect(screen.getByText('Veteran ID:')).toBeInTheDocument();
@@ -145,4 +155,18 @@ describe('CorrespondenceDetails', () => {
     expect(screen.getByText('Number of Issues')).toBeInTheDocument();
     expect(screen.getByText('Decision Date')).toBeInTheDocument();
     expect(screen.getByText('Appeal Location')).toBeInTheDocument();
-  })});
+
+    // Clicks on the Package Details Tab and tests its expectations
+    fireEvent.click(packageDetailsTab);
+    expect(screen.getByText('Veteran Details')).toBeInTheDocument();
+    expect(screen.getByText(props.correspondence.veteranFullName)).toBeInTheDocument();
+    expect(screen.getByText('Correspondence Type')).toBeInTheDocument();
+    expect(screen.getByText(props.correspondence.correspondenceType)).toBeInTheDocument();
+    expect(screen.getByText('Package Document Type')).toBeInTheDocument();
+    expect(screen.getByText('Non-NOD')).toBeInTheDocument();
+    expect(screen.getByText('VA DOR')).toBeInTheDocument();
+    expect(screen.getByText(moment(props.correspondence.vaDateOfReceipt).format('MM/DD/YYYY'))).toBeInTheDocument();
+    expect(screen.getByText('Notes')).toBeInTheDocument();
+    expect(screen.getByText(props.correspondence.notes)).toBeInTheDocument();
+  });
+});
