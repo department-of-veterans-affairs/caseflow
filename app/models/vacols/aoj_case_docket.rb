@@ -518,7 +518,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket
     end
   end
 
-  def self.generate_priority_case_distribution_lever_query(aoj_cavc_affinity_lever_value)
+  def self.generate_priority_aoj_case_distribution_lever_query(aoj_cavc_affinity_lever_value)
     if case_affinity_days_lever_value_is_selected?(aoj_cavc_affinity_lever_value) ||
        aoj_cavc_affinity_lever_value == Constants.ACD_LEVERS.omit
       "((PREV_DECIDING_JUDGE = ? or PREV_DECIDING_JUDGE is null or PREV_DECIDING_JUDGE is not null)
