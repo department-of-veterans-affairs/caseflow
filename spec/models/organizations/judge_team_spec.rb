@@ -192,7 +192,7 @@ describe JudgeTeam, :postgres do
     end
   end
 
-  describe ".judges_with_exclude_appeals_from_affinity" do
+  describe ".judge_ids_with_exclude_appeals_from_affinity" do
     before { FeatureToggle.enable!(:acd_exclude_from_affinity) }
     after { FeatureToggle.disable!(:acd_exclude_from_affinity) }
 
@@ -203,7 +203,7 @@ describe JudgeTeam, :postgres do
       before { populate_judge_team_for_testing(judge_team, judge, [create(:user), user]) }
 
       it "returns nil as the default value for exclude_appeals_from_affinity is false" do
-        expect(JudgeTeam.judges_with_exclude_appeals_from_affinity).to eq([])
+        expect(JudgeTeam.judge_ids_with_exclude_appeals_from_affinity).to eq([])
         expect(judge_team.exclude_appeals_from_affinity).to be_falsey
         expect(judge_team.status).to eq("active")
       end
@@ -226,12 +226,12 @@ describe JudgeTeam, :postgres do
         judge_team.reload
         expect(judge_team.exclude_appeals_from_affinity).to be true
         expect(judge_team.status).to eq("active")
-        expect(JudgeTeam.judges_with_exclude_appeals_from_affinity).to eq([judge.id])
+        expect(JudgeTeam.judge_ids_with_exclude_appeals_from_affinity).to eq([judge.id])
 
         judge_team2.reload
         expect(judge_team2.exclude_appeals_from_affinity).to be true
         expect(judge_team2.status).to eq("inactive")
-        expect(JudgeTeam.judges_with_exclude_appeals_from_affinity).to_not include(judge2.id)
+        expect(JudgeTeam.judge_ids_with_exclude_appeals_from_affinity).to_not include(judge2.id)
       end
     end
   end
