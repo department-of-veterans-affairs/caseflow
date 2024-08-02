@@ -32,6 +32,7 @@ Rails.application.routes.draw do
       get 'appeals_ready_to_distribute'
       get 'appeals_non_priority_ready_to_distribute'
       get 'appeals_distributed'
+      get 'appeals_in_location_63_past_2_days'
       get 'ineligible_judge_list'
       post 'run_demo_aod_hearing_seeds'
       post 'run_demo_non_aod_hearing_seeds'

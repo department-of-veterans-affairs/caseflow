@@ -217,6 +217,47 @@ class VACOLS::CaseDocket < VACOLS::Record
     order by BFD19
   "
 
+  FROM_LOC_63_APPEALS = "
+    from BRIEFF
+      #{VACOLS::Case::JOIN_AOD}
+      #{JOIN_MAIL_BLOCKS_DISTRIBUTION}
+      #{JOIN_DIARY_BLOCKS_DISTRIBUTION}
+      inner join FOLDER on FOLDER.TICKNUM = BRIEFF.BFKEY
+      where BRIEFF.BFCURLOC in ('63')
+        and BRIEFF.BFBOX is null
+        and BRIEFF.BFAC is not null
+        and BRIEFF.BFD19 is not null
+        and MAIL_BLOCKS_DISTRIBUTION = 0
+        and DIARY_BLOCKS_DISTRIBUTION = 0
+  "
+  # snamef, snamel, tinum, aod, cavc, bfd19, bfdloout, ssn, bfcorlid, bfcurloc
+  SELECT_LOC_63_APPEALS = "
+    select BFKEY, BFD19, BFCORLID, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD,
+    BFMEMID, BFDPDCN
+    #{FROM_LOC_63_APPEALS}
+  "
+
+  SELECT_APPEALS_IN_LOCATION_63_FROM_PAST_48_HOURS = "
+    select APPEALS.BFKEY, APPEALS.TINUM, APPEALS.BFD19, APPEALS.BFDLOOUT,
+      case when APPEALS.BFAC = '7' or APPEALS.AOD = 1 then 1 else 0 end PRIORITY,
+      APPEALS.VLJ, APPEALS.PREV_DECIDING_JUDGE, APPEALS.HEARING_DATE, APPEALS.PREV_BFDDEC
+    from (
+      select BRIEFF.BFKEY, BRIEFF.TINUM, BFD19, BFDLOOUT, BFAC, AOD,
+        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
+        , PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
+        , VLJ_HEARINGS.HEARING_DATE HEARING_DATE
+        , PREV_APPEAL.PREV_BFDDEC PREV_BFDDEC
+      from (
+        #{SELECT_LOC_63_APPEALS}
+      ) BRIEFF
+      #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+      #{JOIN_PREVIOUS_APPEALS}
+      order by BFD19
+    ) APPEALS
+  "
+
+
+
   # rubocop:disable Metrics/MethodLength
   def self.counts_by_priority_and_readiness
     query = <<-SQL
@@ -453,6 +494,15 @@ class VACOLS::CaseDocket < VACOLS::Record
   def self.ready_to_distribute_appeals
     query = <<-SQL
       #{SELECT_READY_TO_DISTRIBUTE_APPEALS_ORDER_BY_BFD19_ADDITIONAL_COLS}
+    SQL
+
+    fmtd_query = sanitize_sql_array([query])
+    connection.exec_query(fmtd_query).to_a
+  end
+
+  def self.loc_63_appeals
+    query = <<-SQL
+      #{SELECT_APPEALS_IN_LOCATION_63_FROM_PAST_48_HOURS}
     SQL
 
     fmtd_query = sanitize_sql_array([query])
