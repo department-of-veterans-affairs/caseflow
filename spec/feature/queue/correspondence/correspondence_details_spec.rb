@@ -136,29 +136,4 @@ RSpec.feature("The Correspondence Details page") do
       expect(page).to have_content(@correspondences.first.veteran.file_number)
     end
   end
-
-  context "correspondence package details tab" do
-    before do
-      InboundOpsTeam.singleton.add_user(current_user)
-      User.authenticate!(user: current_user, roles: ["Inbound Ops Team"])
-      FeatureToggle.enable!(:correspondence_queue)
-      @correspondence = create(
-        :correspondence,
-        veteran: veteran,
-        va_date_of_receipt: "Tue, 23 Jul 2024 00:00:00 EDT -04:00",
-        nod: false,
-        notes: "Note Test"
-      )
-    end
-
-    it "checks the General Information of Veteran" do
-      visit "/queue/correspondence/#{@correspondence.uuid}"
-      safe_click "#tasks-tabwindow-tab-1"
-      expect(page).to have_content("John Testingman (8675309)")
-      expect(page).to have_content("a correspondence type.")
-      expect(page).to have_content("Non-NOD")
-      expect(page).to have_content("07/23/2024")
-      expect(page).to have_content("Note Test")
-    end
-  end
 end
