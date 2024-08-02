@@ -43,15 +43,13 @@ describe Api::V3::Issues::Ama::RequestIssueSerializer, :postgres do
       expect(serialized_request_issue.key?(:contested_rating_issue_diagnostic_code)).to eq true
       expect(serialized_request_issue.key?(:contested_rating_issue_profile_date)).to eq true
       expect(serialized_request_issue.key?(:contested_rating_issue_reference_id)).to eq true
-      # expect(serialized_request_issue.key?(:corrected_by_request_issue_id)).to eq true
-      # expect(serialized_request_issue.key?(:corrected_by_station_id)).to eq true
       expect(serialized_request_issue.key?(:correction_type)).to eq true
       expect(serialized_request_issue.key?(:created_at)).to eq true
       expect(serialized_request_issue.key?(:decision_date)).to eq true
       expect(serialized_request_issue.key?(:decision_review_id)).to eq true
       expect(serialized_request_issue.key?(:decision_review_type)).to eq true
-      # expect(serialized_request_issue.key?(:edited_by_css_id)).to eq true
-      # expect(serialized_request_issue.key?(:edited_by_station_id)).to eq true
+      expect(serialized_request_issue.key?(:edited_by_css_id)).to eq true
+      expect(serialized_request_issue.key?(:edited_by_station_id)).to eq true
       expect(serialized_request_issue.key?(:edited_description)).to eq true
       expect(serialized_request_issue.key?(:end_product_establishment_id)).to eq true
       expect(serialized_request_issue.key?(:ineligible_due_to_id)).to eq true

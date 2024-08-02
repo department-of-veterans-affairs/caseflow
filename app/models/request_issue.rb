@@ -422,6 +422,11 @@ class RequestIssue < CaseflowRecord
     closed_status == "removed"
   end
 
+  # check if this RequestIssue was edited
+  def edited?
+    edited_description.present? || edited_decision_date.present?
+  end
+
   # check for any RequestIssuesUpdates on the associated DecisionReview
   def any_updates?
     decision_review.request_issues_updates.any?
@@ -434,7 +439,7 @@ class RequestIssue < CaseflowRecord
 
   def fetch_removed_by_user
     if removed? && any_updates?
-      riu = fetch_request_issues_updates
+      riu = request_issues_updates
 
       relevant_update = riu.find do |update|
         update.removed_issues.any? { |issue| issue.id == id }
@@ -446,7 +451,7 @@ class RequestIssue < CaseflowRecord
 
   def fetch_withdrawn_by_user
     if withdrawn? && any_updates?
-      riu = fetch_request_issues_updates
+      riu = request_issues_updates
 
       relevant_update = riu.find do |update|
         update.withdrawn_issues.any? { |issue| issue.id == id }
@@ -454,6 +459,35 @@ class RequestIssue < CaseflowRecord
 
       User.find(relevant_update&.user_id)
     end
+  end
+
+  def fetch_edited_by_user
+    if edited? && any_updates?
+      riu = request_issues_updates
+
+      # Find the most recent update where the current issue ID is in the edited_issues list
+      relevant_update = riu
+        .select { |update| update.edited_issues.any? { |issue| issue.id == id } }
+        .max_by(&:updated_at)
+
+      User.find(relevant_update&.user_id)
+    end
+  end
+
+  def request_issues_updates
+    @request_issues_updates ||= fetch_request_issues_updates
+  end
+
+  def removed_by_user
+    @removed_by_user ||= fetch_removed_by_user
+  end
+
+  def withdrawn_by_user
+    @withdrawn_by_user ||= fetch_withdrawn_by_user
+  end
+
+  def edited_by_user
+    @edited_by_user ||= fetch_edited_by_user
   end
 
   def serialize
