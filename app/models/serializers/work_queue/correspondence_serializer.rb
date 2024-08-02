@@ -49,7 +49,22 @@ class WorkQueue::CorrespondenceSerializer
   end
 
   attribute :tasks_added_to_appeal do |object|
-    object.correspondence_appeals.each { |cor_appeal| cor_appeal.tasks }
+    task_info = []
+
+    object.correspondence_appeals.each do |cor_appeal|
+      docket_num = cor_appeal.appeal.stream_docket_number
+      assigned_to = cor_appeal.correspondence.tasks[0].assigned_to
+      assigned_to_text = assigned_to.is_a?(Organization) ? assigned_to.name : assigned_to.css_id
+      task_info << {
+        docket_num: docket_num,
+        appealant_name: cor_appeal.appeal.veteran,
+        appeal_type: cor_appeal.appeal.stream_type,
+        number_of_issues: 0,
+        status: cor_appeal.correspondence.status,
+        assigned_to: assigned_to_text
+      }
+    end
+    task_info
   end
 
   attribute :veteran_full_name do |object|
