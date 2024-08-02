@@ -286,7 +286,7 @@ describe HearingMailer do
       # Date and Time section
       expect(subject.body).to include("Date and Time")
       expect(subject.body).to include(
-        Hearings::CalendarTemplateHelper.format_hearing_time(hearing.time.appellant_time)
+        Hearings::CalendarTemplateHelper.format_hearing_time(hearing.appellant_time)
       )
 
       # Signature section
