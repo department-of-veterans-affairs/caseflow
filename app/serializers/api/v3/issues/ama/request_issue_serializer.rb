@@ -141,7 +141,12 @@ class Api::V3::Issues::Ama::RequestIssueSerializer
 
   def self.format_rating_profile_date(date)
     return nil if date.blank?
-    return Time.parse(date).utc if date.is_a?(String)
+
+    begin
+      return Time.parse(date).utc if date.is_a?(String)
+    rescue ArgumentError
+      return date.to_s
+    end
 
     date.utc
   end

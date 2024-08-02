@@ -144,5 +144,17 @@ describe Api::V3::Issues::Ama::RequestIssueSerializer, :postgres do
         expect(localized_time.to_datetime).to eq(rating_profile_date)
       end
     end
+
+    context "when rating_profile_date is invalid" do
+      let(:rating_profile_date) { "invalid-date" }
+
+      before do
+        allow(described_class).to receive(:format_rating_profile_date).and_return(rating_profile_date)
+      end
+
+      it "returns the rating_profile_date as string" do
+        expect(serialized_decision_issue[:rating_profile_date]).to eq(rating_profile_date)
+      end
+    end
   end
 end
