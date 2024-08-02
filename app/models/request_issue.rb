@@ -820,7 +820,6 @@ class RequestIssue < CaseflowRecord
   #
   # In order to prevent browser/API automatic time zone changes from altering it, we
   # re-retrieve the value from the cache and save it to the DB as a string. Yikes.
-
   def set_contested_rating_issue_profile_date
     self.contested_rating_issue_profile_date ||= contested_rating_issue&.profile_date
   end
