@@ -216,7 +216,7 @@ class Hearing < CaseflowRecord
     # to explicitly convert it to the time zone of the person who scheduled it,
     # then assemble and return a TimeWithZone object cast to the regional
     # office's time zone.
-    if FeatureToggled.enabled?(:use_existing_scheduled_for)
+    if FeatureToggle.enabled?(:use_existing_scheduled_for)
       updated_by_timezone = updated_by&.timezone || Time.zone.name
       scheduled_time_in_updated_by_timezone = scheduled_time.utc.in_time_zone(updated_by_timezone)
 

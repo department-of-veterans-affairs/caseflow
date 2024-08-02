@@ -27,7 +27,7 @@ class HearingTimeService
   def ama_scheduled_for(time_string)
     return nil unless time_string
 
-    return Time.parse(time_string).strftime("%H:%M") if FeatureToggled.enabled?(:use_existing_scheduled_for)
+    return Time.parse(time_string).strftime("%H:%M") if FeatureToggle.enabled?(:use_existing_scheduled_for)
 
     tz = timezone_from_time_string(time_string)
 
