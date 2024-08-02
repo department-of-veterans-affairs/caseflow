@@ -147,7 +147,8 @@ class ClaimHistoryEvent
       edited_versions.map do |version|
         event_date_hash = {
           "event_date" => version["updated_at"][1],
-          "event_user_name" => change_data["requestor"]
+          "event_user_name" => change_data["requestor"],
+          "user_facility" => change_data["requestor_station_id"]
         }
 
         event_date_hash.merge!(update_event_hash_data_from_version(version, 1))
@@ -172,9 +173,12 @@ class ClaimHistoryEvent
 
     def create_request_issue_decision_events(change_data, event_date, event)
       events = []
+      event_user = change_data["decider"] || change_data["requestor"]
+
       decision_event_hash = pending_system_hash
-        .merge("event_date" => event_date)
-        .merge("event_user_name" => change_data["decider"] || change_data["requestor"])
+        .merge("event_date" => event_date,
+               "event_user_name" => event_user,
+               "user_facility" => decider_user_facility(change_data))
 
       if change_data["request_type"] == "addition"
         change_data = issue_attributes_for_request_type_addition(change_data)
@@ -290,6 +294,10 @@ class ClaimHistoryEvent
 
     def extract_issue_ids_from_change_data(change_data, key)
       (change_data[key] || "").scan(/\d+/).map(&:to_i)
+    end
+
+    def decider_user_facility(change_data)
+      change_data["decider_station_id"] || change_data["requestor_station_id"]
     end
 
     def process_issue_ids(request_issue_ids, event_type, change_data)
