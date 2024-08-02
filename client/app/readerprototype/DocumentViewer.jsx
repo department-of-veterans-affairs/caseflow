@@ -111,16 +111,14 @@ const DocumentViewer = (props) => {
           showPreviousDocument={props.showPdf(getPrevDocId(props))}
         />
       </div>
-      { showSideBar &&
-          (
-            <ReaderSidebar
-              doc={doc}
-              documents={props.allDocuments}
-              toggleSideBar={() => setShowSideBar(false)}
-              vacolsId={props.match.params.vacolsId}
-            />
-          )
-      }
+      {showSideBar && (
+        <ReaderSidebar
+          doc={doc}
+          documents={props.allDocuments}
+          toggleSideBar={() => setShowSideBar(false)}
+          vacolsId={props.match.params.vacolsId}
+        />
+      )}
       <DeleteModal documentId={currentDocumentId} />
       <ShareModal />
     </div>
