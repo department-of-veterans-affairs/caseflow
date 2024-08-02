@@ -4,6 +4,7 @@ import DocketTypeBadge from '../../components/DocketTypeBadge';
 import { ExternalLinkIcon } from '../../components/icons/ExternalLinkIcon';
 
 const CorrespondenceTasksAdded = (props) => {
+  console.log(props.)
   return (
     <div className="correspondence-tasks-added ">
       <div className="corr-tasks-added-col first-row">
@@ -17,23 +18,23 @@ const CorrespondenceTasksAdded = (props) => {
       </div>
       <div className="corr-tasks-added-col">
         <p>Appellant name</p>
-        <p>test</p>
+        <p>{props.task_added.appellant_name}</p>
       </div>
       <div className="corr-tasks-added-col">
         <p>Appeal stream type</p>
-        <p>test</p>
+        <p>{props.task_added.stream_type}</p>
       </div>
       <div className="corr-tasks-added-col">
         <p>Number of issues</p>
-        <p>test</p>
+        <p>{props.task_added.number_of_issues}</p>
       </div>
       <div className="corr-tasks-added-col">
         <p>Status</p>
-        <p>test</p>
+        <p>{props.task_added.status}</p>
       </div>
       <div className="corr-tasks-added-col">
         <p>Added to</p>
-        <p>test</p>
+        <p>{props.task_added.assigned_to}</p>
       </div>
 
     </div>
