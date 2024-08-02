@@ -58,7 +58,7 @@ class WorkQueue::CorrespondenceSerializer
       task_info << {
         docket_num: docket_num,
         appealant_name: cor_appeal.appeal.veteran,
-        appeal_type: cor_appeal.appeal.stream_type,
+        stream_type: cor_appeal.appeal.stream_type,
         number_of_issues: 0,
         status: cor_appeal.correspondence.status,
         assigned_to: assigned_to_text
