@@ -57,6 +57,7 @@ FactoryBot.define do
     trait :with_supplemental_claim do
       decision_review do
         create(:supplemental_claim,
+               :with_intake,
                :with_vha_issue,
                :update_assigned_at,
                :processed,

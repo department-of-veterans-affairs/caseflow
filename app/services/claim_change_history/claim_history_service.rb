@@ -256,12 +256,11 @@ class ClaimHistoryService
     process_pending_status_event(change_data) if !is_processed
   end
 
-  # processed_issue_modification_task_id stores all the task id that has already
-  # been processed so that it prevents the duplicate entry of pending event based on change_ data.
-
   def process_pending_status_event(change_data)
     task_id = change_data["task_id"]
 
+    # processed_issue_modification_task_id stores all the task id that has already
+    # been processed so that it prevents the duplicate entry of pending event based on change_data.
     if task_id &&
        !@processed_issue_modification_task_ids.include?(task_id) &&
        change_data["issue_modification_request_status"] == "assigned"

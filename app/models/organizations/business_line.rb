@@ -448,7 +448,7 @@ class BusinessLine < Organization
              SELECT 1
              FROM issue_modification_requests imr
              WHERE imr.decision_review_id = request_issues.decision_review_id
-             AND imr.decision_review_type = 'HigherLevelReview'
+             AND imr.decision_review_type = 'SupplementalClaim'
                AND imr.status = 'assigned'
            ) THEN true
            ELSE false
@@ -504,27 +504,23 @@ class BusinessLine < Organization
     end
 
     def task_status_pending_filter
-      filter_params_count = query_params[:task_status].count
-      # change pending status to assigned in the query because pending is not a thing in status column
-      query_params[:task_status][query_params[:task_status].index("pending")] = "assigned"
-      where_with_pending = " AND (imr.id IS NOT NULL AND imr.status = 'assigned')"
-
-      # when status param is pending and count is greater than one then
-      # we need to add OR statement so that both is collected.
-      if filter_params_count > 1
-        where_with_pending += " OR #{where_clause_from_array(Task, :status, query_params[:task_status].uniq).to_sql}"
-      end
-      where_with_pending
+      <<-SQL
+       AND (
+        (imr.id IS NOT NULL AND imr.status = 'assigned')
+        OR #{where_clause_from_array(Task, :status, query_params[:task_status].uniq).to_sql}
+       )
+      SQL
     end
 
     def task_status_without_pending_filter
-      where_clause_no_pending = " AND #{where_clause_from_array(Task, :status, query_params[:task_status].uniq).to_sql}"
-      where_clause_no_pending += " AND NOT EXISTS(
-            SELECT decision_review_id FROM issue_modification_requests WHERE
-            issue_modification_requests.status = 'assigned'
-            AND issue_modification_requests.decision_review_id = tasks.appeal_id
-            AND tasks.appeal_type = issue_modification_requests.decision_review_type)"
-      where_clause_no_pending
+      <<-SQL
+         AND NOT EXISTS(
+             SELECT decision_review_id FROM issue_modification_requests WHERE
+             issue_modification_requests.status = 'assigned'
+             AND issue_modification_requests.decision_review_id = tasks.appeal_id
+             AND tasks.appeal_type = issue_modification_requests.decision_review_type)
+        AND #{where_clause_from_array(Task, :status, query_params[:task_status].uniq).to_sql}
+      SQL
     end
 
     def claim_type_filter

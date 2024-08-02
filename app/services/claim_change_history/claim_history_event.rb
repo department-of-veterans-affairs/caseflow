@@ -18,8 +18,7 @@ class ClaimHistoryEvent
               :event_user_css_id, :new_issue_type, :new_issue_description, :new_decision_date,
               :modification_request_reason, :request_type, :decision_reason, :decided_at_date,
               :issue_modification_request_withdrawal_date, :requestor,
-              :decider, :remove_original_issue, :issue_modification_request_status,
-              :imr_created_at_lag, :imr_decided_at_lag, :first_static_version
+              :decider, :remove_original_issue, :issue_modification_request_status
 
   EVENT_TYPES = [
     :completed_disposition,
@@ -213,7 +212,6 @@ class ClaimHistoryEvent
     # rubocop:disable Metrics/MethodLength
     def create_status_events(change_data)
       status_events = []
-      # versions = parse_versions(change_data)
       versions = parse_versions(change_data["task_versions"])
       hookless_cancelled_events = handle_hookless_cancelled_status_events(versions, change_data)
       status_events.push(*hookless_cancelled_events)
@@ -250,14 +248,12 @@ class ClaimHistoryEvent
     # rubocop:enable Metrics/MethodLength
 
     def parse_versions(versions)
-      # versions = change_data["task_versions"]
       if versions
         # Quite a bit faster but less safe. Should probably be fine since it's coming from the database
         # rubocop:disable Security/YAMLLoad
         versions[1..-2].split(",").map { |yaml| YAML.load(yaml.gsub(/^"|"$/, "")) }
         # versions[1..-2].split(",").map { |yaml| YAML.safe_load(yaml.gsub(/^"|"$/, ""), [Time]) }
         # rubocop:enable Security/YAMLLoad
-
       end
     end
 
@@ -374,40 +370,21 @@ class ClaimHistoryEvent
       }[task_status]
     end
 
-    # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def update_event_hash_data_from_version(version, index)
-      data = {}
+      version_database_field_mapping = {
+        "nonrating_issue_category" => "requested_issue_type",
+        "nonrating_issue_description" => "requested_issue_description",
+        "remove_original_issue" => "remove_original_issue",
+        "request_reason" => "modification_request_reason",
+        "decision_date" => "requested_decision_date",
+        "decision_reason" => "decision_reason",
+        "withdrawal_date" => "issue_modification_request_withdrawal_date"
+      }
 
-      unless version["nonrating_issue_category"].nil?
-        data["requested_issue_type"] = version["nonrating_issue_category"][index]
+      version_database_field_mapping.each_with_object({}) do |(version_key, db_key), data|
+        data[db_key] = version[version_key][index] unless version[version_key].nil?
       end
-
-      unless version["nonrating_issue_description"].nil?
-        data["requested_issue_description"] = version["nonrating_issue_description"][index]
-      end
-
-      unless version["remove_original_issue"].nil?
-        data["remove_original_issue"] = version["remove_original_issue"][index]
-      end
-
-      unless version["request_reason"].nil?
-        data["modification_request_reason"] = version["request_reason"][index]
-      end
-
-      unless version["decision_date"].nil?
-        data["requested_decision_date"] = version["decision_date"][index]
-      end
-
-      unless version["decision_reason"].nil?
-        data["decision_reason"] = version["decision_reason"][index]
-      end
-
-      unless version["withdrawal_date"].nil?
-        data["issue_modification_request_withdrawal_date"] = version["withdrawal_date"][index]
-      end
-      data
     end
-    # rubocop:enable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     def event_from_version(changes, index, change_data)
       # If there is no task status change in the set of papertrail changes, ignore the object
@@ -486,7 +463,6 @@ class ClaimHistoryEvent
     end
 
     def request_issue_modification_event_hash(change_data)
-      # if decided date is nil and status is cancelled then we should display edited info and edited user.
       {
         "event_date" => change_data["issue_modification_request_created_at"],
         "event_user_name" => change_data["decider"] || change_data["requestor"],
@@ -690,7 +666,7 @@ class ClaimHistoryEvent
   end
 
   def parse_issue_attributes(change_data)
-    if issue_event? || event_has_modification_request? # is this really needed?
+    if issue_event? || event_has_modification_request?
       @issue_type = change_data["nonrating_issue_category"]
       @issue_description = change_data["nonrating_issue_description"] || change_data["unidentified_issue_text"]
       @decision_date = change_data["decision_date"]
