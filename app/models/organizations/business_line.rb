@@ -285,9 +285,9 @@ class BusinessLine < Organization
           decider.station_id AS decider_station_id,
           decider.css_id AS decider_css_id,
           itv.object_changes_array AS imr_versions,
-          imr.created_at_lag as previous_imr_created_at,
+          lag(imr.created_at, 1) over (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.created_at) as previous_imr_created_at,
           v.object_changes as first_static_version,
-          last_row
+          LEAD(imr.created_at, 1) over (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.created_at) as last_row
         FROM tasks
         INNER JOIN request_issues ON request_issues.decision_review_type = tasks.appeal_type
         AND request_issues.decision_review_id = tasks.appeal_id
@@ -296,20 +296,15 @@ class BusinessLine < Organization
         INNER JOIN intakes ON tasks.appeal_type = intakes.detail_type
         AND intakes.detail_id = tasks.appeal_id
         LEFT JOIN LATERAL (
-        SELECT * ,
-          lag(a.created_at,1) over (ORDER BY id) created_at_lag,
-          lead(a.created_at,1) over (ORDER BY id) last_row
-        FROM (
           SELECT * FROM issue_modification_requests imr
           WHERE imr.decision_review_id = tasks.appeal_id
             AND imr.decision_review_type = 'HigherLevelReview'
             AND imr.request_issue_id = request_issues.id
-            UNION ALL
+          UNION ALL
           SELECT * FROM issue_modification_requests imr_add
             where imr_add.decision_review_id = tasks.appeal_id
               AND imr_add.decision_review_type = 'HigherLevelReview'
               AND imr_add.request_type = 'addition'
-              ) a
 				) imr  on true
         LEFT JOIN request_issues_updates ON request_issues_updates.review_type = tasks.appeal_type
         AND request_issues_updates.review_id = tasks.appeal_id
@@ -397,9 +392,9 @@ class BusinessLine < Organization
          decider.station_id AS decider_station_id,
          decider.css_id AS decider_css_id,
          itv.object_changes_array AS imr_versions,
-         imr.created_at_lag as previous_imr_created_at,
-         v.object_changes  as first_static_version,
-         last_row
+         lag(imr.created_at, 1) over (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.created_at) as previous_imr_created_at,
+         v.object_changes as first_static_version,
+         LEAD(imr.created_at, 1) over (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.created_at) as last_row
       FROM tasks
       INNER JOIN request_issues ON request_issues.decision_review_type = tasks.appeal_type
       AND request_issues.decision_review_id = tasks.appeal_id
@@ -408,10 +403,6 @@ class BusinessLine < Organization
       LEFT JOIN intakes ON tasks.appeal_type = intakes.detail_type
       AND intakes.detail_id = tasks.appeal_id
       LEFT JOIN LATERAL (
-      SELECT * ,
-       lag(a.created_at,1) over (ORDER BY id) created_at_lag,
-       lead(a.created_at,1) over (ORDER BY id) last_row
-      FROM (
         SELECT * FROM issue_modification_requests imr
         WHERE imr.decision_review_id = tasks.appeal_id
           AND imr.decision_review_type = 'SupplementalClaim'
@@ -420,8 +411,8 @@ class BusinessLine < Organization
         SELECT *FROM issue_modification_requests imr_add
           where imr_add.decision_review_id = tasks.appeal_id
             AND imr_add.decision_review_type = 'SupplementalClaim'
-            AND imr_add.request_type = 'addition') a
-				) imr on true
+            AND imr_add.request_type = 'addition'
+			) imr on true
       LEFT JOIN request_issues_updates ON request_issues_updates.review_type = tasks.appeal_type
       AND request_issues_updates.review_id = tasks.appeal_id
       LEFT JOIN request_decision_issues ON request_decision_issues.request_issue_id = request_issues.id
