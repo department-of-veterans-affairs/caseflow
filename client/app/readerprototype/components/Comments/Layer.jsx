@@ -11,21 +11,13 @@ import {
   stopPlacingAnnotation,
 } from '../../../reader/AnnotationLayer/AnnotationActions';
 import { handleSelectCommentIcon } from '../../../reader/PdfViewer/PdfViewerActions';
-import { getPageCoordinatesOfMouseEventPrototype } from '../../../reader/utils';
+import { getPageCoordinatesOfMouseEvent, getPageCoordinatesOfMouseEventPrototype } from '../../../reader/utils';
 import { annotationPlacement, annotationsForDocumentId, annotationsForDocumentIdAndPageId } from '../../selectors';
 import Icon from './Icon';
 
-const DIV_STYLING = css({
-  width: '100%',
-  height: '100%',
-  zIndex: 10,
-  position: 'relative',
-});
-
 const Layer = (props) => {
-  const { zoomLevel, pageNumber, documentId, rotation, children } = props;
-
-  const scale = zoomLevel / 100.0;
+  const { zoomLevel, pageNumber, documentId, rotation, children, dimensions } = props;
+  const scale = zoomLevel / 100;
   const rotationDegrees = Number(rotation.replace('deg', ''));
 
   const annotations = useSelector((state) => annotationsForDocumentIdAndPageId(state, documentId, pageNumber));
@@ -35,6 +27,13 @@ const Layer = (props) => {
   );
   const layerRef = useRef(null);
   const dispatch = useDispatch();
+
+  const commentLayerStyle = css({
+    width: '100%',
+    height: '100%',
+    zIndex: 10,
+    position: 'relative',
+  });
 
   useEffect(() => {
     const keyHandler = (event) => {
@@ -106,7 +105,7 @@ const Layer = (props) => {
     const coordinates = getPageCoordinatesOfMouseEventPrototype(
       event,
       layerRef.current?.getBoundingClientRect(),
-      scale,
+      1,
       rotationDegrees
     );
 
@@ -126,7 +125,7 @@ const Layer = (props) => {
     const { x, y } = getPageCoordinatesOfMouseEventPrototype(
       event,
       layerRef.current?.getBoundingClientRect(),
-      scale,
+      1,
       rotationDegrees
     );
 
@@ -134,8 +133,8 @@ const Layer = (props) => {
       placeAnnotation(
         pageNumber,
         {
-          xPosition: x,
-          yPosition: y,
+          xPosition: x / scale,
+          yPosition: y / scale,
         },
         documentId
       )
@@ -146,7 +145,7 @@ const Layer = (props) => {
       const pageCoords = getPageCoordinatesOfMouseEventPrototype(
         event,
         layerRef.current?.getBoundingClientRect(),
-        scale,
+        1,
         rotationDegrees
       );
 
@@ -165,37 +164,53 @@ const Layer = (props) => {
         onClick={onPageClick}
         onMouseMove={mouseListener}
         ref={layerRef}
-        className={DIV_STYLING}
+        className={commentLayerStyle}
       >
         {children}
-        {isPlacingAnnotation && placingAnnotationIconPageCoords?.pageIndex === pageNumber && (
-          <Icon
-            draggable
-            rotation={-rotationDegrees}
-            position={placingAnnotationIconPageCoords}
-            comment={{}}
-            onClick={() => {}}
-          />
-        )}
-        {!isPlacingAnnotation && placedButUnsavedAnnotation && placedButUnsavedAnnotation.page === pageNumber && (
-          <Icon
-            draggable
-            comment={placedButUnsavedAnnotation}
-            rotation={-rotationDegrees}
-            position={{ x: placedButUnsavedAnnotation.x, y: placedButUnsavedAnnotation.y }}
-            onClick={() => {}}
-          />
-        )}
-        {annotations.map((annotation) => (
-          <Icon
-            key={annotation.uuid}
-            draggable
-            comment={annotation}
-            rotation={-rotationDegrees}
-            position={{ x: annotation.x, y: annotation.y }}
-            onClick={annotation.isPlacingAnnotation ? () => {} : () => onIconClick(annotation)}
-          />
-        ))}
+        <div
+          style={{
+            position: 'relative',
+            top: dimensions.offsetY,
+            left: dimensions.offsetX,
+            rotate: rotation,
+            width: `${dimensions.width}px`,
+            height: `${dimensions.height}px`,
+            pointerEvents: 'none',
+          }}
+        >
+          {isPlacingAnnotation && placingAnnotationIconPageCoords?.pageIndex === pageNumber && (
+            <Icon
+              draggable
+              rotation={-rotationDegrees}
+              position={{
+                x: placingAnnotationIconPageCoords.x,
+                y: placingAnnotationIconPageCoords.y,
+                pageIndex: placingAnnotationIconPageCoords.pageIndex,
+              }}
+              comment={{}}
+              onClick={() => {}}
+            />
+          )}
+          {!isPlacingAnnotation && placedButUnsavedAnnotation && placedButUnsavedAnnotation.page === pageNumber && (
+            <Icon
+              draggable
+              comment={placedButUnsavedAnnotation}
+              rotation={-rotationDegrees}
+              position={{ x: placedButUnsavedAnnotation.x * scale, y: placedButUnsavedAnnotation.y * scale }}
+              onClick={() => {}}
+            />
+          )}
+          {annotations.map((annotation) => (
+            <Icon
+              key={annotation.uuid}
+              draggable
+              comment={annotation}
+              rotation={-rotationDegrees}
+              position={{ x: annotation.x * scale, y: annotation.y * scale }}
+              onClick={annotation.isPlacingAnnotation ? () => {} : () => onIconClick(annotation)}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -208,6 +223,7 @@ Layer.propTypes = {
   documentId: PropTypes.number,
   rotation: PropTypes.string,
   children: PropTypes.element,
+  dimensions: PropTypes.object,
 };
 
 export default Layer;

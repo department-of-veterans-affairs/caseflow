@@ -64,7 +64,7 @@ const ReaderSearchBar = () => {
 
   // set focus upon mount
   useEffect(() => {
-    searchBarRef.current.setInputFocus();
+    searchBarRef.current?.setInputFocus();
   }, []);
 
   // handle keyboard control of search results
