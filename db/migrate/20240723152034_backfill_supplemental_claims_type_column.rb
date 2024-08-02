@@ -3,7 +3,7 @@ class BackfillSupplementalClaimsTypeColumn < Caseflow::Migration
     safety_assured do
       execute <<-SQL
         UPDATE supplemental_claims
-          SET type=(CASE WHEN decision_review_remanded_id IS NOT NULL AND decision_review_type = 'Appeal' THEN 'Remand'
+          SET type=(CASE WHEN decision_review_remanded_id IS NOT NULL AND decision_review_remanded_type = 'Appeal' THEN 'Remand'
                          ELSE 'SupplementalClaim'
                     END);
       SQL
