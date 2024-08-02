@@ -722,7 +722,17 @@ ActiveRecord::Schema.define(version: 2024_08_02_154252) do
 
   create_table "distribution_stats", comment: "A database table to store a snapshot of variables used during a case distribution event", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.json "direct_review_priority_stats", comment: "Priority statistics for Direct Review Docket"
+    t.json "direct_review_stats", comment: "Statistics for Direct Review Docket"
     t.bigint "distribution_id", comment: "ID of the associated Distribution"
+    t.json "evidence_submission_priority_stats", comment: "Priority statistics for Evidence Submission Docket"
+    t.json "evidence_submission_stats", comment: "Statistics for Evidence Submission Docket"
+    t.json "hearing_priority_stats", comment: "Priority statistics for Hearings Docket"
+    t.json "hearing_stats", comment: "Statistics for Hearings Docket"
+    t.json "ineligible_judge_stats", comment: "Statistics about appeals tied to ineligible judges"
+    t.json "judge_stats", comment: "Statistics that are specific to judge"
+    t.json "legacy_priority_stats", comment: "Priority statistics for any VACOLS Docket"
+    t.json "legacy_stats", comment: "Statistics for any VACOLS Docket"
     t.json "levers", comment: "Indicates a snapshot of lever values and is_toggle_active for a distribution"
     t.json "statistics", comment: "Indicates a snapshot of variables used during the distribution"
     t.datetime "updated_at", null: false
