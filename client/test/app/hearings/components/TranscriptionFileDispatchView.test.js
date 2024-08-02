@@ -5,8 +5,9 @@ import ApiUtil from '../../../../app/util/ApiUtil';
 import { when } from 'jest-when';
 import { axe } from 'jest-axe';
 import userEvent from '@testing-library/user-event';
+import { MemoryRouter as Router } from 'react-router-dom';
 
-const setup = () => render(<TranscriptionFileDispatchView />);
+const setup = () => render( <Router><TranscriptionFileDispatchView /></Router>);
 
 const mockTranscriptionFiles = [
   {
