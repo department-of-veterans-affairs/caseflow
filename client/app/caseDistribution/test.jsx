@@ -19,7 +19,8 @@ class CaseDistributionTest extends React.PureComponent {
       isReseedingAod: false,
       isReseedingNonAod: false,
       isReseedingAmaDocketGoals: false,
-      isReseedingDocketPriority: false
+      isReseedingDocketPriority: false,
+      isReturnLegacyAppeals: false
     };
   }
 
@@ -75,6 +76,20 @@ class CaseDistributionTest extends React.PureComponent {
       console.warn(err);
       this.setState({
         isReseedingDocketPriority: false,
+      });
+    });
+  };
+
+  returnLegacyAppealsToBoard = () => {
+    this.setState({ isReturnLegacyAppeals: true });
+    ApiUtil.post('/case_distribution_levers_tests/run_return_legacy_appeals_to_board').then(() => {
+      this.setState({
+        isReturnLegacyAppeals: false,
+      });
+    }, (err) => {
+      console.warn(err);
+      this.setState({
+        isReturnLegacyAppeals: false,
       });
     });
   };
@@ -289,6 +304,18 @@ class CaseDistributionTest extends React.PureComponent {
                                 name="Run Docket-type Seeds"
                                 loading={this.state.isReseedingDocketPriority}
                                 loadingText="Reseeding Docket-type Seeds"
+                              />
+                            </li>
+                          </ul>
+                          <hr />
+                          <h2 id="case_movement">Case Movement</h2>
+                          <ul>
+                            <li>
+                              <Button classNames={['usa-button-case-movement']}
+                                onClick={this.returnLegacyAppealsToBoard}
+                                name="Run ReturnLegacyAppealsToBoard job"
+                                loading={this.state.isReturnLegacyAppeals}
+                                loadingText="Processing ReturnLegacyAppealsToBoard job"
                               />
                             </li>
                           </ul>
