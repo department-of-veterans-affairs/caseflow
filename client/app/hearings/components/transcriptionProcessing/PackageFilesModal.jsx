@@ -8,7 +8,8 @@ import ApiUtil from 'app/util/ApiUtil';
 
 const PackageFilesModal = ({ onCancel, contractors }) => {
   const [transcriptionTaskId, setTranscriptionTaskId] = useState(0);
-  const [returnDateOption, setReturnDateOption] = useState(null);
+  const [returnDateValue, setReturnDateValue] = useState('');
+  const [contractorId, setContractorId] = useState('');
 
   const getTranscriptionTaskId = () => {
     ApiUtil.get('/hearings/transcriptions/next_transcription_task_id').
@@ -26,14 +27,14 @@ const PackageFilesModal = ({ onCancel, contractors }) => {
     let firstSet;
 
     if (numberOfDigits > 5) {
-      firstSet = year.substring(0, 2) + taskIdString.substring(0, 2);
+      firstSet = year.substring(2) + taskIdString.substring(0, 2);
       sequencer = taskIdString.substring(2);
     } else if (numberOfDigits === 5) {
-      firstSet = `${year.substring(0, 2)}0${taskIdString.substring(0, 1)}`;
+      firstSet = `${year.substring(2)}0${taskIdString.substring(0, 1)}`;
       sequencer = taskIdString.substring(1);
     } else {
       firstSet = year;
-      sequencer = taskId;
+      sequencer = '0'.repeat(4 - numberOfDigits) + taskId;
     }
 
     return `BVA-${firstSet}-${sequencer}`;
@@ -100,6 +101,7 @@ const PackageFilesModal = ({ onCancel, contractors }) => {
     return <SearchableDropdown
       name=<strong>Contractor</strong>
       options={contractorOptions()}
+      onChange={(option) => setContractorId(option.value)}
     />;
   };
 
@@ -109,7 +111,7 @@ const PackageFilesModal = ({ onCancel, contractors }) => {
         name="returnDateRadioField"
         label=<strong>Return date</strong>
         options={returnDateOptions()}
-        onChange={(value) => setReturnDateOption(value)}
+        onChange={(value) => setReturnDateValue(value)}
       />
     );
   };

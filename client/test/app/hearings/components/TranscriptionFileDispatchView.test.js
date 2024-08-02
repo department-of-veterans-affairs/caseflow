@@ -1,10 +1,12 @@
 import React from 'react';
 import { TranscriptionFileDispatchView } from '../../../../app/hearings/components/TranscriptionFileDispatchView';
-import { render, waitFor, screen, cleanup } from '@testing-library/react';
+import { render, waitFor, screen, cleanup, fireEvent } from '@testing-library/react';
 import ApiUtil from '../../../../app/util/ApiUtil';
 import { when } from 'jest-when';
 import { axe } from 'jest-axe';
 import userEvent from '@testing-library/user-event';
+
+const getSpy = jest.spyOn(ApiUtil, 'get');
 
 const setup = () => render(<TranscriptionFileDispatchView />);
 
@@ -226,7 +228,8 @@ const constClickData = { data: { file_ids: [37], status: true } };
 
 describe('TranscriptionFileDispatch', () => {
   beforeEach(async () => {
-    ApiUtil.get = jest.fn();
+    ApiUtil.get = getSpy.
+      mockImplementationOnce(() => new Promise((resolve) => resolve({ body: { transcription_contractor: [] } })));
     ApiUtil.post = jest.fn();
 
     when(ApiUtil.get).calledWith('/hearings/transcription_files/transcription_file_tasks?tab=Unassigned&page=1').
@@ -307,6 +310,14 @@ describe('TranscriptionFileDispatch', () => {
       expect(checkboxes[3]).toBeChecked();
       expect(ApiUtil.post).toHaveBeenCalledWith(
         '/hearings/transcription_files/lock', constClickData);
+    });
+
+    it('PackageFilesModal can be opened', async () => {
+      setup();
+      const button = screen.getByRole('button', { name: 'Package files'});
+
+      fireEvent.click(button);
+      expect(await screen.findByText('Package files')).toBeInTheDocument();
     });
   });
 });
