@@ -55,10 +55,13 @@ describe SupplementalClaim, :postgres do
         let(:legacy_opt_in_approved) { false }
         let(:receipt_date) { 1.day.ago }
 
-        it "is valid" do
-          is_expected.to be true
+        it "sets the type column correctly" do
           expect(supplemental_claim.type).to eq(SupplementalClaim.name)
           expect(remand.type).to eq(Remand.name)
+        end
+
+        it "is valid" do
+          is_expected.to be true
         end
 
         context "invalid Veteran" do
