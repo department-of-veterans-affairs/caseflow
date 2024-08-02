@@ -22,10 +22,10 @@ describe "AMA Cases Tableau data source", :all_dbs do
       non_aod_case = result.find { |r| r["id"] == not_distributed.id }
 
       expect(aod_case["aod_is_advanced_on_docket"]).to eq(true)
-      expect(aod_case["aod_veteran.age"]).to eq("76")
+      expect(aod_case["aod_veteran.age"]).to eq(76)
 
       expect(non_aod_case["aod_is_advanced_on_docket"]).to eq(false)
-      expect(non_aod_case["aod_veteran.age"]).to eq("65")
+      expect(non_aod_case["aod_veteran.age"]).to eq(65)
     end
   end
 end
