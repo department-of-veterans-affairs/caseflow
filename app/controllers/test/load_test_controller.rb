@@ -63,17 +63,16 @@ class Test::LoadTestController < ApplicationController
     Organization.pluck(:name).sort
   end
 
-  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def data_for_testing
     case params[:target_type]
     when "Appeal"
-      data = Appeal.find_by(uuid: params[:appeal_external_id])
-      if data.nil?
-        data = LegacyAppeal.find_by(vacols_id: params[:appeal_external_id])
-      end
+      data = params[:appeal_external_id].blank? ? Appeal.sample : Appeal.find_by(uuid: params[:appeal_external_id])
+    when "LegacyAppeal"
+      data = params[:legacy_appeal_external_id].blank? ? LegacyAppeal.sample : LegacyAppeal.find_by(vacols_id: params[:legacy_appeal_external_id])
     when "Hearing"
       data = params[:hearing_external_id].blank? ? Hearing.sample : Hearing.find_hearing_by_uuid_or_vacols_id(params[:hearing_external_id])
-    when "Decision Review"
+    when "DecisionReview"
       data = params[:decision_review_external_id].blank? ? DecisionReview.sample : DecisionReview.by_uuid(params[:decision_review_external_id])
     when "Document"
       data = params[:document_id].blank? ? Document.sample : Document.find_by(id: params[:document_id])
@@ -89,7 +88,7 @@ class Test::LoadTestController < ApplicationController
 
   def set_current_user
     user = user.presence || User.find_or_create_by(css_id: LOAD_TESTING_USER, station_id: params[:station_id])
-    # user update in order to gain access to certain endpoints.
+
     user.update!(css_id: params[:css_id]) if user.css_id != params[:css_id]
     user.update!(station_id: params[:station_id]) if params[:station_id] != user.station_id
     user.update!(regional_office: params[:regional_office]) if params[:regional_office] != user.regional_office
@@ -103,10 +102,9 @@ class Test::LoadTestController < ApplicationController
       FeatureToggle.enable!(toggle, users: user) if !FeatureToggle.enabled?(toggle, user: user)
     end
     session["user"] = user.to_session_hash
-    # Do we want regional_office vs users_regional_office
     session[:regional_office] = user.users_regional_office
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   # Private: Deletes  the load testing API key if it already exists to prevent conflicts
   def ensure_key_does_not_exist_already
