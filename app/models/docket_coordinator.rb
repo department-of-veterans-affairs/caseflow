@@ -6,7 +6,8 @@ class DocketCoordinator
       legacy: LegacyDocket.new,
       direct_review: DirectReviewDocket.new,
       evidence_submission: EvidenceSubmissionDocket.new,
-      hearing: HearingRequestDocket.new
+      hearing: HearingRequestDocket.new,
+      aoj_legacy: AojLegacyDocket.new
     }
 
     @dockets ||= all_dockets

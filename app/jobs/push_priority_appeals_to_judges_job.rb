@@ -61,6 +61,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
       report << "*Number of #{sym} appeals _not_ distributed*: #{docket.count(priority: true, ready: true)}"
     end
     report << "*Number of Legacy Hearing Non Genpop appeals _not_ distributed*: #{legacy_not_genpop_count}"
+    report << "*Number of Aoj Legacy Hearing Non Genpop appeals _not_ distributed*: #{aoj_legacy_not_genpop_count}"
 
     report << ""
     report << "*Debugging information*"
@@ -184,5 +185,9 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
 
   def legacy_not_genpop_count
     docket_coordinator.dockets[:legacy].not_genpop_priority_count
+  end
+
+  def aoj_legacy_not_genpop_count
+    docket_coordinator.dockets[:aoj_legacy].not_genpop_priority_count
   end
 end
