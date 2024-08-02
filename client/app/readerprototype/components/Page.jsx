@@ -4,12 +4,32 @@ import React, { useEffect, useRef } from 'react';
 
 const Page = ({ page, rotation = '0deg', renderItem, scale }) => {
   const canvasRef = useRef(null);
+  const scaleFraction = scale / 100;
 
-  const viewport = page.getViewport({ scale: 1 });
+  const viewport = page.getViewport({ scale: scaleFraction });
+  const scaledHeight = viewport.height;
+  const scaledWidth = viewport.width;
+  let rotatedHeight = scaledHeight;
+  let rotatedWidth = scaledWidth;
+  let top = 0;
+  let left = 0;
+  const offset = (scaledHeight - scaledWidth) / 2;
+
+  if (rotation.includes('90') || rotation.includes('270')) {
+    rotatedHeight = scaledWidth;
+    rotatedWidth = scaledHeight;
+    top = `${offset * -1}px`;
+    left = `${offset}px`;
+  }
   const wrapperStyle = css({
+    height: `${rotatedHeight}px`,
+    width: `${rotatedWidth}px`,
+    position: 'relative',
+  });
+  const canvasStyle = css({
     rotate: rotation,
-    transform: `scale(${scale / 100.0})`,
-    padding: '10px',
+    position: 'relative',
+    top,
   });
 
   useEffect(() => {
@@ -22,17 +42,19 @@ const Page = ({ page, rotation = '0deg', renderItem, scale }) => {
     <div id={`canvasWrapper-${page.pageNumber}`} className={`${wrapperStyle} prototype-canvas-wrapper`}>
       <canvas
         id={`canvas-${page.pageNumber}`}
-        className="prototype-canvas"
+        className={`prototype-canvas ${canvasStyle}`}
         ref={canvasRef}
-        height={viewport.height}
-        width={viewport.width}
+        height={scaledHeight}
+        width={scaledWidth}
       />
       {renderItem &&
         renderItem({
           pageNumber: page.pageNumber,
           dimensions: {
-            width: viewport?.width,
-            height: viewport?.height,
+            height: scaledHeight,
+            width: scaledWidth,
+            offsetX: left,
+            offsetY: top,
           },
           rotation,
         })}

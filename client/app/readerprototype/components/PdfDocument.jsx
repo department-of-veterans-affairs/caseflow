@@ -14,16 +14,15 @@ const PdfDocument = ({ fileUrl, rotateDeg, setNumPages, zoomLevel, documentId })
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
 
-  const containerClass = css({
+  const containerStyle = {
     width: '100%',
     height: '100%',
     overflow: 'auto',
+    paddingTop: '10px',
     alignContent: 'start',
-    flexGrow: 'auto',
-    zoom: `${zoomLevel}%`,
     justifyContent: 'center',
-    gap: zoomLevel > 100 ? `${zoomLevel / 3}rem 15rem` : 0,
-  });
+    gap: '5rem',
+  };
 
   useEffect(() => {
     const getDocData = async () => {
@@ -66,7 +65,7 @@ const PdfDocument = ({ fileUrl, rotateDeg, setNumPages, zoomLevel, documentId })
   }, [pdfDoc]);
 
   return (
-    <div id="pdfContainer" className={containerClass}>
+    <div id="pdfContainer" style={containerStyle}>
       {pdfPages.map((page, index) => (
         <Page
           scale={zoomLevel}
@@ -74,8 +73,8 @@ const PdfDocument = ({ fileUrl, rotateDeg, setNumPages, zoomLevel, documentId })
           rotation={rotateDeg}
           key={`page-${index}`}
           renderItem={(childProps) => (
-            <Layer documentId={documentId} zoomLevel={zoomLevel} {...childProps}>
-              <TextLayer page={page} />
+            <Layer documentId={documentId} zoomLevel={zoomLevel} rotation={rotateDeg} {...childProps}>
+              <TextLayer page={page} zoomLevel={zoomLevel} rotation={rotateDeg} />
             </Layer>
           )}
         />

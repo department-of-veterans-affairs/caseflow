@@ -34,6 +34,7 @@ export class CommentIcon extends React.Component {
           left: this.props.position.x,
           top: this.props.position.y,
           transform: `rotate(${this.props.rotation}deg)`,
+          pointerEvents: 'auto',
         }}
         data-placing-annotation-icon={this.props.comment.isPlacingAnnotationIcon}
         className="commentIcon-container"
