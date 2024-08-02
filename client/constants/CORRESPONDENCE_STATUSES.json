@@ -1,7 +1,7 @@
 {
-  "unassigned": "unassigned",
-  "assigned": "assigned",
-  "action_required": "action_required",
-  "pending": "pending",
-  "completed": "completed"
+  "unassigned": "Unassigned",
+  "assigned": "Assigned",
+  "action_required": "Action Required",
+  "pending": "Pending",
+  "completed": "Completed"
 }
