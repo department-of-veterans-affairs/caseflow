@@ -74,7 +74,7 @@ const CorrespondenceDetails = (props) => {
       {
         header: 'Package Document Type',
         valueFunction: (correspondenceObj) => (
-          <Link href={`/queue/correspondence/${correspondenceObj.uuid}`}>
+          <Link href={`/queue/correspondence/${correspondenceObj.uuid}`} target="_blank">
             <strong> {correspondenceObj.nod ? 'NOD' : 'Non-NOD'} </strong>
           </Link>
         )
@@ -142,7 +142,6 @@ const CorrespondenceDetails = (props) => {
   const correspondenceTasks = () => {
     return (
       <React.Fragment>
-        { allCorrespondencesList() }
         <div className="correspondence-mail-tasks">
           <h2>Completed Mail Tasks</h2>
           <AppSegment filledBackground noMarginTop>
@@ -229,21 +228,18 @@ const CorrespondenceDetails = (props) => {
 
   const packageDetails = <>
     <div>
-      { allCorrespondencesList() }
       <p> Information about Package Details</p>
     </div>
   </>;
 
   const associatedPriorMail = <>
     <div>
-      { allCorrespondencesList() }
       <p> Information about Associated Prior Mail</p>
     </div>
   </>;
 
   const responseLetters = <>
     <div>
-      { allCorrespondencesList() }
       <p> Information about Response Letters</p>
     </div>
   </>;
@@ -286,6 +282,9 @@ const CorrespondenceDetails = (props) => {
           <p><a onClick={handleViewAllCorrespondence}>{viewDisplayText()}</a></p>
           <div></div>
           <p className="last-item"><b>Record status: </b>{props.correspondence.status}</p>
+        </div>
+        <div style = { { marginTop: '20px' }}>
+        { allCorrespondencesList() }
         </div>
         <TabWindow
           name="tasks-tabwindow"
