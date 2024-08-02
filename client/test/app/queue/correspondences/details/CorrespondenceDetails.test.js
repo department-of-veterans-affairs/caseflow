@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import { Provider } from 'react-redux';
 import CorrespondenceDetails from 'app/queue/correspondence/details/CorrespondenceDetails';
@@ -7,6 +7,7 @@ import { correspondenceData } from 'test/data/correspondence';
 import { applyMiddleware, createStore } from 'redux';
 import rootReducer from 'app/queue/reducers';
 import thunk from 'redux-thunk';
+import moment from 'moment';
 import { prepareAppealForSearchStore, sortCaseTimelineEvents } from 'app/queue/utils';
 import { debug } from 'console';
 
@@ -14,6 +15,7 @@ jest.mock('redux', () => ({
   ...jest.requireActual('redux'),
   bindActionCreators: () => jest.fn().mockImplementation(() => Promise.resolve(true)),
 }));
+
 jest.mock('app/queue/utils', () => ({
   prepareAppealForSearchStore: jest.fn(),
   sortCaseTimelineEvents: jest.fn()
@@ -53,6 +55,7 @@ jest.mock('app/queue/CaseListTable', () => ({ appeals }) => (
 let initialState = {
   correspondence: correspondenceData
 };
+
 const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
 
 describe('CorrespondenceDetails', () => {
@@ -61,6 +64,9 @@ describe('CorrespondenceDetails', () => {
     correspondence: {
       veteranFullName: 'John Doe',
       veteranFileNumber: '123456789',
+      correspondenceType: 'Abeyance',
+      nod: false,
+      notes: 'Note Test',
       mailTasks: ['Task 1', 'Task 2'],
       tasksUnrelatedToAppeal: [{
         type: 'FOIA request',
@@ -304,7 +310,6 @@ describe('CorrespondenceDetails', () => {
         availableActions: []
       }]
     );
-
   });
 
   it('renders the component', () => {
