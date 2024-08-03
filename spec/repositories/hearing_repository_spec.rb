@@ -62,8 +62,9 @@ describe HearingRepository, :all_dbs do
         scheduled_time_string: "09:00 AM Eastern Time (US & Canada)",
         appeal: legacy_appeal
       )
+
       expect(VACOLS::CaseHearing.find_by(vdkey: hearing_day.id)
-        .hearing_date.to_datetime.in_time_zone("UTC").hour).to eq(9)
+        .hearing_date.to_datetime.in_time_zone("America/New_York").hour).to eq(9)
     end
 
     context "for a full hearing day" do
@@ -157,18 +158,35 @@ describe HearingRepository, :all_dbs do
       )
     end
 
-    subject { HearingRepository.set_vacols_values(hearing, hearing_hash) }
+    subject do
+      HearingRepository.set_vacols_values(hearing, hearing_hash)
+      # Pretend like we have received this information from an actual HEARSCHED record.
+      #
+      # A better way to refactor this test would be to replace hearing_hash with
+      #  a CaseHearing model instance with the same attributes.
+      hearing.vacols_load_status = :success
+      hearing.reload
+    end
 
     it "assigns values properly" do
-      expect(subject.request_type).to eq(HearingDay::REQUEST_TYPES[:video])
-      expect(subject.vacols_record).to eq(hearing_hash)
-      expect(subject.scheduled_for.class).to eq(ActiveSupport::TimeWithZone)
-      expect(subject.disposition).to eq(Constants.HEARING_DISPOSITION_TYPES.no_show)
-      expect(subject.aod).to eq :filed
-      expect(subject.transcript_requested).to eq nil
-      expect(subject.hold_open).to eq 90
-      expect(subject.notes).to eq notes
-      expect(subject.representative_name).to eq representative_name
+      updated_hearing = subject
+
+      expect(updated_hearing.request_type).to eq(HearingDay::REQUEST_TYPES[:video])
+      expect(updated_hearing.vacols_record).to eq(hearing_hash)
+      expect(updated_hearing.scheduled_for.class).to eq(ActiveSupport::TimeWithZone)
+      # The below attrs would be nil since the test never stages a HEARSCHED record
+      #  and our new LegacyHearing#scheduled_for method will repull and set these values
+      #  based on what is in VACOLS if it determines that we have not grabbed info from
+      #  there yet.
+      #
+      # The entire point of HearingRepository#assign_from_vacols is to use VACOLS values, so
+      #  using an OpenStruct to "back" the PG model is this tests leaves us wanting.
+      expect(updated_hearing.disposition).to eq(Constants.HEARING_DISPOSITION_TYPES.no_show)
+      expect(updated_hearing.aod).to eq :filed
+      expect(updated_hearing.transcript_requested).to eq nil
+      expect(updated_hearing.hold_open).to eq 90
+      expect(updated_hearing.notes).to eq notes
+      expect(updated_hearing.representative_name).to eq representative_name
     end
   end
 

@@ -362,6 +362,10 @@ class LegacyHearing < CaseflowRecord
     end
   end
 
+  def vacols_load_status=(status)
+    @vacols_load_status = status
+  end
+
   def scheduled_for
     perform_vacols_request unless @vacols_load_status == :success
 
