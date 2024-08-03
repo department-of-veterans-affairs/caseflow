@@ -225,8 +225,7 @@ class BusinessLine < Organization
         ), imr_version_agg AS (SELECT
               versions.item_id,
               versions.item_type,
-              ARRAY_AGG(versions.object_changes ORDER BY versions.id) AS object_changes_array,
-              MIN(versions.id) first_id
+              ARRAY_AGG(versions.object_changes ORDER BY versions.id) AS object_changes_array
           FROM
               versions
           INNER JOIN issue_modification_requests ON issue_modification_requests.id = versions.item_id

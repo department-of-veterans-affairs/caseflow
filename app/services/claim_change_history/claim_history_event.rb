@@ -159,6 +159,7 @@ class ClaimHistoryEvent
 
     def create_last_version_events(change_data, last_version)
       edited_events = []
+
       last_version["status"].map.with_index do |status, index|
         if status == "assigned"
           edited_events.push(*create_pending_status_events(change_data, last_version["updated_at"][index]))
@@ -189,6 +190,7 @@ class ClaimHistoryEvent
       events
     end
 
+    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def create_in_progress_status_event(change_data)
       in_progress_system_hash_events = pending_system_hash
         .merge("event_date" => (change_data["decided_at"] ||
@@ -198,6 +200,7 @@ class ClaimHistoryEvent
         from_change_data(:in_progress, change_data.merge(in_progress_system_hash_events))
       end
     end
+    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     def should_create_imr_in_progress_status_event?(change_data)
       (imr_last_decided_row?(change_data) &&
@@ -224,11 +227,11 @@ class ClaimHistoryEvent
       pending_system_hash_events = pending_system_hash
         .merge("event_date" => event_date)
 
-      same_transaction = timestamp_within_seconds?(change_data["issue_modification_request_created_at"],
-                                                   change_data["previous_imr_created_at"],
-                                                   ISSUE_MODIFICATION_REQUEST_CREATION_WINDOW)
-
-      if change_data["previous_imr_created_at"].nil? || !same_transaction
+      imr_created_in_same_transaction = imr_created_in_same_transaction?(change_data)
+      # if two imr's are of different transaction and if decision has already been made then we
+      # want to put pending status since it went back to pending status before it was approved/cancelled or denied.
+      if change_data["previous_imr_created_at"].nil? ||
+         !imr_created_in_same_transaction
         from_change_data(:pending, change_data.merge(pending_system_hash_events))
       end
     end
