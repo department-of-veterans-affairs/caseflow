@@ -38,7 +38,8 @@ class ChangeHistoryEventSerializer
       issueModificationRequestStatus: object.issue_modification_request_status,
       requestor: object.requestor,
       decider: object.decider,
-      decidedAtDate: object.decided_at_date
+      decidedAtDate: object.decided_at_date,
+      decisionReason: object.decision_reason
     }
   end
 end

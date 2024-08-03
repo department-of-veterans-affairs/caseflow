@@ -208,7 +208,7 @@ class ClaimHistoryEvent
                                                    change_data["previous_imr_created_at"],
                                                    ISSUE_MODIFICATION_REQUEST_CREATION_WINDOW)
 
-      if change_data["previous_imr_created_at"].nil? || !same_transaction
+      if change_data["previous_imr_created_at"].nil? && !same_transaction
         from_change_data(:pending, change_data.merge(pending_system_hash_events))
       end
     end

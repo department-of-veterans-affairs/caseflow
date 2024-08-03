@@ -73,7 +73,8 @@ describe ChangeHistoryEventSerializer do
               issueModificationRequestStatus: nil,
               requestor: nil,
               decider: nil,
-              decidedAtDate: nil
+              decidedAtDate: nil,
+              decisionReason: nil
             }
         }
       },
@@ -108,7 +109,8 @@ describe ChangeHistoryEventSerializer do
             issueModificationRequestStatus: nil,
             requestor: nil,
             decider: nil,
-            decidedAtDate: nil
+            decidedAtDate: nil,
+            decisionReason: nil
           },
           eventDate: events[1].event_date,
           eventType: :added_issue,
