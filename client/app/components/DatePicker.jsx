@@ -5,6 +5,7 @@ import FilterIcon from './icons/FilterIcon';
 import SearchableDropdown from '../components/SearchableDropdown';
 import Button from '../components/Button';
 import COPY from '../../COPY';
+import moment from 'moment-timezone';
 
 const datePickerStyle = css({
   paddingLeft: '1rem',
@@ -59,6 +60,46 @@ const menuStyle = css({
   }
 });
 
+/* Custom filter method to pass in a QueueTable column object */
+/* This called for every row of data in the table */
+/* rowValue is a date string such as '5/15/2024' */
+/* filterValues is the array of filter options such as ['between,2024-05-01,2024-05-31']
+/* It returns true or false if the row belongs in the data still */
+export const datePickerFilterValue = (rowValue, filterValues) => {
+  let pick = false;
+  const rowDate = moment(rowValue).valueOf();
+
+  if (filterValues.length && rowDate) {
+    const filterOptions = filterValues[0].split(',');
+
+    if (filterOptions) {
+      const mode = filterOptions[0];
+
+      if (mode === 'between') {
+        const startDate = moment(`${filterOptions[1]} 00:00:00`).valueOf();
+        const endDate = moment(`${filterOptions[2]} 23:59:59`).valueOf();
+
+        pick = rowDate >= startDate && rowDate <= endDate;
+      } else if (mode === 'before') {
+        const date = moment(`${filterOptions[1]} 00:00:00`).valueOf();
+
+        pick = rowDate < date;
+      } else if (mode === 'after') {
+        const date = moment(`${filterOptions[1]} 23:59:59`).valueOf();
+
+        pick = rowDate > date;
+      } else if (mode === 'on') {
+        const startDate = moment(`${filterOptions[1]} 00:00:00`).valueOf();
+        const endDate = moment(`${filterOptions[1]} 23:59:59`).valueOf();
+
+        pick = rowDate >= startDate && rowDate <= endDate;
+      }
+    }
+  }
+
+  return pick;
+};
+
 class DatePicker extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -80,6 +121,8 @@ class DatePicker extends React.PureComponent {
     if (onChange) {
       onChange(`${this.state.mode },${ this.state.startDate },${ this.state.endDate}`);
     }
+
+    this.hideDropdown();
   }
 
   toggleDropdown = () => {
@@ -145,6 +188,8 @@ class DatePicker extends React.PureComponent {
     if (onChange) {
       onChange('');
     }
+
+    this.hideDropdown();
   }
 
   updateMode = (mode) => {
