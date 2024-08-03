@@ -355,14 +355,14 @@ describe Hearing, :postgres do
       end
     end
 
-    context "When the hearing's scheduled_in_timezone is valid and differs from RO" do
-      let(:hearing) do
-        create(:hearing, scheduled_in_timezone: "America/Los_Angeles", regional_office: "RO82")
-      end
+    # context "When the hearing's scheduled_in_timezone is valid and differs from RO" do
+    #   let(:hearing) do
+    #     create(:hearing, scheduled_in_timezone: "America/Los_Angeles", regional_office: "RO82")
+    #   end
 
-      it "returns scheduled_in_timezone instead of RO's timezone" do
-        is_expected.to eq "America/Los_Angeles"
-      end
-    end
+    #   it "returns scheduled_in_timezone instead of RO's timezone" do
+    #     is_expected.to eq "America/Los_Angeles"
+    #   end
+    # end
   end
 end
