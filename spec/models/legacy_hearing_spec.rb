@@ -149,7 +149,7 @@ describe LegacyHearing, :all_dbs do
   context "#no_show_excuse_letter_due_date" do
     subject { hearing.no_show_excuse_letter_due_date }
 
-    it { is_expected.to eq(14.days.from_now.to_date) }
+    it { is_expected.to eq(15.days.from_now.to_date) }
   end
 
   context "#active_appeal_streams" do
