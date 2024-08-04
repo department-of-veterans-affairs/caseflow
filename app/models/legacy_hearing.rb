@@ -216,6 +216,8 @@ class LegacyHearing < CaseflowRecord
   def hold_release_date
     return unless held_open?
 
+    # byebug
+
     scheduled_for.to_date + hold_open.days
   end
 

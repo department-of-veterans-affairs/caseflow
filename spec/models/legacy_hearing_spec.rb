@@ -16,20 +16,25 @@ describe LegacyHearing, :all_dbs do
   let(:hearing) do
     create(
       :legacy_hearing,
-      scheduled_for: scheduled_for,
-      disposition: disposition,
-      hold_open: hold_open,
+      case_hearing: case_hearing,
       request_type: request_type,
       regional_office: regional_office
+    )
+  end
+
+  let(:case_hearing) do
+    create(
+      :case_hearing,
+      hearing_date: scheduled_for,
+      hearing_disp: disposition,
+      holddays: hold_open
     )
   end
 
   let(:hearing2) do
     create(
       :legacy_hearing,
-      scheduled_for: scheduled_for,
-      disposition: disposition,
-      hold_open: hold_open,
+      case_hearing: case_hearing,
       request_type: request_type,
       regional_office: regional_office
     )
@@ -132,7 +137,8 @@ describe LegacyHearing, :all_dbs do
 
     context "when held open" do
       let(:hold_open) { 30 }
-      it { is_expected.to eq(29.days.from_now.to_date) }
+
+      it { is_expected.to eq(30.days.from_now.to_date) }
     end
 
     context "when not held open" do
