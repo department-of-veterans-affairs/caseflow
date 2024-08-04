@@ -44,7 +44,7 @@ describe LegacyHearing, :all_dbs do
     now = Time.zone.now
     yesterday = Time.zone.yesterday
 
-    Time.zone.local(yesterday.year, yesterday.month, yesterday.day, now.hour, now.min, now.sec)
+    Time.zone.local(now.year, now.month, now.day, now.hour, now.min, now.sec)
   end
   let(:disposition) { nil }
   let(:hold_open) { nil }
@@ -149,7 +149,7 @@ describe LegacyHearing, :all_dbs do
   context "#no_show_excuse_letter_due_date" do
     subject { hearing.no_show_excuse_letter_due_date }
 
-    it { is_expected.to eq(15.days.from_now.to_date) }
+    it { is_expected.to eq(15.days.from_now.utc.to_date) }
   end
 
   context "#active_appeal_streams" do
