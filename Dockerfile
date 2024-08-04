@@ -44,6 +44,20 @@ RUN apt -y update && \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
     apt -y update
 
+# Install OpenSSL 3.2.0 from source
+RUN apt-get install -y wget && \
+    wget https://www.openssl.org/source/openssl-3.2.0.tar.gz && \
+    tar -zxf openssl-3.2.0.tar.gz && \
+    cd openssl-3.2.0 && \
+    ./config && \
+    make && \
+    make install && \
+    cd .. && \
+    rm -rf openssl-3.2.0 openssl-3.2.0.tar.gz
+
+# Add OpenSSL libraries to the runtime linker path
+RUN echo "/usr/local/lib64" >> /etc/ld.so.conf.d/openssl.conf && ldconfig
+
 # Install node
 RUN mkdir /usr/local/nvm
 ENV NVM_DIR /usr/local/nvm
@@ -56,6 +70,9 @@ RUN source $NVM_DIR/nvm.sh \
    && nvm use default
 ENV NODE_PATH $NVM_INSTALL_PATH/lib/node_modules
 ENV PATH $NVM_INSTALL_PATH/bin:$PATH
+
+#Set NODE_OPTIONS to use legacy OpenSSL provider
+# ENV NODE_OPTIONS=--openssl-legacy-provider
 
 RUN apt install -y ${CASEFLOW} &&  \
     curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
