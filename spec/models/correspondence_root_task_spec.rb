@@ -9,6 +9,38 @@ describe CorrespondenceRootTask, :all_dbs do
     FeatureToggle.enable!(:correspondence_queue)
   end
 
+  def tasks_not_related_to_an_appeal
+    [
+      CavcCorrespondenceCorrespondenceTask,
+      CongressionalInterestCorrespondenceTask,
+      DeathCertificateCorrespondenceTask,
+      FoiaRequestCorrespondenceTask,
+      OtherMotionCorrespondenceTask,
+      PowerOfAttorneyRelatedCorrespondenceTask,
+      PrivacyActRequestCorrespondenceTask,
+      PrivacyComplaintCorrespondenceTask,
+      StatusInquiryCorrespondenceTask
+    ]
+  end
+
+  def package_action_tasks
+    [
+      ReassignPackageTask,
+      RemovePackageTask,
+      SplitPackageTask,
+      MergePackageTask
+    ]
+  end
+
+  def mail_tasks
+    [
+      AssociatedWithClaimsFolderMailTask,
+      AddressChangeCorrespondenceMailTask,
+      EvidenceOrArgumentCorrespondenceMailTask,
+      VacolsUpdatedMailTask
+    ]
+  end
+
   describe ".review_package_task" do
     let!(:correspondence) { create(:correspondence, veteran: veteran) }
     let!(:root_task) { correspondence.root_task }
@@ -63,15 +95,6 @@ describe CorrespondenceRootTask, :all_dbs do
     let!(:root_task) { correspondence.root_task }
 
     context "when the correspondence has an open package task" do
-      let!(:package_action_tasks) do
-        [
-          ReassignPackageTask,
-          RemovePackageTask,
-          SplitPackageTask,
-          MergePackageTask
-        ]
-      end
-
       it "returns the open package task" do
         package_action_tasks.each do |klass|
           task = klass.create!(
@@ -113,19 +136,6 @@ describe CorrespondenceRootTask, :all_dbs do
     let!(:root_task) { correspondence.root_task }
 
     context "when the correspondence has an open task not related to an appeal" do
-      let!(:tasks_not_related_to_an_appeal) do
-        [
-          CavcCorrespondenceCorrespondenceTask,
-          CongressionalInterestCorrespondenceTask,
-          DeathCertificateCorrespondenceTask,
-          FoiaRequestCorrespondenceTask,
-          OtherMotionCorrespondenceTask,
-          PowerOfAttorneyRelatedCorrespondenceTask,
-          PrivacyActRequestCorrespondenceTask,
-          PrivacyComplaintCorrespondenceTask,
-          StatusInquiryCorrespondenceTask
-        ]
-      end
 
       it "returns the open package tasks" do
         tasks_not_related_to_an_appeal.each_with_index do |klass, count|
@@ -148,15 +158,6 @@ describe CorrespondenceRootTask, :all_dbs do
     let!(:root_task) { correspondence.root_task }
 
     context "when the correspondence has a mail task" do
-      let!(:mail_tasks) do
-        [
-          AssociatedWithClaimsFolderMailTask,
-          AddressChangeCorrespondenceMailTask,
-          EvidenceOrArgumentCorrespondenceMailTask,
-          VacolsUpdatedMailTask
-        ]
-      end
-
       it "returns the mail tasks" do
         mail_tasks.each_with_index do |klass, count|
           task = klass.create!(
@@ -229,16 +230,7 @@ describe CorrespondenceRootTask, :all_dbs do
     end
 
     context "When the correspondence has an open package action task" do
-      let!(:package_action_tasks) do
-        [
-          ReassignPackageTask,
-          RemovePackageTask,
-          SplitPackageTask,
-          MergePackageTask
-        ]
-      end
       it "returns the status as action required if the task is assigned" do
-
         package_action_tasks.each do |klass|
           task = klass.create!(
             type: klass.name,
@@ -256,19 +248,6 @@ describe CorrespondenceRootTask, :all_dbs do
     end
 
     context "When the correspondence has open tasks not related to an appeal" do
-      let!(:tasks_not_related_to_an_appeal) do
-        [
-          CavcCorrespondenceCorrespondenceTask,
-          CongressionalInterestCorrespondenceTask,
-          DeathCertificateCorrespondenceTask,
-          FoiaRequestCorrespondenceTask,
-          OtherMotionCorrespondenceTask,
-          PowerOfAttorneyRelatedCorrespondenceTask,
-          PrivacyActRequestCorrespondenceTask,
-          PrivacyComplaintCorrespondenceTask,
-          StatusInquiryCorrespondenceTask
-        ]
-      end
       it "returns the status as pending" do
         correspondence.review_package_task.update!(status: Constants.TASK_STATUSES.completed)
         tasks_not_related_to_an_appeal.each do |klass|
@@ -304,6 +283,5 @@ describe CorrespondenceRootTask, :all_dbs do
         expect(subject).to eq(Constants.CORRESPONDENCE_STATUSES.completed)
       end
     end
-
   end
 end
