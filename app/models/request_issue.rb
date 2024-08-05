@@ -424,7 +424,7 @@ class RequestIssue < CaseflowRecord
 
   # check if this RequestIssue was edited
   def edited?
-    edited_description.present? || edited_decision_date.present?
+    edited_description&.present?
   end
 
   # check for any RequestIssuesUpdates on the associated DecisionReview
