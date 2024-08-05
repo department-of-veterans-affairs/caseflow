@@ -622,6 +622,188 @@ describe VACOLS::AojCaseDocket, :all_dbs do
     end
   end
 
+    # rubocop:disable Layout/LineLength
+  context "when CaseDistributionLever" do
+    before do
+      VACOLS::Case.where(bfcurloc: %w[81 83]).map { |c| c.update!(bfcurloc: "testing") }
+    end
+
+    let(:aff_judge_caseflow) { create(:user) }
+    let!(:aff_judge) { create(:staff, :judge_role, sdomainid: aff_judge_caseflow.css_id) }
+
+    let(:other_judge_caseflow) { create(:user) }
+    let!(:other_judge) { create(:staff, :judge_role, sdomainid: other_judge_caseflow.css_id) }
+
+    let(:tied_judge_caseflow) { create(:user) }
+    let!(:tied_judge) { create(:staff, :judge_role, sdomainid: tied_judge_caseflow.css_id) }
+
+    let(:inel_judge_caseflow) { create(:user) }
+    let!(:inel_judge) { create(:staff, :judge_role, svlj: "V", sdomainid: inel_judge_caseflow.css_id) }
+
+    let(:excl_judge_caseflow) { create(:user, :judge_with_appeals_excluded_from_affinity) }
+    let!(:excl_judge) { create(:staff, :judge_role, sdomainid: excl_judge_caseflow.css_id) }
+
+    let(:attorney_caseflow) { create(:user) }
+    let!(:attorney) { create(:staff, :attorney_role, sdomainid: attorney_caseflow.css_id) }
+
+    context ".aoj_affinity_days lever is active" do
+      # aoj affinity cases:
+      # no hearing held but has previous decision
+      let!(:c1) do
+        create(:legacy_aoj_appeal, judge: aff_judge, attorney: attorney, tied_to: false)
+      end
+      let!(:c2) do
+        create(:legacy_aoj_appeal, judge: aff_judge, attorney: attorney,
+                                    tied_to: false, affinity_start_date: 3.days.ago)
+      end
+      let!(:c3) do
+        create(:legacy_aoj_appeal, judge: aff_judge, attorney: attorney,
+                                    tied_to: false, appeal_affinity: false)
+      end
+      # hearing held with previous decision where judge is not the same
+      let!(:c4) do
+        c4 = create(:legacy_aoj_appeal, judge: other_judge, attorney: attorney)
+        c4.update!(bfmemid: aff_judge.sattyid)
+        c4
+      end
+      let!(:c5) do
+        c5 = create(:legacy_aoj_appeal, judge: other_judge, attorney: attorney,
+                                          affinity_start_date: 3.days.ago)
+        c5.update!(bfmemid: aff_judge.sattyid)
+        c5
+      end
+      let!(:c6) do
+        c6 = create(:legacy_aoj_appeal, judge: other_judge, attorney: attorney, appeal_affinity: false)
+        c6.update!(bfmemid: aff_judge.sattyid)
+        c6
+      end
+      # hearing held with previous decision where judge is same (THIS IS TIED TO)
+      let!(:c7) { create(:legacy_aoj_appeal, judge: tied_judge, attorney: attorney) }
+      let!(:c8) do
+        create(:legacy_aoj_appeal, judge: tied_judge, attorney: attorney, affinity_start_date: 3.days.ago)
+      end
+      let!(:c9) { create(:legacy_aoj_appeal, judge: tied_judge, attorney: attorney, appeal_affinity: false) }
+      # hearing held but no previous deciding judge
+      let!(:c10) do
+        c10 = create(:legacy_aoj_appeal, judge: tied_judge, attorney: attorney)
+        c10.update!(bfmemid: nil)
+        c10
+      end
+      # no hearing held, no previous deciding judge
+      let!(:c11) do
+        c11 = create(:legacy_aoj_appeal, judge: aff_judge, attorney: attorney,
+                                          tied_to: false)
+        c11.update!(bfmemid: nil)
+        c11
+      end
+      # excluded judge cases:
+      # no hearing held but has previous decision
+      let!(:c12) { create(:legacy_aoj_appeal, judge: excl_judge, attorney: attorney, tied_to: false) }
+      let!(:c13) do
+        create(:legacy_aoj_appeal, judge: excl_judge, attorney: attorney,
+                                    tied_to: false, affinity_start_date: 3.days.ago)
+      end
+      let!(:c14) do
+        create(:legacy_aoj_appeal, judge: excl_judge, attorney: attorney,
+                                    tied_to: false, appeal_affinity: false)
+      end
+      # hearing held with previous decision where judge is not the same
+      let!(:c15) do
+        c15 = create(:legacy_aoj_appeal, judge: other_judge, attorney: attorney)
+        c15.update!(bfmemid: excl_judge.sattyid)
+        c15
+      end
+      let!(:c16) do
+        c16 = create(:legacy_aoj_appeal, judge: other_judge, attorney: attorney,
+                                          affinity_start_date: 3.days.ago)
+        c16.update!(bfmemid: excl_judge.sattyid)
+        c16
+      end
+      let!(:c17) do
+        c17 = create(:legacy_aoj_appeal, judge: other_judge, attorney: attorney, appeal_affinity: false)
+        c17.update!(bfmemid: excl_judge.sattyid)
+        c17
+      end
+      # hearing held with previous decision where judge is same (THIS IS TIED TO)
+      let!(:c18) { create(:legacy_aoj_appeal, judge: excl_judge, attorney: attorney) }
+      let!(:c19) do
+        create(:legacy_aoj_appeal, judge: excl_judge, attorney: attorney, affinity_start_date: 3.days.ago)
+      end
+      let!(:c20) do
+        create(:legacy_aoj_appeal, judge: excl_judge, attorney: attorney, appeal_affinity: false)
+      end
+      # ineligible judge cases:
+      # no hearing held but has previous decision
+      let!(:c21) { create(:legacy_aoj_appeal, judge: inel_judge, attorney: attorney, tied_to: false) }
+      let!(:c22) do
+        create(:legacy_aoj_appeal, judge: inel_judge, attorney: attorney,
+                                    tied_to: false, affinity_start_date: 3.days.ago)
+      end
+      let!(:c23) do
+        create(:legacy_aoj_appeal, judge: inel_judge, attorney: attorney,
+                                    tied_to: false, appeal_affinity: false)
+      end
+      # hearing held with previous decision where judge is not the same
+      let!(:c24) do
+        c24 = create(:legacy_aoj_appeal, judge: other_judge, attorney: attorney)
+        c24.update!(bfmemid: inel_judge.sattyid)
+        c24
+      end
+      let!(:c25) do
+        c25 = create(:legacy_aoj_appeal, judge: other_judge, attorney: attorney,
+                                          affinity_start_date: 3.days.ago)
+        c25.update!(bfmemid: inel_judge.sattyid)
+        c25
+      end
+      let!(:c26) do
+        c26 = create(:legacy_aoj_appeal, judge: other_judge, attorney: attorney, appeal_affinity: false)
+        c26.update!(bfmemid: inel_judge.sattyid)
+        c26
+      end
+      # hearing held with previous decision where judge is same (THIS IS TIED TO)
+      let!(:c27) { create(:legacy_aoj_appeal, judge: inel_judge, attorney: attorney) }
+      let!(:c28) do
+        create(:legacy_aoj_appeal, judge: inel_judge, attorney: attorney,  affinity_start_date: 3.days.ago)
+      end
+      let!(:c29) do
+        create(:legacy_aoj_appeal, judge: inel_judge, attorney: attorney,  appeal_affinity: false)
+      end
+      # hearing held but no previous deciding judge
+      let!(:c30) do
+        c30 = create(:legacy_aoj_appeal, judge: inel_judge, attorney: attorney)
+        c30.update!(bfmemid: nil)
+        c30
+      end
+
+      it "distributes aoj cases correctly based on lever value", :aggregate_failures do
+        IneligibleJudgesJob.new.perform_now
+        aoj_lever = CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.aoj_affinity_days)
+
+        # {FOR LEVER BEING A VALUE:}
+        aoj_lever.update!(value: 14)
+        expect(VACOLS::CaseDocket.distribute_priority_appeals(judge, "any", 100, true).map { |c| c["bfkey"] }.sort)
+          .to match_array([c1, c4, c10, c11, c12, c13, c14, c15, c16, c17, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30]
+          .map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
+        # {FOR LEVER BEING INFINITE:}
+        aoj_lever.update!(value: "infinite")
+        expect(
+          VACOLS::CaseDocket.distribute_priority_appeals(judge, "any", 100, true).map { |c| c["bfkey"] }.sort
+        )
+          .to match_array([c11, c12, c13, c14, c15, c16, c17, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30]
+            .map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
+        # {FOR LEVER BEING OMIT:}
+        aoj_lever.update!(value: "omit")
+        expect(VACOLS::CaseDocket.distribute_priority_appeals(judge, "any", 100, true).map { |c| c["bfkey"] }.sort)
+          .to match_array([
+            c1, c2, c3, c4, c5, c6, c10, c11, c12, c13, c14, c15, c16, c17, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30
+          ]
+          .map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
+      end
+    end
+  end
+
+  # rubocop:enable Layout/LineLength
+
   context "legacy_das_deprecation FeatureToggle enabled" do
     before do
       FeatureToggle.enable!(:legacy_das_deprecation)
