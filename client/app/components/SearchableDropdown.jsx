@@ -52,7 +52,12 @@ const CustomInput = (props) => {
     'aria-live': 'polite',
   };
 
-  return <components.Input {...props} {...innerProps} />;
+  const updatedProps = {
+    ...innerProps,
+    ...(props.selectProps?.value && { 'aria-label': `${props.selectProps?.value?.label}` })
+  };
+
+  return <components.Input {...props} {...updatedProps} />;
 };
 
 const DoubleArrowDropdownIndicator = (props) => {
