@@ -83,20 +83,22 @@ class Api::V3::Issues::Ama::RequestIssueSerializer
   end
 
   attribute :added_by_station_id do |object|
-    object&.decision_review&.intake&.user&.station_id
+    # object&.decision_review&.intake&.user&.station_id
+    object&.added_by_user&.station_id
   end
 
   attribute :added_by_css_id do |object|
-    object&.decision_review&.intake&.user&.css_id
+    # object&.decision_review&.intake&.user&.css_id
+    object&.added_by_user&.css_id
   end
 
-  attribute :edited_by_station_id do |object|
-    object&.edited_by_user&.css_id
-  end
+  # attribute :edited_by_station_id do |object|
+  #   object&.edited_by_user&.station_id
+  # end
 
-  attribute :edited_by_css_id do |object|
-    object&.edited_by_user&.css_id
-  end
+  # attribute :edited_by_css_id do |object|
+  #   object&.edited_by_user&.css_id
+  # end
 
   attribute :removed_by_css_id do |object|
     object&.removed_by_user&.css_id

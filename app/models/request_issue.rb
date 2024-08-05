@@ -474,6 +474,17 @@ class RequestIssue < CaseflowRecord
     end
   end
 
+  # This retrieves the User who added the Issue as a result of a RequestIssuesUpdate and NOT during the initial Intake
+  def fetch_added_by_user_from_update
+    if any_updates?
+      relevant_update = riu.find do |update|
+        update.added_issues.any? { |issue| issue.id == id }
+      end
+
+      User.find(relevant_update&.user_id)
+    end
+  end
+
   def request_issues_updates
     @request_issues_updates ||= fetch_request_issues_updates
   end
@@ -488,6 +499,10 @@ class RequestIssue < CaseflowRecord
 
   def edited_by_user
     @edited_by_user ||= fetch_edited_by_user
+  end
+
+  def added_by_user
+    @added_by_user ||= fetch_added_by_user_from_update || decision_review&.intake&.user
   end
 
   def serialize
