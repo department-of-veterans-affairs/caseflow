@@ -57,11 +57,17 @@ const menuStyle = css({
     '& button': {
       margin: '0'
     }
+  },
+  '& .quick-buttons': {
+    padding: '0 0 2rem 0',
+    textAlign: 'center',
+    borderBottom: '1px solid #d6d7d9',
+    marginBottom: '2rem',
   }
 });
 
 /* Custom filter method to pass in a QueueTable column object */
-/* This called for every row of data in the table */
+/* This is called for every row of data in the table */
 /* rowValue is a date string such as '5/15/2024' */
 /* filterValues is the array of filter options such as ['between,2024-05-01,2024-05-31']
 /* It returns true or false if the row belongs in the data still */
@@ -105,13 +111,15 @@ class DatePicker extends React.PureComponent {
     super(props);
 
     const position = (props.settings && props.settings.position) || 'left';
+    const buttons = (props.settings && props.settings.buttons) || false;
 
     this.state = {
       open: false,
       mode: '',
       startDate: '',
       endDate: '',
-      position
+      position,
+      buttons
     };
   }
 
@@ -199,6 +207,27 @@ class DatePicker extends React.PureComponent {
     }
   }
 
+  quickButtons = (option) => {
+    let mode = '';
+    let startDate = '';
+    let endDate = '';
+    const format = 'YYYY-MM-DD';
+    const { onChange } = this.props;
+
+    if (option === 30) {
+      mode = 'between';
+      startDate = moment().subtract(30, 'days').
+        format(format);
+      endDate = moment().format(format);
+    }
+
+    if (onChange) {
+      onChange(`${ mode },${ startDate },${ endDate}`);
+    }
+
+    this.hideDropdown();
+  }
+
   render() {
     return <span {...datePickerStyle} ref={(rootElem) => {
       this.rootElem = rootElem;
@@ -215,6 +244,13 @@ class DatePicker extends React.PureComponent {
             <div className="clear-wrapper">
               <Button linkStyling onClick={() => this.clearFilter()} name={COPY.DATE_PICKER_CLEAR} />
             </div>
+
+            {this.state.buttons &&
+              <div className="quick-buttons">
+                <Button onClick={() => this.quickButtons(30)} name={COPY.DATE_PICKER_QUICK_BUTTON_30} />
+              </div>
+            }
+
             <div className="input-wrapper">
               <SearchableDropdown
                 name={COPY.DATE_PICKER_DROPDOWN_LABEL}
