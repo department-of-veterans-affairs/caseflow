@@ -29,7 +29,8 @@ FactoryBot.define do
           :correspondence_intake_task,
           appeal: correspondence,
           assigned_to: evaluator.assigned_to,
-          appeal_type: Correspondence.name
+          appeal_type: Correspondence.name,
+          parent: correspondence.root_task
         )
       end
     end
