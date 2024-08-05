@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 
 import NavigationBar from '../components/NavigationBar';
+import AppFrame from '../components/AppFrame';
 
 export default class TestApp extends React.PureComponent {
   constructor(props) {
@@ -22,7 +23,9 @@ export default class TestApp extends React.PureComponent {
       logoProps={{
         accentColor: COLORS.GREY_DARK,
         overlapColor: COLORS.GREY_DARK
-      }} />
+      }} >
+      <AppFrame />
+    </NavigationBar>
   )
 }
 
