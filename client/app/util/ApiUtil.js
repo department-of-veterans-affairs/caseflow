@@ -249,6 +249,52 @@ const httpMethods = {
 // TODO(jd): Fill in other HTTP methods as needed
 const ApiUtil = {
 
+  downloadWithProgress: (url, onProgress) => {
+    const xhr = new XMLHttpRequest();
+    const promise = new Promise((resolve, reject) => {
+
+      xhr.open('GET', url, true);
+      xhr.responseType = 'arraybuffer';
+      xhr.onprogress = (event) => {
+        console.log('## Progress event:', event);
+        const hardcodedTotal = 17448335; // Hardcoded total for testing purposes
+
+        const loaded = event.loaded;
+        const total = event.total || hardcodedTotal;
+
+        if (typeof onProgress === 'function') {
+          console.log('##', `Loaded: ${event.loaded}, Total: ${event.total}`);
+          onProgress({
+            loaded,
+            total,
+          });
+        } else {
+          console.warn('Progress event not computable');
+        }
+      };
+
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          resolve(xhr.response);
+        } else {
+          reject(new Error(`Failed to download file: ${xhr.statusText}`));
+        }
+      };
+
+      xhr.onerror = () => {
+        reject(new Error('Network error while downloading file.'));
+      };
+
+      xhr.send();
+
+    });
+
+    // Return the XMLHttpRequest object so that it can be aborted if needed
+    promise.xhr = xhr; // Attach the xhr object to the promise
+
+    return promise;
+  },
+
   // Converts camelCase to snake_case
   convertToSnakeCase(data) {
     if (!_.isObject(data)) {

@@ -97,6 +97,7 @@ const DocumentViewer = (props) => {
             setNumPages={setNumPages}
             zoomLevel={zoomLevel}
             documentId={currentDocumentId}
+            showSideBar={showSideBar}
           />
         </div>
         <ReaderFooter
