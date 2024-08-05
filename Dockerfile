@@ -26,25 +26,11 @@ COPY . .
 
 RUN pwd && ls -lsa
 
-# Install VA Trusted Certificates
-RUN mkdir -p /usr/local/share/ca-certificates/va
-COPY docker-bin/ca-certs/*.crt /usr/local/share/ca-certificates/va/
-#COPY docker-bin/ca-certs/*.cer /usr/local/share/ca-certificates/va/
-RUN update-ca-certificates
-COPY docker-bin/ca-certs/cacert.pem /etc/ssl/certs/cacert.pem
-
+# Install OpenSSL 3.2.0 from source
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
-
 RUN apt -y update && \
     apt -y upgrade && \
-    mkdir -p /usr/share/man/man1 && \
-    mkdir /usr/share/man/man7 && \
-    apt install -y ${BUILD} && \
-    curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
-    echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
     apt -y update
-
-# Install OpenSSL 3.2.0 from source
 RUN apt-get install -y wget && \
     wget https://www.openssl.org/source/openssl-3.2.0.tar.gz && \
     tar -zxf openssl-3.2.0.tar.gz && \
@@ -57,6 +43,22 @@ RUN apt-get install -y wget && \
 
 # Add OpenSSL libraries to the runtime linker path
 RUN echo "/usr/local/lib64" >> /etc/ld.so.conf.d/openssl.conf && ldconfig
+
+# Install VA Trusted Certificates
+RUN mkdir -p /usr/local/share/ca-certificates/va
+COPY docker-bin/ca-certs/*.crt /usr/local/share/ca-certificates/va/
+#COPY docker-bin/ca-certs/*.cer /usr/local/share/ca-certificates/va/
+RUN update-ca-certificates
+COPY docker-bin/ca-certs/cacert.pem /etc/ssl/certs/cacert.pem
+
+RUN apt -y update && \
+    apt -y upgrade && \
+    mkdir -p /usr/share/man/man1 && \
+    mkdir /usr/share/man/man7 && \
+    apt install -y ${BUILD} && \
+    curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
+    echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
+    apt -y update
 
 # Install node
 RUN mkdir /usr/local/nvm
