@@ -67,7 +67,7 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git
-  revision: cdc4da3ae836dbd8fa2d6b26fbe726c2b587fd36
+  revision: 793fb5e7b39d0d8fa4d25f006d8229ce68149f64
   branch: feature/APPEALS-43121-efolder
   specs:
     ruby_claim_evidence_api (0.1.0)
@@ -383,8 +383,8 @@ GEM
     aws-sdk-cognitosync (1.36.0)
       aws-sdk-core (~> 3, >= 3.127.0)
       aws-sigv4 (~> 1.1)
-    aws-sdk-comprehend (1.62.0)
-      aws-sdk-core (~> 3, >= 3.127.0)
+    aws-sdk-comprehend (1.82.0)
+      aws-sdk-core (~> 3, >= 3.193.0)
       aws-sigv4 (~> 1.1)
     aws-sdk-comprehendmedical (1.36.0)
       aws-sdk-core (~> 3, >= 3.127.0)
@@ -416,11 +416,11 @@ GEM
     aws-sdk-controltower (1.0.0)
       aws-sdk-core (~> 3, >= 3.127.0)
       aws-sigv4 (~> 1.1)
-    aws-sdk-core (3.131.0)
-      aws-eventstream (~> 1, >= 1.0.2)
-      aws-partitions (~> 1, >= 1.525.0)
-      aws-sigv4 (~> 1.1)
-      jmespath (~> 1.0)
+    aws-sdk-core (3.196.1)
+      aws-eventstream (~> 1, >= 1.3.0)
+      aws-partitions (~> 1, >= 1.651.0)
+      aws-sigv4 (~> 1.8)
+      jmespath (~> 1, >= 1.6.1)
     aws-sdk-costandusagereportservice (1.41.0)
       aws-sdk-core (~> 3, >= 3.127.0)
       aws-sigv4 (~> 1.1)
@@ -1640,7 +1640,7 @@ GEM
     gyoku (1.3.1)
       builder (>= 2.1.2)
     hana (1.3.6)
-    hashdiff (1.1.0)
+    hashdiff (1.1.1)
     heapy (0.1.4)
     holidays (6.6.1)
     httpclient (2.8.3)
@@ -1743,8 +1743,6 @@ GEM
     nio4r (2.5.9)
     no_proxy_fix (0.1.2)
     nokogiri (1.15.6-x86_64-darwin)
-      racc (~> 1.4)
-    nokogiri (1.15.6-x86_64-linux)
       racc (~> 1.4)
     nori (2.6.0)
     notiffany (0.1.1)
@@ -2053,10 +2051,7 @@ GEM
     ziptz (2.1.6)
 
 PLATFORMS
-  x86_64-darwin-21
-  x86_64-darwin-22
   x86_64-darwin-23
-  x86_64-linux
 
 DEPENDENCIES
   aasm (= 4.11.0)

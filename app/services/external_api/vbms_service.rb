@@ -83,7 +83,6 @@ class ExternalApi::VBMSService
         doc_info: file_upload_payload
       )
       JsonApiResponseAdapter.new.adapt_upload_document(response)
-
     else
       @vbms_client ||= init_vbms_client
       response = initialize_upload(appeal, uploadable_document)
