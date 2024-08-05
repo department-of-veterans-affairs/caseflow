@@ -131,7 +131,7 @@ describe CorrespondenceRootTask, :all_dbs do
       end
 
       it "returns the open package tasks" do
-        tasks_not_related_to_an_appeal.each do |klass|
+        tasks_not_related_to_an_appeal.each_with_index do |klass, count|
           task = klass.create!(
             type: klass.name,
             appeal: correspondence,
@@ -140,11 +140,8 @@ describe CorrespondenceRootTask, :all_dbs do
             assigned_to: user
           )
           root_task.reload
-          expect(root_task.tasks_not_related_to_an_appeal).to eq([task])
-          expect(root_task.tasks_not_related_to_an_appeal.first.open?).to eq(true)
-
-          # clear out task for next test
-          task.destroy
+          expect(root_task.tasks_not_related_to_an_appeal[count]).to eq(task)
+          expect(root_task.tasks_not_related_to_an_appeal[count].open?).to eq(true)
         end
       end
     end
