@@ -54,7 +54,7 @@ RSpec.describe CorrespondenceIntakeController, :all_dbs, type: :controller do
       corres_array1.map { |corr| corr.root_task.update!(status: "completed") }
 
       corres_array2 = (1..4).map { create(:correspondence, veteran: veteran) }
-      corres_array2.map { |corr| corr.root_task.update!(status: "assigned") }
+      corres_array2.map { |corr| corr.root_task.update!(status: "in_progress") }
 
       get :intake, params: { correspondence_uuid: correspondence.uuid }
       expect(controller.instance_variable_get(:@prior_mail).count).to eq(8)
