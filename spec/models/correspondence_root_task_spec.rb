@@ -102,7 +102,7 @@ describe CorrespondenceRootTask, :all_dbs do
             appeal: correspondence,
             appeal_type: Correspondence.name,
             parent: root_task.review_package_task,
-            assigned_to: user
+            assigned_to: InboundOpsTeam.singleton
           )
           expect(root_task.open_package_action_task).to eq(task)
           expect(root_task.open_package_action_task.open?).to eq(true)
@@ -119,7 +119,7 @@ describe CorrespondenceRootTask, :all_dbs do
             appeal: correspondence,
             appeal_type: Correspondence.name,
             parent: root_task.review_package_task,
-            assigned_to: user
+            assigned_to: InboundOpsTeam.singleton
           )
           task.update!(status: Constants.TASK_STATUSES.cancelled)
           expect(root_task.open_package_action_task.nil?).to eq(true)
@@ -237,7 +237,7 @@ describe CorrespondenceRootTask, :all_dbs do
             appeal: correspondence,
             appeal_type: Correspondence.name,
             parent: root_task.review_package_task,
-            assigned_to: user
+            assigned_to: InboundOpsTeam.singleton
           )
           expect(root_task.open_package_action_task).to eq(task)
           expect(root_task.open_package_action_task.status).to eq(Constants.TASK_STATUSES.assigned)

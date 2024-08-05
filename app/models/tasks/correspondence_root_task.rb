@@ -18,11 +18,7 @@ class CorrespondenceRootTask < CorrespondenceTask
   end
 
   def open_package_action_task
-    CorrespondenceTask.package_action_tasks.open.find_by(
-      appeal_id: appeal_id,
-      appeal_type: appeal_type,
-      status: Constants.TASK_STATUSES.assigned
-    )
+    CorrespondenceTask.action_required_tasks.find_by(appeal_id: appeal_id, appeal_type: appeal_type)
   end
 
   def tasks_not_related_to_an_appeal
