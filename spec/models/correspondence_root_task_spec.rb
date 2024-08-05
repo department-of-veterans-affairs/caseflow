@@ -81,7 +81,6 @@ describe CorrespondenceRootTask, :all_dbs do
             parent: root_task.review_package_task,
             assigned_to: user
           )
-          root_task.reload
           expect(root_task.open_package_action_task).to eq(task)
           expect(root_task.open_package_action_task.open?).to eq(true)
 
@@ -99,7 +98,6 @@ describe CorrespondenceRootTask, :all_dbs do
             parent: root_task.review_package_task,
             assigned_to: user
           )
-          root_task.reload
           task.update!(status: Constants.TASK_STATUSES.cancelled)
           expect(root_task.open_package_action_task.nil?).to eq(true)
 
@@ -138,7 +136,6 @@ describe CorrespondenceRootTask, :all_dbs do
             parent: root_task,
             assigned_to: user
           )
-          root_task.reload
           expect(root_task.tasks_not_related_to_an_appeal[count]).to eq(task)
           expect(root_task.tasks_not_related_to_an_appeal[count].open?).to eq(true)
         end
@@ -170,7 +167,6 @@ describe CorrespondenceRootTask, :all_dbs do
             assigned_to: user
           )
           task.update!(status: Constants.TASK_STATUSES.completed)
-          root_task.reload
           expect(root_task.correspondence_mail_tasks[count]).to eq(task)
         end
       end
@@ -229,6 +225,64 @@ describe CorrespondenceRootTask, :all_dbs do
         correspondence.open_intake_task.update!(status: Constants.TASK_STATUSES.on_hold)
         expect(correspondence.open_intake_task.status).to eq(Constants.TASK_STATUSES.on_hold)
         expect(subject).to eq(Constants.CORRESPONDENCE_STATUSES.assigned)
+      end
+    end
+
+    context "When the correspondence has an open package action task" do
+      let!(:package_action_tasks) do
+        [
+          ReassignPackageTask,
+          RemovePackageTask,
+          SplitPackageTask,
+          MergePackageTask
+        ]
+      end
+      it "returns the status as assigned if the task is assigned" do
+
+        package_action_tasks.each do |klass|
+          task = klass.create!(
+            type: klass.name,
+            appeal: correspondence,
+            appeal_type: Correspondence.name,
+            parent: root_task.review_package_task,
+            assigned_to: user
+          )
+          expect(root_task.open_package_action_task).to eq(task)
+          expect(root_task.open_package_action_task.status).to eq(Constants.TASK_STATUSES.assigned)
+          expect(subject).to eq(Constants.CORRESPONDENCE_STATUSES.action_required)
+          task.destroy
+        end
+      end
+    end
+
+    context "When the correspondence has open tasks not related to an appeal" do
+      let!(:tasks_not_related_to_an_appeal) do
+        [
+          CavcCorrespondenceCorrespondenceTask,
+          CongressionalInterestCorrespondenceTask,
+          DeathCertificateCorrespondenceTask,
+          FoiaRequestCorrespondenceTask,
+          OtherMotionCorrespondenceTask,
+          PowerOfAttorneyRelatedCorrespondenceTask,
+          PrivacyActRequestCorrespondenceTask,
+          PrivacyComplaintCorrespondenceTask,
+          StatusInquiryCorrespondenceTask
+        ]
+      end
+      it "returns the status as in_progress" do
+        correspondence.review_package_task.update!(status: Constants.TASK_STATUSES.completed)
+        tasks_not_related_to_an_appeal.each do |klass|
+          task = klass.create!(
+            type: klass.name,
+            appeal: correspondence,
+            appeal_type: Correspondence.name,
+            parent: root_task.review_package_task,
+            assigned_to: user
+          )
+          expect(root_task.tasks_not_related_to_an_appeal[0]).to eq(task)
+          expect(subject).to eq(Constants.CORRESPONDENCE_STATUSES.pending)
+          task.destroy
+        end
       end
     end
   end
