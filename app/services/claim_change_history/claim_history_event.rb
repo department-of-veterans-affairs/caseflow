@@ -186,6 +186,8 @@ class ClaimHistoryEvent
 
       request_event_type = "request_#{event}"
 
+      where_imr_created_in_same_transaction = same_transaction?(change_data)
+
       events.push from_change_data(request_event_type.to_sym, change_data.merge(decision_event_hash))
       # in case of multipe issue modification request and all been approved, only first one will have
       # previous_imr_created_at nil which will create only one in-progress event.
@@ -196,6 +198,11 @@ class ClaimHistoryEvent
           .merge("event_date" => change_data["imr_last_updated_at"])
 
         events.push from_change_data(:in_progress, change_data.merge(in_progress_system_hash_events))
+      elsif !where_imr_created_in_same_transaction && # change_data["is_assigned_present"] &&
+            !change_data["imr_last_decided_date"].nil?
+        in_progress_system_hash_events = pending_system_hash
+          .merge("event_date" => change_data["imr_last_updated_at"] - 2.seconds)
+        events.push from_change_data(:in_progress, change_data.merge(in_progress_system_hash_events))
       end
       events
     end
@@ -204,11 +211,9 @@ class ClaimHistoryEvent
       pending_system_hash_events = pending_system_hash
         .merge("event_date" => event_date)
 
-      same_transaction = timestamp_within_seconds?(change_data["issue_modification_request_created_at"],
-                                                   change_data["previous_imr_created_at"],
-                                                   ISSUE_MODIFICATION_REQUEST_CREATION_WINDOW)
+      same_transaction = same_transaction?(change_data)
 
-      if change_data["previous_imr_created_at"].nil? && !same_transaction
+      if change_data["previous_imr_created_at"].nil? || !same_transaction
         from_change_data(:pending, change_data.merge(pending_system_hash_events))
       end
     end
@@ -290,6 +295,12 @@ class ClaimHistoryEvent
       }
 
       change_data.merge(issue_data)
+    end
+
+    def same_transaction?(change_data)
+      timestamp_within_seconds?(change_data["issue_modification_request_created_at"],
+                                                   change_data["previous_imr_created_at"],
+                                                   ISSUE_MODIFICATION_REQUEST_CREATION_WINDOW)
     end
 
     def extract_issue_ids_from_change_data(change_data, key)

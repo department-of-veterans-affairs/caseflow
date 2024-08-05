@@ -287,7 +287,8 @@ class BusinessLine < Organization
           itv.object_changes_array AS imr_versions,
           lag(imr.created_at, 1) over (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.created_at) as previous_imr_created_at,
           v.object_changes as first_static_version,
-          MAX(imr.updated_at) over (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.updated_at desc)  as imr_last_updated_at
+          MAX(imr.updated_at) over (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.updated_at desc)  as imr_last_updated_at,
+          MAX(imr.decided_at) over (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.updated_at desc)  as imr_last_decided_date
         FROM tasks
         INNER JOIN request_issues ON request_issues.decision_review_type = tasks.appeal_type
         AND request_issues.decision_review_id = tasks.appeal_id
@@ -325,7 +326,7 @@ class BusinessLine < Organization
         LEFT JOIN users requestor ON imr.requestor_id = requestor.id
         LEFT JOIN users decider ON imr.decider_id = decider.id
         LEFT JOIN imr_version_agg itv ON itv.item_type = 'IssueModificationRequest' AND itv.item_id = imr.id
-        LEFT JOIN versions v on v.id = itv.first_id
+        LEFT JOIN versions v on v.id = itv.first_id AND v.item_type = 'IssueModificationRequest'
         LEFT JOIN LATERAL (
              SELECT CASE
            WHEN EXISTS (
@@ -394,7 +395,8 @@ class BusinessLine < Organization
          itv.object_changes_array AS imr_versions,
          lag(imr.created_at, 1) over (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.created_at) as previous_imr_created_at,
          v.object_changes as first_static_version,
-         MAX(imr.updated_at) over (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.updated_at desc)  as imr_last_updated_at
+         MAX(imr.updated_at) over (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.updated_at desc)  as imr_last_updated_at,
+         MAX(imr.decided_at) over (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.updated_at desc)  as imr_last_decided_date
       FROM tasks
       INNER JOIN request_issues ON request_issues.decision_review_type = tasks.appeal_type
       AND request_issues.decision_review_id = tasks.appeal_id
@@ -432,7 +434,7 @@ class BusinessLine < Organization
       LEFT JOIN users requestor ON imr.requestor_id  = requestor.id
       LEFT JOIN users decider ON  imr.decider_id  = decider.id
       LEFT JOIN imr_version_agg itv ON itv.item_type = 'IssueModificationRequest' AND itv.item_id = imr.id
-      LEFT JOIN versions v on v.id = itv.first_id
+      LEFT JOIN versions v on v.id = itv.first_id AND v.item_type = 'IssueModificationRequest'
       LEFT JOIN LATERAL (
              SELECT CASE
            WHEN EXISTS (
