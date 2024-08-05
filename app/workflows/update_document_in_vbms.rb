@@ -3,7 +3,12 @@
 class UpdateDocumentInVbms
   include VbmsDocumentTransactionConcern
 
-  delegate :document_type, :document_subject, :document_name, :document_version_reference_id, to: :document
+  delegate :document_type,
+           :document_subject,
+           :document_name,
+           :document_version_reference_id,
+           :document_series_reference_id,
+           to: :document
 
   def initialize(document:)
     @document = document
