@@ -176,4 +176,60 @@ describe CorrespondenceRootTask, :all_dbs do
       end
     end
   end
+
+  describe ".correspondence_status" do
+    let!(:correspondence) { create(:correspondence) }
+    let!(:root_task) { correspondence.root_task }
+
+    subject { root_task.correspondence_status }
+
+    context "When the correspondence has an unassigned Review Package Task" do
+
+      it "returns the status unassigned" do
+        expect(subject).to eq(Constants.CORRESPONDENCE_STATUSES.unassigned)
+      end
+    end
+
+    context "When the correspondence has an open review package task" do
+      it "returns the status as assigned if the task is assigned" do
+        correspondence.review_package_task.update!(
+          status: Constants.TASK_STATUSES.assigned,
+          assigned_to: current_user
+        )
+        expect(subject).to eq(Constants.CORRESPONDENCE_STATUSES.assigned)
+      end
+      it "returns the status of assigned if the task is on hold" do
+        EfolderUploadFailedTask.create!(
+          appeal: correspondence,
+          appeal_type: Correspondence.name,
+          parent: correspondence.review_package_task,
+          assigned_to: current_user
+        )
+        correspondence.review_package_task.update!(status: Constants.TASK_STATUSES.on_hold)
+        expect(correspondence.review_package_task.status).to eq(Constants.TASK_STATUSES.on_hold)
+        expect(subject).to eq(Constants.CORRESPONDENCE_STATUSES.assigned)
+      end
+    end
+
+    context "When the correspondence has an open intake task" do
+      let!(:correspondence) { create(:correspondence, :with_correspondence_intake_task) }
+
+      it "returns the status as assigned if the task is assigned" do
+
+        expect(correspondence.open_intake_task.status).to eq(Constants.TASK_STATUSES.assigned)
+        expect(subject).to eq(Constants.CORRESPONDENCE_STATUSES.assigned)
+      end
+      it "returns the status of assigned if the task is on hold" do
+        EfolderUploadFailedTask.create!(
+          appeal: correspondence,
+          appeal_type: Correspondence.name,
+          parent: correspondence.open_intake_task,
+          assigned_to: current_user
+        )
+        correspondence.open_intake_task.update!(status: Constants.TASK_STATUSES.on_hold)
+        expect(correspondence.open_intake_task.status).to eq(Constants.TASK_STATUSES.on_hold)
+        expect(subject).to eq(Constants.CORRESPONDENCE_STATUSES.assigned)
+      end
+    end
+  end
 end

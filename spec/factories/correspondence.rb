@@ -32,6 +32,8 @@ FactoryBot.define do
           appeal_type: Correspondence.name,
           parent: correspondence.root_task
         )
+        # close out the review package task
+        correspondence.review_package_task.update!(status: Constants.TASK_STATUSES.completed)
       end
     end
   end
