@@ -12,9 +12,6 @@ class Docket
     fail Caseflow::Error::MustImplementInSubclass
   end
 
-  PRIORITY = "priority"
-  NON_PRIORITY = "non_priority"
-
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   # :reek:LongParameterList
   def appeals(priority: nil, genpop: nil, ready: nil, judge: nil)
