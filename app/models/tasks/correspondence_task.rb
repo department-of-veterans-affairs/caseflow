@@ -30,7 +30,11 @@ class CorrespondenceTask < Task
 
   # Your Correspondence queries
   scope :user_assigned_tasks, ->(assignee) { where(type: active_task_names).open.where("assigned_to_id=?", assignee&.id) }
-  # in progress task tab goes here ###############
+  scope :user_in_progress_tasks, lambda { |assignee|
+    where("assigned_to_id=?", assignee&.id)
+      .where.not(type: EfolderUploadFailedTask.name)
+      .where(status: [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.on_hold])
+  }
 
   delegate :nod, to: :correspondence
 

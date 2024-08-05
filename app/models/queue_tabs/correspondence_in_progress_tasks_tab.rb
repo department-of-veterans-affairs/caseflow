@@ -18,10 +18,7 @@ class CorrespondenceInProgressTasksTab < CorrespondenceQueueTab
   end
 
   def tasks
-    CorrespondenceTask.includes(*task_includes)
-      .where(assigned_to: assignee)
-      .where.not(type: EfolderUploadFailedTask.name)
-      .where(status: [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.on_hold])
+    CorrespondenceTask.includes(*task_includes).user_in_progress_tasks(assignee)
   end
 
   # :reek:UtilityFunction
