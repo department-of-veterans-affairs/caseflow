@@ -7,9 +7,9 @@ import { SearchableDropdown } from '../../../components/SearchableDropdown';
 import ApiUtil from 'app/util/ApiUtil';
 
 const PackageFilesModal = ({ onCancel, contractors }) => {
-  const [transcriptionTaskId, setTranscriptionTaskId] = useState(0);
-  const [returnDateValue, setReturnDateValue] = useState('');
-  const [contractorId, setContractorId] = useState('');
+  const [transcriptionTaskId, setTranscriptionTaskId] = useState('');
+  const [, setReturnDateValue] = useState('');
+  const [, setContractorId] = useState('');
 
   /**
    * Grabs the taskId
