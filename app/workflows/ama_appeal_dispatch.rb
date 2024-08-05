@@ -85,10 +85,7 @@ class AmaAppealDispatch
   end
 
   def create_decision_document_and_submit_for_processing!(params)
-    DecisionDocument.create_document!(params, mail_package).tap do |doc|
-      doc.appeal_constested? = appeal.contested_claim?
-      doc.submit_for_processing!
-    end
+    DecisionDocument.create_document!(params, mail_package).tap(&:submit_for_processing!)
   end
 
   def complete_dispatch_task!
