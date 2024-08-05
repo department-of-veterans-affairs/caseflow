@@ -54,25 +54,40 @@ class AppealsReadyForDistribution
 
   def self.legacy_rows(appeals, sym)
     appeals.map do |appeal|
-      vlj_name = FullName.new(appeal["vlj_namef"], nil, appeal["vlj_namel"]).to_s
-      appeal_affinity = AppealAffinity.find_by(case_id: appeal["bfkey"], case_type: "VACOLS::Case")
-
-      {
-        docket_number: appeal["tinum"],
-        docket: sym.to_s,
-        aod: appeal["aod"] == 1,
-        cavc: appeal["cavc"] == 1,
-        receipt_date: appeal["bfd19"],
-        ready_for_distribution_at: appeal["bfdloout"],
-        target_distro_date: target_distro_date(appeal["bfd19"], docket),
-        days_before_goal_date: days_before_goal_date(appeal["bfd19"], docket),
-        hearing_judge: vlj_name.empty? ? nil : vlj_name,
-        original_judge: appeal["prev_deciding_judge"].nil? ? nil : legacy_original_deciding_judge(appeal),
-        veteran_file_number: appeal["ssn"] || appeal["bfcorlid"],
-        veteran_name: FullName.new(appeal["snamef"], nil, appeal["snamel"]).to_s,
-        affinity_start_date: appeal_affinity&.affinity_start_date
-      }
+      build_appeal_row(appeal, sym)
     end
+  end
+
+  def self.build_appeal_row(appeal, sym)
+    {
+      docket_number: appeal["tinum"],
+      docket: sym.to_s,
+      aod: appeal["aod"] == 1,
+      cavc: appeal["cavc"] == 1,
+      receipt_date: appeal["bfd19"],
+      ready_for_distribution_at: appeal["bfdloout"],
+      target_distro_date: target_distro_date(appeal["bfd19"], sym),
+      days_before_goal_date: days_before_goal_date(appeal["bfd19"], sym),
+      hearing_judge: format_vlj_name(appeal["vlj_namef"], appeal["vlj_namel"]),
+      original_judge: legacy_original_deciding_judge(appeal),
+      veteran_file_number: appeal["ssn"] || appeal["bfcorlid"],
+      veteran_name: format_veteran_name(appeal["snamef"], appeal["snamel"]),
+      affinity_start_date: fetch_affinity_start_date(appeal["bfkey"])
+    }
+  end
+
+  def self.format_vlj_name(first_name, last_name)
+    name = FullName.new(first_name, nil, last_name).to_s
+    name.empty? ? nil : name
+  end
+
+  def self.format_veteran_name(first_name, last_name)
+    FullName.new(first_name, nil, last_name).to_s
+  end
+
+  def self.fetch_affinity_start_date(case_id)
+    appeal_affinity = AppealAffinity.find_by(case_id: case_id, case_type: "VACOLS::Case")
+    appeal_affinity&.affinity_start_date
   end
 
   def self.ama_rows(appeals, docket, sym)
