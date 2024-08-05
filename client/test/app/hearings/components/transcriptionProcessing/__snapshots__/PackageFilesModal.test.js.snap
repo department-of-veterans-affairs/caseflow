@@ -58,9 +58,7 @@ exports[`Package files modal matches snapshot 1`] = `
             <strong>
               Work Order
             </strong>
-            <p>
-              0
-            </p>
+            <p />
           </div>
           <fieldset
             class="usa-fieldset-inputs cf-form-radio-inline "

@@ -35,6 +35,10 @@ RSpec.describe Hearings::TranscriptionContractorsController, type: :controller d
   let(:transcription_contractor_counts_this_week) { [2, 1] }
   let(:transcription_contractor_counts_next_week) { [1, 0] }
 
+  before do
+    TranscriptionTeam.singleton.add_user(user)
+  end
+
   describe "GET index" do
     it "returns blank when requesting HTML" do
       get :index
