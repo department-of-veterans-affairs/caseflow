@@ -39,11 +39,12 @@ class AppealsInLocation63InPast2Days
 
     docket_coordinator.dockets
       .flat_map do |sym, docket|
-        appeals = docket.loc_63_appeals
         if sym == :legacy
+          appeals = docket.loc_63_appeals
           legacy_rows(appeals, docket, sym)
         else
-          ama_rows(appeals, docket, sym)
+          []
+          # ama_rows(appeals, docket, sym)
         end
       end
   end
@@ -51,6 +52,7 @@ class AppealsInLocation63InPast2Days
   def self.legacy_rows(appeals, docket, sym)
     appeals.map do |appeal|
       veteran_name = FullName.new(appeal["snamef"], nil, appeal["snamel"]).to_s
+      vlj_name = FullName.new(appeal["vlj_namef"], nil, appeal["vlj_namel"]).to_s
       hearing_judge = vlj_name.empty? ? nil : vlj_name
       deciding_judge = "TODO"
       moved_date_time = "TODO"
@@ -73,12 +75,12 @@ class AppealsInLocation63InPast2Days
   end
 
   def self.ama_rows(appeals, docket, sym)
-    appeals.map do |appeal|
+    # appeals.map do |appeal|
       # This comes from the DistributionTask's assigned_at date
       # ready_for_distribution_at = distribution_task_query(appeal)
       # only look for hearings that were held
       # hearing_judge = with_held_hearings(appeal)
-      {
+      # {
         # docket_number: appeal.docket_number,
         # docket: sym.to_s,
         # aod: appeal.aod,
@@ -91,8 +93,8 @@ class AppealsInLocation63InPast2Days
         # veteran_file_number: appeal.veteran_file_number,
         # veteran_name: appeal.veteran&.name.to_s,
         # affinity_start_date: appeal.appeal_affinity&.affinity_start_date
-      }
-    end
+      # }
+    # end
   end
 
 end

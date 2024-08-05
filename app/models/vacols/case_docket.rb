@@ -220,15 +220,11 @@ class VACOLS::CaseDocket < VACOLS::Record
   FROM_LOC_63_APPEALS = "
     from BRIEFF
       #{VACOLS::Case::JOIN_AOD}
-      #{JOIN_MAIL_BLOCKS_DISTRIBUTION}
-      #{JOIN_DIARY_BLOCKS_DISTRIBUTION}
       inner join FOLDER on FOLDER.TICKNUM = BRIEFF.BFKEY
       where BRIEFF.BFCURLOC in ('63')
         and BRIEFF.BFBOX is null
         and BRIEFF.BFAC is not null
         and BRIEFF.BFD19 is not null
-        and MAIL_BLOCKS_DISTRIBUTION = 0
-        and DIARY_BLOCKS_DISTRIBUTION = 0
   "
   # snamef, snamel, tinum, aod, cavc, bfd19, bfdloout, ssn, bfcorlid, bfcurloc
   SELECT_LOC_63_APPEALS = "

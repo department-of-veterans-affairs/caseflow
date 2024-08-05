@@ -80,7 +80,7 @@ class CaseDistributionLeversTestsController < ApplicationController
     send_data csv_data, filename: filename
   end
 
-  def appeals_in_location_63_past_2_days
+  def appeals_in_location_63_in_past_2_days
     # change this to the correct class
     csv_data = AppealsInLocation63InPast2Days.process
 
