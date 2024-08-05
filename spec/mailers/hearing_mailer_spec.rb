@@ -391,7 +391,7 @@ describe HearingMailer do
     # ama hearing is scheduled at 8:30am in the regional office's time zone
     expected_ama_times = {
       ro_and_recipient_both_eastern: "8:30am EST",
-      ro_pacific_recipient_eastern: "8:30am EST"
+      ro_pacific_recipient_eastern: "11:30am EST"
     }
     # legacy hearing is scheduled at 11:30am in the regional office's time zone
     expected_legacy_times = {
@@ -556,7 +556,7 @@ describe HearingMailer do
     # ama hearing is scheduled at 8:30am in the regional office's time zone
     expected_ama_times = {
       ro_and_recipient_both_eastern: "8:30am EST",
-      ro_and_recipient_both_pacific: "5:30am PST",
+      ro_and_recipient_both_pacific: "8:30am PST",
       ro_eastern_recipient_pacific: "5:30am PST"
     }
     # legacy hearing is scheduled at 11:30am in the regional office's time zone
@@ -567,7 +567,7 @@ describe HearingMailer do
     }
 
     context "with ama virtual hearing" do
-      let(:hearing_email_recipient) { virtual_hearing.hearing.appellant_recipient }
+      let(:hearing_email_recipient) { hearing.appellant_recipient }
 
       include_context "ama_hearing"
 
@@ -1114,7 +1114,7 @@ describe HearingMailer do
     # ama hearing is scheduled at 8:30am in the regional office's time zone
     expected_ama_times = {
       ro_and_recipient_both_eastern: "8:30am EST",
-      ro_and_recipient_both_pacific: "5:30am PST",
+      ro_and_recipient_both_pacific: "8:30am PST",
       ro_eastern_recipient_pacific: "5:30am PST"
     }
     # legacy hearing is scheduled at 11:30am in the regional office's time zone
@@ -1583,7 +1583,7 @@ describe HearingMailer do
 
         context "email body" do
           include_examples "representative central reminder intro"
-          # include_examples "representative shared reminder sections"
+          include_examples "representative shared reminder sections"
           include_examples "representative non-virtual reminder sections"
         end
       end
