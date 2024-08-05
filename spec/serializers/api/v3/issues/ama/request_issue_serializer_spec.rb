@@ -3,26 +3,30 @@
 require "test_prof/recipes/rspec/let_it_be"
 
 describe Api::V3::Issues::Ama::RequestIssueSerializer, :postgres do
-  context "request issue object" do
-    let(:user) { Generators::User.build }
-    let(:vet) { create(:veteran) }
-    let(:epe) { create(:end_product_establishment) }
-    let(:request_issue) do
-      create(:request_issue, :with_associated_decision_issue, edited_description: "Somehow edited",
-                                                              end_product_establishment_id: epe.id,
-                                                              veteran_participant_id: vet.participant_id)
-    end
-    let!(:intake) do
-      AppealIntake.create(
-        user: user,
-        detail: request_issue.decision_review,
-        veteran_file_number: vet.file_number,
-        started_at: 2.days.ago,
-        completed_at: Time.zone.now,
-        completion_status: "success"
-      )
-    end
+  let(:user) { Generators::User.build }
+  let(:vet) { create(:veteran) }
+  let(:epe) { create(:end_product_establishment) }
+  let(:request_issue) do
+    create(:request_issue, :with_associated_decision_issue, edited_description: "Somehow edited",
+                                                            end_product_establishment_id: epe.id,
+                                                            veteran_participant_id: vet.participant_id)
+  end
+  let(:request_issue_2) do
+    create(:request_issue, :with_associated_decision_issue, end_product_establishment_id: epe.id,
+                                                            veteran_participant_id: vet.participant_id)
+  end
+  let!(:appeal_intake) do
+    AppealIntake.create(
+      user: user,
+      detail: request_issue.decision_review,
+      veteran_file_number: vet.file_number,
+      started_at: 2.days.ago,
+      completed_at: Time.zone.now,
+      completion_status: "success"
+    )
+  end
 
+  context "request issue object" do
     it "should have all eligiblity fields" do
       serialized_request_issue = Api::V3::Issues::Ama::RequestIssueSerializer.new(request_issue)
         .serializable_hash[:data][:attributes]
@@ -98,6 +102,90 @@ describe Api::V3::Issues::Ama::RequestIssueSerializer, :postgres do
       expect(serialized_decision_issue.key?(:rating_promulgation_date)).to eq true
       expect(serialized_decision_issue.key?(:subject_text)).to eq true
       expect(serialized_decision_issue.key?(:updated_at)).to eq true
+    end
+  end
+
+  context "when a request issue has an edit update" do
+    before do
+      request_issue.update!(edited_description: "new edit")
+    end
+
+    let(:new_user_edit) { Generators::User.build }
+
+    let!(:riu_edit) do
+      RequestIssuesUpdate.create!(
+        review: request_issue.decision_review,
+        user: new_user_edit,
+        before_request_issue_ids: [request_issue.id, request_issue_2.id],
+        after_request_issue_ids: [request_issue.id, request_issue_2.id],
+        edited_request_issue_ids: [request_issue.id],
+        attempted_at: Time.zone.now,
+        last_submitted_at: Time.zone.now,
+        processed_at: Time.zone.now
+      )
+    end
+
+    it "edited_by should return the user who edited the description" do
+      serialized_request_issue = Api::V3::Issues::Ama::RequestIssueSerializer.new(request_issue)
+        .serializable_hash[:data][:attributes]
+
+      expect(serialized_request_issue[:edited_by_station_id]).to eq new_user_edit.station_id
+      expect(serialized_request_issue[:edited_by_css_id]).to eq new_user_edit.css_id
+    end
+  end
+
+  context "when a request issue has a removal update" do
+    before do
+      request_issue.update!(closed_status: "removed", closed_at: Time.zone.now)
+    end
+    let(:new_user_remove) { Generators::User.build }
+
+    let!(:riu_remove) do
+      RequestIssuesUpdate.create!(
+        review: request_issue.decision_review,
+        user: new_user_remove,
+        before_request_issue_ids: [request_issue.id, request_issue_2.id],
+        after_request_issue_ids: [request_issue_2.id],
+        attempted_at: Time.zone.now,
+        last_submitted_at: Time.zone.now,
+        processed_at: Time.zone.now
+      )
+    end
+
+    it "removed_by should return the user who removed the issue" do
+      serialized_request_issue = Api::V3::Issues::Ama::RequestIssueSerializer.new(request_issue)
+        .serializable_hash[:data][:attributes]
+
+      expect(serialized_request_issue[:removed_by_station_id]).to eq new_user_remove.station_id
+      expect(serialized_request_issue[:removed_by_css_id]).to eq new_user_remove.css_id
+    end
+  end
+
+  context "when a request issue has a withdraw update" do
+    before do
+      request_issue_2.update!(closed_status: "withdrawn", closed_at: Time.zone.now)
+    end
+    let(:new_user_withdraw) { Generators::User.build }
+
+    let!(:riu_remove) do
+      RequestIssuesUpdate.create!(
+        review: request_issue_2.decision_review,
+        user: new_user_withdraw,
+        before_request_issue_ids: [request_issue_2.id],
+        after_request_issue_ids: [],
+        withdrawn_request_issue_ids: [request_issue_2.id],
+        attempted_at: Time.zone.now,
+        last_submitted_at: Time.zone.now,
+        processed_at: Time.zone.now
+      )
+    end
+
+    it "withdrawn_by should return the user who withdrew the issue" do
+      serialized_request_issue = Api::V3::Issues::Ama::RequestIssueSerializer.new(request_issue_2)
+        .serializable_hash[:data][:attributes]
+
+      expect(serialized_request_issue[:withdrawn_by_station_id]).to eq new_user_withdraw.station_id
+      expect(serialized_request_issue[:withdrawn_by_css_id]).to eq new_user_withdraw.css_id
     end
   end
 end

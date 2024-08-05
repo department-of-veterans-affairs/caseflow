@@ -445,7 +445,7 @@ class RequestIssue < CaseflowRecord
         update.removed_issues.any? { |issue| issue.id == id }
       end
 
-      User.find(relevant_update&.user_id)
+      User.find(relevant_update&.user_id) if relevant_update
     end
   end
 
@@ -457,7 +457,7 @@ class RequestIssue < CaseflowRecord
         update.withdrawn_issues.any? { |issue| issue.id == id }
       end
 
-      User.find(relevant_update&.user_id)
+      User.find(relevant_update&.user_id) if relevant_update
     end
   end
 
@@ -470,18 +470,20 @@ class RequestIssue < CaseflowRecord
         .select { |update| update.edited_issues.any? { |issue| issue.id == id } }
         .max_by(&:updated_at)
 
-      User.find(relevant_update&.user_id)
+      User.find(relevant_update&.user_id) if relevant_update
     end
   end
 
   # This retrieves the User who added the Issue as a result of a RequestIssuesUpdate and NOT during the initial Intake
   def fetch_added_by_user_from_update
     if any_updates?
+      riu = request_issues_updates
+
       relevant_update = riu.find do |update|
         update.added_issues.any? { |issue| issue.id == id }
       end
 
-      User.find(relevant_update&.user_id)
+      User.find(relevant_update&.user_id) if relevant_update
     end
   end
 
