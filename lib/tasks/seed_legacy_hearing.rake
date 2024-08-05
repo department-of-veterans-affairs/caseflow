@@ -12,7 +12,7 @@ namespace :db do
       # The offset should start at 100 to avoid collisions
       offsets = (100..(100 + number_of_appeals_to_create - 1)).to_a
       # Use a hearings user so the factories don't try to create one (and sometimes fail)
-      user = User.find_by_css_id("BVASYELLOW")
+      user = User.system_user
       # Set this for papertrail when creating vacols_case
       RequestStore[:current_user] = user
 
