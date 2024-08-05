@@ -11,7 +11,7 @@ const CorrespondenceCaseTimeline = (props) => {
     actions.push({ value: 'changeTask', label: 'Change task type' });
     actions.push({ value: 'changeTask', label: 'Change task type' });
     actions.push({ value: 'changeTask', label: 'Assign to team' });
-    actions.push({ value: 'changeTask', label: modifiedUserLabel });
+    actions.push({ value: 'changeTask', label: 'modifiedUserLabel' });
     actions.push({ value: 'changeTask', label: 'Mark task complete' });
     actions.push({ value: 'changeTask', label: 'Return to Inbound Ops' });
     actions.push({ value: 'changeTask', label: 'Cancel task' });
@@ -29,7 +29,7 @@ const CorrespondenceCaseTimeline = (props) => {
   };
 
   const formatTaskData = () => {
-    return (props.correspondence.tasksUnrelatedToAppeal.map((task) => {
+    return (props.tasksToDisplay.map((task) => {
       return {
         assignedOn: task.assigned_at,
         assignedTo: task.assigned_to,
@@ -60,6 +60,7 @@ CorrespondenceCaseTimeline.propTypes = {
   loadCorrespondence: PropTypes.func,
   correspondence: PropTypes.object,
   organizations: PropTypes.array,
+  tasksToDisplay: PropTypes.array,
   userCssId: PropTypes.string
 };
 

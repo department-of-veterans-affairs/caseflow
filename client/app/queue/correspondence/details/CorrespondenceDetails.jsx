@@ -87,7 +87,6 @@ const CorrespondenceDetails = (props) => {
                 task_added={task_added}
                 correspondence={props.correspondence} />
             ))}
-            {/* {props.correspondence} */}
 
           </AppSegment>
         </div>
@@ -102,7 +101,9 @@ const CorrespondenceDetails = (props) => {
       <CorrespondenceCaseTimeline
         organizations={props.organizations}
         userCssId={props.userCssId}
-        correspondence={props.correspondence} />
+        correspondence={props.correspondence}
+        tasksToDisplay={props.correspondence.tasksUnrelatedToAppeal}
+         />
     </div>
   </>;
 

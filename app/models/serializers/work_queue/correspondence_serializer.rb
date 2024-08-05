@@ -51,6 +51,7 @@ class WorkQueue::CorrespondenceSerializer
   attribute :tasks_added_to_appeal do |object|
     task_info = []
 
+
     object.correspondence_appeals.each do |cor_appeal|
       docket_num = cor_appeal.appeal.stream_docket_number
       assigned_to = cor_appeal.correspondence.tasks[0].assigned_to
@@ -61,7 +62,11 @@ class WorkQueue::CorrespondenceSerializer
         stream_type: cor_appeal.appeal.stream_type,
         number_of_issues: 0,
         status: cor_appeal.correspondence.status,
-        assigned_to: assigned_to_text
+        assigned_at: cor_appeal.appeal.tasks[1].assigned_at.strftime("%m/%d/%Y"),
+        instructions: [cor_appeal.appeal.tasks[1].instructions],
+        type: cor_appeal.appeal.tasks[1].label,
+        assigned_to: assigned_to_text,
+        corr: cor_appeal.appeal
       }
     end
     task_info
