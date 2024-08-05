@@ -12,6 +12,24 @@ class CorrespondenceTask < Task
   scope :package_action_tasks, -> { where(type: package_action_task_names) }
   scope :tasks_not_related_to_an_appeal, -> { where(type: tasks_not_related_to_an_appeal_names) }
   scope :correspondence_mail_tasks, -> { where(type: correspondence_mail_task_names) }
+
+  # scopes to handle task queue logic
+  # Correspondence Cases queries
+  scope :unassigned_tasks, -> { where(type: ReviewPackageTask.name, status: Constants.TASK_STATUSES.unassigned) }
+  scope :assigned_tasks, -> { where(type: active_task_names).open.where.not(status: Constants.TASK_STATUSES.unassigned) }
+  scope :action_required_tasks, -> { where(assigned_to: InboundOpsTeam.singleton).package_action_tasks.active }
+  scope :pending_tasks, -> { tasks_not_related_to_an_appeal.open }
+  # a correspondence is completed if the root task is completed or there are no active child tasks
+  # since active child tasks set the root task status to 'on_hold', the assumption is if a root task isn't on hold or cancelled,
+  # the correspondence is completed. This assumption is used to lower the N+1 query checking all the child task statuses.
+  scope :completed_root_tasks, -> { where(type: CorrespondenceRootTask.name).where.not(
+    status: Constants.TASK_STATUSES.on_hold).where.not(status: Constants.TASK_STATUSES.cancelled
+      )  }
+
+  # Your Correspondence queries
+  scope :user_assigned_tasks, ->(assignee) { where(type: active_task_names).open.where('assigned_to_id=?', assignee&.id) }
+  # in progress task tab goes here ###############
+
   delegate :nod, to: :correspondence
 
   class << self
@@ -38,6 +56,13 @@ class CorrespondenceTask < Task
       fail Caseflow::Error::ActionForbiddenError, message: "User does not belong to Inbound Ops Team" unless
       InboundOpsTeam.singleton.user_has_access?(user) || user&.system_user?
     end
+  end
+
+  def self.active_task_names
+    [
+      CorrespondenceIntakeTask.name,
+      ReviewPackageTask.name
+    ]
   end
 
   def self.package_action_task_names
