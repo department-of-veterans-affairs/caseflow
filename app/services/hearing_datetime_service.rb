@@ -52,7 +52,7 @@ class HearingDatetimeService
     central_office_time.strftime("%Y-%m-%d %I:%M %p %z")
   end
 
-  def scheduled_time_string
+  def scheduled_time_string(zone = nil)
     tz = ActiveSupport::TimeZone::MAPPING.key(@hearing.scheduled_in_timezone)
 
     "#{local_time.strftime('%l:%M %p')} #{tz}".lstrip

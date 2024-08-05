@@ -50,7 +50,7 @@ class HearingTimeService
   end
 
   def central_office_time_string
-    time_to_string(central_office_time)
+    time_to_string(central_office_time, CENTRAL_OFFICE_TIMEZONE)
   end
 
   def local_time
@@ -99,8 +99,10 @@ class HearingTimeService
     local_time.in_time_zone(CENTRAL_OFFICE_TIMEZONE)
   end
 
-  def time_to_string(time)
-    tz = ActiveSupport::TimeZone::MAPPING.key(@hearing.regional_office_timezone)
+  def time_to_string(time, zone = nil)
+    # A bit of a gross way to get the TZ alias.
+    tz = ActiveSupport::TimeZone::MAPPING.key(zone)
+    tz ||= ActiveSupport::TimeZone::MAPPING.key(@hearing.regional_office_timezone)
 
     "#{time.strftime('%l:%M %p')} #{tz}".lstrip
   end

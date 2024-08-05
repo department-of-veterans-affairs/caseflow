@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 describe HearingMailer do
+  before { FeatureToggle.enable!(:use_existing_scheduled_for) }
+  after { FeatureToggle.disable!(:use_existing_scheduled_for) }
+
   let(:nyc_ro_eastern) { "RO06" }
   let(:oakland_ro_pacific) { "RO43" }
   let(:regional_office) { nyc_ro_eastern }
@@ -567,7 +570,7 @@ describe HearingMailer do
     }
 
     context "with ama virtual hearing" do
-      let(:hearing_email_recipient) { hearing.appellant_recipient }
+      let(:hearing_email_recipient) { virtual_hearing.hearing.appellant_recipient }
 
       include_context "ama_hearing"
 
