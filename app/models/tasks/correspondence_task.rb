@@ -22,12 +22,14 @@ class CorrespondenceTask < Task
   # a correspondence is completed if the root task is completed or there are no active child tasks
   # since active child tasks set the root task status to 'on_hold', the assumption is if a root task isn't on hold or cancelled,
   # the correspondence is completed. This assumption is used to lower the N+1 query checking all the child task statuses.
-  scope :completed_root_tasks, -> { where(type: CorrespondenceRootTask.name).where.not(
-    status: Constants.TASK_STATUSES.on_hold).where.not(status: Constants.TASK_STATUSES.cancelled
-      )  }
+  scope :completed_root_tasks, lambda {
+                                 where(type: CorrespondenceRootTask.name).where.not(
+                                   status: Constants.TASK_STATUSES.on_hold
+                                 ).where.not(status: Constants.TASK_STATUSES.cancelled)
+                               }
 
   # Your Correspondence queries
-  scope :user_assigned_tasks, ->(assignee) { where(type: active_task_names).open.where('assigned_to_id=?', assignee&.id) }
+  scope :user_assigned_tasks, ->(assignee) { where(type: active_task_names).open.where("assigned_to_id=?", assignee&.id) }
   # in progress task tab goes here ###############
 
   delegate :nod, to: :correspondence
@@ -91,8 +93,8 @@ class CorrespondenceTask < Task
   def self.correspondence_mail_task_names
     [
       AssociatedWithClaimsFolderMailTask.name,
-      AddressChangeMailTask.name,
-      EvidenceOrArgumentMailTask.name,
+      AddressChangeCorrespondenceMailTask.name,
+      EvidenceOrArgumentCorrespondenceMailTask.name,
       VacolsUpdatedMailTask.name
     ].freeze
   end

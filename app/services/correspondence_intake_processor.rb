@@ -171,8 +171,8 @@ class CorrespondenceIntakeProcessor
   def mail_task_class_for_type(task_type)
     mail_task_types = {
       "Associated with Claims Folder": AssociatedWithClaimsFolderMailTask.name,
-      "Change of address": AddressChangeMailTask.name,
-      "Evidence or argument": EvidenceOrArgumentMailTask.name,
+      "Change of address": AddressChangeCorrespondenceMailTask.name,
+      "Evidence or argument": EvidenceOrArgumentCorrespondenceMailTask.name,
       "VACOLS updated": VacolsUpdatedMailTask.name
     }.with_indifferent_access
 

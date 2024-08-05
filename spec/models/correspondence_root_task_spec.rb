@@ -4,7 +4,6 @@ describe CorrespondenceRootTask, :all_dbs do
   let!(:user) { create(:correspondence_auto_assignable_user) }
   let!(:veteran) { create(:veteran) }
 
-
   before do
     User.authenticate!(user: user)
     FeatureToggle.enable!(:correspondence_queue)
@@ -142,6 +141,37 @@ describe CorrespondenceRootTask, :all_dbs do
           root_task.reload
           expect(root_task.tasks_not_related_to_an_appeal[count]).to eq(task)
           expect(root_task.tasks_not_related_to_an_appeal[count].open?).to eq(true)
+        end
+      end
+    end
+  end
+
+  describe ".correspondence_mail_tasks" do
+    let!(:correspondence) { create(:correspondence) }
+    let!(:root_task) { correspondence.root_task }
+
+    context "when the correspondence has a mail task" do
+      let!(:mail_tasks) do
+        [
+          AssociatedWithClaimsFolderMailTask,
+          AddressChangeCorrespondenceMailTask,
+          EvidenceOrArgumentCorrespondenceMailTask,
+          VacolsUpdatedMailTask
+        ]
+      end
+
+      it "returns the mail tasks" do
+        mail_tasks.each_with_index do |klass, count|
+          task = klass.create!(
+            type: klass.name,
+            appeal_id: correspondence.id,
+            appeal_type: Correspondence.name,
+            parent: root_task,
+            assigned_to: user
+          )
+          task.update!(status: Constants.TASK_STATUSES.completed)
+          root_task.reload
+          expect(root_task.correspondence_mail_tasks[count]).to eq(task)
         end
       end
     end
