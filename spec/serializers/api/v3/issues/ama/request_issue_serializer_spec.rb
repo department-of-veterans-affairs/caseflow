@@ -188,4 +188,33 @@ describe Api::V3::Issues::Ama::RequestIssueSerializer, :postgres do
       expect(serialized_request_issue[:withdrawn_by_css_id]).to eq new_user_withdraw.css_id
     end
   end
+
+  context "when a new request issue is added" do
+    let(:new_user_add) { Generators::User.build }
+    let(:request_issue_3) do
+      create(:request_issue, :with_associated_decision_issue, end_product_establishment_id: epe.id,
+                                                              veteran_participant_id: vet.participant_id)
+    end
+
+    let!(:riu_add) do
+      RequestIssuesUpdate.create!(
+        review: request_issue_3.decision_review,
+        user: new_user_add,
+        before_request_issue_ids: [],
+        after_request_issue_ids: [request_issue_3.id],
+        attempted_at: Time.zone.now,
+        last_submitted_at: Time.zone.now,
+        processed_at: Time.zone.now
+      )
+    end
+
+    it "added_by should return the user who added the issue via update" do
+      serialized_request_issue = Api::V3::Issues::Ama::RequestIssueSerializer.new(request_issue_3)
+        .serializable_hash[:data][:attributes]
+
+      expect(serialized_request_issue[:added_by_station_id]).to eq new_user_add.station_id
+      expect(serialized_request_issue[:added_by_css_id]).to eq new_user_add.css_id
+      expect(serialized_request_issue[:added_by_css_id]).to_not eq user.css_id
+    end
+  end
 end
