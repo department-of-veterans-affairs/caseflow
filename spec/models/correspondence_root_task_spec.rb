@@ -237,7 +237,7 @@ describe CorrespondenceRootTask, :all_dbs do
           MergePackageTask
         ]
       end
-      it "returns the status as assigned if the task is assigned" do
+      it "returns the status as action required if the task is assigned" do
 
         package_action_tasks.each do |klass|
           task = klass.create!(
@@ -269,7 +269,7 @@ describe CorrespondenceRootTask, :all_dbs do
           StatusInquiryCorrespondenceTask
         ]
       end
-      it "returns the status as in_progress" do
+      it "returns the status as pending" do
         correspondence.review_package_task.update!(status: Constants.TASK_STATUSES.completed)
         tasks_not_related_to_an_appeal.each do |klass|
           task = klass.create!(
@@ -285,5 +285,25 @@ describe CorrespondenceRootTask, :all_dbs do
         end
       end
     end
+
+    context "When the correspondence has no active children" do
+      it "returns the status as completed" do
+        correspondence.review_package_task.update!(
+          status: Constants.TASK_STATUSES.completed,
+          assigned_to: current_user
+        )
+        root_task.update!(status: Constants.TASK_STATUSES.assigned)
+        expect(subject).to eq(Constants.CORRESPONDENCE_STATUSES.completed)
+      end
+    end
+
+    context "When the correspondence has a completed root task" do
+      it "returns the status as completed" do
+        root_task.update!(status: Constants.TASK_STATUSES.completed)
+        root_task.review_package_task.update!(status: Constants.TASK_STATUSES.completed)
+        expect(subject).to eq(Constants.CORRESPONDENCE_STATUSES.completed)
+      end
+    end
+
   end
 end
