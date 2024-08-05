@@ -1,4 +1,6 @@
 class BackfillSupplementalClaimsTypeColumn < Caseflow::Migration
+  disable_ddl_transaction!
+
   def up
     safety_assured do
       execute <<-SQL
@@ -7,26 +9,10 @@ class BackfillSupplementalClaimsTypeColumn < Caseflow::Migration
                          ELSE 'SupplementalClaim'
                     END);
       SQL
-
-      execute <<-SQL
-        CREATE VIEW remands AS
-          SELECT *
-          FROM supplemental_claims
-          WHERE type = 'Remand';
-      SQL
     end
   end
 
   def down
-    safety_assured do
-      execute <<-SQL
-        UPDATE supplemental_claims
-          SET type='SupplementalClaim';
-      SQL
-
-      execute <<-SQL
-        DROP VIEW remands;
-      SQL
-    end
+    SupplementalClaim.in_batches.update_all type: 'SupplementalClaim'
   end
 end
