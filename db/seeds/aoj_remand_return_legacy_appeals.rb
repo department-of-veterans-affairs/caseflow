@@ -132,25 +132,25 @@ module Seeds
         create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S",  judge: affinity_and_tied_to_judge, attorney: attorney,
                                     tied_to: false, appeal_affinity: false, cavc: true)
         # hearing held with previous decision where judge is not the same
-        create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: other_judge, attorney: attorney, cavc: true)
-        .update!(bfmemid: affinity_judge.sattyid)
+        a1 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: other_judge, attorney: attorney, cavc: true)
+        VACOLS::Case.where(bfcorlid: a1.bfcorlid, bfac: "7").update(bfmemid: affinity_judge.sattyid)
 
-        create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: other_judge, attorney: attorney,
+        a2 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: other_judge, attorney: attorney,
                                           affinity_start_date: 3.days.ago, cavc: true)
-                                          .update!(bfmemid: affinity_judge.sattyid)
+        VACOLS::Case.where(bfcorlid: a2.bfcorlid, bfac: "7").update(bfmemid: affinity_judge.sattyid)
 
-        create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: other_judge, attorney: attorney, appeal_affinity: false, cavc: true)
-        .update!(bfmemid: affinity_judge.sattyid)
+        a3 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: other_judge, attorney: attorney, appeal_affinity: false, cavc: true)
+        VACOLS::Case.where(bfcorlid: a3.bfcorlid, bfac: "7").update(bfmemid: affinity_judge.sattyid)
 
-        create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: other_judge, attorney: attorney, cavc: true)
-        .update!(bfmemid: affinity_and_tied_to_judge.sattyid)
+        a4 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: other_judge, attorney: attorney, cavc: true)
+        VACOLS::Case.where(bfcorlid: a4.bfcorlid, bfac: "7").update(bfmemid: affinity_and_tied_to_judge.sattyid)
 
-        create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: other_judge, attorney: attorney,
+        a5 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: other_judge, attorney: attorney,
                                           affinity_start_date: 3.days.ago, cavc: true)
-                                          .update!(bfmemid: affinity_and_tied_to_judge.sattyid)
+        VACOLS::Case.where(bfcorlid: a5.bfcorlid, bfac: "7").update(bfmemid: affinity_and_tied_to_judge.sattyid)
 
-        create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: other_judge, attorney: attorney, appeal_affinity: false, cavc: true)
-        .update!(bfmemid: affinity_and_tied_to_judge.sattyid)
+        a6 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: other_judge, attorney: attorney, appeal_affinity: false, cavc: true)
+        VACOLS::Case.where(bfcorlid: a6.bfcorlid, bfac: "7").update(bfmemid: affinity_and_tied_to_judge.sattyid)
 
         # hearing held with previous decision where judge is same (THIS IS TIED TO)
         create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: tied_to_judge, attorney: attorney, cavc: true)
@@ -161,16 +161,18 @@ module Seeds
         create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: affinity_and_tied_to_judge, attorney: attorney, appeal_affinity: false, cavc: true)
 
         # hearing held but no previous deciding judge
-        create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: tied_to_judge, attorney: attorney, cavc: true)
-        .update!(bfmemid: nil)
-        create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: affinity_and_tied_to_judge, attorney: attorney, cavc: true)
-        .update!(bfmemid: nil)
+        a7 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: tied_to_judge, attorney: attorney, cavc: true)
+        VACOLS::Case.where(bfcorlid: a7.bfcorlid, bfac: "7").update(bfmemid: nil)
+        a8 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: affinity_and_tied_to_judge, attorney: attorney, cavc: true)
+        VACOLS::Case.where(bfcorlid: a8.bfcorlid, bfac: "7").update(bfmemid: nil)
 
         # no hearing held, no previous deciding judge
-        create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: affinity_judge, attorney: attorney,
-                                          tied_to: false, cavc: true).update!(bfmemid: nil)
-        create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: affinity_and_tied_to_judge, attorney: attorney,
-                                          tied_to: false, cavc: true).update!(bfmemid: nil)
+        a9 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: affinity_judge, attorney: attorney,
+                                          tied_to: false, cavc: true)
+        VACOLS::Case.where(bfcorlid: a9.bfcorlid, bfac: "7").update(bfmemid: nil)
+        a10 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: affinity_and_tied_to_judge, attorney: attorney,
+                                          tied_to: false, cavc: true)
+        VACOLS::Case.where(bfcorlid: a10.bfcorlid, bfac: "7").update(bfmemid: nil)
     end
 
     def create_cases_for_aoj_cavc_affinity_days_lever_excluded_judge
@@ -182,15 +184,15 @@ module Seeds
         create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: excluded_judge, attorney: attorney,
                                       tied_to: false, appeal_affinity: false, cavc: true)
         # hearing held with previous decision where judge is not the same
-        create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: other_judge, attorney: attorney, cavc: true)
-        .update!(bfmemid: excluded_judge.sattyid)
+        a11 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: other_judge, attorney: attorney, cavc: true)
+        VACOLS::Case.where(bfcorlid: a11.bfcorlid, bfac: "7").update(bfmemid: excluded_judge.sattyid)
 
-        create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: other_judge, attorney: attorney,
+        a12 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: other_judge, attorney: attorney,
                                       affinity_start_date: 3.days.ago, cavc: true)
-                                      .update!(bfmemid: excluded_judge.sattyid)
+        VACOLS::Case.where(bfcorlid: a12.bfcorlid, bfac: "7").update(bfmemid: excluded_judge.sattyid)
 
-        create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: other_judge, attorney: attorney, appeal_affinity: false, cavc: true)
-        .update!(bfmemid: excluded_judge.sattyid)
+        a13 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: other_judge, attorney: attorney, appeal_affinity: false, cavc: true)
+        VACOLS::Case.where(bfcorlid: a13.bfcorlid, bfac: "7").update(bfmemid: excluded_judge.sattyid)
 
         # hearing held with previous decision where judge is same (THIS IS TIED TO)
         create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: excluded_judge, attorney: attorney, cavc: true)
@@ -207,19 +209,20 @@ module Seeds
         create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: ineligible_judge, attorney: attorney,
                                       tied_to: false, appeal_affinity: false, cavc: true)
         # hearing held with previous decision where judge is not the same
-        create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: other_judge, attorney: attorney, cavc: true)
-          .update!(bfmemid: ineligible_judge.sattyid)
-        create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: other_judge, attorney: attorney,
+        a14 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: other_judge, attorney: attorney, cavc: true)
+        VACOLS::Case.where(bfcorlid: a14.bfcorlid, bfac: "7").update(bfmemid: ineligible_judge.sattyid)
+        a15 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: other_judge, attorney: attorney,
                                             affinity_start_date: 3.days.ago, cavc: true)
-                                            .update!(bfmemid: ineligible_judge.sattyid)
-        create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: other_judge, attorney: attorney, appeal_affinity: false, cavc: true)
-        .update!(bfmemid: ineligible_judge.sattyid)
+        VACOLS::Case.where(bfcorlid: a15.bfcorlid, bfac: "7").update(bfmemid: ineligible_judge.sattyid)
+        a16 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: other_judge, attorney: attorney, appeal_affinity: false, cavc: true)
+        VACOLS::Case.where(bfcorlid: a16.bfcorlid, bfac: "7").update(bfmemid: ineligible_judge.sattyid)
         # hearing held with previous decision where judge is same (THIS IS TIED TO)
         create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: ineligible_judge, attorney: attorney, cavc: true)
         create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: ineligible_judge, attorney: attorney,  affinity_start_date: 3.days.ago, cavc: true)
         create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: ineligible_judge, attorney: attorney,  appeal_affinity: false, cavc: true)
         # hearing held but no previous deciding judge
-        create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: ineligible_judge, attorney: attorney, cavc: true).update!(bfmemid: nil)
+        a17 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: ineligible_judge, attorney: attorney, cavc: true)
+        VACOLS::Case.where(bfcorlid: a17.bfcorlid, bfac: "7").update(bfmemid: nil)
     end
   end
 end
