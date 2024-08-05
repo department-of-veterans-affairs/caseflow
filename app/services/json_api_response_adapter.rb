@@ -6,9 +6,10 @@ class JsonApiResponseAdapter
   def adapt_fetch_document_series_for(json_response)
     documents = []
 
-    return documents unless valid_json_response?(json_response)
+    json_response = normalize_json_response(json_response)
+    return documents unless json_response.key?("files")
 
-    json_response.body["files"].each do |file_resp|
+    json_response["files"].each do |file_resp|
       documents.push(fetch_document_series_for_response(file_resp))
     end
 
@@ -16,19 +17,27 @@ class JsonApiResponseAdapter
   end
 
   def adapt_upload_document(json_response)
-    document_upload_response(JSON.parse(json_response.body))
+    document_upload_response(
+      normalize_json_response(json_response)
+    )
   end
 
   def adapt_update_document(json_response)
-    document_update_response(JSON.parse(json_response.body))
+    document_update_response(
+      normalize_json_response(json_response)
+    )
   end
 
   private
 
-  def valid_json_response?(json_response)
-    return false if json_response&.body.blank?
-
-    json_response.body.key?("files")
+  def normalize_json_response(json_response)
+    if json_response.blank?
+      {}
+    elsif json_response.instance_of?(Hash)
+      json_response.with_indifferent_access
+    elsif json_response.instance_of?(String)
+      JSON.parse(json_response)
+    end
   end
 
   def fetch_document_series_for_response(file_json)
