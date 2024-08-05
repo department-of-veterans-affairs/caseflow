@@ -10,7 +10,7 @@ const CorrespondenceTasksAdded = (props) => {
         <p>Docket number</p>
         <span className="case-details-badge">
           <DocketTypeBadge name="test" />
-          <CaseDetailsLink appeal={props.correspondence} task={{}} userRole="test" />
+          <CaseDetailsLink appeal={props.correspondence} getLinkText={() => props.task_added.docket_num}  task={{}} userRole="red" />
           <ExternalLinkIcon color="blue" />
         </span>
 
