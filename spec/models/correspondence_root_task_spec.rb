@@ -91,7 +91,7 @@ describe CorrespondenceRootTask, :all_dbs do
         end
       end
 
-      it "doesn't return a intake task that is closed" do
+      it "doesn't return a package task that is closed" do
         package_action_tasks.each do |klass|
           task = klass.create!(
             type: klass.name,
@@ -103,6 +103,45 @@ describe CorrespondenceRootTask, :all_dbs do
           root_task.reload
           task.update!(status: Constants.TASK_STATUSES.cancelled)
           expect(root_task.open_package_action_task.nil?).to eq(true)
+
+          # clear out task for next test
+          task.destroy
+        end
+      end
+    end
+  end
+
+  describe ".tasks_not_related_to_an_appeal" do
+    let!(:correspondence) { create(:correspondence) }
+    let!(:root_task) { correspondence.root_task }
+
+    context "when the correspondence has an open task not related to an appeal" do
+      let!(:tasks_not_related_to_an_appeal) do
+        [
+          CavcCorrespondenceCorrespondenceTask,
+          CongressionalInterestCorrespondenceTask,
+          DeathCertificateCorrespondenceTask,
+          FoiaRequestCorrespondenceTask,
+          OtherMotionCorrespondenceTask,
+          PowerOfAttorneyRelatedCorrespondenceTask,
+          PrivacyActRequestCorrespondenceTask,
+          PrivacyComplaintCorrespondenceTask,
+          StatusInquiryCorrespondenceTask
+        ]
+      end
+
+      it "returns the open package tasks" do
+        tasks_not_related_to_an_appeal.each do |klass|
+          task = klass.create!(
+            type: klass.name,
+            appeal: correspondence,
+            appeal_type: Correspondence.name,
+            parent: root_task,
+            assigned_to: user
+          )
+          root_task.reload
+          expect(root_task.tasks_not_related_to_an_appeal).to eq([task])
+          expect(root_task.tasks_not_related_to_an_appeal.first.open?).to eq(true)
 
           # clear out task for next test
           task.destroy
