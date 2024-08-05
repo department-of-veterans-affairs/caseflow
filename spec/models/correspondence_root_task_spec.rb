@@ -58,4 +58,56 @@ describe CorrespondenceRootTask, :all_dbs do
       end
     end
   end
+
+  describe ".open_package_action_task" do
+    let!(:correspondence) { create(:correspondence) }
+    let!(:root_task) { correspondence.root_task }
+
+    context "when the correspondence has an open package task" do
+      let!(:package_action_tasks) do
+        [
+          ReassignPackageTask,
+          RemovePackageTask,
+          SplitPackageTask,
+          MergePackageTask
+        ]
+      end
+
+      it "returns the open package task" do
+        package_action_tasks.each do |klass|
+          task = klass.create!(
+            type: klass.name,
+            appeal: correspondence,
+            appeal_type: Correspondence.name,
+            parent: root_task.review_package_task,
+            assigned_to: user
+          )
+          root_task.reload
+          expect(root_task.open_package_action_task).to eq(task)
+          expect(root_task.open_package_action_task.open?).to eq(true)
+
+          # clear out task for next test
+          task.destroy
+        end
+      end
+
+      it "doesn't return a intake task that is closed" do
+        package_action_tasks.each do |klass|
+          task = klass.create!(
+            type: klass.name,
+            appeal: correspondence,
+            appeal_type: Correspondence.name,
+            parent: root_task.review_package_task,
+            assigned_to: user
+          )
+          root_task.reload
+          task.update!(status: Constants.TASK_STATUSES.cancelled)
+          expect(root_task.open_package_action_task.nil?).to eq(true)
+
+          # clear out task for next test
+          task.destroy
+        end
+      end
+    end
+  end
 end
