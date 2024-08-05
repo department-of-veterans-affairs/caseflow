@@ -110,6 +110,14 @@ FactoryBot.define do
       end
     end
 
+    trait :inbound_ops_team do
+      after(:create) do |user|
+        user.organizations << InboundOpsTeam.singleton
+      end
+    end
+
+    factory :inbound_ops_team_user, traits: [:inbound_ops_team]
+
     trait :inactive do
       status { "inactive" }
     end
