@@ -66,23 +66,17 @@ namespace :db do
       )
     end
 
-    def create_vacols_entries(vacols_titrnum, docket_number, regional_office, type)
-      # We need these retries because the sequence for FactoryBot comes out of
-      # sync with what's in the DB. This just essentially updates the FactoryBot
-      # sequence to match what's in the DB.
-      # Note: Because the sequences in FactoryBot are global, these retrys won't happen
-      # every time you call this, probably only the first time.
-      retry_max = 100
-
-      # Create the vacols_folder
+    def create_vacols_folder(retry_max, docket_number, vacols_titrnum)
       begin
         retries ||= 0
         vacols_folder = FactoryBot.create(:folder, tinum: docket_number, titrnum: vacols_titrnum)
       rescue ActiveRecord::RecordNotUnique
         retry if (retries += 1) < retry_max
       end
+      vacols_folder
+    end
 
-      # Create the correspondent (where the name in the UI comes from)
+    def create_correspondent(retry_max)
       begin
         retries ||= 0
         correspondent = FactoryBot.create(
@@ -94,8 +88,10 @@ namespace :db do
       rescue ActiveRecord::RecordNotUnique
         retry if (retries += 1) < retry_max
       end
+      correspondent
+    end
 
-      # Create the vacols_case
+    def create_vacols_case(retry_max, vacols_titrnum, vacols_folder, correspondent, type)
       begin
         retries ||= 0
         if type == "video"
@@ -107,6 +103,20 @@ namespace :db do
       rescue ActiveRecord::RecordNotUnique
         retry if (retries += 1) < retry_max
       end
+      vacols_case
+    end
+
+    def create_vacols_entries(vacols_titrnum, docket_number, regional_office, type)
+      # We need these retries because the sequence for FactoryBot comes out of
+      # sync with what's in the DB. This just essentially updates the FactoryBot
+      # sequence to match what's in the DB.
+      # Note: Because the sequences in FactoryBot are global, these retrys won't happen
+      # every time you call this, probably only the first time.
+      retry_max = 100
+
+      vacols_folder = create_vacols_folder(retry_max, docket_number, vacols_titrnum)
+      correspondent = create_correspondent(retry_max)
+      vacols_case = create_vacols_case(retry_max, vacols_titrnum, vacols_folder, correspondent, type)
 
       # Create the legacy_appeal, this doesn't fail with index problems, so no need to retry
       legacy_appeal = FactoryBot.create(
