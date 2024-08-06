@@ -17,6 +17,7 @@ class Correspondence < CaseflowRecord
   belongs_to :correspondence_type
   belongs_to :veteran
 
+  scope :with_status, -> { all.tap{ |relation| binding.pry; relation.define_singleton_method(:status) { relation.status } } }
   after_create :initialize_correspondence_tasks
 
   def initialize_correspondence_tasks

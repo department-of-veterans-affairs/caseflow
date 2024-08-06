@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
@@ -10,6 +10,9 @@ import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
 import { prepareAppealForSearchStore } from 'app/queue/utils';
 import moment from 'moment';
+import Pagination from 'app/components/Pagination/Pagination';
+import Table from 'app/components/Table';
+import Link from 'app/components/Link';
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
@@ -19,6 +22,8 @@ const CorrespondenceDetails = (props) => {
   const appeals = [];
   let filteredAppeals = [];
   let unfilteredAppeals = [];
+  const allCorrespondences = props.correspondence.all_correspondences;
+  const [viewAllCorrespondence, setViewAllCorrespondence] = useState(false);
 
   appealsResult.appeals.map((appeal) => {
     if (correspondence.correspondenceAppealIds?.includes(appeal.id)) {
@@ -49,9 +54,91 @@ const CorrespondenceDetails = (props) => {
     dispatch(loadCorrespondence(correspondence));
   }, []);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(allCorrespondences.length / 15);
+  const startIndex = (currentPage * 15) - 15;
+  const endIndex = (currentPage * 15);
+
+  const updatePageHandler = (idx) => {
+    const newCurrentPage = idx + 1;
+
+    setCurrentPage(newCurrentPage);
+  };
+
+  const getKeyForRow = (rowNumber, object) => object.id;
+
+  const getColumns = () => {
+    const columns = [];
+
+    columns.push(
+      {
+        header: 'Package Document Type',
+        valueFunction: (correspondenceObj) => (
+          <Link href={`/queue/correspondence/${correspondenceObj.uuid}`}>
+            <strong> {correspondenceObj.nod ? 'NOD' : 'Non-NOD'} </strong>
+          </Link>
+        )
+      },
+      {
+        header: 'VA DOR',
+        valueFunction: (correspondenceObj) => {
+          const date = new Date(correspondenceObj.vaDateOfReceipt);
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          const formattedDate = `${month}/${day}/${year}`;
+
+          return formattedDate;
+        }
+      },
+      {
+        header: 'Notes',
+        valueFunction: (correspondenceObj) => correspondenceObj.notes
+      },
+      {
+        header: 'Status',
+        valueFunction: (correspondenceObj) => correspondenceObj.status
+      }
+    );
+
+    return columns;
+  };
+
+  const handleViewAllCorrespondence = () => {
+    setViewAllCorrespondence(!viewAllCorrespondence);
+  };
+
+  const viewDisplayText = () => {
+    return viewAllCorrespondence ? 'Hide all correspondence' : 'View all correspondence';
+  };
+
   const correspondenceTasks = () => {
     return (
       <React.Fragment>
+        {viewAllCorrespondence && (
+          <div className="all-correspondences">
+            <h2>{COPY.ALL_CORRESPONDENCES}</h2>
+            <AppSegment filledBackground noMarginTop>
+              <Pagination
+                pageSize={15}
+                currentPage={currentPage}
+                currentCases={allCorrespondences.slice(startIndex, endIndex).length}
+                totalPages={totalPages}
+                totalCases={allCorrespondences.length}
+                updatePage={updatePageHandler}
+                table={
+                  <Table
+                    className="cf-case-list-table"
+                    columns={getColumns}
+                    rowObjects={allCorrespondences.slice(startIndex, endIndex)}
+                    getKeyForRow={getKeyForRow}
+                  />
+                }
+                enableTopPagination = {false}
+              />
+            </AppSegment>
+          </div>
+        )}
         <div className="correspondence-mail-tasks">
           <h2>Completed Mail Tasks</h2>
           <AppSegment filledBackground noMarginTop>
@@ -171,7 +258,7 @@ const CorrespondenceDetails = (props) => {
               text={props.correspondence.veteranFileNumber}
             />
           </div>
-          <p><a href="/under_construction">View all correspondence</a></p>
+          <p><a onClick={handleViewAllCorrespondence}>{viewDisplayText()}</a></p>
           <div></div>
           <p className="last-item"><b>Record status: </b>{props.correspondence.status}</p>
         </div>
