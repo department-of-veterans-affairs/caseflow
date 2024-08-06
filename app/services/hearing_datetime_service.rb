@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
-# HearingDatetimeService is intended to replace HearingTimeService by taking advantage of the new hearings table columns
-# scheduled_in_timezone and (for AMA hearings) scheduled_datetime. The two services will work in parallel until
+# HearingDatetimeService is intended to replace {HearingTimeService} by taking advantage of the new hearings table
+# columns scheduled_in_timezone and (for AMA hearings) scheduled_datetime. The two services will work in parallel until
 # hearings with nil values for those columns have been held, at which point we should be able to deprecate
-# HearingTimeService as well as the hearings.scheduled_time column (which is unable to store the hearing date due
-# to it's datatype in postgres). Until then, this class will work in parallel to HearingTimeService through the
-# facade hearing.time as set in the module HearingTimeConcern.rb
+# {HearingTimeService} as well as the hearings.scheduled_time column (which is unable to store the hearing date due
+# to it's datatype in postgres). Until then, this class will work in parallel to {HearingTimeService} through the
+# facade hearing.time as set in the module {HearingTimeConcern}.
+
 class HearingDatetimeService
   class << self
     # Combines a date and time string to create a Time object.

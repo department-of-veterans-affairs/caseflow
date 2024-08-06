@@ -17,11 +17,11 @@ RSpec.describe HearingDatetimeService do
         time_string = "1:00 PM Central Time (US & Canada)"
 
         time = described_class.prepare_time_for_storage(date: date, time_string: time_string)
+        expected_time = Time.new(2021, 7, 3, 13, 0, 0, "-05:00")
 
         expect(time.dst?).to eq(true)
         expect(time.zone).to eq("CDT")
-        # utc_offset is in seconds
-        expect(time.utc_offset).to eq(-18_000)
+        expect(time).to eq(expected_time)
       end
 
       it "has no Daylight Savings time offset in Winter" do
@@ -29,11 +29,11 @@ RSpec.describe HearingDatetimeService do
         time_string = "1:00 PM Central Time (US & Canada)"
 
         time = described_class.prepare_time_for_storage(date: date, time_string: time_string)
+        expected_time = Time.new(2026, 2, 6, 13, 0, 0, "-06:00")
 
         expect(time.dst?).to eq(false)
         expect(time.zone).to eq("CST")
-        # utc_offset is in seconds
-        expect(time.utc_offset).to eq(-21_600)
+        expect(time).to eq(expected_time)
       end
 
       it "returns nil if date method argument is nil" do
