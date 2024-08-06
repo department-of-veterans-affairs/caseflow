@@ -15,6 +15,11 @@ FactoryBot.define do
     remove_original_issue { false }
     requestor_id { create(:user).id }
 
+    trait :withdrawal do
+      request_type { "withdrawal" }
+      withdrawal_date { Time.zone.today - rand(0..29) }
+    end
+
     trait :update_decider do
       after(:create) do |imr, evaluator|
         imr.status = evaluator.status == "assigned" ? "approved" : evaluator.status
@@ -29,6 +34,13 @@ FactoryBot.define do
         imr.nonrating_issue_category = evaluator.nonrating_issue_category ||
                                        Constants::ISSUE_CATEGORIES[evaluator.benefit_type].sample
         imr.status = evaluator.status
+        imr.save!
+      end
+    end
+
+    trait :cancel_of_request do
+      after(:create) do |imr|
+        imr.status = "cancelled"
         imr.save!
       end
     end
@@ -71,6 +83,18 @@ FactoryBot.define do
                :with_intake,
                :with_vha_issue,
                :update_assigned_at,
+               :processed,
+               claimant_type: :veteran_claimant)
+      end
+    end
+
+    trait :with_higher_level_review_with_decision do
+      decision_review do
+        create(:higher_level_review,
+               :with_intake,
+               :with_vha_issue,
+               :update_assigned_at,
+               :with_decision,
                :processed,
                claimant_type: :veteran_claimant)
       end
