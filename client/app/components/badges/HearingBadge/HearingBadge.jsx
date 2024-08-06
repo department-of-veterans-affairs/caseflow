@@ -56,7 +56,7 @@ class HearingBadge extends React.PureComponent {
         <li>Judge: <strong>{hearing.heldBy}</strong></li>
         <li>Disposition: <strong>{_.startCase(hearing.disposition)}</strong></li>
         <li>Date: <strong><DateString date={hearing.date} /></strong></li>
-        <li>Type: <strong>{_.startCase(hearing.type)}</strong></li>
+        <li>Type: <strong>{hearing.isVirtual ? 'Virtual' : _.startCase(hearing.type)}</strong></li>
       </ul>
     </div>;
 
