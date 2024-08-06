@@ -600,7 +600,7 @@
     "label": "Anchorage regional office",
     "city": "Anchorage",
     "state": "AK",
-    "timezone": "America/Anchorage",
+    "timezone": "America/Juneau",
     "hold_hearings": true,
     "facility_locator_id": "vba_463",
     "alternate_locations": null

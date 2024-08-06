@@ -137,8 +137,10 @@ class LegacyHearing < CaseflowRecord
   end
 
   def hearing_day_id_refers_to_vacols_row?
-    (original_request_type == HearingDay::REQUEST_TYPES[:central] && scheduled_for.to_date < Date.new(2019, 1, 1)) ||
-      (original_request_type == HearingDay::REQUEST_TYPES[:video] && scheduled_for.to_date < Date.new(2019, 4, 1))
+    perform_vacols_request unless @vacols_load_status == :success
+
+    (original_request_type == HearingDay::REQUEST_TYPES[:central] && @scheduled_for.to_date < Date.new(2019, 1, 1)) ||
+      (original_request_type == HearingDay::REQUEST_TYPES[:video] && @scheduled_for.to_date < Date.new(2019, 4, 1))
   end
 
   def hearing_day_id
@@ -213,6 +215,8 @@ class LegacyHearing < CaseflowRecord
 
   def hold_release_date
     return unless held_open?
+
+    # byebug
 
     scheduled_for.to_date + hold_open.days
   end
@@ -358,6 +362,24 @@ class LegacyHearing < CaseflowRecord
       Raven.capture_exception(error)
       false
     end
+  end
+
+  def vacols_load_status=(status)
+    @vacols_load_status = status
+  end
+
+  def scheduled_for
+    perform_vacols_request unless @vacols_load_status == :success
+
+    return nil unless @scheduled_for
+
+    return @scheduled_for.in_time_zone(scheduled_in_timezone) if try(:scheduled_in_timezone)
+
+    HearingMapper.datetime_based_on_type(
+      datetime: @scheduled_for,
+      regional_office: HearingRepository.regional_office_for_scheduled_timezone(self, vacols_record),
+      type: vacols_record.hearing_type
+    )
   end
 
   class << self

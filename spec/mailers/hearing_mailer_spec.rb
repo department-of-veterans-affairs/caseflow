@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 describe HearingMailer do
+  before { FeatureToggle.enable!(:use_existing_scheduled_for) }
+  after { FeatureToggle.disable!(:use_existing_scheduled_for) }
+
   let(:nyc_ro_eastern) { "RO06" }
   let(:oakland_ro_pacific) { "RO43" }
   let(:regional_office) { nyc_ro_eastern }
@@ -236,7 +239,7 @@ describe HearingMailer do
       # Date and Time section
       expect(subject.body).to include("Date and Time")
       expect(subject.body).to include(
-        Hearings::CalendarTemplateHelper.format_hearing_time(virtual_hearing.hearing.time.appellant_time)
+        Hearings::CalendarTemplateHelper.format_hearing_time(virtual_hearing.hearing.appellant_time)
       )
 
       # Signature section
@@ -286,7 +289,7 @@ describe HearingMailer do
       # Date and Time section
       expect(subject.body).to include("Date and Time")
       expect(subject.body).to include(
-        Hearings::CalendarTemplateHelper.format_hearing_time(hearing.time.appellant_time)
+        Hearings::CalendarTemplateHelper.format_hearing_time(hearing.appellant_time)
       )
 
       # Signature section
@@ -391,7 +394,7 @@ describe HearingMailer do
     # ama hearing is scheduled at 8:30am in the regional office's time zone
     expected_ama_times = {
       ro_and_recipient_both_eastern: "8:30am EST",
-      ro_pacific_recipient_eastern: "8:30am EST"
+      ro_pacific_recipient_eastern: "11:30am EST"
     }
     # legacy hearing is scheduled at 11:30am in the regional office's time zone
     expected_legacy_times = {
@@ -556,7 +559,7 @@ describe HearingMailer do
     # ama hearing is scheduled at 8:30am in the regional office's time zone
     expected_ama_times = {
       ro_and_recipient_both_eastern: "8:30am EST",
-      ro_and_recipient_both_pacific: "5:30am PST",
+      ro_and_recipient_both_pacific: "8:30am PST",
       ro_eastern_recipient_pacific: "5:30am PST"
     }
     # legacy hearing is scheduled at 11:30am in the regional office's time zone
@@ -1114,7 +1117,7 @@ describe HearingMailer do
     # ama hearing is scheduled at 8:30am in the regional office's time zone
     expected_ama_times = {
       ro_and_recipient_both_eastern: "8:30am EST",
-      ro_and_recipient_both_pacific: "5:30am PST",
+      ro_and_recipient_both_pacific: "8:30am PST",
       ro_eastern_recipient_pacific: "5:30am PST"
     }
     # legacy hearing is scheduled at 11:30am in the regional office's time zone
@@ -1583,7 +1586,7 @@ describe HearingMailer do
 
         context "email body" do
           include_examples "representative central reminder intro"
-          # include_examples "representative shared reminder sections"
+          include_examples "representative shared reminder sections"
           include_examples "representative non-virtual reminder sections"
         end
       end

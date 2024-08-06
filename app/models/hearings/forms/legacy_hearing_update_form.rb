@@ -23,7 +23,7 @@ class LegacyHearingUpdateForm < BaseHearingUpdateForm
   private
 
   def hearing_updates
-    updates = {
+    {
       aod: aod,
       bva_poc: bva_poc,
       disposition: disposition,
@@ -35,14 +35,11 @@ class LegacyHearingUpdateForm < BaseHearingUpdateForm
       prepped: prepped,
       representative_name: representative_name,
       room: room,
-      scheduled_for: scheduled_for,
-      scheduled_time_string: scheduled_time_string,
+      scheduled_for: hearing.time.legacy_scheduled_for(scheduled_time_string),
       summary: summary,
       transcript_requested: transcript_requested,
       witness: witness,
       email_recipients_attributes: email_recipients_attributes
     }.compact
-
-    HearingTimeService.build_legacy_params_with_time(hearing, updates)
   end
 end
