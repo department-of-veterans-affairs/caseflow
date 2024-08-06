@@ -443,9 +443,10 @@ Rails.application.routes.draw do
     get "/error", to: "users#show_error"
     get "/seeds", to: "test_seeds#seeds" # test seed buttons routes
 
-    resources :load_test, only: [:index]
-    get "/load_test", to: "load_test#user", as: "user"
-    get "/load_test", to: "load_test#target", as: "target"
+    # resources :load_test, only: [:index]
+    get "/load_test/index", to: "load_test#index", as: "index"
+    post "/load_test/user", to: "load_test#user", as: "user"
+    get "/load_test/target", to: "load_test#target", as: "target"
 
     resources :hearings, only: [:index]
 
