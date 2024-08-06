@@ -19,7 +19,7 @@ class OrganizationCorrespondencePendingTasksTab < CorrespondenceQueueTab
 
   # :reek:UtilityFunction
   def tasks
-    CorrespondenceMailTask.includes(*task_includes).active
+    CorrespondenceTask.includes(*task_includes).pending_tasks
   end
 
   # :reek:UtilityFunction
