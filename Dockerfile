@@ -94,6 +94,8 @@ RUN rm -rf /var/lib/apt/lists/*
 RUN gem install bundler:$(cat Gemfile.lock | tail -1 | tr -d " ") && gem uninstall -i /usr/local/lib/ruby/gems/2.7.0 rake
 RUN bundle install && \
     cd client && \
+    rm -rf node_modules  && \
+    yarn cache clean && \
     yarn install && \
     yarn run build:demo && \
     chmod +x /caseflow/docker-bin/startup.sh && \
