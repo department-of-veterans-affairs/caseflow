@@ -93,7 +93,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket
       from BRIEFF B
       inner join FOLDER F on F.TICKNUM = B.BFKEY
 
-      where B.BFMPRO = 'HIS' and B.BFMEMID not in ('000', '888', '999') and B.BFATTID is not null
+      where B.BFMPRO = 'HIS'
     ) PREV_APPEAL
       on PREV_APPEAL.PREV_BFKEY != BRIEFF.BFKEY and PREV_APPEAL.PREV_BFCORLID = BRIEFF.BFCORLID
       and PREV_APPEAL.PREV_TINUM = BRIEFF.TINUM and PREV_APPEAL.PREV_TITRNUM = BRIEFF.TITRNUM
