@@ -62,8 +62,8 @@ class CorrespondenceDetailsController < CorrespondenceController
 
   def all_correspondences
     veteran = @correspondence.veteran
-    serialized_correspondences =  WorkQueue::CorrespondenceSerializer.new(veteran.correspondences.order(va_date_of_receipt: :asc)).serializable_hash[:data]
-    all_correspondences = serialized_correspondences.map{ |c| c[:attributes]}
+    serialized_correspondences = WorkQueue::CorrespondenceSerializer.new(veteran.correspondences.order(va_date_of_receipt: :asc)).serializable_hash[:data]
+    all_correspondences = serialized_correspondences.map { |c| c[:attributes] }
     { all_correspondences: all_correspondences }
   end
 end

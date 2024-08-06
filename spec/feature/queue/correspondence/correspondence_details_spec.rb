@@ -19,7 +19,7 @@ RSpec.feature("The Correspondence Details page") do
       visit "/queue/correspondence/#{correspondence.uuid}"
 
       # Veteran Details
-      expect(page).to have_content("8675309")
+      expect(page).to have_content("8675309", count: 3)
       expect(page).to have_content("John Testingman")
 
       # View all correspondence link
