@@ -1410,6 +1410,9 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   margin-bottom: 20px;
 }
 
+.task-added-header {
+  font-weight: bold;
+}
 .correspondence-tasks-added {
   background-color: $color-gray-inverse-base;
   padding-left: 2%;
@@ -1440,7 +1443,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   width: fit-content;
   flex-grow: 1;
   padding: 3px;
-  background-color: white;
+  background-color: $color-bg-gray;
 }
 
 .link-icon-container {

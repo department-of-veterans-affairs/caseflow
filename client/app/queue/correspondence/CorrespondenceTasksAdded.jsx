@@ -14,7 +14,7 @@ const CorrespondenceTasksAdded = (props) => {
       <div className="tasks-added-container">
         <div className="correspondence-tasks-added ">
           <div className="corr-tasks-added-col first-row">
-            <p>Docket number</p>
+            <p className="task-added-header">Docket number</p>
             <span className="case-details-badge">
               <DocketTypeBadge name="test" />
               <CaseDetailsLink appeal={props.correspondence} getLinkText={() => props.task_added.docket_num} task={{}} userRole="red" />
@@ -23,23 +23,23 @@ const CorrespondenceTasksAdded = (props) => {
 
           </div>
           <div className="corr-tasks-added-col">
-            <p>Appellant name</p>
+            <p className="task-added-header">Appellant name</p>
             <p>{veteranFullName}</p>
           </div>
           <div className="corr-tasks-added-col">
-            <p>Appeal stream type</p>
+            <p className="task-added-header">Appeal stream type</p>
             <p>{props.task_added.stream_type}</p>
           </div>
           <div className="corr-tasks-added-col">
-            <p>Number of issues</p>
+            <p className="task-added-header">Number of issues</p>
             <p>{props.task_added.number_of_issues}</p>
           </div>
           <div className="corr-tasks-added-col">
-            <p>Status</p>
+            <p className="task-added-header">Status</p>
             <p>{props.task_added.status}</p>
           </div>
           <div className="corr-tasks-added-col">
-            <p>Added to</p>
+            <p className="task-added-header">Added to</p>
             <p>{props.task_added.assigned_to}</p>
           </div>
 
