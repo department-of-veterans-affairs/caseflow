@@ -378,7 +378,7 @@ describe RequestIssuesUpdate, :all_dbs do
           )
         end
 
-        let(:request_issue) { create(:request_issue, decision_date: 4.days.ago, benefit_type: "vha", decision_review: appeal)}
+        let(:ri) { create(:request_issue, decision_date: 4.days.ago, benefit_type: "vha", decision_review: appeal) }
 
         it "does not get added to the sct queue" do
           vha_caregiver_task.completed!
