@@ -5,7 +5,9 @@ import { ExternalLinkIcon } from '../../components/icons/ExternalLinkIcon';
 import CorrespondenceCaseTimeline from './CorrespondenceCaseTimeline';
 
 const CorrespondenceTasksAdded = (props) => {
-  console.log(props.task_added);
+
+  const veteranName = props.correspondence.veteran_name;
+  const veteranFullName = `${veteranName.first_name} ${veteranName.middle_initial} ${veteranName.last_name}`;
 
   return (
     <>
@@ -16,13 +18,13 @@ const CorrespondenceTasksAdded = (props) => {
             <span className="case-details-badge">
               <DocketTypeBadge name="test" />
               <CaseDetailsLink appeal={props.correspondence} getLinkText={() => props.task_added.docket_num} task={{}} userRole="red" />
-              <span className='link-icon-container'><ExternalLinkIcon color="blue" /> </span>
+              <span className="link-icon-container"><ExternalLinkIcon color="blue" /> </span>
             </span>
 
           </div>
           <div className="corr-tasks-added-col">
             <p>Appellant name</p>
-            {/* <p>{props.correspondence.veteran_name}</p> */}
+            <p>{veteranFullName}</p>
           </div>
           <div className="corr-tasks-added-col">
             <p>Appeal stream type</p>
