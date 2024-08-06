@@ -21,7 +21,8 @@ export const mapDataToInitialState = function(props = {}) {
     userCssId,
     isLegacy,
     hasDistributionTask,
-    hasSpecialtyCaseTeamAssignTask
+    hasSpecialtyCaseTeamAssignTask,
+    intakeFromVbms
   } = props;
 
   serverIntake.relationships = formatRelationships(serverIntake.relationships);
@@ -69,7 +70,8 @@ export const mapDataToInitialState = function(props = {}) {
     updatedIssues: null,
     editEpUpdateError: null,
     hasDistributionTask,
-    hasSpecialtyCaseTeamAssignTask
+    hasSpecialtyCaseTeamAssignTask,
+    intakeFromVbms
   };
 };
 

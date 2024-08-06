@@ -8,7 +8,7 @@ class ClaimReview < DecisionReview
 
   has_many :end_product_establishments, as: :source
   has_many :messages, as: :detail
-
+  has_one :event_record, as: :evented_record
   with_options if: :saving_review do
     validate :validate_receipt_date
     validate :validate_veteran
@@ -223,7 +223,8 @@ class ClaimReview < DecisionReview
       receipt_date: receipt_date,
       veteran_file_number: veteran_file_number,
       veteran_full_name: claim_veteran&.name&.formatted(:readable_full),
-      caseflow_only_edit_issues_url: caseflow_only_edit_issues_url
+      caseflow_only_edit_issues_url: caseflow_only_edit_issues_url,
+      intake_from_vbms: from_decision_review_created_event?
     }
   end
 
@@ -305,6 +306,11 @@ class ClaimReview < DecisionReview
 
   def cleared_nonrating_ep?
     processed? && cleared_end_products.any?(&:nonrating?)
+  end
+
+  def from_decision_review_created_event?
+    # refer back to the associated Intake to see if both objects came from DRCE
+    intake&.from_decision_review_created_event? || false
   end
 
   def sct_appeal?
