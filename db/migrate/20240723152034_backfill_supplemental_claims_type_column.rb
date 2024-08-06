@@ -2,13 +2,15 @@ class BackfillSupplementalClaimsTypeColumn < Caseflow::Migration
   disable_ddl_transaction!
 
   def up
-    safety_assured do
-      execute <<-SQL
-        UPDATE supplemental_claims
-          SET type=(CASE WHEN decision_review_remanded_id IS NOT NULL AND decision_review_remanded_type = 'Appeal' THEN 'Remand'
-                         ELSE 'SupplementalClaim'
-                    END);
-      SQL
+    SupplementalClaim.in_batches do |batch|
+      batch.update_all(
+        <<-SQL
+          type = CASE
+                  WHEN decision_review_remanded_id IS NOT NULL AND decision_review_remanded_type = 'Appeal' THEN 'Remand'
+                  ELSE 'SupplementalClaim'
+                  END
+        SQL
+      )
     end
   end
 
