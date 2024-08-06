@@ -12,6 +12,7 @@ import TextareaField from '../../components/TextareaField';
 import COPY from '../../../COPY';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import QueueFlowModal from './QueueFlowModal';
+import ApiUtil from '../../util/ApiUtil';
 
 /* eslint-disable camelcase */
 const CorrespondenceCancelTaskModal = (props) => {
@@ -57,17 +58,17 @@ const CorrespondenceCancelTaskModal = (props) => {
   };
 
   const submit = () => {
-    // const currentInstruction = (props.task.type === 'PostSendInitialNotificationLetterHoldingTask' ?
-    //   `\nHold time: ${currentDaysOnHold(task)}/${task.onHoldDuration} days\n\n ${instructions}` : formatInstructions());
-    // const payload = {
-    //   data: {
-    //     task: {
-    //       status: TASK_STATUSES.cancelled,
-    //       instructions: currentInstruction,
-    //       ...(taskData?.business_payloads && { business_payloads: taskData?.business_payloads })
-    //     }
-    //   }
-    // };
+    const currentInstruction = (props.task.type === 'PostSendInitialNotificationLetterHoldingTask' ?
+      `\nHold time: ${currentDaysOnHold(task)}/${task.onHoldDuration} days\n\n ${instructions}` : formatInstructions());
+    const payload = {
+      data: {
+        task: {
+          status: TASK_STATUSES.cancelled,
+          instructions: currentInstruction,
+          ...(taskData?.business_payloads && { business_payloads: taskData?.business_payloads })
+        }
+      }
+    };
 
     // const successMsg = {
     //   title: taskData?.message_title ?? 'Task was cancelled successfully.',
@@ -78,7 +79,7 @@ const CorrespondenceCancelTaskModal = (props) => {
     //   )
     // };
 
-    return props.requestPatch(`correspondence/task/${task.taskId}/cancel`);
+    return ApiUtil.patch(`correspondence/task/${task.taskId}/cancel`, payload);
   };
 
   // Additional properties - should be removed later once generic submit buttons are styled the same across all modals
