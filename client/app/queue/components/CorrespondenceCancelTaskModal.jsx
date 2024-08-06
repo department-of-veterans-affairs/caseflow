@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import { get } from 'lodash';
 
 import { taskById } from '../selectors';
@@ -16,13 +15,23 @@ import QueueFlowModal from './QueueFlowModal';
 
 /* eslint-disable camelcase */
 const CorrespondenceCancelTaskModal = (props) => {
-  const { task, hearingDay } = props;
+  const { task } = props;
   const taskData = taskActionData(props);
 
   // Show task instructions by default
   const shouldShowTaskInstructions = get(taskData, 'show_instructions', true);
 
   const [instructions, setInstructions] = useState('');
+  const [instructionsAdded, setInstructionsAdded] = useState(true);
+
+  useEffect(() => {
+    // Handle document search position
+    if (instructions.length > 0) {
+      setInstructionsAdded(false);
+    } else {
+      setInstructionsAdded(true);
+    }
+  }, [instructions]);
 
   const isVhaOffice = () => props.task.assignedTo.type === 'VhaRegionalOffice' ||
     props.task.assignedTo.type === 'VhaProgramOffice';
@@ -60,18 +69,11 @@ const CorrespondenceCancelTaskModal = (props) => {
       }
     };
 
-    const hearingScheduleLink = taskData?.back_to_hearing_schedule ?
-      <p>
-        <Link href={`/hearings/schedule/assign?regional_office_key=${hearingDay.regionalOffice}`}>
-          Back to Hearing Schedule
-        </Link>
-      </p> : null;
     const successMsg = {
       title: taskData?.message_title ?? 'Task was cancelled successfully.',
       detail: (
         <span>
           <span dangerouslySetInnerHTML={{ __html: taskData.message_detail }} />
-          {hearingScheduleLink}
         </span>
       )
     };
@@ -91,43 +93,12 @@ const CorrespondenceCancelTaskModal = (props) => {
     modalProps.submitDisabled = !validateForm();
   }
 
-  if (props.task.type === 'SendInitialNotificationLetterTask' ||
-    props.task.type === 'PostSendInitialNotificationLetterHoldingTask' ||
-    props.task.type === 'SendFinalNotificationLetterTask') {
-    return (
-      <QueueFlowModal
-        title={taskData?.modal_title ?? ''}
-        button={taskData?.modal_button_text ?? COPY.MODAL_SUBMIT_CANCEL_BUTTON_CONTESTED_CLAIM}
-        pathAfterSubmit={taskData?.redirect_after ?? '/queue'}
-        submit={submit}
-        validateForm={validateForm}
-        submitButtonClassNames={['usa-button']}
-        submitDisabled={!(instructions.length)}
-      >
-        {taskData?.modal_body &&
-          <React.Fragment>
-            <div dangerouslySetInnerHTML={{ __html: taskData.modal_body }} />
-            <br />
-          </React.Fragment>
-        }
-        {get(taskData, 'show_instructions', true) &&
-          <TextareaField
-            name={COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}
-            id="taskInstructions"
-            onChange={setInstructions}
-            placeholder="This is a description of instructions and context for this action."
-            value={instructions}
-          />
-        }
-      </QueueFlowModal>
-    );
-  }
-
   return (
     <QueueFlowModal
       {...modalProps}
-      title={taskData?.modal_title ?? ''}
-      button={taskData?.modal_button_text ?? COPY.MODAL_SUBMIT_BUTTON}
+      title= "Cancel Task"
+      button="Cancel Task"
+      submitDisabled= {instructionsAdded}
       pathAfterSubmit={taskData?.redirect_after ?? '/queue'}
       submit={submit}
       validateForm={validateForm}
@@ -153,9 +124,6 @@ const CorrespondenceCancelTaskModal = (props) => {
 /* eslint-enable camelcase */
 
 CorrespondenceCancelTaskModal.propTypes = {
-  hearingDay: PropTypes.shape({
-    regionalOffice: PropTypes.string
-  }),
   requestPatch: PropTypes.func,
   task: PropTypes.shape({
     appeal: PropTypes.shape({
@@ -172,7 +140,6 @@ CorrespondenceCancelTaskModal.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   task: taskById(state, { taskId: ownProps.taskId }),
-  hearingDay: state.ui.hearingDay,
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
