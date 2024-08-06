@@ -8,6 +8,7 @@ describe AojLegacyDocket do
     create(:case_distribution_lever, :disable_legacy_priority)
     create(:case_distribution_lever, :cavc_affinity_days)
     create(:case_distribution_lever, :cavc_aod_affinity_days)
+    create(:case_distribution_lever, :aoj_cavc_affinity)
   end
 
   let(:docket) do

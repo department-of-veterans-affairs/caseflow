@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class VACOLS::AojCaseDocket < VACOLS::CaseDocket
+class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/ClassLength
   # :nocov:
   self.table_name = "brieff"
 
@@ -500,7 +500,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket
       if dry_run
         dry_appeals = conn.exec_query(query).to_a
 
-        aoj_cavc_affinity_filter(dry_appeals, judge_sattyid, aoj_cavc_affinity_lever_value, excluded_judges_attorney_ids)
+        aoj_cavc_affinity_filter(dry_appeals, judge_sattyid, aoj_cavc_affinity_lever_value, excluded_judges_attorney_ids) # rubocop:disable Layout/LineLength
 
         dry_appeals
       else
