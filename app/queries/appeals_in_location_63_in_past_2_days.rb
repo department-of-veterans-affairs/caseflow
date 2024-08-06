@@ -54,8 +54,9 @@ class AppealsInLocation63InPast2Days
       veteran_name = FullName.new(appeal["snamef"], nil, appeal["snamel"]).to_s
       vlj_name = FullName.new(appeal["vlj_namef"], nil, appeal["vlj_namel"]).to_s
       hearing_judge = vlj_name.empty? ? nil : vlj_name
-      deciding_judge = "TODO"
+      deciding_judge = appeal["bfmemid"].blank? ? nil : legacy_original_deciding_judge(appeal)
       moved_date_time = "TODO"
+      appeal_affinity = AppealAffinity.find_by(case_id: appeal["bfkey"], case_type: "VACOLS::Case")
 
       {
         docket_number: appeal["tinum"],
@@ -68,7 +69,7 @@ class AppealsInLocation63InPast2Days
         hearing_judge: hearing_judge,
         deciding_judge: deciding_judge,
         affinity_start_date: appeal_affinity&.affinity_start_date,
-        moved_date_time: moved_date_time,
+        moved_date_time: appeal["bfdlocin"],
         bfcurloc: appeal["bfcurloc"]
       }
     end
@@ -95,6 +96,11 @@ class AppealsInLocation63InPast2Days
         # affinity_start_date: appeal.appeal_affinity&.affinity_start_date
       # }
     # end
+  end
+
+  def self.legacy_original_deciding_judge(appeal)
+    staff = VACOLS::Staff.find_by(sattyid: appeal["bfmemid"])
+    staff&.sdomainid || appeal["bfmemid"]
   end
 
 end
