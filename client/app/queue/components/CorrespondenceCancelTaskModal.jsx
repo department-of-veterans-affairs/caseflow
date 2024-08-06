@@ -57,28 +57,28 @@ const CorrespondenceCancelTaskModal = (props) => {
   };
 
   const submit = () => {
-    const currentInstruction = (props.task.type === 'PostSendInitialNotificationLetterHoldingTask' ?
-      `\nHold time: ${currentDaysOnHold(task)}/${task.onHoldDuration} days\n\n ${instructions}` : formatInstructions());
-    const payload = {
-      data: {
-        task: {
-          status: TASK_STATUSES.cancelled,
-          instructions: currentInstruction,
-          ...(taskData?.business_payloads && { business_payloads: taskData?.business_payloads })
-        }
-      }
-    };
+    // const currentInstruction = (props.task.type === 'PostSendInitialNotificationLetterHoldingTask' ?
+    //   `\nHold time: ${currentDaysOnHold(task)}/${task.onHoldDuration} days\n\n ${instructions}` : formatInstructions());
+    // const payload = {
+    //   data: {
+    //     task: {
+    //       status: TASK_STATUSES.cancelled,
+    //       instructions: currentInstruction,
+    //       ...(taskData?.business_payloads && { business_payloads: taskData?.business_payloads })
+    //     }
+    //   }
+    // };
 
-    const successMsg = {
-      title: taskData?.message_title ?? 'Task was cancelled successfully.',
-      detail: (
-        <span>
-          <span dangerouslySetInnerHTML={{ __html: taskData.message_detail }} />
-        </span>
-      )
-    };
+    // const successMsg = {
+    //   title: taskData?.message_title ?? 'Task was cancelled successfully.',
+    //   detail: (
+    //     <span>
+    //       <span dangerouslySetInnerHTML={{ __html: taskData.message_detail }} />
+    //     </span>
+    //   )
+    // };
 
-    return props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg);
+    return props.requestPatch(`correspondence/task/${task.taskId}/cancel`);
   };
 
   // Additional properties - should be removed later once generic submit buttons are styled the same across all modals
