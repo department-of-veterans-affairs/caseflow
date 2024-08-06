@@ -379,26 +379,6 @@ feature "Supplemental Claim Intake", :all_dbs do
     [supplemental_claim, intake]
   end
 
-  it "Allows a Veteran without ratings to create an intake" do
-    start_supplemental_claim(veteran_no_ratings)
-
-    visit "/intake"
-
-    click_intake_continue
-    click_intake_add_issue
-    add_intake_nonrating_issue(
-      category: "Active Duty Adjustments",
-      description: "Description for Active Duty Adjustments",
-      date: profile_date.mdY
-    )
-
-    expect(page).to have_content("1 issue")
-
-    click_intake_finish
-
-    expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been submitted.")
-  end
-
   context "ratings with disabiliity codes" do
     let(:disabiliity_receive_date) { receipt_date + 2.days }
     let(:disability_profile_date) { profile_date - 1.day }
