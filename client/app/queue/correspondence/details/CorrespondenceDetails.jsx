@@ -112,33 +112,37 @@ const CorrespondenceDetails = (props) => {
     return viewAllCorrespondence ? 'Hide all correspondence' : 'View all correspondence';
   };
 
+  const allCorrespondencesList = () => {
+    return viewAllCorrespondence && (
+      <div className="all-correspondences">
+        <h2>{COPY.ALL_CORRESPONDENCES}</h2>
+        <AppSegment filledBackground noMarginTop>
+          <Pagination
+            pageSize={15}
+            currentPage={currentPage}
+            currentCases={allCorrespondences.slice(startIndex, endIndex).length}
+            totalPages={totalPages}
+            totalCases={allCorrespondences.length}
+            updatePage={updatePageHandler}
+            table={
+              <Table
+                className="cf-case-list-table"
+                columns={getColumns}
+                rowObjects={allCorrespondences.slice(startIndex, endIndex)}
+                getKeyForRow={getKeyForRow}
+              />
+            }
+            enableTopPagination = {false}
+          />
+        </AppSegment>
+      </div>
+    );
+  };
+
   const correspondenceTasks = () => {
     return (
       <React.Fragment>
-        {viewAllCorrespondence && (
-          <div className="all-correspondences">
-            <h2>{COPY.ALL_CORRESPONDENCES}</h2>
-            <AppSegment filledBackground noMarginTop>
-              <Pagination
-                pageSize={15}
-                currentPage={currentPage}
-                currentCases={allCorrespondences.slice(startIndex, endIndex).length}
-                totalPages={totalPages}
-                totalCases={allCorrespondences.length}
-                updatePage={updatePageHandler}
-                table={
-                  <Table
-                    className="cf-case-list-table"
-                    columns={getColumns}
-                    rowObjects={allCorrespondences.slice(startIndex, endIndex)}
-                    getKeyForRow={getKeyForRow}
-                  />
-                }
-                enableTopPagination = {false}
-              />
-            </AppSegment>
-          </div>
-        )}
+        { allCorrespondencesList() }
         <div className="correspondence-mail-tasks">
           <h2>Completed Mail Tasks</h2>
           <AppSegment filledBackground noMarginTop>
@@ -223,6 +227,27 @@ const CorrespondenceDetails = (props) => {
     );
   };
 
+  const packageDetails = <>
+    <div>
+      { allCorrespondencesList() }
+      <p> Information about Package Details</p>
+    </div>
+  </>;
+
+  const associatedPriorMail = <>
+    <div>
+      { allCorrespondencesList() }
+      <p> Information about Associated Prior Mail</p>
+    </div>
+  </>;
+
+  const responseLetters = <>
+    <div>
+      { allCorrespondencesList() }
+      <p> Information about Response Letters</p>
+    </div>
+  </>;
+
   const tabList = [
     {
       disable: false,
@@ -237,12 +262,12 @@ const CorrespondenceDetails = (props) => {
     {
       disable: false,
       label: 'Response Letters',
-      page: 'Information about Response Letters'
+      page: responseLetters
     },
     {
       disable: false,
       label: 'Associated Prior Mail',
-      page: 'Information about Associated Prior Mail'
+      page: associatedPriorMail
     }
   ];
 
