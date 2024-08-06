@@ -4,27 +4,29 @@ module PrintsTaskTree
   extend ActiveSupport::Concern
   include TaskTreeRenderModule
 
-  def structure_render(*atts)
-    TTY::Tree.new(structure(*atts)).render
+  def structure_render(tasks, *atts)
+    TTY::Tree.new(structure(tasks, *atts)).render
   end
 
-  def structure(*atts)
+  def structure(tasks, *atts)
     leaf_name = "#{self.class.name} #{task_tree_attributes(*atts)}"
-    { "#{leaf_name}": task_tree_children.map { |child| child.structure(*atts) } }
+    { "#{leaf_name}": task_tree_children(tasks).map { |child| child.structure(tasks, *atts) } }
   end
 
-  def structure_as_json(*atts)
+  def structure_as_json(tasks, *atts)
     leaf_name = self.class.name
-    child_tree = task_tree_children.map { |child| child.structure_as_json(*atts) }
+    child_tree = task_tree_children(tasks).map { |child| child.structure_as_json(tasks, *atts) }
     { "#{leaf_name}": task_tree_attributes_as_json(*atts).merge(tasks: child_tree) }
   end
 
   private
 
-  def task_tree_children
-    return children.order(:id) if is_a? Task
-
-    tasks.where(parent_id: nil).order(:id)
+  def task_tree_children(tasks)
+    if is_a?(Task)
+      tasks.select { |task| task.parent_id == id }.sort_by(&:id)
+    else
+      tasks.select { |task| task.parent_id.nil? }.sort_by(&:id)
+    end
   end
 
   def task_tree_attributes(*atts)
