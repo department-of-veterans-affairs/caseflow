@@ -28,7 +28,7 @@
     "dev": "yarn run dev:clear-build && NODE_ENV=development yarn run build -w",
     "dev:hot": "webpack-dev-server",
     "storybook": "start-storybook -p 6006",
-    "build:storybook": "build-storybook -o ../public/storybook"
+    "build:storybook": "NODE_OPTIONS=--openssl-legacy-provider build-storybook -o ../public/storybook"
   },
   "cacheDirectories": [
     "node_modules",
