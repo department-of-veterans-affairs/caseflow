@@ -17,7 +17,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
 
       # rubocop:disable Layout/HashAlignment
       it "returns a 501 status and error message" do
-        patch :decision_review_updated, params: { event_id: event_id }
+        post :decision_review_updated, params: { event_id: event_id }
         expect(response).to have_http_status(:not_implemented)
         expect(JSON.parse(response.body)).to eq(
           "errors" => [
@@ -40,12 +40,12 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
 
       it "allows the action to proceed" do
         expect(controller).to receive(:decision_review_updated)
-        patch :decision_review_updated, params: { event_id: event_id }
+        post :decision_review_updated, params: { event_id: event_id }
       end
     end
   end
 
-  describe "PATCH #decision_review_updated" do
+  describe "POST #decision_review_updated" do
     let(:dru_params) { { event_id: event_id } }
     let(:event) { double("DecisionReviewCreatedEvent") }
 
@@ -60,7 +60,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
       end
 
       it "returns a 404 status and error message" do
-        patch :decision_review_updated, params: { event_id: fake_event_id }
+        post :decision_review_updated, params: { event_id: fake_event_id }
         expect(response).to have_http_status(:not_found)
         expect(JSON.parse(response.body)).to eq({ "message" => "Record not found in Caseflow" })
       end
@@ -80,7 +80,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
 
         # skipping this test until we implement update! method
         xit "returns a 200 status and success message" do
-          patch :decision_review_updated, params: { event_id: event_id }
+          post :decision_review_updated, params: { event_id: event_id }
           expect(response).to have_http_status(:ok)
           expect(JSON.parse(response.body)).to eq(
             { "message" => "DecisionReviewCreatedEvent successfully updated" }
@@ -96,7 +96,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
         end
 
         it "returns a 409 status and error message" do
-          patch :decision_review_updated, params: { event_id: event_id }
+          post :decision_review_updated, params: { event_id: event_id }
           expect(response).to have_http_status(:conflict)
           expect(JSON.parse(response.body)).to eq({ "message" => "Lock failed" })
         end
@@ -108,7 +108,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
         end
 
         it "returns a 422 status and error message" do
-          patch :decision_review_updated, params: { event_id: event_id }
+          post :decision_review_updated, params: { event_id: event_id }
           expect(response).to have_http_status(:unprocessable_entity)
           expect(JSON.parse(response.body)).to eq({ "message" => "Something went wrong" })
         end
@@ -116,7 +116,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
     end
   end
 
-  describe "PATCH #decision_review_updated_error" do
+  describe "POST #decision_review_updated_error" do
     let(:dru_error_params) { { event_id: event_id, errored_claim_id: 2, error: "some error" } }
 
     before do
@@ -130,7 +130,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
       end
 
       it "returns a 201 status and success message" do
-        patch :decision_review_updated_error, params: { event_id: event_id }
+        post :decision_review_updated_error, params: { event_id: event_id }
         expect(response).to have_http_status(:created)
         expect(JSON.parse(response.body)).to eq({ "message" => "Decision Review Updated Error Saved in Caseflow" })
       end
@@ -144,7 +144,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
       end
 
       it "returns a 409 status and error message" do
-        patch :decision_review_updated_error, params: { event_id: event_id }
+        post :decision_review_updated_error, params: { event_id: event_id }
         expect(response).to have_http_status(:conflict)
         expect(JSON.parse(response.body)).to eq({ "message" => "Lock failed" })
       end
@@ -158,7 +158,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
       end
 
       it "returns a 422 status and error message" do
-        patch :decision_review_updated_error, params: { event_id: event_id }
+        post :decision_review_updated_error, params: { event_id: event_id }
         expect(response).to have_http_status(:unprocessable_entity)
         expect(JSON.parse(response.body)).to eq({ "message" => "Something went wrong" })
       end
