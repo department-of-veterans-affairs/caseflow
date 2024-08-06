@@ -46,7 +46,6 @@ class AppealsTiedToNonSscAvljQuery
       .flat_map do |sym, docket|
         appeals = docket.ready_to_distribute_appeals # Returns Ready to Distribute Appeals
 
-        # Does not work, returns empty array. Comment out to see CSV populate data.
         appeals = appeals.select { |appeal| appeals_tied_to_non_ssc_avljs.returned_appeals.include?(appeal["bfkey"]) }
 
         legacy_rows(appeals, sym)
@@ -56,9 +55,10 @@ class AppealsTiedToNonSscAvljQuery
   def self.legacy_rows(appeals, sym)
     appeals.map do |appeal|
       veteran_name = FullName.new(appeal["snamef"], nil, appeal["snamel"]).to_s
-      vlj_name = FullName.new(appeal["vlj_namef"], nil, appeal["vlj_namel"]).to_s
-      hearing_judge = vlj_name.empty? ? nil : vlj_name
       vacols_case = VACOLS::Case.find_by(bfkey: appeal["bfkey"])
+      vacols_hearing = VACOLS::CaseHearing.find_by(folder_nr: appeal["bfkey"])
+      avlj_user = vacols_hearing&.board_member ? VACOLS::Staff.find_by(sattyid: vacols_hearing.board_member) : nil
+      avlj_name = avlj_user ? get_avlj_name_from_hearing(avlj_user) : nil
 
       {
         docket_number: appeal["tinum"],
@@ -68,8 +68,8 @@ class AppealsTiedToNonSscAvljQuery
         receipt_date: appeal["bfd19"],
         veteran_file_number: appeal["ssn"] || appeal["bfcorlid"],
         veteran_name: veteran_name,
-        non_ssc_avlj: vlj_name,
-        hearing_judge: hearing_judge,
+        non_ssc_avlj: avlj_name && check_if_non_ssc_avlj(avlj_user) ? avlj_name : "",
+        hearing_judge: avlj_name,
         most_recent_signing_judge: mrsj_name(vacols_case),
         bfcurloc: vacols_case&.bfcurloc
       }
@@ -79,5 +79,13 @@ class AppealsTiedToNonSscAvljQuery
   def self.mrsj_name(vacols_case)
     vacols_staff = vacols_case && vacols_case&.bfmemid ? VACOLS::Staff.find_by(sattyid: vacols_case.bfmemid) : nil
     vacols_staff ? FullName.new(vacols_staff.snamef, nil, vacols_staff.snamel).to_s : ""
+  end
+
+  def self.get_avlj_name_from_hearing(avlj_user)
+    FullName.new(avlj_user["snamef"], nil, avlj_user["snamel"]).to_s
+  end
+
+  def self.check_if_non_ssc_avlj(avlj_user)
+    avlj_user.sattyid != avlj_user.smemgrp
   end
 end
