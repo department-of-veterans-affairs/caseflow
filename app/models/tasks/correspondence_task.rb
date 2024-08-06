@@ -16,12 +16,17 @@ class CorrespondenceTask < Task
   # scopes to handle task queue logic
   # Correspondence Cases queries
   scope :unassigned_tasks, -> { where(type: ReviewPackageTask.name, status: Constants.TASK_STATUSES.unassigned) }
-  scope :assigned_tasks, -> { where(type: active_task_names).open.where.not(status: Constants.TASK_STATUSES.unassigned) }
+  scope :assigned_tasks, lambda {
+                           where(type: active_task_names).open.where.not(
+                             status: Constants.TASK_STATUSES.unassigned
+                           )
+                         }
   scope :action_required_tasks, -> { where(assigned_to: InboundOpsTeam.singleton).package_action_tasks.active }
   scope :pending_tasks, -> { tasks_not_related_to_an_appeal.open }
   # a correspondence is completed if the root task is completed or there are no active child tasks
-  # since active child tasks set the root task status to 'on_hold', the assumption is if a root task isn't on hold or cancelled,
-  # the correspondence is completed. This assumption is used to lower the N+1 query checking all the child task statuses.
+  # since active child tasks set the root task status to 'on_hold', the assumption is if a root task isn't on hold or
+  # cancelled, the correspondence is completed.
+  # This assumption is used to lower the N+1 query checking all the child task statuses.
   scope :completed_root_tasks, lambda {
                                  where(type: CorrespondenceRootTask.name).where.not(
                                    status: Constants.TASK_STATUSES.on_hold

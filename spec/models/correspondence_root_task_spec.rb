@@ -136,7 +136,6 @@ describe CorrespondenceRootTask, :all_dbs do
     let!(:root_task) { correspondence.root_task }
 
     context "when the correspondence has an open task not related to an appeal" do
-
       it "returns the open package tasks" do
         tasks_not_related_to_an_appeal.each_with_index do |klass, count|
           task = klass.create!(
@@ -181,7 +180,6 @@ describe CorrespondenceRootTask, :all_dbs do
     subject { root_task.correspondence_status }
 
     context "When the correspondence has an unassigned Review Package Task" do
-
       it "returns the status unassigned" do
         expect(subject).to eq(Constants.CORRESPONDENCE_STATUSES.unassigned)
       end
@@ -212,7 +210,6 @@ describe CorrespondenceRootTask, :all_dbs do
       let!(:correspondence) { create(:correspondence, :with_correspondence_intake_task) }
 
       it "returns the status as assigned if the task is assigned" do
-
         expect(correspondence.open_intake_task.status).to eq(Constants.TASK_STATUSES.assigned)
         expect(subject).to eq(Constants.CORRESPONDENCE_STATUSES.assigned)
       end
