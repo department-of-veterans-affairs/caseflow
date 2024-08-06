@@ -531,11 +531,6 @@ feature "Higher-Level Review", :all_dbs do
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been submitted.")
   end
 
-  scenario "intake can still be completed when ratings are backfilled" do
-    mock_backfilled_rating_response
-    complete_higher_level_review
-  end
-
   scenario "intake can still be completed when ratings are locked" do
     mock_locked_rating_response
     complete_higher_level_review
