@@ -13,6 +13,9 @@ import moment from 'moment';
 import Pagination from 'app/components/Pagination/Pagination';
 import Table from 'app/components/Table';
 import Link from 'app/components/Link';
+import moment from 'moment';
+import { ExternalLinkIcon } from 'app/components/icons/ExternalLinkIcon';
+import { COLORS } from 'app/constants/AppConstants';
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
@@ -74,9 +77,16 @@ const CorrespondenceDetails = (props) => {
       {
         header: 'Package Document Type',
         valueFunction: (correspondenceObj) => (
-          <Link href={`/queue/correspondence/${correspondenceObj.uuid}`} target="_blank">
-            <strong> {correspondenceObj.nod ? 'NOD' : 'Non-NOD'} </strong>
-          </Link>
+          <span className="va-package-document-type-item">
+            <p>
+              <a href={`/queue/correspondence/${correspondenceObj.uuid}`} rel="noopener noreferrer" target="_blank">
+                <b>{correspondenceObj.nod ? 'NOD' : 'Non-NOD'}</b>
+                <span className="external-link-icon-wrapper">
+                  <ExternalLinkIcon color={COLORS.FOCUS_OUTLINE} />
+                </span>
+              </a>
+            </p>
+          </span>
         )
       },
       {
@@ -283,8 +293,8 @@ const CorrespondenceDetails = (props) => {
           <div></div>
           <p className="last-item"><b>Record status: </b>{props.correspondence.status}</p>
         </div>
-        <div style = { { marginTop: '20px' }}>
-        { allCorrespondencesList() }
+        <div style = {{ marginTop: '20px' }}>
+          { allCorrespondencesList() }
         </div>
         <TabWindow
           name="tasks-tabwindow"
