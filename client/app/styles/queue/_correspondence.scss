@@ -1405,10 +1405,14 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   }
 }
 
+.tasks-added-container {
+  border: 1px solid black;
+  margin-bottom: 20px;
+}
+
 .correspondence-tasks-added {
   background-color: $color-gray-inverse-base;
   padding-left: 2%;
-  margin-top: 1%;
   flex-direction: row;
   display: flex;
   width: 100%;
@@ -1432,5 +1436,13 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 }
 
 .case-details-badge {
-  line-height: 10px;
+  display: flex;
+  width: fit-content;
+  flex-grow: 1;
+  padding: 3px;
+  background-color: white;
+}
+
+.link-icon-container {
+  display: flex;
 }
