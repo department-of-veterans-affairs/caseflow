@@ -30,7 +30,7 @@ RSpec.describe Hearings::TimeService do
 
         time = described_class.prepare_time_for_storage(date: date, time_string: time_string)
 
-        expect(time.dst?).to eq(true)
+        expect(time.dst?).to eq(false)
         expect(time.zone).to eq("CST")
         # utc_offset is in seconds
         expect(time.utc_offset).to eq(-21600)
