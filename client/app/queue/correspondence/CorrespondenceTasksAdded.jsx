@@ -41,6 +41,8 @@ const CorrespondenceTasksAdded = (props) => {
         </div>
 
       </div>
+      <span className='tasks-added-text'>Tasks added to appeal</span>
+
       <CorrespondenceCaseTimeline
         organizations={['TEST']}
         userCssId="INBOUND_OPS_TEAM_ADMIN_USER"

@@ -1417,16 +1417,18 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 .corr-tasks-added-col {
   flex-direction: column;
   width: 15%;
-
-  // margin-left: 2%;
-
 }
 
 .first-row {
-  // margin-left: 1%;
   padding-right: 3%;
   flex-wrap: nowrap;
   min-width: fit-content;
+}
+
+.tasks-added-text {
+  padding-top: 20px;
+  font-weight: bold;
+  display: block;
 }
 
 .case-details-badge {
