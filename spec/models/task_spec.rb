@@ -13,7 +13,7 @@ describe Task, :all_dbs do
       let(:judge_task) { create(:ama_judge_assign_task, :completed, parent: root_task) }
       let!(:attorney_task) { create(:ama_attorney_task, :completed, parent: judge_task) }
 
-      subject { root_task.structure(:id, :status) }
+      subject { root_task.structure([bva_task, judge_task, attorney_task], :id, :status) }
 
       it "outputs the task structure" do
         root_key = "#{root_task.type} #{root_task.id}, #{root_task.status}".to_sym
