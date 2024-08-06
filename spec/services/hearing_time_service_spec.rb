@@ -20,7 +20,7 @@ describe HearingTimeService, :all_dbs do
   context "with a legacy hearing and a hearing scheduled for 12:00pm PT" do
     include_context "legacy_hearing"
 
-    let!(:hearing) { create(:hearing, regional_office: "RO43", scheduled_time: "12:00 PM Pacific Time (US & Canada)") }
+    let!(:hearing) { create(:hearing, regional_office: "RO43", scheduled_time: "12:00 PM") }
 
     # describe "#build_params_with_time" do
     #   let!(:params) do
@@ -62,6 +62,7 @@ describe HearingTimeService, :all_dbs do
             min: 0
           )
         end
+
         expect(LegacyHearing.first.time.local_time).to eq(expected_time)
         expect(hearing.time.local_time).to eq(expected_time)
       end
