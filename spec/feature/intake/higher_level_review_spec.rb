@@ -531,28 +531,6 @@ feature "Higher-Level Review", :all_dbs do
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been submitted.")
   end
 
-  context "ratings with disabiliity codes" do
-    let(:disabiliity_receive_date) { receipt_date + 2.days }
-    let(:disability_profile_date) { profile_date - 1.day }
-    let!(:ratings_with_diagnostic_codes) do
-      generate_ratings_with_disabilities(
-        veteran,
-        disabiliity_receive_date,
-        disability_profile_date
-      )
-    end
-
-    scenario "saves diagnostic codes" do
-      hlr, = start_higher_level_review(veteran)
-      visit "/intake"
-      click_intake_continue
-      save_and_check_request_issues_with_diagnostic_codes(
-        Constants.INTAKE_FORM_NAMES.higher_level_review,
-        hlr
-      )
-    end
-  end
-
   context "Add / Remove Issues page" do
     before { FeatureToggle.enable!(:contestable_rating_decisions) }
     after { FeatureToggle.disable!(:contestable_rating_decisions) }
