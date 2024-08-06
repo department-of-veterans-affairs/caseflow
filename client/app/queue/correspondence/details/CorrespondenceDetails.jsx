@@ -114,7 +114,6 @@ const CorrespondenceDetails = (props) => {
     );
   };
 
-
   const appealsResult = props.correspondence.appeals_information;
   const appeals = [];
   let filteredAppeals = [];
