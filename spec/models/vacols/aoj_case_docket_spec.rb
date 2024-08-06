@@ -815,4 +815,5 @@ describe VACOLS::AojCaseDocket, :all_dbs do
       end
     end
   end
+  # rubocop:enable Layout/LineLength
 end
