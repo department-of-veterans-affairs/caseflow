@@ -285,8 +285,8 @@ class BusinessLine < Organization
           decider.css_id AS decider_css_id,
           itv.object_changes_array AS imr_versions,
           lag(imr.created_at, 1) over (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.created_at) as previous_imr_created_at,
+          lag(imr.decided_at, 1) over (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.decided_at) as previous_imr_decided_at,
           itv.object_changes_array[1] as first_static_version,
-          MAX(imr.updated_at) over (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.updated_at desc)  as imr_last_updated_at,
           MAX(imr.decided_at) over (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.updated_at desc)  as imr_last_decided_date
         FROM tasks
         INNER JOIN request_issues ON request_issues.decision_review_type = tasks.appeal_type
@@ -392,8 +392,8 @@ class BusinessLine < Organization
          decider.css_id AS decider_css_id,
          itv.object_changes_array AS imr_versions,
          lag(imr.created_at, 1) over (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.created_at) as previous_imr_created_at,
+         lag(imr.decided_at, 1) over (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.decided_at) as previous_imr_decided_at,
          itv.object_changes_array[1] as first_static_version,
-         MAX(imr.updated_at) over (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.updated_at desc)  as imr_last_updated_at,
          MAX(imr.decided_at) over (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.updated_at desc)  as imr_last_decided_date
       FROM tasks
       INNER JOIN request_issues ON request_issues.decision_review_type = tasks.appeal_type

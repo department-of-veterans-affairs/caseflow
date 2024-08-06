@@ -190,21 +190,22 @@ class ClaimHistoryEvent
       events
     end
 
+    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def create_in_progress_status_event(change_data)
-      imr_created_in_same_transaction = imr_created_in_same_transaction?(change_data)
-
-      imr_last_decided_row = imr_last_decided_row?(change_data)
-
       in_progress_system_hash_events = pending_system_hash
         .merge("event_date" => (change_data["decided_at"] ||
           change_data["issue_modification_request_updated_at"]))
 
-      if imr_last_decided_row || (!imr_created_in_same_transaction &&
-         %w[cancelled denied approved].include?(change_data["issue_modification_request_status"]))
+      if (imr_last_decided_row?(change_data) &&
+         (!imr_decided_in_same_transaction?(change_data) || change_data["previous_imr_decided_at"].nil?)) ||
+         (change_data["previous_imr_created_at"].nil? ||
+          !imr_created_in_same_transaction?(change_data) &&
+          %w[cancelled denied approved].include?(change_data["issue_modification_request_status"]))
 
         from_change_data(:in_progress, change_data.merge(in_progress_system_hash_events))
       end
     end
+    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     def create_pending_status_events(change_data, event_date)
       pending_system_hash_events = pending_system_hash
@@ -262,7 +263,6 @@ class ClaimHistoryEvent
         # Quite a bit faster but less safe. Should probably be fine since it's coming from the database
         # rubocop:disable Security/YAMLLoad
         versions[1..-2].split(",").map { |yaml| YAML.load(yaml.gsub(/^"|"$/, "")) }
-        # versions[1..-2].split(",").map { |yaml| YAML.safe_load(yaml.gsub(/^"|"$/, ""), [Time]) }
         # rubocop:enable Security/YAMLLoad
       end
     end
@@ -308,6 +308,12 @@ class ClaimHistoryEvent
     def imr_last_decided_row?(change_data)
       change_data["imr_last_decided_date"] == (change_data["decided_at"] ||
                          change_data["issue_modification_request_updated_at"])
+    end
+
+    def imr_decided_in_same_transaction?(change_data)
+      timestamp_within_seconds?(change_data["decided_at"],
+                                change_data["previous_imr_decided_at"],
+                                ISSUE_MODIFICATION_REQUEST_CREATION_WINDOW)
     end
 
     def extract_issue_ids_from_change_data(change_data, key)
