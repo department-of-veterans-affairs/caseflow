@@ -471,13 +471,22 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket
               SQL
             end
 
-    fmtd_query = sanitize_sql_array([
-                                      query,
-                                      judge.vacols_attorney_id,
-                                      (genpop == "any" || genpop == "not_genpop") ? 1 : 0,
-                                      (genpop == "any" || genpop == "only_genpop") ? 1 : 0,
-                                      judge.vacols_attorney_id
-                                    ])
+    fmtd_query = if aoj_aod_affinity_lever_value == Constants.ACD_LEVERS.infinite
+                   sanitize_sql_array([
+                                        query,
+                                        judge.vacols_attorney_id,
+                                        (genpop == "any" || genpop == "not_genpop") ? 1 : 0,
+                                        (genpop == "any" || genpop == "only_genpop") ? 1 : 0
+                                      ])
+                 else
+                   sanitize_sql_array([
+                                        query,
+                                        judge.vacols_attorney_id,
+                                        (genpop == "any" || genpop == "not_genpop") ? 1 : 0,
+                                        (genpop == "any" || genpop == "only_genpop") ? 1 : 0,
+                                        judge.vacols_attorney_id
+                                      ])
+                 end
 
     distribute_appeals(fmtd_query, judge, limit, dry_run)
   end
