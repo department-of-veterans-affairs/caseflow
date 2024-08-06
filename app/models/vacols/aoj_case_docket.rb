@@ -94,7 +94,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket
       from BRIEFF B
       inner join FOLDER F on F.TICKNUM = B.BFKEY
 
-      where B.BFMPRO = 'HIS' and B.BFMEMID not in ('000', '888', '999') and B.BFATTID is not null
+      where B.BFMPRO = 'HIS'
     ) PREV_APPEAL
       on PREV_APPEAL.PREV_BFKEY != BRIEFF.BFKEY and PREV_APPEAL.PREV_BFCORLID = BRIEFF.BFCORLID
       and PREV_APPEAL.PREV_TINUM = BRIEFF.TINUM and PREV_APPEAL.PREV_TITRNUM = BRIEFF.TITRNUM
@@ -504,7 +504,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket
         appeals = conn.exec_query(query).to_a
         return appeals if appeals.empty?
 
-        aoj_aod_affinity_filter(dry_appeals, judge_sattyid, aoj_aod_affinity_lever_value,
+        aoj_aod_affinity_filter(appeals, judge_sattyid, aoj_aod_affinity_lever_value,
                                 excluded_judges_attorney_ids)
 
         appeals.sort_by { |appeal| appeal[:bfd19] } if use_by_docket_date?
@@ -528,9 +528,9 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket
     if case_affinity_days_lever_value_is_selected?(aoj_aod_affinity_lever_value) ||
        aoj_aod_affinity_lever_value == Constants.ACD_LEVERS.omit
       "((PREV_DECIDING_JUDGE = ? or PREV_DECIDING_JUDGE is null or PREV_DECIDING_JUDGE is not null)
-      and AOD = '1' and PREV_TYPE_ACTION = '7' )"
+      and AOD = '1')"
     elsif aoj_aod_affinity_lever_value == Constants.ACD_LEVERS.infinite
-      "(AOD = '1' and PREV_TYPE_ACTION = '7')"
+      "(AOD = '1')"
     else
       "VLJ = ?"
     end
@@ -550,7 +550,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket
   def self.aoj_aod_affinity_filter(appeals, judge_sattyid, lever_value, excluded_judges_attorney_ids)
     appeals.reject! do |appeal|
       # {will skip if not AOJ AOD || if AOJ AOD being distributed to tied_to judge || if not tied to any judge}
-      next if tied_to_or_not_aod?(appeal, judge_sattyid)
+      next if tied_to_or_not_aoj_aod?(appeal, judge_sattyid)
 
       if not_distributing_to_tied_judge?(appeal, judge_sattyid)
         next if ineligible_judges_sattyids&.include?(appeal["vlj"])
@@ -560,7 +560,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket
 
       next if ineligible_or_excluded_deciding_judge?(appeal, excluded_judges_attorney_ids)
 
-      if case_affinity_days_lever_value_is_selected?(cavc_aod_affinity_lever_value)
+      if case_affinity_days_lever_value_is_selected?(lever_value)
         next if appeal["prev_deciding_judge"] == judge_sattyid
 
         reject_due_to_affinity?(appeal, lever_value)
