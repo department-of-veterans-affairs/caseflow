@@ -5,7 +5,7 @@
   "license": "none",
   "version": "0.0.1",
   "engines": {
-    "node": "16.16.0"
+    "node": "18.20.2"
   },
   "scripts": {
     "analyze": "yarn run analyze:build && yarn run analyze:view",
@@ -67,21 +67,22 @@
     "@storybook/addon-a11y": "^6.3.8",
     "@storybook/addon-actions": "^6.3.8",
     "@storybook/addon-controls": "^6.3.8",
-    "@storybook/addon-docs": "^6.3.8",
+    "@storybook/addon-docs": "^6.5.16",
     "@storybook/addon-knobs": "^6.3.1",
     "@storybook/addon-links": "^6.3.8",
     "@storybook/addons": "^6.3.8",
-    "@storybook/react": "^6.3.8",
+    "@storybook/builder-webpack4": "^6.5.16",
+    "@storybook/react": "^6.5.16",
     "@storybook/testing-react": "^0.0.22",
     "babel-jest": "^26.2.2",
     "babel-loader": "^8.1.0",
     "babel-plugin-lodash": "^3.3.4",
     "classnames": "^2.2.5",
-    "core-js": "^3.4.1",
     "css-loader": "^3.6.0",
     "date-fns": "^2.16.1",
     "detect-browser": "^2.4.0",
     "dompurify": "^2.0.17",
+    "dotenv-webpack": "^8.1.0",
     "draft-js": "^0.10.5",
     "draftjs-to-html": "^0.8.3",
     "expose-loader": "^0.7.3",
@@ -98,7 +99,7 @@
     "moment": "^2.24.0",
     "moment-range": "^4.0.2",
     "moment-timezone": "^0.5.27",
-    "node-sass": "^6.0.0",
+    "node-sass": "^8.0.0",
     "pdf-annotate.js": "^1.0.0",
     "pdfjs-dist": "2.6.347",
     "picocolors": "^1.0.1",
@@ -144,7 +145,7 @@
     "vis-data": "^7.1.2",
     "vis-network": "^9.0.4",
     "vis-timeline": "^7.4.9",
-    "webpack": "^4.42.1",
+    "webpack": "^4.47.0",
     "webpack-cli": "^3.3.11",
     "yup": "^0.32.9"
   },
@@ -183,6 +184,8 @@
   "resolutions": {
     "kind-of": ">=6.0.3",
     "ws": "^1.1.5",
-    "prismjs": "^1.21.0"
+    "prismjs": "^1.21.0",
+    "docpress/**/lodash": "^4.17.10",
+    "terser-webpack-plugin": "^4.2.3"
   }
 }
