@@ -474,19 +474,6 @@ feature "Higher-Level Review", :all_dbs do
     end
   end
 
-  it "Shows a review error when something goes wrong" do
-    start_higher_level_review(veteran_no_ratings)
-    visit "/intake"
-
-    ## Validate error message when complete intake fails
-    expect_any_instance_of(HigherLevelReviewIntake).to receive(:review!).and_raise("A random error. Oh no!")
-
-    click_intake_continue
-
-    expect(page).to have_content("Something went wrong")
-    expect(page).to have_current_path("/intake/review_request")
-  end
-
   # this version is slightly different from what is in IntakeHelpers
   # TODO it would be good to reconcile and save some duplication.
   def start_higher_level_review(

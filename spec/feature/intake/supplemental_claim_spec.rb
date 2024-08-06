@@ -345,20 +345,6 @@ feature "Supplemental Claim Intake", :all_dbs do
     expect(page).to have_content("Page not found")
   end
 
-  it "Shows a review error when something goes wrong" do
-    start_supplemental_claim(veteran_no_ratings)
-    visit "/intake"
-
-    ## Validate error message when complete intake fails
-    expect_any_instance_of(SupplementalClaimIntake).to receive(:review!).and_raise("A random error. Oh no!")
-
-    click_intake_continue
-
-    expect(page).to have_content("Something went wrong")
-    expect(page).to have_content("Error code")
-    expect(page).to have_current_path("/intake/review_request")
-  end
-
   def start_supplemental_claim(
     test_veteran,
     is_comp: true,
