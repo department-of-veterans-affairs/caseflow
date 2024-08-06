@@ -185,9 +185,6 @@ class Task < CaseflowRecord
     end
 
     def verify_user_can_create!(user, parent)
-      # guard clause to allow InboundOpsTeam members to create mail/appeal tasks within Correspondence Intake
-      return true if InboundOpsTeam.singleton.user_has_access?(user)
-
       can_create = parent&.available_actions(user)&.map do |action|
         parent.build_action_hash(action, user)
       end&.any? do |action|
@@ -634,8 +631,9 @@ class Task < CaseflowRecord
   end
 
   def can_be_received_by?(team)
-    return false if assigned_to == team
-    return false if assigned_to.is_a?(User) && parent && parent.assigned_to == team
+    return false if assigned_to?(team)
+
+    false if parent_assigned_to?(team)
   end
 
   # rubocop:disable Metrics/AbcSize
@@ -851,6 +849,14 @@ class Task < CaseflowRecord
       child_task.parent = self
       child_task.save!
     end
+  end
+
+  def assigned_to?(team)
+    assigned_to == team
+  end
+
+  def parent_assigned_to?(team)
+    assigned_to.is_a?(User) && parent && parent.assigned_to == team
   end
 
   def automatically_assign_org_task?
