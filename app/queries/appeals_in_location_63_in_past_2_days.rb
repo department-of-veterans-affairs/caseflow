@@ -9,8 +9,10 @@ class AppealsInLocation63InPast2Days
     ready_for_distribution_at: "Ready for Distribution at",
     veteran_file_number: "Veteran File number",
     veteran_name: "Veteran",
-    hearing_judge: "Most Recent Hearing Judge",
-    deciding_judge: "Most Recent Deciding Judge",
+    hearing_judge_id: "Most Recent Hearing Judge ID",
+    hearing_judge_name: "Most Recent Hearing Judge Name",
+    deciding_judge_id: "Most Recent Deciding Judge ID",
+    deciding_judge_name: "Most Recent Hearing Judge Name",
     affinity_start_date: "Affinity Start Date",
     moved_date_time: "Date/Time Moved",
     bfcurloc: "BFCURLOC"
@@ -52,10 +54,11 @@ class AppealsInLocation63InPast2Days
   def self.legacy_rows(appeals, docket, sym)
     appeals.map do |appeal|
       veteran_name = FullName.new(appeal["snamef"], nil, appeal["snamel"]).to_s
+      hearing_judge_id = appeal["bfmemid"].blank? ? nil : legacy_hearing_judge(appeal)
       vlj_name = FullName.new(appeal["vlj_namef"], nil, appeal["vlj_namel"]).to_s
-      hearing_judge = vlj_name.empty? ? nil : vlj_name
-      deciding_judge = appeal["bfmemid"].blank? ? nil : legacy_original_deciding_judge(appeal)
-      moved_date_time = "TODO"
+      hearing_judge_name = vlj_name.empty? ? nil : vlj_name
+      deciding_judge_id = appeal["bfmemid"].blank? ? nil : legacy_original_deciding_judge(appeal)
+      deciding_judge_name = appeal["bfmemid"].blank? ? nil : legacy_original_deciding_judge_name(appeal)
       appeal_affinity = AppealAffinity.find_by(case_id: appeal["bfkey"], case_type: "VACOLS::Case")
 
       {
@@ -66,8 +69,10 @@ class AppealsInLocation63InPast2Days
         ready_for_distribution_at: appeal["bfdloout"],
         veteran_file_number: appeal["ssn"] || appeal["bfcorlid"],
         veteran_name: veteran_name,
-        hearing_judge: hearing_judge,
-        deciding_judge: deciding_judge,
+        hearing_judge_id: hearing_judge_id,
+        hearing_judge_name: hearing_judge_name,
+        deciding_judge_id: deciding_judge_id,
+        deciding_judge_name: deciding_judge_name,
         affinity_start_date: appeal_affinity&.affinity_start_date,
         moved_date_time: appeal["bfdlocin"],
         bfcurloc: appeal["bfcurloc"]
@@ -98,9 +103,20 @@ class AppealsInLocation63InPast2Days
     # end
   end
 
+  def self.legacy_hearing_judge(appeal)
+    staff = VACOLS::Staff.find_by(sattyid: appeal["vlj"])
+    staff&.sdomainid || appeal["vlj"]
+  end
+
   def self.legacy_original_deciding_judge(appeal)
     staff = VACOLS::Staff.find_by(sattyid: appeal["bfmemid"])
     staff&.sdomainid || appeal["bfmemid"]
+  end
+
+  def self.legacy_original_deciding_judge_name(appeal)
+    staff = VACOLS::Staff.find_by(sattyid: appeal["bfmemid"])
+    deciding_Judge_name = FullName.new(staff["snamef"], nil, appeal["snamel"]).to_s
+    deciding_Judge_name.empty? ? nil : deciding_Judge_name
   end
 
 end
