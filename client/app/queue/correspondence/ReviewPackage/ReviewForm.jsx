@@ -259,9 +259,6 @@ export const ReviewForm = (props) => {
                 onChange={handleSelectCorrespondenceType}
                 readOnly={props.isReadOnly}
                 placeholder={handleCorrespondenceTypeEmpty()}
-                aria-live="polite"
-                aria-labelledby="correspondence-type-label"
-                aria-describedby="correspondence-type-select"
               />
             </div>
           </div>

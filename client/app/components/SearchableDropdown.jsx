@@ -35,7 +35,6 @@ const CustomOption = (props) => {
     ...props.innerProps,
     role: 'option',
     'aria-disabled': props.selectProps.isDisabled,
-    'aria-selected': props.selectProps.isSelected,
   };
 
   return <components.Option {...props} innerProps={innerProps} />;
@@ -49,7 +48,6 @@ const CustomInput = (props) => {
     'aria-owns': `${kebabCase(props.selectProps.name)}-listbox`,
     'aria-expanded': props.selectProps.menuIsOpen,
     'aria-haspopup': true,
-    'aria-live': 'polite',
   };
 
   const updatedProps = {
@@ -308,7 +306,6 @@ export class SearchableDropdown extends React.Component {
               }
               styles={customStyles}
               {...addCreatableOptions}
-              aria-live="polite"
             />
           </div>
         </div>
