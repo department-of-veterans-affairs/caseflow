@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Hearings::TimeService do
+RSpec.describe HearingDatetimeService do
   context "class methods" do
     describe "prepare_time_for_storage" do
       it "returns a Time object" do
@@ -72,7 +72,7 @@ RSpec.describe Hearings::TimeService do
 
     describe "initialize" do
       it "exists" do
-        expect(described_class.new(hearing: hearing)).to be_a(Hearings::TimeService)
+        expect(described_class.new(hearing: hearing)).to be_a(HearingDatetimeService)
       end
 
       it "can be initialized with AMA or Legacy Hearing" do
