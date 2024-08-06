@@ -12,7 +12,6 @@ import { prepareAppealForSearchStore } from 'app/queue/utils';
 import moment from 'moment';
 import Pagination from 'app/components/Pagination/Pagination';
 import Table from 'app/components/Table';
-import Link from 'app/components/Link';
 import moment from 'moment';
 import { ExternalLinkIcon } from 'app/components/icons/ExternalLinkIcon';
 import { COLORS } from 'app/constants/AppConstants';
@@ -195,6 +194,18 @@ const CorrespondenceDetails = (props) => {
         organizations={props.organizations}
         userCssId={props.userCssId}
         correspondence={props.correspondence} />
+    </div>
+  </>;
+
+  const associatedPriorMail = <>
+    <div>
+      <p> Information about Associated Prior Mail</p>
+    </div>
+  </>;
+
+  const responseLetters = <>
+    <div>
+      <p> Information about Response Letters</p>
     </div>
   </>;
 
