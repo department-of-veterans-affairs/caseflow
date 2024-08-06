@@ -7,6 +7,10 @@ module HearingTimeConcern
            to: :time
 
   def time
-    @time ||= HearingTimeService.new(hearing: self)
+    @time ||= if use_hearing_datetime?
+                HearingDatetimeService.new(hearing: self)
+              else
+                HearingTimeService.new(hearing: self)
+              end
   end
 end

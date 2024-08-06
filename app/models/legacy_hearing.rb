@@ -207,6 +207,10 @@ class LegacyHearing < CaseflowRecord
     scheduled_date < DateTime.yesterday.in_time_zone(regional_office_timezone)
   end
 
+  def use_hearing_datetime?
+    scheduled_in_timezone.present?
+  end
+
   def held_open?
     hold_open && hold_open > 0
   end

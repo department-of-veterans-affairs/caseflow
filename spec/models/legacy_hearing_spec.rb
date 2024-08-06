@@ -545,6 +545,40 @@ describe LegacyHearing, :all_dbs do
     end
   end
 
+  context "use_hearing_datetime?" do
+    let(:hearing) { create(:legacy_hearing) }
+
+    context "scheduled_in_timezone is not nil" do
+      it "returns true" do
+        expect(hearing.use_hearing_datetime?).to eq(true)
+      end
+
+      it "uses HearingDatetimeService instance" do
+        time_service_double = instance_double("HearingDatetimeService")
+        allow(HearingDatetimeService).to receive(:new).and_return(time_service_double)
+        hearing.time
+        expect(HearingDatetimeService).to have_received(:new)
+      end
+    end
+
+    context "scheduled_in_timezone is nil" do
+      before do
+        hearing.update(scheduled_in_timezone: nil)
+      end
+
+      it "returns false" do
+        expect(hearing.use_hearing_datetime?).to eq(false)
+      end
+
+      it "uses HearingTimeService instance" do
+        time_service_double = instance_double("HearingTimeServicee")
+        allow(HearingTimeService).to receive(:new).and_return(time_service_double)
+        hearing.time
+        expect(HearingTimeService).to have_received(:new)
+      end
+    end
+  end
+
   context "#hearing_location_or_regional_office" do
     subject { legacy_hearing.hearing_location_or_regional_office }
 
