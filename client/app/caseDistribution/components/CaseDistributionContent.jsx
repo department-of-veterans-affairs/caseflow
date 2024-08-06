@@ -1,4 +1,7 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
+import Alert from '../../components/Alert';
+import Link from '../../components/Link';
 import StaticLeversWrapper from './StaticLeversWrapper';
 import InteractableLeverWrapper from './InteractableLeversWrapper';
 import LeverHistory from './LeverHistory';
@@ -6,9 +9,13 @@ import {
   sectionSegmentStyling,
   sectionHeadingStyling,
   anchorJumpLinkStyling } from 'app/queue/StickyNavContentArea';
+
 import COPY from '../../../COPY';
+import { getExcludeFromAffinityStatus } from '../reducers/levers/leversSelector';
 
 const CaseDistributionContent = () => {
+  const theState = useSelector((state) => state);
+  const excludeFromAffinityCasesToggle = getExcludeFromAffinityStatus(theState);
 
   return (
     <div>
@@ -17,6 +24,13 @@ const CaseDistributionContent = () => {
       <div> {/* Main Content Wrapper*/}
         <h2>{COPY.CASE_DISTRIBUTION_TITLE}</h2>
         <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_ALGORITHM_DESCRIPTION}</p>
+
+        {excludeFromAffinityCasesToggle && (<p>
+          <Alert type="info">
+            You may remove individual judges from Affinity Case Distribution within the setting on the&nbsp;
+            <Link to="team_management" target="_blank">Caseflow Team Management page</Link>.
+          </Alert>
+        </p>)}
 
         <div className="active-data-content" id="active-data-elements">  {/* Container for Active Levers*/}
           <h2 {...sectionHeadingStyling}>

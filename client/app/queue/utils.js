@@ -195,6 +195,7 @@ const appealAttributesFromRawTask = (task) => ({
   veteranAppellantDeceased: task.attributes.veteran_appellant_deceased,
   issueCount: task.attributes.issue_count,
   issueTypes: task.attributes.issue_types,
+  pendingIssueModificationCount: task.attributes.pending_issue_modification_count,
   docketNumber: task.attributes.docket_number,
   veteranFullName: task.attributes.veteran_full_name,
   veteranFileNumber: task.attributes.veteran_file_number,
@@ -402,7 +403,6 @@ const prepareLocationHistoryForStore = (appeal) => {
   return locationHistory;
 };
 
-
 export const prepareAppealForStore = (appeals) => {
   const appealHash = appeals.reduce((accumulator, appeal) => {
     const {
@@ -519,6 +519,7 @@ export const prepareAppealForStore = (appeals) => {
       remandJudgeName: appeal.attributes.remand_judge_name,
       hasNotifications: appeal.attributes.has_notifications,
       locationHistory: prepareLocationHistoryForStore(appeal),
+      hasCompletedSctAssignTask: appeal.attributes.has_completed_sct_assign_task,
       mst: appeal.attributes.mst,
       pact: appeal.attributes.pact
     };
@@ -563,12 +564,13 @@ export const prepareAppealForSearchStore = (appeals) => {
         appeal.attributes.readable_hearing_request_type,
       readableOriginalHearingRequestType:
         appeal.attributes.readable_original_hearing_request_type,
-      vacateType: appeal.attributes.vacate_type
+      vacateType: appeal.attributes.vacate_type,
+      mst: appeal.attributes.mst,
+      pact: appeal.attributes.pact
     };
 
     return accumulator;
   }, {});
-
 
   const appealDetailsHash = appeals.reduce((accumulator, appeal) => {
     accumulator[appeal.attributes.external_id] = {
@@ -594,6 +596,8 @@ export const prepareAppealForSearchStore = (appeals) => {
       regionalOffice: appeal.attributes.regional_office,
       caseflowVeteranId: appeal.attributes.caseflow_veteran_id,
       locationHistory: prepareLocationHistoryForStore(appeal),
+      mst: appeal.attributes.mst,
+      pact: appeal.attributes.pact
     };
 
     return accumulator;
@@ -1129,5 +1133,5 @@ export const getPreviousTaskInstructions = (parentTask, tasks) => {
 };
 
 export const replaceSpecialCharacters = (string_replace) => {
-  return string_replace.replace(/[^\w\s]/gi, '_')
+  return string_replace.replace(/[^\w\s]/gi, '_');
 };

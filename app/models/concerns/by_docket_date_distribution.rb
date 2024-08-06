@@ -32,12 +32,10 @@ module ByDocketDateDistribution
     priority_rem = priority_target.clamp(0, @rem)
     distribute_priority_appeals_from_all_dockets_by_age_to_limit(priority_rem, style: "request")
 
-    unless FeatureToggle.enabled?(:acd_disable_nonpriority_distributions, user: RequestStore.store[:current_user])
-      # Distribute the oldest nonpriority appeals from any docket if we haven't distributed {batch_size} appeals
-      # @nonpriority_iterations guards against an infinite loop if not enough cases are ready to distribute
-      until @rem <= 0 || @nonpriority_iterations >= MAX_NONPRIORITY_ITERATIONS
-        distribute_nonpriority_appeals_from_all_dockets_by_age_to_limit(@rem)
-      end
+    # Distribute the oldest nonpriority appeals from any docket if we haven't distributed {batch_size} appeals
+    # @nonpriority_iterations guards against an infinite loop if not enough cases are ready to distribute
+    until @rem <= 0 || @nonpriority_iterations >= MAX_NONPRIORITY_ITERATIONS
+      distribute_nonpriority_appeals_from_all_dockets_by_age_to_limit(@rem)
     end
     @appeals
   end
@@ -69,15 +67,17 @@ module ByDocketDateDistribution
       nonpriority_counts[sym] = docket.count(priority: false, ready: true)
     end
 
-    unless FeatureToggle.enabled?(:acd_disable_legacy_distributions, user: RequestStore.store[:current_user])
-      priority_counts[:legacy_hearing_tied_to] = legacy_hearing_priority_count(judge)
-      nonpriority_counts[:legacy_hearing_tied_to] = legacy_hearing_nonpriority_count(judge)
-    end
+    priority_counts[:legacy_hearing_tied_to] = legacy_hearing_priority_count(judge)
+    nonpriority_counts[:legacy_hearing_tied_to] = legacy_hearing_nonpriority_count(judge)
 
     nonpriority_counts[:iterations] = @nonpriority_iterations
 
+    sct_appeals_counts = @appeals.count { |appeal| appeal.try(:sct_appeal) }
+
     settings = {}
-    feature_toggles = [:acd_disable_legacy_distributions, :acd_disable_nonpriority_distributions]
+    feature_toggles = [
+      :specialty_case_team_distribution
+    ]
     feature_toggles.each do |sym|
       settings[sym] = FeatureToggle.enabled?(sym, user: RequestStore.store[:current_user])
     end
@@ -88,6 +88,7 @@ module ByDocketDateDistribution
       priority_target: @push_priority_target || @request_priority_count,
       priority: priority_counts,
       nonpriority: nonpriority_counts,
+      sct_appeals: sct_appeals_counts,
       distributed_cases_tied_to_ineligible_judges: {
         ama: ama_distributed_cases_tied_to_ineligible_judges,
         legacy: distributed_cases_tied_to_ineligible_judges

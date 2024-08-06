@@ -29,7 +29,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
 
     it "dashboard loads as read-only if the appeal has an associated cavcRemand" do
       go_to_dashboard(cavc_remand.remand_appeal.uuid)
-      expect(page).to have_text `CAVC appeals for #{cavc_remand.remand_appeal.veteran.name}`
+      expect(page).to have_text "CAVC appeals for #{cavc_remand.remand_appeal.veteran.name}"
       expect(page).to_not have_content(COPY::ADD_CAVC_DASHBOARD_ISSUE_BUTTON_TEXT)
       expect(page).to_not have_content("Edit")
     end
@@ -44,7 +44,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
 
     it "dashboard cancel button returns to case details if no changes have been made" do
       go_to_dashboard(cavc_remand.remand_appeal.uuid)
-      expect(page).to have_text `CAVC appeals for #{cavc_remand.remand_appeal.veteran.name}`
+      expect(page).to have_text "CAVC appeals for #{cavc_remand.remand_appeal.veteran.name}"
       expect(page).to have_content(COPY::ADD_CAVC_DASHBOARD_ISSUE_BUTTON_TEXT)
       expect(page).to have_content("Edit")
 
@@ -57,7 +57,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
 
     it "dashboard save button is disabled until changes made, cancel button shows warning if clicked without saving" do
       go_to_dashboard(cavc_remand.remand_appeal.uuid)
-      expect(page).to have_text `CAVC appeals for #{cavc_remand.remand_appeal.veteran.name}`
+      expect(page).to have_text "CAVC appeals for #{cavc_remand.remand_appeal.veteran.name}"
       expect(page).to have_content(COPY::ADD_CAVC_DASHBOARD_ISSUE_BUTTON_TEXT)
       expect(page).to have_content("Edit")
 
@@ -78,7 +78,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
 
     it "cancel modal functions properly when changes have not been saved" do
       go_to_dashboard(cavc_remand.remand_appeal.uuid)
-      expect(page).to have_text `CAVC appeals for #{cavc_remand.remand_appeal.veteran.name}`
+      expect(page).to have_text "CAVC appeals for #{cavc_remand.remand_appeal.veteran.name}"
       expect(page).to have_content("Edit")
 
       page.all("div.cf-select__placeholder", exact_text: "Select option").first.click
@@ -92,7 +92,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
 
       page.find("button", id: "Your-changes-are-not-saved-button-id-0").click
 
-      expect(page).to have_text `CAVC appeals for #{cavc_remand.remand_appeal.veteran.name}`
+      expect(page).to have_text "CAVC appeals for #{cavc_remand.remand_appeal.veteran.name}"
       click_button "Cancel"
 
       expect(page).to have_button("Continue")
@@ -116,7 +116,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
 
       click_button "Save"
 
-      expect(page).to have_content `CAVC appeal 21-1234`
+      expect(page).to have_content "CAVC appeal 21-1234"
       # date format for input is MM/DD/YYYY but for display is MM/DD/YY
       expect(page).to have_content "01/01/21"
       expect(page).to have_content "210101-1000"

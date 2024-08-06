@@ -332,4 +332,6 @@ class WorkQueue::AppealSerializer
       Constants.CAVC_DECISION_TYPES.settlement
     ]).count
   end
+
+  attribute :has_completed_sct_assign_task, &:completed_specialty_case_team_assign_task?
 end

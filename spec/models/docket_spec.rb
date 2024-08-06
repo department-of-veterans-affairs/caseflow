@@ -3,6 +3,18 @@
 require_relative "../../app/models/tasks/mail_task"
 
 describe Docket, :all_dbs do
+  before do
+    create(:case_distribution_lever, :ama_direct_review_docket_time_goals)
+    create(:case_distribution_lever, :ama_evidence_submission_docket_time_goals)
+    create(:case_distribution_lever, :ama_hearing_docket_time_goals)
+    create(:case_distribution_lever, :ama_hearing_start_distribution_prior_to_goals)
+    create(:case_distribution_lever, :ama_direct_review_start_distribution_prior_to_goals)
+    create(:case_distribution_lever, :ama_evidence_submission_review_start_distribution_prior_to_goals)
+    create(:case_distribution_lever, :cavc_affinity_days)
+    create(:case_distribution_lever, :request_more_cases_minimum)
+    create(:case_distribution_lever, :disable_ama_non_priority_direct_review)
+  end
+
   context "docket" do
     # nonpriority
     let!(:appeal) do
@@ -56,8 +68,11 @@ describe Docket, :all_dbs do
       create(:appeal,
              :type_cavc_remand,
              :cavc_ready_for_distribution,
-             docket_type: Constants.AMA_DOCKETS.direct_review)
+             :with_appeal_affinity,
+             docket_type: Constants.AMA_DOCKETS.direct_review,
+             affinity_start_date: affinity_start_date)
     end
+    let(:affinity_start_date) { Time.zone.now }
 
     context "docket type" do
       # docket_type is implemented in the subclasses and should error if called here
@@ -98,7 +113,7 @@ describe Docket, :all_dbs do
           subject { DirectReviewDocket.new.appeals(ready: true, genpop: "not_genpop", judge: other_judge) }
 
           it "returns no appeals" do
-            expect(subject.count.size).to eq 0
+            expect(subject.to_a.length).to eq 0
           end
         end
 
@@ -108,6 +123,21 @@ describe Docket, :all_dbs do
 
           it "returns only the cavc appeal" do
             expect(subject).to match_array([cavc_appeal])
+          end
+        end
+
+        context "when acd_exclude_from_affinity flag is enabled" do
+          before { FeatureToggle.enable!(:acd_exclude_from_affinity) }
+
+          context "when called for ready is true and judge is passed" do
+            let(:judge) { judge_decision_review_task.assigned_to }
+            subject { DirectReviewDocket.new.appeals(ready: true, judge: judge) }
+
+            it "returns non priority appeals" do
+              expect(subject).to include appeal
+              expect(subject).to include denied_aod_motion_appeal
+              expect(subject).to include inapplicable_aod_motion_appeal
+            end
           end
         end
       end
@@ -131,6 +161,26 @@ describe Docket, :all_dbs do
           expect(subject).to include aod_motion_appeal
           expect(subject).to include cavc_appeal
         end
+
+        context "when aod appeal with claimants person does not contain DOB" do
+          let!(:other_aod_age_appeal) do
+            create(:appeal,
+                   :advanced_on_docket_due_to_age,
+                   :with_post_intake_tasks,
+                   docket_type: Constants.AMA_DOCKETS.direct_review,
+                   aod_based_on_age: false)
+          end
+
+          before do
+            aod_age_appeal.claimants.first.person.update!(date_of_birth: nil)
+            other_aod_age_appeal.claimants.first.person.update!(date_of_birth: nil)
+          end
+
+          it "returns aod appeal in priority/ready appeals" do
+            expect(subject).to include aod_age_appeal
+            expect(subject).to_not include inapplicable_aod_motion_appeal
+          end
+        end
       end
 
       context "when looking for only nonpriority appeals" do
@@ -142,6 +192,26 @@ describe Docket, :all_dbs do
           expect(subject).to_not include aod_age_appeal
           expect(subject).to_not include aod_motion_appeal
           expect(subject).to_not include cavc_appeal
+        end
+
+        context "when aod appeal with claimants person does not contain DOB" do
+          let!(:other_aod_age_appeal) do
+            create(:appeal,
+                   :advanced_on_docket_due_to_age,
+                   :with_post_intake_tasks,
+                   docket_type: Constants.AMA_DOCKETS.direct_review,
+                   aod_based_on_age: false)
+          end
+
+          before do
+            aod_age_appeal.claimants.first.person.update!(date_of_birth: nil)
+            other_aod_age_appeal.claimants.first.person.update!(date_of_birth: nil)
+          end
+
+          it "returns aod nonpriority appeals" do
+            expect(subject).not_to include aod_age_appeal
+            expect(subject).to include inapplicable_aod_motion_appeal
+          end
         end
       end
 
@@ -226,35 +296,35 @@ describe Docket, :all_dbs do
             expect(subject).to include with_blocking_but_closed_tasks
           end
         end
-
-        context "nonblocking mail tasks but closed Root Task" do
-          it "excludes those appeals" do
-            inactive_appeal = create(:appeal,
-                                     :with_post_intake_tasks,
-                                     docket_type: Constants.AMA_DOCKETS.direct_review)
-            AodMotionMailTask.create_from_params({
-                                                   appeal: inactive_appeal,
-                                                   parent_id: inactive_appeal.root_task.id
-                                                 }, user)
-            inactive_appeal.root_task.update!(status: "completed")
-
-            expect(subject).to_not include inactive_appeal
-          end
-        end
       end
     end
 
     context "count" do
       let(:priority) { nil }
-      subject { DirectReviewDocket.new.count(priority: priority) }
+      let(:ready) { nil }
+      subject { DirectReviewDocket.new.count(priority: priority, ready: ready) }
 
-      it "counts appeals" do
+      it "counts all active appeals on the docket" do
         expect(subject).to eq(6)
+      end
+
+      context "when looking for ready appeals" do
+        let(:ready) { true }
+        it "counts only ready appeals" do
+          expect(subject).to eq(6)
+        end
       end
 
       context "when looking for nonpriority appeals" do
         let(:priority) { false }
-        it "counts nonpriority appeals" do
+        it "counts active nonpriority appeals" do
+          expect(subject).to eq(3)
+        end
+      end
+
+      context "when looking for priority appeals" do
+        let(:priority) { true }
+        it "counts active priority appeals" do
           expect(subject).to eq(3)
         end
       end
@@ -269,6 +339,114 @@ describe Docket, :all_dbs do
       end
     end
 
+    context "ready_priority_nonpriority_appeals" do
+      let(:docket) { DirectReviewDocket.new }
+      let(:judge) { create(:user, :judge, :with_judge_team) }
+
+      it "returns appeals when the corresponding CaseDistributionLever value is false" do
+        CaseDistributionLever.where(item: "disable_ama_non_priority_direct_review").update(value: false)
+        result = docket.ready_priority_nonpriority_appeals(priority: false)
+        expected_appeals = docket.appeals(priority: false, ready: true)
+        expect(result.map(&:id)).to eq(expected_appeals.map(&:id))
+      end
+
+      it "returns docket when the corresponding CaseDistributionLever value is false" do
+        CaseDistributionLever.where(item: "disable_ama_non_priority_direct_review").update(value: false)
+        result = docket.ready_priority_nonpriority_appeals(priority: false, ready: true, genpop: true, judge: judge)
+        expected_attributes = docket.appeals(
+          priority: false,
+          ready: true,
+          genpop: true,
+          judge: judge
+        ).map(&:attributes)
+        result_attributes = result.map(&:attributes)
+        expect(result_attributes).to eq(expected_attributes)
+      end
+
+      it "returns an empty array when the corresponding CaseDistributionLever value is true" do
+        lever = CaseDistributionLever.find_by(item: "disable_ama_non_priority_direct_review")
+        lever.update(value: "true")
+        expect(lever.value).to eq("true")
+        result = docket.ready_priority_nonpriority_appeals(priority: false)
+        expect(result).to eq([])
+      end
+
+      it "returns an empty list when the corresponding CaseDistributionLever record is not found" do
+        result = docket.ready_priority_nonpriority_appeals(priority: false)
+        expected_result = docket.appeals(priority: false, ready: true)
+        expect(result.map(&:id)).to eq(expected_result.map(&:id))
+      end
+
+      it "returns an empty array when the lever value is true and priority is true" do
+        allow(CaseDistributionLever).to receive(:find_by_item).and_return(double(value: "true"))
+        expect(docket.ready_priority_nonpriority_appeals(ready: true)).to eq([])
+      end
+
+      it "returns the correct appeals when the lever value is false and priority is true" do
+        expected_appeals = docket.appeals(priority: true)
+        result = docket.ready_priority_nonpriority_appeals(priority: true, ready: true)
+        expect(result).to match_array(expected_appeals)
+      end
+
+      context "when start_distribution_prior_to_goal toggle is off" do
+        before do
+          CaseDistributionLever.find_by(item: "ama_direct_review_start_distribution_prior_to_goals")
+            .update!(is_toggle_active: false)
+        end
+
+        it "returns the correct appeals" do
+          expected_appeals = docket.appeals(priority: true)
+          result = docket.ready_priority_nonpriority_appeals(priority: true, ready: true)
+          expect(result).to match_array(expected_appeals)
+        end
+      end
+
+      context "when start_distribution_prior_to_goal toggle is on" do
+        before do
+          CaseDistributionLever.find_by(item: "ama_direct_review_start_distribution_prior_to_goals")
+            .update!(is_toggle_active: true, value: 345)
+        end
+
+        context "with non-priority appeals" do
+          before do
+            [appeal, denied_aod_motion_appeal, inapplicable_aod_motion_appeal].each do |np_appeal|
+              np_appeal.update!(receipt_date: 22.days.ago)
+            end
+          end
+
+          it "returns the appeals with in docket time goal days" do
+            result = docket.ready_priority_nonpriority_appeals(priority: false, ready: true)
+            expected_appeals = docket.appeals(priority: false, ready: true)
+            expect(result).to match_array(expected_appeals)
+          end
+        end
+
+        context "with priority appeals" do
+          it "returns the appeals without docket time goal days" do
+            result = docket.ready_priority_nonpriority_appeals(priority: true, ready: true)
+            expected_appeals = docket.appeals(priority: true, ready: true)
+            expect(result).to match_array(expected_appeals)
+          end
+        end
+      end
+    end
+
+    context "lever item construction" do
+      let(:docket) { DirectReviewDocket.new }
+
+      it "correctly builds the lever item based on docket type" do
+        allow(docket).to receive(:docket_type).and_return("direct_review")
+
+        lever_item_key = "disable_ama_non_priority_direct_review"
+        allow(CaseDistributionLever).to receive(:find_by).and_call_original
+        allow(CaseDistributionLever).to receive(:find_by).with(item: lever_item_key).and_return(double(value: "false"))
+
+        expect(docket).to receive(:ready_priority_nonpriority_appeals).and_call_original
+
+        docket.ready_priority_nonpriority_appeals(priority: false)
+      end
+    end
+
     context "age_of_n_oldest_genpop_priority_appeals" do
       subject { DirectReviewDocket.new.age_of_n_oldest_genpop_priority_appeals(1) }
 
@@ -279,26 +457,76 @@ describe Docket, :all_dbs do
     end
 
     context "age_of_n_oldest_priority_appeals_available_to_judge" do
+      # Set cavc_appeal to be outside its affinity window
+      let(:affinity_start_date) { (CaseDistributionLever.cavc_affinity_days + 7).days.ago }
       let(:judge) { create(:user, :with_vacols_judge_record) }
+      let!(:cavc_appeal_no_appeal_affinity) do
+        create_ready_cavc_appeal_without_appeal_affinity(tied_judge: judge, created_date: 7.days.ago)
+      end
+
+      before do
+        FeatureToggle.enable!(:acd_exclude_from_affinity)
+        FeatureToggle.enable!(:acd_distribute_by_docket_date)
+      end
 
       subject { DirectReviewDocket.new.age_of_n_oldest_priority_appeals_available_to_judge(judge, 5) }
 
       it "returns the receipt_date field of the oldest direct review priority appeals ready for distribution" do
-        expect(subject.length).to eq(3)
-        expect(subject).to eq([aod_age_appeal.receipt_date, aod_motion_appeal.receipt_date, cavc_appeal.receipt_date])
+        expect(subject.length).to eq(4)
+        expect(subject).to match_array([aod_age_appeal.receipt_date,
+                                        aod_motion_appeal.receipt_date,
+                                        cavc_appeal.receipt_date,
+                                        cavc_appeal_no_appeal_affinity.receipt_date])
       end
     end
 
     context "age_of_n_oldest_nonpriority_appeals_available_to_judge" do
       let(:judge) { create(:user, :with_vacols_judge_record) }
+      let(:expected_result) do
+        [appeal.receipt_date, denied_aod_motion_appeal.receipt_date, inapplicable_aod_motion_appeal.receipt_date]
+      end
+
+      before do
+        FeatureToggle.enable!(:acd_exclude_from_affinity)
+        FeatureToggle.enable!(:acd_distribute_by_docket_date)
+      end
+
+      before do
+        FeatureToggle.enable!(:acd_exclude_from_affinity)
+        FeatureToggle.enable!(:acd_distribute_by_docket_date)
+      end
 
       subject { DirectReviewDocket.new.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, 5) }
 
       it "returns the receipt_date field of the oldest direct review priority appeals ready for distribution" do
         expect(subject.length).to eq(3)
-        expect(subject).to eq(
-          [appeal.receipt_date, denied_aod_motion_appeal.receipt_date, inapplicable_aod_motion_appeal.receipt_date]
-        )
+        expect(subject).to eq(expected_result)
+      end
+
+      context "when calculated time goal days are 20" do
+        before do
+          CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_direct_review_docket_time_goals)
+            .update!(value: 385)
+          appeal.update!(receipt_date: 25.days.ago)
+          denied_aod_motion_appeal.update!(receipt_date: 25.days.ago)
+        end
+
+        it "returns only receipt_date with in the time goal" do
+          expect(subject.length).to eq(2)
+          expect(subject).to eq([appeal.receipt_date, denied_aod_motion_appeal.receipt_date])
+        end
+      end
+
+      context "when start_distribution_prior_to_goal toggle off" do
+        before do
+          CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_direct_review_start_distribution_prior_to_goals)
+            .update!(is_toggle_active: false)
+        end
+
+        it "returns only receipt_date with in the time goal" do
+          expect(subject.length).to eq(3)
+          expect(subject).to eq(expected_result)
+        end
       end
     end
 
@@ -402,11 +630,7 @@ describe Docket, :all_dbs do
         let(:second_judge) { create(:user, :judge, :with_vacols_judge_record) }
         let(:second_distribution) { Distribution.create!(judge: second_judge) }
 
-        let(:cavc_affinity_days) { CaseDistributionLever.cavc_affinity_days }
-
-        before do
-          cavc_distribution_task.update!(assigned_at: (cavc_affinity_days + 1).days.ago)
-        end
+        let(:affinity_start_date) { (CaseDistributionLever.cavc_affinity_days + 1).days.ago }
 
         context "when genpop: not_genpop is set" do
           it "is not distributed because it is now genpop" do
@@ -519,7 +743,8 @@ describe Docket, :all_dbs do
         docket: distributed_appeal.docket_type,
         priority: false,
         case_id: distributed_appeal.uuid,
-        task: distributed_appeal.tasks.of_type("DistributionTask").first
+        task: distributed_appeal.tasks.of_type("DistributionTask").first,
+        sct_appeal: false
       )
     end
     let!(:second_distribution_task) do
@@ -575,6 +800,7 @@ describe Docket, :all_dbs do
     let(:judge_user) { create(:user) }
     let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
     let!(:distribution) { Distribution.create!(judge: judge_user) }
+    let!(:sct_org) { SpecialtyCaseTeam.singleton }
 
     context "nonpriority appeals" do
       subject { DirectReviewDocket.new.distribute_appeals(distribution, priority: false, limit: 10) }
@@ -588,5 +814,163 @@ describe Docket, :all_dbs do
         expect(judge_user.reload.tasks.map(&:appeal)).to include(appeals.first)
       end
     end
+  end
+
+  context "distribute_appeals to Specialty Case Team" do
+    let!(:appeals) do
+      [
+        (1..num_appeals_before).map do
+          create(:appeal,
+                 :with_post_intake_tasks,
+                 docket_type: docket_type,
+                 receipt_date: 5.days.ago)
+        end,
+        (1..num_vha_appeals).map do
+          create(:appeal, :with_post_intake_tasks, :with_vha_issue, docket_type: docket_type, receipt_date: 3.days.ago)
+        end,
+        (1..num_appeals_after).map do
+          create(:appeal,
+                 :with_post_intake_tasks,
+                 docket_type: docket_type,
+                 receipt_date: 2.days.ago)
+        end
+      ].flatten
+    end
+
+    let(:judge_user) { create(:user) }
+    let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
+    let!(:distribution) { Distribution.create!(judge: judge_user) }
+    let!(:sct_org) { SpecialtyCaseTeam.singleton }
+    let(:num_vha_appeals) { 5 }
+    let(:num_appeals_before) { 3 }
+    let(:num_appeals_after) { 10 }
+    let(:docket_type) { Constants.AMA_DOCKETS.direct_review }
+    let(:limit) { 5 }
+
+    context "with the SCT feature toggle enabled" do
+      before do
+        FeatureToggle.enable!(:specialty_case_team_distribution)
+      end
+
+      after do
+        FeatureToggle.disable!(:specialty_case_team_distribution)
+      end
+
+      context "nonpriority appeals with SCT appeals" do
+        subject { DirectReviewDocket.new.distribute_appeals(distribution, priority: false, limit: limit) }
+
+        it "creates distributed cases, judge tasks, and specialty case team tasks" do
+          tasks = subject
+
+          # We expect as many as the limit of appeals + the number of sct_appeals
+          expect(tasks.length).to eq(10)
+          expect(tasks.first.class).to eq(DistributedCase)
+          expect(distribution.distributed_cases.length).to eq(10)
+          expect(judge_user.reload.tasks.map(&:appeal)).to include(appeals.first)
+          expect(distribution.distributed_cases.count(&:sct_appeal)).to eq(5)
+        end
+      end
+
+      context "EvidenceSubmissionDocket with nonpriority appeals with SCT appeals " do
+        let(:docket_type) { Constants.AMA_DOCKETS.evidence_submission }
+
+        before do
+          # Complete the EvidenceSubmissionWindowTask to move the appeals to be ready to distribute
+          appeals.each do |appeal|
+            appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first.completed!
+          end
+          CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_evidence_submission_docket_time_goals)
+            .update!(value: 61)
+        end
+
+        subject { EvidenceSubmissionDocket.new.distribute_appeals(distribution, priority: false, limit: limit) }
+
+        it "creates distributed cases, judge tasks, and specialty case team tasks" do
+          tasks = subject
+
+          # We expect as many as the limit of appeals + the number of sct_appeals
+          expect(tasks.length).to eq(10)
+          expect(tasks.first.class).to eq(DistributedCase)
+          expect(distribution.distributed_cases.length).to eq(10)
+          expect(judge_user.reload.tasks.map(&:appeal)).to include(appeals.first)
+          expect(distribution.distributed_cases.count(&:sct_appeal)).to eq(5)
+        end
+      end
+    end
+
+    context "nonpriority appeals with SCT feature toggle disabled" do
+      before do
+        FeatureToggle.disable!(:specialty_case_team_distribution)
+      end
+
+      subject { DirectReviewDocket.new.distribute_appeals(distribution, priority: false, limit: limit) }
+
+      it "creates distributed cases and judge tasks" do
+        tasks = subject
+
+        # We expect as many as the limit of appeals with no additional sct appeals or tasks
+        expect(tasks.length).to eq(5)
+        expect(tasks.first.class).to eq(DistributedCase)
+        expect(distribution.distributed_cases.length).to eq(5)
+        expect(judge_user.reload.tasks.map(&:appeal)).to include(appeals.first)
+        expect(distribution.distributed_cases.count(&:sct_appeal)).to eq(0)
+      end
+    end
+  end
+
+  context "distribute appeals when CAVC cases don't have an appeal_affinity record" do
+    let(:judge) { create(:user, :judge, :with_vacols_judge_record) }
+    let!(:distribution) { Distribution.create!(judge: judge) }
+    let!(:cavc_appeal_with_appeal_affinity) do
+      appeal = create_ready_cavc_appeal_without_appeal_affinity(tied_judge: judge, created_date: 7.days.ago)
+      create(:appeal_affinity, appeal: appeal)
+      appeal
+    end
+    let!(:cavc_appeal_no_appeal_affinity) do
+      create_ready_cavc_appeal_without_appeal_affinity(tied_judge: judge, created_date: 7.days.ago)
+    end
+
+    before do
+      FeatureToggle.enable!(:acd_exclude_from_affinity)
+      FeatureToggle.enable!(:acd_distribute_by_docket_date)
+    end
+
+    subject { DirectReviewDocket.new.distribute_appeals(distribution, priority: true, limit: 3) }
+
+    it "selects all appeals tied to the requesting judge" do
+      expect(subject.map(&:case_id)).to match_array([cavc_appeal_with_appeal_affinity.uuid,
+                                                     cavc_appeal_no_appeal_affinity.uuid])
+    end
+  end
+
+  def create_ready_cavc_appeal_without_appeal_affinity(tied_judge: nil, created_date: 1.year.ago)
+    Timecop.travel(created_date - 6.months)
+    if tied_judge
+      judge = tied_judge
+      attorney = JudgeTeam.for_judge(judge)&.attorneys&.first || create(:user, :with_vacols_attorney_record)
+    else
+      judge = create(:user, :judge, :with_vacols_judge_record)
+      attorney = create(:user, :with_vacols_attorney_record)
+    end
+
+    source_appeal = create(
+      :appeal,
+      :direct_review_docket,
+      :dispatched,
+      associated_judge: judge,
+      associated_attorney: attorney
+    )
+
+    Timecop.travel(6.months.from_now)
+    cavc_remand = create(
+      :cavc_remand,
+      source_appeal: source_appeal
+    )
+    remand_appeal = cavc_remand.remand_appeal
+    distribution_tasks = remand_appeal.tasks.select { |task| task.is_a?(DistributionTask) }
+    (distribution_tasks.flat_map(&:descendants) - distribution_tasks).each(&:completed!)
+    Timecop.return
+
+    remand_appeal
   end
 end

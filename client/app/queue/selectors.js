@@ -2,7 +2,7 @@ import Moment from 'moment';
 import { extendMoment } from 'moment-range';
 import { createSelector } from 'reselect';
 import { filter, find, keyBy, map, merge, orderBy, reduce } from 'lodash';
-import { taskIsActive, taskIsOnHold, getAllChildrenTasks, taskAttributesFromRawTask } from './utils';
+import { taskIsActive, taskIsOnHold, getAllChildrenTasks } from './utils';
 
 import TASK_STATUSES from '../../constants/TASK_STATUSES';
 
@@ -120,12 +120,13 @@ const tasksByAssigneeCssIdSelector = createSelector(
 
 const tasksByAssigneeOrgSelector = createSelector(
   [tasksWithAppealSelector, getActiveOrgId],
-  (tasks, orgId) => filter(tasks, (task) => task.assignedTo.id === orgId)
+  (tasks, orgId) => filter(tasks, (task) => (task.assignedTo.id === orgId && task.assignedTo.isOrganization))
 );
 
 export const legacyJudgeTasksAssignedToUser = createSelector(
   [tasksByAssigneeCssIdSelector],
-  (tasks) => filter(tasks, (task) => task.type === 'JudgeLegacyDecisionReviewTask' || task.type === 'JudgeLegacyAssignTask')
+  (tasks) => filter(tasks,
+    (task) => task.type === 'JudgeLegacyDecisionReviewTask' || task.type === 'JudgeLegacyAssignTask')
 );
 
 const workTasksByAssigneeCssIdSelector = createSelector(
@@ -180,12 +181,14 @@ export const distributionTasksForAppeal = createSelector(
 
 export const caseTimelineTasksForAppeal = createSelector(
   [getAllTasksForAppeal],
-  (tasks) => orderBy(filter(completeTasksSelector(tasks), (task) => !task.hideFromCaseTimeline), ['completedAt'], ['desc'])
+  (tasks) => orderBy(filter(completeTasksSelector(tasks),
+    (task) => !task.hideFromCaseTimeline), ['completedAt'], ['desc'])
 );
 
 export const taskSnapshotTasksForAppeal = createSelector(
   [getAllTasksForAppeal],
-  (tasks) => orderBy(filter(incompleteTasksSelector(tasks), (task) => !task.hideFromTaskSnapshot), ['createdAt'], ['desc'])
+  (tasks) => orderBy(filter(incompleteTasksSelector(tasks),
+    (task) => !task.hideFromTaskSnapshot), ['createdAt'], ['desc'])
 );
 
 const taskIsLegacyAttorneyJudgeTask = (task) => {
@@ -231,6 +234,17 @@ export const camoAssignTasksSelector = createSelector(
       return (
         task.label === COPY.REVIEW_DOCUMENTATION_TASK_LABEL &&
         (task.status === TASK_STATUSES.in_progress || task.status === TASK_STATUSES.assigned)
+      );
+    })
+);
+
+export const specialtyCaseTeamAssignTasksSelector = createSelector(
+  [workTasksByAssigneeOrgSelector],
+  (tasks) =>
+    filter(tasks, (task) => {
+      return (
+        task.label === COPY.SPECIALTY_CASE_TEAM_ASSIGN_TASK_LABEL &&
+        task.status === TASK_STATUSES.assigned
       );
     })
 );
@@ -314,6 +328,16 @@ const vhaOrgTypes = ['VhaCamo', 'VhaCaregiverSupport', 'VhaProgramOffice', 'VhaR
 export const isActiveOrganizationVHA = createSelector(
   [getActiveOrgType],
   (activeOrganizationType) => vhaOrgTypes.includes(activeOrganizationType)
+);
+
+export const isVhaCamoOrg = createSelector(
+  [getActiveOrgType],
+  (activeOrganizationType) => activeOrganizationType === 'VhaCamo'
+);
+
+export const isSpecialtyCaseTeamOrg = createSelector(
+  [getActiveOrgType],
+  (activeOrganizationType) => activeOrganizationType === 'SpecialtyCaseTeam'
 );
 
 // ***************** Non-memoized selectors *****************
