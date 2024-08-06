@@ -159,6 +159,7 @@ class ClaimHistoryEvent
 
     def create_last_version_events(change_data, last_version)
       edited_events = []
+
       last_version["status"].map.with_index do |status, index|
         if status == "assigned"
           edited_events.push(*create_pending_status_events(change_data, last_version["updated_at"][index]))
@@ -180,31 +181,29 @@ class ClaimHistoryEvent
                "event_user_name" => event_user,
                "user_facility" => decider_user_facility(change_data))
 
-      if change_data["request_type"] == "addition"
-        change_data = issue_attributes_for_request_type_addition(change_data)
-      end
+      change_data = issue_attributes_for_request_type_addition(change_data) if change_data["request_type"] == "addition"
 
       request_event_type = "request_#{event}"
-
-      where_imr_created_in_same_transaction = same_transaction?(change_data)
-
       events.push from_change_data(request_event_type.to_sym, change_data.merge(decision_event_hash))
-      # in case of multipe issue modification request and all been approved, only first one will have
-      # previous_imr_created_at nil which will create only one in-progress event.
-      # in case of multiple cancelled for the last event then add in progress otherwise its not necessary
-      if %w[cancelled denied approved].include?(event) && !change_data["is_assigned_present"] &&
-         change_data["previous_imr_created_at"].nil?
-        in_progress_system_hash_events = pending_system_hash
-          .merge("event_date" => change_data["imr_last_updated_at"])
 
-        events.push from_change_data(:in_progress, change_data.merge(in_progress_system_hash_events))
-      elsif !where_imr_created_in_same_transaction && # change_data["is_assigned_present"] &&
-            !change_data["imr_last_decided_date"].nil?
-        in_progress_system_hash_events = pending_system_hash
-          .merge("event_date" => change_data["imr_last_updated_at"] - 2.seconds)
-        events.push from_change_data(:in_progress, change_data.merge(in_progress_system_hash_events))
-      end
+      events.push create_in_progress_status_event(change_data)
       events
+    end
+
+    def create_in_progress_status_event(change_data)
+      same_transaction = same_transaction?(change_data)
+
+      last_decided_row = last_decided_row?(change_data)
+
+      in_progress_system_hash_events = pending_system_hash
+        .merge("event_date" => (change_data["decided_at"] ||
+          change_data["issue_modification_request_updated_at"]))
+
+      if last_decided_row || (!same_transaction &&
+         %w[cancelled denied approved].include?(change_data["issue_modification_request_status"]))
+
+        from_change_data(:in_progress, change_data.merge(in_progress_system_hash_events))
+      end
     end
 
     def create_pending_status_events(change_data, event_date)
@@ -212,8 +211,12 @@ class ClaimHistoryEvent
         .merge("event_date" => event_date)
 
       same_transaction = same_transaction?(change_data)
-
-      if change_data["previous_imr_created_at"].nil? || !same_transaction
+      # if two imr's are of different transaction and if decision has already been made then we
+      # want to put pending status since it went back to pending status before it was approved/cancelled or denied.
+      if change_data["previous_imr_created_at"].nil? ||
+         (!same_transaction &&
+          %w[cancelled denied approved assigned].include?(change_data["issue_modification_request_status"])
+         )
         from_change_data(:pending, change_data.merge(pending_system_hash_events))
       end
     end
@@ -299,8 +302,14 @@ class ClaimHistoryEvent
 
     def same_transaction?(change_data)
       timestamp_within_seconds?(change_data["issue_modification_request_created_at"],
-                                                   change_data["previous_imr_created_at"],
-                                                   ISSUE_MODIFICATION_REQUEST_CREATION_WINDOW)
+                                change_data["previous_imr_created_at"] ||
+                                change_data["issue_modification_request_created_at"],
+                                ISSUE_MODIFICATION_REQUEST_CREATION_WINDOW)
+    end
+
+    def last_decided_row?(change_data)
+      change_data["imr_last_decided_date"] == (change_data["decided_at"] ||
+                         change_data["issue_modification_request_updated_at"])
     end
 
     def extract_issue_ids_from_change_data(change_data, key)

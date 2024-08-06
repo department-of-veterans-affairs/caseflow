@@ -95,6 +95,7 @@ describe ClaimHistoryEvent do
   let(:request_issue_update_time) { Time.zone.parse("2023-10-19 22:47:16.233187") }
   let(:request_issue_created_at) { Time.zone.parse("2023-10-19 22:45:43.108934") }
   let(:issue_modification_request_created_at) { Time.zone.parse("2023-10-20 22:47:16.233187") }
+  let(:imr_last_decided_date) { Time.zone.parse("2023-10-21 22:47:16.233187") }
   let(:previous_imr_created_at) { Time.zone.parse("2023-10-19 22:47:16.233187") }
 
   let(:decision_reason) { nil }
@@ -817,6 +818,10 @@ describe ClaimHistoryEvent do
         "- 2024-07-19 22:45:43.148742000 Z\n" \
         "- 2024-07-19 22:47:16.222311778 Z\n" \
         "\"}"
+      end
+      before do
+        change_data["decided_at"] = imr_last_decided_date
+        change_data["imr_last_decided_date"] = imr_last_decided_date
       end
       subject { described_class.create_edited_request_issue_events(change_data) }
 
