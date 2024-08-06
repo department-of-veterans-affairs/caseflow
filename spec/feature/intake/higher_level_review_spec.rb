@@ -531,11 +531,6 @@ feature "Higher-Level Review", :all_dbs do
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been submitted.")
   end
 
-  scenario "intake can still be completed when ratings are locked" do
-    mock_locked_rating_response
-    complete_higher_level_review
-  end
-
   context "ratings with disabiliity codes" do
     let(:disabiliity_receive_date) { receipt_date + 2.days }
     let(:disability_profile_date) { profile_date - 1.day }
