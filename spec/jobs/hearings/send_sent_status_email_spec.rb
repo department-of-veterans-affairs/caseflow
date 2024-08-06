@@ -44,7 +44,7 @@ describe Hearings::SendSentStatusEmail do
       expect(HearingEmailStatusMailer).not_to receive(:notification)
       # Expect we logged the failure to Rails.logger
       expect(Rails.logger).to receive(:info).at_least(:once)
-      # Expect we logged the failure to DataDog
+      # Expect we logged the failure to Dynatrace
       expect(MetricsService).to receive(:increment_counter).at_least(:once)
       # Call the sender
       subject
