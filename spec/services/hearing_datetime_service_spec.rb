@@ -21,7 +21,7 @@ RSpec.describe HearingDatetimeService do
         expect(time.dst?).to eq(true)
         expect(time.zone).to eq("CDT")
         # utc_offset is in seconds
-        expect(time.utc_offset).to eq(-18000)
+        expect(time.utc_offset).to eq(-18_000)
       end
 
       it "has no Daylight Savings time offset in Winter" do
@@ -33,7 +33,7 @@ RSpec.describe HearingDatetimeService do
         expect(time.dst?).to eq(false)
         expect(time.zone).to eq("CST")
         # utc_offset is in seconds
-        expect(time.utc_offset).to eq(-21600)
+        expect(time.utc_offset).to eq(-21_600)
       end
 
       it "returns nil if date method argument is nil" do
@@ -62,7 +62,6 @@ RSpec.describe HearingDatetimeService do
           described_class.prepare_time_for_storage(date: date, time_string: time_string)
         end.to raise_error(TZInfo::UnknownTimezone)
       end
-
     end
   end
 
