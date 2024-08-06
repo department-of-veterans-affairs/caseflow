@@ -621,37 +621,6 @@ feature "Higher-Level Review", :all_dbs do
              benefit_type: previous_supplemental_claim.benefit_type)
     end
 
-    context "Veteran has no ratings" do
-      let(:decision_date) { (receipt_date + 9000.days).to_date.mdY }
-
-      scenario "the Add Issue modal skips directly to Nonrating Issue modal" do
-        start_higher_level_review(veteran_no_ratings)
-        visit "/intake/add_issues"
-
-        click_intake_add_issue
-
-        add_intake_nonrating_issue(
-          category: "Active Duty Adjustments",
-          description: "Description for Active Duty Adjustments",
-          date: profile_date.mdY
-        )
-
-        expect(page).to have_content("1 issue")
-      end
-
-      scenario "validate decision date" do
-        start_higher_level_review(veteran_no_ratings)
-        visit "/intake/add_issues"
-        click_intake_add_issue
-
-        fill_in "Issue category", with: "Apportionment"
-        find("#issue-category").send_keys :enter
-
-        fill_in "Decision date", with: decision_date
-        expect(page).to have_content("Decision date cannot be in the future")
-      end
-    end
-
     context "Veteran with future ratings" do
       before { FeatureToggle.enable!(:show_future_ratings) }
       after { FeatureToggle.disable!(:show_future_ratings) }

@@ -358,6 +358,18 @@ feature "Appeal Intake", :all_dbs do
 
       click_intake_finish
     end
+
+    scenario "validate decision date" do
+      start_appeal(veteran_no_ratings)
+      visit "/intake/add_issues"
+      click_intake_add_issue
+
+      fill_in "Issue category", with: "Apportionment"
+      find("#issue-category").send_keys :enter
+
+      fill_in "Decision date", with: Time.zone.tomorrow.to_date.mdY
+      expect(page).to have_content("Decision date cannot be in the future")
+    end
   end
 
   scenario "Add / Remove Issues page" do

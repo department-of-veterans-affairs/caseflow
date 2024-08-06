@@ -404,23 +404,6 @@ feature "Supplemental Claim Intake", :all_dbs do
       )
     end
 
-    context "Veteran has no ratings" do
-      scenario "the Add Issue modal skips directly to Nonrating Issue modal" do
-        start_supplemental_claim(veteran_no_ratings)
-        visit "/intake/add_issues"
-
-        click_intake_add_issue
-
-        add_intake_nonrating_issue(
-          category: "Active Duty Adjustments",
-          description: "Description for Active Duty Adjustments",
-          date: profile_date.mdY
-        )
-
-        expect(page).to have_content("1 issue")
-      end
-    end
-
     scenario "compensation claim" do
       supplemental_claim, = start_supplemental_claim(veteran)
       visit "/intake/add_issues"
