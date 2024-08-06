@@ -28,12 +28,13 @@ describe LegacyAppeal, :all_dbs do
     context "#structure" do
       let!(:root_task) { create(:root_task, appeal: appeal) }
       let(:vacols_case) { create(:case, bfcorlid: "123456789S") }
+      let!(:child_task) { create(:task, appeal: appeal, parent_id: root_task.id) }
 
-      subject { appeal.structure(:id) }
+      subject { appeal.structure([root_task, child_task], :id) }
 
       it "returns the task structure" do
-        expect_any_instance_of(RootTask).to receive(:structure).with(:id)
-        expect(subject.key?(:"LegacyAppeal #{appeal.id} [id]")).to be_truthy
+        expect_any_instance_of(RootTask).to receive(:structure).with([root_task, child_task], :id)
+        expect(subject.key?(:"LegacyAppeal #{appeal.id} [#{root_task}, #{child_task}, id]")).to be_truthy
       end
 
       context "the appeal has more than one parentless task" do
@@ -41,11 +42,13 @@ describe LegacyAppeal, :all_dbs do
 
         let!(:colocated_task) { create(:colocated_task, appeal: appeal, parent: nil) }
 
+        subject { appeal.structure([root_task, colocated_task], :id) }
+
         it "returns all parentless tasks" do
-          expect_any_instance_of(RootTask).to receive(:structure).with(:id)
-          expect_any_instance_of(ColocatedTask).to receive(:structure).with(:id)
-          expect(subject.key?(:"LegacyAppeal #{appeal.id} [id]")).to be_truthy
-          expect(subject[:"LegacyAppeal #{appeal.id} [id]"].count).to eq 2
+          expect_any_instance_of(RootTask).to receive(:structure).with([root_task, colocated_task], :id)
+          expect_any_instance_of(ColocatedTask).to receive(:structure).with([root_task, colocated_task], :id)
+          expect(subject.key?(:"LegacyAppeal #{appeal.id} [#{root_task}, #{colocated_task}, id]")).to be_truthy
+          expect(subject[:"LegacyAppeal #{appeal.id} [#{root_task}, #{colocated_task}, id]"].count).to eq 2
         end
       end
     end
@@ -2747,10 +2750,12 @@ describe LegacyAppeal, :all_dbs do
           let!(:task) do
             create(:colocated_task, :in_progress, assigned_to: task_assignee, parent: root_task)
           end
+          let!(:root_task) { create(:root_task, appeal: appeal) }
 
           it "returns the actionable task's label and does not include nonactionable tasks in its determinations" do
             expect(appeal.assigned_to_location).to(
-              eq(task_assignee.css_id), appeal.structure_render(:id, :status, :assigned_to_id, :created_at, :updated_at)
+              eq(task_assignee.css_id),
+              appeal.structure_render([root_task], :id, :status, :assigned_to_id, :created_at, :updated_at)
             )
           end
         end
