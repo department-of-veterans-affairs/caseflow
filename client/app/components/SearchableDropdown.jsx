@@ -44,7 +44,6 @@ const CustomInput = (props) => {
   const innerProps = {
     ...props.innerProps,
     role: 'combobox',
-    'aria-labelledby': `${kebabCase(props.selectProps.name)}-label`,
     'aria-owns': `${kebabCase(props.selectProps.name)}-listbox`,
     'aria-expanded': props.selectProps.menuIsOpen,
     'aria-haspopup': true,
