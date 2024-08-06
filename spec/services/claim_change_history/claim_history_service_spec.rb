@@ -706,7 +706,7 @@ describe ClaimHistoryService do
           expected_event_types = [
             :completed,
             :in_progress,
-            :in_progress
+            :request_approved
           ]
           expect(service_instance.events.map(&:event_type)).to contain_exactly(*expected_event_types)
         end
