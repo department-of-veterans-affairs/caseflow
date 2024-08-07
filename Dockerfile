@@ -47,7 +47,7 @@ RUN apt -y update && \
 # Install node
 RUN mkdir /usr/local/nvm
 ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION 16.16.0
+ENV NODE_VERSION 18.20.2
 ENV NVM_INSTALL_PATH $NVM_DIR/versions/node/v$NODE_VERSION
 RUN curl --silent -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
 RUN source $NVM_DIR/nvm.sh \
