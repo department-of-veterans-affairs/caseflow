@@ -15,7 +15,10 @@ class ClaimHistoryEvent
               :benefit_type, :issue_type, :issue_description, :decision_date,
               :disposition, :decision_description, :withdrawal_request_date,
               :task_status, :disposition_date, :intake_completed_date, :event_user_name,
-              :event_user_css_id
+              :event_user_css_id, :new_issue_type, :new_issue_description, :new_decision_date,
+              :modification_request_reason, :request_type, :decision_reason, :decided_at_date,
+              :issue_modification_request_withdrawal_date, :requestor,
+              :decider, :remove_original_issue, :issue_modification_request_status
 
   EVENT_TYPES = [
     :completed_disposition,
@@ -28,7 +31,16 @@ class ClaimHistoryEvent
     :in_progress,
     :completed,
     :incomplete,
-    :cancelled
+    :cancelled,
+    :pending,
+    :modification,
+    :addition,
+    :withdrawal,
+    :removal,
+    :request_approved,
+    :request_denied,
+    :request_cancelled,
+    :request_edited
   ].freeze
 
   ISSUE_EVENTS = [
@@ -47,10 +59,29 @@ class ClaimHistoryEvent
     :added_decision_date
   ].freeze
 
-  STATUS_EVENTS = [:in_progress, :incomplete, :completed, :claim_creation, :cancelled].freeze
+  STATUS_EVENTS = [
+    :completed,
+    :claim_creation,
+    :cancelled,
+    :in_progress,
+    :incomplete,
+    :pending
+  ].freeze
+
+  REQUEST_ISSUE_MODIFICATION_EVENTS = [
+    :modification,
+    :addition,
+    :withdrawal,
+    :removal,
+    :request_approved,
+    :request_denied,
+    :request_cancelled,
+    :request_edited
+  ].freeze
 
   REQUEST_ISSUE_TIME_WINDOW = 15
   STATUS_EVENT_TIME_WINDOW = 2
+  ISSUE_MODIFICATION_REQUEST_CREATION_WINDOW = 60
 
   class << self
     def from_change_data(event_type, change_data)
@@ -73,11 +104,127 @@ class ClaimHistoryEvent
       from_change_data(:claim_creation, change_data.merge(intake_event_hash(change_data)))
     end
 
+    def create_issue_modification_request_event(change_data)
+      issue_modification_events = []
+      request_type = change_data["request_type"]
+      event_hash = request_issue_modification_event_hash(change_data)
+
+      if change_data["first_static_version"].present?
+        first_version = parse_versions("{#{change_data['first_static_version']}}")
+        event_hash.merge!(update_event_hash_data_from_version(first_version[0], 0))
+      end
+
+      if request_type == "addition"
+        change_data = issue_attributes_for_request_type_addition(change_data)
+      end
+
+      issue_modification_events.push from_change_data(request_type.to_sym, change_data.merge(event_hash))
+    end
+
+    def create_edited_request_issue_events(change_data)
+      edited_events = []
+      imr_versions = parse_versions(change_data["imr_versions"])
+
+      if imr_versions.present?
+        *rest_of_versions, last_version = imr_versions
+        if last_version["status"].present?
+          edited_events.push(*create_last_version_events(change_data, last_version))
+        else
+          rest_of_versions.push(last_version)
+        end
+        edited_events.push(*create_event_from_rest_of_versions(change_data, rest_of_versions))
+      else
+        create_pending_status_events(change_data, change_data["issue_modification_request_updated_at"])
+      end
+      edited_events
+    end
+
+    def create_event_from_rest_of_versions(change_data, edited_versions)
+      edit_of_request_events = []
+      event_type = :request_edited
+      event_date_hash = {}
+
+      edited_versions.map do |version|
+        event_date_hash = {
+          "event_date" => version["updated_at"][1],
+          "event_user_name" => change_data["requestor"],
+          "user_facility" => change_data["requestor_station_id"]
+        }
+
+        event_date_hash.merge!(update_event_hash_data_from_version(version, 1))
+        edit_of_request_events.push(*from_change_data(event_type, change_data.merge(event_date_hash)))
+      end
+      edit_of_request_events
+    end
+
+    def create_last_version_events(change_data, last_version)
+      edited_events = []
+
+      last_version["status"].map.with_index do |status, index|
+        if status == "assigned"
+          edited_events.push(*create_pending_status_events(change_data, last_version["updated_at"][index]))
+        else
+          edited_events.push(*create_request_issue_decision_events(
+            change_data, last_version["updated_at"][index], status
+          ))
+        end
+      end
+      edited_events
+    end
+
+    def create_request_issue_decision_events(change_data, event_date, event)
+      events = []
+      event_user = change_data["decider"] || change_data["requestor"]
+
+      decision_event_hash = pending_system_hash
+        .merge("event_date" => event_date,
+               "event_user_name" => event_user,
+               "user_facility" => decider_user_facility(change_data))
+
+      change_data = issue_attributes_for_request_type_addition(change_data) if change_data["request_type"] == "addition"
+
+      request_event_type = "request_#{event}"
+      events.push from_change_data(request_event_type.to_sym, change_data.merge(decision_event_hash))
+
+      events.push create_in_progress_status_event(change_data)
+      events
+    end
+
+    def create_in_progress_status_event(change_data)
+      in_progress_system_hash_events = pending_system_hash
+        .merge("event_date" => (change_data["decided_at"] ||
+          change_data["issue_modification_request_updated_at"]))
+
+      if should_create_imr_in_progress_status_event?(change_data)
+        from_change_data(:in_progress, change_data.merge(in_progress_system_hash_events))
+      end
+    end
+
+    def should_create_imr_in_progress_status_event?(change_data)
+      (imr_last_decided_row?(change_data) &&
+        (!imr_decided_in_same_transaction?(change_data) || change_data["previous_imr_decided_at"].nil?)) ||
+        (change_data["previous_imr_created_at"].nil? ||
+          !imr_created_in_same_transaction?(change_data) &&
+          %w[cancelled denied approved].include?(change_data["issue_modification_request_status"]))
+    end
+
+    def create_pending_status_events(change_data, event_date)
+      pending_system_hash_events = pending_system_hash
+        .merge("event_date" => event_date)
+
+      imr_created_in_same_transaction = imr_created_in_same_transaction?(change_data)
+      # if two imr's are of different transaction and if decision has already been made then we
+      # want to put pending status since it went back to pending status before it was approved/cancelled or denied.
+      if change_data["previous_imr_created_at"].nil? ||
+         !imr_created_in_same_transaction
+        from_change_data(:pending, change_data.merge(pending_system_hash_events))
+      end
+    end
+
     # rubocop:disable Metrics/MethodLength
     def create_status_events(change_data)
       status_events = []
-      versions = parse_versions(change_data)
-
+      versions = parse_versions(change_data["task_versions"])
       hookless_cancelled_events = handle_hookless_cancelled_status_events(versions, change_data)
       status_events.push(*hookless_cancelled_events)
 
@@ -112,15 +259,12 @@ class ClaimHistoryEvent
     end
     # rubocop:enable Metrics/MethodLength
 
-    def parse_versions(change_data)
-      versions = change_data["task_versions"]
+    def parse_versions(versions)
       if versions
         # Quite a bit faster but less safe. Should probably be fine since it's coming from the database
         # rubocop:disable Security/YAMLLoad
         versions[1..-2].split(",").map { |yaml| YAML.load(yaml.gsub(/^"|"$/, "")) }
-        # versions[1..-2].split(",").map { |yaml| YAML.safe_load(yaml.gsub(/^"|"$/, ""), [Time]) }
         # rubocop:enable Security/YAMLLoad
-
       end
     end
 
@@ -144,8 +288,41 @@ class ClaimHistoryEvent
       issue_events
     end
 
+    def issue_attributes_for_request_type_addition(change_data)
+      # addition should not have issue_type that is pre-existing
+      issue_data = {
+        "nonrating_issue_category" => nil,
+        "nonrating_issue_description" => nil,
+        "decision_date" => nil
+      }
+
+      change_data.merge(issue_data)
+    end
+
+    def imr_created_in_same_transaction?(change_data)
+      timestamp_within_seconds?(change_data["issue_modification_request_created_at"],
+                                change_data["previous_imr_created_at"] ||
+                                change_data["issue_modification_request_created_at"],
+                                ISSUE_MODIFICATION_REQUEST_CREATION_WINDOW)
+    end
+
+    def imr_last_decided_row?(change_data)
+      change_data["imr_last_decided_date"] == (change_data["decided_at"] ||
+                         change_data["issue_modification_request_updated_at"])
+    end
+
+    def imr_decided_in_same_transaction?(change_data)
+      timestamp_within_seconds?(change_data["decided_at"],
+                                change_data["previous_imr_decided_at"],
+                                ISSUE_MODIFICATION_REQUEST_CREATION_WINDOW)
+    end
+
     def extract_issue_ids_from_change_data(change_data, key)
       (change_data[key] || "").scan(/\d+/).map(&:to_i)
+    end
+
+    def decider_user_facility(change_data)
+      change_data["decider_station_id"] || change_data["requestor_station_id"]
     end
 
     def process_issue_ids(request_issue_ids, event_type, change_data)
@@ -221,8 +398,25 @@ class ClaimHistoryEvent
         "assigned" => :in_progress,
         "on_hold" => :incomplete,
         "completed" => :completed,
-        "cancelled" => :cancelled
+        "cancelled" => :cancelled,
+        "pending" => :pending
       }[task_status]
+    end
+
+    def update_event_hash_data_from_version(version, index)
+      version_database_field_mapping = {
+        "nonrating_issue_category" => "requested_issue_type",
+        "nonrating_issue_description" => "requested_issue_description",
+        "remove_original_issue" => "remove_original_issue",
+        "request_reason" => "modification_request_reason",
+        "decision_date" => "requested_decision_date",
+        "decision_reason" => "decision_reason",
+        "withdrawal_date" => "issue_modification_request_withdrawal_date"
+      }
+
+      version_database_field_mapping.each_with_object({}) do |(version_key, db_key), data|
+        data[db_key] = version[version_key][index] unless version[version_key].nil?
+      end
     end
 
     def event_from_version(changes, index, change_data)
@@ -301,6 +495,22 @@ class ClaimHistoryEvent
       end
     end
 
+    def request_issue_modification_event_hash(change_data)
+      {
+        "event_date" => change_data["issue_modification_request_created_at"],
+        "event_user_name" => change_data["decider"] || change_data["requestor"],
+        "user_facility" => change_data["decider_station_id"] || change_data["requestor_station_id"],
+        "event_user_css_id" => change_data["decider_css_id"] || change_data["requestor_css_id"]
+      }
+    end
+
+    def pending_system_hash
+      {
+        "event_user_name" => "System",
+        "event_type" => "in_progress"
+      }
+    end
+
     def timestamp_within_seconds?(first_date, second_date, time_in_seconds)
       return false unless first_date && second_date
 
@@ -356,7 +566,7 @@ class ClaimHistoryEvent
     [
       veteran_file_number, claimant_name, task_url, readable_task_status,
       days_waiting, readable_claim_type, readable_facility_name, readable_user_name, readable_event_date,
-      readable_event_type, issue_or_status_information, disposition_information
+      readable_event_type, issue_or_status_information, issue_modification_request_information, disposition_information
     ]
   end
 
@@ -371,7 +581,8 @@ class ClaimHistoryEvent
       "in_progress" => "in progress",
       "on_hold" => "incomplete",
       "completed" => "completed",
-      "cancelled" => "cancelled"
+      "cancelled" => "cancelled",
+      "pending" => "pending"
     }[task_status]
   end
 
@@ -398,6 +609,10 @@ class ClaimHistoryEvent
     format_date_string(decision_date)
   end
 
+  def readable_new_decision_date
+    format_date_string(new_decision_date)
+  end
+
   def readable_disposition_date
     format_date_string(disposition_date)
   end
@@ -408,10 +623,12 @@ class ClaimHistoryEvent
     [Constants::BGS_FACILITY_CODES[user_facility], " (", user_facility, ")"].join
   end
 
+  # rubocop:disable Metrics/MethodLength
   def readable_event_type
     {
       in_progress: "Claim status - In progress",
       incomplete: "Claim status - Incomplete",
+      pending: "Claim status - Pending",
       completed: "Claim closed",
       claim_creation: "Claim created",
       completed_disposition: "Completed disposition",
@@ -420,9 +637,18 @@ class ClaimHistoryEvent
       withdrew_issue: "Withdrew issue",
       removed_issue: "Removed issue",
       added_decision_date: "Added decision date",
-      cancelled: "Claim closed"
+      cancelled: "Claim closed",
+      addition: "Requested issue addition",
+      removal: "Requested issue removal",
+      modification: "Requested issue modification",
+      withdrawal: "Requested issue withdrawal",
+      request_approved: "Approval of request - issue #{request_type}",
+      request_denied: "Rejection of request - issue #{request_type}",
+      request_cancelled: "Cancellation of request",
+      request_edited: "Edit of request - issue #{request_type}"
     }[event_type]
   end
+  # rubocop:enable Metrics/MethodLength
 
   def issue_event?
     ISSUE_EVENTS.include?(event_type)
@@ -440,6 +666,10 @@ class ClaimHistoryEvent
     STATUS_EVENTS.include?(event_type)
   end
 
+  def event_has_modification_request?
+    REQUEST_ISSUE_MODIFICATION_EVENTS.include?(event_type)
+  end
+
   private
 
   def set_attributes_from_change_history_data(new_event_type, change_data)
@@ -451,11 +681,13 @@ class ClaimHistoryEvent
     parse_task_attributes(change_data)
     parse_issue_attributes(change_data)
     parse_disposition_attributes(change_data)
+    parse_request_issue_modification_attributes(change_data)
   end
 
+  # :reek:FeatureEnvy
   def parse_task_attributes(change_data)
     @task_id = change_data["task_id"]
-    @task_status = change_data["task_status"]
+    @task_status = change_data["is_assigned_present"] ? "pending" : change_data["task_status"]
     @claim_type = change_data["appeal_type"]
     @assigned_at = change_data["assigned_at"]
     @days_waiting = change_data["days_waiting"]
@@ -467,7 +699,7 @@ class ClaimHistoryEvent
   end
 
   def parse_issue_attributes(change_data)
-    if issue_event?
+    if issue_event? || event_has_modification_request?
       @issue_type = change_data["nonrating_issue_category"]
       @issue_description = change_data["nonrating_issue_description"] || change_data["unidentified_issue_text"]
       @decision_date = change_data["decision_date"]
@@ -491,6 +723,22 @@ class ClaimHistoryEvent
     @event_user_css_id = change_data["event_user_css_id"]
   end
 
+  def parse_request_issue_modification_attributes(change_data)
+    if event_has_modification_request?
+      @request_type = change_data["request_type"]
+      @new_issue_type = change_data["requested_issue_type"]
+      @new_issue_description = change_data["requested_issue_description"]
+      @new_decision_date = change_data["requested_decision_date"]
+      @modification_request_reason = change_data["modification_request_reason"]
+      @decision_reason = change_data["decision_reason"]
+      @decided_at_date = change_data["decided_at"]
+      @issue_modification_request_withdrawal_date = change_data["issue_modification_request_withdrawal_date"]
+      @remove_original_issue = change_data["remove_original_issue"]
+      @requestor = change_data["requestor"]
+      @decider = change_data["decider"]
+    end
+  end
+
   ############ CSV and Serializer Helpers ############
 
   def abbreviated_user_name(name_string)
@@ -499,8 +747,16 @@ class ClaimHistoryEvent
   end
 
   def issue_information
-    if issue_event?
+    if issue_event? || event_has_modification_request?
       [issue_type, issue_description, readable_decision_date]
+    end
+  end
+
+  def issue_modification_request_information
+    if event_has_modification_request?
+      [new_issue_type, new_issue_description, readable_new_decision_date, modification_request_reason, decision_reason]
+    else
+      [nil, nil, nil, nil, nil]
     end
   end
 
@@ -524,7 +780,8 @@ class ClaimHistoryEvent
       incomplete: "Claim cannot be processed until decision date is entered.",
       completed: "Claim closed.",
       claim_creation: "Claim created.",
-      cancelled: "Claim closed."
+      cancelled: "Claim cancelled.",
+      pending: "Claim cannot be processed until VHA admin reviews pending requests."
     }[event_type]
   end
 

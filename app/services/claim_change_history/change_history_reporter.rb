@@ -18,7 +18,12 @@ class ChangeHistoryReporter
     Edit\ Action
     Issue\ Type
     Issue\ Description
-    Prior\ Decision\ Date
+    Decision\ Date
+    New\ Issue\ Type
+    New\ Issue\ Description
+    New\ Decision\ Date
+    Request\ Reason
+    Reason\ for\ Rejection
     Disposition
     Disposition\ Description
     Disposition\ Date
