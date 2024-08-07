@@ -64,6 +64,13 @@ describe('NotificationTable', () => {
     expect(row[7].textContent).toBe('Text');
   });
 
+  it('first recipient information row should be a dashed line', async () => {
+    setup();
+    const row = await screen.findAllByRole('gridcell');
+
+    expect(row[3].textContent).toBe('-');
+  });
+
   it('second recipient information row should be a phone number', async () => {
     setup();
     const row = await screen.findAllByRole('gridcell');
