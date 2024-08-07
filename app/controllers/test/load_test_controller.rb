@@ -63,7 +63,7 @@ class Test::LoadTestController < ApplicationController
     Organization.pluck(:name).sort
   end
 
-  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Layout/LineLength
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Layout/LineLength, Metrics/MethodLength
   def data_for_testing
     case params[:target_type]
     when "Appeal"
@@ -90,27 +90,36 @@ class Test::LoadTestController < ApplicationController
   # so that it can access any area in Caseflow, and stores their information in the
   # current session. This will be reflected in the session cookie.
   def set_current_user
-    user = user.presence || User.find_or_create_by(
-      css_id: LOAD_TESTING_USER,
-      station_id: params[:attributes][:station_id]
-    )
-
-    user.station_id = params[:attributes][:station_id] if params[:station_id] != user.station_id
-    user.selected_regional_office = params[:attributes][:regional_office] if params[:regional_office] != user.selected_regional_office
-    user.roles = params[:attributes].extract_value(:roles)
+    user = user.presence || User.find_or_create_by(css_id: "LOAD_TESTING_USER")
+    user.station_id = params[:user][:station_id] if params[:station_id] != user.station_id
+    user.selected_regional_office = params[:user][:regional_office] if params[:regional_office] != user.selected_regional_office
+    user.roles = params[:user][:roles] if params[:user][:roles] != user.roles
     user.save
-    Functions.grant!(params[:attributes].extract_value(:functions), users: [LOAD_TESTING_USER])
-    params[:attributes].extract_value(:organizations).each do |org|
-      organization = Organization.find_by_name_or_url(org)
+    params[:user].extract_value(:functions).select { |_k, v| v == true }.each do |k, _v|
+      Functions.grant!(k, users: ["LOAD_TESTING_USER"])
+    end
+    params[:user].extract_value(:functions).select { |_k, v| v == false }.each do |k, _v|
+      Functions.deny!(k, users: ["LOAD_TESTING_USER"])
+    end
+    params[:user].extract_value(:organizations).select { |_k, v| v == true }.each do |k, _v|
+      organization = Organization.find_by_name_or_url(k)
+      organization.add_user(user: user) unless organization.users.include?(user)
+      OrganizationsUser.make_user_admin(user, k)
+    end
+    params[:user].extract_value(:organizations).select { |_k, v| v == false }.each do |k, _v|
+      organization = Organization.find_by_name_or_url(k)
       organization.add_user(user: user) unless organization.users.include?(user)
     end
-    params[:attributes].extract_value(:feature_toggles).each do |toggle|
-      FeatureToggle.enable!(toggle, users: user) if !FeatureToggle.enabled?(toggle, user: user)
+    params[:user].extract_value(:feature_toggles).select { |_k, v| v == true }.each do |k, _v|
+      FeatureToggle.enable!(k, users: ["LOAD_TESTING_USER"]) if !FeatureToggle.enabled?(k, user: user)
+    end
+    params[:user].extract_value(:feature_toggles).select { |_k, v| v == false }.each do |k, _v|
+      FeatureToggle.disable!(k, users: ["LOAD_TESTING_USER"])
     end
     session["user"] = user.to_session_hash
     session[:regional_office] = user.selected_regional_office
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Layout/LineLength
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Layout/LineLength, Metrics/MethodLength
 
   # Private: Deletes  the load testing API key if it already exists to prevent conflicts
   def ensure_key_does_not_exist_already
