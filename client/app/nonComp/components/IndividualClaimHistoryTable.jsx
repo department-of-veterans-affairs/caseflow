@@ -105,7 +105,7 @@ const IndividualClaimHistoryTable = (props) => {
     </>;
   };
 
-  const WithdrawalRequestDate = (row) => {
+  const withdrawalRequestDate = (row) => {
     if (['withdrawal'].includes(row.requestType)) {
       return <React.Fragment>
         <b>Withdrawal request date: </b> {formatDecisionDate(row.issueModificationRequestWithdrawalDate)}<br />
@@ -146,7 +146,7 @@ const IndividualClaimHistoryTable = (props) => {
     </React.Fragment>;
   };
 
-  const RequestedIssueDecisionFragement = (details) => {
+  const RequestedIssueDecisionFragment = (details) => {
     return <React.Fragment>
       {requestDecision(details)}
       { details.issueModificationRequestStatus === 'approved' && ['modification'].includes(details.requestType) ?
@@ -244,7 +244,7 @@ const IndividualClaimHistoryTable = (props) => {
       <b>Issue description: </b>{details.newIssueDescription}<br />
       <b>Decision date: </b>{formatDecisionDate(details.newDecisionDate)}<br />
       <b>{capitalizeFirst(details.requestType)} request reason: </b>{details.modificationRequestReason}<br />
-      {WithdrawalRequestDate(details)}
+      {withdrawalRequestDate(details)}
     </React.Fragment>;
   };
 
@@ -278,8 +278,9 @@ const IndividualClaimHistoryTable = (props) => {
   const OriginalDetailsFragments = (row) => {
     const { readableEventType, details, modificationRequestDetails } = row;
 
-    const requestDetails = { ...modificationRequestDetails, requestType: row.requestType };
+    const requestDetails = { ...modificationRequestDetails };
     const requestModificationDetails = { ...details, ...requestDetails };
+
     let component = null;
     const [isOpen, setIsOpen] = useState(false);
 
@@ -288,13 +289,13 @@ const IndividualClaimHistoryTable = (props) => {
     };
 
     switch (readableEventType) {
-    case `Rejection of request - issue ${row.requestType}`:
+    case `Rejection of request - issue ${requestDetails.requestType}`:
       component = <OriginalRequestedIssueModificationFragment {...requestModificationDetails} />;
       break;
-    case `Edit of request - issue ${row.requestType}`:
+    case `Edit of request - issue ${requestDetails.requestType}`:
       component = <OriginalRequestedIssueModificationFragment {...requestModificationDetails} />;
       break;
-    case `Approval of request - issue ${row.requestType}`:
+    case `Approval of request - issue ${requestDetails.requestType}`:
       component = <OriginalRequestedIssueModificationFragment {...requestModificationDetails} />;
       break;
     default:
@@ -317,12 +318,11 @@ const IndividualClaimHistoryTable = (props) => {
   const DetailsFragment = (row) => {
 
     let component = null;
-
     const { readableEventType, details, modificationRequestDetails } = row;
 
     const detailsExtended = { ...details, eventDate: row.eventDate, eventType: row.eventType };
 
-    const requestDetails = { ...modificationRequestDetails, requestType: row.requestType };
+    const requestDetails = { ...modificationRequestDetails };
     const RequestIssueModificationDetails = { ...requestDetails, ...detailsExtended };
 
     switch (readableEventType) {
@@ -374,14 +374,14 @@ const IndividualClaimHistoryTable = (props) => {
     case 'Requested issue withdrawal':
       component = <WithdrawalRequestedIssueFormat {...requestDetails} />;
       break;
-    case `Approval of request - issue ${row.requestType}`:
-      component = <RequestedIssueDecisionFragement {...RequestIssueModificationDetails} />;
+    case `Approval of request - issue ${requestDetails.requestType}`:
+      component = <RequestedIssueDecisionFragment {...RequestIssueModificationDetails} />;
       break;
-    case `Edit of request - issue ${row.requestType}`:
+    case `Edit of request - issue ${requestDetails.requestType}`:
       component = <EditOfRequestIssueModification {...RequestIssueModificationDetails} />;
       break;
-    case `Rejection of request - issue ${row.requestType}`:
-      component = <RequestedIssueDecisionFragement {...RequestIssueModificationDetails} />;
+    case `Rejection of request - issue ${requestDetails.requestType}`:
+      component = <RequestedIssueDecisionFragment {...RequestIssueModificationDetails} />;
       break;
     default:
       return null;
