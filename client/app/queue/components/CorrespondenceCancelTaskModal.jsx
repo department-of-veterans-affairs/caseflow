@@ -63,14 +63,14 @@ const CorrespondenceCancelTaskModal = (props) => {
     //   `\nHold time: ${currentDaysOnHold(task)}/${task.onHoldDuration} days\n\n ${instructions}` : formatInstructions());
 
     // eslint-disable-next-line no-debugger
-      // debugger;
-      // console.log(currentInstruction);
+    // debugger;
+    // console.log(currentInstruction);
 
     const payload = {
       data: {
         task: {
           status: TASK_STATUSES.cancelled,
-          instructions: instructions,
+          instructions,
           ...(taskData?.business_payloads && { business_payloads: taskData?.business_payloads })
         }
       }
@@ -88,7 +88,8 @@ const CorrespondenceCancelTaskModal = (props) => {
     //   )
     // };
     console.log((`queue/correspondence/tasks/${props.task_id}/cancel`));
-    return ApiUtil.patch(`queue/correspondence/tasks/${props.task_id}/cancel`, payload).
+
+    return ApiUtil.patch(`/queue/correspondence/tasks/${props.task_id}/cancel`, payload).
       then((r) => {
 
         console.log(r);
@@ -117,7 +118,7 @@ const CorrespondenceCancelTaskModal = (props) => {
       title= "Cancel Task"
       button="Cancel Task"
       submitDisabled= {instructionsAdded}
-      pathAfterSubmit={taskData?.redirect_after ?? '/queue'}
+      pathAfterSubmit={taskData?.redirect_after ?? `/queue/correspondence/${props.correspondence_uuid}`}
       submit={submit}
       validateForm={validateForm}
     >
