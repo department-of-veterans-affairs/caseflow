@@ -13,6 +13,7 @@ import COPY from '../../../COPY';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import QueueFlowModal from './QueueFlowModal';
 import ApiUtil from '../../util/ApiUtil';
+import Button from '../../components/Button';
 
 /* eslint-disable camelcase */
 const CorrespondenceCancelTaskModal = (props) => {
@@ -58,18 +59,26 @@ const CorrespondenceCancelTaskModal = (props) => {
   };
 
   const submit = () => {
-    const currentInstruction = (props.task.type === 'PostSendInitialNotificationLetterHoldingTask' ?
-      `\nHold time: ${currentDaysOnHold(task)}/${task.onHoldDuration} days\n\n ${instructions}` : formatInstructions());
+    // const currentInstruction = (props.task.type === 'PostSendInitialNotificationLetterHoldingTask' ?
+    //   `\nHold time: ${currentDaysOnHold(task)}/${task.onHoldDuration} days\n\n ${instructions}` : formatInstructions());
+
+    // eslint-disable-next-line no-debugger
+      // debugger;
+      // console.log(currentInstruction);
+
     const payload = {
       data: {
         task: {
           status: TASK_STATUSES.cancelled,
-          instructions: currentInstruction,
+          instructions: instructions,
           ...(taskData?.business_payloads && { business_payloads: taskData?.business_payloads })
         }
       }
     };
 
+    // eslint-disable-next-line no-debugger
+    // debugger;
+    console.log(payload);
     // const successMsg = {
     //   title: taskData?.message_title ?? 'Task was cancelled successfully.',
     //   detail: (
@@ -78,8 +87,16 @@ const CorrespondenceCancelTaskModal = (props) => {
     //     </span>
     //   )
     // };
+    console.log((`queue/correspondence/tasks/${props.task_id}/cancel`));
+    return ApiUtil.patch(`queue/correspondence/tasks/${props.task_id}/cancel`, payload).
+      then((r) => {
 
-    return ApiUtil.patch(`correspondence/task/${task.taskId}/cancel`, payload);
+        console.log(r);
+
+      }).
+      catch((error) => {
+        console.error(error);
+      });
   };
 
   // Additional properties - should be removed later once generic submit buttons are styled the same across all modals
@@ -118,6 +135,12 @@ const CorrespondenceCancelTaskModal = (props) => {
           value={instructions}
         />
       }
+
+      <Button
+        name="jumpToComment"
+        classNames={['cf-btn-link comment-control-button horizontal']}
+        onClick={submit}
+      > hello test</Button>
     </QueueFlowModal>
   );
 
