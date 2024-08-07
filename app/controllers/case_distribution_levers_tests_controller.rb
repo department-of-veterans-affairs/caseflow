@@ -67,7 +67,11 @@ class CaseDistributionLeversTestsController < ApplicationController
   end
 
   def run_return_legacy_appeals_to_board
-    ReturnLegacyAppealsToBoardJob.perform_now
+    result = ReturnLegacyAppealsToBoardJob.perform_now(params[:fail_job])
+    if params[:fail_job] && result.include?("Job failed with error")
+      return render json: { error: result }, status: :unprocessable_entity
+    end
+
     head :ok
   end
 
@@ -80,6 +84,20 @@ class CaseDistributionLeversTestsController < ApplicationController
 
     # Set dynamic filename with current date and time
     filename = "distributed_appeals_#{current_datetime}.csv"
+
+    # Send CSV as a response with dynamic filename
+    send_data csv_data, filename: filename
+  end
+
+  def appeals_in_location_63_in_past_2_days
+    # change this to the correct class
+    csv_data = AppealsInLocation63InPast2Days.process
+
+    # Get the current date and time for dynamic filename
+    current_datetime = Time.zone.now.strftime("%Y%m%d-%H%M")
+
+    # Set dynamic filename with current date and time
+    filename = "appeals_in_location_63_past_2_days_#{current_datetime}.csv"
 
     # Send CSV as a response with dynamic filename
     send_data csv_data, filename: filename
