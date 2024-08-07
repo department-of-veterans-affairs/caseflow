@@ -52,7 +52,6 @@ class AppealsInLocation63InPast2Days
 
   def self.legacy_rows(appeals)
     appeals.map do |appeal|
-      binding.pry
       calculated_values = calculate_field_values(appeal)
       {
         docket_number: appeal["tinum"],
