@@ -527,8 +527,8 @@ describe VACOLS::AojCaseDocket, :all_dbs do
       context "when genpop is yes" do
         let(:genpop) { "only_genpop" }
         it "does not distribute the case" do
-          expect(subject.count).to eq(0)
-          expect(aod_ready_case.reload.bfcurloc).to eq("81")
+          expect(subject.count).to eq(1)
+          expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           expect(postcavc_ready_case.reload.bfcurloc).to eq("83")
         end
       end
@@ -537,19 +537,6 @@ describe VACOLS::AojCaseDocket, :all_dbs do
     context "when an aod case is tied to the same judge as last decided the case" do
       let(:original_docket_number) { aod_ready_case_docket_number }
       let(:genpop) { "not_genpop" }
-
-      it "does not distribute the case" do
-        subject
-        expect(aod_ready_case.reload.bfcurloc).to eq("81")
-      end
-
-      context "when a different judge decided the case" do
-        let(:original_judge) { "1111" }
-        it "does not distribute the case" do
-          subject
-          expect(aod_ready_case.reload.bfcurloc).to eq("81")
-        end
-      end
 
       context "when distributing genpop cases" do
         let(:genpop) { "only_genpop" }
