@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Tooltip from './Tooltip';
 
 const MaybeAddTooltip = ({ option, children }) => {
@@ -20,6 +21,14 @@ const MaybeAddTooltip = ({ option, children }) => {
       {children}
     </Tooltip>
   );
+};
+
+MaybeAddTooltip.propTypes = {
+  option: PropTypes.shape({
+    tooltipText: PropTypes.string,
+    value: PropTypes.string.isRequired,
+  }).isRequired,
+  children: PropTypes.node.isRequired,
 };
 
 export default MaybeAddTooltip;
