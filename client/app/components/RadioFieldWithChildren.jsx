@@ -4,7 +4,7 @@ import classNames from 'classnames';
 
 import RequiredIndicator from './RequiredIndicator';
 import StringUtil from '../util/StringUtil';
-import Tooltip from './Tooltip';
+import MaybeAddTooltip from './TooltipHelper';
 
 import ACD_LEVERS from '../../constants/ACD_LEVERS';
 
@@ -70,25 +70,6 @@ export const RadioFieldWithChildren = (props) => {
     </span>
   );
 
-  const maybeAddTooltip = (option, radioField) => {
-    if (option.tooltipText) {
-      const keyId = `tooltip-${option.value}`;
-
-      return <Tooltip
-        key={keyId}
-        id={keyId}
-        text={option.tooltipText}
-        position="right"
-        className="cf-radio-option-tooltip"
-        offset={{ right: 15 }}
-      >
-        {radioField}
-      </Tooltip>;
-    }
-
-    return radioField;
-  };
-
   const isDisabled = (option) => Boolean(option.disabled);
 
   const handleChange = (event) => onChange?.(event.target.value);
@@ -134,7 +115,11 @@ export const RadioFieldWithChildren = (props) => {
           </div>
           );
 
-          return maybeAddTooltip(option, radioField);
+          return (
+            <MaybeAddTooltip key={option.value} option={option}>
+              {radioField}
+            </MaybeAddTooltip>
+          );
         })}
       </div>
     </fieldset>
