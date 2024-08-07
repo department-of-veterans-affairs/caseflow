@@ -9,6 +9,7 @@ import FilterIcon from './icons/FilterIcon';
 import QueueDropdownFilter from '../queue/QueueDropdownFilter';
 import FilterOption from './FilterOption';
 import DateSelector from './DateSelector';
+import DatePicker from './DatePicker';
 
 const iconStyle = css(
   {
@@ -134,13 +135,17 @@ class TableFilter extends React.PureComponent {
   //
   // Adds the text (string) for a filtered value to an internal list. The list holds all the
   // values to filter by.
-  updateSelectedFilter = (value, columnName) => {
+  updateSelectedFilter = (value, columnName, resetValue) => {
     const { filteredByList } = this.props;
     const filtersForColumn = _.get(filteredByList, String(columnName));
     let newFilters = [];
 
     if (filtersForColumn) {
-      if (filtersForColumn.includes(value)) {
+      if (resetValue) {
+        if (value !== '') {
+          newFilters = [value];
+        }
+      } else if (filtersForColumn.includes(value)) {
         newFilters = _.pull(filtersForColumn, value);
       } else {
         newFilters = filtersForColumn.concat([value]);
@@ -187,7 +192,8 @@ class TableFilter extends React.PureComponent {
       anyFiltersAreSet,
       valueName,
       getFilterValues,
-      dateFilter
+      dateFilter,
+      filterType,
     } = this.props;
 
     const filterOptions = tableData && columnName ?
@@ -218,7 +224,7 @@ class TableFilter extends React.PureComponent {
               addClearFiltersRow>
               <FilterOption
                 options={filterOptions}
-                setSelectedValue={(value) => this.updateSelectedFilter(value, columnName)} />
+                setSelectedValue={(value) => this.updateSelectedFilter(value, columnName, false)} />
             </QueueDropdownFilter>
           }
         </span>
@@ -227,19 +233,36 @@ class TableFilter extends React.PureComponent {
 
     const formatDate = (date) => new Date(date).toLocaleDateString('en-US', { timeZone: 'UTC' });
 
-    return (
-      <>
-        {dateFilter ?
-          <span>
-            <DateSelector
-              type="date"
-              value=""
-              ariaLabelText="date-selector"
-              onChange={(value) => this.updateSelectedFilter(formatDate(value), columnName)} />
-          </span> :
-          renderFilterIcon()}
-      </>
-    );
+    let filter = '';
+
+    if (dateFilter) {
+      filter = (
+        <span>
+          <DateSelector
+            type="date"
+            value=""
+            ariaLabelText="date-selector"
+            onChange={(value) => this.updateSelectedFilter(formatDate(value), columnName, false)} />
+        </span>
+      );
+    } else if (filterType === 'date-picker') {
+
+      const dates = _.get(this.props.filteredByList, String(columnName));
+      const filterSettings = this.props.filterSettings || {};
+
+      filter = (<DatePicker
+        values={dates}
+        getRef={this.props.getFilterIconRef}
+        label={this.filterIconAriaLabel()}
+        onChange={(value) => this.updateSelectedFilter(value, columnName, true)}
+        settings={filterSettings}
+        selected={this.isFilterOpen()} />
+      );
+    } else {
+      filter = renderFilterIcon();
+    }
+
+    return filter;
   }
 }
 
@@ -263,7 +286,9 @@ TableFilter.propTypes = {
   updateFilters: PropTypes.func,
   filterOptionsFromApi: PropTypes.array,
   multiValueDelimiter: PropTypes.string,
-  dateFilter: PropTypes.bool
+  dateFilter: PropTypes.bool,
+  filterType: PropTypes.string,
+  filterSettings: PropTypes.object,
 };
 
 export default TableFilter;

@@ -51,7 +51,7 @@ import COPY from '../../COPY';
  *   - @enableFilterTextTransform {boolean} when true, filter text that gets displayed
  *     is automatically capitalized. default is true.
  *   - @footer {string} footer cell value for the column
-
+ *   - @customFilterMethod {function(string, array)} custom method for handling complex front end filtering
  * - @rowObjects {array[object]} array of objects used to build the <tr/> rows
  * - @summary {string} table summary
  * - @enablePagination {boolean} whether or not to enablePagination
@@ -164,7 +164,7 @@ export const HeaderRow = (props) => {
                 dateFilter={column.enableFilter === 'date'}
               />
             );
-          } else if (props.useTaskPagesApi && column.filterOptions) {
+          } else if (props.useTaskPagesApi && (column.filterOptions || column.filterType)) {
             filterIcon = (
               <TableFilter
                 {...column}
@@ -172,6 +172,7 @@ export const HeaderRow = (props) => {
                 filterOptionsFromApi={props.useTaskPagesApi && column.filterOptions}
                 updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
                 filteredByList={props.filteredByList}
+                filterType={column.filterType ? column.filterType : ''}
               />
             );
           }
@@ -470,6 +471,11 @@ export default class QueueTable extends React.PureComponent {
 
           if (_.isNil(cellValue)) {
             return filteredByList[columnName].includes('null');
+          }
+
+          // Use custom filtering method for complex front end filtering such as a date picker
+          if (columnConfig && columnConfig.customFilterMethod) {
+            return columnConfig.customFilterMethod(cellValue, filteredByList[columnName]);
           }
 
           // This is needed if a column contains multiple values instead of a single value

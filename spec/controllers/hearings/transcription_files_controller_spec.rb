@@ -187,6 +187,101 @@ RSpec.describe Hearings::TranscriptionFilesController do
       expect(response.body).to eq(expected_response)
     end
 
+    # 4 = 06/30/2007
+    # 3 = 01/17/2024
+    # 2 = 05/14/2020
+    # 1 = 01/19/2014
+
+    it "filters by hearing dates between dates" do
+      filter = Rack::Utils.build_query({ col: "hearingDateColumn", val: "between,2000-01-01,2015-12-31" })
+
+      get :transcription_file_tasks, params: { filter: [filter] }
+
+      expected_response = {
+        task_page_count: 1,
+        tasks: {
+          data: [transcription_response_4, transcription_response_1]
+        },
+        tasks_per_page: 15,
+        total_task_count: 2
+      }.to_json
+
+      expect(response.status).to eq(200)
+      expect(response.body).to eq(expected_response)
+    end
+
+    it "filters by hearing dates before a date" do
+      filter = Rack::Utils.build_query({ col: "hearingDateColumn", val: "before,2010-12-31," })
+
+      get :transcription_file_tasks, params: { filter: [filter] }
+
+      expected_response = {
+        task_page_count: 1,
+        tasks: {
+          data: [transcription_response_4]
+        },
+        tasks_per_page: 15,
+        total_task_count: 1
+      }.to_json
+
+      expect(response.status).to eq(200)
+      expect(response.body).to eq(expected_response)
+    end
+
+    it "filters by hearing dates after a date" do
+      filter = Rack::Utils.build_query({ col: "hearingDateColumn", val: "after,2010-12-31," })
+
+      get :transcription_file_tasks, params: { filter: [filter] }
+
+      expected_response = {
+        task_page_count: 1,
+        tasks: {
+          data: [transcription_response_3, transcription_response_2, transcription_response_1]
+        },
+        tasks_per_page: 15,
+        total_task_count: 3
+      }.to_json
+
+      expect(response.status).to eq(200)
+      expect(response.body).to eq(expected_response)
+    end
+
+    it "filters by hearing dates after a date" do
+      filter = Rack::Utils.build_query({ col: "hearingDateColumn", val: "on,01/19/2014," })
+
+      get :transcription_file_tasks, params: { filter: [filter] }
+
+      expected_response = {
+        task_page_count: 1,
+        tasks: {
+          data: [transcription_response_1]
+        },
+        tasks_per_page: 15,
+        total_task_count: 1
+      }.to_json
+
+      expect(response.status).to eq(200)
+      expect(response.body).to eq(expected_response)
+    end
+
+    it "filters by hearing dates and handles an empty response" do
+      filter = Rack::Utils.build_query({ col: "hearingDateColumn", val: "on,01/19/2025," })
+
+      get :transcription_file_tasks, params: { filter: [filter] }
+
+      expected_response = {
+        task_page_count: 0,
+        tasks: {
+          data: []
+        },
+        tasks_per_page: 15,
+        total_task_count: 0
+      }.to_json
+
+      expect(response.status).to eq(200)
+      expect(response.body).to eq(expected_response)
+    end
+
     it "filters by hearing types" do
       filter = Rack::Utils.build_query({ col: "hearingTypeColumn", val: "Hearing" })
 
