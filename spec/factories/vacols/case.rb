@@ -219,8 +219,10 @@ FactoryBot.define do
 
               after(:create) do |new_case, evaluator|
                 original_judge = evaluator.judge || create(:user, :judge, :with_vacols_judge_record).vacols_staff
-                signing_sattyid =
-                  evaluator.signing_avlj.present? ? evaluator.signing_avlj.vacols_staff.sattyid : original_judge.sattyid
+
+                avlj_judge =
+                  evaluator.signing_avlj.present? ? VACOLS::Staff.find_by_sdomainid(evaluator.signing_avlj.css_id) : original_judge
+                signing_sattyid = avlj_judge.sattyid
 
                 original_attorney = evaluator.attorney || create(:user, :with_vacols_attorney_record).vacols_staff
 
@@ -283,7 +285,7 @@ FactoryBot.define do
                     :disposition_held,
                     folder_nr: original_case.bfkey,
                     hearing_date: original_case.bfddec - 1.month,
-                    user: evaluator.assigned_avlj || User.find_by_css_id(original_judge.sdomainid)
+                    user: User.find_by_css_id(avlj_judge&.sdomainid) || User.find_by_css_id(original_judge&.sdomainid)
                   )
                 end
 

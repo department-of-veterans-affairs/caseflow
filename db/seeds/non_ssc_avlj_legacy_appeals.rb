@@ -71,21 +71,20 @@ module Seeds
     end
 
     def create_four_priority_appeals_tied_to_and_signed_by_a_non_ssc_avlj
-      # A non-SSC AVLJ that Only has 4 priority cases where they held the last hearing and signed the most recent decision
       assigned_avlj, signing_avlj = User.find_by(css_id: "NONSSCAN03")
-      create_signed_legacy_apeal(priority=true, signing_avlj, assigned_avlj, 100.days.ago)
-      create_signed_legacy_apeal(priority=true, signing_avlj, assigned_avlj, 80.days.ago)
-      create_signed_legacy_apeal(priority=true, signing_avlj, assigned_avlj, 60.days.ago)
-      create_signed_legacy_apeal(priority=true, signing_avlj, assigned_avlj, 30.days.ago)
+      create_signed_legacy_appeal(priority=false, signing_avlj, assigned_avlj, 100.days.ago)
+      create_signed_legacy_appeal(priority=false, signing_avlj, assigned_avlj, 80.days.ago)
+      create_signed_legacy_appeal(priority=false, signing_avlj, assigned_avlj, 60.days.ago)
+      create_signed_legacy_appeal(priority=false, signing_avlj, assigned_avlj, 30.days.ago)
     end
 
     def create_four_non_priority_appeals_tied_to_and_signed_by_a_non_ssc_avlj
       # A non-SSC AVLJ that Only has 4 non-priority cases where they held the last hearing and signed the most recent decision
       assigned_avlj, signing_avlj = User.find_by(css_id: "NONSSCAN04")
-      create_signed_legacy_apeal(priority=false, signing_avlj, assigned_avlj, 110.days.ago)
-      create_signed_legacy_apeal(priority=false, signing_avlj, assigned_avlj, 90.days.ago)
-      create_signed_legacy_apeal(priority=false, signing_avlj, assigned_avlj, 70.days.ago)
-      create_signed_legacy_apeal(priority=false, signing_avlj, assigned_avlj, 40.days.ago)
+      create_signed_legacy_appeal(priority=false, signing_avlj, assigned_avlj, 110.days.ago)
+      create_signed_legacy_appeal(priority=false, signing_avlj, assigned_avlj, 90.days.ago)
+      create_signed_legacy_appeal(priority=false, signing_avlj, assigned_avlj, 70.days.ago)
+      create_signed_legacy_appeal(priority=false, signing_avlj, assigned_avlj, 40.days.ago)
     end
 
     def create_four_alternating_priority_by_age_appeals_tied_to_a_non_ssc_avlj
@@ -104,10 +103,10 @@ module Seeds
       # priority cases where they held the last hearing and signed the most recent decision
       # non-priority cases where they held the last hearing and signed the most recent decision
       signing_avlj, assigned_avlj = User.find_by(css_id: "NONSSCAN06")
-      create_signed_legacy_apeal(priority=false, signing_avlj, assigned_avlj, 120.days.ago) #oldest
-      create_signed_legacy_apeal(priority=true, signing_avlj, assigned_avlj, 110.days.ago)
-      create_signed_legacy_apeal(priority=false, signing_avlj, assigned_avlj, 100.days.ago)
-      create_signed_legacy_apeal(priority=true, signing_avlj, assigned_avlj, 50.days.ago) #most recent
+      create_signed_legacy_appeal(priority=false, signing_avlj, assigned_avlj, 120.days.ago) #oldest
+      create_signed_legacy_appeal(priority=true, signing_avlj, assigned_avlj, 110.days.ago)
+      create_signed_legacy_appeal(priority=false, signing_avlj, assigned_avlj, 100.days.ago)
+      create_signed_legacy_appeal(priority=true, signing_avlj, assigned_avlj, 50.days.ago) #most recent
     end
 
     def create_four_priority_appeals_tied_to_a_non_ssc_avlj_signed_by_another_avlj
@@ -115,10 +114,10 @@ module Seeds
       # These cases should NOT be returned to the board
       assigned_avlj = User.find_by(css_id: "NONSSCAN07")
       signing_avlj = User.find_by(css_id: "SIGNAVLJLGC")
-      create_signed_legacy_apeal(priority=true, signing_avlj, assigned_avlj, 120.days.ago)
-      create_signed_legacy_apeal(priority=true, signing_avlj, assigned_avlj, 110.days.ago)
-      create_signed_legacy_apeal(priority=true, signing_avlj, assigned_avlj, 100.days.ago)
-      create_signed_legacy_apeal(priority=true, signing_avlj, assigned_avlj, 50.days.ago)
+      create_signed_legacy_appeal(priority=true, signing_avlj, assigned_avlj, 120.days.ago)
+      create_signed_legacy_appeal(priority=true, signing_avlj, assigned_avlj, 110.days.ago)
+      create_signed_legacy_appeal(priority=true, signing_avlj, assigned_avlj, 100.days.ago)
+      create_signed_legacy_appeal(priority=true, signing_avlj, assigned_avlj, 50.days.ago)
     end
 
     def create_four_non_priority_appeals_tied_to_a_non_ssc_avlj_signed_by_another_avlj
@@ -126,10 +125,10 @@ module Seeds
       # These cases should NOT be returned to the board
       assigned_avlj = User.find_by(css_id: "NONSSCAN08")
       signing_avlj = User.find_by(css_id: "SIGNAVLJLGC")
-      create_signed_legacy_apeal(priority=false, signing_avlj, assigned_avlj, 120.days.ago)
-      create_signed_legacy_apeal(priority=false, signing_avlj, assigned_avlj, 110.days.ago)
-      create_signed_legacy_apeal(priority=false, signing_avlj, assigned_avlj, 100.days.ago)
-      create_signed_legacy_apeal(priority=false, signing_avlj, assigned_avlj, 50.days.ago)
+      create_signed_legacy_appeal(priority=false, signing_avlj, assigned_avlj, 120.days.ago)
+      create_signed_legacy_appeal(priority=false, signing_avlj, assigned_avlj, 110.days.ago)
+      create_signed_legacy_appeal(priority=false, signing_avlj, assigned_avlj, 100.days.ago)
+      create_signed_legacy_appeal(priority=false, signing_avlj, assigned_avlj, 50.days.ago)
     end
 
     def create_four_alternating_priority_by_age_appeals_tied_to_a_non_ssc_avlj_signed_by_another_avlj
@@ -140,10 +139,10 @@ module Seeds
       # These cases should NOT be returned to the board
       assigned_avlj = User.find_by(css_id: "NONSSCAN09")
       signing_avlj = User.find_by(css_id: "SIGNAVLJLGC")
-      create_signed_legacy_apeal(priority=false, signing_avlj, assigned_avlj, 220.days.ago) #oldest
-      create_signed_legacy_apeal(priority=true, signing_avlj, assigned_avlj, 210.days.ago)
-      create_signed_legacy_apeal(priority=false, signing_avlj, assigned_avlj, 200.days.ago)
-      create_signed_legacy_apeal(priority=true, signing_avlj, assigned_avlj, 150.days.ago) #most recent
+      create_signed_legacy_appeal(priority=false, signing_avlj, assigned_avlj, 220.days.ago) #oldest
+      create_signed_legacy_appeal(priority=true, signing_avlj, assigned_avlj, 210.days.ago)
+      create_signed_legacy_appeal(priority=false, signing_avlj, assigned_avlj, 200.days.ago)
+      create_signed_legacy_appeal(priority=true, signing_avlj, assigned_avlj, 150.days.ago) #most recent
     end
 
     def create_two_sets_of_seven_types_of_appeals_tied_to_a_non_ssc_avlj
@@ -165,21 +164,21 @@ module Seeds
 
       assigned_avlj = User.find_by(css_id: "NONSSCAN10")
       signing_avlj = User.find_by(css_id: "SIGNAVLJLGC")
-      create_signed_legacy_apeal(priority=false, signing_avlj, assigned_avlj, 220.days.ago) #oldest
-      create_signed_legacy_apeal(priority=true, signing_avlj, assigned_avlj, 210.days.ago)
+      create_signed_legacy_appeal(priority=false, signing_avlj, assigned_avlj, 220.days.ago) #oldest
+      create_signed_legacy_appeal(priority=true, signing_avlj, assigned_avlj, 210.days.ago)
       create_legacy_appeal(priority=true, assigned_avlj, 200.days.ago)
       create_legacy_appeal(priority=false, assigned_avlj, 190.days.ago)
-      create_signed_legacy_apeal(priority=false, assigned_avlj, assigned_avlj, 180.days.ago)
-      create_signed_legacy_apeal(priority=true, assigned_avlj, assigned_avlj, 170.days.ago)
+      create_signed_legacy_appeal(priority=false, assigned_avlj, assigned_avlj, 180.days.ago)
+      create_signed_legacy_appeal(priority=true, assigned_avlj, assigned_avlj, 170.days.ago)
       legacy_appeal = create_legacy_appeal(priority=true, assigned_avlj, 160.days.ago)
       make_legacy_appeal_not_ready_for_distribution(legacy_appeal)
 
-      create_signed_legacy_apeal(priority=false, signing_avlj, assigned_avlj, 150.days.ago)
-      create_signed_legacy_apeal(priority=true, signing_avlj, assigned_avlj, 140.days.ago)
+      create_signed_legacy_appeal(priority=false, signing_avlj, assigned_avlj, 150.days.ago)
+      create_signed_legacy_appeal(priority=true, signing_avlj, assigned_avlj, 140.days.ago)
       create_legacy_appeal(priority=true, assigned_avlj, 130.days.ago)
       create_legacy_appeal(priority=false, assigned_avlj, 120.days.ago)
-      create_signed_legacy_apeal(priority=false, assigned_avlj, assigned_avlj, 110.days.ago)
-      create_signed_legacy_apeal(priority=true, assigned_avlj, assigned_avlj, 100.days.ago)
+      create_signed_legacy_appeal(priority=false, assigned_avlj, assigned_avlj, 110.days.ago)
+      create_signed_legacy_appeal(priority=true, assigned_avlj, assigned_avlj, 100.days.ago)
       legacy_appeal = create_legacy_appeal(priority=true, assigned_avlj, 90.days.ago)
       make_legacy_appeal_not_ready_for_distribution(legacy_appeal)#most recent
     end
@@ -243,14 +242,11 @@ module Seeds
       'RO17'
     end
 
-    def create_signed_legacy_apeal(priority, signing_avlj, assigned_avlj, docket_date)
-      Timecop.travel(docket_date)
-        if priority
-          create(:legacy_signed_appeal, :type_cavc_remand, signing_avlj: signing_avlj, assigned_avlj: assigned_avlj)
-        else
-          create(:legacy_signed_appeal, :type_original, signing_avlj: signing_avlj, assigned_avlj: assigned_avlj)
-        end
-      Timecop.return
+    def create_signed_legacy_appeal(priority, signing_avlj, assigned_avlj, docket_date)
+      Timecop.travel(docket_date) do
+        traits = priority ? [:type_cavc_remand] : [:type_original]
+        create(:legacy_signed_appeal, *traits, signing_avlj: signing_avlj, assigned_avlj: assigned_avlj)
+      end
     end
 
     def create_legacy_appeal(priority, avlj, docket_date)
