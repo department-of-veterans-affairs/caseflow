@@ -68,7 +68,7 @@ describe('NotificationTable', () => {
     setup();
     const row = await screen.findAllByRole('gridcell');
 
-    expect(row[3].textContent).toBe('-');
+    expect(row[3].textContent).toBe('—');
   });
 
   it('second recipient information row should be a phone number', async () => {
