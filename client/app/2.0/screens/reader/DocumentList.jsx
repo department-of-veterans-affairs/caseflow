@@ -37,7 +37,7 @@ import { selectComment } from 'store/reader/annotationLayer';
 const DocumentList = (props) => {
   // Get the Document List state
   const state = props.featureToggles.readerSelectorsMemoized ?
-  useSelector(documentListScreenMemoized) : useSelector(documentListScreen);
+    useSelector(documentListScreenMemoized) : useSelector(documentListScreen);
 
   // Create the Dispatcher
   const dispatch = useDispatch();
@@ -74,9 +74,10 @@ const DocumentList = (props) => {
         <QueueLink {...state} veteranFullName={state.appeal.veteran_full_name} vbmsId={state.appeal.vbms_id} />
       )}
       <AppSegment filledBackground>
+      <LastRetrievalAlert {...state.documentList} appeal={state.appeal} />
         <div className="section--document-list">
           <ClaimsFolderDetails {...state} />
-          <LastRetrievalAlert {...state.documentList} appeal={state.appeal} />
+
           <DocumentListHeader {...state} {...actions} />
           <NoSearchResults {...state} {...actions} show={state.documentsView === 'none'} />
           <DocumentsTable
