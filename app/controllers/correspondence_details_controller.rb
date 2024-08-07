@@ -27,6 +27,7 @@ class CorrespondenceDetailsController < CorrespondenceController
       .merge(general_information)
       .merge(mail_tasks)
       .merge(appeals)
+      .merge(all_correspondences)
   end
 
   def build_json_response
@@ -57,5 +58,22 @@ class CorrespondenceDetailsController < CorrespondenceController
     {
       mailTasks: @correspondence.correspondence_mail_tasks.completed.map(&:label)
     }
+  end
+
+  def all_correspondences
+    { all_correspondences: serialized_correspondences }
+  end
+
+  def serialized_correspondences
+    serialized_data.map { |correspondence| correspondence[:attributes] }
+  end
+
+  def serialized_data
+    serializer = WorkQueue::CorrespondenceSerializer.new(ordered_correspondences)
+    serializer.serializable_hash[:data]
+  end
+
+  def ordered_correspondences
+    @correspondence.veteran.correspondences.order(va_date_of_receipt: :asc)
   end
 end

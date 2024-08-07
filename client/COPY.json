@@ -1620,5 +1620,6 @@
   "CORRESPONDENCE_DETAILS": {
     "COMPLETED_MAIL_TASKS": "Completed Mail Tasks",
     "NO_COMPLETED_MAIL_TASKS": "No previously completed mail tasks prior to intake."
-  }
+  },
+  "ALL_CORRESPONDENCES": "All Correspondence"
 }
