@@ -12,6 +12,7 @@ describe Docket, :all_dbs do
     create(:case_distribution_lever, :ama_evidence_submission_review_start_distribution_prior_to_goals)
     create(:case_distribution_lever, :cavc_affinity_days)
     create(:case_distribution_lever, :cavc_aod_affinity_days)
+    create(:case_distribution_lever, :aoj_aod_affinity_days)
     create(:case_distribution_lever, :request_more_cases_minimum)
     create(:case_distribution_lever, :disable_ama_non_priority_direct_review)
   end
