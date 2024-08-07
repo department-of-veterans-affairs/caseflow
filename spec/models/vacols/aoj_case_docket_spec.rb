@@ -7,7 +7,7 @@ describe VACOLS::AojCaseDocket, :all_dbs do
     FeatureToggle.enable!(:acd_distribute_by_docket_date)
     FeatureToggle.enable!(:acd_cases_tied_to_judges_no_longer_with_board)
     FeatureToggle.enable!(:acd_exclude_from_affinity)
-    create(:case_distribution_lever, :aoj_cavc_affinity)
+    create(:case_distribution_lever, :aoj_cavc_affinity_days)
   end
 
   after do
