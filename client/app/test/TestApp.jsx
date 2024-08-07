@@ -10,12 +10,18 @@ import AppFrame from '../components/AppFrame';
 import ScrollToTop from '../components/ScrollToTop';
 import PageRoute from '../components/PageRoute';
 
+import TestUsers from './TestUsers';
+
 export default class TestApp extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       currentUser: props.currentUser,
     };
+  }
+
+  routedTestUsers = (props) => {
+    return <TestUsers {...props}/>;
   }
 
   render = () => (
@@ -36,7 +42,7 @@ export default class TestApp extends React.PureComponent {
               exact
               path="/test/users"
               title="Test App"
-              // render={}
+              render={this.routedTestUsers}
             />
           </Switch>
         </div>
