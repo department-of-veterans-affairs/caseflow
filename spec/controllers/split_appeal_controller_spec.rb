@@ -281,7 +281,6 @@ RSpec.describe SplitAppealController, type: :controller do
           post :split_appeal, params: valid_params
           expect(response.status).to eq 201
           dup_appeal = Appeal.last
-
           expect(appeal.request_issues.active.count).to eq(1)
           expect(dup_appeal.request_issues.active.count).to eq(1)
           expect(appeal.sct_appeal?).to eq(true)
@@ -309,14 +308,11 @@ RSpec.describe SplitAppealController, type: :controller do
           post :split_appeal, params: valid_params
           expect(response.status).to eq 201
           dup_appeal = Appeal.last
-
           expect(appeal.request_issues.active.count).to eq(1)
           expect(dup_appeal.request_issues.active.count).to eq(1)
           expect(appeal.sct_appeal?).to eq(false)
           expect(dup_appeal.sct_appeal?).to eq(true)
 
-
-          ### FAILS : Expects "assigned", gets "on_hold"
           # old appeal's distribution task should be assigned since it should be sent back to distribution
           expect(appeal.tasks.of_type(:DistributionTask).first.status).to eq("assigned")
           expect(appeal.tasks.of_type(:SpecialtyCaseTeamAssignTask).count).to eq(0)
