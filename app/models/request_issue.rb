@@ -438,10 +438,8 @@ class RequestIssue < CaseflowRecord
   end
 
   def fetch_removed_by_user
-    if removed? && any_updates?
-      riu = request_issues_updates
-
-      relevant_update = riu.find do |update|
+    if removed?
+      relevant_update = request_issues_updates.find do |update|
         update.removed_issues.any? { |issue| issue.id == id }
       end
 
@@ -450,10 +448,8 @@ class RequestIssue < CaseflowRecord
   end
 
   def fetch_withdrawn_by_user
-    if withdrawn? && any_updates?
-      riu = request_issues_updates
-
-      relevant_update = riu.find do |update|
+    if withdrawn?
+      relevant_update = request_issues_updates.find do |update|
         update.withdrawn_issues.any? { |issue| issue.id == id }
       end
 
@@ -462,11 +458,9 @@ class RequestIssue < CaseflowRecord
   end
 
   def fetch_edited_by_user
-    if edited? && any_updates?
-      riu = request_issues_updates
-
+    if edited?
       # Find the most recent update where the current issue ID is in the edited_issues list
-      relevant_update = riu
+      relevant_update = request_issues_updates
         .select { |update| update.edited_issues.any? { |issue| issue.id == id } }
         .max_by(&:updated_at)
 
@@ -477,9 +471,7 @@ class RequestIssue < CaseflowRecord
   # This retrieves the User who added the Issue as a result of a RequestIssuesUpdate and NOT during the initial Intake
   def fetch_added_by_user_from_update
     if any_updates?
-      riu = request_issues_updates
-
-      relevant_update = riu.find do |update|
+      relevant_update = request_issues_updates.find do |update|
         update.added_issues.any? { |issue| issue.id == id }
       end
 
