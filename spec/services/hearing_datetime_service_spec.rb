@@ -36,6 +36,43 @@ RSpec.describe HearingDatetimeService do
         expect(time).to eq(expected_time)
       end
 
+      it "has no DST offset in Summer for zone that does not observe DST" do
+        date = "2021-07-03"
+        time_string = "1:00 PM Arizona"
+
+        time = described_class.prepare_time_for_storage(date: date, time_string: time_string)
+        expected_time = Time.new(2021, 7, 3, 13, 0, 0, "-07:00")
+
+        expect(time.dst?).to eq(false)
+        expect(time.zone).to eq("MST")
+        expect(time).to eq(expected_time)
+      end
+
+      it "edge case: returns the correct time for error-prone Manila timezone: Summer" do
+        # note Asia/Manila tz does not observe Daylight Savings Time
+        date = "2021-07-03"
+        time_string = "1:00 PM Philippine Standard Time"
+
+        time = described_class.prepare_time_for_storage(date: date, time_string: time_string)
+        expected_time = Time.new(2021, 7, 3, 13, 0, 0, "+08:00")
+
+        expect(time.dst?).to eq(false)
+        expect(time.zone).to eq("PST")
+        expect(time).to eq(expected_time)
+      end
+
+      it "edge case: returns the correct time for error-prone Manila timezone: Winter" do
+        date = "2021-01-03"
+        time_string = "1:00 PM Philippine Standard Time"
+
+        time = described_class.prepare_time_for_storage(date: date, time_string: time_string)
+        expected_time = Time.new(2021, 1, 3, 13, 0, 0, "+08:00")
+
+        expect(time.dst?).to eq(false)
+        expect(time.zone).to eq("PST")
+        expect(time).to eq(expected_time)
+      end
+
       it "returns nil if date method argument is nil" do
         date = nil
         time_string = "1:00 PM Central Time (US & Canada)"

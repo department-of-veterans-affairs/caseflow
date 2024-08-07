@@ -31,8 +31,7 @@ class HearingDatetimeService
     def timezone_from_time_string(scheduled_time_string)
       time_str_split = scheduled_time_string.split(" ", 3)
 
-      tz_str = ActiveSupport::TimeZone::MAPPING[time_str_split[2]]
-      tz_str = ActiveSupport::TimeZone::MAPPING.key(time_str_split[2]) if tz_str.nil?
+      tz_str = ActiveSupport::TimeZone[time_str_split[2]]&.name
 
       begin
         ActiveSupport::TimeZone.find_tzinfo(tz_str).name
