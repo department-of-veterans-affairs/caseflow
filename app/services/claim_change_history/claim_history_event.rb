@@ -190,22 +190,23 @@ class ClaimHistoryEvent
       events
     end
 
-    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def create_in_progress_status_event(change_data)
       in_progress_system_hash_events = pending_system_hash
         .merge("event_date" => (change_data["decided_at"] ||
           change_data["issue_modification_request_updated_at"]))
 
-      if (imr_last_decided_row?(change_data) &&
-         (!imr_decided_in_same_transaction?(change_data) || change_data["previous_imr_decided_at"].nil?)) ||
-         (change_data["previous_imr_created_at"].nil? ||
-          !imr_created_in_same_transaction?(change_data) &&
-          %w[cancelled denied approved].include?(change_data["issue_modification_request_status"]))
-
+      if should_create_imr_in_progress_status_event?(change_data)
         from_change_data(:in_progress, change_data.merge(in_progress_system_hash_events))
       end
     end
-    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
+    def should_create_imr_in_progress_status_event?(change_data)
+      (imr_last_decided_row?(change_data) &&
+        (!imr_decided_in_same_transaction?(change_data) || change_data["previous_imr_decided_at"].nil?)) ||
+        (change_data["previous_imr_created_at"].nil? ||
+          !imr_created_in_same_transaction?(change_data) &&
+          %w[cancelled denied approved].include?(change_data["issue_modification_request_status"]))
+    end
 
     def create_pending_status_events(change_data, event_date)
       pending_system_hash_events = pending_system_hash
