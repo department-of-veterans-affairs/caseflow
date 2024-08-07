@@ -1418,7 +1418,8 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   padding-left: 2%;
   flex-direction: row;
   display: flex;
-  width: 100%;
+  width: 98%;
+  margin-left: 1%;
 }
 
 .corr-tasks-added-col {
@@ -1448,4 +1449,8 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
 .link-icon-container {
   display: flex;
+}
+
+.tasks-added-details {
+  margin-left: 40px;
 }

@@ -43,7 +43,8 @@ const CorrespondenceTasksAdded = (props) => {
             <p>{props.task_added.assigned_to}</p>
           </div>
 
-        </div>
+        </div >
+        <div className="tasks-added-details">
         <span className="tasks-added-text">Tasks added to appeal</span>
 
         <CorrespondenceCaseTimeline
@@ -52,6 +53,7 @@ const CorrespondenceTasksAdded = (props) => {
           correspondence={props.task_added.corr}
           tasksToDisplay={props.correspondence.tasksAddedToAppeal}
         />
+        </div>
       </div>
     </>
   );
