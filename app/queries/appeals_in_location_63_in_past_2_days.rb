@@ -46,7 +46,6 @@ class AppealsInLocation63InPast2Days
           legacy_rows(appeals, docket, sym)
         else
           []
-          # ama_rows(appeals, docket, sym)
         end
       end
   end
@@ -78,29 +77,6 @@ class AppealsInLocation63InPast2Days
         bfcurloc: appeal["bfcurloc"]
       }
     end
-  end
-
-  def self.ama_rows(appeals, docket, sym)
-    # appeals.map do |appeal|
-      # This comes from the DistributionTask's assigned_at date
-      # ready_for_distribution_at = distribution_task_query(appeal)
-      # only look for hearings that were held
-      # hearing_judge = with_held_hearings(appeal)
-      # {
-        # docket_number: appeal.docket_number,
-        # docket: sym.to_s,
-        # aod: appeal.aod,
-        # cavc: appeal.cavc,
-        # receipt_date: appeal.receipt_date,
-        # ready_for_distribution_at: ready_for_distribution_at,
-        # target_distro_date: target_distro_date(appeal.receipt_date, docket),
-        # days_before_goal_date: days_before_goal_date(appeal.receipt_date, docket),
-        # hearing_judge: hearing_judge,
-        # veteran_file_number: appeal.veteran_file_number,
-        # veteran_name: appeal.veteran&.name.to_s,
-        # affinity_start_date: appeal.appeal_affinity&.affinity_start_date
-      # }
-    # end
   end
 
   def self.legacy_hearing_judge(appeal)
