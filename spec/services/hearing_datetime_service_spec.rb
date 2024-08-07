@@ -97,7 +97,7 @@ RSpec.describe HearingDatetimeService do
 
         expect do
           described_class.prepare_time_for_storage(date: date, time_string: time_string)
-        end.to raise_error(TZInfo::UnknownTimezone)
+        end.to raise_error(TZInfo::InvalidTimezoneIdentifier)
       end
     end
   end

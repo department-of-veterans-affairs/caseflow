@@ -29,12 +29,10 @@ class HearingDatetimeService
     # @param scheduled_time_string [String] Formatted time and timezone string, `12:00 PM Eastern Time (US & Canada)`.
     # @return [String] e.g. `America/New_York`
     def timezone_from_time_string(scheduled_time_string)
-      time_str_split = scheduled_time_string.split(" ", 3)
-
-      tz_str = ActiveSupport::TimeZone[time_str_split[2]]&.name
+      tz_str = scheduled_time_string.split(" ", 3)[2]
 
       begin
-        ActiveSupport::TimeZone.find_tzinfo(tz_str).name
+        ActiveSupport::TimeZone.find_tzinfo(tz_str)&.name
       rescue TZInfo::InvalidTimezoneIdentifier => error
         Raven.capture_exception(error)
         Rails.logger.info("#{error}: Invalid timezone #{tz_str} for hearing day")
