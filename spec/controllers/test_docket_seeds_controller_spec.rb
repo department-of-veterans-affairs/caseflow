@@ -8,6 +8,22 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
   end
   let!(:authenticated_user) { User.authenticate!(css_id: "RSPEC", roles: ["System Admin"]) }
 
+  let(:root_task) { create(:root_task) }
+  let(:distribution_task) do
+    DistributionTask.create!(
+      appeal: root_task.appeal,
+      assigned_to: Bva.singleton,
+      status: "assigned"
+    )
+  end
+
+  let(:bfcurloc_keys) { %w[77 81 83] }
+  let!(:cases) do
+    bfcurloc_keys.map do |bfcurloc_key|
+      create(:case, bfcurloc: bfcurloc_key)
+    end
+  end
+
   describe "POST run-demo?seed_type=ii?seed_count=x&days_ago=y&judge_css_id=zzz" do
     before(:all) do
       Rake::Task.define_task(:environment)
@@ -594,6 +610,35 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
           expect(LegacyAppeal.count).to eq(1)
           expect(Appeal.where(docket_type: "direct_review").count).to eq(1)
         end
+      end
+    end
+
+    it "should reset all appeals" do
+      expect(distribution_task.status).to eq("assigned")
+      expect(VACOLS::Case.where(bfcurloc: %w[81 83]).count).to eq(2)
+      expect(VACOLS::Case.where(bfcurloc: "testing").count).to eq(0)
+      get :reset_all_appeals
+      expect(response.status).to eq 200
+      expect(distribution_task.reload.status).to eq("on_hold")
+      expect(VACOLS::Case.where(bfcurloc: %w[81 83]).count).to eq(0)
+      expect(VACOLS::Case.where(bfcurloc: "testing").count).to eq(2)
+    end
+
+    context "check environment when non prod environments is true" do
+      before { allow(Rails).to receive(:deploy_env?).with(:demo).and_return(true) }
+
+      it "allows access without redirecting" do
+        get :reset_all_appeals
+        expect(response.status).to eq 200
+      end
+    end
+
+    context "check environment when in other environments" do
+      before { allow(Rails).to receive(:deploy_env?).and_return(false) }
+
+      it "redirects to /unauthorized" do
+        get :reset_all_appeals
+        expect(response).to redirect_to("/unauthorized")
       end
     end
   end
