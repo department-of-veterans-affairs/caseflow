@@ -768,12 +768,12 @@ describe VACOLS::AojCaseDocket, :all_dbs do
             ca1, ca4, ca10, ca11, ca12, ca13, ca14, ca15, ca16, ca17, ca21, ca22, ca23, ca24, ca25,
             ca26, ca27, ca28, ca29, ca30
           ]
-            .map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
+            .map { |c| c["bfkey"].to_i.to_s }.sort)
         # {FOR LEVER BEING INFINITE:}
         aoj_aod_lever.update!(value: "infinite")
         expect(VACOLS::AojCaseDocket.distribute_priority_appeals(judge, "any", 100, true).map { |c| c["bfkey"] }.sort)
           .to match_array([ca11, ca12, ca13, ca14, ca15, ca16, ca17, ca21, ca22, ca23, ca24, ca25, ca26, ca27, ca28, ca29, ca30]
-            .map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
+            .map { |c| c["bfkey"].to_i.to_s }.sort)
         # {FOR LEVER BEING OMIT:}
         aoj_aod_lever.update!(value: "omit")
         expect(VACOLS::AojCaseDocket.distribute_priority_appeals(judge, "any", 100, true).map { |c| c["bfkey"] }.sort)
@@ -781,7 +781,7 @@ describe VACOLS::AojCaseDocket, :all_dbs do
             ca1, ca2, ca3, ca4, ca5, ca6, ca10, ca11, ca12, ca13, ca14, ca15, ca16, ca17, ca21, ca22,
             ca23, ca24, ca25, ca26, ca27, ca28, ca29, ca30
           ]
-            .map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
+            .map { |c| c["bfkey"].to_i.to_s }.sort)
       end
     end
   end
