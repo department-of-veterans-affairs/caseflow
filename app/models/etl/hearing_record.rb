@@ -21,6 +21,7 @@ class ETL::HearingRecord < ETL::Record
         :notes,
         :prepped,
         :representative_name,
+        :scheduled_in_timezone,
         :scheduled_time,
         :summary,
         :transcript_requested,

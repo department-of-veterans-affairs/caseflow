@@ -159,7 +159,7 @@ describe HearingPostponementRequestMailTask, :postgres do
                     representative_tz: "America/Los_Angeles",
                     appellant_email: "test@test.com"
                   },
-                  scheduled_time_string: "09:00",
+                  scheduled_time_string: "09:00 AM America/Los_Angeles",
                   hearing_day_id: virtual_hearing_day.id,
                   hearing_location: nil,
                   virtual_hearing_attributes: {

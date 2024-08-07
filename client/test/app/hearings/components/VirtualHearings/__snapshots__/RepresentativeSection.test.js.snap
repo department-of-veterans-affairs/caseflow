@@ -114,6 +114,8 @@ exports[`RepresentativeSection Displays timezone when showTimezoneField is passe
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -16461,6 +16463,8 @@ exports[`RepresentativeSection Does not allow editing emails when read-only 1`] 
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -16650,6 +16654,8 @@ exports[`RepresentativeSection Does not display address when formFieldsOnly = tr
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -16876,6 +16882,8 @@ exports[`RepresentativeSection Matches snapshot with default props 1`] = `
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -17112,6 +17120,8 @@ exports[`RepresentativeSection Shows Representative name when representative add
         "representativeEmail": "tom.brady@caseflow.gov",
         "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
+        "scheduledInTimezone": "America/Chicago",
+        "scheduledTimeString": "03:30",
         "status": "active",
       },
       "wasVirtual": false,
@@ -17136,6 +17146,8 @@ exports[`RepresentativeSection Shows Representative name when representative add
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -17365,6 +17377,8 @@ exports[`RepresentativeSection Shows Representative not present message when no 
         "representativeEmail": "tom.brady@caseflow.gov",
         "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
+        "scheduledInTimezone": "America/Chicago",
+        "scheduledTimeString": "03:30",
         "status": "active",
       },
       "wasVirtual": false,
@@ -17389,6 +17403,8 @@ exports[`RepresentativeSection Shows Representative not present message when no 
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }

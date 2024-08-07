@@ -29,6 +29,8 @@ describe ETL::HearingSyncer, :etl, :all_dbs do
         expect(etl_virtual_hearing.hearing_location_zip_code).to eq "20001"
         expect(etl_regional_hearing.hearing_request_type).to eq "Video"
         expect(etl_regional_hearing.hearing_location_zip_code).to be_nil
+        expect(etl_virtual_hearing.scheduled_in_timezone).to eq("America/New_York")
+        expect(etl_regional_hearing.scheduled_in_timezone).to eq("America/New_York")
       end
     end
   end

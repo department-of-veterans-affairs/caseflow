@@ -89,7 +89,7 @@ export default class DailyDocketHearingRows extends React.Component {
 }
 
 DailyDocketHearingRows.propTypes = {
-  hearings: PropTypes.array,
+  hearings: PropTypes.object,
   openDispositionModal: PropTypes.func,
   readOnly: PropTypes.bool,
   regionalOffice: PropTypes.string,

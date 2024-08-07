@@ -43,7 +43,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
         .strftime("%F %T")
         .in_time_zone(regional_office_timezone) # cast the updated hearing time to the ro timezone
         .in_time_zone(HearingTimeService::CENTRAL_OFFICE_TIMEZONE) # convert it to the central office timezone
-        .strftime("%-l:%M %P ET") # and render it in the format expected in the modal
+        .strftime("%-l:%M %p ET") # and render it in the format expected in the modal
     end
 
     scenario "Virtual hearing time is updated" do
