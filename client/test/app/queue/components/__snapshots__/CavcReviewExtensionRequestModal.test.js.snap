@@ -157,62 +157,84 @@ exports[`CavcReviewExtensionRequestModal renders correctly 1`] = `
                 <div
                   className="cf-form-radio-options"
                 >
-                  <div
-                    className="cf-form-radio-option"
-                    key="decision-grant-0"
+                  <MaybeAddTooltip
+                    key="grant"
+                    option={
+                      Object {
+                        "displayText": "Grant",
+                        "help": "Task will go on hold for selected number of days",
+                        "value": "grant",
+                      }
+                    }
                   >
-                    <input
-                      disabled={false}
-                      id="decision_grant"
-                      name="decision"
-                      onChange={[Function]}
-                      type="radio"
-                      value="grant"
-                    />
-                    <label
-                      className=""
-                      htmlFor="decision_grant"
+                    <div
+                      className="cf-form-radio-option"
+                      key="decision-grant-0"
                     >
-                      Grant
-                    </label>
-                    <RadioFieldHelpText
-                      help="Task will go on hold for selected number of days"
-                    >
-                      <div
-                        className="cf-form-radio-help helpText"
+                      <input
+                        disabled={false}
+                        id="decision_grant"
+                        name="decision"
+                        onChange={[Function]}
+                        type="radio"
+                        value="grant"
+                      />
+                      <label
+                        className=""
+                        htmlFor="decision_grant"
                       >
-                        Task will go on hold for selected number of days
-                      </div>
-                    </RadioFieldHelpText>
-                  </div>
-                  <div
-                    className="cf-form-radio-option"
-                    key="decision-deny-1"
+                        Grant
+                      </label>
+                      <RadioFieldHelpText
+                        help="Task will go on hold for selected number of days"
+                      >
+                        <div
+                          className="cf-form-radio-help helpText"
+                        >
+                          Task will go on hold for selected number of days
+                        </div>
+                      </RadioFieldHelpText>
+                    </div>
+                  </MaybeAddTooltip>
+                  <MaybeAddTooltip
+                    key="deny"
+                    option={
+                      Object {
+                        "displayText": "Deny",
+                        "help": "Marks the extension request as denied",
+                        "value": "deny",
+                      }
+                    }
                   >
-                    <input
-                      disabled={false}
-                      id="decision_deny"
-                      name="decision"
-                      onChange={[Function]}
-                      type="radio"
-                      value="deny"
-                    />
-                    <label
-                      className=""
-                      htmlFor="decision_deny"
+                    <div
+                      className="cf-form-radio-option"
+                      key="decision-deny-1"
                     >
-                      Deny
-                    </label>
-                    <RadioFieldHelpText
-                      help="Marks the extension request as denied"
-                    >
-                      <div
-                        className="cf-form-radio-help helpText"
+                      <input
+                        disabled={false}
+                        id="decision_deny"
+                        name="decision"
+                        onChange={[Function]}
+                        type="radio"
+                        value="deny"
+                      />
+                      <label
+                        className=""
+                        htmlFor="decision_deny"
                       >
-                        Marks the extension request as denied
-                      </div>
-                    </RadioFieldHelpText>
-                  </div>
+                        Deny
+                      </label>
+                      <RadioFieldHelpText
+                        help="Marks the extension request as denied"
+                      >
+                        <div
+                          className="cf-form-radio-help helpText"
+                        >
+                          Marks the extension request as denied
+                        </div>
+                      </RadioFieldHelpText>
+                    </div>
+                  </MaybeAddTooltip>
                 </div>
               </fieldset>
             </RadioField>
