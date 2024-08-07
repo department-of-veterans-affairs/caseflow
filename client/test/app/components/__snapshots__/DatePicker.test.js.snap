@@ -3,7 +3,7 @@
 exports[`DatePicker renders default state correctly 1`] = `
 <div>
   <span
-    data-css-116l83e=""
+    data-css-tidn98=""
   >
     <svg
       aria-label="date-picker"
@@ -41,7 +41,7 @@ exports[`DatePicker renders default state correctly 1`] = `
     </svg>
     <div
       class="date-picker left"
-      data-css-17v7e1x=""
+      data-css-1yplfb5=""
     >
       <div
         class="clear-wrapper"
@@ -173,7 +173,7 @@ exports[`DatePicker renders default state correctly 1`] = `
 exports[`DatePicker restores input values correctly 1`] = `
 <div>
   <span
-    data-css-116l83e=""
+    data-css-tidn98=""
   >
     <svg
       aria-label="date-picker"
@@ -211,7 +211,7 @@ exports[`DatePicker restores input values correctly 1`] = `
     </svg>
     <div
       class="date-picker left"
-      data-css-17v7e1x=""
+      data-css-1yplfb5=""
     >
       <div
         class="clear-wrapper"
@@ -373,7 +373,7 @@ exports[`DatePicker restores input values correctly 1`] = `
 exports[`DatePicker shows one date field for after mode 1`] = `
 <div>
   <span
-    data-css-116l83e=""
+    data-css-tidn98=""
   >
     <svg
       aria-label="date-picker"
@@ -411,7 +411,7 @@ exports[`DatePicker shows one date field for after mode 1`] = `
     </svg>
     <div
       class="date-picker left"
-      data-css-17v7e1x=""
+      data-css-1yplfb5=""
     >
       <div
         class="clear-wrapper"
@@ -557,7 +557,7 @@ exports[`DatePicker shows one date field for after mode 1`] = `
 exports[`DatePicker shows one date field for before mode 1`] = `
 <div>
   <span
-    data-css-116l83e=""
+    data-css-tidn98=""
   >
     <svg
       aria-label="date-picker"
@@ -595,7 +595,7 @@ exports[`DatePicker shows one date field for before mode 1`] = `
     </svg>
     <div
       class="date-picker left"
-      data-css-17v7e1x=""
+      data-css-1yplfb5=""
     >
       <div
         class="clear-wrapper"
@@ -741,7 +741,7 @@ exports[`DatePicker shows one date field for before mode 1`] = `
 exports[`DatePicker shows one date field for on mode 1`] = `
 <div>
   <span
-    data-css-116l83e=""
+    data-css-tidn98=""
   >
     <svg
       aria-label="date-picker"
@@ -779,7 +779,7 @@ exports[`DatePicker shows one date field for on mode 1`] = `
     </svg>
     <div
       class="date-picker left"
-      data-css-17v7e1x=""
+      data-css-1yplfb5=""
     >
       <div
         class="clear-wrapper"

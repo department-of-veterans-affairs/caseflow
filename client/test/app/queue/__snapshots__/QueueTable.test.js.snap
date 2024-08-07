@@ -198,7 +198,7 @@ exports[`QueueTable DatePicker filter Back end filtering renders in a queue tabl
                 Date
               </span>
               <span
-                data-css-116l83e=""
+                data-css-tidn98=""
               >
                 <svg
                   aria-label="filter by date"
@@ -236,7 +236,7 @@ exports[`QueueTable DatePicker filter Back end filtering renders in a queue tabl
                 </svg>
                 <div
                   class="date-picker left"
-                  data-css-17v7e1x=""
+                  data-css-1yplfb5=""
                 >
                   <div
                     class="clear-wrapper"
@@ -687,7 +687,7 @@ exports[`QueueTable DatePicker filter Front end filtering renders in a queue tab
                 </svg>
               </span>
               <span
-                data-css-116l83e=""
+                data-css-tidn98=""
               >
                 <svg
                   aria-label="filter by date"
@@ -725,7 +725,7 @@ exports[`QueueTable DatePicker filter Front end filtering renders in a queue tab
                 </svg>
                 <div
                   class="date-picker left"
-                  data-css-17v7e1x=""
+                  data-css-1yplfb5=""
                 >
                   <div
                     class="clear-wrapper"

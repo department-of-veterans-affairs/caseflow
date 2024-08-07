@@ -8,12 +8,12 @@ import COPY from '../../COPY';
 import moment from 'moment-timezone';
 
 const datePickerStyle = css({
-  paddingLeft: '1rem',
+  paddingLeft: '0.95rem',
   paddingTop: '0.3rem',
   verticalAlign: 'middle',
   position: 'relative',
   fontWeight: 'normal',
-  top: '0.15rem',
+  display: 'table-cell',
   '& svg': {
     cursor: 'pointer'
   },
@@ -28,9 +28,9 @@ const datePickerStyle = css({
 const menuStyle = css({
   position: 'absolute',
   background: 'white',
-  top: '24px',
   width: '250px',
   border: '1px solid #CCC',
+  zIndex: '1',
   '& .input-wrapper': {
     padding: '0 1rem 2.5rem',
     '& input': {
@@ -112,6 +112,7 @@ class DatePicker extends React.PureComponent {
 
     const position = (props.settings && props.settings.position) || 'left';
     const buttons = (props.settings && props.settings.buttons) || false;
+    const selected = (props.selected && props.selected) || false;
 
     this.state = {
       open: false,
@@ -119,7 +120,8 @@ class DatePicker extends React.PureComponent {
       startDate: '',
       endDate: '',
       position,
-      buttons
+      buttons,
+      selected
     };
   }
 
@@ -173,7 +175,7 @@ class DatePicker extends React.PureComponent {
   }
 
   isFilterOpen = () => {
-    return this.state.open;
+    return this.state.open || this.state.selected;
   }
 
   buttonDisabled = () => {
@@ -309,6 +311,7 @@ DatePicker.propTypes = {
   getRef: PropTypes.func,
   label: PropTypes.string,
   settings: PropTypes.object,
+  selected: PropTypes.bool,
 };
 
 export default DatePicker;

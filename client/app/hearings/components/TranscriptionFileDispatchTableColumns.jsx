@@ -168,7 +168,7 @@ export const hearingDateColumn = () => {
     filterType: 'date-picker',
     filterSettings: {
       buttons: false,
-      position: 'left'
+      position: 'right'
     }
   };
 };

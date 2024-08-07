@@ -255,7 +255,8 @@ class TableFilter extends React.PureComponent {
         getRef={this.props.getFilterIconRef}
         label={this.filterIconAriaLabel()}
         onChange={(value) => this.updateSelectedFilter(value, columnName, true)}
-        settings={filterSettings} />
+        settings={filterSettings}
+        selected={this.isFilterOpen()} />
       );
     } else {
       filter = renderFilterIcon();
