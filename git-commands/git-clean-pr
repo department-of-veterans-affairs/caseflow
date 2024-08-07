@@ -1,0 +1,90 @@
+#!/bin/bash
+
+# git command to run relevant jest, rubocop, and rspecs on files changed
+# can accept a branch parameter to compare changes to another given branch
+
+# get script directory
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+# get current directory
+CURRENT_DIR=$(pwd)
+
+# determine if branch param was passed
+if [ ! -z "$1" ]; then
+  # get the list of files changed that are eligible for testing
+  jsxCommits=$(git diff --name-only "$1" | grep -E '.jsx$') # get the list of jsx files
+  jsCommits=$(git diff --name-only "$1" | grep -E '.js$') # get the list of js files
+  rbCommits=$(git diff --name-only "$1" | grep -E '.rb$') # get the list of ruby files
+  scssCommits=$(git diff --name-only "$1" | grep -E '.scss$') # get the list of scss files
+
+else
+  # else default to no branch comparison
+  # get the list of files changed that are eligible for testing
+  jsxCommits=$(git diff --name-only | grep -E '.jsx$') # get the list of jsx files
+  jsCommits=$(git diff --name-only | grep -E '.js$') # get the list of js files
+  rbCommits=$(git diff --name-only | grep -E '.rb$') # get the list of ruby files
+  scssCommits=$(git diff --name-only | grep -E '.scss$') # get the list of scss files
+fi
+
+# cycle through ruby suite of tests
+for commit in $rbCommits; do
+  # change to appeals directory
+  cd "$SCRIPT_DIR"
+  cd ..
+
+  # attempt to find unit test
+  # get base file name
+  base=$(basename $commit .rb)
+  # find the corresponding unit test (if any)
+  testFile=$(find ./spec -name "${base}_spec.rb")
+
+  # check that there is a path
+  if [ ! -z "$testFile" ]; then
+    echo "running spec test for $testFile path"; echo "";
+
+    # run spec if there is a corresponding spec test for the file
+    bundle exec rspec $testFile --format progress
+  else
+    echo "no test file found at $testFile"
+  fi
+
+  # run rubocop
+  echo "running rubocop"; echo "";
+  bundle exec rubocop -a $commit
+
+  # run fasterer
+  echo "running fasterer"; echo "";
+  bundle exec fasterer $commit
+
+  # return to current path
+  cd $CURRENT_DIR
+  echo "Relevant spec, rubocop, and fasterer tests have been run"; echo "";
+done
+
+# run scss commits if file committed
+if [[ ! -z "$scssCommits" ]]; then
+  echo "running scss-lint --color"; echo ""
+  scss-lint --color
+fi
+
+# if there is a jsx or js file, use jest -o to run tests that cover file
+if [[ ! -z "$jsxCommits" || ! -z "$jsCommits" ]]; then
+  echo "running jest tests for $jsxCommits $jsCommits"; echo "";
+  # use SCRIPT_DIR to get to appeals/client/test
+  cd "$SCRIPT_DIR"
+  cd ../client && yarn jest -o
+
+  # run lint:fix
+  echo "running yarn lint"; echo "";
+  yarn run lint:fix
+
+  # run prettier
+  echo "running yarn pretty:format"; echo "";
+  yarn run pretty:format
+
+  # return to current path
+  cd $CURRENT_DIR
+
+  echo "Relevant jest, lint, and prettier tests have been run"; echo "";
+fi
+
+echo "All tests relevant to current code changes have been run"

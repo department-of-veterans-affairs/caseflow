@@ -13,7 +13,7 @@ import Pagination from '../components/Pagination/Pagination';
 import { COLORS, LOGO_COLORS } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
 import LoadingScreen from '../components/LoadingScreen';
-import { tasksWithAppealsFromRawTasks } from './utils';
+import { tasksWithAppealsFromRawTasks, tasksWithCorrespondenceFromRawTasks } from './utils';
 import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
 import COPY from '../../COPY';
 
@@ -171,6 +171,8 @@ export const HeaderRow = (props) => {
                 filterOptionsFromApi={props.useTaskPagesApi && column.filterOptions}
                 updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
                 filteredByList={props.filteredByList}
+                isReceiptDateFilter={column.name === QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name}
+                isTaskCompletedDateFilter={column.name === QUEUE_CONFIG.COLUMNS.CORRESPONDENCE_TASK_CLOSED_DATE.name}
               />
             );
           }
@@ -347,7 +349,7 @@ export default class QueueTable extends React.PureComponent {
     const firstResponse = {
       task_page_count: this.props.numberOfPages,
       tasks_per_page: this.props.casesPerPage,
-      total_task_count: this.props.rowObjects.length,
+      total_task_count: this.props.totalTaskCount,
       tasks: this.props.rowObjects
     };
 
@@ -638,7 +640,9 @@ export default class QueueTable extends React.PureComponent {
           tasks: { data: tasks }
         } = response.body;
 
-        const preparedTasks = tasksWithAppealsFromRawTasks(tasks);
+        const preparedTasks = this.props.isCorrespondenceTable ?
+          tasksWithCorrespondenceFromRawTasks(tasks) :
+          tasksWithAppealsFromRawTasks(tasks);
 
         const preparedResponse = Object.assign(response.body, { tasks: preparedTasks });
 
@@ -651,6 +655,10 @@ export default class QueueTable extends React.PureComponent {
         this.updateAddressBar();
       }).
       catch(() => this.setState({ loadingComponent: null }));
+  };
+
+  filterTasksFromSearchbar = (tasks, searchValue) => {
+    return tasks.filter((task) => this.props.taskMatchesSearch(task, searchValue));
   };
 
   render() {
@@ -669,7 +677,8 @@ export default class QueueTable extends React.PureComponent {
       styling,
       bodyStyling,
       enablePagination,
-      useTaskPagesApi
+      useTaskPagesApi,
+      searchValue
     } = this.props;
 
     let { totalTaskCount, numberOfPages, rowObjects, casesPerPage } = this.props;
@@ -774,7 +783,7 @@ export default class QueueTable extends React.PureComponent {
           tbodyRef={tbodyRef}
           columns={columns}
           getKeyForRow={keyGetter}
-          rowObjects={rowObjects}
+          rowObjects={searchValue ? this.filterTasksFromSearchbar(rowObjects, searchValue) : rowObjects}
           bodyClassName={bodyClassName ?? ''}
           rowClassNames={rowClassNames}
           bodyStyling={bodyStyling}
@@ -843,6 +852,9 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
   }),
   onHistoryUpdate: PropTypes.func,
   preserveFilter: PropTypes.bool,
+  isCorrespondenceTable: PropTypes.bool,
+  searchValue: PropTypes.string,
+  taskMatchesSearch: PropTypes.func
 };
 
 Row.propTypes.rowObjects = PropTypes.arrayOf(PropTypes.object);

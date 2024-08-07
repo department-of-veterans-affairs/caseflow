@@ -21,13 +21,35 @@ class TaskSorter
     fail(Caseflow::Error::MissingRequiredProperty, message: errors.full_messages.join(", ")) unless valid?
   end
 
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
   def sorted_tasks
     return tasks unless tasks.any?
 
-    # Always join to the CachedAppeal and users tables because we sometimes need it, joining does not slow down the
-    # application, and conditional logic to only join sometimes adds unnecessary complexity.
-    tasks.with_assignees.with_assigners.with_cached_appeals.order(order_clause)
+    # used for when the logic on the sorting needs to be reversed
+    reverse_sort_order = sort_order == "asc" ? "desc" : "asc"
+
+    # The following cases are used for Correspondence Queue tables
+    case column.name
+    when Constants.QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name
+      tasks.joins(appeal: :veteran).order(last_name: sort_order.to_sym, first_name: sort_order.to_sym)
+    when Constants.QUEUE_CONFIG.COLUMNS.NOTES.name
+      tasks.joins(:appeal).order(notes: sort_order.to_sym)
+    when Constants.QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name
+      tasks.joins(:appeal).order(va_date_of_receipt: sort_order.to_sym)
+    when Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING_CORRESPONDENCE.name
+      tasks.joins(:appeal).order(assigned_at: reverse_sort_order.to_sym)
+    when Constants.QUEUE_CONFIG.COLUMNS.CORRESPONDENCE_TASK_CLOSED_DATE.name
+      tasks.joins(:appeal).order(closed_at: sort_order.to_sym)
+    when Constants.QUEUE_CONFIG.COLUMNS.PACKAGE_DOCUMENT_TYPE.name
+      # Reverse sort since nod is a bool column. However the UI text needs to be sorted by display value.
+      tasks.joins(:appeal).order(nod: reverse_sort_order.to_sym)
+    else
+      # Always join to the CachedAppeal and users tables because we sometimes need it, joining does not slow down the
+      # application, and conditional logic to only join sometimes adds unnecessary complexity.
+      tasks.with_assignees.with_assigners.with_cached_appeals.order(order_clause)
+    end
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
 
   private
 

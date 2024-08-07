@@ -2,6 +2,9 @@
 
 # create tasks and their related appeals
 # to do: split this up more logically for legacy, AMA, etc.
+
+require_relative "./helpers/seed_helpers"
+
 module Seeds
   # rubocop:disable Metrics/PerceivedComplexity
   # rubocop:disable Metrics/CyclomaticComplexity
@@ -10,6 +13,8 @@ module Seeds
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Lint/DuplicateMethods
   class Tasks < Base
+    include SeedHelpers
+
     def initialize
       @ama_appeals = []
       initial_file_number_and_participant_id
@@ -32,16 +37,6 @@ module Seeds
         @file_number += 2000
         @participant_id += 2000
       end
-    end
-
-    def create_veteran(options = {})
-      @file_number += 1
-      @participant_id += 1
-      params = {
-        file_number: format("%<n>09d", n: @file_number),
-        participant_id: format("%<n>09d", n: @participant_id)
-      }
-      create(:veteran, params.merge(options))
     end
 
     def create_ama_appeals

@@ -36,7 +36,7 @@ class ExplainController < ApplicationController
       Rails.env.development?
   end
 
-  helper_method :legacy_appeal?, :appeal, :appeal_affinity,
+  helper_method :legacy_appeal?, :correspondence?, :appeal, :appeal_affinity,
                 :show_pii_query_param, :fields_query_param, :sections_query_param,
                 :treee_fields, :enabled_sections,
                 :available_fields,
@@ -51,15 +51,22 @@ class ExplainController < ApplicationController
   end
 
   def explain_as_text
-    [
-      "show_pii = #{show_pii_query_param}",
-      task_tree_as_text,
-      intake_as_text,
-      hearing_as_text,
-      JSON.pretty_generate(event_table_data),
-      JSON.pretty_generate(timeline_data),
-      JSON.pretty_generate(network_graph_data)
-    ].join("\n\n")
+    if correspondence?
+      [
+        "show_pii = #{show_pii_query_param}",
+        appeal.tree(*treee_fields)
+      ].join("\n\n")
+    else
+      [
+        "show_pii = #{show_pii_query_param}",
+        task_tree_as_text,
+        intake_as_text,
+        hearing_as_text,
+        JSON.pretty_generate(event_table_data),
+        JSON.pretty_generate(timeline_data),
+        JSON.pretty_generate(network_graph_data)
+      ].join("\n\n")
+    end
   end
 
   def available_fields
@@ -127,6 +134,7 @@ class ExplainController < ApplicationController
 
   def sanitized_json
     return "(LegacyAppeals are not yet supported)".to_json if legacy_appeal?
+    return "(Correspondences are not yet supported)".to_json if correspondence?
 
     SanitizedJsonExporter.new(appeal, sanitize: !show_pii_query_param, verbosity: 0).file_contents
   end
@@ -143,11 +151,17 @@ class ExplainController < ApplicationController
     appeal.is_a?(LegacyAppeal)
   end
 
+  def correspondence?
+    appeal.is_a?(Correspondence)
+  end
+
   def appeal
     @appeal ||= fetch_appeal
   end
 
   def appeal_affinity
+    return if correspondence?
+
     @appeal_affinity ||= if legacy_appeal?
                            VACOLS::Case.find_by(bfkey: appeal.vacols_id)&.appeal_affinity
                          else
@@ -156,7 +170,9 @@ class ExplainController < ApplicationController
   end
 
   def fetch_appeal
-    if appeal_id.start_with?("ama-")
+    if params[:correspondence_uuid].present?
+      Correspondence.find_by_uuid(params[:correspondence_uuid])
+    elsif appeal_id.start_with?("ama-")
       record_id = appeal_id.delete_prefix("ama-")
       Appeal.find_by_id(record_id)
     elsif appeal_id.start_with?("legacy-")

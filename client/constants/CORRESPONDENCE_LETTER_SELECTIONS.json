@@ -1,0 +1,365 @@
+[
+  {
+    "letter_type": "Pre-docketing",
+    "response_window_option_default": "No response window",
+    "letter_titles": [
+      {
+        "letter_title": "Intake 10182 Recv Needs AOJ Development",
+        "letter_subcategories": [
+          {
+            "subcategory": "Issues(s) is VHA",
+            "reasons": []
+          },
+          {
+            "subcategory": "Issues(s) is Education Service",
+            "reasons": []
+          },
+          {
+            "subcategory": "Issue(s) is Other",
+            "reasons": []
+          },
+          {
+            "subcategory": "Issue(s) is VHA and Education Service",
+            "reasons": []
+          },
+          {
+            "subcategory": "Issue(s) is VHA and Other",
+            "reasons": []
+          },
+          {
+            "subcategory": "Issue(s) is Education Service and Other",
+            "reasons": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "letter_type": "Ineligible",
+    "response_window_option_default": "No response window",
+    "letter_titles": [
+      {
+        "letter_title": "Intake AMA HLR or Supp Claim Pending Letter",
+        "letter_subcategories": [
+          {
+            "subcategory": "10182 received when a HLR is pending for the same issue(s)",
+            "reasons": []
+          },
+          {
+            "subcategory": "10182 received when a Supplemental claim is pending for the same issue(s)",
+            "reasons": []
+          }
+        ]
+      },
+      {
+        "letter_title": "Intake AMA NOD - Ineligible Appeal Proposed Reduction",
+        "letter_subcategories": [
+          {
+            "subcategory": "10182 received - proposed reduction",
+            "reasons": []
+          },
+          {
+            "subcategory": "10182 received - proposed severence of service connection",
+            "reasons": []
+          }
+        ]
+      },
+      {
+        "letter_title": "Intake AMA or RAMP NOD Inelligible Claim or Appeal",
+        "letter_subcategories": [
+          {
+            "subcategory": "10182 received attempting to elect a RAMP appeal",
+            "reasons": []
+          }
+        ]
+      },
+      {
+        "letter_title": "Intake Caregiver or 10182 on Legacy",
+        "letter_subcategories": [
+          {
+            "subcategory": "10182 received attempting to appeal a Caregiver legacy decision",
+            "reasons": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "letter_type": "General",
+    "letter_titles": [
+      {
+        "letter_title": "Intake AMA Corrective App Receipt",
+        "response_window_option_default": "65 days",
+        "letter_subcategories": []
+      },
+      {
+        "letter_title": "Intake AMA Docket Switch New Form Needed",
+        "response_window_option_default": "65 days",
+        "letter_subcategories": []
+      },
+      {
+        "letter_title": "Intake AMA How to withdraw a Board Appeal",
+        "response_window_option_default": "65 days",
+        "letter_subcategories": []
+      },
+      {
+        "letter_title": "Intake AMA Next Friend Letter",
+        "response_window_option_default": "65 days",
+        "letter_subcategories": []
+      },
+      {
+        "letter_title": "Intake AMA NOD - 10182 After Vet Death Docketing Letter Take Back",
+        "response_window_option_default": "No response window",
+        "letter_subcategories": []
+      },
+      {
+        "letter_title": "Intake AMA NOD - 10182 Cannot Docket after Vet Death",
+        "response_window_option_default": "No response window",
+        "letter_subcategories": []
+      },
+      {
+        "letter_title": "Intake AMA Rejection Sent in Error",
+        "response_window_option_default": "No response window",
+        "letter_subcategories": [
+          {
+            "subcategory": "Previously submitted 10182 is accepted and rejection sent in error",
+            "reasons": []
+          }
+        ]
+      },
+      {
+        "letter_title": "Intake Legacy Corrective App Receipt",
+        "response_window_option_default": "No response window",
+        "letter_subcategories": [
+          {
+            "subcategory": "Docket letter for AMA issued in error for a Legacy appeal currently pending",
+            "reasons": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "letter_type": "Clarification",
+    "response_window_option_default": "65 days",
+    "letter_titles": [
+      {
+        "letter_title": "Intake AMA 10182/HLR/Supp Clarification",
+        "letter_subcategories": [
+          {
+            "subcategory": "10182 received with a 0996 - Same issue(s)",
+            "reasons": []
+          },
+          {
+            "subcategory": "10182 received with a 0995 - Same issue(s)",
+            "reasons": []
+          },
+          {
+            "subcategory": "10182 received with a 0995 and 0996 - Same issue(s)",
+            "reasons": []
+          }
+        ]
+      },
+      {
+        "letter_title": "Intake AMA NOD-Clarification Letter 0995 or 0996 Same Day",
+        "letter_subcategories": [
+          {
+            "subcategory": "0995",
+            "reasons": [
+              "No issues",
+              "No lane selected",
+              "Multiple lanes selected",
+              "Unsigned",
+              "No issues & no lane selected",
+              "No issues & multiple lanes selected",
+              "No issues & unsigned",
+              "Unsigned & no lane selected",
+              "Unsigned & multiple lanes selected"
+            ]
+          },
+          {
+            "subcategory": "0996",
+            "reasons": [
+              "No issues",
+              "No lane selected",
+              "Multiple lanes selected",
+              "Unsigned",
+              "No issues & no lane selected",
+              "No issues & multiple lanes selected",
+              "No issues & unsigned",
+              "Unsigned & no lane selected",
+              "Unsigned & multiple lanes selected"
+            ]
+          },
+          {
+            "subcategory": "0995 & 0996",
+            "reasons": [
+              "No issues",
+              "No lane selected",
+              "Multiple lanes selected",
+              "Unsigned",
+              "No issues & no lane selected",
+              "No issues & multiple lanes selected",
+              "No issues & unsigned",
+              "Unsigned & no lane selected",
+              "Unsigned & multiple lanes selected"
+            ]
+          }
+        ]
+      },
+      {
+        "letter_title": "Intake AMA NOD Clarification Letter",
+        "letter_subcategories": [
+          {
+            "subcategory": "1 reason",
+            "reasons": [
+              "No issues",
+              "No decision dates",
+              "No lane selected",
+              "Multiple lanes selected",
+              "Unsigned"
+            ]
+          },
+          {
+            "subcategory": "2 reasons",
+            "reasons": [
+              "No issue(s) or decision date",
+              "No issue(s) & no lane selected",
+              "No issue(s) & multiple lanes are selected",
+              "No issue(s) & unsigned",
+              "No decision dates & no lane selected",
+              "No decision dates & multiple lanes selected",
+              "No decison dates(s) & unsigned",
+              "No lane selected & unsigned",
+              "Multiple lanes selected & unsigned"
+            ]
+          },
+          {
+            "subcategory": "3 reasons",
+            "reasons": [
+              "No issues, no lane selected & unsigned",
+              "No issues, multiple lanes selected & unsigned",
+              "No issues, no decision(s) date & unsigned",
+              "No lane selected, no decision(s) date & unsigned"
+            ]
+          }
+        ]
+      },
+      {
+        "letter_title": "Intake AMA Request without 10182",
+        "letter_subcategories": [
+          {
+            "subcategory": "Attempt to appeal without submitting a 10182",
+            "reasons": []
+          }
+        ]
+      },
+      {
+        "letter_title": "Intake AMA VHA NOD Clarification Letter",
+        "letter_subcategories": [
+          {
+            "subcategory": "10182 received for a VHA appeal without a decision date",
+            "reasons": []
+          }
+        ]
+      },
+      {
+        "letter_title": "Intake AMA VHA Request without a 10182",
+        "letter_subcategories": [
+          {
+            "subcategory": "Correspondence received attempting to appeal VHA decision without a 10182",
+            "reasons": []
+          }
+        ]
+      },
+      {
+        "letter_title": "Intake Caregiver Legacy NOD for AMA",
+        "letter_subcategories": [
+          {
+            "subcategory": "Correspondence received attempting to appeal CG decision without a 10182, decision after 9/28/2021",
+            "reasons": []
+          },
+          {
+            "subcategory": "Correspondence received attempting to appeal VHA decision without a 10182, decision before 9/28/2021",
+            "reasons": []
+          }
+        ]
+      },
+      {
+        "letter_title": "Intake Form 10182 and Form 9 Clarification",
+        "letter_subcategories": [
+          {
+            "subcategory": "10182 received with a VA Form 9 w a Legacy Appeal pending for same issue(s)",
+            "reasons": []
+          }
+        ]
+      },
+      {
+        "letter_title": "Intake Form 10182 and Form 9 SOC Opt-in Only Clarification Letter",
+        "letter_subcategories": [
+          {
+            "subcategory": "10182 received with a VA Form 9 w a Legacy Appeal pending for same issue(s), SOC issued",
+            "reasons": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "letter_type": "Untimely",
+    "response_window_option_default": "No response window",
+    "letter_titles": [
+      {
+        "letter_title": "Intake AMA Untimely NOD No Opt In",
+        "letter_subcategories": [
+          {
+            "subcategory": "10182 received after expiration of the appeal period",
+            "reasons": []
+          }
+        ]
+      },
+      {
+        "letter_title": "Intake AMA Untimely NOD Post SOC Opt in ACT or ADV Cert",
+        "letter_subcategories": [
+          {
+            "subcategory": "10182 received untimely for AMA, legacy is pending",
+            "reasons": []
+          }
+        ]
+      },
+      {
+        "letter_title": "Intake AMA Untimely NOD Post SOC Opt in HIS 99 G",
+        "letter_subcategories": [
+          {
+            "subcategory": "10182 received untimely for AMA, SOC response time expired",
+            "reasons": []
+          }
+        ]
+      },
+      {
+        "letter_title": "Intake AMA Untimely NOD Post SSOC Opt",
+        "letter_subcategories": [
+          {
+            "subcategory": "10182 received untimely for AMA, SSOC response time expired",
+            "reasons": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "letter_type": "Docketing",
+    "response_window_option_default": "No response window",
+    "letter_titles": [
+      {
+        "letter_title": "Intake Queue (with Docket)",
+        "letter_subcategories": [
+          {
+            "subcategory": "10182 received and appeal docketed",
+            "reasons": []
+          }
+        ]
+      }
+    ]
+  }
+]
