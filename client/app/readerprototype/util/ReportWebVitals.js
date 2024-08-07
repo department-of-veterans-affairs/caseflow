@@ -2,7 +2,7 @@
 import { onFCP } from 'web-vitals';
 import { recordAsyncMetrics } from '../../../../client/app/util/Metrics';
 
-const reportWebVitals = (featureToggleEnabled, pageNumber) => {
+const reportWebVitals = (featureToggleEnabled, pageNumber, stats) => {
 
   const handleMetric = (metric) => {
     const pageMetricData = {
@@ -15,7 +15,7 @@ const reportWebVitals = (featureToggleEnabled, pageNumber) => {
 
     recordAsyncMetrics(metric, pageMetricData, true);
 
-    console.log(`**VITALS${pageNumber}`, metric);
+    console.log(`**VITALS${pageNumber}`, stats);
   };
 
   if (featureToggleEnabled) {

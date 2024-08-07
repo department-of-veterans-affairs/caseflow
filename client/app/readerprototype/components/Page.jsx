@@ -5,7 +5,7 @@ import reportWebVitals from '../util/ReportWebVitals';
 
 const Page = ({ page, rotation = '0deg', renderItem, scale }) => {
   const canvasRef = useRef(null);
-  const hasReportedWebVitals = useRef(false);
+  // const hasReportedWebVitals = useRef(false);
 
   const viewport = page.getViewport({ scale: 1 });
   const wrapperStyle = css({
@@ -17,16 +17,16 @@ const Page = ({ page, rotation = '0deg', renderItem, scale }) => {
   useEffect(() => {
     if (canvasRef.current) {
       page.render({ canvasContext: canvasRef.current?.getContext('2d'), viewport });
-      reportWebVitals(true, page.pageNumber);
+      reportWebVitals(true, page.pageNumber, page._stats);
     }
   }, [canvasRef.current, viewport]);
 
-  useEffect(() => {
-    if (!hasReportedWebVitals.current) {
-      reportWebVitals(true, page.pageNumber);
-      hasReportedWebVitals.current = true;
-    }
-  }, [canvasRef.current]);
+  // useEffect(() => {
+  //   if (!hasReportedWebVitals.current) {
+  //     reportWebVitals(true, page.pageNumber);
+  //     hasReportedWebVitals.current = true;
+  //   }
+  // }, [canvasRef.current]);
 
   return (
     <div id={`canvasWrapper-${page.pageNumber}`} className={`${wrapperStyle} prototype-canvas-wrapper`}>
