@@ -12,6 +12,7 @@ import CaseSearchLink from '../components/CaseSearchLink';
 import ApiUtil from '../util/ApiUtil';
 import Button from '../components/Button';
 import Alert from 'app/components/Alert';
+import uuid from 'uuid';
 
 class CaseDistributionTest extends React.PureComponent {
   constructor(props) {
@@ -22,11 +23,10 @@ class CaseDistributionTest extends React.PureComponent {
       isReseedingAmaDocketGoals: false,
       isReseedingDocketPriority: false,
       isReturnLegacyAppeals: false,
+      isFailReturnLegacyAppeals: false,
       showLegacyAppealsAlert: false,
-      legacyAppealsAlertType: "success",
-      legacyAppealsAlertMsg: "Successfully Completed Return Legacy Appeals To Board Job.",
       showAlert: false,
-      alertType: "success",
+      alertType: 'success',
     };
   }
 
@@ -36,7 +36,7 @@ class CaseDistributionTest extends React.PureComponent {
       this.setState({
         isReseedingAod: false,
         showAlert: true,
-        alertMsg: "Successfully Completed Seeding Aod Hearing Held Appeals.",
+        alertMsg: 'Successfully Completed Seeding Aod Hearing Held Appeals.',
       });
     }, (err) => {
       console.warn(err);
@@ -44,7 +44,7 @@ class CaseDistributionTest extends React.PureComponent {
         isReseedingAod: false,
         showAlert: true,
         alertMsg: err,
-        alertType: "error",
+        alertType: 'error',
       });
     });
   };
@@ -55,7 +55,7 @@ class CaseDistributionTest extends React.PureComponent {
       this.setState({
         isReseedingNonAod: false,
         showAlert: true,
-        alertMsg: "Successfully Completed Seeding Non Aod Hearing Held Appeals.",
+        alertMsg: 'Successfully Completed Seeding Non Aod Hearing Held Appeals.',
       });
     }, (err) => {
       console.warn(err);
@@ -63,7 +63,7 @@ class CaseDistributionTest extends React.PureComponent {
         isReseedingNonAod: false,
         showAlert: true,
         alertMsg: err,
-        alertType: "error",
+        alertType: 'error',
       });
     });
   };
@@ -74,7 +74,7 @@ class CaseDistributionTest extends React.PureComponent {
       this.setState({
         isReseedingAmaDocketGoals: false,
         showAlert: true,
-        alertMsg: "Successfully Completed Seeding Ama Docket Time Goal Non Priority Appeals.",
+        alertMsg: 'Successfully Completed Seeding Ama Docket Time Goal Non Priority Appeals.',
       });
     }, (err) => {
       console.warn(err);
@@ -82,7 +82,7 @@ class CaseDistributionTest extends React.PureComponent {
         isReseedingAmaDocketGoals: false,
         showAlert: true,
         alertMsg: err,
-        alertType: "error",
+        alertType: 'error',
       });
     });
   };
@@ -93,7 +93,7 @@ class CaseDistributionTest extends React.PureComponent {
       this.setState({
         isReseedingDocketPriority: false,
         showAlert: true,
-        alertMsg: "Successfully Completed Seeding Docket Type Appeals.",
+        alertMsg: 'Successfully Completed Seeding Docket Type Appeals.',
       });
     }, (err) => {
       console.warn(err);
@@ -101,7 +101,7 @@ class CaseDistributionTest extends React.PureComponent {
         isReseedingDocketPriority: false,
         showAlert: true,
         alertMsg: err,
-        alertType: "error",
+        alertType: 'error',
       });
     });
   };
@@ -111,15 +111,38 @@ class CaseDistributionTest extends React.PureComponent {
     ApiUtil.post('/case_distribution_levers_tests/run_return_legacy_appeals_to_board').then(() => {
       this.setState({
         isReturnLegacyAppeals: false,
-        showLegacyAppealsAlert: true
+        showLegacyAppealsAlert: true,
+        legacyAppealsAlertType: 'success',
+        legacyAppealsAlertMsg: 'Successfully Completed Return Legacy Appeals To Board Job.',
       });
     }, (err) => {
       console.warn(err);
       this.setState({
         isReturnLegacyAppeals: false,
         showLegacyAppealsAlert: true,
-        legacyAppealsAlertType: "error",
+        legacyAppealsAlertType: 'error',
         legacyAppealsAlertMsg: err
+      });
+    });
+  };
+
+  failReturnLegacyAppealsToBoard = () => {
+    this.setState({ isFailReturnLegacyAppeals: true });
+    ApiUtil.post('/case_distribution_levers_tests/run_return_legacy_appeals_to_board?fail_job=true').then(() => {
+      this.setState({
+        isFailReturnLegacyAppeals: false,
+        showLegacyAppealsAlert: true,
+      });
+    }, (err) => {
+      const id = uuid.v4();
+      const error = JSON.parse(err.response.text).error;
+      const message = `Return Legacy Appeals To Board ${error} UUID: ${id}.`;
+
+      this.setState({
+        isFailReturnLegacyAppeals: false,
+        showLegacyAppealsAlert: true,
+        legacyAppealsAlertType: 'error',
+        legacyAppealsAlertMsg: message
       });
     });
   };
@@ -354,6 +377,14 @@ class CaseDistributionTest extends React.PureComponent {
                                 name="Run ReturnLegacyAppealsToBoard job"
                                 loading={this.state.isReturnLegacyAppeals}
                                 loadingText="Processing ReturnLegacyAppealsToBoard job"
+                              />
+                            </li>
+                            <li>
+                              <Button classNames={['usa-button-case-movement']}
+                                onClick={this.failReturnLegacyAppealsToBoard}
+                                name="Fail - Run ReturnLegacyAppealsToBoard job"
+                                loading={this.state.isFailReturnLegacyAppeals}
+                                loadingText="Fail ReturnLegacyAppealsToBoard job"
                               />
                             </li>
                           </ul>
