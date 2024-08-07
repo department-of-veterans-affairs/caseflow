@@ -309,7 +309,7 @@ FactoryBot.define do
       lever_group_order { 3003 }
     end
 
-    trait :aoj_aod_affinity do
+    trait :aoj_aod_affinity_days do
       item { "aoj_aod_affinity_days" }
       title { "AOJ AOD Affinity Days" }
       description do
