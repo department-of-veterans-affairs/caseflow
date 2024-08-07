@@ -228,7 +228,6 @@ exports[`RecommendDocketSwitchForm renders correctly 1`] = `
                           aria-autocomplete="list"
                           aria-expanded="false"
                           aria-haspopup="true"
-                          aria-labelledby="judge-label"
                           aria-owns="judge-listbox"
                           autocapitalize="none"
                           autocomplete="off"
