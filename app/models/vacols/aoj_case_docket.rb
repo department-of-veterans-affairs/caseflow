@@ -93,7 +93,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket
       from BRIEFF B
       inner join FOLDER F on F.TICKNUM = B.BFKEY
 
-      where B.BFMPRO = 'HIS' and B.BFMEMID not in ('000', '888', '999') and B.BFATTID is not null
+      where B.BFMPRO = 'HIS'
     ) PREV_APPEAL
       on PREV_APPEAL.PREV_BFKEY != BRIEFF.BFKEY and PREV_APPEAL.PREV_BFCORLID = BRIEFF.BFCORLID
       and PREV_APPEAL.PREV_TINUM = BRIEFF.TINUM and PREV_APPEAL.PREV_TITRNUM = BRIEFF.TITRNUM
@@ -443,24 +443,24 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket
     end
 
     fmtd_query = if aoj_affinity_lever_value == Constants.ACD_LEVERS.infinite
-      sanitize_sql_array([
-                            query,
-                            judge.vacols_attorney_id,
-                            (genpop == "any" || genpop == "not_genpop") ? 1 : 0,
-                            (genpop == "any" || genpop == "only_genpop") ? 1 : 0,
-                            range,
-                            range.nil? ? 1 : 0
-                         ])
-    else
-      sanitize_sql_array([
-                            query,
-                            judge.vacols_attorney_id,
-                            (genpop == "any" || genpop == "not_genpop") ? 1 : 0,
-                            (genpop == "any" || genpop == "only_genpop") ? 1 : 0,
-                            range,
-                            range.nil? ? 1 : 0,
-                            judge.vacols_attorney_id
-                         ])
+                   sanitize_sql_array([
+                                        query,
+                                        judge.vacols_attorney_id,
+                                        (genpop == "any" || genpop == "not_genpop") ? 1 : 0,
+                                        (genpop == "any" || genpop == "only_genpop") ? 1 : 0,
+                                        range,
+                                        range.nil? ? 1 : 0
+                                      ])
+                 else
+                   sanitize_sql_array([
+                                        query,
+                                        judge.vacols_attorney_id,
+                                        (genpop == "any" || genpop == "not_genpop") ? 1 : 0,
+                                        (genpop == "any" || genpop == "only_genpop") ? 1 : 0,
+                                        range,
+                                        range.nil? ? 1 : 0,
+                                        judge.vacols_attorney_id
+                                      ])
     end
 
     distribute_appeals(fmtd_query, judge, limit, dry_run)
@@ -502,7 +502,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket
       if dry_run
         dry_appeals = conn.exec_query(query).to_a
 
-        aoj_affinity_filter(dry_appeals, judge_sattyid, aoj_affinity_lever_value, excluded_judges_attorney_ids) # rubocop:disable Layout/LineLength
+        aoj_affinity_filter(dry_appeals, judge_sattyid, aoj_affinity_lever_value, excluded_judges_attorney_ids)
 
         dry_appeals
       else
@@ -551,7 +551,6 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket
         .flat_map(&:judge).compact.pluck(:css_id))&.pluck(:sattyid)
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def self.aoj_affinity_filter(appeals, judge_sattyid, lever_value, excluded_judges_attorney_ids)
     appeals.reject! do |appeal|
       # {will skip if not AOJ AOD || if AOJ AOD being distributed to tied_to judge || if not tied to any judge}
