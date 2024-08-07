@@ -36,7 +36,7 @@ const PdfDocument = ({ fileUrl, rotateDeg, setNumPages, zoomLevel, documentId })
       const byteArr = await ApiUtil.get(fileUrl, requestOptions).then((response) => {
         return response.body;
       });
-      const docProxy = await PDFJS.getDocument({ data: byteArr }).promise;
+      const docProxy = await PDFJS.getDocument({ data: byteArr, pdfBug: true }).promise;
 
       if (docProxy) {
         setPdfDoc(docProxy);
