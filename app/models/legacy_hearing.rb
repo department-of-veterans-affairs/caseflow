@@ -207,6 +207,9 @@ class LegacyHearing < CaseflowRecord
     scheduled_date < DateTime.yesterday.in_time_zone(regional_office_timezone)
   end
 
+  # Checks the scheduled_in_timezone value and returns
+  # true if scheduled_in_timezone is not nil,
+  # else false
   def use_hearing_datetime?
     scheduled_in_timezone.present?
   end
