@@ -1213,14 +1213,16 @@ RSpec.feature("The Correspondence Cases page") do
   end
 
   context "Banner alert for approval and reject request" do
-    let(:current_user) { create(:inbound_ops_team_supervisor) }
+    let(:current_user) { create(:correspondence_auto_assignable_user, :super_user) }
+
     before :each do
-      User.authenticate!(user: current_user)
       FeatureToggle.enable!(:correspondence_queue)
+      User.authenticate!(user: current_user)
     end
 
     before do
       5.times do
+        create(:correspondence_auto_assignable_user)
         corres_array = (1..2).map { create(:correspondence) }
         task_array = [ReassignPackageTask, RemovePackageTask]
 

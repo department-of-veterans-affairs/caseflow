@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
-import { Provider } from 'react-redux';
+import { Provider,  } from 'react-redux';
 import CorrespondenceDetails from 'app/queue/correspondence/details/CorrespondenceDetails';
 import { correspondenceData } from 'test/data/correspondence';
 import { applyMiddleware, createStore } from 'redux';
@@ -67,6 +67,7 @@ describe('CorrespondenceDetails', () => {
       nod: false,
       notes: 'Note Test',
       mailTasks: ['Task 1', 'Task 2'],
+      all_correspondences: Array.from({ length: 30 }, (_, i) => ({ uuid: `uuid${i}`, vaDateOfReceipt: '2024-08-06T00:00:00Z', notes: `Note ${i}`, status: `Status ${i}` })),
       tasksUnrelatedToAppeal: [{
         type: 'FOIA request',
         assigned_to: 'CAVC Litigation Support',
@@ -123,6 +124,17 @@ describe('CorrespondenceDetails', () => {
     );
   });
 
+  test('toggles view all correspondence', () => {
+     render(
+      <Provider store={store}>
+        <CorrespondenceDetails {...props} />
+      </Provider>
+      )
+     const viewAllButton = screen.getByText('View all correspondence');
+     fireEvent.click(viewAllButton);
+     expect(screen.getByText('Hide all correspondence')).toBeInTheDocument();
+   });
+
   it('renders the component', () => {
     render(
       <Provider store={store}>
@@ -141,6 +153,7 @@ describe('CorrespondenceDetails', () => {
     expect(screen.getByText('Package Details')).toBeInTheDocument();
     expect(screen.getByText('Response Letters')).toBeInTheDocument();
     expect(screen.getByText('Associated Prior Mail')).toBeInTheDocument();
+    expect(screen.getByText('View all correspondence')).toBeInTheDocument();
 
     expect(screen.getByText('Tasks not related to an appeal')).toBeInTheDocument();
     expect(screen.getByText('Completed Mail Tasks')).toBeInTheDocument();
