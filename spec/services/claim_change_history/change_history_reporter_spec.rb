@@ -23,7 +23,7 @@ describe ChangeHistoryReporter do
           events: [:completed, :cancelled],
           task_status: [:testing1, :testing2],
           status_report_type: nil,
-          claim_type: %w[HigherLevelReview SupplementalClaim],
+          claim_type: %w[HigherLevelReview SupplementalClaim Remand],
           personnel: nil,
           dispositions: nil,
           issue_types: nil,
@@ -37,7 +37,7 @@ describe ChangeHistoryReporter do
         expected_formatted_filter = [
           "events: [completed, cancelled]",
           "task_status: [testing1, testing2]",
-          "claim_type: [HigherLevelReview, SupplementalClaim]",
+          "claim_type: [HigherLevelReview, SupplementalClaim, Remand]",
           "timing: [range: None]",
           "days_waiting: [operator: >, num_days: 10]"
         ]

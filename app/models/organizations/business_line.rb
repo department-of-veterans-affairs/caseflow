@@ -338,7 +338,7 @@ class BusinessLine < Organization
         FROM tasks
         INNER JOIN request_issues ON request_issues.decision_review_type = tasks.appeal_type
         AND request_issues.decision_review_id = tasks.appeal_id
-        INNER JOIN supplemental_claims ON tasks.appeal_type = 'SupplementalClaim'
+        INNER JOIN supplemental_claims ON tasks.appeal_type = supplemental_claims.type
         AND tasks.appeal_id = supplemental_claims.id
         LEFT JOIN intakes ON tasks.appeal_type = intakes.detail_type
         AND intakes.detail_id = tasks.appeal_id
@@ -403,7 +403,7 @@ class BusinessLine < Organization
       if query_params[:claim_type].present?
         " AND #{where_clause_from_array(Task, :appeal_type, query_params[:claim_type]).to_sql}"
       else
-        " AND tasks.appeal_type IN ('HigherLevelReview', 'SupplementalClaim') "
+        " AND tasks.appeal_type IN ('HigherLevelReview', 'SupplementalClaim', 'Remand' ) "
       end
     end
 

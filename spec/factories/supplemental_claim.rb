@@ -293,6 +293,23 @@ FactoryBot.define do
           disposition: "remanded"
         )
       end
+
+      trait :with_vha_issue do
+        benefit_type { "vha" }
+        after(:create) do |remand, evaluator|
+          create(:request_issue,
+                 benefit_type: "vha",
+                 nonrating_issue_category: "Beneficiary Travel",
+                 nonrating_issue_description: "VHA issue description ",
+                 decision_review: remand,
+                 decision_date: 1.month.ago)
+
+          if evaluator.veteran
+            remand.veteran_file_number = evaluator.veteran.file_number
+            remand.save
+          end
+        end
+      end
     end
   end
 end

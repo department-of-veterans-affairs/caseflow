@@ -518,6 +518,10 @@ describe BusinessLine do
                             benefit_type: "vha",
                             claimant_type: :dependent_claimant))
     end
+    let!(:remand_task) do
+      create(:remand_vha_task,
+             appeal: create(:remand, :with_vha_issue, benefit_type: "vha", claimant_type: :dependent_claimant))
+    end
     let(:decision_issue) { create(:decision_issue, disposition: "denied", benefit_type: hlr_task.appeal.benefit_type) }
     let(:intake_user) { create(:user, full_name: "Alexander Dewitt", css_id: "ALEXVHA", station_id: "103") }
     let(:decision_user) { create(:user, full_name: "Gaius Baelsar", css_id: "GAIUSVHA", station_id: "104") }
@@ -618,6 +622,25 @@ describe BusinessLine do
         "days_waiting" => (Time.zone.today - Date.parse(sc_task.assigned_at.iso8601)).to_i
       )
     end
+    let(:remand_task_1_ri_1_expectation) do
+      a_hash_including(
+        "nonrating_issue_category" => "Beneficiary Travel",
+        "nonrating_issue_description" => "VHA issue description ",
+        "task_id" => remand_task.id,
+        "veteran_file_number" => remand_task.appeal.veteran_file_number,
+        "intake_user_name" => remand_task.appeal.intake.user.full_name,
+        "intake_user_css_id" => remand_task.appeal.intake.user.css_id,
+        "intake_user_station_id" => remand_task.appeal.intake.user.station_id,
+        "disposition" => nil,
+        "decision_user_name" => nil,
+        "decision_user_css_id" => nil,
+        "decision_user_station_id" => nil,
+        "claimant_name" => remand_task.appeal.claimant.name,
+        "task_status" => remand_task.status,
+        "request_issue_benefit_type" => "vha",
+        "days_waiting" => (Time.zone.today - Date.parse(remand_task.assigned_at.iso8601)).to_i
+      )
+    end
 
     let(:all_expectations) do
       [
@@ -625,7 +648,8 @@ describe BusinessLine do
         hlr_task_1_ri_2_expectation,
         hlr_task_2_ri_1_expectation,
         hlr_task_2_ri_2_expectation,
-        sc_task_1_ri_1_expectation
+        sc_task_1_ri_1_expectation,
+        remand_task_1_ri_1_expectation
       ]
     end
 
@@ -673,21 +697,22 @@ describe BusinessLine do
 
     context "without filters" do
       it "should return all rows" do
-        expect(subject.count).to eq 5
+        expect(subject.count).to eq 7
         expect(subject.entries).to include(*all_expectations)
       end
     end
 
     context "with task_id filter" do
       context "with multiple task ids" do
-        let(:change_history_filters) { { task_id: [hlr_task.id, sc_task.id] } }
+        let(:change_history_filters) { { task_id: [hlr_task.id, sc_task.id, remand_task.id] } }
 
         it "should return rows for all matching ids" do
-          expect(subject.entries.count).to eq(3)
+          expect(subject.entries.count).to eq(4)
           expect(subject.entries).to include(
             hlr_task_1_ri_1_expectation,
             hlr_task_1_ri_2_expectation,
-            sc_task_1_ri_1_expectation
+            sc_task_1_ri_1_expectation,
+            remand_task_1_ri_1_expectation
           )
         end
       end
@@ -719,6 +744,15 @@ describe BusinessLine do
         it "should only return rows for the filtered claim type" do
           expect(subject.entries.count).to eq(4)
           expect(subject.entries).to include(*(all_expectations - [sc_task_1_ri_1_expectation]))
+        end
+      end
+
+      context "Remand claim filter" do
+        let(:change_history_filters) { { claim_type: "Remand" } }
+
+        it "should only return rows for the filtered claim type" do
+          expect(subject.entries.count).to eq(1)
+          expect(subject.entries).to include(remand_task_1_ri_1_expectation)
         end
       end
     end
