@@ -9,7 +9,7 @@ describe VACOLS::AojCaseDocket, :all_dbs do
     FeatureToggle.enable!(:acd_exclude_from_affinity)
     create(:case_distribution_lever, :cavc_affinity_days)
     create(:case_distribution_lever, :cavc_aod_affinity_days)
-    create(:case_distribution_lever, :aoj_aod_affinity)
+    create(:case_distribution_lever, :aoj_aod_affinity_days)
   end
 
   after do
