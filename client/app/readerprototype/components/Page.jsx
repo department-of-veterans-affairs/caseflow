@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import { css } from 'glamor';
 import React, { useEffect, useRef } from 'react';
 
 const Page = ({ page, rotation = '0deg', renderItem, scale }) => {
@@ -21,16 +20,16 @@ const Page = ({ page, rotation = '0deg', renderItem, scale }) => {
     top = `${offset * -1}px`;
     left = `${offset}px`;
   }
-  const wrapperStyle = css({
+  const wrapperStyle = {
     height: `${rotatedHeight}px`,
     width: `${rotatedWidth}px`,
     position: 'relative',
-  });
-  const canvasStyle = css({
+  };
+  const canvasStyle = {
     rotate: rotation,
     position: 'relative',
     top,
-  });
+  };
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -39,10 +38,11 @@ const Page = ({ page, rotation = '0deg', renderItem, scale }) => {
   }, [canvasRef.current, viewport]);
 
   return (
-    <div id={`canvasWrapper-${page.pageNumber}`} className={`${wrapperStyle} prototype-canvas-wrapper`}>
+    <div id={`canvasWrapper-${page.pageNumber}`} className="prototype-canvas-wrapper" style={wrapperStyle}>
       <canvas
         id={`canvas-${page.pageNumber}`}
-        className={`prototype-canvas ${canvasStyle}`}
+        className="prototype-canvas"
+        style={canvasStyle}
         ref={canvasRef}
         height={scaledHeight}
         width={scaledWidth}
