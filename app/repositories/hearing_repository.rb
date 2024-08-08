@@ -156,6 +156,35 @@ class HearingRepository
       ama_sent_hearing_email_events + legacy_sent_hearing_email_events
     end
 
+    # Gets the regional office to use when mapping the VACOLS hearing date to
+    # the local scheduled time.
+    #
+    # @note Avoid triggering an indirect additional VACOLS load by avoiding calls to the
+    #   `hearing` parameter.
+    #
+    # @note This mirrors `LegacyHearing#regional_office_key`, but is designed to avoid
+    #   calls to any VACOLS accessors because those would trigger an additional
+    #   query to VACOLS.
+    #
+    #   The only call here that has the potential to trigger a VACOLS query is
+    #   the call to `LegacyHearing#hearing_day`, which can make a call to VACOLS
+    #   if the value is not cached in Caseflow.
+    #
+    # @param hearing       [LegacyHearing] an uninitialized Caseflow legacy hearing
+    # @param vacols_record [VACOLS::CaseHearing] a VACOLS case hearing
+    #
+    # @return [RegionalOffice]
+    #   A hash of setter names on a `LegacyHearing` to values
+    def regional_office_for_scheduled_timezone(hearing, vacols_record)
+      ro_key = if vacols_record.hearing_type == HearingDay::REQUEST_TYPES[:travel] || hearing.hearing_day.nil?
+                 vacols_record.hearing_venue
+               else
+                 hearing.hearing_day&.regional_office || "C"
+               end
+
+      RegionalOffice.find!(ro_key) if ro_key.present?
+    end
+
     private
 
     # Returns a where clause that can be used to find all hearings that occur within
@@ -270,35 +299,6 @@ class HearingRepository
       legacy_maybe_ready.flatten
     end
 
-    # Gets the regional office to use when mapping the VACOLS hearing date to
-    # the local scheduled time.
-    #
-    # @note Avoid triggering an indirect additional VACOLS load by avoiding calls to the
-    #   `hearing` parameter.
-    #
-    # @note This mirrors `LegacyHearing#regional_office_key`, but is designed to avoid
-    #   calls to any VACOLS accessors because those would trigger an additional
-    #   query to VACOLS.
-    #
-    #   The only call here that has the potential to trigger a VACOLS query is
-    #   the call to `LegacyHearing#hearing_day`, which can make a call to VACOLS
-    #   if the value is not cached in Caseflow.
-    #
-    # @param hearing       [LegacyHearing] an uninitialized Caseflow legacy hearing
-    # @param vacols_record [VACOLS::CaseHearing] a VACOLS case hearing
-    #
-    # @return [RegionalOffice]
-    #   A hash of setter names on a `LegacyHearing` to values
-    def regional_office_for_scheduled_timezone(hearing, vacols_record)
-      ro_key = if vacols_record.hearing_type == HearingDay::REQUEST_TYPES[:travel] || hearing.hearing_day.nil?
-                 vacols_record.hearing_venue
-               else
-                 hearing.hearing_day&.regional_office || "C"
-               end
-
-      RegionalOffice.find!(ro_key) if ro_key.present?
-    end
-
     # Maps attributes on a VACOLS case hearing to attributes on a Caseflow legacy hearing.
     #
     # @note Avoid triggering an indirect additional VACOLS load by avoiding calls to the
@@ -312,12 +312,6 @@ class HearingRepository
     #
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def vacols_attributes(hearing, vacols_record)
-      date = HearingMapper.datetime_based_on_type(
-        datetime: vacols_record.hearing_date,
-        regional_office: regional_office_for_scheduled_timezone(hearing, vacols_record),
-        type: vacols_record.hearing_type
-      )
-
       {
         vacols_record: vacols_record,
         appeal_vacols_id: vacols_record.folder_nr,
@@ -340,7 +334,7 @@ class HearingRepository
         appellant_last_name: vacols_record.sspare1,
         room: vacols_record.room,
         request_type: vacols_record.hearing_type,
-        scheduled_for: date,
+        scheduled_for: vacols_record.hearing_date,
         hearing_day_vacols_id: vacols_record.vdkey,
         bva_poc: vacols_record.vdbvapoc,
         judge_id: hearing.user_id
@@ -351,7 +345,7 @@ class HearingRepository
     def create_vacols_hearing(attrs)
       vacols_record = VACOLS::CaseHearing.create_hearing!(
         folder_nr: attrs[:appeal].vacols_id,
-        hearing_date: VacolsHelper.format_datetime_with_utc_timezone(attrs[:scheduled_for]),
+        hearing_date: attrs[:scheduled_for],
         vdkey: attrs[:hearing_day].id,
         hearing_type: attrs[:hearing_day].request_type,
         room: attrs[:hearing_day].room,
