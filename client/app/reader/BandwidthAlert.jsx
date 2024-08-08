@@ -12,28 +12,15 @@ class BandwidthAlert extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      //downlink: null,
-      displayBandwidthAlert: true
+      displayBandwidthAlert: false
     };
   }
 
   componentDidMount() {
     if ('connection' in navigator) {
       this.updateConnectionInfo();
-      // const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-
-      // connection.addEventListener('change', this.updateConnectionInfo);
-
     }
   }
-
-  // componentWillUnmount() {
-  //   if ('connection' in navigator) {
-  //     const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-
-  //     connection.removeEventListener('change', this.updateConnectionInfo);
-  //   }
-  // }
 
   updateConnectionInfo = () => {
     const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
@@ -50,7 +37,7 @@ class BandwidthAlert extends React.Component {
       this.setState({ displayBandwidthAlert: true });
     }
   };
-//  const { displayBandwidthAlert } = this.state;
+
   render() {
 
     if (this.state.displayBandwidthAlert) {
