@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "./scripts/enable_features_dev.rb"
-class Test::LoadTestController < ApplicationController
+class Test::LoadTestsController < ApplicationController
   before_action :check_environment
 
   API_KEY_CACHE_KEY = "load_test_api_key"
@@ -27,13 +27,7 @@ class Test::LoadTestController < ApplicationController
   end
 
   def target
-    if params[:target_type].class != (String || NilClass)
-      fail(
-        Caseflow::Error::InvalidParameter,
-        parameter: params[:target_type],
-        message: "At least and only one search parameter allowed."
-      )
-    end
+    params.require(:target_type)
     render json: {
       data_type: params[:target_type],
       data: data_for_testing
@@ -81,6 +75,7 @@ class Test::LoadTestController < ApplicationController
     when "Metric"
       data = Metric.all.sample
     end
+
     fail ActiveRecord::RecordNotFound if data.nil?
 
     data
@@ -97,7 +92,7 @@ class Test::LoadTestController < ApplicationController
     user = user.presence || User.find_or_initialize_by(css_id: LOAD_TESTING_USER)
     user.station_id = params[:user][:station_id]
     user.selected_regional_office = params[:user][:regional_office]
-    user.roles = params[:user][:roles] if params[:user][:roles] != user.roles
+    user.roles = params[:user][:roles]
     user.save
 
     params[:user][:functions].select { |_k, v| v == true }.each do |k, _v|
