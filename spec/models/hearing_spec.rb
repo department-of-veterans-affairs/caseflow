@@ -365,4 +365,38 @@ describe Hearing, :postgres do
       end
     end
   end
+
+  context "use_hearing_datetime?" do
+    let(:hearing) { create(:hearing) }
+
+    context "scheduled_datetime is not nil" do
+      before do
+        hearing.update(scheduled_datetime: "2023-04-15 14:30:00+00")
+      end
+
+      it "returns true" do
+        expect(hearing.use_hearing_datetime?).to eq(true)
+      end
+
+      it "uses HearingDatetimeService instance" do
+        time_service_double = instance_double("HearingDatetimeService")
+        allow(HearingDatetimeService).to receive(:new).and_return(time_service_double)
+        hearing.time
+        expect(HearingDatetimeService).to have_received(:new)
+      end
+    end
+
+    context "scheduled_datetime is nil" do
+      it "returns false" do
+        expect(hearing.use_hearing_datetime?).to eq(false)
+      end
+
+      it "uses HearingTimeService instance" do
+        time_service_double = instance_double("HearingTimeServicee")
+        allow(HearingTimeService).to receive(:new).and_return(time_service_double)
+        hearing.time
+        expect(HearingTimeService).to have_received(:new)
+      end
+    end
+  end
 end
