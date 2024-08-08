@@ -784,6 +784,18 @@ module Seeds
               }
             ]
           },
+          {
+            item: Constants.DISTRIBUTION.enable_nonsscavlj,
+            title: Constants.DISTRIBUTION.enable_nonsscavlj_title,
+            description: "This is the internal lever used to enable and disable Non-SSC AVLJ work.",
+            data_type: Constants.ACD_LEVERS.data_types.boolean,
+            value: true,
+            unit: "",
+            is_disabled_in_ui: true,
+            algorithms_used: [],
+            lever_group: Constants.ACD_LEVERS.lever_groups.internal,
+            lever_group_order: 0
+          },
         ]
       end
 
@@ -824,7 +836,6 @@ module Seeds
       # DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER
       def full_update_lever(lever)
         existing_lever = CaseDistributionLever.find_by_item(lever[:item])
-
         existing_lever.update(
           title: lever[:title],
           description: lever[:description],
