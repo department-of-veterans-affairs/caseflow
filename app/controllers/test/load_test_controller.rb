@@ -3,6 +3,7 @@
 require "./scripts/enable_features_dev.rb"
 class Test::LoadTestController < ApplicationController
   before_action :check_environment
+  skip_before_action :verify_authenticity_token
 
   API_KEY_CACHE_KEY = "load_test_api_key"
   IDT_TOKEN_CACHE_KEY = "load_test_idt_token"
@@ -27,7 +28,7 @@ class Test::LoadTestController < ApplicationController
   end
 
   def target
-    if params[:target_type].class != String
+    if params[:target_type].class != (String || NilClass)
       fail(
         Caseflow::Error::InvalidParameter,
         parameter: params[:target_type],
@@ -90,30 +91,34 @@ class Test::LoadTestController < ApplicationController
   # so that it can access any area in Caseflow, and stores their information in the
   # current session. This will be reflected in the session cookie.
   def set_current_user
-    user = user.presence || User.find_or_create_by(css_id: "LOAD_TESTING_USER")
-    user.station_id = params[:user][:station_id] if params[:station_id] != user.station_id
-    user.selected_regional_office = params[:user][:regional_office] if params[:regional_office] != user.selected_regional_office
+    params.require(:user).tap do |u|
+      u.require([:station_id])
+      u.require([:regional_office])
+    end
+    user = user.presence || User.find_or_initialize_by(css_id: "LOAD_TESTING_USER")
+    user.station_id = params[:user][:station_id]
+    user.selected_regional_office = params[:user][:regional_office]
     user.roles = params[:user][:roles] if params[:user][:roles] != user.roles
     user.save
-    params[:user].extract_value(:functions).select { |_k, v| v == true }.each do |k, _v|
+    params[:user][:functions].select { |_k, v| v == true }.each do |k, _v|
       Functions.grant!(k, users: ["LOAD_TESTING_USER"])
     end
-    params[:user].extract_value(:functions).select { |_k, v| v == false }.each do |k, _v|
+    params[:user][:functions].select { |_k, v| v == false }.each do |k, _v|
       Functions.deny!(k, users: ["LOAD_TESTING_USER"])
     end
-    params[:user].extract_value(:organizations).select { |_k, v| v == true }.each do |k, _v|
-      organization = Organization.find_by_name_or_url(k)
-      organization.add_user(user: user) unless organization.users.include?(user)
-      OrganizationsUser.make_user_admin(user, k)
+    params[:user][:organizations].select { |organization| organization[:admin] == true }.each do |org|
+      organization = Organization.find_by_name_or_url(org[:url])
+      organization.add_user(user) unless organization.users.include?(user)
+      OrganizationsUser.make_user_admin(user, organization)
     end
-    params[:user].extract_value(:organizations).select { |_k, v| v == false }.each do |k, _v|
-      organization = Organization.find_by_name_or_url(k)
-      organization.add_user(user: user) unless organization.users.include?(user)
+    params[:user][:organizations].select { |organization| organization[:admin] == false }.each do |org|
+      organization = Organization.find_by_name_or_url(org[:url])
+      organization.add_user(user) unless organization.users.include?(user)
     end
-    params[:user].extract_value(:feature_toggles).select { |_k, v| v == true }.each do |k, _v|
+    params[:user][:feature_toggles].select { |_k, v| v == true }.each do |k, _v|
       FeatureToggle.enable!(k, users: ["LOAD_TESTING_USER"]) if !FeatureToggle.enabled?(k, user: user)
     end
-    params[:user].extract_value(:feature_toggles).select { |_k, v| v == false }.each do |k, _v|
+    params[:user][:feature_toggles].select { |_k, v| v == false }.each do |k, _v|
       FeatureToggle.disable!(k, users: ["LOAD_TESTING_USER"])
     end
     session["user"] = user.to_session_hash
