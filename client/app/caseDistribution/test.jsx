@@ -329,6 +329,8 @@ class CaseDistributionTest extends React.PureComponent {
                                 <Button classNames={['usa-button-active']}>
                                   Download RTD Appeals tied to Non-SSC AVLJs CSV</Button>
                               </a>
+                            </li>
+                            <li>
                               <a href="/case_distribution_levers_tests/appeals_in_location_63_in_past_2_days?csv=1">
                                 <Button classNames={['usa-button-active']}>
                                   Download Loc 63 Appeals Last 48 hrs CSV

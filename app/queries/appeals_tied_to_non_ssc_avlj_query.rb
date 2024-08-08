@@ -46,7 +46,7 @@ class AppealsTiedToNonSscAvljQuery
       .flat_map do |sym, docket|
         appeals = docket.ready_to_distribute_appeals # Returns Ready to Distribute Appeals
 
-        appeals = appeals.select { |appeal| appeals_tied_to_non_ssc_avljs.returned_appeals.include?(appeal["bfkey"]) }
+        appeals = appeals.select { |appeal| appeals_tied_to_non_ssc_avljs&.returned_appeals&.include?(appeal["bfkey"]) }
 
         legacy_rows(appeals, sym)
       end
@@ -59,7 +59,6 @@ class AppealsTiedToNonSscAvljQuery
       vacols_hearing = VACOLS::CaseHearing.find_by(folder_nr: appeal["bfkey"])
       avlj_user = vacols_hearing&.board_member ? VACOLS::Staff.find_by(sattyid: vacols_hearing.board_member) : nil
       avlj_name = avlj_user ? get_avlj_name_from_hearing(avlj_user) : nil
-
       {
         docket_number: appeal["tinum"],
         docket: sym.to_s,
