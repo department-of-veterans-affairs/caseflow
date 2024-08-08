@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import Layer from './Comments/Layer';
 
-import * as PDFJS from 'pdfjs-dist';
-PDFJS.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.js';
+import { GlobalWorkerOptions, getDocument } from 'pdfjs-dist';
+GlobalWorkerOptions.workerSrc = '/assets/pdf.worker.min.js';
 
 import ApiUtil from '../../util/ApiUtil';
 import Page from './Page';
@@ -34,7 +34,7 @@ const PdfDocument = ({ fileUrl, rotateDeg, setNumPages, zoomLevel, documentId })
       const byteArr = await ApiUtil.get(fileUrl, requestOptions).then((response) => {
         return response.body;
       });
-      const docProxy = await PDFJS.getDocument({ data: byteArr }).promise;
+      const docProxy = await getDocument({ data: byteArr }).promise;
 
       if (docProxy) {
         setPdfDoc(docProxy);
