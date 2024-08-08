@@ -19,9 +19,7 @@ class LastRetrievalAlert extends React.PureComponent {
   ) : (
     <>Please submit a support ticket via <a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">YourIT</a> to sync their eFolder with Reader.</>
   );
-
   render() {
-
     // Check that document manifests have been recieved from VBMS
     if (!this.props.manifestVbmsFetchedAt) {
       return <div {...alertStyling}>
