@@ -3,7 +3,6 @@
 require "./scripts/enable_features_dev.rb"
 class Test::LoadTestController < ApplicationController
   before_action :check_environment
-  skip_before_action :verify_authenticity_token
 
   API_KEY_CACHE_KEY = "load_test_api_key"
   IDT_TOKEN_CACHE_KEY = "load_test_idt_token"
@@ -100,6 +99,7 @@ class Test::LoadTestController < ApplicationController
     user.selected_regional_office = params[:user][:regional_office]
     user.roles = params[:user][:roles] if params[:user][:roles] != user.roles
     user.save
+    byebug
     params[:user][:functions].select { |_k, v| v == true }.each do |k, _v|
       Functions.grant!(k, users: ["LOAD_TESTING_USER"])
     end
