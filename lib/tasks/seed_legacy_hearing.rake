@@ -24,10 +24,7 @@ namespace :db do
         veterans_file_number = vets[0..10].pluck(:file_number)
         vacols_titrnum = veterans_file_number[rand(veterans_file_number.count)]
 
-        # Create some video and some travel hearings
-        type = offset.even? ? "T" : "V"
-
-        create_vacols_entries(vacols_titrnum, docket_number, regional_office, type, legacy_ids, number_of_appeals_to_create)
+        create_vacols_entries(vacols_titrnum, docket_number, regional_office, legacy_ids, number_of_appeals_to_create)
       end
     end
 
@@ -56,11 +53,28 @@ namespace :db do
       }
     end
 
-    def custom_hearing_attributes(veteran, type)
-      { hearing_type: "V" }
+    def custom_hearing_attributes(type)
+      { hearing_type: type }
+    end
+
+    def other_params(vacols_veteran_record, key, type, regional_office)
+      {
+        bfcorkey: vacols_veteran_record.stafkey,
+        bfcorlid: vacols_veteran_record.slogid,
+        bfkey: key,
+        bfcurloc: "CASEFLOW",
+        bfmpro: "ACT",
+        bfddec: nil,
+        bfregoff: regional_office,
+        bfhr: 2,
+        bfdocind: type
+      }
     end
 
     def build_the_cases_in_caseflow(cases)
+      user = User.system_user
+      RequestStore[:current_user] = user
+
       vacols_ids = cases.map(&:bfkey)
       issues = VACOLS::CaseIssue.where(isskey: vacols_ids).group_by(&:isskey)
 
@@ -69,14 +83,12 @@ namespace :db do
           appeal.issues = (issues[appeal.vacols_id] || []).map { |issue| Issue.load_from_vacols(issue.attributes) }
         end.save!
         legacy_appeal = LegacyAppeal.last
-        create_open_schedule_hearing_task_for_legacy(legacy_appeal)
+        create_open_schedule_hearing_task_for_legacy(legacy_appeal, user)
         legacy_appeal
       end
     end
 
-    def create_open_schedule_hearing_task_for_legacy(legacy_appeal)
-      user = User.system_user
-      RequestStore[:current_user] = user
+    def create_open_schedule_hearing_task_for_legacy(legacy_appeal, user)
       root_task = RootTask.create!(appeal: legacy_appeal)
 
       distribution_task = DistributionTask.create!(
@@ -89,7 +101,6 @@ namespace :db do
         parent: distribution_task,
         appeal: legacy_appeal
       )
-
       schedule_hearing_task = ScheduleHearingTask.create!(
         status: "assigned",
         assigned_to: user,
@@ -100,30 +111,24 @@ namespace :db do
       schedule_hearing_task.update(status: "in_progress")
     end
 
-    def create_vacols_entries(vacols_titrnum, docket_number, regional_office, type, legacy_ids, num_appeals_to_create)
+    def create_vacols_entries(vacols_titrnum, docket_number, regional_office, legacy_ids, num_appeals_to_create)
       veteran = Veteran.find_by_file_number(vacols_titrnum)
       vacols_veteran_record = find_or_create_vacols_veteran(veteran)
 
-      cases = Array.new(num_appeals_to_create).each_with_index.map do |_element, idx|
+      # Create some video and some travel hearings
+      type = docket_number.to_i.even? ? "T" : "V"
+
+      cases = Array.new(num_appeals_to_create).each_with_index.map do |_element|
         key = VACOLS::Folder.maximum(:ticknum).next
         Generators::Vacols::Case.create(
           corres_exists: true,
           folder_attrs: Generators::Vacols::Folder.folder_attrs.merge(
             custom_folder_attributes(vacols_veteran_record, docket_number.to_s)
           ),
-
           case_hearing_attrs: [Generators::Vacols::CaseHearing.case_hearing_attrs.merge(
-            custom_hearing_attributes(vacols_veteran_record, type)
+            custom_hearing_attributes(type)
           )],
-          case_attrs: {
-            bfcorkey: vacols_veteran_record.stafkey,
-            bfcorlid: vacols_veteran_record.slogid,
-            bfkey: key,
-            bfcurloc: "CASEFLOW",
-            bfmpro: "ACT",
-            bfddec: nil,
-            bfregoff: regional_office
-          }
+          case_attrs: other_params(vacols_veteran_record, key, type, regional_office)
         )
       end.compact
       legacy_appeal = build_the_cases_in_caseflow(cases)
