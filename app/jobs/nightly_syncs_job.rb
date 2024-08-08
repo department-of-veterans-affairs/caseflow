@@ -88,17 +88,28 @@ class NightlySyncsJob < CaseflowJob
   # Syncs the decision_mailed status of Legacy Appeals with a decision made
   def sync_decided_appeals
     AppealState.where(appeal_type: "LegacyAppeal", decision_mailed: false).each do |appeal_state|
-      legacy_appeal = LegacyAppeal.find_by_id(appeal_state.appeal_id)
-      vacols_record = legacy_appeal.present? ? VACOLS::Case.find_by_bfkey(legacy_appeal[:vacols_id]) : nil
-
       # If there is a decision date on the VACOLS record,
       # update the decision_mailed status on the AppealState to true
-      if vacols_record.present? && vacols_record[:bfddec].present?
+      if get_decision_date(appeal_state.appeal_id).present?
         appeal_state.decision_mailed_appeal_state_update_action!
       end
     end
   rescue StandardError => error
     @slack_report << "*Fatal error in sync_decided_appeals* #{error}"
+  end
+
+  def get_decision_date(appeals_id)
+    begin
+      legacy_appeal = LegacyAppeal.find(appeals_id)
+
+      # Find the VACOLS record associated with the LegacyAppeal
+      vacols_record = VACOLS::Case.where(bfkey: legacy_appeal[:vacols_id])[0]
+
+      # Return the decision date
+      vacols_record[:bfddec]
+    rescue ActiveRecord::RecordNotFound
+      nil
+    end
   end
 
   def dangling_legacy_appeals

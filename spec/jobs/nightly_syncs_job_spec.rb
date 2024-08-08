@@ -232,28 +232,35 @@ describe NightlySyncsJob, :all_dbs do
 
   context "#sync_decided_appeals" do
     let(:decided_appeal_state) do
-      create_decided_appeal_state_with_case_record_and_hearing(true)
+      create_decided_appeal_state_with_case_record_and_hearing(true, true)
     end
 
     let(:undecided_appeal_state) do
-      create_decided_appeal_state_with_case_record_and_hearing(false)
+      create_decided_appeal_state_with_case_record_and_hearing(false, true)
+    end
+
+    let(:missing_vacols_case_appeal_state) do
+      create_decided_appeal_state_with_case_record_and_hearing(true, false)
     end
 
     it "Job syncs decided appeals decision_mailed status" do
       expect([decided_appeal_state,
-              undecided_appeal_state].all?(&:decision_mailed)).to eq false
+              undecided_appeal_state,
+              missing_vacols_case_appeal_state].all?(&:decision_mailed)).to eq false
 
       subject
 
       expect(decided_appeal_state.reload.decision_mailed).to eq true
       expect(undecided_appeal_state.reload.decision_mailed).to eq false
+      expect(undecided_appeal_state.reload.decision_mailed).to eq false
     end
 
     it "catches standard errors" do
       expect([decided_appeal_state,
-              undecided_appeal_state].all?(&:decision_mailed)).to eq false
+              undecided_appeal_state,
+              missing_vacols_case_appeal_state].all?(&:decision_mailed)).to eq false
 
-      allow(LegacyAppeal).to receive(:find_by_id).and_raise(StandardError)
+      allow(AppealState).to receive(:where).and_raise(StandardError)
       slack_msg = ""
       slack_msg_error_text = "Fatal error in sync_decided_appeals"
       allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
@@ -266,10 +273,10 @@ describe NightlySyncsJob, :all_dbs do
     # VACOLS record's decision date will be set to simulate a decided appeal
     # decision_mailed will be set to false for the AppealState to verify the method
     # functionality
-    def create_decided_appeal_state_with_case_record_and_hearing(decided_appeal)
+    def create_decided_appeal_state_with_case_record_and_hearing(decided_appeal, create_case)
       case_hearing = create(:case_hearing)
       decision_date = decided_appeal ? Time.current : nil
-      vacols_case = create(:case, case_hearings: [case_hearing], bfddec: decision_date)
+      vacols_case = create_case ? create(:case, case_hearings: [case_hearing], bfddec: decision_date) : nil
       appeal = create(:legacy_appeal, vacols_case: vacols_case)
 
       appeal.appeal_state.tap { _1.update!(decision_mailed: false) }
