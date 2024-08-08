@@ -1099,11 +1099,8 @@ feature "Appeal Edit issues", :all_dbs do
         expect(page).to have_content(COPY::MOVE_TO_DISTRIBUTION_MODAL_BODY)
         expect(page).to have_button("Move")
         safe_click ".confirm"
-        expect(page).to have_content("You have successfully updated issues on this appeal")
-        expect(page).to have_content(
-          "The appeal for #{appeal3.claimant.name} " \
-          "(ID: #{appeal3.veteran.file_number}) has been moved to the regular distribution pool."
-        )
+        expect(page).to have_content("Edit Completed")
+        expect(page).to have_content("You have successfully added 1 issue and removed 1 issue")
         expect(page).to have_current_path("/queue/appeals/#{appeal3.uuid}")
 
         # Verify task tree status
