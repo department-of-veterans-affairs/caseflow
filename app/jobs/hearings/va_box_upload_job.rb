@@ -31,6 +31,7 @@ class VaBoxUploadJob < CaseflowJob
       passphrase: ENV['BOX_PASS_PHRASE']
     )
 
+
     box_service.fetch_access_token
 
     file_info[:hearings].each do |hearing|
@@ -53,7 +54,7 @@ class VaBoxUploadJob < CaseflowJob
         end
 
         # Download file from S3
-        # local_file_path = download_file_from_s3(file_path)
+        local_file_path = download_file_from_s3(file_path)
 
         upload_to_box(box_service, file_path, child_folder_id, transcription_package, file_info, hearing)
       rescue StandardError => error
