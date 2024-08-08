@@ -10,6 +10,16 @@ SYSTEM_GEN_TAG = User.system_user.id
 class Transcription
   attr_accessor :created_by_id, :task_id
 
+  scope :counts_for_this_week, lambda {
+    where(sent_to_transcriber_date: Time.zone.today.beginning_of_week.yesterday..Time.zone.today)
+      .group(:transcription_contractor_id)
+      .count
+  }
+
+  scope :first_empty_transcription_file, lambda {
+    where(transcription_status: "unassigned").order(:task_id).first
+  }
+
   # Initialize a new transcription object.
   def initialize(created_by_id, task_id)
     @created_by_id = created_by_id
