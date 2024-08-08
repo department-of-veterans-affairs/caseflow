@@ -98,7 +98,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def inbound_ops_team_superuser?
-    return false unless FeatureToggle.enabled?(:correspondence_queue)
+    return false unless correspondence_queue_enabled?
 
     member_of_organization?(InboundOpsTeam.singleton) &&
       OrganizationUserPermissionChecker.new.can?(
@@ -110,14 +110,14 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   # check for user that is not an admin of the inbound ops team
   def inbound_ops_team_user?
-    return false unless FeatureToggle.enabled?(:correspondence_queue)
+    return false unless correspondence_queue_enabled?
 
     organizations.include?(InboundOpsTeam.singleton) &&
       !inbound_ops_team_supervisor?
   end
 
   def inbound_ops_team_supervisor?
-    return false unless FeatureToggle.enabled?(:correspondence_queue)
+    return false unless correspondence_queue_enabled?
 
     administered_teams.include?(InboundOpsTeam.singleton)
   end
@@ -590,6 +590,10 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   private
+
+  def correspondence_queue_enabled?
+    FeatureToggle.enabled?(:correspondence_queue)
+  end
 
   def inactive_judge_team
     JudgeTeam.unscoped.inactive.find_by(id: organizations_users.admin.pluck(:organization_id))

@@ -130,7 +130,7 @@ module CorrespondenceControllerConcern
   end
 
   def error_reason(error)
-    return "" unless error
+    return "" unless error.is_a?(String)
 
     case error
     when Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.NOD_ERROR then "of NOD permissions settings"
@@ -148,7 +148,7 @@ module CorrespondenceControllerConcern
   def build_error_message(*args)
     # Build error message for multiple correspondence based on error types
     message = "#{args[0]} cases were not #{args[1]}assigned to user"
-    message = "• #{message}" if use_bullet
+    message = "• #{message}" if args[3].present?
     message += " because #{args[2]}." unless args[0].zero?
     message
   end
