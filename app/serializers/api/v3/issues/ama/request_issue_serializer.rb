@@ -84,59 +84,35 @@ class Api::V3::Issues::Ama::RequestIssueSerializer
   end
 
   attribute :added_by_station_id do |object|
-    object&.end_product_establishment&.user&.station_id
+    object&.added_by_user&.station_id
   end
 
   attribute :added_by_css_id do |object|
-    object&.end_product_establishment&.user&.css_id
-  end
-
-  attribute :corrected_by_station_id do |object|
-    if object&.correction_type.present?
-      object&.end_product_establishment&.user&.station_id
-    end
-  end
-
-  attribute :corrected_by_css_id do |object|
-    if object&.correction_type.present?
-      object&.end_product_establishment&.user&.css_id
-    end
+    object&.added_by_user&.css_id
   end
 
   attribute :edited_by_station_id do |object|
-    if object&.edited_description.present?
-      object&.end_product_establishment&.user&.station_id
-    end
+    object&.edited_by_user&.station_id
   end
 
   attribute :edited_by_css_id do |object|
-    if object&.edited_description.present?
-      object&.end_product_establishment&.user&.css_id
-    end
+    object&.edited_by_user&.css_id
   end
 
   attribute :removed_by_css_id do |object|
-    if object&.closed_status == "removed"
-      object&.end_product_establishment&.user&.css_id
-    end
+    object&.removed_by_user&.css_id
   end
 
   attribute :removed_by_station_id do |object|
-    if object&.closed_status == "removed"
-      object&.end_product_establishment&.user&.station_id
-    end
+    object&.removed_by_user&.station_id
   end
 
   attribute :withdrawn_by_css_id do |object|
-    if object&.closed_status == "withdrawn"
-      object&.end_product_establishment&.user&.css_id
-    end
+    object&.withdrawn_by_user&.css_id
   end
 
   attribute :withdrawn_by_station_id do |object|
-    if object&.closed_status == "withdrawn"
-      object&.end_product_establishment&.user&.station_id
-    end
+    object&.withdrawn_by_user&.station_id
   end
 
   def self.format_rating_profile_date(date)
