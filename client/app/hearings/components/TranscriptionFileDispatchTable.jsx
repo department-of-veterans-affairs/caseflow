@@ -43,6 +43,9 @@ const styles = css({
   },
   '& th:last-child .cf-dropdown-filter': {
     left: '-200px'
+  },
+  '& .cf-table-wrapper': {
+    minHeight: '620px'
   }
 });
 
