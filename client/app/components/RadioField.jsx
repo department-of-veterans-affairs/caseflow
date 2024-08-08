@@ -7,6 +7,7 @@ import StringUtil from '../util/StringUtil';
 import MaybeAddTooltip from './TooltipHelper';
 
 import RadioInput from './RadioInput';
+import { extractFieldProps } from './fieldUtils';
 
 import { helpText } from './RadioField.module.scss';
 
@@ -29,11 +30,9 @@ RadioFieldHelpText.propTypes = {
  */
 
 export const RadioField = (props) => {
+
+  const { id, className, label, inputRef } = extractFieldProps(props);
   const {
-    id,
-    className,
-    label,
-    inputRef,
     inputProps,
     name,
     options,
