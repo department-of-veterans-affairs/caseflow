@@ -268,7 +268,7 @@ describe NightlySyncsJob, :all_dbs do
     # functionality
     def create_decided_appeal_state_with_case_record_and_hearing(decided_appeal)
       case_hearing = create(:case_hearing)
-      decision_date = decided_appeal ? Time.now : nil
+      decision_date = decided_appeal ? Time.current : nil
       vacols_case = create(:case, case_hearings: [case_hearing], bfddec: decision_date)
       appeal = create(:legacy_appeal, vacols_case: vacols_case)
 
