@@ -95,6 +95,7 @@ class VACOLS::CaseDocket < VACOLS::Record
   JOIN_ASSOCIATED_VLJS_BY_HEARINGS = "
     left join (
       select distinct TITRNUM, TINUM,
+        first_value(HEARING_DATE) over (partition by TITRNUM, TINUM order by HEARING_DATE desc) HEARING_DATE,
         first_value(BOARD_MEMBER) over (partition by TITRNUM, TINUM order by HEARING_DATE desc) VLJ
       from HEARSCHED
       inner join FOLDER on FOLDER.TICKNUM = HEARSCHED.FOLDER_NR
@@ -122,10 +123,10 @@ class VACOLS::CaseDocket < VACOLS::Record
   "
 
   SELECT_PRIORITY_APPEALS = "
-    select BFKEY, BFDLOOUT, BFAC, AOD, VLJ, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
+    select BFKEY, BFDLOOUT, BFAC, AOD, VLJ, HEARING_DATE, BFDPDCN, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
       from (
-        select BFKEY, BFDLOOUT, BFAC, AOD,
-          VLJ_HEARINGS.VLJ,
+        select BFKEY, BFDLOOUT, BFAC, AOD, BFDPDCN,
+          VLJ_HEARINGS.VLJ, VLJ_HEARINGS.HEARING_DATE,
           PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
           PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
         from (
@@ -139,10 +140,10 @@ class VACOLS::CaseDocket < VACOLS::Record
     "
 
   SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19 = "
-    select BFKEY, BFD19, BFDLOOUT, BFAC, AOD, VLJ, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
+    select BFKEY, BFD19, BFDLOOUT, BFAC, AOD, VLJ, HEARING_DATE, BFDPDCN, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
       from (
-        select BFKEY, BFD19, BFDLOOUT, BFAC, AOD,
-          VLJ_HEARINGS.VLJ,
+        select BFKEY, BFD19, BFDLOOUT, BFAC, AOD, BFDPDCN,
+          VLJ_HEARINGS.VLJ, VLJ_HEARINGS.HEARING_DATE,
           PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
           PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
         from (
@@ -170,10 +171,10 @@ class VACOLS::CaseDocket < VACOLS::Record
   "
 
   SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19 = "
-    select BFKEY, BFD19, BFDLOOUT, VLJ, BFAC, DOCKET_INDEX, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
+    select BFKEY, BFD19, BFDLOOUT, VLJ, BFAC, DOCKET_INDEX, HEARING_DATE, BFDPDCN, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
     from (
-      select BFKEY, BFD19, BFDLOOUT, BFAC, rownum DOCKET_INDEX,
-        VLJ_HEARINGS.VLJ,
+      select BFKEY, BFD19, BFDLOOUT, BFAC, rownum DOCKET_INDEX, BFDPDCN,
+        VLJ_HEARINGS.VLJ, VLJ_HEARINGS.HEARING_DATE,
         PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
         PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
       from (
@@ -596,7 +597,7 @@ class VACOLS::CaseDocket < VACOLS::Record
               SQL
             elsif use_by_docket_date?
               <<-SQL
-                #{SELECT_PRIORITY_APPEALS}
+                #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
                 where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?)
                 or (VLJ is null and 1 = ?) or #{priority_cdl_query} or #{priority_cdl_aod_query})
               SQL
@@ -779,7 +780,8 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   def self.not_distributing_to_tied_judge?(appeal, judge_sattyid)
     !appeal["vlj"].blank? &&
-      (appeal["vlj"] == appeal["prev_deciding_judge"]) &&
+      (appeal["vlj"] == appeal["prev_deciding_judge"] ||
+      (!appeal["hearing_date"].nil? && !appeal["bfdpdcn"].nil? && appeal["hearing_date"] > appeal["bfdpdcn"])) &&
       (appeal["vlj"] != judge_sattyid)
   end
 

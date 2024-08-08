@@ -683,7 +683,6 @@ describe VACOLS::CaseDocket, :all_dbs do
       end
     end
 
-    # rubocop:disable Layout/LineLength
     context "when CaseDistributionLever" do
       before do
         VACOLS::Case.where(bfcurloc: %w[81 83]).map { |c| c.update!(bfcurloc: "testing") }
@@ -984,10 +983,106 @@ describe VACOLS::CaseDocket, :all_dbs do
               .map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
         end
       end
+
+      context "for cases where a hearing has been held after the original decision date" do
+        def create_case_hearing(original_case, hearing_judge)
+          create(:case_hearing, :disposition_held, folder_nr: (original_case.bfkey.to_i + 1).to_s,
+                                                   hearing_date: Time.zone.today, user: hearing_judge)
+        end
+
+        let(:new_hearing_judge) { create(:user, :judge, :with_vacols_judge_record) }
+
+        # original hearing held by tied_judge, decided by tied_judge, new hearing held by new_hearing_judge
+        let!(:case_1) do
+          c = create(:legacy_cavc_appeal, judge: tied_judge, attorney: attorney, tied_to: true)
+          create_case_hearing(c, new_hearing_judge)
+          c
+        end
+        # original hearing held by tied_judge, decided by other_judge, new hearing held by new_hearing_judge
+        let!(:case_2) do
+          c = create(:legacy_cavc_appeal, judge: tied_judge, attorney: attorney, tied_to: true)
+          c.update!(bfmemid: other_judge.sattyid)
+          create_case_hearing(c, new_hearing_judge)
+          c
+        end
+        # no original hearing, decided by other_judge, new hearing held by new_hearing_judge
+        let!(:case_3) do
+          c = create(:legacy_cavc_appeal, judge: other_judge, attorney: attorney, tied_to: false)
+          create_case_hearing(c, new_hearing_judge)
+          c
+        end
+        # original hearing held by tied_judge, no original deciding judge, new hearing held by new_hearing_judge
+        let!(:case_4) do
+          c = create(:legacy_cavc_appeal, judge: tied_judge, attorney: attorney, tied_to: true)
+          c.update!(bfmemid: nil)
+          create_case_hearing(c, new_hearing_judge)
+          c
+        end
+        # no original hearing, no original deciding judge, new hearing held by new_hearing_judge
+        let!(:case_5) do
+          c = create(:legacy_cavc_appeal, judge: tied_judge, attorney: attorney, tied_to: false)
+          c.update!(bfmemid: nil)
+          create_case_hearing(c, new_hearing_judge)
+          c
+        end
+        # original hearing held by tied_judge, decided by tied_judge, no new hearing
+        let!(:case_6) { create(:legacy_cavc_appeal, judge: tied_judge, attorney: attorney, tied_to: true) }
+        # original hearing held by tied_judge, decided by other_judge, no new hearing
+        let!(:case_7) do
+          c = create(:legacy_cavc_appeal, judge: tied_judge,
+                                          attorney: attorney, tied_to: true, affinity_start_date: 3.days.ago)
+          c.update!(bfmemid: other_judge.sattyid)
+          c
+        end
+        # no original hearing, decided by other_judge, no new hearing
+        let!(:case_8) do
+          create(:legacy_cavc_appeal, judge: other_judge, attorney: attorney, tied_to: false,
+                                      affinity_start_date: 3.days.ago)
+        end
+        # original hearing held by tied_judge, no original deciding judge, no new hearing
+        let!(:case_9) do
+          c = create(:legacy_cavc_appeal, judge: tied_judge, attorney: attorney, tied_to: true)
+          c.update!(bfmemid: nil)
+          c
+        end
+        # no original hearing, no original deciding judge, no new hearing
+        let!(:case_10) do
+          c = create(:legacy_cavc_appeal, judge: tied_judge, attorney: attorney, tied_to: false)
+          c.update!(bfmemid: nil)
+          c
+        end
+        # original hearing held by tied_judge, decided by tied_judge, new hearing held by inel_judge
+        let!(:case_11) do
+          c = create(:legacy_cavc_appeal, judge: tied_judge, attorney: attorney, tied_to: true)
+          create_case_hearing(c, inel_judge_caseflow)
+          c
+        end
+
+        it "considers cases tied to a judge if they held a hearing after the previous case was decided" do
+          IneligibleJudgesJob.perform_now
+
+          tied_judge_cases = VACOLS::CaseDocket.distribute_priority_appeals(tied_judge_caseflow, "any", 100, true)
+          other_judge_cases = VACOLS::CaseDocket.distribute_priority_appeals(other_judge_caseflow, "any", 100, true)
+          new_hearing_judge_cases = VACOLS::CaseDocket.distribute_priority_appeals(new_hearing_judge, "any", 100, true)
+
+          expect(new_hearing_judge_cases.map { |c| c["bfkey"] }.sort)
+            .to match_array([
+              case_1, case_2, case_3, case_4, case_5, case_9, case_10, case_11
+            ].map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
+
+          expect(tied_judge_cases.map { |c| c["bfkey"] }.sort)
+            .to match_array([
+              case_6, case_9, case_10, case_11
+            ].map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
+
+          expect(other_judge_cases.map { |c| c["bfkey"] }.sort)
+            .to match_array([
+              case_7, case_8, case_9, case_10, case_11
+            ].map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
+        end
+      end
     end
   end
-
-  # rubocop:enable Layout/LineLength
 
   context "legacy_das_deprecation FeatureToggle enabled" do
     before do
