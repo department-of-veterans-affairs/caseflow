@@ -390,15 +390,29 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                           className="cf-form-radio-option"
                           key="attorney-options-1-0"
                         >
-                          <input
-                            checked={true}
-                            disabled={false}
-                            id="attorney-options_1"
+                          <RadioInput
+                            controlled={true}
+                            handleChange={[Function]}
+                            idPart="attorney-options"
                             name="attorney-options"
-                            onChange={[Function]}
-                            type="radio"
+                            option={
+                              Object {
+                                "displayText": "Yes",
+                                "value": "1",
+                              }
+                            }
                             value="1"
-                          />
+                          >
+                            <input
+                              checked={true}
+                              disabled={false}
+                              id="attorney-options_1"
+                              name="attorney-options"
+                              onChange={[Function]}
+                              type="radio"
+                              value="1"
+                            />
+                          </RadioInput>
                           <label
                             className=""
                             htmlFor="attorney-options_1"
@@ -420,15 +434,29 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                           className="cf-form-radio-option"
                           key="attorney-options-2-1"
                         >
-                          <input
-                            checked={false}
-                            disabled={false}
-                            id="attorney-options_2"
+                          <RadioInput
+                            controlled={true}
+                            handleChange={[Function]}
+                            idPart="attorney-options"
                             name="attorney-options"
-                            onChange={[Function]}
-                            type="radio"
-                            value="2"
-                          />
+                            option={
+                              Object {
+                                "displayText": "No",
+                                "value": "2",
+                              }
+                            }
+                            value="1"
+                          >
+                            <input
+                              checked={false}
+                              disabled={false}
+                              id="attorney-options_2"
+                              name="attorney-options"
+                              onChange={[Function]}
+                              type="radio"
+                              value="2"
+                            />
+                          </RadioInput>
                           <label
                             className=""
                             htmlFor="attorney-options_2"
@@ -3666,15 +3694,29 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                           className="cf-form-radio-option"
                           key="type-options-remand-0"
                         >
-                          <input
-                            checked={true}
-                            disabled={false}
-                            id="type-options_remand"
+                          <RadioInput
+                            controlled={true}
+                            handleChange={[Function]}
+                            idPart="type-options"
                             name="type-options"
-                            onChange={[Function]}
-                            type="radio"
+                            option={
+                              Object {
+                                "displayText": "Remand",
+                                "value": "remand",
+                              }
+                            }
                             value="remand"
-                          />
+                          >
+                            <input
+                              checked={true}
+                              disabled={false}
+                              id="type-options_remand"
+                              name="type-options"
+                              onChange={[Function]}
+                              type="radio"
+                              value="remand"
+                            />
+                          </RadioInput>
                           <label
                             className=""
                             htmlFor="type-options_remand"
@@ -3696,15 +3738,29 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                           className="cf-form-radio-option"
                           key="type-options-other_dismissal-1"
                         >
-                          <input
-                            checked={false}
-                            disabled={false}
-                            id="type-options_other_dismissal"
+                          <RadioInput
+                            controlled={true}
+                            handleChange={[Function]}
+                            idPart="type-options"
                             name="type-options"
-                            onChange={[Function]}
-                            type="radio"
-                            value="other_dismissal"
-                          />
+                            option={
+                              Object {
+                                "displayText": "Dismissal, other than Death",
+                                "value": "other_dismissal",
+                              }
+                            }
+                            value="remand"
+                          >
+                            <input
+                              checked={false}
+                              disabled={false}
+                              id="type-options_other_dismissal"
+                              name="type-options"
+                              onChange={[Function]}
+                              type="radio"
+                              value="other_dismissal"
+                            />
+                          </RadioInput>
                           <label
                             className=""
                             htmlFor="type-options_other_dismissal"
@@ -3726,15 +3782,29 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                           className="cf-form-radio-option"
                           key="type-options-affirmed-2"
                         >
-                          <input
-                            checked={false}
-                            disabled={false}
-                            id="type-options_affirmed"
+                          <RadioInput
+                            controlled={true}
+                            handleChange={[Function]}
+                            idPart="type-options"
                             name="type-options"
-                            onChange={[Function]}
-                            type="radio"
-                            value="affirmed"
-                          />
+                            option={
+                              Object {
+                                "displayText": "Affirmed",
+                                "value": "affirmed",
+                              }
+                            }
+                            value="remand"
+                          >
+                            <input
+                              checked={false}
+                              disabled={false}
+                              id="type-options_affirmed"
+                              name="type-options"
+                              onChange={[Function]}
+                              type="radio"
+                              value="affirmed"
+                            />
+                          </RadioInput>
                           <label
                             className=""
                             htmlFor="type-options_affirmed"
@@ -3756,15 +3826,29 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                           className="cf-form-radio-option"
                           key="type-options-settlement-3"
                         >
-                          <input
-                            checked={false}
-                            disabled={false}
-                            id="type-options_settlement"
+                          <RadioInput
+                            controlled={true}
+                            handleChange={[Function]}
+                            idPart="type-options"
                             name="type-options"
-                            onChange={[Function]}
-                            type="radio"
-                            value="settlement"
-                          />
+                            option={
+                              Object {
+                                "displayText": "Settlement",
+                                "value": "settlement",
+                              }
+                            }
+                            value="remand"
+                          >
+                            <input
+                              checked={false}
+                              disabled={false}
+                              id="type-options_settlement"
+                              name="type-options"
+                              onChange={[Function]}
+                              type="radio"
+                              value="settlement"
+                            />
+                          </RadioInput>
                           <label
                             className=""
                             htmlFor="type-options_settlement"
@@ -3833,15 +3917,29 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                           className="cf-form-radio-option"
                           key="sub-type-options-jmr_jmpr-0"
                         >
-                          <input
-                            checked={true}
-                            disabled={false}
-                            id="sub-type-options_jmr_jmpr"
+                          <RadioInput
+                            controlled={true}
+                            handleChange={[Function]}
+                            idPart="sub-type-options"
                             name="sub-type-options"
-                            onChange={[Function]}
-                            type="radio"
+                            option={
+                              Object {
+                                "displayText": "Joint Motion for Remand (JMR) / Joint Motion for Partial Remand (JMPR)",
+                                "value": "jmr_jmpr",
+                              }
+                            }
                             value="jmr_jmpr"
-                          />
+                          >
+                            <input
+                              checked={true}
+                              disabled={false}
+                              id="sub-type-options_jmr_jmpr"
+                              name="sub-type-options"
+                              onChange={[Function]}
+                              type="radio"
+                              value="jmr_jmpr"
+                            />
+                          </RadioInput>
                           <label
                             className=""
                             htmlFor="sub-type-options_jmr_jmpr"

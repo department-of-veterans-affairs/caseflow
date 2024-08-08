@@ -171,14 +171,28 @@ exports[`CavcReviewExtensionRequestModal renders correctly 1`] = `
                       className="cf-form-radio-option"
                       key="decision-grant-0"
                     >
-                      <input
-                        disabled={false}
-                        id="decision_grant"
+                      <RadioInput
+                        controlled={false}
+                        handleChange={[Function]}
+                        idPart="decision"
                         name="decision"
-                        onChange={[Function]}
-                        type="radio"
-                        value="grant"
-                      />
+                        option={
+                          Object {
+                            "displayText": "Grant",
+                            "help": "Task will go on hold for selected number of days",
+                            "value": "grant",
+                          }
+                        }
+                      >
+                        <input
+                          disabled={false}
+                          id="decision_grant"
+                          name="decision"
+                          onChange={[Function]}
+                          type="radio"
+                          value="grant"
+                        />
+                      </RadioInput>
                       <label
                         className=""
                         htmlFor="decision_grant"
@@ -210,14 +224,28 @@ exports[`CavcReviewExtensionRequestModal renders correctly 1`] = `
                       className="cf-form-radio-option"
                       key="decision-deny-1"
                     >
-                      <input
-                        disabled={false}
-                        id="decision_deny"
+                      <RadioInput
+                        controlled={false}
+                        handleChange={[Function]}
+                        idPart="decision"
                         name="decision"
-                        onChange={[Function]}
-                        type="radio"
-                        value="deny"
-                      />
+                        option={
+                          Object {
+                            "displayText": "Deny",
+                            "help": "Marks the extension request as denied",
+                            "value": "deny",
+                          }
+                        }
+                      >
+                        <input
+                          disabled={false}
+                          id="decision_deny"
+                          name="decision"
+                          onChange={[Function]}
+                          type="radio"
+                          value="deny"
+                        />
+                      </RadioInput>
                       <label
                         className=""
                         htmlFor="decision_deny"
