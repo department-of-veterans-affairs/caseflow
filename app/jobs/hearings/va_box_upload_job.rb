@@ -2,24 +2,36 @@
 
 require 'aws-sdk-s3'
 class VaBoxUploadJob < CaseflowJob
+  include Shoryuken::Worker
   queue_as :low_priority
   include Hearings::SendTranscriptionIssuesEmail
 
   S3_BUCKET = "vaec-appeals-caseflow"
-  MAX_RETRIES = 3
+
+  shoryuken_options retry_intervals: [3.seconds, 30.seconds, 5.minutes, 30.minutes, 2.hours, 5.hours]
+
+  class BoxUploadError < StandardError; end
+
+  retry_on StandardError, wait: :exponentially_longer do |job, exception|
+    job.cleanup_tmp_files
+    error_details = { error: { type: "upload", message: exception.message }, provider: "Box" }
+    job.send_transcription_issues_email(error_details)
+    fail BoxUploadError
+  end
 
   def perform(file_info, box_folder_id)
-    box_service = ExternalApi::VaBoxService.new(
-      client_secret: ENV['BOX_CLIENT_SECRET'],
-      client_id: ENV['BOX_CLIENT_ID'],
-      enterprise_id: ENV['BOX_ENTERPRISE_ID'],
-      private_key: ENV['BOX_PRIVATE_KEY'],
-      passphrase: ENV['BOX_PASS_PHRASE']
-    )
+  @all_paths = []
+  box_service = ExternalApi::VaBoxService.new(
+    client_secret: ENV['BOX_CLIENT_SECRET'],
+    client_id: ENV['BOX_CLIENT_ID'],
+    enterprise_id: ENV['BOX_ENTERPRISE_ID'],
+    private_key: ENV['BOX_PRIVATE_KEY'],
+    passphrase: ENV['BOX_PASS_PHRASE']
+  )
+
     box_service.fetch_access_token
 
     file_info[:hearings].each do |hearing|
-      retries = 0
       begin
         transcription_package = find_transcription_package(hearing)
         unless transcription_package
@@ -28,13 +40,9 @@ class VaBoxUploadJob < CaseflowJob
           next
         end
 
-        # Store previous state
-        previous_state = transcription_package.attributes.except("status")
-
         file_path = transcription_package.aws_link_zip
         contractor_name = file_info[:contractor_name]
         child_folder_id = box_service.get_child_folder_id(box_folder_id, contractor_name)
-
         unless child_folder_id
           error_details = { error: { type: "child_folder_id", message: "Child folder ID not found for contractor name: #{contractor_name}" }, provider: "Box" }
           send_transcription_issues_email(error_details)
@@ -46,15 +54,10 @@ class VaBoxUploadJob < CaseflowJob
 
         upload_to_box(box_service, local_file_path, child_folder_id, transcription_package)
       rescue StandardError => e
-        retries += 1
-        if retries <= MAX_RETRIES
-          Rails.logger.warn("Retrying VaBoxUploadJob due to error: #{e.message}. Attempt #{retries} of #{MAX_RETRIES}.")
-          retry
-        else
-          handle_error(e, transcription_package, previous_state)
-          error_details = { error: { type: "upload", message: e.message }, provider: "Box" }
-          send_transcription_issues_email(error_details)
-        end
+        log_error(e, extra: { transcription_package_id: transcription_package.id })
+        error_details = { error: { type: "upload", message: e.message }, provider: "Box" }
+        send_transcription_issues_email(error_details)
+        raise e
       end
     end
   end
@@ -72,34 +75,38 @@ class VaBoxUploadJob < CaseflowJob
   def download_file_from_s3(s3_path)
     local_path = Rails.root.join('tmp', 'transcription_files', File.basename(s3_path))
     Caseflow::S3Service.fetch_file(s3_path, local_path)
+    @all_paths << local_path
     Rails.logger.info("File successfully downloaded from S3: #{local_path}")
     local_path
   end
 
   def upload_to_box(box_service, file_path, folder_id, transcription_package)
-    box_service.public_upload_file(file_path, folder_id)
-    Rails.logger.info("File successfully uploaded to Box folder ID: #{folder_id}")
-    transcription_package.update!(
-      date_upload_box: Time.current,
-      status: 'Successful Upload (BOX)',
-      task_number: file_info[:work_order_name],
-      expected_return_date: file_info[:return_date],
-      updated_by_id: RequestStore[:current_user].id
-    )
+    ActiveRecord::Base.transaction do
+      box_service.public_upload_file(file_path, folder_id)
+      Rails.logger.info("File successfully uploaded to Box folder ID: #{folder_id}")
+      transcription_package.update!(
+        date_upload_box: Time.current,
+        status: 'Successful Upload (BOX)',
+        task_number: file_info[:work_order_name],
+        expected_return_date: file_info[:return_date],
+        updated_by_id: RequestStore[:current_user].id
+      )
+
+      transcription = Transcription.find_by(task_number: file_info[:work_order_number])
+      transcription.update!(
+        expected_return_date: file_info[:return_date],
+        hearing_id: file_info[:hearing][:hearing_id],
+        sent_to_transcriber_date: Time.current,
+        transcriber: file_info[:contractor_name],
+        transcription_contractor_id: transcription_package.contractor_id,
+        updated_by_id: RequestStore[:current_user].id
+      )
+    end
   end
 
-  def handle_error(error, transcription_package, previous_state)
-    Rails.logger.error("Failed to upload transcription package: #{error.message}")
-    rollback_to_previous_state(transcription_package, previous_state)
-  end
-
-  def rollback_to_previous_state(transcription_package, previous_state)
-    Rails.logger.info("Rolling back transcription package to previous state")
-    transcription_package.update!(previous_state.merge(status: 'failed'))
+  def cleanup_tmp_files
+    @all_paths&.each { |path| File.delete(path) if File.exist?(path) }
+    Rails.logger.info("Cleaned up the following files from tmp: #{@all_paths}")
   end
 end
-
-
-
-
 
