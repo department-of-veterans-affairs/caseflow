@@ -258,6 +258,12 @@ class BusinessLine < Organization
             AND tasks.assigned_to_id = '#{parent.id.to_i}'
           GROUP BY
               versions.item_id, versions.item_type
+        ),
+        remand_task_ids AS (
+          SELECT tasks.id AS task_id
+          FROM tasks
+          INNER JOIN supplemental_claims ON tasks.appeal_type = 'SupplementalClaim' AND tasks.appeal_id = supplemental_claims.id
+          WHERE supplemental_claims.type = 'Remand'
         )
         SELECT tasks.id AS task_id, tasks.status AS task_status, request_issues.id AS request_issue_id,
           request_issues_updates.created_at AS request_issue_update_time, decision_issues.description AS decision_description,
@@ -338,7 +344,7 @@ class BusinessLine < Organization
         FROM tasks
         INNER JOIN request_issues ON request_issues.decision_review_type = tasks.appeal_type
         AND request_issues.decision_review_id = tasks.appeal_id
-        INNER JOIN supplemental_claims ON tasks.appeal_type = supplemental_claims.type
+        INNER JOIN supplemental_claims ON tasks.appeal_type = 'SupplementalClaim'
         AND tasks.appeal_id = supplemental_claims.id
         LEFT JOIN intakes ON tasks.appeal_type = intakes.detail_type
         AND intakes.detail_id = tasks.appeal_id
@@ -401,9 +407,13 @@ class BusinessLine < Organization
 
     def claim_type_filter
       if query_params[:claim_type].present?
-        " AND #{where_clause_from_array(Task, :appeal_type, query_params[:claim_type]).to_sql}"
+        if query_params[:claim_type] == Remand.name
+          " AND tasks.id IN (SELECT task_id FROM remand_task_ids) "
+        else
+          " AND #{where_clause_from_array(Task, :appeal_type, query_params[:claim_type]).to_sql}"
+        end
       else
-        " AND tasks.appeal_type IN ('HigherLevelReview', 'SupplementalClaim', 'Remand' ) "
+        " AND tasks.appeal_type IN ('HigherLevelReview', 'SupplementalClaim' ) "
       end
     end
 

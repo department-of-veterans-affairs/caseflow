@@ -517,7 +517,6 @@ FactoryBot.define do
       end
 
       factory :remand_vha_task, class: DecisionReviewTask do
-        appeal_type { Remand.name }
         appeal do
           create(
             :remand,
