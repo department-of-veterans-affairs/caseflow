@@ -6,7 +6,7 @@ import RequiredIndicator from './RequiredIndicator';
 import StringUtil from '../util/StringUtil';
 import MaybeAddTooltip from './TooltipHelper';
 
-import ACD_LEVERS from '../../constants/ACD_LEVERS';
+import RadioInput from './RadioInput';
 
 import { helpText } from './RadioField.module.scss';
 const RadioFieldHelpText = ({ help, className }) => {
@@ -92,17 +92,15 @@ export const RadioFieldWithChildren = (props) => {
             className="cf-form-radio-option"
             key={`${idPart}-${option.value}-${i}`}
           >
-            <input
-              onChange={handleChange}
+            <RadioInput
+              handleChange={handleChange}
               name={name}
-              type={ACD_LEVERS.data_types.radio}
-              id={`${idPart}_${option.value}`}
-              value={option.value}
-              // eslint-disable-next-line no-undefined
-              checked={controlled ? value === option.value : undefined}
-              disabled={optionDisabled}
-              ref={inputRef}
-              {...inputProps}
+              idPart={idPart}
+              option={option}
+              controlled={controlled}
+              value={value}
+              inputRef={inputRef}
+              inputProps={inputProps}
             />
             <label
               className={optionDisabled ? 'disabled' : ''}
