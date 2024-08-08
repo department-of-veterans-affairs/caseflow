@@ -673,13 +673,6 @@ describe BusinessLine do
       hlr_task.appeal.request_issues << issue
       hlr_task2.appeal.request_issues << issue2
       remand_task.appeal.request_issues << remand_issue
-    #   remand_task.appeal.claimants = create_list(
-    #   :claimant,
-    #   1,
-    #   decision_review: remand_task.appeal,
-    #   type: "DependentClaimant",
-    #   payee_code: "10"
-    # )
       remand_task.save
       remand_task.reload
 
@@ -761,7 +754,9 @@ describe BusinessLine do
 
         it "should only return rows for the filtered claim type" do
           expect(subject.entries.count).to eq(4)
-          expect(subject.entries).to include(*(all_expectations - [sc_task_1_ri_1_expectation] - [remand_task_1_ri_1_expectation]))
+          expect(subject.entries).to include(
+            *(all_expectations - [sc_task_1_ri_1_expectation] - [remand_task_1_ri_1_expectation])
+          )
         end
       end
 
@@ -907,7 +902,9 @@ describe BusinessLine do
 
         it "should only return rows that are between the number of days and end of days" do
           expect(subject.entries.count).to eq(4)
-          expect(subject.entries).to include(*(all_expectations - [sc_task_1_ri_1_expectation] - [remand_task_1_ri_1_expectation]))
+          expect(subject.entries).to include(
+            *(all_expectations - [sc_task_1_ri_1_expectation] - [remand_task_1_ri_1_expectation])
+          )
         end
       end
     end
@@ -927,7 +924,9 @@ describe BusinessLine do
 
         it "only return rows where either an intake, decisions, or updates user matches the station id" do
           expect(subject.entries.count).to eq(4)
-          expect(subject.entries).to include(*(all_expectations - [sc_task_1_ri_1_expectation] - [remand_task_1_ri_1_expectation]))
+          expect(subject.entries).to include(
+            *(all_expectations - [sc_task_1_ri_1_expectation] - [remand_task_1_ri_1_expectation])
+          )
         end
       end
 
@@ -960,7 +959,9 @@ describe BusinessLine do
 
         it "only return rows where either an intake, decisions, or updates user matches the  css_ids" do
           expect(subject.entries.count).to eq(4)
-          expect(subject.entries).to include(*(all_expectations - [sc_task_1_ri_1_expectation] - [remand_task_1_ri_1_expectation]))
+          expect(subject.entries).to include(
+            *(all_expectations - [sc_task_1_ri_1_expectation] - [remand_task_1_ri_1_expectation])
+          )
         end
       end
 
