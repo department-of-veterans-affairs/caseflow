@@ -15,15 +15,14 @@ import TestUsers from './TestUsers';
 const TestApp = (props) => {
 
   const routedTestUsers = () => {
-    // return <TestUsers {...props} />;
-    return <h1>Test</h1>;
+    return <TestUsers {...props} />;
   };
 
   return <BrowserRouter basename="/test">
     <NavigationBar
       userDisplayName={props.userDisplayName}
       dropdownUrls={props.dropdownUrls}
-      appName="Test Zone"
+      appName="Test"
       logoProps={{
         accentColor: COLORS.GREY_DARK,
         overlapColor: COLORS.GREY_DARK
