@@ -11,6 +11,6 @@ class Transcription < CaseflowRecord
   }
 
   scope :first_empty_transcription_file, lambda {
-    where(expected_return_date: nil).order(:task_id).first
+    where(transcription_status: "unassigned").order(:task_id).first
   }
 end

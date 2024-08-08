@@ -80,30 +80,30 @@ exports[`Package files modal matches snapshot 1`] = `
                 class="cf-form-radio-option"
               >
                 <input
-                  id="returnDateRadioField_8/26/2024"
+                  id="returnDateRadioField_8/29/2024"
                   name="returnDateRadioField"
                   type="radio"
-                  value="8/26/2024"
+                  value="8/29/2024"
                 />
                 <label
                   class=""
-                  for="returnDateRadioField_8/26/2024"
+                  for="returnDateRadioField_8/29/2024"
                 >
-                  Return in 15 days (8/26/2024)
+                  Return in 15 days (8/29/2024)
                 </label>
               </div>
               <div
                 class="cf-form-radio-option"
               >
                 <input
-                  id="returnDateRadioField_8/12/2024"
+                  id="returnDateRadioField_8/15/2024"
                   name="returnDateRadioField"
                   type="radio"
-                  value="8/12/2024"
+                  value="8/15/2024"
                 />
                 <label
                   class=""
-                  for="returnDateRadioField_8/12/2024"
+                  for="returnDateRadioField_8/15/2024"
                 >
                   Expedite (Maximum of 5 days)
                 </label>
