@@ -8,7 +8,7 @@ module Seeds
     end
 
     def seed!
-      # call new seed methods here
+      create_aoj_affinity_cases
     end
 
     private
@@ -59,7 +59,7 @@ module Seeds
       correspondent
     end
 
-    def create_aoj_aod_affinity_cases
+    def create_aoj_affinity_cases
       create_cases_for_aoj_affinty_days_lever
       create_cases_for_aoj_affinty_days_lever_excluded_judge
       create_cases_for_aoj_affinity_days_lever_ineligible_judge
@@ -119,7 +119,7 @@ module Seeds
     end
 
     def create_cases_for_aoj_affinty_days_lever
-      # aoj aod affinity cases:
+      # aoj affinity cases:
         # no hearing held but has previous decision
 
         create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent.ssn}S", judge: affinity_judge, attorney: attorney, tied_to: false)
