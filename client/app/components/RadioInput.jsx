@@ -2,19 +2,23 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ACD_LEVERS from '../../constants/ACD_LEVERS';
 
-const RadioInput = ({ handleChange, name, idPart, option, controlled, value, inputRef, inputProps }) => (
-  <input
-    onChange={handleChange}
-    name={name}
-    type={ACD_LEVERS.data_types.radio}
-    id={`${idPart}_${option.value}`}
-    value={option.value}
-    checked={controlled ? value === option.value : false}
-    disabled={Boolean(option.disabled)}
-    ref={inputRef}
-    {...inputProps}
-  />
-);
+const RadioInput = ({ handleChange, name, idPart, option, controlled, value, inputRef, inputProps }) => {
+  const isChecked = controlled ? value === option.value : option.checked;
+
+  return (
+    <input
+      onChange={handleChange}
+      name={name}
+      type={ACD_LEVERS.data_types.radio}
+      id={`${idPart}_${option.value}`}
+      value={option.value}
+      checked={isChecked}
+      disabled={Boolean(option.disabled)}
+      ref={inputRef}
+      {...inputProps}
+    />
+  );
+};
 
 RadioInput.propTypes = {
   handleChange: PropTypes.func.isRequired,
