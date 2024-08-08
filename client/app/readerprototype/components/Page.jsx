@@ -1,8 +1,9 @@
 import PropTypes from 'prop-types';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 const Page = ({ page, rotation = '0deg', renderItem, scale }) => {
   const canvasRef = useRef(null);
+  const [isRendering, setIsRendering] = useState(false);
   const scaleFraction = scale / 100;
 
   const viewport = page.getViewport({ scale: scaleFraction });
@@ -32,8 +33,11 @@ const Page = ({ page, rotation = '0deg', renderItem, scale }) => {
   };
 
   useEffect(() => {
-    if (canvasRef.current) {
-      page.render({ canvasContext: canvasRef.current?.getContext('2d'), viewport });
+    if (canvasRef.current && !isRendering) {
+      setIsRendering(true);
+      page
+        .render({ canvasContext: canvasRef.current?.getContext('2d'), viewport })
+        .promise.then(() => setIsRendering(false));
     }
   }, [canvasRef.current, viewport]);
 
