@@ -14,6 +14,7 @@ import ApiUtil from '../util/ApiUtil';
 import { getMinutesToMilliseconds } from '../util/DateUtil';
 import pluralize from 'pluralize';
 import { keyBy, pick } from 'lodash';
+import { removeTaskIdsFromCache } from './caching/queueTableCache.slice';
 
 export const onReceiveQueue = (
   { tasks, amaTasks, appeals }
@@ -419,12 +420,13 @@ export const fetchTasksAndAppealsOfAttorney = (attorneyId, params) => (dispatch)
 };
 
 export const setSelectionOfTaskOfUser =
-  ({ userId, taskId, selected }) => ({
+  ({ userId, taskId, selected, task }) => ({
     type: ACTIONS.SET_SELECTION_OF_TASK_OF_USER,
     payload: {
       userId,
       taskId,
-      selected
+      selected,
+      task
     }
   });
 
@@ -506,6 +508,9 @@ export const initialSpecialtyCaseTeamAssignTasksToUser = ({
     then((resp) => resp.body).
     then((resp) => {
       const receievedTasks = prepareAllTasksForStore(resp.tasks.data);
+
+      // Removes tasks from queue table cache if using redux caching instead of local component state
+      dispatch(removeTaskIdsFromCache({ taskIds }));
 
       dispatch(onReceiveTasks(pick(receievedTasks, ['tasks', 'amaTasks'])));
 

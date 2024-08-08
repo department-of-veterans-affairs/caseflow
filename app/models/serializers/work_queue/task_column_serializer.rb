@@ -90,11 +90,7 @@ class WorkQueue::TaskColumnSerializer
     columns = [Constants.QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name]
 
     if serialize_attribute?(params, columns)
-      if object.appeal.is_a?(LegacyAppeal)
-        object.appeal.issue_categories
-      else
-        object.appeal.request_issues.active.map(&:nonrating_issue_category)
-      end.join(",")
+      object.appeal.issue_categories.join(",")
     end
   end
 

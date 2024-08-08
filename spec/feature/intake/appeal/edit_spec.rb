@@ -391,11 +391,11 @@ feature "Appeal Edit issues", :all_dbs do
     end
   end
 
-  context "User is a member of the Supervisory Senior Council" do
+  context "User is a member of the Supervisory Senior Counsel" do
     before do
       User.authenticate!(user: current_user)
       FeatureToggle.enable!(:split_appeal_workflow)
-      OrganizationsUser.make_user_admin(current_user, SupervisorySeniorCouncil.singleton)
+      OrganizationsUser.make_user_admin(current_user, SupervisorySeniorCounsel.singleton)
     end
 
     after { FeatureToggle.disable!(:split_appeal_workflow) }
