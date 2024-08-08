@@ -16,6 +16,7 @@ class NightlySyncsJob < CaseflowJob
     sync_vacols_users
     sync_decision_review_tasks
     sync_bgs_attorneys
+    sync_decided_appeals
 
     slack_service.send_notification(@slack_report.join("\n"), self.class.name) if @slack_report.any?
   end
@@ -84,6 +85,22 @@ class NightlySyncsJob < CaseflowJob
     @slack_report << "*Fatal error in sync_bgs_attorneys:* #{error}"
   end
 
+  # Syncs the decision_mailed status of Legacy Appeals with a decision made
+  def sync_decided_appeals
+    AppealState.where(appeal_type: "LegacyAppeal", decision_mailed: false).each do |appeal_state|
+      legacy_appeal = LegacyAppeal.find_by_id(appeal_state.appeal_id)
+      vacols_record = legacy_appeal.present? ? VACOLS::Case.find_by_bfkey(legacy_appeal[:vacols_id]) : nil
+
+      # If there is a decision date on the VACOLS record,
+      # update the decision_mailed status on the AppealState to true
+      if vacols_record.present? && vacols_record[:bfddec].present?
+        appeal_state.decision_mailed_appeal_state_update_action!
+      end
+    end
+  rescue StandardError => error
+    @slack_report << "*Fatal error in sync_decided_appeals* #{error}"
+  end
+
   def dangling_legacy_appeals
     reporter = LegacyAppealsWithNoVacolsCase.new
     reporter.call
@@ -105,5 +122,7 @@ class NightlySyncsJob < CaseflowJob
         state.scheduled_in_error_appeal_state_update_action!
       end
     end
+  rescue StandardError => error
+    @slack_report << "*Fatal error in sync_hearing_states* #{error}"
   end
 end
