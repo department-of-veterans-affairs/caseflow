@@ -7,7 +7,9 @@
 SYSTEM_GEN_TAG = User.system_user.id
 
 # Define a class to represent the transcriptions table.
-class Transcription
+class Transcription < CaseflowRecord
+  belongs_to :hearing
+  belongs_to :transcription_contractor
   attr_accessor :created_by_id, :task_id
 
   scope :counts_for_this_week, lambda {
