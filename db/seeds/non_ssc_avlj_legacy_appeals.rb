@@ -71,7 +71,8 @@ module Seeds
     end
 
     def create_four_priority_appeals_tied_to_and_signed_by_a_non_ssc_avlj
-      assigned_avlj, signing_avlj = User.find_by(css_id: "NONSSCAN03")
+      assigned_avlj = User.find_by(css_id: "NONSSCAN03")
+      signing_avlj = User.find_by(css_id: "NONSSCAN03")
       create_signed_legacy_appeal(priority=false, signing_avlj, assigned_avlj, 100.days.ago)
       create_signed_legacy_appeal(priority=false, signing_avlj, assigned_avlj, 80.days.ago)
       create_signed_legacy_appeal(priority=false, signing_avlj, assigned_avlj, 60.days.ago)
@@ -80,7 +81,8 @@ module Seeds
 
     def create_four_non_priority_appeals_tied_to_and_signed_by_a_non_ssc_avlj
       # A non-SSC AVLJ that Only has 4 non-priority cases where they held the last hearing and signed the most recent decision
-      assigned_avlj, signing_avlj = User.find_by(css_id: "NONSSCAN04")
+      assigned_avlj = User.find_by(css_id: "NONSSCAN04")
+      signing_avlj = User.find_by(css_id: "NONSSCAN04")
       create_signed_legacy_appeal(priority=false, signing_avlj, assigned_avlj, 110.days.ago)
       create_signed_legacy_appeal(priority=false, signing_avlj, assigned_avlj, 90.days.ago)
       create_signed_legacy_appeal(priority=false, signing_avlj, assigned_avlj, 70.days.ago)
@@ -102,7 +104,8 @@ module Seeds
       # A non-SSC AVLJ that Has 4 in alternating order by age of BRIEFF.BFD19 (Docket Date)
       # priority cases where they held the last hearing and signed the most recent decision
       # non-priority cases where they held the last hearing and signed the most recent decision
-      signing_avlj, assigned_avlj = User.find_by(css_id: "NONSSCAN06")
+      signing_avlj = User.find_by(css_id: "NONSSCAN06")
+      assigned_avlj = User.find_by(css_id: "NONSSCAN06")
       create_signed_legacy_appeal(priority=false, signing_avlj, assigned_avlj, 120.days.ago) #oldest
       create_signed_legacy_appeal(priority=true, signing_avlj, assigned_avlj, 110.days.ago)
       create_signed_legacy_appeal(priority=false, signing_avlj, assigned_avlj, 100.days.ago)
