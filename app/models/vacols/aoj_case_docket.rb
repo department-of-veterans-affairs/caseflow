@@ -251,6 +251,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
     connection.exec_query(query).to_a.size
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength, Metrics/AbcSize
   def self.age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
     aoj_cavc_affinity_lever_value = CaseDistributionLever.aoj_cavc_affinity_days
     aoj_aod_affinity_lever_value = CaseDistributionLever.aoj_aod_affinity_days
@@ -263,19 +264,41 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
 
     conn = connection
 
-    query = <<-SQL
-      #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
-      where (VLJ = ? or #{ineligible_judges_sattyid_cache} or VLJ is null)
-      and (PREV_TYPE_ACTION = '7' or AOD = '1')
-      or #{priority_aoj_cdl_query}
-      or #{priority_cdl_aoj_aod_query}
-    SQL
+    query = if aoj_cavc_affinity_lever_value == Constants.ACD_LEVERS.infinite &&
+               aoj_aod_affinity_lever_value == Constants.ACD_LEVERS.infinite
+              <<-SQL
+                  #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
+                  where (VLJ = ? or #{ineligible_judges_sattyid_cache} or VLJ is null)
+                  and (PREV_TYPE_ACTION = '7' or AOD = '1')
+                  or ((PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache(true)}
+                  or #{vacols_judges_with_exclude_appeals_from_affinity(excluded_judges_attorney_ids)})
+                  and (#{priority_aoj_cdl_query} or #{priority_cdl_aoj_aod_query})))
+              SQL
+            else
+              <<-SQL
+                  #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
+                  where (VLJ = ? or #{ineligible_judges_sattyid_cache} or VLJ is null)
+                  and (PREV_TYPE_ACTION = '7' or AOD = '1')
+                  or #{priority_aoj_cdl_query}
+                  or #{priority_cdl_aoj_aod_query}
+              SQL
+            end
 
-    fmtd_query = sanitize_sql_array([
-                                      query,
-                                      judge.vacols_attorney_id,
-                                      judge.vacols_attorney_id
-                                    ])
+    fmtd_query = if aoj_cavc_affinity_lever_value != Constants.ACD_LEVERS.infinite &&
+                    aoj_aod_affinity_lever_value != Constants.ACD_LEVERS.infinite
+                   sanitize_sql_array([
+                                        query,
+                                        judge.vacols_attorney_id,
+                                        judge.vacols_attorney_id,
+                                        judge.vacols_attorney_id
+                                      ])
+                 else
+                   sanitize_sql_array([
+                                        query,
+                                        judge.vacols_attorney_id,
+                                        judge.vacols_attorney_id
+                                      ])
+                 end
 
     appeals = conn.exec_query(fmtd_query).to_a
 
@@ -308,6 +331,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
     appeals = conn.exec_query(fmtd_query).to_a
     appeals.map { |appeal| appeal["bfd19"] }
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength, Metrics/AbcSize
 
   def self.age_of_oldest_priority_appeal
     query = <<-SQL
@@ -454,6 +478,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
     distribute_appeals(fmtd_query, judge, limit, dry_run)
   end
 
+  # rubocop:disable Metrics/AbcSize
   def self.distribute_priority_appeals(judge, genpop, limit, dry_run = false)
     aoj_cavc_affinity_lever_value = CaseDistributionLever.aoj_cavc_affinity_days
     aoj_aod_affinity_lever_value = CaseDistributionLever.aoj_aod_affinity_days
@@ -462,31 +487,41 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
 
     priority_cdl_aoj_aod_query = generate_priority_case_distribution_lever_aoj_aod_query(aoj_aod_affinity_lever_value)
 
-    query = if use_by_docket_date?
+    query = if use_by_docket_date? && aoj_cavc_affinity_lever_value == Constants.ACD_LEVERS.infinite &&
+               aoj_aod_affinity_lever_value == Constants.ACD_LEVERS.infinite
+              <<-SQL
+                #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
+                where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?)
+                and (PREV_TYPE_ACTION = '7' or AOD = '1')
+                or ((PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache(true)}
+                or #{vacols_judges_with_exclude_appeals_from_affinity(excluded_judges_attorney_ids)})
+                and (#{priority_aoj_cdl_query} or #{priority_cdl_aoj_aod_query})))
+              SQL
+            elsif use_by_docket_date?
               <<-SQL
                 #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
                 where ((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?)
                 and (PREV_TYPE_ACTION = '7' or AOD = '1')
-                or #{priority_aoj_cdl_query}
-                or #{priority_cdl_aoj_aod_query}
+                or #{priority_aoj_cdl_query} or #{priority_cdl_aoj_aod_query}
               SQL
             else
               <<-SQL
                 #{SELECT_PRIORITY_APPEALS}
                 where ((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?)
                 and (PREV_TYPE_ACTION = '7' or AOD = '1')
-                or #{priority_aoj_cdl_query}
-                or #{priority_cdl_aoj_aod_query}
+                or #{priority_aoj_cdl_query} or #{priority_cdl_aoj_aod_query}
               SQL
             end
 
-    fmtd_query = if aoj_cavc_affinity_lever_value == Constants.ACD_LEVERS.infinite &&
-                    aoj_aod_affinity_lever_value == Constants.ACD_LEVERS.infinite
+    fmtd_query = if aoj_cavc_affinity_lever_value != Constants.ACD_LEVERS.infinite &&
+                    aoj_aod_affinity_lever_value != Constants.ACD_LEVERS.infinite
                    sanitize_sql_array([
                                         query,
                                         judge.vacols_attorney_id,
                                         (genpop == "any" || genpop == "not_genpop") ? 1 : 0,
-                                        (genpop == "any" || genpop == "only_genpop") ? 1 : 0
+                                        (genpop == "any" || genpop == "only_genpop") ? 1 : 0,
+                                        judge.vacols_attorney_id,
+                                        judge.vacols_attorney_id
                                       ])
                  else
                    sanitize_sql_array([
@@ -546,6 +581,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
       end
     end
   end
+  # rubocop:enable Metrics/AbcSize
 
   def self.generate_priority_aoj_case_distribution_lever_query(aoj_cavc_affinity_lever_value)
     if case_affinity_days_lever_value_is_selected?(aoj_cavc_affinity_lever_value) ||
