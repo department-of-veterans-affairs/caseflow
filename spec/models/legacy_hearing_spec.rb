@@ -16,20 +16,25 @@ describe LegacyHearing, :all_dbs do
   let(:hearing) do
     create(
       :legacy_hearing,
-      scheduled_for: scheduled_for,
-      disposition: disposition,
-      hold_open: hold_open,
+      case_hearing: case_hearing,
       request_type: request_type,
       regional_office: regional_office
+    )
+  end
+
+  let(:case_hearing) do
+    create(
+      :case_hearing,
+      hearing_date: scheduled_for,
+      hearing_disp: disposition,
+      holddays: hold_open
     )
   end
 
   let(:hearing2) do
     create(
       :legacy_hearing,
-      scheduled_for: scheduled_for,
-      disposition: disposition,
-      hold_open: hold_open,
+      case_hearing: case_hearing,
       request_type: request_type,
       regional_office: regional_office
     )
@@ -39,7 +44,7 @@ describe LegacyHearing, :all_dbs do
     now = Time.zone.now
     yesterday = Time.zone.yesterday
 
-    Time.zone.local(yesterday.year, yesterday.month, yesterday.day, now.hour, now.min, now.sec)
+    Time.zone.local(now.year, now.month, now.day, now.hour, now.min, now.sec)
   end
   let(:disposition) { nil }
   let(:hold_open) { nil }
@@ -132,7 +137,8 @@ describe LegacyHearing, :all_dbs do
 
     context "when held open" do
       let(:hold_open) { 30 }
-      it { is_expected.to eq(29.days.from_now.to_date) }
+
+      it { is_expected.to eq(30.days.from_now.to_date) }
     end
 
     context "when not held open" do
@@ -143,7 +149,7 @@ describe LegacyHearing, :all_dbs do
   context "#no_show_excuse_letter_due_date" do
     subject { hearing.no_show_excuse_letter_due_date }
 
-    it { is_expected.to eq(14.days.from_now.to_date) }
+    it { is_expected.to eq(15.days.from_now.to_date) }
   end
 
   context "#active_appeal_streams" do
@@ -454,22 +460,23 @@ describe LegacyHearing, :all_dbs do
 
   # Note: `scheduled_for` is populated by `HearingRepostiory#vacols_attributes`
   context "#scheduled_for" do
-    let(:hearing) do
-      create(
-        :legacy_hearing,
-        hearing_day: hearing_day,
-        scheduled_for: scheduled_for,
-        request_type: request_type,
-        regional_office: regional_office
-      )
-    end
-
     subject { hearing.scheduled_for }
 
     # Note: This can happen if the hearing is scheduled across state lines
     context "if case hearing regional office differs from hearing day regional office" do
+      let(:hearing) do
+        create(
+          :legacy_hearing,
+          hearing_day: hearing_day,
+          scheduled_for: scheduled_for,
+          request_type: request_type,
+          regional_office: regional_office,
+          scheduled_in_timezone: scheduled_in_timezone
+        )
+      end
       # Oakland regional office
       let(:regional_office) { "RO43" }
+      let(:scheduled_in_timezone) { nil }
       let(:hearing_day) do
         create(
           :hearing_day,
@@ -498,6 +505,42 @@ describe LegacyHearing, :all_dbs do
         expect(subject.min).to eq(scheduled_for.min)
         expect(subject.sec).to eq(scheduled_for.sec)
       end
+    end
+
+    context "hearing has a supplied scheduled_in_timezone value" do
+      let(:hearing) do
+        create(
+          :legacy_hearing,
+          hearing_day: hearing_day,
+          case_hearing: case_hearing,
+          request_type: request_type,
+          regional_office: regional_office,
+          scheduled_in_timezone: scheduled_in_timezone
+        )
+      end
+       # Oakland regional office
+       let(:regional_office) { "RO43" }
+       let(:scheduled_in_timezone) { "America/Los_Angeles" }
+       let(:hearing_day) do
+         create(
+           :hearing_day,
+           regional_office: "RO06", # New York regional office
+           request_type: HearingDay::REQUEST_TYPES[:video]
+         )
+       end
+
+       before { Timecop.freeze(Time.utc(2020, 6, 22)) }
+
+       after { Timecop.return }
+
+       it "time is expected value and is in the supplied scheduled_in_timezone" do
+        expected_time = scheduled_for.in_time_zone("America/Los_Angeles")
+
+        expect(subject.zone).to eq("PDT")
+        expect(subject.hour).to eq(expected_time.hour)
+        expect(subject.min).to eq(expected_time.min)
+        expect(subject.sec).to eq(expected_time.sec)
+       end
     end
   end
 
