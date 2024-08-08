@@ -10205,7 +10205,7 @@ SAN FRANCISCO, CA 94103
                                             aria-autocomplete="list"
                                             aria-expanded={false}
                                             aria-haspopup={true}
-                                            aria-label="Pacific Time (US & Canada) (3:00 AM)"
+                                            aria-labelledby="representative-tz-label"
                                             aria-owns="representative-tz-listbox"
                                             autoCapitalize="none"
                                             autoComplete="off"
@@ -11101,7 +11101,7 @@ SAN FRANCISCO, CA 94103
                                                   aria-autocomplete="list"
                                                   aria-expanded={false}
                                                   aria-haspopup={true}
-                                                  aria-label="Pacific Time (US & Canada) (3:00 AM)"
+                                                  aria-labelledby="representative-tz-label"
                                                   aria-owns="representative-tz-listbox"
                                                   autoCapitalize="none"
                                                   autoComplete="off"
@@ -11145,7 +11145,7 @@ SAN FRANCISCO, CA 94103
                                                       aria-autocomplete="list"
                                                       aria-expanded={false}
                                                       aria-haspopup={true}
-                                                      aria-label="Pacific Time (US & Canada) (3:00 AM)"
+                                                      aria-labelledby="representative-tz-label"
                                                       aria-owns="representative-tz-listbox"
                                                       autoCapitalize="none"
                                                       autoComplete="off"

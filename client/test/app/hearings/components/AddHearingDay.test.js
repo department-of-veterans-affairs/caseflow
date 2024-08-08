@@ -57,9 +57,7 @@ describe('AddHearingDay', () => {
     );
 
     const docketDate = component.getByLabelText('Docket Date');
-    const comboBoxes = screen.getAllByRole('combobox').filter((element) => element.id === 'request-type');
-    // const docketType = screen.getByRole('combobox', { name: 'Type of Docket' });
-    const docketType = comboBoxes[0];
+    const docketType = screen.getByRole('combobox', { name: 'Type of Docket' });
     const roomRequired = screen.getByRole('checkbox', { name: 'roomRequired' });
     const notes = screen.getByRole('textbox', { name: 'Notes Optional' });
 
@@ -138,10 +136,7 @@ describe('AddHearingDay', () => {
     expect(addHearingDay.docketDate.value).toBe(date);
 
     await userEvent.type(addHearingDay.roDropdown, ro.label);
-    const comboBoxes = screen.getAllByRole('combobox').filter((element) => element.id === 'regional-office');
-    const regionalOfficeDropDown = comboBoxes[0];
-
-    expect(regionalOfficeDropDown.value).toBe(ro.label);
+    expect(screen.getByRole('combobox', { name: 'Regional Office (RO)' }).value).toBe(ro.label);
 
     await userEvent.type(addHearingDay.docketType, REQUEST_TYPE_OPTIONS[0].label);
     expect(addHearingDay.docketType.value).toBe(REQUEST_TYPE_OPTIONS[0].label);
@@ -169,10 +164,7 @@ describe('AddHearingDay', () => {
     expect(addHearingDay.docketDate.value).toBe(date);
 
     await userEvent.type(addHearingDay.roDropdown, ro.label);
-    const comboBoxes = screen.getAllByRole('combobox').filter((element) => element.id === 'regional-office');
-    const regionalOfficeDropDown = comboBoxes[0];
-
-    expect(regionalOfficeDropDown.value).toBe(ro.label);
+    expect(screen.getByRole('combobox', { name: 'Regional Office (RO)' }).value).toBe(ro.label);
 
     await userEvent.type(addHearingDay.docketType, REQUEST_TYPE_OPTIONS[2].label);
     expect(addHearingDay.docketType.value).toBe(REQUEST_TYPE_OPTIONS[2].label);
