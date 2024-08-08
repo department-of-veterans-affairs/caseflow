@@ -664,18 +664,18 @@ describe VACOLS::AojCaseDocket, :all_dbs do
       # hearing held with previous decision where judge is not the same
       let!(:c4) do
         c4 = create(:legacy_aoj_appeal, judge: other_judge, attorney: attorney)
-        c4.update!(bfmemid: aff_judge.sattyid)
+        VACOLS::Case.where(bfcorlid: c4.bfcorlid, bfkey: (c4.bfkey.to_i + 1).to_s).update(bfmemid: aff_judge.sattyid)
         c4
       end
       let!(:c5) do
         c5 = create(:legacy_aoj_appeal, judge: other_judge, attorney: attorney,
                                         affinity_start_date: 3.days.ago)
-        c5.update!(bfmemid: aff_judge.sattyid)
+        VACOLS::Case.where(bfcorlid: c5.bfcorlid, bfkey: (c5.bfkey.to_i + 1).to_s).update(bfmemid: aff_judge.sattyid)
         c5
       end
       let!(:c6) do
         c6 = create(:legacy_aoj_appeal, judge: other_judge, attorney: attorney, appeal_affinity: false)
-        c6.update!(bfmemid: aff_judge.sattyid)
+        VACOLS::Case.where(bfcorlid: c6.bfcorlid, bfkey: (c6.bfkey.to_i + 1).to_s).update(bfmemid: aff_judge.sattyid)
         c6
       end
       # hearing held with previous decision where judge is same (THIS IS TIED TO)
@@ -687,14 +687,14 @@ describe VACOLS::AojCaseDocket, :all_dbs do
       # hearing held but no previous deciding judge
       let!(:c10) do
         c10 = create(:legacy_aoj_appeal, judge: tied_judge, attorney: attorney)
-        c10.update!(bfmemid: nil)
+        VACOLS::Case.where(bfcorlid: c10.bfcorlid, bfkey: (c10.bfkey.to_i + 1).to_s).update(bfmemid: nil)
         c10
       end
       # no hearing held, no previous deciding judge
       let!(:c11) do
         c11 = create(:legacy_aoj_appeal, judge: aff_judge, attorney: attorney,
                                          tied_to: false)
-        c11.update!(bfmemid: nil)
+        VACOLS::Case.where(bfcorlid: c11.bfcorlid, bfkey: (c11.bfkey.to_i + 1).to_s).update(bfmemid: nil)
         c11
       end
       # excluded judge cases:
@@ -711,18 +711,18 @@ describe VACOLS::AojCaseDocket, :all_dbs do
       # hearing held with previous decision where judge is not the same
       let!(:c15) do
         c15 = create(:legacy_aoj_appeal, judge: other_judge, attorney: attorney)
-        c15.update!(bfmemid: excl_judge.sattyid)
+        VACOLS::Case.where(bfcorlid: c15.bfcorlid, bfkey: (c15.bfkey.to_i + 1).to_s).update(bfmemid: excl_judge.sattyid)
         c15
       end
       let!(:c16) do
         c16 = create(:legacy_aoj_appeal, judge: other_judge, attorney: attorney,
                                          affinity_start_date: 3.days.ago)
-        c16.update!(bfmemid: excl_judge.sattyid)
+        VACOLS::Case.where(bfcorlid: c16.bfcorlid, bfkey: (c16.bfkey.to_i + 1).to_s).update(bfmemid: excl_judge.sattyid)
         c16
       end
       let!(:c17) do
         c17 = create(:legacy_aoj_appeal, judge: other_judge, attorney: attorney, appeal_affinity: false)
-        c17.update!(bfmemid: excl_judge.sattyid)
+        VACOLS::Case.where(bfcorlid: c17.bfcorlid, bfkey: (c17.bfkey.to_i + 1).to_s).update(bfmemid: excl_judge.sattyid)
         c17
       end
       # hearing held with previous decision where judge is same (THIS IS TIED TO)
@@ -747,18 +747,18 @@ describe VACOLS::AojCaseDocket, :all_dbs do
       # hearing held with previous decision where judge is not the same
       let!(:c24) do
         c24 = create(:legacy_aoj_appeal, judge: other_judge, attorney: attorney)
-        c24.update!(bfmemid: inel_judge.sattyid)
+        VACOLS::Case.where(bfcorlid: c24.bfcorlid, bfkey: (c24.bfkey.to_i + 1).to_s).update(bfmemid: inel_judge.sattyid)
         c24
       end
       let!(:c25) do
         c25 = create(:legacy_aoj_appeal, judge: other_judge, attorney: attorney,
                                          affinity_start_date: 3.days.ago)
-        c25.update!(bfmemid: inel_judge.sattyid)
+        VACOLS::Case.where(bfcorlid: c25.bfcorlid, bfkey: (c25.bfkey.to_i + 1).to_s).update(bfmemid: inel_judge.sattyid)
         c25
       end
       let!(:c26) do
         c26 = create(:legacy_aoj_appeal, judge: other_judge, attorney: attorney, appeal_affinity: false)
-        c26.update!(bfmemid: inel_judge.sattyid)
+        VACOLS::Case.where(bfcorlid: c26.bfcorlid, bfkey: (c26.bfkey.to_i + 1).to_s).update(bfmemid: inel_judge.sattyid)
         c26
       end
       # hearing held with previous decision where judge is same (THIS IS TIED TO)
@@ -772,7 +772,7 @@ describe VACOLS::AojCaseDocket, :all_dbs do
       # hearing held but no previous deciding judge
       let!(:c30) do
         c30 = create(:legacy_aoj_appeal, judge: inel_judge, attorney: attorney)
-        c30.update!(bfmemid: nil)
+        VACOLS::Case.where(bfcorlid: c30.bfcorlid, bfkey: (c30.bfkey.to_i + 1).to_s).update(bfmemid: nil)
         c30
       end
 
@@ -782,19 +782,19 @@ describe VACOLS::AojCaseDocket, :all_dbs do
 
         # {FOR LEVER BEING A VALUE:}
         aoj_lever.update!(value: 14)
-        expect(VACOLS::CaseDocket.distribute_priority_appeals(judge, "any", 100, true).map { |c| c["bfkey"] }.sort)
+        expect(VACOLS::AojCaseDocket.distribute_priority_appeals(judge, "any", 100, true).map { |c| c["bfkey"] }.sort)
           .to match_array([c1, c4, c10, c11, c12, c13, c14, c15, c16, c17, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30]
           .map { |c| c["bfkey"].to_i.to_s }.sort)
         # {FOR LEVER BEING INFINITE:}
         aoj_lever.update!(value: "infinite")
         expect(
-          VACOLS::CaseDocket.distribute_priority_appeals(judge, "any", 100, true).map { |c| c["bfkey"] }.sort
+          VACOLS::AojCaseDocket.distribute_priority_appeals(judge, "any", 100, true).map { |c| c["bfkey"] }.sort
         )
           .to match_array([c11, c12, c13, c14, c15, c16, c17, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30]
             .map { |c| c["bfkey"].to_i.to_s }.sort)
         # {FOR LEVER BEING OMIT:}
         aoj_lever.update!(value: "omit")
-        expect(VACOLS::CaseDocket.distribute_priority_appeals(judge, "any", 100, true).map { |c| c["bfkey"] }.sort)
+        expect(VACOLS::AojCaseDocket.distribute_priority_appeals(judge, "any", 100, true).map { |c| c["bfkey"] }.sort)
           .to match_array([
             c1, c2, c3, c4, c5, c6, c10, c11, c12, c13, c14, c15, c16, c17, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30
           ]

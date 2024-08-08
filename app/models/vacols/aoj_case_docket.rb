@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class VACOLS::AojCaseDocket < VACOLS::CaseDocket
+class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/ClassLength
   # :nocov:
   self.table_name = "brieff"
 
@@ -402,7 +402,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket
     connection.exec_query(fmtd_query).to_a
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/AbcSize
 
   def self.distribute_nonpriority_appeals(judge, genpop, range, limit, bust_backlog, dry_run = false)
     fail(DocketNumberCentennialLoop, COPY::MAX_LEGACY_DOCKET_NUMBER_ERROR_MESSAGE) if Time.zone.now.year >= 2030
@@ -457,11 +457,11 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket
                                         judge.vacols_attorney_id,
                                         (genpop == "any" || genpop == "not_genpop") ? 1 : 0,
                                         (genpop == "any" || genpop == "only_genpop") ? 1 : 0,
+                                        judge.vacols_attorney_id,
                                         range,
-                                        range.nil? ? 1 : 0,
-                                        judge.vacols_attorney_id
+                                        range.nil? ? 1 : 0
                                       ])
-    end
+                 end
 
     distribute_appeals(fmtd_query, judge, limit, dry_run)
   end
@@ -490,8 +490,8 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket
 
     distribute_appeals(fmtd_query, judge, limit, dry_run)
   end
-  # :nocov:
 
+  # :nocov:
   def self.distribute_appeals(query, judge, limit, dry_run)
     aoj_affinity_lever_value = CaseDistributionLever.aoj_affinity_days
     excluded_judges_attorney_ids = excluded_judges_sattyids
@@ -533,9 +533,9 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket
     if case_affinity_days_lever_value_is_selected?(aoj_affinity_lever_value) ||
        aoj_affinity_lever_value == Constants.ACD_LEVERS.omit
       "((PREV_DECIDING_JUDGE = ? or PREV_DECIDING_JUDGE is null or PREV_DECIDING_JUDGE is not null)
-      and AOD = '0' and PREV_TYPE_ACTION = '7' )"
+      and AOD = '0' and PREV_TYPE_ACTION <> '7' )"
     elsif aoj_affinity_lever_value == Constants.ACD_LEVERS.infinite
-      "(AOD = '0' and PREV_TYPE_ACTION = '7')"
+      "(AOD = '0' and PREV_TYPE_ACTION <> '7')"
     else
       "VLJ = ?"
     end
@@ -564,7 +564,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket
 
       next if ineligible_or_excluded_deciding_judge?(appeal, excluded_judges_attorney_ids)
 
-      if case_affinity_days_lever_value_is_selected?(cavc_aod_affinity_lever_value)
+      if case_affinity_days_lever_value_is_selected?(lever_value)
         next if appeal["prev_deciding_judge"] == judge_sattyid
 
         reject_due_to_affinity?(appeal, lever_value)
@@ -586,5 +586,5 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket
         appeal["vlj"] == judge_sattyid) ||
       (appeal["vlj"].nil? && appeal["prev_deciding_judge"].nil?)
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength, Metrics/AbcSize
 end
