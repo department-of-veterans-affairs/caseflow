@@ -362,6 +362,9 @@ class LegacyHearing < CaseflowRecord
     end
   end
 
+  # The scheduled time for a legacy hearing after it have been retrieved from VACOLS and processed for time zone.
+  #
+  # @return [Time] a Time object in the calculated time zone and DST offset
   def scheduled_for
     perform_vacols_request unless @vacols_load_status == :success
 
