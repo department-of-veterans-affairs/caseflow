@@ -458,7 +458,7 @@ class RequestIssue < CaseflowRecord
   end
 
   def fetch_edited_by_user
-    if edited?
+    if edited? && any_updates?
       # Find the most recent update where the current issue ID is in the edited_issues list
       relevant_update = request_issues_updates
         .select { |update| update.edited_issues.any? { |issue| issue.id == id } }
