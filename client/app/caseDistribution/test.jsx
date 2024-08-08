@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 /* eslint-disable react/prop-types */
 
 import React from 'react';
@@ -321,6 +322,12 @@ class CaseDistributionTest extends React.PureComponent {
                                 <Button classNames={['usa-button-active']}>
                                   Download AMA Non-priority Distributable CSV
                                 </Button>
+                              </a>
+                            </li>
+                            <li>
+                              <a href="/case_distribution_levers_tests/appeals_tied_to_non_ssc_avlj?csv=1">
+                                <Button classNames={['usa-button-active']}>
+                                  Download RTD Appeals tied to Non-SSC AVLJs CSV</Button>
                               </a>
                             </li>
                             <li>

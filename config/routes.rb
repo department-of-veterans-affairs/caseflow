@@ -34,6 +34,7 @@ Rails.application.routes.draw do
       get 'appeals_distributed'
       get 'appeals_in_location_63_in_past_2_days'
       get 'ineligible_judge_list'
+      get 'appeals_tied_to_non_ssc_avlj'
       post 'run_demo_aod_hearing_seeds'
       post 'run_demo_non_aod_hearing_seeds'
       post 'run-demo-ama-docket-goals'
