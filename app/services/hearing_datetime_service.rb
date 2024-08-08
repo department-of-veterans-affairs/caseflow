@@ -8,6 +8,8 @@
 # facade hearing.time as set in the module {HearingTimeConcern}.
 
 class HearingDatetimeService
+  CENTRAL_OFFICE_TIMEZONE = "America/New_York"
+
   class << self
     # Combines a date and time string to create a Time object.
     #
@@ -43,5 +45,23 @@ class HearingDatetimeService
 
   def initialize(hearing:)
     @hearing = hearing
+  end
+
+  def local_time
+    @hearing.scheduled_for
+  end
+
+  def central_office_time
+    local_time.in_time_zone(CENTRAL_OFFICE_TIMEZONE)
+  end
+
+  def central_office_time_string
+    central_office_time.strftime("%Y-%m-%d %I:%M %p %z")
+  end
+
+  def scheduled_time_string
+    tz = ActiveSupport::TimeZone::MAPPING.key(@hearing.scheduled_in_timezone)
+
+    "#{local_time.strftime('%l:%M %p')} #{tz}".lstrip
   end
 end

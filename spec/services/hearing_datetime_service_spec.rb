@@ -103,8 +103,19 @@ RSpec.describe HearingDatetimeService do
   end
 
   context "instance methods" do
-    let(:hearing) { create(:hearing) }
-    let(:legacy_hearing) { create(:legacy_hearing) }
+    let(:hearing) do
+      create(
+        :hearing,
+        scheduled_in_timezone: "America/Los_Angeles"
+      )
+    end
+
+    let(:legacy_hearing) do
+      create(
+        :legacy_hearing,
+        scheduled_in_timezone: "America/Los_Angeles"
+      )
+    end
 
     describe "initialize" do
       it "exists" do
@@ -117,6 +128,75 @@ RSpec.describe HearingDatetimeService do
 
         expect(time_service_1.instance_variable_get(:@hearing)).to be_a(Hearing)
         expect(time_service_2.instance_variable_get(:@hearing)).to be_a(LegacyHearing)
+      end
+    end
+
+    context "hearing is AMA" do
+      describe "local_time" do
+        it "returns the scheduled_for value for a hearing" do
+          time_service = described_class.new(hearing: hearing)
+
+          expect(time_service.local_time).to eq(hearing.scheduled_for)
+          expect(time_service.local_time.zone).to eq(hearing.scheduled_for.zone)
+        end
+      end
+
+      describe "central_office_time" do
+        it "returns local_time in Eastern Time" do
+          time_service = described_class.new(hearing: hearing)
+
+          if time_service.central_office_time.dst?
+            expect(time_service.central_office_time.zone).to eq("EDT")
+          else
+            expect(time_service.central_office_time.zone).to eq("EST")
+          end
+        end
+      end
+
+      describe "central_office_time_string" do
+        it "formats central_office_time into a string" do
+          time_service = described_class.new(hearing: hearing)
+          expected_string = hearing
+                              .scheduled_for
+                              .in_time_zone("America/New_York")
+                              .strftime("%Y-%m-%d %I:%M %p %z")
+
+          expect(time_service.central_office_time_string).to eq(expected_string)
+        end
+      end
+
+      describe "scheduled_time_string" do
+        it "formats local_time into a string" do
+          time_service = described_class.new(hearing: hearing)
+          expected_string = "#{hearing.scheduled_for.strftime('%l:%M %p')} Pacific Time (US & Canada)".lstrip
+
+          expect(time_service.scheduled_time_string).to eq(expected_string)
+        end
+      end
+    end
+    context "hearing is Legacy" do
+      describe "local_time" do
+        xit "returns the scheduled_for value for a hearing" do
+          # skipping until LegacyHearing#scheduled_for is implemented
+        end
+      end
+
+      describe "central_office_time" do
+        xit "returns local_time in Eastern Time" do
+          # skipping until LegacyHearing#scheduled_for is implemented
+        end
+      end
+
+      describe "central_office_time_string" do
+        xit "formats central_office_time into a string" do
+          # skipping until LegacyHearing#scheduled_for is implemented
+        end
+      end
+
+      describe "scheduled_time_string" do
+        xit "formats local_time into a string" do
+          # skipping until LegacyHearing#scheduled_for is implemented
+        end
       end
     end
   end
