@@ -5,13 +5,19 @@ describe ETL::HearingSyncer, :etl, :all_dbs do
   let(:regional_office) { "RO89" }
   let!(:virtual_hearing) { create(:virtual_hearing, hearing: video_hearing) }
   let(:video_hearing) do
-    build(:hearing, :with_tasks, hearing_day: hearing_day, regional_office: regional_office)
+    build(
+      :hearing,
+      :with_tasks,
+      hearing_day: hearing_day,
+      regional_office: regional_office,
+      scheduled_in_timezone: "America/New_York"
+    )
   end
   let(:hearing_day) do
     create(:hearing_day, regional_office: regional_office, request_type: HearingDay::REQUEST_TYPES[:video])
   end
   let!(:regional_hearing) do
-    create(:hearing, :with_tasks, hearing_day: hearing_day)
+    create(:hearing, :with_tasks, hearing_day: hearing_day, scheduled_in_timezone: "America/New_York")
   end
 
   describe "#call" do

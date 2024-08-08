@@ -549,6 +549,10 @@ describe LegacyHearing, :all_dbs do
     let(:hearing) { create(:legacy_hearing) }
 
     context "scheduled_in_timezone is not nil" do
+      before do
+        hearing.update(scheduled_in_timezone: "America/New_York")
+      end
+
       it "returns true" do
         expect(hearing.use_hearing_datetime?).to eq(true)
       end
@@ -562,10 +566,6 @@ describe LegacyHearing, :all_dbs do
     end
 
     context "scheduled_in_timezone is nil" do
-      before do
-        hearing.update(scheduled_in_timezone: nil)
-      end
-
       it "returns false" do
         expect(hearing.use_hearing_datetime?).to eq(false)
       end
