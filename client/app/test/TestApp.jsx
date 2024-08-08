@@ -11,11 +11,16 @@ import ScrollToTop from '../components/ScrollToTop';
 import PageRoute from '../components/PageRoute';
 
 import TestUsers from './TestUsers';
+import TestData from './TestData';
 
 const TestApp = (props) => {
 
   const routedTestUsers = () => {
     return <TestUsers {...props} />;
+  };
+
+  const routedTestData = () => {
+    return <TestData {...props} />;
   };
 
   return <BrowserRouter basename="/test">
@@ -37,6 +42,12 @@ const TestApp = (props) => {
               path="/users"
               title="Test App"
               render={routedTestUsers}
+            />
+            <PageRoute
+              exact
+              path="/data"
+              title="Test App"
+              render={routedTestData}
             />
           </Switch>
         </div>
