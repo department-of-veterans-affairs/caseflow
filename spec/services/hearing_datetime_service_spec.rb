@@ -157,9 +157,9 @@ RSpec.describe HearingDatetimeService do
         it "formats central_office_time into a string" do
           time_service = described_class.new(hearing: hearing)
           expected_string = hearing
-                              .scheduled_for
-                              .in_time_zone("America/New_York")
-                              .strftime("%Y-%m-%d %I:%M %p %z")
+            .scheduled_for
+            .in_time_zone("America/New_York")
+            .strftime("%Y-%m-%d %I:%M %p %z")
 
           expect(time_service.central_office_time_string).to eq(expected_string)
         end
