@@ -42,7 +42,6 @@ describe LegacyHearing, :all_dbs do
 
   let(:scheduled_for) do
     now = Time.zone.now
-    yesterday = Time.zone.yesterday
 
     Time.zone.local(now.year, now.month, now.day, now.hour, now.min, now.sec)
   end
@@ -518,29 +517,30 @@ describe LegacyHearing, :all_dbs do
           scheduled_in_timezone: scheduled_in_timezone
         )
       end
-       # Oakland regional office
-       let(:regional_office) { "RO43" }
-       let(:scheduled_in_timezone) { "America/Los_Angeles" }
-       let(:hearing_day) do
-         create(
-           :hearing_day,
-           regional_office: "RO06", # New York regional office
-           request_type: HearingDay::REQUEST_TYPES[:video]
-         )
-       end
 
-       before { Timecop.freeze(Time.utc(2020, 6, 22)) }
+      # Oakland regional office
+      let(:regional_office) { "RO43" }
+      let(:scheduled_in_timezone) { "America/Los_Angeles" }
+      let(:hearing_day) do
+        create(
+          :hearing_day,
+          regional_office: "RO06", # New York regional office
+          request_type: HearingDay::REQUEST_TYPES[:video]
+        )
+      end
 
-       after { Timecop.return }
+      before { Timecop.freeze(Time.utc(2020, 6, 22)) }
 
-       it "time is expected value and is in the supplied scheduled_in_timezone" do
+      after { Timecop.return }
+
+      it "time is expected value and is in the supplied scheduled_in_timezone" do
         expected_time = scheduled_for.in_time_zone("America/Los_Angeles")
 
         expect(subject.zone).to eq("PDT")
         expect(subject.hour).to eq(expected_time.hour)
         expect(subject.min).to eq(expected_time.min)
         expect(subject.sec).to eq(expected_time.sec)
-       end
+      end
     end
   end
 
