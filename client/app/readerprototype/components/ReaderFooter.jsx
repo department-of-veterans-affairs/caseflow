@@ -15,12 +15,11 @@ const ReaderFooter = ({
   setCurrentPage,
   selectedDocIndex,
   showNextDocument,
-  showPreviousDocument
+  showPreviousDocument,
 }) => {
-
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
-      document.getElementById(`canvasContainer-${event.target.value}`).scrollIntoView({ behavior: 'smooth' });
+      document.getElementById(`canvasWrapper-${event.target.value}`).scrollIntoView({ behavior: 'smooth' });
       setCurrentPage(event.target.value);
     }
   };
@@ -33,8 +32,10 @@ const ReaderFooter = ({
             name="previous"
             classNames={['cf-pdf-button']}
             onClick={showPreviousDocument}
-            ariaLabel="previous PDF">
-            <PageArrowLeftIcon /><span className="left-button-label">Previous</span>
+            ariaLabel="previous PDF"
+          >
+            <PageArrowLeftIcon />
+            <span className="left-button-label">Previous</span>
           </Button>
         )}
       </div>
@@ -58,7 +59,8 @@ const ReaderFooter = ({
               </div>
               of {numPages}
             </span>
-          </span>|
+          </span>
+          |
         </span>
         <span className="doc-list-progress-indicator">
           Document {selectedDocIndex + 1} of {docCount}
@@ -71,8 +73,10 @@ const ReaderFooter = ({
             name="next"
             classNames={['cf-pdf-button cf-right-side']}
             onClick={showNextDocument}
-            ariaLabel="next PDF">
-            <span className="right-button-label">Next</span><PageArrowRightIcon />
+            ariaLabel="next PDF"
+          >
+            <span className="right-button-label">Next</span>
+            <PageArrowRightIcon />
           </Button>
         )}
       </div>
