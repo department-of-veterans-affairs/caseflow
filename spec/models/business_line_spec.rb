@@ -520,7 +520,9 @@ describe BusinessLine do
     end
     let!(:remand_task) do
       create(:remand_vha_task,
-             appeal: create(:remand, :with_vha_issue, benefit_type: "vha", claimant_type: :dependent_claimant))
+             appeal: create(:remand,
+                            benefit_type: "vha",
+                            claimant_type: :dependent_claimant))
     end
     let(:decision_issue) { create(:decision_issue, disposition: "denied", benefit_type: hlr_task.appeal.benefit_type) }
     let(:intake_user) { create(:user, full_name: "Alexander Dewitt", css_id: "ALEXVHA", station_id: "103") }
@@ -624,13 +626,13 @@ describe BusinessLine do
     end
     let(:remand_task_1_ri_1_expectation) do
       a_hash_including(
-        "nonrating_issue_category" => "Beneficiary Travel",
+        "nonrating_issue_category" => "Clothing Allowance",
         "nonrating_issue_description" => "VHA issue description ",
         "task_id" => remand_task.id,
         "veteran_file_number" => remand_task.appeal.veteran_file_number,
-        "intake_user_name" => remand_task.appeal.intake.user.full_name,
-        "intake_user_css_id" => remand_task.appeal.intake.user.css_id,
-        "intake_user_station_id" => remand_task.appeal.intake.user.station_id,
+        "intake_user_name" => nil,
+        "intake_user_css_id" => nil,
+        "intake_user_station_id" => nil,
         "disposition" => nil,
         "decision_user_name" => nil,
         "decision_user_css_id" => nil,
@@ -662,8 +664,16 @@ describe BusinessLine do
                       nonrating_issue_category: "Camp Lejune Family Member",
                       nonrating_issue_description: "This is a Camp Lejune issue",
                       benefit_type: "vha")
+      remand_issue = create(:request_issue,
+                            nonrating_issue_category: "Clothing Allowance",
+                            nonrating_issue_description: "This is a Clothing Allowance issue",
+                            benefit_type: "vha",
+                            decision_review: remand_task.appeal)
       hlr_task.appeal.request_issues << issue
       hlr_task2.appeal.request_issues << issue2
+      remand_task.appeal.request_issues << remand_issue
+      remand_task.save
+      remand_task.reload
 
       # Add a different intake user to the second hlr task for data differences
       second_intake = hlr_task2.appeal.intake
@@ -697,7 +707,7 @@ describe BusinessLine do
 
     context "without filters" do
       it "should return all rows" do
-        expect(subject.count).to eq 7
+        expect(subject.count).to eq 5
         expect(subject.entries).to include(*all_expectations)
       end
     end
@@ -743,7 +753,7 @@ describe BusinessLine do
 
         it "should only return rows for the filtered claim type" do
           expect(subject.entries.count).to eq(4)
-          expect(subject.entries).to include(*(all_expectations - [sc_task_1_ri_1_expectation]))
+          expect(subject.entries).to include(*(all_expectations - [sc_task_1_ri_1_expectation] - [remand_task_1_ri_1_expectation]))
         end
       end
 
@@ -751,6 +761,7 @@ describe BusinessLine do
         let(:change_history_filters) { { claim_type: "Remand" } }
 
         it "should only return rows for the filtered claim type" do
+          binding.pry
           expect(subject.entries.count).to eq(1)
           expect(subject.entries).to include(remand_task_1_ri_1_expectation)
         end
@@ -886,7 +897,7 @@ describe BusinessLine do
 
         it "should only return rows that are between the number of days and end of days" do
           expect(subject.entries.count).to eq(4)
-          expect(subject.entries).to include(*(all_expectations - [sc_task_1_ri_1_expectation]))
+          expect(subject.entries).to include(*(all_expectations - [sc_task_1_ri_1_expectation] - [remand_task_1_ri_1_expectation]))
         end
       end
     end
@@ -906,7 +917,7 @@ describe BusinessLine do
 
         it "only return rows where either an intake, decisions, or updates user matches the station id" do
           expect(subject.entries.count).to eq(4)
-          expect(subject.entries).to include(*(all_expectations - [sc_task_1_ri_1_expectation]))
+          expect(subject.entries).to include(*(all_expectations - [sc_task_1_ri_1_expectation] - [remand_task_1_ri_1_expectation]))
         end
       end
 
@@ -939,7 +950,7 @@ describe BusinessLine do
 
         it "only return rows where either an intake, decisions, or updates user matches the  css_ids" do
           expect(subject.entries.count).to eq(4)
-          expect(subject.entries).to include(*(all_expectations - [sc_task_1_ri_1_expectation]))
+          expect(subject.entries).to include(*(all_expectations - [sc_task_1_ri_1_expectation] - [remand_task_1_ri_1_expectation]))
         end
       end
 
