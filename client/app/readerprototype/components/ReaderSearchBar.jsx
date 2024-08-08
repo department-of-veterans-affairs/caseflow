@@ -1,20 +1,10 @@
-import { css } from 'glamor';
-import React, { useState, useEffect, useRef } from 'react';
+import Mark from 'mark.js';
+import React, { useEffect, useRef, useState } from 'react';
 import Button from '../../components/Button';
 import SearchBar from '../../components/SearchBar';
 import { LeftChevronIcon } from '../../components/icons/LeftChevronIcon';
 import { RightChevronIcon } from '../../components/icons/RightChevronIcon';
-import { LOGO_COLORS, COLORS } from '../../constants/AppConstants';
-import Mark from 'mark.js';
-
-const markStyle = css({
-  '& mark': {
-    background: COLORS.GOLD_LIGHTER,
-    '.highlighted': {
-      background: COLORS.GREEN_LIGHTER,
-    },
-  },
-});
+import { LOGO_COLORS } from '../../constants/AppConstants';
 
 const ReaderSearchBar = () => {
   const [foundCount, setFoundCount] = useState(0);
@@ -25,9 +15,8 @@ const ReaderSearchBar = () => {
   const markInstance = new Mark(pdfContainer);
 
   if (pdfContainer) {
-    pdfContainer.className = markStyle;
+    pdfContainer.className = 'prototype-mark';
   }
-  const classes = `cf-search-bar ${css({ hidden: false })}`;
 
   const highlightMarkAtIndex = (selectedIndex = 0) => {
     const marks = pdfContainer.getElementsByTagName('mark');
@@ -126,7 +115,7 @@ const ReaderSearchBar = () => {
   const internalText = `${index} of ${foundCount > 9999 ? 'many' : foundCount}`;
 
   return (
-    <div className={classes}>
+    <div className="cf-search-bar" style={{ hidden: false }}>
       <SearchBar
         ref={searchBarRef}
         isSearchAhead

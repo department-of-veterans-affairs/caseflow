@@ -1,4 +1,3 @@
-import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,7 +10,7 @@ import {
   stopPlacingAnnotation,
 } from '../../../reader/AnnotationLayer/AnnotationActions';
 import { handleSelectCommentIcon } from '../../../reader/PdfViewer/PdfViewerActions';
-import { getPageCoordinatesOfMouseEvent, getPageCoordinatesOfMouseEventPrototype } from '../../../reader/utils';
+import { getPageCoordinatesOfMouseEventPrototype } from '../../../reader/utils';
 import { annotationPlacement, annotationsForDocumentId, annotationsForDocumentIdAndPageId } from '../../selectors';
 import Icon from './Icon';
 
@@ -28,12 +27,12 @@ const Layer = (props) => {
   const layerRef = useRef(null);
   const dispatch = useDispatch();
 
-  const commentLayerStyle = css({
+  const commentLayerStyle = {
     width: '100%',
     height: '100%',
     zIndex: 10,
     position: 'relative',
-  });
+  };
 
   useEffect(() => {
     const keyHandler = (event) => {
@@ -164,7 +163,7 @@ const Layer = (props) => {
         onClick={onPageClick}
         onMouseMove={mouseListener}
         ref={layerRef}
-        className={commentLayerStyle}
+        style={commentLayerStyle}
       >
         {children}
         <div
