@@ -208,8 +208,7 @@ class Hearing < CaseflowRecord
   end
 
   # Checks the scheduled_datetime value and returns
-  # true if scheduled_datetime is not nil,
-  # else false
+  # @return [Boolean] true if scheduled_datetime is not nil, else false
   def use_hearing_datetime?
     scheduled_datetime.present?
   end
