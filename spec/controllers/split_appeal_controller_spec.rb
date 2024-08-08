@@ -257,24 +257,24 @@ RSpec.describe SplitAppealController, type: :controller do
         FeatureToggle.enable!(:specialty_case_team_distribution)
       end
       context "when the SCT issue is left on the original appeal stream" do
-        let(:request_issue) {
+        let(:request_issue) do
           create(
             :request_issue,
             benefit_type: "compensation",
-            # decision_review: appeal,
             decision_date: 1.month.ago
           )
-        }
-        let(:request_issue2) {
+        end
+
+        let(:request_issue2) do
           create(
             :request_issue,
             benefit_type: "vha",
             nonrating_issue_category: "Caregiver | Other",
             nonrating_issue_description: "VHA - Caregiver ",
-            # decision_review: appeal,
             decision_date: 1.month.ago
           )
-        }
+        end
+
         let(:appeal) { create(:appeal, :ready_for_distribution, request_issues: [request_issue, request_issue2]) }
 
         it "creates a new split appeal that is sent back to distribution" do
