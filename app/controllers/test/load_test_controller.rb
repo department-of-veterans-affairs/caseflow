@@ -99,7 +99,7 @@ class Test::LoadTestController < ApplicationController
     user.selected_regional_office = params[:user][:regional_office]
     user.roles = params[:user][:roles] if params[:user][:roles] != user.roles
     user.save
-    byebug
+
     params[:user][:functions].select { |_k, v| v == true }.each do |k, _v|
       Functions.grant!(k, users: ["LOAD_TESTING_USER"])
     end
