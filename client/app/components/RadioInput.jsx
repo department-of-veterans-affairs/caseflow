@@ -9,7 +9,7 @@ const RadioInput = ({ handleChange, name, idPart, option, controlled, value, inp
     type={ACD_LEVERS.data_types.radio}
     id={`${idPart}_${option.value}`}
     value={option.value}
-    checked={controlled ? value === option.value : undefined}
+    checked={controlled ? value === option.value : false}
     disabled={Boolean(option.disabled)}
     ref={inputRef}
     {...inputProps}
