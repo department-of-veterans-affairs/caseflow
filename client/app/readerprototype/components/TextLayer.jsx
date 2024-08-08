@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'glamor';
 import * as PDFJS from 'pdfjs-dist';
 
 const TextLayer = (props) => {
@@ -21,7 +20,7 @@ const TextLayer = (props) => {
   }
   if (rotation.includes('270')) positionY = viewport.width;
 
-  const textLayerStyle = css({
+  const textLayerStyle = {
     width: `${fullSizeViewport.width}px`,
     height: `${fullSizeViewport.height}px`,
     transformOrigin: 'left top',
@@ -31,7 +30,7 @@ const TextLayer = (props) => {
     left: `${positionX}px`,
     rotate: rotation,
     transform: `scale(${zoomLevel / 100})`,
-  });
+  };
 
   useEffect(() => {
     const getPageText = async () => {
@@ -51,7 +50,7 @@ const TextLayer = (props) => {
     }
   }, [textLayerRef.current]);
 
-  return <div ref={textLayerRef} className={`cf-pdf-pdfjs-textLayer ${textLayerStyle}`} />;
+  return <div ref={textLayerRef} className="cf-pdf-pdfjs-textLayer" style={textLayerStyle} />;
 };
 
 TextLayer.propTypes = {
