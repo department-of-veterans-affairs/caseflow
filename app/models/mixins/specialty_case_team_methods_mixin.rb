@@ -5,8 +5,9 @@ module SpecialtyCaseTeamMethodsMixin
     request_issues.active.any?(&:sct_benefit_type?)
   end
 
+  # :reek:FeatureEnvy
   def distributed?
-    tasks.any? { |task| task.is_a?(DistributionTask) }
+    tasks.any? { |task| task.is_a?(DistributionTask) && task.completed? }
   end
 
   def specialty_case_team_assign_task?

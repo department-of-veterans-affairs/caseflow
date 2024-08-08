@@ -611,6 +611,11 @@ feature "Appeal Edit issues", :all_dbs do
             end
 
             step "The appeal should be split succesfully and user should be redirected back to the case details page" do
+              evidence_submission_task = appeal2.tasks.find { |task| task.type == EvidenceSubmissionWindowTask.name }
+              distribution_task = appeal2.tasks.find { |task| task.type == DistributionTask.name }
+              # complete the distribution task so that a SpecialtyCaseTeamAssignTask can be created
+              evidence_submission_task.completed!
+              distribution_task.completed!
               click_button("Split appeal")
               expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}", ignore_query: true)
 
@@ -1094,11 +1099,8 @@ feature "Appeal Edit issues", :all_dbs do
         expect(page).to have_content(COPY::MOVE_TO_DISTRIBUTION_MODAL_BODY)
         expect(page).to have_button("Move")
         safe_click ".confirm"
-        expect(page).to have_content("You have successfully updated issues on this appeal")
-        expect(page).to have_content(
-          "The appeal for #{appeal3.claimant.name} " \
-          "(ID: #{appeal3.veteran.file_number}) has been moved to the regular distribution pool."
-        )
+        expect(page).to have_content("Edit Completed")
+        expect(page).to have_content("You have successfully added 1 issue and removed 1 issue")
         expect(page).to have_current_path("/queue/appeals/#{appeal3.uuid}")
 
         # Verify task tree status
