@@ -94,17 +94,17 @@ class Test::LoadTestController < ApplicationController
       u.require([:station_id])
       u.require([:regional_office])
     end
-    user = user.presence || User.find_or_initialize_by(css_id: "LOAD_TESTING_USER")
+    user = user.presence || User.find_or_initialize_by(css_id: LOAD_TESTING_USER)
     user.station_id = params[:user][:station_id]
     user.selected_regional_office = params[:user][:regional_office]
     user.roles = params[:user][:roles] if params[:user][:roles] != user.roles
     user.save
 
     params[:user][:functions].select { |_k, v| v == true }.each do |k, _v|
-      Functions.grant!(k, users: ["LOAD_TESTING_USER"])
+      Functions.grant!(k, users: [LOAD_TESTING_USER])
     end
     params[:user][:functions].select { |_k, v| v == false }.each do |k, _v|
-      Functions.deny!(k, users: ["LOAD_TESTING_USER"])
+      Functions.deny!(k, users: [LOAD_TESTING_USER])
     end
     params[:user][:organizations].select { |organization| organization[:admin] == true }.each do |org|
       organization = Organization.find_by_name_or_url(org[:url])
@@ -116,10 +116,10 @@ class Test::LoadTestController < ApplicationController
       organization.add_user(user) unless organization.users.include?(user)
     end
     params[:user][:feature_toggles].select { |_k, v| v == true }.each do |k, _v|
-      FeatureToggle.enable!(k, users: ["LOAD_TESTING_USER"]) if !FeatureToggle.enabled?(k, user: user)
+      FeatureToggle.enable!(k, users: [LOAD_TESTING_USER]) if !FeatureToggle.enabled?(k, user: user)
     end
     params[:user][:feature_toggles].select { |_k, v| v == false }.each do |k, _v|
-      FeatureToggle.disable!(k, users: ["LOAD_TESTING_USER"])
+      FeatureToggle.disable!(k, users: [LOAD_TESTING_USER])
     end
     session["user"] = user.to_session_hash
     session[:regional_office] = user.selected_regional_office
