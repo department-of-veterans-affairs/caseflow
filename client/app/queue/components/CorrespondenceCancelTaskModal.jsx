@@ -14,6 +14,7 @@ import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import QueueFlowModal from './QueueFlowModal';
 import ApiUtil from '../../util/ApiUtil';
 import Button from '../../components/Button';
+import { setTaskNotRelatedToAppealBanner } from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
 
 /* eslint-disable camelcase */
 const CorrespondenceCancelTaskModal = (props) => {
@@ -76,6 +77,20 @@ const CorrespondenceCancelTaskModal = (props) => {
       }
     };
 
+    const successBanner = {
+      title: 'success Test',
+      message: 'success Test',
+      type: 'success'
+
+    };
+    const failBanner = {
+
+      title: 'warning Test',
+      message: 'warning Test',
+      type: 'warning'
+
+    };
+
     // eslint-disable-next-line no-debugger
     // debugger;
     console.log(payload);
@@ -92,10 +107,12 @@ const CorrespondenceCancelTaskModal = (props) => {
     return ApiUtil.patch(`/queue/correspondence/tasks/${props.task_id}/cancel`, payload).
       then((r) => {
 
+        props.setTaskNotRelatedToAppealBanner(successBanner);
         console.log(r);
 
       }).
       catch((error) => {
+        props.setTaskNotRelatedToAppealBanner(failBanner);
         console.error(error);
       });
   };
@@ -165,10 +182,12 @@ CorrespondenceCancelTaskModal.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   task: taskById(state, { taskId: ownProps.taskId }),
+  taskNotRelatedToAppealBanner: state.correspondenceDetails.bannerAlert
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  requestPatch
+  requestPatch,
+  setTaskNotRelatedToAppealBanner
 }, dispatch);
 
 export default (withRouter(

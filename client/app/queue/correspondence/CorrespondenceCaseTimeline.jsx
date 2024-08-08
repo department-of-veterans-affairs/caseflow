@@ -1,7 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import CorrespondenceTaskRows from './CorrespondenceTaskRows';
+import Alert from '../../components/Alert';
+import { setTaskNotRelatedToAppealBanner } from './correspondenceDetailsReducer/correspondenceDetailsActions';
 const CorrespondenceCaseTimeline = (props) => {
+
+  const {taskNotRelatedToAppealBanner} = props
 
   const getAvailableActions = (task) => {
     if (props.organizations.includes(task.assigned_to) || props.userCssId === task.assigned_to) {
@@ -27,6 +33,10 @@ const CorrespondenceCaseTimeline = (props) => {
 
   return (
     <React.Fragment>
+      { (Object.keys(taskNotRelatedToAppealBanner).length > 0) && (<Alert
+ type={taskNotRelatedToAppealBanner.type}>
+{taskNotRelatedToAppealBanner.message}
+      </Alert>)}
       <table id="case-timeline-table" summary="layout table">
         <tbody>
           <CorrespondenceTaskRows
@@ -48,4 +58,18 @@ CorrespondenceCaseTimeline.propTypes = {
   userCssId: PropTypes.string
 };
 
-export default CorrespondenceCaseTimeline;
+const mapStateToProps = (state) => ({
+  correspondences: state.intakeCorrespondence.correspondences,
+  taskNotRelatedToAppealBanner: state.correspondenceDetails.bannerAlert
+});
+
+const mapDispatchToProps = (dispatch) => (
+  bindActionCreators({
+    setTaskNotRelatedToAppealBanner
+  }, dispatch)
+);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(CorrespondenceCaseTimeline);
