@@ -1,4 +1,3 @@
-import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import Layer from './Comments/Layer';

@@ -619,7 +619,8 @@ input[type='search'].cf-search-input-with-close {
   align-items: center;
 
   @media screen and (max-width: $site-max-width) {
-    .left-button-label, .right-button-label {
+    .left-button-label,
+    .right-button-label {
       display: none;
     }
   }
@@ -650,4 +651,12 @@ input[type='search'].cf-search-input-with-close {
   background-color: white;
   display: inline-block;
   position: relative;
+}
+.prototype-mark {
+  & mark {
+    background-color: #fad980;
+    &.highlighted {
+      background-color: #94bfa2;
+    }
+  }
 }
