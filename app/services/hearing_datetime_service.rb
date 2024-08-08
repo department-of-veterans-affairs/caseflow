@@ -47,18 +47,34 @@ class HearingDatetimeService
     @hearing = hearing
   end
 
+  # The time a hearing is scheduled to take place in the timezone set by
+  # hearing.scheduled_in_timezone. In this class it simply serves as an alias to
+  # hearing.scheduled_for, but this is necessary in that it allows us to mimic
+  # #local_time in the analogous facade, {HearingTimeService}.
+  #
+  # @return [Time]
   def local_time
     @hearing.scheduled_for
   end
 
+  # The time a hearing is scheduled to take place in Eastern Time.
+  #
+  # @return [Time]
   def central_office_time
     local_time.in_time_zone(CENTRAL_OFFICE_TIMEZONE)
   end
 
+  # A formatted string version of the central_office_time.
+  #
+  # @return [String]
   def central_office_time_string
     central_office_time.strftime("%Y-%m-%d %I:%M %p %z")
   end
 
+  # A formatted string version of local_time that has the timezone formatted
+  # in a metazone name e.g. "Eastern Time (US & Canada)".
+  #
+  # @return [String]
   def scheduled_time_string
     tz = ActiveSupport::TimeZone::MAPPING.key(@hearing.scheduled_in_timezone)
 
