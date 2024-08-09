@@ -16,12 +16,7 @@ module AppealDecisionMailed
     super_return_value = super
     if processed?
       appeal.appeal_state.decision_mailed_appeal_state_update_action!
-      case appeal_type
-      when "Appeal"
-        template = contested ? CONTESTED_CLAIM : NON_CONTESTED_CLAIM
-      when "LegacyAppeal"
-        template = appeal.contested_claim ? CONTESTED_CLAIM : NON_CONTESTED_CLAIM
-      end
+      template = contested ? CONTESTED_CLAIM : NON_CONTESTED_CLAIM
       AppellantNotification.notify_appellant(appeal, template)
     end
     super_return_value

@@ -63,7 +63,7 @@ class DecisionDocument < CaseflowRecord
     if not_processed_or_decision_date_not_in_the_future?
       # Below we're grabbing the boolean value at this point in time.
       # This will act as a point of truth that wont be affected by the
-      # async behavior of the outcode function due to triggerign jobs.
+      # async behavior of the outcode function due to triggering jobs.
       contested = appeal.contested_claim?
       ProcessDecisionDocumentJob.perform_later(id, contested, mail_package)
     end
