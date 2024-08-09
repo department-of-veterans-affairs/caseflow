@@ -18,13 +18,11 @@ class OrganizationCorrespondenceActionRequiredTasksTab < CorrespondenceQueueTab
   end
 
   def tasks
-    tasks = CorrespondenceTask.includes(*task_includes).package_action_tasks
+    tasks = CorrespondenceTask.includes(*task_includes).action_required_tasks
 
-    if RequestStore[:current_user].inbound_ops_team_supervisor?
-      tasks.where(assigned_to: assignee).active
-    else
-      tasks.where.not(type: RemovePackageTask.name).where(assigned_to: assignee).active
-    end
+    return tasks if RequestStore[:current_user].inbound_ops_team_supervisor?
+
+    tasks.where.not(type: RemovePackageTask.name)
   end
 
   # :reek:UtilityFunction

@@ -29,8 +29,11 @@ FactoryBot.define do
           :correspondence_intake_task,
           appeal: correspondence,
           assigned_to: evaluator.assigned_to,
-          appeal_type: Correspondence.name
+          appeal_type: Correspondence.name,
+          parent: correspondence.root_task
         )
+        # close out the review package task
+        correspondence.review_package_task.update!(status: Constants.TASK_STATUSES.completed)
       end
     end
   end

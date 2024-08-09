@@ -18,19 +18,7 @@ class OrganizationCorrespondenceCompletedTasksTab < CorrespondenceQueueTab
   end
 
   def tasks
-    completed_root_task_ids = CorrespondenceRootTask.select(:id)
-      .where(status: Constants.TASK_STATUSES.completed).pluck(:id)
-
-    ids_with_completed_child_tasks = CorrespondenceTask.select(:parent_id)
-      .where(status: Constants.TASK_STATUSES.completed)
-      .where.not(type: CorrespondenceRootTask.name).distinct.pluck(:parent_id)
-
-    ids_to_exclude = CorrespondenceTask.select(:parent_id)
-      .where(parent_id: ids_with_completed_child_tasks)
-      .open.distinct.pluck(:parent_id)
-
-    CorrespondenceRootTask.includes(*task_includes)
-      .where(id: completed_root_task_ids + ids_with_completed_child_tasks - ids_to_exclude)
+    CorrespondenceTask.includes(*task_includes).completed_root_tasks
   end
 
   # :reek:UtilityFunction

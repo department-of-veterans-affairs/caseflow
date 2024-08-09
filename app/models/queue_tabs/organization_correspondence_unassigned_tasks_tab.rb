@@ -18,10 +18,7 @@ class OrganizationCorrespondenceUnassignedTasksTab < CorrespondenceQueueTab
   end
 
   def tasks
-    CorrespondenceTask.includes(*task_includes).where(
-      assigned_to: assignee,
-      status: Constants.TASK_STATUSES.unassigned
-    )
+    CorrespondenceTask.includes(*task_includes).unassigned_tasks
   end
 
   # :reek:UtilityFunction

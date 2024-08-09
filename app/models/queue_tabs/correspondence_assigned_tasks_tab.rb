@@ -18,7 +18,7 @@ class CorrespondenceAssignedTasksTab < CorrespondenceQueueTab
   end
 
   def tasks
-    ReviewPackageTask.includes(*task_includes).where(assigned_to: assignee, status: Constants.TASK_STATUSES.assigned)
+    CorrespondenceTask.includes(*task_includes).user_assigned_tasks(assignee)
   end
 
   # :reek:UtilityFunction
