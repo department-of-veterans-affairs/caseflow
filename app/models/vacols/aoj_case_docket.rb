@@ -280,7 +280,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
     judge_sattyid = judge.vacols_attorney_id
     excluded_judges_attorney_ids = excluded_judges_sattyids
 
-    nonpriority_cdl_aoj_query = generate_nonpriority_case_distribution_lever_aoj_aod_query(aoj_affinity_lever_value)
+    nonpriority_cdl_aoj_query = generate_nonpriority_case_distribution_lever_aoj_query(aoj_affinity_lever_value)
     conn = connection
 
     query = <<-SQL
