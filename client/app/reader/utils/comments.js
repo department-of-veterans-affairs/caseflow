@@ -2,7 +2,7 @@
 import { sortBy } from 'lodash';
 
 // Local Dependencies
-import { escapeRegExp } from 'utils/reader/format';
+import { escapeRegExp } from './format';
 
 /**
  * Helper Method to Calculate the Comment Rows

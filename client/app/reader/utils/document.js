@@ -2,16 +2,18 @@
 import { orderBy, isEmpty, range } from 'lodash';
 
 // Local Dependencies
-import { loadDocuments } from 'store/reader/documentList';
+import { loadDocuments } from '../store/documentList';
+
+
 import {
   DOCUMENTS_OR_COMMENTS_ENUM,
   CATEGORIES,
   PDF_PAGE_WIDTH,
   PDF_PAGE_HEIGHT,
   PAGE_MARGIN
-} from 'store/constants/reader';
-import { formatFilterCriteria, searchString } from 'utils/reader';
-import { fetchAppealDetails } from 'store/reader/appeal';
+} from '../store/constants/reader';
+import { formatFilterCriteria, searchString } from './index';
+import { fetchAppealDetails } from '../store/appeal';
 
 /*
  * Helper Method to load documents into the store only when necessary

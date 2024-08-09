@@ -27,7 +27,7 @@ import {
   MOVE_ANNOTATION_ICON_DIRECTION_ARRAY,
   MOVE_ANNOTATION_ICON_DIRECTIONS,
   ANNOTATION_ICON_SIDE_LENGTH,
-} from 'store/constants/reader';
+} from '../store/constants/reader';
 
 /**
  * Helper Method to calculate the page coordinates

@@ -3,8 +3,8 @@ import { memoize } from 'lodash';
 
 // Local Dependencies
 import { getQueryParams } from 'app/util/QueryParamsUtil';
-import { CATEGORIES } from 'store/constants/reader';
-import { setCategoryFilter } from 'store/reader/documentList';
+import { CATEGORIES } from '../store/constants/reader';
+import { setCategoryFilter } from '../store/documentList';
 
 /**
  * Method to change to Single Document Mode

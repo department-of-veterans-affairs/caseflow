@@ -5,7 +5,7 @@ import { sortBy, compact } from 'lodash';
 
 // Local Dependencies
 import { formatNameShort } from 'app/util/FormatUtil';
-import { documentCategories, CACHE_TIMEOUT_HOURS, CATEGORIES } from 'store/constants/reader';
+import { documentCategories, CACHE_TIMEOUT_HOURS, CATEGORIES } from '../store/constants/reader';
 
 /**
  * Helper Method to add `category_` to the name of the category

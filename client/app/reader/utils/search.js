@@ -3,9 +3,9 @@ import { compact } from 'lodash';
 
 // Local Dependencies
 import ApiUtil from 'app/util/ApiUtil';
-import { documentCategories, ENDPOINT_NAMES } from 'store/constants/reader';
+import { documentCategories, ENDPOINT_NAMES } from '../store/constants/reader';
 import { doDatesMatch } from 'app/util/DateUtil';
-import { formatCategoryName } from 'utils/reader/format';
+import { formatCategoryName } from './format';
 
 /**
  * Helper Method to record the search value for analytics purposes. Don't worry if it fails
