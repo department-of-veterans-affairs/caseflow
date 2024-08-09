@@ -674,7 +674,7 @@ feature "Appeal Intake", :all_dbs do
     end
   end
 
-  it "Shows a review error when something goes wrong" do
+  it "Shows an error while adding issues when something goes wrong" do
     start_appeal(veteran_with_ratings)
     visit "/intake/add_issues"
 

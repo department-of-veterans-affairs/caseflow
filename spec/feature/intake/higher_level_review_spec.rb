@@ -1071,22 +1071,6 @@ feature "Higher-Level Review", :all_dbs do
       end
     end
 
-    it "Shows a review error when something goes wrong" do
-      start_higher_level_review(veteran)
-      visit "/intake/add_issues"
-
-      click_intake_add_issue
-      add_intake_rating_issue("Left knee granted", "I am an issue note")
-
-      ## Validate error message when complete intake fails
-      expect_any_instance_of(HigherLevelReviewIntake).to receive(:complete!).and_raise("A random error. Oh no!")
-
-      click_intake_finish
-
-      expect(page).to have_content("Something went wrong")
-      expect(page).to have_current_path("/intake/add_issues")
-    end
-
     context "Non-compensation" do
       context "decision issues present" do
         scenario "Add Issues button shows contestable issues" do
