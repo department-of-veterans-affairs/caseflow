@@ -1057,6 +1057,8 @@ describe VACOLS::CaseDocket, :all_dbs do
           create_case_hearing(c, inel_judge_caseflow)
           c
         end
+        # original hearing held by inel_judge, decided by inel_judge, no new hearing
+        let!(:case_12) { create(:legacy_cavc_appeal, judge: inel_judge, attorney: attorney, tied_to: true) }
 
         it "considers cases tied to a judge if they held a hearing after the previous case was decided" do
           IneligibleJudgesJob.perform_now
@@ -1067,17 +1069,17 @@ describe VACOLS::CaseDocket, :all_dbs do
 
           expect(new_hearing_judge_cases.map { |c| c["bfkey"] }.sort)
             .to match_array([
-              case_1, case_2, case_3, case_4, case_5, case_9, case_10, case_11
+              case_1, case_2, case_3, case_4, case_5, case_9, case_10, case_11, case_12
             ].map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
 
           expect(tied_judge_cases.map { |c| c["bfkey"] }.sort)
             .to match_array([
-              case_6, case_9, case_10, case_11
+              case_6, case_9, case_10, case_11, case_12
             ].map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
 
           expect(other_judge_cases.map { |c| c["bfkey"] }.sort)
             .to match_array([
-              case_7, case_8, case_9, case_10, case_11
+              case_7, case_8, case_9, case_10, case_11, case_12
             ].map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
         end
       end

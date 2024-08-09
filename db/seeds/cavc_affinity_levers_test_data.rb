@@ -496,14 +496,14 @@ module Seeds
       create(:case_hearing, :disposition_held, folder_nr: (c5.bfkey.to_i + 1).to_s, hearing_date: Time.zone.today, user: judge_bvabdaniel)
 
       # original hearing held by SPORER, decided by SPORER, no new hearing => tied to SPORER
-      c6 = create(:legacy_cavc_appeal, bfd19: 5.years.ago, bfcorlid: "#{create_veteran_for_bvagsporer_judge("TiedToSporer").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvagsporer.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), tied_to: true)
+      create(:legacy_cavc_appeal, bfd19: 5.years.ago, bfcorlid: "#{create_veteran_for_bvagsporer_judge("TiedToSporer").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvagsporer.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), tied_to: true)
 
       # original hearing held by SPORER, decided by BVADCREMIN, no new hearing => affinity to BVADCREMIN
       c7 = create(:legacy_cavc_appeal, bfd19: 5.years.ago, bfcorlid: "#{create_veteran_for_bvadcremin_judge("AffinityToCremin").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvagsporer.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), tied_to: true, affinity_start_date: 3.days.ago)
       c7.update!(bfmemid: judge_bvadcremin.vacols_attorney_id)
 
-      # no original heairng, decided by BVADCREMIN, no new hearing => affintiy to BVADCREMIN
-      c8 = create(:legacy_cavc_appeal, bfd19: 5.years.ago, bfcorlid: "#{create_veteran_for_bvadcremin_judge("AffinityToCremin").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvadcremin.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), tied_to: false, affinity_start_date: 3.days.ago)
+      # no original hearing, decided by BVADCREMIN, no new hearing => affintiy to BVADCREMIN
+      create(:legacy_cavc_appeal, bfd19: 5.years.ago, bfcorlid: "#{create_veteran_for_bvadcremin_judge("AffinityToCremin").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvadcremin.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), tied_to: false, affinity_start_date: 3.days.ago)
 
       # original hearing held by SPORER, no original deciding judge, no new hearing => genpop
       c9 = create(:legacy_cavc_appeal, bfd19: 5.years.ago, bfcorlid: "#{create_veteran_for_genpop("Genpop").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvagsporer.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), tied_to: true)
@@ -516,6 +516,9 @@ module Seeds
       # original hearing held by SPORER, decided by SPORER, new hearing held by inactive_judge
       c11 = create(:legacy_cavc_appeal, bfd19: 5.years.ago, bfcorlid: "#{create_veteran_for_inactivejudge_judge("Genpop").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvagsporer.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), tied_to: true)
       create(:case_hearing, :disposition_held, folder_nr: (c11.bfkey.to_i + 1).to_s, hearing_date: Time.zone.today, user: judge_inactivejudge)
+
+      # original hearing held by inactive_judge, decided by inactive_judge, no new hearing => genpop
+      create(:legacy_cavc_appeal, bfd19: 5.years.ago, bfcorlid: "#{create_veteran_for_inactivejudge_judge("Genpop").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: inactive_judge.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), tied_to: true)
     end
 
     def create_legacy_appeals_without_hearing_held
