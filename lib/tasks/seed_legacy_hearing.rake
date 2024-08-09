@@ -79,7 +79,7 @@ namespace :db do
           appeal.issues = (issues[appeal.vacols_id] || []).map { |issue| Issue.load_from_vacols(issue.attributes) }
         end.save!
         legacy_appeal = LegacyAppeal.last
-        create_open_schedule_hearing_task_for_legacy(legacy_appeal, user)
+        create_open_schedule_hearing_task_for_legacy(legacy_appeal, RequestStore[:current_user])
         legacy_appeal
       end
     end
