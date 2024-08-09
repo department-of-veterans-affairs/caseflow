@@ -634,15 +634,6 @@ feature "Higher-Level Review", :all_dbs do
       end
     end
 
-    scenario "Add Issues modal uses promulgation date" do
-      start_higher_level_review(veteran)
-      visit "/intake/add_issues"
-      click_intake_add_issue
-      rating_date = promulgation_date.mdY
-
-      expect(page).to have_content("Past decisions from #{rating_date}")
-    end
-
     scenario "compensation claim" do
       allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
         first_name: "BOB",
@@ -661,6 +652,9 @@ feature "Higher-Level Review", :all_dbs do
 
       # clicking the add issues button should bring up the modal
       click_intake_add_issue
+
+      # ensure Add Issue Modal uses promulgation date
+      expect(page).to have_content("Past decisions from #{promulgation_date.mdY}")
 
       expect(page).to have_content("Add issue 1")
       expect(page).to have_content("Does issue 1 match any of these issues")
