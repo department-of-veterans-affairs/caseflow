@@ -258,12 +258,6 @@ class BusinessLine < Organization
             AND tasks.assigned_to_id = '#{parent.id.to_i}'
           GROUP BY
               versions.item_id, versions.item_type
-        ),
-        remand_task_ids AS (
-          SELECT tasks.id AS task_id
-          FROM tasks
-          INNER JOIN supplemental_claims ON tasks.appeal_type = 'SupplementalClaim' AND tasks.appeal_id = supplemental_claims.id
-          WHERE supplemental_claims.type = 'Remand'
         )
         SELECT tasks.id AS task_id, tasks.status AS task_status, request_issues.id AS request_issue_id,
           request_issues_updates.created_at AS request_issue_update_time, decision_issues.description AS decision_description,
@@ -316,6 +310,7 @@ class BusinessLine < Organization
         AND tasks.assigned_to_type = 'Organization'
         AND tasks.assigned_to_id = '#{parent.id.to_i}'
         #{sanitized_filters}
+        #{claim_type_filter}
         UNION ALL
         SELECT tasks.id AS task_id, tasks.status AS task_status, request_issues.id AS request_issue_id,
           request_issues_updates.created_at AS request_issue_update_time, decision_issues.description AS decision_description,
@@ -368,6 +363,7 @@ class BusinessLine < Organization
         AND tasks.assigned_to_type = 'Organization'
         AND tasks.assigned_to_id = '#{parent.id.to_i}'
         #{sanitized_filters}
+        #{sc_type_filter}
       SQL
 
       ActiveRecord::Base.transaction do
@@ -386,7 +382,7 @@ class BusinessLine < Organization
       [
         # Task status and claim type filtering always happens regardless of params
         task_status_filter,
-        claim_type_filter,
+        # claim_type_filter,
         # All the other filters are optional
         task_id_filter,
         dispositions_filter,
@@ -407,13 +403,28 @@ class BusinessLine < Organization
 
     def claim_type_filter
       if query_params[:claim_type].present?
-        if query_params[:claim_type] == Remand.name
-          " AND tasks.id IN (SELECT task_id FROM remand_task_ids) "
+        if query_params[:claim_type].include?(HigherLevelReview.name)
+          # " AND tasks.appeal_type = 'HigherLevelReview' "
+          " AND #{where_clause_from_array(Task, :appeal_type, query_params[:claim_type]).to_sql} "
         else
-          " AND #{where_clause_from_array(Task, :appeal_type, query_params[:claim_type]).to_sql}"
+          " AND tasks.appeal_type = '' "
         end
       else
         " AND tasks.appeal_type IN ('HigherLevelReview', 'SupplementalClaim' ) "
+      end
+    end
+
+    def sc_type_filter
+      if query_params[:claim_type].present?
+        if query_params[:claim_type].include?(Remand.name) && query_params[:claim_type].include?(SupplementalClaim.name)
+          " AND supplemental_claims.type IN ('Remand', 'SupplementalClaim') "
+        elsif query_params[:claim_type].include?(SupplementalClaim.name)
+          " AND supplemental_claims.type = 'SupplementalClaim' "
+        elsif query_params[:claim_type].include?(Remand.name)
+          " AND supplemental_claims.type = 'Remand' "
+        else
+          " AND supplemental_claims.type = '' "
+        end
       end
     end
 
