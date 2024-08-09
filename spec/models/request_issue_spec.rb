@@ -1339,7 +1339,7 @@ describe RequestIssue, :all_dbs do
       it { is_expected.to eq("an unidentified issue") }
     end
 
-    context "when unsafe characters used" do
+    context "when description contains unsafe characters" do
       let(:request_issue) { build(:request_issue, contested_issue_description: "Not safe: \u{00A7}") }
 
       it "should not be valid" do

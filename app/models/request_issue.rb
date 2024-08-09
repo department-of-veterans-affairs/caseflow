@@ -26,7 +26,7 @@ class RequestIssue < CaseflowRecord
   DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS = 12
 
   # contested issue description pattern
-  DESC_REGEX = /\A[a-zA-Z0-9\s.\-_|\/\\@#~=%,;?!'"`():$+*^\[\]&><{}]+\z/.freeze
+  DESC_ALLOWED_CHARACTERS_REGEX = /\A[a-zA-Z0-9\s.\-_|\/\\@#~=%,;?!'"`():$+*^\[\]&><{}]+\z/.freeze
 
   belongs_to :decision_review, polymorphic: true
   belongs_to :end_product_establishment, dependent: :destroy
