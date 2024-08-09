@@ -782,19 +782,19 @@ describe VACOLS::AojCaseDocket, :all_dbs do
 
         # {FOR LEVER BEING A VALUE:}
         aoj_lever.update!(value: 14)
-        expect(VACOLS::AojCaseDocket.distribute_priority_appeals(judge, "any", 100, true).map { |c| c["bfkey"] }.sort)
+        expect(VACOLS::AojCaseDocket.distribute_nonpriority_appeals(judge, "any", 100, nil, false, true).map { |c| c["bfkey"] }.sort)
           .to match_array([c1, c4, c10, c11, c12, c13, c14, c15, c16, c17, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30]
           .map { |c| c["bfkey"].to_i.to_s }.sort)
         # {FOR LEVER BEING INFINITE:}
         aoj_lever.update!(value: "infinite")
         expect(
-          VACOLS::AojCaseDocket.distribute_priority_appeals(judge, "any", 100, true).map { |c| c["bfkey"] }.sort
+          VACOLS::AojCaseDocket.distribute_nonpriority_appeals(judge, "any", 100, nil, false, true).map { |c| c["bfkey"] }.sort
         )
           .to match_array([c11, c12, c13, c14, c15, c16, c17, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30]
             .map { |c| c["bfkey"].to_i.to_s }.sort)
         # {FOR LEVER BEING OMIT:}
         aoj_lever.update!(value: "omit")
-        expect(VACOLS::AojCaseDocket.distribute_priority_appeals(judge, "any", 100, true).map { |c| c["bfkey"] }.sort)
+        expect(VACOLS::AojCaseDocket.distribute_nonpriority_appeals(judge, "any", 100, nil, false, true).map { |c| c["bfkey"] }.sort)
           .to match_array([
             c1, c2, c3, c4, c5, c6, c10, c11, c12, c13, c14, c15, c16, c17, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30
           ]
