@@ -46,7 +46,11 @@ class RequestIssue < CaseflowRecord
   validates :ineligible_reason, exclusion: { in: ["untimely"] }, if: proc { |reqi| reqi.untimely_exemption }
 
   # only allow specified characters for description
-  validates :contested_issue_description, format: { with: DESC_REGEX, message: "invalid characters used" }, allow_nil: true
+  validates(
+    :contested_issue_description,
+    format: { with: DESC_REGEX, message: "invalid characters used" },
+    allow_nil: true
+  )
 
   enum ineligible_reason: {
     duplicate_of_nonrating_issue_in_active_review: "duplicate_of_nonrating_issue_in_active_review",
