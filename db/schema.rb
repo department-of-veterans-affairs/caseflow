@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_06_13_202232) do
+ActiveRecord::Schema.define(version: 2024_08_05_162358) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1071,6 +1071,7 @@ ActiveRecord::Schema.define(version: 2024_06_13_202232) do
     t.boolean "prepped", comment: "Determines whether the judge has checked the hearing as prepped"
     t.string "representative_name", comment: "Name of Appellant's representative if applicable"
     t.string "room", comment: "The room at BVA where the hearing will take place; ported from associated HearingDay"
+    t.datetime "scheduled_datetime", comment: "Timestamp with zone datatype a hearing is scheduled to take place in UTC. Intended to eventually replace scheduled_time column."
     t.string "scheduled_in_timezone", comment: "Named TZ string that the hearing will have to provide accurate hearing times."
     t.time "scheduled_time", null: false, comment: "Date and Time when hearing will take place"
     t.text "summary", comment: "Summary of hearing"
