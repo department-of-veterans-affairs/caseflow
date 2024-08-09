@@ -285,9 +285,9 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
 
     query = <<-SQL
       #{SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19}
-      where (VLJ = ? or #{ineligible_judges_sattyid_cache} or VLJ is null)
+      where ((VLJ = ? or #{ineligible_judges_sattyid_cache} or VLJ is null)
       and ((PREV_TYPE_ACTION is null or PREV_TYPE_ACTION <> '7') and AOD = '0')
-      or #{nonpriority_cdl_aoj_query}
+      or #{nonpriority_cdl_aoj_query})
       and rownum <= ?
     SQL
 
@@ -414,9 +414,9 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
     if use_by_docket_date?
       query = <<-SQL
         #{SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19}
-        where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?))
+        where ((((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?))
         and ((PREV_TYPE_ACTION is null or PREV_TYPE_ACTION <> '7') and AOD = '0')
-        or #{nonpriority_cdl_aoj_query}
+        or #{nonpriority_cdl_aoj_query})
         and (DOCKET_INDEX <= ? or 1 = ?)
       SQL
     else
@@ -435,9 +435,9 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
 
       query = <<-SQL
         #{SELECT_NONPRIORITY_APPEALS}
-        where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?))
+        where ((((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?))
         and ((PREV_TYPE_ACTION is null or PREV_TYPE_ACTION <> '7') and AOD = '0')
-        or #{nonpriority_cdl_aoj_query}
+        or #{nonpriority_cdl_aoj_query})
         and (DOCKET_INDEX <= ? or 1 = ?)
       SQL
     end
