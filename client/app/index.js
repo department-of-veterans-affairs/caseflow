@@ -178,7 +178,6 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
         './intakeManager/index',
         './intakeEdit/index',
         './nonComp/index',
-        './2.0/router',
         './explain/index',
         './mpi/MPISearch',
         './admin/index',
