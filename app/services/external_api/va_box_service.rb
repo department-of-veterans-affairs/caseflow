@@ -69,6 +69,20 @@ class ExternalApi::VaBoxService
     log_error(error)
   end
 
+  def public_folder_details(folder_id)
+    get_child_folders(folder_id)
+  end
+
+  def get_child_folder_id(parent_folder_id, child_folder_name)
+    folders = public_folder_details(parent_folder_id)
+    matching_folder = folders.find { |folder| folder["name"] == child_folder_name }
+    if matching_folder
+      matching_folder["id"]
+    else
+      fail "Folder '#{child_folder_name}' not found in parent folder '#{parent_folder_id}'"
+    end
+  end
+
   private
 
   # rubocop:disable Metrics/MethodLength
@@ -121,6 +135,27 @@ class ExternalApi::VaBoxService
     else
       Rails.logger.info("Chunkifying and uploading file: #{file_path}")
       chunkify_and_upload(file_path, folder_id)
+    end
+  end
+
+  def get_child_folders(parent_folder_id)
+    url = "#{BASE_URL}/2.0/folders/#{parent_folder_id}/items"
+    uri = URI.parse(url)
+
+    request = Net::HTTP::Get.new(uri.request_uri)
+    request["Authorization"] = "Bearer #{@access_token}"
+
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+
+    response = http.request(request)
+
+    if response.code == "200"
+      body = JSON.parse(response.body)
+      child_folders = body["entries"].select { |item| item["type"] == "folder" }
+      child_folders
+    else
+      fail "Error: #{response.body}"
     end
   end
 
