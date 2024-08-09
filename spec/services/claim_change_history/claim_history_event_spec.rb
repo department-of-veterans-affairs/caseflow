@@ -87,7 +87,7 @@ describe ClaimHistoryEvent do
       task_status: "completed",
       user_facility: nil,
       veteran_file_number: "000100022",
-      withdrawal_request_date: Time.zone.parse("2023-10-16 22:47:16.233187"),
+      withdrawal_request_date: Time.zone.parse("2023-10-16 22:47:16.233187")
     }
   end
 

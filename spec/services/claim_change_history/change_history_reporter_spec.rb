@@ -245,7 +245,7 @@ describe ChangeHistoryReporter do
           another_completed_disposition_event,
           another_added_decision_date_event,
           another_removed_issue_event,
-          another_withdrew_issue_event,
+          another_withdrew_issue_event
         ]
       end
 
