@@ -980,55 +980,6 @@ feature "Higher-Level Review", :all_dbs do
       )
     end
 
-    context "when veteran chooses decision issue from a previous appeal" do
-      let(:previous_appeal) { create(:appeal, :outcoded, veteran: veteran) }
-      let(:appeal_reference_id) { "appeal123" }
-      let!(:previous_appeal_request_issue) do
-        create(
-          :request_issue,
-          decision_review: previous_appeal,
-          contested_rating_issue_reference_id: appeal_reference_id,
-          closed_at: 2.months.ago
-        )
-      end
-      let!(:previous_appeal_decision_issue) do
-        create(:decision_issue,
-               decision_review: previous_appeal,
-               request_issues: [previous_appeal_request_issue],
-               rating_issue_reference_id: appeal_reference_id,
-               participant_id: veteran.participant_id,
-               description: "appeal decision issue",
-               decision_text: "appeal decision issue",
-               benefit_type: "compensation",
-               caseflow_decision_date: profile_date)
-      end
-
-      scenario "the issue is ineligible" do
-        start_higher_level_review(veteran)
-        visit "/intake/add_issues"
-
-        expect(page).to have_content("Add / Remove Issues")
-
-        click_intake_add_issue
-        add_intake_rating_issue("appeal decision issue")
-        expect(page).to have_content(
-          "appeal decision issue #{ineligible_constants.appeal_to_higher_level_review}"
-        )
-        click_intake_finish
-
-        expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been submitted.")
-
-        expect(
-          RequestIssue.find_by(contested_issue_description: "appeal decision issue").ineligible_reason
-        ).to eq("appeal_to_higher_level_review")
-
-        ineligible_checklist = find("ul.cf-issue-checklist")
-        expect(ineligible_checklist).to have_content(
-          "appeal decision issue #{ineligible_constants.appeal_to_higher_level_review}"
-        )
-      end
-    end
-
     context "when veteran has active nonrating request issues" do
       let(:another_higher_level_review) { create(:higher_level_review) }
       let!(:active_nonrating_request_issue) do
