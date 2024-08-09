@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'aws-sdk-s3'
+require "aws-sdk-s3"
 class VaBoxUploadJob < CaseflowJob
   include Shoryuken::Worker
   queue_as :low_priority
@@ -20,17 +20,17 @@ class VaBoxUploadJob < CaseflowJob
     fail BoxUploadError
   end
 
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
   def perform(file_info, box_folder_id)
     @all_paths = []
     @email_sent_flags = { transcription_package: false, child_folder_id: false, upload: false }
     box_service = ExternalApi::VaBoxService.new(
-      client_secret: ENV['BOX_CLIENT_SECRET'],
-      client_id: ENV['BOX_CLIENT_ID'],
-      enterprise_id: ENV['BOX_ENTERPRISE_ID'],
-      private_key: ENV['BOX_PRIVATE_KEY'],
-      passphrase: ENV['BOX_PASS_PHRASE']
+      client_secret: ENV["BOX_CLIENT_SECRET"],
+      client_id: ENV["BOX_CLIENT_ID"],
+      enterprise_id: ENV["BOX_ENTERPRISE_ID"],
+      private_key: ENV["BOX_PRIVATE_KEY"],
+      passphrase: ENV["BOX_PASS_PHRASE"]
     )
-
 
     box_service.fetch_access_token
 
@@ -38,7 +38,13 @@ class VaBoxUploadJob < CaseflowJob
       begin
         transcription_package = find_transcription_package(hearing)
         unless transcription_package
-          error_details = { error: { type: "transcription_package", message: "Transcription package not found for hearing ID: #{hearing[:hearing_id]}" }, provider: "Box" }
+          error_details = {
+            error: {
+              type: "transcription_package",
+              message: "Transcription package not found for hearing ID: #{hearing[:hearing_id]}"
+            },
+            provider: "Box"
+          }
           send_transcription_issues_email(error_details) unless email_sent?(:transcription_package)
           mark_email_sent(:transcription_package)
           next
@@ -47,7 +53,13 @@ class VaBoxUploadJob < CaseflowJob
         contractor_name = file_info[:contractor_name]
         child_folder_id = box_service.get_child_folder_id(box_folder_id, contractor_name)
         unless child_folder_id
-          error_details = { error: { type: "child_folder_id", message: "Child folder ID not found for contractor name: #{contractor_name}" }, provider: "Box" }
+          error_details = {
+            error: {
+              type: "child_folder_id",
+              message: "Child folder ID not found for contractor name: #{contractor_name}"
+            },
+            provider: "Box"
+          }
           send_transcription_issues_email(error_details) unless email_sent?(:child_folder_id)
           mark_email_sent(:child_folder_id)
           break
@@ -56,7 +68,14 @@ class VaBoxUploadJob < CaseflowJob
         # Download file from S3
         local_file_path = download_file_from_s3(file_path)
 
-        upload_to_box(box_service, file_path, child_folder_id, transcription_package, file_info, hearing)
+        upload_to_box(
+          box_service: box_service,
+          file_path: local_file_path,
+          folder_id: child_folder_id,
+          transcription_package: transcription_package,
+          file_info: file_info,
+          hearing: hearing
+        )
       rescue StandardError => error
         log_error(error, extra: { transcription_package_id: transcription_package&.id })
         error_details = { error: { type: "upload", message: error.message }, provider: "Box" }
@@ -66,6 +85,7 @@ class VaBoxUploadJob < CaseflowJob
       end
     end
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
 
   private
 
@@ -78,21 +98,27 @@ class VaBoxUploadJob < CaseflowJob
   end
 
   def download_file_from_s3(s3_path)
-    local_path = Rails.root.join('tmp', 'transcription_files', File.basename(s3_path))
+    local_path = Rails.root.join("tmp", "transcription_files", File.basename(s3_path))
     Caseflow::S3Service.fetch_file(s3_path, local_path)
     @all_paths << local_path
     Rails.logger.info("File successfully downloaded from S3: #{local_path}")
     local_path
   end
 
-  def upload_to_box(box_service, file_path, folder_id, transcription_package, file_info, hearing)
-    byebug
+  # rubocop:disable Metrics/MethodLength
+  def upload_to_box(params)
+    box_service = params[:box_service]
+    file_path = params[:file_path]
+    folder_id = params[:folder_id]
+    transcription_package = params[:transcription_package]
+    file_info = params[:file_info]
+    hearing = params[:hearing]
     ActiveRecord::Base.transaction do
       box_service.public_upload_file(file_path, folder_id)
       Rails.logger.info("File successfully uploaded to Box folder ID: #{folder_id}")
       transcription_package.update!(
         date_upload_box: Time.current,
-        status: 'Successful Upload (BOX)',
+        status: "Successful Upload (BOX)",
         task_number: file_info[:work_order_name],
         expected_return_date: file_info[:return_date],
         updated_by_id: RequestStore[:current_user].id
@@ -109,6 +135,7 @@ class VaBoxUploadJob < CaseflowJob
       )
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   def cleanup_tmp_files
     @all_paths&.each { |path| File.delete(path) if File.exist?(path) }
@@ -123,4 +150,3 @@ class VaBoxUploadJob < CaseflowJob
     @email_sent_flags[type] = true
   end
 end
-

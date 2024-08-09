@@ -152,10 +152,10 @@ class ExternalApi::VaBoxService
 
     if response.code == "200"
       body = JSON.parse(response.body)
-      child_folders = body['entries'].select { |item| item['type'] == 'folder' }
+      child_folders = body["entries"].select { |item| item["type"] == "folder" }
       child_folders
     else
-      raise "Error: #{response.body}"
+      fail "Error: #{response.body}"
     end
   end
 
@@ -224,7 +224,3 @@ class ExternalApi::VaBoxService
     Rails.logger.error(error.backtrace.join("\n"))
   end
 end
-
-
-
-
