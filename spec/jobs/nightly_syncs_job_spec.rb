@@ -260,7 +260,7 @@ describe NightlySyncsJob, :all_dbs do
               undecided_appeal_state,
               missing_vacols_case_appeal_state].all?(&:decision_mailed)).to eq false
 
-      allow(AppealState).to receive(:where).and_raise(StandardError)
+      allow(AppealState).to receive(:legacy).and_raise(StandardError)
       slack_msg = ""
       slack_msg_error_text = "Fatal error in sync_decided_appeals"
       allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
