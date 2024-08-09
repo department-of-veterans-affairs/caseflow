@@ -48,7 +48,8 @@ describe ClaimHistoryEvent do
       "event_date" => change_data_event_date,
       "task_versions" => version_changes,
       "days_waiting" => 25,
-      "task_closed_at" => "2023-10-19 22:47:16.233187"
+      "task_closed_at" => "2023-10-19 22:47:16.233187",
+      "type_classifier" => change_data_claim_type
     }
   end
 
@@ -86,7 +87,7 @@ describe ClaimHistoryEvent do
       task_status: "completed",
       user_facility: nil,
       veteran_file_number: "000100022",
-      withdrawal_request_date: Time.zone.parse("2023-10-16 22:47:16.233187")
+      withdrawal_request_date: Time.zone.parse("2023-10-16 22:47:16.233187"),
     }
   end
 
