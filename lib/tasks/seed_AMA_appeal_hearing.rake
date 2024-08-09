@@ -46,7 +46,7 @@ namespace :db do
 
     list_id.each do |current_id|
       current_appeal = Appeal.where(id: current_id)
-      $stdout.puts("queue/appeal/#{current_appeal[0].uuid}")
+      $stdout.puts("queue/appeals/#{current_appeal[0].uuid}")
     end
   end
 end
