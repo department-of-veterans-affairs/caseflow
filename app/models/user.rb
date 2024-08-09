@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# :reek:RepeatedConditional
 class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   include BgsService
 
