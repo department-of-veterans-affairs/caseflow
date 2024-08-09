@@ -39,14 +39,14 @@ const TestApp = (props) => {
           <Switch>
             <PageRoute
               exact
-              path="/users"
-              title="Test App"
+              path={['/users', '/users/me']}
+              title="Test Users | Caseflow"
               render={routedTestUsers}
             />
             <PageRoute
               exact
               path="/data"
-              title="Test App"
+              title="Test Data | Caseflowp"
               render={routedTestData}
             />
           </Switch>
