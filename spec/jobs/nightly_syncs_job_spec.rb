@@ -252,7 +252,7 @@ describe NightlySyncsJob, :all_dbs do
 
       expect(decided_appeal_state.reload.decision_mailed).to eq true
       expect(undecided_appeal_state.reload.decision_mailed).to eq false
-      expect(undecided_appeal_state.reload.decision_mailed).to eq false
+      expect(missing_vacols_case_appeal_state.reload.decision_mailed).to eq false
     end
 
     it "catches standard errors" do
