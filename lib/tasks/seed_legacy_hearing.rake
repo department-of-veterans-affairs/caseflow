@@ -15,7 +15,6 @@ namespace :db do
 
       offsets.each do |offset|
         docket_number = "160000#{offset}"
-        # next unless VACOLS::Folder.find_by(tinum: docket_number).nil?
 
         # Create the veteran for this legacy appeal
         vets = Veteran.order(Arel.sql("RANDOM()")).first(10)
