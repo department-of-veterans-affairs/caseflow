@@ -26,7 +26,6 @@ import Loadable from 'components/shared/Loadable';
 import { LOGO_COLORS } from 'app/constants/AppConstants';
 
 // List of container components we render directly in  Rails .erb files
-import Router from 'app/2.0/router';
 import BaseContainer from 'app/containers/BaseContainer';
 import Certification from 'app/certification/Certification';
 
@@ -64,7 +63,6 @@ import uuid from 'uuid';
 
 const COMPONENTS = {
   // New Version 2.0 Root Component
-  Router,
   BaseContainer,
   Certification,
   // New SPA wrapper for multiple admin pages
