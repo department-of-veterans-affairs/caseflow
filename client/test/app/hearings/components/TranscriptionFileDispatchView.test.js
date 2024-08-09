@@ -7,7 +7,7 @@ import { axe } from 'jest-axe';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter as Router } from 'react-router-dom';
 
-const setup = () => render( <Router><TranscriptionFileDispatchView /></Router>);
+const setup = () => render(<Router><TranscriptionFileDispatchView /></Router>);
 
 const mockTranscriptionFiles = [
   {
@@ -205,7 +205,7 @@ const mockLockedResponse = {
 
 const selectAllData = {
   data: {
-    file_ids: [40,38,37,36,35,34,33,32,31,30,29,28,27,26],
+    file_ids: [40, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26],
     status: true
   }
 };
@@ -229,7 +229,6 @@ const mockSelectAllResponse = {
     }
   ]
 };
-
 
 const mockClickedResponse = {
   body: [
@@ -322,16 +321,19 @@ describe('TranscriptionFileDispatch', () => {
 
     it('select all checkbox when select-all checkbox is selected', async () => {
       const { container } = setup();
-      ApiUtil.post.mockResolvedValue(mockSelectAllResponse );
+
+      ApiUtil.post.mockResolvedValue(mockSelectAllResponse);
       await waitFor(() =>
         expect(screen.getAllByText('Viewing 1-15 of 40 total')[0]).toBeInTheDocument()
       );
 
       const selectAllCheckbox = screen.getByRole('checkbox', { name: /select all files checkbox/i });
+
       userEvent.click(selectAllCheckbox);
 
       const selectFileCheckboxes = container.querySelectorAll('.select-file input');
-      selectFileCheckboxes.forEach(checkbox => {
+
+      selectFileCheckboxes.forEach((checkbox) => {
         if (!checkbox.disabled) {
           expect(checkbox).toBeChecked();
         }
@@ -340,7 +342,6 @@ describe('TranscriptionFileDispatch', () => {
         '/hearings/transcription_files/lock', selectAllData
       );
     });
-
 
     it('select individual checkbox when single checkbox is checked', async () => {
       const { container } = setup();
@@ -361,20 +362,22 @@ describe('TranscriptionFileDispatch', () => {
         '/hearings/transcription_files/lock', constClickData);
     });
 
-
     it('selecting or deselecting an individual checkbox will de-select the "Select All Files" checkbox', async () => {
       const { container } = setup();
-      ApiUtil.post.mockResolvedValue(mockSelectAllResponse );
+
+      ApiUtil.post.mockResolvedValue(mockSelectAllResponse);
 
       await waitFor(() =>
         expect(screen.getAllByText('Viewing 1-15 of 40 total')[0]).toBeInTheDocument()
       );
 
       const selectAllCheckbox = screen.getByRole('checkbox', { name: /select all files checkbox/i });
+
       userEvent.click(selectAllCheckbox);
 
       const individualCheckboxes = container.querySelectorAll('.select-file input');
-      individualCheckboxes.forEach(checkbox => {
+
+      individualCheckboxes.forEach((checkbox) => {
         if (!checkbox.disabled) {
           expect(checkbox).toBeChecked();
         }
