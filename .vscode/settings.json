@@ -8,4 +8,10 @@
   "files.insertFinalNewline": true,
   "files.trimTrailingWhitespace": true,
   "git.autofetch": true,
+  "folder-color.pathColors": [
+    {
+      "folderPath": "caseflow/client/app/2.0/",
+      "color": "foldercolorizer.OrangeRed"
+    }
+  ],
 }
