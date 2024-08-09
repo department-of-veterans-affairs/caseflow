@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 import { timeFunction } from 'app/util/PerfDebug';
 
-import reader from 'store/reader';
+import reader from '../store';
 
 const rootReducer = combineReducers({
   reader,

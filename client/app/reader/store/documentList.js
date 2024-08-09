@@ -5,7 +5,7 @@ import querystring from 'querystring';
 
 // Local Dependencies
 import ApiUtil from 'app/util/ApiUtil';
-import { ENDPOINT_NAMES, DOCUMENTS_OR_COMMENTS_ENUM, documentCategories } from 'store/constants/reader';
+import { ENDPOINT_NAMES, DOCUMENTS_OR_COMMENTS_ENUM, documentCategories } from './constants/reader';
 import {
   filterDocuments,
   addMetaLabel,
@@ -13,8 +13,9 @@ import {
   categoryContainsWords,
   getQueueRedirectUrl,
   getQueueTaskType
-} from 'utils/reader';
-import { showPdf, handleCategoryToggle, addTag, removeTag } from 'store/reader/documentViewer';
+} from '../utils/index';
+
+import { showPdf, handleCategoryToggle, addTag, removeTag } from './documentViewer';
 
 /**
  * PDF Initial State

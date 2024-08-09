@@ -14,10 +14,10 @@ import {
   ROTATION_INCREMENTS,
   COMPLETE_ROTATION,
   COMMENT_ACCORDION_KEY,
-} from 'store/constants/reader';
-import { addMetaLabel, formatCategoryName } from 'utils/reader';
-import { removeComment } from 'store/reader/annotationLayer';
-import { markDocAsRead } from 'store/reader/documentList';
+} from './constants/reader';
+import { addMetaLabel, formatCategoryName } from '../utils/index';
+import { removeComment } from './annotationLayer';
+import { markDocAsRead } from './documentList';
 
 // Set the PDFJS service worker
 // PDF.GlobalWorkerOptions.workerSrc = pdfjsWorker;

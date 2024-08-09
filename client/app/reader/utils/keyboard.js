@@ -2,8 +2,8 @@
 import { isEmpty } from 'lodash';
 
 // Local Dependencies
-import { MOVE_ANNOTATION_ICON_DIRECTIONS } from 'store/constants/reader';
-import { nextPageCoords } from 'utils/reader';
+import { MOVE_ANNOTATION_ICON_DIRECTIONS } from '../store/constants/reader';
+import { nextPageCoords } from './coordinates';
 
 /**
  * Method to change the current PDF document
