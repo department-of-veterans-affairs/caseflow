@@ -288,18 +288,22 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
       where ((VLJ = ? or #{ineligible_judges_sattyid_cache} or VLJ is null)
       and ((PREV_TYPE_ACTION is null or PREV_TYPE_ACTION <> '7') and AOD = '0')
       or #{nonpriority_cdl_aoj_query})
-      and rownum <= ?
     SQL
 
     fmtd_query = sanitize_sql_array([
                                       query,
                                       judge.vacols_attorney_id,
-                                      judge.vacols_attorney_id,
-                                      num
+                                      judge.vacols_attorney_id
                                     ])
 
-    aoj_affinity_filter(appeals, judge_sattyid, aoj_affinity_lever_value, excluded_judges_attorney_ids)
     appeals = conn.exec_query(fmtd_query).to_a
+
+    aoj_affinity_filter(appeals, judge_sattyid, aoj_affinity_lever_value, excluded_judges_attorney_ids)
+
+    appeals.sort_by { |appeal| appeal[:bfd19] } if use_by_docket_date?
+
+    appeals = appeals.first(num) unless num.nil? # {Reestablishes the limit}
+
     appeals.map { |appeal| appeal["bfd19"] }
   end
 
