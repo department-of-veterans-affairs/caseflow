@@ -18,9 +18,26 @@
       },
       "user_input": "SchedulePeriod.find(params[:schedule_period_id]).spreadsheet_location",
       "confidence": "Medium",
-      "cwe_id": [
-        22
-      ],
+      "note": ""
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "3c37feede17bd60a0b4b4701d902b864de1120cbaa12e3421704244c3b0ff827",
+      "check_name": "SendFile",
+      "message": "Model attribute used in file name",
+      "file": "app/controllers/correspondence_review_package_controller.rb",
+      "line": 57,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "send_file(Document.limit(200)[pdf_params[:pdf_id].to_i].serve, :type => \"application/pdf\", :disposition => ((\"inline\" or \"attachment; filename='#{pdf_params[:type]}-#{pdf_params[:id]}.pdf'\")))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "CorrespondenceReviewPackageController",
+        "method": "pdf"
+      },
+      "user_input": "Document.limit(200)[pdf_params[:pdf_id].to_i].serve",
+      "confidence": "Medium",
       "note": ""
     },
     {
@@ -41,9 +58,6 @@
       },
       "user_input": "Document.find(params[:id]).serve",
       "confidence": "Medium",
-      "cwe_id": [
-        22
-      ],
       "note": ""
     },
     {
@@ -76,7 +90,7 @@
       "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "app/jobs/ama_notification_efolder_sync_job.rb",
-      "line": 112,
+      "line": 113,
       "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
       "code": "Appeal.find_by_sql(\"          SELECT appeals.* FROM appeals\\n          JOIN tasks t ON appeals.id = t.appeal_id\\n          AND t.appeal_type = 'Appeal'\\n          JOIN (#{appeals_on_latest_notifications(ids)}) AS notifs ON\\n            notifs.appeals_id = appeals.\\\"uuid\\\"::text AND notifs.appeals_type = 'Appeal'\\n          JOIN (#{appeals_on_latest_doc_uploads(ids)}) AS vbms_uploads ON\\n            vbms_uploads.appeal_id = appeals.id AND vbms_uploads.appeal_type = 'Appeal'\\n          WHERE (\\n            notifs.notified_at > vbms_uploads.attempted_at\\n          OR\\n            notifs.created_at > vbms_uploads.attempted_at\\n          )\\n          AND t.TYPE = 'RootTask' AND t.status NOT IN ('completed', 'cancelled')\\n          GROUP BY appeals.id\\n\")",
       "render_path": null,
@@ -87,9 +101,6 @@
       },
       "user_input": "appeals_on_latest_notifications(ids)",
       "confidence": "Medium",
-      "cwe_id": [
-        89
-      ],
       "note": ""
     },
     {
@@ -99,7 +110,7 @@
       "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "app/jobs/legacy_notification_efolder_sync_job.rb",
-      "line": 113,
+      "line": 114,
       "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
       "code": "LegacyAppeal.find_by_sql(\"              SELECT la.* FROM legacy_appeals la\\n              JOIN tasks t ON la.id = t.appeal_id\\n              AND t.appeal_type = 'LegacyAppeal'\\n              JOIN (#{appeals_on_latest_notifications(ids)}) AS notifs ON\\n                notifs.appeals_id = la.vacols_id AND notifs.appeals_type = 'LegacyAppeal'\\n              JOIN (#{appeals_on_latest_doc_uploads(ids)}) AS vbms_uploads ON\\n                vbms_uploads.appeal_id = la.id AND vbms_uploads.appeal_type = 'LegacyAppeal'\\n              WHERE (\\n                notifs.notified_at > vbms_uploads.attempted_at\\n              OR\\n                notifs.created_at > vbms_uploads.attempted_at\\n              )\\n              AND t.type = 'RootTask' AND t.status NOT IN ('completed', 'cancelled')\\n              GROUP BY la.id\\n\")",
       "render_path": null,
@@ -110,9 +121,6 @@
       },
       "user_input": "appeals_on_latest_notifications(ids)",
       "confidence": "Medium",
-      "cwe_id": [
-        89
-      ],
       "note": ""
     },
     {
@@ -122,7 +130,7 @@
       "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "app/models/task.rb",
-      "line": 284,
+      "line": 283,
       "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
       "code": "Arel.sql(\"CASE WHEN #{CachedAppeal.table_name}.is_aod = TRUE THEN #{(\"0 ELSE 1\" or \"1 ELSE 0\")} END, CASE WHEN #{CachedAppeal.table_name}.case_type = 'Court Remand' THEN #{(\"0 ELSE 1\" or \"1 ELSE 0\")} END, #{CachedAppeal.table_name}.docket_number #{order}, #{Task.table_name}.created_at #{order}\")",
       "render_path": null,
@@ -133,9 +141,6 @@
       },
       "user_input": "order",
       "confidence": "Medium",
-      "cwe_id": [
-        89
-      ],
       "note": ""
     },
     {
@@ -156,12 +161,9 @@
       },
       "user_input": "Document.find(document_id).serve",
       "confidence": "Medium",
-      "cwe_id": [
-        22
-      ],
       "note": ""
     }
   ],
-  "updated": "2024-06-27 14:50:46 -0400",
-  "brakeman_version": "5.4.1"
+  "updated": "2024-08-08 13:35:28 -0700",
+  "brakeman_version": "4.10.1"
 }

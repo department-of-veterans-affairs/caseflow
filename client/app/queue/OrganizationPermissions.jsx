@@ -92,38 +92,51 @@ const OrganizationPermissions = (props) => {
   // Correspondence: Refactor Candidate
   // CodeClimate: Avoid too many return statements within this function.
   const getCheckboxEnabled = (user, orgUserData, permission) => {
+    let isEnabled = false;
 
     // uses the local state over what comes in over props
-    const stateValue = (toggledCheckboxes.find((storedCheckbox) =>
-      storedCheckbox.userId === user.id && storedCheckbox.permissionName === permission.permission));
+    const stateValue = toggledCheckboxes.find(
+      (storedCheckbox) =>
+        storedCheckbox.userId === user.id &&
+        storedCheckbox.permissionName === permission.permission
+    );
 
-    if (toggledCheckboxes.find((checkboxInState) =>
-      checkboxInState.userId === user.id &&
-    checkboxInState.permissionName === permission.permission &&
-  checkboxInState.checked)) {
-      return true;
+    if (
+      toggledCheckboxes.find(
+        (checkboxInState) =>
+          checkboxInState.userId === user.id &&
+          checkboxInState.permissionName === permission.permission &&
+          checkboxInState.checked
+      )
+    ) {
+      isEnabled = true;
     }
 
     // check if user is marked as admin to auto check the checkbox.
     if (permission.default_for_admin && user.attributes.admin) {
-      return true;
+      isEnabled = true;
     }
 
     if (typeof stateValue !== 'undefined') {
-      return stateValue.checked;
+      isEnabled = stateValue.checked;
     }
 
     // default state that came in when page loads, used as final fallback.
-    const relevantPermissions = props.orgnizationUserPermissions.find((oup) =>
-      oup.user_id === Number(user.id)).organization_user_permissions;
+    const relevantPermissions = props.orgnizationUserPermissions.find(
+      (oup) => oup.user_id === Number(user.id)
+    ).organization_user_permissions;
 
-    if (relevantPermissions.find((perm) =>
-      perm.organization_permission.permission === permission.permission &&
-    perm.permitted)) {
-      return true;
+    if (
+      relevantPermissions.find(
+        (perm) =>
+          perm.organization_permission.permission === permission.permission &&
+          perm.permitted
+      )
+    ) {
+      isEnabled = true;
     }
 
-    return false;
+    return isEnabled;
   };
 
   const permissionAdminCheck = (user, permission) => {

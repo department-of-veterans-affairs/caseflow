@@ -42,6 +42,16 @@ class Correspondence < CaseflowRecord
     Task.where(appeal_id: id, appeal_type: type)
   end
 
+  def tasks_not_related_to_an_appeal
+    CorrespondenceMailTask.open.where(appeal_id: id, appeal_type: type)
+  end
+
+  def correspondence_mail_tasks
+    tasks.where(type: [AssociatedWithClaimsFolderMailTask.name,
+                       AddressChangeMailTask.name,
+                       EvidenceOrArgumentMailTask.name, VacolsUpdatedMailTask.name])
+  end
+
   def review_package_task
     ReviewPackageTask.find_by(appeal_id: id, appeal_type: type)
   end
@@ -64,6 +74,16 @@ class Correspondence < CaseflowRecord
   # Methods below are included to allow Correspondences to render in explain page
   def veteran_full_name
     veteran.name
+  end
+
+  def status
+    # Closed
+    return "Completed" if root_task.completed? || tasks.open.none?
+
+    # Pending
+    return "Pending" if tasks.open.any?
+
+    # Future workflows if needed to change status
   end
 
   def self.prior_mail(veteran_id, uuid)

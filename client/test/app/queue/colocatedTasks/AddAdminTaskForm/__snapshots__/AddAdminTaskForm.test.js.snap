@@ -65,7 +65,6 @@ exports[`AddAdminTaskForm renders correctly 1`] = `
                       aria-autocomplete="list"
                       aria-expanded="false"
                       aria-haspopup="true"
-                      aria-labelledby="new-tasks-0-type-label"
                       aria-owns="new-tasks-0-type-listbox"
                       autocapitalize="none"
                       autocomplete="off"

@@ -2,6 +2,34 @@
 
 class TaskActionRepository # rubocop:disable Metrics/ClassLength
   class << self
+    def change_corr_task_type
+      # stubbed
+    end
+
+    def assign_corr_task_to_team
+      # stubbed
+    end
+
+    def assign_corr_task_to_person
+      # stubbed
+    end
+
+    def reassign_corr_task_to_person
+      # stubbed
+    end
+
+    def mark_corr_task_complete
+      # stubbed
+    end
+
+    def return_to_inbound_ops
+      # stubbed
+    end
+
+    def cancel_corr_task
+      # stubbed
+    end
+
     def assign_to_organization_data(task, _user = nil)
       organizations = Organization.assignable(task).map do |organization|
         {

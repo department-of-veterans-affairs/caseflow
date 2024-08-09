@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative 'document_manager'
 # rubocop:disable Metrics/ModuleLength
 module QueueHelpers
   def create_veteran(options = {})
@@ -33,7 +34,7 @@ module QueueHelpers
       veteran_id: vet.id,
       nod: nod
     )
-    create_correspondence_document(correspondence, vet, doc_type)
+    DocumentManager.create_correspondence_document(correspondence, vet, doc_type)
 
     return correspondence
   end
@@ -56,18 +57,6 @@ module QueueHelpers
     end
 
     note
-  end
-
-  # :reek:UtilityFunction
-  def create_correspondence_document(correspondence, veteran, doc_type)
-    CorrespondenceDocument.find_or_create_by!(
-      document_file_number: veteran.file_number,
-      uuid: SecureRandom.uuid,
-      vbms_document_type_id: doc_type[:id],
-      document_type: doc_type[:id],
-      pages: rand(1..30),
-      correspondence_id: correspondence.id
-    )
   end
 
   # :reek:UtilityFunction
