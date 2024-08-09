@@ -21,8 +21,8 @@ import ReduxBase from 'app/components/ReduxBase';
 import rootReducer from 'store/root';
 
 // Shared Component Dependencies
-import { ErrorBoundary } from 'components/shared/ErrorBoundary';
-import Loadable from 'components/shared/Loadable';
+import { ErrorBoundary } from './components/ErrorBoundary';
+import Loadable from './components/Loadable';
 import { LOGO_COLORS } from 'app/constants/AppConstants';
 
 // List of container components we render directly in  Rails .erb files
