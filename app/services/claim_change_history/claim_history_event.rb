@@ -378,7 +378,8 @@ class ClaimHistoryEvent
   def readable_claim_type
     {
       "HigherLevelReview" => "Higher-Level Review",
-      "SupplementalClaim" => "Supplemental Claim"
+      "SupplementalClaim" => "Supplemental Claim",
+      "Remand" => "Remand"
     }[claim_type]
   end
 
@@ -456,7 +457,7 @@ class ClaimHistoryEvent
   def parse_task_attributes(change_data)
     @task_id = change_data["task_id"]
     @task_status = change_data["task_status"]
-    @claim_type = change_data["appeal_type"]
+    @claim_type = change_data["type_classifier"]
     @assigned_at = change_data["assigned_at"]
     @days_waiting = change_data["days_waiting"]
   end
