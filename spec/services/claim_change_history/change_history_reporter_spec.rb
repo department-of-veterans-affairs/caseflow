@@ -23,7 +23,7 @@ describe ChangeHistoryReporter do
           events: [:completed, :cancelled],
           task_status: [:testing1, :testing2],
           status_report_type: nil,
-          claim_type: %w[HigherLevelReview SupplementalClaim Remand],
+          claim_type: %w[HigherLevelReview SupplementalClaim],
           personnel: nil,
           dispositions: nil,
           issue_types: nil,
@@ -37,7 +37,7 @@ describe ChangeHistoryReporter do
         expected_formatted_filter = [
           "events: [completed, cancelled]",
           "task_status: [testing1, testing2]",
-          "claim_type: [HigherLevelReview, SupplementalClaim, Remand]",
+          "claim_type: [HigherLevelReview, SupplementalClaim]",
           "timing: [range: None]",
           "days_waiting: [operator: >, num_days: 10]"
         ]
@@ -146,6 +146,83 @@ describe ChangeHistoryReporter do
         new_event
       end
 
+      let(:another_claim_creation_event) do
+        new_event = added_issue_event.clone
+        new_event.instance_variable_set(:@event_type, :claim_creation)
+        new_event.instance_variable_set(:@event_user_name, "System")
+        new_event.instance_variable_set(:@user_facility, nil)
+        new_event.instance_variable_set(:@claim_type, "Remand")
+        new_event
+      end
+      let(:another_in_progress_status_event) do
+        new_event = claim_creation_event.clone
+        new_event.instance_variable_set(:@event_type, :in_progress)
+        new_event.instance_variable_set(:@claim_type, "Remand")
+        new_event
+      end
+      let(:another_cancelled_status_event) do
+        new_event = in_progress_status_event.clone
+        new_event.instance_variable_set(:@event_type, :cancelled)
+        new_event.instance_variable_set(:@task_status, "cancelled")
+        new_event.instance_variable_set(:@claim_type, "Remand")
+        new_event
+      end
+      let(:another_completed_status_event) do
+        new_event = in_progress_status_event.clone
+        new_event.instance_variable_set(:@event_type, :completed)
+        new_event.instance_variable_set(:@task_status, "completed")
+        new_event.instance_variable_set(:@claim_type, "Remand")
+        new_event
+      end
+      let(:another_incomplete_status_event) do
+        new_event = in_progress_status_event.clone
+        new_event.instance_variable_set(:@event_type, :incomplete)
+        new_event.instance_variable_set(:@task_status, "on_hold")
+        new_event.instance_variable_set(:@claim_type, "Remand")
+        new_event
+      end
+      let(:another_added_issue_without_decision_date_event) do
+        new_event = added_issue_event.clone
+        new_event.instance_variable_set(:@event_type, :added_issue_without_decision_date)
+        new_event.instance_variable_set(:@task_status, "on_hold")
+        new_event.instance_variable_set(:@claim_type, "Remand")
+        new_event.instance_variable_set(:@decision_date, nil)
+        new_event
+      end
+      let(:another_completed_disposition_event) do
+        new_event = added_issue_event.clone
+        new_event.instance_variable_set(:@event_type, :completed_disposition)
+        new_event.instance_variable_set(:@task_status, "completed")
+        new_event.instance_variable_set(:@disposition, "Granted")
+        new_event.instance_variable_set(:@decision_description, "Decision for CHAMPVA issue")
+        new_event.instance_variable_set(:@disposition_date, 4.days.ago.iso8601)
+        new_event.instance_variable_set(:@user_facility, "200")
+        new_event.instance_variable_set(:@claim_type, "Remand")
+        new_event
+      end
+      let(:another_added_decision_date_event) do
+        new_event = completed_disposition_event.clone
+        new_event.instance_variable_set(:@event_type, :added_decision_date)
+        new_event.instance_variable_set(:@task_status, "assigned")
+        new_event.instance_variable_set(:@task_id, 900)
+        new_event.instance_variable_set(:@claim_type, "Remand")
+        new_event
+      end
+      let(:another_removed_issue_event) do
+        new_event = added_decision_date_event.clone
+        new_event.instance_variable_set(:@event_type, :removed_issue)
+        new_event.instance_variable_set(:@task_status, "cancelled")
+        new_event.instance_variable_set(:@claim_type, "Remand")
+        new_event
+      end
+      let(:another_withdrew_issue_event) do
+        new_event = removed_issue_event.clone
+        new_event.instance_variable_set(:@event_type, :withdrew_issue)
+        new_event.instance_variable_set(:@task_status, "cancelled")
+        new_event.instance_variable_set(:@claim_type, "Remand")
+        new_event
+      end
+
       let(:events) do
         [
           added_issue_event,
@@ -158,7 +235,17 @@ describe ChangeHistoryReporter do
           completed_disposition_event,
           added_decision_date_event,
           removed_issue_event,
-          withdrew_issue_event
+          withdrew_issue_event,
+          another_claim_creation_event,
+          another_in_progress_status_event,
+          another_cancelled_status_event,
+          another_completed_status_event,
+          another_incomplete_status_event,
+          another_added_issue_without_decision_date_event,
+          another_completed_disposition_event,
+          another_added_decision_date_event,
+          another_removed_issue_event,
+          another_withdrew_issue_event,
         ]
       end
 
@@ -361,6 +448,186 @@ describe ChangeHistoryReporter do
         ]
       end
 
+      let(:another_claim_creation_event_row) do
+        [
+          "242080004",
+          "Mason Rodriguez",
+          "/decision_reviews/vha/tasks/999",
+          "in progress",
+          "20",
+          "Remand",
+          "",
+          "System",
+          another_claim_creation_event.readable_event_date,
+          "Claim created",
+          nil,
+          "Claim created.",
+          nil
+        ]
+      end
+
+      let(:another_in_progress_status_event_row) do
+        [
+          "242080004",
+          "Mason Rodriguez",
+          "/decision_reviews/vha/tasks/999",
+          "in progress",
+          "20",
+          "Remand",
+          "",
+          "System",
+          another_in_progress_status_event.readable_event_date,
+          "Claim status - In progress",
+          nil,
+          "Claim can be processed.",
+          nil
+        ]
+      end
+
+      let(:another_cancelled_status_event_row) do
+        [
+          "242080004",
+          "Mason Rodriguez",
+          "/decision_reviews/vha/tasks/999",
+          "cancelled",
+          "20",
+          "Remand",
+          "",
+          "System",
+          another_cancelled_status_event.readable_event_date,
+          "Claim closed",
+          nil,
+          "Claim closed.",
+          nil
+        ]
+      end
+      let(:another_completed_status_event_row) do
+        [
+          "242080004",
+          "Mason Rodriguez",
+          "/decision_reviews/vha/tasks/999",
+          "completed",
+          "20",
+          "Remand",
+          "",
+          "System",
+          another_completed_status_event.readable_event_date,
+          "Claim closed",
+          nil,
+          "Claim closed.",
+          nil
+        ]
+      end
+      let(:another_incomplete_status_event_row) do
+        [
+          "242080004",
+          "Mason Rodriguez",
+          "/decision_reviews/vha/tasks/999",
+          "incomplete",
+          "20",
+          "Remand",
+          "",
+          "System",
+          another_incomplete_status_event.readable_event_date,
+          "Claim status - Incomplete",
+          nil,
+          "Claim cannot be processed until decision date is entered.",
+          nil
+        ]
+      end
+      let(:another_added_issue_without_decision_date_event_row) do
+        [
+          "242080004",
+          "Mason Rodriguez",
+          "/decision_reviews/vha/tasks/999",
+          "incomplete",
+          "20",
+          "Remand",
+          "VACO (101)",
+          "E. Thompson",
+          another_added_issue_without_decision_date_event.readable_event_date,
+          "Added issue - No decision date",
+          "CHAMPVA",
+          "CHAMPVA issue description",
+          another_added_issue_without_decision_date_event.readable_decision_date,
+          nil
+        ]
+      end
+      let(:another_completed_disposition_event_row) do
+        [
+          "242080004",
+          "Mason Rodriguez",
+          "/decision_reviews/vha/tasks/999",
+          "completed",
+          "20",
+          "Remand",
+          "Austin AAC (200)",
+          "E. Thompson",
+          another_completed_disposition_event.readable_event_date,
+          "Completed disposition",
+          "CHAMPVA",
+          "CHAMPVA issue description",
+          another_completed_disposition_event.readable_decision_date,
+          "Granted",
+          "Decision for CHAMPVA issue",
+          another_completed_disposition_event.readable_disposition_date
+        ]
+      end
+      let(:another_added_decision_date_event_row) do
+        [
+          "242080004",
+          "Mason Rodriguez",
+          "/decision_reviews/vha/tasks/900",
+          "in progress",
+          "20",
+          "Remand",
+          "Austin AAC (200)",
+          "E. Thompson",
+          another_added_decision_date_event.readable_event_date,
+          "Added decision date",
+          "CHAMPVA",
+          "CHAMPVA issue description",
+          another_added_decision_date_event.readable_decision_date,
+          nil
+        ]
+      end
+      let(:another_removed_issue_event_row) do
+        [
+          "242080004",
+          "Mason Rodriguez",
+          "/decision_reviews/vha/tasks/900",
+          "cancelled",
+          "20",
+          "Remand",
+          "Austin AAC (200)",
+          "E. Thompson",
+          another_removed_issue_event.readable_event_date,
+          "Removed issue",
+          "CHAMPVA",
+          "CHAMPVA issue description",
+          another_removed_issue_event.readable_decision_date,
+          nil
+        ]
+      end
+      let(:another_withdrew_issue_event_row) do
+        [
+          "242080004",
+          "Mason Rodriguez",
+          "/decision_reviews/vha/tasks/900",
+          "cancelled",
+          "20",
+          "Remand",
+          "Austin AAC (200)",
+          "E. Thompson",
+          another_withdrew_issue_event.readable_event_date,
+          "Withdrew issue",
+          "CHAMPVA",
+          "CHAMPVA issue description",
+          another_withdrew_issue_event.readable_decision_date,
+          nil
+        ]
+      end
+
       it "returns a csv string with the column headers, filters, and event rows" do
         rows = CSV.parse(subject)
         expect(rows.count).to eq(2 + events.length)
@@ -377,6 +644,16 @@ describe ChangeHistoryReporter do
         expect(rows[10]).to eq(added_decision_date_event_row)
         expect(rows[11]).to eq(removed_issue_event_row)
         expect(rows[12]).to eq(withdrew_issue_event_row)
+        expect(rows[13]).to eq(another_claim_creation_event_row)
+        expect(rows[14]).to eq(another_in_progress_status_event_row)
+        expect(rows[15]).to eq(another_cancelled_status_event_row)
+        expect(rows[16]).to eq(another_completed_status_event_row)
+        expect(rows[17]).to eq(another_incomplete_status_event_row)
+        expect(rows[18]).to eq(another_added_issue_without_decision_date_event_row)
+        expect(rows[19]).to eq(another_completed_disposition_event_row)
+        expect(rows[20]).to eq(another_added_decision_date_event_row)
+        expect(rows[21]).to eq(another_removed_issue_event_row)
+        expect(rows[22]).to eq(another_withdrew_issue_event_row)
       end
     end
   end

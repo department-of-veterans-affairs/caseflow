@@ -852,6 +852,14 @@ describe ClaimHistoryEvent do
             expect(subject).to eq("Supplemental Claim")
           end
         end
+
+        context "when the claim type is Remand" do
+          let(:change_data_claim_type) { "Remand" }
+
+          it "readable claim type of Remand" do
+            expect(subject).to eq("Remand")
+          end
+        end
       end
 
       describe ".readable_user_name" do
