@@ -7,7 +7,7 @@ import { SearchableDropdown } from '../../../components/SearchableDropdown';
 import ApiUtil from 'app/util/ApiUtil';
 
 const PackageFilesModal = ({ onCancel, contractors }) => {
-  const [transcriptionTaskId, setTranscriptionTaskId] = useState('');
+  const [transcription, setTranscription] = useState({ task_id: '' });
   const [, setReturnDateValue] = useState('');
   const [, setContractorId] = useState('');
 
@@ -15,9 +15,9 @@ const PackageFilesModal = ({ onCancel, contractors }) => {
    * Grabs the taskId
   */
   const getTranscriptionTaskId = () => {
-    ApiUtil.get('/hearings/transcriptions/next_transcription_task_id').
+    ApiUtil.get('/hearings/transcriptions/next_transcription').
       // eslint-disable-next-line camelcase
-      then((response) => setTranscriptionTaskId(response.body?.task_id));
+      then((response) => setTranscription(response.body));
   };
 
   /**
@@ -53,7 +53,7 @@ const PackageFilesModal = ({ onCancel, contractors }) => {
     return (
       <div>
         <strong>Work Order</strong>
-        <p>{transcriptionTaskId && generateWorkOrder(transcriptionTaskId)}</p>
+        <p>{transcription.task_id && generateWorkOrder(transcription.task_id)}</p>
       </div>
     );
   };
@@ -140,6 +140,12 @@ const PackageFilesModal = ({ onCancel, contractors }) => {
     );
   };
 
+  // Temporary function for rolling over to next transcription for testing
+  const packageFiles = (id, taskId) => {
+    ApiUtil.put('/hearings/transcriptions/package_files', { data: { id, task_id: taskId } }).
+      then(() => onCancel());
+  };
+
   useEffect(() => {
     getTranscriptionTaskId();
   }, []);
@@ -156,7 +162,7 @@ const PackageFilesModal = ({ onCancel, contractors }) => {
         {
           classNames: ['usa-button', 'usa-button-primary'],
           name: COPY.TRANSCRIPTION_TABLE_PACKAGE_FILE,
-          onClick: onCancel,
+          onClick: () => packageFiles(transcription.id, transcription.task_id),
         },
       ]}
       closeHandler={onCancel}

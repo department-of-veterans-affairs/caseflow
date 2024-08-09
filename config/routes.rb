@@ -231,7 +231,8 @@ Rails.application.routes.draw do
     end
     get 'find_by_contractor/available_contractors', to: "transcription_contractors#available_contractors"
     resources :find_by_contractor, controller: "transcription_contractors", except: [:edit, :new]
-    get 'transcriptions/next_transcription_task_id', to: "transcriptions#next_transcription_task_id"
+    get 'transcriptions/next_transcription', to: "transcriptions#next_transcription"
+    put 'transcriptions/package_files', to: "transcriptions#package_files"
   end
   get '/hearings/dockets', to: redirect("/hearings/schedule")
   get 'hearings/schedule', to: "hearings/hearing_day#index"
