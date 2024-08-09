@@ -927,6 +927,71 @@ describe VACOLS::AojCaseDocket, :all_dbs do
             .map { |c| c["bfkey"].to_i.to_s }.sort)
       end
     end
+
+    context "aoj_cavc_affinity_days and aoj_aod_affinity_days levers are both set to infinite" do
+      # aoj aod affinity cases:
+      # no hearing held but has previous decision
+      let!(:ca1) { create(:legacy_aoj_appeal, :aod, judge: aff_judge, attorney: attorney, tied_to: false) }
+      let!(:ca2) { create(:legacy_aoj_appeal, :aod, judge: aff_judge, attorney: attorney, tied_to: false, affinity_start_date: 3.days.ago) }
+      let!(:ca3) { create(:legacy_aoj_appeal, :aod, judge: aff_judge, attorney: attorney, tied_to: false, appeal_affinity: false) }
+      # excluded judge cases:
+      # no hearing held but has previous decision
+      let!(:ca12) { create(:legacy_aoj_appeal, :aod, judge: excl_judge, attorney: attorney, tied_to: false) }
+      let!(:ca13) { create(:legacy_aoj_appeal, :aod, judge: excl_judge, attorney: attorney, tied_to: false, affinity_start_date: 3.days.ago) }
+      let!(:ca14) { create(:legacy_aoj_appeal, :aod, judge: excl_judge, attorney: attorney, tied_to: false, appeal_affinity: false) }
+      # ineligible judge cases:
+      # no hearing held but has previous decision
+      let!(:ca21) { create(:legacy_aoj_appeal, :aod, judge: inel_judge, attorney: attorney, tied_to: false) }
+      let!(:ca22) { create(:legacy_aoj_appeal, :aod, judge: inel_judge, attorney: attorney, tied_to: false, affinity_start_date: 3.days.ago) }
+      let!(:ca23) { create(:legacy_aoj_appeal, :aod, judge: inel_judge, attorney: attorney, tied_to: false, appeal_affinity: false) }
+      # cavc affinity cases:
+      # no hearing held but has previous decision
+      let!(:c1) do
+        create(:legacy_aoj_appeal, judge: aff_judge, attorney: attorney, tied_to: false, cavc: true)
+      end
+      let!(:c2) do
+        create(:legacy_aoj_appeal, judge: aff_judge, attorney: attorney,
+                                   tied_to: false, affinity_start_date: 3.days.ago, cavc: true)
+      end
+      let!(:c3) do
+        create(:legacy_aoj_appeal, judge: aff_judge, attorney: attorney,
+                                   tied_to: false, appeal_affinity: false, cavc: true)
+      end
+      # excluded judge cases:
+      # no hearing held but has previous decision
+      let!(:c12) { create(:legacy_aoj_appeal, judge: excl_judge, attorney: attorney, tied_to: false, cavc: true) }
+      let!(:c13) do
+        create(:legacy_aoj_appeal, judge: excl_judge, attorney: attorney,
+                                   tied_to: false, affinity_start_date: 3.days.ago, cavc: true)
+      end
+      let!(:c14) do
+        create(:legacy_aoj_appeal, judge: excl_judge, attorney: attorney,
+                                   tied_to: false, appeal_affinity: false, cavc: true)
+      end
+      # ineligible judge cases:
+      # no hearing held but has previous decision
+      let!(:c21) { create(:legacy_aoj_appeal, judge: inel_judge, attorney: attorney, tied_to: false, cavc: true) }
+      let!(:c22) do
+        create(:legacy_aoj_appeal, judge: inel_judge, attorney: attorney,
+                                   tied_to: false, affinity_start_date: 3.days.ago, cavc: true)
+      end
+      let!(:c23) do
+        create(:legacy_aoj_appeal, judge: inel_judge, attorney: attorney,
+                                   tied_to: false, appeal_affinity: false, cavc: true)
+      end
+
+      it "successfully runs without timing out" do
+        IneligibleJudgesJob.new.perform_now
+        aoj_aod_lever = CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.aoj_aod_affinity_days)
+        aoj_cavc_lever = CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.aoj_cavc_affinity_days)
+
+        aoj_aod_lever.update!(value: "infinite")
+        aoj_cavc_lever.update!(value: "infinite")
+        expect(VACOLS::AojCaseDocket.distribute_priority_appeals(judge, "any", 100, true).map { |c| c["bfkey"] }.sort)
+          .to match_array([ca12, ca13, ca14, ca21, ca22, ca23, c12, c13, c14, c21, c22, c23]
+            .map { |c| c["bfkey"].to_i.to_s }.sort)
+      end
+    end
   end
   # rubocop:enable Layout/LineLength
 end
