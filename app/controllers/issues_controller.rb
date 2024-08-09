@@ -98,12 +98,12 @@ class IssuesController < ApplicationController
     # opting to use params vs issue model to capture in-flight issue changes
     program_code = params[:issues][:program]
     issue_code = params[:issues][:issue]
-    level_1_code = params[:issues][:level_1]
+    diagnostic_code = params[:issues][:level_2]
 
     # line up param codes to their descriptions
     param_issue = Constants::ISSUE_INFO[program_code]
+    diagnostic_description = Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]["staff_description"]
     iss = param_issue["levels"][issue_code]["description"] unless issue_code.nil?
-    level_1_description = level_1_code.nil? ? "N/A" : param_issue["levels"][issue_code]["levels"][level_1_code]["description"]
 
     # format the task instructions and close out
     set = CaseTimelineInstructionSet.new(
@@ -111,7 +111,7 @@ class IssuesController < ApplicationController
       issue_category: [
         "Benefit Type: #{param_issue['description']}\n",
         "Issue: #{iss}\n",
-        "Code: #{[level_1_code, level_1_description].join(' - ')}\n",
+        "Code: #{[diagnostic_code, diagnostic_description].join(' - ')}\n",
         "Note: #{note}\n",
         "Disposition: #{disposition}\n"
       ].compact.join("\r\n"),
