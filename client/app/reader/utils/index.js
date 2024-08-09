@@ -29,12 +29,12 @@ export const focusElement = (lastReadRef, tbodyRef) => {
   return scrollTop;
 };
 
-export * from 'utils/reader/format';
-export * from 'utils/reader/search';
-export * from 'utils/reader/pdf';
-export * from 'utils/reader/document';
-export * from 'utils/reader/comments';
-export * from 'utils/reader/coordinates';
-export * from 'utils/reader/keyboard';
-export * from 'utils/reader/user';
-export * from 'utils/reader/appeal';
+export * from './format';
+export * from './search';
+export * from './pdf';
+export * from './document';
+export * from './comments';
+export * from './coordinates';
+export * from './keyboard';
+export * from './user';
+export * from './appeal';

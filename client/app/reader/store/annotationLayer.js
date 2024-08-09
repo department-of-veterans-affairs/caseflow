@@ -1,12 +1,12 @@
 // External Dependencies
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { isEmpty } from 'lodash';
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 // Local Dependencies
-import { loadDocuments } from 'store/reader/documentList';
-import { addMetaLabel } from 'utils/reader';
-import { ENDPOINT_NAMES } from 'store/constants/reader';
 import ApiUtil from 'app/util/ApiUtil';
+import { loadDocuments } from './documentList';
+import { addMetaLabel } from '../utils/format';
+import { ENDPOINT_NAMES } from './constants/reader';
 
 // Extract the Annotation Endpoint
 const { ANNOTATION } = ENDPOINT_NAMES;

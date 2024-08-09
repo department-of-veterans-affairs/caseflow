@@ -2,10 +2,10 @@
 import { combineReducers } from 'redux';
 
 // Reducers
-import appeal from 'store/reader/appeal';
-import documentList from 'store/reader/documentList';
-import documentViewer from 'store/reader/documentViewer';
-import annotationLayer from 'store/reader/annotationLayer';
+import appeal from './appeal';
+import documentList from './documentList';
+import documentViewer from './documentViewer';
+import annotationLayer from './annotationLayer';
 
 /**
  * Root Reader Reducer

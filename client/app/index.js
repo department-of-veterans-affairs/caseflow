@@ -18,8 +18,7 @@ import { storeMetrics } from './util/Metrics';
 
 // Redux Store Dependencies
 import ReduxBase from 'app/components/ReduxBase';
-import rootReducer from 'store/root';
-
+import rootReducer from './reader/store/root';
 // Shared Component Dependencies
 import { ErrorBoundary } from './components/ErrorBoundary';
 import Loadable from './components/Loadable';
