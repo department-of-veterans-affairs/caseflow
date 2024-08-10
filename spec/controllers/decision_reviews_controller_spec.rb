@@ -919,7 +919,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
           res = JSON.parse(response.body)
 
           expected_events = [
-            { "taskID" => remand_task_event.id, "eventType" => "added_issue", "claimType" => "Remand"},
+            { "taskID" => remand_task_event.id, "eventType" => "added_issue", "claimType" => "Remand" }
           ]
 
           expected_events.each do |expected_attributes|
