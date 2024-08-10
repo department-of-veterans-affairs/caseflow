@@ -382,7 +382,7 @@ class BusinessLine < Organization
       [
         # Task status and claim type filtering always happens regardless of params
         task_status_filter,
-        # claim_type_filter, this now runs only for HLR query
+        # claim_type_filter, -> this now runs only for HLR query
         # All the other filters are optional
         task_id_filter,
         dispositions_filter,
