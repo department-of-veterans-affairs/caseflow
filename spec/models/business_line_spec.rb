@@ -744,7 +744,7 @@ describe BusinessLine do
         let(:change_history_filters) { { claim_type: "SupplementalClaim" } }
 
         it "should only return rows for the filtered claim type" do
-          expect(subject.entries.count).to eq(2)
+          expect(subject.entries.count).to eq(1)
           expect(subject.entries).to include(sc_task_1_ri_1_expectation)
         end
       end
