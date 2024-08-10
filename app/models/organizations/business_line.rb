@@ -382,7 +382,7 @@ class BusinessLine < Organization
       [
         # Task status and claim type filtering always happens regardless of params
         task_status_filter,
-        # claim_type_filter,
+        # claim_type_filter, this now runs only for HLR query
         # All the other filters are optional
         task_id_filter,
         dispositions_filter,
@@ -404,7 +404,6 @@ class BusinessLine < Organization
     def claim_type_filter
       if query_params[:claim_type].present?
         if query_params[:claim_type].include?(HigherLevelReview.name)
-          # " AND tasks.appeal_type = 'HigherLevelReview' "
           " AND #{where_clause_from_array(Task, :appeal_type, query_params[:claim_type]).to_sql} "
         else
           " AND tasks.appeal_type = '' "
