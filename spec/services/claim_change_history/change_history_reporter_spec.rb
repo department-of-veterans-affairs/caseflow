@@ -146,7 +146,7 @@ describe ChangeHistoryReporter do
         new_event
       end
 
-      let(:another_claim_creation_event) do
+      let(:remand_claim_creation_event) do
         new_event = added_issue_event.clone
         new_event.instance_variable_set(:@event_type, :claim_creation)
         new_event.instance_variable_set(:@event_user_name, "System")
@@ -154,34 +154,34 @@ describe ChangeHistoryReporter do
         new_event.instance_variable_set(:@claim_type, "Remand")
         new_event
       end
-      let(:another_in_progress_status_event) do
+      let(:remand_in_progress_status_event) do
         new_event = claim_creation_event.clone
         new_event.instance_variable_set(:@event_type, :in_progress)
         new_event.instance_variable_set(:@claim_type, "Remand")
         new_event
       end
-      let(:another_cancelled_status_event) do
+      let(:remand_cancelled_status_event) do
         new_event = in_progress_status_event.clone
         new_event.instance_variable_set(:@event_type, :cancelled)
         new_event.instance_variable_set(:@task_status, "cancelled")
         new_event.instance_variable_set(:@claim_type, "Remand")
         new_event
       end
-      let(:another_completed_status_event) do
+      let(:remand_completed_status_event) do
         new_event = in_progress_status_event.clone
         new_event.instance_variable_set(:@event_type, :completed)
         new_event.instance_variable_set(:@task_status, "completed")
         new_event.instance_variable_set(:@claim_type, "Remand")
         new_event
       end
-      let(:another_incomplete_status_event) do
+      let(:remand_incomplete_status_event) do
         new_event = in_progress_status_event.clone
         new_event.instance_variable_set(:@event_type, :incomplete)
         new_event.instance_variable_set(:@task_status, "on_hold")
         new_event.instance_variable_set(:@claim_type, "Remand")
         new_event
       end
-      let(:another_added_issue_without_decision_date_event) do
+      let(:remand_added_issue_without_decision_date_event) do
         new_event = added_issue_event.clone
         new_event.instance_variable_set(:@event_type, :added_issue_without_decision_date)
         new_event.instance_variable_set(:@task_status, "on_hold")
@@ -189,7 +189,7 @@ describe ChangeHistoryReporter do
         new_event.instance_variable_set(:@decision_date, nil)
         new_event
       end
-      let(:another_completed_disposition_event) do
+      let(:remand_completed_disposition_event) do
         new_event = added_issue_event.clone
         new_event.instance_variable_set(:@event_type, :completed_disposition)
         new_event.instance_variable_set(:@task_status, "completed")
@@ -200,7 +200,7 @@ describe ChangeHistoryReporter do
         new_event.instance_variable_set(:@claim_type, "Remand")
         new_event
       end
-      let(:another_added_decision_date_event) do
+      let(:remand_added_decision_date_event) do
         new_event = completed_disposition_event.clone
         new_event.instance_variable_set(:@event_type, :added_decision_date)
         new_event.instance_variable_set(:@task_status, "assigned")
@@ -208,14 +208,14 @@ describe ChangeHistoryReporter do
         new_event.instance_variable_set(:@claim_type, "Remand")
         new_event
       end
-      let(:another_removed_issue_event) do
+      let(:remand_removed_issue_event) do
         new_event = added_decision_date_event.clone
         new_event.instance_variable_set(:@event_type, :removed_issue)
         new_event.instance_variable_set(:@task_status, "cancelled")
         new_event.instance_variable_set(:@claim_type, "Remand")
         new_event
       end
-      let(:another_withdrew_issue_event) do
+      let(:remand_withdrew_issue_event) do
         new_event = removed_issue_event.clone
         new_event.instance_variable_set(:@event_type, :withdrew_issue)
         new_event.instance_variable_set(:@task_status, "cancelled")
@@ -236,16 +236,16 @@ describe ChangeHistoryReporter do
           added_decision_date_event,
           removed_issue_event,
           withdrew_issue_event,
-          another_claim_creation_event,
-          another_in_progress_status_event,
-          another_cancelled_status_event,
-          another_completed_status_event,
-          another_incomplete_status_event,
-          another_added_issue_without_decision_date_event,
-          another_completed_disposition_event,
-          another_added_decision_date_event,
-          another_removed_issue_event,
-          another_withdrew_issue_event
+          remand_claim_creation_event,
+          remand_in_progress_status_event,
+          remand_cancelled_status_event,
+          remand_completed_status_event,
+          remand_incomplete_status_event,
+          remand_added_issue_without_decision_date_event,
+          remand_completed_disposition_event,
+          remand_added_decision_date_event,
+          remand_removed_issue_event,
+          remand_withdrew_issue_event
         ]
       end
 
@@ -448,7 +448,7 @@ describe ChangeHistoryReporter do
         ]
       end
 
-      let(:another_claim_creation_event_row) do
+      let(:remand_claim_creation_event_row) do
         [
           "242080004",
           "Mason Rodriguez",
@@ -458,7 +458,7 @@ describe ChangeHistoryReporter do
           "Remand",
           "",
           "System",
-          another_claim_creation_event.readable_event_date,
+          remand_claim_creation_event.readable_event_date,
           "Claim created",
           nil,
           "Claim created.",
@@ -466,7 +466,7 @@ describe ChangeHistoryReporter do
         ]
       end
 
-      let(:another_in_progress_status_event_row) do
+      let(:remand_in_progress_status_event_row) do
         [
           "242080004",
           "Mason Rodriguez",
@@ -476,7 +476,7 @@ describe ChangeHistoryReporter do
           "Remand",
           "",
           "System",
-          another_in_progress_status_event.readable_event_date,
+          remand_in_progress_status_event.readable_event_date,
           "Claim status - In progress",
           nil,
           "Claim can be processed.",
@@ -484,7 +484,7 @@ describe ChangeHistoryReporter do
         ]
       end
 
-      let(:another_cancelled_status_event_row) do
+      let(:remand_cancelled_status_event_row) do
         [
           "242080004",
           "Mason Rodriguez",
@@ -494,14 +494,14 @@ describe ChangeHistoryReporter do
           "Remand",
           "",
           "System",
-          another_cancelled_status_event.readable_event_date,
+          remand_cancelled_status_event.readable_event_date,
           "Claim closed",
           nil,
           "Claim closed.",
           nil
         ]
       end
-      let(:another_completed_status_event_row) do
+      let(:remand_completed_status_event_row) do
         [
           "242080004",
           "Mason Rodriguez",
@@ -511,14 +511,14 @@ describe ChangeHistoryReporter do
           "Remand",
           "",
           "System",
-          another_completed_status_event.readable_event_date,
+          remand_completed_status_event.readable_event_date,
           "Claim closed",
           nil,
           "Claim closed.",
           nil
         ]
       end
-      let(:another_incomplete_status_event_row) do
+      let(:remand_incomplete_status_event_row) do
         [
           "242080004",
           "Mason Rodriguez",
@@ -528,14 +528,14 @@ describe ChangeHistoryReporter do
           "Remand",
           "",
           "System",
-          another_incomplete_status_event.readable_event_date,
+          remand_incomplete_status_event.readable_event_date,
           "Claim status - Incomplete",
           nil,
           "Claim cannot be processed until decision date is entered.",
           nil
         ]
       end
-      let(:another_added_issue_without_decision_date_event_row) do
+      let(:remand_added_issue_without_decision_date_event_row) do
         [
           "242080004",
           "Mason Rodriguez",
@@ -545,15 +545,15 @@ describe ChangeHistoryReporter do
           "Remand",
           "VACO (101)",
           "E. Thompson",
-          another_added_issue_without_decision_date_event.readable_event_date,
+          remand_added_issue_without_decision_date_event.readable_event_date,
           "Added issue - No decision date",
           "CHAMPVA",
           "CHAMPVA issue description",
-          another_added_issue_without_decision_date_event.readable_decision_date,
+          remand_added_issue_without_decision_date_event.readable_decision_date,
           nil
         ]
       end
-      let(:another_completed_disposition_event_row) do
+      let(:remand_completed_disposition_event_row) do
         [
           "242080004",
           "Mason Rodriguez",
@@ -563,17 +563,17 @@ describe ChangeHistoryReporter do
           "Remand",
           "Austin AAC (200)",
           "E. Thompson",
-          another_completed_disposition_event.readable_event_date,
+          remand_completed_disposition_event.readable_event_date,
           "Completed disposition",
           "CHAMPVA",
           "CHAMPVA issue description",
-          another_completed_disposition_event.readable_decision_date,
+          remand_completed_disposition_event.readable_decision_date,
           "Granted",
           "Decision for CHAMPVA issue",
-          another_completed_disposition_event.readable_disposition_date
+          remand_completed_disposition_event.readable_disposition_date
         ]
       end
-      let(:another_added_decision_date_event_row) do
+      let(:remand_added_decision_date_event_row) do
         [
           "242080004",
           "Mason Rodriguez",
@@ -583,15 +583,15 @@ describe ChangeHistoryReporter do
           "Remand",
           "Austin AAC (200)",
           "E. Thompson",
-          another_added_decision_date_event.readable_event_date,
+          remand_added_decision_date_event.readable_event_date,
           "Added decision date",
           "CHAMPVA",
           "CHAMPVA issue description",
-          another_added_decision_date_event.readable_decision_date,
+          remand_added_decision_date_event.readable_decision_date,
           nil
         ]
       end
-      let(:another_removed_issue_event_row) do
+      let(:remand_removed_issue_event_row) do
         [
           "242080004",
           "Mason Rodriguez",
@@ -601,15 +601,15 @@ describe ChangeHistoryReporter do
           "Remand",
           "Austin AAC (200)",
           "E. Thompson",
-          another_removed_issue_event.readable_event_date,
+          remand_removed_issue_event.readable_event_date,
           "Removed issue",
           "CHAMPVA",
           "CHAMPVA issue description",
-          another_removed_issue_event.readable_decision_date,
+          remand_removed_issue_event.readable_decision_date,
           nil
         ]
       end
-      let(:another_withdrew_issue_event_row) do
+      let(:remand_withdrew_issue_event_row) do
         [
           "242080004",
           "Mason Rodriguez",
@@ -619,11 +619,11 @@ describe ChangeHistoryReporter do
           "Remand",
           "Austin AAC (200)",
           "E. Thompson",
-          another_withdrew_issue_event.readable_event_date,
+          remand_withdrew_issue_event.readable_event_date,
           "Withdrew issue",
           "CHAMPVA",
           "CHAMPVA issue description",
-          another_withdrew_issue_event.readable_decision_date,
+          remand_withdrew_issue_event.readable_decision_date,
           nil
         ]
       end
@@ -644,16 +644,16 @@ describe ChangeHistoryReporter do
         expect(rows[10]).to eq(added_decision_date_event_row)
         expect(rows[11]).to eq(removed_issue_event_row)
         expect(rows[12]).to eq(withdrew_issue_event_row)
-        expect(rows[13]).to eq(another_claim_creation_event_row)
-        expect(rows[14]).to eq(another_in_progress_status_event_row)
-        expect(rows[15]).to eq(another_cancelled_status_event_row)
-        expect(rows[16]).to eq(another_completed_status_event_row)
-        expect(rows[17]).to eq(another_incomplete_status_event_row)
-        expect(rows[18]).to eq(another_added_issue_without_decision_date_event_row)
-        expect(rows[19]).to eq(another_completed_disposition_event_row)
-        expect(rows[20]).to eq(another_added_decision_date_event_row)
-        expect(rows[21]).to eq(another_removed_issue_event_row)
-        expect(rows[22]).to eq(another_withdrew_issue_event_row)
+        expect(rows[13]).to eq(remand_claim_creation_event_row)
+        expect(rows[14]).to eq(remand_in_progress_status_event_row)
+        expect(rows[15]).to eq(remand_cancelled_status_event_row)
+        expect(rows[16]).to eq(remand_completed_status_event_row)
+        expect(rows[17]).to eq(remand_incomplete_status_event_row)
+        expect(rows[18]).to eq(remand_added_issue_without_decision_date_event_row)
+        expect(rows[19]).to eq(remand_completed_disposition_event_row)
+        expect(rows[20]).to eq(remand_added_decision_date_event_row)
+        expect(rows[21]).to eq(remand_removed_issue_event_row)
+        expect(rows[22]).to eq(remand_withdrew_issue_event_row)
       end
     end
   end
