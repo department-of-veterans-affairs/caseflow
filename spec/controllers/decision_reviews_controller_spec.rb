@@ -883,6 +883,10 @@ describe DecisionReviewsController, :postgres, type: :controller do
           create(:higher_level_review_vha_task_with_decision)
         end
 
+        let!(:remand_task_event) do
+          create(:remand_vha_task)
+        end
+
         it "should return task details" do
           get :history, params: { task_id: task_event.id, decision_review_business_line_slug: vha_org.url },
                         format: :json
@@ -897,6 +901,25 @@ describe DecisionReviewsController, :postgres, type: :controller do
             { "eventType" => "claim_creation", "readableEventType" => "Claim created" },
             { "eventType" => "in_progress", "readableEventType" => "Claim status - In progress" },
             { "eventType" => "completed_disposition", "readableEventType" => "Completed disposition" }
+          ]
+
+          expected_events.each do |expected_attributes|
+            expect(res).to include(
+              a_hash_including("attributes" => a_hash_including(expected_attributes))
+            )
+          end
+        end
+
+        it "should return remand task details" do
+          get :history, params: { task_id: remand_task_event.id, decision_review_business_line_slug: vha_org.url },
+                        format: :json
+
+          expect(response.status).to eq 200
+
+          res = JSON.parse(response.body)
+
+          expected_events = [
+            { "taskID" => remand_task_event.id, "eventType" => "added_issue", "claimType" => "Remand"},
           ]
 
           expected_events.each do |expected_attributes|
