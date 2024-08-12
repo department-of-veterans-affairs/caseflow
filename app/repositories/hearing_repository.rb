@@ -345,7 +345,7 @@ class HearingRepository
     def create_vacols_hearing(attrs)
       vacols_record = VACOLS::CaseHearing.create_hearing!(
         folder_nr: attrs[:appeal].vacols_id,
-        hearing_date: attrs[:scheduled_for],
+        hearing_date: VacolsHelper.format_datetime_with_utc_timezone(attrs[:scheduled_for]),
         vdkey: attrs[:hearing_day].id,
         hearing_type: attrs[:hearing_day].request_type,
         room: attrs[:hearing_day].room,
