@@ -89,7 +89,7 @@ class CaseDistributionTest extends React.PureComponent {
 
   reseedDocketPriority = () => {
     this.setState({ isReseedingDocketPriority: true });
-    ApiUtil.post('/case_distribution_levers_tests/run-demo-docket-priority').then(() => {
+    ApiUtil.post('/case_distribution_levers_tests/run_demo_non_avlj_appeals').then(() => {
       this.setState({
         isReseedingDocketPriority: false,
         showAlert: true,
@@ -99,6 +99,25 @@ class CaseDistributionTest extends React.PureComponent {
       console.warn(err);
       this.setState({
         isReseedingDocketPriority: false,
+        showAlert: true,
+        alertMsg: err,
+        alertType: 'error',
+      });
+    });
+  };
+
+  reseedNonSSCAVLJAppeals = () => {
+    this.setState({ isReseedingNonSSCAVLJAppeals: true });
+    ApiUtil.post('/case_distribution_levers_tests/run-demo-docket-priority').then(() => {
+      this.setState({
+        isReseedingNonSSCAVLJAppeals: false,
+        showAlert: true,
+        alertMsg: 'Successfully Completed Seeding non-SSJ AVLJ and appeals.',
+      });
+    }, (err) => {
+      console.warn(err);
+      this.setState({
+        isReseedingNonSSCAVLJAppeals: false,
         showAlert: true,
         alertMsg: err,
         alertType: 'error',
@@ -367,6 +386,14 @@ class CaseDistributionTest extends React.PureComponent {
                                 name="Run Docket-type Seeds"
                                 loading={this.state.isReseedingDocketPriority}
                                 loadingText="Reseeding Docket-type Seeds"
+                              />
+                            </li>
+                            <li>
+                              <Button
+                                onClick={this.reseedNonSSCAVLJAppeals}
+                                name="Run non-SSC AVLJ and Appeal Seeds"
+                                loading={this.state.isReseedingNonSSCAVLJAppeals}
+                                loadingText="Reseeding non-SSC AVLJ and Appeal Seeds"
                               />
                             </li>
                           </ul>

@@ -40,6 +40,13 @@ class CaseDistributionLeversTestsController < ApplicationController
     head :ok
   end
 
+  def run_demo_non_avlj_appeals
+    Rake::Task["db:seed:non_ssc_avlj_legacy_appeals"].reenable
+    Rake::Task["db:seed:non_ssc_avlj_legacy_appeals"].invoke
+
+    head :ok
+  end
+
   def appeals_ready_to_distribute
     csv_data = AppealsReadyForDistribution.process
 
