@@ -122,6 +122,7 @@ class IssuesController < ApplicationController
 
   # formats and saves task instructions
   # rubocop:disable Metrics/AbcSize
+  # :reek:FeatureEnvy
   def format_instructions(inst_params)
     disposition = inst_params[:issue].readable_disposition.nil? ? "N/A" : inst_params[:issue].readable_disposition
     note = params[:issues][:note].nil? ? "N/A" : params[:issues][:note]
