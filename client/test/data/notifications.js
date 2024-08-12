@@ -118,9 +118,9 @@ export const notifications = [
       notification_type: 'Email and SMS',
       event_date: '2022-10-27',
       event_type: 'Appeal decision mailed (Non-contested claims)',
-      recipient_email: 'test@caseflow.com',
+      recipient_email: null,
       recipient_phone_number: '2468012345',
-      email_notification_status: 'sent',
+      email_notification_status: 'temporary-failure',
       sms_notification_status: 'delivered',
       notification_content: 'string'
     }
