@@ -27,7 +27,7 @@ class DocumentController < ApplicationController
       document_disposition = "attachment; filename='#{params[:type]}-#{params[:id]}.pdf'"
     end
 
-    The line below enables document caching for a month.
+    # The line below enables document caching for a month.
     expires_in 30.days, public: true
     send_file(
       document.serve,

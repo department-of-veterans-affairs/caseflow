@@ -63,11 +63,7 @@ const ReaderToolbar = ({
               target="_blank"
               button="matte"
               onClick={() => handleClickDocumentTypeLink()}
-              href={
-                window.location.pathname.includes('prototype') ?
-                  `/reader/appeal${documentPathBase}/${doc.id}/prototype` :
-                  `/reader/appeal${documentPathBase}/${doc.id}`
-              }
+              href={`/reader/appeal${documentPathBase}/${doc.id}`}
             >
               <h1 className="cf-pdf-vertically-center cf-non-stylized-header">
                 <span title="Open in new tab">{doc.type}</span>
