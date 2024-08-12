@@ -36,7 +36,7 @@ module.exports = {
     'no-unused-expressions': 'off',
     'babel/no-unused-expressions': 'error',
     'no-restricted-imports': ['error', {
-      name: 'Enzyme',
+      name: 'enzyme',
       message: 'Please use React Testing Library instead.'
     }]
   },
