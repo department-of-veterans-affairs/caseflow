@@ -29,8 +29,6 @@ import Alert from '../components/Alert';
 import LoadingContainer from '../components/LoadingContainer';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { css } from 'glamor';
-import querystring from 'querystring';
-import { columnsFromConfig } from './queueTableUtils';
 import { DEFAULT_QUEUE_TABLE_SORT } from './constants';
 
 const assignSectionStyling = css({ marginTop: '30px' });
@@ -79,49 +77,6 @@ class UnassignedCasesPage extends React.PureComponent {
 
     const HeadingTag = userIsSCTCoordinator ? 'h1' : 'h2';
 
-    // Setup for backend paginated task retrieval
-    const tabPaginationOptions = querystring.parse(window.location.search.slice(1));
-    const queueConfig = this.props.queueConfig;
-    const tabConfig = queueConfig.tabs?.[0] || {};
-    const tabColumns = columnsFromConfig(queueConfig, tabConfig, []);
-
-    if (tabConfig) {
-      // Order all of the columns from the backend except badges so any included columns will be in front
-      tabColumns.slice(1).forEach((obj) => {
-        obj.order = 1;
-      });
-
-      // // Setup default sorting for the SCT assign page.
-      // If there is no sort by column in the pagination options, then use the tab config default sort
-      if (!tabPaginationOptions.sort_by) {
-        tabPaginationOptions.sort_by = tabConfig.defaultSort?.sortColName;
-        tabPaginationOptions.order = tabConfig.defaultSort?.sortAscending ? 'asc' : 'desc';
-      }
-
-    }
-
-    const includedColumnProps = {
-      includeBadges: true,
-      includeSelect: true,
-      includeDetailsLink: true,
-      includeType: true,
-      includeDocketNumber: true,
-      includeIssueCount: true,
-      includeDaysWaiting: true,
-      includeIssueTypes: Boolean(userIsCamoEmployee),
-      includeReaderLink: true,
-      includeNewDocsIcon: true,
-    };
-
-    const specialtyCaseTeamProps = {
-      includeSelect: true,
-      customColumns: tabColumns,
-      taskPagesApiEndpoint: tabConfig.task_page_endpoint_base_path,
-      useTaskPagesApi: true,
-      tabPaginationOptions,
-      useReduxCache: true,
-    };
-
     return <React.Fragment>
       <HeadingTag {...css({ display: 'inline-block' })}>{JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE}</HeadingTag>
       {error && <Alert type="error" title={error.title} message={error.detail} scrollOnAlert={false} />}
@@ -142,9 +97,17 @@ class UnassignedCasesPage extends React.PureComponent {
           }
           {!this.props.distributionCompleteCasesLoading &&
             <TaskTable
-              {...(!userIsSCTCoordinator && { ...includedColumnProps })}
-              {...(userIsSCTCoordinator && { ...specialtyCaseTeamProps })}
-              tasks={userIsSCTCoordinator ? [] : this.props.tasks}
+              includeBadges
+              includeSelect
+              includeDetailsLink
+              includeType
+              includeDocketNumber
+              includeIssueCount
+              {...((userIsCamoEmployee || userIsSCTCoordinator) ? { includeIssueTypes: true } : {})}
+              {...((userIsSCTCoordinator) ? { includeDaysWaiting: false } : { includeDaysWaiting: true })}
+              includeReaderLink
+              includeNewDocsIcon
+              tasks={this.props.tasks}
               userId={userId}
               defaultSort={DEFAULT_QUEUE_TABLE_SORT}
               {...(userIsCamoEmployee ? { preserveQueueFilter: true } : {})}
@@ -160,8 +123,7 @@ const mapStateToProps = (state, ownProps) => {
   const {
     queue: {
       isTaskAssignedToUserSelected,
-      pendingDistribution,
-      queueConfig
+      pendingDistribution
     },
     ui: {
       userIsCamoEmployee,
@@ -174,7 +136,6 @@ const mapStateToProps = (state, ownProps) => {
   } = state;
 
   let taskSelector = judgeAssignTasksSelector(state);
-  let fromReduxTasks = true;
 
   if (userIsCamoEmployee && isVhaCamoOrg(state)) {
     taskSelector = camoAssignTasksSelector(state);
@@ -182,17 +143,15 @@ const mapStateToProps = (state, ownProps) => {
 
   if (userIsSCTCoordinator && isSpecialtyCaseTeamOrg(state)) {
     taskSelector = specialtyCaseTeamAssignTasksSelector(state);
-    fromReduxTasks = false;
   }
 
   return {
     tasks: taskSelector,
     isTaskAssignedToUserSelected,
     pendingDistribution,
-    queueConfig,
     distributionLoading: pendingDistribution !== null,
     distributionCompleteCasesLoading: pendingDistribution && pendingDistribution.status === 'completed',
-    selectedTasks: selectedTasksSelector(state, ownProps.userId, fromReduxTasks),
+    selectedTasks: selectedTasksSelector(state, ownProps.userId),
     success,
     error,
     userIsCamoEmployee: isVhaCamoOrg(state),
@@ -219,7 +178,6 @@ UnassignedCasesPage.propTypes = {
     title: PropTypes.string,
     detail: PropTypes.string
   }),
-  queueConfig: PropTypes.object,
   userIsCamoEmployee: PropTypes.bool,
   userIsSCTCoordinator: PropTypes.bool,
   isVhaCamoOrg: PropTypes.bool,

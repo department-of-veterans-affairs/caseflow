@@ -57,46 +57,22 @@ module ByDocketDateDistribution
     end
   end
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength
   def ama_statistics
-    docket_counts = {
-      direct_review_priority_stats: {},
-      direct_review_stats: {},
-      evidence_submission_priority_stats: {},
-      evidence_submission_stats: {},
-      hearing_priority_stats: {},
-      hearing_stats: {},
-      legacy_priority_stats: {},
-      legacy_stats: {}
-    }
+    priority_counts = { count: priority_count }
+    nonpriority_counts = { count: nonpriority_count }
 
     dockets.each_pair do |sym, docket|
-      docket_counts["#{sym}_priority_stats".to_sym] = {
-        count: docket.count(priority: true, ready: true),
-        affinity_date: {
-          in_window: docket.affinity_date_count(true, true),
-          out_of_window: docket.affinity_date_count(false, true)
-        }
-      }
-
-      docket_counts["#{sym}_stats".to_sym] = {
-        count: docket.count(priority: false, ready: true),
-        affinity_date: {
-          in_window: docket.affinity_date_count(true, false),
-          out_of_window: docket.affinity_date_count(false, false)
-        }
-      }
+      priority_counts[sym] = docket.count(priority: true, ready: true)
+      nonpriority_counts[sym] = docket.count(priority: false, ready: true)
     end
 
-    docket_counts[:legacy_priority_stats][:legacy_hearing_tied_to] = legacy_hearing_priority_count(judge)
-    docket_counts[:legacy_stats][:legacy_hearing_tied_to] = legacy_hearing_nonpriority_count(judge)
+    priority_counts[:legacy_hearing_tied_to] = legacy_hearing_priority_count(judge)
+    nonpriority_counts[:legacy_hearing_tied_to] = legacy_hearing_nonpriority_count(judge)
+
+    nonpriority_counts[:iterations] = @nonpriority_iterations
 
     sct_appeals_counts = @appeals.count { |appeal| appeal.try(:sct_appeal) }
-
-    cases_tied_to_ineligible_judges = {
-      ama: ama_distributed_cases_tied_to_ineligible_judges,
-      legacy: distributed_cases_tied_to_ineligible_judges
-    }
 
     settings = {}
     feature_toggles = [
@@ -106,39 +82,29 @@ module ByDocketDateDistribution
       settings[sym] = FeatureToggle.enabled?(sym, user: RequestStore.store[:current_user])
     end
 
-    docket_counts.merge(
-      {
-        ineligible_judge_stats: {
-          distributed_cases_tied_to_ineligible_judges: cases_tied_to_ineligible_judges
-        },
-        judge_stats: {
-          team_size: team_size,
-          ama_judge_assigned_tasks: judge_tasks.length,
-          legacy_assigned_tasks: judge_legacy_tasks.length,
-          settings: settings
-        },
-        statistics: {
-          batch_size: @appeals.count,
-          total_batch_size: total_batch_size,
-          priority_target: @push_priority_target || @request_priority_count,
-          priority_count: priority_count,
-          nonpriority_count: nonpriority_count,
-          nonpriority_iterations: @nonpriority_iterations,
-          sct_appeals: sct_appeals_counts
-        }
-      }
-    )
+    {
+      batch_size: @appeals.count,
+      total_batch_size: total_batch_size,
+      priority_target: @push_priority_target || @request_priority_count,
+      priority: priority_counts,
+      nonpriority: nonpriority_counts,
+      sct_appeals: sct_appeals_counts,
+      distributed_cases_tied_to_ineligible_judges: {
+        ama: ama_distributed_cases_tied_to_ineligible_judges,
+        legacy: distributed_cases_tied_to_ineligible_judges
+      },
+      algorithm: "by_docket_date",
+      settings: settings
+    }
   rescue StandardError => error
     # There always needs to be a batch_size value for a completed distribution, else the priority push job will error
     {
-      statistics: {
-        batch_size: @appeals.count,
-        message: "Distribution successful, but there was an error generating statistics: \
-                #{error.class}: #{error.message}, #{error.backtrace.first}"
-      }
+      batch_size: @appeals.count,
+      message: "Distribution successful, but there was an error generating statistics: \
+               #{error.class}: #{error.message}, #{error.backtrace.first}"
     }
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
 
   def ama_distributed_cases_tied_to_ineligible_judges
     @appeals.filter_map do |appeal|

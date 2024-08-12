@@ -25,7 +25,6 @@ import {
 import { setSelectionOfTaskOfUser } from '../QueueActions';
 import { hasDASRecord } from '../utils';
 import COPY from '../../../COPY';
-import { updateQueueTableCache } from '../caching/queueTableCache.slice';
 export class TaskTableUnconnected extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.uniqueId
 
@@ -35,7 +34,7 @@ export class TaskTableUnconnected extends React.PureComponent {
     }
     const isTaskSelected = this.props.isTaskAssignedToUserSelected[this.props.userId] || {};
 
-    return isTaskSelected[uniqueId]?.selected || false;
+    return isTaskSelected[uniqueId] || false;
   }
 
   taskHasDASRecord = (task) => {
@@ -58,8 +57,7 @@ export class TaskTableUnconnected extends React.PureComponent {
         onChange={(selected) => this.props.setSelectionOfTaskOfUser({
           userId: this.props.userId,
           taskId: task.uniqueId,
-          selected,
-          task
+          selected
         })} />
     } : null;
   }
@@ -121,23 +119,20 @@ export class TaskTableUnconnected extends React.PureComponent {
     }
   }
 
-  render = () => <QueueTable
-    columns={this.getQueueColumns()}
-    rowObjects={this.props.tasks}
-    getKeyForRow={this.props.getKeyForRow || this.getKeyForRow}
-    defaultSort={this.getDefaultSortHash()}
-    enablePagination
-    onHistoryUpdate={this.props.onHistoryUpdate}
-    preserveFilter={this.props.preserveQueueFilter}
-    rowClassNames={(task) =>
-      (this.taskHasDASRecord(task) || !this.props.requireDasRecord) ? null : 'usa-input-error'}
-    taskPagesApiEndpoint={this.props.taskPagesApiEndpoint}
-    useTaskPagesApi={this.props.useTaskPagesApi}
-    tabPaginationOptions={this.props.tabPaginationOptions}
-    useReduxCache={this.props.useReduxCache}
-    reduxCache={this.props.queueTableResponseCache}
-    updateReduxCache={this.props.updateQueueTableCache}
-  />;
+    render = () => <QueueTable
+      columns={this.getQueueColumns()}
+      rowObjects={this.props.tasks}
+      getKeyForRow={this.props.getKeyForRow || this.getKeyForRow}
+      defaultSort={this.getDefaultSortHash()}
+      enablePagination
+      onHistoryUpdate={this.props.onHistoryUpdate}
+      preserveFilter={this.props.preserveQueueFilter}
+      rowClassNames={(task) =>
+        (this.taskHasDASRecord(task) || !this.props.requireDasRecord) ? null : 'usa-input-error'}
+      taskPagesApiEndpoint={this.props.taskPagesApiEndpoint}
+      useTaskPagesApi={this.props.useTaskPagesApi}
+      tabPaginationOptions={this.props.tabPaginationOptions}
+    />;
 }
 
 TaskTableUnconnected.propTypes = {
@@ -170,21 +165,17 @@ TaskTableUnconnected.propTypes = {
   tabPaginationOptions: PropTypes.object,
   onHistoryUpdate: PropTypes.func,
   preserveQueueFilter: PropTypes.bool,
-  queueTableResponseCache: PropTypes.object,
-  updateQueueTableCache: PropTypes.func,
-  useReduxCache: PropTypes.bool,
 };
 
 const mapStateToProps = (state) => ({
   isTaskAssignedToUserSelected: state.queue.isTaskAssignedToUserSelected,
   userIsVsoEmployee: state.ui.userIsVsoEmployee,
   userRole: state.ui.userRole,
-  organizationId: state.ui.activeOrganization.id,
-  queueTableResponseCache: state.caching.queueTable.cachedResponses
+  organizationId: state.ui.activeOrganization.id
 });
 
 const mapDispatchToProps = (dispatch) => (
-  bindActionCreators({ setSelectionOfTaskOfUser, updateQueueTableCache }, dispatch)
+  bindActionCreators({ setSelectionOfTaskOfUser }, dispatch)
 );
 
 export default (connect(mapStateToProps, mapDispatchToProps)(TaskTableUnconnected));
