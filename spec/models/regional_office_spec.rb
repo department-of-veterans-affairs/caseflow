@@ -73,22 +73,6 @@ describe RegionalOffice do
     end
   end
 
-  context ".valid?" do
-    RegionalOffice.all.each do |ro|
-      it "regional office (#{ro.key}) is valid?" do
-        expect(ro.valid?).to eq true
-      end
-    end
-  end
-
-  context ".facility_id" do
-    RegionalOffice.all.each do |ro|
-      it "regional office (#{ro.key}) does not throw when facility id is called" do
-        expect { ro.facility_id }.not_to raise_error
-      end
-    end
-  end
-
   context ".ro_facility_ids" do
     subject { RegionalOffice.ro_facility_ids }
 
@@ -106,12 +90,6 @@ describe RegionalOffice do
   end
 
   context ".street_address" do
-    RegionalOffice.all.each do |ro|
-      it "regional office (#{ro.key}) does not throw when street_address is called" do
-        expect { ro.street_address }.not_to raise_error
-      end
-    end
-
     it "RO87 has nil address" do
       ro = RegionalOffice.find!("RO87")
 
@@ -126,12 +104,6 @@ describe RegionalOffice do
   end
 
   context ".full_address" do
-    RegionalOffice.all.each do |ro|
-      it "regional office (#{ro.key}) does not throw when full_address is called" do
-        expect { ro.full_address }.not_to raise_error
-      end
-    end
-
     it "RO87 has nil address" do
       ro = RegionalOffice.find!("RO87")
 
@@ -151,17 +123,14 @@ describe RegionalOffice do
     end
   end
 
-  context ".name" do
+  context "individual RO attribute accessors do not raise errors" do
     RegionalOffice.all.each do |ro|
-      it "regional office (#{ro.key}) does not throw when name is called" do
+      it "regional office (#{ro.key})" do
+        expect(ro.valid?).to eq true
+        expect { ro.facility_id }.not_to raise_error
+        expect { ro.street_address }.not_to raise_error
+        expect { ro.full_address }.not_to raise_error
         expect { ro.name }.not_to raise_error
-      end
-    end
-  end
-
-  context ".zip_code" do
-    RegionalOffice.all.each do |ro|
-      it "regional office (#{ro.key}) does not throw when zip_code is called" do
         expect { ro.zip_code }.not_to raise_error
       end
     end
