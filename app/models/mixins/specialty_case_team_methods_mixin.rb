@@ -10,6 +10,10 @@ module SpecialtyCaseTeamMethodsMixin
     tasks.any? { |task| task.is_a?(DistributionTask) && task.completed? }
   end
 
+  def distribution_task?
+    tasks.any? { |task| task.is_a?(DistributionTask) }
+  end
+
   def specialty_case_team_assign_task?
     tasks.any? { |task| task.is_a?(SpecialtyCaseTeamAssignTask) }
   end
