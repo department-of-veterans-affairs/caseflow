@@ -121,7 +121,7 @@ describe('NonratingRequestIssueModal', () => {
       // Simulate user input of invalid characters
       const descInput = wrapper.find("input[id='Issue description']");
 
-      descInput.simulate('change', { target: { value: 'test \u03B5' } });
+      descInput.simulate('change', { target: { value: 'Not safe: \u{00A7} \u{2600} \u{2603} \u{260E} \u{2615}' } });
 
       expect(wrapper.find('.cf-modal-controls .add-issue').prop('disabled')).toBe(true);
       expect(wrapper.find('.usa-input-error-message').text()).toBe('Invalid character');
