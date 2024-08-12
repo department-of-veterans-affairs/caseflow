@@ -4,7 +4,6 @@ import BENEFIT_TYPES from 'constants/BENEFIT_TYPES';
 import { formatDateStr } from 'app/util/DateUtil';
 import PropTypes from 'prop-types';
 import StringUtil from 'app/util/StringUtil';
-import _ from 'lodash';
 
 const { capitalizeFirst } = StringUtil;
 
@@ -139,10 +138,8 @@ const IndividualClaimHistoryTable = (props) => {
   };
 
   const requestDecision = (details) => {
-    return details.issueModificationRequestStatus === 'denied' ? <React.Fragment>
-      <b> Request decision: </b> Rejected <br />
-    </React.Fragment> : <React.Fragment>
-      <b> Request decision: </b> Approved <br />
+    return <React.Fragment>
+      <b> Request decision: </b> {details.issueModificationRequestStatus === 'denied' ? 'Rejected' : 'Approved'} <br />
     </React.Fragment>;
   };
 
@@ -163,17 +160,17 @@ const IndividualClaimHistoryTable = (props) => {
     switch (details.requestType) {
     case 'modification':
       component = <React.Fragment>
-        <b>New Issue type: </b>{details.newIssueType}<br />
-        <b>New Issue description: </b>{details.newIssueDescription}<br />
-        <b>New Decision date: </b>{formatDecisionDate(details.newDecisionDate)}<br />
+        <b>New issue type: </b>{details.newIssueType}<br />
+        <b>New issue description: </b>{details.newIssueDescription}<br />
+        <b>New decision date: </b>{formatDecisionDate(details.newDecisionDate)}<br />
         <b>New {details.requestType} request reason: </b>{details.modificationRequestReason}<br />
       </React.Fragment>;
       break;
     case 'addition':
       component = <React.Fragment>
-        <b>New Issue type: </b>{details.newIssueType}<br />
-        <b>New Issue description: </b>{details.newIssueDescription}<br />
-        <b>New Decision date: </b>{formatDecisionDate(details.newDecisionDate)}<br />
+        <b>New issue type: </b>{details.newIssueType}<br />
+        <b>New issue description: </b>{details.newIssueDescription}<br />
+        <b>New decision date: </b>{formatDecisionDate(details.newDecisionDate)}<br />
         <b>New {details.requestType} request reason: </b>{details.modificationRequestReason}<br />
       </React.Fragment>;
       break;
@@ -185,7 +182,7 @@ const IndividualClaimHistoryTable = (props) => {
     case 'withdrawal':
       component = <React.Fragment>
         <b>New {details.requestType} request reason: </b>{details.requestor}<br />
-        <b>New Withdrawal request date: </b> {formatDecisionDate(details.issueModificationRequestWithdrawalDate)}<br />
+        <b>New withdrawal request date: </b> {formatDecisionDate(details.issueModificationRequestWithdrawalDate)}<br />
       </React.Fragment>;
       break;
     default:
@@ -276,31 +273,16 @@ const IndividualClaimHistoryTable = (props) => {
   };
 
   const OriginalDetailsFragments = (row) => {
-    const { readableEventType, details, modificationRequestDetails } = row;
+    const { details, modificationRequestDetails } = row;
 
     const requestDetails = { ...modificationRequestDetails };
     const requestModificationDetails = { ...details, ...requestDetails };
 
-    let component = null;
     const [isOpen, setIsOpen] = useState(false);
 
     const toggle = () => {
       setIsOpen((isOpen) => !isOpen);
     };
-
-    switch (readableEventType) {
-    case `Rejection of request - issue ${requestDetails.requestType}`:
-      component = <OriginalRequestedIssueModificationFragment {...requestModificationDetails} />;
-      break;
-    case `Edit of request - issue ${requestDetails.requestType}`:
-      component = <OriginalRequestedIssueModificationFragment {...requestModificationDetails} />;
-      break;
-    case `Approval of request - issue ${requestDetails.requestType}`:
-      component = <OriginalRequestedIssueModificationFragment {...requestModificationDetails} />;
-      break;
-    default:
-      return null;
-    }
 
     return (
       <div>
@@ -309,7 +291,7 @@ const IndividualClaimHistoryTable = (props) => {
         </div>
         {isOpen &&
           <div>
-            {component}
+            <OriginalRequestedIssueModificationFragment {...requestModificationDetails} />
           </div>}
       </div>
     );
