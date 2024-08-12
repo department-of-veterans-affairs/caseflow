@@ -171,8 +171,6 @@ Rails.application.routes.draw do
   end
 
   namespace :reader do
-    get '/appeal/:appeal_id/documents/:document_id/prototype', to: 'documents#show_prototype', as: 'prototype'
-
     get 'appeal/veteran-id', to: "appeal#find_appeals_by_veteran_id",
       constraints: lambda{ |req| req.env["HTTP_CASE_SEARCH"] =~ /[a-zA-Z0-9]{2,12}/ }
     resources :appeal, only: [:show, :index] do

@@ -63,11 +63,7 @@ const ReaderToolbar = ({
               target="_blank"
               button="matte"
               onClick={() => handleClickDocumentTypeLink()}
-              href={
-                window.location.pathname.includes('prototype') ?
-                  `/reader/appeal${documentPathBase}/${doc.id}/prototype` :
-                  `/reader/appeal${documentPathBase}/${doc.id}`
-              }
+              href={`/reader/appeal${documentPathBase}/${doc.id}`}
             >
               <h1 className="cf-pdf-vertically-center cf-non-stylized-header">
                 <span title="Open in new tab">{doc.type}</span>
@@ -151,7 +147,12 @@ const ReaderToolbar = ({
 
 ReaderToolbar.propTypes = {
   documentPathBase: PropTypes.string,
-  doc: PropTypes.object,
+  doc: PropTypes.shape({
+    content_url: PropTypes.string,
+    filename: PropTypes.string,
+    id: PropTypes.number,
+    type: PropTypes.string,
+  }),
   showClaimsFolderNavigation: PropTypes.bool,
   resetZoomLevel: PropTypes.func,
   setZoomOutLevel: PropTypes.func,
