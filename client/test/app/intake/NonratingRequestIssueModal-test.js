@@ -124,6 +124,7 @@ describe('NonratingRequestIssueModal', () => {
       descInput.simulate('change', { target: { value: 'test \u03B5' } });
 
       expect(wrapper.find('.cf-modal-controls .add-issue').prop('disabled')).toBe(true);
+      expect(wrapper.find('.usa-input-error-message').text()).toBe('Invalid character');
     });
   });
 
