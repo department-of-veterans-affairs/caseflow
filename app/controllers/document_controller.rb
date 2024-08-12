@@ -28,12 +28,13 @@ class DocumentController < ApplicationController
     end
 
     # The line below enables document caching for a month.
-    expires_in 30.days, public: true
-    send_file(
-      document.serve,
-      type: "application/pdf",
-      disposition: document_disposition
-    )
+    # expires_in 30.days, public: true
+    # send_file(
+    #   document.serve,
+    #   type: "application/pdf",
+    #   disposition: document_disposition
+    # )
+    render json: { error: 'Internal Server Error' }, status: :internal_server_error
   end
 
   def mark_as_read
