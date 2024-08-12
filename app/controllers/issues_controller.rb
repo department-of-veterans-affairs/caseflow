@@ -88,6 +88,7 @@ class IssuesController < ApplicationController
     task_instructions_helper(issue, task)
   end
 
+  # rubocop:disable Metrics/ParameterLists
   def task_instructions_helper(issue, task)
     # set up data for added or edited issue depending on the params action
     change_category = (params[:action] == "create") ? "Added Issue" : "Edited Issue"
@@ -114,7 +115,7 @@ class IssuesController < ApplicationController
   end
 
   # formats and saves task instructions
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/ParameterLists
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def format_instructions(issue, task, updated_mst_status, updated_pact_status, change_category)
     disposition = issue.readable_disposition.nil? ? "N/A" : issue.readable_disposition
     note = params[:issues][:note].nil? ? "N/A" : params[:issues][:note]
