@@ -55,7 +55,7 @@ for commit in $rbCommits; do
   # check all params for 'auto-fix' option
   autofix="";
   for var in "$@"; do
-    if [ $var == "auto-fix" ]; then
+    if [ $var == "autofix" ]; then
       autofix="-a"
     fi
   done
@@ -86,7 +86,7 @@ if [[ ! -z "$jsxCommits" || ! -z "$jsCommits" ]]; then
   autofix="";
   for var in "$@"
   do
-    if [ $var == "auto-fix" ]; then
+    if [ $var == "autofix" ]; then
       autofix= "-o"
       # if autofix is run, run jest --update-snapshot
       jest --update-snapshot
