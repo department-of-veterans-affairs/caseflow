@@ -197,8 +197,7 @@ class Hearing < CaseflowRecord
 
     # returns datetime in scheduled_in_timezone timezone
     if scheduled_datetime.present? && scheduled_in_timezone.present?
-      scheduled_datetime_string = scheduled_datetime.strftime("%Y-%m-%d %H:%M:%S %z")
-      return Time.use_zone(scheduled_in_timezone) { Time.zone.parse(scheduled_datetime_string) }
+      return scheduled_datetime.in_time_zone(scheduled_in_timezone)
     end
 
     # returns the date and time a hearing is scheduled for in the regional office's
