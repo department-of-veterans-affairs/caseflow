@@ -30,6 +30,12 @@ class CaseDistributionTest extends React.PureComponent {
     };
   }
 
+  componentDidUpdate() {
+    setTimeout(() => {
+      this.setState({ showAlert: false, showLegacyAppealsAlert: false });
+    }, 5000); // Delay of 5 seconds
+  }
+
   reseedAod = () => {
     this.setState({ isReseedingAod: true });
     ApiUtil.post('/case_distribution_levers_tests/run_demo_aod_hearing_seeds').then(() => {
@@ -205,6 +211,7 @@ class CaseDistributionTest extends React.PureComponent {
                                 <button className="btn btn-primary">Distribution Status</button>
                               </a>
                             </li>
+                            <li><a href="#case_movement"><button className="btn btn-primary">Go to Case Movement</button></a></li>
                           </ul>
                           <h2 id="levers"> Case Distribution Levers </h2>
                           <table
