@@ -1,9 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import Layer from './Comments/Layer';
-
-import { clearDocumentLoadError, setDocumentLoadError } from '../../reader/Pdf/PdfActions';
-import { useDispatch } from 'react-redux';
+import StatusMessage from '../../components/StatusMessage';
 
 import { GlobalWorkerOptions, getDocument } from 'pdfjs-dist';
 GlobalWorkerOptions.workerSrc = '/assets/pdf.worker.min.js';
@@ -12,12 +10,30 @@ import ApiUtil from '../../util/ApiUtil';
 import Page from './Page';
 import TextLayer from './TextLayer';
 
-const PdfDocument = ({ fileUrl, rotateDeg, setNumPages, zoomLevel, documentId }) => {
+const displayErrorMessage = (doc) => {
+  const downloadUrl = `${doc.content_url}?type=${doc.type}&download=true`;
+  // Center the status message vertically
+  const style = {
+    position: 'absolute',
+    top: '40%',
+    left: '50%',
+    width: '816px',
+    transform: 'translate(-50%, -50%)'
+  };
+
+  return <div style={style}>
+    <StatusMessage title="Unable to load document" type="warning">
+        Caseflow is experiencing technical difficulties and cannot load <strong>{doc.type}</strong>.
+      <br />
+        You can try <a href={downloadUrl}>downloading the document</a> or try again later.
+    </StatusMessage>
+  </div>;
+};
+
+const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel }) => {
+  const [documentLoadError, setDocumentLoadError] = useState(false);
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
-  const dispatch = useDispatch();
-
-  dispatch(clearDocumentLoadError(fileUrl));
 
   const containerStyle = {
     width: '100%',
@@ -39,7 +55,7 @@ const PdfDocument = ({ fileUrl, rotateDeg, setNumPages, zoomLevel, documentId })
         timeout: true,
         responseType: 'arraybuffer',
       };
-      const byteArr = await ApiUtil.get(fileUrl, requestOptions).then((response) => {
+      const byteArr = await ApiUtil.get(doc.content_url, requestOptions).then((response) => {
         return response.body;
       });
       const docProxy = await getDocument({ data: byteArr }).promise;
@@ -52,9 +68,9 @@ const PdfDocument = ({ fileUrl, rotateDeg, setNumPages, zoomLevel, documentId })
 
     getDocData().catch((error) => {
       console.log(`ERROR with getting doc data: ${error}`);
-      dispatch(setDocumentLoadError(fileUrl));
+      setDocumentLoadError(true);
     });
-  }, [fileUrl]);
+  }, [doc.content_url]);
 
   useEffect(() => {
     const pageArray = [];
@@ -76,6 +92,7 @@ const PdfDocument = ({ fileUrl, rotateDeg, setNumPages, zoomLevel, documentId })
 
   return (
     <div id="pdfContainer" style={containerStyle}>
+      { documentLoadError && displayErrorMessage(doc) }
       {pdfPages.map((page, index) => (
         <Page
           scale={zoomLevel}
@@ -83,7 +100,7 @@ const PdfDocument = ({ fileUrl, rotateDeg, setNumPages, zoomLevel, documentId })
           rotation={rotateDeg}
           key={`page-${index}`}
           renderItem={(childProps) => (
-            <Layer documentId={documentId} zoomLevel={zoomLevel} rotation={rotateDeg} {...childProps}>
+            <Layer documentId={doc.id} zoomLevel={zoomLevel} rotation={rotateDeg} {...childProps}>
               <TextLayer page={page} zoomLevel={zoomLevel} rotation={rotateDeg} />
             </Layer>
           )}
@@ -94,11 +111,15 @@ const PdfDocument = ({ fileUrl, rotateDeg, setNumPages, zoomLevel, documentId })
 };
 
 PdfDocument.propTypes = {
-  fileUrl: PropTypes.string,
+  doc: PropTypes.shape({
+    content_url: PropTypes.string,
+    filename: PropTypes.string,
+    id: PropTypes.number,
+    type: PropTypes.string,
+  }),
   rotateDeg: PropTypes.string,
   setNumPages: PropTypes.func,
   zoomLevel: PropTypes.number,
-  documentId: PropTypes.number,
 };
 
 export default PdfDocument;
