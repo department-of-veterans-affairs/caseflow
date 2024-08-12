@@ -108,8 +108,8 @@ class NonratingRequestIssueModal extends React.Component {
 
   errorOnDescription = (value) => {
     // whitelist alphanumberic, and specified special characters to match VBMS
-    const regex = /^[a-zA-Z0-9\s.\-_|/\\@#~=%,;?!'"`():$+*^[\]&><{}]*$/;
-    const error = regex.test(value) ? null : 'Invalid character';
+    const specialCharWhitelist = /^[a-zA-Z0-9\s.\-_|/\\@#~=%,;?!'"`():$+*^[\]&><{}]*$/;
+    const error = specialCharWhitelist.test(value) ? null : 'Invalid character';
 
     return error;
   }
