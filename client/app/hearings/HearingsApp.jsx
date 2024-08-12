@@ -25,6 +25,7 @@ import ReviewAssignmentsContainer from './containers/ReviewAssignmentsContainer'
 import ScrollToTop from '../components/ScrollToTop';
 import UnsupportedBrowserBanner from '../components/UnsupportedBrowserBanner';
 import { TranscriptionFileDispatchView } from './components/TranscriptionFileDispatchView';
+import ConfirmWorkOrderModal from './components/transcriptionProcessing/ConfirmWorkOrderModal';
 
 export default class HearingsApp extends React.PureComponent {
   userPermissionProps = () => {
@@ -127,6 +128,12 @@ export default class HearingsApp extends React.PureComponent {
   routeForTranscriptionSettings = ({ match: history }) => (
     <HearingsUserContext.Provider value={this.userPermissionProps()}>
       <TranscriptionSettingsContainer history={history} />
+    </HearingsUserContext.Provider>
+  );
+
+  routeForConfirmWorkOrder = ({ history }) => (
+    <HearingsUserContext.Provider value={this.userPermissionProps()}>
+      <ConfirmWorkOrderModal onCancel={() => history.goBack()} />
     </HearingsUserContext.Provider>
   );
 
@@ -233,6 +240,12 @@ export default class HearingsApp extends React.PureComponent {
               path="/find_by_contractor"
               title="Transcription Settings"
               component={this.routeForTranscriptionSettings}
+            />
+            <PageRoute
+              exact
+              path="/confirm_work_order"
+              title="Confirm Work Order"
+              component={this.routeForConfirmWorkOrder}
             />
           </div>
         </AppFrame>

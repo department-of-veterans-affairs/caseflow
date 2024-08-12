@@ -5,11 +5,13 @@ import COPY from '../../../../COPY';
 import { RadioField } from '../../../components/RadioField';
 import { SearchableDropdown } from '../../../components/SearchableDropdown';
 import ApiUtil from 'app/util/ApiUtil';
+import { useHistory } from 'react-router';
 
 const PackageFilesModal = ({ onCancel, contractors }) => {
   const [transcription, setTranscription] = useState({ task_id: '' });
   const [, setReturnDateValue] = useState('');
   const [, setContractorId] = useState('');
+  let history = useHistory();
 
   /**
    * Grabs the taskId
@@ -162,7 +164,7 @@ const PackageFilesModal = ({ onCancel, contractors }) => {
         {
           classNames: ['usa-button', 'usa-button-primary'],
           name: COPY.TRANSCRIPTION_TABLE_PACKAGE_FILE,
-          onClick: () => packageFiles(transcription.id, transcription.task_id),
+          onClick: () => history.push('/confirm_work_order')
         },
       ]}
       closeHandler={onCancel}
