@@ -353,21 +353,10 @@ export default class QueueTable extends React.PureComponent {
 
     if (this.props.rowObjects.length) {
       this.setState({ cachedResponses: { ...this.state.cachedResponses, [this.requestUrl()]: firstResponse } });
-
-      if (this.props.useReduxCache) {
-        this.props.updateReduxCache({ key: this.requestUrl(), value: firstResponse });
-      }
-
     }
   };
 
   componentDidUpdate = (previousProps, previousState) => {
-    if (this.props.useReduxCache &&
-      (this.props.reduxCache[this.requestUrl()]?.tasks?.length !==
-        previousProps.reduxCache[this.requestUrl()]?.tasks?.length)) {
-      this.setState({ tasksFromApi: this.props.reduxCache[this.requestUrl()].tasks });
-    }
-
     // Only refetch if the search query text changes
     if (this.props.tabPaginationOptions &&
       previousState.querySearchText !== this.props.tabPaginationOptions[QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM]) {
@@ -567,29 +556,9 @@ export default class QueueTable extends React.PureComponent {
 
   deepLink = () => {
     const base = `${window.location.origin}${window.location.pathname}`;
-    const currentParams = new URLSearchParams(window.location.search);
-    const tableParams = new URLSearchParams(this.requestQueryString());
-    const tabParams = new URLSearchParams(this.props.taskPagesApiEndpoint.split('?')[1]);
+    const tab = this.props.taskPagesApiEndpoint.split('?')[1];
 
-    // List of parameters that should be cleared if not present in tableParams
-    const paramsToClear = [
-      QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM,
-      `${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`,
-    ];
-
-    // Remove paramsToClear from currentParams if they are not in tableParams
-    paramsToClear.forEach((param) => {
-      if (!tableParams.has(param)) {
-        currentParams.delete(param);
-      }
-    });
-
-    // Merge tableParams and tabParams into currentParams, overwriting any duplicate keys
-    for (const [key, value] of [...tabParams.entries(), ...tableParams.entries()]) {
-      currentParams.set(key, value);
-    }
-
-    return `${base}?${currentParams.toString()}`;
+    return `${base}?${tab}${this.requestQueryString()}`;
   };
 
   // /organizations/vlj-support-staff/tasks?tab=on_hold
@@ -653,8 +622,7 @@ export default class QueueTable extends React.PureComponent {
     const endpointUrl = this.requestUrl();
 
     // If we already have the tasks cached then we set the state and return early.
-    const responseFromCache = this.props.useReduxCache ? this.props.reduxCache[endpointUrl] :
-      this.state.cachedResponses[endpointUrl];
+    const responseFromCache = this.state.cachedResponses[endpointUrl];
 
     if (responseFromCache) {
       this.setState({ tasksFromApi: responseFromCache.tasks });
@@ -675,20 +643,10 @@ export default class QueueTable extends React.PureComponent {
         const preparedResponse = Object.assign(response.body, { tasks: preparedTasks });
 
         this.setState({
-          // cachedResponses: { ...this.state.cachedResponses, [endpointUrl]: preparedResponse },
-          ...(!this.props.useReduxCache && {
-            cachedResponses: {
-              ...this.state.cachedResponses,
-              [endpointUrl]: preparedResponse
-            }
-          }),
+          cachedResponses: { ...this.state.cachedResponses, [endpointUrl]: preparedResponse },
           tasksFromApi: preparedTasks,
           loadingComponent: null
         });
-
-        if (this.props.useReduxCache) {
-          this.props.updateReduxCache({ key: endpointUrl, value: preparedResponse });
-        }
 
         this.updateAddressBar();
       }).
@@ -711,9 +669,7 @@ export default class QueueTable extends React.PureComponent {
       styling,
       bodyStyling,
       enablePagination,
-      useTaskPagesApi,
-      reduxCache,
-      useReduxCache
+      useTaskPagesApi
     } = this.props;
 
     let { totalTaskCount, numberOfPages, rowObjects, casesPerPage } = this.props;
@@ -726,7 +682,7 @@ export default class QueueTable extends React.PureComponent {
 
         // If we already have the response cached then use the attributes of the response to set the pagination vars.
         const endpointUrl = this.requestUrl();
-        const responseFromCache = useReduxCache ? reduxCache[endpointUrl] : this.state.cachedResponses[endpointUrl];
+        const responseFromCache = this.state.cachedResponses[endpointUrl];
 
         if (responseFromCache) {
           numberOfPages = responseFromCache.task_page_count;
@@ -887,9 +843,6 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
   }),
   onHistoryUpdate: PropTypes.func,
   preserveFilter: PropTypes.bool,
-  useReduxCache: PropTypes.bool,
-  reduxCache: PropTypes.object,
-  updateReduxCache: PropTypes.func
 };
 
 Row.propTypes.rowObjects = PropTypes.arrayOf(PropTypes.object);

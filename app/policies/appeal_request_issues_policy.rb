@@ -30,7 +30,7 @@ class AppealRequestIssuesPolicy
   end
 
   def editable_by_ssc_team_member?
-    SupervisorySeniorCounsel.singleton.users.include?(user) &&
+    SupervisorySeniorCouncil.singleton.users.include?(user) &&
       FeatureToggle.enabled?(:split_appeal_workflow)
   end
 

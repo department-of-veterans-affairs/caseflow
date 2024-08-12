@@ -10,20 +10,13 @@ import COPY from '../../COPY';
 
 const moment = extendMoment(Moment);
 
-export const selectedTasksSelector = (state, userId, fromReduxTasks = true) => {
-  return map(state.queue.isTaskAssignedToUserSelected[userId] || {}, (task, id) => {
-    if (!task.selected) {
+export const selectedTasksSelector = (state, userId) => {
+  return map(state.queue.isTaskAssignedToUserSelected[userId] || {}, (selected, id) => {
+    if (!selected) {
       return;
     }
 
-    // If you are pulling the tasks from the serialized redux tasks
-    if (fromReduxTasks) {
-      return state.queue.tasks[id] || state.queue.amaTasks[id];
-    }
-
-    // Grabbing tasks from the selectedTasksReduxStore instead of the queue tasks store
-    return task.task;
-
+    return state.queue.tasks[id] || state.queue.amaTasks[id];
   }).filter(Boolean);
 };
 

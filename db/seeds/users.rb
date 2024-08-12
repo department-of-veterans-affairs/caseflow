@@ -431,25 +431,25 @@ module Seeds
     def create_split_appeals_test_users
       ussc = create(:user,
                     css_id: "SPLTAPPLSNOW",
-                    full_name: "Jon SupervisorySeniorCounselUser Snow",
+                    full_name: "Jon SupervisorySeniorCouncilUser Snow",
                     roles: ["Hearing Prep"])
-      SupervisorySeniorCounsel.singleton.add_user(ussc)
+      SupervisorySeniorCouncil.singleton.add_user(ussc)
       ussc2 = create(:user,
                      css_id: "SPLTAPPLTARGARYEN",
-                     full_name: "Daenerys SupervisorySeniorCounselUser Targaryen",
+                     full_name: "Daenerys SupervisorySeniorCouncilUser Targaryen",
                      roles: ["Hearing Prep"])
-      SupervisorySeniorCounsel.singleton.add_user(ussc2)
+      SupervisorySeniorCouncil.singleton.add_user(ussc2)
       ussccr = create(:user,
                       css_id: "SPLTAPPLLANNISTER",
-                      full_name: "Jaime SupervisorySeniorCounselCaseReviewUser Lannister",
+                      full_name: "Jaime SupervisorySeniorCouncilCaseReviewUser Lannister",
                       roles: ["Hearing Prep"])
-      SupervisorySeniorCounsel.singleton.add_user(ussccr)
+      SupervisorySeniorCouncil.singleton.add_user(ussccr)
       CaseReview.singleton.add_user(ussccr)
       ussccr2 = create(:user,
                        css_id: "SPLTAPPLSTARK",
-                       full_name: "Ned SupervisorySeniorCounselCaseReviewUser Stark",
+                       full_name: "Ned SupervisorySeniorCouncilCaseReviewUser Stark",
                        roles: ["Hearing Prep"])
-      SupervisorySeniorCounsel.singleton.add_user(ussccr2)
+      SupervisorySeniorCouncil.singleton.add_user(ussccr2)
       CaseReview.singleton.add_user(ussccr2)
     end
 
@@ -577,7 +577,7 @@ module Seeds
 
     def create_qa_ssc_avlj_attorney
       atty = create(:user, css_id: "QSSCAVLJ", full_name: "QA SSC_AVLJ Attorney", roles: ["Hearing Prep"])
-      SupervisorySeniorCounsel.singleton.add_user(atty)
+      SupervisorySeniorCouncil.singleton.add_user(atty)
       create(:staff, user: atty, sattyid: "9999", smemgrp: "9999")
     end
 

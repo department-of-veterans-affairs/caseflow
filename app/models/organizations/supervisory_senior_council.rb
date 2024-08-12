@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-class SupervisorySeniorCounsel < Organization
+class SupervisorySeniorCouncil < Organization
   alias_attribute :full_name, :name
 
   def self.singleton
-    SupervisorySeniorCounsel.first || SupervisorySeniorCounsel.create(
-      name: "Supervisory Senior Counsel",
-      url: "supervisory-senior-counsel"
+    SupervisorySeniorCouncil.first || SupervisorySeniorCouncil.create(
+      name: "Supervisory Senior Council",
+      url: "supervisory-senior-council"
     )
   end
 

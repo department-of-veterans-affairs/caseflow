@@ -72,39 +72,39 @@ namespace :add_admins do
   desc "create SSC org and test users for UAT testing"
   task :create_ssc_and_users do # rubocop:disable Rails/RakeEnvironment
     STDOUT.puts("Creating the SSC org and all test users")
-    SupervisorySeniorCounsel.singleton
+    SupervisorySeniorCouncil.singleton
     ussc = User.create!(
       station_id: 101,
       css_id: "SPLTAPPLJERRY",
-      full_name: "Jerry SupervisorySeniorCounselUser",
+      full_name: "Jerry SupervisorySeniorCouncilUser",
       roles: ["Hearing Prep"]
     )
-    SupervisorySeniorCounsel.singleton.add_user(ussc)
+    SupervisorySeniorCouncil.singleton.add_user(ussc)
     STDOUT.puts("Created user #{ussc.css_id}")
     ussc2 = User.create!(
       station_id: 101,
       css_id: "SPLTAPPLTOM",
-      full_name: "Tom SupervisorySeniorCounselUser",
+      full_name: "Tom SupervisorySeniorCouncilUser",
       roles: ["Hearing Prep"]
     )
-    SupervisorySeniorCounsel.singleton.add_user(ussc2)
+    SupervisorySeniorCouncil.singleton.add_user(ussc2)
     STDOUT.puts("Created user #{ussc2.css_id}")
     ussccr = User.create!(
       station_id: 101,
       css_id: "SPLTAPPLBILLY",
-      full_name: "Billy SupervisorySeniorCounselCaseReviewUser",
+      full_name: "Billy SupervisorySeniorCouncilCaseReviewUser",
       roles: ["Hearing Prep"]
     )
-    SupervisorySeniorCounsel.singleton.add_user(ussccr)
+    SupervisorySeniorCouncil.singleton.add_user(ussccr)
     STDOUT.puts("Created user #{ussccr.css_id}")
     CaseReview.singleton.add_user(ussccr)
     ussccr2 = User.create!(
       station_id: 101,
       css_id: "SPLTAPPLSUSAN",
-      full_name: "Susan SupervisorySeniorCounselCaseReviewUser",
+      full_name: "Susan SupervisorySeniorCouncilCaseReviewUser",
       roles: ["Hearing Prep"]
     )
-    SupervisorySeniorCounsel.singleton.add_user(ussccr2)
+    SupervisorySeniorCouncil.singleton.add_user(ussccr2)
     CaseReview.singleton.add_user(ussccr2)
     STDOUT.puts("Created user #{ussccr2.css_id}")
 
@@ -189,7 +189,7 @@ namespace :add_admins do
     ihp = IhpDraft.create!(
       appeal_id: appeal.id,
       appeal_type: "Appeal",
-      organization_id: Organization.find_by(name: "Supervisory Senior Counsel").id,
+      organization_id: Organization.find_by(name: "Supervisory Senior Council").id,
       path: path
     )
 
