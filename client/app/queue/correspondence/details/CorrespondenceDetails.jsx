@@ -202,7 +202,7 @@ const CorrespondenceDetails = (props) => {
       <>
         <div className="correspondence-package-details">
           <h2 className="correspondence-h2">General Information</h2>
-          <table className="corr-table-borderless gray-border">
+          <table className="corr-table-borderless-no-background gray-border">
             <tbody>
               <tr>
                 <th className="corr-table-borderless-first-item"><strong>Veteran Details</strong></th>
