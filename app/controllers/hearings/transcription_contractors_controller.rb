@@ -6,22 +6,27 @@ class Hearings::TranscriptionContractorsController < ApplicationController
   rescue_from ActiveRecord::RecordNotFound, with: :render_record_not_found
   rescue_from ActionController::ParameterMissing, with: :render_record_not_found
   rescue_from ActiveRecord::RecordInvalid, with: :render_record_invalid
-  before_action :verify_access_to_hearings
+  before_action :verify_transcription_user
+  before_action :verify_access_to_hearings, except: [:available_contractors]
 
   def index
     respond_to do |format|
       format.html do
         render "hearings/index"
       end
-
       format.json do
         @transcription_contractors = TranscriptionContractor.all
-        counts = Transcription.count_for_this_week
+        counts = Transcription.counts_for_this_week
         transcription_contractor_json = @transcription_contractors.as_json
           .each { |contractor| contractor["transcription_count_this_week"] = counts[contractor["id"]] || 0 }
         render json: { transcription_contractors: transcription_contractor_json }
       end
     end
+  end
+
+  def available_contractors
+    contractors = TranscriptionContractor.where(is_available_for_work: true).select(:id, :name)
+    render json: { transcription_contractors: contractors }
   end
 
   def show

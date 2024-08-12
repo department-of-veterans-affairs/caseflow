@@ -780,6 +780,7 @@
   "TRANSCRIPTION_SETTINGS_UPDATE_HEARINGS_GOAL_MESSAGE": "You have successfully updated %s total hearings goal",
   "TRANSCRIPTION_SETTINGS_ERROR_TITLE": "Unknown error",
   "TRANSCRIPTION_SETTINGS_ERROR_MESSAGE": "Please try again later",
+  "TRANSCRIPTION_TABLE_PACKAGE_FILE": "Package file",
   "USER_MANAGEMENT_PAGE_DROPDOWN_LINK": "Caseflow user management",
   "USER_MANAGEMENT_STATUS_PAGE_TITLE": "Caseflow user status management",
   "USER_MANAGEMENT_PAGE_DESCRIPTION": "Marking a user inactive will remove them from all organizations they are a member of. Once marked inactive, a user cannot be assigned new tasks.",
