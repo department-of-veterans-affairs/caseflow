@@ -418,6 +418,87 @@ class RequestIssue < CaseflowRecord
     closed_at if withdrawn?
   end
 
+  def removed?
+    closed_status == "removed"
+  end
+
+  # check if this RequestIssue was edited
+  def edited?
+    edited_description&.present?
+  end
+
+  # check for any RequestIssuesUpdates on the associated DecisionReview
+  def any_updates?
+    decision_review.request_issues_updates.any?
+  end
+
+  # Retrieve all Updates tied to the DecisionReview (Appeal, HLR/SC)
+  def fetch_request_issues_updates
+    decision_review.request_issues_updates if any_updates?
+  end
+
+  def fetch_removed_by_user
+    if removed?
+      relevant_update = request_issues_updates.find do |update|
+        update.removed_issues.any? { |issue| issue.id == id }
+      end
+
+      User.find(relevant_update&.user_id) if relevant_update
+    end
+  end
+
+  def fetch_withdrawn_by_user
+    if withdrawn?
+      relevant_update = request_issues_updates.find do |update|
+        update.withdrawn_issues.any? { |issue| issue.id == id }
+      end
+
+      User.find(relevant_update&.user_id) if relevant_update
+    end
+  end
+
+  def fetch_edited_by_user
+    if edited? && any_updates?
+      # Find the most recent update where the current issue ID is in the edited_issues list
+      relevant_update = request_issues_updates
+        .select { |update| update.edited_issues.any? { |issue| issue.id == id } }
+        .max_by(&:updated_at)
+
+      User.find(relevant_update&.user_id) if relevant_update
+    end
+  end
+
+  # This retrieves the User who added the Issue as a result of a RequestIssuesUpdate and NOT during the initial Intake
+  def fetch_added_by_user_from_update
+    if any_updates?
+      relevant_update = request_issues_updates.find do |update|
+        update.added_issues.any? { |issue| issue.id == id }
+      end
+
+      User.find(relevant_update&.user_id) if relevant_update
+    end
+  end
+
+  def request_issues_updates
+    @request_issues_updates ||= fetch_request_issues_updates
+  end
+
+  def removed_by_user
+    @removed_by_user ||= fetch_removed_by_user
+  end
+
+  def withdrawn_by_user
+    @withdrawn_by_user ||= fetch_withdrawn_by_user
+  end
+
+  def edited_by_user
+    @edited_by_user ||= fetch_edited_by_user
+  end
+
+  def added_by_user
+    @added_by_user ||= fetch_added_by_user_from_update || decision_review&.intake&.user
+  end
+
   def serialize
     Intake::RequestIssueSerializer.new(self).serializable_hash[:data][:attributes]
   end
