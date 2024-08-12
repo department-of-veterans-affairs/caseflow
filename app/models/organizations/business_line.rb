@@ -310,7 +310,6 @@ class BusinessLine < Organization
         AND tasks.assigned_to_type = 'Organization'
         AND tasks.assigned_to_id = '#{parent.id.to_i}'
         #{sanitized_filters}
-        #{claim_type_filter}
         UNION ALL
         SELECT tasks.id AS task_id, tasks.status AS task_status, request_issues.id AS request_issue_id,
           request_issues_updates.created_at AS request_issue_update_time, decision_issues.description AS decision_description,
@@ -382,7 +381,7 @@ class BusinessLine < Organization
       [
         # Task status and claim type filtering always happens regardless of params
         task_status_filter,
-        # claim_type_filter, -> this now runs only for HLR query
+        claim_type_filter,
         # All the other filters are optional
         task_id_filter,
         dispositions_filter,
@@ -403,11 +402,13 @@ class BusinessLine < Organization
 
     def claim_type_filter
       if query_params[:claim_type].present?
-        if query_params[:claim_type].include?(HigherLevelReview.name)
-          " AND #{where_clause_from_array(Task, :appeal_type, query_params[:claim_type]).to_sql} "
-        else
-          " AND tasks.appeal_type = '' "
+        temp_claim_types = query_params[:claim_type].dup
+
+        if query_params[:claim_type].include?(Remand.name)
+          temp_claim_types.push "SupplementalClaim"
         end
+
+        " AND #{where_clause_from_array(Task, :appeal_type, temp_claim_types).to_sql} "
       else
         " AND tasks.appeal_type IN ('HigherLevelReview', 'SupplementalClaim' ) "
       end
@@ -415,14 +416,8 @@ class BusinessLine < Organization
 
     def sc_type_filter
       if query_params[:claim_type].present?
-        if query_params[:claim_type].include?(Remand.name) && query_params[:claim_type].include?(SupplementalClaim.name)
-          " AND supplemental_claims.type IN ('Remand', 'SupplementalClaim') "
-        elsif query_params[:claim_type].include?(SupplementalClaim.name)
-          " AND supplemental_claims.type = 'SupplementalClaim' "
-        elsif query_params[:claim_type].include?(Remand.name)
-          " AND supplemental_claims.type = 'Remand' "
-        else
-          " AND supplemental_claims.type = '' "
+        if query_params[:claim_type].include?(Remand.name) || query_params[:claim_type].include?(SupplementalClaim.name)
+          " AND #{where_clause_from_array(SupplementalClaim, :type, query_params[:claim_type]).to_sql} "
         end
       end
     end
