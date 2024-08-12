@@ -6,6 +6,7 @@ FactoryBot.define do
     request_reason { Faker::Lorem.sentence }
 
     benefit_type { "vha" }
+    nonrating_issue_description { Faker::Lorem.sentence }
     nonrating_issue_category { Constants::ISSUE_CATEGORIES["vha"].sample }
     status { "assigned" }
 

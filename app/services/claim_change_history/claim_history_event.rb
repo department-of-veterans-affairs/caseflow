@@ -734,6 +734,7 @@ class ClaimHistoryEvent
       @decided_at_date = change_data["decided_at"]
       @issue_modification_request_withdrawal_date = change_data["issue_modification_request_withdrawal_date"]
       @remove_original_issue = change_data["remove_original_issue"]
+      @issue_modification_request_status = change_data["issue_modification_request_status"]
       @requestor = change_data["requestor"]
       @decider = change_data["decider"]
     end
