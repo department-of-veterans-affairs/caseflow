@@ -48,7 +48,7 @@ class RequestIssue < CaseflowRecord
   # only allow specified characters for description
   validates(
     :contested_issue_description,
-    format: { with: DESC_REGEX, message: "invalid characters used" },
+    format: { with: DESC_ALLOWED_CHARACTERS_REGEX, message: "invalid characters used" },
     allow_nil: true
   )
 
