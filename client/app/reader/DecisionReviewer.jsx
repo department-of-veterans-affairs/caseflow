@@ -44,12 +44,7 @@ export class DecisionReviewer extends React.PureComponent {
     if (!this.props.storeDocuments[docId]) {
       return;
     }
-
-    if (window.location.pathname.includes('prototype')) {
-      history.push(`/${vacolsId}/documents/${docId}/prototype`);
-    } else {
-      history.push(`/${vacolsId}/documents/${docId}`);
-    }
+    history.push(`/${vacolsId}/documents/${docId}`);
   }
 
   clearPlacingAnnotationState = () => {
@@ -174,13 +169,7 @@ export class DecisionReviewer extends React.PureComponent {
       <PageRoute
         exact
         title="Document Viewer | Caseflow Reader"
-        breadcrumb="Document Viewer Prototype"
-        path="/:vacolsId/documents/:docId/prototype"
-        render={this.routedPdfViewerPrototype} /> :
-      <PageRoute
-        exact
-        title="Document Viewer | Caseflow Reader"
-        breadcrumb="Document Viewer"
+        breadcrumb={this.props.featureToggles.readerPrototype ? 'Document Viewer Prototype' : 'Document Viewer'}
         path="/:vacolsId/documents/:docId"
         render={this.props.featureToggles.readerPrototype ? this.routedPdfViewerPrototype : this.routedPdfViewer} />
       <AppFrame wideApp>
