@@ -21,6 +21,7 @@ import SplitButtons from './components/SplitButtons';
 import IntakeAppealContext from './components/IntakeAppealContext';
 import ReviewAppealView from '../intake/pages/ReviewAppealView';
 import PendingIssueModificationBanner from './components/PendingIssueModificationRequestBanner';
+import EditDisabledBanner from './components/EditDisabledBanner';
 
 const textAlignRightStyling = css({
   textAlign: 'right',
@@ -105,6 +106,16 @@ export const IntakeEditFrame = (props) => {
     return 'One or more request issues lack a decision date. Please contact the Caseflow team via the VA Enterprise Service Desk at 855-673-4357 or create a YourIT ticket to correct these issues.'; // eslint-disable-line max-len
   };
 
+  const displayEditDisabledBanner = () => {
+    const disabledEditBenefitTypes = ['compensation', 'pension'];
+    const claimsBenefitType = props.serverIntake.benefitType;
+    const isBenefitTypeDisabled = disabledEditBenefitTypes.includes(claimsBenefitType);
+
+    if (props.featureToggles.removeCompAndPenIntake && isBenefitTypeDisabled) {
+      return EditDisabledBanner;
+    }
+  };
+
   const { veteran, formType } = props.serverIntake;
 
   const appName = 'Intake';
@@ -141,6 +152,12 @@ export const IntakeEditFrame = (props) => {
                 path={PAGE_PATHS.BEGIN}
                 title="Edit Claim Issues | Caseflow Intake"
                 component={PendingIssueModificationBanner}
+              />
+              <PageRoute
+                exact
+                path={PAGE_PATHS.BEGIN}
+                title="Edit Claim Issues | Caseflow Intake"
+                component={displayEditDisabledBanner()}
               />
               <AppSegment filledBackground>
                 <div>
@@ -278,7 +295,8 @@ IntakeEditFrame.propTypes = {
     asyncJobUrl: PropTypes.string,
     hasClearedNonratingEp: PropTypes.bool,
     hasClearedRatingEp: PropTypes.bool,
-    requestIssues: PropTypes.array
+    requestIssues: PropTypes.array,
+    benefitType: PropTypes.string
   }),
   dropdownUrls: PropTypes.array,
   applicationUrls: PropTypes.array,
@@ -288,7 +306,8 @@ IntakeEditFrame.propTypes = {
   user: PropTypes.string,
   isLegacy: PropTypes.bool,
   routerTestProps: PropTypes.object,
-  router: PropTypes.object
+  router: PropTypes.object,
+  featureToggles: PropTypes.object
 };
 
 export default IntakeEditFrame;
