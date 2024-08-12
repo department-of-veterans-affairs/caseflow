@@ -2,6 +2,9 @@ import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import Layer from './Comments/Layer';
 
+import { clearDocumentLoadError, setDocumentLoadError } from '../../reader/Pdf/PdfActions';
+import { useDispatch } from 'react-redux';
+
 import { GlobalWorkerOptions, getDocument } from 'pdfjs-dist';
 GlobalWorkerOptions.workerSrc = '/assets/pdf.worker.min.js';
 
@@ -12,6 +15,9 @@ import TextLayer from './TextLayer';
 const PdfDocument = ({ fileUrl, rotateDeg, setNumPages, zoomLevel, documentId }) => {
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
+  const dispatch = useDispatch();
+
+  dispatch(clearDocumentLoadError(fileUrl));
 
   const containerStyle = {
     width: '100%',
@@ -24,7 +30,9 @@ const PdfDocument = ({ fileUrl, rotateDeg, setNumPages, zoomLevel, documentId })
   };
 
   useEffect(() => {
+
     const getDocData = async () => {
+
       const requestOptions = {
         cache: true,
         withCredentials: true,
@@ -42,7 +50,10 @@ const PdfDocument = ({ fileUrl, rotateDeg, setNumPages, zoomLevel, documentId })
       }
     };
 
-    getDocData();
+    getDocData().catch((error) => {
+      console.log(`ERROR with getting doc data: ${error}`);
+      dispatch(setDocumentLoadError(fileUrl));
+    });
   }, [fileUrl]);
 
   useEffect(() => {
