@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import Layer from './Comments/Layer';
-import StatusMessage from '../../components/StatusMessage';
 
 import { GlobalWorkerOptions, getDocument } from 'pdfjs-dist';
 GlobalWorkerOptions.workerSrc = '/assets/pdf.worker.min.js';
@@ -9,29 +8,10 @@ GlobalWorkerOptions.workerSrc = '/assets/pdf.worker.min.js';
 import ApiUtil from '../../util/ApiUtil';
 import Page from './Page';
 import TextLayer from './TextLayer';
-
-const displayErrorMessage = (doc) => {
-  const downloadUrl = `${doc.content_url}?type=${doc.type}&download=true`;
-  // Center the status message vertically
-  const style = {
-    position: 'absolute',
-    top: '40%',
-    left: '50%',
-    width: '816px',
-    transform: 'translate(-50%, -50%)'
-  };
-
-  return <div style={style}>
-    <StatusMessage title="Unable to load document" type="warning">
-        Caseflow is experiencing technical difficulties and cannot load <strong>{doc.type}</strong>.
-      <br />
-        You can try <a href={downloadUrl}>downloading the document</a> or try again later.
-    </StatusMessage>
-  </div>;
-};
+import DocumentLoadError from './DocumentLoadError';
 
 const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel }) => {
-  const [documentLoadError, setDocumentLoadError] = useState(false);
+  const [isDocumentLoadError, setIsDocumentLoadError] = useState(false);
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
 
@@ -46,9 +26,7 @@ const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel }) => {
   };
 
   useEffect(() => {
-
     const getDocData = async () => {
-
       const requestOptions = {
         cache: true,
         withCredentials: true,
@@ -67,8 +45,8 @@ const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel }) => {
     };
 
     getDocData().catch((error) => {
-      console.log(`ERROR with getting doc data: ${error}`);
-      setDocumentLoadError(true);
+      console.error(`ERROR with getting doc data: ${error}`);
+      setIsDocumentLoadError(true);
     });
   }, [doc.content_url]);
 
@@ -92,7 +70,7 @@ const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel }) => {
 
   return (
     <div id="pdfContainer" style={containerStyle}>
-      { documentLoadError && displayErrorMessage(doc) }
+      { isDocumentLoadError && <DocumentLoadError doc={doc} /> }
       {pdfPages.map((page, index) => (
         <Page
           scale={zoomLevel}

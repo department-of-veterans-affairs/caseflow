@@ -147,7 +147,12 @@ const ReaderToolbar = ({
 
 ReaderToolbar.propTypes = {
   documentPathBase: PropTypes.string,
-  doc: PropTypes.object,
+  doc: PropTypes.shape({
+    content_url: PropTypes.string,
+    filename: PropTypes.string,
+    id: PropTypes.number,
+    type: PropTypes.string,
+  }),
   showClaimsFolderNavigation: PropTypes.bool,
   resetZoomLevel: PropTypes.func,
   setZoomOutLevel: PropTypes.func,
