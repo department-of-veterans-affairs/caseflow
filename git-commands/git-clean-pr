@@ -55,7 +55,7 @@ for commit in $rbCommits; do
   # check all params for 'auto-fix' option
   autofix="";
   for var in "$@"; do
-    if [ $var == "autofix" ]; then
+    if [ "$var" == "autofix" ]; then
       autofix="-a"
     fi
   done
@@ -78,21 +78,21 @@ fi
 
 # if there is a jsx or js file, use jest -o to run tests that cover file
 if [[ ! -z "$jsxCommits" || ! -z "$jsCommits" ]]; then
-  echo "running jest tests for $jsxCommits $jsCommits"; echo "";
+  echo "running jest tests for $jsCommits"; echo "";
   # use SCRIPT_DIR to get to appeals/client/test
   cd "$SCRIPT_DIR"
 
   # check for autofix option in parameters
-  autofix="";
+  # run -o for autofix jest and update snapshots
   for var in "$@"
   do
-    if [ $var == "autofix" ]; then
-      autofix= "-o"
-      # if autofix is run, run jest --update-snapshot
-      jest --update-snapshot
+    if [ "$var" == "autofix" ]; then
+      cd ../client && yarn jest $var
+      yarn jest --updateSnapshot
+    else
+      cd ../client && yarn jest
     fi
   done
-  cd ../client && yarn jest $autofix
 
   # run lint:fix
   yarn run lint:fix
@@ -108,7 +108,7 @@ echo "Relevant jest, lint, and prettier tests have been run"; echo "";
 
 # run code climate for all changed files
   for var in "$@"; do
-    if [ $var == "codeclimate" ]; then
+    if [ "$var" == "codeclimate" ]; then
       docker pull codeclimate/codeclimate
 
       docker run \
