@@ -497,4 +497,8 @@ module Caseflow::Error
       super(msg)
     end
   end
+
+  class SqsUnexpectedQueueTypeError < StandardError; end
+  class SqsQueueNotFoundError < StandardError; end
+  class SqsQueueExhaustionError < StandardError; end
 end
