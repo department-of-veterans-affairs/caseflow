@@ -2,6 +2,9 @@
 
 # git command to run relevant jest, rubocop, and rspecs on files changed
 # can accept a branch parameter to compare changes to another given branch
+# can also accept codeclimate param to run codeclimate CLI or autofix to run autofix options
+
+# syntax is: git clean-pr [branch-name] -- [codeclimate] [autofix]
 
 # get script directory
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
@@ -9,7 +12,7 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 CURRENT_DIR=$(pwd)
 
 # determine if branch param was passed
-if [ ! -z "$1" ] && [ "$1" != "with-codeclimate" ]; then
+if [ ! -z "$1" ] && [ "$1" != "codeclimate" ]; then
   # get the list of files changed that are eligible for testing
   jsxCommits=$(git diff --name-only "$1" | grep -E '.jsx$') # get the list of jsx files
   jsCommits=$(git diff --name-only "$1" | grep -E '.js$') # get the list of js files
@@ -49,17 +52,23 @@ for commit in $rbCommits; do
   fi
 
   # run rubocop
-  echo "running rubocop"; echo "";
-  bundle exec rubocop -a $commit
+  # check all params for 'auto-fix' option
+  autofix="";
+  for var in "$@"; do
+    if [ $var == "auto-fix" ]; then
+      autofix="-a"
+    fi
+  done
+
+  bundle exec rubocop $autofix $commit
 
   # run fasterer
-  echo "running fasterer"; echo "";
   bundle exec fasterer $commit
 
   # return to current path
   cd $CURRENT_DIR
-  echo "Relevant spec, rubocop, and fasterer tests have been run"; echo "";
 done
+echo "Relevant spec, rubocop, and fasterer tests have been run"; echo "";
 
 # run scss commits if file committed
 if [[ ! -z "$scssCommits" ]]; then
@@ -72,41 +81,52 @@ if [[ ! -z "$jsxCommits" || ! -z "$jsCommits" ]]; then
   echo "running jest tests for $jsxCommits $jsCommits"; echo "";
   # use SCRIPT_DIR to get to appeals/client/test
   cd "$SCRIPT_DIR"
-  cd ../client && yarn jest -o
+
+  # check for autofix option in parameters
+  autofix="";
+  for var in "$@"
+  do
+    if [ $var == "auto-fix" ]; then
+      autofix= "-o"
+      # if autofix is run, run jest --update-snapshot
+      jest --update-snapshot
+    fi
+  done
+  cd ../client && yarn jest $autofix
 
   # run lint:fix
-  echo "running yarn lint"; echo "";
   yarn run lint:fix
 
   # run prettier
-  echo "running yarn pretty:format"; echo "";
   yarn run pretty:format
 
   # return to current path
   cd $CURRENT_DIR
-
-  echo "Relevant jest, lint, and prettier tests have been run"; echo "";
 fi
+echo "Relevant jest, lint, and prettier tests have been run"; echo "";
+
 
 # run code climate for all changed files
-if [ "$1" == "with-codeclimate" ] || [ "$2" == "with-codeclimate" ]; then
-  docker pull codeclimate/codeclimate
+  for var in "$@"; do
+    if [ $var == "codeclimate" ]; then
+      docker pull codeclimate/codeclimate
 
-  docker run \
-    --interactive --tty --rm \
-    --env CODECLIMATE_CODE="$PWD" \
-    --volume "$PWD":/code \
-    --volume /var/run/docker.sock:/var/run/docker.sock \
-    --volume /tmp/cc:/tmp/cc \
-    codeclimate/codeclimate help
+      docker run \
+        --interactive --tty --rm \
+        --env CODECLIMATE_CODE="$PWD" \
+        --volume "$PWD":/code \
+        --volume /var/run/docker.sock:/var/run/docker.sock \
+        --volume /tmp/cc:/tmp/cc \
+        codeclimate/codeclimate
 
-  codeclimate engines:install
+      codeclimate engines:install
 
-  # analyze each of the commits
-  for commit in $allCommits; do
-    echo "running codeClimate CLI for $commit"
-    codeclimate analyze $commit
+      # analyze each of the commits
+      for commit in $allCommits; do
+        echo "running codeClimate CLI for $commit"
+        codeclimate analyze $commit
+      done
+    fi
   done
-fi
 
 echo "All tests relevant to current code changes have been run"
