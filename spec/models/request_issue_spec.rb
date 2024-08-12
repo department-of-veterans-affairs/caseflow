@@ -1340,7 +1340,7 @@ describe RequestIssue, :all_dbs do
     end
 
     context "when description contains unsafe characters" do
-      let(:request_issue) { build(:request_issue, contested_issue_description: "Not safe: \u{00A7}") }
+      let(:request_issue) { build(:request_issue, contested_issue_description: "Not safe: \u{00A7} \u{2600} \u{2603} \u{260E} \u{2615}") }
 
       it "should not be valid" do
         expect(request_issue.valid?).to eq false
