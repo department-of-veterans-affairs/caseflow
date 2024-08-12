@@ -183,7 +183,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def member_of_cob_or_ssc?
-    member_of_organization?(ClerkOfTheBoard.singleton) || member_of_organization?(SupervisorySeniorCouncil.singleton)
+    member_of_organization?(ClerkOfTheBoard.singleton) || member_of_organization?(SupervisorySeniorCounsel.singleton)
   end
 
   def can_edit_issues?
