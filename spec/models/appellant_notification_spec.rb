@@ -3,7 +3,7 @@
 describe AppellantNotification do
   describe "class methods" do
     describe "self.handle_errors" do
-      let(:appeal) { create(:appeal, number_of_claimants: 1) }
+      let(:appeal) { create(:appeal, :active, number_of_claimants: 1) }
       let(:current_user) { User.system_user }
       context "if appeal is nil" do
         let(:empty_appeal) {}
@@ -15,7 +15,7 @@ describe AppellantNotification do
       end
 
       context "with no claimant listed" do
-        let(:appeal) { create(:appeal, number_of_claimants: 0) }
+        let(:appeal) { create(:appeal, :active, number_of_claimants: 0) }
         it "returns error message" do
           expect(AppellantNotification.handle_errors(appeal)[:status]).to eq(
             AppellantNotification::NoClaimantError.new(appeal.id).status
@@ -25,13 +25,23 @@ describe AppellantNotification do
 
       context "with no participant_id listed" do
         let(:claimant) { create(:claimant, participant_id: "") }
-        let(:appeal) { create(:appeal) }
+        let(:appeal) { create(:appeal, :active) }
         before do
           appeal.claimants = [claimant]
         end
         it "returns error message" do
           expect(AppellantNotification.handle_errors(appeal)[:status]).to eq(
             AppellantNotification::NoParticipantIdError.new(appeal.id).status
+          )
+        end
+      end
+
+      context "with an inactive appeal" do
+        let(:appeal) { create(:appeal, :active, number_of_claimants: 1) }
+        it "returns error message" do
+          appeal.root_task.completed!
+          expect { AppellantNotification.handle_errors(appeal) }.to raise_error(
+            AppellantNotification::InactiveAppealError
           )
         end
       end
@@ -44,7 +54,7 @@ describe AppellantNotification do
     end
 
     describe "veteran is deceased" do
-      let(:appeal) { create(:appeal, number_of_claimants: 1) }
+      let(:appeal) { create(:appeal, :active, number_of_claimants: 1) }
       let(:substitute_appellant) { create(:appellant_substitution) }
 
       it "with no substitute appellant" do
@@ -62,8 +72,8 @@ describe AppellantNotification do
     end
 
     describe "self.create_payload" do
-      let(:good_appeal) { create(:appeal, number_of_claimants: 1) }
-      let(:bad_appeal) { create(:appeal) }
+      let(:good_appeal) { create(:appeal, :active, number_of_claimants: 1) }
+      let(:bad_appeal) { create(:appeal, :active) }
       let(:bad_claimant) { create(:claimant, participant_id: "") }
       let(:template_name) { "test" }
 
@@ -570,7 +580,7 @@ describe AppellantNotification do
 
     # Note: only privacyactrequestmailtask is tested because the process is the same as foiarequestmailtask
     describe "mail task" do
-      let(:appeal) { create(:appeal) }
+      let(:appeal) { create(:appeal, :active) }
       let(:appeal_state) { create(:appeal_state, appeal_id: appeal.id, appeal_type: appeal.class.to_s) }
       let(:current_user) { create(:user) }
       let(:priv_org) { PrivacyTeam.singleton }
@@ -640,7 +650,7 @@ describe AppellantNotification do
     end
 
     context "Foia Colocated Tasks" do
-      let(:appeal) { create(:appeal) }
+      let(:appeal) { create(:appeal, :active) }
       let(:appeal_state) { create(:appeal_state, appeal_id: appeal.id, appeal_type: appeal.class.to_s) }
       let!(:attorney) { create(:user) }
       let!(:attorney_task) { create(:ama_attorney_task, appeal: appeal, assigned_to: attorney) }
@@ -691,7 +701,7 @@ describe AppellantNotification do
     end
 
     context "Privacy Act Tasks" do
-      let(:appeal) { create(:appeal) }
+      let(:appeal) { create(:appeal, :active) }
       let(:appeal_state) { create(:appeal_state, appeal_id: appeal.id, appeal_type: appeal.class.to_s) }
       let(:attorney) { create(:user) }
       let(:current_user) { create(:user) }
@@ -936,6 +946,7 @@ describe AppellantNotification do
         end
         it "will update appeal state with the 'IhpTaskComplete' status" do
           allow(task).to receive(:verify_user_can_update!).with(user).and_return(true)
+          InitialTasksFactory.new(task.appeal).create_root_and_sub_tasks!
           task.update_from_params({ status: Constants.TASK_STATUSES.completed, instructions: "Test" }, user)
           appeal_state_record = AppealState.find_by(appeal_id: task.appeal.id, appeal_type: task.appeal.class.to_s)
           expect(appeal_state_record.vso_ihp_complete).to eq(true)

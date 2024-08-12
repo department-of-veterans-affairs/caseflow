@@ -23,10 +23,21 @@ module AppellantNotification
     end
   end
 
+  class InactiveAppealError < StandardError
+    def initialize(appeal_id, message = "The appeal status is inactive")
+      super(message + " for appeal with id #{appeal_id}")
+    end
+
+    def status
+      "Inactive"
+    end
+  end
+
   class NoAppealError < StandardError; end
 
   def self.handle_errors(appeal)
     fail NoAppealError if appeal.nil?
+    fail InactiveAppealError, appeal["uuid"] if !appeal.active?
 
     message_attributes = {}
     message_attributes[:appeal_type] = appeal.class.to_s
