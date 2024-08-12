@@ -61,7 +61,7 @@ describe HearingRepository, :all_dbs do
         appeal: legacy_appeal
       )
       expect(VACOLS::CaseHearing.find_by(vdkey: hearing_day.id)
-        .hearing_date.to_datetime.in_time_zone("UTC").hour).to eq(9)
+        .hearing_date.to_datetime.in_time_zone("America/New_York").hour).to eq(9)
     end
 
     context "for a full hearing day" do
@@ -134,26 +134,25 @@ describe HearingRepository, :all_dbs do
 
   context ".set_vacols_values" do
     let(:date) { AppealRepository.normalize_vacols_date(7.days.from_now) }
-    let(:hearing) { create(:legacy_hearing) }
-    let(:hearing_day) { HearingDay.first }
+    let(:hearing_day) { create(:hearing_day) }
     let(:notes) { "test notes" }
     let(:representative_name) { "test representative name" }
     let(:hearing_hash) do
-      OpenStruct.new(
+      case_hearing = create(:case_hearing,
         hearing_date: date,
         hearing_type: HearingDay::REQUEST_TYPES[:video],
-        hearing_pkseq: "12345678",
         hearing_disp: VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:no_show],
         aod: "Y",
         tranreq: nil,
         holddays: 90,
         notes1: notes,
         repname: representative_name,
-        bfso: "E",
-        bfregoff: "RO36",
         vdkey: hearing_day.id
       )
+
+      VACOLS::CaseHearing.load_hearing(case_hearing.hearing_pkseq)
     end
+    let(:hearing) { create(:legacy_hearing, case_hearing: hearing_hash, hearing_day: hearing_day) }
 
     subject { HearingRepository.set_vacols_values(hearing, hearing_hash) }
 
