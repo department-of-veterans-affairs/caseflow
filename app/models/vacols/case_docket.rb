@@ -217,7 +217,50 @@ class VACOLS::CaseDocket < VACOLS::Record
     order by BFD19
   "
 
+  FROM_LOC_63_APPEALS = "
+    from BRIEFF
+      #{VACOLS::Case::JOIN_AOD}
+      inner join FOLDER on FOLDER.TICKNUM = BRIEFF.BFKEY
+      where BRIEFF.BFCURLOC in ('63')
+        and BRIEFF.BFBOX is null
+        and BRIEFF.BFAC is not null
+        and BRIEFF.BFD19 is not null
+  "
+
+  SELECT_LOC_63_APPEALS = "
+    select BFKEY, BFD19, BFDLOCIN, BFCORLID, BFDLOOUT, BFMPRO, BFCORKEY, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD,
+    BFMEMID, BFDPDCN
+    #{FROM_LOC_63_APPEALS}
+  "
+
   # rubocop:disable Metrics/MethodLength
+  SELECT_APPEALS_IN_LOCATION_63_FROM_PAST_2_DAYS = "
+    select APPEALS.BFKEY, APPEALS.TINUM, APPEALS.BFD19, APPEALS.BFMEMID, APPEALS.BFCURLOC,
+      APPEALS.BFDLOCIN, APPEALS.BFCORLID, APPEALS.BFDLOOUT,
+      case when APPEALS.BFAC = '7' or APPEALS.AOD = 1 then 1 else 0 end AOD,
+      case when APPEALS.BFAC = '7' then 1 else 0 end CAVC,
+      APPEALS.VLJ, APPEALS.PREV_DECIDING_JUDGE, APPEALS.HEARING_DATE, APPEALS.PREV_BFDDEC,
+      CORRES.SNAMEF, CORRES.SNAMEL, CORRES.SSN,
+      STAFF.SNAMEF as VLJ_NAMEF, STAFF.SNAMEL as VLJ_NAMEL
+    from (
+      select BRIEFF.BFKEY, BRIEFF.TINUM, BFD19, BFDLOOUT, BFAC, BFCORKEY, BFMEMID, BFCURLOC,
+        BRIEFF.BFDLOCIN, BFCORLID, AOD,
+        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
+        , PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
+        , VLJ_HEARINGS.HEARING_DATE HEARING_DATE
+        , PREV_APPEAL.PREV_BFDDEC PREV_BFDDEC
+      from (
+        #{SELECT_LOC_63_APPEALS}
+      ) BRIEFF
+      #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+      #{JOIN_PREVIOUS_APPEALS}
+      where BRIEFF.BFDLOCIN >= TRUNC(CURRENT_DATE - 2)
+      order by BFD19
+    ) APPEALS
+    left join CORRES on APPEALS.BFCORKEY = CORRES.STAFKEY
+    left join STAFF on APPEALS.VLJ = STAFF.STAFKEY
+  "
+
   def self.counts_by_priority_and_readiness
     query = <<-SQL
       select count(*) N, PRIORITY, READY
@@ -453,6 +496,15 @@ class VACOLS::CaseDocket < VACOLS::Record
   def self.ready_to_distribute_appeals
     query = <<-SQL
       #{SELECT_READY_TO_DISTRIBUTE_APPEALS_ORDER_BY_BFD19_ADDITIONAL_COLS}
+    SQL
+
+    fmtd_query = sanitize_sql_array([query])
+    connection.exec_query(fmtd_query).to_a
+  end
+
+  def self.loc_63_appeals
+    query = <<-SQL
+      #{SELECT_APPEALS_IN_LOCATION_63_FROM_PAST_2_DAYS}
     SQL
 
     fmtd_query = sanitize_sql_array([query])

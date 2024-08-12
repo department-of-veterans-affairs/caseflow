@@ -865,6 +865,14 @@ class AppealRepository
       end
     end
 
+    def loc_63_appeals
+      MetricsService.record("VACOLS: loc_63_appeals",
+                            name: "loc_63_appeals",
+                            service: :vacols) do
+        VACOLS::CaseDocket.loc_63_appeals
+      end
+    end
+
     private
 
     # NOTE: this should be called within a transaction where you are closing an appeal
