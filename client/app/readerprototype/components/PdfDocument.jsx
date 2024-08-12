@@ -10,9 +10,9 @@ PDFJS.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pd
 import ApiUtil from '../../util/ApiUtil';
 import Page from './Page';
 import TextLayer from './TextLayer';
-import ProgressBar from './ProgressBar';
+import DocumentProgressBar from './DocumentProgressBar';
 
-const PdfDocument = ({ fileUrl, rotateDeg, setNumPages, zoomLevel, documentId, showSideBar }) => {
+const PdfDocument = ({ fileUrl, rotateDeg, setNumPages, zoomLevel, documentId }) => {
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
   const [downloadedBytes, setDownloadedBytes] = useState(0);
@@ -93,11 +93,10 @@ const PdfDocument = ({ fileUrl, rotateDeg, setNumPages, zoomLevel, documentId, s
   return (
     <div id="pdfContainer" className={containerClass}>
       {!isDownloadComplete && (
-        <ProgressBar
+        <DocumentProgressBar
           downloadedBytes={downloadedBytes}
           totalBytes={totalBytes}
           onCancel={handleCancelDownload}
-          showSideBar={showSideBar}
         />
       )}
       {pdfPages.map((page, index) => (
@@ -122,8 +121,7 @@ PdfDocument.propTypes = {
   rotateDeg: PropTypes.string,
   setNumPages: PropTypes.func,
   zoomLevel: PropTypes.number,
-  documentId: PropTypes.number,
-  showSideBar: PropTypes.bool
+  documentId: PropTypes.number
 };
 
 export default PdfDocument;
