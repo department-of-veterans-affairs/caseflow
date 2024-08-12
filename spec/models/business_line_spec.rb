@@ -761,7 +761,7 @@ describe BusinessLine do
       end
 
       context "Remand claim filter" do
-        let(:change_history_filters) { { claim_type: "Remand" } }
+        let(:change_history_filters) { { claim_type: ["Remand"] } }
 
         it "should only return rows for the filtered claim type" do
           expect(subject.entries.count).to eq(1)
