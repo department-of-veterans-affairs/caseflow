@@ -94,7 +94,7 @@ class IssuesController < ApplicationController
     updated_mst_status = convert_to_bool(params[:issues][:mst_status]) unless params[:action] == "create"
     updated_pact_status = convert_to_bool(params[:issues][:pact_status]) unless params[:action] == "create"
 
-    save_task_instructions(issue, task, updated_mst_status, updated_pact_status, change_category)
+    format_instructions(issue, task, updated_mst_status, updated_pact_status, change_category)
 
     # create SpecialIssueChange record to log the changes
     SpecialIssueChange.create!(
@@ -113,13 +113,8 @@ class IssuesController < ApplicationController
     )
   end
 
-  def save_task_instructions(issue, task, updated_mst_status, updated_pact_status, change_category)
-    format_instructions(issue, task, updated_mst_status, updated_pact_status, change_category)
-    task.completed!
-  end
-
   # formats and saves task instructions
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/ParameterLists
   def format_instructions(issue, task, updated_mst_status, updated_pact_status, change_category)
     disposition = issue.readable_disposition.nil? ? "N/A" : issue.readable_disposition
     note = params[:issues][:note].nil? ? "N/A" : params[:issues][:note]
@@ -151,8 +146,9 @@ class IssuesController < ApplicationController
       edit_pact: updated_pact_status
     )
     task.format_instructions(set)
+    task.completed!
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/ParameterLists
 
   # builds issue code on IssuesUpdateTask for MST/PACT changes
   def build_issue_code_message(issue_code, param_issue)
