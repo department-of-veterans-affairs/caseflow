@@ -88,14 +88,20 @@ class IssuesController < ApplicationController
     task_instructions_helper(issue, task)
   end
 
-  # rubocop:disable Metrics/ParameterLists
+  # rubocop:disable Metrics/MethodLength
   def task_instructions_helper(issue, task)
     # set up data for added or edited issue depending on the params action
     change_category = (params[:action] == "create") ? "Added Issue" : "Edited Issue"
     updated_mst_status = convert_to_bool(params[:issues][:mst_status]) unless params[:action] == "create"
     updated_pact_status = convert_to_bool(params[:issues][:pact_status]) unless params[:action] == "create"
-
-    format_instructions(issue, task, updated_mst_status, updated_pact_status, change_category)
+    instruction_params = {
+      issue: issue,
+      task: task,
+      updated_mst_status: updated_mst_status,
+      updated_pact_status: updated_pact_status,
+      change_category: change_category
+    }
+    format_instructions(instruction_params)
 
     # create SpecialIssueChange record to log the changes
     SpecialIssueChange.create!(
@@ -115,9 +121,9 @@ class IssuesController < ApplicationController
   end
 
   # formats and saves task instructions
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-  def format_instructions(issue, task, updated_mst_status, updated_pact_status, change_category)
-    disposition = issue.readable_disposition.nil? ? "N/A" : issue.readable_disposition
+  # rubocop:disable Metrics/AbcSize
+  def format_instructions(inst_params)
+    disposition = inst_params[:issue].readable_disposition.nil? ? "N/A" : inst_params[:issue].readable_disposition
     note = params[:issues][:note].nil? ? "N/A" : params[:issues][:note]
     # use codes from params to get descriptions
     # opting to use params vs issue model to capture in-flight issue changes
@@ -132,7 +138,7 @@ class IssuesController < ApplicationController
 
     # format the task instructions and close out
     set = CaseTimelineInstructionSet.new(
-      change_type: change_category,
+      change_type: inst_params[:change_category],
       issue_category: [
         "Benefit Type: #{param_issue['description']}\n",
         "Issue: #{iss}\n",
@@ -141,15 +147,15 @@ class IssuesController < ApplicationController
         "Disposition: #{disposition}\n"
       ].compact.join("\r\n"),
       benefit_type: "",
-      original_mst: issue.mst_status,
-      original_pact: issue.pact_status,
-      edit_mst: updated_mst_status,
-      edit_pact: updated_pact_status
+      original_mst: inst_params[:issue].mst_status,
+      original_pact: inst_params[:issue].pact_status,
+      edit_mst: inst_params[:updated_mst_status],
+      edit_pact: inst_params[:updated_pact_status]
     )
-    task.format_instructions(set)
-    task.completed!
+    inst_params[:task].format_instructions(set)
+    inst_params[:task].completed!
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/ParameterLists
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   # builds issue code on IssuesUpdateTask for MST/PACT changes
   def build_issue_code_message(issue_code, param_issue)
