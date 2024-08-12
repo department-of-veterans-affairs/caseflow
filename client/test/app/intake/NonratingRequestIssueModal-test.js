@@ -99,7 +99,7 @@ describe('NonratingRequestIssueModal', () => {
       // Simulate user input of valid characters
       const descInput = wrapper.find("input[id='Issue description']");
 
-      descInput.simulate('change', { target: { value: 'test 123456 !@##$% [{}],<?/.' } });
+      descInput.simulate('change', { target: { value: '1234567890-=`~!@#$%^&*()_+[]{}\\|;:' } });
 
       expect(wrapper.find('.cf-modal-controls .add-issue').prop('disabled')).toBe(false);
     });
