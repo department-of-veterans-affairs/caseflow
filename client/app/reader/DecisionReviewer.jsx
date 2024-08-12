@@ -169,7 +169,7 @@ export class DecisionReviewer extends React.PureComponent {
       <PageRoute
         exact
         title="Document Viewer | Caseflow Reader"
-        breadcrumb={this.props.featureToggles.readerPrototype ? 'Document Viewer Prototype' : 'Document Viewer'}
+        breadcrumb="Document Viewer"
         path="/:vacolsId/documents/:docId"
         render={this.props.featureToggles.readerPrototype ? this.routedPdfViewerPrototype : this.routedPdfViewer} />
       <AppFrame wideApp>
