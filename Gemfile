@@ -89,6 +89,7 @@ gem "uglifier", ">= 1.3.0"
 gem "validates_email_format_of"
 gem "webvtt-ruby"
 gem "ziptz"
+gem "jwt"
 
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
