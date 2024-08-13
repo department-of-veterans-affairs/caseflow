@@ -165,8 +165,13 @@ RSpec.describe HearingDatetimeService do
       end
 
       it "validates the hearing's scheduled_in_timezone value" do
-        expect { described_class.new(hearing: hearing_2) }.to raise_error(HearingDatetimeService::UnsuppliedScheduledInTimezoneError)
-        expect { described_class.new(hearing: legacy_hearing_2) }.to raise_error(HearingDatetimeService::UnsuppliedScheduledInTimezoneError)
+        expect do
+          described_class.new(hearing: hearing_2)
+        end.to raise_error(HearingDatetimeService::UnsuppliedScheduledInTimezoneError)
+
+        expect do
+          described_class.new(hearing: legacy_hearing_2)
+        end.to raise_error(HearingDatetimeService::UnsuppliedScheduledInTimezoneError)
       end
     end
 

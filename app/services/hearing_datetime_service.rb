@@ -94,7 +94,7 @@ class HearingDatetimeService
       error = UnsuppliedScheduledInTimezoneError
       Raven.capture_exception(error)
       Rails.logger.info("#{error}: HearingDatetimeService requires non-nil scheduled_in_timezone for a hearing.")
-      raise error
+      fail error
     end
   end
 end
