@@ -1,37 +1,36 @@
 import React from 'react';
-import { css } from 'glamor';
 
 import BENEFIT_TYPES from '../../constants/BENEFIT_TYPES';
 import { COLORS } from '../constants/AppConstants';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 
-const issueListStyling = css({
+const issueListStyling = {
   paddingLeft: '1em'
-});
+};
 
-const singleIssueStyling = css({
+const singleIssueStyling = {
   width: '75%',
   marginBottom: '1.5em !important',
   paddingLeft: '0.75em',
   '@media(max-width: 1200px)': { width: '100%' }
-});
+};
 
-const issueContentStyling = css({
+const issueContentStyling = {
   marginBottom: '0.3em'
-});
+};
 
-const issueNoteStyling = css({
+const issueNoteStyling = {
   fontStyle: 'italic'
-});
+};
 
-const issueClosedStatusStyling = css({
+const issueClosedStatusStyling = {
   color: COLORS.RED_DARK
-});
+};
 
-const issueErrorStyling = css({
+const issueErrorStyling = {
   borderLeft: '4px solid #cd2026'
-});
+};
 
 // format special issues to display 'None', 'PACT', 'MST', or 'MST and PACT'
 const specialIssuesFormatting = (mstStatus, pactStatus) => {
