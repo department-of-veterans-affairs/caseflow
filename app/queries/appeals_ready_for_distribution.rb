@@ -53,7 +53,7 @@ class AppealsReadyForDistribution
 
   def self.legacy_rows(appeals, docket, sym)
     appeals.map do |appeal|
-      build_appeal_row(appeal, sym)
+      build_appeal_row(appeal, sym, docket)
     end
   end
 
