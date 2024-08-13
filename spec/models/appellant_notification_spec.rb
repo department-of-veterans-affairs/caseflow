@@ -148,14 +148,14 @@ describe AppellantNotification do
       it "Will notify appellant that the legacy appeal decision has been mailed (Non Contested)" do
         expect(AppellantNotification).to receive(:notify_appellant).with(legacy_appeal, non_contested)
         decision_document = dispatch.send dispatch_func, params
-        decision_document.process!(true)
+        decision_document.process!(false)
       end
       it "Will notify appellant that the legacy appeal decision has been mailed (Contested)" do
         expect(AppellantNotification).to receive(:notify_appellant).with(legacy_appeal, contested)
         allow(legacy_appeal).to receive(:contested_claim).and_return(true)
         legacy_appeal.contested_claim
         decision_document = dispatch.send dispatch_func, params
-        decision_document.process!(false)
+        decision_document.process!(true)
       end
     end
 
