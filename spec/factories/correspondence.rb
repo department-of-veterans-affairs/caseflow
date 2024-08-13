@@ -13,6 +13,31 @@ FactoryBot.define do
       nod { true }
     end
 
+    trait :completed do
+      after(:create) do |correspondence|
+        correspondence.review_package_task.update!(status: Constants.TASK_STATUSES.completed)
+      end
+    end
+
+    trait :pending do
+      after(:create) do |correspondence|
+        create(
+          :correspondence_intake_task,
+          appeal: correspondence,
+          appeal_type: Correspondence.name,
+          parent: correspondence.root_task
+        )
+        correspondence.open_intake_task.update!(status: Constants.TASK_STATUSES.completed)
+        correspondence.review_package_task.update!(status: Constants.TASK_STATUSES.completed)
+        CavcCorrespondenceCorrespondenceTask.create!(
+          appeal: correspondence,
+          assigned_to: CavcLitigationSupport.singleton,
+          appeal_type: Correspondence.name,
+          parent: correspondence.root_task
+        )
+      end
+    end
+
     trait :with_single_doc do
       after(:create) do |correspondence|
         create(:correspondence_document, correspondence: correspondence)
