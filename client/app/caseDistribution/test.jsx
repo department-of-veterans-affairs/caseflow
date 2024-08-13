@@ -90,7 +90,7 @@ class CaseDistributionTest extends React.PureComponent {
 
   reseedDocketPriority = () => {
     this.setState({ isReseedingDocketPriority: true });
-    ApiUtil.post('/case_distribution_levers_tests/run_demo_non_avlj_appeals').then(() => {
+    ApiUtil.post('/case_distribution_levers_tests/run_demo_docket_priority').then(() => {
       this.setState({
         isReseedingDocketPriority: false,
         showAlert: true,
@@ -109,7 +109,7 @@ class CaseDistributionTest extends React.PureComponent {
 
   reseedNonSSCAVLJAppeals = () => {
     this.setState({ isReseedingNonSSCAVLJAppeals: true });
-    ApiUtil.post('/case_distribution_levers_tests/run-demo-docket-priority').then(() => {
+    ApiUtil.post('/case_distribution_levers_tests/run_demo_non_avlj_appeals').then(() => {
       this.setState({
         isReseedingNonSSCAVLJAppeals: false,
         showAlert: true,
