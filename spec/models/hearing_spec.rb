@@ -400,7 +400,7 @@ describe Hearing, :postgres do
       end
 
       it "uses HearingTimeService instance" do
-        time_service_double = instance_double("HearingTimeServicee")
+        time_service_double = instance_double("HearingTimeService")
         allow(HearingTimeService).to receive(:new).and_return(time_service_double)
         hearing.time
         expect(HearingTimeService).to have_received(:new)
