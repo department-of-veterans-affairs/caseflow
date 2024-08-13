@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useRef } from 'react';
 
-const Page = ({ page, rotation = '0deg', renderItem, scale }) => {
+const Page = ({ page, rotation = '0deg', renderItem, scale, storeMetric }) => {
   const canvasRef = useRef(null);
   const scaleFraction = scale / 100;
 
@@ -33,8 +33,14 @@ const Page = ({ page, rotation = '0deg', renderItem, scale }) => {
 
   useEffect(() => {
     if (canvasRef.current) {
-      page.render({ canvasContext: canvasRef.current?.getContext('2d'), viewport }).promise.catch(() => {
-        // this catch is necessary to prevent the error: Cannot use the same canvas during multiple render operations
+      const renderResult = page
+        .render({ canvasContext: canvasRef.current?.getContext('2d'), viewport })
+        .promise.catch(() => {
+          // this catch is necessary to prevent the error: Cannot use the same canvas during multiple render operations
+        });
+
+      renderResult.finally(() => {
+        storeMetric(page.pageNumber, page.stats.times);
       });
     }
   }, [canvasRef.current, viewport]);
@@ -69,6 +75,7 @@ Page.propTypes = {
   rotation: PropTypes.string,
   renderItem: PropTypes.func,
   scale: PropTypes.number,
+  storeMetric: PropTypes.func,
 };
 
 export default Page;
