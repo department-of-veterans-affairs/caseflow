@@ -34,15 +34,21 @@ const TextLayer = (props) => {
 
   useEffect(() => {
     const getPageText = async () => {
-      const pageText = await page.getTextContent();
-
-      PDFJS.renderTextLayer({
-        textContent: pageText,
-        container: textLayerRef.current,
-        viewport,
-        textDivs: [],
-      });
-      setHasRenderedText(true);
+      page
+        .getTextContent()
+        .then((pageText) => {
+          PDFJS.renderTextLayer({
+            textContent: pageText,
+            container: textLayerRef.current,
+            viewport,
+            textDivs: [],
+          });
+          setHasRenderedText(true);
+        })
+        .catch((error) => {
+          // this catch is necessary to prevent the error: TypeError: Cannot read properties of null (reading 'ownerDocument')
+          console.error(`text layer ${error}`);
+        });
     };
 
     if (textLayerRef.current && !hasRenderedText) {
