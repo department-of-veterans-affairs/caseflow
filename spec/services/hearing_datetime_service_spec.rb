@@ -159,7 +159,9 @@ RSpec.describe HearingDatetimeService do
           expected_string = hearing
             .scheduled_for
             .in_time_zone("America/New_York")
-            .strftime("%Y-%m-%d %I:%M %p %z")
+            .strftime("%l:%M %p")
+            .lstrip
+            .concat(" ", "Eastern Time (US & Canada)")
 
           expect(time_service.central_office_time_string).to eq(expected_string)
         end

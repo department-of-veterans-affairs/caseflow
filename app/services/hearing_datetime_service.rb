@@ -64,11 +64,14 @@ class HearingDatetimeService
     local_time.in_time_zone(CENTRAL_OFFICE_TIMEZONE)
   end
 
-  # A formatted string version of the central_office_time.
+  # A formatted string version of the central_office_time that has the timezone formatted
+  # in a metazone name e.g. "Eastern Time (US & Canada)".
   #
   # @return [String]
   def central_office_time_string
-    central_office_time.strftime("%Y-%m-%d %I:%M %p %z")
+    tz = ActiveSupport::TimeZone::MAPPING.key(CENTRAL_OFFICE_TIMEZONE)
+
+    "#{central_office_time.strftime('%l:%M %p')} #{tz}".lstrip
   end
 
   # A formatted string version of local_time that has the timezone formatted
