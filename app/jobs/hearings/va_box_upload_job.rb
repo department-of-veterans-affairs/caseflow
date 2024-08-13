@@ -25,6 +25,14 @@ class VaBoxUploadJob < CaseflowJob
     @all_paths = []
     @email_sent_flags = { transcription_package: false, child_folder_id: false, upload: false }
 
+    box_service = ExternalApi::VaBoxService.new(
+      client_secret: ENV["BOX_CLIENT_SECRET"],
+      client_id: ENV["BOX_CLIENT_ID"],
+      enterprise_id: ENV["BOX_ENTERPRISE_ID"],
+      private_key: ENV["BOX_PRIVATE_KEY"],
+      passphrase: ENV["BOX_PASS_PHRASE"]
+    )
+
     box_service.fetch_access_token
 
     file_info[:hearings].each_with_index do |hearing, index|
@@ -42,7 +50,7 @@ class VaBoxUploadJob < CaseflowJob
           mark_email_sent(:transcription_package)
           next
         end
-        local_file_path = transcription_package.aws_link_zip
+        s3_file_path = transcription_package.aws_link_zip
         contractor_name = file_info[:contractor_name]
         child_folder_id = box_service.get_child_folder_id(box_folder_id, contractor_name)
         unless child_folder_id
@@ -59,7 +67,7 @@ class VaBoxUploadJob < CaseflowJob
         end
 
         # Download file from S3
-        # local_file_path = download_file_from_s3(file_path)
+        local_file_path = download_file_from_s3(s3_file_path)
 
         if index == 0
           upsert_to_box(box_service, local_file_path, child_folder_id, transcription_package, file_info, hearing)
