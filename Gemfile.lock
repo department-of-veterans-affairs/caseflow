@@ -2075,6 +2075,7 @@ DEPENDENCIES
   browser
   bullet
   bummr
+  bundler (~> 2.4.22)
   bundler-audit
   business_time (~> 0.9.3)
   capybara
@@ -2178,4 +2179,4 @@ DEPENDENCIES
   ziptz
 
 BUNDLED WITH
-   2.4.19
+   2.4.22
