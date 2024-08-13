@@ -103,10 +103,28 @@ RSpec.describe HearingDatetimeService do
   end
 
   context "instance methods" do
+    let(:summer_date) { "2030-06-01".to_date }
+    let(:winter_date) { "2030-12-01".to_date }
+
     let(:hearing) do
       create(
         :hearing,
-        scheduled_in_timezone: "America/Los_Angeles"
+        scheduled_in_timezone: "America/Los_Angeles",
+        hearing_day: create(
+          :hearing_day,
+          scheduled_for: winter_date
+        )
+      )
+    end
+
+    let(:summer_hearing) do
+      create(
+        :hearing,
+        scheduled_in_timezone: "America/Los_Angeles",
+        hearing_day: create(
+          :hearing_day,
+          scheduled_for: summer_date
+        )
       )
     end
 
@@ -114,6 +132,22 @@ RSpec.describe HearingDatetimeService do
       create(
         :legacy_hearing,
         scheduled_in_timezone: "America/Los_Angeles"
+      )
+    end
+
+    # to test validations in initializer
+    let(:hearing_2) do
+      create(
+        :hearing,
+        scheduled_in_timezone: nil
+      )
+    end
+
+    # to test validations in initializer
+    let(:legacy_hearing_2) do
+      create(
+        :legacy_hearing,
+        scheduled_in_timezone: nil
       )
     end
 
@@ -128,6 +162,11 @@ RSpec.describe HearingDatetimeService do
 
         expect(time_service_1.instance_variable_get(:@hearing)).to be_a(Hearing)
         expect(time_service_2.instance_variable_get(:@hearing)).to be_a(LegacyHearing)
+      end
+
+      it "validates the hearing's scheduled_in_timezone value" do
+        expect { described_class.new(hearing: hearing_2) }.to raise_error(HearingDatetimeService::UnsuppliedScheduledInTimezoneError)
+        expect { described_class.new(hearing: legacy_hearing_2) }.to raise_error(HearingDatetimeService::UnsuppliedScheduledInTimezoneError)
       end
     end
 
@@ -144,12 +183,10 @@ RSpec.describe HearingDatetimeService do
       describe "central_office_time" do
         it "returns local_time in Eastern Time" do
           time_service = described_class.new(hearing: hearing)
+          time_service_2 = described_class.new(hearing: summer_hearing)
 
-          if time_service.central_office_time.dst?
-            expect(time_service.central_office_time.zone).to eq("EDT")
-          else
-            expect(time_service.central_office_time.zone).to eq("EST")
-          end
+          expect(time_service.central_office_time.zone).to eq("EST")
+          expect(time_service_2.central_office_time.zone).to eq("EDT")
         end
       end
 
