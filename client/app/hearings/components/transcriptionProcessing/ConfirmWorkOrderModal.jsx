@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom/cjs/react-router-dom.min';
 import { css } from 'glamor';
 
 const ConfirmWorkOrderModal = ({ history, onCancel }) => {
+  const { state } = history.location;
 
   const styles = {
     body: {
@@ -18,7 +19,11 @@ const ConfirmWorkOrderModal = ({ history, onCancel }) => {
     buttonSection: {
       display: 'flex',
       justifyContent: 'space-between',
-      marginRight: '3rem'
+      marginRight: '3rem',
+    },
+    formInfoSection: {
+      listStyleType: 'none',
+      marginTop: '-3rem',
     }
   };
 
@@ -32,7 +37,33 @@ const ConfirmWorkOrderModal = ({ history, onCancel }) => {
     '& a': {
       margin: '3rem'
     },
+    '& h4': {
+      margin: '3rem',
+      fontSize: '17px'
+    },
+    '& p': {
+      marginTop: '2.9rem',
+      marginLeft: '-2rem'
+    },
+    '& li': {
+      display: 'inline-flex',
+      marginBottom: '-4rem'
+    },
+    '& ul': {
+      display: 'inline-grid',
+      marginLeft: '-3rem'
+    }
   });
+
+  const renderFormInformation = () => {
+    return (
+      <ul style={styles.formInfoSection}>
+        <li><h4>Work Order:</h4><p>{state?.workOrder}</p></li>
+        <li><h4>Return date:</h4><p>{state?.returnDateValue}</p></li>
+        <li><h4>Contractor:</h4><p>{state?.contractor?.name}</p></li>
+      </ul>
+    );
+  };
 
   const cancelWorkOrder = (files) => {
     const ids = files.map((file) => file.id);
@@ -48,7 +79,7 @@ const ConfirmWorkOrderModal = ({ history, onCancel }) => {
   const renderButtonSection = () => {
     return (
       <div style={styles.buttonSection}>
-        <Link onClick={() => cancelWorkOrder(history.location.state.selectedFiles)}>Cancel</Link>
+        <Link onClick={() => cancelWorkOrder(state?.selectedFiles)}>Cancel</Link>
         <div>
           <Button
             classNames={['usa-button', 'usa-button-secondary']}
@@ -65,6 +96,7 @@ const ConfirmWorkOrderModal = ({ history, onCancel }) => {
   return (
     <div {...marginStyles} style={styles.body}>
       <h1>Confirm work order summary</h1>
+      {renderFormInformation()}
       {renderButtonSection()}
     </div>
   );

@@ -8,9 +8,10 @@ import ApiUtil from 'app/util/ApiUtil';
 import { useHistory } from 'react-router';
 
 const PackageFilesModal = ({ onCancel, contractors, selectedFiles }) => {
-  const [transcription, setTranscription] = useState({ task_id: '' });
-  const [, setReturnDateValue] = useState('');
-  const [, setContractorId] = useState('');
+  const [transcription, setTranscription] = useState({ task_id: '----' });
+  const [returnDateValue, setReturnDateValue] = useState('');
+  const [contractor, setContractor] = useState({ id: '0', name: '' });
+  const [workOrder, setWorkOrder] = useState('');
   let history = useHistory();
 
   /**
@@ -47,7 +48,7 @@ const PackageFilesModal = ({ onCancel, contractors, selectedFiles }) => {
       sequencer = '0'.repeat(4 - numberOfDigits) + taskId;
     }
 
-    return `BVA-${firstSet}-${sequencer}`;
+    setWorkOrder(`BVA-${firstSet}-${sequencer}`);
   };
 
   // Renders the work order number
@@ -55,7 +56,7 @@ const PackageFilesModal = ({ onCancel, contractors, selectedFiles }) => {
     return (
       <div>
         <strong>Work Order</strong>
-        <p>{transcription.task_id && generateWorkOrder(transcription.task_id)}</p>
+        <p>{workOrder}</p>
       </div>
     );
   };
@@ -113,10 +114,10 @@ const PackageFilesModal = ({ onCancel, contractors, selectedFiles }) => {
    * @returns {object} The contractor option
    */
   const contractorOptions = () => {
-    return contractors.map((contractor) => {
+    return contractors.map((option) => {
       return {
-        label: contractor.name,
-        value: contractor.id
+        label: option.name,
+        value: option.id
       };
     });
   };
@@ -126,7 +127,7 @@ const PackageFilesModal = ({ onCancel, contractors, selectedFiles }) => {
     return <SearchableDropdown
       name=<strong>Contractor</strong>
       options={contractorOptions()}
-      onChange={(option) => setContractorId(option.value)}
+      onChange={(option) => setContractor({ id: option.value, name: option.label })}
     />;
   };
 
@@ -152,6 +153,10 @@ const PackageFilesModal = ({ onCancel, contractors, selectedFiles }) => {
     getTranscriptionTaskId();
   }, []);
 
+  useEffect(() => {
+    generateWorkOrder(transcription.task_id);
+  }, [transcription]);
+
   return (
     <Modal
       title="Package files"
@@ -164,7 +169,7 @@ const PackageFilesModal = ({ onCancel, contractors, selectedFiles }) => {
         {
           classNames: ['usa-button', 'usa-button-primary'],
           name: COPY.TRANSCRIPTION_TABLE_PACKAGE_FILE,
-          onClick: () => history.push('/confirm_work_order', { selectedFiles })
+          onClick: () => history.push('/confirm_work_order', { workOrder, selectedFiles, returnDateValue, contractor })
         },
       ]}
       closeHandler={onCancel}
