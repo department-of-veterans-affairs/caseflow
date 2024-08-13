@@ -19,7 +19,7 @@ export const sectionSegmentStyling = {
 
 export const ContentSection = ({ header, children, content }) => (
   <div className="cf-app-segment">
-    <h2 {...sectionHeadingStyling}>{header}</h2>
+    <h2 style={sectionHeadingStyling}>{header}</h2>
     <div {...sectionSegmentStyling}>{content || children}</div>
   </div>
 );
