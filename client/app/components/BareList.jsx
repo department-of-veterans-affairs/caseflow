@@ -15,10 +15,10 @@ export default class BareList extends React.PureComponent {
     } = this.props;
     const className = classNames('cf-bare-list', this.props.className);
 
-    return <ListElementComponent {...listStyle} className={className}>
+    return <ListElementComponent style={listStyle} className={className}>
       {
         items.map((itemFn, index) =>
-          <li {...this.bottomMargin()} key={index}>{itemFn()}</li>
+          <li style={this.bottomMargin()} key={index}>{itemFn()}</li>
         )
       }
     </ListElementComponent>;
