@@ -72,7 +72,12 @@ export const TranscriptionFileDispatchView = () => {
           fullPage={false}
           tabs={tabConfig(openPackageModal, selectFilesForPackage, selectedFiles.length)}
         />
-        { packageModalConfig.opened && <PackageFilesModal onCancel={closePackageModal} contractors={contractors} />}
+        { packageModalConfig.opened &&
+          <PackageFilesModal
+            onCancel={closePackageModal}
+            contractors={contractors}
+            selectedFiles={selectedFiles}
+          />}
       </AppSegment>
     </>
   );

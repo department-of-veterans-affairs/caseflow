@@ -133,7 +133,7 @@ export default class HearingsApp extends React.PureComponent {
 
   routeForConfirmWorkOrder = ({ history }) => (
     <HearingsUserContext.Provider value={this.userPermissionProps()}>
-      <ConfirmWorkOrderModal onCancel={() => history.goBack()} />
+      <ConfirmWorkOrderModal history={history} onCancel={() => history.goBack()} />
     </HearingsUserContext.Provider>
   );
 

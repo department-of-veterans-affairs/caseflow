@@ -7,7 +7,7 @@ import { SearchableDropdown } from '../../../components/SearchableDropdown';
 import ApiUtil from 'app/util/ApiUtil';
 import { useHistory } from 'react-router';
 
-const PackageFilesModal = ({ onCancel, contractors }) => {
+const PackageFilesModal = ({ onCancel, contractors, selectedFiles }) => {
   const [transcription, setTranscription] = useState({ task_id: '' });
   const [, setReturnDateValue] = useState('');
   const [, setContractorId] = useState('');
@@ -164,7 +164,7 @@ const PackageFilesModal = ({ onCancel, contractors }) => {
         {
           classNames: ['usa-button', 'usa-button-primary'],
           name: COPY.TRANSCRIPTION_TABLE_PACKAGE_FILE,
-          onClick: () => history.push('/confirm_work_order')
+          onClick: () => history.push('/confirm_work_order', { selectedFiles })
         },
       ]}
       closeHandler={onCancel}
@@ -177,7 +177,8 @@ const PackageFilesModal = ({ onCancel, contractors }) => {
 
 PackageFilesModal.propTypes = {
   onCancel: PropTypes.func,
-  contractors: PropTypes.object
+  contractors: PropTypes.object,
+  selectedFiles: PropTypes.arrayOf(PropTypes.object)
 };
 
 export default PackageFilesModal;
