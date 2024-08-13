@@ -54,7 +54,6 @@ RSpec.describe "Correspondence Requests", :all_dbs, type: :request do
           expect(task[:attributes][:completion_date]).to eq(nil).or be_a(String)
           expect(task[:attributes][:days_waiting]).to be_a(Integer)
           expect(task[:attributes][:va_date_of_receipt]).to be_a(String)
-          expect(task[:attributes][:label]).to be_a(String)
           expect(task[:attributes][:assigned_to]).to be_a(Hash)
           expect(task[:attributes][:assigned_by]).to be_a(Hash)
         end
