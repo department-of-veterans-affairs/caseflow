@@ -47,7 +47,6 @@ describe('HearingTypeConversion', () => {
 
     const heading = screen.getByRole('heading', { name: /Convert Hearing To Central/i });
     expect(heading).toBeInTheDocument();
-    logRoles(container);
 
     expect(screen.queryByText(/Central Office/i)).toBeInTheDocument();
     expect(screen.queryByText((content) => content.includes(COPY.CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT))

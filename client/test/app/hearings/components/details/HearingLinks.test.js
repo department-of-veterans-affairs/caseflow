@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { logRoles } from '@testing-library/react';
 import { HearingLinks } from 'app/hearings/components/details/HearingLinks';
 import { anyUser, vsoUser, hearingUser } from 'test/data/user';
 import { inProgressvirtualHearing } from 'test/data/virtualHearings';

@@ -4,6 +4,7 @@ exports[`ReadOnly Matches snapshot with default props 1`] = `
 <DocumentFragment>
   <div
     data-css-1a5irm0=""
+    data-testid="read-only-testid"
   >
     <strong>
       example
