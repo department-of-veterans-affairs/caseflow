@@ -17,7 +17,10 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
       appeals = LegacyDocket.new.appeals_tied_to_non_ssc_avljs
       appeals = appeals.sort_by { |appeal| [appeal["priority"], appeal["bfd19"]] } unless appeals.empty?
       complete_returned_appeal_job(returned_appeal_job, "Job completed successfully", appeals)
-      send_job_slack_report
+
+      # Filter the appeals and send the filtered report
+      filtered_appeals = filter_appeals(appeals)
+      send_job_slack_report(filtered_appeals)
     rescue StandardError => error
       message = "Job failed with error: #{error.message}"
       errored_returned_appeal_job(returned_appeal_job, message)
@@ -31,6 +34,37 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
       @start_time ||= Time.zone.now
       metrics_service_report_runtime(metric_group_name: "return_legacy_appeals_to_board_job")
     end
+  end
+
+  def filter_appeals(appeals)
+    Rails.logger.info "Appeals before filtering: #{appeals.inspect}"
+    # Number of priority appeals returned to the board
+    priority_appeals = appeals.select { |appeal| appeal["priority"] }
+
+    # Number of non-priority appeals returned to the board
+    non_priority_appeals = appeals.reject { |appeal| appeal["priority"] }
+
+    # Calculate remaining appeals
+    total_priority_appeals = LegacyDocket.new.count(priority: true)
+    total_non_priority_appeals = LegacyDocket.new.count(priority: false)
+
+    remaining_priority_appeals_count = total_priority_appeals - priority_appeals.size
+    remaining_non_priority_appeals_count = total_non_priority_appeals - non_priority_appeals.size
+
+    # List of non-SSC AVLJs that appeals were moved from to location '63'
+    moved_avljs = appeals.map { |appeal| appeal["non_ssc_avlj"] }.uniq
+
+    # Keys of the hash that holds "Appeals should be grouped by non-SSC AVLJ"
+    grouped_by_avlj = appeals.group_by { |appeal| appeal["non_ssc_avlj"] }.keys
+
+    {
+      priority_appeals_count: priority_appeals.size,
+      non_priority_appeals_count: non_priority_appeals.size,
+      remaining_priority_appeals_count: remaining_priority_appeals_count,
+      remaining_non_priority_appeals_count: remaining_non_priority_appeals_count,
+      moved_avljs: moved_avljs,
+      grouped_by_avlj: grouped_by_avlj
+    }
   end
 
   private
