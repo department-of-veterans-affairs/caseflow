@@ -10,6 +10,7 @@ exports[`Appellant Displays appellant information when appellant is not veteran 
   </h2>
   <div
     data-css-1a5irm0=""
+    data-testid="read-only-testid"
   >
     <strong>
       Appellant Name
@@ -20,6 +21,7 @@ exports[`Appellant Displays appellant information when appellant is not veteran 
   </div>
   <div
     data-css-1a5irm0=""
+    data-testid="read-only-testid"
   >
     <strong>
       Relation to Veteran
@@ -30,6 +32,7 @@ exports[`Appellant Displays appellant information when appellant is not veteran 
   </div>
   <div
     data-css-1a5irm0=""
+    data-testid="read-only-testid"
   >
     <strong>
       Appellant Mailing Address
@@ -96,6 +99,7 @@ exports[`Appellant Displays email alert when email is null 1`] = `
   </h2>
   <div
     data-css-1a5irm0=""
+    data-testid="read-only-testid"
   >
     <strong>
       Veteran Name
@@ -106,6 +110,7 @@ exports[`Appellant Displays email alert when email is null 1`] = `
   </div>
   <div
     data-css-1a5irm0=""
+    data-testid="read-only-testid"
   >
     <strong>
       Veteran Mailing Address
@@ -125,6 +130,7 @@ SAN FRANCISCO, CA 94103
     >
       <div
         data-css-1a5irm0=""
+        data-testid="read-only-testid"
       >
         <strong>
           Veteran Email (for these notifications only)
@@ -164,6 +170,7 @@ exports[`Appellant Displays email alert when email is undefined 1`] = `
   </h2>
   <div
     data-css-1a5irm0=""
+    data-testid="read-only-testid"
   >
     <strong>
       Veteran Name
@@ -174,6 +181,7 @@ exports[`Appellant Displays email alert when email is undefined 1`] = `
   </div>
   <div
     data-css-1a5irm0=""
+    data-testid="read-only-testid"
   >
     <strong>
       Veteran Mailing Address
@@ -193,6 +201,7 @@ SAN FRANCISCO, CA 94103
     >
       <div
         data-css-1a5irm0=""
+        data-testid="read-only-testid"
       >
         <strong>
           Veteran Email (for these notifications only)
@@ -232,6 +241,7 @@ exports[`Appellant Displays timezone when showTimezoneField is passed as prop 1`
   </h2>
   <div
     data-css-1a5irm0=""
+    data-testid="read-only-testid"
   >
     <strong>
       Veteran Name
@@ -242,6 +252,7 @@ exports[`Appellant Displays timezone when showTimezoneField is passed as prop 1`
   </div>
   <div
     data-css-1a5irm0=""
+    data-testid="read-only-testid"
   >
     <strong>
       Veteran Mailing Address
@@ -425,6 +436,7 @@ exports[`Appellant Does not allow editing emails when read-only 1`] = `
   </h2>
   <div
     data-css-1a5irm0=""
+    data-testid="read-only-testid"
   >
     <strong>
       Veteran Name
@@ -435,6 +447,7 @@ exports[`Appellant Does not allow editing emails when read-only 1`] = `
   </div>
   <div
     data-css-1a5irm0=""
+    data-testid="read-only-testid"
   >
     <strong>
       Veteran Mailing Address
@@ -454,6 +467,7 @@ SAN FRANCISCO, CA 94103
     >
       <div
         data-css-1a5irm0=""
+        data-testid="read-only-testid"
       >
         <strong>
           Veteran Email (for these notifications only)
@@ -531,6 +545,7 @@ exports[`Appellant Matches snapshot with default props 1`] = `
   </h2>
   <div
     data-css-1a5irm0=""
+    data-testid="read-only-testid"
   >
     <strong>
       Veteran Name
@@ -541,6 +556,7 @@ exports[`Appellant Matches snapshot with default props 1`] = `
   </div>
   <div
     data-css-1a5irm0=""
+    data-testid="read-only-testid"
   >
     <strong>
       Veteran Mailing Address

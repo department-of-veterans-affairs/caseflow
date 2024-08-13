@@ -5,6 +5,10 @@ import { AddressLine } from 'app/hearings/components/details/Address';
 import { ReadOnly } from 'app/hearings/components/details/ReadOnly';
 import { anyUser } from 'test/data/user';
 
+const convertRegex = (str) => {
+  return new RegExp(str, 'i');
+}
+
 describe('AddressLine', () => {
   test('Matches snapshot with default props', () => {
     // Render the address component
@@ -18,11 +22,9 @@ describe('AddressLine', () => {
       />
     );
 
-    const addressText = `${anyUser.name}\n${anyUser.addressLine1}\n${anyUser.addressCity}, ${anyUser.addressState} ${anyUser.addressZip}`;
-
-    // Assertions
-    const readOnly = screen.getByText(addressText);
-    expect(readOnly).toBeInTheDocument();
+    expect(screen.getByText(convertRegex(anyUser.name))).toBeInTheDocument();
+    expect(screen.getByText(convertRegex(anyUser.addressLine1))).toBeInTheDocument();
+    expect(screen.getByText(convertRegex(`${anyUser.addressCity}, ${anyUser.addressState} ${anyUser.addressZip}`))).toBeInTheDocument();
     expect(asFragment()).toMatchSnapshot();
   });
 });
