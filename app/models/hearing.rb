@@ -189,9 +189,9 @@ class Hearing < CaseflowRecord
   end
 
   # returns scheduled datetime object considering the timezones
-  # nil - if hearing_day is nil
-  # datetime in scheduled_in_timezone timezone - if scheduled_datetime and scheduled_in_timezone are present
-  # else datetime in regional office timezone
+  # @return [nil] if hearing_day is nil
+  # @return [Time] in scheduled_in_timezone timezone - if scheduled_datetime and scheduled_in_timezone are present
+  # @return [Time] else datetime in regional office timezone
   def scheduled_for
     return nil unless hearing_day
 
