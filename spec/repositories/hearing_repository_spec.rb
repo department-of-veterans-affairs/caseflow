@@ -138,7 +138,8 @@ describe HearingRepository, :all_dbs do
     let(:notes) { "test notes" }
     let(:representative_name) { "test representative name" }
     let(:hearing_hash) do
-      case_hearing = create(:case_hearing,
+      case_hearing = create(
+        :case_hearing,
         hearing_date: date,
         hearing_type: HearingDay::REQUEST_TYPES[:video],
         hearing_disp: VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:no_show],

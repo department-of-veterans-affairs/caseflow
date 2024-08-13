@@ -64,7 +64,7 @@ describe AppealEvent do
           hearing_date: 4.days.ago
         )
 
-        legacy_hearing = create(
+        create(
           :legacy_hearing,
           case_hearing: vacols_record,
           scheduled_in_timezone: Time.zone.name
@@ -87,7 +87,7 @@ describe AppealEvent do
           hearing_date: 4.days.ago
         )
 
-        legacy_hearing = create(
+        create(
           :legacy_hearing,
           scheduled_in_timezone: Time.zone.name,
           case_hearing: vacols_record
