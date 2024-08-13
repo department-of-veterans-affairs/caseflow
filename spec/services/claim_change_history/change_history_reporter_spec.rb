@@ -145,6 +145,18 @@ describe ChangeHistoryReporter do
         new_event.instance_variable_set(:@task_status, "cancelled")
         new_event
       end
+      let(:pending_issue_event) do
+        new_event = removed_issue_event.clone
+        new_event.instance_variable_set(:@event_type, :pending)
+        new_event.instance_variable_set(:@task_status, "assigned")
+        new_event
+      end
+      let(:issue_modification_request_event) do
+        new_event = pending_issue_event.clone
+        new_event.instance_variable_set(:@event_type, :modification)
+        new_event.instance_variable_set(:@task_status, "assigned")
+        new_event
+      end
 
       let(:events) do
         [
@@ -158,7 +170,9 @@ describe ChangeHistoryReporter do
           completed_disposition_event,
           added_decision_date_event,
           removed_issue_event,
-          withdrew_issue_event
+          withdrew_issue_event,
+          pending_issue_event,
+          issue_modification_request_event
         ]
       end
 
@@ -177,6 +191,11 @@ describe ChangeHistoryReporter do
           "CHAMPVA",
           "CHAMPVA issue description",
           added_issue_event.readable_decision_date,
+          nil,
+          nil,
+          nil,
+          nil,
+          nil,
           nil
         ]
       end
@@ -195,6 +214,11 @@ describe ChangeHistoryReporter do
           "Claim created",
           nil,
           "Claim created.",
+          nil,
+          nil,
+          nil,
+          nil,
+          nil,
           nil
         ]
       end
@@ -213,6 +237,11 @@ describe ChangeHistoryReporter do
           "Claim status - In progress",
           nil,
           "Claim can be processed.",
+          nil,
+          nil,
+          nil,
+          nil,
+          nil,
           nil
         ]
       end
@@ -230,7 +259,12 @@ describe ChangeHistoryReporter do
           cancelled_status_event.readable_event_date,
           "Claim closed",
           nil,
-          "Claim closed.",
+          "Claim cancelled.",
+          nil,
+          nil,
+          nil,
+          nil,
+          nil,
           nil
         ]
       end
@@ -248,6 +282,11 @@ describe ChangeHistoryReporter do
           "Claim closed",
           nil,
           "Claim closed.",
+          nil,
+          nil,
+          nil,
+          nil,
+          nil,
           nil
         ]
       end
@@ -265,6 +304,11 @@ describe ChangeHistoryReporter do
           "Claim status - Incomplete",
           nil,
           "Claim cannot be processed until decision date is entered.",
+          nil,
+          nil,
+          nil,
+          nil,
+          nil,
           nil
         ]
       end
@@ -283,6 +327,11 @@ describe ChangeHistoryReporter do
           "CHAMPVA",
           "CHAMPVA issue description",
           added_issue_without_decision_date_event.readable_decision_date,
+          nil,
+          nil,
+          nil,
+          nil,
+          nil,
           nil
         ]
       end
@@ -301,6 +350,11 @@ describe ChangeHistoryReporter do
           "CHAMPVA",
           "CHAMPVA issue description",
           completed_disposition_event.readable_decision_date,
+          nil,
+          nil,
+          nil,
+          nil,
+          nil,
           "Granted",
           "Decision for CHAMPVA issue",
           completed_disposition_event.readable_disposition_date
@@ -321,6 +375,11 @@ describe ChangeHistoryReporter do
           "CHAMPVA",
           "CHAMPVA issue description",
           added_decision_date_event.readable_decision_date,
+          nil,
+          nil,
+          nil,
+          nil,
+          nil,
           nil
         ]
       end
@@ -339,6 +398,11 @@ describe ChangeHistoryReporter do
           "CHAMPVA",
           "CHAMPVA issue description",
           removed_issue_event.readable_decision_date,
+          nil,
+          nil,
+          nil,
+          nil,
+          nil,
           nil
         ]
       end
@@ -357,12 +421,63 @@ describe ChangeHistoryReporter do
           "CHAMPVA",
           "CHAMPVA issue description",
           withdrew_issue_event.readable_decision_date,
+          nil,
+          nil,
+          nil,
+          nil,
+          nil,
+          nil
+        ]
+      end
+      let(:pending_issue_event_row) do
+        [
+          "242080004",
+          "Mason Rodriguez",
+          "/decision_reviews/vha/tasks/900",
+          "in progress",
+          "20",
+          "Higher-Level Review",
+          "Austin AAC (200)",
+          "E. Thompson",
+          added_issue_event.readable_event_date,
+          "Claim status - Pending",
+          nil,
+          "Claim cannot be processed until VHA admin reviews pending requests.",
+          nil,
+          nil,
+          nil,
+          nil,
+          nil,
+          nil
+        ]
+      end
+      let(:modification_issue_event_row) do
+        [
+          "242080004",
+          "Mason Rodriguez",
+          "/decision_reviews/vha/tasks/900",
+          "in progress",
+          "20",
+          "Higher-Level Review",
+          "Austin AAC (200)",
+          "E. Thompson",
+          added_issue_event.readable_event_date,
+          "Requested issue modification",
+          "CHAMPVA",
+          "CHAMPVA issue description",
+          added_issue_event.readable_decision_date,
+          nil,
+          nil,
+          nil,
+          nil,
+          nil,
           nil
         ]
       end
 
       it "returns a csv string with the column headers, filters, and event rows" do
         rows = CSV.parse(subject)
+
         expect(rows.count).to eq(2 + events.length)
         expect(rows[0]).to eq([])
         expect(rows[1]).to eq(column_headers)
@@ -377,6 +492,8 @@ describe ChangeHistoryReporter do
         expect(rows[10]).to eq(added_decision_date_event_row)
         expect(rows[11]).to eq(removed_issue_event_row)
         expect(rows[12]).to eq(withdrew_issue_event_row)
+        expect(rows[13]).to eq(pending_issue_event_row)
+        expect(rows[14]).to eq(modification_issue_event_row)
       end
     end
   end
