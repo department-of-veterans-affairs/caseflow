@@ -348,20 +348,26 @@ describe Hearing, :postgres do
     end
 
     context "when scheduled_datetime or/and scheduled_in_timezone is null" do
-      it "returns scheduled_time in regional_office timezone" do
+      let(:expected_scheduled_for) do
         time_string = if Time.zone.now.in_time_zone(hearing.regional_office_timezone).zone == "EDT"
                         "09:30:00 -0400"
                       else
                         "08:30:00 -0500"
                       end
-        expected_scheduled_for = "#{Time.zone.today.strftime('%Y-%m-%d')} #{time_string}"
+        "#{Time.zone.today.strftime('%Y-%m-%d')} #{time_string}"
+      end
 
+      it "returns scheduled_time in regional_office timezone when scheduled_datetime is null" do
         hearing.update(scheduled_datetime: nil, scheduled_in_timezone: "America/Los_Angeles")
         expect(hearing.scheduled_for.strftime("%Y-%m-%d %H:%M:%S %z")).to eq expected_scheduled_for
+      end
 
+      it "returns scheduled_time in regional_office timezone when scheduled_in_timezone is null" do
         hearing.update(scheduled_datetime: "2021-04-23T11:30:00-04:00", scheduled_in_timezone: nil)
         expect(hearing.scheduled_for.strftime("%Y-%m-%d %H:%M:%S %z")).to eq expected_scheduled_for
+      end
 
+      it "returns scheduled_time in regional_office timezone when both null" do
         hearing.update(scheduled_datetime: nil, scheduled_in_timezone: nil)
         expect(hearing.scheduled_for.strftime("%Y-%m-%d %H:%M:%S %z")).to eq expected_scheduled_for
       end
