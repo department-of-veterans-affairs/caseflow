@@ -32,21 +32,18 @@ DT_API_TOKEN = ENV["DT_API_TOKEN"]
 
 Rails.logger.info("DT_API_TOKEN is set to #{DT_API_TOKEN}")
 
+config = {
+  'OpenTelemetry::Instrumentation::Redis' => { enabled: false },
+  'OpenTelemetry::Instrumentation::PG' => { enabled: false },
+  'OpenTelemetry::Instrumentation::AwsSdk' => { enabled: false },
+  'OpenTelemetry::Instrumentation::Net::HTTP' => { enabled: false },
+  'OpenTelemetry::Instrumentation::Rack' => { untraced_endpoints: ['/health-check', '/sample', '/logs'] }
+}
+
 if !Rails.env.development? && !Rails.env.test? && !Rails.env.demo?
   OpenTelemetry::SDK.configure do |c|
-    c.service_name = 'ruby-quickstart'
+    c.service_name = 'caseflow-quickstart'
     c.service_version = '1.0.1'
-    # c.use_all # application will be using all instrumentation provided by OpenTelemetry
-    # c.use 'OpenTelemetry::Instrumentation::Rack', { untraced_endpoints: ['/health-check', '/sample', '/logs'] }
-    # c.use 'OpenTelemetry::Instrumentation::Rails'
-    # c.use 'OpenTelemetry::Instrumentation::ActiveRecord'
-    config = {
-      'OpenTelemetry::Instrumentation::Redis' => { enabled: false },
-      'OpenTelemetry::Instrumentation::PG' => { enabled: false },
-      'OpenTelemetry::Instrumentation::AwsSdk' => { enabled: false },
-      'OpenTelemetry::Instrumentation::Net::HTTP' => { enabled: false },
-      'OpenTelemetry::Instrumentation::Rack' => { untraced_endpoints: ['/health-check', '/sample', '/logs'] }
-    }
     c.use_all(config)
 
     %w[dt_metadata_e617c525669e072eebe3d0f08212e8f2.properties /var/lib/dynatrace/enrichment/dt_host_metadata.properties].each { |name|
@@ -67,4 +64,13 @@ if !Rails.env.development? && !Rails.env.test? && !Rails.env.demo?
     )
   end
 end
-  # rubocop:enable Layout/LineLength
+if Rails.env.development?
+  OpenTelemetry::SDK.configure do |c|
+    c.service_name = 'caseflow-quickstart'
+    c.service_version = '1.0.1'
+    c.use_all(config)
+    # Uncomment this line to enbale console exporting.
+    ENV['OTEL_TRACES_EXPORTER'] = 'console'
+  end
+end
+# rubocop:enable Layout/LineLength
