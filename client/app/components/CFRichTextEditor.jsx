@@ -61,7 +61,7 @@ export default class CFRichTextEditor extends React.PureComponent {
         {label || name} {required && <span className="cf-required">Required</span>}
       </label>
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
-      <section {...editorStyling}>
+      <section style={editorStyling}>
         <Editor
           onEditorStateChange={this.onChange}
           editorState={this.state.editorState}
