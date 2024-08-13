@@ -23,10 +23,10 @@ const textStyling = {
   marginBottom: 0
 };
 
-const CaseSearchLink = (props) => <div {...containerStyling}>
+const CaseSearchLink = (props) => <div style={containerStyling}>
   <Link href="/search" target={props.newWindow ? '_blank' : '_self'}>
-    <span {...iconStyling}><MagnifyingGlassIcon color={COLORS.PRIMARY} size={24} /></span>
-    <p {...textStyling}>Search cases</p>
+    <span style={iconStyling}><MagnifyingGlassIcon color={COLORS.PRIMARY} size={24} /></span>
+    <p style={textStyling}>Search cases</p>
   </Link>
 </div>;
 
