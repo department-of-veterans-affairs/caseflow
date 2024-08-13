@@ -20,7 +20,7 @@ class VaBoxUploadJob < CaseflowJob
     fail BoxUploadError
   end
 
-  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
   def perform(file_info, box_folder_id)
     @all_paths = []
     @email_sent_flags = { transcription_package: false, child_folder_id: false, upload: false }
@@ -86,7 +86,7 @@ class VaBoxUploadJob < CaseflowJob
       end
     end
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 
   private
 
@@ -106,6 +106,7 @@ class VaBoxUploadJob < CaseflowJob
     local_path
   end
 
+  # rubocop:disable Metrics/ParameterLists, Metrics/MethodLength
   def upsert_to_box(box_service, local_file_path, child_folder_id, transcription_package, file_info, hearing)
     ActiveRecord::Base.transaction do
       box_service.public_upload_file(local_file_path, child_folder_id)
@@ -128,7 +129,9 @@ class VaBoxUploadJob < CaseflowJob
       )
     end
   end
+  # rubocop:enable Metrics/ParameterLists, Metrics/MethodLength
 
+  # rubocop:disable Metrics/ParameterLists, Metrics/MethodLength
   def create_to_box(box_service, local_file_path, child_folder_id, transcription_package, file_info, hearing)
     ActiveRecord::Base.transaction do
       box_service.public_upload_file(local_file_path, child_folder_id)
@@ -152,6 +155,7 @@ class VaBoxUploadJob < CaseflowJob
       transcription.save!
     end
   end
+  # rubocop:enable Metrics/ParameterLists, Metrics/MethodLength
 
   def update_transcription_files(hearing, file_info, transcription_package)
     TranscriptionFile.where(hearing_id: hearing[:hearing_id], hearing_type: hearing[:hearing_type]).update_all(
