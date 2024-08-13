@@ -46,21 +46,24 @@ const specialIssuesFormatting = (mstStatus, pactStatus) => {
 };
 
 export const AmaIssue = (props) => {
-  return <li key={props.index} {...singleIssueStyling} {...props.customStyle}>
-    <div {...issueContentStyling}><strong>Benefit type: </strong>{BENEFIT_TYPES[props.issue.program]}</div>
-    <div {...issueContentStyling}><strong>Issue: </strong>{props.issue.description}</div>
+  const liStyling = { ...singleIssueStyling, ...props.customStyle };
+  const notesStyling = { ...issueContentStyling, ...issueNoteStyling };
+
+  return <li key={props.index} style={liStyling}>
+    <div style={issueContentStyling}><strong>Benefit type: </strong>{BENEFIT_TYPES[props.issue.program]}</div>
+    <div style={issueContentStyling}><strong>Issue: </strong>{props.issue.description}</div>
     { props.issue.diagnostic_code &&
-      <div {...issueContentStyling}><strong>Diagnostic code: </strong>{props.issue.diagnostic_code}</div> }
-    { (props.mstFeatureToggle || props.pactFeatureToggle) && <div {...issueContentStyling}>
+      <div style={issueContentStyling}><strong>Diagnostic code: </strong>{props.issue.diagnostic_code}</div> }
+    { (props.mstFeatureToggle || props.pactFeatureToggle) && <div style={issueContentStyling}>
       <strong>Special Issues: </strong>{
         specialIssuesFormatting(props.issue.mst_status, props.issue.pact_status)
       }
     </div> }
     { props.issue.notes &&
-      <div {...issueContentStyling} {...issueNoteStyling}>Note from NOD: {props.issue.notes}</div> }
+      <div style={notesStyling}>Note from NOD: {props.issue.notes}</div> }
     { props.issue.closed_status && props.issue.closed_status === 'withdrawn' &&
-      <div {...issueContentStyling}>
-        <strong>Disposition</strong>: <span {...issueClosedStatusStyling}>
+      <div style={issueContentStyling}>
+        <strong>Disposition</strong>: <span style={issueClosedStatusStyling}>
           {_.capitalize(props.issue.closed_status)}</span>
       </div> }
     { props.children && React.cloneElement(props.children, { requestIssue: props.issue }) }
@@ -77,7 +80,7 @@ export default class AmaIssueList extends React.PureComponent {
       pactFeatureToggle,
     } = this.props;
 
-    return <ol {...issueListStyling}>
+    return <ol style={issueListStyling}>
       {requestIssues.map((issue, i) => {
         const error = errorMessages && errorMessages[issue.id];
 
