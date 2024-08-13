@@ -69,6 +69,7 @@ class Hearing < CaseflowRecord
            to: :appeal
   delegate :external_id, to: :appeal, prefix: true
   delegate :name, to: :regional_office, prefix: true
+  delegate :timezone, :name, to: :regional_office, prefix: true
 
   # ActiveRecord can interpret the associated hearing_day as null because acts_as_paranoid
   # allows us to soft-delete hearing_days by setting the deleted_at value.
@@ -187,8 +188,17 @@ class Hearing < CaseflowRecord
       .first
   end
 
+  # returns scheduled datetime object considering the timezones
+  # @return [nil] if hearing_day is nil
+  # @return [Time] in scheduled_in_timezone timezone - if scheduled_datetime and scheduled_in_timezone are present
+  # @return [Time] else datetime in regional office timezone
   def scheduled_for
     return nil unless hearing_day
+
+    # returns datetime in scheduled_in_timezone timezone
+    if scheduled_datetime.present? && scheduled_in_timezone.present?
+      return scheduled_datetime.in_time_zone(scheduled_in_timezone)
+    end
 
     # returns the date and time a hearing is scheduled for in the regional office's
     # time zone
@@ -226,26 +236,6 @@ class Hearing < CaseflowRecord
                          rescue RegionalOffice::NotFoundError
                            nil
                          end
-  end
-
-  # Returns timezone that the hearing is scheduled in
-  def regional_office_timezone
-    ro = regional_office
-    hearing_day_timezone = (ro.nil? || ro.timezone.nil?) ? HearingTimeService::CENTRAL_OFFICE_TIMEZONE : ro.timezone
-
-    # If there is not a scheduled_in_timezone value in the db,
-    # the timezone is calculated from the regional office associated with the hearing_day.
-    # Else the timezone is parsed from the db value
-    if scheduled_in_timezone.nil?
-      ro_timezone = hearing_day_timezone
-    else
-      begin
-        ro_timezone = ActiveSupport::TimeZone.find_tzinfo(scheduled_in_timezone).name
-      rescue TZInfo::InvalidTimezoneIdentifier
-        ro_timezone = hearing_day_timezone
-      end
-    end
-    ro_timezone
   end
 
   def regional_office_key

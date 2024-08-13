@@ -304,64 +304,72 @@ describe Hearing, :postgres do
     end
   end
 
-  context "regional_office_timezone" do
-    subject { hearing.regional_office_timezone }
+  context "scheduled_for" do
+    let(:hearing) { create(:hearing) }
 
-    context "When the hearing's RO is nil" do
-      let(:hearing) do
-        create(:hearing).tap { |hear| hear.hearing_day.update!(regional_office: nil) }
-      end
-
-      it "returns the CENTRAL_OFFICE_TIMEZONE" do
-        is_expected.to eq "America/New_York"
+    context "when hearing_day is nil" do
+      it "returns nil" do
+        hearing.hearing_day.destroy!
+        hearing.reload
+        expect(hearing.scheduled_for).to be nil
       end
     end
 
-    context "When the hearing's RO's time zone is nil" do
-      let(:hearing) { create(:hearing) }
-
-      before do
-        allow_any_instance_of(RegionalOffice).to receive(:timezone).and_return(nil)
+    context "when scheduled_datetime and scheduled_in_timezone are present" do
+      it "returns scheduled_datetime in scheduled_in_timezone timezone with daylight savings ON" do
+        hearing.update(scheduled_datetime: "2021-04-23T11:30:00-04:00", scheduled_in_timezone: "America/Los_Angeles")
+        expect(hearing.scheduled_for.strftime("%Y-%m-%d %H:%M:%S %z")).to eq "2021-04-23 08:30:00 -0700"
       end
 
-      it "returns the CENTRAL_OFFICE_TIMEZONE" do
-        is_expected.to eq "America/New_York"
-      end
-    end
-
-    context "When the hearing's scheduled_in_timezone is nil" do
-      let(:hearing) do
-        create(:hearing, scheduled_in_timezone: nil, regional_office: "RO82")
+      it "returns scheduled_datetime in scheduled_in_timezone timezone with daylight savings OFF" do
+        hearing.update(scheduled_datetime: "2021-12-23T11:30:00-05:00", scheduled_in_timezone: "America/Los_Angeles")
+        expect(hearing.scheduled_for.strftime("%Y-%m-%d %H:%M:%S %z")).to eq "2021-12-23 08:30:00 -0800"
       end
 
-      it "returns the RO's timezone associated with the hearing day/docket" do
-        is_expected.to eq "America/Chicago"
+      it "returns scheduled_datetime in scheduled_in_timezone timezone - America/Phoenix" do
+        hearing.update(scheduled_datetime: "2021-04-23T11:30:00-04:00", scheduled_in_timezone: "America/Phoenix")
+        expect(hearing.scheduled_for.strftime("%Y-%m-%d %H:%M:%S %z")).to eq "2021-04-23 08:30:00 -0700"
       end
-    end
 
-    context "When the hearing's scheduled_in_timezone is invalid" do
-      let(:hearing) { create(:hearing, scheduled_in_timezone: "Mars/Olympus_Mons") }
+      it "returns scheduled_datetime in scheduled_in_timezone timezone - Pacific/Honolulu" do
+        hearing.update(scheduled_datetime: "2021-04-23T11:30:00-04:00", scheduled_in_timezone: "Pacific/Honolulu")
+        expect(hearing.scheduled_for.strftime("%Y-%m-%d %H:%M:%S %z")).to eq "2021-04-23 05:30:00 -1000"
+      end
 
-      it "raises an error and defaults to the RO timezone" do
-        expect(ActiveSupport::TimeZone)
-          .to receive(:find_tzinfo)
-          .with("Mars/Olympus_Mons")
-          .and_raise(TZInfo::InvalidTimezoneIdentifier)
+      it "returns scheduled_datetime in scheduled_in_timezone timezone - Asia/Manila" do
+        hearing.update(scheduled_datetime: "2021-04-23T11:30:00-04:00", scheduled_in_timezone: "Asia/Manila")
+        expect(hearing.scheduled_for.strftime("%Y-%m-%d %H:%M:%S %z")).to eq "2021-04-23 23:30:00 +0800"
+      end
 
-        # Although an exception is encounted, it should be handled and not raised up the stack
-        expect { subject }.not_to raise_error(TZInfo::InvalidTimezoneIdentifier)
-
-        is_expected.to eq "America/New_York"
+      it "returns scheduled_datetime in scheduled_in_timezone timezone - America/Puerto_Rico" do
+        hearing.update(scheduled_datetime: "2021-04-23T11:30:00-04:00", scheduled_in_timezone: "America/Puerto_Rico")
+        expect(hearing.scheduled_for.strftime("%Y-%m-%d %H:%M:%S %z")).to eq "2021-04-23 11:30:00 -0400"
       end
     end
 
-    context "When the hearing's scheduled_in_timezone is valid and differs from RO" do
-      let(:hearing) do
-        create(:hearing, scheduled_in_timezone: "America/Los_Angeles", regional_office: "RO82")
+    context "when scheduled_datetime or/and scheduled_in_timezone is null" do
+      let(:expected_scheduled_for) do
+        time_string = if Time.zone.now.in_time_zone(hearing.regional_office_timezone).zone == "EDT"
+                        "09:30:00 -0400"
+                      else
+                        "08:30:00 -0500"
+                      end
+        "#{Time.zone.today.strftime('%Y-%m-%d')} #{time_string}"
       end
 
-      it "returns scheduled_in_timezone instead of RO's timezone" do
-        is_expected.to eq "America/Los_Angeles"
+      it "returns scheduled_time in regional_office timezone when scheduled_datetime is null" do
+        hearing.update(scheduled_datetime: nil, scheduled_in_timezone: "America/Los_Angeles")
+        expect(hearing.scheduled_for.strftime("%Y-%m-%d %H:%M:%S %z")).to eq expected_scheduled_for
+      end
+
+      it "returns scheduled_time in regional_office timezone when scheduled_in_timezone is null" do
+        hearing.update(scheduled_datetime: "2021-04-23T11:30:00-04:00", scheduled_in_timezone: nil)
+        expect(hearing.scheduled_for.strftime("%Y-%m-%d %H:%M:%S %z")).to eq expected_scheduled_for
+      end
+
+      it "returns scheduled_time in regional_office timezone when both null" do
+        hearing.update(scheduled_datetime: nil, scheduled_in_timezone: nil)
+        expect(hearing.scheduled_for.strftime("%Y-%m-%d %H:%M:%S %z")).to eq expected_scheduled_for
       end
     end
   end
