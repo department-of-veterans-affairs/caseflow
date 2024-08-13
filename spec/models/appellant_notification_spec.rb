@@ -939,6 +939,12 @@ describe AppellantNotification do
         let(:task) { create(:informal_hearing_presentation_task, :in_progress, assigned_to: org) }
         let(:appeal_state) { create(:appeal_state, appeal_id: task.appeal.id, appeal_type: task.appeal.class.to_s) }
         let(:template_name) { Constants.EVENT_TYPE_FILTERS.vso_ihp_complete }
+        let(:appeal) { task.appeal }
+
+        before do
+          InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+        end
+
         it "will notify the appellant of the 'IhpTaskComplete' status" do
           allow(task).to receive(:verify_user_can_update!).with(user).and_return(true)
           expect(AppellantNotification).to receive(:notify_appellant).with(task.appeal, template_name)
@@ -946,7 +952,6 @@ describe AppellantNotification do
         end
         it "will update appeal state with the 'IhpTaskComplete' status" do
           allow(task).to receive(:verify_user_can_update!).with(user).and_return(true)
-          InitialTasksFactory.new(task.appeal).create_root_and_sub_tasks!
           task.update_from_params({ status: Constants.TASK_STATUSES.completed, instructions: "Test" }, user)
           appeal_state_record = AppealState.find_by(appeal_id: task.appeal.id, appeal_type: task.appeal.class.to_s)
           expect(appeal_state_record.vso_ihp_complete).to eq(true)

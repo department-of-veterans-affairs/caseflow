@@ -37,7 +37,7 @@ module AppellantNotification
 
   def self.handle_errors(appeal)
     fail NoAppealError if appeal.nil?
-    fail InactiveAppealError, appeal["uuid"] if !appeal.active?
+    fail InactiveAppealError, appeal.external_id if !appeal.active?
 
     message_attributes = {}
     message_attributes[:appeal_type] = appeal.class.to_s
