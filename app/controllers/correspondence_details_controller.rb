@@ -8,6 +8,9 @@ class CorrespondenceDetailsController < CorrespondenceController
     @correspondence = WorkQueue::CorrespondenceSerializer
     set_instance_variables
 
+    # Sort the response letters
+    @correspondence_response_letters = sort_response_letters(@correspondence[:correspondenceResponseLetters])
+
     respond_to do |format|
       format.html
       format.json { render json: build_json_response, status: :ok }
@@ -45,6 +48,20 @@ class CorrespondenceDetailsController < CorrespondenceController
   end
 
   private
+
+  def sort_response_letters(response_letters)
+    response_letters.sort_by do |letter|
+      case letter[:days_left]
+      when /Expired on:/
+        expiration_date = Date.strptime(letter[:days_left].split(" on ").last, "%m/%d/%Y")
+        [0, expiration_date]
+      when /No response window/
+        [2, 0]
+      else
+        [1, 0]
+      end
+    end
+  end
 
   def appeals
     case_search_results = CaseSearchResultsForCaseflowVeteranId.new(
