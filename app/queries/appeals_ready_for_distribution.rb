@@ -44,14 +44,14 @@ class AppealsReadyForDistribution
       .flat_map do |sym, docket|
         appeals = docket.ready_to_distribute_appeals
         if sym == :legacy
-          legacy_rows(appeals, sym)
+          legacy_rows(appeals, docket, sym)
         else
           ama_rows(appeals, docket, sym)
         end
       end
   end
 
-  def self.legacy_rows(appeals, sym)
+  def self.legacy_rows(appeals, docket, sym)
     appeals.map do |appeal|
       build_appeal_row(appeal, sym)
     end
@@ -70,8 +70,8 @@ class AppealsReadyForDistribution
       cavc: appeal["cavc"] == 1,
       receipt_date: appeal["bfd19"],
       ready_for_distribution_at: appeal["bfdloout"],
-      target_distro_date: target_distro_date(appeal["bfd19"], sym),
-      days_before_goal_date: days_before_goal_date(appeal["bfd19"], sym),
+      target_distro_date: target_distro_date(appeal["bfd19"], docket),
+      days_before_goal_date: days_before_goal_date(appeal["bfd19"], docket),
       hearing_judge: hearing_judge,
       veteran_file_number: appeal["ssn"] || appeal["bfcorlid"],
       veteran_name: veteran_name,
