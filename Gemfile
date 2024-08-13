@@ -93,7 +93,6 @@ gem "webvtt-ruby"
 
 gem "ziptz"
 
-
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
   gem "activerecord-oracle_enhanced-adapter", "~> 6.0.0"
