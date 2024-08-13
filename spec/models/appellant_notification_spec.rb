@@ -148,14 +148,14 @@ describe AppellantNotification do
       it "Will notify appellant that the legacy appeal decision has been mailed (Non Contested)" do
         expect(AppellantNotification).to receive(:notify_appellant).with(legacy_appeal, non_contested)
         decision_document = dispatch.send dispatch_func, params
-        decision_document.process!
+        decision_document.process!(true)
       end
       it "Will notify appellant that the legacy appeal decision has been mailed (Contested)" do
         expect(AppellantNotification).to receive(:notify_appellant).with(legacy_appeal, contested)
         allow(legacy_appeal).to receive(:contested_claim).and_return(true)
         legacy_appeal.contested_claim
         decision_document = dispatch.send dispatch_func, params
-        decision_document.process!
+        decision_document.process!(false)
       end
     end
 
@@ -205,7 +205,7 @@ describe AppellantNotification do
       it "Will notify appellant that the AMA appeal decision has been mailed (Non Contested)" do
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal, non_contested)
         decision_document = dispatch.send dispatch_func, params
-        decision_document.process!
+        decision_document.process!(false)
       end
       it "Will notify appellant that the AMA appeal decision has been mailed (Contested)" do
         expect(AppellantNotification).to receive(:notify_appellant).with(contested_appeal, contested)
@@ -213,7 +213,7 @@ describe AppellantNotification do
         contested_appeal.contested_claim?
         contested_decision_document = contested_dispatch
           .send dispatch_func, contested_params
-        contested_decision_document.process!
+        contested_decision_document.process!(true)
       end
     end
   end

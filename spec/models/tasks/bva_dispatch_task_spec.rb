@@ -99,7 +99,7 @@ describe BvaDispatchTask, :all_dbs do
 
       it "should complete the BvaDispatchTask assigned to the User and the task assigned to the BvaDispatch org" do
         allow(ProcessDecisionDocumentJob).to receive(:perform_later)
-        byebug
+
         BvaDispatchTask.outcode(root_task.appeal.reload, params, user)
         tasks = BvaDispatchTask.where(appeal: root_task.appeal, assigned_to: user)
         expect(tasks.length).to eq(1)
