@@ -1,4 +1,3 @@
-import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -9,7 +8,7 @@ import { ClipboardIcon } from '../components//icons/ClipboardIcon';
 import { isEmpty } from 'lodash';
 
 export const clipboardButtonStyling = (defaults) =>
-  css({
+  ({
     ...defaults,
     padding: '0.75rem',
     // Offset the additional padding so when this component appears in an unordered list of items its baseline matches.
