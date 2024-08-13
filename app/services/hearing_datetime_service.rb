@@ -8,6 +8,10 @@
 # facade hearing.time as set in the module {HearingTimeConcern}.
 
 class HearingDatetimeService
+  class UnsuppliedScheduledInTimezoneError < StandardError; end
+
+  CENTRAL_OFFICE_TIMEZONE = "America/New_York"
+
   class << self
     # Combines a date and time string to create a Time object.
     #
@@ -42,6 +46,55 @@ class HearingDatetimeService
   end
 
   def initialize(hearing:)
+    validate_required_hearing_attrs(hearing)
     @hearing = hearing
+  end
+
+  # The time a hearing is scheduled to take place in the timezone set by
+  # hearing.scheduled_in_timezone. In this class it simply serves as an alias to
+  # hearing.scheduled_for, but this is necessary in that it allows us to mimic
+  # #local_time in the analogous facade, {HearingTimeService}.
+  #
+  # @return [Time]
+  def local_time
+    @hearing.scheduled_for
+  end
+
+  # The time a hearing is scheduled to take place in Eastern Time.
+  #
+  # @return [Time]
+  def central_office_time
+    local_time.in_time_zone(CENTRAL_OFFICE_TIMEZONE)
+  end
+
+  # A formatted string version of the central_office_time that has the timezone formatted
+  # in a metazone name e.g. "Eastern Time (US & Canada)".
+  #
+  # @return [String]
+  def central_office_time_string
+    tz = ActiveSupport::TimeZone::MAPPING.key(CENTRAL_OFFICE_TIMEZONE)
+
+    "#{central_office_time.strftime('%l:%M %p')} #{tz}".lstrip
+  end
+
+  # A formatted string version of local_time that has the timezone formatted
+  # in a metazone name e.g. "Eastern Time (US & Canada)".
+  #
+  # @return [String]
+  def scheduled_time_string
+    tz = ActiveSupport::TimeZone::MAPPING.key(@hearing.scheduled_in_timezone)
+
+    "#{local_time.strftime('%l:%M %p')} #{tz}".lstrip
+  end
+
+  private
+
+  def validate_required_hearing_attrs(hearing)
+    if hearing.scheduled_in_timezone.nil?
+      error = UnsuppliedScheduledInTimezoneError
+      Raven.capture_exception(error)
+      Rails.logger.info("#{error}: HearingDatetimeService requires non-nil scheduled_in_timezone for a hearing.")
+      fail error
+    end
   end
 end
