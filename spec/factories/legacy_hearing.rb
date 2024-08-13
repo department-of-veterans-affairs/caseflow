@@ -48,9 +48,7 @@ FactoryBot.define do
       )
     end
 
-    after(:create) do |hearing|
-      hearing.update(scheduled_in_timezone: nil)
-    end
+    scheduled_in_timezone { nil }
 
     hearing_day_id { case_hearing.vdkey }
     vacols_id { case_hearing.hearing_pkseq }
