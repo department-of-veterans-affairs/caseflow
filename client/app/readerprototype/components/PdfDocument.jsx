@@ -27,6 +27,8 @@ const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel }) => {
 
   useEffect(() => {
     const getDocData = async () => {
+      setPdfDoc(null);
+      setPdfPages([]);
       const requestOptions = {
         cache: true,
         withCredentials: true,
@@ -70,7 +72,7 @@ const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel }) => {
 
   return (
     <div id="pdfContainer" style={containerStyle}>
-      { isDocumentLoadError && <DocumentLoadError doc={doc} /> }
+      {isDocumentLoadError && <DocumentLoadError doc={doc} />}
       {pdfPages.map((page, index) => (
         <Page
           scale={zoomLevel}
