@@ -58,7 +58,7 @@ const DocumentViewer = (props) => {
   const getPageNumFromScrollTop = (event) => {
     const { clientHeight, scrollTop, scrollHeight } = event.target;
     const pageHeightEstimate = rotateDeg === '90deg' || rotateDeg === '270deg' ? clientHeight : scrollHeight / numPages;
-    const pageNumber = Math.floor((pageHeightEstimate + scrollTop) / pageHeightEstimate);
+    const pageNumber = Math.ceil((pageHeightEstimate + scrollTop) / pageHeightEstimate);
 
     if (pageNumber > numPages) {
       setCurrentPage(numPages);
