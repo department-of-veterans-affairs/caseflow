@@ -6,7 +6,8 @@ RSpec.describe CorrespondenceIntakeController, :all_dbs, type: :controller do
   let(:correspondence) { create(:correspondence, veteran: veteran) }
 
   let(:related_correspondence_uuids) do
-    (1..3).map { create(:correspondence) }.pluck(:uuid)
+    (1..3).map { create(:correspondence, :pending) }.pluck(:uuid)
+    (1..3).map { create(:correspondence, :completed) }.pluck(:uuid)
   end
   let(:esw_tasks) do
     (1..3).map do
@@ -50,11 +51,8 @@ RSpec.describe CorrespondenceIntakeController, :all_dbs, type: :controller do
       InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
 
-      corres_array1 = (1..4).map { create(:correspondence, veteran: veteran) }
-      corres_array1.map { |corr| corr.root_task.update!(status: "completed") }
-
-      corres_array2 = (1..4).map { create(:correspondence, veteran: veteran) }
-      corres_array2.map { |corr| corr.root_task.update!(status: "in_progress") }
+      (1..4).map { create(:correspondence,:completed, veteran: veteran) }
+      (1..4).map { create(:correspondence, :pending, veteran: veteran) }
 
       get :intake, params: { correspondence_uuid: correspondence.uuid }
       expect(controller.instance_variable_get(:@prior_mail).count).to eq(8)
