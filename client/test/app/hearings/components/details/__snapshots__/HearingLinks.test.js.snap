@@ -104,6 +104,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
       </button>
       <span
         data-css-as2zk0=""
+        data-testid="tooltip-testid"
       >
         <div
           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -290,6 +291,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
       </button>
       <span
         data-css-1qgqh7a=""
+        data-testid="tooltip-testid"
       >
         <div
           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
