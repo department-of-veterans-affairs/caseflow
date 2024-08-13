@@ -19,6 +19,23 @@ FactoryBot.define do
       end
     end
 
+    trait :unassigned do
+      after(:create) do |correspondence|
+        correspondence.review_package_task.update!(status: Constants.TASK_STATUSES.unassigned)
+      end
+    end
+
+    trait :action_required do
+      after(:create) do |correspondence|
+        ReassignPackageTask.create!(
+          appeal: correspondence,
+          appeal_type: Correspondence.name,
+          parent: correspondence.review_package_task,
+          assigned_to: InboundOpsTeam.singleton
+        )
+      end
+    end
+
     trait :pending do
       after(:create) do |correspondence|
         create(
@@ -44,6 +61,7 @@ FactoryBot.define do
       end
     end
 
+    # doubles as 'assigned' correspondence status.
     trait :with_correspondence_intake_task do
       transient do
         assigned_to { InboundOpsTeam.singleton.users.first }
