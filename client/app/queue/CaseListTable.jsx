@@ -15,6 +15,8 @@ import { DateString } from '../util/DateUtil';
 import { statusLabel, labelForLocation, renderAppealType, mostRecentHeldHearingForAppeal } from './utils';
 import COPY from '../../COPY';
 import Pagination from 'app/components/Pagination/Pagination';
+import { ExternalLinkIcon } from 'app/components/icons/ExternalLinkIcon';
+import { COLORS } from 'app/constants/AppConstants';
 
 class CaseListTable extends React.PureComponent {
   constructor(props) {
@@ -58,12 +60,15 @@ class CaseListTable extends React.PureComponent {
           return (
             <React.Fragment>
               <DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />
-              <CaseDetailsLink
+              <b><CaseDetailsLink
                 appeal={appeal}
                 userRole={this.props.userRole}
                 getLinkText={() => appeal.docketNumber}
                 linkOpensInNewTab={this.props.linkOpensInNewTab}
-              />
+              /></b>
+              <span className="external-link-icon-wrapper">
+                <ExternalLinkIcon color={COLORS.FOCUS_OUTLINE} />
+              </span>
             </React.Fragment>
           );
         }

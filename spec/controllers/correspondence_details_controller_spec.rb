@@ -33,6 +33,7 @@ RSpec.describe CorrespondenceDetailsController, :all_dbs, type: :controller do
         expect(response).to have_http_status(:ok)
         expect(json["correspondence"]).to be_present
         expect(json["correspondence"]["appeals_information"]).to be_present
+        expect(json["correspondence"]["all_correspondences"]).to be_present
       end
     end
   end
