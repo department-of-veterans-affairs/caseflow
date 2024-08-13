@@ -5,14 +5,13 @@ import draftToHtml from 'draftjs-to-html';
 import htmlToDraft from 'html-to-draftjs';
 import { Editor } from 'react-draft-wysiwyg';
 import classnames from 'classnames';
-import { css } from 'glamor';
 
-const editorStyling = css({
+const editorStyling = {
   border: '1px solid #aeb0b5',
   resize: 'vertical',
   '& .rdw-editor-main': {
     paddingLeft: '10px'
-  } });
+  } };
 
 export default class CFRichTextEditor extends React.PureComponent {
 
