@@ -51,25 +51,51 @@ class WorkQueue::CorrespondenceSerializer
   attribute :tasks_added_to_appeal do |object|
     task_info = []
 
-
     object.correspondence_appeals.each do |cor_appeal|
+
+      # # run tasks
+      # tasks = cor_appeal.tasks
+      # docket_num = tasks.stream_docket_number
+
+      # task_info << {
+      #   docket_num: docket_num,
+      # }
+
       docket_num = cor_appeal.appeal.stream_docket_number
-      assigned_to = cor_appeal.correspondence.tasks[0].assigned_to
+      assigned_to = cor_appeal.appeal.tasks[1].assigned_to
       assigned_to_text = assigned_to.is_a?(Organization) ? assigned_to.name : assigned_to.css_id
       task_info << {
         docket_num: docket_num,
         appealant_name: cor_appeal.appeal.veteran,
         stream_type: cor_appeal.appeal.stream_type,
-        number_of_issues: 0,
+        number_of_issues: 0, # fix me
         status: cor_appeal.correspondence.status,
         assigned_at: cor_appeal.appeal.tasks[1].assigned_at.strftime("%m/%d/%Y"),
-        instructions: [cor_appeal.appeal.tasks[1].instructions],
-        type: cor_appeal.appeal.tasks[1].label,
+        instructions: [cor_appeal.tasks[0]&.instructions],
+        type: cor_appeal.tasks[0]&.label,
         assigned_to: assigned_to_text,
-        corr: cor_appeal.appeal
+        corr: cor_appeal.correspondence
       }
     end
     task_info
+  end
+
+  # attribute :correspondence_appeals do |object|
+  #   cor_app = object&.correspondence_appeals
+  #   tasks = []
+  #   cor_app.each do |ca|
+  #     tasks << {tasks: ca.tasks, corr: object}
+  #   end
+  #   tasks
+  # end
+
+  attribute :correspondence_appeals do |object|
+    appeals = []
+    object.correspondence_appeals.map do |appeal|
+      appeals << WorkQueue::CorrespondenceAppealsSerializer.new(appeal).serializable_hash[:data][:attributes]
+      # binding.pry
+    end
+    appeals
   end
 
   attribute :veteran_full_name do |object|

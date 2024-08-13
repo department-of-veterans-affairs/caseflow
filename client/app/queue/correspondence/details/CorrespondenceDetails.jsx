@@ -82,7 +82,7 @@ const CorrespondenceDetails = (props) => {
               disabled
               enableTopPagination
             />
-            {(props.correspondence.tasksAddedToAppeal.map((task_added) =>
+            {(props.correspondence.correspondenceAppeals.map((task_added) =>
               <CorrespondenceTasksAdded
                 task_added={task_added}
                 correspondence={props.correspondence} />

@@ -5,7 +5,7 @@ class CorrespondenceDetailsController < CorrespondenceController
 
   def correspondence_details
     @organizations = current_user.organizations.pluck(:name)
-    @correspondence = WorkQueue::CorrespondenceSerializer
+    @correspondence = serialized_correspondence
     set_instance_variables
 
     respond_to do |format|
@@ -59,3 +59,4 @@ class CorrespondenceDetailsController < CorrespondenceController
     }
   end
 end
+

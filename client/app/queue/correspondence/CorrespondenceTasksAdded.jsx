@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import CaseDetailsLink from '../CaseDetailsLink';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 import { ExternalLinkIcon } from '../../components/icons/ExternalLinkIcon';
@@ -8,7 +9,8 @@ const CorrespondenceTasksAdded = (props) => {
 
   const veteranName = props.correspondence.veteran_name;
   const veteranFullName = `${veteranName.first_name} ${veteranName.middle_initial} ${veteranName.last_name}`;
-
+  // console.log(veteranFullName)
+  console.log(props)
   return (
     <>
       <div className="tasks-added-container">
@@ -17,7 +19,11 @@ const CorrespondenceTasksAdded = (props) => {
             <p className="task-added-header">Docket number</p>
             <span className="case-details-badge">
               <DocketTypeBadge name="test" />
-              <CaseDetailsLink appeal={props.correspondence} getLinkText={() => props.task_added.docket_num} task={{}} userRole="red" />
+              <CaseDetailsLink
+                appeal={props.correspondence}
+                getLinkText={() => props.task_added.docketNumber}
+                task={{}}
+              />
               <span className="link-icon-container"><ExternalLinkIcon color="blue" /> </span>
             </span>
 
@@ -45,18 +51,24 @@ const CorrespondenceTasksAdded = (props) => {
 
         </div >
         <div className="tasks-added-details">
-        <span className="tasks-added-text">Tasks added to appeal</span>
+          <span className="tasks-added-text">Tasks added to appeal</span>
 
-        <CorrespondenceCaseTimeline
-          organizations={['TEST']}
-          userCssId="INBOUND_OPS_TEAM_ADMIN_USER"
-          correspondence={props.task_added.corr}
-          tasksToDisplay={props.correspondence.tasksAddedToAppeal}
-        />
+          <CorrespondenceCaseTimeline
+            organizations={['TEST']}
+            userCssId="INBOUND_OPS_TEAM_ADMIN_USER"
+            correspondence={props.task_added.correspondence}
+            tasksToDisplay={props.correspondence.tasksAddedToAppeal}
+          />
         </div>
       </div>
     </>
   );
+};
+
+CorrespondenceTasksAdded.propTypes = {
+  correspondence: PropTypes.object,
+  task_added: PropTypes.object,
+
 };
 
 export default CorrespondenceTasksAdded;
