@@ -1,7 +1,6 @@
 import React from 'react';
 import { render, fireEvent, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { logRoles } from '@testing-library/react';
 
 import { VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER } from 'app/../COPY';
 import NonratingRequestIssueModal from '../../../app/intake/components/NonratingRequestIssueModal';
@@ -242,8 +241,7 @@ describe('NonratingRequestIssueModal', () => {
     });
 
     it('submit button is enabled without a decision date entered', () => {
-      const {container}=setup();
-      logRoles(container);
+      setup();
       let submitBtn = screen.getByRole('button', { name: /Add this issue/i });
       expect(submitBtn).toBeDisabled();
 

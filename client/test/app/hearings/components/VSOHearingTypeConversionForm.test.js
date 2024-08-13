@@ -1,6 +1,5 @@
 import React from 'react';
-import { render, screen, cleanup } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, screen, cleanup, fireEvent } from '@testing-library/react';
 
 import { virtualAppeal, scheduleHearingTask } from 'test/data';
 import { HearingTypeConversionProvider } from '../../../../app/hearings/contexts/HearingTypeConversionContext';
@@ -41,8 +40,10 @@ describe('VSOHearingTypeConversionForm', () => {
 
     const appellantTzDropdown = screen.getByRole('combobox', { name: 'Appellant Timezone Required' });
 
-    userEvent.click(appellantTzDropdown);
-    userEvent.click(screen.getByText('Guam'));
+    fireEvent.keyDown(appellantTzDropdown, { key: 'ArrowDown' });
+
+    const option = screen.getByRole('option', { name: 'Guam' });
+    fireEvent.click(option);
 
     expect(screen.findByText('Guam')).toBeTruthy();
     expect(screen.queryByText('Nairobi')).not.toBeInTheDocument();
@@ -58,8 +59,10 @@ describe('VSOHearingTypeConversionForm', () => {
 
     const representativeTzDropdown = screen.getByRole('combobox', { name: 'POA/Representative Timezone Required' });
 
-    userEvent.click(representativeTzDropdown);
-    userEvent.click(screen.getByText('Vienna'));
+    fireEvent.keyDown(representativeTzDropdown, { key: 'ArrowDown' });
+
+    const option = screen.getByRole('option', { name: 'Vienna' });
+    fireEvent.click(option);
 
     expect(screen.getByText('Vienna')).toBeTruthy();
     expect(screen.queryByText('Eastern Time (US & Canada)')).not.toBeInTheDocument();

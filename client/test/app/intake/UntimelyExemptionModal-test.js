@@ -43,7 +43,6 @@ describe('UntimelyExemptionModal', () => {
   describe('renders', () => {
     it('renders button text', () => {
       setup();
-      screen.debug();
       expect(screen.getByText('Cancel adding this issue')).toBeInTheDocument();
       expect(screen.getByText('None of these match, see more options')).toBeInTheDocument();
       expect(screen.getByText('Add this issue')).toBeInTheDocument();

@@ -1,6 +1,5 @@
 import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
-import { logRoles } from '@testing-library/react';
 
 import UnidentifiedIssuesModal from '../../../app/intake/components/UnidentifiedIssuesModal';
 import { sample1 } from './testData';
