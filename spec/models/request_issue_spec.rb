@@ -1350,9 +1350,9 @@ describe RequestIssue, :all_dbs do
     end
 
     context "when description contains safe characters" do
-      let(:request_issue) {
+      let(:request_issue) do
         build(:request_issue, contested_issue_description: "Safe: 1234567890-=`~!@#$%^&*()_+[]{}\|;:")
-      }
+      end
 
       it "should be valid" do
         expect(request_issue.valid?).to eq true
