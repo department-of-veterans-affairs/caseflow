@@ -86,7 +86,7 @@ class VaBoxUploadJob < CaseflowJob
       end
     end
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   private
 
@@ -106,7 +106,7 @@ class VaBoxUploadJob < CaseflowJob
     local_path
   end
 
-  # rubocop:disable Metrics/ParameterLists, Metrics/MethodLength
+  # rubocop:disable Metrics/ParameterLists
   def upsert_to_box(box_service, local_file_path, child_folder_id, transcription_package, file_info, hearing)
     ActiveRecord::Base.transaction do
       box_service.public_upload_file(local_file_path, child_folder_id)
