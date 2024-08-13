@@ -292,7 +292,20 @@ paths:
                           caseflow_considers_eligible: true
                           claimant_participant_id: "111111"
                           decision_issues:
-                            -
+                          -
+                          development_item_reference_id: "111"
+                          same_office: nil
+                          legacy_opt_in_approved: false
+                          added_by_station_id: "101"
+                          added_by_css_id: "BVADWISE101"
+                          corrected_by_station_id: nil
+                          corrected_by_css_id: nil
+                          edited_by_station_id: nil
+                          edited_by_css_id: nil
+                          removed_by_css_id: "BVADWISE101"
+                          removed_by_station_id: "101"
+                          withdrawn_by_css_id: nil
+                          withdrawn_by_station_id: nil
         '401':
           description: 401 Unauthorized
           content:
@@ -362,6 +375,12 @@ components:
             id:
               type: integer
               description: "The unique identifier for a request issue"
+            added_by_css_id:
+              type: string
+              description: "It comes from the user record tied to the RequestIssuesUpdate.  If there is no RequestIssuesUpdate for the issue being added, then it comes from the user record linked to intake."
+            added_by_station_id:
+                type: string
+                description: "It comes from the user record tied to the RequestIssuesUpdate.  If there is no RequestIssuesUpdate for the issue being added, then it comes from the user record linked to intake."
             benefit_type:
               type: string
               description: "The Line of Business the issue is connected with."
@@ -401,6 +420,12 @@ components:
             created_at:
               type: string
               description: "The date and time the record was created"
+            corrected_by_css_id:
+              type: string
+              description: "Comes from the user record tied to the RequestIssuesUpdate that has the Request Issue being corrected. Indicates css_id of that user."
+            corrected_by_station_id:
+              type: string
+              description: "Comes from the user record tied to the RequestIssuesUpdate that has the Request Issue being corrected. Indicates station_id of that user."
             decision_date:
               type: string
               description: "Either the rating issue's promulgation date, the decision issue's approx decision date or the decision date entered by the user (for nonrating and unidentified issues)."
@@ -410,6 +435,15 @@ components:
             decision_review_type:
               type: string
               description: "Class name of the decision review that this request issue belongs to."
+            development_item_reference_id:
+              type: string
+              description: "When a Veteran requests an informal conference with their higher level review, a tracked item is created. This stores the ID of the of the tracked item, it is also used to indicate the success of creating the tracked item."
+            edited_by_css_id:
+              type: string
+              description: "Comes from the user record tied to the RequestIssuesUpdate that has the Request Issue being edited."
+            edited_by_station_id:
+              type: string
+              description: "Comes from the user record tied to the RequestIssuesUpdate that has the Request Issue being edited."
             edited_description:
               type: string
               description: "The edited description for the contested issue, optionally entered by the user."
@@ -425,9 +459,15 @@ components:
             is_unidentified:
               type: boolean
               description: "Indicates whether a Request Issue is unidentified, meaning it wasn't found in the list of contestable issues, and is not a new nonrating issue. Contentions for unidentified issues are created on a rating End Product if processed in VBMS but without the issue description, and someone is required to edit it in Caseflow before proceeding with the decision."
+            legacy_opt_in_approved:
+              type: boolean
+              description: "Indicates whether a Veteran opted to withdraw their Higher Level Review request issues from the legacy system if a matching issue is found. If there is a matching legacy issue and it is not withdrawn, then that issue is ineligible to be a new request issue and a contention will not be created for it."
             nonrating_issue_bgs_id:
               type: string
               description: "The ID of the nonrating request issue in BGS/CorpDB"
+            nonrating_issue_bgs_source:
+              type: string
+              description: "Name of Table in Corporate Database where the nonrating issue is stored. This datapoint is correlated with the nonrating_issue_bgs_id."
             nonrating_issue_category:
               type: string
               description: "The category selected for nonrating request issues. These vary by business line."
@@ -440,6 +480,15 @@ components:
             ramp_claim_id:
               type: string
               description: "If a rating issue was created as a result of an issue intaken for a RAMP Review, it will be connected to the former RAMP issue by its End Product's claim ID."
+            removed_by_css_id:
+              type: string
+              description: "Comes from the user record tied to the RequestIssuesUpdate that has a removed Request Issue."
+            removed_by_station_id:
+              type: string
+              description: "Comes from the user record tied to the RequestIssuesUpdate that has a removed Request Issue. Indicates station_id of user who updated closed_stauts to 'removed'."
+            same_office:
+              type: boolean
+              description: "comes from Higher Level Review. Whether the Veteran wants their issues to be reviewed by the same office where they were previously reviewed. This creates a special issue on all of the contentions created on this Higher Level Review."
             split_issue_status:
               type: string
               description: "If a request issue is part of a split, on_hold status applies to the original request issues while active are request issues on splitted appeals."
@@ -467,6 +516,12 @@ components:
             veteran_participant_id:
               type: string
               description: "The veteran participant ID. This should be unique in upstream systems and used in the future to reconcile duplicates."
+            withdrawn_by_css_id:
+              type: string
+              description: "Comes from the user record tied to the RequestIssuesUpdate that has a Withdrawn Request Issue."
+            withdrawn_by_station_id:
+              type: string
+              description: "Comes from the user record tied to the RequestIssuesUpdate that has a withdrawn Request Issue."
             caseflow_considers_decision_review_active:
               type: boolean
               description: "This value is populated by a method call in the request_issue model. Returns true if the Request Issue's decision_review is an Appeal that has open tasks OR if the End Product Establishment's synced_status is nil or anything other than CAN or CLR."
