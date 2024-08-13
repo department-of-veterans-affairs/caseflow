@@ -90,12 +90,7 @@ const DocumentViewer = (props) => {
         />
         {showSearchBar && <ReaderSearchBar />}
         <div className="cf-pdf-scroll-view" onScroll={getPageNumFromScrollTop}>
-          <PdfDocument
-            doc={doc}
-            rotateDeg={rotateDeg}
-            setNumPages={setNumPages}
-            zoomLevel={zoomLevel}
-          />
+          <PdfDocument doc={doc} rotateDeg={rotateDeg} setNumPages={setNumPages} zoomLevel={zoomLevel} />
         </div>
         <ReaderFooter
           currentPage={currentPage}
