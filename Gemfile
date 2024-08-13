@@ -30,6 +30,7 @@ gem "fuzzy_match"
 gem "govdelivery-tms", require: "govdelivery/tms/mail/delivery_method"
 gem "holidays", "~> 6.4"
 gem "icalendar"
+gem "jwt"
 gem "kaminari"
 gem "logstasher"
 gem "moment_timezone-rails"
@@ -88,8 +89,9 @@ gem "tzinfo", "1.2.10"
 gem "uglifier", ">= 1.3.0"
 gem "validates_email_format_of"
 gem "webvtt-ruby"
+
 gem "ziptz"
-gem "jwt"
+
 
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
