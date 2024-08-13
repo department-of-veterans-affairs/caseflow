@@ -210,8 +210,7 @@ class LegacyHearing < CaseflowRecord
   end
 
   # Checks the scheduled_in_timezone value and returns
-  # true if scheduled_in_timezone is not nil,
-  # else false
+  # @return [Boolean] true if scheduled_in_timezone is not nil, else false
   def use_hearing_datetime?
     scheduled_in_timezone.present?
   end
