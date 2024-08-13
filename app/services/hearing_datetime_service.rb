@@ -8,6 +8,8 @@
 # facade hearing.time as set in the module {HearingTimeConcern}.
 
 class HearingDatetimeService
+  class UnsuppliedScheduledInTimezoneError < StandardError; end
+
   CENTRAL_OFFICE_TIMEZONE = "America/New_York"
 
   class << self
@@ -44,6 +46,7 @@ class HearingDatetimeService
   end
 
   def initialize(hearing:)
+    validate_required_hearing_attrs(hearing)
     @hearing = hearing
   end
 
@@ -82,5 +85,16 @@ class HearingDatetimeService
     tz = ActiveSupport::TimeZone::MAPPING.key(@hearing.scheduled_in_timezone)
 
     "#{local_time.strftime('%l:%M %p')} #{tz}".lstrip
+  end
+
+  private
+
+  def validate_required_hearing_attrs(hearing)
+    if hearing.scheduled_in_timezone.nil?
+      error = UnsuppliedScheduledInTimezoneError
+      Raven.capture_exception(error)
+      Rails.logger.info("#{error}: HearingDatetimeService requires non-nil scheduled_in_timezone for a hearing.")
+      raise error
+    end
   end
 end
