@@ -29,7 +29,8 @@ BareList.propTypes = {
   ListElementComponent: PropTypes.string,
   items: PropTypes.array.isRequired,
   compact: PropTypes.bool,
-  listStyle: PropTypes.object
+  listStyle: PropTypes.object,
+  className: PropTypes.string
 };
 
 BareList.defaultProps = {
