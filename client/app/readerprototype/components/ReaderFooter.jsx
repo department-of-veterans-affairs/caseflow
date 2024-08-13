@@ -19,7 +19,7 @@ const ReaderFooter = ({
 }) => {
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
-      document.getElementById(`canvasContainer-${event.target.value}`).scrollIntoView({ behavior: 'smooth' });
+      document.getElementById(`canvas-${event.target.value}`).scrollIntoView();
       setCurrentPage(event.target.value);
     }
   };
