@@ -11,6 +11,7 @@ class ChangeHistoryEventSerializer
   attribute :claimType, &:readable_claim_type
   attribute :readableEventType, &:readable_event_type
   attribute :claimantName, &:claimant_name
+  attribute :requestType, &:request_type
 
   attribute :details do |object|
     {
