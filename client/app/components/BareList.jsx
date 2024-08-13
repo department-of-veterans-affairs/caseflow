@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { css } from 'glamor';
 
 export default class BareList extends React.PureComponent {
-  bottomMargin = () => css({
+  bottomMargin = () => ({
     marginBottom: this.props.compact ? '5px' : ''
   });
 
