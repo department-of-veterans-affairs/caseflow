@@ -36,39 +36,20 @@ class HearingRepository
       vacols_record.update_hearing!(hearing_hash.merge(staff_id: vacols_record.slogid)) if hearing_hash.present?
     end
 
-    def fix_hearings_timezone(scheduled_time_string)
-      time_str_split = scheduled_time_string.split(" ", 3)
-
-      tz_str = ActiveSupport::TimeZone::MAPPING[time_str_split[2]]
-      tz_str = ActiveSupport::TimeZone::MAPPING.key(time_str_split[2]) if tz_str.nil?
-
-      begin
-        ActiveSupport::TimeZone.find_tzinfo(tz_str).name
-      rescue TZInfo::InvalidTimezoneIdentifier => error
-        Raven.capture_exception(error)
-        Rails.logger.info("#{error}: Invalid timezone #{tz_str} for hearing day")
-        raise error
-      end
-    end
-
     # rubocop:disable Metrics/MethodLength
     def slot_new_hearing(attrs, override_full_hearing_day_validation: false)
       hearing_day = HearingDay.find(attrs[:hearing_day_id])
-      processed_scheduled_time = HearingTimeService.convert_scheduled_time_to_utc(attrs[:scheduled_time_string],
-                                                                                  hearing_day.scheduled_for)
-
       fail HearingDayFull if !override_full_hearing_day_validation && hearing_day.hearing_day_full?
 
       if attrs[:appeal].is_a?(LegacyAppeal)
-        scheduled_for = HearingTimeService.legacy_formatted_scheduled_for(
-          scheduled_for: hearing_day.scheduled_for,
-          scheduled_time_string: processed_scheduled_time
-        )
         vacols_hearing = create_vacols_hearing(
           hearing_day: hearing_day,
           appeal: attrs[:appeal],
-          scheduled_for: scheduled_for,
-          scheduled_in_timezone: fix_hearings_timezone(attrs[:scheduled_time_string]),
+          scheduled_for: HearingDatetimeService.prepare_time_for_storage(
+            date: hearing_day.scheduled_for,
+            time_string: attrs[:scheduled_time_string]
+          ),
+          scheduled_in_timezone: HearingDatetimeService.timezone_from_time_string(attrs[:scheduled_time_string]),
           hearing_location_attrs: attrs[:hearing_location_attrs],
           notes: attrs[:notes]
         )
@@ -79,8 +60,12 @@ class HearingRepository
           appeal: attrs[:appeal],
           hearing_day_id: hearing_day.id,
           hearing_location_attributes: attrs[:hearing_location_attrs] || {},
-          scheduled_time: processed_scheduled_time,
-          scheduled_in_timezone: fix_hearings_timezone(attrs[:scheduled_time_string]),
+          scheduled_time: attrs[:scheduled_time_string],
+          scheduled_datetime: HearingDatetimeService.prepare_time_for_storage(
+            date: hearing_day.scheduled_for,
+            time_string: attrs[:scheduled_time_string]
+          ),
+          scheduled_in_timezone: HearingDatetimeService.timezone_from_time_string(attrs[:scheduled_time_string]),
           override_full_hearing_day_validation: override_full_hearing_day_validation,
           notes: attrs[:notes]
         )
@@ -345,7 +330,7 @@ class HearingRepository
     def create_vacols_hearing(attrs)
       vacols_record = VACOLS::CaseHearing.create_hearing!(
         folder_nr: attrs[:appeal].vacols_id,
-        hearing_date: VacolsHelper.format_datetime_with_utc_timezone(attrs[:scheduled_for]),
+        hearing_date: attrs[:scheduled_for],
         vdkey: attrs[:hearing_day].id,
         hearing_type: attrs[:hearing_day].request_type,
         room: attrs[:hearing_day].room,
