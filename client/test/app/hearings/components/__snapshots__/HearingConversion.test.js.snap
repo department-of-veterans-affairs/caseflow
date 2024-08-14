@@ -16,6 +16,7 @@ exports[`HearingConversion Displays email fields when hearing type is switched f
     <div>
       <div
         data-css-1a5irm0=""
+        data-testid="read-only-testid"
       >
         <strong>
           Hearing Date
@@ -206,6 +207,73 @@ exports[`HearingConversion Displays email fields when hearing type is switched f
           </div>
         </div>
       </div>
+    </div>
+    <div>
+      <div
+        class="cf-help-divider"
+      />
+      <h2>
+        Veteran
+      </h2>
+      <div
+        data-css-1a5irm0=""
+        data-testid="read-only-testid"
+      >
+        <strong>
+          Veteran Name
+        </strong>
+        <pre>
+          Bob Smith
+        </pre>
+      </div>
+      <div
+        data-css-1a5irm0=""
+        data-testid="read-only-testid"
+      >
+        <strong>
+          Veteran Mailing Address
+        </strong>
+        <pre>
+          Bob Smith
+9999 MISSION ST
+SAN FRANCISCO, CA 94103
+        </pre>
+      </div>
+      <div
+        class="usa-grid css-1jfbwxw"
+      >
+        <div
+          class="usa-width-one-half"
+        >
+          <div
+            class=""
+          >
+            <div
+              class="cf-form-dropdown dropdown-appellantTz"
+              data-css-1gh7024=""
+            >
+              <label
+                class="question-label"
+                for="appellant-tz"
+                id="appellant-tz-label"
+              >
+                <strong>
+                  <span>
+                    Veteran Timezone
+                    <span
+                      class="cf-optional"
+                    >
+                      Optional
+                    </span>
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
+              >
+                <div
+                  class=" css-2b097c-container"
+                >
                   <div
                     class="cf-select__control css-yk16xz-control"
                   >
@@ -339,6 +407,7 @@ exports[`HearingConversion Displays email fields when hearing type is switched f
       </h2>
       <div
         data-css-1a5irm0=""
+        data-testid="read-only-testid"
       >
         <pre>
           PARALYZED VETERANS OF AMERICA, INC.
@@ -525,6 +594,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
     <div>
       <div
         data-css-1a5irm0=""
+        data-testid="read-only-testid"
       >
         <strong>
           Hearing Date
@@ -654,6 +724,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
       </h2>
       <div
         data-css-1a5irm0=""
+        data-testid="read-only-testid"
       >
         <strong>
           Veteran Name
@@ -664,6 +735,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
       </div>
       <div
         data-css-1a5irm0=""
+        data-testid="read-only-testid"
       >
         <strong>
           Veteran Mailing Address
@@ -842,6 +914,7 @@ SAN FRANCISCO, CA 94103
       </h2>
       <div
         data-css-1a5irm0=""
+        data-testid="read-only-testid"
       >
         <pre>
           PARALYZED VETERANS OF AMERICA, INC.
@@ -1120,6 +1193,7 @@ SAN FRANCISCO, CA 94103
     </div>
     <div
       data-css-1a5irm0=""
+      data-testid="read-only-testid"
     >
       <strong>
         VLJ Email
