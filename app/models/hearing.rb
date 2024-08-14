@@ -217,6 +217,12 @@ class Hearing < CaseflowRecord
     scheduled_for < DateTime.yesterday.in_time_zone(regional_office_timezone)
   end
 
+  # Checks the scheduled_datetime value and returns
+  # @return [Boolean] true if scheduled_datetime is not nil, else false
+  def use_hearing_datetime?
+    scheduled_datetime.present?
+  end
+
   def worksheet_issues
     request_issues.map do |request_issue|
       HearingIssueNote.joins(:request_issue)

@@ -54,7 +54,16 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
           OR original_judge_task.assigned_to_id in (?)",
         Constants.AMA_STREAM_TYPES.court_remand,
         CaseDistributionLever.cavc_affinity_days.days.ago,
-        JudgeTeam.judges_with_exclude_appeals_from_affinity
+        JudgeTeam.judge_ids_with_exclude_appeals_from_affinity
+      )
+  end
+
+  def genpop_by_affinity_start_date
+    with_appeal_affinities
+      .with_original_appeal_and_judge_task
+      .where(
+        "appeal_affinities.affinity_start_date <= ?",
+        CaseDistributionLever.cavc_affinity_days.days.ago
       )
   end
 
@@ -87,6 +96,14 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
       .where("appeal_affinities.affinity_start_date > ? or appeal_affinities.affinity_start_date is null",
              CaseDistributionLever.cavc_affinity_days.days.ago)
       .where(original_judge_task: { assigned_to_id: judge&.id })
+  end
+
+  def non_genpop_by_affinity_start_date
+    with_appeal_affinities
+      .with_original_appeal_and_judge_task
+      .where("appeal_affinities.affinity_start_date > ? or appeal_affinities.affinity_start_date is null",
+             CaseDistributionLever.cavc_affinity_days.days.ago)
+      .where.not(original_judge_task: { assigned_to_id: nil })
   end
 
   def ordered_by_distribution_ready_date
@@ -134,7 +151,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
 
   def tied_to_judges_with_exclude_appeals_from_affinity
     with_appeal_affinities
-      .where(hearings: { disposition: "held", judge_id: JudgeTeam.judges_with_exclude_appeals_from_affinity })
+      .where(hearings: { disposition: "held", judge_id: JudgeTeam.judge_ids_with_exclude_appeals_from_affinity })
   end
 
   # If an appeal has exceeded the affinity, it should be returned to genpop.
