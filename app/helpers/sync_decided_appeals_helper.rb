@@ -15,7 +15,6 @@ module SyncDecidedAppealsHelper
         end
       end
     rescue StandardError => error
-      byebug
       Rails.logger.error("#{error.class}: #{error.message}\n#{error.backtrace}")
 
       # Re-raising the error so it can be caught in the NightlySyncsJob report
