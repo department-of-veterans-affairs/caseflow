@@ -9,41 +9,6 @@ class HearingTimeService
   CENTRAL_OFFICE_TIMEZONE = "America/New_York"
 
   class << self
-    def build_legacy_params_with_time(hearing, update_params)
-      # takes hearing update_legacy_params from controller and adds
-      # vacols-formatted scheduled_for
-      return update_params if update_params[:scheduled_time_string].nil?
-
-      scheduled_for = legacy_formatted_scheduled_for(
-        scheduled_for: update_params[:scheduled_for] || hearing.scheduled_for,
-        scheduled_time_string: update_params[:scheduled_time_string]
-      )
-
-      remove_time_string_params(update_params).merge(scheduled_for: scheduled_for)
-    end
-
-    def build_params_with_time(_hearing, update_params)
-      return update_params if update_params[:scheduled_time_string].nil?
-
-      remove_time_string_params(update_params).merge(scheduled_time: update_params[:scheduled_time_string])
-    end
-
-    def legacy_formatted_scheduled_for(scheduled_for:, scheduled_time_string:)
-      # Parse the scheduled_time_string as a UTC time
-      scheduled_time_in_utc = if scheduled_time_string.is_a?(String)
-                                Time.zone.parse(scheduled_time_string).utc
-                              else
-                                scheduled_time_string
-                              end
-
-      time = scheduled_for.to_datetime
-      Time.use_zone(VacolsHelper::VACOLS_DEFAULT_TIMEZONE) do
-        Time.zone.parse(
-          "#{time.year}-#{time.month}-#{time.day} #{scheduled_time_in_utc.hour}:#{scheduled_time_in_utc.min} UTC"
-        )
-      end
-    end
-
     def time_to_string(time, hearing)
       datetime = time.to_datetime
 
