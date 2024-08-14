@@ -18,8 +18,6 @@ RSpec.feature("The Correspondence Details Response Letters page") do
       setup_response_letters_data
       find_by_id("tasks-tabwindow-tab-2").click
       expect(page).to have_content("Response Letters")
-      binding.pry
     end
   end
-
 end

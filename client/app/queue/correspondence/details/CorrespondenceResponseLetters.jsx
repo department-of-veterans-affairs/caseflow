@@ -21,7 +21,9 @@ const CorrespondenceResponseLetters = (props) => {
                 </td>
               </tr>
               <tr>
-                <th className="response-letter-table-borderless-second-item"><strong>Date response letter sent</strong></th>
+                <th className="response-letter-table-borderless-second-item">
+                  <strong>Date response letter sent</strong>
+                </th>
                 <th className="response-letter-table-borderless-second-item"><strong>Letter type</strong></th>
                 <th className="response-letter-table-borderless-second-item"><strong>Letter title</strong></th>
                 <th className="response-letter-table-borderless-second-item"><strong>Letter subcategory</strong></th>
@@ -32,10 +34,12 @@ const CorrespondenceResponseLetters = (props) => {
                 </td>
               </tr>
               <tr>
-                <td className="response-letter-table-borderless-last-item">{moment(letter.date_sent).format('MM/DD/YYYY')}</td>
+                <td className="response-letter-table-borderless-last-item">
+                  {moment(letter.date_sent).format('MM/DD/YYYY')}
+                </td>
                 <td className="response-letter-table-borderless-last-item">{letter.letter_type}</td>
                 <td className="response-letter-table-borderless-last-item">{letter.title}</td>
-                <td className="response-letter-table-borderless-last-item">{letter.subcategory.split( )}</td>
+                <td className="response-letter-table-borderless-last-item">{letter.subcategory}</td>
               </tr>
               &nbsp;
             </tbody>
@@ -58,10 +62,10 @@ CorrespondenceResponseLetters.propTypes = {
       date_sent: PropTypes.string,
       response_window: PropTypes.number,
       user_id: PropTypes.number,
-      days_left: PropTypes.string, // This will contain either the days left or 'No response window required'
+      days_left: PropTypes.string,
       expired: PropTypes.oneOfType([
-        PropTypes.string, // Expired date as string
-        PropTypes.bool    // false when not expired
+        PropTypes.string,
+        PropTypes.bool
       ]),
     })
   ).isRequired

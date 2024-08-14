@@ -7,7 +7,9 @@ class CorrespondenceDetailsController < CorrespondenceController
     set_instance_variables
 
     # Sort the response letters
-    @correspondence_response_letters = sort_response_letters(@correspondence_details[:correspondence][:correspondenceResponseLetters])
+    @correspondence_response_letters = sort_response_letters(
+      @correspondence_details[:correspondence][:correspondenceResponseLetters]
+    )
 
     respond_to do |format|
       format.html
