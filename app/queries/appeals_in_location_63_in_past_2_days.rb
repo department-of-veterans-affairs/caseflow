@@ -12,7 +12,7 @@ class AppealsInLocation63InPast2Days
     hearing_judge_id: "Most Recent Hearing Judge ID",
     hearing_judge_name: "Most Recent Hearing Judge Name",
     deciding_judge_id: "Most Recent Deciding Judge ID",
-    deciding_judge_name: "Most Recent Hearing Judge Name",
+    deciding_judge_name: "Most Recent Deciding Judge Name",
     affinity_start_date: "Affinity Start Date",
     moved_date_time: "Date/Time Moved",
     bfcurloc: "BFCURLOC"
