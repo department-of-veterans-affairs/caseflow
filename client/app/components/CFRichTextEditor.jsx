@@ -80,5 +80,7 @@ CFRichTextEditor.propTypes = {
   label: PropTypes.string,
   name: PropTypes.string,
   required: PropTypes.bool,
-  onChange: PropTypes.func
+  onChange: PropTypes.func,
+  toolbar: PropTypes.object,
+  value: PropTypes.string
 };
