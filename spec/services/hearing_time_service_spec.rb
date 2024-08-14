@@ -22,34 +22,6 @@ describe HearingTimeService, :all_dbs do
 
     let!(:hearing) { create(:hearing, regional_office: "RO43", scheduled_time: "12:00 PM Pacific Time (US & Canada)") }
 
-    describe "#build_params_with_time" do
-      let!(:params) do
-        { scheduled_time_string: "01:30 PM Pacific Time (US & Canada)" }
-      end
-
-      it "returns scheduled_time string parameter and removes scheduled_time_string param" do
-        expect(HearingTimeService.build_params_with_time(hearing, params))
-          .to eq(scheduled_time: "01:30 PM Pacific Time (US & Canada)")
-        expect(params).to eq(scheduled_time_string: "01:30 PM Pacific Time (US & Canada)")
-      end
-    end
-
-    describe "#build_legacy_params_with_time" do
-      let(:params) do
-        { scheduled_time_string: "01:30 PM Eastern Time (US & Canada)" }
-      end
-
-      it "returns scheduled_for parameter in ET and removes scheduled_time_string param" do
-        expected_scheduled_for = Time.use_zone("America/New_York") do
-          time = legacy_hearing.scheduled_for.to_datetime
-          Time.zone.local(time.year, time.month, time.day, 13, 30)
-        end
-        expected_params = { scheduled_for: expected_scheduled_for }
-        expect(HearingTimeService.build_legacy_params_with_time(legacy_hearing, params)).to eq(expected_params)
-        expect(params).to eq(scheduled_time_string: "01:30 PM Eastern Time (US & Canada)")
-      end
-    end
-
     describe "#local_time" do
       it "returns time object encoded in local time" do
         hearing_day = hearing.hearing_day
