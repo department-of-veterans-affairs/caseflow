@@ -30,6 +30,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
     </h2>
     <div
       data-css-1a5irm0=""
+      data-testid="read-only-testid"
     >
       <strong>
         Veteran Name
@@ -47,6 +48,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
       >
         <div
           data-css-1a5irm0=""
+          data-testid="read-only-testid"
         >
           <strong>
             Veteran Email (for these notifications only)
@@ -81,6 +83,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
     </h2>
     <div
       data-css-1a5irm0=""
+      data-testid="read-only-testid"
     >
       <strong>
         Attorney
@@ -98,6 +101,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
       >
         <div
           data-css-1a5irm0=""
+          data-testid="read-only-testid"
         >
           <strong>
             POA/Representative Email (for these notifications only)
