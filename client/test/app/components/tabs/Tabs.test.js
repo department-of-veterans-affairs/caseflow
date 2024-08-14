@@ -6,7 +6,6 @@ import {
   waitFor
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import {renderHook} from '@testing-library/react-hooks';
 
 import { axe } from 'jest-axe';
 
