@@ -9,11 +9,59 @@ module HearingTimeConcern
   # Set the @time instance variable to
   # HearingDatetimeService instance if use_hearing_datetime? is true, else
   # to HearingTimeService instance
+  # @return [HearingTimeService] if {Hearing#use_hearing_datetime?} or {LegacyHearing#use_hearing_datetime?} is false
+  # @return [HearingDatetimeService] if {Hearing#use_hearing_datetime?} or {LegacyHearing#use_hearing_datetime?} is true
   def time
     @time ||= if use_hearing_datetime?
                 HearingDatetimeService.new(hearing: self)
               else
                 HearingTimeService.new(hearing: self)
               end
+  end
+
+  # The hearing's local time cast into the POA's timezone
+  #
+  # @return [Time]
+  #   The hearing's local time using the representative recipient's timezone, if available.
+  # @return [Time]
+  #   The virtual hearing's local time using the representative timezone, if representative recipient's timezone is not available from the hearing.
+  # @return [Time]
+  #   Fall back to the hearing's default local time if neither are available.
+  def poa_time
+    representative_tz_from_recipient = representative_recipient&.timezone
+    return normalized_time(representative_tz_from_recipient) if representative_tz_from_recipient.present?
+
+    return normalized_time(virtual_hearing[:representative_tz]) if virtual_hearing.present?
+
+    normalized_time(nil)
+  end
+
+  # The hearing's local time cast into the appellant's timezone
+  #
+  # @return [Time]
+  #   The hearing's local time using the appellant recipient's timezone, if available.
+  # @return [Time]
+  #   The virtual hearing's local time using the appellant timezone, if appellant recipient's timezone is not available from the hearing.
+  # @return [Time]
+  #   Fall back to the hearing's default local time if neither are available.
+  def appellant_time
+    appellant_tz_from_recipient = appellant_recipient&.timezone
+    return normalized_time(appellant_tz_from_recipient) if appellant_tz_from_recipient.present?
+
+    return normalized_time(virtual_hearing[:appellant_tz]) if virtual_hearing.present?
+
+    normalized_time(nil)
+  end
+
+  private
+
+  # @param timezone [String]
+  #
+  # @return [Time] The hearing's local time cast into the supplied timezone.
+  # @return [Time] Fall back to the hearing's default local time if the supplied timezone is nil.
+  def normalized_time(timezone)
+    return time.local_time if timezone.nil?
+
+    time.local_time.in_time_zone(timezone)
   end
 end
