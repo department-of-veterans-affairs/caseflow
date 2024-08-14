@@ -98,6 +98,45 @@ module CorrespondenceHelpers
     click_button("Continue")
   end
 
+  def setup_response_letters_data
+    setup_access
+    @correspondence = create(
+      :correspondence,
+      :with_correspondence_intake_task,
+      assigned_to: current_user,
+      uuid: SecureRandom.uuid,
+      va_date_of_receipt: Time.zone.local(2023, 1, 1)
+    )
+    find_and_route_to_intake
+    perform_add_letters_action
+    visit "/queue/correspondence/#{@correspondence.uuid}"
+  end
+
+  def perform_add_letters_action
+    click_on("+ Add letter")
+    mydate = page.all("#date-set")
+    mydate[0].value == Time.zone.today.strftime("%Y-%m-%d")
+    dropdowns = page.all(".cf-select__control")
+    dropdowns[0].click
+    dropdowns[0].sibling(".cf-select__menu").find(
+        "div .cf-select__option", text: "Pre-docketing"
+      ).click
+    dropdowns[1].click
+    dropdowns[1].sibling(".cf-select__menu").find(
+      "div .cf-select__option", text: "Intake 10182 Recv Needs AOJ Development"
+    ).click
+    dropdowns[2].click
+    dropdowns[2].sibling(".cf-select__menu").find(
+      "div .cf-select__option", text: "Issues(s) is VHA"
+    ).click
+    dropdowns[3].click
+    dropdowns[3].sibling(".cf-select__menu").find("div .cf-select__option", text: "N/A").click
+    click_button("Continue")
+    click_button("Continue")
+    click_button("Submit")
+    click_button("Confirm")
+  end
+
   def associate_with_prior_mail_radio_options
     radio_options = page.all(".cf-form-radio-option")
     { yes: radio_options[0], no: radio_options[1] }
@@ -144,6 +183,10 @@ module CorrespondenceHelpers
     require Rails.root.join("db/seeds/base.rb").to_s
     Dir[Rails.root.join("db/seeds/*.rb")].sort.each { |f| require f }
     Seeds::Correspondence.new.create_auto_text_data
+  end
+
+  def intake_correspondence_path(correspondence)
+   visit "/queue/correspondence/#{correspondence.uuid}/intake"
   end
 
   def find_and_route_to_intake

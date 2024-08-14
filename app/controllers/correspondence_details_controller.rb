@@ -4,12 +4,10 @@ class CorrespondenceDetailsController < CorrespondenceController
   include CorrespondenceControllerConcern
 
   def correspondence_details
-    @organizations = current_user.organizations.pluck(:name)
-    @correspondence = WorkQueue::CorrespondenceSerializer
     set_instance_variables
 
     # Sort the response letters
-    @correspondence_response_letters = sort_response_letters(@correspondence[:correspondenceResponseLetters])
+    @correspondence_response_letters = sort_response_letters(@correspondence_details[:correspondence][:correspondenceResponseLetters])
 
     respond_to do |format|
       format.html
@@ -18,9 +16,19 @@ class CorrespondenceDetailsController < CorrespondenceController
   end
 
   def set_instance_variables
-    @inbound_ops_team_users = User.inbound_ops_team_users.select(:css_id).pluck(:css_id)
-    @correspondence_types = CorrespondenceType.all
     @correspondence = serialized_correspondence
+
+    # Group related variables into a single hash
+    @correspondence_details = {
+      organizations: current_user.organizations.pluck(:name),
+      correspondence: @correspondence,
+      correspondence_documents: @correspondence[:correspondenceDocuments],
+      general_information: general_information,
+      mail_tasks: mail_tasks,
+      appeals_information: appeals,
+      inbound_ops_team_users: User.inbound_ops_team_users.select(:css_id).pluck(:css_id),
+      correspondence_types: CorrespondenceType.all
+    }
   end
 
   def serialized_correspondence
@@ -35,10 +43,10 @@ class CorrespondenceDetailsController < CorrespondenceController
 
   def build_json_response
     {
-      correspondence: @correspondence,
-      general_information: general_information,
-      mailTasks: mail_tasks,
-      corres_docs: @correspondence[:correspondenceDocuments]
+      correspondence: @correspondence_details[:correspondence],
+      general_information: @correspondence_details[:general_information],
+      mailTasks: @correspondence_details[:mail_tasks],
+      corres_docs: @correspondence_details[:correspondence_documents]
     }
   end
 
