@@ -1052,13 +1052,22 @@ describe VACOLS::CaseDocket, :all_dbs do
           c
         end
         # original hearing held by tied_judge, decided by tied_judge, new hearing held by inel_judge
+        # this should have affinity to the original deciding judge because new hearing judge is ineligible
         let!(:case_11) do
-          c = create(:legacy_cavc_appeal, judge: tied_judge, attorney: attorney, tied_to: true)
+          c = create(:legacy_cavc_appeal,
+                     judge: tied_judge, attorney: attorney, tied_to: true, affinity_start_date: Time.zone.now)
           create_case_hearing(c, inel_judge_caseflow)
           c
         end
         # original hearing held by inel_judge, decided by inel_judge, no new hearing
         let!(:case_12) { create(:legacy_cavc_appeal, judge: inel_judge, attorney: attorney, tied_to: true) }
+        # original hearing held by tied_judge, decided by tied_judge, new hearing held by inel_judge
+        # this would have affinity to the original deciding judge but is out of affinity window
+        let!(:case_13) do
+          c = create(:legacy_cavc_appeal, judge: tied_judge, attorney: attorney, tied_to: true)
+          create_case_hearing(c, inel_judge_caseflow)
+          c
+        end
 
         it "considers cases tied to a judge if they held a hearing after the previous case was decided" do
           IneligibleJudgesJob.perform_now
@@ -1069,17 +1078,17 @@ describe VACOLS::CaseDocket, :all_dbs do
 
           expect(new_hearing_judge_cases.map { |c| c["bfkey"] }.sort)
             .to match_array([
-              case_1, case_2, case_3, case_4, case_5, case_9, case_10, case_11, case_12
+              case_1, case_2, case_3, case_4, case_5, case_9, case_10, case_12, case_13
             ].map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
 
           expect(tied_judge_cases.map { |c| c["bfkey"] }.sort)
             .to match_array([
-              case_6, case_9, case_10, case_11, case_12
+              case_6, case_9, case_10, case_11, case_12, case_13
             ].map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
 
           expect(other_judge_cases.map { |c| c["bfkey"] }.sort)
             .to match_array([
-              case_7, case_8, case_9, case_10, case_11, case_12
+              case_7, case_8, case_9, case_10, case_12, case_13
             ].map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
         end
       end

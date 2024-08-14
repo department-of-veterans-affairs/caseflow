@@ -715,6 +715,11 @@ class VACOLS::CaseDocket < VACOLS::Record
         next (appeal["vlj"] != judge_sattyid)
       end
 
+      if appeal_has_hearing_after_previous_decision?(appeal)
+        next if appeal["vlj"] == judge_sattyid
+        next true if !ineligible_judges_sattyids.include?(appeal["vlj"])
+      end
+
       next if ineligible_or_excluded_deciding_judge?(appeal, excluded_judges_attorney_ids)
 
       if case_affinity_days_lever_value_is_selected?(cavc_affinity_lever_value)
@@ -740,6 +745,11 @@ class VACOLS::CaseDocket < VACOLS::Record
         next if ineligible_judges_sattyids&.include?(appeal["vlj"])
 
         next (appeal["vlj"] != judge_sattyid)
+      end
+
+      if appeal_has_hearing_after_previous_decision?(appeal)
+        next if appeal["vlj"] == judge_sattyid
+        next true if !ineligible_judges_sattyids.include?(appeal["vlj"])
       end
 
       next if ineligible_or_excluded_deciding_judge?(appeal, excluded_judges_attorney_ids)
@@ -780,9 +790,12 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   def self.not_distributing_to_tied_judge?(appeal, judge_sattyid)
     !appeal["vlj"].blank? &&
-      (appeal["vlj"] == appeal["prev_deciding_judge"] ||
-      (!appeal["hearing_date"].nil? && !appeal["bfdpdcn"].nil? && appeal["hearing_date"] > appeal["bfdpdcn"])) &&
+      (appeal["vlj"] == appeal["prev_deciding_judge"]) &&
       (appeal["vlj"] != judge_sattyid)
+  end
+
+  def self.appeal_has_hearing_after_previous_decision?(appeal)
+    (!appeal["hearing_date"].nil? && !appeal["bfdpdcn"].nil? && appeal["hearing_date"] > appeal["bfdpdcn"])
   end
 
   def self.ineligible_or_excluded_deciding_judge?(appeal, excluded_judges_attorney_ids)
