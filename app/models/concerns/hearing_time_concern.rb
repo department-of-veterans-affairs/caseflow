@@ -22,9 +22,9 @@ module HearingTimeConcern
   # The hearing's local time cast into the POA's timezone
   #
   # @return [Time]
-  #   The hearing's local time using the representative recipient's timezone, if available.
+  #   The hearing time in the representative recipient's timezone, if available.
   # @return [Time]
-  #   The virtual hearing's local time using the representative timezone, if representative recipient's timezone is not available from the hearing.
+  #   The hearing time in the virtual_hearings' representative_tz, if representative's timezone missing on the hearing.
   # @return [Time]
   #   Fall back to the hearing's default local time if neither are available.
   def poa_time
@@ -39,9 +39,9 @@ module HearingTimeConcern
   # The hearing's local time cast into the appellant's timezone
   #
   # @return [Time]
-  #   The hearing's local time using the appellant recipient's timezone, if available.
+  #   The hearing time in appellant recipient's timezone, if available.
   # @return [Time]
-  #   The virtual hearing's local time using the appellant timezone, if appellant recipient's timezone is not available from the hearing.
+  #   The hearing time in the virtual_hearing's appellant_tz, if appellant's timezone is not available from the hearing.
   # @return [Time]
   #   Fall back to the hearing's default local time if neither are available.
   def appellant_time
