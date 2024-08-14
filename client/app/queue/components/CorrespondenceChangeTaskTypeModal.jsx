@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -14,94 +14,82 @@ import SearchableDropdown from "app/components/SearchableDropdown";
 import Alert from "app/components/Alert";
 import COPY from '../../../COPY';
 
-class CorrespondenceChangeTaskTypeModal extends React.PureComponent {
+const CorrespondenceChangeTaskTypeModal = (props) => {
+  const { error, task } = props;
+  const taskData = taskActionData(props);
+  const [typeOption, setTypeOption] = useState(null);
+  const [instructions, setInstructions] = useState('');
 
-  constructor(props) {
-    super(props);
+  const validateForm = () => Boolean(typeOption) && Boolean(instructions);
 
-    this.state = {
-      typeOption: null,
-      instructions: '',
-    };
-  }
-
-  validateForm = () => Boolean(this.state.typeOption) && Boolean(this.state.instructions);
-
-  buildPayload = () => {
-    const { typeOption, instructions } = this.state;
-
-    return {
-      data: {
-        task: {
-          type: typeOption.value,
-          instructions: instructions.value
-        }
+  const buildPayload = () => ({
+    data: {
+      task: {
+        type: typeOption.value,
+        instructions
       }
-    };
-  }
+    }
+  });
 
-  submit = () => {
-    const { task } = this.props;
-    const { typeOption } = this.state;
-
-    const payload = this.buildPayload();
+  const submit = () => {
+    const payload = buildPayload();
 
     const successMsg = {
       title: sprintf(COPY.CHANGE_TASK_TYPE_CONFIRMATION_TITLE, task.label, typeOption.label),
       detail: COPY.CHANGE_TASK_TYPE_CONFIRMATION_DETAIL
     };
 
-    return this.props.requestPatch(`/queue/correspondence/tasks/${task.taskId}/change_task_type`, payload, successMsg).
+    return requestPatch(`/queue/correspondence/tasks/${task.taskId}/change_task_type`, payload, successMsg).
       then((response) => {
         console.log(response);
       }).
       catch(() => {
         // handle the error from the frontend
       });
-  }
+  };
 
-  actionForm = () => {
-    const { instructions, typeOption } = this.state;
-
-    return <React.Fragment>
+  const actionForm = () => (
+    <>
       <div>
         <div {...marginTop(4)}>
           <SearchableDropdown
             name={COPY.CHANGE_TASK_TYPE_ACTION_LABEL}
             placeholder="Select an action type..."
-            options={taskActionData(this.props).options}
-            onChange={(option) => option && this.setState({ typeOption: option })}
-            value={typeOption && typeOption.value} />
+            options={taskActionData({ task }).options}
+            onChange={(option) => option && setTypeOption(option)}
+            value={typeOption?.value}
+          />
         </div>
         <div {...marginTop(4)}>
           <TextareaField
             name={COPY.CHANGE_TASK_TYPE_INSTRUCTIONS_LABEL}
-            onChange={(value) => this.setState({ instructions: value })}
-            value={instructions} />
+            onChange={setInstructions}
+            value={instructions}
+          />
         </div>
       </div>
-    </React.Fragment>;
-  };
+    </>
+  );
 
-  render = () => {
-    const { error } = this.props;
-
-    return <QueueFlowModal
-      validateForm={this.validateForm}
-      submit={this.submit}
+  return (
+    <QueueFlowModal
+      validateForm={validateForm}
+      submit={submit}
       title={COPY.CHANGE_TASK_TYPE_SUBHEAD}
       button={COPY.CHANGE_TASK_TYPE_SUBHEAD}
-      pathAfterSubmit={`/queue/correspondence/${this.props.correspondence_uuid}`}
+      pathAfterSubmit={`/queue/correspondence/${props.correspondence_uuid}`}
       submitButtonClassNames={['usa-button']}
-      submitDisabled={!this.validateForm()}
+      submitDisabled={!validateForm()}
     >
-      {error && <Alert title={error.title} type="error">
-        {error.detail}
-      </Alert>}
-      { this.actionForm() }
-    </QueueFlowModal>;
-  }
-}
+      {error && (
+        <Alert title={error.title} type="error">
+          {error.detail}
+        </Alert>
+      )}
+      {actionForm()}
+    </QueueFlowModal>
+  );
+};
 
 CorrespondenceChangeTaskTypeModal.propTypes = {
   correspondence_uuid: PropTypes.string,
