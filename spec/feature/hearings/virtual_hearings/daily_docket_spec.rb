@@ -200,7 +200,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
       end
 
       context "Without a pre-existing scheduled_in_timezone value" do
-        let(:hearing_time_selection_string) { "2:00 PM Central Time (US & Canada)" }
+        let(:hearing_time_selection_string) { "12:00 PM Central Time (US & Canada)" }
         let(:hearing) { initial_hearing.tap { _1.update!(scheduled_in_timezone: nil) } }
 
         before { hearing.hearing_day.update!(regional_office: "RO30", request_type: "T") }
@@ -213,7 +213,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
       let(:initial_hearing) { create(:hearing) }
 
       context "With a pre-existing scheduled_datetime value" do
-        let(:hearing_time_selection_string) { "2:00 PM Alaska" }
+        let(:hearing_time_selection_string) { "12:00 PM Alaska" }
         let(:hearing) { initial_hearing.tap { _1.update!(scheduled_in_timezone: "America/Juneau") } }
 
         before { hearing.hearing_day.update!(regional_office: "RO63", request_type: "V") }
