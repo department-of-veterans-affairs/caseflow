@@ -37,12 +37,16 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
   end
 
   def filter_appeals(appeals)
-    Rails.logger.info "Appeals before filtering: #{appeals.inspect}"
+    # Get appeals in location '63'
+    loc_63_appeals = LegacyDocket.new.loc_63_appeals
+
     # Number of priority appeals returned to the board
-    priority_appeals = appeals.select { |appeal| appeal["priority"] }
+    priority_appeals = appeals
+      .select { |appeal| appeal["priority"] && loc_63_appeals.include?(appeal) }
 
     # Number of non-priority appeals returned to the board
     non_priority_appeals = appeals.reject { |appeal| appeal["priority"] }
+      .select { |appeal| loc_63_appeals.include?(appeal) }
 
     # Calculate remaining appeals
     total_priority_appeals = LegacyDocket.new.count(priority: true)
@@ -52,10 +56,10 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
     remaining_non_priority_appeals_count = total_non_priority_appeals - non_priority_appeals.size
 
     # List of non-SSC AVLJs that appeals were moved from to location '63'
-    moved_avljs = appeals.map { |appeal| appeal["non_ssc_avlj"] }.uniq
+    moved_avljs = priority_appeals.map { |appeal| appeal["non_ssc_avlj"] }.compact.uniq
 
     # Keys of the hash that holds "Appeals should be grouped by non-SSC AVLJ"
-    grouped_by_avlj = appeals.group_by { |appeal| appeal["non_ssc_avlj"] }.keys
+    grouped_by_avlj = priority_appeals.group_by { |appeal| appeal["non_ssc_avlj"] }.keys.compact
 
     {
       priority_appeals_count: priority_appeals.size,
