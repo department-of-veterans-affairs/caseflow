@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Layer from './Comments/Layer';
 
 import { GlobalWorkerOptions, getDocument } from 'pdfjs-dist';
@@ -10,10 +10,12 @@ import Page from './Page';
 import TextLayer from './TextLayer';
 import DocumentLoadError from './DocumentLoadError';
 
-const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel }) => {
+const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel, currentDocumentId }) => {
   const [isDocumentLoadError, setIsDocumentLoadError] = useState(false);
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
+  const metricsRef = useRef({});
+  const [hasSentMetrics, setHasSentMetrics] = useState(false);
 
   const containerStyle = {
     width: '100%',
@@ -23,6 +25,31 @@ const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel }) => {
     alignContent: 'start',
     justifyContent: 'center',
     gap: '5rem',
+  };
+
+  const sendMetrics = (metrics) => {
+    if (hasSentMetrics) return;
+    setHasSentMetrics(true);
+    for (const [page, values] of Object.entries(metrics)) {
+      console.log(page);
+      values
+        .filter((value) => value.name === 'Overall')
+        .forEach((metric) => {
+          console.log(metric.name, (metric.end - metric.start) / 1000);
+        });
+    }
+  };
+
+  // this function is called per page. only actually send the metrics if all pages have loaded
+  const storeMetric = (pageNumber, data) => {
+    if (hasSentMetrics) return;
+    if (metricsRef.current[pageNumber]) return;
+
+    metricsRef.current[pageNumber] = data;
+
+    const totalStored = Object.keys(metricsRef.current).length;
+
+    if (totalStored > 0 && totalStored === pdfPages.length) sendMetrics(metricsRef.current);
   };
 
   useEffect(() => {
@@ -38,7 +65,7 @@ const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel }) => {
       const byteArr = await ApiUtil.get(doc.content_url, requestOptions).then((response) => {
         return response.body;
       });
-      const docProxy = await getDocument({ data: byteArr }).promise;
+      const docProxy = await getDocument({ data: byteArr, pdfBug: true }).promise;
 
       if (docProxy) {
         setPdfDoc(docProxy);
@@ -70,11 +97,24 @@ const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel }) => {
     getPdfData();
   }, [pdfDoc]);
 
+  // handle the case where the user navigates away from the page before all pages have loaded
+  useEffect(() => {
+    metricsRef.current = {};
+
+    return () => {
+      if (!hasSentMetrics && Object.keys(metricsRef.current).length > 0) {
+        console.log('unmount', hasSentMetrics);
+        sendMetrics(metricsRef.current);
+      }
+    };
+  }, [currentDocumentId]);
+
   return (
     <div id="pdfContainer" style={containerStyle}>
       {isDocumentLoadError && <DocumentLoadError doc={doc} />}
       {pdfPages.map((page, index) => (
         <Page
+          storeMetric={storeMetric}
           scale={zoomLevel}
           page={page}
           rotation={rotateDeg}
@@ -100,6 +140,7 @@ PdfDocument.propTypes = {
   rotateDeg: PropTypes.string,
   setNumPages: PropTypes.func,
   zoomLevel: PropTypes.number,
+  currentDocumentId: PropTypes.number,
 };
 
 export default PdfDocument;
