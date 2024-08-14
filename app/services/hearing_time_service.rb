@@ -86,6 +86,30 @@ class HearingTimeService
     local_time.in_time_zone(CENTRAL_OFFICE_TIMEZONE)
   end
 
+  # Casts incoming scheduled_time_strings into Eastern Time, and then into a quasi-UTC Time object.
+  # @see - HearingMapper.datetime_based_on_type is where these values are coverted to their correct
+  #   local time whenever retreiving them from the database.
+  #
+  # Used to facilitate updates to hearing times submitted via the {LegacyHearingUpdateForm}
+  #
+  # @param date [Date] a Date object for which a hearing will be scheduled.
+  # @param time_string [String] a formatted string with scheduling details. ex: 12:00 PM Eastern Time (US & Canada).
+  # @return [Time] The time a hearing is set to take place in cast to UTC time.
+  # @return [nil] If either the date or time_string params are absent.
+  def process_legacy_scheduled_time_string(date:, time_string:)
+    return nil unless date && time_string
+
+    hour, min = time_string.split(":")
+    time = date.to_datetime
+    unformatted_time = Time.use_zone(VacolsHelper::VACOLS_DEFAULT_TIMEZONE) do
+      Time.zone.now.change(
+        year: time.year, month: time.month, day: time.day, hour: hour.to_i, min: min.to_i
+      )
+    end
+
+    VacolsHelper.format_datetime_with_utc_timezone(unformatted_time)
+  end
+
   def normalized_time(timezone)
     return local_time if timezone.nil?
 

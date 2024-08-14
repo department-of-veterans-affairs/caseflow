@@ -87,6 +87,17 @@ class HearingDatetimeService
     "#{local_time.strftime('%l:%M %p')} #{tz}".lstrip
   end
 
+  # An alias for {prepare_time_for_storage}
+  #
+  # Used to facilitate updates to hearing times submitted via the {LegacyHearingUpdateForm}
+  #
+  # @param date [Date] a Date object for which a hearing will be scheduled.
+  # @param time_string [String] a formatted string with scheduling details, `12:00 PM Eastern Time (US & Canada)`.
+  # @return [Time] A representation of when the hearing will take place in the calculated time zone and DST offset.
+  def process_legacy_scheduled_time_string(date:, time_string:)
+    self.class.prepare_time_for_storage(date: date, time_string: time_string)
+  end
+
   private
 
   def validate_required_hearing_attrs(hearing)
