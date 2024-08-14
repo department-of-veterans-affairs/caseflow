@@ -29,7 +29,7 @@ class AppealsTiedToNonSscAvljQuery
       csv << HEADERS.values
 
       # Iterate through results and add each row to CSV
-      ready_appeals.each do |record|
+      tied_appeals.each do |record|
         csv << generate_rows(record)
       end
     end
@@ -37,54 +37,45 @@ class AppealsTiedToNonSscAvljQuery
 
   # Uses DocketCoordinator to pull appeals ready for distribution
   # DocketCoordinator is used by Automatic Case Distribution so this will give us the most accurate list of appeals
-  def self.ready_appeals
+  def self.tied_appeals
     docket_coordinator = DocketCoordinator.new
 
-    # Returns Appeals Tied to Non SSC AVLJs
-    appeals_tied_to_non_ssc_avljs = ReturnedAppealJob.last
     docket_coordinator.dockets
       .flat_map do |sym, docket|
-        appeals = docket.ready_to_distribute_appeals # Returns Ready to Distribute Appeals
+        if sym == :legacy
+          appeals = docket.appeals_tied_to_non_ssc_avljs
 
-        appeals = appeals.select { |appeal| appeals_tied_to_non_ssc_avljs&.returned_appeals&.include?(appeal["bfkey"]) }
-
-        legacy_rows(appeals, sym)
+          legacy_rows(appeals, sym)
+        else
+          []
+        end
       end
   end
 
   def self.legacy_rows(appeals, sym)
     appeals.map do |appeal|
-      veteran_name = FullName.new(appeal["snamef"], nil, appeal["snamel"]).to_s
+      avlj_record = VACOLS::Staff.find_by(sattyid: appeal["vlj"])
+      prev_judge_record = VACOLS::Staff.find_by(sattyid: appeal["prev_deciding_judge"])
       vacols_case = VACOLS::Case.find_by(bfkey: appeal["bfkey"])
-      vacols_hearing = VACOLS::CaseHearing.find_by(folder_nr: appeal["bfkey"])
-      avlj_user = vacols_hearing&.board_member ? VACOLS::Staff.find_by(sattyid: vacols_hearing.board_member) : nil
-      avlj_name = avlj_user ? get_avlj_name_from_hearing(avlj_user) : nil
+      veteran_record = VACOLS::Correspondent.find_by(stafkey: vacols_case.bfcorkey)
+
       {
         docket_number: appeal["tinum"],
         docket: sym.to_s,
         aod: appeal["aod"] == 1,
         cavc: appeal["cavc"] == 1,
         receipt_date: appeal["bfd19"],
-        veteran_file_number: appeal["ssn"] || appeal["bfcorlid"],
-        veteran_name: veteran_name,
-        non_ssc_avlj: avlj_name && check_if_non_ssc_avlj(avlj_user) ? avlj_name : "",
-        hearing_judge: avlj_name,
-        most_recent_signing_judge: mrsj_name(vacols_case),
+        veteran_file_number: veteran_record.ssn || vacols_case&.bfcorlid,
+        veteran_name: get_name_from_record(veteran_record),
+        non_ssc_avlj: get_name_from_record(avlj_record),
+        hearing_judge: get_name_from_record(avlj_record),
+        most_recent_signing_judge: get_name_from_record(prev_judge_record),
         bfcurloc: vacols_case&.bfcurloc
       }
     end
   end
 
-  def self.mrsj_name(vacols_case)
-    vacols_staff = vacols_case && vacols_case&.bfmemid ? VACOLS::Staff.find_by(sattyid: vacols_case.bfmemid) : nil
-    vacols_staff ? FullName.new(vacols_staff.snamef, nil, vacols_staff.snamel).to_s : ""
-  end
-
-  def self.get_avlj_name_from_hearing(avlj_user)
-    FullName.new(avlj_user["snamef"], nil, avlj_user["snamel"]).to_s
-  end
-
-  def self.check_if_non_ssc_avlj(avlj_user)
-    avlj_user.sattyid != avlj_user.smemgrp
+  def self.get_name_from_record(record)
+    FullName.new(record["snamef"], nil, record["snamel"]).to_s
   end
 end
