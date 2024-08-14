@@ -231,7 +231,7 @@ class CaseDistributionTest extends React.PureComponent {
                                 <button className="btn btn-primary">Distribution Status</button>
                               </a>
                             </li>
-                            <li><a href="#case_movement"><button className="btn btn-primary">Go to Case Movement</button></a></li>
+                            <li><a href="#case_movement"><button className="btn btn-primary">Case Movement</button></a></li>
                           </ul>
                           <h2 id="levers"> Case Distribution Levers </h2>
                           <table
