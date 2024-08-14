@@ -48,7 +48,7 @@ describe NotificationInitializationJob, type: :job do
           appeal_docketed: true
         )
       end
-      
+
       before do
         InitialTasksFactory.new(appeal_state.appeal).create_root_and_sub_tasks!
       end
