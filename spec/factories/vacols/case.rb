@@ -316,14 +316,15 @@ FactoryBot.define do
                 attorney { nil }
                 cavc { false }
                 appeal_affinity { true }
-                affinity_start_date { 2.months.ago }
+                affinity_start_date { 60.days.ago }
                 tied_to { true }
+                hearing_after_decision { false }
               end
 
               status_active
               type_post_remand
 
-              bfdpdcn { 1.month.ago }
+              bfdpdcn { 2.months.ago }
               bfcurloc { "81" }
 
               after(:create) do |new_case, evaluator|
@@ -388,7 +389,7 @@ FactoryBot.define do
                     :case_hearing,
                     :disposition_held,
                     folder_nr: original_case.bfkey,
-                    hearing_date: original_case.bfddec - 1.month,
+                    hearing_date: evaluator.hearing_after_decision ? original_case.bfddec + 1.month : original_case.bfddec - 1.month,
                     user: User.find_by_css_id(original_judge.sdomainid)
                   )
                 end
