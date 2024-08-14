@@ -68,6 +68,10 @@ class CorrespondenceTasksController < TasksController
     #   )
   end
 
+  def change_task_type
+    binding.pry
+  end
+
   private
 
   def correspondence_tasks_params
