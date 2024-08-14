@@ -581,24 +581,22 @@ RSpec.feature("The Correspondence Cases page") do
         rpt.save!
       end
 
-      1.times do
-        corres_array = (1..4).map { |index| create(:correspondence, nod: index == 1) }
-        task_array = [ReassignPackageTask, RemovePackageTask, SplitPackageTask, MergePackageTask]
+      corres_array = (1..4).map { |index| create(:correspondence, nod: index == 1) }
+      task_array = [ReassignPackageTask, RemovePackageTask, SplitPackageTask, MergePackageTask]
 
-        corres_array.each_with_index do |corres, index|
-          rpt = ReviewPackageTask.find_by(appeal_id: corres.id)
-          task_array[index].create!(
-            parent_id: rpt.id,
-            appeal_type: "Correspondence",
-            appeal_id: corres.id,
-            assigned_to: InboundOpsTeam.singleton,
-            status: "assigned",
-            instructions: ["Default"],
-            assigned_by_id: 1
-          )
-          rpt.update!(assigned_to: current_user, status: "assigned")
-          rpt.save!
-        end
+      corres_array.each_with_index do |corres, index|
+        rpt = ReviewPackageTask.find_by(appeal_id: corres.id)
+        task_array[index].create!(
+          parent_id: rpt.id,
+          appeal_type: "Correspondence",
+          appeal_id: corres.id,
+          assigned_to: InboundOpsTeam.singleton,
+          status: "assigned",
+          instructions: ["Default"],
+          assigned_by_id: 1
+        )
+        rpt.update!(assigned_to: current_user, status: "assigned")
+        rpt.save!
       end
     end
 
@@ -827,12 +825,10 @@ RSpec.feature("The Correspondence Cases page") do
         rpt.update!(assigned_to: current_user, status: "completed")
         rpt.save!
       end
-      1.times do
-        review_correspondence = create(:correspondence)
-        rpt = ReviewPackageTask.find_by(appeal_id: review_correspondence.id)
-        rpt.update!(assigned_to: current_user, status: "completed", closed_at: Date.new(2000, 10, 10))
-        rpt.save!
-      end
+      review_correspondence = create(:correspondence)
+      rpt = ReviewPackageTask.find_by(appeal_id: review_correspondence.id)
+      rpt.update!(assigned_to: current_user, status: "completed", closed_at: Date.new(2000, 10, 10))
+      rpt.save!
     end
 
     it "successfully tests the completed tab" do

@@ -3,8 +3,7 @@
 module CorrespondenceTaskHelpers
   def create_correspondence_intake(correspondence, user)
     parent = correspondence&.root_task
-    cit = CorrespondenceIntakeTask.create_from_params(parent, user)
-    cit
+    CorrespondenceIntakeTask.create_from_params(parent, user)
   end
 
   def assign_review_package_task(correspondence, user)
