@@ -6,9 +6,9 @@ module HearingTimeConcern
   delegate :central_office_time_string, :scheduled_time_string,
            to: :time
 
-  # Set the @time instance variable to
-  # HearingDatetimeService instance if use_hearing_datetime? is true, else
-  # to HearingTimeService instance
+  #  A façade for a hearing's memoized time service instance - either {HearingTimeService} or {HearingDatetimeService},
+  # depending on the hearing's attributes.
+  #
   # @return [HearingTimeService] if {Hearing#use_hearing_datetime?} or {LegacyHearing#use_hearing_datetime?} is false
   # @return [HearingDatetimeService] if {Hearing#use_hearing_datetime?} or {LegacyHearing#use_hearing_datetime?} is true
   def time
@@ -55,7 +55,7 @@ module HearingTimeConcern
 
   private
 
-  # @param timezone [String]
+  # @param timezone [String] A timezone in a format readable by Rails ActiveSupport::TimeZone.
   #
   # @return [Time] The hearing's local time cast into the supplied timezone.
   # @return [Time] Fall back to the hearing's default local time if the supplied timezone is nil.
