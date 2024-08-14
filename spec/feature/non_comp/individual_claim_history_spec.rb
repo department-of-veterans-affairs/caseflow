@@ -667,7 +667,7 @@ feature "Individual Claim History", :postgres do
     end
   end
 
-  context "should do expected details to show claim closed" do
+  context "should do expected details to show claim closed when cancelled" do
     before { visit "/decision_reviews/vha/tasks/#{cancelled_claim.tasks[0].id}/history" }
 
     it "Claim Cancelled" do
@@ -676,12 +676,12 @@ feature "Individual Claim History", :postgres do
       dropdown_filter = page.find(class: "cf-dropdown-filter")
 
       dropdown_filter.find("label", text: "Claim closed (1)", match: :prefer_exact).click
-
       table = page.find("tbody")
       expect(table).to have_selector("tr", count: 1)
 
       table_row = table.first("tr")
-      expect(table_row).to have_content("Claim closed.")
+      expect(table_row).to have_content("Claim closed")
+      expect(table_row).to have_content("Claim cancelled.")
     end
   end
 end

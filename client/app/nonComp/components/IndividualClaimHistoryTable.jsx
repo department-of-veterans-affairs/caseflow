@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import React, { useState } from 'react';
 import QueueTable from '../../queue/QueueTable';
 import BENEFIT_TYPES from 'constants/BENEFIT_TYPES';
@@ -46,13 +47,12 @@ const IndividualClaimHistoryTable = (props) => {
   };
 
   const ClaimClosedFragment = (details) => {
-
     let component = null;
 
     switch (details.eventType) {
     case 'cancelled':
       component = <React.Fragment>
-        <b>Claim cancelled.</b>
+        Claim cancelled.
       </React.Fragment>;
       break;
     default:
@@ -299,6 +299,7 @@ const IndividualClaimHistoryTable = (props) => {
     const [isOpen, setIsOpen] = useState(false);
 
     const toggle = () => {
+      // eslint-disable-next-line no-shadow
       setIsOpen((isOpen) => !isOpen);
     };
 
@@ -471,3 +472,4 @@ IndividualClaimHistoryTable.propTypes = {
 };
 
 export default IndividualClaimHistoryTable;
+/* eslint-enable max-lines */
