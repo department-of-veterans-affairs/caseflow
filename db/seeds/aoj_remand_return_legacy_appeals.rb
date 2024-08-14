@@ -239,6 +239,8 @@ module Seeds
         create(:legacy_aoj_appeal, :aod, bfcorlid: "#{create_correspondent.ssn}S", judge: affinity_judge, attorney: attorney, tied_to: false)
         create(:legacy_aoj_appeal, :aod, bfcorlid: "#{create_correspondent.ssn}S", judge: affinity_judge, attorney: attorney, tied_to: false, affinity_start_date: 3.days.ago)
         create(:legacy_aoj_appeal, :aod, bfcorlid: "#{create_correspondent.ssn}S", judge: affinity_judge, attorney: attorney, tied_to: false, appeal_affinity: false)
+        create(:legacy_aoj_appeal, :aod, bfcorlid: "#{create_correspondent.ssn}S", judge: affinity_and_tied_to_judge, attorney: attorney, tied_to: false, affinity_start_date: 2.days.ago, cavc: true)
+        create(:legacy_aoj_appeal, :aod, bfcorlid: "#{create_correspondent.ssn}S", judge: affinity_and_tied_to_judge, attorney: attorney, tied_to: false, affinity_start_date: 1.days.ago, cavc: true)
         create(:legacy_aoj_appeal, :aod, bfcorlid: "#{create_correspondent.ssn}S", judge: affinity_and_tied_to_judge, attorney: attorney, tied_to: false)
         create(:legacy_aoj_appeal, :aod, bfcorlid: "#{create_correspondent.ssn}S", judge: affinity_and_tied_to_judge, attorney: attorney, tied_to: false, affinity_start_date: 3.days.ago)
         create(:legacy_aoj_appeal, :aod, bfcorlid: "#{create_correspondent.ssn}S", judge: affinity_and_tied_to_judge, attorney: attorney, tied_to: false, appeal_affinity: false)
