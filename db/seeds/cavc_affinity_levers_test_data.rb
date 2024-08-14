@@ -513,12 +513,12 @@ module Seeds
       c10 = create(:legacy_cavc_appeal, bfd19: 5.years.ago, bfcorlid: "#{create_veteran_for_genpop("Genpop").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvagsporer.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), tied_to: false)
       c10.update!(bfmemid: nil)
 
-      # original hearing held by SPORER, decided by SPORER, new hearing held by inactive_judge
+      # original hearing held by SPORER, decided by SPORER, new hearing held by judge_inactivejudge
       c11 = create(:legacy_cavc_appeal, bfd19: 5.years.ago, bfcorlid: "#{create_veteran_for_inactivejudge_judge("Genpop").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvagsporer.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), tied_to: true)
       create(:case_hearing, :disposition_held, folder_nr: (c11.bfkey.to_i + 1).to_s, hearing_date: Time.zone.today, user: judge_inactivejudge)
 
-      # original hearing held by inactive_judge, decided by inactive_judge, no new hearing => genpop
-      create(:legacy_cavc_appeal, bfd19: 5.years.ago, bfcorlid: "#{create_veteran_for_inactivejudge_judge("Genpop").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: inactive_judge.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), tied_to: true)
+      # original hearing held by judge_inactivejudge, decided by judge_inactivejudge, no new hearing => genpop
+      create(:legacy_cavc_appeal, bfd19: 5.years.ago, bfcorlid: "#{create_veteran_for_inactivejudge_judge("Genpop").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), tied_to: true)
     end
 
     def create_legacy_appeals_without_hearing_held
