@@ -633,7 +633,7 @@ class Appeal < DecisionReview
   end
 
   def active?
-    if !root_task.nil? then
+    if !root_task.nil?
       root_task.status != "completed" && root_task.status != "cancelled"
     else
       false
