@@ -231,7 +231,35 @@ class BusinessLine < Organization
           INNER JOIN issue_modification_requests ON issue_modification_requests.id = versions.item_id
           WHERE versions.item_type = 'IssueModificationRequest'
           GROUP BY
-              versions.item_id, versions.item_type)
+              versions.item_id, versions.item_type
+        ), imr_distinct AS (
+            -- TODO: SEE if this needs an index join of some sort or will it only join on what it needs later?
+            SELECT DISTINCT ON (imr_cte.id)
+                imr_cte.id,
+                imr_cte.decided_at,
+                imr_cte.created_at,
+                imr_cte.decision_review_type,
+                imr_cte.decision_review_id,
+                imr_cte.status,
+                imr_cte.updated_at
+            FROM issue_modification_requests imr_cte
+        ), imr_lead_decided AS (
+            SELECT id,
+                  decision_review_id,
+                  LEAD(
+                    CASE
+                      WHEN status = 'cancelled' THEN updated_at
+                      ELSE decided_at
+                    END,
+                    1,
+                    '9999-12-31 23:59:59' -- Fake value to indicate out of bounds
+                  ) OVER (PARTITION BY decision_review_id, decision_review_type ORDER BY decided_at, created_at DESC) AS next_decided_or_cancelled_at
+            FROM imr_distinct
+        ), imr_lead_created AS (
+            SELECT id,
+                LEAD(created_at, 1, '9999-12-31 23:59:59') OVER (PARTITION BY decision_review_id, decision_review_type ORDER BY created_at ASC) AS next_created_at
+            FROM imr_distinct
+        )
         SELECT tasks.id AS task_id,
           check_imr_current_status.is_assigned_present,
           tasks.status AS task_status,
@@ -284,10 +312,11 @@ class BusinessLine < Organization
           decider.station_id AS decider_station_id,
           decider.css_id AS decider_css_id,
           itv.object_changes_array AS imr_versions,
-          lag(imr.created_at, 1) over (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.created_at) as previous_imr_created_at,
+          lag(imr.created_at, 1) OVER (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.created_at) as previous_imr_created_at,
           lag(imr.decided_at, 1) over (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.decided_at) as previous_imr_decided_at,
-          itv.object_changes_array[1] as first_static_version,
-          MAX(imr.decided_at) over (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.updated_at desc)  as imr_last_decided_date
+          itv.object_changes_array[1] AS first_static_version,
+          imr_lead_decided.next_decided_or_cancelled_at,
+          imr_lead_created.next_created_at
         FROM tasks
         INNER JOIN request_issues ON request_issues.decision_review_type = tasks.appeal_type
         AND request_issues.decision_review_id = tasks.appeal_id
@@ -295,19 +324,20 @@ class BusinessLine < Organization
         AND tasks.appeal_id = higher_level_reviews.id
         INNER JOIN intakes ON tasks.appeal_type = intakes.detail_type
         AND intakes.detail_id = tasks.appeal_id
-        LEFT JOIN LATERAL (
-          SELECT * FROM issue_modification_requests imr
-          WHERE imr.decision_review_id = tasks.appeal_id
-            AND imr.decision_review_type = 'HigherLevelReview'
-            AND imr.request_issue_id = request_issues.id
-          UNION ALL
-          SELECT * FROM issue_modification_requests imr_add
-            where imr_add.decision_review_id = tasks.appeal_id
-              AND imr_add.decision_review_type = 'HigherLevelReview'
-              AND imr_add.request_type = 'addition'
-				) imr  on true
         LEFT JOIN request_issues_updates ON request_issues_updates.review_type = tasks.appeal_type
         AND request_issues_updates.review_id = tasks.appeal_id
+        LEFT JOIN LATERAL (
+          SELECT *
+          FROM issue_modification_requests imr
+          WHERE imr.decision_review_id = tasks.appeal_id
+            AND imr.decision_review_type = 'HigherLevelReview'
+            AND (
+                imr.request_issue_id = request_issues.id
+                OR imr.request_type = 'addition'
+            )
+        ) imr ON true
+        LEFT JOIN imr_lead_decided ON imr_lead_decided.id = imr.id
+        LEFT JOIN imr_lead_created ON imr_lead_created.id = imr.id
         LEFT JOIN request_decision_issues ON request_decision_issues.request_issue_id = request_issues.id
         LEFT JOIN decision_issues ON decision_issues.decision_review_id = tasks.appeal_id
         AND decision_issues.decision_review_type = tasks.appeal_type AND decision_issues.id = request_decision_issues.decision_issue_id
@@ -394,7 +424,8 @@ class BusinessLine < Organization
          lag(imr.created_at, 1) over (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.created_at) as previous_imr_created_at,
          lag(imr.decided_at, 1) over (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.decided_at) as previous_imr_decided_at,
          itv.object_changes_array[1] as first_static_version,
-         MAX(imr.decided_at) over (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.updated_at desc)  as imr_last_decided_date
+         imr_lead_decided.next_decided_or_cancelled_at,
+         imr_lead_created.next_created_at
       FROM tasks
       INNER JOIN request_issues ON request_issues.decision_review_type = tasks.appeal_type
       AND request_issues.decision_review_id = tasks.appeal_id
@@ -402,19 +433,20 @@ class BusinessLine < Organization
       AND tasks.appeal_id = supplemental_claims.id
       LEFT JOIN intakes ON tasks.appeal_type = intakes.detail_type
       AND intakes.detail_id = tasks.appeal_id
-      LEFT JOIN LATERAL (
-        SELECT * FROM issue_modification_requests imr
-        WHERE imr.decision_review_id = tasks.appeal_id
-          AND imr.decision_review_type = 'SupplementalClaim'
-          AND imr.request_issue_id = request_issues.id
-          UNION ALL
-        SELECT *FROM issue_modification_requests imr_add
-          where imr_add.decision_review_id = tasks.appeal_id
-            AND imr_add.decision_review_type = 'SupplementalClaim'
-            AND imr_add.request_type = 'addition'
-			) imr on true
       LEFT JOIN request_issues_updates ON request_issues_updates.review_type = tasks.appeal_type
       AND request_issues_updates.review_id = tasks.appeal_id
+      LEFT JOIN LATERAL (
+        SELECT *
+        FROM issue_modification_requests imr
+        WHERE imr.decision_review_id = tasks.appeal_id
+          AND imr.decision_review_type = 'SupplementalClaim'
+          AND (
+              imr.request_issue_id = request_issues.id
+              OR imr.request_type = 'addition'
+          )
+      ) imr ON true
+      LEFT JOIN imr_lead_decided ON imr_lead_decided.id = imr.id
+      LEFT JOIN imr_lead_created ON imr_lead_created.id = imr.id
       LEFT JOIN request_decision_issues ON request_decision_issues.request_issue_id = request_issues.id
       LEFT JOIN decision_issues ON decision_issues.decision_review_id = tasks.appeal_id
       AND decision_issues.decision_review_type = tasks.appeal_type AND decision_issues.id = request_decision_issues.decision_issue_id

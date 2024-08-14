@@ -443,16 +443,26 @@ describe ClaimHistoryService do
 
           # Cancel the removal and add a new approval at the same time
           Timecop.travel(2.minutes.from_now)
+          addition2 = nil
           ActiveRecord::Base.transaction do
             issue_modification_removal.update!(decider: vha_admin, status: :cancelled, decision_reason: "Just cause")
-            addition2 = create(:issue_modification_request, request_type: "addition", decision_review: supplemental_claim)
+            addition2 = create(:issue_modification_request,
+                               request_type: "addition",
+                               decision_review: supplemental_claim)
           end
 
-          p '**********************************before final build events *************************************'
           # Rebuild events
           service_instance.build_events
           p events.map(&:event_type)
           new_events.push(:request_cancelled, :addition)
+          expect(events.map(&:event_type)).to contain_exactly(*starting_imr_events + new_events)
+
+          # Approve the newest addition to make sure the in progress and approval events are correct
+          Timecop.travel(2.minutes.from_now)
+          addition2.update!(decider: vha_admin, status: :approved, decision_reason: "Better reason2")
+
+          service_instance.build_events
+          new_events.push(:in_progress, :request_approved)
           expect(events.map(&:event_type)).to contain_exactly(*starting_imr_events + new_events)
         end
       end

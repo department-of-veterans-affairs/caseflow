@@ -82,6 +82,8 @@ class ClaimHistoryEvent
   REQUEST_ISSUE_TIME_WINDOW = 15
   STATUS_EVENT_TIME_WINDOW = 2
   ISSUE_MODIFICATION_REQUEST_CREATION_WINDOW = 60
+  # Used to signal when the database lead function is out of bounds
+  OUT_OF_BOUNDS_LEAD_TIME = Time.utc(9999, 12, 31, 23, 59, 59)
 
   class << self
     def from_change_data(event_type, change_data)
@@ -134,7 +136,7 @@ class ClaimHistoryEvent
         end
         edited_events.push(*create_event_from_rest_of_versions(change_data, rest_of_versions))
       else
-        create_pending_status_events(change_data, change_data["issue_modification_request_updated_at"])
+        create_pending_status_event(change_data, change_data["issue_modification_request_updated_at"])
       end
       edited_events
     end
@@ -162,7 +164,7 @@ class ClaimHistoryEvent
 
       last_version["status"].map.with_index do |status, index|
         if status == "assigned"
-          edited_events.push(*create_pending_status_events(change_data, last_version["updated_at"][index]))
+          edited_events.push(*create_pending_status_event(change_data, last_version["updated_at"][index]))
         else
           edited_events.push(*create_request_issue_decision_events(
             change_data, last_version["updated_at"][index], status
@@ -195,28 +197,136 @@ class ClaimHistoryEvent
         .merge("event_date" => (change_data["decided_at"] ||
           change_data["issue_modification_request_updated_at"]))
 
-      if should_create_imr_in_progress_status_event?(change_data)
+      # If the imr is not decided, then always skip in progress creation
+      if imr_decided_or_cancelled?(change_data) && create_imr_in_progress_status_event?(change_data, false)
         from_change_data(:in_progress, change_data.merge(in_progress_system_hash_events))
       end
     end
 
-    def should_create_imr_in_progress_status_event?(change_data)
-      (imr_last_decided_row?(change_data) &&
-        (!imr_decided_in_same_transaction?(change_data) || change_data["previous_imr_decided_at"].nil?)) ||
-        (change_data["previous_imr_created_at"].nil? ||
-          !imr_created_in_same_transaction?(change_data) &&
-          %w[cancelled denied approved].include?(change_data["issue_modification_request_status"]))
+    # def create_imr_in_progress_status_event?(change_data)
+    #   # debug_testing(change_data)
+    #   # TODO: may not need this check if it's blocked before now but it's fine to include it here as well.
+    #   return false if !imr_decided_or_cancelled?(change_data) ||
+    #                   next_imr_decided_or_cancelled_in_same_transaction(change_data)
+
+    #   # If the next created by was after the decided_at then, this was an in progress transition
+    #   # TODO: What if one is created at the same time this one is decided? Do I need to add like a 2 second buffer??
+    #   return true if imr_next_created_by_after_current_decided_at?(change_data)
+
+    #   # If it's the end of the lead rows then this is the last decided row so make an in progress event
+    #   return true if change_data["next_decided_or_cancelled_at"] == OUT_OF_BOUNDS_LEAD_TIME &&
+    #                  !next_imr_created_in_same_transaction?(change_data)
+
+    #   # If the next imr was in the same transaction and it's also decided, then defer event creation to it.
+    #   return false if next_imr_created_in_same_transaction?(change_data) &&
+    #                   change_data["next_decided_or_cancelled_at"]
+
+    #   # If nothing else matches and the next one is also decided then go ahead and generate an in progress event
+    #   return true if change_data["next_decided_or_cancelled_at"]
+
+    #   false
+    # end
+
+    def create_imr_in_progress_status_event?(change_data, run_debug = true)
+      # If the next imr is decided already in the same transaction then defer creation
+      # if run_debug
+      #   debug_testing(change_data)
+      # end
+
+      return false if next_imr_decided_or_cancelled_in_same_transaction?(change_data)
+
+      # TODO: Need a case in here if these two are the same then defer
+      # "decided_at_lead: 2024-08-13 23:49:38 UTC"
+      # "next_created_at: 2024-08-13 23:49:38 UTC"
+
+      if next_imr_created_by_after_current_decided_at?(change_data)
+        # If the next created by was after the decided_at then, this was an in progress transition so create one
+        # TODO: What if one is created at the same time this one is decided? Do I need to add like a 2 second buffer??
+        true
+      elsif change_data["next_decided_or_cancelled_at"] == OUT_OF_BOUNDS_LEAD_TIME
+        # If it's the end of the lead rows, then this is the last decided row
+        # If the next created at is in the same transaction, then defer event creation, otherwise create an in progress
+        # By inverting the result of the created in same transaction check
+        !next_imr_created_in_same_transaction?(change_data)
+      elsif next_imr_created_in_same_transaction?(change_data) &&
+            change_data["next_decided_or_cancelled_at"]
+        # If the next imr was in the same transaction and it's also decided, then defer event creation to it.
+        false
+      elsif next_imr_created_at_and_decided_at_in_same_transaction?(change_data)
+        # If the next imr was created in the same transaction as the next decided then defer
+        false
+      else
+        # puts "get into the else block then for imr id: #{change_data['issue_modification_request_id']}"
+        # If nothing else matches and the next one is also decided then go ahead and generate an in progress event
+        change_data["next_decided_or_cancelled_at"].present?
+      end
     end
 
-    def create_pending_status_events(change_data, event_date)
+    def imr_decided_or_cancelled?(change_data)
+      %w[cancelled denied approved].include?(change_data["issue_modification_request_status"])
+    end
+
+    def next_imr_decided_or_cancelled_in_same_transaction?(change_data)
+      timestamp_within_seconds?(change_data["decided_at"], change_data["next_decided_or_cancelled_at"], 2)
+    end
+
+    def next_imr_created_in_same_transaction?(change_data)
+      timestamp_within_seconds?(change_data["issue_modification_request_created_at"],
+                                change_data["next_created_at"],
+                                2)
+    end
+
+    def next_imr_created_by_after_current_decided_at?(change_data)
+      change_data["next_decided_or_cancelled_at"].nil? &&
+        change_data["next_created_at"] != OUT_OF_BOUNDS_LEAD_TIME &&
+        change_data["next_created_at"] > change_data["decided_at"]
+    end
+
+    def next_imr_created_at_and_decided_at_in_same_transaction?(change_data)
+      timestamp_within_seconds?(change_data["next_decided_or_cancelled_at"],
+                                change_data["next_created_at"],
+                                2)
+    end
+
+    # def debug_testing(change_data)
+    #   p "-----------------"
+    #   p "For imr: #{change_data['issue_modification_request_id']}"
+    #   p "status: #{change_data['issue_modification_request_status']}"
+    #   p "decided_at: #{change_data['decided_at']}"
+    #   p "decided_at_lead: #{change_data['next_decided_or_cancelled_at']}"
+    #   p "next_created_at: #{change_data['next_created_at']}"
+    #   p "next_imr_created_in_same_transaction??: #{next_imr_created_in_same_transaction?(change_data)}"
+    #   p "next_imr_decided_or_cancelled_in_same_transaction?: #{next_imr_decided_or_cancelled_in_same_transaction?(change_data)}"
+    #   p "imr_next_created_by_after_current_decided_at?: #{next_imr_created_by_after_current_decided_at?(change_data)}"
+    #   p "next_imr_created_at_and_decided_at_in_same_transaction?: #{next_imr_created_at_and_decided_at_in_same_transaction?(change_data)}"
+    #   p "result of create_imr_in_progress_status_event?: #{create_imr_in_progress_status_event?(change_data, false)}"
+    #   p "*****************"
+    # end
+
+    def create_pending_status_event(change_data, event_date)
+      # puts "getting in here for imr id: #{change_data[""]}"
+      # p "********* checking for pending creation"
+      # p "For imr: #{change_data['issue_modification_request_id']}"
+      # p "status: #{change_data['issue_modification_request_status']}"
+      # p "created_at: #{change_data['issue_modification_request_created_at']}"
+      # p "imr_lag_created_at: #{change_data['previous_imr_created_at']}"
+      # p "imr_lag_decided_at: #{change_data['previous_imr_decided_at']}"
+      # p "previous_imr_created_in_same_transaction?: #{previous_imr_created_in_same_transaction?(change_data)}"
+      # p "******** ending of creating the pending status event *************"
       pending_system_hash_events = pending_system_hash
         .merge("event_date" => event_date)
 
-      imr_created_in_same_transaction = imr_created_in_same_transaction?(change_data)
+      imr_created_in_same_transaction = previous_imr_created_in_same_transaction?(change_data)
+      # If this IMR was created at the same time as the previous decided at then skip pending event creation.
+      return nil if timestamp_within_seconds?(change_data["previous_imr_decided_at"],
+                                              change_data["issue_modification_request_created_at"],
+                                              STATUS_EVENT_TIME_WINDOW)
+
       # if two imr's are of different transaction and if decision has already been made then we
       # want to put pending status since it went back to pending status before it was approved/cancelled or denied.
       if change_data["previous_imr_created_at"].nil? ||
          !imr_created_in_same_transaction
+        # puts "creating a pending event from imr: #{change_data['issue_modification_request_id']}"
         from_change_data(:pending, change_data.merge(pending_system_hash_events))
       end
     end
@@ -299,21 +409,10 @@ class ClaimHistoryEvent
       change_data.merge(issue_data)
     end
 
-    def imr_created_in_same_transaction?(change_data)
+    def previous_imr_created_in_same_transaction?(change_data)
       timestamp_within_seconds?(change_data["issue_modification_request_created_at"],
                                 change_data["previous_imr_created_at"] ||
                                 change_data["issue_modification_request_created_at"],
-                                ISSUE_MODIFICATION_REQUEST_CREATION_WINDOW)
-    end
-
-    def imr_last_decided_row?(change_data)
-      change_data["imr_last_decided_date"] == (change_data["decided_at"] ||
-                         change_data["issue_modification_request_updated_at"])
-    end
-
-    def imr_decided_in_same_transaction?(change_data)
-      timestamp_within_seconds?(change_data["decided_at"],
-                                change_data["previous_imr_decided_at"],
                                 ISSUE_MODIFICATION_REQUEST_CREATION_WINDOW)
     end
 
