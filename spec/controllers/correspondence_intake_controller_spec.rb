@@ -51,7 +51,7 @@ RSpec.describe CorrespondenceIntakeController, :all_dbs, type: :controller do
       InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
 
-      (1..4).map { create(:correspondence,:completed, veteran: veteran) }
+      (1..4).map { create(:correspondence, :completed, veteran: veteran) }
       (1..4).map { create(:correspondence, :pending, veteran: veteran) }
 
       get :intake, params: { correspondence_uuid: correspondence.uuid }
