@@ -35,7 +35,7 @@ module CorrespondenceHelpers
       uuid: SecureRandom.uuid,
       va_date_of_receipt: Time.zone.local(2023, 1, 1)
     )
-    54.times do
+    53.times do
       cor = create(
         :correspondence,
         veteran_id: veteran.id,
