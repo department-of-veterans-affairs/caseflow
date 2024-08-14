@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState } from 'react';
 
 import Button from '../../components/Button';
 import TextField from '../../components/TextField';
@@ -7,7 +7,7 @@ import { PageArrowLeftIcon } from '../../components/icons/PageArrowLeftIcon';
 import { PageArrowRightIcon } from '../../components/icons/PageArrowRightIcon';
 
 const isValidWholeNumber = (pageNumber) => {
-  return (/^\d+$/).test(pageNumber);
+  return /^\d+$/.test(pageNumber);
 };
 
 const validatePageNum = (pageNumber, numPages) => {
@@ -70,7 +70,7 @@ const ReaderFooter = ({
                   maxLength={4}
                   onChange={handleKeyPress}
                   onKeyPress={handleKeyPress}
-                  value={currentPage}
+                  defaultValue={currentPage}
                   required={false}
                   className={['page-progress-indicator-input']}
                 />
