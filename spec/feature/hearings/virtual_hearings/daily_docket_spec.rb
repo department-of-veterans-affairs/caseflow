@@ -177,4 +177,57 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
       end
     end
   end
+
+  context "Updating a hearing's time" do
+    shared_examples "The hearing time is updated correctly" do
+      scenario do
+        visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+        click_dropdown(name: "optionalHearingTime0", text: hearing_time_selection_string)
+      end
+    end
+
+    context "Legacy Hearing" do
+      let(:initial_hearing) { create(:legacy_hearing, :for_vacols_case) }
+
+      context "With a pre-existing scheduled_in_timezone value" do
+        let(:hearing_time_selection_string) { "10:00 AM Central Time (US & Canada)" }
+        let(:hearing) { initial_hearing.tap { _1.update!(scheduled_in_timezone: "America/Chicago") } }
+
+        before { hearing.hearing_day.update!(regional_office: "RO30", request_type: "V") }
+
+        include_examples "The hearing time is updated correctly"
+      end
+
+      context "Without a pre-existing scheduled_in_timezone value" do
+        let(:hearing_time_selection_string) { "2:00 PM Central Time (US & Canada)" }
+        let(:hearing) { initial_hearing.tap { _1.update!(scheduled_in_timezone: nil) } }
+
+        before { hearing.hearing_day.update!(regional_office: "RO30", request_type: "T") }
+
+        include_examples "The hearing time is updated correctly"
+      end
+    end
+
+    context "AMA Hearing" do
+      let(:initial_hearing) { create(:hearing) }
+
+      context "With a pre-existing scheduled_datetime value" do
+        let(:hearing_time_selection_string) { "2:00 PM Alaska" }
+        let(:hearing) { initial_hearing.tap { _1.update!(scheduled_in_timezone: "America/Juneau") } }
+
+        before { hearing.hearing_day.update!(regional_office: "RO63", request_type: "V") }
+
+        include_examples "The hearing time is updated correctly"
+      end
+
+      context "Without a pre-existing scheduled_datetime value" do
+        let(:hearing_time_selection_string) { "11:00 AM Hawaii" }
+        let(:hearing) { initial_hearing.tap { _1.update!(scheduled_in_timezone: nil) } }
+
+        before { hearing.hearing_day.update!(regional_office: "RO59", request_type: "V") }
+
+        include_examples "The hearing time is updated correctly"
+      end
+    end
+  end
 end
