@@ -31,6 +31,8 @@ module Seeds
       update_ineligible_users
     end
 
+    private
+
     def find_veteran(file_number)
       Veteran.find_by(file_number: format("%<n>09d", n: file_number + 1))
     end
