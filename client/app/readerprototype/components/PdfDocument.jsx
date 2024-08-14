@@ -10,7 +10,7 @@ import Page from './Page';
 import TextLayer from './TextLayer';
 import DocumentLoadError from './DocumentLoadError';
 
-const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel }) => {
+const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel, currentDocumentId }) => {
   const [isDocumentLoadError, setIsDocumentLoadError] = useState(false);
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
@@ -99,13 +99,15 @@ const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel }) => {
 
   // handle the case where the user navigates away from the page before all pages have loaded
   useEffect(() => {
+    metricsRef.current = {};
+
     return () => {
       if (!hasSentMetrics && Object.keys(metricsRef.current).length > 0) {
         console.log('unmount', hasSentMetrics);
         sendMetrics(metricsRef.current);
       }
     };
-  });
+  }, [currentDocumentId]);
 
   return (
     <div id="pdfContainer" style={containerStyle}>
@@ -138,6 +140,7 @@ PdfDocument.propTypes = {
   rotateDeg: PropTypes.string,
   setNumPages: PropTypes.func,
   zoomLevel: PropTypes.number,
+  currentDocumentId: PropTypes.number,
 };
 
 export default PdfDocument;
