@@ -36,28 +36,25 @@ gem "moment_timezone-rails"
 gem "multiverse"
 gem "newrelic_rpm"
 gem "nokogiri", ">= 1.11.0.rc4"
-
-# gem "opentelemetry-exporter-otlp"
-# gem "opentelemetry-instrumentation-all"
-# gem "opentelemetry-sdk"
-
-gem "opentelemetry-sdk", require: false
-gem "opentelemetry-exporter-otlp", require: false
-gem "opentelemetry-instrumentation-rack", require: false
-gem "opentelemetry-instrumentation-rails", require: false
-gem "opentelemetry-instrumentation-active_job", require: false
+# OpenTelemetry instruments
 gem "opentelemetry-instrumentation-action_pack", require: false
-gem "opentelemetry-instrumentation-active_record", require: false
 gem "opentelemetry-instrumentation-action_view", require: false
-gem "opentelemetry-instrumentation-active_model_serializers", require: false
+gem "opentelemetry-instrumentation-active_job", require: false
+gem "opentelemetry-instrumentation-active_record", require: false
+gem "opentelemetry-instrumentation-active_support", require: false
 gem "opentelemetry-instrumentation-aws_sdk", require: false
 gem "opentelemetry-instrumentation-concurrent_ruby", require: false
 gem "opentelemetry-instrumentation-faraday", require: false
-gem "opentelemetry-instrumentation-http", require: false
 gem "opentelemetry-instrumentation-http_client", require: false
 gem "opentelemetry-instrumentation-net_http", require: false
-# gem "opentelemetry-instrumentation-pg", require: false
-# gem "opentelemetry-instrumentation-redis", require: false
+gem "opentelemetry-instrumentation-pg", require: false
+gem "opentelemetry-instrumentation-rack", require: false
+gem "opentelemetry-instrumentation-rails", require: false
+gem "opentelemetry-instrumentation-rake", require: false
+gem "opentelemetry-instrumentation-redis", require: false
+
+gem "opentelemetry-exporter-otlp", require: false
+gem "opentelemetry-sdk", require: false
 
 gem "paper_trail", "~> 12.0"
 # Used to speed up reporting
