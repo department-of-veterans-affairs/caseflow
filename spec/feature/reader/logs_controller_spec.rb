@@ -32,5 +32,4 @@ RSpec.feature "Metrics::V2::LogsController", type: :feature do
       Generators::Document.build(type: "NOD", received_at: 1.day.ago)
     ]
   end
-
 end
