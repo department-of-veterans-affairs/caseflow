@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require "#{Rails.root}/app/helpers/sync_decided_appeals_helper.rb"
 
 namespace :appeal_state_synchronizer do
   desc "Used to synchronize appeal_states table using data from other sources."
@@ -9,6 +10,12 @@ namespace :appeal_state_synchronizer do
     adjust_ama_hearing_statuses
     locate_unrecorded_docketed_states
     backfill_appeal_information
+  end
+
+  task sync_legacy_appeal_decisions: :environment do
+    include SyncDecidedAppealsHelper
+
+    sync_decided_appeals
   end
 
   def map_appeal_hearing_scheduled_state(appeal_state)
