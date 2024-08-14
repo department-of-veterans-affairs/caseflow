@@ -60,9 +60,9 @@ class HearingRepository
       fail HearingDayFull if !override_full_hearing_day_validation && hearing_day.hearing_day_full?
 
       if attrs[:appeal].is_a?(LegacyAppeal)
-        scheduled_for = HearingTimeService.legacy_formatted_scheduled_for(
-          scheduled_for: hearing_day.scheduled_for,
-          scheduled_time_string: processed_scheduled_time
+        scheduled_for = HearingDatetimeService.legacy_formatted_scheduled_for(
+          date: hearing_day.scheduled_for,
+          time_string: processed_scheduled_time
         )
         vacols_hearing = create_vacols_hearing(
           hearing_day: hearing_day,
