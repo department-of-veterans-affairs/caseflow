@@ -208,27 +208,6 @@ class ClaimHistoryEvent
           %w[cancelled denied approved].include?(change_data["issue_modification_request_status"]))
     end
 
-    def should_create_imr_in_progress_status_event?(change_data)
-      (imr_last_decided_row?(change_data) &&
-        (!imr_decided_in_same_transaction?(change_data) || change_data["previous_imr_decided_at"].nil?)) ||
-        (change_data["previous_imr_created_at"].nil? ||
-          !imr_created_in_same_transaction?(change_data) &&
-          %w[cancelled denied approved].include?(change_data["issue_modification_request_status"]))
-    end
-
-    def create_pending_status_events(change_data, event_date)
-      pending_system_hash_events = pending_system_hash
-        .merge("event_date" => event_date)
-
-      imr_created_in_same_transaction = imr_created_in_same_transaction?(change_data)
-      # if two imr's are of different transaction and if decision has already been made then we
-      # want to put pending status since it went back to pending status before it was approved/cancelled or denied.
-      if change_data["previous_imr_created_at"].nil? ||
-         !imr_created_in_same_transaction
-        from_change_data(:pending, change_data.merge(pending_system_hash_events))
-      end
-    end
-
     def create_pending_status_events(change_data, event_date)
       pending_system_hash_events = pending_system_hash
         .merge("event_date" => event_date)

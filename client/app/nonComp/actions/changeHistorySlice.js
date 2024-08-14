@@ -63,10 +63,6 @@ export const fetchIndividualHistory = createAsyncThunk(
       const response = await ApiUtil.get(url);
 
       const events = response.body;
-      console.log(events,'events')
-      // const events = {
-
-      // };
 
       const flattenData = events.map(({ attributes, ...rest }) => ({ ...attributes, ...rest }));
 

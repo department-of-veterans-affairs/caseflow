@@ -271,18 +271,6 @@ class ClaimHistoryService
                                                        change_data["issue_modification_request_created_at"])
       )
     end
-
-    # no matter what the status is if request_modification_request was made then pending status has to be present.
-    if task_id &&
-       !@processed_issue_modification_task_ids.include?(task_id) &&
-       change_data["issue_modification_request_status"] == "assigned"
-      @processed_issue_modification_task_ids.add(task_id)
-
-      save_events(
-        ClaimHistoryEvent.create_pending_status_events(change_data,
-                                                       change_data["issue_modification_request_created_at"])
-      )
-    end
   end
 
   def ensure_array(variable)

@@ -231,16 +231,6 @@ class BusinessLine < Organization
           INNER JOIN issue_modification_requests ON issue_modification_requests.id = versions.item_id
           WHERE versions.item_type = 'IssueModificationRequest'
           GROUP BY
-              versions.item_id, versions.item_type
-        ), imr_version_agg AS (SELECT
-              versions.item_id,
-              versions.item_type,
-              ARRAY_AGG(versions.object_changes ORDER BY versions.id) AS object_changes_array
-          FROM
-              versions
-          INNER JOIN issue_modification_requests ON issue_modification_requests.id = versions.item_id
-          WHERE versions.item_type = 'IssueModificationRequest'
-          GROUP BY
               versions.item_id, versions.item_type)
         SELECT tasks.id AS task_id,
           check_imr_current_status.is_assigned_present,
