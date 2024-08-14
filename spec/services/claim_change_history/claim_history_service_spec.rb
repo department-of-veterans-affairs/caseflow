@@ -227,6 +227,237 @@ describe ClaimHistoryService do
       end
     end
 
+    context "issue modification edge cases" do
+      let!(:sc_task_with_imrs) do
+        create(:supplemental_claim_vha_task,
+               appeal: create(:supplemental_claim,
+                              :with_vha_issue,
+                              :with_intake,
+                              benefit_type: "vha",
+                              claimant_type: :veteran_claimant))
+      end
+
+      let(:request_issue) { sc_task_with_imrs.appeal.request_issues.first }
+      let(:supplemental_claim) { sc_task_with_imrs.appeal }
+
+      let(:starting_imr_events) do
+        [:claim_creation, :added_issue, :in_progress, :removal, :pending, :addition]
+      end
+
+      let!(:issue_modification_addition) do
+        create(:issue_modification_request, request_type: "addition", decision_review: supplemental_claim)
+      end
+
+      # Only generate the events for this task to keep it focused on the issue modification request events
+      let!(:filters) { { task_id: [sc_task_with_imrs.id] } }
+
+      let!(:vha_admin) { create(:user, full_name: "VHA ADMIN", css_id: "VHAADMIN") }
+
+      before do
+        OrganizationsUser.make_user_admin(vha_admin, VhaBusinessLine.singleton)
+        Timecop.freeze(Time.zone.now)
+      end
+
+      after do
+        Timecop.return
+      end
+
+      it "should correctly generate temporary in progress and pending events for a single imr event" do
+        events = subject
+        one_imr_events = *starting_imr_events - [:removal]
+        expect(events.map(&:event_type)).to contain_exactly(*one_imr_events)
+
+        # Make an edit to the addition and make sure the events are correct
+        Timecop.travel(2.minutes.from_now)
+        issue_modification_addition.update!(edited_at: Time.zone.now, nonrating_issue_category: "CHAMPVA")
+
+        # Rebuild events
+        service_instance.build_events
+        new_events = [:request_edited]
+        expect(events.map(&:event_type)).to contain_exactly(*one_imr_events + new_events)
+
+        # Approve the addition and make sure the events are correct
+        # NOTE: This only does the issue modification events and does not create a request issue update
+        Timecop.travel(2.minutes.from_now)
+        issue_modification_addition.update!(decider: vha_admin, status: :approved, decision_reason: "Better reason")
+
+        # Rebuild events
+        service_instance.build_events
+        new_events.push(:in_progress, :request_approved)
+        expect(events.map(&:event_type)).to contain_exactly(*one_imr_events + new_events)
+
+        # Create another addition IMR to verify that the event sequence works through one more iteration
+        # TODO: Move this into a shared block to use for all these edge cases
+        Timecop.travel(2.minutes.from_now)
+        addition2 = create(:issue_modification_request, request_type: "addition", decision_review: supplemental_claim)
+
+        service_instance.build_events
+        new_events.push(:addition, :pending)
+        expect(events.map(&:event_type)).to contain_exactly(*one_imr_events + new_events)
+
+        # Approve the newest addition to make sure the in progress and approval events are correct
+        Timecop.travel(2.minutes.from_now)
+        addition2.update!(decider: vha_admin, status: :approved, decision_reason: "Better reason2")
+
+        service_instance.build_events
+        new_events.push(:in_progress, :request_approved)
+        expect(events.map(&:event_type)).to contain_exactly(*one_imr_events + new_events)
+      end
+
+      context "starting with two imrs" do
+        let!(:issue_modification_removal) do
+          create(:issue_modification_request,
+                 request_type: "removal",
+                 request_issue: request_issue,
+                 decision_review: supplemental_claim)
+        end
+
+        it "should correctly generate temporary in progress events for two imrs created at the same time" do
+          events = subject
+          expect(events.map(&:event_type)).to contain_exactly(*starting_imr_events)
+
+          # Deny the removal and make sure the events are correct
+          Timecop.travel(2.minutes.from_now)
+          issue_modification_removal.update!(decider: vha_admin, status: :denied, decision_reason: "Just cause")
+
+          # Rebuild events
+          service_instance.build_events
+          new_events = [:request_denied]
+          expect(events.map(&:event_type)).to contain_exactly(*starting_imr_events + new_events)
+
+          # Approve the addition and make sure the events are correct
+          # NOTE: This only does the issue modification events and does not create a request issue update
+          Timecop.travel(2.minutes.from_now)
+          issue_modification_addition.update!(decider: vha_admin, status: :approved, decision_reason: "Better reason")
+
+          # Rebuild events
+          service_instance.build_events
+          new_events.push(:in_progress, :request_approved)
+          expect(events.map(&:event_type)).to contain_exactly(*starting_imr_events + new_events)
+
+          # Create another addition IMR to verify that the event sequence works through one more iteration
+          # TODO: Move this into a shared block to use for all these edge cases
+          Timecop.travel(2.minutes.from_now)
+          addition2 = create(:issue_modification_request, request_type: "addition", decision_review: supplemental_claim)
+
+          service_instance.build_events
+          new_events.push(:addition, :pending)
+          expect(events.map(&:event_type)).to contain_exactly(*starting_imr_events + new_events)
+
+          # Approve the newest addition to make sure the in progress and approval events are correct
+          Timecop.travel(2.minutes.from_now)
+          addition2.update!(decider: vha_admin, status: :approved, decision_reason: "Better reason2")
+
+          service_instance.build_events
+          new_events.push(:in_progress, :request_approved)
+          expect(events.map(&:event_type)).to contain_exactly(*starting_imr_events + new_events)
+        end
+
+        it "should correctly generate temporary in progress events for two imrs decided at the same time" do
+          events = subject
+          expect(events.map(&:event_type)).to contain_exactly(*starting_imr_events)
+
+          # Deny the removal and approve the addition and make sure the events are correct
+          Timecop.travel(2.minutes.from_now)
+          ActiveRecord::Base.transaction do
+            issue_modification_removal.update!(decider: vha_admin, status: :denied, decision_reason: "Just cause")
+            issue_modification_addition.update!(decider: vha_admin, status: :approved, decision_reason: "Better reason")
+          end
+
+          # Rebuild events
+          service_instance.build_events
+          new_events = [:request_denied, :request_approved, :in_progress]
+          expect(events.map(&:event_type)).to contain_exactly(*starting_imr_events + new_events)
+
+          # Create another addition IMR to verify that the event sequence works through one more iteration
+          Timecop.travel(2.minutes.from_now)
+          addition2 = create(:issue_modification_request, request_type: "addition", decision_review: supplemental_claim)
+
+          service_instance.build_events
+          new_events.push(:addition, :pending)
+          expect(events.map(&:event_type)).to contain_exactly(*starting_imr_events + new_events)
+
+          # Approve the newest addition to make sure the in progress and approval events are correct
+          Timecop.travel(2.minutes.from_now)
+          addition2.update!(decider: vha_admin, status: :approved, decision_reason: "Better reason2")
+
+          service_instance.build_events
+          new_events.push(:in_progress, :request_approved)
+          expect(events.map(&:event_type)).to contain_exactly(*starting_imr_events + new_events)
+        end
+
+        it "should correctly generate temporary in progress events for two imrs with one cancelled in reverse order" do
+          events = subject
+          expect(events.map(&:event_type)).to contain_exactly(*starting_imr_events)
+
+          # Approve the addition and make sure the events are correct
+          # NOTE: This only does the issue modification events and does not create a request issue update
+          Timecop.travel(2.minutes.from_now)
+          issue_modification_addition.update!(decider: vha_admin, status: :approved, decision_reason: "Better reason")
+
+          # Rebuild events
+          service_instance.build_events
+          new_events = [:request_approved]
+          expect(events.map(&:event_type)).to contain_exactly(*starting_imr_events + new_events)
+
+          # Cancel the removal and make sure the events are correct
+          Timecop.travel(2.minutes.from_now)
+          issue_modification_removal.update!(decider: vha_admin, status: :cancelled, decision_reason: "Just cause")
+
+          # Rebuild events
+          service_instance.build_events
+          new_events.push(:request_cancelled, :in_progress)
+          expect(events.map(&:event_type)).to contain_exactly(*starting_imr_events + new_events)
+
+          # TODO: once again move this to a shared function
+          # Create another addition IMR to verify that the event sequence works through one more iteration
+          Timecop.travel(2.minutes.from_now)
+          addition2 = create(:issue_modification_request, request_type: "addition", decision_review: supplemental_claim)
+
+          service_instance.build_events
+          new_events.push(:addition, :pending)
+          expect(events.map(&:event_type)).to contain_exactly(*starting_imr_events + new_events)
+
+          # Approve the newest addition to make sure the in progress and approval events are correct
+          Timecop.travel(2.minutes.from_now)
+          addition2.update!(decider: vha_admin, status: :approved, decision_reason: "Better reason2")
+
+          service_instance.build_events
+          new_events.push(:in_progress, :request_approved)
+          expect(events.map(&:event_type)).to contain_exactly(*starting_imr_events + new_events)
+        end
+
+        it "when an imr is cancelled at the same time and another is created" do
+          events = subject
+          expect(events.map(&:event_type)).to contain_exactly(*starting_imr_events)
+
+          # Approve the addition and make sure the events are correct
+          # NOTE: This only does the issue modification events and does not create a request issue update
+          Timecop.travel(2.minutes.from_now)
+          issue_modification_addition.update!(decider: vha_admin, status: :approved, decision_reason: "Better reason")
+
+          # Rebuild events
+          service_instance.build_events
+          new_events = [:request_approved]
+          expect(events.map(&:event_type)).to contain_exactly(*starting_imr_events + new_events)
+
+          # Cancel the removal and add a new approval at the same time
+          Timecop.travel(2.minutes.from_now)
+          ActiveRecord::Base.transaction do
+            issue_modification_removal.update!(decider: vha_admin, status: :cancelled, decision_reason: "Just cause")
+            addition2 = create(:issue_modification_request, request_type: "addition", decision_review: supplemental_claim)
+          end
+
+          p '**********************************before final build events *************************************'
+          # Rebuild events
+          service_instance.build_events
+          p events.map(&:event_type)
+          new_events.push(:request_cancelled, :addition)
+          expect(events.map(&:event_type)).to contain_exactly(*starting_imr_events + new_events)
+        end
+      end
+    end
+
     context "with filters" do
       context "with task_id filter" do
         let(:filters) { { task_id: sc_task.id } }
