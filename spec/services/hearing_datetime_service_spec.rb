@@ -49,7 +49,7 @@ RSpec.describe HearingDatetimeService do
       end
 
       it "edge case: returns the correct time for error-prone Manila timezone: Summer" do
-        # note Asia/Manila tz does not observe Daylight Savings Time
+        # NOTE: Asia/Manila tz does not observe Daylight Savings Time
         date = "2021-07-03"
         time_string = "1:00 PM Philippine Standard Time"
 

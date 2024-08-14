@@ -334,7 +334,7 @@ class HearingRepository
         vdkey: attrs[:hearing_day].id,
         hearing_type: attrs[:hearing_day].request_type,
         room: attrs[:hearing_day].room,
-        board_member: attrs[:hearing_day].judge ? attrs[:hearing_day].judge.vacols_attorney_id : nil,
+        board_member: attrs[:hearing_day]&.judge ? attrs[:hearing_day].judge.vacols_attorney_id : nil,
         vdbvapoc: attrs[:hearing_day].bva_poc,
         notes1: attrs[:notes]
       )
