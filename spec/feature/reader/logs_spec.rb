@@ -55,6 +55,7 @@ RSpec.feature "Reader", :all_dbs do
 
       context "Internet Speed available", js: true do
         it "create an error Metric including internet speed" do
+          FeatureToggle.enable!(:metrics_get_pdfjs_doc)
           Capybara.current_driver = :selenium_chrome_headless
           expect(Metric.any?).to be false
           visit "/reader/appeal/#{appeal.vacols_id}/documents/1"
