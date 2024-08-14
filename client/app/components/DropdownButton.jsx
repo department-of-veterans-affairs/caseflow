@@ -1,20 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import { css } from 'glamor';
 import Button from './Button';
 
-const dropdownList = css({
+const dropdownList = {
   top: '3.55rem',
   left: '0',
   width: '21.2rem'
-});
-const dropdownBtn = css({
+};
+const dropdownBtn = {
   marginRight: '0rem'
-});
-const dropdownBtnContainer = css({
+};
+const dropdownBtnContainer = {
   marginRight: '2rem'
-});
+};
 
 export default class DropdownButton extends React.Component {
   constructor(props) {
@@ -97,7 +96,7 @@ export default class DropdownButton extends React.Component {
     return list.target ? this.dropdownLink(list) : this.dropdownAction(list);
   }
   dropdownButtonList = () => {
-    return <ul role="listbox" className="cf-dropdown-menu active" {...dropdownList}>
+    return <ul role="listbox" className="cf-dropdown-menu active" style={dropdownList}>
       {this.props.lists.map((list, index) =>
         <li role="option" key={index}>
           {this.renderLiBody(list)}
@@ -108,8 +107,8 @@ export default class DropdownButton extends React.Component {
   render() {
     const { label, children } = this.props;
 
-    return <div className="cf-dropdown" ref={this.setWrapperRef} {...dropdownBtnContainer} >
-      <button {...dropdownBtn}
+    return <div className="cf-dropdown" ref={this.setWrapperRef} style={dropdownBtnContainer} >
+      <button style={dropdownBtn}
         role="button"
         aria-label={label || 'dropdown-button'}
         aria-haspopup="listbox"
