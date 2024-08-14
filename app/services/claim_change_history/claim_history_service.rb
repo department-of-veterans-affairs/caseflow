@@ -267,8 +267,8 @@ class ClaimHistoryService
       @processed_issue_modification_task_ids.add(task_id)
 
       save_events(
-        ClaimHistoryEvent.create_pending_status_events(change_data,
-                                                       change_data["issue_modification_request_created_at"])
+        ClaimHistoryEvent.create_pending_status_event(change_data,
+                                                      change_data["issue_modification_request_created_at"])
       )
     end
   end
