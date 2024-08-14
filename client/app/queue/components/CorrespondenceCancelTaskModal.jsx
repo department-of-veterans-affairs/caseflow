@@ -14,6 +14,7 @@ import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import QueueFlowModal from './QueueFlowModal';
 import ApiUtil from '../../util/ApiUtil';
 import Button from '../../components/Button';
+import { setTaskNotRelatedToAppealBanner, cancelTaskNotRelatedToAppeal } from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
 
 /* eslint-disable camelcase */
 const CorrespondenceCancelTaskModal = (props) => {
@@ -62,7 +63,7 @@ const CorrespondenceCancelTaskModal = (props) => {
     // const currentInstruction = (props.task.type === 'PostSendInitialNotificationLetterHoldingTask' ?
     //   `\nHold time: ${currentDaysOnHold(task)}/${task.onHoldDuration} days\n\n ${instructions}` : formatInstructions());
 
-    // eslint-disable-next-line no-debugger
+    // // eslint-disable-next-line no-debugger
     // debugger;
     // console.log(currentInstruction);
 
@@ -76,28 +77,8 @@ const CorrespondenceCancelTaskModal = (props) => {
       }
     };
 
-    // eslint-disable-next-line no-debugger
-    // debugger;
-    console.log(payload);
-    // const successMsg = {
-    //   title: taskData?.message_title ?? 'Task was cancelled successfully.',
-    //   detail: (
-    //     <span>
-    //       <span dangerouslySetInnerHTML={{ __html: taskData.message_detail }} />
-    //     </span>
-    //   )
-    // };
-    console.log((`queue/correspondence/tasks/${props.task_id}/cancel`));
+    return props.cancelTaskNotRelatedToAppeal(props.task_id, payload);
 
-    return ApiUtil.patch(`/queue/correspondence/tasks/${props.task_id}/cancel`, payload).
-      then((r) => {
-
-        console.log(r);
-
-      }).
-      catch((error) => {
-        console.error(error);
-      });
   };
 
   // Additional properties - should be removed later once generic submit buttons are styled the same across all modals
@@ -165,10 +146,13 @@ CorrespondenceCancelTaskModal.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   task: taskById(state, { taskId: ownProps.taskId }),
+  taskNotRelatedToAppealBanner: state.correspondenceDetails.bannerAlert
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  requestPatch
+  requestPatch,
+  setTaskNotRelatedToAppealBanner,
+  cancelTaskNotRelatedToAppeal
 }, dispatch);
 
 export default (withRouter(

@@ -62,10 +62,10 @@ class CorrespondenceTasksController < TasksController
 
   def cancel
     # Commented out for testing
-    # task = CorrespondenceTask.find(correspondence_tasks_params[:task_id])
-    # task.update!(
-    #   status: Constants.TASK_STATUSES.cancelled
-    #   )
+    task = CorrespondenceTask.find(correspondence_tasks_params[:task_id])
+    task.update!(
+      status: Constants.TASK_STATUSES.cancelled
+      )
   end
 
   def change_task_type

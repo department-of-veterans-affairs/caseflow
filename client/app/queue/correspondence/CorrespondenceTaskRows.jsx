@@ -78,6 +78,7 @@ const cancelGrayTimeLineStyle = (timeline) => {
 };
 
 class CorrespondenceTaskRows extends React.PureComponent {
+
   constructor(props) {
     super(props);
 
@@ -86,6 +87,7 @@ class CorrespondenceTaskRows extends React.PureComponent {
       showEditNodDateModal: false,
       activeTasks: [...props.taskList],
     };
+    console.log(props.taskList);
   }
 
   toggleTaskInstructionsVisibility = (taskKey) => {
@@ -295,6 +297,8 @@ class CorrespondenceTaskRows extends React.PureComponent {
     const sortedTimelineEvents = sortCaseTimelineEvents(
       taskList,
     );
+
+    console.log(sortedTimelineEvents);
 
     return (
       <React.Fragment key={correspondence.uuid}>
