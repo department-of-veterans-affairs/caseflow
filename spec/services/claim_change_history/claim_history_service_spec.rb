@@ -453,7 +453,6 @@ describe ClaimHistoryService do
 
           # Rebuild events
           service_instance.build_events
-          p events.map(&:event_type)
           new_events.push(:request_cancelled, :addition)
           expect(events.map(&:event_type)).to contain_exactly(*starting_imr_events + new_events)
 
