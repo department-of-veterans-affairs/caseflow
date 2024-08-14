@@ -187,7 +187,8 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
     end
 
     context "Legacy Hearing" do
-      let(:initial_hearing) { create(:legacy_hearing, :for_vacols_case) }
+      let(:case_hearing) { create(:case_hearing) }
+      let(:initial_hearing) { create(:legacy_hearing, case_hearing: case_hearing) }
 
       context "With a pre-existing scheduled_in_timezone value" do
         let(:hearing_time_selection_string) { "10:00 AM Central Time (US & Canada)" }
