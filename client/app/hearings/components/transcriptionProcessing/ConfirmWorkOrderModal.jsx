@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import COPY from '../../../../COPY';
 import ApiUtil from 'app/util/ApiUtil';
@@ -9,6 +9,8 @@ import { css } from 'glamor';
 
 const ConfirmWorkOrderModal = ({ history, onCancel }) => {
   const { state } = history.location;
+
+  const [transcriptionFiles, setTranscriptionFiles] = useState([]);
 
   const styles = {
     body: {
@@ -41,6 +43,9 @@ const ConfirmWorkOrderModal = ({ history, onCancel }) => {
       margin: '3rem',
       fontSize: '17px'
     },
+    '& h2': {
+      margin: '3rem',
+    },
     '& p': {
       marginTop: '2.9rem',
       marginLeft: '-2rem'
@@ -62,6 +67,12 @@ const ConfirmWorkOrderModal = ({ history, onCancel }) => {
         <li><h4>Return date:</h4><p>{state?.returnDateValue}</p></li>
         <li><h4>Contractor:</h4><p>{state?.contractor?.name}</p></li>
       </ul>
+    );
+  };
+
+  const renderTableSection = () => {
+    return (
+      <h2>Number of files: {state?.selectedFiles?.length}</h2>
     );
   };
 
@@ -93,10 +104,22 @@ const ConfirmWorkOrderModal = ({ history, onCancel }) => {
     );
   };
 
+  const getSelectedFilesInfo = (files) => {
+    const ids = files.map((file) => file.id);
+
+    ApiUtil.get(`/hearings/transcription_files/selected_files_info/${ids}`).
+      then((response) => setTranscriptionFiles(response.body));
+  };
+
+  useEffect(() => {
+    getSelectedFilesInfo(state?.selectedFiles);
+  }, []);
+
   return (
     <div {...marginStyles} style={styles.body}>
       <h1>Confirm work order summary</h1>
       {renderFormInformation()}
+      {renderTableSection()}
       {renderButtonSection()}
     </div>
   );

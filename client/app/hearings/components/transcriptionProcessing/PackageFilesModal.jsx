@@ -61,6 +61,20 @@ const PackageFilesModal = ({ onCancel, contractors, selectedFiles }) => {
     );
   };
 
+  const formatDate = (date) => {
+    const dateArr = date.split('/');
+
+    const newArr = dateArr.map((digit) => {
+      if (Number(digit) < 10) {
+        return `0${digit}`;
+      }
+
+      return digit;
+    });
+
+    return newArr.join('/');
+  };
+
   /**
    * Calculates the expected return date for the radio buttons
    * @params {number} days - Amount of days from today
@@ -86,7 +100,9 @@ const PackageFilesModal = ({ onCancel, contractors, selectedFiles }) => {
 
     date.setDate(date.getDate() + totalDays);
 
-    return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+    const dateString = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+
+    return formatDate(dateString);
 
   };
 

@@ -258,6 +258,8 @@ Rails.application.routes.draw do
   get 'hearings/transcription_files/transcription_file_tasks', to: 'hearings/transcription_files#transcription_file_tasks'
   get 'hearings/transcription_files/locked', to: 'hearings/transcription_files#locked'
   post 'hearings/transcription_files/lock', to: 'hearings/transcription_files#lock'
+  get 'hearings/confirm_work_order', to: redirect("/hearings/transcription_files")
+  get 'hearings/transcription_files/selected_files_info/:file_ids', to: 'hearings/transcription_files#selected_files_info'
 
   post 'hearings/hearing_view/:id', to: 'hearings/hearing_view#create'
 
