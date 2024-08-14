@@ -36,36 +36,33 @@ RSpec.feature "Reader", :all_dbs do
   end
 
   describe "Log Reader Metrics" do
+    context "Get Document Success" do
+      it "creates a metric for getting PDF" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
+        expect(page).to have_content("BOARD OF VETERANS' APPEALS")
+        metric = Metric.where("metric_message LIKE ?", "Getting PDF%").first
+        expect(metric.metric_type).to eq "performance"
+      end
+    end
 
-        context "Get Document Success" do
-          it "creates a metric for getting PDF" do
-            visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
-            expect(page).to have_content("BOARD OF VETERANS' APPEALS")
-            metric = Metric.where("metric_message LIKE ?", "Getting PDF%").first
-            expect(metric.metric_type).to eq "performance"
-          end
+    context "Get Document Error" do
+      before do
+        allow_any_instance_of(::DocumentController).to receive(:pdf) do
+          large_document = "a" * (50 * 1024 * 1024) # 50MB document
+          send_data large_document, type: "application/pdf", disposition: "inline"
         end
+      end
 
-        context "Get Document Error" do
-          before do
-            allow_any_instance_of(::DocumentController).to receive(:pdf) do
-              large_document = "a" * (50 * 1024 * 1024) # 50MB document
-              send_data large_document, type: "application/pdf", disposition: "inline"
-            end
-          end
-
-          context "Internet Speed available", js: true do
-            it "create an error Metric including internet speed" do
-              Capybara.current_driver = :selenium_chrome_headless
-              expect(Metric.any?).to be false
-              visit "/reader/appeal/#{appeal.vacols_id}/documents/1"
-              expect(page).to have_content("Unable to load document")
-              metric = Metric.where("metric_message LIKE ?", "Getting PDF%").first
-              expect(metric["metric_attributes"]["bandwidth"]).to end_with("Mbits/s")
-              expect(metric.metric_attributes["step"]).to eq "getDocument"
-              expect(metric.metric_type).to eq "error"
-            end
-          end
+      context "Internet Speed available", js: true do
+        it "create an error Metric including internet speed" do
+          Capybara.current_driver = :selenium_chrome_headless
+          expect(Metric.any?).to be false
+          visit "/reader/appeal/#{appeal.vacols_id}/documents/1"
+          expect(page).to have_content("Unable to load document")
+          metric = Metric.where("metric_message LIKE ?", "Getting PDF%").first
+          expect(metric["metric_attributes"]["bandwidth"]).to end_with("Mbits/s")
+          expect(metric.metric_attributes["step"]).to eq "getDocument"
+          expect(metric.metric_type).to eq "error"
         end
       end
     end
