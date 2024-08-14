@@ -30,6 +30,10 @@ const DocumentViewer = (props) => {
   const currentDocumentId = Number(props.match.params.docId);
 
   useEffect(() => {
+    setShowSearchBar(false);
+  }, [currentDocumentId]);
+
+  useEffect(() => {
     const keyHandler = (event) => {
       if (event.key === 'Escape') {
         event.preventDefault();
