@@ -202,4 +202,82 @@ describe HearingTimeService, :all_dbs do
       end
     end
   end
+
+  context "#process_legacy_scheduled_time_string" do
+    include_context "legacy_hearing"
+
+    subject do
+      HearingTimeService.new(hearing: legacy_hearing).process_legacy_scheduled_time_string(
+        date: test_date,
+        time_string: test_time_string
+      )
+    end
+
+    context "When date is nil and time_string is nil" do
+      let(:test_date) { nil }
+      let(:test_time_string) { nil }
+
+      it { is_expected.to be nil }
+    end
+
+    context "When date is non-nil and time_string is nil" do
+      let(:test_date) { legacy_hearing.hearing_day.scheduled_for }
+      let(:test_time_string) { nil }
+
+      it { is_expected.to be nil }
+    end
+
+    context "When date is nil and time_string is non-nil" do
+      let(:test_date) { nil }
+      let(:test_time_string) { "2:00 PM Pacific Time (US & Canada)" }
+
+      it { is_expected.to be nil }
+    end
+
+    describe "When the time_string is Pacific Time" do
+      let(:test_time_string) { "10:00 AM Pacific Time (US & Canada)" }
+      let(:expected_time) { Time.use_zone("UTC") { Time.zone.parse("#{test_date} 10:00") } }
+
+      context "Standard Time" do
+        let(:test_date) { "2024-11-25" }
+
+        it { is_expected.to eq expected_time }
+      end
+
+      context "DST" do
+        let(:test_date) { "2024-08-25" }
+
+        it { is_expected.to eq expected_time }
+      end
+    end
+
+    describe "When the time_string is Eastern Time" do
+      let(:test_time_string) { "9:00 AM Eastern Time (US & Canada)" }
+      let(:expected_time) { Time.use_zone("UTC") { Time.zone.parse("#{test_date} 9:00") } }
+
+      context "Standard Time" do
+        let(:test_date) { "2024-12-01" }
+
+        it { is_expected.to eq expected_time }
+      end
+
+      context "DST" do
+        let(:test_date) { "2024-06-01" }
+
+        it { is_expected.to eq expected_time }
+      end
+    end
+
+    describe "When the time_string is Phillipine Standard Time" do
+      let(:test_time_string) { "12:00 PM Philippine Standard Time" }
+      let(:expected_time) { Time.use_zone("UTC") { Time.zone.parse("#{test_date} 12:00") } }
+
+      # The Phillipines does not observe DST.
+      context "Standard Time" do
+        let(:test_date) { "2024-01-01" }
+
+        it { is_expected.to eq expected_time }
+      end
+    end
+  end
 end
