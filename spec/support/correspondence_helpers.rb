@@ -30,6 +30,7 @@ module CorrespondenceHelpers
     create(
       :correspondence,
       :with_correspondence_intake_task,
+      assigned_to: current_user,
       veteran_id: veteran.id,
       uuid: SecureRandom.uuid,
       va_date_of_receipt: Time.zone.local(2023, 1, 1)
