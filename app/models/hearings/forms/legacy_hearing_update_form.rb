@@ -37,7 +37,7 @@ class LegacyHearingUpdateForm < BaseHearingUpdateForm
       representative_name: representative_name,
       room: room,
       scheduled_for: HearingDatetimeService.prepare_time_for_storage(
-        date_string: hearing.hearing_day&.scheduled_for,
+        date: hearing.hearing_day&.scheduled_for,
         time_string: scheduled_time_string
       ),
       summary: summary,
