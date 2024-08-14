@@ -60,7 +60,7 @@ class HearingRepository
       fail HearingDayFull if !override_full_hearing_day_validation && hearing_day.hearing_day_full?
 
       if attrs[:appeal].is_a?(LegacyAppeal)
-        scheduled_for = HearingDatetimeService.legacy_formatted_scheduled_for(
+        scheduled_for = HearingDatetimeService.prepare_time_for_storage(
           date: hearing_day.scheduled_for,
           time_string: processed_scheduled_time
         )
