@@ -36,42 +36,6 @@ RSpec.feature "Reader", :all_dbs do
   end
 
   describe "Log Reader Metrics" do
-    context "Feature Toggle pdf_page_render_time_in_ms" do
-      context "Toggle On" do
-        before do
-          FeatureToggle.enable!(:pdf_page_render_time_in_ms)
-        end
-        after do
-          FeatureToggle.disable!(:pdf_page_render_time_in_ms)
-        end
-
-        it "creates a Metric for pdf_page_render_time_in_ms" do
-          expect(Metric.any?).to be false # There are no metrics
-          Capybara.default_max_wait_time = 5 # seconds
-
-          visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
-
-          expect(page).to have_content("BOARD OF VETERANS' APPEALS")
-          metric = Metric.where(metric_message: "PDF render time in Milliseconds")&.last
-          expect(metric).to be_present # New metric is created
-          expect(metric.start).not_to be_nil
-          expect(metric.end).not_to be_nil
-          expect(metric.duration).to be > 0 # Confirm duration not default 0 value
-        end
-      end
-    end
-
-    context "Feature Toggle metrics_get_pdfjs_doc" do
-      context "Toggle On" do
-        before do
-          FeatureToggle.enable!(:metrics_get_pdfjs_doc)
-          FeatureToggle.enable!(:prefetch_disabled)
-        end
-
-        after do
-          FeatureToggle.disable!(:metrics_get_pdfjs_doc)
-          FeatureToggle.disable!(:prefetch_disabled)
-        end
 
         context "Get Document Success" do
           it "creates a metric for getting PDF" do
