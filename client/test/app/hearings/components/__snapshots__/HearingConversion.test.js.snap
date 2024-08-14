@@ -217,6 +217,7 @@ exports[`HearingConversion Displays email fields when hearing type is switched f
       </h2>
       <div
         data-css-1a5irm0=""
+        data-testid="read-only-testid"
       >
         <strong>
           Veteran Name
@@ -227,6 +228,7 @@ exports[`HearingConversion Displays email fields when hearing type is switched f
       </div>
       <div
         data-css-1a5irm0=""
+        data-testid="read-only-testid"
       >
         <strong>
           Veteran Mailing Address
@@ -405,6 +407,7 @@ SAN FRANCISCO, CA 94103
       </h2>
       <div
         data-css-1a5irm0=""
+        data-testid="read-only-testid"
       >
         <pre>
           PARALYZED VETERANS OF AMERICA, INC.
@@ -591,6 +594,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
     <div>
       <div
         data-css-1a5irm0=""
+        data-testid="read-only-testid"
       >
         Convert to Virtual
       </h1>

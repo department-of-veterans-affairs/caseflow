@@ -4,6 +4,7 @@ exports[`ScheduleVeteranForm Displayes Unschedules Notes input 1`] = `
 <DocumentFragment>
   <div
     class="usa-width-one-whole schedule-veteran-details"
+    data-testid="schedule-veteran-form"
   >
     <div
       class="usa-width-one-fourth schedule-veteran-appeal-info-container"
@@ -16,6 +17,7 @@ exports[`ScheduleVeteranForm Displayes Unschedules Notes input 1`] = `
         </h2>
         <div
           data-css-atv6j6=""
+          data-testid="read-only-testid"
         >
           <pre>
             9999 MISSION ST
@@ -24,6 +26,7 @@ SAN FRANCISCO, CA 94103
         </div>
         <div
           data-css-acl5jg=""
+          data-testid="read-only-testid"
         >
           <strong>
             Issues
@@ -33,6 +36,7 @@ SAN FRANCISCO, CA 94103
         <div
           class="schedule-veteran-appeals-info-stream"
           data-css-acl5jg=""
+          data-testid="read-only-testid"
         >
           <strong>
             Appeal Stream
@@ -46,6 +50,7 @@ SAN FRANCISCO, CA 94103
         <div
           class="appeal-information-docket-type-badge"
           data-css-acl5jg=""
+          data-testid="read-only-testid"
         >
           <strong>
             Docket Number
@@ -66,6 +71,7 @@ SAN FRANCISCO, CA 94103
             </span>
             <span
               data-css-1u6dx7t=""
+              data-testid="tooltip-testid"
             >
               <div
                 class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -161,6 +167,7 @@ SAN FRANCISCO, CA 94103
         />
         <div
           data-css-1a5irm0=""
+          data-testid="read-only-testid"
         >
           <strong>
             Power Of Attorney
@@ -418,6 +425,7 @@ exports[`ScheduleVeteranForm Displays HearingTime when video is selected and hal
 <DocumentFragment>
   <div
     class="usa-width-one-whole schedule-veteran-details"
+    data-testid="schedule-veteran-form"
   >
     <div
       class="usa-width-one-fourth schedule-veteran-appeal-info-container"
@@ -430,6 +438,7 @@ exports[`ScheduleVeteranForm Displays HearingTime when video is selected and hal
         </h2>
         <div
           data-css-atv6j6=""
+          data-testid="read-only-testid"
         >
           <pre>
             9999 MISSION ST
@@ -438,6 +447,7 @@ SAN FRANCISCO, CA 94103
         </div>
         <div
           data-css-acl5jg=""
+          data-testid="read-only-testid"
         >
           <strong>
             Issues
@@ -447,6 +457,7 @@ SAN FRANCISCO, CA 94103
         <div
           class="schedule-veteran-appeals-info-stream"
           data-css-acl5jg=""
+          data-testid="read-only-testid"
         >
           <strong>
             Appeal Stream
@@ -460,6 +471,7 @@ SAN FRANCISCO, CA 94103
         <div
           class="appeal-information-docket-type-badge"
           data-css-acl5jg=""
+          data-testid="read-only-testid"
         >
           <strong>
             Docket Number
@@ -480,6 +492,7 @@ SAN FRANCISCO, CA 94103
             </span>
             <span
               data-css-1u6dx7t=""
+              data-testid="tooltip-testid"
             >
               <div
                 class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -575,6 +588,7 @@ SAN FRANCISCO, CA 94103
         />
         <div
           data-css-1a5irm0=""
+          data-testid="read-only-testid"
         >
           <strong>
             Power Of Attorney
@@ -25095,6 +25109,7 @@ exports[`ScheduleVeteranForm Displays ReadOnlyHearingTimeWithZone when video is 
 <DocumentFragment>
   <div
     class="usa-width-one-whole schedule-veteran-details"
+    data-testid="schedule-veteran-form"
   >
     <div
       class="usa-width-one-fourth schedule-veteran-appeal-info-container"
@@ -25107,6 +25122,7 @@ exports[`ScheduleVeteranForm Displays ReadOnlyHearingTimeWithZone when video is 
         </h2>
         <div
           data-css-atv6j6=""
+          data-testid="read-only-testid"
         >
           <pre>
             9999 MISSION ST
@@ -25115,6 +25131,7 @@ SAN FRANCISCO, CA 94103
         </div>
         <div
           data-css-acl5jg=""
+          data-testid="read-only-testid"
         >
           <strong>
             Issues
@@ -25124,6 +25141,7 @@ SAN FRANCISCO, CA 94103
         <div
           class="schedule-veteran-appeals-info-stream"
           data-css-acl5jg=""
+          data-testid="read-only-testid"
         >
           <strong>
             Appeal Stream
@@ -25137,6 +25155,7 @@ SAN FRANCISCO, CA 94103
         <div
           class="appeal-information-docket-type-badge"
           data-css-acl5jg=""
+          data-testid="read-only-testid"
         >
           <strong>
             Docket Number
@@ -25157,6 +25176,7 @@ SAN FRANCISCO, CA 94103
             </span>
             <span
               data-css-1u6dx7t=""
+              data-testid="tooltip-testid"
             >
               <div
                 class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -25252,6 +25272,7 @@ SAN FRANCISCO, CA 94103
         />
         <div
           data-css-1a5irm0=""
+          data-testid="read-only-testid"
         >
           <strong>
             Power Of Attorney
@@ -49987,6 +50008,7 @@ SAN FRANCISCO, CA 94103
         >
           <div
             data-css-1a5irm0=""
+            data-testid="read-only-testid"
           >
             <strong>
               Hearing Time
@@ -50006,6 +50028,7 @@ exports[`ScheduleVeteranForm Displays Virtual Hearing form fields when type is c
 <DocumentFragment>
   <div
     class="usa-width-one-whole schedule-veteran-details"
+    data-testid="schedule-veteran-form"
   >
     <div
       class="usa-width-one-fourth schedule-veteran-appeal-info-container"
@@ -50018,6 +50041,7 @@ exports[`ScheduleVeteranForm Displays Virtual Hearing form fields when type is c
         </h2>
         <div
           data-css-atv6j6=""
+          data-testid="read-only-testid"
         >
           <pre>
             9999 MISSION ST
@@ -50026,6 +50050,7 @@ SAN FRANCISCO, CA 94103
         </div>
         <div
           data-css-acl5jg=""
+          data-testid="read-only-testid"
         >
           <strong>
             Issues
@@ -50035,6 +50060,7 @@ SAN FRANCISCO, CA 94103
         <div
           class="schedule-veteran-appeals-info-stream"
           data-css-acl5jg=""
+          data-testid="read-only-testid"
         >
           <strong>
             Appeal Stream
@@ -50048,6 +50074,7 @@ SAN FRANCISCO, CA 94103
         <div
           class="appeal-information-docket-type-badge"
           data-css-acl5jg=""
+          data-testid="read-only-testid"
         >
           <strong>
             Docket Number
@@ -50068,6 +50095,7 @@ SAN FRANCISCO, CA 94103
             </span>
             <span
               data-css-1u6dx7t=""
+              data-testid="tooltip-testid"
             >
               <div
                 class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -50163,6 +50191,7 @@ SAN FRANCISCO, CA 94103
         />
         <div
           data-css-1a5irm0=""
+          data-testid="read-only-testid"
         >
           <strong>
             Power Of Attorney
@@ -50312,6 +50341,7 @@ SAN FRANCISCO, CA 94103
       >
         <div
           data-css-acl5jg=""
+          data-testid="read-only-testid"
         >
           <strong>
             Hearing Location
@@ -50746,6 +50776,7 @@ SAN FRANCISCO, CA 94103
         </strong>
         <div
           data-css-1a5irm0=""
+          data-testid="read-only-testid"
         >
           <pre>
             PARALYZED VETERANS OF AMERICA, INC.
@@ -50920,6 +50951,7 @@ exports[`ScheduleVeteranForm Displays error messages when errors are present 1`]
 <DocumentFragment>
   <div
     class="usa-width-one-whole schedule-veteran-details"
+    data-testid="schedule-veteran-form"
   >
     <div
       class="usa-width-one-fourth schedule-veteran-appeal-info-container"
@@ -50932,6 +50964,7 @@ exports[`ScheduleVeteranForm Displays error messages when errors are present 1`]
         </h2>
         <div
           data-css-atv6j6=""
+          data-testid="read-only-testid"
         >
           <pre>
             9999 MISSION ST
@@ -50940,6 +50973,7 @@ SAN FRANCISCO, CA 94103
         </div>
         <div
           data-css-acl5jg=""
+          data-testid="read-only-testid"
         >
           <strong>
             Issues
@@ -50949,6 +50983,7 @@ SAN FRANCISCO, CA 94103
         <div
           class="schedule-veteran-appeals-info-stream"
           data-css-acl5jg=""
+          data-testid="read-only-testid"
         >
           <strong>
             Appeal Stream
@@ -50962,6 +50997,7 @@ SAN FRANCISCO, CA 94103
         <div
           class="appeal-information-docket-type-badge"
           data-css-acl5jg=""
+          data-testid="read-only-testid"
         >
           <strong>
             Docket Number
@@ -50982,6 +51018,7 @@ SAN FRANCISCO, CA 94103
             </span>
             <span
               data-css-1u6dx7t=""
+              data-testid="tooltip-testid"
             >
               <div
                 class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -51077,6 +51114,7 @@ SAN FRANCISCO, CA 94103
         />
         <div
           data-css-1a5irm0=""
+          data-testid="read-only-testid"
         >
           <strong>
             Power Of Attorney
@@ -51544,6 +51582,7 @@ exports[`ScheduleVeteranForm Displays hearing form when regional office is selec
 <DocumentFragment>
   <div
     class="usa-width-one-whole schedule-veteran-details"
+    data-testid="schedule-veteran-form"
   >
     <div
       class="usa-width-one-fourth schedule-veteran-appeal-info-container"
@@ -51556,6 +51595,7 @@ exports[`ScheduleVeteranForm Displays hearing form when regional office is selec
         </h2>
         <div
           data-css-atv6j6=""
+          data-testid="read-only-testid"
         >
           <pre>
             9999 MISSION ST
@@ -51564,6 +51604,7 @@ SAN FRANCISCO, CA 94103
         </div>
         <div
           data-css-acl5jg=""
+          data-testid="read-only-testid"
         >
           <strong>
             Issues
@@ -51573,6 +51614,7 @@ SAN FRANCISCO, CA 94103
         <div
           class="schedule-veteran-appeals-info-stream"
           data-css-acl5jg=""
+          data-testid="read-only-testid"
         >
           <strong>
             Appeal Stream
@@ -51586,6 +51628,7 @@ SAN FRANCISCO, CA 94103
         <div
           class="appeal-information-docket-type-badge"
           data-css-acl5jg=""
+          data-testid="read-only-testid"
         >
           <strong>
             Docket Number
@@ -51606,6 +51649,7 @@ SAN FRANCISCO, CA 94103
             </span>
             <span
               data-css-1u6dx7t=""
+              data-testid="tooltip-testid"
             >
               <div
                 class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -51701,6 +51745,7 @@ SAN FRANCISCO, CA 94103
         />
         <div
           data-css-1a5irm0=""
+          data-testid="read-only-testid"
         >
           <strong>
             Power Of Attorney
@@ -52162,6 +52207,7 @@ exports[`ScheduleVeteranForm Matches snapshot with default props 1`] = `
 <DocumentFragment>
   <div
     class="usa-width-one-whole schedule-veteran-details"
+    data-testid="schedule-veteran-form"
   >
     <div
       class="usa-width-one-fourth schedule-veteran-appeal-info-container"
@@ -52174,6 +52220,7 @@ exports[`ScheduleVeteranForm Matches snapshot with default props 1`] = `
         </h2>
         <div
           data-css-atv6j6=""
+          data-testid="read-only-testid"
         >
           <pre>
             9999 MISSION ST
@@ -52182,6 +52229,7 @@ SAN FRANCISCO, CA 94103
         </div>
         <div
           data-css-acl5jg=""
+          data-testid="read-only-testid"
         >
           <strong>
             Issues
@@ -52191,6 +52239,7 @@ SAN FRANCISCO, CA 94103
         <div
           class="schedule-veteran-appeals-info-stream"
           data-css-acl5jg=""
+          data-testid="read-only-testid"
         >
           <strong>
             Appeal Stream
@@ -52204,6 +52253,7 @@ SAN FRANCISCO, CA 94103
         <div
           class="appeal-information-docket-type-badge"
           data-css-acl5jg=""
+          data-testid="read-only-testid"
         >
           <strong>
             Docket Number
@@ -52224,6 +52274,7 @@ SAN FRANCISCO, CA 94103
             </span>
             <span
               data-css-1u6dx7t=""
+              data-testid="tooltip-testid"
             >
               <div
                 class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -52319,6 +52370,7 @@ SAN FRANCISCO, CA 94103
         />
         <div
           data-css-1a5irm0=""
+          data-testid="read-only-testid"
         >
           <strong>
             Power Of Attorney
@@ -52576,6 +52628,7 @@ exports[`ScheduleVeteranForm RO dropdown includes Virtual Hearings as option is 
 <DocumentFragment>
   <div
     class="usa-width-one-whole schedule-veteran-details"
+    data-testid="schedule-veteran-form"
   >
     <div
       class="usa-width-one-fourth schedule-veteran-appeal-info-container"
@@ -52588,6 +52641,7 @@ exports[`ScheduleVeteranForm RO dropdown includes Virtual Hearings as option is 
         </h2>
         <div
           data-css-atv6j6=""
+          data-testid="read-only-testid"
         >
           <pre>
             9999 MISSION ST
@@ -52596,6 +52650,7 @@ SAN FRANCISCO, CA 94103
         </div>
         <div
           data-css-acl5jg=""
+          data-testid="read-only-testid"
         >
           <strong>
             Issues
@@ -52605,6 +52660,7 @@ SAN FRANCISCO, CA 94103
         <div
           class="schedule-veteran-appeals-info-stream"
           data-css-acl5jg=""
+          data-testid="read-only-testid"
         >
           <strong>
             Appeal Stream
@@ -52618,6 +52674,7 @@ SAN FRANCISCO, CA 94103
         <div
           class="appeal-information-docket-type-badge"
           data-css-acl5jg=""
+          data-testid="read-only-testid"
         >
           <strong>
             Docket Number
@@ -52638,6 +52695,7 @@ SAN FRANCISCO, CA 94103
             </span>
             <span
               data-css-1u6dx7t=""
+              data-testid="tooltip-testid"
             >
               <div
                 class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -52733,6 +52791,7 @@ SAN FRANCISCO, CA 94103
         />
         <div
           data-css-1a5irm0=""
+          data-testid="read-only-testid"
         >
           <strong>
             Power Of Attorney
@@ -52882,6 +52941,7 @@ SAN FRANCISCO, CA 94103
       >
         <div
           data-css-acl5jg=""
+          data-testid="read-only-testid"
         >
           <strong>
             Hearing Location
@@ -53177,6 +53237,7 @@ SAN FRANCISCO, CA 94103
         </strong>
         <div
           data-css-1a5irm0=""
+          data-testid="read-only-testid"
         >
           <pre>
             PARALYZED VETERANS OF AMERICA, INC.
