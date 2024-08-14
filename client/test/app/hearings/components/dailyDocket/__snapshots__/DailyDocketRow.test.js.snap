@@ -112,11 +112,11 @@ exports[`DailyDocketRow renders correctly for non virtual, DVC  1`] = `
           aria-describedby="badge-220428-968"
           aria-label=""
           currentitem="false"
-          data-css-2moai0=""
           data-event="focus mouseenter"
           data-event-off="mouseleave keydown"
           data-for="badge-220428-968"
           data-tip="true"
+          style="display: inline-block; background: rgb(214, 215, 217); border-radius: 1rem; line-height: 2rem; margin-right: 0.5rem; padding: 0px 1rem;"
           tabindex="0"
         >
           H
@@ -701,11 +701,11 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
           aria-describedby="badge-220428-968"
           aria-label=""
           currentitem="false"
-          data-css-2moai0=""
           data-event="focus mouseenter"
           data-event-off="mouseleave keydown"
           data-for="badge-220428-968"
           data-tip="true"
+          style="display: inline-block; background: rgb(214, 215, 217); border-radius: 1rem; line-height: 2rem; margin-right: 0.5rem; padding: 0px 1rem;"
           tabindex="0"
         >
           H
@@ -1287,11 +1287,11 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
           aria-describedby="badge-220428-968"
           aria-label=""
           currentitem="false"
-          data-css-2moai0=""
           data-event="focus mouseenter"
           data-event-off="mouseleave keydown"
           data-for="badge-220428-968"
           data-tip="true"
+          style="display: inline-block; background: rgb(214, 215, 217); border-radius: 1rem; line-height: 2rem; margin-right: 0.5rem; padding: 0px 1rem;"
           tabindex="0"
         >
           H
@@ -1846,11 +1846,11 @@ exports[`DailyDocketRow renders correctly for non virtual, attorney 1`] = `
           aria-describedby="badge-220428-968"
           aria-label=""
           currentitem="false"
-          data-css-2moai0=""
           data-event="focus mouseenter"
           data-event-off="mouseleave keydown"
           data-for="badge-220428-968"
           data-tip="true"
+          style="display: inline-block; background: rgb(214, 215, 217); border-radius: 1rem; line-height: 2rem; margin-right: 0.5rem; padding: 0px 1rem;"
           tabindex="0"
         >
           H
@@ -2435,11 +2435,11 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
           aria-describedby="badge-220428-968"
           aria-label=""
           currentitem="false"
-          data-css-2moai0=""
           data-event="focus mouseenter"
           data-event-off="mouseleave keydown"
           data-for="badge-220428-968"
           data-tip="true"
+          style="display: inline-block; background: rgb(214, 215, 217); border-radius: 1rem; line-height: 2rem; margin-right: 0.5rem; padding: 0px 1rem;"
           tabindex="0"
         >
           H
@@ -3052,11 +3052,11 @@ exports[`DailyDocketRow renders correctly for non virtual, judge 1`] = `
           aria-describedby="badge-220428-968"
           aria-label=""
           currentitem="false"
-          data-css-2moai0=""
           data-event="focus mouseenter"
           data-event-off="mouseleave keydown"
           data-for="badge-220428-968"
           data-tip="true"
+          style="display: inline-block; background: rgb(214, 215, 217); border-radius: 1rem; line-height: 2rem; margin-right: 0.5rem; padding: 0px 1rem;"
           tabindex="0"
         >
           H
@@ -3641,11 +3641,11 @@ exports[`DailyDocketRow renders correctly for virtual 1`] = `
           aria-describedby="badge-220428-970"
           aria-label=""
           currentitem="false"
-          data-css-2moai0=""
           data-event="focus mouseenter"
           data-event-off="mouseleave keydown"
           data-for="badge-220428-970"
           data-tip="true"
+          style="display: inline-block; background: rgb(214, 215, 217); border-radius: 1rem; line-height: 2rem; margin-right: 0.5rem; padding: 0px 1rem;"
           tabindex="0"
         >
           H
