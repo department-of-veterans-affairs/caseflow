@@ -131,13 +131,11 @@ feature "Individual Claim History", :postgres do
   end
 
   let!(:cancelled_claim) do
-    request = create(:issue_modification_request,
-                     :with_request_issue,
-                     request_type: "removal",
-                     decision_review: task_event.decision_review)
-    request.request_issue.update(closed_status: "withdrawn", closed_at: Time.zone.now)
+    create(:supplemental_claim, :with_vha_issue, :with_update_users)
+  end
 
-    task_event.update(status: "cancelled")
+  let!(:claim_closed) do
+    create(:higher_level_review_vha_task_with_decision)
   end
 
   let(:task_id) { task_event.decision_review.tasks.ids[0] }
@@ -149,6 +147,12 @@ feature "Individual Claim History", :postgres do
     User.stub = user
     non_comp_org.add_user(user)
     OrganizationsUser.make_user_admin(user, non_comp_org)
+
+    cancelled_claim.establish!
+    cancelled_claim.request_issues.update(closed_status: "withdrawn", closed_at: Time.zone.now)
+    cancelled_claim.tasks.update(status: "cancelled")
+    cancelled_claim.reload
+
     visit task_history_url
   end
 
@@ -529,7 +533,7 @@ feature "Individual Claim History", :postgres do
     dropdown_filter.find("label", text: "Added issue", match: :prefer_exact).click
 
     table = page.find("tbody")
-    expect(table).to have_selector("tr", count: 11)
+    expect(table).to have_selector("tr", count: 10)
 
     table_row = table.first("tr")
     expect(table_row).to have_content("Benefit type:")
@@ -542,13 +546,13 @@ feature "Individual Claim History", :postgres do
     sort = find("[aria-label='Filter by Activity']").click
     sort.click
     dropdown_filter = page.find(class: "cf-dropdown-filter")
-    dropdown_filter.find("label", text: "Request issue addition (5)", match: :prefer_exact).click
+    dropdown_filter.find("label", text: "Requested issue addition (4)", match: :prefer_exact).click
 
     table = page.find("tbody")
-    expect(table).to have_selector("tr", count: 5)
+    expect(table).to have_selector("tr", count: 4)
 
     table_row = table.first("tr")
-    expect(table_row).to have_content("Request issue addition")
+    expect(table_row).to have_content("Requested issue addition")
     expect(table_row).to have_content("Benefit type:")
     expect(table_row).to have_content("Issue type:")
     expect(table_row).to have_content("Issue description:")
@@ -561,13 +565,13 @@ feature "Individual Claim History", :postgres do
     sort.click
 
     dropdown_filter = page.find(class: "cf-dropdown-filter")
-    dropdown_filter.find("label", text: "Request issue modification (3)", match: :prefer_exact).click
+    dropdown_filter.find("label", text: "Requested issue modification (3)", match: :prefer_exact).click
 
     table = page.find("tbody")
     expect(table).to have_selector("tr", count: 3)
 
     table_row = table.first('tr[id^="table-row"]')
-    expect(table_row).to have_content("Request issue modification")
+    expect(table_row).to have_content("Requested issue modification")
     expect(table_row).to have_content("Benefit type:")
     expect(table_row).to have_content("Current issue type:")
     expect(table_row).to have_content("Current issue description:")
@@ -582,13 +586,13 @@ feature "Individual Claim History", :postgres do
     sort = find("[aria-label='Filter by Activity']").click
     sort.click
     dropdown_filter = page.find(class: "cf-dropdown-filter")
-    dropdown_filter.find("label", text: "Request issue removal (3)", match: :prefer_exact).click
+    dropdown_filter.find("label", text: "Requested issue removal (3)", match: :prefer_exact).click
 
     table = page.find("tbody")
     expect(table).to have_selector("tr", count: 3)
 
     table_row = table.first('tr[id^="table-row"]')
-    expect(table_row).to have_content("Request issue removal")
+    expect(table_row).to have_content("Requested issue removal")
 
     expect(table_row).to have_content("Benefit type:")
     expect(table_row).to have_content("Issue type:")
@@ -601,13 +605,13 @@ feature "Individual Claim History", :postgres do
     sort = find("[aria-label='Filter by Activity']").click
     sort.click
     dropdown_filter = page.find(class: "cf-dropdown-filter")
-    dropdown_filter.find("label", text: "Request issue withdrawal (3)", match: :prefer_exact).click
+    dropdown_filter.find("label", text: "Requested issue withdrawal (3)", match: :prefer_exact).click
 
     table = page.find("tbody")
     expect(table).to have_selector("tr", count: 3)
 
     table_row = table.first("tr")
-    expect(table_row).to have_content("Request issue withdrawal")
+    expect(table_row).to have_content("Requested issue withdrawal")
 
     expect(table_row).to have_content("Benefit type:")
     expect(table_row).to have_content("Issue type:")
@@ -645,35 +649,39 @@ feature "Individual Claim History", :postgres do
     expect(table_row).to have_content("Claim created.")
   end
 
-  scenario "Claim closed" do
-    sort = find("[aria-label='Filter by Activity']").click
-    sort.click
-    dropdown_filter = page.find(class: "cf-dropdown-filter")
-    dropdown_filter.find("label", text: "Claim closed (1)", match: :prefer_exact).click
+  context "should do expected details to show claim close for a claim close" do
+    before { visit "/decision_reviews/vha/tasks/#{claim_closed.id}/history" }
 
-    table = page.find("tbody")
-    expect(table).to have_selector("tr", count: 1)
+    it "Claim closed" do
+      sort = find("[aria-label='Filter by Activity']").click
+      sort.click
+      dropdown_filter = page.find(class: "cf-dropdown-filter")
+      dropdown_filter.find("label", text: "Claim closed (1)", match: :prefer_exact).click
 
-    table_row = table.first("tr")
-    expect(table_row).to have_content("Claim closed")
-    expect(table_row).to have_content("Claim closed.")
-    expect(table_row).to have_content("Claim decision date:")
+      table = page.find("tbody")
+      expect(table).to have_selector("tr", count: 1)
+
+      table_row = table.first("tr")
+      expect(table_row).to have_content("Claim closed")
+      expect(table_row).to have_content("Claim decision date:")
+    end
   end
 
-  scenario "Claim Cancelled" do
-    sort = find("[aria-label='Filter by Activity']").click
-    sort.click
-    dropdown_filter = page.find(class: "cf-dropdown-filter")
+  context "should do expected details to show claim closed" do
+    before { visit "/decision_reviews/vha/tasks/#{cancelled_claim.tasks[0].id}/history" }
 
-    binding.pry
+    it "Claim Cancelled" do
+      sort = find("[aria-label='Filter by Activity']").click
+      sort.click
+      dropdown_filter = page.find(class: "cf-dropdown-filter")
 
-    dropdown_filter.find("label", text: "Claim closed (1)", match: :prefer_exact).click
+      dropdown_filter.find("label", text: "Claim closed (1)", match: :prefer_exact).click
 
-    table = page.find("tbody")
-    expect(table).to have_selector("tr", count: 1)
+      table = page.find("tbody")
+      expect(table).to have_selector("tr", count: 1)
 
-    table_row = table.first("tr")
-    expect(table_row).to have_content("Claim Cancelled")
-    expect(table_row).to have_content("Claim closed")
+      table_row = table.first("tr")
+      expect(table_row).to have_content("Claim closed.")
+    end
   end
 end

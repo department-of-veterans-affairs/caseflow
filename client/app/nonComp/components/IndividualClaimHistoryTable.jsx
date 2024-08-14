@@ -46,10 +46,28 @@ const IndividualClaimHistoryTable = (props) => {
   };
 
   const ClaimClosedFragment = (details) => {
-    return <React.Fragment>
-      Claim closed.<br />
-      <b>Claim decision date: </b>{formatDecisionDate(details.dispositionDate)}
-    </React.Fragment>;
+
+    let component = null;
+
+    switch (details.eventType) {
+    case 'cancelled':
+      component = <React.Fragment>
+        <b>Claim cancelled.</b>
+      </React.Fragment>;
+      break;
+    default:
+      component = <React.Fragment>
+        Claim closed.<br />
+        <b>Claim decision date: </b>{formatDecisionDate(details.dispositionDate)}
+      </React.Fragment>;
+      break;
+    }
+
+    return (
+      <div>
+        {component}
+      </div>
+    );
   };
 
   const AddedIssueFragment = (details) => {
