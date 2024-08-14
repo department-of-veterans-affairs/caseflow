@@ -27,15 +27,21 @@ module CorrespondenceHelpers
   def visit_intake_form_with_correspondence_load(return_veteran: false)
     setup_access
     veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
+    create(
+      :correspondence,
+      :with_correspondence_intake_task,
+      veteran_id: veteran.id,
+      uuid: SecureRandom.uuid,
+      va_date_of_receipt: Time.zone.local(2023, 1, 1)
+    )
     54.times do
-      create(
+      cor = create(
         :correspondence,
-        :with_correspondence_intake_task,
-        assigned_to: current_user,
         veteran_id: veteran.id,
         uuid: SecureRandom.uuid,
         va_date_of_receipt: Time.zone.local(2023, 1, 1)
       )
+      cor.review_package_task.update!(status: Constants.TASK_STATUSES.completed)
     end
     find_and_route_to_intake
     return_veteran ? veteran : nil
