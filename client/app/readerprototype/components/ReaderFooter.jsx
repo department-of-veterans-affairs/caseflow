@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React from 'react';
 
 import Button from '../../components/Button';
 import TextField from '../../components/TextField';
@@ -38,7 +38,7 @@ const ReaderFooter = ({
       if (validatePageNum(targetPage, numPages)) {
         document.getElementById(`canvas-${targetPage}`).scrollIntoView();
         setCurrentPage(targetPage);
-      } else {
+      } else if (currentPage) {
         event.target.value = currentPage;
       }
     }
