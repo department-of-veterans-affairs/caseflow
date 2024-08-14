@@ -58,4 +58,14 @@ module CorrespondenceTaskHelpers
     correspondence.root_task.update!(status: Constants.TASK_STATUSES.completed,
                                      closed_at: rand(6 * 24 * 60).minutes.ago)
   end
+
+  def correspondence_spec_user_access
+    InboundOpsTeam.singleton.add_user(current_user)
+    User.authenticate!(user: current_user)
+  end
+
+  def correspondence_spec_super_access
+    InboundOpsTeam.singleton.add_user(current_super)
+    User.authenticate!(user: current_super)
+  end
 end

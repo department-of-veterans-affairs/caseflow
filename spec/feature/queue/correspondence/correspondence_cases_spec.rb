@@ -12,8 +12,7 @@ RSpec.feature("The Correspondence Cases page") do
   # Feature Toggle Tests
   describe "correspondece cases feature toggle" do
     before :each do
-      InboundOpsTeam.singleton.add_user(current_user)
-      User.authenticate!(user: current_user)
+      correspondence_spec_user_access
       @correspondence_uuid = "123456789"
     end
 
@@ -33,8 +32,7 @@ RSpec.feature("The Correspondence Cases page") do
   # Correspondence Cases Tests
   context "Correspondence Cases - Unassigned" do
     before :each do
-      InboundOpsTeam.singleton.add_user(current_super)
-      User.authenticate!(user: current_super)
+      correspondence_spec_super_access
       FeatureToggle.enable!(:correspondence_queue)
       @correspondence_uuid = "123456789"
     end
@@ -235,8 +233,7 @@ RSpec.feature("The Correspondence Cases page") do
 
   context "Correspondence Cases - Action Required" do
     before :each do
-      InboundOpsTeam.singleton.add_user(current_super)
-      User.authenticate!(user: current_super)
+      correspondence_spec_super_access
       FeatureToggle.enable!(:correspondence_queue)
       @correspondence_uuid = "123456789"
     end
@@ -315,8 +312,7 @@ RSpec.feature("The Correspondence Cases page") do
 
   context "Correspondence Cases - Pending" do
     before :each do
-      InboundOpsTeam.singleton.add_user(current_super)
-      User.authenticate!(user: current_super)
+      correspondence_spec_super_access
       FeatureToggle.enable!(:correspondence_queue)
       @correspondence_uuid = "123456789"
     end
@@ -385,8 +381,7 @@ RSpec.feature("The Correspondence Cases page") do
 
   context "Correspondence Cases - Assigned" do
     before :each do
-      InboundOpsTeam.singleton.add_user(current_super)
-      User.authenticate!(user: current_super)
+      correspondence_spec_super_access
       FeatureToggle.enable!(:correspondence_queue)
       @correspondence_uuid = "123456789"
     end
@@ -458,7 +453,7 @@ RSpec.feature("The Correspondence Cases page") do
     let(:current_super) { create(:correspondence_auto_assignable_user, :super_user) }
 
     before :each do
-      User.authenticate!(user: current_super)
+      correspondence_spec_super_access
       FeatureToggle.enable!(:correspondence_queue)
       @correspondence_uuid = "123456789"
     end
@@ -573,8 +568,7 @@ RSpec.feature("The Correspondence Cases page") do
 
   context "Your Correspondence Assigned Tab" do
     before :each do
-      InboundOpsTeam.singleton.add_user(current_user)
-      User.authenticate!(user: current_user)
+      correspondence_spec_user_access
       FeatureToggle.enable!(:correspondence_queue)
     end
 
@@ -763,8 +757,7 @@ RSpec.feature("The Correspondence Cases page") do
 
   context "Your Correspondence In-Progress Tab" do
     before :each do
-      InboundOpsTeam.singleton.add_user(current_user)
-      User.authenticate!(user: current_user)
+      correspondence_spec_user_access
       FeatureToggle.enable!(:correspondence_queue)
     end
 
@@ -822,8 +815,7 @@ RSpec.feature("The Correspondence Cases page") do
 
   context "Your Correspondence Completed Tab" do
     before :each do
-      InboundOpsTeam.singleton.add_user(current_user)
-      User.authenticate!(user: current_user)
+      correspondence_spec_user_access
       FeatureToggle.enable!(:correspondence_queue)
     end
 
