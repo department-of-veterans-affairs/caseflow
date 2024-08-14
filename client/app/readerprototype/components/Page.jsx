@@ -1,8 +1,27 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useRef } from 'react';
 
+const useIsVisible = (ref) => {
+  const [isIntersecting, setIntersecting] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) =>
+      setIntersecting(entry.isIntersecting)
+    );
+
+    observer.observe(ref.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [ref]);
+
+  return isIntersecting;
+};
+
 const Page = ({ page, rotation = '0deg', renderItem, scale }) => {
   const canvasRef = useRef(null);
+  const isVisible = useIsVisible(canvasRef);
   const scaleFraction = scale / 100;
 
   const viewport = page.getViewport({ scale: scaleFraction });
@@ -43,7 +62,7 @@ const Page = ({ page, rotation = '0deg', renderItem, scale }) => {
     <div id={`canvasWrapper-${page.pageNumber}`} className="prototype-canvas-wrapper" style={wrapperStyle}>
       <canvas
         id={`canvas-${page.pageNumber}`}
-        className="prototype-canvas"
+        className={`prototype-canvas page-${isVisible}`}
         style={canvasStyle}
         ref={canvasRef}
         height={scaledHeight}
