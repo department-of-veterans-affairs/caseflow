@@ -24,22 +24,6 @@ export const textMetricData = [
   true
 ];
 
-export const storeMetricsData = [
-  documents[0].id,
-  {
-    documentType: 'Test',
-    overscan: '',
-    pageCount: 1
-  },
-  {
-    duration: 0,
-    message: 'pdf_page_render_time_in_ms',
-    product: 'reader',
-    type: 'performance'
-  },
-  '123456'
-];
-
 export const storeMetricsBrowserError = [
   '1234',
   {
