@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import '@testing-library/jest-dom';
@@ -123,7 +123,7 @@ describe('NonCompTabsVha', () => {
 
     const tabs = screen.getAllByRole('tab');
 
-    await tabs[1].click();
+    fireEvent.click(tabs[1]);
 
     await waitFor(() => {
       expect(screen.getByText(VHA_PENDING_REQUESTS_TAB_DESCRIPTION)).toBeInTheDocument();
@@ -151,7 +151,7 @@ describe('NonCompTabsVha', () => {
 
     const tabs = screen.getAllByRole('tab');
 
-    await tabs[0].click();
+    fireEvent.click(tabs[0]);
 
     await waitFor(() => {
       expect(screen.getByText(VHA_INCOMPLETE_TAB_DESCRIPTION)).toBeInTheDocument();
@@ -174,7 +174,7 @@ describe('NonCompTabsVha', () => {
 
     const tabs = screen.getAllByRole('tab');
 
-    await tabs[3].click();
+    fireEvent.click(tabs[3]);
 
     await waitFor(() => {
       expect(screen.getByText('Cases completed (last 7 days):')).toBeInTheDocument();
@@ -203,7 +203,7 @@ describe('NonCompTabsGeneric', () => {
     const tabs = screen.getAllByRole('tab');
 
     // The async from the first describe block is interferring with this test so wait for the tab to reload apparently.
-    await tabs[0].click();
+    fireEvent.click(tabs[0]);
     await waitFor(() => {
       expect(screen.getByText('Days Waiting')).toBeInTheDocument();
     });
@@ -232,8 +232,9 @@ describe('NonCompTabsGeneric', () => {
     expect(screen.getAllByText('Completed Tasks')).toBeTruthy();
 
     const tabs = screen.getAllByRole('tab');
+    console.log('tabs', tabs)
 
-    await tabs[1].click();
+    fireEvent.click(tabs[1]);
 
     await waitFor(() => {
       expect(screen.getByText('Cases completed (last 7 days):')).toBeInTheDocument();

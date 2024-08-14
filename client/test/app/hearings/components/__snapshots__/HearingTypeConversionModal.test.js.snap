@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`HearingTypeConversion Displays convert to Central text when converting from Central 1`] = `
-<div>
+<DocumentFragment>
   <section
     aria-describedby="modal_id-desc"
     aria-labelledby="modal_id-title"
@@ -43,27 +43,24 @@ exports[`HearingTypeConversion Displays convert to Central text when converting 
         </svg>
       </button>
       <div
-        style="display: flex;"
+        style="display: flex; flex-wrap: wrap;"
       >
-        <div
-          data-css-1gs0ko2=""
+        <h1
+          id="modal_id-title"
+          style="flex: 1;"
         >
-          <h1
-            id="modal_id-title"
-          >
-            Convert Hearing To Central
-          </h1>
-          <div
-            data-css-o98ubo=""
-          >
-            <p>
-              The hearing request will appear in the scheduling queue for the
-              <strong>
-                Central Office
-              </strong>
-              .
-            </p>
-          </div>
+          Convert Hearing To Central
+        </h1>
+        <div
+          data-css-2flkvz=""
+        >
+          <p>
+            The hearing request will appear in the scheduling queue for the 
+            <strong>
+              Central Office
+            </strong>
+            .
+          </p>
         </div>
       </div>
       <div
@@ -81,8 +78,7 @@ exports[`HearingTypeConversion Displays convert to Central text when converting 
                 class="cf-submit usa-button"
                 type="button"
               >
-                Convert Hearing to
-                Central
+                Convert Hearing to Central
               </button>
             </span>
           </span>
@@ -102,11 +98,11 @@ exports[`HearingTypeConversion Displays convert to Central text when converting 
       </div>
     </div>
   </section>
-</div>
+</DocumentFragment>
 `;
 
 exports[`HearingTypeConversion Displays convert to Video text when converting from Video 1`] = `
-<div>
+<DocumentFragment>
   <section
     aria-describedby="modal_id-desc"
     aria-labelledby="modal_id-title"
@@ -148,23 +144,20 @@ exports[`HearingTypeConversion Displays convert to Video text when converting fr
         </svg>
       </button>
       <div
-        style="display: flex;"
+        style="display: flex; flex-wrap: wrap;"
       >
-        <div
-          data-css-1gs0ko2=""
+        <h1
+          id="modal_id-title"
+          style="flex: 1;"
         >
-          <h1
-            id="modal_id-title"
-          >
-            Convert Hearing To Video
-          </h1>
-          <div
-            data-css-o98ubo=""
-          >
-            <p>
-              The hearing request will appear in the scheduling queue for the appropriate regional office.
-            </p>
-          </div>
+          Convert Hearing To Video
+        </h1>
+        <div
+          data-css-2flkvz=""
+        >
+          <p>
+            The hearing request will appear in the scheduling queue for the appropriate regional office.
+          </p>
         </div>
       </div>
       <div
@@ -182,8 +175,7 @@ exports[`HearingTypeConversion Displays convert to Video text when converting fr
                 class="cf-submit usa-button"
                 type="button"
               >
-                Convert Hearing to
-                Video
+                Convert Hearing to Video
               </button>
             </span>
           </span>
@@ -203,5 +195,5 @@ exports[`HearingTypeConversion Displays convert to Video text when converting fr
       </div>
     </div>
   </section>
-</div>
+</DocumentFragment>
 `;

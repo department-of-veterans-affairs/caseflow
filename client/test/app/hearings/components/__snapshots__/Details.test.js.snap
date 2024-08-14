@@ -16,6 +16,7 @@ exports[`Details Displays HearingConversion when converting from central 1`] = `
     <div>
       <div
         data-css-1a5irm0=""
+        data-testid="read-only-testid"
       >
         <strong>
           Hearing Date
@@ -216,6 +217,7 @@ exports[`Details Displays HearingConversion when converting from central 1`] = `
       </h2>
       <div
         data-css-1a5irm0=""
+        data-testid="read-only-testid"
       >
         <strong>
           Veteran Name
@@ -226,6 +228,7 @@ exports[`Details Displays HearingConversion when converting from central 1`] = `
       </div>
       <div
         data-css-1a5irm0=""
+        data-testid="read-only-testid"
       >
         <strong>
           Veteran Mailing Address
@@ -404,6 +407,7 @@ SAN FRANCISCO, CA 94103
       </h2>
       <div
         data-css-1a5irm0=""
+        data-testid="read-only-testid"
       >
         <pre>
           PARALYZED VETERANS OF AMERICA, INC.
@@ -617,6 +621,7 @@ exports[`Details Displays HearingConversion when converting from video 1`] = `
     <div>
       <div
         data-css-1a5irm0=""
+        data-testid="read-only-testid"
       >
         <strong>
           Hearing Date
@@ -812,6 +817,7 @@ exports[`Details Displays HearingConversion when converting from video 1`] = `
       </h2>
       <div
         data-css-1a5irm0=""
+        data-testid="read-only-testid"
       >
         <strong>
           Veteran Name
@@ -822,6 +828,7 @@ exports[`Details Displays HearingConversion when converting from video 1`] = `
       </div>
       <div
         data-css-1a5irm0=""
+        data-testid="read-only-testid"
       >
         <strong>
           Veteran Mailing Address
@@ -1000,6 +1007,7 @@ SAN FRANCISCO, CA 94103
       </h2>
       <div
         data-css-1a5irm0=""
+        data-testid="read-only-testid"
       >
         <pre>
           PARALYZED VETERANS OF AMERICA, INC.
@@ -1279,6 +1287,7 @@ SAN FRANCISCO, CA 94103
     </div>
     <div
       data-css-1a5irm0=""
+      data-testid="read-only-testid"
     >
       <strong>
         VLJ Email
@@ -1334,6 +1343,7 @@ exports[`Details Displays HearingConversion when converting from virtual 1`] = `
     <div>
       <div
         data-css-1a5irm0=""
+        data-testid="read-only-testid"
       >
         <strong>
           Hearing Date
@@ -1529,6 +1539,7 @@ exports[`Details Displays HearingConversion when converting from virtual 1`] = `
       </h2>
       <div
         data-css-1a5irm0=""
+        data-testid="read-only-testid"
       >
         <strong>
           Veteran Name
@@ -1539,6 +1550,7 @@ exports[`Details Displays HearingConversion when converting from virtual 1`] = `
       </div>
       <div
         data-css-1a5irm0=""
+        data-testid="read-only-testid"
       >
         <strong>
           Veteran Mailing Address
@@ -1717,6 +1729,7 @@ SAN FRANCISCO, CA 94103
       </h2>
       <div
         data-css-1a5irm0=""
+        data-testid="read-only-testid"
       >
         <pre>
           PARALYZED VETERANS OF AMERICA, INC.
@@ -1996,6 +2009,7 @@ SAN FRANCISCO, CA 94103
     </div>
     <div
       data-css-1a5irm0=""
+      data-testid="read-only-testid"
     >
       <strong>
         VLJ Email
@@ -2083,6 +2097,7 @@ exports[`Details Displays VirtualHearing details when there is a virtual hearing
           </button>
           <span
             data-css-rlb1pw=""
+            data-testid="tooltip-testid"
           >
             <div
               class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -2221,6 +2236,7 @@ exports[`Details Displays VirtualHearing details when there is a virtual hearing
                 </span>
                 <span
                   data-css-1w1a50w=""
+                  data-testid="tooltip-testid"
                 >
                   <div
                     class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -2940,6 +2956,7 @@ exports[`Details Displays VirtualHearing details when there is a virtual hearing
               </button>
               <span
                 data-css-1qgqh7a=""
+                data-testid="tooltip-testid"
               >
                 <div
                   class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -4069,6 +4086,7 @@ exports[`Details Does not display EmailConfirmationModal when updating transcrip
           </button>
           <span
             data-css-rlb1pw=""
+            data-testid="tooltip-testid"
           >
             <div
               class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -4207,6 +4225,7 @@ exports[`Details Does not display EmailConfirmationModal when updating transcrip
                 </span>
                 <span
                   data-css-1w1a50w=""
+                  data-testid="tooltip-testid"
                 >
                   <div
                     class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -4926,6 +4945,7 @@ exports[`Details Does not display EmailConfirmationModal when updating transcrip
               </button>
               <span
                 data-css-1qgqh7a=""
+                data-testid="tooltip-testid"
               >
                 <div
                   class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -6054,6 +6074,7 @@ exports[`Details Does not display transcription section for legacy hearings 1`] 
           </button>
           <span
             data-css-n52zsg=""
+            data-testid="tooltip-testid"
           >
             <div
               class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -6192,6 +6213,7 @@ exports[`Details Does not display transcription section for legacy hearings 1`] 
                 </span>
                 <span
                   data-css-1iar5hk=""
+                  data-testid="tooltip-testid"
                 >
                   <div
                     class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -7179,6 +7201,7 @@ exports[`Details Matches snapshot with default props 1`] = `
           </button>
           <span
             data-css-n52zsg=""
+            data-testid="tooltip-testid"
           >
             <div
               class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -7317,6 +7340,7 @@ exports[`Details Matches snapshot with default props 1`] = `
                 </span>
                 <span
                   data-css-127pskq=""
+                  data-testid="tooltip-testid"
                 >
                   <div
                     class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"

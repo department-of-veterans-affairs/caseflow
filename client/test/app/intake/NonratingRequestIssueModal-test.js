@@ -260,54 +260,77 @@ describe('NonratingRequestIssueModal', () => {
   });
 
   describe('on higher level review, with VHA Admin and Task on Progress', () => {
-    wrapperNoSkip.setState({
+    const props = {
       benefitType: 'vha',
-      isTaskInProgress: true,
-      userIsVhaAdmin: true,
-      category: {
-        label: 'Beneficiary Travel',
-        value: 'Beneficiary Travel'
+      formType: formType,
+      intakeData: {
+        ...intakeData,
+        benefitType: 'vha',
+        taskInProgress: true,
+        addedIssues: [],
+        activeNonratingRequestIssues: []
+
       },
-      description: 'VHA data test'
+      userIsVhaAdmin: true,
+      userCanEditIntakeIssues: true,
+      featureToggles: {},
+    };
+
+    beforeEach(() => {
+      const {container} = render(<NonratingRequestIssueModal {...props} />);
     });
 
-    const optionalLabel = wrapperNoSkip.find('.decision-date .cf-optional');
-    const submitButton = wrapperNoSkip.find('.cf-modal-controls .add-issue');
-    const alertText = wrapperNoSkip.find('.usa-alert-text');
-
     it('renders modal with Decision date required alert banner', () => {
-      expect(alertText.text()).toContain(VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER);
+      expect(screen.getByText(VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER)).toBeInTheDocument();
     });
 
     it('renders modal without Decision date optional text', () => {
-      expect(optionalLabel).not.toBe();
-      expect(submitButton.prop('disabled')).toBe(true);
+      const optionalLabel = screen.queryByText(/optional/i);
+      const submitButton = screen.getByRole('button', { name: /Add this issue/i });
+
+      expect(optionalLabel).not.toBeInTheDocument();
+      expect(submitButton).toBeDisabled();
     });
   });
 
   describe('on higher level review, with VHA Admin User and Task not in Progress', () => {
-    wrapperNoSkip.setState({
+    const props = {
       benefitType: 'vha',
-      isTaskInProgress: false,
-      userIsVhaAdmin: true,
-      category: {
-        label: 'Beneficiary Travel',
-        value: 'Beneficiary Travel'
+      formType: formType,
+      intakeData: {
+        ...intakeData,
+        benefitType: 'vha',
+        taskInProgress: false,
+        addedIssues: [],
+        activeNonratingRequestIssues: []
+
       },
-      description: 'VHA data test'
+      userIsVhaAdmin: true,
+      userCanEditIntakeIssues: true,
+      featureToggles: {},
+    };
+
+    beforeEach(() => {
+      render(<NonratingRequestIssueModal {...props} />);
     });
 
-    const optionalLabel = wrapperNoSkip.find('.decision-date .cf-optional');
-    const submitButton = wrapperNoSkip.find('.cf-modal-controls .add-issue');
-    const alertBody = wrapperNoSkip.find('.usa-alert-body');
-
     it('renders modal without Decision date required alert banner', () => {
-      expect(alertBody.exists()).toBe(false);
+      expect(screen.queryByText(VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER)).not.toBeInTheDocument();
     });
 
     it('renders modal without Decision date optional text', () => {
-      expect(optionalLabel.text()).toBe('Optional');
-      expect(submitButton.prop('disabled')).toBe(false);
+      const optionalLabel = screen.getByText(/Optional/i);
+      const submitButton = screen.getByRole('button', { name: /Add this issue/i });
+
+      const issueCategoryInput = screen.getByRole('combobox', { name: /Issue category/i });
+      userEvent.click(issueCategoryInput); // open the dropdown menu
+      userEvent.type(issueCategoryInput, 'Beneficiary Travel{enter}'); // select the option
+
+      const issueDescriptionTextbox = screen.getByRole('textbox', { name: /Issue description/i });
+      fireEvent.change(issueDescriptionTextbox, { target: { value: 'blah blah' } });
+
+      expect(optionalLabel).toBeInTheDocument();
+      expect(submitButton).not.toBeDisabled();
     });
   });
 });
