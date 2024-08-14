@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'glamor';
 
-const listStyling = css({
+const listStyling = {
   paddingBottom: 0,
   margin: 0,
   maxHeight: '345px',
@@ -11,11 +10,11 @@ const listStyling = css({
   overflowY: 'auto',
   listStyleType: 'none',
   paddingLeft: 0
-});
-const listItemStyling = css({
+};
+const listItemStyling = {
   padding: '1px',
   position: 'relative'
-});
+};
 
 const FilterOption = ({ options, setSelectedValue,
   dropdownFilterViewListStyle, dropdownFilterViewListItemStyle }) => {
@@ -24,9 +23,12 @@ const FilterOption = ({ options, setSelectedValue,
     setSelectedValue(event.target.value);
   };
 
-  return <ul {...dropdownFilterViewListStyle} {...listStyling}>
+  const dropdownFilterListStyle = { ...dropdownFilterViewListStyle, ...listStyling };
+  const dropdownFilterListItemStyle = { ...dropdownFilterViewListItemStyle, ...listItemStyling };
+
+  return <ul style={dropdownFilterListStyle}>
     {options.map((option, index) => {
-      return <li className="cf-filter-option-row" key={index} {...dropdownFilterViewListItemStyle} {...listItemStyling}>
+      return <li className="cf-filter-option-row" key={index} style={dropdownFilterListItemStyle}>
         <input
           type="checkbox"
           id={`${index}-${option.value}`}
