@@ -98,21 +98,21 @@ describe HearingTimeService, :all_dbs do
           end
 
           it "changes to Appellant timezone (CT)" do
-            expect(hearing.time.appellant_time).to eq(expected_time)
+            expect(hearing.appellant_time).to eq(expected_time)
           end
 
           it "changes to Representative timezone (CT)" do
-            expect(hearing.time.poa_time).to eq(expected_time)
+            expect(hearing.poa_time).to eq(expected_time)
           end
         end
 
         context "timezone is not present" do
           it "changes to local time (PT) for Appellant" do
-            expect(hearing.time.appellant_time).to eq(expected_local)
+            expect(hearing.appellant_time).to eq(expected_local)
           end
 
           it "changes to local time (PT) for Representative" do
-            expect(hearing.time.poa_time).to eq(expected_local)
+            expect(hearing.poa_time).to eq(expected_local)
           end
         end
 
@@ -123,11 +123,11 @@ describe HearingTimeService, :all_dbs do
           end
 
           it "throws an ArgumentError for Appellant" do
-            expect { hearing.time.appellant_time }.to raise_error ArgumentError
+            expect { hearing.appellant_time }.to raise_error ArgumentError
           end
 
           it "throws an ArgumentError for Representative" do
-            expect { hearing.time.poa_time }.to raise_error ArgumentError
+            expect { hearing.poa_time }.to raise_error ArgumentError
           end
         end
       end
