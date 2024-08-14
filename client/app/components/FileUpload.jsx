@@ -1,11 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'glamor';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
-const styling = css({
+const styling = {
   display: 'none'
-});
+};
 
 export default class FileUpload extends React.Component {
 
@@ -30,7 +29,7 @@ export default class FileUpload extends React.Component {
           {this.props.value ? this.props.postUploadText : this.props.preUploadText}
         </Link>
       </label>
-      <div {...styling}>
+      <div style={styling}>
         <input
           type="file"
           accept={this.props.fileType}
