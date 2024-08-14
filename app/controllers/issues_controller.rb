@@ -124,7 +124,6 @@ class IssuesController < ApplicationController
   # rubocop:disable Metrics/AbcSize
   # :reek:FeatureEnvy
   def format_instructions(inst_params)
-    disposition = inst_params[:issue].readable_disposition.nil? ? "N/A" : inst_params[:issue].readable_disposition
     note = params[:issues][:note].nil? ? "N/A" : params[:issues][:note]
     # use codes from params to get descriptions
     # opting to use params vs issue model to capture in-flight issue changes
@@ -144,8 +143,7 @@ class IssuesController < ApplicationController
         "Benefit Type: #{param_issue['description']}\n",
         "Issue: #{iss}\n",
         "Code: #{issue_code_message}\n",
-        "Note: #{note}\n",
-        "Disposition: #{disposition}\n"
+        "Note: #{note}\n"
       ].compact.join("\r\n"),
       benefit_type: "",
       original_mst: inst_params[:issue].mst_status,
