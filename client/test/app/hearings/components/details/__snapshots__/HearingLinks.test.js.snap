@@ -229,12 +229,33 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                   aria-describedby="tooltip-Copy VLJ Link"
                   aria-label=""
                   className="cf-apppeal-id"
-                  data-css-cjlnsd=""
                   data-event="focus mouseenter"
                   data-event-off="mouseleave keydown"
                   data-for="tooltip-Copy VLJ Link"
                   data-tip={true}
                   onClick={[Function]}
+                  style={
+                    Object {
+                      "& > svg path": Object {
+                        "fill": "#d6d7d9",
+                      },
+                      "&:hover > svg path": Object {
+                        "fill": "#0071bc",
+                      },
+                      ":hover": Object {
+                        "backgroundColor": "transparent",
+                        "borderBottomWidth": "1px",
+                        "borderColor": "#0071bc",
+                        "color": "#323a45",
+                      },
+                      "borderColor": "#d6d7d9",
+                      "borderWidth": "1px",
+                      "color": "#323a45",
+                      "margin": "-0.75rem 0",
+                      "overflowWrap": "break-word",
+                      "padding": "0.75rem",
+                    }
+                  }
                   tabIndex={0}
                   type="submit"
                 >
@@ -569,12 +590,33 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                   aria-describedby="tooltip-Copy Guest Link"
                   aria-label=""
                   className="cf-apppeal-id"
-                  data-css-cjlnsd=""
                   data-event="focus mouseenter"
                   data-event-off="mouseleave keydown"
                   data-for="tooltip-Copy Guest Link"
                   data-tip={true}
                   onClick={[Function]}
+                  style={
+                    Object {
+                      "& > svg path": Object {
+                        "fill": "#d6d7d9",
+                      },
+                      "&:hover > svg path": Object {
+                        "fill": "#0071bc",
+                      },
+                      ":hover": Object {
+                        "backgroundColor": "transparent",
+                        "borderBottomWidth": "1px",
+                        "borderColor": "#0071bc",
+                        "color": "#323a45",
+                      },
+                      "borderColor": "#d6d7d9",
+                      "borderWidth": "1px",
+                      "color": "#323a45",
+                      "margin": "-0.75rem 0",
+                      "overflowWrap": "break-word",
+                      "padding": "0.75rem",
+                    }
+                  }
                   tabIndex={0}
                   type="submit"
                 >
@@ -1648,12 +1690,33 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
                   aria-describedby="tooltip-Copy Guest Link"
                   aria-label=""
                   className="cf-apppeal-id"
-                  data-css-cjlnsd=""
                   data-event="focus mouseenter"
                   data-event-off="mouseleave keydown"
                   data-for="tooltip-Copy Guest Link"
                   data-tip={true}
                   onClick={[Function]}
+                  style={
+                    Object {
+                      "& > svg path": Object {
+                        "fill": "#d6d7d9",
+                      },
+                      "&:hover > svg path": Object {
+                        "fill": "#0071bc",
+                      },
+                      ":hover": Object {
+                        "backgroundColor": "transparent",
+                        "borderBottomWidth": "1px",
+                        "borderColor": "#0071bc",
+                        "color": "#323a45",
+                      },
+                      "borderColor": "#d6d7d9",
+                      "borderWidth": "1px",
+                      "color": "#323a45",
+                      "margin": "-0.75rem 0",
+                      "overflowWrap": "break-word",
+                      "padding": "0.75rem",
+                    }
+                  }
                   tabIndex={0}
                   type="submit"
                 >
