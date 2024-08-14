@@ -47,7 +47,7 @@ describe('Docket Time Goals Lever', () => {
       toHaveTextContent(testTimeGoalLever.is_toggle_active ? 'On' : 'Off');
   });
 
-  it('renders Docket Time Goals Levers for Admin Users', () => {
+  it('renders Docket Time Goals Levers for Admin Users', async () => {
     const store = getStore();
 
     store.dispatch(loadLevers(levers));
@@ -58,11 +58,14 @@ describe('Docket Time Goals Lever', () => {
         <DocketTimeGoals />
       </Provider>);
 
-    const leverTimeGoal = container.querySelector('input[name="ama_hearings_docket_time_goals"]');
-    const leverDistPrior = container.querySelector('input[name="ama_hearings_start_distribution_prior_to_goals"]');
+    const leverTimeGoal = container.querySelector('input[name="ama_hearing_docket_time_goals"]');
+    const leverDistPrior = container.querySelector('input[name="toggle-ama_hearing_start_distribution_prior_to_goals"]');
 
-    waitFor(() => expect(leverTimeGoal).toHaveTextContent(testTimeGoalLever.value));
-    waitFor(() => expect(leverDistPrior).toHaveTextContent(testDistPriorLever.value));
+    // Use waitFor for asynchronous expectations if necessary
+    await waitFor(() => {
+      expect(leverTimeGoal).toHaveValue(testTimeGoalLever.value.toString());
+      expect(leverDistPrior).toHaveValue(testDistPriorLever.value.toString());
+    });
 
     expect(container.querySelector('div[aria-label="AMA Hearings Docket Time Goals"]')).toBeInTheDocument();
   });
@@ -82,7 +85,7 @@ describe('Docket Time Goals Lever', () => {
       </Provider>
     );
 
-    const leverTimeGoal = container.querySelector('input[name="ama_hearings_docket_time_goals"]');
+    const leverTimeGoal = container.querySelector('input[name="ama_hearing_docket_time_goals"]');
 
     // Calls simulate change to set value outside of min/max range
     await waitFor(() => fireEvent.change(leverTimeGoal, eventForError));

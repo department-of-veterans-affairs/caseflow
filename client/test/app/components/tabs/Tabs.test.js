@@ -4,10 +4,10 @@ import {
   fireEvent,
   screen,
   wait,
-  waitFor,
+  waitFor
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderHook } from '@testing-library/react-hooks';
+import {renderHook} from '@testing-library/react-hooks';
 
 import { axe } from 'jest-axe';
 
@@ -239,7 +239,7 @@ describe('Tabs', () => {
   });
 
   it('should correctly honor mountOnEnter', async () => {
-    await render(
+    render(
       <Tabs idPrefix={idPrefix} mountOnEnter>
         <Tab title="Tab 1" value="1">
           <p>Tab contents 1</p>
@@ -256,7 +256,7 @@ describe('Tabs', () => {
     expect(screen.queryByText('Tab contents 2')).not.toBeTruthy();
 
     // Switch to tab 2
-    userEvent.click(headers[1]);
+    fireEvent.click(headers[1]);
 
     // Now both should be present
     await waitFor(() => {
@@ -283,7 +283,7 @@ describe('Tabs', () => {
     expect(screen.queryByText('Tab contents 2')).not.toBeTruthy();
 
     // Switch to tab 2
-    userEvent.click(headers[1]);
+    fireEvent.click(headers[1]);
 
     await waitFor(() => {
       // Now only the newly active tab should be rendered
@@ -294,9 +294,11 @@ describe('Tabs', () => {
 });
 
 describe('useUniquePrefix hook', () => {
-  it('returns unique value with proper prefix', () => {
+  it('returns unique value with proper prefix', async () => {
     const { result } = renderHook(() => useUniquePrefix());
 
-    expect(result.current).toMatch(/cf-tabs-\d+/);
+    await waitFor(() => {
+      expect(result.current).toMatch(/cf-tabs-\d+/);
+    });
   });
 });

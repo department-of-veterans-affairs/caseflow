@@ -13,7 +13,7 @@ const Wrapper = ({ children }) => {
 
 describe('HearingTypeConversion', () => {
   test('Displays convert to Video text when converting from Video', () => {
-    const {container} = render(
+    const {asFragment} = render(
       <HearingTypeConversionModal
         appeal={appealData}
         hearingType="Video"
@@ -31,11 +31,11 @@ describe('HearingTypeConversion', () => {
       screen.queryByText((content) => content.includes(COPY.CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT))
     ).toBeInTheDocument();
     console.log(COPY.CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT)
-    expect(container).toMatchSnapshot();
+    expect(asFragment()).toMatchSnapshot();
   });
 
-  test.only('Displays convert to Central text when converting from Central', () => {
-    const { container } = render(
+  test('Displays convert to Central text when converting from Central', () => {
+    const { asFragment } = render(
       <HearingTypeConversionModal
         appeal={appealData}
         hearingType="Central"
@@ -51,6 +51,6 @@ describe('HearingTypeConversion', () => {
     expect(screen.queryByText(/Central Office/i)).toBeInTheDocument();
     expect(screen.queryByText((content) => content.includes(COPY.CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT))
     ).not.toBeInTheDocument();
-    expect(container).toMatchSnapshot();
+    expect(asFragment()).toMatchSnapshot();
   });
 });
