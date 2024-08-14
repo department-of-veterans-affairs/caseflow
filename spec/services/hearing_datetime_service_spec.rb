@@ -242,6 +242,25 @@ RSpec.describe HearingDatetimeService do
           # skipping until LegacyHearing#scheduled_for is implemented
         end
       end
+
+      describe "process_legacy_scheduled_time_string" do
+        it "is an alias for .prepare_time_for_storage" do
+          date = "2024-01-01"
+          time_string = "11:00 AM Central Time (US & Canada)"
+
+          time_prepped = described_class.prepare_time_for_storage(date: date, time_string: time_string)
+          time_legacy_processed = legacy_hearing.time.process_legacy_scheduled_time_string(
+            date: date,
+            time_string: time_string
+          )
+
+          expected_time = Time.new(2024, 1, 1, 11, 0, 0, "-06:00")
+
+          expect(time_prepped).to eq(expected_time)
+          expect(time_legacy_processed).to eq(expected_time)
+          expect(time_prepped).to eq(time_legacy_processed)
+        end
+      end
     end
   end
 end
