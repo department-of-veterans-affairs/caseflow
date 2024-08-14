@@ -4,6 +4,7 @@ import { ACTIONS } from './correspondenceDetailsConstants';
 export const initialState = {
 
   bannerAlert: {},
+  correspondenceInfo: {}
 
 };
 
@@ -14,6 +15,12 @@ export const correspondenceDetailsReducer = (state = initialState, action = {}) 
     return update(state, {
       bannerAlert: {
         $set: action.payload.bannerAlert
+      }
+    });
+  case ACTIONS.CORRESPONDENCE_INFO:
+    return update(state, {
+      correspondenceInfo: {
+        $set: action.payload.correspondence
       }
     });
 

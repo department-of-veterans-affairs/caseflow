@@ -14,7 +14,7 @@ import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import QueueFlowModal from './QueueFlowModal';
 import ApiUtil from '../../util/ApiUtil';
 import Button from '../../components/Button';
-import { setTaskNotRelatedToAppealBanner } from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
+import { setTaskNotRelatedToAppealBanner, cancelTaskNotRelatedToAppeal } from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
 
 /* eslint-disable camelcase */
 const CorrespondenceCancelTaskModal = (props) => {
@@ -63,7 +63,7 @@ const CorrespondenceCancelTaskModal = (props) => {
     // const currentInstruction = (props.task.type === 'PostSendInitialNotificationLetterHoldingTask' ?
     //   `\nHold time: ${currentDaysOnHold(task)}/${task.onHoldDuration} days\n\n ${instructions}` : formatInstructions());
 
-    // eslint-disable-next-line no-debugger
+    // // eslint-disable-next-line no-debugger
     // debugger;
     // console.log(currentInstruction);
 
@@ -77,44 +77,8 @@ const CorrespondenceCancelTaskModal = (props) => {
       }
     };
 
-    const successBanner = {
-      title: 'success Test',
-      message: 'success Test',
-      type: 'success'
+    return props.cancelTaskNotRelatedToAppeal(props.task_id, payload);
 
-    };
-    const failBanner = {
-
-      title: 'warning Test',
-      message: 'warning Test',
-      type: 'warning'
-
-    };
-
-    // eslint-disable-next-line no-debugger
-    // debugger;
-    console.log(payload);
-    // const successMsg = {
-    //   title: taskData?.message_title ?? 'Task was cancelled successfully.',
-    //   detail: (
-    //     <span>
-    //       <span dangerouslySetInnerHTML={{ __html: taskData.message_detail }} />
-    //     </span>
-    //   )
-    // };
-    console.log((`queue/correspondence/tasks/${props.task_id}/cancel`));
-
-    return ApiUtil.patch(`/queue/correspondence/tasks/${props.task_id}/cancel`, payload).
-      then((r) => {
-
-        props.setTaskNotRelatedToAppealBanner(successBanner);
-        console.log(r);
-
-      }).
-      catch((error) => {
-        props.setTaskNotRelatedToAppealBanner(failBanner);
-        console.error(error);
-      });
   };
 
   // Additional properties - should be removed later once generic submit buttons are styled the same across all modals
@@ -187,7 +151,8 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestPatch,
-  setTaskNotRelatedToAppealBanner
+  setTaskNotRelatedToAppealBanner,
+  cancelTaskNotRelatedToAppeal
 }, dispatch);
 
 export default (withRouter(
