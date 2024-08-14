@@ -519,6 +519,10 @@ module Seeds
 
       # original hearing held by judge_inactivejudge, decided by judge_inactivejudge, no new hearing => genpop
       create(:legacy_cavc_appeal, bfd19: 5.years.ago, bfcorlid: "#{create_veteran_for_inactivejudge_judge("Genpop").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), tied_to: true)
+
+      # original hearing held by SPORER, decided by SPORER, new hearing held by judge_inactivejudge
+      c13 = create(:legacy_cavc_appeal, bfd19: 5.years.ago, bfcorlid: "#{create_veteran_for_inactivejudge_judge("Genpop").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvagsporer.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), tied_to: true, affinity_start_date: 3.days.ago)
+      create(:case_hearing, :disposition_held, folder_nr: (c13.bfkey.to_i + 1).to_s, hearing_date: Time.zone.today, user: judge_inactivejudge)
     end
 
     def create_legacy_appeals_without_hearing_held
