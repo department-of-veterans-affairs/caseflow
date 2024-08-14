@@ -122,7 +122,6 @@ class RequestIssueUpdateEvent < RequestIssuesUpdate
 #         withdrawn_request_issue_ids: withdrawn_issues.map(&:id),
 #         edited_request_issue_ids: edited_issues.map(&:id)
 #       )
-#       handle_sct_issue_updates
 #       cancel_active_tasks
 #       submit_for_processing!
 #     end
@@ -341,7 +340,7 @@ class RequestIssueUpdateEvent < RequestIssuesUpdate
 #       else
 #         # format the task instructions and close out
 #         # use contested issue description if nonrating issue category is nil
-#         # rubocop:disable Layout/LineLength
+
 #         issue_description = "#{before_issue.nonrating_issue_category} - #{before_issue.nonrating_issue_description}" unless before_issue.nonrating_issue_category.nil?
 #         issue_description = before_issue.contested_issue_description if issue_description.nil?
 #         set = CaseTimelineInstructionSet.new(
@@ -351,7 +350,6 @@ class RequestIssueUpdateEvent < RequestIssuesUpdate
 #         )
 #       end
 #       task.format_instructions(set)
-#       # rubocop:enable Layout/LineLength, Metrics/AbcSize
 #       task.completed!
 
 #       # create SpecialIssueChange record to log the changes
@@ -368,77 +366,4 @@ class RequestIssueUpdateEvent < RequestIssuesUpdate
 #     end
 #   end
 #   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
-# end
-
-
-
-  # class << self
-  #   def process!(params)
-  #     update_request_issues(params)
-  #   rescue StandardError => error
-  #     raise Caseflow::Error::DecisionReviewUpdatedRequestIssuesError, error.message
-  #   end
-
-  #   private
-
-  #   def update_request_issues(params)
-  #     event = params[:event]
-  #     parser = params[:parser] # Instance of DecisionReviewUpdatedParser
-  #     decision_review = params[:decision_review]
-  #     epe = params[:epe]
-  #     updated_issues = []
-
-  #     # Iterate through the parsed request issues
-  #     parser.request_issues.each do |issue_data|
-  #       # Find the existing request issue by some unique identifier
-  #       request_issue = find_existing_request_issue(issue_data)
-
-  #       if request_issue
-  #         # Update the request issue with new data
-  #         request_issue.update!(
-  #           contested_issue_description: issue_data[:contested_issue_description],
-  #           contention_reference_id: issue_data[:contention_reference_id],
-  #           contested_rating_decision_reference_id: issue_data[:contested_rating_decision_reference_id],
-  #           contested_rating_issue_profile_date: issue_data[:contested_rating_issue_profile_date],
-  #           contested_rating_issue_reference_id: issue_data[:contested_rating_issue_reference_id],
-  #           contested_decision_issue_id: issue_data[:contested_decision_issue_id],
-  #           decision_date: issue_data[:decision_date],
-  #           ineligible_due_to_id: issue_data[:ineligible_due_to_id],
-  #           ineligible_reason: issue_data[:ineligible_reason],
-  #           is_unidentified: issue_data[:is_unidentified],
-  #           unidentified_issue_text: issue_data[:unidentified_issue_text],
-  #           nonrating_issue_category: issue_data[:nonrating_issue_category],
-  #           nonrating_issue_description: issue_data[:nonrating_issue_description],
-  #           untimely_exemption: issue_data[:untimely_exemption],
-  #           untimely_exemption_notes: issue_data[:untimely_exemption_notes],
-  #           vacols_id: issue_data[:vacols_id],
-  #           vacols_sequence_id: issue_data[:vacols_sequence_id],
-  #           closed_at: issue_data[:closed_at],
-  #           closed_status: issue_data[:closed_status],
-  #           contested_rating_issue_diagnostic_code: issue_data[:contested_rating_issue_diagnostic_code],
-  #           ramp_claim_id: issue_data[:ramp_claim_id],
-  #           rating_issue_associated_at: issue_data[:rating_issue_associated_at],
-  #           nonrating_issue_bgs_id: issue_data[:nonrating_issue_bgs_id],
-  #           nonrating_issue_bgs_source: issue_data[:nonrating_issue_bgs_source]
-  #         )
-  #         updated_issues << request_issue
-  #         create_event_record(event, request_issue)
-  #       else
-  #         # Handle cases where the request issue doesn't exist
-  #         # This could involve logging, raising an error, or other actions
-  #       end
-  #     end
-
-  #     updated_issues
-  #   end
-
-  #   def find_existing_request_issue(issue_data)
-  #     # need to identify the existing request issue, typically by a unique identifier
-  #     RequestIssue.find_by(id: issue_data[:id])
-  #   end
-
-  #   def create_event_record(event, issue)
-  #     EventRecord.create!(event: event, evented_record: issue)
-  #   end
-  # end
 # end
