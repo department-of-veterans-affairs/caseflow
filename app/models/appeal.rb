@@ -633,7 +633,7 @@ class Appeal < DecisionReview
   end
 
   def active?
-    tasks.open.of_type(:RootTask).any?
+    root_task.status != "completed" && root_task.status != "cancelled"
   end
 
   def ready_for_distribution?
