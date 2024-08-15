@@ -518,6 +518,13 @@ describe BusinessLine do
                             benefit_type: "vha",
                             claimant_type: :dependent_claimant))
     end
+    let!(:remand_task) do
+      create(:remand_vha_task,
+             appeal: create(:remand,
+                            benefit_type: "vha",
+                            claimant_type: :dependent_claimant))
+    end
+
     let(:decision_issue) { create(:decision_issue, disposition: "denied", benefit_type: hlr_task.appeal.benefit_type) }
     let(:intake_user) { create(:user, full_name: "Alexander Dewitt", css_id: "ALEXVHA", station_id: "103") }
     let(:decision_user) { create(:user, full_name: "Gaius Baelsar", css_id: "GAIUSVHA", station_id: "104") }
@@ -618,6 +625,25 @@ describe BusinessLine do
         "days_waiting" => (Time.zone.today - Date.parse(sc_task.assigned_at.iso8601)).to_i
       )
     end
+    let(:remand_task_1_ri_1_expectation) do
+      a_hash_including(
+        "nonrating_issue_category" => "Clothing Allowance",
+        "nonrating_issue_description" => "This is a Clothing Allowance issue",
+        "task_id" => remand_task.id,
+        "veteran_file_number" => remand_task.appeal.veteran_file_number,
+        "intake_user_name" => nil,
+        "intake_user_css_id" => nil,
+        "intake_user_station_id" => nil,
+        "disposition" => nil,
+        "decision_user_name" => nil,
+        "decision_user_css_id" => nil,
+        "decision_user_station_id" => nil,
+        "claimant_name" => remand_task.appeal.claimant.name,
+        "task_status" => remand_task.status,
+        "request_issue_benefit_type" => "vha",
+        "days_waiting" => (Time.zone.today - Date.parse(remand_task.assigned_at.iso8601)).to_i
+      )
+    end
 
     let(:all_expectations) do
       [
@@ -625,7 +651,8 @@ describe BusinessLine do
         hlr_task_1_ri_2_expectation,
         hlr_task_2_ri_1_expectation,
         hlr_task_2_ri_2_expectation,
-        sc_task_1_ri_1_expectation
+        sc_task_1_ri_1_expectation,
+        remand_task_1_ri_1_expectation
       ]
     end
 
@@ -638,8 +665,16 @@ describe BusinessLine do
                       nonrating_issue_category: "Camp Lejune Family Member",
                       nonrating_issue_description: "This is a Camp Lejune issue",
                       benefit_type: "vha")
+      remand_issue = create(:request_issue,
+                            nonrating_issue_category: "Clothing Allowance",
+                            nonrating_issue_description: "This is a Clothing Allowance issue",
+                            benefit_type: "vha",
+                            decision_review: remand_task.appeal)
       hlr_task.appeal.request_issues << issue
       hlr_task2.appeal.request_issues << issue2
+      remand_task.appeal.request_issues << remand_issue
+      remand_task.save
+      remand_task.reload
 
       # Add a different intake user to the second hlr task for data differences
       second_intake = hlr_task2.appeal.intake
@@ -673,21 +708,22 @@ describe BusinessLine do
 
     context "without filters" do
       it "should return all rows" do
-        expect(subject.count).to eq 5
+        expect(subject.count).to eq 6
         expect(subject.entries).to include(*all_expectations)
       end
     end
 
     context "with task_id filter" do
       context "with multiple task ids" do
-        let(:change_history_filters) { { task_id: [hlr_task.id, sc_task.id] } }
+        let(:change_history_filters) { { task_id: [hlr_task.id, sc_task.id, remand_task.id] } }
 
         it "should return rows for all matching ids" do
-          expect(subject.entries.count).to eq(3)
+          expect(subject.entries.count).to eq(4)
           expect(subject.entries).to include(
             hlr_task_1_ri_1_expectation,
             hlr_task_1_ri_2_expectation,
-            sc_task_1_ri_1_expectation
+            sc_task_1_ri_1_expectation,
+            remand_task_1_ri_1_expectation
           )
         end
       end
@@ -718,7 +754,18 @@ describe BusinessLine do
 
         it "should only return rows for the filtered claim type" do
           expect(subject.entries.count).to eq(4)
-          expect(subject.entries).to include(*(all_expectations - [sc_task_1_ri_1_expectation]))
+          expect(subject.entries).to include(
+            *(all_expectations - [sc_task_1_ri_1_expectation] - [remand_task_1_ri_1_expectation])
+          )
+        end
+      end
+
+      context "Remand claim filter" do
+        let(:change_history_filters) { { claim_type: ["Remand"] } }
+
+        it "should only return rows for the filtered claim type" do
+          expect(subject.entries.count).to eq(1)
+          expect(subject.entries).to include(remand_task_1_ri_1_expectation)
         end
       end
     end
@@ -761,11 +808,12 @@ describe BusinessLine do
         let(:change_history_filters) { { dispositions: ["Blank"] } }
 
         it "should return rows that do not have a disposition" do
-          expect(subject.entries.count).to eq(3)
+          expect(subject.entries.count).to eq(4)
           expect(subject.entries).to include(
             hlr_task_2_ri_1_expectation,
             hlr_task_2_ri_2_expectation,
-            sc_task_1_ri_1_expectation
+            sc_task_1_ri_1_expectation,
+            remand_task_1_ri_1_expectation
           )
         end
 
@@ -773,12 +821,13 @@ describe BusinessLine do
           let(:change_history_filters) { { dispositions: %w[denied Blank] } }
 
           it "should return rows that match denied or have no disposition" do
-            expect(subject.entries.count).to eq(4)
+            expect(subject.entries.count).to eq(5)
             expect(subject.entries).to include(
               hlr_task_1_ri_2_expectation,
               hlr_task_2_ri_1_expectation,
               hlr_task_2_ri_2_expectation,
-              sc_task_1_ri_1_expectation
+              sc_task_1_ri_1_expectation,
+              remand_task_1_ri_1_expectation
             )
           end
         end
@@ -828,9 +877,10 @@ describe BusinessLine do
         let(:change_history_filters) { { days_waiting: { number_of_days: 11, operator: ">" } } }
 
         it "should only return rows that are over the filtered days waiting value" do
-          expect(subject.entries.count).to eq(1)
+          expect(subject.entries.count).to eq(2)
           expect(subject.entries).to include(
-            sc_task_1_ri_1_expectation
+            sc_task_1_ri_1_expectation,
+            remand_task_1_ri_1_expectation
           )
         end
       end
@@ -852,7 +902,9 @@ describe BusinessLine do
 
         it "should only return rows that are between the number of days and end of days" do
           expect(subject.entries.count).to eq(4)
-          expect(subject.entries).to include(*(all_expectations - [sc_task_1_ri_1_expectation]))
+          expect(subject.entries).to include(
+            *(all_expectations - [sc_task_1_ri_1_expectation] - [remand_task_1_ri_1_expectation])
+          )
         end
       end
     end
@@ -872,7 +924,9 @@ describe BusinessLine do
 
         it "only return rows where either an intake, decisions, or updates user matches the station id" do
           expect(subject.entries.count).to eq(4)
-          expect(subject.entries).to include(*(all_expectations - [sc_task_1_ri_1_expectation]))
+          expect(subject.entries).to include(
+            *(all_expectations - [sc_task_1_ri_1_expectation] - [remand_task_1_ri_1_expectation])
+          )
         end
       end
 
@@ -905,7 +959,9 @@ describe BusinessLine do
 
         it "only return rows where either an intake, decisions, or updates user matches the  css_ids" do
           expect(subject.entries.count).to eq(4)
-          expect(subject.entries).to include(*(all_expectations - [sc_task_1_ri_1_expectation]))
+          expect(subject.entries).to include(
+            *(all_expectations - [sc_task_1_ri_1_expectation] - [remand_task_1_ri_1_expectation])
+          )
         end
       end
 

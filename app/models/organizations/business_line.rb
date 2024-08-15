@@ -282,7 +282,7 @@ class BusinessLine < Organization
             NULLIF(CONCAT(unrecognized_party_details.name, ' ', unrecognized_party_details.last_name), ' '),
             NULLIF(CONCAT(people.first_name, ' ', people.last_name), ' '),
             bgs_attorneys.name
-          ) AS claimant_name
+          ) AS claimant_name, 'HigherLevelReview' AS type_classifier
         FROM tasks
         INNER JOIN request_issues ON request_issues.decision_review_type = tasks.appeal_type
         AND request_issues.decision_review_id = tasks.appeal_id
@@ -334,7 +334,7 @@ class BusinessLine < Organization
             NULLIF(CONCAT(unrecognized_party_details.name, ' ', unrecognized_party_details.last_name), ' '),
             NULLIF(CONCAT(people.first_name, ' ', people.last_name), ' '),
             bgs_attorneys.name
-          ) AS claimant_name
+          ) AS claimant_name, supplemental_claims.type AS type_classifier
         FROM tasks
         INNER JOIN request_issues ON request_issues.decision_review_type = tasks.appeal_type
         AND request_issues.decision_review_id = tasks.appeal_id
@@ -362,6 +362,7 @@ class BusinessLine < Organization
         AND tasks.assigned_to_type = 'Organization'
         AND tasks.assigned_to_id = '#{parent.id.to_i}'
         #{sanitized_filters}
+        #{sc_type_filter}
       SQL
 
       ActiveRecord::Base.transaction do
@@ -401,9 +402,23 @@ class BusinessLine < Organization
 
     def claim_type_filter
       if query_params[:claim_type].present?
-        " AND #{where_clause_from_array(Task, :appeal_type, query_params[:claim_type]).to_sql}"
+        temp_claim_types = query_params[:claim_type].dup
+
+        if query_params[:claim_type].include?(Remand.name)
+          temp_claim_types.push "SupplementalClaim"
+        end
+
+        " AND #{where_clause_from_array(Task, :appeal_type, temp_claim_types).to_sql} "
       else
-        " AND tasks.appeal_type IN ('HigherLevelReview', 'SupplementalClaim') "
+        " AND tasks.appeal_type IN ('HigherLevelReview', 'SupplementalClaim' ) "
+      end
+    end
+
+    def sc_type_filter
+      if query_params[:claim_type].present?
+        if query_params[:claim_type].include?(Remand.name) || query_params[:claim_type].include?(SupplementalClaim.name)
+          " AND #{where_clause_from_array(SupplementalClaim, :type, query_params[:claim_type]).to_sql} "
+        end
       end
     end
 
