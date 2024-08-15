@@ -331,18 +331,28 @@ class ClaimHistoryEvent
         rest_of_versions.map do |version|
           status_events.push event_from_version(version, 1, change_data)
         end
+
+        # If there are no events, then it had versions but none that altered status so create one from current status
+        status_events.compact!
+        if status_events.empty?
+          status_events.push create_status_event_from_current_status(change_data)
+        end
       elsif hookless_cancelled_events.empty?
         # No versions so make an event with the current status
-        # There is a chance that a task has no intake either through data setup or through a remanded SC
-        event_date = change_data["intake_completed_at"] || change_data["task_created_at"]
-        status_events.push from_change_data(task_status_to_event_type(change_data["task_status"]),
-                                            change_data.merge("event_date" => event_date,
-                                                              "event_user_name" => "System"))
+        status_events.push create_status_event_from_current_status(change_data)
       end
 
       status_events
     end
     # rubocop:enable Metrics/MethodLength
+
+    def create_status_event_from_current_status(change_data)
+      # There is a chance that a task has no intake either through data setup or through a remanded SC
+      from_change_data(task_status_to_event_type(change_data["task_status"]),
+                       change_data.merge("event_date" => change_data["intake_completed_at"] ||
+                                                         change_data["task_created_at"],
+                                         "event_user_name" => "System"))
+    end
 
     def parse_versions(versions)
       if versions
