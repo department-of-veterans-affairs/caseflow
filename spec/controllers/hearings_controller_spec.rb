@@ -511,7 +511,7 @@ RSpec.describe HearingsController, type: :controller do
   describe "#show" do
     let(:expected_time_zone) { "America/New_York" }
     let(:utc_offset) { ActiveSupport::TimeZone["America/New_York"].formatted_offset }
-    let(:hearing_day) { create(:hearing_day, scheduled_for: "2030-01-01")}
+    let(:hearing_day) { create(:hearing_day, scheduled_for: "2030-01-01") }
     let!(:hearing) do
       create(
         :hearing,
