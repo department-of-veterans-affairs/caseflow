@@ -61,21 +61,29 @@ class Hearings::TranscriptionFilesController < ApplicationController
     locked
   end
 
+  def format_docket_number(file)
+    if file.hearing_type == "Hearing"
+      return "H" + file.docket_number
+    end
+
+    "L" + file.docket_number
+  end
+
   def selected_files_info
     files = []
     ids = params[:file_ids].split(",")
     TranscriptionFile.where(id: ids).filterable_values.each do |transcription_file|
       files << {
         id: transcription_file.id,
-        docketNumber: transcription_file.docket_number,
+        docketNumber: format_docket_number(transcription_file),
         firstName: transcription_file.hearing.appeal.appellant_first_name,
         lastName: transcription_file.hearing.appeal.appellant_last_name,
         isAdvancedOnDocket: transcription_file.advanced_on_docket?,
         caseType: transcription_file.case_type,
         hearingDate: transcription_file.hearing_date,
-        hearingType: transcription_file.hearing_type,
+        appealType: transcription_file.hearing_type == "Hearing" ? "AMA" : "Legacy",
         judge: transcription_file.hearing.judge&.full_name&.split(" ")&.last,
-        regional_office: transcription_file.hearing.regional_office&.city
+        regionalOffice: transcription_file.hearing.regional_office&.city
       }
     end
     render json: files

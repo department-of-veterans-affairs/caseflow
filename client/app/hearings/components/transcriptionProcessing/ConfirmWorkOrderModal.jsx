@@ -3,14 +3,17 @@ import PropTypes from 'prop-types';
 import COPY from '../../../../COPY';
 import ApiUtil from 'app/util/ApiUtil';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import { COLORS as extraColors, LOGO_COLORS } from '../../../constants/AppConstants';
 import Button from '../../../components/Button';
 import { Link } from 'react-router-dom/cjs/react-router-dom.min';
 import { css } from 'glamor';
+import LoadingContainer from '../../../components/LoadingContainer';
 
 const ConfirmWorkOrderModal = ({ history, onCancel }) => {
   const { state } = history.location;
 
   const [transcriptionFiles, setTranscriptionFiles] = useState([]);
+  const [isLoading, setIsloading] = useState(true);
 
   const styles = {
     body: {
@@ -26,6 +29,29 @@ const ConfirmWorkOrderModal = ({ history, onCancel }) => {
     formInfoSection: {
       listStyleType: 'none',
       marginTop: '-3rem',
+    },
+    tableSection: {
+      display: 'inline-block',
+      borderTop: '1px solid',
+      marginTop: '3rem',
+      width: '95%',
+      marginLeft: '3rem',
+      borderBottom: '1px solid',
+      borderColor: COLORS.GREY_LIGHT,
+      padding: '2rem 0'
+    },
+    table: {
+      width: '100%',
+      marginTop: '-2rem'
+    },
+    advanceOnDocket: {
+      color: extraColors.RED
+    },
+    numberOfFiles: {
+      marginLeft: '0rem'
+    },
+    docketNumber: {
+      fontWeight: 'bold'
     }
   };
 
@@ -57,6 +83,22 @@ const ConfirmWorkOrderModal = ({ history, onCancel }) => {
     '& ul': {
       display: 'inline-grid',
       marginLeft: '-3rem'
+    },
+    '& th': {
+      borderRight: 'none',
+      borderLeft: 'none',
+      borderTop: 'none',
+      fontWeight: 'bold',
+      borderColor: COLORS.GREY_LIGHT
+    },
+    '& td': {
+      borderRight: 'none',
+      borderLeft: 'none',
+      borderTop: 'none',
+      borderColor: COLORS.GREY_LIGHT
+    },
+    '& .loadingContainer-content': {
+      height: '25rem'
     }
   });
 
@@ -70,9 +112,61 @@ const ConfirmWorkOrderModal = ({ history, onCancel }) => {
     );
   };
 
+  const renderFiles = (files) => {
+    return files.map((file, index) =>
+      <>
+        <tr>
+          <td>{index + 1}.</td>
+          <td style={styles.docketNumber}>{file.docketNumber}</td>
+          <td>{file.firstName}</td>
+          <td>{file.lastName}</td>
+          <td>{file.isAdvancedOnDocket && <><span style={styles.advanceOnDocket}>AOD</span>,</>} {file.caseType}</td>
+          <td>{file.hearingDate}</td>
+          <td>{file.regionalOffice}</td>
+          <td>{file.judge}</td>
+          <td>{file.appealType}</td>
+        </tr>
+      </>
+    );
+  };
+
+  const renderTranscriptionFilesTable = () => {
+    return (
+      <table style={styles.table} >
+        <tr>
+          <th></th>
+          <th>{COPY.TABLE_DOCKET_NUMBER}</th>
+          <th>{COPY.TRANSCRIPTION_TABLE_FIRST_NAME}</th>
+          <th>{COPY.TRANSCRIPTION_TABLE_LAST_NAME}</th>
+          <th>{COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE}</th>
+          <th>{COPY.TRANSCRIPTION_FILE_DISPATCH_HEARING_DATE_COLUMN_NAME}</th>
+          <th>{COPY.TRANSCRIPTION_TABLE_RO}</th>
+          <th>{COPY.TASK_SNAPSHOT_ASSIGNED_JUDGE_LABEL}</th>
+          <th>{COPY.TRANSCRIPTION_TABLE_APPEAL_TYPE}</th>
+        </tr>
+        {renderFiles(transcriptionFiles)}
+      </table>
+    );
+  };
+
+  const getSelectedFilesInfo = (files) => {
+    const ids = files.map((file) => file.id);
+
+    ApiUtil.get(`/hearings/transcription_files/selected_files_info/${ids}`).
+      then((response) => {
+        setTranscriptionFiles(response.body);
+        setIsloading(false);
+      });
+  };
+
+  const renderLoading = () => <LoadingContainer color={LOGO_COLORS.HEARINGS.ACCENT} />;
+
   const renderTableSection = () => {
     return (
-      <h2>Number of files: {state?.selectedFiles?.length}</h2>
+      <div style={styles.tableSection}>
+        <h2 style={styles.numberOfFiles}>Number of files: {state?.selectedFiles?.length}</h2>
+        {(isLoading && renderLoading()) || renderTranscriptionFilesTable()}
+      </div>
     );
   };
 
@@ -83,8 +177,7 @@ const ConfirmWorkOrderModal = ({ history, onCancel }) => {
       status: false
     };
 
-    ApiUtil.post('/hearings/transcription_files/lock', { data });
-    onCancel();
+    ApiUtil.post('/hearings/transcription_files/lock', { data }).then(onCancel());
   };
 
   const renderButtonSection = () => {
@@ -102,13 +195,6 @@ const ConfirmWorkOrderModal = ({ history, onCancel }) => {
         </div>
       </div>
     );
-  };
-
-  const getSelectedFilesInfo = (files) => {
-    const ids = files.map((file) => file.id);
-
-    ApiUtil.get(`/hearings/transcription_files/selected_files_info/${ids}`).
-      then((response) => setTranscriptionFiles(response.body));
   };
 
   useEffect(() => {
