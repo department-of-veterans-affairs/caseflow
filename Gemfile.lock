@@ -1742,7 +1742,8 @@ GEM
     newrelic_rpm (6.5.0.357)
     nio4r (2.5.9)
     no_proxy_fix (0.1.2)
-    nokogiri (1.15.6-x86_64-darwin)
+    nokogiri (1.15.6)
+      mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     nori (2.6.0)
     notiffany (0.1.1)
@@ -2045,8 +2046,7 @@ GEM
     ziptz (2.1.6)
 
 PLATFORMS
-  x86_64-darwin-22
-  x86_64-darwin-23
+  ruby
 
 DEPENDENCIES
   aasm (= 4.11.0)
