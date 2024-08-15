@@ -150,14 +150,16 @@ describe HearingTimeService, :all_dbs do
         vacols_hearing = create(
           :case_hearing,
           hearing_type: HearingDay::REQUEST_TYPES[:central],
-          hearing_date: Time.use_zone("UTC") { Time.zone.now.change(hour: 8, min: 30) }
+          hearing_date: Time.use_zone("UTC") do
+            Time.zone.now.change(hour: 8, min: 30).in_time_zone("America/New_York")
+          end
         )
         legacy_hearing = create(
           :legacy_hearing,
           regional_office: "C",
-          scheduled_for: Time.use_zone("UTC") { Time.zone.now.change(hour: 8, min: 30) },
           vacols_record: vacols_hearing,
-          vacols_id: vacols_hearing.hearing_pkseq.to_s
+          vacols_id: vacols_hearing.hearing_pkseq.to_s,
+          scheduled_in_timezone: nil
         )
 
         expected_time = Time.use_zone("America/New_York") do
