@@ -15,7 +15,7 @@ exports[`FileUpload display text displays formatted value when set 1`] = `
       </a>
     </label>
     <div
-      data-css-gyrv08=""
+      style="display: none;"
     >
       <input
         id="testing-file-upload"
@@ -41,7 +41,7 @@ exports[`FileUpload display text displays postUploadText when value is set 1`] =
       </a>
     </label>
     <div
-      data-css-gyrv08=""
+      style="display: none;"
     >
       <input
         id="testing-file-upload"
@@ -63,7 +63,7 @@ exports[`FileUpload display text displays preUploadText when value is not set 1`
       </a>
     </label>
     <div
-      data-css-gyrv08=""
+      style="display: none;"
     >
       <input
         id="testing-file-upload"
