@@ -55,7 +55,7 @@ Object {
               Add Court dates
             </h1>
             <div
-              data-css-2flkvz=""
+              style="width: 100%; font-family: Source Sans Pro; flex-grow: 1;"
             >
               <p>
                 Complete the details below to intake this Court remand for further processing
@@ -212,7 +212,7 @@ Object {
             Add Court dates
           </h1>
           <div
-            data-css-2flkvz=""
+            style="width: 100%; font-family: Source Sans Pro; flex-grow: 1;"
           >
             <p>
               Complete the details below to intake this Court remand for further processing
@@ -426,7 +426,7 @@ Object {
               Add Court dates
             </h1>
             <div
-              data-css-2flkvz=""
+              style="width: 100%; font-family: Source Sans Pro; flex-grow: 1;"
             >
               <p>
                 Complete the details below to intake this Court remand for further processing
@@ -607,7 +607,7 @@ Object {
             Add Court dates
           </h1>
           <div
-            data-css-2flkvz=""
+            style="width: 100%; font-family: Source Sans Pro; flex-grow: 1;"
           >
             <p>
               Complete the details below to intake this Court remand for further processing
