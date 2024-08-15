@@ -301,20 +301,11 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
      SQL
     end
 
-    fmtd_query = if aoj_affinity_lever_value != Constants.ACD_LEVERS.infinite
-                  sanitize_sql_array([
-                                      query,
-                                      judge.vacols_attorney_id,
-                                      judge.vacols_attorney_id,
-                                      num
-                                    ])
-                else
-                  sanitize_sql_array([
+    fmtd_query = sanitize_sql_array([
                                       query,
                                       judge.vacols_attorney_id,
                                       num
-                                    ])
-                end  
+                                    ])  
 
     appeals = conn.exec_query(fmtd_query).to_a
 
