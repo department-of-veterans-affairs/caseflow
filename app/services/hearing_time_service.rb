@@ -89,7 +89,9 @@ class HearingTimeService
   end
 
   def central_office_time_string
-    self.class.time_to_string(central_office_time, @hearing)
+    datetime = central_office_time.to_datetime
+
+    "#{datetime.strftime('%l:%M %p')} Eastern Time (US & Canada)".lstrip
   end
 
   def local_time
