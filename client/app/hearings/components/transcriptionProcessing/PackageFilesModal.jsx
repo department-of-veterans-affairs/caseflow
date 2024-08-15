@@ -159,12 +159,6 @@ const PackageFilesModal = ({ onCancel, contractors, selectedFiles }) => {
     );
   };
 
-  // Temporary function for rolling over to next transcription for testing
-  const packageFiles = (id, taskId) => {
-    ApiUtil.put('/hearings/transcriptions/package_files', { data: { id, task_id: taskId } }).
-      then(() => onCancel());
-  };
-
   useEffect(() => {
     getTranscriptionTaskId();
   }, []);
@@ -185,6 +179,7 @@ const PackageFilesModal = ({ onCancel, contractors, selectedFiles }) => {
         {
           classNames: ['usa-button', 'usa-button-primary'],
           name: COPY.TRANSCRIPTION_TABLE_PACKAGE_FILE,
+          disabled: !(workOrder && returnDateValue && contractor.name),
           onClick: () => history.push('/confirm_work_order', { workOrder, selectedFiles, returnDateValue, contractor })
         },
       ]}

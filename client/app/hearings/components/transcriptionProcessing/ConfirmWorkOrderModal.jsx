@@ -25,6 +25,7 @@ const ConfirmWorkOrderModal = ({ history, onCancel }) => {
       display: 'flex',
       justifyContent: 'space-between',
       marginRight: '3rem',
+      paddingTop: '3rem'
     },
     formInfoSection: {
       listStyleType: 'none',
@@ -180,6 +181,25 @@ const ConfirmWorkOrderModal = ({ history, onCancel }) => {
     ApiUtil.post('/hearings/transcription_files/lock', { data }).then(onCancel());
   };
 
+  const dispatchWorkOrder = () => {
+    const hearings = transcriptionFiles.map((file) => {
+      return {
+        hearing_id: file.hearing_id,
+        hearing_type: file.hearing_type === 'AMA' ? 'Hearing' : 'LegacyHearing'
+      };
+    });
+
+    ApiUtil.post('/hearings/transcription_packages/dispatch',
+      {
+        data: {
+          work_order_name: state.workOrder,
+          return_date: state.returnDateValue,
+          contractor_name: state.contractor,
+          hearings
+        }
+      }).then(() => onCancel());
+  };
+
   const renderButtonSection = () => {
     return (
       <div style={styles.buttonSection}>
@@ -191,7 +211,7 @@ const ConfirmWorkOrderModal = ({ history, onCancel }) => {
           >
             {COPY.TRANSCRIPTION_TABLE_MODIFY_WORK_ORDER}
           </Button>
-          <Button>{COPY.TRANSCRIPTION_TABLE_DISPATCH_WORK_ORDER}</Button>
+          <Button onClick={dispatchWorkOrder}>{COPY.TRANSCRIPTION_TABLE_DISPATCH_WORK_ORDER}</Button>
         </div>
       </div>
     );
