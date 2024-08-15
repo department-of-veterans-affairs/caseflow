@@ -12,7 +12,8 @@ class AppealsDistributed
     distributed_at: "Distributed At",
     hearing_judge: "Hearing Judge",
     veteran_file_number: "Veteran File number",
-    veteran_name: "Veteran"
+    veteran_name: "Veteran",
+    affinity_start_date: "Affinity Start Date"
   }.freeze
 
   def self.generate_rows(record)
@@ -75,7 +76,8 @@ class AppealsDistributed
       distributed_at: distributed_case.created_at,
       hearing_judge: hearing_judge,
       veteran_file_number: appeal.veteran_file_number,
-      veteran_name: appeal.veteran&.name.to_s
+      veteran_name: appeal.veteran&.name.to_s,
+      affinity_start_date: appeal.appeal_affinity&.affinity_start_date
     }
   end
 
@@ -99,6 +101,7 @@ class AppealsDistributed
     correspondent_record = case_record.correspondent
     folder_record = case_record.folder
     veteran_name = FullName.new(correspondent_record.snamef, nil, correspondent_record.snamel).to_s
+    appeal_affinity = AppealAffinity.find_by(case_id: appeal["bfkey"], case_type: "VACOLS::Case")
 
     {
       docket_number: folder_record.tinum,
@@ -110,7 +113,8 @@ class AppealsDistributed
       distributed_at: distributed_case.created_at,
       hearing_judge: case_record.case_hearings.first&.staff&.sdomainid,
       veteran_file_number: correspondent_record.ssn || case_record.bfcorlid,
-      veteran_name: veteran_name
+      veteran_name: veteran_name,
+      affinity_start_date: appeal_affinity&.affinity_start_date
     }
   end
 end
