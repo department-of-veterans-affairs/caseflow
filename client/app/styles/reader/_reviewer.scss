@@ -78,6 +78,18 @@
   color: inherit;
 }
 
+@media screen and (min-width: 920px) {
+  .cf-sidebar-wrapper{
+    width: 28%;
+  }
+}
+
+@media screen and (min-width: 1240px) {
+  .cf-sidebar-wrapper{
+    width: 380px;
+  }
+}
+
 .cf-sidebar-wrapper {
   display: flex;
   flex-direction: column;
@@ -88,9 +100,9 @@
   text-align: left;
   background: $caseflow-background;
   border-top: 1px solid $color-gray-lighter;
-  width: 28%;
 
   &.hidden-sidebar {
+    display:none;
     width: 0;
     min-width: 0;
   }
@@ -101,12 +113,6 @@
 
   .usa-alert {
     margin-top: 15px;
-  }
-}
-
-@media screen and (min-width: 1240px) {
-  .cf-sidebar-wrapper{
-    width: 380px;
   }
 }
 
