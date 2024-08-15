@@ -188,11 +188,11 @@ class ClaimHistoryEvent
       request_event_type = "request_#{event}"
       events.push from_change_data(request_event_type.to_sym, change_data.merge(decision_event_hash))
 
-      events.push create_in_progress_status_event(change_data)
+      events.push create_imr_in_progress_status_event(change_data)
       events
     end
 
-    def create_in_progress_status_event(change_data)
+    def create_imr_in_progress_status_event(change_data)
       in_progress_system_hash_events = pending_system_hash
         .merge("event_date" => (change_data["decided_at"] ||
           change_data["issue_modification_request_updated_at"]))

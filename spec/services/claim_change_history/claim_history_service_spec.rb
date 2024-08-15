@@ -262,6 +262,24 @@ describe ClaimHistoryService do
         Timecop.return
       end
 
+      def create_last_addition_and_verify_events(original_events, current_events)
+        new_events = current_events.dup
+        Timecop.travel(2.minutes.from_now)
+        addition = create(:issue_modification_request, request_type: "addition", decision_review: supplemental_claim)
+
+        events = service_instance.build_events
+        new_events.push(:addition, :pending)
+        expect(events.map(&:event_type)).to contain_exactly(*original_events + new_events)
+
+        # Approve the newest addition to make sure the in progress and approval events are correct
+        Timecop.travel(2.minutes.from_now)
+        addition.update!(decider: vha_admin, status: :approved, decision_reason: "Better reason2")
+
+        events = service_instance.build_events
+        new_events.push(:in_progress, :request_approved)
+        expect(events.map(&:event_type)).to contain_exactly(*original_events + new_events)
+      end
+
       it "should correctly generate temporary in progress and pending events for a single imr event" do
         events = subject
         one_imr_events = *starting_imr_events - [:removal]
@@ -287,21 +305,7 @@ describe ClaimHistoryService do
         expect(events.map(&:event_type)).to contain_exactly(*one_imr_events + new_events)
 
         # Create another addition IMR to verify that the event sequence works through one more iteration
-        # TODO: Move this into a shared block to use for all these edge cases
-        Timecop.travel(2.minutes.from_now)
-        addition2 = create(:issue_modification_request, request_type: "addition", decision_review: supplemental_claim)
-
-        service_instance.build_events
-        new_events.push(:addition, :pending)
-        expect(events.map(&:event_type)).to contain_exactly(*one_imr_events + new_events)
-
-        # Approve the newest addition to make sure the in progress and approval events are correct
-        Timecop.travel(2.minutes.from_now)
-        addition2.update!(decider: vha_admin, status: :approved, decision_reason: "Better reason2")
-
-        service_instance.build_events
-        new_events.push(:in_progress, :request_approved)
-        expect(events.map(&:event_type)).to contain_exactly(*one_imr_events + new_events)
+        create_last_addition_and_verify_events(one_imr_events, new_events)
       end
 
       context "starting with two imrs" do
@@ -336,21 +340,7 @@ describe ClaimHistoryService do
           expect(events.map(&:event_type)).to contain_exactly(*starting_imr_events + new_events)
 
           # Create another addition IMR to verify that the event sequence works through one more iteration
-          # TODO: Move this into a shared block to use for all these edge cases
-          Timecop.travel(2.minutes.from_now)
-          addition2 = create(:issue_modification_request, request_type: "addition", decision_review: supplemental_claim)
-
-          service_instance.build_events
-          new_events.push(:addition, :pending)
-          expect(events.map(&:event_type)).to contain_exactly(*starting_imr_events + new_events)
-
-          # Approve the newest addition to make sure the in progress and approval events are correct
-          Timecop.travel(2.minutes.from_now)
-          addition2.update!(decider: vha_admin, status: :approved, decision_reason: "Better reason2")
-
-          service_instance.build_events
-          new_events.push(:in_progress, :request_approved)
-          expect(events.map(&:event_type)).to contain_exactly(*starting_imr_events + new_events)
+          create_last_addition_and_verify_events(starting_imr_events, new_events)
         end
 
         it "should correctly generate temporary in progress events for two imrs decided at the same time" do
@@ -384,6 +374,9 @@ describe ClaimHistoryService do
           service_instance.build_events
           new_events.push(:in_progress, :request_approved)
           expect(events.map(&:event_type)).to contain_exactly(*starting_imr_events + new_events)
+
+          # Create another addition IMR to verify that the event sequence works through one more iteration
+          create_last_addition_and_verify_events(starting_imr_events, new_events)
         end
 
         it "should correctly generate temporary in progress events for two imrs with one cancelled in reverse order" do
@@ -409,22 +402,8 @@ describe ClaimHistoryService do
           new_events.push(:request_cancelled, :in_progress)
           expect(events.map(&:event_type)).to contain_exactly(*starting_imr_events + new_events)
 
-          # TODO: once again move this to a shared function
           # Create another addition IMR to verify that the event sequence works through one more iteration
-          Timecop.travel(2.minutes.from_now)
-          addition2 = create(:issue_modification_request, request_type: "addition", decision_review: supplemental_claim)
-
-          service_instance.build_events
-          new_events.push(:addition, :pending)
-          expect(events.map(&:event_type)).to contain_exactly(*starting_imr_events + new_events)
-
-          # Approve the newest addition to make sure the in progress and approval events are correct
-          Timecop.travel(2.minutes.from_now)
-          addition2.update!(decider: vha_admin, status: :approved, decision_reason: "Better reason2")
-
-          service_instance.build_events
-          new_events.push(:in_progress, :request_approved)
-          expect(events.map(&:event_type)).to contain_exactly(*starting_imr_events + new_events)
+          create_last_addition_and_verify_events(starting_imr_events, new_events)
         end
 
         it "when an imr is cancelled at the same time and another is created" do
@@ -463,6 +442,9 @@ describe ClaimHistoryService do
           service_instance.build_events
           new_events.push(:in_progress, :request_approved)
           expect(events.map(&:event_type)).to contain_exactly(*starting_imr_events + new_events)
+
+          # Create another addition IMR to verify that the event sequence works through one more iteration
+          create_last_addition_and_verify_events(starting_imr_events, new_events)
         end
       end
     end
