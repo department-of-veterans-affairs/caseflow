@@ -318,6 +318,7 @@ FactoryBot.define do
                 appeal_affinity { true }
                 affinity_start_date { 60.days.ago }
                 tied_to { true }
+                hearing_after_decision { false }
               end
 
               status_active
