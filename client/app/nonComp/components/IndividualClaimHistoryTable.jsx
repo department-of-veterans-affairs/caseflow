@@ -164,7 +164,7 @@ const IndividualClaimHistoryTable = (props) => {
   const RequestedIssueDecisionFragment = (details) => {
     return <React.Fragment>
       {requestDecision(details)}
-      { details.issueModificationRequestStatus === 'approved' && ['modification'].includes(details.requestType) ?
+      { details.issueModificationRequestStatus === 'approved' && details.requestType === 'modification' ?
         <RemoveOriginalIssueFragment {...details} /> : null
       }
       {reasonForRejection(details)}
@@ -292,9 +292,7 @@ const IndividualClaimHistoryTable = (props) => {
 
   const OriginalDetailsFragments = (row) => {
     const { details, modificationRequestDetails } = row;
-
-    const requestDetails = { ...modificationRequestDetails };
-    const requestModificationDetails = { ...details, ...requestDetails };
+    const requestModificationDetails = { ...details, ...modificationRequestDetails };
 
     const [isOpen, setIsOpen] = useState(false);
 
@@ -319,11 +317,8 @@ const IndividualClaimHistoryTable = (props) => {
 
     let component = null;
     const { readableEventType, details, modificationRequestDetails } = row;
-
     const detailsExtended = { ...details, eventDate: row.eventDate, eventType: row.eventType };
-
-    const requestDetails = { ...modificationRequestDetails };
-    const RequestIssueModificationDetails = { ...requestDetails, ...detailsExtended };
+    const requestIssueModificationDetails = { ...modificationRequestDetails, ...detailsExtended };
 
     switch (readableEventType) {
     case 'Claim created':
@@ -360,28 +355,28 @@ const IndividualClaimHistoryTable = (props) => {
       component = <RemovedIssueFragment {...detailsExtended} />;
       break;
     case 'Cancellation of request':
-      component = <CancellationRequestedIssueFragment {...requestDetails} />;
+      component = <CancellationRequestedIssueFragment {...requestIssueModificationDetails} />;
       break;
     case 'Requested issue removal':
-      component = <RequestedIssueFragment {...requestDetails} />;
+      component = <RequestedIssueFragment {...requestIssueModificationDetails} />;
       break;
     case 'Requested issue modification':
-      component = <RequestedIssueModificationFragment {...requestDetails} />;
+      component = <RequestedIssueModificationFragment {...requestIssueModificationDetails} />;
       break;
     case 'Requested issue addition':
-      component = <RequestedIssueFragment {...requestDetails} />;
+      component = <RequestedIssueFragment {...requestIssueModificationDetails} />;
       break;
     case 'Requested issue withdrawal':
-      component = <WithdrawalRequestedIssueFormat {...requestDetails} />;
+      component = <WithdrawalRequestedIssueFormat {...requestIssueModificationDetails} />;
       break;
-    case `Approval of request - issue ${requestDetails.requestType}`:
-      component = <RequestedIssueDecisionFragment {...RequestIssueModificationDetails} />;
+    case `Approval of request - issue ${requestIssueModificationDetails.requestType}`:
+      component = <RequestedIssueDecisionFragment {...requestIssueModificationDetails} />;
       break;
-    case `Edit of request - issue ${requestDetails.requestType}`:
-      component = <EditOfRequestIssueModification {...RequestIssueModificationDetails} />;
+    case `Edit of request - issue ${requestIssueModificationDetails.requestType}`:
+      component = <EditOfRequestIssueModification {...requestIssueModificationDetails} />;
       break;
-    case `Rejection of request - issue ${requestDetails.requestType}`:
-      component = <RequestedIssueDecisionFragment {...RequestIssueModificationDetails} />;
+    case `Rejection of request - issue ${requestIssueModificationDetails.requestType}`:
+      component = <RequestedIssueDecisionFragment {...requestIssueModificationDetails} />;
       break;
     default:
       return null;
@@ -396,7 +391,7 @@ const IndividualClaimHistoryTable = (props) => {
     return (
       <div>
         <p>{component}</p>
-        { chunk.includes(RequestIssueModificationDetails.eventType) ? <OriginalDetailsFragments {...row} /> : null }
+        { chunk.includes(requestIssueModificationDetails.eventType) ? <OriginalDetailsFragments {...row} /> : null }
       </div>
     );
   };
