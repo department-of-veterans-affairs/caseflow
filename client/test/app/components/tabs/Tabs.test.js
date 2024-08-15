@@ -3,7 +3,6 @@ import {
   render,
   fireEvent,
   screen,
-  wait,
   waitFor
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -142,28 +141,28 @@ describe('Tabs', () => {
     // Go left!
     fireEvent.keyDown(headers[1], { key: 'ArrowLeft' });
 
-    await wait(() => {
+    await waitFor(() => {
       expect(headers[0]).toBe(document.activeElement);
     });
 
     // Can't go further left
     fireEvent.keyDown(headers[0], { key: 'ArrowLeft' });
 
-    await wait(() => {
+    await waitFor(() => {
       expect(headers[0]).toBe(document.activeElement);
     });
 
     // Go back right!
     fireEvent.keyDown(headers[0], { key: 'ArrowRight' });
 
-    await wait(() => {
+    await waitFor(() => {
       expect(headers[1]).toBe(document.activeElement);
     });
 
     // Can't go further right
     fireEvent.keyDown(headers[1], { key: 'ArrowRight' });
 
-    await wait(() => {
+    await waitFor(() => {
       expect(headers[1]).toBe(document.activeElement);
     });
   });
@@ -190,7 +189,7 @@ describe('Tabs', () => {
     fireEvent.keyDown(headers[1], { key: 'ArrowLeft' });
 
     // Focus should not have moved
-    await wait(() => {
+    await waitFor(() => {
       expect(headers[1]).toBe(document.activeElement);
     });
 
@@ -198,7 +197,7 @@ describe('Tabs', () => {
     fireEvent.keyDown(headers[0], { key: 'ArrowRight' });
 
     // Focus should not have moved
-    await wait(() => {
+    await waitFor(() => {
       expect(headers[1]).toBe(document.activeElement);
     });
   });
@@ -294,11 +293,14 @@ describe('Tabs', () => {
 });
 
 describe('useUniquePrefix hook', () => {
+  function TestComponent() {
+    const uniquePrefix = useUniquePrefix();
+    return <div data-testid="uniquePrefix">{uniquePrefix}</div>;
+  }
   it('returns unique value with proper prefix', async () => {
-    const { result } = renderHook(() => useUniquePrefix());
+    render(<TestComponent />);
 
-    await waitFor(() => {
-      expect(result.current).toMatch(/cf-tabs-\d+/);
-    });
+    const displayedValue = screen.getByTestId('uniquePrefix');
+    expect(displayedValue.textContent).toMatch(/cf-tabs-\d+/);
   });
 });
