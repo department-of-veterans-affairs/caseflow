@@ -1584,7 +1584,7 @@ describe HearingMailer do
 
         context "email body" do
           include_examples "representative central reminder intro"
-          # include_examples "representative shared reminder sections"
+          include_examples "representative shared reminder sections"
           include_examples "representative non-virtual reminder sections"
         end
       end
