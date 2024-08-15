@@ -6,8 +6,7 @@ class AppealsTiedToNonSscAvljQuery
   HEADERS = {
     docket_number: "Docket number",
     docket: "Docket type",
-    aod: "AOD",
-    cavc: "CAVC",
+    priority: "Priority",
     receipt_date: "Receipt Date",
     veteran_file_number: "File Number",
     veteran_name: "Veteran Name",
@@ -62,8 +61,7 @@ class AppealsTiedToNonSscAvljQuery
       {
         docket_number: appeal["tinum"],
         docket: sym.to_s,
-        aod: appeal["aod"] == 1,
-        cavc: appeal["cavc"] == 1,
+        priority: appeal["priority"] == 1 ? "True" : "",
         receipt_date: appeal["bfd19"],
         veteran_file_number: veteran_record.ssn || vacols_case&.bfcorlid,
         veteran_name: get_name_from_record(veteran_record),
