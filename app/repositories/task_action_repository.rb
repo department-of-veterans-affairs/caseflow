@@ -7,7 +7,13 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
     end
 
     def assign_corr_task_to_team
-      # stubbed
+      {
+        modal_title: COPY::MODAL_ASSIGN_BUTTON,
+        modal_body: format_assign_to_team_body(task, COPY::CANCEL_TASK_MODAL_DETAIL),
+        message_title: format(COPY::CANCEL_TASK_CONFIRMATION, task.correspondence&.veteran_full_name),
+        message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL),
+        redirect_after: "/queue/correspondence/:correspondence_uuid/"
+      }
     end
 
     def assign_corr_task_to_person
