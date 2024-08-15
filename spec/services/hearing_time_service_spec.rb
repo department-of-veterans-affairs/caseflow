@@ -22,34 +22,6 @@ describe HearingTimeService, :all_dbs do
 
     let!(:hearing) { create(:hearing, regional_office: "RO43", scheduled_time: "12:00 PM Pacific Time (US & Canada)") }
 
-    describe "#build_params_with_time" do
-      let!(:params) do
-        { scheduled_time_string: "01:30 PM Pacific Time (US & Canada)" }
-      end
-
-      it "returns scheduled_time string parameter and removes scheduled_time_string param" do
-        expect(HearingTimeService.build_params_with_time(hearing, params))
-          .to eq(scheduled_time: "01:30 PM Pacific Time (US & Canada)")
-        expect(params).to eq(scheduled_time_string: "01:30 PM Pacific Time (US & Canada)")
-      end
-    end
-
-    describe "#build_legacy_params_with_time" do
-      let(:params) do
-        { scheduled_time_string: "01:30 PM Eastern Time (US & Canada)" }
-      end
-
-      it "returns scheduled_for parameter in ET and removes scheduled_time_string param" do
-        expected_scheduled_for = Time.use_zone("America/New_York") do
-          time = legacy_hearing.scheduled_for.to_datetime
-          Time.zone.local(time.year, time.month, time.day, 13, 30)
-        end
-        expected_params = { scheduled_for: expected_scheduled_for }
-        expect(HearingTimeService.build_legacy_params_with_time(legacy_hearing, params)).to eq(expected_params)
-        expect(params).to eq(scheduled_time_string: "01:30 PM Eastern Time (US & Canada)")
-      end
-    end
-
     describe "#local_time" do
       it "returns time object encoded in local time" do
         hearing_day = hearing.hearing_day
@@ -98,21 +70,21 @@ describe HearingTimeService, :all_dbs do
           end
 
           it "changes to Appellant timezone (CT)" do
-            expect(hearing.time.appellant_time).to eq(expected_time)
+            expect(hearing.appellant_time).to eq(expected_time)
           end
 
           it "changes to Representative timezone (CT)" do
-            expect(hearing.time.poa_time).to eq(expected_time)
+            expect(hearing.poa_time).to eq(expected_time)
           end
         end
 
         context "timezone is not present" do
           it "changes to local time (PT) for Appellant" do
-            expect(hearing.time.appellant_time).to eq(expected_local)
+            expect(hearing.appellant_time).to eq(expected_local)
           end
 
           it "changes to local time (PT) for Representative" do
-            expect(hearing.time.poa_time).to eq(expected_local)
+            expect(hearing.poa_time).to eq(expected_local)
           end
         end
 
@@ -123,11 +95,11 @@ describe HearingTimeService, :all_dbs do
           end
 
           it "throws an ArgumentError for Appellant" do
-            expect { hearing.time.appellant_time }.to raise_error ArgumentError
+            expect { hearing.appellant_time }.to raise_error ArgumentError
           end
 
           it "throws an ArgumentError for Representative" do
-            expect { hearing.time.poa_time }.to raise_error ArgumentError
+            expect { hearing.poa_time }.to raise_error ArgumentError
           end
         end
       end
@@ -177,12 +149,13 @@ describe HearingTimeService, :all_dbs do
         vacols_hearing = create(
           :case_hearing,
           hearing_type: HearingDay::REQUEST_TYPES[:central],
-          hearing_date: Time.use_zone("UTC") { Time.zone.now.change(hour: 8, min: 30) }
+          hearing_date: Time.use_zone("UTC") do
+            Time.zone.now.change(hour: 8, min: 30).in_time_zone("America/New_York")
+          end
         )
         legacy_hearing = create(
           :legacy_hearing,
           regional_office: "C",
-          scheduled_for: Time.use_zone("UTC") { Time.zone.now.change(hour: 8, min: 30) },
           vacols_record: vacols_hearing,
           vacols_id: vacols_hearing.hearing_pkseq.to_s,
           scheduled_in_timezone: "America/New_York"
@@ -198,35 +171,85 @@ describe HearingTimeService, :all_dbs do
           )
         end
 
-        expect(legacy_hearing.time.local_time).to eq(expected_time)
+        expect(legacy_hearing.time.local_time) == expected_time
+      end
+    end
+  end
+
+  context "#process_legacy_scheduled_time_string" do
+    include_context "legacy_hearing"
+
+    subject do
+      HearingTimeService.new(hearing: legacy_hearing).process_legacy_scheduled_time_string(
+        date: test_date,
+        time_string: test_time_string
+      )
+    end
+
+    context "When date is nil and time_string is nil" do
+      let(:test_date) { nil }
+      let(:test_time_string) { nil }
+
+      it { is_expected.to be nil }
+    end
+
+    context "When date is non-nil and time_string is nil" do
+      let(:test_date) { legacy_hearing.hearing_day.scheduled_for }
+      let(:test_time_string) { nil }
+
+      it { is_expected.to be nil }
+    end
+
+    context "When date is nil and time_string is non-nil" do
+      let(:test_date) { nil }
+      let(:test_time_string) { "2:00 PM Pacific Time (US & Canada)" }
+
+      it { is_expected.to be nil }
+    end
+
+    describe "When the time_string is Pacific Time" do
+      let(:test_time_string) { "10:00 AM Pacific Time (US & Canada)" }
+      let(:expected_time) { Time.use_zone("UTC") { Time.zone.parse("#{test_date} 10:00") } }
+
+      context "Standard Time" do
+        let(:test_date) { "2024-11-25" }
+
+        it { is_expected.to eq expected_time }
       end
 
-      it "returns the right time even when the Legacy Hearing scheduled_for is in UTC", tz: "UTC" do
-        # This is only expected if the hearing has a nil value for scheduled_in_timezone
-        vacols_hearing = create(
-          :case_hearing,
-          hearing_type: HearingDay::REQUEST_TYPES[:central],
-          hearing_date: Time.use_zone("UTC") { Time.zone.now.change(hour: 8, min: 30) }
-        )
-        legacy_hearing = create(
-          :legacy_hearing,
-          regional_office: "C",
-          scheduled_for: Time.use_zone("UTC") { Time.zone.now.change(hour: 8, min: 30) },
-          vacols_record: vacols_hearing,
-          vacols_id: vacols_hearing.hearing_pkseq.to_s
-        )
+      context "DST" do
+        let(:test_date) { "2024-08-25" }
 
-        expected_time = Time.use_zone("America/New_York") do
-          Time.zone.now.change(
-            year: legacy_hearing.scheduled_for.year,
-            month: legacy_hearing.scheduled_for.month,
-            day: legacy_hearing.scheduled_for.day,
-            hour: 8,
-            min: 30
-          )
-        end
+        it { is_expected.to eq expected_time }
+      end
+    end
 
-        expect(legacy_hearing.time.local_time).to eq(expected_time)
+    describe "When the time_string is Eastern Time" do
+      let(:test_time_string) { "9:00 AM Eastern Time (US & Canada)" }
+      let(:expected_time) { Time.use_zone("UTC") { Time.zone.parse("#{test_date} 9:00") } }
+
+      context "Standard Time" do
+        let(:test_date) { "2024-12-01" }
+
+        it { is_expected.to eq expected_time }
+      end
+
+      context "DST" do
+        let(:test_date) { "2024-06-01" }
+
+        it { is_expected.to eq expected_time }
+      end
+    end
+
+    describe "When the time_string is Phillipine Standard Time" do
+      let(:test_time_string) { "12:00 PM Philippine Standard Time" }
+      let(:expected_time) { Time.use_zone("UTC") { Time.zone.parse("#{test_date} 12:00") } }
+
+      # The Phillipines does not observe DST.
+      context "Standard Time" do
+        let(:test_date) { "2024-01-01" }
+
+        it { is_expected.to eq expected_time }
       end
     end
   end
