@@ -61,7 +61,6 @@ class AppealsDistributed
   end
 
   # For each AMA appeal get its distributed case and use ActiveRecord relationships to get fields
-  # rubocop:disable Metrics/CyclomaticComplexity
   def self.ama_appeal(appeal, distributed_cases)
     distributed_case = distributed_cases.filter { |dc| dc.case_id == appeal.uuid }.first
     hearing_judge = appeal.hearings
@@ -83,7 +82,6 @@ class AppealsDistributed
       affinity_start_date: appeal.appeal_affinity&.affinity_start_date
     }
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
 
   # Pull all the Legacy Appeals found
   def self.legacy_appeals(legacy_bfkeys, distributed_cases)
