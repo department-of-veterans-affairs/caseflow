@@ -274,6 +274,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
     appeals.map { |appeal| appeal["bfd19"] }
   end
 
+  # rubocop:disable Metrics/MethodLength
   def self.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
     aoj_affinity_lever_value = CaseDistributionLever.aoj_affinity_days
 
@@ -284,28 +285,28 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
     conn = connection
 
     query = if aoj_affinity_lever_value == Constants.ACD_LEVERS.infinite
-    <<-SQL
-      #{SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19}
-      where ((VLJ = ? or #{ineligible_judges_sattyid_cache} or VLJ is null)
-      and ((PREV_TYPE_ACTION is null or PREV_TYPE_ACTION <> '7') and AOD = '0')
-      or ((PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache(true)}
-      or #{vacols_judges_with_exclude_appeals_from_affinity(excluded_judges_attorney_ids)})
-      or #{nonpriority_cdl_aoj_query})
-     SQL
-    else
-    <<-SQL
-      #{SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19}
-      where ((VLJ = ? or #{ineligible_judges_sattyid_cache} or VLJ is null)
-      and ((PREV_TYPE_ACTION is null or PREV_TYPE_ACTION <> '7') and AOD = '0')
-      or #{nonpriority_cdl_aoj_query})
-     SQL
-    end
+              <<-SQL
+                #{SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19}
+                where ((VLJ = ? or #{ineligible_judges_sattyid_cache} or VLJ is null)
+                and ((PREV_TYPE_ACTION is null or PREV_TYPE_ACTION <> '7') and AOD = '0')
+                or ((PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache(true)}
+                or #{vacols_judges_with_exclude_appeals_from_affinity(excluded_judges_attorney_ids)})
+                or #{nonpriority_cdl_aoj_query})
+              SQL
+            else
+              <<-SQL
+                #{SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19}
+                where ((VLJ = ? or #{ineligible_judges_sattyid_cache} or VLJ is null)
+                and ((PREV_TYPE_ACTION is null or PREV_TYPE_ACTION <> '7') and AOD = '0')
+                or #{nonpriority_cdl_aoj_query})
+              SQL
+            end
 
     fmtd_query = sanitize_sql_array([
                                       query,
                                       judge.vacols_attorney_id,
                                       judge.vacols_attorney_id
-                                    ])  
+                                    ])
 
     appeals = conn.exec_query(fmtd_query).to_a
 
@@ -317,6 +318,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
 
     appeals.map { |appeal| appeal["bfd19"] }
   end
+  # rubocop:enable Metrics/MethodLength
 
   def self.age_of_oldest_priority_appeal
     query = <<-SQL
