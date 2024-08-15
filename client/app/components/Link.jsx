@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link as RouterLink } from 'react-router-dom';
-import { css } from 'glamor';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 
 const CLASS_NAME_MAPPING = {
@@ -11,14 +10,14 @@ const CLASS_NAME_MAPPING = {
   matte: 'link-matte link-overflow'
 };
 
-const disabledLinkStyling = css({
+const disabledLinkStyling = {
   color: COLORS.GREY_MEDIUM,
   ':hover': {
     color: COLORS.GREY_MEDIUM
   }
-});
+};
 
-const matteStyling = css({
+const matteStyling = {
   margin: '0 8px',
   color: 'inherit',
   padding: '0',
@@ -49,7 +48,7 @@ const matteStyling = css({
   whiteSpace: 'nowrap',
   overflowX: 'hidden',
   maxWidth: '100%'
-});
+};
 
 export default class Link extends React.Component {
   render() {
@@ -68,7 +67,7 @@ export default class Link extends React.Component {
     } = this.props;
 
     if (disabled) {
-      return <span {...disabledLinkStyling}>
+      return <span style={disabledLinkStyling}>
         {children}
       </span>;
     }
@@ -80,14 +79,14 @@ export default class Link extends React.Component {
       return <p
         type={type}
         className={CLASS_NAME_MAPPING[button]}
-        {...styling}
+        style={styling}
       >
         {children}
       </p>;
     }
 
     const commonProps = {
-      ...styling,
+      style: styling,
       'aria-label': ariaLabel,
       target,
       type,
