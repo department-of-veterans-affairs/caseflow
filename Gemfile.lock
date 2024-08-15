@@ -1500,7 +1500,7 @@ GEM
     coderay (1.1.3)
     colored2 (3.1.2)
     colorize (0.8.1)
-    concurrent-ruby (1.3.3)
+    concurrent-ruby (1.3.4)
     connection_pool (2.2.3)
     cork (0.3.0)
       colored2 (~> 3.1)
@@ -1716,7 +1716,8 @@ GEM
       mime-types-data (~> 3.2015)
     mime-types-data (3.2019.1009)
     mini_mime (1.1.2)
-    minitest (5.24.1)
+    mini_portile2 (2.8.7)
+    minitest (5.25.0)
     moment_timezone-rails (0.5.0)
     momentjs-rails (2.29.4.1)
       railties (>= 3.1)
@@ -1742,7 +1743,8 @@ GEM
     newrelic_rpm (6.5.0.357)
     nio4r (2.5.9)
     no_proxy_fix (0.1.2)
-    nokogiri (1.15.6-x86_64-darwin)
+    nokogiri (1.15.6)
+      mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     nori (2.6.0)
     notiffany (0.1.1)
@@ -1857,8 +1859,7 @@ GEM
       rack (>= 1.4)
     reverse_markdown (1.4.0)
       nokogiri
-    rexml (3.3.4)
-      strscan
+    rexml (3.2.6)
     roo (2.8.2)
       nokogiri (~> 1)
       rubyzip (>= 1.2.1, < 2.0.0)
@@ -1991,7 +1992,6 @@ GEM
     stringex (2.8.5)
     strong_migrations (0.4.1)
       activerecord (>= 5)
-    strscan (3.1.0)
     terminal-table (1.8.0)
       unicode-display_width (~> 1.1, >= 1.1.1)
     test-prof (0.10.1)
@@ -2045,8 +2045,7 @@ GEM
     ziptz (2.1.6)
 
 PLATFORMS
-  x86_64-darwin-22
-  x86_64-darwin-23
+  ruby
 
 DEPENDENCIES
   aasm (= 4.11.0)
