@@ -49,7 +49,7 @@ RSpec.describe HearingDatetimeService do
       end
 
       it "edge case: returns the correct time for error-prone Manila timezone: Summer" do
-        # note Asia/Manila tz does not observe Daylight Savings Time
+        # NOTE: Asia/Manila tz does not observe Daylight Savings Time
         date = "2021-07-03"
         time_string = "1:00 PM Philippine Standard Time"
 
@@ -131,7 +131,22 @@ RSpec.describe HearingDatetimeService do
     let(:legacy_hearing) do
       create(
         :legacy_hearing,
-        scheduled_in_timezone: "America/Los_Angeles"
+        scheduled_in_timezone: "America/Los_Angeles",
+        hearing_day: create(
+          :hearing_day,
+          scheduled_for: winter_date
+        )
+      )
+    end
+
+    let(:summer_legacy_hearing) do
+      create(
+        :legacy_hearing,
+        scheduled_in_timezone: "America/Los_Angeles",
+        hearing_day: create(
+          :hearing_day,
+          scheduled_for: summer_date
+        )
       )
     end
 
@@ -220,26 +235,44 @@ RSpec.describe HearingDatetimeService do
     end
     context "hearing is Legacy" do
       describe "local_time" do
-        xit "returns the scheduled_for value for a hearing" do
-          # skipping until LegacyHearing#scheduled_for is implemented
+        it "returns the scheduled_for value for a hearing" do
+          time_service = described_class.new(hearing: legacy_hearing)
+
+          expect(time_service.local_time).to eq(legacy_hearing.scheduled_for)
+          expect(time_service.local_time.zone).to eq(legacy_hearing.scheduled_for.zone)
         end
       end
 
       describe "central_office_time" do
-        xit "returns local_time in Eastern Time" do
-          # skipping until LegacyHearing#scheduled_for is implemented
+        it "returns local_time in Eastern Time" do
+          time_service = described_class.new(hearing: legacy_hearing)
+          time_service_2 = described_class.new(hearing: summer_legacy_hearing)
+
+          expect(time_service.central_office_time.zone).to eq("EST")
+          expect(time_service_2.central_office_time.zone).to eq("EDT")
         end
       end
 
       describe "central_office_time_string" do
-        xit "formats central_office_time into a string" do
-          # skipping until LegacyHearing#scheduled_for is implemented
+        it "formats central_office_time into a string" do
+          time_service = described_class.new(hearing: legacy_hearing)
+          expected_string = legacy_hearing
+            .scheduled_for
+            .in_time_zone("America/New_York")
+            .strftime("%l:%M %p")
+            .lstrip
+            .concat(" ", "Eastern Time (US & Canada)")
+
+          expect(time_service.central_office_time_string).to eq(expected_string)
         end
       end
 
       describe "scheduled_time_string" do
-        xit "formats local_time into a string" do
-          # skipping until LegacyHearing#scheduled_for is implemented
+        it "formats local_time into a string" do
+          time_service = described_class.new(hearing: legacy_hearing)
+          expected_string = "#{legacy_hearing.scheduled_for.strftime('%l:%M %p')} Pacific Time (US & Canada)".lstrip
+
+          expect(time_service.scheduled_time_string).to eq(expected_string)
         end
       end
 

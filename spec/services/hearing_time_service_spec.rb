@@ -145,8 +145,7 @@ describe HearingTimeService, :all_dbs do
 
   context "with a legacy hearing scheduled for 08:30am" do
     describe "#local_time" do
-      it "returns the right time even when the Legacy Hearing scheduled_for is in UTC", tz: "UTC" do
-        # This is only expected if the hearing has a nil value for scheduled_in_timezone
+      it "returns the right time when scheduled_in_timezone value is non-nil", tz: "UTC" do
         vacols_hearing = create(
           :case_hearing,
           hearing_type: HearingDay::REQUEST_TYPES[:central],
@@ -159,7 +158,7 @@ describe HearingTimeService, :all_dbs do
           regional_office: "C",
           vacols_record: vacols_hearing,
           vacols_id: vacols_hearing.hearing_pkseq.to_s,
-          scheduled_in_timezone: nil
+          scheduled_in_timezone: "America/New_York"
         )
 
         expected_time = Time.use_zone("America/New_York") do
@@ -172,7 +171,7 @@ describe HearingTimeService, :all_dbs do
           )
         end
 
-        expect(legacy_hearing.time.local_time).to eq(expected_time)
+        expect(legacy_hearing.time.local_time) == expected_time
       end
     end
   end

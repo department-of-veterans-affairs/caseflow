@@ -29,22 +29,6 @@ describe HearingRepository, :all_dbs do
     end
   end
 
-  context ".fix_hearings_timezone" do
-    let(:valid_tz) { "10:30 PM Eastern Time (US & Canada)" }
-    let(:invalid_tz) { "This is not a timezone" }
-
-    subject { HearingRepository.fix_hearings_timezone(valid_tz) }
-
-    it "returns the shortened timezone name" do
-      expect(subject).to eq("America/New_York")
-    end
-    it "throws an error if the timezone is invalid" do
-      expect do
-        HearingRepository.fix_hearings_timezone(invalid_tz)
-      end.to raise_error(TZInfo::UnknownTimezone)
-    end
-  end
-
   context ".slot_new_hearing" do
     let(:legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
     let(:staff_record) { create(:staff) }

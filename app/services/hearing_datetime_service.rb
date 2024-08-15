@@ -25,8 +25,6 @@ class HearingDatetimeService
       "#{date} #{time_without_zone}".in_time_zone(timezone_from_time_string(time_string))
     end
 
-    private
-
     # Converts time zone from the scheduled_time_string into a region string recognized by
     # Rails ActiveSupport::Timezone
     #
