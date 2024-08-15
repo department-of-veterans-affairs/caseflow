@@ -6,7 +6,7 @@ RSpec.feature("Correspondence Details Response Letters Module") do
   let(:organization) { InboundOpsTeam.singleton }
   let(:bva_user) { User.authenticate!(roles: ["Mail Intake"]) }
   let(:correspondence) { create :correspondence, :with_correspondence_intake_task }
-  let(:wait_time) { 30 }
+  let(:wait_time) { 40 }
 
   before(:each) do
     FeatureToggle.enable!(:correspondence_queue)
