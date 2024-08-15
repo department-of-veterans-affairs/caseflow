@@ -52,7 +52,7 @@ exports[`EditClaimLabelModal renders correctly 1`] = `
           Edit Claim Label
         </h1>
         <div
-          data-css-2flkvz=""
+          style="width: 100%; font-family: Source Sans Pro; flex-grow: 1;"
         >
           <div>
             <strong>
