@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "#{Rails.root}/app/helpers/sync_decided_appeals_helper.rb"
 
 namespace :appeal_state_synchronizer do

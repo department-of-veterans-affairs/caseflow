@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative "../../app/helpers/sync_decided_appeals_helper"
 
 describe "SyncDecidedAppealsHelper" do
@@ -7,8 +9,8 @@ describe "SyncDecidedAppealsHelper" do
 
   attr_reader :helper
 
-  before do
-    @helper = Helper.new
+  subject do
+    Helper.new
   end
 
   context "#sync_decided_appeals" do
@@ -29,7 +31,7 @@ describe "SyncDecidedAppealsHelper" do
               undecided_appeal_state,
               missing_vacols_case_appeal_state].all?(&:decision_mailed)).to eq false
 
-      @helper.sync_decided_appeals
+      subject.sync_decided_appeals
 
       expect(decided_appeal_state.reload.decision_mailed).to eq true
       expect(undecided_appeal_state.reload.decision_mailed).to eq false
@@ -46,7 +48,7 @@ describe "SyncDecidedAppealsHelper" do
 
       expect(Rails.logger).to receive(:error)
 
-      expect { @helper.sync_decided_appeals }.to raise_error(StandardError)
+      expect { subject.sync_decided_appeals }.to raise_error(StandardError)
     end
 
     # VACOLS record's decision date will be set to simulate a decided appeal
