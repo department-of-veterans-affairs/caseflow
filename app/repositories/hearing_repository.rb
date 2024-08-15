@@ -41,15 +41,18 @@ class HearingRepository
       hearing_day = HearingDay.find(attrs[:hearing_day_id])
       fail HearingDayFull if !override_full_hearing_day_validation && hearing_day.hearing_day_full?
 
+      scheduled_for = HearingDatetimeService.prepare_time_for_storage(
+        date: hearing_day.scheduled_for,
+        time_string: attrs[:scheduled_time_string]
+      )
+      scheduled_timezone = HearingDatetimeService.timezone_from_time_string(attrs[:scheduled_time_string])
+
       if attrs[:appeal].is_a?(LegacyAppeal)
         vacols_hearing = create_vacols_hearing(
           hearing_day: hearing_day,
           appeal: attrs[:appeal],
-          scheduled_for: HearingDatetimeService.prepare_time_for_storage(
-            date: hearing_day.scheduled_for,
-            time_string: attrs[:scheduled_time_string]
-          ),
-          scheduled_in_timezone: HearingDatetimeService.timezone_from_time_string(attrs[:scheduled_time_string]),
+          scheduled_for: scheduled_for,
+          scheduled_in_timezone: scheduled_timezone,
           hearing_location_attrs: attrs[:hearing_location_attrs],
           notes: attrs[:notes]
         )
@@ -61,11 +64,8 @@ class HearingRepository
           hearing_day_id: hearing_day.id,
           hearing_location_attributes: attrs[:hearing_location_attrs] || {},
           scheduled_time: attrs[:scheduled_time_string],
-          scheduled_datetime: HearingDatetimeService.prepare_time_for_storage(
-            date: hearing_day.scheduled_for,
-            time_string: attrs[:scheduled_time_string]
-          ),
-          scheduled_in_timezone: HearingDatetimeService.timezone_from_time_string(attrs[:scheduled_time_string]),
+          scheduled_datetime: scheduled_for,
+          scheduled_in_timezone: scheduled_timezone,
           override_full_hearing_day_validation: override_full_hearing_day_validation,
           notes: attrs[:notes]
         )

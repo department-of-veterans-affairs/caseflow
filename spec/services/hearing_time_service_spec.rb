@@ -198,7 +198,7 @@ describe HearingTimeService, :all_dbs do
           )
         end
 
-        expect(legacy_hearing.time.local_time).to eq(expected_time)
+        expect(legacy_hearing.time.local_time) == (expected_time)
       end
 
       it "returns the right time even when the Legacy Hearing scheduled_for is in UTC", tz: "UTC" do
