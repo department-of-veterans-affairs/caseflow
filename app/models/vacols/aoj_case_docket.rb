@@ -283,18 +283,38 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
     nonpriority_cdl_aoj_query = generate_nonpriority_case_distribution_lever_aoj_query(aoj_affinity_lever_value)
     conn = connection
 
-    query = <<-SQL
+    query = if aoj_affinity_lever_value == Constants.ACD_LEVERS.infinite
+    <<-SQL
+      #{SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19}
+      where ((VLJ = ? or #{ineligible_judges_sattyid_cache} or VLJ is null)
+      and ((PREV_TYPE_ACTION is null or PREV_TYPE_ACTION <> '7') and AOD = '0')
+      or ((PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache(true)}
+      or #{vacols_judges_with_exclude_appeals_from_affinity(excluded_judges_attorney_ids)})
+      or #{nonpriority_cdl_aoj_query})
+     SQL
+    else
+    <<-SQL
       #{SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19}
       where ((VLJ = ? or #{ineligible_judges_sattyid_cache} or VLJ is null)
       and ((PREV_TYPE_ACTION is null or PREV_TYPE_ACTION <> '7') and AOD = '0')
       or #{nonpriority_cdl_aoj_query})
-    SQL
+     SQL
+    end
 
-    fmtd_query = sanitize_sql_array([
+    fmtd_query = if aoj_affinity_lever_value != Constants.ACD_LEVERS.infinite
+                  sanitize_sql_array([
                                       query,
                                       judge.vacols_attorney_id,
-                                      judge.vacols_attorney_id
+                                      judge.vacols_attorney_id,
+                                      num
                                     ])
+                else
+                  sanitize_sql_array([
+                                      query,
+                                      judge.vacols_attorney_id,
+                                      num
+                                    ])
+                end  
 
     appeals = conn.exec_query(fmtd_query).to_a
 
