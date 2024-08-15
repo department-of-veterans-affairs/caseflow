@@ -6,7 +6,7 @@ exports[`LoadingDataDisplay displays loading state initally 1`] = `
     class="cf-app-segment cf-app-segment--alt"
   >
     <div
-      data-css-1ogvp9u=""
+      style="text-align: center; height: 300px; margin-top: 75px;"
     >
       <div>
         
