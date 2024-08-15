@@ -12,14 +12,14 @@ class CorrespondenceTask < Task
   scope :package_action_tasks, -> { where(type: package_action_task_names) }
   scope :tasks_not_related_to_an_appeal, -> { where(type: tasks_not_related_to_an_appeal_names) }
   scope :correspondence_mail_tasks, -> { where(type: correspondence_mail_task_names) }
+  scope :efolder_parent_tasks, -> { where(id: where(type: EfolderUploadFailedTask.name).active.pluck(:parent_id)) }
 
   # scopes to handle task queue logic
   # Correspondence Cases queries
   scope :unassigned_tasks, -> { where(type: ReviewPackageTask.name, status: Constants.TASK_STATUSES.unassigned) }
+  # due to 'on_hold' tasks also getting action_required_tasks, join efolder parent task
   scope :assigned_tasks, lambda {
-                           where(type: active_task_names).open.where.not(
-                             status: Constants.TASK_STATUSES.unassigned
-                           )
+                           where(type: active_task_names).active.or(efolder_parent_tasks)
                          }
   scope :action_required_tasks, -> { where(assigned_to: InboundOpsTeam.singleton).package_action_tasks.active }
   scope :pending_tasks, -> { tasks_not_related_to_an_appeal.open }
