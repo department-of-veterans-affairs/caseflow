@@ -249,7 +249,7 @@ module Seeds
       case_hearing = create(
         :case_hearing,
         hearing_type: day.request_type,
-        hearing_date: VacolsHelper.format_datetime_with_utc_timezone(scheduled_for),
+        hearing_date: scheduled_for,
         folder_nr: appeal.vacols_id,
         vdkey: day.id,
         board_member: day.judge.vacols_attorney_id.to_i
