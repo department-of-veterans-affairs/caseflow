@@ -123,7 +123,7 @@ class HearingMailer < ActionMailer::Base
   def formatted_time
     # Mon, Oct 19 at 10:30am CDT
     time_format = "%a, %b %-d at %-l:%M%P %Z"
-    @hearing.time.appellant_time.strftime(time_format)
+    @hearing.appellant_time.strftime(time_format)
   end
 
   def appellant_name
