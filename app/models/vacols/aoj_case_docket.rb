@@ -304,7 +304,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
     fmtd_query = sanitize_sql_array([
                                       query,
                                       judge.vacols_attorney_id,
-                                      num
+                                      judge.vacols_attorney_id
                                     ])  
 
     appeals = conn.exec_query(fmtd_query).to_a
