@@ -237,7 +237,7 @@ class ClaimHistoryEvent
         false
       else
         # If nothing else matches and the next one is also decided then go ahead and generate an in progress event
-        # This may occasionally result in a false positive
+        # This may occasionally result in a false positive but it should be right most of the time
         change_data["next_decided_or_cancelled_at"].present?
       end
     end

@@ -97,6 +97,7 @@ describe ClaimHistoryEvent do
   let(:issue_modification_request_created_at) { Time.zone.parse("2023-10-20 22:47:16.233187") }
   let(:imr_last_decided_date) { Time.zone.parse("2023-10-21 22:47:16.233187") }
   let(:previous_imr_created_at) { Time.zone.parse("2023-10-19 22:47:16.233187") }
+  let(:out_of_bounds_time) { Time.utc(9999, 12, 31, 23, 59, 59) }
 
   let(:decision_reason) { nil }
   let(:decider_id) { nil }
@@ -748,11 +749,11 @@ describe ClaimHistoryEvent do
       end
     end
 
-    describe ".create_pending_status_events" do
+    describe ".create_pending_status_event" do
       let(:event_date) { change_data["issue_modification_request_created_at"] }
       let(:is_assigned_present) { true }
 
-      subject { described_class.create_pending_status_events(change_data, event_date) }
+      subject { described_class.create_pending_status_event(change_data, event_date) }
 
       it "should return one pending event" do
         expect_attributes(subject, pending_attribute_data)
@@ -822,6 +823,7 @@ describe ClaimHistoryEvent do
       before do
         change_data["decided_at"] = imr_last_decided_date
         change_data["imr_last_decided_date"] = imr_last_decided_date
+        change_data["next_created_at"] = out_of_bounds_time
       end
       subject { described_class.create_edited_request_issue_events(change_data) }
 
@@ -831,7 +833,7 @@ describe ClaimHistoryEvent do
         expect_attributes(subject[0], pending_attribute_data)
         expect_attributes(subject[1], issue_modification_response_attribute)
         expect_attributes(subject[3], issue_modification_edited_attribute)
-        expect_attributes(subject[2], in_progress_attribute_data)
+        expect_attributes(subject[2], issue_modification_edited_attribute)
       end
     end
 
