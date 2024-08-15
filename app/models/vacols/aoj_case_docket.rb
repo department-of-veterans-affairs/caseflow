@@ -291,14 +291,14 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
                 and ((PREV_TYPE_ACTION is null or PREV_TYPE_ACTION <> '7') and AOD = '0')
                 or ((PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache(true)}
                 or #{vacols_judges_with_exclude_appeals_from_affinity(excluded_judges_attorney_ids)})
-                or #{nonpriority_cdl_aoj_query})
+                or #{nonpriority_cdl_aoj_query}))
               SQL
             else
               <<-SQL
                 #{SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19}
                 where ((VLJ = ? or #{ineligible_judges_sattyid_cache} or VLJ is null)
                 and ((PREV_TYPE_ACTION is null or PREV_TYPE_ACTION <> '7') and AOD = '0')
-                or #{nonpriority_cdl_aoj_query})
+                or #{nonpriority_cdl_aoj_query}))
               SQL
             end
 

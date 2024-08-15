@@ -792,6 +792,10 @@ describe VACOLS::AojCaseDocket, :all_dbs do
         )
           .to match_array([c11, c12, c13, c14, c15, c16, c17, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30]
             .map { |c| c["bfkey"].to_i.to_s }.sort)
+        expect(
+          VACOLS::AojCaseDocket.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, 100).count
+        )
+          .to eq(17)
         # {FOR LEVER BEING OMIT:}
         aoj_lever.update!(value: "omit")
         expect(VACOLS::AojCaseDocket.distribute_nonpriority_appeals(judge, "any", 100, nil, false, true).map { |c| c["bfkey"] }.sort)
