@@ -198,7 +198,7 @@ describe HearingTimeService, :all_dbs do
           )
         end
 
-        expect(legacy_hearing.time.local_time) == (expected_time)
+        expect(legacy_hearing.time.local_time) == expected_time
       end
     end
   end
