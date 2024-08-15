@@ -433,7 +433,8 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
           click_dropdown(index: 0)
           click_label "private_attorney_or_agent"
           click_on "Continue"
-          expect(page).not_to have_content(COPY::SPECIAL_ISSUES_NONE_CHOSEN_TITLE)
+          # expect(page).not_to have_content(COPY::SPECIAL_ISSUES_NONE_CHOSEN_TITLE)
+          expect(page.has_no_content?(COPY::SPECIAL_ISSUES_NONE_CHOSEN_TITLE)).to eq(true)
         end
       end
 
