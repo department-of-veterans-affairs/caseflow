@@ -133,7 +133,7 @@ describe DecisionDocument, :postgres do
   end
 
   context "#process!" do
-    subject { decision_document.process! }
+    subject { decision_document.process!(false) }
 
     before do
       allow(decision_document).to receive(:submitted_and_ready?).and_return(true)
