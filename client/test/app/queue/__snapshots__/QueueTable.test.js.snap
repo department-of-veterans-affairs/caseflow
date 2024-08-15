@@ -5423,7 +5423,13 @@ exports[`QueueTable render() Renders loading component instead of body when load
           className="testClasses"
         >
           <div
-            data-css-1ogvp9u=""
+            style={
+              Object {
+                "height": "300px",
+                "marginTop": "75px",
+                "textAlign": "center",
+              }
+            }
           >
             <LoadingIcon
               className="cf-loading-button-symbol cf-small-loader-symbol"
