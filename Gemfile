@@ -50,7 +50,7 @@ gem "pdfjs_viewer-rails", git: "https://github.com/senny/pdfjs_viewer-rails.git"
 # Used to build out PDF files on the backend
 # https://github.com/pdfkit/pdfkit
 gem "pdfkit"
-gem "pg", platforms: :ruby
+gem "pg", "~> 1.5.7", platforms: :ruby
 # Application server: Puma
 # Puma was chosen because it handles load of 40+ concurrent users better than Unicorn and Passenger
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
@@ -89,7 +89,7 @@ gem "ziptz"
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
   gem "activerecord-oracle_enhanced-adapter", "~> 6.0.0"
-  gem "ruby-oci8", "~> 2.2"
+  gem "ruby-oci8", "~> 2.2.14"
 end
 
 group :test, :development, :demo do
