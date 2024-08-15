@@ -76,7 +76,7 @@ class CorrespondenceTask < Task
     [
       CorrespondenceIntakeTask.name,
       ReviewPackageTask.name
-    ]
+    ].freeze
   end
 
   def self.package_action_task_names
