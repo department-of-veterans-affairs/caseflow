@@ -9,41 +9,6 @@ class HearingTimeService
   CENTRAL_OFFICE_TIMEZONE = "America/New_York"
 
   class << self
-    def build_legacy_params_with_time(hearing, update_params)
-      # takes hearing update_legacy_params from controller and adds
-      # vacols-formatted scheduled_for
-      return update_params if update_params[:scheduled_time_string].nil?
-
-      scheduled_for = legacy_formatted_scheduled_for(
-        scheduled_for: update_params[:scheduled_for] || hearing.scheduled_for,
-        scheduled_time_string: update_params[:scheduled_time_string]
-      )
-
-      remove_time_string_params(update_params).merge(scheduled_for: scheduled_for)
-    end
-
-    def build_params_with_time(_hearing, update_params)
-      return update_params if update_params[:scheduled_time_string].nil?
-
-      remove_time_string_params(update_params).merge(scheduled_time: update_params[:scheduled_time_string])
-    end
-
-    def legacy_formatted_scheduled_for(scheduled_for:, scheduled_time_string:)
-      # Parse the scheduled_time_string as a UTC time
-      scheduled_time_in_utc = if scheduled_time_string.is_a?(String)
-                                Time.zone.parse(scheduled_time_string).utc
-                              else
-                                scheduled_time_string
-                              end
-
-      time = scheduled_for.to_datetime
-      Time.use_zone(VacolsHelper::VACOLS_DEFAULT_TIMEZONE) do
-        Time.zone.parse(
-          "#{time.year}-#{time.month}-#{time.day} #{scheduled_time_in_utc.hour}:#{scheduled_time_in_utc.min} UTC"
-        )
-      end
-    end
-
     def time_to_string(time, hearing)
       datetime = time.to_datetime
 
@@ -79,9 +44,6 @@ class HearingTimeService
     # for AMA hearings, return the hearing object's scheduled_for
     return @hearing.scheduled_for if @hearing.is_a?(Hearing)
 
-    # for legacy hearings with non-nil scheduled_in_timezone value, convert to scheduled_in_timezone
-    return @hearing.scheduled_for.in_time_zone(@hearing.scheduled_in_timezone) if @hearing.scheduled_in_timezone
-
     # for legacy hearings with nil scheduled_in_timezone, convert to the regional office's time zone.
     # if the hearing's regional_office_timezone is nil, assume this is a
     # central office hearing (eastern time)
@@ -102,5 +64,29 @@ class HearingTimeService
 
   def central_office_time
     local_time.in_time_zone(CENTRAL_OFFICE_TIMEZONE)
+  end
+
+  # Casts incoming scheduled_time_strings into Eastern Time, and then into a quasi-UTC Time object.
+  # @see - HearingMapper.datetime_based_on_type is where these values are coverted to their correct
+  #   local time whenever retreiving them from the database.
+  #
+  # Used to facilitate updates to hearing times submitted via the {LegacyHearingUpdateForm}
+  #
+  # @param date [Date] a Date object for which a hearing will be scheduled.
+  # @param time_string [String] a formatted string with scheduling details. ex: 12:00 PM Eastern Time (US & Canada).
+  # @return [Time] The time a hearing is set to take place in cast to UTC time.
+  # @return [nil] If either the date or time_string params are absent.
+  def process_legacy_scheduled_time_string(date:, time_string:)
+    return nil unless date && time_string
+
+    hour, min = time_string.split(":")
+    time = date.to_datetime
+    unformatted_time = Time.use_zone(VacolsHelper::VACOLS_DEFAULT_TIMEZONE) do
+      Time.zone.now.change(
+        year: time.year, month: time.month, day: time.day, hour: hour.to_i, min: min.to_i
+      )
+    end
+
+    VacolsHelper.format_datetime_with_utc_timezone(unformatted_time)
   end
 end

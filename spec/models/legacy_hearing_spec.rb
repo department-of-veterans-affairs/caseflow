@@ -138,7 +138,7 @@ describe LegacyHearing, :all_dbs do
     context "when held open" do
       let(:hold_open) { 30 }
 
-      it { is_expected.to eq(Time.zone.now.to_date + 30.days) }
+      it { is_expected.to eq(Time.zone.now.utc.to_date + 30.days) }
     end
 
     context "when not held open" do
@@ -149,7 +149,7 @@ describe LegacyHearing, :all_dbs do
   context "#no_show_excuse_letter_due_date" do
     subject { hearing.no_show_excuse_letter_due_date }
 
-    it { is_expected.to eq(Time.zone.now.to_date + 15.days) }
+    it { is_expected.to eq(Time.zone.now.utc.to_date + 15.days) }
   end
 
   context "#active_appeal_streams" do
