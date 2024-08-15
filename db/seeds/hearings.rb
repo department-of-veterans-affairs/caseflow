@@ -7,8 +7,8 @@ module Seeds
     include PowerOfAttorneyMapper
 
     # Create the available hearing times and issue counts to pull from
-    AMA_SCHEDULE_TIMES = %w[8:30 10:00 11:30 13:15 13:15].freeze # times in EST/EDT
-    LEGACY_SCHEDULE_TIMES = %w[8:15 9:30 10:15 11:00 11:45].freeze # times in EST/EDT
+    AMA_SCHEDULE_TIMES = ["8:30 AM", "10:00 AM", "11:30 AM", "1:00 PM", "1:15 PM"].freeze # times in EST/EDT
+    LEGACY_SCHEDULE_TIMES = ["8:15 AM", "9:30 AM", "10:15 AM", "11:00 AM", "11:45 AM"].freeze # times in EST/EDT
     ISSUE_COUNTS = %w[1 2 3 4 12].freeze
 
     # Define how many hearings per day and how many hearing days to create
