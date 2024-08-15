@@ -63,6 +63,7 @@ class WorkQueue::LegacyAppealSerializer
     object.veteran ? object.veteran.id : nil
   end
 
+  attribute :contested_claim, &:contested_claim?
   attribute :closest_regional_office
 
   attribute :closest_regional_office_label

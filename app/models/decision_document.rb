@@ -64,12 +64,7 @@ class DecisionDocument < CaseflowRecord
       # Below we're grabbing the boolean value at this point in time.
       # This will act as a point of truth that wont be affected by the
       # async behavior of the outcode function due to triggering jobs.
-      case appeal_type
-      when "Appeal"
-        contested = appeal.contested_claim?
-      when "LegacyAppeal"
-        contested = appeal.contested_claim
-      end
+      contested = appeal.contested_claim?
       ProcessDecisionDocumentJob.perform_later(id, contested, mail_package)
     end
   end
