@@ -389,7 +389,7 @@ FactoryBot.define do
                     :case_hearing,
                     :disposition_held,
                     folder_nr: original_case.bfkey,
-                    hearing_date: evaluator.hearing_after_decision ? original_case.bfddec + 1.month : original_case.bfddec - 1.month,
+                    hearing_date: evaluator.hearing_after_decision ? original_case.bfddec + 1.month : original_case.bfddec - 1.month, # rubocop:disable Layout/LineLength
                     user: User.find_by_css_id(original_judge.sdomainid)
                   )
                 end
