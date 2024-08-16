@@ -92,6 +92,7 @@ import TeamManagement from './teamManagement/TeamManagement';
 import UserManagement from './UserManagement';
 import CorrespondenceReviewPackage from './correspondence/ReviewPackage/CorrespondenceReviewPackage';
 import CorrespondenceIntake from './correspondence/intake/components/CorrespondenceIntake';
+import CorrespondenceAssignTaskModal from './components/CorrespondenceAssignTaskModal';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_TITLES } from './constants';
@@ -714,6 +715,10 @@ class QueueApp extends React.PureComponent {
       priorMail={this.props.priorMail}
       isInboundOpsSupervisor={this.props.isInboundOpsSupervisor}
     />
+  );
+
+  routedCorrespondenceAssignTaskModal = (props) => (
+    <CorrespondenceAssignTaskModal {...props.match.params} />
   );
 
   routedCorrespondenceCases = (props) => (
