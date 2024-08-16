@@ -324,7 +324,7 @@ FactoryBot.define do
               status_active
               type_post_remand
 
-              bfdpdcn { 2.month.ago }
+              bfdpdcn { 2.months.ago }
               bfcurloc { "81" }
 
               after(:create) do |new_case, evaluator|
