@@ -17,6 +17,14 @@ class HearingTimeService
       "#{datetime.strftime('%l:%M %p')} #{tz}".lstrip
     end
 
+    # Used to satisfy an interface for a façade between {HearingDatetimeService}
+    #  and {HearingTimeService}. It will always return nil since this service
+    #  does not pertain to datetime processing.
+    # @return [nil] nil will always be returned.
+    def prepare_datetime_for_storage(**_args)
+      nil
+    end
+
     # Checks the time_string value and returns the formatted time in %H:%M
     # @return [String] - Time string in "%H:%M" format
     # @example Extract the hour and minute from a string.
@@ -98,13 +106,5 @@ class HearingTimeService
     end
 
     VacolsHelper.format_datetime_with_utc_timezone(unformatted_time)
-  end
-
-  # Used to satisfy an interface for a façade between {HearingDatetimeService}
-  #  and {HearingTimeService}. It will always return nil since this service
-  #  does not pertain to datetime processing.
-  # @return [nil] nil will always be returned.
-  def prepare_datetime_for_storage(**_args)
-    nil
-  end
+  endS
 end

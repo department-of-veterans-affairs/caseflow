@@ -60,7 +60,7 @@ class HearingUpdateForm < BaseHearingUpdateForm
       representative_name: representative_name,
       room: room,
       scheduled_time: HearingTimeService.process_scheduled_time(scheduled_time_string),
-      scheduled_datetime: hearing.time.prepare_datetime_for_storage(
+      scheduled_datetime: hearing.time.class.prepare_datetime_for_storage(
         date: hearing.hearing_day&.scheduled_for,
         time_string: scheduled_time_string
       ),
