@@ -50,7 +50,7 @@ class MissingVacolsHearingJobFix < CaseflowJob
       type: "AssignHearingDispositionTask",
       status: "assigned",
       appeal_type: "LegacyAppeal",
-      assigned_at: 5.years.ago..6.months.ago
+      assigned_at: 7.years.ago..6.months.ago
     )
 
     questionable_tasks
