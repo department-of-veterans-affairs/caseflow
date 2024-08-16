@@ -16,6 +16,8 @@ describe Distribution, :all_dbs do
     create(:case_distribution_lever, :nod_adjustment)
     create(:case_distribution_lever, :cavc_affinity_days)
     create(:case_distribution_lever, :cavc_aod_affinity_days)
+    create(:case_distribution_lever, :aoj_cavc_affinity_days)
+    create(:case_distribution_lever, :aoj_aod_affinity_days)
     create(:case_distribution_lever, :aoj_affinity_days)
     create(:case_distribution_lever, :ama_hearing_case_affinity_days)
     create(:case_distribution_lever, :ama_hearing_case_aod_affinity_days)
