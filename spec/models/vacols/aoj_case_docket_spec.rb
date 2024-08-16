@@ -612,8 +612,6 @@ describe VACOLS::AojCaseDocket, :all_dbs do
     end
   end
 
-  # rubocop:enable Layout/LineLength
-
   context "legacy_das_deprecation FeatureToggle enabled" do
     before do
       FeatureToggle.enable!(:legacy_das_deprecation)
