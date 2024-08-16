@@ -106,5 +106,5 @@ class HearingTimeService
     end
 
     VacolsHelper.format_datetime_with_utc_timezone(unformatted_time)
-  endS
+  end
 end
