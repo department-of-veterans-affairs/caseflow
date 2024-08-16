@@ -394,7 +394,13 @@ exports[`HearingTypeConversion Displays convert to Central text when converting 
                 Convert Hearing To Central
               </h1>
               <div
-                data-css-2flkvz=""
+                style={
+                  Object {
+                    "flexGrow": 1,
+                    "fontFamily": "Source Sans Pro",
+                    "width": "100%",
+                  }
+                }
               >
                 <p
                   dangerouslySetInnerHTML={
@@ -873,7 +879,13 @@ exports[`HearingTypeConversion Displays convert to Video text when converting fr
                 Convert Hearing To Video
               </h1>
               <div
-                data-css-2flkvz=""
+                style={
+                  Object {
+                    "flexGrow": 1,
+                    "fontFamily": "Source Sans Pro",
+                    "width": "100%",
+                  }
+                }
               >
                 <p
                   dangerouslySetInnerHTML={
