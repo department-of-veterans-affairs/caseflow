@@ -7,11 +7,20 @@ module SyncDecidedAppealsHelper
   # Syncs the decision_mailed status of Legacy Appeals with a decision made
   def sync_decided_appeals
     begin
-      AppealState.legacy.where(decision_mailed: false).each do |appeal_state|
+      # Join query to retrieve Legacy AppealState ids and corresponding vacols_id
+      appeal_state_ids = AppealState.legacy.where(decision_mailed: false)
+        .joins(:legacy_appeal).preload(:legacy_appeal)
+        .pluck(:id, :vacols_id)
+
+      appeal_state_ids_hash = appeal_state_ids.to_h
+
+      vacols_decision_dates = get_decision_dates(appeal_state_ids_hash.values).to_h
+
+      appeal_state_ids_hash.each do |appeal_state_id, vacols_id|
         # If there is a decision date on the VACOLS record,
         # update the decision_mailed status on the AppealState to true
-        if get_decision_date(appeal_state.appeal_id).present?
-          appeal_state.decision_mailed_appeal_state_update_action!
+        if vacols_decision_dates[vacols_id].present?
+          AppealState.find(appeal_state_id).decision_mailed_appeal_state_update_action!
         end
       end
     rescue StandardError => error
@@ -22,17 +31,40 @@ module SyncDecidedAppealsHelper
     end
   end
 
-  def get_decision_date(appeals_id)
+  # Method to retrieve the decision dates from VACOLS in batches
+  # params: vacols_ids
+  # Returns: Hash containing the key, value pair of vacols_id, decision_date
+  def get_decision_dates(vacols_ids)
     begin
-      legacy_appeal = LegacyAppeal.find(appeals_id)
+      decision_dates = {}
 
-      # Find the VACOLS record associated with the LegacyAppeal
-      vacols_record = VACOLS::Case.find_by_bfkey!(legacy_appeal[:vacols_id])
+      # Find the VACOLS records in batches
+      VACOLS::Case.where(bfkey: vacols_ids).find_in_batches do |vacols_records|
+        vacols_records.each do |vacols_record|
+          decision_dates[vacols_record[:bfkey]] = vacols_record[:bfddec]
+        end
+      end
 
-      # Return the decision date
-      vacols_record[:bfddec]
+      decision_dates
     rescue ActiveRecord::RecordNotFound
-      nil
+      []
+    end
+  end
+
+  def get_vacols_ids(legacy_appeal_states)
+    begin
+      vacols_ids = {}
+
+      legacy_appeal_states.each do |appeal_state|
+        legacy_appeal = LegacyAppeal.find(appeal_state.appeal_id)
+
+        # Find the VACOLS record associated with the LegacyAppeal
+        vacols_ids << { appeal_state.id.to_s => (legacy_appeal[:vacols_id]).to_s }
+      end
+
+      vacols_ids
+    rescue ActiveRecord::RecordNotFound
+      {}
     end
   end
 end
