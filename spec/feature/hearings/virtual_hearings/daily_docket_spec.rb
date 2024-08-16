@@ -221,7 +221,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
       end
     end
 
-    context "AMA Hearing", skip: "Wait for APPEALS-54170 to be merged in" do
+    context "AMA Hearing" do
       let(:initial_hearing) { create(:hearing) }
 
       context "With a pre-existing scheduled_datetime value" do
