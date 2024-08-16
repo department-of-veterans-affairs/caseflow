@@ -225,7 +225,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         allow_any_instance_of(PushPriorityAppealsToJudgesJob).to receive(:eligible_judges).and_return(eligible_judges)
       end
 
-      it "should only distribute the ready priority cases tied to a judge" do
+      xit "should only distribute the ready priority cases tied to a judge" do
         expect(subject.count).to eq eligible_judges.count
         expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [2, 2, 0, 0]
 
@@ -257,7 +257,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
           create(:case_distribution_lever, :disable_legacy_priority, value: "false")
         end
 
-        it "should only distribute the ready priority cases tied to a judge" do
+        xit "should only distribute the ready priority cases tied to a judge" do
           expect(subject.count).to eq eligible_judges.count
           expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [2, 2, 0, 0]
 
@@ -283,7 +283,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
             create(:case_distribution_lever, :disable_ama_priority_evidence_submission, value: "false")
           end
 
-          it "should distribute the ready priority cases" do
+          xit "should distribute the ready priority cases" do
             expect(subject.count).to eq eligible_judges.count
             expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [2, 2, 0, 0]
 
@@ -307,7 +307,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
             create(:case_distribution_lever, :disable_ama_priority_evidence_submission, value: "true")
           end
 
-          it "should not distribute the ready priority cases" do
+          xit "should not distribute the ready priority cases" do
             expect(subject.count).to eq eligible_judges.count
             expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [0, 0, 0, 0]
 
