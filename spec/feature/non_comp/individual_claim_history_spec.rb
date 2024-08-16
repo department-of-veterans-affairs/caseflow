@@ -143,6 +143,14 @@ feature "Individual Claim History", :postgres do
   let(:task_history_url) { "/decision_reviews/vha/tasks/#{task_id}/history" }
   let(:events) { ClaimHistoryService.new(non_comp_org, task_id: task_id).build_events }
 
+  def click_filter_option(filter_text)
+    sort = find("[aria-label='Filter by Activity']").click
+    sort.click
+
+    dropdown_filter = page.find(class: "cf-dropdown-filter")
+    dropdown_filter.find("label", text: filter_text, match: :prefer_exact).click
+  end
+
   before do
     User.stub = user
     non_comp_org.add_user(user)
@@ -198,11 +206,7 @@ feature "Individual Claim History", :postgres do
   end
 
   scenario "Approval of request - issue addition" do
-    sort = find("[aria-label='Filter by Activity']").click
-    sort.click
-
-    dropdown_filter = page.find(class: "cf-dropdown-filter")
-    dropdown_filter.find("label", text: "Approval of request - issue addition (1)", match: :prefer_exact).click
+    click_filter_option("Approval of request - issue addition (1)")
 
     table = page.find("tbody")
     expect(table).to have_selector("tr", count: 1)
@@ -224,11 +228,7 @@ feature "Individual Claim History", :postgres do
   end
 
   scenario "Approval of request - issue modification" do
-    sort = find("[aria-label='Filter by Activity']").click
-    sort.click
-
-    dropdown_filter = page.find(class: "cf-dropdown-filter")
-    dropdown_filter.find("label", text: "Approval of request - issue modification (1)", match: :prefer_exact).click
+    click_filter_option("Approval of request - issue modification (1)")
 
     table = page.find("tbody")
     expect(table).to have_selector("tr", count: 1)
@@ -254,11 +254,7 @@ feature "Individual Claim History", :postgres do
   end
 
   scenario "Approval of request - issue removal" do
-    sort = find("[aria-label='Filter by Activity']").click
-    sort.click
-    dropdown_filter = page.find(class: "cf-dropdown-filter")
-    dropdown_filter.find("label", text: "Approval of request - issue removal (1)", match: :prefer_exact).click
-
+    click_filter_option("Approval of request - issue removal (1)")
     table = page.find("tbody")
     expect(table).to have_selector("tr", count: 1)
 
@@ -280,10 +276,7 @@ feature "Individual Claim History", :postgres do
   end
 
   scenario "Approval of request - issue withdrawal" do
-    sort = find("[aria-label='Filter by Activity']").click
-    sort.click
-    dropdown_filter = page.find(class: "cf-dropdown-filter")
-    dropdown_filter.find("label", text: "Approval of request - issue withdrawal (1)", match: :prefer_exact).click
+    click_filter_option("Approval of request - issue withdrawal (1)")
 
     table = page.find("tbody")
     table_row = table.first('tr[id^="table-row"]')
@@ -305,20 +298,14 @@ feature "Individual Claim History", :postgres do
   end
 
   scenario "Cancellation of request" do
-    sort = find("[aria-label='Filter by Activity']").click
-    sort.click
-    dropdown_filter = page.find(class: "cf-dropdown-filter")
-    dropdown_filter.find("label", text: "Cancellation of request", match: :prefer_exact).click
+    click_filter_option("Cancellation of request")
 
     table = page.find("tbody")
     expect(table).to have_selector("tr", count: 4)
   end
 
   scenario "Edit of request - issue addition" do
-    sort = find("[aria-label='Filter by Activity']").click
-    sort.click
-    dropdown_filter = page.find(class: "cf-dropdown-filter")
-    dropdown_filter.find("label", text: "Edit of request - issue addition (1)", match: :prefer_exact).click
+    click_filter_option("Edit of request - issue addition (1)")
 
     table = page.find("tbody")
     expect(table).to have_selector("tr", count: 1)
@@ -343,10 +330,7 @@ feature "Individual Claim History", :postgres do
   end
 
   scenario "Edit of request - issue modification" do
-    sort = find("[aria-label='Filter by Activity']").click
-    sort.click
-    dropdown_filter = page.find(class: "cf-dropdown-filter")
-    dropdown_filter.find("label", text: "Edit of request - issue modification (1)", match: :prefer_exact).click
+    click_filter_option("Edit of request - issue modification (1)")
 
     table = page.find("tbody")
     expect(table).to have_selector("tr", count: 1)
@@ -374,10 +358,7 @@ feature "Individual Claim History", :postgres do
   end
 
   scenario "Edit of request - issue removal" do
-    sort = find("[aria-label='Filter by Activity']").click
-    sort.click
-    dropdown_filter = page.find(class: "cf-dropdown-filter")
-    dropdown_filter.find("label", text: "Edit of request - issue removal (4)", match: :prefer_exact).click
+    click_filter_option("Edit of request - issue removal (4)")
 
     table = page.find("tbody")
     expect(table).to have_selector("tr", count: 4)
@@ -398,10 +379,7 @@ feature "Individual Claim History", :postgres do
   end
 
   scenario "Edit of request - issue withdrawal" do
-    sort = find("[aria-label='Filter by Activity']").click
-    sort.click
-    dropdown_filter = page.find(class: "cf-dropdown-filter")
-    dropdown_filter.find("label", text: "Edit of request - issue withdrawal (4)", match: :prefer_exact).click
+    click_filter_option("Edit of request - issue withdrawal (4)")
 
     table = page.find("tbody")
     expect(table).to have_selector("tr", count: 4)
@@ -424,10 +402,7 @@ feature "Individual Claim History", :postgres do
   end
 
   scenario "Rejection of request - issue addition" do
-    sort = find("[aria-label='Filter by Activity']").click
-    sort.click
-    dropdown_filter = page.find(class: "cf-dropdown-filter")
-    dropdown_filter.find("label", text: "Rejection of request - issue addition (1)", match: :prefer_exact).click
+    click_filter_option("Rejection of request - issue addition (1)")
 
     table = page.find("tbody")
     expect(table).to have_selector("tr", count: 1)
@@ -449,10 +424,7 @@ feature "Individual Claim History", :postgres do
   end
 
   scenario "Rejection of request - issue modification" do
-    sort = find("[aria-label='Filter by Activity']").click
-    sort.click
-    dropdown_filter = page.find(class: "cf-dropdown-filter")
-    dropdown_filter.find("label", text: "Rejection of request - issue modification (1)", match: :prefer_exact).click
+    click_filter_option("Rejection of request - issue modification (1)")
 
     table = page.find("tbody")
     expect(table).to have_selector("tr", count: 1)
@@ -476,10 +448,7 @@ feature "Individual Claim History", :postgres do
   end
 
   scenario "Rejection of request - issue removal" do
-    sort = find("[aria-label='Filter by Activity']").click
-    sort.click
-    dropdown_filter = page.find(class: "cf-dropdown-filter")
-    dropdown_filter.find("label", text: "Rejection of request - issue removal (1)", match: :prefer_exact).click
+    click_filter_option("Rejection of request - issue removal (1)")
 
     table = page.find("tbody")
     expect(table).to have_selector("tr", count: 1)
@@ -501,10 +470,7 @@ feature "Individual Claim History", :postgres do
   end
 
   scenario "Rejection of request - issue withdrawal" do
-    sort = find("[aria-label='Filter by Activity']").click
-    sort.click
-    dropdown_filter = page.find(class: "cf-dropdown-filter")
-    dropdown_filter.find("label", text: "Rejection of request - issue withdrawal (1)", match: :prefer_exact).click
+    click_filter_option("Rejection of request - issue withdrawal (1)")
 
     table = page.find("tbody")
     expect(table).to have_selector("tr", count: 1)
@@ -527,10 +493,7 @@ feature "Individual Claim History", :postgres do
   end
 
   scenario "Added issue" do
-    sort = find("[aria-label='Filter by Activity']").click
-    sort.click
-    dropdown_filter = page.find(class: "cf-dropdown-filter")
-    dropdown_filter.find("label", text: "Added issue", match: :prefer_exact).click
+    click_filter_option("Added issue")
 
     table = page.find("tbody")
     expect(table).to have_selector("tr", count: 10)
@@ -543,10 +506,7 @@ feature "Individual Claim History", :postgres do
   end
 
   scenario "Requested issue addition" do
-    sort = find("[aria-label='Filter by Activity']").click
-    sort.click
-    dropdown_filter = page.find(class: "cf-dropdown-filter")
-    dropdown_filter.find("label", text: "Requested issue addition (4)", match: :prefer_exact).click
+    click_filter_option("Requested issue addition (4)")
 
     table = page.find("tbody")
     expect(table).to have_selector("tr", count: 4)
@@ -561,11 +521,7 @@ feature "Individual Claim History", :postgres do
   end
 
   scenario "Requested issue modification" do
-    sort = find("[aria-label='Filter by Activity']").click
-    sort.click
-
-    dropdown_filter = page.find(class: "cf-dropdown-filter")
-    dropdown_filter.find("label", text: "Requested issue modification (3)", match: :prefer_exact).click
+    click_filter_option("Requested issue modification (3)")
 
     table = page.find("tbody")
     expect(table).to have_selector("tr", count: 3)
@@ -583,10 +539,7 @@ feature "Individual Claim History", :postgres do
   end
 
   scenario "Requested issue removal" do
-    sort = find("[aria-label='Filter by Activity']").click
-    sort.click
-    dropdown_filter = page.find(class: "cf-dropdown-filter")
-    dropdown_filter.find("label", text: "Requested issue removal (3)", match: :prefer_exact).click
+    click_filter_option("Requested issue removal (3)")
 
     table = page.find("tbody")
     expect(table).to have_selector("tr", count: 3)
@@ -602,10 +555,7 @@ feature "Individual Claim History", :postgres do
   end
 
   scenario "Requested issue withdrawal" do
-    sort = find("[aria-label='Filter by Activity']").click
-    sort.click
-    dropdown_filter = page.find(class: "cf-dropdown-filter")
-    dropdown_filter.find("label", text: "Requested issue withdrawal (3)", match: :prefer_exact).click
+    click_filter_option("Requested issue withdrawal (3)")
 
     table = page.find("tbody")
     expect(table).to have_selector("tr", count: 3)
@@ -622,10 +572,7 @@ feature "Individual Claim History", :postgres do
   end
 
   scenario "claim status - Pending" do
-    sort = find("[aria-label='Filter by Activity']").click
-    sort.click
-    dropdown_filter = page.find(class: "cf-dropdown-filter")
-    dropdown_filter.find("label", text: "Claim status - Pending (1)", match: :prefer_exact).click
+    click_filter_option("Claim status - Pending (1)")
 
     table = page.find("tbody")
     expect(table).to have_selector("tr", count: 1)
@@ -636,10 +583,7 @@ feature "Individual Claim History", :postgres do
   end
 
   scenario "Claim created" do
-    sort = find("[aria-label='Filter by Activity']").click
-    sort.click
-    dropdown_filter = page.find(class: "cf-dropdown-filter")
-    dropdown_filter.find("label", text: "Claim created (1)", match: :prefer_exact).click
+    click_filter_option("Claim created (1)")
 
     table = page.find("tbody")
     expect(table).to have_selector("tr", count: 1)
@@ -653,10 +597,7 @@ feature "Individual Claim History", :postgres do
     before { visit "/decision_reviews/vha/tasks/#{claim_closed.id}/history" }
 
     it "Claim closed" do
-      sort = find("[aria-label='Filter by Activity']").click
-      sort.click
-      dropdown_filter = page.find(class: "cf-dropdown-filter")
-      dropdown_filter.find("label", text: "Claim closed (1)", match: :prefer_exact).click
+      click_filter_option("Claim closed (1)")
 
       table = page.find("tbody")
       expect(table).to have_selector("tr", count: 1)
@@ -671,11 +612,8 @@ feature "Individual Claim History", :postgres do
     before { visit "/decision_reviews/vha/tasks/#{cancelled_claim.tasks[0].id}/history" }
 
     it "Claim Cancelled" do
-      sort = find("[aria-label='Filter by Activity']").click
-      sort.click
-      dropdown_filter = page.find(class: "cf-dropdown-filter")
+      click_filter_option("Claim closed (1)")
 
-      dropdown_filter.find("label", text: "Claim closed (1)", match: :prefer_exact).click
       table = page.find("tbody")
       expect(table).to have_selector("tr", count: 1)
 

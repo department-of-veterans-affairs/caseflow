@@ -47,25 +47,16 @@ const IndividualClaimHistoryTable = (props) => {
   };
 
   const ClaimClosedFragment = (details) => {
-    let component = null;
-
-    switch (details.eventType) {
-    case 'cancelled':
-      component = <React.Fragment>
-        Claim cancelled.
-      </React.Fragment>;
-      break;
-    default:
-      component = <React.Fragment>
+    const fragment = details.eventType === 'cancelled' ? <>
+      Claim cancelled.
+    </> : <>
         Claim closed.<br />
-        <b>Claim decision date: </b>{formatDecisionDate(details.dispositionDate)}
-      </React.Fragment>;
-      break;
-    }
+      <b>Claim decision date: </b>{formatDecisionDate(details.dispositionDate)}
+    </>;
 
     return (
       <div>
-        {component}
+        {fragment}
       </div>
     );
   };
@@ -96,8 +87,6 @@ const IndividualClaimHistoryTable = (props) => {
       component = <RequestedIssueModificationFragment {...details} />;
       break;
     case 'addition':
-      component = <RequestedIssueFragment {...details} />;
-      break;
     case 'removal':
       component = <RequestedIssueFragment {...details} />;
       break;
@@ -123,7 +112,7 @@ const IndividualClaimHistoryTable = (props) => {
   };
 
   const withdrawalRequestDate = (row) => {
-    if (['withdrawal'].includes(row.requestType)) {
+    if (row.requestType === 'withdrawal') {
       return <React.Fragment>
         <b>Withdrawal request date: </b> {formatDecisionDate(row.issueModificationRequestWithdrawalDate)}<br />
       </React.Fragment>;
@@ -134,7 +123,7 @@ const IndividualClaimHistoryTable = (props) => {
     return <React.Fragment>
       <b>Benefit type: </b>{BENEFIT_TYPES[details.benefitType]}<br />
       <b>Current issue type: </b>{details.newIssueType}<br />
-      <b>Current issue description: </b>{details.newIssueDescription}<br />
+      <b>Current issue description: </b>{details.issueDescription}<br />
       <b>Current decision date: </b>{formatDecisionDate(details.newDecisionDate)}<br />
       <b>New issue type: </b>{details.newIssueType}<br />
       <b>New issue description: </b>{details.newIssueDescription}<br />
@@ -151,13 +140,13 @@ const IndividualClaimHistoryTable = (props) => {
 
   const reasonForRejection = (details) => {
     return details.issueModificationRequestStatus === 'denied' ? <React.Fragment>
-      <b> Reason for rejection: </b> {details.decisionReason} <br />
+      <b>Reason for rejection: </b> {details.decisionReason} <br />
     </React.Fragment> : <></>;
   };
 
   const requestDecision = (details) => {
     return <React.Fragment>
-      <b> Request decision: </b> {details.issueModificationRequestStatus === 'denied' ? 'Rejected' : 'Approved'} <br />
+      <b>Request decision: </b> {details.issueModificationRequestStatus === 'denied' ? 'Rejected' : 'Approved'} <br />
     </React.Fragment>;
   };
 
@@ -172,34 +161,33 @@ const IndividualClaimHistoryTable = (props) => {
     </React.Fragment>;
   };
 
+  const modificationRequestReason = (details) => {
+    return <React.Fragment>
+      <b>New {details.requestType} request reason: </b>{details.modificationRequestReason}<br />
+    </React.Fragment>;
+  };
+
   const EditOfRequestIssueModification = (details) => {
     let component = null;
 
     switch (details.requestType) {
     case 'modification':
-      component = <React.Fragment>
-        <b>New issue type: </b>{details.newIssueType}<br />
-        <b>New issue description: </b>{details.newIssueDescription}<br />
-        <b>New decision date: </b>{formatDecisionDate(details.newDecisionDate)}<br />
-        <b>New {details.requestType} request reason: </b>{details.modificationRequestReason}<br />
-      </React.Fragment>;
-      break;
     case 'addition':
       component = <React.Fragment>
         <b>New issue type: </b>{details.newIssueType}<br />
         <b>New issue description: </b>{details.newIssueDescription}<br />
         <b>New decision date: </b>{formatDecisionDate(details.newDecisionDate)}<br />
-        <b>New {details.requestType} request reason: </b>{details.modificationRequestReason}<br />
+        {modificationRequestReason(details)}
       </React.Fragment>;
       break;
     case 'removal':
       component = <React.Fragment>
-        <b>New {details.requestType} request reason: </b>{details.requestor}<br />
+        {modificationRequestReason(details)}
       </React.Fragment>;
       break;
     case 'withdrawal':
       component = <React.Fragment>
-        <b>New {details.requestType} request reason: </b>{details.requestor}<br />
+        {modificationRequestReason(details)}
         <b>New withdrawal request date: </b> {formatDecisionDate(details.issueModificationRequestWithdrawalDate)}<br />
       </React.Fragment>;
       break;
@@ -254,11 +242,7 @@ const IndividualClaimHistoryTable = (props) => {
 
   const WithdrawnRequestedIssueModificationFragment = (details) => {
     return <React.Fragment>
-      <b>Benefit type: </b>{BENEFIT_TYPES[details.benefitType]}<br />
-      <b>Issue type: </b>{details.newIssueType}<br />
-      <b>Issue description: </b>{details.newIssueDescription}<br />
-      <b>Decision date: </b>{formatDecisionDate(details.newDecisionDate)}<br />
-      <b>{capitalizeFirst(details.requestType)} request reason: </b>{details.modificationRequestReason}<br />
+      <RequestedIssueFragment {...details} />
       {withdrawalRequestDate(details)}
     </React.Fragment>;
   };
@@ -297,8 +281,7 @@ const IndividualClaimHistoryTable = (props) => {
     const [isOpen, setIsOpen] = useState(false);
 
     const toggle = () => {
-      // eslint-disable-next-line no-shadow
-      setIsOpen((isOpen) => !isOpen);
+      setIsOpen(!isOpen);
     };
 
     return (
@@ -358,25 +341,21 @@ const IndividualClaimHistoryTable = (props) => {
     case 'Cancellation of request':
       component = <CancellationRequestedIssueFragment {...requestIssueModificationDetails} />;
       break;
-    case 'Requested issue removal':
-      component = <RequestedIssueFragment {...requestIssueModificationDetails} />;
-      break;
     case 'Requested issue modification':
       component = <RequestedIssueModificationFragment {...requestIssueModificationDetails} />;
       break;
     case 'Requested issue addition':
+    case 'Requested issue removal':
       component = <RequestedIssueFragment {...requestIssueModificationDetails} />;
       break;
     case 'Requested issue withdrawal':
       component = <WithdrawalRequestedIssueFormat {...requestIssueModificationDetails} />;
       break;
-    case `Approval of request - issue ${requestIssueModificationDetails.requestType}`:
-      component = <RequestedIssueDecisionFragment {...requestIssueModificationDetails} />;
-      break;
     case `Edit of request - issue ${requestIssueModificationDetails.requestType}`:
       component = <EditOfRequestIssueModification {...requestIssueModificationDetails} />;
       break;
     case `Rejection of request - issue ${requestIssueModificationDetails.requestType}`:
+    case `Approval of request - issue ${requestIssueModificationDetails.requestType}`:
       component = <RequestedIssueDecisionFragment {...requestIssueModificationDetails} />;
       break;
     default:
