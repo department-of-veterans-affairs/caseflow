@@ -227,7 +227,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
       context "With a pre-existing scheduled_datetime value" do
         let(:hearing_time_selection_string) { "12:00 PM Alaska" }
         let(:hearing) { initial_hearing.tap { _1.update!(scheduled_in_timezone: "America/Juneau") } }
-        let(:expected_post_update_time) { "11:00 AM #{Time.zone.now.dst? ? 'AKDT' : 'AKST'}" }
+        let(:expected_post_update_time) { "12:00 PM #{Time.zone.now.dst? ? 'AKDT' : 'AKST'}" }
 
         before { hearing.hearing_day.update!(regional_office: "RO63", request_type: "V") }
 
