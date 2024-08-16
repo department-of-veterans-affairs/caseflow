@@ -59,7 +59,6 @@ class AppealsReadyForDistribution
 
   def self.build_appeal_row(appeal, sym, docket)
     veteran_name = format_veteran_name(appeal["snamef"], appeal["snamel"])
-    vlj_name = FullName.new(appeal["vlj_namef"], nil, appeal["vlj_namel"]).to_s
     hearing_judge = format_vlj_name(appeal["vlj_namef"], appeal["vlj_namel"])
     appeal_affinity = fetch_affinity_start_date(appeal["bfkey"])
 
