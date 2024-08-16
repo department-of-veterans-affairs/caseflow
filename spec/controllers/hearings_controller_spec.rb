@@ -510,21 +510,15 @@ RSpec.describe HearingsController, type: :controller do
 
   describe "#show" do
     let(:expected_time_zone) { "America/New_York" }
-    # for "America/New_York", "-04:00" or "-05:00" depending on daylight savings time
-    let(:utc_offset) do
-      hours, minutes = Time.zone.now.in_time_zone(expected_time_zone).utc_offset.divmod(60)[0].divmod(60)
-      hour_string = (hours < 0) ? format("%<hours>03i", hours: hours) : format("+%<hours>02i", hours: hours)
-      "#{hour_string}:#{format('%<minutes>02i', minutes: minutes)}"
-    end
-    let(:is_daylight_savings_on) { Time.zone.now.in_time_zone(expected_time_zone).zone == "EDT" }
-
+    let(:utc_offset) { ActiveSupport::TimeZone["America/New_York"].formatted_offset }
+    let(:hearing_day) { create(:hearing_day, scheduled_for: "2030-01-01") }
     let!(:hearing) do
       create(
         :hearing,
         :with_tasks,
-        scheduled_time:
-          is_daylight_savings_on ? "7:30 AM Eastern Time (US & Canada)" : "8:30 AM Eastern Time (US & Canada)",
-        scheduled_in_timezone: "Eastern Time (US & Canada)"
+        hearing_day: hearing_day,
+        scheduled_datetime: Time.new(2030, 1, 1, 8, 30, 0, "-05:00"),
+        scheduled_in_timezone: "America/New_York"
       )
     end
 
@@ -536,11 +530,11 @@ RSpec.describe HearingsController, type: :controller do
 
     shared_examples_for "returns the correct hearing time in EST" do |expected_time|
       it "returns the correct hearing time in EST", :aggregate_failures do
-        body = JSON.parse(subject.body)
+        body = JSON.parse(subject.body, symbolize_names: true)
 
-        expect(body["data"]["regional_office_timezone"]).to eq(expected_time_zone)
-        expect(body["data"]["scheduled_time_string"]).to eq("8:30 AM Eastern Time (US & Canada)")
-        expect(body["data"]["scheduled_for"]).to eq(
+        expect(body[:data][:regional_office_timezone]).to eq(expected_time_zone)
+        expect(body[:data][:scheduled_time_string]).to eq("8:30 AM Eastern Time (US & Canada)")
+        expect(body[:data][:scheduled_for]).to eq(
           "#{hearing.hearing_day.scheduled_for}T#{expected_time}:00.000#{utc_offset}"
         )
       end
@@ -548,6 +542,8 @@ RSpec.describe HearingsController, type: :controller do
 
     it_should_behave_like "returns the correct hearing time in EST", "08:30"
 
+    # We should not see a drift in hearing times based on logged-in user's timezone if scheduled_datetime and
+    # scheduled_in_timezone are available on the hearing.
     context "for user on west coast" do
       let!(:user) do
         User.authenticate!(

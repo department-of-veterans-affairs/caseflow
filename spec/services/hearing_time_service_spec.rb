@@ -20,7 +20,7 @@ describe HearingTimeService, :all_dbs do
   context "with a legacy hearing and a hearing scheduled for 12:00pm PT" do
     include_context "legacy_hearing"
 
-    let!(:hearing) { create(:hearing, regional_office: "RO43", scheduled_time: "12:00 PM Pacific Time (US & Canada)") }
+    let!(:hearing) { create(:hearing, regional_office: "RO43", scheduled_time: "12:00 PM") }
 
     describe "#local_time" do
       it "returns time object encoded in local time" do
@@ -34,6 +34,7 @@ describe HearingTimeService, :all_dbs do
             min: 0
           )
         end
+
         expect(LegacyHearing.first.time.local_time).to eq(expected_time)
         expect(hearing.time.local_time).to eq(expected_time)
       end
@@ -56,8 +57,8 @@ describe HearingTimeService, :all_dbs do
 
     describe "#central_office_time_string" do
       it "changes to central office timezone (ET)" do
-        expect(hearing.time.central_office_time_string).to eq("3:00 PM Pacific Time (US & Canada)")
-        expect(LegacyHearing.first.time.central_office_time_string).to eq("3:00 PM Pacific Time (US & Canada)")
+        expect(hearing.time.central_office_time_string).to eq("3:00 PM Eastern Time (US & Canada)")
+        expect(LegacyHearing.first.time.central_office_time_string).to eq("3:00 PM Eastern Time (US & Canada)")
       end
     end
 
