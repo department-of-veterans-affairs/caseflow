@@ -16,7 +16,7 @@ describe HearingDispositionChangeJob, :all_dbs do
         disposition: disposition,
         scheduled_time: scheduled_for,
         scheduled_in_timezone: Time.zone.name,
-        scheduled_datetime: HearingDatetimeService.prepare_time_for_storage(
+        scheduled_datetime: HearingDatetimeService.prepare_datetime_for_storage(
           date: hearing_day.scheduled_for,
           time_string: "#{scheduled_for.strftime('%I:%M %p')} #{Time.zone.name}"
         ),
