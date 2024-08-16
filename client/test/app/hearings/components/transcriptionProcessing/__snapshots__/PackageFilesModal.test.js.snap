@@ -58,7 +58,9 @@ exports[`Package files modal matches snapshot 1`] = `
             <strong>
               Work Order
             </strong>
-            <p />
+            <p>
+              BVA-2024-----
+            </p>
           </div>
           <fieldset
             class="usa-fieldset-inputs cf-form-radio-inline "
@@ -80,30 +82,30 @@ exports[`Package files modal matches snapshot 1`] = `
                 class="cf-form-radio-option"
               >
                 <input
-                  id="returnDateRadioField_8/30/2024"
+                  id="returnDateRadioField_08/21/2024"
                   name="returnDateRadioField"
                   type="radio"
-                  value="8/30/2024"
+                  value="08/21/2024"
                 />
                 <label
                   class=""
-                  for="returnDateRadioField_8/30/2024"
+                  for="returnDateRadioField_08/21/2024"
                 >
-                  Return in 15 days (8/30/2024)
+                  Return in 15 days (08/21/2024)
                 </label>
               </div>
               <div
                 class="cf-form-radio-option"
               >
                 <input
-                  id="returnDateRadioField_8/16/2024"
+                  id="returnDateRadioField_08/07/2024"
                   name="returnDateRadioField"
                   type="radio"
-                  value="8/16/2024"
+                  value="08/07/2024"
                 />
                 <label
                   class=""
-                  for="returnDateRadioField_8/16/2024"
+                  for="returnDateRadioField_08/07/2024"
                 >
                   Expedite (Maximum of 5 days)
                 </label>
@@ -227,7 +229,8 @@ exports[`Package files modal matches snapshot 1`] = `
         </span>
         <span>
           <button
-            class="usa-button usa-button-primary cf-push-right usa-button"
+            class="cf-push-right usa-button-disabled usa-button"
+            disabled=""
             id="Package-files-button-id-1"
             type="button"
           >

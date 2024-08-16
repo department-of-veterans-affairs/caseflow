@@ -53,6 +53,9 @@ const ConfirmWorkOrderModal = ({ history, onCancel }) => {
     },
     docketNumber: {
       fontWeight: 'bold'
+    },
+    summaryHeader: {
+      fontWeight: 'bold'
     }
   };
 
@@ -106,9 +109,9 @@ const ConfirmWorkOrderModal = ({ history, onCancel }) => {
   const renderFormInformation = () => {
     return (
       <ul style={styles.formInfoSection}>
-        <li><h4>Work Order:</h4><p>{state?.workOrder}</p></li>
-        <li><h4>Return date:</h4><p>{state?.returnDateValue}</p></li>
-        <li><h4>Contractor:</h4><p>{state?.contractor?.name}</p></li>
+        <li><p style={styles.summaryHeader}>Work Order:</p><p>{state?.workOrder}</p></li>
+        <li><p style={styles.summaryHeader}>Return date:</p><p>{state?.returnDateValue}</p></li>
+        <li><p style={styles.summaryHeader}>Contractor:</p><p>{state?.contractor?.name}</p></li>
       </ul>
     );
   };

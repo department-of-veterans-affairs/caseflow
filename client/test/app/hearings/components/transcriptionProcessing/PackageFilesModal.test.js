@@ -4,33 +4,37 @@ import ApiUtil from '../../../../../app/util/ApiUtil';
 import PackageFilesModal from '../../../../../app/hearings/components/transcriptionProcessing/PackageFilesModal';
 import { transcriptionContractors } from '../../../../data/transcriptionContractors';
 import { axe } from 'jest-axe';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 const getSpy = jest.spyOn(ApiUtil, 'get');
 
 const setup = () => {
   const onCancel = jest.fn();
 
-  return render(<PackageFilesModal onCancel={onCancel} contractors={transcriptionContractors} />);
+  return render(
+    <Router>
+      <PackageFilesModal onCancel={onCancel} contractors={transcriptionContractors} />
+    </Router>
+  );
 };
 
 const mockTaskId = (taskId) => {
   getSpy.mockImplementationOnce(() => new Promise((resolve) => resolve({ body: { task_id: taskId } })));
 };
 
-afterEach(() => {
-  jest.useRealTimers();
+beforeEach(() => {
+  const mockedDate = new Date(2024, 6, 31);
+
+  jest.useFakeTimers('modern');
+  jest.setSystemTime(mockedDate);
 });
 
 describe('Package files modal', () => {
   it('radio button displays correct dates', () => {
     mockTaskId(347);
-    const mockedDate = new Date(2024, 6, 31);
-
-    jest.useFakeTimers('modern');
-    jest.setSystemTime(mockedDate);
     setup();
 
-    expect(screen.getByRole('radio', { name: 'Return in 15 days (8/21/2024)' })).toBeInTheDocument();
+    expect(screen.getByRole('radio', { name: 'Return in 15 days (08/21/2024)' })).toBeInTheDocument();
     expect(screen.getByRole('radio', { name: 'Expedite (Maximum of 5 days)', value: { text: '8/7/2024' } })).
       toBeInTheDocument();
   });
@@ -73,6 +77,7 @@ describe('Package files modal', () => {
   });
 
   it('passes a11y testing', async () => {
+    jest.useRealTimers();
     mockTaskId(346749);
     const { container } = setup();
 
