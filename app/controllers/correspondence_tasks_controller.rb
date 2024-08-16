@@ -69,7 +69,8 @@ class CorrespondenceTasksController < TasksController
   end
 
   def change_task_type
-    binding.pry
+    task = CorrespondenceTask.find(correspondence_tasks_params[:task_id])
+    task.update_task_type(change_task_type_params)
   end
 
   private
@@ -87,6 +88,12 @@ class CorrespondenceTasksController < TasksController
       :correspondence_uuid,
       instructions: []
     )
+  end
+
+  def change_task_type_params
+    change_type_params = params.require(:task).permit(:type, :instructions)
+    change_type_params[:instructions] = task.flattened_instructions(change_type_params)
+    change_type_params
   end
 
   def process_package_action_decision(decision)

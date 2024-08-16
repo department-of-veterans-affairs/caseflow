@@ -38,6 +38,29 @@ export const cancelTaskNotRelatedToAppeal = (taskID, payload) => (dispatch) => {
       console.error(error);
     });
 };
+export const changeTaskTypeNotRelatedToAppeal = (taskID, payload) => (dispatch) => {
+
+  return ApiUtil.patch(`/queue/correspondence/tasks/${taskID}/change_task_type`, payload).
+    then(() => {
+
+      dispatch({
+        type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
+        payload: {
+          bannerAlert: CORRESPONDENCE_DETAILS_BANNERS.successBanner
+        }
+      });
+
+    }).
+    catch((error) => {
+      dispatch({
+        type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
+        payload: {
+          bannerAlert: CORRESPONDENCE_DETAILS_BANNERS.failBanner
+        }
+      });
+      console.error(error);
+    });
+};
 
 export const correspondenceInfo = (correspondence) => (dispatch) => {
   dispatch({

@@ -3,9 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
-import { sprintf } from 'sprintf-js';
 import { requestPatch } from '../uiReducer/uiActions';
-import { taskById } from '../selectors';
 import { marginTop } from '../constants';
 import { taskActionData } from '../utils';
 import QueueFlowModal from '../components/QueueFlowModal';
@@ -14,42 +12,32 @@ import SearchableDropdown from "app/components/SearchableDropdown";
 import Alert from "app/components/Alert";
 import COPY from '../../../COPY';
 import {
+  changeTaskTypeNotRelatedToAppeal,
   setShowActionsDropdown,
   setTaskNotRelatedToAppealBanner
 } from "app/queue/correspondence/correspondenceDetailsReducer/correspondenceDetailsActions";
 
 const CorrespondenceChangeTaskTypeModal = (props) => {
-  const { error, task } = props;
+  const { error } = props;
   const taskData = taskActionData(props);
   const [typeOption, setTypeOption] = useState(null);
   const [instructions, setInstructions] = useState('');
 
   const validateForm = () => Boolean(typeOption) && Boolean(instructions);
 
-  const buildPayload = () => ({
-    data: {
-      task: {
-        type: typeOption.value,
-        instructions
-      }
-    }
-  });
-
   const submit = () => {
-    const payload = buildPayload();
-
-    const successMsg = {
-      title: sprintf(COPY.CHANGE_TASK_TYPE_CONFIRMATION_TITLE, task.label, typeOption.label),
-      detail: COPY.CHANGE_TASK_TYPE_CONFIRMATION_DETAIL
+    const payload = {
+      data: {
+        task: {
+          type: typeOption.value,
+          instructions
+        }
+      }
     };
 
-    return requestPatch(`/queue/correspondence/tasks/${task.taskId}/change_task_type`, payload, successMsg).
-      then((response) => {
-        console.log(response);
-      }).
-      catch(() => {
-        // handle the error from the frontend
-      });
+    props.setShowActionsDropdown(false);
+
+    return props.changeTaskTypeNotRelatedToAppeal(props.task_id, payload);
   };
 
   const actionForm = () => (
@@ -103,7 +91,7 @@ CorrespondenceChangeTaskTypeModal.propTypes = {
   }),
   requestPatch: PropTypes.func,
   setShowActionsDropdown: PropTypes.func,
-  cancelTaskNotRelatedToAppeal: PropTypes.func,
+  changeTaskTypeNotRelatedToAppeal: PropTypes.func,
   task: PropTypes.shape({
     appeal: PropTypes.shape({
       hasCompletedSctAssignTask: PropTypes.bool
@@ -130,6 +118,7 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestPatch,
   setTaskNotRelatedToAppealBanner,
+  changeTaskTypeNotRelatedToAppeal,
   setShowActionsDropdown
 }, dispatch);
 
