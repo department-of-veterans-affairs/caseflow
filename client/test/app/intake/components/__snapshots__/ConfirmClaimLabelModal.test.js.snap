@@ -52,7 +52,7 @@ exports[`ConfirmClaimLabelModal renders correctly 1`] = `
           Confirm new claim label
         </h1>
         <div
-          data-css-2flkvz=""
+          style="width: 100%; font-family: Source Sans Pro; flex-grow: 1;"
         >
           <div
             style="margin-bottom: 24px;"
