@@ -250,7 +250,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       end
       after do
         FeatureToggle.disable!(:acd_distribute_by_docket_date)
-        FeatureToggle.disable!(:acd_exclude_from_affinity)
+        FeatureToggle.enable!(:acd_exclude_from_affinity)
       end
       context "without using Docket Levers" do
         before do
