@@ -6,6 +6,7 @@
 class NightlySyncsJob < CaseflowJob
   queue_with_priority :low_priority
   application_attr :queue # arbitrary
+  include SyncDecidedAppealsHelper
 
   def perform
     RequestStore.store[:current_user] = User.system_user
@@ -16,7 +17,7 @@ class NightlySyncsJob < CaseflowJob
     sync_vacols_users
     sync_decision_review_tasks
     sync_bgs_attorneys
-    sync_decided_appeals
+    sync_all_decided_appeals
 
     slack_service.send_notification(@slack_report.join("\n"), self.class.name) if @slack_report.any?
   end
@@ -85,30 +86,11 @@ class NightlySyncsJob < CaseflowJob
     @slack_report << "*Fatal error in sync_bgs_attorneys:* #{error}"
   end
 
-  # Syncs the decision_mailed status of Legacy Appeals with a decision made
-  def sync_decided_appeals
-    AppealState.legacy.where(decision_mailed: false).each do |appeal_state|
-      # If there is a decision date on the VACOLS record,
-      # update the decision_mailed status on the AppealState to true
-      if get_decision_date(appeal_state.appeal_id).present?
-        appeal_state.decision_mailed_appeal_state_update_action!
-      end
-    end
-  rescue StandardError => error
-    @slack_report << "*Fatal error in sync_decided_appeals* #{error}"
-  end
-
-  def get_decision_date(appeals_id)
+  def sync_all_decided_appeals
     begin
-      legacy_appeal = LegacyAppeal.find(appeals_id)
-
-      # Find the VACOLS record associated with the LegacyAppeal
-      vacols_record = VACOLS::Case.find_by_bfkey!(legacy_appeal[:vacols_id])
-
-      # Return the decision date
-      vacols_record[:bfddec]
-    rescue ActiveRecord::RecordNotFound
-      nil
+      sync_decided_appeals
+    rescue StandardError => error
+      @slack_report << "*Fatal error in sync_decided_appeals* #{error}"
     end
   end
 
