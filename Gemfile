@@ -106,7 +106,7 @@ group :test, :development, :demo do
   gem "faker"
   gem "guard-rspec"
   gem "immigrant"
-  gem 'parallel_tests'
+  gem "parallel_tests"
   # Linters
   gem "pluck_to_hash"
   gem "pry", "~> 0.13.0"
