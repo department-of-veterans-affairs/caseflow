@@ -103,9 +103,9 @@ class AppealsDistributed
     distributed_case = distributed_cases.filter { |dc| dc.case_id == case_record.bfkey }.first
     correspondent_record = case_record.correspondent
     folder_record = case_record.folder
-    original_judge = VACOLS::Case.includes(:folder).where(folder: { tinum: folder_record.tinum },
-                                                          bfddec: case_record.bfdpdcn).first.bfmemid
-    judge_mem_id = VACOLS::Staff.find_by(sattyid: original_judge)
+    judge_mem_id = VACOLS::Case.includes(:folder).where(folder: { tinum: folder_record.tinum },
+                                                        bfddec: case_record.bfdpdcn).first.bfmemid
+    original_judge = VACOLS::Staff.find_by(sattyid: judge_mem_id)
     veteran_name = FullName.new(correspondent_record.snamef, nil, correspondent_record.snamel).to_s
     appeal_affinity = case_record.appeal_affinity
 
@@ -117,7 +117,7 @@ class AppealsDistributed
       receipt_date: normalize_vacols_date(case_record.bfd19),
       ready_for_distribution_at: distributed_case.ready_at,
       distributed_at: distributed_case.created_at,
-      original_judge: judge_mem_id&.sdomainid,
+      original_judge: original_judge&.sdomainid,
       hearing_judge: case_record.case_hearings.first&.staff&.sdomainid,
       veteran_file_number: correspondent_record.ssn || case_record.bfcorlid,
       veteran_name: veteran_name,
