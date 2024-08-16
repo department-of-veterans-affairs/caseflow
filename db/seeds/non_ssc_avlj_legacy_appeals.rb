@@ -16,23 +16,23 @@ module Seeds
     private
 
     def create_avljs
-      create_non_ssc_avlj("NONSSCAN01", "Non SSC AVLJ1")
-      create_non_ssc_avlj("NONSSCAN02", "Non SSC AVLJ2")
-      create_non_ssc_avlj("NONSSCAN03", "Non SSC AVLJ3")
-      create_non_ssc_avlj("NONSSCAN04", "Non SSC AVLJ4")
-      create_non_ssc_avlj("NONSSCAN05", "Non SSC AVLJ5")
-      create_non_ssc_avlj("NONSSCAN06", "Non SSC AVLJ6")
-      create_non_ssc_avlj("NONSSCAN07", "Non SSC AVLJ7")
-      create_non_ssc_avlj("NONSSCAN08", "Non SSC AVLJ8")
-      create_non_ssc_avlj("NONSSCAN09", "Non SSC AVLJ9")
-      create_non_ssc_avlj("NONSSCAN10", "Non SSC AVLJ110")
-      create_ssc_avlj("SSCA11", "SSC AVLJ1")
-      create_non_ssc_avlj("NONSSCAN12", "Non SSC AVLJ12")
-      create_non_ssc_avlj("NONSSCAN13", "Non SSC AVLJ13")
+      create_non_ssc_avlj("NONSSCAN01", "Non-SSC-AVLJ1")
+      create_non_ssc_avlj("NONSSCAN02", "Non-SSC-AVLJ2")
+      create_non_ssc_avlj("NONSSCAN03", "Non-SSC-AVLJ3")
+      create_non_ssc_avlj("NONSSCAN04", "Non-SSC-AVLJ4")
+      create_non_ssc_avlj("NONSSCAN05", "Non-SSC-AVLJ5")
+      create_non_ssc_avlj("NONSSCAN06", "Non-SSC-AVLJ6")
+      create_non_ssc_avlj("NONSSCAN07", "Non-SSC-AVLJ7")
+      create_non_ssc_avlj("NONSSCAN08", "Non-SSC-AVLJ8")
+      create_non_ssc_avlj("NONSSCAN09", "Non-SSC-AVLJ9")
+      create_non_ssc_avlj("NONSSCAN10", "Non-SSC-AVLJ110")
+      create_ssc_avlj("SSCA11", "SSC-AVLJ1")
+      create_non_ssc_avlj("NONSSCAN12", "Non-SSC-AVLJ12")
+      create_non_ssc_avlj("NONSSCAN13", "Non-SSC-AVLJ13")
 
-      create_non_ssc_avlj("SIGNAVLJLGC", "NonSSC Signing AVLJ1")
-      create_non_ssc_avlj("AVLJLGC2", "Alternate NonSSC AVLJ")
-      create_ssc_avlj("SSCAVLJLGC", "SSC AVLJ1")
+      create_non_ssc_avlj("SIGNAVLJLGC", "NonSSC-Signing AVLJ1")
+      create_non_ssc_avlj("AVLJLGC2", "Alternate-NonSSC-AVLJ")
+      create_ssc_avlj("SSCAVLJLGC", "SSC-AVLJ1")
     end
 
     def create_legacy_appeals
