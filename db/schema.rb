@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_08_02_154252) do
+ActiveRecord::Schema.define(version: 2024_08_05_162358) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1212,6 +1212,8 @@ ActiveRecord::Schema.define(version: 2024_08_02_154252) do
     t.boolean "prepped", comment: "Determines whether the judge has checked the hearing as prepped"
     t.string "representative_name", comment: "Name of Appellant's representative if applicable"
     t.string "room", comment: "The room at BVA where the hearing will take place; ported from associated HearingDay"
+    t.datetime "scheduled_datetime", comment: "Timestamp with zone datatype a hearing is scheduled to take place in UTC. Intended to eventually replace scheduled_time column."
+    t.string "scheduled_in_timezone", comment: "Named TZ string that the hearing will have to provide accurate hearing times."
     t.time "scheduled_time", null: false, comment: "Date and Time when hearing will take place"
     t.text "summary", comment: "Summary of hearing"
     t.boolean "transcript_requested", comment: "Determines whether the veteran/appellant has requested the hearing transcription"
@@ -1428,6 +1430,7 @@ ActiveRecord::Schema.define(version: 2024_08_02_154252) do
     t.string "military_service", comment: "Periods and circumstances of military service"
     t.string "original_vacols_request_type", comment: "The original request type of the hearing in VACOLS, before it was changed to Virtual"
     t.boolean "prepped", comment: "Determines whether the judge has checked the hearing as prepped"
+    t.string "scheduled_in_timezone", comment: "Named TZ string that the legacy hearing will have to provide accurate hearing times."
     t.text "summary", comment: "Summary of hearing"
     t.datetime "updated_at", comment: "Timestamp when record was last updated."
     t.bigint "updated_by_id", comment: "The ID of the user who most recently updated the Legacy Hearing"

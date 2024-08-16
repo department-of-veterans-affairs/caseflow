@@ -57,12 +57,15 @@ export const HearingTime = ({
   hideLabel,
   requestType
 }) => {
-  const timeOptions = getTimeOptions(regionalOffice, readOnly, requestType);
+  const basicTimeOptions = getTimeOptions(regionalOffice, readOnly, requestType);
+  const timeOptions = enableZone ?
+    hearingTimeOptsWithZone(basicTimeOptions, localZone || enableZone) :
+    basicTimeOptions;
   const isOther = _.isUndefined(
     _.find(timeOptions, (opt) => opt.value === value)
   );
   const onRadioChange = (newValue) => {
-    if (newValue === 'other') {
+    if (newValue === 'Other') {
       onChange(null);
     } else {
       onChange(newValue);
@@ -81,9 +84,9 @@ export const HearingTime = ({
             name={`hearingTime${componentIndex}`}
             label={label || 'Time'}
             strongLabel
-            options={enableZone ? hearingTimeOptsWithZone(timeOptions, localZone || enableZone) : timeOptions}
+            options={timeOptions}
             onChange={onRadioChange}
-            value={isOther ? 'other' : value}
+            value={isOther ? 'Other' : value}
           />
         </span>
       )}
