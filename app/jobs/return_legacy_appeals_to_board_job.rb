@@ -16,6 +16,7 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
       # Logic to process legacy appeals and return to the board
       appeals = LegacyDocket.new.appeals_tied_to_non_ssc_avljs
       appeals = appeals.sort_by { |appeal| [appeal["priority"], appeal["bfd19"]] } unless appeals.empty?
+      VACOLS::Case.batch_update_vacols_location("63", appeals.map { |appeal| appeal["bfkey"] })
       complete_returned_appeal_job(returned_appeal_job, "Job completed successfully", appeals)
       send_job_slack_report
     rescue StandardError => error

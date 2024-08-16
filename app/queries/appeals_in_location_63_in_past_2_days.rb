@@ -76,7 +76,7 @@ class AppealsInLocation63InPast2Days
     vlj_name = FullName.new(appeal["vlj_namef"], nil, appeal["vlj_namel"]).to_s
     {
       veteran_name: FullName.new(appeal["snamef"], nil, appeal["snamel"]).to_s,
-      hearing_judge_id: appeal["bfmemid"].blank? ? nil : legacy_hearing_judge(appeal),
+      hearing_judge_id: appeal["vlj"].blank? ? nil : legacy_hearing_judge(appeal),
       hearing_judge_name: vlj_name.empty? ? nil : vlj_name,
       deciding_judge_id: appeal["bfmemid"].blank? ? nil : legacy_original_deciding_judge(appeal),
       deciding_judge_name: appeal["bfmemid"].blank? ? nil : legacy_original_deciding_judge_name(appeal),

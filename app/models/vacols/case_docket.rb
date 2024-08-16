@@ -258,7 +258,7 @@ class VACOLS::CaseDocket < VACOLS::Record
       order by BFD19
     ) APPEALS
     left join CORRES on APPEALS.BFCORKEY = CORRES.STAFKEY
-    left join STAFF on APPEALS.VLJ = STAFF.STAFKEY
+    left join STAFF on APPEALS.VLJ = STAFF.SATTYID
   "
 
   def self.counts_by_priority_and_readiness
