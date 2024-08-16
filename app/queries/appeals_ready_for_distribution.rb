@@ -60,7 +60,7 @@ class AppealsReadyForDistribution
   def self.build_appeal_row(appeal, sym, docket)
       veteran_name = format_veteran_name(appeal["snamef"], appeal["snamel"])
       vlj_name = FullName.new(appeal["vlj_namef"], nil, appeal["vlj_namel"]).to_s
-      hearing_judge = format_vlj_name(appeal["vlj_namef"], appeal["vlj_namel"]),
+      hearing_judge = format_vlj_name(appeal["vlj_namef"], appeal["vlj_namel"])
       appeal_affinity = fetch_affinity_start_date(appeal["bfkey"])
 
     {
@@ -72,7 +72,7 @@ class AppealsReadyForDistribution
       ready_for_distribution_at: appeal["bfdloout"],
       target_distro_date: target_distro_date(appeal["bfd19"], docket),
       days_before_goal_date: days_before_goal_date(appeal["bfd19"], docket),
-      hearing_judge: hearing_judge
+      hearing_judge: hearing_judge,
       original_judge: legacy_original_deciding_judge(appeal),
       veteran_file_number: appeal["ssn"] || appeal["bfcorlid"],
       veteran_name: veteran_name,
