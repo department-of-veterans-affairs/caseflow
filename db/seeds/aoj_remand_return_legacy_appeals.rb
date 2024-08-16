@@ -8,7 +8,7 @@ module Seeds
     end
 
     def seed!
-      #create_aoj_cavc_affinity_cases
+      create_aoj_cavc_affinity_cases
       create_aoj_aod_affinity_cases
     end
 
