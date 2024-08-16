@@ -286,6 +286,9 @@ client-build-all client-all: client-test client-demo ## Builds webpack for both 
 one-test:  ## run the rspec test passed in
 	bundle exec rspec $(RUN_ARGS)
 
+one-test-headless: # run the rspec test headless. Syntax: 'make one-test-headless CI=1 ./spec/path/here'
+	bundle exec rspec $(RUN_ARGS) --format progress
+
 run-all-queues: ## start shoryuken with all queues
 	bundle exec shoryuken -q caseflow_development_send_notifications caseflow_development_high_priority caseflow_development_low_priority  -R
 

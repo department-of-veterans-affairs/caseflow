@@ -38,10 +38,12 @@ for commit in $rbCommits; do
   # attempt to find unit test
   # get base file name
   base=$(basename $commit .rb)
-  # find the corresponding unit test (if any)
-  testFile=$(find ./spec -name "${base}_spec.rb")
+  # find the corresponding unit test (if any, ignoring feature)
+  testFile=$(find . -path ./spec/feature -prune -o -name ${base}_spec.rb -print)
+  # find the correspondening feature test (if any)
+  featureTestFile=$(find ./spec/feature -name "${base}_spec.rb")
 
-  # check that there is a path
+  # check that there is a path for unit tests
   if [ ! -z "$testFile" ]; then
     echo "running spec test for $testFile path"; echo "";
 
@@ -49,6 +51,15 @@ for commit in $rbCommits; do
     bundle exec rspec $testFile --format progress
   else
     echo "no test file found at $testFile"
+  fi
+
+  # check that there is a path for feature tests
+  if [ ! -z "$featureTestFile" ]; then
+    echo "running feature test for $featureTestFile path"; echo "";
+    # run feature test headless
+    make one-test-headless CI=1 $featureTestFile
+  else
+    echo "no test file found at $featureTestFile"
   fi
 
   # run rubocop
