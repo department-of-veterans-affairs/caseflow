@@ -13,6 +13,10 @@ import TextareaField from "app/components/TextareaField";
 import SearchableDropdown from "app/components/SearchableDropdown";
 import Alert from "app/components/Alert";
 import COPY from '../../../COPY';
+import {
+  setShowActionsDropdown,
+  setTaskNotRelatedToAppealBanner
+} from "app/queue/correspondence/correspondenceDetailsReducer/correspondenceDetailsActions";
 
 const CorrespondenceChangeTaskTypeModal = (props) => {
   const { error, task } = props;
@@ -55,7 +59,7 @@ const CorrespondenceChangeTaskTypeModal = (props) => {
           <SearchableDropdown
             name={COPY.CHANGE_TASK_TYPE_ACTION_LABEL}
             placeholder="Select an action type..."
-            options={taskActionData({ task }).options}
+            options={taskData.options}
             onChange={(option) => option && setTypeOption(option)}
             value={typeOption?.value}
           />
@@ -98,19 +102,35 @@ CorrespondenceChangeTaskTypeModal.propTypes = {
     detail: PropTypes.string
   }),
   requestPatch: PropTypes.func,
+  setShowActionsDropdown: PropTypes.func,
+  cancelTaskNotRelatedToAppeal: PropTypes.func,
   task: PropTypes.shape({
+    appeal: PropTypes.shape({
+      hasCompletedSctAssignTask: PropTypes.bool
+    }),
+    assignedTo: PropTypes.shape({
+      type: PropTypes.string
+    }),
     taskId: PropTypes.string,
-    label: PropTypes.string
-  })
+    type: PropTypes.string,
+    onHoldDuration: PropTypes.number
+  }),
+  task_id: PropTypes.string,
 };
 
 const mapStateToProps = (state, ownProps) => ({
   error: state.ui.messages.error,
-  task: taskById(state, { taskId: ownProps.task_id })
+  task: state.correspondenceDetails.
+    correspondenceInfo.tasksUnrelatedToAppeal.find((tsk) => tsk.uniqueId.toString() === ownProps.task_id),
+  taskNotRelatedToAppealBanner: state.correspondenceDetails.bannerAlert,
+  correspondenceInfo: state.correspondenceDetails.correspondenceInfo,
+  showActionsDropdown: state.correspondenceDetails.showActionsDropdown,
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  requestPatch
+  requestPatch,
+  setTaskNotRelatedToAppealBanner,
+  setShowActionsDropdown
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(CorrespondenceChangeTaskTypeModal));
