@@ -57,7 +57,7 @@ for commit in $rbCommits; do
   if [ ! -z "$featureTestFile" ]; then
     echo "running feature test for $featureTestFile path"; echo "";
     # run feature test headless
-    make one-test-headless CI=1 $featureTestFile
+    make one-test-headless $featureTestFile
   else
     echo "no test file found at $featureTestFile"
   fi
