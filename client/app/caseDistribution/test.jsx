@@ -14,6 +14,7 @@ import ApiUtil from '../util/ApiUtil';
 import Button from '../components/Button';
 import Alert from 'app/components/Alert';
 import uuid from 'uuid';
+import CollapsibleTable from './components/CollapsibleTable';
 
 class CaseDistributionTest extends React.PureComponent {
   constructor(props) {
@@ -438,7 +439,9 @@ class CaseDistributionTest extends React.PureComponent {
                           </ul>
                           <hr />
                           <a href="#top"><button className="btn btn-primary">Back to Top</button></a>
+                          <CollapsibleTable returnedAppealJobs={this.props.returnedAppealJobs} />
                         </div>
+
                       );
                     }}
                   />
