@@ -37,18 +37,17 @@ class HearingUpdateForm < BaseHearingUpdateForm
   end
 
   # Checks the scheduled_time_string value and returns the formatted
-  # datetime from HearinDatetimeService#prepare_time_for_storage
+  # datetime from HearingDatetimeService#prepare_time_for_storage
   # @return [nil] if scheduled_time_string or the existing value is blank
-  # @return [Object] DateTIme object
+  # @return [Object] DateTime object
   def processed_scheduled_datetime
     return nil if scheduled_time_string.blank? || hearing.scheduled_datetime.blank?
 
     scheduled_date = hearing.hearing_day.scheduled_for.strftime("%Y-%m-%d")
-    HearingTimeService.new(hearing: hearing).prepare_time_for_storage(
+    HearingDatetimeService.prepare_time_for_storage(
       date: scheduled_date,
       time_string: scheduled_time_string
     )
-    # hearing.time.prepare_time_for_storage(date: scheduled_date, time_string: scheduled_time_string)
   end
 
   def update_advance_on_docket_motion
