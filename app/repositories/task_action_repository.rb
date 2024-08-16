@@ -14,11 +14,11 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       return_to_name = task_assigner_name(task)
 
       {
-        modal_title: COPY::CANCEL_TASK_MODAL_TITLE,
-        modal_body: format_cancel_body(task, COPY::CANCEL_TASK_MODAL_DETAIL, return_to_name),
-        message_title: format(COPY::CANCEL_TASK_CONFIRMATION, task.correspondence&.veteran_full_name),
-        message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, return_to_name),
-        redirect_after: "/queue/correspondence/:correspondence_uuid/"
+        modal_title: COPY::ASSIGN_TASK_TITLE,
+        modal_body: format_assign_body(task, COPY::ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER, assign_corr_task_to_person),
+        message_title: format(COPY::CORRESPONDENCE_CASES_ASSIGN_TASK_MODAL_INSTRUCTIONS_TITLE, task.correspondence&.veteran_full_name),
+        # message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, return_to_name),
+        # redirect_after: "/queue/correspondence/:correspondence_uuid/"
       }
     end
 
