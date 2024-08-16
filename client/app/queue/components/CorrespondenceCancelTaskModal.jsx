@@ -7,14 +7,16 @@ import { get } from 'lodash';
 
 import { taskById } from '../selectors';
 import { requestPatch } from '../uiReducer/uiActions';
-import { taskActionData, currentDaysOnHold } from '../utils';
+import { taskActionData } from '../utils';
 import TextareaField from '../../components/TextareaField';
 import COPY from '../../../COPY';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import QueueFlowModal from './QueueFlowModal';
-import ApiUtil from '../../util/ApiUtil';
 import Button from '../../components/Button';
-import { setTaskNotRelatedToAppealBanner, cancelTaskNotRelatedToAppeal } from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
+import {
+  setTaskNotRelatedToAppealBanner,
+  cancelTaskNotRelatedToAppeal,
+  setShowActionsDropdown } from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
 
 /* eslint-disable camelcase */
 const CorrespondenceCancelTaskModal = (props) => {
@@ -36,21 +38,6 @@ const CorrespondenceCancelTaskModal = (props) => {
     }
   }, [instructions]);
 
-  const isVhaOffice = () => props.task.assignedTo.type === 'VhaRegionalOffice' ||
-    props.task.assignedTo.type === 'VhaProgramOffice';
-
-  const formatInstructions = () => {
-    const reason_text = isVhaOffice() ?
-      '##### REASON FOR RETURN:' :
-      '##### REASON FOR CANCELLATION:';
-
-    if (instructions.length > 0) {
-      return `${reason_text}\n${instructions}`;
-    }
-
-    return instructions;
-  };
-
   const validateForm = () => {
     if (!shouldShowTaskInstructions) {
       return true;
@@ -60,12 +47,6 @@ const CorrespondenceCancelTaskModal = (props) => {
   };
 
   const submit = () => {
-    // const currentInstruction = (props.task.type === 'PostSendInitialNotificationLetterHoldingTask' ?
-    //   `\nHold time: ${currentDaysOnHold(task)}/${task.onHoldDuration} days\n\n ${instructions}` : formatInstructions());
-
-    // // eslint-disable-next-line no-debugger
-    // debugger;
-    // console.log(currentInstruction);
 
     const payload = {
       data: {
@@ -76,6 +57,8 @@ const CorrespondenceCancelTaskModal = (props) => {
         }
       }
     };
+
+    props.setShowActionsDropdown(false);
 
     return props.cancelTaskNotRelatedToAppeal(props.task_id, payload);
 
@@ -131,6 +114,8 @@ const CorrespondenceCancelTaskModal = (props) => {
 
 CorrespondenceCancelTaskModal.propTypes = {
   requestPatch: PropTypes.func,
+  setShowActionsDropdown: PropTypes.func,
+  cancelTaskNotRelatedToAppeal: PropTypes.func,
   task: PropTypes.shape({
     appeal: PropTypes.shape({
       hasCompletedSctAssignTask: PropTypes.bool
@@ -142,17 +127,22 @@ CorrespondenceCancelTaskModal.propTypes = {
     type: PropTypes.string,
     onHoldDuration: PropTypes.number
   }),
+  task_id: PropTypes.string,
+  correspondence_uuid: PropTypes.number,
 };
 
 const mapStateToProps = (state, ownProps) => ({
   task: taskById(state, { taskId: ownProps.taskId }),
-  taskNotRelatedToAppealBanner: state.correspondenceDetails.bannerAlert
+  taskNotRelatedToAppealBanner: state.correspondenceDetails.bannerAlert,
+  correspondenceInfo: state.correspondenceDetails.correspondenceInfo,
+  showActionsDropdown: state.correspondenceDetails.showActionsDropdown,
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestPatch,
   setTaskNotRelatedToAppealBanner,
-  cancelTaskNotRelatedToAppeal
+  cancelTaskNotRelatedToAppeal,
+  setShowActionsDropdown
 }, dispatch);
 
 export default (withRouter(

@@ -4,7 +4,10 @@ import { ACTIONS } from './correspondenceDetailsConstants';
 export const initialState = {
 
   bannerAlert: {},
-  correspondenceInfo: {}
+  correspondenceInfo: {
+    tasksUnrelatedToAppeal: {}
+  },
+  showActionsDropdown: true
 
 };
 
@@ -21,6 +24,12 @@ export const correspondenceDetailsReducer = (state = initialState, action = {}) 
     return update(state, {
       correspondenceInfo: {
         $set: action.payload.correspondence
+      }
+    });
+  case ACTIONS.SHOW_ACTIONS_DROP_DOWN:
+    return update(state, {
+      showActionsDropdown: {
+        $set: action.payload.showActionsDropdown
       }
     });
 
