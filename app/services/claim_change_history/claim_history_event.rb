@@ -265,7 +265,7 @@ class ClaimHistoryEvent
     def next_imr_created_by_after_current_decided_at?(change_data)
       change_data["next_created_at"] &&
         change_data["decided_at"] &&
-        change_data["next_created_at"] != OUT_OF_BOUNDS_LEAD_TIME &&
+        !last_imr?(change_data) &&
         (change_data["next_created_at"].change(usec: 0) > change_data["decided_at"].change(usec: 0))
     end
 

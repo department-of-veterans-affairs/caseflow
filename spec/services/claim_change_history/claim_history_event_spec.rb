@@ -95,7 +95,6 @@ describe ClaimHistoryEvent do
   let(:request_issue_update_time) { Time.zone.parse("2023-10-19 22:47:16.233187") }
   let(:request_issue_created_at) { Time.zone.parse("2023-10-19 22:45:43.108934") }
   let(:issue_modification_request_created_at) { Time.zone.parse("2023-10-20 22:47:16.233187") }
-  let(:imr_last_decided_date) { Time.zone.parse("2023-10-21 22:47:16.233187") }
   let(:previous_imr_created_at) { Time.zone.parse("2023-10-19 22:47:16.233187") }
   let(:out_of_bounds_time) { Time.utc(9999, 12, 31, 23, 59, 59) }
 
@@ -821,19 +820,21 @@ describe ClaimHistoryEvent do
         "\"}"
       end
       before do
-        change_data["decided_at"] = imr_last_decided_date
-        change_data["imr_last_decided_date"] = imr_last_decided_date
+        change_data["decided_at"] = Time.zone.parse("2023-10-21 22:47:16.233187")
+        change_data["next_decided_or_cancelled_at"] = out_of_bounds_time
         change_data["next_created_at"] = out_of_bounds_time
+        # The event is generated via the versions so it needs to match the status instead of cancelled.
+        # It's not important for generation, but it's a more correct data state for a claim with a single approved IMR
+        change_data["issue_modification_request_status"] = "approved"
       end
       subject { described_class.create_edited_request_issue_events(change_data) }
 
       it "returns request_edited event type with multiple events" do
         expect(subject.count).to be(4)
-
         expect_attributes(subject[0], pending_attribute_data)
         expect_attributes(subject[1], issue_modification_response_attribute)
         expect_attributes(subject[3], issue_modification_edited_attribute)
-        expect_attributes(subject[2], issue_modification_edited_attribute)
+        expect_attributes(subject[2], in_progress_attribute_data)
       end
     end
 

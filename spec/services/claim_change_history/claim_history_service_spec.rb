@@ -88,6 +88,8 @@ describe ClaimHistoryService do
     ]
   end
 
+  let(:total_event_count) { 22 }
+
   let(:expected_sc_event_types) do
     [
       :added_issue,
@@ -100,6 +102,7 @@ describe ClaimHistoryService do
     [
       :claim_creation,
       :added_issue,
+      :in_progress,
       :pending,
       :addition,
       :request_edited,
@@ -167,7 +170,7 @@ describe ClaimHistoryService do
 
         # Expect to get back all the combined event types
         all_event_types = expected_hlr_event_types + expected_sc_event_types + expected_imr_event_types
-        expect(events.count).to eq(21)
+        expect(events.count).to eq(total_event_count)
         expect(events.map(&:event_type)).to contain_exactly(*all_event_types)
 
         # Verify the issue data is correct for the completed_dispostion events
@@ -547,7 +550,7 @@ describe ClaimHistoryService do
 
           it "should return events without a disposition" do
             subject
-            expect(service_instance.events.count).to eq(21)
+            expect(service_instance.events.count).to eq(total_event_count)
           end
         end
       end

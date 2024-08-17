@@ -233,7 +233,6 @@ class BusinessLine < Organization
           GROUP BY
               versions.item_id, versions.item_type
         ), imr_distinct AS (
-            -- TODO: SEE if this needs an index join of some sort or will it only join on what it needs later?
             SELECT DISTINCT ON (imr_cte.id)
                 imr_cte.id,
                 imr_cte.decided_at,
