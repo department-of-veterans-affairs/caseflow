@@ -208,30 +208,25 @@ class ClaimHistoryEvent
       return false if next_imr_decided_or_cancelled_in_same_transaction?(change_data) &&
                       !imr_reverse_order?(change_data)
 
-      # If it's in reverse order and the creation of the next imr is after the current decision time then generate
-      # an event since the next imr will start a new pending/in progress loop
-      return true if imr_reverse_order?(change_data) && next_imr_created_by_after_current_decided_at?(change_data)
-
-      if change_data["next_decided_or_cancelled_at"].nil? && next_imr_created_by_after_current_decided_at?(change_data)
+      if do_not_defer_in_progress_creation?(change_data)
+        # If it's in reverse order and the creation of the next imr is after the current decision time then generate
+        # an event since the next imr will start a new pending/in progress loop
+        # Or
         # If the next created by was after the decided_at then, this was an in progress transition so create one
+        # Or
+        # If it's the last IMR and the next imr was decided or cancelled in the same transaction then go ahead
+        # and generate an in progress event since the ordering is odd due to the decided at in the same transaction
         true
       elsif next_imr_decided_is_out_of_bounds?(change_data)
         # If it's the end of the lead rows, then this is the last decided row
         # If the next created at is in the same transaction, then defer event creation, otherwise create an in progress
         # By inverting the result of the created in same transaction check
         !next_imr_created_in_same_transaction?(change_data)
-      elsif last_imr?(change_data) && next_imr_decided_or_cancelled_in_same_transaction?(change_data)
-        # If it's the last IMR and the next imr was decided or cancelled in the same transaction then go ahead
-        # and generate an in progress event since the ordering is odd due to the decided at in the same transaction
-        true
-      elsif next_imr_created_in_same_transaction?(change_data) && change_data["next_decided_or_cancelled_at"]
+      elsif defer_in_progress_creation?(change_data)
         # If the next imr was in the same transaction and it's also decided, then defer event creation to it.
-        false
-      # TODO: Can probably combine these two into an or another method check
-      elsif next_imr_created_at_and_decided_at_in_same_transaction?(change_data)
+        # Or
         # If the next imr was created in the same transaction as the next decided, then defer to the next imr
-        false
-      elsif next_imr_created_in_same_transaction_as_decided_at?(change_data)
+        # Or
         # If the next imr was created at the same time that the current imr is decided, then defer
         # since it should never leave the current pending loop in that case
         false
@@ -240,6 +235,19 @@ class ClaimHistoryEvent
         # This may occasionally result in a false positive but it should be right most of the time
         change_data["next_decided_or_cancelled_at"].present?
       end
+    end
+
+    def do_not_defer_in_progress_creation?(change_data)
+      (imr_reverse_order?(change_data) && next_imr_created_by_after_current_decided_at?(change_data)) ||
+        (change_data["next_decided_or_cancelled_at"].nil? &&
+           next_imr_created_by_after_current_decided_at?(change_data)) ||
+        (last_imr?(change_data) && next_imr_decided_or_cancelled_in_same_transaction?(change_data))
+    end
+
+    def defer_in_progress_creation?(change_data)
+      (next_imr_created_in_same_transaction?(change_data) && change_data["next_decided_or_cancelled_at"]) ||
+        next_imr_created_at_and_decided_at_in_same_transaction?(change_data) ||
+        next_imr_created_in_same_transaction_as_decided_at?(change_data)
     end
 
     def imr_decided_or_cancelled?(change_data)
