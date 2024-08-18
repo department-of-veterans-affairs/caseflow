@@ -121,7 +121,7 @@ class RequestIssueUpdateEvent < RequestIssuesUpdate
   end
 
   def calculate_edited_issues
-    edited_issue_data.map do |issue_data|
+    parser.edited_issues.map do |issue_data|
       review.find_or_build_request_issue_from_intake_data(issue_data)
     end
   end
@@ -144,13 +144,13 @@ class RequestIssueUpdateEvent < RequestIssuesUpdate
     end
   end
 
-  def edited_issue_data
-    return [] unless @request_issues_data
+  # def edited_issue_data
+  #   return [] unless @request_issues_data
 
-    @request_issues_data.select do |ri|
-      edited_issue?(ri)
-    end
-  end
+  #   @request_issues_data.select do |ri|
+  #     edited_issue?(ri)
+  #   end
+  # end
 
   def edited_issue?(request_issue)
     (request_issue[:edited_description].present? || request_issue[:edited_decision_date].present?) &&
@@ -192,7 +192,7 @@ class RequestIssueUpdateEvent < RequestIssuesUpdate
     # create_issues! create that end product establishment if it doesn't exist (claim_review model). ?Probably not necessary?.
     review.create_issues!(added_issues, self)
     process_removed_issues!
-    process_legacy_issues!
+    process_legacy_issues! # ???????
     process_withdrawn_issues!
     process_edited_issues!
   end
@@ -206,15 +206,19 @@ class RequestIssueUpdateEvent < RequestIssuesUpdate
 
     return if withdrawn_issues.empty?
 
-    withdrawal_date = withdrawn_issue_data.first[:withdrawal_date]
-    withdrawn_issues.each { |ri| ri.withdraw!(withdrawal_date) }
+    withdrawn_issues_data = parser.withdrawn_issues
+    withdrawn_issues_data.each do |withdrawn_issue|
+      request_issue = RequestIssue.find(withdrawn_issue[:id].to_s)
+      request_issue.withdraw!(withdrawn_issue[:closed_at])
+    end
   end
 
   def process_edited_issues!
     return if edited_issues.empty?
 
+    edited_issue_data = parser.edited_issues
     edited_issue_data.each do |edited_issue|
-      request_issue = RequestIssue.find(edited_issue[:request_issue_id].to_s)
+      request_issue = RequestIssue.find(edited_issue[:id].to_s)
       edit_contention_text(edited_issue, request_issue)
       edit_decision_date(edited_issue, request_issue)
     end
@@ -227,8 +231,12 @@ class RequestIssueUpdateEvent < RequestIssuesUpdate
   end
 
   def edit_decision_date(edited_issue_params, request_issue)
-    if edited_issue_params[:edited_decision_date]
-      request_issue.save_decision_date!(edited_issue_params[:edited_decision_date])
+    # if edited_issue_params[:edited_decision_date]
+    #   request_issue.save_decision_date!(edited_issue_params[:edited_decision_date])
+    # end
+
+    if edited_issue_params[:decision_date]
+      request_issue.save_decision_date!(edited_issue_params[:decision_date])
     end
   end
 
