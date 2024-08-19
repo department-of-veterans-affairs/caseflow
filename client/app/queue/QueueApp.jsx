@@ -1005,6 +1005,17 @@ class QueueApp extends React.PureComponent {
               render={this.routedCorrespondenceIntake}
             />
 
+            <PageRoute
+              exact
+              path={
+                '/queue/correspondence/:correspondence_uuid/tasks/:task_id/' +
+                `(${TASK_ACTIONS.ASSIGN_CORR_TASK_TO_PERSON.value
+                })`
+              }
+              title={`${PAGE_TITLES.ASSIGN_TO_PERSON} | Caseflow`}
+              render={this.routedCorrespondenceAssignTaskModal}
+            />
+
             {motionToVacateRoutes.page}
 
             {docketSwitchRoutes.page}
