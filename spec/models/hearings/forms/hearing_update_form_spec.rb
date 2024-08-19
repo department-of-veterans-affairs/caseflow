@@ -114,7 +114,9 @@ describe HearingUpdateForm, :all_dbs do
         end
 
         it "should update scheduled_datetime if it is not null already" do
-          hearing.update(scheduled_datetime: "2021-04-23T11:30:00-04:00")
+          hearing.update(
+            scheduled_datetime: "2021-04-23T11:30:00-04:00", scheduled_in_timezone: "America/New_York"
+          )
           subject.update
           updated_scheduled_datetime = hearing.scheduled_datetime
           expect(updated_scheduled_datetime.strftime("%Y-%m-%d %H:%M %z"))
