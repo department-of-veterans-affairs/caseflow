@@ -58,14 +58,13 @@ export const HearingTime = ({
   requestType,
   hearingDayDate
 }) => {
-  const basicTimeOptions = useMemo(
-    getTimeOptions(regionalOffice, readOnly, requestType),
+  const basicTimeOptions = useMemo(() => getTimeOptions(regionalOffice, readOnly, requestType),
     [regionalOffice, readOnly, requestType]
   );
-  const timeOptions = useMemo(enableZone ?
+  const timeOptions = useMemo(() => enableZone ?
     hearingTimeOptsWithZone(basicTimeOptions, localZone || enableZone, hearingDayDate) :
     basicTimeOptions,
-    [basicTimeOptions, hearingDayDate, localZone, enableZone]);
+  [basicTimeOptions, hearingDayDate, localZone, enableZone]);
 
   const isOther = _.isUndefined(
     _.find(timeOptions, (opt) => opt.value === value)

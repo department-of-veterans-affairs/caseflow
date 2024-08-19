@@ -179,7 +179,7 @@ export const ScheduleVeteranForm = ({
                   }}
                 />
               </div>
-              {hearing.hearingDay?.hearingId && (
+              {hearing.hearingDay?.scheduledFor && (
                 <div {...marginTop(30)}>
                   {hearingDayIsVirtual && userCanViewTimeSlots ? (
                     <TimeSlot

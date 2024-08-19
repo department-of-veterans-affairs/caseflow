@@ -33,11 +33,13 @@ export const HearingTime = ({
       repTimezone :
       hearing.regionalOfficeTimezone || 'America/New_York';
 
+  const hearingDayDate = hearing.hearing_day?.scheduledFor;
+
   // Calculate the local time based on either Regional Office or Representative for Virtual hearings
-  const localTime = zoneName(hearing.scheduledTimeString, timezone, 'z');
+  const localTime = zoneName(hearing.scheduledTimeString, timezone, 'z', hearingDayDate);
 
   // Calculate the central office time
-  const coTime = zoneName(hearing.scheduledTimeString, 'America/New_York', 'z');
+  const coTime = zoneName(hearing.scheduledTimeString, 'America/New_York', 'z', hearingDayDate);
 
   // Determine whether to show the Regional Office time as the primary label
   const primaryTime = primaryLabel === 'RO' ? localTime : coTime;

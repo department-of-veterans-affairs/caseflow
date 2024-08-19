@@ -327,7 +327,7 @@ export const splitSelectedTime = (time) => {
   const selectedTime = splitTimeString === -1 ? time : time.slice(0, splitTimeString + 2).trim();
   const selectedTimeZone = splitTimeString === -1 ? null : time.slice(splitTimeString + 2).trim();
 
-  return [selectedTime, selectedTimeZone]
+  return [selectedTime, selectedTimeZone];
 }
 
 /**
@@ -423,7 +423,7 @@ export const hearingTimeOptsWithZone = (options, local, date) =>
     // For the Hearing Time dropdown, the value passed should include the AM/PM and timezone context
     return {
       ...item,
-      value: displayLocalTime ? `${localTime}` : time,
+      value: displayLocalTime ? localTime : time,
       [label]: displayLocalTime ? `${localTime} / ${time}` : time
     };
   });
