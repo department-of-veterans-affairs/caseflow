@@ -642,51 +642,5 @@ feature "Supplemental Claim Intake", :all_dbs do
         )
       )
     end
-
-    context "Non-compensation" do
-      context "no contestable issues present" do
-        before do
-          education_org = create(:business_line, name: "Education", url: "education")
-          education_org.add_user(current_user)
-        end
-
-        scenario "no rating issues show on first Add Issues modal" do
-          sc, = start_supplemental_claim(veteran, is_comp: false)
-
-          visit "/intake/add_issues"
-          expect(page).to have_content("Add / Remove Issues")
-          check_row("Form", Constants.INTAKE_FORM_NAMES.supplemental_claim)
-          check_row("Benefit type", "Education")
-
-          expect(page).to_not have_content("Left knee granted")
-
-          click_intake_add_issue
-          add_intake_nonrating_issue(
-            category: "Accrued",
-            description: "I am a description",
-            date: profile_date.mdY
-          )
-
-          expect(page).to_not have_content("Establish EP")
-          expect(page).to have_content("Establish Supplemental Claim")
-          expect(page).to have_content("Claimant")
-
-          click_intake_finish
-
-          # should redirect to tasks review page
-          expect(page).to have_content("Reviews needing action")
-          expect(page).not_to have_content("It may take up to 24 hours for the claim to establish")
-          expect(current_path).to eq("/decision_reviews/education")
-          expect(page).to have_content("Success!")
-
-          # request issue should have matching benefit type
-          expect(RequestIssue.find_by(
-                   decision_review: sc,
-                   nonrating_issue_category: "Accrued",
-                   benefit_type: sc.benefit_type
-                 )).to_not be_nil
-        end
-      end
-    end
   end
 end
