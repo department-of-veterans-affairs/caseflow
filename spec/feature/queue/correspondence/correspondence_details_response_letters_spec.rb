@@ -15,8 +15,9 @@ RSpec.feature("Correspondence Details Response Letters Module") do
     end
 
     it "Verifies that Response Letters added during Intake are displayed in details page" do
-      setup_response_letters_data
+      correspondence = setup_response_letters_data
       sleep 2
+      visit "/queue/correspondence/#{correspondence.uuid}"
       find_by_id("tasks-tabwindow-tab-2", wait: 10).click
       expect(page).to have_content("Response Letters")
       expect(page).to have_content("No response window required")
@@ -27,8 +28,9 @@ RSpec.feature("Correspondence Details Response Letters Module") do
     end
 
     it "Verifies that Response Letters added during Intake are ordered correctly" do
-      response_letters_order_actions
+      correspondence = response_letters_order_actions
       sleep 2
+      visit "/queue/correspondence/#{correspondence.uuid}"
       find_by_id("tasks-tabwindow-tab-2", wait: 10).click
       ten_days_before_date = 10.days.ago
       final_date = ten_days_before_date + 2.days

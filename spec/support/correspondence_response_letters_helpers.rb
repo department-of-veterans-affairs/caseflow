@@ -21,8 +21,7 @@ module CorrespondenceResponseLettersHelpers
   def setup_response_letters_data
     initial_setup
     perform_add_letters_action
-    sleep 2
-    visit "/queue/correspondence/#{@correspondence.uuid}"
+    return @correspondence
   end
 
   def perform_add_letters_action
@@ -62,7 +61,7 @@ module CorrespondenceResponseLettersHelpers
     )
     find_by_id("content").fill_in with: "2"
     add_second_response_letter
-    visit "/queue/correspondence/#{@correspondence.uuid}"
+    return @correspondence
   end
 
   def add_second_response_letter
