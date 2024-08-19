@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class RequestIssueUpdateEvent < RequestIssuesUpdate
+class RequestIssuesUpdateEvent < RequestIssuesUpdate
   # example of calling RequestIssuesUpdateEvent
   # RequestIssuesUpdateEvent.new(
   #   user: user,
