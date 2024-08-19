@@ -56,7 +56,7 @@ const TestApp = (props) => {
             />
             <PageRoute
               exact
-              path="/load_test"
+              path="/load_tests"
               title="Test Data | Caseflow"
               render={routedLoadTest}
             />

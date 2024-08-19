@@ -8,13 +8,18 @@ class Test::LoadTestsController < ApplicationController
   IDT_TOKEN_CACHE_KEY = "load_test_idt_token"
   LOAD_TESTING_USER = "LOAD_TESTER"
 
-  def index
+  def form_values
     render json: {
       feature_toggles_available: find_features.map { |key, value| { name: key, default_status: value } },
       functions_available: find_functions,
       all_csum_roles: find_roles,
       all_organizations: find_orgs
     }
+  end
+  helper_method :form_values
+
+  def index
+    render template: "test/load_tests"
   end
 
   def user
