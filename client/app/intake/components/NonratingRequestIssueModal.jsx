@@ -233,7 +233,7 @@ class NonratingRequestIssueModal extends React.Component {
 
     const options = intakeData.activeNonratingRequestIssues.
       filter(() => {
-        return category;
+        return false;
       }).
       map((issue) => {
         return {
