@@ -25,6 +25,7 @@ feature "Individual Claim History", :postgres do
                      request_type: "modification",
                      decision_review: task_event.decision_review)
     request.update(status: "approved")
+    request
   end
 
   let!(:issue_modification_request_withdrawal_edit) do
@@ -34,6 +35,7 @@ feature "Individual Claim History", :postgres do
                      :withdrawal,
                      decision_review: task_event.decision_review)
     request.update(status: "approved")
+    request
   end
 
   let!(:issue_modification_request_addition_edit) do
@@ -41,6 +43,7 @@ feature "Individual Claim History", :postgres do
                      :edit_of_request,
                      decision_review: task_event.decision_review)
     request.update(status: "approved")
+    request
   end
 
   let!(:issue_modification_request_removal_edit) do
@@ -50,6 +53,7 @@ feature "Individual Claim History", :postgres do
                      request_type: "removal",
                      decision_review: task_event.decision_review)
     request.update(status: "approved")
+    request
   end
 
   # cancelled
@@ -94,6 +98,7 @@ feature "Individual Claim History", :postgres do
       status: "denied",
       decision_reason: "Decision for denial"
     )
+    request
   end
 
   let!(:denied_issue_modification_request_withdrawal) do
@@ -106,6 +111,7 @@ feature "Individual Claim History", :postgres do
       status: "denied",
       decision_reason: "Decision for denial"
     )
+    request
   end
 
   let!(:denied_issue_modification_request_addition) do
@@ -116,6 +122,7 @@ feature "Individual Claim History", :postgres do
       status: "denied",
       decision_reason: "Decision for denial"
     )
+    request
   end
 
   let!(:denied_issue_modification_request_removal) do
@@ -128,6 +135,7 @@ feature "Individual Claim History", :postgres do
       status: "denied",
       decision_reason: "Decision for denial"
     )
+    request
   end
 
   let!(:cancelled_claim) do
@@ -144,11 +152,19 @@ feature "Individual Claim History", :postgres do
   let(:events) { ClaimHistoryService.new(non_comp_org, task_id: task_id).build_events }
 
   def click_filter_option(filter_text)
-    sort = find("[aria-label='Filter by Activity']").click
+    sort = find("[aria-label='Filter by Activity']")
     sort.click
 
     dropdown_filter = page.find(class: "cf-dropdown-filter")
     dropdown_filter.find("label", text: filter_text, match: :prefer_exact).click
+  end
+
+  def clear_filter_option(filter_text)
+    sort = find("[aria-label='Filter by Activity. Filtering by #{filter_text}']")
+    sort.click
+
+    clear_button_filter = page.find(class: "cf-clear-filter-button-wrapper")
+    clear_button_filter.click
   end
 
   before do
@@ -164,433 +180,450 @@ feature "Individual Claim History", :postgres do
     visit task_history_url
   end
 
-  scenario "To have all event types" do
-    event_types = events.map(&:readable_event_type).uniq.sort!
-    button = page.all("div.cf-pagination-pages button", text: "Next")[0]
+  let(:event_types) { events.map(&:readable_event_type).uniq.sort! }
 
-    events_found = []
-    loop do
-      event_types.each do |event|
-        if page.has_text?(event)
-          events_found << event unless events_found.include?(event)
-        end
+  context "Testing all Event Types" do
+    it "Filtering each event and verifiying row attributes" do
+      step "display the claim history table count" do
+        expect(page).to have_text("Viewing 1-15 of #{events.length} total")
+
+        click_filter_option("Approval of request - issue addition (1)")
+        expect(event_types.include?("Approval of request - issue addition")).to be_truthy
+
+        table = page.find("tbody")
+        expect(table).to have_selector("tr", count: 1)
+
+        table_row = table.first('tr[id^="table-row"]')
+        expect(table_row).to have_content("Approval of request - issue addition")
+        expect(table_row).to have_content("Request decision:")
+        expect(table_row).to have_content("Request originated by:")
+
+        expect(table_row).to have_content("View original request")
+        table_row.first("a", text: "View original request").click
+
+        expect(table_row).to have_content("Hide original request")
+        expect(table_row).to have_content("Benefit type:")
+        expect(table_row).to have_content("Issue type:")
+        expect(table_row).to have_content("Issue description:")
+        expect(table_row).to have_content("Decision date:")
+        expect(table_row).to have_content("Addition request reason:")
+        clear_filter_option("Approval of request - issue addition")
       end
 
-      break if events_found.sort == event_types.sort
+      step "Checking Approval of request - issue modification" do
+        click_filter_option("Approval of request - issue modification (1)")
+        expect(event_types.include?("Approval of request - issue modification")).to be_truthy
 
-      break if button.disabled?
+        table = page.find("tbody")
+        expect(table).to have_selector("tr", count: 1)
 
-      button.click
+        table_row = table.first('tr[id^="table-row"]')
+        expect(table_row).to have_content("Approval of request - issue modification")
+        expect(table_row).to have_content("Request decision:")
+        expect(table_row).to have_content("Remove original issue:")
+        expect(table_row).to have_content("Request originated by")
+        expect(table_row).to have_content("View original request")
+
+        first("a", text: "View original request").click
+        expect(table_row).to have_content("Hide original request")
+
+        expect(table_row).to have_content("Benefit type:")
+        expect(table_row).to have_content("Current issue type:")
+        expect(table_row).to have_content("Current issue description:")
+        expect(table_row).to have_content("Current decision date:")
+        expect(table_row).to have_content("New issue type:")
+        expect(table_row).to have_content("New issue description:")
+        expect(table_row).to have_content("New decision date:")
+        expect(table_row).to have_content("Modification request reason:")
+        clear_filter_option("Approval of request - issue modification")
+      end
+
+      step "Checking Approval of request - issue removal" do
+        click_filter_option("Approval of request - issue removal (1)")
+        table = page.find("tbody")
+        expect(table).to have_selector("tr", count: 1)
+        expect(event_types.include?("Approval of request - issue removal")).to be_truthy
+
+        table_row = table.first('tr[id^="table-row"]')
+        expect(table_row).to have_content("Approval of request - issue removal")
+        expect(table_row).to have_content("Request decision:")
+        expect(table_row).to have_content("Request originated by")
+        expect(table_row).to have_content("View original request")
+
+        expect(table_row).to have_content("View original request")
+        first("a", text: "View original request").click
+        expect(table_row).to have_content("Hide original request")
+
+        expect(table_row).to have_content("Benefit type:")
+        expect(table_row).to have_content("Issue type:")
+        expect(table_row).to have_content("Issue description:")
+        expect(table_row).to have_content("Decision date:")
+        expect(table_row).to have_content("Removal request reason:")
+        clear_filter_option("Approval of request - issue removal")
+      end
+
+      step "Checking Approval of request - issue withdrawal" do
+        click_filter_option("Approval of request - issue withdrawal (1)")
+        expect(event_types.include?("Approval of request - issue withdrawal")).to be_truthy
+
+        table = page.find("tbody")
+        table_row = table.first('tr[id^="table-row"]')
+        expect(table_row).to have_content("Approval of request - issue withdrawal")
+        expect(table_row).to have_content("Request decision:")
+        expect(table_row).to have_content("Request originated by")
+        expect(table_row).to have_content("View original request")
+
+        expect(table_row).to have_content("View original request")
+        first("a", text: "View original request").click
+        expect(table_row).to have_content("Hide original request")
+
+        expect(table_row).to have_content("Benefit type:")
+        expect(table_row).to have_content("Issue type:")
+        expect(table_row).to have_content("Issue description:")
+        expect(table_row).to have_content("Decision date:")
+        expect(table_row).to have_content("Withdrawal request reason:")
+        expect(table_row).to have_content("Withdrawal request date:")
+        clear_filter_option("Approval of request - issue withdrawal")
+      end
+
+      step "Checking Cancellation of request" do
+        click_filter_option("Cancellation of request")
+        expect(event_types.include?("Cancellation of request")).to be_truthy
+        table = page.find("tbody")
+
+        expect(table).to have_selector("tr", count: 4)
+        clear_filter_option("Cancellation of request")
+      end
+      step "Checking Edit of request - issue addition" do
+        click_filter_option("Edit of request - issue addition (1)")
+        expect(event_types.include?("Edit of request - issue addition")).to be_truthy
+
+        table = page.find("tbody")
+        expect(table).to have_selector("tr", count: 1)
+
+        table_row = table.first('tr[id^="table-row"]')
+
+        expect(table_row).to have_content("Edit of request - issue addition")
+        expect(table_row).to have_content("New issue type:")
+        expect(table_row).to have_content("New issue description:")
+        expect(table_row).to have_content("New decision date:")
+        expect(table_row).to have_content("New addition request reason:")
+
+        expect(table_row).to have_content("View original request")
+        first("a", text: "View original request").click
+        expect(table_row).to have_content("Hide original request")
+
+        expect(table_row).to have_content("Benefit type:")
+        expect(table_row).to have_content("Issue type:")
+        expect(table_row).to have_content("Issue description:")
+        expect(table_row).to have_content("Decision date:")
+        expect(table_row).to have_content("Addition request reason:")
+        clear_filter_option("Edit of request - issue addition")
+      end
+
+      step "Checking Edit of request - issue modification" do
+        click_filter_option("Edit of request - issue modification (1)")
+        expect(event_types.include?("Edit of request - issue modification")).to be_truthy
+        table = page.find("tbody")
+        expect(table).to have_selector("tr", count: 1)
+
+        table_row = table.first('tr[id^="table-row"]')
+        expect(table_row).to have_content("Edit of request - issue modification")
+
+        expect(table_row).to have_content("New issue type:")
+        expect(table_row).to have_content("New issue description:")
+        expect(table_row).to have_content("New decision date:")
+        expect(table_row).to have_content("New modification request reason:")
+
+        expect(table_row).to have_content("View original request")
+        first("a", text: "View original request").click
+        expect(table_row).to have_content("Hide original request")
+
+        expect(table_row).to have_content("Benefit type:")
+        expect(table_row).to have_content("Current issue type:")
+        expect(table_row).to have_content("Current issue description:")
+        expect(table_row).to have_content("Current decision date:")
+        expect(table_row).to have_content("New issue type:")
+        expect(table_row).to have_content("New issue description:")
+        expect(table_row).to have_content("New decision date:")
+        expect(table_row).to have_content("Modification request reason:")
+
+        clear_filter_option("Edit of request - issue modification")
+      end
+
+      step "Checking Edit of request - issue removal" do
+        click_filter_option("Edit of request - issue removal (4)")
+        expect(event_types.include?("Edit of request - issue removal")).to be_truthy
+
+        table = page.find("tbody")
+        expect(table).to have_selector("tr", count: 4)
+
+        table_row = table.first('tr[id^="table-row"]')
+        expect(table_row).to have_content("Edit of request - issue removal")
+        expect(table_row).to have_content("New removal request reason:")
+
+        expect(table_row).to have_content("View original request")
+        first("a", text: "View original request").click
+        expect(table_row).to have_content("Hide original request")
+
+        expect(table_row).to have_content("Benefit type:")
+        expect(table_row).to have_content("Issue type:")
+        expect(table_row).to have_content("Issue description:")
+        expect(table_row).to have_content("Decision date:")
+        expect(table_row).to have_content("Removal request reason:")
+        clear_filter_option("Edit of request - issue removal")
+      end
+
+      step "Checking Edit of request - issue withdrawal" do
+        click_filter_option("Edit of request - issue withdrawal (4)")
+        expect(event_types.include?("Edit of request - issue withdrawal")).to be_truthy
+
+        table = page.find("tbody")
+        expect(table).to have_selector("tr", count: 4)
+
+        table_row = table.first("tr")
+        expect(table_row).to have_content("Edit of request - issue withdrawal")
+        expect(table_row).to have_content("New withdrawal request reason:")
+        expect(table_row).to have_content("New withdrawal request date:")
+
+        expect(table_row).to have_content("View original request")
+        first("a", text: "View original request").click
+        expect(table_row).to have_content("Hide original request")
+
+        expect(table_row).to have_content("Benefit type:")
+        expect(table_row).to have_content("Issue type:")
+        expect(table_row).to have_content("Issue description:")
+        expect(table_row).to have_content("Decision date:")
+        expect(table_row).to have_content("Withdrawal request reason:")
+        expect(table_row).to have_content("Withdrawal request date:")
+        clear_filter_option("Edit of request - issue withdrawal")
+      end
+
+      step "Checking Rejection of request - issue addition" do
+        click_filter_option("Rejection of request - issue addition (1)")
+        expect(event_types.include?("Rejection of request - issue addition")).to be_truthy
+
+        table = page.find("tbody")
+        expect(table).to have_selector("tr", count: 1)
+
+        table_row = table.first("tr")
+        expect(table_row).to have_content("Request decision:")
+        expect(table_row).to have_content("Reason for rejection:")
+        expect(table_row).to have_content("Request originated by:")
+
+        expect(table_row).to have_content("View original request")
+        first("a", text: "View original request").click
+        expect(table_row).to have_content("Hide original request")
+
+        expect(table_row).to have_content("Benefit type:")
+        expect(table_row).to have_content("Issue type:")
+        expect(table_row).to have_content("Issue description:")
+        expect(table_row).to have_content("Decision date:")
+        expect(table_row).to have_content("Addition request reason:")
+
+        clear_filter_option("Rejection of request - issue addition")
+      end
+
+      step "Checking Rejection of request - issue modification" do
+        click_filter_option("Rejection of request - issue modification (1)")
+        expect(event_types.include?("Rejection of request - issue modification")).to be_truthy
+
+        table = page.find("tbody")
+        expect(table).to have_selector("tr", count: 1)
+
+        table_row = table.first("tr")
+        expect(table_row).to have_content("Request decision:")
+        expect(table_row).to have_content("Reason for rejection:")
+        expect(table_row).to have_content("Request originated by:")
+
+        expect(table_row).to have_content("View original request")
+        first("a", text: "View original request").click
+        expect(table_row).to have_content("Hide original request")
+
+        expect(table_row).to have_content("Benefit type:")
+        expect(table_row).to have_content("Current issue type:")
+        expect(table_row).to have_content("Current issue description:")
+        expect(table_row).to have_content("New issue type:")
+        expect(table_row).to have_content("New issue description:")
+        expect(table_row).to have_content("New decision date:")
+        expect(table_row).to have_content("Modification request reason:")
+
+        clear_filter_option("Rejection of request - issue modification")
+
+      end
+
+      step "Checking Rejection of request - issue removal" do
+        click_filter_option("Rejection of request - issue removal (1)")
+        expect(event_types.include?("Rejection of request - issue removal")).to be_truthy
+
+        table = page.find("tbody")
+        expect(table).to have_selector("tr", count: 1)
+
+        table_row = table.first("tr")
+        expect(table_row).to have_content("Request decision:")
+        expect(table_row).to have_content("Reason for rejection:")
+        expect(table_row).to have_content("Request originated by:")
+
+        expect(table_row).to have_content("View original request")
+        first("a", text: "View original request").click
+        expect(table_row).to have_content("Hide original request")
+
+        expect(table_row).to have_content("Benefit type:")
+        expect(table_row).to have_content("Issue type:")
+        expect(table_row).to have_content("Issue description:")
+        expect(table_row).to have_content("Issue type:")
+        expect(table_row).to have_content("Decision date:")
+
+        clear_filter_option("Rejection of request - issue removal")
+      end
+
+      step "Checking Rejection of request - issue withdrawal" do
+        click_filter_option("Rejection of request - issue withdrawal (1)")
+        expect(event_types.include?("Rejection of request - issue withdrawal")).to be_truthy
+
+        table = page.find("tbody")
+        expect(table).to have_selector("tr", count: 1)
+
+        table_row = table.first("tr")
+        expect(table_row).to have_content("Request decision:")
+        expect(table_row).to have_content("Reason for rejection:")
+        expect(table_row).to have_content("Request originated by:")
+
+        expect(table_row).to have_content("View original request")
+        first("a", text: "View original request").click
+
+        expect(table_row).to have_content("Hide original request")
+        expect(table_row).to have_content("Benefit type:")
+        expect(table_row).to have_content("Issue type:")
+        expect(table_row).to have_content("Issue description:")
+        expect(table_row).to have_content("Decision date:")
+        expect(table_row).to have_content("Withdrawal request reason:")
+        expect(table_row).to have_content("Withdrawal request date:")
+
+        clear_filter_option("Rejection of request - issue withdrawal")
+      end
+
+      step "Checking Added issue" do
+        click_filter_option("Added issue")
+        expect(event_types.include?("Added issue")).to be_truthy
+
+        table = page.find("tbody")
+        expect(table).to have_selector("tr", count: 10)
+
+        table_row = table.first("tr")
+        expect(table_row).to have_content("Benefit type:")
+        expect(table_row).to have_content("Issue type:")
+        expect(table_row).to have_content("Issue description:")
+        expect(table_row).to have_content("Decision date:")
+
+        clear_filter_option("Added issue")
+      end
+
+      step "checking Requested issue addition" do
+        click_filter_option("Requested issue addition (4)")
+        expect(event_types.include?("Requested issue addition")).to be_truthy
+
+        table = page.find("tbody")
+        expect(table).to have_selector("tr", count: 4)
+
+        table_row = table.first("tr")
+        expect(table_row).to have_content("Requested issue addition")
+        expect(table_row).to have_content("Benefit type:")
+        expect(table_row).to have_content("Issue type:")
+        expect(table_row).to have_content("Issue description:")
+        expect(table_row).to have_content("Decision date:")
+        expect(table_row).to have_content("Addition request reason:")
+
+        clear_filter_option("Requested issue addition")
+      end
+
+      step "Checking Requested issue modification" do
+        click_filter_option("Requested issue modification (3)")
+        expect(event_types.include?("Requested issue modification")).to be_truthy
+
+        table = page.find("tbody")
+        expect(table).to have_selector("tr", count: 3)
+
+        table_row = table.first('tr[id^="table-row"]')
+        expect(table_row).to have_content("Requested issue modification")
+        expect(table_row).to have_content("Benefit type:")
+        expect(table_row).to have_content("Current issue type:")
+        expect(table_row).to have_content("Current issue description:")
+        expect(table_row).to have_content("Current decision date:")
+        expect(table_row).to have_content("New issue type:")
+        expect(table_row).to have_content("New issue description:")
+        expect(table_row).to have_content("New decision date:")
+        expect(table_row).to have_content("Modification request reason:")
+
+        clear_filter_option("Requested issue modification")
+      end
+
+      step "Checking Requested issue removal" do
+        click_filter_option("Requested issue removal (3)")
+        expect(event_types.include?("Requested issue removal")).to be_truthy
+
+        table = page.find("tbody")
+        expect(table).to have_selector("tr", count: 3)
+
+        table_row = table.first('tr[id^="table-row"]')
+        expect(table_row).to have_content("Requested issue removal")
+
+        expect(table_row).to have_content("Benefit type:")
+        expect(table_row).to have_content("Issue type:")
+        expect(table_row).to have_content("Issue description:")
+        expect(table_row).to have_content("Decision date:")
+        expect(table_row).to have_content("Removal request reason:")
+
+        clear_filter_option("Requested issue removal")
+      end
+
+      step "Checking Requested issue withdrawal" do
+        click_filter_option("Requested issue withdrawal (3)")
+        expect(event_types.include?("Requested issue withdrawal")).to be_truthy
+
+        table = page.find("tbody")
+        expect(table).to have_selector("tr", count: 3)
+
+        table_row = table.first("tr")
+        expect(table_row).to have_content("Requested issue withdrawal")
+
+        expect(table_row).to have_content("Benefit type:")
+        expect(table_row).to have_content("Issue type:")
+        expect(table_row).to have_content("Issue description:")
+        expect(table_row).to have_content("Decision date:")
+        expect(table_row).to have_content("Withdrawal request reason:")
+        expect(table_row).to have_content("Withdrawal request date:")
+
+        clear_filter_option("Requested issue withdrawal")
+      end
+
+      step "checking claim status - Pending" do
+        click_filter_option("Claim status - Pending (1)")
+        expect(event_types.include?("Claim status - Pending")).to be_truthy
+
+        table = page.find("tbody")
+        expect(table).to have_selector("tr", count: 1)
+
+        table_row = table.first("tr")
+        expect(table_row).to have_content("Claim status - Pending")
+        expect(table_row).to have_content("Claim cannot be processed until VHA admin reviews pending requests.")
+
+        clear_filter_option("Claim status - Pending")
+      end
+      step "checking Claim created" do
+        click_filter_option("Claim created (1)")
+        expect(event_types.include?("Claim created")).to be_truthy
+
+        table = page.find("tbody")
+        expect(table).to have_selector("tr", count: 1)
+
+        table_row = table.first("tr")
+        expect(table_row).to have_content("Claim created")
+        expect(table_row).to have_content("Claim created.")
+
+        clear_filter_option("Claim created")
+      end
     end
-
-    expect(events_found.count).to eq(event_types.count)
-  end
-
-  scenario "display the claim history table" do
-    expect(page).to have_text("Viewing 1-15 of #{events.length} total")
-
-    table = page.find("tbody")
-    expect(table).to have_selector("tr", count: 15)
-
-    find("button", text: "2", match: :first).click
-    table_page_two = page.find("div", class: "cf-table-wrapper")
-    expect(table_page_two).to have_text("Viewing 16-30 of #{events.length} total")
-
-    find("button", text: "3", match: :first).click
-    table_page_three = page.find("div", class: "cf-table-wrapper")
-    expect(table_page_three).to have_text("Viewing 31-45 of #{events.length} total")
-
-    find("button", text: "4", match: :first).click
-    table_page_four = page.find("div", class: "cf-table-wrapper")
-    expect(table_page_four).to have_text("Viewing 46-48 of #{events.length} total")
-  end
-
-  scenario "Approval of request - issue addition" do
-    click_filter_option("Approval of request - issue addition (1)")
-
-    table = page.find("tbody")
-    expect(table).to have_selector("tr", count: 1)
-
-    table_row = table.first('tr[id^="table-row"]')
-    expect(table_row).to have_content("Approval of request - issue addition")
-    expect(table_row).to have_content("Request decision:")
-    expect(table_row).to have_content("Request originated by:")
-
-    expect(table_row).to have_content("View original request")
-    table_row.first("a", text: "View original request").click
-
-    expect(table_row).to have_content("Hide original request")
-    expect(table_row).to have_content("Benefit type:")
-    expect(table_row).to have_content("Issue type:")
-    expect(table_row).to have_content("Issue description:")
-    expect(table_row).to have_content("Decision date:")
-    expect(table_row).to have_content("Addition request reason:")
-  end
-
-  scenario "Approval of request - issue modification" do
-    click_filter_option("Approval of request - issue modification (1)")
-
-    table = page.find("tbody")
-    expect(table).to have_selector("tr", count: 1)
-
-    table_row = table.first('tr[id^="table-row"]')
-    expect(table_row).to have_content("Approval of request - issue modification")
-    expect(table_row).to have_content("Request decision:")
-    expect(table_row).to have_content("Remove original issue:")
-    expect(table_row).to have_content("Request originated by")
-    expect(table_row).to have_content("View original request")
-
-    first("a", text: "View original request").click
-    expect(table_row).to have_content("Hide original request")
-
-    expect(table_row).to have_content("Benefit type:")
-    expect(table_row).to have_content("Current issue type:")
-    expect(table_row).to have_content("Current issue description:")
-    expect(table_row).to have_content("Current decision date:")
-    expect(table_row).to have_content("New issue type:")
-    expect(table_row).to have_content("New issue description:")
-    expect(table_row).to have_content("New decision date:")
-    expect(table_row).to have_content("Modification request reason:")
-  end
-
-  scenario "Approval of request - issue removal" do
-    click_filter_option("Approval of request - issue removal (1)")
-    table = page.find("tbody")
-    expect(table).to have_selector("tr", count: 1)
-
-    table_row = table.first('tr[id^="table-row"]')
-    expect(table_row).to have_content("Approval of request - issue removal")
-    expect(table_row).to have_content("Request decision:")
-    expect(table_row).to have_content("Request originated by")
-    expect(table_row).to have_content("View original request")
-
-    expect(table_row).to have_content("View original request")
-    first("a", text: "View original request").click
-    expect(table_row).to have_content("Hide original request")
-
-    expect(table_row).to have_content("Benefit type:")
-    expect(table_row).to have_content("Issue type:")
-    expect(table_row).to have_content("Issue description:")
-    expect(table_row).to have_content("Decision date:")
-    expect(table_row).to have_content("Removal request reason:")
-  end
-
-  scenario "Approval of request - issue withdrawal" do
-    click_filter_option("Approval of request - issue withdrawal (1)")
-
-    table = page.find("tbody")
-    table_row = table.first('tr[id^="table-row"]')
-    expect(table_row).to have_content("Approval of request - issue withdrawal")
-    expect(table_row).to have_content("Request decision:")
-    expect(table_row).to have_content("Request originated by")
-    expect(table_row).to have_content("View original request")
-
-    expect(table_row).to have_content("View original request")
-    first("a", text: "View original request").click
-    expect(table_row).to have_content("Hide original request")
-
-    expect(table_row).to have_content("Benefit type:")
-    expect(table_row).to have_content("Issue type:")
-    expect(table_row).to have_content("Issue description:")
-    expect(table_row).to have_content("Decision date:")
-    expect(table_row).to have_content("Withdrawal request reason:")
-    expect(table_row).to have_content("Withdrawal request date:")
-  end
-
-  scenario "Cancellation of request" do
-    click_filter_option("Cancellation of request")
-
-    table = page.find("tbody")
-    expect(table).to have_selector("tr", count: 4)
-  end
-
-  scenario "Edit of request - issue addition" do
-    click_filter_option("Edit of request - issue addition (1)")
-
-    table = page.find("tbody")
-    expect(table).to have_selector("tr", count: 1)
-
-    table_row = table.first('tr[id^="table-row"]')
-
-    expect(table_row).to have_content("Edit of request - issue addition")
-    expect(table_row).to have_content("New issue type:")
-    expect(table_row).to have_content("New issue description:")
-    expect(table_row).to have_content("New decision date:")
-    expect(table_row).to have_content("New addition request reason:")
-
-    expect(table_row).to have_content("View original request")
-    first("a", text: "View original request").click
-    expect(table_row).to have_content("Hide original request")
-
-    expect(table_row).to have_content("Benefit type:")
-    expect(table_row).to have_content("Issue type:")
-    expect(table_row).to have_content("Issue description:")
-    expect(table_row).to have_content("Decision date:")
-    expect(table_row).to have_content("Addition request reason:")
-  end
-
-  scenario "Edit of request - issue modification" do
-    click_filter_option("Edit of request - issue modification (1)")
-
-    table = page.find("tbody")
-    expect(table).to have_selector("tr", count: 1)
-
-    table_row = table.first('tr[id^="table-row"]')
-    expect(table_row).to have_content("Edit of request - issue modification")
-
-    expect(table_row).to have_content("New issue type:")
-    expect(table_row).to have_content("New issue description:")
-    expect(table_row).to have_content("New decision date:")
-    expect(table_row).to have_content("New modification request reason:")
-
-    expect(table_row).to have_content("View original request")
-    first("a", text: "View original request").click
-    expect(table_row).to have_content("Hide original request")
-
-    expect(table_row).to have_content("Benefit type:")
-    expect(table_row).to have_content("Current issue type:")
-    expect(table_row).to have_content("Current issue description:")
-    expect(table_row).to have_content("Current decision date:")
-    expect(table_row).to have_content("New issue type:")
-    expect(table_row).to have_content("New issue description:")
-    expect(table_row).to have_content("New decision date:")
-    expect(table_row).to have_content("Modification request reason:")
-  end
-
-  scenario "Edit of request - issue removal" do
-    click_filter_option("Edit of request - issue removal (4)")
-
-    table = page.find("tbody")
-    expect(table).to have_selector("tr", count: 4)
-
-    table_row = table.first('tr[id^="table-row"]')
-    expect(table_row).to have_content("Edit of request - issue removal")
-    expect(table_row).to have_content("New removal request reason:")
-
-    expect(table_row).to have_content("View original request")
-    first("a", text: "View original request").click
-    expect(table_row).to have_content("Hide original request")
-
-    expect(table_row).to have_content("Benefit type:")
-    expect(table_row).to have_content("Issue type:")
-    expect(table_row).to have_content("Issue description:")
-    expect(table_row).to have_content("Decision date:")
-    expect(table_row).to have_content("Removal request reason:")
-  end
-
-  scenario "Edit of request - issue withdrawal" do
-    click_filter_option("Edit of request - issue withdrawal (4)")
-
-    table = page.find("tbody")
-    expect(table).to have_selector("tr", count: 4)
-
-    table_row = table.first("tr")
-    expect(table_row).to have_content("Edit of request - issue withdrawal")
-    expect(table_row).to have_content("New withdrawal request reason:")
-    expect(table_row).to have_content("New withdrawal request date:")
-
-    expect(table_row).to have_content("View original request")
-    first("a", text: "View original request").click
-    expect(table_row).to have_content("Hide original request")
-
-    expect(table_row).to have_content("Benefit type:")
-    expect(table_row).to have_content("Issue type:")
-    expect(table_row).to have_content("Issue description:")
-    expect(table_row).to have_content("Decision date:")
-    expect(table_row).to have_content("Withdrawal request reason:")
-    expect(table_row).to have_content("Withdrawal request date:")
-  end
-
-  scenario "Rejection of request - issue addition" do
-    click_filter_option("Rejection of request - issue addition (1)")
-
-    table = page.find("tbody")
-    expect(table).to have_selector("tr", count: 1)
-
-    table_row = table.first("tr")
-    expect(table_row).to have_content("Request decision:")
-    expect(table_row).to have_content("Reason for rejection:")
-    expect(table_row).to have_content("Request originated by:")
-
-    expect(table_row).to have_content("View original request")
-    first("a", text: "View original request").click
-    expect(table_row).to have_content("Hide original request")
-
-    expect(table_row).to have_content("Benefit type:")
-    expect(table_row).to have_content("Issue type:")
-    expect(table_row).to have_content("Issue description:")
-    expect(table_row).to have_content("Decision date:")
-    expect(table_row).to have_content("Addition request reason:")
-  end
-
-  scenario "Rejection of request - issue modification" do
-    click_filter_option("Rejection of request - issue modification (1)")
-
-    table = page.find("tbody")
-    expect(table).to have_selector("tr", count: 1)
-
-    table_row = table.first("tr")
-    expect(table_row).to have_content("Request decision:")
-    expect(table_row).to have_content("Reason for rejection:")
-    expect(table_row).to have_content("Request originated by:")
-
-    expect(table_row).to have_content("View original request")
-    first("a", text: "View original request").click
-    expect(table_row).to have_content("Hide original request")
-
-    expect(table_row).to have_content("Benefit type:")
-    expect(table_row).to have_content("Current issue type:")
-    expect(table_row).to have_content("Current issue description:")
-    expect(table_row).to have_content("New issue type:")
-    expect(table_row).to have_content("New issue description:")
-    expect(table_row).to have_content("New decision date:")
-    expect(table_row).to have_content("Modification request reason:")
-  end
-
-  scenario "Rejection of request - issue removal" do
-    click_filter_option("Rejection of request - issue removal (1)")
-
-    table = page.find("tbody")
-    expect(table).to have_selector("tr", count: 1)
-
-    table_row = table.first("tr")
-    expect(table_row).to have_content("Request decision:")
-    expect(table_row).to have_content("Reason for rejection:")
-    expect(table_row).to have_content("Request originated by:")
-
-    expect(table_row).to have_content("View original request")
-    first("a", text: "View original request").click
-    expect(table_row).to have_content("Hide original request")
-
-    expect(table_row).to have_content("Benefit type:")
-    expect(table_row).to have_content("Issue type:")
-    expect(table_row).to have_content("Issue description:")
-    expect(table_row).to have_content("Issue type:")
-    expect(table_row).to have_content("Decision date:")
-  end
-
-  scenario "Rejection of request - issue withdrawal" do
-    click_filter_option("Rejection of request - issue withdrawal (1)")
-
-    table = page.find("tbody")
-    expect(table).to have_selector("tr", count: 1)
-
-    table_row = table.first("tr")
-    expect(table_row).to have_content("Request decision:")
-    expect(table_row).to have_content("Reason for rejection:")
-    expect(table_row).to have_content("Request originated by:")
-
-    expect(table_row).to have_content("View original request")
-    first("a", text: "View original request").click
-    expect(table_row).to have_content("Hide original request")
-
-    expect(table_row).to have_content("Benefit type:")
-    expect(table_row).to have_content("Issue type:")
-    expect(table_row).to have_content("Issue description:")
-    expect(table_row).to have_content("Decision date:")
-    expect(table_row).to have_content("Withdrawal request reason:")
-    expect(table_row).to have_content("Withdrawal request date:")
-  end
-
-  scenario "Added issue" do
-    click_filter_option("Added issue")
-
-    table = page.find("tbody")
-    expect(table).to have_selector("tr", count: 10)
-
-    table_row = table.first("tr")
-    expect(table_row).to have_content("Benefit type:")
-    expect(table_row).to have_content("Issue type:")
-    expect(table_row).to have_content("Issue description:")
-    expect(table_row).to have_content("Decision date:")
-  end
-
-  scenario "Requested issue addition" do
-    click_filter_option("Requested issue addition (4)")
-
-    table = page.find("tbody")
-    expect(table).to have_selector("tr", count: 4)
-
-    table_row = table.first("tr")
-    expect(table_row).to have_content("Requested issue addition")
-    expect(table_row).to have_content("Benefit type:")
-    expect(table_row).to have_content("Issue type:")
-    expect(table_row).to have_content("Issue description:")
-    expect(table_row).to have_content("Decision date:")
-    expect(table_row).to have_content("Addition request reason:")
-  end
-
-  scenario "Requested issue modification" do
-    click_filter_option("Requested issue modification (3)")
-
-    table = page.find("tbody")
-    expect(table).to have_selector("tr", count: 3)
-
-    table_row = table.first('tr[id^="table-row"]')
-    expect(table_row).to have_content("Requested issue modification")
-    expect(table_row).to have_content("Benefit type:")
-    expect(table_row).to have_content("Current issue type:")
-    expect(table_row).to have_content("Current issue description:")
-    expect(table_row).to have_content("Current decision date:")
-    expect(table_row).to have_content("New issue type:")
-    expect(table_row).to have_content("New issue description:")
-    expect(table_row).to have_content("New decision date:")
-    expect(table_row).to have_content("Modification request reason:")
-  end
-
-  scenario "Requested issue removal" do
-    click_filter_option("Requested issue removal (3)")
-
-    table = page.find("tbody")
-    expect(table).to have_selector("tr", count: 3)
-
-    table_row = table.first('tr[id^="table-row"]')
-    expect(table_row).to have_content("Requested issue removal")
-
-    expect(table_row).to have_content("Benefit type:")
-    expect(table_row).to have_content("Issue type:")
-    expect(table_row).to have_content("Issue description:")
-    expect(table_row).to have_content("Decision date:")
-    expect(table_row).to have_content("Removal request reason:")
-  end
-
-  scenario "Requested issue withdrawal" do
-    click_filter_option("Requested issue withdrawal (3)")
-
-    table = page.find("tbody")
-    expect(table).to have_selector("tr", count: 3)
-
-    table_row = table.first("tr")
-    expect(table_row).to have_content("Requested issue withdrawal")
-
-    expect(table_row).to have_content("Benefit type:")
-    expect(table_row).to have_content("Issue type:")
-    expect(table_row).to have_content("Issue description:")
-    expect(table_row).to have_content("Decision date:")
-    expect(table_row).to have_content("Withdrawal request reason:")
-    expect(table_row).to have_content("Withdrawal request date:")
-  end
-
-  scenario "claim status - Pending" do
-    click_filter_option("Claim status - Pending (1)")
-
-    table = page.find("tbody")
-    expect(table).to have_selector("tr", count: 1)
-
-    table_row = table.first("tr")
-    expect(table_row).to have_content("Claim status - Pending")
-    expect(table_row).to have_content("Claim cannot be processed until VHA admin reviews pending requests.")
-  end
-
-  scenario "Claim created" do
-    click_filter_option("Claim created (1)")
-
-    table = page.find("tbody")
-    expect(table).to have_selector("tr", count: 1)
-
-    table_row = table.first("tr")
-    expect(table_row).to have_content("Claim created")
-    expect(table_row).to have_content("Claim created.")
   end
 
   context "should do expected details to show claim close for a claim close" do
@@ -607,6 +640,11 @@ feature "Individual Claim History", :postgres do
       expect(table_row).to have_content("Claim decision date:")
     end
   end
+
+    context "" do
+    
+      
+    end
 
   context "should do expected details to show claim closed when cancelled" do
     before { visit "/decision_reviews/vha/tasks/#{cancelled_claim.tasks[0].id}/history" }
