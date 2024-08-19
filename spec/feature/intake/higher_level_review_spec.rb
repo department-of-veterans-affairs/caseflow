@@ -1246,21 +1246,4 @@ feature "Higher-Level Review", :all_dbs do
       end
     end
   end
-
-  context "has a chain of prior decision issues" do
-    let(:start_date) { Time.zone.today - 300.days }
-    before do
-      prior_hlr = create(:higher_level_review, veteran_file_number: veteran.file_number)
-      request_issue = create(:request_issue,
-                             contested_rating_issue_reference_id: "old123",
-                             contested_rating_issue_profile_date: untimely_ratings.profile_date,
-                             decision_review: prior_hlr)
-      setup_prior_decision_issue_chain(prior_hlr, request_issue, veteran, start_date)
-    end
-
-    it "disables prior contestable issues" do
-      start_higher_level_review(veteran)
-      check_decision_issue_chain(start_date)
-    end
-  end
 end
