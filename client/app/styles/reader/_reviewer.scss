@@ -79,13 +79,13 @@
 }
 
 @media screen and (min-width: 920px) {
-  .cf-sidebar-wrapper{
+  .cf-sidebar-wrapper {
     width: 28%;
   }
 }
 
 @media screen and (min-width: 1240px) {
-  .cf-sidebar-wrapper{
+  .cf-sidebar-wrapper {
     width: 380px;
   }
 }
@@ -102,10 +102,9 @@
   border-top: 1px solid $color-gray-lighter;
 
   &.hidden-sidebar {
-    display:none;
+    display: none;
     width: 0;
     min-width: 0;
-    display: none;
   }
 
   .usa-accordion-content {
