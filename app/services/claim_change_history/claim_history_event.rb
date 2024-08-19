@@ -300,16 +300,17 @@ class ClaimHistoryEvent
       pending_system_hash_events = pending_system_hash
         .merge("event_date" => event_date)
 
-      imr_created_in_same_transaction = previous_imr_created_in_same_transaction?(change_data)
-      # If this IMR was created at the same time as the previous decided at then skip pending event creation.
-      return nil if timestamp_within_seconds?(change_data["previous_imr_decided_at"],
-                                              change_data["issue_modification_request_created_at"],
-                                              STATUS_EVENT_TIME_WINDOW)
-
-      # if two imr's are of different transaction and if decision has already been made then we
-      # want to put pending status since it went back to pending status before it was approved/cancelled or denied.
-      if change_data["previous_imr_created_at"].nil? ||
-         !imr_created_in_same_transaction
+      if change_data["previous_imr_created_at"].nil?
+        # If this is the first IMR then it will always generate a pending event.
+        from_change_data(:pending, change_data.merge(pending_system_hash_events))
+      elsif timestamp_within_seconds?(change_data["previous_imr_decided_at"],
+                                      change_data["issue_modification_request_created_at"],
+                                      STATUS_EVENT_TIME_WINDOW)
+        # If this IMR was created at the same time as the previous decided at then skip pending event creation.
+        nil
+      elsif !previous_imr_created_in_same_transaction?(change_data)
+        # if two imr's are of different transaction and if decision has already been made then we
+        # want to put pending status since it went back to pending status before it was approved/cancelled or denied.
         from_change_data(:pending, change_data.merge(pending_system_hash_events))
       end
     end
