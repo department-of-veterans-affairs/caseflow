@@ -242,6 +242,10 @@ module Seeds
                                     tied_to: false, affinity_start_date: 25.days.ago)
         create(:legacy_aoj_appeal, :aod, bfcorlid: "#{create_correspondent(snamef: "AffinityToBVAGSPORER", snamel: "3DaysAffinity").ssn}S",  judge: affinity_judge, attorney: attorney,
                                     tied_to: false, affinity_start_date: 3.days.ago)
+        create(:legacy_aoj_appeal, :aod, bfcorlid: "#{create_correspondent(snamef: "AffinityToBVAGSPORER", snamel: "30DaysAffinity").ssn}S",  judge: affinity_judge, attorney: attorney,
+                                    tied_to: false, affinity_start_date: 30.days.ago, cavc: true)
+        create(:legacy_aoj_appeal, :aod, bfcorlid: "#{create_correspondent(snamef: "AffinityToBVAGSPORER", snamel: "60DaysAffinity").ssn}S",  judge: affinity_judge, attorney: attorney,
+                                    tied_to: false, affinity_start_date: 60.days.ago, cavc: true)
         create(:legacy_aoj_appeal, :aod, bfcorlid: "#{create_correspondent(snamef: "AffinityToBVAGSPORER", snamel: "NoAppealAffinity").ssn}S",  judge: affinity_judge, attorney: attorney,
                                     tied_to: false, appeal_affinity: false)
 
