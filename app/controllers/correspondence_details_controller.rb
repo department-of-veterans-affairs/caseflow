@@ -59,4 +59,3 @@ class CorrespondenceDetailsController < CorrespondenceController
     }
   end
 end
-

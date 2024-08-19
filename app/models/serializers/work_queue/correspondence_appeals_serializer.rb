@@ -19,33 +19,44 @@ class WorkQueue::CorrespondenceAppealsSerializer
     object.appeal.stream_type
   end
 
+  attribute :appeal_uuid do |object|
+    object.appeal.uuid
+  end
+
+  attribute :appeal_type do |object|
+    object.appeal.docket_type
+  end
+
   attribute :number_of_issues do |object|
-    0
+    object.appeal.issues.length
+  end
+
+  attribute :task_added_data do |object|
+    tasks = []
+    object.correspondences_appeals_tasks.each do |cor_app_task|
+      assigned_to = cor_app_task.task.assigned_to
+      assigned_to_text = assigned_to.is_a?(Organization) ? assigned_to.name : assigned_to.css_id
+      task_data = {
+        assigned_at: cor_app_task.task.assigned_at,
+        assigned_to: assigned_to_text,
+        assigned_to_type: cor_app_task.task.assigned_to_type,
+        instructions: cor_app_task.task.instructions,
+        type: cor_app_task.task.label
+      }
+      tasks << task_data
+    end
+    tasks
   end
 
   attribute :status do |object|
     object.correspondence.status
-    # status: cor_appeal.correspondence.status,
-  end
-
-  attribute :assigned_at do |object|
-    object&.tasks[0]&.assigned_at
-  end
-
-  attribute :instructions do |object|
-    object.tasks[0]&.instructions
-  end
-
-  attribute :type do |object|
-    object.tasks[0]&.label
   end
 
   attribute :assigned_to do |object|
-    object.tasks[0]&.assigned_to
+    object.tasks[0].assigned_to
   end
 
   attribute :correspondence do |object|
     object
   end
-# end
 end

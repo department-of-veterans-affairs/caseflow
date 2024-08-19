@@ -2,15 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import CaseDetailsLink from '../CaseDetailsLink';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
-import { ExternalLinkIcon } from '../../components/icons/ExternalLinkIcon';
 import CorrespondenceCaseTimeline from './CorrespondenceCaseTimeline';
 
 const CorrespondenceTasksAdded = (props) => {
-
   const veteranName = props.correspondence.veteran_name;
   const veteranFullName = `${veteranName.first_name} ${veteranName.middle_initial} ${veteranName.last_name}`;
-  // console.log(veteranFullName)
-  console.log(props)
+
   return (
     <>
       <div className="tasks-added-container">
@@ -18,13 +15,14 @@ const CorrespondenceTasksAdded = (props) => {
           <div className="corr-tasks-added-col first-row">
             <p className="task-added-header">Docket number</p>
             <span className="case-details-badge">
-              <DocketTypeBadge name="test" />
+              <DocketTypeBadge name={props.task_added.appealType} />
               <CaseDetailsLink
-                appeal={props.correspondence}
+                appeal={{ externalId: props.task_added.appealUuid }}
                 getLinkText={() => props.task_added.docketNumber}
-                task={{}}
+                task={props.task_added}
+
+                linkOpensInNewTab
               />
-              <span className="link-icon-container"><ExternalLinkIcon color="blue" /> </span>
             </span>
 
           </div>
@@ -34,11 +32,11 @@ const CorrespondenceTasksAdded = (props) => {
           </div>
           <div className="corr-tasks-added-col">
             <p className="task-added-header">Appeal stream type</p>
-            <p>{props.task_added.stream_type}</p>
+            <p>{props.task_added.streamType}</p>
           </div>
           <div className="corr-tasks-added-col">
             <p className="task-added-header">Number of issues</p>
-            <p>{props.task_added.number_of_issues}</p>
+            <p>{props.task_added.numberOfIssues}</p>
           </div>
           <div className="corr-tasks-added-col">
             <p className="task-added-header">Status</p>
@@ -46,19 +44,20 @@ const CorrespondenceTasksAdded = (props) => {
           </div>
           <div className="corr-tasks-added-col">
             <p className="task-added-header">Added to</p>
-            <p>{props.task_added.assigned_to}</p>
+            <p>{props.task_added.assignedTo ? props.task_added.assignedTo.name : ''}</p>
           </div>
 
         </div >
         <div className="tasks-added-details">
           <span className="tasks-added-text">Tasks added to appeal</span>
-
-          <CorrespondenceCaseTimeline
-            organizations={['TEST']}
-            userCssId="INBOUND_OPS_TEAM_ADMIN_USER"
-            correspondence={props.task_added.correspondence}
-            tasksToDisplay={props.correspondence.tasksAddedToAppeal}
-          />
+          <div>
+            <CorrespondenceCaseTimeline
+              organizations={props.organizations}
+              userCssId="INBOUND_OPS_TEAM_ADMIN_USEkR"
+              correspondence={props.task_added.correspondence}
+              tasksToDisplay={(props.task_added.taskAddedData)}
+            />
+          </div>
         </div>
       </div>
     </>
@@ -68,6 +67,7 @@ const CorrespondenceTasksAdded = (props) => {
 CorrespondenceTasksAdded.propTypes = {
   correspondence: PropTypes.object,
   task_added: PropTypes.object,
+  organizations: PropTypes.array
 
 };
 

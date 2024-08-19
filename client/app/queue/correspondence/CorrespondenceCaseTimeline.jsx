@@ -11,7 +11,7 @@ const CorrespondenceCaseTimeline = (props) => {
     actions.push({ value: 'changeTask', label: 'Change task type' });
     actions.push({ value: 'changeTask', label: 'Change task type' });
     actions.push({ value: 'changeTask', label: 'Assign to team' });
-    actions.push({ value: 'changeTask', label: 'modifiedUserLabel' });
+    actions.push({ value: 'changeTask', label: modifiedUserLabel });
     actions.push({ value: 'changeTask', label: 'Mark task complete' });
     actions.push({ value: 'changeTask', label: 'Return to Inbound Ops' });
     actions.push({ value: 'changeTask', label: 'Cancel task' });

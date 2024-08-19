@@ -1406,8 +1406,9 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 }
 
 .tasks-added-container {
-  border: 1px solid black;
+  border: 1px solid $color-cream;
   margin-bottom: 20px;
+  padding-top: 0;
 }
 
 .task-added-header {
@@ -1420,6 +1421,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   display: flex;
   width: 98%;
   margin-left: 1%;
+  margin-top: 15px;
 }
 
 .corr-tasks-added-col {

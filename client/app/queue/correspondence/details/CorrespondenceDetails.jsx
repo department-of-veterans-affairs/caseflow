@@ -82,13 +82,16 @@ const CorrespondenceDetails = (props) => {
               disabled
               enableTopPagination
             />
-            {(props.correspondence.correspondenceAppeals.map((task_added) =>
-              <CorrespondenceTasksAdded
-                task_added={task_added}
-                correspondence={props.correspondence} />
-            ))}
-
           </AppSegment>
+          {(props.correspondence.correspondenceAppeals.map((taskAdded) =>
+
+            taskAdded.correspondencesAppealsTasks.length > 0 && <CorrespondenceTasksAdded
+              task_added={taskAdded}
+              correspondence={props.correspondence}
+              organizations={props.organizations}
+            />
+          )
+          )}
         </div>
       </React.Fragment>
     );
@@ -103,7 +106,7 @@ const CorrespondenceDetails = (props) => {
         userCssId={props.userCssId}
         correspondence={props.correspondence}
         tasksToDisplay={props.correspondence.tasksUnrelatedToAppeal}
-         />
+      />
     </div>
   </>;
 
