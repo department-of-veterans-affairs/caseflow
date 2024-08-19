@@ -1,4 +1,3 @@
-import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -9,7 +8,7 @@ import { ClipboardIcon } from '../components//icons/ClipboardIcon';
 import { isEmpty } from 'lodash';
 
 export const clipboardButtonStyling = (defaults) =>
-  css({
+  ({
     ...defaults,
     padding: '0.75rem',
     // Offset the additional padding so when this component appears in an unordered list of items its baseline matches.
@@ -43,7 +42,7 @@ export default class CopyTextButton extends React.PureComponent {
             type="submit"
             className="cf-apppeal-id"
             aria-label={ariaLabel || `Copy ${label} ${text}`}
-            {...clipboardButtonStyling(buttonStyles)}
+            style={clipboardButtonStyling(buttonStyles)}
           >
             {text}&nbsp;
             <ClipboardIcon />
