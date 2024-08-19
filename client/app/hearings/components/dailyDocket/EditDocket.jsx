@@ -230,6 +230,7 @@ export const EditDocket = (props) => {
                 localZone="America/New_York"
                 onChange={handleStartTimeChange}
                 value={firstSlotTime}
+                hearingDayDate={props?.docket?.scheduledFor}
               />
               <div className="time-slot-preview-container">
                 <TimeSlot
