@@ -1,7 +1,7 @@
 <% content_for :page_title do %>&nbsp &gt &nbspLoad Tests<% end %>
 
 <% content_for :full_page_content do %>
-  <%= react_component("LoadTest", props: {
+  <%= react_component("TestApp", props: {
     userDisplayName: current_user.display_name,
     dropdownUrls: dropdown_urls,
     page: "LoadTest",
@@ -9,7 +9,7 @@
     currentUser: current_user.to_hash,
     isGlobalAdmin: current_user.global_admin?,
     dependenciesFaked: ApplicationController.dependencies_faked?,
-    # formValues: form_values,
+    formValues: form_values,
     # testUsersList: Test::UsersController.test_users,
     # featuresList: features_list,
     # # appSelectList: Test::UsersController::APPS,

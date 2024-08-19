@@ -9,7 +9,7 @@
     currentUser: current_user.to_hash,
     isGlobalAdmin: current_user.global_admin?,
     dependenciesFaked: ApplicationController.dependencies_faked?,
-    # testUsersList: Test::UsersController.test_users,
+    testUsersList: test_users,
     featuresList: features_list,
     appSelectList: Test::UsersController::APPS,
     userSession: user_session,

@@ -9,7 +9,7 @@ class Test::LoadTestsController < ApplicationController
   LOAD_TESTING_USER = "LOAD_TESTER"
 
   def form_values
-    render json: {
+    return {
       feature_toggles_available: find_features.map { |key, value| { name: key, default_status: value } },
       functions_available: find_functions,
       all_csum_roles: find_roles,
