@@ -58,10 +58,10 @@ class MissingVacolsHearingJobFix < CaseflowJob
 
   def stuck_tasks(questionable_tasks)
     tasks_with_hearing_missing_vacols_records = []
-    questionable_tasks.each do |t|
+    questionable_tasks.each do |task|
       # adds the stuck task associated with the missing VACOLS hearing
-      if VACOLS::CaseHearing.find_by(hearing_pkseq: t.hearing.vacols_id).nil?
-        tasks_with_hearing_missing_vacols_records.push(t)
+      if VACOLS::CaseHearing.find_by(hearing_pkseq: task.hearing.vacols_id).nil?
+        tasks_with_hearing_missing_vacols_records.push(task)
       end
     end
 
