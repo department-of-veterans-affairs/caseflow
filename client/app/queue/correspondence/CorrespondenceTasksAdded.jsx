@@ -50,7 +50,7 @@ const CorrespondenceTasksAdded = (props) => {
         </div >
         <div className="tasks-added-details">
           <span className="tasks-added-text">Tasks added to appeal</span>
-          <div>
+          <div >
             <CorrespondenceCaseTimeline
               organizations={props.organizations}
               userCssId="INBOUND_OPS_TEAM_ADMIN_USEkR"

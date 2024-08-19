@@ -53,7 +53,7 @@ class WorkQueue::CorrespondenceAppealsSerializer
   end
 
   attribute :assigned_to do |object|
-    object.tasks[0].assigned_to
+    object.tasks[0]&.assigned_to
   end
 
   attribute :correspondence do |object|
