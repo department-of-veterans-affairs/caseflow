@@ -6,7 +6,7 @@
 # associated LegacyHearing. This job will create a VACOLS record for the
 # associated LegacyHearing, cancel the task, then destroy the VACOLS record.
 # The VACOLS record is deleted because the exact time of the hearing cannot be
-# recorded accurately.
+# recorded accurately and we do not want any false data to exist.
 # ************************
 class MissingVacolsHearingJobFix < CaseflowJob
   def initialize
@@ -58,29 +58,14 @@ class MissingVacolsHearingJobFix < CaseflowJob
 
   def stuck_tasks(questionable_tasks)
     tasks_with_hearing_missing_vacols_records = []
-    questionable_tasks.each { |t|
+    questionable_tasks.each do |t|
       # adds the stuck task associated with the missing VACOLS hearing
       if VACOLS::CaseHearing.find_by(hearing_pkseq: t.hearing.vacols_id).nil?
         tasks_with_hearing_missing_vacols_records.push(t)
       end
-    }
+    end
 
     tasks_with_hearing_missing_vacols_records
-  end
-
-  def get_attributes(appeal, hearing)
-    scheduled_for = HearingTimeService.legacy_formatted_scheduled_for(
-      scheduled_for: hearing.hearing_day.scheduled_for,
-      scheduled_time_string: "12:00"
-    )
-
-    attrs = {
-      hearing_day: hearing.hearing_day,
-      appeal: appeal,
-      scheduled_for: scheduled_for,
-      notes: ""
-    }
-    attrs
   end
 
   def process_vacols_record(attrs, task)
@@ -90,9 +75,6 @@ class MissingVacolsHearingJobFix < CaseflowJob
       task.hearing.update(vacols_id: vacols_record[:hearing_pkseq])
       task.cancelled!
       vacols_record.destroy!
-    else
-      log_error("Task #{task.id} not able to cancel..")
-      fail Interrupt
     end
   rescue StandardError => error
     log_error("Something went wrong. Requires manual remediation. Error: #{error} Aborting...")
@@ -113,6 +95,21 @@ class MissingVacolsHearingJobFix < CaseflowJob
     )
 
     vacols_record
+  end
+
+  def get_attributes(appeal, hearing)
+    scheduled_for = HearingTimeService.legacy_formatted_scheduled_for(
+      scheduled_for: hearing.hearing_day.scheduled_for,
+      scheduled_time_string: "12:00"
+    )
+
+    attrs = {
+      hearing_day: hearing.hearing_day,
+      appeal: appeal,
+      scheduled_for: scheduled_for,
+      notes: ""
+    }
+    attrs
   end
 
   def log_processing_time
