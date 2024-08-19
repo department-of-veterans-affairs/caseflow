@@ -26,7 +26,7 @@ class HearingTimeService
     end
 
     # Checks the time_string value and returns the formatted time in %H:%M
-    # @return [String] - Time string in "%H:%M" format
+    # @return [String, nil] - Time string in "%H:%M" format
     # @example Extract the hour and minute from a string.
     #   process_scheduled_time("1:00 PM Eastern Time (US & Canada)") #=> "13:00"
     def process_scheduled_time(time_string)
