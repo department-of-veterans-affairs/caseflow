@@ -39,14 +39,6 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
     end
 
     describe "claim_review" do
-      it "returns the correct auto_remand" do
-        expect(subject.claim_review_auto_remand).to eq(true)
-      end
-
-      it "returns the correct remand_source_id" do
-        expect(subject.claim_review_remand_source_id).to eq(1001)
-      end
-
       it "returns the correct informal_conference" do
         expect(subject.claim_review_informal_conference).to eq(false)
       end
@@ -70,109 +62,194 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
       end
     end
 
-    describe "request_issues" do
-      it "returns the correct ids" do
-        expect(subject.request_issues_id).to eq([1])
+    # We are testing that each attribute returns the correct value
+    describe "updated_issues" do
+      it "returns an empty array if no updated issues" do
+        expect(subject.updated_issues).to eq([])
       end
+    end
 
+    describe "eligible_to_ineligible_issues" do
+      it "returns an empty array if no eligible_to_ineligible_issues" do
+        expect(subject.eligible_to_ineligible_issues).to eq([])
+      end
+    end
+
+    describe "ineligible_to_eligible_issues" do
+      it "returns an empty array if no ineligible_to_eligible_issues" do
+        expect(subject.ineligible_to_eligible_issues).to eq([])
+      end
+    end
+
+    describe "ineligible_to_ineligible_issues" do
+      it "returns an empty array if no ineligible_to_ineligible_issues" do
+        expect(subject.ineligible_to_ineligible_issues).to eq([])
+      end
+    end
+
+    describe "withdrawn_issues" do
+      it "returns an empty array if no uwithdrawn_issues" do
+        expect(subject.withdrawn_issues).to eq([])
+      end
+    end
+
+    describe "removed_issues" do
+      it "returns an empty array if no removed_issues" do
+        expect(subject.removed_issues).to eq([])
+      end
+    end
+
+    describe "added_issues" do
       it "returns the correct benefit types" do
-        expect(subject.request_issues_benefit_type).to eq(["compensation"])
+        expect(subject.added_issues_benefit_type).to eq(["compensation"])
       end
 
       it "returns the correct closed at times" do
-        expect(subject.request_issues_closed_at).to eq([162_515_160_0])
+        expect(subject.added_issues_closed_at).to eq([162_515_160_0])
       end
 
       it "returns the correct closed statuses" do
-        expect(subject.request_issues_closed_status).to eq(["withdrawn"])
+        expect(subject.added_issues_closed_status).to eq(["withdrawn"])
       end
 
       it "returns the correct contention reference ids" do
-        expect(subject.request_issues_contention_reference_id).to eq([101])
+        expect(subject.added_issues_contention_reference_id).to eq([790_575_2])
+      end
+
+      it "returns the correct contested_rating_decision_reference_id" do
+        expect(subject.added_issues_contested_rating_decision_reference_id).to eq([nil])
       end
 
       it "returns the correct contested issue descriptions" do
-        expect(subject.request_issues_contested_issue_description).to eq(["Service connection for PTSD"])
+        expect(subject.added_issues_contested_issue_description).to eq(["Service connection for PTSD"])
       end
 
       it "returns the correct contested rating issue diagnostic codes" do
-        expect(subject.request_issues_contested_rating_issue_diagnostic_code).to eq(["9411"])
+        expect(subject.added_issues_contested_rating_issue_diagnostic_code).to eq(["9411"])
       end
 
       it "returns the correct contested rating issue reference ids" do
-        expect(subject.request_issues_contested_rating_issue_reference_id).to eq(["REF9411"])
+        expect(subject.added_issues_contested_rating_issue_reference_id).to eq(["REF9411"])
       end
 
       it "returns the correct contested rating issue profile dates" do
-        expect(subject.request_issues_contested_rating_issue_profile_date).to eq([162_507_600_0])
+        expect(subject.added_issues_contested_rating_issue_profile_date).to eq([162_507_600_0])
       end
 
       it "returns the correct contested decision issue ids" do
-        expect(subject.request_issues_contested_decision_issue_id).to eq([201])
+        expect(subject.added_issues_contested_decision_issue_id).to eq([201])
       end
 
       it "returns the correct decision dates" do
-        expect(subject.request_issues_decision_date).to eq(["2023-07-01"])
+        expect(subject.added_issues_decision_date).to eq(["2023-07-01"])
       end
 
       it "returns the correct ineligible due to ids" do
-        expect(subject.request_issues_ineligible_due_to_id).to eq([301])
+        expect(subject.added_issues_ineligible_due_to_id).to eq([301])
       end
 
       it "returns the correct ineligible reasons" do
-        expect(subject.request_issues_ineligible_reason).to eq(["duplicate"])
+        expect(subject.added_issues_ineligible_reason).to eq([nil])
       end
 
       it "returns the correct is unidentified values" do
-        expect(subject.request_issues_is_unidentified).to eq([false])
+        expect(subject.added_issues_is_unidentified).to eq([false])
       end
 
       it "returns the correct unidentified issue texts" do
-        expect(subject.request_issues_unidentified_issue_text).to eq(["N/A"])
+        expect(subject.added_issues_unidentified_issue_text).to eq([nil])
       end
 
       it "returns the correct nonrating issue categories" do
-        expect(subject.request_issues_nonrating_issue_category).to eq(["education"])
+        expect(subject.added_issues_nonrating_issue_category).to eq(["Accrued Benefits"])
       end
 
       it "returns the correct nonrating issue descriptions" do
-        expect(subject.request_issues_nonrating_issue_description).to eq(["Chapter 35 benefits"])
+        expect(subject.added_issues_nonrating_issue_description).to eq(["Chapter 35 benefits"])
       end
 
       it "returns the correct nonrating issue bgs ids" do
-        expect(subject.request_issues_nonrating_issue_bgs_id).to eq(["BGS123"])
+        expect(subject.added_issues_nonrating_issue_bgs_id).to eq(["13"])
       end
 
       it "returns the correct nonrating issue bgs sources" do
-        expect(subject.request_issues_nonrating_issue_bgs_source).to eq(["source"])
+        expect(subject.added_issues_nonrating_issue_bgs_source).to eq(["CORP_AWARD_ATTORNEY_FEE"])
       end
 
       it "returns the correct ramp claim ids" do
-        expect(subject.request_issues_ramp_claim_id).to eq(["RAMP123"])
+        expect(subject.added_issues_ramp_claim_id).to eq(["RAMP123"])
       end
 
       it "returns the correct rating issue associated at times" do
-        expect(subject.request_issues_rating_issue_associated_at).to eq([162_507_600_0])
+        expect(subject.added_issues_rating_issue_associated_at).to eq([162_507_600_0])
       end
 
       it "returns the correct untimely exemptions" do
-        expect(subject.request_issues_untimely_exemption).to eq([false])
+        expect(subject.added_issues_untimely_exemption).to eq([nil])
       end
 
       it "returns the correct untimely exemption notes" do
-        expect(subject.request_issues_untimely_exemption_notes).to eq(["N/A"])
+        expect(subject.added_issues_untimely_exemption_notes).to eq([nil])
       end
 
       it "returns the correct vacols ids" do
-        expect(subject.request_issues_vacols_id).to eq(["VAC123"])
+        expect(subject.added_issues_vacols_id).to eq(["VAC123"])
       end
 
       it "returns the correct vacols sequence ids" do
-        expect(subject.request_issues_vacols_sequence_id).to eq([123])
+        expect(subject.added_issues_vacols_sequence_id).to eq([nil])
       end
 
-      it "returns the correct veteran participant ids" do
-        expect(subject.request_issues_veteran_participant_id).to eq(["VET123"])
+      it "returns a list of decisions with one decision" do
+        expect(subject.added_issues_decision.size).to eq(1)
+      end
+
+      it "returns the added issues decision_id" do
+        expect(subject.added_issues_decision_id).to eq([1738])
+      end
+
+      it "returns the added issues decision_award_event_id" do
+        expect(subject.added_issues_decision_award_event_id).to eq([679])
+      end
+
+      it "returns the added issues decision_category" do
+        expect(subject.added_issues_decision_category).to eq(["decision"])
+      end
+
+      it "returns the added issues decision_contention_id" do
+        expect(subject.added_issues_decision_contention_id).to eq([35])
+      end
+
+      it "returns the added issues decision_source" do
+        expect(subject.added_issues_decision_source).to eq(["the source"])
+      end
+
+      it "returns the added issues decision_recorded_time" do
+        expect(subject.added_issues_decision_recorded_time).to eq([nil])
+      end
+
+      it "returns the added issues decision_text" do
+        expect(subject.added_issues_decision_text).to eq([""])
+      end
+
+      it "returns the added issues decision_description" do
+        expect(subject.added_issues_decision_description).to eq([nil])
+      end
+
+      it "returns the added issues decision_disposition" do
+        expect(subject.added_issues_decision_disposition).to eq([nil])
+      end
+
+      it "returns the added issues decision_dta_error_explanation" do
+        expect(subject.added_issues_decision_dta_error_explanation).to eq([nil])
+      end
+
+      it "returns the added issues decision_rating_profile_date" do
+        expect(subject.added_issues_decision_rating_profile_date).to eq([nil])
+      end
+
+      it "returns the added issues decision_decision_finalized_time" do
+        expect(subject.added_issues_decision_finalized_time).to eq([nil])
       end
     end
   end

@@ -55,14 +55,6 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedParser
     @payload[:station]
   end
 
-  def claim_review_auto_remand
-    @payload.dig(:claim_review, :auto_remand)
-  end
-
-  def claim_review_remand_source_id
-    @payload.dig(:claim_review, :remand_source_id)
-  end
-
   def claim_review_informal_conference
     @payload.dig(:claim_review, :informal_conference)
   end
@@ -83,111 +75,337 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedParser
     @payload.dig(:end_product_establishments, :reference_id)
   end
 
-  def request_issues
-    @payload[:request_issues] || []
+  def added_issues
+    @payload[:added_issues] || []
   end
 
-  def request_issues_id
-    request_issues.map { |issue| issue[:id] }
+  def updated_issues
+    @payload[:updated_issues] || []
   end
 
-  def request_issues_benefit_type
-    request_issues.map { |issue| issue[:benefit_type] }
+  def eligible_to_ineligible_issues
+    @payload[:eligible_to_ineligible_issues] || []
   end
 
-  def request_issues_closed_at
-    request_issues.map { |issue| issue[:closed_at] }
+  def ineligible_to_eligible_issues
+    @payload[:ineligible_to_eligible_issues] || []
   end
 
-  def request_issues_closed_status
-    request_issues.map { |issue| issue[:closed_status] }
+  def ineligible_to_ineligible_issues
+    @payload[:ineligible_to_ineligible_issues] || []
   end
 
-  def request_issues_contention_reference_id
-    request_issues.map { |issue| issue[:contention_reference_id] }
+  def withdrawn_issues
+    @payload[:withdrawn_issues] || []
   end
 
-  def request_issues_contested_issue_description
-    request_issues.map { |issue| issue[:contested_issue_description] }
+  def removed_issues
+    @payload[:removed_issues] || []
   end
 
-  def request_issues_contested_rating_issue_diagnostic_code
-    request_issues.map { |issue| issue[:contested_rating_issue_diagnostic_code] }
+  # Added Issues
+  def added_issues_benefit_type
+    added_issues.map { |issue| issue[:benefit_type] }
   end
 
-  def request_issues_contested_rating_issue_reference_id
-    request_issues.map { |issue| issue[:contested_rating_issue_reference_id] }
+  def added_issues_closed_at
+    added_issues.map { |issue| issue[:closed_at] }
   end
 
-  def request_issues_contested_rating_issue_profile_date
-    request_issues.map { |issue| issue[:contested_rating_issue_profile_date] }
+  def added_issues_closed_status
+    added_issues.map { |issue| issue[:closed_status] }
   end
 
-  def request_issues_contested_decision_issue_id
-    request_issues.map { |issue| issue[:contested_decision_issue_id] }
+  def added_issues_contention_reference_id
+    added_issues.map { |issue| issue[:contention_reference_id] }
   end
 
-  def request_issues_decision_date
-    request_issues.map { |issue| issue[:decision_date] }
+  def added_issues_contested_issue_description
+    added_issues.map { |issue| issue[:contested_issue_description] }
   end
 
-  def request_issues_ineligible_due_to_id
-    request_issues.map { |issue| issue[:ineligible_due_to_id] }
+  def added_issues_contested_rating_issue_diagnostic_code
+    added_issues.map { |issue| issue[:contested_rating_issue_diagnostic_code] }
   end
 
-  def request_issues_ineligible_reason
-    request_issues.map { |issue| issue[:ineligible_reason] }
+  def added_issues_contested_rating_issue_reference_id
+    added_issues.map { |issue| issue[:contested_rating_issue_reference_id] }
   end
 
-  def request_issues_is_unidentified
-    request_issues.map { |issue| issue[:is_unidentified] }
+  def added_issues_contested_rating_issue_profile_date
+    added_issues.map { |issue| issue[:contested_rating_issue_profile_date] }
   end
 
-  def request_issues_unidentified_issue_text
-    request_issues.map { |issue| issue[:unidentified_issue_text] }
+  def added_issues_contested_decision_issue_id
+    added_issues.map { |issue| issue[:contested_decision_issue_id] }
   end
 
-  def request_issues_nonrating_issue_category
-    request_issues.map { |issue| issue[:nonrating_issue_category] }
+  def added_issues_contested_rating_decision_reference_id
+    added_issues.map { |issue| issue[:contested_rating_decision_reference_id] }
   end
 
-  def request_issues_nonrating_issue_description
-    request_issues.map { |issue| issue[:nonrating_issue_description] }
+  def added_issues_decision_date
+    added_issues.map { |issue| issue[:decision_date] }
   end
 
-  def request_issues_nonrating_issue_bgs_id
-    request_issues.map { |issue| issue[:nonrating_issue_bgs_id] }
+  def added_issues_ineligible_due_to_id
+    added_issues.map { |issue| issue[:ineligible_due_to_id] }
   end
 
-  def request_issues_nonrating_issue_bgs_source
-    request_issues.map { |issue| issue[:nonrating_issue_bgs_source] }
+  def added_issues_ineligible_reason
+    added_issues.map { |issue| issue[:ineligible_reason] }
   end
 
-  def request_issues_ramp_claim_id
-    request_issues.map { |issue| issue[:ramp_claim_id] }
+  def added_issues_is_unidentified
+    added_issues.map { |issue| issue[:is_unidentified] }
   end
 
-  def request_issues_rating_issue_associated_at
-    request_issues.map { |issue| issue[:rating_issue_associated_at] }
+  def added_issues_unidentified_issue_text
+    added_issues.map { |issue| issue[:unidentified_issue_text] }
   end
 
-  def request_issues_untimely_exemption
-    request_issues.map { |issue| issue[:untimely_exemption] }
+  def added_issues_nonrating_issue_category
+    added_issues.map { |issue| issue[:nonrating_issue_category] }
   end
 
-  def request_issues_untimely_exemption_notes
-    request_issues.map { |issue| issue[:untimely_exemption_notes] }
+  def added_issues_nonrating_issue_description
+    added_issues.map { |issue| issue[:nonrating_issue_description] }
   end
 
-  def request_issues_vacols_id
-    request_issues.map { |issue| issue[:vacols_id] }
+  def added_issues_nonrating_issue_bgs_id
+    added_issues.map { |issue| issue[:nonrating_issue_bgs_id] }
   end
 
-  def request_issues_vacols_sequence_id
-    request_issues.map { |issue| issue[:vacols_sequence_id] }
+  def added_issues_nonrating_issue_bgs_source
+    added_issues.map { |issue| issue[:nonrating_issue_bgs_source] }
   end
 
-  def request_issues_veteran_participant_id
-    request_issues.map { |issue| issue[:veteran_participant_id] }
+  def added_issues_ramp_claim_id
+    added_issues.map { |issue| issue[:ramp_claim_id] }
+  end
+
+  def added_issues_rating_issue_associated_at
+    added_issues.map { |issue| issue[:rating_issue_associated_at] }
+  end
+
+  def added_issues_untimely_exemption
+    added_issues.map { |issue| issue[:untimely_exemption] }
+  end
+
+  def added_issues_untimely_exemption_notes
+    added_issues.map { |issue| issue[:untimely_exemption_notes] }
+  end
+
+  def added_issues_vacols_id
+    added_issues.map { |issue| issue[:vacols_id] }
+  end
+
+  def added_issues_vacols_sequence_id
+    added_issues.map { |issue| issue[:vacols_sequence_id] }
+  end
+
+  def added_issues_decision
+    added_issues.map { |issue| issue[:decision] }.flatten
+  end
+
+  def added_issues_decision_id
+    added_issues_decision.map { |decision| decision[:id] }
+  end
+
+  def added_issues_decision_category
+    added_issues_decision.map { |decision| decision[:category] }
+  end
+
+  def added_issues_decision_award_event_id
+    added_issues_decision.map { |decision| decision[:award_event_id] }
+  end
+
+  def added_issues_decision_contention_id
+    added_issues_decision.map { |decision| decision[:contention_id] }
+  end
+
+  def added_issues_decision_source
+    added_issues_decision.map { |decision| decision[:decision_source] }
+  end
+
+  def added_issues_decision_recorded_time
+    added_issues_decision.map { |decision| decision[:decision_recorded_time] }
+  end
+
+  def added_issues_decision_text
+    added_issues_decision.map { |decision| decision[:decision_text] }
+  end
+
+  def added_issues_decision_description
+    added_issues_decision.map { |decision| decision[:description] }
+  end
+
+  def added_issues_decision_disposition
+    added_issues_decision.map { |decision| decision[:disposition] }
+  end
+
+  def added_issues_decision_dta_error_explanation
+    added_issues_decision.map { |decision| decision[:dta_error_explanation] }
+  end
+
+  def added_issues_decision_rating_profile_date
+    added_issues_decision.map { |decision| decision[:rating_profile_date] }
+  end
+
+  def added_issues_decision_finalized_time
+    added_issues_decision.map { |decision| decision[:decision_finalized_time] }
+  end
+
+  # Updated Issues
+  def updated_issues_benefit_type
+    updated_issues.map { |issue| issue[:benefit_type] }
+  end
+
+  def updated_issues_closed_at
+    updated_issues.map { |issue| issue[:closed_at] }
+  end
+
+  def updated_issues_closed_status
+    updated_issues.map { |issue| issue[:closed_status] }
+  end
+
+  def updated_issues_contention_reference_id
+    updated_issues.map { |issue| issue[:contention_reference_id] }
+  end
+
+  def updated_issues_contested_issue_description
+    updated_issues.map { |issue| issue[:contested_issue_description] }
+  end
+
+  def updated_issues_contested_rating_issue_diagnostic_code
+    updated_issues.map { |issue| issue[:contested_rating_issue_diagnostic_code] }
+  end
+
+  def updated_issues_contested_rating_issue_reference_id
+    updated_issues.map { |issue| issue[:contested_rating_issue_reference_id] }
+  end
+
+  def updated_issues_contested_rating_issue_profile_date
+    updated_issues.map { |issue| issue[:contested_rating_issue_profile_date] }
+  end
+
+  def updated_issues_contested_decision_issue_id
+    updated_issues.map { |issue| issue[:contested_decision_issue_id] }
+  end
+
+  def updated_issues_decision_date
+    updated_issues.map { |issue| issue[:decision_date] }
+  end
+
+  def updated_issues_ineligible_due_to_id
+    updated_issues.map { |issue| issue[:ineligible_due_to_id] }
+  end
+
+  def updated_issues_ineligible_reason
+    updated_issues.map { |issue| issue[:ineligible_reason] }
+  end
+
+  def updated_issues_is_unidentified
+    updated_issues.map { |issue| issue[:is_unidentified] }
+  end
+
+  def updated_issues_unidentified_issue_text
+    updated_issues.map { |issue| issue[:unidentified_issue_text] }
+  end
+
+  def updated_issues_nonrating_issue_category
+    updated_issues.map { |issue| issue[:nonrating_issue_category] }
+  end
+
+  def updated_issues_nonrating_issue_description
+    updated_issues.map { |issue| issue[:nonrating_issue_description] }
+  end
+
+  def updated_issues_nonrating_issue_bgs_id
+    updated_issues.map { |issue| issue[:nonrating_issue_bgs_id] }
+  end
+
+  def updated_issues_nonrating_issue_bgs_source
+    updated_issues.map { |issue| issue[:nonrating_issue_bgs_source] }
+  end
+
+  def updated_issues_ramp_claim_id
+    updated_issues.map { |issue| issue[:ramp_claim_id] }
+  end
+
+  def updated_issues_rating_issue_associated_at
+    updated_issues.map { |issue| issue[:rating_issue_associated_at] }
+  end
+
+  def updated_issues_untimely_exemption
+    updated_issues.map { |issue| issue[:untimely_exemption] }
+  end
+
+  def updated_issues_untimely_exemption_notes
+    updated_issues.map { |issue| issue[:untimely_exemption_notes] }
+  end
+
+  def updated_issues_vacols_id
+    updated_issues.map { |issue| issue[:vacols_id] }
+  end
+
+  def updated_issues_vacols_sequence_id
+    updated_issues.map { |issue| issue[:vacols_sequence_id] }
+  end
+
+  def updated_issues_contested_rating_decision_reference_id
+    updated_issues.map { |issue| issue[:contested_rating_decision_reference_id] }
+  end
+
+  def updated_issues_decision
+    updated_issues.map { |issue| issue[:decision] }
+  end
+
+  def updated_issues_decision_id
+    updated_issues_decision.map { |decision| decision[:id] }
+  end
+
+  def updated_issues_decision_category
+    updated_issues_decision.map { |decision| decision[:category] }
+  end
+
+  def updated_issues_decision_award_event_id
+    updated_issues_decision.map { |decision| decision[:award_event_id] }
+  end
+
+  def updated_issues_decision_contention_id
+    updated_issues_decision.map { |decision| decision[:contention_id] }
+  end
+
+  def updated_issues_decision_source
+    updated_issues_decision.map { |decision| decision[:decision_source] }
+  end
+
+  def updated_issues_decision_recorded_time
+    updated_issues_decision.map { |decision| decision[:decision_recorded_time] }
+  end
+
+  def updated_issues_decision_text
+    updated_issues_decision.map { |decision| decision[:decision_text] }
+  end
+
+  def updated_issues_decision_description
+    updated_issues_decision.map { |decision| decision[:description] }
+  end
+
+  def updated_issues_decision_disposition
+    updated_issues_decision.map { |decision| decision[:disposition] }
+  end
+
+  def updated_issues_decision_dta_error_explanation
+    updated_issues_decision.map { |decision| decision[:dta_error_explanation] }
+  end
+
+  def updated_issues_decision_rating_profile_date
+    updated_issues_decision.map { |decision| decision[:rating_profile_date] }
+  end
+
+  def updated_issues_decision_finalized_time
+    updated_issues_decision.map { |decision| decision[:decision_finalized_time] }
   end
 end
