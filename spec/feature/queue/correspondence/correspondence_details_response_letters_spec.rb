@@ -3,18 +3,17 @@
 RSpec.feature("Correspondence Details Response Letters Module") do
   include CorrespondenceResponseLettersHelpers
 
-  let(:organization) { InboundOpsTeam.singleton }
-  let(:bva_user) { User.authenticate!(roles: ["Mail Intake"]) }
+  let(:current_user) { create(:user) }
   let(:correspondence) { create :correspondence, :with_correspondence_intake_task }
   let(:wait_time) { 40 }
 
-  before(:each) do
-    FeatureToggle.enable!(:correspondence_queue)
-    organization.add_user(bva_user)
-    bva_user.reload
-  end
-
   context "Verifying Correspondence Details Response Letters page" do
+    before(:each) do
+      InboundOpsTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user, roles: ["Inbound Ops Team"])
+      FeatureToggle.enable!(:correspondence_queue)
+    end
+
     it "Verifies that Response Letters added during Intake are displayed in details page" do
       setup_response_letters_data
       using_wait_time(wait_time) do
