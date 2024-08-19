@@ -210,6 +210,9 @@
         text-align: center;
         margin: 5px;
         padding: 0;
+        .input-container {
+          width: 5rem;
+        }
       }
 
       > label {
