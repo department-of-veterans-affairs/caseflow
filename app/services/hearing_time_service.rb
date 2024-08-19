@@ -17,6 +17,24 @@ class HearingTimeService
       "#{datetime.strftime('%l:%M %p')} #{tz}".lstrip
     end
 
+    # Used to satisfy an interface for a façade between {HearingDatetimeService}
+    #  and {HearingTimeService}. It will always return nil since this service
+    #  does not pertain to datetime processing.
+    # @return [nil] nil will always be returned.
+    def prepare_datetime_for_storage(**_args)
+      nil
+    end
+
+    # Checks the time_string value and returns the formatted time in %H:%M
+    # @return [String] - Time string in "%H:%M" format
+    # @example Extract the hour and minute from a string.
+    #   process_scheduled_time("1:00 PM Eastern Time (US & Canada)") #=> "13:00"
+    def process_scheduled_time(time_string)
+      return nil if time_string.blank?
+
+      Time.strptime(time_string, "%I:%M %p").strftime("%H:%M")
+    end
+
     private
 
     def pad_time(time)

@@ -349,11 +349,7 @@ describe Hearing, :postgres do
 
     context "when scheduled_datetime or/and scheduled_in_timezone is null" do
       let(:expected_scheduled_for) do
-        time_string = if Time.zone.now.in_time_zone(hearing.regional_office_timezone).zone == "EDT"
-                        "09:30:00 -0400"
-                      else
-                        "08:30:00 -0500"
-                      end
+        time_string = "08:30:00 #{Time.zone.now.dst? ? '-0400' : '-0500'}"
         "#{Time.zone.today.strftime('%Y-%m-%d')} #{time_string}"
       end
 
