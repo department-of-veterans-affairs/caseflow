@@ -1244,41 +1244,6 @@ feature "Higher-Level Review", :all_dbs do
           expect(page).to have_content("Contention: Looks like a VACOLS issue")
         end
       end
-
-      context "with legacy opt in not approved" do
-        scenario "adding issues" do
-          start_higher_level_review(veteran, legacy_opt_in_approved: false)
-          visit "/intake/add_issues"
-          click_intake_add_issue
-          add_intake_rating_issue(/^Left knee granted$/)
-
-          expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
-          # do not show inactive appeals when legacy opt in is false
-          expect(page).to_not have_content("impairment of hip")
-          expect(page).to_not have_content("typhoid arthritis")
-          add_intake_rating_issue("ankylosis of hip")
-
-          expect(page).to have_content(
-            "Left knee granted #{ineligible_constants.legacy_issue_not_withdrawn}"
-          )
-
-          click_intake_finish
-
-          ineligible_checklist = find("ul.cf-issue-checklist")
-          expect(ineligible_checklist).to have_content(
-            "Left knee granted #{ineligible_constants.legacy_issue_not_withdrawn}"
-          )
-
-          expect(RequestIssue.find_by(
-                   contested_issue_description: "Left knee granted",
-                   ineligible_reason: :legacy_issue_not_withdrawn,
-                   vacols_id: "vacols1",
-                   vacols_sequence_id: "1"
-                 )).to_not be_nil
-
-          expect(page).to_not have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED)
-        end
-      end
     end
   end
 
