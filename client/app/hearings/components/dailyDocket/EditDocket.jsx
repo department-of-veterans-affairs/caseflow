@@ -187,6 +187,7 @@ export const EditDocket = (props) => {
               amStartTime={travel ? '9:00' : '8:30'}
               pmStartTime={travel ? '13:00' : '12:30'}
               roTimezone={fields?.regionalOffice?.timezone}
+              hearingDayDate={props?.docket?.scheduledFor}
             />
           }
           {!virtual && (

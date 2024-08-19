@@ -295,6 +295,7 @@ export const AddHearingDay = ({
               amStartTime={selectedTravel ? '9:00' : '8:30'}
               pmStartTime={selectedTravel ? '13:00' : '12:30'}
               roTimezone={selectedRegionalOffice?.timezone}
+              hearingDayDate={selectedHearingDay}
             />
           }
           {selectedRequestType !== null && (
