@@ -23,7 +23,7 @@ export const HearingTime = ({
   // Determine whether to display the appellant timezone
   const repTimezone =
     hearing.virtualHearing?.appellantTz === hearing.regionalOfficeTimezone &&
-    hearing.regionalOfficeTimezone === 'America/New_York' ?
+      hearing.regionalOfficeTimezone === 'America/New_York' ?
       '' :
       hearing.virtualHearing?.appellantTz || hearing.regionalOfficeTimezone;
 
@@ -33,7 +33,10 @@ export const HearingTime = ({
       repTimezone :
       hearing.regionalOfficeTimezone || 'America/New_York';
 
-  const hearingDayDate = hearing.hearing_day?.scheduledFor;
+  // This should be moved to the parent component since the source of the date can differ a good bit.
+  const hearingDayDate = hearing.hearing_day ?
+    hearing.hearing_day?.scheduledFor :
+    moment(hearing.scheduledFor).format('YYYY-MM-DD');
 
   // Calculate the local time based on either Regional Office or Representative for Virtual hearings
   const localTime = zoneName(hearing.scheduledTimeString, timezone, 'z', hearingDayDate);

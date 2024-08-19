@@ -168,13 +168,13 @@ export const isEdited = (init, current) => {
 
   // Handle the value comparison
   switch (current) {
-    // Empty strings should be treated the same as false and null
-    case '':
-    case false:
-      return current != falsy;
-    // Default to compare the initial with the current value
-    default:
-      return !isEqual(current, init);
+  // Empty strings should be treated the same as false and null
+  case '':
+  case false:
+    return current != falsy;
+  // Default to compare the initial with the current value
+  default:
+    return !isEqual(current, init);
   }
 };
 
@@ -328,7 +328,7 @@ export const splitSelectedTime = (time) => {
   const selectedTimeZone = splitTimeString === -1 ? null : time.slice(splitTimeString + 2).trim();
 
   return [selectedTime, selectedTimeZone];
-}
+};
 
 /**
  * Method to get the Timezone label of a Timezone value
@@ -403,6 +403,10 @@ export const hearingTimeOptsWithZone = (options, local, date) =>
     // Default to using EST for all times before conversion
     moment.tz.setDefault(local === true ? 'America/New_York' : local);
 
+    if (date === null) {
+      return null;
+    }
+
     // Check which label to use
     const label = item.label ? 'label' : 'displayText';
 
@@ -443,9 +447,11 @@ export const roTimezones = () =>
  * Returns the available timezones options and the count of the available Regional Office timezones
  * @param {string} time -- String representation of the time to convert
  * @param {string} roTimezone -- String representation of the timezone of the RO selected
+ * @param {string} hearingDayDate - Date the hearing is being scheduled for in YYYY-MM-DD format.
+ *  Used to correctly calculate DST offsets.
  * @returns {Object} -- { options: Array, commonsCount: number }
  */
-export const timezones = (time, roTimezone) => {
+export const timezones = (time, roTimezone, hearingDayDate) => {
   // Initialize count of common timezones
   let commonsCount = 0;
 
@@ -464,7 +470,7 @@ export const timezones = (time, roTimezone) => {
   }
 
   // Convert the time into a date object with the RO timezone
-  const dateTime = moment.tz(time, 'HH:mm A', roTimezone);
+  const dateTime = moment.tz(`${hearingDayDate} ${time}`, 'YYYY-MM-DD HH:mm A', roTimezone);
 
   // Map the available timeTIMEZONES to a select options object
   const unorderedOptions = Object.keys(TIMEZONES).map((zone) => {
@@ -488,7 +494,7 @@ export const timezones = (time, roTimezone) => {
 
     // ensure that before the user selects a time it won't display 'Invalid Date' next to zone
     const zoneLabel = dateTime.isValid() ? `${zone} (${moment(dateTime, 'HH:mm').tz(TIMEZONES[zone]).
-      format('h:mm A')})` : `${zone}`;
+      format('h:mm A')})` : zone;
 
     // Return the formatted options
     return {
@@ -609,13 +615,13 @@ export const taskPayload = (values, task = {}) => ({
  */
 export const formatChangeRequestType = (type) => {
   switch (type) {
-    case 'Virtual':
-      return HEARING_REQUEST_TYPES.virtual;
-    case 'Video':
-      return HEARING_REQUEST_TYPES.video;
-    case 'Central':
-    default:
-      return HEARING_REQUEST_TYPES.central;
+  case 'Virtual':
+    return HEARING_REQUEST_TYPES.virtual;
+  case 'Video':
+    return HEARING_REQUEST_TYPES.video;
+  case 'Central':
+  default:
+    return HEARING_REQUEST_TYPES.central;
   }
 };
 
@@ -696,6 +702,7 @@ const calculateAvailableTimeslots = ({
 const combineSlotsAndHearings = ({ roTimezone, availableSlots, scheduledHearings, hearingDayDate }) => {
   const slots = availableSlots.map((slot) => ({
     ...slot,
+    // slot.time_string is undefined right now...
     key: `${slot?.slotId}-${slot?.time_string}`,
     full: false,
     // This is a moment object, always in "America/New_York"
@@ -792,7 +799,9 @@ export const setTimeSlots = ({
 
   const defaultNumberOfSlots = 8;
   const defaultBeginsAt = ro === 'C' ? '09:00' : '08:30';
-  const momentDefaultBeginsAt = moment.tz(`${defaultBeginsAt} ${hearingDayDate}`, 'HH:mm YYYY-MM-DD', 'America/New_York');
+  const momentDefaultBeginsAt = moment.tz(
+  `${defaultBeginsAt} ${hearingDayDate}`, 'HH:mm YYYY-MM-DD', 'America/New_York'
+  );
   const momentBeginsAt = moment(beginsAt).tz('America/New_York');
 
   const defaultSlotLengthMinutes = 60;
@@ -1264,3 +1273,4 @@ export const scheduleData = ({ hearingSchedule, user }) => {
 
   return { headers, rows, columns };
 };
+/* eslint-enable camelcase */

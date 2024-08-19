@@ -79,7 +79,8 @@ export const ScheduleVeteranForm = ({
       props.onChange('virtualHearing', {
         ...hearing?.virtualHearing,
         ...virtualHearing,
-      })
+      }),
+    hearingDayDate
   };
 
   const getHearingTime = () => {
