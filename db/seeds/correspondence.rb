@@ -214,6 +214,7 @@ module Seeds
       assign_review_package_task(corres, user)
     end
 
+    # :reek:FeatureEnvy
     def create_correspondence_with_action_required_tasks(user = {}, veteran = {})
       corres_array = (1..4).map { create_correspondence(user, veteran) }
       task_array = [ReassignPackageTask, RemovePackageTask, SplitPackageTask, MergePackageTask]
@@ -235,6 +236,7 @@ module Seeds
       end
     end
 
+    # :reek:FeatureEnvy
     def create_correspondences_with_review_remove_package_tasks
       corres_array = (1..2).map { create(:correspondence) }
       task_array = [ReassignPackageTask, RemovePackageTask]
