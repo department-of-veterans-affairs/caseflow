@@ -21,6 +21,7 @@ module CorrespondenceResponseLettersHelpers
   def setup_response_letters_data
     initial_setup
     perform_add_letters_action
+    sleep 2
     visit "/queue/correspondence/#{@correspondence.uuid}"
   end
 
