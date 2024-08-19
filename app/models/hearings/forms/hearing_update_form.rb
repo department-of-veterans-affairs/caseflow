@@ -27,7 +27,7 @@ class HearingUpdateForm < BaseHearingUpdateForm
 
   # Checks the scheduled_time_string value and returns the formatted
   # time in %H:#M
-  # @return [String]
+  # @return [String, nil]
   def processed_scheduled_time
     return nil if scheduled_time_string.blank?
 
