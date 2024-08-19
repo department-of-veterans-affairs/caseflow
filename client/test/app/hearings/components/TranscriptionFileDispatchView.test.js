@@ -7,6 +7,7 @@ import { axe } from 'jest-axe';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter as Router } from 'react-router-dom';
 
+
 const getSpy = jest.spyOn(ApiUtil, 'get');
 
 const setup = () => render( <Router><TranscriptionFileDispatchView /></Router>);
@@ -205,6 +206,33 @@ const mockLockedResponse = {
   ]
 };
 
+const selectAllData = {
+  data: {
+    file_ids: [40, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26],
+    status: true
+  }
+};
+
+const mockSelectAllResponse = {
+  body: [
+    {
+      id: 40,
+      status: 'selected',
+      message: ''
+    },
+    {
+      id: 38,
+      status: 'selected',
+      message: ''
+    },
+    {
+      id: 37,
+      status: 'selected',
+      message: ''
+    }
+  ]
+};
+
 const mockClickedResponse = {
   body: [
     {
@@ -293,6 +321,81 @@ describe('TranscriptionFileDispatch', () => {
       expect(select[1]).toHaveAttribute('title', 'Locked by QATTY2');
 
       expect(container).toMatchSnapshot();
+    });
+
+    it('select all checkbox when select-all checkbox is selected', async () => {
+      const { container } = setup();
+
+      ApiUtil.post.mockResolvedValue(mockSelectAllResponse);
+      await waitFor(() =>
+        expect(screen.getAllByText('Viewing 1-15 of 40 total')[0]).toBeInTheDocument()
+      );
+
+      const selectAllCheckbox = screen.getByRole('checkbox', { name: /select all files checkbox/i });
+
+      userEvent.click(selectAllCheckbox);
+
+      const selectFileCheckboxes = container.querySelectorAll('.select-file input');
+
+      selectFileCheckboxes.forEach((checkbox) => {
+        if (!checkbox.disabled) {
+          expect(checkbox).toBeChecked();
+        }
+      });
+      expect(ApiUtil.post).toHaveBeenCalledWith(
+        '/hearings/transcription_files/lock', selectAllData
+      );
+    });
+
+    it('select individual checkbox when single checkbox is checked', async () => {
+      const { container } = setup();
+
+      await waitFor(() =>
+        expect(screen.getAllByText('Viewing 1-15 of 40 total')[0]).toBeInTheDocument()
+      );
+
+      const checkboxes = container.querySelectorAll('.select-file input');
+
+      expect(checkboxes[3]).not.toBeChecked();
+
+      userEvent.click(checkboxes[3]);
+
+      expect(checkboxes[3]).toBeChecked();
+
+      expect(ApiUtil.post).toHaveBeenCalledWith(
+        '/hearings/transcription_files/lock', constClickData);
+    });
+
+    it('selecting or deselecting an individual checkbox will de-select the "Select All Files" checkbox', async () => {
+      const { container } = setup();
+
+      ApiUtil.post.mockResolvedValue(mockSelectAllResponse);
+
+      await waitFor(() =>
+        expect(screen.getAllByText('Viewing 1-15 of 40 total')[0]).toBeInTheDocument()
+      );
+
+      const selectAllCheckbox = screen.getByRole('checkbox', { name: /select all files checkbox/i });
+
+      userEvent.click(selectAllCheckbox);
+
+      const individualCheckboxes = container.querySelectorAll('.select-file input');
+
+      individualCheckboxes.forEach((checkbox) => {
+        if (!checkbox.disabled) {
+          expect(checkbox).toBeChecked();
+        }
+      });
+
+      userEvent.click(individualCheckboxes[3]);
+
+      expect(individualCheckboxes[3]).not.toBeChecked();
+
+      expect(selectAllCheckbox).not.toBeChecked();
+
+      expect(ApiUtil.post).toHaveBeenCalledWith(
+        '/hearings/transcription_files/lock', selectAllData
+      );
     });
 
     it('allows a user to click to lock a record and call the back end', async () => {
