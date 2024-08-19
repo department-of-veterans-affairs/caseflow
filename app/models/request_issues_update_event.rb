@@ -66,19 +66,19 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   end
 
   def calculate_edited_issues
-    calculate_issues(edited_issues_data)
+    calculate_issues(@edited_issues_data)
   end
 
   def calculate_added_issues
-    calculate_issues(added_issues_data)
+    calculate_issues(@added_issues_data)
   end
 
   def calculate_withdrawn_issues
-    calculate_issues(withdrawn_issues_data)
+    calculate_issues(@withdrawn_issues_data)
   end
 
   def calculate_removed_issues
-    removed_issues_data.map do |issue_data|
+    @removed_issues_data.map do |issue_data|
       review.request_issues.find(issue_data[:id])
     end
   end
