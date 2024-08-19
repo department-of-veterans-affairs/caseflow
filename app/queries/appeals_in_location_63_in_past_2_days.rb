@@ -51,7 +51,7 @@ class AppealsInLocation63InPast2Days
   end
 
   def self.legacy_rows(appeals)
-    appeals.map do |appeal|
+    unsorted_result = appeals.map do |appeal|
       calculated_values = calculate_field_values(appeal)
       {
         docket_number: appeal["tinum"],
@@ -70,6 +70,8 @@ class AppealsInLocation63InPast2Days
         bfcurloc: appeal["bfcurloc"]
       }
     end
+
+    unsorted_result.sort_by { |appeal| appeal[:moved_date_time] }.reverse
   end
 
   def self.calculate_field_values(appeal)
@@ -78,8 +80,8 @@ class AppealsInLocation63InPast2Days
       veteran_name: FullName.new(appeal["snamef"], nil, appeal["snamel"]).to_s,
       hearing_judge_id: appeal["vlj"].blank? ? nil : legacy_hearing_judge(appeal),
       hearing_judge_name: vlj_name.empty? ? nil : vlj_name,
-      deciding_judge_id: appeal["bfmemid"].blank? ? nil : legacy_original_deciding_judge(appeal),
-      deciding_judge_name: appeal["bfmemid"].blank? ? nil : legacy_original_deciding_judge_name(appeal),
+      deciding_judge_id: appeal["prev_deciding_judge"].blank? ? nil : legacy_original_deciding_judge(appeal),
+      deciding_judge_name: appeal["prev_deciding_judge"].blank? ? nil : legacy_original_deciding_judge_name(appeal),
       appeal_affinity: AppealAffinity.find_by(case_id: appeal["bfkey"], case_type: "VACOLS::Case")
     }
   end
@@ -90,12 +92,12 @@ class AppealsInLocation63InPast2Days
   end
 
   def self.legacy_original_deciding_judge(appeal)
-    staff = VACOLS::Staff.find_by(sattyid: appeal["bfmemid"])
-    staff&.sdomainid || appeal["bfmemid"]
+    staff = VACOLS::Staff.find_by(sattyid: appeal["prev_deciding_judge"])
+    staff&.sdomainid || appeal["prev_deciding_judge"]
   end
 
   def self.legacy_original_deciding_judge_name(appeal)
-    staff = VACOLS::Staff.find_by(sattyid: appeal["bfmemid"])
+    staff = VACOLS::Staff.find_by(sattyid: appeal["prev_deciding_judge"])
     deciding_judge_name = FullName.new(staff["snamef"], nil, appeal["snamel"]).to_s
     deciding_judge_name.empty? ? nil : deciding_judge_name
   end
