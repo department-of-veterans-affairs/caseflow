@@ -334,6 +334,11 @@ export const splitSelectedTime = (time) => {
  * Method to get the Timezone label of a Timezone value
  * @param {string} time -- The time to which the zone is being added
  * @param {string} name -- Name of the zone, defaults to New York
+ *
+
+  // TODO fill this in
+
+
  * @returns {string} -- The label of the timezone
  */
 export const zoneName = (time, name, format, date) => {
