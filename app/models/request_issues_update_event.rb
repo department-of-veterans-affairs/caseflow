@@ -35,6 +35,10 @@ class RequestIssueUpdateEvent < RequestIssuesUpdate
     @after_issues ||= after_request_issue_ids ? fetch_after_issues : calculate_after_issues
   end
 
+  def edited_issues
+    @edited_issues ||= edited_request_issue_ids ? fetch_edited_issues : calculate_edited_issues
+  end
+
   def added_issues
     calculate_added_issues
   end
