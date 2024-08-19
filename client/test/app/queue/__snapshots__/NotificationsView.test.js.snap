@@ -185,7 +185,7 @@ exports[`NotificationsTest matches snapshot 1`] = `
             >
               Open eFolder 
               <span
-                data-css-wevxet=""
+                style="position: relative; top: 3px;"
               >
                 <svg
                   class=""
