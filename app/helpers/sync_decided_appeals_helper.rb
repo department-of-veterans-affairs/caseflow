@@ -4,6 +4,8 @@
 # Helper to sync the decided appeals and their decision_mailed status
 
 module SyncDecidedAppealsHelper
+  VACOLS_BATCH_PROCESS_LIMIT = ENV["VACOLS_QUERY_BATCH_SIZE"]
+
   # Syncs the decision_mailed status of Legacy Appeals with a decision made
   def sync_decided_appeals
     begin
@@ -38,9 +40,9 @@ module SyncDecidedAppealsHelper
     begin
       decision_dates = {}
 
-      # Find the VACOLS records in batches
-      VACOLS::Case.where(bfkey: vacols_ids).find_in_batches do |vacols_records|
-        vacols_records.each do |vacols_record|
+      # Query VACOLS in batches
+      vacols_ids.in_groups_of(VACOLS_BATCH_PROCESS_LIMIT.to_i) do |vacols_id|
+        VACOLS::Case.where(bfkey: vacols_id).each do |vacols_record|
           decision_dates[vacols_record[:bfkey]] = vacols_record[:bfddec]
         end
       end
