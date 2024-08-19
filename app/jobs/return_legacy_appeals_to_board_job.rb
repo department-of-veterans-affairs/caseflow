@@ -14,11 +14,7 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
       fail if fail_job
 
       # Logic to process legacy appeals and return to the board
-      appeals = LegacyDocket.new.appeals_tied_to_non_ssc_avljs
-
-
-      appeals = select_two_appeals_to_move(appeals)
-
+      appeals = select_two_appeals_to_move(LegacyDocket.new.appeals_tied_to_non_ssc_avljs)
       VACOLS::Case.batch_update_vacols_location("63", appeals.map { |appeal| appeal["bfkey"] })
       complete_returned_appeal_job(returned_appeal_job, "Job completed successfully", appeals)
       send_job_slack_report
