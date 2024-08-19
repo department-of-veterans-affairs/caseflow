@@ -55,6 +55,8 @@ export const ScheduleVeteranForm = ({
 
   const hearingDayIsVideo = hearing?.requestType === 'Video';
 
+  const hearingDayDate = hearing.hearingDay?.scheduledFor || initialHearingDay?.scheduledFor;
+
   // Set the section props
   const sectionProps = {
     errors,
@@ -104,6 +106,7 @@ export const ScheduleVeteranForm = ({
       localZone={hearing?.hearingDay?.timezone}
       onChange={onTimeChange}
       value={hearing.scheduledTimeString}
+      hearingDayDate={hearingDayDate}
     />;
 
   };

@@ -168,13 +168,13 @@ export const isEdited = (init, current) => {
 
   // Handle the value comparison
   switch (current) {
-  // Empty strings should be treated the same as false and null
-  case '':
-  case false:
-    return current != falsy;
+    // Empty strings should be treated the same as false and null
+    case '':
+    case false:
+      return current != falsy;
     // Default to compare the initial with the current value
-  default:
-    return !isEqual(current, init);
+    default:
+      return !isEqual(current, init);
   }
 };
 
@@ -218,6 +218,11 @@ export const virtualHearingLinkLabelFull = (role) =>
   role === VIRTUAL_HEARING_HOST ?
     COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL_FULL :
     COPY.REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL;
+
+export const virtualHearingScheduledDatePassedLabelFull = (role) =>
+  role === VIRTUAL_HEARING_HOST ?
+    `${COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL_FULL}: N/A` :
+    `${COPY.REPRESENTATIVE_VIRTUAL_HEARING_PASSED_LABEL}: N/A`;
 
 export const pollVirtualHearingData = (hearingId, onSuccess) => (
   // Did not specify retryCount so if api call fails, it'll stop polling.
@@ -331,7 +336,11 @@ export const splitSelectedTime = (time) => {
  * @param {string} name -- Name of the zone, defaults to New York
  * @returns {string} -- The label of the timezone
  */
-export const zoneName = (time, name, format) => {
+export const zoneName = (time, name, format, date) => {
+  if (time === 'Other') {
+    return time;
+  }
+
   const [selectedTime, selectedTimeZone] = splitSelectedTime(time);
 
   // Default to using America/New_York
@@ -343,17 +352,22 @@ export const zoneName = (time, name, format) => {
   // Set the label
   const label = format ? '' : zone;
 
+  // The datetime string should probably be validated..
+  const datetime = `${date} ${selectedTime}`;
+
+  // Dropdown contents
   if (selectedTimeZone && selectedTimeZone.length > 0) {
-    time = selectedTime;
     const originTimeZone = selectedTimeZone === null ? timezone : TIMEZONES[selectedTimeZone];
 
     // Return the value if it is not a valid time
-    return moment(selectedTime, 'h:mm A').isValid() ? `${moment.tz(selectedTime, 'h:mm a', originTimeZone).tz(timezone).
-    format(`h:mm A ${format || ''}`)}${label}` : selectedTime;
+    return moment(selectedTime, 'h:mm A').isValid() ? `${moment.tz(datetime, 'YYYY-MM-DD h:mm a', originTimeZone).
+      tz(timezone).
+      format(`h:mm A ${format || ''}`)}${label}` : selectedTime;
   }
 
+  // Radio fields
   // Return the value if it is not a valid time
-  return moment(time, 'h:mm A').isValid() ? `${moment(time, 'h:mm a').tz(timezone).
+  return moment(time, 'h:mm A').isValid() ? `${moment(datetime, 'YYYY-MM-DD h:mm a').tz(timezone).
     format(`h:mm A ${format || ''}`)}${label}` : time;
 };
 
@@ -363,7 +377,7 @@ export const zoneName = (time, name, format) => {
  * @param {string} timeZone -- Name of timezone. Default 'America/New_York'
  * @returns {string} -- Formatted time in 'h:mm A z'
  */
-export const timeWithTimeZone = (dateTime, timeZone = 'America/New_York') =>{
+export const timeWithTimeZone = (dateTime, timeZone = 'America/New_York') => {
   return moment(dateTime).tz(timeZone).
     format('h:mm A z');
 };
@@ -384,7 +398,7 @@ export const shortZoneName = (name) => {
  * Method to add timezone to the label of the time
  * @returns {Array} -- List of hearing times with the zone appended to the label
  */
-export const hearingTimeOptsWithZone = (options, local) =>
+export const hearingTimeOptsWithZone = (options, local, date) =>
   options.map((item) => {
     // Default to using EST for all times before conversion
     moment.tz.setDefault(local === true ? 'America/New_York' : local);
@@ -393,10 +407,10 @@ export const hearingTimeOptsWithZone = (options, local) =>
     const label = item.label ? 'label' : 'displayText';
 
     // Set the time
-    const time = zoneName(item[label]);
+    const time = zoneName(item[label], null, null, date);
 
     // Set the time in the local timezone
-    const localTime = zoneName(item[label], local === true ? '' : local);
+    const localTime = zoneName(item[label], local === true ? '' : local, null, date);
 
     // This fixes some timezone bugs in the TimeSlot component, moment.tz.setDefault changes
     // -global- settings for moment.
@@ -405,10 +419,11 @@ export const hearingTimeOptsWithZone = (options, local) =>
     moment.tz.setDefault();
 
     const displayLocalTime = local && localTime !== time;
+
     // For the Hearing Time dropdown, the value passed should include the AM/PM and timezone context
     return {
       ...item,
-      ['value']: displayLocalTime ? `${localTime}` : time,
+      value: displayLocalTime ? `${localTime}` : time,
       [label]: displayLocalTime ? `${localTime} / ${time}` : time
     };
   });
@@ -441,7 +456,7 @@ export const timezones = (time, roTimezone) => {
     const getAmTime = time.search('AM');
     const splitTimeString = getAmTime < 0 ? time.search('PM') : getAmTime;
 
-    const selectedTime = splitTimeString === -1 ? time : time.slice(0,splitTimeString + 2).trim();
+    const selectedTime = splitTimeString === -1 ? time : time.slice(0, splitTimeString + 2).trim();
     const selectedTimeZone = splitTimeString === -1 ? null : time.slice(splitTimeString + 2).trim();
 
     time = selectedTime;
@@ -552,7 +567,7 @@ export const parseVirtualHearingErrors = (msg, hearing) => {
   return messages.split(',').reduce((list, message) => ({
     ...list,
     [(/Representative/).test(message) ? 'representativeEmailAddress' : 'appellantEmailAddress']:
-       message.replace('Appellant', getAppellantTitle(hearing?.appellantIsNotVeteran))
+      message.replace('Appellant', getAppellantTitle(hearing?.appellantIsNotVeteran))
   }), {});
 };
 
@@ -594,13 +609,13 @@ export const taskPayload = (values, task = {}) => ({
  */
 export const formatChangeRequestType = (type) => {
   switch (type) {
-  case 'Virtual':
-    return HEARING_REQUEST_TYPES.virtual;
-  case 'Video':
-    return HEARING_REQUEST_TYPES.video;
-  case 'Central':
-  default:
-    return HEARING_REQUEST_TYPES.central;
+    case 'Virtual':
+      return HEARING_REQUEST_TYPES.virtual;
+    case 'Video':
+      return HEARING_REQUEST_TYPES.video;
+    case 'Central':
+    default:
+      return HEARING_REQUEST_TYPES.central;
   }
 };
 
@@ -802,10 +817,10 @@ export const setTimeSlots = ({
 
 };
 
-export const formatTimeSlotLabel = (time, zone) => {
+export const formatTimeSlotLabel = (datetime, zone) => {
   const timeFormatString = 'h:mm A z';
-  const coTime = moment.tz(time, 'HH:mm', 'America/New_York').format(timeFormatString);
-  const roTime = moment.tz(time, 'HH:mm', 'America/New_York').tz(zone).
+  const coTime = moment.tz(datetime, 'YYYY-MM-DD HH:mm', 'America/New_York').format(timeFormatString);
+  const roTime = moment.tz(datetime, 'YYYY-MM-DD HH:mm', 'America/New_York').tz(zone).
     format(timeFormatString);
 
   if (roTime === coTime) {
@@ -1017,7 +1032,7 @@ export const formatNotificationLabel = (hearing, virtual, appellantTitle) => {
 
   if (virtual) {
     return `When you schedule the hearing, the ${recipientLabel} and ` +
-     'Judge will receive an email with connection information for the virtual hearing.';
+      'Judge will receive an email with connection information for the virtual hearing.';
   }
 
   return `The ${recipientLabel} will receive email reminders 7 and 3 days before the hearing. ` +
@@ -1211,27 +1226,41 @@ export const scheduleData = ({ hearingSchedule, user }) => {
   const columns = columnsForUser(user, columnData);
 
   const exportHeaders = [
-    { label: 'ID',
-      key: 'id' },
-    { label: 'Scheduled For',
-      key: 'scheduledFor' },
-    { label: 'Type',
-      key: 'readableRequestType' },
-    { label: 'Regional Office',
-      key: 'regionalOffice' },
-    { label: 'Room',
-      key: 'room' },
-    { label: 'CSS ID',
-      key: 'judgeCssId' },
-    { label: 'VLJ',
-      key: 'vlj' },
-    { label: 'Hearings Scheduled',
-      key: 'hearingsScheduled' }
+    {
+      label: 'ID',
+      key: 'id'
+    },
+    {
+      label: 'Scheduled For',
+      key: 'scheduledFor'
+    },
+    {
+      label: 'Type',
+      key: 'readableRequestType'
+    },
+    {
+      label: 'Regional Office',
+      key: 'regionalOffice'
+    },
+    {
+      label: 'Room',
+      key: 'room'
+    },
+    {
+      label: 'CSS ID',
+      key: 'judgeCssId'
+    },
+    {
+      label: 'VLJ',
+      key: 'vlj'
+    },
+    {
+      label: 'Hearings Scheduled',
+      key: 'hearingsScheduled'
+    }
   ];
 
   const headers = headersforUser(user, exportHeaders);
 
   return { headers, rows, columns };
 };
-
-/* eslint-enable camelcase */

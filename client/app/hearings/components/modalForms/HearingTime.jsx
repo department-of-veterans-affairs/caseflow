@@ -1,6 +1,6 @@
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useMemo } from 'react';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 
@@ -55,12 +55,18 @@ export const HearingTime = ({
   label,
   vertical,
   hideLabel,
-  requestType
+  requestType,
+  hearingDayDate
 }) => {
-  const basicTimeOptions = getTimeOptions(regionalOffice, readOnly, requestType);
-  const timeOptions = enableZone ?
-    hearingTimeOptsWithZone(basicTimeOptions, localZone || enableZone) :
-    basicTimeOptions;
+  const basicTimeOptions = useMemo(
+    getTimeOptions(regionalOffice, readOnly, requestType),
+    [regionalOffice, readOnly, requestType]
+  );
+  const timeOptions = useMemo(enableZone ?
+    hearingTimeOptsWithZone(basicTimeOptions, localZone || enableZone, hearingDayDate) :
+    basicTimeOptions,
+    [basicTimeOptions, hearingDayDate, localZone, enableZone]);
+
   const isOther = _.isUndefined(
     _.find(timeOptions, (opt) => opt.value === value)
   );
@@ -99,7 +105,7 @@ export const HearingTime = ({
           placeholder="Select a time"
           options={
             enableZone ?
-              hearingTimeOptsWithZone(HEARING_TIME_OPTIONS, localZone || enableZone) :
+              hearingTimeOptsWithZone(HEARING_TIME_OPTIONS, localZone || enableZone, hearingDayDate) :
               HEARING_TIME_OPTIONS
           }
           value={value}
@@ -136,4 +142,5 @@ HearingTime.propTypes = {
       value: PropTypes.string
     })
   ]),
+  hearingDayDate: PropTypes.string
 };
