@@ -12,7 +12,6 @@ import TextareaField from '../../components/TextareaField';
 import COPY from '../../../COPY';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import QueueFlowModal from './QueueFlowModal';
-import Button from '../../components/Button';
 import {
   setTaskNotRelatedToAppealBanner,
   cancelTaskNotRelatedToAppeal,
@@ -100,12 +99,6 @@ const CorrespondenceCancelTaskModal = (props) => {
           value={instructions}
         />
       }
-
-      <Button
-        name="jumpToComment"
-        classNames={['cf-btn-link comment-control-button horizontal']}
-        onClick={submit}
-      > hello test</Button>
     </QueueFlowModal>
   );
 
