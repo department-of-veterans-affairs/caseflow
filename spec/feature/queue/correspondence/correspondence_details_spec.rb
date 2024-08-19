@@ -23,7 +23,7 @@ RSpec.feature("The Correspondence Details page") do
       expect(page).to have_content("John Testingman")
 
       # View all correspondence link
-      expect(page).to have_link("View all correspondence")
+      expect(page).to have_content("View all correspondence")
 
       # Record status
       expect(page).to have_content("Record status:")

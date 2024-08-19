@@ -63,11 +63,11 @@ const isCancelled = (task) => {
   return task.status === TASK_STATUSES.cancelled;
 };
 
-const establishmentTask = (task) => {
+const establishmentTaskCorrespondence = (task) => {
   return task.type === 'EstablishmentTask';
 };
 
-const tdClassNames = (timeline, task) => {
+const tdClassNamesforCorrespondence = (timeline, task) => {
   const containerClass = timeline ? taskInfoWithIconTimelineContainer : '';
   const closedAtClass = task.closedAt ? null : <span className="greyDotTimelineStyling"></span>;
 
@@ -176,7 +176,7 @@ class CorrespondenceTaskRows extends React.PureComponent {
       <div className="cf-row-wrapper">
         {taskInstructionsVisible && (
           <React.Fragment key={`${task.assignedOn}${task.label}`}>
-            {!establishmentTask(task) &&
+            {!establishmentTaskCorrespondence(task) &&
             <dt style={{ width: '100%' }}>
               {COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}
             </dt>
@@ -256,7 +256,7 @@ class CorrespondenceTaskRows extends React.PureComponent {
         </td>
         <td
           {...taskInfoWithIconContainer}
-          className={tdClassNames(timeline, task)}
+          className={tdClassNamesforCorrespondence(timeline, task)}
         >
           {isCancelled(task) ? <CancelIcon /> : closedAtIcon(task, timeline)}
 
