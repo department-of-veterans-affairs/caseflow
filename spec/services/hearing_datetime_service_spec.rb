@@ -2,12 +2,12 @@
 
 RSpec.describe HearingDatetimeService do
   context "class methods" do
-    describe "prepare_time_for_storage" do
+    describe "prepare_datetime_for_storage" do
       it "returns a Time object" do
         date = "2021-02-03"
         time_string = "1:00 PM Central Time (US & Canada)"
 
-        time = described_class.prepare_time_for_storage(date: date, time_string: time_string)
+        time = described_class.prepare_datetime_for_storage(date: date, time_string: time_string)
 
         expect(time).to be_a(Time)
       end
@@ -16,7 +16,7 @@ RSpec.describe HearingDatetimeService do
         date = "2021-07-03"
         time_string = "1:00 PM Central Time (US & Canada)"
 
-        time = described_class.prepare_time_for_storage(date: date, time_string: time_string)
+        time = described_class.prepare_datetime_for_storage(date: date, time_string: time_string)
         expected_time = Time.new(2021, 7, 3, 13, 0, 0, "-05:00")
 
         expect(time.dst?).to eq(true)
@@ -28,7 +28,7 @@ RSpec.describe HearingDatetimeService do
         date = "2026-02-06"
         time_string = "1:00 PM Central Time (US & Canada)"
 
-        time = described_class.prepare_time_for_storage(date: date, time_string: time_string)
+        time = described_class.prepare_datetime_for_storage(date: date, time_string: time_string)
         expected_time = Time.new(2026, 2, 6, 13, 0, 0, "-06:00")
 
         expect(time.dst?).to eq(false)
@@ -40,7 +40,7 @@ RSpec.describe HearingDatetimeService do
         date = "2021-07-03"
         time_string = "1:00 PM Arizona"
 
-        time = described_class.prepare_time_for_storage(date: date, time_string: time_string)
+        time = described_class.prepare_datetime_for_storage(date: date, time_string: time_string)
         expected_time = Time.new(2021, 7, 3, 13, 0, 0, "-07:00")
 
         expect(time.dst?).to eq(false)
@@ -53,7 +53,7 @@ RSpec.describe HearingDatetimeService do
         date = "2021-07-03"
         time_string = "1:00 PM Philippine Standard Time"
 
-        time = described_class.prepare_time_for_storage(date: date, time_string: time_string)
+        time = described_class.prepare_datetime_for_storage(date: date, time_string: time_string)
         expected_time = Time.new(2021, 7, 3, 13, 0, 0, "+08:00")
 
         expect(time.dst?).to eq(false)
@@ -65,7 +65,7 @@ RSpec.describe HearingDatetimeService do
         date = "2021-01-03"
         time_string = "1:00 PM Philippine Standard Time"
 
-        time = described_class.prepare_time_for_storage(date: date, time_string: time_string)
+        time = described_class.prepare_datetime_for_storage(date: date, time_string: time_string)
         expected_time = Time.new(2021, 1, 3, 13, 0, 0, "+08:00")
 
         expect(time.dst?).to eq(false)
@@ -77,7 +77,7 @@ RSpec.describe HearingDatetimeService do
         date = nil
         time_string = "1:00 PM Central Time (US & Canada)"
 
-        time = described_class.prepare_time_for_storage(date: date, time_string: time_string)
+        time = described_class.prepare_datetime_for_storage(date: date, time_string: time_string)
 
         expect(time).to eq(nil)
       end
@@ -86,7 +86,7 @@ RSpec.describe HearingDatetimeService do
         date = "2021-02-03"
         time_string = nil
 
-        time = described_class.prepare_time_for_storage(date: date, time_string: time_string)
+        time = described_class.prepare_datetime_for_storage(date: date, time_string: time_string)
 
         expect(time).to eq(nil)
       end
@@ -96,7 +96,7 @@ RSpec.describe HearingDatetimeService do
         time_string = "1:00 PM Fantasy Land Timezone"
 
         expect do
-          described_class.prepare_time_for_storage(date: date, time_string: time_string)
+          described_class.prepare_datetime_for_storage(date: date, time_string: time_string)
         end.to raise_error(TZInfo::InvalidTimezoneIdentifier)
       end
     end
@@ -277,11 +277,11 @@ RSpec.describe HearingDatetimeService do
       end
 
       describe "process_legacy_scheduled_time_string" do
-        it "is an alias for .prepare_time_for_storage" do
+        it "is an alias for .prepare_datetime_for_storage" do
           date = "2024-01-01"
           time_string = "11:00 AM Central Time (US & Canada)"
 
-          time_prepped = described_class.prepare_time_for_storage(date: date, time_string: time_string)
+          time_prepped = described_class.prepare_datetime_for_storage(date: date, time_string: time_string)
           time_legacy_processed = legacy_hearing.time.process_legacy_scheduled_time_string(
             date: date,
             time_string: time_string

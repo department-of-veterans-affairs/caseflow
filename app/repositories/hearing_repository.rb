@@ -41,7 +41,7 @@ class HearingRepository
       hearing_day = HearingDay.find(attrs[:hearing_day_id])
       fail HearingDayFull if !override_full_hearing_day_validation && hearing_day.hearing_day_full?
 
-      scheduled_for = HearingDatetimeService.prepare_time_for_storage(
+      scheduled_for = HearingDatetimeService.prepare_datetime_for_storage(
         date: hearing_day.scheduled_for,
         time_string: attrs[:scheduled_time_string]
       )
