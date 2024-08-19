@@ -707,42 +707,6 @@ feature "Supplemental Claim Intake", :all_dbs do
       end
     end
 
-    scenario "canceling" do
-      _, intake = start_supplemental_claim(veteran)
-      visit "/intake/add_issues"
-
-      expect(page).to have_content("Add / Remove Issues")
-      safe_click "#cancel-intake"
-      expect(find("#modal_id-title")).to have_content("Cancel Intake?")
-      safe_click ".close-modal"
-      expect(page).to_not have_css("#modal_id-title")
-      safe_click "#cancel-intake"
-
-      expect(page).to have_button("Cancel intake", disabled: true)
-
-      within_fieldset("Please select the reason you are canceling this intake.") do
-        find("label", text: "System error").click
-      end
-      expect(page).to have_button("Cancel intake", disabled: false)
-
-      within_fieldset("Please select the reason you are canceling this intake.") do
-        find("label", text: "Other").click
-      end
-      expect(page).to have_button("Cancel intake", disabled: true)
-
-      fill_in "Tell us more about your situation.", with: "blue!"
-      expect(page).to have_button("Cancel intake", disabled: false)
-      safe_click ".confirm-cancel"
-
-      expect(page).to have_content("Welcome to Caseflow Intake!")
-      expect(page).to_not have_css(".cf-modal-title")
-
-      intake.reload
-      expect(intake.completed_at).to eq(Time.zone.now)
-      expect(intake.cancel_reason).to eq("other")
-      expect(intake).to be_canceled
-    end
-
     context "with active legacy appeal" do
       before do
         setup_legacy_opt_in_appeals(veteran.file_number)

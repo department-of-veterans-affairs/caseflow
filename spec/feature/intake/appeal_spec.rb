@@ -690,7 +690,7 @@ feature "Appeal Intake", :all_dbs do
     expect(page).to have_current_path("/intake/add_issues")
   end
 
-  scenario "canceling an appeal intake" do
+  scenario "canceling an intake" do
     _, intake = start_appeal(veteran)
     visit "/intake/add_issues"
 
@@ -700,15 +700,19 @@ feature "Appeal Intake", :all_dbs do
     safe_click ".close-modal"
     expect(page).to_not have_css("#modal_id-title")
     safe_click "#cancel-intake"
+
     expect(page).to have_button("Cancel intake", disabled: true)
+
     within_fieldset("Please select the reason you are canceling this intake.") do
       find("label", text: "System error").click
     end
     expect(page).to have_button("Cancel intake", disabled: false)
+
     within_fieldset("Please select the reason you are canceling this intake.") do
       find("label", text: "Other").click
     end
     expect(page).to have_button("Cancel intake", disabled: true)
+
     fill_in "Tell us more about your situation.", with: "blue!"
     expect(page).to have_button("Cancel intake", disabled: false)
     safe_click ".confirm-cancel"
