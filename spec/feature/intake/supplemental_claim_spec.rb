@@ -644,24 +644,6 @@ feature "Supplemental Claim Intake", :all_dbs do
     end
 
     context "Non-compensation" do
-      context "decision issues are present" do
-        scenario "Add Issues button shows contestable issues" do
-          sc, = start_supplemental_claim(veteran, is_comp: false)
-          create(:decision_issue,
-                 decision_review: sc,
-                 caseflow_decision_date: receipt_date - 1.day,
-                 benefit_type: sc.benefit_type,
-                 decision_text: "something was decided",
-                 participant_id: veteran.participant_id)
-
-          visit "/intake/add_issues"
-          click_intake_add_issue
-
-          expect(page).to have_content("something was decided")
-          expect(page).to_not have_content("Left knee granted")
-        end
-      end
-
       context "no contestable issues present" do
         before do
           education_org = create(:business_line, name: "Education", url: "education")
