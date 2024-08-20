@@ -919,6 +919,52 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   }
 }
 
+// Response Letters Card Starts Here
+.response-letter-table-borderless-no-background {
+  width: 100%;
+  margin-top: 0;
+  margin-bottom: 1.25em;
+  table-layout: fixed;
+
+  th,
+  td {
+    border: 0;
+    padding-bottom: 0;
+    vertical-align: top;
+  }
+
+  .response-letter-table-borderless-first-item {
+    display: block;
+    width: 140%;
+    margin-left: 4%;
+    padding-bottom: 1.25rem;
+  }
+
+  .response-letter-table-borderless {
+    padding-left: 1.5rem;
+  }
+
+  .response-letter-table-borderless-second-item {
+    width: 2%;
+    padding-left: 2%;
+    white-space: nowrap;
+  }
+
+  .response-letter-table-borderless-last-item {
+    padding-left: 3rem;
+  }
+}
+
+.hr-container {
+  padding-left: 2%;
+}
+
+.full-width-hr {
+  margin: 0 0 0.5rem;
+  border: 1px solid $color-gray-lighter;
+}
+// response letters card ends here
+
 .add-autotext-button {
   padding-left: 0;
   padding-right: 0;

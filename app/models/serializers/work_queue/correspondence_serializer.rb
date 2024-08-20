@@ -59,4 +59,10 @@ class WorkQueue::CorrespondenceSerializer
   attribute :correspondence_appeal_ids do |object|
     object.appeal_ids.map(&:to_s)
   end
+
+  attribute :correspondence_response_letters do |object|
+    object.correspondence_response_letters.map do |response_letter|
+      WorkQueue::CorrespondenceResponseLetterSerializer.new(response_letter).serializable_hash[:data][:attributes]
+    end
+  end
 end
