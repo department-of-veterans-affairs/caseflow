@@ -9,7 +9,6 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     create(:case_distribution_lever, :nod_adjustment)
     create(:case_distribution_lever, :batch_size_per_attorney)
     create(:case_distribution_lever, :cavc_affinity_days)
-    create(:case_distribution_lever, :cavc_aod_affinity_days)
     create(:case_distribution_lever, :ama_hearing_case_affinity_days)
     create(:case_distribution_lever, :ama_hearing_case_aod_affinity_days)
     create(:case_distribution_lever, :ama_direct_review_start_distribution_prior_to_goals)
@@ -251,7 +250,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       end
       after do
         FeatureToggle.disable!(:acd_distribute_by_docket_date)
-        FeatureToggle.disable!(:acd_exclude_from_affinity)
+        FeatureToggle.enable!(:acd_exclude_from_affinity)
       end
 
       it "should only distribute the ready priority cases tied to a judge" do
