@@ -35,7 +35,7 @@ const ReaderFooter = ({
       const targetPage = event.target.value;
 
       if (validatePageNum(targetPage, numPages)) {
-        document.getElementById(`canvas-${targetPage}`).scrollIntoView();
+        document.getElementById(`canvasWrapper-${targetPage}`).scrollIntoView();
         setCurrentPage(targetPage);
       } else if (currentPage) {
         event.target.value = currentPage;
