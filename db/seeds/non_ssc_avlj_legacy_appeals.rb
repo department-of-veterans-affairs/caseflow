@@ -37,19 +37,20 @@ module Seeds
 
     def create_legacy_appeals
       # the naming comes from the acceptance criteria of APPEALS-45208
-      create_four_priority_appeals_tied_to_a_non_ssc_avlj
-      create_four_non_priority_appeals_tied_to_a_non_ssc_avlj
-      create_four_priority_appeals_tied_to_and_signed_by_a_non_ssc_avlj
-      create_four_non_priority_appeals_tied_to_and_signed_by_a_non_ssc_avlj
-      create_four_alternating_priority_by_age_appeals_tied_to_a_non_ssc_avlj
-      create_four_alternating_priority_by_age_appeals_tied_to_and_signed_by_a_non_ssc_avlj
-      create_four_priority_appeals_tied_to_a_non_ssc_avlj_signed_by_another_avlj
-      create_four_non_priority_appeals_tied_to_a_non_ssc_avlj_signed_by_another_avlj
-      create_four_alternating_priority_by_age_appeals_tied_to_a_non_ssc_avlj_signed_by_another_avlj
-      create_two_sets_of_seven_types_of_appeals_tied_to_a_non_ssc_avlj
-      create_four_alternating_priority_by_age_appeals_tied_to_a_ssc_avlj
-      create_four_alternating_priority_by_age_appeals_tied_to_a_non_ssc_avlj_with_a_second_hearing_held_by_a_ssc_avlj
-      create_four_alternating_priority_by_age_appeals_tied_to_a_non_ssc_avlj_with_a_second_hearing_held_by_another_non_ssc_avlj
+      #TODO: Rename these methods
+      # create_ac_1_appeals #TEAM 1
+      # create_ac_2_appeals #TEAM 1
+      create_ac_3_appeals #TEAM 2
+      # create_ac_4_appeals #TEAM 2
+      # create_ac_5_appeals #TEAM 1
+      # create_ac_6_appeals #TEAM 2
+      # create_ac_7_appeals #TEAM 2
+      # create_ac_8_appeals #TEAM 2
+      # create_ac_9_appeals #TEAM 2
+      # create_ac_10_appeals #TEAM 2
+      # create_ac_11_appeals #TEAM 1
+      # create_ac_12_appeals #TEAM 3
+      # create_ac_13_appeals #TEAM 3
     end
 
     def create_four_priority_appeals_tied_to_a_non_ssc_avlj
