@@ -23,5 +23,7 @@ if [ ! -z "$1" ]; then
   codeclimate analyze $file
 else
   echo "running CodeClimate CLI for entire project"
-  codeclimate analyze
+  # timeout set for 1 hour to allow time to run entire project
+  # default timeout is 15 mins
+  CONTAINER_TIMEOUT_SECONDS=3600 codeclimate analyze
 fi
