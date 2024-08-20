@@ -254,11 +254,11 @@ class VACOLS::CaseDocket < VACOLS::Record
       ) BRIEFF
       #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
       #{JOIN_PREVIOUS_APPEALS}
-      where BRIEFF.BFDLOCIN >= TRUNC(CURRENT_DATE - 2)
+      where BRIEFF.BFDLOCIN >= CURRENT_DATE - 2
       order by BFD19
     ) APPEALS
     left join CORRES on APPEALS.BFCORKEY = CORRES.STAFKEY
-    left join STAFF on APPEALS.VLJ = STAFF.STAFKEY
+    left join STAFF on APPEALS.VLJ = STAFF.SATTYID
   "
 
   def self.counts_by_priority_and_readiness
