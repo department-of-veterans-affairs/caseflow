@@ -33,9 +33,10 @@ class CaseDistributionTest extends React.PureComponent {
   }
 
   componentDidUpdate() {
+    // Delay of 5 seconds
     setTimeout(() => {
       this.setState({ showAlert: false, showLegacyAppealsAlert: false });
-    }, 5000); // Delay of 5 seconds
+    }, 5000);
   }
 
   reseedAod = () => {
@@ -236,7 +237,11 @@ class CaseDistributionTest extends React.PureComponent {
                               <a href="#case_movement"><button className="btn btn-primary">Case Movement</button></a>
                             </li>
                             <li>
-                              <a href="#log_of_most_recent_appeals"><button className="btn btn-primary">Log of 15 most recent appeals moved to location 63</button></a>
+                              <a href="#log_of_most_recent_appeals">
+                                <button className="btn btn-primary">
+                                  Log of 15 most recent appeals moved to location 63
+                                </button>
+                              </a>
                             </li>
                           </ul>
                           <h2 id="levers"> Case Distribution Levers </h2>
