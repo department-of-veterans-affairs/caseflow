@@ -232,7 +232,12 @@ class CaseDistributionTest extends React.PureComponent {
                                 <button className="btn btn-primary">Distribution Status</button>
                               </a>
                             </li>
-                            <li><a href="#case_movement"><button className="btn btn-primary">Case Movement</button></a></li>
+                            <li>
+                              <a href="#case_movement"><button className="btn btn-primary">Case Movement</button></a>
+                            </li>
+                            <li>
+                              <a href="#log_of_most_recent_appeals"><button className="btn btn-primary">Log of 15 most recent appeals moved to location 63</button></a>
+                            </li>
                           </ul>
                           <h2 id="levers"> Case Distribution Levers </h2>
                           <table
@@ -438,8 +443,10 @@ class CaseDistributionTest extends React.PureComponent {
                             </li>
                           </ul>
                           <hr />
-                          <a href="#top"><button className="btn btn-primary">Back to Top</button></a>
+                          <h2 id="log_of_most_recent_appeals">Log of 15 most recent appeals moved to location 63</h2>
                           <CollapsibleTable returnedAppealJobs={this.props.returnedAppealJobs} />
+                          <hr />
+                          <a href="#top"><button className="btn btn-primary">Back to Top</button></a>
                         </div>
 
                       );
