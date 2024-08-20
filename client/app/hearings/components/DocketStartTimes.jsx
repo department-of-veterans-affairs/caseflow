@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment-timezone';
-import { shortZoneName, buildDatetimeString } from '../utils';
+import { shortZoneName } from '../utils';
 
 import { RadioField } from '../../components/RadioField';
 
@@ -31,9 +31,8 @@ export const DocketStartTimes = ({
 
   const formatTimeLabels = (amStartTimeString, pmStartTimeString, fullDaySlots, timezone) => {
     const zoneName = shortZoneName(timezone);
-
-    const amTimeInEastern = roTimezoneToEastern(buildDatetimeString(hearingDayDate, amStartTimeString), timezone, true);
-    const pmTimeInEastern = roTimezoneToEastern(buildDatetimeString(hearingDayDate, pmStartTimeString), timezone, true);
+    const amTimeInEastern = roTimezoneToEastern(`${hearingDayDate} ${amStartTimeString}`, timezone, true);
+    const pmTimeInEastern = roTimezoneToEastern(`${hearingDayDate} ${pmStartTimeString}`, timezone, true);
     const amTimeWithAM = formatWithAMPM(amStartTimeString, timezone);
     const pmTimeWithPM = formatWithAMPM(pmStartTimeString, timezone);
 
