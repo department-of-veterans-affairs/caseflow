@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
  * @component
  */
 export const ReadOnly = ({ className, label, text, unformatted, spacing = 25 }) => (
-  <div {...marginTop(spacing)} className={className} data-testid='read-only-testid'>
+  <div {...marginTop(spacing)} className={className} data-testid="read-only-testid">
     {label && <strong>{label}</strong>}
     {text && !unformatted && <pre>{text}</pre>}
     {text && unformatted && <div>{text}</div>}

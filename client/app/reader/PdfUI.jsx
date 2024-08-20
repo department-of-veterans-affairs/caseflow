@@ -225,11 +225,11 @@ export class PdfUI extends React.Component {
     });
 
     return <div
-    className={pdfUiClass}
-    {...pdfWrapper}
-    data-testid='pdf-ui'
-    cp-test={this.state.currentPage}
-    ftsz-test={this.state.fitToScreenZoom}>
+      className={pdfUiClass}
+      {...pdfWrapper}
+      data-testid="pdf-ui"
+      cp-test={this.state.currentPage}
+      ftsz-test={this.state.fitToScreenZoom}>
       <div className="cf-pdf-header cf-pdf-toolbar">
         <span {...pdfToolbarStyles.toolbar} {...pdfToolbarStyles.toolbarLeft}>
           { this.props.showClaimsFolderNavigation && <Link

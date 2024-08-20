@@ -87,6 +87,7 @@ export class PdfFile extends React.PureComponent {
 
   getDocument = (requestOptions) => {
     const { file } = this.props;
+
     if (!file) {
       return;
     }
