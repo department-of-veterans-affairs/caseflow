@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Button from 'app/components/Button';
 import { TimeSlotDetail } from './TimeSlotDetail';
 
-import { formatTimeSlotLabel } from '../../utils';
+import { formatTimeSlotLabel, buildDatetimeString } from '../../utils';
 
 export const TimeSlotButton = ({
   hearingTime,
@@ -37,7 +37,7 @@ export const TimeSlotButton = ({
           <TimeSlotDetail
             constrainWidth
             showDetails={Boolean(full && issueCount !== null && poaName)}
-            label={formatTimeSlotLabel(`${hearingDayDate} ${hearingTime}`, roTimezone)}
+            label={formatTimeSlotLabel(buildDatetimeString(hearingDayDate, hearingTime), roTimezone)}
             issueCount={issueCount}
             poaName={poaName}
             docketName={docketName}

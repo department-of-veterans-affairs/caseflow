@@ -380,12 +380,12 @@ export const timeWithTimeZone = (dateTime, timeZone = 'America/New_York') => {
 
 /**
  * Method to form a datetime string from a separate time and date strings
- * @param {string} time -- Time in 'hh:mm AM/PM timezone' format. Ex: 1:00 PM Eastern Time (US & Canada)
  * @param {string} date -- Date in YYYY-MM-DD format.
+ * @param {string} time -- Time in 'hh:mm AM/PM timezone' format. Ex: 1:00 PM Eastern Time (US & Canada)
  * @throws {Error} -- If either argument fails to meet the expected formatting.
  * @returns {string} -- A string formed by concantenating the date and time parameters.
  */
-export const buildDatetimeString = (time, date) => {
+export const buildDatetimeString = (date, time) => {
   const clockTime = splitSelectedTime(time)[0];
 
   if (!moment(clockTime, 'h:mm A').isValid()) {
@@ -487,7 +487,7 @@ export const timezones = (time, roTimezone, hearingDayDate) => {
   }
 
   // Convert the time into a date object with the RO timezone
-  const dateTime = moment.tz(`${hearingDayDate} ${time}`, 'YYYY-MM-DD HH:mm A', roTimezone);
+  const dateTime = moment.tz(buildDatetimeString(hearingDayDate, time), 'YYYY-MM-DD HH:mm A', roTimezone);
 
   // Map the available timeTIMEZONES to a select options object
   const unorderedOptions = Object.keys(TIMEZONES).map((zone) => {
