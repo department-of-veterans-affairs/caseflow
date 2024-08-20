@@ -60,7 +60,6 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         step "BVA Intake user intakes a VHA case" do
           User.authenticate!(user: bva_intake_user)
           categories.each do |category|
-            puts category.inspect
             start_appeal(veteran, intake_user: bva_intake_user)
             visit "/intake"
             expect(page).to have_current_path("/intake/review_request")
@@ -72,16 +71,11 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             find("#issue-benefit-type").send_keys :enter
             fill_in "Issue category", with: category
             find("#issue-category").send_keys :enter
-            if page.has_field?("Issue description")
-              fill_in "Issue description", with: "I am a VHA issue"
-            else
-              expect(page).to have_selector('input[name="rating-radio"][value="None of these match"]', visible: true)
-              choose('None of these match')
-            end
-            expect(page).to have_field("Decision date")
+            fill_in "Issue description", with: "I am a VHA issue"
             fill_in "Decision date", with: 1.month.ago.mdY
-            safe_click ".add-issue"
+
             expect(page).to have_content(COPY::VHA_PRE_DOCKET_ISSUE_BANNER)
+            safe_click ".add-issue"
             expect(page).to have_content(COPY::VHA_PRE_DOCKET_ADD_ISSUES_NOTICE)
             expect(page).to have_button("Submit appeal")
             click_intake_finish
@@ -93,7 +87,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             expect(vha_document_search_task.assigned_to).to eq vha_caregiver
 
             reload_case_detail_page(appeal.external_id)
-            # expect(page).to have_content("Pre-Docket")
+            expect(page).to have_content("Pre-Docket")
             expect(page).to have_content(category)
 
             expect(page).to have_content(vha_caregiver.name)
