@@ -16,23 +16,23 @@ module Seeds
     private
 
     def create_avljs
-      create_non_ssc_avlj("NONSSCAN01", "Four-Priority")
-      create_non_ssc_avlj("NONSSCAN02", "Four-non-priority")
-      create_non_ssc_avlj("NONSSCAN03", "Four-pri-h-and-d")
-      create_non_ssc_avlj("NONSSCAN04", "Four-non-pri-h-and-d")
-      create_non_ssc_avlj("NONSSCAN05", "For-mix-of-both-h-only")
-      create_non_ssc_avlj("NONSSCAN06", "For-mix-of-both-h-and-d")
-      create_non_ssc_avlj("NONSSCAN07", "Do-not-get-moved-pri")
-      create_non_ssc_avlj("NONSSCAN08", "Do-not-get-moved-nonpri")
-      create_non_ssc_avlj("NONSSCAN09", "Do-not-get-moved-mix")
-      create_non_ssc_avlj("NONSSCAN10", "Some-moved-some-not")
-      create_ssc_avlj("SSCA11", "Does-not-qualify-for-mvmt")
-      create_non_ssc_avlj("NONSSCAN12", "Two-judges-last-is-SSC")
-      create_non_ssc_avlj("NONSSCAN13", "Two-judges-both-non-SSC")
+      create_non_ssc_avlj("NONSSCAN01", "Four Priority")
+      create_non_ssc_avlj("NONSSCAN02", "Four non-priority")
+      create_non_ssc_avlj("NONSSCAN03", "Four-pri h-and-d")
+      create_non_ssc_avlj("NONSSCAN04", "Four-non-pri h-and-d")
+      create_non_ssc_avlj("NONSSCAN05", "For-mix-of both-h-only")
+      create_non_ssc_avlj("NONSSCAN06", "For-mix-of both-h-and-d")
+      create_non_ssc_avlj("NONSSCAN07", "Do-not-get moved-pri")
+      create_non_ssc_avlj("NONSSCAN08", "Do-not-get moved-nonpri")
+      create_non_ssc_avlj("NONSSCAN09", "Do-not-get moved-mix")
+      create_non_ssc_avlj("NONSSCAN10", "Some-moved some-not")
+      create_ssc_avlj("SSCA11", "Does-not qualify for-mvmt")
+      create_non_ssc_avlj("NONSSCAN12", "Two-judges last-is-SSC")
+      create_non_ssc_avlj("NONSSCAN13", "Two-judges both-non-SSC")
 
-      create_non_ssc_avlj("SIGNAVLJLGC", "NonSSC-Signing-AVLJ1")
-      create_non_ssc_avlj("AVLJLGC2", "Alternate-NonSSC-AVLJ")
-      create_ssc_avlj("SSCAVLJLGC", "SSC-AVLJ1")
+      create_non_ssc_avlj("SIGNAVLJLGC", "NonSSC Signing-AVLJ")
+      create_non_ssc_avlj("AVLJLGC2", "Alternate NonSSC-AVLJ")
+      create_ssc_avlj("SSCAVLJLGC", "SSC AVLJ1")
     end
 
     def create_legacy_appeals
@@ -73,10 +73,10 @@ module Seeds
     def create_four_priority_appeals_tied_to_and_signed_by_a_non_ssc_avlj
       assigned_avlj = User.find_by(css_id: "NONSSCAN03")
       signing_avlj = User.find_by(css_id: "NONSSCAN03")
-      create_signed_legacy_appeal(priority=false, signing_avlj, assigned_avlj, 100.days.ago)
-      create_signed_legacy_appeal(priority=false, signing_avlj, assigned_avlj, 80.days.ago)
-      create_signed_legacy_appeal(priority=false, signing_avlj, assigned_avlj, 60.days.ago)
-      create_signed_legacy_appeal(priority=false, signing_avlj, assigned_avlj, 30.days.ago)
+      create_signed_legacy_appeal(priority=true, signing_avlj, assigned_avlj, 100.days.ago)
+      create_signed_legacy_appeal(priority=true, signing_avlj, assigned_avlj, 80.days.ago)
+      create_signed_legacy_appeal(priority=true, signing_avlj, assigned_avlj, 60.days.ago)
+      create_signed_legacy_appeal(priority=true, signing_avlj, assigned_avlj, 30.days.ago)
     end
 
     def create_four_non_priority_appeals_tied_to_and_signed_by_a_non_ssc_avlj
