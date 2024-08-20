@@ -25,6 +25,7 @@ const Page = ({ page, rotation = '0deg', renderItem, scale }) => {
     height: `${rotatedHeight}px`,
     width: `${rotatedWidth}px`,
     position: 'relative',
+    backgroundColor: 'white',
   };
   let canvasStyle = {
     rotate: rotation,
@@ -41,29 +42,29 @@ const Page = ({ page, rotation = '0deg', renderItem, scale }) => {
     }
   }, [canvasRef.current, viewport]);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        canvasStyle = { ...canvasStyle, display: entry.isIntersecting ? 'inline-block' : 'none' };
-      },
-      {
-        root: document.getElementById('pdfContainer'),
-        rootMargin: `${scaledHeight * 10}px`, // show 10 rows of pages before and after
-        threshold: 0, // any of the target is visible
-      }
-    );
+  // useEffect(() => {
+  //   const observer = new IntersectionObserver(
+  //     ([entry]) => {
+  //       canvasStyle = { ...canvasStyle, display: entry.isIntersecting ? 'inline-block' : 'none' };
+  //     },
+  //     {
+  //       root: document.getElementById('pdfContainer'),
+  //       rootMargin: `${scaledHeight * 10}px`, // show 10 rows of pages before and after
+  //       threshold: 0, // any of the target is visible
+  //     }
+  //   );
 
-    if (wrapperRef.current) {
-      observer.observe(wrapperRef.current);
-    }
+  //   if (wrapperRef.current) {
+  //     observer.observe(wrapperRef.current);
+  //   }
 
-    // Clean up the observer
-    return () => {
-      if (wrapperRef.current) {
-        observer.unobserve(wrapperRef.current);
-      }
-    };
-  }, [wrapperRef.current]);
+  //   // Clean up the observer
+  //   return () => {
+  //     if (wrapperRef.current) {
+  //       observer.unobserve(wrapperRef.current);
+  //     }
+  //   };
+  // }, [wrapperRef.current]);
 
   return (
     <div
