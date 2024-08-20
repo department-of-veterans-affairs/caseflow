@@ -120,7 +120,7 @@ class CaseDistributionTest extends React.PureComponent {
       this.setState({
         isReseedingNonSSCAVLJAppeals: false,
         showAlert: true,
-        alertMsg: 'Successfully Completed Seeding non-SSJ AVLJ and appeals.',
+        alertMsg: 'Successfully Completed Seeding non-SSC AVLJ and Appeals.',
       });
     }, (err) => {
       console.warn(err);
