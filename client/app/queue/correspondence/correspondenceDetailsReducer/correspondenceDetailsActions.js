@@ -1,5 +1,6 @@
 import { ACTIONS } from './correspondenceDetailsConstants';
 import ApiUtil from '../../../util/ApiUtil';
+// eslint-disable-next-line import/extensions
 import CORRESPONDENCE_DETAILS_BANNERS from '../../../../constants/CORRESPONDENCE_DETAILS_BANNERS.json';
 
 export const setTaskNotRelatedToAppealBanner = (bannerDetails) => (dispatch) => {
@@ -15,7 +16,6 @@ export const setTaskNotRelatedToAppealBanner = (bannerDetails) => (dispatch) => 
   });
 };
 export const cancelTaskNotRelatedToAppeal = (taskID, payload) => (dispatch) => {
-
 
   return ApiUtil.patch(`/queue/correspondence/tasks/${taskID}/cancel`, payload).
     then(() => {
@@ -45,4 +45,14 @@ export const correspondenceInfo = (correspondence) => (dispatch) => {
     payload: {
       correspondence
     } });
+};
+
+export const setShowActionsDropdown = (showActionsDropdown) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.SHOW_ACTIONS_DROP_DOWN,
+    payload: {
+      showActionsDropdown
+    }
+  });
+
 };
