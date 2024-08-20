@@ -4,7 +4,7 @@
 # Helper to sync the decided appeals and their decision_mailed status
 
 module SyncDecidedAppealsHelper
-  VACOLS_BATCH_PROCESS_LIMIT = ENV["VACOLS_QUERY_BATCH_SIZE"]
+  VACOLS_BATCH_PROCESS_LIMIT = ENV["VACOLS_QUERY_BATCH_SIZE"] || 800
 
   # Syncs the decision_mailed status of Legacy Appeals with a decision made
   def sync_decided_appeals
