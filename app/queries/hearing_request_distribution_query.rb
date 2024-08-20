@@ -53,6 +53,7 @@ class HearingRequestDistributionQuery
     ama_non_aod_hearing_query.or(ama_aod_hearing_query).uniq
   end
 
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def only_genpop_appeals
     ama_non_aod_hearing_query = generate_ama_only_genpop_non_aod_hearing_query(base_relation)
     ama_aod_hearing_query = generate_ama_only_genpop_aod_hearing_query(base_relation)
@@ -79,9 +80,16 @@ class HearingRequestDistributionQuery
     # the base result is doing an inner join with hearings so it isn't retrieving any appeals that have no hearings
     # yet, so we add with_no_hearings to retrieve those appeals
     no_hearings_or_no_held_hearings = with_no_hearings.or(with_no_held_hearings)
+    no_hearings_or_only_no_held_hearings = []
+    no_hearings_or_no_held_hearings.each do |appeal|
+      if appeal.hearings.blank? || appeal.hearings.pluck(:disposition).exclude?("held")
+        no_hearings_or_only_no_held_hearings << appeal
+      end
+    end
 
-    [*result, *no_hearings_or_no_held_hearings].uniq
+    [*result, *no_hearings_or_only_no_held_hearings].uniq
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def generate_ama_not_genpop_non_aod_hearing_query(base_relation)
     query =
@@ -89,13 +97,13 @@ class HearingRequestDistributionQuery
         base_relation
           .most_recent_hearings
           .tied_to_distribution_judge(judge)
-          .ama_non_aod_hearing_appeals
+          .ama_non_aod_appeals
           .affinitized_ama_affinity_cases(CaseDistributionLever.ama_hearing_case_affinity_days)
       elsif CaseDistributionLever.ama_hearing_case_affinity_days == Constants.ACD_LEVERS.infinite
         base_relation
           .most_recent_hearings
           .tied_to_distribution_judge(judge)
-          .ama_non_aod_hearing_appeals
+          .ama_non_aod_appeals
       elsif CaseDistributionLever.ama_hearing_case_affinity_days == Constants.ACD_LEVERS.omit
         base_relation
           .most_recent_hearings
@@ -112,13 +120,13 @@ class HearingRequestDistributionQuery
         base_relation
           .most_recent_hearings
           .tied_to_distribution_judge(judge)
-          .ama_aod_hearing_appeals
+          .ama_aod_appeals
           .affinitized_ama_affinity_cases(CaseDistributionLever.ama_hearing_case_aod_affinity_days)
       elsif CaseDistributionLever.ama_hearing_case_aod_affinity_days == Constants.ACD_LEVERS.infinite
         base_relation
           .most_recent_hearings
           .tied_to_distribution_judge(judge)
-          .ama_aod_hearing_appeals
+          .ama_aod_appeals
       elsif CaseDistributionLever.ama_hearing_case_aod_affinity_days == Constants.ACD_LEVERS.omit
         base_relation
           .most_recent_hearings
@@ -135,7 +143,7 @@ class HearingRequestDistributionQuery
         base_relation
           .most_recent_hearings
           .with_appeal_affinities
-          .ama_non_aod_hearing_appeals
+          .ama_non_aod_appeals
           .expired_ama_affinity_cases(CaseDistributionLever.ama_hearing_case_affinity_days)
       elsif CaseDistributionLever.ama_hearing_case_affinity_days == Constants.ACD_LEVERS.infinite
         base_relation
@@ -147,7 +155,7 @@ class HearingRequestDistributionQuery
           .most_recent_hearings
           .with_appeal_affinities
           .with_held_hearings
-          .ama_non_aod_hearing_appeals
+          .ama_non_aod_appeals
       end
 
     query
@@ -159,7 +167,7 @@ class HearingRequestDistributionQuery
         base_relation
           .most_recent_hearings
           .with_appeal_affinities
-          .ama_aod_hearing_appeals
+          .ama_aod_appeals
           .expired_ama_affinity_cases(CaseDistributionLever.ama_hearing_case_aod_affinity_days)
       elsif CaseDistributionLever.ama_hearing_case_aod_affinity_days == Constants.ACD_LEVERS.infinite
         base_relation
@@ -171,7 +179,7 @@ class HearingRequestDistributionQuery
           .most_recent_hearings
           .with_appeal_affinities
           .with_held_hearings
-          .ama_aod_hearing_appeals
+          .ama_aod_appeals
       end
 
     query
