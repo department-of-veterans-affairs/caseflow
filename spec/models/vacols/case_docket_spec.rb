@@ -683,7 +683,6 @@ describe VACOLS::CaseDocket, :all_dbs do
       end
     end
 
-    # rubocop:disable Layout/LineLength
     context "when CaseDistributionLever" do
       before do
         VACOLS::Case.where(bfcurloc: %w[81 83]).map { |c| c.update!(bfcurloc: "testing") }
@@ -843,8 +842,10 @@ describe VACOLS::CaseDocket, :all_dbs do
           # {FOR LEVER BEING A VALUE:}
           cavc_lever.update!(value: 14)
           expect(VACOLS::CaseDocket.distribute_priority_appeals(judge, "any", 100, true).map { |c| c["bfkey"] }.sort)
-            .to match_array([c1, c4, c10, c11, c12, c13, c14, c15, c16, c17, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30]
-            .map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
+            .to match_array(
+              [c1, c4, c10, c11, c12, c13, c14, c15, c16, c17, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30]
+              .map { |c| (c["bfkey"].to_i + 1).to_s }.sort
+            )
           # {FOR LEVER BEING INFINITE:}
           cavc_lever.update!(value: "infinite")
           expect(
@@ -856,7 +857,8 @@ describe VACOLS::CaseDocket, :all_dbs do
           cavc_lever.update!(value: "omit")
           expect(VACOLS::CaseDocket.distribute_priority_appeals(judge, "any", 100, true).map { |c| c["bfkey"] }.sort)
             .to match_array([
-              c1, c2, c3, c4, c5, c6, c10, c11, c12, c13, c14, c15, c16, c17, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30
+              c1, c2, c3, c4, c5, c6, c10, c11, c12, c13, c14, c15, c16,
+              c17, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30
             ]
             .map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
         end
@@ -866,8 +868,14 @@ describe VACOLS::CaseDocket, :all_dbs do
         # cavc aod affinity cases:
         # no hearing held but has previous decision
         let!(:ca1) { create(:legacy_cavc_appeal, judge: aff_judge, attorney: attorney, aod: true, tied_to: false) }
-        let!(:ca2) { create(:legacy_cavc_appeal, judge: aff_judge, attorney: attorney, aod: true, tied_to: false, affinity_start_date: 3.days.ago) }
-        let!(:ca3) { create(:legacy_cavc_appeal, judge: aff_judge, attorney: attorney, aod: true, tied_to: false, appeal_affinity: false) }
+        let!(:ca2) do
+          create(:legacy_cavc_appeal,
+                 judge: aff_judge, attorney: attorney, aod: true, tied_to: false, affinity_start_date: 3.days.ago)
+        end
+        let!(:ca3) do
+          create(:legacy_cavc_appeal,
+                 judge: aff_judge, attorney: attorney, aod: true, tied_to: false, appeal_affinity: false)
+        end
         # hearing held with previous decision where judge is not the same
         let!(:ca4) do
           ca4 = create(:legacy_cavc_appeal, judge: other_judge, attorney: attorney, aod: true)
@@ -875,7 +883,8 @@ describe VACOLS::CaseDocket, :all_dbs do
           ca4
         end
         let!(:ca5) do
-          ca5 = create(:legacy_cavc_appeal, judge: other_judge, attorney: attorney, aod: true, affinity_start_date: 3.days.ago)
+          ca5 = create(:legacy_cavc_appeal,
+                       judge: other_judge, attorney: attorney, aod: true, affinity_start_date: 3.days.ago)
           ca5.update!(bfmemid: aff_judge.sattyid)
           ca5
         end
@@ -886,8 +895,13 @@ describe VACOLS::CaseDocket, :all_dbs do
         end
         # hearing held with previous decision where judge is same (THIS IS TIED TO)
         let!(:ca7) { create(:legacy_cavc_appeal, judge: tied_judge, attorney: attorney, aod: true) }
-        let!(:ca8) { create(:legacy_cavc_appeal, judge: tied_judge, attorney: attorney, aod: true, affinity_start_date: 3.days.ago) }
-        let!(:ca9) { create(:legacy_cavc_appeal, judge: tied_judge, attorney: attorney, aod: true, appeal_affinity: false) }
+        let!(:ca8) do
+          create(:legacy_cavc_appeal,
+                 judge: tied_judge, attorney: attorney, aod: true, affinity_start_date: 3.days.ago)
+        end
+        let!(:ca9) do
+          create(:legacy_cavc_appeal, judge: tied_judge, attorney: attorney, aod: true, appeal_affinity: false)
+        end
         # hearing held but no previous deciding judge
         let!(:ca10) do
           ca10 = create(:legacy_cavc_appeal, judge: tied_judge, attorney: attorney, aod: true)
@@ -903,8 +917,14 @@ describe VACOLS::CaseDocket, :all_dbs do
         # excluded judge cases:
         # no hearing held but has previous decision
         let!(:ca12) { create(:legacy_cavc_appeal, judge: excl_judge, attorney: attorney, aod: true, tied_to: false) }
-        let!(:ca13) { create(:legacy_cavc_appeal, judge: excl_judge, attorney: attorney, aod: true, tied_to: false, affinity_start_date: 3.days.ago) }
-        let!(:ca14) { create(:legacy_cavc_appeal, judge: excl_judge, attorney: attorney, aod: true, tied_to: false, appeal_affinity: false) }
+        let!(:ca13) do
+          create(:legacy_cavc_appeal,
+                 judge: excl_judge, attorney: attorney, aod: true, tied_to: false, affinity_start_date: 3.days.ago)
+        end
+        let!(:ca14) do
+          create(:legacy_cavc_appeal,
+                 judge: excl_judge, attorney: attorney, aod: true, tied_to: false, appeal_affinity: false)
+        end
         # hearing held with previous decision where judge is not the same
         let!(:ca15) do
           ca15 = create(:legacy_cavc_appeal, judge: other_judge, attorney: attorney, aod: true)
@@ -912,7 +932,8 @@ describe VACOLS::CaseDocket, :all_dbs do
           ca15
         end
         let!(:ca16) do
-          ca16 = create(:legacy_cavc_appeal, judge: other_judge, attorney: attorney, aod: true, affinity_start_date: 3.days.ago)
+          ca16 = create(:legacy_cavc_appeal,
+                        judge: other_judge, attorney: attorney, aod: true, affinity_start_date: 3.days.ago)
           ca16.update!(bfmemid: excl_judge.sattyid)
           ca16
         end
@@ -923,13 +944,24 @@ describe VACOLS::CaseDocket, :all_dbs do
         end
         # hearing held with previous decision where judge is same (THIS IS TIED TO)
         let!(:ca18) { create(:legacy_cavc_appeal, judge: excl_judge, attorney: attorney, aod: true) }
-        let!(:ca19) { create(:legacy_cavc_appeal, judge: excl_judge, attorney: attorney, aod: true, affinity_start_date: 3.days.ago) }
-        let!(:ca20) { create(:legacy_cavc_appeal, judge: excl_judge, attorney: attorney, aod: true, appeal_affinity: false) }
+        let!(:ca19) do
+          create(:legacy_cavc_appeal,
+                 judge: excl_judge, attorney: attorney, aod: true, affinity_start_date: 3.days.ago)
+        end
+        let!(:ca20) do
+          create(:legacy_cavc_appeal, judge: excl_judge, attorney: attorney, aod: true, appeal_affinity: false)
+        end
         # ineligible judge cases:
         # no hearing held but has previous decision
         let!(:ca21) { create(:legacy_cavc_appeal, judge: inel_judge, attorney: attorney, aod: true, tied_to: false) }
-        let!(:ca22) { create(:legacy_cavc_appeal, judge: inel_judge, attorney: attorney, aod: true, tied_to: false, affinity_start_date: 3.days.ago) }
-        let!(:ca23) { create(:legacy_cavc_appeal, judge: inel_judge, attorney: attorney, aod: true, tied_to: false, appeal_affinity: false) }
+        let!(:ca22) do
+          create(:legacy_cavc_appeal,
+                 judge: inel_judge, attorney: attorney, aod: true, tied_to: false, affinity_start_date: 3.days.ago)
+        end
+        let!(:ca23) do
+          create(:legacy_cavc_appeal,
+                 judge: inel_judge, attorney: attorney, aod: true, tied_to: false, appeal_affinity: false)
+        end
         # hearing held with previous decision where judge is not the same
         let!(:ca24) do
           ca24 = create(:legacy_cavc_appeal, judge: other_judge, attorney: attorney, aod: true)
@@ -937,7 +969,8 @@ describe VACOLS::CaseDocket, :all_dbs do
           ca24
         end
         let!(:ca25) do
-          ca25 = create(:legacy_cavc_appeal, judge: other_judge, attorney: attorney, aod: true, affinity_start_date: 3.days.ago)
+          ca25 = create(:legacy_cavc_appeal,
+                        judge: other_judge, attorney: attorney, aod: true, affinity_start_date: 3.days.ago)
           ca25.update!(bfmemid: inel_judge.sattyid)
           ca25
         end
@@ -948,8 +981,13 @@ describe VACOLS::CaseDocket, :all_dbs do
         end
         # hearing held with previous decision where judge is same (THIS IS TIED TO)
         let!(:ca27) { create(:legacy_cavc_appeal, judge: inel_judge, attorney: attorney, aod: true) }
-        let!(:ca28) { create(:legacy_cavc_appeal, judge: inel_judge, attorney: attorney, aod: true, affinity_start_date: 3.days.ago) }
-        let!(:ca29) { create(:legacy_cavc_appeal, judge: inel_judge, attorney: attorney, aod: true, appeal_affinity: false) }
+        let!(:ca28) do
+          create(:legacy_cavc_appeal,
+                 judge: inel_judge, attorney: attorney, aod: true, affinity_start_date: 3.days.ago)
+        end
+        let!(:ca29) do
+          create(:legacy_cavc_appeal, judge: inel_judge, attorney: attorney, aod: true, appeal_affinity: false)
+        end
         # hearing held but no previous deciding judge
         let!(:ca30) do
           ca30 = create(:legacy_cavc_appeal, judge: inel_judge, attorney: attorney, aod: true)
@@ -972,8 +1010,10 @@ describe VACOLS::CaseDocket, :all_dbs do
           # {FOR LEVER BEING INFINITE:}
           cavc_aod_lever.update!(value: "infinite")
           expect(VACOLS::CaseDocket.distribute_priority_appeals(judge, "any", 100, true).map { |c| c["bfkey"] }.sort)
-            .to match_array([ca11, ca12, ca13, ca14, ca15, ca16, ca17, ca21, ca22, ca23, ca24, ca25, ca26, ca27, ca28, ca29, ca30]
-              .map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
+            .to match_array(
+              [ca11, ca12, ca13, ca14, ca15, ca16, ca17, ca21, ca22, ca23, ca24, ca25, ca26, ca27, ca28, ca29, ca30]
+              .map { |c| (c["bfkey"].to_i + 1).to_s }.sort
+            )
           # {FOR LEVER BEING OMIT:}
           cavc_aod_lever.update!(value: "omit")
           expect(VACOLS::CaseDocket.distribute_priority_appeals(judge, "any", 100, true).map { |c| c["bfkey"] }.sort)
@@ -984,10 +1024,117 @@ describe VACOLS::CaseDocket, :all_dbs do
               .map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
         end
       end
+
+      context "for cases where a hearing has been held after the original decision date" do
+        def create_case_hearing(original_case, hearing_judge)
+          create(:case_hearing, :disposition_held, folder_nr: (original_case.bfkey.to_i + 1).to_s,
+                                                   hearing_date: Time.zone.today, user: hearing_judge)
+        end
+
+        let(:new_hearing_judge) { create(:user, :judge, :with_vacols_judge_record) }
+
+        # original hearing held by tied_judge, decided by tied_judge, new hearing held by new_hearing_judge
+        let!(:case_1) do
+          c = create(:legacy_cavc_appeal, judge: tied_judge, attorney: attorney, tied_to: true)
+          create_case_hearing(c, new_hearing_judge)
+          c
+        end
+        # original hearing held by tied_judge, decided by other_judge, new hearing held by new_hearing_judge
+        let!(:case_2) do
+          c = create(:legacy_cavc_appeal, judge: tied_judge, attorney: attorney, tied_to: true)
+          c.update!(bfmemid: other_judge.sattyid)
+          create_case_hearing(c, new_hearing_judge)
+          c
+        end
+        # no original hearing, decided by other_judge, new hearing held by new_hearing_judge
+        let!(:case_3) do
+          c = create(:legacy_cavc_appeal, judge: other_judge, attorney: attorney, tied_to: false)
+          create_case_hearing(c, new_hearing_judge)
+          c
+        end
+        # original hearing held by tied_judge, no original deciding judge, new hearing held by new_hearing_judge
+        let!(:case_4) do
+          c = create(:legacy_cavc_appeal, judge: tied_judge, attorney: attorney, tied_to: true)
+          c.update!(bfmemid: nil)
+          create_case_hearing(c, new_hearing_judge)
+          c
+        end
+        # no original hearing, no original deciding judge, new hearing held by new_hearing_judge
+        let!(:case_5) do
+          c = create(:legacy_cavc_appeal, judge: tied_judge, attorney: attorney, tied_to: false)
+          c.update!(bfmemid: nil)
+          create_case_hearing(c, new_hearing_judge)
+          c
+        end
+        # original hearing held by tied_judge, decided by tied_judge, no new hearing
+        let!(:case_6) { create(:legacy_cavc_appeal, judge: tied_judge, attorney: attorney, tied_to: true) }
+        # original hearing held by tied_judge, decided by other_judge, no new hearing
+        let!(:case_7) do
+          c = create(:legacy_cavc_appeal, judge: tied_judge,
+                                          attorney: attorney, tied_to: true, affinity_start_date: 3.days.ago)
+          c.update!(bfmemid: other_judge.sattyid)
+          c
+        end
+        # no original hearing, decided by other_judge, no new hearing
+        let!(:case_8) do
+          create(:legacy_cavc_appeal, judge: other_judge, attorney: attorney, tied_to: false,
+                                      affinity_start_date: 3.days.ago)
+        end
+        # original hearing held by tied_judge, no original deciding judge, no new hearing
+        let!(:case_9) do
+          c = create(:legacy_cavc_appeal, judge: tied_judge, attorney: attorney, tied_to: true)
+          c.update!(bfmemid: nil)
+          c
+        end
+        # no original hearing, no original deciding judge, no new hearing
+        let!(:case_10) do
+          c = create(:legacy_cavc_appeal, judge: tied_judge, attorney: attorney, tied_to: false)
+          c.update!(bfmemid: nil)
+          c
+        end
+        # original hearing held by tied_judge, decided by tied_judge, new hearing held by inel_judge
+        # this should have affinity to the original deciding judge because new hearing judge is ineligible
+        let!(:case_11) do
+          c = create(:legacy_cavc_appeal,
+                     judge: tied_judge, attorney: attorney, tied_to: true, affinity_start_date: Time.zone.now)
+          create_case_hearing(c, inel_judge_caseflow)
+          c
+        end
+        # original hearing held by inel_judge, decided by inel_judge, no new hearing
+        let!(:case_12) { create(:legacy_cavc_appeal, judge: inel_judge, attorney: attorney, tied_to: true) }
+        # original hearing held by tied_judge, decided by tied_judge, new hearing held by inel_judge
+        # this would have affinity to the original deciding judge but is out of affinity window
+        let!(:case_13) do
+          c = create(:legacy_cavc_appeal, judge: tied_judge, attorney: attorney, tied_to: true)
+          create_case_hearing(c, inel_judge_caseflow)
+          c
+        end
+
+        it "considers cases tied to a judge if they held a hearing after the previous case was decided" do
+          IneligibleJudgesJob.perform_now
+
+          tied_judge_cases = VACOLS::CaseDocket.distribute_priority_appeals(tied_judge_caseflow, "any", 100, true)
+          other_judge_cases = VACOLS::CaseDocket.distribute_priority_appeals(other_judge_caseflow, "any", 100, true)
+          new_hearing_judge_cases = VACOLS::CaseDocket.distribute_priority_appeals(new_hearing_judge, "any", 100, true)
+
+          expect(new_hearing_judge_cases.map { |c| c["bfkey"] }.sort)
+            .to match_array([
+              case_1, case_2, case_3, case_4, case_5, case_9, case_10, case_12, case_13
+            ].map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
+
+          expect(tied_judge_cases.map { |c| c["bfkey"] }.sort)
+            .to match_array([
+              case_6, case_9, case_10, case_11, case_12, case_13
+            ].map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
+
+          expect(other_judge_cases.map { |c| c["bfkey"] }.sort)
+            .to match_array([
+              case_7, case_8, case_9, case_10, case_12, case_13
+            ].map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
+        end
+      end
     end
   end
-
-  # rubocop:enable Layout/LineLength
 
   context "legacy_das_deprecation FeatureToggle enabled" do
     before do
