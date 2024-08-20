@@ -218,14 +218,21 @@ FactoryBot.define do
               bfcurloc { "81" }
 
               after(:create) do |new_case, evaluator|
-                hearing_judge =
+                signing_judge =
                   if evaluator.signing_avlj.present?
                     VACOLS::Staff.find_by_sdomainid(evaluator.signing_avlj.css_id)
                   else
                     evaluator.judge || create(:user, :judge, :with_vacols_judge_record).vacols_staff
                   end
 
-                signing_sattyid = hearing_judge.sattyid
+                hearing_judge =
+                  if evaluator.assigned_avlj.present?
+                    VACOLS::Staff.find_by_sdomainid(evaluator.assigned_avlj.css_id)
+                  else
+                    evaluator.judge || create(:user, :judge, :with_vacols_judge_record).vacols_staff
+                  end
+
+                signing_sattyid = signing_judge.sattyid
 
                 original_attorney = evaluator.attorney || create(:user, :with_vacols_attorney_record).vacols_staff
 
