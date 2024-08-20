@@ -489,7 +489,7 @@ export const timezones = (time, roTimezone, hearingDayDate) => {
   }
 
   // Convert the time into a date object with the RO timezone
-  const dateTime = moment.tz(buildDatetimeString(hearingDayDate, time), 'YYYY-MM-DD HH:mm A', roTimezone);
+  const dateTime = moment.tz(`${hearingDayDate} ${time}`, 'YYYY-MM-DD HH:mm A', roTimezone);
 
   // Map the available timeTIMEZONES to a select options object
   const unorderedOptions = Object.keys(TIMEZONES).map((zone) => {
