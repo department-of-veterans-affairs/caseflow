@@ -136,10 +136,6 @@ module CaseflowCertification
 
     Rails.autoloaders.log! # Enable Zeitwerk logging for compliance troubleshooting
 
-    config.eager_load_paths << Rails.root.join('lib')
-    config.eager_load_paths += Dir[Rails.root.join('app', 'models', '{**}', '{**}')]
-    config.eager_load_paths += Dir[Rails.root.join('app', 'serializers', '{**}')]
-
     config.exceptions_app = self.routes
 
     config.cache_store = :redis_store, Rails.application.secrets.redis_url_cache, { expires_in: 24.hours }
