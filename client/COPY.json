@@ -1220,7 +1220,6 @@
   "URL_HOST_MISSING_ERROR_MESSAGE": "Cannot generate a virtual hearing URL without a valid URL host",
   "URL_PATH_MISSING_ERROR_MESSAGE": "Cannot generate a virtual hearing URL without a valid URL path",
   "BULK_REASSIGN_INSTRUCTIONS": "This task has been %s due to the reassignment of all tasks previously assigned to %s.",
-  "PRIORITY_PUSH_WARNING_MESSAGE": "Some cases are ready to distribute but could not be. This could be due to the tied judge being an acting judge or an attorney (`!user.judge_in_vacols?`). These will be handled manually by the board. The tied judge could also have priority distribution turned off and should not be pushed cases (`JudgeTeam.for_judge(user).accepts_priority_pushed_cases?`). There could also be a duplicate distributed case blocking distribution (`DistributedCase.find_by(case_id: case_id`) or our validations for redistributing legacy appeals failed (https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/services/redistributed_case.rb#L26)",
   "INVALID_IHP_DRAFT_PATH": "Path to IHP is invalid. This path should be of the format '\\\\vacoappbva3.dva.va.gov\\DMDI$\\VBMS Paperless IHPs\\VSO\\902\\VetName 12345.pdf' for legacy appeals and '\\\\vacoappbva3.dva.va.gov\\DMDI$\\VBMS Paperless IHPs\\VSO\\AMA IHPs\\VetName 12345.pdf' for AMA appeals. Hold SHIFT and right click the file to copy the path to the drafted IHP.",
   "UNSCHEDULED_HEARING_TITLE": "Unscheduled hearing",
   "SAVE_UNSCHEDULED_NOTES_SUCCESS_MESSAGE": "You updated the notes for %s’s hearing",
