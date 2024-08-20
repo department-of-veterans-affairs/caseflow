@@ -5,8 +5,7 @@ import DocketTypeBadge from '../../components/DocketTypeBadge';
 import CorrespondenceCaseTimeline from './CorrespondenceCaseTimeline';
 
 const CorrespondenceTasksAdded = (props) => {
-  const veteranName = props.correspondence.veteran_name;
-  const veteranFullName = `${veteranName.first_name} ${veteranName.middle_initial} ${veteranName.last_name}`;
+  const veteranFullName = props.correspondence.veteranFullName;
 
   return (
     <>
