@@ -329,12 +329,8 @@ export const splitSelectedTime = (time) => {
  * Method to get the Timezone label of a Timezone value
  * @param {string} time -- The time to which the zone is being added
  * @param {string} name -- Name of the zone, defaults to New York
- *
-
-  // TODO fill this in
-
-
- * @returns {string} -- The label of the timezone
+ * @param {string} datetime -- Time of a hearing in 'YYYY-MM-DD HH::MM timezone' format
+ * @returns {string} -- The label of the timezone with time preview.
  */
 export const zoneName = (time, name, format, date) => {
   if (time === 'Other') {
@@ -380,6 +376,27 @@ export const zoneName = (time, name, format, date) => {
 export const timeWithTimeZone = (dateTime, timeZone = 'America/New_York') => {
   return moment(dateTime).tz(timeZone).
     format('h:mm A z');
+};
+
+/**
+ * Method to form a datetime string from a separate time and date strings
+ * @param {string} time -- Time in 'hh:mm AM/PM timezone' format. Ex: 1:00 PM Eastern Time (US & Canada)
+ * @param {string} date -- Date in YYYY-MM-DD format.
+ * @throws {Error} -- If either argument fails to meet the expected formatting.
+ * @returns {string} -- A string formed by concantenating the date and time parameters.
+ */
+export const buildDatetimeString = (time, date) => {
+  const clockTime = splitSelectedTime(time)[0];
+
+  if (!moment(clockTime, 'h:mm A').isValid()) {
+    throw new Error(`Time ${time} is not able to be parsed into 'h:mm A' format and therefore is invalid.`);
+  }
+
+  if (!moment(date, 'YYYY-MM-DD').isValid()) {
+    throw new Error(`Date ${date} is not in 'YYYY-MM-DD' format and therefore is invalid.`);
+  }
+
+  return `${date} ${time}`;
 };
 
 /**
