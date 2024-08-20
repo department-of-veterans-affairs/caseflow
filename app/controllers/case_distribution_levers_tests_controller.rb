@@ -132,7 +132,7 @@ class CaseDistributionLeversTestsController < ApplicationController
     current_datetime = Time.zone.now.strftime("%Y%m%d-%H%M")
 
     # Set dynamic filename with current date and time
-    filename = "return_legacy_appeals_to_board_#{current_datetime}.csv"
+    filename = "appeals_tied_to_non_ssc_avljs_#{current_datetime}.csv"
 
     # Send CSV as a response with dynamic filename
     send_data csv_data, filename: filename
