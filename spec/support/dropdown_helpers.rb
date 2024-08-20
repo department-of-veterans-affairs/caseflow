@@ -12,4 +12,6 @@ module DropdownHelpers
     select_option(dropdowns[2], "Issues(s) is VHA")
     select_option(dropdowns[3], "N/A")
   end
+
+  module_function :select_option, :perform_dropdown_actions
 end
