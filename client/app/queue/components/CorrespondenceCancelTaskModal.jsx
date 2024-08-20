@@ -131,6 +131,7 @@ CorrespondenceCancelTaskModal.propTypes = {
   correspondence_uuid: PropTypes.number,
 };
 
+
 const mapStateToProps = (state, ownProps) => ({
   task: taskById(state, { taskId: ownProps.taskId }),
   taskNotRelatedToAppealBanner: state.correspondenceDetails.bannerAlert,
