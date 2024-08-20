@@ -14,10 +14,14 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
       fail if fail_job
 
       # Logic to process legacy appeals and return to the board
-      appeals = select_two_appeals_to_move(LegacyDocket.new.appeals_tied_to_non_ssc_avljs)
-      VACOLS::Case.batch_update_vacols_location("63", appeals.map { |appeal| appeal["bfkey"] })
+      appeals = LegacyDocket.new.appeals_tied_to_non_ssc_avljs
+      select_two_appeals_to_move(appeals)
+      VACOLS::Case.batch_update_vacols_location("63", select_two_appeals_to_move.map { |appeal| appeal["bfkey"] })
       complete_returned_appeal_job(returned_appeal_job, "Job completed successfully", appeals)
-      send_job_slack_report
+
+      # Filter the appeals and send the filtered report
+      filtered_appeals = filter_appeals(appeals)
+      send_job_slack_report(filtered_appeals)
     rescue StandardError => error
       message = "Job failed with error: #{error.message}"
       errored_returned_appeal_job(returned_appeal_job, message)
@@ -31,6 +35,37 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
       @start_time ||= Time.zone.now
       metrics_service_report_runtime(metric_group_name: "return_legacy_appeals_to_board_job")
     end
+  end
+
+  def filter_appeals(appeals, selected_appeals)
+    # These are the appeals that have been moved to location '63'
+    loc_63_appeals = LegacyDocket.new.loc_63_appeals
+
+    # Number of priority and non-priority appeals moved to location '63'
+    priority_appeals_moved = selected_appeals.select { |appeal| appeal["priority"] == 1 }
+    non_priority_appeals_moved = selected_appeals.select { |appeal| appeal["priority"] == 0 }
+
+    # Calculate remaining elligible appeals
+    remaining_priority_appeals = appeals.select { |appeal| appeal["priority"] == 1 } - priority_appeals_moved
+    remaining_non_priority_appeals = appeals.select { |appeal| appeal["priority"] == 1 } - non_priority_appeals_moved
+
+    # List of non-SSC AVLJs that appeals were moved to location '63'
+    moved_avljs = selected_appeals.map { |appeal| appeal["vlj"] }.compact.uniq
+
+    # Keys of the hash that holds "Appeals should be grouped by non-SSC AVLJ"
+    grouped_by_avlj = loc_63_appeals.group_by { |appeal| appeal["vlj"] }
+      .select { |key, group| selected_appeals.map { |appeal| appeal["bfkey"] }.include?(group.first["bfkey"]) }
+      .keys
+      .compact
+
+    {
+      priority_appeals_count: priority_appeals_moved.size,
+      non_priority_appeals_count: non_priority_appeals_moved.size,
+      remaining_priority_appeals_count: remaining_priority_appeals.size,
+      remaining_non_priority_appeals_count: remaining_non_priority_appeals.size,
+      moved_avljs: moved_avljs,
+      grouped_by_avlj: grouped_by_avlj
+    }
   end
 
   private
