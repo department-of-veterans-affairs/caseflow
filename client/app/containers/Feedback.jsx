@@ -19,7 +19,7 @@ const Feedback = (props) => <BrowserRouter>
         overlapColor: COLORS.GREY_DARK
       }} />
     <AppFrame>
-      <StatusMessage title="Having a technical difficulty?" messageTag="p" >
+      <StatusMessage title="Having a technical difficulty?" messageTag="div" >
         <p tabIndex={0}>
           Submit a ticket to the Caseflow team using <a href="https://yourIT.va.gov" target="_blank"
             rel="noopener noreferrer">YourIT</a>. The YourIT link is also available on most VA issued workstations.
