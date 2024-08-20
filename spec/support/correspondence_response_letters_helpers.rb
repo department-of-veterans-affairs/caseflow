@@ -64,6 +64,10 @@ module CorrespondenceResponseLettersHelpers
     @correspondence
   end
 
+  def wait_for_backend_processing
+    sleep 2
+  end
+
   def add_second_response_letter
     click_on("+ Add letter")
     container = find_by_id("2")
