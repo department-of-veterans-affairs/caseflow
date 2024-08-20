@@ -25,6 +25,22 @@ class CorrespondenceMailTask < CorrespondenceTask
     )
   end
 
+  def self.reassign_users(assigned_to)
+    users_list = []
+    # return users if the assignee is an organization
+    if assigned_to.is_a?(Organization)
+      users_list << assigned_to&.users.pluck(:css_id)
+    end
+    # return the users from other orgs
+    if assigned_to.is_a?(User)
+      users_list = []
+      assigned_to.organizations.each { |org| users_list << org.users.reject { |user| user == assigned_to} }
+      users_list.flatten
+    end
+
+    users_list
+  end
+
   def self.available_actions(user)
     return [] unless user
 
