@@ -15,9 +15,12 @@ task :lint do # rubocop:disable Rails/RakeEnvironment
   puts "running rubocop..."
   rubocop_result = ShellCommand.run("bundle exec rubocop")
 
-  puts "\nrunning eslint..."
+  puts "\nrunning eslint for changed files..."
   eslint_cmd = ENV["CI"] ? "lint" : "lint:fix"
   eslint_result = ShellCommand.run("cd ./client && yarn run #{eslint_cmd}")
+
+  puts "\nrunning eslint for all files..."
+  ShellCommand.run("cd ./client && yarn run lint:all")
 
   puts "\nrunning prettier..."
   prettier_cmd = ENV["CI"] ? "pretty:check" : "pretty:format"
