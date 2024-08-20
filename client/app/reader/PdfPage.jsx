@@ -146,7 +146,7 @@ export class PdfPage extends React.PureComponent {
         console.error(`${uuid.v4()} : render ${this.props.file} : ${error}`);
         this.isDrawing = false;
       });
-  };
+  }
 
   componentDidMount = () => {
     this.setUpPage();
