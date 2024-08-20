@@ -18,6 +18,7 @@ describe Distribution, :all_dbs do
     create(:case_distribution_lever, :cavc_aod_affinity_days)
     create(:case_distribution_lever, :aoj_cavc_affinity_days)
     create(:case_distribution_lever, :aoj_aod_affinity_days)
+    create(:case_distribution_lever, :aoj_affinity_days)
     create(:case_distribution_lever, :ama_hearing_case_affinity_days)
     create(:case_distribution_lever, :ama_hearing_case_aod_affinity_days)
     create(:case_distribution_lever, :ama_direct_review_docket_time_goals)
@@ -155,10 +156,19 @@ describe Distribution, :all_dbs do
   context "#distribute!" do
     let(:statistics) do
       {
-        batch_size: 0, direct_review_due_count: 0, direct_review_proportion: 0,
-        evidence_submission_proportion: 0, hearing_proportion: 0, legacy_hearing_backlog_count: 0,
-        legacy_proportion: 0.0, nonpriority_iterations: 0, priority_count: 0, total_batch_size: 0,
-        algorithm: "proportions", sct_appeals: 0
+        statistics: {
+          batch_size: 0,
+          direct_review_due_count: 0,
+          direct_review_proportion: 0,
+          evidence_submission_proportion: 0,
+          hearing_proportion: 0,
+          legacy_hearing_backlog_count: 0,
+          legacy_proportion: 0.0,
+          nonpriority_iterations: 0,
+          priority_count: 0,
+          total_batch_size: 0,
+          sct_appeals: 0
+        }
       }
     end
     let(:result_stats) do
@@ -201,7 +211,7 @@ describe Distribution, :all_dbs do
 
       it "calls requested_distribution" do
         expect(new_distribution).to receive(:requested_distribution)
-        allow(new_distribution).to receive(:ama_statistics).and_return({})
+        allow(new_distribution).to receive(:ama_statistics).and_return(statistics)
         new_distribution.distribute!
         expect(new_distribution.reload.status).to eq "completed"
       end
@@ -212,7 +222,7 @@ describe Distribution, :all_dbs do
 
       it "calls priority_push_distribution" do
         expect(new_distribution).to receive(:priority_push_distribution)
-        allow(new_distribution).to receive(:ama_statistics).and_return({})
+        allow(new_distribution).to receive(:ama_statistics).and_return(statistics)
         new_distribution.distribute!
         expect(new_distribution.reload.status).to eq "completed"
       end
