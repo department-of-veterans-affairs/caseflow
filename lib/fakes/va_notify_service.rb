@@ -9,7 +9,7 @@ class Fakes::VANotifyService < ExternalApi::VANotifyService
       email_template_id:,
       first_name:,
       docket_number:,
-      status: ""
+      status: "delivered"
     )
       fake_notification_response(email_template_id, status)
     end
@@ -20,7 +20,7 @@ class Fakes::VANotifyService < ExternalApi::VANotifyService
       sms_template_id:,
       first_name:,
       docket_number:,
-      status: ""
+      status: "delivered"
     )
       if participant_id.length.nil?
         return bad_participant_id_response
