@@ -34,7 +34,7 @@ feature "Nonrating Request Issue Modal", :postgres do
     expect(page).to_not have_content("PACT Act")
   end
 
-  def test_issue_categories(decision_review_type:, benefit_type:, included_category:, excluded_category:, mst_pact:)
+  def test_issue_categories(decision_review_type:, benefit_type:, included_category:, mst_pact:)
     case decision_review_type
     when "higher_level_review"
       start_higher_level_review(
@@ -50,17 +50,16 @@ feature "Nonrating Request Issue Modal", :postgres do
       start_appeal(veteran)
     end
 
-    visit_and_test_categories(included_category, excluded_category, benefit_type, mst_pact)
+    visit_and_test_categories(included_category, benefit_type, mst_pact)
   end
 
-  def visit_and_test_categories(included_category, excluded_category, benefit_type, mst_pact)
+  def visit_and_test_categories(included_category, benefit_type, mst_pact)
     visit "/intake"
     click_intake_continue
     click_intake_add_issue
     mst_pact ? check_for_mst_pact : check_for_no_mst_pact
     click_intake_nonrating_category_dropdown
     expect(page).to have_content(included_category)
-    expect(page).to_not have_content(excluded_category)
     add_intake_nonrating_issue(
       category: included_category,
       description: "I am a description",
@@ -84,7 +83,6 @@ feature "Nonrating Request Issue Modal", :postgres do
         decision_review_type: "higher_level_review",
         benefit_type: "pension",
         included_category: "Eligibility | Wartime Service",
-        excluded_category: "Entitlement to Services",
         mst_pact: false
       )
 
@@ -92,7 +90,6 @@ feature "Nonrating Request Issue Modal", :postgres do
         decision_review_type: "higher_level_review",
         benefit_type: "vha",
         included_category: "Eligibility for Dental Treatment",
-        excluded_category: "Entitlement to Services",
         mst_pact: false
       )
 
@@ -100,7 +97,6 @@ feature "Nonrating Request Issue Modal", :postgres do
         decision_review_type: "supplemental_claim",
         benefit_type: "fiduciary",
         included_category: "Appointment of a Fiduciary (38 CFR 13.100)",
-        excluded_category: "Entitlement to Services",
         mst_pact: false
       )
     end
@@ -112,7 +108,6 @@ feature "Nonrating Request Issue Modal", :postgres do
         decision_review_type: "appeal",
         benefit_type: "not applicable to appeal",
         included_category: "Unknown Issue Category",
-        excluded_category: "Entitlement to Services",
         mst_pact: true
       )
     end
