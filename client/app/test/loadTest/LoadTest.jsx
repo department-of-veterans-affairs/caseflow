@@ -4,7 +4,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import AppFrame from '../../components/AppFrame';
 import { BrowserRouter } from 'react-router-dom';
 
-import SearchableDropdown from '../../components/SearchableDropdown';
+import UserConfiguration from './UserConfiguration';
 
 export default function LoadTest() {
 
@@ -13,31 +13,7 @@ export default function LoadTest() {
       <AppFrame>
         <AppSegment filledBackground>
           <h1>Test Target Configuration</h1>
-          <div>
-            <p>Station ID</p>
-            <SearchableDropdown
-              name="Station id dropdown"
-              hideLabel
-              // onInputChange={handleInputChange}
-              // options={slicedUserOptions} searchable
-              // onChange={handleUserSelect}
-              // Disable native filter
-              filterOption={() => true}
-              // value={userSelect}
-            />
-            <br />
-            <p>Regional Office</p>
-            <SearchableDropdown
-              name="Regional office dropdown"
-              hideLabel
-              // onInputChange={handleInputChange}
-              // options={slicedUserOptions} searchable
-              // onChange={handleUserSelect}
-              // Disable native filter
-              filterOption={() => true}
-              // value={userSelect}
-            />
-          </div>
+          <UserConfiguration />
         </AppSegment>
       </AppFrame>
     </div>
