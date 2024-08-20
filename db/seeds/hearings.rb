@@ -189,7 +189,7 @@ module Seeds
       )
 
       hearing.update!(
-        scheduled_datetime: HearingDatetimeService.prepare_time_for_storage(
+        scheduled_datetime: HearingDatetimeService.prepare_datetime_for_storage(
           date: day.scheduled_for,
           time_string: scheduled_time_string_eastern
         )
@@ -268,7 +268,7 @@ module Seeds
       )
 
       case_hearing.update!(
-        hearing_date: HearingDatetimeService.prepare_time_for_storage(
+        hearing_date: HearingDatetimeService.prepare_datetime_for_storage(
           date: day.scheduled_for,
           time_string: scheduled_time_string_eastern
         )
