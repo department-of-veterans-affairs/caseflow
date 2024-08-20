@@ -6,6 +6,7 @@ import TabWindow from '../../../components/TabWindow';
 import CopyTextButton from '../../../components/CopyTextButton';
 import { loadCorrespondence } from '../correspondenceReducer/correspondenceActions';
 import CorrespondenceCaseTimeline from '../CorrespondenceCaseTimeline';
+import CorrespondenceResponseLetters from './CorrespondenceResponseLetters';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
 import { prepareAppealForSearchStore } from 'app/queue/utils';
@@ -235,6 +236,18 @@ const CorrespondenceDetails = (props) => {
     );
   };
 
+  const correspondenceResponseLetters = () => {
+    return (
+      <>
+        <div className="correspondence-package-details">
+          <CorrespondenceResponseLetters
+            letters={props.correspondenceResponseLetters}
+          />
+        </div>
+      </>
+    );
+  };
+
   const tabList = [
     {
       disable: false,
@@ -249,7 +262,7 @@ const CorrespondenceDetails = (props) => {
     {
       disable: false,
       label: 'Response Letters',
-      page: 'Information about Response Letters'
+      page: correspondenceResponseLetters()
     },
     {
       disable: false,
@@ -292,7 +305,11 @@ CorrespondenceDetails.propTypes = {
   correspondence: PropTypes.object,
   organizations: PropTypes.array,
   userCssId: PropTypes.string,
-  enableTopPagination: PropTypes.bool
+  enableTopPagination: PropTypes.bool,
+  loadCorrespondenceStatus: PropTypes.func,
+  correspondenceStatus: PropTypes.object,
+  correspondence_appeal_ids: PropTypes.bool,
+  correspondenceResponseLetters: PropTypes.array
 };
 
 export default CorrespondenceDetails;
