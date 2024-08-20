@@ -78,10 +78,11 @@ const ConfirmWorkOrderModal = ({ history, onCancel }) => {
     },
     '& p': {
       marginTop: '2.9rem',
-      marginLeft: '-2rem'
+      marginLeft: '1rem'
     },
     '& li': {
       display: 'inline-flex',
+      marginLeft: '2rem',
       marginBottom: '-4rem'
     },
     '& ul': {

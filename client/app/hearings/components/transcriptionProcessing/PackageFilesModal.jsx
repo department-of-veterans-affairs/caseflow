@@ -7,7 +7,7 @@ import { SearchableDropdown } from '../../../components/SearchableDropdown';
 import ApiUtil from 'app/util/ApiUtil';
 import { useHistory } from 'react-router';
 
-const PackageFilesModal = ({ onCancel, contractors, selectedFiles }) => {
+const PackageFilesModal = ({ onCancel, contractors, returnDates, selectedFiles }) => {
   const [transcription, setTranscription] = useState({ task_id: '----' });
   const [returnDateValue, setReturnDateValue] = useState('');
   const [contractor, setContractor] = useState({ id: '0', name: '' });
@@ -61,57 +61,13 @@ const PackageFilesModal = ({ onCancel, contractors, selectedFiles }) => {
     );
   };
 
-  const formatDate = (date) => {
-    const dateArr = date.split('/');
-
-    const newArr = dateArr.map((digit) => {
-      if (Number(digit) < 10) {
-        return `0${digit}`;
-      }
-
-      return digit;
-    });
-
-    return newArr.join('/');
-  };
-
-  /**
-   * Calculates the expected return date for the radio buttons
-   * @params {number} days - Amount of days from today
-   * @returns {string} The formatted expected return date
-   */
-  const calculateReturnDate = (days) => {
-    const date = new Date();
-
-    let dayofWeek = date.getDay();
-    let daysRemaining = days;
-    let totalDays = 0;
-
-    while (daysRemaining > 0) {
-      dayofWeek += 1;
-      if (dayofWeek < 6) {
-        daysRemaining -= 1;
-        totalDays += 1;
-      } else {
-        totalDays += 2;
-        dayofWeek = 0;
-      }
-    }
-
-    date.setDate(date.getDate() + totalDays);
-
-    const dateString = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
-
-    return formatDate(dateString);
-
-  };
-
   /**
    * Creates the radio button options
    * @returns {object} The radio button options
    */
   const returnDateOptions = () => {
-    const fifteenDayReturnDate = calculateReturnDate(15);
+    const fifteenDayReturnDate = returnDates[0];
+    const fiveDayReturnDate = returnDates[1];
 
     return [
       {
@@ -120,7 +76,7 @@ const PackageFilesModal = ({ onCancel, contractors, selectedFiles }) => {
       },
       {
         displayText: 'Expedite (Maximum of 5 days)',
-        value: calculateReturnDate(5)
+        value: fiveDayReturnDate
       }
     ];
   };
@@ -194,6 +150,7 @@ const PackageFilesModal = ({ onCancel, contractors, selectedFiles }) => {
 PackageFilesModal.propTypes = {
   onCancel: PropTypes.func,
   contractors: PropTypes.object,
+  returnDates: PropTypes.array,
   selectedFiles: PropTypes.arrayOf(PropTypes.object)
 };
 

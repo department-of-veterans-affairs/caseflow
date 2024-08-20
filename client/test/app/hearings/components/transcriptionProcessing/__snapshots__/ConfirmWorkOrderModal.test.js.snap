@@ -3,7 +3,7 @@
 exports[`ConfirmWorkOrderModal matches snapshot 1`] = `
 <div>
   <div
-    data-css-gldsg8=""
+    data-css-1k03ilb=""
     style="border: 2px solid; border-color: #d6d7d9; margin: 3rem;"
   >
     <h1>
@@ -142,7 +142,7 @@ exports[`ConfirmWorkOrderModal matches snapshot 1`] = `
 exports[`ConfirmWorkOrderModal matches snapshot 2`] = `
 <div>
   <div
-    data-css-gldsg8=""
+    data-css-1k03ilb=""
     style="border: 2px solid; border-color: #d6d7d9; margin: 3rem;"
   >
     <h1>
