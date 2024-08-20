@@ -236,7 +236,6 @@ module Seeds
     def create_cases_for_aoj_aod_affinty_days_lever
       # aoj aod affinity cases:
         # no hearing held but has previous decision
-       
         create(:legacy_aoj_appeal, :aod, bfcorlid: "#{create_correspondent.ssn}S", judge: affinity_judge, attorney: attorney, tied_to: false)
         create(:legacy_aoj_appeal, :aod, bfcorlid: "#{create_correspondent.ssn}S", judge: affinity_judge, attorney: attorney, tied_to: false, affinity_start_date: 3.days.ago)
         create(:legacy_aoj_appeal, :aod, bfcorlid: "#{create_correspondent.ssn}S", judge: affinity_judge, attorney: attorney, tied_to: false, appeal_affinity: false)
