@@ -31,7 +31,7 @@ Rails.logger.info("DT_API_TOKEN is set to #{DT_API_TOKEN}")
 
 config = {
   "OpenTelemetry::Instrumentation::Redis" => { enabled: false },
-  "OpenTelemetry::Instrumentation::PG" => { enabled: true },
+  "OpenTelemetry::Instrumentation::PG" => { enabled: false },
   "OpenTelemetry::Instrumentation::AwsSdk" => { enabled: false },
   "OpenTelemetry::Instrumentation::Net::HTTP" => { enabled: false },
   "OpenTelemetry::Instrumentation::Rack" => { untraced_endpoints: ["/health-check", "/sample", "/logs"] },
