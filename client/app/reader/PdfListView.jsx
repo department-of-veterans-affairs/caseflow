@@ -83,6 +83,7 @@ export class PdfListView extends React.Component {
         userHasEfolderRole={this.props.userHasEfolderRole}
         efolderExpressUrl={this.props.efolderExpressUrl}
         appeal={this.props.appeal} />
+      {this.props.featureToggles.bandwidth_banner ? <BandwidthAlert /> : null}
       <AppSegment filledBackground>
         <div className="section--document-list">
           <ClaimsFolderDetails appeal={this.props.appeal} documents={this.props.documents} />
