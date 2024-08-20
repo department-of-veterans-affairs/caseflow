@@ -6,6 +6,18 @@ import TextField from '../../components/TextField';
 import { PageArrowLeftIcon } from '../../components/icons/PageArrowLeftIcon';
 import { PageArrowRightIcon } from '../../components/icons/PageArrowRightIcon';
 
+const isValidWholeNumber = (pageNumber) => {
+  return (/^\d+$/).test(pageNumber);
+};
+
+const validatePageNum = (pageNumber, numPages) => {
+  if (isValidWholeNumber(pageNumber)) {
+    return parseInt(pageNumber, 10) >= 1 && parseInt(pageNumber, 10) <= numPages;
+  }
+
+  return false;
+};
+
 const ReaderFooter = ({
   currentPage,
   docCount,
@@ -19,8 +31,14 @@ const ReaderFooter = ({
 }) => {
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
-      document.getElementById(`canvas-${event.target.value}`).scrollIntoView();
-      setCurrentPage(event.target.value);
+      if (validatePageNum(event.target.value, numPages)) {
+        document.getElementById(`canvas-${event.target.value}`).scrollIntoView();
+        setCurrentPage(event.target.value);
+      } else if (currentPage) {
+        event.target.value = currentPage;
+      }
+    } else if (validatePageNum(event.currentTarget?.value, numPages)) {
+      setCurrentPage(event.currentTarget.value);
     }
   };
 
@@ -50,7 +68,7 @@ const ReaderFooter = ({
                   name=""
                   label=""
                   maxLength={4}
-                  onChange={() => setCurrentPage()}
+                  onChange={handleKeyPress}
                   onKeyPress={handleKeyPress}
                   value={currentPage}
                   required={false}

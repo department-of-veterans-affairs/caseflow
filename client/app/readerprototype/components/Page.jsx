@@ -62,7 +62,8 @@ const Page = ({ page, rotation = '0deg', renderItem, scale }) => {
     <div id={`canvasWrapper-${page.pageNumber}`} className="prototype-canvas-wrapper" style={wrapperStyle}>
       <canvas
         id={`canvas-${page.pageNumber}`}
-        className={`prototype-canvas page-${isVisible}`}
+        className="prototype-canvas"
+        data-visible={isVisible}
         style={canvasStyle}
         ref={canvasRef}
         height={scaledHeight}

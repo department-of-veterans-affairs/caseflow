@@ -71,6 +71,15 @@ const DocumentViewer = (props) => {
     }
   };
 
+  const getCurrentPageNum = () => {
+    const getPageNum = document.querySelector('[data-visible="true"]').id.replace(/[^0-9]/g, '');
+    const pageNumber = parseInt(getPageNum, 10);
+
+    if (pageNumber && pageNumber !== currentPage) {
+      setCurrentPage(pageNumber);
+    }
+  };
+
   document.body.style.overflow = 'hidden';
 
   return (
