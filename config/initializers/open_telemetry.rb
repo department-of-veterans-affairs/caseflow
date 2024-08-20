@@ -33,7 +33,7 @@ config = {
   "OpenTelemetry::Instrumentation::Redis" => { enabled: false },
   "OpenTelemetry::Instrumentation::PG" => { enabled: true },
   "OpenTelemetry::Instrumentation::AwsSdk" => { enabled: false },
-  "OpenTelemetry::Instrumentation::Net::HTTP" => { enabled: true },
+  "OpenTelemetry::Instrumentation::Net::HTTP" => { enabled: false },
   "OpenTelemetry::Instrumentation::Rack" => { untraced_endpoints: ["/health-check", "/sample", "/logs"] }
 }
 
@@ -62,7 +62,7 @@ if !Rails.env.development? && !Rails.env.test? && !Rails.env.demo?
   end
 end
 # Uncomment this line to enbale console exporting.
-ENV["OTEL_TRACES_EXPORTER"] = "console"
+# ENV["OTEL_TRACES_EXPORTER"] = "console"
 if Rails.env.development? && ENV["OTEL_TRACES_EXPORTER"] == "console"
   OpenTelemetry::SDK.configure do |c|
     c.service_name = "caseflow-quickstart"
