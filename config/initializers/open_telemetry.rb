@@ -34,7 +34,8 @@ config = {
   "OpenTelemetry::Instrumentation::PG" => { enabled: true },
   "OpenTelemetry::Instrumentation::AwsSdk" => { enabled: false },
   "OpenTelemetry::Instrumentation::Net::HTTP" => { enabled: false },
-  "OpenTelemetry::Instrumentation::Rack" => { untraced_endpoints: ["/health-check", "/sample", "/logs"] }
+  "OpenTelemetry::Instrumentation::Rack" => { untraced_endpoints: ["/health-check", "/sample", "/logs"] },
+  "OpenTelemetry::Instrumentation::ActiveJob" => { enabled: false }
 }
 
 if !Rails.env.development? && !Rails.env.test? && !Rails.env.demo?
