@@ -329,6 +329,8 @@ export const splitSelectedTime = (time) => {
  * Method to get the Timezone label of a Timezone value
  * @param {string} time -- The time to which the zone is being added
  * @param {string} name -- Name of the zone, defaults to New York
+ * @param {string} format -- How the resulting time preview should be formatted.
+ *   See: https://momentjscom.readthedocs.io/en/latest/moment/01-parsing/03-string-format/
  * @param {string} datetime -- Time of a hearing in 'YYYY-MM-DD HH::MM timezone' format
  * @returns {string} -- The label of the timezone with time preview.
  */
