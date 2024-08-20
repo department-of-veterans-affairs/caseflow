@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { get } from 'lodash';
 
@@ -14,10 +14,28 @@ import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import QueueFlowModal from './QueueFlowModal';
 import ApiUtil from '../../util/ApiUtil';
 import Button from '../../components/Button';
-import { setTaskNotRelatedToAppealBanner, cancelTaskNotRelatedToAppeal } from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
+import { setTaskNotRelatedToAppealBanner, cancelTaskNotRelatedToAppeal, organizationUsers } from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
+import Dropdown from '../../components/Dropdown';
+import SearchableDropdown from '../../components/SearchableDropdown';
+import AssignedCasesPage from '../AssignedCasesPage';
 
 /* eslint-disable camelcase */
 const CorrespondenceAssignTaskModal = (props) => {
+  const userData = () => {
+    const storeData = useSelector((state) => state.correspondenceDetails.correspondenceInfo.tasksUnrelatedToAppeal[0].usersInOrg);
+    // console.log("following is store data output")
+    // console.log(storeData)
+    return storeData.map((orgUser) => {
+      return {
+        label: orgUser.css_id,
+        value: orgUser.css_id
+      }
+    });
+    // return storeData.map((orgUser) => {id: orgUser.css_id});
+    // console.log(storeData);
+  }
+  // console.log("following is user data method output")
+  // console.log(userData());
   const { task } = props;
   const taskData = taskActionData(props);
 
@@ -26,6 +44,11 @@ const CorrespondenceAssignTaskModal = (props) => {
 
   const [instructions, setInstructions] = useState('');
   const [instructionsAdded, setInstructionsAdded] = useState(true);
+  // let assignee;
+
+  // useEffect(() => {
+  //   organizationUsers()
+  // }, []);
 
   useEffect(() => {
     // Handle document search position
@@ -70,14 +93,15 @@ const CorrespondenceAssignTaskModal = (props) => {
     const payload = {
       data: {
         task: {
-          status: TASK_STATUSES.cancelled,
+          status: TASK_STATUSES.assigned,
+          // assignedTo: assignee,
           instructions,
           ...(taskData?.business_payloads && { business_payloads: taskData?.business_payloads })
         }
       }
     };
 
-    return props.cancelTaskNotRelatedToAppeal(props.task_id, payload);
+    return props.assignTaskToUser(props.task_id, payload);
 
   };
 
@@ -96,8 +120,8 @@ const CorrespondenceAssignTaskModal = (props) => {
   return (
     <QueueFlowModal
       {...modalProps}
-      title= "Cancel Task"
-      button="Cancel Task"
+      title= "Assign Task"
+      button="Assign Task"
       submitDisabled= {instructionsAdded}
       pathAfterSubmit={taskData?.redirect_after ?? `/queue/correspondence/${props.correspondence_uuid}`}
       submit={submit}
@@ -109,20 +133,29 @@ const CorrespondenceAssignTaskModal = (props) => {
           <br />
         </React.Fragment>
       }
+      {
+        <SearchableDropdown
+          // key={doc.id}
+          name="User dropdown"
+          label="Select a user"
+          // multi
+          dropdownStyling={{ position: 'relative' }}
+          creatable
+          options={userData()}
+          placeholder="Select or search"
+          // value={generateOptionsFromTags(doc.tags)}
+          // onChange={onChange}
+        />
+      }
       {shouldShowTaskInstructions &&
         <TextareaField
-          name={taskData?.instructions_label ?? COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}
+          // name={taskData?.instructions_label ?? COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}
+          name={taskData?.instructions_label ?? COPY.CORRESPONDENCE_CASES_ASSIGN_TASK_MODAL_INSTRUCTIONS_TITLE}
           id="taskInstructions"
           onChange={setInstructions}
           value={instructions}
         />
       }
-
-      <Button
-        name="jumpToComment"
-        classNames={['cf-btn-link comment-control-button horizontal']}
-        onClick={submit}
-      > hello test</Button>
     </QueueFlowModal>
   );
 
@@ -146,13 +179,15 @@ CorrespondenceAssignTaskModal.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   task: taskById(state, { taskId: ownProps.taskId }),
-  taskNotRelatedToAppealBanner: state.correspondenceDetails.bannerAlert
+  taskNotRelatedToAppealBanner: state.correspondenceDetails.bannerAlert,
+  // organizationUsers: state.correspondenceDetails.showOrganizationUsers
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestPatch,
   setTaskNotRelatedToAppealBanner,
-  cancelTaskNotRelatedToAppeal
+  cancelTaskNotRelatedToAppeal,
+  // organizationUsers
 }, dispatch);
 
 export default (withRouter(

@@ -10,15 +10,15 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       # stubbed
     end
 
-    def assign_corr_task_to_person(task, _user = current.user)
-      return_to_name = task_assigner_name(task)
+    def assign_corr_task_to_person(task, _user = nil)
+      # return_to_name = task_assigner_name(task)
 
       {
         modal_title: COPY::ASSIGN_TASK_TITLE,
-        modal_body: format_assign_body(task, COPY::ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER, assign_corr_task_to_person),
+        modal_body: format(COPY::ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER),
         message_title: format(COPY::CORRESPONDENCE_CASES_ASSIGN_TASK_MODAL_INSTRUCTIONS_TITLE, task.correspondence&.veteran_full_name),
         # message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, return_to_name),
-        # redirect_after: "/queue/correspondence/:correspondence_uuid/"
+        redirect_after: "/queue/correspondence/:correspondence_uuid/"
       }
     end
 

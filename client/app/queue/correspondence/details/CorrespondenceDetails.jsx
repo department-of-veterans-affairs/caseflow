@@ -7,7 +7,7 @@ import TabWindow from '../../../components/TabWindow';
 import CopyTextButton from '../../../components/CopyTextButton';
 import { loadCorrespondence } from '../correspondenceReducer/correspondenceActions';
 import CorrespondenceCaseTimeline from '../CorrespondenceCaseTimeline';
-import { correspondenceInfo } from './../correspondenceDetailsReducer/correspondenceDetailsActions';
+import { correspondenceInfo, organizationUsers } from './../correspondenceDetailsReducer/correspondenceDetailsActions';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
 import { prepareAppealForSearchStore } from 'app/queue/utils';
@@ -149,6 +149,7 @@ const CorrespondenceDetails = (props) => {
   useEffect(() => {
     dispatch(loadCorrespondence(correspondence));
     dispatch(correspondenceInfo(correspondence));
+    dispatch(organizationUsers(props.correspondence.tasksUnrelatedToAppeal.usersInOrg));
   }, []);
 
   const correspondenceTasks = () => {
@@ -303,11 +304,13 @@ CorrespondenceDetails.propTypes = {
 
 const mapStateToProps = (state) => ({
   correspondenceInfo: state.correspondenceDetails.correspondenceInfo,
+  organizationUsers: state.correspondenceDetails.showOrganizationUsers
 });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    correspondenceInfo
+    correspondenceInfo,
+    organizationUsers
   }, dispatch)
 );
 

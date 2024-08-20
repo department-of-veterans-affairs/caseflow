@@ -60,6 +60,14 @@ class CorrespondenceTasksController < TasksController
     process_package_action_decision(correspondence_tasks_params[:decision])
   end
 
+  def assign_to_person
+    task = CorrespondenceTask.find(correspondence_tasks_params[:task_id])
+    task.update!(
+      status: Constants.TASK_STATUSES.assigned,
+      assigned_to: current_user
+      )
+  end
+
   private
 
   def correspondence_tasks_params
