@@ -13,12 +13,14 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
   end
 
   subject do
-    described_class.new(user: user, review: review).tap do |instance|
-      instance.instance_variable_set(:@added_issues_data, parser.added_issues)
-      instance.instance_variable_set(:@removed_issues_data, parser.removed_issues)
-      instance.instance_variable_set(:@edited_issues_data, parser.updated_issues)
-      instance.instance_variable_set(:@withdrawn_issues_data, parser.withdrawn_issues)
-    end
+    described_class.new(
+      user: user,
+      review: review,
+      added_issues_data: parser.added_issues,
+      removed_issues_data: parser.removed_issues,
+      edited_issues_data: parser.updated_issues,
+      withdrawn_issues_data: parser.withdrawn_issues
+    )
   end
 
   describe "#perform!" do

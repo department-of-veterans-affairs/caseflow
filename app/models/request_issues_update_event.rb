@@ -11,6 +11,11 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   #   withdrawn_issues_data: parser.withdrawn_issues
   # )
 
+  attr_writer :added_issues_data
+  attr_writer :removed_issues_data
+  attr_writer :edited_issues_data
+  attr_writer :withdrawn_issues_data
+
   def perform!
     return false unless validate_before_perform
     return false if processed?
@@ -124,7 +129,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   def process_withdrawn_issues!
     return if withdrawn_issues.empty?
 
-    withdrawn_issues_data.each do |withdrawn_issue|
+    @withdrawn_issues_data.each do |withdrawn_issue|
       request_issue = RequestIssue.find(withdrawn_issue[:id].to_s)
       request_issue.withdraw!(withdrawn_issue[:closed_at])
     end
