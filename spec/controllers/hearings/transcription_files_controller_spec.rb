@@ -395,6 +395,47 @@ RSpec.describe Hearings::TranscriptionFilesController do
       create(:transcription_file, locked_by_id: nil, locked_at: nil)
     end
 
+    let(:transcription_file_1_info_response) do
+      {
+        id: transcription_file_1.id,
+        docketNumber: "H" + transcription_file_1.docket_number,
+        firstName: transcription_file_1.hearing.appellant_first_name,
+        lastName: transcription_file_1.hearing.appellant_last_name,
+        isAdvancedOnDocket: false,
+        caseType: "Original",
+        hearingDate: transcription_file_1.hearing.scheduled_for.to_formatted_s(:short_date),
+        appealType: "AMA",
+        judge: "JudgeUser",
+        regionalOffice: "Washington",
+        hearingId: transcription_file_1.hearing.id
+      }
+    end
+
+    let!(:transcription_file_6) do
+      create(
+        :transcription_file,
+        hearing: create(:legacy_hearing),
+        file_status: Constants.TRANSCRIPTION_FILE_STATUSES.retrieval.success,
+        hearing_type: "LegacyHearing"
+      )
+    end
+
+    let(:transcription_file_6_info_response) do
+      {
+        id: transcription_file_6.id,
+        docketNumber: "L" + transcription_file_6.docket_number,
+        firstName: transcription_file_6.hearing.appellant_first_name,
+        lastName: transcription_file_6.hearing.appellant_last_name,
+        isAdvancedOnDocket: false,
+        caseType: "Original",
+        hearingDate: transcription_file_6.hearing.scheduled_for.to_formatted_s(:short_date),
+        appealType: "Legacy",
+        judge: nil,
+        regionalOffice: "Washington",
+        hearingId: transcription_file_6.hearing.id
+      }
+    end
+
     before do
       TranscriptionTeam.singleton.add_user(current_user)
       Timecop.freeze(current_time)
@@ -437,6 +478,29 @@ RSpec.describe Hearings::TranscriptionFilesController do
 
         expect(response.status).to eq(200)
         expect(response.body).to eq(expected_response)
+      end
+    end
+
+    describe "GET selected files info" do
+      it "gives info for selected files for AMA" do
+        get :selected_files_info, params: { file_ids: [transcription_file_1.id], status: true }
+
+        expect(response.status).to eq(200)
+        expect(response.body).to eq([transcription_file_1_info_response].to_json)
+      end
+
+      it "gives info for selected files for Legacy" do
+        get :selected_files_info, params: { file_ids: [transcription_file_6.id], status: true }
+
+        expect(response.status).to eq(200)
+        expect(response.body).to eq([transcription_file_6_info_response].to_json)
+      end
+
+      it "gives info from only selected files" do
+        get :selected_files_info, params: { file_ids: [transcription_file_1.id, transcription_file_4.id], status: true }
+
+        expect(response.status).to eq(200)
+        expect(JSON.parse(response.body).pluck("id")).to eq([transcription_file_4.id, transcription_file_1.id])
       end
     end
   end
