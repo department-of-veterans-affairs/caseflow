@@ -19,8 +19,8 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
       complete_returned_appeal_job(returned_appeal_job, "Job completed successfully", appeals)
 
       # Filter the appeals and send the filtered report
-      filtered_appeals = filter_appeals(appeals, selected_appeals)
-      send_job_slack_report(filtered_appeals)
+      @filtered_appeals = filter_appeals(appeals, selected_appeals)
+      send_job_slack_report
     rescue StandardError => error
       message = "Job failed with error: #{error.message}"
       errored_returned_appeal_job(returned_appeal_job, message)
@@ -141,13 +141,19 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
     )
   end
 
-  def send_job_slack_report(filtered_appeals)
-    slack_service.send_notification(slack_report(filtered_appeals).join("\n"), self.class.name)
+  def send_job_slack_report
+    slack_service.send_notification(slack_report.join("\n"), self.class.name)
   end
 
   def slack_report
     report = []
     report << "Job performed successfully"
+    report << "Priority Appeals Moved: #{@filtered_appeals[:priority_appeals_count]}"
+    report << "Non-Priority Appeals Moved: #{@filtered_appeals[:non_priority_appeals_count]}"
+    report << "Remaining Priority Appeals: #{@filtered_appeals[:remaining_priority_appeals_count]}"
+    report << "Remaining Non-Priority Appeals: #{@filtered_appeals[:remaining_non_priority_appeals_count]}"
+    report << "Moved AVLJs: #{@filtered_appeals[:moved_avljs].join(', ')}"
+    report << "Grouped by AVLJ: #{@filtered_appeals[:grouped_by_avlj].join(', ')}"
     report
   end
 end
