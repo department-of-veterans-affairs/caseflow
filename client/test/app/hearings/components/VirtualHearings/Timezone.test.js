@@ -10,7 +10,7 @@ import TIMEZONES from 'constants/TIMEZONES';
 import { COMMON_TIMEZONES } from 'app/constants/AppConstants';
 import { timezones, roTimezones } from 'app/hearings/utils';
 import SearchableDropdown from 'app/components/SearchableDropdown';
-import { timezoneDropdownStyles, timezoneStyles } from 'app/hearings/components/details/style';
+import { timezoneStyles } from 'app/hearings/components/details/style';
 
 // Set the test Constants
 const defaultTime = '08:15';
@@ -24,10 +24,17 @@ const commonsCount = REGIONAL_OFFICE_TIMEZONES.filter((zone) => Object.values(TI
 // Reverse the commons array but don't mutate to move EST to the top for comparison
 const commons = COMMON_TIMEZONES.slice().reverse();
 
+const hearingDayDate = '2025-01-01';
+
 describe('Timezone', () => {
   test('Matches snapshot with default props', () => {
     // Setup the test
-    const tz = shallow(<Timezone time={HEARING_TIME_OPTIONS[0].value} roTimezone={defaultRoTimezone}/>);
+    const tz = shallow(
+      <Timezone
+        time={HEARING_TIME_OPTIONS[0].value}
+        roTimezone={defaultRoTimezone}
+        hearingDayDate={hearingDayDate}
+      />);
 
     expect(tz).toMatchSnapshot();
     expect(tz.find('.cf-select__menu')).toHaveLength(0);
@@ -51,7 +58,9 @@ describe('Timezone', () => {
         name="tz"
         onChange={changeSpy}
         time={HEARING_TIME_OPTIONS[0].value}
-        roTimezone={defaultRoTimezone}/>
+        roTimezone={defaultRoTimezone}
+        hearingDayDate={hearingDayDate}
+      />
     );
     const dropdown = tz.find(SearchableDropdown);
 
@@ -80,7 +89,12 @@ describe('Timezone', () => {
 
   test('Displays Regional Office timezones first', () => {
     // Run the test
-    const tz = mount(<Timezone time={HEARING_TIME_OPTIONS[0].value} roTimezone={defaultRoTimezone}/>);
+    const tz = mount(
+      <Timezone
+        time={HEARING_TIME_OPTIONS[0].value}
+        roTimezone={defaultRoTimezone}
+        hearingDayDate={hearingDayDate}
+      />);
     const dropdown = tz.find(SearchableDropdown);
 
     // Assertions
@@ -107,13 +121,22 @@ describe('Timezone', () => {
         expect(REGIONAL_OFFICE_TIMEZONES).not.toContain(opt.value);
         expect(COMMON_TIMEZONES).not.toContain(opt.value);
       }
+
+      return true;
     });
+
     expect(tz).toMatchSnapshot();
   });
 
   test('Respects required prop', () => {
     // Run the test
-    const tz = mount(<Timezone required time={HEARING_TIME_OPTIONS[0].value} roTimezone={defaultRoTimezone}/>);
+    const tz = mount(
+      <Timezone
+        required
+        time={HEARING_TIME_OPTIONS[0].value}
+        roTimezone={defaultRoTimezone}
+        hearingDayDate={hearingDayDate}
+      />);
 
     // Assertions
     expect(tz.find('.cf-required')).toHaveLength(1);
@@ -122,7 +145,14 @@ describe('Timezone', () => {
 
   test('Does not show required when ReadOnly', () => {
     // Run the test
-    const tz = mount(<Timezone required readOnly time={HEARING_TIME_OPTIONS[0].value} roTimezone={defaultRoTimezone}/>);
+    const tz = mount(
+      <Timezone
+        required
+        readOnly
+        time={HEARING_TIME_OPTIONS[0].value}
+        roTimezone={defaultRoTimezone}
+        hearingDayDate={hearingDayDate}
+      />);
 
     // Assertions
     expect(tz.find('.cf-required')).toHaveLength(0);
@@ -132,22 +162,26 @@ describe('Timezone', () => {
   test('Dropdown displays correct times based on props time and roTimezone', () => {
     const timeWithTimezone = HEARING_TIME_OPTIONS[0].value;
     const splitTimeString = timeWithTimezone.search('AM');
-    const time = timeWithTimezone.slice(0, splitTimeString).trim() + ' am';
+    const time = `${timeWithTimezone.slice(0, splitTimeString).trim()} am`;
     const roTimezone = 'America/Los_Angeles';
     const dateTime = moment.tz(time, 'h:mm a', roTimezone);
     const roTzValueToLabelMapping = invert(TIMEZONES);
 
     const tz = mount(
       <Timezone time={time} roTimezone={roTimezone} />
-    )
+    );
     const dropdown = tz.find(SearchableDropdown);
 
     dropdown.prop('options').map((opt) => {
       if (opt.value && opt.label && REGIONAL_OFFICE_TIMEZONES.includes(opt.value)) {
-        const label = `${roTzValueToLabelMapping[opt.value]} (${moment(dateTime).tz(opt.value).format('h:mm A')})`
-        expect(opt.label).toEqual(label)
+        const label = `${roTzValueToLabelMapping[opt.value]} (${moment(dateTime).tz(opt.value).
+          format('h:mm A')})`;
+
+        expect(opt.label).toEqual(label);
       }
-    })
+
+      return true;
+    });
     expect(tz).toMatchSnapshot();
-  })
+  });
 });
