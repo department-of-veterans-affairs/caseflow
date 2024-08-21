@@ -1914,7 +1914,7 @@ GEM
     ruby-debug-ide (0.7.3)
       rake (>= 0.8.1)
     ruby-graphviz (1.2.4)
-    ruby-oci8 (2.2.14)
+    ruby-oci8 (2.2.7)
     ruby-plsql (0.8.0)
     ruby-prof (1.4.1)
     ruby-progressbar (1.13.0)
@@ -2130,7 +2130,7 @@ DEPENDENCIES
   rubocop-performance
   rubocop-rails
   ruby-debug-ide
-  ruby-oci8 (~> 2.2.14)
+  ruby-oci8 (~> 2.2)
   ruby-prof (~> 1.4)
   ruby_claim_evidence_api!
   sass-rails (~> 5.0)
@@ -2157,4 +2157,4 @@ DEPENDENCIES
   ziptz
 
 BUNDLED WITH
-   2.4.19
+   2.4.22

@@ -4,6 +4,7 @@ import { css } from 'glamor';
 import { storeMetrics } from '../util/Metrics';
 import uuid from 'uuid';
 
+//variables being defined are in mbps
 const bandwidthThreshold = 1.5;
 
 const alertStyling = css({
