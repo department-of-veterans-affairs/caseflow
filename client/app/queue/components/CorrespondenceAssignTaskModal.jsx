@@ -14,7 +14,7 @@ import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import QueueFlowModal from './QueueFlowModal';
 import ApiUtil from '../../util/ApiUtil';
 import Button from '../../components/Button';
-import { setTaskNotRelatedToAppealBanner, cancelTaskNotRelatedToAppeal, organizationUsers } from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
+import { setTaskNotRelatedToAppealBanner, cancelTaskNotRelatedToAppeal } from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
 import Dropdown from '../../components/Dropdown';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import AssignedCasesPage from '../AssignedCasesPage';
@@ -22,19 +22,18 @@ import AssignedCasesPage from '../AssignedCasesPage';
 /* eslint-disable camelcase */
 const CorrespondenceAssignTaskModal = (props) => {
   const userData = () => {
-    const storeData = useSelector((state) => state.correspondenceDetails.correspondenceInfo.tasksUnrelatedToAppeal[0].usersInOrg);
-    // console.log("following is store data output")
-    // console.log(storeData)
-    return storeData.map((reassignUsers) => {
+    const storeData = useSelector((state) => state.correspondenceDetails.correspondenceInfo.tasksUnrelatedToAppeal[0].reassignUsers[0]);
+    console.log("The store data is as follows:");
+    console.log(storeData);
+    return storeData.map((userIteration) => {
       return {
-        label: reassignUsers.css_id,
-        value: reassignUsers.css_id
+        label: userIteration,
+        value: userIteration
       }
     });
-    // return storeData.map((orgUser) => {id: orgUser.css_id});
-    // console.log(storeData);
   }
-  // console.log("following is user data method output")
+  userData();
+
   const { task } = props;
   const taskData = taskActionData(props);
 
@@ -44,15 +43,6 @@ const CorrespondenceAssignTaskModal = (props) => {
   const [instructions, setInstructions] = useState('');
   const [instructionsAdded, setInstructionsAdded] = useState(true);
   const [assigneeAdded, setAssigneeAdded] = useState(false);
-  // let assignee;
-
-  // useEffect(() => {
-  //   if () {
-  //     setInstructionsAdded(false);
-  //   } else {
-  //     setInstructionsAdded(true);
-  //   }
-  // }, []);
 
   useEffect(() => {
     // Handle document search position
@@ -82,14 +72,13 @@ const CorrespondenceAssignTaskModal = (props) => {
     if (!shouldShowTaskInstructions && assigneeAdded) {
       return true;
     }
-    // if (instructions.length > 0 ) { console.log(assigneeAdded);}
-    return (instructions.length > 0 && assigneeAdded);
+
+    return (instructionsAdded && assigneeAdded);
   };
 
   const formChanged = () => {
     setAssigneeAdded(true);
   }
-  // formChanged
 
   const submit = () => {
     // const currentInstruction = (props.task.type === 'PostSendInitialNotificationLetterHoldingTask' ?
@@ -188,15 +177,13 @@ CorrespondenceAssignTaskModal.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   task: taskById(state, { taskId: ownProps.taskId }),
-  taskNotRelatedToAppealBanner: state.correspondenceDetails.bannerAlert,
-  // organizationUsers: state.correspondenceDetails.showOrganizationUsers
+  taskNotRelatedToAppealBanner: state.correspondenceDetails.bannerAlert
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestPatch,
   setTaskNotRelatedToAppealBanner,
-  cancelTaskNotRelatedToAppeal,
-  // organizationUsers
+  cancelTaskNotRelatedToAppeal
 }, dispatch);
 
 export default (withRouter(

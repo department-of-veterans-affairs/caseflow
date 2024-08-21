@@ -72,11 +72,3 @@ export const correspondenceInfo = (correspondence) => (dispatch) => {
     } });
 };
 
-export const organizationUsers = (showOrganizationUsers) => (dispatch) => {
-  console.log("action is hit");
-  dispatch({
-    type: ACTIONS.SHOW_ORGANIZATION_USERS,
-    payload: {
-      showOrganizationUsers
-    } });
-};

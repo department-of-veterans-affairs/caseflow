@@ -31,7 +31,6 @@ class WorkQueue::CorrespondenceSerializer
       filtered_tasks.each do |task|
         tasks <<
           {
-            usersInOrg: task.assigned_to.users,
             label: task.label,
             assignedOn: task.assigned_at.strftime("%m/%d/%Y"),
             assignedTo: (task.assigned_to_type == "Organization") ? task.assigned_to.name : task.assigned_to.css_id,
