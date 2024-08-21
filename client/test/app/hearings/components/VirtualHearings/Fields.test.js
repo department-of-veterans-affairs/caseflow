@@ -33,8 +33,8 @@ describe('Fields', () => {
     expect(poaRepTimezoneInput).toBeInTheDocument();
 
     await waitFor(() => {
-      expect(veteranTimezoneInput.getByText('Pacific Time (US & Canada) (5:15 AM)')).toBeTruthy();
-      expect(poaRepTimezoneInput.getByText('Pacific Time (US & Canada) (5:15 AM)')).toBeTruthy();
+      expect(veteranTimezoneInput).toHaveTextContent('Pacific Time (US & Canada) (5:15 AM)');
+      expect(poaRepTimezoneInput).toHaveTextContent('Pacific Time (US & Canada) (5:15 AM)');
     });
 
     // // Other components
