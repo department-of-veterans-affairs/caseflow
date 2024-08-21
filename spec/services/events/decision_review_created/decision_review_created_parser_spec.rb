@@ -128,6 +128,7 @@ describe Events::DecisionReviewCreated::DecisionReviewCreatedParser do
       expect(parser_issues.ri_rating_issue_associated_at).to eq response_hash.request_issues.first["rating_issue_associated_at"]
       expect(parser_issues.ri_nonrating_issue_bgs_id).to eq response_hash.request_issues.first["nonrating_issue_bgs_id"]
       expect(parser_issues.ri_nonrating_issue_bgs_source).to eq response_hash.request_issues.first["nonrating_issue_bgs_source"]
+      expect(parser_issues.ri_decisions).to eq nil
     end
     describe "#process_nonrating" do
       let(:payload_with_valid_issue) do
