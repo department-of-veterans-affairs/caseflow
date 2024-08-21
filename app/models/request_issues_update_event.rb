@@ -36,14 +36,6 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     true
   end
 
-  def after_issues
-    @after_issues ||= after_request_issue_ids ? fetch_after_issues : calculate_after_issues
-  end
-
-  def edited_issues
-    @edited_issues ||= edited_request_issue_ids ? fetch_edited_issues : calculate_edited_issues
-  end
-
   def added_issues
     calculate_added_issues
   end
@@ -116,43 +108,6 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
 
   def fetch_withdrawn_issues
     RequestIssue.where(id: withdrawn_request_issue_ids)
-  end
-
-  def process_issues!
-    begin
-      review.create_issues!(added_issues, self)
-      process_removed_issues!
-      process_legacy_issues!
-      process_withdrawn_issues!
-      process_edited_issues!
-    rescue ActiveRecord::InvalidForeignKey => e
-      Rails.logger.error("Failed to process issue due to missing foreign key: #{e.message}")
-
-      # Option 1: skip the failing issue and continue processing others
-      handle_foreign_key_violation(e)
-
-      # Option 2: halt processing and return false, depending on our needs
-      # false
-    end
-  end
-
-  def handle_foreign_key_violation(error)
-    if error.message.include?("ineligible_due_to_id")
-      Rails.logger.warn("Skipping issue processing due to missing ineligible_due_to_id reference.")
-      # removing the problematic issue from processing
-      @added_issues_data.reject! do |issue|
-        issue[:ineligible_due_to_id] && !RequestIssue.exists?(issue[:ineligible_due_to_id])
-      end
-    elsif error.message.include?("contested_decision_issue_id")
-      Rails.logger.warn("Skipping issue processing due to missing contested_decision_issue_id reference.")
-      # other cases where specific foreign keys are missing
-      @added_issues_data.reject! do |issue|
-        issue[:contested_decision_issue_id] && !DecisionIssue.exists?(issue[:contested_decision_issue_id])
-      end
-    else
-      Rails.logger.error("Unhandled foreign key violation: #{error.message}")
-      raise error
-    end
   end
 
   def process_withdrawn_issues!
