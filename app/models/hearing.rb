@@ -42,7 +42,7 @@ class Hearing < CaseflowRecord
 
   belongs_to :hearing_day
   belongs_to :appeal
-  belongs_to :judge, class_name: "User", foreign_key: :judge_id
+  belongs_to :judge, class_name: "User"
   belongs_to :created_by, class_name: "User"
   has_one :transcription, -> { order(created_at: :desc) }
   has_many :hearing_views, as: :hearing
