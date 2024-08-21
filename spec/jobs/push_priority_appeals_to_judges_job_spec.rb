@@ -23,8 +23,6 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     before do
       expect_any_instance_of(PushPriorityAppealsToJudgesJob)
         .to receive(:distribute_genpop_priority_appeals).and_return([])
-      expect_any_instance_of(PushPriorityAppealsToJudgesJob)
-        .to receive(:generate_report).and_return([])
     end
 
     after { FeatureToggle.disable!(:acd_distribute_by_docket_date) }
@@ -48,6 +46,13 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
     it "queues the UpdateAppealAffinityDatesJob" do
       expect_any_instance_of(UpdateAppealAffinityDatesJob).to receive(:perform).with(no_args)
+
+      subject
+    end
+
+    it "calls send_job_report method" do
+      expect_any_instance_of(PushPriorityAppealsToJudgesJob)
+        .to receive(:generate_report).and_return([])
 
       subject
     end
@@ -358,7 +363,6 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
     it "using By Docket Date Distribution module" do
       FeatureToggle.enable!(:acd_distribute_by_docket_date)
-
       today = Time.zone.now.to_date
       legacy_days_waiting = (today - legacy_priority_case.bfd19.to_date).to_i
       direct_review_days_waiting = (today - ready_priority_direct_case.receipt_date).to_i
