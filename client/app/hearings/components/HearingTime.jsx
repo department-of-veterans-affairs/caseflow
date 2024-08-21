@@ -33,7 +33,6 @@ export const HearingTime = ({
       repTimezone :
       hearing.regionalOfficeTimezone || 'America/New_York';
 
-  // This should be moved to the parent component since the source of the date can differ a good bit.
   const hearingDayDate = hearing.hearing_day ?
     hearing.hearing_day?.scheduledFor :
     moment(hearing.scheduledFor).format('YYYY-MM-DD');
@@ -98,6 +97,10 @@ HearingTime.propTypes = {
     regionalOfficeTimezone: PropTypes.string,
     centralOfficeTimeString: PropTypes.string.isRequired,
     isVirtual: PropTypes.bool,
+    scheduledFor: PropTypes.string,
+    hearing_day: PropTypes.shape({
+      scheduledFor: PropTypes.string
+    })
   }),
   // Show the number of issues related to the given hearing.
   showIssueCount: PropTypes.bool,
