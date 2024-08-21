@@ -2,6 +2,9 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import BandwidthAlert from '../../../app/reader/BandwidthAlert';
 
+const bandwidthUnderThreshold = 1.0;
+const bandwidthOverThreshold = 2.0;
+
 const mockNavigationConnection = (downlink) => {
   Object.defineProperty(global.navigator, 'connection', {
     value: {
@@ -19,7 +22,7 @@ describe('BandwidthAlert', () => {
   });
 
   it('should render warning alert if downlink is below 1.5', () => {
-    mockNavigationConnection(1.0);
+    mockNavigationConnection(bandwidthUnderThreshold);
 
     render(<BandwidthAlert />);
 
@@ -29,7 +32,7 @@ describe('BandwidthAlert', () => {
   });
 
   it('should not render alert if downlink is above 1.5', () => {
-    mockNavigationConnection(2.0);
+    mockNavigationConnection(bandwidthOverThreshold);
 
     render(<BandwidthAlert />);
 

@@ -4,6 +4,8 @@ import { css } from 'glamor';
 import { storeMetrics } from '../util/Metrics';
 import uuid from 'uuid';
 
+const bandwidthThreshold = 1.5;
+
 const alertStyling = css({
   marginBottom: '20px'
 });
@@ -25,7 +27,7 @@ class BandwidthAlert extends React.Component {
   updateConnectionInfo = () => {
     const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
 
-    if (connection.downlink && connection.downlink < 1.5) {
+    if (connection.downlink && connection.downlink < bandwidthThreshold) {
       const logId = uuid.v4();
 
       storeMetrics(logId, { bandwidth: this.state.downlink }, {
