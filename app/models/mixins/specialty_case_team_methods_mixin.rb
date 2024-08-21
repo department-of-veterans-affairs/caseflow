@@ -7,7 +7,7 @@ module SpecialtyCaseTeamMethodsMixin
 
   # :reek:FeatureEnvy
   def distributed?
-    tasks.any? { |task| task.is_a?(DistributionTask) && task.completed? }
+    distribution_task? && tasks.any?(&:completed?)
   end
 
   def distribution_task?
