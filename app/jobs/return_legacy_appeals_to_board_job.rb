@@ -50,11 +50,13 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
       end
     end
 
-    qualifying_appeals = qualifying_appeals
-      .flatten
-      .sort_by { |appeal| [-appeal["priority"], appeal["bfd19"]] } unless qualifying_appeals.empty?
+    unless qualifying_appeals.empty?
+      qualifying_appeals = qualifying_appeals
+        .flatten
+        .sort_by { |appeal| [-appeal["priority"], appeal["bfd19"]] }
+    end
 
-      VACOLS::Case.batch_update_vacols_location("63", qualifying_appeals.map { |q_appeal| q_appeal["bfkey"] })
+    VACOLS::Case.batch_update_vacols_location("63", qualifying_appeals.map { |q_appeal| q_appeal["bfkey"] })
   end
 
   def non_ssc_avljs
