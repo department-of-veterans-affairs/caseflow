@@ -27,6 +27,13 @@ export const cancelTaskNotRelatedToAppeal = (taskID, payload) => (dispatch) => {
         }
       });
 
+      dispatch({
+        type: ACTIONS.REMOVE_TASK_NOT_RELATED_TO_APPEAL,
+        payload: {
+          taskID
+        }
+      });
+
     }).
     catch((error) => {
       dispatch({
@@ -45,6 +52,15 @@ export const correspondenceInfo = (correspondence) => (dispatch) => {
     payload: {
       correspondence
     } });
+};
+
+export const removeTaskNotRelatedToAppealFromStore = (unrelatedTasks) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.REMOVE_TASK_NOT_RELATED_TO_APPEAL,
+    payload: {
+      unrelatedTasks
+    }
+  });
 };
 
 export const setShowActionsDropdown = (showActionsDropdown) => (dispatch) => {

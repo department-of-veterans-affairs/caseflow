@@ -57,7 +57,7 @@ const CorrespondenceCancelTaskModal = (props) => {
       }
     };
 
-    props.setShowActionsDropdown(false);
+    // props.setShowActionsDropdown(false);
 
     return props.cancelTaskNotRelatedToAppeal(props.task_id, payload);
 
