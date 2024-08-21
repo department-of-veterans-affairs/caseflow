@@ -13,25 +13,28 @@ class MissingVacolsHearingJobFix < CaseflowJob
     @stuck_job_report_service = StuckJobReportService.new
     @start_time = nil
     @end_time = nil
+    @tasks_missing_hearings = []
   end
 
   def perform
     start_time
-    return if questionable_tasks.blank?
-
     RequestStore[:current_user] = User.system_user
+    return "There are no stuck AssignHearingDisposition tasks." if questionable_tasks.blank?
+
     process_missing_vacols_records
 
+    unless @tasks_missing_hearings.blank?
+      Rails.logger.error "ALERT------- Task Id's: #{@tasks_missing_hearings.to_sentence} are missing associated hearings." \
+      "This requires manual remediation------- ALERT"
+    end
     end_time
     log_processing_time
   end
 
   def process_missing_vacols_records
     questionable_tasks = questionable_tasks()
-
     # These tasks are stuck because they have a LegacyHearing associated with them that do not exist in VACOLS
     stuck_tasks = stuck_tasks(questionable_tasks)
-
     stuck_tasks.each do |task|
       task = Task.find(task.id)
       appeal = task.appeal
@@ -42,7 +45,7 @@ class MissingVacolsHearingJobFix < CaseflowJob
     end
   rescue StandardError => error
     log_error("Something went wrong. Requires manual remediation. Error: #{error} Aborting...")
-    raise Interrupt
+    raise error
   end
 
   def questionable_tasks
@@ -59,8 +62,13 @@ class MissingVacolsHearingJobFix < CaseflowJob
   def stuck_tasks(questionable_tasks)
     tasks_with_hearing_missing_vacols_records = []
     questionable_tasks.each do |task|
-      # adds the stuck task associated with the missing VACOLS hearing
+      if task.hearing.nil?
+        @tasks_missing_hearings << task.id
+        next
+      end
+
       if VACOLS::CaseHearing.find_by(hearing_pkseq: task.hearing.vacols_id).nil?
+        # adds the stuck task associated with the missing VACOLS hearing
         tasks_with_hearing_missing_vacols_records.push(task)
       end
     end
@@ -70,7 +78,6 @@ class MissingVacolsHearingJobFix < CaseflowJob
 
   def process_vacols_record(attrs, task)
     vacols_record = create_hearing_in_vacols(attrs)
-
     if vacols_record
       task.hearing.update(vacols_id: vacols_record[:hearing_pkseq])
       task.cancelled!
