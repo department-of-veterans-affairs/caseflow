@@ -9,7 +9,6 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   has_many :appeal_views
   has_many :hearing_views
   has_many :hearings
-
   has_many :annotations
   has_many :tasks, as: :assigned_to
   has_many :organizations_users, dependent: :destroy
