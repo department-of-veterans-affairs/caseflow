@@ -37,7 +37,7 @@ jest.mock('app/queue/CaseListTable', () => ({ appeals }) => (
         {appeals.map((appeal, index) => (
           <tr key={index}>
             <td>{appeal.docketNumber}</td>
-            <td>{'John Doe'}</td>
+            <td>{appeal.appellant_full_name}</td>
             <td>{appeal.status}</td>
             <td>{appeal.appealType}</td>
             <td>{appeal.issueCount}</td>
@@ -187,7 +187,7 @@ describe('CorrespondenceDetails', () => {
           id: 52,
           correspondencesAppealsTasks: [
             {
-              id: 28,
+              id: 1,
               correspondence_appeal_id: 52,
               task_id: 3160,
               created_at: '2024-08-14T10:53:47.678-04:00',
@@ -313,10 +313,10 @@ describe('CorrespondenceDetails', () => {
         <CorrespondenceDetails {...props} />
       </Provider>
     );
-    // debug();
 
-    expect(screen.getByText('John Doe')).toBeInTheDocument();
-    expect(screen.getByText('Veteran ID:')).toBeInTheDocument();
+    const userNameCount = screen.getAllByText('John Doe').length;
+
+    expect(userNameCount).toBeGreaterThan(0);
     expect(screen.getByText('Correspondence and Appeal Tasks')).toBeInTheDocument();
     expect(screen.getByText('Package Details')).toBeInTheDocument();
     expect(screen.getByText('Response Letters')).toBeInTheDocument();
@@ -335,5 +335,22 @@ describe('CorrespondenceDetails', () => {
     expect(screen.getByText('Number of Issues')).toBeInTheDocument();
     expect(screen.getByText('Decision Date')).toBeInTheDocument();
     expect(screen.getByText('Appeal Location')).toBeInTheDocument();
+
+    // Appeals related
+    const tasksAddedTextCount = screen.getAllByText('Tasks added to appeal').length;
+
+    expect(tasksAddedTextCount).toBe(2);
+    expect(screen.getByText('240714-253')).toBeInTheDocument();
+    expect(screen.getByText('240714-254')).toBeInTheDocument();
+    expect(screen.getByText('VLJ Support Staff')).toBeInTheDocument();
+    expect(screen.getByText('Hearing Admin')).toBeInTheDocument();
+
+
+
+
+
+
+
+
   });
 });

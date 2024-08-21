@@ -25,7 +25,7 @@ export const correspondenceDocumentsData = [
     document_title: 'VA Form 10182 Notice of Disagreement'
   },
   {
-    correspondence_id: 1,
+    correspondence_id: 2,
     document_file_number: '998877665',
     pages: 20,
     vbms_document_type_id: 1,
