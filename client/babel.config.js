@@ -18,6 +18,8 @@ module.exports = function(api) {
     '@babel/plugin-proposal-class-properties',
     '@babel/plugin-proposal-private-methods',
     '@babel/plugin-proposal-json-strings',
+    '@babel/plugin-transform-runtime',
+    "@babel/plugin-syntax-import-attributes",
     [
       '@babel/plugin-proposal-decorators',
       {

@@ -68,7 +68,7 @@ const config = {
     rules: [
       {
         test: /\.mdx$/,
-        use: ['babel-loader', '@mdx-js/loader'],
+        use: ['@mdx-js/loader'],
       },
       {
         test: /\.(?:jsx|js|mjs|cjs)$/,
@@ -81,7 +81,7 @@ const config = {
             options: {
               plugins: [
                 devBuild &&
-                  !testBuild &&
+                  testBuild &&
                   require.resolve('react-refresh/babel'),
               ].filter(Boolean),
             },
