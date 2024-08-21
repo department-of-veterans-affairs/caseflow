@@ -10,6 +10,6 @@ class Hearings::TranscriptionPackagesController < ApplicationController
 
   def new
     # todo
-    Rails.logger.info("Work order #{params[:work_order_name]} submitted")
+    Rails.logger.info("Work order #{params['work_order_name']} submitted")
   end
 end
