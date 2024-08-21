@@ -7,9 +7,10 @@ const CollapsibleTable = (props) => {
   const [allExpanded, setAllExpanded] = useState(true);
 
   useEffect(() => {
-    const allRowIds = returnedAppealJobs.map(row => row.id);
+    const allRowIds = returnedAppealJobs.map((row) => row.id);
+
     setExpandedRows(allRowIds);
-  }, [returnedAppealJobs])
+  }, [returnedAppealJobs]);
 
   const toggleAllRows = () => {
 
@@ -18,7 +19,8 @@ const CollapsibleTable = (props) => {
       setExpandedRows([]);
     } else {
       // Expand all rows
-      const allRowIds = returnedAppealJobs.map(row => row.id);
+      const allRowIds = returnedAppealJobs.map((row) => row.id);
+
       setExpandedRows(allRowIds);
     }
     setAllExpanded(!allExpanded);
@@ -29,7 +31,7 @@ const CollapsibleTable = (props) => {
       <tr key={`row-expanded-${row.id}`}>
         <td>{row.created_at}</td>
         <td>{row.returned_appeals.join(', ')}</td>
-        <td>{JSON.parse(row.stats)['message']}</td>
+        <td>{JSON.parse(row.stats).message}</td>
       </tr>
     );
   };
@@ -48,7 +50,7 @@ const CollapsibleTable = (props) => {
           </tr>
         </thead>
         <tbody>
-          {returnedAppealJobs.map(row => (
+          {returnedAppealJobs.map((row) => (
             <React.Fragment key={row.id}>
               {expandedRows.includes(row.id) && renderRowDetails(row)}
             </React.Fragment>
