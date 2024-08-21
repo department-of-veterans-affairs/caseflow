@@ -1,0 +1,65 @@
+import { useState } from 'react';
+
+import { Meta, Story, Canvas, ArgsTable } from '@storybook/addon-docs/blocks';
+
+import * as StatusMessageStories from './StatusMessage.stories';
+
+import StatusMessage from './StatusMessage';
+
+<Meta
+  title="Commons/Components/StatusMessage"
+  component={StatusMessage}
+  parameters={{
+    controls: { expanded: true }
+  }}
+  argTypes={{
+    messageText: { control: { type: "text" } }
+  }}
+/>
+
+# Messages
+
+Messages are a frequent layout used in Caseflow. These messages are shown when the user has completed a task, when
+there is an error, and to indicate status.
+
+All messages are shown in the standard App Canvas. The messages contain a `heading 1`, whose colors vary based on
+`type`, and `lead` follow-up text. The follow up text often contains context and instructions on what the user can do
+next.
+
+<Canvas>
+  <Story story={StatusMessageStories.Status} />
+</Canvas>
+
+## Success Messages
+
+Success messages are shown when the user has successfully completed the intended task of the application. The title is
+green, and these messages contain a checklist confirming the tasks the user has completed and displays actions performed
+by Caseflow in the background, such as automatically sending a letter or changing the location of a claim.
+
+<Canvas>
+  <Story story={StatusMessageStories.Success} />
+</Canvas>
+
+## Alert Messages
+
+Alert messages are often shown when the user has destroyed data by canceling their work. These messages have red titles
+to reinforce that the user did not complete the intended task of the application, a brief explanation of what happened,
+and next steps.
+
+<Canvas>
+  <Story story={StatusMessageStories.Alert} />
+</Canvas>
+
+## Warning Messages
+
+Status messages are shown when Caseflow encounters an error such as 500 or 400 http error codes. They are also shown
+when a user doesn’t have access to view a particular page or application. These messages are more neutral with a
+`dark-grey` title, an explanation of what is going on, and next steps the user can take.
+
+<Canvas>
+  <Story story={StatusMessageStories.Warning} />
+</Canvas>
+
+## Arguments
+
+<ArgsTable of={StatusMessage} />
