@@ -26,8 +26,6 @@ import uuid from 'uuid';
 import { storeMetrics, recordAsyncMetrics } from '../util/Metrics';
 import networkUtil from '../util/NetworkUtil';
 
-// PDFJS.GlobalWorkerOptions.workerSrc = pdfjsWorker;
-
 export class PdfFile extends React.PureComponent {
   constructor(props) {
     super(props);

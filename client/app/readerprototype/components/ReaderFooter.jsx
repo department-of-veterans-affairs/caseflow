@@ -32,14 +32,14 @@ const ReaderFooter = ({
 }) => {
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
-      const targetPage = event.target.value;
-
-      if (validatePageNum(targetPage, numPages)) {
-        document.getElementById(`canvasWrapper-${targetPage}`).scrollIntoView();
-        setCurrentPage(targetPage);
+      if (validatePageNum(event.target.value, numPages)) {
+        document.getElementById(`canvas-${event.target.value}`).scrollIntoView();
+        setCurrentPage(event.target.value);
       } else if (currentPage) {
         event.target.value = currentPage;
       }
+    } else if (validatePageNum(event.currentTarget?.value, numPages)) {
+      setCurrentPage(event.currentTarget.value);
     }
   };
 
@@ -70,6 +70,7 @@ const ReaderFooter = ({
                   name=""
                   label=""
                   maxLength={4}
+                  onChange={handleKeyPress}
                   onKeyPress={handleKeyPress}
                   defaultValue={currentPage}
                   required={false}
