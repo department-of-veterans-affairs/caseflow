@@ -7,17 +7,13 @@ import { get } from 'lodash';
 
 import { taskById } from '../selectors';
 import { requestPatch } from '../uiReducer/uiActions';
-import { taskActionData, currentDaysOnHold } from '../utils';
+import { taskActionData } from '../utils';
 import TextareaField from '../../components/TextareaField';
 import COPY from '../../../COPY';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import QueueFlowModal from './QueueFlowModal';
-import ApiUtil from '../../util/ApiUtil';
-import Button from '../../components/Button';
 import { setTaskNotRelatedToAppealBanner, cancelTaskNotRelatedToAppeal } from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
-import Dropdown from '../../components/Dropdown';
 import SearchableDropdown from '../../components/SearchableDropdown';
-import AssignedCasesPage from '../AssignedCasesPage';
 
 /* eslint-disable camelcase */
 const CorrespondenceAssignTaskModal = (props) => {
@@ -49,21 +45,6 @@ const CorrespondenceAssignTaskModal = (props) => {
       setInstructionsAdded(false);
     }
   }, [instructions]);
-
-  const isVhaOffice = () => props.task.assignedTo.type === 'VhaRegionalOffice' ||
-    props.task.assignedTo.type === 'VhaProgramOffice';
-
-  const formatInstructions = () => {
-    const reason_text = isVhaOffice() ?
-      '##### REASON FOR RETURN:' :
-      '##### REASON FOR CANCELLATION:';
-
-    if (instructions.length > 0) {
-      return `${reason_text}\n${instructions}`;
-    };
-
-    return instructions;
-  }
 
   const validateForm = () => {
     if (!shouldShowTaskInstructions && assigneeAdded) {
@@ -100,24 +81,12 @@ const CorrespondenceAssignTaskModal = (props) => {
 
   };
 
-  // Additional properties - should be removed later once generic submit buttons are styled the same across all modals
-  const modalProps = {};
-
-  if ([
-    'AssessDocumentationTask',
-    'EducationAssessDocumentationTask',
-    'HearingPostponementRequestMailTask'
-  ].includes(task?.type) || task?.appeal.hasCompletedSctAssignTask) {
-    modalProps.submitButtonClassNames = ['usa-button'];
-    modalProps.submitDisabled = !validateForm();
-  }
-
   return (
     <QueueFlowModal
-      {...modalProps}
       title= "Assign Task"
       button="Assign Task"
       submitDisabled= {!validateForm()}
+      submitButtonClassNames= {'usa-button'}
       pathAfterSubmit={taskData?.redirect_after ?? `/queue/correspondence/${props.correspondence_uuid}`}
       submit={submit}
       validateForm={validateForm}
@@ -133,9 +102,7 @@ const CorrespondenceAssignTaskModal = (props) => {
           // key={doc.id}
           name="User dropdown"
           label="Select a user"
-          // multi
           dropdownStyling={{ position: 'relative', paddingBottom: '10px'}}
-          creatable
           options={userData()}
           placeholder="Select or search"
           // value={generateOptionsFromTags(doc.tags)}
