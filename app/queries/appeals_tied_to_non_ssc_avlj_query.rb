@@ -55,7 +55,6 @@ class AppealsTiedToNonSscAvljQuery
   def self.legacy_rows(appeals, sym)
     appeals.map do |appeal|
       calculated_values = calculate_values(appeal)
-      judge_names = calculate_judge_names(appeal)
       {
         docket_number: appeal["tinum"],
         docket: sym.to_s,
@@ -63,9 +62,9 @@ class AppealsTiedToNonSscAvljQuery
         receipt_date: appeal["bfd19"],
         veteran_file_number: calculated_values[:veteran_file_number],
         veteran_name: calculated_values[:veteran_name],
-        non_ssc_avlj: judge_names[:non_ssc_avlj],
-        hearing_judge: judge_names[:hearing_judge],
-        most_recent_signing_judge: judge_names[:most_recent_signing_judge],
+        non_ssc_avlj: calculated_values[:non_ssc_avlj],
+        hearing_judge: calculated_values[:hearing_judge],
+        most_recent_signing_judge: calculated_values[:most_recent_signing_judge],
         bfcurloc: calculated_values[:bfcurloc]
       }
     end
