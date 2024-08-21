@@ -703,6 +703,7 @@
   "ASSIGN_TASK_TITLE": "Assign task",
   "ASSIGN_TASK_BUTTON": "Assign task",
   "ASSIGN_TASK_TO_TITLE": "Assign task to %s",
+  "REASSIGN_TASK_TITLE": "Re-assign to person",
   "NOTIFY_OGC_OF": "Notify OGC of %s",
   "PULAC_CERULLO_MODAL_TITLE": "Notify Litigation Support of Possible Conflict of Jurisdiction",
   "PULAC_CERULLO_MODAL_BODY_1": "This case will be assigned to a team who will determine if there is a conflict of jurisdiction.",

@@ -14,7 +14,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       # return_to_name = task_assigner_name(task)
 
       {
-        modal_title: COPY::ASSIGN_TASK_TITLE,
+        modal_title: task.assigned_to.is_a?(Organization) ? COPY::ASSIGN_TASK_TITLE : COPY::REASSIGN_TASK_TITLE,
         modal_body: format(COPY::ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER),
         message_title: format(COPY::CORRESPONDENCE_CASES_ASSIGN_TASK_MODAL_INSTRUCTIONS_TITLE, task.correspondence&.veteran_full_name),
         # message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, return_to_name),

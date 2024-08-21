@@ -19,7 +19,14 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 const CorrespondenceAssignTaskModal = (props) => {
   const userData = () => {
     const storeData = useSelector((state) => state.correspondenceDetails.correspondenceInfo.tasksUnrelatedToAppeal[0].reassignUsers[0]);
-    return storeData.map((userIteration) => {
+    const testData = useSelector((state) =>
+      state.correspondenceDetails.correspondenceInfo.tasksUnrelatedToAppeal.find((task) => parseInt(task.uniqueId, 10) ===
+                                                                                  parseInt(props.task_id, 10)).reassignUsers[0]
+    );
+    console.log("The following is the task unrelated to appeal");
+    console.log(testData);
+
+    return testData.map((userIteration) => {
       return {
         label: userIteration,
         value: userIteration
@@ -102,7 +109,7 @@ const CorrespondenceAssignTaskModal = (props) => {
           // key={doc.id}
           name="User dropdown"
           label="Select a user"
-          dropdownStyling={{ position: 'relative', paddingBottom: '10px'}}
+          dropdownStyling={{ position: 'relative' }}
           options={userData()}
           placeholder="Select or search"
           // value={generateOptionsFromTags(doc.tags)}
