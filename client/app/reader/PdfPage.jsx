@@ -212,7 +212,7 @@ export class PdfPage extends React.PureComponent {
     });
   }
 
-  // getText = (page) => page.getTextContent();
+  // eslint-disable-next-line class-methods-use-this
   getText(page) {
     return page.getTextContent();
   }

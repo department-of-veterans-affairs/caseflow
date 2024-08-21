@@ -1,6 +1,5 @@
 import { recordMetrics, storeMetrics, recordAsyncMetrics } from '../../../app/util/Metrics';
-import { cleanup } from '@testing-library/react';
-import { waitFor } from '@testing-library/react';
+import { cleanup, waitFor } from '@testing-library/react';
 import {
   metricsPdfStorePagesDisabled,
   pageMetricData,
@@ -8,9 +7,8 @@ import {
   pdfPageRenderTimeInMsEnabled,
   recordMetricsArgs,
   storeMetricsBrowserError,
-  storeMetricsData
 } from '../../helpers/PdfPageTests';
-import {PdfPage} from '../../../app/reader/PdfPage';
+import { PdfPage } from '../../../app/reader/PdfPage';
 
 jest.mock('../../../app/util/Metrics', () => ({
   storeMetrics: jest.fn().mockReturnThis(),
