@@ -1,8 +1,6 @@
 /* eslint-disable max-lines */
 import { createSlice, createAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { random, range, difference } from 'lodash';
-// import * as PDF from 'pdfjs-dist';
-// import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 import Mark from 'mark.js';
 
 // Local Dependencies
@@ -18,9 +16,6 @@ import {
 import { addMetaLabel, formatCategoryName } from '../utils/index';
 import { removeComment } from './annotationLayer';
 import { markDocAsRead } from './documentList';
-
-// Set the PDFJS service worker
-// PDF.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 // Create a place in-memory to store the downloaded PDF documents
 const pdfDocuments = {};
