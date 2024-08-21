@@ -54,8 +54,8 @@ class AppealsTiedToNonSscAvljQuery
 
   def self.legacy_rows(appeals, sym)
     appeals.map do |appeal|
-      avlj_record = VACOLS::Staff.find_by(sattyid: appeal["vlj"])
-      prev_judge_record = VACOLS::Staff.find_by(sattyid: appeal["prev_deciding_judge"])
+      avlj_record = appeal["vlj"].nil? ? nil : VACOLS::Staff.find_by(sattyid: appeal["vlj"])
+      prev_judge_record = appeal["prev_deciding_judge"].nil? ? nil : VACOLS::Staff.find_by(sattyid: appeal["prev_deciding_judge"])
       vacols_case = VACOLS::Case.find_by(bfkey: appeal["bfkey"])
       veteran_record = VACOLS::Correspondent.find_by(stafkey: vacols_case.bfcorkey)
 
@@ -66,9 +66,9 @@ class AppealsTiedToNonSscAvljQuery
         receipt_date: appeal["bfd19"],
         veteran_file_number: veteran_record.ssn || vacols_case&.bfcorlid,
         veteran_name: get_name_from_record(veteran_record),
-        non_ssc_avlj: get_name_from_record(avlj_record),
-        hearing_judge: get_name_from_record(avlj_record),
-        most_recent_signing_judge: get_name_from_record(prev_judge_record),
+        non_ssc_avlj: avlj_record.nil? ? nil : get_name_from_record(avlj_record),
+        hearing_judge: avlj_record.nil? ? nil : get_name_from_record(avlj_record),
+        most_recent_signing_judge: prev_judge_record.nil? ? nil : get_name_from_record(prev_judge_record),
         bfcurloc: vacols_case&.bfcurloc
       }
     end

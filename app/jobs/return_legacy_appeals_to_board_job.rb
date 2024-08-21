@@ -13,9 +13,7 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
       returned_appeal_job = create_returned_appeal_job
       fail if fail_job
 
-      # Logic to process legacy appeals and return to the board
-      appeals = select_two_appeals_to_move(LegacyDocket.new.appeals_tied_to_non_ssc_avljs)
-      VACOLS::Case.batch_update_vacols_location("63", appeals.map { |appeal| appeal["bfkey"] })
+      move_qualifying_appeals(LegacyDocket.new.appeals_tied_to_non_ssc_avljs)
       complete_returned_appeal_job(returned_appeal_job, "Job completed successfully", appeals)
       send_job_slack_report
     rescue StandardError => error
@@ -35,13 +33,32 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
 
   private
 
-  def select_two_appeals_to_move(appeals)
-    appeals = appeals.sort_by { |appeal| [-appeal["priority"], appeal["bfd19"]] } unless appeals.empty?
-    if appeals.count < 2
-      appeals
-    else
-      appeals[0..1]
+  def move_qualifying_appeals(appeals)
+    qualifying_appeals = []
+
+    non_ssc_avljs.each do |non_ssc_avlj|
+      tied_appeals = appeals.select { |appeal| appeal["vlj"] == non_ssc_avlj.sattyid }
+
+      unless tied_appeals.empty?
+        tied_appeals = tied_appeals.sort_by { |t_appeal| [-t_appeal["priority"], t_appeal["bfd19"]] }
+      end
+
+      if appeals.count < 2
+        qualifying_appeals.push(tied_appeals).flatten
+      else
+        qualifying_appeals.push(tied_appeals[0..1]).flatten
+      end
     end
+
+    qualifying_appeals = qualifying_appeals
+      .flatten
+      .sort_by { |appeal| [-appeal["priority"], appeal["bfd19"]] } unless qualifying_appeals.empty?
+
+      VACOLS::Case.batch_update_vacols_location("63", qualifying_appeals.map { |q_appeal| q_appeal["bfkey"] })
+  end
+
+  def non_ssc_avljs
+    VACOLS::Staff.where("sactive = 'A' AND svlj = 'A' AND sattyid <> smemgrp")
   end
 
   def create_returned_appeal_job
