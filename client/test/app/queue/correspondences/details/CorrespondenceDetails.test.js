@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
-import { Provider,  } from 'react-redux';
+import { Provider } from 'react-redux';
 import CorrespondenceDetails from 'app/queue/correspondence/details/CorrespondenceDetails';
 import { correspondenceData } from 'test/data/correspondence';
 import { applyMiddleware, createStore } from 'redux';
@@ -70,6 +70,9 @@ describe('CorrespondenceDetails', () => {
       all_correspondences: Array.from({ length: 30 }, (_, i) => ({ uuid: `uuid${i}`, vaDateOfReceipt: '2024-08-06T00:00:00Z', notes: `Note ${i}`, status: `Status ${i}` })),
       tasksUnrelatedToAppeal: [{
         type: 'FOIA request',
+        label: 'Other Motion',
+        status: 'assigned',
+        uniqueId: 3080,
         assigned_to: 'CAVC Litigation Support',
         assigned_at: '07/23/2024',
         instructions: [
@@ -79,6 +82,9 @@ describe('CorrespondenceDetails', () => {
       },
       {
         type: 'Cavc request',
+        label: 'CAVC Task',
+        status: 'assigned',
+        uniqueId: 3080,
         assigned_to: 'CAVC Litigation Support',
         assigned_at: '07/23/2024',
         instructions: [
@@ -90,7 +96,7 @@ describe('CorrespondenceDetails', () => {
         appeals: [
           {
             id: 1,
-            type: 'appeal',
+            type: 'Correspondence',
             attributes: {
               assigned_to_location: 'Mail',
               appellant_full_name: 'John Doe',
@@ -125,15 +131,16 @@ describe('CorrespondenceDetails', () => {
   });
 
   test('toggles view all correspondence', () => {
-     render(
+    render(
       <Provider store={store}>
         <CorrespondenceDetails {...props} />
       </Provider>
-      )
-     const viewAllButton = screen.getByText('View all correspondence');
-     fireEvent.click(viewAllButton);
-     expect(screen.getByText('Hide all correspondence')).toBeInTheDocument();
-   });
+    );
+    const viewAllButton = screen.getByText('View all correspondence');
+
+    fireEvent.click(viewAllButton);
+    expect(screen.getByText('Hide all correspondence')).toBeInTheDocument();
+  });
 
   it('renders the component', () => {
     render(
