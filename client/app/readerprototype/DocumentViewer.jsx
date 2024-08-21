@@ -13,6 +13,7 @@ import { stopPlacingAnnotation } from '../reader/AnnotationLayer/AnnotationActio
 import DeleteModal from './components/Comments/DeleteModal';
 import ShareModal from './components/Comments/ShareModal';
 import { getNextDocId, getPrevDocId, getRotationDeg, selectedDoc, selectedDocIndex } from './util/documentUtil';
+import { ROTATION_DEGREES } from './util/readerConstants';
 
 const ZOOM_LEVEL_MIN = 20;
 const ZOOM_LEVEL_MAX = 300;
@@ -62,7 +63,10 @@ const DocumentViewer = (props) => {
 
   const getPageNumFromScrollTop = (event) => {
     const { clientHeight, scrollTop, scrollHeight } = event.target;
-    const pageHeightEstimate = rotateDeg === '90deg' || rotateDeg === '270deg' ? clientHeight : scrollHeight / numPages;
+    const pageHeightEstimate =
+      rotateDeg === ROTATION_DEGREES.NINETY || rotateDeg === ROTATION_DEGREES.TWO_SEVENTY
+        ? clientHeight
+        : scrollHeight / numPages;
     const pageNumber = Math.ceil((pageHeightEstimate + scrollTop) / pageHeightEstimate);
 
     if (pageNumber > numPages) {

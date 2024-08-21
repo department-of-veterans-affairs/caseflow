@@ -76,105 +76,97 @@ export const initialState = {
 /**
  * Dispatcher for Extracting text from PDF Documents and searching
  */
-export const searchText = createAsyncThunk(
-  'documentViewer/search',
-  async ({ matchIndex, searchTerm, docId }) => {
-    // Create the list of text layer containers
-    const layers = [];
+export const searchText = createAsyncThunk('documentViewer/search', async ({ matchIndex, searchTerm, docId }) => {
+  // Create the list of text layer containers
+  const layers = [];
 
-    // Map the Extract to promises
-    const textPromises = range(pdfDocuments[docId].pdf.numPages).map((index) =>
-      pdfDocuments[docId].pdf.
-        getPage(index + 1).
-        then((page) => page.getTextContent())
-    );
+  // Map the Extract to promises
+  const textPromises = range(pdfDocuments[docId].pdf.numPages).map((index) =>
+    pdfDocuments[docId].pdf.getPage(index + 1).then((page) => page.getTextContent())
+  );
 
-    // Wait for the search to complete
-    const pages = await Promise.all(textPromises);
+  // Wait for the search to complete
+  const pages = await Promise.all(textPromises);
 
-    // Create the Regex Match
-    const regex = new RegExp(
-      searchTerm ? searchTerm.replace(/[-[\]/{}()*+?.\\^$|]/g, '\\$&') : null,
-      'gi'
-    );
+  // Create the Regex Match
+  const regex = new RegExp(searchTerm ? searchTerm.replace(/[-[\]/{}()*+?.\\^$|]/g, '\\$&') : null, 'gi');
 
-    // Calculate the Search Matches
-    const match = (page) =>
-      (
-        page.items.
-          map((row) => row.str).
-          join(' ').
-          match(regex) || []
-      ).length;
+  // Calculate the Search Matches
+  const match = (page) =>
+    (
+      page.items
+        .map((row) => row.str)
+        .join(' ')
+        .match(regex) || []
+    ).length;
 
-    // Reduce the Pages to an object containing the matches
-    const matches = pages.reduce((count, page) => count + match(page), 0);
+  // Reduce the Pages to an object containing the matches
+  const matches = pages.reduce((count, page) => count + match(page), 0);
 
-    // Render the text layer
-    const pageList = pages.map((page, index) => {
-      // Retrieve the text layer element
-      layers[index] = document.getElementById(`text-${index}`);
+  // Render the text layer
+  const pageList = pages.map((page, index) => {
+    // Retrieve the text layer element
+    layers[index] = document.getElementById(`text-${index}`);
 
-      // Reset the container contents if present
-      if (layers[index]) {
-        layers[index].innerHTML = '';
+    // Reset the container contents if present
+    if (layers[index]) {
+      layers[index].innerHTML = '';
+    }
+
+    return PDF.renderTextLayer({
+      container: layers[index],
+      textContent: page,
+      viewport: pdfDocuments[docId].viewport,
+      textDivs: [],
+    }).promise;
+  });
+
+  // Resolve all of the text rendering
+  await Promise.all(pageList);
+
+  // Map over the layers to mark any matched search text
+  const marks = layers.map(
+    (layer) =>
+      new Promise((resolve) => {
+        // Create the mark instance
+        const mark = new Mark(layer);
+
+        // Mark the text
+        mark.mark(searchTerm, {
+          separateWordSearch: false,
+          done: () => {
+            const list = layer ? layer.getElementsByTagName('mark') : [];
+
+            // Default to resolve null
+            resolve(list);
+          },
+        });
+      })
+  );
+
+  // Resolve the list of marks
+  const list = await Promise.all(marks);
+
+  // Get the new scroll position by matching the list of marks to the matchIndex
+  const scrollPosition = list
+    .reduce((markList, item) => [...markList, ...item], [])
+    .reduce((scroll, item, index) => {
+      // Highlight the selected mark in the document
+      if (index === matchIndex) {
+        item.classList.add('highlighted');
+        item.scrollIntoView();
+
+        // Send the New Match Position
+        return parseFloat(item.parentElement.style.top);
       }
 
-      return PDF.renderTextLayer({
-        container: layers[index],
-        textContent: page,
-        viewport: pdfDocuments[docId].viewport,
-        textDivs: [],
-      }).promise;
-    });
+      // Default to returning null for the scroll position
+      return scroll;
+    }, null);
 
-    // Resolve all of the text rendering
-    await Promise.all(pageList);
-
-    // Map over the layers to mark any matched search text
-    const marks = layers.map(
-      (layer) =>
-        new Promise((resolve) => {
-          // Create the mark instance
-          const mark = new Mark(layer);
-
-          // Mark the text
-          mark.mark(searchTerm, {
-            separateWordSearch: false,
-            done: () => {
-              const list = layer ? layer.getElementsByTagName('mark') : [];
-
-              // Default to resolve null
-              resolve(list);
-            },
-          });
-        })
-    );
-
-    // Resolve the list of marks
-    const list = await Promise.all(marks);
-
-    // Get the new scroll position by matching the list of marks to the matchIndex
-    const scrollPosition = list.
-      reduce((markList, item) => [...markList, ...item], []).
-      reduce((scroll, item, index) => {
-        // Highlight the selected mark in the document
-        if (index === matchIndex) {
-          item.classList.add('highlighted');
-          item.scrollIntoView();
-
-          // Send the New Match Position
-          return parseFloat(item.parentElement.style.top);
-        }
-
-        // Default to returning null for the scroll position
-        return scroll;
-      }, null);
-
-    // Return the new state
-    return { searchTerm, matches, scrollPosition, matchIndex };
-  }
-);
+  // Return the new state
+  return { searchTerm, matches, scrollPosition, matchIndex };
+});
 
 /**
  * Method to render the PDF page
@@ -185,17 +177,13 @@ export const showPage = async (params) => {
   const page = pdfDocuments[params.docId].pages[params.pageIndex];
 
   // Calculate the Viewport
-  const viewport = page ?
-    page.getViewport({ scale: params.scale }) :
-    initialState.viewport;
+  const viewport = page ? page.getViewport({ scale: params.scale }) : initialState.viewport;
 
   // Set the viewport
   pdfDocuments[params.docId].viewport = viewport;
 
   // Select the canvas element to draw
-  const canvas = document.getElementById(
-    `pdf-canvas-${params.docId}-${params.pageIndex}`
-  );
+  const canvas = document.getElementById(`pdf-canvas-${params.docId}-${params.pageIndex}`);
 
   // Only Update the Canvas if it is present
   if (canvas) {
@@ -227,10 +215,7 @@ export const showPage = async (params) => {
  */
 export const showPdf = createAsyncThunk(
   'documentViewer/show',
-  async (
-    { rotation = null, pageNumber, currentDocument, scale },
-    { dispatch }
-  ) => {
+  async ({ rotation = null, pageNumber, currentDocument, scale }, { dispatch }) => {
     // Update the Document as read if not already
     if (!currentDocument.opened_by_current_user) {
       dispatch(markDocAsRead({ docId: currentDocument.id }));
@@ -252,17 +237,14 @@ export const showPdf = createAsyncThunk(
 
       // Store the pages for the PDF
       pdfDocuments[currentDocument.id].pages = await Promise.all(
-        range(0, pdfDocuments[currentDocument.id].pdf.numPages).map(
-          (pageIndex) =>
-            pdfDocuments[currentDocument.id].pdf.getPage(pageIndex + 1)
+        range(0, pdfDocuments[currentDocument.id].pdf.numPages).map((pageIndex) =>
+          pdfDocuments[currentDocument.id].pdf.getPage(pageIndex + 1)
         )
       );
     }
 
     // Store the Viewport
-    pdfDocuments[currentDocument.id].viewport = pdfDocuments[
-      currentDocument.id
-    ].pages.reduce(
+    pdfDocuments[currentDocument.id].viewport = pdfDocuments[currentDocument.id].pages.reduce(
       (viewport, page) => ({
         height: Math.max(viewport.height, page.getViewport({ scale }).height),
         width: Math.max(viewport.width, page.getViewport({ scale }).width),
@@ -276,10 +258,7 @@ export const showPdf = createAsyncThunk(
       viewport: pdfDocuments[currentDocument.id].viewport,
       currentDocument: {
         ...currentDocument,
-        rotation:
-          rotation === null ?
-            0 :
-            (rotation + ROTATION_INCREMENTS) % COMPLETE_ROTATION,
+        rotation: rotation === null ? 0 : (rotation + ROTATION_INCREMENTS) % COMPLETE_ROTATION,
         currentPage: parseInt(pageNumber, 10) || 1,
         numPages: pdfDocuments[currentDocument.id].pdf.numPages,
       },
@@ -290,59 +269,40 @@ export const showPdf = createAsyncThunk(
 /**
  * Dispatcher to Remove Tags from a Document
  */
-export const removeTag = createAsyncThunk(
-  'documentViewer/removeTag',
-  async ({ doc, tag }) => {
-    // Request the deletion of the selected tag
-    await ApiUtil.delete(
-      `/document/${doc.id}/tag/${tag.id}`,
-      {},
-      ENDPOINT_NAMES.TAG
-    );
+export const removeTag = createAsyncThunk('documentViewer/removeTag', async ({ doc, tag }) => {
+  // Request the deletion of the selected tag
+  await ApiUtil.delete(`/document/${doc.id}/tag/${tag.id}`, {}, ENDPOINT_NAMES.TAG);
 
-    // Return the selected document and tag to the next Dispatcher
-    return { doc, tag };
-  }
-);
+  // Return the selected document and tag to the next Dispatcher
+  return { doc, tag };
+});
 
 /**
  * Dispatcher to Add Tags for a Document
  */
-export const addTag = createAsyncThunk(
-  'documentViewer/addTag',
-  async ({ doc, tags }) => {
-    // Request the addition of the selected tags
-    const { body } = await ApiUtil.post(
-      `/document/${doc.id}/tag`,
-      { data: { tags } },
-      ENDPOINT_NAMES.TAG
-    );
+export const addTag = createAsyncThunk('documentViewer/addTag', async ({ doc, tags }) => {
+  // Request the addition of the selected tags
+  const { body } = await ApiUtil.post(`/document/${doc.id}/tag`, { data: { tags } }, ENDPOINT_NAMES.TAG);
 
-    // Return the selected document and tag to the next Dispatcher
-    return { doc, ...body };
-  }
-);
+  // Return the selected document and tag to the next Dispatcher
+  return { doc, ...body };
+});
 
 /**
  * Dispatcher to Save Description for a Document
  */
-export const saveDescription = createAsyncThunk(
-  'documentViewer/saveDescription',
-  async ({ docId, description }) => {
-    // Request the addition of the selected tags
-    await ApiUtil.patch(`/document/${docId}`, { data: { description } });
+export const saveDescription = createAsyncThunk('documentViewer/saveDescription', async ({ docId, description }) => {
+  // Request the addition of the selected tags
+  await ApiUtil.patch(`/document/${docId}`, { data: { description } });
 
-    // Return the selected document and tag to the next Dispatcher
-    return { description };
-  }
-);
+  // Return the selected document and tag to the next Dispatcher
+  return { description };
+});
 
 /**
  * Dispatcher to Set the PDF as Opened
  */
-export const toggleDocumentCategoryFail = createAction(
-  'documentViewer/toggleDocumentCategoryFail'
-);
+export const toggleDocumentCategoryFail = createAction('documentViewer/toggleDocumentCategoryFail');
 
 /**
  * Dispatcher to Remove Tags from a Document
@@ -354,11 +314,7 @@ export const handleCategoryToggle = createAsyncThunk(
     const category = formatCategoryName(categoryKey);
 
     // Request the addition of the selected tags
-    await ApiUtil.patch(
-      `/document/${docId}`,
-      { data: { [category]: toggleState } },
-      ENDPOINT_NAMES.DOCUMENT
-    );
+    await ApiUtil.patch(`/document/${docId}`, { data: { [category]: toggleState } }, ENDPOINT_NAMES.DOCUMENT);
 
     // Return the selected document and tag to the next Dispatcher
     return { docId, category, toggleState };
@@ -374,10 +330,10 @@ const documentViewerSlice = createSlice({
   reducers: {
     clearSearch: {
       reducer: (state) => {
-      // Clear the Search Term
+        // Clear the Search Term
         state.search.searchTerm = '';
       },
-      prepare: () => addMetaLabel('clear-search')
+      prepare: () => addMetaLabel('clear-search'),
     },
     toggleTagEdit: (state, action) => {
       state.editingTag = action.payload;
@@ -389,7 +345,7 @@ const documentViewerSlice = createSlice({
       reducer: (state, action) => {
         state.selected.currentPage = action.payload;
       },
-      prepare: (page) => addMetaLabel('changing-page', page)
+      prepare: (page) => addMetaLabel('changing-page', page),
     },
     changeDescription: (state, action) => {
       state.selected.pendingDescription = action.payload;
@@ -405,12 +361,7 @@ const documentViewerSlice = createSlice({
         state.shareCommentId = action.payload;
       },
       prepare: (shareCommentId) =>
-        addMetaLabel(
-          shareCommentId ?
-            'open-annotation-share-modal' :
-            'close-annotation-share-modal',
-          shareCommentId
-        ),
+        addMetaLabel(shareCommentId ? 'open-annotation-share-modal' : 'close-annotation-share-modal', shareCommentId),
     },
     toggleDeleteModal: {
       reducer: (state, action) => {
@@ -418,9 +369,7 @@ const documentViewerSlice = createSlice({
       },
       prepare: (deleteCommentId) =>
         addMetaLabel(
-          deleteCommentId ?
-            'open-annotation-delete-modal' :
-            'close-annotation-delete-modal',
+          deleteCommentId ? 'open-annotation-delete-modal' : 'close-annotation-delete-modal',
           deleteCommentId
         ),
     },
@@ -436,39 +385,37 @@ const documentViewerSlice = createSlice({
         removedSectionKeys.map((key) => addMetaLabel('closed-accordion-section', null, key));
 
         return { payload: sections };
-      }
+      },
     },
     togglePdfSideBar: {
       reducer: (state, action) => {
-        state.hidePdfSidebar =
-        action.payload === null ? !state.hidePdfSidebar : action.payload;
+        state.hidePdfSidebar = action.payload === null ? !state.hidePdfSidebar : action.payload;
       },
-      prepare: (payload) => addMetaLabel('toggle-pdf-sidebar', payload)
+      prepare: (payload) => addMetaLabel('toggle-pdf-sidebar', payload),
     },
     toggleSearchBar: (state, action) => {
-      state.hideSearchBar =
-        action.payload === null ? !state.hideSearchBar : action.payload;
+      state.hideSearchBar = action.payload === null ? !state.hideSearchBar : action.payload;
     },
   },
   extraReducers: (builder) => {
-    builder.
-      addCase(showPdf.rejected, (state) => {
+    builder
+      .addCase(showPdf.rejected, (state) => {
         state.selected = {
           loadError: true,
         };
-      }).
-      addCase(showPdf.pending, (state) => {
+      })
+      .addCase(showPdf.pending, (state) => {
         state.loading = true;
-      }).
-      addCase(showPdf.fulfilled, (state, action) => {
+      })
+      .addCase(showPdf.fulfilled, (state, action) => {
         // Add the PDF data to the store
         state.selected = action.payload.currentDocument;
 
         // Add the PDF data to the store
         state.scale = action.payload.scale;
         state.viewport = action.payload.viewport;
-      }).
-      addCase(searchText.fulfilled, (state, action) => {
+      })
+      .addCase(searchText.fulfilled, (state, action) => {
         // Update the Search Term
         state.search.searchTerm = action.payload.searchTerm;
 
@@ -479,60 +426,58 @@ const documentViewerSlice = createSlice({
         state.search.matchIndex = action.payload.matchIndex || 0;
 
         state.search.scrollPosition = action.payload.scrollPosition;
-      }).
-      addCase(saveDescription.rejected, (state, action) => {
+      })
+      .addCase(saveDescription.rejected, (state, action) => {
         // Set the error state
         state.errors.description = {
           visible: true,
           message: action.error.message,
         };
-      }).
-      addCase(saveDescription.fulfilled, (state, action) => {
+      })
+      .addCase(saveDescription.fulfilled, (state, action) => {
         state.selected.pendingDescription = null;
         state.selected.description = action.payload.description;
-      }).
-      addCase(addTag.pending, (state) => {
+      })
+      .addCase(addTag.pending, (state) => {
         state.pendingTag = true;
-      }).
-      addCase(addTag.fulfilled, (state, action) => {
+      })
+      .addCase(addTag.fulfilled, (state, action) => {
         // Reset the state
         state.pendingTag = false;
         state.editingTag = false;
 
         // Update the tags
         state.selected.tags = action.payload.tags;
-      }).
-      addCase(addTag.rejected, (state, action) => {
+      })
+      .addCase(addTag.rejected, (state, action) => {
         // Set the error state
         state.errors.tag = {
           visible: true,
           message: action.error.message,
         };
-      }).
-      addCase(removeTag.pending, (state) => {
+      })
+      .addCase(removeTag.pending, (state) => {
         state.pendingTag = true;
-      }).
-      addCase(removeTag.fulfilled, (state, action) => {
+      })
+      .addCase(removeTag.fulfilled, (state, action) => {
         // Reset the state on success
         state.pendingTag = false;
         state.editingTag = false;
 
         // Filter out the removed text
-        state.selected.tags = state.selected.tags.filter(
-          (tag) => tag.text !== action.payload.tag.text
-        );
-      }).
-      addCase(removeTag.rejected, (state, action) => {
+        state.selected.tags = state.selected.tags.filter((tag) => tag.text !== action.payload.tag.text);
+      })
+      .addCase(removeTag.rejected, (state, action) => {
         // Set the error state
         state.errors.tag = {
           visible: true,
           message: action.error.message,
         };
-      }).
-      addCase(handleCategoryToggle.pending, (state) => {
+      })
+      .addCase(handleCategoryToggle.pending, (state) => {
         state.pendingCategory = true;
-      }).
-      addCase(handleCategoryToggle.rejected, (state, action) => {
+      })
+      .addCase(handleCategoryToggle.rejected, (state, action) => {
         state.pendingCategory = false;
 
         // Set the error state
@@ -540,15 +485,15 @@ const documentViewerSlice = createSlice({
           visible: true,
           message: action.error.message,
         };
-      }).
-      addCase(handleCategoryToggle.fulfilled, (state, action) => {
+      })
+      .addCase(handleCategoryToggle.fulfilled, (state, action) => {
         // Reset the state
         state.pendingCategory = false;
 
         // Apply the Category toggle
         state.selected[action.payload.category] = action.payload.toggleState;
-      }).
-      addMatcher(
+      })
+      .addMatcher(
         (action) => action.type === removeComment.fulfilled.toString(),
         (state) => {
           // Remove the modal state
@@ -573,7 +518,7 @@ export const {
   setPageNumber,
   toggleKeyboardInfo,
   clearSearch,
-  toggleTagEdit
+  toggleTagEdit,
 } = documentViewerSlice.actions;
 
 // Default export the reducer

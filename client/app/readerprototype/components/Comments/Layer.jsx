@@ -14,6 +14,17 @@ import { getPageCoordinatesOfMouseEventPrototype } from '../../../reader/utils';
 import { annotationPlacement, annotationsForDocumentId, annotationsForDocumentIdAndPageId } from '../../selectors';
 import Icon from './Icon';
 
+// This comment provides the framework for positioning, moving and selecting comment icons.
+// These icons (in this file referred to as 'annotations') are stored in the database with their positions
+// relative to the document scaled to 100% and 0 degrees of rotation. If we scale/rotate the document,
+// we have to calculate the mouse position in that transformed frame, use that transformed position for display, but
+// ensure we _store_ it without that transformation. Thus, you will see applications of scales/zooms and then see it
+// undone upon display.
+//
+// You will see 3 versions of the comment icon in the render. One is the icon glued to the mouse when
+// isPlacingAnnotation is true so the user can see where they are going to position it.
+// The second is after they've clicked but haven't saved it yet (ie, they still need to type in their comment)
+// The third is the display of the comments already saved that were fetched from the db.
 const Layer = (props) => {
   const { zoomLevel, pageNumber, documentId, rotation, children, dimensions } = props;
   const scale = zoomLevel / 100;

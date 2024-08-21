@@ -1,7 +1,33 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useRef } from 'react';
+import { ROTATION_DEGREES } from '../util/readerConstants';
 
-const Page = ({ page, rotation = '0deg', renderItem, scale }) => {
+// This Page component is expected to be used within a flexbox container. Flex doesn't notice when children are
+// transformed (scaled and rotated). Where * is the flex container:
+//      *|--------------|*
+//      *|              |*
+//      *|              |*
+//      *|              |*
+//      *|              |*
+//      *|              |*
+//      *|              |*
+//      *|--------------|*
+//
+// When rotated and scaled looks like this:
+//      *                *
+//      *                *
+//      *                *
+//      *    --------    *
+//      *    |      |    *
+//      *    ________    *
+//      *                *
+//      *                *
+// We have to also change the dimensions of the container so that the flex reflows.
+// When scaling, we multiply the height and width (via the getViewport call) by the scale.
+// When rotating, we swap height and width of the container.
+// The child is still centered in the container, so we must offset it put it back to the
+// top / center of the container.
+const Page = ({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale }) => {
   const canvasRef = useRef(null);
   const wrapperRef = useRef(null);
   const scaleFraction = scale / 100;
@@ -31,7 +57,7 @@ const Page = ({ page, rotation = '0deg', renderItem, scale }) => {
     rotate: rotation,
     position: 'relative',
     top,
-    contentVisibility: 'auto',
+    contentVisibility: 'auto', // removes offscreen canvas from rendering calculations to improve performance
   };
 
   useEffect(() => {
@@ -41,30 +67,6 @@ const Page = ({ page, rotation = '0deg', renderItem, scale }) => {
       });
     }
   }, [canvasRef.current, viewport]);
-
-  // useEffect(() => {
-  //   const observer = new IntersectionObserver(
-  //     ([entry]) => {
-  //       canvasStyle = { ...canvasStyle, display: entry.isIntersecting ? 'inline-block' : 'none' };
-  //     },
-  //     {
-  //       root: document.getElementById('pdfContainer'),
-  //       rootMargin: `${scaledHeight * 10}px`, // show 10 rows of pages before and after
-  //       threshold: 0, // any of the target is visible
-  //     }
-  //   );
-
-  //   if (wrapperRef.current) {
-  //     observer.observe(wrapperRef.current);
-  //   }
-
-  //   // Clean up the observer
-  //   return () => {
-  //     if (wrapperRef.current) {
-  //       observer.unobserve(wrapperRef.current);
-  //     }
-  //   };
-  // }, [wrapperRef.current]);
 
   return (
     <div
