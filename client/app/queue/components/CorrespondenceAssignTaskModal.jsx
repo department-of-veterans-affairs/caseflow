@@ -23,16 +23,13 @@ import AssignedCasesPage from '../AssignedCasesPage';
 const CorrespondenceAssignTaskModal = (props) => {
   const userData = () => {
     const storeData = useSelector((state) => state.correspondenceDetails.correspondenceInfo.tasksUnrelatedToAppeal[0].reassignUsers[0]);
-    console.log("The store data is as follows:");
-    console.log(storeData);
     return storeData.map((userIteration) => {
       return {
         label: userIteration,
         value: userIteration
-      }
+      };
     });
-  }
-  userData();
+  };
 
   const { task } = props;
   const taskData = taskActionData(props);
@@ -63,10 +60,10 @@ const CorrespondenceAssignTaskModal = (props) => {
 
     if (instructions.length > 0) {
       return `${reason_text}\n${instructions}`;
-    }
+    };
 
     return instructions;
-  };
+  }
 
   const validateForm = () => {
     if (!shouldShowTaskInstructions && assigneeAdded) {
@@ -78,7 +75,7 @@ const CorrespondenceAssignTaskModal = (props) => {
 
   const formChanged = () => {
     setAssigneeAdded(true);
-  }
+  };
 
   const submit = () => {
     // const currentInstruction = (props.task.type === 'PostSendInitialNotificationLetterHoldingTask' ?
