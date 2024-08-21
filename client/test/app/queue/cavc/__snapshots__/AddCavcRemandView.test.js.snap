@@ -4057,17 +4057,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                   Object {
                     "callback": [Function],
                     "classNames": Array [
-                      "cf-prev-step",
-                      "usa-button-secondary",
-                      "button-back-button",
-                    ],
-                    "displayText": "Cancel",
-                    "name": "back-button",
-                    "willNeverBeLoading": true,
-                  },
-                  Object {
-                    "callback": [Function],
-                    "classNames": Array [
                       "cf-right-side",
                     ],
                     "disabled": false,
@@ -4079,6 +4068,17 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                       "data-css-wn5k45": "",
                     },
                   },
+                  Object {
+                    "callback": [Function],
+                    "classNames": Array [
+                      "cf-right-side",
+                      "cf-prev-step",
+                      "usa-button-secondary",
+                    ],
+                    "displayText": "Cancel",
+                    "name": "back-button",
+                    "willNeverBeLoading": true,
+                  },
                 ]
               }
             >
@@ -4089,39 +4089,12 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                   callback={[Function]}
                   classNames={
                     Array [
-                      "cf-prev-step",
-                      "usa-button-secondary",
-                      "button-back-button",
-                    ]
-                  }
-                  displayText="Cancel"
-                  key="0"
-                  linkStyling={false}
-                  loading={false}
-                  name="back-button"
-                  onClick={[Function]}
-                  type="button"
-                  willNeverBeLoading={true}
-                >
-                  <button
-                    className="cf-prev-step usa-button-secondary button-back-button usa-button"
-                    id="button-back-button"
-                    onClick={[Function]}
-                    type="button"
-                  >
-                    Cancel
-                  </button>
-                </Button>
-                <Button
-                  callback={[Function]}
-                  classNames={
-                    Array [
                       "cf-right-side",
                     ]
                   }
                   disabled={false}
                   displayText="Submit"
-                  key="1"
+                  key="0"
                   linkStyling={false}
                   loading={false}
                   loadingText="Submitting..."
@@ -4147,6 +4120,33 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                       Submit
                     </button>
                   </span>
+                </Button>
+                <Button
+                  callback={[Function]}
+                  classNames={
+                    Array [
+                      "cf-right-side",
+                      "cf-prev-step",
+                      "usa-button-secondary",
+                    ]
+                  }
+                  displayText="Cancel"
+                  key="1"
+                  linkStyling={false}
+                  loading={false}
+                  name="back-button"
+                  onClick={[Function]}
+                  type="button"
+                  willNeverBeLoading={true}
+                >
+                  <button
+                    className="cf-right-side cf-prev-step usa-button-secondary usa-button"
+                    id="button-back-button"
+                    onClick={[Function]}
+                    type="button"
+                  >
+                    Cancel
+                  </button>
                 </Button>
               </div>
             </DecisionViewFooter>
