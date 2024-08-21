@@ -32,6 +32,8 @@ describe('Fields', () => {
     expect(veteranTimezoneInput).toBeInTheDocument();
     expect(poaRepTimezoneInput).toBeInTheDocument();
 
+    screen.debug();
+
     await waitFor(() => {
       expect(veteranTimezoneInput).toHaveValue(hearing.appellantTz);
       expect(poaRepTimezoneInput).toHaveValue(hearing.representativeTz);
