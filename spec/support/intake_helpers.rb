@@ -350,9 +350,6 @@ module IntakeHelpers
 
     fill_in "Issue category", with: category
     find("#issue-category").send_keys :enter
-    unless page.has_selector?("label", text: "Issue description", visible: true)
-      find("label", text: "None of these match").click
-    end
     fill_in "Issue description", with: description
     fill_in "Decision date", with: date
     expect(page).to have_button(add_button_text, disabled: false)

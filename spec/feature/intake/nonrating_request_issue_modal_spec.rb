@@ -34,6 +34,46 @@ feature "Nonrating Request Issue Modal", :postgres do
     expect(page).to_not have_content("PACT Act")
   end
 
+    # rubocop:disable Metrics/ParameterLists
+  # rubocop:disable Metrics/AbcSize
+  def add_intake_for_nonrating_issue(
+    benefit_type: "Compensation",
+    category: "Active Duty Adjustments",
+    description: "Some description",
+    date: "01/01/2016",
+    legacy_issues: false,
+    is_predocket_needed: false
+  )
+    add_button_text = legacy_issues ? "Next" : "Add this issue"
+    expect(page.text).to match(/Does issue \d+ match any of these non-rating issue categories?/)
+    expect(page).to have_button(add_button_text, disabled: true)
+
+    # has_css will wait 5 seconds by default, and we want an instant decision.
+    # we can trust the modal is rendered because of the expect() calls above.
+    if page.has_css?("#issue-benefit-type", wait: 0)
+      fill_in "Benefit type", with: benefit_type
+      find("#issue-benefit-type").send_keys :enter
+    end
+
+    if page.has_css?("div.cf-is-predocket-needed", wait: 1)
+      within_fieldset("Is pre-docketing needed for this issue?") do
+        find("label", text: is_predocket_needed ? "Yes" : "No", match: :prefer_exact).click
+      end
+    end
+
+    fill_in "Issue category", with: category
+    find("#issue-category").send_keys :enter
+    unless page.has_selector?("label", text: "Issue description", visible: true)
+      find("label", text: "None of these match").click
+    end
+    fill_in "Issue description", with: description
+    fill_in "Decision date", with: date
+    expect(page).to have_button(add_button_text, disabled: false)
+    safe_click ".add-issue"
+  end
+  # rubocop:enable Metrics/ParameterLists
+  # rubocop:enable Metrics/AbcSize
+
   def test_issue_categories(decision_review_type:, benefit_type:, included_category:, mst_pact:)
     case decision_review_type
     when "higher_level_review"
@@ -60,7 +100,7 @@ feature "Nonrating Request Issue Modal", :postgres do
     mst_pact ? check_for_mst_pact : check_for_no_mst_pact
     click_intake_nonrating_category_dropdown
     expect(page).to have_content(included_category)
-    add_intake_nonrating_issue(
+    add_intake_for_nonrating_issue(
       category: included_category,
       description: "I am a description",
       date: Time.zone.today.mdY
