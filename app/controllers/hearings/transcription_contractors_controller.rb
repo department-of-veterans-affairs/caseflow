@@ -26,13 +26,7 @@ class Hearings::TranscriptionContractorsController < ApplicationController
 
   def available_contractors
     contractors = TranscriptionContractor.where(is_available_for_work: true).select(:id, :name)
-    today = Time.zone.today
-    standard_date = today + 15.days + Holidays.between(today, today + 15.days, :federal_reserve, :observed).length.days
-    expedited_date = today + 5.days + Holidays.between(today, today + 5.days, :federal_reserve, :observed).length.days
-    render json: {
-      transcription_contractors: contractors,
-      return_dates: [standard_date.to_formatted_s(:short_date), expedited_date.to_formatted_s(:short_date)]
-    }
+    render json: { transcription_contractors: contractors }
   end
 
   def show

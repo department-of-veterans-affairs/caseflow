@@ -18,12 +18,12 @@ export const TranscriptionFileDispatchView = () => {
   const [alert, setAlert] = useState(defaultAlert);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [packageModalConfig, setPackageModalConfig] = useState({ opened: false });
-  const [contractors, setContractors] = useState({ transcription_contractors: [], return_dates: ['---', '---'] });
+  const [contractors, setContractors] = useState([]);
 
   const getContractors = () => {
     ApiUtil.get('/hearings/find_by_contractor/available_contractors').
       // eslint-disable-next-line camelcase
-      then((response) => setContractors(response.body));
+      then((response) => setContractors(response.body?.transcription_contractors));
   };
 
   const selectFilesForPackage = (files) => {
@@ -72,13 +72,7 @@ export const TranscriptionFileDispatchView = () => {
           fullPage={false}
           tabs={tabConfig(openPackageModal, selectFilesForPackage, selectedFiles.length)}
         />
-        { packageModalConfig.opened &&
-          <PackageFilesModal
-            onCancel={closePackageModal}
-            contractors={contractors.transcription_contractors}
-            returnDates={contractors.return_dates}
-            selectedFiles={selectedFiles}
-          />}
+        { packageModalConfig.opened && <PackageFilesModal onCancel={closePackageModal} contractors={contractors} />}
       </AppSegment>
     </>
   );

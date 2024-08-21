@@ -168,30 +168,4 @@ RSpec.describe Hearings::TranscriptionContractorsController, type: :controller d
       expect(response.body).to eq error_response.to_json
     end
   end
-
-  before do
-    transcription_contractor_2.update!(is_available_for_work: true)
-  end
-
-  describe "available contractors" do
-    it "only gives available contractors" do
-      get :available_contractors
-
-      expect(response.status).to eq(200)
-      expect(JSON.parse(response.body)["transcription_contractors"]).to eq(
-        [{
-          "id": transcription_contractor_2.id,
-          "name": "Contractor Name"
-        }.transform_keys(&:to_s)]
-      )
-    end
-
-    it "gives the correct dates excluding holidays" do
-      allow(Time.zone).to receive(:today).and_return Date.new(2024, 8, 20)
-      get :available_contractors
-
-      expect(response.status).to eq(200)
-      expect(JSON.parse(response.body)["return_dates"]).to eq(["09/05/2024", "08/25/2024"])
-    end
-  end
 end
