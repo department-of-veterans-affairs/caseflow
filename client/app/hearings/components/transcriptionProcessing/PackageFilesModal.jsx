@@ -5,11 +5,14 @@ import COPY from '../../../../COPY';
 import { RadioField } from '../../../components/RadioField';
 import { SearchableDropdown } from '../../../components/SearchableDropdown';
 import ApiUtil from 'app/util/ApiUtil';
+import { useHistory } from 'react-router';
 
-const PackageFilesModal = ({ onCancel, contractors }) => {
-  const [transcription, setTranscription] = useState({ task_id: '' });
-  const [, setReturnDateValue] = useState('');
-  const [, setContractorId] = useState('');
+const PackageFilesModal = ({ onCancel, contractors, returnDates, selectedFiles }) => {
+  const [transcription, setTranscription] = useState({ task_id: '----' });
+  const [returnDateValue, setReturnDateValue] = useState('');
+  const [contractor, setContractor] = useState({ id: '0', name: '' });
+  const [workOrder, setWorkOrder] = useState('');
+  let history = useHistory();
 
   /**
    * Grabs the taskId
@@ -45,7 +48,7 @@ const PackageFilesModal = ({ onCancel, contractors }) => {
       sequencer = '0'.repeat(4 - numberOfDigits) + taskId;
     }
 
-    return `BVA-${firstSet}-${sequencer}`;
+    setWorkOrder(`BVA-${firstSet}-${sequencer}`);
   };
 
   // Renders the work order number
@@ -53,38 +56,9 @@ const PackageFilesModal = ({ onCancel, contractors }) => {
     return (
       <div>
         <strong>Work Order</strong>
-        <p>{transcription.task_id && generateWorkOrder(transcription.task_id)}</p>
+        <p>{workOrder}</p>
       </div>
     );
-  };
-
-  /**
-   * Calculates the expected return date for the radio buttons
-   * @params {number} days - Amount of days from today
-   * @returns {string} The formatted expected return date
-   */
-  const calculateReturnDate = (days) => {
-    const date = new Date();
-
-    let dayofWeek = date.getDay();
-    let daysRemaining = days;
-    let totalDays = 0;
-
-    while (daysRemaining > 0) {
-      dayofWeek += 1;
-      if (dayofWeek < 6) {
-        daysRemaining -= 1;
-        totalDays += 1;
-      } else {
-        totalDays += 2;
-        dayofWeek = 0;
-      }
-    }
-
-    date.setDate(date.getDate() + totalDays);
-
-    return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
-
   };
 
   /**
@@ -92,7 +66,8 @@ const PackageFilesModal = ({ onCancel, contractors }) => {
    * @returns {object} The radio button options
    */
   const returnDateOptions = () => {
-    const fifteenDayReturnDate = calculateReturnDate(15);
+    const fifteenDayReturnDate = returnDates[0];
+    const fiveDayReturnDate = returnDates[1];
 
     return [
       {
@@ -101,7 +76,7 @@ const PackageFilesModal = ({ onCancel, contractors }) => {
       },
       {
         displayText: 'Expedite (Maximum of 5 days)',
-        value: calculateReturnDate(5)
+        value: fiveDayReturnDate
       }
     ];
   };
@@ -111,10 +86,10 @@ const PackageFilesModal = ({ onCancel, contractors }) => {
    * @returns {object} The contractor option
    */
   const contractorOptions = () => {
-    return contractors.map((contractor) => {
+    return contractors.map((option) => {
       return {
-        label: contractor.name,
-        value: contractor.id
+        label: option.name,
+        value: option.id
       };
     });
   };
@@ -124,7 +99,7 @@ const PackageFilesModal = ({ onCancel, contractors }) => {
     return <SearchableDropdown
       name=<strong>Contractor</strong>
       options={contractorOptions()}
-      onChange={(option) => setContractorId(option.value)}
+      onChange={(option) => setContractor({ id: option.value, name: option.label })}
     />;
   };
 
@@ -140,15 +115,13 @@ const PackageFilesModal = ({ onCancel, contractors }) => {
     );
   };
 
-  // Temporary function for rolling over to next transcription for testing
-  const packageFiles = (id, taskId) => {
-    ApiUtil.put('/hearings/transcriptions/package_files', { data: { id, task_id: taskId } }).
-      then(() => onCancel());
-  };
-
   useEffect(() => {
     getTranscriptionTaskId();
   }, []);
+
+  useEffect(() => {
+    generateWorkOrder(transcription.task_id);
+  }, [transcription]);
 
   return (
     <Modal
@@ -162,7 +135,8 @@ const PackageFilesModal = ({ onCancel, contractors }) => {
         {
           classNames: ['usa-button', 'usa-button-primary'],
           name: COPY.TRANSCRIPTION_TABLE_PACKAGE_FILE,
-          onClick: () => packageFiles(transcription.id, transcription.task_id),
+          disabled: !(workOrder && returnDateValue && contractor.name),
+          onClick: () => history.push('/confirm_work_order', { workOrder, selectedFiles, returnDateValue, contractor })
         },
       ]}
       closeHandler={onCancel}
@@ -175,7 +149,9 @@ const PackageFilesModal = ({ onCancel, contractors }) => {
 
 PackageFilesModal.propTypes = {
   onCancel: PropTypes.func,
-  contractors: PropTypes.object
+  contractors: PropTypes.object,
+  returnDates: PropTypes.array,
+  selectedFiles: PropTypes.arrayOf(PropTypes.object)
 };
 
 export default PackageFilesModal;

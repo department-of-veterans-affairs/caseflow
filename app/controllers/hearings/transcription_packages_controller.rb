@@ -7,4 +7,9 @@ class Hearings::TranscriptionPackagesController < ApplicationController
 
     render json: Hearings::TranscriptionPackageSerializer.new(transcription_package).serializable_hash, status: :ok
   end
+
+  def new
+    # todo
+    Rails.logger.info("Work order #{params[:work_order_name]} submitted")
+  end
 end
