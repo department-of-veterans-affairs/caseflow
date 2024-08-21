@@ -57,8 +57,6 @@ module Seeds
       end
     end
 
-
-
     def create_correspondence_types
       correspondence_types_list =
         ["Abeyance",
@@ -118,12 +116,12 @@ module Seeds
 
     def create_veterans
       veterans = []
-      15.times do |i|
+      35.times do |i|
         # Create the veteran
         @file_number += 1
         @participant_id += 1
         veteran = create(:veteran, file_number: @file_number, participant_id: @participant_id)
-        15.times do
+        35.times do
           appeal = create(:appeal, veteran: veteran)
           InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
         end

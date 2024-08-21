@@ -57,4 +57,8 @@ class WorkQueue::CorrespondenceSerializer
       WorkQueue::CorrespondenceResponseLetterSerializer.new(response_letter).serializable_hash[:data][:attributes]
     end
   end
+
+  attribute :related_correspondence_ids do |object|
+    object.related_correspondence_ids
+  end
 end

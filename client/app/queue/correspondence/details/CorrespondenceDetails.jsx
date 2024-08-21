@@ -30,6 +30,21 @@ const CorrespondenceDetails = (props) => {
   const startIndex = (currentPage * 15) - 15;
   const endIndex = (currentPage * 15);
   const priorMail = props.correspondence.prior_mail
+  const relatedCorrespondenceIds = props.correspondence.relatedCorrespondenceIds
+  
+  priorMail.sort((a,b)=>{ 
+    if (relatedCorrespondenceIds.includes(a.id) && relatedCorrespondenceIds.includes(b.id)) {
+      return Date.parse(a.vaDateOfReceipt) > Date.parse(b.vaDateOfReceipt) ? -1 : 1
+    } else if (relatedCorrespondenceIds.includes(a.id)) {
+      return -1
+    } else if (relatedCorrespondenceIds.includes(b.id)) {
+      return -1
+    }
+    else {
+      return 1;
+    }
+  });
+  
   const updatePageHandler = (idx) => {
     const newCurrentPage = idx + 1;
 
@@ -264,7 +279,7 @@ const CorrespondenceDetails = (props) => {
               name={correspondence.id.toString()}
               id={correspondence.id.toString()}
               hideLabel
-              defaultValue={false}
+              defaultValue={relatedCorrespondenceIds.some((el) => el === correspondence.id)}
               disabled={true}
             />
           </div>
@@ -356,9 +371,10 @@ const CorrespondenceDetails = (props) => {
   const associatedPriorMail = () => {
     return (
       <>
-        <div className="associatedPriorMail"> 
-          <h2> Information about Associated Prior Mail kk</h2>
-          <div>
+        <div className="associatedPriorMail" style = {{ marginTop: '30px'}}> 
+          <AppSegment filledBackground noMarginTop>
+            <p style = {{ marginTop: 0 }}>Please select prior mail to link to this correspondence </p>
+              <div>
               <CorrespondencePaginationWrapper
                 columns={getDocumentColumns}
                 columnsToDisplay={15}
@@ -370,7 +386,8 @@ const CorrespondenceDetails = (props) => {
                 tbodyId="correspondence-table-body"
                 getKeyForRow={getKeyForRow}
               />
-            </div>
+              </div>
+          </AppSegment>
         </div>
       </>
     )
@@ -380,12 +397,12 @@ const CorrespondenceDetails = (props) => {
     {
       disable: false,
       label: 'Correspondence and Appeal Tasks',
-      page: 'correspondenceAndAppealTaskComponents'
+      page: correspondenceAndAppealTaskComponents
     },
     {
       disable: false,
       label: 'Package Details',
-      page: 'correspondencePackageDetails'
+      page: correspondencePackageDetails()
     },
     {
       disable: false,

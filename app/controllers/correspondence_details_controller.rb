@@ -106,9 +106,8 @@ class CorrespondenceDetailsController < CorrespondenceController
   end
 
   def prior_mail
-    prior_mail = Correspondence.prior_mail(veteran_by_correspondence.id, correspondence.uuid)
+    prior_mail = Correspondence.prior_mail(veteran_by_correspondence.id, correspondence.uuid).order(:va_date_of_receipt)
       .select { |corr| corr.status == "Completed" || corr.status == "Pending" }
-
     serialized_mail = prior_mail.map do |correspondence|
       WorkQueue::CorrespondenceSerializer.new(correspondence).serializable_hash[:data][:attributes]
     end
