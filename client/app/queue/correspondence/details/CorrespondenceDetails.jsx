@@ -29,19 +29,19 @@ const CorrespondenceDetails = (props) => {
   const totalPages = Math.ceil(allCorrespondences.length / 15);
   const startIndex = (currentPage * 15) - 15;
   const endIndex = (currentPage * 15);
-  const priorMail = props.correspondence.prior_mail
-  const relatedCorrespondenceIds = props.correspondence.relatedCorrespondenceIds
-  
-  priorMail.sort((a,b)=>{ 
-    if (relatedCorrespondenceIds.includes(a.id) && relatedCorrespondenceIds.includes(b.id)) {
-      return Date.parse(a.vaDateOfReceipt) > Date.parse(b.vaDateOfReceipt) ? -1 : 1
-    } else if (relatedCorrespondenceIds.includes(a.id)) {
-      return -1
-    } else if (relatedCorrespondenceIds.includes(b.id)) {
-      return -1
-    }
-    else {
-      return 1;
+  const priorMail = correspondence.prior_mail;
+  const relatedCorrespondenceIds = props.correspondence.relatedCorrespondenceIds;
+
+  priorMail.sort((first, second) => {
+    const firstInRelated = relatedCorrespondenceIds.includes(first.id);
+    const secondInRelated = relatedCorrespondenceIds.includes(second.id);
+
+    if (firstInRelated && secondInRelated) {
+      return new Date(second.vaDateOfReceipt) - new Date(first.vaDateOfReceipt);
+    } else if (firstInRelated) {
+      return -1;
+    } else if (secondInRelated) {
+      return -1;
     }
     return 1;
   });
