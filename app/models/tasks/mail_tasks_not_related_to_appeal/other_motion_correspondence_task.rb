@@ -8,7 +8,8 @@ class OtherMotionCorrespondenceTask < CorrespondenceMailTask
   # if you have a UNIQUE action for the specific task, put it here.
   def available_actions(user)
     [
-      Constants.TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.to_h
+      Constants.TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.to_h,
+      Constants.TASK_ACTIONS.COMPLETE_CORRESPONDENCE_TASK.to_h
     ]
   end
 end

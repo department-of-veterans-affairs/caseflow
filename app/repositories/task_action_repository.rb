@@ -417,6 +417,18 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       params
     end
 
+    def complete_correspondence_task_data(task, organization, _user = nil)
+      {
+        modal_title: COPY::MARK_TASK_COMPLETE_TITLE,
+        modal_body: COPY::CORRESPONDENCE_OTHER_MOTION_MODAL_DETAIL,
+        message_title: format(COPY::CORRESPONDENCE_OTHER_MOTION_TASK_COMPLETE,
+                              task,
+                              organization),
+        message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL),
+        redirect_after: "/queue/correspondence/:correspondence_uuid/"
+      }
+    end
+
     def proceed_final_notification_letter_data(task, _user = nil)
       params = {
         modal_body: COMPLETE_TASK_MODAL_BODY_HASH[task.type.to_sym],

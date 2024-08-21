@@ -1,16 +1,19 @@
 {
-
   "successBanner": {
     "title": "Success",
     "message": "FOIA request task has been cancelled. If you have made a mistake, please email Inbound Ops Supervisor for any changes.",
     "type": "success"
+  },
 
-    },
-    "failBanner": {
+  "completeBanner": {
+    "title": "Complete",
+    "message": "%s task has been marked complete. If you have made a mistake, please email %d for any changes",
+    "type": "complete"
+  },
 
-      "title": "Warning",
-      "message": "Error FOIA request task has not been cancelled",
-      "type": "warning"
-
-      }
-    }
+  "failBanner": {
+    "title": "Warning",
+    "message": "Error FOIA request task has not been cancelled",
+    "type": "warning"
+  }
+}

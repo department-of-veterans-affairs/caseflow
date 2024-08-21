@@ -39,6 +39,30 @@ export const cancelTaskNotRelatedToAppeal = (taskID, payload) => (dispatch) => {
     });
 };
 
+export const completeTaskNotRelatedToAppeal = (task, taskID, team, payload) => (dispatch) => {
+
+  return ApiUtil.patch(`/queue/correspondence/tasks/${taskID}/complete`, payload).
+    then(() => {
+
+      dispatch({
+        type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
+        payload: {
+          bannerAlert: CORRESPONDENCE_DETAILS_BANNERS.completeBanner(task, team)
+        }
+      });
+
+    }).
+    catch((error) => {
+      dispatch({
+        type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
+        payload: {
+          bannerAlert: CORRESPONDENCE_DETAILS_BANNERS.failBanner
+        }
+      });
+      console.error(error);
+    });
+};
+
 export const correspondenceInfo = (correspondence) => (dispatch) => {
   dispatch({
     type: ACTIONS.CORRESPONDENCE_INFO,

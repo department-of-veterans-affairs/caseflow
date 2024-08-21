@@ -93,6 +93,7 @@ import TeamManagement from './teamManagement/TeamManagement';
 import UserManagement from './UserManagement';
 import CorrespondenceReviewPackage from './correspondence/ReviewPackage/CorrespondenceReviewPackage';
 import CorrespondenceIntake from './correspondence/intake/components/CorrespondenceIntake';
+import CorrespondenceCompleteTaskModal from './components/CorrespondenceCompleteTaskModal';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_TITLES } from './constants';
@@ -720,6 +721,11 @@ class QueueApp extends React.PureComponent {
   routedCorrespondenceCancelTaskModal = (props) => (
     <CorrespondenceCancelTaskModal {...props.match.params} />
   );
+
+  routedCorrespondenceCompleteTaskModal = (props) => (
+    <CorrespondenceCompleteTaskModal {...props.match.params} />
+  );
+
   routedCorrespondenceCases = (props) => (
     <CorrespondenceCases {...props.match.params}
       {...this.props}
@@ -1013,6 +1019,17 @@ class QueueApp extends React.PureComponent {
               }
               title={`${PAGE_TITLES.CANCEL_TASK} | Caseflow`}
               render={this.routedCorrespondenceCancelTaskModal}
+            />
+
+            <PageRoute
+              exact
+              path={
+                '/queue/correspondence/:correspondence_uuid/tasks/:task_id/' +
+            `(${TASK_ACTIONS.COMPLETE_CORRESPONDENCE_TASK.value
+            })`
+              }
+              title={`${PAGE_TITLES.MARK_TASK_COMPLETE} | Caseflow`}
+              render={this.routedCorrespondenceCompleteTaskModal}
             />
 
             {motionToVacateRoutes.page}
