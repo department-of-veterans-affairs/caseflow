@@ -3,7 +3,6 @@ import { shallow, mount } from 'enzyme';
 import moment from 'moment-timezone';
 import { invert } from 'lodash';
 
-
 import { Timezone } from 'app/hearings/components/VirtualHearings/Timezone';
 import HEARING_TIME_OPTIONS from 'constants/HEARING_TIME_OPTIONS';
 import TIMEZONES from 'constants/TIMEZONES';
@@ -14,7 +13,7 @@ import { timezoneStyles } from 'app/hearings/components/details/style';
 
 // Set the test Constants
 const defaultTime = '08:15';
-const defaultRoTimezone = 'America/New_York'
+const defaultRoTimezone = 'America/New_York';
 const defaults = timezones(defaultTime, defaultRoTimezone);
 const REGIONAL_OFFICE_TIMEZONES = roTimezones();
 
