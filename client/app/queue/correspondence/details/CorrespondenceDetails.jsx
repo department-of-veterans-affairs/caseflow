@@ -43,8 +43,9 @@ const CorrespondenceDetails = (props) => {
     else {
       return 1;
     }
+    return 1;
   });
-  
+
   const updatePageHandler = (idx) => {
     const newCurrentPage = idx + 1;
 
@@ -269,18 +270,18 @@ const CorrespondenceDetails = (props) => {
   //   return `${id}`;
   // };
 
-  const getDocumentColumns = (correspondence) => {
+  const getDocumentColumns = (correspondenceRow) => {
     return [
       {
         cellClass: 'checkbox-column',
         valueFunction: () => (
           <div className="checkbox-column-inline-style">
             <Checkbox
-              name={correspondence.id.toString()}
-              id={correspondence.id.toString()}
+              name={correspondenceRow.id.toString()}
+              id={correspondenceRow.id.toString()}
               hideLabel
-              defaultValue={relatedCorrespondenceIds.some((el) => el === correspondence.id)}
-              disabled={true}
+              defaultValue={relatedCorrespondenceIds.some((el) => el === correspondenceRow.id)}
+              disabled
             />
           </div>
         )
@@ -296,7 +297,7 @@ const CorrespondenceDetails = (props) => {
           </div>
         ),
         valueFunction: () => {
-          const date = new Date(correspondence.vaDateOfReceipt);
+          const date = new Date(correspondenceRow.vaDateOfReceipt);
 
           return (
             <span className="va-dor-item">
@@ -319,12 +320,12 @@ const CorrespondenceDetails = (props) => {
           <span className="va-package-document-type-item">
             <p>
               <a
-                href={`/queue/correspondence/${correspondence.uuid}`}
+                href={`/queue/correspondence/${correspondenceRow.uuid}`}
                 rel="noopener noreferrer"
                 className="external-link-icon-a"
                 target="_blank"
               >
-                {correspondence?.nod ? 'NOD' : 'Non-NOD'}
+                {correspondenceRow?.nod ? 'NOD' : 'Non-NOD'}
                 <span className="external-link-icon-wrapper">
                   <ExternalLinkIcon color={COLORS.PRIMARY} />
                 </span>
@@ -345,7 +346,7 @@ const CorrespondenceDetails = (props) => {
         ),
         valueFunction: () => (
           <span className="va-correspondence-type-item">
-            <p>{correspondence.correspondenceType}</p>
+            <p>{correspondenceRow.correspondenceType}</p>
           </span>
         )
       },
@@ -361,7 +362,7 @@ const CorrespondenceDetails = (props) => {
         ),
         valueFunction: () => (
           <span className="va-notes-item">
-            <p>{correspondence.notes}</p>
+            <p>{correspondenceRow.notes}</p>
           </span>
         )
       }
@@ -371,10 +372,10 @@ const CorrespondenceDetails = (props) => {
   const associatedPriorMail = () => {
     return (
       <>
-        <div className="associatedPriorMail" style = {{ marginTop: '30px'}}> 
+        <div className="associatedPriorMail" style = {{ marginTop: '30px' }}>
           <AppSegment filledBackground noMarginTop>
             <p style = {{ marginTop: 0 }}>Please select prior mail to link to this correspondence </p>
-              <div>
+            <div>
               <CorrespondencePaginationWrapper
                 columns={getDocumentColumns}
                 columnsToDisplay={15}
@@ -386,12 +387,12 @@ const CorrespondenceDetails = (props) => {
                 tbodyId="correspondence-table-body"
                 getKeyForRow={getKeyForRow}
               />
-              </div>
+            </div>
           </AppSegment>
         </div>
       </>
-    )
-  }
+    );
+  };
 
   const tabList = [
     {
