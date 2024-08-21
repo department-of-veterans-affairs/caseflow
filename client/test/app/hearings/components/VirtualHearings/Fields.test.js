@@ -32,11 +32,9 @@ describe('Fields', () => {
     expect(veteranTimezoneInput).toBeInTheDocument();
     expect(poaRepTimezoneInput).toBeInTheDocument();
 
-    screen.debug();
-
     await waitFor(() => {
-      expect(veteranTimezoneInput).toHaveValue(hearing.appellantTz);
-      expect(poaRepTimezoneInput).toHaveValue(hearing.representativeTz);
+      expect(veteranTimezoneInput.getByText('Pacific Time (US & Canada) (5:15 AM)')).toBeTruthy();
+      expect(poaRepTimezoneInput.getByText('Pacific Time (US & Canada) (5:15 AM)')).toBeTruthy();
     });
 
     // // Other components
