@@ -591,9 +591,9 @@ class ClaimHistoryEvent
     def request_issue_modification_event_hash(change_data)
       {
         "event_date" => change_data["issue_modification_request_created_at"],
-        "event_user_name" => change_data["decider"] || change_data["requestor"],
-        "user_facility" => change_data["decider_station_id"] || change_data["requestor_station_id"],
-        "event_user_css_id" => change_data["decider_css_id"] || change_data["requestor_css_id"]
+        "event_user_name" => change_data["requestor"],
+        "user_facility" => change_data["requestor_station_id"],
+        "event_user_css_id" => change_data["requestor_css_id"]
       }
     end
 
