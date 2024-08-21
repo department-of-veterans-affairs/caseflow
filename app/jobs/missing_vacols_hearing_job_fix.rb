@@ -60,6 +60,7 @@ module WarRoom
       questionable_tasks
     end
 
+    # :reek:FeatureEnvy
     def stuck_tasks(questionable_tasks)
       tasks_with_hearing_missing_vacols_records = []
       questionable_tasks.each do |task|
