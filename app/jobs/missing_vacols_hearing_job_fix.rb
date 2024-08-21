@@ -24,8 +24,8 @@ class MissingVacolsHearingJobFix < CaseflowJob
     process_missing_vacols_records
 
     unless @tasks_missing_hearings.blank?
-      Rails.logger.error "ALERT------- Task Id's: #{@tasks_missing_hearings.to_sentence} are missing associated hearings." \
-      "This requires manual remediation------- ALERT"
+      Rails.logger.error "ALERT------- Task Id's: #{@tasks_missing_hearings.to_sentence} are missing " \
+      "associated hearings. This requires manual remediation------- ALERT"
     end
     end_time
     log_processing_time
