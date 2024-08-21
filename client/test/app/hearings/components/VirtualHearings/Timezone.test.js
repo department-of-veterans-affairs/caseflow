@@ -14,7 +14,7 @@ import { timezoneStyles } from 'app/hearings/components/details/style';
 // Set the test Constants
 const defaultTime = '08:15';
 const defaultRoTimezone = 'America/New_York';
-const defaults = timezones(defaultTime, defaultRoTimezone);
+const defaults = timezones(defaultTime, defaultRoTimezone, '2025-01-01');
 const REGIONAL_OFFICE_TIMEZONES = roTimezones();
 
 // Remove missing Regional Office zones from the count
@@ -162,12 +162,13 @@ describe('Timezone', () => {
     const timeWithTimezone = HEARING_TIME_OPTIONS[0].value;
     const splitTimeString = timeWithTimezone.search('AM');
     const time = `${timeWithTimezone.slice(0, splitTimeString).trim()} am`;
+
     const roTimezone = 'America/Los_Angeles';
-    const dateTime = moment.tz(time, 'h:mm a', roTimezone);
+    const dateTime = moment.tz(`${hearingDayDate} ${time}`, 'YYYY-MM-DD h:mm a', roTimezone);
     const roTzValueToLabelMapping = invert(TIMEZONES);
 
     const tz = mount(
-      <Timezone time={time} roTimezone={roTimezone} />
+      <Timezone time={time} roTimezone={roTimezone} hearingDayDate={hearingDayDate} />
     );
     const dropdown = tz.find(SearchableDropdown);
 
