@@ -43,6 +43,7 @@ const CorrespondenceDetails = (props) => {
     } else if (secondInRelated) {
       return -1;
     }
+
     return 1;
   });
 
