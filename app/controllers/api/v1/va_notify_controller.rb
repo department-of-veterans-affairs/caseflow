@@ -19,9 +19,16 @@ class Api::V1::VaNotifyController < Api::ApplicationController
   private
 
   def required_params
-    id_param, notification_type_param,
-    to_param, status_param,
-    status_reason_param = params.require([:id, :notification_type, :to, :status, :status_reason])
+    if params[:status].casecmp("delivered") == 0
+      id_param, notification_type_param,
+      status_param = params.require([:id, :notification_type, :status])
+      to_param = params[:to]
+      status_reason_param = params[:status_reason]
+    else
+      id_param, notification_type_param,
+      to_param, status_param,
+      status_reason_param = params.require([:id, :notification_type, :to, :status, :status_reason])
+    end
     {
       external_id: id_param,
       notification_type: notification_type_param,

@@ -227,6 +227,116 @@ describe Api::V1::VaNotifyController, type: :controller do
     end
   end
 
+  context "payload status is delivered and status_reason and to are null" do
+    before { Seeds::NotificationEvents.new.seed! }
+    let(:payload) do
+      error_payload1.deep_dup.tap do |payload|
+        payload[:status] = "delivered"
+        payload[:status_reason] = nil
+        payload[:to] = nil
+      end
+    end
+
+    it "updates status of notification" do
+      request.headers["Authorization"] = "Bearer #{api_key}"
+      post :notifications_update, params: payload
+
+      perform_enqueued_jobs { ProcessNotificationStatusUpdatesJob.perform_later }
+      expect(response.status).to eq(200)
+    end
+  end
+
+  context "payload status is delivered and status_reason is null" do
+    before { Seeds::NotificationEvents.new.seed! }
+    let(:payload) do
+      error_payload1.deep_dup.tap do |payload|
+        payload[:status] = "delivered"
+        payload[:status_reason] = nil
+      end
+    end
+
+    it "updates status of notification" do
+      request.headers["Authorization"] = "Bearer #{api_key}"
+      post :notifications_update, params: payload
+
+      perform_enqueued_jobs { ProcessNotificationStatusUpdatesJob.perform_later }
+      expect(response.status).to eq(200)
+    end
+  end
+
+  context "payload status is delivered and to is null" do
+    before { Seeds::NotificationEvents.new.seed! }
+    let(:payload) do
+      error_payload1.deep_dup.tap do |payload|
+        payload[:status] = "delivered"
+        payload[:to] = nil
+      end
+    end
+
+    it "updates status of notification" do
+      request.headers["Authorization"] = "Bearer #{api_key}"
+      post :notifications_update, params: payload
+
+      perform_enqueued_jobs { ProcessNotificationStatusUpdatesJob.perform_later }
+      expect(response.status).to eq(200)
+    end
+  end
+
+  context "payload status is NOT delivered and status reason and to are null" do
+    before { Seeds::NotificationEvents.new.seed! }
+    let(:payload) do
+      error_payload1.deep_dup.tap do |payload|
+        payload[:status] = "Pending Delivery"
+        payload[:to] = nil
+        payload[:status_reason] = nil
+      end
+    end
+
+    it "updates status of notification" do
+      request.headers["Authorization"] = "Bearer #{api_key}"
+      post :notifications_update, params: payload
+
+      perform_enqueued_jobs { ProcessNotificationStatusUpdatesJob.perform_later }
+      expect(response.status).to eq(400)
+    end
+  end
+
+  context "payload status is NOT delivered and status reason is null" do
+    before { Seeds::NotificationEvents.new.seed! }
+    let(:payload) do
+      error_payload1.deep_dup.tap do |payload|
+        payload[:status] = "Pending Delivery"
+        payload[:status_reason] = nil
+      end
+    end
+
+    it "updates status of notification" do
+      request.headers["Authorization"] = "Bearer #{api_key}"
+      post :notifications_update, params: payload
+
+      perform_enqueued_jobs { ProcessNotificationStatusUpdatesJob.perform_later }
+      expect(response.status).to eq(400)
+    end
+  end
+
+  context "payload status is NOT delivered and to is null" do
+    before { Seeds::NotificationEvents.new.seed! }
+    let(:payload) do
+      error_payload1.deep_dup.tap do |payload|
+        payload[:status] = "Pending Delivery"
+        payload[:to] = nil
+      end
+    end
+
+    it "updates status of notification" do
+      request.headers["Authorization"] = "Bearer #{api_key}"
+      post :notifications_update, params: payload
+
+      perform_enqueued_jobs { ProcessNotificationStatusUpdatesJob.perform_later }
+      expect(response.status).to eq(400)
+    end
+  end
+
   def create_queue(name, fifo = false)
     sqs_client.create_queue({
                               queue_name: "caseflow_test_#{name}#{fifo ? '.fifo' : ''}".to_sym,
