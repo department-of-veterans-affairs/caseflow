@@ -126,7 +126,7 @@ jobs:
       - name: Install Chrome
         run: |
           apt-get update
-          wget --no-verbose -O /tmp/chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
+          wget --no-verbose -O /tmp/chrome.deb https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_127.0.6533.119-1_amd64.deb \
           && apt install -y /tmp/chrome.deb \
           && rm /tmp/chrome.deb
           echo "Chrome exe name: $(ls /usr/bin | chrome)"
