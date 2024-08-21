@@ -41,15 +41,15 @@ const CorrespondenceAssignTaskModal = (props) => {
   const shouldShowTaskInstructions = get(taskData, 'show_instructions', true);
 
   const [instructions, setInstructions] = useState('');
-  const [instructionsAdded, setInstructionsAdded] = useState(true);
+  const [instructionsAdded, setInstructionsAdded] = useState(false);
   const [assigneeAdded, setAssigneeAdded] = useState(false);
 
   useEffect(() => {
     // Handle document search position
     if (instructions.length > 0) {
-      setInstructionsAdded(false);
-    } else {
       setInstructionsAdded(true);
+    } else {
+      setInstructionsAdded(false);
     }
   }, [instructions]);
 
