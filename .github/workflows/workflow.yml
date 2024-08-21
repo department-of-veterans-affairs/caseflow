@@ -73,6 +73,7 @@ jobs:
         KNAPSACK_PRO_CI_NODE_INDEX: ${{ matrix.ci_node_index }}
         KNAPSACK_PRO_LOG_LEVEL: info
         KNAPSACK_PRO_FIXED_QUEUE_SPLIT: true
+        KNAPSACK_PRO_TEST_FILE_EXCLUDE_PATTERN: "spec/seeds/**/*_spec.rb"
         WD_INSTALL_DIR: .webdrivers
         CI: true
         REDIS_URL_CACHE: redis://redis:6379/0/cache/
@@ -215,7 +216,7 @@ jobs:
           touch log/selenium-chrome.log
           chmod -R 777 ${GITHUB_WORKSPACE}
           export GHA_NODE_INDEX=${{matrix.ci_node_index}}
-          runuser -u circleci bundle exec rake "knapsack_pro:queue:rspec[--format documentation --format RSpec::Github::Formatter --tty --exclude-pattern 'spec/seeds/**/*_spec.rb']"
+          runuser -u circleci bundle exec rake "knapsack_pro:queue:rspec[--format documentation --format RSpec::Github::Formatter --tty]"
       # --format RSpec::Github::Formatter use in Rspec-github gem, adds more detailed info to GHA "Annotations"
       # --tty forces Rspec to produce color
       # circleci is the USER
