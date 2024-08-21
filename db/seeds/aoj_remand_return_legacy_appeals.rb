@@ -73,6 +73,13 @@ module Seeds
       create_cases_for_aoj_aod_affinity_days_lever_ineligible_judge
     end
 
+    def create_aoj_affinity_cases
+      create_cases_for_aoj_affinty_days_lever
+      create_cases_for_aoj_affinty_days_lever_excluded_judge
+      create_cases_for_aoj_affinity_days_lever_ineligible_judge
+      create_cases_for_aoj_with_hearing_after_decision
+    end
+
     def affinity_judge
       @affinity_judge ||= VACOLS::Staff.find_by_sdomainid("BVAGSPORER")
     end
@@ -331,66 +338,6 @@ module Seeds
         # hearing held but no previous deciding judge
         ca17 = create(:legacy_aoj_appeal, :aod, bfcorlid: "#{create_correspondent.ssn}S", judge: ineligible_judge, attorney: attorney)
         VACOLS::Case.where(bfcorlid: ca17.bfcorlid, bfac: "1").update(bfmemid: ineligible_judge.sattyid)
-    end
-
-    def create_aoj_affinity_cases
-      create_cases_for_aoj_affinty_days_lever
-      create_cases_for_aoj_affinty_days_lever_excluded_judge
-      create_cases_for_aoj_affinity_days_lever_ineligible_judge
-      create_cases_for_aoj_with_hearing_after_decision
-    end
-
-    def affinity_judge
-      @affinity_judge ||= VACOLS::Staff.find_by_sdomainid("BVAGSPORER")
-    end
-
-    def tied_to_judge
-      @tied_to_judge ||= VACOLS::Staff.find_by_sdomainid("BVABDANIEL")
-    end
-
-    def affinity_and_tied_to_judge
-      @affinity_and_tied_to_judge ||= VACOLS::Staff.find_by_sdomainid("BVAEEMARD")
-    end
-
-    def excluded_judge
-      @excluded_judge ||= find_or_create_active_excluded_judge("EXCLUDED_JUDGE", "Excluded FromAffinity Judge")
-    end
-
-    def ineligible_judge
-      @ineligible_judge ||= find_or_create_ineligible_judge("INELIGIBLE_JUDGE", "Ineligible Vacols Judge")
-    end
-
-    def attorney
-      @attorney ||= find_or_create_attorney("AFFINITY_ATTORNEY", "Affinity Cases Attorney")
-    end
-
-    def other_judge
-      @other_judge ||= find_or_create_other_judge("OTHER_JUDGE", "Other Affinity Judge")
-    end
-
-    def find_or_create_ineligible_judge(sdomainid, full_name)
-      VACOLS::Staff.find_by_sdomainid(sdomainid) || (
-       user = create(:user, :judge, :with_inactive_vacols_judge_record, css_id: sdomainid, full_name: full_name)
-       VACOLS::Staff.find_by_sdomainid(user.css_id))
-    end
-
-    def find_or_create_active_excluded_judge(sdomainid, full_name)
-       VACOLS::Staff.find_by_sdomainid(sdomainid) || (
-        user = create(:user, :judge_with_appeals_excluded_from_affinity,
-               :with_vacols_judge_record, css_id: sdomainid, full_name: full_name)
-        VACOLS::Staff.find_by_sdomainid(user.css_id))
-    end
-
-    def find_or_create_attorney(sdomainid, full_name)
-      VACOLS::Staff.find_by_sdomainid(sdomainid) || (
-       user = create(:user, :with_vacols_attorney_record, css_id: sdomainid, full_name: full_name)
-       VACOLS::Staff.find_by_sdomainid(user.css_id))
-    end
-
-    def find_or_create_other_judge(sdomainid, full_name)
-      VACOLS::Staff.find_by_sdomainid(sdomainid) || (
-       user = create(:user, :judge, :with_vacols_judge_record, css_id: sdomainid, full_name: full_name)
-       VACOLS::Staff.find_by_sdomainid(user.css_id))
     end
 
     def create_cases_for_aoj_affinty_days_lever
