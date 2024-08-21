@@ -22,35 +22,17 @@ module HearingTimeConcern
   # The hearing's local time cast into the POA's timezone
   #
   # @return [Time]
-  #   The hearing time in the representative recipient's timezone, if available.
-  # @return [Time]
-  #   The hearing time in the virtual_hearings' representative_tz, if representative's timezone missing on the hearing.
-  # @return [Time]
-  #   Fall back to the hearing's default local time if neither are available.
+  #   The hearing time in the representative recipient's timezone, if available, else local time.
   def poa_time
-    representative_tz_from_recipient = representative_recipient&.timezone
-    return normalized_time(representative_tz_from_recipient) if representative_tz_from_recipient.present?
-
-    return normalized_time(virtual_hearing[:representative_tz]) if virtual_hearing.present?
-
-    normalized_time(nil)
+    normalized_time(representative_tz)
   end
 
   # The hearing's local time cast into the appellant's timezone
   #
   # @return [Time]
-  #   The hearing time in appellant recipient's timezone, if available.
-  # @return [Time]
-  #   The hearing time in the virtual_hearing's appellant_tz, if appellant's timezone is not available from the hearing.
-  # @return [Time]
-  #   Fall back to the hearing's default local time if neither are available.
+  #   The hearing time in appellant recipient's timezone, if available, else local time.
   def appellant_time
-    appellant_tz_from_recipient = appellant_recipient&.timezone
-    return normalized_time(appellant_tz_from_recipient) if appellant_tz_from_recipient.present?
-
-    return normalized_time(virtual_hearing[:appellant_tz]) if virtual_hearing.present?
-
-    normalized_time(nil)
+    normalized_time(appellant_tz)
   end
 
   private
