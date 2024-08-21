@@ -19,7 +19,7 @@
     responseType: @response_type,
     responseHeader: @response_header,
     responseMessage: @response_message,
-    organizations: @organizations,
+    organizations: @correspondence_details[:organizations],
     correspondenceResponseLetters: @correspondence_response_letters,
     featureToggles: {
       correspondence_queue: FeatureToggle.enabled?(:correspondence_queue, user: current_user)
