@@ -5,6 +5,8 @@ import { EmailNotificationFields } from 'app/hearings/components/details/EmailNo
 import { defaultHearing as hearing } from 'test/data/hearings';
 import HEARING_TIME_OPTIONS from 'constants/HEARING_TIME_OPTIONS';
 
+const hearingDayDate = '2025-01-01';
+
 describe('Fields', () => {
   const expectations = async (container) => {
     // Emails
@@ -49,6 +51,7 @@ describe('Fields', () => {
         time={HEARING_TIME_OPTIONS[0].value}
         requestType="Central"
         hearing={hearing}
+        hearingDayDate={hearingDayDate}
       />
     );
 
@@ -64,6 +67,7 @@ describe('Fields', () => {
         time={HEARING_TIME_OPTIONS[0].value}
         requestType="Video"
         hearing={hearing}
+        hearingDayDate={hearingDayDate}
       />
     );
 
