@@ -66,7 +66,7 @@ class CorrespondenceTasksController < TasksController
   end
 
   def complete
-    task = Correspondence.Task.find(correspondence_task_params[:task_id])
+    task = CorrespondenceTask.find(correspondence_tasks_params[:task_id])
     task.update!(status: Constants.TASK_STATUSES.completed)
   end
 

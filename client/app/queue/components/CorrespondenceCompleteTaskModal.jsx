@@ -60,6 +60,8 @@ const CorrespondenceCompleteTaskModal = (props) => {
     props.setShowActionsDropdown(false);
 
     // Where my props at, bro?
+    // this does not work, unable to pass details to banner: FIXME
+
     return props.completeTaskNotRelatedToAppeal(props.task_id, props.task, props.team, payload);
 
   };

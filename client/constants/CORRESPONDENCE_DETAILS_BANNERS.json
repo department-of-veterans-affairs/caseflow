@@ -13,13 +13,13 @@
 
   "completeBanner": {
     "title": "Complete",
-    "message": "%s task has been marked complete. If you have made a mistake, please email %d for any changes",
+    "message": "%s task has been marked complete. If you have made a mistake, please email %s for any changes",
     "type": "complete"
   },
 
   "completeFailBanner": {
-    "title": "Complete",
-    "message": "Task unable to be completed or assigned.%s %s",
+    "title": "Complete Failed",
+    "message": "Task unable to be completed or assigned.",
     "type": "complete"
   }
 }

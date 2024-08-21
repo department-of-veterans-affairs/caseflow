@@ -39,7 +39,7 @@ export const cancelTaskNotRelatedToAppeal = (taskID, payload) => (dispatch) => {
     });
 };
 
-export const completeTaskNotRelatedToAppeal = (taskID, task, team, payload) => (dispatch) => {
+export const completeTaskNotRelatedToAppeal = (taskID, payload) => (dispatch) => {
 
   return ApiUtil.patch(`/queue/correspondence/tasks/${taskID}/complete`, payload).
     then(() => {
@@ -47,7 +47,9 @@ export const completeTaskNotRelatedToAppeal = (taskID, task, team, payload) => (
       dispatch({
         type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
         payload: {
-          bannerAlert: CORRESPONDENCE_DETAILS_BANNERS.completeBanner(task, team)
+          // this does not work, unable to pass details to banner: FIXME
+          // bannerAlert: CORRESPONDENCE_DETAILS_BANNERS.completeBanner(task, team)
+          bannerAlert: CORRESPONDENCE_DETAILS_BANNERS.completeBanner
         }
       });
 
@@ -56,7 +58,9 @@ export const completeTaskNotRelatedToAppeal = (taskID, task, team, payload) => (
       dispatch({
         type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
         payload: {
-          bannerAlert: CORRESPONDENCE_DETAILS_BANNERS.completeFailBanner(task, team)
+          // this does not work, unable to pass details to banner: FIXME
+          // bannerAlert: CORRESPONDENCE_DETAILS_BANNERS.completeFailBanner(task, team)
+          bannerAlert: CORRESPONDENCE_DETAILS_BANNERS.completeFailBanner
         }
       });
       console.error(error);
