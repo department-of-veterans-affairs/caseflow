@@ -104,4 +104,70 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       end
     end
   end
+
+  describe "#perform!" do
+    context "when only added issues are present" do
+      before do
+        subject.instance_variable_set(:@added_issues_data, parser.added_issues)
+        subject.instance_variable_set(:@removed_issues_data, [])
+        subject.instance_variable_set(:@edited_issues_data, [])
+        subject.instance_variable_set(:@withdrawn_issues_data, [])
+
+        allow(subject).to receive(:validate_before_perform).and_return(true)
+        allow(subject).to receive(:processed?).and_return(false)
+        allow(subject).to receive(:transaction).and_yield
+        allow(subject).to receive(:process_job).and_return(true)
+      end
+
+      it "processes only the added issues and returns true" do
+        expect(subject).to receive(:process_issues!)
+        expect(subject.perform!).to be true
+      end
+
+      it "updates the review and issues with added issues only" do
+        allow(subject).to receive(:process_issues!)
+        expect(subject).to receive(:update!).with(
+          before_request_issue_ids: anything,
+          after_request_issue_ids: anything,
+          withdrawn_request_issue_ids: anything,
+          edited_request_issue_ids: anything
+        )
+        subject.perform!
+      end
+    end
+  end
+
+  describe "#perform!" do
+    context "when withdrawn issues are empty" do
+      before do
+        # Ensure there's a corresponding decision issue in the database
+        create(:decision_issue, id: 201)
+
+        subject.instance_variable_set(:@withdrawn_issues_data, [])
+
+        allow(subject).to receive(:validate_before_perform).and_return(true)
+        allow(subject).to receive(:processed?).and_return(false)
+        allow(subject).to receive(:transaction).and_yield
+        allow(subject).to receive(:process_job).and_return(true)
+      end
+
+      it "returns true without processing any withdrawn issues" do
+        expect(subject).not_to receive(:process_withdrawn_issues!)
+        expect(subject.perform!).to be true
+      end
+    end
+  end
+
+  describe "#calculate_added_issues" do
+    let(:multiple_issues_data) { parser.added_issues + parser.added_issues } # Simulating multiple issues
+
+    before do
+      subject.instance_variable_set(:@added_issues_data, multiple_issues_data)
+    end
+
+    it "processes all added issues and returns the correct count" do
+      added_issues = subject.send(:calculate_added_issues)
+      expect(added_issues.size).to eq(2) # Expecting two issues to be processed
+    end
+  end
 end
