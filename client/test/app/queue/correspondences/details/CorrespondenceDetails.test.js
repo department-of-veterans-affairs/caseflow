@@ -332,8 +332,10 @@ describe('CorrespondenceDetails', () => {
     );
 
     const userNameCount = screen.getAllByText('John Doe').length;
-
     expect(userNameCount).toBeGreaterThan(0);
+    const packageDetailsTab = screen.getByText('Package Details');
+
+    expect(screen.getByText('Veteran ID:')).toBeInTheDocument();
     expect(screen.getByText('Correspondence and Appeal Tasks')).toBeInTheDocument();
     expect(screen.getByText('Package Details')).toBeInTheDocument();
     expect(screen.getByText('Response Letters')).toBeInTheDocument();
@@ -366,9 +368,17 @@ describe('CorrespondenceDetails', () => {
 
 
 
-
-
-
-
+    // Clicks on the Package Details Tab and tests its expectations
+    fireEvent.click(packageDetailsTab);
+    expect(screen.getByText('Veteran Details')).toBeInTheDocument();
+    expect(screen.getByText(props.correspondence.veteranFullName)).toBeInTheDocument();
+    expect(screen.getByText('Correspondence Type')).toBeInTheDocument();
+    expect(screen.getByText(props.correspondence.correspondenceType)).toBeInTheDocument();
+    expect(screen.getByText('Package Document Type')).toBeInTheDocument();
+    expect(screen.getByText('Non-NOD')).toBeInTheDocument();
+    expect(screen.getByText('VA DOR')).toBeInTheDocument();
+    expect(screen.getByText(moment(props.correspondence.vaDateOfReceipt).format('MM/DD/YYYY'))).toBeInTheDocument();
+    expect(screen.getByText('Notes')).toBeInTheDocument();
+    expect(screen.getByText(props.correspondence.notes)).toBeInTheDocument();
   });
 });

@@ -720,6 +720,7 @@ export default class QueueTable extends React.PureComponent {
       bodyStyling,
       enablePagination,
       useTaskPagesApi,
+      searchValue,
       reduxCache,
       useReduxCache
     } = this.props;
@@ -895,6 +896,9 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
   }),
   onHistoryUpdate: PropTypes.func,
   preserveFilter: PropTypes.bool,
+  isCorrespondenceTable: PropTypes.bool,
+  searchValue: PropTypes.string,
+  taskMatchesSearch: PropTypes.func,
   useReduxCache: PropTypes.bool,
   reduxCache: PropTypes.object,
   updateReduxCache: PropTypes.func
