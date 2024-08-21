@@ -39,7 +39,7 @@ export const cancelTaskNotRelatedToAppeal = (taskID, payload) => (dispatch) => {
     });
 };
 
-export const completeTaskNotRelatedToAppeal = (task, taskID, team, payload) => (dispatch) => {
+export const completeTaskNotRelatedToAppeal = (taskID, task, team, payload) => (dispatch) => {
 
   return ApiUtil.patch(`/queue/correspondence/tasks/${taskID}/complete`, payload).
     then(() => {
@@ -56,7 +56,7 @@ export const completeTaskNotRelatedToAppeal = (task, taskID, team, payload) => (
       dispatch({
         type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
         payload: {
-          bannerAlert: CORRESPONDENCE_DETAILS_BANNERS.failBanner
+          bannerAlert: CORRESPONDENCE_DETAILS_BANNERS.completeFailBanner(task, team)
         }
       });
       console.error(error);

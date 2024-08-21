@@ -59,7 +59,8 @@ const CorrespondenceCompleteTaskModal = (props) => {
 
     props.setShowActionsDropdown(false);
 
-    return props.completeTaskNotRelatedToAppeal(props.task, props.task_id, props.team, payload);
+    // Where my props at, bro?
+    return props.completeTaskNotRelatedToAppeal(props.task_id, props.task, props.team, payload);
 
   };
 
@@ -78,9 +79,9 @@ const CorrespondenceCompleteTaskModal = (props) => {
   return (
     <QueueFlowModal
       {...modalProps}
-      title= "Complete Task"
-      button="Complete Task"
-      submitDisabled= {instructionsAdded}
+      title={COPY.MARK_TASK_COMPLETE_TITLE}
+      button={COPY.MARK_TASK_COMPLETE_BUTTON}
+      submitDisabled={instructionsAdded}
       pathAfterSubmit={taskData?.redirect_after ?? `/queue/correspondence/${props.correspondence_uuid}`}
       submit={submit}
       validateForm={validateForm}
@@ -93,8 +94,9 @@ const CorrespondenceCompleteTaskModal = (props) => {
       }
       {shouldShowTaskInstructions &&
         <TextareaField
-          name={taskData?.instructions_label ?? COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}
+          name={taskData?.instructions_label ?? COPY.CORRESPONDENCE_OTHER_MOTION_MODAL_DETAIL}
           id="taskInstructions"
+          optional
           onChange={setInstructions}
           value={instructions}
         />

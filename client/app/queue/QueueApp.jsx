@@ -53,6 +53,7 @@ import CompleteTaskModal from './components/CompleteTaskModal';
 import UpdateTaskStatusAssignRegionalOfficeModal from './components/UpdateTaskStatusAssignRegionalOfficeModal';
 import CancelTaskModal from './components/CancelTaskModal';
 import CorrespondenceCancelTaskModal from './components/CorrespondenceCancelTaskModal';
+import CorrespondenceCompleteTaskModal from './components/CorrespondenceCompleteTaskModal';
 import InProgressTaskModal from './components/InProgressTaskModal';
 import AssignHearingModal from './components/AssignHearingModal';
 import PostponeHearingModal from './components/PostponeHearingModal';
@@ -93,7 +94,6 @@ import TeamManagement from './teamManagement/TeamManagement';
 import UserManagement from './UserManagement';
 import CorrespondenceReviewPackage from './correspondence/ReviewPackage/CorrespondenceReviewPackage';
 import CorrespondenceIntake from './correspondence/intake/components/CorrespondenceIntake';
-import CorrespondenceCompleteTaskModal from './components/CorrespondenceCompleteTaskModal';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_TITLES } from './constants';
@@ -723,7 +723,9 @@ class QueueApp extends React.PureComponent {
   );
 
   routedCorrespondenceCompleteTaskModal = (props) => (
-    <CorrespondenceCompleteTaskModal {...props.match.params} />
+    <CorrespondenceCompleteTaskModal {...props.match.params}
+      {...this.props}
+    />
   );
 
   routedCorrespondenceCases = (props) => (

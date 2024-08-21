@@ -120,7 +120,7 @@
     "APPROVE": "approve",
     "REJECT": "reject"
   },
-  "CORRESPONDENCE_OTHER_MOTION_TASK_COMPLETE": "%s task has been marked complete. If you have made a mistake, please email %d for any changes.",
+  "CORRESPONDENCE_OTHER_MOTION_TASK_COMPLETE": "%s task has been marked complete. If you have made a mistake, please email %s for any changes.",
   "CORRESPONDENCE_OTHER_MOTION_MODAL_DETAIL": "Provide context and instructions for the action",
   "DOCUMENT_PREVIEW": "Document Preview",
   "TASK_SNAPSHOT_ABOUT_BOX_TITLE": "About the case",
