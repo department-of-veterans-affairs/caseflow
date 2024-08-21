@@ -7,7 +7,6 @@ const CorrespondencePaginationWrapper = (props) => {
   const totalPages = Math.ceil(props.rowObjects.length / props.columnsToDisplay);
   const startIndex = (currentPage * props.columnsToDisplay) - 15;
   const endIndex = (currentPage * props.columnsToDisplay);
-  
 
   return <React.Fragment>
     <CorrespondencePagination
