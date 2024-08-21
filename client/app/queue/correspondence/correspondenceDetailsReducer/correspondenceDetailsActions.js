@@ -15,7 +15,7 @@ export const setTaskNotRelatedToAppealBanner = (bannerDetails) => (dispatch) => 
     }
   });
 };
-export const cancelTaskNotRelatedToAppeal = (taskID, payload) => (dispatch) => {
+export const cancelTaskNotRelatedToAppeal = (taskID, correspondence, payload) => (dispatch) => {
 
   return ApiUtil.patch(`/queue/correspondence/tasks/${taskID}/cancel`, payload).
     then(() => {
@@ -30,7 +30,7 @@ export const cancelTaskNotRelatedToAppeal = (taskID, payload) => (dispatch) => {
       dispatch({
         type: ACTIONS.REMOVE_TASK_NOT_RELATED_TO_APPEAL,
         payload: {
-          taskID
+          correspondence
         }
       });
 

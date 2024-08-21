@@ -34,8 +34,8 @@ export const correspondenceDetailsReducer = (state = initialState, action = {}) 
     });
   case ACTIONS.REMOVE_TASK_NOT_RELATED_TO_APPEAL:
     return update(state, {
-      tasksUnrelatedToAppeal: {
-        $set: state.correspondenceInfo.tasksUnrelatedToAppeal.filter((task) => task.uniqueId !== action.payload.taskID)
+      correspondenceInfo: {
+        $set: action.payload.correspondence
       }
     });
 
