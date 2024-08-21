@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { CATEGORIES } from './readerConstants';
+import { CATEGORIES, ROTATION_DEGREES } from './readerConstants';
 
 export const isValidWholeNumber = (number) => {
   return !isNaN(number) && number % 1 === 0;
@@ -9,8 +9,7 @@ export const validatePageNumber = (pageNumber, totalPages) => {
   const RADIX = 10;
   let pageNum = parseInt(pageNumber, RADIX);
 
-  if (!pageNum || !isValidWholeNumber(pageNum) ||
-    (pageNum < 1 || pageNum > totalPages)) {
+  if (!pageNum || !isValidWholeNumber(pageNum) || (pageNum < 1 || pageNum > totalPages)) {
     return false;
   }
 
@@ -23,9 +22,7 @@ export const selectedDocIndex = (props) => {
   return _.findIndex(props.allDocuments, { id: selectedDocId });
 };
 
-export const selectedDoc = (props) => (
-  props.allDocuments[selectedDocIndex(props)]
-);
+export const selectedDoc = (props) => props.allDocuments[selectedDocIndex(props)];
 
 const getPrevDoc = (props) => _.get(props.allDocuments, [selectedDocIndex(props) - 1]);
 const getNextDoc = (props) => _.get(props.allDocuments, [selectedDocIndex(props) + 1]);
@@ -46,23 +43,23 @@ export const getRotationDeg = (rotateDeg) => {
   let updatedRotateDeg;
 
   switch (rotateDeg) {
-  case '0deg':
-    updatedRotateDeg = '90deg';
-    break;
-  case '90deg':
-    updatedRotateDeg = '180deg';
-    break;
-  case '180deg':
-    updatedRotateDeg = '270deg';
-    break;
-  case '270deg':
-    updatedRotateDeg = '360deg';
-    break;
-  case '360deg':
-    updatedRotateDeg = '90deg';
-    break;
-  default:
-    updatedRotateDeg = '0deg';
+    case ROTATION_DEGREES.ZERO:
+      updatedRotateDeg = ROTATION_DEGREES.NINETY;
+      break;
+    case ROTATION_DEGREES.NINETY:
+      updatedRotateDeg = ROTATION_DEGREES.ONE_EIGHTY;
+      break;
+    case ROTATION_DEGREES.ONE_EIGHTY:
+      updatedRotateDeg = ROTATION_DEGREES.TWO_SEVENTY;
+      break;
+    case ROTATION_DEGREES.TWO_SEVENTY:
+      updatedRotateDeg = ROTATION_DEGREES.THREE_SIXTY;
+      break;
+    case ROTATION_DEGREES.THREE_SIXTY:
+      updatedRotateDeg = ROTATION_DEGREES.NINETY;
+      break;
+    default:
+      updatedRotateDeg = ROTATION_DEGREES.ZERO;
   }
 
   return updatedRotateDeg;
