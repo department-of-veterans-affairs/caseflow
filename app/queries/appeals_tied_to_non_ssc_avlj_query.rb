@@ -54,7 +54,7 @@ class AppealsTiedToNonSscAvljQuery
 
   def self.legacy_rows(appeals, sym)
     appeals.map do |appeal|
-      calculated_values = calculate_values(appeal)
+      calculated_values = calculate_field_values(appeal)
       {
         docket_number: appeal["tinum"],
         docket: sym.to_s,
@@ -96,7 +96,7 @@ class AppealsTiedToNonSscAvljQuery
     avlj_name
   end
 
-  def get_prev_judge_name(appeal)
+  def self.get_prev_judge_name(appeal)
     if appeal["prev_deciding_judge"].nil?
       prev_judge_name = nil
     else
