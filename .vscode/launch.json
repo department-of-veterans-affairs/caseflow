@@ -62,7 +62,7 @@
       },
       "program": "${workspaceFolder}/client/node_modules/.bin/jest",
       "args": [
-        "${fileBasename}"
+        "${relativeFile}"
       ],
       "cwd": "${workspaceRoot}/client",
       "console": "integratedTerminal",

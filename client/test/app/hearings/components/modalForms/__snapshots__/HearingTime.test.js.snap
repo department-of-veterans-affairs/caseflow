@@ -4,6 +4,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
 <HearingTime
   componentIndex={0}
   enableZone={true}
+  hearingDayDate="2025-01-01"
   label="Hearing Time"
   value="8:15 AM Eastern Time (US & Canada)"
 >
@@ -8954,6 +8955,7 @@ exports[`HearingTime Matches snapshot when other time is not selected 1`] = `
 <HearingTime
   componentIndex={0}
   enableZone={true}
+  hearingDayDate="2025-01-01"
   label="Hearing Time"
   value="12:30 PM Eastern Time (US & Canada)"
 >
@@ -9079,6 +9081,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
 <HearingTime
   componentIndex={0}
   enableZone={false}
+  hearingDayDate="2025-01-01"
   label="Hearing Time"
   value="1:45 PM Eastern Time (US & Canada)"
 >
@@ -18029,6 +18032,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
 <HearingTime
   componentIndex={0}
   enableZone={false}
+  hearingDayDate="2025-01-01"
   label="Hearing Time"
 >
   <span
@@ -26931,6 +26935,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
 <HearingTime
   componentIndex={0}
   enableZone={false}
+  hearingDayDate="2025-01-01"
   label="Hearing Time"
 >
   <span

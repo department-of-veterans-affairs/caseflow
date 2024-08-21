@@ -209,7 +209,6 @@ class Hearing < CaseflowRecord
 
     # returns the date and time a hearing is scheduled for in the regional office's
     # time zone
-    #
     # When a hearing is scheduled, we save the hearing time to the scheduled_time
     # field. The time is converted to UTC upon save *relative to the timezone of
     # the user who saved it*, not relative to the timezone of the RO where the

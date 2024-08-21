@@ -29,16 +29,17 @@ const oneHearing = [{
 }];
 const defaultRoCode = 'RO39';
 const mockOnChange = jest.fn();
+const hearingDayDate = moment.tz().format('YYYY-MM-DD');
 const defaultProps = {
   // Denver
   ro: defaultRoCode,
   roTimezone: REGIONAL_OFFICE_INFORMATION[defaultRoCode].timezone,
-  hearingDayDate: moment.tz().format('YYYY-MM-DD'),
+  hearingDate: hearingDayDate,
   scheduledHearingsList: emptyHearings,
   numberOfSlots: 8,
   slotLengthMinutes: 60,
   fetchScheduledHearings: jest.fn(),
-  onChange: mockOnChange
+  onChange: mockOnChange,
 };
 
 const setup = (props = {}) => {
@@ -57,7 +58,9 @@ const setup = (props = {}) => {
 };
 
 const clickTimeslot = (time, timezone) => {
-  fireEvent.click(screen.getByText(formatTimeSlotLabel(time, timezone)));
+  const formattedTimeSlotLabel = formatTimeSlotLabel(`${hearingDayDate} ${time}`, timezone);
+
+  fireEvent.click(screen.getByText(formattedTimeSlotLabel));
 };
 
 describe('TimeSlot', () => {
@@ -150,11 +153,10 @@ describe('TimeSlot', () => {
 
           it(`correctly parses hearings and slots onto the date in beginsAt (${beginsAtString})`, () => {
             const beginsAt = moment(beginsAtString).tz('America/New_York');
-            const hearingDayDate = beginsAt.tz(ro.timezone).format('YYYY-MM-DD');
             const { timeSlots } = setup({
               roTimezone: ro.timezone,
               beginsAt,
-              hearingDayDate,
+              hearingDayDate: beginsAt.tz(ro.timezone).format('YYYY-MM-DD'),
               scheduledHearingsList: oneHearing
             });
 
@@ -274,7 +276,6 @@ describe('TimeSlot', () => {
 
           expect(hearingButton).toHaveLength(1);
           expect(hearingButton[0]).toHaveTextContent(timeString);
-
         });
       });
     });
