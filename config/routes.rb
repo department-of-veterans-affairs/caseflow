@@ -260,6 +260,9 @@ Rails.application.routes.draw do
   post 'hearings/transcription_files/lock', to: 'hearings/transcription_files#lock'
 
   post 'hearings/hearing_view/:id', to: 'hearings/hearing_view#create'
+  get 'hearings/work_order_packages/display_wo_summary', to: 'hearings/work_order_packages#display_wo_summary'
+  get 'hearings/work_order_packages/display_wo_contents', to: 'hearings/work_order_packages#display_wo_contents'
+  get 'hearings/work_order_packages/unassign_wo', to: 'hearings/work_order_packages#unassign_wo'
 
   resources :hearings, only: [:update, :show]
 
