@@ -3,8 +3,28 @@
 import React from 'react';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
+import OFFICE_INFO from '../../../constants/REGIONAL_OFFICE_FOR_CSS_STATION.json';
 
-const UserConfiguration = () => {
+export default function UserConfiguration() {
+
+  // console.log(OFFICE_INFO);
+
+  // const filteredStations = () => {
+  //   const allStations = OFFICE_INFO;
+
+  //   const stationsWithOffices = allStations.map((station, office) => {
+  //     // if (office === 'NA') {
+  //     //   allStations.delete(station);
+  //     // }
+
+  //     return station;
+  //   });
+
+  //   return stationsWithOffices;
+  // };
+
+  // console.log(filteredStations);
+
   return (
     <div>
       <p>Station ID</p>
@@ -12,7 +32,7 @@ const UserConfiguration = () => {
         name="Station id dropdown"
         hideLabel
         // onInputChange={handleInputChange}
-        // options={slicedUserOptions} searchable
+        // options={OFFICE_INFO.keys} searchable
         // onChange={handleUserSelect}
         // Disable native filter
         filterOption={() => true}
@@ -27,11 +47,9 @@ const UserConfiguration = () => {
         // options={slicedUserOptions} searchable
         // onChange={handleUserSelect}
         // Disable native filter
-        filterOption={() => true}
+        // filterOption={() => true}
         // value={userSelect}
       />
     </div>
   );
 }
-
-export default UserConfiguration;

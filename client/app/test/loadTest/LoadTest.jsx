@@ -6,14 +6,14 @@ import { BrowserRouter } from 'react-router-dom';
 
 import UserConfiguration from './UserConfiguration';
 
-export default function LoadTest() {
+export default function LoadTest(props) {
 
   return <BrowserRouter>
     <div>
       <AppFrame>
         <AppSegment filledBackground>
           <h1>Test Target Configuration</h1>
-          <UserConfiguration />
+          <UserConfiguration {...props} />
         </AppSegment>
       </AppFrame>
     </div>
