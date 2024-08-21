@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import PropTypes, { object } from 'prop-types';
 import CorrespondencePagination from '../../components/Pagination/CorrespondencePagination';
 const CorrespondencePaginationWrapper = (props) => {
-
   const [currentPage, setCurrentPage] = useState(1);
 
   const totalPages = Math.ceil(props.rowObjects.length / props.columnsToDisplay);
   const startIndex = (currentPage * props.columnsToDisplay) - 15;
   const endIndex = (currentPage * props.columnsToDisplay);
+
+    
 
   return <React.Fragment>
     <CorrespondencePagination

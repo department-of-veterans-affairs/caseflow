@@ -15,6 +15,8 @@ import Pagination from 'app/components/Pagination/Pagination';
 import Table from 'app/components/Table';
 import { ExternalLinkIcon } from 'app/components/icons/ExternalLinkIcon';
 import { COLORS } from 'app/constants/AppConstants';
+import CorrespondencePaginationWrapper from 'app/queue/correspondence/CorrespondencePaginationWrapper';
+import Checkbox from 'app/components/Checkbox';
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
@@ -27,7 +29,7 @@ const CorrespondenceDetails = (props) => {
   const totalPages = Math.ceil(allCorrespondences.length / 15);
   const startIndex = (currentPage * 15) - 15;
   const endIndex = (currentPage * 15);
-
+  const priorMail = props.correspondence.prior_mail
   const updatePageHandler = (idx) => {
     const newCurrentPage = idx + 1;
 
@@ -248,16 +250,142 @@ const CorrespondenceDetails = (props) => {
     );
   };
 
+  // const getKeyForRow = (index, { id }) => {
+  //   return `${id}`;
+  // };
+
+  const getDocumentColumns = (correspondence) => {
+    return [
+      {
+        cellClass: 'checkbox-column',
+        valueFunction: () => (
+          <div className="checkbox-column-inline-style">
+            <Checkbox
+              name={correspondence.id.toString()}
+              id={correspondence.id.toString()}
+              hideLabel
+              defaultValue={false}
+              disabled={true}
+            />
+          </div>
+        )
+      },
+      {
+        cellClass: 'va-dor-column',
+        ariaLabel: 'va-dor-header-label',
+        header: (
+          <div id="va-dor-header">
+            <span id="va-dor-header-label" className="table-header-label">
+              VA DOR
+            </span>
+          </div>
+        ),
+        valueFunction: () => {
+          const date = new Date(correspondence.vaDateOfReceipt);
+
+          return (
+            <span className="va-dor-item">
+              <p>{date.toLocaleDateString('en-US')}</p>
+            </span>
+          );
+        }
+      },
+      {
+        cellClass: 'package-document-type-column',
+        ariaLabel: 'package-document-type-header-label',
+        header: (
+          <div id="package-document-type-header">
+            <span id="package-document-type-header-label" className="table-header-label">
+              Package Document Type
+            </span>
+          </div>
+        ),
+        valueFunction: () => (
+          <span className="va-package-document-type-item">
+            <p>
+              <a
+                href={`/queue/correspondence/${correspondence.uuid}`}
+                rel="noopener noreferrer"
+                className="external-link-icon-a"
+                target="_blank"
+              >
+                {correspondence?.nod ? 'NOD' : 'Non-NOD'}
+                <span className="external-link-icon-wrapper">
+                  <ExternalLinkIcon color={COLORS.PRIMARY} />
+                </span>
+              </a>
+            </p>
+          </span>
+        )
+      },
+      {
+        cellClass: 'correspondence-type-column',
+        ariaLabel: 'correspondence-type-header-label',
+        header: (
+          <div id="correspondence-type-header">
+            <span id="correspondence-type-header-label" className="table-header-label">
+              Correspondence Type
+            </span>
+          </div>
+        ),
+        valueFunction: () => (
+          <span className="va-correspondence-type-item">
+            <p>{correspondence.correspondenceType}</p>
+          </span>
+        )
+      },
+      {
+        cellClass: 'notes-column',
+        ariaLabel: 'notes-header-label',
+        header: (
+          <div id="notes-header">
+            <span id="notes-header-label" className="table-header-label">
+              Notes
+            </span>
+          </div>
+        ),
+        valueFunction: () => (
+          <span className="va-notes-item">
+            <p>{correspondence.notes}</p>
+          </span>
+        )
+      }
+    ];
+  };
+
+  const associatedPriorMail = () => {
+    return (
+      <>
+        <div className="associatedPriorMail"> 
+          <h2> Information about Associated Prior Mail kk</h2>
+          <div>
+              <CorrespondencePaginationWrapper
+                columns={getDocumentColumns}
+                columnsToDisplay={15}
+                rowObjects={priorMail}
+                summary="Correspondence list"
+                className="correspondence-table"
+                headerClassName="cf-correspondence-list-header-row"
+                bodyClassName="cf-correspondence-list-body"
+                tbodyId="correspondence-table-body"
+                getKeyForRow={getKeyForRow}
+              />
+            </div>
+        </div>
+      </>
+    )
+  }
+
   const tabList = [
     {
       disable: false,
       label: 'Correspondence and Appeal Tasks',
-      page: correspondenceAndAppealTaskComponents
+      page: 'correspondenceAndAppealTaskComponents'
     },
     {
       disable: false,
       label: 'Package Details',
-      page: correspondencePackageDetails()
+      page: 'correspondencePackageDetails'
     },
     {
       disable: false,
@@ -267,7 +395,7 @@ const CorrespondenceDetails = (props) => {
     {
       disable: false,
       label: 'Associated Prior Mail',
-      page: 'Information about Associated Prior Mail'
+      page: associatedPriorMail()
     }
   ];
 
