@@ -21,16 +21,17 @@ import { ReadOnly } from 'app/hearings/components/details/ReadOnly';
 const updateSpy = jest.fn();
 const error = 'Something went wrong...';
 const location = { name: 'Somewhere' };
+const hearingDayDate = '2025-01-01';
 
 // Helper test to check email assertions on formerly central hearings
 const showAllEmailsAssertion = (node, hearing) => {
   expect(node.find(ReadOnly)).toHaveLength(4);
   expect(node.find(ReadOnly).first().
-    text()).toContain(zoneName(hearing.scheduledTimeString, hearing.appellantTz));
+    text()).toContain(zoneName(hearing.scheduledTimeString, hearing.appellantTz, null, hearingDayDate));
   expect(node.find(ReadOnly).at(1).
     text()).toContain(hearing.appellantEmailAddress);
   expect(node.find(ReadOnly).at(2).
-    text()).toContain(zoneName(hearing.scheduledTimeString, hearing.representativeTz));
+    text()).toContain(zoneName(hearing.scheduledTimeString, hearing.representativeTz, null, hearingDayDate));
   expect(node.find(ReadOnly).at(3).
     text()).toContain(hearing.representativeEmailAddress);
   expect(node.find('.cf-help-divider')).toHaveLength(1);
@@ -39,7 +40,7 @@ const showAllEmailsAssertion = (node, hearing) => {
 const showSingleEmailAssertion = (node, hearing, email, tz) => {
   expect(node.find(ReadOnly)).toHaveLength(2);
   expect(node.find(ReadOnly).first().
-    text()).toContain(zoneName(hearing.scheduledTimeString, tz));
+    text()).toContain(zoneName(hearing.scheduledTimeString, tz, null, hearingDayDate));
   expect(node.find(ReadOnly).at(1).
     text()).toContain(email);
   expect(node.find('.cf-help-divider')).toHaveLength(0);
@@ -275,7 +276,7 @@ describe('EmailConfirmationModal', () => {
       expect(dateTime.find('strong').at(1).
         text()).toContain('Hearing Time');
       expect(dateTime.text()).toContain(moment(defaultHearing.scheduledFor).format('MM/DD/YYYY'));
-      expect(dateTime.text()).toContain(zoneName(defaultHearing.scheduledTimeString));
+      expect(dateTime.text()).toContain(zoneName(defaultHearing.scheduledTimeString, null, null, hearingDayDate));
       expect(dateTime.find('.cf-help-divider')).toHaveLength(0);
       expect(dateTime).toMatchSnapshot();
     });
