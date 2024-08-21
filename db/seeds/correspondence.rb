@@ -116,7 +116,7 @@ module Seeds
 
     def create_veterans
       veterans = []
-      35.times do |i|
+      35.times do |_i|
         # Create the veteran
         @file_number += 1
         @participant_id += 1
@@ -133,37 +133,37 @@ module Seeds
     def create_queue_correspondences(user)
       veterans = create_veterans
       veterans.each do |veteran|
-        #Correspondences with unassigned ReviewPackageTask
+        # Correspondences with unassigned ReviewPackageTask
         create_correspondence_with_unassigned_review_package_task(user, veteran)
 
-        #Correspondences with eFolderFailedUploadTask with a parent CorrespondenceIntakeTask
+        # Correspondences with eFolderFailedUploadTask with a parent CorrespondenceIntakeTask
         create_correspondence_with_intake_and_failed_upload_task(user, veteran)
 
-        #Correspondences with CorrespondenceIntakeTask with a status of in_progress
+        # Correspondences with CorrespondenceIntakeTask with a status of in_progress
         create_correspondence_with_intake_task(user, veteran)
 
-        #Correspondences with eFolderFailedUploadTask with a parent ReviewPackageTask
+        # Correspondences with eFolderFailedUploadTask with a parent ReviewPackageTask
         create_correspondence_with_review_package_and_failed_upload_task(user, veteran)
 
-        #Correspondences with the CorrespondenceRootTask with the status of completed
+        # Correspondences with the CorrespondenceRootTask with the status of completed
         create_correspondence_with_completed_root_task(user, veteran)
 
-        #Correspondences with ReviewPackageTask in progress
+        # Correspondences with ReviewPackageTask in progress
         create_correspondence_with_review_package_task(user, veteran)
 
-        #Correspondences with the tasks for Action Required tab and an on_hold ReviewPackageTask as their parent
+        # Correspondences with the tasks for Action Required tab and an on_hold ReviewPackageTask as their parent
         create_correspondence_with_action_required_tasks(user, veteran)
 
-        #correspondences with reassign / remove task for action required
+        # correspondences with reassign / remove task for action required
         create_correspondences_with_review_remove_package_tasks
 
-        #Correspondences with in-progress CorrespondenceRootTask and completed Mail Task
+        # Correspondences with in-progress CorrespondenceRootTask and completed Mail Task
         create_correspondence_with_completed_mail_task(user, veteran)
 
         # Correspondences with the CorrespondenceRootTask with the status of canceled
         create_correspondence_with_canceled_root_task(user, veteran)
 
-        #Correspondences with the tasks for CAVC and Congress Interest
+        # Correspondences with the tasks for CAVC and Congress Interest
         create_cavc_mailtask(user, veteran)
 
         create_congress_interest_mailtask(user, veteran)
@@ -181,7 +181,7 @@ module Seeds
     end
 
     def create_correspondence_with_intake_and_failed_upload_task(user, veteran = {})
-      corres = create_correspondence(user,veteran)
+      corres = create_correspondence(user, veteran)
       parent_task = create_correspondence_intake(corres, user)
       create_efolderupload_failed_task(corres, parent_task)
     end
@@ -199,12 +199,18 @@ module Seeds
     end
 
     def create_correspondence_with_completed_root_task(user = {}, veteran = {})
-      corres = create_correspondence(user, veteran)
-      assign_review_package_task(corres, user)
-      rpt = ReviewPackageTask.find_by(appeal_id: corres.id, type: ReviewPackageTask.name)
-      rpt.update!(status: Constants.TASK_STATUSES.completed)
-      corres.root_task.update!(status: Constants.TASK_STATUSES.completed)
-      corres.root_task.update!(closed_at: rand(1.month.ago..1.day.ago))
+      30.times do |_i|
+        begin
+          corres = create_correspondence(user, veteran)
+          assign_review_package_task(corres, user)
+          rpt = ReviewPackageTask.find_by(appeal_id: corres.id, type: ReviewPackageTask.name)
+          rpt.update!(status: Constants.TASK_STATUSES.completed)
+          corres.root_task.update!(status: Constants.TASK_STATUSES.completed)
+          corres.root_task.update!(closed_at: rand(1.month.ago..1.day.ago))
+        rescue StandardError => error
+          puts error
+        end
+      end
     end
 
     def create_correspondence_with_review_package_task(user, veteran = {})
@@ -291,21 +297,39 @@ module Seeds
     end
 
     def create_correspondence_with_in_progress_review_package_task(user, veteran = {})
-      corres = create_correspondence(user, veteran)
-      assign_review_package_task(corres, user)
-      rpt = ReviewPackageTask.find_by(appeal_id: corres.id)
-      rpt.update!(status: Constants.TASK_STATUSES.in_progress)
+      30.times do |_i|
+        begin
+          corres = create_correspondence(user, veteran)
+          assign_review_package_task(corres, user)
+          rpt = ReviewPackageTask.find_by(appeal_id: corres.id)
+          rpt.update!(status: Constants.TASK_STATUSES.in_progress)
+        rescue Exception => error
+          puts error
+        end
+      end
     end
 
     def create_correspondence_with_in_progress_intake_task(user, veteran = {})
-      corres = create_correspondence(user, veteran)
-      cit = create_correspondence_intake(corres, user)
-      cit.update!(status: Constants.TASK_STATUSES.in_progress)
+      30.times do |_i|
+        begin
+          corres = create_correspondence(user, veteran)
+          cit = create_correspondence_intake(corres, user)
+          cit.update!(status: Constants.TASK_STATUSES.in_progress)
+        rescue Exception => error
+          puts error
+        end
+      end
     end
 
     def create_nod_correspondence(user, veteran = {})
-      corres = create_correspondence(user, veteran)
-      create_multiple_docs(corres, veteran)
+      30.times do |_i|
+        begin
+          corres = create_correspondence(user, veteran)
+          create_multiple_docs(corres, veteran)
+        rescue Exception => error
+          puts error
+        end
+      end
     end
 
     def correspondence_auto_assignment_levers
@@ -313,7 +337,7 @@ module Seeds
         Any Mail Team User or Mail Superuser with equal to or more than this amount will be excluded from Auto-assign
       EOS
 
-      return [
+      [
         {
           name: "capacity",
           description: capacity_description,
@@ -322,6 +346,5 @@ module Seeds
         }
       ]
     end
-
   end
 end
