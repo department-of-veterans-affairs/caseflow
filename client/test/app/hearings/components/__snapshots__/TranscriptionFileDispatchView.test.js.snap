@@ -320,7 +320,6 @@ exports[`TranscriptionFileDispatch Unassigned Tab loads a table from backend dat
                     role="row"
                   >
                     <th
-                      aria-labelledby="header-selectAll"
                       class=""
                       role="columnheader"
                       scope="col"
@@ -329,9 +328,7 @@ exports[`TranscriptionFileDispatch Unassigned Tab loads a table from backend dat
                         aria-label="[object Object]"
                         data-css-9shxm7=""
                       >
-                        <span
-                          id="header-selectAll"
-                        >
+                        <span>
                           <div
                             data-css-g2rzop=""
                           >
@@ -368,7 +365,6 @@ exports[`TranscriptionFileDispatch Unassigned Tab loads a table from backend dat
                       </span>
                     </th>
                     <th
-                      aria-labelledby="header-docketNumber"
                       class=""
                       role="columnheader"
                       scope="col"
@@ -377,15 +373,12 @@ exports[`TranscriptionFileDispatch Unassigned Tab loads a table from backend dat
                         aria-label="Docket Number"
                         data-css-9shxm7=""
                       >
-                        <span
-                          id="header-docketNumber"
-                        >
+                        <span>
                           Docket Number
                         </span>
                       </span>
                     </th>
                     <th
-                      aria-labelledby="header-caseDetails"
                       class=""
                       role="columnheader"
                       scope="col"
@@ -394,9 +387,7 @@ exports[`TranscriptionFileDispatch Unassigned Tab loads a table from backend dat
                         aria-label="Case Details"
                         data-css-9shxm7=""
                       >
-                        <span
-                          id="header-caseDetails"
-                        >
+                        <span>
                           Case Details
                         </span>
                       </span>
@@ -474,7 +465,6 @@ exports[`TranscriptionFileDispatch Unassigned Tab loads a table from backend dat
                           data-css-ilmt4b=""
                         >
                           <svg
-                            aria-label="filter by types"
                             class="table-icon unselected-filter-icon"
                             height="20"
                             role="button"
@@ -583,7 +573,6 @@ exports[`TranscriptionFileDispatch Unassigned Tab loads a table from backend dat
                           data-css-tidn98=""
                         >
                           <svg
-                            aria-label="filter by hearing date"
                             class="table-icon unselected-filter-icon"
                             height="20"
                             role="button"
@@ -692,7 +681,6 @@ exports[`TranscriptionFileDispatch Unassigned Tab loads a table from backend dat
                           data-css-ilmt4b=""
                         >
                           <svg
-                            aria-label="filter by hearing type"
                             class="table-icon unselected-filter-icon"
                             height="20"
                             role="button"

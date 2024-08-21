@@ -50,6 +50,17 @@ export const unassignedColumns = (columns) => {
 };
 
 /**
+ * Configuring a table for the unassigned tab
+ * @param {object} column - The json object that has all the columns listed with required attributes
+ * @returns An object for configuring the table
+ */
+export const assignedColumns = (columns) => {
+  const { WORK_ORDER, ITEMS, DATE_SENT, EXPECTED_RETURN_DATE, CONTRACTOR, STATUS, UNASSIGN } = columns;
+
+  return { WORK_ORDER, ITEMS, DATE_SENT, EXPECTED_RETURN_DATE, CONTRACTOR, STATUS, UNASSIGN };
+};
+
+/**
  * A mini template component used on most of the tabs
  * @param {string} text - The descriptive text
  * @param {string} searchPrompt - The label text for the search bar prompt
@@ -126,6 +137,14 @@ export const tabConfig = (openPackageModal, selectFilesForPackage, files) => [
         text="Transcription owned by the Transcription Team are returned from contractor:"
         searchPrompt="Search by work Order, Claimant Name, Docket Number, File Number or SSN"
       />
+
+      <div style={styles.tableStyles}>
+        <TranscriptionFileDispatchTable
+          columns={assignedColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
+          statusFilter={['Assigned']}
+          selectFilesForPackage={selectFilesForPackage}
+        />
+      </div>
     </>
   },
   {
