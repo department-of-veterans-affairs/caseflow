@@ -7,7 +7,7 @@ import { PageArrowLeftIcon } from '../../components/icons/PageArrowLeftIcon';
 import { PageArrowRightIcon } from '../../components/icons/PageArrowRightIcon';
 
 const isValidWholeNumber = (pageNumber) => {
-  return (/^\d+$/).test(pageNumber);
+  return /^\d+$/.test(pageNumber);
 };
 
 const validatePageNum = (pageNumber, numPages) => {
@@ -28,6 +28,7 @@ const ReaderFooter = ({
   selectedDocIndex,
   showNextDocument,
   showPreviousDocument,
+  disablePreviousNext,
 }) => {
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
@@ -51,6 +52,7 @@ const ReaderFooter = ({
             classNames={['cf-pdf-button']}
             onClick={showPreviousDocument}
             ariaLabel="previous PDF"
+            disabled={disablePreviousNext}
           >
             <PageArrowLeftIcon />
             <span className="left-button-label">Previous</span>
@@ -70,7 +72,7 @@ const ReaderFooter = ({
                   maxLength={4}
                   onChange={handleKeyPress}
                   onKeyPress={handleKeyPress}
-                  value={currentPage}
+                  defaultValue={currentPage}
                   required={false}
                   className={['page-progress-indicator-input']}
                 />
@@ -92,6 +94,7 @@ const ReaderFooter = ({
             classNames={['cf-pdf-button cf-right-side']}
             onClick={showNextDocument}
             ariaLabel="next PDF"
+            disabled={disablePreviousNext}
           >
             <span className="right-button-label">Next</span>
             <PageArrowRightIcon />
@@ -112,6 +115,7 @@ ReaderFooter.propTypes = {
   selectedDocIndex: PropTypes.number,
   showNextDocument: PropTypes.func,
   showPreviousDocument: PropTypes.func,
+  disablePreviousNext: PropTypes.bool,
 };
 
 export default ReaderFooter;
