@@ -25,17 +25,16 @@ const CorrespondenceAssignTaskModal = (props) => {
     const storeData = useSelector((state) => state.correspondenceDetails.correspondenceInfo.tasksUnrelatedToAppeal[0].usersInOrg);
     // console.log("following is store data output")
     // console.log(storeData)
-    return storeData.map((orgUser) => {
+    return storeData.map((reassignUsers) => {
       return {
-        label: orgUser.css_id,
-        value: orgUser.css_id
+        label: reassignUsers.css_id,
+        value: reassignUsers.css_id
       }
     });
     // return storeData.map((orgUser) => {id: orgUser.css_id});
     // console.log(storeData);
   }
   // console.log("following is user data method output")
-  // console.log(userData());
   const { task } = props;
   const taskData = taskActionData(props);
 
@@ -44,10 +43,15 @@ const CorrespondenceAssignTaskModal = (props) => {
 
   const [instructions, setInstructions] = useState('');
   const [instructionsAdded, setInstructionsAdded] = useState(true);
+  const [assigneeAdded, setAssigneeAdded] = useState(false);
   // let assignee;
 
   // useEffect(() => {
-  //   organizationUsers()
+  //   if () {
+  //     setInstructionsAdded(false);
+  //   } else {
+  //     setInstructionsAdded(true);
+  //   }
   // }, []);
 
   useEffect(() => {
@@ -75,12 +79,17 @@ const CorrespondenceAssignTaskModal = (props) => {
   };
 
   const validateForm = () => {
-    if (!shouldShowTaskInstructions) {
+    if (!shouldShowTaskInstructions && assigneeAdded) {
       return true;
     }
-
-    return instructions.length > 0;
+    // if (instructions.length > 0 ) { console.log(assigneeAdded);}
+    return (instructions.length > 0 && assigneeAdded);
   };
+
+  const formChanged = () => {
+    setAssigneeAdded(true);
+  }
+  // formChanged
 
   const submit = () => {
     // const currentInstruction = (props.task.type === 'PostSendInitialNotificationLetterHoldingTask' ?
@@ -122,7 +131,7 @@ const CorrespondenceAssignTaskModal = (props) => {
       {...modalProps}
       title= "Assign Task"
       button="Assign Task"
-      submitDisabled= {instructionsAdded}
+      submitDisabled= {!validateForm()}
       pathAfterSubmit={taskData?.redirect_after ?? `/queue/correspondence/${props.correspondence_uuid}`}
       submit={submit}
       validateForm={validateForm}
@@ -139,12 +148,12 @@ const CorrespondenceAssignTaskModal = (props) => {
           name="User dropdown"
           label="Select a user"
           // multi
-          dropdownStyling={{ position: 'relative' }}
+          dropdownStyling={{ position: 'relative', paddingBottom: '10px'}}
           creatable
           options={userData()}
           placeholder="Select or search"
           // value={generateOptionsFromTags(doc.tags)}
-          // onChange={onChange}
+          onChange={formChanged}
         />
       }
       {shouldShowTaskInstructions &&

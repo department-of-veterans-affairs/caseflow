@@ -25,7 +25,7 @@ class CorrespondenceMailTask < CorrespondenceTask
     )
   end
 
-  def self.reassign_users(assigned_to)
+  def reassign_users
     users_list = []
     # return users if the assignee is an organization
     if assigned_to.is_a?(Organization)
