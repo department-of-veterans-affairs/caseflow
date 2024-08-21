@@ -55,7 +55,8 @@ class NonratingRequestIssueModal extends React.Component {
       isTaskInProgress: props.intakeData.taskInProgress,
       mstChecked: false,
       pactChecked: false,
-      dateError: ''
+      dateError: '',
+      descriptionError: ''
     };
   }
 
@@ -101,9 +102,18 @@ class NonratingRequestIssueModal extends React.Component {
 
   descriptionOnChange = (value) => {
     this.setState({
-      description: value
+      description: value,
+      descriptionError: this.errorOnDescription(value)
     });
   };
+
+  errorOnDescription = (value) => {
+    // whitelist alphanumberic, and specified special characters to match VBMS
+    const specialCharWhitelist = /^[a-zA-Z0-9\s.\-_|/\\@#~=%,;?!'"`():$+*^[\]&><{}]*$/;
+    const error = specialCharWhitelist.test(value) ? null : 'Invalid character';
+
+    return error;
+  }
 
   decisionDateOnChange = (value) => {
     this.setState({
@@ -229,7 +239,7 @@ class NonratingRequestIssueModal extends React.Component {
         classNames: ['usa-button', 'add-issue'],
         name: this.props.submitText,
         onClick: this.onAddIssue,
-        disabled: this.requiredFieldsMissing() || Boolean(this.state.dateError)
+        disabled: this.requiredFieldsMissing() || Boolean(this.state.dateError) || Boolean(this.state.descriptionError)
       }
     ];
 
@@ -309,7 +319,13 @@ class NonratingRequestIssueModal extends React.Component {
           />
         </div>
 
-        <TextField name="Issue description" strongLabel value={description} onChange={this.descriptionOnChange} />
+        <TextField
+          name="Issue description"
+          strongLabel
+          value={description}
+          onChange={this.descriptionOnChange}
+          errorMessage={this.state.descriptionError}
+        />
       </React.Fragment>
     );
   }
