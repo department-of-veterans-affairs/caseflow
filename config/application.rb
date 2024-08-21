@@ -134,6 +134,8 @@ module CaseflowCertification
     # setup the deploy env environment variable
     ENV['DEPLOY_ENV'] ||= Rails.env
 
+    Rails.autoloaders.log! # Enable Zeitwerk logging for compliance troubleshooting
+
     config.eager_load_paths << Rails.root.join('lib')
     config.eager_load_paths += Dir[Rails.root.join('app', 'models', '{**}', '{**}')]
     config.eager_load_paths += Dir[Rails.root.join('app', 'serializers', '{**}')]
