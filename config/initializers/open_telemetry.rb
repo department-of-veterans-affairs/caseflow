@@ -3,21 +3,21 @@
 require "rubygems"
 require "bundler/setup"
 
-require "opentelemetry-instrumentation-action_pack"
-require "opentelemetry-instrumentation-action_view"
-require "opentelemetry-instrumentation-active_job"
-require "opentelemetry-instrumentation-active_record"
-require "opentelemetry-instrumentation-active_support"
-require "opentelemetry-instrumentation-aws_sdk"
-require "opentelemetry-instrumentation-concurrent_ruby"
-require "opentelemetry-instrumentation-faraday"
-require "opentelemetry-instrumentation-http_client"
-require "opentelemetry-instrumentation-net_http"
-require "opentelemetry-instrumentation-pg"
+# require "opentelemetry-instrumentation-action_pack"
+# require "opentelemetry-instrumentation-action_view"
+# require "opentelemetry-instrumentation-active_job"
+# require "opentelemetry-instrumentation-active_record"
+# require "opentelemetry-instrumentation-active_support"
+# require "opentelemetry-instrumentation-aws_sdk"
+# require "opentelemetry-instrumentation-concurrent_ruby"
+# require "opentelemetry-instrumentation-faraday"
+# require "opentelemetry-instrumentation-http_client"
+# require "opentelemetry-instrumentation-net_http"
+# require "opentelemetry-instrumentation-pg"
 require "opentelemetry-instrumentation-rack"
 require "opentelemetry-instrumentation-rails"
-require "opentelemetry-instrumentation-rake"
-require "opentelemetry-instrumentation-redis"
+# require "opentelemetry-instrumentation-rake"
+# require "opentelemetry-instrumentation-redis"
 
 require "opentelemetry-exporter-otlp"
 require "opentelemetry-sdk"
@@ -30,12 +30,12 @@ DT_API_TOKEN = ENV["DT_API_TOKEN"]
 Rails.logger.info("DT_API_TOKEN is set to #{DT_API_TOKEN}")
 
 config = {
-  "OpenTelemetry::Instrumentation::Redis" => { enabled: false },
-  "OpenTelemetry::Instrumentation::PG" => { enabled: false },
-  "OpenTelemetry::Instrumentation::AwsSdk" => { enabled: false },
-  "OpenTelemetry::Instrumentation::Net::HTTP" => { enabled: false },
-  "OpenTelemetry::Instrumentation::Rack" => { untraced_endpoints: ["/health-check", "/sample", "/logs"] },
-  "OpenTelemetry::Instrumentation::ActiveJob" => { enabled: false }
+  # "OpenTelemetry::Instrumentation::Redis" => { enabled: false },
+  # "OpenTelemetry::Instrumentation::PG" => { enabled: false },
+  # "OpenTelemetry::Instrumentation::AwsSdk" => { enabled: false },
+  # "OpenTelemetry::Instrumentation::Net::HTTP" => { enabled: false },
+  "OpenTelemetry::Instrumentation::Rack" => { untraced_endpoints: ["/health-check", "/sample", "/logs"] }
+  # "OpenTelemetry::Instrumentation::ActiveJob" => { enabled: false }
 }
 
 if !Rails.env.development? && !Rails.env.test? && !Rails.env.demo?
