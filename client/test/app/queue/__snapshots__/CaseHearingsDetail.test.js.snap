@@ -18,10 +18,9 @@ exports[`CaseHearingDetail renders correctly 1`] = `
       </span>
       <ul
         class="cf-bare-list"
-        data-css-vguy8r=""
       >
         <li
-          data-css-1yjr6ry=""
+          style="margin-bottom: 5px;"
         >
           <span
             data-css-l6c9n4=""
@@ -33,7 +32,7 @@ exports[`CaseHearingDetail renders correctly 1`] = `
           Video
         </li>
         <li
-          data-css-1yjr6ry=""
+          style="margin-bottom: 5px;"
         >
           <span
             data-css-l6c9n4=""
@@ -97,11 +96,8 @@ exports[`CaseHearingDetail renders correctly 1`] = `
     </div>
     <ul
       class="cf-bare-list"
-      data-css-aga5w7=""
     >
-      <li
-        data-css-dxjmvv=""
-      >
+      <li>
         
          
         <div
@@ -116,10 +112,9 @@ exports[`CaseHearingDetail renders correctly 1`] = `
           </span>
           <ul
             class="cf-bare-list"
-            data-css-vguy8r=""
           >
             <li
-              data-css-1yjr6ry=""
+              style="margin-bottom: 5px;"
             >
               <span
                 data-css-l6c9n4=""
@@ -132,7 +127,7 @@ exports[`CaseHearingDetail renders correctly 1`] = `
                 
             </li>
             <li
-              data-css-1yjr6ry=""
+              style="margin-bottom: 5px;"
             >
               <span
                 data-css-l6c9n4=""
@@ -144,7 +139,7 @@ exports[`CaseHearingDetail renders correctly 1`] = `
               None
             </li>
             <li
-              data-css-1yjr6ry=""
+              style="margin-bottom: 5px;"
             >
               
                
@@ -245,7 +240,7 @@ exports[`CaseHearingDetail renders correctly 1`] = `
               </span>
             </li>
             <li
-              data-css-1yjr6ry=""
+              style="margin-bottom: 5px;"
             >
               <span
                 data-css-l6c9n4=""
@@ -257,7 +252,7 @@ exports[`CaseHearingDetail renders correctly 1`] = `
               
             </li>
             <li
-              data-css-1yjr6ry=""
+              style="margin-bottom: 5px;"
             >
               <span
                 data-css-l6c9n4=""
@@ -273,7 +268,7 @@ exports[`CaseHearingDetail renders correctly 1`] = `
               </span>
             </li>
             <li
-              data-css-1yjr6ry=""
+              style="margin-bottom: 5px;"
             >
               
                
