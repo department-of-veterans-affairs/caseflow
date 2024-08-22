@@ -58,10 +58,6 @@ class WorkOrderPackage
     end
   end
 
-  def self.current_user
-    User.first
-  end
-
   def self.update_transcription_info(task_number)
     update_transcriptions(task_number)
     update_transcription_files(task_number)
