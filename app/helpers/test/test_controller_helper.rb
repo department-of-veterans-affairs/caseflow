@@ -4,10 +4,10 @@ module Test::TestControllerHelper
   class << self
     def form_values
       {
-        feature_toggles_available: self.find_features.map { |key, value| { name: key, default_status: value } },
-        functions_available: self.find_functions,
-        all_csum_roles: self.find_roles,
-        all_organizations: self.find_orgs
+        feature_toggles_available: find_features.map { |key, value| { name: key, default_status: value } },
+        functions_available: find_functions,
+        all_csum_roles: find_roles,
+        all_organizations: find_orgs
       }
     end
 

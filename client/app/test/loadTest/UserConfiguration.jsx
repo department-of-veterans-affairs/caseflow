@@ -3,7 +3,7 @@
 import React from 'react';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
-import OFFICE_INFO from '../../../constants/REGIONAL_OFFICE_FOR_CSS_STATION.json';
+// import OFFICE_INFO from '../../../constants/REGIONAL_OFFICE_FOR_CSS_STATION.json';
 
 export default function UserConfiguration() {
 
