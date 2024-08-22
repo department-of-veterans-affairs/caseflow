@@ -78,9 +78,9 @@ const IndividualClaimHistoryTable = (props) => {
   const RequestedIssueFragment = (details) => {
     return <React.Fragment>
       { benefitType(details) }
-      <b>Issue type: </b>{details.issueType}<br />
-      <b>Issue description: </b>{details.issueDescription}<br />
-      <b>Decision date: </b>{formatDecisionDate(details.decisionDate)}<br />
+      <b>Issue type: </b>{details.newIssueType}<br />
+      <b>Issue description: </b>{details.newIssueDescription}<br />
+      <b>Decision date: </b>{formatDecisionDate(details.newDecisionDate)}<br />
       <b>{capitalizeFirst(details.requestType)} request reason: </b>{details.modificationRequestReason}<br />
     </React.Fragment>;
   };
