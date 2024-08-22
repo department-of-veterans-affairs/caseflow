@@ -3,7 +3,7 @@
   "private": true,
   "repository": "https://github.com/department-of-veterans-affairs/caseflow",
   "license": "none",
-  "version": "0.0.1",
+  "version": "1.22.18",
   "engines": {
     "node": "18.20.2"
   },
