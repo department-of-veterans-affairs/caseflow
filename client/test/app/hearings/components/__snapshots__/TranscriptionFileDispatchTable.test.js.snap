@@ -3,7 +3,7 @@
 exports[`TranscriptionFileDispatchTable Assigned Tab loads a table from backend data 1`] = `
 <div>
   <div
-    data-css-1nb4y5o=""
+    data-css-1wuo2gf=""
   >
     <div
       class="cf-table-wrapper"
@@ -2444,7 +2444,7 @@ exports[`TranscriptionFileDispatchTable Assigned Tab loads a table from backend 
 exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backend data and handles selected and locked records 1`] = `
 <div>
   <div
-    data-css-1nb4y5o=""
+    data-css-1wuo2gf=""
   >
     <div
       class="cf-table-wrapper"

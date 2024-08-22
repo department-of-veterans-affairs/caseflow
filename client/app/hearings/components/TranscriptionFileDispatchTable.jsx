@@ -24,6 +24,14 @@ const styles = css({
   '& div *': {
     outline: 'none'
   },
+  '& table': {
+    marginTop: '0',
+    position: 'relative',
+    top: '-1em'
+  },
+  '& thead': {
+    margin: '-2em 0 0 0',
+  },
   '& .cf-form-textinput': {
     position: 'relative',
     top: '0.1em',
@@ -40,13 +48,11 @@ const styles = css({
   },
   '& .cf-pagination-summary': {
     position: 'relative',
-    top: '4em',
-  },
-  '& .cf-pagination:last-child .cf-pagination-summary': {
-    top: '2em'
+    top: '0.4em',
+    margin: '0'
   },
   '& .cf-pagination-pages': {
-    position: 'relative',
+    margin: '0'
   },
   '& th:last-child .cf-dropdown-filter': {
     left: '-200px'
