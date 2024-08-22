@@ -26,23 +26,23 @@ const CorrespondenceTasksAdded = (props) => {
 
           </div>
           <div className="corr-tasks-added-col">
-            <p className="task-added-header">Appellant name</p>
+            <p className="task-added-header">APPELLANT NAME</p>
             <p>{veteranFullName}</p>
           </div>
           <div className="corr-tasks-added-col">
-            <p className="task-added-header">Appeal stream type</p>
+            <p className="task-added-header">APPEAL STREAM TYPE</p>
             <p>{props.task_added.streamType}</p>
           </div>
           <div className="corr-tasks-added-col">
-            <p className="task-added-header">Number of issues</p>
+            <p className="task-added-header">NUMBER OF ISSUES</p>
             <p>{props.task_added.numberOfIssues}</p>
           </div>
           <div className="corr-tasks-added-col">
-            <p className="task-added-header">Status</p>
+            <p className="task-added-header">STATUS</p>
             <p>{props.task_added.status}</p>
           </div>
           <div className="corr-tasks-added-col">
-            <p className="task-added-header">Added to</p>
+            <p className="task-added-header">ASSIGNED TO</p>
             <p>{props.task_added.assignedTo ? props.task_added.assignedTo.name : ''}</p>
           </div>
 
