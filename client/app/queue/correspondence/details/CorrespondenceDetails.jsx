@@ -186,10 +186,11 @@ const CorrespondenceDetails = (props) => {
           </AppSegment>
           {(props.correspondence.correspondenceAppeals.map((taskAdded) =>
 
-            taskAdded.correspondencesAppealsTasks.length > 0 && <CorrespondenceTasksAdded
+            taskAdded.correspondencesAppealsTasks?.length > 0 && <CorrespondenceTasksAdded
               task_added={taskAdded}
               correspondence={props.correspondence}
               organizations={props.organizations}
+              userCssId={props.userCssId}
             />
           )
           )}

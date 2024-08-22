@@ -51,8 +51,8 @@ const CorrespondenceTasksAdded = (props) => {
           <span className="tasks-added-text">Tasks added to appeal</span>
           <div >
             <CorrespondenceCaseTimeline
-              organizations={['TEST']}
-              userCssId="INBOUND_OPS_TEAM_ADMIN_USEkR"
+              organizations={props.organizations}
+              userCssId={props.userCssId}
               correspondence={props.task_added.correspondence}
               tasksToDisplay={(props.task_added.taskAddedData)}
             />
@@ -66,7 +66,8 @@ const CorrespondenceTasksAdded = (props) => {
 CorrespondenceTasksAdded.propTypes = {
   correspondence: PropTypes.object,
   task_added: PropTypes.object,
-  organizations: PropTypes.array
+  organizations: PropTypes.array,
+  userCssId: PropTypes.string,
 
 };
 
