@@ -9,7 +9,6 @@ import rootReducer from 'app/queue/reducers';
 import thunk from 'redux-thunk';
 import moment from 'moment';
 import { prepareAppealForSearchStore, sortCaseTimelineEvents } from 'app/queue/utils';
-import { debug } from 'console';
 
 jest.mock('redux', () => ({
   ...jest.requireActual('redux'),
