@@ -143,10 +143,10 @@ export const AddHearingDay = ({
         setLoading(false);
 
         if (error?.response?.body && error.response.body.errors &&
-        error.response.body.errors[0].status === 400) {
+          error.response.body.errors[0].status === 400) {
           setNoRoomsAvailableError(error.response.body.errors[0]);
         } else {
-        // All other server errors
+          // All other server errors
           setServerError(true);
         }
       });
@@ -295,6 +295,7 @@ export const AddHearingDay = ({
               amStartTime={selectedTravel ? '9:00' : '8:30'}
               pmStartTime={selectedTravel ? '13:00' : '12:30'}
               roTimezone={selectedRegionalOffice?.timezone}
+              hearingDayDate={selectedHearingDay}
             />
           }
           {selectedRequestType !== null && (
@@ -337,6 +338,7 @@ export const AddHearingDay = ({
                 localZone="America/New_York"
                 onChange={handleStartTimeChange}
                 value={hearingStartTime}
+                hearingDayDate={selectedHearingDay}
               />
               <div className="time-slot-preview-container">
                 <TimeSlot
@@ -366,7 +368,7 @@ export const AddHearingDay = ({
         }}
         styling={cancelButton}
       >
-          Cancel
+        Cancel
       </Button>
       <span {...saveButton}>
         <Button

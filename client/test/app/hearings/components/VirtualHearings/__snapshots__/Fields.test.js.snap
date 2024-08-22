@@ -117,6 +117,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
             data-css-150oin1=""
           >
             <Timezone
+              hearingDayDate="2020-07-06"
               label="Veteran Timezone"
               name="appellantTz"
               onChange={[Function]}
@@ -16313,6 +16314,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
             data-css-150oin1=""
           >
             <Timezone
+              hearingDayDate="2020-07-06"
               label="POA/Representative Timezone"
               name="representativeTz"
               onChange={[Function]}
@@ -32621,6 +32623,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
             data-css-150oin1=""
           >
             <Timezone
+              hearingDayDate="2020-07-06"
               label="Veteran Timezone"
               name="appellantTz"
               onChange={[Function]}
@@ -48817,6 +48820,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
             data-css-150oin1=""
           >
             <Timezone
+              hearingDayDate="2020-07-06"
               label="POA/Representative Timezone"
               name="representativeTz"
               onChange={[Function]}
