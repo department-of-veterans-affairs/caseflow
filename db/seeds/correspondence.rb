@@ -208,7 +208,7 @@ module Seeds
           corres.root_task.update!(status: Constants.TASK_STATUSES.completed)
           corres.root_task.update!(closed_at: rand(1.month.ago..1.day.ago))
         rescue StandardError => error
-          puts error
+          Rails.logger.debug(error)
         end
       end
     end
@@ -303,8 +303,8 @@ module Seeds
           assign_review_package_task(corres, user)
           rpt = ReviewPackageTask.find_by(appeal_id: corres.id)
           rpt.update!(status: Constants.TASK_STATUSES.in_progress)
-        rescue Exception => error
-          puts error
+        rescue StandardError => error
+          Rails.logger.debug(error)
         end
       end
     end
@@ -315,8 +315,8 @@ module Seeds
           corres = create_correspondence(user, veteran)
           cit = create_correspondence_intake(corres, user)
           cit.update!(status: Constants.TASK_STATUSES.in_progress)
-        rescue Exception => error
-          puts error
+        rescue StandardError => error
+          Rails.logger.debug(error)
         end
       end
     end
@@ -326,8 +326,8 @@ module Seeds
         begin
           corres = create_correspondence(user, veteran)
           create_multiple_docs(corres, veteran)
-        rescue Exception => error
-          puts error
+        rescue StandardError => error
+          Rails.logger.debug(error)
         end
       end
     end

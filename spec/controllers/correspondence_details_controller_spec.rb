@@ -34,6 +34,7 @@ RSpec.describe CorrespondenceDetailsController, :all_dbs, type: :controller do
         expect(json["correspondence"]).to be_present
         expect(json["correspondence"]["appeals_information"]).to be_present
         expect(json["correspondence"]["all_correspondences"]).to be_present
+        expect(json["correspondence"]["prior_mail"]).to be_present
       end
     end
   end

@@ -112,6 +112,6 @@ class CorrespondenceDetailsController < CorrespondenceController
       WorkQueue::CorrespondenceSerializer.new(correspondence).serializable_hash[:data][:attributes]
     end
 
-    { prior_mail: serialized_mail}
+    { prior_mail: serialized_mail }
   end
 end

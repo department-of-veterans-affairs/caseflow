@@ -58,7 +58,5 @@ class WorkQueue::CorrespondenceSerializer
     end
   end
 
-  attribute :related_correspondence_ids do |object|
-    object.related_correspondence_ids
-  end
+  attribute :related_correspondence_ids, &:related_correspondence_ids
 end
