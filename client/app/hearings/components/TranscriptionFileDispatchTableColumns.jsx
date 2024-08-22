@@ -114,7 +114,7 @@ export const docketNumberColumn = () => {
     anyFiltersAreSet: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.DOCKET_NUMBER.anyFiltersAreSet,
     valueFunction: (row) => (
       <div>
-        <DocketTypeBadge name={row.hearingType} />
+        <DocketTypeBadge name={row.hearingType} number={row.id} />
         &nbsp;
         {row.docketNumber}
       </div>
@@ -132,6 +132,7 @@ export const caseDetailsColumn = () => {
       <div>
         {row.externalAppealId && (
           <LinkToAppeal
+            id={row.id}
             appealExternalId={row.externalAppealId}
             hearingDay={{}}
             regionalOffice="">
@@ -150,6 +151,7 @@ export const typesColumn = () => {
     enableFilter: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.TYPES.filterable,
     anyFiltersAreSet: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.TYPES.anyFiltersAreSet,
     columnName: COPY.TRANSCRIPTION_FILE_DISPATCH_TYPES_COLUMN_NAME,
+    label: 'types filter',
     valueFunction: (row) => (
       <div>
         {renderLegacyAppealType({
@@ -174,6 +176,7 @@ export const hearingDateColumn = () => {
     enableFilter: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.HEARING_DATE.filterable,
     anyFiltersAreSet: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.HEARING_DATE.anyFiltersAreSet,
     columnName: COPY.TRANSCRIPTION_FILE_DISPATCH_HEARING_DATE_COLUMN_NAME,
+    label: 'hearing date filter',
     valueFunction: (row) => row.hearingDate,
     backendCanSort: true,
     getSortValue: (row) => row.hearingDate,
@@ -193,6 +196,7 @@ export const hearingTypeColumn = () => {
     enableFilter: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.HEARING_TYPE.filterable,
     anyFiltersAreSet: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.HEARING_TYPE.anyFiltersAreSet,
     columnName: COPY.TRANSCRIPTION_FILE_DISPATCH_HEARING_TYPE_COLUMN_NAME,
+    label: 'hearing types filter',
     valueFunction: (row) => (
       <div>
         {row.hearingType === 'LegacyHearing' ? 'Legacy' : 'AMA'}
@@ -249,6 +253,7 @@ export const dateSentColumn = () => {
     enableFilter: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.DATE_SENT.filterable,
     anyFiltersAreSet: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.DATE_SENT.anyFiltersAreSet,
     columnName: COPY.TRANSCRIPTION_FILE_DISPATCH_DATE_SENT_COLUMN_NAME,
+    label: 'date sent filter',
     valueFunction: (row) => row.dateSent,
     backendCanSort: true,
     getSortValue: (row) => row.dateSent,
@@ -267,6 +272,7 @@ export const expectedReturnDateColumn = () => {
     enableFilter: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.EXPECTED_RETURN_DATE.filterable,
     anyFiltersAreSet: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.EXPECTED_RETURN_DATE.anyFiltersAreSet,
     columnName: COPY.TRANSCRIPTION_FILE_DISPATCH_EXPECTED_RETURN_DATE_COLUMN_NAME,
+    label: 'expected return date filter',
     valueFunction: (row) => row.expectedReturnDate,
     backendCanSort: true,
     getSortValue: (row) => row.expectedReturnDate,
@@ -279,10 +285,10 @@ export const expectedReturnDateColumn = () => {
 };
 
 export const contractorColumn = (contractors) => {
-  const filterOptions = contractors.map((contractor) => ({
+  const filterOptions = contractors ? contractors.map((contractor) => ({
     value: contractor.name,
     displayText: contractor.name
-  }));
+  })) : [];
 
   return {
     header: <p {...styles.headerWithIcon}>{COPY.TRANSCRIPTION_FILE_DISPATCH_CONTRACTOR_COLUMN_NAME}</p>,
@@ -290,6 +296,7 @@ export const contractorColumn = (contractors) => {
     enableFilter: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.CONTRACTOR.filterable,
     anyFiltersAreSet: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.CONTRACTOR.anyFiltersAreSet,
     columnName: COPY.TRANSCRIPTION_FILE_DISPATCH_CONTRACTOR_COLUMN_NAME,
+    label: 'contractor filter',
     filterOptions,
     valueFunction: (row) => (
       <div style={styles.contractor}>
@@ -308,6 +315,7 @@ export const statusColumn = () => {
     enableFilter: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.STATUS.filterable,
     anyFiltersAreSet: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.STATUS.anyFiltersAreSet,
     columnName: COPY.TRANSCRIPTION_FILE_DISPATCH_STATUS_COLUMN_NAME,
+    label: 'status filter',
     filterOptions: [
       { value: 'Completed', displayText: 'Completed' },
       { value: 'Overdue', displayText: 'Overdue' },
