@@ -90,7 +90,8 @@ class VACOLS::CaseDocket < VACOLS::Record
   "
 
   # Judges 000, 888, and 999 are not real judges, but rather VACOLS codes.
-
+  # This query will create multiple records/rows for each BRIEFF if the BRIEFF has multiple hearings
+  # This may need to be accounted for by making sure the resultant set is filtered by BFKEY
   JOIN_ASSOCIATED_VLJS_BY_HEARINGS = "
     left join (
       select distinct TITRNUM, TINUM, HEARING_DATE,
