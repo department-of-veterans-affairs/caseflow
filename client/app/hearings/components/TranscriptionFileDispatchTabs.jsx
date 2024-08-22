@@ -5,17 +5,23 @@ import { ExternalLinkIcon } from '../../components/icons/ExternalLinkIcon';
 import { COLORS, ICON_SIZES } from '../../constants/AppConstants';
 import SearchBar from '../../components/SearchBar';
 import Button from '../../components/Button';
-import PropTypes from 'prop-types';
 import { TranscriptionFileDispatchTable } from './TranscriptionFileDispatchTable';
 import { css } from 'glamor';
 import TRANSCRIPTION_FILE_DISPATCH_CONFIG from '../../../constants/TRANSCRIPTION_FILE_DISPATCH_CONFIG';
 import { sprintf } from 'sprintf-js';
 
 const styles = {
-  descriptionStyles: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    marginBottom: '4em',
+  tabColumns: {
+    float: 'left',
+    width: '100%'
+  },
+  tabColumn: {
+    float: 'left',
+    width: '50%'
+  },
+  settingsLink: {
+    textAlign: 'right',
+    marginBottom: '2.5em'
   },
   linkStyles: {
     display: 'inline-flex',
@@ -25,13 +31,14 @@ const styles = {
   linkIconStyles: {
     marginLeft: '0.2em'
   },
-  buttonStyles: {
-    display: 'inline-block'
+  filesHeading: {
+    margin: '1em 0 1em 0'
   },
   fileSelect: {
-    margin: '-4.5em 0 2em 0'
+    margin: '2.65em 0 2em 0'
   },
   searchBar: css({
+    marginBottom: '4em',
     '& input': {
       width: '100% !important',
       maxWidth: '100%',
@@ -41,7 +48,10 @@ const styles = {
       maxWidth: '100%',
       width: '550px'
     }
-  })
+  }),
+  tableWrapper: {
+    clear: 'both',
+  }
 };
 
 /**
@@ -67,108 +77,132 @@ export const assignedColumns = (columns) => {
 };
 
 /**
- * A mini template component used on most of the tabs
- * @param {string} text - The descriptive text
- * @param {string} searchPrompt - The label text for the search bar prompt
- * @returns
+ * A mini template component for transcription settings link
  */
-const Description = ({ text, searchPrompt }) => {
-  return (
-    <>
-      <div className="tab-description" style={styles.descriptionStyles}>
-        {text}
-        <div className="cf-search-ahead-parent">
-          <div {...styles.searchBar}>
-            <SearchBar
-              placeholder={COPY.TRANSCRIPTION_FILE_DISPATCH_TYPE}
-              size="big"
-              isSearchAhead
-              title={searchPrompt}
-            />
-          </div>
-        </div>
-      </div>
-    </>
-  );
-};
+const TranscriptionSettingsLink = () => (
+  <div style={styles.settingsLink}>
+    <Link linkStyling to="/find_by_contractor">
+      <span style={styles.linkStyles}>
+        {COPY.TRANSCRIPTION_FILE_DISPATCH_LINK}
+        <span style={styles.linkIconStyles}>
+          <ExternalLinkIcon style={styles.linkIconStyles} color={COLORS.PRIMARY} size={ICON_SIZES.SMALL} />
+        </span>
+      </span>
+    </Link>
+  </div>
+);
 
 // This maps the component to render for each tab
 export const tabConfig = (openPackageModal, selectFilesForPackage, files) => [
   {
     label: COPY.CASE_LIST_TABLE_UNASSIGNED_LABEL,
     page: <>
-      <div className="tab-description" style={{ ...styles.descriptionStyles }} >
-        {COPY.TRANSCRIPTION_FILE_DISPATCH_UNASSIGNED_TAB_DESCRIPTION}
-        <Link linkStyling to="/find_by_contractor">
-          <span style={styles.linkStyles}>
-            {COPY.TRANSCRIPTION_FILE_DISPATCH_LINK}
-            <span style={styles.linkIconStyles}>
-              <ExternalLinkIcon style={styles.linkIconStyles} color={COLORS.PRIMARY} size={ICON_SIZES.SMALL} />
-            </span>
-          </span>
-        </Link>
-      </div>
-      <div style={{ ...styles.descriptionStyles }} className="cf-search-ahead-parent">
-        {COPY.TRANSCRIPTION_FILE_DISPATCH_UNASSIGNED_TAB_PROMPT}
-        <div {...styles.searchBar} >
-          <SearchBar
-            placeholder={COPY.TRANSCRIPTION_FILE_DISPATCH_TYPE}
-            size="big"
-            id="transcription-table-search"
-            isSearchAhead
-            title={COPY.TRANSCRIPTION_FILE_DISPATCH_UNASSIGNED_TAB_SEARCH}
-          />
+      <div style={styles.tabColumns}>
+        <div style={styles.tabColumn}>
+          <div>{COPY.TRANSCRIPTION_FILE_DISPATCH_UNASSIGNED_TAB_DESCRIPTION}</div>
+          <div style={styles.fileSelect}>
+            <div>{COPY.TRANSCRIPTION_FILE_DISPATCH_UNASSIGNED_TAB_PROMPT}</div>
+            <h2 style={styles.filesHeading}>
+              {sprintf(COPY.TRANSCRIPTION_FILE_DISPATCH_FILE_SELECTED, files, files === 1 ? '' : 's')}
+            </h2>
+            <div className="button-row" style={styles.buttonStyles}>
+              <Button disabled={files === 0} onClick={() => openPackageModal()}>Package files</Button>
+              <Button linkStyling>Cancel</Button>
+            </div>
+          </div>
+        </div>
+        <div style={styles.tabColumn}>
+          <TranscriptionSettingsLink />
+          <div {...styles.searchBar} >
+            <SearchBar
+              placeholder={COPY.TRANSCRIPTION_FILE_DISPATCH_TYPE}
+              size="big"
+              id="transcription-table-search"
+              isSearchAhead
+              title={COPY.TRANSCRIPTION_FILE_DISPATCH_UNASSIGNED_TAB_SEARCH}
+            />
+          </div>
         </div>
       </div>
-      <div className="file-select" style={styles.fileSelect}>
-        <h2>{sprintf(COPY.TRANSCRIPTION_FILE_DISPATCH_FILE_SELECTED, files, files === 1 ? '' : 's')}</h2>
-        <div className="button-row" style={styles.buttonStyles}>
-          <Button disabled={files === 0} onClick={() => openPackageModal()}>Package files</Button>
-          <Button linkStyling>Cancel</Button>
-        </div>
+      <div style={styles.tableWrapper}>
+        <TranscriptionFileDispatchTable
+          columns={unassignedColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
+          statusFilter={['Unassigned']}
+          selectFilesForPackage={selectFilesForPackage}
+        />
       </div>
-      <TranscriptionFileDispatchTable
-        columns={unassignedColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
-        statusFilter={['Unassigned']}
-        selectFilesForPackage={selectFilesForPackage}
-      />
     </>
   },
   {
     label: COPY.TRANSCRIPTION_DISPATCH_ASSIGNED_TAB,
     page: <>
-      <Description
-        text={COPY.TRANSCRIPTION_FILE_DISPATCH_ASSIGNED_TAB_DESCRIPTION}
-        searchPrompt={COPY.TRANSCRIPTION_FILE_DISPATCH_ASSIGNED_TAB_SEARCH}
-      />
-      <TranscriptionFileDispatchTable
-        columns={assignedColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
-        statusFilter={['Assigned']}
-        selectFilesForPackage={selectFilesForPackage}
-      />
+      <div style={styles.tabColumns}>
+        <div style={styles.tabColumn}>
+          <div>{COPY.TRANSCRIPTION_FILE_DISPATCH_ASSIGNED_TAB_DESCRIPTION}</div>
+        </div>
+        <div style={styles.tabColumn}>
+          <div {...styles.searchBar} >
+            <SearchBar
+              placeholder={COPY.TRANSCRIPTION_FILE_DISPATCH_TYPE}
+              size="big"
+              id="transcription-table-search"
+              isSearchAhead
+              title={COPY.TRANSCRIPTION_FILE_DISPATCH_ASSIGNED_TAB_SEARCH}
+            />
+          </div>
+        </div>
+      </div>
+      <div style={styles.tableWrapper}>
+        <TranscriptionFileDispatchTable
+          columns={assignedColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
+          statusFilter={['Assigned']}
+          selectFilesForPackage={selectFilesForPackage}
+        />
+      </div>
     </>
   },
   {
     label: COPY.TRANSCRIPTION_DISPATCH_COMPLETED_TAB,
     page: <>
-      <Description
-        text={COPY.TRANSCRIPTION_FILE_DISPATCH_COMPLETED_TAB_DESCRIPTION}
-        searchPrompt={COPY.TRANSCRIPTION_FILE_DISPATCH_COMPLETED_TAB_SEARCH}
-      />
+      <div style={styles.tabColumns}>
+        <div style={styles.tabColumn}>
+          <div>{COPY.TRANSCRIPTION_FILE_DISPATCH_COMPLETED_TAB_DESCRIPTION}</div>
+        </div>
+        <div style={styles.tabColumn}>
+          <div {...styles.searchBar} >
+            <SearchBar
+              placeholder={COPY.TRANSCRIPTION_FILE_DISPATCH_TYPE}
+              size="big"
+              id="transcription-table-search"
+              isSearchAhead
+              title={COPY.TRANSCRIPTION_FILE_DISPATCH_COMPLETED_TAB_SEARCH}
+            />
+          </div>
+        </div>
+      </div>
+      <div style={styles.tableWrapper}></div>
     </>
   },
   {
     label: COPY.TRANSCRIPTION_FILE_DISPATCH_ALL_TAB,
     page: <>
-      <Description
-        text={COPY.TRANSCRIPTION_FILE_DISPATCH_ALL_TAB_DESCRIPTION}
-        searchPrompt={COPY.TRANSCRIPTION_FILE_DISPATCH_ALL_TAB_SEARCH}
-      />
+      <div style={styles.tabColumns}>
+        <div style={styles.tabColumn}>
+          <div>{COPY.TRANSCRIPTION_FILE_DISPATCH_ALL_TAB_DESCRIPTION}</div>
+        </div>
+        <div style={styles.tabColumn}>
+          <div {...styles.searchBar} >
+            <SearchBar
+              placeholder={COPY.TRANSCRIPTION_FILE_DISPATCH_TYPE}
+              size="big"
+              id="transcription-table-search"
+              isSearchAhead
+              title={COPY.TRANSCRIPTION_FILE_DISPATCH_ALL_TAB_SEARCH}
+            />
+          </div>
+        </div>
+      </div>
+      <div style={styles.tableWrapper}></div>
     </>
   }
 ];
-
-Description.propTypes = {
-  text: PropTypes.string,
-  searchPrompt: PropTypes.string
-};
