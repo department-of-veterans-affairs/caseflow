@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class DependenciesChecksController < ApplicationBaseController
-  newrelic_ignore_apdex
+  # newrelic_ignore_apdex
 
   skip_before_action :check_out_of_service
 

@@ -1737,7 +1737,6 @@ GEM
       timeout
     net-smtp (0.3.3)
       net-protocol
-    newrelic_rpm (6.5.0.357)
     nio4r (2.5.9)
     no_proxy_fix (0.1.2)
     nokogiri (1.15.5)
@@ -2169,7 +2168,6 @@ DEPENDENCIES
   meta_request
   moment_timezone-rails
   multiverse
-  newrelic_rpm
   nokogiri (>= 1.11.0.rc4)
   opentelemetry-exporter-otlp
   opentelemetry-instrumentation-action_pack

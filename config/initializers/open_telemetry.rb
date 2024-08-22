@@ -19,7 +19,7 @@ require 'opentelemetry/instrumentation/faraday'
 require 'opentelemetry/instrumentation/http'
 require 'opentelemetry/instrumentation/http_client'
 require 'opentelemetry/instrumentation/net/http'
-require 'opentelemetry/instrumentation/net_http'
+# require 'opentelemetry/instrumentation/net_http'
 # require 'opentelemetry/instrumentation/pg'
 # require 'opentelemetry/instrumentation/redis'
 
