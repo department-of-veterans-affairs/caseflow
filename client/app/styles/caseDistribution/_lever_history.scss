@@ -7,8 +7,7 @@
   border-color: $color-gray-lighter;
   vertical-align: text-top;
   font-family: Source Sans Pro;
-  font-size: 19px;
-  width: 20%;
+  font-size: 17px;
 }
 
 .lever-history-table-header-styling {
@@ -18,7 +17,7 @@
   border-color: $color-gray-lighter;
   font-family: Source Sans Pro;
   font-weight: 700;
-  font-size: 19px;
+  font-size: 17px;
   line-height: 1.3em/25px;
 }
 
@@ -34,8 +33,14 @@
   table {
     width: 100%;
     margin-top: 0;
+    overflow: auto;
+    display: block;
 
     tr {
+      max-width: 30rem;
+      overflow-x: auto;
+      padding: 1rem;
+      font-size: 1.5rem;
       border-bottom: 1px solid $color-gray-lighter;
 
       th {

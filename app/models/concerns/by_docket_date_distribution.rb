@@ -57,7 +57,7 @@ module ByDocketDateDistribution
     end
   end
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength
   def ama_statistics
     docket_counts = {
       direct_review_priority_stats: {},
@@ -138,7 +138,7 @@ module ByDocketDateDistribution
       }
     }
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
 
   def ama_distributed_cases_tied_to_ineligible_judges
     @appeals.filter_map do |appeal|
