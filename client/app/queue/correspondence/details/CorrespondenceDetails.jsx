@@ -179,7 +179,7 @@ const CorrespondenceDetails = (props) => {
             <a rel="noopener noreferrer"
               target="_blank"
               href={`/reader/appeal/${correspondence.veteranFileNumber}`}
-              className={'correspondence-details-view-documents'}>
+              className="correspondence-details-view-documents">
               <p>view veteran documents</p>
             </a>
             <CaseListTable
