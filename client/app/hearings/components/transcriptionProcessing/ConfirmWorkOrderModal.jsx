@@ -193,15 +193,14 @@ const ConfirmWorkOrderModal = ({ history, onCancel }) => {
       };
     });
 
-    ApiUtil.post('/hearings/transcription_packages/dispatch',
-      {
-        data: {
-          work_order_name: state.workOrder,
-          return_date: state.returnDateValue,
-          contractor_name: state.contractor,
-          hearings
-        }
-      }).then(() => onCancel());
+    const data = JSON.stringify({
+      work_order_name: state.workOrder,
+      return_date: state.returnDateValue,
+      contractor_name: state.contractor,
+      hearings
+    });
+
+    ApiUtil.post('/hearings/transcription_packages/dispatch', { data }).then(onCancel());
   };
 
   const renderButtonSection = () => {
