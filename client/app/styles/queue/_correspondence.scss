@@ -1508,3 +1508,55 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   // margin-bottom: -10px;
   margin-left: 10px;
 }
+.tasks-added-container {
+  border: 1px solid $color-cream;
+  margin-bottom: 20px;
+  padding-top: 0;
+}
+
+.task-added-header {
+  font-weight: bold;
+}
+
+.correspondence-tasks-added {
+  background-color: $color-gray-inverse-base;
+  padding-left: 2%;
+  flex-direction: row;
+  display: flex;
+  width: 98%;
+  margin-left: 1%;
+  margin-top: 15px;
+}
+
+.corr-tasks-added-col {
+  flex-direction: column;
+  width: 15%;
+}
+
+.first-row {
+  padding-right: 3%;
+  flex-wrap: nowrap;
+  min-width: fit-content;
+}
+
+.tasks-added-text {
+  padding-top: 20px;
+  font-weight: bold;
+  display: block;
+}
+
+.case-details-badge {
+  display: flex;
+  width: fit-content;
+  flex-grow: 1;
+  padding: 3px;
+  background-color: $color-white;
+}
+
+.link-icon-container {
+  display: flex;
+}
+
+.tasks-added-details {
+  margin-left: 40px;
+}

@@ -25,7 +25,7 @@ export const correspondenceDocumentsData = [
     document_title: 'VA Form 10182 Notice of Disagreement'
   },
   {
-    correspondence_id: 1,
+    correspondence_id: 2,
     document_file_number: '998877665',
     pages: 20,
     vbms_document_type_id: 1,
@@ -47,12 +47,12 @@ export const correspondenceData = {
   va_date_of_receipt: '2023-11-15 00:00:00',
   veteran_id: 1928,
   veteranFileNumber: '998877665',
-  veteranFullName: 'Bob Vetner',
+  veteranFullName: 'John Doe',
   correspondenceDocuments: correspondenceDocumentsData,
   correspondence_tasks: [
     {
-      id: 16768,
-      appeal_id: 514,
+      id: 1,
+      appeal_id: 1,
       appeal_type: 'Correspondence',
       assigned_at: '2024-06-21T10:56:26.035-04:00',
       assigned_by_id: null,
@@ -94,6 +94,10 @@ export const correspondenceData = {
     }
   ]
 };
+
+export const appeals = {
+  appellantFullName: 'John Doe',
+}
 
 export const packageDocumentTypeData = {
   id: 15,

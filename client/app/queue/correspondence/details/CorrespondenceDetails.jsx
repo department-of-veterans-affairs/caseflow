@@ -10,6 +10,7 @@ import CorrespondenceResponseLetters from './CorrespondenceResponseLetters';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
 import { prepareAppealForSearchStore } from 'app/queue/utils';
+import CorrespondenceTasksAdded from '../CorrespondenceTasksAdded';
 import moment from 'moment';
 import Pagination from 'app/components/Pagination/Pagination';
 import Table from 'app/components/Table';
@@ -195,18 +196,31 @@ const CorrespondenceDetails = (props) => {
               enableTopPagination
             />
           </AppSegment>
+          {(props.correspondence.correspondenceAppeals.map((taskAdded) =>
+
+            taskAdded.correspondencesAppealsTasks?.length > 0 && <CorrespondenceTasksAdded
+              task_added={taskAdded}
+              correspondence={props.correspondence}
+              organizations={props.organizations}
+              userCssId={props.userCssId}
+            />
+          )
+          )}
         </div>
       </React.Fragment>
     );
   };
   const correspondenceAndAppealTaskComponents = <>
     {correspondenceTasks()}
+
     <section className="task-not-related-title">Tasks not related to an appeal</section>
     <div className="correspondence-case-timeline-container">
       <CorrespondenceCaseTimeline
         organizations={props.organizations}
         userCssId={props.userCssId}
-        correspondence={props.correspondence} />
+        correspondence={props.correspondence}
+        tasksToDisplay={props.correspondence.tasksUnrelatedToAppeal}
+      />
     </div>
   </>;
 
