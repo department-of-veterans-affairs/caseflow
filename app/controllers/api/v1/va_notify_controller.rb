@@ -18,27 +18,29 @@ class Api::V1::VaNotifyController < Api::ApplicationController
 
   private
 
-  def required_params
-    id_param, notification_type_param, status_param = params.require([:id, :notification_type, :status])
-    status_reason_param, to_param = params.permit(:status_reason, :to)
+  def va_notify_params
+    permitted_params = params.permit(:id, :notification_type, :status, :status_reason, :to)
+  end
+
+  def build_message_body
+    id_param, notification_type_param, status_param = va_notify_params.require([:id, :notification_type, :status])
+
     {
       external_id: id_param,
       notification_type: notification_type_param,
-      recipient: to_param,
+      recipient: va_notify_params[:to],
       status: status_param,
-      status_reason: status_reason_param
+      status_reason: va_notify_params[:status_reason]
     }
   rescue StandardError => error
     raise error
   end
 
   def build_sqs_message
-    sqs_url = SqsService.find_queue_url_by_name(name: "receive_notifications")
-
-    message_body = required_params.to_json
+    message_body = build_message_body.to_json
 
     {
-      queue_url: sqs_url,
+      queue_url: SqsService.find_queue_url_by_name(name: "receive_notifications"),
       message_body: message_body,
       message_deduplication_id: Digest::SHA256.hexdigest(message_body),
       message_group_id: Constants.VA_NOTIFY_CONSTANTS.message_group_id
