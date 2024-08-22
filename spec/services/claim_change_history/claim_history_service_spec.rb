@@ -251,7 +251,10 @@ describe ClaimHistoryService do
         create(:issue_modification_request,
                request_type: "addition",
                decision_review: supplemental_claim,
-               requestor: vha_user)
+               requestor: vha_user,
+               nonrating_issue_category: "CHAMPVA",
+               nonrating_issue_description: "Starting issue description",
+               decision_date: 5.days.ago)
       end
 
       let(:issue_modification_modify) do
@@ -353,6 +356,53 @@ describe ClaimHistoryService do
 
         # Create another addition IMR to verify that the event sequence works through one more iteration
         create_last_addition_and_verify_events(one_imr_events, new_events)
+      end
+
+      it "should correctly track the previous version data for multiple IMR edits" do
+        events = subject
+        one_imr_events = *starting_imr_events - [:removal]
+        expect(events.map(&:event_type)).to contain_exactly(*one_imr_events)
+
+        # Edit several fields to create a new version of the IMR
+        Timecop.travel(2.minutes.from_now)
+        issue_modification_addition.update!(nonrating_issue_category: "Other",
+                                            nonrating_issue_description: "Edited description 1",
+                                            edited_at: Time.zone.now)
+
+        # Rebuild events
+        service_instance.build_events
+        new_events = [:request_edited]
+        expect(events.map(&:event_type)).to contain_exactly(*one_imr_events + new_events)
+
+        # Edit several fields to create a new version of the IMR
+        Timecop.travel(2.minutes.from_now)
+        issue_modification_addition.update!(nonrating_issue_description: "Edited description 2",
+                                            edited_at: Time.zone.now)
+
+        # Rebuild events
+        service_instance.build_events
+        new_events.push(:request_edited)
+        expect(events.map(&:event_type)).to contain_exactly(*one_imr_events + new_events)
+
+        # Verify that each of the edited events has the information from the previous version
+        edited_events = events.select { |event| event.event_type == :request_edited }
+
+        first_edit = edited_events.first
+        second_edit = edited_events.last
+
+        expect(first_edit).to have_attributes(
+          new_issue_description: "Edited description 1",
+          new_issue_type: "Other",
+          previous_issue_description: "Starting issue description",
+          previous_issue_type: "CHAMPVA"
+        )
+
+        expect(second_edit).to have_attributes(
+          new_issue_description: "Edited description 2",
+          new_issue_type: "Other",
+          previous_issue_description: "Edited description 1",
+          previous_issue_type: "Other"
+        )
       end
 
       context "starting with two imrs" do
