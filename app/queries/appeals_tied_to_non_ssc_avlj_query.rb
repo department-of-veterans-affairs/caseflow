@@ -54,24 +54,57 @@ class AppealsTiedToNonSscAvljQuery
 
   def self.legacy_rows(appeals, sym)
     appeals.map do |appeal|
-      avlj_record = VACOLS::Staff.find_by(sattyid: appeal["vlj"])
-      prev_judge_record = VACOLS::Staff.find_by(sattyid: appeal["prev_deciding_judge"])
-      vacols_case = VACOLS::Case.find_by(bfkey: appeal["bfkey"])
-      veteran_record = VACOLS::Correspondent.find_by(stafkey: vacols_case.bfcorkey)
-
+      calculated_values = calculate_field_values(appeal)
       {
         docket_number: appeal["tinum"],
         docket: sym.to_s,
         priority: appeal["priority"] == 1 ? "True" : "",
         receipt_date: appeal["bfd19"],
-        veteran_file_number: veteran_record.ssn || vacols_case&.bfcorlid,
-        veteran_name: get_name_from_record(veteran_record),
-        non_ssc_avlj: get_name_from_record(avlj_record),
-        hearing_judge: get_name_from_record(avlj_record),
-        most_recent_signing_judge: get_name_from_record(prev_judge_record),
-        bfcurloc: vacols_case&.bfcurloc
+        veteran_file_number: calculated_values[:veteran_file_number],
+        veteran_name: calculated_values[:veteran_name],
+        non_ssc_avlj: calculated_values[:non_ssc_avlj],
+        hearing_judge: calculated_values[:hearing_judge],
+        most_recent_signing_judge: calculated_values[:most_recent_signing_judge],
+        bfcurloc: calculated_values[:bfcurloc]
       }
     end
+  end
+
+  def self.calculate_field_values(appeal)
+    avlj_name = get_avlj_name(appeal)
+    prev_judge_name = get_prev_judge_name(appeal)
+    vacols_case = VACOLS::Case.find_by(bfkey: appeal["bfkey"])
+    veteran_record = VACOLS::Correspondent.find_by(stafkey: vacols_case.bfcorkey)
+    {
+      veteran_file_number: veteran_record.ssn || vacols_case&.bfcorlid,
+      veteran_name: get_name_from_record(veteran_record),
+      non_ssc_avlj: avlj_name,
+      hearing_judge: avlj_name,
+      most_recent_signing_judge: prev_judge_name,
+      bfcurloc: vacols_case&.bfcurloc
+    }
+  end
+
+  def self.get_avlj_name(appeal)
+    if appeal["vlj"].nil?
+      avlj_name = nil
+    else
+      avlj_record = VACOLS::Staff.find_by(sattyid: appeal["vlj"])
+      avlj_name = get_name_from_record(avlj_record)
+    end
+
+    avlj_name
+  end
+
+  def self.get_prev_judge_name(appeal)
+    if appeal["prev_deciding_judge"].nil?
+      prev_judge_name = nil
+    else
+      prev_judge_record = VACOLS::Staff.find_by(sattyid: appeal["prev_deciding_judge"])
+      prev_judge_name = get_name_from_record(prev_judge_record)
+    end
+
+    prev_judge_name
   end
 
   def self.get_name_from_record(record)
