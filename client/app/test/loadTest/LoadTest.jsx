@@ -1,5 +1,4 @@
 import React from 'react';
-// import PropTypes from 'prop-types';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import AppFrame from '../../components/AppFrame';
 import { BrowserRouter } from 'react-router-dom';
