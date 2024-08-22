@@ -14,9 +14,9 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
       fail if fail_job
 
       appeals = LegacyDocket.new.appeals_tied_to_non_ssc_avljs
-      selected_appeals = move_qualifying_appeals(appeals)
+      selected_appeals = move_qualifying_appeals(LegacyDocket.new.appeals_tied_to_non_ssc_avljs)
 
-      complete_returned_appeal_job(returned_appeal_job, "Job completed successfully", appeals)
+      complete_returned_appeal_job(returned_appeal_job, "Job completed successfully", selected_appeals)
 
       # Filter the appeals and send the filtered report
       @filtered_appeals = filter_appeals(appeals, selected_appeals)
