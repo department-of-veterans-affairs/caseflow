@@ -48,9 +48,8 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
         .select { |q_appeal| qualifying_appeals_bfkeys.include? q_appeal["bfkey"] }
         .flatten
         .sort_by { |appeal| [-appeal["priority"], appeal["bfd19"]] }
+      VACOLS::Case.batch_update_vacols_location("63", qualifying_appeals.map { |q_appeal| q_appeal["bfkey"] })
     end
-
-    VACOLS::Case.batch_update_vacols_location("63", qualifying_appeals.map { |q_appeal| q_appeal["bfkey"] })
 
     qualifying_appeals
   end
