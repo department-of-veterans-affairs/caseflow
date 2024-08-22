@@ -66,7 +66,6 @@ RSpec.feature("The Correspondence Details page") do
       InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user, roles: ["Inbound Ops Team"])
       FeatureToggle.enable!(:correspondence_queue)
-      # @completed_correspondence = create(:correspondence)
     end
 
     it "checks default match of pending" do
