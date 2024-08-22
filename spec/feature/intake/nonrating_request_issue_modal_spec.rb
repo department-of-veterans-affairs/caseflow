@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'json'
+require "json"
 
-ISSUE_CATEGORIES = JSON.parse(File.read(Rails.root.join('client', 'constants', 'ISSUE_CATEGORIES.json')))
+ISSUE_CATEGORIES = JSON.parse(File.read(Rails.root.join("client", "constants", "ISSUE_CATEGORIES.json")))
 
 feature "Nonrating Request Issue Modal", :postgres do
   include IntakeHelpers
