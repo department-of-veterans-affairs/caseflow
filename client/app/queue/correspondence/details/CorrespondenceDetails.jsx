@@ -331,10 +331,8 @@ CorrespondenceDetails.propTypes = {
   correspondence: PropTypes.object,
   organizations: PropTypes.array,
   userCssId: PropTypes.string,
-  loadCorrespondenceStatus: PropTypes.func,
-  correspondenceStatus: PropTypes.object,
-  correspondence_appeal_ids: PropTypes.bool,
   enableTopPagination: PropTypes.bool,
+  correspondence_appeal_ids: PropTypes.bool,
   correspondenceResponseLetters: PropTypes.array
 };
 

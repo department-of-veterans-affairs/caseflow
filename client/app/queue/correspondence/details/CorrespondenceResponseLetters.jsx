@@ -8,7 +8,7 @@ const CorrespondenceResponseLetters = (props) => {
   return (
     <div className="correspondence-package-details">
       <h2 className="correspondence-h2"><strong>Response Letters</strong></h2>
-      {letters.map((letter, index) => (
+      {letters?.map((letter, index) => (
         <div key={index}>
           <table className="response-letter-table-borderless-no-background gray-border">
             <tbody>

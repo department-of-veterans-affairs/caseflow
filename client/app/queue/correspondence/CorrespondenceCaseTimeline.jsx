@@ -4,8 +4,10 @@ import CorrespondenceTaskRows from './CorrespondenceTaskRows';
 const CorrespondenceCaseTimeline = (props) => {
 
   const getAvailableActions = (task) => {
-    if (props.organizations.includes(task.assigned_to) || props.userCssId === task.assigned_to) {
-      return task.available_actions;
+    const organizations = props.organizations || [];
+
+    if (organizations.includes(task.assigned_to) || props.userCssId === task.assigned_to) {
+      return task.available_actions || [];
     }
 
     return [];
