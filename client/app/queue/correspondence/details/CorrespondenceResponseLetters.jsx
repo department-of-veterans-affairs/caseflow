@@ -7,7 +7,9 @@ const CorrespondenceResponseLetters = (props) => {
 
   return (
     <div className="correspondence-package-details">
-      <h2 className="correspondence-h2"><strong>Response Letters</strong></h2>
+      <h2 className="correspondence-h2">
+        <strong>Response Letters</strong>
+      </h2>
       {letters.map((letter, index) => (
         <div key={index}>
           <table className="response-letter-table-borderless-no-background gray-border">
@@ -24,12 +26,21 @@ const CorrespondenceResponseLetters = (props) => {
                 <th className="response-letter-table-borderless-second-item">
                   <strong>Date response letter sent</strong>
                 </th>
-                <th className="response-letter-table-borderless-second-item"><strong>Letter type</strong></th>
-                <th className="response-letter-table-borderless-second-item"><strong>Letter title</strong></th>
-                <th className="response-letter-table-borderless-second-item"><strong>Letter subcategory</strong></th>
+                <th className="response-letter-table-borderless-second-item">
+                  <strong>Letter type</strong>
+                </th>
+                <th className="response-letter-table-borderless-second-item">
+                  <strong>Letter title</strong>
+                </th>
+                <th className="response-letter-table-borderless-second-item">
+                  <strong>Letter subcategory</strong>
+                </th>
+                <th className="response-letter-table-borderless-second-item">
+                  <strong>Letter subcategory reason</strong>
+                </th>
               </tr>
               <tr>
-                <td colSpan="4" className="hr-container">
+                <td colSpan="5" className="hr-container">
                   <hr className="full-width-hr" />
                 </td>
               </tr>
@@ -37,9 +48,18 @@ const CorrespondenceResponseLetters = (props) => {
                 <td className="response-letter-table-borderless-last-item">
                   {moment(letter.date_sent).format('MM/DD/YYYY')}
                 </td>
-                <td className="response-letter-table-borderless-last-item">{letter.letter_type}</td>
-                <td className="response-letter-table-borderless-last-item">{letter.title}</td>
-                <td className="response-letter-table-borderless-last-item">{letter.subcategory}</td>
+                <td className="response-letter-table-borderless-last-item">
+                  {letter.letter_type}
+                </td>
+                <td className="response-letter-table-borderless-last-item">
+                  {letter.title}
+                </td>
+                <td className="response-letter-table-borderless-last-item">
+                  {letter.subcategory}
+                </td>
+                <td className="response-letter-table-borderless-last-item">
+                  {letter.reason}
+                </td>
               </tr>
               &nbsp;
             </tbody>
