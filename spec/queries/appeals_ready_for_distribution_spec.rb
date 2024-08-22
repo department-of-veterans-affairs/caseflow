@@ -59,7 +59,7 @@ describe AppealsReadyForDistribution do
     let(:case_hearing) { build(:case_hearing, :disposition_held, user: hearing_judge) }
     let(:query_result) { VACOLS::CaseDocket.ready_to_distribute_appeals }
 
-    subject { described_class.legacy_rows(query_result, LegacyDocket.new, :legacy).first }
+    subject { described_class.legacy_rows(query_result, :legacy).first }
 
     it "correctly uses attributes to create a hash for the row" do
       corres = legacy_appeal_with_attributes.reload.correspondent
