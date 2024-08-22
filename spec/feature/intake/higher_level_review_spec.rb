@@ -1236,7 +1236,7 @@ feature "Higher-Level Review", :all_dbs do
 
           # should redirect to tasks review page
           expect(page).to have_content("Reviews needing action")
-          expect(page).not_to have_content("It may take up to 24 hours for the claim to establish")
+          expect(page.has_no_content?("It may take up to 24 hours for the claim to establish")).to eq(true)
           expect(current_path).to eq("/decision_reviews/education")
           expect(OrganizationsUser.existing_record(current_user, Organization.find_by(url: "education"))).to_not be_nil
           expect(page).to have_content("Success!")

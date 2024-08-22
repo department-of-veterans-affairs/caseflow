@@ -60,7 +60,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         click_dropdown(text: "Central")
         click_button("Legacy Veterans Waiting", exact: true)
         click_link appellant_appeal_link_text
-        expect(page).not_to have_content("loading to VACOLS.", wait: 30)
+        expect(page.has_no_content?("loading to VACOLS.", wait: 30)).to eq(true)
         expect(page).to have_content("Currently active tasks", wait: 30)
         click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
         expect(page).to have_content("Time")
@@ -112,7 +112,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         click_button("Legacy Veterans Waiting", exact: true)
         appeal_link = page.find(:xpath, "//tbody/tr/td[2]/a")
         appeal_link.click
-        expect(page).not_to have_content("loading to VACOLS.", wait: 30)
+        expect(page.has_no_content?("loading to VACOLS.", wait: 30)).to eq(true)
         expect(page).to have_content("Currently active tasks", wait: 30)
         click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
         expect(page).to have_content("Time")
@@ -365,8 +365,8 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         navigate_to_schedule_veteran
         select_hearing_time("8:30")
         click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
-        expect(page).not_to have_content("Could not find hearing locations for this veteran")
-        expect(page).not_to have_content("There are no upcoming hearing dates for this regional office.")
+        expect(page.has_no_content?("Could not find hearing locations for this veteran")).to eq(true)
+        expect(page.has_no_content?("There are no upcoming hearing dates for this regional office.")).to eq(true)
         click_dropdown(
           text: format_hearing_day(hearing_day, room_label),
           name: "hearingDate"
@@ -715,7 +715,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
           click_button("Schedule", exact: true)
           click_on "Back to Schedule Veterans"
 
-          expect(page).not_to have_content("null")
+          expect(page.has_no_content?("null")).to eq(true)
         end
       end
     end

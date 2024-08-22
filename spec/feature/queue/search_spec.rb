@@ -511,7 +511,7 @@ feature "Search", :all_dbs do
         context "when user represents substitute appellant" do
           it "does not short-circuit to the helpful error message" do
             perform_search(other_substitute_appeal.docket_number)
-            expect(page).not_to have_content("You do not have access to this claims file number")
+            expect(page.has_no_content?("You do not have access to this claims file number")).to eq(true)
           end
         end
 
@@ -674,7 +674,7 @@ feature "Search", :all_dbs do
       caseflow_appeal.reload.tasks.update_all(status: Constants.TASK_STATUSES.cancelled)
       perform_search
       expect(page).to have_content("Cancelled")
-      expect(page).not_to have_content("Assigned to you")
+      expect(page.has_no_content?("Assigned to you")).to eq(true)
     end
   end
 end

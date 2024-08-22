@@ -110,7 +110,6 @@ describe BgsPowerOfAttorney do
 
       before do
         allow(BgsPowerOfAttorney).to receive(:fetch_bgs_poa_by_participant_id) do
-          sleep 1
           bgs_record
         end
       end

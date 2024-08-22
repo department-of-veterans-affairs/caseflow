@@ -379,7 +379,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     const { issue, issues, idx, highlight, appeal } = this.props;
 
     return (
-      <div key={`remand-reasons-${String(issue.id)}`}>
+      <div className="remand-reasons-options" key={`remand-reasons-${String(issue.id)}`}>
         <h2 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
           Issue {idx + 1} {issues.length > 1 ? ` of ${issues.length}` : ''}
         </h2>
