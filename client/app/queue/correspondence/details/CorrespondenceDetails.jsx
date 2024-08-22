@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
@@ -16,7 +17,7 @@ import Table from 'app/components/Table';
 import { ExternalLinkIcon } from 'app/components/icons/ExternalLinkIcon';
 import { COLORS } from 'app/constants/AppConstants';
 import Checkbox from 'app/components/Checkbox';
-import AssociatedPriorMail from './AssociatedPriorMail';
+import CorrespondencePaginationWrapper from 'app/queue/correspondence/CorrespondencePaginationWrapper';
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
@@ -370,6 +371,31 @@ const CorrespondenceDetails = (props) => {
     ];
   };
 
+  const associatedPriorMail = () => {
+    return (
+      <>
+        <div className="associatedPriorMail" style = {{ marginTop: '30px' }}>
+          <AppSegment filledBackground noMarginTop>
+            <p style = {{ marginTop: 0 }}>Please select prior mail to link to this correspondence </p>
+            <div>
+              <CorrespondencePaginationWrapper
+                columns={getDocumentColumns}
+                columnsToDisplay={15}
+                rowObjects={priorMail}
+                summary="Correspondence list"
+                className="correspondence-table"
+                headerClassName="cf-correspondence-list-header-row"
+                bodyClassName="cf-correspondence-list-body"
+                tbodyId="correspondence-table-body"
+                getKeyForRow={getKeyForRow}
+              />
+            </div>
+          </AppSegment>
+        </div>
+      </>
+    );
+  };
+
   const tabList = [
     {
       disable: false,
@@ -389,11 +415,7 @@ const CorrespondenceDetails = (props) => {
     {
       disable: false,
       label: 'Associated Prior Mail',
-      page: <AssociatedPriorMail
-        priorMail={priorMail}
-        getDocumentColumns={getDocumentColumns}
-        getKeyForRow={getKeyForRow}
-      />
+      page: associatedPriorMail()
     }
   ];
 
@@ -439,3 +461,4 @@ CorrespondenceDetails.propTypes = {
 };
 
 export default CorrespondenceDetails;
+/* eslint-enable max-lines */
