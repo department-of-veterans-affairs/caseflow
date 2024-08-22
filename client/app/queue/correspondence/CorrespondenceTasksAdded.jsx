@@ -68,7 +68,6 @@ CorrespondenceTasksAdded.propTypes = {
   task_added: PropTypes.object,
   organizations: PropTypes.array,
   userCssId: PropTypes.string,
-
 };
 
 export default CorrespondenceTasksAdded;
