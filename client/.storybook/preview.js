@@ -1,6 +1,5 @@
 import { Preview } from '@storybook/react';
 import { DocsPage, DocsContainer } from '@storybook/addon-docs/blocks';
-
 import '../app/styles/app.scss';
 
 // Generate arguments for any props that start with "on" (onClick, onSubmit, etc)
