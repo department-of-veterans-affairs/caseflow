@@ -248,16 +248,29 @@ describe ClaimHistoryService do
       end
 
       let!(:issue_modification_addition) do
-        create(:issue_modification_request, request_type: "addition", decision_review: supplemental_claim)
+        create(:issue_modification_request,
+               request_type: "addition",
+               decision_review: supplemental_claim,
+               requestor: vha_user)
+      end
+
+      let(:issue_modification_modify) do
+        create(:issue_modification_request,
+               request_type: "modification",
+               decision_review: supplemental_claim,
+               requestor: vha_user,
+               request_issue: supplemental_claim.request_issues.first)
       end
 
       # Only generate the events for this task to keep it focused on the issue modification request events
       let!(:filters) { { task_id: [sc_task_with_imrs.id] } }
 
-      let!(:vha_admin) { create(:user, full_name: "VHA ADMIN", css_id: "VHAADMIN") }
+      let(:vha_admin) { create(:user, full_name: "VHA ADMIN", css_id: "VHAADMIN") }
+      let(:vha_user) { create(:user, full_name: "VHA USER", css_id: "VHAUSER") }
 
       before do
         OrganizationsUser.make_user_admin(vha_admin, VhaBusinessLine.singleton)
+        VhaBusinessLine.singleton.add_user(vha_user)
         Timecop.freeze(Time.zone.now)
       end
 
@@ -305,6 +318,37 @@ describe ClaimHistoryService do
         # Rebuild events
         service_instance.build_events
         new_events.push(:in_progress, :request_approved)
+        expect(events.map(&:event_type)).to contain_exactly(*one_imr_events + new_events)
+
+        # Create another addition IMR to verify that the event sequence works through one more iteration
+        create_last_addition_and_verify_events(one_imr_events, new_events)
+      end
+
+      it "should correctly generate events for an imr that is cancelled while another is added" do
+        events = subject
+        one_imr_events = *starting_imr_events - [:removal]
+        expect(events.map(&:event_type)).to contain_exactly(*one_imr_events)
+
+        # Cancel the addition IMR at the same time as creating a new issue modification request to
+        # modify the existing request issue on the supplemental claim
+        Timecop.travel(2.minutes.from_now)
+        ActiveRecord::Base.transaction do
+          issue_modification_addition.update!(status: "cancelled")
+          issue_modification_modify
+        end
+
+        # Rebuild events
+        service_instance.build_events
+        new_events = [:modification, :request_cancelled]
+        expect(events.map(&:event_type)).to contain_exactly(*one_imr_events + new_events)
+
+        # Approve the modification to verify that it create a new in progress event and a denied event
+        Timecop.travel(2.minutes.from_now)
+        issue_modification_modify.update!(decider: vha_admin, status: :denied, decision_reason: "Better reason")
+
+        # Rebuild events
+        service_instance.build_events
+        new_events.push(:in_progress, :request_denied)
         expect(events.map(&:event_type)).to contain_exactly(*one_imr_events + new_events)
 
         # Create another addition IMR to verify that the event sequence works through one more iteration

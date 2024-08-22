@@ -222,8 +222,9 @@ class ClaimHistoryEvent
       elsif next_imr_decided_is_out_of_bounds?(change_data)
         # If it's the end of the lead rows, then this is the last decided row
         # If the next created at is in the same transaction, then defer event creation, otherwise create an in progress
-        # By inverting the result of the created in same transaction check
-        !next_imr_created_in_same_transaction?(change_data)
+        # Or
+        # If the next imr was created at the same time that the current imr is decided, then defer
+        create_in_progress_event_for_last_decided_by_imr?(change_data)
       elsif defer_in_progress_creation?(change_data)
         # If the next imr was in the same transaction and it's also decided, then defer event creation to it.
         # Or
@@ -286,7 +287,7 @@ class ClaimHistoryEvent
     end
 
     def imr_reverse_order?(change_data)
-      change_data["previous_imr_decided_at"].nil? ||
+      change_data["previous_imr_decided_at"].nil? || change_data["decided_at"].nil? ||
         (change_data["previous_imr_decided_at"] > change_data["decided_at"])
     end
 
@@ -296,6 +297,15 @@ class ClaimHistoryEvent
 
     def last_imr?(change_data)
       change_data["next_created_at"] == OUT_OF_BOUNDS_LEAD_TIME
+    end
+
+    def create_in_progress_event_for_last_decided_by_imr?(change_data)
+      if next_imr_created_in_same_transaction?(change_data) ||
+         next_imr_created_in_same_transaction_as_decided_at?(change_data)
+        false
+      else
+        true
+      end
     end
 
     def create_pending_status_event(change_data, event_date)
