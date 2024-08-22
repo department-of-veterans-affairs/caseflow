@@ -10,7 +10,10 @@ const Template = (args) => {
   return <EditableField {...args} value={value} onChange={setValue} />;
 };
 
-export const Default = Template.bind({});
+const Default = Template.bind({});
+export default {
+  component: Default,
+};
 Default.args = {
   label: 'Click "Edit" to change the value below',
 };

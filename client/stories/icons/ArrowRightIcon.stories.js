@@ -2,7 +2,7 @@ import React from 'react';
 import { ICON_SIZES, COLORS } from '../../app/constants/AppConstants';
 import { ArrowRightIcon } from '../../app/components/icons/ArrowRightIcon';
 
-export default {
+const config =  {
   title: 'Commons/Components/Icons/ArrowRightIcon',
   component: ArrowRightIcon,
   parameters: {
@@ -21,5 +21,9 @@ export default {
 };
 
 const Template = (args) => <ArrowRightIcon {...args} />;
-
-export const Default = Template.bind({});
+const Default = Template.bind({});
+Template.args = { ...config.args, name: 'template' };
+Template.argTypes = { ...config.argTypes, name: 'template' };
+export default {
+  component: Default,
+};

@@ -158,7 +158,6 @@
   },
   "devDependencies": {
     "@babel/helpers": "^7.25.0",
-    "@babel/plugin-syntax-import-attributes": "^7.24.7",
     "@babel/plugin-transform-runtime": "^7.24.7",
     "@chromatic-com/storybook": "^1.6.1",
     "@department-of-veterans-affairs/eslint-config-appeals": "https://github.com/department-of-veterans-affairs/eslint-config-appeals#1e2a2db",

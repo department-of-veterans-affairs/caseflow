@@ -472,7 +472,7 @@ const CavcDecisionReasons = (props) => {
     const childrenOfParent = childReasons.filter((child) => child.parent_decision_reason_id === parent.id);
 
     return (
-      <div key={parent.id}>
+      <div key={parent.id} data-testid="testDecisionReasons">
         {/* render parent checkboxes */}
         {renderParentDecisionReason(parent)}
         {/* render child checkbox if parent is checked */}

@@ -32,6 +32,9 @@ const Controlled = (args) => {
 };
 
 export const Big = Template.bind({});
+export default {
+  component: Big,
+};
 
 export const Small = Template.bind({});
 Small.args = { size: 'small' };

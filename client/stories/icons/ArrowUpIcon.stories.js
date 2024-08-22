@@ -2,7 +2,7 @@ import React from 'react';
 import { ICON_SIZES, COLORS } from '../../app/constants/AppConstants';
 import { ArrowUpIcon } from '../../app/components/icons/ArrowUpIcon';
 
-export default {
+const config = {
   title: 'Commons/Components/Icons/ArrowUpIcon',
   component: ArrowUpIcon,
   parameters: {
@@ -22,5 +22,10 @@ export default {
 };
 
 const Template = (args) => <ArrowUpIcon {...args} />;
+Template.args = { ...config.args, name: 'template' };
+Template.argTypes = { ...config.argTypes, name: 'template' };
 
-export const Default = Template.bind({});
+const Default = Template.bind({});
+export default {
+  component: Default,
+};

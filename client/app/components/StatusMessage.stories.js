@@ -35,7 +35,10 @@ const warningChildren = (
 
 const Template = (args) => <StatusMessage {...args} />;
 
-export const Status = Template.bind({});
+const Status = Template.bind({});
+export default {
+  component: Status,
+};
 Status.args = { type: 'status', title: statusTitle, leadMessageList: statusMessages };
 
 export const Success = Template.bind({});
