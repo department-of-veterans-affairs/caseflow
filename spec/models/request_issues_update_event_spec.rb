@@ -149,4 +149,46 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       expect(added_issues.size).to eq(2) # Expecting two issues to be processed
     end
   end
+
+  context "when multiple types of issues are present" do
+    before do
+      subject.instance_variable_set(:@added_issues_data, parser.added_issues)
+      subject.instance_variable_set(:@removed_issues_data, parser.removed_issues)
+      subject.instance_variable_set(:@edited_issues_data, parser.updated_issues)
+      subject.instance_variable_set(:@withdrawn_issues_data, parser.withdrawn_issues)
+
+      allow(subject).to receive(:validate_before_perform).and_return(true)
+      allow(subject).to receive(:processed?).and_return(false)
+      allow(subject).to receive(:transaction).and_yield
+    end
+
+    it "processes all types of issues and returns true" do
+      expect(subject).to receive(:process_issues!)
+      expect(subject.perform!).to be true
+    end
+  end
+
+  context "when an exception occurs during transaction" do
+    before do
+      allow(subject).to receive(:validate_before_perform).and_return(true)
+      allow(subject).to receive(:processed?).and_return(false)
+      allow(subject).to receive(:transaction).and_raise(StandardError)
+    end
+
+    it "raises an error and does not commit changes" do
+      expect { subject.perform! }.to raise_error(StandardError)
+      expect(subject).not_to receive(:process_issues!)
+    end
+  end
+
+  context "when validation fails" do
+    before do
+      allow(subject).to receive(:validate_before_perform).and_return(false)
+    end
+
+    it "returns false and does not process issues" do
+      expect(subject).not_to receive(:process_issues!)
+      expect(subject.perform!).to be false
+    end
+  end
 end

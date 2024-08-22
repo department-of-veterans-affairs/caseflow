@@ -30,6 +30,9 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
         edited_request_issue_ids: edited_issues.map(&:id)
       )
     end
+
+    process_job
+
     true
   end
 
