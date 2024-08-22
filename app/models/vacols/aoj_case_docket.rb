@@ -607,8 +607,6 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
 
         aoj_affinity_filter(appeals, judge_sattyid, aoj_affinity_lever_value, excluded_judges_attorney_ids)
 
-        aoj_affinity_filter(appeals, judge_sattyid, aoj_affinity_lever_value, excluded_judges_attorney_ids)
-
         aoj_cavc_affinity_filter(appeals, judge_sattyid, aoj_cavc_affinity_lever_value, excluded_judges_attorney_ids)
 
         aoj_aod_affinity_filter(appeals, judge_sattyid, aoj_aod_affinity_lever_value,
