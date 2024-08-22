@@ -43,7 +43,7 @@ class AppealsTiedToNonSscAvljQuery
       .flat_map do |sym, docket|
         if sym == :legacy
           appeals = docket.appeals_tied_to_non_ssc_avljs
-          unique_appeals = legacy_rows(appeals, sym).uniq { |record| record[:veteran_file_number] }
+          unique_appeals = legacy_rows(appeals, sym).uniq { |record| record[:docket_number] }
 
           unique_appeals
         else

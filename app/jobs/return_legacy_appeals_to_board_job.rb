@@ -13,8 +13,9 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
       returned_appeal_job = create_returned_appeal_job
       fail if fail_job
 
-      move_qualifying_appeals(LegacyDocket.new.appeals_tied_to_non_ssc_avljs)
-      complete_returned_appeal_job(returned_appeal_job, "Job completed successfully", appeals)
+      appeals = LegacyDocket.new.appeals_tied_to_non_ssc_avljs
+      moved_appeals = move_qualifying_appeals(appeals)
+      complete_returned_appeal_job(returned_appeal_job, "Job completed successfully", moved_appeals)
       send_job_slack_report
     rescue StandardError => error
       message = "Job failed with error: #{error.message}"
@@ -34,29 +35,24 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
   private
 
   def move_qualifying_appeals(appeals)
-    qualifying_appeals = []
+    qualifying_appeals_bfkeys = []
 
     non_ssc_avljs.each do |non_ssc_avlj|
       tied_appeals = appeals.select { |appeal| appeal["vlj"] == non_ssc_avlj.sattyid }
-
-      unless tied_appeals.empty?
-        tied_appeals = tied_appeals.sort_by { |t_appeal| [-t_appeal["priority"], t_appeal["bfd19"]] }
-      end
-
-      if appeals.count < 2
-        qualifying_appeals.push(tied_appeals).flatten
-      else
-        qualifying_appeals.push(tied_appeals[0..1]).flatten
-      end
+      tied_appeals_bfkeys = get_tied_appeal_bfkeys(tied_appeals)
+      qualifying_appeals_bfkeys = update_qualifying_appeals_bfkeys(tied_appeals_bfkeys, qualifying_appeals_bfkeys)
     end
 
-    unless qualifying_appeals.empty?
-      qualifying_appeals = qualifying_appeals
+    unless qualifying_appeals_bfkeys.empty?
+      qualifying_appeals = appeals
+        .select { |q_appeal| qualifying_appeals_bfkeys.include? q_appeal["bfkey"] }
         .flatten
         .sort_by { |appeal| [-appeal["priority"], appeal["bfd19"]] }
     end
 
     VACOLS::Case.batch_update_vacols_location("63", qualifying_appeals.map { |q_appeal| q_appeal["bfkey"] })
+
+    qualifying_appeals
   end
 
   def non_ssc_avljs
@@ -83,6 +79,32 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
       errored_at: Time.zone.now,
       stats: { message: message }.to_json
     )
+  end
+
+  def get_tied_appeal_bfkeys(tied_appeals)
+    tied_appeals_bfkeys = []
+
+    unless tied_appeals.empty?
+      tied_appeals_bfkeys = tied_appeals
+        .sort_by { |t_appeal| [-t_appeal["priority"], t_appeal["bfd19"]] }
+        .map { |t_appeal| t_appeal["bfkey"] }
+        .uniq
+        .flatten
+    end
+
+    tied_appeals_bfkeys
+  end
+
+  def update_qualifying_appeals_bfkeys(tied_appeals_bfkeys, qualifying_appeals_bfkeys)
+    if tied_appeals_bfkeys.any?
+      if tied_appeals_bfkeys.count < 2
+        qualifying_appeals_bfkeys.push(tied_appeals_bfkeys)
+      else
+        qualifying_appeals_bfkeys.push(tied_appeals_bfkeys[0..1])
+      end
+    end
+
+    qualifying_appeals_bfkeys.flatten
   end
 
   def send_job_slack_report
