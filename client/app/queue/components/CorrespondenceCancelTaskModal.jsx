@@ -57,9 +57,14 @@ const CorrespondenceCancelTaskModal = (props) => {
       }
     };
 
-    props.setShowActionsDropdown(false);
+    // props.setShowActionsDropdown(false);
+    let filteredTasks = props.correspondenceInfo.tasksUnrelatedToAppeal.filter((task) => parseInt(task.uniqueId, 10) !== parseInt(props.task_id, 10));
 
-    return props.cancelTaskNotRelatedToAppeal(props.task_id, payload);
+    let tempCor = props.correspondenceInfo;
+
+    tempCor.tasksUnrelatedToAppeal = filteredTasks;
+
+    return props.cancelTaskNotRelatedToAppeal(props.task_id, tempCor, payload);
 
   };
 

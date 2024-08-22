@@ -734,6 +734,7 @@ class QueueApp extends React.PureComponent {
   routedCorrespondenceDetails = (props) => (
     <CorrespondenceDetails {...props.match.params}
       {...this.props}
+      correspondenceResponseLetters={this.props.correspondenceResponseLetters}
     />
   );
 
@@ -1618,7 +1619,8 @@ QueueApp.propTypes = {
   reduxStore: PropTypes.object,
   organizationPermissions: PropTypes.array,
   userPermissions: PropTypes.array,
-  configUrl: PropTypes.string
+  configUrl: PropTypes.string,
+  correspondenceResponseLetters: PropTypes.array,
 };
 
 const mapStateToProps = (state) => ({

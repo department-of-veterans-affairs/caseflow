@@ -8,6 +8,7 @@ import CopyTextButton from '../../../components/CopyTextButton';
 import { loadCorrespondence } from '../correspondenceReducer/correspondenceActions';
 import CorrespondenceCaseTimeline from '../CorrespondenceCaseTimeline';
 import { correspondenceInfo } from './../correspondenceDetailsReducer/correspondenceDetailsActions';
+import CorrespondenceResponseLetters from './CorrespondenceResponseLetters';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
 // import TaskSnapshot from '../../TaskSnapshot';
@@ -144,6 +145,18 @@ const CorrespondenceDetails = (props) => {
     );
   };
 
+  const correspondenceResponseLetters = () => {
+    return (
+      <>
+        <div className="correspondence-package-details">
+          <CorrespondenceResponseLetters
+            letters={props.correspondenceResponseLetters}
+          />
+        </div>
+      </>
+    );
+  };
+
   const tabList = [
     {
       disable: false,
@@ -158,7 +171,7 @@ const CorrespondenceDetails = (props) => {
     {
       disable: false,
       label: 'Response Letters',
-      page: 'Information about Response Letters'
+      page: correspondenceResponseLetters()
     },
     {
       disable: false,
@@ -201,7 +214,8 @@ CorrespondenceDetails.propTypes = {
   loadCorrespondenceStatus: PropTypes.func,
   correspondenceStatus: PropTypes.object,
   correspondence_appeal_ids: PropTypes.bool,
-  enableTopPagination: PropTypes.bool
+  enableTopPagination: PropTypes.bool,
+  correspondenceResponseLetters: PropTypes.array
 };
 
 const mapStateToProps = (state) => ({
