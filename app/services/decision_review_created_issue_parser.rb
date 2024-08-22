@@ -109,4 +109,8 @@ class DecisionReviewCreatedIssueParser
   def ri_nonrating_issue_bgs_source
     @issue.dig(:nonrating_issue_bgs_source)
   end
+
+  def ri_decisions
+    @issue.dig(:decision)
+  end
 end
