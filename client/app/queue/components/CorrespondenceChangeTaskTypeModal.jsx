@@ -35,9 +35,14 @@ const CorrespondenceChangeTaskTypeModal = (props) => {
       }
     };
 
+    const typeNames = {
+      oldType: props.task.label,
+      newType: typeOption.label
+    };
+
     props.setShowActionsDropdown(false);
 
-    return props.changeTaskTypeNotRelatedToAppeal(props.task_id, payload);
+    return props.changeTaskTypeNotRelatedToAppeal(props.task_id, payload, typeNames);
   };
 
   const actionForm = () => (
@@ -101,6 +106,7 @@ CorrespondenceChangeTaskTypeModal.propTypes = {
     }),
     taskId: PropTypes.string,
     type: PropTypes.string,
+    label: PropTypes.string,
     onHoldDuration: PropTypes.number
   }),
   task_id: PropTypes.string,

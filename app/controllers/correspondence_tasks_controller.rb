@@ -68,8 +68,11 @@ class CorrespondenceTasksController < TasksController
   end
 
   def change_task_type
-    task = CorrespondenceTask.find(correspondence_tasks_params[:task_id])
-    task.update_task_type(change_task_type_params)
+    @task = CorrespondenceTask.find(correspondence_tasks_params[:task_id])
+    @task.update!(
+      type: change_task_type_params[:type],
+      instructions: change_task_type_params[:instructions]
+    )
   end
 
   private
@@ -91,7 +94,7 @@ class CorrespondenceTasksController < TasksController
 
   def change_task_type_params
     change_type_params = params.require(:task).permit(:type, :instructions)
-    change_type_params[:instructions] = task.flattened_instructions(change_type_params)
+    change_type_params[:instructions] = @task.flattened_instructions(change_type_params)
     change_type_params
   end
 
