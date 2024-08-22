@@ -12,7 +12,7 @@ const CorrespondenceTasksAdded = (props) => {
       <div className="tasks-added-container">
         <div className="correspondence-tasks-added ">
           <div className="corr-tasks-added-col first-row">
-            <p className="task-added-header">Docket number</p>
+            <p className="task-added-header">DOCKET NUMBER</p>
             <span className="case-details-badge">
               <DocketTypeBadge name={props.task_added.appealType} />
               <CaseDetailsLink
