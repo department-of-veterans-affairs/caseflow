@@ -18,7 +18,9 @@ class ClaimHistoryEvent
               :event_user_css_id, :new_issue_type, :new_issue_description, :new_decision_date,
               :modification_request_reason, :request_type, :decision_reason, :decided_at_date,
               :issue_modification_request_withdrawal_date, :requestor,
-              :decider, :remove_original_issue, :issue_modification_request_status
+              :decider, :remove_original_issue, :issue_modification_request_status,
+              :previous_issue_type, :previous_issue_description, :previous_decision_date,
+              :previous_modification_request_reason
 
   EVENT_TYPES = [
     :completed_disposition,
@@ -141,6 +143,19 @@ class ClaimHistoryEvent
       edited_events
     end
 
+    def previous_event_version(version)
+      version_database_field_mapping = {
+        "previous_issue_type" => "nonrating_issue_category",
+        "previous_issue_description" => "nonrating_issue_description",
+        "previous_decision_date" => "decision_date",
+        "previous_modification_request_reason" => "request_reason"
+      }
+
+      version_database_field_mapping.each_with_object({}) do |(db_key, version_key), data|
+        data[db_key] = version[version_key][0] unless version[version_key].nil?
+      end
+    end
+
     def create_event_from_rest_of_versions(change_data, edited_versions)
       edit_of_request_events = []
       event_type = :request_edited
@@ -150,10 +165,10 @@ class ClaimHistoryEvent
         event_date_hash = {
           "event_date" => version["updated_at"][1],
           "event_user_name" => change_data["requestor"],
-          "user_facility" => change_data["requestor_station_id"],
-          "event_user_css_id" => change_data["requestor_css_id"]
+          "user_facility" => change_data["requestor_station_id"]
         }
-
+        event_date_hash.merge!(previous_event_version(version))
+        # TODO: Might not need this?
         event_date_hash.merge!(update_event_hash_data_from_version(version, 1))
         edit_of_request_events.push(*from_change_data(event_type, change_data.merge(event_date_hash)))
       end
@@ -841,6 +856,12 @@ class ClaimHistoryEvent
       @remove_original_issue = change_data["remove_original_issue"]
       @requestor = change_data["requestor"]
       @decider = change_data["decider"]
+      @previous_issue_type = change_data["previous_issue_type"] || change_data["requested_issue_type"]
+      @previous_issue_description = change_data["previous_issue_description"] ||
+                                    change_data["requested_issue_description"]
+      @previous_decision_date = change_data["previous_decision_date"] || change_data["requested_decision_date"]
+      @previous_modification_request_reason = change_data["previous_modification_request_reason"] ||
+                                              change_data["modification_request_reason"]
     end
   end
 
