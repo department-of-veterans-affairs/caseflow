@@ -9,7 +9,7 @@ class RackContextGetter < OpenTelemetry::Context::Propagation::RackEnvGetter
 
   def to_rack_key(key)
     ret = +"HTTP_#{key}"
-    ret.tr!("-", "_")
+    ret.tr!('-', '_')
     ret.upcase!
     ret
   end

@@ -29,6 +29,16 @@ DT_API_TOKEN = ENV["DT_API_TOKEN"]
 
 Rails.logger.info("DT_API_TOKEN is set to #{DT_API_TOKEN}")
 
+config = {
+  "OpenTelemetry::Instrumentation::Redis" => { enabled: false },
+  "OpenTelemetry::Instrumentation::PG" => { enabled: false },
+  "OpenTelemetry::Instrumentation::AwsSdk" => { enabled: false },
+  # Net::HTTP instrument disabled due to noisey shoryuken traces.
+  "OpenTelemetry::Instrumentation::Net::HTTP" => { enabled: false },
+  "OpenTelemetry::Instrumentation::Rack" => { untraced_endpoints: ["/health-check", "/sample", "/logs"] },
+  "OpenTelemetry::Instrumentation::ActiveJob" => { enabled: false }
+}
+
 if !Rails.env.development? && !Rails.env.test? && !Rails.env.demo?
   OpenTelemetry::SDK.configure do |c|
     c.service_name = "caseflow-quickstart"
