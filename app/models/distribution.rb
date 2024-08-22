@@ -2,7 +2,11 @@
 
 class Distribution < CaseflowRecord
   include ActiveModel::Serializers::JSON
-  include ByDocketDateDistribution
+  if FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
+    include ByDocketDateDistribution
+  else
+    include AutomaticCaseDistribution
+  end
 
   has_many :distributed_cases
   belongs_to :judge, class_name: "User"
