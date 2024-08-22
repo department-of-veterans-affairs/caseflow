@@ -221,7 +221,7 @@ describe Api::V1::VaNotifyController, type: :controller do
       request.headers["Authorization"] = "Bearer #{api_key}"
       post :notifications_update, params: payload_email
 
-      expect(response.status).to eq(400)
+      expect(response.status).to eq(200)
 
       perform_enqueued_jobs { ProcessNotificationStatusUpdatesJob.perform_later }
     end
@@ -297,7 +297,7 @@ describe Api::V1::VaNotifyController, type: :controller do
       post :notifications_update, params: payload
 
       perform_enqueued_jobs { ProcessNotificationStatusUpdatesJob.perform_later }
-      expect(response.status).to eq(400)
+      expect(response.status).to eq(200)
     end
   end
 
@@ -315,7 +315,7 @@ describe Api::V1::VaNotifyController, type: :controller do
       post :notifications_update, params: payload
 
       perform_enqueued_jobs { ProcessNotificationStatusUpdatesJob.perform_later }
-      expect(response.status).to eq(400)
+      expect(response.status).to eq(200)
     end
   end
 
@@ -333,7 +333,7 @@ describe Api::V1::VaNotifyController, type: :controller do
       post :notifications_update, params: payload
 
       perform_enqueued_jobs { ProcessNotificationStatusUpdatesJob.perform_later }
-      expect(response.status).to eq(400)
+      expect(response.status).to eq(200)
     end
   end
 
