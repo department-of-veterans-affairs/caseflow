@@ -78,7 +78,8 @@ class VACOLS::CaseDocket < VACOLS::Record
   "
 
   SELECT_READY_APPEALS = "
-    select BFKEY, BFD19, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD
+    select BFKEY, BFD19, BFCORLID, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD,
+    BFMEMID, BFDPDCN
     #{FROM_READY_APPEALS}
   "
 
@@ -92,7 +93,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   JOIN_ASSOCIATED_VLJS_BY_HEARINGS = "
     left join (
-      select distinct TITRNUM, TINUM,
+      select distinct TITRNUM, TINUM, HEARING_DATE,
         first_value(BOARD_MEMBER) over (partition by TITRNUM, TINUM order by HEARING_DATE desc) VLJ
       from HEARSCHED
       inner join FOLDER on FOLDER.TICKNUM = HEARSCHED.FOLDER_NR
@@ -103,11 +104,26 @@ class VACOLS::CaseDocket < VACOLS::Record
         and (VLJ_HEARINGS.TINUM is null or VLJ_HEARINGS.TINUM = BRIEFF.TINUM)
   "
 
+  # Provide access to legacy appeal decisions for more complete appeals history queries
+  JOIN_PREVIOUS_APPEALS = "
+  left join (
+      select B.BFKEY as PREV_BFKEY, B.BFCORLID as PREV_BFCORLID, B.BFDDEC as PREV_BFDDEC,
+      B.BFMEMID as PREV_DECIDING_JUDGE, B.BFAC as PREV_TYPE_ACTION, F.TINUM as PREV_TINUM,
+      F.TITRNUM as PREV_TITRNUM
+      from BRIEFF B
+      inner join FOLDER F on F.TICKNUM = B.BFKEY
+      where B.BFMPRO = 'HIS' and B.BFMEMID not in ('000', '888', '999') and B.BFATTID is not null
+    ) PREV_APPEAL
+      on PREV_APPEAL.PREV_BFKEY != BRIEFF.BFKEY and PREV_APPEAL.PREV_BFCORLID = BRIEFF.BFCORLID
+      and PREV_APPEAL.PREV_TINUM = BRIEFF.TINUM and PREV_APPEAL.PREV_TITRNUM = BRIEFF.TITRNUM
+      and PREV_APPEAL.PREV_BFDDEC = BRIEFF.BFDPDCN
+  "
+
   SELECT_PRIORITY_APPEALS = "
     select BFKEY, BFDLOOUT, VLJ
       from (
         select BFKEY, BFDLOOUT,
-          case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
+          VLJ_HEARINGS.VLJ
         from (
           #{SELECT_READY_APPEALS}
             and (BFAC = '7' or AOD = '1')
@@ -121,7 +137,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     select BFKEY, BFD19, BFDLOOUT, VLJ
       from (
         select BFKEY, BFD19, BFDLOOUT,
-          case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
+          VLJ_HEARINGS.VLJ
         from (
           #{SELECT_READY_APPEALS}
             and (BFAC = '7' or AOD = '1')
@@ -136,7 +152,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     select BFKEY, BFDLOOUT, VLJ, DOCKET_INDEX
     from (
       select BFKEY, BFDLOOUT, rownum DOCKET_INDEX,
-        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
+        VLJ_HEARINGS.VLJ
       from (
         #{SELECT_READY_APPEALS}
           and BFAC <> '7' and AOD = '0'
@@ -150,7 +166,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     select BFKEY, BFD19, BFDLOOUT, VLJ, DOCKET_INDEX
     from (
       select BFKEY, BFD19, BFDLOOUT, rownum DOCKET_INDEX,
-        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
+        VLJ_HEARINGS.VLJ
       from (
         #{SELECT_READY_APPEALS}
           and BFAC <> '7' and AOD = '0'
@@ -161,15 +177,35 @@ class VACOLS::CaseDocket < VACOLS::Record
     )
   "
 
-  # this query should not be used during distribution it is only intended for reporting usage
+  # selects both priority and non-priority appeals that are ready to distribute
   SELECT_READY_TO_DISTRIBUTE_APPEALS_ORDER_BY_BFD19 = "
+    select APPEALS.BFKEY, APPEALS.TINUM, APPEALS.BFD19, APPEALS.BFDLOOUT,
+      case when APPEALS.BFAC = '7' or APPEALS.AOD = 1 then 1 else 0 end PRIORITY,
+      APPEALS.VLJ, APPEALS.PREV_DECIDING_JUDGE, APPEALS.HEARING_DATE, APPEALS.PREV_BFDDEC
+    from (
+      select BRIEFF.BFKEY, BRIEFF.TINUM, BFD19, BFDLOOUT, BFAC, AOD,
+        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
+        , PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
+        , VLJ_HEARINGS.HEARING_DATE HEARING_DATE
+        , PREV_APPEAL.PREV_BFDDEC PREV_BFDDEC
+      from (
+        #{SELECT_READY_APPEALS}
+      ) BRIEFF
+      #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+      #{JOIN_PREVIOUS_APPEALS}
+      order by BFD19
+    ) APPEALS
+  "
+
+  # this query should not be used during distribution it is only intended for reporting usage
+  SELECT_READY_TO_DISTRIBUTE_APPEALS_ORDER_BY_BFD19_ADDITIONAL_COLS = "
     select APPEALS.BFKEY, APPEALS.TINUM, APPEALS.BFD19, APPEALS.BFDLOOUT, APPEALS.AOD, APPEALS.BFCORLID,
       CORRES.SNAMEF, CORRES.SNAMEL, CORRES.SSN,
       STAFF.SNAMEF as VLJ_NAMEF, STAFF.SNAMEL as VLJ_NAMEL,
       case when APPEALS.BFAC = '7' then 1 else 0 end CAVC
     from (
       select BFKEY, BRIEFF.TINUM, BFD19, BFDLOOUT, BFAC, BFCORKEY, AOD, BFCORLID,
-        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
+        VLJ_HEARINGS.VLJ
       from (
         #{SELECT_READY_APPEALS_ADDITIONAL_COLS}
       ) BRIEFF
@@ -181,7 +217,50 @@ class VACOLS::CaseDocket < VACOLS::Record
     order by BFD19
   "
 
+  FROM_LOC_63_APPEALS = "
+    from BRIEFF
+      #{VACOLS::Case::JOIN_AOD}
+      inner join FOLDER on FOLDER.TICKNUM = BRIEFF.BFKEY
+      where BRIEFF.BFCURLOC in ('63')
+        and BRIEFF.BFBOX is null
+        and BRIEFF.BFAC is not null
+        and BRIEFF.BFD19 is not null
+  "
+
+  SELECT_LOC_63_APPEALS = "
+    select BFKEY, BFD19, BFDLOCIN, BFCORLID, BFDLOOUT, BFMPRO, BFCORKEY, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD,
+    BFMEMID, BFDPDCN
+    #{FROM_LOC_63_APPEALS}
+  "
+
   # rubocop:disable Metrics/MethodLength
+  SELECT_APPEALS_IN_LOCATION_63_FROM_PAST_2_DAYS = "
+    select APPEALS.BFKEY, APPEALS.TINUM, APPEALS.BFD19, APPEALS.BFMEMID, APPEALS.BFCURLOC,
+      APPEALS.BFDLOCIN, APPEALS.BFCORLID, APPEALS.BFDLOOUT,
+      case when APPEALS.BFAC = '7' or APPEALS.AOD = 1 then 1 else 0 end AOD,
+      case when APPEALS.BFAC = '7' then 1 else 0 end CAVC,
+      APPEALS.VLJ, APPEALS.PREV_DECIDING_JUDGE, APPEALS.HEARING_DATE, APPEALS.PREV_BFDDEC,
+      CORRES.SNAMEF, CORRES.SNAMEL, CORRES.SSN,
+      STAFF.SNAMEF as VLJ_NAMEF, STAFF.SNAMEL as VLJ_NAMEL
+    from (
+      select BRIEFF.BFKEY, BRIEFF.TINUM, BFD19, BFDLOOUT, BFAC, BFCORKEY, BFMEMID, BFCURLOC,
+        BRIEFF.BFDLOCIN, BFCORLID, AOD,
+        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
+        , PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
+        , VLJ_HEARINGS.HEARING_DATE HEARING_DATE
+        , PREV_APPEAL.PREV_BFDDEC PREV_BFDDEC
+      from (
+        #{SELECT_LOC_63_APPEALS}
+      ) BRIEFF
+      #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+      #{JOIN_PREVIOUS_APPEALS}
+      where BRIEFF.BFDLOCIN >= CURRENT_DATE - 2
+      order by BFD19
+    ) APPEALS
+    left join CORRES on APPEALS.BFCORKEY = CORRES.STAFKEY
+    left join STAFF on APPEALS.VLJ = STAFF.SATTYID
+  "
+
   def self.counts_by_priority_and_readiness
     query = <<-SQL
       select count(*) N, PRIORITY, READY
@@ -416,7 +495,37 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   def self.ready_to_distribute_appeals
     query = <<-SQL
+      #{SELECT_READY_TO_DISTRIBUTE_APPEALS_ORDER_BY_BFD19_ADDITIONAL_COLS}
+    SQL
+
+    fmtd_query = sanitize_sql_array([query])
+    connection.exec_query(fmtd_query).to_a
+  end
+
+  def self.loc_63_appeals
+    query = <<-SQL
+      #{SELECT_APPEALS_IN_LOCATION_63_FROM_PAST_2_DAYS}
+    SQL
+
+    fmtd_query = sanitize_sql_array([query])
+    connection.exec_query(fmtd_query).to_a
+  end
+
+  def self.appeals_tied_to_non_ssc_avljs
+    query = <<-SQL
+      with non_ssc_avljs as (
+        #{VACOLS::Staff::NON_SSC_AVLJS}
+      )
       #{SELECT_READY_TO_DISTRIBUTE_APPEALS_ORDER_BY_BFD19}
+      where APPEALS.VLJ in (select * from non_ssc_avljs)
+      and (
+        APPEALS.PREV_DECIDING_JUDGE is null or
+        (
+          APPEALS.PREV_DECIDING_JUDGE = APPEALS.VLJ
+          AND APPEALS.HEARING_DATE <= APPEALS.PREV_BFDDEC
+        )
+      )
+      order by BFD19
     SQL
 
     fmtd_query = sanitize_sql_array([query])

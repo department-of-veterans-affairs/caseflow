@@ -1,0 +1,22 @@
+---
+openapi: 3.0.2
+info:
+  title: API V2
+  version: V2
+security:
+  bearerAuth: []
+servers:
+- url: "/api/v2"
+paths:
+  "/api/v2/appeals":
+    get:
+      summary: list appeals
+      responses:
+        '200':
+          description: successful
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API Key provided by Caseflow

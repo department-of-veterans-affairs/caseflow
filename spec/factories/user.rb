@@ -140,6 +140,19 @@ FactoryBot.define do
       end
     end
 
+    trait :vha_admin_user do
+      after(:create) do |user|
+        VhaBusinessLine.singleton.add_user(user)
+        OrganizationsUser.make_user_admin(user, VhaBusinessLine.singleton)
+      end
+    end
+
+    trait :vha_default_user do
+      after(:create) do |user|
+        VhaBusinessLine.singleton.add_user(user)
+      end
+    end
+
     trait :bva_intake_admin do
       after(:create) do |user|
         BvaIntake.singleton.add_user(user)
@@ -153,6 +166,18 @@ FactoryBot.define do
         Functions.grant!("System Admin", users: existing_sysadmins + [user.css_id])
         Bva.singleton.add_user(user)
         OrganizationsUser.make_user_admin(user, Bva.singleton)
+      end
+    end
+
+    trait :non_ssc_avlj_user do
+      after(:create) do |user|
+        create(:staff, :non_ssc_avlj, user: user)
+      end
+    end
+
+    trait :ssc_avlj_user do
+      after(:create) do |user|
+        create(:staff, :ssc_avlj, user: user)
       end
     end
 

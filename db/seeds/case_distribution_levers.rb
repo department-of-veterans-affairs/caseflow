@@ -22,7 +22,7 @@ module Seeds
 
       validate_levers_creation
       updated_levers.compact!
-      puts "#{updated_levers.count} levers updated: #{updated_levers}" if updated_levers.count > 0
+      Rails.logger.info("#{updated_levers.count} levers updated: #{updated_levers}") if updated_levers.count > 0
     end
 
     private
@@ -46,9 +46,11 @@ module Seeds
         lever_group_order: lever[:lever_group_order]
       )
 
-      puts "*********************************************" unless lever.valid?
-      puts lever.errors.full_messages unless lever.valid?
-      puts "*********************************************" unless lever.valid?
+      unless lever.valid?
+        Rails.logger.error( "*********************************************")
+        Rails.logger.error(lever.errors.full_messages)
+        Rails.logger.error( "*********************************************")
+      end
     end
 
     # For properties missing those were intentionally ignored so that they would not
@@ -782,6 +784,18 @@ module Seeds
               }
             ]
           },
+          {
+            item: Constants.DISTRIBUTION.enable_nonsscavlj,
+            title: Constants.DISTRIBUTION.enable_nonsscavlj_title,
+            description: "This is the internal lever used to enable and disable Non-SSC AVLJ work.",
+            data_type: Constants.ACD_LEVERS.data_types.boolean,
+            value: true,
+            unit: "",
+            is_disabled_in_ui: true,
+            algorithms_used: [],
+            lever_group: Constants.ACD_LEVERS.lever_groups.internal,
+            lever_group_order: 0
+          },
         ]
       end
 
@@ -806,7 +820,7 @@ module Seeds
           full_update_lever(lever)
         end
 
-        puts "Levers updated: #{levers_to_update.map { |lever| lever[:item] }}"
+        Rails.logger.info("Levers updated: #{levers_to_update.map { |lever| lever[:item] }}")
       end
 
       private
@@ -822,7 +836,6 @@ module Seeds
       # DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER
       def full_update_lever(lever)
         existing_lever = CaseDistributionLever.find_by_item(lever[:item])
-
         existing_lever.update(
           title: lever[:title],
           description: lever[:description],
@@ -840,9 +853,11 @@ module Seeds
           lever_group_order: lever[:lever_group_order]
         )
 
-        puts "*********************************************" unless existing_lever.valid?
-        puts existing_lever.errors.full_messages unless existing_lever.valid?
-        puts "*********************************************" unless existing_lever.valid?
+        unless lever.valid?
+          Rails.logger.error( "*********************************************")
+          Rails.logger.error(lever.errors.full_messages)
+          Rails.logger.error( "*********************************************")
+        end
       end
     end
   end

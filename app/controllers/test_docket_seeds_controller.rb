@@ -40,9 +40,7 @@ class TestDocketSeedsController < ApplicationController
   # end
 
   def check_environment
-    return true if Rails.env.development?
-    return true if Rails.deploy_env?(:demo)
-    return true if Rails.deploy_env?(:uat)
+    return true if Rails.env.development? || Rails.deploy_env?(:demo) || Rails.deploy_env?(:uat)
 
     redirect_to "/unauthorized"
   end

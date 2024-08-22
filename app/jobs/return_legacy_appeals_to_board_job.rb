@@ -1,0 +1,78 @@
+# frozen_string_literal: true
+
+class ReturnLegacyAppealsToBoardJob < CaseflowJob
+  # For time_ago_in_words()
+  include ActionView::Helpers::DateHelper
+  # include RunAsyncable
+
+  queue_as :low_priority
+  application_attr :queue
+
+  def perform(fail_job = false)
+    begin
+      returned_appeal_job = create_returned_appeal_job
+      fail if fail_job
+
+      # Logic to process legacy appeals and return to the board
+      appeals = select_two_appeals_to_move(LegacyDocket.new.appeals_tied_to_non_ssc_avljs)
+      VACOLS::Case.batch_update_vacols_location("63", appeals.map { |appeal| appeal["bfkey"] })
+      complete_returned_appeal_job(returned_appeal_job, "Job completed successfully", appeals)
+      send_job_slack_report
+    rescue StandardError => error
+      message = "Job failed with error: #{error.message}"
+      errored_returned_appeal_job(returned_appeal_job, message)
+      start_time ||= Time.zone.now # temporary fix to get this job to succeed
+      duration = time_ago_in_words(start_time)
+      slack_msg = "<!here>\n [ERROR] after running for #{duration}: #{error.message}"
+      slack_service.send_notification(slack_msg, self.class.name)
+      log_error(error)
+      message
+    ensure
+      @start_time ||= Time.zone.now
+      metrics_service_report_runtime(metric_group_name: "return_legacy_appeals_to_board_job")
+    end
+  end
+
+  private
+
+  def select_two_appeals_to_move(appeals)
+    appeals = appeals.sort_by { |appeal| [-appeal["priority"], appeal["bfd19"]] } unless appeals.empty?
+    if appeals.count < 2
+      appeals
+    else
+      appeals[0..1]
+    end
+  end
+
+  def create_returned_appeal_job
+    ReturnedAppealJob.create!(
+      started_at: Time.zone.now,
+      stats: { message: "Job started" }.to_json
+    )
+  end
+
+  def complete_returned_appeal_job(returned_appeal_job, message, appeals)
+    returned_appeal_job.update!(
+      completed_at: Time.zone.now,
+      stats: { message: message }.to_json,
+      returned_appeals: appeals.map { |appeal| appeal["bfkey"] }
+    )
+  end
+
+  def errored_returned_appeal_job(returned_appeal_job, message)
+    returned_appeal_job.update!(
+      errored_at: Time.zone.now,
+      stats: { message: message }.to_json
+    )
+  end
+
+  def send_job_slack_report
+    slack_service.send_notification(slack_report.join("\n"), self.class.name)
+  end
+
+  def slack_report
+    report = []
+    report << "Job performed successfully"
+    report
+  end
+end

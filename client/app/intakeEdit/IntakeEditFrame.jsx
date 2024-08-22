@@ -20,6 +20,7 @@ import SplitAppealProgressBar from '../intake/components/SplitAppealProgressBar'
 import SplitButtons from './components/SplitButtons';
 import IntakeAppealContext from './components/IntakeAppealContext';
 import ReviewAppealView from '../intake/pages/ReviewAppealView';
+import PendingIssueModificationBanner from './components/PendingIssueModificationRequestBanner';
 
 const textAlignRightStyling = css({
   textAlign: 'right',
@@ -135,6 +136,12 @@ export const IntakeEditFrame = (props) => {
             <Route exact path={PAGE_PATHS.CREATE_SPLIT} component={SplitAppealProgressBar} />
             <Route exact path={PAGE_PATHS.REVIEW_SPLIT} component={SplitAppealProgressBar} />
             <Provider>
+              <PageRoute
+                exact
+                path={PAGE_PATHS.BEGIN}
+                title="Edit Claim Issues | Caseflow Intake"
+                component={PendingIssueModificationBanner}
+              />
               <AppSegment filledBackground>
                 <div>
                   <PageRoute

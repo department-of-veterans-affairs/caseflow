@@ -92,4 +92,14 @@ class Api::ApplicationController < ActionController::Base
       ]
     }, status: error.code || :bad_request
   end
+
+  def endpoint_disabled(message)
+    result = {
+      uuid: SecureRandom.uuid,
+      code: "VEFSERR50102",
+      message: "Operation not enabled. #{message}"
+    }
+
+    render json: result, status: :not_implemented
+  end
 end

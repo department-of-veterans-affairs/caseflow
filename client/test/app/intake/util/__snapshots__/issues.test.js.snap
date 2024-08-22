@@ -42,6 +42,7 @@ Array [
     "withdrawalPending": undefined,
   },
   Object {
+    "addedFromApprovedRequest": undefined,
     "beforeAma": false,
     "benefitType": undefined,
     "category": "Military Retired Pay",
@@ -65,6 +66,7 @@ Array [
     "mst_status_update_reason_notes": undefined,
     "pactChecked": undefined,
     "pact_status_update_reason_notes": undefined,
+    "pendingWithdrawalDate": undefined,
     "text": "Military Retired Pay - nonrating description",
     "timely": undefined,
     "untimelyExemption": undefined,
@@ -123,6 +125,7 @@ Array [
     "withdrawalPending": undefined,
   },
   Object {
+    "addedFromApprovedRequest": undefined,
     "beforeAma": false,
     "benefitType": undefined,
     "category": "Military Retired Pay",
@@ -146,6 +149,7 @@ Array [
     "mst_status_update_reason_notes": undefined,
     "pactChecked": undefined,
     "pact_status_update_reason_notes": undefined,
+    "pendingWithdrawalDate": undefined,
     "text": "Military Retired Pay - nonrating description",
     "timely": undefined,
     "untimelyExemption": undefined,

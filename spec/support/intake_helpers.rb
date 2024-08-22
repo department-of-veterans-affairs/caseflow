@@ -404,24 +404,52 @@ module IntakeHelpers
 
   def click_remove_intake_issue_dropdown(text)
     issue_el = find_intake_issue_by_text(text)
-    issue_num = issue_el[:"data-key"].sub(/^issue-/, "")
-    find("#issue-action-#{issue_num}").click
-    find("#issue-action-#{issue_num}_remove").click
+
+    within issue_el do
+      click_dropdown(text: "Remove")
+    end
+    click_remove_issue_confirmation
+  end
+
+  def click_remove_intake_issue_dropdown_by_number(number)
+    issue_el = find_intake_issue_by_number(number)
+
+    within issue_el do
+      click_dropdown(text: "Remove")
+    end
     click_remove_issue_confirmation
   end
 
   def click_withdraw_intake_issue_dropdown(text)
     issue_el = find_intake_issue_by_text(text)
-    issue_num = issue_el[:"data-key"].sub(/^issue-/, "")
-    find("#issue-action-#{issue_num}").click
-    find("#issue-action-#{issue_num}_withdraw").click
+
+    within issue_el do
+      click_dropdown(text: "Withdraw")
+    end
   end
 
   def click_correct_intake_issue_dropdown(text)
     issue_el = find_intake_issue_by_text(text)
-    issue_num = issue_el[:"data-key"].sub(/^issue-/, "")
-    find("#issue-action-#{issue_num}").click
-    find("#issue-action-#{issue_num}_correct").click
+
+    within issue_el do
+      click_dropdown(text: "Correct")
+    end
+  end
+
+  def click_edit_intake_issue_dropdown(text)
+    issue_el = find_intake_issue_by_text(text)
+
+    within issue_el do
+      click_dropdown(text: "Edit issue")
+    end
+  end
+
+  def click_edit_intake_issue_dropdown_by_number(number)
+    issue_el = find_intake_issue_by_number(number)
+
+    within issue_el do
+      click_dropdown(text: "Edit issue")
+    end
   end
 
   def select_correction_type_from_modal(value)

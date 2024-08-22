@@ -5,6 +5,9 @@ class Docket
   include DistributionConcern
   include DistributionScopes
 
+  PRIORITY = "priority"
+  NON_PRIORITY = "non_priority"
+
   def docket_type
     fail Caseflow::Error::MustImplementInSubclass
   end
@@ -17,7 +20,11 @@ class Docket
   def appeals(priority: nil, genpop: nil, ready: nil, judge: nil)
     fail "'ready for distribution' value cannot be false" if ready == false
 
-    scope = docket_appeals.active
+    scope = docket_appeals
+
+    # The `ready_for_distribution` scope will functionally add a filter for active appeals, and adding it here first
+    # will cause that scope to always return zero appeals.
+    scope = scope.active unless ready
 
     if ready
       scope = scope.ready_for_distribution
@@ -60,7 +67,7 @@ class Docket
 
   # currently this is used for reporting needs
   def ready_to_distribute_appeals
-    docket_appeals.active.ready_for_distribution
+    docket_appeals.ready_for_distribution
   end
 
   def genpop_priority_count
@@ -83,14 +90,12 @@ class Docket
     ).limit(num).map(&:ready_for_distribution_at)
   end
 
-  def age_of_n_oldest_priority_appeals_available_to_judge(_judge, num)
-    ready_priority_nonpriority_appeals(priority: true, ready: true).limit(num).map(&:receipt_date)
+  def age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
+    ready_priority_nonpriority_appeals(priority: true, ready: true, judge: judge).limit(num).map(&:receipt_date)
   end
 
-  # this method needs to have the same name as the method in legacy_docket.rb for by_docket_date_distribution,
-  # but the judge that is passed in isn't relevant here
-  def age_of_n_oldest_nonpriority_appeals_available_to_judge(_judge, num)
-    ready_priority_nonpriority_appeals(priority: false, ready: true).limit(num).map(&:receipt_date)
+  def age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
+    ready_priority_nonpriority_appeals(priority: false, ready: true, judge: judge).limit(num).map(&:receipt_date)
   end
 
   def age_of_oldest_priority_appeal
@@ -157,6 +162,23 @@ class Docket
       .joins(:decision_documents)
       .where("decision_date > ?", 1.year.ago)
       .pluck(:id).size
+  end
+
+  # used for distribution_stats
+  # :reek:ControlParameter
+  # :reek:FeatureEnvy
+  def affinity_date_count(in_window, priority)
+    scope = docket_appeals.ready_for_distribution
+
+    scope = if in_window
+              scope.non_genpop_by_affinity_start_date
+            else
+              scope.genpop_by_affinity_start_date
+            end
+
+    return scoped_for_priority(scope).ids.size if priority
+
+    scope.nonpriority.ids.size
   end
 
   def calculate_days_for_time_goal_with_prior_to_goal

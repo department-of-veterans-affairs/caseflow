@@ -232,6 +232,32 @@ FactoryBot.define do
       lever_group_order { 3002 }
     end
 
+    trait :cavc_aod_affinity_days do
+      item { "cavc_aod_affinity_days" }
+      title { "CAVC AOD Affinity Days" }
+      description do
+        "Sets the number of days a case returned from CAVC respects the affinity to the judge who authored a decision "\
+        "before distributing the appeal to any available judge. This does not include Legacy CAVC Remand Appeals with "\
+        "a hearing held."
+      end
+      data_type { "radio" }
+      value { "14" }
+      unit { "days" }
+      options do
+        [{ item: "value",
+           data_type: "number",
+           value: 14,
+           text: "Attempt distribution to current judge for max of:",
+           unit: "days",
+           selected: true },
+         { item: "infinite", value: "infinite", text: "Always distribute to current judge" },
+         { item: "omit", value: "omit", text: "Omit variable from distribution rules" }]
+      end
+      algorithms_used { %w[docket proportion] }
+      lever_group { "affinity" }
+      lever_group_order { 3003 }
+    end
+
     trait :ama_hearing_case_aod_affinity_days do
       item { "ama_hearing_case_aod_affinity_days" }
       title { "AMA Hearing Case AOD Affinity Days" }

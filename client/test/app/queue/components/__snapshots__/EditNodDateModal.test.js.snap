@@ -43,154 +43,151 @@ exports[`EditNodDateModal renders correctly 1`] = `
         </svg>
       </button>
       <div
-        style="display: flex;"
+        style="display: flex; flex-wrap: wrap;"
       >
-        <div
-          data-css-1gs0ko2=""
+        <h1
+          id="modal_id-title"
+          style="flex: 1;"
         >
-          <h1
-            id="modal_id-title"
-          >
-            Edit NOD Date
-          </h1>
-          <div
-            data-css-o98ubo=""
-          >
+          Edit NOD Date
+        </h1>
+        <div
+          data-css-2flkvz=""
+        >
+          <div>
             <div>
-              <div>
-                <p>
+              <p>
+                <strong>
+                  Editing the NOD date affects the time it takes for a Veteran to receive a response to their appeal.
+                </strong>
+              </p>
+            </div>
+            <form>
+              <div
+                class="cf-form-textinput   "
+              >
+                <label
+                  for="nodDate"
+                >
                   <strong>
-                    Editing the NOD date affects the time it takes for a Veteran to receive a response to their appeal.
+                    <span>
+                      NOD Date
+                    </span>
                   </strong>
-                </p>
-              </div>
-              <form>
+                </label>
                 <div
-                  class="cf-form-textinput   "
+                  class="input-container"
+                >
+                  <input
+                    class="cf-form-textinput"
+                    id="nodDate"
+                    max="9999-12-31"
+                    name="nodDate"
+                    placeholder="mm/dd/yyyy"
+                    type="date"
+                    value=""
+                  />
+                </div>
+              </div>
+              <div
+                class=""
+              >
+                <div
+                  class="cf-form-dropdown dropdown-reason"
                 >
                   <label
-                    for="nodDate"
+                    class="question-label"
+                    for="reason"
+                    id="reason-label"
                   >
                     <strong>
                       <span>
-                        NOD Date
+                        Reason for edit
                       </span>
                     </strong>
                   </label>
                   <div
-                    class="input-container"
+                    class="cf-select"
                   >
-                    <input
-                      class="cf-form-textinput"
-                      id="nodDate"
-                      max="9999-12-31"
-                      name="nodDate"
-                      placeholder="mm/dd/yyyy"
-                      type="date"
-                      value=""
-                    />
-                  </div>
-                </div>
-                <div
-                  class=""
-                >
-                  <div
-                    class="cf-form-dropdown dropdown-reason"
-                  >
-                    <label
-                      class="question-label"
-                      for="reason"
-                      id="reason-label"
-                    >
-                      <strong>
-                        <span>
-                          Reason for edit
-                        </span>
-                      </strong>
-                    </label>
                     <div
-                      class="cf-select"
+                      class=" css-2b097c-container"
                     >
                       <div
-                        class=" css-2b097c-container"
+                        class="cf-select__control css-yk16xz-control"
                       >
                         <div
-                          class="cf-select__control css-yk16xz-control"
+                          class="cf-select__value-container css-g1d714-ValueContainer"
                         >
                           <div
-                            class="cf-select__value-container css-g1d714-ValueContainer"
+                            class="cf-select__placeholder css-1wa3eu0-placeholder"
                           >
-                            <div
-                              class="cf-select__placeholder css-1wa3eu0-placeholder"
-                            >
-                              Select the reason...
-                            </div>
-                            <div
-                              class="css-81nyic-Input"
-                            >
-                              <div
-                                class="cf-select__input"
-                                style="display: inline-block;"
-                              >
-                                <input
-                                  aria-autocomplete="list"
-                                  aria-expanded="false"
-                                  aria-haspopup="true"
-                                  aria-labelledby="reason-label"
-                                  aria-owns="reason-listbox"
-                                  autocapitalize="none"
-                                  autocomplete="off"
-                                  autocorrect="off"
-                                  id="reason"
-                                  role="combobox"
-                                  spellcheck="false"
-                                  style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
-                                  tabindex="0"
-                                  type="text"
-                                  value=""
-                                />
-                                <div
-                                  style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
-                                />
-                              </div>
-                            </div>
+                            Select the reason...
                           </div>
                           <div
-                            class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                            class="css-81nyic-Input"
                           >
-                            <span
-                              class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
-                            />
                             <div
-                              aria-hidden="true"
-                              class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                              class="cf-select__input"
+                              style="display: inline-block;"
                             >
-                              <svg
-                                aria-hidden="true"
-                                class="css-6q0nyr-Svg"
-                                focusable="false"
-                                height="20"
-                                viewBox="0 0 20 20"
-                                width="20"
-                              >
-                                <path
-                                  d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
-                                />
-                              </svg>
+                              <input
+                                aria-autocomplete="list"
+                                aria-expanded="false"
+                                aria-haspopup="true"
+                                aria-labelledby="reason-label"
+                                aria-owns="reason-listbox"
+                                autocapitalize="none"
+                                autocomplete="off"
+                                autocorrect="off"
+                                id="reason"
+                                role="combobox"
+                                spellcheck="false"
+                                style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                                tabindex="0"
+                                type="text"
+                                value=""
+                              />
+                              <div
+                                style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                              />
                             </div>
                           </div>
                         </div>
-                        <input
-                          name="reason"
-                          type="hidden"
-                          value=""
-                        />
+                        <div
+                          class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                        >
+                          <span
+                            class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                          />
+                          <div
+                            aria-hidden="true"
+                            class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                          >
+                            <svg
+                              aria-hidden="true"
+                              class="css-6q0nyr-Svg"
+                              focusable="false"
+                              height="20"
+                              viewBox="0 0 20 20"
+                              width="20"
+                            >
+                              <path
+                                d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                              />
+                            </svg>
+                          </div>
+                        </div>
                       </div>
+                      <input
+                        name="reason"
+                        type="hidden"
+                        value=""
+                      />
                     </div>
                   </div>
                 </div>
-              </form>
-            </div>
+              </div>
+            </form>
           </div>
         </div>
       </div>

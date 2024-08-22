@@ -1,13 +1,25 @@
 # frozen_string_literal: true
 
 class LegacyDocket < Docket
-  def docket_type
+  def self.docket_type
     "legacy"
+  end
+
+  def docket_type
+    self.class.docket_type
   end
 
   # currently this is used for reporting needs
   def ready_to_distribute_appeals
     LegacyAppeal.repository.ready_to_distribute_appeals
+  end
+
+  def appeals_tied_to_non_ssc_avljs
+    LegacyAppeal.repository.appeals_tied_to_non_ssc_avljs
+  end
+
+  def loc_63_appeals
+    LegacyAppeal.repository.loc_63_appeals
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity
@@ -132,6 +144,12 @@ class LegacyDocket < Docket
     end.compact
   end
   # rubocop:enable Metrics/ParameterLists
+
+  # used for distribution_stats
+  # change parameters to in_window, priority once implemented
+  def affinity_date_count(*)
+    "not implemented"
+  end
 
   private
 

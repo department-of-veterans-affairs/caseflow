@@ -10,6 +10,7 @@ class DecisionReview < CaseflowRecord
   attr_reader :saving_review
 
   has_many :request_issues, as: :decision_review, dependent: :destroy
+  has_many :issue_modification_requests, as: :decision_review, dependent: :destroy
   has_many :claimants, as: :decision_review, dependent: :destroy
   has_many :request_decision_issues, through: :request_issues
   has_many :decision_issues, as: :decision_review, dependent: :destroy
@@ -124,7 +125,11 @@ class DecisionReview < CaseflowRecord
   end
 
   def number_of_issues
-    request_issues.active.count
+    request_issues.count(&:active?)
+  end
+
+  def issue_categories
+    request_issues.select(&:active?).map(&:nonrating_issue_category)
   end
 
   def external_id
@@ -261,6 +266,10 @@ class DecisionReview < CaseflowRecord
     @active_nonrating_request_issues ||= RequestIssue.nonrating.active
       .where(veteran_participant_id: veteran.participant_id)
       .where.not(id: request_issues.map(&:id))
+  end
+
+  def pending_issue_modification_requests
+    issue_modification_requests.includes(:request_issue, :requestor, :decider).select(&:assigned?)
   end
 
   # do not confuse ui_hash with serializer. ui_hash for intake and intakeEdit. serializer for work queue.
