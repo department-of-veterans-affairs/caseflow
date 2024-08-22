@@ -1635,7 +1635,12 @@ describe Appeal, :all_dbs do
     context "when an appeal has open DistributionTask and non-blocking MailTask subclass" do
       let!(:appeal_ready_to_distribute_with_evidence_task) do
         appeal = create(:appeal, :direct_review_docket, :ready_for_distribution)
-        create(:evidence_or_argument_mail_task, :assigned, assigned_to: MailTeam.singleton, parent: appeal.root_task)
+        create(
+          :evidence_or_argument_mail_task,
+          :assigned,
+          assigned_to: InboundOpsTeam.singleton,
+          parent: appeal.root_task
+        )
         appeal
       end
 
