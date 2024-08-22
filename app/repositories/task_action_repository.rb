@@ -6,8 +6,14 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       # stubbed
     end
 
-    def assign_corr_task_to_team
-      # stubbed
+    def assign_corr_task_to_team(task, _user = nil)
+      return_to_name = task_assigner_name(task)
+      {
+        modal_title: COPY::MODAL_ASSIGN_BUTTON,
+        modal_body: format(COPY::ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER),
+
+
+      }
     end
 
     def assign_corr_task_to_person
