@@ -127,7 +127,7 @@ class BusinessLine < Organization
       :intake_users,
       :update_users,
       :decision_users,
-      :decision_suers_completed_by,
+      :decision_users_completed_by,
       :requestor,
       :decider
     ].freeze
