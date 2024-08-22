@@ -27,15 +27,7 @@ const nonEditableIssueStyling = css({
 });
 
 export default class IssuesList extends React.Component {
-  /* eslint-disable max-params */
-  generateIssueActionOptions = (
-    issue,
-    userCanWithdrawIssues,
-    userCanEditIntakeIssues,
-    isDtaError,
-    docketType,
-    formType
-  ) => {
+  generateIssueActionOptions = (issue, userCanWithdrawIssues, userCanEditIntakeIssues, isDtaError, docketType) => {
     let options = [];
 
     if (issue.correctionType && issue.endProductCleared) {
@@ -46,7 +38,7 @@ export default class IssuesList extends React.Component {
         { label: 'Remove issue',
           value: 'remove' }
       );
-      if (userCanEditIntakeIssues && (formType === FORM_TYPES.APPEAL.key)) {
+      if (userCanEditIntakeIssues) {
         options.push(
           { label: 'Edit issue',
             value: 'edit' }
@@ -68,7 +60,7 @@ export default class IssuesList extends React.Component {
             value: 'remove' }
         );
       }
-      if (userCanEditIntakeIssues && (formType === FORM_TYPES.APPEAL.key)) {
+      if (userCanEditIntakeIssues) {
         options.push(
           { label: 'Edit issue',
             value: 'edit' }
@@ -92,7 +84,6 @@ export default class IssuesList extends React.Component {
           value: 'requestWithdrawal' }
       );
     }
-    /* eslint-enable max-params */
 
     const isIssueWithdrawn = issue.withdrawalDate || issue.withdrawalPending;
 
@@ -136,12 +127,7 @@ export default class IssuesList extends React.Component {
             editableIssueProperties);
 
           const issueActionOptions = this.generateIssueActionOptions(
-            issue,
-            userCanWithdrawIssues,
-            userCanEditIntakeIssues,
-            intakeData.isDtaError,
-            intakeData.docketType,
-            formType
+            issue, userCanWithdrawIssues, userCanEditIntakeIssues, intakeData.isDtaError, intakeData.docketType
           );
 
           const isIssueWithdrawn = issue.withdrawalDate || issue.withdrawalPending;
