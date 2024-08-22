@@ -46,6 +46,12 @@ const IndividualClaimHistoryTable = (props) => {
     return <React.Fragment>Claim cannot be processed until decision date is entered.</React.Fragment>;
   };
 
+  const benefitType = (details) => {
+    return <>
+      <b>Benefit type: </b>{BENEFIT_TYPES[details.benefitType]}<br />
+    </>;
+  };
+
   const ClaimClosedFragment = (details) => {
     const fragment = details.eventType === 'cancelled' ? <>
       Claim cancelled.
@@ -63,7 +69,7 @@ const IndividualClaimHistoryTable = (props) => {
 
   const AddedIssueFragment = (details) => {
     return <React.Fragment>
-      <b>Benefit type: </b>{BENEFIT_TYPES[details.benefitType]}<br />
+      { benefitType(details) }
       <b>Issue type: </b>{details.issueType}<br />
       <b>Issue description: </b>{details.issueDescription}<br />
     </React.Fragment>;
@@ -71,7 +77,7 @@ const IndividualClaimHistoryTable = (props) => {
 
   const RequestedIssueFragment = (details) => {
     return <React.Fragment>
-      <b>Benefit type: </b>{BENEFIT_TYPES[details.benefitType]}<br />
+      { benefitType(details) }
       <b>Issue type: </b>{details.issueType}<br />
       <b>Issue description: </b>{details.issueDescription}<br />
       <b>Decision date: </b>{formatDecisionDate(details.decisionDate)}<br />
@@ -86,16 +92,30 @@ const IndividualClaimHistoryTable = (props) => {
     </>;
   };
 
+  const formatLabel = (baseLabel, prefix) => {
+    if (prefix) {
+      return `${prefix} ${baseLabel.toLowerCase()}`;
+    }
+
+    return baseLabel;
+  };
+
+  const previousModificationFragment = (details, prefix) => {
+    return <React.Fragment>
+      <b>{formatLabel('Issue type:', prefix)} </b>{details.previousIssueType}<br />
+      <b>{formatLabel('Issue description:', prefix)} </b>{details.previousIssueDescription}<br />
+      <b>{formatLabel('Decision date:', prefix)} </b>{formatDecisionDate(details.previousDecisionDate)}<br />
+      <b>{capitalizeFirst(details.requestType)} request reason: </b>{details.previousModificationRequestReason}<br />
+    </React.Fragment>;
+  };
+
   const RequestedIssueModificationFragment = (details) => {
     return <React.Fragment>
-      <b>Benefit type: </b>{BENEFIT_TYPES[details.benefitType]}<br />
+      { benefitType(details) }
       <b>Current issue type: </b>{details.issueType}<br />
       <b>Current issue description: </b>{details.issueDescription}<br />
-      <b>Current decision date: </b>{formatDecisionDate(details.decidedAtDate)}<br /> Double check the value
-      <b>New issue type: </b>{details.newIssueType}<br />
-      <b>New issue description: </b>{details.newIssueDescription}<br />
-      <b>New decision date: </b>{formatDecisionDate(details.newDecisionDate)}<br />
-      <b>{capitalizeFirst(details.requestType)} request reason: </b>{details.modificationRequestReason}<br />
+      <b>Current decision date: </b>{formatDecisionDate(details.decidedAtDate)}<br />
+      { previousModificationFragment(details, 'New') }
     </React.Fragment>;
   };
 
@@ -207,8 +227,15 @@ const IndividualClaimHistoryTable = (props) => {
 
   const WithdrawnRequestedIssueModificationFragment = (details) => {
     return <React.Fragment>
-      <RequestedIssueFragment {...details} />
-      <b>Withdrawal request date: </b> {formatDecisionDate(details.issueModificationRequestWithdrawalDate)}<br />
+      <PreviousFragmentWithBenefitType {...details} />
+      <b>Withdrawal request date: </b> {formatDecisionDate(details.previousWithdrawalDate)}<br />
+    </React.Fragment>;
+  };
+
+  const PreviousFragmentWithBenefitType = (details) => {
+    return <React.Fragment>
+      { benefitType(details) }
+      { previousModificationFragment(details) }
     </React.Fragment>;
   };
 
@@ -221,7 +248,7 @@ const IndividualClaimHistoryTable = (props) => {
       break;
     case 'addition':
     case 'removal':
-      component = <RequestedIssueFragment {...details} />;
+      component = <PreviousFragmentWithBenefitType {...details} />;
       break;
     case 'withdrawal':
       component = <WithdrawnRequestedIssueModificationFragment {...details} />;
