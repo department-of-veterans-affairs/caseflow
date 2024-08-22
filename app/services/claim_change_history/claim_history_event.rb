@@ -150,7 +150,8 @@ class ClaimHistoryEvent
         event_date_hash = {
           "event_date" => version["updated_at"][1],
           "event_user_name" => change_data["requestor"],
-          "user_facility" => change_data["requestor_station_id"]
+          "user_facility" => change_data["requestor_station_id"],
+          "event_user_css_id" => change_data["requestor_css_id"]
         }
 
         event_date_hash.merge!(update_event_hash_data_from_version(version, 1))
@@ -181,7 +182,8 @@ class ClaimHistoryEvent
       decision_event_hash = pending_system_hash
         .merge("event_date" => event_date,
                "event_user_name" => event_user,
-               "user_facility" => decider_user_facility(change_data))
+               "user_facility" => change_data["decider_station_id"] || change_data["requestor_station_id"],
+               "event_user_css_id" => change_data["decider_css_id"] || change_data["requestor_css_id"])
 
       change_data = issue_attributes_for_request_type_addition(change_data) if change_data["request_type"] == "addition"
 

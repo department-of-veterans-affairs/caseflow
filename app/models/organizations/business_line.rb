@@ -123,6 +123,15 @@ class BusinessLine < Organization
       }
     }.freeze
 
+    USER_TABLE_ALIASES = [
+      :intake_users,
+      :update_users,
+      :decision_users,
+      :decision_suers_completed_by,
+      :requestor,
+      :decider
+    ].freeze
+
     def initialize(query_type: :in_progress, parent: business_line, query_params: {})
       @query_type = query_type
       @parent = parent
@@ -297,7 +306,7 @@ class BusinessLine < Organization
           imr.decision_reason AS decision_reason,
           imr.decider_id decider_id,
           imr.requestor_id as requestor_id,
-          imr.decided_at AS decided_at,
+          CASE when imr.status = 'cancelled' THEN imr.updated_at ELSE imr.decided_at END AS decided_at,
           imr.created_at AS issue_modification_request_created_at,
           imr.updated_at AS issue_modification_request_updated_at,
           imr.edited_at AS issue_modification_request_edited_at,
@@ -406,7 +415,7 @@ class BusinessLine < Organization
          imr.decision_reason AS decision_reason,
          imr.decider_id AS decider_id,
          imr.requestor_id AS requestor_id,
-         imr.decided_at AS decided_at,
+         CASE when imr.status = 'cancelled' THEN imr.updated_at ELSE imr.decided_at END AS decided_at,
          imr.created_at AS issue_modification_request_created_at,
          imr.updated_at  AS issue_modification_request_updated_at,
          imr.edited_at AS issue_modification_request_edited_at,
@@ -601,19 +610,16 @@ class BusinessLine < Organization
       end
     end
 
-    # rubocop:disable Metrics/AbcSize
     def station_id_filter
       if query_params[:facilities].present?
+        conditions = USER_TABLE_ALIASES.map do |alias_name|
+          User.arel_table.alias(alias_name)[:css_id].in(query_params[:facilities]).to_sql
+        end
+
         <<-SQL
           AND
           (
-            #{User.arel_table.alias(:intake_users)[:station_id].in(query_params[:facilities]).to_sql}
-            OR
-            #{User.arel_table.alias(:update_users)[:station_id].in(query_params[:facilities]).to_sql}
-            OR
-            #{User.arel_table.alias(:decision_users)[:station_id].in(query_params[:facilities]).to_sql}
-            OR
-            #{User.arel_table.alias(:decision_users_completed_by)[:station_id].in(query_params[:facilities]).to_sql}
+            #{conditions.join(' OR ')}
           )
         SQL
       end
@@ -621,21 +627,18 @@ class BusinessLine < Organization
 
     def user_css_id_filter
       if query_params[:personnel].present?
+        conditions = USER_TABLE_ALIASES.map do |alias_name|
+          User.arel_table.alias(alias_name)[:css_id].in(query_params[:personnel]).to_sql
+        end
+
         <<-SQL
           AND
           (
-            #{User.arel_table.alias(:intake_users)[:css_id].in(query_params[:personnel]).to_sql}
-            OR
-            #{User.arel_table.alias(:update_users)[:css_id].in(query_params[:personnel]).to_sql}
-            OR
-            #{User.arel_table.alias(:decision_users)[:css_id].in(query_params[:personnel]).to_sql}
-            OR
-            #{User.arel_table.alias(:decision_users_completed_by)[:css_id].in(query_params[:personnel]).to_sql}
+            #{conditions.join(' OR ')}
           )
         SQL
       end
     end
-    # rubocop:enable Metrics/AbcSize
 
     #################### End of Change history filter helpers ########################
 
