@@ -13,8 +13,7 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
       returned_appeal_job = create_returned_appeal_job
       fail if fail_job
 
-      appeals = LegacyDocket.new.appeals_tied_to_non_ssc_avljs
-      selected_appeals = move_qualifying_appeals(LegacyDocket.new.appeals_tied_to_non_ssc_avljs)
+      eligible_and_moved_appeals(appeals, selected_appeals)
 
       complete_returned_appeal_job(returned_appeal_job, "Job completed successfully", selected_appeals)
 
@@ -63,6 +62,12 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
       moved_avljs: moved_avljs,
       grouped_by_avlj: grouped_by_avlj
     }
+  end
+
+  def eligible_and_moved_appeals
+    appeals = LegacyDocket.new.appeals_tied_to_non_ssc_avljs
+    selected_appeals = move_qualifying_appeals(LegacyDocket.new.appeals_tied_to_non_ssc_avljs)
+    [appeals, selected_appeals]
   end
 
   private
