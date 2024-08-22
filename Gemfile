@@ -34,15 +34,18 @@ gem "moment_timezone-rails"
 # Rails 6 has native support for multiple dbs, so prefer that over multiverse after upgrade.
 # https://github.com/ankane/multiverse#upgrading-to-rails-6
 gem "multiverse"
-gem "newrelic_rpm"
 gem "nokogiri", ">= 1.11.0.rc4"
+
+# Testing without new_relic
+# gem "newrelic_rpm"
 
 # gem "opentelemetry-exporter-otlp"
 # gem "opentelemetry-instrumentation-all"
 # gem "opentelemetry-sdk"
 
-gem "opentelemetry-sdk", require: false
 gem "opentelemetry-exporter-otlp", require: false
+gem "opentelemetry-sdk", require: false
+
 gem "opentelemetry-instrumentation-rack", require: false
 gem "opentelemetry-instrumentation-rails", require: false
 gem "opentelemetry-instrumentation-active_job", require: false
