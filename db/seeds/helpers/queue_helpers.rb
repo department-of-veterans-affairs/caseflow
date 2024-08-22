@@ -89,6 +89,7 @@ module QueueHelpers
       status: Constants.TASK_STATUSES.in_progress
     )
     randomize_days_waiting_value(euft)
+    parent.update!(status: Constants.TASK_STATUSES.on_hold)
   end
 
   # :reek:UtilityFunction
