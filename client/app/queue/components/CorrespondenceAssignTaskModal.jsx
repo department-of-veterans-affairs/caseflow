@@ -84,7 +84,11 @@ const CorrespondenceAssignTaskModal = (props) => {
       }
     };
 
-    return props.assignTaskToUser(props.task_id, payload);
+    let filteredTasks = props.correspondenceInfo.tasksUnrelatedToAppeal.filter((task) => parseInt(task.uniqueId, 10) !== parseInt(props.task_id, 10));
+    let tempCor = props.correspondenceInfo;
+    tempCor.tasksUnrelatedToAppeal = filteredTasks;
+
+    return props.assignTaskToUser(props.task_id, payload) && props.correspondenceInfo(tempCor);
 
   };
 
@@ -114,6 +118,7 @@ const CorrespondenceAssignTaskModal = (props) => {
           placeholder="Select or search"
           // value={generateOptionsFromTags(doc.tags)}
           onChange={formChanged}
+          styling={{ marginBottom: '20px' }}
         />
       }
       {shouldShowTaskInstructions &&

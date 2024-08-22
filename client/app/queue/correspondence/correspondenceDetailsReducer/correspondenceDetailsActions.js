@@ -52,6 +52,13 @@ export const assignTaskToUser = (taskID, payload) => (dispatch) => {
         }
       });
 
+      // dispatch({
+      //   type: ACTIONS.CORRESPONDENCE_INFO,
+      //   payload: {
+      //     correspondence
+      //   }
+      // });
+
     }).
     catch((error) => {
       dispatch({
@@ -69,6 +76,7 @@ export const correspondenceInfo = (correspondence) => (dispatch) => {
     type: ACTIONS.CORRESPONDENCE_INFO,
     payload: {
       correspondence
-    } });
+    }
+  });
 };
 
