@@ -13,6 +13,14 @@ import ContinuousProgressBar from 'app/components/ContinuousProgressBar';
 import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
 import IhpDaysWaitingTooltip from './IhpDaysWaitingTooltip';
 import TranscriptionTaskTooltip from './TranscriptionTaskTooltip';
+import Checkbox from '../../components/Checkbox';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  setShowReassignPackageModal,
+  setShowRemovePackageModal,
+  setSelectedTasks,
+  setSelectedVeteranDetails
+} from 'app/queue/correspondence/correspondenceReducer/correspondenceActions';
 
 import { taskHasCompletedHold, hasDASRecord, collapseColumn, regionalOfficeCity, renderAppealType } from '../utils';
 import { DateString, daysSinceAssigned, daysSincePlacedOnHold } from '../../util/DateUtil';
@@ -219,6 +227,180 @@ export const assignedByColumn = () => {
     valueFunction: (task) =>
       task.assignedBy ? `${task.assignedBy.firstName} ${task.assignedBy.lastName}` : null,
     getSortValue: (task) => task.assignedBy ? task.assignedBy.lastName : null
+  };
+};
+
+export const veteranDetails = () => {
+  const dispatch = useDispatch();
+
+  const handleRemoveClick = (task) => {
+    dispatch(setSelectedVeteranDetails(task));
+    dispatch(setShowRemovePackageModal(true));
+  };
+
+  const handleReassignClick = (task) => {
+    dispatch(setSelectedVeteranDetails(task));
+    dispatch(setShowReassignPackageModal(true));
+  };
+
+  // Developer Function for in-progress and future work
+  const handleExplainPageInConSoleLog = (task) => {
+    // eslint-disable-next-line
+    console.log("Correspondence Explain Page for Under Construction Link:")
+    // eslint-disable-next-line
+    console.log(window.location.origin + task.taskUrl);
+  };
+
+  return {
+    header: 'Veteran Details',
+    label: 'Veteran Details',
+    name: QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name,
+    backendCanSort: true,
+    getSortValue: (task) => task.veteranDetails,
+    valueFunction: (task) => {
+      if (task.taskUrl === '/modal/reassign_package') {
+        return <a
+          href="#"
+          onClick={() => handleReassignClick(task)}
+          id="task-link"
+        >
+          {task.veteranDetails}
+        </a>;
+      } else if (task.taskUrl === '/modal/remove_package') {
+        return <a
+          href="#"
+          onClick={() => handleRemoveClick(task)}
+          id="task-link"
+        >
+          {task.veteranDetails}
+        </a>;
+      } else if (task.taskUrl.includes('explain')) {
+        return <a
+          href="/under_construction"
+          onContextMenu={() => handleExplainPageInConSoleLog(task)}
+          id="task-link"
+        >
+          {task.veteranDetails}
+        </a>;
+      }
+
+      return <a
+        href={task.taskUrl}
+        id="task-link"
+      >
+        {task.veteranDetails}
+      </a>;
+    },
+  };
+};
+
+export const vaDor = () => {
+  return {
+    header: 'VA DOR',
+    filterOptions: [],
+    columnName: 'Receipt Date',
+    backendCanSort: true,
+    enableFilter: true,
+    getSortValue: (task) => task.vaDor,
+    name: QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name,
+    label: 'Filter by VA Date of Receipt',
+    valueFunction: (task) => {
+      return moment(task.vaDor).format('MM/DD/YYYY');
+    }
+  };
+};
+
+export const packageDocumentType = (filterOptions) => {
+  return {
+    header: COPY.CASE_LIST_TABLE_PACKAGE_DOCUMENT_TYPE_COLUMN_TITLE,
+    filterOptions,
+    columnName: COPY.CASE_LIST_TABLE_PACKAGE_DOCUMENT_TYPE_COLUMN_TITLE,
+    valueName: COPY.CASE_LIST_TABLE_PACKAGE_DOCUMENT_TYPE_COLUMN_TITLE,
+    backendCanSort: true,
+    enableFilter: true,
+    anyFiltersAreSet: true,
+    getSortValue: (task) => task.nod,
+    name: QUEUE_CONFIG.COLUMNS.PACKAGE_DOCUMENT_TYPE.name,
+    label: 'Filter by Package Document Type',
+    valueFunction: (task) => {
+      return task.nod ? 'NOD' : 'Non-NOD';
+    }
+  };
+};
+
+export const notes = () => {
+  return {
+    header: 'Notes',
+    name: QUEUE_CONFIG.COLUMNS.NOTES.name,
+    valueFunction: (task) => task.notes,
+    backendCanSort: true,
+    getSortValue: (task) => task.notes
+  };
+};
+export const checkboxColumn = (handleCheckboxChange) => {
+  const dispatch = useDispatch();
+
+  const currentlySelectedTasks = useSelector((state) => state.intakeCorrespondence.selectedTasks);
+
+  const toggleChange = (value) => {
+    const indexOfTask = currentlySelectedTasks.indexOf(value);
+
+    const newSelectedTasks = currentlySelectedTasks;
+
+    if (indexOfTask === -1) {
+      newSelectedTasks.push(value);
+    } else {
+      newSelectedTasks.splice(indexOfTask, 1);
+    }
+
+    dispatch(setSelectedTasks(newSelectedTasks));
+
+    handleCheckboxChange(newSelectedTasks.length > 0);
+
+  };
+
+  return {
+    header: 'Select',
+    checked: true,
+    name: QUEUE_CONFIG.COLUMNS.CHECKBOX_COLUMN,
+    valueFunction: (task) => {
+
+      if (task) {
+        return <Checkbox
+          id={task.uniqueId}
+          value={Boolean(currentlySelectedTasks.includes(task.uniqueId))}
+          name={task.uniqueId}
+          hideLabel
+          onChange={() => toggleChange(task.uniqueId)}
+        />;
+      }
+
+      return null;
+      // or any other valid JSX element
+
+    }
+
+  };
+};
+
+export const actionType = () => {
+  return {
+    header: 'Action Type',
+    name: QUEUE_CONFIG.COLUMNS.ACTION_TYPE.name,
+    backendCanSort: true,
+    getSortValue: (task) => task.label,
+    valueFunction: (task) => task.label.split(' ')[0]
+  };
+};
+
+export const daysWaitingCorrespondence = () => {
+  return {
+    header: 'Days Waiting',
+    name: QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name,
+    enableFilter: true,
+    backendCanSort: true,
+    getSortValue: (task) => task.daysWaiting,
+    valueFunction: (task) => task.daysWaiting
   };
 };
 
@@ -460,5 +642,21 @@ export const taskCompletedDateColumn = () => {
     valueFunction: (task) => task.closedAt ? <DateString date={task.closedAt} /> : null,
     backendCanSort: true,
     getSortValue: (task) => task.closedAt ? new Date(task.closedAt) : null
+  };
+};
+
+export const correspondenceCompletedDateColumn = () => {
+  return {
+    header: COPY.CASE_LIST_TABLE_COMPLETED_ON_DATE_COLUMN_TITLE,
+    name: QUEUE_CONFIG.COLUMNS.CORRESPONDENCE_TASK_CLOSED_DATE.name,
+    filterOptions: [],
+    label: 'Filter by date completed',
+    columnName: 'Date Completed',
+    backendCanSort: true,
+    enableFilter: true,
+    valueFunction: (task) => {
+      return moment(task.closedAt).format('MM/DD/YYYY');
+    },
+    getSortValue: (task) => new Date(task.closedAt)
   };
 };
