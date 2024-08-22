@@ -19,7 +19,7 @@ class Api::V1::VaNotifyController < Api::ApplicationController
   private
 
   def va_notify_params
-    permitted_params = params.permit(:id, :notification_type, :status, :status_reason, :to)
+    params.permit(:id, :notification_type, :status, :status_reason, :to)
   end
 
   def build_message_body
