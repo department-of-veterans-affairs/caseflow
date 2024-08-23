@@ -13,9 +13,12 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
       returned_appeal_job = create_returned_appeal_job
       fail if fail_job
 
-      appeals = LegacyDocket.new.appeals_tied_to_non_ssc_avljs
-      moved_appeals = move_qualifying_appeals(appeals)
+      appeals, moved_appeals = eligible_and_moved_appeals
+
       complete_returned_appeal_job(returned_appeal_job, "Job completed successfully", moved_appeals)
+
+      # Filter the appeals and send the filtered report
+      @filtered_appeals = filter_appeals(appeals, moved_appeals)
       send_job_slack_report
     rescue StandardError => error
       message = "Job failed with error: #{error.message}"
@@ -30,6 +33,40 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
       @start_time ||= Time.zone.now
       metrics_service_report_runtime(metric_group_name: "return_legacy_appeals_to_board_job")
     end
+  end
+
+  def filter_appeals(appeals, moved_appeals)
+    priority_appeals_moved, non_priority_appeals_moved = separate_by_priority(moved_appeals)
+
+    remaining_priority_appeals,
+    remaining_non_priority_appeals = calculate_remaining_appeals(
+      appeals,
+      priority_appeals_moved,
+      non_priority_appeals_moved
+    )
+
+    {
+      priority_appeals_count: count_unique_bfkeys(priority_appeals_moved),
+      non_priority_appeals_count: count_unique_bfkeys(non_priority_appeals_moved),
+      remaining_priority_appeals_count: count_unique_bfkeys(remaining_priority_appeals),
+      remaining_non_priority_appeals_count: count_unique_bfkeys(remaining_non_priority_appeals),
+      moved_avljs: fetch_moved_avljs(moved_appeals),
+      grouped_by_avlj: grouped_by_avlj(moved_appeals)
+    }
+  end
+
+  def eligible_and_moved_appeals
+    appeals = LegacyDocket.new.appeals_tied_to_non_ssc_avljs
+    moved_appeals = move_qualifying_appeals(appeals)
+    [appeals, moved_appeals]
+  end
+
+  def grouped_by_avlj(moved_appeals)
+    moved_appeals.group_by { |appeal| VACOLS::Staff.find_by(sattyid: appeal["vlj"])&.sattyid }.keys.compact
+  end
+
+  def count_unique_bfkeys(appeals)
+    appeals.map { |appeal| appeal["bfkey"] }.uniq.size
   end
 
   private
@@ -52,32 +89,6 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
     end
 
     qualifying_appeals
-  end
-
-  def non_ssc_avljs
-    VACOLS::Staff.where("sactive = 'A' AND svlj = 'A' AND sattyid <> smemgrp")
-  end
-
-  def create_returned_appeal_job
-    ReturnedAppealJob.create!(
-      started_at: Time.zone.now,
-      stats: { message: "Job started" }.to_json
-    )
-  end
-
-  def complete_returned_appeal_job(returned_appeal_job, message, appeals)
-    returned_appeal_job.update!(
-      completed_at: Time.zone.now,
-      stats: { message: message }.to_json,
-      returned_appeals: appeals.map { |appeal| appeal["bfkey"] }
-    )
-  end
-
-  def errored_returned_appeal_job(returned_appeal_job, message)
-    returned_appeal_job.update!(
-      errored_at: Time.zone.now,
-      stats: { message: message }.to_json
-    )
   end
 
   def get_tied_appeal_bfkeys(tied_appeals)
@@ -106,6 +117,65 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
     qualifying_appeals_bfkeys.flatten
   end
 
+  def non_ssc_avljs
+    VACOLS::Staff.where("sactive = 'A' AND svlj = 'A' AND sattyid <> smemgrp")
+  end
+
+  # Method to separate appeals by priority
+  def separate_by_priority(appeals)
+    priority_appeals = appeals.select { |appeal| appeal["priority"] == 1 }
+    non_priority_appeals = appeals.select { |appeal| appeal["priority"] == 0 }
+    [priority_appeals, non_priority_appeals]
+  end
+
+  # Method to calculate remaining eligible appeals
+  def calculate_remaining_appeals(all_appeals, moved_priority_appeals, moved_non_priority_appeals)
+    remaining_priority_appeals = (
+      all_appeals.select { |appeal| appeal["priority"] == 1 } -
+      moved_priority_appeals
+    )
+    remaining_non_priority_appeals = (
+      all_appeals.select { |appeal| appeal["priority"] == 0 } -
+      moved_non_priority_appeals
+    )
+    [remaining_priority_appeals, remaining_non_priority_appeals]
+  end
+
+  # Method to fetch non-SSC AVLJs that appeals were moved to location '63'
+  def fetch_moved_avljs(moved_appeals)
+    moved_appeals.map { |appeal| VACOLS::Staff.find_by(sattyid: appeal["vlj"]) }
+      .compact
+      .uniq
+      .map { |record| get_name_from_record(record) }
+  end
+
+  def get_name_from_record(record)
+    FullName.new(record["snamef"], nil, record["snamel"]).to_s
+  end
+
+  def create_returned_appeal_job
+    ReturnedAppealJob.create!(
+      started_at: Time.zone.now,
+      stats: { message: "Job started" }.to_json
+    )
+  end
+
+  def complete_returned_appeal_job(returned_appeal_job, message, appeals)
+    appeals ||= []
+    returned_appeal_job.update!(
+      completed_at: Time.zone.now,
+      stats: { message: message }.to_json,
+      returned_appeals: appeals.map { |appeal| appeal["bfkey"] }
+    )
+  end
+
+  def errored_returned_appeal_job(returned_appeal_job, message)
+    returned_appeal_job.update!(
+      errored_at: Time.zone.now,
+      stats: { message: message }.to_json
+    )
+  end
+
   def send_job_slack_report
     slack_service.send_notification(slack_report.join("\n"), self.class.name)
   end
@@ -113,6 +183,12 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
   def slack_report
     report = []
     report << "Job performed successfully"
+    report << "Priority Appeals Moved: #{@filtered_appeals[:priority_appeals_count]}"
+    report << "Non-Priority Appeals Moved: #{@filtered_appeals[:non_priority_appeals_count]}"
+    report << "Remaining Priority Appeals: #{@filtered_appeals[:remaining_priority_appeals_count]}"
+    report << "Remaining Non-Priority Appeals: #{@filtered_appeals[:remaining_non_priority_appeals_count]}"
+    report << "Moved AVLJs: #{@filtered_appeals[:moved_avljs].join(', ')}"
+    report << "Grouped by AVLJ: #{@filtered_appeals[:grouped_by_avlj].join(', ')}"
     report
   end
 end
