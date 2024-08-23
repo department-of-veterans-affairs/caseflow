@@ -47,6 +47,10 @@ const CorrespondenceCompleteTaskModal = (props) => {
 
   const submit = () => {
 
+    let correspondence = props.correspondenceInfo;
+
+    const updatedTask = correspondence.tasksUnrelatedToAppeal.find((task) => parseInt(props.task_id, 10) === parseInt(task.uniqueId, 10));
+
     const payload = {
       data: {
         task: {
@@ -57,12 +61,21 @@ const CorrespondenceCompleteTaskModal = (props) => {
       }
     };
 
-    props.setShowActionsDropdown(false);
+    const frontendParams = {
+      taskId: props.task_id,
+      taskName: updatedTask.label,
+      teamName: updatedTask.assignedTo
+    };
 
-    // Where my props at, bro?
-    // this does not work, unable to pass details to banner: FIXME
+    // props.setShowActionsDropdown(false);
 
-    return props.completeTaskNotRelatedToAppeal(props.task_id, props.task, props.team, payload);
+    // let filteredTasks = props.correspondenceInfo.tasksUnrelatedToAppeal.filter((task) => parseInt(task.uniqueId, 10) !== parseInt(props.task_id, 10));
+
+    // let tempCor = correspondence.tasksUnrelatedToAppeal.find((task) => parseInt(props.task_id, 10) === parseInt(task.uniqueId, 10)).status;
+
+    // tempCor.tasksUnrelatedToAppeal = filteredTasks;
+
+    return props.completeTaskNotRelatedToAppeal(payload, frontendParams, correspondence);
 
   };
 
@@ -122,10 +135,12 @@ CorrespondenceCompleteTaskModal.propTypes = {
     }),
     taskId: PropTypes.string,
     type: PropTypes.string,
+    label: PropTypes.string,
     onHoldDuration: PropTypes.number
   }),
   task_id: PropTypes.string,
-  correspondence_uuid: PropTypes.number,
+  correspondence_uuid: PropTypes.string,
+  correspondenceInfo: PropTypes.func,
   team: PropTypes.string
 };
 

@@ -1,5 +1,6 @@
 import { ACTIONS } from './correspondenceDetailsConstants';
 import ApiUtil from '../../../util/ApiUtil';
+import { sprintf } from 'sprintf-js';
 // eslint-disable-next-line import/extensions
 import CORRESPONDENCE_DETAILS_BANNERS from '../../../../constants/CORRESPONDENCE_DETAILS_BANNERS.json';
 
@@ -39,17 +40,28 @@ export const cancelTaskNotRelatedToAppeal = (taskID, payload) => (dispatch) => {
     });
 };
 
-export const completeTaskNotRelatedToAppeal = (taskID, payload) => (dispatch) => {
+export const completeTaskNotRelatedToAppeal = (payload, frontendParams, correspondence) => (dispatch) => {
 
-  return ApiUtil.patch(`/queue/correspondence/tasks/${taskID}/complete`, payload).
+  return ApiUtil.patch(`/queue/correspondence/tasks/${frontendParams.taskId}/complete`, payload).
     then(() => {
 
       dispatch({
         type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
         payload: {
-          // this does not work, unable to pass details to banner: FIXME
-          // bannerAlert: CORRESPONDENCE_DETAILS_BANNERS.completeBanner(task, team)
-          bannerAlert: CORRESPONDENCE_DETAILS_BANNERS.completeBanner
+          bannerAlert: {
+            title: CORRESPONDENCE_DETAILS_BANNERS.completeBanner.title,
+            message: sprintf(CORRESPONDENCE_DETAILS_BANNERS.completeBanner.message,
+              frontendParams.taskName,
+              frontendParams.teamName),
+            type: CORRESPONDENCE_DETAILS_BANNERS.completeBanner.type
+          }
+        }
+      });
+
+      dispatch({
+        type: ACTIONS.CORRESPONDENCE_INFO,
+        payload: {
+          correspondence
         }
       });
 
@@ -58,8 +70,6 @@ export const completeTaskNotRelatedToAppeal = (taskID, payload) => (dispatch) =>
       dispatch({
         type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
         payload: {
-          // this does not work, unable to pass details to banner: FIXME
-          // bannerAlert: CORRESPONDENCE_DETAILS_BANNERS.completeFailBanner(task, team)
           bannerAlert: CORRESPONDENCE_DETAILS_BANNERS.completeFailBanner
         }
       });
