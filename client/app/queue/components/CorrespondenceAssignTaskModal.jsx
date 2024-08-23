@@ -10,16 +10,20 @@ import { requestPatch } from '../uiReducer/uiActions';
 import { taskActionData } from '../utils';
 import TextareaField from '../../components/TextareaField';
 import COPY from '../../../COPY';
-import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import QueueFlowModal from './QueueFlowModal';
-import { setTaskNotRelatedToAppealBanner, assignTaskToUser } from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
+import {
+  setTaskNotRelatedToAppealBanner,
+  assignTaskToUser
+} from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
 import SearchableDropdown from '../../components/SearchableDropdown';
 
 /* eslint-disable camelcase */
 const CorrespondenceAssignTaskModal = (props) => {
   const userData = () => {
     const storeData = useSelector((state) =>
-      state.correspondenceDetails.correspondenceInfo.tasksUnrelatedToAppeal.find((task) => parseInt(task.uniqueId, 10) === parseInt(props.task_id, 10)).reassignUsers[0]
+      state.correspondenceDetails.correspondenceInfo.tasksUnrelatedToAppeal.find(
+        (task) => parseInt(task.uniqueId, 10) === parseInt(props.task_id, 10)
+      ).reassignUsers[0]
     );
 
     return storeData.map((userIteration) => {
@@ -30,7 +34,6 @@ const CorrespondenceAssignTaskModal = (props) => {
     });
   };
 
-  // const { task } = props;
   const taskData = taskActionData(props);
 
   // Show task instructions by default
@@ -63,48 +66,27 @@ const CorrespondenceAssignTaskModal = (props) => {
     setAssignee(user?.value);
   };
 
-  // const getDate = () => {
-  //   const date = new Date();
-
-  //   let day = date.getDate();
-  //   let month = date.getMonth() + 1;
-  //   let year = date.getFullYear();
-
-  //   // This arrangement can be altered based on how we want the date's format to appear.
-  //   let currentDate = `${month}/${day}/${year}`;
-
-  //   return currentDate;
-  // }
-
   const updateCorrespondence = () => {
     let tempCor = props.correspondenceInfo;
-    tempCor.tasksUnrelatedToAppeal.find((task) => task.uniqueId == props.task_id).assignedTo = assignee;
-    // tempCor.tasksUnrelatedToAppeal.find((task) => task.uniqueId == props.task_id).assigned_to_type = "User";
-    // tempCor.tasksUnrelatedToAppeal.find((task) => task.uniqueId  == props.task_id).assignedOn = getDate();
-    tempCor.tasksUnrelatedToAppeal.find((task) => task.uniqueId  == props.task_id).instructions = instructions;
+    tempCor.tasksUnrelatedToAppeal.find(
+      (task) => task.uniqueId == props.task_id
+    ).assignedTo = assignee;
+    tempCor.tasksUnrelatedToAppeal.find(
+      (task) => task.uniqueId  == props.task_id
+    ).instructions = instructions;
 
     return tempCor;
   }
 
   const submit = () => {
-    // const currentInstruction = (props.task.type === 'PostSendInitialNotificationLetterHoldingTask' ?
-    //   `\nHold time: ${currentDaysOnHold(task)}/${task.onHoldDuration} days\n\n ${instructions}` : formatInstructions());
-
-    // // eslint-disable-next-line no-debugger
-    // debugger;
-    // console.log(currentInstruction);
-
     const payload = {
       data: {
-        // status: TASK_STATUSES.assigned,
         assigned_to: assignee,
-        // assigned_at: getDate(),
         instructions: instructions,
-        // type: "User",
         ...(taskData?.business_payloads && { business_payloads: taskData?.business_payloads })
       }
     };
-    // debugger;
+
     return props.assignTaskToUser(props.task_id, updateCorrespondence, payload);
   };
 
@@ -114,7 +96,9 @@ const CorrespondenceAssignTaskModal = (props) => {
       button="Assign Task"
       submitDisabled= {!validateForm()}
       submitButtonClassNames= {'usa-button'}
-      pathAfterSubmit={taskData?.redirect_after ?? `/queue/correspondence/${props.correspondence_uuid}`}
+      pathAfterSubmit={
+        taskData?.redirect_after ?? `/queue/correspondence/${props.correspondence_uuid}`
+      }
       submit={submit}
       validateForm={validateForm}
     >
@@ -141,7 +125,9 @@ const CorrespondenceAssignTaskModal = (props) => {
       {shouldShowTaskInstructions &&
         <TextareaField
           // name={taskData?.instructions_label ?? COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}
-          name={taskData?.instructions_label ?? COPY.CORRESPONDENCE_CASES_ASSIGN_TASK_MODAL_INSTRUCTIONS_TITLE}
+          name={
+            taskData?.instructions_label ?? COPY.CORRESPONDENCE_CASES_ASSIGN_TASK_MODAL_INSTRUCTIONS_TITLE
+          }
           id="taskInstructions"
           onChange={setInstructions}
           value={instructions}
