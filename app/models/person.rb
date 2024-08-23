@@ -2,7 +2,7 @@
 
 class Person < CaseflowRecord
   include AssociatedBgsRecord
-  include BgsService
+  include BgsServiceConcern
 
   has_many :advance_on_docket_motions
   has_many :claimants, primary_key: :participant_id, foreign_key: :participant_id

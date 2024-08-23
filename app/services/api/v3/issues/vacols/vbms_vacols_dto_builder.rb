@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 #:reek:TooManyInstanceVariables
-class Api::V3::Issues::Vacols::VbmsVacolsDtoBuilder
+class Api::V3::Issues::VACOLS::VbmsVacolsDtoBuilder
   attr_reader :hash_response, :vacols_issue_count
 
   def initialize(veteran, page, per_page)
@@ -32,7 +32,7 @@ class Api::V3::Issues::Vacols::VbmsVacolsDtoBuilder
       vacols_issues.push(AppealRepository.issues(id))
     end
 
-    serialized_data = Api::V3::Issues::Vacols::VacolsIssueSerializer.new(
+    serialized_data = Api::V3::Issues::VACOLS::VacolsIssueSerializer.new(
       Kaminari.paginate_array(vacols_issues.flatten).page(page).per(offset)
     ).serializable_hash[:data]
 

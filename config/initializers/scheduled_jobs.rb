@@ -1,7 +1,5 @@
-require "./app/jobs/batch_processes/priority_ep_sync_batch_process_job.rb"
-require "./app/jobs/batch_processes/batch_process_rescue_job.rb"
-
-SCHEDULED_JOBS = {
+Rails.application.config.after_initialize do
+  SCHEDULED_JOBS = {
     "amo_metrics_report" => AMOMetricsReportJob,
     "annual_metrics" => AnnualMetricsReportJob,
     "priority_ep_sync_batch_process_job" => PriorityEpSyncBatchProcessJob,
@@ -51,4 +49,5 @@ SCHEDULED_JOBS = {
     "process_notification_status_updates_job" => ProcessNotificationStatusUpdatesJob,
     "stuck_job_scheduler_job" => StuckJobSchedulerJob,
     "ineligible_judges_job" => IneligibleJudgesJob
-}.freeze
+  }.freeze
+end

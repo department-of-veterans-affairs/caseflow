@@ -1,0 +1,36 @@
+# frozen_string_literal: true
+
+Rails.autoloaders.each do |autoloader|
+  autoloader.inflector.inflect(
+    "amo_metrics_report_job" => "AMOMetricsReportJob",
+    "appeals_for_poa" => "AppealsForPOA",
+    "bgs_service" => "BGSService",
+    "bgs_service_grants" => "BGSServiceGrants",
+    "bgs_service_poa" => "BGSServicePOA",
+    "bgs_service_record_maker" => "BGSServiceRecordMaker",
+    "bva_appeal_status" => "BVAAppealStatus",
+    "cavc_decision" => "CAVCDecision",
+    "cavc_case_decision" => "CAVCCaseDecision",
+    "cavc_decision_repository" => "CAVCDecisionRepository",
+    "cda_control_group" => "CDAControlGroup",
+    "db_service" => "DBService",
+    "duplicate_veteran_participant_id_finder" => "DuplicateVeteranParticipantIDFinder",
+    "etl" => "ETL",
+    "etl_builder_job" => "ETLBuilderJob",
+    "etl_classes" => "ETLClasses",
+    "hlr_status_serializer" => "HLRStatusSerializer",
+    "mpi_service" => "MPIService",
+    "sc_status_serializer" => "SCStatusSerializer",
+    "sync_attributes_with_bgs" => "SyncAttributesWithBGS",
+    "update_poa_concern" => "UpdatePOAConcern",
+    "vacols" => "VACOLS",
+    "vacols_csv_reader" => "VacolsCSVReader",
+    "va_dot_gov_service" => "VADotGovService",
+    "va_notify_send_message_template" => "VANotifySendMessageTemplate",
+    "va_notify_service" => "VANotifyService",
+    "va_notify_status_update_job" => "VANotifyStatusUpdateJob",
+    "vbms_request" => "VBMSRequest",
+    "vbms_service" => "VBMSService",
+    "veteran_record_requests_open_for_vre_query" => "VeteranRecordRequestsOpenForVREQuery",
+  )
+end

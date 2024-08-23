@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # :reek:InstanceVariableAssumption
-class Api::V3::Issues::Vacols::VeteransController < Api::V3::BaseController
+class Api::V3::Issues::VACOLS::VeteransController < Api::V3::BaseController
   # The max amount of Issues that can be paginated on a single page
   DEFAULT_UPPER_BOUND_PER_PAGE = ENV["REQUEST_ISSUE_DEFAULT_UPPER_BOUND_PER_PAGE"].to_i
   include ApiV3FeatureToggleConcern
@@ -52,8 +52,8 @@ class Api::V3::Issues::Vacols::VeteransController < Api::V3::BaseController
     (page.nil? || page <= 0) ? page = 1 : page ||= 1
 
     MetricsService.record("VACOLS: Get VACOLS Issues information for Veteran",
-                          name: "Api::V3::Issues::Vacols::VeteransController.show") do
-      render_vacols_issues(Api::V3::Issues::Vacols::VbmsVacolsDtoBuilder.new(@veteran, page, per_page))
+                          name: "Api::V3::Issues::VACOLS::VeteransController.show") do
+      render_vacols_issues(Api::V3::Issues::VACOLS::VbmsVacolsDtoBuilder.new(@veteran, page, per_page))
     end
   end
 

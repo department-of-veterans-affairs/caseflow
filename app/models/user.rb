@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
-  include BgsService
+  include BgsServiceConcern
 
   has_many :dispatch_tasks, class_name: "Dispatch::Task"
   has_many :document_views
