@@ -19,8 +19,7 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 const CorrespondenceAssignTaskModal = (props) => {
   const userData = () => {
     const storeData = useSelector((state) =>
-      state.correspondenceDetails.correspondenceInfo.tasksUnrelatedToAppeal.find((task) => parseInt(task.uniqueId, 10) ===
-                                                                                  parseInt(props.task_id, 10)).reassignUsers[0]
+      state.correspondenceDetails.correspondenceInfo.tasksUnrelatedToAppeal.find((task) => parseInt(task.uniqueId, 10) === parseInt(props.task_id, 10)).reassignUsers[0]
     );
 
     return storeData.map((userIteration) => {
@@ -31,7 +30,7 @@ const CorrespondenceAssignTaskModal = (props) => {
     });
   };
 
-  const { task } = props;
+  // const { task } = props;
   const taskData = taskActionData(props);
 
   // Show task instructions by default

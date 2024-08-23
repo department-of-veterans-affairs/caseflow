@@ -34,7 +34,7 @@ class CorrespondenceMailTask < CorrespondenceTask
     # return the users from other orgs
     if assigned_to.is_a?(User)
       users_list = []
-      assigned_to.organizations.each { |org| users_list << org.users.reject { |user| user == assigned_to} }
+      assigned_to.organizations.each { |org| users_list << org.users.reject { |user| user == assigned_to}.pluck(:css_id) }
       users_list.flatten
     end
 
