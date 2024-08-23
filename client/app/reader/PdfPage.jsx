@@ -1,6 +1,6 @@
 import React from 'react';
 import Mark from 'mark.js';
-import uuid, { v4 as uuidv4 } from 'uuid';
+import uuid from 'uuid';
 
 import CommentLayer from './CommentLayer';
 import { connect } from 'react-redux';
@@ -12,7 +12,7 @@ import { bindActionCreators } from 'redux';
 import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, SEARCH_BAR_HEIGHT, PAGE_DIMENSION_SCALE, PAGE_MARGIN } from './constants';
 import { pageNumberOfPageIndex } from './utils';
 import * as PDFJS from 'pdfjs-dist';
-import { recordMetrics, recordAsyncMetrics, storeMetrics } from '../util/Metrics';
+import { recordAsyncMetrics, storeMetrics } from '../util/Metrics';
 
 import { css } from 'glamor';
 import classNames from 'classnames';
@@ -213,8 +213,6 @@ export class PdfPage extends React.PureComponent {
     });
   };
 
-  getText = (page) => page.getTextContent();
-
   // Set up the page component in the Redux store. This includes the page dimensions, text,
   // and PDFJS page object.
   setUpPage = () => {
@@ -236,30 +234,6 @@ export class PdfPage extends React.PureComponent {
 
       pageResult.then((page) => {
         this.page = page;
-
-        const textMetricData = {
-          message: `Storing PDF page ${this.props.pageIndex + 1} text in Redux`,
-          product: 'reader',
-          type: 'performance',
-          data: this.props.metricsAttributes,
-          eventId: this.props.metricsIdentifier
-        };
-
-        const readerRenderText = {
-          uuid: uuidv4(),
-          message: `Rendering PDF page ${this.props.pageIndex + 1} text`,
-          type: 'performance',
-          product: 'reader',
-          data: this.props.metricsAttributes,
-          eventId: this.props.metricsIdentifier
-        };
-
-        const textResult = recordAsyncMetrics(this.getText(page), textMetricData, pageAndTextFeatureToggle);
-
-        textResult.then((text) => {
-          recordMetrics(this.drawText(page, text), readerRenderText,
-            this.props.featureToggles.metricsReaderRenderText);
-        });
 
         this.drawPage(page).then();
       }).catch((error) => {
