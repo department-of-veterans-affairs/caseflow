@@ -81,7 +81,7 @@ export const recipientInformationColumn = (notifications) => {
     tableData: notifications,
     valueName: 'Recipient Information',
     // eslint-disable-next-line no-negated-condition
-    valueFunction: (notification) => notification.status !== 'delivered' ? '—' : notification.recipient_information
+    valueFunction: (notification) => notification.recipient_information ?? '—'
   };
 };
 
