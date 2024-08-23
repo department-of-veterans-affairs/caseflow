@@ -738,7 +738,7 @@ module Seeds
         create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "TiedToBVAEEMARD", snamel: "25DaysAffinity").ssn}S",  judge: affinity_and_tied_to_judge, attorney: attorney, affinity_start_date: 25.days.ago)
         create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "TiedToBVAEEMARD", snamel: "3DaysAffinity").ssn}S",  judge: affinity_and_tied_to_judge, attorney: attorney, affinity_start_date: 3.days.ago)
         create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "TiedToBVAEEMARD", snamel: "NoAppealAffinity").ssn}S",  judge: affinity_and_tied_to_judge, attorney: attorney, appeal_affinity: false)
-        create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "TiedToBVAGSPORER", snamel: "60DaysAffinity").ssn}S",  judge: affinity_judge, attorney: attorney)
+        create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "TiedToBVAGSPORER", snamel: "60DaysAffinity").ssn}S", attorney: attorney)
         create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "TiedToBVAGSPORER", snamel: "25DaysAffinity").ssn}S",  judge: affinity_judge, attorney: attorney, affinity_start_date: 25.days.ago)
         create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "TiedToBVAGSPORER", snamel: "3DaysAffinity").ssn}S",  judge: affinity_judge, attorney: attorney, affinity_start_date: 3.days.ago)
         create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "TiedToBVAGSPORER", snamel: "NoAppealAffinity").ssn}S",  judge: affinity_judge, attorney: attorney, appeal_affinity: false)
@@ -817,7 +817,7 @@ module Seeds
     def create_cases_for_aoj_affinity_days_lever_ineligible_judge
       # ineligible judge cases:
         # no hearing held but has previous decision
-        create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "AffinityToIneligibleUser", snamel: "60DaysAffinity").ssn}S", judge: affinity_judge, attorney: attorney, tied_to: false)
+        create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "AffinityToIneligibleUser", snamel: "60DaysAffinity").ssn}S", judge: ineligible_judge, attorney: attorney, tied_to: false)
         create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "AffinityToIneligibleUser", snamel: "25DaysAffinity").ssn}S", judge: ineligible_judge, attorney: attorney,
                                       tied_to: false, affinity_start_date: 25.days.ago)
         create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "AffinityToIneligibleUser", snamel: "3DaysAffinity").ssn}S", judge: ineligible_judge, attorney: attorney,
