@@ -58,7 +58,8 @@ const styles = css({
     left: '-200px'
   },
   '& .cf-table-wrapper': {
-    minHeight: '620px'
+    minHeight: '620px',
+    overflow: 'unset'
   }
 });
 
