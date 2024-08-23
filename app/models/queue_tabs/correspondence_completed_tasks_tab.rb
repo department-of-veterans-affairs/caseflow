@@ -19,15 +19,12 @@ class CorrespondenceCompletedTasksTab < CorrespondenceQueueTab
 
   def tasks
     # root task ids for all the assignee's tasks
-    potential_root_task_ids = assignee.tasks.select(:parent_id)
+    potential_root_tasks = assignee.tasks.select(:parent_id)
       .where(status: Constants.TASK_STATUSES.completed).distinct.pluck(:parent_id)
 
-    # root task ids within the subset created above with open child tasks
-    ids_to_exclude = CorrespondenceTask.select(:parent_id)
-      .where(parent_id: potential_root_task_ids)
-      .open.distinct.pluck(:parent_id)
-
-    CorrespondenceRootTask.includes(*task_includes).where(id: potential_root_task_ids - ids_to_exclude)
+    CorrespondenceTask.includes(*task_includes).where(
+      id: potential_root_tasks
+    ).completed_root_tasks
   end
 
   # :reek:UtilityFunction

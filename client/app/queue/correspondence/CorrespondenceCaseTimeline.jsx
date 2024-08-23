@@ -4,8 +4,10 @@ import CorrespondenceTaskRows from './CorrespondenceTaskRows';
 const CorrespondenceCaseTimeline = (props) => {
 
   const getAvailableActions = (task) => {
-    if (props.organizations.includes(task.assigned_to) || props.userCssId === task.assigned_to) {
-      return task.available_actions;
+    const organizations = props.organizations || [];
+
+    if (organizations.includes(task.assigned_to) || props.userCssId === task.assigned_to) {
+      return task.available_actions || [];
     }
 
     return [];
@@ -13,7 +15,7 @@ const CorrespondenceCaseTimeline = (props) => {
   };
 
   const formatTaskData = () => {
-    return (props.correspondence.tasksUnrelatedToAppeal.map((task) => {
+    return (props.tasksToDisplay?.map((task) => {
       return {
         assignedOn: task.assigned_at,
         assignedTo: task.assigned_to,
@@ -44,6 +46,7 @@ CorrespondenceCaseTimeline.propTypes = {
   loadCorrespondence: PropTypes.func,
   correspondence: PropTypes.object,
   organizations: PropTypes.array,
+  tasksToDisplay: PropTypes.array,
   userCssId: PropTypes.string
 };
 

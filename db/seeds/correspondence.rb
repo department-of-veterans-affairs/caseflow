@@ -36,12 +36,13 @@ module Seeds
       end
     end
 
+    # :reek:FeatureEnvy
     def create_auto_assign_levers
       correspondence_auto_assignment_levers.each do |lever|
-        CorrespondenceAutoAssignmentLever.find_or_create_by(name: lever[:name]) do |l|
-          l.description = lever[:description]
-          l.value = lever[:value]
-          l.enabled = lever[:enabled]
+        CorrespondenceAutoAssignmentLever.find_or_create_by(name: lever[:name]) do |lev|
+          lev.description = lever[:description]
+          lev.value = lever[:value]
+          lev.enabled = lever[:enabled]
         end
       end
     end
@@ -58,37 +59,12 @@ module Seeds
     end
 
     def create_correspondence_types
-      correspondence_types_list =
-        ["Abeyance",
-         "Attorney Inquiry",
-         "CAVC Correspondence",
-         "Change of address",
-         "Congressional interest",
-         "CUE related",
-         "Death certificate",
-         "Evidence or argument",
-         "Extension request",
-         "FOIA request",
-         "Hearing Postponement Request",
-         "Hearing related",
-         "Hearing Withdrawal Request",
-         "Advance on docket",
-         "Motion for reconsideration",
-         "Motion to vacate",
-         "Other motions",
-         "Power of attorney related",
-         "Privacy Act complaints",
-         "Privacy Act request",
-         "Returned as undeliverable mail",
-         "Status Inquiry",
-         "Thurber",
-         "Withdrawal of appeal"]
-
       correspondence_types_list.each do |type|
         CorrespondenceType.find_or_create_by(name: type)
       end
     end
 
+    # rubocop:disable Metrics/MethodLength
     def correspondence_auto_texts
       [
         "Address updated in VACOLS",
@@ -113,6 +89,36 @@ module Seeds
         "VAF 9 (specify)"
       ]
     end
+
+    def correspondence_types_list
+      [
+        "Abeyance",
+        "Attorney Inquiry",
+        "CAVC Correspondence",
+        "Change of address",
+        "Congressional interest",
+        "CUE related",
+        "Death certificate",
+        "Evidence or argument",
+        "Extension request",
+        "FOIA request",
+        "Hearing Postponement Request",
+        "Hearing related",
+        "Hearing Withdrawal Request",
+        "Advance on docket",
+        "Motion for reconsideration",
+        "Motion to vacate",
+        "Other motions",
+        "Power of attorney related",
+        "Privacy Act complaints",
+        "Privacy Act request",
+        "Returned as undeliverable mail",
+        "Status Inquiry",
+        "Thurber",
+        "Withdrawal of appeal"
+      ]
+    end
+    # rubocop:enable Metrics/MethodLength
 
     def create_veterans
       veterans = []
@@ -173,6 +179,7 @@ module Seeds
       end
     end
 
+    # :reek:FeatureEnvy
     def create_correspondence_with_unassigned_review_package_task(user = {}, veteran = {})
       corres = create_correspondence(user, veteran)
       # vary days waiting to be able to test column sorting
@@ -218,6 +225,7 @@ module Seeds
       assign_review_package_task(corres, user)
     end
 
+    # :reek:FeatureEnvy
     def create_correspondence_with_action_required_tasks(user = {}, veteran = {})
       corres_array = (1..4).map { create_correspondence(user, veteran) }
       task_array = [ReassignPackageTask, RemovePackageTask, SplitPackageTask, MergePackageTask]
@@ -231,12 +239,15 @@ module Seeds
           appeal_type: "Correspondence",
           assigned_to: InboundOpsTeam.singleton,
           assigned_by_id: rpt.assigned_to_id,
+          status: Constants.TASK_STATUSES.assigned,
           instructions: ["Test instructions for #{task_array[index]&.name}."]
         )
         pat.update(assigned_at: corres.va_date_of_receipt)
+        rpt.update!(status: Constants.TASK_STATUSES.on_hold)
       end
     end
 
+    # :reek:FeatureEnvy
     def create_correspondences_with_review_remove_package_tasks
       corres_array = (1..2).map { create(:correspondence) }
       task_array = [ReassignPackageTask, RemovePackageTask]
@@ -249,8 +260,10 @@ module Seeds
           appeal_id: corres.id,
           assigned_to: InboundOpsTeam.singleton,
           assigned_by_id: rpt.assigned_to_id,
+          status: Constants.TASK_STATUSES.assigned,
           instructions: ["Test instructions for #{task_array[index]&.name}."]
         )
+        rpt.update!(status: Constants.TASK_STATUSES.on_hold)
       end
     end
 
