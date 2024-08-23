@@ -14,6 +14,16 @@ const defaultAlert = {
   type: '',
 };
 
+const styles = css({
+  '& .cf-dropdown': {
+    marginRight: 0
+  },
+  '& h1': {
+    display: 'inline-block',
+    marginBottom: 0
+  }
+});
+
 export const TranscriptionFileDispatchView = () => {
   const [alert, setAlert] = useState(defaultAlert);
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -63,9 +73,11 @@ export const TranscriptionFileDispatchView = () => {
         />
       )}
 
-      <AppSegment filledBackground >
-        <h1 {...css({ display: 'inline-block', marginBottom: '0' })}>Transcription file dispatch</h1>
-        <QueueOrganizationDropdown organizations={[{ name: 'Transcription', url: 'transcription-team' }]} />
+      <AppSegment filledBackground>
+        <div {...styles}>
+          <h1>Transcription file dispatch</h1>
+          <QueueOrganizationDropdown organizations={[{ name: 'Transcription', url: 'transcription-team' }]} />
+        </div>
         <TabWindow
           name="transcription-tabwindow"
           defaultPage={0}
