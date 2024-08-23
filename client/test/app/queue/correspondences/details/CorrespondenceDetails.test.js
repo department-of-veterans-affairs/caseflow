@@ -381,6 +381,18 @@ describe('CorrespondenceDetails', () => {
 
 
 
+    // Appeals related
+    const tasksAddedTextCount = screen.getAllByText('Tasks added to appeal').length;
+
+    expect(tasksAddedTextCount).toBe(2);
+    expect(screen.getByText('240714-253')).toBeInTheDocument();
+    expect(screen.getByText('240714-254')).toBeInTheDocument();
+    expect(screen.getByText('VLJ Support Staff')).toBeInTheDocument();
+    expect(screen.getByText('Hearing Admin')).toBeInTheDocument();
+
+
+
+
     // Clicks on the Package Details Tab and tests its expectations
     fireEvent.click(packageDetailsTab);
     expect(screen.getByText('Veteran Details')).toBeInTheDocument();
