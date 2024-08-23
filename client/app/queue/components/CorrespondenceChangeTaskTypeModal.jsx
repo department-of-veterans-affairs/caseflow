@@ -40,9 +40,22 @@ const CorrespondenceChangeTaskTypeModal = (props) => {
       newType: typeOption.label
     };
 
+    const updatedTasks = props.correspondenceInfo.tasksUnrelatedToAppeal.map((filteredTask) => {
+      if (parseInt(filteredTask.uniqueId, 10) === parseInt(props.task_id, 10)) {
+        filteredTask.label = typeOption.label;
+        filteredTask.instructions = `${filteredTask.instructions}, ${instructions}`;
+      }
+
+      return filteredTask;
+    });
+
+    const tempCor = props.correspondenceInfo;
+
+    tempCor.tasksUnrelatedToAppeal = updatedTasks;
+
     props.setShowActionsDropdown(false);
 
-    return props.changeTaskTypeNotRelatedToAppeal(props.task_id, payload, typeNames);
+    return props.changeTaskTypeNotRelatedToAppeal(props.task_id, payload, typeNames, tempCor);
   };
 
   const actionForm = () => (
