@@ -108,7 +108,7 @@ jobs:
 
       # We run yarn install after loading the cache to update any dependencies if their version is different
       - name: Install Node Dependencies
-        run: ./ci-bin/capture-log "cd client && yarn install --frozen-lockfile --prefer-offline"
+        run: ./ci-bin/capture-log "cd client && yarn install --force"
 
       - name: Save Yarn Cache
         if: steps.cache-yarn-cache.outputs.cache-hit != 'true'
