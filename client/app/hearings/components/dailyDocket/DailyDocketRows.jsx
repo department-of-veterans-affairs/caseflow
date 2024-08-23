@@ -62,7 +62,15 @@ export default class DailyDocketHearingRows extends React.Component {
   }
 
   render() {
-    const { readOnly, regionalOffice, openDispositionModal, user, saveHearing, hidePreviouslyScheduled } = this.props;
+    const {
+      readOnly,
+      regionalOffice,
+      openDispositionModal,
+      user,
+      saveHearing,
+      hidePreviouslyScheduled,
+      hearingDayDate
+    } = this.props;
 
     return (
       <div {...rowsMargin}>
@@ -80,6 +88,7 @@ export default class DailyDocketHearingRows extends React.Component {
                 saveHearing={saveHearing}
                 regionalOffice={regionalOffice}
                 openDispositionModal={openDispositionModal}
+                hearingDayDate={hearingDayDate}
               />
             ))}
         </div>
@@ -89,7 +98,7 @@ export default class DailyDocketHearingRows extends React.Component {
 }
 
 DailyDocketHearingRows.propTypes = {
-  hearings: PropTypes.array,
+  hearings: PropTypes.object,
   openDispositionModal: PropTypes.func,
   readOnly: PropTypes.bool,
   regionalOffice: PropTypes.string,
@@ -97,5 +106,6 @@ DailyDocketHearingRows.propTypes = {
   hidePreviouslyScheduled: PropTypes.bool,
   user: PropTypes.shape({
     userHasHearingPrepRole: PropTypes.bool
-  })
+  }),
+  hearingDayDate: PropTypes.string
 };

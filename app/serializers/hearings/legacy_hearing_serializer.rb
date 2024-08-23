@@ -123,6 +123,8 @@ class LegacyHearingSerializer
     params[:user]&.timezone
   end
 
+  attribute :scheduled_in_timezone
+
   attribute :worksheet_issues, &:prepare_worksheet_issues
   attribute :mst do |object|
     object.appeal.mst?
