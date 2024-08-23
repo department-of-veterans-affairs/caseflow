@@ -916,7 +916,6 @@ describe HearingMailer do
         end
 
         describe "appellant_tz is not present" do
-
           before { hearing_email_recipient.update(timezone: nil) }
 
           it "displays eastern standard time (ET)" do
