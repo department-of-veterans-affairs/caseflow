@@ -96,16 +96,6 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     RequestIssue.from_intake_data(issue_data, decision_review: review)
   end
 
-  def validate_before_perform
-    if !changes?
-      @error_code = :no_changes
-    elsif RequestIssuesUpdate.where(review: review).where.not(id: id).processable.exists?
-      @error_code = :previous_update_not_done_processing
-    end
-
-    !@error_code
-  end
-
   def fetch_withdrawn_issues
     RequestIssue.where(id: withdrawn_request_issue_ids)
   end
