@@ -64,7 +64,7 @@ export const TranscriptionFileDispatchView = () => {
       )}
 
       <AppSegment filledBackground >
-        <h1 {...css({ display: 'inline-block' })}>Transcription file dispatch</h1>
+        <h1 {...css({ display: 'inline-block', marginBottom: '0' })}>Transcription file dispatch</h1>
         <QueueOrganizationDropdown organizations={[{ name: 'Transcription', url: 'transcription-team' }]} />
         <TabWindow
           name="transcription-tabwindow"

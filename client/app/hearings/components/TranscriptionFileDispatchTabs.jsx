@@ -25,11 +25,13 @@ const styles = {
   },
   linkStyles: {
     display: 'inline-flex',
-    fontSize: 'small',
+    fontSize: '15px',
     cursor: 'pointer',
   },
   linkIconStyles: {
-    marginLeft: '0.2em'
+    marginLeft: '0.2em',
+    position: 'relative',
+    top: '2px'
   },
   filesHeading: {
     margin: '1em 0 1em 0'
