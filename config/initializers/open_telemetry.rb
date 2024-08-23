@@ -2,26 +2,9 @@
 require 'rubygems'
 require 'bundler/setup'
 
-# require 'opentelemetry/instrumentation/all'
 require 'opentelemetry/sdk'
 require 'opentelemetry/exporter/otlp'
-
-require 'opentelemetry/instrumentation/rack'
-require 'opentelemetry/instrumentation/rails'
-require 'opentelemetry/instrumentation/active_record'
-require 'opentelemetry/instrumentation/active_job'
-require 'opentelemetry/instrumentation/action_pack'
-require 'opentelemetry/instrumentation/action_view'
-require 'opentelemetry/instrumentation/active_model_serializers'
-require 'opentelemetry/instrumentation/aws_sdk'
-require 'opentelemetry/instrumentation/concurrent_ruby'
-require 'opentelemetry/instrumentation/faraday'
-require 'opentelemetry/instrumentation/http'
-require 'opentelemetry/instrumentation/http_client'
-require 'opentelemetry/instrumentation/net/http'
-# require 'opentelemetry/instrumentation/net_http'
-# require 'opentelemetry/instrumentation/pg'
-# require 'opentelemetry/instrumentation/redis'
+require 'opentelemetry/instrumentation/all'
 
 # rubocop:disable Layout/LineLength
 
@@ -35,14 +18,15 @@ if !Rails.env.development? && !Rails.env.test? && !Rails.env.demo?
     c.service_name = 'ruby-quickstart'
     c.service_version = '1.0.1'
 
-    config = {
-      'OpenTelemetry::Instrumentation::Redis' => { enabled: false },
-      'OpenTelemetry::Instrumentation::PG' => { enabled: false },
-      'OpenTelemetry::Instrumentation::AwsSdk' => { enabled: false },
-      'OpenTelemetry::Instrumentation::Net::HTTP' => { enabled: false },
-      'OpenTelemetry::Instrumentation::Rack' => { untraced_endpoints: ['/health-check', '/sample', '/logs'] }
-    }
-    c.use_all(config)
+    c.use 'OpenTelemetry::Instrumentation::ActiveRecord'
+    c.use 'OpenTelemetry::Instrumentation::AwsSdk'
+    c.use 'OpenTelemetry::Instrumentation::Net::HTTP'
+    c.use 'OpenTelemetry::Instrumentation::PG'
+    c.use 'OpenTelemetry::Instrumentation::Rack', { untraced_endpoints: ['/health-check', '/sample', '/logs'] }
+    c.use 'OpenTelemetry::Instrumentation::Rails'
+    c.use 'OpenTelemetry::Instrumentation::Redis'
+
+    Rails.logger.info("Loaded instruments")
 
     %w[dt_metadata_e617c525669e072eebe3d0f08212e8f2.properties /var/lib/dynatrace/enrichment/dt_host_metadata.properties].each { |name|
       begin
