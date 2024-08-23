@@ -61,11 +61,17 @@ class CorrespondenceTasksController < TasksController
   end
 
   def assign_to_person
+    # binding.pry
     task = CorrespondenceTask.find(correspondence_tasks_params[:task_id])
     task.update!(
       status: Constants.TASK_STATUSES.assigned,
-      assigned_to: current_user
-      )
+      assigned_to: User.find_by_css_id(correspondence_tasks_params[:assigned_to]),
+      assigned_at: Time.zone.now,
+      # instructions: correspondence_tasks_params[:instructions],
+      # type: correspondence_tasks_params[:type]
+    )
+    # binding.pry
+    task.instructions << correspondence_task_params[:instructions]
   end
 
   private
@@ -81,7 +87,11 @@ class CorrespondenceTasksController < TasksController
       :action_type,
       :type,
       :correspondence_uuid,
-      instructions: []
+      :instructions,
+      # instructions: [],
+      :assigned_to,
+      # :assigned_at,
+      :type
     )
   end
 

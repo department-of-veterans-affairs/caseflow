@@ -39,10 +39,9 @@ export const cancelTaskNotRelatedToAppeal = (taskID, payload) => (dispatch) => {
     });
 };
 
-export const assignTaskToUser = (taskID, payload) => (dispatch) => {
+export const assignTaskToUser = (taskID, correspondence, payload) => (dispatch) => {
 
-
-  return ApiUtil.patch(`/queue/correspondence/tasks/${taskID}/assign_to_user`, payload).
+  return ApiUtil.patch(`/queue/correspondence/tasks/${taskID}/assign_to_person`, payload).
     then(() => {
 
       dispatch({
@@ -52,12 +51,12 @@ export const assignTaskToUser = (taskID, payload) => (dispatch) => {
         }
       });
 
-      // dispatch({
-      //   type: ACTIONS.CORRESPONDENCE_INFO,
-      //   payload: {
-      //     correspondence
-      //   }
-      // });
+      dispatch({
+        type: ACTIONS.CORRESPONDENCE_INFO,
+        payload: {
+          correspondence
+        }
+      });
 
     }).
     catch((error) => {
