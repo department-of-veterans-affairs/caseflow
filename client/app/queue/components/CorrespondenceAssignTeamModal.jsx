@@ -14,13 +14,25 @@ import QueueFlowModal from './QueueFlowModal';
 import {
   setTaskNotRelatedToAppealBanner,
   cancelTaskNotRelatedToAppeal,
-  setShowActionsDropdown } from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
-import Dropdown from '../../components/Dropdown';
+  setShowActionsDropdown
+} from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
 import SearchableDropdown from '../../components/SearchableDropdown';
-
 
 /* eslint-disable camelcase */
 const CorrespondenceAssignTeamModal = (props) => {
+  const { task_id, correspondenceInfo } = props;
+
+  const taskList = correspondenceInfo?.tasksUnrelatedToAppeal?.find(
+    (task) => parseInt(task.uniqueId, 10) === parseInt(task_id, 10)
+  );
+
+  const organizations = taskList?.organizations || [];
+  const organizationOptions = organizations.map((org) => ({
+    label: org.label,
+    value: org.value
+  }));
+
+
   const { task } = props;
   const taskData = taskActionData(props);
 
@@ -59,7 +71,7 @@ const CorrespondenceAssignTeamModal = (props) => {
     'AssessDocumentationTask',
     'EducationAssessDocumentationTask',
     'HearingPostponementRequestMailTask'
-  ].includes(task?.type) || task?.appeal.hasCompletedSctAssignTask) {
+  ].includes(task?.type) || task?.appeal?.hasCompletedSctAssignTask) {
     modalProps.submitButtonClassNames = ['usa-button'];
     modalProps.submitDisabled = !validateForm();
   }
@@ -67,9 +79,9 @@ const CorrespondenceAssignTeamModal = (props) => {
   return (
     <QueueFlowModal
       {...modalProps}
-      title= "Assign Task"
+      title="Assign Task"
       button="Assign Task"
-      submitDisabled= {!validateForm()}
+      submitDisabled={!validateForm()}
       pathAfterSubmit={taskData?.redirect_after ?? `/queue/correspondence/${props.correspondence_uuid}`}
       submit={submit}
       validateForm={validateForm}
@@ -80,27 +92,24 @@ const CorrespondenceAssignTeamModal = (props) => {
           <br />
         </React.Fragment>
       }
-      {
-        <SearchableDropdown
-          name="User dropdown"
-          label="Select a team"
-          creatable
-          placeholder="Select or search"
-          styling={{ marginBottom: '20px' }}
-        />
-      }
+      <SearchableDropdown
+        name="User dropdown"
+        label="Select a team"
+        creatable
+        placeholder="Select or search"
+        styling={{ marginBottom: '20px' }}
+        options={organizationOptions}
+      />
       {shouldShowTaskInstructions &&
         <TextareaField
           name={taskData?.instructions_label ?? COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}
           id="taskInstructions"
-          onChange={setInstructions}
+          onChange={(e) => setInstructions(e.target.value)}
           value={instructions}
         />
       }
     </QueueFlowModal>
   );
-
-
 };
 /* eslint-enable camelcase */
 
@@ -119,12 +128,21 @@ CorrespondenceAssignTeamModal.propTypes = {
     type: PropTypes.string,
     onHoldDuration: PropTypes.number
   }),
-  task_id: PropTypes.string,
-  correspondence_uuid: PropTypes.number,
+  task_id: PropTypes.string.isRequired,
+  correspondence_uuid: PropTypes.string.isRequired,
+  correspondenceInfo: PropTypes.shape({
+    tasksUnrelatedToAppeal: PropTypes.arrayOf(PropTypes.shape({
+      uniqueId: PropTypes.number,
+      organizations: PropTypes.arrayOf(PropTypes.shape({
+        label: PropTypes.string,
+        value: PropTypes.number
+      }))
+    }))
+  })
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  task: taskById(state, { taskId: ownProps.taskId }),
+  task: taskById(state, { taskId: ownProps.task_id }),
   taskNotRelatedToAppealBanner: state.correspondenceDetails.bannerAlert,
   correspondenceInfo: state.correspondenceDetails.correspondenceInfo,
   showActionsDropdown: state.correspondenceDetails.showActionsDropdown,
