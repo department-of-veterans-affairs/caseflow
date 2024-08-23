@@ -161,6 +161,7 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
   end
 
   def complete_returned_appeal_job(returned_appeal_job, message, appeals)
+    appeals ||= []
     returned_appeal_job.update!(
       completed_at: Time.zone.now,
       stats: { message: message }.to_json,
