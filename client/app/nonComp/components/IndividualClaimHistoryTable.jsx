@@ -114,7 +114,7 @@ const IndividualClaimHistoryTable = (props) => {
       { benefitType(details) }
       <b>Current issue type: </b>{details.issueType}<br />
       <b>Current issue description: </b>{details.issueDescription}<br />
-      <b>Current decision date: </b>{formatDecisionDate(details.decidedAtDate)}<br />
+      <b>Current decision date: </b>{formatDecisionDate(details.decisionDate)}<br />
       { previousModificationFragment(details, 'New') }
     </React.Fragment>;
   };

@@ -754,15 +754,19 @@ class ClaimHistoryEvent
       @issue_modification_request_status = change_data["issue_modification_request_status"]
       @requestor = change_data["requestor"]
       @decider = change_data["decider"]
-      @previous_issue_type = change_data["previous_issue_type"] || change_data["requested_issue_type"]
-      @previous_decision_date = change_data["previous_decision_date"] || change_data["requested_decision_date"]
-      @previous_modification_request_reason = change_data["previous_modification_request_reason"] ||
-                                              change_data["modification_request_reason"]
-      @previous_issue_description = change_data["previous_issue_description"] ||
-                                    change_data["requested_issue_description"]
-      @previous_withdrawal_date = change_data["previous_withdrawal_date"] ||
-                                  change_data["issue_modification_request_withdrawal_date"]
+      parse_previous_issue_modification_attributes(change_data)
     end
+  end
+
+  def parse_previous_issue_modification_attributes(change_data)
+    @previous_issue_type = change_data["previous_issue_type"] || change_data["requested_issue_type"]
+    @previous_decision_date = change_data["previous_decision_date"] || change_data["requested_decision_date"]
+    @previous_modification_request_reason = change_data["previous_modification_request_reason"] ||
+                                            change_data["modification_request_reason"]
+    @previous_issue_description = change_data["previous_issue_description"] ||
+                                  change_data["requested_issue_description"]
+    @previous_withdrawal_date = change_data["previous_withdrawal_date"] ||
+                                change_data["issue_modification_request_withdrawal_date"]
   end
 
   ############ CSV and Serializer Helpers ############
