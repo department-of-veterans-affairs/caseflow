@@ -174,6 +174,18 @@ const CorrespondenceDetails = (props) => {
         <div className="correspondence-existing-appeals">
           <h2>Existing Appeals</h2>
           <AppSegment filledBackground noMarginTop>
+            <span className="test">
+              <a rel="noopener noreferrer"
+                target="_blank"
+                href={`/reader/appeal/${correspondence.veteranFileNumber}`}
+                className="correspondence-details-view-documents">
+              View veteran documents
+                <div className="link-icon-spacing">
+                  <ExternalLinkIcon color={COLORS.FOCUS_OUTLINE} />
+                </div>
+              </a>
+            </span>
+
             <CaseListTable
               appeals={appeals}
               paginate="true"
