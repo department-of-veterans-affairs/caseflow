@@ -49,7 +49,7 @@ const CorrespondenceCompleteTaskModal = (props) => {
 
     let correspondence = props.correspondenceInfo;
 
-    const updatedTask = correspondence.tasksUnrelatedToAppeal.find((task) => parseInt(props.task_id, 10) === parseInt(task.uniqueId, 10));
+    let updatedTask = correspondence.tasksUnrelatedToAppeal.find((task) => parseInt(props.task_id, 10) === parseInt(task.uniqueId, 10));
 
     const payload = {
       data: {
@@ -69,11 +69,13 @@ const CorrespondenceCompleteTaskModal = (props) => {
 
     // props.setShowActionsDropdown(false);
 
-    // let filteredTasks = props.correspondenceInfo.tasksUnrelatedToAppeal.filter((task) => parseInt(task.uniqueId, 10) !== parseInt(props.task_id, 10));
+    let filteredTasks = props.correspondenceInfo.tasksUnrelatedToAppeal.filter((task) => parseInt(task.uniqueId, 10) !== parseInt(props.task_id, 10));
 
-    // let tempCor = correspondence.tasksUnrelatedToAppeal.find((task) => parseInt(props.task_id, 10) === parseInt(task.uniqueId, 10)).status;
+    correspondence.tasksUnrelatedToAppeal = filteredTasks;
 
-    // tempCor.tasksUnrelatedToAppeal = filteredTasks;
+    updatedTask.status = TASK_STATUSES.completed;
+
+    correspondence.completedTasksUnrelatedToAppeal.push(updatedTask);
 
     return props.completeTaskNotRelatedToAppeal(payload, frontendParams, correspondence);
 

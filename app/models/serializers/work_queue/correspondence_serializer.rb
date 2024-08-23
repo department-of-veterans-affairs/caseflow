@@ -37,7 +37,30 @@ class WorkQueue::CorrespondenceSerializer
             type: task.assigned_to_type,
             instructions: task.instructions,
             availableActions: task.available_actions_unwrapper(RequestStore[:current_user]),
-            uniqueId: task.id
+            uniqueId: task.id,
+            status: task.status
+          }
+      end
+    end
+    tasks
+  end
+
+  attribute :completed_tasks_unrelated_to_appeal do |object|
+    filtered_tasks = object.completed_tasks_not_related_to_an_appeal
+    tasks = []
+
+    unless filtered_tasks.empty?
+      filtered_tasks.each do |task|
+        tasks <<
+          {
+            label: task.label,
+            assignedOn: task.assigned_at.strftime("%m/%d/%Y"),
+            assignedTo: (task.assigned_to_type == "Organization") ? task.assigned_to.name : task.assigned_to.css_id,
+            type: task.assigned_to_type,
+            instructions: task.instructions,
+            availableActions: task.available_actions_unwrapper(RequestStore[:current_user]),
+            uniqueId: task.id,
+            status: task.status
           }
       end
     end
