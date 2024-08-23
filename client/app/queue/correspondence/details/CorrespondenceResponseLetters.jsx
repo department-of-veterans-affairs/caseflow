@@ -36,7 +36,7 @@ const CorrespondenceResponseLetters = (props) => {
                   <strong>Letter subcategory</strong>
                 </th>
                 <th className="response-letter-table-borderless-second-item">
-                  <strong>Letter subcategory reason</strong>
+                  <strong>Letter subcategory reasons</strong>
                 </th>
               </tr>
               <tr>
