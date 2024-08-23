@@ -146,6 +146,7 @@ const CancelTaskModal = (props) => {
           value={instructions}
         />
       }
+
     </QueueFlowModal>
   );
 

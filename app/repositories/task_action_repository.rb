@@ -2,6 +2,34 @@
 
 class TaskActionRepository # rubocop:disable Metrics/ClassLength
   class << self
+    def change_corr_task_type
+      # stubbed
+    end
+
+    def assign_corr_task_to_team
+      # stubbed
+    end
+
+    def assign_corr_task_to_person
+      # stubbed
+    end
+
+    def reassign_corr_task_to_person
+      # stubbed
+    end
+
+    def mark_corr_task_complete
+      # stubbed
+    end
+
+    def return_to_inbound_ops
+      # stubbed
+    end
+
+    def cancel_corr_task
+      # stubbed
+    end
+
     def assign_to_organization_data(task, _user = nil)
       organizations = Organization.assignable(task).map do |organization|
         {
@@ -49,6 +77,19 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         modal_body: format_cancel_body(task, COPY::CANCEL_TASK_MODAL_DETAIL, return_to_name),
         message_title: format(COPY::CANCEL_TASK_CONFIRMATION, task.appeal.veteran_full_name),
         message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, return_to_name)
+      }
+    end
+
+    # this is used to build the modal and handle redirect after modal is closed
+    def cancel_correspondence_task_data(task, _user = nil)
+      return_to_name = task_assigner_name(task)
+
+      {
+        modal_title: COPY::CANCEL_TASK_MODAL_TITLE,
+        modal_body: format_cancel_body(task, COPY::CANCEL_TASK_MODAL_DETAIL, return_to_name),
+        message_title: format(COPY::CANCEL_TASK_CONFIRMATION, task.correspondence&.veteran_full_name),
+        message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, return_to_name),
+        redirect_after: "/queue/correspondence/:correspondence_uuid/"
       }
     end
 
