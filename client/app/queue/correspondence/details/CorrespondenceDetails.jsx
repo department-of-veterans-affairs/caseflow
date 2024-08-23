@@ -199,7 +199,7 @@ const CorrespondenceDetails = (props) => {
         <div className="correspondence-existing-appeals">
           <h2>Existing Appeals</h2>
           <AppSegment filledBackground noMarginTop>
-            <span className="test">
+            <span>
               <a rel="noopener noreferrer"
                 target="_blank"
                 href={`/reader/appeal/${correspondence.veteranFileNumber}`}
