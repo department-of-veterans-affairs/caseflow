@@ -235,12 +235,3 @@ class QueueTab
     errors.add(:assignee, COPY::QUEUE_TAB_NON_ORGANIZATION_ASSIGNEE_MESSAGE) unless assignee.is_a?(Organization)
   end
 end
-
-require_dependency "assigned_tasks_tab"
-require_dependency "completed_tasks_tab"
-require_dependency "on_hold_tasks_tab"
-require_dependency "organization_assigned_tasks_tab"
-require_dependency "organization_completed_tasks_tab"
-require_dependency "organization_on_hold_tasks_tab"
-require_dependency "organization_tracking_tasks_tab"
-require_dependency "organization_unassigned_tasks_tab"

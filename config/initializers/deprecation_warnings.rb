@@ -24,10 +24,15 @@ module DeprecationWarnings
     /NOT conditions will no longer behave as NOR in Rails 6\.1/
   ].freeze
 
+  RAILS_7_0_FIXED_DEPRECATION_WARNING_REGEXES = [
+    /Initialization autoloaded the constant/
+  ].freeze
+
   # Regular expressions for deprecation warnings that should raise an exception on detection
   DISALLOWED_DEPRECATION_WARNING_REGEXES = [
     *CUSTOM_DEPRECATION_WARNING_REGEXES,
     *RAILS_6_0_FIXED_DEPRECATION_WARNING_REGEXES,
-    *RAILS_6_1_FIXED_DEPRECATION_WARNING_REGEXES
+    *RAILS_6_1_FIXED_DEPRECATION_WARNING_REGEXES,
+    *RAILS_7_0_FIXED_DEPRECATION_WARNING_REGEXES
   ].freeze
 end

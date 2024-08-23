@@ -134,7 +134,89 @@ module CaseflowCertification
     # setup the deploy env environment variable
     ENV['DEPLOY_ENV'] ||= Rails.env
 
-    Rails.autoloaders.log! # Enable Zeitwerk logging for compliance troubleshooting
+    # Rails.autoloaders.log! # Enable Zeitwerk logging for compliance troubleshooting
+
+    Rails.autoloaders.each do |autoloader|
+      autoloader.inflector.inflect(
+        "amo_metrics_report_job" => "AMOMetricsReportJob",
+        "appeals_for_poa" => "AppealsForPOA",
+        "bgs_service" => "BGSService",
+        "bgs_service_grants" => "BGSServiceGrants",
+        "bgs_service_poa" => "BGSServicePOA",
+        "bgs_service_record_maker" => "BGSServiceRecordMaker",
+        "bva_appeal_status" => "BVAAppealStatus",
+        "cavc_decision" => "CAVCDecision",
+        "cavc_case_decision" => "CAVCCaseDecision",
+        "cavc_decision_repository" => "CAVCDecisionRepository",
+        "cda_control_group" => "CDAControlGroup",
+        "db_service" => "DBService",
+        "duplicate_veteran_participant_id_finder" => "DuplicateVeteranParticipantIDFinder",
+        "etl" => "ETL",
+        "etl_builder_job" => "ETLBuilderJob",
+        "etl_classes" => "ETLClasses",
+        "hlr_status_serializer" => "HLRStatusSerializer",
+        "mpi_service" => "MPIService",
+        "sc_status_serializer" => "SCStatusSerializer",
+        "sync_attributes_with_bgs" => "SyncAttributesWithBGS",
+        "update_poa_concern" => "UpdatePOAConcern",
+        "vacols" => "VACOLS",
+        "vacols_csv_reader" => "VacolsCSVReader",
+        "va_dot_gov_service" => "VADotGovService",
+        "va_notify_send_message_template" => "VANotifySendMessageTemplate",
+        "va_notify_service" => "VANotifyService",
+        "va_notify_status_update_job" => "VANotifyStatusUpdateJob",
+        "vbms_request" => "VBMSRequest",
+        "vbms_service" => "VBMSService",
+        "veteran_record_requests_open_for_vre_query" => "VeteranRecordRequestsOpenForVREQuery",
+      )
+    end
+
+    config.autoload_paths += [
+      "#{root}/lib",
+    ]
+
+    config.eager_load_paths += [
+      "#{root}/lib",
+    ]
+
+    Rails.autoloaders.main.collapse(
+      "#{root}/app/jobs/batch_processes",
+      "#{root}/app/models/batch_processes",
+      "#{root}/app/models/dockets",
+      "#{root}/app/models/events",
+      "#{root}/app/models/external_models",
+      "#{root}/app/models/hearings",
+      "#{root}/app/models/hearings/forms",
+      "#{root}/app/models/legacy_tasks",
+      "#{root}/app/models/mixins",
+      "#{root}/app/models/organizations",
+      "#{root}/app/models/prepend",
+      "#{root}/app/models/prepend/va_notify",
+      "#{root}/app/models/priority_queues",
+      "#{root}/app/models/queue_tabs",
+      "#{root}/app/models/queues",
+      "#{root}/app/models/serializers",
+      "#{root}/app/models/tasks",
+      "#{root}/app/models/tasks/hearing_mail_tasks",
+      "#{root}/app/models/tasks/docket_switch",
+      "#{root}/app/models/tasks/pre_docket",
+      "#{root}/app/models/tasks/special_case_movement",
+      "#{root}/app/models/validators",
+      "#{root}/app/models/vanotify",
+      "#{root}/app/serializers/case_distribution",
+      "#{root}/app/serializers/hearings",
+      "#{root}/app/services/claim_change_history",
+      "#{root}/lib/helpers",
+    )
+
+    Rails.autoloaders.main.ignore(
+       "#{root}/app/jobs/middleware",
+       "#{root}/lib/assets",
+       "#{root}/lib/fakes/constants",
+       "#{root}/lib/helpers/scripts",
+       "#{root}/lib/pdfs",
+       "#{root}/lib/tasks",
+    )
 
     config.exceptions_app = self.routes
 

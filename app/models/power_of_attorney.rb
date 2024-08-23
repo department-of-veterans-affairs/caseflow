@@ -14,7 +14,7 @@
 class PowerOfAttorney
   include ActiveModel::Model
   include AssociatedVacolsModel
-  include BgsService
+  include BgsServiceConcern
 
   vacols_attr_accessor  :vacols_representative_type,
                         :vacols_representative_name,
