@@ -615,8 +615,6 @@ feature "Individual Claim History", :postgres do
           table_row = table.first("tr")
           expect(table_row).to have_content("Claim created")
           expect(table_row).to have_content("Claim created.")
-
-          clear_filter_option("Claim created")
         end
       end
     end
@@ -724,8 +722,6 @@ feature "Individual Claim History", :postgres do
         expect(table_row).to have_content(
           "Modification request reason: #{original_modification_request.previous_modification_request_reason}"
         )
-
-        clear_filter_option("Edit of request - issue modification")
       end
 
       it "check for the correct data for Approval of request - issue modification" do
@@ -767,8 +763,6 @@ feature "Individual Claim History", :postgres do
         expect(table_row).to have_content(
           "Modification request reason: #{original_modification_request.modification_request_reason}"
         )
-
-        clear_filter_option("Approval of request - issue modification")
       end
 
       it "check for the correct data for denied request modification" do
@@ -806,8 +800,6 @@ feature "Individual Claim History", :postgres do
         expect(table_row).to have_content(
           "Modification request reason: #{original_modification_request.modification_request_reason}"
         )
-
-        clear_filter_option("Rejection of request - issue modification")
       end
 
       it "check for the correct data for Cancellation of request" do
@@ -836,7 +828,6 @@ feature "Individual Claim History", :postgres do
         expect(table_row).to have_content(
           "Modification request reason: #{original_modification_request.modification_request_reason}"
         )
-        clear_filter_option("Cancellation of request")
       end
     end
   end
