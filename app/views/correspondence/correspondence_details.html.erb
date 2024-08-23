@@ -15,10 +15,11 @@
     isInboundOpsSupervisor: current_user.inbound_ops_team_supervisor?,
     isInboundOpsSuperuser: current_user.inbound_ops_team_superuser?,
     inboundOpsTeamUsers: @correspondence_details[:inbound_ops_team_users],
+    correspondenceAppeals: @correspondence_appeals,
     responseType: @response_type,
     responseHeader: @response_header,
     responseMessage: @response_message,
-    organizations: @organizations,
+    organizations: @correspondence_details[:organizations],
     correspondenceResponseLetters: @correspondence_response_letters,
     featureToggles: {
       correspondence_queue: FeatureToggle.enabled?(:correspondence_queue, user: current_user)

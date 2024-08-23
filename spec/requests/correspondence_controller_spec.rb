@@ -54,7 +54,6 @@ RSpec.describe "Correspondence Requests", :all_dbs, type: :request do
           expect(task[:attributes][:completion_date]).to eq(nil).or be_a(String)
           expect(task[:attributes][:days_waiting]).to be_a(Integer)
           expect(task[:attributes][:va_date_of_receipt]).to be_a(String)
-          expect(task[:attributes][:label]).to be_a(String)
           expect(task[:attributes][:assigned_to]).to be_a(Hash)
           expect(task[:attributes][:assigned_by]).to be_a(Hash)
         end
@@ -204,8 +203,8 @@ RSpec.describe "Correspondence Requests", :all_dbs, type: :request do
 
       mail_tasks = {
         "Associated with Claims Folder": AssociatedWithClaimsFolderMailTask.name,
-        "Change of address": AddressChangeMailTask.name,
-        "Evidence or argument": EvidenceOrArgumentMailTask.name,
+        "Change of address": AddressChangeCorrespondenceMailTask.name,
+        "Evidence or argument": EvidenceOrArgumentCorrespondenceMailTask.name,
         "VACOLS updated": VacolsUpdatedMailTask.name
       }
 

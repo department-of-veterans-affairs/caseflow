@@ -86,6 +86,7 @@ const CorrespondenceAssignTeamModal = (props) => {
           label="Select a team"
           creatable
           placeholder="Select or search"
+          styling={{ marginBottom: '20px' }}
         />
       }
       {shouldShowTaskInstructions &&
