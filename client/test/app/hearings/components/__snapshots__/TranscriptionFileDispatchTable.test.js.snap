@@ -3,7 +3,7 @@
 exports[`TranscriptionFileDispatchTable Assigned Tab loads a table from backend data 1`] = `
 <div>
   <div
-    data-css-1wuo2gf=""
+    data-css-8r64z=""
   >
     <div
       class="cf-table-wrapper"
@@ -560,12 +560,12 @@ exports[`TranscriptionFileDispatchTable Assigned Tab loads a table from backend 
             >
               <div>
                 <a
-                  style="cursor: pointer; white-space: nowrap;"
+                  style="cursor: pointer; white-space: nowrap; padding-right: 1.3em; position: relative;"
                 >
                   #
                   BVA202401
                   <span
-                    style="position: relative; margin-left: 0.4em; top: 3px;"
+                    style="position: absolute; top: -0.2em; right: 0px;"
                   >
                     <svg
                       class=""
@@ -683,12 +683,12 @@ exports[`TranscriptionFileDispatchTable Assigned Tab loads a table from backend 
             >
               <div>
                 <a
-                  style="cursor: pointer; white-space: nowrap;"
+                  style="cursor: pointer; white-space: nowrap; padding-right: 1.3em; position: relative;"
                 >
                   #
                   BVA202402
                   <span
-                    style="position: relative; margin-left: 0.4em; top: 3px;"
+                    style="position: absolute; top: -0.2em; right: 0px;"
                   >
                     <svg
                       class=""
@@ -806,12 +806,12 @@ exports[`TranscriptionFileDispatchTable Assigned Tab loads a table from backend 
             >
               <div>
                 <a
-                  style="cursor: pointer; white-space: nowrap;"
+                  style="cursor: pointer; white-space: nowrap; padding-right: 1.3em; position: relative;"
                 >
                   #
                   BVA202403
                   <span
-                    style="position: relative; margin-left: 0.4em; top: 3px;"
+                    style="position: absolute; top: -0.2em; right: 0px;"
                   >
                     <svg
                       class=""
@@ -929,12 +929,12 @@ exports[`TranscriptionFileDispatchTable Assigned Tab loads a table from backend 
             >
               <div>
                 <a
-                  style="cursor: pointer; white-space: nowrap;"
+                  style="cursor: pointer; white-space: nowrap; padding-right: 1.3em; position: relative;"
                 >
                   #
                   BVA202404
                   <span
-                    style="position: relative; margin-left: 0.4em; top: 3px;"
+                    style="position: absolute; top: -0.2em; right: 0px;"
                   >
                     <svg
                       class=""
@@ -1054,12 +1054,12 @@ exports[`TranscriptionFileDispatchTable Assigned Tab loads a table from backend 
             >
               <div>
                 <a
-                  style="cursor: pointer; white-space: nowrap;"
+                  style="cursor: pointer; white-space: nowrap; padding-right: 1.3em; position: relative;"
                 >
                   #
                   BVA202405
                   <span
-                    style="position: relative; margin-left: 0.4em; top: 3px;"
+                    style="position: absolute; top: -0.2em; right: 0px;"
                   >
                     <svg
                       class=""
@@ -1177,12 +1177,12 @@ exports[`TranscriptionFileDispatchTable Assigned Tab loads a table from backend 
             >
               <div>
                 <a
-                  style="cursor: pointer; white-space: nowrap;"
+                  style="cursor: pointer; white-space: nowrap; padding-right: 1.3em; position: relative;"
                 >
                   #
                   BVA202406
                   <span
-                    style="position: relative; margin-left: 0.4em; top: 3px;"
+                    style="position: absolute; top: -0.2em; right: 0px;"
                   >
                     <svg
                       class=""
@@ -1300,12 +1300,12 @@ exports[`TranscriptionFileDispatchTable Assigned Tab loads a table from backend 
             >
               <div>
                 <a
-                  style="cursor: pointer; white-space: nowrap;"
+                  style="cursor: pointer; white-space: nowrap; padding-right: 1.3em; position: relative;"
                 >
                   #
                   BVA202407
                   <span
-                    style="position: relative; margin-left: 0.4em; top: 3px;"
+                    style="position: absolute; top: -0.2em; right: 0px;"
                   >
                     <svg
                       class=""
@@ -1423,12 +1423,12 @@ exports[`TranscriptionFileDispatchTable Assigned Tab loads a table from backend 
             >
               <div>
                 <a
-                  style="cursor: pointer; white-space: nowrap;"
+                  style="cursor: pointer; white-space: nowrap; padding-right: 1.3em; position: relative;"
                 >
                   #
                   BVA202408
                   <span
-                    style="position: relative; margin-left: 0.4em; top: 3px;"
+                    style="position: absolute; top: -0.2em; right: 0px;"
                   >
                     <svg
                       class=""
@@ -1546,12 +1546,12 @@ exports[`TranscriptionFileDispatchTable Assigned Tab loads a table from backend 
             >
               <div>
                 <a
-                  style="cursor: pointer; white-space: nowrap;"
+                  style="cursor: pointer; white-space: nowrap; padding-right: 1.3em; position: relative;"
                 >
                   #
                   BVA202409
                   <span
-                    style="position: relative; margin-left: 0.4em; top: 3px;"
+                    style="position: absolute; top: -0.2em; right: 0px;"
                   >
                     <svg
                       class=""
@@ -1669,12 +1669,12 @@ exports[`TranscriptionFileDispatchTable Assigned Tab loads a table from backend 
             >
               <div>
                 <a
-                  style="cursor: pointer; white-space: nowrap;"
+                  style="cursor: pointer; white-space: nowrap; padding-right: 1.3em; position: relative;"
                 >
                   #
                   BVA202410
                   <span
-                    style="position: relative; margin-left: 0.4em; top: 3px;"
+                    style="position: absolute; top: -0.2em; right: 0px;"
                   >
                     <svg
                       class=""
@@ -1792,12 +1792,12 @@ exports[`TranscriptionFileDispatchTable Assigned Tab loads a table from backend 
             >
               <div>
                 <a
-                  style="cursor: pointer; white-space: nowrap;"
+                  style="cursor: pointer; white-space: nowrap; padding-right: 1.3em; position: relative;"
                 >
                   #
                   BVA202411
                   <span
-                    style="position: relative; margin-left: 0.4em; top: 3px;"
+                    style="position: absolute; top: -0.2em; right: 0px;"
                   >
                     <svg
                       class=""
@@ -1915,12 +1915,12 @@ exports[`TranscriptionFileDispatchTable Assigned Tab loads a table from backend 
             >
               <div>
                 <a
-                  style="cursor: pointer; white-space: nowrap;"
+                  style="cursor: pointer; white-space: nowrap; padding-right: 1.3em; position: relative;"
                 >
                   #
                   BVA202412
                   <span
-                    style="position: relative; margin-left: 0.4em; top: 3px;"
+                    style="position: absolute; top: -0.2em; right: 0px;"
                   >
                     <svg
                       class=""
@@ -2038,12 +2038,12 @@ exports[`TranscriptionFileDispatchTable Assigned Tab loads a table from backend 
             >
               <div>
                 <a
-                  style="cursor: pointer; white-space: nowrap;"
+                  style="cursor: pointer; white-space: nowrap; padding-right: 1.3em; position: relative;"
                 >
                   #
                   BVA202413
                   <span
-                    style="position: relative; margin-left: 0.4em; top: 3px;"
+                    style="position: absolute; top: -0.2em; right: 0px;"
                   >
                     <svg
                       class=""
@@ -2161,12 +2161,12 @@ exports[`TranscriptionFileDispatchTable Assigned Tab loads a table from backend 
             >
               <div>
                 <a
-                  style="cursor: pointer; white-space: nowrap;"
+                  style="cursor: pointer; white-space: nowrap; padding-right: 1.3em; position: relative;"
                 >
                   #
                   BVA202414
                   <span
-                    style="position: relative; margin-left: 0.4em; top: 3px;"
+                    style="position: absolute; top: -0.2em; right: 0px;"
                   >
                     <svg
                       class=""
@@ -2284,12 +2284,12 @@ exports[`TranscriptionFileDispatchTable Assigned Tab loads a table from backend 
             >
               <div>
                 <a
-                  style="cursor: pointer; white-space: nowrap;"
+                  style="cursor: pointer; white-space: nowrap; padding-right: 1.3em; position: relative;"
                 >
                   #
                   BVA202415
                   <span
-                    style="position: relative; margin-left: 0.4em; top: 3px;"
+                    style="position: absolute; top: -0.2em; right: 0px;"
                   >
                     <svg
                       class=""
@@ -2444,7 +2444,7 @@ exports[`TranscriptionFileDispatchTable Assigned Tab loads a table from backend 
 exports[`TranscriptionFileDispatchTable Unassigned Tab loads a table from backend data and handles selected and locked records 1`] = `
 <div>
   <div
-    data-css-1wuo2gf=""
+    data-css-8r64z=""
   >
     <div
       class="cf-table-wrapper"
