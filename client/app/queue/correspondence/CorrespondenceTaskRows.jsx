@@ -1,5 +1,6 @@
 import { css } from 'glamor';
 import React from 'react';
+import { connect } from 'react-redux';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import Button from '../../components/Button';
@@ -67,8 +68,8 @@ const establishmentTaskCorrespondence = (task) => {
 };
 
 const tdClassNamesforCorrespondence = (timeline, task) => {
-  const containerClass = timeline ? taskInfoWithIconTimelineContainer : '';
   const closedAtClass = task.closedAt ? null : <span className="greyDotTimelineStyling"></span>;
+  const containerClass = timeline ? taskInfoWithIconTimelineContainer : '';
 
   return [containerClass, closedAtClass].filter((val) => val).join(' ');
 };
@@ -78,13 +79,14 @@ const cancelGrayTimeLineStyle = (timeline) => {
 };
 
 class CorrespondenceTaskRows extends React.PureComponent {
+
   constructor(props) {
     super(props);
 
     this.state = {
       taskInstructionsIsVisible: [],
       showEditNodDateModal: false,
-      activeTasks: [...props.taskList],
+      activeTasks: [props.taskList],
     };
   }
 
@@ -175,11 +177,11 @@ class CorrespondenceTaskRows extends React.PureComponent {
         {taskInstructionsVisible && (
           <React.Fragment key={`${task.assignedOn}${task.label}`}>
             {!establishmentTaskCorrespondence(task) &&
-            <dt style={{ width: '100%' }}>
+            <dt>
               {COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}
             </dt>
             }
-            <dd style={{ width: '100%' }}>
+            <dd>
               {this.taskInstructionsWithLineBreaks(task)}
             </dd>
           </React.Fragment>
@@ -198,16 +200,19 @@ class CorrespondenceTaskRows extends React.PureComponent {
       </div>
     );
   };
-
-  showActionsListItem = (task, appeal) => {
-    if (task.availableActions.length <= 0) {
+  showActionsListItem = (task, correspondence) => {
+    if (task.availableActions.length <= 0 || !this.props.showActionsDropdown) {
       return null;
     }
 
     return this.showActionsSection(task) ? (
       <div>
         <h3>{COPY.TASK_SNAPSHOT_ACTION_BOX_TITLE}</h3>
-        <ActionsDropdown task={task} appealId={appeal.externalId} />
+        <ActionsDropdown
+          task={task}
+          appealId={correspondence.uuid}
+          type={correspondence.type}
+        />
       </div>
     ) : null;
   };
@@ -231,7 +236,7 @@ class CorrespondenceTaskRows extends React.PureComponent {
       sortedTimelineEvents,
       index,
       timeline,
-      appeal,
+      correspondence,
     } = templateConfig;
 
     const timelineTitle = isCancelled(task) ?
@@ -278,7 +283,7 @@ class CorrespondenceTaskRows extends React.PureComponent {
         </td>
         {!timeline && (
           <td className="taskContainerStyling taskActionsContainerStyling">
-            {this.showActionsListItem(task, appeal)}{' '}
+            {this.showActionsListItem(task, correspondence)}{' '}
           </td>
         )}
       </tr>
@@ -286,20 +291,20 @@ class CorrespondenceTaskRows extends React.PureComponent {
   };
 
   render = () => {
-    const { appeal, taskList } = this.props;
+    const { correspondence, taskList } = this.props;
     // Non-tasks are only relevant for the main Case Timeline
     const sortedTimelineEvents = sortCaseTimelineEvents(
       taskList,
     );
 
     return (
-      <React.Fragment key={appeal.externalId}>
+      <React.Fragment key={correspondence.uuid}>
         {sortedTimelineEvents.map((timelineEvent, index) => {
           const templateConfig = {
             task: timelineEvent,
             index,
             sortedTimelineEvents,
-            appeal,
+            correspondence,
           };
 
           return this.taskTemplate(templateConfig);
@@ -310,10 +315,17 @@ class CorrespondenceTaskRows extends React.PureComponent {
 }
 
 CorrespondenceTaskRows.propTypes = {
-  appeal: PropTypes.object,
+  correspondence: PropTypes.object,
   hideDropdown: PropTypes.bool,
   taskList: PropTypes.array,
   timeline: PropTypes.bool,
+  showActionsDropdown: PropTypes.bool,
 };
 
-export default CorrespondenceTaskRows;
+const mapStateToProps = (state) => ({
+  showActionsDropdown: state.correspondenceDetails.showActionsDropdown,
+});
+
+export default connect(
+  mapStateToProps,
+)(CorrespondenceTaskRows);
