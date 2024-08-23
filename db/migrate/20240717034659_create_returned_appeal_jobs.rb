@@ -6,7 +6,6 @@ class CreateReturnedAppealJobs < Caseflow::Migration
       t.timestamp :errored_at
       t.json :stats
       t.text :returned_appeals, array: true, default: []
-
       t.timestamps
     end
   end
