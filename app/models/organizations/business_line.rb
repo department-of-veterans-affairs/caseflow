@@ -613,7 +613,7 @@ class BusinessLine < Organization
     def station_id_filter
       if query_params[:facilities].present?
         conditions = USER_TABLE_ALIASES.map do |alias_name|
-          User.arel_table.alias(alias_name)[:css_id].in(query_params[:facilities]).to_sql
+          User.arel_table.alias(alias_name)[:station_id].in(query_params[:facilities]).to_sql
         end
 
         <<-SQL
