@@ -15,7 +15,7 @@ const CorrespondenceCaseTimeline = (props) => {
   };
 
   const formatTaskData = () => {
-    return (props.correspondence.tasksUnrelatedToAppeal.map((task) => {
+    return (props.tasksToDisplay?.map((task) => {
       return {
         assignedOn: task.assigned_at,
         assignedTo: task.assigned_to,
@@ -46,6 +46,7 @@ CorrespondenceCaseTimeline.propTypes = {
   loadCorrespondence: PropTypes.func,
   correspondence: PropTypes.object,
   organizations: PropTypes.array,
+  tasksToDisplay: PropTypes.array,
   userCssId: PropTypes.string
 };
 
