@@ -4,7 +4,22 @@ require 'bundler/setup'
 
 require 'opentelemetry/sdk'
 require 'opentelemetry/exporter/otlp'
-require 'opentelemetry/instrumentation/all'
+
+require "opentelemetry-instrumentation-action_pack"
+require "opentelemetry-instrumentation-action_view"
+require "opentelemetry-instrumentation-active_job"
+require "opentelemetry-instrumentation-active_record"
+require "opentelemetry-instrumentation-active_support"
+require "opentelemetry-instrumentation-aws_sdk"
+require "opentelemetry-instrumentation-concurrent_ruby"
+require "opentelemetry-instrumentation-faraday"
+require "opentelemetry-instrumentation-http_client"
+require "opentelemetry-instrumentation-net_http"
+require "opentelemetry-instrumentation-pg"
+require "opentelemetry-instrumentation-rack"
+require "opentelemetry-instrumentation-rails"
+require "opentelemetry-instrumentation-rake"
+require "opentelemetry-instrumentation-redis"
 
 # rubocop:disable Layout/LineLength
 
@@ -18,13 +33,21 @@ if !Rails.env.development? && !Rails.env.test? && !Rails.env.demo?
     c.service_name = 'ruby-quickstart'
     c.service_version = '1.0.1'
 
+    c.use 'OpenTelemetry::Instrumentation::ActionPack'
+    c.use 'OpenTelemetry::Instrumentation::ActionView'
+    c.use 'OpenTelemetry::Instrumentation::ActiveJob'
     c.use 'OpenTelemetry::Instrumentation::ActiveRecord'
+    c.use 'OpenTelemetry::Instrumentation::ActiveSupport'
     c.use 'OpenTelemetry::Instrumentation::AwsSdk'
-    c.use 'OpenTelemetry::Instrumentation::Net::HTTP'
-    c.use 'OpenTelemetry::Instrumentation::PG'
+    c.use 'OpenTelemetry::Instrumentation::ConcurrentRuby'
+    c.use 'OpenTelemetry::Instrumentation::Faraday'
+    c.use 'OpenTelemetry::Instrumentation::HttpClient'
     c.use 'OpenTelemetry::Instrumentation::Rack', { untraced_endpoints: ['/health-check', '/sample', '/logs'] }
     c.use 'OpenTelemetry::Instrumentation::Rails'
     c.use 'OpenTelemetry::Instrumentation::Redis'
+
+    # c.use 'OpenTelemetry::Instrumentation::Net::HTTP'
+    # c.use 'OpenTelemetry::Instrumentation::PG'
 
     Rails.logger.info("Loaded instruments")
 
