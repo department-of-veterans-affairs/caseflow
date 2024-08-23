@@ -33,19 +33,19 @@ if !Rails.env.development? && !Rails.env.test? && !Rails.env.demo?
     c.service_name = 'ruby-quickstart'
     c.service_version = '1.0.1'
 
-    c.use 'OpenTelemetry::Instrumentation::ActionPack'
-    c.use 'OpenTelemetry::Instrumentation::ActionView'
-    c.use 'OpenTelemetry::Instrumentation::ActiveJob'
     c.use 'OpenTelemetry::Instrumentation::ActiveRecord'
-    c.use 'OpenTelemetry::Instrumentation::ActiveSupport'
-    c.use 'OpenTelemetry::Instrumentation::AwsSdk'
-    c.use 'OpenTelemetry::Instrumentation::ConcurrentRuby'
-    c.use 'OpenTelemetry::Instrumentation::Faraday'
-    c.use 'OpenTelemetry::Instrumentation::HttpClient'
     c.use 'OpenTelemetry::Instrumentation::Rack', { untraced_endpoints: ['/health-check', '/sample', '/logs'] }
     c.use 'OpenTelemetry::Instrumentation::Rails'
-    c.use 'OpenTelemetry::Instrumentation::Redis'
 
+    # c.use 'OpenTelemetry::Instrumentation::ActionPack'
+    # c.use 'OpenTelemetry::Instrumentation::ActionView'
+    # c.use 'OpenTelemetry::Instrumentation::ActiveJob'
+    # c.use 'OpenTelemetry::Instrumentation::ActiveSupport'
+    # c.use 'OpenTelemetry::Instrumentation::AwsSdk'
+    # c.use 'OpenTelemetry::Instrumentation::ConcurrentRuby'
+    # c.use 'OpenTelemetry::Instrumentation::Faraday'
+    # c.use 'OpenTelemetry::Instrumentation::HttpClient'
+    # c.use 'OpenTelemetry::Instrumentation::Redis'
     # c.use 'OpenTelemetry::Instrumentation::Net::HTTP'
     # c.use 'OpenTelemetry::Instrumentation::PG'
 
