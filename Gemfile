@@ -53,6 +53,7 @@ gem "opentelemetry-instrumentation-net_http", require: false
 gem "opentelemetry-instrumentation-pg", require: false
 gem "opentelemetry-instrumentation-rack", require: false
 gem "opentelemetry-instrumentation-rails", require: false
+gem "opentelemetry-instrumentation-rake", require: false
 gem "opentelemetry-instrumentation-redis", require: false
 
 gem "paper_trail", "~> 12.0"
