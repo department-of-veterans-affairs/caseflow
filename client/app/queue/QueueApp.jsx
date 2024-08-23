@@ -1590,7 +1590,7 @@ QueueApp.propTypes = {
   canViewCavcDashboards: PropTypes.bool,
   userIsCobAdmin: PropTypes.bool,
   conferenceProvider: PropTypes.string,
-  setMeetingType: PropTypes.string
+  setMeetingType: PropTypes.string,
   correspondence: PropTypes.object,
   correspondenceTypes: PropTypes.array,
   hasEfolderFailedTask: PropTypes.bool,
