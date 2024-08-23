@@ -1885,6 +1885,16 @@ ActiveRecord::Schema.define(version: 2024_08_05_162358) do
     t.index ["user_id"], name: "index_request_issues_updates_on_user_id"
   end
 
+  create_table "returned_appeal_jobs", force: :cascade do |t|
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "errored_at"
+    t.text "returned_appeals", default: [], array: true
+    t.datetime "started_at"
+    t.json "stats"
+    t.datetime "updated_at", null: false
+  end
+
   create_table "schedule_periods", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "end_date", null: false
