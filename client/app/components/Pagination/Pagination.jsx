@@ -122,7 +122,11 @@ class Pagination extends React.PureComponent {
     }
 
     return (
+
       <div className="cf-pagination">
+        { this.props.enableTopPagination && (<div className="cf-pagination-pages">
+          {paginationButtons}
+        </div>) }
         <div className="cf-pagination-summary">
           {paginationSummary}
         </div>
@@ -142,7 +146,8 @@ Pagination.propTypes = {
   totalPages: PropTypes.number,
   totalCases: PropTypes.number,
   updatePage: PropTypes.func.isRequired,
-  table: PropTypes.oneOfType([PropTypes.instanceOf(Table), PropTypes.object])
+  table: PropTypes.oneOfType([PropTypes.instanceOf(Table), PropTypes.object]),
+  enableTopPagination: PropTypes.bool
 };
 
 export default Pagination;

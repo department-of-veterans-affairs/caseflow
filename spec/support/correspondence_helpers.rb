@@ -24,20 +24,28 @@ module CorrespondenceHelpers
     allow(mock_doc_uploader).to receive(:upload_documents_to_claim_evidence).and_return(true)
   end
 
-  def visit_intake_form_with_correspondence_load
+  def visit_intake_form_with_correspondence_load(return_veteran: false)
     setup_access
     veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
-    54.times do
-      create(
+    create(
+      :correspondence,
+      :with_correspondence_intake_task,
+      assigned_to: current_user,
+      veteran_id: veteran.id,
+      uuid: SecureRandom.uuid,
+      va_date_of_receipt: Time.zone.local(2023, 1, 1)
+    )
+    53.times do
+      cor = create(
         :correspondence,
-        :with_correspondence_intake_task,
-        assigned_to: current_user,
         veteran_id: veteran.id,
         uuid: SecureRandom.uuid,
         va_date_of_receipt: Time.zone.local(2023, 1, 1)
       )
+      cor.review_package_task.update!(status: Constants.TASK_STATUSES.completed)
     end
     find_and_route_to_intake
+    return_veteran ? veteran : nil
   end
 
   def visit_intake_form_step_2_with_appeals

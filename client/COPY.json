@@ -1502,7 +1502,7 @@
   "CORRESPONDENCE_READONLY_BANNER_HEADER": "This package has a pending request",
   "CORRESPONDENCE_READONLY_BANNER_MESSAGE": "Any further actions cannot be made on this package until a supervisor or superuser reviews the request.",
   "CORRESPONDENCE_READONLY_SUPERVISOR_BANNER_MESSAGE": "Any further actions cannot be made on this package until a supervisor reviews the request.",
-  "ASSOCIATED_WITH_CLAIMS_FOLDER_MAIL_TASK_LABEL": "Associated with claims folder",
+  "ASSOCIATED_WITH_CLAIMS_FOLDER_MAIL_TASK_LABEL": "Associated with Claims Folder",
   "CORRESPONDENCE_CASES_REMOVE_PACKAGE_MODAL_TITLE": "Review request",
   "CORRESPONDENCE_CASES_REASSIGN_PACKAGE_MODAL_TITLE": "Review request",
   "VACOLS_UPDATED_MAIL_TASK_LABEL": "VACOLS updated",
@@ -1616,5 +1616,10 @@
     }
   },
   "VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_NON_ADMIN": "Requests for issue modifications have been submitted for this case. Dispositions cannot be made until a VHA admin completes review of the requested changes.",
-  "VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_ADMIN": "Requests for issue modifications have been submitted for this case. Dispositions cannot be made until a VHA admin completes review of the requested changes. Click the \"Edit issues\" button above to review the issue modification requests."
+  "VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_ADMIN": "Requests for issue modifications have been submitted for this case. Dispositions cannot be made until a VHA admin completes review of the requested changes. Click the \"Edit issues\" button above to review the issue modification requests.",
+  "CORRESPONDENCE_DETAILS": {
+    "COMPLETED_MAIL_TASKS": "Completed Mail Tasks",
+    "NO_COMPLETED_MAIL_TASKS": "No previously completed mail tasks prior to intake."
+  },
+  "ALL_CORRESPONDENCES": "All Correspondence"
 }

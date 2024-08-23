@@ -27,9 +27,8 @@ class CorrespondenceIntakeProcessor
       parent_task.update!(status: Constants.TASK_STATUSES.completed)
 
       create_correspondence_relations(intake_params, correspondence.id)
-      link_appeals_to_correspondence(intake_params, correspondence.id)
       create_response_letter(intake_params, correspondence.id)
-      add_tasks_to_related_appeals(intake_params, current_user)
+      add_tasks_to_related_appeals(intake_params, current_user, correspondence.id)
       complete_waived_evidence_submission_tasks(intake_params)
       create_tasks_not_related_to_appeals(intake_params, correspondence, current_user)
       create_mail_tasks(intake_params, correspondence, current_user)
@@ -83,18 +82,32 @@ class CorrespondenceIntakeProcessor
     end
   end
 
-  def add_tasks_to_related_appeals(intake_params, current_user)
-    intake_params[:tasks_related_to_appeal]&.map do |data|
-      appeal = Appeal.find(data[:appeal_id])
+  def create_appeal_related_tasks(data, current_user, correspondence_id)
+    appeal = Appeal.find(data[:appeal_id])
+    # find the CorrespondenceAppeal created in link_appeals_to_correspondence
+    cor_appeal = CorrespondenceAppeal.find_by(
+      correspondence_id: correspondence_id,
+      appeal_id: appeal.id
+    )
+    task = task_class_for_task_related(data).create_from_params(
+      {
+        appeal: appeal,
+        parent_id: appeal.root_task&.id,
+        assigned_to: class_for_assigned_to(data[:assigned_to]).singleton,
+        instructions: data[:content]
+      }, current_user
+    )
+    # create join table to CorrespondenceAppealTask for tracking
+    CorrespondencesAppealsTask.find_or_create_by(
+      correspondence_appeal: cor_appeal,
+      task: task
+    )
+  end
 
-      task_class_for_task_related(data).create_from_params(
-        {
-          appeal: appeal,
-          parent_id: appeal.root_task&.id,
-          assigned_to: class_for_assigned_to(data[:assigned_to]).singleton,
-          instructions: data[:content]
-        }, current_user
-      )
+  def add_tasks_to_related_appeals(intake_params, current_user, correspondence_id)
+    link_appeals_to_correspondence(intake_params, correspondence_id)
+    intake_params[:tasks_related_to_appeal]&.map do |data|
+      create_appeal_related_tasks(data, current_user, correspondence_id)
     end
   end
 
@@ -148,7 +161,8 @@ class CorrespondenceIntakeProcessor
 
   def task_class_for_task_unrelated(data)
     task_type = data[:klass]
-    TASKS_NOT_RELATED_TO_APPEAL_TASK_TYPES[task_type]&.constantize
+    CorrespondenceTask.tasks_not_related_to_an_appeal_names
+      .find { |name| name == task_type }&.constantize
   end
 
   def correspondence_documents_efolder_uploader
@@ -157,26 +171,14 @@ class CorrespondenceIntakeProcessor
 
   def mail_task_class_for_type(task_type)
     mail_task_types = {
-      "Associated with Claims Folder": AssociatedWithClaimsFolderMailTask.name,
-      "Change of address": AddressChangeMailTask.name,
-      "Evidence or argument": EvidenceOrArgumentMailTask.name,
-      "VACOLS updated": VacolsUpdatedMailTask.name
+      AssociatedWithClaimsFolderMailTask.label => AssociatedWithClaimsFolderMailTask.name,
+      AddressChangeCorrespondenceMailTask.label => AddressChangeCorrespondenceMailTask.name,
+      EvidenceOrArgumentCorrespondenceMailTask.label => EvidenceOrArgumentCorrespondenceMailTask.name,
+      VacolsUpdatedMailTask.label => VacolsUpdatedMailTask.name
     }.with_indifferent_access
 
     mail_task_types[task_type]&.constantize
   end
-
-  TASKS_NOT_RELATED_TO_APPEAL_TASK_TYPES = {
-    CavcCorrespondenceCorrespondenceTask.name => CavcCorrespondenceCorrespondenceTask.name,
-    CongressionalInterestCorrespondenceTask.name => CongressionalInterestCorrespondenceTask.name,
-    DeathCertificateCorrespondenceTask.name => DeathCertificateCorrespondenceTask.name,
-    FoiaRequestCorrespondenceTask.name => FoiaRequestCorrespondenceTask.name,
-    OtherMotionCorrespondenceTask.name => OtherMotionCorrespondenceTask.name,
-    PrivacyActRequestCorrespondenceTask.name => PrivacyActRequestCorrespondenceTask.name,
-    PrivacyComplaintCorrespondenceTask.name => PrivacyComplaintCorrespondenceTask.name,
-    StatusInquiryCorrespondenceTask.name => StatusInquiryCorrespondenceTask.name,
-    PowerOfAttorneyRelatedCorrespondenceTask.name => PowerOfAttorneyRelatedCorrespondenceTask.name
-  }.with_indifferent_access
 
   TASKS_RELATED_TO_APPEAL_TASK_TYPES = {
     CavcCorrespondenceMailTask.name => CavcCorrespondenceMailTask.name,

@@ -6,7 +6,8 @@ RSpec.describe CorrespondenceIntakeController, :all_dbs, type: :controller do
   let(:correspondence) { create(:correspondence, veteran: veteran) }
 
   let(:related_correspondence_uuids) do
-    (1..3).map { create(:correspondence) }.pluck(:uuid)
+    (1..3).map { create(:correspondence, :pending) }.pluck(:uuid)
+    (1..3).map { create(:correspondence, :completed) }.pluck(:uuid)
   end
   let(:esw_tasks) do
     (1..3).map do
@@ -44,6 +45,17 @@ RSpec.describe CorrespondenceIntakeController, :all_dbs, type: :controller do
       get :intake, params: { correspondence_uuid: correspondence.uuid }
 
       expect(response.status).to eq 200
+    end
+
+    it "serializes prior mail correctly" do
+      InboundOpsTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
+
+      (1..4).map { create(:correspondence, :completed, veteran: veteran) }
+      (1..4).map { create(:correspondence, :pending, veteran: veteran) }
+
+      get :intake, params: { correspondence_uuid: correspondence.uuid }
+      expect(controller.instance_variable_get(:@prior_mail).count).to eq(8)
     end
   end
 

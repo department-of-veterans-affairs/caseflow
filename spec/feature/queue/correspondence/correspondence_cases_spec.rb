@@ -907,6 +907,7 @@ RSpec.feature("The Correspondence Cases page") do
 
     before do
       5.times do
+        create(:correspondence_auto_assignable_user)
         corres_array = (1..2).map { create(:correspondence) }
         task_array = [ReassignPackageTask, RemovePackageTask]
 
