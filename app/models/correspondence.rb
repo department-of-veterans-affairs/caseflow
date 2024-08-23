@@ -20,8 +20,19 @@ class Correspondence < CaseflowRecord
 
   after_create :initialize_correspondence_tasks
 
+  # root task manages checks for different child tasks
+  delegate :tasks_not_related_to_an_appeal, to: :root_task
+  delegate :correspondence_mail_tasks, to: :root_task
+  delegate :open_package_action_task, to: :root_task
+  delegate :review_package_task, to: :root_task
+  delegate :open_intake_task, to: :root_task
+
   def initialize_correspondence_tasks
     CorrespondenceRootTaskFactory.new(self).create_root_and_sub_tasks!
+  end
+
+  def status
+    root_task&.correspondence_status
   end
 
   def type
@@ -40,25 +51,7 @@ class Correspondence < CaseflowRecord
 
   # Cannot use has_many :tasks - Task model does not contain a correspondence_id column
   def tasks
-    Task.where(appeal_id: id, appeal_type: type)
-  end
-
-  def tasks_not_related_to_an_appeal
-    CorrespondenceMailTask.open.where(appeal_id: id, appeal_type: type)
-  end
-
-  def correspondence_mail_tasks
-    tasks.where(type: [AssociatedWithClaimsFolderMailTask.name,
-                       AddressChangeMailTask.name,
-                       EvidenceOrArgumentMailTask.name, VacolsUpdatedMailTask.name])
-  end
-
-  def review_package_task
-    ReviewPackageTask.find_by(appeal_id: id, appeal_type: type)
-  end
-
-  def open_intake_task
-    CorrespondenceIntakeTask.open.find_by(appeal_id: id)
+    CorrespondenceTask.where(appeal_id: id, appeal_type: type)
   end
 
   def root_task
@@ -75,16 +68,6 @@ class Correspondence < CaseflowRecord
   # Methods below are included to allow Correspondences to render in explain page
   def veteran_full_name
     veteran.name
-  end
-
-  def status
-    # Closed
-    return "Completed" if root_task.completed? || tasks.open.none?
-
-    # Pending
-    return "Pending" if tasks.open.any?
-
-    # Future workflows if needed to change status
   end
 
   def self.prior_mail(veteran_id, uuid)
