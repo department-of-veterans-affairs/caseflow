@@ -2,7 +2,7 @@ import React from 'react';
 import { ICON_SIZES, COLORS } from '../../app/constants/AppConstants';
 import { DownloadIcon } from '../../app/components/icons/DownloadIcon';
 
-export default {
+const config =  {
   title: 'Commons/Components/Icons/DownloadIcon',
   component: DownloadIcon,
   parameters: {
@@ -22,5 +22,10 @@ export default {
 
 const Template = (args) => <DownloadIcon {...args} />;
 
-export const Default = Template.bind({});
+const Default = Template.bind({});
+Default.args = { ...config.args, name: 'default' };
+Default.argTypes = { ...config.argTypes, name: 'default' };
+export default {
+  component: Default,
+};
 Default.decorators = [(Story) => <div style={{ padding: '20px', background: '#333' }}><Story /></div>];

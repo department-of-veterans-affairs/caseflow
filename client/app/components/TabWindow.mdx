@@ -1,0 +1,137 @@
+import { Meta, Story, Preview, Props } from "@storybook/addon-docs/blocks";
+import { action } from "@storybook/addon-actions";
+import TabWindow from "./TabWindow";
+import { CrossIcon } from "./icons/fontAwesome/CrossIcon";
+import { CheckIcon } from "./icons/fontAwesome/CheckIcon";
+
+export const defaultProps = {
+  tabs: [
+    {
+      disable: false,
+      label: "Tab 1",
+      page: "Content",
+    },
+    {
+      disable: false,
+      label: "Tab 2",
+      page: "Some other content",
+    },
+  ],
+};
+
+<Meta title="Commons/Components/TabWindow" component={TabWindow} />
+
+# TabWindow
+
+Displays content in sections based on the currently selected tab. Allows for grouping sections of a page based on common functionality
+The US Web Design doesn’t include tabs so we’ve designed our own.
+The active tab is highlighted with a blue border and blue text.
+Inactive tabs have grey text. Disabled tabs are grey, have faded grey text,
+and cannot be clicked.
+
+### Default
+
+The tab window will by default toggle between the tab list that is provided as props and render the page value of the active tab
+
+<Preview>
+  <Story name="Default">
+    {() => {
+      return <TabWindow tabs={defaultProps.tabs} />;
+    }}
+  </Story>
+</Preview>
+
+### Disabled
+
+Tabs can be disabled by setting the `disable` prop to `true` on the tab you wish to disable
+
+<Preview>
+  <Story name="Disabled">
+    {() => {
+      return (
+        <TabWindow
+          tabs={[
+            {
+              disable: false,
+              label: "Enabled Tab",
+              page: "Accessible content",
+            },
+            {
+              disable: true,
+              label: "Disabled Tab",
+              page: "Inaccessible content",
+            },
+          ]}
+        />
+      );
+    }}
+  </Story>
+</Preview>
+
+### Icons
+
+Icons are optional on tabs and are set by the designer in the mockup.
+These icons come from the Font Awesome package, which is set in the
+U.S. Design standards. Here is an example of tabs with icons:
+
+<Preview>
+  <Story name="With Icons">
+    {() => {
+      return (
+        <TabWindow
+          tabs={[
+            {
+              icon: <CheckIcon />,
+              disable: false,
+              label: "Check Tab",
+              page: "Content with icon",
+            },
+            {
+              icon: <CrossIcon />,
+              disable: false,
+              label: "Cross Tab",
+              page: "More content with icon",
+            },
+          ]}
+        />
+      );
+    }}
+  </Story>
+</Preview>
+
+### FullPage
+
+You can also make the tab content span the full page by setting the `fullPage` prop to `true`.
+
+<Preview>
+  <Story name="FullPage">
+    {() => {
+      return (
+        <div
+          style={{
+            maxWidth: "800px",
+          }}
+        >
+          <TabWindow
+            fullPage
+            tabs={[
+              {
+                disable: false,
+                label: "Full Page Tab 1",
+                page:
+                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+              },
+              {
+                disable: false,
+                label: "Full Page Tab 2",
+                page: "More spanned content",
+              },
+            ]}
+          />
+        </div>
+      );
+    }}
+  </Story>
+</Preview>
+
+<Props of={TabWindow} />

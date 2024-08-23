@@ -1,0 +1,28 @@
+import { Meta, Story, Canvas } from '@storybook/addon-docs/blocks';
+
+import * as LoadingContainerStories from './LoadingContainer.stories';
+
+import LoadingContainer from './LoadingContainer';
+
+<Meta
+  title="Commons/Components/Loaders/LoadingContainer"
+  component={LoadingContainer}
+  parameters={{
+    controls: { expanded: true }
+  }}
+/>
+
+# Loaders
+
+A large Caseflow loading indicator in the center of the page is used when some
+information has been retrieved but other information is still being pulled.
+Each loader should have a message underneath the logo in `gray-dark`
+that explains what is currently happening or where the information is being drawn
+from. Loader should match the respective Caseflow app logo. Designers are
+responsible for letting developers know that defaulted color in the source code needs
+to be the color of the app logo.
+See Caseflow Logos under the `Colors` section.
+
+<Canvas>
+  <Story story={LoadingContainerStories.Loader} />
+</Canvas>

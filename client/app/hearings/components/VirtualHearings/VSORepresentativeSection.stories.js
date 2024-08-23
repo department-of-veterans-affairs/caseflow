@@ -1,5 +1,5 @@
 import React from 'react';
-import { useArgs } from '@storybook/client-api';
+import { useArgs } from '@storybook/preview-api';
 
 import { virtualHearing, defaultHearing } from '../../../../test/data/hearings';
 import { VSORepresentativeSection } from './VSORepresentativeSection';

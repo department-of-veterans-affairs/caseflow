@@ -228,7 +228,7 @@ const CavcDashboardIssuesSection = (props) => {
   };
 
   return (
-    <div {...issueSectionStyling}>
+    <div {...issueSectionStyling} data-testid="testIssues">
       <div>
         <strong {...headerStyling}>
           <span>{LABELS.CAVC_DASHBOARD_ISSUES}</span>

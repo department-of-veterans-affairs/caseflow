@@ -7,5 +7,8 @@ export const Template = (args) => (
   <SmallLoader {...args} />
 );
 
-export const Loader = Template.bind({});
+const Loader = Template.bind({});
+export default {
+  component: Loader,
+};
 Loader.args = {message: "Loading...", spinnerColor: LOGO_COLORS.READER.ACCENT };
