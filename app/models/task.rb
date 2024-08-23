@@ -560,8 +560,16 @@ class Task < CaseflowRecord
   end
 
   def latest_attorney_case_review
+    # Not sure about this one. I don't know the difference between task attorney cases and appeal attorney cases
     # Should be the same as calling: appeal.latest_attorney_case_review
-    @latest_attorney_case_review ||= AttorneyCaseReview.where(appeal: appeal).order(:created_at).last
+    @latest_attorney_case_review ||=
+      if association(:attorney_case_reviews).loaded?
+        attorney_case_reviews.max_by(&:created_at)
+      else
+        AttorneyCaseReview.where(appeal: appeal).order(:created_at).last
+      end
+
+    # @latest_attorney_case_review ||= AttorneyCaseReview.where(appeal: appeal).order(:created_at).last
   end
 
   def prepared_by_display_name

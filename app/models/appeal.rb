@@ -247,7 +247,7 @@ class Appeal < DecisionReview
   end
 
   def contested_claim?
-    return false unless FeatureToggle.enabled?(:indicator_for_contested_claims)
+    # return false unless FeatureToggle.enabled?(:indicator_for_contested_claims)
 
     category_substrings = %w[Contested Apportionment]
 
@@ -265,21 +265,26 @@ class Appeal < DecisionReview
   # :reek:RepeatedConditionals
   # decision issue status overrules request issues/special issue list for both mst and pact
   def mst?
-    return false unless FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user])
+    # Would be nice to remove this if it's always on by default since the check is pretty slow compared to what it does
+    # return false unless FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user])
 
     return decision_issues.any?(&:mst_status) unless decision_issues.empty?
 
-    request_issues.active.any?(&:mst_status) ||
-      special_issue_list&.military_sexual_trauma
+    # request_issues.active.any?(&:mst_status) ||
+    #   special_issue_list&.military_sexual_trauma
+    special_issue_list&.military_sexual_trauma ||
+      request_issues.any? { |request_issue| request_issue.mst_status && request_issue.active? }
   end
 
   # :reek:RepeatedConditionals
   def pact?
-    return false unless FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user])
+    # Would be nice to remove this if it's always on by default since the check is pretty slow compared to what it does
+    # return false unless FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user])
 
     return decision_issues.any?(&:pact_status) unless decision_issues.empty?
 
-    request_issues.active.any?(&:pact_status)
+    # request_issues.active.any?(&:pact_status)
+    request_issues.any? { |request_issue| request_issue.pact_status && request_issue.active? }
   end
 
   # Returns the most directly responsible party for an appeal when it is at the Board,

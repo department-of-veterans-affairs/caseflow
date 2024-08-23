@@ -39,7 +39,9 @@ class WorkQueue::TaskSerializer
   end
 
   attribute :assigned_to do |object|
-    assignee = object.try(:unscoped_assigned_to)
+    # TODO: Why is this using this instead of just assigned_to that is preloaded?
+    # assignee = object.try(:unscoped_assigned_to)
+    assignee = object.try(:assigned_to)
 
     {
       css_id: assignee.try(:css_id),

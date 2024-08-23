@@ -26,16 +26,20 @@ class SpecialtyCaseTeamUnassignedTasksTab < QueueTab
     [
       { appeal: [
         :request_issues,
+        :decision_issues,
         :available_hearing_locations,
         :claimants,
         :work_mode,
-        :latest_informal_hearing_presentation_task
+        :latest_informal_hearing_presentation_task,
+        :special_issue_list
       ] },
       :assigned_by,
       :assigned_to,
       :children,
       :parent,
-      :attorney_case_reviews
+      :attorney_case_reviews,
+      :cancelled_by,
+      :completed_by
     ]
   end
 
