@@ -749,6 +749,9 @@ module Seeds
         ca8 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "Genpop60Days", snamel: "AffinityStartDate").ssn}S",  judge: affinity_and_tied_to_judge, attorney: attorney)
         VACOLS::Case.where(bfcorlid: ca8.bfcorlid, bfac: "1").update(bfmemid: nil)
 
+        caa8 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "Genpop60Days", snamel: "AffinityStartDate").ssn}S",  judge: affinity_judge, attorney: attorney)
+        VACOLS::Case.where(bfcorlid: ca8.bfcorlid, bfac: "1").update(bfmemid: nil)
+
         # no hearing held, no previous deciding judge
         ca9 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "Genpop60Days", snamel: "AffinityStartDate").ssn}S", judge: affinity_judge, attorney: attorney,
                                           tied_to: false)
@@ -814,7 +817,7 @@ module Seeds
     def create_cases_for_aoj_affinity_days_lever_ineligible_judge
       # ineligible judge cases:
         # no hearing held but has previous decision
-        create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "AffinityToIneligibleUser", snamel: "60DaysAffinity").ssn}S", judge: ineligible_judge, attorney: attorney, tied_to: false)
+        create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "AffinityToIneligibleUser", snamel: "60DaysAffinity").ssn}S", judge: affinity_judge, attorney: attorney, tied_to: false)
         create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "AffinityToIneligibleUser", snamel: "25DaysAffinity").ssn}S", judge: ineligible_judge, attorney: attorney,
                                       tied_to: false, affinity_start_date: 25.days.ago)
         create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "AffinityToIneligibleUser", snamel: "3DaysAffinity").ssn}S", judge: ineligible_judge, attorney: attorney,
