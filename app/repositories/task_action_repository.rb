@@ -22,10 +22,6 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       }
     end
 
-    def reassign_corr_task_to_person
-      # stubbed
-    end
-
     def mark_corr_task_complete
       # stubbed
     end

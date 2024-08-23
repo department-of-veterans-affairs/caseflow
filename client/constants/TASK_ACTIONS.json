@@ -566,8 +566,8 @@
   },
   "REASSIGN_CORR_TASK_TO_PERSON": {
     "label": "Re-assign to person",
-    "value": "reassign_to_person",
-    "func": "reassign_corr_task_to_person"
+    "value": "assign_to_person",
+    "func": "assign_corr_task_to_person"
   },
 
   "MARK_TASK_COMPLETE": {
