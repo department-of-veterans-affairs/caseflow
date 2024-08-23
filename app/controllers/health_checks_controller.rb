@@ -5,7 +5,6 @@ class HealthChecksController < ActionController::Base
   include CollectCustomMetrics
 
   protect_from_forgery with: :exception
-  # newrelic_ignore_apdex
 
   def show
     body = {
