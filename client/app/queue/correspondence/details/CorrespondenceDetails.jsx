@@ -1,15 +1,18 @@
 /* eslint-disable max-lines */
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import TabWindow from '../../../components/TabWindow';
 import CopyTextButton from '../../../components/CopyTextButton';
 import { loadCorrespondence } from '../correspondenceReducer/correspondenceActions';
 import CorrespondenceCaseTimeline from '../CorrespondenceCaseTimeline';
+import { correspondenceInfo } from './../correspondenceDetailsReducer/correspondenceDetailsActions';
 import CorrespondenceResponseLetters from './CorrespondenceResponseLetters';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
+// import TaskSnapshot from '../../TaskSnapshot';
 import { prepareAppealForSearchStore } from 'app/queue/utils';
 import CorrespondenceTasksAdded from '../CorrespondenceTasksAdded';
 import moment from 'moment';
@@ -168,6 +171,7 @@ const CorrespondenceDetails = (props) => {
 
   useEffect(() => {
     dispatch(loadCorrespondence(correspondence));
+    dispatch(correspondenceInfo(correspondence));
   }, []);
 
   const correspondenceTasks = () => {
@@ -484,5 +488,18 @@ CorrespondenceDetails.propTypes = {
   correspondenceResponseLetters: PropTypes.array
 };
 
-export default CorrespondenceDetails;
+const mapStateToProps = (state) => ({
+  correspondenceInfo: state.correspondenceDetails.correspondenceInfo,
+});
+
+const mapDispatchToProps = (dispatch) => (
+  bindActionCreators({
+    correspondenceInfo
+  }, dispatch)
+);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(CorrespondenceDetails);
 /* eslint-enable max-lines */

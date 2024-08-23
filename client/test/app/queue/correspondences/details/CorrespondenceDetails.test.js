@@ -75,6 +75,9 @@ describe('CorrespondenceDetails', () => {
       relatedCorrespondenceIds: [2],
       tasksUnrelatedToAppeal: [{
         type: 'FOIA request',
+        label: 'Other Motion',
+        status: 'assigned',
+        uniqueId: 3080,
         assigned_to: 'CAVC Litigation Support',
         assigned_at: '07/23/2024',
         instructions: [
@@ -84,6 +87,9 @@ describe('CorrespondenceDetails', () => {
       },
       {
         type: 'Cavc request',
+        label: 'CAVC Task',
+        status: 'assigned',
+        uniqueId: 3080,
         assigned_to: 'CAVC Litigation Support',
         assigned_at: '07/23/2024',
         instructions: [
@@ -283,7 +289,7 @@ describe('CorrespondenceDetails', () => {
         appeals: [
           {
             id: 1,
-            type: 'appeal',
+            type: 'Correspondence',
             attributes: {
               assigned_to_location: 'Mail',
               appellant_full_name: 'John Doe',

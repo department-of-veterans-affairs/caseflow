@@ -27,7 +27,7 @@ import cavcDashboardReducer from './cavcDashboard/cavcDashboardReducer';
 
 import intakeCorrespondenceReducer from './correspondence/correspondenceReducer/correspondenceReducer';
 import reviewPackageReducer from './correspondence/correspondenceReducer/reviewPackageReducer';
-
+import correspondenceDetailsReducer from './correspondence/correspondenceDetailsReducer/correspondenceDetailsReducer';
 import cachingReducer from './caching/cachingReducer';
 
 export const initialState = {
@@ -821,7 +821,7 @@ const rootReducer = combineReducers({
 
   intakeCorrespondence: intakeCorrespondenceReducer,
   reviewPackage: reviewPackageReducer,
-
+  correspondenceDetails: correspondenceDetailsReducer,
   caching: cachingReducer
 });
 
