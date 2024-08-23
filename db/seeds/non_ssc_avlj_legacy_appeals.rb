@@ -29,6 +29,9 @@ module Seeds
       create_ssc_avlj("SSCA11", "Does-not qualify for-mvmt")
       create_non_ssc_avlj("NONSSCAN12", "Two-judges last-is-SSC")
       create_non_ssc_avlj("NONSSCAN13", "Two-judges both-non-SSC")
+      #create_inactive_non_ssc_avlj("NONSSCAN14", "Inactive Non")
+      #create_vlj("REGVLJ01", "Regular VLJ1")
+      #create_vlj("REGVLJ02", "Regular VLJ2")
 
       create_non_ssc_avlj("SIGNAVLJLGC", "NonSSC Signing-AVLJ")
       create_non_ssc_avlj("AVLJLGC2", "Alternate NonSSC-AVLJ")
@@ -50,6 +53,12 @@ module Seeds
       create_four_alternating_priority_by_age_appeals_tied_to_a_ssc_avlj
       create_four_alternating_priority_by_age_appeals_tied_to_a_non_ssc_avlj_with_a_second_hearing_held_by_a_ssc_avlj
       create_four_alternating_priority_by_age_appeals_tied_to_a_non_ssc_avlj_with_a_second_hearing_held_by_another_non_ssc_avlj
+      #create_unsigned_priority_appeal_tied_to_inactive_non_ssc_avlj
+      #create_signed_non_priority_appeal_tied_to_inactive_non_ssc_avlj
+      #create_unsigned_priority_ama_appeal_tied_to_non_ssc_avlj
+      #create_signed_non_priority_ama_appeal_tied_to_non_ssc_avlj
+      #create_unsigned_priority_appeal_tied_to_vlj
+      #create_signed_non_priority_appeal_tied_to_vlj
     end
 
     def create_four_priority_appeals_tied_to_a_non_ssc_avlj
@@ -231,6 +240,36 @@ module Seeds
       create_second_hearing_for_legacy_appeal(legacy_appeal, 10.days.ago, avlj2)
     end
 
+    #def create_unsigned_priority_appeal_tied_to_inactive_non_ssc_avlj
+      #("NONSSCAN14", "Inactive Non")
+      #create_legacy_appeal(priority=true, inactive_avlj, x.days.ago)
+    #end
+
+    #def create_signed_non_priority_appeal_tied_to_inactive_non_ssc_avlj
+      #("NONSSCAN14", "Inactive Non")
+      #create_signed_legacy_appeal(priority=false, inactive_avlj, inactive_avlj, x.days.ago)
+    #end
+
+    #def create_unsigned_priority_ama_appeal_tied_to_non_ssc_avlj
+      #("NONSSCAN01", "Four Priority")
+      #create_ama_appeal(pirority=true, non_ssc_avlj, x.days.ago)
+    #end
+
+    #def create_signed_non_priority_ama_appeal_tied_to_non_ssc_avlj
+      #("NONSSCAN01", "Four Priority")
+      #create_signed_ama_appeal(priority=false, non_ssc_avlj, non_ssc_avlj, x.days.ago)
+    #end
+
+    #def create_unsigned_priority_appeal_tied_to_vlj
+      #("REGVLJ01", "Regular VLJ1")
+      #create_legacy_appeal(priority=true, vlj, x.days.ago)
+    #end
+
+    #def create_signed_non_priority_appeal_tied_to_vlj
+      #("REGVLJ02", "Regular VLJ2")
+      #create_signed_legacy_appeal(priority=false, vlj, vlj, x.days.ago)
+    #end
+
     def create_non_ssc_avlj(css_id, full_name)
       User.find_by_css_id(css_id) ||
         create(:user, :non_ssc_avlj_user, css_id: css_id, full_name: full_name)
@@ -240,6 +279,18 @@ module Seeds
       User.find_by_css_id(css_id) ||
         create(:user, :ssc_avlj_user, css_id: css_id, full_name: full_name)
     end
+
+    #def create_inactive_non_ssc_avlj
+      #same as a regular non_ssc_avlj except thier sactive = 'I' instead of 'A'
+      # User.find_by_css_id(css_id) ||
+      #   create(:user, :inactive_non_ssc_avlj_user, css_id: css_id, full_name: full_name)
+    #end
+
+    #def create_vlj
+      #same as a ssc_avlj except thier svlj = 'J' instead of 'A'
+      # User.find_by_css_id(css_id) ||
+      #   create(:user, :vlj_user, css_id: css_id, full_name: full_name)
+    #end
 
     def demo_regional_office
       'RO17'
@@ -346,6 +397,17 @@ module Seeds
         participant_id: participant_id
       )
     end
+
+    #def create_ama_appeal
+      # look at db/seeds/demo_ama_aod_hearing_data.rb for priority
+      # look at db/seeds/demo_ama_non_aod_hearing_data.rb for non priority
+    #end
+
+    #def create_signed_ama_appeal
+      # THIS WILL BE THE HARDEST ONE it likely involves creating a new factory for it similar to the one for legacy cases
+      # look at db/seeds/demo_ama_aod_hearing_data.rb for priority
+      # look at db/seeds/demo_ama_non_aod_hearing_data.rb for non priority
+    #end
 
     def create_second_hearing_for_legacy_appeal(legacy_appeal, docket_date, avlj)
       case_hearing = create(
