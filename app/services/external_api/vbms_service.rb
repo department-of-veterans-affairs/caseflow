@@ -308,4 +308,16 @@ class ExternalApi::VBMSService
       service.call(file_number: vbms_id)
     end
   end
+
+  def self.verify_current_user_veteran_access(veteran)
+    return if !FeatureToggle.enabled?(:check_user_sensitivity)
+
+    current_user = RequestStore[:current_user]
+
+    fail "User does not have permission to access this information" unless
+      SensitivityChecker.new(current_user).sensitivity_levels_compatible?(
+        user: current_user,
+        veteran: veteran
+      )
+  end
 end
