@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import BandwidthAlert from '../../../app/reader/BandwidthAlert';
 
-//variables being defined are in mbps
+// variables being defined are in mbps
 const bandwidthUnderThreshold = 1.0;
 const bandwidthOverThreshold = 2.0;
 
