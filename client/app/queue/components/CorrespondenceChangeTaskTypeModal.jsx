@@ -43,7 +43,7 @@ const CorrespondenceChangeTaskTypeModal = (props) => {
     const updatedTasks = props.correspondenceInfo.tasksUnrelatedToAppeal.map((filteredTask) => {
       if (parseInt(filteredTask.uniqueId, 10) === parseInt(props.task_id, 10)) {
         filteredTask.label = typeOption.label;
-        filteredTask.instructions = `${filteredTask.instructions}, ${instructions}`;
+        filteredTask.instructions.push(instructions);
       }
 
       return filteredTask;
