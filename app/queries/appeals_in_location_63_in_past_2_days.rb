@@ -43,7 +43,7 @@ class AppealsInLocation63InPast2Days
       .flat_map do |sym, docket|
         if sym == :legacy
           appeals = docket.loc_63_appeals
-          legacy_rows(appeals)
+          legacy_rows(appeals).uniq { |record| record[:docket_number] }
         else
           []
         end
