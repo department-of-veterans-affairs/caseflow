@@ -75,7 +75,7 @@ const CorrespondenceCompleteTaskModal = (props) => {
 
     updatedTask.status = TASK_STATUSES.completed;
 
-    correspondence.completedTasksUnrelatedToAppeal.push(updatedTask);
+    correspondence.closedTasksUnrelatedToAppeal.push(updatedTask);
 
     return props.completeTaskNotRelatedToAppeal(payload, frontendParams, correspondence);
 

@@ -45,8 +45,8 @@ class WorkQueue::CorrespondenceSerializer
     tasks
   end
 
-  attribute :completed_tasks_unrelated_to_appeal do |object|
-    filtered_tasks = object.completed_tasks_not_related_to_an_appeal
+  attribute :closed_tasks_unrelated_to_appeal do |object|
+    filtered_tasks = object.closed_tasks_not_related_to_an_appeal
     tasks = []
 
     unless filtered_tasks.empty?

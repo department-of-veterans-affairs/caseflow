@@ -497,6 +497,3 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(CorrespondenceDetails);
-
-export default CorrespondenceDetails;
-/* eslint-enable max-lines */
