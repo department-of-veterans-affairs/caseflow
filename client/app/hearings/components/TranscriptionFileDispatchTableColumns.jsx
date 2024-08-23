@@ -56,6 +56,13 @@ const styles = {
   workOrderLink: {
     cursor: 'pointer',
     whiteSpace: 'nowrap',
+    paddingRight: '1.3em',
+    position: 'relative',
+  },
+  workOrderLinkIcon: {
+    position: 'absolute',
+    top: '-0.2em',
+    right: 0
   },
   contractor: {
     maxWidth: '150px'
@@ -221,7 +228,7 @@ export const workOrderColumn = (openFile) => {
       <div>
         <a style={styles.workOrderLink} onClick={() => openFile(row.id)}>
           #{row.workOrder}
-          <span style={styles.linkIcon}>
+          <span style={styles.workOrderLinkIcon}>
             <ExternalLinkIcon color={COLORS.PRIMARY} size={ICON_SIZES.SMALL} />
           </span>
         </a>
