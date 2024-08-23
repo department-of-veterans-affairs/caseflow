@@ -1,5 +1,5 @@
 import React from 'react';
-import { useArgs } from '@storybook/client-api';
+import { useArgs } from '@storybook/preview-api';
 import { MemoryRouter } from 'react-router';
 
 import ReduxBase from 'app/components/ReduxBase';

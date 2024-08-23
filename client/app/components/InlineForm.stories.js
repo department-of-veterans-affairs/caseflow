@@ -20,4 +20,7 @@ const Template = (args) => {
   </InlineForm>;
 };
 
-export const Default = Template.bind({});
+const Default = Template.bind({});
+export default {
+  component: Default,
+};

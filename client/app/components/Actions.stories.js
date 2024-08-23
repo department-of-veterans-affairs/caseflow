@@ -16,4 +16,7 @@ const Template = () => (
   </div>
 );
 
-export const Actions = Template.bind({});
+const Actions = Template.bind({});
+export default {
+  component: Actions,
+};

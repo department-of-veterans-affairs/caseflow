@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 const path = require('path');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 const Dotenv = require('dotenv-webpack');
 
 const devBuild = process.env.NODE_ENV !== 'production'; // eslint-disable-line no-process-env
@@ -19,6 +20,7 @@ const config = {
     new webpack.EnvironmentPlugin({ NODE_ENV: 'development' }),
     devBuild && new webpack.HotModuleReplacementPlugin(),
     devBuild && !testBuild && new ReactRefreshWebpackPlugin(),
+    new NodePolyfillPlugin(),
     // See https://github.com/mrsteele/dotenv-webpack/blob/master/README.md#properties
     new Dotenv({
       systemvars: true,
@@ -29,16 +31,19 @@ const config = {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Credentials': 'true',
     },
-    hotOnly: true,
-    contentBase: './',
-    port: 3500,
-    proxy: {
-      '*': 'http://localhost:3500',
+    proxy: [
+      {
+        router: 'http://localhost:3500',
+      },
+    ],
+    static: {
+      directory: './',
+      staticOptions: {
+        poll: true,
+        ignored: '/node_modules/',
+      },
     },
-    watchOptions: {
-      poll: true,
-      ignored: '/node_modules/',
-    },
+    port: 3500, 
   },
   resolve: {
     extensions: ['.js', '.jsx', '.json'],
@@ -62,7 +67,11 @@ const config = {
   module: {
     rules: [
       {
-        test: /\.jsx?$/,
+        test: /\.mdx$/,
+        use: ['@mdx-js/loader'],
+      },
+      {
+        test: /\.(?:jsx|js|mjs|cjs)$/,
         exclude: new RegExp(
           'node_modules/(?!@department-of-veterans-affairs/caseflow-frontend-toolkit)'
         ),
@@ -72,7 +81,7 @@ const config = {
             options: {
               plugins: [
                 devBuild &&
-                  !testBuild &&
+                  testBuild &&
                   require.resolve('react-refresh/babel'),
               ].filter(Boolean),
             },

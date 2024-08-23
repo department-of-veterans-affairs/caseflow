@@ -1,17 +1,11 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import CavcDashboardIssuesSection from '../../../../app/queue/cavcDashboard/CavcDashboardIssuesSection';
+import {Provider} from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+import { queueWrapper } from 'test/data/stores/queueStore';
 
-jest.mock('../../../../app/queue/cavcDashboard/CavcDecisionReasons',
-  () => () => <mock-details data-testid="testDecisionReasons" />
-);
-
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => jest.fn().mockImplementation(() => Promise.resolve(true)),
-  // useSelector is only used to get state for selectionBases and see if array length is > 0
-  useSelector: () => jest.fn().mockImplementation(() => Promise.resolve([1, 2, 3]))
-}));
 
 const createDashboardProp = (hasIssues) => {
   if (hasIssues) {
@@ -44,7 +38,13 @@ const createDashboardProp = (hasIssues) => {
 const renderCavcDashboardIssuesSection = async (dashboard, userCanEdit = true) => {
   const props = { dashboard, userCanEdit };
 
-  return render(<CavcDashboardIssuesSection {...props} />);
+  const { queryByTestId } = render(
+    <CavcDashboardIssuesSection {...props}
+    />,
+    {
+      wrapper: queueWrapper,
+    }
+  );
 };
 
 describe('CavcDashboardIssuesSection', () => {

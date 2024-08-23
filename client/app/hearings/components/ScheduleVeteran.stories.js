@@ -1,5 +1,5 @@
 import React from 'react';
-import { useArgs } from '@storybook/client-api';
+import { useArgs } from '@storybook/preview-api';
 
 import { defaultHearing, virtualHearing, centralHearing, hearingDateOptions } from '../../../test/data/hearings';
 import { amaAppeal, openHearingAppeal, defaultAssignHearing, scheduleHearingDetails } from '../../../test/data/appeals';

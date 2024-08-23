@@ -10,5 +10,8 @@ export const Template = (args) => (
   </LoadingContainer>
 );
 
-export const Loader = Template.bind({});
+const Loader = Template.bind({});
+export default {
+  component: Loader,
+};
 Loader.args = { color: LOGO_COLORS.CERTIFICATION.ACCENT };

@@ -1,0 +1,108 @@
+import { useState } from 'react';
+
+import { Meta, Story, Preview, Props } from '@storybook/addon-docs/blocks';
+import { action } from '@storybook/addon-actions';
+import { text, boolean } from '@storybook/addon-knobs';
+
+import { HearingTime } from './HearingTime';
+
+<Meta
+  title="Hearings/Components/Modal Forms/HearingTime"
+  component={HearingTime}
+/>
+
+# Hearing Time
+
+<Preview>
+  <Story name="Normal">
+    {() => {
+      const [value, setValue] = useState('');
+      return (
+        <HearingTime
+          errorMessage={text('Error Message', '', 'knobs')}
+          readOnly={boolean('Read-Only', false, 'knobs')}
+          vertical={boolean('Vertical Align', false, 'knobs')}
+          disableRadioOptions={boolean('Disable Additional Options', false, 'knobs')}
+          enableZone={boolean('Show Timezone', false, 'knobs')}
+          onChange={setValue}
+          regionalOffice={text('Regional Office Key', 'RO01', 'knobs')}
+          value={value}
+        />
+      );
+    }}
+  </Story>
+</Preview>
+
+### Read-Only
+
+<Preview>
+  <Story name="Read Only">
+    {() => {
+      return (
+        <HearingTime
+          readOnly
+          regionalOffice={"RO01"}
+          value={"09:30"}
+        />
+      );
+    }}
+  </Story>
+</Preview>
+
+### Error
+
+<Preview>
+  <Story name="With Error">
+    {() => {
+      const [value, setValue] = useState('');
+      return (
+        <HearingTime
+          errorMessage={"Please select a hearing time"}
+          onChange={setValue}
+          regionalOffice={"RO01"}
+          value={value}
+        />
+      );
+    }}
+  </Story>
+</Preview>
+
+### Timezone Enabled
+
+<Preview>
+  <Story name="Timezone Enabled">
+    {() => {
+      const [value, setValue] = useState('');
+      return (
+        <HearingTime
+          enableZone
+          onChange={setValue}
+          regionalOffice={"RO01"}
+          value={value}
+        />
+      );
+    }}
+  </Story>
+</Preview>
+
+### Without Radio Buttons
+
+<Preview>
+  <Story name="Without Radio Buttons">
+    {() => {
+      const [value, setValue] = useState('');
+      return (
+        <HearingTime
+          disableRadioOptions
+          onChange={setValue}
+          regionalOffice={"RO01"}
+          value={value}
+        />
+      );
+    }}
+  </Story>
+</Preview>
+
+### Props
+
+<Props of={HearingTime} />

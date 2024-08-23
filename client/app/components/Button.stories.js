@@ -8,7 +8,10 @@ const Template = (args) => (
   </Button >
 );
 
-export const Primary = Template.bind({});
+const Primary = Template.bind({});
+export default {
+  component: Primary,
+};
 
 export const Secondary = Template.bind({});
 Secondary.args = {

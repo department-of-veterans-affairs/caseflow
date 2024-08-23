@@ -96,7 +96,7 @@ export const CavcDashboardDetails = (props) => {
   });
 
   return (
-    <div id={`dashboard-details-${dashboard.id}`}>
+    <div id={`dashboard-details-${dashboard.id}`} data-testid="testDetails">
       <Button linkStyling willNeverBeLoading classNames={['cf-push-right', 'cf-modal-link']}
         styling={buttonStyling} disabled={!userCanEdit} onClick={openHandler}
       >

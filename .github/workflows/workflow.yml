@@ -85,7 +85,7 @@ jobs:
       - name: install node version
         uses: actions/setup-node@v4
         with:
-          node-version: '16.16.0'
+          node-version: '18.20.2'
 
       # If we don't explicitly set this, the runner doesn't find the path when trying to save the cache
       - name: Set yarn cache directory
@@ -108,7 +108,7 @@ jobs:
 
       # We run yarn install after loading the cache to update any dependencies if their version is different
       - name: Install Node Dependencies
-        run: ./ci-bin/capture-log "cd client && yarn install --frozen-lockfile --prefer-offline"
+        run: ./ci-bin/capture-log "cd client && yarn policies set-version 1.22.18 && yarn install --frozen-lockfile --prefer-offline"
 
       - name: Save Yarn Cache
         if: steps.cache-yarn-cache.outputs.cache-hit != 'true'
@@ -298,7 +298,7 @@ jobs:
       - name: install node version
         uses: actions/setup-node@v4
         with:
-          node-version: '16.16.0'
+          node-version: '18.20.2'
 
       - name: validate node version
         run: ./ci-bin/capture-log "node -v"
@@ -351,7 +351,7 @@ jobs:
       - name: install node version
         uses: actions/setup-node@v4
         with:
-          node-version: '16.16.0'
+          node-version: '18.20.2'
 
       - name: Install Node Dependencies
         run: ./ci-bin/capture-log "cd client && yarn install --frozen-lockfile"

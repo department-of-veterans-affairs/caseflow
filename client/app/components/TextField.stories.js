@@ -38,7 +38,10 @@ const ControlledTpl = (args) => {
   return <TextField {...args} onChange={handleChange} value={value} />;
 };
 
-export const Uncontrolled = UncontrolledTpl.bind({});
+const Uncontrolled = UncontrolledTpl.bind({});
+export default {
+  component: Uncontrolled,
+};
 Uncontrolled.args = { ...config.args, name: 'uncontrolled' };
 Uncontrolled.argTypes = { ...config.argTypes };
 

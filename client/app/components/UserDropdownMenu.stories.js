@@ -6,7 +6,10 @@ const Template = (args) => <DropdownMenu {...args} />;
 // Mock analyticsEvent sent by window in DropdownMenu component
 window.analyticsEvent = (...args) => {};
 
-export const UserDropdownMenu = Template.bind({});
+const UserDropdownMenu = Template.bind({});
+export default {
+  component: UserDropdownMenu,
+};
 UserDropdownMenu.parameters = {
   docs: {
     inlineStories: false,

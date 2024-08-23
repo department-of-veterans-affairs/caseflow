@@ -1,0 +1,80 @@
+import { Meta, Story, Canvas } from '@storybook/addon-docs/blocks';
+
+import * as ButtonStories from './Button.stories';
+
+import Button from './Button';
+
+<Meta
+  title="Commons/Components/Button"
+  component={Button}
+  parameters={{
+    controls: { expanded: true }
+  }}
+  args={{
+    children: 'Click Me',
+    disabled: false,
+    linkStyling: false,
+    loading: false,
+    type: 'button',
+    name: 'myButton',
+  }}
+  argTypes={{
+    classNames: { control: { type: 'array' } },
+    type: {
+      control: { type: 'select', options: ['button', 'submit', 'reset'] },
+    },
+    loading: { control: { type: 'boolean' } },
+    onClick: { action: 'clicked' },
+    styling: { control: { type: 'object' } },
+  }}
+/>
+
+Primary actions are visually prioritized by being solid blue `usa-button` style.
+
+Finally, there are actions that we generally want to discourage but should remain visible to users as an escape hatch.
+
+These actions can be `button-link` styles or use the `usa-button-secondary style`.
+For example, the “Cancel” button frequently found at the bottom of Caseflow workflow layouts
+is usually a button link because it launches a modal.
+The button to confirm that a user wants to cancel is red and serves as a warning to the user
+that the action is destructive. These styles should be used sparingly.
+
+The width of the button will vary depending on the length of the content.
+In the source code, the buttons are set so that there is always 20px padding on the left
+and right of the text. While it is ideal not to change the default setting, in a case where
+buttons of various widths are stacked, we highly recommend adjusting the padding of the buttons
+so that they all match in width.
+
+### Primary Button
+<Canvas>
+  <Story story={ButtonStories.Primary} />
+</Canvas>
+
+### Secondary Button
+<Canvas>
+  <Story story={ButtonStories.Secondary} />
+</Canvas>
+
+### Disabled Button
+<Canvas>
+  <Story story={ButtonStories.Disabled} />
+</Canvas>
+
+### Link Button
+<Canvas>
+  <Story story={ButtonStories.Link} />
+</Canvas>
+
+### Disabled Link Button
+<Canvas>
+  <Story story={ButtonStories.DisabledLink} />
+</Canvas>
+
+### Loading Button
+Our button components are able to react to a *loading* property which,
+when *true*, causes the button to show **Loading...**
+beside a spinning icon.
+
+<Canvas>
+  <Story story={ButtonStories.Loading} />
+</Canvas>

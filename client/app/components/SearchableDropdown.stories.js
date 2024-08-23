@@ -2,7 +2,7 @@ import React from 'react';
 
 import faker from 'faker';
 
-import { useArgs } from '@storybook/client-api';
+import { useArgs } from '@storybook/preview-api';
 import { action } from '@storybook/addon-actions';
 
 import SearchableDropdown from './SearchableDropdown';
