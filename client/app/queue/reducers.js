@@ -23,6 +23,8 @@ import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
 
 import editClaimantReducer from './editAppellantInformation/editAppellantInformationSlice';
 import cavcDashboardReducer from './cavcDashboard/cavcDashboardReducer';
+
+
 import intakeCorrespondenceReducer from './correspondence/correspondenceReducer/correspondenceReducer';
 import reviewPackageReducer from './correspondence/correspondenceReducer/reviewPackageReducer';
 import correspondenceDetailsReducer from './correspondence/correspondenceDetailsReducer/correspondenceDetailsReducer';
@@ -816,6 +818,7 @@ const rootReducer = combineReducers({
   cavcRemand: editCavRemandReducer,
   editClaimantReducer,
   cavcDashboard: cavcDashboardReducer,
+
   intakeCorrespondence: intakeCorrespondenceReducer,
   reviewPackage: reviewPackageReducer,
   correspondenceDetails: correspondenceDetailsReducer,

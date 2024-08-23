@@ -12,6 +12,7 @@ import CorrespondenceResponseLetters from './CorrespondenceResponseLetters';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
 import { prepareAppealForSearchStore } from 'app/queue/utils';
+import CorrespondenceTasksAdded from '../CorrespondenceTasksAdded';
 import moment from 'moment';
 
 const CorrespondenceDetails = (props) => {
@@ -78,6 +79,13 @@ const CorrespondenceDetails = (props) => {
         <div className="correspondence-existing-appeals">
           <h2>Existing Appeals</h2>
           <AppSegment filledBackground noMarginTop>
+
+            <a rel="noopener noreferrer"
+              target="_blank"
+              href={`/reader/appeal/${correspondence.veteranFileNumber}`}
+              className="correspondence-details-view-documents">
+              <p>view veteran documents</p>
+            </a>
             <CaseListTable
               appeals={appeals}
               paginate="true"
@@ -87,22 +95,31 @@ const CorrespondenceDetails = (props) => {
               enableTopPagination
             />
           </AppSegment>
+          {(props.correspondence.correspondenceAppeals.map((taskAdded) =>
+
+            taskAdded.correspondencesAppealsTasks?.length > 0 && <CorrespondenceTasksAdded
+              task_added={taskAdded}
+              correspondence={props.correspondence}
+              organizations={props.organizations}
+              userCssId={props.userCssId}
+            />
+          )
+          )}
         </div>
       </React.Fragment>
     );
   };
   const correspondenceAndAppealTaskComponents = <>
     {correspondenceTasks()}
+
     <section className="task-not-related-title">Tasks not related to an appeal</section>
     <div className="correspondence-case-timeline-container">
       <CorrespondenceCaseTimeline
         organizations={props.organizations}
         userCssId={props.userCssId}
-        correspondence={props.correspondence} />
-      {/* <TaskSnapshot
-      // appeals={appeals}
-
-        /> */}
+        correspondence={props.correspondence}
+        tasksToDisplay={props.correspondence.tasksUnrelatedToAppeal}
+      />
     </div>
   </>;
 
@@ -210,10 +227,8 @@ CorrespondenceDetails.propTypes = {
   correspondence: PropTypes.object,
   organizations: PropTypes.array,
   userCssId: PropTypes.string,
-  loadCorrespondenceStatus: PropTypes.func,
-  correspondenceStatus: PropTypes.object,
-  correspondence_appeal_ids: PropTypes.bool,
   enableTopPagination: PropTypes.bool,
+  correspondence_appeal_ids: PropTypes.bool,
   correspondenceResponseLetters: PropTypes.array
 };
 

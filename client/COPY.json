@@ -1501,7 +1501,7 @@
   "CORRESPONDENCE_READONLY_BANNER_HEADER": "This package has a pending request",
   "CORRESPONDENCE_READONLY_BANNER_MESSAGE": "Any further actions cannot be made on this package until a supervisor or superuser reviews the request.",
   "CORRESPONDENCE_READONLY_SUPERVISOR_BANNER_MESSAGE": "Any further actions cannot be made on this package until a supervisor reviews the request.",
-  "ASSOCIATED_WITH_CLAIMS_FOLDER_MAIL_TASK_LABEL": "Associated with claims folder",
+  "ASSOCIATED_WITH_CLAIMS_FOLDER_MAIL_TASK_LABEL": "Associated with Claims Folder",
   "CORRESPONDENCE_CASES_REMOVE_PACKAGE_MODAL_TITLE": "Review request",
   "CORRESPONDENCE_CASES_REASSIGN_PACKAGE_MODAL_TITLE": "Review request",
   "VACOLS_UPDATED_MAIL_TASK_LABEL": "VACOLS updated",

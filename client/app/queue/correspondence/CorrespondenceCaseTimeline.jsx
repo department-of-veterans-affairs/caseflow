@@ -44,6 +44,7 @@ CorrespondenceCaseTimeline.propTypes = {
   correspondenceInfo: PropTypes.object,
   taskNotRelatedToAppealBanner: PropTypes.object,
   organizations: PropTypes.array,
+  tasksToDisplay: PropTypes.array,
   userCssId: PropTypes.string
 };
 
