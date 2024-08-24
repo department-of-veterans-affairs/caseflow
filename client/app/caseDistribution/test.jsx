@@ -14,6 +14,7 @@ import ApiUtil from '../util/ApiUtil';
 import Button from '../components/Button';
 import Alert from 'app/components/Alert';
 import uuid from 'uuid';
+import CollapsibleTable from './components/CollapsibleTable';
 
 class CaseDistributionTest extends React.PureComponent {
   constructor(props) {
@@ -29,6 +30,13 @@ class CaseDistributionTest extends React.PureComponent {
       showAlert: false,
       alertType: 'success',
     };
+  }
+
+  componentDidUpdate() {
+    // Delay of 5 seconds
+    setTimeout(() => {
+      this.setState({ showAlert: false, showLegacyAppealsAlert: false });
+    }, 5000);
   }
 
   reseedAod = () => {
@@ -223,6 +231,16 @@ class CaseDistributionTest extends React.PureComponent {
                             <li>
                               <a href="#distribution_status">
                                 <button className="btn btn-primary">Distribution Status</button>
+                              </a>
+                            </li>
+                            <li>
+                              <a href="#case_movement"><button className="btn btn-primary">Case Movement</button></a>
+                            </li>
+                            <li>
+                              <a href="#log_of_most_recent_appeals">
+                                <button className="btn btn-primary">
+                                  Log of 15 most recent appeals moved to location 63
+                                </button>
                               </a>
                             </li>
                           </ul>
@@ -430,8 +448,12 @@ class CaseDistributionTest extends React.PureComponent {
                             </li>
                           </ul>
                           <hr />
+                          <h2 id="log_of_most_recent_appeals">Log of 15 most recent appeals moved to location 63</h2>
+                          <CollapsibleTable returnedAppealJobs={this.props.returnedAppealJobs} />
+                          <hr />
                           <a href="#top"><button className="btn btn-primary">Back to Top</button></a>
                         </div>
+
                       );
                     }}
                   />
