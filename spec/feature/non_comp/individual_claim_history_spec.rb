@@ -722,112 +722,118 @@ feature "Individual Claim History", :postgres do
         expect(table_row).to have_content(
           "Modification request reason: #{original_modification_request.previous_modification_request_reason}"
         )
-      end
 
-      it "check for the correct data for Approval of request - issue modification" do
-        click_filter_option("Approval of request - issue modification (1)")
+        clear_filter_option("Edit of request - issue modification")
 
-        original_modification_request = events.reverse.find { |e| e.event_type == :request_approved }
-        new_decision_date = Date.parse(original_modification_request.new_decision_date)
-        request_issue_decision_date = Date.parse(original_modification_request.decision_date)
+        step "check for the correct data for Approval of request - issue modification" do
+          click_filter_option("Approval of request - issue modification (1)")
 
-        table = page.find("tbody")
-        expect(table).to have_selector("tr", count: 1)
-        table_row = table.first('tr[id^="table-row"]')
-        expect(table_row).to have_content("Approval of request - issue modification")
+          original_modification_request = events.reverse.find { |e| e.event_type == :request_approved }
+          new_decision_date = Date.parse(original_modification_request.new_decision_date)
+          request_issue_decision_date = Date.parse(original_modification_request.decision_date)
 
-        expect(table_row).to have_content("Request decision: #{
-          original_modification_request.issue_modification_request_status == 'denied' ? 'Rejected' : 'Approved'
-        }")
+          table = page.find("tbody")
+          expect(table).to have_selector("tr", count: 1)
+          table_row = table.first('tr[id^="table-row"]')
+          expect(table_row).to have_content("Approval of request - issue modification")
 
-        expect(table_row).to have_content("Remove original issue: #{
-          original_modification_request.remove_original_issue ? 'Yes' : 'No'
-        }")
-        expect(table_row).to have_content("Request originated by: #{original_modification_request.requestor}")
+          expect(table_row).to have_content("Request decision: #{
+            original_modification_request.issue_modification_request_status == 'denied' ? 'Rejected' : 'Approved'
+          }")
 
-        expect(table_row).to have_content("View original request")
-        first("a", text: "View original request").click
-        expect(table_row).to have_content("Hide original request")
+          expect(table_row).to have_content("Remove original issue: #{
+            original_modification_request.remove_original_issue ? 'Yes' : 'No'
+          }")
+          expect(table_row).to have_content("Request originated by: #{original_modification_request.requestor}")
 
-        expect(table_row).to have_content("Benefit type: Veterans Health Administration")
-        expect(table_row).to have_content("Current issue type: #{original_modification_request.issue_type}")
-        expect(table_row).to have_content(
-          "Current issue description: #{original_modification_request.issue_description}"
-        )
-        expect(table_row).to have_content("Current decision date: #{request_issue_decision_date.strftime('%m/%d/%Y')}")
-        expect(table_row).to have_content("New issue type: #{original_modification_request.new_issue_type}")
-        expect(table_row).to have_content(
-          "New issue description: #{original_modification_request.new_issue_description}"
-        )
-        expect(table_row).to have_content("New decision date: #{new_decision_date.strftime('%m/%d/%Y')}")
-        expect(table_row).to have_content(
-          "Modification request reason: #{original_modification_request.modification_request_reason}"
-        )
-      end
+          expect(table_row).to have_content("View original request")
+          first("a", text: "View original request").click
+          expect(table_row).to have_content("Hide original request")
 
-      it "check for the correct data for denied request modification" do
-        click_filter_option("Rejection of request - issue modification (1)")
+          expect(table_row).to have_content("Benefit type: Veterans Health Administration")
+          expect(table_row).to have_content("Current issue type: #{original_modification_request.issue_type}")
+          expect(table_row).to have_content(
+            "Current issue description: #{original_modification_request.issue_description}"
+          )
+          expect(table_row).to have_content("Current decision date: #{request_issue_decision_date.strftime('%m/%d/%Y')}")
+          expect(table_row).to have_content("New issue type: #{original_modification_request.new_issue_type}")
+          expect(table_row).to have_content(
+            "New issue description: #{original_modification_request.new_issue_description}"
+          )
+          expect(table_row).to have_content("New decision date: #{new_decision_date.strftime('%m/%d/%Y')}")
+          expect(table_row).to have_content(
+            "Modification request reason: #{original_modification_request.modification_request_reason}"
+          )
 
-        original_modification_request = events.detect { |e| e.event_type == :request_denied }
-        new_decision_date = Date.parse(original_modification_request.new_decision_date)
-        request_issue_decision_date = Date.parse(original_modification_request.decision_date)
+          clear_filter_option("Approval of request - issue modification")
+        end
 
-        table = page.find("tbody")
-        expect(table).to have_selector("tr", count: 1)
-        table_row = table.first('tr[id^="table-row"]')
-        expect(table_row).to have_content("Rejection of request - issue modification")
+        step "check for the correct data for denied request modification" do
+          click_filter_option("Rejection of request - issue modification (1)")
 
-        expect(table_row).to have_content("Request decision: #{
-          original_modification_request.issue_modification_request_status == 'denied' ? 'Rejected' : 'Approved'
-        }")
-        expect(table_row).to have_content("Request originated by: #{original_modification_request.requestor}")
+          original_modification_request = events.detect { |e| e.event_type == :request_denied }
+          new_decision_date = Date.parse(original_modification_request.new_decision_date)
+          request_issue_decision_date = Date.parse(original_modification_request.decision_date)
 
-        expect(table_row).to have_content("View original request")
-        first("a", text: "View original request").click
-        expect(table_row).to have_content("Hide original request")
+          table = page.find("tbody")
+          expect(table).to have_selector("tr", count: 1)
+          table_row = table.first('tr[id^="table-row"]')
+          expect(table_row).to have_content("Rejection of request - issue modification")
 
-        expect(table_row).to have_content("Benefit type: Veterans Health Administration")
-        expect(table_row).to have_content("Current issue type: #{original_modification_request.issue_type}")
-        expect(table_row).to have_content(
-          "Current issue description: #{original_modification_request.issue_description}"
-        )
-        expect(table_row).to have_content("Current decision date: #{request_issue_decision_date.strftime('%m/%d/%Y')}")
-        expect(table_row).to have_content("New issue type: #{original_modification_request.new_issue_type}")
-        expect(table_row).to have_content(
-          "New issue description: #{original_modification_request.new_issue_description}"
-        )
-        expect(table_row).to have_content("New decision date: #{new_decision_date.strftime('%m/%d/%Y')}")
-        expect(table_row).to have_content(
-          "Modification request reason: #{original_modification_request.modification_request_reason}"
-        )
-      end
+          expect(table_row).to have_content("Request decision: #{
+            original_modification_request.issue_modification_request_status == 'denied' ? 'Rejected' : 'Approved'
+          }")
+          expect(table_row).to have_content("Request originated by: #{original_modification_request.requestor}")
 
-      it "check for the correct data for Cancellation of request" do
-        click_filter_option("Cancellation of request (1)")
+          expect(table_row).to have_content("View original request")
+          first("a", text: "View original request").click
+          expect(table_row).to have_content("Hide original request")
 
-        original_modification_request = events.detect { |e| e.event_type == :request_cancelled }
-        new_decision_date = Date.parse(original_modification_request.new_decision_date)
-        request_issue_decision_date = Date.parse(original_modification_request.decision_date)
+          expect(table_row).to have_content("Benefit type: Veterans Health Administration")
+          expect(table_row).to have_content("Current issue type: #{original_modification_request.issue_type}")
+          expect(table_row).to have_content(
+            "Current issue description: #{original_modification_request.issue_description}"
+          )
+          expect(table_row).to have_content("Current decision date: #{request_issue_decision_date.strftime('%m/%d/%Y')}")
+          expect(table_row).to have_content("New issue type: #{original_modification_request.new_issue_type}")
+          expect(table_row).to have_content(
+            "New issue description: #{original_modification_request.new_issue_description}"
+          )
+          expect(table_row).to have_content("New decision date: #{new_decision_date.strftime('%m/%d/%Y')}")
+          expect(table_row).to have_content(
+            "Modification request reason: #{original_modification_request.modification_request_reason}"
+          )
 
-        table = page.find("tbody")
-        expect(table).to have_selector("tr", count: 1)
-        table_row = table.first('tr[id^="table-row"]')
-        expect(table_row).to have_content("Cancellation of request")
+          clear_filter_option("Rejection of request - issue modification")
+        end
 
-        expect(table_row).to have_content("Benefit type: Veterans Health Administration")
-        expect(table_row).to have_content("Current issue type: #{original_modification_request.issue_type}")
-        expect(table_row).to have_content(
-          "Current issue description: #{original_modification_request.issue_description}"
-        )
-        expect(table_row).to have_content("Current decision date: #{request_issue_decision_date.strftime('%m/%d/%Y')}")
-        expect(table_row).to have_content("New issue type: #{original_modification_request.new_issue_type}")
-        expect(table_row).to have_content(
-          "New issue description: #{original_modification_request.new_issue_description}"
-        )
-        expect(table_row).to have_content("New decision date: #{new_decision_date.strftime('%m/%d/%Y')}")
-        expect(table_row).to have_content(
-          "Modification request reason: #{original_modification_request.modification_request_reason}"
-        )
+        step "check for the correct data for Cancellation of request" do
+          click_filter_option("Cancellation of request (1)")
+
+          original_modification_request = events.detect { |e| e.event_type == :request_cancelled }
+          new_decision_date = Date.parse(original_modification_request.new_decision_date)
+          request_issue_decision_date = Date.parse(original_modification_request.decision_date)
+
+          table = page.find("tbody")
+          expect(table).to have_selector("tr", count: 1)
+          table_row = table.first('tr[id^="table-row"]')
+          expect(table_row).to have_content("Cancellation of request")
+
+          expect(table_row).to have_content("Benefit type: Veterans Health Administration")
+          expect(table_row).to have_content("Current issue type: #{original_modification_request.issue_type}")
+          expect(table_row).to have_content(
+            "Current issue description: #{original_modification_request.issue_description}"
+          )
+          expect(table_row).to have_content("Current decision date: #{request_issue_decision_date.strftime('%m/%d/%Y')}")
+          expect(table_row).to have_content("New issue type: #{original_modification_request.new_issue_type}")
+          expect(table_row).to have_content(
+            "New issue description: #{original_modification_request.new_issue_description}"
+          )
+          expect(table_row).to have_content("New decision date: #{new_decision_date.strftime('%m/%d/%Y')}")
+          expect(table_row).to have_content(
+            "Modification request reason: #{original_modification_request.modification_request_reason}"
+          )
+        end
       end
     end
   end
