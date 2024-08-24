@@ -8,6 +8,7 @@ class CaseDistributionLeversTestsController < ApplicationController
   def acd_lever_index_test
     @acd_levers = CaseDistributionLever.all
     @acd_history = CaseDistributionAuditLeverEntry.lever_history
+    @returned_appeal_jobs = ReturnedAppealJob.all.order(created_at: :desc).limit(15)
 
     render "case_distribution_levers/test"
   end
