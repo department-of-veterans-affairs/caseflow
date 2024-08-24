@@ -30,12 +30,12 @@ class ExternalApi::VaBoxService
 
   def fetch_access_token
     response = fetch_jwt_access_token
-    @access_token = response["access_token"]
+    @access_token = response[:access_token]
 
-    if response["expires_in"] <= Time.now.to_i
+    if response[:expires_in] <= Time.now.to_i
       # Fetch a new JWT access token
       response = fetch_jwt_access_token
-      @access_token = response["access_token"]
+      @access_token = response[:access_token]
     end
   end
 
@@ -69,15 +69,15 @@ class ExternalApi::VaBoxService
     log_error(error)
   end
 
-  def public_folder_details(folder_id)
-    get_child_folders(folder_id)
+  def public_folder_details(folder_id, item_type = "folder")
+    get_folder_items(folder_id, item_type)
   end
 
   def get_child_folder_id(parent_folder_id, child_folder_name)
     folders = public_folder_details(parent_folder_id)
-    matching_folder = folders.find { |folder| folder["name"] == child_folder_name }
+    matching_folder = folders.find { |folder| folder[:name] == child_folder_name }
     if matching_folder
-      matching_folder["id"]
+      matching_folder[:id]
     else
       fail "Folder '#{child_folder_name}' not found in parent folder '#{parent_folder_id}'"
     end
@@ -116,7 +116,7 @@ class ExternalApi::VaBoxService
     response = http.request(request)
 
     if response.code == "200"
-      body = JSON.parse(response.body)
+      body = JSON.parse(response.body, symbolize_names: true)
       body
     else
       fail "Error: #{response.body}"
@@ -138,8 +138,8 @@ class ExternalApi::VaBoxService
     end
   end
 
-  def get_child_folders(parent_folder_id)
-    url = "#{BASE_URL}/2.0/folders/#{parent_folder_id}/items"
+  def get_folder_items(folder_id, item_type)
+    url = "#{BASE_URL}/2.0/folders/#{folder_id}/items"
     uri = URI.parse(url)
 
     request = Net::HTTP::Get.new(uri.request_uri)
@@ -151,9 +151,9 @@ class ExternalApi::VaBoxService
     response = http.request(request)
 
     if response.code == "200"
-      body = JSON.parse(response.body)
-      child_folders = body["entries"].select { |item| item["type"] == "folder" }
-      child_folders
+      body = JSON.parse(response.body, symbolize_names: true)
+      items = body[:entries].select { |item| item[:type] == item_type }
+      items
     else
       fail "Error: #{response.body}"
     end
@@ -180,7 +180,7 @@ class ExternalApi::VaBoxService
     response = http.request(request)
 
     if response.code == "201"
-      body = JSON.parse(response.body)
+      body = JSON.parse(response.body, symbolize_names: true)
       body
     else
       Rails.logger.info("Response body: #{response.body}")
