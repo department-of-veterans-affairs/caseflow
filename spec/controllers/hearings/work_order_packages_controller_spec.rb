@@ -32,7 +32,7 @@ RSpec.describe Hearings::WorkOrderPackagesController, type: :controller do
       end
 
       before do
-        allow(::ManageTranscriptionPackage).to receive(:display_wo_summary).with(task_number).and_return(wo_summary)
+        allow(::TranscriptionWorkOrder).to receive(:display_wo_summary).with(task_number).and_return(wo_summary)
         get :display_wo_summary, params: { task_number: task_number }
       end
 
@@ -47,7 +47,7 @@ RSpec.describe Hearings::WorkOrderPackagesController, type: :controller do
 
     context "when work order summary is not found" do
       before do
-        allow(::ManageTranscriptionPackage).to receive(:display_wo_summary).with(task_number).and_return(nil)
+        allow(::TranscriptionWorkOrder).to receive(:display_wo_summary).with(task_number).and_return(nil)
         get :display_wo_summary, params: { task_number: task_number }
       end
 
@@ -73,7 +73,7 @@ RSpec.describe Hearings::WorkOrderPackagesController, type: :controller do
       end
 
       before do
-        allow(::ManageTranscriptionPackage).to receive(:display_wo_contents).with(task_number).and_return(wo_contents)
+        allow(::TranscriptionWorkOrder).to receive(:display_wo_contents).with(task_number).and_return(wo_contents)
         get :display_wo_contents, params: { task_number: task_number }
       end
 
@@ -88,7 +88,7 @@ RSpec.describe Hearings::WorkOrderPackagesController, type: :controller do
 
     context "when work order contents are not found" do
       before do
-        allow(::ManageTranscriptionPackage).to receive(:display_wo_contents).with(task_number).and_return(nil)
+        allow(::TranscriptionWorkOrder).to receive(:display_wo_contents).with(task_number).and_return(nil)
         get :display_wo_contents, params: { task_number: task_number }
       end
 
@@ -112,7 +112,7 @@ RSpec.describe Hearings::WorkOrderPackagesController, type: :controller do
       end
 
       before do
-        allow(::ManageTranscriptionPackage).to receive(:unassign_wo).with(task_number).and_return(banner_messages)
+        allow(::TranscriptionWorkOrder).to receive(:unassign_wo).with(task_number).and_return(banner_messages)
         post :unassign_wo, params: { task_number: task_number }
       end
 
@@ -127,7 +127,7 @@ RSpec.describe Hearings::WorkOrderPackagesController, type: :controller do
 
     context "when unassigning work order fails" do
       before do
-        allow(::ManageTranscriptionPackage)
+        allow(::TranscriptionWorkOrder)
           .to receive(:unassign_wo)
           .with(task_number)
           .and_raise(StandardError.new("An error occurred"))

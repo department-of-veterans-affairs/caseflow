@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-RSpec.describe ManageTranscriptionPackage, type: :model do
+RSpec.describe TranscriptionWorkOrder, type: :model do
   let(:task_number) { "TASK123" }
   let(:current_user) { create(:user) }
 
   before do
-    allow_any_instance_of(ManageTranscriptionPackage).to receive(:current_user).and_return(current_user)
+    allow_any_instance_of(TranscriptionWorkOrder).to receive(:current_user).and_return(current_user)
   end
 
   describe ".display_wo_summary" do
@@ -35,12 +35,12 @@ RSpec.describe ManageTranscriptionPackage, type: :model do
     end
 
     before do
-      allow(ManageTranscriptionPackage).to receive(:fetch_wo_info).with(task_number).and_return(wo_info)
-      allow(ManageTranscriptionPackage).to receive(:fetch_wo_file_info).with(task_number).and_return(wo_file_info)
+      allow(TranscriptionWorkOrder).to receive(:fetch_wo_info).with(task_number).and_return(wo_info)
+      allow(TranscriptionWorkOrder).to receive(:fetch_wo_file_info).with(task_number).and_return(wo_file_info)
     end
 
     it "returns the merged work order summary" do
-      result = ManageTranscriptionPackage.display_wo_summary(task_number)
+      result = TranscriptionWorkOrder.display_wo_summary(task_number)
       expect(result).to eq(wo_info.merge(wo_file_info))
     end
   end
@@ -63,7 +63,7 @@ RSpec.describe ManageTranscriptionPackage, type: :model do
     end
 
     it "returns work order contents" do
-      result = ManageTranscriptionPackage.display_wo_contents(task_number)
+      result = TranscriptionWorkOrder.display_wo_contents(task_number)
       expect(result).to eq([
                              {
                                case_details: transcription_file.case_details,
@@ -91,9 +91,9 @@ RSpec.describe ManageTranscriptionPackage, type: :model do
     end
 
     before do
-      allow(ManageTranscriptionPackage).to receive(:update_transcription_package).with(task_number).and_return(true)
-      allow(ManageTranscriptionPackage).to receive(:update_transcription_info).with(task_number).and_return(true)
-      allow(ManageTranscriptionPackage).to receive(:get_banner_messages)
+      allow(TranscriptionWorkOrder).to receive(:update_transcription_package).with(task_number).and_return(true)
+      allow(TranscriptionWorkOrder).to receive(:update_transcription_info).with(task_number).and_return(true)
+      allow(TranscriptionWorkOrder).to receive(:get_banner_messages)
         .with(task_number)
         .and_return(
           hearing_message: "Some hearing message",
@@ -102,7 +102,7 @@ RSpec.describe ManageTranscriptionPackage, type: :model do
     end
 
     it "updates the transcription package and returns banner messages" do
-      result = ManageTranscriptionPackage.unassign_wo(task_number)
+      result = TranscriptionWorkOrder.unassign_wo(task_number)
       expected_result = {
         hearing_message: "Some hearing message",
         work_order_message: "Work order message for Contractor X"

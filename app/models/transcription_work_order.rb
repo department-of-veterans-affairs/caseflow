@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ManageTranscriptionPackage
+class TranscriptionWorkOrder
   include ActiveModel::Model
 
   def self.display_wo_summary(task_number)
