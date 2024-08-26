@@ -56,5 +56,7 @@
   "disable_ama_priority_evidence_submission": "disable_ama_priority_evidence_submission",
   "disable_ama_priority_evidence_submission_title": "ACD Disable AMA Priority Evidence Submission",
   "enable_nonsscavlj": "enable_nonsscavlj",
-  "enable_nonsscavlj_title": "Enable Non-SSC/AVLJ"
+  "enable_nonsscavlj_title": "Enable Non-SSC/AVLJ",
+  "nonsscavlj_number_of_appeals_to_move": "NONSSCAVLJ_NUMBER_OF_APPEALS_TO_MOVE",
+  "nonsscavlj_number_of_appeals_to_move_title": "Non-SSC/AVLJ Number of Appeals to Move"
 }
