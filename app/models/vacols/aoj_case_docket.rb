@@ -149,7 +149,8 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
   "
 
   SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19 = "
-    select BFKEY, BFD19, BFDLOOUT, AOD, VLJ, BFAC, DOCKET_INDEX, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE, HEARING_DATE, BFDPDCN
+    select BFKEY, BFD19, BFDLOOUT, AOD, VLJ, BFAC, DOCKET_INDEX, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE,
+     HEARING_DATE, BFDPDCN
     from (
       select BFKEY, BFD19, BFDLOOUT, AOD, BFAC, rownum DOCKET_INDEX, BFDPDCN,
         VLJ_HEARINGS.VLJ, VLJ_HEARINGS.HEARING_DATE,
@@ -629,6 +630,18 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
   end
   # rubocop:enable Metrics/AbcSize
 
+  def self.generate_nonpriority_case_distribution_lever_aoj_query(aoj_affinity_lever_value)
+    if case_affinity_days_lever_value_is_selected?(aoj_affinity_lever_value) ||
+       aoj_affinity_lever_value == Constants.ACD_LEVERS.omit
+      "((PREV_DECIDING_JUDGE = ? or PREV_DECIDING_JUDGE is null or PREV_DECIDING_JUDGE is not null)
+      and AOD = '0' and PREV_TYPE_ACTION <> '7' )"
+    elsif aoj_affinity_lever_value == Constants.ACD_LEVERS.infinite
+      "(AOD = '0' and PREV_TYPE_ACTION <> '7')"
+    else
+      "VLJ = ?"
+    end
+  end
+
   def self.generate_priority_aoj_case_distribution_lever_query(aoj_cavc_affinity_lever_value)
     if case_affinity_days_lever_value_is_selected?(aoj_cavc_affinity_lever_value) ||
        aoj_cavc_affinity_lever_value == Constants.ACD_LEVERS.omit
@@ -650,6 +663,39 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
       "(AOD = '1')"
     else
       "VLJ = ?"
+    end
+  end
+
+  # rubocop:disable Metrics/AbcSize
+  def self.aoj_affinity_filter(appeals, judge_sattyid, lever_value, excluded_judges_attorney_ids)
+    appeals.reject! do |appeal|
+      # {will skip if not AOJ AOD || if AOJ AOD being distributed to tied_to judge || if not tied to any judge}
+      next if tied_to_or_not_aoj_nonpriority?(appeal, judge_sattyid)
+
+      if not_distributing_to_tied_judge?(appeal, judge_sattyid)
+        next if ineligible_judges_sattyids&.include?(appeal["vlj"])
+
+        next (appeal["vlj"] != judge_sattyid)
+      end
+
+      if appeal_has_hearing_after_previous_decision?(appeal)
+        next if appeal["vlj"] == judge_sattyid
+        next true if !ineligible_judges_sattyids.include?(appeal["vlj"])
+      end
+
+      next if ineligible_or_excluded_deciding_judge?(appeal, excluded_judges_attorney_ids)
+
+      if case_affinity_days_lever_value_is_selected?(lever_value)
+        next if appeal["prev_deciding_judge"] == judge_sattyid
+
+        reject_due_to_affinity?(appeal, lever_value)
+      elsif lever_value == Constants.ACD_LEVERS.infinite
+        next if ineligible_judges_sattyids&.include?(appeal["vlj"])
+
+        appeal["prev_deciding_judge"] != judge_sattyid
+      elsif lever_value == Constants.ACD_LEVERS.omit
+        appeal["prev_deciding_judge"] == appeal["vlj"]
+      end
     end
   end
 
@@ -715,6 +761,16 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
       end
     end
   end
+  # rubocop:enable Metrics/AbcSize
+
+  def self.tied_to_or_not_aoj_nonpriority?(appeal, judge_sattyid)
+    (appeal["prev_type_action"] == "7" || appeal["aod"] == 1) ||
+      (appeal["prev_type_action"] != "7" && appeal["aod"] == 0 &&
+        !appeal["vlj"].blank? &&
+        (appeal["vlj"] == appeal["prev_deciding_judge"] || appeal["prev_deciding_judge"].nil?) &&
+        appeal["vlj"] == judge_sattyid) ||
+      (appeal["vlj"].nil? && appeal["prev_deciding_judge"].nil?)
+  end
 
   def self.tied_to_or_not_cavc?(appeal, judge_sattyid)
     (appeal["prev_type_action"] != "7" || appeal["aod"] != 0) ||
@@ -734,18 +790,6 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
       (appeal["vlj"].nil? && appeal["prev_deciding_judge"].nil?)
   end
 
-  def self.generate_nonpriority_case_distribution_lever_aoj_query(aoj_affinity_lever_value)
-    if case_affinity_days_lever_value_is_selected?(aoj_affinity_lever_value) ||
-       aoj_affinity_lever_value == Constants.ACD_LEVERS.omit
-      "((PREV_DECIDING_JUDGE = ? or PREV_DECIDING_JUDGE is null or PREV_DECIDING_JUDGE is not null)
-      and AOD = '0' and PREV_TYPE_ACTION <> '7' )"
-    elsif aoj_affinity_lever_value == Constants.ACD_LEVERS.infinite
-      "(AOD = '0' and PREV_TYPE_ACTION <> '7')"
-    else
-      "VLJ = ?"
-    end
-  end
-
   def self.ineligible_judges_sattyids
     Rails.cache.fetch("case_distribution_ineligible_judges")&.pluck(:sattyid)&.reject(&:blank?) || []
   end
@@ -754,47 +798,6 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
     VACOLS::Staff.where(sdomainid: JudgeTeam.active
         .where(exclude_appeals_from_affinity: true)
         .flat_map(&:judge).compact.pluck(:css_id))&.pluck(:sattyid)
-  end
-
-  def self.aoj_affinity_filter(appeals, judge_sattyid, lever_value, excluded_judges_attorney_ids)
-    appeals.reject! do |appeal|
-      # {will skip if not AOJ AOD || if AOJ AOD being distributed to tied_to judge || if not tied to any judge}
-      next if tied_to_or_not_aoj_nonpriority?(appeal, judge_sattyid)
-
-      if not_distributing_to_tied_judge?(appeal, judge_sattyid)
-        next if ineligible_judges_sattyids&.include?(appeal["vlj"])
-
-        next (appeal["vlj"] != judge_sattyid)
-      end
-
-      if appeal_has_hearing_after_previous_decision?(appeal)
-        next if appeal["vlj"] == judge_sattyid
-        next true if !ineligible_judges_sattyids.include?(appeal["vlj"])
-      end
-
-      next if ineligible_or_excluded_deciding_judge?(appeal, excluded_judges_attorney_ids)
-
-      if case_affinity_days_lever_value_is_selected?(lever_value)
-        next if appeal["prev_deciding_judge"] == judge_sattyid
-
-        reject_due_to_affinity?(appeal, lever_value)
-      elsif lever_value == Constants.ACD_LEVERS.infinite
-        next if ineligible_judges_sattyids&.include?(appeal["vlj"])
-
-        appeal["prev_deciding_judge"] != judge_sattyid
-      elsif lever_value == Constants.ACD_LEVERS.omit
-        appeal["prev_deciding_judge"] == appeal["vlj"]
-      end
-    end
-  end
-
-  def self.tied_to_or_not_aoj_nonpriority?(appeal, judge_sattyid)
-    (appeal["prev_type_action"] == "7" || appeal["aod"] == 1) ||
-      (appeal["prev_type_action"] != "7" && appeal["aod"] == 0 &&
-        !appeal["vlj"].blank? &&
-        (appeal["vlj"] == appeal["prev_deciding_judge"] || appeal["prev_deciding_judge"].nil?) &&
-        appeal["vlj"] == judge_sattyid) ||
-      (appeal["vlj"].nil? && appeal["prev_deciding_judge"].nil?)
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength
 end
