@@ -8,6 +8,15 @@
     "title": "Warning",
     "message": "Error FOIA request task has not been cancelled",
     "type": "warning"
-
+  },
+  "assignSuccessBanner": {
+    "title": "Assigned",
+    "message": "%s task has been assigned to %s.",
+    "type": "success"
+  },
+  "assignFailBanner": {
+    "title": "Assign Failed",
+    "message": "Task unable to be completed or assigned.",
+    "type": "warning"
   }
 }

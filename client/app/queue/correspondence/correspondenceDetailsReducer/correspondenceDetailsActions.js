@@ -47,7 +47,7 @@ export const assignTaskToUser = (taskID, correspondence, payload) => (dispatch) 
       dispatch({
         type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
         payload: {
-          bannerAlert: CORRESPONDENCE_DETAILS_BANNERS.successBanner
+          bannerAlert: CORRESPONDENCE_DETAILS_BANNERS.assignSuccessBanner
         }
       });
 
@@ -63,7 +63,7 @@ export const assignTaskToUser = (taskID, correspondence, payload) => (dispatch) 
       dispatch({
         type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
         payload: {
-          bannerAlert: CORRESPONDENCE_DETAILS_BANNERS.failBanner
+          bannerAlert: CORRESPONDENCE_DETAILS_BANNERS.assignFailBanner
         }
       });
       console.error(error);
