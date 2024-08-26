@@ -53,6 +53,8 @@ class ExternalApi::VBMSService
   end
 
   def self.fetch_document_series_for(appeal)
+    verify_current_user_veteran_access(appeal.veteran)
+
     if FeatureToggle.enabled?(:use_ce_api)
       response = VeteranFileFetcher.fetch_veteran_file_list(veteran_file_number: appeal.veteran_file_number)
       JsonApiResponseAdapter.new.adapt_fetch_document_series_for(response)
