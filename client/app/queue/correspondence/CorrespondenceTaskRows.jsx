@@ -206,7 +206,7 @@ class CorrespondenceTaskRows extends React.PureComponent {
     }
 
     return this.showActionsSection(task) ? (
-      <div>
+      <div className="correspondence-task-actions-row-wrapper">
         <h3>{COPY.TASK_SNAPSHOT_ACTION_BOX_TITLE}</h3>
         <ActionsDropdown
           task={task}

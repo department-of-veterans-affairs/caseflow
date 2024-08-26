@@ -70,7 +70,7 @@ export const assignTaskToTeam = (taskID, correspondence, payload, organizationLa
       payload: {
         bannerAlert: {
           title: 'Error',
-          message: `Task action could not be completed. Please try again at a
+          message: `Task action could not be completed. Please try again at a \
           later time or contact the Help Desk (Error code: ${error.message})`,
           type: 'error'
         }

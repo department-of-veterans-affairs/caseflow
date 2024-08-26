@@ -64,7 +64,7 @@ class CorrespondenceTasksController < TasksController
     task = CorrespondenceTask.find(correspondence_tasks_params[:task_id])
     task.update!(
       status: Constants.TASK_STATUSES.assigned,
-      assigned_to: Organization.find_by(id: correspondence_tasks_params[:assigned_to]),
+      assigned_to: Organization.find_by(name: correspondence_tasks_params[:assigned_to]),
       assigned_at: Time.zone.now
     )
     task.instructions << correspondence_tasks_params[:instructions]

@@ -62,7 +62,7 @@ const CorrespondenceAssignTeamModal = (props) => {
     const task = updatedCorrespondence.tasksUnrelatedToAppeal.find(task => task.uniqueId === parseInt(props.task_id, 10));
 
     if (task) {
-      task.assignedTo = teamAssignedFlag.value;
+      task.assignedTo = teamAssignedFlag.label;
       task.instructions = instructions;
     }
 
@@ -73,7 +73,7 @@ const CorrespondenceAssignTeamModal = (props) => {
     if (teamAssignedFlag && typeof teamAssignedFlag === 'object') {
       const payload = {
         data: {
-          assigned_to: teamAssignedFlag.value,
+          assigned_to: teamAssignedFlag.label,
           instructions: instructions,
           ...(taskData?.business_payloads && { business_payloads: taskData.business_payloads })
         }
