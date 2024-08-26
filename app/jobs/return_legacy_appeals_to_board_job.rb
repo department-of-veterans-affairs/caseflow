@@ -62,6 +62,7 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
   end
 
   def grouped_by_avlj(moved_appeals)
+    return [] if moved_appeals.nil?
     moved_appeals.group_by { |appeal| VACOLS::Staff.find_by(sattyid: appeal["vlj"])&.sattyid }.keys.compact
   end
 
@@ -123,30 +124,33 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
 
   # Method to separate appeals by priority
   def separate_by_priority(appeals)
-    priority_appeals = appeals.select { |appeal| appeal["priority"] == 1 }
-    non_priority_appeals = appeals.select { |appeal| appeal["priority"] == 0 }
+    priority_appeals = appeals&.select { |appeal| appeal["priority"] == 1 } || []
+    non_priority_appeals = appeals&.select { |appeal| appeal["priority"] == 0 } || []
+
     [priority_appeals, non_priority_appeals]
   end
 
   # Method to calculate remaining eligible appeals
   def calculate_remaining_appeals(all_appeals, moved_priority_appeals, moved_non_priority_appeals)
     remaining_priority_appeals = (
-      all_appeals.select { |appeal| appeal["priority"] == 1 } -
+      all_appeals&.select { |appeal| appeal["priority"] == 1 } -
       moved_priority_appeals
-    )
+    ) || []
     remaining_non_priority_appeals = (
-      all_appeals.select { |appeal| appeal["priority"] == 0 } -
+      all_appeals&.select { |appeal| appeal["priority"] == 0 } -
       moved_non_priority_appeals
-    )
+    ) || []
     [remaining_priority_appeals, remaining_non_priority_appeals]
   end
 
   # Method to fetch non-SSC AVLJs that appeals were moved to location '63'
   def fetch_moved_avljs(moved_appeals)
-    moved_appeals.map { |appeal| VACOLS::Staff.find_by(sattyid: appeal["vlj"]) }
+    return [] if moved_appeals.nil?
+
+    moved_appeals&.map { |appeal| VACOLS::Staff.find_by(sattyid: appeal["vlj"]) }
       .compact
       .uniq
-      .map { |record| get_name_from_record(record) }
+      &.map { |record| get_name_from_record(record) } || []
   end
 
   def get_name_from_record(record)
