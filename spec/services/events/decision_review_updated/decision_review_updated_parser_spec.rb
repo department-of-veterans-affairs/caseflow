@@ -56,7 +56,7 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
       nonrating_issue_category: "Accrued Benefits",
       nonrating_issue_description: "Chapter 35 benefits",
       ramp_claim_id: "RAMP123",
-      rating_issue_associated_at: 1625076000,
+      rating_issue_associated_at: 1_625_076_000,
       unidentified_issue_text: nil,
       untimely_exemption: nil,
       untimely_exemption_notes: nil,
