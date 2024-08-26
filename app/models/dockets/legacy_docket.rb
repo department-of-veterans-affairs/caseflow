@@ -139,7 +139,6 @@ class LegacyDocket < Docket
 
   # used for distribution_stats
   # change parameters to in_window, priority once implemented
-  # rubocop:disable Metrics/AbcSize
   def affinity_date_count(in_window, _priority)
     cavc_affinity_lever_value = CaseDistributionLever.cavc_affinity_days
     appeals = ready_to_distribute_appeals
@@ -147,22 +146,18 @@ class LegacyDocket < Docket
     if case_affinity_days_lever_value_is_selected?(cavc_affinity_lever_value)
       appeals = if in_window
                   appeals.select! do |appeal|
-                    VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity&.affinity_start_date.nil? ||
-                      (VACOLS::Case.find_by(bfkey: appeal["bfkey"])
-                        .appeal_affinity
-                        .affinity_start_date > lever.to_i.days.ago)
+                    appeal_affinity(appeal)&.affinity_start_date.nil? ||
+                      (appeal_affinity(appeal).affinity_start_date > lever.to_i.days.ago)
                   end
                 else
                   appeals.select! do |appeal|
-                    VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity&.affinity_start_date.nil? ||
-                      (VACOLS::Case.find_by(bfkey: appeal["bfkey"])
-                        .appeal_affinity
-                        .affinity_start_date < lever.to_i.days.ago)
+                    appeal_affinity(appeal)&.affinity_start_date.nil? ||
+                      (appeal_affinity(appeal).affinity_start_date < lever.to_i.days.ago)
                   end
                 end
     end
-    appeals  end
-  # rubocop:enable Metrics/AbcSize
+    appeals.size
+  end
 
   private
 
@@ -204,5 +199,9 @@ class LegacyDocket < Docket
 
   def nod_count
     @nod_count ||= LegacyAppeal.repository.nod_count
+  end
+
+  def appeal_affinity(appeal)
+    @appeal_affinity ||= VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity
   end
 end
