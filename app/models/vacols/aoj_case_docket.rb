@@ -101,10 +101,10 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
   "
 
   SELECT_PRIORITY_APPEALS = "
-    select BFKEY, BFDLOOUT, BFAC, AOD, VLJ, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
+    select BFKEY, BFDLOOUT, BFAC, AOD, VLJ, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE, HEARING_DATE, BFDPDCN
       from (
-        select BFKEY, BFDLOOUT, BFAC, AOD,
-          VLJ_HEARINGS.VLJ,
+        select BFKEY, BFDLOOUT, BFAC, AOD, BFDPDCN,
+          VLJ_HEARINGS.VLJ, VLJ_HEARINGS.HEARING_DATE,
           PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
           PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
         from (
@@ -117,10 +117,10 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
     "
 
   SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19 = "
-    select BFKEY, BFD19, BFDLOOUT, BFAC, AOD, VLJ, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
+    select BFKEY, BFD19, BFDLOOUT, BFAC, AOD, VLJ, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE, HEARING_DATE, BFDPDCN
       from (
-        select BFKEY, BFD19, BFDLOOUT, BFAC, AOD,
-          VLJ_HEARINGS.VLJ,
+        select BFKEY, BFD19, BFDLOOUT, BFAC, AOD, BFDPDCN,
+          VLJ_HEARINGS.VLJ, VLJ_HEARINGS.HEARING_DATE,
           PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
           PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
         from (
@@ -133,10 +133,10 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
     "
 
   SELECT_NONPRIORITY_APPEALS = "
-    select BFKEY, BFDLOOUT, AOD, VLJ, DOCKET_INDEX, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
+    select BFKEY, BFDLOOUT, AOD, VLJ, DOCKET_INDEX, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE, HEARING_DATE, BFDPDCN
     from (
-      select BFKEY, BFDLOOUT, AOD, rownum DOCKET_INDEX,
-        VLJ_HEARINGS.VLJ,
+      select BFKEY, BFDLOOUT, AOD, rownum DOCKET_INDEX, BFDPDCN,
+        VLJ_HEARINGS.VLJ, VLJ_HEARINGS.HEARING_DATE,
         PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
         PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
       from (
@@ -149,10 +149,10 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
   "
 
   SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19 = "
-    select BFKEY, BFD19, BFDLOOUT, AOD, VLJ, BFAC, DOCKET_INDEX, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
+    select BFKEY, BFD19, BFDLOOUT, AOD, VLJ, BFAC, DOCKET_INDEX, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE, HEARING_DATE, BFDPDCN
     from (
-      select BFKEY, BFD19, BFDLOOUT, AOD, BFAC, rownum DOCKET_INDEX,
-        VLJ_HEARINGS.VLJ,
+      select BFKEY, BFD19, BFDLOOUT, AOD, BFAC, rownum DOCKET_INDEX, BFDPDCN,
+        VLJ_HEARINGS.VLJ, VLJ_HEARINGS.HEARING_DATE,
          PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
          PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
       from (
@@ -663,6 +663,11 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
         next (appeal["vlj"] != judge_sattyid)
       end
 
+      if appeal_has_hearing_after_previous_decision?(appeal)
+        next if appeal["vlj"] == judge_sattyid
+        next true if !ineligible_judges_sattyids.include?(appeal["vlj"])
+      end
+
       next if ineligible_or_excluded_deciding_judge?(appeal, excluded_judges_attorney_ids)
 
       if case_affinity_days_lever_value_is_selected?(aoj_cavc_affinity_lever_value)
@@ -688,6 +693,11 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
         next if ineligible_judges_sattyids&.include?(appeal["vlj"])
 
         next (appeal["vlj"] != judge_sattyid)
+      end
+
+      if appeal_has_hearing_after_previous_decision?(appeal)
+        next if appeal["vlj"] == judge_sattyid
+        next true if !ineligible_judges_sattyids.include?(appeal["vlj"])
       end
 
       next if ineligible_or_excluded_deciding_judge?(appeal, excluded_judges_attorney_ids)
@@ -755,6 +765,11 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
         next if ineligible_judges_sattyids&.include?(appeal["vlj"])
 
         next (appeal["vlj"] != judge_sattyid)
+      end
+
+      if appeal_has_hearing_after_previous_decision?(appeal)
+        next if appeal["vlj"] == judge_sattyid
+        next true if !ineligible_judges_sattyids.include?(appeal["vlj"])
       end
 
       next if ineligible_or_excluded_deciding_judge?(appeal, excluded_judges_attorney_ids)

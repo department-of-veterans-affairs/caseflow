@@ -1152,6 +1152,125 @@ describe VACOLS::AojCaseDocket, :all_dbs do
             .map { |c| c["bfkey"].to_i.to_s }.sort)
       end
     end
+
+    context "for cases where a hearing has been held after the original decision date" do
+      def create_case_hearing(orig_case, hearing_judge)
+        create(:case_hearing, :disposition_held, folder_nr: (orig_case.bfkey.to_i - 1).to_s,
+                                                 hearing_date: Time.zone.today, user: hearing_judge)
+      end
+
+      let(:new_hearing_judge) { create(:user, :judge, :with_vacols_judge_record) }
+
+      # original hearing held by tied_judge, decided by tied_judge, new hearing held by new_hearing_judge
+      let!(:case_1) do
+        c = create(:legacy_aoj_appeal, :aod, judge: tied_judge, attorney: attorney, tied_to: true)
+        original_case = VACOLS::Case.find_by(bfcorlid: c.bfcorlid, bfkey: (c.bfkey.to_i + 1).to_s)
+        create_case_hearing(original_case, new_hearing_judge)
+        c
+      end
+      # original hearing held by tied_judge, decided by other_judge, new hearing held by new_hearing_judge
+      let!(:case_2) do
+        c = create(:legacy_aoj_appeal, :aod, judge: tied_judge, attorney: attorney, tied_to: true)
+        original_case = VACOLS::Case.find_by(bfcorlid: c.bfcorlid, bfkey: (c.bfkey.to_i + 1).to_s)
+        original_case.update!(bfmemid: other_judge.sattyid)
+        create_case_hearing(original_case, new_hearing_judge)
+        c
+      end
+      # no original hearing, decided by other_judge, new hearing held by new_hearing_judge
+      let!(:case_3) do
+        c = create(:legacy_aoj_appeal, :aod, judge: other_judge, attorney: attorney, tied_to: false)
+        original_case = VACOLS::Case.find_by(bfcorlid: c.bfcorlid, bfkey: (c.bfkey.to_i + 1).to_s)
+        create_case_hearing(original_case, new_hearing_judge)
+        c
+      end
+      # original hearing held by tied_judge, no original deciding judge, new hearing held by new_hearing_judge
+      let!(:case_4) do
+        c = create(:legacy_aoj_appeal, :aod, judge: tied_judge, attorney: attorney, tied_to: true)
+        original_case = VACOLS::Case.find_by(bfcorlid: c.bfcorlid, bfkey: (c.bfkey.to_i + 1).to_s)
+        original_case.update!(bfmemid: nil)
+        create_case_hearing(original_case, new_hearing_judge)
+        c
+      end
+      # no original hearing, no original deciding judge, new hearing held by new_hearing_judge
+      let!(:case_5) do
+        c = create(:legacy_aoj_appeal, :aod, judge: tied_judge, attorney: attorney, tied_to: false)
+        original_case = VACOLS::Case.find_by(bfcorlid: c.bfcorlid, bfkey: (c.bfkey.to_i + 1).to_s)
+        original_case.update!(bfmemid: nil)
+        create_case_hearing(original_case, new_hearing_judge)
+        c
+      end
+      # original hearing held by tied_judge, decided by tied_judge, no new hearing
+      let!(:case_6) { create(:legacy_aoj_appeal, :aod, judge: tied_judge, attorney: attorney, tied_to: true) }
+      # original hearing held by tied_judge, decided by other_judge, no new hearing
+      let!(:case_7) do
+        c = create(:legacy_aoj_appeal, :aod, judge: tied_judge,
+                                             attorney: attorney, tied_to: true, affinity_start_date: 3.days.ago)
+        original_case = VACOLS::Case.find_by(bfcorlid: c.bfcorlid, bfkey: (c.bfkey.to_i + 1).to_s)
+        original_case.update!(bfmemid: other_judge.sattyid)
+        c
+      end
+      # no original hearing, decided by other_judge, no new hearing
+      let!(:case_8) do
+        create(:legacy_aoj_appeal, :aod, judge: other_judge, attorney: attorney, tied_to: false,
+                                         affinity_start_date: 3.days.ago)
+      end
+      # original hearing held by tied_judge, no original deciding judge, no new hearing
+      let!(:case_9) do
+        c = create(:legacy_aoj_appeal, :aod, judge: tied_judge, attorney: attorney, tied_to: true)
+        original_case = VACOLS::Case.find_by(bfcorlid: c.bfcorlid, bfkey: (c.bfkey.to_i + 1).to_s)
+        original_case.update!(bfmemid: nil)
+        c
+      end
+      # no original hearing, no original deciding judge, no new hearing
+      let!(:case_10) do
+        c = create(:legacy_aoj_appeal, :aod, judge: tied_judge, attorney: attorney, tied_to: false)
+        original_case = VACOLS::Case.find_by(bfcorlid: c.bfcorlid, bfkey: (c.bfkey.to_i + 1).to_s)
+        original_case.update!(bfmemid: nil)
+        c
+      end
+      # original hearing held by tied_judge, decided by tied_judge, new hearing held by inel_judge
+      # this should have affinity to the original deciding judge because new hearing judge is ineligible
+      let!(:case_11) do
+        c = create(:legacy_aoj_appeal, :aod,
+                   judge: tied_judge, attorney: attorney, tied_to: true, affinity_start_date: Time.zone.now)
+        original_case = VACOLS::Case.find_by(bfcorlid: c.bfcorlid, bfkey: (c.bfkey.to_i + 1).to_s)
+        create_case_hearing(original_case, inel_judge_caseflow)
+        c
+      end
+      # original hearing held by inel_judge, decided by inel_judge, no new hearing
+      let!(:case_12) { create(:legacy_aoj_appeal, :aod, judge: inel_judge, attorney: attorney, tied_to: true) }
+      # original hearing held by tied_judge, decided by tied_judge, new hearing held by inel_judge
+      # this would have affinity to the original deciding judge but is out of affinity window
+      let!(:case_13) do
+        c = create(:legacy_aoj_appeal, :aod, judge: tied_judge, attorney: attorney, tied_to: true)
+        original_case = VACOLS::Case.find_by(bfcorlid: c.bfcorlid, bfkey: (c.bfkey.to_i + 1).to_s)
+        create_case_hearing(original_case, inel_judge_caseflow)
+        c
+      end
+
+      it "considers cases tied to a judge if they held a hearing after the previous case was decided", :aggregate_failures do
+        IneligibleJudgesJob.perform_now
+
+        tied_judge_cases = VACOLS::AojCaseDocket.distribute_priority_appeals(tied_judge_caseflow, "any", 100, true)
+        other_judge_cases = VACOLS::AojCaseDocket.distribute_priority_appeals(other_judge_caseflow, "any", 100, true)
+        new_hearing_judge_cases = VACOLS::AojCaseDocket.distribute_priority_appeals(new_hearing_judge, "any", 100, true)
+
+        expect(new_hearing_judge_cases.map { |c| c["bfkey"] }.sort)
+          .to match_array([
+            case_1, case_2, case_3, case_4, case_5, case_9, case_10, case_12, case_13
+          ].map { |c| c["bfkey"].to_i.to_s }.sort)
+
+        expect(tied_judge_cases.map { |c| c["bfkey"] }.sort)
+          .to match_array([
+            case_6, case_9, case_10, case_11, case_12, case_13
+          ].map { |c| c["bfkey"].to_i.to_s }.sort)
+
+        expect(other_judge_cases.map { |c| c["bfkey"] }.sort)
+          .to match_array([
+            case_7, case_8, case_9, case_10, case_12, case_13
+          ].map { |c| c["bfkey"].to_i.to_s }.sort)
+      end
+    end
   end
   # rubocop:enable Layout/LineLength
 end
