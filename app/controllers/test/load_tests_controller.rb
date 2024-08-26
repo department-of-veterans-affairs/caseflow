@@ -9,12 +9,7 @@ class Test::LoadTestsController < ApplicationController
   LOAD_TESTING_USER = "LOAD_TESTER"
 
   def index
-    render json: {
-      feature_toggles_available: find_features.map { |key, value| { name: key, default_status: value } },
-      functions_available: find_functions,
-      all_csum_roles: find_roles,
-      all_organizations: find_orgs
-    }
+    render template: "test/index"
   end
 
   def user
@@ -35,27 +30,6 @@ class Test::LoadTestsController < ApplicationController
   end
 
   private
-
-  def find_features
-    all_features = AllFeatureToggles.new.call.flatten.uniq.sort
-    all_features.map! do |feature|
-      sym_feature = feature.split(",")[0].to_sym
-      [sym_feature, FeatureToggle.enabled?(sym_feature)]
-    end
-    all_features.to_h
-  end
-
-  def find_functions
-    Functions.functions.sort
-  end
-
-  def find_roles
-    User.all.pluck(:roles).flatten.uniq.compact.sort
-  end
-
-  def find_orgs
-    Organization.pluck(:name).sort
-  end
 
   # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Layout/LineLength, Metrics/MethodLength
   def data_for_testing

@@ -47,6 +47,7 @@ import Login from 'app/login';
 import TestApp from 'app/test/TestApp';
 import TestUsers from 'app/test/TestUsers';
 import TestData from 'app/test/TestData';
+import LoadTest from 'app/test/loadTest/LoadTest';
 import PerformanceDegradationBanner from 'app/components/PerformanceDegradationBanner';
 import EstablishClaimAdmin from 'app/establishClaimAdmin';
 import Queue from 'app/queue/index';
@@ -79,6 +80,7 @@ const COMPONENTS = {
   TestApp,
   TestUsers,
   TestData,
+  LoadTest,
   Error403,
   Error404,
   Error500,

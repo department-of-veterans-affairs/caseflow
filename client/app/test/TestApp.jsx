@@ -12,6 +12,7 @@ import PageRoute from '../components/PageRoute';
 
 import TestUsers from './TestUsers';
 import TestData from './TestData';
+import LoadTest from './loadTest/LoadTest';
 
 const TestApp = (props) => {
 
@@ -21,6 +22,10 @@ const TestApp = (props) => {
 
   const routedTestData = () => {
     return <TestData {...props} />;
+  };
+
+  const routedLoadTest = () => {
+    return <LoadTest {...props} />;
   };
 
   return <BrowserRouter basename="/test">
@@ -46,8 +51,14 @@ const TestApp = (props) => {
             <PageRoute
               exact
               path="/data"
-              title="Test Data | Caseflowp"
+              title="Test Data | Caseflow"
               render={routedTestData}
+            />
+            <PageRoute
+              exact
+              path="/load_tests"
+              title="Load Test | Caseflow"
+              render={routedLoadTest}
             />
           </Switch>
         </div>
