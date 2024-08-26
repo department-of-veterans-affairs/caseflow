@@ -114,13 +114,7 @@ export const IntakeEditFrame = (props) => {
   };
 
   const displayEditDisabledBanner = () => {
-    const disabledEditBenefitTypes = ['compensation', 'pension'];
-    const claimsBenefitType = props.serverIntake.benefitType;
-    const isBenefitTypeDisabled = disabledEditBenefitTypes.includes(claimsBenefitType);
-
-    if (props.featureToggles.removeCompAndPenIntake && isBenefitTypeDisabled) {
-      return EditDisabledBanner;
-    }
+    return disableEditingForCompensationAndPension() ? EditDisabledBanner : null;
   };
 
   const { veteran, formType } = props.serverIntake;
