@@ -76,10 +76,6 @@ export const TranscriptionFileDispatchView = () => {
     setPackageModalConfig({ opened: false });
   };
 
-  const onTabChange = (tabNumber) => {
-    console.log(tabNumber);
-  };
-
   useEffect(() => {
     getContractors();
   }, []);
@@ -103,7 +99,6 @@ export const TranscriptionFileDispatchView = () => {
           name="transcription-tabwindow"
           defaultPage={currentTab}
           fullPage={false}
-          onChange={onTabChange}
           tabs={tabConfig(openPackageModal, selectFilesForPackage, selectedFiles.length)}
         />
         { packageModalConfig.opened &&
