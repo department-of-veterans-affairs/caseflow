@@ -156,7 +156,7 @@ class BgsPowerOfAttorney < CaseflowRecord
 
   def update_ihp_task
     related_appeals.each do |appeal|
-      InformalHearingPresentationTask.update_to_new_poa(appeal) if appeal.active?
+      InformalHearingPresentationTask.update_to_new_poa(appeal) if appeal.active? && !appeal.predocketed?
     end
   end
 

@@ -11,6 +11,7 @@ export const vhaTaskFilterDetails = {
     '["VeteranRecordRequest", "Appeal"]': 3
   },
   incomplete: {},
+  pending: {},
   in_progress_issue_types: {
     CHAMPVA: 12,
     'Caregiver | Tier Level': 20,
@@ -48,6 +49,7 @@ export const vhaTaskFilterDetails = {
     'Camp Lejune Family Member': 8
   },
   incomplete_issue_types: {},
+  pending_issue_types: {},
 };
 
 export const genericTaskFilterDetails = {

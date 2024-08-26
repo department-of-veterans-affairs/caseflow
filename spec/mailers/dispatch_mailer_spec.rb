@@ -14,7 +14,7 @@ describe DispatchMailer do
     subject { DispatchMailer.dispatch(email_address: email_address, appeal: appeal) }
     describe "#dispatch" do
       it "has the correct from" do
-        expect(subject.from).to include("BoardofVeteransAppealsHearings@messages.va.gov")
+        expect(subject.from).to include("BoardofVeteransAppealsDecisions@messages.va.gov")
       end
 
       it "has the correct subject line" do

@@ -49,6 +49,11 @@ FactoryBot.define do
       sattyid { generated_sattyid }
     end
 
+    trait :titled_attorney_role do
+      attorney_role
+      stitle { "D#{Random.rand(1..5)}" }
+    end
+
     # I'm not sure if this reflects real data but it's required for SCM users to see legacy tasks in tests
     trait :scm_role do
       sattyid { generated_sattyid }

@@ -25,7 +25,7 @@ FactoryBot.define do
     end
 
     trait :legacy do
-      appeal { create(:legacy_appeal, vacols_case: create(:case)) }
+      appeal { create(:legacy_appeal, :with_veteran, vacols_case: create(:case)) }
     end
   end
 end

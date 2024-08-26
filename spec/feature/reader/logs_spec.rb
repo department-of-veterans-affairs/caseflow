@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require "selenium-webdriver"
+
 RSpec.feature "Reader", :all_dbs do
   before do
-    FeatureToggle.enable!(:pdf_page_render_time_in_ms)
     FeatureToggle.enable!(:metrics_monitoring)
     Fakes::Initializer.load!
 
@@ -34,19 +35,75 @@ RSpec.feature "Reader", :all_dbs do
     ]
   end
 
-  context "log Reader Metrics" do
-    scenario "create a metric for pdf_page_render_time_in_ms" do
-      expect(Metric.any?).to be false # There are no metrics
-      Capybara.default_max_wait_time = 5 # seconds
+  describe "Log Reader Metrics" do
+    context "Feature Toggle pdf_page_render_time_in_ms" do
+      context "Toggle On" do
+        before do
+          FeatureToggle.enable!(:pdf_page_render_time_in_ms)
+        end
+        after do
+          FeatureToggle.disable!(:pdf_page_render_time_in_ms)
+        end
 
-      visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
+        it "creates a Metric for pdf_page_render_time_in_ms" do
+          expect(Metric.any?).to be false # There are no metrics
+          Capybara.default_max_wait_time = 5 # seconds
 
-      expect(page).to have_content("BOARD OF VETERANS' APPEALS")
-      metric = Metric.where(metric_message: "PDF render time in Milliseconds")&.last
-      expect(metric).to be_present # New metric is created
-      expect(metric.start).not_to be_nil
-      expect(metric.end).not_to be_nil
-      expect(metric.duration).to be > 0 # Confirm duration not default 0 value
+          visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
+
+          expect(page).to have_content("BOARD OF VETERANS' APPEALS")
+          metric = Metric.where(metric_message: "PDF render time in Milliseconds")&.last
+          expect(metric).to be_present # New metric is created
+          expect(metric.start).not_to be_nil
+          expect(metric.end).not_to be_nil
+          expect(metric.duration).to be > 0 # Confirm duration not default 0 value
+        end
+      end
+    end
+
+    context "Feature Toggle metrics_get_pdfjs_doc" do
+      context "Toggle On" do
+        before do
+          FeatureToggle.enable!(:metrics_get_pdfjs_doc)
+          FeatureToggle.enable!(:prefetch_disabled)
+        end
+
+        after do
+          FeatureToggle.disable!(:metrics_get_pdfjs_doc)
+          FeatureToggle.disable!(:prefetch_disabled)
+        end
+
+        context "Get Document Success" do
+          it "creates a metric for getting PDF" do
+            visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
+            expect(page).to have_content("BOARD OF VETERANS' APPEALS")
+            metric = Metric.where("metric_message LIKE ?", "Getting PDF%").first
+            expect(metric.metric_type).to eq "performance"
+          end
+        end
+
+        context "Get Document Error" do
+          before do
+            allow_any_instance_of(::DocumentController).to receive(:pdf) do
+              large_document = "a" * (50 * 1024 * 1024) # 50MB document
+              send_data large_document, type: "application/pdf", disposition: "inline"
+            end
+          end
+
+          context "Internet Speed available", js: true do
+            it "create an error Metric including internet speed" do
+              Capybara.current_driver = :selenium_chrome_headless
+              expect(Metric.any?).to be false
+              visit "/reader/appeal/#{appeal.vacols_id}/documents/1"
+              expect(page).to have_content("Unable to load document")
+              metric = Metric.where("metric_message LIKE ?", "Getting PDF%").first
+              expect(metric["metric_attributes"]["bandwidth"]).to end_with("Mbits/s")
+              expect(metric.metric_attributes["step"]).to eq "getDocument"
+              expect(metric.metric_type).to eq "error"
+            end
+          end
+        end
+      end
     end
   end
 end

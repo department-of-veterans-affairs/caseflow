@@ -295,6 +295,7 @@ describe DocketCoordinator do
   end
 
   describe "#genpop_priority_count" do
+    before { allow_any_instance_of(Docket).to receive(:calculate_days_for_time_goal_with_prior_to_goal).and_return(0) }
     subject { DocketCoordinator.new.genpop_priority_count }
 
     let(:expected_priority_count) { genpop_priority_cases_count }

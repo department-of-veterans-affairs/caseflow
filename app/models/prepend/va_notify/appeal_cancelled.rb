@@ -8,9 +8,6 @@
 
 module AppealCancelled
   extend AppellantNotification
-  # rubocop:disable all
-  @@template_name = "Appeal Cancelled"
-  # rubocop:enable all
 
   # Original Method in app/models/task.rb
   # Purpose: Update Record in Appeal States Table
@@ -21,12 +18,7 @@ module AppealCancelled
 
   def update_appeal_state_when_appeal_cancelled
     if ["RootTask"].include?(type) && status == Constants.TASK_STATUSES.cancelled
-      MetricsService.record("Updating APPEAL_CANCELLED column in Appeal States Table to TRUE "\
-        "for #{appeal.class} ID #{appeal.id}",
-                            service: :queue,
-                            name: "AppellantNotification.appeal_mapper") do
-        AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "appeal_cancelled")
-      end
+      appeal.appeal_state.appeal_cancelled_appeal_state_update_action!
     end
   end
 end

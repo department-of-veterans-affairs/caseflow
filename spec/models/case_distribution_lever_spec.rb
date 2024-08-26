@@ -10,9 +10,12 @@ RSpec.describe CaseDistributionLever, :all_dbs do
        batch_size_per_attorney
        ama_direct_review_start_distribution_prior_to_goals
        ama_hearing_case_affinity_days
+       ama_hearing_case_aod_affinity_days
        cavc_affinity_days
        ama_evidence_submission_docket_time_goals
-       ama_hearings_docket_time_goals]
+       ama_hearing_docket_time_goals
+       ama_hearing_start_distribution_prior_to_goals
+       ama_evidence_submission_start_distribution_prior_to_goals]
   end
   let!(:float_levers) do
     %w[maximum_direct_review_proportion minimum_legacy_proportion nod_adjustment]
@@ -63,7 +66,7 @@ RSpec.describe CaseDistributionLever, :all_dbs do
 
       it "validates combination data_type" do
         lever = CaseDistributionLever.find_by_item(
-          Constants.DISTRIBUTION.ama_hearings_start_distribution_prior_to_goals
+          Constants.DISTRIBUTION.ama_hearing_start_distribution_prior_to_goals
         )
         valid = lever.update(options: nil)
 
