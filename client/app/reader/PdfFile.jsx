@@ -22,12 +22,13 @@ import { startPlacingAnnotation, showPlaceAnnotationIcon
 } from '../reader/AnnotationLayer/AnnotationActions';
 import { INTERACTION_TYPES } from '../reader/analytics';
 import { getCurrentMatchIndex, getMatchesPerPageInFile, getSearchTerm } from './selectors';
-import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
+// import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 import uuid from 'uuid';
 import { storeMetrics, recordAsyncMetrics } from '../util/Metrics';
 import networkUtil from '../util/NetworkUtil';
 
-PDFJS.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+// PDFJS.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+PDFJS.GlobalWorkerOptions.workerSrc = '/assets/pdf.worker.min.js';
 
 export class PdfFile extends React.PureComponent {
   constructor(props) {
