@@ -7,6 +7,7 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
 
   queue_as :low_priority
   application_attr :queue
+  NO_RECORDS_MOVED_MESSAGE = "Job Ran Successfully, No Records Moved"
 
   def perform(fail_job = false)
     begin
@@ -17,9 +18,15 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
 
       complete_returned_appeal_job(returned_appeal_job, "Job completed successfully", moved_appeals)
 
+      if moved_appeals.nil?
+        send_job_slack_report(NO_RECORDS_MOVED_MESSAGE)
+        return
+      end
+
+      # The rest of your code continues here
       # Filter the appeals and send the filtered report
       @filtered_appeals = filter_appeals(appeals, moved_appeals)
-      send_job_slack_report
+      send_job_slack_report(slack_report)
     rescue StandardError => error
       message = "Job failed with error: #{error.message}"
       errored_returned_appeal_job(returned_appeal_job, message)
@@ -180,8 +187,8 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
     )
   end
 
-  def send_job_slack_report
-    slack_service.send_notification(slack_report.join("\n"), self.class.name)
+  def send_job_slack_report(slack_message)
+    slack_service.send_notification(slack_message&.join("\n"), self.class.name)
   end
 
   def slack_report
