@@ -128,7 +128,6 @@ describe ReceiveNotificationJob, type: :job do
         event.email_template_id = "27bf814b-f065-4fc8-89af-ae1292db894e"
         event.sms_template_id = "c2798da3-4c7a-43ed-bc16-599329eaf7cc"
       end
-
     end
     # create notification record
     let(:notification) do
