@@ -102,6 +102,13 @@ describe DistributionTask, :postgres do
       end
     end
 
+    # completed -> on_hold -> assigned
+    # completed -> assigned
+    # completed -> in_progress
+    # if status ever was completed, block change to active
+    #
+    # completed -> on_hold -> assigned -> on_hold -> assigned -> on_hold -> completed - Creates two JudgeAssignTasks
+
     context "when there are no open JudgeAssignTasks" do
       it "allows changing the status from 'completed' to an active status" do
         distribution_task.status = "assigned"
