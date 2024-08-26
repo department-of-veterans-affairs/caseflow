@@ -43,6 +43,18 @@ describe('IntakeEditFrame', () => {
       });
     });
 
+    describe('turned on and with a benefit type of pension', () => {
+      it('displays the edit disabled banner', () => {
+        props.featureToggles = {
+          removeCompAndPenIntake: true
+        };
+        props.serverIntake.benefitType = 'pension';
+        renderIntakeEditFrame(props);
+
+        expect(screen.queryByText(COPY.INTAKE_REMOVE_COMP_AND_PEN)).toBeInTheDocument();
+      });
+    });
+
     describe('turned on and with a benefit type not compensation or pension', () => {
       it('does NOT display the edit disabledbanner', () => {
         props.featureToggles = {
@@ -60,6 +72,18 @@ describe('IntakeEditFrame', () => {
         props.featureToggles = {
           removeCompAndPenIntake: false
         };
+        renderIntakeEditFrame(props);
+
+        expect(screen.queryByText(COPY.INTAKE_REMOVE_COMP_AND_PEN)).not.toBeInTheDocument();
+      });
+    });
+
+    describe('turned off and with a benefit type of pension', () => {
+      it('does NOT display the edit disabled banner', () => {
+        props.featureToggles = {
+          removeCompAndPenIntake: false
+        };
+        props.serverIntake.benefitType = 'pension';
         renderIntakeEditFrame(props);
 
         expect(screen.queryByText(COPY.INTAKE_REMOVE_COMP_AND_PEN)).not.toBeInTheDocument();
