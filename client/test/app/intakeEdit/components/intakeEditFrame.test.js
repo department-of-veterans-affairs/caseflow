@@ -27,27 +27,24 @@ describe('IntakeEditFrame', () => {
     jest.clearAllMocks();
   });
 
-  describe('With the removeCompAndPen feature toggle', () => {
+  describe('With the removeCompAndPen feature toggle turned on', () => {
     beforeEach(() => {
       props = testProps();
+      props.featureToggles = {
+        removeCompAndPenIntake: true
+      };
     });
 
-    describe('turned on and with a benefit type of compensation', () => {
+    describe('and with a benefit type of compensation', () => {
       it('displays the edit disabled banner', () => {
-        props.featureToggles = {
-          removeCompAndPenIntake: true
-        };
         renderIntakeEditFrame(props);
 
         expect(screen.queryByText(COPY.INTAKE_REMOVE_COMP_AND_PEN)).toBeInTheDocument();
       });
     });
 
-    describe('turned on and with a benefit type of pension', () => {
+    describe('and with a benefit type of pension', () => {
       it('displays the edit disabled banner', () => {
-        props.featureToggles = {
-          removeCompAndPenIntake: true
-        };
         props.serverIntake.benefitType = 'pension';
         renderIntakeEditFrame(props);
 
@@ -55,34 +52,34 @@ describe('IntakeEditFrame', () => {
       });
     });
 
-    describe('turned on and with a benefit type not compensation or pension', () => {
+    describe('and with a benefit type not compensation or pension', () => {
       it('does NOT display the edit disabledbanner', () => {
-        props.featureToggles = {
-          removeCompAndPenIntake: true
-        };
         props.serverIntake.benefitType = 'fiduciary';
         renderIntakeEditFrame(props);
 
         expect(screen.queryByText(COPY.INTAKE_REMOVE_COMP_AND_PEN)).not.toBeInTheDocument();
       });
     });
+  });
 
-    describe('turned off and with a benefit type of compensation', () => {
+  describe('With the removeCompAndPen feature toggle turned off', () => {
+    beforeEach(() => {
+      props = testProps();
+      props.featureToggles = {
+        removeCompAndPenIntake: false
+      };
+    });
+
+    describe('and with a benefit type of compensation', () => {
       it('does NOT display the edit disabled banner', () => {
-        props.featureToggles = {
-          removeCompAndPenIntake: false
-        };
         renderIntakeEditFrame(props);
 
         expect(screen.queryByText(COPY.INTAKE_REMOVE_COMP_AND_PEN)).not.toBeInTheDocument();
       });
     });
 
-    describe('turned off and with a benefit type of pension', () => {
+    describe('and with a benefit type of pension', () => {
       it('does NOT display the edit disabled banner', () => {
-        props.featureToggles = {
-          removeCompAndPenIntake: false
-        };
         props.serverIntake.benefitType = 'pension';
         renderIntakeEditFrame(props);
 
