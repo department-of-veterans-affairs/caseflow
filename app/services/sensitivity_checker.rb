@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# Uses the BGSService to check a user's sensitivity level,
+# which is used to control access to a veteran's information
 class SensitivityChecker
   def initialize(current_user)
     self.current_user = current_user
