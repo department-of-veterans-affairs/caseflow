@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Hearings::WorkOrderPackagesController < ApplicationController
+class Hearings::TranscriptionWorkOrderController < ApplicationController
   include HearingsConcerns::VerifyAccess
   before_action :set_task_number
 

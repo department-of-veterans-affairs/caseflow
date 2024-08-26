@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Hearings::WorkOrderPackagesController, type: :controller do
+RSpec.describe Hearings::TranscriptionWorkOrderController, type: :controller do
   let(:task_number) { "TASK123" }
 
   before do
