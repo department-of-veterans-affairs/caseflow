@@ -235,6 +235,7 @@ const AddCavcRemandView = (props) => {
     if (!validateDateNotInPriorNodOrDod(val)) {
       setMinSubstitutionDateError(true);
       setFutureSubstitutionDateError(false);
+    // eslint-disable-next-line no-negated-condition
     } else if (!validateDateNotInFuture(val)) {
       setMinSubstitutionDateError(false);
       setFutureSubstitutionDateError(true);
@@ -563,6 +564,7 @@ const AddCavcRemandView = (props) => {
       {mdrSubtype() && allIssuesUnselected && <MdrIssuesBanner />}
       {mdrSubtype() && federalCircuitField }
       {instructionsField}
+      <h1>THIS IS TYPE: {type}</h1>
     </QueueFlowPage>
   );
 };
