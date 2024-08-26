@@ -1,6 +1,5 @@
 import React from 'react';
-import { mount } from 'enzyme';
-import RadioField from 'app/components/RadioField';
+import { render, screen } from '@testing-library/react';
 import ExclusionTable from 'app/caseDistribution/components/ExclusionTable';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
@@ -27,12 +26,14 @@ describe('Exclusion Table', () => {
     store.dispatch(loadLevers(leversWithTestingDocketLevers));
     store.dispatch(setUserIsAcdAdmin(true));
 
-    const wrapper = mount((<Provider store={store}>
-      <ExclusionTable />
-    </Provider>
-    ));
+    render(
+      <Provider store={store}>
+        <ExclusionTable />
+      </Provider>
+    );
 
-    expect(wrapper.find(RadioField)).toHaveLength(8);
+    const radioFields = screen.getAllByRole('group');
+    expect(radioFields).toHaveLength(8);
   });
 
   it('Exclusion Table Renders all 8 Levers for Member View', () => {
@@ -41,13 +42,13 @@ describe('Exclusion Table', () => {
     store.dispatch(loadLevers(leversWithTestingDocketLevers));
     store.dispatch(setUserIsAcdAdmin(false));
 
-    const wrapper = mount((<Provider store={store}>
+    const {container} = render(
+    <Provider store={store}>
       <ExclusionTable />
     </Provider>
-    ));
+    );
 
     // Renders all 8 Lever Labels
-    expect(wrapper.find('.exclusion-table-member-view-styling').length).toBe(8);
+    expect(container.querySelectorAll('.exclusion-table-member-view-styling').length).toBe(8);
   });
-
 });

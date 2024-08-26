@@ -1,5 +1,5 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { render, screen, fireEvent } from '@testing-library/react';
 import ExcludeDocketLever from 'app/caseDistribution/components/ExcludeDocketLever';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
@@ -36,18 +36,18 @@ describe('Exclusion Lever', () => {
     store.dispatch(loadLevers(leversWithTestingDocketLevers));
     store.dispatch(setUserIsAcdAdmin(false));
 
-    const wrapper = mount((<Provider store={store}>
-      <ExcludeDocketLever
-        lever={selectedLever}
-      />
+    render(
+      <Provider store={store}>
+        <ExcludeDocketLever
+          lever={selectedLever}
+        />
     </Provider>
-    ));
+    );
 
-    let input = (wrapper.find('input').at(1));
-
-    // All 8 levers are rendered
-    expect(wrapper).toBeDefined();
-    expect(input.instance().value).toBe('false');
+    const input = screen.getByRole('radio', {name: 'Off'});
+    // // All 8 levers are rendered
+    expect(input).toBeInTheDocument();
+    expect(input.value).toBe('false');
   });
 
   it('Exclusion Lever Change Value', () => {
@@ -56,18 +56,17 @@ describe('Exclusion Lever', () => {
     store.dispatch(loadLevers(leversWithTestingDocketLevers));
     store.dispatch(setUserIsAcdAdmin(false));
 
-    const wrapper = mount((<Provider store={store}>
+    render(
+    <Provider store={store}>
       <ExcludeDocketLever
         lever={selectedLever}
       />
     </Provider>
-    ));
+  );
 
-    let input = (wrapper.find('input').at(0));
+    const input = screen.getByRole('radio', {name: 'On'});
 
-    input.simulate('change', { lever, event: { value: true } });
-
-    expect(input.instance().value).toBeTruthy();
+    fireEvent.change(input, { target: { value: 'true' } });
+    expect(input.value).toBe('true');
   });
-
 });

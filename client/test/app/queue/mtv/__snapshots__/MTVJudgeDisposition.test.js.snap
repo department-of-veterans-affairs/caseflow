@@ -37,15 +37,12 @@ exports[`MTVJudgeDisposition default view renders correctly 1`] = `
       <p>
         Determine how you would like to address this motion to vacate.
         <br />
-        
         <br />
         If you are granting all issues for vacatur or a partial vacatur for this motion, you will then assign this case to an attorney on your team.
         <br />
-        
         <br />
         If you are choosing to deny or dismiss this motion, it will be automatically returned to the original Motions Attorney on the case.
         <br />
-        
         <br />
         If they are no longer active, it will be placed in the Litigation Support team queue for reassignment.
       </p>
@@ -276,15 +273,12 @@ exports[`MTVJudgeDisposition with denied disposition selected renders correctly 
       <p>
         Determine how you would like to address this motion to vacate.
         <br />
-        
         <br />
         If you are granting all issues for vacatur or a partial vacatur for this motion, you will then assign this case to an attorney on your team.
         <br />
-        
         <br />
         If you are choosing to deny or dismiss this motion, it will be automatically returned to the original Motions Attorney on the case.
         <br />
-        
         <br />
         If they are no longer active, it will be placed in the Litigation Support team queue for reassignment.
       </p>
@@ -685,15 +679,12 @@ exports[`MTVJudgeDisposition with dismissed disposition selected renders correct
       <p>
         Determine how you would like to address this motion to vacate.
         <br />
-        
         <br />
         If you are granting all issues for vacatur or a partial vacatur for this motion, you will then assign this case to an attorney on your team.
         <br />
-        
         <br />
         If you are choosing to deny or dismiss this motion, it will be automatically returned to the original Motions Attorney on the case.
         <br />
-        
         <br />
         If they are no longer active, it will be placed in the Litigation Support team queue for reassignment.
       </p>
@@ -1094,15 +1085,12 @@ exports[`MTVJudgeDisposition with granted disposition selected renders correctly
       <p>
         Determine how you would like to address this motion to vacate.
         <br />
-        
         <br />
         If you are granting all issues for vacatur or a partial vacatur for this motion, you will then assign this case to an attorney on your team.
         <br />
-        
         <br />
         If you are choosing to deny or dismiss this motion, it will be automatically returned to the original Motions Attorney on the case.
         <br />
-        
         <br />
         If they are no longer active, it will be placed in the Litigation Support team queue for reassignment.
       </p>
@@ -1503,15 +1491,12 @@ exports[`MTVJudgeDisposition with partially_granted disposition selected renders
       <p>
         Determine how you would like to address this motion to vacate.
         <br />
-        
         <br />
         If you are granting all issues for vacatur or a partial vacatur for this motion, you will then assign this case to an attorney on your team.
         <br />
-        
         <br />
         If you are choosing to deny or dismiss this motion, it will be automatically returned to the original Motions Attorney on the case.
         <br />
-        
         <br />
         If they are no longer active, it will be placed in the Litigation Support team queue for reassignment.
       </p>

@@ -61,6 +61,7 @@ exports[`DailyDocketGuestLinkSection renders correctly for hearing admins and he
         </button>
         <span
           data-css-1qgqh7a=""
+          data-testid="tooltip-testid"
         >
           <div
             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -215,6 +216,7 @@ exports[`DailyDocketGuestLinkSection renders correctly for non hearing admins an
         </button>
         <span
           data-css-1qgqh7a=""
+          data-testid="tooltip-testid"
         >
           <div
             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
