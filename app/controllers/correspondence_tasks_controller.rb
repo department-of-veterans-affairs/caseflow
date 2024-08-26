@@ -61,7 +61,6 @@ class CorrespondenceTasksController < TasksController
   end
 
   def assign_to_person
-    # binding.pry
     task = CorrespondenceTask.find(correspondence_tasks_params[:task_id])
     task.update!(
       status: Constants.TASK_STATUSES.assigned,
@@ -70,8 +69,7 @@ class CorrespondenceTasksController < TasksController
       # instructions: correspondence_tasks_params[:instructions],
       # type: correspondence_tasks_params[:type]
     )
-    # binding.pry
-    task.instructions << correspondence_task_params[:instructions]
+    task.instructions << correspondence_tasks_params[:instructions]
   end
 
   private
