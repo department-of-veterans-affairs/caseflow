@@ -86,5 +86,14 @@ describe('IntakeEditFrame', () => {
         expect(screen.queryByText(COPY.INTAKE_REMOVE_COMP_AND_PEN)).not.toBeInTheDocument();
       });
     });
+
+    describe('and with a benefit type not compensation or pension', () => {
+      it('does NOT display the edit disabled banner', () => {
+        props.serverIntake.benefitType = 'fiduciary';
+        renderIntakeEditFrame(props);
+
+        expect(screen.queryByText(COPY.INTAKE_REMOVE_COMP_AND_PEN)).not.toBeInTheDocument();
+      });
+    });
   });
 });
