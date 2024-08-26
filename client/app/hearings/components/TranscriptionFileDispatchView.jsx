@@ -76,6 +76,15 @@ export const TranscriptionFileDispatchView = () => {
     setPackageModalConfig({ opened: false });
   };
 
+  const onTabChange = () => {
+    // reset pagenation settings when tab is changed
+    const base = `${window.location.origin}${window.location.pathname}`;
+    const params = getQueryParams(window.location.search);
+
+    params.page = 1;
+    history.pushState('', '', `${base }?${ params.toString()}`);
+  };
+
   useEffect(() => {
     getContractors();
   }, []);
@@ -99,6 +108,7 @@ export const TranscriptionFileDispatchView = () => {
           name="transcription-tabwindow"
           defaultPage={currentTab}
           fullPage={false}
+          onChange={onTabChange}
           tabs={tabConfig(openPackageModal, selectFilesForPackage, selectedFiles.length)}
         />
         { packageModalConfig.opened &&
