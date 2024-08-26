@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 class Hearings::WorkOrderPackagesController < ApplicationController
+  include HearingsConcerns::VerifyAccess
   before_action :set_task_number
 
   def display_wo_summary
-    wo_summary = ::WorkOrderPackage.display_wo_summary(@task_number)
+    wo_summary = ::ManageTranscriptionPackage.display_wo_summary(@task_number)
     if wo_summary.present?
       render json: { data: wo_summary }
     else
@@ -13,7 +14,7 @@ class Hearings::WorkOrderPackagesController < ApplicationController
   end
 
   def display_wo_contents
-    wo_content = ::WorkOrderPackage.display_wo_contents(@task_number)
+    wo_content = ::ManageTranscriptionPackage.display_wo_contents(@task_number)
     if wo_content.present?
       render json: { data: wo_content }
     else
@@ -23,7 +24,7 @@ class Hearings::WorkOrderPackagesController < ApplicationController
 
   def unassign_wo
     begin
-      wo_content = ::WorkOrderPackage.unassign_wo(@task_number)
+      wo_content = ::ManageTranscriptionPackage.unassign_wo(@task_number)
       render json: { data: wo_content }
     rescue StandardError => error
       Rails.logger.error("Failed to unassign work order: #{error.message}")
