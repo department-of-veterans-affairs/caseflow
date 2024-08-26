@@ -455,6 +455,7 @@ class AddIssuesPage extends React.Component {
               legacyStyling={false}
               classNames={['usa-button-secondary']}
               onClick={() => this.onClickAddIssue()}
+              disabled={this.props.disableEditingForCompAndPen}
             >
             + Add issue
             </Button>,
@@ -476,7 +477,7 @@ class AddIssuesPage extends React.Component {
               legacyStyling={false}
               dangerStyling
               onClick={() => this.onClickAddIssue()}
-              disabled={disableIssueActions}
+              disabled={disableIssueActions || this.props.disableEditingForCompAndPen}
             >
             + Add issue
             </Button>)}
@@ -617,7 +618,7 @@ class AddIssuesPage extends React.Component {
               <Button
                 classNames={['usa-button-secondary']}
                 onClick={() => this.openEditClaimLabelModal(endProductCode)}
-                disabled={editDisabled}
+                disabled={editDisabled || this.props.disableEditingForCompAndPen}
               >
               Edit claim label
               </Button>
