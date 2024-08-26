@@ -29,7 +29,7 @@ describe('IntakeEditFrame', () => {
 
   describe('With the removeCompAndPen feature toggle turned on', () => {
     beforeEach(() => {
-      props = testProps;
+      props = testProps();
       props.featureToggles = {
         removeCompAndPenIntake: true
       };
@@ -64,7 +64,7 @@ describe('IntakeEditFrame', () => {
 
   describe('With the removeCompAndPen feature toggle turned off', () => {
     beforeEach(() => {
-      props = testProps;
+      props = testProps();
       props.featureToggles = {
         removeCompAndPenIntake: false
       };
