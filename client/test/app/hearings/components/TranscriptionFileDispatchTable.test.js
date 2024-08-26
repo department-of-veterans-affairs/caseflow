@@ -441,22 +441,22 @@ describe('TranscriptionFileDispatchTable', () => {
     ApiUtil.post = jest.fn();
 
     when(ApiUtil.get).calledWith('/hearings/find_by_contractor/available_contractors').
-      mockResolvedValue(mockTranscriptionContractorsResponse);
+      mockResolvedValueOnce(mockTranscriptionContractorsResponse);
 
     when(ApiUtil.get).calledWith('/hearings/transcription_files/transcription_file_tasks?tab=Unassigned&page=1').
-      mockResolvedValue(mockTranscriptionFilesResponse);
+      mockResolvedValueOnce(mockTranscriptionFilesResponse);
 
     when(ApiUtil.get).calledWith('/hearings/transcription_files/locked').
       mockResolvedValue(mockLockedResponse);
 
     when(ApiUtil.post).calledWith('/hearings/transcription_files/lock', constClickData).
-      mockResolvedValue(mockClickedResponse);
+      mockResolvedValueOnce(mockClickedResponse);
 
     when(ApiUtil.get).calledWith('/hearings/transcription_files/transcription_packages_tasks?tab=Assigned&page=1').
-      mockResolvedValue(mockTranscriptionPackagesResponse);
+      mockResolvedValueOnce(mockTranscriptionPackagesResponse);
 
     when(ApiUtil.get).calledWith('/hearings/find_by_contractor/filterable_contractors').
-      mockResolvedValue(mockTranscriptionContractorsResponse);
+      mockResolvedValueOnce(mockTranscriptionContractorsResponse);
   });
 
   afterEach(() => {
