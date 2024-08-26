@@ -39,6 +39,7 @@ if !Rails.env.development? && !Rails.env.test? && !Rails.env.demo?
 
     # c.use 'OpenTelemetry::Instrumentation::PG'
     # c.use 'OpenTelemetry::Instrumentation::ActionView'
+    # c.use 'OpenTelemetry::Instrumentation::Redis'
 
     c.use 'OpenTelemetry::Instrumentation::ActionPack'
     c.use 'OpenTelemetry::Instrumentation::ActiveSupport'
@@ -48,7 +49,6 @@ if !Rails.env.development? && !Rails.env.test? && !Rails.env.demo?
     c.use 'OpenTelemetry::Instrumentation::Faraday'
     c.use 'OpenTelemetry::Instrumentation::HttpClient'
     c.use 'OpenTelemetry::Instrumentation::Net::HTTP'
-    c.use 'OpenTelemetry::Instrumentation::Redis'
 
     Rails.logger.info("Loaded instruments")
 
