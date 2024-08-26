@@ -22,14 +22,14 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
   let(:added_issues_payload) do
     [{
       benefit_type: "compensation",
-      closed_at: 1625151600,
+      closed_at: 1_625_151_600,
       closed_status: "withdrawn",
-      contention_reference_id: 7905752,
+      contention_reference_id: 7_905_752,
       contested_decision_issue_id: 201,
       contested_issue_description: "Service connection for PTSD",
       contested_rating_decision_reference_id: nil,
       contested_rating_issue_diagnostic_code: "9411",
-      contested_rating_issue_profile_date: 1625076000,
+      contested_rating_issue_profile_date: 1_625_076_000,
       contested_rating_issue_reference_id: "REF9411",
       decision: [
         {
