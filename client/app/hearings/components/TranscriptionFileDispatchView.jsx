@@ -7,7 +7,7 @@ import { tabConfig } from './TranscriptionFileDispatchTabs';
 import Alert from '../../components/Alert';
 import PackageFilesModal from './transcriptionProcessing/PackageFilesModal';
 import ApiUtil from '../../util/ApiUtil';
-import { getQueryParams } from '../../util/QueryParamsUtil';
+import { getQueryParams, encodeQueryParams } from '../../util/QueryParamsUtil';
 
 const defaultAlert = {
   title: '',
@@ -77,12 +77,12 @@ export const TranscriptionFileDispatchView = () => {
   };
 
   const onTabChange = () => {
-    // reset pagenation settings when tab is changed
+    // reset pagenation and filtering settings when tab changes
     const base = `${window.location.origin}${window.location.pathname}`;
     const params = getQueryParams(window.location.search);
+    const qs = encodeQueryParams({ tab: params.tab, page: 1 });
 
-    params.page = 1;
-    history.pushState('', '', `${base }?${ params.toString()}`);
+    history.pushState('', '', `${base}${qs}`);
   };
 
   useEffect(() => {
