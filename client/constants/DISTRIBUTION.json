@@ -3,6 +3,8 @@
   "minimum_legacy_proportion": "minimum_legacy_proportion",
   "nod_adjustment": "nod_adjustment",
   "bust_backlog": "bust_backlog",
+  "NONSSCAVLJ_NUMBER_OF_APPEALS_TO_MOVE": "NONSSCAVLJ_NUMBER_OF_APPEALS_TO_MOVE",
+  "NONSSCAVLJ_NUMBER_OF_APPEALS_TO_MOVE_TITLE": "Number of Non-SSC/AVLJ Appeals to Move",
   "alternative_batch_size": "alternative_batch_size",
   "batch_size_per_attorney": "batch_size_per_attorney",
   "request_more_cases_minimum": "request_more_cases_minimum",

@@ -36,6 +36,8 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
   def move_qualifying_appeals(appeals)
     qualifying_appeals = []
 
+    max_appeals_moved = max_appeals_to_move
+
     non_ssc_avljs.each do |non_ssc_avlj|
       tied_appeals = appeals.select { |appeal| appeal["vlj"] == non_ssc_avlj.sattyid }
 
@@ -43,10 +45,10 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
         tied_appeals = tied_appeals.sort_by { |t_appeal| [-t_appeal["priority"], t_appeal["bfd19"]] }
       end
 
-      if appeals.count < 2
+      if appeals.count <= max_appeals_moved
         qualifying_appeals.push(tied_appeals).flatten
       else
-        qualifying_appeals.push(tied_appeals[0..1]).flatten
+        qualifying_appeals.push(tied_appeals[0..max_appeals_moved]).flatten
       end
     end
 
@@ -61,6 +63,12 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
 
   def non_ssc_avljs
     VACOLS::Staff.where("sactive = 'A' AND svlj = 'A' AND sattyid <> smemgrp")
+  end
+
+  def max_appeals_to_move
+    CaseDistributionLever.find_by_item(
+      Constants.DISTRIBUTION.NON_SSC_AVLJ_NUMBER_OF_APPEALS_TO_MOVE
+    ).value.to_i
   end
 
   def create_returned_appeal_job

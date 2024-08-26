@@ -162,6 +162,18 @@ module Seeds
             lever_group_order: 1003
           },
           {
+            item: Constants.DISTRIBUTION.NONSSCAVLJ_NUMBER_OF_APPEALS_TO_MOVE,
+            title: Constants.DISTRIBUTION.NONSSCAVLJ_NUMBER_OF_APPEALS_TO_MOVE_TITLE,
+            description: "This is the internal lever used to alter the number of appeals to be returned for Non-SSC AVLJs",
+            data_type: Constants.ACD_LEVERS.data_types.number,
+            value: 2,
+            unit: "",
+            is_disabled_in_ui: true,
+            algorithms_used: [],
+            lever_group: Constants.ACD_LEVERS.lever_groups.internal,
+            lever_group_order: 0
+          },
+          {
             item: Constants.DISTRIBUTION.alternative_batch_size,
             title: Constants.DISTRIBUTION.alternative_batch_size_title,
             description: "Sets case-distribution batch size for judges who do not have their own attorney teams.",
