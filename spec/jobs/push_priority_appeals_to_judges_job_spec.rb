@@ -431,8 +431,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         appeal
       end
     end
-    let(:priority_count) { Appeal.count { |a| a.aod? || a.cavc? } + legacy_priority_cases.count + aoj_legacy_priority_cases.count }
-    # rubocop:enable Layout/LineLength
+    let(:priority_count) { Appeal.count { |a| a.aod? || a.cavc? } + legacy_priority_cases.count + aoj_legacy_priority_cases.count } # rubocop:disable Layout/LineLength
     let(:priority_target) { (priority_count + judge_distributions_this_month.sum) / judges.count }
 
     before do
