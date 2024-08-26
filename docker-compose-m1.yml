@@ -27,5 +27,12 @@ services:
     volumes:
       - ./local/sqs/conf:/conf
 
+  appeals-metabase:
+    platform: linux/amd64
+    container_name: metabase3 # change this to metabase after testing is done
+    image: metabase/metabase:latest
+    ports:
+      - "3002:3000"
+
 volumes:
   postgresdata:
