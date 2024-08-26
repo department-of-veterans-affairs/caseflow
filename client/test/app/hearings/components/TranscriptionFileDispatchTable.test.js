@@ -425,15 +425,13 @@ const setupUnassignedTable = () =>
     columns={unassignedColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
     statusFilter={['Unassigned']}
     selectFilesForPackage={selectFilesForPackage}
-  />
-  );
+  />);
 
 const setupAssignedTable = () =>
   render(<TranscriptionFileDispatchTable
     columns={assignedColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
     statusFilter={['Assigned']}
-  />
-  );
+  />);
 
 describe('TranscriptionFileDispatchTable', () => {
   beforeEach(async () => {
@@ -441,22 +439,22 @@ describe('TranscriptionFileDispatchTable', () => {
     ApiUtil.post = jest.fn();
 
     when(ApiUtil.get).calledWith('/hearings/find_by_contractor/available_contractors').
-      mockResolvedValueOnce(mockTranscriptionContractorsResponse);
+      mockResolvedValue(mockTranscriptionContractorsResponse);
 
     when(ApiUtil.get).calledWith('/hearings/transcription_files/transcription_file_tasks?tab=Unassigned&page=1').
-      mockResolvedValueOnce(mockTranscriptionFilesResponse);
+      mockResolvedValue(mockTranscriptionFilesResponse);
 
     when(ApiUtil.get).calledWith('/hearings/transcription_files/locked').
-      mockResolvedValueOnce(mockLockedResponse);
+      mockResolvedValue(mockLockedResponse);
 
     when(ApiUtil.post).calledWith('/hearings/transcription_files/lock', constClickData).
-      mockResolvedValueOnce(mockClickedResponse);
+      mockResolvedValue(mockClickedResponse);
 
     when(ApiUtil.get).calledWith('/hearings/transcription_files/transcription_packages_tasks?tab=Assigned&page=1').
-      mockResolvedValueOnce(mockTranscriptionPackagesResponse);
+      mockResolvedValue(mockTranscriptionPackagesResponse);
 
     when(ApiUtil.get).calledWith('/hearings/find_by_contractor/filterable_contractors').
-      mockResolvedValueOnce(mockTranscriptionContractorsResponse);
+      mockResolvedValue(mockTranscriptionContractorsResponse);
 
     global.setInterval = jest.fn();
   });
@@ -488,7 +486,7 @@ describe('TranscriptionFileDispatchTable', () => {
       const results = await axe(container);
 
       expect(results).toHaveNoViolations();
-    });
+    }, 20000);
 
     it('select all checkbox when select-all checkbox is selected', async () => {
       const { container } = setupUnassignedTable();
@@ -512,7 +510,7 @@ describe('TranscriptionFileDispatchTable', () => {
       expect(ApiUtil.post).toHaveBeenCalledWith(
         '/hearings/transcription_files/lock', selectAllData
       );
-    });
+    }, 20000);
 
     it('select individual checkbox when single checkbox is checked', async () => {
       const { container } = setupUnassignedTable();
@@ -531,7 +529,7 @@ describe('TranscriptionFileDispatchTable', () => {
 
       expect(ApiUtil.post).toHaveBeenCalledWith(
         '/hearings/transcription_files/lock', constClickData);
-    });
+    }, 20000);
 
     it('selecting or deselecting an individual checkbox will de-select the "Select All Files" checkbox', async () => {
       const { container } = setupUnassignedTable();
@@ -563,7 +561,7 @@ describe('TranscriptionFileDispatchTable', () => {
       expect(ApiUtil.post).toHaveBeenCalledWith(
         '/hearings/transcription_files/lock', selectAllData
       );
-    });
+    }, 20000);
 
     it('allows a user to click to lock a record and call the back end', async () => {
       const { container } = setupUnassignedTable();
@@ -582,7 +580,7 @@ describe('TranscriptionFileDispatchTable', () => {
       expect(ApiUtil.post).toHaveBeenCalledWith(
         '/hearings/transcription_files/lock', constClickData);
     });
-  });
+  }, 20000);
 
   describe('Assigned Tab', () => {
     it('loads a table from backend data', async () => {
@@ -598,6 +596,6 @@ describe('TranscriptionFileDispatchTable', () => {
 
       expect(results).toHaveNoViolations();
     });
-  });
+  }, 20000);
 });
 

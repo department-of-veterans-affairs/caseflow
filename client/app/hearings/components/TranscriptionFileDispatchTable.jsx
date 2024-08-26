@@ -236,7 +236,7 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
    * Call for initial selection statuses and set interval to keep refreshing them
    */
   useEffect(() => {
-    if (!statusFilter || statusFilter[0] === 'Unassigned') {
+    if (statusFilter[0] === 'Unassigned') {
       getFileStatuses();
       const interval = setInterval(() => {
         getFileStatuses();
