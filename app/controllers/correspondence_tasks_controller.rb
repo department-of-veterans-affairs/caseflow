@@ -69,8 +69,8 @@ class CorrespondenceTasksController < TasksController
       # instructions: correspondence_tasks_params[:instructions],
       # type: correspondence_tasks_params[:type]
     )
-    task.instructions << correspondence_tasks_params[:instructions],
-    tasks.save!
+    task.instructions << correspondence_tasks_params[:instructions]
+    task.save!
   end
 
   private
