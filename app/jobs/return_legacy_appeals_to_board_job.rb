@@ -7,7 +7,7 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
 
   queue_as :low_priority
   application_attr :queue
-  NO_RECORDS_MOVED_MESSAGE = "Job Ran Successfully, No Records Moved"
+  NO_RECORDS_MOVED_MESSAGE = ["Job Ran Successfully, No Records Moved"].freeze
 
   def perform(fail_job = false)
     begin
@@ -188,7 +188,7 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
   end
 
   def send_job_slack_report(slack_message)
-    slack_service.send_notification(slack_message&.join("\n"), self.class.name)
+    slack_service.send_notification(slack_message.join("\n"), self.class.name)
   end
 
   def slack_report
