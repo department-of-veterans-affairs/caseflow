@@ -37,10 +37,10 @@ if !Rails.env.development? && !Rails.env.test? && !Rails.env.demo?
     c.use 'OpenTelemetry::Instrumentation::Rack', { untraced_endpoints: ['/health-check', '/sample', '/logs'] }
     c.use 'OpenTelemetry::Instrumentation::Rails'
 
-    # c.use 'OpenTelemetry::Instrumentation::ActionPack'
     # c.use 'OpenTelemetry::Instrumentation::PG'
     # c.use 'OpenTelemetry::Instrumentation::ActionView'
 
+    c.use 'OpenTelemetry::Instrumentation::ActionPack'
     c.use 'OpenTelemetry::Instrumentation::ActiveSupport'
     c.use 'OpenTelemetry::Instrumentation::ActiveJob'
     c.use 'OpenTelemetry::Instrumentation::AwsSdk', { suppress_internal_instrumentation: true }
