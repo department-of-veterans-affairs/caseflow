@@ -7,6 +7,7 @@ import { tabConfig } from './TranscriptionFileDispatchTabs';
 import Alert from '../../components/Alert';
 import PackageFilesModal from './transcriptionProcessing/PackageFilesModal';
 import ApiUtil from '../../util/ApiUtil';
+import { getQueryParams } from '../../util/QueryParamsUtil';
 
 const defaultAlert = {
   title: '',
@@ -29,6 +30,22 @@ export const TranscriptionFileDispatchView = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [packageModalConfig, setPackageModalConfig] = useState({ opened: false });
   const [contractors, setContractors] = useState({ transcription_contractors: [], return_dates: ['---', '---'] });
+
+  const tabFromUrl = () => {
+    const params = getQueryParams(window.location.search);
+    let page = 0;
+
+    if (params.tab === 'Assigned') {
+      page = 1;
+    } else if (params.tab === 'Completed') {
+      page = 2;
+    } else if (params.tab === 'All') {
+      page = 3;
+    }
+
+    return page;
+  };
+  const [currentTab] = useState(tabFromUrl());
 
   const getContractors = () => {
     ApiUtil.get('/hearings/find_by_contractor/available_contractors').
@@ -59,6 +76,10 @@ export const TranscriptionFileDispatchView = () => {
     setPackageModalConfig({ opened: false });
   };
 
+  const onTabChange = (tabNumber) => {
+    console.log(tabNumber);
+  };
+
   useEffect(() => {
     getContractors();
   }, []);
@@ -80,8 +101,9 @@ export const TranscriptionFileDispatchView = () => {
         </div>
         <TabWindow
           name="transcription-tabwindow"
-          defaultPage={0}
+          defaultPage={currentTab}
           fullPage={false}
+          onChange={onTabChange}
           tabs={tabConfig(openPackageModal, selectFilesForPackage, selectedFiles.length)}
         />
         { packageModalConfig.opened &&
