@@ -100,6 +100,7 @@ export const TimeSlot = ({
                   roTimezone={roTimezone}
                   selected={slot.time.isSame(selected)}
                   onClick={() => handleChange(slot.time)}
+                  hearingDayDate={hearingDayDate}
                 />
               ))}
             </div>
@@ -112,6 +113,7 @@ export const TimeSlot = ({
                   roTimezone={roTimezone}
                   selected={slot.time.isSame(selected)}
                   onClick={() => handleChange(slot.time)}
+                  hearingDayDate={hearingDayDate}
                 />
               ))}
             </div>

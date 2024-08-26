@@ -172,7 +172,7 @@ export const isEdited = (init, current) => {
   case '':
   case false:
     return current != falsy;
-    // Default to compare the initial with the current value
+  // Default to compare the initial with the current value
   default:
     return !isEqual(current, init);
   }
@@ -322,16 +322,23 @@ export const splitSelectedTime = (time) => {
   const selectedTime = splitTimeString === -1 ? time : time.slice(0, splitTimeString + 2).trim();
   const selectedTimeZone = splitTimeString === -1 ? null : time.slice(splitTimeString + 2).trim();
 
-  return [selectedTime, selectedTimeZone]
-}
+  return [selectedTime, selectedTimeZone];
+};
 
 /**
  * Method to get the Timezone label of a Timezone value
  * @param {string} time -- The time to which the zone is being added
  * @param {string} name -- Name of the zone, defaults to New York
- * @returns {string} -- The label of the timezone
+ * @param {string} format -- How the resulting time preview should be formatted.
+ *   See: https://momentjscom.readthedocs.io/en/latest/moment/01-parsing/03-string-format/
+ * @param {string} datetime -- Time of a hearing in 'YYYY-MM-DD HH::MM timezone' format
+ * @returns {string} -- The label of the timezone with time preview.
  */
-export const zoneName = (time, name, format) => {
+export const zoneName = (time, name, format, date) => {
+  if (time === 'Other') {
+    return time;
+  }
+
   const [selectedTime, selectedTimeZone] = splitSelectedTime(time);
 
   // Default to using America/New_York
@@ -343,17 +350,22 @@ export const zoneName = (time, name, format) => {
   // Set the label
   const label = format ? '' : zone;
 
+  // The datetime string should probably be validated..
+  const datetime = `${date} ${selectedTime}`;
+
+  // Dropdown contents
   if (selectedTimeZone && selectedTimeZone.length > 0) {
-    time = selectedTime;
     const originTimeZone = selectedTimeZone === null ? timezone : TIMEZONES[selectedTimeZone];
 
     // Return the value if it is not a valid time
-    return moment(selectedTime, 'h:mm A').isValid() ? `${moment.tz(selectedTime, 'h:mm a', originTimeZone).tz(timezone).
-    format(`h:mm A ${format || ''}`)}${label}` : selectedTime;
+    return moment(selectedTime, 'h:mm A').isValid() ? `${moment.tz(datetime, 'YYYY-MM-DD h:mm a', originTimeZone).
+      tz(timezone).
+      format(`h:mm A ${format || ''}`)}${label}` : selectedTime;
   }
 
+  // Radio fields
   // Return the value if it is not a valid time
-  return moment(time, 'h:mm A').isValid() ? `${moment(time, 'h:mm a').tz(timezone).
+  return moment(time, 'h:mm A').isValid() ? `${moment(datetime, 'YYYY-MM-DD h:mm a').tz(timezone).
     format(`h:mm A ${format || ''}`)}${label}` : time;
 };
 
@@ -363,9 +375,30 @@ export const zoneName = (time, name, format) => {
  * @param {string} timeZone -- Name of timezone. Default 'America/New_York'
  * @returns {string} -- Formatted time in 'h:mm A z'
  */
-export const timeWithTimeZone = (dateTime, timeZone = 'America/New_York') =>{
+export const timeWithTimeZone = (dateTime, timeZone = 'America/New_York') => {
   return moment(dateTime).tz(timeZone).
     format('h:mm A z');
+};
+
+/**
+ * Method to form a datetime string from a separate time and date strings
+ * @param {string} date -- Date in YYYY-MM-DD format.
+ * @param {string} time -- Time in 'hh:mm AM/PM timezone' format. Ex: 1:00 PM Eastern Time (US & Canada)
+ * @throws {Error} -- If either argument fails to meet the expected formatting.
+ * @returns {string} -- A string formed by concantenating the date and time parameters.
+ */
+export const buildDatetimeString = (date, time) => {
+  const clockTime = splitSelectedTime(time)[0];
+
+  if (!moment(clockTime, 'h:mm A').isValid()) {
+    throw new Error(`Time ${time} is not able to be parsed into 'h:mm A' format and therefore is invalid.`);
+  }
+
+  if (!moment(date, 'YYYY-MM-DD').isValid()) {
+    throw new Error(`Date ${date} is not in 'YYYY-MM-DD' format and therefore is invalid.`);
+  }
+
+  return `${date} ${time}`;
 };
 
 /**
@@ -384,19 +417,23 @@ export const shortZoneName = (name) => {
  * Method to add timezone to the label of the time
  * @returns {Array} -- List of hearing times with the zone appended to the label
  */
-export const hearingTimeOptsWithZone = (options, local) =>
+export const hearingTimeOptsWithZone = (options, local, date) =>
   options.map((item) => {
     // Default to using EST for all times before conversion
     moment.tz.setDefault(local === true ? 'America/New_York' : local);
+
+    if (date === null) {
+      return null;
+    }
 
     // Check which label to use
     const label = item.label ? 'label' : 'displayText';
 
     // Set the time
-    const time = zoneName(item[label]);
+    const time = zoneName(item[label], null, null, date);
 
     // Set the time in the local timezone
-    const localTime = zoneName(item[label], local === true ? '' : local);
+    const localTime = zoneName(item[label], local === true ? '' : local, null, date);
 
     // This fixes some timezone bugs in the TimeSlot component, moment.tz.setDefault changes
     // -global- settings for moment.
@@ -405,10 +442,11 @@ export const hearingTimeOptsWithZone = (options, local) =>
     moment.tz.setDefault();
 
     const displayLocalTime = local && localTime !== time;
+
     // For the Hearing Time dropdown, the value passed should include the AM/PM and timezone context
     return {
       ...item,
-      ['value']: displayLocalTime ? `${localTime}` : time,
+      value: displayLocalTime ? localTime : time,
       [label]: displayLocalTime ? `${localTime} / ${time}` : time
     };
   });
@@ -428,9 +466,11 @@ export const roTimezones = () =>
  * Returns the available timezones options and the count of the available Regional Office timezones
  * @param {string} time -- String representation of the time to convert
  * @param {string} roTimezone -- String representation of the timezone of the RO selected
+ * @param {string} hearingDayDate - Date the hearing is being scheduled for in YYYY-MM-DD format.
+ *  Used to correctly calculate DST offsets.
  * @returns {Object} -- { options: Array, commonsCount: number }
  */
-export const timezones = (time, roTimezone) => {
+export const timezones = (time, roTimezone, hearingDayDate) => {
   // Initialize count of common timezones
   let commonsCount = 0;
 
@@ -441,7 +481,7 @@ export const timezones = (time, roTimezone) => {
     const getAmTime = time.search('AM');
     const splitTimeString = getAmTime < 0 ? time.search('PM') : getAmTime;
 
-    const selectedTime = splitTimeString === -1 ? time : time.slice(0,splitTimeString + 2).trim();
+    const selectedTime = splitTimeString === -1 ? time : time.slice(0, splitTimeString + 2).trim();
     const selectedTimeZone = splitTimeString === -1 ? null : time.slice(splitTimeString + 2).trim();
 
     time = selectedTime;
@@ -449,7 +489,7 @@ export const timezones = (time, roTimezone) => {
   }
 
   // Convert the time into a date object with the RO timezone
-  const dateTime = moment.tz(time, 'HH:mm A', roTimezone);
+  const dateTime = moment.tz(`${hearingDayDate} ${time}`, 'YYYY-MM-DD HH:mm A', roTimezone);
 
   // Map the available timeTIMEZONES to a select options object
   const unorderedOptions = Object.keys(TIMEZONES).map((zone) => {
@@ -473,7 +513,7 @@ export const timezones = (time, roTimezone) => {
 
     // ensure that before the user selects a time it won't display 'Invalid Date' next to zone
     const zoneLabel = dateTime.isValid() ? `${zone} (${moment(dateTime, 'HH:mm').tz(TIMEZONES[zone]).
-      format('h:mm A')})` : `${zone}`;
+      format('h:mm A')})` : zone;
 
     // Return the formatted options
     return {
@@ -552,7 +592,7 @@ export const parseVirtualHearingErrors = (msg, hearing) => {
   return messages.split(',').reduce((list, message) => ({
     ...list,
     [(/Representative/).test(message) ? 'representativeEmailAddress' : 'appellantEmailAddress']:
-       message.replace('Appellant', getAppellantTitle(hearing?.appellantIsNotVeteran))
+      message.replace('Appellant', getAppellantTitle(hearing?.appellantIsNotVeteran))
   }), {});
 };
 
@@ -681,6 +721,7 @@ const calculateAvailableTimeslots = ({
 const combineSlotsAndHearings = ({ roTimezone, availableSlots, scheduledHearings, hearingDayDate }) => {
   const slots = availableSlots.map((slot) => ({
     ...slot,
+    // slot.time_string is undefined right now...
     key: `${slot?.slotId}-${slot?.time_string}`,
     full: false,
     // This is a moment object, always in "America/New_York"
@@ -777,7 +818,9 @@ export const setTimeSlots = ({
 
   const defaultNumberOfSlots = 8;
   const defaultBeginsAt = ro === 'C' ? '09:00' : '08:30';
-  const momentDefaultBeginsAt = moment.tz(`${defaultBeginsAt} ${hearingDayDate}`, 'HH:mm YYYY-MM-DD', 'America/New_York');
+  const momentDefaultBeginsAt = moment.tz(
+  `${defaultBeginsAt} ${hearingDayDate}`, 'HH:mm YYYY-MM-DD', 'America/New_York'
+  );
   const momentBeginsAt = moment(beginsAt).tz('America/New_York');
 
   const defaultSlotLengthMinutes = 60;
@@ -802,10 +845,10 @@ export const setTimeSlots = ({
 
 };
 
-export const formatTimeSlotLabel = (time, zone) => {
+export const formatTimeSlotLabel = (datetime, zone) => {
   const timeFormatString = 'h:mm A z';
-  const coTime = moment.tz(time, 'HH:mm', 'America/New_York').format(timeFormatString);
-  const roTime = moment.tz(time, 'HH:mm', 'America/New_York').tz(zone).
+  const coTime = moment.tz(datetime, 'YYYY-MM-DD HH:mm', 'America/New_York').format(timeFormatString);
+  const roTime = moment.tz(datetime, 'YYYY-MM-DD HH:mm', 'America/New_York').tz(zone).
     format(timeFormatString);
 
   if (roTime === coTime) {
@@ -1017,7 +1060,7 @@ export const formatNotificationLabel = (hearing, virtual, appellantTitle) => {
 
   if (virtual) {
     return `When you schedule the hearing, the ${recipientLabel} and ` +
-     'Judge will receive an email with connection information for the virtual hearing.';
+      'Judge will receive an email with connection information for the virtual hearing.';
   }
 
   return `The ${recipientLabel} will receive email reminders 7 and 3 days before the hearing. ` +
@@ -1211,27 +1254,42 @@ export const scheduleData = ({ hearingSchedule, user }) => {
   const columns = columnsForUser(user, columnData);
 
   const exportHeaders = [
-    { label: 'ID',
-      key: 'id' },
-    { label: 'Scheduled For',
-      key: 'scheduledFor' },
-    { label: 'Type',
-      key: 'readableRequestType' },
-    { label: 'Regional Office',
-      key: 'regionalOffice' },
-    { label: 'Room',
-      key: 'room' },
-    { label: 'CSS ID',
-      key: 'judgeCssId' },
-    { label: 'VLJ',
-      key: 'vlj' },
-    { label: 'Hearings Scheduled',
-      key: 'hearingsScheduled' }
+    {
+      label: 'ID',
+      key: 'id'
+    },
+    {
+      label: 'Scheduled For',
+      key: 'scheduledFor'
+    },
+    {
+      label: 'Type',
+      key: 'readableRequestType'
+    },
+    {
+      label: 'Regional Office',
+      key: 'regionalOffice'
+    },
+    {
+      label: 'Room',
+      key: 'room'
+    },
+    {
+      label: 'CSS ID',
+      key: 'judgeCssId'
+    },
+    {
+      label: 'VLJ',
+      key: 'vlj'
+    },
+    {
+      label: 'Hearings Scheduled',
+      key: 'hearingsScheduled'
+    }
   ];
 
   const headers = headersforUser(user, exportHeaders);
 
   return { headers, rows, columns };
 };
-
 /* eslint-enable camelcase */

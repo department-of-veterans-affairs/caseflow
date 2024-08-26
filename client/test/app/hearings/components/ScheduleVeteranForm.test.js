@@ -236,7 +236,8 @@ describe('ScheduleVeteranForm', () => {
         readableRequestType: 'Video',
         beginsAt: '2021-07-29T11:30:00-04:00',
         halfDay: true,
-        timezone: 'America/Los_Angeles'
+        timezone: 'America/Los_Angeles',
+        scheduledFor: '2025-01-01'
       }
     };
     const scheduleVeteran = mount(
@@ -271,7 +272,8 @@ describe('ScheduleVeteranForm', () => {
         readableRequestType: 'Video',
         beginsAt: null,
         halfDay: false,
-        timezone: 'America/Los_Angeles'
+        timezone: 'America/Los_Angeles',
+        scheduledFor: '2025-01-01'
       }
     };
     const scheduleVeteran = mount(

@@ -187,6 +187,7 @@ export const EditDocket = (props) => {
               amStartTime={travel ? '9:00' : '8:30'}
               pmStartTime={travel ? '13:00' : '12:30'}
               roTimezone={fields?.regionalOffice?.timezone}
+              hearingDayDate={props?.docket?.scheduledFor}
             />
           }
           {!virtual && (
@@ -230,6 +231,7 @@ export const EditDocket = (props) => {
                 localZone="America/New_York"
                 onChange={handleStartTimeChange}
                 value={firstSlotTime}
+                hearingDayDate={props?.docket?.scheduledFor}
               />
               <div className="time-slot-preview-container">
                 <TimeSlot
