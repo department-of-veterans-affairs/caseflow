@@ -7,6 +7,7 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
 
   queue_as :low_priority
   application_attr :queue
+  NO_RECORDS_MOVED_MESSAGE = ["Job Ran Successfully, No Records Moved"].freeze
 
   def perform(fail_job = false)
     begin
@@ -15,22 +16,24 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
 
       appeals, moved_appeals = eligible_and_moved_appeals
 
+      return send_job_slack_report(NO_RECORDS_MOVED_MESSAGE) if moved_appeals.nil?
+
       complete_returned_appeal_job(returned_appeal_job, "Job completed successfully", moved_appeals)
 
+      # The rest of your code continues here
       # Filter the appeals and send the filtered report
       @filtered_appeals = filter_appeals(appeals, moved_appeals)
-      send_job_slack_report
+      send_job_slack_report(slack_report)
     rescue StandardError => error
+      @start_time ||= Time.zone.now
       message = "Job failed with error: #{error.message}"
       errored_returned_appeal_job(returned_appeal_job, message)
-      start_time ||= Time.zone.now # temporary fix to get this job to succeed
-      duration = time_ago_in_words(start_time)
-      slack_msg = "<!here>\n [ERROR] after running for #{duration}: #{error.message}"
-      slack_service.send_notification(slack_msg, self.class.name)
+      duration = time_ago_in_words(@start_time)
+      slack_service.send_notification("<!here>\n [ERROR] after running for #{duration}: #{error.message}",
+                                      self.class.name)
       log_error(error)
       message
     ensure
-      @start_time ||= Time.zone.now
       metrics_service_report_runtime(metric_group_name: "return_legacy_appeals_to_board_job")
     end
   end
@@ -62,6 +65,8 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
   end
 
   def grouped_by_avlj(moved_appeals)
+    return [] if moved_appeals.nil?
+
     moved_appeals.group_by { |appeal| VACOLS::Staff.find_by(sattyid: appeal["vlj"])&.sattyid }.keys.compact
   end
 
@@ -123,30 +128,37 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
 
   # Method to separate appeals by priority
   def separate_by_priority(appeals)
-    priority_appeals = appeals.select { |appeal| appeal["priority"] == 1 }
-    non_priority_appeals = appeals.select { |appeal| appeal["priority"] == 0 }
+    return [] if appeals.nil?
+
+    priority_appeals = appeals.select { |appeal| appeal["priority"] == 1 } || []
+    non_priority_appeals = appeals.select { |appeal| appeal["priority"] == 0 } || []
+
     [priority_appeals, non_priority_appeals]
   end
 
   # Method to calculate remaining eligible appeals
   def calculate_remaining_appeals(all_appeals, moved_priority_appeals, moved_non_priority_appeals)
+    return [] if all_appeals.nil?
+
     remaining_priority_appeals = (
       all_appeals.select { |appeal| appeal["priority"] == 1 } -
       moved_priority_appeals
-    )
+    ) || []
     remaining_non_priority_appeals = (
       all_appeals.select { |appeal| appeal["priority"] == 0 } -
       moved_non_priority_appeals
-    )
+    ) || []
     [remaining_priority_appeals, remaining_non_priority_appeals]
   end
 
   # Method to fetch non-SSC AVLJs that appeals were moved to location '63'
   def fetch_moved_avljs(moved_appeals)
+    return [] if moved_appeals.nil?
+
     moved_appeals.map { |appeal| VACOLS::Staff.find_by(sattyid: appeal["vlj"]) }
       .compact
       .uniq
-      .map { |record| get_name_from_record(record) }
+      &.map { |record| get_name_from_record(record) } || []
   end
 
   def get_name_from_record(record)
@@ -176,8 +188,8 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
     )
   end
 
-  def send_job_slack_report
-    slack_service.send_notification(slack_report.join("\n"), self.class.name)
+  def send_job_slack_report(slack_message)
+    slack_service.send_notification(slack_message.join("\n"), self.class.name)
   end
 
   def slack_report
