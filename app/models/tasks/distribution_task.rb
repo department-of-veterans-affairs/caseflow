@@ -63,11 +63,9 @@ class DistributionTask < Task
   end
 
   def prevent_status_change_if_judge_assign_task_open
-    if status_changed? && status_was == "completed" && Task.active_statuses.include?(status)
-      open_judge_assign_tasks = appeal.tasks.where(type: "JudgeAssignTask", status: Task.open_statuses)
-      if open_judge_assign_tasks.exists?
-        errors.add(:status, "cannot be changed from this status if there are open JudgeAssignTasks")
-      end
+    open_judge_assign_tasks = appeal.tasks.where(type: "JudgeAssignTask", status: Task.open_statuses)
+    if status_changed? && open_judge_assign_tasks.exists? && status_was == "completed" && Task.active_statuses.include?(status)
+      errors.add(status, "cannot be changed from this status if there are open JudgeAssignTasks")
     end
   end
 end

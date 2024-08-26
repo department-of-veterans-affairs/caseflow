@@ -98,7 +98,7 @@ describe DistributionTask, :postgres do
         distribution_task.status = "assigned"
         puts "Is distribution_task valid? #{distribution_task.valid?}"
         expect(distribution_task.valid?).to be false
-        expect(distribution_task.errors[:status]).to include("cannot be changed from this status if there are open JudgeAssignTasks")
+        expect(distribution_task.errors[distribution_task.status]).to include("cannot be changed from this status if there are open JudgeAssignTasks")
       end
     end
 
