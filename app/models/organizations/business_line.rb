@@ -239,6 +239,7 @@ class BusinessLine < Organization
       # Generate all of the filter queries to be used in both the HLR and SC block
       sql = Arel.sql(change_history_sql_filter_array.join(" "))
       sanitized_filters = ActiveRecord::Base.sanitize_sql_array([sql])
+      sc_type_clauses = ActiveRecord::Base.sanitize_sql_array([sc_type_filter])
 
       change_history_sql_block = <<-SQL
         WITH versions_agg AS NOT MATERIALIZED (
@@ -362,7 +363,7 @@ class BusinessLine < Organization
         AND tasks.assigned_to_type = 'Organization'
         AND tasks.assigned_to_id = '#{parent.id.to_i}'
         #{sanitized_filters}
-        #{sc_type_filter}
+        #{sc_type_clauses}
       SQL
 
       ActiveRecord::Base.transaction do
@@ -418,7 +419,11 @@ class BusinessLine < Organization
       if query_params[:claim_type].present?
         if query_params[:claim_type].include?(Remand.name) || query_params[:claim_type].include?(SupplementalClaim.name)
           " AND #{where_clause_from_array(SupplementalClaim, :type, query_params[:claim_type]).to_sql} "
+        else
+          ""
         end
+      else
+        ""
       end
     end
 
