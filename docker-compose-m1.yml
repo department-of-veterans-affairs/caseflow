@@ -30,8 +30,8 @@ services:
 
   appeals-metabase:
     platform: linux/amd64
-    container_name: metabase3 # change this to metabase after testing is done
-    image: metabase/metabase:latest
+    container_name: metabase
+    image: metabase/metabase:v0.50.21
     ports:
       - "3002:3000"
 
