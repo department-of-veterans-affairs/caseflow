@@ -79,7 +79,7 @@ class Test::UsersController < ApplicationController
   end
 
   def show
-    render "index"
+    render template: "test/index"
   end
 
   # Set current user in DEMO

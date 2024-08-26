@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Test::TestControllerHelper
+  require './scripts/enable_features_dev.rb'
   class << self
     def form_values
       {
@@ -27,9 +28,8 @@ module Test::TestControllerHelper
       %w[full partial none all]
     end
 
-    def user_session
-      # (params[:id] == "me") ? session : nil
-      nil
+    def user_session(id_param, session)
+      (id_param == "me") ? session : nil
     end
 
     def find_features

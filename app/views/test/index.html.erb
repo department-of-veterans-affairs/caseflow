@@ -13,7 +13,7 @@
     testUsersList: Test::TestControllerHelper.test_users,
     featuresList: Test::TestControllerHelper.features_list,
     appSelectList: Test::UsersController::APPS,
-    userSession: Test::TestControllerHelper.user_session,
+    userSession: Test::TestControllerHelper.user_session(params[:id], session),
     timezone: { getlocal: Time.now.getlocal.zone, zone: Time.zone.name },
     epTypes: Test::TestControllerHelper.ep_types,
     featureToggles: {
