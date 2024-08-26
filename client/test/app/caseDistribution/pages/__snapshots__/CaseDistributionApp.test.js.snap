@@ -9,7 +9,7 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
           Administration
         </h1>
         <div>
-           
+
           <h2>
             Case Distribution Algorithm Values
           </h2>
@@ -22,7 +22,7 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
             class="active-data-content"
             id="active-data-elements"
           >
-              
+
             <h2
               data-css-3rhuy2=""
             >
@@ -213,7 +213,7 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                               cases
                             </span>
                           </label>
-                          
+
                           <div
                             class="input-container"
                           >
@@ -267,12 +267,11 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                               cases
                             </span>
                           </label>
-                          
+
                           <div
                             class="input-container"
                           >
                             <input
-                              aria-label="Test Title Lever2*"
                               aria-readonly="true"
                               class="cf-form-textinput"
                               disabled=""
@@ -323,12 +322,11 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                               cases
                             </span>
                           </label>
-                          
+
                           <div
                             class="input-container"
                           >
                             <input
-                              aria-label="Test Text Title Lever3"
                               aria-readonly="true"
                               class="cf-form-textinput"
                               disabled=""
@@ -385,7 +383,7 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                     >
                       <strong>
                         AMA Hearing Case Affinity Days
-                        
+
                       </strong>
                       <p
                         class="affinity-lever-text"
@@ -431,7 +429,7 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                                     days
                                   </span>
                                 </label>
-                                
+
                                 <div
                                   class="input-container"
                                 >
@@ -505,7 +503,7 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                     >
                       <strong>
                         AMA Hearing Case AOD Affinity Days
-                        
+
                       </strong>
                       <p
                         class="affinity-lever-text"
@@ -540,7 +538,7 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                             <div
                               class="cf-form-textinput   "
                             >
-                              
+
                               <div
                                 class="input-container"
                               >
@@ -704,12 +702,11 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                               days
                             </span>
                           </label>
-                          
+
                           <div
                             class="input-container"
                           >
                             <input
-                              aria-label="AMA Hearings Docket Time Goals"
                               aria-readonly="true"
                               class="cf-form-textinput"
                               disabled=""
@@ -758,12 +755,11 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                                 days
                               </span>
                             </label>
-                            
+
                             <div
                               class="input-container"
                             >
                               <input
-                                aria-label="AMA Hearings Start Distribution Prior to Goals"
                                 aria-readonly="true"
                                 class="cf-form-textinput"
                                 disabled=""
@@ -809,12 +805,11 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                               days
                             </span>
                           </label>
-                          
+
                           <div
                             class="input-container"
                           >
                             <input
-                              aria-label="AMA Direct Review Docket Time Goals"
                               aria-readonly="true"
                               class="cf-form-textinput"
                               disabled=""
@@ -863,12 +858,11 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                                 days
                               </span>
                             </label>
-                            
+
                             <div
                               class="input-container"
                             >
                               <input
-                                aria-label="AMA Direct Review Start Distribution Prior to Goals"
                                 aria-readonly="true"
                                 class="cf-form-textinput"
                                 disabled=""
@@ -922,7 +916,7 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
             class="inactive-data-content"
             id="inactive-data-elements"
           >
-              
+
             <h2
               data-css-3rhuy2=""
             >
@@ -1178,7 +1172,7 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                       >
                         <ol>
                           <li>
-                            undefined 
+                            undefined
                           </li>
                         </ol>
                       </td>
@@ -1187,7 +1181,7 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                       >
                         <ol>
                           <li>
-                            undefined 
+                            undefined
                           </li>
                         </ol>
                       </td>
@@ -1216,10 +1210,10 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                       >
                         <ol>
                           <li>
-                            undefined 
+                            undefined
                           </li>
                           <li>
-                            undefined 
+                            undefined
                           </li>
                         </ol>
                       </td>
@@ -1228,10 +1222,10 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                       >
                         <ol>
                           <li>
-                            undefined 
+                            undefined
                           </li>
                           <li>
-                            undefined 
+                            undefined
                           </li>
                         </ol>
                       </td>
