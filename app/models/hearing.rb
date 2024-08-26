@@ -289,6 +289,41 @@ class Hearing < CaseflowRecord
     end
   end
 
+  def closest_regional_office_city
+    return nil unless hearing_day
+
+    query = <<-SQL
+      SELECT closest_regional_office_city
+      FROM cached_appeal_attributes
+      WHERE closest_regional_office_key = '#{hearing_day.id}'
+      LIMIT 1
+    SQL
+    result = ActiveRecord::Base.connection.execute(query)
+    result.first&.dig("closest_regional_office_city")
+  end
+
+  def original_appeal_type
+    return nil unless appeal.aod_based_on_age
+
+    appeal.type
+  end
+
+  def mo_appeal_type
+    query = <<-SQL
+      SELECT appeal_type, granted
+      FROM advance_on_docket_motions
+      WHERE appeal_id = '#{appeal.id}'
+      LIMIT 1
+    SQL
+    result = ActiveRecord::Base.connection.execute(query)
+    docket_motion = result.first
+    appeal_type = docket_motion&.dig("appeal_type")
+    granted = docket_motion&.dig("granted")
+    return nil unless granted
+
+    appeal_type
+  end
+
   private
 
   def update_appeal_states_on_hearing_create

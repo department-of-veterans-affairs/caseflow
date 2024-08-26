@@ -262,6 +262,9 @@ Rails.application.routes.draw do
   post 'hearings/transcription_packages/dispatch', to: 'hearings/transcription_packages#new'
 
   post 'hearings/hearing_view/:id', to: 'hearings/hearing_view#create'
+  get 'hearings/transcription_work_order/display_wo_summary', to: 'hearings/transcription_work_order#display_wo_summary'
+  get 'hearings/transcription_work_order/display_wo_contents', to: 'hearings/transcription_work_order#display_wo_contents'
+  get 'hearings/transcription_work_order/unassign_wo', to: 'hearings/transcription_work_order#unassign_wo'
 
   resources :hearings, only: [:update, :show]
 
