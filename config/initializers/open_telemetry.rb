@@ -43,7 +43,7 @@ if !Rails.env.development? && !Rails.env.test? && !Rails.env.demo?
 
     c.use 'OpenTelemetry::Instrumentation::ActionView'
     c.use 'OpenTelemetry::Instrumentation::ActiveJob'
-    c.use 'OpenTelemetry::Instrumentation::AwsSdk'
+    c.use 'OpenTelemetry::Instrumentation::AwsSdk', { suppress_internal_instrumentation: true }
     c.use 'OpenTelemetry::Instrumentation::ConcurrentRuby'
     c.use 'OpenTelemetry::Instrumentation::Faraday'
     c.use 'OpenTelemetry::Instrumentation::HttpClient'
