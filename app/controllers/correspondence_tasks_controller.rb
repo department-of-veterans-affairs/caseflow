@@ -63,8 +63,11 @@ class CorrespondenceTasksController < TasksController
   def assign_to_team
     task = CorrespondenceTask.find(correspondence_tasks_params[:task_id])
     task.update!(
-      status: Constants.TASK_STATUSES.assigned
+      status: Constants.TASK_STATUSES.assigned,
+      assigned_to: Organization.find_by(id: correspondence_tasks_params[:assigned_to]),
+      assigned_at: Time.zone.now
     )
+    task.instructions << correspondence_tasks_params[:instructions]
   end
 
   private
@@ -80,7 +83,8 @@ class CorrespondenceTasksController < TasksController
       :action_type,
       :type,
       :correspondence_uuid,
-      instructions: []
+      :instructions,
+      :assigned_to
     )
   end
 

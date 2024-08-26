@@ -7,10 +7,8 @@
 
     },
     "failBanner": {
-
       "title": "Warning",
       "message": "Error FOIA request task has not been cancelled",
       "type": "warning"
-
       }
-    }
+}

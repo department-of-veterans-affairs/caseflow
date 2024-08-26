@@ -13,6 +13,7 @@ import COPY from '../../../COPY';
 import QueueFlowModal from './QueueFlowModal';
 import {
   setTaskNotRelatedToAppealBanner,
+  assignTaskToTeam,
   cancelTaskNotRelatedToAppeal,
   setShowActionsDropdown
 } from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
@@ -32,82 +33,95 @@ const CorrespondenceAssignTeamModal = (props) => {
     value: org.value
   }));
 
-
-  const { task } = props;
   const taskData = taskActionData(props);
 
   // Show task instructions by default
   const shouldShowTaskInstructions = get(taskData, 'show_instructions', true);
 
   const [instructions, setInstructions] = useState('');
-  const [instructionsAdded, setInstructionsAdded] = useState(true);
+  const [instructionsAdded, setInstructionsAdded] = useState(false);
+  const [teamAssigned, setTeamAssigned] = useState('');
+  const [teamAssignedFlag, setTeamAssignedFlag] = useState(false);
 
   useEffect(() => {
     // Handle document search position
-    if (instructions.length > 0) {
-      setInstructionsAdded(false);
-    } else {
-      setInstructionsAdded(true);
-    }
+    setInstructionsAdded(instructions.length > 0);
   }, [instructions]);
 
   const validateForm = () => {
-    if (!shouldShowTaskInstructions) {
-      return true;
+    return !shouldShowTaskInstructions ? teamAssigned : (instructionsAdded && teamAssigned);
+  };
+
+  const formChanged = (organization) => {
+    setTeamAssigned(true);
+    setTeamAssignedFlag(organization ? { label: organization.label, value: organization.value } : false);
+  };
+
+  const updateCorrespondence = () => {
+    const updatedCorrespondence = { ...props.correspondenceInfo };
+    const task = updatedCorrespondence.tasksUnrelatedToAppeal.find(task => task.uniqueId === parseInt(props.task_id, 10));
+
+    if (task) {
+      task.assignedTo = teamAssignedFlag.value;
+      task.instructions = instructions;
     }
 
-    return instructions.length > 0;
+    return updatedCorrespondence;
   };
 
   const submit = () => {
+    if (teamAssignedFlag && typeof teamAssignedFlag === 'object') {
+      const payload = {
+        data: {
+          assigned_to: teamAssignedFlag.value,
+          instructions: instructions,
+          ...(taskData?.business_payloads && { business_payloads: taskData.business_payloads })
+        }
+      };
 
-
+      return props.assignTaskToTeam(props.task_id, updateCorrespondence(), payload, teamAssignedFlag.label);
+    } else {
+      console.error('No valid organization selected');
+    }
   };
 
-  // Additional properties - should be removed later once generic submit buttons are styled the same across all modals
-  const modalProps = {};
-
-  if ([
-    'AssessDocumentationTask',
-    'EducationAssessDocumentationTask',
-    'HearingPostponementRequestMailTask'
-  ].includes(task?.type) || task?.appeal?.hasCompletedSctAssignTask) {
-    modalProps.submitButtonClassNames = ['usa-button'];
-    modalProps.submitDisabled = !validateForm();
-  }
+  const modalProps = {
+    submitButtonClassNames: ['usa-button'],
+    submitDisabled: !validateForm()
+  };
 
   return (
     <QueueFlowModal
       {...modalProps}
       title="Assign Task"
       button="Assign Task"
-      submitDisabled={!validateForm()}
       pathAfterSubmit={taskData?.redirect_after ?? `/queue/correspondence/${props.correspondence_uuid}`}
       submit={submit}
       validateForm={validateForm}
     >
-      {taskData?.modal_body &&
-        <React.Fragment>
+      {taskData?.modal_body && (
+        <>
           <div dangerouslySetInnerHTML={{ __html: taskData.modal_body }} />
           <br />
-        </React.Fragment>
-      }
+        </>
+      )}
       <SearchableDropdown
-        name="User dropdown"
+        name="Organization dropdown"
         label="Select a team"
-        creatable
+        dropdownStyling={{ position: 'relative' }}
         placeholder="Select or search"
         styling={{ marginBottom: '20px' }}
         options={organizationOptions}
+        onChange={formChanged}
       />
-      {shouldShowTaskInstructions &&
+      {shouldShowTaskInstructions && (
         <TextareaField
-          name={taskData?.instructions_label ?? COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}
+          name={taskData?.instructions_label ?? COPY.CORRESPONDENCE_CASES_ASSIGN_TASK_MODAL_INSTRUCTIONS_TITLE}
           id="taskInstructions"
-          onChange={(e) => setInstructions(e.target.value)}
+          onChange={setInstructions}
           value={instructions}
         />
-      }
+      )}
     </QueueFlowModal>
   );
 };
@@ -117,6 +131,7 @@ CorrespondenceAssignTeamModal.propTypes = {
   requestPatch: PropTypes.func,
   setShowActionsDropdown: PropTypes.func,
   cancelTaskNotRelatedToAppeal: PropTypes.func,
+  assignTaskToTeam: PropTypes.func.isRequired,
   task: PropTypes.shape({
     appeal: PropTypes.shape({
       hasCompletedSctAssignTask: PropTypes.bool
@@ -152,11 +167,13 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestPatch,
   setTaskNotRelatedToAppealBanner,
   cancelTaskNotRelatedToAppeal,
-  setShowActionsDropdown
+  setShowActionsDropdown,
+  assignTaskToTeam
 }, dispatch);
 
-export default (withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(
-    CorrespondenceAssignTeamModal
-  )
-));
+export default withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(CorrespondenceAssignTeamModal)
+);
