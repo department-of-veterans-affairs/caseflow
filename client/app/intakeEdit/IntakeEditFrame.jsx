@@ -102,6 +102,13 @@ export const IntakeEditFrame = (props) => {
     return 'This appeal has been outcoded and the issues are no longer editable.';
   };
 
+  const disableEditingForCompensationAndPension = () => {
+    const disabledEditBenefitTypes = ['compensation', 'pension'];
+    const isBenefitTypeDisabled = disabledEditBenefitTypes.includes(props.serverIntake.benefitType);
+
+    return props.featureToggles.removeCompAndPenIntake && isBenefitTypeDisabled;
+  };
+
   const displayDecisionDateMessage = () => {
     return 'One or more request issues lack a decision date. Please contact the Caseflow team via the VA Enterprise Service Desk at 855-673-4357 or create a YourIT ticket to correct these issues.'; // eslint-disable-line max-len
   };
@@ -165,7 +172,14 @@ export const IntakeEditFrame = (props) => {
                     exact
                     path={PAGE_PATHS.BEGIN}
                     title="Edit Claim Issues | Caseflow Intake"
-                    component={EditAddIssuesPage}
+                    component={() => {
+                      return (
+                        <EditAddIssuesPage
+                          {...props}
+                          disableEditingForCompAndPen={disableEditingForCompensationAndPension()}
+                        />
+                      );
+                    }}
                   />
                   <PageRoute
                     exact
