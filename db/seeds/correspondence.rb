@@ -122,12 +122,12 @@ module Seeds
 
     def create_veterans
       veterans = []
-      15.times do |_|
+      35.times do |_i|
         # Create the veteran
         @file_number += 1
         @participant_id += 1
         veteran = create(:veteran, file_number: @file_number, participant_id: @participant_id)
-        15.times do
+        35.times do
           appeal = create(:appeal, veteran: veteran)
           InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
         end
@@ -206,12 +206,18 @@ module Seeds
     end
 
     def create_correspondence_with_completed_root_task(user = {}, veteran = {})
-      corres = create_correspondence(user, veteran)
-      assign_review_package_task(corres, user)
-      rpt = ReviewPackageTask.find_by(appeal_id: corres.id, type: ReviewPackageTask.name)
-      rpt.update!(status: Constants.TASK_STATUSES.completed)
-      corres.root_task.update!(status: Constants.TASK_STATUSES.completed)
-      corres.root_task.update!(closed_at: rand(1.month.ago..1.day.ago))
+      30.times do |_i|
+        begin
+          corres = create_correspondence(user, veteran)
+          assign_review_package_task(corres, user)
+          rpt = ReviewPackageTask.find_by(appeal_id: corres.id, type: ReviewPackageTask.name)
+          rpt.update!(status: Constants.TASK_STATUSES.completed)
+          corres.root_task.update!(status: Constants.TASK_STATUSES.completed)
+          corres.root_task.update!(closed_at: rand(1.month.ago..1.day.ago))
+        rescue StandardError => error
+          Rails.logger.debug(error)
+        end
+      end
     end
 
     def create_correspondence_with_review_package_task(user, veteran = {})
@@ -304,21 +310,39 @@ module Seeds
     end
 
     def create_correspondence_with_in_progress_review_package_task(user, veteran = {})
-      corres = create_correspondence(user, veteran)
-      assign_review_package_task(corres, user)
-      rpt = ReviewPackageTask.find_by(appeal_id: corres.id)
-      rpt.update!(status: Constants.TASK_STATUSES.in_progress)
+      30.times do |_i|
+        begin
+          corres = create_correspondence(user, veteran)
+          assign_review_package_task(corres, user)
+          rpt = ReviewPackageTask.find_by(appeal_id: corres.id)
+          rpt.update!(status: Constants.TASK_STATUSES.in_progress)
+        rescue StandardError => error
+          Rails.logger.debug(error)
+        end
+      end
     end
 
     def create_correspondence_with_in_progress_intake_task(user, veteran = {})
-      corres = create_correspondence(user, veteran)
-      cit = create_correspondence_intake(corres, user)
-      cit.update!(status: Constants.TASK_STATUSES.in_progress)
+      30.times do |_i|
+        begin
+          corres = create_correspondence(user, veteran)
+          cit = create_correspondence_intake(corres, user)
+          cit.update!(status: Constants.TASK_STATUSES.in_progress)
+        rescue StandardError => error
+          Rails.logger.debug(error)
+        end
+      end
     end
 
     def create_nod_correspondence(user, veteran = {})
-      corres = create_correspondence(user, veteran)
-      create_multiple_docs(corres, veteran)
+      30.times do |_i|
+        begin
+          corres = create_correspondence(user, veteran)
+          create_multiple_docs(corres, veteran)
+        rescue StandardError => error
+          Rails.logger.debug(error)
+        end
+      end
     end
 
     def correspondence_auto_assignment_levers

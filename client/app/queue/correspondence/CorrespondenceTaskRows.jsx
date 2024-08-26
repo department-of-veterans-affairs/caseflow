@@ -68,8 +68,8 @@ const establishmentTaskCorrespondence = (task) => {
 };
 
 const tdClassNamesforCorrespondence = (timeline, task) => {
-  const containerClass = timeline ? taskInfoWithIconTimelineContainer : '';
   const closedAtClass = task.closedAt ? null : <span className="greyDotTimelineStyling"></span>;
+  const containerClass = timeline ? taskInfoWithIconTimelineContainer : '';
 
   return [containerClass, closedAtClass].filter((val) => val).join(' ');
 };

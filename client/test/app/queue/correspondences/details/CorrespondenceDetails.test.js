@@ -68,6 +68,11 @@ describe('CorrespondenceDetails', () => {
       notes: 'Note Test',
       mailTasks: ['Task 1', 'Task 2'],
       all_correspondences: Array.from({ length: 30 }, (_, i) => ({ uuid: `uuid${i}`, vaDateOfReceipt: '2024-08-06T00:00:00Z', notes: `Note ${i}`, status: `Status ${i}` })),
+      prior_mail: [
+        { id: 1, vaDateOfReceipt: '2023-08-20T00:00:00Z' },
+        { id: 2, vaDateOfReceipt: '2023-08-19T00:00:00Z' }
+      ],
+      relatedCorrespondenceIds: [2],
       tasksUnrelatedToAppeal: [{
         type: 'FOIA request',
         label: 'Other Motion',
@@ -340,6 +345,8 @@ describe('CorrespondenceDetails', () => {
     const userNameCount = screen.getAllByText('John Doe').length;
     expect(userNameCount).toBeGreaterThan(0);
     const packageDetailsTab = screen.getByText('Package Details');
+    // const responseLettersTab = screen.getByText('Response Letters');
+    const associatedPriorMailTab = screen.getByText('Associated Prior Mail');
 
     expect(screen.getByText('Veteran ID:')).toBeInTheDocument();
     expect(screen.getByText('Correspondence and Appeal Tasks')).toBeInTheDocument();
@@ -386,5 +393,10 @@ describe('CorrespondenceDetails', () => {
     expect(screen.getByText(moment(props.correspondence.vaDateOfReceipt).format('MM/DD/YYYY'))).toBeInTheDocument();
     expect(screen.getByText('Notes')).toBeInTheDocument();
     expect(screen.getByText(props.correspondence.notes)).toBeInTheDocument();
+
+    fireEvent.click(associatedPriorMailTab)
+    expect(screen.getByText('Please select prior mail to link to this correspondence')).toBeInTheDocument();
+    const priorDate =  new Date(props.correspondence.prior_mail[0].vaDateOfReceipt)
+    expect(screen.getByText(priorDate.toLocaleDateString('en-US'))).toBeInTheDocument();
   });
 });
