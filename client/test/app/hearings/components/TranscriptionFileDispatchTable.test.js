@@ -447,7 +447,7 @@ describe('TranscriptionFileDispatchTable', () => {
       mockResolvedValueOnce(mockTranscriptionFilesResponse);
 
     when(ApiUtil.get).calledWith('/hearings/transcription_files/locked').
-      mockResolvedValue(mockLockedResponse);
+      mockResolvedValueOnce(mockLockedResponse);
 
     when(ApiUtil.post).calledWith('/hearings/transcription_files/lock', constClickData).
       mockResolvedValueOnce(mockClickedResponse);
@@ -457,6 +457,8 @@ describe('TranscriptionFileDispatchTable', () => {
 
     when(ApiUtil.get).calledWith('/hearings/find_by_contractor/filterable_contractors').
       mockResolvedValueOnce(mockTranscriptionContractorsResponse);
+
+    global.setInterval = jest.fn();
   });
 
   afterEach(() => {
