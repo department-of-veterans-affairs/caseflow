@@ -148,9 +148,7 @@ RSpec.feature("The Correspondence Details page") do
         nod: false,
         notes: "Note Test"
       )
-      # binding.pry
-      # appeal = create(:appeal),
-      other_motion_correspondence_task = OtherMotionCorrespondenceTask.create!(
+      OtherMotionCorrespondenceTask.create!(
         parent: @correspondence.tasks[0],
         appeal: @correspondence,
         appeal_type: "Correspondence",
@@ -158,7 +156,7 @@ RSpec.feature("The Correspondence Details page") do
         assigned_to_type: "User",
         assigned_to: current_user,
         instructions: ["Test"],
-        assigned_at: Time.now,
+        assigned_at: Time.current
       )
     end
 
@@ -171,13 +169,13 @@ RSpec.feature("The Correspondence Details page") do
       expect(page).to have_content("07/23/2024")
       expect(page).to have_content("Note Test")
     end
+    
     it "checks that FOIA request task can been cancelled." do
       visit "/queue/correspondence/#{@correspondence.uuid}"
       click_dropdown(prompt: "Select an action", text: "Cancel task")
       find(".cf-form-textarea", match: :first).fill_in with: "Cancel task test"
       click_button "Cancel-Task-button-id-1"
       expect(page).to have_content("FOIA request task has been cancelled.")
-
     end
   end
 end

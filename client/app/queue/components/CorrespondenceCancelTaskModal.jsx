@@ -57,9 +57,14 @@ const CorrespondenceCancelTaskModal = (props) => {
       }
     };
 
-    props.setShowActionsDropdown(false);
+    const filteredTasks = props.correspondenceInfo.tasksUnrelatedToAppeal.filter((filterdTask) =>
+      parseInt(filterdTask.uniqueId, 10) !== parseInt(props.task_id, 10));
 
-    return props.cancelTaskNotRelatedToAppeal(props.task_id, payload);
+    const tempCor = props.correspondenceInfo;
+
+    tempCor.tasksUnrelatedToAppeal = filteredTasks;
+
+    return props.cancelTaskNotRelatedToAppeal(props.task_id, tempCor, payload);
 
   };
 
@@ -109,7 +114,9 @@ CorrespondenceCancelTaskModal.propTypes = {
   requestPatch: PropTypes.func,
   setShowActionsDropdown: PropTypes.func,
   cancelTaskNotRelatedToAppeal: PropTypes.func,
+  correspondenceInfo: PropTypes.object,
   task: PropTypes.shape({
+    uniqueId: PropTypes.number,
     appeal: PropTypes.shape({
       hasCompletedSctAssignTask: PropTypes.bool
     }),

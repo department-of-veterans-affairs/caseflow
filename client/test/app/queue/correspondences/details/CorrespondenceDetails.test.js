@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
-import { Provider,  } from 'react-redux';
+import { Provider } from 'react-redux';
 import CorrespondenceDetails from 'app/queue/correspondence/details/CorrespondenceDetails';
 import { correspondenceData } from 'test/data/correspondence';
 import { applyMiddleware, createStore } from 'redux';
@@ -75,6 +75,9 @@ describe('CorrespondenceDetails', () => {
       relatedCorrespondenceIds: [2],
       tasksUnrelatedToAppeal: [{
         type: 'FOIA request',
+        label: 'Other Motion',
+        status: 'assigned',
+        uniqueId: 3080,
         assigned_to: 'CAVC Litigation Support',
         assigned_at: '07/23/2024',
         instructions: [
@@ -84,6 +87,9 @@ describe('CorrespondenceDetails', () => {
       },
       {
         type: 'Cavc request',
+        label: 'CAVC Task',
+        status: 'assigned',
+        uniqueId: 3080,
         assigned_to: 'CAVC Litigation Support',
         assigned_at: '07/23/2024',
         instructions: [
@@ -283,7 +289,7 @@ describe('CorrespondenceDetails', () => {
         appeals: [
           {
             id: 1,
-            type: 'appeal',
+            type: 'Correspondence',
             attributes: {
               assigned_to_location: 'Mail',
               appellant_full_name: 'John Doe',
@@ -318,15 +324,16 @@ describe('CorrespondenceDetails', () => {
   });
 
   test('toggles view all correspondence', () => {
-     render(
+    render(
       <Provider store={store}>
         <CorrespondenceDetails {...props} />
       </Provider>
-      )
-     const viewAllButton = screen.getByText('View all correspondence');
-     fireEvent.click(viewAllButton);
-     expect(screen.getByText('Hide all correspondence')).toBeInTheDocument();
-   });
+    );
+    const viewAllButton = screen.getByText('View all correspondence');
+
+    fireEvent.click(viewAllButton);
+    expect(screen.getByText('Hide all correspondence')).toBeInTheDocument();
+  });
 
   it('renders the component', () => {
     render(
@@ -347,7 +354,6 @@ describe('CorrespondenceDetails', () => {
     expect(screen.getByText('Response Letters')).toBeInTheDocument();
     expect(screen.getByText('Associated Prior Mail')).toBeInTheDocument();
     expect(screen.getByText('View all correspondence')).toBeInTheDocument();
-
     expect(screen.getByText('Tasks not related to an appeal')).toBeInTheDocument();
     expect(screen.getByText('Completed Mail Tasks')).toBeInTheDocument();
     expect(screen.getByText('Task 1')).toBeInTheDocument();
@@ -361,6 +367,16 @@ describe('CorrespondenceDetails', () => {
     expect(screen.getByText('Number of Issues')).toBeInTheDocument();
     expect(screen.getByText('Decision Date')).toBeInTheDocument();
     expect(screen.getByText('Appeal Location')).toBeInTheDocument();
+    expect(screen.getByText('View veteran documents')).toBeInTheDocument();
+
+    // Appeals related
+    const existingAppeals = screen.getAllByText('Tasks added to appeal').length;
+
+    expect(existingAppeals).toBe(2);
+    expect(screen.getByText('240714-253')).toBeInTheDocument();
+    expect(screen.getByText('240714-254')).toBeInTheDocument();
+    expect(screen.getByText('VLJ Support Staff')).toBeInTheDocument();
+    expect(screen.getByText('Hearing Admin')).toBeInTheDocument();
 
     // Appeals related
     const tasksAddedTextCount = screen.getAllByText('Tasks added to appeal').length;
