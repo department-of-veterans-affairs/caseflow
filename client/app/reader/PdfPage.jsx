@@ -221,44 +221,17 @@ export class PdfPage extends React.PureComponent {
     // eslint-disable-next-line no-underscore-dangle
     if (this.props.pdfDocument && !this.props.pdfDocument._transport.destroyed) {
 
-      const pageMetricData = {
-        message: `Getting PDF page ${this.props.pageIndex + 1} from PDFJS document`,
-        product: 'reader',
-        type: 'performance',
-        data: this.props.metricsAttributes,
-        eventId: this.props.metricsIdentifier
-      };
-
-      const pageAndTextFeatureToggle = this.props.featureToggles.metricsPdfStorePages;
       const document = this.props.pdfDocument;
       const pageIndex = pageNumberOfPageIndex(this.props.pageIndex);
-      const pageResult = recordAsyncMetrics(document.getPage(pageIndex), pageMetricData, false);
+      const pageResult = document.getPage(pageIndex);
 
       pageResult.then((page) => {
         this.page = page;
 
-        const textMetricData = {
-          message: `Storing PDF page ${this.props.pageIndex + 1} text in Redux`,
-          product: 'reader',
-          type: 'performance',
-          data: this.props.metricsAttributes,
-          eventId: this.props.metricsIdentifier
-        };
-
-        const readerRenderText = {
-          uuid: uuidv4(),
-          message: `Rendering PDF page ${this.props.pageIndex + 1} text`,
-          type: 'performance',
-          product: 'reader',
-          data: this.props.metricsAttributes,
-          eventId: this.props.metricsIdentifier
-        };
-
-        const textResult = recordAsyncMetrics(this.getText(page), textMetricData, false);
+        const textResult = this.getText(page);
 
         textResult.then((text) => {
-          recordMetrics(this.drawText(page, text), readerRenderText,
-            false);
+          this.drawText(page, text);
         });
 
         this.drawPage(page).then();

@@ -1,12 +1,6 @@
-import { recordMetrics, storeMetrics, recordAsyncMetrics } from '../../../app/util/Metrics';
 import { cleanup } from '@testing-library/react';
 import {
-  metricsPdfStorePagesDisabled,
-  pageMetricData,
-  pdfPageRenderTimeInMsDisabled,
   pdfPageRenderTimeInMsEnabled,
-  recordMetricsArgs,
-  storeMetricsBrowserError,
 } from '../../helpers/PdfPageTests';
 
 jest.mock('../../../app/util/Metrics', () => ({
