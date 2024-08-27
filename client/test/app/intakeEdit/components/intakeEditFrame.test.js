@@ -39,7 +39,7 @@ describe('IntakeEditFrame', () => {
       it('displays the edit disabled banner', () => {
         renderIntakeEditFrame(props);
 
-        expect(screen.queryByText(COPY.INTAKE_REMOVE_COMP_AND_PEN)).toBeInTheDocument();
+        expect(screen.queryByText(COPY.INTAKE_EDIT_DISABLED_COMP_AND_PEN)).toBeInTheDocument();
       });
     });
 
@@ -48,7 +48,7 @@ describe('IntakeEditFrame', () => {
         props.serverIntake.benefitType = 'pension';
         renderIntakeEditFrame(props);
 
-        expect(screen.queryByText(COPY.INTAKE_REMOVE_COMP_AND_PEN)).toBeInTheDocument();
+        expect(screen.queryByText(COPY.INTAKE_EDIT_DISABLED_COMP_AND_PEN)).toBeInTheDocument();
       });
     });
 
@@ -57,7 +57,7 @@ describe('IntakeEditFrame', () => {
         props.serverIntake.benefitType = 'fiduciary';
         renderIntakeEditFrame(props);
 
-        expect(screen.queryByText(COPY.INTAKE_REMOVE_COMP_AND_PEN)).not.toBeInTheDocument();
+        expect(screen.queryByText(COPY.INTAKE_EDIT_DISABLED_COMP_AND_PEN)).not.toBeInTheDocument();
       });
     });
   });
@@ -74,7 +74,7 @@ describe('IntakeEditFrame', () => {
       it('does NOT display the edit disabled banner', () => {
         renderIntakeEditFrame(props);
 
-        expect(screen.queryByText(COPY.INTAKE_REMOVE_COMP_AND_PEN)).not.toBeInTheDocument();
+        expect(screen.queryByText(COPY.INTAKE_EDIT_DISABLED_COMP_AND_PEN)).not.toBeInTheDocument();
       });
     });
 
@@ -83,7 +83,7 @@ describe('IntakeEditFrame', () => {
         props.serverIntake.benefitType = 'pension';
         renderIntakeEditFrame(props);
 
-        expect(screen.queryByText(COPY.INTAKE_REMOVE_COMP_AND_PEN)).not.toBeInTheDocument();
+        expect(screen.queryByText(COPY.INTAKE_EDIT_DISABLED_COMP_AND_PEN)).not.toBeInTheDocument();
       });
     });
 
@@ -92,7 +92,7 @@ describe('IntakeEditFrame', () => {
         props.serverIntake.benefitType = 'fiduciary';
         renderIntakeEditFrame(props);
 
-        expect(screen.queryByText(COPY.INTAKE_REMOVE_COMP_AND_PEN)).not.toBeInTheDocument();
+        expect(screen.queryByText(COPY.INTAKE_EDIT_DISABLED_COMP_AND_PEN)).not.toBeInTheDocument();
       });
     });
   });
