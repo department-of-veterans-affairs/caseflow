@@ -129,7 +129,6 @@ class ClaimHistoryEvent
       edited_events = []
       imr_versions = parse_versions(change_data["imr_versions"])
       previous_version = parse_versions(change_data["previous_state_array"])
-
       if imr_versions.present?
         *rest_of_versions, last_version = imr_versions
         if last_version["status"].present?
@@ -142,12 +141,6 @@ class ClaimHistoryEvent
         create_pending_status_event(change_data, change_data["issue_modification_request_updated_at"])
       end
       edited_events
-    end
-
-    def create_event_from_version_object(version)
-      previous_version_database_field.each_with_object({}) do |(db_key, version_key), data|
-        data[db_key] = version[version_key] unless version[version_key].nil?
-      end
     end
 
     def create_event_from_rest_of_versions(change_data, edited_versions, previous_version)
@@ -534,7 +527,27 @@ class ClaimHistoryEvent
 
     def update_event_hash_data_from_version_object(version)
       version_database_field_mapping.each_with_object({}) do |(version_key, db_key), data|
-        data[db_key] = version[version_key] unless version[version_key].nil?
+        next if version[version_key].nil?
+
+        data[db_key] =
+          if version_key == "decision_date"
+            version[version_key].strftime("%-m/%-d/%Y")
+          else
+            version[version_key]
+          end
+      end
+    end
+
+    def create_event_from_version_object(version)
+      previous_version_database_field.each_with_object({}) do |(db_key, version_key), data|
+        next if version[version_key].nil?
+
+        data[db_key] =
+          if version_key == "decision_date"
+            version[version_key].strftime("%-m/%-d/%Y")
+          else
+            version[version_key]
+          end
       end
     end
 
