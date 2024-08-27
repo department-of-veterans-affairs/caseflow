@@ -53,7 +53,6 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
       non_priority_appeals_count: count_unique_bfkeys(non_priority_appeals_moved),
       remaining_priority_appeals_count: count_unique_bfkeys(remaining_priority_appeals),
       remaining_non_priority_appeals_count: count_unique_bfkeys(remaining_non_priority_appeals),
-      moved_avljs: fetch_moved_avljs(moved_appeals),
       grouped_by_avlj: grouped_by_avlj(moved_appeals)
     }
   end
@@ -151,18 +150,14 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
     [remaining_priority_appeals, remaining_non_priority_appeals]
   end
 
-  # Method to fetch non-SSC AVLJs that appeals were moved to location '63'
-  def fetch_moved_avljs(moved_appeals)
+  # Method to fetch non-SSC AVLJs SATTYIDS that appeals were moved to location '63'
+  def fetch_moved_sattyids(moved_appeals)
     return [] if moved_appeals.nil?
 
     moved_appeals.map { |appeal| VACOLS::Staff.find_by(sattyid: appeal["vlj"]) }
       .compact
       .uniq
-      &.map { |record| get_name_from_record(record) } || []
-  end
-
-  def get_name_from_record(record)
-    FullName.new(record["snamef"], nil, record["snamel"]).to_s
+      .map(&:sattyid) || []
   end
 
   def create_returned_appeal_job
@@ -199,7 +194,6 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
     report << "Non-Priority Appeals Moved: #{@filtered_appeals[:non_priority_appeals_count]}"
     report << "Remaining Priority Appeals: #{@filtered_appeals[:remaining_priority_appeals_count]}"
     report << "Remaining Non-Priority Appeals: #{@filtered_appeals[:remaining_non_priority_appeals_count]}"
-    report << "Moved AVLJs: #{@filtered_appeals[:moved_avljs].join(', ')}"
     report << "Grouped by AVLJ: #{@filtered_appeals[:grouped_by_avlj].join(', ')}"
     report
   end
