@@ -34,6 +34,15 @@ class ApplicationController < ApplicationBaseController
     end
   end
 
+  rescue_from BGS::SensitivityLevelCheckFailure do |e|
+    render json: {
+      status: e.message,
+      featureToggles: {
+        checkUserSensitivity: FeatureToggle.enabled?(:check_user_sensitivity)
+      }
+    }, status: :forbidden
+  end
+
   private
 
   def deny_non_bva_admins
