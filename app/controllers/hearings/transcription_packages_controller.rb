@@ -9,7 +9,13 @@ class Hearings::TranscriptionPackagesController < ApplicationController
   end
 
   def new
-    # todo
-    Rails.logger.info("Work order #{params[:work_order_name]} submitted")
+    work_order_params = params.permit(:work_order_name, :sent_to_transcriber_date, :return_date, :contractor_name, hearings: [:hearing_id, :hearing_type])
+    transcription_package = TranscriptionPackages.new(work_order_params)
+
+    if transcription_package.call
+      render json: { message: "Work order processed successfully" }, status: :ok
+    else
+      render json: { error_code: "Failed to process work order" }, status: :unprocessable_entity
+    end
   end
 end
