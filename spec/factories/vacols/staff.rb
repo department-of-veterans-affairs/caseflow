@@ -134,7 +134,8 @@ FactoryBot.define do
     end
 
     trait :inactive_non_ssc_avlj do
-      svlj { "I" }
+      svlj { "A" }
+      sactive { "I" }
       sattyid { generated_sattyid }
       smemgrp { generated_smemgrp_not_equal_to_sattyid }
     end

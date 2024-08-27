@@ -38,7 +38,7 @@ module Seeds
     end
 
     def create_legacy_appeals
-      the naming comes from the acceptance criteria of APPEALS-45208
+      # the naming comes from the acceptance criteria of APPEALS-45208
       create_four_priority_appeals_tied_to_a_non_ssc_avlj
       create_four_non_priority_appeals_tied_to_a_non_ssc_avlj
       create_four_priority_appeals_tied_to_and_signed_by_a_non_ssc_avlj
@@ -55,7 +55,7 @@ module Seeds
       create_unsigned_priority_appeal_tied_to_inactive_non_ssc_avlj
       create_signed_non_priority_appeal_tied_to_inactive_non_ssc_avlj
       create_unsigned_priority_ama_appeal_tied_to_non_ssc_avlj
-      # create_signed_non_priority_ama_appeal_tied_to_non_ssc_avlj
+      create_signed_non_priority_ama_appeal_tied_to_non_ssc_avlj
       create_unsigned_priority_appeal_tied_to_vlj
       create_signed_non_priority_appeal_tied_to_vlj
     end
@@ -257,21 +257,22 @@ module Seeds
       create_ama_appeal(priority=true, non_ssc_avlj, docket_date)
     end
 
-    #def create_signed_non_priority_ama_appeal_tied_to_non_ssc_avlj
-      #non_ssc_avlj = User.find_by(css_id: "NONSSCAN01")
-      #create_signed_ama_appeal(priority=false, non_ssc_avlj, non_ssc_avlj, x.days.ago)
-    #end
-
-    def create_unsigned_priority_appeal_tied_to_vlj
-      vlj = User.find_by(css_id: "REGVLJ01")
-      docket_date = Date.new(1999, 1, 5)
-      create_legacy_appeal(priority=true, vlj, docket_date)
+    def create_signed_non_priority_ama_appeal_tied_to_non_ssc_avlj
+      non_ssc_avlj = User.find_by(css_id: "NONSSCAN01")
+      docket_date = Date.new(2020, 1, 4)
+      create_signed_ama_appeal(priority=false, non_ssc_avlj, non_ssc_avlj, docket_date)
     end
 
-    def create_signed_non_priority_appeal_tied_to_vlj
+    def create_signed_priority_appeal_tied_to_vlj
+      vlj = User.find_by(css_id: "REGVLJ01")
+      docket_date = Date.new(1999, 1, 5)
+      create_signed_legacy_appeal(priority=true, vlj, vlj, docket_date)
+    end
+
+    def create_unsigned_non_priority_appeal_tied_to_vlj
       vlj = User.find_by(css_id: "REGVLJ02")
       docket_date = Date.new(1999, 1, 6)
-      create_signed_legacy_appeal(priority=false, vlj, vlj, docket_date)
+      create_legacy_appeal(priority=false, vlj, docket_date)
     end
 
     def create_non_ssc_avlj(css_id, full_name)
@@ -365,11 +366,19 @@ module Seeds
       Timecop.return
     end
 
-    #def create_signed_ama_appeal
-      # THIS WILL BE THE HARDEST ONE it likely involves creating a new factory for it similar to the one for legacy cases
-      # look at db/seeds/demo_ama_aod_hearing_data.rb for priority
-      # look at db/seeds/demo_ama_non_aod_hearing_data.rb for non priority
-    #end
+    def create_signed_ama_appeal(priority, avlj, signing_avlj, docket_date)
+      Timecop.travel(docket_date)
+        source = priority ? create(:appeal, :dispatched, :hearing_docket, :advanced_on_docket_due_to_age, associated_judge: signing_avlj)
+          : create(:appeal, :dispatched, :hearing_docket, associated_judge: signing_avlj)
+
+        remand = create(:cavc_remand, source_appeal: source)
+        remand.remand_appeal.tasks.where(type: SendCavcRemandProcessedLetterTask.name).first.completed!
+        create(:appeal_affinity, appeal: remand.remand_appeal)
+        remand.remand_appeal
+
+        create(:hearing, :held, appeal: source, judge: avlj, adding_user: avlj)
+      Timecop.return
+    end
 
 
     def create_priority_video_vacols_case(veteran, correspondent, associated_judge, days_ago)
