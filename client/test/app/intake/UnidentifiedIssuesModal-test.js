@@ -67,5 +67,17 @@ describe('UnidentifiedIssuesModal', () => {
 
       expect(wrapper.find('.cf-modal-controls .add-issue').prop('disabled')).toBe(null);
     });
+
+    it('disables when invalid description entered', () => {
+      const wrapper = mount(<UnidentifiedIssuesModal formType={formType}
+        intakeData={intakeData} />);
+
+      // Simulate user input of invalid characters
+      const descInput = wrapper.find('input[id="Transcribe the issue as it\'s written on the form"]');
+
+      descInput.simulate('change', { target: { value: 'Not safe: \u{00A7} \u{2600} \u{2603} \u{260E} \u{2615}' } });
+
+      expect(wrapper.find('.cf-modal-controls .add-issue').prop('disabled')).toBe(true);
+    });
   });
 });
