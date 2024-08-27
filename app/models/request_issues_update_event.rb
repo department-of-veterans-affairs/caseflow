@@ -137,9 +137,11 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
 
     eligible_to_ineligible_issues_data.each do |eligible_to_ineligible_issue|
       request_issue = RequestIssue.find(eligible_to_ineligible_issue[:id].to_s)
+      next if !request_issue.ineligible_reason.nil?
+
       request_issue.update(ineligible_reason: eligible_to_ineligible_issue.ineligible_reason,
-                           closed_status: "ineligible")
-      # probably do something else
+                           closed_at: Time.at.utc(ineligible_to_ineligible_issue.closed_at / 1000).to_datetime)
+      # Question: closed_at becomes DateTime.now by default as soon as ineligible_reason updates from nil to valid ineligible_reason. How can we pass closed_at from the parser?
     end
   end
 
@@ -147,12 +149,10 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     return if ineligible_to_eligible_issues.empty?
 
     ineligible_to_eligible_issues_data.each do |ineligible_to_eligible_issue|
-      # return if !eligible_to_ineligible_issue.ineligible_reason.nil?
-
       request_issue = RequestIssue.find(ineligible_to_eligible_issue[:id].to_s)
-      next unless request_issue.ineligible_reason.nil?
+      next if request_issue.ineligible_reason.nil?
 
-      request_issue.update(ineligible_reason: nil)
+      request_issue.update(ineligible_reason: nil, closed_status: nil, closed_at: nil)
     end
   end
 
@@ -164,7 +164,10 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       next if request_issue.ineligible_reason.nil?
 
       request_issue.update(ineligible_reason: ineligible_to_ineligible_issue.ineligible_reason,
-                           closed_status: "ineligible")
+                           closed_at: Time.at.utc(ineligible_to_ineligible_issue.closed_at / 1000).to_datetime)
+      # closed_at from parser has millisoconds format. Also probably it is impossible to update ineligible_reason and
+      # closed_at at the same time, because it overwrites closed_at as DateTime.now
+      # request_issue.update(closed_at: Time.at.utc(ineligible_to_ineligible_issue.closed_at/1000).to_datetime) # probably this is solution (or use .to_datetime)
     end
   end
 
