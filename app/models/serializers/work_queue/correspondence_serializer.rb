@@ -61,7 +61,6 @@ class WorkQueue::CorrespondenceSerializer
             availableActions: task.available_actions_unwrapper(RequestStore[:current_user]),
             uniqueId: task.id,
             status: task.status
-            uniqueId: task.id
           }
       end
     end

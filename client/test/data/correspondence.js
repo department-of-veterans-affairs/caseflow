@@ -158,7 +158,7 @@ export const correspondenceDetailsData = {
 
 export const appeals = {
   appellantFullName: 'John Doe',
-}
+};
 
 export const packageDocumentTypeData = {
   id: 15,

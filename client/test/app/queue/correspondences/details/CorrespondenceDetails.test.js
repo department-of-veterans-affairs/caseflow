@@ -329,13 +329,9 @@ describe('CorrespondenceDetails', () => {
   test('toggles view all correspondence', () => {
     render(
       <Provider store={store}>
-        <CorrespondenceDetails {...props[Symbol.iterator]} />
+        <CorrespondenceDetails {...props} />
       </Provider>
     );
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
     const viewAllButton = screen.getByText('View all correspondence');
 
     fireEvent.click(viewAllButton);
