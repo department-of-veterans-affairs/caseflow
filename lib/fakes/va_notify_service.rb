@@ -2,6 +2,8 @@
 
 class Fakes::VANotifyService < ExternalApi::VANotifyService
   class << self
+    VA_NOTIFY_ENDPOINT = "/api/v1/va_notify_update"
+
     # rubocop:disable  Metrics/ParameterLists
     def send_email_notifications(
       participant_id:,
@@ -9,9 +11,20 @@ class Fakes::VANotifyService < ExternalApi::VANotifyService
       email_template_id:,
       first_name:,
       docket_number:,
-      status: "delivered"
+      status: ""
     )
-      fake_notification_response(email_template_id, status)
+
+      external_id = "VANotifyTestApiKey"
+
+      request = HTTPI::Request.new
+      request.url = "http://localhost:3000#{VA_NOTIFY_ENDPOINT}?id=#{external_id}"\
+                    "&status=delivered&to=to&notification_type=email"
+      request.headers["Content-Type"] = "application/json"
+      request.headers["Authorization"] = "Bearer test"
+
+      HTTPI.post(request)
+
+      fake_notification_response(email_template_id, status, external_id)
     end
 
     def send_sms_notifications(
@@ -22,11 +35,13 @@ class Fakes::VANotifyService < ExternalApi::VANotifyService
       docket_number:,
       status: "delivered"
     )
+      external_id = SecureRandom.uuid
+
       if participant_id.length.nil?
         return bad_participant_id_response
       end
 
-      fake_notification_response(sms_template_id, status)
+      fake_notification_response(sms_template_id, status, external_id)
     end
     # rubocop:enable  Metrics/ParameterLists
 
@@ -102,7 +117,7 @@ class Fakes::VANotifyService < ExternalApi::VANotifyService
       )
     end
 
-    def fake_notification_response(template_id, status)
+    def fake_notification_response(template_id, status, external_id)
       HTTPI::Response.new(
         200,
         {},
