@@ -55,5 +55,17 @@ describe('UnidentifiedIssuesModal', () => {
 
       expect(submitBtn.prop('disabled')).toBe(true);
     });
+
+    it('enables when valid description entered', () => {
+      const wrapper = mount(<UnidentifiedIssuesModal formType={formType}
+        intakeData={intakeData} />);
+
+      // Simulate user input of valid characters
+      const descInput = wrapper.find('input[id="Transcribe the issue as it\'s written on the form"]');
+
+      descInput.simulate('change', { target: { value: '1234567890-=`~!@#$%^&*()_+[]{}\\|;:' } });
+
+      expect(wrapper.find('.cf-modal-controls .add-issue').prop('disabled')).toBe(null);
+    });
   });
 });
