@@ -47,9 +47,11 @@ const CorrespondenceCompleteTaskModal = (props) => {
 
   const submit = () => {
 
-    let correspondence = props.correspondenceInfo;
+    const correspondence = props.correspondenceInfo;
 
-    let updatedTask = correspondence.tasksUnrelatedToAppeal.find((task) => parseInt(props.task_id, 10) === parseInt(task.uniqueId, 10));
+    // eslint-disable-next-line no-shadow
+    const updatedTask = correspondence.tasksUnrelatedToAppeal.find((task) =>
+      parseInt(props.task_id, 10) === parseInt(task.uniqueId, 10));
 
     const payload = {
       data: {
@@ -67,9 +69,9 @@ const CorrespondenceCompleteTaskModal = (props) => {
       teamName: updatedTask.assignedTo
     };
 
-    // props.setShowActionsDropdown(false);
-
-    let filteredTasks = props.correspondenceInfo.tasksUnrelatedToAppeal.filter((task) => parseInt(task.uniqueId, 10) !== parseInt(props.task_id, 10));
+    // eslint-disable-next-line no-shadow
+    const filteredTasks = props.correspondenceInfo.tasksUnrelatedToAppeal.filter((task) =>
+      parseInt(task.uniqueId, 10) !== parseInt(props.task_id, 10));
 
     correspondence.tasksUnrelatedToAppeal = filteredTasks;
 
@@ -136,6 +138,7 @@ CorrespondenceCompleteTaskModal.propTypes = {
       type: PropTypes.string
     }),
     taskId: PropTypes.string,
+    uniqueId: PropTypes.string,
     type: PropTypes.string,
     label: PropTypes.string,
     onHoldDuration: PropTypes.number
