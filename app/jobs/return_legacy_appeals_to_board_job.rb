@@ -7,12 +7,11 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
 
   queue_as :low_priority
   application_attr :queue
-  NO_RECORDS_MOVED_MESSAGE = ["Job Ran Successfully, No Records Moved"].freeze
+  NO_RECORDS_MOVED_MESSAGE = [Constants.DISTRIBUTION.no_records_moved_message].freeze
 
-  def perform(fail_job = false)
+  def perform
     begin
       returned_appeal_job = create_returned_appeal_job
-      fail if fail_job
 
       appeals, moved_appeals = eligible_and_moved_appeals
 
@@ -177,7 +176,7 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
     returned_appeal_job.update!(
       completed_at: Time.zone.now,
       stats: { message: message }.to_json,
-      returned_appeals: appeals.map { |appeal| appeal["bfkey"] }
+      returned_appeals: appeals.map { |appeal| appeal["bfkey"] }.uniq
     )
   end
 
