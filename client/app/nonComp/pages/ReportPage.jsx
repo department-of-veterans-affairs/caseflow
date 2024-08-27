@@ -247,14 +247,12 @@ const ReportPage = ({ history }) => {
     let formattedOptions;
 
     switch (condition) {
-    case 'decisionReviewType':
-      formattedOptions = Object.keys(options).filter((key) => options[key]);
-      break;
     // Multi select conditions
     case 'personnel':
     case 'facility':
     case 'issueDisposition':
     case 'issueType':
+    case 'decisionReviewType':
       formattedOptions = Object.values(options)[0].map((item) => item.value);
       break;
     // Else it is probably already an object, so it just pass the existing options
