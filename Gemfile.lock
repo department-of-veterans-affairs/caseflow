@@ -1755,6 +1755,8 @@ GEM
       activerecord (>= 5.2)
       request_store (~> 1.1)
     parallel (1.23.0)
+    parallel_tests (4.7.1)
+      parallel
     paranoia (2.6.3)
       activerecord (>= 5.1, < 7.2)
     parser (2.7.2.0)
@@ -2099,6 +2101,7 @@ DEPENDENCIES
   nokogiri (>= 1.11.0.rc4)
   paper_trail (~> 12.0)
   parallel
+  parallel_tests
   paranoia (~> 2.2)
   pdf-forms
   pdfjs_viewer-rails!

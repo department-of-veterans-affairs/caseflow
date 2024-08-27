@@ -103,6 +103,7 @@ group :test, :development, :demo, :make_docs do
   gem "faker"
   gem "guard-rspec"
   gem "immigrant"
+  gem "parallel_tests"
   # Linters
   gem "pluck_to_hash"
   gem "pry", "~> 0.13.0"
