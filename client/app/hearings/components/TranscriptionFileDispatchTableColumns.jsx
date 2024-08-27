@@ -237,7 +237,7 @@ export const workOrderColumn = (openFile) => {
   };
 };
 
-export const itemsColumn = (openPackage) => {
+export const itemsColumn = (openModal) => {
   return {
     header: <p {...styles.headerWithIcon}>{COPY.TRANSCRIPTION_FILE_DISPATCH_ITEMS_COLUMN_NAME}</p>,
     name: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.ITEMS.name,
@@ -245,7 +245,7 @@ export const itemsColumn = (openPackage) => {
     anyFiltersAreSet: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.ITEMS.anyFiltersAreSet,
     valueFunction: (row) => (
       <div>
-        <a style={styles.link} onClick={() => openPackage(row.id)}>
+        <a style={styles.link} onClick={() => openModal('highlights')}>
           {row.items} item{row.items === 1 ? '' : 's'}
         </a>
       </div>

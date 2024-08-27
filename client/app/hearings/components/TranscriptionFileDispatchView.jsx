@@ -8,6 +8,7 @@ import Alert from '../../components/Alert';
 import PackageFilesModal from './transcriptionProcessing/PackageFilesModal';
 import ApiUtil from '../../util/ApiUtil';
 import { getQueryParams, encodeQueryParams } from '../../util/QueryParamsUtil';
+import WorkOrderHightlightsModal from './transcriptionProcessing/WorkOrderHighlightsModal';
 
 const defaultAlert = {
   title: '',
@@ -28,7 +29,7 @@ const styles = css({
 export const TranscriptionFileDispatchView = () => {
   const [alert, setAlert] = useState(defaultAlert);
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const [packageModalConfig, setPackageModalConfig] = useState({ opened: false });
+  const [modalConfig, setModalConfig] = useState({ opened: false, type: '' });
   const [contractors, setContractors] = useState({ transcription_contractors: [], return_dates: ['---', '---'] });
 
   const tabFromUrl = () => {
@@ -67,13 +68,35 @@ export const TranscriptionFileDispatchView = () => {
   };
 
   // Opens the modal
-  const openPackageModal = () => {
-    setPackageModalConfig({ opened: true });
+  const openModal = (type) => {
+    setModalConfig({ opened: true, type });
   };
 
   // Closes the modal
-  const closePackageModal = () => {
-    setPackageModalConfig({ opened: false });
+  const closeModal = () => {
+    setModalConfig({ opened: false, type: '' });
+  };
+
+  const renderModal = (type) => {
+    switch (type) {
+    case 'package':
+      return (
+        <PackageFilesModal
+          onCancel={closeModal}
+          contractors={contractors.transcription_contractors}
+          returnDates={contractors.return_dates}
+          selectedFiles={selectedFiles}
+        />
+      );
+    case 'highlights':
+      return (
+        <WorkOrderHightlightsModal
+          onCancel={closeModal}
+          workOrder="BVA-2024-5001"
+        />
+      );
+    default: return <></>;
+    }
   };
 
   const onTabChange = () => {
@@ -109,15 +132,9 @@ export const TranscriptionFileDispatchView = () => {
           defaultPage={currentTab}
           fullPage={false}
           onChange={onTabChange}
-          tabs={tabConfig(openPackageModal, selectFilesForPackage, selectedFiles.length)}
+          tabs={tabConfig(openModal, selectFilesForPackage, selectedFiles.length)}
         />
-        { packageModalConfig.opened &&
-          <PackageFilesModal
-            onCancel={closePackageModal}
-            contractors={contractors.transcription_contractors}
-            returnDates={contractors.return_dates}
-            selectedFiles={selectedFiles}
-          />}
+        { modalConfig.opened && renderModal(modalConfig.type)}
       </AppSegment>
     </>
   );
