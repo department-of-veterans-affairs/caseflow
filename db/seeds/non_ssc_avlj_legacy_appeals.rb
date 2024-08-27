@@ -56,8 +56,8 @@ module Seeds
       create_signed_non_priority_appeal_tied_to_inactive_non_ssc_avlj
       create_unsigned_priority_ama_appeal_tied_to_non_ssc_avlj
       create_signed_non_priority_ama_appeal_tied_to_non_ssc_avlj
-      create_unsigned_priority_appeal_tied_to_vlj
-      create_signed_non_priority_appeal_tied_to_vlj
+      create_signed_priority_appeal_tied_to_vlj
+      create_unsigned_non_priority_appeal_tied_to_vlj
     end
 
     def create_four_priority_appeals_tied_to_a_non_ssc_avlj
@@ -367,16 +367,23 @@ module Seeds
     end
 
     def create_signed_ama_appeal(priority, avlj, signing_avlj, docket_date)
+
+      # Go back to when we want the original appeal to have been decided
       Timecop.travel(docket_date)
-        source = priority ? create(:appeal, :dispatched, :hearing_docket, :advanced_on_docket_due_to_age, associated_judge: signing_avlj)
-          : create(:appeal, :dispatched, :hearing_docket, associated_judge: signing_avlj)
 
-        remand = create(:cavc_remand, source_appeal: source)
-        remand.remand_appeal.tasks.where(type: SendCavcRemandProcessedLetterTask.name).first.completed!
-        create(:appeal_affinity, appeal: remand.remand_appeal)
-        remand.remand_appeal
+        source = create(:appeal, :dispatched, :hearing_docket, associated_judge: avlj)
+        remand = create(:cavc_remand, source_appeal: source).remand_appeal
+        remand.tasks.where(type: SendCavcRemandProcessedLetterTask.name).map(&:completed!)
+        create(:appeal_affinity, appeal: remand)
 
-        create(:hearing, :held, appeal: source, judge: avlj, adding_user: avlj)
+        jat = JudgeAssignTaskCreator.new(appeal: remand, judge: avlj, assigned_by_id: avlj.id).call
+        create(:colocated_task, :schedule_hearing, parent: jat, assigned_by: avlj).completed!
+
+        create(:hearing, :held, appeal: remand, judge: avlj, adding_user: User.system_user)
+        remand.tasks.where(type: AssignHearingDispositionTask.name).flat_map(&:children).map(&:completed!)
+        remand.appeal_affinity.update!(affinity_start_date: Time.zone.now)
+
+        remand
       Timecop.return
     end
 
