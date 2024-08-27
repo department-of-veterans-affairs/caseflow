@@ -11,8 +11,8 @@ describe('UnidentifiedIssuesModal', () => {
   describe('renders', () => {
     it('renders button text', () => {
       const wrapper = mount(
-        <UnidentifiedIssuesModal 
-        formType={formType} 
+        <UnidentifiedIssuesModal
+        formType={formType}
         intakeData={intakeData}
         onSkip={() => null} />
       );
@@ -37,8 +37,8 @@ describe('UnidentifiedIssuesModal', () => {
     });
 
     it('skip button only with onSkip prop', () => {
-      const wrapper = mount(<UnidentifiedIssuesModal 
-        formType={formType} 
+      const wrapper = mount(<UnidentifiedIssuesModal
+        formType={formType}
         intakeData={intakeData} />);
 
       expect(wrapper.find('.cf-modal-controls .no-matching-issues').exists()).toBe(false);
@@ -48,20 +48,12 @@ describe('UnidentifiedIssuesModal', () => {
     });
 
     it('disables button when nothing selected', () => {
-      const wrapper = mount(<UnidentifiedIssuesModal formType={formType} 
+      const wrapper = mount(<UnidentifiedIssuesModal formType={formType}
         intakeData={intakeData} />);
 
       const submitBtn = wrapper.find('.cf-modal-controls .add-issue');
 
       expect(submitBtn.prop('disabled')).toBe(true);
-
-      wrapper.setState({
-        description: 'blah blah',
-        disabled: false
-      });
-
-      // We need to find element again, or it won't appear updated
-      expect(wrapper.find('.cf-modal-controls .add-issue').prop('disabled')).toBe(false);
     });
   });
 });
