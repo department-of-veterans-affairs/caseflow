@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 class Fakes::VANotifyService < ExternalApi::VANotifyService
-  class << self
-    VA_NOTIFY_ENDPOINT = "/api/v1/va_notify_update"
+  VA_NOTIFY_ENDPOINT = "/api/v1/va_notify_update"
 
+  class << self
     # rubocop:disable  Metrics/ParameterLists
     def send_email_notifications(
       participant_id:,
@@ -14,11 +14,10 @@ class Fakes::VANotifyService < ExternalApi::VANotifyService
       status: ""
     )
 
-      external_id = "VANotifyTestApiKey"
+      external_id = SecureRandom.uuid
 
       request = HTTPI::Request.new
-      request.url = "http://localhost:3000#{VA_NOTIFY_ENDPOINT}?id=#{external_id}"\
-                    "&status=delivered&to=to&notification_type=email"
+      request.url = "#{ENV["CASEFLOW_BASE_URL"]}#{VA_NOTIFY_ENDPOINT}?id=#{external_id}&status=delivered&to=to&notification_type=email"
       request.headers["Content-Type"] = "application/json"
       request.headers["Authorization"] = "Bearer test"
 
@@ -33,9 +32,17 @@ class Fakes::VANotifyService < ExternalApi::VANotifyService
       sms_template_id:,
       first_name:,
       docket_number:,
-      status: "delivered"
+      status: ""
     )
+
       external_id = SecureRandom.uuid
+
+      request = HTTPI::Request.new
+      request.url = "#{ENV["CASEFLOW_BASE_URL"]}#{VA_NOTIFY_ENDPOINT}?id=#{external_id}&status=delivered&to=to&notification_type=sms"
+      request.headers["Content-Type"] = "application/json"
+      request.headers["Authorization"] = "Bearer test"
+
+      HTTPI.post(request)
 
       if participant_id.length.nil?
         return bad_participant_id_response
@@ -122,7 +129,7 @@ class Fakes::VANotifyService < ExternalApi::VANotifyService
         200,
         {},
         OpenStruct.new(
-          "id": SecureRandom.uuid,
+          "id": external_id,
           "reference": "string",
           "uri": "string",
           "template": {
