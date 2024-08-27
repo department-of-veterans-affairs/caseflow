@@ -1,6 +1,5 @@
 import { css } from 'glamor';
 import React from 'react';
-import { connect } from 'react-redux';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import Button from '../../components/Button';
@@ -201,7 +200,7 @@ class CorrespondenceTaskRows extends React.PureComponent {
     );
   };
   showActionsListItem = (task, correspondence) => {
-    if (task.availableActions.length <= 0 || !this.props.showActionsDropdown) {
+    if (task.availableActions.length <= 0) {
       return null;
     }
 
@@ -319,13 +318,6 @@ CorrespondenceTaskRows.propTypes = {
   hideDropdown: PropTypes.bool,
   taskList: PropTypes.array,
   timeline: PropTypes.bool,
-  showActionsDropdown: PropTypes.bool,
 };
 
-const mapStateToProps = (state) => ({
-  showActionsDropdown: state.correspondenceDetails.showActionsDropdown,
-});
-
-export default connect(
-  mapStateToProps,
-)(CorrespondenceTaskRows);
+export default CorrespondenceTaskRows;

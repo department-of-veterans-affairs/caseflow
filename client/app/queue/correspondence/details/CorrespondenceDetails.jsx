@@ -12,7 +12,6 @@ import { correspondenceInfo } from './../correspondenceDetailsReducer/correspond
 import CorrespondenceResponseLetters from './CorrespondenceResponseLetters';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
-// import TaskSnapshot from '../../TaskSnapshot';
 import { prepareAppealForSearchStore } from 'app/queue/utils';
 import CorrespondenceTasksAdded from '../CorrespondenceTasksAdded';
 import moment from 'moment';
@@ -174,6 +173,14 @@ const CorrespondenceDetails = (props) => {
     dispatch(correspondenceInfo(correspondence));
   }, []);
 
+  const isTasksUnrelatedToAppealEmpty = () => {
+    if (props.tasksUnrelatedToAppealEmpty === true) {
+      return 'Completed';
+    }
+
+    return props.correspondence.status;
+  };
+
   const correspondenceTasks = () => {
     return (
       <React.Fragment>
@@ -292,10 +299,6 @@ const CorrespondenceDetails = (props) => {
       </>
     );
   };
-
-  // const getKeyForRow = (index, { id }) => {
-  //   return `${id}`;
-  // };
 
   const getDocumentColumns = (correspondenceRow) => {
     return [
@@ -458,7 +461,7 @@ const CorrespondenceDetails = (props) => {
           </div>
           <p><a onClick={handleViewAllCorrespondence}>{viewDisplayText()}</a></p>
           <div></div>
-          <p className="last-item"><b>Record status: </b>{props.correspondence.status}</p>
+          <p className="last-item"><b>Record status: </b>{isTasksUnrelatedToAppealEmpty()}</p>
         </div>
         <div style = {{ marginTop: '20px' }}>
           { allCorrespondencesList() }
@@ -480,11 +483,13 @@ CorrespondenceDetails.propTypes = {
   userCssId: PropTypes.string,
   enableTopPagination: PropTypes.bool,
   correspondence_appeal_ids: PropTypes.bool,
+  tasksUnrelatedToAppealEmpty: PropTypes.bool,
   correspondenceResponseLetters: PropTypes.array
 };
 
 const mapStateToProps = (state) => ({
   correspondenceInfo: state.correspondenceDetails.correspondenceInfo,
+  tasksUnrelatedToAppealEmpty: state.correspondenceDetails.tasksUnrelatedToAppealEmpty,
 });
 
 const mapDispatchToProps = (dispatch) => (

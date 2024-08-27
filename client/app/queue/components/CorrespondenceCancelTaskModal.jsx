@@ -15,7 +15,7 @@ import QueueFlowModal from './QueueFlowModal';
 import {
   setTaskNotRelatedToAppealBanner,
   cancelTaskNotRelatedToAppeal,
-  setShowActionsDropdown } from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
+} from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
 
 /* eslint-disable camelcase */
 const CorrespondenceCancelTaskModal = (props) => {
@@ -111,7 +111,6 @@ const CorrespondenceCancelTaskModal = (props) => {
 
 CorrespondenceCancelTaskModal.propTypes = {
   requestPatch: PropTypes.func,
-  setShowActionsDropdown: PropTypes.func,
   cancelTaskNotRelatedToAppeal: PropTypes.func,
   correspondenceInfo: PropTypes.object,
   task: PropTypes.shape({
@@ -134,14 +133,12 @@ const mapStateToProps = (state, ownProps) => ({
   task: taskById(state, { taskId: ownProps.taskId }),
   taskNotRelatedToAppealBanner: state.correspondenceDetails.bannerAlert,
   correspondenceInfo: state.correspondenceDetails.correspondenceInfo,
-  showActionsDropdown: state.correspondenceDetails.showActionsDropdown,
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestPatch,
   setTaskNotRelatedToAppealBanner,
   cancelTaskNotRelatedToAppeal,
-  setShowActionsDropdown
 }, dispatch);
 
 export default (withRouter(

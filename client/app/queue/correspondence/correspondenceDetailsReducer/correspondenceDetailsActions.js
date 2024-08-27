@@ -54,12 +54,11 @@ export const correspondenceInfo = (correspondence) => (dispatch) => {
     } });
 };
 
-export const setShowActionsDropdown = (showActionsDropdown) => (dispatch) => {
+export const setTasksUnrelatedToAppealEmpty = (tasksUnrelatedToAppealEmpty) => (dispatch) => {
   dispatch({
-    type: ACTIONS.SHOW_ACTIONS_DROP_DOWN,
+    type: ACTIONS.TASKS_UNRELATED_TO_APPEAL_EMPTY,
     payload: {
-      showActionsDropdown
+      tasksUnrelatedToAppealEmpty
     }
   });
-
 };
