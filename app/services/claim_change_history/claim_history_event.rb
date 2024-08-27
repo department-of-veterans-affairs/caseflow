@@ -156,11 +156,14 @@ class ClaimHistoryEvent
 
         # this create_event_from_version_object updated the previous version fields in change data
         # that is being used in the front end to show the original records.
-        event_date_hash.merge!(create_event_from_version_object(previous_version[index]))
-        # this update_event_hash_data_from_version_object updates the change_data values with previous or
-        # unedited data. since change_data has the final version of the data that was updated.
-        # this is necessary to preserve the history that is displayed in the frontend.
-        event_date_hash.merge!(update_event_hash_data_from_version_object(previous_version[index]))
+        if !previous_version[index].nil?
+          event_date_hash.merge!(create_event_from_version_object(previous_version[index]))
+          # this update_event_hash_data_from_version_object updates the change_data values with previous or
+          # unedited data. since change_data has the final version of the data that was updated.
+          # this is necessary to preserve the history that is displayed in the frontend.
+          event_date_hash.merge!(update_event_hash_data_from_version_object(previous_version[index]))
+        end
+
         event_date_hash.merge!(update_event_hash_data_from_version(version, 1))
         edit_of_request_events.push(*from_change_data(event_type, change_data.merge(event_date_hash)))
       end

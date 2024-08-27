@@ -684,7 +684,8 @@ feature "Individual Claim History", :postgres do
         click_filter_option("Edit of request - issue modification (1)")
 
         original_modification_request = events.detect { |e| e.event_type == :request_edited }
-        new_decision_date = Date.parse(original_modification_request.new_decision_date)
+
+        new_decision_date = original_modification_request.new_decision_date
         request_issue_decision_date = Date.parse(original_modification_request.decision_date)
 
         table = page.find("tbody")
@@ -755,7 +756,9 @@ feature "Individual Claim History", :postgres do
           expect(table_row).to have_content(
             "Current issue description: #{original_modification_request.issue_description}"
           )
-          expect(table_row).to have_content("Current decision date: #{request_issue_decision_date.strftime('%m/%d/%Y')}")
+          expect(table_row).to have_content(
+            "Current decision date: #{request_issue_decision_date.strftime('%m/%d/%Y')}"
+          )
           expect(table_row).to have_content("New issue type: #{original_modification_request.new_issue_type}")
           expect(table_row).to have_content(
             "New issue description: #{original_modification_request.new_issue_description}"
@@ -794,7 +797,9 @@ feature "Individual Claim History", :postgres do
           expect(table_row).to have_content(
             "Current issue description: #{original_modification_request.issue_description}"
           )
-          expect(table_row).to have_content("Current decision date: #{request_issue_decision_date.strftime('%m/%d/%Y')}")
+          expect(table_row).to have_content(
+            "Current decision date: #{request_issue_decision_date.strftime('%m/%d/%Y')}"
+          )
           expect(table_row).to have_content("New issue type: #{original_modification_request.new_issue_type}")
           expect(table_row).to have_content(
             "New issue description: #{original_modification_request.new_issue_description}"
@@ -811,6 +816,7 @@ feature "Individual Claim History", :postgres do
           click_filter_option("Cancellation of request (1)")
 
           original_modification_request = events.detect { |e| e.event_type == :request_cancelled }
+
           new_decision_date = Date.parse(original_modification_request.new_decision_date)
           request_issue_decision_date = Date.parse(original_modification_request.decision_date)
 
@@ -820,11 +826,15 @@ feature "Individual Claim History", :postgres do
           expect(table_row).to have_content("Cancellation of request")
 
           expect(table_row).to have_content("Benefit type: Veterans Health Administration")
-          expect(table_row).to have_content("Current issue type: #{original_modification_request.issue_type}")
+          expect(table_row).to have_content(
+            "Current issue type: #{original_modification_request.issue_type}"
+          )
           expect(table_row).to have_content(
             "Current issue description: #{original_modification_request.issue_description}"
           )
-          expect(table_row).to have_content("Current decision date: #{request_issue_decision_date.strftime('%m/%d/%Y')}")
+          expect(table_row).to have_content(
+            "Current decision date: #{request_issue_decision_date.strftime('%m/%d/%Y')}"
+          )
           expect(table_row).to have_content("New issue type: #{original_modification_request.new_issue_type}")
           expect(table_row).to have_content(
             "New issue description: #{original_modification_request.new_issue_description}"
