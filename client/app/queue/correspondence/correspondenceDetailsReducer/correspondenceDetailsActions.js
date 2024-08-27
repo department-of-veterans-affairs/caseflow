@@ -70,13 +70,16 @@ export const changeTaskTypeNotRelatedToAppeal = (taskID, payload, taskNames, cor
       });
     }).
     catch((error) => {
-      // dispatch({
-      //   type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
-      //   payload: {
-      //     bannerAlert: CORRESPONDENCE_DETAILS_BANNERS.failBanner
-      //   }
-      // });
-      console.error(error);
+      dispatch({
+        type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
+        payload: {
+          bannerAlert: {
+            title: 'Warning',
+            message: error,
+            type: 'warning'
+          }
+        }
+      });
     });
 };
 
