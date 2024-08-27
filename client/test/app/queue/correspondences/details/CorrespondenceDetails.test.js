@@ -354,7 +354,6 @@ describe('CorrespondenceDetails', () => {
     expect(screen.getByText('Response Letters')).toBeInTheDocument();
     expect(screen.getByText('Associated Prior Mail')).toBeInTheDocument();
     expect(screen.getByText('View all correspondence')).toBeInTheDocument();
-
     expect(screen.getByText('Tasks not related to an appeal')).toBeInTheDocument();
     expect(screen.getByText('Completed Mail Tasks')).toBeInTheDocument();
     expect(screen.getByText('Task 1')).toBeInTheDocument();
@@ -368,6 +367,16 @@ describe('CorrespondenceDetails', () => {
     expect(screen.getByText('Number of Issues')).toBeInTheDocument();
     expect(screen.getByText('Decision Date')).toBeInTheDocument();
     expect(screen.getByText('Appeal Location')).toBeInTheDocument();
+    expect(screen.getByText('View veteran documents')).toBeInTheDocument();
+
+    // Appeals related
+    const existingAppeals = screen.getAllByText('Tasks added to appeal').length;
+
+    expect(existingAppeals).toBe(2);
+    expect(screen.getByText('240714-253')).toBeInTheDocument();
+    expect(screen.getByText('240714-254')).toBeInTheDocument();
+    expect(screen.getByText('VLJ Support Staff')).toBeInTheDocument();
+    expect(screen.getByText('Hearing Admin')).toBeInTheDocument();
 
     // Appeals related
     const tasksAddedTextCount = screen.getAllByText('Tasks added to appeal').length;
