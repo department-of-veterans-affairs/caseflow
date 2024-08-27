@@ -190,11 +190,11 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
   def slack_report
     report = []
     report << "Job performed successfully"
-    report << "Priority Appeals Moved: #{@filtered_appeals[:priority_appeals_count]}"
-    report << "Non-Priority Appeals Moved: #{@filtered_appeals[:non_priority_appeals_count]}"
-    report << "Remaining Priority Appeals: #{@filtered_appeals[:remaining_priority_appeals_count]}"
-    report << "Remaining Non-Priority Appeals: #{@filtered_appeals[:remaining_non_priority_appeals_count]}"
-    report << "Grouped by AVLJ: #{@filtered_appeals[:grouped_by_avlj].join(', ')}"
+    report << "Total Priority Appeals Moved: #{@filtered_appeals[:priority_appeals_count]}"
+    report << "Total Non-Priority Appeals Moved: #{@filtered_appeals[:non_priority_appeals_count]}"
+    report << "Total Remaining Priority Appeals: #{@filtered_appeals[:remaining_priority_appeals_count]}"
+    report << "Total Remaining Non-Priority Appeals: #{@filtered_appeals[:remaining_non_priority_appeals_count]}"
+    report << "SATTYIDs of Non-SSC AVLJs Moved: #{@filtered_appeals[:grouped_by_avlj].join(', ')}"
     report
   end
 end
