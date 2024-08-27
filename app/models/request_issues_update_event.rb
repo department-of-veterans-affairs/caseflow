@@ -9,6 +9,9 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   #   removed_issues_data: parser.removed_issues,
   #   edited_issues_data: parser.updated_issues,
   #   withdrawn_issues_data: parser.withdrawn_issues
+  #   eligible_to_ineligible_issues_data: parser.eligible_to_ineligible_issues
+  #   ineligible_to_eligible_issues_data: parser.ineligible_to_eligible_issues
+  #   ineligible_to_ineligible_issues_data: parser.ineligible_to_ineligible_issues
   # )
 
   attr_writer :added_issues_data
@@ -27,7 +30,10 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
         before_request_issue_ids: before_issues.map(&:id),
         after_request_issue_ids: after_issues.map(&:id),
         withdrawn_request_issue_ids: withdrawn_issues.map(&:id),
-        edited_request_issue_ids: edited_issues.map(&:id)
+        edited_request_issue_ids: edited_issues.map(&:id),
+        # eligible_to_ineligible_issue_ids: eligible_to_ineligible.map(&:id),
+        # ineligible_to_eligible_issue_ids: ineligible_to_eligible.map(&:id),
+        # ineligible_to_ineligible_issue_ids: ineligible_to_ineligible.map(&:id)
       )
     end
 
@@ -51,6 +57,12 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   def all_updated_issues
     added_issues + removed_issues + withdrawn_issues + edited_issues
   end
+
+  def eligible_to_ineligible; end
+
+  def ineligible_to_eligible; end
+
+  def ineligible_to_ineligible; end
 
   private
 
@@ -117,6 +129,42 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       request_issue = RequestIssue.find(edited_issue[:id].to_s)
       edit_contention_text(edited_issue, request_issue)
       edit_decision_date(edited_issue, request_issue)
+    end
+  end
+
+  def process_eligible_to_ineligible_issues!
+    return if eligible_to_ineligible_issues.empty?
+
+    eligible_to_ineligible_issues_data.each do |eligible_to_ineligible_issue|
+      request_issue = RequestIssue.find(eligible_to_ineligible_issue[:id].to_s)
+      request_issue.update(ineligible_reason: eligible_to_ineligible_issue.ineligible_reason,
+                           closed_status: "ineligible")
+      # probably do something else
+    end
+  end
+
+  def process_ineligible_to_eligible_issues!
+    return if ineligible_to_eligible_issues.empty?
+
+    ineligible_to_eligible_issues_data.each do |ineligible_to_eligible_issue|
+      # return if !eligible_to_ineligible_issue.ineligible_reason.nil?
+
+      request_issue = RequestIssue.find(ineligible_to_eligible_issue[:id].to_s)
+      next unless request_issue.ineligible_reason.nil?
+
+      request_issue.update(ineligible_reason: nil)
+    end
+  end
+
+  def process_ineligible_to_ineligible_issues!
+    return if ineligible_to_ineligible_issues.empty?
+
+    ineligible_to_ineligible_issues_data.each do |ineligible_to_ineligible_issue|
+      request_issue = RequestIssue.find(ineligible_to_ineligible_issue[:id].to_s)
+      next if request_issue.ineligible_reason.nil?
+
+      request_issue.update(ineligible_reason: ineligible_to_ineligible_issue.ineligible_reason,
+                           closed_status: "ineligible")
     end
   end
 
