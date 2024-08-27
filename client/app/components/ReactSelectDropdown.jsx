@@ -1,6 +1,5 @@
 import React from 'react';
 import Select from 'react-select';
-import { css } from 'glamor';
 import PropTypes from 'prop-types';
 
 //  this component replaces the default html select dropdown, because the original html dropdown
@@ -52,16 +51,22 @@ const customSelectStyles = {
   })
 };
 
-const selectContainerStyles = css({
+const selectContainerStyles = {
   width: '100%',
   display: 'inline-block'
-});
+};
+
+const labelStyle = {
+  marginTop: '5px',
+  marginBottom: '5px',
+  marginLeft: '1px'
+};
 
 const ReactSelectDropdown = (props) => {
   return (
-    <div {...selectContainerStyles}>
+    <div style={selectContainerStyles}>
 
-      <label style={{ marginTop: '5px', marginBottom: '5px', marginLeft: '1px' }}>{props.label}</label>
+      <label style={labelStyle}>{props.label}</label>
       <Select
         placeholder="select..."
         options={props.options}

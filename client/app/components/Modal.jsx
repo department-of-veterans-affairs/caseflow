@@ -5,14 +5,17 @@ import ScrollLock from 'react-scrolllock';
 import { CloseIcon } from './icons/CloseIcon';
 import Button from './Button';
 import _ from 'lodash';
-import { css } from 'glamor';
 
-const modalTextStyling = css({ width: '100%', fontFamily: 'Source Sans Pro', flexGrow: 1 });
+const modalTextStyling = {
+  width: '100%',
+  fontFamily: 'Source Sans Pro',
+  flexGrow: 1
+};
 
-const iconStyling = css({
+const iconStyling = {
   marginRight: '2rem',
   color: '#323a45',
-});
+};
 
 /**
  * Modals are 490 pixels in width with 30px padding around the border and contain the following:
@@ -132,7 +135,7 @@ export default class Modal extends React.Component {
         aria-modal="true"
       >
         {scrollLock && <ScrollLock />}
-        <div className="cf-modal-body" id={id || ''} {...customStyles}>
+        <div className="cf-modal-body" id={id || ''} style={customStyles}>
           <button
             type="button"
             id={`${this.buttonIdPrefix}close`}
@@ -144,9 +147,9 @@ export default class Modal extends React.Component {
             <CloseIcon />
           </button>
           <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-            {icon && <i className={`fa fa-2x fa-${icon}`} {...iconStyling} />}
+            {icon && <i className={`fa fa-2x fa-${icon}`} style={iconStyling} />}
             <h1 style={{ flex: 1 }} id="modal_id-title">{title}</h1>
-            <div {...modalTextStyling}>{children}</div>
+            <div style={modalTextStyling}>{children}</div>
           </div>
           {noDivider ? '' : <div className="cf-modal-divider" />}
           <div className="cf-modal-controls">{modalButtons}</div>
@@ -187,4 +190,5 @@ Modal.propTypes = {
   specialContent: PropTypes.func,
   title: PropTypes.string.isRequired,
   icon: PropTypes.string,
+  customStyles: PropTypes.object
 };

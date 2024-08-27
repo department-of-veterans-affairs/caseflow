@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'glamor';
 
-const listStyling = css({
+const listStyling = {
   paddingBottom: 0,
   margin: 0,
   maxHeight: '345px',
@@ -11,10 +10,11 @@ const listStyling = css({
   overflowY: 'auto',
   listStyleType: 'none',
   paddingLeft: 0
-});
-const listItemStyling = css({
+};
+
+const listItemStyling = {
   padding: '1px'
-});
+};
 
 const ListItemPicker = ({ options, setSelectedValue,
   dropdownFilterViewListStyle, dropdownFilterViewListItemStyle }) => {
@@ -23,9 +23,12 @@ const ListItemPicker = ({ options, setSelectedValue,
     setSelectedValue(event.target.value);
   };
 
-  return <ul {...dropdownFilterViewListStyle} {...listStyling}>
+  const listStyle = { ...dropdownFilterViewListStyle, ...listStyling };
+  const itemStyle = { ...dropdownFilterViewListItemStyle, ...listItemStyling };
+
+  return <ul style={listStyle}>
     {options.map((option, index) => {
-      return <li key={index} {...dropdownFilterViewListItemStyle} {...listItemStyling} onClick={onClick}>
+      return <li key={index} style={itemStyle} onClick={onClick}>
         <option
           value={option.value}
           id={`${index}-${option.value}`}
@@ -38,7 +41,9 @@ const ListItemPicker = ({ options, setSelectedValue,
 
 ListItemPicker.propTypes = {
   options: PropTypes.array.isRequired,
-  setSelectedValue: PropTypes.func.isRequired
+  setSelectedValue: PropTypes.func.isRequired,
+  dropdownFilterViewListStyle: PropTypes.object,
+  dropdownFilterViewListItemStyle: PropTypes.object
 };
 
 export default ListItemPicker;

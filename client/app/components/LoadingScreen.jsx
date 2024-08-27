@@ -1,18 +1,17 @@
 import React from 'react';
 import { LoadingIcon } from './icons/LoadingIcon';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import { css } from 'glamor';
 import PropTypes from 'prop-types';
 
-const centerTextStyling = css({
+const centerTextStyling = {
   textAlign: 'center',
   height: '300px',
   marginTop: '75px'
-});
+};
 
 const LoadingScreen = (props) =>
   <AppSegment filledBackground>
-    <div {...centerTextStyling}>
+    <div style={centerTextStyling}>
       <LoadingIcon
         text=""
         size={150}

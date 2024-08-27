@@ -52,7 +52,7 @@ exports[`renders correctly 1`] = `
           Choose a custom time
         </h1>
         <div
-          data-css-2flkvz=""
+          style="width: 100%; font-family: Source Sans Pro; flex-grow: 1;"
         >
           <div
             data-css-b5ywrm=""

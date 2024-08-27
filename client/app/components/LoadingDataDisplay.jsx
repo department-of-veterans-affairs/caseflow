@@ -6,10 +6,9 @@ import StatusMessage from './StatusMessage';
 import COPY from '../../COPY';
 import { recordAsyncMetrics } from '../util/Metrics';
 import { ExternalLinkIcon } from './icons';
-import { css } from 'glamor';
 import Link from './Link';
 
-const ICON_POSITION_FIX = css({ position: 'relative', top: 3 });
+const ICON_POSITION_FIX = { position: 'relative', top: 3 };
 
 const PROMISE_RESULTS = {
   SUCCESS: 'SUCCESS',
@@ -28,7 +27,7 @@ const accessDeniedMsg = <div>
   <div>
     <Link href={ESCALATION_FORM_URL}>
       <button className="btn btn-default">Request Access &nbsp;
-        <span {...ICON_POSITION_FIX}><ExternalLinkIcon /></span>
+        <span style={ICON_POSITION_FIX}><ExternalLinkIcon /></span>
       </button>
     </Link>
   </div>

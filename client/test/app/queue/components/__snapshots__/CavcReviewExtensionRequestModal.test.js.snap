@@ -112,7 +112,13 @@ exports[`CavcReviewExtensionRequestModal renders correctly 1`] = `
             Review extension request
           </h1>
           <div
-            data-css-2flkvz=""
+            style={
+              Object {
+                "flexGrow": 1,
+                "fontFamily": "Source Sans Pro",
+                "width": "100%",
+              }
+            }
           >
             <RadioField
               className={

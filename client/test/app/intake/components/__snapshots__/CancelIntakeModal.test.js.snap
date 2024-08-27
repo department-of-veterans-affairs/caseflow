@@ -58,7 +58,7 @@ Object {
                 Cancel Intake?
               </h1>
               <div
-                data-css-2flkvz=""
+                style="width: 100%; font-family: Source Sans Pro; flex-grow: 1;"
               >
                 <fieldset
                   class="usa-fieldset-inputs cf-form-radio "
@@ -246,7 +246,7 @@ Object {
               Cancel Intake?
             </h1>
             <div
-              data-css-2flkvz=""
+              style="width: 100%; font-family: Source Sans Pro; flex-grow: 1;"
             >
               <fieldset
                 class="usa-fieldset-inputs cf-form-radio "

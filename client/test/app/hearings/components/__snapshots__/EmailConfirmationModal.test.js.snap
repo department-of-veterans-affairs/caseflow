@@ -3936,7 +3936,13 @@ exports[`EmailConfirmationModal Displays ChangeEmailOrTimezone component when ty
               Update Timezone
             </h1>
             <div
-              data-css-2flkvz=""
+              style={
+                Object {
+                  "flexGrow": 1,
+                  "fontFamily": "Source Sans Pro",
+                  "width": "100%",
+                }
+              }
             >
               <p
                 dangerouslySetInnerHTML={
@@ -4550,7 +4556,13 @@ exports[`EmailConfirmationModal Displays ChangeFromVirtual component when type i
               Change to Video Hearing
             </h1>
             <div
-              data-css-2flkvz=""
+              style={
+                Object {
+                  "flexGrow": 1,
+                  "fontFamily": "Source Sans Pro",
+                  "width": "100%",
+                }
+              }
             >
               <p
                 dangerouslySetInnerHTML={
@@ -5378,7 +5390,13 @@ exports[`EmailConfirmationModal Displays ChangeHearingTime component when type i
               Update Hearing Time
             </h1>
             <div
-              data-css-2flkvz=""
+              style={
+                Object {
+                  "flexGrow": 1,
+                  "fontFamily": "Source Sans Pro",
+                  "width": "100%",
+                }
+              }
             >
               <p
                 dangerouslySetInnerHTML={
@@ -6206,7 +6224,13 @@ exports[`EmailConfirmationModal Matches snapshot with default props 1`] = `
               Change to Virtual Hearing
             </h1>
             <div
-              data-css-2flkvz=""
+              style={
+                Object {
+                  "flexGrow": 1,
+                  "fontFamily": "Source Sans Pro",
+                  "width": "100%",
+                }
+              }
             >
               <p
                 dangerouslySetInnerHTML={
