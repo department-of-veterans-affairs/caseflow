@@ -234,6 +234,7 @@ class BusinessLine < Organization
         ), imr_version_agg AS (SELECT
               versions.item_id,
               versions.item_type,
+              ARRAY_AGG(versions.object ORDER BY versions.id) AS object_array,
               ARRAY_AGG(versions.object_changes ORDER BY versions.id) AS object_changes_array
           FROM
               versions
@@ -322,7 +323,7 @@ class BusinessLine < Organization
           itv.object_changes_array AS imr_versions,
           LAG(imr.created_at, 1) OVER (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.created_at) AS previous_imr_created_at,
           LAG(CASE WHEN imr.status = 'cancelled' THEN imr.updated_at ELSE imr.decided_at END) OVER (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY CASE WHEN imr.status = 'cancelled' THEN imr.updated_at ELSE imr.decided_at END) AS previous_imr_decided_at,
-          itv.object_changes_array[1] AS first_static_version,
+          itv.object_array as previous_state_array,
           imr_lead_decided.next_decided_or_cancelled_at,
           imr_lead_created.next_created_at
         FROM tasks
@@ -431,7 +432,7 @@ class BusinessLine < Organization
          itv.object_changes_array AS imr_versions,
          LAG(imr.created_at, 1) OVER (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.created_at) AS previous_imr_created_at,
          LAG(CASE WHEN imr.status = 'cancelled' THEN imr.updated_at ELSE imr.decided_at END) OVER (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY CASE WHEN imr.status = 'cancelled' THEN imr.updated_at ELSE imr.decided_at END) AS previous_imr_decided_at,
-         itv.object_changes_array[1] as first_static_version,
+         itv.object_array as previous_state_array,
          imr_lead_decided.next_decided_or_cancelled_at,
          imr_lead_created.next_created_at
       FROM tasks

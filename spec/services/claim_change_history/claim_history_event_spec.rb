@@ -76,7 +76,8 @@ describe ClaimHistoryEvent do
       "imr_versions" => imr_versions,
       "previous_imr_created_at" => nil,
       "updater_user_name" => "Monte Mann",
-      "is_assigned_present" => is_assigned_present
+      "is_assigned_present" => is_assigned_present,
+      "previous_state_array" => previous_state_array
     }
   end
 
@@ -102,6 +103,8 @@ describe ClaimHistoryEvent do
   let(:decider_id) { nil }
   let(:decided_at) { nil }
   let(:is_assigned_present) { false }
+  let(:previous_state_array) {}
+
   let(:event_attribute_data) do
     {
       assigned_at: Time.zone.parse("2023-10-19 22:47:16.222148"),
@@ -229,7 +232,11 @@ describe ClaimHistoryEvent do
       new_issue_description: "modifiedvalue",
       new_decision_date: "2024-07-07",
       modification_request_reason: "Addition is the only request issue-modifiedvalue Z",
-      event_user_name: "Monte Mann"
+      event_user_name: "Monte Mann",
+      previous_issue_type: "Caregiver | Tier Level",
+      previous_issue_description: "modifiedvalue",
+      previous_decision_date: "2024-07-07",
+      previous_modification_request_reason: "Addition is the only request issue-modifiedvalue Z"
     }
   end
 
@@ -783,12 +790,14 @@ describe ClaimHistoryEvent do
     end
 
     describe ".create_issue_modification_request_event" do
-      let(:request_type) { :modification }
+      context "when request type is modification" do
+        let(:request_type) { :modification }
 
-      subject { described_class.create_issue_modification_request_event(change_data) }
+        subject { described_class.create_issue_modification_request_event(change_data) }
 
-      it "should return single event with request_type passed as the request_type" do
-        verify_attributes_and_count(subject, 1, modification_attribute_data)
+        it "should return single event with request_type passed as the request_type" do
+          verify_attributes_and_count(subject, 1, modification_attribute_data)
+        end
       end
     end
 

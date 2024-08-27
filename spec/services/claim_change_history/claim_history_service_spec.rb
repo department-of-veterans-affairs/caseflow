@@ -544,6 +544,37 @@ describe ClaimHistoryService do
           create_last_addition_and_verify_events(starting_imr_events, new_events)
         end
       end
+
+      context "with multiple text edit in for a withdrawal event" do
+        let!(:issue_modification_withdrawal) do
+          create(:issue_modification_request,
+                 :withdrawal,
+                 request_issue: request_issue,
+                 decision_review: supplemental_claim,
+                 request_reason: "first comment in the array",
+                 nonrating_issue_description: "first nonrating description")
+        end
+
+        let!(:issue_modification_edit_of_request_first) do
+          issue_modification_withdrawal.nonrating_issue_description = "this is first update"
+          issue_modification_withdrawal.updated_at = Time.zone.today
+          issue_modification_withdrawal.save!
+        end
+
+        let!(:issue_modification_edit_of_request_second) do
+          issue_modification_withdrawal.nonrating_issue_description = "this is Second update"
+          issue_modification_withdrawal.withdrawal_date = Time.zone.today - 12.days
+          issue_modification_withdrawal.updated_at = Time.zone.today
+          issue_modification_withdrawal.save!
+        end
+
+        it "should have two request of edit event and a withdrawal event" do
+          events = service_instance.build_events
+          starting_event_without_removal = *starting_imr_events - [:removal]
+          new_events = [:withdrawal, :request_edited, :request_edited]
+          expect(events.map(&:event_type)).to contain_exactly(*starting_event_without_removal + new_events)
+        end
+      end
     end
 
     context "with filters" do
