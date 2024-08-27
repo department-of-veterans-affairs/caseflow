@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import { Provider } from 'react-redux';
 import CorrespondenceDetails from 'app/queue/correspondence/details/CorrespondenceDetails';
-import { correspondenceData } from 'test/data/correspondence';
+import { correspondenceDetailsData } from 'test/data/correspondence';
 import { applyMiddleware, createStore } from 'redux';
 import rootReducer from 'app/queue/reducers';
 import thunk from 'redux-thunk';
@@ -52,7 +52,7 @@ jest.mock('app/queue/CaseListTable', () => ({ appeals }) => (
 ));
 
 let initialState = {
-  correspondence: correspondenceData
+  correspondence: correspondenceDetailsData
 };
 
 const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
@@ -67,7 +67,10 @@ describe('CorrespondenceDetails', () => {
       nod: false,
       notes: 'Note Test',
       mailTasks: ['Task 1', 'Task 2'],
-      all_correspondences: Array.from({ length: 30 }, (_, i) => ({ uuid: `uuid${i}`, vaDateOfReceipt: '2024-08-06T00:00:00Z', notes: `Note ${i}`, status: `Status ${i}` })),
+      all_correspondences: Array.from({ length: 30 }, (_, i) => ({ uuid: `uuid${i}`,
+        vaDateOfReceipt: '2024-08-06T00:00:00Z',
+        notes: `Note ${i}`,
+        status: `Status ${i}` })),
       prior_mail: [
         { id: 1, vaDateOfReceipt: '2023-08-20T00:00:00Z' },
         { id: 2, vaDateOfReceipt: '2023-08-19T00:00:00Z' }
@@ -326,9 +329,13 @@ describe('CorrespondenceDetails', () => {
   test('toggles view all correspondence', () => {
     render(
       <Provider store={store}>
-        <CorrespondenceDetails {...props} />
+        <CorrespondenceDetails {...props[Symbol.iterator]} />
       </Provider>
     );
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
     const viewAllButton = screen.getByText('View all correspondence');
 
     fireEvent.click(viewAllButton);
@@ -343,6 +350,7 @@ describe('CorrespondenceDetails', () => {
     );
 
     const userNameCount = screen.getAllByText('John Doe').length;
+
     expect(userNameCount).toBeGreaterThan(0);
     const packageDetailsTab = screen.getByText('Package Details');
     // const responseLettersTab = screen.getByText('Response Letters');
@@ -387,9 +395,6 @@ describe('CorrespondenceDetails', () => {
     expect(screen.getByText('VLJ Support Staff')).toBeInTheDocument();
     expect(screen.getByText('Hearing Admin')).toBeInTheDocument();
 
-
-
-
     // Clicks on the Package Details Tab and tests its expectations
     fireEvent.click(packageDetailsTab);
     expect(screen.getByText('Veteran Details')).toBeInTheDocument();
@@ -403,9 +408,10 @@ describe('CorrespondenceDetails', () => {
     expect(screen.getByText('Notes')).toBeInTheDocument();
     expect(screen.getByText(props.correspondence.notes)).toBeInTheDocument();
 
-    fireEvent.click(associatedPriorMailTab)
+    fireEvent.click(associatedPriorMailTab);
     expect(screen.getByText('Please select prior mail to link to this correspondence')).toBeInTheDocument();
-    const priorDate =  new Date(props.correspondence.prior_mail[0].vaDateOfReceipt)
+    const priorDate = new Date(props.correspondence.prior_mail[0].vaDateOfReceipt);
+
     expect(screen.getByText(priorDate.toLocaleDateString('en-US'))).toBeInTheDocument();
   });
 });
