@@ -334,7 +334,7 @@ class ExternalApi::VBMSService
     end
   end
 
-   def self.verify_current_user_veteran_access(veteran)
+  def self.verify_current_user_veteran_access(veteran)
     return if !FeatureToggle.enabled?(:check_user_sensitivity)
 
     current_user = RequestStore[:current_user]
