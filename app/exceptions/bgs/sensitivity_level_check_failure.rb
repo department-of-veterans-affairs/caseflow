@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Class for various errors that can be received from the BGS service
+# Error class for when user/veteran sensitivity levels are not compatible
 module BGS
   class SensitivityLevelCheckFailure < StandardError; end
 end
