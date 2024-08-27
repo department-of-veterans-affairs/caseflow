@@ -124,7 +124,7 @@ class Fakes::VANotifyService < ExternalApi::VANotifyService
       )
     end
 
-    def fake_notification_response(template_id, status)
+    def fake_notification_response(template_id, status, external_id)
       HTTPI::Response.new(
         200,
         {},
