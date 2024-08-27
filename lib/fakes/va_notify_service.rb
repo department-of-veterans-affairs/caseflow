@@ -17,7 +17,8 @@ class Fakes::VANotifyService < ExternalApi::VANotifyService
       external_id = SecureRandom.uuid
 
       request = HTTPI::Request.new
-      request.url = "#{ENV["CASEFLOW_BASE_URL"]}#{VA_NOTIFY_ENDPOINT}?id=#{external_id}&status=delivered&to=to&notification_type=email"
+      request.url = "#{ENV['CASEFLOW_BASE_URL']}#{VA_NOTIFY_ENDPOINT}"\
+        "?id=#{external_id}&status=delivered&to=test@example.com&notification_type=email"
       request.headers["Content-Type"] = "application/json"
       request.headers["Authorization"] = "Bearer test"
 
@@ -38,7 +39,8 @@ class Fakes::VANotifyService < ExternalApi::VANotifyService
       external_id = SecureRandom.uuid
 
       request = HTTPI::Request.new
-      request.url = "#{ENV["CASEFLOW_BASE_URL"]}#{VA_NOTIFY_ENDPOINT}?id=#{external_id}&status=delivered&to=to&notification_type=sms"
+      request.url = "#{ENV['CASEFLOW_BASE_URL']}#{VA_NOTIFY_ENDPOINT}"\
+        "?id=#{external_id}&status=delivered&to=+15555555555&notification_type=sms"
       request.headers["Content-Type"] = "application/json"
       request.headers["Authorization"] = "Bearer test"
 
