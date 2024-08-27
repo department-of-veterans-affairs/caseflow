@@ -71,6 +71,7 @@ const CorrespondenceAssignTeamModal = (props) => {
 
   const submit = () => {
     if (teamAssignedFlag && typeof teamAssignedFlag === 'object') {
+      let correspondence = props.correspondenceInfo;
       const payload = {
         data: {
           assigned_to: teamAssignedFlag.label,
@@ -79,7 +80,21 @@ const CorrespondenceAssignTeamModal = (props) => {
         }
       };
 
-      return props.assignTaskToTeam(props.task_id, updateCorrespondence(), payload, teamAssignedFlag.label);
+      const frontendParams = {
+        taskId: props.task_id,
+        teamName: teamAssignedFlag.label
+      };
+
+
+      // Filter out the current task from the tasksUnrelatedToAppeal
+      const updatedTasks = correspondence.tasksUnrelatedToAppeal.filter(
+        (task) => parseInt(task.uniqueId, 10) !== parseInt(props.task_id, 10)
+      );
+
+      // Assign the updated tasks to correspondence
+      correspondence.tasksUnrelatedToAppeal = updatedTasks;
+
+      return props.assignTaskToTeam(payload, frontendParams, correspondence);
     } else {
       console.error('No valid organization selected');
     }
