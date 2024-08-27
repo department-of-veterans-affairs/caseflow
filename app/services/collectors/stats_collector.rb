@@ -11,7 +11,7 @@ module Collectors::StatsCollector
       stats_hash.each do |metric_name, counts_hash|
         unless valid_metric_name?(metric_name)
           fail "Invalid metric name #{metric_name}; "\
-            "see https://docs.datadoghq.com/developers/metrics/#naming-custom-metrics"
+            "see https://docs.dynatrace.com/docs/extend-dynatrace/extend-metrics/reference/custom-metric-metadata"
         end
 
         stats.concat add_tags_to_group_counts(metric_name_prefix, metric_name, counts_hash)
@@ -29,7 +29,7 @@ module Collectors::StatsCollector
     end
   end
 
-  # See valid tag name rules at https://docs.datadoghq.com/tagging/#defining-tags
+  # See valid tag name rules at https://docs.dynatrace.com/docs/manage/tags-and-metadata/setup/how-to-define-tags
   def to_valid_tag(name)
     name.gsub(/[^a-zA-Z_\-\:\.\d\/]/, "__")
   end
@@ -41,8 +41,7 @@ module Collectors::StatsCollector
   end
 
   def valid_metric_name?(metric_name)
-    # Actual limit is 200 but since the actual metric name in DataDog has
-    # "dsva_appeals.stats_collector_job." prepended, let's just stick with a 150 character limit.
+    
     return false if metric_name.length > 150
 
     return true if metric_name.match?(/\A[a-zA-Z][a-zA-Z\d_\.]*\Z/)
