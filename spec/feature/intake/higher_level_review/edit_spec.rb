@@ -1699,4 +1699,36 @@ feature "Higher Level Review Edit issues", :all_dbs do
       expect(page).to have_button("Add this issue", disabled: false)
     end
   end
+
+  context "When COMPENSATION benefit present disable Edit Claim Label and Add issue buttons on edit page" do
+    before do
+      FeatureToggle.enable!(:remove_comp_and_pen_intake)
+    end
+
+    let(:request_issue) do
+      create(
+        :request_issue,
+        contested_rating_issue_reference_id: "def456",
+        contested_rating_issue_profile_date: rating.profile_date,
+        decision_review: another_higher_level_review,
+        benefit_type: benefit_type,
+        contested_issue_description: "PTSD denied"
+      )
+    end
+
+    before do
+      FeatureToggle.enable!(:remove_comp_and_pen_intake)
+      another_higher_level_review.create_issues!([request_issue])
+      another_higher_level_review.establish!
+      another_higher_level_review.reload
+      request_issue.reload
+    end
+
+    it "Add Issue button is disabled if compensation benefit present" do
+      visit "higher_level_reviews/#{another_higher_level_review.uuid}/edit"
+
+      expect(page).to have_button("Add issue", disabled: true)
+      expect(page).to have_button("Edit claim label", disabled: true)
+    end
+  end
 end

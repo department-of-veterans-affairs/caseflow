@@ -931,4 +931,37 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       expect(page).to have_button("Add this issue", disabled: true)
     end
   end
+
+  context "When compensation benefit present disable Edit Claim Label and Add issue buttons on edit page" do
+    before do
+      FeatureToggle.enable!(:remove_comp_and_pen_intake)
+    end
+
+    let(:request_issue) do
+      create(
+        :request_issue,
+        contested_rating_issue_reference_id: "def456",
+        contested_rating_issue_profile_date: rating.profile_date,
+        decision_review: supplemental_claim,
+        benefit_type: benefit_type,
+        contested_issue_description: "PTSD denied",
+        is_predocket_needed: is_predocket_needed
+      )
+    end
+
+    before do
+      FeatureToggle.enable!(:remove_comp_and_pen_intake)
+      supplemental_claim.create_issues!([request_issue])
+      supplemental_claim.establish!
+      supplemental_claim.reload
+      request_issue.reload
+    end
+
+    it "Buttons add issue and edit claim lable are disabled if compensation benefit present" do
+      visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
+
+      expect(page).to have_button("Add issue", disabled: true)
+      expect(page).to have_button("Edit claim label", disabled: true)
+    end
+  end
 end
