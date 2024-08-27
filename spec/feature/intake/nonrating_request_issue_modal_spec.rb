@@ -16,11 +16,13 @@ feature "Nonrating Request Issue Modal", :postgres do
     User.authenticate!(user: bva_intake_admin_user)
     FeatureToggle.enable!(:mst_identification)
     FeatureToggle.enable!(:pact_identification)
+    FeatureToggle.enable!(:displayNonFilteredCategories)
   end
 
   after do
     FeatureToggle.disable!(:mst_identification)
     FeatureToggle.disable!(:pact_identification)
+    FeatureToggle.disable!(:displayNonFilteredCategories)
   end
 
   let(:veteran_file_number) { "123412345" }
