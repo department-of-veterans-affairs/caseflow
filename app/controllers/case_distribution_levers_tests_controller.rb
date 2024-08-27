@@ -75,8 +75,8 @@ class CaseDistributionLeversTestsController < ApplicationController
   end
 
   def run_return_legacy_appeals_to_board
-    result = ReturnLegacyAppealsToBoardJob.perform_now(params[:fail_job])
-    if params[:fail_job] && result.include?("Job failed with error")
+    result = ReturnLegacyAppealsToBoardJob.perform_now
+    if result.include?("Job failed with error")
       return render json: { error: result }, status: :unprocessable_entity
     end
 
