@@ -66,8 +66,6 @@ class CorrespondenceTasksController < TasksController
       status: Constants.TASK_STATUSES.assigned,
       assigned_to: User.find_by_css_id(correspondence_tasks_params[:assigned_to]),
       assigned_at: Time.zone.now,
-      # instructions: correspondence_tasks_params[:instructions],
-      # type: correspondence_tasks_params[:type]
     )
     task.instructions << correspondence_tasks_params[:instructions]
     task.save!

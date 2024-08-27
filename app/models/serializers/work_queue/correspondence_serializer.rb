@@ -38,7 +38,8 @@ class WorkQueue::CorrespondenceSerializer
             instructions: task.instructions,
             availableActions: task.available_actions_unwrapper(RequestStore[:current_user]),
             uniqueId: task.id,
-            reassignUsers: task&.reassign_users
+            reassignUsers: task&.reassign_users,
+            assignedToOrg: task&.assigned_to.is_a?(Organization)
           }
       end
     end

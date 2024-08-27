@@ -64,23 +64,6 @@ export const assignTaskToUser = (taskID, payload, frontendParams, correspondence
         }
       });
 
-      // dispatch({
-      //   type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
-      //   payload: {
-      //     bannerAlert: {
-      //       title: "Test Title",
-      //       message: "Test Message"
-      //     }
-      //     // bannerAlert: {
-      //     //   title: CORRESPONDENCE_DETAILS_BANNERS.assignSuccessBanner.title,
-      //     //   message: sprintf(CORRESPONDENCE_DETAILS_BANNERS.assignSuccessBanner.message,
-      //     //     correspondence.label,
-      //     //     payload.assigned_to),
-      //     //   type: CORRESPONDENCE_DETAILS_BANNERS.assignSuccessBanner.type
-      //     // }
-      //   }
-      // });
-
     }).
     catch((error) => {
       dispatch({
@@ -92,43 +75,6 @@ export const assignTaskToUser = (taskID, payload, frontendParams, correspondence
       console.error(error);
     });
 };
-
-// export const completeTaskNotRelatedToAppeal = (payload, frontendParams, correspondence) => (dispatch) => {
-
-//   return ApiUtil.patch(`/queue/correspondence/tasks/${frontendParams.taskId}/complete`, payload).
-//     then(() => {
-
-//       dispatch({
-//         type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
-//         payload: {
-//           bannerAlert: {
-//             title: CORRESPONDENCE_DETAILS_BANNERS.completeBanner.title,
-//             message: sprintf(CORRESPONDENCE_DETAILS_BANNERS.completeBanner.message,
-//               frontendParams.taskName,
-//               frontendParams.teamName),
-//             type: CORRESPONDENCE_DETAILS_BANNERS.completeBanner.type
-//           }
-//         }
-//       });
-
-//       dispatch({
-//         type: ACTIONS.CORRESPONDENCE_INFO,
-//         payload: {
-//           correspondence
-//         }
-//       });
-
-//     }).
-//     catch((error) => {
-//       dispatch({
-//         type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
-//         payload: {
-//           bannerAlert: CORRESPONDENCE_DETAILS_BANNERS.completeFailBanner
-//         }
-//       });
-//       console.error(error);
-//     });
-// };
 
 export const correspondenceInfo = (correspondence) => (dispatch) => {
   dispatch({

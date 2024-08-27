@@ -36,6 +36,7 @@ const CorrespondenceAssignTaskModal = (props) => {
 
   const taskData = taskActionData(props);
 
+
   // Show task instructions by default
   const shouldShowTaskInstructions = get(taskData, 'show_instructions', true);
 
@@ -43,6 +44,11 @@ const CorrespondenceAssignTaskModal = (props) => {
   const [instructionsAdded, setInstructionsAdded] = useState(false);
   const [assigneeAdded, setAssigneeAdded] = useState(false);
   const [assignee, setAssignee] = useState("");
+  // const [updatedTask, setUpdatedTask] = useState(
+  //   useSelector(props.correspondenceInfo.tasksUnrelatedToAppeal.find((task) => parseInt(props.task_id, 10) === parseInt(task.uniqueId, 10)))
+  // );
+
+  const task = props.correspondenceInfo.tasksUnrelatedToAppeal.find((task) => parseInt(props.task_id, 10) === parseInt(task.uniqueId, 10));
 
   useEffect(() => {
     // Handle document search position
@@ -99,9 +105,15 @@ const CorrespondenceAssignTaskModal = (props) => {
     return props.assignTaskToUser(props.task_id, payload, frontendParams, correspondence);
   };
 
+  const modalTitle = () => {
+    // if assigned_to.is_a?(Organization)
+    // task.assigned_to.is_a?(Organization) ? COPY::ASSIGN_TASK_TITLE : COPY::REASSIGN_TASK_TITLE
+  }
+
+  // if assigned_to.is_a?(Organization)
   return (
     <QueueFlowModal
-      title= "Assign Task"
+      title= {task.assignedToOrg ? "Assign Task" : "Re-assign to person" }
       button="Assign Task"
       submitDisabled= {!validateForm()}
       submitButtonClassNames= {'usa-button'}
@@ -119,21 +131,17 @@ const CorrespondenceAssignTaskModal = (props) => {
       }
       {
         <SearchableDropdown
-          // key={doc.id}
           name="User dropdown"
           label="Select a user"
           dropdownStyling={{ position: 'relative' }}
           options={userData()}
           placeholder="Select or search"
-          // value={generateOptionsFromTags(doc.tags)}
-          // onChange={formChanged(value)}
           onChange={(value) => formChanged(value)}
           styling={{ marginBottom: '20px' }}
         />
       }
       {shouldShowTaskInstructions &&
         <TextareaField
-          // name={taskData?.instructions_label ?? COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}
           name={
             taskData?.instructions_label ?? COPY.CORRESPONDENCE_CASES_ASSIGN_TASK_MODAL_INSTRUCTIONS_TITLE
           }
