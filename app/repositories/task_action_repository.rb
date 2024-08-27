@@ -15,12 +15,25 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
 
       {
         modal_title: task.assigned_to.is_a?(Organization) ? COPY::ASSIGN_TASK_TITLE : COPY::REASSIGN_TASK_TITLE,
-        modal_body: format(COPY::ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER),
-        message_title: format(COPY::CORRESPONDENCE_CASES_ASSIGN_TASK_MODAL_INSTRUCTIONS_TITLE, task.correspondence&.veteran_full_name),
+        modal_body: COPY::ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER,
+        message_title: COPY::CORRESPONDENCE_CASES_ASSIGN_TASK_MODAL_INSTRUCTIONS_TITLE,
+        # message_title: format(COPY::CORRESPONDENCE_CASES_ASSIGN_TASK_MODAL_INSTRUCTIONS_TITLE, task.correspondence&.veteran_full_name),
         # message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, return_to_name),
         redirect_after: "/queue/correspondence/:correspondence_uuid/"
       }
     end
+
+    # def complete_correspondence_task_data(task, _user = nil)
+    #   return_to_name = task_assigner_name(task)
+
+    #   {
+    #     modal_title: COPY::MARK_TASK_COMPLETE_TITLE,
+    #     modal_body: COPY::CORRESPONDENCE_OTHER_MOTION_MODAL_DETAIL,
+    #     message_title: format(COPY::CORRESPONDENCE_COMPLETE_TASK_CONFIRMATION, task.correspondence&.veteran_full_name),
+    #     message_detail: format(COPY::CORRESPONDENCE_COMPLETE_TASK_CONFIRMATION_DETAIL, return_to_name),
+    #     redirect_after: "/queue/correspondence/:correspondence_uuid/"
+    #   }
+    # end
 
     def mark_corr_task_complete
       # stubbed

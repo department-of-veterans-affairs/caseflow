@@ -79,6 +79,9 @@ const CorrespondenceAssignTaskModal = (props) => {
   }
 
   const submit = () => {
+    let correspondence = updateCorrespondence();
+    let updatedTask = correspondence.tasksUnrelatedToAppeal.find((task) => parseInt(props.task_id, 10) === parseInt(task.uniqueId, 10));
+
     const payload = {
       data: {
         assigned_to: assignee,
@@ -87,7 +90,13 @@ const CorrespondenceAssignTaskModal = (props) => {
       }
     };
 
-    return props.assignTaskToUser(props.task_id, updateCorrespondence, payload);
+    const frontendParams = {
+      taskId: props.task_id,
+      taskName: updatedTask.label,
+      assignedName: updatedTask.assignedTo
+    };
+
+    return props.assignTaskToUser(props.task_id, payload, frontendParams, correspondence);
   };
 
   return (
