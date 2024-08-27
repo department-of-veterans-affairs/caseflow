@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe ExternalApi::VBMSService do
   subject(:described) { described_class }
   let(:mock_json_adapter) { instance_double(JsonApiResponseAdapter) }
@@ -34,7 +36,7 @@ describe ExternalApi::VBMSService do
           .with(user: user, veteran: appeal.veteran).and_return(false)
 
         expect { described.verify_current_user_veteran_access(appeal.veteran) }
-          .to raise_error(RuntimeError, "User does not have permission to access this information")
+          .to raise_error(BGS::SensitivityLevelCheckFailure, "User does not have permission to access this information")
       end
     end
   end

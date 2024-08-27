@@ -64,7 +64,7 @@ class ExternalApi::VbmsRequestWithFileNumber
 
     current_user = RequestStore[:current_user]
 
-    fail "User does not have permission to access this information" unless
+    fail BGS::SensitivityLevelCheckFailure, "User does not have permission to access this information" unless
       SensitivityChecker.new(current_user).sensitivity_levels_compatible?(
         user: current_user,
         veteran: veteran
