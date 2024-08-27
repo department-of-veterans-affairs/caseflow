@@ -3,6 +3,7 @@
 class Transcription < CaseflowRecord
   belongs_to :hearing
   belongs_to :transcription_contractor
+  has_many :transcription_files
 
   before_create :sequence_task_id
 
