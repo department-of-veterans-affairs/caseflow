@@ -1,4 +1,5 @@
 /* eslint-disable max-lines */
+
 export const dailyDocketPropsHearingNotVirtualJudgeUser = {
   hearing: {
     aod: false,
@@ -19,6 +20,7 @@ export const dailyDocketPropsHearingNotVirtualJudgeUser = {
     centralOfficeTimeString: '09:30',
     claimantId: 968,
     closestRegionalOffice: null,
+    conferenceProvider: 'webex',
     contestedClaim: false,
     currentIssueCount: 12,
     disposition: null,
@@ -41,7 +43,7 @@ export const dailyDocketPropsHearingNotVirtualJudgeUser = {
     regionalOfficeTimezone: 'America/Chicago',
     room: '21',
     scheduledFor: '2022-04-29T08:30:00.000-05:00',
-    scheduledForIsPast: true,
+    scheduledForIsPast: false,
     scheduledTime: '2000-01-01T08:30:00.000-05:00',
     scheduledTimeString: '08:30',
     summary: null,
@@ -85,7 +87,8 @@ export const dailyDocketPropsHearingNotVirtualJudgeUser = {
   },
   saveHearing: 'ƒ () {}',
   regionalOffice: 'RO08',
-  openDispositionModal: 'ƒ () {}'
+  openDispositionModal: 'ƒ () {}',
+  hearingDayDate: '2022-04-29'
 };
 
 export const dailyDocketPropsHearingNotVirtualAttorneyUser = {
@@ -108,6 +111,7 @@ export const dailyDocketPropsHearingNotVirtualAttorneyUser = {
     centralOfficeTimeString: '09:30',
     claimantId: 968,
     closestRegionalOffice: null,
+    conferenceProvider: 'pexip',
     contestedClaim: false,
     currentIssueCount: 12,
     disposition: null,
@@ -195,6 +199,7 @@ export const dailyDocketPropsHearingNotVirtualCoordinatorUser = {
     centralOfficeTimeString: '09:30',
     claimantId: 968,
     closestRegionalOffice: null,
+    conferenceProvider: 'webex',
     contestedClaim: false,
     currentIssueCount: 12,
     disposition: null,
@@ -259,7 +264,8 @@ export const dailyDocketPropsHearingNotVirtualCoordinatorUser = {
   },
   saveHearing: 'ƒ () {}',
   regionalOffice: 'RO08',
-  openDispositionModal: 'ƒ () {}'
+  openDispositionModal: 'ƒ () {}',
+  hearingDayDate: '2022-04-29'
 };
 
 export const dailyDocketPropsHearingNotVirtualVSOUser = {
@@ -282,6 +288,7 @@ export const dailyDocketPropsHearingNotVirtualVSOUser = {
     centralOfficeTimeString: '09:30',
     claimantId: 968,
     closestRegionalOffice: null,
+    conferenceProvider: 'pexip',
     contestedClaim: false,
     currentIssueCount: 12,
     disposition: null,
@@ -345,7 +352,8 @@ export const dailyDocketPropsHearingNotVirtualVSOUser = {
   },
   saveHearing: 'ƒ () {}',
   regionalOffice: 'RO08',
-  openDispositionModal: 'ƒ () {}'
+  openDispositionModal: 'ƒ () {}',
+  hearingDayDate: '2022-04-29'
 };
 
 export const dailyDocketPropsHearingNotVirtualDVCUser = {
@@ -368,6 +376,7 @@ export const dailyDocketPropsHearingNotVirtualDVCUser = {
     centralOfficeTimeString: '09:30',
     claimantId: 968,
     closestRegionalOffice: null,
+    conferenceProvider: 'pexip',
     contestedClaim: false,
     currentIssueCount: 12,
     disposition: null,
@@ -434,8 +443,10 @@ export const dailyDocketPropsHearingNotVirtualDVCUser = {
   },
   saveHearing: 'ƒ () {}',
   regionalOffice: 'RO08',
-  openDispositionModal: 'ƒ () {}'
+  openDispositionModal: 'ƒ () {}',
+  hearingDayDate: '2022-04-29'
 };
+
 export const dailyDocketPropsHearingNotVirtualTranscriberUser = {
   hearing: {
     aod: false,
@@ -456,6 +467,7 @@ export const dailyDocketPropsHearingNotVirtualTranscriberUser = {
     centralOfficeTimeString: '09:30',
     claimantId: 968,
     closestRegionalOffice: null,
+    conferenceProvider: 'webex',
     contestedClaim: false,
     currentIssueCount: 12,
     disposition: null,
@@ -523,7 +535,8 @@ export const dailyDocketPropsHearingNotVirtualTranscriberUser = {
   },
   saveHearing: 'ƒ () {}',
   regionalOffice: 'RO08',
-  openDispositionModal: 'ƒ () {}'
+  openDispositionModal: 'ƒ () {}',
+  hearingDayDate: '2022-04-29'
 };
 
 export const dailyDocketPropsHearingIsVirtual = {
@@ -546,6 +559,7 @@ export const dailyDocketPropsHearingIsVirtual = {
     centralOfficeTimeString: '09:30',
     claimantId: 970,
     closestRegionalOffice: null,
+    conferenceProvider: 'pexip',
     contestedClaim: false,
     currentIssueCount: 4,
     disposition: null,
@@ -616,7 +630,8 @@ export const dailyDocketPropsHearingIsVirtual = {
   update: 'ƒ () {}',
   onReceiveAlerts: 'ƒ () {}',
   onReceiveTransitioningAlert: 'ƒ () {}',
-  transitionAlert: 'ƒ () {}'
+  transitionAlert: 'ƒ () {}',
+  hearingDayDate: '2022-04-29'
 };
 
 export const dailyDocketPropsConferenceLinkError = {
@@ -647,9 +662,11 @@ export const dailyDocketPropsConferenceLinkError = {
     updatedAt: '2022-05-23T14:04:28.593-04:00',
     conferenceLink: {
       hostPin: '1116504',
+      // eslint-disable-next-line max-len
       hostLink: 'https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000004@example.va.gov&pin=1116504&role=host',
       alias: null
     }
   },
-  conferenceLinkError: true
+  conferenceLinkError: true,
+  hearingDayDate: '2022-04-29'
 };

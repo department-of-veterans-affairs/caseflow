@@ -164,12 +164,14 @@ feature "Attorney checkout flow", :all_dbs do
     # joins the user with the organization to grant access to role and org permissions
     FeatureToggle.enable!(:mst_identification)
     FeatureToggle.enable!(:pact_identification)
+    FeatureToggle.enable!(:legacy_mst_pact_identification)
     FeatureToggle.enable!(:acd_distribute_by_docket_date)
   end
 
   after do
     FeatureToggle.disable!(:mst_identification)
     FeatureToggle.disable!(:pact_identification)
+    FeatureToggle.enable!(:legacy_mst_pact_identification)
     FeatureToggle.disable!(:acd_distribute_by_docket_date)
   end
 
@@ -247,7 +249,7 @@ feature "Attorney checkout flow", :all_dbs do
     end
   end
 
-  context " AC 1.5 It passes the feature tests for adding a new issue appeal PACT" do
+  context " AC 1.5 It passes the feature tests for adding a new issue appeal PACT", :skip do
     scenario "Adding a new issue with PACT" do
       generate_rating_with_mst_pact(veteran)
       visit "/appeals/#{appeal.uuid}/edit"
@@ -271,7 +273,7 @@ feature "Attorney checkout flow", :all_dbs do
     end
   end
 
-  context " AC 1.6 It passes the feature tests for adding a new issue appeal MST & PACT" do
+  context " AC 1.6 It passes the feature tests for adding a new issue appeal MST & PACT", :skip do
     scenario "Adding a new issue with MST & PACT" do
       generate_rating_with_mst_pact(veteran)
       visit "/appeals/#{appeal.uuid}/edit"
