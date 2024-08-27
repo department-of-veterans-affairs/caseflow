@@ -7,7 +7,7 @@ import { PageArrowLeftIcon } from '../../components/icons/PageArrowLeftIcon';
 import { PageArrowRightIcon } from '../../components/icons/PageArrowRightIcon';
 
 const isValidWholeNumber = (pageNumber) => {
-  return /^\d+$/.test(pageNumber);
+  return (/^\d+$/).test(pageNumber);
 };
 
 const validatePageNum = (pageNumber, numPages) => {
