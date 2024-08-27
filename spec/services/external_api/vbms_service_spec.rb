@@ -1,15 +1,48 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 describe ExternalApi::VBMSService do
   subject(:described) { described_class }
   let(:mock_json_adapter) { instance_double(JsonApiResponseAdapter) }
+  let(:mock_sensitivity_checker) { instance_double(SensitivityChecker, sensitivity_levels_compatible?: true) }
+
   before do
     allow(JsonApiResponseAdapter).to receive(:new).and_return(mock_json_adapter)
+    allow(SensitivityChecker).to receive(:new).and_return(mock_sensitivity_checker)
+  end
+
+  describe ".verify_current_user_veteran_access" do
+    let!(:appeal) { create(:appeal) }
+
+    context "with check_user_sensitivity feature flag enabled" do
+      before { FeatureToggle.enable!(:check_user_sensitivity) }
+      after { FeatureToggle.disable!(:check_user_sensitivity) }
+
+      let!(:user) do
+        user = create(:user)
+        RequestStore.store[:current_user] = user
+      end
+
+      it "checks the user's sensitivity" do
+        expect(mock_sensitivity_checker).to receive(:sensitivity_levels_compatible?)
+          .with(user: user, veteran: appeal.veteran).and_return(true)
+
+        described.verify_current_user_veteran_access(appeal.veteran)
+      end
+
+      it "raises an exception when the sensitivity level is not compatible" do
+        expect(mock_sensitivity_checker).to receive(:sensitivity_levels_compatible?)
+          .with(user: user, veteran: appeal.veteran).and_return(false)
+
+        expect { described.verify_current_user_veteran_access(appeal.veteran) }
+          .to raise_error(BGS::SensitivityLevelCheckFailure, "User does not have permission to access this information")
+      end
+    end
   end
 
   describe ".fetch_document_series_for" do
     let(:mock_vbms_document_series_for_appeal) { instance_double(ExternalApi::VbmsDocumentSeriesForAppeal) }
-
     let!(:appeal) { create(:appeal) }
 
     before do
@@ -29,8 +62,9 @@ describe ExternalApi::VBMSService do
       end
     end
 
-    context "with no feature toggles enabled" do
+    context "with use_ce_api feature toggle disabled" do
       it "calls the VbmsDocumentSeriesForAppeal service" do
+        expect(FeatureToggle).to receive(:enabled?).with(:check_user_sensitivity).and_return(false)
         expect(FeatureToggle).to receive(:enabled?).with(:use_ce_api).and_return(false)
         expect(ExternalApi::VbmsDocumentSeriesForAppeal).to receive(:new).with(file_number: appeal.veteran_file_number)
         expect(mock_vbms_document_series_for_appeal).to receive(:fetch)
@@ -40,7 +74,7 @@ describe ExternalApi::VBMSService do
     end
   end
 
-  describe ".fetch_document_for" do
+  describe ".fetch_document_series_for" do
     let(:mock_json_adapter) { instance_double(JsonApiResponseAdapter) }
     let!(:appeal) { create(:appeal) }
 
