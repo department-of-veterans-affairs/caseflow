@@ -1,5 +1,5 @@
 #! /bin/bash
 cd /opt/caseflow-certification/src; bin/rails c << DONETOKEN
-x = WarRoom::MissingVacolsHearingJobFix.new
+x = MissingVacolsHearingJobFix.new
 x.perform
 DONETOKEN
