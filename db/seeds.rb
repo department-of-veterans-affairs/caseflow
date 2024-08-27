@@ -54,6 +54,7 @@ class SeedDB
     call_and_log_seed_step Seeds::BgsServiceRecordMaker
     call_and_log_seed_step Seeds::PopulateCaseflowFromVacols
     call_and_log_seed_step Seeds::IssueModificationRequest
+    call_and_log_seed_step Seeds::ApiKey
   end
 end
 
