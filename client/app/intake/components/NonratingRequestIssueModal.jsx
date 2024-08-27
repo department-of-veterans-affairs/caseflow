@@ -19,6 +19,7 @@ import { formatDateStr } from 'app/util/DateUtil';
 import { VHA_PRE_DOCKET_ISSUE_BANNER, VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER } from 'app/../COPY';
 import Checkbox from '../../components/Checkbox';
 import { generateSkipButton } from '../util/buttonUtils';
+import descriptionValidator from '../../util/validators/DescriptionValidator';
 
 const NO_MATCH_TEXT = 'None of these match';
 
@@ -103,17 +104,9 @@ class NonratingRequestIssueModal extends React.Component {
   descriptionOnChange = (value) => {
     this.setState({
       description: value,
-      descriptionError: this.errorOnDescription(value)
+      descriptionError: descriptionValidator()(value)
     });
   };
-
-  errorOnDescription = (value) => {
-    // whitelist alphanumberic, and specified special characters to match VBMS
-    const specialCharWhitelist = /^[a-zA-Z0-9\s.\-_|/\\@#~=%,;?!'"`():$+*^[\]&><{}]*$/;
-    const error = specialCharWhitelist.test(value) ? null : 'Invalid character';
-
-    return error;
-  }
 
   decisionDateOnChange = (value) => {
     this.setState({
