@@ -89,16 +89,10 @@ const CorrespondenceCancelTaskModal = (props) => {
       submit={submit}
       validateForm={validateForm}
     >
-      {taskData?.modal_body &&
-        <React.Fragment>
-          <div dangerouslySetInnerHTML={{ __html: taskData.modal_body }} />
-          <br />
-        </React.Fragment>
-      }
       {shouldShowTaskInstructions &&
         <TextareaField
           name={taskData?.instructions_label ?? COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}
-          id="taskInstructions"
+          id="cancelTaskInstructions"
           onChange={setInstructions}
           value={instructions}
         />
