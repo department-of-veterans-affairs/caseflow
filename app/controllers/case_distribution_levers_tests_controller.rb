@@ -138,6 +138,19 @@ class CaseDistributionLeversTestsController < ApplicationController
     send_data csv_data, filename: filename
   end
 
+  def appeals_tied_to_avljs_and_vljs
+    csv_data = AppealsTiedToAvljsAndVljsQuery.process
+
+    # Get the current date and time for dynamic filename
+    current_datetime = Time.zone.now.strftime("%Y%m%d-%H%M")
+
+    # Set dynamic filename with current date and time
+    filename = "appeals_tied_to_avljs_and_vljs#{current_datetime}.csv"
+
+    # Send CSV as a response with dynamic filename
+    send_data csv_data, filename: filename
+  end
+
   private
 
   def check_environment
