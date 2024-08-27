@@ -14,19 +14,8 @@ import { pageNumberOfPageIndex } from './utils';
 import * as PDFJS from 'pdfjs-dist';
 import { recordMetrics, recordAsyncMetrics, storeMetrics } from '../util/Metrics';
 
-import { css } from 'glamor';
 import classNames from 'classnames';
-import { COLORS } from '../constants/AppConstants';
 import { pdfPagePropTypes } from 'app/constants/pdfPagePropTypes';
-
-const markStyle = css({
-  '& mark': {
-    background: COLORS.GOLD_LIGHTER,
-    '.highlighted': {
-      background: COLORS.GREEN_LIGHTER
-    }
-  }
-});
 
 export class PdfPage extends React.PureComponent {
   constructor(props) {
@@ -346,7 +335,6 @@ export class PdfPage extends React.PureComponent {
         style={divPageStyle}
         onClick={this.onClick}
         ref={this.getPageContainerRef}
-        {...markStyle}
       >
         <div
           id={this.props.isFileVisible ? `rotationDiv${pageNumberOfPageIndex(this.props.pageIndex)}` : null}
