@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Fakes::VANotifyService < ExternalApi::VANotifyService
+  VA_NOTIFY_ENDPOINT = "/api/v1/va_notify_update"
+
   class << self
     # rubocop:disable  Metrics/ParameterLists
     def send_email_notifications(
@@ -11,7 +13,17 @@ class Fakes::VANotifyService < ExternalApi::VANotifyService
       docket_number:,
       status: ""
     )
-      fake_notification_response(email_template_id, status)
+
+      external_id = SecureRandom.uuid
+
+      request = HTTPI::Request.new
+      request.url = "#{ENV["CASEFLOW_BASE_URL"]}#{VA_NOTIFY_ENDPOINT}?id=#{external_id}&status=delivered&to=to&notification_type=email"
+      request.headers["Content-Type"] = "application/json"
+      request.headers["Authorization"] = "Bearer test"
+
+      HTTPI.post(request)
+
+      fake_notification_response(email_template_id, status, external_id)
     end
 
     def send_sms_notifications(
@@ -22,11 +34,21 @@ class Fakes::VANotifyService < ExternalApi::VANotifyService
       docket_number:,
       status: ""
     )
+
+      external_id = SecureRandom.uuid
+
+      request = HTTPI::Request.new
+      request.url = "#{ENV["CASEFLOW_BASE_URL"]}#{VA_NOTIFY_ENDPOINT}?id=#{external_id}&status=delivered&to=to&notification_type=sms"
+      request.headers["Content-Type"] = "application/json"
+      request.headers["Authorization"] = "Bearer test"
+
+      HTTPI.post(request)
+
       if participant_id.length.nil?
         return bad_participant_id_response
       end
 
-      fake_notification_response(sms_template_id, status)
+      fake_notification_response(sms_template_id, status, external_id)
     end
     # rubocop:enable  Metrics/ParameterLists
 
@@ -107,7 +129,7 @@ class Fakes::VANotifyService < ExternalApi::VANotifyService
         200,
         {},
         OpenStruct.new(
-          "id": SecureRandom.uuid,
+          "id": external_id,
           "reference": "string",
           "uri": "string",
           "template": {
