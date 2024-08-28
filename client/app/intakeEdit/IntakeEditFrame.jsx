@@ -124,6 +124,8 @@ export const IntakeEditFrame = (props) => {
 
   const basename = `/${formType}s/${props.claimId}/edit/`;
 
+  console.log(disableEditingForCompensationAndPension(), "is com and pen disabled");
+
   return (
     <Router basename={basename} {...props.routerTestProps}>
       <div>
