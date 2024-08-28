@@ -422,14 +422,6 @@ class CaseDistributionTest extends React.PureComponent {
                                 loadingText="Processing ReturnLegacyAppealsToBoard job"
                               />
                             </li>
-                            <li>
-                              <Button classNames={['usa-button-case-movement']}
-                                onClick={this.failReturnLegacyAppealsToBoard}
-                                name="Fail - Run ReturnLegacyAppealsToBoard job"
-                                loading={this.state.isFailReturnLegacyAppeals}
-                                loadingText="Fail ReturnLegacyAppealsToBoard job"
-                              />
-                            </li>
                           </ul>
                           <hr />
                           <h2 id="log_of_most_recent_appeals">Log of 15 most recent appeals moved to location 63</h2>

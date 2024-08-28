@@ -76,13 +76,14 @@ class CaseDistributionLeversTestsController < ApplicationController
 
   def run_return_legacy_appeals_to_board
     result = ReturnLegacyAppealsToBoardJob.perform_now
-    if result.include?("Job failed with error")
-      return render json: { error: result }, status: :unprocessable_entity
+
+    unless result
+      render json: { error: "Job failed" }, status: :unprocessable_entity
+      return
     end
 
     head :ok
   end
-
   def appeals_distributed
     # change this to the correct class
     csv_data = AppealsDistributed.process
