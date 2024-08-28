@@ -188,19 +188,23 @@ const ConfirmWorkOrderModal = ({ history, onCancel }) => {
   const dispatchWorkOrder = () => {
     const hearings = transcriptionFiles.map((file) => {
       return {
-        hearing_id: file.hearing_id,
+        hearing_id: file.hearingId,
         hearing_type: file.hearing_type === 'AMA' ? 'Hearing' : 'LegacyHearing'
       };
     });
 
-    const data = JSON.stringify({
+    const payload = {
       work_order_name: state.workOrder,
+      sent_to_transcriber_date: new Date().toISOString(),
       return_date: state.returnDateValue,
-      contractor_name: state.contractor,
-      hearings
-    });
+      contractor_name: state.contractor.name,
+      hearings,
+    };
 
-    ApiUtil.post('/hearings/transcription_packages/dispatch', { data }).then(onCancel());
+    ApiUtil.post('/hearings/transcription_packages/dispatch',
+      {
+        data: payload
+      }).then(() => onCancel());
   };
 
   const renderButtonSection = () => {
