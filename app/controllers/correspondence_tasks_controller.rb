@@ -71,6 +71,13 @@ class CorrespondenceTasksController < TasksController
     task.save!
   end
 
+  def cancel
+    task = CorrespondenceTask.find(correspondence_tasks_params[:task_id])
+    task.update!(
+      status: Constants.TASK_STATUSES.cancelled
+    )
+  end
+
   private
 
   def correspondence_tasks_params

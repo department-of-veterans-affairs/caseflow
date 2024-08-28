@@ -41,6 +41,7 @@ class CorrespondenceDetailsController < CorrespondenceController
       .merge(mail_tasks)
       .merge(appeals)
       .merge(all_correspondences)
+      .merge(prior_mail)
   end
 
   def build_json_response
@@ -61,15 +62,19 @@ class CorrespondenceDetailsController < CorrespondenceController
 
   def sort_response_letters(response_letters)
     response_letters.sort_by do |letter|
-      case letter[:days_left]
-      when /Expired on:/
-        expiration_date = Date.strptime(letter[:days_left].split(" on ").last, "%m/%d/%Y")
-        [0, expiration_date]
-      when /No response window/
-        [2, 0]
-      else
-        [1, 0]
-      end
+      days_left = letter[:days_left]
+
+      sort_key = if days_left.match?(/Expired on/)
+                   expiration_date = Date.strptime(days_left.split("Expired on ").last, "%m/%d/%Y")
+                   [0, expiration_date, letter[:date_sent].to_date, letter[:title]]
+                 elsif days_left.match?(/No response window/)
+                   [2, letter[:date_sent].to_date, letter[:title]]
+                 else
+                   expiration_date_str = days_left.split(" (").first
+                   expiration_date = Date.strptime(expiration_date_str, "%m/%d/%Y")
+                   [1, expiration_date, letter[:date_sent].to_date, letter[:title]]
+                 end
+      sort_key
     end
   end
 
@@ -102,5 +107,15 @@ class CorrespondenceDetailsController < CorrespondenceController
 
   def ordered_correspondences
     @correspondence.veteran.correspondences.order(va_date_of_receipt: :asc)
+  end
+
+  def prior_mail
+    prior_mail = Correspondence.prior_mail(veteran_by_correspondence.id, correspondence.uuid).order(:va_date_of_receipt)
+      .select { |corr| corr.status == "Completed" || corr.status == "Pending" }
+    serialized_mail = prior_mail.map do |correspondence|
+      WorkQueue::CorrespondenceSerializer.new(correspondence).serializable_hash[:data][:attributes]
+    end
+
+    { prior_mail: serialized_mail }
   end
 end

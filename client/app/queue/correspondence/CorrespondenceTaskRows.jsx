@@ -86,7 +86,7 @@ class CorrespondenceTaskRows extends React.PureComponent {
     this.state = {
       taskInstructionsIsVisible: [],
       showEditNodDateModal: false,
-      activeTasks: [...props.taskList],
+      activeTasks: [props.taskList],
     };
   }
 
@@ -177,11 +177,11 @@ class CorrespondenceTaskRows extends React.PureComponent {
         {taskInstructionsVisible && (
           <React.Fragment key={`${task.assignedOn}${task.label}`}>
             {!establishmentTaskCorrespondence(task) &&
-            <dt style={{ width: '100%' }}>
+            <dt>
               {COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}
             </dt>
             }
-            <dd style={{ width: '100%' }}>
+            <dd>
               {this.taskInstructionsWithLineBreaks(task)}
             </dd>
           </React.Fragment>

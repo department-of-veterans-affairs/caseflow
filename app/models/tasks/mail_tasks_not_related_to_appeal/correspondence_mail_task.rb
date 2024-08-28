@@ -13,6 +13,10 @@ class CorrespondenceMailTask < CorrespondenceTask
 
   self.abstract_class = true
 
+  # def task_is_assigned_to_users_organization?(user)
+  #   assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
+  # end
+
   def self.create_child_task(parent, current_user, params)
     Task.create!(
       type: name,
@@ -45,18 +49,19 @@ class CorrespondenceMailTask < CorrespondenceTask
     return [] unless user
 
     options = [
-      Constants.TASK_ACTIONS.CHANGE_CORR_TASK_TYPE.to_h,
-      Constants.TASK_ACTIONS.ASSIGN_CORR_TASK_TO_TEAM.to_h,
-      Constants.TASK_ACTIONS.MARK_TASK_COMPLETE.to_h,
-      Constants.TASK_ACTIONS.RETURN_TO_INBOUND_OPS.to_h,
-      Constants.TASK_ACTIONS.CANCEL_CORR_TASK.to_h,
-      Constants.TASK_ACTIONS.ASSIGN_CORR_TASK_TO_PERSON.to_h
+      # Constants.TASK_ACTIONS.CHANGE_CORR_TASK_TYPE.to_h,
+      # Constants.TASK_ACTIONS.ASSIGN_CORR_TASK_TO_TEAM.to_h,
+      # Constants.TASK_ACTIONS.MARK_TASK_COMPLETE.to_h,
+      # Constants.TASK_ACTIONS.RETURN_TO_INBOUND_OPS.to_h,
+      # Constants.TASK_ACTIONS.ASSIGN_CORR_TASK_TO_PERSON.to_h,
+      Constants.TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.to_h
     ]
 
-    if user.is_a? Organization
-      options.insert(2, Constants.TASK_ACTIONS.ASSIGN_CORR_TASK_TO_PERSON.to_h)
-    else
+
+    if user.is_a? (User)
       options.insert(2, Constants.TASK_ACTIONS.REASSIGN_CORR_TASK_TO_PERSON.to_h)
+    else
+      options.insert(2, Constants.TASK_ACTIONS.ASSIGN_CORR_TASK_TO_PERSON.to_h)
     end
 
     options
