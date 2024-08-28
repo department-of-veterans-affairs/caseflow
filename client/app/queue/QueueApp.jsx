@@ -52,6 +52,7 @@ import AddCavcDatesModal from './cavc/AddCavcDatesModal';
 import CompleteTaskModal from './components/CompleteTaskModal';
 import UpdateTaskStatusAssignRegionalOfficeModal from './components/UpdateTaskStatusAssignRegionalOfficeModal';
 import CancelTaskModal from './components/CancelTaskModal';
+import CorrespondenceCancelTaskModal from './components/CorrespondenceCancelTaskModal';
 import InProgressTaskModal from './components/InProgressTaskModal';
 import AssignHearingModal from './components/AssignHearingModal';
 import PostponeHearingModal from './components/PostponeHearingModal';
@@ -717,6 +718,9 @@ class QueueApp extends React.PureComponent {
     />
   );
 
+  routedCorrespondenceCancelTaskModal = (props) => (
+    <CorrespondenceCancelTaskModal {...props.match.params} />
+  );
   routedCorrespondenceCases = (props) => (
     <CorrespondenceCases {...props.match.params}
       {...this.props}
@@ -1014,6 +1018,17 @@ class QueueApp extends React.PureComponent {
               }
               title={`${PAGE_TITLES.ASSIGN_CORR_TASK_TO_TEAM} | Caseflow`}
               render={this.routedCorrespondenceAssignTeamModal}
+            />
+
+            <PageRoute
+              exact
+              path={
+                '/queue/correspondence/:correspondence_uuid/tasks/:task_id/' +
+            `(${TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.value
+            })`
+              }
+              title={`${PAGE_TITLES.CANCEL_TASK} | Caseflow`}
+              render={this.routedCorrespondenceCancelTaskModal}
             />
 
             {motionToVacateRoutes.page}

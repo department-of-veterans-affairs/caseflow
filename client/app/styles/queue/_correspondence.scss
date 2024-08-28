@@ -935,8 +935,8 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
   .response-letter-table-borderless-first-item {
     display: block;
-    width: 140%;
-    margin-left: 4%;
+    width: 168%;
+    margin-left: 5%;
     padding-bottom: 1.25rem;
   }
 
@@ -1498,6 +1498,23 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   h2 {
     margin-bottom: 20px;
   }
+}
+
+.correspondence-details-view-documents {
+
+  display: flex;
+  position: relative;
+  justify-content: end;
+  vertical-align: middle;
+}
+
+.link-icon-spacing {
+  // margin-bottom: -10px;
+  margin-left: 10px;
+}
+
+.correspondence-details-alert-banner {
+  padding-right: 30px;
 }
 
 .tasks-added-container {
