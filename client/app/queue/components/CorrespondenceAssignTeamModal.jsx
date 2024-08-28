@@ -14,8 +14,7 @@ import QueueFlowModal from './QueueFlowModal';
 import {
   setTaskNotRelatedToAppealBanner,
   assignTaskToTeam,
-  cancelTaskNotRelatedToAppeal,
-  setShowActionsDropdown
+  cancelTaskNotRelatedToAppeal
 } from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
 import SearchableDropdown from '../../components/SearchableDropdown';
 
@@ -47,7 +46,11 @@ const CorrespondenceAssignTeamModal = (props) => {
   }, [instructions]);
 
   const validateForm = () => {
-    return !shouldShowTaskInstructions ? teamAssignedFlag : (instructionsAdded && teamAssignedFlag);
+    if (shouldShowTaskInstructions) {
+      return instructionsAdded && teamAssignedFlag;
+    }
+
+    return teamAssignedFlag;
   };
 
   const formChanged = (organization) => {
@@ -56,33 +59,33 @@ const CorrespondenceAssignTeamModal = (props) => {
 
   const updateCorrespondence = () => {
     const updatedCorrespondence = { ...props.correspondenceInfo };
-    const task = updatedCorrespondence.tasksUnrelatedToAppeal.find(
+    const taskUpdate = updatedCorrespondence.tasksUnrelatedToAppeal.find(
       (task) => task.uniqueId === parseInt(props.task_id, 10)
     );
 
-    if (task) {
-      const previousOrg = task.assignedTo; // Get the current assigned organization
-      const previousOrgValue = task.assignedToValue; // Get the current assigned organization value
+    if (taskUpdate) {
+      const previousOrg = taskUpdate.assignedTo;
+      const previousOrgValue = taskUpdate.assignedToValue;
 
       // Update the assigned organization
-      task.assignedTo = teamAssignedFlag?.label || ''; // Use teamAssignedFlag.label
-      task.instructions.push(instructions);
+      taskUpdate.assignedTo = teamAssignedFlag?.label || '';
+      taskUpdate.instructions.push(instructions);
 
       // Remove the newly assigned organization from the list
-      task.organizations = task.organizations.filter(
+      taskUpdate.organizations = taskUpdate.organizations.filter(
         (org) => org.label !== teamAssignedFlag?.label
       );
 
       // Add the previous organization back to the list, if it exists
       if (previousOrg && previousOrg !== teamAssignedFlag?.label) {
-        task.organizations.push({
+        taskUpdate.organizations.push({
           label: previousOrg,
           value: previousOrgValue,
         });
       }
 
       // Reset the selected organization to show placeholder text
-      setTeamAssignedFlag(null); // Reset the selected organization
+      setTeamAssignedFlag(null);
     }
 
     return updatedCorrespondence;
@@ -94,7 +97,7 @@ const CorrespondenceAssignTeamModal = (props) => {
       const payload = {
         data: {
           assigned_to: teamAssignedFlag.label,
-          instructions: instructions,
+          instructions,
           ...(taskData?.business_payloads && { business_payloads: taskData.business_payloads })
         }
       };
@@ -105,9 +108,9 @@ const CorrespondenceAssignTeamModal = (props) => {
       };
 
       return props.assignTaskToTeam(payload, frontendParams, correspondence);
-    } else {
-      console.error('No valid organization selected');
     }
+    console.error('No valid organization selected');
+
   };
 
   const modalProps = {
@@ -155,7 +158,6 @@ const CorrespondenceAssignTeamModal = (props) => {
 
 CorrespondenceAssignTeamModal.propTypes = {
   requestPatch: PropTypes.func,
-  setShowActionsDropdown: PropTypes.func,
   cancelTaskNotRelatedToAppeal: PropTypes.func,
   assignTaskToTeam: PropTypes.func.isRequired,
   task: PropTypes.shape({
@@ -193,7 +195,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestPatch,
   setTaskNotRelatedToAppealBanner,
   cancelTaskNotRelatedToAppeal,
-  setShowActionsDropdown,
   assignTaskToTeam
 }, dispatch);
 
