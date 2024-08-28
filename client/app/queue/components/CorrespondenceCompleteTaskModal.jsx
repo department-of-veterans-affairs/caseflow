@@ -13,8 +13,7 @@ import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import QueueFlowModal from './QueueFlowModal';
 import {
   setTaskNotRelatedToAppealBanner,
-  completeTaskNotRelatedToAppeal,
-  setShowActionsDropdown } from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
+  completeTaskNotRelatedToAppeal } from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
 
 /* eslint-disable camelcase */
 const CorrespondenceCompleteTaskModal = (props) => {
@@ -101,7 +100,6 @@ const CorrespondenceCompleteTaskModal = (props) => {
 
 CorrespondenceCompleteTaskModal.propTypes = {
   requestPatch: PropTypes.func,
-  setShowActionsDropdown: PropTypes.func,
   completeTaskNotRelatedToAppeal: PropTypes.func,
   task: PropTypes.shape({
     appeal: PropTypes.shape({
@@ -132,8 +130,7 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestPatch,
   setTaskNotRelatedToAppealBanner,
-  completeTaskNotRelatedToAppeal,
-  setShowActionsDropdown
+  completeTaskNotRelatedToAppeal
 }, dispatch);
 
 export default (withRouter(
