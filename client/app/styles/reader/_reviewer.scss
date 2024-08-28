@@ -661,6 +661,7 @@ input[type='search'].cf-search-input-with-close {
 .prototype-mark {
   mark {
     background-color: $prototype-mark;
+
     &.highlighted {
       background-color: $prototype-highlight;
     }
