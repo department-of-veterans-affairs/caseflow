@@ -68,7 +68,12 @@ export const assignTaskToTeam = (payload, frontendParams, correspondence) => (di
       dispatch({
         type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
         payload: {
-          bannerAlert: CORRESPONDENCE_DETAILS_BANNERS.teamFailBanner
+          bannerAlert: {
+            title: CORRESPONDENCE_DETAILS_BANNERS.teamFailBanner,
+            message: sprintf(CORRESPONDENCE_DETAILS_BANNERS.teamFailBanner,
+              error.response.body.message),
+            type: CORRESPONDENCE_DETAILS_BANNERS.teamFailBanner
+          }
         }
       });
       console.error(error);

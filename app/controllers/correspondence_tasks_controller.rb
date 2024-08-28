@@ -68,6 +68,7 @@ class CorrespondenceTasksController < TasksController
       assigned_at: Time.zone.now
     )
     task.instructions << correspondence_tasks_params[:instructions]
+    task.save!
   end
 
   private
