@@ -36,6 +36,29 @@ describe ChangeHistoryEventSerializer do
     ClaimHistoryService.new(vha_org, task_id: vha_task.id).build_events
   end
 
+  let(:modificationRequestDetailsObject) do
+    {
+      benefitType: "vha",
+      requestType: nil,
+      issueModificationRequestWithdrawalDate: nil,
+      modificationRequestReason: nil,
+      newDecisionDate: nil,
+      newIssueDescription: nil,
+      newIssueType: nil,
+      previousDecisionDate: nil,
+      previousIssueDescription: nil,
+      previousIssueType: nil,
+      previousModificationRequestReason: nil,
+      previousWithdrawalDate: nil,
+      removeOriginalIssue: nil,
+      issueModificationRequestStatus: nil,
+      requestor: nil,
+      decider: nil,
+      decidedAtDate: nil,
+      decisionReason: nil
+    }
+  end
+
   let(:serialized_hash_array) do
     [
       {
@@ -60,22 +83,7 @@ describe ChangeHistoryEventSerializer do
               issueType: nil,
               withdrawalRequestDate: nil
             },
-          modificationRequestDetails:
-            {
-              benefitType: "vha",
-              requestType: nil,
-              issueModificationRequestWithdrawalDate: nil,
-              modificationRequestReason: nil,
-              newDecisionDate: nil,
-              newIssueDescription: nil,
-              newIssueType: nil,
-              removeOriginalIssue: nil,
-              issueModificationRequestStatus: nil,
-              requestor: nil,
-              decider: nil,
-              decidedAtDate: nil,
-              decisionReason: nil
-            }
+          modificationRequestDetails: modificationRequestDetailsObject
         }
       },
       {
@@ -96,22 +104,7 @@ describe ChangeHistoryEventSerializer do
             issueType: "Other",
             withdrawalRequestDate: nil
           },
-          modificationRequestDetails:
-          {
-            benefitType: "vha",
-            requestType: nil,
-            issueModificationRequestWithdrawalDate: nil,
-            modificationRequestReason: nil,
-            newDecisionDate: nil,
-            newIssueDescription: nil,
-            newIssueType: nil,
-            removeOriginalIssue: nil,
-            issueModificationRequestStatus: nil,
-            requestor: nil,
-            decider: nil,
-            decidedAtDate: nil,
-            decisionReason: nil
-          },
+          modificationRequestDetails: modificationRequestDetailsObject,
           eventDate: events[1].event_date,
           eventType: :added_issue,
           eventUser: "L. Roth",
