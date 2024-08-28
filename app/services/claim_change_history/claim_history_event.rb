@@ -18,7 +18,9 @@ class ClaimHistoryEvent
               :event_user_css_id, :new_issue_type, :new_issue_description, :new_decision_date,
               :modification_request_reason, :request_type, :decision_reason, :decided_at_date,
               :issue_modification_request_withdrawal_date, :requestor,
-              :decider, :remove_original_issue, :issue_modification_request_status
+              :decider, :remove_original_issue, :issue_modification_request_status,
+              :previous_issue_type, :previous_issue_description, :previous_decision_date,
+              :previous_modification_request_reason, :previous_withdrawal_date
 
   EVENT_TYPES = [
     :completed_disposition,
@@ -109,9 +111,9 @@ class ClaimHistoryEvent
       request_type = change_data["request_type"]
       event_hash = request_issue_modification_event_hash(change_data)
 
-      if change_data["first_static_version"].present?
-        first_version = parse_versions("{#{change_data['first_static_version']}}")
-        event_hash.merge!(update_event_hash_data_from_version(first_version[0], 0))
+      if change_data["previous_state_array"].present?
+        first_version = parse_versions(change_data["previous_state_array"])[0]
+        event_hash.merge!(update_event_hash_data_from_version_object(first_version))
       end
 
       if request_type == "addition"
@@ -124,37 +126,54 @@ class ClaimHistoryEvent
     def create_edited_request_issue_events(change_data)
       edited_events = []
       imr_versions = parse_versions(change_data["imr_versions"])
+      previous_version = parse_versions(change_data["previous_state_array"])
 
       if imr_versions.present?
         *rest_of_versions, last_version = imr_versions
+
         if last_version["status"].present?
           edited_events.push(*create_last_version_events(change_data, last_version))
         else
           rest_of_versions.push(last_version)
         end
-        edited_events.push(*create_event_from_rest_of_versions(change_data, rest_of_versions))
+        edited_events.push(*create_event_from_rest_of_versions(change_data, rest_of_versions, previous_version))
       else
         create_pending_status_events(change_data, change_data["issue_modification_request_updated_at"])
       end
       edited_events
     end
 
-    def create_event_from_rest_of_versions(change_data, edited_versions)
+    def create_event_from_rest_of_versions(change_data, edited_versions, previous_version)
       edit_of_request_events = []
       event_type = :request_edited
       event_date_hash = {}
-
-      edited_versions.map do |version|
+      edited_versions.map.with_index do |version, index|
         event_date_hash = {
           "event_date" => version["updated_at"][1],
           "event_user_name" => change_data["requestor"],
           "user_facility" => change_data["requestor_station_id"]
         }
 
+        # this create_event_from_version_object updated the previous version fields in change data
+        # that is being used in the front end to show the original records.
+        if !previous_version[index].nil?
+          event_date_hash.merge!(create_event_from_version_object(previous_version[index]))
+          # this update_event_hash_data_from_version_object updates the change_data values with previous or
+          # unedited data. since change_data has the final version of the data that was updated.
+          # this is necessary to preserve the history that is displayed in the frontend.
+          event_date_hash.merge!(update_event_hash_data_from_version_object(previous_version[index]))
+        end
+
         event_date_hash.merge!(update_event_hash_data_from_version(version, 1))
         edit_of_request_events.push(*from_change_data(event_type, change_data.merge(event_date_hash)))
       end
       edit_of_request_events
+    end
+
+    def create_event_from_version_object(version)
+      previous_version_database_field.each_with_object({}) do |(db_key, version_key), data|
+        data[db_key] = version[version_key] unless version[version_key].nil?
+      end
     end
 
     def create_last_version_events(change_data, last_version)
@@ -404,18 +423,14 @@ class ClaimHistoryEvent
     end
 
     def update_event_hash_data_from_version(version, index)
-      version_database_field_mapping = {
-        "nonrating_issue_category" => "requested_issue_type",
-        "nonrating_issue_description" => "requested_issue_description",
-        "remove_original_issue" => "remove_original_issue",
-        "request_reason" => "modification_request_reason",
-        "decision_date" => "requested_decision_date",
-        "decision_reason" => "decision_reason",
-        "withdrawal_date" => "issue_modification_request_withdrawal_date"
-      }
-
       version_database_field_mapping.each_with_object({}) do |(version_key, db_key), data|
         data[db_key] = version[version_key][index] unless version[version_key].nil?
+      end
+    end
+
+    def update_event_hash_data_from_version_object(version)
+      version_database_field_mapping.each_with_object({}) do |(version_key, db_key), data|
+        data[db_key] = version[version_key] unless version[version_key].nil?
       end
     end
 
@@ -460,6 +475,28 @@ class ClaimHistoryEvent
         "event_user_name" => change_data["update_user_name"],
         "user_facility" => change_data["update_user_station_id"],
         "event_user_css_id" => change_data["update_user_css_id"]
+      }
+    end
+
+    def version_database_field_mapping
+      {
+        "nonrating_issue_category" => "requested_issue_type",
+        "nonrating_issue_description" => "requested_issue_description",
+        "remove_original_issue" => "remove_original_issue",
+        "request_reason" => "modification_request_reason",
+        "decision_date" => "requested_decision_date",
+        "decision_reason" => "decision_reason",
+        "withdrawal_date" => "issue_modification_request_withdrawal_date"
+      }
+    end
+
+    def previous_version_database_field
+      {
+        "previous_issue_type" => "nonrating_issue_category",
+        "previous_issue_description" => "nonrating_issue_description",
+        "previous_decision_date" => "decision_date",
+        "previous_modification_request_reason" => "request_reason",
+        "previous_withdrawal_date" => "withdrawal_date"
       }
     end
 
@@ -734,9 +771,22 @@ class ClaimHistoryEvent
       @decided_at_date = change_data["decided_at"]
       @issue_modification_request_withdrawal_date = change_data["issue_modification_request_withdrawal_date"]
       @remove_original_issue = change_data["remove_original_issue"]
+      @issue_modification_request_status = change_data["issue_modification_request_status"]
       @requestor = change_data["requestor"]
       @decider = change_data["decider"]
+      parse_previous_issue_modification_attributes(change_data)
     end
+  end
+
+  def parse_previous_issue_modification_attributes(change_data)
+    @previous_issue_type = change_data["previous_issue_type"] || change_data["requested_issue_type"]
+    @previous_decision_date = change_data["previous_decision_date"] || change_data["requested_decision_date"]
+    @previous_modification_request_reason = change_data["previous_modification_request_reason"] ||
+                                            change_data["modification_request_reason"]
+    @previous_issue_description = change_data["previous_issue_description"] ||
+                                  change_data["requested_issue_description"]
+    @previous_withdrawal_date = change_data["previous_withdrawal_date"] ||
+                                change_data["issue_modification_request_withdrawal_date"]
   end
 
   ############ CSV and Serializer Helpers ############
