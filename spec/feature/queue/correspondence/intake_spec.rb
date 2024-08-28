@@ -9,16 +9,8 @@ RSpec.feature("The Correspondence Intake page") do
   let(:mail_user) { User.authenticate!(roles: ["Mail Team"]) }
   let(:supervisor_user) { create(:inbound_ops_team_supervisor) }
   let(:unauthorized_user) { create(:user) }
-  let(:correspondence) { create :correspondence }
-  let(:correspondence_intake_task) do
-    create(
-      :correspondence_intake_task,
-      appeal: correspondence,
-      appeal_type: Correspondence.name,
-      assigned_to: mail_user
-    )
-  end
-
+  let(:correspondence) { create :correspondence, :with_correspondence_intake_task, assigned_to: mail_user }
+  let(:correspondence_intake_task) { correspondence.open_intake_task }
   context "correspondence intake form access" do
     before :each do
       Bva.singleton.add_user(unauthorized_user)

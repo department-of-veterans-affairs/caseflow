@@ -161,7 +161,8 @@ class CorrespondenceIntakeProcessor
 
   def task_class_for_task_unrelated(data)
     task_type = data[:klass]
-    TASKS_NOT_RELATED_TO_APPEAL_TASK_TYPES[task_type]&.constantize
+    CorrespondenceTask.tasks_not_related_to_an_appeal_names
+      .find { |name| name == task_type }&.constantize
   end
 
   def correspondence_documents_efolder_uploader
@@ -170,26 +171,14 @@ class CorrespondenceIntakeProcessor
 
   def mail_task_class_for_type(task_type)
     mail_task_types = {
-      "Associated with Claims Folder": AssociatedWithClaimsFolderMailTask.name,
-      "Change of address": AddressChangeMailTask.name,
-      "Evidence or argument": EvidenceOrArgumentMailTask.name,
-      "VACOLS updated": VacolsUpdatedMailTask.name
+      AssociatedWithClaimsFolderMailTask.label => AssociatedWithClaimsFolderMailTask.name,
+      AddressChangeCorrespondenceMailTask.label => AddressChangeCorrespondenceMailTask.name,
+      EvidenceOrArgumentCorrespondenceMailTask.label => EvidenceOrArgumentCorrespondenceMailTask.name,
+      VacolsUpdatedMailTask.label => VacolsUpdatedMailTask.name
     }.with_indifferent_access
 
     mail_task_types[task_type]&.constantize
   end
-
-  TASKS_NOT_RELATED_TO_APPEAL_TASK_TYPES = {
-    CavcCorrespondenceCorrespondenceTask.name => CavcCorrespondenceCorrespondenceTask.name,
-    CongressionalInterestCorrespondenceTask.name => CongressionalInterestCorrespondenceTask.name,
-    DeathCertificateCorrespondenceTask.name => DeathCertificateCorrespondenceTask.name,
-    FoiaRequestCorrespondenceTask.name => FoiaRequestCorrespondenceTask.name,
-    OtherMotionCorrespondenceTask.name => OtherMotionCorrespondenceTask.name,
-    PrivacyActRequestCorrespondenceTask.name => PrivacyActRequestCorrespondenceTask.name,
-    PrivacyComplaintCorrespondenceTask.name => PrivacyComplaintCorrespondenceTask.name,
-    StatusInquiryCorrespondenceTask.name => StatusInquiryCorrespondenceTask.name,
-    PowerOfAttorneyRelatedCorrespondenceTask.name => PowerOfAttorneyRelatedCorrespondenceTask.name
-  }.with_indifferent_access
 
   TASKS_RELATED_TO_APPEAL_TASK_TYPES = {
     CavcCorrespondenceMailTask.name => CavcCorrespondenceMailTask.name,

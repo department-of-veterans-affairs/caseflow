@@ -59,23 +59,22 @@ RSpec.feature("The Correspondence Details page") do
   end
 
   context "correspondence record status matches correspondence root task status" do
+    let!(:completed_correspondence) { create(:correspondence, :completed) }
+    let!(:pending_correspondence) { create(:correspondence, :pending) }
+
     before do
       InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user, roles: ["Inbound Ops Team"])
       FeatureToggle.enable!(:correspondence_queue)
-      @completed_correspondence = create(:correspondence)
     end
 
     it "checks default match of pending" do
-      visit "/queue/correspondence/#{@completed_correspondence.uuid}"
+      visit "/queue/correspondence/#{pending_correspondence.uuid}"
       expect(page).to have_content("Record status: Pending")
     end
 
     it "checks that status has been updated to completed" do
-      complete_root_task = CorrespondenceRootTask.find_by(appeal_id: @completed_correspondence.id)
-      complete_root_task.update!(assigned_to: current_user, status: "completed")
-      complete_root_task.save!
-      visit "/queue/correspondence/#{@completed_correspondence.uuid}"
+      visit "/queue/correspondence/#{completed_correspondence.uuid}"
       # Record status - Completed
       expect(page).to have_content("Record status: Completed")
     end
@@ -134,6 +133,50 @@ RSpec.feature("The Correspondence Details page") do
       find_all("#task-link").first.click
       visit "/queue/correspondence/#{@correspondences.first.uuid}"
       expect(page).to have_content(@correspondences.first.veteran.file_number)
+    end
+  end
+
+  context "correspondence package details tab" do
+    before do
+      InboundOpsTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user, roles: ["Inbound Ops Team"])
+      FeatureToggle.enable!(:correspondence_queue)
+      @correspondence = create(
+        :correspondence,
+        veteran: veteran,
+        va_date_of_receipt: "Tue, 23 Jul 2024 00:00:00 EDT -04:00",
+        nod: false,
+        notes: "Note Test"
+      )
+      # binding.pry
+      # appeal = create(:appeal),
+      OtherMotionCorrespondenceTask.create!(
+        parent: @correspondence.tasks[0],
+        appeal: @correspondence,
+        appeal_type: "Correspondence",
+        status: "assigned",
+        assigned_to_type: "User",
+        assigned_to: current_user,
+        instructions: ["Test"],
+        assigned_at: Time.current
+      )
+    end
+
+    it "checks the General Information of Veteran" do
+      visit "/queue/correspondence/#{@correspondence.uuid}"
+      safe_click "#tasks-tabwindow-tab-1"
+      expect(page).to have_content("John Testingman (8675309)")
+      expect(page).to have_content("a correspondence type.")
+      expect(page).to have_content("Non-NOD")
+      expect(page).to have_content("07/23/2024")
+      expect(page).to have_content("Note Test")
+    end
+    it "checks that FOIA request task can been cancelled." do
+      visit "/queue/correspondence/#{@correspondence.uuid}"
+      click_dropdown(prompt: "Select an action", text: "Cancel task")
+      find(".cf-form-textarea", match: :first).fill_in with: "Cancel task test"
+      click_button "Cancel-Task-button-id-1"
+      expect(page).to have_content("FOIA request task has been cancelled.")
     end
   end
 end

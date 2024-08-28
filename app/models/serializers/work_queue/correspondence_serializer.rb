@@ -46,6 +46,14 @@ class WorkQueue::CorrespondenceSerializer
     tasks
   end
 
+  attribute :correspondence_appeals do |object|
+    appeals = []
+    object.correspondence_appeals.map do |appeal|
+      appeals << WorkQueue::CorrespondenceAppealsSerializer.new(appeal).serializable_hash[:data][:attributes]
+    end
+    appeals
+  end
+
   attribute :veteran_full_name do |object|
     [object.veteran_full_name&.first_name, object.veteran_full_name&.last_name].join(" ")
   end
@@ -63,4 +71,6 @@ class WorkQueue::CorrespondenceSerializer
       WorkQueue::CorrespondenceResponseLetterSerializer.new(response_letter).serializable_hash[:data][:attributes]
     end
   end
+
+  attribute :related_correspondence_ids, &:related_correspondence_ids
 end

@@ -105,10 +105,10 @@ const CorrespondenceAssignTaskModal = (props) => {
     return props.assignTaskToUser(props.task_id, payload, frontendParams, correspondence);
   };
 
-  const modalTitle = () => {
+  // const modalTitle = () => {
     // if assigned_to.is_a?(Organization)
     // task.assigned_to.is_a?(Organization) ? COPY::ASSIGN_TASK_TITLE : COPY::REASSIGN_TASK_TITLE
-  }
+  // }
 
   // if assigned_to.is_a?(Organization)
   return (
