@@ -47,9 +47,11 @@ class AppealsTiedToAvljsAndVljsQuery
 
           unique_appeals
         else
-          []
+          appeals = docket.tied_to_vljs(vlj_user_ids)
+
+          ama_rows(appeals, docket, sym)
         end
-      end
+    end
   end
 
   def self.legacy_rows(appeals, sym)
@@ -68,6 +70,50 @@ class AppealsTiedToAvljsAndVljsQuery
         bfcurloc: calculated_values[:bfcurloc]
       }
     end
+  end
+
+  def self.ama_rows(appeals, docket, sym)
+    appeals.map do |appeal|
+      # # This comes from the DistributionTask's assigned_at date
+      # ready_for_distribution_at = distribution_task_query(appeal)
+      # only look for hearings that were held
+      hearing_judge = ama_hearing_judge(appeal)
+      signing_judge = ama_cavc_original_deciding_judge(appeal)
+      {
+        docket_number: appeal.docket_number,
+        docket: sym.to_s,
+        priority: appeal.aod || appeal.cavc,
+        receipt_date: appeal.receipt_date,
+        veteran_file_number: appeal.veteran_file_number,
+        veteran_name: appeal.veteran&.name.to_s,
+        vlj: hearing_judge,
+        hearing_judge: hearing_judge,
+        most_recent_signing_judge: signing_judge,
+        bfcurloc: nil
+
+        # docket_number: appeal.docket_number,
+        # docket: sym.to_s,
+        # aod: appeal.aod,
+        # cavc: appeal.cavc,
+        # receipt_date: appeal.receipt_date,
+        # assigned_at: ready_for_distribution_at,
+        # target_distro_date: target_distro_date(appeal.receipt_date, docket),
+        # days_before_goal_date: days_before_goal_date(appeal.receipt_date, docket),
+        # hearing_judge: hearing_judge,
+        # veteran_file_number: appeal.veteran_file_number,
+        # veteran_name: appeal.veteran&.name.to_s,
+        # affinity_start_date: "NA"
+      }
+    end
+  end
+
+  def self.vlj_user_ids
+    staff_domainids = VACOLS::Staff.where("svlj in ('A','J') AND sactive in ('A','I') ")
+      .pluck(:sdomainid)
+      .uniq
+      .compact
+
+    User.where(css_id: staff_domainids).pluck(:id)
   end
 
   def self.calculate_field_values(appeal)
@@ -109,5 +155,21 @@ class AppealsTiedToAvljsAndVljsQuery
 
   def self.get_name_from_record(record)
     FullName.new(record["snamef"], nil, record["snamel"]).to_s
+  end
+
+  def self.ama_hearing_judge(appeal)
+    appeal.hearings
+      .filter { |hearing| hearing.disposition = Constants.HEARING_DISPOSITION_TYPES.held }
+      .first&.judge&.full_name
+  end
+
+  def self.ama_cavc_original_deciding_judge(appeal)
+    return nil if appeal.cavc_remand.nil?
+
+    source_appeal_id = CavcRemand.find_by(remand_appeal: appeal).source_appeal_id
+    judge_css_id = Task.find_by(appeal_id: source_appeal_id, appeal_type: Appeal.name, type: JudgeDecisionReviewTask.name)
+      &.assigned_to&.css_id
+
+    User.find_by_css_id(judge_css_id)&.full_name
   end
 end
