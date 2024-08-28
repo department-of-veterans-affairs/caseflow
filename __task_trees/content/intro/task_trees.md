@@ -98,7 +98,7 @@ digraph G {
   1. Install the following libraries using `python3 -m pip install <library name>`
       1. matplotlib
       1. seaborn
-  Follow instructions provided by running `python3 ./gen_ttdocs.py`
+  1. Follow instructions provided by running `python3 ./gen_ttdocs.py`
   1. Export non-PII tasks from production as instructed
   1. Download exported file and run something like `python3 ./gen_ttdocs.py ~/Downloads/appeals-tasks.json`
   1. Then run `bash ./createPngs.sh`
