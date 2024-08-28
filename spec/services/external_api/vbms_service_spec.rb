@@ -106,13 +106,13 @@ describe ExternalApi::VBMSService do
   end
 
   describe ".fetch_document_file" do
+    let(:fake_document) do
+      Generators::Document.build(id: 201, type: "NOD", series_id: "{ABC-123}")
+    end
+
     context "with use_ce_api feature toggle enabled" do
       before { FeatureToggle.enable!(:use_ce_api) }
       after { FeatureToggle.disable!(:use_ce_api) }
-
-      let(:fake_document) do
-        Generators::Document.build(id: 201, type: "NOD", series_id: "{ABC-123}")
-      end
 
       it "calls the CE API" do
         expect(VeteranFileFetcher)
@@ -121,6 +121,32 @@ describe ExternalApi::VBMSService do
           .and_return("Pdf Byte String")
 
         described.fetch_document_file(fake_document)
+      end
+
+      context "with check_user_sensitivty feature toggle enabled" do
+        before { FeatureToggle.enable!(:check_user_sensitivity) }
+        after { FeatureToggle.disable!(:check_user_sensitivity) }
+
+        let(:fake_veteran) do
+          Generators::Veteran.build(file_number: fake_document.file_number)
+        end
+
+        let(:current_user) { create(:user) }
+        let(:mock_sensitivity_checker) do
+          instance_double(SensitivityChecker, sensitivity_levels_compatible?: true)
+        end
+
+        it "checks user sensitivity for veteran file access" do
+          RequestStore[:current_user] = current_user
+          expect(Veteran).to receive(:find_by_file_number_or_ssn)
+            .with(fake_veteran.file_number)
+            .and_return(fake_veteran)
+          expect(SensitivityChecker).to receive(:new)
+            .and_return(mock_sensitivity_checker)
+          expect(mock_sensitivity_checker).to receive(:sensitivity_levels_compatible?)
+            .with(veteran: fake_veteran, user: RequestStore[:current_user])
+          described.fetch_document_file(fake_document)
+        end
       end
     end
   end
