@@ -75,7 +75,7 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
   private
 
   def max_appeals_to_move
-    CaseDistributionLever.nonsscavlj_number_of_appeals_to_move
+    @max_appeals || = CaseDistributionLever.nonsscavlj_number_of_appeals_to_move
   end
 
   def move_qualifying_appeals(appeals)
@@ -119,7 +119,7 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
       if tied_appeals_bfkeys.count < max_appeals
         qualifying_appeals_bfkeys.push(tied_appeals_bfkeys)
       else
-        qualifying_appeals_bfkeys.push(tied_appeals_bfkeys[0..max_appeals])
+        qualifying_appeals_bfkeys.push(tied_appeals_bfkeys[0..(max_appeals-1)])
       end
     end
 
