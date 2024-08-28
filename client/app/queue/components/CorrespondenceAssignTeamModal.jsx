@@ -66,7 +66,7 @@ const CorrespondenceAssignTeamModal = (props) => {
 
       // Update the assigned organization
       task.assignedTo = teamAssignedFlag?.label || ''; // Use teamAssignedFlag.label
-      task.instructions = instructions;
+      task.instructions.push(instructions);
 
       // Remove the newly assigned organization from the list
       task.organizations = task.organizations.filter(
