@@ -90,19 +90,6 @@ class AppealsTiedToAvljsAndVljsQuery
         hearing_judge: hearing_judge,
         most_recent_signing_judge: signing_judge,
         bfcurloc: nil
-
-        # docket_number: appeal.docket_number,
-        # docket: sym.to_s,
-        # aod: appeal.aod,
-        # cavc: appeal.cavc,
-        # receipt_date: appeal.receipt_date,
-        # assigned_at: ready_for_distribution_at,
-        # target_distro_date: target_distro_date(appeal.receipt_date, docket),
-        # days_before_goal_date: days_before_goal_date(appeal.receipt_date, docket),
-        # hearing_judge: hearing_judge,
-        # veteran_file_number: appeal.veteran_file_number,
-        # veteran_name: appeal.veteran&.name.to_s,
-        # affinity_start_date: "NA"
       }
     end
   end

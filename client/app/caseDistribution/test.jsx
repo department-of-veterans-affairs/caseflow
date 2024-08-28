@@ -13,7 +13,6 @@ import CaseSearchLink from '../components/CaseSearchLink';
 import ApiUtil from '../util/ApiUtil';
 import Button from '../components/Button';
 import Alert from 'app/components/Alert';
-import uuid from 'uuid';
 import CollapsibleTable from './components/CollapsibleTable';
 
 class CaseDistributionTest extends React.PureComponent {
@@ -150,27 +149,6 @@ class CaseDistributionTest extends React.PureComponent {
         showLegacyAppealsAlert: true,
         legacyAppealsAlertType: 'error',
         legacyAppealsAlertMsg: err
-      });
-    });
-  };
-
-  failReturnLegacyAppealsToBoard = () => {
-    this.setState({ isFailReturnLegacyAppeals: true });
-    ApiUtil.post('/case_distribution_levers_tests/run_return_legacy_appeals_to_board?fail_job=true').then(() => {
-      this.setState({
-        isFailReturnLegacyAppeals: false,
-        showLegacyAppealsAlert: true,
-      });
-    }, (err) => {
-      const id = uuid.v4();
-      const error = JSON.parse(err.response.text).error;
-      const message = `Return Legacy Appeals To Board ${error} UUID: ${id}.`;
-
-      this.setState({
-        isFailReturnLegacyAppeals: false,
-        showLegacyAppealsAlert: true,
-        legacyAppealsAlertType: 'error',
-        legacyAppealsAlertMsg: message
       });
     });
   };
@@ -442,14 +420,6 @@ class CaseDistributionTest extends React.PureComponent {
                                 name="Run ReturnLegacyAppealsToBoard job"
                                 loading={this.state.isReturnLegacyAppeals}
                                 loadingText="Processing ReturnLegacyAppealsToBoard job"
-                              />
-                            </li>
-                            <li>
-                              <Button classNames={['usa-button-case-movement']}
-                                onClick={this.failReturnLegacyAppealsToBoard}
-                                name="Fail - Run ReturnLegacyAppealsToBoard job"
-                                loading={this.state.isFailReturnLegacyAppeals}
-                                loadingText="Fail ReturnLegacyAppealsToBoard job"
                               />
                             </li>
                           </ul>
