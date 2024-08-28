@@ -109,7 +109,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
   end
 
   context "when remove_comp_and_pen feature toggle is enabled and benefit type is compensation or pension" do
-    %w[compensation, pension].each do |benefit_type|
+    %w[compensation pension].each do |benefit_type|
       context "with benefit type as #{benefit_type}" do
         let(:request_issue) do
           create(
