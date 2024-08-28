@@ -91,7 +91,7 @@ describe ScheduleHearingTask, :all_dbs do
             description: "Update",
             values: {
               hearing_day_id: hearing_day.id,
-              scheduled_time_string: "09:00"
+              scheduled_time_string: "09:00 AM America/New_York"
             }
           }
         }
@@ -171,6 +171,21 @@ describe ScheduleHearingTask, :all_dbs do
             expect(AssignHearingDispositionTask.count).to eq(0)
             expect(HearingEmailRecipient.count).to eq(0)
           end
+        end
+      end
+
+      context "for non virtual hearings scheduled by a webex users" do
+        before do
+          hearings_management_user.meeting_type.update!(service_name: "webex")
+        end
+        it "creates a webex conference associated to the hearing" do
+          subject
+          conference_link = ConferenceLink.find_by(hearing_id: Hearing.first.id)
+          expect(Hearing.count).to eq(1)
+          expect(Hearing.first.virtual?).to eq(false)
+          expect(Hearing.first.virtual_hearing).to eq(nil)
+          expect(conference_link.nil?).to eq(false)
+          expect(conference_link.host_link).to include("instant-usgov.webex.com")
         end
       end
 

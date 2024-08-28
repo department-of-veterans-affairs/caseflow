@@ -400,6 +400,7 @@ FactoryBot.define do
       # > overridden parameters in the instance variable @overrides.
       # It's a clean solution that doesn't require updating tests or adding a new transient attribute.
       appeal { @overrides[:parent] ? @overrides[:parent].appeal : create(:appeal) }
+      appeal_type { appeal.class.name }
 
       before :create do |task, _eval|
         task.update(type: task.class.name)
@@ -428,6 +429,11 @@ FactoryBot.define do
 
       factory :supplemental_claim_task, class: DecisionReviewTask do
         appeal { create(:supplemental_claim, benefit_type: "nca") }
+        assigned_by { nil }
+      end
+
+      factory :remand_task, class: DecisionReviewTask do
+        appeal { create(:remand, benefit_type: "nca") }
         assigned_by { nil }
       end
 
@@ -503,6 +509,19 @@ FactoryBot.define do
             :supplemental_claim,
             :with_vha_issue,
             :with_intake,
+            benefit_type: "vha",
+            claimant_type: :veteran_claimant
+          )
+        end
+        assigned_by { nil }
+        assigned_to { VhaBusinessLine.singleton }
+      end
+
+      factory :remand_vha_task, class: DecisionReviewTask do
+        appeal do
+          create(
+            :remand,
+            :with_vha_issue,
             benefit_type: "vha",
             claimant_type: :veteran_claimant
           )
@@ -750,6 +769,33 @@ FactoryBot.define do
       factory :returned_undeliverable_correspondence_mail_task, class: ReturnedUndeliverableCorrespondenceMailTask do
         assigned_to { BvaDispatch.singleton }
         parent { create(:root_task, appeal: appeal) }
+      end
+
+      factory :correspondence_intake_task, class: CorrespondenceIntakeTask do
+        appeal_type { Correspondence.name }
+      end
+
+      factory :review_package_task, class: ReviewPackageTask do
+        appeal { create(:correspondence) }
+        appeal_type { Correspondence.name }
+      end
+
+      factory :merge_package_task, class: MergePackageTask do
+        appeal { create(:correspondence) }
+        appeal_type { Correspondence.name }
+      end
+
+      factory :reassign_package_task, class: ReassignPackageTask do
+        appeal { create(:correspondence) }
+        appeal_type { Correspondence.name }
+      end
+
+      factory :split_package_task, class: SplitPackageTask do
+        appeal { create(:correspondence) }
+        appeal_type { Correspondence.name }
+      end
+
+      factory :efolder_upload_failed_task, class: EfolderUploadFailedTask do
       end
 
       factory :no_show_hearing_task, class: NoShowHearingTask do
