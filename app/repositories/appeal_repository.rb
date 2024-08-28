@@ -856,6 +856,22 @@ class AppealRepository
       end
     end
 
+    def priority_appeals
+      MetricsService.record("VACOLS: priority_appeals",
+                            name: "priority_appeals",
+                            service: :vacols) do
+        VACOLS::CaseDocket.priority_appeals
+      end
+    end
+
+    def nonpriority_appeals
+      MetricsService.record("VACOLS: nonpriority_appeals",
+                            name: "nonpriority_appeals",
+                            service: :vacols) do
+        VACOLS::CaseDocket.nonpriority_appeals
+      end
+    end
+
     private
 
     # NOTE: this should be called within a transaction where you are closing an appeal
