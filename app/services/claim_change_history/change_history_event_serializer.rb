@@ -39,7 +39,12 @@ class ChangeHistoryEventSerializer
       requestor: object.requestor,
       decider: object.decider,
       decidedAtDate: object.decided_at_date,
-      decisionReason: object.decision_reason
+      decisionReason: object.decision_reason,
+      previousIssueType: object.previous_issue_type,
+      previousIssueDescription: object.previous_issue_description,
+      previousDecisionDate: object.previous_decision_date,
+      previousModificationRequestReason: object.previous_modification_request_reason,
+      previousWithdrawalDate: object.previous_withdrawal_date
     }
   end
 end
