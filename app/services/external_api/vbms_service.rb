@@ -3,7 +3,7 @@
 class ExternalApi::VBMSService
   def self.fetch_document_file(document)
     DBService.release_db_connections
-
+    verify_current_user_veteran_file_number_access(document.file_number) unless document.file_number.nil?
     if FeatureToggle.enabled?(:use_ce_api)
       VeteranFileFetcher.get_document_content(doc_series_id: document.series_id)
     else
@@ -323,5 +323,10 @@ class ExternalApi::VBMSService
         user: current_user,
         veteran: veteran
       )
+  end
+
+  def self.verify_current_user_veteran_file_number_access(file_number)
+    veteran = Veteran.find_by_file_number_or_ssn(file_number)
+    verify_current_user_veteran_access(veteran)
   end
 end
