@@ -243,7 +243,7 @@ describe NightlySyncsJob, :all_dbs do
       create_decided_appeal_state_with_case_record_and_hearing(true, false)
     end
 
-    it "Job syncs decided appeals decision_mailed status" do
+    it "Job syncs decided appeals decision_mailed status", bypass_cleaner: true do
       expect([decided_appeal_state,
               undecided_appeal_state,
               missing_vacols_case_appeal_state].all?(&:decision_mailed)).to eq false
@@ -255,7 +255,7 @@ describe NightlySyncsJob, :all_dbs do
       expect(missing_vacols_case_appeal_state.reload.decision_mailed).to eq false
     end
 
-    it "catches standard errors" do
+    it "catches standard errors", bypass_cleaner: true do
       expect([decided_appeal_state,
               undecided_appeal_state,
               missing_vacols_case_appeal_state].all?(&:decision_mailed)).to eq false
@@ -270,6 +270,9 @@ describe NightlySyncsJob, :all_dbs do
       expect(slack_msg.include?(slack_msg_error_text)).to be true
     end
 
+    # Clean up parallel threads
+    after(:each) { clean_up_after_threads }
+
     # VACOLS record's decision date will be set to simulate a decided appeal
     # decision_mailed will be set to false for the AppealState to verify the method
     # functionality
@@ -280,6 +283,10 @@ describe NightlySyncsJob, :all_dbs do
       appeal = create(:legacy_appeal, vacols_case: vacols_case)
 
       appeal.appeal_state.tap { _1.update!(decision_mailed: false) }
+    end
+
+    def clean_up_after_threads
+      DatabaseCleaner.clean_with(:truncation, except: %w[vftypes issref notification_events])
     end
   end
 
