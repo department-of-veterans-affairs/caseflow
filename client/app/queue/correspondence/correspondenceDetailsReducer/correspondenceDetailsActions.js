@@ -26,6 +26,7 @@ export const cancelTaskNotRelatedToAppeal = (taskID, correspondence, payload) =>
           bannerAlert: CORRESPONDENCE_DETAILS_BANNERS.successBanner
         }
       });
+
       dispatch({
         type: ACTIONS.CORRESPONDENCE_INFO,
         payload: {
@@ -38,6 +39,7 @@ export const cancelTaskNotRelatedToAppeal = (taskID, correspondence, payload) =>
       dispatch({
         type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
         payload: {
+          bannerAlert: CORRESPONDENCE_DETAILS_BANNERS.failBanner
         }
       });
       console.error(error);
@@ -72,7 +74,12 @@ export const assignTaskToTeam = (payload, frontendParams, correspondence) => (di
       dispatch({
         type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
         payload: {
-          bannerAlert: CORRESPONDENCE_DETAILS_BANNERS.teamFailBanner
+          bannerAlert: {
+            title: CORRESPONDENCE_DETAILS_BANNERS.teamFailBanner,
+            message: sprintf(CORRESPONDENCE_DETAILS_BANNERS.teamFailBanner,
+              error.response.body.message),
+            type: CORRESPONDENCE_DETAILS_BANNERS.teamFailBanner
+          }
         }
       });
       console.error(error);
