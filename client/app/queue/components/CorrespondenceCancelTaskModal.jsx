@@ -15,7 +15,7 @@ import QueueFlowModal from './QueueFlowModal';
 import {
   setTaskNotRelatedToAppealBanner,
   cancelTaskNotRelatedToAppeal,
-  setShowActionsDropdown } from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
+} from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
 
 /* eslint-disable camelcase */
 const CorrespondenceCancelTaskModal = (props) => {
@@ -89,16 +89,10 @@ const CorrespondenceCancelTaskModal = (props) => {
       submit={submit}
       validateForm={validateForm}
     >
-      {taskData?.modal_body &&
-        <React.Fragment>
-          <div dangerouslySetInnerHTML={{ __html: taskData.modal_body }} />
-          <br />
-        </React.Fragment>
-      }
       {shouldShowTaskInstructions &&
         <TextareaField
           name={taskData?.instructions_label ?? COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}
-          id="taskInstructions"
+          id="cancelTaskInstructions"
           onChange={setInstructions}
           value={instructions}
         />
@@ -111,7 +105,6 @@ const CorrespondenceCancelTaskModal = (props) => {
 
 CorrespondenceCancelTaskModal.propTypes = {
   requestPatch: PropTypes.func,
-  setShowActionsDropdown: PropTypes.func,
   cancelTaskNotRelatedToAppeal: PropTypes.func,
   correspondenceInfo: PropTypes.object,
   task: PropTypes.shape({
@@ -134,14 +127,12 @@ const mapStateToProps = (state, ownProps) => ({
   task: taskById(state, { taskId: ownProps.taskId }),
   taskNotRelatedToAppealBanner: state.correspondenceDetails.bannerAlert,
   correspondenceInfo: state.correspondenceDetails.correspondenceInfo,
-  showActionsDropdown: state.correspondenceDetails.showActionsDropdown,
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestPatch,
   setTaskNotRelatedToAppealBanner,
   cancelTaskNotRelatedToAppeal,
-  setShowActionsDropdown
 }, dispatch);
 
 export default (withRouter(
