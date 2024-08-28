@@ -92,7 +92,7 @@ export const TranscriptionFileDispatchView = () => {
       return (
         <WorkOrderHightlightsModal
           onCancel={closeModal}
-          workOrder="BVA-2024-5001"
+          workOrder="#BVA-2024-5001"
         />
       );
     default: return <></>;

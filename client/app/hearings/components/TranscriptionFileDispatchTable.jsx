@@ -267,5 +267,6 @@ TranscriptionFileDispatchTable.propTypes = {
     })),
   statusFilter: PropTypes.arrayOf(PropTypes.string),
   selectAll: PropTypes.func,
-  selectFilesForPackage: PropTypes.func
+  selectFilesForPackage: PropTypes.func,
+  openModal: PropTypes.func
 };
