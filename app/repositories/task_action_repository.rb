@@ -6,12 +6,12 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       # stubbed
     end
 
-    def assign_corr_task_to_team(task, _user = nil)
-      { modal_title: COPY::ASSIGN_TASK_TITLE,
+    def assign_corr_task_to_team(_task, _user = nil)
+      {
+        modal_title: COPY::ASSIGN_TASK_TITLE,
         modal_body: format(COPY::ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER),
         message_title: format(
-          COPY::CORRESPONDENCE_CASES_ASSIGN_TASK_MODAL_INSTRUCTIONS_TITLE,
-          task.correspondence &.veteran_full_name
+          COPY::CORRESPONDENCE_CASES_ASSIGN_TASK_MODAL_INSTRUCTIONS_TITLE
         ),
         redirect_after: "/queue/correspondence/:correspondence_uuid/"
       }
