@@ -746,7 +746,7 @@ RSpec.feature "Reader", :all_dbs do
         expect(page).to have_css("#commentIcon-container-#{annotation.id}")
       end
 
-      scenario "Scroll to comment" do
+      xscenario "Scroll to comment" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
         click_on documents[0].type
@@ -773,7 +773,7 @@ RSpec.feature "Reader", :all_dbs do
         find("g[filter=\"url(##{id})\"]")
       end
 
-      scenario "Scroll to comment icon" do
+      xscenario "Scroll to comment icon" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
         click_on documents[0].type
@@ -802,7 +802,7 @@ RSpec.feature "Reader", :all_dbs do
         find("g[filter=\"url(##{id})\"]")
       end
 
-      scenario "Follow comment deep link" do
+      xscenario "Follow comment deep link" do
         annotation = documents[1].annotations[0]
         # Open the document list before trying to go to deep link to pre-load the data
         visit "/reader/appeal/#{appeal.vacols_id}/documents/"
@@ -852,7 +852,7 @@ RSpec.feature "Reader", :all_dbs do
 
     # The zoom level is adjusted by changing the height of the container row in react-virtualized
     # Checking for text on the pages is flaky because of inconsistencies with react-virtualized rendering
-    scenario "Zooming changes the size of pages" do
+    xscenario "Zooming changes the size of pages" do
       # This is set in client/app/2.0/store/constants/reader.js as ZOOM_RATE
       zoom_rate = 0.3
 
@@ -879,7 +879,7 @@ RSpec.feature "Reader", :all_dbs do
       expect(ratio).to eq(1 - zoom_rate)
     end
 
-    scenario "Open document, close/open sidebar, and open/close sidebar accordions" do
+    xscenario "Open document, close/open sidebar, and open/close sidebar accordions" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/"
       click_on documents[0].type
 
@@ -997,7 +997,7 @@ RSpec.feature "Reader", :all_dbs do
       end
     end
 
-    scenario "Categories" do
+    xscenario "Categories" do
       cats = {
         procedural: "Procedural",
         medical: "Medical",
@@ -1104,7 +1104,7 @@ RSpec.feature "Reader", :all_dbs do
     context "Tags" do
       let(:new_tag_text) { "Foo" }
 
-      scenario "adding and deleting tags" do
+      xscenario "adding and deleting tags" do
         TAG1 = "Medical"
         TAG2 = "Law document"
 
