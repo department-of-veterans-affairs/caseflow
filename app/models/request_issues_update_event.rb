@@ -140,7 +140,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       next if !request_issue.ineligible_reason.nil?
 
       request_issue.update(ineligible_reason: eligible_to_ineligible_issue.ineligible_reason,
-                           closed_at: Time.at.utc(ineligible_to_ineligible_issue.closed_at / 1000).to_datetime)
+                           closed_at: ineligible_to_ineligible_issue.closed_at)
     end
   end
 
@@ -163,7 +163,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       next if request_issue.ineligible_reason.nil?
 
       request_issue.update(ineligible_reason: ineligible_to_ineligible_issue.ineligible_reason,
-                           closed_at: Time.at.utc(ineligible_to_ineligible_issue.closed_at / 1000).to_datetime)
+                           closed_at: ineligible_to_ineligible_issue.closed_at)
       # closed_at from parser has milliseconds format.
     end
   end

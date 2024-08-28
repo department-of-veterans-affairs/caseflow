@@ -8,6 +8,11 @@ class DecisionReviewUpdatedIssueParser
     @issue = issue
   end
 
+  # this is new vbms_id column added to requestIssues table, come from appeals-consumer as decision_review_issue_id
+  def ri_vbms_id
+    @issue.dig(:decision_review_issue_id)
+  end
+
   def ri_benefit_type
     @issue.dig(:benefit_type)
   end
