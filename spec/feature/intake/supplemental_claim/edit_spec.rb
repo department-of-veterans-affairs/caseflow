@@ -964,4 +964,48 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       expect(page).to have_button("Edit claim label", disabled: true)
     end
   end
+
+  context "When PENSION benefit present disable Edit Claim Label and Add issue buttons on edit page" do
+    before do
+      FeatureToggle.enable!(:remove_comp_and_pen_intake)
+    end
+
+    let(:benefit_type_pension) { "pension" }
+    let!(:supplemental_claim_pension) do
+      SupplementalClaim.create!(
+        veteran_file_number: veteran.file_number,
+        receipt_date: receipt_date,
+        benefit_type: benefit_type_pension,
+        decision_review_remanded: decision_review_remanded,
+        veteran_is_not_claimant: true
+      )
+    end
+
+    let(:request_issue_pension) do
+      create(
+        :request_issue,
+        contested_rating_issue_reference_id: "def456",
+        contested_rating_issue_profile_date: rating.profile_date,
+        decision_review: supplemental_claim_pension,
+        benefit_type: benefit_type_pension,
+        contested_issue_description: "PTSD denied"
+      )
+    end
+
+    before do
+      FeatureToggle.enable!(:remove_comp_and_pen_intake)
+      supplemental_claim_pension.create_issues!([request_issue_pension])
+      supplemental_claim_pension.establish!
+      supplemental_claim_pension.reload
+      request_issue_pension.reload
+    end
+
+    it "Add Issue button is disabled if pension benefit present" do
+      visit "supplemental_claims/#{supplemental_claim_pension.uuid}/edit"
+
+      expect(page).to have_content("Pension")
+      expect(page).to have_button("Add issue", disabled: true)
+      expect(page).to have_button("Edit claim label", disabled: true)
+    end
+  end
 end
