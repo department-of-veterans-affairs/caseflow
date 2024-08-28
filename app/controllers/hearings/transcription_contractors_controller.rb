@@ -7,7 +7,7 @@ class Hearings::TranscriptionContractorsController < ApplicationController
   rescue_from ActionController::ParameterMissing, with: :render_record_not_found
   rescue_from ActiveRecord::RecordInvalid, with: :render_record_invalid
   before_action :verify_transcription_user
-  before_action :verify_access_to_hearings, except: [:available_contractors]
+  before_action :verify_access_to_hearings, except: [:available_contractors, :filterable_contractors]
 
   def index
     respond_to do |format|
@@ -22,6 +22,11 @@ class Hearings::TranscriptionContractorsController < ApplicationController
         render json: { transcription_contractors: transcription_contractor_json }
       end
     end
+  end
+
+  def filterable_contractors
+    contractors = TranscriptionContractor.select(:id, :name)
+    render json: { transcription_contractors: contractors }
   end
 
   def available_contractors

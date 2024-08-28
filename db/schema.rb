@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_07_12_142557) do
+ActiveRecord::Schema.define(version: 2024_08_25_120325) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -730,7 +730,17 @@ ActiveRecord::Schema.define(version: 2024_07_12_142557) do
 
   create_table "distribution_stats", comment: "A database table to store a snapshot of variables used during a case distribution event", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.json "direct_review_priority_stats", comment: "Priority statistics for Direct Review Docket"
+    t.json "direct_review_stats", comment: "Statistics for Direct Review Docket"
     t.bigint "distribution_id", comment: "ID of the associated Distribution"
+    t.json "evidence_submission_priority_stats", comment: "Priority statistics for Evidence Submission Docket"
+    t.json "evidence_submission_stats", comment: "Statistics for Evidence Submission Docket"
+    t.json "hearing_priority_stats", comment: "Priority statistics for Hearings Docket"
+    t.json "hearing_stats", comment: "Statistics for Hearings Docket"
+    t.json "ineligible_judge_stats", comment: "Statistics about appeals tied to ineligible judges"
+    t.json "judge_stats", comment: "Statistics that are specific to judge"
+    t.json "legacy_priority_stats", comment: "Priority statistics for any VACOLS Docket"
+    t.json "legacy_stats", comment: "Statistics for any VACOLS Docket"
     t.json "levers", comment: "Indicates a snapshot of lever values and is_toggle_active for a distribution"
     t.json "statistics", comment: "Indicates a snapshot of variables used during the distribution"
     t.datetime "updated_at", null: false
@@ -1960,6 +1970,7 @@ ActiveRecord::Schema.define(version: 2024_07_12_142557) do
     t.string "hearing_type", null: false, comment: "Type of hearing associated with this record"
     t.datetime "locked_at", comment: "Locked record timeout field"
     t.bigint "locked_by_id", comment: "ID of user who locked the record"
+    t.bigint "transcription_id", comment: "ID of the associated transcription record"
     t.datetime "updated_at", null: false
     t.bigint "updated_by_id", comment: "The user who most recently updated the transcription file"
     t.index ["aws_link"], name: "index_transcription_files_on_aws_link"
@@ -1969,6 +1980,7 @@ ActiveRecord::Schema.define(version: 2024_07_12_142557) do
     t.index ["hearing_id", "hearing_type", "docket_number"], name: "index_transcription_files_on_docket_number_and_hearing"
     t.index ["hearing_id", "hearing_type"], name: "index_transcription_files_on_hearing_id_and_hearing_type"
     t.index ["locked_by_id", "locked_at"], name: "index_transcription_files_locked_by_id_locked_at"
+    t.index ["transcription_id"], name: "index_transcription_files_on_transcription_id"
   end
 
   create_table "transcription_package_hearings", force: :cascade do |t|
