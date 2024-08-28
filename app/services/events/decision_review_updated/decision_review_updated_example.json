@@ -14,6 +14,7 @@
   },
   "added_issues": [
     {
+      "decision_review_issue_id": 1,
       "benefit_type": "compensation",
       "contested_decision_issue_id": 201,
       "contested_issue_description": "Service connection for PTSD",
@@ -39,6 +40,7 @@
       "rating_issue_associated_at": 1625076000,
       "nonrating_issue_bgs_id": "13",
       "nonrating_issue_bgs_source": "CORP_AWARD_ATTORNEY_FEE",
+      "type": "RequestIssue",
       "decision":[
         {
           "id": 1738,
