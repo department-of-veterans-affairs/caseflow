@@ -31,8 +31,8 @@ MB_TOKEN=$(curl -s -X POST \
         "password": "'${ADMIN_PASSWORD}'"
     },
     "prefs": {
-        "allow_tracking": false,
-        "site_name": "Metawhat"
+      "allow_tracking": false,
+      "site_name": "Caseflow"
     }
 }' | jq -r '.id')
 
@@ -55,19 +55,28 @@ curl -X POST http://localhost:3002/api/database \
   -H "X-Metabase-Session: ${ADMIN_SESSION_ID}" \
   -d '{
     "engine": "postgres",
-    "name":"Caseflow DB",
+    "name": "Caseflow DB",
     "details": {
       "host": "'${CASEFLOW_HOST}'", "port":"5432", "db": "caseflow_certification_development", "user": "postgres", "password": "postgres"
     }
   }'
 
 echo -e "\nCreating VACOLS Database connection"
-echo "Not yet implemented"
+curl -X POST http://localhost:3002/api/database \
+  -H "Content-type: application/json" \
+  -H "X-Metabase-Session: ${ADMIN_SESSION_ID}" \
+  -d '{
+    "engine": "oracle",
+    "name": "VACOLS",
+    "details": {
+      "host": "'${VACOLS_HOST}'", "port": "1521", "sid": "BVAP", "name": "VACOLS_DEV", "user": "VACOLS_DEV", "password": "VACOLS_DEV"
+    }
+  }'
 
 echo -e "\n👥 Creating a basic user: "
 curl -s "http://localhost:3002/api/user" \
     -H 'Content-Type: application/json' \
     -H "X-Metabase-Session: ${ADMIN_SESSION_ID}" \
-    -d '{"first_name":"Caseflow","last_name":"User","email":"'${USER_EMAIL}'","login_attributes":{"region_filter":"WA"},"password":"'${USER_PASSWORD}'"}'
+    -d '{"first_name": "Caseflow", "last_name": "User", "email": "'${USER_EMAIL}'", "login_attributes": {"region_filter": "WA"}, "password":"'${USER_PASSWORD}'"}'
 
 echo -e "\n👥 Basic user created!"

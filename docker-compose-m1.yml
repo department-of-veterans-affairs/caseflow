@@ -31,7 +31,8 @@ services:
   appeals-metabase:
     platform: linux/amd64
     container_name: metabase
-    image: metabase/metabase:v0.50.21
+    build:
+      context: metabase
     ports:
       - "3002:3000"
 
