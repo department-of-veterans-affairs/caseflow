@@ -135,7 +135,11 @@ feature "Supplemental Claim Edit issues", :all_dbs do
         it "automatically removes issues" do
           visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
 
-          expect(page).to have_selector(".cf-select--is-disabled")
+          disabled_status = page.evaluate_script("document.getElementById('issue-action-0').disabled")
+
+          expect(disabled_status).to be true
+          expect(page).to have_css(".cf-select--is-disabled")
+          expect(page).to have_css(".cf-select__control--is-disabled")
         end
       end
     end

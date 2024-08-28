@@ -223,7 +223,11 @@ feature "Higher Level Review Edit issues", :all_dbs do
         it "prevents removal of request issue" do
           visit "higher_level_reviews/#{another_higher_level_review.uuid}/edit"
 
-          expect(page).to have_selector(".cf-select--is-disabled")
+          disabled_status = page.evaluate_script("document.getElementById('issue-action-0').disabled")
+
+          expect(disabled_status).to be true
+          expect(page).to have_css(".cf-select--is-disabled")
+          expect(page).to have_css(".cf-select__control--is-disabled")
         end
       end
     end
