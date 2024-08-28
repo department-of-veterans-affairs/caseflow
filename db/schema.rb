@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_08_25_120325) do
+ActiveRecord::Schema.define(version: 2024_08_27_160514) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1089,6 +1089,8 @@ ActiveRecord::Schema.define(version: 2024_08_25_120325) do
     t.boolean "prepped", comment: "Determines whether the judge has checked the hearing as prepped"
     t.string "representative_name", comment: "Name of Appellant's representative if applicable"
     t.string "room", comment: "The room at BVA where the hearing will take place; ported from associated HearingDay"
+    t.datetime "scheduled_datetime", comment: "Timestamp with zone datatype a hearing is scheduled to take place in UTC. Intended to eventually replace scheduled_time column."
+    t.string "scheduled_in_timezone", comment: "Named TZ string that the hearing will have to provide accurate hearing times."
     t.time "scheduled_time", null: false, comment: "Date and Time when hearing will take place"
     t.text "summary", comment: "Summary of hearing"
     t.boolean "transcript_requested", comment: "Determines whether the veteran/appellant has requested the hearing transcription"
@@ -1288,6 +1290,7 @@ ActiveRecord::Schema.define(version: 2024_08_25_120325) do
     t.string "military_service", comment: "Periods and circumstances of military service"
     t.string "original_vacols_request_type", comment: "The original request type of the hearing in VACOLS, before it was changed to Virtual"
     t.boolean "prepped", comment: "Determines whether the judge has checked the hearing as prepped"
+    t.string "scheduled_in_timezone", comment: "Named TZ string that the legacy hearing will have to provide accurate hearing times."
     t.text "summary", comment: "Summary of hearing"
     t.datetime "updated_at", comment: "Timestamp when record was last updated."
     t.bigint "updated_by_id", comment: "The ID of the user who most recently updated the Legacy Hearing"
@@ -1959,17 +1962,20 @@ ActiveRecord::Schema.define(version: 2024_08_25_120325) do
     t.datetime "created_at", null: false
     t.bigint "created_by_id", comment: "The user who created the transcription record"
     t.datetime "date_converted", comment: "Timestamp when file was converted from vtt to rtf"
-    t.datetime "date_receipt_webex", comment: "Timestamp when file was added to webex"
+    t.datetime "date_receipt_recording", comment: "Timestamp when file was added to webex"
+    t.datetime "date_returned_box", comment: "Timestamp when file was added to the Box.com return folder by a QAT contractor. Used for performance metrics."
     t.datetime "date_upload_aws", comment: "Timestamp when file was loaded to AWS"
     t.datetime "date_upload_box", comment: "Timestamp when file was added to box"
-    t.string "docket_number", null: false, comment: "Docket number of associated hearing"
+    t.string "docket_number", comment: "Docket number of associated hearing"
     t.string "file_name", null: false, comment: "File name, with extension, of the transcription file migrated by caseflow"
     t.string "file_status", comment: "Status of the file, could be one of nil, 'Successful retrieval (Webex), Failed retrieval (Webex), Sucessful conversion, Failed conversion, Successful upload (AWS), Failed upload (AWS)'"
     t.string "file_type", null: false, comment: "One of mp4, vtt, mp3, rtf, pdf, xls"
-    t.bigint "hearing_id", null: false, comment: "ID of the hearing associated with this record"
-    t.string "hearing_type", null: false, comment: "Type of hearing associated with this record"
+    t.bigint "hearing_id", comment: "ID of the hearing associated with this record"
+    t.string "hearing_type", comment: "Type of hearing associated with this record"
     t.datetime "locked_at", comment: "Locked record timeout field"
     t.bigint "locked_by_id", comment: "ID of user who locked the record"
+    t.string "recording_task_number", comment: "Number associated with recording, is the created id from the recording system"
+    t.string "recording_transcriber", comment: "Contractor who created the closed caption transcription for the recording; i.e, 'Webex'"
     t.bigint "transcription_id", comment: "ID of the associated transcription record"
     t.datetime "updated_at", null: false
     t.bigint "updated_by_id", comment: "The user who most recently updated the transcription file"
