@@ -96,7 +96,8 @@ class UnidentifiedIssuesModal extends React.Component {
 
     // if Decision date is not required then we need to verify if there is any error in the decision date field
     // this.errorOnDecisionDate returns null if no error is present.
-    return !descriptionIsValid || (isDecisionDateRequired ? !decisionDateIsValid : this.errorOnDecisionDate(this.state.decisionDate));
+    return !descriptionIsValid ||
+      (isDecisionDateRequired ? !decisionDateIsValid : this.errorOnDecisionDate(this.state.decisionDate));
   }
 
   getModalButtons() {
