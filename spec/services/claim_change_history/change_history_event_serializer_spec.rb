@@ -36,7 +36,7 @@ describe ChangeHistoryEventSerializer do
     ClaimHistoryService.new(vha_org, task_id: vha_task.id).build_events
   end
 
-  let(:issue_modification_request_details) do
+  let(:modificationRequestDetailsObject) do
     {
       benefitType: "vha",
       requestType: nil,
@@ -45,6 +45,11 @@ describe ChangeHistoryEventSerializer do
       newDecisionDate: nil,
       newIssueDescription: nil,
       newIssueType: nil,
+      previousDecisionDate: nil,
+      previousIssueDescription: nil,
+      previousIssueType: nil,
+      previousModificationRequestReason: nil,
+      previousWithdrawalDate: nil,
       removeOriginalIssue: nil,
       issueModificationRequestStatus: nil,
       requestor: nil,
@@ -78,7 +83,7 @@ describe ChangeHistoryEventSerializer do
               issueType: nil,
               withdrawalRequestDate: nil
             },
-          modificationRequestDetails: issue_modification_request_details
+          modificationRequestDetails: modificationRequestDetailsObject
         }
       },
       {
@@ -99,7 +104,7 @@ describe ChangeHistoryEventSerializer do
             issueType: "Other",
             withdrawalRequestDate: nil
           },
-          modificationRequestDetails: issue_modification_request_details,
+          modificationRequestDetails: modificationRequestDetailsObject,
           eventDate: events[1].event_date,
           eventType: :added_issue,
           eventUser: "L. Roth",

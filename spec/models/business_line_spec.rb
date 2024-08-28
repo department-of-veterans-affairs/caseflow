@@ -490,14 +490,16 @@ describe BusinessLine do
       create(:issue_modification_request,
              :with_higher_level_review,
              :edit_of_request,
-             nonrating_issue_category: "Medical and Dental Care Reimbursement")
+             nonrating_issue_category: "Medical and Dental Care Reimbursement",
+             nonrating_issue_description: "Reimbursement note description")
     end
 
     let!(:sc_task_with_imr) do
       create(:issue_modification_request,
              :with_supplemental_claim,
              :edit_of_request,
-             nonrating_issue_category: "Medical and Dental Care Reimbursement")
+             nonrating_issue_category: "Medical and Dental Care Reimbursement",
+             nonrating_issue_description: "Reimbursement note description")
     end
     let(:decision_issue) { create(:decision_issue, disposition: "denied", benefit_type: hlr_task.appeal.benefit_type) }
     let(:intake_user) { create(:user, full_name: "Alexander Dewitt", css_id: "ALEXVHA", station_id: "103") }
@@ -602,7 +604,7 @@ describe BusinessLine do
     let(:imr_hlr_expectation) do
       a_hash_including(
         "requested_issue_type" => "Medical and Dental Care Reimbursement",
-        "requested_issue_description" => nil,
+        "requested_issue_description" => "Reimbursement note description",
         "remove_original_issue" => false,
         "modification_request_reason" => "I edited this request.",
         "request_type" => "addition",
@@ -613,7 +615,7 @@ describe BusinessLine do
     let(:imr_sc_expectation) do
       a_hash_including(
         "requested_issue_type" => "Medical and Dental Care Reimbursement",
-        "requested_issue_description" => nil,
+        "requested_issue_description" => "Reimbursement note description",
         "remove_original_issue" => false,
         "modification_request_reason" => "I edited this request.",
         "request_type" => "addition",
