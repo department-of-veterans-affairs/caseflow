@@ -1,5 +1,6 @@
 import { css } from 'glamor';
 import React from 'react';
+import { connect } from 'react-redux';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import Button from '../../components/Button';
@@ -318,6 +319,13 @@ CorrespondenceTaskRows.propTypes = {
   hideDropdown: PropTypes.bool,
   taskList: PropTypes.array,
   timeline: PropTypes.bool,
+  showActionsDropdown: PropTypes.bool,
 };
 
-export default CorrespondenceTaskRows;
+const mapStateToProps = (state) => ({
+  showActionsDropdown: state.correspondenceDetails.showActionsDropdown,
+});
+
+export default connect(
+  mapStateToProps,
+)(CorrespondenceTaskRows);
