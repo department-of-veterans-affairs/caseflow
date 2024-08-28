@@ -243,7 +243,6 @@ class NonratingRequestIssueModal extends React.Component {
     const { category } = this.state;
     const { featureToggles } = this.props;
 
-
     const options = intakeData.activeNonratingRequestIssues.
       filter((issue) => {
         if (featureToggles.displayNonFilteredCategories) {
