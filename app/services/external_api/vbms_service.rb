@@ -39,6 +39,8 @@ class ExternalApi::VBMSService
   end
 
   def self.fetch_documents_for(appeal, _user = nil)
+    verify_current_user_veteran_access(appeal.veteran)
+
     if FeatureToggle.enabled?(:use_ce_api)
       response = VeteranFileFetcher.fetch_veteran_file_list(veteran_file_number: appeal.veteran_file_number)
       documents = JsonApiResponseAdapter.new.adapt_fetch_document_series_for(response)
@@ -53,6 +55,8 @@ class ExternalApi::VBMSService
   end
 
   def self.fetch_document_series_for(appeal)
+    verify_current_user_veteran_access(appeal.veteran)
+
     if FeatureToggle.enabled?(:use_ce_api)
       response = VeteranFileFetcher.fetch_veteran_file_list(veteran_file_number: appeal.veteran_file_number)
       JsonApiResponseAdapter.new.adapt_fetch_document_series_for(response)
@@ -335,7 +339,7 @@ class ExternalApi::VBMSService
 
     current_user = RequestStore[:current_user]
 
-    fail "User does not have permission to access this information" unless
+    fail BGS::SensitivityLevelCheckFailure, "User does not have permission to access this information" unless
       SensitivityChecker.new(current_user).sensitivity_levels_compatible?(
         user: current_user,
         veteran: veteran
