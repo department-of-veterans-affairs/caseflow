@@ -74,12 +74,12 @@ describe ExternalApi::VBMSService do
     end
   end
 
-  describe ".fetch_document_series_for" do
-    let(:mock_json_adapter) { instance_double(JsonApiResponseAdapter) }
+  describe ".fetch_documents_for" do
+    let(:mock_vbms_document_series_for_appeal) { instance_double(ExternalApi::VbmsDocumentsForAppeal) }
     let!(:appeal) { create(:appeal) }
 
     before do
-      allow(JsonApiResponseAdapter).to receive(:new).and_return(mock_json_adapter)
+      allow(ExternalApi::VbmsDocumentsForAppeal).to receive(:new).and_return(mock_vbms_document_series_for_appeal)
     end
 
     context "with use_ce_api feature toggle enabled" do
@@ -90,7 +90,17 @@ describe ExternalApi::VBMSService do
         expect(VeteranFileFetcher).to receive(:fetch_veteran_file_list)
           .with(veteran_file_number: appeal.veteran_file_number)
         expect(mock_json_adapter).to receive(:adapt_fetch_document_series_for).and_return([])
-        described.fetch_document_series_for(appeal)
+        described.fetch_documents_for(appeal)
+      end
+    end
+
+    context "with use_ce_api feature toggle disabled" do
+      it "calls the VbmsDocumentsForAppeal service" do
+        expect(FeatureToggle).to receive(:enabled?).with(:check_user_sensitivity).and_return(false)
+        expect(FeatureToggle).to receive(:enabled?).with(:use_ce_api).and_return(false)
+        expect(ExternalApi::VbmsDocumentsForAppeal).to receive(:new).with(file_number: appeal.veteran_file_number)
+        expect(mock_vbms_document_series_for_appeal).to receive(:fetch)
+        described.fetch_documents_for(appeal)
       end
     end
   end
