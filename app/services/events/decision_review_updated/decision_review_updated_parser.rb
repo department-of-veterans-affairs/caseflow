@@ -55,14 +55,6 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedParser
     @payload[:station]
   end
 
-  def claim_review_auto_remand
-    @payload.dig(:claim_review, :auto_remand)
-  end
-
-  def claim_review_remand_source_id
-    @payload.dig(:claim_review, :remand_source_id)
-  end
-
   def claim_review_informal_conference
     @payload.dig(:claim_review, :informal_conference)
   end
@@ -83,111 +75,31 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedParser
     @payload.dig(:end_product_establishments, :reference_id)
   end
 
-  def request_issues
-    @payload[:request_issues] || []
+  def added_issues
+    @payload[:added_issues] || []
   end
 
-  def request_issues_id
-    request_issues.map { |issue| issue[:id] }
+  def updated_issues
+    @payload[:updated_issues] || []
   end
 
-  def request_issues_benefit_type
-    request_issues.map { |issue| issue[:benefit_type] }
+  def eligible_to_ineligible_issues
+    @payload[:eligible_to_ineligible_issues] || []
   end
 
-  def request_issues_closed_at
-    request_issues.map { |issue| issue[:closed_at] }
+  def ineligible_to_eligible_issues
+    @payload[:ineligible_to_eligible_issues] || []
   end
 
-  def request_issues_closed_status
-    request_issues.map { |issue| issue[:closed_status] }
+  def ineligible_to_ineligible_issues
+    @payload[:ineligible_to_ineligible_issues] || []
   end
 
-  def request_issues_contention_reference_id
-    request_issues.map { |issue| issue[:contention_reference_id] }
+  def withdrawn_issues
+    @payload[:withdrawn_issues] || []
   end
 
-  def request_issues_contested_issue_description
-    request_issues.map { |issue| issue[:contested_issue_description] }
-  end
-
-  def request_issues_contested_rating_issue_diagnostic_code
-    request_issues.map { |issue| issue[:contested_rating_issue_diagnostic_code] }
-  end
-
-  def request_issues_contested_rating_issue_reference_id
-    request_issues.map { |issue| issue[:contested_rating_issue_reference_id] }
-  end
-
-  def request_issues_contested_rating_issue_profile_date
-    request_issues.map { |issue| issue[:contested_rating_issue_profile_date] }
-  end
-
-  def request_issues_contested_decision_issue_id
-    request_issues.map { |issue| issue[:contested_decision_issue_id] }
-  end
-
-  def request_issues_decision_date
-    request_issues.map { |issue| issue[:decision_date] }
-  end
-
-  def request_issues_ineligible_due_to_id
-    request_issues.map { |issue| issue[:ineligible_due_to_id] }
-  end
-
-  def request_issues_ineligible_reason
-    request_issues.map { |issue| issue[:ineligible_reason] }
-  end
-
-  def request_issues_is_unidentified
-    request_issues.map { |issue| issue[:is_unidentified] }
-  end
-
-  def request_issues_unidentified_issue_text
-    request_issues.map { |issue| issue[:unidentified_issue_text] }
-  end
-
-  def request_issues_nonrating_issue_category
-    request_issues.map { |issue| issue[:nonrating_issue_category] }
-  end
-
-  def request_issues_nonrating_issue_description
-    request_issues.map { |issue| issue[:nonrating_issue_description] }
-  end
-
-  def request_issues_nonrating_issue_bgs_id
-    request_issues.map { |issue| issue[:nonrating_issue_bgs_id] }
-  end
-
-  def request_issues_nonrating_issue_bgs_source
-    request_issues.map { |issue| issue[:nonrating_issue_bgs_source] }
-  end
-
-  def request_issues_ramp_claim_id
-    request_issues.map { |issue| issue[:ramp_claim_id] }
-  end
-
-  def request_issues_rating_issue_associated_at
-    request_issues.map { |issue| issue[:rating_issue_associated_at] }
-  end
-
-  def request_issues_untimely_exemption
-    request_issues.map { |issue| issue[:untimely_exemption] }
-  end
-
-  def request_issues_untimely_exemption_notes
-    request_issues.map { |issue| issue[:untimely_exemption_notes] }
-  end
-
-  def request_issues_vacols_id
-    request_issues.map { |issue| issue[:vacols_id] }
-  end
-
-  def request_issues_vacols_sequence_id
-    request_issues.map { |issue| issue[:vacols_sequence_id] }
-  end
-
-  def request_issues_veteran_participant_id
-    request_issues.map { |issue| issue[:veteran_participant_id] }
+  def removed_issues
+    @payload[:removed_issues] || []
   end
 end
