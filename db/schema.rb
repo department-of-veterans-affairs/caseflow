@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_08_05_162358) do
+ActiveRecord::Schema.define(version: 2024_08_28_165652) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1963,8 +1963,8 @@ ActiveRecord::Schema.define(version: 2024_08_05_162358) do
     t.bigint "issue_id", null: false, comment: "ID of the issue that was changed"
     t.boolean "mst_from_vbms", comment: "Indication that the MST status originally came from VBMS on intake"
     t.string "mst_reason_for_change", comment: "Reason for changing the MST status on an issue"
-    t.boolean "original_mst_status", null: false, comment: "Original MST special issue status of the issue"
-    t.boolean "original_pact_status", null: false, comment: "Original PACT special issue status of the issue"
+    t.boolean "original_mst_status", comment: "Original MST special issue status of the issue"
+    t.boolean "original_pact_status", comment: "Original PACT special issue status of the issue"
     t.boolean "pact_from_vbms"
     t.string "pact_reason_for_change", comment: "Reason for changing the PACT status on an issue"
     t.bigint "task_id", null: false, comment: "Task ID of the IssueUpdateTask or EstablishmentTask used to log this issue in the case timeline"
