@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+require 'rails_helper'
+require_relative '../../app/jobs/hearings/va_box_upload_job'
 
 describe TranscriptionPackages do
   describe "#call" do
@@ -30,12 +32,17 @@ describe TranscriptionPackages do
         )
       end
 
-      it "Call to Call method " do
+      it "Call to call method" do
         allow_any_instance_of(TranscriptionPackages).to receive(:create_zip_file).and_return(true)
         allow_any_instance_of(TranscriptionPackages).to receive(:create_bom_file).and_return(true)
         allow_any_instance_of(TranscriptionPackages).to receive(:create_transcription_package).and_return(true)
         allow_any_instance_of(TranscriptionPackages).to receive(:upload_transcription_package).and_return(true)
         expect { subject.call }.not_to raise_error
+      end
+
+      it "Call to upload_transcription_package method" do
+        expect(VaBoxUploadJob).to receive(:perform_now).with(work_order_params)
+        subject.upload_transcription_package
       end
     end
   end
