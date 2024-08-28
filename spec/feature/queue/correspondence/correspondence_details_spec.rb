@@ -188,15 +188,15 @@ RSpec.feature("The Correspondence Details page") do
       )
     end
 
-    it "checks that FOIA request task can been cancelled." do
+    it "checks that Other Motion task can be cancelled." do
       visit "/queue/correspondence/#{@correspondence.uuid}"
       click_dropdown(prompt: "Select an action", text: "Cancel task")
       find(".cf-form-textarea", match: :first).fill_in with: "Cancel task test"
       click_button "Cancel-Task-button-id-1"
-      expect(page).to have_content("FOIA request task has been cancelled.")
+      expect(page).to have_content("Other Motion task has been cancelled.")
     end
 
-    it "checks that other motion task can be completed." do
+    it "checks that Other Motion task can be completed." do
       visit "/queue/correspondence/#{@correspondence.uuid}"
       click_dropdown(prompt: "Select an action", text: "Mark task complete")
       find(".cf-form-textarea", match: :first).fill_in with: "Complete task test"
