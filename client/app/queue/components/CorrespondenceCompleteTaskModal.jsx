@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { get } from 'lodash';
 
 import { taskById } from '../selectors';
 import { requestPatch } from '../uiReducer/uiActions';
@@ -22,28 +21,7 @@ const CorrespondenceCompleteTaskModal = (props) => {
   const { task } = props;
   const taskData = taskActionData(props);
 
-  // Show task instructions by default
-  const shouldShowTaskInstructions = get(taskData, 'show_instructions', true);
-
   const [instructions, setInstructions] = useState('');
-  const [instructionsAdded, setInstructionsAdded] = useState(true);
-
-  useEffect(() => {
-    // Handle document search position
-    if (instructions.length > 0) {
-      setInstructionsAdded(false);
-    } else {
-      setInstructionsAdded(true);
-    }
-  }, [instructions]);
-
-  const validateForm = () => {
-    if (!shouldShowTaskInstructions) {
-      return true;
-    }
-
-    return instructions.length > 0;
-  };
 
   const submit = () => {
 
@@ -92,7 +70,6 @@ const CorrespondenceCompleteTaskModal = (props) => {
     'HearingPostponementRequestMailTask'
   ].includes(task?.type) || task?.appeal.hasCompletedSctAssignTask) {
     modalProps.submitButtonClassNames = ['usa-button'];
-    modalProps.submitDisabled = !validateForm();
   }
 
   return (
@@ -100,10 +77,8 @@ const CorrespondenceCompleteTaskModal = (props) => {
       {...modalProps}
       title={COPY.MARK_TASK_COMPLETE_TITLE}
       button={COPY.MARK_TASK_COMPLETE_BUTTON}
-      submitDisabled={instructionsAdded}
       pathAfterSubmit={taskData?.redirect_after ?? `/queue/correspondence/${props.correspondence_uuid}`}
       submit={submit}
-      validateForm={validateForm}
     >
       {taskData?.modal_body &&
         <React.Fragment>
@@ -111,15 +86,13 @@ const CorrespondenceCompleteTaskModal = (props) => {
           <br />
         </React.Fragment>
       }
-      {shouldShowTaskInstructions &&
-        <TextareaField
-          name={taskData?.instructions_label ?? COPY.CORRESPONDENCE_OTHER_MOTION_MODAL_DETAIL}
-          id="taskInstructions"
-          optional
-          onChange={setInstructions}
-          value={instructions}
-        />
-      }
+      <TextareaField
+        name={taskData?.instructions_label ?? COPY.CORRESPONDENCE_OTHER_MOTION_MODAL_DETAIL}
+        id="taskInstructions"
+        optional
+        onChange={setInstructions}
+        value={instructions}
+      />
     </QueueFlowModal>
   );
 
