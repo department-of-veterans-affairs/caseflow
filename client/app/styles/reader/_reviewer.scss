@@ -583,16 +583,19 @@ input[type='search'].cf-search-input-with-close {
   margin: 0 0 0 18px;
 }
 
+// scss-lint:disable IdSelector
 #prototype-reader {
   display: flex;
 }
 
+// scss-lint:disable IdSelector
 #prototype-reader-main {
   height: 100%;
   position: relative;
   flex: 1;
 }
 
+// scss-lint:disable IdSelector
 #prototype-sidebar {
   flex: 0 0 20em;
   display: flex;
@@ -604,6 +607,7 @@ input[type='search'].cf-search-input-with-close {
   max-width: 20em;
 }
 
+// scss-lint:disable IdSelector
 #prototype-toolbar {
   overflow: hidden;
   display: flex;
@@ -613,6 +617,7 @@ input[type='search'].cf-search-input-with-close {
   }
 }
 
+// scss-lint:disable IdSelector
 #prototype-footer {
   position: absolute;
   bottom: 0;
@@ -627,12 +632,11 @@ input[type='search'].cf-search-input-with-close {
   }
 }
 
-//TODO inline style instead?
 .prototype-page-number-input {
   display: inline-block;
 }
 
-//TODO rename
+// scss-lint:disable IdSelector
 #pdfContainer {
   position: relative;
   display: flex;
@@ -649,15 +653,16 @@ input[type='search'].cf-search-input-with-close {
 }
 
 .prototype-canvas {
-  background-color: white;
+  background-color: $white-background;
   display: inline-block;
   position: relative;
 }
+
 .prototype-mark {
-  & mark {
-    background-color: #fad980;
+  mark {
+    background-color: $prototype-mark;
     &.highlighted {
-      background-color: #94bfa2;
+      background-color: $prototype-highlight;
     }
   }
 }
