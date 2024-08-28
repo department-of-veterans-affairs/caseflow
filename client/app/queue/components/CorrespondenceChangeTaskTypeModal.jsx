@@ -107,6 +107,7 @@ CorrespondenceChangeTaskTypeModal.propTypes = {
     title: PropTypes.string,
     detail: PropTypes.string
   }),
+  correspondenceInfo: PropTypes.object,
   requestPatch: PropTypes.func,
   setShowActionsDropdown: PropTypes.func,
   changeTaskTypeNotRelatedToAppeal: PropTypes.func,
