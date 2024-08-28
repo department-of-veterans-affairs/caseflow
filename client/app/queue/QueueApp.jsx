@@ -119,7 +119,7 @@ import EditPOAInformation from './editPOAInformation/EditPOAInformation';
 import NotificationsView from './NotificationsView';
 import CavcDashboard from './cavcDashboard/CavcDashboard';
 import CorrespondenceDetails from './correspondence/details/CorrespondenceDetails';
-import CorrespondenceChangeTaskTypeModal from "app/queue/components/CorrespondenceChangeTaskTypeModal";
+import CorrespondenceChangeTaskTypeModal from 'app/queue/components/CorrespondenceChangeTaskTypeModal';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {

@@ -9,7 +9,7 @@ class OtherMotionCorrespondenceTask < CorrespondenceMailTask
   def available_actions(_user)
     [
       Constants.TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.to_h,
-      Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
+      Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h
     ]
   end
 end

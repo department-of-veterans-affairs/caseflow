@@ -7,15 +7,15 @@ import { requestPatch } from '../uiReducer/uiActions';
 import { marginTop } from '../constants';
 import { taskActionData } from '../utils';
 import QueueFlowModal from '../components/QueueFlowModal';
-import TextareaField from "app/components/TextareaField";
-import SearchableDropdown from "app/components/SearchableDropdown";
-import Alert from "app/components/Alert";
+import TextareaField from 'app/components/TextareaField';
+import SearchableDropdown from 'app/components/SearchableDropdown';
+import Alert from 'app/components/Alert';
 import COPY from '../../../COPY';
 import {
   changeTaskTypeNotRelatedToAppeal,
   setShowActionsDropdown,
   setTaskNotRelatedToAppealBanner
-} from "app/queue/correspondence/correspondenceDetailsReducer/correspondenceDetailsActions";
+} from 'app/queue/correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
 
 const CorrespondenceChangeTaskTypeModal = (props) => {
   const { error } = props;
