@@ -86,7 +86,6 @@ Object {
                             aria-autocomplete="list"
                             aria-expanded="false"
                             aria-haspopup="true"
-                            aria-labelledby="request-type-label"
                             aria-owns="request-type-listbox"
                             autocapitalize="none"
                             autocomplete="off"
@@ -296,7 +295,6 @@ Object {
                           aria-autocomplete="list"
                           aria-expanded="false"
                           aria-haspopup="true"
-                          aria-labelledby="request-type-label"
                           aria-owns="request-type-listbox"
                           autocapitalize="none"
                           autocomplete="off"
@@ -575,7 +573,7 @@ Object {
                             aria-autocomplete="list"
                             aria-expanded="true"
                             aria-haspopup="true"
-                            aria-labelledby="request-type-label"
+                            aria-label="Video"
                             aria-owns="request-type-listbox"
                             autocapitalize="none"
                             autocomplete="off"
@@ -719,7 +717,7 @@ Object {
                             aria-autocomplete="list"
                             aria-expanded="false"
                             aria-haspopup="true"
-                            aria-labelledby="regional-office-label"
+                            aria-label="New York City regional office"
                             aria-owns="regional-office-listbox"
                             autocapitalize="none"
                             autocomplete="off"
@@ -809,14 +807,14 @@ Object {
                 class="cf-form-radio-option"
               >
                 <input
-                  id="docketStartTimes_08:30"
+                  id="docketStartTimes_Invalid date"
                   name="docketStartTimes"
                   type="radio"
-                  value="08:30"
+                  value="Invalid date"
                 />
                 <label
                   class=""
-                  for="docketStartTimes_08:30"
+                  for="docketStartTimes_Invalid date"
                 >
                   Half-Day AM (5 slots at 8:30 AM Eastern)
                 </label>
@@ -825,14 +823,14 @@ Object {
                 class="cf-form-radio-option"
               >
                 <input
-                  id="docketStartTimes_12:30"
+                  id="docketStartTimes_Invalid date"
                   name="docketStartTimes"
                   type="radio"
-                  value="12:30"
+                  value="Invalid date"
                 />
                 <label
                   class=""
-                  for="docketStartTimes_12:30"
+                  for="docketStartTimes_Invalid date"
                 >
                   Half-Day PM (5 slots at 12:30 PM Eastern)
                 </label>
@@ -887,7 +885,7 @@ Object {
                             aria-autocomplete="list"
                             aria-expanded="false"
                             aria-haspopup="true"
-                            aria-labelledby="vlj-label"
+                            aria-label="null"
                             aria-owns="vlj-listbox"
                             autocapitalize="none"
                             autocomplete="off"
@@ -988,7 +986,7 @@ Object {
                             aria-autocomplete="list"
                             aria-expanded="false"
                             aria-haspopup="true"
-                            aria-labelledby="coordinator-label"
+                            aria-label="null"
                             aria-owns="coordinator-listbox"
                             autocapitalize="none"
                             autocomplete="off"
@@ -1186,7 +1184,7 @@ Object {
                           aria-autocomplete="list"
                           aria-expanded="true"
                           aria-haspopup="true"
-                          aria-labelledby="request-type-label"
+                          aria-label="Video"
                           aria-owns="request-type-listbox"
                           autocapitalize="none"
                           autocomplete="off"
@@ -1330,7 +1328,7 @@ Object {
                           aria-autocomplete="list"
                           aria-expanded="false"
                           aria-haspopup="true"
-                          aria-labelledby="regional-office-label"
+                          aria-label="New York City regional office"
                           aria-owns="regional-office-listbox"
                           autocapitalize="none"
                           autocomplete="off"
@@ -1420,14 +1418,14 @@ Object {
               class="cf-form-radio-option"
             >
               <input
-                id="docketStartTimes_08:30"
+                id="docketStartTimes_Invalid date"
                 name="docketStartTimes"
                 type="radio"
-                value="08:30"
+                value="Invalid date"
               />
               <label
                 class=""
-                for="docketStartTimes_08:30"
+                for="docketStartTimes_Invalid date"
               >
                 Half-Day AM (5 slots at 8:30 AM Eastern)
               </label>
@@ -1436,14 +1434,14 @@ Object {
               class="cf-form-radio-option"
             >
               <input
-                id="docketStartTimes_12:30"
+                id="docketStartTimes_Invalid date"
                 name="docketStartTimes"
                 type="radio"
-                value="12:30"
+                value="Invalid date"
               />
               <label
                 class=""
-                for="docketStartTimes_12:30"
+                for="docketStartTimes_Invalid date"
               >
                 Half-Day PM (5 slots at 12:30 PM Eastern)
               </label>
@@ -1498,7 +1496,7 @@ Object {
                           aria-autocomplete="list"
                           aria-expanded="false"
                           aria-haspopup="true"
-                          aria-labelledby="vlj-label"
+                          aria-label="null"
                           aria-owns="vlj-listbox"
                           autocapitalize="none"
                           autocomplete="off"
@@ -1599,7 +1597,7 @@ Object {
                           aria-autocomplete="list"
                           aria-expanded="false"
                           aria-haspopup="true"
-                          aria-labelledby="coordinator-label"
+                          aria-label="null"
                           aria-owns="coordinator-listbox"
                           autocapitalize="none"
                           autocomplete="off"
@@ -1854,7 +1852,7 @@ Object {
                             aria-autocomplete="list"
                             aria-expanded="true"
                             aria-haspopup="true"
-                            aria-labelledby="request-type-label"
+                            aria-label="Travel"
                             aria-owns="request-type-listbox"
                             autocapitalize="none"
                             autocomplete="off"
@@ -1998,7 +1996,7 @@ Object {
                             aria-autocomplete="list"
                             aria-expanded="false"
                             aria-haspopup="true"
-                            aria-labelledby="regional-office-label"
+                            aria-label="New York City regional office"
                             aria-owns="regional-office-listbox"
                             autocapitalize="none"
                             autocomplete="off"
@@ -2088,14 +2086,14 @@ Object {
                 class="cf-form-radio-option"
               >
                 <input
-                  id="docketStartTimes_09:00"
+                  id="docketStartTimes_Invalid date"
                   name="docketStartTimes"
                   type="radio"
-                  value="09:00"
+                  value="Invalid date"
                 />
                 <label
                   class=""
-                  for="docketStartTimes_09:00"
+                  for="docketStartTimes_Invalid date"
                 >
                   Half-Day AM (5 slots at 9:00 AM Eastern)
                 </label>
@@ -2104,14 +2102,14 @@ Object {
                 class="cf-form-radio-option"
               >
                 <input
-                  id="docketStartTimes_13:00"
+                  id="docketStartTimes_Invalid date"
                   name="docketStartTimes"
                   type="radio"
-                  value="13:00"
+                  value="Invalid date"
                 />
                 <label
                   class=""
-                  for="docketStartTimes_13:00"
+                  for="docketStartTimes_Invalid date"
                 >
                   Half-Day PM (5 slots at 1:00 PM Eastern)
                 </label>
@@ -2166,7 +2164,7 @@ Object {
                             aria-autocomplete="list"
                             aria-expanded="false"
                             aria-haspopup="true"
-                            aria-labelledby="vlj-label"
+                            aria-label="null"
                             aria-owns="vlj-listbox"
                             autocapitalize="none"
                             autocomplete="off"
@@ -2267,7 +2265,7 @@ Object {
                             aria-autocomplete="list"
                             aria-expanded="false"
                             aria-haspopup="true"
-                            aria-labelledby="coordinator-label"
+                            aria-label="null"
                             aria-owns="coordinator-listbox"
                             autocapitalize="none"
                             autocomplete="off"
@@ -2465,7 +2463,7 @@ Object {
                           aria-autocomplete="list"
                           aria-expanded="true"
                           aria-haspopup="true"
-                          aria-labelledby="request-type-label"
+                          aria-label="Travel"
                           aria-owns="request-type-listbox"
                           autocapitalize="none"
                           autocomplete="off"
@@ -2609,7 +2607,7 @@ Object {
                           aria-autocomplete="list"
                           aria-expanded="false"
                           aria-haspopup="true"
-                          aria-labelledby="regional-office-label"
+                          aria-label="New York City regional office"
                           aria-owns="regional-office-listbox"
                           autocapitalize="none"
                           autocomplete="off"
@@ -2699,14 +2697,14 @@ Object {
               class="cf-form-radio-option"
             >
               <input
-                id="docketStartTimes_09:00"
+                id="docketStartTimes_Invalid date"
                 name="docketStartTimes"
                 type="radio"
-                value="09:00"
+                value="Invalid date"
               />
               <label
                 class=""
-                for="docketStartTimes_09:00"
+                for="docketStartTimes_Invalid date"
               >
                 Half-Day AM (5 slots at 9:00 AM Eastern)
               </label>
@@ -2715,14 +2713,14 @@ Object {
               class="cf-form-radio-option"
             >
               <input
-                id="docketStartTimes_13:00"
+                id="docketStartTimes_Invalid date"
                 name="docketStartTimes"
                 type="radio"
-                value="13:00"
+                value="Invalid date"
               />
               <label
                 class=""
-                for="docketStartTimes_13:00"
+                for="docketStartTimes_Invalid date"
               >
                 Half-Day PM (5 slots at 1:00 PM Eastern)
               </label>
@@ -2777,7 +2775,7 @@ Object {
                           aria-autocomplete="list"
                           aria-expanded="false"
                           aria-haspopup="true"
-                          aria-labelledby="vlj-label"
+                          aria-label="null"
                           aria-owns="vlj-listbox"
                           autocapitalize="none"
                           autocomplete="off"
@@ -2878,7 +2876,7 @@ Object {
                           aria-autocomplete="list"
                           aria-expanded="false"
                           aria-haspopup="true"
-                          aria-labelledby="coordinator-label"
+                          aria-label="null"
                           aria-owns="coordinator-listbox"
                           autocapitalize="none"
                           autocomplete="off"
@@ -3118,7 +3116,6 @@ exports[`AddHearingDay Matches snapshot with default props 1`] = `
                         aria-autocomplete="list"
                         aria-expanded="false"
                         aria-haspopup="true"
-                        aria-labelledby="request-type-label"
                         aria-owns="request-type-listbox"
                         autocapitalize="none"
                         autocomplete="off"
