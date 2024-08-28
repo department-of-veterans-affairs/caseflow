@@ -259,6 +259,10 @@ class Fakes::VBMSService
   end
 
   def self.verify_current_user_veteran_access(veteran)
-    # fail BGS::SensitivityLevelCheckFailure, "User does not have permission to access this information"
+    return if !FeatureToggle.enabled?(:check_user_sensitivity)
+
+    return false if !veteran.instance_of?(Veteran)
+
+    true
   end
 end
