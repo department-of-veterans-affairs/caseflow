@@ -91,6 +91,22 @@ class AojAppealRepository < AppealRepository
         VACOLS::AojCaseDocket.ready_to_distribute_appeals
       end
     end
+
+    def priority_appeals
+      MetricsService.record("VACOLS: priority_appeals",
+                            name: "priority_appeals",
+                            service: :vacols) do
+        VACOLS::AojCaseDocket.priority_appeals
+      end
+    end
+
+    def nonpriority_appeals
+      MetricsService.record("VACOLS: nonpriority_appeals",
+                            name: "nonpriority_appeals",
+                            service: :vacols) do
+        VACOLS::AojCaseDocket.nonpriority_appeals
+      end
+    end
   end
   # :nocov:
 end

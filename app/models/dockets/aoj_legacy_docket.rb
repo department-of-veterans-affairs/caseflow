@@ -86,11 +86,18 @@ class AojLegacyDocket < LegacyDocket
   end
   # rubocop:enable Metrics/ParameterLists
 
+  def priority_appeals
+    LegacyAppeal.aoj_appeal_repository.priority_appeals
+  end
+
+  def non_priority_appeals
+    LegacyAppeal.aoj_appeal_repository.non_priority_appeals
+  end
+
   # used for distribution_stats
-  # change parameters to in_window, priority once implemented
   def affinity_date_count(in_window, _priority)
+    appeals = prioriy ? priority_appeals : non_priority_appeals
     aoj_cavc_affinity_lever_value = CaseDistributionLever.aoj_cavc_affinity_days
-    appeals = ready_to_distribute_appeals
 
     if case_affinity_days_lever_value_is_selected?(aoj_cavc_affinity_lever_value)
       appeals = if in_window
@@ -100,8 +107,9 @@ class AojLegacyDocket < LegacyDocket
                   end
                 else
                   appeals.select! do |appeal|
-                    appeal_affinity(appeal)&.affinity_start_date.nil? ||
-                      (appeal_affinity(appeal).affinity_start_date < lever.to_i.days.ago)
+                    next if appeal_affinity(appeal)&.affinity_start_date.nil?
+
+                    appeal_affinity(appeal).affinity_start_date < lever.to_i.days.ago
                   end
                 end
     end
@@ -115,6 +123,6 @@ class AojLegacyDocket < LegacyDocket
   end
 
   def appeal_affinity(appeal)
-    @appeal_affinity ||= VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity
+    VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity
   end
 end

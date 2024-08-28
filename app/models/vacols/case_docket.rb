@@ -878,5 +878,31 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     true
   end
+
+  def self.priority_appeals
+    conn = connection
+
+    query = <<-SQL
+      #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
+      where (VLJ IS NULL or #{ineligible_judges_sattyid_cache})
+    SQL
+
+    fmtd_query = sanitize_sql_array([query])
+
+    conn.exec_query(fmtd_query).to_a
+  end
+
+  def self.nonpriority_appeals
+    conn = connection
+
+    query = <<-SQL
+      #{SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19}
+      where (VLJ IS NULL or #{ineligible_judges_sattyid_cache})
+    SQL
+
+    fmtd_query = sanitize_sql_array([query])
+
+    conn.exec_query(fmtd_query).to_a
+  end
 end
 # rubocop:enable Metrics/ClassLength

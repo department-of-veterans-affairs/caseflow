@@ -782,4 +782,30 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
       (appeal["vlj"].nil? && appeal["prev_deciding_judge"].nil?)
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength
+
+  def self.priority_appeals
+    conn = connection
+
+    query = <<-SQL
+      #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
+      where (VLJ IS NULL or #{ineligible_judges_sattyid_cache}) AND (PREV_TYPE_ACTION = '7')
+    SQL
+
+    fmtd_query = sanitize_sql_array([query])
+
+    conn.exec_query(fmtd_query).to_a
+  end
+
+  def self.nonpriority_appeals
+    conn = connection
+
+    query = <<-SQL
+      #{SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19}
+      where (VLJ IS NULL or #{ineligible_judges_sattyid_cache}) AND (PREV_TYPE_ACTION != '7')
+    SQL
+
+    fmtd_query = sanitize_sql_array([query])
+
+    conn.exec_query(fmtd_query).to_a
+  end
 end
