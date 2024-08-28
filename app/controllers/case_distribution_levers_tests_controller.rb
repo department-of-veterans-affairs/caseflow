@@ -84,6 +84,7 @@ class CaseDistributionLeversTestsController < ApplicationController
 
     head :ok
   end
+
   def appeals_distributed
     # change this to the correct class
     csv_data = AppealsDistributed.process
