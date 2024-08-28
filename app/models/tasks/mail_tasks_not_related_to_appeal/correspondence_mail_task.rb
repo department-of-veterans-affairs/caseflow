@@ -25,6 +25,7 @@ class CorrespondenceMailTask < CorrespondenceTask
     )
   end
 
+  # rubocop: disable Metrics/AbcSize
   def self.available_actions(user)
     return [] unless user
 
@@ -46,4 +47,5 @@ class CorrespondenceMailTask < CorrespondenceTask
 
     options
   end
+  # rubocop: enable Metrics/AbcSize
 end
