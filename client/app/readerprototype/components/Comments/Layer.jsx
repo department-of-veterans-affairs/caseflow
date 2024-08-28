@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -198,7 +199,7 @@ const Layer = (props) => {
                 pageIndex: placingAnnotationIconPageCoords.pageIndex,
               }}
               comment={{}}
-              onClick={() => {}}
+              onClick={_.noop}
             />
           )}
           {!isPlacingAnnotation && placedButUnsavedAnnotation && placedButUnsavedAnnotation.page === pageNumber && (
@@ -207,7 +208,7 @@ const Layer = (props) => {
               comment={placedButUnsavedAnnotation}
               rotation={-rotationDegrees}
               position={{ x: placedButUnsavedAnnotation.x * scale, y: placedButUnsavedAnnotation.y * scale }}
-              onClick={() => {}}
+              onClick={_.noop}
             />
           )}
           {annotations.map((annotation) => (
@@ -217,7 +218,7 @@ const Layer = (props) => {
               comment={annotation}
               rotation={-rotationDegrees}
               position={{ x: annotation.x * scale, y: annotation.y * scale }}
-              onClick={annotation.isPlacingAnnotation ? () => {} : () => onIconClick(annotation)}
+              onClick={annotation.isPlacingAnnotation ? _.noop : () => onIconClick(annotation)}
             />
           ))}
         </div>

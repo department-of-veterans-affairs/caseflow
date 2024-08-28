@@ -154,9 +154,9 @@ class CommentLayer extends PureComponent {
   getCommentLayerDivRef = (ref) => (this.commentLayerDiv = ref);
 
   getAnnotationsForPage = () =>
-    this.props.comments
-      .concat(this.getPlacingAnnotation())
-      .filter((comment) => comment.page === pageNumberOfPageIndex(this.props.pageIndex));
+    this.props.comments.
+      concat(this.getPlacingAnnotation()).
+      filter((comment) => comment.page === pageNumberOfPageIndex(this.props.pageIndex));
 
   getCommentIcons = () =>
     this.getAnnotationsForPage().map((comment) => (
@@ -223,6 +223,10 @@ CommentLayer.propTypes = {
   pageIndex: PropTypes.number,
   file: PropTypes.string,
   documentId: PropTypes.number,
+  allAnnotations: PropTypes.array,
+  showPlaceAnnotationIcon: PropTypes.func,
+  requestMoveAnnotation: PropTypes.func,
+  placeAnnotation: PropTypes.func,
 };
 
 const mapStateToProps = (state, ownProps) => ({

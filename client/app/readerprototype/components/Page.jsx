@@ -57,7 +57,8 @@ const Page = ({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale }) => 
     rotate: rotation,
     position: 'relative',
     top,
-    contentVisibility: 'auto', // removes offscreen canvas from rendering calculations to improve performance
+    // removes offscreen canvas from rendering calculations to improve performance
+    contentVisibility: 'auto',
   };
 
   useEffect(() => {

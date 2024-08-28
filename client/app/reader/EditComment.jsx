@@ -95,4 +95,6 @@ EditComment.propTypes = {
   id: PropTypes.string,
   onSaveCommentEdit: PropTypes.func,
   onCancelCommentEdit: PropTypes.func,
+  onChange: PropTypes.func,
+  onChangeDate: PropTypes.func,
 };

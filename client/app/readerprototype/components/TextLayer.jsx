@@ -18,12 +18,16 @@ const TextLayer = (props) => {
   let positionY = 0;
   const fullSizeViewport = page.getViewport({ scale: 1 });
 
-  if (rotation.includes('90')) positionX = viewport.height;
+  if (rotation.includes('90')) {
+    positionX = viewport.height;
+  }
   if (rotation.includes('180')) {
     positionX = viewport.width;
     positionY = viewport.height;
   }
-  if (rotation.includes('270')) positionY = viewport.width;
+  if (rotation.includes('270')) {
+    positionY = viewport.width;
+  }
 
   const textLayerStyle = {
     width: `${fullSizeViewport.width}px`,
@@ -39,9 +43,9 @@ const TextLayer = (props) => {
 
   useEffect(() => {
     const getPageText = async () => {
-      page
-        .getTextContent()
-        .then((pageText) => {
+      page.
+        getTextContent().
+        then((pageText) => {
           PDFJS.renderTextLayer({
             textContent: pageText,
             container: textLayerRef.current,
@@ -49,9 +53,10 @@ const TextLayer = (props) => {
             textDivs: [],
           });
           setHasRenderedText(true);
-        })
-        .catch((error) => {
-          // this catch is necessary to prevent the error: TypeError: Cannot read properties of null (reading 'ownerDocument')
+        }).
+        catch((error) => {
+          // this catch is necessary to prevent the error: TypeError: Cannot read properties of null
+          // (reading 'ownerDocument')
           console.error(`text layer ${error}`);
         });
     };

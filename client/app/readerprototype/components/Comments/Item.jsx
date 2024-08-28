@@ -18,7 +18,9 @@ const Item = (props) => {
     <Comment
       {...props}
       innerRef={(el) => {
-        if (props.id === selectedAnnotationId) itemRef.current = el;
+        if (props.id === selectedAnnotationId) {
+          itemRef.current = el;
+        }
       }}
     />
   );

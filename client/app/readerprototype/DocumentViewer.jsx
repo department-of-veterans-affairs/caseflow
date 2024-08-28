@@ -64,9 +64,9 @@ const DocumentViewer = (props) => {
   const getPageNumFromScrollTop = (event) => {
     const { clientHeight, scrollTop, scrollHeight } = event.target;
     const pageHeightEstimate =
-      rotateDeg === ROTATION_DEGREES.NINETY || rotateDeg === ROTATION_DEGREES.TWO_SEVENTY
-        ? clientHeight
-        : scrollHeight / numPages;
+      rotateDeg === ROTATION_DEGREES.NINETY || rotateDeg === ROTATION_DEGREES.TWO_SEVENTY ?
+        clientHeight :
+        scrollHeight / numPages;
     const pageNumber = Math.ceil((pageHeightEstimate + scrollTop) / pageHeightEstimate);
 
     if (pageNumber > numPages) {
@@ -141,6 +141,7 @@ DocumentViewer.propTypes = {
   fetchAppealDetails: PropTypes.func,
   history: PropTypes.any,
   showPdf: PropTypes.func,
+  match: PropTypes.object
 };
 
 export default DocumentViewer;

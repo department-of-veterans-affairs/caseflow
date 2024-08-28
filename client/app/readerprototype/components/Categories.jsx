@@ -16,7 +16,7 @@ const Categories = ({ doc, documents, error }) => {
       Constants.documentCategories,
       (val, key) =>
         documents[doc.id][categoryFieldNameOfCategoryName(key)]
-    )
+    );
   };
 
   return (

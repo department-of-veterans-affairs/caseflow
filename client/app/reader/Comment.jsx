@@ -141,6 +141,8 @@ Comment.propTypes = {
   uuid: PropTypes.number,
   horizontalLayout: PropTypes.bool,
   innerRef: PropTypes.any,
+  date: PropTypes.number,
+  docType: PropTypes.string
 };
 
 const mapStateToProps = null;

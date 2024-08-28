@@ -7,9 +7,9 @@ import { addNewTag, removeTag } from '../../reader/Documents/DocumentsActions';
 import { tagErrorSelector, tagSelector } from '../selectors';
 
 const tagsToOptions = (tags) =>
-  tags
-    .filter((tag) => !tag.pendingRemoval)
-    .map((tag) => ({
+  tags.
+    filter((tag) => !tag.pendingRemoval).
+    map((tag) => ({
       value: tag.text,
       label: tag.text,
       tagId: tag.id,
