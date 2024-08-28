@@ -61,7 +61,7 @@ curl -X POST http://localhost:3002/api/database \
     }
   }'
 
-echo "Creating VACOLS Database connection"
+echo -e "\nCreating VACOLS Database connection"
 echo "Not yet implemented"
 
 echo -e "\n👥 Creating a basic user: "
