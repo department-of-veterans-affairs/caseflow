@@ -1,6 +1,6 @@
 # frozen_string_literal: true
-require 'rails_helper'
-require_relative '../../app/jobs/hearings/va_box_upload_job'
+require "rails_helper"
+require_relative "../../app/jobs/hearings/va_box_upload_job"
 
 describe TranscriptionPackages do
   describe "#call" do
