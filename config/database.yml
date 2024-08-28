@@ -57,7 +57,7 @@ test:
   primary:
     <<: *default
     username: <%= ENV['POSTGRES_USER'] || `whoami` %>
-    database: caseflow_certification_test<%= ENV['TEST_SUBCATEGORY'] %>
+    database: caseflow_certification_test<%= ENV['TEST_ENV_NUMBER'] %>
     <% if ENV['POSTGRES_HOST'] %>
     host: <%= ENV['POSTGRES_HOST'] %>
     <% end %>
@@ -66,7 +66,7 @@ test:
     <% end %>
   etl:
     <<: *etl_default
-    database: caseflow_etl_test<%= ENV["TEST_SUBCATEGORY"] %>
+    database: caseflow_etl_test<%= ENV['TEST_ENV_NUMBER'] %>
   # Increase the receive timeout value due to ORA-12609: TNS: Receive timeout occurred
   # Solution: https://www.fatihacar.com/blog/category/databases/oracle/oracle-errors-and-solutions/page/13/
   # Oracle timeout configuration: https://github.com/rsim/oracle-enhanced#timeouts
