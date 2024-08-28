@@ -245,7 +245,7 @@ export const itemsColumn = (openModal) => {
     anyFiltersAreSet: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.ITEMS.anyFiltersAreSet,
     valueFunction: (row) => (
       <div>
-        <a style={styles.link} onClick={() => openModal('highlights')}>
+        <a style={styles.link} onClick={() => openModal({ type: 'highlights', workOrder: row.workOrder })}>
           {row.items} item{row.items === 1 ? '' : 's'}
         </a>
       </div>

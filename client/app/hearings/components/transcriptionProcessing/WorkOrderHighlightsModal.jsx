@@ -5,27 +5,10 @@ import ApiUtil from 'app/util/ApiUtil';
 import Modal from '../../../components/Modal';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import { css } from 'glamor';
-import { marginBottom } from '../../../queue/constants';
 import DocketTypeBadge from '../../../components/DocketTypeBadge';
 
 const WorkOrderHightlightsModal = ({ onCancel, workOrder }) => {
-  const [items, setItems] = useState([
-    {
-      docketNumber: '123456789',
-      caseDetails: 'John Doe (200000001)',
-      appealType: 'Appeal'
-    },
-    {
-      docketNumber: '123456789',
-      caseDetails: 'John Doe (200000001)',
-      appealType: 'Appeal'
-    },
-    {
-      docketNumber: '123456789',
-      caseDetails: 'John Doe (200000001)',
-      appealType: 'Appeal'
-    },
-  ]);
+  const [items, setItems] = useState([]);
 
   const styles = {
     headerStyle: {
@@ -52,10 +35,10 @@ const WorkOrderHightlightsModal = ({ onCancel, workOrder }) => {
 
   const renderItems = () => {
     return items.map((item, index) =>
-      <tr>
+      <tr key={index}>
         <td>{index + 1}</td>
-        <td><DocketTypeBadge name="hearing" number={index} />{item.docketNumber}</td>
-        <td><a href="/queue/appeals/">{item.caseDetails}</a></td>
+        <td><DocketTypeBadge name={item.hearing_type} number={index} />{item.docket_number}</td>
+        <td><a href={`/queue/appeals/${item.appeal_id}`}>{item.case_details}</a></td>
       </tr>
     );
   };
@@ -72,6 +55,15 @@ const WorkOrderHightlightsModal = ({ onCancel, workOrder }) => {
       </table>
     );
   };
+
+  const fetchWorkOrderContent = () => {
+    ApiUtil.get(`transcription_work_order/display_wo_contents?task_number=${workOrder}`).
+      then((response) => setItems(response.body?.data));
+  };
+
+  useEffect(() => {
+    fetchWorkOrderContent();
+  }, []);
 
   return (
     <Modal

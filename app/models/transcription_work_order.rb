@@ -17,9 +17,12 @@ class TranscriptionWorkOrder
     return {} unless transcription
 
     transcription.transcription_files.map do |t|
+      hearing_type = t.hearing_type
       {
         docket_number: t.docket_number,
-        case_details: t.case_details
+        case_details: t.case_details,
+        hearing_type: hearing_type,
+        appeal_id: hearing_type == "Hearing" ? t.hearing.appeal.uuid : t.hearing.appeal.vacols_id
       }
     end
   end

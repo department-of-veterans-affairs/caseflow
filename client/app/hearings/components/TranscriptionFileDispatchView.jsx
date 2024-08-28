@@ -9,7 +9,6 @@ import PackageFilesModal from './transcriptionProcessing/PackageFilesModal';
 import ApiUtil from '../../util/ApiUtil';
 import { getQueryParams, encodeQueryParams } from '../../util/QueryParamsUtil';
 import WorkOrderHightlightsModal from './transcriptionProcessing/WorkOrderHighlightsModal';
-
 const defaultAlert = {
   title: '',
   message: '',
@@ -68,8 +67,8 @@ export const TranscriptionFileDispatchView = () => {
   };
 
   // Opens the modal
-  const openModal = (type) => {
-    setModalConfig({ opened: true, type });
+  const openModal = (config) => {
+    setModalConfig({ opened: true, ...config });
   };
 
   // Closes the modal
@@ -77,8 +76,8 @@ export const TranscriptionFileDispatchView = () => {
     setModalConfig({ opened: false, type: '' });
   };
 
-  const renderModal = (type) => {
-    switch (type) {
+  const renderModal = (config) => {
+    switch (config.type) {
     case 'package':
       return (
         <PackageFilesModal
@@ -92,7 +91,7 @@ export const TranscriptionFileDispatchView = () => {
       return (
         <WorkOrderHightlightsModal
           onCancel={closeModal}
-          workOrder="#BVA-2024-5001"
+          workOrder={config.workOrder}
         />
       );
     default: return <></>;
@@ -134,7 +133,7 @@ export const TranscriptionFileDispatchView = () => {
           onChange={onTabChange}
           tabs={tabConfig(openModal, selectFilesForPackage, selectedFiles.length)}
         />
-        { modalConfig.opened && renderModal(modalConfig.type)}
+        { modalConfig.opened && renderModal(modalConfig)}
       </AppSegment>
     </>
   );

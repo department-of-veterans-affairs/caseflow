@@ -108,7 +108,7 @@ export const tabConfig = (openModal, selectFilesForPackage, files) => [
               {sprintf(COPY.TRANSCRIPTION_FILE_DISPATCH_FILE_SELECTED, files, files === 1 ? '' : 's')}
             </h2>
             <div className="button-row" style={styles.buttonStyles}>
-              <Button disabled={files === 0} onClick={() => openModal('package')}>Package files</Button>
+              <Button disabled={files === 0} onClick={() => openModal({ type: 'package' })}>Package files</Button>
               <Button linkStyling>Cancel</Button>
             </div>
           </div>
