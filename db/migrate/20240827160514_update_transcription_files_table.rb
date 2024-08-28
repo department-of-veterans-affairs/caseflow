@@ -8,8 +8,8 @@ class UpdateTranscriptionFilesTable < Caseflow::Migration
       rename_column :transcription_files, :date_receipt_webex, :date_receipt_recording
     end
 
-    change_column_null :transcription_files, :docket_number, true
-    change_column_null :transcription_files, :hearing_id, true
-    change_column_null :transcription_files, :hearing_type, true
+    change_column_null :transcription_files, :docket_number, false
+    change_column_null :transcription_files, :hearing_id, false
+    change_column_null :transcription_files, :hearing_type, false
   end
 end
