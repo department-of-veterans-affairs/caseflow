@@ -13,7 +13,6 @@ import Alert from 'app/components/Alert';
 import COPY from '../../../COPY';
 import {
   changeTaskTypeNotRelatedToAppeal,
-  setShowActionsDropdown,
   setTaskNotRelatedToAppealBanner
 } from 'app/queue/correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
 
@@ -52,8 +51,6 @@ const CorrespondenceChangeTaskTypeModal = (props) => {
     const tempCor = props.correspondenceInfo;
 
     tempCor.tasksUnrelatedToAppeal = updatedTasks;
-
-    props.setShowActionsDropdown(false);
 
     return props.changeTaskTypeNotRelatedToAppeal(props.task_id, payload, typeNames, tempCor);
   };
@@ -109,7 +106,6 @@ CorrespondenceChangeTaskTypeModal.propTypes = {
   }),
   correspondenceInfo: PropTypes.object,
   requestPatch: PropTypes.func,
-  setShowActionsDropdown: PropTypes.func,
   changeTaskTypeNotRelatedToAppeal: PropTypes.func,
   task: PropTypes.shape({
     appeal: PropTypes.shape({
@@ -138,8 +134,7 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestPatch,
   setTaskNotRelatedToAppealBanner,
-  changeTaskTypeNotRelatedToAppeal,
-  setShowActionsDropdown
+  changeTaskTypeNotRelatedToAppeal
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(CorrespondenceChangeTaskTypeModal));
