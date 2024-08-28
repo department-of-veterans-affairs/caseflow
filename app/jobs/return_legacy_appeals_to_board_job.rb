@@ -75,7 +75,7 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
   private
 
   def max_appeals_to_move
-    @max_appeals || = CaseDistributionLever.nonsscavlj_number_of_appeals_to_move
+    @max_appeals ||= CaseDistributionLever.nonsscavlj_number_of_appeals_to_move
   end
 
   def move_qualifying_appeals(appeals)
