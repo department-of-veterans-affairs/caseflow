@@ -18,6 +18,9 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   attr_writer :removed_issues_data
   attr_writer :edited_issues_data
   attr_writer :withdrawn_issues_data
+  attr_writer :eligible_to_ineligible_issues_data
+  attr_writer :ineligible_to_eligible_issues_data
+  attr_writer :ineligible_to_ineligible_issues_data
 
   def perform!
     return false unless validate_before_perform
@@ -25,15 +28,13 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
 
     transaction do
       process_issues!
+      # updates rating_issue_associated_at of review's issues to nil
       review.mark_rating_request_issues_to_reassociate!
       update!(
         before_request_issue_ids: before_issues.map(&:id),
         after_request_issue_ids: after_issues.map(&:id),
         withdrawn_request_issue_ids: withdrawn_issues.map(&:id),
-        edited_request_issue_ids: edited_issues.map(&:id),
-        # eligible_to_ineligible_issue_ids: eligible_to_ineligible.map(&:id),
-        # ineligible_to_eligible_issue_ids: ineligible_to_eligible.map(&:id),
-        # ineligible_to_ineligible_issue_ids: ineligible_to_ineligible.map(&:id)
+        edited_request_issue_ids: edited_issues.map(&:id)
       )
     end
 

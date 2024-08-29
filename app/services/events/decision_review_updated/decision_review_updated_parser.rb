@@ -52,7 +52,7 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedParser
   end
 
   def station
-    @payload[:station]
+    @payload[:station] # to remove?
   end
 
   def claim_review_informal_conference
