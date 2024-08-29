@@ -83,8 +83,8 @@ const CorrespondenceCancelTaskModal = (props) => {
   return (
     <QueueFlowModal
       {...modalProps}
-      title= "Cancel Task"
-      button="Cancel Task"
+      title= "Cancel task"
+      button="Cancel task"
       submitDisabled= {instructionsAdded}
       pathAfterSubmit={taskData?.redirect_after ?? `/queue/correspondence/${props.correspondence_uuid}`}
       submit={submit}
