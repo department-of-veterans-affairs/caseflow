@@ -237,9 +237,7 @@ jobs:
 
       - name: Rename examples.txt
         if: success() || failure()
-        run: |
-          touch ./tmp/examples.txt
-          mv ./tmp/examples.txt ./tmp/examples-${{matrix.ci_node_index}}.txt
+        run: mv ./tmp/examples.txt ./tmp/examples-${{matrix.ci_node_index}}.txt
       - uses: actions/upload-artifact@v3
         if: success() || failure()
         name: Upload tmp/examples.txt
