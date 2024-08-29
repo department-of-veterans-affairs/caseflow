@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# require "aws-sdk-s3"
 class Hearings::VaBoxUploadJob < CaseflowJob
   include Shoryuken::Worker
   queue_as :low_priority
@@ -20,7 +19,7 @@ class Hearings::VaBoxUploadJob < CaseflowJob
     fail BoxUploadError
   end
 
-  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
   def perform(file_info, box_folder_id)
     @all_paths = []
     @email_sent_flags = { transcription_package: false, child_folder_id: false, upload: false }
@@ -78,7 +77,7 @@ class Hearings::VaBoxUploadJob < CaseflowJob
       end
     end
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   private
 

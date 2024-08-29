@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class Fakes::VaBoxService
-  # rubocop:disable Metrics/MethodLength, Layout/LineLength, Metrics/AbcSize
-  def public_folder_details(folder_id, item_type = "folder")
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  def get_folder_items(folder_id:, item_type: "folder", query_string: nil)
     case item_type
     when "folder"
       [
@@ -19,8 +19,8 @@ class Fakes::VaBoxService
           file_version: { type: "file_version", id: "1780652260259", created_at: random_time },
           sequence_id: "0",
           etag: "0",
-          created_at: random_time,
-          name: "test_folder_13.zip" },
+          created_at: JSON.parse(Time.zone.now.to_json),
+          name: "240216-4387-4387-AMA.zip" },
         { type: "file",
           id: "1619969073264",
           file_version: { type: "file_version", id: "1781045517264", created_at: random_time },
@@ -186,11 +186,11 @@ class Fakes::VaBoxService
           name: "This is a doc for testing attempt.docx" }]]
     end
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   private
 
   def random_time
     JSON.parse(rand(3.hours.ago..Time.zone.now).to_json)
   end
-  # rubocop:enable Metrics/MethodLength, Layout/LineLength, Metrics/AbcSize
 end

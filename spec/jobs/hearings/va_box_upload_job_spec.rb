@@ -36,7 +36,8 @@ RSpec.describe Hearings::VaBoxUploadJob, type: :job do
   describe "#perform" do
     context "when transcription package is found" do
       before do
-        allow_any_instance_of(Hearings::VaBoxUploadJob).to receive(:find_transcription_package).and_return(transcription_package)
+        allow_any_instance_of(Hearings::VaBoxUploadJob).to receive(:find_transcription_package)
+          .and_return(transcription_package)
       end
 
       it "uploads the file to Box and updates the transcription package" do
@@ -70,7 +71,8 @@ RSpec.describe Hearings::VaBoxUploadJob, type: :job do
 
     context "when child folder ID is not found" do
       before do
-        allow_any_instance_of(Hearings::VaBoxUploadJob).to receive(:find_transcription_package).and_return(transcription_package)
+        allow_any_instance_of(Hearings::VaBoxUploadJob).to receive(:find_transcription_package)
+          .and_return(transcription_package)
         allow(box_service).to receive(:get_child_folder_id).and_return(nil)
       end
 

@@ -39,16 +39,16 @@ RSpec.describe ExternalApi::VaBoxService, type: :service do
     end
   end
 
-  describe "#fetch_access_token" do
+  describe "#ensure_access_token" do
     let(:access_token) { "fake_access_token" }
 
     before do
       allow(subject).to receive(:fetch_jwt_access_token)
-        .and_return({ access_token: access_token, expires_in: Time.now.to_i + 3600 })
+        .and_return({ access_token: access_token, expires_in: 3600 })
     end
 
     it "fetches and sets the access token" do
-      subject.fetch_access_token
+      subject.ensure_access_token
       expect(subject.instance_variable_get(:@access_token)).to eq(access_token)
     end
   end

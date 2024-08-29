@@ -103,8 +103,8 @@ class ExternalApi::VaBoxService
     Faraday.new(BASE_URL) do |f|
       f.headers["Authorization"] = "Bearer #{@access_token}"
       f.headers["Content-Type"] = "application/json"
-      f.use Faraday::Adapter::NetHttp
       f.response :logger, ::Logger.new($stdout)
+      f.use Faraday::Adapter::NetHttp
     end
   end
 
@@ -120,6 +120,7 @@ class ExternalApi::VaBoxService
     end
   end
 
+  # rubocop:disable Metrics/MethodLength
   def fetch_jwt_access_token
     url = "#{BASE_URL}/oauth2/token"
     payload = {
@@ -158,6 +159,7 @@ class ExternalApi::VaBoxService
   rescue StandardError => error
     log_error(error)
   end
+  # rubocop:enable Metrics/MethodLength
 
   def chunkify_and_upload(file_path, folder_id)
     chunk_paths = split_file(file_path)
