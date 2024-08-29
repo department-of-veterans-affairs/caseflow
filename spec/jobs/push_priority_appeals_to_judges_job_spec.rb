@@ -13,6 +13,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     create(:case_distribution_lever, :ama_hearing_case_aod_affinity_days)
     create(:case_distribution_lever, :ama_direct_review_start_distribution_prior_to_goals)
     create(:case_distribution_lever, :disable_legacy_non_priority)
+    create(:case_distribution_lever, :nonsscavlj_number_of_appeals_to_move)
   end
 
   def to_judge_hash(arr)
