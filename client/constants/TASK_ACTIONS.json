@@ -585,11 +585,5 @@
     "label": "Return to Inbound Ops",
     "value": "return_to_inbound_ops",
     "func": "return_to_inbound_ops"
-  },
-
-  "CANCEL_CORR_TASK": {
-    "label": "Cancel task",
-    "value": "cancel_task",
-    "func": "cancel_corr_task"
   }
 }
