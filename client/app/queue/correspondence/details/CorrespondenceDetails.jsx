@@ -508,4 +508,5 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(CorrespondenceDetails);
+
 /* eslint-enable max-lines */

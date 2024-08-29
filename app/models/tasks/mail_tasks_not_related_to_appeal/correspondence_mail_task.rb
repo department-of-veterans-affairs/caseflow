@@ -25,6 +25,7 @@ class CorrespondenceMailTask < CorrespondenceTask
     )
   end
 
+  # rubocop: disable Metrics/AbcSize
   def self.available_actions(user)
     return [] unless user
 
@@ -34,7 +35,8 @@ class CorrespondenceMailTask < CorrespondenceTask
       Constants.TASK_ACTIONS.MARK_TASK_COMPLETE.to_h,
       Constants.TASK_ACTIONS.RETURN_TO_INBOUND_OPS.to_h,
       Constants.TASK_ACTIONS.CANCEL_CORR_TASK.to_h,
-      Constants.TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.to_h
+      Constants.TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.to_h,
+      Constants.TASK_ACTIONS.COMPLETE_CORRESPONDENCE_TASK.to_h
     ]
 
     if user.is_a? Organization
@@ -54,4 +56,5 @@ class CorrespondenceMailTask < CorrespondenceTask
       Organization.assignable(self)
     end
   end
+  # rubocop: enable Metrics/AbcSize
 end

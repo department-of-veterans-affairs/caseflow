@@ -34,6 +34,10 @@ class CorrespondenceRootTask < CorrespondenceTask
     CorrespondenceTask.tasks_not_related_to_an_appeal.open.where(appeal_id: appeal_id, appeal_type: appeal_type)
   end
 
+  def closed_tasks_not_related_to_an_appeal
+    CorrespondenceTask.tasks_not_related_to_an_appeal.closed.where(appeal_id: appeal_id, appeal_type: appeal_type)
+  end
+
   # correspondence_mail_tasks are completed upon creation, so no open check
   def correspondence_mail_tasks
     CorrespondenceTask.correspondence_mail_tasks.where(appeal_id: appeal_id, appeal_type: appeal_type)
