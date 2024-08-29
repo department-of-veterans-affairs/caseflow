@@ -587,7 +587,7 @@
     "func": "return_to_inbound_ops"
   },
 
-  "CANCEL_CORRESPONDENCE_TASK": {
+  "CANCEL_CORR_TASK": {
     "label": "Cancel task",
     "value": "modal/cancel_corrresponence_task",
     "func": "cancel_correspondence_task_data"

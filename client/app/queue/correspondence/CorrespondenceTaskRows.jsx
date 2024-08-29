@@ -318,12 +318,11 @@ CorrespondenceTaskRows.propTypes = {
   correspondence: PropTypes.object,
   hideDropdown: PropTypes.bool,
   taskList: PropTypes.array,
-  timeline: PropTypes.bool,
-  showActionsDropdown: PropTypes.bool,
+  timeline: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({
-  showActionsDropdown: state.correspondenceDetails.showActionsDropdown,
+
 });
 
 export default connect(

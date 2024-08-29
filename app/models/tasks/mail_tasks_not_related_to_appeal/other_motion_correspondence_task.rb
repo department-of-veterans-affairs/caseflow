@@ -15,14 +15,14 @@ class OtherMotionCorrespondenceTask < CorrespondenceMailTask
         Constants.TASK_ACTIONS.REASSIGN_CORR_TASK_TO_PERSON.to_h,
         Constants.TASK_ACTIONS.COMPLETE_CORRESPONDENCE_TASK.to_h,
         Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
-        Constants.TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.to_h
+        Constants.TASK_ACTIONS.CANCEL_CORR_TASK.to_h
       ]
     else
       options = [
         Constants.TASK_ACTIONS.ASSIGN_CORR_TASK_TO_PERSON.to_h,
         Constants.TASK_ACTIONS.COMPLETE_CORRESPONDENCE_TASK.to_h,
         Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
-        Constants.TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.to_h
+        Constants.TASK_ACTIONS.CANCEL_CORR_TASK.to_h
       ]
     end
 

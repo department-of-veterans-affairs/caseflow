@@ -63,6 +63,7 @@ class WorkQueue::CorrespondenceSerializer
             uniqueId: task.id,
             reassignUsers: task&.reassign_users,
             assignedToOrg: task&.assigned_to.is_a?(Organization),
+            # assignedToOrg: task&.assigned_to_type.is_a?(Organization),
             status: task.status
           }
       end
