@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_08_25_120325) do
+ActiveRecord::Schema.define(version: 2024_08_27_160514) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1959,7 +1959,8 @@ ActiveRecord::Schema.define(version: 2024_08_25_120325) do
     t.datetime "created_at", null: false
     t.bigint "created_by_id", comment: "The user who created the transcription record"
     t.datetime "date_converted", comment: "Timestamp when file was converted from vtt to rtf"
-    t.datetime "date_receipt_webex", comment: "Timestamp when file was added to webex"
+    t.datetime "date_receipt_recording", comment: "Timestamp when file was added to webex"
+    t.datetime "date_returned_box", comment: "Timestamp when file was added to the Box.com return folder by a QAT contractor. Used for performance metrics."
     t.datetime "date_upload_aws", comment: "Timestamp when file was loaded to AWS"
     t.datetime "date_upload_box", comment: "Timestamp when file was added to box"
     t.string "docket_number", null: false, comment: "Docket number of associated hearing"
@@ -1970,6 +1971,8 @@ ActiveRecord::Schema.define(version: 2024_08_25_120325) do
     t.string "hearing_type", null: false, comment: "Type of hearing associated with this record"
     t.datetime "locked_at", comment: "Locked record timeout field"
     t.bigint "locked_by_id", comment: "ID of user who locked the record"
+    t.string "recording_task_number", comment: "Number associated with recording, is the created id from the recording system"
+    t.string "recording_transcriber", comment: "Contractor who created the closed caption transcription for the recording; i.e, 'Webex'"
     t.bigint "transcription_id", comment: "ID of the associated transcription record"
     t.datetime "updated_at", null: false
     t.bigint "updated_by_id", comment: "The user who most recently updated the transcription file"
