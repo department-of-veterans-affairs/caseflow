@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_08_02_154252) do
+ActiveRecord::Schema.define(version: 2024_08_29_142914) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -885,6 +885,7 @@ ActiveRecord::Schema.define(version: 2024_08_02_154252) do
     t.integer "event_id", null: false, comment: "ID of the Event that created or updated this record."
     t.bigint "evented_record_id", null: false
     t.string "evented_record_type", null: false
+    t.jsonb "info"
     t.datetime "updated_at", null: false, comment: "Automatic timestamp whenever the record changes"
     t.index ["evented_record_type", "evented_record_id"], name: "index_event_record_on_evented_record"
   end
