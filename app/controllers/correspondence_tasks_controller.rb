@@ -73,8 +73,19 @@ class CorrespondenceTasksController < TasksController
 
   def cancel
     task = CorrespondenceTask.find(correspondence_tasks_params[:task_id])
-    task.update!(
-      status: Constants.TASK_STATUSES.cancelled
+    task.update!(status: Constants.TASK_STATUSES.cancelled)
+  end
+
+  def complete
+    task = CorrespondenceTask.find(correspondence_tasks_params[:task_id])
+    task.update!(status: Constants.TASK_STATUSES.completed)
+  end
+
+  def change_task_type
+    @task = CorrespondenceTask.find(correspondence_tasks_params[:task_id])
+    @task.update!(
+      type: change_task_type_params[:type],
+      instructions: change_task_type_params[:instructions]
     )
   end
 
@@ -97,6 +108,12 @@ class CorrespondenceTasksController < TasksController
       # :assigned_at,
       :type
     )
+  end
+
+  def change_task_type_params
+    change_type_params = params.require(:task).permit(:type, :instructions)
+    change_type_params[:instructions] = @task.flattened_instructions(change_type_params)
+    change_type_params
   end
 
   def process_package_action_decision(decision)

@@ -7,7 +7,7 @@ export const initialState = {
   correspondenceInfo: {
     tasksUnrelatedToAppeal: {}
   },
-  showActionsDropdown: true
+  tasksUnrelatedToAppealEmpty: false,
 
 };
 
@@ -26,10 +26,10 @@ export const correspondenceDetailsReducer = (state = initialState, action = {}) 
         $set: action.payload.correspondence
       }
     });
-  case ACTIONS.SHOW_ACTIONS_DROP_DOWN:
+  case ACTIONS.TASKS_UNRELATED_TO_APPEAL_EMPTY:
     return update(state, {
-      showActionsDropdown: {
-        $set: action.payload.showActionsDropdown
+      tasksUnrelatedToAppealEmpty: {
+        $set: action.payload.tasksUnrelatedToAppealEmpty
       }
     });
   default:

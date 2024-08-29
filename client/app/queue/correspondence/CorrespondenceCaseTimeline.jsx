@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -6,17 +6,24 @@ import CorrespondenceTaskRows from './CorrespondenceTaskRows';
 import Alert from '../../components/Alert';
 import {
   setTaskNotRelatedToAppealBanner,
-  setShowActionsDropdown } from './correspondenceDetailsReducer/correspondenceDetailsActions';
+  setTasksUnrelatedToAppealEmpty } from './correspondenceDetailsReducer/correspondenceDetailsActions';
 
 const CorrespondenceCaseTimeline = (props) => {
 
   const { taskNotRelatedToAppealBanner, correspondenceInfo } = props;
 
+  useEffect(() => {
+
+    if (correspondenceInfo.tasksUnrelatedToAppeal.length === 0) {
+      props.setTasksUnrelatedToAppealEmpty(true);
+    }
+
+  }, []);
+
   return (
     <React.Fragment>
       { (Object.keys(taskNotRelatedToAppealBanner).length > 0) && (
         <div className="correspondence-details-alert-banner">
-
           <Alert
             type={taskNotRelatedToAppealBanner.type}>
             {taskNotRelatedToAppealBanner.message}
@@ -40,6 +47,7 @@ const CorrespondenceCaseTimeline = (props) => {
 
 CorrespondenceCaseTimeline.propTypes = {
   loadCorrespondence: PropTypes.func,
+  setTasksUnrelatedToAppealEmpty: PropTypes.func,
   correspondence: PropTypes.object,
   correspondenceInfo: PropTypes.object,
   taskNotRelatedToAppealBanner: PropTypes.object,
@@ -53,14 +61,13 @@ const mapStateToProps = (state) => ({
   taskNotRelatedToAppealBanner: state.correspondenceDetails.bannerAlert,
   correspondenceInfo: state.correspondenceDetails.correspondenceInfo,
   tasksUnrelatedToAppeal: state.correspondenceDetails.tasksUnrelatedToAppeal,
-  showActionsDropdown: state.correspondenceDetails.showActionsDropdown,
-  dubuggo: state.correspondenceDetails.dubuggo,
+  tasksUnrelatedToAppealEmpty: state.correspondenceDetails.tasksUnrelatedToAppealEmpty,
 });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
     setTaskNotRelatedToAppealBanner,
-    setShowActionsDropdown
+    setTasksUnrelatedToAppealEmpty
   }, dispatch)
 );
 

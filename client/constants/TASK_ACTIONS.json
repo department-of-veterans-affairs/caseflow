@@ -145,6 +145,11 @@
     "value": "modal/mark_task_complete",
     "func": "mark_task_complete_data"
   },
+  "COMPLETE_CORRESPONDENCE_TASK": {
+    "label": "Mark task complete",
+    "value": "modal/complete_correspondence_task",
+    "func": "complete_correspondence_task_data"
+  },
   "COMPLETE_TRANSCRIPTION": {
     "label": "Mark as complete: Transcribed",
     "value": "modal/mark_task_complete",
