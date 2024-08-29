@@ -33,6 +33,10 @@ const WorkOrderHightlightsModal = ({ onCancel, workOrder }) => {
     }
   });
 
+  /**
+   * Renders the table to display order contents
+   * @returns the table of order contents
+   */
   const renderItems = () => {
     return items.map((item, index) =>
       <tr key={index}>
@@ -43,6 +47,10 @@ const WorkOrderHightlightsModal = ({ onCancel, workOrder }) => {
     );
   };
 
+  /**
+   * Renders the list of records in the table of contents
+   * @returns the contents list
+   */
   const renderList = () => {
     return (
       <table {...tableStyles} style={styles.tableBody}>
@@ -56,10 +64,22 @@ const WorkOrderHightlightsModal = ({ onCancel, workOrder }) => {
     );
   };
 
+  /**
+   * Fetches the content of the work order
+   */
   const fetchWorkOrderContent = () => {
     ApiUtil.get(`transcription_work_order/display_wo_contents?task_number=${workOrder}`).
       then((response) => setItems(response.body?.data));
   };
+
+  /**
+   * Formats the work order number for the modal title
+   * @param {string} number - the work order number
+   * @returns The formatted work order number
+   */
+  const formatWorkOrder = (number) => (
+    `#${number.substring(0, 3)}-${number.substring(3, 7)}-${number.substring(7)}`
+  );
 
   useEffect(() => {
     fetchWorkOrderContent();
@@ -67,7 +87,7 @@ const WorkOrderHightlightsModal = ({ onCancel, workOrder }) => {
 
   return (
     <Modal
-      title={`Order contents of work order ${workOrder}`}
+      title={`Order contents of work order ${formatWorkOrder(workOrder)}`}
       buttons={[
         {
           classNames: ['usa-button', 'usa-button-primary'],

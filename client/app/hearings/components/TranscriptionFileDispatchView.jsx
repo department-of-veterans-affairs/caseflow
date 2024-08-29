@@ -47,6 +47,9 @@ export const TranscriptionFileDispatchView = () => {
   };
   const [currentTab] = useState(tabFromUrl());
 
+  /**
+   * Fetches available contractors
+   */
   const getContractors = () => {
     ApiUtil.get('/hearings/find_by_contractor/available_contractors').
       // eslint-disable-next-line camelcase
@@ -76,6 +79,10 @@ export const TranscriptionFileDispatchView = () => {
     setModalConfig({ opened: false, type: '' });
   };
 
+  /**
+   * @param {object} config - object to describe what type of modal to render
+   * @returns the modal
+   */
   const renderModal = (config) => {
     switch (config.type) {
     case 'package':
