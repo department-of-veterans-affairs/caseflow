@@ -41,16 +41,16 @@ class AppealsTiedToAvljsAndVljsQuery
 
     docket_coordinator.dockets
       .flat_map do |sym, docket|
-        if sym == :legacy
-          appeals = docket.appeals_tied_to_avljs_and_vljs
-          unique_appeals = legacy_rows(appeals, sym).uniq { |record| record[:docket_number] }
+      if sym == :legacy
+        appeals = docket.appeals_tied_to_avljs_and_vljs
+        unique_appeals = legacy_rows(appeals, sym).uniq { |record| record[:docket_number] }
 
-          unique_appeals
-        else
-          appeals = docket.tied_to_vljs(vlj_user_ids)
+        unique_appeals
+      else
+        appeals = docket.tied_to_vljs(vlj_user_ids)
 
-          ama_rows(appeals, docket, sym)
-        end
+        ama_rows(appeals, sym)
+      end
     end
   end
 
@@ -72,7 +72,7 @@ class AppealsTiedToAvljsAndVljsQuery
     end
   end
 
-  def self.ama_rows(appeals, docket, sym)
+  def self.ama_rows(appeals, sym)
     appeals.map do |appeal|
       # # This comes from the DistributionTask's assigned_at date
       # ready_for_distribution_at = distribution_task_query(appeal)
@@ -154,8 +154,11 @@ class AppealsTiedToAvljsAndVljsQuery
     return nil if appeal.cavc_remand.nil?
 
     source_appeal_id = CavcRemand.find_by(remand_appeal: appeal).source_appeal_id
-    judge_css_id = Task.find_by(appeal_id: source_appeal_id, appeal_type: Appeal.name, type: JudgeDecisionReviewTask.name)
-      &.assigned_to&.css_id
+    judge_css_id = Task.find_by(
+      appeal_id: source_appeal_id,
+      appeal_type: Appeal.name,
+      type: JudgeDecisionReviewTask.name
+    )&.assigned_to&.css_id
 
     User.find_by_css_id(judge_css_id)&.full_name
   end
