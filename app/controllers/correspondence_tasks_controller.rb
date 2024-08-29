@@ -95,7 +95,7 @@ class CorrespondenceTasksController < TasksController
       :type,
       :correspondence_uuid,
       :assigned_to,
-      instructions: []
+      :instructions
     )
   end
 
