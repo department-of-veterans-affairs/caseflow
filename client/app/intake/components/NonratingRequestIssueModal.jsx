@@ -245,7 +245,7 @@ class NonratingRequestIssueModal extends React.Component {
 
     const options = intakeData.activeNonratingRequestIssues.
       filter((issue) => {
-        if (featureToggles.disableAmaEventing) {
+        if (!featureToggles.disableAmaEventing) {
           return category;
         }
 
