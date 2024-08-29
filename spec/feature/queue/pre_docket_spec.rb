@@ -7,7 +7,6 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
     FeatureToggle.enable!(:vha_predocket_workflow)
     FeatureToggle.enable!(:visn_predocket_workflow)
     FeatureToggle.enable!(:docket_vha_appeals)
-    FeatureToggle.enable!(:disable_ama_eventing)
 
     bva_intake.add_user(bva_intake_user)
     camo.add_user(camo_user)
@@ -22,7 +21,6 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
     FeatureToggle.disable!(:vha_predocket_workflow)
     FeatureToggle.disable!(:visn_predocket_workflow)
     FeatureToggle.disable!(:docket_vha_appeals)
-    FeatureToggle.disable!(:disable_ama_eventing)
   end
 
   # Organizations
@@ -73,7 +71,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             find("#issue-benefit-type").send_keys :enter
             fill_in "Issue category", with: category
             find("#issue-category").send_keys :enter
-            if index > 0
+            if index > 0 && page.has_selector?("label", text: "None of these match")
               find("label", text: "None of these match").click
             end
             fill_in "Issue description", with: "I am a VHA issue"
