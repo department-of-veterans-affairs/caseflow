@@ -6,10 +6,14 @@ class OtherMotionCorrespondenceTask < CorrespondenceMailTask
   end
 
   # if you have a UNIQUE action for the specific task, put it here.
-  # :reek:UtilityFunction
-  def available_actions(_user)
-    [
-      Constants.TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.to_h
+  def available_actions(user)
+    return [] unless user
+
+    options = [
+      Constants.TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.to_h,
+      Constants.TASK_ACTIONS.COMPLETE_CORRESPONDENCE_TASK.to_h
     ]
+
+    options
   end
 end

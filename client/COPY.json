@@ -120,6 +120,10 @@
     "APPROVE": "approve",
     "REJECT": "reject"
   },
+  "CORRESPONDENCE_OTHER_MOTION_TASK_COMPLETE": "%s task has been marked complete. If you have made a mistake, please email %s for any changes.",
+  "CORRESPONDENCE_OTHER_MOTION_MODAL_DETAIL": "Provide context and instructions for the action",
+  "CORRESPONDENCE_COMPLETE_TASK_CONFIRMATION": "Task for %s's case has been completed",
+  "CORRESPONDENCE_COMPLETE_TASK_CONFIRMATION_DETAIL": "Task for %s's case has been completed",
   "DOCUMENT_PREVIEW": "Document Preview",
   "TASK_SNAPSHOT_ABOUT_BOX_TITLE": "About the case",
   "TASK_SNAPSHOT_ABOUT_BOX_HEARING_REQUEST_TYPE_LABEL": "Hearing Type",
