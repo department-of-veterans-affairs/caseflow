@@ -47,6 +47,43 @@ export const cancelTaskNotRelatedToAppeal = (taskID, correspondence, payload) =>
       console.error(error);
     });
 };
+export const changeTaskTypeNotRelatedToAppeal = (taskID, payload, taskNames, correspondence) => (dispatch) => {
+
+  return ApiUtil.patch(`/queue/correspondence/tasks/${taskID}/change_task_type`, payload).
+    then(() => {
+
+      dispatch({
+        type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
+        payload: {
+          bannerAlert: {
+            title: 'Success',
+            // eslint-disable-next-line max-len
+            message: `You have changed the task type from ${taskNames.oldType} to ${taskNames.newType}. These changes are now reflected in the tasks section below.`,
+            type: 'success'
+          }
+        }
+      });
+
+      dispatch({
+        type: ACTIONS.CORRESPONDENCE_INFO,
+        payload: {
+          correspondence
+        }
+      });
+    }).
+    catch((error) => {
+      dispatch({
+        type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
+        payload: {
+          bannerAlert: {
+            title: 'Warning',
+            message: error,
+            type: 'warning'
+          }
+        }
+      });
+    });
+};
 
 export const completeTaskNotRelatedToAppeal = (payload, frontendParams, correspondence) => (dispatch) => {
 

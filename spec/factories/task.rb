@@ -777,6 +777,11 @@ FactoryBot.define do
         appeal_type { Correspondence.name }
       end
 
+      factory :other_motion_correspondence_task, class: OtherMotionCorrespondenceTask do
+        appeal { create(:correspondence) }
+        appeal_type { Correspondence.name }
+      end
+
       factory :efolder_upload_failed_task, class: EfolderUploadFailedTask do
       end
 

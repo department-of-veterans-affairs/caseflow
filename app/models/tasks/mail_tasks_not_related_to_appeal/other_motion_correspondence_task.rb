@@ -11,7 +11,8 @@ class OtherMotionCorrespondenceTask < CorrespondenceMailTask
 
     options = [
       Constants.TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.to_h,
-      Constants.TASK_ACTIONS.COMPLETE_CORRESPONDENCE_TASK.to_h
+      Constants.TASK_ACTIONS.COMPLETE_CORRESPONDENCE_TASK.to_h,
+      Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h
     ]
 
     options
