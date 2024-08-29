@@ -25,9 +25,11 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
 
         expect(job).to have_received(:create_returned_appeal_job).once
         expect(job).to have_received(:eligible_and_moved_appeals).once
-        expect(job).to have_received(:complete_returned_appeal_job).with(returned_appeal_job, "Job completed successfully", moved_appeals).once
+        expect(job).to have_received(:complete_returned_appeal_job)
+          .with(returned_appeal_job, "Job completed successfully", moved_appeals).once
         expect(job).to have_received(:send_job_slack_report).with(["Job completed successfully"]).once
-        expect(job).to have_received(:metrics_service_report_runtime).with(metric_group_name: "return_legacy_appeals_to_board_job").once
+        expect(job).to have_received(:metrics_service_report_runtime)
+          .with(metric_group_name: "return_legacy_appeals_to_board_job").once
       end
     end
 
