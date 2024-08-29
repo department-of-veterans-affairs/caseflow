@@ -154,16 +154,6 @@ class ClaimHistoryEvent
           .merge("event_date" => version["updated_at"][1])
         # this create_event_from_version_object updated the previous version fields in change data
         # that is being used in the front end to show the original records.
-        if !previous_version.nil?
-          event_date_hash.merge!(create_event_from_version_object(previous_version[index]))
-          # this update_event_hash_data_from_version_object updates the change_data values with previous or
-          # unedited data. since change_data has the final version of the data that was updated.
-          # this is necessary to preserve the history that is displayed in the frontend.
-          event_date_hash.merge!(update_event_hash_data_from_version_object(previous_version[index]))
-        end
-
-        # this create_event_from_version_object updated the previous version fields in change data
-        # that is being used in the front end to show the original records.
         if !previous_version[index].nil?
           event_date_hash.merge!(create_event_from_version_object(previous_version[index]))
           # this update_event_hash_data_from_version_object updates the change_data values with previous or
@@ -540,7 +530,7 @@ class ClaimHistoryEvent
 
     def create_event_from_version_object(version)
       previous_version_database_field_mapping.each_with_object({}) do |(db_key, version_key), data|
-        data[db_key] = version[version_key]
+        data[db_key] = version[version_key] unless version[version_key].nil?
       end
     end
 

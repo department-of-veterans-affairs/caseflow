@@ -31,7 +31,7 @@ FactoryBot.define do
 
     trait :edit_of_request do
       after(:create) do |imr, evaluator|
-        imr.request_reason = evaluator.request_reason || "I edited this request."
+        imr.request_reason = "I edited this request."
         imr.nonrating_issue_category = evaluator.nonrating_issue_category ||
                                        Constants::ISSUE_CATEGORIES[evaluator.benefit_type].sample
         imr.status = evaluator.status
