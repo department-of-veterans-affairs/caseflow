@@ -783,29 +783,57 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength
 
-  def self.priority_appeals
+  def self.priority_appeals(in_window)
     conn = connection
+    aoj_cavc_affinity_lever_value = CaseDistributionLever.aoj_cavc_affinity_days
+    aoj_aod_affinity_lever_value = CaseDistributionLever.aoj_aod_affinity_days
 
     query = <<-SQL
       #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
-      where (VLJ IS NULL or #{ineligible_judges_sattyid_cache}) AND (PREV_TYPE_ACTION = '7')
     SQL
 
     fmtd_query = sanitize_sql_array([query])
 
-    conn.exec_query(fmtd_query).to_a
+    appeals = conn.exec_query(fmtd_query).to_a
+    if in_window
+      appeals.reject! do |appeal|
+        if appeal["prev_type_action"] == "7" && appeal["aod"] == "0"
+          reject_due_to_affinity?(appeal, aoj_cavc_affinity_lever_value)
+        else
+          reject_due_to_affinity?(appeal, aoj_aod_affinity_lever_value)
+        end
+      end
+    else
+      appeals.select! do |appeal|
+        if appeal["prev_type_action"] == "7" && appeal["aod"] == "0"
+          reject_due_to_affinity?(appeal, aoj_cavc_affinity_lever_value)
+        else
+          reject_due_to_affinity?(appeal, aoj_aod_affinity_lever_value)
+        end
+      end
+    end
   end
 
-  def self.nonpriority_appeals
+  def self.nonpriority_appeals(in_window)
     conn = connection
+    aoj_affinity_lever_value = CaseDistributionLever.aoj_affinity_days
 
     query = <<-SQL
       #{SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19}
-      where (VLJ IS NULL or #{ineligible_judges_sattyid_cache}) AND (PREV_TYPE_ACTION != '7')
     SQL
 
     fmtd_query = sanitize_sql_array([query])
 
-    conn.exec_query(fmtd_query).to_a
+    appeals = conn.exec_query(fmtd_query).to_a
+
+    if in_window
+      appeals.reject! do |appeal|
+        reject_due_to_affinity?(appeal, aoj_affinity_lever_value)
+      end
+    else
+      appeals.select! do |appeal|
+        reject_due_to_affinity?(appeal, aoj_affinity_lever_value)
+      end
+    end
   end
 end

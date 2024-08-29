@@ -860,7 +860,7 @@ class AppealRepository
       MetricsService.record("VACOLS: priority_appeals",
                             name: "priority_appeals",
                             service: :vacols) do
-        VACOLS::CaseDocket.priority_appeals
+        VACOLS::CaseDocket.priority_appeals(in_window)
       end
     end
 
@@ -868,7 +868,7 @@ class AppealRepository
       MetricsService.record("VACOLS: nonpriority_appeals",
                             name: "nonpriority_appeals",
                             service: :vacols) do
-        VACOLS::CaseDocket.nonpriority_appeals
+        VACOLS::CaseDocket.nonpriority_appeals(in_window)
       end
     end
 

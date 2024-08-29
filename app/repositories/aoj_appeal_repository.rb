@@ -96,7 +96,7 @@ class AojAppealRepository < AppealRepository
       MetricsService.record("VACOLS: priority_appeals",
                             name: "priority_appeals",
                             service: :vacols) do
-        VACOLS::AojCaseDocket.priority_appeals
+        VACOLS::AojCaseDocket.priority_appeals(in_window)
       end
     end
 
@@ -104,7 +104,7 @@ class AojAppealRepository < AppealRepository
       MetricsService.record("VACOLS: nonpriority_appeals",
                             name: "nonpriority_appeals",
                             service: :vacols) do
-        VACOLS::AojCaseDocket.nonpriority_appeals
+        VACOLS::AojCaseDocket.nonpriority_appeals(in_window)
       end
     end
   end

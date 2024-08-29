@@ -879,25 +879,43 @@ class VACOLS::CaseDocket < VACOLS::Record
     true
   end
 
-  def self.priority_appeals
+  def self.priority_appeals(in_window)
     conn = connection
+    cavc_affinity_lever_value = CaseDistributionLever.cavc_affinity_days
+    cavc_aod_affinity_lever_value = CaseDistributionLever.cavc_aod_affinity_days
 
     query = <<-SQL
       #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
-      where (VLJ IS NULL or #{ineligible_judges_sattyid_cache})
     SQL
 
     fmtd_query = sanitize_sql_array([query])
 
-    conn.exec_query(fmtd_query).to_a
+    appeals = conn.exec_query(fmtd_query).to_a
+
+    if in_window
+      appeals.reject! do |appeal|
+        if appeal["bfac"] == "7" && appeal["aod"] == "0"
+          reject_due_to_affinity?(appeal, cavc_affinity_lever_value)
+        else
+          reject_due_to_affinity?(appeal, cavc_aod_affinity_lever_value)
+        end
+      end
+    else
+      appeals.select! do |appeal|
+        if appeal["bfac"] == "7" && appeal["aod"] == "0"
+          reject_due_to_affinity?(appeal, cavc_affinity_lever_value)
+        else
+          reject_due_to_affinity?(appeal, cavc_aod_affinity_lever_value)
+        end
+      end
+    end
   end
 
-  def self.nonpriority_appeals
+  def self.nonpriority_appeals(_in_window)
     conn = connection
 
     query = <<-SQL
       #{SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19}
-      where (VLJ IS NULL or #{ineligible_judges_sattyid_cache})
     SQL
 
     fmtd_query = sanitize_sql_array([query])
