@@ -7,6 +7,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
     FeatureToggle.enable!(:vha_predocket_workflow)
     FeatureToggle.enable!(:visn_predocket_workflow)
     FeatureToggle.enable!(:docket_vha_appeals)
+    FeatureToggle.enable!(:disable_ama_eventing)
 
     bva_intake.add_user(bva_intake_user)
     camo.add_user(camo_user)
@@ -21,6 +22,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
     FeatureToggle.disable!(:vha_predocket_workflow)
     FeatureToggle.disable!(:visn_predocket_workflow)
     FeatureToggle.disable!(:docket_vha_appeals)
+    FeatureToggle.disable!(:disable_ama_eventing)
   end
 
   # Organizations
