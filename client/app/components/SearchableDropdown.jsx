@@ -7,6 +7,7 @@ import _, { isPlainObject, isNull, kebabCase, isEmpty, isString } from 'lodash';
 import classNames from 'classnames';
 import { css } from 'glamor';
 import { FormLabel } from './FormLabel';
+import { DoubleArrowIcon } from 'app/components/icons/DoubleArrowIcon';
 
 const TAG_ALREADY_EXISTS_MSG = 'Tag already exists';
 const NO_RESULTS_TEXT = 'Not an option';
@@ -50,6 +51,14 @@ const CustomInput = (props) => {
   };
 
   return <components.Input {...props} {...innerProps} />;
+};
+
+const DoubleArrowDropdownIndicator = (props) => {
+  return (
+    <components.DropdownIndicator {...props}>
+      <DoubleArrowIcon />
+    </components.DropdownIndicator>
+  );
 };
 
 export class SearchableDropdown extends React.Component {
@@ -162,6 +171,7 @@ export class SearchableDropdown extends React.Component {
       options,
       defaultOptions,
       defaultValue,
+      doubleArrow,
       filterOption,
       isClearable,
       inputRef,
@@ -240,6 +250,14 @@ export class SearchableDropdown extends React.Component {
     const handleNoOptions = () =>
       noResultsText ?? (creatable ? null : NO_RESULTS_TEXT);
 
+    const replacedComponents = {
+      Input: CustomInput,
+      MenuList: CustomMenuList,
+      Option: CustomOption,
+      ...(doubleArrow && { DropdownIndicator: DoubleArrowDropdownIndicator }),
+      ...(doubleArrow && { IndicatorSeparator: null })
+    };
+
     return (
       <div className={errorMessage ? 'usa-input-error' : ''} ref={this.setWrapperRef}>
         <div className={dropdownClasses} {...dropdownStyling}>
@@ -251,7 +269,7 @@ export class SearchableDropdown extends React.Component {
           )}
           <div className="cf-select">
             <SelectComponent
-              components={{ Input: CustomInput, MenuList: CustomMenuList, Option: CustomOption }}
+              components={replacedComponents}
               name={name}
               classNamePrefix="cf-select"
               inputId={`${kebabCase(name)}`}
@@ -396,6 +414,7 @@ SearchableDropdown.propTypes = {
     PropTypes.arrayOf(PropTypes.object),
   ]),
   dropdownStyling: PropTypes.object,
+  doubleArrow: PropTypes.bool,
   errorMessage: PropTypes.string,
   filterOption: PropTypes.func,
 

@@ -1,0 +1,79 @@
+type: object
+title: Upload / Update Provider Data
+description: Claim Evidence API Provider Data.
+required:
+  - claimantFirstName
+  - claimantLastName
+  - documentTypeId
+  - dateVaReceivedDocument
+properties:
+  contentSource:
+    title: Document content source
+    description: String field designating the originating source of the content being uploaded.
+    type: string
+    minimum: 1
+    maximum: 500
+    pattern: "^[a-zA-Z0-9\\'\\,\\s.\\-\\_\\|\\/@\\(\\)]*$"
+    example: VBMS
+  claimantFirstName:
+    title: Claimant First Name
+    description: String field designating the Claimant's first name.
+    type: string
+    maxLength: 64
+    pattern: ^[a-zA-Z0-9\\'\\,\\s.\\-\\_\\|\\/@\\(\\)]*$
+    example: John
+  claimantMiddleInitial:
+    title: Claimant Middle Initial
+    description: String field designating the Claimant's middle initial.
+    type: string
+    maxLength: 4
+    pattern: ^[a-zA-Z]*$
+    example: M
+  claimantLastName:
+    title: Claimant Last Name
+    description: String field designating the Claimant's last name.
+    type: string
+    maxLength: 64
+    pattern: ^[a-zA-Z0-9\\'\\,\\s.\\-\\_\\|\\/@\\(\\)]*$
+    example: Smith
+  claimantSsn:
+    title: Claimant SSN
+    description: String field designating the Claimant's SSN. Only accepts exactly 9 characters.
+    type: string
+    maxLength: 9
+    pattern: ^[0-9]*$
+    example: 123456789
+  documentTypeId:
+    title: Document Type ID
+    description: Number field correlating to a Claim Evidence document type ID. Document types primary use is loosely categorizing their contents.
+    type: integer
+    minimum: 1
+    example: 131
+  dateVaReceivedDocument:
+    title: Date VA Received Document
+    description: Date field indicating the date the VA received the document. This can be any date in format of YYYY-MM-DD from 1900 until today
+    type: string
+    format: string
+    maxLength: 10
+    minLength: 10
+    minDate: 1900-01-01
+    maxDate: today
+    pattern: "([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))"
+    example: 2022-02-01
+  subject:
+    type: string
+    title: Subject
+    description: Free text describing the document. This is primarily notes used to
+      assist claim developers.
+    maxLength: 256
+    pattern: ^[a-zA-Z0-9\s.\-_|\Q\\E@#~=%,;?!'"`():$+*^\[\]&<>{}\Q/\E]*$
+    example: subject
+  claimantParticipantId:
+    title: Claimant Participant Id
+    description: String field designating the claimant participant Id.
+    type: string
+    maxLength: 15
+    pattern: ^[0-9]*$
+    example: '000000000'
+additionalProperties: false
+

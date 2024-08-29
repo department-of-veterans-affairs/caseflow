@@ -7,10 +7,10 @@ require "rails_helper"
 RSpec.describe CaseDistributionAuditLeverEntry, type: :model do
   let(:user) { create(:user) }
   let!(:levers) { Seeds::CaseDistributionLevers.levers }
+  let(:lever) { create(:case_distribution_lever, :ama_hearing_case_affinity_days) }
 
   describe ".lever_history" do
     it "returns lever history for the past year" do
-      lever = CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_case_affinity_days)
       entries = [
         create(
           :case_distribution_audit_lever_entry,

@@ -14,6 +14,8 @@ describe DistributedCase do
     )
   end
 
+  before { create(:case_distribution_lever, :request_more_cases_minimum) }
+
   describe "#rename_for_redistribution!" do
     subject { distributed_case.rename_for_redistribution! }
 

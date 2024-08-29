@@ -1,0 +1,9 @@
+type: object
+title: Upload Response
+properties:
+  uuid:
+    type: string
+    description: >-
+      UUID representing the package as a whole. This is used for all primary Caseflow Correspondence operations.
+    format: uuid
+    example: c30626c9-954d-4dd1-9f70-1e38756d9d97

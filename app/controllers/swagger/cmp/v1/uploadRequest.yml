@@ -1,0 +1,15 @@
+type: object
+title: Upload Request
+description: Upload request containing the file binary and upload payload data
+required:
+  - payload
+  - file[]
+properties:
+  payload:
+    $ref: './payload.yml'
+  'file[]':
+    description: Array of files to be uploaded
+    type: array
+    items:
+      type: string
+      format: binary

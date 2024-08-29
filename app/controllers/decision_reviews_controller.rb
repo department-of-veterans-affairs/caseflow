@@ -15,6 +15,9 @@ class DecisionReviewsController < ApplicationController
            :in_progress_tasks,
            :in_progress_tasks_type_counts,
            :in_progress_tasks_issue_type_counts,
+           :pending_tasks,
+           :pending_tasks_type_counts,
+           :pending_tasks_issue_type_counts,
            :completed_tasks,
            :completed_tasks_type_counts,
            :completed_tasks_issue_type_counts,
@@ -29,7 +32,8 @@ class DecisionReviewsController < ApplicationController
     "issueCountColumn" => "issue_count",
     "issueTypesColumn" => "issue_types_lower",
     "daysWaitingColumn" => "tasks.assigned_at",
-    "completedDateColumn" => "tasks.closed_at"
+    "completedDateColumn" => "tasks.closed_at",
+    "pendingIssueModificationRequests" => "pending_issue_count"
   }.freeze
 
   def index
@@ -68,6 +72,10 @@ class DecisionReviewsController < ApplicationController
   end
 
   def update
+    if task.appeal.pending_issue_modification_requests.any?
+      return render json: { error_uuid: error_uuid, error_code: "pendingModificationRequests" }, status: :bad_request
+    end
+
     if task.complete_with_payload!(decision_issue_params, decision_date, current_user)
       business_line.tasks.reload
       render json: { task_filter_details: task_filter_details }, status: :ok
@@ -124,6 +132,9 @@ class DecisionReviewsController < ApplicationController
       when :incomplete
         task_filter_hash[:incomplete] = incomplete_tasks_type_counts
         task_filter_hash[:incomplete_issue_types] = incomplete_tasks_issue_type_counts
+      when :pending
+        task_filter_hash[:pending] = pending_tasks_type_counts
+        task_filter_hash[:pending_issue_types] = pending_tasks_issue_type_counts
       when :in_progress
         task_filter_hash[:in_progress] = in_progress_tasks_type_counts
         task_filter_hash[:in_progress_issue_types] = in_progress_tasks_issue_type_counts
@@ -180,6 +191,7 @@ class DecisionReviewsController < ApplicationController
 
     tasks = case tab_name
             when "incomplete" then incomplete_tasks(pagination_query_params(sort_by_column))
+            when "pending" then pending_tasks(pagination_query_params(sort_by_column))
             when "in_progress" then in_progress_tasks(pagination_query_params(sort_by_column))
             when "completed" then completed_tasks(pagination_query_params(sort_by_column))
             when nil

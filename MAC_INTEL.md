@@ -25,7 +25,7 @@
 
 4. Change directory to appeals by typing: `cd appeals`
 
-5. Navigate to [instant client](https://www.oracle.com/database/tecdchnologies/instant-client/linux-x86-64-downloads.html)
+5. Navigate to [instant client](https://www.oracle.com/database/technologies/instant-client/linux-x86-64-downloads.html)
 
 6. Download the following zip files (Step can be skipped if you received the file transfer files)
     * instantclient-basic-linux.x64-12.2.0.1.0.zip

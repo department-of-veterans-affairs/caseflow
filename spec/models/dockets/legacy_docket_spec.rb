@@ -1,6 +1,13 @@
 # frozen_string_literal: true
 
 describe LegacyDocket do
+  before do
+    create(:case_distribution_lever, :request_more_cases_minimum)
+    create(:case_distribution_lever, :nod_adjustment)
+    create(:case_distribution_lever, :disable_legacy_non_priority)
+    create(:case_distribution_lever, :disable_legacy_priority)
+  end
+
   let(:docket) do
     LegacyDocket.new
   end
@@ -17,6 +24,32 @@ describe LegacyDocket do
   context "#docket_type" do
     it "is legacy" do
       expect(subject.docket_type).to eq "legacy"
+    end
+  end
+
+  context "#ready_priority_nonpriority_legacy_appeals" do
+    context "when priority is true" do
+      it "returns false when the lever is set to true" do
+        CaseDistributionLever.where(item: "disable_legacy_priority").update_all(value: true)
+        expect(docket.ready_priority_nonpriority_legacy_appeals(priority: true)).to be_falsey
+      end
+
+      it "returns true when the lever is set to false" do
+        CaseDistributionLever.where(item: "disable_legacy_priority").update_all(value: false)
+        expect(docket.ready_priority_nonpriority_legacy_appeals(priority: true)).to be_truthy
+      end
+    end
+
+    context "when priority is false" do
+      it "returns false when the lever is set to true" do
+        CaseDistributionLever.where(item: "disable_legacy_non_priority").update_all(value: true)
+        expect(docket.ready_priority_nonpriority_legacy_appeals(priority: false)).to be_falsey
+      end
+
+      it "returns true when the lever is set to false" do
+        CaseDistributionLever.where(item: "disable_legacy_non_priority").update_all(value: false)
+        expect(docket.ready_priority_nonpriority_legacy_appeals(priority: false)).to be_truthy
+      end
     end
   end
 

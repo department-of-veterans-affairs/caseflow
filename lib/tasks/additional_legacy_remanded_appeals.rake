@@ -228,7 +228,6 @@ namespace :additional_legacy_remand_reasons do
 
       else
         veterans_with_like_45_appeals = %w[011899917 011899918] # UAT option for veterans
-
       end
 
       # set task to ATTORNEYTASK

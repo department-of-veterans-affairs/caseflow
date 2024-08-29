@@ -198,6 +198,7 @@ detectors:
       - UpdateCachedAppealsAttributesJob
       - Veteran
       - LegacyDocket
+      - Test::UsersController
   TooManyConstants:
     exclude:
       - Fakes::BGSServicePOA
