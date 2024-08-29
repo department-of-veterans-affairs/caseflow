@@ -16,17 +16,6 @@ class ExternalApi::VaBoxService
     @passphrase = ENV["BOX_PASSPHRASE"]
   end
 
-  def fetch_access_token
-    response = fetch_jwt_access_token
-    @access_token = response[:access_token]
-
-    if response[:expires_in] <= Time.now.to_i
-      # Fetch a new JWT access token
-      response = fetch_jwt_access_token
-      @access_token = response[:access_token]
-    end
-  end
-
   def download_file(file_id, destination_path)
     uri = "#{FILES_URI}/#{file_id}/content"
 
@@ -95,9 +84,22 @@ class ExternalApi::VaBoxService
     response.success? ? parse_json(response.body) : handle_error(response)
   end
 
+  def ensure_access_token
+    @access_token = Rails.cache.read(:box_access_token) || fetch_access_token
+  end
+
   private
 
+  def fetch_access_token
+    response = fetch_jwt_access_token
+    @access_token = response[:access_token]
+    Rails.cache.write(:box_access_token, @access_token, expires_in: (response[:expires_in] - 60))
+    @access_token
+  end
+
   def box_conn
+    ensure_access_token
+
     Faraday.new(BASE_URL) do |f|
       f.headers["Authorization"] = "Bearer #{@access_token}"
       f.headers["Content-Type"] = "application/json"
@@ -107,6 +109,8 @@ class ExternalApi::VaBoxService
   end
 
   def upload_conn
+    ensure_access_token
+
     Faraday.new(UPLOAD_URL) do |f|
       f.headers["Authorization"] = "Bearer #{@access_token}"
       f.request :multipart

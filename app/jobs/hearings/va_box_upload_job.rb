@@ -27,8 +27,6 @@ class Hearings::VaBoxUploadJob < CaseflowJob
 
     box_service = ExternalApi::VaBoxService.new
 
-    box_service.fetch_access_token
-
     file_info[:hearings].each_with_index do |hearing, index|
       begin
         transcription_package = find_transcription_package(hearing)
