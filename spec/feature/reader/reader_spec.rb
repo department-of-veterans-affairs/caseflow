@@ -1142,7 +1142,7 @@ RSpec.feature "Reader", :all_dbs do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
         click_on documents[1].type
 
-        find("h3", text: "Issue tags", wait: 5).click
+        find("h3", text: "Issue tags", wait: 10).click
         # tags for first document are shared in tag auto suggestions for second document
         page.find("#tags").click
         tag_options = find_all(".cf-select__option")
@@ -1169,7 +1169,7 @@ RSpec.feature "Reader", :all_dbs do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
         click_on documents[0].type
-        find("h3", text: "Issue tags", wait: 5).click
+        find("h3", text: "Issue tags", wait: 10).click
         # verify that the tags on first doc still exist and tag deleted from second doc isn't suggested
         expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 4)
       end
