@@ -8,6 +8,8 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
     let(:moved_appeals) { [{ "bfkey" => "1", "priority" => 1 }] }
 
     before do
+      allow(CaseDistributionLever).to receive(:nonsscavlj_number_of_appeals_to_move).and_return(10)
+
       allow(job).to receive(:create_returned_appeal_job).and_return(returned_appeal_job)
       allow(returned_appeal_job).to receive(:update!)
       allow(job).to receive(:eligible_and_moved_appeals).and_return([appeals, moved_appeals])
