@@ -163,7 +163,6 @@ class IntakesController < ApplicationController
       vhaClaimReviewEstablishment: FeatureToggle.enabled?(:vha_claim_review_establishment, user: current_user),
       metricsBrowserError: FeatureToggle.enabled?(:metrics_browser_error, user: current_user),
       removeCompAndPenIntake: FeatureToggle.enabled?(:remove_comp_and_pen_intake, user: current_user),
-      displayNonFilteredCategories: FeatureToggle.enabled?(:display_non_filtered_categories, user: current_user)
     }
   end
   # rubocop:enable Metrics/AbcSize
