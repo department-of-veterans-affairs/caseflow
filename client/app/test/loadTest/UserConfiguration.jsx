@@ -1,6 +1,7 @@
 /* eslint-disable max-lines, max-len */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
 import Checkbox from '../../components/Checkbox';
@@ -23,7 +24,11 @@ export default function UserConfiguration(props) {
   // };
 
   // console.log(filteredStations());
-  console.log(props);
+  // console.log(props.featuresList.sort());
+
+  const featureToggles = props.featuresList;
+
+  featureToggles.sort();
 
   return (
     <div>
@@ -61,15 +66,23 @@ export default function UserConfiguration(props) {
       <Checkbox
         unpadded
         label="System Admin"
-        name="functions-checkbox"
+        name="functions-checkboxes"
       />
       <br />
       <h2><strong>Feature Toggles</strong></h2>
-      <Checkbox
-        unpadded
-        label="System Admin"
-        name="functions-checkbox"
-      />
+      <div>
+        {featureToggles.map((feature) => (
+          <Checkbox
+            unpadded
+            label={feature}
+            name="features-checkboxes"
+          />
+        ))}
+      </div>
     </div>
   );
 }
+
+UserConfiguration.propTypes = {
+  featuresList: PropTypes.array,
+};
