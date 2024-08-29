@@ -524,13 +524,13 @@ class ClaimHistoryEvent
 
     def update_event_hash_data_from_version_object(version)
       version_database_field_mapping.each_with_object({}) do |(version_key, db_key), data|
-        data[db_key] = version[version_key] unless version[version_key].nil?
+        data[db_key] = version[version_key]
       end
     end
 
     def create_event_from_version_object(version)
-      previous_version_database_field_mapping.each_with_object({}) do |(db_key, version_key), data|
-        data[db_key] = version[version_key] unless version[version_key].nil?
+      previous_version_database_field_mapping.each_with_object({}) do |(version_key, db_key), data|
+        data[db_key] = version[version_key]
       end
     end
 
@@ -592,11 +592,11 @@ class ClaimHistoryEvent
 
     def previous_version_database_field_mapping
       {
-        "previous_issue_type" => "nonrating_issue_category",
-        "previous_issue_description" => "nonrating_issue_description",
-        "previous_decision_date" => "decision_date",
-        "previous_modification_request_reason" => "request_reason",
-        "previous_withdrawal_date" => "withdrawal_date"
+        "nonrating_issue_category" => "previous_issue_type",
+        "nonrating_issue_description" => "previous_issue_description",
+        "decision_date" => "previous_decision_date",
+        "request_reason" => "previous_modification_request_reason",
+        "withdrawal_date" => "previous_withdrawal_date"
       }
     end
 
@@ -823,14 +823,14 @@ class ClaimHistoryEvent
 
   def parse_task_attributes(change_data)
     @task_id = change_data["task_id"]
-    parse_task_status(change_data)
+    @task_status = derive_task_status(change_data)
     @claim_type = change_data["appeal_type"]
     @assigned_at = change_data["assigned_at"]
     @days_waiting = change_data["days_waiting"]
   end
 
-  def parse_task_status(change_data)
-    @task_status = change_data["is_assigned_present"] ? "pending" : change_data["task_status"]
+  def derive_task_status(change_data)
+    change_data["is_assigned_present"] ? "pending" : change_data["task_status"]
   end
 
   def parse_intake_attributes(change_data)
@@ -882,14 +882,31 @@ class ClaimHistoryEvent
   end
 
   def parse_previous_issue_modification_attributes(change_data)
-    @previous_issue_type = change_data["previous_issue_type"] || change_data["requested_issue_type"]
-    @previous_decision_date = change_data["previous_decision_date"] || change_data["requested_decision_date"]
-    @previous_modification_request_reason = change_data["previous_modification_request_reason"] ||
-                                            change_data["modification_request_reason"]
-    @previous_issue_description = change_data["previous_issue_description"] ||
-                                  change_data["requested_issue_description"]
-    @previous_withdrawal_date = change_data["previous_withdrawal_date"] ||
-                                change_data["issue_modification_request_withdrawal_date"]
+    @previous_issue_type = derive_previous_issue_type(change_data)
+    @previous_decision_date = derive_previous_decision_date(change_data)
+    @previous_modification_request_reason = derive_previous_modification_request_reason(change_data)
+    @previous_issue_description = derive_previous_issue_description(change_data)
+    @previous_withdrawal_date = derive_previous_withdrawal_date(change_data)
+  end
+
+  def derive_previous_issue_type(change_data)
+    change_data["previous_issue_type"] || change_data["requested_issue_type"]
+  end
+
+  def derive_previous_decision_date(change_data)
+    change_data["previous_decision_date"] || change_data["requested_decision_date"]
+  end
+
+  def derive_previous_issue_description(change_data)
+    change_data["previous_issue_description"] || change_data["requested_issue_description"]
+  end
+
+  def derive_previous_modification_request_reason(change_data)
+    change_data["previous_modification_request_reason"] || change_data["modification_request_reason"]
+  end
+
+  def derive_previous_withdrawal_date(change_data)
+    change_data["previous_withdrawal_date"] || change_data["issue_modification_request_withdrawal_date"]
   end
 
   ############ CSV and Serializer Helpers ############
