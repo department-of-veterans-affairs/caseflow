@@ -17,7 +17,6 @@ import {
 
 /* eslint-disable camelcase */
 const CorrespondenceCompleteTaskModal = (props) => {
-  const { task } = props;
   const taskData = taskActionData(props);
 
   const [instructions, setInstructions] = useState('');
@@ -62,14 +61,6 @@ const CorrespondenceCompleteTaskModal = (props) => {
 
   // Additional properties - should be removed later once generic submit buttons are styled the same across all modals
   const modalProps = {};
-
-  if ([
-    'AssessDocumentationTask',
-    'EducationAssessDocumentationTask',
-    'HearingPostponementRequestMailTask'
-  ].includes(task?.type) || task?.appeal.hasCompletedSctAssignTask) {
-    modalProps.submitButtonClassNames = ['usa-button'];
-  }
 
   return (
     <QueueFlowModal
