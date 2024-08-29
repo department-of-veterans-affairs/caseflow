@@ -91,11 +91,8 @@ Object {
               <span
                 class="time-slot-card-label"
               >
-                1:30 AM MDT
+                3:30 AM EDT
               </span>
-              
-              <br />
-              3:30 AM EDT
             </p>
           </div>
         </div>
@@ -985,11 +982,8 @@ Object {
             <span
               class="time-slot-card-label"
             >
-              1:30 AM MDT
+              3:30 AM EDT
             </span>
-            
-            <br />
-            3:30 AM EDT
           </p>
         </div>
       </div>
