@@ -750,6 +750,9 @@ RSpec.feature "Reader", :all_dbs do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
         click_on documents[0].type
+        page.driver.browser.manage.window.resize_to(1024, 1024)
+
+        find("h3", text: "Comments").click
 
         element_id = "cf-sidebar-accordion"
         scroll_to(id: element_id, value: 0)
