@@ -102,14 +102,16 @@ class AojLegacyDocket < LegacyDocket
     if case_affinity_days_lever_value_is_selected?(aoj_cavc_affinity_lever_value)
       appeals = if in_window
                   appeals.select! do |appeal|
-                    appeal_affinity(appeal)&.affinity_start_date.nil? ||
-                      (appeal_affinity(appeal).affinity_start_date > lever.to_i.days.ago)
+                    appeal_affinity = find_appeal_affinity(appeal)
+                    appeal_affinity&.affinity_start_date.nil? ||
+                      (appeal_affinity.affinity_start_date > lever.to_i.days.ago)
                   end
                 else
                   appeals.select! do |appeal|
-                    next if appeal_affinity(appeal)&.affinity_start_date.nil?
+                    appeal_affinity = find_appeal_affinity(appeal)
+                    next if appeal_affinity&.affinity_start_date.nil?
 
-                    appeal_affinity(appeal).affinity_start_date < lever.to_i.days.ago
+                    appeal_affinity.affinity_start_date < lever.to_i.days.ago
                   end
                 end
     end
@@ -120,9 +122,5 @@ class AojLegacyDocket < LegacyDocket
 
   def counts_by_priority_and_readiness
     @counts_by_priority_and_readiness ||= LegacyAppeal.aoj_appeal_repository.docket_counts_by_priority_and_readiness
-  end
-
-  def appeal_affinity(appeal)
-    VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity
   end
 end
