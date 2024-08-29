@@ -162,7 +162,7 @@ class IntakesController < ApplicationController
       hlrScUnrecognizedClaimants: FeatureToggle.enabled?(:hlr_sc_unrecognized_claimants, user: current_user),
       vhaClaimReviewEstablishment: FeatureToggle.enabled?(:vha_claim_review_establishment, user: current_user),
       metricsBrowserError: FeatureToggle.enabled?(:metrics_browser_error, user: current_user),
-      removeCompAndPenIntake: FeatureToggle.enabled?(:remove_comp_and_pen_intake, user: current_user),
+      removeCompAndPenIntake: FeatureToggle.enabled?(:remove_comp_and_pen_intake, user: current_user)
     }
   end
   # rubocop:enable Metrics/AbcSize
