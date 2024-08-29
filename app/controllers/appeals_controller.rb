@@ -218,6 +218,7 @@ class AppealsController < ApplicationController
     is_predocket_needed
     mst_status
     pact_status
+    is_unidentified
   ].freeze
 
   def appeals_controller_params
