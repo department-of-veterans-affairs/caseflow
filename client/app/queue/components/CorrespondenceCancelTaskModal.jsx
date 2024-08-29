@@ -98,6 +98,7 @@ const CorrespondenceCancelTaskModal = (props) => {
           value={instructions}
         />
       }
+
     </QueueFlowModal>
   );
 
