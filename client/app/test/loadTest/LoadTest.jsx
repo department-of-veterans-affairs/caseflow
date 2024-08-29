@@ -7,6 +7,7 @@ import { css } from 'glamor';
 import Button from '../../components/Button';
 
 import UserConfiguration from './UserConfiguration';
+import ScenarioConfiguration from './ScenarioConfiguration';
 
 export default function LoadTest(props) {
 
@@ -16,6 +17,9 @@ export default function LoadTest(props) {
         <AppSegment filledBackground>
           <h1>Test Target Configuration</h1>
           <UserConfiguration {...props} />
+          <br/>
+          <h2>Scenario Groups</h2>
+          <ScenarioConfiguration/>
         </AppSegment>
         <div {...css({ overflow: 'hidden' })}>
           <Button
