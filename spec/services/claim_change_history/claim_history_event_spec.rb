@@ -202,6 +202,7 @@ describe ClaimHistoryEvent do
       event_user_name: "System"
     }
   end
+  let(:modification_request_decision_date) { Time.zone.parse("2024-07-28").to_date }
   let(:modification_attribute_data) do
     {
       event_type: :modification,
@@ -212,11 +213,11 @@ describe ClaimHistoryEvent do
       decision_date: "2023-05-31",
       new_issue_type: "Caregiver | Eligibility",
       new_issue_description: "Rejection of withrwaslasas",
-      new_decision_date: "7/28/2024",
+      new_decision_date: modification_request_decision_date,
       modification_request_reason: "Please withdwasdadsadadadad",
       previous_issue_type: "Caregiver | Eligibility",
       previous_issue_description: "Rejection of withrwaslasas",
-      previous_decision_date: "7/28/2024",
+      previous_decision_date: modification_request_decision_date,
       previous_modification_request_reason: "Please withdwasdadsadadadad"
     }
   end
@@ -239,12 +240,12 @@ describe ClaimHistoryEvent do
       issue_description: "Clothing allowance no decision date",
       new_issue_type: "Caregiver | Eligibility",
       new_issue_description: "modifiedvalue",
-      new_decision_date: "7/28/2024",
+      new_decision_date: modification_request_decision_date,
       modification_request_reason: "Addition is the only request issue-modifiedvalue Z",
       event_user_name: "Monte Mann",
       previous_issue_type: "Caregiver | Eligibility",
       previous_issue_description: "Rejection of withrwaslasas",
-      previous_decision_date: "7/28/2024",
+      previous_decision_date: modification_request_decision_date,
       previous_modification_request_reason: "Please withdwasdadsadadadad"
     }
   end
@@ -1460,8 +1461,8 @@ describe ClaimHistoryEvent do
     end
   end
 
-  def verify_attributes_and_count(subject, num_of_records, attribute)
+  def verify_attributes_and_count(subject, num_of_records, attributes)
     expect(subject.count).to eq(num_of_records)
-    expect_attributes(subject[0], attribute)
+    expect_attributes(subject[0], attributes)
   end
 end

@@ -130,7 +130,7 @@ describe ChangeHistoryEventSerializer do
             dispositionDate: nil,
             withdrawalRequestDate: nil
           },
-          modificationRequestDetails: issue_modification_request_details,
+          modificationRequestDetails: modificationRequestDetailsObject,
           eventDate: events[2].event_date,
           taskID: vha_task.id
         }

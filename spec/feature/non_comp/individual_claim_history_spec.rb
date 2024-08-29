@@ -642,14 +642,14 @@ feature "Individual Claim History", :postgres do
              nonrating_issue_category: "Medical and Dental Care Reimbursement")
     end
     let(:task_event_two_id) { task_event_two.decision_review.tasks.ids[0] }
+
     let!(:approved_modification_edit) do
-      request = create(:issue_modification_request,
-                       :with_request_issue,
-                       :edit_of_request,
-                       request_type: "modification",
-                       decision_review: task_event_two.decision_review)
-      request.update(status: "approved")
-      request
+      create(:issue_modification_request,
+             request_type: "modification",
+             decision_review: task_event_two.decision_review,
+             request_issue: task_event_two.decision_review.request_issues.first,
+             request_reason: "Initial request reason",
+             decision_date: 2.days.ago)
     end
 
     let!(:cancelled_issue_modification_request_modification) do
@@ -676,11 +676,28 @@ feature "Individual Claim History", :postgres do
     let(:events) { ClaimHistoryService.new(non_comp_org, task_id: task_event_two_id).build_events }
 
     before do
-      visit "/decision_reviews/vha/tasks/#{task_event_two_id}/history"
+      Timecop.freeze(Time.zone.now)
+      # approved_modification_edit
+      Timecop.travel(2.minutes.from_now)
+
+      # Edit the request to create a request edit event
+      approved_modification_edit.update!(request_reason: "I edited this request.",
+                                         nonrating_issue_category: "CHAMPVA",
+                                         nonrating_issue_description: "Newly edited issue description")
+
+      Timecop.travel(2.minutes.from_now)
+      approved_modification_edit.update!(status: "approved")
+    end
+
+    after do
+      Timecop.return
     end
 
     context "Check for data output" do
       it "check for the correct data for Edited Request Modification" do
+        visit "/decision_reviews/vha/tasks/#{task_event_two_id}/history"
+        puts "------------list of event types--------------"
+        p events.map(&:event_type)
         click_filter_option("Edit of request - issue modification (1)")
 
         original_modification_request = events.detect { |e| e.event_type == :request_edited }
@@ -699,6 +716,8 @@ feature "Individual Claim History", :postgres do
         expect(table_row).to have_content(
           "New decision date: #{approved_modification_edit.decision_date.strftime('%m/%d/%Y')}"
         )
+        puts "what is this then?????????"
+        puts approved_modification_edit.inspect
         expect(table_row).to have_content(
           "New modification request reason: #{approved_modification_edit.request_reason}"
         )
@@ -719,6 +738,10 @@ feature "Individual Claim History", :postgres do
         expect(table_row).to have_content(
           "New issue description: #{original_modification_request.new_issue_description}"
         )
+
+        puts "----------DECISION DATES---------"
+        puts new_decision_date.inspect
+        puts request_issue_decision_date.inspect
         expect(table_row).to have_content("New decision date: #{new_decision_date.strftime('%m/%d/%Y')}")
         expect(table_row).to have_content(
           "Modification request reason: #{original_modification_request.previous_modification_request_reason}"

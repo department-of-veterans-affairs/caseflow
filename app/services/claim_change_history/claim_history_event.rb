@@ -129,6 +129,7 @@ class ClaimHistoryEvent
       edited_events = []
       imr_versions = parse_versions(change_data["imr_versions"])
       previous_version = parse_versions(change_data["previous_state_array"])
+
       if imr_versions.present?
         *rest_of_versions, last_version = imr_versions
 
@@ -175,12 +176,6 @@ class ClaimHistoryEvent
         edit_of_request_events.push(*from_change_data(event_type, change_data.merge(event_date_hash)))
       end
       edit_of_request_events
-    end
-
-    def create_event_from_version_object(version)
-      previous_version_database_field.each_with_object({}) do |(db_key, version_key), data|
-        data[db_key] = version[version_key] unless version[version_key].nil?
-      end
     end
 
     def create_last_version_events(change_data, last_version)
@@ -543,6 +538,12 @@ class ClaimHistoryEvent
       end
     end
 
+    def create_event_from_version_object(version)
+      previous_version_database_field_mapping.each_with_object({}) do |(db_key, version_key), data|
+        data[db_key] = version[version_key]
+      end
+    end
+
     def event_from_version(changes, index, change_data)
       # If there is no task status change in the set of papertrail changes, ignore the object
       if changes["status"]
@@ -599,7 +600,7 @@ class ClaimHistoryEvent
       }
     end
 
-    def previous_version_database_field
+    def previous_version_database_field_mapping
       {
         "previous_issue_type" => "nonrating_issue_category",
         "previous_issue_description" => "nonrating_issue_description",
@@ -830,13 +831,16 @@ class ClaimHistoryEvent
     parse_request_issue_modification_attributes(change_data)
   end
 
-  # :reek:FeatureEnvy
   def parse_task_attributes(change_data)
     @task_id = change_data["task_id"]
-    @task_status = change_data["is_assigned_present"] ? "pending" : change_data["task_status"]
+    parse_task_status(change_data)
     @claim_type = change_data["appeal_type"]
     @assigned_at = change_data["assigned_at"]
     @days_waiting = change_data["days_waiting"]
+  end
+
+  def parse_task_status(change_data)
+    @task_status = change_data["is_assigned_present"] ? "pending" : change_data["task_status"]
   end
 
   def parse_intake_attributes(change_data)

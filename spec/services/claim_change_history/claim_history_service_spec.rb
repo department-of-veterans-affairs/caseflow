@@ -176,7 +176,7 @@ describe ClaimHistoryService do
         # Verify the issue data is correct for the completed_dispostion events
         disposition_events = events.select { |event| event.event_type == :completed_disposition }
         disposition_issue_types = ["Caregiver | Other", "Camp Lejune Family Member"]
-        disposition_issue_descriptions = ["VHA - Caregiver ", "Camp Lejune description"]
+        disposition_issue_descriptions = ["VHA - Caregiver", "Camp Lejune description"]
         disposition_user_names = ["Gaius Baelsar", "Gaius Baelsar"]
         disposition_values = %w[Granted denied]
         disposition_dates = [5.days.ago.to_date.to_s] * 2
@@ -192,7 +192,7 @@ describe ClaimHistoryService do
         added_issue_descriptions = [*disposition_issue_descriptions,
                                     "Withdrew CHAMPVA",
                                     "VHA issue description ",
-                                    "VHA - Caregiver "]
+                                    "VHA - Caregiver"]
         added_issue_user_names = ["Lauren Roth", "Lauren Roth", "Lauren Roth", "Eleanor Reynolds", "Lauren Roth"]
         add_issue_events = events.select do |event|
           event.event_type == :added_issue || event.event_type == :added_issue_without_decision_date
