@@ -1144,7 +1144,7 @@ RSpec.feature "Reader", :all_dbs do
 
         find("h3", text: "Issue tags", wait: 10).click
         # tags for first document are shared in tag auto suggestions for second document
-        page.find("#tags").click
+        page.find("#tags", wait: 10).click
         tag_options = find_all(".cf-select__option")
         expect(tag_options.count).to eq 4
 
