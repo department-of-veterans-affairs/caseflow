@@ -3,61 +3,75 @@
 describe ReturnLegacyAppealsToBoardJob, :all_dbs do
   describe "#perform" do
     let(:job) { described_class.new }
-    context "when successful" do
-      it "creates a ReturnedAppealJob instance and updates its status" do
-        expect do
-          job.perform
-        end.to change { ReturnedAppealJob.count }.by(1)
+    let(:returned_appeal_job) { instance_double("ReturnedAppealJob", id: 1) }
+    let(:appeals) { [{ "bfkey" => "1", "priority" => 1 }, { "bfkey" => "2", "priority" => 0 }] }
+    let(:moved_appeals) { [{ "bfkey" => "1", "priority" => 1 }] }
 
-        returned_appeal_job = ReturnedAppealJob.last
-        expect(returned_appeal_job.started_at).to be_present
+    before do
+      allow(CaseDistributionLever).to receive(:nonsscavlj_number_of_appeals_to_move).and_return(2)
 
-        if returned_appeal_job.errored_at
-          expect(JSON.parse(returned_appeal_job.stats)["message"]).to include("Job failed with error")
-        else
-          expect(returned_appeal_job.completed_at).to be_present
-          expect(JSON.parse(returned_appeal_job.stats)["message"]).to eq("Job completed successfully")
-        end
+      allow(job).to receive(:create_returned_appeal_job).and_return(returned_appeal_job)
+      allow(returned_appeal_job).to receive(:update!)
+      allow(job).to receive(:eligible_and_moved_appeals).and_return([appeals, moved_appeals])
+      allow(job).to receive(:filter_appeals).and_return({})
+      allow(job).to receive(:send_job_slack_report)
+      allow(job).to receive(:complete_returned_appeal_job)
+      allow(job).to receive(:metrics_service_report_runtime)
+    end
+
+    context "when the job completes successfully" do
+      it "creates a ReturnedAppealJob instance, processes appeals, and sends a report" do
+        allow(job).to receive(:slack_report).and_return(["Job completed successfully"])
+
+        job.perform
+
+        expect(job).to have_received(:create_returned_appeal_job).once
+        expect(job).to have_received(:eligible_and_moved_appeals).once
+        expect(job).to have_received(:complete_returned_appeal_job)
+          .with(returned_appeal_job, "Job completed successfully", moved_appeals).once
+        expect(job).to have_received(:send_job_slack_report).with(["Job completed successfully"]).once
+        expect(job).to have_received(:metrics_service_report_runtime)
+          .with(metric_group_name: "return_legacy_appeals_to_board_job").once
+      end
+    end
+
+    context "when no appeals are moved" do
+      before do
+        allow(job).to receive(:eligible_and_moved_appeals).and_return([appeals, nil])
+        allow(job).to receive(:slack_report).and_return(["Job Ran Successfully, No Records Moved"])
       end
 
-      it "records runtime metrics" do
-        allow(MetricsService).to receive(:record_runtime)
-        expect do
-          job.perform
-        end.to change { ReturnedAppealJob.count }.by(1)
-        expect(MetricsService).to have_received(:record_runtime).with(
-          hash_including(metric_group: "return_legacy_appeals_to_board_job")
-        )
+      it "sends a no records moved Slack report" do
+        job.perform
+
+        expect(job).to have_received(:send_job_slack_report).with(["Job Ran Successfully, No Records Moved"]).once
+        expect(job).to have_received(:metrics_service_report_runtime).once
       end
     end
 
     context "when an error occurs" do
-      let(:error_message) { "Something went wrong" }
+      let(:error_message) { "Unexpected error" }
+      let(:slack_service_instance) { instance_double(SlackService) }
 
       before do
-        allow(job).to receive(:send_job_slack_report).and_raise(StandardError, error_message)
+        allow(job).to receive(:eligible_and_moved_appeals).and_raise(StandardError, error_message)
+        allow(job).to receive(:log_error)
+        allow(returned_appeal_job).to receive(:update!)
+        allow(SlackService).to receive(:new).and_return(slack_service_instance)
+        allow(slack_service_instance).to receive(:send_notification)
       end
 
-      it "updates the ReturnedAppealJob with error details" do
-        expect do
-          job.perform
-        end.to change { ReturnedAppealJob.count }.by(1)
+      it "handles the error, logs it, and sends a Slack notification" do
+        job.perform
 
-        returned_appeal_job = ReturnedAppealJob.last
-        expect(returned_appeal_job.errored_at).to be_present
-        expect(JSON.parse(returned_appeal_job.stats)["message"]).to include("Job failed with error")
-      end
-
-      it "sends an error notification via Slack" do
-        expect_any_instance_of(SlackService).to receive(:send_notification).with(
+        expect(job).to have_received(:log_error).with(instance_of(StandardError))
+        expect(returned_appeal_job).to have_received(:update!)
+          .with(hash_including(errored_at: kind_of(Time),
+                               stats: "{\"message\":\"Job failed with error: #{error_message}\"}")).once
+        expect(slack_service_instance).to have_received(:send_notification).with(
           a_string_matching(/<!here>\n \[ERROR\]/), job.class.name
-        )
-        job.perform
-      end
-
-      it "logs the error" do
-        expect(job).to receive(:log_error).with(anything)
-        job.perform
+        ).once
+        expect(job).to have_received(:metrics_service_report_runtime).once
       end
     end
   end
