@@ -25,24 +25,29 @@ class CorrespondenceMailTask < CorrespondenceTask
     )
   end
 
-  def self.available_actions(user)
-    return [] unless user
+  def available_actions(user)
+    return [] unless user_can_work_task_correspondence_mail_task(user)
 
     options = [
       Constants.TASK_ACTIONS.CHANGE_CORR_TASK_TYPE.to_h,
       Constants.TASK_ACTIONS.ASSIGN_CORR_TASK_TO_TEAM.to_h,
       Constants.TASK_ACTIONS.MARK_TASK_COMPLETE.to_h,
       Constants.TASK_ACTIONS.RETURN_TO_INBOUND_OPS.to_h,
-      Constants.TASK_ACTIONS.CANCEL_CORR_TASK.to_h,
       Constants.TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.to_h
     ]
 
-    if user.is_a? Organization
+    if assigned_to.is_a? Organization
       options.insert(2, Constants.TASK_ACTIONS.ASSIGN_CORR_TASK_TO_PERSON.to_h)
     else
       options.insert(2, Constants.TASK_ACTIONS.REASSIGN_CORR_TASK_TO_PERSON.to_h)
     end
 
     options
+  end
+
+  private
+
+  def user_can_work_task_correspondence_mail_task(user)
+    task_is_assigned_to_users_organization?(user) || assigned_to == user
   end
 end
