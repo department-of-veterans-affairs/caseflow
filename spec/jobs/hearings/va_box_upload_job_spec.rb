@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
 require "rails_helper"
-require_relative "../../../app/jobs/hearings/va_box_upload_job"
 
-RSpec.describe VaBoxUploadJob, type: :job do
+RSpec.describe Hearings::VaBoxUploadJob, type: :job do
   let(:box_service) { instance_double(ExternalApi::VaBoxService) }
   let(:file_info) do
     {
@@ -18,7 +17,9 @@ RSpec.describe VaBoxUploadJob, type: :job do
   end
   let(:box_folder_id) { "255974435715" }
   let(:hearing) { { hearing_id: 1, hearing_type: "LegacyHearing" } }
-  let(:transcription_package) { instance_double(TranscriptionPackage, aws_link_zip: "s3://bucket/file.zip", contractor_id: 123, id: 1) } # rubocop:disable Layout/LineLength
+  let(:transcription_package) do
+    instance_double(TranscriptionPackage, aws_link_zip: "s3://bucket/file.zip", contractor_id: 123, id: 1)
+  end
   let(:local_file_path) { Rails.root.join("tmp", "transcription_files", "file.zip") }
   let(:user) { instance_double(User, id: 1) }
 
@@ -27,7 +28,7 @@ RSpec.describe VaBoxUploadJob, type: :job do
     allow(box_service).to receive(:fetch_access_token)
     allow(box_service).to receive(:get_child_folder_id).and_return("child_folder_id")
     allow(Caseflow::S3Service).to receive(:fetch_file).and_return(local_file_path)
-    allow(box_service).to receive(:public_upload_file)
+    allow(box_service).to receive(:upload_file)
     allow(transcription_package).to receive(:update!)
     allow(RequestStore).to receive(:[]).with(:current_user).and_return(user)
   end
@@ -35,11 +36,11 @@ RSpec.describe VaBoxUploadJob, type: :job do
   describe "#perform" do
     context "when transcription package is found" do
       before do
-        allow_any_instance_of(VaBoxUploadJob).to receive(:find_transcription_package).and_return(transcription_package)
+        allow_any_instance_of(Hearings::VaBoxUploadJob).to receive(:find_transcription_package).and_return(transcription_package)
       end
 
       it "uploads the file to Box and updates the transcription package" do
-        expect(box_service).to receive(:public_upload_file).with(local_file_path, "child_folder_id")
+        expect(box_service).to receive(:upload_file).with(local_file_path, "child_folder_id")
         expect(transcription_package).to receive(:update!).with(
           date_upload_box: anything,
           status: "Successful Upload (BOX)",
@@ -54,11 +55,11 @@ RSpec.describe VaBoxUploadJob, type: :job do
 
     context "when transcription package is not found" do
       before do
-        allow_any_instance_of(VaBoxUploadJob).to receive(:find_transcription_package).and_return(nil)
+        allow_any_instance_of(Hearings::VaBoxUploadJob).to receive(:find_transcription_package).and_return(nil)
       end
 
       it "sends an email about the missing transcription package" do
-        expect_any_instance_of(VaBoxUploadJob).to receive(:send_transcription_issues_email).with(
+        expect_any_instance_of(Hearings::VaBoxUploadJob).to receive(:send_transcription_issues_email).with(
           error: { type: "transcription_package", message: "Transcription package not found for hearing ID: 1" },
           provider: "Box"
         )
@@ -69,12 +70,12 @@ RSpec.describe VaBoxUploadJob, type: :job do
 
     context "when child folder ID is not found" do
       before do
-        allow_any_instance_of(VaBoxUploadJob).to receive(:find_transcription_package).and_return(transcription_package)
+        allow_any_instance_of(Hearings::VaBoxUploadJob).to receive(:find_transcription_package).and_return(transcription_package)
         allow(box_service).to receive(:get_child_folder_id).and_return(nil)
       end
 
       it "sends an email about the missing child folder ID" do
-        expect_any_instance_of(VaBoxUploadJob).to receive(:send_transcription_issues_email).with(
+        expect_any_instance_of(Hearings::VaBoxUploadJob).to receive(:send_transcription_issues_email).with(
           error: { type: "child_folder_id", message: "Child folder ID not found for contractor name: Jamison Pickup" },
           provider: "Box"
         )

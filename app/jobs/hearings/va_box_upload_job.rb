@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require "aws-sdk-s3"
-class VaBoxUploadJob < CaseflowJob
+# require "aws-sdk-s3"
+class Hearings::VaBoxUploadJob < CaseflowJob
   include Shoryuken::Worker
   queue_as :low_priority
   include Hearings::SendTranscriptionIssuesEmail
@@ -25,13 +25,7 @@ class VaBoxUploadJob < CaseflowJob
     @all_paths = []
     @email_sent_flags = { transcription_package: false, child_folder_id: false, upload: false }
 
-    box_service = ExternalApi::VaBoxService.new(
-      client_secret: ENV["BOX_CLIENT_SECRET"],
-      client_id: ENV["BOX_CLIENT_ID"],
-      enterprise_id: ENV["BOX_ENTERPRISE_ID"],
-      private_key: ENV["BOX_PRIVATE_KEY"],
-      passphrase: ENV["BOX_PASS_PHRASE"]
-    )
+    box_service = ExternalApi::VaBoxService.new
 
     box_service.fetch_access_token
 
@@ -109,7 +103,7 @@ class VaBoxUploadJob < CaseflowJob
   # rubocop:disable Metrics/ParameterLists
   def upsert_to_box(box_service, local_file_path, child_folder_id, transcription_package, file_info, hearing)
     ActiveRecord::Base.transaction do
-      box_service.public_upload_file(local_file_path, child_folder_id)
+      box_service.upload_file(local_file_path, child_folder_id)
       Rails.logger.info("File successfully uploaded to Box folder ID: #{child_folder_id}")
       transcription_package.update!(
         date_upload_box: Time.current,
@@ -118,7 +112,7 @@ class VaBoxUploadJob < CaseflowJob
         expected_return_date: file_info[:return_date],
         updated_by_id: RequestStore[:current_user].id
       )
-      transcription = Transcription.find_or_initialize_by(task_number: file_info[:work_order_name])
+      transcription = ::Transcription.find_or_initialize_by(task_number: file_info[:work_order_name])
       transcription.update!(
         expected_return_date: file_info[:return_date],
         hearing_id: hearing[:hearing_id],
@@ -134,7 +128,7 @@ class VaBoxUploadJob < CaseflowJob
   # rubocop:disable Metrics/ParameterLists, Metrics/MethodLength
   def create_to_box(box_service, local_file_path, child_folder_id, transcription_package, file_info, hearing)
     ActiveRecord::Base.transaction do
-      box_service.public_upload_file(local_file_path, child_folder_id)
+      box_service.upload_file(local_file_path, child_folder_id)
       Rails.logger.info("File successfully uploaded to Box folder ID: #{child_folder_id}")
       transcription_package.update!(
         date_upload_box: Time.current,
@@ -143,7 +137,7 @@ class VaBoxUploadJob < CaseflowJob
         expected_return_date: file_info[:return_date],
         updated_by_id: RequestStore[:current_user].id
       )
-      transcription = Transcription.new(
+      transcription = ::Transcription.new(
         task_number: file_info[:work_order_name],
         expected_return_date: file_info[:return_date],
         hearing_id: hearing[:hearing_id],
