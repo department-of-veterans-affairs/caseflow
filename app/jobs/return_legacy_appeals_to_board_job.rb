@@ -9,7 +9,7 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
   application_attr :queue
 
   def initialize
-    @NO_RECORDS_MOVED_MESSAGE = [Constants.DISTRIBUTION.no_records_moved_message].freeze
+    @no_records_found_message = [Constants.DISTRIBUTION.no_records_moved_message].freeze
     @nonsscavlj_number_of_appeals_limit = CaseDistributionLever.nonsscavlj_number_of_appeals_to_move || 0
     @nonsscavlj_number_of_appeals_to_move = @nonsscavlj_number_of_appeals_limit - 1
   end
@@ -20,7 +20,7 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
 
       appeals, moved_appeals = eligible_and_moved_appeals
 
-      return send_job_slack_report(@NO_RECORDS_MOVED_MESSAGE) if moved_appeals.nil?
+      return send_job_slack_report(@no_records_found_message) if moved_appeals.nil?
 
       complete_returned_appeal_job(returned_appeal_job, "Job completed successfully", moved_appeals)
 
@@ -118,7 +118,7 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
       if tied_appeals_bfkeys.count < @nonsscavlj_number_of_appeals_limit
         qualifying_appeals_bfkeys.push(tied_appeals_bfkeys)
       else
-        qualifying_appeals_bfkeys.push(tied_appeals_bfkeys[0..(@nonsscavlj_number_of_appeals_to_move)])
+        qualifying_appeals_bfkeys.push(tied_appeals_bfkeys[0..@nonsscavlj_number_of_appeals_to_move])
       end
     end
 
