@@ -158,4 +158,13 @@ class Distribution < CaseflowRecord
   def record_distribution_stats(stats)
     create_distribution_stats!(stats.merge(levers: CaseDistributionLever.snapshot))
   end
+
+  def write_to_distribution_lever_cache(values)
+    Rails.cache.write('distribution_lever_cache', values, expires_in: 1.week)
+  end
+
+  def check_distribution_lever_cache
+    Rails.cache.read('distribution_lever_cache')
+  end
+
 end
