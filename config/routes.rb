@@ -26,19 +26,19 @@ Rails.application.routes.draw do
 
   resources :certification_cancellations, only: [:show, :create]
 
-  constraints(lambda { |request| Rails.env.demo? || Rails.env.test? || Rails.env.development? }) do
-    get 'acd-controls', :to => 'case_distribution_levers#acd_lever_index'
-    get 'acd-controls/test', :to => 'case_distribution_levers_tests#acd_lever_index_test'
+  constraints(->(_request) { Rails.env.demo? || Rails.env.test? || Rails.env.development? }) do
+    get "acd-controls", to: "case_distribution_levers#acd_lever_index"
+    get "acd-controls/test", to: "case_distribution_levers_tests#acd_lever_index_test"
 
     namespace :case_distribution_levers_tests do
-      get 'appeals_ready_to_distribute'
-      get 'appeals_non_priority_ready_to_distribute'
-      get 'appeals_distributed'
-      get 'ineligible_judge_list'
-      post 'run_demo_aod_hearing_seeds'
-      post 'run_demo_non_aod_hearing_seeds'
-      post 'run-demo-ama-docket-goals'
-      post 'run-demo-docket-priority'
+      get "appeals_ready_to_distribute"
+      get "appeals_non_priority_ready_to_distribute"
+      get "appeals_distributed"
+      get "ineligible_judge_list"
+      post "run_demo_aod_hearing_seeds"
+      post "run_demo_non_aod_hearing_seeds"
+      post "run-demo-ama-docket-goals"
+      post "run-demo-docket-priority"
     end
   end
 
@@ -343,6 +343,8 @@ Rails.application.routes.draw do
     post "/correspondence/:correspondence_uuid/correspondence_intake_task", to: "correspondence_tasks#create_correspondence_intake_task"
     patch "/correspondence/tasks/:task_id/update", to: "correspondence_tasks#update"
     patch "/correspondence/tasks/:task_id/cancel", to: "correspondence_tasks#cancel"
+    patch "/correspondence/tasks/:task_id/change_task_type", to: "correspondence_tasks#change_task_type"
+    patch "/correspondence/tasks/:task_id/complete", to: "correspondence_tasks#complete"
     get "/correspondence/:correspondence_uuid/review_package", to: "correspondence_review_package#review_package"
     get "/correspondence/edit_document_type_correspondence", to: "correspondence_review_package#document_type_correspondence"
     patch "/correspondence/:correspondence_uuid/intake_update", to: "correspondence_intake#intake_update"
@@ -464,9 +466,9 @@ Rails.application.routes.draw do
   post "docket_switches", to: "docket_switches#create"
   post "docket_switches/address_ruling", to: "docket_switches#address_ruling"
 
-  scope path: 'seeds', as: 'seeds' do
-    post 'run-demo', to: 'test_docket_seeds#seed_dockets'
-    get 'reset_all_appeals', to: 'test_docket_seeds#reset_all_appeals'
+  scope path: "seeds", as: "seeds" do
+    post "run-demo", to: "test_docket_seeds#seed_dockets"
+    get "reset_all_appeals", to: "test_docket_seeds#reset_all_appeals"
   end
 
   # :nocov:

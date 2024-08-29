@@ -53,6 +53,7 @@ import CompleteTaskModal from './components/CompleteTaskModal';
 import UpdateTaskStatusAssignRegionalOfficeModal from './components/UpdateTaskStatusAssignRegionalOfficeModal';
 import CancelTaskModal from './components/CancelTaskModal';
 import CorrespondenceCancelTaskModal from './components/CorrespondenceCancelTaskModal';
+import CorrespondenceCompleteTaskModal from './components/CorrespondenceCompleteTaskModal';
 import InProgressTaskModal from './components/InProgressTaskModal';
 import AssignHearingModal from './components/AssignHearingModal';
 import PostponeHearingModal from './components/PostponeHearingModal';
@@ -119,6 +120,7 @@ import EditPOAInformation from './editPOAInformation/EditPOAInformation';
 import NotificationsView from './NotificationsView';
 import CavcDashboard from './cavcDashboard/CavcDashboard';
 import CorrespondenceDetails from './correspondence/details/CorrespondenceDetails';
+import CorrespondenceChangeTaskTypeModal from 'app/queue/components/CorrespondenceChangeTaskTypeModal';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -720,6 +722,17 @@ class QueueApp extends React.PureComponent {
   routedCorrespondenceCancelTaskModal = (props) => (
     <CorrespondenceCancelTaskModal {...props.match.params} />
   );
+
+  routedCorrespondenceChangeTaskTypeModal = (props) => (
+    <CorrespondenceChangeTaskTypeModal {...props.match.params} />
+  );
+
+  routedCorrespondenceCompleteTaskModal = (props) => (
+    <CorrespondenceCompleteTaskModal {...props.match.params}
+      {...this.props}
+    />
+  );
+
   routedCorrespondenceCases = (props) => (
     <CorrespondenceCases {...props.match.params}
       {...this.props}
@@ -1014,6 +1027,24 @@ class QueueApp extends React.PureComponent {
               }
               title={`${PAGE_TITLES.CANCEL_TASK} | Caseflow`}
               render={this.routedCorrespondenceCancelTaskModal}
+            />
+
+            <PageRoute
+              exact
+              path="/queue/correspondence/:correspondence_uuid/tasks/:task_id/modal/change_task_type"
+              title={`${PAGE_TITLES.CHANGE_TASK_TYPE} | Caseflow`}
+              render={this.routedCorrespondenceChangeTaskTypeModal}
+            />
+
+            <PageRoute
+              exact
+              path={
+                '/queue/correspondence/:correspondence_uuid/tasks/:task_id/' +
+            `(${TASK_ACTIONS.COMPLETE_CORRESPONDENCE_TASK.value
+            })`
+              }
+              title={`${PAGE_TITLES.MARK_TASK_COMPLETE} | Caseflow`}
+              render={this.routedCorrespondenceCompleteTaskModal}
             />
 
             {motionToVacateRoutes.page}
