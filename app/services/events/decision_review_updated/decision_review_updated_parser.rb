@@ -36,7 +36,6 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedParser
   def initialize(headers, payload_json)
     @payload = payload_json.to_h.deep_symbolize_keys
     @headers = headers
-    @veteran = @payload.dig(:veteran)
   end
 
   def event_id
@@ -44,11 +43,11 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedParser
   end
 
   def css_id
-    @payload[:css_id]
+    @payload[:css_id] # to remove?
   end
 
   def detail_type
-    @payload[:detail_type]
+    @payload[:detail_type] # to remove?
   end
 
   def station
