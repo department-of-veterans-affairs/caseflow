@@ -796,6 +796,18 @@ module Seeds
             lever_group: Constants.ACD_LEVERS.lever_groups.internal,
             lever_group_order: 0
           },
+          {
+            item: Constants.DISTRIBUTION.nonsscavlj_number_of_appeals_to_move,
+            title: Constants.DISTRIBUTION.nonsscavlj_number_of_appeals_to_move_title,
+            description: "This is the internal lever used to alter the number of appeals to be returned for Non-SSC AVLJs",
+            data_type: Constants.ACD_LEVERS.data_types.number,
+            value: 2,
+            unit: "",
+            is_disabled_in_ui: true,
+            algorithms_used: [],
+            lever_group: Constants.ACD_LEVERS.lever_groups.internal,
+            lever_group_order: 999
+          },
         ]
       end
 

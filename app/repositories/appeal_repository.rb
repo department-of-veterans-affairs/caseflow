@@ -865,6 +865,14 @@ class AppealRepository
       end
     end
 
+    def appeals_tied_to_avljs_and_vljs
+      MetricsService.record("VACOLS: appeals_tied_to_avljs_and_vljs",
+                            name: "appeals_tied_to_avljs_and_vljs",
+                            service: :vacols) do
+        VACOLS::CaseDocket.appeals_tied_to_avljs_and_vljs
+      end
+    end
+
     def loc_63_appeals
       MetricsService.record("VACOLS: loc_63_appeals",
                             name: "loc_63_appeals",
