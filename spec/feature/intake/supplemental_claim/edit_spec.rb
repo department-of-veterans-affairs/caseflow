@@ -132,7 +132,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
         end
         after { FeatureToggle.disable!(:remove_comp_and_pen_intake) }
 
-        it "automatically removes issues" do
+        it "shows Requested issues dropdown is disabled" do
           visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
 
           disabled_status = page.evaluate_script("document.getElementById('issue-action-0').disabled")

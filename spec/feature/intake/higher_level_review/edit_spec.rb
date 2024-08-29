@@ -220,7 +220,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
         end
         after { FeatureToggle.disable!(:remove_comp_and_pen_intake) }
 
-        it "prevents removal of request issue" do
+        it "shows Requested issues dropdown is disabled" do
           visit "higher_level_reviews/#{another_higher_level_review.uuid}/edit"
 
           disabled_status = page.evaluate_script("document.getElementById('issue-action-0').disabled")
