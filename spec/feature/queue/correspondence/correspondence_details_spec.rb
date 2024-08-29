@@ -138,8 +138,7 @@ RSpec.feature("The Correspondence Details page") do
 
   context "correspondence package details tab" do
     before do
-      InboundOpsTeam.singleton.add_user(current_user)
-      User.authenticate!(user: current_user, roles: ["Inbound Ops Team"])
+      correspondence_spec_user_access
       FeatureToggle.enable!(:correspondence_queue)
       @correspondence = create(
         :correspondence,
@@ -163,15 +162,14 @@ RSpec.feature("The Correspondence Details page") do
 
   context "testing for other motion dropdowns" do
     before do
-      InboundOpsTeam.singleton.add_user(current_user)
-      User.authenticate!(user: current_user, roles: ["Inbound Ops Team"])
+      correspondence_spec_user_access
       FeatureToggle.enable!(:correspondence_queue)
       @correspondence = create(
         :correspondence,
         veteran: veteran,
-        va_date_of_receipt: "Tue, 23 Jul 2024 00:00:00 EDT -04:00",
+        va_date_of_receipt: "Wed, 24 Jul 2024 00:00:00 EDT -04:00",
         nod: false,
-        notes: "Note Test"
+        notes: "Notes for Other Motion"
       )
     end
 

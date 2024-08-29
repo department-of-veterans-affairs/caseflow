@@ -343,6 +343,7 @@ Rails.application.routes.draw do
     post "/correspondence/:correspondence_uuid/correspondence_intake_task", to: "correspondence_tasks#create_correspondence_intake_task"
     patch "/correspondence/tasks/:task_id/update", to: "correspondence_tasks#update"
     patch "/correspondence/tasks/:task_id/cancel", to: "correspondence_tasks#cancel"
+    patch "/correspondence/tasks/:task_id/change_task_type", to: "correspondence_tasks#change_task_type"
     patch "/correspondence/tasks/:task_id/complete", to: "correspondence_tasks#complete"
     get "/correspondence/:correspondence_uuid/review_package", to: "correspondence_review_package#review_package"
     get "/correspondence/edit_document_type_correspondence", to: "correspondence_review_package#document_type_correspondence"
