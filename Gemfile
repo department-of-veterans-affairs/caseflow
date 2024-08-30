@@ -26,8 +26,8 @@ gem "countries"
 gem "ddtrace"
 gem "dogstatsd-ruby"
 gem "dry-schema", "~> 1.4"
-gem 'faraday'
-gem 'faraday-multipart'
+gem "faraday"
+gem "faraday-multipart"
 gem "fast_jsonapi"
 gem "fuzzy_match"
 gem "govdelivery-tms", require: "govdelivery/tms/mail/delivery_method"
