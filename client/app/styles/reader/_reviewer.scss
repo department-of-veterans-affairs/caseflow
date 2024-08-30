@@ -210,9 +210,6 @@
         text-align: center;
         margin: 5px;
         padding: 0;
-        .input-container {
-          width: 5rem;
-        }
       }
 
       > label {
@@ -633,6 +630,10 @@ input[type='search'].cf-search-input-with-close {
       display: none;
     }
   }
+}
+
+.prototype-page-number-input {
+  display: inline-block;
 }
 
 // scss-lint:disable IdSelector
