@@ -77,7 +77,7 @@ export const changeTaskTypeNotRelatedToAppeal = (taskID, payload, taskNames, cor
         payload: {
           bannerAlert: {
             title: 'Warning',
-            message: error,
+            message: error.message,
             type: 'warning'
           }
         }
