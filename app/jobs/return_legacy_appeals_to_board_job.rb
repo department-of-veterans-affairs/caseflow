@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class ReturnLegacyAppealsToBoardJob < CaseflowJob
+  # For time_ago_in_words()
+  include ActionView::Helpers::DateHelper
+
   queue_with_priority :low_priority
   application_attr :queue
 
@@ -12,6 +15,7 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
 
   def perform
     begin
+      binding.pry
       returned_appeal_job = create_returned_appeal_job
 
       appeals, moved_appeals = eligible_and_moved_appeals
