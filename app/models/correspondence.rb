@@ -22,6 +22,7 @@ class Correspondence < CaseflowRecord
 
   # root task manages checks for different child tasks
   delegate :tasks_not_related_to_an_appeal, to: :root_task
+  delegate :closed_tasks_not_related_to_an_appeal, to: :root_task
   delegate :correspondence_mail_tasks, to: :root_task
   delegate :open_package_action_task, to: :root_task
   delegate :review_package_task, to: :root_task

@@ -7,17 +7,25 @@ class OtherMotionCorrespondenceTask < CorrespondenceMailTask
 
   # if you have a UNIQUE action for the specific task, put it here.
 
-  def available_actions(_user)
+  def available_actions(user)
+    return [] unless user
+
     if assigned_to.is_a?(User)
-      [
+      options = [
         Constants.TASK_ACTIONS.REASSIGN_CORR_TASK_TO_PERSON.to_h,
-        Constants.TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.to_h
+        Constants.TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.to_h,
+        Constants.TASK_ACTIONS.COMPLETE_CORRESPONDENCE_TASK.to_h,
+        Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h
       ]
     else
-      [
+      options = [
         Constants.TASK_ACTIONS.ASSIGN_CORR_TASK_TO_PERSON.to_h,
-        Constants.TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.to_h
+        Constants.TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.to_h,
+        Constants.TASK_ACTIONS.COMPLETE_CORRESPONDENCE_TASK.to_h,
+        Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h
       ]
     end
+
+    options
   end
 end

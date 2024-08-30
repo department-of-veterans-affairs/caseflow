@@ -105,7 +105,67 @@ RSpec.describe CorrespondenceTasksController, :all_dbs, type: :controller do
         correspondence_task.reload
         expect(correspondence_task.status).to eq(Constants.TASK_STATUSES.assigned)
         expect(correspondence_task.assigned_to).to eq(assigned_to)
-        expect(correspondence_task.assigned_at).to be_within(1.second).of(Time.now)  
+        expect(correspondence_task.assigned_at).to be_within(1.second).of(Time.now)
+      end
+    end
+  end
+
+  describe "PATCH #change_task_type" do
+    let(:correspondence_task) do
+      create(
+        :correspondence_intake_task,
+        appeal: correspondence,
+        appeal_type: Correspondence.name,
+        assigned_to: current_user
+      )
+    end
+    let(:valid_params) do
+      {
+        task: {
+          type: "PoaClarificationColocatedTask",
+          instructions: "Updated instructions"
+        },
+        task_id: correspondence_task.id
+      }
+    end
+
+    let(:invalid_params) do
+      {
+        task: {
+          type: nil, # Invalid type
+          instructions: "Updated instructions"
+        },
+        task_id: correspondence_task.id
+      }
+    end
+
+    context "with valid params" do
+      it "updates the task with the new type and instructions" do
+        patch :change_task_type, params: valid_params
+
+        updated_task = Task.find_by(id: correspondence_task.id)
+        expect(updated_task.type).to eq("PoaClarificationColocatedTask")
+        expect(updated_task.instructions).to eq(["Updated instructions"])
+        expect(response).to have_http_status(:success)
+      end
+    end
+
+    context "with invalid params" do
+      it "raises an error and does not update the task" do
+        expect do
+          patch :change_task_type, params: invalid_params
+        end.to raise_error(ActiveRecord::RecordInvalid)
+
+        updated_task = Task.find_by(id: correspondence_task.id)
+        expect(updated_task.type).not_to be_nil
+        expect(updated_task.type).to eq("CorrespondenceIntakeTask")
+      end
+    end
+
+    context "with an invalid task ID" do
+      it "raises an error" do
+        patch :change_task_type, params: { task_id: "invalid_id" }
+        expect(response).to have_http_status(404)
       end
     end
   end

@@ -201,7 +201,7 @@ class CorrespondenceTaskRows extends React.PureComponent {
     );
   };
   showActionsListItem = (task, correspondence) => {
-    if (task.availableActions.length <= 0 || !this.props.showActionsDropdown) {
+    if (task.availableActions.length <= 0) {
       return null;
     }
 
