@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { ROTATION_DEGREES } from '../util/readerConstants';
 
 // This Page component is expected to be used within a flexbox container. Flex doesn't notice when children are
@@ -61,34 +61,12 @@ const Page = ({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale }) => 
     contentVisibility: 'auto',
   };
 
-  const [isRendered, setIsRendered] = useState(false);
-  const [isSkipped, setIsSkipped] = useState(true);
-
-  const stateChanged = (event) => {
-    if (isRendered) {
-      return;
-    }
-    if (event.skipped) {
-      // not visible, dont render
-    } else {
-      setIsSkipped(false);
-    }
-  };
-
-  canvasRef.current?.addEventListener('contentvisibilityautostatechange', stateChanged);
-
-  const renderPage = () => {
-    page.render({ canvasContext: canvasRef.current?.getContext('2d', { alpha: false }), viewport }).promise.catch(() => {
-      // this catch is necessary to prevent the error: Cannot use the same canvas during multiple render operations
-    });
-  }
-
   useEffect(() => {
     if (canvasRef.current) {
-      if (!isRendered && !isSkipped) {
-        renderPage();
-        setIsRendered(true);
-      }
+      page.render({ canvasContext: canvasRef.current?.getContext('2d', { alpha: false }), viewport }).
+        promise.catch(() => {
+        // this catch is necessary to prevent the error: Cannot use the same canvas during multiple render operations
+        });
     }
   }, [canvasRef.current, viewport]);
 
