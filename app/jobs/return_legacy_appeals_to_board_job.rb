@@ -3,16 +3,11 @@
 class ReturnLegacyAppealsToBoardJob < CaseflowJob
   # For time_ago_in_words()
   include ActionView::Helpers::DateHelper
-  # include RunAsyncable
 
-  queue_as :low_priority
+  queue_with_priority :low_priority
   application_attr :queue
 
-  def initialize
-    @no_records_found_message = [Constants.DISTRIBUTION.no_records_moved_message].freeze
-    @nonsscavlj_number_of_appeals_limit = CaseDistributionLever.nonsscavlj_number_of_appeals_to_move || 0
-    @nonsscavlj_number_of_appeals_to_move = @nonsscavlj_number_of_appeals_limit - 1
-  end
+  NO_RECORDS_FOUND_MESSAGE = [Constants.DISTRIBUTION.no_records_moved_message].freeze
 
   def perform
     begin
@@ -20,7 +15,7 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
 
       appeals, moved_appeals = eligible_and_moved_appeals
 
-      return send_job_slack_report(@no_records_found_message) if moved_appeals.nil?
+      return send_job_slack_report(NO_RECORDS_FOUND_MESSAGE) if moved_appeals.nil?
 
       complete_returned_appeal_job(returned_appeal_job, "Job completed successfully", moved_appeals)
 
@@ -115,10 +110,10 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
 
   def update_qualifying_appeals_bfkeys(tied_appeals_bfkeys, qualifying_appeals_bfkeys)
     if tied_appeals_bfkeys.any?
-      if tied_appeals_bfkeys.count < @nonsscavlj_number_of_appeals_limit
+      if tied_appeals_bfkeys.count < nonsscavlj_number_of_appeals_limit
         qualifying_appeals_bfkeys.push(tied_appeals_bfkeys)
       else
-        qualifying_appeals_bfkeys.push(tied_appeals_bfkeys[0..@nonsscavlj_number_of_appeals_to_move])
+        qualifying_appeals_bfkeys.push(tied_appeals_bfkeys[0..max_appeals_limit_index])
       end
     end
 
@@ -127,6 +122,14 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
 
   def non_ssc_avljs
     VACOLS::Staff.where("sactive = 'A' AND svlj = 'A' AND sattyid <> smemgrp")
+  end
+
+  def nonsscavlj_number_of_appeals_limit
+    @nonsscavlj_number_of_appeals_limit ||= (CaseDistributionLever.nonsscavlj_number_of_appeals_to_move || 0)
+  end
+
+  def max_appeals_limit_index
+    nonsscavlj_number_of_appeals_limit - 1
   end
 
   # Method to separate appeals by priority
