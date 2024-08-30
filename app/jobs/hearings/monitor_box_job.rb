@@ -45,8 +45,7 @@ class Hearings::MonitorBoxJob < ApplicationJob
   end
 
   def most_recent_returned_file_time
-    # uncomment after date_return box_migration
-    # ::TranscriptionFile.maximum(:date_return_box)
+    ::TranscriptionFile.maximum(:date_returned_box)
   end
 
   def filter_non_webex_files(files)
