@@ -191,8 +191,7 @@ class CaseDistributionLever < ApplicationRecord
     private
 
     def method_missing_value(name)
-      cached_values = check_distribution_lever_cache
-      lever = find_by_item(name).try(:value) 
+      lever = find_by_item(name).try(:value) || check_distribution_lever_cache
       begin
         if INTEGER_LEVERS.include?(name)
           Integer(lever)
