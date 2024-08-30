@@ -74,17 +74,17 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
       expect(subject.event_id).to eq(1)
     end
 
-    it "returns the correct css_id" do
-      expect(subject.css_id).to eq("CSEM123")
-    end
+    # it "returns the correct css_id" do
+    #   expect(subject.css_id).to eq("CSEM123")
+    # end
 
-    it "returns the correct detail_type" do
-      expect(subject.detail_type).to eq("HigherLevelReview")
-    end
+    # it "returns the correct detail_type" do
+    #   expect(subject.detail_type).to eq("HigherLevelReview")
+    # end
 
-    it "returns the correct station" do
-      expect(subject.station).to eq("123")
-    end
+    # it "returns the correct station" do
+    #   expect(subject.station).to eq("123")
+    # end
 
     describe "claim_review" do
       it "returns the correct informal_conference" do

@@ -42,18 +42,6 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedParser
     @payload[:event_id]
   end
 
-  def css_id
-    @payload[:css_id] # to remove?
-  end
-
-  def detail_type
-    @payload[:detail_type] # to remove?
-  end
-
-  def station
-    @payload[:station] # to remove?
-  end
-
   def claim_review_informal_conference
     @payload.dig(:claim_review, :informal_conference)
   end

@@ -54,6 +54,7 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser
     @issue.dig(:contested_decision_issue_id)
   end
 
+  # probably we have the wrong type of passed decision_date in json eample, needs to be clarified
   def ri_decision_date
     Date.parse(@issue.dig(:decision_date))
     # logical_date_converter(decision_date_int)
