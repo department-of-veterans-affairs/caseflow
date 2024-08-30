@@ -55,7 +55,7 @@
   "request_issues": [
     {
       "benefit_type": "compensation",
-      "contested_issue_description": null,
+      "contested_issue_description": "some contested description",
       "contention_reference_id": 7905752,
       "contested_rating_decision_reference_id": null,
       "contested_rating_issue_profile_date": null,
