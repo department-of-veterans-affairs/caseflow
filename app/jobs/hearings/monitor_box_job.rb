@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Hearings::MonitorBoxJob < ApplicationJob
+  queue_as :low_priority
+
   attr_reader :box_service
 
   def initialize
