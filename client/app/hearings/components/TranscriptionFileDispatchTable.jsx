@@ -19,6 +19,7 @@ import
 import { css } from 'glamor';
 import { encodeQueryParams } from '../../util/QueryParamsUtil';
 import ApiUtil from '../../util/ApiUtil';
+import WorkOrderUnassign from './transcriptionProcessing/WorkOrderUnassign';
 
 const styles = css({
   '& div *': {
@@ -68,13 +69,32 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [selectingFile, setSelectingFile] = useState(false);
   const [contractors, setContractors] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalData, setModalData] = useState({ id: null, workOrderNumber: null });
+
+
+  // const unassignPackage = (id, workOrder) => {
+  //   console.log(
+  //     "Unassign clicked for ID:",
+  //     id,
+  //     "Work Order Number:",
+  //     workOrder
+  //   );
+  // };
 
   /**
    * Callback passed into the Queue Table triggered when the unnasign link is clicked
    * @param {number} id - id of package
+   * @param {object} workOrderNumber - work order number of package
    */
-  const unassignPackage = () => {
-    // do something
+  const unassignPackage = (id, workOrderNumber) => {
+    setModalData({ id, workOrderNumber });
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setModalData({ id: null, workOrderNumber: null });
   };
 
   /**
@@ -263,6 +283,13 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
         onTableDataUpdated={tableDataUpdated}
         skipCache
       />
+      {isModalOpen && (
+        <WorkOrderUnassign
+          onClose={closeModal}
+          workOrderNumber={modalData.workOrderNumber}
+          id={modalData.id}
+        />
+      )}
     </div>
   );
 };
