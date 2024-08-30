@@ -9,6 +9,10 @@ if ENV["SINGLE_COV"]
 else
   # default is aggregate via simplecov for CI
   require "simplecov"
+  require 'simplecov-lcov'
+  SimpleCov::Formatter::LcovFormatter.config.report_with_single_file = true
+  SimpleCov.formatter = SimpleCov::Formatter::LcovFormatter
+  SimpleCov.start
 end
 if ENV["CI"]
   require "rspec/retry"

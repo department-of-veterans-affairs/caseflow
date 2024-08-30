@@ -221,6 +221,12 @@ jobs:
       # --tty forces Rspec to produce color
       # circleci is the USER
 
+      - name: Add code coverage comment
+        uses: romeovs/lcov-reporter-action@v0.2.16
+        with:
+          lcov-file: ./coverage/lcov/ruby-simplecov.lcov
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
       # Artifacts --- circleci is the USER
       - run: (cd /home/circleci && tar -zcvf coverage-${{matrix.ci_node_index}}.tar.gz coverage-${{matrix.ci_node_index}})
       - uses: actions/upload-artifact@v3
