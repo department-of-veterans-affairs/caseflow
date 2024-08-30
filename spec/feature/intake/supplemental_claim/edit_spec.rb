@@ -932,80 +932,49 @@ feature "Supplemental Claim Edit issues", :all_dbs do
     end
   end
 
-  context "When compensation benefit present disable Edit Claim Label and Add issue buttons on edit page" do
-    before do
-      FeatureToggle.enable!(:remove_comp_and_pen_intake)
-    end
+  context "When pension or compensation benefit present disable Edit Claim Label and Add issue buttons on edit page" do
+    %w[pension compensation].each do |benefit_type|
+      context "with benefit type as #{benefit_type}" do
+        let(:supplemental_claim_disable) do
+          SupplementalClaim.create!(
+            veteran_file_number: veteran.file_number,
+            receipt_date: receipt_date,
+            benefit_type: benefit_type,
+            decision_review_remanded: decision_review_remanded,
+            veteran_is_not_claimant: true
+          )
+        end
 
-    let(:request_issue) do
-      create(
-        :request_issue,
-        contested_rating_issue_reference_id: "def456",
-        contested_rating_issue_profile_date: rating.profile_date,
-        decision_review: supplemental_claim,
-        benefit_type: benefit_type,
-        contested_issue_description: "PTSD denied",
-        is_predocket_needed: is_predocket_needed
-      )
-    end
+        let(:request_issue_disable) do
+          create(
+            :request_issue,
+            contested_rating_issue_reference_id: "def456",
+            contested_rating_issue_profile_date: rating.profile_date,
+            decision_review: supplemental_claim_disable,
+            benefit_type: benefit_type,
+            contested_issue_description: "PTSD denied"
+          )
+        end
 
-    before do
-      FeatureToggle.enable!(:remove_comp_and_pen_intake)
-      supplemental_claim.create_issues!([request_issue])
-      supplemental_claim.establish!
-      supplemental_claim.reload
-      request_issue.reload
-    end
+        before do
+          FeatureToggle.enable!(:remove_comp_and_pen_intake)
+          supplemental_claim_disable.create_issues!([request_issue_disable])
+          supplemental_claim_disable.establish!
+          supplemental_claim_disable.reload
+          request_issue_disable.reload
+        end
 
-    it "Buttons add issue and edit claim lable are disabled if compensation benefit present" do
-      visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
+        after do
+          FeatureToggle.disable!(:remove_comp_and_pen_intake)
+        end
+        it "Add Issue button is disabled if pension benefit present" do
+          visit "supplemental_claims/#{supplemental_claim_disable.uuid}/edit"
 
-      expect(page).to have_button("Add issue", disabled: true)
-      expect(page).to have_button("Edit claim label", disabled: true)
-    end
-  end
-
-  context "When PENSION benefit present disable Edit Claim Label and Add issue buttons on edit page" do
-    before do
-      FeatureToggle.enable!(:remove_comp_and_pen_intake)
-    end
-
-    let(:benefit_type_pension) { "pension" }
-    let!(:supplemental_claim_pension) do
-      SupplementalClaim.create!(
-        veteran_file_number: veteran.file_number,
-        receipt_date: receipt_date,
-        benefit_type: benefit_type_pension,
-        decision_review_remanded: decision_review_remanded,
-        veteran_is_not_claimant: true
-      )
-    end
-
-    let(:request_issue_pension) do
-      create(
-        :request_issue,
-        contested_rating_issue_reference_id: "def456",
-        contested_rating_issue_profile_date: rating.profile_date,
-        decision_review: supplemental_claim_pension,
-        benefit_type: benefit_type_pension,
-        contested_issue_description: "PTSD denied"
-      )
-    end
-
-    before do
-      FeatureToggle.enable!(:remove_comp_and_pen_intake)
-      supplemental_claim_pension.create_issues!([request_issue_pension])
-      supplemental_claim_pension.establish!
-      supplemental_claim_pension.reload
-      request_issue_pension.reload
-    end
-
-    it "Add Issue button is disabled if pension benefit present" do
-      visit "supplemental_claims/#{supplemental_claim_pension.uuid}/edit"
-
-      expect(page).to have_content("Pension")
-      expect(page).to have_button("Add issue", disabled: true)
-      expect(page).to have_button("Edit claim label", disabled: true)
+          expect(page).to have_content(benefit_type.capitalize)
+          expect(page).to have_button("Add issue", disabled: true)
+          expect(page).to have_button("Edit claim label", disabled: true)
+        end
+      end
     end
   end
 end

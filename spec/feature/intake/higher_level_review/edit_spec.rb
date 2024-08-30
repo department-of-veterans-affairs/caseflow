@@ -1700,82 +1700,53 @@ feature "Higher Level Review Edit issues", :all_dbs do
     end
   end
 
-  context "When COMPENSATION benefit present disable Edit Claim Label and Add issue buttons on edit page" do
-    before do
-      FeatureToggle.enable!(:remove_comp_and_pen_intake)
-    end
+  context "When pension or compensation benefit present disable Edit Claim Label and Add issue buttons on edit page" do
+    %w[pension compensation].each do |benefit_type|
+      context "with benefit type as #{benefit_type}" do
+        let(:higher_level_review_disable) do
+          create(
+            :higher_level_review,
+            :processed,
+            intake: create(:intake),
+            veteran_file_number: veteran.file_number,
+            receipt_date: receipt_date,
+            informal_conference: false,
+            same_office: false,
+            benefit_type: benefit_type
+          )
+        end
 
-    let(:request_issue) do
-      create(
-        :request_issue,
-        contested_rating_issue_reference_id: "def456",
-        contested_rating_issue_profile_date: rating.profile_date,
-        decision_review: another_higher_level_review,
-        benefit_type: benefit_type,
-        contested_issue_description: "PTSD denied"
-      )
-    end
+        let(:request_issue_disable) do
+          create(
+            :request_issue,
+            contested_rating_issue_reference_id: "def456",
+            contested_rating_issue_profile_date: rating.profile_date,
+            decision_review: higher_level_review_disable,
+            benefit_type: benefit_type,
+            contested_issue_description: "PTSD denied"
+          )
+        end
 
-    before do
-      FeatureToggle.enable!(:remove_comp_and_pen_intake)
-      another_higher_level_review.create_issues!([request_issue])
-      another_higher_level_review.establish!
-      another_higher_level_review.reload
-      request_issue.reload
-    end
+        before do
+          FeatureToggle.enable!(:remove_comp_and_pen_intake)
+          higher_level_review_disable.create_issues!([request_issue_disable])
+          higher_level_review_disable.establish!
+          higher_level_review_disable.reload
+          request_issue.reload
+        end
 
-    it "Add Issue button is disabled if compensation benefit present" do
-      visit "higher_level_reviews/#{another_higher_level_review.uuid}/edit"
+        after do
+          FeatureToggle.disable!(:remove_comp_and_pen_intake)
+        end
 
-      expect(page).to have_content("Compensation")
-      expect(page).to have_button("Add issue", disabled: true)
-      expect(page).to have_button("Edit claim label", disabled: true)
-    end
-  end
+        it "Add Issue button is disabled if pension benefit present" do
+          visit "higher_level_reviews/#{higher_level_review_disable.uuid}/edit"
 
-  context "When PENSION benefit present disable Edit Claim Label and Add issue buttons on edit page" do
-    before do
-      FeatureToggle.enable!(:remove_comp_and_pen_intake)
-    end
-    let(:pension_higher_level_review) do
-      create(
-        :higher_level_review,
-        :processed,
-        intake: create(:intake),
-        veteran_file_number: veteran.file_number,
-        receipt_date: receipt_date,
-        informal_conference: false,
-        same_office: false,
-        benefit_type: "pension"
-      )
-    end
-
-    let(:benefit_type_pension) { "pension" }
-    let(:request_issue_pension) do
-      create(
-        :request_issue,
-        contested_rating_issue_reference_id: "def456",
-        contested_rating_issue_profile_date: rating.profile_date,
-        decision_review: pension_higher_level_review,
-        benefit_type: benefit_type_pension,
-        contested_issue_description: "PTSD denied"
-      )
-    end
-
-    before do
-      FeatureToggle.enable!(:remove_comp_and_pen_intake)
-      pension_higher_level_review.create_issues!([request_issue_pension])
-      pension_higher_level_review.establish!
-      pension_higher_level_review.reload
-      request_issue.reload
-    end
-
-    it "Add Issue button is disabled if pension benefit present" do
-      visit "higher_level_reviews/#{pension_higher_level_review.uuid}/edit"
-
-      expect(page).to have_content("Pension")
-      expect(page).to have_button("Add issue", disabled: true)
-      expect(page).to have_button("Edit claim label", disabled: true)
+          expect(page).to have_content(benefit_type.capitalize)
+          expect(page).to have_button("Add issue", disabled: true)
+          expect(page).to have_button("Edit claim label", disabled: true)
+        end
+      end
     end
   end
 end
