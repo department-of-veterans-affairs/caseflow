@@ -6,18 +6,6 @@ import TextField from '../../components/TextField';
 import { PageArrowLeftIcon } from '../../components/icons/PageArrowLeftIcon';
 import { PageArrowRightIcon } from '../../components/icons/PageArrowRightIcon';
 
-const isValidWholeNumber = (pageNumber) => {
-  return (/^\d+$/).test(pageNumber);
-};
-
-const validatePageNum = (pageNumber, numPages) => {
-  if (isValidWholeNumber(pageNumber)) {
-    return parseInt(pageNumber, 10) >= 1 && parseInt(pageNumber, 10) <= numPages;
-  }
-
-  return false;
-};
-
 const ReaderFooter = ({
   currentPage,
   docCount,
@@ -30,18 +18,32 @@ const ReaderFooter = ({
   showPreviousDocument,
   disablePreviousNext,
 }) => {
+  const isValidInputPageNumber = (pageNumber) => {
+    if (!isNaN(pageNumber) && pageNumber % 1 === 0) {
+
+      return pageNumber >= 1 && pageNumber <= numPages;
+    }
+  };
+
+  const sanitizedPageNumber = (pageNumberInput) => {
+    let pageNumber = parseInt(pageNumberInput, 10);
+
+    if (!pageNumber || !isValidInputPageNumber(pageNumber)) {
+      return setCurrentPage;
+    }
+
+    return pageNumber;
+  };
+
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
-      const targetPage = event.target.value;
+      const newPageNumber = sanitizedPageNumber(event.target.value);
 
-      if (validatePageNum(targetPage, numPages)) {
-        document.getElementById(`canvasWrapper-${targetPage}`).scrollIntoView();
-        setCurrentPage(targetPage);
-      } else if (currentPage) {
-        event.target.value = currentPage;
+      setCurrentPage(newPageNumber);
+      event.target.value = newPageNumber;
+      if (setCurrentPage !== newPageNumber) {
+        document.getElementById(`canvasWrapper-${newPageNumber}`).scrollIntoView();
       }
-    } else if (validatePageNum(event.currentTarget?.value, numPages)) {
-      setCurrentPage(event.currentTarget.value);
     }
   };
 
@@ -65,16 +67,15 @@ const ReaderFooter = ({
       <div className="cf-pdf-buttons-center">
         <span>
           <span className="page-progress-indicator">
-            <span> Page </span>
             <span>
-              <div className="prototype-page-number-input">
+              <div style={{ display: 'inline-flex' }}>
                 <TextField
-                  name=""
-                  label=""
                   maxLength={4}
-                  onChange={handleKeyPress}
+                  name="page-progress-indicator-input"
+                  label="Page"
+                  onChange={setCurrentPage}
                   onKeyPress={handleKeyPress}
-                  defaultValue={currentPage}
+                  value={currentPage}
                   required={false}
                   className={['page-progress-indicator-input']}
                 />
