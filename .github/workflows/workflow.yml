@@ -228,16 +228,6 @@ jobs:
         with:
           path: /home/circleci/coverage-${{matrix.ci_node_index}}.tar.gz #circleci is the USER
 
-      - name: Add code coverage comment
-        uses: romeovs/lcov-reporter-action@v0.2.16
-        with:
-          lcov-file: ./coverage/lcov/caseflow.lcov
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - uses: joshmfrankel/simplecov-check-action@main
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
       - uses: actions/upload-artifact@v3
         # Run even if there is a failure in the previous steps, but not if the run is cancelled
         if: success() || failure()

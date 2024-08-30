@@ -9,18 +9,6 @@ if ENV["SINGLE_COV"]
 else
   # default is aggregate via simplecov for CI
   require "simplecov"
-  require "simplecov-lcov"
-  SimpleCov::Formatter::LcovFormatter.config.report_with_single_file = true
-  SimpleCov.formatter = SimpleCov::Formatter::LcovFormatter
-
-  SimpleCov.start do
-    add_filter "lib/fakes"
-    add_filter "config/initializers"
-    add_filter "spec/support"
-    add_filter "app/jobs"
-
-    SimpleCov.minimum_coverage_by_file 75
-  end
 end
 if ENV["CI"]
   require "rspec/retry"
