@@ -20,7 +20,8 @@ class CongressionalInterestMailTask < MailTask
       Constants.TASK_ACTIONS.CHANGE_CORR_TASK_TYPE.to_h,
       Constants.TASK_ACTIONS.ASSIGN_CORR_TASK_TO_TEAM.to_h,
       Constants.TASK_ACTIONS.MARK_TASK_COMPLETE.to_h,
-      Constants.TASK_ACTIONS.RETURN_TO_INBOUND_OPS.to_h
+      Constants.TASK_ACTIONS.RETURN_TO_INBOUND_OPS.to_h,
+      Constants.TASK_ACTIONS.CANCEL_CORR_TASK.to_h
     ]
 
     if user.assigned_to.name == User.name

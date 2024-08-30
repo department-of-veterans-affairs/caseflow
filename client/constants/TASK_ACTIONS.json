@@ -589,7 +589,7 @@
 
   "CANCEL_CORR_TASK": {
     "label": "Cancel task",
-    "value": "modal/cancel_corrresponence_task",
+    "value": "modal/cancel_correspondence_task",
     "func": "cancel_correspondence_task_data"
   }
 }
