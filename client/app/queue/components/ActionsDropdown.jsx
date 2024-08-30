@@ -47,7 +47,6 @@ class ActionsDropdown extends React.PureComponent {
     } else {
       history.push(`/queue/appeals/${appealId}/tasks/${task.uniqueId}/${option.value}`);
     }
-
   };
 
   render = () => {

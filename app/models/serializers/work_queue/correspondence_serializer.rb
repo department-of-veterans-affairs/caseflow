@@ -39,7 +39,8 @@ class WorkQueue::CorrespondenceSerializer
             instructions: task.instructions,
             availableActions: task.available_actions_unwrapper(RequestStore[:current_user]),
             uniqueId: task.id,
-            status: task.status
+            status: task.status,
+            organizations: task.reassign_organizations.map { |org| { label: org.name, value: org.id } }
           }
       end
     end
