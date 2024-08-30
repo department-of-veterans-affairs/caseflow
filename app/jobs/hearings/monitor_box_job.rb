@@ -11,6 +11,9 @@ class Hearings::MonitorBoxJob < ApplicationJob
 
   def perform
     poll_box_dot_com_for_new_files
+  rescue StandardError => error
+    log_error(error)
+    raise error
   end
 
   private
