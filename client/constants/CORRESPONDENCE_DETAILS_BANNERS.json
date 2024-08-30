@@ -1,16 +1,25 @@
 {
-
   "successBanner": {
     "title": "Success",
-    "message": "FOIA request task has been cancelled. If you have made a mistake, please email Inbound Ops Supervisor for any changes.",
+    "message": "Other Motion task has been cancelled. If you have made a mistake, please email Inbound Ops Supervisor for any changes.",
     "type": "success"
+  },
 
-    },
-    "failBanner": {
+  "failBanner": {
+    "title": "Warning",
+    "message": "Error FOIA request task has not been cancelled",
+    "type": "warning"
+  },
 
-      "title": "Warning",
-      "message": "Error FOIA request task has not been cancelled",
-      "type": "warning"
+  "completeBanner": {
+    "title": "Complete",
+    "message": "%s task has been marked complete. If you have made a mistake, please email %s for any changes.",
+    "type": "success"
+  },
 
-      }
-    }
+  "completeFailBanner": {
+    "title": "Complete Failed",
+    "message": "Task unable to be completed or assigned.",
+    "type": "warning"
+  }
+}

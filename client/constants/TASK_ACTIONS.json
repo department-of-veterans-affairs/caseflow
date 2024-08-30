@@ -127,7 +127,7 @@
   },
   "CANCEL_CORRESPONDENCE_TASK": {
     "label": "Cancel task",
-    "value": "modal/cancel_corrresponence_task",
+    "value": "modal/cancel_correspondence_task",
     "func": "cancel_correspondence_task_data"
   },
   "CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE": {
@@ -149,6 +149,11 @@
     "label": "Send back to judge",
     "value": "modal/mark_task_complete",
     "func": "mark_task_complete_data"
+  },
+  "COMPLETE_CORRESPONDENCE_TASK": {
+    "label": "Mark task complete",
+    "value": "modal/complete_correspondence_task",
+    "func": "complete_correspondence_task_data"
   },
   "COMPLETE_TRANSCRIPTION": {
     "label": "Mark as complete: Transcribed",
