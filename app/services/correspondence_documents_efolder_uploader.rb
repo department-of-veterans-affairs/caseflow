@@ -17,7 +17,7 @@ class CorrespondenceDocumentsEfolderUploader
     end
   rescue StandardError => error
     Rails.logger.error(error.full_message)
-    create_efolder_upload_failed_task(correspondence, current_user, parent_task)
+    create_efolder_upload_failed_task(correspondence, current_user, parent_task, error.full_message)
 
     false
   end
@@ -28,7 +28,7 @@ class CorrespondenceDocumentsEfolderUploader
     Veteran.find_by(id: correspondence.veteran_id)
   end
 
-  def create_efolder_upload_failed_task(correspondence, current_user, parent_task)
+  def create_efolder_upload_failed_task(correspondence, current_user, parent_task, reason = nil)
     return if EfolderUploadFailedTask.where(appeal_id: correspondence.id).count > 0
 
     euft = EfolderUploadFailedTask.find_or_create_by(
@@ -36,7 +36,8 @@ class CorrespondenceDocumentsEfolderUploader
       appeal_type: Correspondence.name,
       type: EfolderUploadFailedTask.name,
       assigned_to: current_user,
-      parent_id: parent_task.id
+      parent_id: parent_task.id,
+      instructions: [reason]
     )
 
     euft.update!(status: Constants.TASK_STATUSES.in_progress)
