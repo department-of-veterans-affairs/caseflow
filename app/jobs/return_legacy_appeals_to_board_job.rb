@@ -1,11 +1,7 @@
 # frozen_string_literal: true
 
 class ReturnLegacyAppealsToBoardJob < CaseflowJob
-  # For time_ago_in_words() ### <------ IS THIS NEEDED?
-  include ActionView::Helpers::DateHelper ### <------ IS THIS NEEDED?
-  # include RunAsyncable ### <------ THIS DOESN'T SEEMT O BE NEEDED TO RUN "LATER"
-
-  queue_as :low_priority
+  queue_with_priority :low_priority
   application_attr :queue
 
   before_perform do
