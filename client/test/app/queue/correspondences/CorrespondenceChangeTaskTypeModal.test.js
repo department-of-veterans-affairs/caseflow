@@ -36,7 +36,6 @@ describe('CorrespondenceChangeTaskTypeModal', () => {
       ]
     },
     changeTaskTypeNotRelatedToAppeal: jest.fn(),
-    setShowActionsDropdown: jest.fn(),
     error: null
   };
 
@@ -46,8 +45,7 @@ describe('CorrespondenceChangeTaskTypeModal', () => {
         correspondenceInfo: {
           tasksUnrelatedToAppeal: props.correspondenceInfo.tasksUnrelatedToAppeal,
         },
-        bannerAlert: null,
-        showActionsDropdown: false
+        bannerAlert: null
       },
       ui: {
         messages: {
