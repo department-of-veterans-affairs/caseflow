@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
 class ReturnLegacyAppealsToBoardJob < CaseflowJob
-  # For time_ago_in_words()
-  include ActionView::Helpers::DateHelper
-  # include RunAsyncable
+  # For time_ago_in_words() ### <------ IS THIS NEEDED?
+  include ActionView::Helpers::DateHelper ### <------ IS THIS NEEDED?
+  # include RunAsyncable ### <------ THIS DOESN'T SEEMT O BE NEEDED TO RUN "LATER"
 
   queue_as :low_priority
   application_attr :queue
 
-  def initialize
+  before_perform do
     @no_records_found_message = [Constants.DISTRIBUTION.no_records_moved_message].freeze
     @nonsscavlj_number_of_appeals_limit = CaseDistributionLever.nonsscavlj_number_of_appeals_to_move || 0
     @nonsscavlj_number_of_appeals_to_move = @nonsscavlj_number_of_appeals_limit - 1
