@@ -1,7 +1,7 @@
 import React from 'react';
 import WrenchIcon from './WrenchIcon';
 import ApiUtil from '../util/ApiUtil';
-import { listWithOxfordComma } from '../2.0/utils/banner/format';
+import { listWithOxfordComma } from '../util/banner/format';
 import COPY from '../../COPY';
 import * as AppConstants from '../constants/AppConstants';
 
