@@ -20,7 +20,18 @@ export const HearingTime = ({
   // Default to using EST for all times before conversion
   moment.tz.setDefault(hearing.regionalOfficeTimezone || 'America/New_York');
 
-  const timezone = hearing.regionalOfficeTimezone || 'America/New_York';
+  // Determine whether to display the appellant timezone
+  const repTimezone =
+    hearing.virtualHearing?.appellantTz === hearing.regionalOfficeTimezone &&
+      hearing.regionalOfficeTimezone === 'America/New_York' ?
+      '' :
+      hearing.virtualHearing?.appellantTz || hearing.regionalOfficeTimezone;
+
+  // Determine what timezone to use; always use RO timezone for video/formerly-video hearings
+  const timezone =
+    hearing.isVirtual && hearing.readableRequestType !== 'Video' ?
+      repTimezone :
+      hearing.regionalOfficeTimezone || 'America/New_York';
 
   const hearingDayDate = hearing.hearing_day ?
     hearing.hearing_day?.scheduledFor :
