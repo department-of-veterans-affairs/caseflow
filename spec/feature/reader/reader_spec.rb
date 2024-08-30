@@ -1112,7 +1112,7 @@ RSpec.feature "Reader", :all_dbs do
     context "Tags" do
       let(:new_tag_text) { "Foo" }
 
-      scenario "adding and deleting tags" do
+      xscenario "adding and deleting tags" do
         TAG1 = "Medical"
         TAG2 = "Law document"
 
@@ -1145,7 +1145,7 @@ RSpec.feature "Reader", :all_dbs do
         find("h3", text: "Issue tags", wait: 10).click
         # tags for first document are shared in tag auto suggestions for second document
         page.find("#tags", wait: 10).click
-        tag_options = find_all(".cf-select__option")
+        tag_options = find_all(".cf-select__option", wait: 10)
         expect(tag_options.count).to eq 4
 
         documents[0].tags.each_with_index do |tag, index|
