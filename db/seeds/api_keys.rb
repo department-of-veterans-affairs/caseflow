@@ -3,9 +3,7 @@
 # create annotation seeds
 
 module Seeds
-  require "./app/models/api_key.rb"
-
-  class ApiKeys
+    class ApiKeys < Base
     def seed!
       create_api_keys
     end
