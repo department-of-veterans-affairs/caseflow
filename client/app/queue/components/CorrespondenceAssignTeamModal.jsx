@@ -145,7 +145,7 @@ const CorrespondenceAssignTeamModal = (props) => {
       />
       {shouldShowTaskInstructions && (
         <TextareaField
-          name={taskData?.instructions_label ?? COPY.CORRESPONDENCE_CASES_ASSIGN_TASK_MODAL_INSTRUCTIONS_TITLE}
+          name={taskData?.instructions_label ?? COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}
           id="taskInstructions"
           onChange={setInstructions}
           value={instructions}
@@ -161,9 +161,6 @@ CorrespondenceAssignTeamModal.propTypes = {
   cancelTaskNotRelatedToAppeal: PropTypes.func,
   assignTaskToTeam: PropTypes.func.isRequired,
   task: PropTypes.shape({
-    appeal: PropTypes.shape({
-      hasCompletedSctAssignTask: PropTypes.bool
-    }),
     assignedTo: PropTypes.shape({
       type: PropTypes.string
     }),
