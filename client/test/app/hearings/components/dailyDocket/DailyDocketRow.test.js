@@ -13,7 +13,7 @@ import {
   dailyDocketPropsHearingNotVirtualAttorneyUser,
   dailyDocketPropsHearingNotVirtualDVCUser,
   dailyDocketPropsHearingNotVirtualTranscriberUser,
-  dailyDocketPropsConferenceLinkError} from '../../../../data/hearings/dailyDocket/dailyDocketProps';
+  dailyDocketPropsConferenceLinkError } from '../../../../data/hearings/dailyDocket/dailyDocketProps';
 import DailyDocketRow from '../../../../../app/hearings/components/dailyDocket/DailyDocketRow';
 import { shallow } from 'enzyme';
 import DailyDocketContainer from '../../../../../app/hearings/containers/DailyDocketContainer';
