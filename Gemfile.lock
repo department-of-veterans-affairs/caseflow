@@ -1730,8 +1730,6 @@ GEM
     neat (4.0.0)
       thor (~> 0.19)
     nenv (0.3.0)
-    net-http (0.4.1)
-      uri
     net-imap (0.3.7)
       date
       net-protocol
@@ -2020,7 +2018,6 @@ GEM
     unicode-display_width (1.8.0)
     unicode_utils (1.4.0)
     uniform_notifier (1.12.1)
-    uri (0.13.1)
     uri_template (0.7.0)
     validates_email_format_of (1.6.3)
       i18n
@@ -2117,7 +2114,6 @@ DEPENDENCIES
   meta_request
   moment_timezone-rails
   multiverse
-  net-http
   newrelic_rpm
   nokogiri (>= 1.11.0.rc4)
   paper_trail (~> 12.0)
