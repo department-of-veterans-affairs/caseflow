@@ -67,7 +67,7 @@ describe WarmBgsCachesJob, :all_dbs do
 
         new_bgs_record[claimant_pid][:claimant_participant_id] = claimant_pid
         allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids).with(
-          satisfy { |arg| ([claimant_pid, legacy_claimant_pid] & arg).size > 0 }
+          satisfy { |arg| !([claimant_pid, legacy_claimant_pid] & arg).empty? }
         ) do
           new_bgs_record
         end
