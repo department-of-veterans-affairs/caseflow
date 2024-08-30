@@ -98,8 +98,6 @@ describe('CorrespondenceChangeTaskTypeModal', () => {
   it('renders dropdown with correct options', () => {
     renderComponent();
 
-    // Verify dropdown options
-    // const dropdown = screen.getByPlaceholderText('Select an action type');
     const dropdown = screen.getByRole('combobox');
 
     fireEvent.mouseDown(dropdown);
