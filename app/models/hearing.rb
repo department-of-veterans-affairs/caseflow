@@ -70,7 +70,6 @@ class Hearing < CaseflowRecord
            :decision_issues, :available_hearing_locations, :closest_regional_office, :advanced_on_docket?,
            to: :appeal
   delegate :external_id, to: :appeal, prefix: true
-  delegate :name, to: :regional_office, prefix: true
   delegate :timezone, :name, to: :regional_office, prefix: true
 
   # ActiveRecord can interpret the associated hearing_day as null because acts_as_paranoid
