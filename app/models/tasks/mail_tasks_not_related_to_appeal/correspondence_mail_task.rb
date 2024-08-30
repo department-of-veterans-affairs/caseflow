@@ -47,5 +47,14 @@ class CorrespondenceMailTask < CorrespondenceTask
 
     options
   end
+
+  def reassign_organizations
+    if assigned_to.is_a?(Organization)
+      Organization.where.not(id: assigned_to.id).assignable(self)
+    else
+      # Return all assignable organizations if the task is assigned to a user
+      Organization.assignable(self)
+    end
+  end
   # rubocop: enable Metrics/AbcSize
 end
