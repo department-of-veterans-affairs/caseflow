@@ -7,7 +7,6 @@ import { tabConfig } from './TranscriptionFileDispatchTabs';
 import Alert from '../../components/Alert';
 import PackageFilesModal from './transcriptionProcessing/PackageFilesModal';
 import ApiUtil from '../../util/ApiUtil';
-import { getQueryParams, encodeQueryParams } from '../../util/QueryParamsUtil';
 
 const defaultAlert = {
   title: '',
@@ -15,37 +14,11 @@ const defaultAlert = {
   type: '',
 };
 
-const styles = css({
-  '& .cf-dropdown': {
-    marginRight: 0
-  },
-  '& h1': {
-    display: 'inline-block',
-    marginBottom: 0
-  }
-});
-
 export const TranscriptionFileDispatchView = () => {
   const [alert, setAlert] = useState(defaultAlert);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [packageModalConfig, setPackageModalConfig] = useState({ opened: false });
   const [contractors, setContractors] = useState({ transcription_contractors: [], return_dates: ['---', '---'] });
-
-  const tabFromUrl = () => {
-    const params = getQueryParams(window.location.search);
-    let page = 0;
-
-    if (params.tab === 'Assigned') {
-      page = 1;
-    } else if (params.tab === 'Completed') {
-      page = 2;
-    } else if (params.tab === 'All') {
-      page = 3;
-    }
-
-    return page;
-  };
-  const [currentTab] = useState(tabFromUrl());
 
   const getContractors = () => {
     ApiUtil.get('/hearings/find_by_contractor/available_contractors').
@@ -76,15 +49,6 @@ export const TranscriptionFileDispatchView = () => {
     setPackageModalConfig({ opened: false });
   };
 
-  const onTabChange = () => {
-    // reset pagenation and filtering settings when tab changes
-    const base = `${window.location.origin}${window.location.pathname}`;
-    const params = getQueryParams(window.location.search);
-    const qs = encodeQueryParams({ tab: params.tab, page: 1 });
-
-    history.pushState('', '', `${base}${qs}`);
-  };
-
   useEffect(() => {
     getContractors();
   }, []);
@@ -99,16 +63,13 @@ export const TranscriptionFileDispatchView = () => {
         />
       )}
 
-      <AppSegment filledBackground>
-        <div {...styles}>
-          <h1>Transcription file dispatch</h1>
-          <QueueOrganizationDropdown organizations={[{ name: 'Transcription', url: 'transcription-team' }]} />
-        </div>
+      <AppSegment filledBackground >
+        <h1 {...css({ display: 'inline-block' })}>Transcription file dispatch</h1>
+        <QueueOrganizationDropdown organizations={[{ name: 'Transcription', url: 'transcription-team' }]} />
         <TabWindow
           name="transcription-tabwindow"
-          defaultPage={currentTab}
+          defaultPage={0}
           fullPage={false}
-          onChange={onTabChange}
           tabs={tabConfig(openPackageModal, selectFilesForPackage, selectedFiles.length)}
         />
         { packageModalConfig.opened &&

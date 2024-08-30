@@ -230,7 +230,6 @@ Rails.application.routes.draw do
       get '/:hearing_day_id/filled_hearing_slots', to: "filled_hearing_slots#index"
     end
     get 'find_by_contractor/available_contractors', to: "transcription_contractors#available_contractors"
-    get 'find_by_contractor/filterable_contractors', to: "transcription_contractors#filterable_contractors"
     resources :find_by_contractor, controller: "transcription_contractors", except: [:edit, :new]
     get 'transcriptions/next_transcription', to: "transcriptions#next_transcription"
   end
@@ -256,8 +255,6 @@ Rails.application.routes.draw do
   get 'hearings/transcription_file/:file_id/download', to: 'hearings/transcription_files#download_transcription_file'
   get 'hearings/transcription_files', to: 'hearings_application#transcription_file_dispatch'
   get 'hearings/transcription_files/transcription_file_tasks', to: 'hearings/transcription_files#transcription_file_tasks'
-  get 'hearings/transcription_files/transcription_packages_tasks', to: 'hearings/transcription_files#transcription_packages_tasks'
-
   get 'hearings/transcription_files/locked', to: 'hearings/transcription_files#locked'
   post 'hearings/transcription_files/lock', to: 'hearings/transcription_files#lock'
   get 'hearings/confirm_work_order', to: redirect("/hearings/transcription_files")

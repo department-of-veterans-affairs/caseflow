@@ -36,40 +36,10 @@
       "sorting_table": "hearings",
       "sorting_columns": ["hearing_type"]
     },
-    "WORK_ORDER": {
-      "name": "workOrderColumn",
-      "filterable": false,
-      "anyFiltersAreSet": false
-    },
-    "ITEMS": {
-      "name": "itemsColumn",
-      "filterable": false,
-      "anyFiltersAreSet": false
-    },
-    "DATE_SENT": {
-      "name": "dateSentColumn",
-      "filterable": true,
-      "anyFiltersAreSet": true
-    },
-    "EXPECTED_RETURN_DATE": {
-      "name": "expectedReturnDateColumn",
-      "filterable": true,
-      "anyFiltersAreSet": true
-    },
-    "CONTRACTOR": {
-      "name": "contractorColumn",
-      "filterable": true,
-      "anyFiltersAreSet": true
-    },
     "STATUS": {
       "name": "statusColumn",
       "filterable": true,
       "anyFiltersAreSet": true
-    },
-    "UNASSIGN": {
-      "name": "unassignColumn",
-      "filterable": false,
-      "anyFiltersAreSet": false
     }
   },
   "COLUMN_SORT_ORDER_ASC": "asc",

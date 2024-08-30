@@ -6,11 +6,9 @@ import { css } from 'glamor';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 import LinkToAppeal from '../components/assignHearings/LinkToAppeal';
 import { renderLegacyAppealType } from '../../queue/utils';
-import { ExternalLinkIcon } from '../../components/icons/ExternalLinkIcon';
-import { COLORS, ICON_SIZES } from '../../constants/AppConstants';
 
 const styles = {
-  checkBoxHeader: css({
+  checkBoxHeaderStyles: css({
     display: 'flex',
     '& .cf-form-checkbox': {
       position: 'relative',
@@ -22,7 +20,7 @@ const styles = {
       marginLeft: '0.2em'
     }
   }),
-  checkBox: css({
+  checkBoxStyles: css({
     '& .cf-form-checkboxes': {
       marginBottom: '0rem'
     },
@@ -34,39 +32,10 @@ const styles = {
       left: '2px'
     },
   }),
-  headerWithIcon: css({
+  HeaderWithIconStyles: css({
     position: 'relative',
     top: '0.2em'
   }),
-  link: {
-    cursor: 'pointer',
-  },
-  unassign: {
-    cursor: 'pointer',
-    margin: '0 3em'
-  },
-  error: {
-    color: '#E60000'
-  },
-  linkIcon: {
-    position: 'relative',
-    marginLeft: '0.4em',
-    top: '3px'
-  },
-  workOrderLink: {
-    cursor: 'pointer',
-    whiteSpace: 'nowrap',
-    paddingRight: '1.3em',
-    position: 'relative',
-  },
-  workOrderLinkIcon: {
-    position: 'absolute',
-    top: '-0.2em',
-    right: 0
-  },
-  contractor: {
-    maxWidth: '150px'
-  }
 };
 
 export const selectColumn = (selectFiles, selectAll, selectedFiles, transcriptionFiles) => {
@@ -78,7 +47,7 @@ export const selectColumn = (selectFiles, selectAll, selectedFiles, transcriptio
 
   return {
     header:
-    (<div {...styles.checkBoxHeader}>
+    (<div {...styles.checkBoxHeaderStyles}>
       <Checkbox
         ariaLabel="select all files checkbox"
         name="select-all"
@@ -91,18 +60,20 @@ export const selectColumn = (selectFiles, selectAll, selectedFiles, transcriptio
     name: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.SELECT_ALL.name,
     enableFilter: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.SELECT_ALL.filterable,
     anyFiltersAreSet: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.SELECT_ALL.anyFiltersAreSet,
-    valueFunction: (row) => {
-      const selectedFile = selectedFiles.find((file) => file.id === row.id);
+    columnName: 'selectAll',
+    valueName: 'Selected',
+    valueFunction: (transcriptionFile) => {
+      const selectedFile = selectedFiles.find((file) => file.id === transcriptionFile.id);
       const value = selectedFile && selectedFile.status === 'selected' ? 'selected' : '';
       const disabled = selectedFile && selectedFile.status === 'locked';
-      const title = selectedFile && selectedFile.message ? selectedFile.message : row.id;
+      const title = selectedFile && selectedFile.message ? selectedFile.message : transcriptionFile.id;
 
       return (
-        <div {...styles.checkBox} title={title} className="select-file">
+        <div {...styles.checkBoxStyles} title={title} className="select-file">
           <Checkbox
             ariaLabel="select file checkbox"
-            name={`select-file-${ row.id}`}
-            onChange={(val) => selectFiles([row.id], val)}
+            name={`select-file-${ transcriptionFile.id}`}
+            onChange={(val) => selectFiles([transcriptionFile.id], val)}
             label={' '}
             value={value}
             disabled={disabled}
@@ -119,11 +90,14 @@ export const docketNumberColumn = () => {
     name: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.DOCKET_NUMBER.name,
     enableFilter: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.DOCKET_NUMBER.filterable,
     anyFiltersAreSet: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.DOCKET_NUMBER.anyFiltersAreSet,
-    valueFunction: (row) => (
+    label: 'filter by docket number',
+    columnName: 'docketNumber',
+    valueName: 'Docket Number',
+    valueFunction: (transcriptionFile) => (
       <div>
-        <DocketTypeBadge name={row.hearingType} number={row.id} />
+        <DocketTypeBadge name={transcriptionFile.hearingType} />
         &nbsp;
-        {row.docketNumber}
+        {transcriptionFile.docketNumber}
       </div>
     )
   };
@@ -135,15 +109,17 @@ export const caseDetailsColumn = () => {
     name: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.CASE_DETAILS.name,
     enableFilter: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.CASE_DETAILS.filterable,
     anyFiltersAreSet: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.CASE_DETAILS.anyFiltersAreSet,
-    valueFunction: (row) => (
+    label: 'filter by case details',
+    columnName: 'caseDetails',
+    valueName: 'Case Details',
+    valueFunction: (transcriptionFile) => (
       <div>
-        {row.externalAppealId && (
+        {transcriptionFile.externalAppealId && (
           <LinkToAppeal
-            id={row.id}
-            appealExternalId={row.externalAppealId}
+            appealExternalId={transcriptionFile.externalAppealId}
             hearingDay={{}}
             regionalOffice="">
-            {row.caseDetails}
+            {transcriptionFile.caseDetails}
           </LinkToAppeal>
         )}
       </div>
@@ -153,17 +129,18 @@ export const caseDetailsColumn = () => {
 
 export const typesColumn = () => {
   return {
-    header: <p {...styles.headerWithIcon}>{COPY.TRANSCRIPTION_FILE_DISPATCH_TYPES_COLUMN_NAME}</p>,
+    header: <p {...styles.HeaderWithIconStyles}>{COPY.TRANSCRIPTION_FILE_DISPATCH_TYPES_COLUMN_NAME}</p>,
     name: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.TYPES.name,
     enableFilter: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.TYPES.filterable,
     anyFiltersAreSet: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.TYPES.anyFiltersAreSet,
-    columnName: COPY.TRANSCRIPTION_FILE_DISPATCH_TYPES_COLUMN_NAME,
-    label: 'types filter',
-    valueFunction: (row) => (
+    label: 'filter by types',
+    columnName: 'Types',
+    valueName: 'Types',
+    valueFunction: (transcriptionFile) => (
       <div>
         {renderLegacyAppealType({
-          aod: row.isAdvancedOnDocket,
-          type: row.caseType
+          aod: transcriptionFile.isAdvancedOnDocket,
+          type: transcriptionFile.caseType
         })}
       </div>
     ),
@@ -172,21 +149,22 @@ export const typesColumn = () => {
       { value: 'AOD', displayText: 'AOD' }
     ],
     backendCanSort: true,
-    getSortValue: (row) => row.types.join(', '),
+    getSortValue: (transcriptionFile) => transcriptionFile.types.join(', '),
   };
 };
 
 export const hearingDateColumn = () => {
   return {
-    header: <p {...styles.headerWithIcon}>{COPY.TRANSCRIPTION_FILE_DISPATCH_HEARING_DATE_COLUMN_NAME}</p>,
+    header: <p {...styles.HeaderWithIconStyles}>{COPY.TRANSCRIPTION_FILE_DISPATCH_HEARING_DATE_COLUMN_NAME}</p>,
     name: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.HEARING_DATE.name,
     enableFilter: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.HEARING_DATE.filterable,
     anyFiltersAreSet: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.HEARING_DATE.anyFiltersAreSet,
-    columnName: COPY.TRANSCRIPTION_FILE_DISPATCH_HEARING_DATE_COLUMN_NAME,
-    label: 'hearing date filter',
-    valueFunction: (row) => row.hearingDate,
+    label: 'filter by hearing date',
+    columnName: 'Hearing Date',
+    valueName: 'Hearing Date',
+    valueFunction: (transcriptionFile) => transcriptionFile.hearingDate,
     backendCanSort: true,
-    getSortValue: (row) => row.hearingDate,
+    getSortValue: (transcriptionFile) => transcriptionFile.hearingDate,
     filterType: 'date-picker',
     filterSettings: {
       buttons: false,
@@ -198,15 +176,16 @@ export const hearingDateColumn = () => {
 export const hearingTypeColumn = () => {
   return {
     className: 'test-column-name',
-    header: <p {...styles.headerWithIcon}>{COPY.TRANSCRIPTION_FILE_DISPATCH_HEARING_TYPE_COLUMN_NAME}</p>,
+    header: <p {...styles.HeaderWithIconStyles}>{COPY.TRANSCRIPTION_FILE_DISPATCH_HEARING_TYPE_COLUMN_NAME}</p>,
     name: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.HEARING_TYPE.name,
     enableFilter: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.HEARING_TYPE.filterable,
     anyFiltersAreSet: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.HEARING_TYPE.anyFiltersAreSet,
-    columnName: COPY.TRANSCRIPTION_FILE_DISPATCH_HEARING_TYPE_COLUMN_NAME,
-    label: 'hearing types filter',
-    valueFunction: (row) => (
+    label: 'filter by hearing type',
+    columnName: 'Hearing Type',
+    valueName: 'Hearing Type',
+    valueFunction: (transcriptionFile) => (
       <div>
-        {row.hearingType === 'LegacyHearing' ? 'Legacy' : 'AMA'}
+        {transcriptionFile.hearingType === 'LegacyHearing' ? 'Legacy' : 'AMA'}
       </div>
     ),
     filterOptions: [
@@ -214,138 +193,19 @@ export const hearingTypeColumn = () => {
       { value: 'LegacyHearing', displayText: 'Legacy' }
     ],
     backendCanSort: true,
-    getSortValue: (row) => row.status
-  };
-};
-
-export const workOrderColumn = (openFile) => {
-  return {
-    header: <p {...styles.headerWithIcon}>{COPY.TRANSCRIPTION_FILE_DISPATCH_WORK_ORDER_COLUMN_NAME}</p>,
-    name: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.WORK_ORDER.name,
-    enableFilter: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.WORK_ORDER.filterable,
-    anyFiltersAreSet: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.WORK_ORDER.anyFiltersAreSet,
-    valueFunction: (row) => (
-      <div>
-        <a style={styles.workOrderLink} onClick={() => openFile(row.id)}>
-          #{row.workOrder}
-          <span style={styles.workOrderLinkIcon}>
-            <ExternalLinkIcon color={COLORS.PRIMARY} size={ICON_SIZES.SMALL} />
-          </span>
-        </a>
-      </div>
-    )
-  };
-};
-
-export const itemsColumn = (openPackage) => {
-  return {
-    header: <p {...styles.headerWithIcon}>{COPY.TRANSCRIPTION_FILE_DISPATCH_ITEMS_COLUMN_NAME}</p>,
-    name: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.ITEMS.name,
-    enableFilter: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.ITEMS.filterable,
-    anyFiltersAreSet: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.ITEMS.anyFiltersAreSet,
-    valueFunction: (row) => (
-      <div>
-        <a style={styles.link} onClick={() => openPackage(row.id)}>
-          {row.items} item{row.items === 1 ? '' : 's'}
-        </a>
-      </div>
-    )
-  };
-};
-
-export const dateSentColumn = () => {
-  return {
-    header: <p {...styles.headerWithIcon}>{COPY.TRANSCRIPTION_FILE_DISPATCH_DATE_SENT_COLUMN_NAME}</p>,
-    name: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.DATE_SENT.name,
-    enableFilter: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.DATE_SENT.filterable,
-    anyFiltersAreSet: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.DATE_SENT.anyFiltersAreSet,
-    columnName: COPY.TRANSCRIPTION_FILE_DISPATCH_DATE_SENT_COLUMN_NAME,
-    label: 'date sent filter',
-    valueFunction: (row) => row.dateSent,
-    backendCanSort: true,
-    getSortValue: (row) => row.dateSent,
-    filterType: 'date-picker',
-    filterSettings: {
-      buttons: false,
-      position: 'right'
-    }
-  };
-};
-
-export const expectedReturnDateColumn = () => {
-  return {
-    header: <p {...styles.headerWithIcon}>{COPY.TRANSCRIPTION_FILE_DISPATCH_EXPECTED_RETURN_DATE_COLUMN_NAME}</p>,
-    name: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.EXPECTED_RETURN_DATE.name,
-    enableFilter: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.EXPECTED_RETURN_DATE.filterable,
-    anyFiltersAreSet: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.EXPECTED_RETURN_DATE.anyFiltersAreSet,
-    columnName: COPY.TRANSCRIPTION_FILE_DISPATCH_EXPECTED_RETURN_DATE_COLUMN_NAME,
-    label: 'expected return date filter',
-    valueFunction: (row) => row.expectedReturnDate,
-    backendCanSort: true,
-    getSortValue: (row) => row.expectedReturnDate,
-    filterType: 'date-picker',
-    filterSettings: {
-      buttons: false,
-      position: 'right'
-    }
-  };
-};
-
-export const contractorColumn = (contractors) => {
-  const filterOptions = contractors ? contractors.map((contractor) => ({
-    value: contractor.name,
-    displayText: contractor.name
-  })) : [];
-
-  return {
-    header: <p {...styles.headerWithIcon}>{COPY.TRANSCRIPTION_FILE_DISPATCH_CONTRACTOR_COLUMN_NAME}</p>,
-    name: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.CONTRACTOR.name,
-    enableFilter: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.CONTRACTOR.filterable,
-    anyFiltersAreSet: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.CONTRACTOR.anyFiltersAreSet,
-    columnName: COPY.TRANSCRIPTION_FILE_DISPATCH_CONTRACTOR_COLUMN_NAME,
-    label: 'contractor filter',
-    filterOptions,
-    valueFunction: (row) => (
-      <div style={styles.contractor}>
-        {row.contractor}
-      </div>
-    ),
-    backendCanSort: true,
-    getSortValue: (row) => row.expectedReturnDate
+    getSortValue: (transcriptionFile) => transcriptionFile.status
   };
 };
 
 export const statusColumn = () => {
   return {
-    header: <p {...styles.headerWithIcon}>{COPY.TRANSCRIPTION_FILE_DISPATCH_STATUS_COLUMN_NAME}</p>,
+    header: <p {...styles.HeaderWithIconStyles}>{COPY.TRANSCRIPTION_FILE_DISPATCH_STATUS_COLUMN_NAME}</p>,
     name: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.STATUS.name,
     enableFilter: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.STATUS.filterable,
     anyFiltersAreSet: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.STATUS.anyFiltersAreSet,
-    columnName: COPY.TRANSCRIPTION_FILE_DISPATCH_STATUS_COLUMN_NAME,
-    label: 'status filter',
-    filterOptions: [
-      { value: 'Completed', displayText: 'Completed' },
-      { value: 'Overdue', displayText: 'Overdue' },
-      { value: 'Retrieval Failure', displayText: 'Retrieval Failure' },
-      { value: 'Sent', displayText: 'Sent' }
-    ],
-    valueFunction: (row) => (
-      <div style={row.status === 'Overdue' || row.status === 'Retrieval Failure' ? styles.error : {}}>
-        {row.status}
-      </div>
-    ),
-    backendCanSort: true,
-    getSortValue: (row) => row.status
+    label: 'filter by status',
+    columnName: 'status',
+    valueName: 'Status',
+    valueFunction: (transcriptionFile) => transcriptionFile.status
   };
 };
-
-export const unassignColumn = (unassignPackage) => {
-  return {
-    valueFunction: (row) => (
-      <div>
-        <a style={styles.unassign} onClick={() => unassignPackage(row.id)}>Unassign</a>
-      </div>
-    )
-  };
-};
-
