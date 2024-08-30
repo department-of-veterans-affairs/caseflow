@@ -4,6 +4,7 @@
 
 module Seeds
   require "./app/models/api_key.rb"
+
   class ApiKeys < Base
     def seed!
       create_api_keys
