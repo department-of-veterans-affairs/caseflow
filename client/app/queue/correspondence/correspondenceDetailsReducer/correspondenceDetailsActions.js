@@ -147,14 +147,18 @@ export const assignTaskToTeam = (payload, frontendParams, correspondence) => (di
 
     }).
     catch((error) => {
+      const errorMessage = error?.response?.body?.message
+        ? error.response.body.message.replace(/^Error:\s*/, '')
+        : error.message;
+
       dispatch({
         type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
         payload: {
           bannerAlert: {
-            title: CORRESPONDENCE_DETAILS_BANNERS.teamFailBanner,
-            message: sprintf(CORRESPONDENCE_DETAILS_BANNERS.teamFailBanner,
-              error.response.body.message),
-            type: CORRESPONDENCE_DETAILS_BANNERS.teamFailBanner
+            title: CORRESPONDENCE_DETAILS_BANNERS.teamFailBanner.title,
+            message: sprintf(CORRESPONDENCE_DETAILS_BANNERS.teamFailBanner.message,
+              errorMessage),
+            type: CORRESPONDENCE_DETAILS_BANNERS.teamFailBanner.type
           }
         }
       });
