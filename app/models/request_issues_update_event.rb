@@ -106,6 +106,10 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     # when in our case parser returns issue_data with :id key
     return review.request_issues.find(issue_data[:id]) if issue_data[:id]
 
+    # probably we will use our own method for that operation insted of "from_intake_data"
+    # that will be called from future UpdateRequestIssues service class
+    # if not we HAVE TO update or override from_intake_data for new
+    # attribute vbms_id
     RequestIssue.from_intake_data(issue_data, decision_review: review)
   end
 

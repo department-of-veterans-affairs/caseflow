@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class DecisionReviewUpdatedIssueParser
+class Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser
   include ParserHelper
   attr_reader :issue
 
@@ -55,8 +55,8 @@ class DecisionReviewUpdatedIssueParser
   end
 
   def ri_decision_date
-    decision_date_int = @issue.dig(:decision_date)
-    logical_date_converter(decision_date_int)
+    Date.parse(@issue.dig(:decision_date))
+    # logical_date_converter(decision_date_int)
   end
 
   def ri_ineligible_due_to_id
