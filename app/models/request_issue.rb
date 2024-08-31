@@ -49,7 +49,7 @@ class RequestIssue < CaseflowRecord
   validates(
     :contested_issue_description,
     format: { with: DESC_ALLOWED_CHARACTERS_REGEX, message: "invalid characters used" },
-    allow_nil: true
+    allow_blank: true
   )
 
   enum ineligible_reason: {
