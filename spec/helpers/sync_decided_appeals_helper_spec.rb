@@ -28,7 +28,7 @@ describe "SyncDecidedAppealsHelper" do
       create_decided_appeal_state_with_case_record_and_hearing(true, false)
     end
 
-    it "Job syncs decided appeals decision_mailed status", bypass_cleaner: true do
+    it "Job syncs decided appeals decision_mailed status" do
       expect([decided_appeal_state,
               undecided_appeal_state,
               missing_vacols_case_appeal_state].all?(&:decision_mailed)).to eq false
@@ -40,7 +40,7 @@ describe "SyncDecidedAppealsHelper" do
       expect(missing_vacols_case_appeal_state.reload.decision_mailed).to eq false
     end
 
-    it "catches standard errors", bypass_cleaner: true do
+    it "catches standard errors" do
       expect([decided_appeal_state,
               undecided_appeal_state,
               missing_vacols_case_appeal_state].all?(&:decision_mailed)).to eq false
