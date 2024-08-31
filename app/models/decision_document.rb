@@ -125,9 +125,9 @@ class DecisionDocument < CaseflowRecord
   def for_contested_claim?
     case appeal_type
     when "Appeal"
-      return appeal.contested_claim?
+      appeal.contested_claim?
     when "LegacyAppeal"
-      return appeal.contested_claim
+      appeal.contested_claim
     end
   end
 
