@@ -53,6 +53,21 @@
         "webpack:///*": "${webRoot}/*"
       }
     },
+    {
+      "name": "Jest - On Current File",
+      "type": "node",
+      "request": "launch",
+      "env": {
+        "NODE_ENV": "test"
+      },
+      "program": "${workspaceFolder}/client/node_modules/.bin/jest",
+      "args": [
+        "${relativeFile}"
+      ],
+      "cwd": "${workspaceRoot}/client",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    }
   ],
   "compounds": [
     {

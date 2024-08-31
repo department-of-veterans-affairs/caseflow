@@ -255,6 +255,7 @@ RSpec.describe SplitAppealController, type: :controller do
     context "with appeals that have specialty case team issues" do
       before do
         FeatureToggle.enable!(:specialty_case_team_distribution)
+        distribution_task.completed!
       end
 
       context "when the SCT issue is left on the original appeal stream" do
@@ -281,7 +282,7 @@ RSpec.describe SplitAppealController, type: :controller do
           expect(dup_appeal.can_redistribute_appeal?).to eq(true)
 
           # Original appeal's distribution task should remain unchanged
-          expect(appeal.tasks.of_type(:DistributionTask).first.status).to eq("on_hold")
+          expect(appeal.tasks.of_type(:DistributionTask).first.status).to eq("completed")
           sct_task = appeal.tasks.of_type(:SpecialtyCaseTeamAssignTask).first
           expect(appeal.tasks.of_type(:SpecialtyCaseTeamAssignTask).count).to eq(1)
           expect(sct_task.status).to eq("assigned")
@@ -313,7 +314,7 @@ RSpec.describe SplitAppealController, type: :controller do
           expect(appeal.can_redistribute_appeal?).to eq(true)
 
           # new appeal's distribution task should remain unchanged
-          expect(dup_appeal.tasks.of_type(:DistributionTask).first.status).to eq("on_hold")
+          expect(dup_appeal.tasks.of_type(:DistributionTask).first.status).to eq("completed")
           sct_task = dup_appeal.tasks.of_type(:SpecialtyCaseTeamAssignTask).first
           expect(dup_appeal.tasks.of_type(:SpecialtyCaseTeamAssignTask).count).to eq(1)
           expect(sct_task.status).to eq("assigned")

@@ -486,15 +486,32 @@ module Caseflow::Error
   class PacmanNotFoundError < PacmanApiError; end
   class PacmanInternalServerError < PacmanApiError; end
 
+  # Redis Lock errors
   class SyncLockFailed < StandardError
     def ignorable?
       true
     end
   end
 
+  class RedisLockFailed < StandardError; end
+
+  # Event Decision Review Create Errors
+  class DecisionReviewCreatedUserError < StandardError; end
+  class DecisionReviewCreatedVeteranError < StandardError; end
+  class DecisionReviewCreateVacolsOnOptinError < StandardError; end
+  class DecisionReviewCreatedClaimantError < StandardError; end
+  class DecisionReviewCreatedIntakeError < StandardError; end
+  class DecisionReviewCreatedCreateClaimReviewError < StandardError; end
+  class DecisionReviewCreatedEpEstablishmentError < StandardError; end
+  class DecisionReviewCreatedRequestIssuesError < StandardError; end
+
   class MaximumBatchSizeViolationError < StandardError
     def initialize(msg = "The batch size of jobs must not exceed 10")
       super(msg)
     end
   end
+
+  class SqsUnexpectedQueueTypeError < StandardError; end
+  class SqsQueueNotFoundError < StandardError; end
+  class SqsQueueExhaustionError < StandardError; end
 end
