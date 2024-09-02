@@ -808,10 +808,9 @@ class VACOLS::CaseDocket < VACOLS::Record
   end
 
   def self.reject_due_to_affinity?(appeal, lever)
-    VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity&.affinity_start_date.nil? ||
-      (VACOLS::Case.find_by(bfkey: appeal["bfkey"])
-        .appeal_affinity
-        .affinity_start_date > lever.to_i.days.ago)
+    appeal_affinity = VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity
+    appeal_affinity&.affinity_start_date.nil? ||
+      (appeal_affinity.affinity_start_date > lever.to_i.days.ago)
   end
 
   def self.ineligible_judges_sattyids
@@ -879,7 +878,8 @@ class VACOLS::CaseDocket < VACOLS::Record
     true
   end
 
-  def self.priority_appeals(in_window)
+  # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity
+  def self.priority_appeals_affinity_date_count(in_window)
     conn = connection
     cavc_affinity_lever_value = CaseDistributionLever.cavc_affinity_days
     cavc_aod_affinity_lever_value = CaseDistributionLever.cavc_aod_affinity_days
@@ -909,9 +909,11 @@ class VACOLS::CaseDocket < VACOLS::Record
         end
       end
     end
+    appeals
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/PerceivedComplexity
 
-  def self.nonpriority_appeals(_in_window)
+  def self.non_priority_appeals_affinity_date_count(_in_window)
     conn = connection
 
     query = <<-SQL

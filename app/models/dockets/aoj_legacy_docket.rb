@@ -86,12 +86,12 @@ class AojLegacyDocket < LegacyDocket
   end
   # rubocop:enable Metrics/ParameterLists
 
-  def priority_appeals(in_window)
-    LegacyAppeal.aoj_appeal_repository.priority_appeals(in_window)
+  def priority_appeals_affinity_date_count(in_window)
+    LegacyAppeal.aoj_appeal_repository.priority_appeals_affinity_date_count(in_window)
   end
 
-  def non_priority_appeals(in_window)
-    LegacyAppeal.aoj_appeal_repository.non_priority_appeals(in_window)
+  def non_priority_appeals_affinity_date_count(in_window)
+    LegacyAppeal.aoj_appeal_repository.non_priority_appeals_affinity_date_count(in_window)
   end
 
   private

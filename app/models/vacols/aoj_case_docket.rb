@@ -783,7 +783,8 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength
 
-  def self.priority_appeals(in_window)
+  # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity
+  def self.priority_appeals_affinity_date_count(in_window)
     conn = connection
     aoj_cavc_affinity_lever_value = CaseDistributionLever.aoj_cavc_affinity_days
     aoj_aod_affinity_lever_value = CaseDistributionLever.aoj_aod_affinity_days
@@ -812,9 +813,11 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
         end
       end
     end
+    appeals
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/PerceivedComplexity
 
-  def self.nonpriority_appeals(in_window)
+  def self.non_priority_appeals_affinity_date_count(in_window)
     conn = connection
     aoj_affinity_lever_value = CaseDistributionLever.aoj_affinity_days
 
@@ -835,5 +838,6 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
         reject_due_to_affinity?(appeal, aoj_affinity_lever_value)
       end
     end
+    appeals
   end
 end
