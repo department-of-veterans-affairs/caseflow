@@ -412,7 +412,7 @@ describe LegacyDocket do
     )
   end
 
-  def create_nonpriority_distributable_legacy_appeal_not_tied_to_judge(bfkey="12345")
+  def create_nonpriority_distributable_legacy_appeal_not_tied_to_judge(bfkey = "12345")
     create(
       :case,
       bfkey: bfkey,
