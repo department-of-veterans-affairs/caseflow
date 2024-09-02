@@ -856,19 +856,19 @@ class AppealRepository
       end
     end
 
-    def priority_appeals
-      MetricsService.record("VACOLS: priority_appeals",
-                            name: "priority_appeals",
+    def priority_appeals_affinity_date_count(in_window)
+      MetricsService.record("VACOLS: priority_appeals_affinity_date_count",
+                            name: "priority_appeals_affinity_date_count",
                             service: :vacols) do
-        VACOLS::CaseDocket.priority_appeals(in_window)
+        VACOLS::CaseDocket.priority_appeals_affinity_date_count(in_window)
       end
     end
 
-    def nonpriority_appeals
-      MetricsService.record("VACOLS: nonpriority_appeals",
-                            name: "nonpriority_appeals",
+    def non_priority_appeals_affinity_date_count(in_window)
+      MetricsService.record("VACOLS: non_priority_appeals_affinity_date_count",
+                            name: "non_priority_appeals_affinity_date_count",
                             service: :vacols) do
-        VACOLS::CaseDocket.nonpriority_appeals(in_window)
+        VACOLS::CaseDocket.non_priority_appeals_affinity_date_count(in_window)
       end
     end
 
