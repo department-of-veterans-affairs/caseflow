@@ -6,7 +6,7 @@ describe SqsService do
   before(:each) { wipe_queues }
   after(:all) { wipe_queues }
 
-  context "#find_queue_url_by_name", skip: "Skipping due to test failure" do
+  context "#find_queue_url_by_name" do
     let!(:queue) { create_queue(queue_name, fifo) }
 
     subject { SqsService.find_queue_url_by_name(name: queue_name, check_fifo: false) }
@@ -32,7 +32,7 @@ describe SqsService do
       end
     end
 
-    context "non-FIFO", skip: "Skipping due to test failure" do
+    context "non-FIFO" do
       let(:fifo) { false }
       let(:queue_name) { "my_normal_queue" }
 
@@ -50,7 +50,7 @@ describe SqsService do
     end
   end
 
-  context "#batch_delete_messages", skip: "Skipping due to test failure" do
+  context "#batch_delete_messages" do
     let!(:queue) { create_queue("batch_delete_test", false) }
     let(:queue_url) { queue.queue_url }
 
