@@ -11,10 +11,10 @@ describe StuckVirtualHearingsChecker, :postgres do
       )
     end
 
-    # it "does not generate a report" do
-    #   subject.call
-    #   expect(subject.report?).to be_falsey
-    # end
+    it "does not generate a report" do
+      subject.call
+      expect(subject.report?).to be_falsey
+    end
   end
 
   context "there is a stuck virtual hearing but it was updated less than 2 hours ago" do
