@@ -3,7 +3,7 @@
 class Hearings::TranscriptionPackagesController < ApplicationController
   include HearingsConcerns::VerifyAccess
 
-  # before_action :verify_transcription_user
+  before_action :verify_transcription_user
 
   def show
     transcription_package = ::TranscriptionPackage.find_by(task_number: params[:task_number])

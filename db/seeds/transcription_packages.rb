@@ -2,21 +2,6 @@ module Seeds
   class TranscriptionPackages < Base
     def seed!
 
-      # transcription = ???
-        # transcription_files = ???
-      # transcription_packages = ???
-        # transcription_package_hearings
-        # transcription_package_legacy_hearings
-
-      # hearings
-      # transcription_packages
-      # transcription_package_hearings
-      # transcription_package_legacy_hearings
-      # transcriptions table
-      # transcription_files
-
-      puts 'so far so good'
-
       #legacy_hearings = LegacyHearing.last(40)
       hearings = Hearing.last(300)
 
@@ -26,7 +11,7 @@ module Seeds
         "Successful upload (AWS)"
       ]
 
-      year = '2024'
+      year = '2040'
       item_counts = [2,5,10,1,3]
 
       hearing_index = 0
