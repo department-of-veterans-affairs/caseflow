@@ -104,8 +104,8 @@ const CorrespondenceAssignTaskModal = (props) => {
 
   return (
     <QueueFlowModal
-      title= {task.assignedToOrg ? "Assign Task" : "Re-assign to person" }
-      button="Assign Task"
+      title= {task.assignedToOrg ? "Assign task" : "Re-assign to person" }
+      button="Assign task"
       submitDisabled= {!validateForm()}
       submitButtonClassNames= {'usa-button'}
       pathAfterSubmit={
