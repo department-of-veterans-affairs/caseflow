@@ -17,7 +17,7 @@ export const setTaskNotRelatedToAppealBanner = (bannerDetails) => (dispatch) => 
   });
 };
 
-export const cancelTaskNotRelatedToAppeal = (taskID, correspondence, payload) => (dispatch) => {
+export const cancelTaskNotRelatedToAppeal = (taskID, taskName, correspondence, payload) => (dispatch) => {
 
   return ApiUtil.patch(`/queue/correspondence/tasks/${taskID}/cancel`, payload).
     then(() => {
@@ -25,7 +25,12 @@ export const cancelTaskNotRelatedToAppeal = (taskID, correspondence, payload) =>
       dispatch({
         type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
         payload: {
-          bannerAlert: CORRESPONDENCE_DETAILS_BANNERS.successBanner
+          bannerAlert: {
+            title: CORRESPONDENCE_DETAILS_BANNERS.cancelSuccessBanner.title,
+            message: sprintf(CORRESPONDENCE_DETAILS_BANNERS.cancelSuccessBanner.message,
+              taskName),
+            type: CORRESPONDENCE_DETAILS_BANNERS.cancelSuccessBanner.type
+          }
         }
       });
 
@@ -41,7 +46,7 @@ export const cancelTaskNotRelatedToAppeal = (taskID, correspondence, payload) =>
       dispatch({
         type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
         payload: {
-          bannerAlert: CORRESPONDENCE_DETAILS_BANNERS.failBanner
+          bannerAlert: CORRESPONDENCE_DETAILS_BANNERS.taskFailBanner
         }
       });
       console.error(error);
@@ -152,7 +157,7 @@ export const assignTaskToUser = (taskID, payload, frontendParams, correspondence
       dispatch({
         type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
         payload: {
-          bannerAlert: CORRESPONDENCE_DETAILS_BANNERS.assignFailBanner
+          bannerAlert: CORRESPONDENCE_DETAILS_BANNERS.taskFailBanner
         }
       });
       console.error(error);

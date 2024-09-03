@@ -1,7 +1,7 @@
 {
-  "successBanner": {
+  "cancelSuccessBanner": {
     "title": "Success",
-    "message": "Other Motion task has been cancelled. If you have made a mistake, please email Inbound Ops Supervisor for any changes.",
+    "message": "%s task has been cancelled. If you have made a mistake, please email Inbound Ops Supervisor for any changes.",
     "type": "success"
   },
   "failBanner": {
@@ -28,6 +28,11 @@
   "completeFailBanner": {
     "title": "Complete Failed",
     "message": "Task unable to be completed or assigned.",
+    "type": "warning"
+  },
+  "taskFailBanner": {
+    "title": "Task action failed",
+    "message": "Task action has failed",
     "type": "warning"
   }
 }
