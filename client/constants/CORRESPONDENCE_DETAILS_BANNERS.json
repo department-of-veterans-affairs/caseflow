@@ -22,13 +22,13 @@
 
   "teamBanner": {
     "title": "Success",
-    "message": "FOIA request task has been assigned to %s.",
+    "message": "%s task has been assigned to %s.",
     "type": "success"
   },
 
-  "teamFailBanner": {
+  "taskActionFailBanner": {
     "title": "Error",
-    "message": "Task action could not be completed. Please try again at a later time or contact the Help Desk (Error code: %s).",
+    "message": "Task action could not be completed. Please try again at a later time or contact the Help Desk (Error message: %s).",
     "type": "error"
   },
 

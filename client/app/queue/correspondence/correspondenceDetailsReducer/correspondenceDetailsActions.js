@@ -43,15 +43,25 @@ export const cancelTaskNotRelatedToAppeal = (taskID, taskName, correspondence, p
 
     }).
     catch((error) => {
+      const errorMessage = error?.response?.body?.message
+        ? error.response.body.message.replace(/^Error:\s*/, '')
+        : error.message;
+
       dispatch({
         type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
         payload: {
-          bannerAlert: CORRESPONDENCE_DETAILS_BANNERS.taskFailBanner
+          bannerAlert: {
+            title: CORRESPONDENCE_DETAILS_BANNERS.taskActionFailBanner.title,
+            message: sprintf(CORRESPONDENCE_DETAILS_BANNERS.taskActionFailBanner.message,
+              errorMessage),
+            type: CORRESPONDENCE_DETAILS_BANNERS.taskActionFailBanner.type
+          }
         }
       });
       console.error(error);
     });
 };
+
 export const changeTaskTypeNotRelatedToAppeal = (taskID, payload, taskNames, correspondence) => (dispatch) => {
 
   return ApiUtil.patch(`/queue/correspondence/tasks/${taskID}/change_task_type`, payload).
@@ -77,16 +87,22 @@ export const changeTaskTypeNotRelatedToAppeal = (taskID, payload, taskNames, cor
       });
     }).
     catch((error) => {
+      const errorMessage = error?.response?.body?.message
+        ? error.response.body.message.replace(/^Error:\s*/, '')
+        : error.message;
+
       dispatch({
         type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
         payload: {
           bannerAlert: {
-            title: 'Warning',
-            message: error.message,
-            type: 'warning'
+            title: CORRESPONDENCE_DETAILS_BANNERS.taskActionFailBanner.title,
+            message: sprintf(CORRESPONDENCE_DETAILS_BANNERS.taskActionFailBanner.message,
+              errorMessage),
+            type: CORRESPONDENCE_DETAILS_BANNERS.taskActionFailBanner.type
           }
         }
       });
+      console.error(error);
     });
 };
 
@@ -117,10 +133,19 @@ export const completeTaskNotRelatedToAppeal = (payload, frontendParams, correspo
 
     }).
     catch((error) => {
+      const errorMessage = error?.response?.body?.message
+        ? error.response.body.message.replace(/^Error:\s*/, '')
+        : error.message;
+
       dispatch({
         type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
         payload: {
-          bannerAlert: CORRESPONDENCE_DETAILS_BANNERS.completeFailBanner
+          bannerAlert: {
+            title: CORRESPONDENCE_DETAILS_BANNERS.taskActionFailBanner.title,
+            message: sprintf(CORRESPONDENCE_DETAILS_BANNERS.taskActionFailBanner.message,
+              errorMessage),
+            type: CORRESPONDENCE_DETAILS_BANNERS.taskActionFailBanner.type
+          }
         }
       });
       console.error(error);
@@ -154,10 +179,19 @@ export const assignTaskToUser = (taskID, payload, frontendParams, correspondence
 
     }).
     catch((error) => {
+      const errorMessage = error?.response?.body?.message
+        ? error.response.body.message.replace(/^Error:\s*/, '')
+        : error.message;
+
       dispatch({
         type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
         payload: {
-          bannerAlert: CORRESPONDENCE_DETAILS_BANNERS.taskFailBanner
+          bannerAlert: {
+            title: CORRESPONDENCE_DETAILS_BANNERS.taskActionFailBanner.title,
+            message: sprintf(CORRESPONDENCE_DETAILS_BANNERS.taskActionFailBanner.message,
+              errorMessage),
+            type: CORRESPONDENCE_DETAILS_BANNERS.taskActionFailBanner.type
+          }
         }
       });
       console.error(error);
@@ -174,6 +208,7 @@ export const assignTaskToTeam = (payload, frontendParams, correspondence) => (di
           bannerAlert: {
             title: CORRESPONDENCE_DETAILS_BANNERS.teamBanner.title,
             message: sprintf(CORRESPONDENCE_DETAILS_BANNERS.teamBanner.message,
+              frontendParams.taskName,
               frontendParams.teamName),
             type: CORRESPONDENCE_DETAILS_BANNERS.teamBanner.type
           }
@@ -197,10 +232,10 @@ export const assignTaskToTeam = (payload, frontendParams, correspondence) => (di
         type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
         payload: {
           bannerAlert: {
-            title: CORRESPONDENCE_DETAILS_BANNERS.teamFailBanner.title,
-            message: sprintf(CORRESPONDENCE_DETAILS_BANNERS.teamFailBanner.message,
+            title: CORRESPONDENCE_DETAILS_BANNERS.taskActionFailBanner.title,
+            message: sprintf(CORRESPONDENCE_DETAILS_BANNERS.taskActionFailBanner.message,
               errorMessage),
-            type: CORRESPONDENCE_DETAILS_BANNERS.teamFailBanner.type
+            type: CORRESPONDENCE_DETAILS_BANNERS.taskActionFailBanner.type
           }
         }
       });
