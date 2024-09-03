@@ -678,6 +678,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
       today = Time.zone.now.to_date
       legacy_days_waiting = (today - legacy_priority_case.bfd19.to_date).to_i
+      aoj_legacy_days_waiting = (today - aoj_legacy_priority_case.bfd19.to_date).to_i
       direct_review_days_waiting = (today - ready_priority_direct_case.receipt_date).to_i
       evidence_submission_days_waiting = (today - ready_priority_evidence_case.receipt_date).to_i
       hearing_days_waiting = (today - ready_priority_hearing_case.receipt_date).to_i
@@ -690,12 +691,14 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         "*Age of oldest direct_review case*: #{direct_review_days_waiting} days",
         "*Age of oldest evidence_submission case*: #{evidence_submission_days_waiting} days",
         "*Age of oldest hearing case*: #{hearing_days_waiting} days",
+        "*Age of oldest aoj_legacy case*: #{aoj_legacy_days_waiting} days",
         "",
-        "*Total Number of appeals _not_ distributed*: 4",
+        "*Total Number of appeals _not_ distributed*: 5",
         "*Number of legacy appeals _not_ distributed*: 1",
         "*Number of direct_review appeals _not_ distributed*: 1",
         "*Number of evidence_submission appeals _not_ distributed*: 1",
         "*Number of hearing appeals _not_ distributed*: 1",
+        "*Number of aoj_legacy appeals _not_ distributed*: 1",
         "*Number of Legacy Hearing Non Genpop appeals _not_ distributed*: 1",
         "",
         "*Number of legacy appeals in affinity date window*: not implemented",
@@ -706,6 +709,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         "*Number of evidence_submission appeals out of affinity date window*: 0",
         "*Number of hearing appeals in affinity date window*: 0",
         "*Number of hearing appeals out of affinity date window*: 0",
+        "*Number of aoj_legacy appeals in affinity date window*: not implemented",
+        "*Number of aoj_legacy appeals out of affinity date window*: not implemented",
         "",
         "*Debugging information*",
         "*Excluded Judges*: #{excluded_judges}",
