@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# new commit message
 
 class DecisionReviewsController < ApplicationController
   include GenericTaskPaginationConcern
