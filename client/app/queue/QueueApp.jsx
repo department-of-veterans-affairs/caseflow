@@ -1045,7 +1045,7 @@ class QueueApp extends React.PureComponent {
                 `(${TASK_ACTIONS.ASSIGN_CORR_TASK_TO_PERSON.value
                 })`
               }
-              title={`${PAGE_TITLES.ASSIGN_TO_PERSON} | Caseflow`}
+              title={`${PAGE_TITLES.ASSIGN_TASK} | Caseflow`}
               render={this.routedCorrespondenceAssignTaskModal}
             />
             <PageRoute

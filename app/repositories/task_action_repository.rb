@@ -18,8 +18,6 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
     end
 
     def assign_corr_task_to_person(task, _user = nil)
-      # return_to_name = task_assigner_name(task)
-
       {
         modal_title: task.assigned_to.is_a?(Organization) ? COPY::ASSIGN_TASK_TITLE : COPY::REASSIGN_TASK_TITLE,
         modal_body: COPY::ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER,
