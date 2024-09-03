@@ -141,7 +141,7 @@ class LegacyDocket < Docket
     LegacyAppeal.repository.priority_appeals_affinity_date_count(in_window)
   end
 
-  def non_priority_appeals_affinity_date_count(in_window)
+  def non_priority_appeals_affinity_date_count(_in_window)
     "N/A for legacy appeals which are nonpriority and non-AOJ"
   end
 
