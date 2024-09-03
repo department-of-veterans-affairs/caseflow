@@ -6,6 +6,7 @@ class TranscriptionPackage < CaseflowRecord
   has_many :hearings, through: :transcription_package_hearings
   has_many :transcription_package_legacy_hearings
   has_many :legacy_hearings, through: :transcription_package_legacy_hearings
+  has_many :transcriptions, foreign_key: :task_number, primary_key: :task_number
 
   scope :filter_by_date, lambda { |values, field_name|
     mode = values[0]

@@ -86,7 +86,7 @@ class Hearings::TranscriptionPackagesController < ApplicationController
     @transcription_packages = @transcription_packages
       .limit(@page_size)
       .offset(@page_start)
-      .preload(:contractor)
+      .preload(:contractor, :transcriptions)
   end
 
   def build_package_json(transcription_packages)
@@ -95,7 +95,7 @@ class Hearings::TranscriptionPackagesController < ApplicationController
       tasks << {
         id: transcription_package.id,
         workOrder: transcription_package.task_number,
-        items: 25,
+        items: transcription_package.transcriptions.length,
         dateSent: transcription_package.created_at.to_formatted_s(:short_date),
         expectedReturnDate: transcription_package.expected_return_date.to_formatted_s(:short_date),
         contractor: transcription_package.contractor.name,
