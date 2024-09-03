@@ -76,7 +76,7 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
     end
   end
 
-  describe "#non_ssc_avljs" do
+  describe "#non_ssc_avljs" do #krishna
     context "2 non ssc avljs exist" do
       it "returns both non ssc avljs" do
       end
@@ -93,7 +93,7 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
     end
   end
 
-  describe "#calculate_remaining_appeals" do
+  describe "#calculate_remaining_appeals" do #chris
     context "2 priority and 2 non-priority legacy appeals tied to non-ssc avljs exist" do
       let appeals = [p1, p2, np1, np2]
       let p_appeals_moved = [p1]
@@ -136,7 +136,7 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
     end
   end
 
-  describe "#filter_appeals" do
+  describe "#filter_appeals" do #chris
     let non_ssc_avlj1
     let non_ssc_avlj2
     let appeals = [p1, p2, np1, np2]
@@ -174,7 +174,7 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
     end
   end
 
-  describe "#create_returned_appeal_job" do
+  describe "#create_returned_appeal_job" do #harsha
     context "when called" do
       it "creates a valid ReturnedAppealJob" do
         expect ReturnedAppealJob = { started_at: Time.now stats: { message: "Job started"} }
@@ -182,7 +182,7 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
     end
   end
 
-  describe "#send_job_slack_report" do
+  describe "#send_job_slack_report" do #harsha
     context "the slack_report has an array" do
       mock slack_report = ["a", "b", "c"]
       it "sends successfully" do
@@ -196,7 +196,7 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
     end
   end
 
-  describe "#move_qualifying_appeals" do
+  describe "#move_qualifying_appeals" do #chris
     let staff1 = VACOLS::Staff
     let staff2 = VACOLS::Staff
     mock non_ssc_avljs() = [staff1, staff2]
@@ -257,7 +257,7 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
     end
   end
 
-  describe "#get_tied_appeal_bfkeys" do
+  describe "#get_tied_appeal_bfkeys" do #harsha
     let appeal_1 = {priority: 0, bfd19: 10.days.ago, bfkey: "1"}
     let appeal_2 = {priority: 1, bfd19: 8.days.ago, bfkey: "2"}
     let appeal_3 = {priority: 0, bfd19: 6.days.ago, bfkey: "3"}
@@ -271,7 +271,7 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
     end
   end
 
-  describe "#update_qualifying_appeals_bfkeys" do
+  describe "#update_qualifying_appeals_bfkeys" do #krishna
     context "maximum moved appeals per non ssc avlj is 2 and a starting bfkey list of 2 and a tied list of 4 keys" do
       mock CaseDistributionLever.nonsscavlj_number_of_appeals_to_move = 2
       let tied_appeals_bfkeys = ["3", "4", "5", "6"]
@@ -336,34 +336,3 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
     end
   end
 end
-
-
-
-
-X - dont make tests
-O - make test
-
-- perform <--- O
-  - create_returned_appeal_job() <--- O
-  - eligible_and_moved_appeals() <--- ?
-    - move_qualifying_appeals() <--- O
-      - get_tied_appeal_bfkeys() <--- X?
-      - update_qualifying_appeals_bfkeys() <--- X?
-      - VACOLS::Case.batch_update_vacols_location <--- X
-        - VacolsLocationBatchUpdater.new() <--- X
-        - VacolsLocationBatchUpdater.call() <--- X
-  - complete_returned_appeal_job() <--- O
-    - returned_appeal_job.update!() <--- X
-  - filter_appeals() <--- O
-    - separate_by_priority() <--- X?
-    - calculate_remaining_appeals() <--- O?
-    - count_unique_bfkeys() <--- X?
-    - grouped_by_avlj() <--- ?
-      - VACOLS::Staff.find_by() <--- X
-  - send_job_slack_report() <--- O
-    - slack_service.send_notification() <--- X
-    - slack_report() <--- O
-      - @filtered_appeals <--- X
-  -errored_returned_appeal_job() <--- O?
-
--fetch_moved_sattyids() not used? remove?
