@@ -27,6 +27,8 @@ class OtherMotionCorrespondenceTask < CorrespondenceMailTask
         Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h
       ]
     end
+
+    return options
   end
 
   private
