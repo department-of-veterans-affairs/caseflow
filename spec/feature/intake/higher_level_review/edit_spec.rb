@@ -197,6 +197,42 @@ feature "Higher Level Review Edit issues", :all_dbs do
     end
   end
 
+  context "when remove_comp_and_pen feature toggle is enabled and benefit type is compensation or pension" do
+    %w[compensation pension].each do |benefit_type|
+      context "with benefit type as #{benefit_type}" do
+        let(:request_issue) do
+          create(
+            :request_issue,
+            contested_rating_issue_reference_id: "def456",
+            contested_rating_issue_profile_date: rating.profile_date,
+            decision_review: another_higher_level_review,
+            benefit_type: benefit_type,
+            contested_issue_description: "PTSD denied"
+          )
+        end
+
+        before do
+          FeatureToggle.enable!(:remove_comp_and_pen_intake)
+          another_higher_level_review.create_issues!([request_issue])
+          another_higher_level_review.establish!
+          another_higher_level_review.reload
+          request_issue.reload
+        end
+        after { FeatureToggle.disable!(:remove_comp_and_pen_intake) }
+
+        it "shows Requested issues dropdown is disabled" do
+          visit "higher_level_reviews/#{another_higher_level_review.uuid}/edit"
+
+          disabled_status = page.evaluate_script("document.getElementById('issue-action-0').disabled")
+
+          expect(disabled_status).to be true
+          expect(page).to have_css(".cf-select--is-disabled")
+          expect(page).to have_css(".cf-select__control--is-disabled")
+        end
+      end
+    end
+  end
+
   context "when there are ineligible issues" do
     ineligible = Constants.INELIGIBLE_REQUEST_ISSUES
 
