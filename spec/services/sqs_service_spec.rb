@@ -7,7 +7,6 @@ describe SqsService do
   before(:each) { wipe_queues }
   after(:all) { wipe_queues }
 
-
   context "#find_queue_url_by_name" do
     let!(:queue) { create_queue(queue_name, fifo) }
 

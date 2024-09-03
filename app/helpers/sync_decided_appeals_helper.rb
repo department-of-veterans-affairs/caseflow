@@ -20,6 +20,9 @@ module SyncDecidedAppealsHelper
 
       ActiveSupport::Dependencies.interlock.permit_concurrent_loads do
         Parallel.each(appeal_state_ids_hash, in_threads: 4) do |appeal_state_hash|
+          # Set current user in each thread.
+          RequestStore[:current_user] = User.system_user
+
           appeal_state_id = appeal_state_hash[0]
           vacols_id = appeal_state_hash[1]
           # If there is a decision date on the VACOLS record,
