@@ -132,6 +132,7 @@ export const assignTaskToTeam = (payload, frontendParams, correspondence) => (di
           bannerAlert: {
             title: CORRESPONDENCE_DETAILS_BANNERS.teamBanner.title,
             message: sprintf(CORRESPONDENCE_DETAILS_BANNERS.teamBanner.message,
+              frontendParams.taskName,
               frontendParams.teamName),
             type: CORRESPONDENCE_DETAILS_BANNERS.teamBanner.type
           }
