@@ -450,7 +450,7 @@ describe('TranscriptionFileDispatchTable', () => {
     when(ApiUtil.post).calledWith('/hearings/transcription_files/lock', constClickData).
       mockResolvedValue(mockClickedResponse);
 
-    when(ApiUtil.get).calledWith('/hearings/transcription_files/transcription_packages_tasks?tab=Assigned&page=1').
+    when(ApiUtil.get).calledWith('/hearings/transcription_packages/transcription_package_tasks?tab=Assigned&page=1').
       mockResolvedValue(mockTranscriptionPackagesResponse);
 
     when(ApiUtil.get).calledWith('/hearings/find_by_contractor/filterable_contractors').
