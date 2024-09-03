@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_08_05_162358) do
+ActiveRecord::Schema.define(version: 2024_08_28_165652) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -880,6 +880,26 @@ ActiveRecord::Schema.define(version: 2024_08_05_162358) do
     t.index ["user_id"], name: "index_end_product_updates_on_user_id"
   end
 
+  create_table "event_records", comment: "Stores records that are created or updated by an event from the Appeals-Consumer application.", force: :cascade do |t|
+    t.datetime "created_at", null: false, comment: "Automatic timestamp when row was created"
+    t.integer "event_id", null: false, comment: "ID of the Event that created or updated this record."
+    t.bigint "evented_record_id", null: false
+    t.string "evented_record_type", null: false
+    t.datetime "updated_at", null: false, comment: "Automatic timestamp whenever the record changes"
+    t.index ["evented_record_type", "evented_record_id"], name: "index_event_record_on_evented_record"
+  end
+
+  create_table "events", comment: "Stores events from the Appeals-Consumer application that are processed by Caseflow", force: :cascade do |t|
+    t.datetime "completed_at", comment: "Timestamp of when event was successfully completed"
+    t.datetime "created_at", null: false, comment: "Automatic timestamp when row was created"
+    t.string "error", comment: "Error message captured during a failed event"
+    t.jsonb "info", default: {}
+    t.string "reference_id", null: false, comment: "Id of Event Record being referenced within the Appeals Consumer Application"
+    t.string "type", null: false, comment: "Type of Event (e.g. DecisionReviewCreatedEvent)"
+    t.datetime "updated_at", null: false, comment: "Automatic timestamp whenever the record changes"
+    t.index ["info"], name: "index_events_on_info", using: :gin
+  end
+
   create_table "form8s", id: :serial, force: :cascade do |t|
     t.string "_initial_appellant_name"
     t.string "_initial_appellant_relationship"
@@ -1430,6 +1450,7 @@ ActiveRecord::Schema.define(version: 2024_08_05_162358) do
     t.string "email_notification_content", comment: "Full Email Text Content of Notification"
     t.string "email_notification_external_id", comment: "VA Notify Notification Id for the email notification send through their API "
     t.string "email_notification_status", comment: "Status of the Email Notification"
+    t.string "email_status_reason", comment: "Context around why this VA Notify notification is in the email status"
     t.date "event_date", null: false, comment: "Date of Event"
     t.string "event_type", null: false, comment: "Type of Event"
     t.bigint "notifiable_id"
@@ -1445,6 +1466,7 @@ ActiveRecord::Schema.define(version: 2024_08_05_162358) do
     t.string "sms_notification_status", comment: "Status of SMS/Text Notification"
     t.string "sms_response_content", comment: "Message body of the sms notification response."
     t.datetime "sms_response_time", comment: "Date and Time of the sms notification response."
+    t.string "sms_status_reason", comment: "Context around why this VA Notify notification is in the sms status"
     t.datetime "updated_at", comment: "TImestamp of when Notification was Updated"
     t.index ["appeals_id", "appeals_type"], name: "index_appeals_notifications_on_appeals_id_and_appeals_type"
     t.index ["email_notification_external_id"], name: "index_notifications_on_email_notification_external_id"
@@ -1661,6 +1683,7 @@ ActiveRecord::Schema.define(version: 2024_08_05_162358) do
     t.boolean "mst_status", default: false, comment: "Indicates if issue is related to Military Sexual Trauma (MST)"
     t.text "mst_status_update_reason_notes", comment: "The reason for why Request Issue is Military Sexual Trauma (MST)"
     t.string "nonrating_issue_bgs_id", comment: "If the contested issue is a nonrating issue, this is the nonrating issue's reference id. Will be nil if this request issue contests a decision issue."
+    t.string "nonrating_issue_bgs_source", comment: "Name of Table in Corporate Database where the nonrating issue is stored. This datapoint is correlated with the nonrating_issue_bgs_id."
     t.string "nonrating_issue_category", comment: "The category selected for nonrating request issues. These vary by business line."
     t.string "nonrating_issue_description", comment: "The user entered description if the issue is a nonrating issue"
     t.text "notes", comment: "Notes added by the Claims Assistant when adding request issues. This may be used to capture handwritten notes on the form, or other comments the CA wants to capture."
@@ -1764,8 +1787,8 @@ ActiveRecord::Schema.define(version: 2024_08_05_162358) do
     t.bigint "issue_id", null: false, comment: "ID of the issue that was changed"
     t.boolean "mst_from_vbms", comment: "Indication that the MST status originally came from VBMS on intake"
     t.string "mst_reason_for_change", comment: "Reason for changing the MST status on an issue"
-    t.boolean "original_mst_status", null: false, comment: "Original MST special issue status of the issue"
-    t.boolean "original_pact_status", null: false, comment: "Original PACT special issue status of the issue"
+    t.boolean "original_mst_status", comment: "Original MST special issue status of the issue"
+    t.boolean "original_pact_status", comment: "Original PACT special issue status of the issue"
     t.boolean "pact_from_vbms"
     t.string "pact_reason_for_change", comment: "Reason for changing the PACT status on an issue"
     t.bigint "task_id", null: false, comment: "Task ID of the IssueUpdateTask or EstablishmentTask used to log this issue in the case timeline"
@@ -2323,6 +2346,7 @@ ActiveRecord::Schema.define(version: 2024_08_05_162358) do
   add_foreign_key "end_product_establishments", "users"
   add_foreign_key "end_product_updates", "end_product_establishments"
   add_foreign_key "end_product_updates", "users"
+  add_foreign_key "event_records", "events", name: "event_records_event_id_fk"
   add_foreign_key "hearing_appeal_stream_snapshots", "legacy_appeals", column: "appeal_id"
   add_foreign_key "hearing_appeal_stream_snapshots", "legacy_hearings", column: "hearing_id"
   add_foreign_key "hearing_days", "users", column: "created_by_id"
