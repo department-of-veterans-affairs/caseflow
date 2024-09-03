@@ -200,13 +200,14 @@ class CorrespondenceTaskRows extends React.PureComponent {
       </div>
     );
   };
+
   showActionsListItem = (task, correspondence) => {
     if (task.availableActions.length <= 0) {
       return null;
     }
 
     return this.showActionsSection(task) ? (
-      <div>
+      <div className="correspondence-task-actions-row-wrapper">
         <h3>{COPY.TASK_SNAPSHOT_ACTION_BOX_TITLE}</h3>
         <ActionsDropdown
           task={task}

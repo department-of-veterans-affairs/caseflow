@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import { Provider } from 'react-redux';
 import { applyMiddleware, compose, createStore } from 'redux';
@@ -9,16 +9,7 @@ import COPY from '../../../../COPY';
 import CorrespondenceChangeTaskTypeModal from 'app/queue/components/CorrespondenceChangeTaskTypeModal';
 import userEvent from '@testing-library/user-event';
 import thunk from 'redux-thunk';
-
-jest.mock('app/queue/utils', () => ({
-  taskActionData: jest.fn().mockReturnValue({
-    options: [
-      { label: 'Option 1', value: 'option_1' },
-      { label: 'Option 2', value: 'option_2' },
-      { label: 'IHP', value: 'IHP' }
-    ]
-  })
-}));
+import { INTAKE_FORM_TASK_TYPES } from 'app/queue/constants';
 
 describe('CorrespondenceChangeTaskTypeModal', () => {
   const mockProps = {
@@ -94,11 +85,24 @@ describe('CorrespondenceChangeTaskTypeModal', () => {
   it('enables the submit button when both the dropdown and instructions are filled', () => {
     renderComponent();
 
-    userEvent.type(screen.getByRole('combobox'), 'IHP{enter}');
+    userEvent.type(screen.getByRole('combobox'), 'CAVC{enter}');
     userEvent.type(screen.getByLabelText(COPY.CHANGE_TASK_TYPE_INSTRUCTIONS_LABEL), 'test instructions');
 
     const submitButton = screen.getByRole('button', { name: COPY.CHANGE_TASK_TYPE_SUBHEAD });
 
     expect(submitButton).not.toBeDisabled();
+  });
+
+  it('renders dropdown with correct options', () => {
+    renderComponent();
+
+    const dropdown = screen.getByRole('combobox');
+
+    fireEvent.mouseDown(dropdown);
+
+    // Ensure each option is rendered
+    INTAKE_FORM_TASK_TYPES.unrelatedToAppeal.forEach((option) => {
+      expect(screen.getByText(option.label)).toBeInTheDocument();
+    });
   });
 });

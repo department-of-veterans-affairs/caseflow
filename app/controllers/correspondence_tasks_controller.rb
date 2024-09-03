@@ -66,6 +66,17 @@ class CorrespondenceTasksController < TasksController
       status: Constants.TASK_STATUSES.assigned,
       assigned_to: User.find_by_css_id(correspondence_tasks_params[:assigned_to]),
       assigned_at: Time.zone.now,
+      )
+    task.instructions << correspondence_tasks_params[:instructions]
+    task.save!
+  end
+
+  def assign_to_team
+    task = CorrespondenceTask.find(correspondence_tasks_params[:task_id])
+    task.update!(
+      status: Constants.TASK_STATUSES.assigned,
+      assigned_to: Organization.find_by(name: correspondence_tasks_params[:assigned_to]),
+      assigned_at: Time.zone.now
     )
     task.instructions << correspondence_tasks_params[:instructions]
     task.save!
@@ -102,10 +113,8 @@ class CorrespondenceTasksController < TasksController
       :action_type,
       :type,
       :correspondence_uuid,
-      :instructions,
-      # instructions: [],
       :assigned_to,
-      # :assigned_at,
+      :instructions,
       :type
     )
   end

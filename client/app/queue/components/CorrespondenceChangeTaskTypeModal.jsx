@@ -4,8 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
 import { requestPatch } from '../uiReducer/uiActions';
-import { marginTop } from '../constants';
-import { taskActionData } from '../utils';
+import { INTAKE_FORM_TASK_TYPES, marginTop } from '../constants';
 import QueueFlowModal from '../components/QueueFlowModal';
 import TextareaField from 'app/components/TextareaField';
 import SearchableDropdown from 'app/components/SearchableDropdown';
@@ -18,7 +17,6 @@ import {
 
 const CorrespondenceChangeTaskTypeModal = (props) => {
   const { error } = props;
-  const taskData = taskActionData(props);
   const [typeOption, setTypeOption] = useState(null);
   const [instructions, setInstructions] = useState('');
 
@@ -28,7 +26,7 @@ const CorrespondenceChangeTaskTypeModal = (props) => {
     const payload = {
       data: {
         task: {
-          type: typeOption.value,
+          type: typeOption.value.klass,
           instructions
         }
       }
@@ -62,9 +60,9 @@ const CorrespondenceChangeTaskTypeModal = (props) => {
           <SearchableDropdown
             name={COPY.CHANGE_TASK_TYPE_ACTION_LABEL}
             placeholder="Select an action type..."
-            options={taskData.options}
+            options={INTAKE_FORM_TASK_TYPES.unrelatedToAppeal}
             onChange={(option) => option && setTypeOption(option)}
-            value={typeOption?.value}
+            value={typeOption?.value.klass}
           />
         </div>
         <div {...marginTop(4)}>
