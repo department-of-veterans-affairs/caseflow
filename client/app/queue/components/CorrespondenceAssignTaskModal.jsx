@@ -44,14 +44,11 @@ const CorrespondenceAssignTaskModal = (props) => {
   const [instructionsAdded, setInstructionsAdded] = useState(false);
   const [assigneeAdded, setAssigneeAdded] = useState(false);
   const [assignee, setAssignee] = useState("");
-  // const [updatedTask, setUpdatedTask] = useState(
-  //   useSelector(props.correspondenceInfo.tasksUnrelatedToAppeal.find((task) => parseInt(props.task_id, 10) === parseInt(task.uniqueId, 10)))
-  // );
 
   const task = props.correspondenceInfo.tasksUnrelatedToAppeal.find((task) => parseInt(props.task_id, 10) === parseInt(task.uniqueId, 10));
 
   useEffect(() => {
-    // Handle document search position
+    // Handle the instructions boolean for submit button clickability
     if (instructions.length > 0) {
       setInstructionsAdded(true);
     } else {
@@ -105,12 +102,6 @@ const CorrespondenceAssignTaskModal = (props) => {
     return props.assignTaskToUser(props.task_id, payload, frontendParams, correspondence);
   };
 
-  // const modalTitle = () => {
-    // if assigned_to.is_a?(Organization)
-    // task.assigned_to.is_a?(Organization) ? COPY::ASSIGN_TASK_TITLE : COPY::REASSIGN_TASK_TITLE
-  // }
-
-  // if assigned_to.is_a?(Organization)
   return (
     <QueueFlowModal
       title= {task.assignedToOrg ? "Assign Task" : "Re-assign to person" }

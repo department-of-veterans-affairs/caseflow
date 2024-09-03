@@ -324,7 +324,6 @@ class Task < CaseflowRecord
     end
 
     if task_is_assigned_to_users_organization?(user)
-      # binding.pry
       return [
         Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
         Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,

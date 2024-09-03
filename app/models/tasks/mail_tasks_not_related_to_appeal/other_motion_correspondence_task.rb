@@ -27,8 +27,9 @@ class OtherMotionCorrespondenceTask < CorrespondenceMailTask
         Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h
       ]
     end
+  end
 
-    private
+  private
 
   def default_actions
     []
