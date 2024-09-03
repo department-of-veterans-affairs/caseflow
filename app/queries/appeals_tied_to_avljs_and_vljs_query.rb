@@ -143,8 +143,6 @@ class AppealsTiedToAvljsAndVljsQuery
   def self.get_name_from_record(record)
     FullName.new(record["snamef"], nil, record["snamel"]).to_s
   end
-<<<<<<< HEAD
-=======
 
   def self.ama_hearing_judge(appeal)
     appeal.hearings
@@ -164,5 +162,4 @@ class AppealsTiedToAvljsAndVljsQuery
 
     User.find_by_css_id(judge_css_id)&.full_name
   end
->>>>>>> feature/APPEALS-44915
 end
