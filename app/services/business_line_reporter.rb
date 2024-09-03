@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class BusinessLineReporter
+  # new commit here with bad speling
   attr_reader :business_line
 
   BUSINESS_LINE_OPTIONS = %w[business_line appeal_id appeal_type claimant_name request_issues_count
