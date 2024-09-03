@@ -24,8 +24,8 @@ export default function UserConfiguration(props) {
   // };
 
   // console.log(filteredStations());
-  // console.log(props.featuresList.sort());
 
+  const functionsAvailable = props.form_values.functions_available;
   const featureToggles = props.featuresList;
 
   featureToggles.sort();
@@ -63,11 +63,15 @@ export default function UserConfiguration(props) {
       />
       <br />
       <h2><strong>Functions</strong></h2>
-      <Checkbox
-        unpadded
-        label="System Admin"
-        name="functions-checkboxes"
-      />
+      <div>
+        {functionsAvailable.map((functionOption) => (
+          <Checkbox
+            unpadded
+            label={functionOption}
+            name="functions-checkboxes"
+          />
+        ))}
+      </div>
       <br />
       <h2><strong>Feature Toggles</strong></h2>
       <div>
@@ -85,4 +89,6 @@ export default function UserConfiguration(props) {
 
 UserConfiguration.propTypes = {
   featuresList: PropTypes.array,
+  form_values: PropTypes.object,
+  functions_available: PropTypes.array
 };
