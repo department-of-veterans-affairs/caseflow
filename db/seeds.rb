@@ -56,6 +56,7 @@ class SeedDB
     call_and_log_seed_step Seeds::IssueModificationRequest
     call_and_log_seed_step Seeds::TranscriptionContractor
     call_and_log_seed_step Seeds::TranscriptionFiles
+    call_and_log_seed_step Seeds::TranscriptionPackages
     call_and_log_seed_step Seeds::VeteransHealthAdministration
     call_and_log_seed_step Seeds::MTV
     call_and_log_seed_step Seeds::Education

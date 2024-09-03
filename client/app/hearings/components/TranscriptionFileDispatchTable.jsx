@@ -131,7 +131,7 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
     if (!statusFilter || statusFilter[0] === 'Unassigned') {
       return `/hearings/transcription_files/transcription_file_tasks${qs}`;
     } else if (statusFilter[0] === 'Assigned') {
-      return `/hearings/transcription_files/transcription_packages_tasks${qs}`;
+      return `/hearings/transcription_packages/transcription_package_tasks${qs}`;
     }
   };
 

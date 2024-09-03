@@ -30,6 +30,6 @@ class TranscriptionPackages
   end
 
   def upload_transcription_package
-    Hearings::UploadTranscriptionPackageJob.perform_now(work_order_params)
+    VaBoxUploadJob.perform_now(work_order_params)
   end
 end

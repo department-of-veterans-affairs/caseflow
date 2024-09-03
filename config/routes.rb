@@ -225,7 +225,7 @@ Rails.application.routes.draw do
     resources :schedule_periods, only: [:index, :create]
     resources :schedule_periods, only: [:show, :update, :download], param: :schedule_period_id
     resources :hearing_day, only: [:update, :show], param: :hearing_key
-    resources :transcription_packages, only: [:show], param: :task_number
+    # resources :transcription_packages, only: [:show], param: :task_number
     namespace :hearing_day do
       get '/:hearing_day_id/filled_hearing_slots', to: "filled_hearing_slots#index"
     end
@@ -256,14 +256,12 @@ Rails.application.routes.draw do
   get 'hearings/transcription_file/:file_id/download', to: 'hearings/transcription_files#download_transcription_file'
   get 'hearings/transcription_files', to: 'hearings_application#transcription_file_dispatch'
   get 'hearings/transcription_files/transcription_file_tasks', to: 'hearings/transcription_files#transcription_file_tasks'
-  get 'hearings/transcription_files/transcription_packages_tasks', to: 'hearings/transcription_files#transcription_packages_tasks'
-
   get 'hearings/transcription_files/locked', to: 'hearings/transcription_files#locked'
   post 'hearings/transcription_files/lock', to: 'hearings/transcription_files#lock'
   get 'hearings/confirm_work_order', to: redirect("/hearings/transcription_files")
   get 'hearings/transcription_files/selected_files_info/:file_ids', to: 'hearings/transcription_files#selected_files_info'
-  post 'hearings/transcription_packages/dispatch', to: 'hearings/transcription_packages#new'
-
+  # post 'hearings/transcription_packages/dispatch', to: 'hearings/transcription_packages#new'
+  get 'hearings/transcription_packages/transcription_package_tasks', to: 'hearings/transcription_packages#transcription_package_tasks'
   post 'hearings/hearing_view/:id', to: 'hearings/hearing_view#create'
   get 'hearings/transcription_work_order/display_wo_summary', to: 'hearings/transcription_work_order#display_wo_summary'
   get 'hearings/transcription_work_order/display_wo_contents', to: 'hearings/transcription_work_order#display_wo_contents'
