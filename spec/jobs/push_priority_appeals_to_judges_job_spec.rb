@@ -675,6 +675,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
       today = Time.zone.now.to_date
       legacy_days_waiting = (today - legacy_priority_case.bfd19.to_date).to_i
+      aoj_legacy_days_waiting = (today - aoj_legacy_priority_case.bfd19.to_date).to_i
       direct_review_days_waiting = (today - ready_priority_direct_case.receipt_date).to_i
       evidence_submission_days_waiting = (today - ready_priority_evidence_case.receipt_date).to_i
       hearing_days_waiting = (today - ready_priority_hearing_case.receipt_date).to_i
