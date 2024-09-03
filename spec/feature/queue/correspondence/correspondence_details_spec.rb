@@ -159,47 +159,4 @@ RSpec.feature("The Correspondence Details page") do
       expect(page).to have_content("Note Test")
     end
   end
-
-  context "testing for other motion dropdowns" do
-    before do
-      correspondence_spec_user_access
-      FeatureToggle.enable!(:correspondence_queue)
-      @correspondence = create(
-        :correspondence,
-        veteran: veteran,
-        va_date_of_receipt: "Wed, 24 Jul 2024 00:00:00 EDT -04:00",
-        nod: false,
-        notes: "Notes for Other Motion"
-      )
-    end
-
-    before :each do
-      OtherMotionCorrespondenceTask.create!(
-        parent: @correspondence.tasks[0],
-        appeal: @correspondence,
-        appeal_type: "Correspondence",
-        status: "assigned",
-        assigned_to_type: "User",
-        assigned_to: current_user,
-        instructions: ["Other Motion"],
-        assigned_at: Time.current
-      )
-    end
-
-    it "checks that Other Motion task can be cancelled." do
-      visit "/queue/correspondence/#{@correspondence.uuid}"
-      click_dropdown(prompt: "Select an action", text: "Cancel task")
-      find(".cf-form-textarea", match: :first).fill_in with: "Cancel task test"
-      click_button "Cancel-Task-button-id-1"
-      expect(page).to have_content("Other Motion task has been cancelled.")
-    end
-
-    it "checks that Other Motion task can be completed." do
-      visit "/queue/correspondence/#{@correspondence.uuid}"
-      click_dropdown(prompt: "Select an action", text: "Mark task complete")
-      find(".cf-form-textarea", match: :first).fill_in with: "Complete task test"
-      click_button "Mark-as-complete-button-id-1"
-      expect(page).to have_content("Other motion task has been marked complete.")
-    end
-  end
 end

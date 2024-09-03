@@ -67,4 +67,38 @@ module CorrespondenceTaskHelpers
     InboundOpsTeam.singleton.add_user(current_super)
     User.authenticate!(user: current_super)
   end
+
+  def organizations_array_list
+    @organizations_array_list ||= [
+      "Education",
+      "Veterans Readiness and Employment",
+      "Loan Guaranty",
+      "Veterans Health Administration",
+      "Pension & Survivor's Benefits",
+      "Fiduciary",
+      "Compensation",
+      "Insurance",
+      "National Cemetery Administration",
+      "Board Dispatch",
+      "Case Review",
+      "Case Movement Team",
+      "BVA Intake",
+      "VLJ Support Staff",
+      "Transcription",
+      "Translation",
+      "Quality Review",
+      "AOD",
+      "Mail",
+      "Privacy Team",
+      "Litigation Support",
+      "Office of Assessment and Improvement",
+      "Office of Chief Counsel",
+      "CAVC Litigation Support",
+      "Pulac-Cerullo",
+      "Hearings Management",
+      "Hearing Admin",
+      "Executive Management Office",
+      "VLJ Support Staf"
+    ]
+  end
 end
