@@ -104,8 +104,8 @@ const CorrespondenceAssignTeamModal = (props) => {
 
       const frontendParams = {
         taskId: props.task_id,
-        teamName: teamAssignedFlag.label,
-        taskName: taskList.label
+        taskName: taskList.label,
+        teamName: teamAssignedFlag.label
       };
 
       return props.assignTaskToTeam(payload, frontendParams, correspondence);
