@@ -19,10 +19,8 @@ class CorrespondenceDocumentsEfolderUploader
     Rails.logger.error(error.full_message)
 
     params_hash = {
-      correspondence: correspondence,
-      current_user: current_user,
-      parent_task: parent_task,
-      reason: error.full_message
+      correspondence: correspondence, current_user: current_user,
+      parent_task: parent_task, reason: error.full_message
     }
     create_efolder_upload_failed_task(params_hash)
 
