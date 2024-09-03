@@ -15,20 +15,17 @@ module SyncDecidedAppealsHelper
         .pluck(:id, :vacols_id)
 
       appeal_state_ids_hash = appeal_state_ids.to_h
-
       vacols_decision_dates = get_decision_dates(appeal_state_ids_hash.values).to_h
 
       ActiveSupport::Dependencies.interlock.permit_concurrent_loads do
         Parallel.each(appeal_state_ids_hash, in_threads: 4) do |appeal_state_hash|
-          # Set current user in each thread.
-          RequestStore[:current_user] = User.system_user
-
-          appeal_state_id = appeal_state_hash[0]
-          vacols_id = appeal_state_hash[1]
-          # If there is a decision date on the VACOLS record,
-          # update the decision_mailed status on the AppealState to true
-          if vacols_decision_dates[vacols_id].present?
-            AppealState.find(appeal_state_id).decision_mailed_appeal_state_update_action!
+          Rails.application.executor.wrap do
+            appeal_state_id, vacols_id = appeal_state_hash
+            # If there is a decision date on the VACOLS record,
+            # update the decision_mailed status on the AppealState to true
+            if vacols_decision_dates[vacols_id].present?
+              AppealState.find(appeal_state_id).decision_mailed_appeal_state_update_action!
+            end
           end
         end
       end
