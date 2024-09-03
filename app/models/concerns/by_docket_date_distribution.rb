@@ -73,8 +73,6 @@ module ByDocketDateDistribution
     }
 
     dockets.each_pair do |sym, docket|
-      next if sym == :aoj_legacy
-
       docket_counts["#{sym}_priority_stats".to_sym] = {
         count: docket.count(priority: true, ready: true),
         affinity_date: {

@@ -239,8 +239,6 @@ describe ByDocketDateDistribution, :all_dbs do
       expect(judge_stats).to have_key(:settings)
 
       @new_acd.dockets.each_key do |sym|
-        next if sym == :aoj_legacy
-
         # priority stats
         expect(ama_statistics).to have_key("#{sym}_priority_stats".to_sym)
 
