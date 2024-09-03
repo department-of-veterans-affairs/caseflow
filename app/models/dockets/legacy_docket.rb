@@ -142,18 +142,16 @@ class LegacyDocket < Docket
   end
 
   def non_priority_appeals_affinity_date_count(in_window)
-    LegacyAppeal.repository.non_priority_appeals_affinity_date_count(in_window)
+    "N/A for legacy appeals which are nonpriority and non-AOJ"
   end
 
   # used for distribution_stats
   def affinity_date_count(in_window, priority)
-    appeals = if priority
-                priority_appeals_affinity_date_count(in_window)
-              else
-                non_priority_appeals_affinity_date_count(in_window)
-              end
-
-    appeals.size
+    if priority
+      priority_appeals_affinity_date_count(in_window).size
+    else
+      non_priority_appeals_affinity_date_count(in_window)
+    end
   end
 
   private
@@ -196,9 +194,5 @@ class LegacyDocket < Docket
 
   def nod_count
     @nod_count ||= LegacyAppeal.repository.nod_count
-  end
-
-  def find_appeal_affinity(appeal)
-    VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity
   end
 end

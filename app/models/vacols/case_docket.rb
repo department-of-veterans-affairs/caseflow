@@ -912,17 +912,5 @@ class VACOLS::CaseDocket < VACOLS::Record
     appeals
   end
   # rubocop:enable Metrics/MethodLength, Metrics/PerceivedComplexity
-
-  def self.non_priority_appeals_affinity_date_count(_in_window)
-    conn = connection
-
-    query = <<-SQL
-      #{SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19}
-    SQL
-
-    fmtd_query = sanitize_sql_array([query])
-
-    conn.exec_query(fmtd_query).to_a
-  end
 end
 # rubocop:enable Metrics/ClassLength

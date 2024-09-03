@@ -387,13 +387,13 @@ describe LegacyDocket do
     context "when priority is false" do
       context "with in window affinity" do
         it "returns affinity date count" do
-          expect(docket.affinity_date_count(true, false)).to eq(3)
+          expect(docket.affinity_date_count(true, false)).to eq("N/A for legacy appeals which are nonpriority and non-AOJ")
         end
       end
 
       context "with out in window affinity" do
         it "returns affinity date count" do
-          expect(docket.affinity_date_count(false, false)).to eq(3)
+          expect(docket.affinity_date_count(false, false)).to eq("N/A for legacy appeals which are nonpriority and non-AOJ")
         end
       end
     end

@@ -91,7 +91,7 @@ class AojLegacyDocket < LegacyDocket
   end
 
   def non_priority_appeals_affinity_date_count(in_window)
-    LegacyAppeal.aoj_appeal_repository.non_priority_appeals_affinity_date_count(in_window)
+    LegacyAppeal.aoj_appeal_repository.non_priority_appeals_affinity_date_count(in_window).size
   end
 
   private
