@@ -329,7 +329,7 @@ class AddIssuesPage extends React.Component {
       userCanSplitAppeal,
       userCanRequestIssueUpdates,
       isLegacy,
-      pendingIssueModificationRequests,
+      pendingIssueModificationRequests
     } = this.props;
 
     const intakeData = intakeForms[formType];
@@ -654,6 +654,7 @@ class AddIssuesPage extends React.Component {
             issueSectionRow({
               ...issueSectionRowProps,
               fieldTitle: 'Requested issues',
+              disableEditingForCompAndPen: this.props.disableEditingForCompAndPen,
               disableIssueActions
             }),
           );
@@ -661,7 +662,8 @@ class AddIssuesPage extends React.Component {
           rowObjects = rowObjects.concat(
             issueSectionRow({
               ...issueSectionRowProps,
-              fieldTitle: 'Withdrawn issues'
+              fieldTitle: 'Withdrawn issues',
+              disableEditingForCompAndPen: this.props.disableEditingForCompAndPen
             }),
           );
         } else {
@@ -669,7 +671,8 @@ class AddIssuesPage extends React.Component {
           rowObjects = rowObjects.concat(
             issueSectionRow({
               ...issueSectionRowProps,
-              fieldTitle: ' '
+              fieldTitle: ' ',
+              disableEditingForCompAndPen: this.props.disableEditingForCompAndPen
             }),
           );
         }
@@ -903,7 +906,8 @@ AddIssuesPage.propTypes = {
   userCanWithdrawIssues: PropTypes.bool,
   userCanEditIntakeIssues: PropTypes.bool,
   userCanSplitAppeal: PropTypes.bool,
-  isLegacy: PropTypes.bool
+  isLegacy: PropTypes.bool,
+  disableEditingForCompAndPen: PropTypes.bool
 };
 
 export const IntakeAddIssuesPage = connect(
@@ -958,7 +962,7 @@ export const EditAddIssuesPage = connect(
     userIsVhaAdmin: state.userIsVhaAdmin,
     userCanSplitAppeal: state.userCanSplitAppeal,
     userCanRequestIssueUpdates: state.userCanRequestIssueUpdates,
-    isLegacy: state.isLegacy,
+    isLegacy: state.isLegacy
   }),
   (dispatch) =>
     bindActionCreators(
