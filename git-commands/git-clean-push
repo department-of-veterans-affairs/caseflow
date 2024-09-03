@@ -1,0 +1,43 @@
+#!/bin/bash
+# git command to run test-commits before pushing code to branch
+# requires user to type a commit message with push
+# can also accept codeclimate param to run codeclimate CLI or autofix to run autofix options
+
+# syntax is: git clean-push [commit-message] -- [codeclimate] [autofix]
+
+# commit message and options
+message=$1
+codeclimate=""
+autofix=""
+
+# check for options
+  for var in "$@"; do
+    if [ "$var" == "autofix" ]; then
+      autofix="autofix"
+    fi
+    if [ "$var" == "codeclimate" ]; then
+      codeclimate="codeclimate"
+    fi
+  done
+
+currentBranch=$(git symbolic-ref --short -q HEAD) # get current branch
+
+# check if the current commit message is present
+if [ ! -z "$1" ]
+then
+  # run git clean-pr to run test suite on committed filed
+  git clean-pr $autofix $codeclimate
+
+  # read user input to continue
+  read -p "Do you want to merge this commit to $currentBranch? (Y/N) " yn
+
+  # case y: commit to branch. case n: cancel commit
+  case $yn in
+      [Yy]* ) git commit -am "$message"; git push origin $currentBranch; break;;
+      [Nn]* ) echo "commit cancelled"; exit;;
+      * ) echo "Please answer yes or no.";;
+  esac
+
+else
+    echo "Commit message was not provided"
+fi

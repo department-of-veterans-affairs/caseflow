@@ -33,6 +33,7 @@ class UnidentifiedIssuesModal extends React.Component {
     return ((formType === 'higher_level_review' || formType === 'supplemental_claim') && benefitType === 'vha');
   }
 
+  // default mst and pact to false for Unidentified issues
   onAddIssue = () => {
     const { description, notes, decisionDate, verifiedUnidentifiedIssue } = this.state;
     const { formType, intakeData } = this.props;
@@ -42,6 +43,8 @@ class UnidentifiedIssuesModal extends React.Component {
       notes,
       decisionDate,
       verifiedUnidentifiedIssue,
+      mstChecked: false,
+      pactChecked: false,
       timely: isTimely(formType, decisionDate, intakeData.receiptDate)
     };
 
