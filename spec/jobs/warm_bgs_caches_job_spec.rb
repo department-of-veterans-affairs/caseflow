@@ -51,7 +51,7 @@ describe WarmBgsCachesJob, :all_dbs do
       expect(bgs_address_service).to have_received(:fetch_bgs_record).once
       expect(Rails.cache.exist?(address_cache_key)).to eq(true)
       expect(appeal.veteran.reload[:ssn]).to_not be_nil
-      expect(BgsPowerOfAttorney.all.count).to eq(1) # open_appeal
+      expect(BgsPowerOfAttorney.all.count).to eq(2) # open_appeal + legacy appeal
       expect(appeal.representative_name).to_not be_nil
       expect(@slack_msg).to be_nil
       expect(@people_sync).to eq(5)
@@ -60,15 +60,21 @@ describe WarmBgsCachesJob, :all_dbs do
     context "BGS POA changes at BGS" do
       before do
         claimant_pid = open_appeal.claimant.power_of_attorney.claimant_participant_id
+        legacy_claimant_pid = LegacyAppeal.find_by_vacols_id(hearing.brieff.bfkey)
+          .bgs_power_of_attorney
+          .claimant_participant_id
         new_bgs_record = { claimant_pid => Fakes::BGSServicePOA.default_vsos_mapped.first }
+
         new_bgs_record[claimant_pid][:claimant_participant_id] = claimant_pid
-        allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids).with([claimant_pid]) do
+        allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids).with(
+          satisfy { |arg| !([claimant_pid, legacy_claimant_pid] & arg).empty? }
+        ) do
           new_bgs_record
         end
       end
 
-      it "updates local cache to refer to same BGSPowerOfAttorney record with different attributes" do
-        expect(BgsPowerOfAttorney.all.count).to eq(1) # created by open_appeal
+      it "updates local cache to refer to same BGSPowerOfAttorney records with different attributes" do
+        expect(BgsPowerOfAttorney.all.count).to eq(2) # created by open_appeal
         expect(open_appeal.claimant.power_of_attorney).to eq(BgsPowerOfAttorney.first)
 
         old_poa_name = open_appeal.claimant.representative_name

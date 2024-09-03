@@ -722,7 +722,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
       let(:hearing_values) do
         {
-          scheduled_time_string: "08:30",
+          scheduled_time_string: "08:30 AM Central Time (US & Canada)",
           hearing_day_id: hearing_day.id,
           hearing_location: {
             name: "St. Louis Regional Benefit Office",

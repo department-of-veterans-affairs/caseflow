@@ -91,7 +91,15 @@ export const AddHearingDay = ({
   }, [selectedRequestType, selectedRegionalOffice, selectedHearingDay]);
 
   const handleStartTimeChange = (value) => {
-    setHearingStartTime(value);
+    // Process the start time value to return the time without a timezone
+    const getAmTime = value.search('AM');
+    const splitTimeString = getAmTime < 0 ? value.search('PM') : getAmTime;
+    const selectedTime = splitTimeString === -1 ? value : value.slice(0, splitTimeString + 2).trim();
+
+    // Convert the value from '8:00 AM Eastern Time' to '8:00'
+    const finalValue = moment(selectedTime, 'h:mm a').format('HH:mm');
+
+    setHearingStartTime(finalValue);
   };
 
   const handleSlotLengthChange = (value) => {
@@ -135,10 +143,10 @@ export const AddHearingDay = ({
         setLoading(false);
 
         if (error?.response?.body && error.response.body.errors &&
-        error.response.body.errors[0].status === 400) {
+          error.response.body.errors[0].status === 400) {
           setNoRoomsAvailableError(error.response.body.errors[0]);
         } else {
-        // All other server errors
+          // All other server errors
           setServerError(true);
         }
       });
@@ -287,6 +295,7 @@ export const AddHearingDay = ({
               amStartTime={selectedTravel ? '9:00' : '8:30'}
               pmStartTime={selectedTravel ? '13:00' : '12:30'}
               roTimezone={selectedRegionalOffice?.timezone}
+              hearingDayDate={selectedHearingDay}
             />
           }
           {selectedRequestType !== null && (
@@ -329,6 +338,7 @@ export const AddHearingDay = ({
                 localZone="America/New_York"
                 onChange={handleStartTimeChange}
                 value={hearingStartTime}
+                hearingDayDate={selectedHearingDay}
               />
               <div className="time-slot-preview-container">
                 <TimeSlot
@@ -358,7 +368,7 @@ export const AddHearingDay = ({
         }}
         styling={cancelButton}
       >
-          Cancel
+        Cancel
       </Button>
       <span {...saveButton}>
         <Button
