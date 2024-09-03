@@ -13,7 +13,7 @@
 
   "teamBanner": {
     "title": "Success",
-    "message": "FOIA request task has been assigned to %s.",
+    "message": "%s task has been assigned to %s.",
     "type": "success"
   },
 
