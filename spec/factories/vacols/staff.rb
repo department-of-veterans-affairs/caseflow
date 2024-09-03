@@ -133,8 +133,21 @@ FactoryBot.define do
       smemgrp { generated_smemgrp_not_equal_to_sattyid }
     end
 
+    trait :inactive_non_ssc_avlj do
+      svlj { "A" }
+      sactive { "I" }
+      sattyid { generated_sattyid }
+      smemgrp { generated_smemgrp_not_equal_to_sattyid }
+    end
+
     trait :ssc_avlj do
       svlj { "A" }
+      sattyid { generated_sattyid }
+      smemgrp { sattyid }
+    end
+
+    trait :vlj do
+      svlj { "J" }
       sattyid { generated_sattyid }
       smemgrp { sattyid }
     end
