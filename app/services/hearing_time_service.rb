@@ -99,7 +99,7 @@ class HearingTimeService
   def process_legacy_scheduled_time_string(date:, time_string:)
     return nil unless date && time_string
 
-    hour, min = time_string.split(":")
+    hour, min = self.class.process_scheduled_time(time_string).split(":")
     time = date.to_datetime
     unformatted_time = Time.use_zone(VacolsHelper::VACOLS_DEFAULT_TIMEZONE) do
       Time.zone.now.change(
