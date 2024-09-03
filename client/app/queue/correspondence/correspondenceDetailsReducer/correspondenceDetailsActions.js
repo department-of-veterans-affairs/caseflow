@@ -123,7 +123,6 @@ export const completeTaskNotRelatedToAppeal = (payload, frontendParams, correspo
 };
 
 export const assignTaskToTeam = (payload, frontendParams, correspondence) => (dispatch) => {
-  console.log()
   return ApiUtil.patch(`/queue/correspondence/tasks/${frontendParams.taskId}/assign_to_team`, payload).
     then(() => {
 
