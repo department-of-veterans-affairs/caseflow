@@ -123,6 +123,7 @@ export const completeTaskNotRelatedToAppeal = (payload, frontendParams, correspo
 };
 
 export const assignTaskToTeam = (payload, frontendParams, correspondence) => (dispatch) => {
+  console.log()
   return ApiUtil.patch(`/queue/correspondence/tasks/${frontendParams.taskId}/assign_to_team`, payload).
     then(() => {
 
@@ -132,6 +133,7 @@ export const assignTaskToTeam = (payload, frontendParams, correspondence) => (di
           bannerAlert: {
             title: CORRESPONDENCE_DETAILS_BANNERS.teamBanner.title,
             message: sprintf(CORRESPONDENCE_DETAILS_BANNERS.teamBanner.message,
+              frontendParams.taskName,
               frontendParams.teamName),
             type: CORRESPONDENCE_DETAILS_BANNERS.teamBanner.type
           }
