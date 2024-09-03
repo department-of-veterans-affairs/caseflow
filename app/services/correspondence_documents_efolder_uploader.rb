@@ -19,7 +19,7 @@ class CorrespondenceDocumentsEfolderUploader
     Rails.logger.error(error.full_message)
 
     params_hash = {
-      correspondence: correspondence, 
+      correspondence: correspondence,
       current_user: current_user,
       parent_task: parent_task,
       reason: error.full_message
@@ -40,7 +40,7 @@ class CorrespondenceDocumentsEfolderUploader
     current_user = args[:current_user]
     parent_task = args[:parent_task]
     reason = args[:reason]
-    
+
     return if EfolderUploadFailedTask.where(appeal_id: correspondence.id).count > 0
 
     euft = EfolderUploadFailedTask.find_or_create_by(
