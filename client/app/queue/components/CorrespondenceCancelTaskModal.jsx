@@ -29,11 +29,6 @@ const CorrespondenceCancelTaskModal = (props) => {
   const [instructionsAdded, setInstructionsAdded] = useState(true);
   const tempTask = props.correspondenceInfo.tasksUnrelatedToAppeal.find((task1) => parseInt(props.task_id, 10) === parseInt(task1.uniqueId, 10));
 
-  const frontendParams = {
-    taskId: props.task_id,
-    taskName: tempTask.label
-  };
-
   useEffect(() => {
     // Handle document search position
     if (instructions.length > 0) {
@@ -70,7 +65,7 @@ const CorrespondenceCancelTaskModal = (props) => {
 
     tempCor.tasksUnrelatedToAppeal = filteredTasks;
 
-    return props.cancelTaskNotRelatedToAppeal(props.task_id, frontendParams.taskName, tempCor, payload);
+    return props.cancelTaskNotRelatedToAppeal(props.task_id, tempTask.label, tempCor, payload);
 
   };
 
