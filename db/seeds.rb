@@ -55,8 +55,6 @@ class SeedDB
     call_and_log_seed_step Seeds::PopulateCaseflowFromVacols
     call_and_log_seed_step Seeds::IssueModificationRequest
     call_and_log_seed_step Seeds::TranscriptionContractors
-    call_and_log_seed_step Seeds::TranscriptionFiles
-    call_and_log_seed_step Seeds::TranscriptionPackages
     call_and_log_seed_step Seeds::VeteransHealthAdministration
     call_and_log_seed_step Seeds::MTV
     call_and_log_seed_step Seeds::Education
@@ -77,6 +75,8 @@ class SeedDB
     call_and_log_seed_step Seeds::BgsServiceRecordMaker
     call_and_log_seed_step Seeds::PopulateCaseflowFromVacols
     call_and_log_seed_step Seeds::Transcriptions
+    call_and_log_seed_step Seeds::TranscriptionFiles
+    call_and_log_seed_step Seeds::TranscriptionPackages
   end
 end
 
