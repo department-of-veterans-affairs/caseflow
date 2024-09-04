@@ -193,4 +193,9 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
 
     true
   end
+
+  def tied_to_judges(judge_ids)
+    with_appeal_affinities
+      .where(hearings: { judge_id: judge_ids })
+  end
 end
