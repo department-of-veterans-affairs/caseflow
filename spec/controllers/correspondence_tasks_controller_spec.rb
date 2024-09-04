@@ -1,12 +1,11 @@
 # frozen_string_literal: true
-require 'pry'
 
 RSpec.describe CorrespondenceTasksController, :all_dbs, type: :controller do
   let(:veteran) { create(:veteran) }
   let(:correspondence) { create(:correspondence, veteran_id: veteran.id) }
   let(:current_user) { create(:user) }
   let(:task_creation_params) { { correspondence_uuid: correspondence.uuid, correspondence_id: correspondence.id } }
-  let(:correspondence) { create(:correspondence, :with_correspondence_intake_task) }
+  let(:correspondence_with_intake) { create(:correspondence, :with_correspondence_intake_task) }
   let(:assigned_to) { create(:user) }
   let(:correspondence_task) { CorrespondenceTask.first }
 
