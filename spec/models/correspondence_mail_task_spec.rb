@@ -55,9 +55,9 @@ RSpec.describe CorrespondenceMailTask, type: :model do
       ]
     end
 
-    user_array.each do |example|
-      context "for #{example[:class]} assigned to #{example[:assigned_to]}" do
-        let(:task) { example[:class].create!(appeal: root_task.appeal, parent: root_task, assigned_to: example[:assigned_to]) }
+    user_array.each do |user|
+      context "for #{user[:class]} assigned to #{user[:assigned_to]}" do
+        let(:task) { user[:class].create!(appeal: root_task.appeal, parent: root_task, assigned_to: user[:assigned_to]) }
         let(:expected_actions) do
           [
             Constants.TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.to_h,
@@ -68,14 +68,14 @@ RSpec.describe CorrespondenceMailTask, type: :model do
         end
 
         before do
-          allow_any_instance_of(User).to receive(:organization).and_return(example[:assigned_to])
+          allow_any_instance_of(User).to receive(:organization).and_return(user[:assigned_to])
           # Assign user to organization
-          example[:assigned_to].add_user(litigation_user)
+          user[:assigned_to].add_user(litigation_user)
         end
 
         after do
           # Remove user from organization
-          OrganizationsUser.remove_user_from_organization(litigation_user, example[:assigned_to])
+          OrganizationsUser.remove_user_from_organization(litigation_user, user[:assigned_to])
         end
 
         it "allows the assigned user to access task actions" do
