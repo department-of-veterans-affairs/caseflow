@@ -22,6 +22,7 @@ class Fakes::VANotifyService < ExternalApi::VANotifyService
           "?id=#{external_id}&status=delivered&to=test@example.com&notification_type=email"
         request.headers["Content-Type"] = "application/json"
         request.headers["Authorization"] = "Bearer test"
+        request.auth.ssl.ca_cert_file = ENV["SSL_CERT_FILE"]
 
         HTTPI.post(request)
       end
@@ -46,6 +47,7 @@ class Fakes::VANotifyService < ExternalApi::VANotifyService
           "?id=#{external_id}&status=delivered&to=+15555555555&notification_type=sms"
         request.headers["Content-Type"] = "application/json"
         request.headers["Authorization"] = "Bearer test"
+        request.auth.ssl.ca_cert_file = ENV["SSL_CERT_FILE"]
 
         HTTPI.post(request)
       end

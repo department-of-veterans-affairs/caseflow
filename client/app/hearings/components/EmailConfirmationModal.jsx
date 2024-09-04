@@ -37,7 +37,7 @@ const formatTimeString = (hearing, timeWasEdited, hearingDate) => {
     centralOfficeTime.replace('EDT', 'ET') :
     `${moment(centralOfficeTime, 'hh:mm').format('h:mm a')} ET`;
 
-  timeString += ` / ${moment(hearing.scheduledTimeString, 'hh:mm').format('h:mm a')} `;
+  timeString += ` / ${moment(hearing.scheduledTimeString, 'hh:mm a').format('h:mm a')} `;
   timeString += moment().
     tz(hearing.regionalOfficeTimezone).
     format('z');
