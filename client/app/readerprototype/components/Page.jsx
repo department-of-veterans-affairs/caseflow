@@ -34,6 +34,7 @@ const Page = ({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale, setRe
   const wrapperRef = useRef(null);
   const scaleFraction = scale / 100;
   const reportedStats = useRef(false);
+  const renderTaskRef = useRef(null);
 
   const viewport = page.getViewport({ scale: scaleFraction });
   const scaledHeight = viewport.height;
@@ -66,32 +67,39 @@ const Page = ({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale, setRe
 
   useEffect(() => {
     if (canvasRef.current && isVisible) {
-      const renderTask = page.render({ canvasContext: canvasRef.current?.getContext('2d', { alpha: false }), viewport });
 
-      renderTask.promise.
-        then(() => {
-          if (page._stats && Array.isArray(page._stats.times)) {
+      if (renderTaskRef.current) {
+        // renderTaskRef.current.cancel();
+        // Don't do anything
+        // console.log('** Do not start render.');
+      } else {
+        const renderTask = page.render({ canvasContext: canvasRef.current?.getContext('2d', { alpha: false }), viewport });
 
-            const renderingTimes = page._stats.times.find((time) => time.name === 'Rendering');
+        renderTaskRef.current = renderTask;
 
-            if (!reportedStats.current) {
-              setRenderingMetrics(renderingTimes.end - renderingTimes.start);
-              reportedStats.current = true;
+        renderTask.promise.
+          then(() => {
+            if (page._stats && Array.isArray(page._stats.times)) {
+
+              const renderingTimes = page._stats.times.find((time) => time.name === 'Rendering');
+
+              if (!reportedStats.current) {
+                setRenderingMetrics(renderingTimes.end - renderingTimes.start);
+                reportedStats.current = true;
+              }
             }
-          }
-        }).
-        catch(() => {
-        // this catch is necessary to prevent the error: Cannot use the same canvas during multiple render operations
-        });
+          }).
+          catch(() => {
+            // this catch is necessary to prevent the error: Cannot use the same canvas during multiple render operations
+          });
 
-      return () => {
-        // this is a work in prorgress to remove warnings in the console
-        // Warning: Timer is already running for Rendering
-        if (renderTask) {
-          renderTask.cancel();
-          console.log('** Cancelled the rendering task.');
-        }
-      };
+        // return () => {
+        //   if (renderTask) {
+        //   // renderTask.cancel();
+        //   // console.log('** Cancelled the rendering task.');
+        //   }
+        // };
+      }
     }
   }, [canvasRef.current, viewport, isVisible]);
 

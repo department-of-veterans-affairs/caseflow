@@ -20,6 +20,7 @@ const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel, onLoad }) => {
   const renderedPageCount = useRef(0);
   const renderedTimeTotal = useRef(0);
   const [allPagesRendered, setAllPagesRendered] = useState(false);
+  const [metricsLogged, setMetricsLogged] = useState(false);
 
   const containerStyle = {
     width: '100%',
@@ -48,6 +49,7 @@ const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel, onLoad }) => {
       setPdfDoc(null);
       setPdfPages([]);
       setAllPagesRendered(false);
+      setMetricsLogged(false);
       onLoad(true);
       const requestOptions = {
         cache: true,
@@ -132,14 +134,21 @@ const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel, onLoad }) => {
         },
         null // event_id not used
       );
+      setMetricsLogged(true); // Set metrics to logged when all pages rendered
     }
+  }, [allPagesRendered]);
 
+  useEffect(() => {
     return () => {
-      if (!allPagesRendered) {
-        console.log('** Component unmounted all pages not rendered');
+      if (!metricsLogged && !allPagesRendered) {
+        console.log(
+          '** Component unmounted and metrics are Not logged\n',
+          'all pages are Not renered\n',
+          'Pdf Pages', pdfPages
+        );
       }
     };
-  }, [allPagesRendered]);
+  }, [metricsLogged, allPagesRendered]);
 
   return (
     <div id="pdfContainer" style={containerStyle}>
