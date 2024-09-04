@@ -27,10 +27,11 @@ import { ROTATION_DEGREES } from '../util/readerConstants';
 // When rotating, we swap height and width of the container.
 // The child is still centered in the container, so we must offset it put it back to the
 // top / center of the container.
-const Page = ({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale }) => {
+const Page = ({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale, setRenderingMetrics }) => {
   const canvasRef = useRef(null);
   const wrapperRef = useRef(null);
   const scaleFraction = scale / 100;
+  const reportedStats = useRef(false);
 
   const viewport = page.getViewport({ scale: scaleFraction });
   const scaledHeight = viewport.height;
@@ -63,9 +64,32 @@ const Page = ({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale }) => 
 
   useEffect(() => {
     if (canvasRef.current) {
-      page.render({ canvasContext: canvasRef.current?.getContext('2d'), viewport }).promise.catch(() => {
+      const renderTask = page.render({ canvasContext: canvasRef.current?.getContext('2d'), viewport });
+
+      renderTask.promise.
+        then(() => {
+          if (page._stats && Array.isArray(page._stats.times)) {
+
+            const renderingTimes = page._stats.times.find((time) => time.name === 'Rendering');
+
+            if (!reportedStats.current) {
+              setRenderingMetrics(renderingTimes.end - renderingTimes.start);
+              reportedStats.current = true;
+            }
+          }
+        }).
+        catch(() => {
         // this catch is necessary to prevent the error: Cannot use the same canvas during multiple render operations
-      });
+        });
+
+      return () => {
+        // this is a work in prorgress to remove warnings in the console
+        // Warning: Timer is already running for Rendering
+        if (renderTask) {
+          renderTask.cancel();
+          console.log('** Cancelled the rendering task.');
+        }
+      };
     }
   }, [canvasRef.current, viewport]);
 
