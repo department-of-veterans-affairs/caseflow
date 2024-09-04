@@ -558,12 +558,6 @@
     "value": "modal/cancel_task_and_return_to_sct",
     "func": "cancel_task_and_return_to_sct_action"
   },
-  "CHANGE_CORR_TASK_TYPE": {
-    "label": "Change task type",
-    "value": "change_task_type",
-    "func": "change_corr_task_type"
-  },
-
   "ASSIGN_CORR_TASK_TO_TEAM": {
     "label": "Assign to team",
     "value": "assign_to_team",
@@ -578,23 +572,5 @@
     "label": "Re-assign to person",
     "value": "reassign_to_person",
     "func": "reassign_corr_task_to_person"
-  },
-
-  "MARK_TASK_COMPLETE": {
-    "label": "Mark task complete",
-    "value": "mark_task_complete",
-    "func": "mark_corr_task_complete"
-  },
-
-  "RETURN_TO_INBOUND_OPS": {
-    "label": "Return to Inbound Ops",
-    "value": "return_to_inbound_ops",
-    "func": "return_to_inbound_ops"
-  },
-
-  "CANCEL_CORR_TASK": {
-    "label": "Cancel task",
-    "value": "cancel_task",
-    "func": "cancel_corr_task"
   }
 }
