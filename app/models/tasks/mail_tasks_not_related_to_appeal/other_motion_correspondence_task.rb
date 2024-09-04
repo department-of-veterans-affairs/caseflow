@@ -10,30 +10,38 @@ class OtherMotionCorrespondenceTask < CorrespondenceMailTask
   def available_actions(user)
     return default_actions if user.nil?
 
-    if assigned_to.is_a?(User)
-      options = [
-        Constants.TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.to_h,
-        Constants.TASK_ACTIONS.COMPLETE_CORRESPONDENCE_TASK.to_h,
-        Constants.TASK_ACTIONS.REASSIGN_CORR_TASK_TO_PERSON.to_h,
-        Constants.TASK_ACTIONS.ASSIGN_CORR_TASK_TO_TEAM.to_h,
-        Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h
-      ]
-    else
-      options = [
-        Constants.TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.to_h,
-        Constants.TASK_ACTIONS.COMPLETE_CORRESPONDENCE_TASK.to_h,
-        Constants.TASK_ACTIONS.ASSIGN_CORR_TASK_TO_PERSON.to_h,
-        Constants.TASK_ACTIONS.ASSIGN_CORR_TASK_TO_TEAM.to_h,
-        Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h
-      ]
-    end
+    options = if assigned_to.is_a?(User)
+                user_actions
+              else
+                non_user_actions
+              end
 
-    return options
+    options
   end
 
   private
 
   def default_actions
     []
+  end
+
+  def user_actions
+    [
+      Constants.TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.to_h,
+      Constants.TASK_ACTIONS.COMPLETE_CORRESPONDENCE_TASK.to_h,
+      Constants.TASK_ACTIONS.REASSIGN_CORR_TASK_TO_PERSON.to_h,
+      Constants.TASK_ACTIONS.ASSIGN_CORR_TASK_TO_TEAM.to_h,
+      Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h
+    ]
+  end
+
+  def non_user_actions
+    [
+      Constants.TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.to_h,
+      Constants.TASK_ACTIONS.COMPLETE_CORRESPONDENCE_TASK.to_h,
+      Constants.TASK_ACTIONS.ASSIGN_CORR_TASK_TO_PERSON.to_h,
+      Constants.TASK_ACTIONS.ASSIGN_CORR_TASK_TO_TEAM.to_h,
+      Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h
+    ]
   end
 end
