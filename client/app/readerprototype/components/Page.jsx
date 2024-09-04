@@ -59,6 +59,7 @@ const Page = ({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale }) => 
     rotate: rotation,
     position: 'relative',
     top,
+    contentVisibility: 'auto',
   };
 
   useEffect(() => {
@@ -80,7 +81,6 @@ const Page = ({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale }) => 
       <canvas
         id={`canvas-${page.pageNumber}`}
         className="prototype-canvas"
-        data-visible={isVisible}
         style={canvasStyle}
         ref={canvasRef}
         height={scaledHeight}
