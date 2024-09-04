@@ -59,6 +59,7 @@ const Page = ({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale }) => 
     rotate: rotation,
     position: 'relative',
     top,
+    // removes offscreen canvas from rendering calculations to improve performance
     contentVisibility: 'auto',
   };
 
