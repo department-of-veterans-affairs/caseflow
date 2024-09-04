@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
-RSpec.feature("The Correspondence Details Other Motions Tasks Actions") do
+RSpec.feature("The Correspondence Details All Tasks Actions") do
   include CorrespondenceHelpers
   include CorrespondenceTaskHelpers
 
   let!(:organizations) do
     organizations_array_list.map { |name| create(:organization, name: name) }
   end
+  let(:privacy_user) { create(:user, css_id: "PRIVACY_TEAM_USER", full_name: "Leighton PrivacyAndFOIAUser Naumov") }
   let(:current_user) { create(:user) }
   let!(:veteran) { create(:veteran, first_name: "John", last_name: "Testingman", file_number: "8675309") }
   let!(:correspondence) { create(:correspondence, veteran: veteran) }
@@ -83,6 +84,44 @@ RSpec.feature("The Correspondence Details Other Motions Tasks Actions") do
       expect(all(".cf-row-wrapper")[2].find("dd").text).to eq("CAVC Correspondence")
       click_button("View task instructions")
       expect(all(".task-instructions")[1].text).to include("Change task type instructions")
+    end
+  end
+
+  context "testing for FOIA Request dropdowns" do
+    before do
+      correspondence_spec_privacy_user_access
+      FeatureToggle.enable!(:correspondence_queue)
+      @correspondence = create(
+        :correspondence,
+        veteran: veteran,
+        va_date_of_receipt: "Wed, 24 Jul 2024 00:00:00 EDT -04:00",
+        nod: false,
+        notes: "Notes for FOIA Request"
+      )
+    end
+
+    before :each do
+      task = FoiaRequestCorrespondenceTask.create!(
+        parent: @correspondence.tasks[0],
+        appeal: @correspondence,
+        appeal_type: "Correspondence",
+        status: "assigned",
+        assigned_to_type: "PrivacyTeam",
+        assigned_to: PrivacyTeam.singleton,
+        instructions: ["FOIA Request"],
+        assigned_at: Time.current
+      )
+      Organization.assignable(task)
+      @organizations = task.reassign_organizations.map { |org| { label: org.name, value: org.id } }
+    end
+
+    it "checks that FOIA Request task can be cancelled." do
+      visit "/queue/correspondence/#{@correspondence.uuid}"
+      binding.pry
+      click_dropdown(prompt: "Select an action", text: "Cancel task")
+      find(".cf-form-textarea", match: :first).fill_in with: "Cancel task test"
+      click_button "Cancel-task-button-id-1"
+      expect(page).to have_content("FOIA Request task has been cancelled.")
     end
   end
 end

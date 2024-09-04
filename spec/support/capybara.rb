@@ -29,6 +29,8 @@ Capybara.register_driver(:parallel_sniffybara) do |app|
   chrome_options.add_preference(:browser,
                                 disk_cache_dir: cache_directory)
 
+  chrome_options.args << "--disable-search-engine-choice-screen"
+
   service = ::Selenium::WebDriver::Service.chrome
   service.port = 51_674
 

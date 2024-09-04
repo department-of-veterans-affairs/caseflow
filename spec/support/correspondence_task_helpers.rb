@@ -68,6 +68,11 @@ module CorrespondenceTaskHelpers
     User.authenticate!(user: current_super)
   end
 
+  def correspondence_spec_privacy_user_access
+    PrivacyTeam.singleton.add_user(privacy_user)
+    User.authenticate!(user: privacy_user)
+  end
+
   def organizations_array_list
     @organizations_array_list ||= [
       "Education",
