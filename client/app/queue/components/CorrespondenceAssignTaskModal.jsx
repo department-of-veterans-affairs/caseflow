@@ -36,14 +36,13 @@ const CorrespondenceAssignTaskModal = (props) => {
 
   const taskData = taskActionData(props);
 
-
   // Show task instructions by default
   const shouldShowTaskInstructions = get(taskData, 'show_instructions', true);
 
   const [instructions, setInstructions] = useState('');
   const [instructionsAdded, setInstructionsAdded] = useState(false);
   const [assigneeAdded, setAssigneeAdded] = useState(false);
-  const [assignee, setAssignee] = useState("");
+  const [assignee, setAssignee] = useState('');
 
   const task = props.correspondenceInfo.tasksUnrelatedToAppeal.find((task) => parseInt(props.task_id, 10) === parseInt(task.uniqueId, 10));
 
@@ -70,25 +69,26 @@ const CorrespondenceAssignTaskModal = (props) => {
   };
 
   const updateCorrespondence = () => {
-    let tempCor = props.correspondenceInfo;
+    const tempCor = props.correspondenceInfo;
+
     tempCor.tasksUnrelatedToAppeal.find(
       (task) => task.uniqueId == props.task_id
     ).assignedTo = assignee;
     tempCor.tasksUnrelatedToAppeal.find(
-      (task) => task.uniqueId  == props.task_id
+      (task) => task.uniqueId == props.task_id
     ).instructions = instructions;
 
     return tempCor;
-  }
+  };
 
   const submit = () => {
-    let correspondence = updateCorrespondence();
-    let updatedTask = correspondence.tasksUnrelatedToAppeal.find((task) => parseInt(props.task_id, 10) === parseInt(task.uniqueId, 10));
+    const correspondence = updateCorrespondence();
+    const updatedTask = correspondence.tasksUnrelatedToAppeal.find((task) => parseInt(props.task_id, 10) === parseInt(task.uniqueId, 10));
 
     const payload = {
       data: {
         assigned_to: assignee,
-        instructions: instructions,
+        instructions,
         ...(taskData?.business_payloads && { business_payloads: taskData?.business_payloads })
       }
     };
@@ -104,10 +104,10 @@ const CorrespondenceAssignTaskModal = (props) => {
 
   return (
     <QueueFlowModal
-      title= {task.assignedToOrg ? "Assign task" : "Re-assign to person" }
+      title= {task.assignedToOrg ? 'Assign task' : 'Re-assign to person'}
       button="Assign task"
       submitDisabled= {!validateForm()}
-      submitButtonClassNames= {'usa-button'}
+      submitButtonClassNames= "usa-button"
       pathAfterSubmit={
         taskData?.redirect_after ?? `/queue/correspondence/${props.correspondence_uuid}`
       }
