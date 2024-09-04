@@ -56,7 +56,7 @@
     }],
     "targetId": "Appeal uuid, Legacy Appeal vacols_id"
   },
-  {"scenario": "claimantsPoaTest",
+  {"scenario": "claimantsPoa",
     "targetType": [{
       "value": "claimant",
       "label": "Claimant"
@@ -80,19 +80,19 @@
     }],
     "targetId": "Appeal uuid, Legacy Appeal vacols_id"
   },
-  {"scenario": "scheduleTest",
+  {"scenario": "schedule",
     "targetType": [],
     "targetId": ""
   },
-  {"scenario": "searchTest",
+  {"scenario": "search",
     "targetType": [],
     "targetId": ""
   },
-  {"scenario": "queueTest",
+  {"scenario": "queue",
     "targetType": [],
     "targetId": ""
   },
-  {"scenario": "queueAppealTest",
+  {"scenario": "queueAppeal",
     "targetType": [{
       "value": "appeal",
       "label": "Appeal"},
