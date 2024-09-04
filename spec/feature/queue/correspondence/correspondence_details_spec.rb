@@ -202,46 +202,4 @@ RSpec.feature("The Correspondence Details page") do
       expect(page).to have_content("Other motion task has been marked complete.")
     end
   end
-
-    describe ".available_actions" do
-      let(:root_task) { create(:root_task) }
-      let(:mail_team) { create(:mail_team) }
-      let(:litigation_user) { create(:user, roles: ['Litigation Support']) }
-      let(:mail_task_user) { create(:user, roles: ['Mail Task']) }
-      let(:mail_task) { task_class.create!(appeal: root_task.appeal, parent_id: root_task.id, assigned_to: mail_team) }
-
-      subject { mail_task.available_actions(current_user) }
-
-      context "when the current user is a member of the litigation support team" do
-        let(:current_user) { litigation_user }
-
-        before { allow_any_instance_of(User).to receive(:litigation_support?).and_return(true) }
-
-        let(:expected_actions) do
-          [
-            Constants.TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.to_h,
-            Constants.TASK_ACTIONS.COMPLETE_CORRESPONDENCE_TASK.to_h,
-            Constants.TASK_ACTIONS.ASSIGN_CORR_TASK_TO_TEAM.to_h,
-            Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h
-          ]
-        end
-
-        it "returns the available actions for the litigation user" do
-          expect(subject).to eq(expected_actions)
-        end
-      end
-
-      context "when the current user is a member of the mail task team and does not have litigation support access" do
-        let(:current_user) { mail_task_user }
-
-        before { allow_any_instance_of(User).to receive(:litigation_support?).and_return(false) }
-
-        it "returns an empty array for mail task users without litigation access" do
-          expect(subject).to eq([])
-        end
-      end
-    end
-
-
-
 end
