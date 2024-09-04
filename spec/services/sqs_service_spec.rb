@@ -2,6 +2,7 @@
 
 describe SqsService do
   let(:sqs_client) { SqsService.sqs_client }
+  let(:test_queue_prefix) { "sqs_service_test_" }
 
   before(:each) { wipe_queues }
   after(:all) { wipe_queues }
@@ -13,15 +14,15 @@ describe SqsService do
 
     context "FIFO" do
       let(:fifo) { true }
-      let(:queue_name) { "my_fifo_queue" }
+      let(:queue_name) { "#{test_queue_prefix}my_fifo_queue" }
 
       it "the queue is found and is validated to be a FIFO queue" do
         expect(subject { SqsService.find_queue_url_by_name(name: queue_name, check_fifo: true) })
-          .to include("caseflow_test_my_fifo_queue.fifo")
+          .to include("sqs_service_test_my_fifo_queue.fifo")
       end
 
       it "the queue is found while validation is opted out" do
-        is_expected.to include("caseflow_test_my_fifo_queue.fifo")
+        is_expected.to include("sqs_service_test_my_fifo_queue.fifo")
       end
 
       it "a non-existent queue cannot be found" do
@@ -34,17 +35,17 @@ describe SqsService do
 
     context "non-FIFO" do
       let(:fifo) { false }
-      let(:queue_name) { "my_normal_queue" }
+      let(:queue_name) { "#{test_queue_prefix}my_normal_queue" }
 
       it "the queue is found" do
-        is_expected.to include("caseflow_test_my_normal_queue")
+        is_expected.to include("sqs_service_test_my_normal_queue")
         is_expected.to_not include(".fifo")
       end
 
       it "the queue found fails the FIFO check" do
         expect { SqsService.find_queue_url_by_name(name: queue_name, check_fifo: true) }.to raise_error do |error|
           expect(error).to be_a(Caseflow::Error::SqsUnexpectedQueueTypeError)
-          expect(error.to_s).to include("No FIFO queue with name my_normal_queue could be located.")
+          expect(error.to_s).to include("No FIFO queue with name #{test_queue_prefix}my_normal_queue could be located.")
         end
       end
     end
@@ -97,7 +98,7 @@ describe SqsService do
 
   def create_queue(name, fifo = false)
     sqs_client.create_queue({
-                              queue_name: "caseflow_test_#{name}#{fifo ? '.fifo' : ''}".to_sym,
+                              queue_name: "#{name}#{fifo ? '.fifo' : ''}".to_sym,
                               attributes: fifo ? { "FifoQueue" => "true" } : {}
                             })
   end
@@ -127,7 +128,7 @@ describe SqsService do
   def wipe_queues
     client = SqsService.sqs_client
 
-    queues_to_delete = client.list_queues.queue_urls.filter { _1.include?("caseflow_test") }
+    queues_to_delete = client.list_queues.queue_urls.filter { _1.include?("sqs_service_spec") }
 
     queues_to_delete.each do |queue_url|
       client.delete_queue(queue_url: queue_url)
