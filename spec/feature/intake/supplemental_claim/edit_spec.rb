@@ -108,43 +108,6 @@ feature "Supplemental Claim Edit issues", :all_dbs do
     end
   end
 
-  context "when remove_comp_and_pen feature toggle is enabled and benefit type is compensation or pension" do
-    %w[compensation pension].each do |benefit_type|
-      context "with benefit type as #{benefit_type}" do
-        let(:request_issue) do
-          create(
-            :request_issue,
-            contested_rating_issue_reference_id: "def456",
-            contested_rating_issue_profile_date: rating.profile_date,
-            decision_review: supplemental_claim,
-            benefit_type: benefit_type,
-            contested_issue_description: "PTSD denied",
-            is_predocket_needed: is_predocket_needed
-          )
-        end
-
-        before do
-          FeatureToggle.enable!(:remove_comp_and_pen_intake)
-          supplemental_claim.create_issues!([request_issue])
-          supplemental_claim.establish!
-          supplemental_claim.reload
-          request_issue.reload
-        end
-        after { FeatureToggle.disable!(:remove_comp_and_pen_intake) }
-
-        it "shows Requested issues dropdown is disabled" do
-          visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
-
-          disabled_status = page.evaluate_script("document.getElementById('issue-action-0').disabled")
-
-          expect(disabled_status).to be true
-          expect(page).to have_css(".cf-select--is-disabled")
-          expect(page).to have_css(".cf-select__control--is-disabled")
-        end
-      end
-    end
-  end
-
   context "when the rating issue is locked" do
     let(:url_path) { "supplemental_claims" }
     let(:decision_review) { supplemental_claim }
@@ -969,7 +932,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
     end
   end
 
-  context "When pension or compensation benefit present disable Edit Claim Label and Add issue buttons on edit page" do
+  context "when remove_comp_and_pen_intake is enabled and benefit type is compensation or pension" do
     %w[pension compensation].each do |benefit_type|
       context "with benefit type as #{benefit_type}" do
         let(:supplemental_claim_disable) do
@@ -1004,9 +967,14 @@ feature "Supplemental Claim Edit issues", :all_dbs do
         after do
           FeatureToggle.disable!(:remove_comp_and_pen_intake)
         end
-        it "Add Issue button is disabled if pension benefit present" do
+        it "Add Issue, Edit claim label and Requested issues dropdown are disabled" do
           visit "supplemental_claims/#{supplemental_claim_disable.uuid}/edit"
 
+          disabled_status = page.evaluate_script("document.getElementById('issue-action-0').disabled")
+
+          expect(disabled_status).to be true
+          expect(page).to have_css(".cf-select--is-disabled")
+          expect(page).to have_css(".cf-select__control--is-disabled")
           expect(page).to have_content(benefit_type.capitalize)
           expect(page).to have_button("Add issue", disabled: true)
           expect(page).to have_button("Edit claim label", disabled: true)
