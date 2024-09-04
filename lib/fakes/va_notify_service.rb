@@ -11,7 +11,21 @@ class Fakes::VANotifyService < ExternalApi::VANotifyService
       docket_number:,
       status: ""
     )
-      fake_notification_response(email_template_id, status)
+
+      external_id = SecureRandom.uuid
+
+      unless Rails.deploy_env == :test
+        request = HTTPI::Request.new
+        request.url = "#{ENV['CASEFLOW_BASE_URL']}#{VA_NOTIFY_ENDPOINT}"\
+          "?id=#{external_id}&status=delivered&to=test@example.com&notification_type=email"
+        request.headers["Content-Type"] = "application/json"
+        request.headers["Authorization"] = "Bearer test"
+        request.auth.ssl.ca_cert_file = ENV["SSL_CERT_FILE"]
+
+        HTTPI.post(request)
+      end
+
+      fake_notification_response(email_template_id, status, external_id)
     end
 
     def send_sms_notifications(
@@ -22,6 +36,20 @@ class Fakes::VANotifyService < ExternalApi::VANotifyService
       docket_number:,
       status: ""
     )
+
+      external_id = SecureRandom.uuid
+
+      unless Rails.deploy_env == :test
+        request = HTTPI::Request.new
+        request.url = "#{ENV['CASEFLOW_BASE_URL']}#{VA_NOTIFY_ENDPOINT}"\
+          "?id=#{external_id}&status=delivered&to=+15555555555&notification_type=sms"
+        request.headers["Content-Type"] = "application/json"
+        request.headers["Authorization"] = "Bearer test"
+        request.auth.ssl.ca_cert_file = ENV["SSL_CERT_FILE"]
+
+        HTTPI.post(request)
+      end
+
       if participant_id.length.nil?
         return bad_participant_id_response
       end
