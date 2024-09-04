@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useRef } from 'react';
 import { ROTATION_DEGREES } from '../util/readerConstants';
+import usePageVisibility from '../hooks/usePageVisibility';
 
 // This Page component is expected to be used within a flexbox container. Flex doesn't notice when children are
 // transformed (scaled and rotated). Where * is the flex container:
@@ -29,6 +30,7 @@ import { ROTATION_DEGREES } from '../util/readerConstants';
 // top / center of the container.
 const Page = ({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale }) => {
   const canvasRef = useRef(null);
+  const isVisible = usePageVisibility(canvasRef);
   const wrapperRef = useRef(null);
   const scaleFraction = scale / 100;
 
@@ -57,18 +59,16 @@ const Page = ({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale }) => 
     rotate: rotation,
     position: 'relative',
     top,
-    // removes offscreen canvas from rendering calculations to improve performance
-    contentVisibility: 'auto',
   };
 
   useEffect(() => {
-    if (canvasRef.current) {
+    if (canvasRef.current && isVisible) {
       page.render({ canvasContext: canvasRef.current?.getContext('2d', { alpha: false }), viewport }).
         promise.catch(() => {
         // this catch is necessary to prevent the error: Cannot use the same canvas during multiple render operations
         });
     }
-  }, [canvasRef.current, viewport]);
+  }, [canvasRef.current, viewport, isVisible]);
 
   return (
     <div
@@ -80,6 +80,7 @@ const Page = ({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale }) => 
       <canvas
         id={`canvas-${page.pageNumber}`}
         className="prototype-canvas"
+        data-visible={isVisible}
         style={canvasStyle}
         ref={canvasRef}
         height={scaledHeight}
