@@ -19,13 +19,15 @@ import { storeMetrics } from './util/Metrics';
 
 // Redux Store Dependencies
 import ReduxBase from 'app/components/ReduxBase';
-import rootReducer from './reader/store/root';
+import rootReducer from 'store/root';
+
 // Shared Component Dependencies
-import { ErrorBoundary } from './components/ErrorBoundary';
-import Loadable from './components/Loadable';
+import { ErrorBoundary } from 'components/shared/ErrorBoundary';
+import Loadable from 'components/shared/Loadable';
 import { LOGO_COLORS } from 'app/constants/AppConstants';
 
 // List of container components we render directly in  Rails .erb files
+import Router from 'app/2.0/router';
 import BaseContainer from 'app/containers/BaseContainer';
 import Certification from 'app/certification/Certification';
 
@@ -63,6 +65,7 @@ import uuid from 'uuid';
 
 const COMPONENTS = {
   // New Version 2.0 Root Component
+  Router,
   BaseContainer,
   Certification,
   // New SPA wrapper for multiple admin pages
@@ -179,6 +182,7 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
         './intakeManager/index',
         './intakeEdit/index',
         './nonComp/index',
+        './2.0/router',
         './explain/index',
         './mpi/MPISearch',
         './admin/index',
