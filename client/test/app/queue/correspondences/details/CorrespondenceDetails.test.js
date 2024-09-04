@@ -9,6 +9,8 @@ import rootReducer from 'app/queue/reducers';
 import thunk from 'redux-thunk';
 import moment from 'moment';
 import { prepareAppealForSearchStore, sortCaseTimelineEvents } from 'app/queue/utils';
+import { MemoryRouter, Route } from 'react-router-dom';
+import { within } from '@testing-library/dom';
 
 jest.mock('redux', () => ({
   ...jest.requireActual('redux'),
@@ -58,6 +60,39 @@ let initialState = {
 const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
 
 describe('CorrespondenceDetails', () => {
+  const tasksUnrelatedToAnAppeal = [
+    {
+      label: 'Other motion',
+      assignedOn: '09/03/2024',
+      assignedTo: 'Litigation Support',
+      type: 'Organization',
+      instructions: ['test OM'],
+      availableActions: [
+        { label: 'Cancel task' },
+        { label: 'Mark task complete' },
+        { label: 'Change task type' }
+      ],
+      status: 'assigned'
+    }
+    // {
+    //   label: 'FOIA request',
+    //   assignedOn: '08/30/2024',
+    //   assignedTo: 'Litigation Support',
+    //   type: 'Organization',
+    //   instructions: ['test OM', 'test cavc2'],
+    //   availableActions: [],
+    //   status: 'assigned'
+    // },
+    // {
+    //   label: 'FOIA request',
+    //   assignedOn: '08/30/2024',
+    //   assignedTo: 'Litigation Support',
+    //   type: 'Organization',
+    //   instructions: ['test OM', 'test cavc'],
+    //   availableActions: [],
+    //   status: 'assigned'
+    // }
+  ];
   const props = {
     organizations: ['Inbound Ops Team'],
     correspondence: {
@@ -76,30 +111,7 @@ describe('CorrespondenceDetails', () => {
         { id: 2, vaDateOfReceipt: '2023-08-19T00:00:00Z' }
       ],
       relatedCorrespondenceIds: [2],
-      tasksUnrelatedToAppeal: [{
-        type: 'FOIA request',
-        label: 'Other Motion',
-        status: 'assigned',
-        uniqueId: 3080,
-        assigned_to: 'CAVC Litigation Support',
-        assigned_at: '07/23/2024',
-        instructions: [
-          'cavc'
-        ],
-        assigned_to_type: 'Organization'
-      },
-      {
-        type: 'Cavc request',
-        label: 'CAVC Task',
-        status: 'assigned',
-        uniqueId: 3080,
-        assigned_to: 'CAVC Litigation Support',
-        assigned_at: '07/23/2024',
-        instructions: [
-          'other cavc'
-        ],
-        assigned_to_type: 'Organization'
-      }],
+      tasksUnrelatedToAppeal: tasksUnrelatedToAnAppeal,
       correspondenceAppeals: [
         {
           id: 50,
@@ -314,24 +326,21 @@ describe('CorrespondenceDetails', () => {
       appealDetails: {}
     });
     sortCaseTimelineEvents.mockReturnValue(
-      [{
-        assignedOn: '07/23/2024',
-        assignedTo: 'Litigation Support',
-        label: 'Status inquiry',
-        instructions: [
-          'stat inq'
-        ],
-        availableActions: []
-      }]
+      tasksUnrelatedToAnAppeal
+    );
+
+    render(
+      <Provider store={store}>
+        <MemoryRouter>
+          <Route>
+            <CorrespondenceDetails {...props} />
+          </Route>
+        </MemoryRouter>
+      </Provider>
     );
   });
 
-  test('toggles view all correspondence', () => {
-    render(
-      <Provider store={store}>
-        <CorrespondenceDetails {...props} />
-      </Provider>
-    );
+  it('toggles view all correspondence', () => {
     const viewAllButton = screen.getByText('View all correspondence');
 
     fireEvent.click(viewAllButton);
@@ -339,12 +348,6 @@ describe('CorrespondenceDetails', () => {
   });
 
   it('renders the component', () => {
-    render(
-      <Provider store={store}>
-        <CorrespondenceDetails {...props} />
-      </Provider>
-    );
-
     const userNameCount = screen.getAllByText('John Doe').length;
 
     expect(userNameCount).toBeGreaterThan(0);
@@ -409,5 +412,37 @@ describe('CorrespondenceDetails', () => {
     const priorDate = new Date(props.correspondence.prior_mail[0].vaDateOfReceipt);
 
     expect(screen.getByText(priorDate.toLocaleDateString('en-US'))).toBeInTheDocument();
+  });
+
+  it('validates the options of the actions dropdown based on the task type', () => {
+    const table = document.querySelector('#case-timeline-table');
+
+    expect(table).toBeInTheDocument();
+
+    const tasksUnrelatedToAppeal = props.correspondence.tasksUnrelatedToAppeal;
+
+    tasksUnrelatedToAppeal.forEach((task) => {
+      const label = task.label;
+      const labelElement = screen.getAllByText(label, { selector: 'dd' })[0];
+      const tableRow = labelElement.closest('tr');
+
+      expect(tableRow).toBeInTheDocument();
+
+      const dropdown = within(tableRow).getByRole('combobox');
+
+      expect(dropdown).toBeInTheDocument();
+      fireEvent.mouseDown(dropdown);
+
+      // Find the listbox which contains the dropdown options
+      const listbox = screen.getByRole('listbox', { name: /available-actions-listbox/i });
+
+      // Ensure the listbox is present in the DOM
+      expect(listbox).toBeInTheDocument();
+      const options = within(listbox).getAllByRole('option');
+      const optionLabels = options.map((option) => option.textContent.trim());
+
+      expect(options).toHaveLength(task.availableActions.length);
+      expect(optionLabels.sort()).toEqual(task.availableActions.map((action) => action.label).sort());
+    });
   });
 });
