@@ -82,7 +82,8 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser
   end
 
   def ri_closed_at
-    @issue.dig(:closed_at)
+    ri_closed_at_in_ms = @issue.dig(:closed_at)
+    convert_milliseconds_to_datetime(ri_closed_at_in_ms)
   end
 
   def ri_closed_status

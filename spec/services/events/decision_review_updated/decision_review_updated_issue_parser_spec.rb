@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser do
@@ -22,7 +24,7 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser d
       untimely_exemption_notes: nil,
       vacols_id: "VAC123",
       vacols_sequence_id: nil,
-      closed_at: "1970-01-19",
+      closed_at: 1_625_151_600,
       closed_status: "withdrawn",
       contested_rating_issue_diagnostic_code: "9411",
       ramp_claim_id: "RAMP123",
@@ -65,7 +67,7 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser d
 
   describe "#ri_closed_at" do
     it "converts closed_at from milliseconds to datetime" do
-      expect(subject.ri_closed_at).to eq("1970-01-19")
+      expect(subject.ri_closed_at).to eq(Time.at(1_625_151_600/1000).utc)
     end
   end
 
