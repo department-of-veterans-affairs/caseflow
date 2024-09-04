@@ -120,10 +120,10 @@ class HearingMailer < ActionMailer::Base
     end
   end
 
-  def formatted_time
+  def formatted_time(time)
     # Mon, Oct 19 at 10:30am CDT
     time_format = "%a, %b %-d at %-l:%M%P %Z"
-    @hearing.time.appellant_time.strftime(time_format)
+    time.strftime(time_format)
   end
 
   def appellant_name
@@ -137,9 +137,9 @@ class HearingMailer < ActionMailer::Base
 
   def reminder_subject
     if recipient_info.title == HearingEmailRecipient::RECIPIENT_TITLES[:representative]
-      "Reminder: #{appellant_name}'s Board hearing is #{formatted_time} – Do Not Reply"
+      "Reminder: #{appellant_name}'s Board hearing is #{formatted_time(@hearing.poa_time)} – Do Not Reply"
     else
-      "Reminder: Your hearing is #{formatted_time} – Do Not Reply"
+      "Reminder: Your hearing is #{formatted_time(@hearing.appellant_time)} – Do Not Reply"
     end
   end
 
@@ -149,7 +149,7 @@ class HearingMailer < ActionMailer::Base
     when HearingEmailRecipient::RECIPIENT_TITLES[:appellant]
       "Your Board hearing has been scheduled – Do Not Reply"
     when HearingEmailRecipient::RECIPIENT_TITLES[:representative]
-      "Confirmation: #{appellant_last_name}'s Board hearing is #{formatted_time} – Do Not Reply"
+      "Confirmation: #{appellant_last_name}'s Board hearing is #{formatted_time(@hearing.poa_time)} – Do Not Reply"
     when HearingEmailRecipient::RECIPIENT_TITLES[:judge]
       hearing_date = virtual_hearing.hearing.scheduled_for.to_formatted_s(:short_date)
 
@@ -165,7 +165,7 @@ class HearingMailer < ActionMailer::Base
                    end
 
     # Raise an error if the link contains the old virtual hearing link 2021-11-10
-    if hearing_link.include?(BAD_VIRTUAL_LINK_TEXT)
+    if hearing_link.nil? || hearing_link.include?(BAD_VIRTUAL_LINK_TEXT)
       fail BadVirtualLinkError, virtual_hearing_id: virtual_hearing&.id
     end
 

@@ -17,9 +17,7 @@ class LegacyHearingSerializer
   attribute :appellant_email_address do |hearing|
     hearing.appellant_email_address || hearing.appeal.appellant_email_address
   end
-  attribute :appellant_tz do |hearing|
-    hearing.appellant_tz || hearing.appeal.appellant_tz
-  end
+  attribute :appellant_tz
   attribute :appellant_email_id, if: for_full do |hearing|
     hearing.appellant_recipient&.id.to_s
   end
@@ -39,7 +37,11 @@ class LegacyHearingSerializer
   attribute :contested_claim do |hearing|
     hearing.appeal.contested_claim
   end
+  attribute :conference_provider
   attribute :current_issue_count
+  attribute :daily_docket_conference_link do |hearing|
+    HearingDaySerializer.serialize_conference_link(hearing.daily_docket_conference_link)
+  end
   attribute :disposition
   attribute :disposition_editable
   attribute :docket_name
@@ -60,6 +62,11 @@ class LegacyHearingSerializer
   attribute :judge_id
   attribute :location
   attribute :military_service, if: for_worksheet
+  attribute :non_virtual_conference_link do |object|
+    if !object.non_virtual_conference_link.nil?
+      ConferenceLinkSerializer.new(object.non_virtual_conference_link).serializable_hash[:data][:attributes]
+    end
+  end
   attribute :notes
   attribute :paper_case do |object|
     object.appeal.paper_case?
@@ -75,9 +82,7 @@ class LegacyHearingSerializer
   attribute :representative_name, if: for_full
   attribute :representative_address, if: for_full
   attribute :representative_email_address, if: for_full
-  attribute :representative_tz, if: for_full do |hearing|
-    hearing.representative_tz || hearing.appeal.appellant_tz
-  end
+  attribute :representative_tz
   attribute :representative_email_id, if: for_full do |hearing|
     hearing.representative_recipient&.id.to_s
   end
@@ -88,6 +93,11 @@ class LegacyHearingSerializer
   attribute :submission_window_end, if: for_worksheet, &:calculate_submission_window
   attribute :summary
   attribute :transcript_requested
+  attribute :transcription_files, if: for_worksheet do |hearing|
+    if hearing.conference_provider == "webex"
+      hearing.serialized_transcription_files
+    end
+  end
   attribute :user_id
   attribute :vacols_id, if: for_worksheet
   attribute :vbms_id
@@ -122,6 +132,8 @@ class LegacyHearingSerializer
   attribute :current_user_timezone do |_, params|
     params[:user]&.timezone
   end
+
+  attribute :scheduled_in_timezone
 
   attribute :worksheet_issues, &:prepare_worksheet_issues
   attribute :mst do |object|

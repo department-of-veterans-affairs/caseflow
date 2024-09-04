@@ -237,9 +237,6 @@ class RequestIssuesUpdate < CaseflowRecord
     if !changes?
       @error_code = :no_changes
     elsif RequestIssuesUpdate.where(review: review).where.not(id: id).processable.exists?
-      if @error_code == :no_changes
-        RequestIssuesUpdate.where(review: review).where.not(id: id).processable.last.destroy
-      end
       @error_code = :previous_update_not_done_processing
     end
 
@@ -409,7 +406,7 @@ class RequestIssuesUpdate < CaseflowRecord
       # close out any tasks that might be open
       open_issue_task = Task.where(
         assigned_to: SpecialIssueEditTeam.singleton
-      ).where(status: "assigned").where(appeal: before_issue.decision_review)
+      ).where(status: Constants.TASK_STATUSES.assigned).where(appeal: before_issue.decision_review)
       open_issue_task[0].delete unless open_issue_task.empty?
 
       task = IssuesUpdateTask.create!(
