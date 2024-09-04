@@ -61,16 +61,12 @@ class DecisionDocument < CaseflowRecord
     super
 
     if not_processed_or_decision_date_not_in_the_future?
-      # Below we're grabbing the boolean value at this point in time.
-      # This will act as a point of truth that wont be affected by the
-      # async behavior of the outcode function due to triggering jobs.
-
-      ProcessDecisionDocumentJob.perform_later(id, for_contested_claim?, mail_package)
+      ProcessDecisionDocumentJob.perform_later(id, mail_package)
     end
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity
-  def process!(_contested, mail_package)
+  def process!(mail_package)
     return if processed?
 
     fail NotYetSubmitted unless submitted_and_ready?
@@ -120,15 +116,6 @@ class DecisionDocument < CaseflowRecord
 
   def all_contention_records(epe)
     contention_records(epe)
-  end
-
-  def for_contested_claim?
-    case appeal_type
-    when "Appeal"
-      appeal.contested_claim?
-    when "LegacyAppeal"
-      appeal.contested_claim
-    end
   end
 
   private
