@@ -1,62 +1,56 @@
 /* eslint-disable max-lines, max-len */
 
-import React from 'react';
+import React, {useState} from 'react';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
 import Checkbox from '../../components/Checkbox';
+import TextField from '../../components/TextField';
 import LOAD_TEST_SCENARIOS from '../../constants/LoadTestScenarios.json';
 
-export default class ScenarioConfiguration extends React.Component {
-  constructor(props) {
-    super(props);
+export default function ScenarioConfiguration(props){
+  const [isChecked, scenarioIsChecked] = useState(false);
 
-    this.state = {}
+  console.log('config');
+  console.log(props);
+  let scenario = props.scenario;
+  let targetType = props.targetType;
 
-    { LOAD_TEST_SCENARIOS.map((scenario_group) => {
-      console.log(scenario_group);
-      this.state[[scenario_group["scenario"]]] = false;
+  console.log(isChecked);
+  console.log(targetType);
 
-      console.log("load props");
-      console.log(this.state);
-      })
-    };
-
-
+  const onChangeHandle = () => {
+    scenarioIsChecked(!isChecked);
   }
 
-  onChange = (scenario, value) => {
-    console.log(this.state);
-    console.log("beforestate");
-    if(this.state[scenario] != value){
-      console.log("changes");
-      this.setState({[scenario]: value});
-    }
-    console.log(scenario);
-    console.log(this.state);
-  }
+  console.log(scenario);
+  console.log(targetType);
+  console.log(targetType.length);
+  console.log("checked");
 
-  retrieveValue = (scenario) => {
-    console.log("retrieveValue");
-    return this.state[scenario];
-  }
 
-  render = () => {
-    return (
-      <div>
-        { LOAD_TEST_SCENARIOS.map((scenario_group) => {
-            return (
-              <div key={scenario_group["scenario"]}>
-                <Checkbox
-                label={scenario_group["scenario"]}
-                name={scenario_group["scenario"]}
-                onClick={this.onChange(scenario_group["scenario"])}
-                value={this.retrieveValue(scenario_group["scenario"])}
-                />
-              </div>
-            );
-          })
-        }
-      </div>
-    );
-  }
+  return (
+    <div>
+      <Checkbox
+      label={scenario}
+      name={scenario}
+      onChange={() => {onChangeHandle()}}
+      value={isChecked || false}
+      />
+      {isChecked && targetType.length > 0 &&
+        (<div>
+          <SearchableDropdown
+          label="Target Type"
+          options={targetType}
+          isClearable
+          />
+          <br/>
+          <TextField
+          name="testTargetID"
+          label="Target Type ID"
+          optional={true}
+        />
+        </div>
+      )}
+    </div>
+  );
 }

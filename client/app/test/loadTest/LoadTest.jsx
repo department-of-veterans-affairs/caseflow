@@ -7,6 +7,7 @@ import { css } from 'glamor';
 import Button from '../../components/Button';
 
 import UserConfiguration from './UserConfiguration';
+import ScenarioConfigurations from './ScenarioConfigurations';
 import ScenarioConfiguration from './ScenarioConfiguration';
 import Example6 from '../../containers/StyleGuide/CheckboxExamples/Example6'
 
@@ -20,7 +21,7 @@ export default function LoadTest(props) {
           <UserConfiguration {...props} />
           <br/>
           <h2>Scenario Groups</h2>
-          <ScenarioConfiguration/>
+          <ScenarioConfigurations/>
         </AppSegment>
         <div {...css({ overflow: 'hidden' })}>
           <Button
