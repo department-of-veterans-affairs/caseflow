@@ -2,9 +2,6 @@
 
 class TaskActionRepository # rubocop:disable Metrics/ClassLength
   class << self
-    def change_corr_task_type(task, _user = nil)
-      # stubbed
-    end
 
     def assign_corr_task_to_team(_task, _user = nil)
       {
