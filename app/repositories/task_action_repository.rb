@@ -2,7 +2,6 @@
 
 class TaskActionRepository # rubocop:disable Metrics/ClassLength
   class << self
-
     def assign_corr_task_to_team(_task, _user = nil)
       {
         modal_title: COPY::ASSIGN_TASK_TITLE,
@@ -15,18 +14,6 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
     end
 
     def assign_corr_task_to_person(task, _user = nil)
-      # stubbed
-    end
-
-    def reassign_corr_task_to_person(task, _user = nil)
-      # stubbed
-    end
-
-    def mark_corr_task_complete(task, _user = nil)
-      # stubbed
-    end
-
-    def return_to_inbound_ops(task, _user = nil)
       # stubbed
     end
 

@@ -31,8 +31,6 @@ class CorrespondenceMailTask < CorrespondenceTask
     options = [
       Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
       Constants.TASK_ACTIONS.ASSIGN_CORR_TASK_TO_TEAM.to_h,
-      Constants.TASK_ACTIONS.MARK_TASK_COMPLETE.to_h,
-      Constants.TASK_ACTIONS.RETURN_TO_INBOUND_OPS.to_h,
       Constants.TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.to_h,
       Constants.TASK_ACTIONS.COMPLETE_CORRESPONDENCE_TASK.to_h
     ]
