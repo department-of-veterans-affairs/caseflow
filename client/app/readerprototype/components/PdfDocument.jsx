@@ -81,7 +81,7 @@ const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel, onLoad }) => {
           scale={zoomLevel}
           page={page}
           rotation={rotateDeg}
-          key={`page-${index}`}
+          key={`doc-${doc.id}-page-${index}`}
           renderItem={(childProps) => (
             <Layer documentId={doc.id} zoomLevel={zoomLevel} rotation={rotateDeg} {...childProps}>
               <TextLayer page={page} zoomLevel={zoomLevel} rotation={rotateDeg} />

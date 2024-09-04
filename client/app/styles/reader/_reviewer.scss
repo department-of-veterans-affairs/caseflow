@@ -663,3 +663,16 @@ input[type='search'].cf-search-input-with-close {
     }
   }
 }
+
+.prototype-page-progress-indicator-input {
+  .input-container {
+    width: 6rem;
+    margin: 0 0.5rem;
+    > input {
+      text-align: center;
+    }
+  }
+  > label {
+    display: inline-block;
+  }
+}

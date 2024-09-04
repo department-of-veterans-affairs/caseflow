@@ -77,7 +77,7 @@ const ReaderFooter = ({
                   onKeyPress={handleKeyPress}
                   value={currentPage}
                   required={false}
-                  className={['page-progress-indicator-input']}
+                  className={['prototype-page-progress-indicator-input']}
                 />
               </div>
               of {numPages}
