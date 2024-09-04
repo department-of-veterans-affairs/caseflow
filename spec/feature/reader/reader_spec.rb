@@ -535,7 +535,7 @@ RSpec.feature "Reader", :all_dbs do
       click_on documents[0].type
 
       # Ensure PDF content loads (using :all because the text is hidden)
-      expect(page).to have_content(:all, "Important Decision Document!!!", wait: 10)
+      expect(page).to have_content(:all, "Important Decision Document!!!", wait: 20)
 
       add_comment("Foo")
 
@@ -750,6 +750,9 @@ RSpec.feature "Reader", :all_dbs do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
         click_on documents[0].type
+        page.driver.browser.manage.window.resize_to(1024, 1024)
+
+        find("h3", text: "Comments").click
 
         element_id = "cf-sidebar-accordion"
         scroll_to(id: element_id, value: 0)
@@ -776,13 +779,14 @@ RSpec.feature "Reader", :all_dbs do
       xscenario "Scroll to comment icon" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-        click_on documents[0].type
-
+        click_on(documents[0].type, wait: 10)
+        find("h3", text: "Comments", wait: 5).click
         expect(page).to have_content(annotations[0].comment)
 
         # Wait for PDFJS to render the pages
         expect(page).to have_css(".page")
-
+        page.driver.browser.manage.window.resize_to(1024, 1024)
+        expect(page).to have_content(:all, "Important Decision Document!!!", wait: 20)
         # Click on the comment and ensure the scroll position changes
         # by the y value the comment.
         element_class = "ReactVirtualized__Grid__innerScrollContainer"
@@ -807,6 +811,8 @@ RSpec.feature "Reader", :all_dbs do
         # Open the document list before trying to go to deep link to pre-load the data
         visit "/reader/appeal/#{appeal.vacols_id}/documents/"
         visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[1].id}?annotation=#{annotation.id}"
+
+        find("h3", text: "Comments").click
 
         expect(page).to have_content(annotation.comment)
         expect(page).to have_css(".page")
@@ -884,7 +890,7 @@ RSpec.feature "Reader", :all_dbs do
       click_on documents[0].type
 
       def click_accordion_header(index)
-        find_all(".rc-collapse-header")[index].click
+        find_all(".rc-collapse-header", wait: 5)[index].click
       end
 
       # Hide sidebar
@@ -1033,7 +1039,8 @@ RSpec.feature "Reader", :all_dbs do
         find(".cf-pdf-header .cf-pdf-doc-type-button-container", text: "BVA Decision")
         expect(cats_in_header).to match_array [cats[:procedural], cats[:case_summary]]
 
-        find(".checkbox-wrapper-procedural").click
+        find("h3", text: "Categories").click
+        find(".checkbox-wrapper-procedural", wait: 12).click
         find(".checkbox-wrapper-medical").click
 
         # this will wait for the categories to update in the header before expecting anything
@@ -1052,6 +1059,7 @@ RSpec.feature "Reader", :all_dbs do
         # this will wait for the document title to display before expecting anything
         find(".cf-pdf-header .cf-pdf-doc-type-button-container", text: "Form 9")
         expect(cats_in_header).to match_array [cats[:medical], cats[:other], cats[:case_summary]]
+        find("h3", text: "Categories").click
         expect(find("#case_summary", visible: false).disabled?).to be true
       end
 
@@ -1113,7 +1121,8 @@ RSpec.feature "Reader", :all_dbs do
         SELECT_VALUE_LABEL_CLASS = ".cf-select__multi-value__label"
 
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
-        click_on documents[0].type
+        click_on(documents[0].type, wait: 10)
+        find("h3", text: "Issue tags", wait: 5).click
 
         fill_in "tags", with: TAG1
 
@@ -1133,9 +1142,10 @@ RSpec.feature "Reader", :all_dbs do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
         click_on documents[1].type
 
+        find("h3", text: "Issue tags", wait: 10).click
         # tags for first document are shared in tag auto suggestions for second document
-        page.find("#tags").click
-        tag_options = find_all(".cf-select__option")
+        page.find("#tags", wait: 10).click
+        tag_options = find_all(".cf-select__option", wait: 10)
         expect(tag_options.count).to eq 4
 
         documents[0].tags.each_with_index do |tag, index|
@@ -1159,7 +1169,7 @@ RSpec.feature "Reader", :all_dbs do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
         click_on documents[0].type
-
+        find("h3", text: "Issue tags", wait: 10).click
         # verify that the tags on first doc still exist and tag deleted from second doc isn't suggested
         expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 4)
       end
