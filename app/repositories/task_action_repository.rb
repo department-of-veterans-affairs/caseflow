@@ -2,10 +2,6 @@
 
 class TaskActionRepository # rubocop:disable Metrics/ClassLength
   class << self
-    def change_corr_task_type
-      # stubbed
-    end
-
     def assign_corr_task_to_team(_task, _user = nil)
       {
         modal_title: COPY::ASSIGN_TASK_TITLE,
@@ -24,14 +20,6 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         message_title: COPY::CORRESPONDENCE_CASES_ASSIGN_TASK_MODAL_INSTRUCTIONS_TITLE,
         redirect_after: "/queue/correspondence/:correspondence_uuid/"
       }
-    end
-
-    def mark_corr_task_complete
-      # stubbed
-    end
-
-    def return_to_inbound_ops
-      # stubbed
     end
 
     # this is used to build the modal and handle redirect after modal is closed
