@@ -26,7 +26,7 @@ class OtherMotionCorrespondenceTask < CorrespondenceMailTask
     []
   end
 
-  def assigned_to_org_actions
+  def assigned_to_user_actions
     [
       Constants.TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.to_h,
       Constants.TASK_ACTIONS.COMPLETE_CORRESPONDENCE_TASK.to_h,
@@ -36,7 +36,7 @@ class OtherMotionCorrespondenceTask < CorrespondenceMailTask
     ]
   end
 
-  def assigned_to_user_actions
+  def assigned_to_org_actions
     [
       Constants.TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.to_h,
       Constants.TASK_ACTIONS.COMPLETE_CORRESPONDENCE_TASK.to_h,
