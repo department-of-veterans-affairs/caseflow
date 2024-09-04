@@ -1137,21 +1137,21 @@ describe VACOLS::CaseDocket, :all_dbs do
           CaseDistributionLever.find_by(item: "cavc_affinity_days").update!(value: "infinite")
           CaseDistributionLever.find_by(item: "cavc_aod_affinity_days").update!(value: "infinite")
 
-          new_hearing_judge_cases_infinite = VACOLS::CaseDocket.distribute_priority_appeals(new_hearing_judge, "any", 100, true)
-          tied_judge_cases_infinite = VACOLS::CaseDocket.distribute_priority_appeals(tied_judge_caseflow, "any", 100, true)
-          other_judge_cases_infinite = VACOLS::CaseDocket.distribute_priority_appeals(other_judge_caseflow, "any", 100, true)
+          new_hrng_judge_infinite = VACOLS::CaseDocket.distribute_priority_appeals(new_hearing_judge, "any", 100, true)
+          tied_judge_infinite = VACOLS::CaseDocket.distribute_priority_appeals(tied_judge_caseflow, "any", 100, true)
+          other_judge_infinite = VACOLS::CaseDocket.distribute_priority_appeals(other_judge_caseflow, "any", 100, true)
 
-          expect(new_hearing_judge_cases_infinite.map { |c| c["bfkey"] }.sort)
+          expect(new_hrng_judge_infinite.map { |c| c["bfkey"] }.sort)
             .to match_array([
               case_1, case_2, case_3, case_4, case_5, case_10, case_12
             ].map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
 
-          expect(tied_judge_cases_infinite.map { |c| c["bfkey"] }.sort)
+          expect(tied_judge_infinite.map { |c| c["bfkey"] }.sort)
             .to match_array([
               case_6, case_9, case_10, case_11, case_12, case_13
             ].map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
 
-          expect(other_judge_cases_infinite.map { |c| c["bfkey"] }.sort)
+          expect(other_judge_infinite.map { |c| c["bfkey"] }.sort)
             .to match_array([
               case_7, case_8, case_10, case_12
             ].map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
@@ -1160,21 +1160,21 @@ describe VACOLS::CaseDocket, :all_dbs do
           CaseDistributionLever.find_by(item: "cavc_affinity_days").update!(value: "omit")
           CaseDistributionLever.find_by(item: "cavc_aod_affinity_days").update!(value: "omit")
 
-          new_hearing_judge_cases_omit = VACOLS::CaseDocket.distribute_priority_appeals(new_hearing_judge, "any", 100, true)
-          tied_judge_cases_omit = VACOLS::CaseDocket.distribute_priority_appeals(tied_judge_caseflow, "any", 100, true)
-          other_judge_cases_omit = VACOLS::CaseDocket.distribute_priority_appeals(other_judge_caseflow, "any", 100, true)
+          new_hearing_judge_omit = VACOLS::CaseDocket.distribute_priority_appeals(new_hearing_judge, "any", 100, true)
+          tied_judge_omit = VACOLS::CaseDocket.distribute_priority_appeals(tied_judge_caseflow, "any", 100, true)
+          other_judge_omit = VACOLS::CaseDocket.distribute_priority_appeals(other_judge_caseflow, "any", 100, true)
 
-          expect(new_hearing_judge_cases_omit.map { |c| c["bfkey"] }.sort)
+          expect(new_hearing_judge_omit.map { |c| c["bfkey"] }.sort)
             .to match_array([
               case_1, case_2, case_3, case_4, case_5, case_7, case_8, case_9, case_10, case_11, case_12, case_13
             ].map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
 
-          expect(tied_judge_cases_omit.map { |c| c["bfkey"] }.sort)
+          expect(tied_judge_omit.map { |c| c["bfkey"] }.sort)
             .to match_array([
               case_6, case_7, case_8, case_9, case_10, case_11, case_12, case_13
             ].map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
 
-          expect(other_judge_cases_omit.map { |c| c["bfkey"] }.sort)
+          expect(other_judge_omit.map { |c| c["bfkey"] }.sort)
             .to match_array([
               case_7, case_8, case_9, case_10, case_11, case_12, case_13
             ].map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
