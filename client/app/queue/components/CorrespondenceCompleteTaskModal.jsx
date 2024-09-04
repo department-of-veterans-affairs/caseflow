@@ -114,8 +114,7 @@ CorrespondenceCompleteTaskModal.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
   task: taskById(state, { taskId: ownProps.taskId }),
   taskNotRelatedToAppealBanner: state.correspondenceDetails.bannerAlert,
-  correspondenceInfo: state.correspondenceDetails.correspondenceInfo,
-  showActionsDropdown: state.correspondenceDetails.showActionsDropdown,
+  correspondenceInfo: state.correspondenceDetails.correspondenceInfo
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

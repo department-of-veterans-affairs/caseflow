@@ -1,14 +1,14 @@
 {
-  "successBanner": {
+  "cancelSuccessBanner": {
     "title": "Success",
-    "message": "Other Motion task has been cancelled. If you have made a mistake, please email Inbound Ops Supervisor for any changes.",
+    "message": "%s task has been cancelled. If you have made a mistake, please email Inbound Ops Supervisor for any changes.",
     "type": "success"
   },
 
-  "failBanner": {
-    "title": "Warning",
-    "message": "Error FOIA request task has not been cancelled",
-    "type": "warning"
+  "assignSuccessBanner": {
+    "title": "Assigned",
+    "message": "%s task has been assigned to %s.",
+    "type": "success"
   },
 
   "teamBanner": {
@@ -17,21 +17,15 @@
     "type": "success"
   },
 
-  "teamFailBanner": {
-    "title": "Error",
-    "message": "Task action could not be completed. Please try again at a later time or contact the Help Desk (Error code: %s).",
-    "type": "error"
-  },
-
   "completeBanner": {
     "title": "Complete",
     "message": "%s task has been marked complete. If you have made a mistake, please email %s for any changes.",
     "type": "success"
   },
 
-  "completeFailBanner": {
-    "title": "Complete Failed",
-    "message": "Task unable to be completed or assigned.",
-    "type": "warning"
+  "taskActionFailBanner": {
+    "title": "Error",
+    "message": "Task action could not be completed. Please try again at a later time or contact the Help Desk (Error message: %s).",
+    "type": "error"
   }
 }
