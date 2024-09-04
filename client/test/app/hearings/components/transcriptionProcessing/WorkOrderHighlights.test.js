@@ -26,8 +26,8 @@ const mockedContent = {
 };
 
 const expectedCellContent = [
-  '1', 'H', 'Joe Shmoe (111111111)',
-  '2', 'L', 'Jane Shmoe (111111111)'
+  '1.', 'H', 'Joe Shmoe (111111111)',
+  '2.', 'L', 'Jane Shmoe (111111111)'
 ];
 
 const expectedLinks = [

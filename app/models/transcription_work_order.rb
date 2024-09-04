@@ -13,7 +13,6 @@ class TranscriptionWorkOrder
     transcriptions = ::Transcription
       .includes(transcription_files: { hearing: :appeal })
       .where(task_number: task_number)
-
     return {} unless transcriptions
 
     order_contents = []

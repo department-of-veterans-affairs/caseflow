@@ -60,7 +60,7 @@ RSpec.describe TranscriptionWorkOrder, type: :model do
     before do
       allow(Transcription).to receive(:includes).and_return(Transcription)
       allow(Transcription).to receive(:find_by).with(task_number: task_number).and_return(transcription)
-      allow(transcription).to receive(:transcription_files).and_return([transcription_file])
+      allow_any_instance_of(Transcription).to receive(:transcription_files).and_return([transcription_file])
     end
 
     it "returns work order contents" do
