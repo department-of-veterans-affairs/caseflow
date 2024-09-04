@@ -55,12 +55,12 @@ RSpec.describe CorrespondenceMailTask, type: :model do
       ]
     end
 
-    user_array.each do |example|
-      context "for #{example[:class]} assigned to #{example[:assigned_to]}" do
-        let(:task) { example[:class].create!(appeal: root_task.appeal, parent: root_task, assigned_to: example[:assigned_to]) }
+    user_array.each do |user|
+      context "for #{user[:class]} assigned to #{user[:assigned_to]}" do
+        let(:task) { user[:class].create!(appeal: root_task.appeal, parent: root_task, assigned_to: user[:assigned_to]) }
 
         before do
-          allow_any_instance_of(User).to receive(:organization).and_return(example[:assigned_to])
+          allow_any_instance_of(User).to receive(:organization).and_return(user[:assigned_to])
         end
 
         it "allows the assigned user to access task actions" do
