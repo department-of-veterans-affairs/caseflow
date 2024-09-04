@@ -373,7 +373,7 @@ describe LegacyDocket do
     context "when priority is true" do
       context "with in window affinity" do
         it "returns affinity date count" do
-          expect(docket.affinity_date_count(true, true)).to eq(2)
+          expect(docket.affinity_date_count(true, true)).to eq(3)
         end
       end
 

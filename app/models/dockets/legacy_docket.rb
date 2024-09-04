@@ -138,7 +138,7 @@ class LegacyDocket < Docket
   # rubocop:enable Metrics/ParameterLists
 
   def priority_appeals_affinity_date_count(in_window)
-    LegacyAppeal.repository.priority_appeals_affinity_date_count(in_window)
+    LegacyAppeal.repository.priority_appeals_affinity_date_count(in_window).size
   end
 
   def non_priority_appeals_affinity_date_count(_in_window)
@@ -148,7 +148,7 @@ class LegacyDocket < Docket
   # used for distribution_stats
   def affinity_date_count(in_window, priority)
     if priority
-      priority_appeals_affinity_date_count(in_window).size
+      priority_appeals_affinity_date_count(in_window)
     else
       non_priority_appeals_affinity_date_count(in_window)
     end
