@@ -9,8 +9,76 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import { LOGO_COLORS } from '../constants/AppConstants';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import CaseSearchLink from '../components/CaseSearchLink';
+import ApiUtil from '../util/ApiUtil';
+import Button from '../components/Button';
 
 class CaseDistributionTest extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isReseedingAod: false,
+      isReseedingNonAod: false,
+      isReseedingAmaDocketGoals: false,
+      isReseedingDocketPriority: false
+    };
+  }
+
+  reseedAod = () => {
+    this.setState({ isReseedingAod: true });
+    ApiUtil.post('/case_distribution_levers_tests/run_demo_aod_hearing_seeds').then(() => {
+      this.setState({
+        isReseedingAod: false,
+      });
+    }, (err) => {
+      console.warn(err);
+      this.setState({
+        isReseedingAod: false,
+      });
+    });
+  };
+
+  reseedNonAod = () => {
+    this.setState({ isReseedingNonAod: true });
+    ApiUtil.post('/case_distribution_levers_tests/run_demo_non_aod_hearing_seeds').then(() => {
+      this.setState({
+        isReseedingNonAod: false,
+      });
+    }, (err) => {
+      console.warn(err);
+      this.setState({
+        isReseedingNonAod: false,
+      });
+    });
+  };
+
+  reseedAmaDocketGoals = () => {
+    this.setState({ isReseedingAmaDocketGoals: true });
+    ApiUtil.post('/case_distribution_levers_tests/run-demo-ama-docket-goals').then(() => {
+      this.setState({
+        isReseedingAmaDocketGoals: false,
+      });
+    }, (err) => {
+      console.warn(err);
+      this.setState({
+        isReseedingAmaDocketGoals: false,
+      });
+    });
+  };
+
+  reseedDocketPriority = () => {
+    this.setState({ isReseedingDocketPriority: true });
+    ApiUtil.post('/case_distribution_levers_tests/run-demo-docket-priority').then(() => {
+      this.setState({
+        isReseedingDocketPriority: false,
+      });
+    }, (err) => {
+      console.warn(err);
+      this.setState({
+        isReseedingDocketPriority: false,
+      });
+    });
+  };
+
   render() {
     const Router = this.props.router || BrowserRouter;
     const appName = 'Case Distribution';
@@ -164,14 +232,64 @@ class CaseDistributionTest extends React.PureComponent {
                           <h2 id="distribution_status">Distribution Status</h2>
                           <ul>
                             <li>
-                              <a href="/appeals-ready-to-distribute?csv=1">
-                                <button className="btn btn-primary">Download Appeals Ready to Distribute CSV</button>
+                              <a href="/case_distribution_levers_tests/appeals_ready_to_distribute?csv=1">
+                                <Button classNames={['usa-button-active']}>
+                                  Download Appeals Ready to Distribute CSV
+                                </Button>
                               </a>
                             </li>
                             <li>
-                              <a href="/appeals-distributed?csv=1">
-                                <button className="btn btn-primary">Download Distributed Appeals CSV</button>
+                              <a href="/case_distribution_levers_tests/appeals_distributed?csv=1">
+                                <Button classNames={['usa-button-active']}>Download Distributed Appeals CSV</Button>
                               </a>
+                            </li>
+                            <li>
+                              <a href="/case_distribution_levers_tests/ineligible_judge_list?csv=1">
+                                <Button classNames={['usa-button-active']}>Download Ineligible Judge List</Button>
+                              </a>
+                            </li>
+                            <li>
+                              <a href="/case_distribution_levers_tests/appeals_non_priority_ready_to_distribute?csv=1">
+                                <Button classNames={['usa-button-active']}>
+                                  Download AMA Non-priority Distributable CSV
+                                </Button>
+                              </a>
+                            </li>
+                          </ul>
+                          <hr />
+                          <h2 id="run_seeds">Run Seed Files</h2>
+                          <ul>
+                            <li>
+                              <Button
+                                onClick={this.reseedAod}
+                                name="Run Demo AOD Hearing Held Seeds"
+                                loading={this.state.isReseedingAod}
+                                loadingText="Reseeding AOD Hearing Held Seeds"
+                              />
+                            </li>
+                            <li>
+                              <Button
+                                onClick={this.reseedNonAod}
+                                name="Run Demo NON AOD Hearing Held Seeds"
+                                loading={this.state.isReseedingNonAod}
+                                loadingText="Reseeding NON AOD Hearing Held Seeds"
+                              />
+                            </li>
+                            <li>
+                              <Button
+                                onClick={this.reseedAmaDocketGoals}
+                                name="Run Docket Time Goal (AMA non-pri) Seeds"
+                                loading={this.state.isReseedingAmaDocketGoals}
+                                loadingText="Reseeding Docket Time Goal (AMA non-pri) Seeds"
+                              />
+                            </li>
+                            <li>
+                              <Button
+                                onClick={this.reseedDocketPriority}
+                                name="Run Docket-type Seeds"
+                                loading={this.state.isReseedingDocketPriority}
+                                loadingText="Reseeding Docket-type Seeds"
+                              />
                             </li>
                           </ul>
                           <hr />

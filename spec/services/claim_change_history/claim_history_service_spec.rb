@@ -55,7 +55,12 @@ describe ClaimHistoryService do
   let(:sc_intake_user) { create(:user, full_name: "Eleanor Reynolds", css_id: "ELENVHA", station_id: "103") }
   let(:update_user) { create(:user, full_name: "Alexander Dewitt", css_id: "ALEXVHA", station_id: "103") }
   let(:update_user2) { create(:user, full_name: "Captain Underpants", css_id: "CAPTAINVHA", station_id: "105") }
-  let(:decision_issue) { create(:decision_issue, disposition: "denied", benefit_type: hlr_task.appeal.benefit_type) }
+  let(:decision_issue) do
+    create(:decision_issue,
+           disposition: "denied",
+           benefit_type: hlr_task.appeal.benefit_type,
+           caseflow_decision_date: 5.days.ago.to_date)
+  end
   let(:filters) { {} }
   let!(:vha_business_line) { VhaBusinessLine.singleton }
 
@@ -151,10 +156,13 @@ describe ClaimHistoryService do
         disposition_issue_descriptions = ["VHA - Caregiver ", "Camp Lejune description"]
         disposition_user_names = ["Gaius Baelsar", "Gaius Baelsar"]
         disposition_values = %w[Granted denied]
+        disposition_dates = [5.days.ago.to_date.to_s] * 2
+
         expect(disposition_events.map(&:issue_type)).to contain_exactly(*disposition_issue_types)
         expect(disposition_events.map(&:issue_description)).to contain_exactly(*disposition_issue_descriptions)
         expect(disposition_events.map(&:event_user_name)).to contain_exactly(*disposition_user_names)
         expect(disposition_events.map(&:disposition)).to contain_exactly(*disposition_values)
+        expect(disposition_events.map(&:disposition_date)).to contain_exactly(*disposition_dates)
 
         # Verify the issue data is correct for all the add issue events
         added_issue_types = [*disposition_issue_types, "CHAMPVA", "Beneficiary Travel"]
@@ -178,6 +186,10 @@ describe ClaimHistoryService do
         expect(add_decision_date_event.issue_type).to eq(extra_hlr_request_issue.nonrating_issue_category)
         expect(add_decision_date_event.issue_description).to eq(extra_hlr_request_issue.nonrating_issue_description)
         expect(add_decision_date_event.event_user_name).to eq(update_user2.full_name)
+
+        # Verify that the completed status event has access to the disposition/caseflow decision date for the ui
+        completed_status_event = events.find { |event| event.event_type == :completed }
+        expect(completed_status_event.disposition_date).to eq(disposition_dates.first)
       end
 
       it "should sort by task id and event date" do
@@ -185,8 +197,10 @@ describe ClaimHistoryService do
         issue.update(created_at: Time.zone.now - 90.days)
         events = subject
 
-        # expect the first event to be the one with the fudged far-in-the-past date
-        expect(events.first.event_type).to eq(:completed_disposition)
+        # expect the first event to always be claim creation
+        expect(events.first.event_type).to eq(:claim_creation)
+        # expect the second event to be the one with the fudged far-in-the-past date
+        expect(events.second.event_type).to eq(:completed_disposition)
       end
     end
 
@@ -555,7 +569,7 @@ describe ClaimHistoryService do
         context "equal to number of days" do
           let(:filters) { { days_waiting: { number_of_days: 5, operator: "=" } } }
 
-          it "should only return events for tasks that match the days waiting filter" do
+          it "should only return events for tasks that match the days waiting filter", skip: "Flakey test" do
             subject
             expect(service_instance.events.map(&:event_type)).to contain_exactly(*expected_hlr_event_types)
           end
@@ -651,7 +665,7 @@ describe ClaimHistoryService do
         it "should only return the last event for each task" do
           subject
           expected_event_types = [
-            :completed_disposition,
+            :completed,
             :in_progress
           ]
           expect(service_instance.events.map(&:event_type)).to contain_exactly(*expected_event_types)

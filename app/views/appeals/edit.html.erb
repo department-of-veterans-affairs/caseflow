@@ -1,9 +1,13 @@
 <% content_for :full_page_content do %>
   <%= react_component("IntakeEdit", props: {
     userDisplayName: current_user.display_name,
+    userCssId: current_user.css_id,
+    userFullName: current_user.full_name,
     userCanWithdrawIssues: current_user.can_withdraw_issues?,
     userCanSplitAppeal: current_user.can_split_appeal?(appeal),
     userCanEditIntakeIssues: current_user.can_edit_intake_issues?,
+    userCanRequestIssueUpdates: current_user.can_request_for_issue_updates?,
+    userIsVhaAdmin: current_user.vha_business_line_admin_user?,
     appeal: appeal,
     hearings: appeal.hearings,
     hearingDayDate: appeal.hearing_day_if_schedueled,
@@ -14,6 +18,8 @@
     buildDate: build_date,
     serverIntake: appeal.ui_hash,
     claimId: url_appeal_uuid,
+    hasDistributionTask: appeal.try(:distributed?),
+    hasSpecialtyCaseTeamAssignTask: appeal.try(:specialty_case_team_assign_task?),
     isLegacy: appeal.is_legacy?,
     featureToggles: {
       useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user),
@@ -21,6 +27,7 @@
       covidTimelinessExemption: FeatureToggle.enabled?(:covid_timeliness_exemption, user: current_user),
       split_appeal_workflow: FeatureToggle.enabled?(:split_appeal_workflow, user: current_user),
       cc_appeal_workflow: FeatureToggle.enabled?(:cc_appeal_workflow, user: current_user),
+      specialtyCaseTeamDistribution: FeatureToggle.enabled?(:specialty_case_team_distribution, user: current_user),
       mstIdentification: FeatureToggle.enabled?(:mst_identification, user: current_user),
       pactIdentification: FeatureToggle.enabled?(:pact_identification, user: current_user),
       legacyMstPactIdentification: FeatureToggle.enabled?(:legacy_mst_pact_identification, user: current_user),

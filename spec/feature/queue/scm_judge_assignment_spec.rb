@@ -21,6 +21,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
     team_attorneys.each do |attorney|
       create(:staff, :attorney_role, user: attorney, stitle: "DF")
       judge_one_team.add_user(attorney)
+      Seeds::CaseDistributionLevers.new.seed!
     end
 
     SpecialCaseMovementTeam.singleton.add_user(scm_user)
@@ -116,6 +117,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
         allow_any_instance_of(DirectReviewDocket).to receive(:weight).and_return(10)
         allow_any_instance_of(DirectReviewDocket).to receive(:nonpriority_receipts_per_year).and_return(100)
         allow(Docket).to receive(:nonpriority_decisions_per_year).and_return(1000)
+        allow_any_instance_of(Docket).to receive(:calculate_days_for_time_goal_with_prior_to_goal).and_return(0)
       end
 
       scenario "on ama appeals" do
@@ -143,7 +145,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           click_dropdown(prompt: "Select a user", text: judge_two.full_name)
           instructions = "#{judge_one.full_name} is on leave. Please take over this case"
           fill_in("taskInstructions", with: instructions)
-          click_on("Submit")
+          click_on COPY::MODAL_SUBMIT_BUTTON
 
           expect(page).to have_content("Task reassigned to #{judge_two.full_name}")
 
@@ -161,7 +163,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           click_dropdown(prompt: "Select a user", text: attorney_one.full_name)
           instructions = "#{judge_one.full_name} is on leave. Please draft a decision for this case"
           fill_in(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: instructions)
-          click_on("Submit")
+          click_on COPY::ASSIGN_TASK_BUTTON
 
           expect(page).to have_content("Assigned 1 task to #{attorney_one.full_name}")
 
@@ -179,7 +181,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           click_dropdown(propmt: "Select an action...", text: "Assign to attorney")
           click_dropdown(prompt: "Select a user", text: "Other")
           click_dropdown(prompt: "Select a user", text: attorney_two.full_name)
-          click_on("Submit")
+          click_on COPY::ASSIGN_TASK_BUTTON
 
           expect(page).to have_content("Reassigned 1 task to #{attorney_two.full_name}")
 
@@ -194,7 +196,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           click_dropdown(propmt: "Select an action...", text: "Cancel task")
           expect(page).to have_content(format(COPY::CANCEL_TASK_MODAL_DETAIL, judge_two.full_name))
           fill_in "taskInstructions", with: "Sending back to judge to be reassigned"
-          click_on("Submit")
+          click_on COPY::MODAL_SUBMIT_BUTTON
           expect(page).to have_content(
             "Task for #{appeal.veteran.first_name} #{appeal.veteran.last_name}'s case has been cancelled"
           )
@@ -214,7 +216,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           click_dropdown(propmt: "Select an action...", text: "Re-assign to a judge")
           click_dropdown(prompt: "Select a user", text: judge_two.full_name)
           fill_in("taskInstructions", with: "#{judge_one.full_name} is on leave. Please take over this case")
-          click_on("Submit")
+          click_on COPY::MODAL_SUBMIT_BUTTON
 
           expect(page).to have_content("Task reassigned to #{judge_two.full_name}")
 
@@ -234,7 +236,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           click_dropdown(propmt: "Select an action...", text: "Re-assign to a judge")
           click_dropdown(prompt: "Select a user", text: judge_two.full_name)
           fill_in("taskInstructions", with: "#{judge_one.full_name} is on leave. Please take over this case")
-          click_on("Submit")
+          click_on COPY::MODAL_SUBMIT_BUTTON
 
           expect(page).to have_content("Task reassigned to #{judge_two.full_name}")
 
@@ -251,9 +253,10 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           click_dropdown(prompt: "Select a user", text: attorney_one.full_name)
           instructions = "#{judge_one.full_name} is on leave. Please draft a decision for this case"
           fill_in(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: instructions)
-          click_on("Submit")
+          click_on COPY::ASSIGN_TASK_BUTTON
 
           expect(page).to have_content("Assigned 1 task to #{attorney_one.full_name}")
+          expect(current_path).to eq("/queue")
 
           visit "/queue/appeals/#{legacy_appeal.external_id}"
           expect(page).to have_content("ASSIGNED TO\n#{attorney_one.vacols_uniq_id}")

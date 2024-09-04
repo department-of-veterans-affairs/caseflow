@@ -49,7 +49,7 @@ class ApplicationController < ApplicationBaseController
       err = Caseflow::Error::SerializableError.new(code: code, message: err.to_s)
     end
 
-    DataDogService.increment_counter(
+    MetricsService.increment_counter(
       metric_group: "errors",
       metric_name: "non_critical",
       app_name: RequestStore[:application],
@@ -161,6 +161,14 @@ class ApplicationController < ApplicationBaseController
     }
   end
 
+  def test_seeds_url
+    {
+      title: "Test Seeds",
+      link: "/test/seeds",
+      sort_order: 7
+    }
+  end
+
   def hearing_application_url
     {
       title: "Hearings",
@@ -210,14 +218,30 @@ class ApplicationController < ApplicationBaseController
 
   def admin_menu_items
     admin_urls = []
-    admin_urls.concat(manage_teams_menu_items) if current_user&.administered_teams&.any?
-    admin_urls.push(manage_users_menu_item) if current_user&.can_view_user_management?
-    admin_urls.push(case_distribution_url) if current_user&.organizations&.any?(&:users_can_view_levers?)
+    add_team_management_items(admin_urls)
+    add_user_management_items(admin_urls)
+    add_case_distribution_item(admin_urls)
 
+    admin_urls.flatten
+  end
+
+  def add_team_management_items(admin_urls)
     if current_user&.can_view_team_management? || current_user&.can_view_judge_team_management?
       admin_urls.unshift(manage_all_teams_menu_item)
     end
-    admin_urls.flatten
+  end
+
+  def add_user_management_items(admin_urls)
+    admin_urls.concat(manage_teams_menu_items) if current_user&.administered_teams&.any?
+    admin_urls.push(manage_users_menu_item) if current_user&.can_view_user_management?
+  end
+
+  def add_case_distribution_item(admin_urls)
+    admin_urls.push(case_distribution_url) if current_user&.organizations&.any?(&:users_can_view_levers?)
+  end
+
+  def add_test_seeds_item(admin_urls)
+    admin_urls.push(test_seeds_url) if current_user&.organizations&.any?(&:users_can_view_levers?)
   end
 
   def dropdown_urls

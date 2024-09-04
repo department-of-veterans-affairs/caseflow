@@ -12,7 +12,7 @@ module Seeds
     end
 
     def local_vacols_seed!
-      hearing_date_shift = Time.now.utc.beginning_of_day - Time.utc(2017, 7, 25)
+      hearing_date_shift = Time.now.utc.beginning_of_day - Time.utc(2017, 12, 2)
 
       vacols_models.each do |model|
         if model == VACOLS::CaseHearing

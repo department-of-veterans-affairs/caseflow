@@ -7,6 +7,14 @@ FactoryBot.define do
     updated_at { Time.now.utc }
     veteran_file_number { appeal&.veteran_file_number || "" }
 
+    trait :ama do
+      appeal
+    end
+
+    trait :legacy do
+      appeal { create(:legacy_appeal, vacols_case: create(:case)) }
+    end
+
     trait "RO17" do
       address { "9500 Bay Pines Blvd." }
       city { "St. Petersburg" }

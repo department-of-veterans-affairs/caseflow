@@ -68,6 +68,7 @@ export class Pdf extends React.PureComponent {
         scale={this.props.scale}
         documentType={this.props.documentType}
         featureToggles={this.props.featureToggles}
+        renderStartTime={this.props.renderStartTime}
       />;
     });
   }
@@ -153,5 +154,6 @@ Pdf.propTypes = {
   selectedAnnotationId: PropTypes.number,
   stopPlacingAnnotation: PropTypes.func,
   togglePdfSidebar: PropTypes.func,
-  featureToggles: PropTypes.object
+  featureToggles: PropTypes.object,
+  renderStartTime: PropTypes.any
 };

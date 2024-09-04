@@ -94,6 +94,6 @@ class TeamQuota < CaseflowRecord
 
   # Cap the search to the last month to avoid an infinite loop
   def most_recent_user_counts
-    self.class.where(task_type: task_type).order(:date).limit(31).lazy.map(&:user_count)
+    self.class.default_scoped.where(task_type: task_type).order(:date).limit(31).lazy.map(&:user_count)
   end
 end

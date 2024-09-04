@@ -11,6 +11,7 @@ import { FlashAlerts } from './components/Alerts';
 import ReviewPage from './pages/ReviewPage';
 import TaskPage from './pages/TaskPage';
 import ReportPage from './pages/ReportPage';
+import ClaimHistoryPage from './pages/ClaimHistoryPage';
 import CombinedNonCompReducer, { mapDataToInitialState } from './reducers';
 
 class NonComp extends React.PureComponent {
@@ -37,6 +38,12 @@ class NonComp extends React.PureComponent {
             >
               <AppFrame>
                 {this.props.flash && <FlashAlerts flash={this.props.flash} />}
+                <PageRoute
+                  exact
+                  path="/:businessLineSlug/tasks/:taskId/history"
+                  title={`${appName} Individual Claim History | Caseflow`}
+                  component={ClaimHistoryPage}
+                />
                 <PageRoute
                   exact
                   path="/:businessLineSlug/tasks/:taskId"

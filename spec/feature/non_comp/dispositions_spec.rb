@@ -265,6 +265,12 @@ feature "NonComp Dispositions Task Page", :postgres do
       User.stub = user
       vha_org.add_user(user)
       Timecop.travel(Time.zone.local(2023, 0o2, 0o1))
+
+      OrganizationsUser.make_user_admin(admin_user, VhaBusinessLine.singleton)
+    end
+
+    let!(:admin_user) do
+      create(:user, roles: ["Mail Intake"])
     end
 
     after do
@@ -273,7 +279,7 @@ feature "NonComp Dispositions Task Page", :postgres do
     end
 
     let!(:vha_org) { VhaBusinessLine.singleton }
-    let(:user) { create(:default_user) }
+    let(:user) { create(:default_user, roles: ["Mail Intake"]) }
     let(:veteran) { create(:veteran) }
     let(:decision_date) { Time.zone.now + 10.days }
 
@@ -281,7 +287,8 @@ feature "NonComp Dispositions Task Page", :postgres do
       create(:higher_level_review,
              :with_vha_issue,
              :with_end_product_establishment,
-             :create_business_line,
+             :processed,
+             :update_assigned_at,
              benefit_type: "vha",
              veteran: veteran,
              claimant_type: :veteran_claimant)
@@ -295,9 +302,16 @@ feature "NonComp Dispositions Task Page", :postgres do
     let(:dispositions_url) { "#{business_line_url}/tasks/#{in_progress_task.id}" }
 
     it "vha decision Review workflow" do
-      step "submit button should be disabled and cancel returns back to business line" do
+      step "submit button should be disabled" do
         visit dispositions_url
         expect(page).to have_button("Complete", disabled: true)
+      end
+
+      step "task history link should not exist" do
+        expect(page).to_not have_link("View History")
+      end
+
+      step "cancel returns back to business line" do
         click_on "Cancel"
         expect(page).to have_current_path("/#{business_line_url}", ignore_query: true)
       end
@@ -386,6 +400,41 @@ feature "NonComp Dispositions Task Page", :postgres do
       expect(page).to have_text(COPY::POA_SUCCESSFULLY_REFRESH_MESSAGE)
     end
 
+    scenario "VHA non-admins should see request issue modification" do
+      visit dispositions_url
+
+      expect(page).to have_link("Request issue modification", href: in_progress_task.caseflow_only_edit_issues_url)
+      expect(page).to have_button("Edit Issues", disabled: true)
+      expect(page).to have_content(COPY::DISPOSITION_DECISION_HEADER_NONADMIN)
+    end
+
+    context "claims with pending issue modifications should not be able to be dispositioned" do
+      before do
+        create(:issue_modification_request, decision_review: in_progress_task)
+        visit dispositions_url
+      end
+
+      scenario "The banner should display and the save button should be disabled" do
+        expect(page).to have_content(COPY::DISPOSITION_DECISION_HEADER_NONADMIN)
+        expect(page).to have_content(COPY::VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_NON_ADMIN)
+        expect(page).to have_selector("input#disposition-issue-0[disabled]", visible: false)
+        expect(page).to have_selector("textarea#description-issue-0[disabled]")
+        expect(page).to have_selector("input#decision-date[readonly]")
+        expect(page).to have_button("Complete", disabled: true)
+
+        step "As an admin user" do
+          User.authenticate!(user: admin_user)
+          visit dispositions_url
+          expect(page).to have_content(COPY::VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_ADMIN)
+          expect(page).not_to have_text(COPY::DISPOSITION_DECISION_HEADER_ADMIN)
+          expect(page).to have_selector("input#disposition-issue-0[disabled]", visible: false)
+          expect(page).to have_selector("textarea#description-issue-0[disabled]")
+          expect(page).to have_selector("input#decision-date[readonly]")
+          expect(page).to have_button("Complete", disabled: true)
+        end
+      end
+    end
+
     context "with no POA" do
       before do
         allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return({})
@@ -405,6 +454,52 @@ feature "NonComp Dispositions Task Page", :postgres do
       it "should display the VHA-specific text" do
         visit dispositions_url
         expect(page).to have_content(COPY::CASE_DETAILS_UNRECOGNIZED_POA_VHA)
+      end
+    end
+
+    context "with a not listed POA" do
+      context "for a higher level review" do
+        let(:decision_review) do
+          create(
+            :higher_level_review,
+            veteran_file_number: veteran.file_number,
+            benefit_type: vha_org.url,
+            veteran_is_not_claimant: true,
+            claimant_type: :other_claimant_not_listed
+          )
+        end
+        let(:in_progress_task) do
+          create(:higher_level_review_task, :in_progress, appeal: decision_review, assigned_to: vha_org)
+        end
+        let(:dispositions_url) { "#{business_line_url}/tasks/#{in_progress_task.id}" }
+
+        it "should display the VHA-specific text" do
+          visit dispositions_url
+          expect(page).to have_content("Veterans Health Administration")
+          expect(page).to have_content(COPY::CASE_DETAILS_NO_RECOGNIZED_POA_VHA)
+        end
+      end
+
+      context "for supplemental claim" do
+        let(:decision_review) do
+          create(
+            :supplemental_claim,
+            veteran_file_number: veteran.file_number,
+            benefit_type: vha_org.url,
+            veteran_is_not_claimant: true,
+            claimant_type: :other_claimant_not_listed
+          )
+        end
+        let(:in_progress_task) do
+          create(:supplemental_claim_task, :in_progress, appeal: decision_review, assigned_to: vha_org)
+        end
+        let(:dispositions_url) { "#{business_line_url}/tasks/#{in_progress_task.id}" }
+
+        it "should display the VHA-specific text" do
+          visit dispositions_url
+          expect(page).to have_content("Veterans Health Administration")
+          expect(page).to have_content(COPY::CASE_DETAILS_NO_RECOGNIZED_POA_VHA)
+        end
       end
     end
   end

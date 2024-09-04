@@ -135,6 +135,9 @@ destroy: clean
 lint:  ## Run linter for javascript and ruby
 	bundle exec rake lint
 
+rubocop: ## Run linter for ruby
+	bundle exec rake rubocop -a
+
 jslint:  ## Run linter for javascript
 	cd client && yarn run lint
 
@@ -249,6 +252,9 @@ reset-dbs: ## Resets Caseflow and ETL database schemas
 
 seed-vbms-ext-claim: ## Seed only vbms_ext_claim
 	bundle exec rake db:seed:vbms_ext_claim
+
+seed-ama-intake: ## Seeds scenarios for the AMA Intake API
+	bundle exec rake db:seed:ama_intake
 
 seed-dbs:	## Seed all databases
 	bundle exec rake local:vacols:seed

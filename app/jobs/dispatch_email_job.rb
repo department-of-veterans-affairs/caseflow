@@ -40,7 +40,7 @@ class DispatchEmailJob < CaseflowJob
       response = msg.response
       response_external_url = response.body.dig("_links", "self")
 
-      DataDogService.increment_counter(
+      MetricsService.increment_counter(
         app_name: Constants.DATADOG_METRICS.DISPATCH.APP_NAME,
         metric_group: Constants.DATADOG_METRICS.DISPATCH.OUTCODE_GROUP_NAME,
         metric_name: "email.sent",

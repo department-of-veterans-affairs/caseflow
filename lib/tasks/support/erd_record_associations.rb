@@ -84,12 +84,10 @@ module ErdRecordAssociations
     # These are common Rails fields that clutter the visualization
     :created_by, :updated_by,
 
-    # These associations are created dynamically by BelongsToPolymorphicAppealConcern
-    # and is already indicated in the visualization
+    # Polymorphic `belongs_to :appeal`-related associations
     :ama_appeal, :legacy_appeal, :supplemental_claim, :higher_level_review,
 
-    # These associations are created dynamically by BelongsToPolymorphicHearingConcern
-    # and is already indicated in the visualization
+    # Polymorphic `belongs_to :hearing`-related associations
     :ama_hearing, :legacy_hearing
   ].freeze
   def exclude_verbose_associations(associations)

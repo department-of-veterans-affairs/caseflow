@@ -1261,6 +1261,48 @@ describe RequestIssue, :all_dbs do
     end
   end
 
+  context "#active?" do
+    let(:request_issue) { create(:request_issue, ineligible_reason: nil, closed_at: nil, split_issue_status: nil) }
+
+    context "all individual fields are looked at" do
+      it "should result in active? as true" do
+        expect(request_issue.eligible?).to eq true
+        expect(request_issue.closed_at).to eq nil
+        expect(request_issue.split_issue_status).to eq nil
+        expect(request_issue.split_issue_status).to_not eq "in_progress"
+        expect(request_issue.active?).to eq true
+      end
+    end
+
+    context "when the current request issue has no ineligible reason, not closed, and no split issue status" do
+      it "should be active" do
+        expect(request_issue.active?).to eq true
+      end
+    end
+
+    context "when the current request issue has no ineligible reason,\
+     not closed, and has a split issue status of in_progress" do
+      it "should be active" do
+        request_issue.update!(split_issue_status: "in_progress")
+        expect(request_issue.active?).to eq true
+      end
+    end
+
+    context "when the current request issue has an ineligible reason" do
+      it "should not be active" do
+        request_issue.update!(ineligible_reason: "untimely")
+        expect(request_issue.active?).to eq false
+      end
+    end
+
+    context "when the current request issue has a closed_at status" do
+      it "should not be active" do
+        request_issue.update!(closed_at: Time.current)
+        expect(request_issue.active?).to eq false
+      end
+    end
+  end
+
   context "#description" do
     subject { request_issue.description }
 
@@ -2679,6 +2721,19 @@ describe RequestIssue, :all_dbs do
 
     it "should have add decision_date_added_at" do
       expect(subject.decision_date_added_at).to eq(subject.created_at)
+    end
+  end
+
+  context "#sct_benefit_type?" do
+    let(:request_issue) { create(:request_issue, benefit_type: "vha", decision_date: 4.days.ago) }
+    let(:request_issue2) { create(:request_issue, decision_date: 4.days.ago) }
+
+    it "should return true if the benefit type is a sct benefit type" do
+      expect(request_issue.sct_benefit_type?).to eq(true)
+    end
+
+    it "should return false if the benefit type is not a sct benefit type" do
+      expect(request_issue2.sct_benefit_type?).to eq(false)
     end
   end
 end

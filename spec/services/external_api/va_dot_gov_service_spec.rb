@@ -30,6 +30,62 @@ describe ExternalApi::VADotGovService do
     end
   end
 
+  describe "#validate_street_address" do
+    it "returns validated street address" do
+      result = VADotGovService.validate_address(address)
+
+      body = JSON.parse(result.response.body)
+      message_keys = body["messages"].pluck("key")
+
+      expect(result.error).to be_nil
+      expect(result.data).to_not be_nil
+      expect(message_keys).to_not include("InvalidRequestStreetAddress")
+      expect(body["address"]).to include("addressLine1", "addressLine2", "addressLine3")
+    end
+  end
+
+  describe "#validate_address_state" do
+    it "returns validated state in the address" do
+      result = VADotGovService.validate_address(address)
+
+      body = JSON.parse(result.response.body)
+      message_keys = body["messages"].pluck("key")
+
+      expect(result.error).to be_nil
+      expect(result.data).to_not be_nil
+      expect(message_keys).to_not include("InvalidRequestState")
+      expect(body["address"]).to include("stateProvince")
+    end
+  end
+
+  describe "#validate_address_country" do
+    it "returns validated country in the address" do
+      result = VADotGovService.validate_address(address)
+
+      body = JSON.parse(result.response.body)
+      message_keys = body["messages"].pluck("key")
+
+      expect(result.error).to be_nil
+      expect(result.data).to_not be_nil
+      expect(message_keys).to_not include("InvalidRequestCountry")
+      expect(body["address"]).to include("country")
+    end
+  end
+
+  describe "#validate_presence_of_zip_code" do
+    it "returns validated presence of zip code in address" do
+      result = VADotGovService.validate_address(address)
+
+      body = JSON.parse(result.response.body)
+      message_keys = body["messages"].pluck("key")
+
+      expect(result.error).to be_nil
+      expect(result.data).to_not be_nil
+      expect(message_keys).to_not include("InvalidRequestPostalCode")
+      expect(body["address"]).to include("zipCode5")
+    end
+  end
+
   describe "#validate_zip_code" do
     it "returns invalid full address with valid geographic coordinates" do
       result = VADotGovService.validate_zip_code(address)
@@ -48,22 +104,40 @@ describe ExternalApi::VADotGovService do
   describe "#get_distance" do
     it "returns distance to facilities" do
       result = VADotGovService.get_distance(
-        ids: %w[vha_757 vha_539 vha_539],
+        ids: %w[vha_757 vha_539],
         lat: 0.0,
         long: 0.0
       )
 
-      expect(result.data.pluck(:facility_id)).to eq(%w[vha_757 vha_539 vha_539])
+      expect(result.data.pluck(:facility_id)).to match_array(%w[vha_757 vha_539])
+      expect(result.body[:meta][:distances].pluck(:id)).to match_array(%w[vha_757 vha_539])
+      expect(result.body[:meta][:distances].pluck(:distance)).to all(be_an(Integer))
+
       expect(result.error).to be_nil
     end
   end
 
   describe "#get_facility_data" do
     it "returns facility data" do
-      result = VADotGovService.get_facility_data(ids: %w[vha_757 vha_539 vha_539])
+      result = VADotGovService.get_facility_data(ids: %w[vha_757 vha_539])
 
-      expect(result.data.pluck(:facility_id)).to eq(%w[vha_757 vha_539 vha_539])
+      expect(result.data.pluck(:facility_id)).to match_array(%w[vha_757 vha_539])
+      expect(result.body[:meta][:distances].pluck(:id)).to match_array(%w[vha_757 vha_539])
+      expect(result.body[:meta][:distances].pluck(:distance)).to all(be_zero)
       expect(result.error).to be_nil
+    end
+  end
+
+  describe "#check_facilities_attributes" do
+    it "returns facility attributes" do
+      result = VADotGovService.get_facility_data(ids: %w[vha_757 vha_539])
+
+      expect(result.body[:data].first.keys).to include(:id, :type, :attributes)
+      expect(result.body[:data].pluck(:attributes).first.keys).to include(:name, :facilityType, :classification)
+
+      attributes = result.body[:data].pluck(:attributes)
+      keys = attributes.pluck(:address).pluck(:physical).first.keys
+      expect(keys).to include(:zip, :city, :state, :address1)
     end
   end
 

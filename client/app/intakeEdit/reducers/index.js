@@ -5,6 +5,7 @@ import { REQUEST_STATE } from '../../intake/constants';
 import { update } from '../../util/ReducerUtil';
 import { formatRequestIssues, formatContestableIssues } from '../../intake/util/issues';
 import { formatRelationships } from '../../intake/util';
+import { formatIssueModificationRequests } from '../../intake/util/issueModificationRequests';
 
 export const mapDataToInitialState = function(props = {}) {
   const {
@@ -13,8 +14,15 @@ export const mapDataToInitialState = function(props = {}) {
     featureToggles,
     userCanWithdrawIssues,
     userCanEditIntakeIssues,
+    userIsVhaAdmin,
     userCanSplitAppeal,
-    isLegacy } = props;
+    userCanRequestIssueUpdates,
+    userFullName,
+    userCssId,
+    isLegacy,
+    hasDistributionTask,
+    hasSpecialtyCaseTeamAssignTask
+  } = props;
 
   serverIntake.relationships = formatRelationships(serverIntake.relationships);
   serverIntake.contestableIssues = formatContestableIssues(serverIntake.contestableIssuesByDate);
@@ -36,7 +44,11 @@ export const mapDataToInitialState = function(props = {}) {
     featureToggles,
     userCanWithdrawIssues,
     userCanEditIntakeIssues,
+    userIsVhaAdmin,
     userCanSplitAppeal,
+    userCanRequestIssueUpdates,
+    userCssId,
+    userFullName,
     isLegacy,
     addDecisionDateModalVisible: false,
     addIssuesModalVisible: false,
@@ -45,6 +57,9 @@ export const mapDataToInitialState = function(props = {}) {
     activeNonratingRequestIssues: formatRequestIssues(serverIntake.activeNonratingRequestIssues),
     addedIssues: formatRequestIssues(serverIntake.requestIssues, serverIntake.contestableIssues),
     originalIssues: formatRequestIssues(serverIntake.requestIssues, serverIntake.contestableIssues),
+    pendingIssueModificationRequests: formatIssueModificationRequests(serverIntake.pendingIssueModificationRequests),
+    originalPendingIssueModificationRequests:
+      formatIssueModificationRequests(serverIntake.pendingIssueModificationRequests),
     requestStatus: {
       requestIssuesUpdate: REQUEST_STATE.NOT_STARTED
     },
@@ -52,7 +67,9 @@ export const mapDataToInitialState = function(props = {}) {
     afterIssues: null,
     beforeIssues: null,
     updatedIssues: null,
-    editEpUpdateError: null
+    editEpUpdateError: null,
+    hasDistributionTask,
+    hasSpecialtyCaseTeamAssignTask
   };
 };
 
@@ -98,7 +115,7 @@ export const intakeEditReducer = (state = mapDataToInitialState(), action) => {
     });
   case ACTIONS.EDIT_EP_CLAIM_LABEL_FAILED:
     return update(state, {
-      editEpUpdateError: { $set: action.payload.errorCode}
+      editEpUpdateError: { $set: action.payload.errorCode }
     });
   default:
     return applyCommonReducers(state, action);

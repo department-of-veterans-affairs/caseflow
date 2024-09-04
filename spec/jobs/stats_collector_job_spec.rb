@@ -97,7 +97,7 @@ describe StatsCollectorJob do
 
       context "with a daily collector" do
         it "records the job's runtime and collector stats" do
-          allow(DataDogService).to receive(:emit_gauge) { |args| emitted_gauges.push(args) }
+          allow(MetricsService).to receive(:emit_gauge) { |args| emitted_gauges.push(args) }
 
           described_class.perform_now
 
@@ -124,7 +124,7 @@ describe StatsCollectorJob do
         end
 
         it "records the job's runtime and collector stats despite a failing collector" do
-          allow(DataDogService).to receive(:emit_gauge) { |args| emitted_gauges.push(args) }
+          allow(MetricsService).to receive(:emit_gauge) { |args| emitted_gauges.push(args) }
 
           allow(Raven).to receive(:capture_exception)
 
@@ -172,7 +172,7 @@ describe StatsCollectorJob do
         end
 
         it "records stats with tags when provided in collector results" do
-          allow(DataDogService).to receive(:emit_gauge) { |args| emitted_gauges.push(args) }
+          allow(MetricsService).to receive(:emit_gauge) { |args| emitted_gauges.push(args) }
 
           slack_msg = []
           allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg << first_arg }

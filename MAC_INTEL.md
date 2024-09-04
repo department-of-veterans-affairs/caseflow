@@ -25,7 +25,7 @@
 
 4. Change directory to appeals by typing: `cd appeals`
 
-5. Navigate to [instant client](https://www.oracle.com/database/tecdchnologies/instant-client/linux-x86-64-downloads.html)
+5. Navigate to [instant client](https://www.oracle.com/database/technologies/instant-client/linux-x86-64-downloads.html)
 
 6. Download the following zip files (Step can be skipped if you received the file transfer files)
     * instantclient-basic-linux.x64-12.2.0.1.0.zip
@@ -77,7 +77,7 @@
 
 19. Run `scripts/dev_env_setup_step2.sh` script (may take a while to run)
 
-20. Run `gem install bundler`
+20. Run `gem install bundler -v $(grep -A 1 "BUNDLED WITH" Gemfile.lock | tail -n 1)`
 
 21. Navigate to `~/appeals/caseflow/local/vacols` in terminal (type: `cd ~/appeals/caseflow/local/vacols`)
 

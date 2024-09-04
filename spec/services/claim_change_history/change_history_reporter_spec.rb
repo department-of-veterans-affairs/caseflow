@@ -173,7 +173,7 @@ describe ChangeHistoryReporter do
           "VACO (101)",
           "E. Thompson",
           added_issue_event.readable_event_date,
-          "Added Issue",
+          "Added issue",
           "CHAMPVA",
           "CHAMPVA issue description",
           added_issue_event.readable_decision_date,
@@ -210,7 +210,7 @@ describe ChangeHistoryReporter do
           "",
           "System",
           in_progress_status_event.readable_event_date,
-          "Claim status - In Progress",
+          "Claim status - In progress",
           nil,
           "Claim can be processed.",
           nil

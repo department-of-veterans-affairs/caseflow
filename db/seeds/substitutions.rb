@@ -21,53 +21,60 @@ module Seeds
       30.days.ago
     end
 
+    def bvaaabshire
+      @bvaaabshire ||= User.find_by_css_id("BVAAABSHIRE")
+    end
+
+    def bvatcobb
+      @bvatcobb ||= User.find_by_css_id("BVATCOBB")
+    end
+
+    def bvascasper1
+      bvascasper1 ||= User.find_by_css_id("BVASCASPER1")
+    end
+
     # :reek:FeatureEnvy
     def create_tasks_for_pending_appeals(appeal)
-      colocated_user = User.find_by_css_id("BVAAABSHIRE")
-      cob_user = User.find_by_css_id("BVATCOBB")
-      FoiaRequestMailTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: MailTeam.singleton)
-      foia_parent_task = appeal.tasks.of_type(:FoiaRequestMailTask).first
-      FoiaRequestMailTask.create!(appeal: appeal,
-                                  parent: foia_parent_task, assigned_to: PrivacyTeam.singleton, assigned_by: cob_user)
+      colocated_user = bvaaabshire
+      cob_user = bvatcobb
+      foia_parent_task = FoiaRequestMailTask.create!(appeal: appeal, parent: appeal.root_task,
+                                                     assigned_to: MailTeam.singleton)
+      FoiaRequestMailTask.create!(appeal: appeal, parent: foia_parent_task,
+                                  assigned_to: PrivacyTeam.singleton, assigned_by: cob_user)
       create(:colocated_task,
              :translation,
              appeal: appeal,
              assigned_to: colocated_user,
              assigned_by: cob_user,
              parent: appeal.root_task)
-      AddressChangeMailTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: MailTeam.singleton)
-      address_parent_task = appeal.tasks.of_type(:AddressChangeMailTask).first
+      address_parent_task = AddressChangeMailTask.create!(appeal: appeal, parent: appeal.root_task,
+                                                          assigned_to: MailTeam.singleton)
       AddressChangeMailTask.create!(appeal: appeal, parent: address_parent_task,
                                     assigned_to: PrivacyTeam.singleton, assigned_by: cob_user)
     end
 
     def create_completed_tasks_for_pending_appeal(appeal)
-      cob_user = User.find_by_css_id("BVATCOBB")
-      EvidenceOrArgumentMailTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: MailTeam.singleton)
-      evidence_task = appeal.tasks.of_type(:EvidenceOrArgumentMailTask).first
-      evidence_task.update!(status: "completed")
-      ReconsiderationMotionMailTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: MailTeam.singleton)
-      motion_parent = appeal.tasks.of_type(:ReconsiderationMotionMailTask).first
-      ReconsiderationMotionMailTask.create!(appeal: appeal, parent: motion_parent,
-                                            assigned_to: LitigationSupport.singleton, assigned_by: cob_user)
-      motion_child = appeal.tasks.of_type(:ReconsiderationMotionMailTask).last
-      motion_parent.update!(status: "completed")
-      motion_child.update!(status: "completed")
+      cob_user = bvatcobb
+      EvidenceOrArgumentMailTask
+        .create!(appeal: appeal, parent: appeal.root_task, assigned_to: MailTeam.singleton)
+        .completed!
+      parent = ReconsiderationMotionMailTask.create!(appeal: appeal, parent: appeal.root_task,
+                                                            assigned_to: MailTeam.singleton)
+      ReconsiderationMotionMailTask
+        .create!(appeal: appeal, parent: parent, assigned_to: LitigationSupport.singleton, assigned_by: cob_user)
+        .completed!
     end
 
     def create_cancelled_tasks(appeal)
-      EvidenceSubmissionWindowTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: MailTeam.singleton)
-      evidence_task = appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first
-      evidence_task.update!(status: "cancelled")
-      ScheduleHearingTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: MailTeam.singleton)
-      hearing_task = appeal.tasks.of_type(:ScheduleHearingTask).first
-      hearing_task.update!(status: "cancelled")
+      EvidenceSubmissionWindowTask
+        .create!(appeal: appeal, parent: appeal.root_task, assigned_to: MailTeam.singleton)
+        .cancelled!
+      ScheduleHearingTask
+        .create!(appeal: appeal, parent: appeal.root_task, assigned_to: MailTeam.singleton)
+        .cancelled!
     end
 
     def create_appeal_with_death_dismissal(veteran: deceased_vet, docket_type: "direct_review")
-      attorney = User.find_by_css_id("BVASCASPER1")
-      judge = User.find_by_css_id("BVAAABSHIRE")
-
       create(
         :appeal,
         :with_decision_issue, :dispatched, # trait order matters to ensure correct `closed_status` on RI
@@ -77,15 +84,12 @@ module Seeds
         docket_type: docket_type,
         receipt_date: date_of_death + 5.days,
         closest_regional_office: "RO17",
-        associated_judge: judge,
-        associated_attorney: attorney
+        associated_judge: bvaaabshire,
+        associated_attorney: bvascasper1
       )
     end
 
     def create_pending_appeal(veteran: deceased_vet, docket_type: "direct_review")
-      attorney = User.find_by_css_id("BVASCASPER1")
-      judge = User.find_by_css_id("BVAAABSHIRE")
-
       appeal = create(
         :appeal,
         :at_attorney_drafting,
@@ -94,8 +98,8 @@ module Seeds
         docket_type: docket_type,
         receipt_date: date_of_death + 5.days,
         closest_regional_office: "RO17",
-        associated_judge: judge,
-        associated_attorney: attorney
+        associated_judge: bvaaabshire,
+        associated_attorney: bvascasper1
       )
       create_tasks_for_pending_appeals(appeal)
       create_completed_tasks_for_pending_appeal(appeal)

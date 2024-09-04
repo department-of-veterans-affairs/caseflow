@@ -7,6 +7,10 @@ import ApiUtil from '../../app/util/ApiUtil';
 import { queueConfigData } from '../../test/data/camoQueueConfigData';
 import { appealsData } from '../../test/data/camoAmaAppealsData';
 import { amaTasksData } from '../../test/data/camoAmaTasksData';
+import { sctAmaTasksData } from '../../test/data/sctAmaTasksData';
+import faker from 'faker';
+import { sctQueueConfigData } from '../../test/data/sctQueueConfigData';
+import { sctAmaAppealsData } from '../../test/data/sctAmaAppealsData';
 
 // Define a custom stub function to replace the Api post method
 // eslint-disable-next-line no-unused-vars
@@ -75,6 +79,31 @@ const vhaProgramOffices = {
   ]
 };
 
+const attorneyData = {
+  data: Array.from({ length: 5 }, (_, i) => ({
+    full_name: faker.name.findName(),
+    id: i + 1,
+    station_id: '101',
+    css_id: `TESTING${i + 1}`
+  }))
+};
+
+// This id has to match the id of the assigned to in your amaTasks test data
+const testCamoOrg = {
+  id: 39,
+  name: 'VHA CAMO',
+  isVso: false,
+  userCanBulkAssign: true
+};
+
+// This id has to match the id of the assigned to in your amaTasks test data
+const testSpecialtyCaseTeamOrg = {
+  id: 67,
+  name: 'Specialty Case Team',
+  isVso: false,
+  userCanBulkAssign: true
+};
+
 const ReduxDecorator = (Story, options) => {
   const state = {};
   const { args } = options;
@@ -82,22 +111,30 @@ const ReduxDecorator = (Story, options) => {
   state.queue = initialState;
   state.ui = uiState;
 
-  state.queue.amaTasks = amaTasksData;
-  state.queue.queueConfig = queueConfigData;
-  state.queue.appeals = appealsData;
-
   state.ui.userCssId = 'TESTUSER';
 
-  state.ui.activeOrganization = {
-    id: 39,
-    name: 'VHA CAMO',
-    isVso: false,
-    userCanBulkAssign: true
-  };
+  if (args.userIsSCTCoordinator) {
+    state.ui.userIsSCTCoordinator = args.userIsSCTCoordinator;
+    state.ui.activeOrganization = testSpecialtyCaseTeamOrg;
+    state.userIsCamoEmployee = false;
+    state.queue.attorneys = attorneyData;
+    state.queue.amaTasks = sctAmaTasksData;
+    state.queue.queueConfig = sctQueueConfigData;
+    state.queue.appeals = sctAmaAppealsData;
+  } else if (args.userIsCamoEmployee) {
+    state.ui.userIsCamoEmployee = args.userIsCamoEmployee;
+    state.ui.activeOrganization = testCamoOrg;
+    state.ui.userIsSCTCoordinator = false;
+    state.queue.vhaProgramOffices = vhaProgramOffices;
+    state.queue.amaTasks = amaTasksData;
+    state.queue.queueConfig = queueConfigData;
+    state.queue.appeals = appealsData;
+  } else {
+    state.ui.userIsSCTCoordinator = false;
+    state.ui.userIsCamoEmployee = false;
+    state.queue.attorneys = attorneyData;
 
-  state.queue.vhaProgramOffices = vhaProgramOffices;
-
-  state.ui.userIsCamoEmployee = args.userIsCamoEmployee;
+  }
 
   return <ReduxBase reducer={queueReducer} initialState={state}>
     <Story />
@@ -114,6 +151,9 @@ export default {
     userIsCamoEmployee: {
       control: { type: 'boolean' }
     },
+    userIsSCTCoordinator: {
+      control: { type: 'boolean' }
+    }
   },
 };
 

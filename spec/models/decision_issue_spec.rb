@@ -3,6 +3,8 @@
 describe DecisionIssue, :postgres do
   include IntakeHelpers
 
+  it_behaves_like "DecisionIssue belongs_to polymorphic appeal"
+
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
   end

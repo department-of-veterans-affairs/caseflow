@@ -37,6 +37,7 @@ describe WorkQueue::VeteranRecordRequestSerializer, :postgres do
           created_at: task.created_at,
           issue_count: 0,
           issue_types: "",
+          pending_issue_modification_count: 0,
           type: "Record Request",
           business_line: non_comp_org.url,
           external_appeal_id: appeal.uuid,

@@ -404,24 +404,52 @@ module IntakeHelpers
 
   def click_remove_intake_issue_dropdown(text)
     issue_el = find_intake_issue_by_text(text)
-    issue_num = issue_el[:"data-key"].sub(/^issue-/, "")
-    find("#issue-action-#{issue_num}").click
-    find("#issue-action-#{issue_num}_remove").click
+
+    within issue_el do
+      click_dropdown(text: "Remove")
+    end
+    click_remove_issue_confirmation
+  end
+
+  def click_remove_intake_issue_dropdown_by_number(number)
+    issue_el = find_intake_issue_by_number(number)
+
+    within issue_el do
+      click_dropdown(text: "Remove")
+    end
     click_remove_issue_confirmation
   end
 
   def click_withdraw_intake_issue_dropdown(text)
     issue_el = find_intake_issue_by_text(text)
-    issue_num = issue_el[:"data-key"].sub(/^issue-/, "")
-    find("#issue-action-#{issue_num}").click
-    find("#issue-action-#{issue_num}_withdraw").click
+
+    within issue_el do
+      click_dropdown(text: "Withdraw")
+    end
   end
 
   def click_correct_intake_issue_dropdown(text)
     issue_el = find_intake_issue_by_text(text)
-    issue_num = issue_el[:"data-key"].sub(/^issue-/, "")
-    find("#issue-action-#{issue_num}").click
-    find("#issue-action-#{issue_num}_correct").click
+
+    within issue_el do
+      click_dropdown(text: "Correct")
+    end
+  end
+
+  def click_edit_intake_issue_dropdown(text)
+    issue_el = find_intake_issue_by_text(text)
+
+    within issue_el do
+      click_dropdown(text: "Edit issue")
+    end
+  end
+
+  def click_edit_intake_issue_dropdown_by_number(number)
+    issue_el = find_intake_issue_by_number(number)
+
+    within issue_el do
+      click_dropdown(text: "Edit issue")
+    end
   end
 
   def select_correction_type_from_modal(value)
@@ -884,22 +912,22 @@ module IntakeHelpers
     )
   end
 
-  def generate_rating_with_old_decisions(veteran, receipt_date)
+  def generate_rating_with_old_decisions(veteran)
     Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - 5.years,
-      profile_date: receipt_date - 5.years,
+      promulgation_date: Constants::DATES["AMA_ACTIVATION"].to_date - 5.days,
+      profile_date: Constants::DATES["AMA_ACTIVATION"].to_date - 5.days,
       issues: [
         { reference_id: "9876", decision_text: "Left hand broken" }
       ],
       decisions: [
         {
           rating_issue_reference_id: nil,
-          original_denial_date: receipt_date - 5.years - 3.days,
+          original_denial_date: Constants::DATES["AMA_ACTIVATION"].to_date - 3.days,
           diagnostic_text: "Right arm broken",
           diagnostic_type: "Bone",
           disability_id: "123",
-          disability_date: receipt_date - 5.years - 2.days,
+          disability_date: Constants::DATES["AMA_ACTIVATION"].to_date - 2.days,
           type_name: "Not Service Connected"
         }
       ]

@@ -19,6 +19,22 @@ FactoryBot.define do
       klass.new(**attributes)
     end
 
+    trait :ama do
+      decision_review { create(:appeal, number_of_claimants: 0) }
+    end
+
+    trait :legacy do
+      decision_review { create(:legacy_appeal, vacols_case: create(:case)) }
+    end
+
+    trait :higher_level_review do
+      decision_review { create(:higher_level_review, number_of_claimants: 0, benefit_type: "vha") }
+    end
+
+    trait :supplemental_claim do
+      decision_review { create(:supplemental_claim, number_of_claimants: 0, benefit_type: "vha") }
+    end
+
     trait :advanced_on_docket_due_to_age do
       after(:create) do |claimant, _evaluator|
         claimant.person.update!(date_of_birth: 76.years.ago)
@@ -28,6 +44,12 @@ FactoryBot.define do
     trait :with_unrecognized_appellant_detail do
       after(:create) do |claimant, _evaluator|
         create(:unrecognized_appellant, claimant: claimant)
+      end
+    end
+
+    trait :with_unrecognized_appellant_not_listed_poa do
+      after(:create) do |claimant, _evaluator|
+        create(:unrecognized_appellant, :with_not_listed_power_of_attorney, claimant: claimant)
       end
     end
 

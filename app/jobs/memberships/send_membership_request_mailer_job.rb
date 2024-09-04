@@ -37,7 +37,7 @@ class Memberships::SendMembershipRequestMailerJob < CaseflowJob
       response_msg = msg.response
       response_external_url = response_msg.body.dig("_link", "self")
 
-      DataDogService.increment_counter(
+      MetricsService.increment_counter(
         app_name: Constants.DATADOG_METRICS.VHA.APP_NAME,
         metric_group: Constants.DATADOG_METRICS.VHA.MEMBERSHIP_REQUESTS_GROUP_NAME,
         metric_name: "email.error",

@@ -21,6 +21,7 @@ class ETL::UnknownStatusWithCompletedRootTaskQuery
   def appeal_ids_for_open_child_tasks
     ETL::Task.select(:appeal_id).distinct
       .where(appeal_type: "Appeal")
-      .where.not(task_type: "RootTask", task_status: Task.closed_statuses)
+      .where.not(task_type: "RootTask")
+      .where.not(task_status: Task.closed_statuses)
   end
 end

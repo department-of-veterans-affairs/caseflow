@@ -13,6 +13,12 @@ class RequestIssue < CaseflowRecord
   include HasDecisionReviewUpdatedSince
   include SyncLock
 
+  # Pagination for VBMS API
+  paginates_per ENV["REQUEST_ISSUE_PAGINATION_OFFSET"].to_i
+
+  # Max page per limit
+  DEFAULT_UPPER_BOUND_PER_PAGE = ENV["REQUEST_ISSUE_DEFAULT_UPPER_BOUND_PER_PAGE"].to_i
+
   # how many days before we give up trying to sync decisions
   REQUIRES_PROCESSING_WINDOW_DAYS = 30
 
@@ -28,6 +34,7 @@ class RequestIssue < CaseflowRecord
   has_many :hearing_issue_notes
   has_one :legacy_issue_optin
   has_many :legacy_issues
+  has_many :issue_modification_requests, dependent: :destroy
   belongs_to :correction_request_issue, class_name: "RequestIssue", foreign_key: "corrected_by_request_issue_id"
   belongs_to :ineligible_due_to, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
   belongs_to :contested_decision_issue, class_name: "DecisionIssue"
@@ -293,6 +300,13 @@ class RequestIssue < CaseflowRecord
     false
   end
 
+  def active?
+    eligible? &&
+      closed_at.nil? &&
+      (split_issue_status.nil? ||
+      split_issue_status == "in_progress")
+  end
+
   def rating?
     !!associated_rating_issue? ||
       !!previous_rating_issue? ||
@@ -349,6 +363,10 @@ class RequestIssue < CaseflowRecord
 
   def vha_predocket?
     benefit_type == "vha" && predocket_needed?
+  end
+
+  def sct_benefit_type?
+    Constants::SPECIALTY_CASE_TEAM_BENEFIT_TYPES.key?(benefit_type)
   end
 
   def description

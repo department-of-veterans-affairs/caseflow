@@ -56,7 +56,10 @@
 }
 
 .cf-selected-issues {
-  > span { font-weight: bold; }
+  > span {
+    font-weight: bold;
+  }
+
   display: block;
   padding: 0.5em;
 }
@@ -75,7 +78,7 @@
   }
 }
 
-[id=button-begin-next-intake] {
+[id='button-begin-next-intake'] {
   margin-top: 10px;
 }
 
@@ -106,11 +109,11 @@
   color: $color-gray-dark;
   width: 750px;
   max-height: 95%;
-  font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+  font-family: 'Source Sans Pro', 'Helvetica Neue', 'Helvetica', 'Roboto', 'Arial', sans-serif;
   font-weight: 400;
 
   p {
-    font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+    font-family: 'Source Sans Pro', 'Helvetica Neue', 'Helvetica', 'Roboto', 'Arial', sans-serif;
     font-size: 1.8rem;
     color: $color-black;
   }
@@ -118,13 +121,13 @@
   h1 {
     text-align: center;
     border-bottom: 1px solid $color-gray-lighter;
-    font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+    font-family: 'Source Sans Pro', 'Helvetica Neue', 'Helvetica', 'Roboto', 'Arial', sans-serif;
     font-weight: 800;
   }
 
   h2 {
     margin-bottom: 10px;
-    font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+    font-family: 'Source Sans Pro', 'Helvetica Neue', 'Helvetica', 'Roboto', 'Arial', sans-serif;
     font-weight: 800;
   }
 
@@ -134,15 +137,15 @@
   }
 
   .question-label {
-    font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+    font-family: 'Source Sans Pro', 'Helvetica Neue', 'Helvetica', 'Roboto', 'Arial', sans-serif;
   }
 
   .add-nonrating-request-issue {
-    font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+    font-family: 'Source Sans Pro', 'Helvetica Neue', 'Helvetica', 'Roboto', 'Arial', sans-serif;
   }
 
   .add-nonrating-request-issue-description {
-    font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+    font-family: 'Source Sans Pro', 'Helvetica Neue', 'Helvetica', 'Roboto', 'Arial', sans-serif;
   }
 
   .cf-benefit-type {
@@ -160,7 +163,7 @@
 
     .usa-button {
       font-size: 1.5rem;
-      padding: .8rem 1.2rem;
+      padding: 0.8rem 1.2rem;
     }
   }
 
@@ -169,7 +172,7 @@
 
     .usa-button {
       font-size: 1.5rem;
-      padding: .8rem 1.2rem;
+      padding: 0.8rem 1.2rem;
     }
 
     .no-matching-issues {
@@ -212,7 +215,7 @@
 
       .claim-label {
         display: inline-block;
-        padding: .75rem 0;
+        padding: 0.75rem 0;
       }
 
       .edit-claim-label {
@@ -226,14 +229,15 @@
       }
     }
 
-    .issues {
+    .issues,
+    .issue-modifications {
       display: table;
       width: 100%;
 
       .issue {
         display: table-row;
 
-        div {
+        > div {
           display: table-cell;
           padding: 1em 0;
         }
@@ -296,8 +300,8 @@
         }
 
         .issue-action {
-          padding: 0;
-          width: 140px;
+          padding: 1em 0;
+          width: 150px;
           display: block;
 
           button {
@@ -371,7 +375,12 @@
   }
 
   p {
-    margin: .5rem 0;
+    margin: 0.5rem 0;
+  }
+
+  .issue-modification-request-original p {
+    color: $color-gray;
+    opacity: 0.5;
   }
 }
 
@@ -379,7 +388,7 @@
   .cf-form-radio-option {
     display: inline;
 
-    [type=radio]:disabled + label::before {
+    [type='radio']:disabled + label::before {
       background: $color-gray-lightest;
       box-shadow: 0 0 0 2px $color-gray-lightest, 0 0 0 3px $color-gray-lighter;
       cursor: not-allowed;

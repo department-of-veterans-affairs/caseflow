@@ -4,6 +4,8 @@
   "value": "value",
   "days": "days",
   "cases": "cases",
+  "priority": "priority",
+  "non_priority": "non-priority",
   "DUPLICATE": "DUPLICATE",
   "ERROR": "ERROR",
   "data_types": {
@@ -27,6 +29,6 @@
   },
   "validation_error_message": {
     "minimum_not_met": "Please enter a value greater than or equal to 0",
-    "out_of_bounds": "Please enter a value from 0 to 999"
+    "out_of_bounds": "Please enter a value from 0 to %s"
   }
 }

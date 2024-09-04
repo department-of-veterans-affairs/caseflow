@@ -5,28 +5,21 @@ import { PdfPage } from '../../app/reader/PdfPage';
 
 export const pageMetricData = [
   'test',
-  { data: {
-    documentId: documents[0].id,
-    file: documents[0].content_url,
-    numPagesInDoc: 1,
-    pageIndex: 1
-  },
-  message: 'Storing PDF page',
-  product: 'reader',
-  type: 'performance'
+  {
+    message: 'Getting PDF page 2 from PDFJS document',
+    product: 'reader',
+    type: 'performance',
+    eventId: '123456'
   },
   true
 ];
 
 export const textMetricData = [
   'test',
-  { data: {
-    documentId: documents[0].id,
-    file: documents[0].content_url
-  },
-  message: 'Storing PDF page text',
-  product: 'reader',
-  type: 'performance'
+  {
+    message: 'Storing PDF page text text in Redux',
+    product: 'reader',
+    type: 'performance'
   },
   true
 ];
@@ -43,7 +36,8 @@ export const storeMetricsData = [
     message: 'pdf_page_render_time_in_ms',
     product: 'reader',
     type: 'performance'
-  }
+  },
+  '123456'
 ];
 
 export const storeMetricsBrowserError = [
@@ -57,22 +51,18 @@ export const storeMetricsBrowserError = [
     message: '1234 : setUpPage /document/1/pdf : Error',
     product: 'browser',
     type: 'error',
-  }
+  },
+  '123456',
 ];
 
 export const recordMetricsArgs = [
   'Test',
-  { data: {
-    documentId: documents[0].id,
-    documentType: 'Test',
-    file: documents[0].content_url,
-    numPagesInDoc: 1,
-    pageIndex: 1
-  },
-  message: 'PDFJS rendering text layer',
-  product: 'reader',
-  type: 'performance',
-  uuid: '1234'
+  {
+    message: 'Rendering PDF page 2 text',
+    product: 'reader',
+    type: 'performance',
+    uuid: '1234',
+    eventId: '123456'
   },
   true
 ];
@@ -81,6 +71,7 @@ export const pdfPageRenderTimeInMsEnabled = () => {
   return shallow(
     <PdfPage
       documentId={documents[0].id}
+      metricsIdentifier="123456"
       file={documents[0].content_url}
       isPageVisible=""
       pageIndex={1}

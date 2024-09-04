@@ -26,7 +26,7 @@ module Seeds
       parent_4 = CavcDecisionReason.create(decision_reason: "Consider statute/regulation/diagnostic code/caselaw",
                                            order: 12)
       CavcDecisionReason.create(decision_reason: "Consider lay evidence", order: 13)
-      CavcDecisionReason.create(decision_reason: "Consider service/private/VA medical advice", order: 14)
+      CavcDecisionReason.create(decision_reason: "Consider service/private/VA medical evidence", order: 14)
       CavcDecisionReason.create(decision_reason: "Consider theory of entitlement/contentions", order: 15)
       parent_5 = CavcDecisionReason.create(
         decision_reason: "Misapplication of statute/regulation/diagnostic code/caselaw",

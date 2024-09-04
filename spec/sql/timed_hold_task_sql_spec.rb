@@ -18,7 +18,7 @@ describe "Timed Hold Task example", :postgres do
     it "generates correct report" do
       expect_sql("timed-hold-task").to include(
         hash_including(
-          "timer_will_trigger" => timed_hold_task.task_timers.first.as_hash[:last_submitted_at]
+          "timer_will_trigger" => timed_hold_task.task_timers.first.last_submitted_at
         )
       )
     end

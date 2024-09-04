@@ -39,18 +39,32 @@
       border-bottom: 1px solid $color-gray-lighter;
 
       th {
-        padding: 20px 0;
+        padding: 10px;
       }
 
       td {
-        padding: 0;
+        padding: 10px;
         vertical-align: middle;
 
         ol {
           list-style-position: inside;
           padding-left: 0;
+          margin: 0;
         }
       }
     }
+  }
+
+  .entry-user-id {
+    width: 10%;
+  }
+
+  .entry-previous-values,
+  .entry-updated-values {
+    width: 15%;
+  }
+
+  .entry-titles {
+    width: 40%;
   }
 }

@@ -331,6 +331,7 @@ export class PdfUI extends React.Component {
           prefetchFiles={this.props.prefetchFiles}
           resetJumpToPage={this.props.resetJumpToPage}
           featureToggles={this.props.featureToggles}
+          renderStartTime={this.props.renderStartTime}
         />
       </div>
       { this.getPdfFooter() }
@@ -406,5 +407,6 @@ PdfUI.propTypes = {
   showPdf: PropTypes.func,
   stopPlacingAnnotation: PropTypes.func,
   togglePdfSidebar: PropTypes.func,
-  toggleSearchBar: PropTypes.any
+  toggleSearchBar: PropTypes.any,
+  renderStartTime: PropTypes.any
 };

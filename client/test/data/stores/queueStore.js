@@ -1,6 +1,6 @@
 import { omit } from 'lodash';
 import React from 'react';
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import { MemoryRouter, Route } from 'react-router-dom';
 
@@ -8,6 +8,7 @@ import reducer from '../../../app/queue/reducers';
 import { defaultHearing, hearingDateOptions } from '../../data/hearings';
 import { amaAppeal, openHearingAppeal, defaultAssignHearing, legacyAppeal } from '../../data/appeals';
 import { roLocations, roList } from '../../data/regional-offices';
+import thunk from 'redux-thunk';
 
 export const appealsData = {
   [legacyAppeal.externalId]: legacyAppeal,
@@ -80,7 +81,7 @@ export const queueWrapper = ({ children, ...props }) => {
         ...initialState.ui,
         ...props?.ui
       },
-    })}>
+    }, applyMiddleware(thunk))}>
       <MemoryRouter
         initialEntries={initialRoute ? [initialRoute] : ['/']}
         keyLength={0}
@@ -93,4 +94,3 @@ export const queueWrapper = ({ children, ...props }) => {
     </Provider>
   );
 };
-

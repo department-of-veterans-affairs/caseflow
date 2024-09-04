@@ -7,7 +7,7 @@ import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 import cx from 'classnames';
 import COPY from '../../../COPY';
 import PropTypes from 'prop-types';
-import { findOption } from '../utils';
+import { findOption, findValueOption } from '../utils';
 import { changedLevers } from '../reducers/levers/leversSelector';
 
 export const SaveModal = (props) => {
@@ -15,18 +15,48 @@ export const SaveModal = (props) => {
 
   const theState = useSelector((state) => state);
 
-  const leverValueDisplay = (lever) => {
-    const doesDatatypeRequireComplexLogic = (lever.data_type === ACD_LEVERS.data_types.radio ||
-      lever.data_type === ACD_LEVERS.data_types.combination);
+  const combinationValue = (value, isToggleActive) => {
+    const toggleString = isToggleActive ? 'Active' : 'Inactive';
 
-    if (doesDatatypeRequireComplexLogic) {
-      const selectedOption = findOption(lever, lever.value);
-      const isSelectedOptionANumber = selectedOption.data_type === ACD_LEVERS.data_types.number;
+    return `${toggleString} - ${value}`;
+  };
 
-      return isSelectedOptionANumber ? selectedOption.value : selectedOption.text;
+  /**
+   * If omit or infinite
+   *  Return the text for the option
+   *
+   * If value
+   *  Return the text, value, and unit for the option
+   */
+  const radioValue = (lever, value) => {
+    if ([ACD_LEVERS.omit, ACD_LEVERS.infinite].includes(value)) {
+      return findOption(lever, value).text;
+    }
+    const selectedOption = findValueOption(lever);
+
+    return `${selectedOption.text} ${value} ${selectedOption.unit}`;
+  };
+
+  const changedLeverDisplayValue = (lever, value, isToggleActive) => {
+    let displayValue = value;
+
+    if (lever.data_type === ACD_LEVERS.data_types.radio) {
+      displayValue = radioValue(lever, value);
     }
 
-    return <strong>{lever.value}</strong>;
+    if (lever.data_type === ACD_LEVERS.data_types.combination) {
+      displayValue = combinationValue(value, isToggleActive);
+    }
+
+    return displayValue;
+  };
+
+  const backendValueDisplay = (lever) => {
+    return <>{changedLeverDisplayValue(lever, lever.backendValue, lever.backendIsToggleActive)}</>;
+  };
+
+  const leverValueDisplay = (lever) => {
+    return <strong>{changedLeverDisplayValue(lever, lever.value, lever.is_toggle_active)}</strong>;
   };
 
   const leverList = () => {
@@ -62,7 +92,7 @@ export const SaveModal = (props) => {
                     id={`${lever.item}-previous-value`}
                     className={cx('modal-table-styling', 'modal-table-right-styling')}
                   >
-                    {lever.backendValue}
+                    {backendValueDisplay(lever)}
                   </td>
                   <td
                     id={`${lever.item}-new-value`}
