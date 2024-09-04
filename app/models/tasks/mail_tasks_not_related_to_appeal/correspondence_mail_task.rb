@@ -34,14 +34,18 @@ class CorrespondenceMailTask < CorrespondenceTask
     # return the users from other orgs
     if assigned_to.is_a?(User)
       users_list = []
-      assigned_to.organizations.each { |org| users_list << org.users.reject { |user| user == assigned_to}.pluck(:css_id) }
+      assigned_to.organizations.each {
+        |org| users_list << org.users.reject {
+          |user| user == assigned_to
+        }.pluck(:css_id)
+      }
       users_list.flatten
     end
 
     users_list
   end
 
-  # rubocop: disable Metrics/AbcSize
+  # disable Metrics/AbcSize
   def self.available_actions(user)
     return [] unless user
 
@@ -54,8 +58,7 @@ class CorrespondenceMailTask < CorrespondenceTask
       Constants.TASK_ACTIONS.COMPLETE_CORRESPONDENCE_TASK.to_h
     ]
 
-
-    if user.is_a? (User)
+    if user.is_a? User
       options.insert(2, Constants.TASK_ACTIONS.REASSIGN_CORR_TASK_TO_PERSON.to_h)
     else
       options.insert(2, Constants.TASK_ACTIONS.ASSIGN_CORR_TASK_TO_PERSON.to_h)
@@ -72,5 +75,4 @@ class CorrespondenceMailTask < CorrespondenceTask
       Organization.assignable(self)
     end
   end
-  # rubocop: enable Metrics/AbcSize
 end

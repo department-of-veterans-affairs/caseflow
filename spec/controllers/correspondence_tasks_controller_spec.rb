@@ -96,7 +96,11 @@ RSpec.describe CorrespondenceTasksController, :all_dbs, type: :controller do
   describe "PATCH #update assign_to_person" do
     context "Update correspondence task" do
       before do
-        task_creation_params.merge!(task_id: correspondence_task.id, instructions: ["please update task, thanks"], assigned_to: assigned_to.css_id)
+        task_creation_params.merge!(
+          task_id: correspondence_task.id,
+          instructions: ["please update task, thanks"],
+          assigned_to: assigned_to.css_id
+        )
         patch :assign_to_person, params: task_creation_params
       end
 
@@ -105,7 +109,7 @@ RSpec.describe CorrespondenceTasksController, :all_dbs, type: :controller do
         correspondence_task.reload
         expect(correspondence_task.status).to eq(Constants.TASK_STATUSES.assigned)
         expect(correspondence_task.assigned_to).to eq(assigned_to)
-        expect(correspondence_task.assigned_at).to be_within(1.second).of(Time.now)
+        expect(correspondence_task.assigned_at).to be_within(1.second).of(Time.zone.now)
       end
     end
   end
