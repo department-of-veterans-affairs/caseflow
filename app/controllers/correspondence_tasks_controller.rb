@@ -60,6 +60,17 @@ class CorrespondenceTasksController < TasksController
     process_package_action_decision(correspondence_tasks_params[:decision])
   end
 
+  def assign_to_team
+    task = CorrespondenceTask.find(correspondence_tasks_params[:task_id])
+    task.update!(
+      status: Constants.TASK_STATUSES.assigned,
+      assigned_to: Organization.find_by(name: correspondence_tasks_params[:assigned_to]),
+      assigned_at: Time.zone.now
+    )
+    task.instructions << correspondence_tasks_params[:instructions]
+    task.save!
+  end
+
   def cancel
     task = CorrespondenceTask.find(correspondence_tasks_params[:task_id])
     task.update!(status: Constants.TASK_STATUSES.cancelled)
@@ -91,7 +102,8 @@ class CorrespondenceTasksController < TasksController
       :action_type,
       :type,
       :correspondence_uuid,
-      instructions: []
+      :assigned_to,
+      :instructions
     )
   end
 

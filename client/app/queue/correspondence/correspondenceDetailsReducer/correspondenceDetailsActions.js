@@ -77,7 +77,7 @@ export const changeTaskTypeNotRelatedToAppeal = (taskID, payload, taskNames, cor
         payload: {
           bannerAlert: {
             title: 'Warning',
-            message: error,
+            message: error.message,
             type: 'warning'
           }
         }
@@ -116,6 +116,51 @@ export const completeTaskNotRelatedToAppeal = (payload, frontendParams, correspo
         type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
         payload: {
           bannerAlert: CORRESPONDENCE_DETAILS_BANNERS.completeFailBanner
+        }
+      });
+      console.error(error);
+    });
+};
+
+export const assignTaskToTeam = (payload, frontendParams, correspondence) => (dispatch) => {
+  return ApiUtil.patch(`/queue/correspondence/tasks/${frontendParams.taskId}/assign_to_team`, payload).
+    then(() => {
+
+      dispatch({
+        type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
+        payload: {
+          bannerAlert: {
+            title: CORRESPONDENCE_DETAILS_BANNERS.teamBanner.title,
+            message: sprintf(CORRESPONDENCE_DETAILS_BANNERS.teamBanner.message,
+              frontendParams.taskName,
+              frontendParams.teamName),
+            type: CORRESPONDENCE_DETAILS_BANNERS.teamBanner.type
+          }
+        }
+      });
+
+      dispatch({
+        type: ACTIONS.CORRESPONDENCE_INFO,
+        payload: {
+          correspondence
+        }
+      });
+
+    }).
+    catch((error) => {
+      const errorMessage = error?.response?.body?.message
+        ? error.response.body.message.replace(/^Error:\s*/, '')
+        : error.message;
+
+      dispatch({
+        type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
+        payload: {
+          bannerAlert: {
+            title: CORRESPONDENCE_DETAILS_BANNERS.teamFailBanner.title,
+            message: sprintf(CORRESPONDENCE_DETAILS_BANNERS.teamFailBanner.message,
+              errorMessage),
+            type: CORRESPONDENCE_DETAILS_BANNERS.teamFailBanner.type
+          }
         }
       });
       console.error(error);

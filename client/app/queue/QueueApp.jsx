@@ -94,6 +94,7 @@ import TeamManagement from './teamManagement/TeamManagement';
 import UserManagement from './UserManagement';
 import CorrespondenceReviewPackage from './correspondence/ReviewPackage/CorrespondenceReviewPackage';
 import CorrespondenceIntake from './correspondence/intake/components/CorrespondenceIntake';
+import CorrespondenceAssignTeamModal from './components/CorrespondenceAssignTeamModal';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_TITLES } from './constants';
@@ -746,6 +747,10 @@ class QueueApp extends React.PureComponent {
     />
   );
 
+  routedCorrespondenceAssignTeamModal = (props) => (
+    <CorrespondenceAssignTeamModal {...props.match.params} />
+  );
+
   routedCompleteHearingWithdrawalRequest = (props) => (
     <CompleteHearingWithdrawalRequestModal {...props.match.params} />
   );
@@ -1016,6 +1021,16 @@ class QueueApp extends React.PureComponent {
               path="/queue/correspondence/:correspondence_uuid/intake"
               title={`${PAGE_TITLES.CORRESPONDENCE_INTAKE}`}
               render={this.routedCorrespondenceIntake}
+            />
+            <PageRoute
+              exact
+              path={
+                '/queue/correspondence/:correspondence_uuid/tasks/:task_id/' +
+            `(${TASK_ACTIONS.ASSIGN_CORR_TASK_TO_TEAM.value
+            })`
+              }
+              title={`${PAGE_TITLES.ASSIGN_CORR_TASK_TO_TEAM} | Caseflow`}
+              render={this.routedCorrespondenceAssignTeamModal}
             />
 
             <PageRoute

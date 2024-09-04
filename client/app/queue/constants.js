@@ -223,7 +223,8 @@ export const PAGE_TITLES = {
   REVIEW_PACKAGE: 'Review Package',
   CORRESPONDENCE_CASES_LIST: 'Correspondence Cases',
   CORRESPONDENCE_INTAKE: 'Correspondence Intake',
-  CORRESPONDENCE_DETAILS: 'Correspondence Details'
+  CORRESPONDENCE_DETAILS: 'Correspondence Details',
+  ASSIGN_CORR_TASK_TO_TEAM: 'Assign Task',
 };
 
 export const CUSTOM_HOLD_DURATION_TEXT = 'Custom';
