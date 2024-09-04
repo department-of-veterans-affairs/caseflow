@@ -53,13 +53,14 @@ class ExternalApi::VaBoxService
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
 
-    response = http.request(request)
-
-    if response.code == "200" || response.code == "302"
+    if response.success?
       File.open(destination_path, "wb") do |file|
         file.write(response.body)
       end
       Rails.logger.info("File downloaded successfully to #{destination_path}")
+    elsif response.status == 302
+      redirect_url = response.headers['location']
+      follow_redirect_and_download(redirect_url, destination_path)
     else
       Rails.logger.info("Failed to download the file. Response code: #{response.code}")
       Rails.logger.info("Response body: #{response.body}")
@@ -84,6 +85,49 @@ class ExternalApi::VaBoxService
   end
 
   private
+
+  def follow_redirect_and_download(url, destination_path)
+    redirect_response = Faraday.get(url)
+
+    if redirect_response.status == 200
+      File.open(destination_path, 'wb') do |file|
+        file.write(redirect_response.body)
+      end
+      puts "File downloaded successfully to #{destination_path} via redirect"
+    else
+      puts "Failed to download file from redirect. Status: #{redirect_response.status}, Body: #{redirect_response.body}"
+    end
+  end
+
+  def fetch_access_token
+    response = fetch_jwt_access_token
+    @access_token = response[:access_token]
+    Rails.cache.write(:box_access_token, @access_token, expires_in: (response[:expires_in] - 60))
+    @access_token
+  end
+
+  def box_conn
+    ensure_access_token
+
+    Faraday.new(BASE_URL) do |f|
+      f.headers["Authorization"] = "Bearer #{@access_token}"
+      f.headers["Content-Type"] = "application/json"
+      f.response :logger, ::Logger.new($stdout)
+      f.use Faraday::Adapter::NetHttp
+    end
+  end
+
+  def upload_conn
+    ensure_access_token
+
+    Faraday.new(UPLOAD_URL) do |f|
+      f.headers["Authorization"] = "Bearer #{@access_token}"
+      f.request :multipart
+      f.request :url_encoded
+      f.response :logger, ::Logger.new($stdout)
+      f.use Faraday::Adapter::NetHttp
+    end
+  end
 
   # rubocop:disable Metrics/MethodLength
   def fetch_jwt_access_token
