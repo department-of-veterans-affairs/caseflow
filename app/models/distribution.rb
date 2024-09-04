@@ -164,7 +164,7 @@ class Distribution < CaseflowRecord
   end
 
   def write_to_distribution_lever_cache(values)
-    Rails.cache.write('distribution_lever_cache', values, expires_in: 1.week)
+    Rails.cache.write('distribution_lever_cache', values, expires_in: 1.day)
   end
 
   def clear_distribution_lever_cache

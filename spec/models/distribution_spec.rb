@@ -198,6 +198,10 @@ describe Distribution, :all_dbs do
       expect(new_distribution.status).to eq("error")
     end
 
+    it "writes to distribution_lever_cache" do
+      expect(Rails.cache.exist?('distribution_lever_cache')).to be true
+    end
+
     context "when status is an invalid value" do
       let(:status) { "invalid!" }
 
