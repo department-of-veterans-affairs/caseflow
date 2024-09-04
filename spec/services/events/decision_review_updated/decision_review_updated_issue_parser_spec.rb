@@ -11,7 +11,7 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser d
       contested_rating_decision_reference_id: nil,
       contested_rating_issue_profile_date: 1_625_076_000,
       contested_rating_issue_reference_id: "REF9411",
-      decision_date: "2023-07-01",
+      decision_date: 19_568,
       ineligible_due_to_id: 301,
       ineligible_reason: nil,
       is_unidentified: false,
@@ -22,7 +22,7 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser d
       untimely_exemption_notes: nil,
       vacols_id: "VAC123",
       vacols_sequence_id: nil,
-      closed_at: 1_625_151_600,
+      closed_at: "1970-01-19",
       closed_status: "withdrawn",
       contested_rating_issue_diagnostic_code: "9411",
       ramp_claim_id: "RAMP123",
@@ -65,7 +65,7 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser d
 
   describe "#ri_closed_at" do
     it "converts closed_at from milliseconds to datetime" do
-      expect(subject.ri_closed_at).to eq(Time.at(1_625_151_600/1000).utc)
+      expect(subject.ri_closed_at).to eq("1970-01-19")
     end
   end
 
@@ -117,11 +117,11 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser d
     end
   end
 
-  # describe "#ri_decision_date" do
-  #   it "returns the decision_date as logical date" do
-  #     expect(subject.ri_decision_date).to eq(need_to_clarify)
-  #   end
-  # end
+  describe "#ri_decision_date" do
+    it "returns the decision_date as logical date" do
+      expect(subject.ri_decision_date).to eq(Date.new(2023, 7, 30))
+    end
+  end
 
   describe "#ri_ineligible_due_to_id" do
     it "returns the ineligible_due_to_id" do

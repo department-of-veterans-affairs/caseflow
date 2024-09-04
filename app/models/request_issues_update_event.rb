@@ -31,10 +31,10 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       # updates rating_issue_associated_at of review's issues to nil
       review.mark_rating_request_issues_to_reassociate!
       update!(
-        before_request_issue_ids: before_issues.map(&:id),
-        after_request_issue_ids: after_issues.map(&:id),
-        withdrawn_request_issue_ids: withdrawn_issues.map(&:id),
-        edited_request_issue_ids: edited_issues.map(&:id)
+        before_request_issue_ids: before_issues.map(&:vbms_id),
+        after_request_issue_ids: after_issues.map(&:vbms_id),
+        withdrawn_request_issue_ids: withdrawn_issues.map(&:vbms_id),
+        edited_request_issue_ids: edited_issues.map(&:vbms_id)
       )
     end
 
@@ -89,7 +89,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
 
   def calculate_removed_issues
     @removed_issue_data.map do |issue_data|
-      review.request_issues.find(issue_data[:id])
+      review.request_issues.find(issue_data[:vbms_id])
     end
   end
 
@@ -103,14 +103,9 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     # find exising issue or build a new one
     # this method is based on the find_or_build_request_issue_from_intake_data
     # method in the DecisionReview model which uses :requested_issue_id key
-    # when in our case parser returns issue_data with :id key
-    return review.request_issues.find(issue_data[:id]) if issue_data[:id]
+    # when in our case parser returns issue_data with :vbms_id key
+    return review.request_issues.find(issue_data[:vbms_id]) if issue_data[:vbms_id]
 
-    # probably we will use our own method for that operation insted of "from_intake_data"
-    # that will be called from future UpdateRequestIssues service class
-    # if not we HAVE TO update or override from_intake_data for new
-    # attribute vbms_id
-    # RequestIssue.from_intake_data(issue_data, decision_review: review)
     RequestIssue.from_intake_data(issue_data, decision_review: review)
   end
 
@@ -173,17 +168,17 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     return if withdrawn_issues.empty?
 
     @withdrawn_issue_data.each do |withdrawn_issue|
-      request_issue = RequestIssue.find(withdrawn_issue[:id].to_s)
+      request_issue = RequestIssue.find(withdrawn_issue[:vbms_id].to_s)
       request_issue.withdraw!(withdrawn_issue[:closed_at])
     end
   end
 
   def process_edited_issues!
-    # method is updated since parser returns issue_data with :id key instead :request_issue_id
+    # method is updated since parser returns issue_data with :vbms_id key instead :request_issue_id
     return if edited_issues.empty?
 
     edited_issue_data.each do |edited_issue|
-      request_issue = RequestIssue.find(edited_issue[:id].to_s)
+      request_issue = RequestIssue.find(edited_issue[:vbms_id].to_s)
       edit_contention_text(edited_issue, request_issue)
       edit_decision_date(edited_issue, request_issue)
     end
@@ -193,7 +188,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     return if eligible_to_ineligible_issues.empty?
 
     eligible_to_ineligible_issue_data.each do |eligible_to_ineligible_issue|
-      request_issue = RequestIssue.find(eligible_to_ineligible_issue[:id].to_s)
+      request_issue = RequestIssue.find(eligible_to_ineligible_issue[:vbms_id].to_s)
       next if !request_issue.ineligible_reason.nil?
 
       request_issue.update(ineligible_reason: eligible_to_ineligible_issue.ineligible_reason,
@@ -205,7 +200,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     return if ineligible_to_eligible_issues.empty?
 
     ineligible_to_eligible_issue_data.each do |ineligible_to_eligible_issue|
-      request_issue = RequestIssue.find(ineligible_to_eligible_issue[:id].to_s)
+      request_issue = RequestIssue.find(ineligible_to_eligible_issue[:vbms_id].to_s)
       next if request_issue.ineligible_reason.nil?
 
       request_issue.update(ineligible_reason: nil, closed_status: nil, closed_at: nil)
@@ -216,7 +211,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     return if ineligible_to_ineligible_issues.empty?
 
     ineligible_to_ineligible_issue_data.each do |ineligible_to_ineligible_issue|
-      request_issue = RequestIssue.find(ineligible_to_ineligible_issue[:id].to_s)
+      request_issue = RequestIssue.find(ineligible_to_ineligible_issue[:vbms_id].to_s)
       next if request_issue.ineligible_reason.nil?
 
       request_issue.update(ineligible_reason: ineligible_to_ineligible_issue.ineligible_reason,
