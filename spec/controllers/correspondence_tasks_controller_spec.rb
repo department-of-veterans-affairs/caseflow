@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-require 'pry'
 
 RSpec.describe CorrespondenceTasksController, :all_dbs, type: :controller do
   let(:veteran) { create(:veteran) }

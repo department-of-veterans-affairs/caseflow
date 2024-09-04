@@ -12,9 +12,9 @@ class OtherMotionCorrespondenceTask < CorrespondenceMailTask
     return default_actions if user.nil?
 
     options = if assigned_to.is_a? User
-                reassign_actions
+                assigned_to_user_actions
               else
-                assign_actions
+                assigned_to_org_actions
               end
 
     options
@@ -26,7 +26,7 @@ class OtherMotionCorrespondenceTask < CorrespondenceMailTask
     []
   end
 
-  def reassign_actions
+  def assigned_to_org_actions
     [
       Constants.TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.to_h,
       Constants.TASK_ACTIONS.COMPLETE_CORRESPONDENCE_TASK.to_h,
@@ -36,7 +36,7 @@ class OtherMotionCorrespondenceTask < CorrespondenceMailTask
     ]
   end
 
-  def assign_actions
+  def assigned_to_user_actions
     [
       Constants.TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.to_h,
       Constants.TASK_ACTIONS.COMPLETE_CORRESPONDENCE_TASK.to_h,
