@@ -15,6 +15,8 @@ class Events::DecisionReviewUpdated
             DecisionReviewUpdatedAudit.new(event: event, request_issue: request_issue, update_type: "U").call
           elsif request_issue.destroyed?
             DecisionReviewUpdatedAudit.new(event: event, request_issue: request_issue, update_type: "D").call
+          elsif request_issue.created_at == request_issue.updated_at
+            DecisionReviewUpdatedAudit.new(event: event, request_issue: request_issue, update_type: "I").call
           end
         end
       end
