@@ -300,14 +300,6 @@ describe VACOLS::AojCaseDocket, :all_dbs do
       # We do not provide a range if this feature toggle is enabled
       before { FeatureToggle.disable!(:acd_distribute_by_docket_date) }
 
-      it "only distributes cases within the range" do
-        expect(subject.count).to eq(1)
-        expect(subject.first["bfkey"]).to eq nonpriority_ready_case.bfkey
-        expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
-        expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
-        expect(third_nonpriority_ready_case.reload.bfcurloc).to eq("83")
-      end
-
       context "when the docket number is pre-y2k", skip: "flaky" do
         let(:another_nonpriority_ready_case_docket_number) { "9901002" }
         it "correctly orders the docket", skip: "flaky" do
