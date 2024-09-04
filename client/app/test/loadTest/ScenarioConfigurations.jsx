@@ -8,13 +8,8 @@ import ScenarioConfiguration from './ScenarioConfiguration';
 export default function ScenarioConfigurations(){
   let loadTestScenarios = LOAD_TEST_SCENARIOS;
 
-  loadTestScenarios.map((scenarioGroup) => console.log(scenarioGroup));
-
-  console.log("successful process");
-  //console.log(scenarioConfigurations);
-
   return (
-    <div>
+    <div className="load-test-container">
       { loadTestScenarios.map((scenarioGroup) => (
       <ScenarioConfiguration
         key={scenarioGroup["scenario"]}

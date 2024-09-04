@@ -10,26 +10,15 @@ import LOAD_TEST_SCENARIOS from '../../constants/LoadTestScenarios.json';
 export default function ScenarioConfiguration(props){
   const [isChecked, scenarioIsChecked] = useState(false);
 
-  console.log('config');
-  console.log(props);
   let scenario = props.scenario;
   let targetType = props.targetType;
-
-  console.log(isChecked);
-  console.log(targetType);
 
   const onChangeHandle = () => {
     scenarioIsChecked(!isChecked);
   }
 
-  console.log(scenario);
-  console.log(targetType);
-  console.log(targetType.length);
-  console.log("checked");
-
-
   return (
-    <div>
+    <div className="load-test-container-checkbox">
       <Checkbox
       label={scenario}
       name={scenario}
@@ -37,8 +26,9 @@ export default function ScenarioConfiguration(props){
       value={isChecked || false}
       />
       {isChecked && targetType.length > 0 &&
-        (<div>
+        (<div className="load-test-checkbox-hidden-content">
           <SearchableDropdown
+          name={`${scenario}-target-type`}
           label="Target Type"
           options={targetType}
           isClearable
