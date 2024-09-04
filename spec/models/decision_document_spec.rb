@@ -133,7 +133,7 @@ describe DecisionDocument, :postgres do
   end
 
   context "#process!" do
-    subject { decision_document.process!(false) }
+    subject { decision_document.process! }
 
     before do
       allow(decision_document).to receive(:submitted_and_ready?).and_return(true)
@@ -141,7 +141,6 @@ describe DecisionDocument, :postgres do
       allow(VBMSService).to receive(:establish_claim!).and_call_original
       allow(VBMSService).to receive(:create_contentions!).and_call_original
       FeatureToggle.enable!(:send_email_for_dispatched_appeals)
-      InitialTasksFactory.new(decision_document.appeal).create_root_and_sub_tasks!
     end
     after { FeatureToggle.disable!(:send_email_for_dispatched_appeals) }
 
