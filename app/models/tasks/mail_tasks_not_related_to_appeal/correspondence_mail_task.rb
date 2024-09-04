@@ -25,7 +25,27 @@ class CorrespondenceMailTask < CorrespondenceTask
     )
   end
 
-  # rubocop: disable Metrics/AbcSize
+  def reassign_users
+    users_list = []
+    # return users if the assignee is an organization
+    if assigned_to.is_a?(Organization)
+      users_list << assigned_to&.users.pluck(:css_id)
+    end
+    # return the users from other orgs
+    if assigned_to.is_a?(User)
+      users_list = []
+      assigned_to.organizations.each {
+        |org| users_list << org.users.reject {
+          |user| user == assigned_to
+        }.pluck(:css_id)
+      }
+      users_list.flatten
+    end
+
+    users_list
+  end
+
+  # disable Metrics/AbcSize
   def self.available_actions(user)
     return [] unless user
 
@@ -34,15 +54,14 @@ class CorrespondenceMailTask < CorrespondenceTask
       Constants.TASK_ACTIONS.ASSIGN_CORR_TASK_TO_TEAM.to_h,
       Constants.TASK_ACTIONS.MARK_TASK_COMPLETE.to_h,
       Constants.TASK_ACTIONS.RETURN_TO_INBOUND_OPS.to_h,
-      Constants.TASK_ACTIONS.CANCEL_CORR_TASK.to_h,
       Constants.TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.to_h,
       Constants.TASK_ACTIONS.COMPLETE_CORRESPONDENCE_TASK.to_h
     ]
 
-    if user.is_a? Organization
-      options.insert(2, Constants.TASK_ACTIONS.ASSIGN_CORR_TASK_TO_PERSON.to_h)
-    else
+    if user.is_a? User
       options.insert(2, Constants.TASK_ACTIONS.REASSIGN_CORR_TASK_TO_PERSON.to_h)
+    else
+      options.insert(2, Constants.TASK_ACTIONS.ASSIGN_CORR_TASK_TO_PERSON.to_h)
     end
 
     options
@@ -56,5 +75,4 @@ class CorrespondenceMailTask < CorrespondenceTask
       Organization.assignable(self)
     end
   end
-  # rubocop: enable Metrics/AbcSize
 end

@@ -125,11 +125,6 @@
     "value": "modal/cancel_task",
     "func": "cancel_task_data"
   },
-  "CANCEL_CORRESPONDENCE_TASK": {
-    "label": "Cancel task",
-    "value": "modal/cancel_correspondence_task",
-    "func": "cancel_correspondence_task_data"
-  },
   "CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE": {
     "label": "Cancel task and assign Regional Office",
     "value": "modal/cancel_task_and_assign_regional_office",
@@ -576,8 +571,8 @@
   },
   "REASSIGN_CORR_TASK_TO_PERSON": {
     "label": "Re-assign to person",
-    "value": "reassign_to_person",
-    "func": "reassign_corr_task_to_person"
+    "value": "assign_to_person",
+    "func": "assign_corr_task_to_person"
   },
 
   "MARK_TASK_COMPLETE": {
@@ -592,9 +587,9 @@
     "func": "return_to_inbound_ops"
   },
 
-  "CANCEL_CORR_TASK": {
+  "CANCEL_CORRESPONDENCE_TASK": {
     "label": "Cancel task",
-    "value": "cancel_task",
-    "func": "cancel_corr_task"
+    "value": "modal/cancel_correspondence_task",
+    "func": "cancel_correspondence_task_data"
   }
 }
