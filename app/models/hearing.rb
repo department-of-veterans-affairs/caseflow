@@ -193,10 +193,6 @@ class Hearing < CaseflowRecord
     hearing_day.conference_link
   end
 
-  def daily_docket_conference_link
-    hearing_day.conference_link
-  end
-
   # returns scheduled datetime object considering the timezones
   # @return [nil] if hearing_day is nil
   # @return [Time] in scheduled_in_timezone timezone - if scheduled_datetime and scheduled_in_timezone are present

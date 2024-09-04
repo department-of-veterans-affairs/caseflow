@@ -225,29 +225,6 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
     subject { PushPriorityAppealsToJudgesJob.new.distribute_non_genpop_priority_appeals }
 
-    context "using Automatic Case Distribution module" do
-      before do
-        create(:case_distribution_lever, :disable_legacy_priority)
-        allow_any_instance_of(PushPriorityAppealsToJudgesJob).to receive(:eligible_judges).and_return(eligible_judges)
-      end
-
-      xit "should only distribute the ready priority cases tied to a judge" do
-        expect(subject.count).to eq eligible_judges.count
-        expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [2, 2, 0, 0]
-
-        # Ensure we only distributed the 2 ready legacy and hearing priority cases that are tied to a judge
-        distributed_cases = DistributedCase.where(distribution: subject)
-        expect(distributed_cases.count).to eq 4
-        expected_array = [ready_priority_bfkey, ready_priority_bfkey2, ready_priority_uuid, ready_priority_uuid2]
-        expect(distributed_cases.map(&:case_id)).to match_array expected_array
-        # Ensure all docket types cases are distributed, including the 5 cavc evidence submission cases
-        expected_array2 = [Constants.AMA_DOCKETS.hearing, Constants.AMA_DOCKETS.hearing, "legacy", "legacy"]
-        expect(distributed_cases.map(&:docket)).to match_array expected_array2
-        expect(distributed_cases.map(&:priority).uniq).to match_array [true]
-        expect(distributed_cases.map(&:genpop).uniq).to match_array [false]
-      end
-    end
-
     context "using By Docket Date Distribution module" do
       before do
         FeatureToggle.enable!(:acd_distribute_by_docket_date)
@@ -257,72 +234,6 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       after do
         FeatureToggle.disable!(:acd_distribute_by_docket_date)
         FeatureToggle.enable!(:acd_exclude_from_affinity)
-      end
-      context "without using Docket Levers" do
-        before do
-          create(:case_distribution_lever, :disable_legacy_priority, value: "false")
-        end
-
-        xit "should only distribute the ready priority cases tied to a judge" do
-          expect(subject.count).to eq eligible_judges.count
-          expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [2, 2, 0, 0]
-
-          # Ensure we only distributed the 2 ready legacy and hearing priority cases that are tied to a judge
-          distributed_cases = DistributedCase.where(distribution: subject)
-          expect(distributed_cases.count).to eq 4
-          expected_array = [ready_priority_bfkey, ready_priority_bfkey2, ready_priority_uuid, ready_priority_uuid2]
-          expect(distributed_cases.map(&:case_id)).to match_array expected_array
-          # Ensure all docket types cases are distributed, including the 5 cavc evidence submission cases
-          expected_array2 = %w[hearing hearing legacy legacy]
-          expect(distributed_cases.map(&:docket)).to match_array expected_array2
-          expect(distributed_cases.map(&:priority).uniq).to match_array [true]
-          expect(distributed_cases.map(&:genpop).uniq).to match_array [false, true]
-        end
-      end
-
-      context "using Excluding Appeals by Docket Type and Priority from Automatic Case Distribution levers" do
-        context "all Exluding levers turned to Include" do
-          before do
-            create(:case_distribution_lever, :disable_legacy_priority, value: "false")
-            create(:case_distribution_lever, :disable_ama_priority_hearing, value: "false")
-            create(:case_distribution_lever, :disable_ama_priority_direct_review, value: "false")
-            create(:case_distribution_lever, :disable_ama_priority_evidence_submission, value: "false")
-          end
-
-          xit "should distribute the ready priority cases" do
-            expect(subject.count).to eq eligible_judges.count
-            expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [2, 2, 0, 0]
-
-            distributed_cases = DistributedCase.where(distribution: subject)
-            expect(distributed_cases.count).to eq 4
-            expected_array = [ready_priority_bfkey, ready_priority_bfkey2, ready_priority_uuid, ready_priority_uuid2]
-            expect(distributed_cases.map(&:case_id)).to match_array expected_array
-            # Ensure all docket types cases are distributed, including the 5 cavc evidence submission cases
-            expected_array2 = %w[hearing hearing legacy legacy]
-            expect(distributed_cases.map(&:docket)).to match_array expected_array2
-            expect(distributed_cases.map(&:priority).uniq).to match_array [true]
-            expect(distributed_cases.map(&:genpop).uniq).to match_array [false, true]
-          end
-        end
-
-        context "all Exluding levers turned to Exclude" do
-          before do
-            create(:case_distribution_lever, :disable_legacy_priority, value: "true")
-            create(:case_distribution_lever, :disable_ama_priority_hearing, value: "true")
-            create(:case_distribution_lever, :disable_ama_priority_direct_review, value: "true")
-            create(:case_distribution_lever, :disable_ama_priority_evidence_submission, value: "true")
-          end
-
-          xit "should not distribute the ready priority cases" do
-            expect(subject.count).to eq eligible_judges.count
-            expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [0, 0, 0, 0]
-
-            distributed_cases = DistributedCase.where(distribution: subject)
-            expect(distributed_cases.count).to eq 0
-            expected_array = []
-            expect(distributed_cases).to match_array expected_array
-          end
-        end
       end
     end
   end
