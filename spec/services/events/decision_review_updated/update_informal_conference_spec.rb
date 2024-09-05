@@ -5,7 +5,6 @@ RSpec.describe Events::DecisionReviewUpdated::UpdateInformalConference do
   let!(:epe) { create(:end_product_establishment, :active_hlr) }
   let!(:hlr) { epe.source }
   let!(:payload) { Events::DecisionReviewUpdated::DecisionReviewUpdatedParser.example_response }
-  # let(:parser) { Events::DecisionReviewUpdated::DecisionReviewUpdatedParser.load_example }
 
   describe ".process" do
     context "informal_conference true to false" do
