@@ -1,3 +1,32 @@
+.dev-env-color {
+  color: $color-green-light;
+}
+.prodtest-env-color {
+  color: $color-gold;
+}
+.preprod-env-color {
+  color: $color-secondary;
+}
+.uat-env-color {
+  color: $color-primary-alt;
+}
+.demo-env-color {
+  color: $color-gray-medium;
+}
+
+.dev-env-alert {
+  .usa-alert{
+    background-color: $color-green-lightest;
+    border-left: 5px solid $color-green-lighter;
+    background-image: url(/images/warning-429d7a1540c2e7d036805bb73a0ba690.png);
+    .usa-alert-text {
+      padding-left: 1.5rem;
+    }
+    &::before {
+      background-color: $color-green-lightest;
+    }
+  }
+}
 .prodtest-env-alert {
   .usa-alert{
     background-color: $color-gold-lightest;

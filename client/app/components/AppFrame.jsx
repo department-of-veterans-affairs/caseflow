@@ -8,13 +8,14 @@ import classnames from 'classnames';
 import Alert from './Alert';
 
 // eslint-disable-next-line no-process-env
-// const env = process.env.DEPLOY_ENV;
-const env = 'prodtest';
+const env = process.env.DEPLOY_ENV;
+// line below is for testing different env presentations, erase before deployment master
+// const env = 'dev';
 
 const className = classnames(
   {
     // eslint-disable-next-line no-undefined
-    'dev-env-alert': env !== 'prod' && env === undefined,
+    'dev-env-alert': env !== 'prod' && env === 'dev',
     'prodtest-env-alert': env !== 'prod' && env === 'prodtest',
     'preprod-env-alert': env !== 'prod' && env === 'preprod',
     'uat-env-alert': env !== 'prod' && env === 'uat',
