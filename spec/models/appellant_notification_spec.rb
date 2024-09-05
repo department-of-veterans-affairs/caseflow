@@ -3,12 +3,13 @@
 describe AppellantNotification do
   describe "class methods" do
     describe "self.handle_errors" do
+      let(:template_name) { "Quarterly Notification" }
       let(:appeal) { create(:appeal, :active, number_of_claimants: 1) }
       let(:current_user) { User.system_user }
       context "if appeal is nil" do
         let(:empty_appeal) {}
         it "reports the error" do
-          expect { AppellantNotification.handle_errors(empty_appeal) }.to raise_error(
+          expect { AppellantNotification.handle_errors(empty_appeal, template_name) }.to raise_error(
             AppellantNotification::NoAppealError
           )
         end
@@ -17,7 +18,7 @@ describe AppellantNotification do
       context "with no claimant listed" do
         let(:appeal) { create(:appeal, :active, number_of_claimants: 0) }
         it "returns error message" do
-          expect(AppellantNotification.handle_errors(appeal)[:status]).to eq(
+          expect(AppellantNotification.handle_errors(appeal, template_name)[:status]).to eq(
             AppellantNotification::NoClaimantError.new(appeal.id).status
           )
         end
@@ -30,7 +31,7 @@ describe AppellantNotification do
           appeal.claimants = [claimant]
         end
         it "returns error message" do
-          expect(AppellantNotification.handle_errors(appeal)[:status]).to eq(
+          expect(AppellantNotification.handle_errors(appeal, template_name)[:status]).to eq(
             AppellantNotification::NoParticipantIdError.new(appeal.id).status
           )
         end
@@ -40,7 +41,7 @@ describe AppellantNotification do
         let(:appeal) { create(:appeal, :active, number_of_claimants: 1) }
         it "returns error message" do
           appeal.root_task.completed!
-          expect { AppellantNotification.handle_errors(appeal) }.to raise_error(
+          expect { AppellantNotification.handle_errors(appeal, template_name) }.to raise_error(
             AppellantNotification::InactiveAppealError
           )
         end
@@ -48,7 +49,7 @@ describe AppellantNotification do
 
       context "with no errors" do
         it "doesn't raise" do
-          expect(AppellantNotification.handle_errors(appeal)[:status]).to eq "Success"
+          expect(AppellantNotification.handle_errors(appeal, template_name)[:status]).to eq "Success"
         end
       end
     end
@@ -56,10 +57,11 @@ describe AppellantNotification do
     describe "veteran is deceased" do
       let(:appeal) { create(:appeal, :active, number_of_claimants: 1) }
       let(:substitute_appellant) { create(:appellant_substitution) }
+      let(:template_name) { "test" }
 
       it "with no substitute appellant" do
         appeal.veteran.update!(date_of_death: Time.zone.today)
-        expect(AppellantNotification.handle_errors(appeal)[:status]).to eq "Failure Due to Deceased"
+        expect(AppellantNotification.handle_errors(appeal, template_name)[:status]).to eq "Failure Due to Deceased"
       end
 
       it "with substitute appellant" do
@@ -67,7 +69,7 @@ describe AppellantNotification do
         substitute_appellant.update!(source_appeal_id: appeal.id)
         substitute_appellant.send(:establish_substitution_on_same_appeal)
         appeal.update!(veteran_is_not_claimant: true)
-        expect(AppellantNotification.handle_errors(appeal)[:status]).to eq "Success"
+        expect(AppellantNotification.handle_errors(appeal, template_name)[:status]).to eq "Success"
       end
     end
 
