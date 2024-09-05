@@ -12,6 +12,8 @@ class AppealsReadyForDistribution
     target_distro_date: "Target Distro Date",
     days_before_goal_date: "Days Before Goal Date",
     hearing_judge: "Hearing Judge",
+    original_judge_id: "Original Deciding Judge ID",
+    original_judge_name: "Original Deciding Judge",
     veteran_file_number: "Veteran File number",
     veteran_name: "Veteran",
     affinity_start_date: "Affinity Start Date"
@@ -72,7 +74,8 @@ class AppealsReadyForDistribution
       target_distro_date: target_distro_date(appeal["bfd19"], docket),
       days_before_goal_date: days_before_goal_date(appeal["bfd19"], docket),
       hearing_judge: hearing_judge,
-      original_judge: legacy_original_deciding_judge(appeal),
+      original_judge_id: legacy_original_deciding_judge(appeal),
+      original_judge_name: legacy_original_deciding_judge_name(appeal),
       veteran_file_number: appeal["ssn"] || appeal["bfcorlid"],
       veteran_name: veteran_name,
       affinity_start_date: appeal_affinity
@@ -139,6 +142,17 @@ class AppealsReadyForDistribution
       return nil
     end
     receipt_date + docket.docket_time_goal.to_i.days
+  end
+
+  def self.legacy_original_deciding_judge(appeal)
+    staff = VACOLS::Staff.find_by(sattyid: appeal["prev_deciding_judge"])
+    staff&.sdomainid || appeal["prev_deciding_judge"]
+  end
+
+  def self.legacy_original_deciding_judge_name(appeal)
+    staff = VACOLS::Staff.find_by(sattyid: appeal["prev_deciding_judge"])
+    deciding_judge_name = FullName.new(staff["snamef"], nil, staff["snamel"]).to_s
+    deciding_judge_name.empty? ? nil : deciding_judge_name
   end
 
   def self.days_before_goal_date(receipt_date, docket)
