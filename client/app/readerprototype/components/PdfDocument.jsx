@@ -21,6 +21,7 @@ const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel, onLoad }) => {
   const renderedTimeTotal = useRef(0);
   const [allPagesRendered, setAllPagesRendered] = useState(false);
   const [metricsLogged, setMetricsLogged] = useState(false);
+  const metricsLoggedRef = useRef(metricsLogged);
 
   const containerStyle = {
     width: '100%',
@@ -101,7 +102,7 @@ const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel, onLoad }) => {
   useEffect(() => {
     if (allPagesRendered) {
       console.log(
-        '** Metric\n',
+        '** Metric when all pages rendered\n',
         'Document request time', getDocumentEnd.current - getDocumentStart.current, '\n',
         'Number of pages rendered', renderedPageCount.current, '\n',
         'Rendering Time for all pages', renderedTimeTotal.current, '\n',
@@ -132,23 +133,30 @@ const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel, onLoad }) => {
           end: null,
           duration: null
         },
-        null // event_id not used
+        null // event_id needed?
       );
-      setMetricsLogged(true); // Set metrics to logged when all pages rendered
+      // Set metrics to logged when all pages rendered
+      setMetricsLogged(true);
     }
   }, [allPagesRendered]);
 
   useEffect(() => {
     return () => {
-      if (!metricsLogged && !allPagesRendered) {
+      if (!metricsLoggedRef.current) {
         console.log(
-          '** Component unmounted and metrics are Not logged\n',
-          'all pages are Not renered\n',
-          'Pdf Pages', pdfPages
+          '** Metric when all pages NOT rendered\n',
+          'Document request time', getDocumentEnd.current - getDocumentStart.current, '\n',
+          'Number of pages rendered', renderedPageCount.current, '\n',
+          'Rendering Time for rendered pages', renderedTimeTotal.current, '\n',
+          'Document', doc.id
         );
       }
     };
-  }, [metricsLogged, allPagesRendered]);
+  }, [doc.id]);
+
+  useEffect(() => {
+    metricsLoggedRef.current = metricsLogged;
+  }, [metricsLogged]);
 
   return (
     <div id="pdfContainer" style={containerStyle}>

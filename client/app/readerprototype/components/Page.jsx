@@ -92,13 +92,6 @@ const Page = ({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale, setRe
           catch(() => {
             // this catch is necessary to prevent the error: Cannot use the same canvas during multiple render operations
           });
-
-        // return () => {
-        //   if (renderTask) {
-        //   // renderTask.cancel();
-        //   // console.log('** Cancelled the rendering task.');
-        //   }
-        // };
       }
     }
   }, [canvasRef.current, viewport, isVisible]);
