@@ -117,7 +117,9 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
     if tied_appeals_bfkeys.any?
       if tied_appeals_bfkeys.count < @nonsscavlj_number_of_appeals_limit
         qualifying_appeals_bfkeys.push(tied_appeals_bfkeys)
-      else
+      # when @nonsscavlj_number_of_appeals_limit is zero then it's returning all elemetnt from the tied_appeals_bfkeys
+      # So to handle it correctly had to added this elsif condition.
+      elsif @nonsscavlj_number_of_appeals_limit != 0
         qualifying_appeals_bfkeys.push(tied_appeals_bfkeys[0..@nonsscavlj_number_of_appeals_to_move])
       end
     end
