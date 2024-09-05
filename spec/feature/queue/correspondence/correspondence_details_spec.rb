@@ -7,7 +7,7 @@ RSpec.feature("The Correspondence Details page") do
   let(:current_user) { create(:user) }
   let(:current_super) { create(:inbound_ops_team_supervisor) }
   let!(:veteran) { create(:veteran, first_name: "John", last_name: "Testingman", file_number: "8675309") }
-  let!(:correspondence) { create(:correspondence, veteran: veteran) }
+  let!(:correspondence) { create(:correspondence, :pending, veteran: veteran) }
 
   context "correspondence details" do
     before :each do
