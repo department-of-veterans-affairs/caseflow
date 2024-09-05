@@ -2,10 +2,14 @@
 
 module CorrespondenceTaskActionsHelpers
   TASKS = [
-    { class: OtherMotionCorrespondenceTask, name: "Other Motion",
-      assigned_to_type: "User", assigned_to: :user_team, access_type: :user_access},
-    { class: FoiaRequestCorrespondenceTask, name: "FOIA Request",
-    assigned_to_type: "PrivacyTeam", assigned_to: :privacy_team, access_type: :privacy_user_access },
+    { class: OtherMotionCorrespondenceTask, name: "Other motion",
+      assigned_to_type: "User", assigned_to: :user_team, access_type: :user_access,
+      team_name: "Inbound Ops Team"
+    },
+    { class: FoiaRequestCorrespondenceTask, name: "FOIA request",
+      assigned_to_type: "PrivacyTeam", assigned_to: :privacy_team, access_type: :privacy_user_access,
+      team_name: "Privacy Team"
+    },
   ].freeze
 
   def setup_correspondence_task(correspondence, task_class, assigned_to_type, assigned_to, instructions)
@@ -28,6 +32,6 @@ module CorrespondenceTaskActionsHelpers
     click_dropdown(prompt: "Select an action", text: action)
     find(".cf-form-textarea", match: :first).fill_in with: form_text
     click_button button_id
-    expect(page).to have_content("#{task_name} task has been #{expected_message}.")
+    expect(page).to have_content("#{task_name} #{expected_message}")
   end
 end
