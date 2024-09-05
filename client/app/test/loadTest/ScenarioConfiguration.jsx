@@ -22,9 +22,8 @@ export default function ScenarioConfiguration(props) {
         label={scenario}
         name={scenario}
         onChange={() => {
-            onChangeHandle();
-          }
-        }
+          onChangeHandle();
+        }}
         value={isChecked}
       />
       {isChecked && targetType.length > 0 &&
@@ -46,4 +45,4 @@ export default function ScenarioConfiguration(props) {
       }
     </div>
   );
-};
+}
