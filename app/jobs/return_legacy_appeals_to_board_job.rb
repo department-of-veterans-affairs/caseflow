@@ -15,7 +15,7 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
 
       appeals, moved_appeals = eligible_and_moved_appeals
 
-      return send_job_slack_report(NO_RECORDS_FOUND_MESSAGE) if moved_appeals.nil?
+      check_appeals_available(moved_appeals, returned_appeal_job)
 
       complete_returned_appeal_job(returned_appeal_job, "Job completed successfully", moved_appeals)
 
@@ -24,14 +24,7 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
       @filtered_appeals = filter_appeals(appeals, moved_appeals)
       send_job_slack_report(slack_report)
     rescue StandardError => error
-      @start_time ||= Time.zone.now
-      message = "Job failed with error: #{error.message}"
-      errored_returned_appeal_job(returned_appeal_job, message)
-      duration = time_ago_in_words(@start_time)
-      slack_service.send_notification("<!here>\n [ERROR] after running for #{duration}: #{error.message}",
-                                      self.class.name)
-      log_error(error)
-      message
+      handle_error(error, returned_appeal_job)
     ensure
       metrics_service_report_runtime(metric_group_name: "return_legacy_appeals_to_board_job")
     end
@@ -172,6 +165,24 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
       started_at: Time.zone.now,
       stats: { message: "Job started" }.to_json
     )
+  end
+
+  def check_appeals_available(moved_appeals, returned_appeal_job)
+    if moved_appeals.nil?
+      complete_returned_appeal_job(returned_appeal_job, Constants.DISTRIBUTION.no_records_moved_message, [])
+      send_job_slack_report(NO_RECORDS_FOUND_MESSAGE)
+    end
+  end
+
+  def handle_error(error, returned_appeal_job)
+    @start_time ||= Time.zone.now
+    message = "Job failed with error: #{error.message}"
+    errored_returned_appeal_job(returned_appeal_job, message)
+    duration = time_ago_in_words(@start_time)
+    slack_service.send_notification("<!here>\n [ERROR] after running for #{duration}: #{error.message}",
+                                    self.class.name)
+    log_error(error)
+    message
   end
 
   def complete_returned_appeal_job(returned_appeal_job, message, appeals)

@@ -38,13 +38,15 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
     context "when no appeals are moved" do
       before do
         allow(job).to receive(:eligible_and_moved_appeals).and_return([appeals, nil])
-        allow(job).to receive(:slack_report).and_return(["Job Ran Successfully, No Records Moved"])
+        allow(job).to receive(:complete_returned_appeal_job)
       end
 
-      it "sends a no records moved Slack report" do
+      it "sends a no records moved Slack report and completes the job" do
         job.perform
 
-        expect(job).to have_received(:send_job_slack_report).with(["Job Ran Successfully, No Records Moved"]).once
+        expect(job).to have_received(:send_job_slack_report).with(described_class::NO_RECORDS_FOUND_MESSAGE).once
+        expect(job).to have_received(:complete_returned_appeal_job)
+          .with(returned_appeal_job, Constants.DISTRIBUTION.no_records_moved_message, []).once
         expect(job).to have_received(:metrics_service_report_runtime).once
       end
     end
