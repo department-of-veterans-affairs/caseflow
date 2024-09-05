@@ -59,12 +59,6 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     added_issues + removed_issues + withdrawn_issues + edited_issues
   end
 
-  def eligible_to_ineligible; end
-
-  def ineligible_to_eligible; end
-
-  def ineligible_to_ineligible; end
-
   private
 
   def changes?
@@ -154,14 +148,15 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   end
 
   def attributes_look_like_contested_issue?(data)
-    data[:ri_rating_issue_reference_id] ||
+    data[:ri_contested_rating_issue_reference_id] ||
       data[:ri_contested_decision_issue_id] ||
-      data[:ri_rating_decision_reference_id]
+      data[:ri_rating_decision_reference_id] ||
+      data[:ri_contested_rating_issue_diagnostic_code]
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   def fetch_withdrawn_issues
-    RequestIssue.where(id: withdrawn_request_issue_ids)
+    RequestIssue.where(vbms_id: withdrawn_request_issue_ids)
   end
 
   def process_withdrawn_issues!

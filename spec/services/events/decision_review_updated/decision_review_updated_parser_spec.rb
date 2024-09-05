@@ -49,7 +49,7 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
           rating_profile_date: nil
         }
       ],
-      decision_date: "2023-07-01",
+      decision_date: 19_568,
       ineligible_due_to_id: 301,
       ineligible_reason: nil,
       is_unidentified: false,
@@ -74,17 +74,17 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
       expect(subject.event_id).to eq(1)
     end
 
-    # it "returns the correct css_id" do
-    #   expect(subject.css_id).to eq("CSEM123")
-    # end
+    it "returns the correct css_id" do
+      expect(subject.css_id).to eq("CSEM123")
+    end
 
-    # it "returns the correct detail_type" do
-    #   expect(subject.detail_type).to eq("HigherLevelReview")
-    # end
+    it "returns the correct detail_type" do
+      expect(subject.detail_type).to eq("HigherLevelReview")
+    end
 
-    # it "returns the correct station" do
-    #   expect(subject.station).to eq("123")
-    # end
+    it "returns the correct station" do
+      expect(subject.station).to eq("123")
+    end
 
     describe "claim_review" do
       it "returns the correct informal_conference" do
