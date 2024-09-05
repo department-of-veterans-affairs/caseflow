@@ -26,9 +26,12 @@ export default function UserConfiguration(props) {
 
   // console.log(filteredStations());
 
-  const organizations = props.form_values.all_organizations;
   const functionsAvailable = props.form_values.functions_available;
   const featureToggles = props.featuresList;
+  const organizations = props.form_values.all_organizations.sort().map((org) => ({
+    value: org,
+    label: org
+  }));
 
   featureToggles.sort();
 
@@ -41,7 +44,6 @@ export default function UserConfiguration(props) {
         // onInputChange={handleInputChange}
         // options={OFFICE_INFO.keys} searchable
         // onChange={handleUserSelect}
-        // Disable native filter
         filterOption={() => true}
         // value={userSelect}
       />
@@ -53,7 +55,6 @@ export default function UserConfiguration(props) {
         // onInputChange={handleInputChange}
         // options={slicedUserOptions} searchable
         // onChange={handleUserSelect}
-        // Disable native filter
         // filterOption={() => true}
         // value={userSelect}
       />
@@ -65,8 +66,8 @@ export default function UserConfiguration(props) {
         // onInputChange={handleInputChange}
         options={organizations} searchable
         // onChange={handleUserSelect}
-        Disable native filter
         filterOption={() => true}
+        placeholder=""
         // value={userSelect}
       />
       <br />
