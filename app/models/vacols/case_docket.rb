@@ -878,7 +878,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     true
   end
 
-  # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize
   def self.priority_appeals_affinity_date_count(in_window)
     conn = connection
     cavc_affinity_lever_value = CaseDistributionLever.cavc_affinity_days
@@ -915,6 +915,6 @@ class VACOLS::CaseDocket < VACOLS::Record
     end
     appeals
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/MethodLength, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize
 end
 # rubocop:enable Metrics/ClassLength
