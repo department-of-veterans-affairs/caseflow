@@ -5,7 +5,6 @@ import React, {useState} from 'react';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import Checkbox from '../../components/Checkbox';
 import TextField from '../../components/TextField';
-import LOAD_TEST_SCENARIOS from '../../constants/LoadTestScenarios.json';
 
 export default function ScenarioConfiguration(props){
   const [isChecked, scenarioIsChecked] = useState(false);
@@ -15,30 +14,30 @@ export default function ScenarioConfiguration(props){
 
   const onChangeHandle = () => {
     scenarioIsChecked(!isChecked);
-  }
+  };
 
   return (
     <div className="load-test-container-checkbox">
       <Checkbox
-      label={scenario}
-      name={scenario}
-      onChange={() => {onChangeHandle()}}
-      value={isChecked || false}
+        label={scenario}
+        name={scenario}
+        onChange={() => {onChangeHandle()}}
+        value={isChecked || false}
       />
       {isChecked && targetType.length > 0 &&
         (<div className="load-test-checkbox-hidden-content">
           <SearchableDropdown
-          name={`${scenario}-target-type`}
-          label="Target Type"
-          options={targetType}
-          isClearable
+            name={`${scenario}-target-type`}
+            label="Target Type"
+            options={targetType}
+            isClearable
           />
           <br/>
           <TextField
-          name="testTargetID"
-          label="Target Type ID"
-          optional={true}
-        />
+            name="testTargetID"
+            label="Target Type ID"
+            optional={true}
+          />
         </div>
       )}
     </div>

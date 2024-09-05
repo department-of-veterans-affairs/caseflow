@@ -1,6 +1,6 @@
 /* eslint-disable max-lines, max-len */
 
-import React, {useState} from 'react';
+import React from 'react';
 
 import LOAD_TEST_SCENARIOS from '../../constants/LoadTestScenarios.json';
 import ScenarioConfiguration from './ScenarioConfiguration';
