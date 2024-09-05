@@ -44,7 +44,9 @@ const CorrespondenceAssignTaskModal = (props) => {
   const [assigneeAdded, setAssigneeAdded] = useState(false);
   const [assignee, setAssignee] = useState('');
 
-  const task = props.correspondenceInfo.tasksUnrelatedToAppeal.find((task) => parseInt(props.task_id, 10) === parseInt(task.uniqueId, 10));
+  const currentTask = props.correspondenceInfo.tasksUnrelatedToAppeal.find(
+    (task) => parseInt(props.task_id, 10) === parseInt(task.uniqueId, 10)
+  );
 
   useEffect(() => {
     // Handle the instructions boolean for submit button clickability
@@ -104,7 +106,7 @@ const CorrespondenceAssignTaskModal = (props) => {
 
   return (
     <QueueFlowModal
-      title= {task.assignedToOrg ? 'Assign task' : 'Re-assign to person'}
+      title= {currentTask.assignedToOrg ? 'Assign task' : 'Re-assign to person'}
       button="Assign task"
       submitDisabled= {!validateForm()}
       submitButtonClassNames= "usa-button"
@@ -160,10 +162,12 @@ CorrespondenceAssignTaskModal.propTypes = {
     type: PropTypes.string,
     onHoldDuration: PropTypes.number
   }),
+  task_id: PropTypes.string,
+  correspondenceInfo: PropTypes.object
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  task: taskById(state, { taskId: ownProps.taskId }),
+  task: taskById(state, { taskId: ownProps.task_id }),
   taskNotRelatedToAppealBanner: state.correspondenceDetails.bannerAlert,
   correspondenceInfo: state.correspondenceDetails.correspondenceInfo
 });
