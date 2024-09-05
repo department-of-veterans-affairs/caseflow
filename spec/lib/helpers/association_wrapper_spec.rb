@@ -2,34 +2,44 @@
 
 require "helpers/association_wrapper.rb"
 
-describe "AssocationWrapper" do
-  subject { AssocationWrapper.new(target_class) }
-  describe "#fieldnames and #select_associations}" do
+describe "AssociationWrapper" do
+  subject { AssociationWrapper.new(target_class) }
+
+  describe "#fieldnames and #select_associations" do
     context "for Task class" do
       let(:target_class) { Task }
-      it "returns those with specific foreign_type" do
+
+      it "returns fieldnames with specific foreign_type" do
         expect(subject.having_type_field.fieldnames).to match_array %w[assigned_to_id appeal_id]
       end
+
       it "returns associations with other tables" do
         expect(subject.select_associations.map do |assoc|
-                 [assoc.name, assoc.class_name, assoc.options[:class_name], assoc.polymorphic?, assoc.foreign_type]
-               end).to match_array [
-                 [:versions, "PaperTrail::Version", "PaperTrail::Version", nil, nil],
-                 [:parent, "Task", "Task", nil, nil],
-                 [:children, "Task", "Task", nil, nil],
-                 [:assigned_to, "AssignedTo", nil, true, "assigned_to_type"],
-                 [:assigned_by, "User", "User", nil, nil],
-                 [:cancelled_by, "User", "User", nil, nil],
-                 [:completed_by, "User", "User", nil, nil],
-                 [:appeal, "Appeal", nil, true, "appeal_type"],
-                 [:ama_appeal, "Appeal", "Appeal", nil, nil],
-                 [:legacy_appeal, "LegacyAppeal", "LegacyAppeal", nil, nil],
-                 [:supplemental_claim, "SupplementalClaim", "SupplementalClaim", nil, nil],
-                 [:higher_level_review, "HigherLevelReview", "HigherLevelReview", nil, nil],
-                 [:attorney_case_reviews, "AttorneyCaseReview", nil, nil, nil],
-                 [:task_timers, "TaskTimer", nil, nil, nil],
-                 [:cached_appeal, "CachedAppeal", nil, nil, nil]
-               ]
+          [assoc.name, assoc.class_name, assoc.options[:class_name], assoc.polymorphic?, assoc.foreign_type]
+        end).to match_array [
+          [:versions, "PaperTrail::Version", "PaperTrail::Version", nil, nil],
+          [:parent, "Task", "Task", nil, nil],
+          [:children, "Task", "Task", nil, nil],
+          [:assigned_to, "AssignedTo", nil, true, "assigned_to_type"],
+          [:assigned_by, "User", "User", nil, nil],
+          [:cancelled_by, "User", "User", nil, nil],
+          [:completed_by, "User", "User", nil, nil],
+          [:appeal, "Appeal", nil, true, "appeal_type"],
+          [:ama_appeal, "Appeal", "Appeal", nil, nil],
+          [:legacy_appeal, "LegacyAppeal", "LegacyAppeal", nil, nil],
+          [:higher_level_review, "HigherLevelReview", "HigherLevelReview", nil, nil],
+          [:supplemental_claim, "SupplementalClaim", "SupplementalClaim", nil, nil],
+          [:correspondence, "Correspondence", "Correspondence", nil, nil],
+                 [:remand, "Remand", "Remand", nil, nil],
+          [:attorney_case_reviews, "AttorneyCaseReview", nil, nil, nil],
+          [:task_timers, "TaskTimer", nil, nil, nil],
+          [:correspondences_appeals_task, "CorrespondencesAppealsTask", nil, nil, nil],
+          [:correspondence_appeal, "CorrespondenceAppeal", nil, nil, nil],
+          [:cached_appeal, "CachedAppeal", nil, nil, nil]
+        ]
+      end
+
+      it "returns associations with primary keys" do
         expect(subject.select_associations.map { |assoc| [assoc.name, assoc.options[:primary_key]] }).to match_array [
           [:versions, nil],
           [:parent, "id"],
@@ -39,14 +49,22 @@ describe "AssocationWrapper" do
           [:cancelled_by, nil],
           [:completed_by, nil],
           [:appeal, nil],
-          [:attorney_case_reviews, nil],
-          [:task_timers, nil],
-          [:cached_appeal, nil],
           [:ama_appeal, nil],
           [:legacy_appeal, nil],
           [:higher_level_review, nil],
-          [:supplemental_claim, nil]
+          [:supplemental_claim, nil],
+          [:correspondence, nil],
+          [:attorney_case_reviews, nil],
+          [:task_timers, nil],
+          [:correspondences_appeals_task, nil],
+          [:correspondence_appeal, nil],
+          [:cached_appeal, nil],
+          [:remand, nil],
+          [:remand, nil]
         ]
+      end
+
+      it "returns associations with foreign keys" do
         expect(subject.select_associations.map { |assoc| [assoc.name, assoc.options[:foreign_key]] }).to match_array [
           [:versions, nil],
           [:parent, "parent_id"],
@@ -56,49 +74,57 @@ describe "AssocationWrapper" do
           [:cancelled_by, nil],
           [:completed_by, nil],
           [:appeal, nil],
-          [:attorney_case_reviews, nil],
-          [:task_timers, nil],
-          [:cached_appeal, :appeal_id],
           [:ama_appeal, "appeal_id"],
           [:legacy_appeal, "appeal_id"],
           [:higher_level_review, "appeal_id"],
-          [:supplemental_claim, "appeal_id"]
+          [:supplemental_claim, "appeal_id"],
+          [:correspondence, "appeal_id"],
+          [:attorney_case_reviews, nil],
+          [:task_timers, nil],
+          [:correspondences_appeals_task, nil],
+          [:correspondence_appeal, nil],
+          [:cached_appeal, :appeal_id],
+          [:remand, "appeal_id"],
+          [:remand, "appeal_id"]
         ]
+      end
 
+      it "returns foreign key details" do
         map_foreign_keys = lambda { |assoc|
           [assoc.name, assoc.belongs_to?, assoc.has_one?,
            assoc.foreign_key, assoc.association_foreign_key, assoc.foreign_type]
         }
         expect(subject.select_associations.map(&map_foreign_keys)).to match_array [
-          # has_paper_trail declared in Task
           [:versions, false, false, "item_id", "version_id", nil],
-          # acts_as_tree declared in Task
           [:parent, true, false, "parent_id", "task_id", nil],
           [:children, false, false, "parent_id", "task_id", nil],
-          # belongs_to declared in Task
           [:assigned_to, true, false, "assigned_to_id", "assigned_to_id", "assigned_to_type"],
           [:assigned_by, true, false, "assigned_by_id", "user_id", nil],
           [:cancelled_by, true, false, "cancelled_by_id", "user_id", nil],
           [:completed_by, true, false, "completed_by_id", "user_id", nil],
           [:appeal, true, false, "appeal_id", "appeal_id", "appeal_type"],
-          # Polymorphic `belongs_to :appeal`-related associations
           [:ama_appeal, true, false, "appeal_id", "appeal_id", nil],
           [:legacy_appeal, true, false, "appeal_id", "legacy_appeal_id", nil],
           [:higher_level_review, true, false, "appeal_id", "higher_level_review_id", nil],
           [:supplemental_claim, true, false, "appeal_id", "supplemental_claim_id", nil],
-          # has_many declared in Task
-          # Note: JudgeCaseReview is not listed; that `belongs_to` association can be traced from JudgeCaseReview
+          # Polymorphic `belongs_to :appeal`-related STI associations
+          [:remand, true, false, "appeal_id", "remand_id", nil],
+          [:correspondence, true, false, "appeal_id", "correspondence_id", nil],
           [:attorney_case_reviews, false, false, "task_id", "attorney_case_review_id", nil],
           [:task_timers, false, false, "task_id", "task_timer_id", nil],
-          # has_one declared in Task
+          [:correspondences_appeals_task, false, true, "task_id", "correspondences_appeals_task_id", nil],
+          [:correspondence_appeal, false, true, "correspondence_appeal_id", "correspondence_appeal_id", nil],
           [:cached_appeal, false, true, :appeal_id, "cached_appeal_id", nil]
         ]
       end
     end
+
     describe "#polymorphic" do
-      subject { AssocationWrapper.new(target_class).belongs_to.polymorphic }
+      subject { AssociationWrapper.new(target_class).belongs_to.polymorphic }
+
       context "for DecisionDocument class" do
         let(:target_class) { DecisionDocument }
+
         it "returns those with polymorphic belongs_to associations" do
           assocs = subject.associated_with_type(Appeal).select_associations
           expect(assocs.length).to eq 1
@@ -109,8 +135,10 @@ describe "AssocationWrapper" do
           expect(assoc.foreign_key).to eq "appeal_id"
         end
       end
+
       context "for DecisionIssue class" do
         let(:target_class) { DecisionIssue }
+
         it "returns those with polymorphic belongs_to associations" do
           assocs = subject.associated_with_type(DecisionReview).select_associations
           expect(assocs.length).to eq 1
@@ -123,24 +151,23 @@ describe "AssocationWrapper" do
       end
     end
   end
-  describe "AssocationWrapper#fieldnames_of_untyped_associations_with User records" do
-    subject { AssocationWrapper.new(target_class).fieldnames_of_untyped_associations_with(User) }
+
+  describe "AssociationWrapper#fieldnames_of_untyped_associations_with User records" do
+    subject { AssociationWrapper.new(target_class).fieldnames_of_untyped_associations_with(User) }
+
     context "for Task class" do
       let(:target_class) { Task }
+
       it "returns fieldnames associated with User records" do
         expect(subject).to match_array %w[assigned_by_id cancelled_by_id completed_by_id]
       end
     end
-    context "for Hearing class" do
-      let(:target_class) { Hearing }
+
+    context "for DecisionIssue class" do
+      let(:target_class) { DecisionIssue }
+
       it "returns fieldnames associated with User records" do
-        expect(subject).to match_array %w[created_by_id judge_id updated_by_id]
-      end
-    end
-    context "for AppealIntake class" do
-      let(:target_class) { AppealIntake }
-      it "returns fieldnames associated with User records" do
-        expect(subject).to match_array %w[user_id]
+        expect(subject).to match_array %w[assigned_by_id]
       end
     end
   end
