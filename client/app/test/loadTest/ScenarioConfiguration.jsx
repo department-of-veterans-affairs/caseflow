@@ -34,7 +34,7 @@ export default function ScenarioConfiguration(props) {
             options={targetType}
             isClearable
           />
-          <br/>
+          <br />
           <TextField
             name="testTargetID"
             label="Target Type ID"

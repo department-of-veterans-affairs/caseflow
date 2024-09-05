@@ -105,7 +105,7 @@
   {"scenario": "v2MetricLogs",
     "targetType": [{
       "value": "metric",
-      "label": "Metrics"
+      "label": "Metric"
     }],
     "targetId": ""
   },
