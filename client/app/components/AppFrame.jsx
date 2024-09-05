@@ -9,13 +9,20 @@ import Alert from './Alert';
 
 // eslint-disable-next-line no-process-env
 const env = process.env.DEPLOY_ENV;
+
+// eslint-disable-next-line no-process-env
+// const nodeEnv = process.env.NODE_ENV;
 // line below is for testing different env presentations, erase before deployment master
-// const env = 'dev';
+// const env = 'uat';
+const nodeEnv = 'development';
+
+// console.log(`Env: ${ env}`);
+// console.log(`nodeEnv: ${ nodeEnv}`);
 
 const className = classnames(
   {
     // eslint-disable-next-line no-undefined
-    'dev-env-alert': env !== 'prod' && env === 'dev',
+    'dev-env-alert': env !== 'prod' && nodeEnv === 'development',
     'prodtest-env-alert': env !== 'prod' && env === 'prodtest',
     'preprod-env-alert': env !== 'prod' && env === 'preprod',
     'uat-env-alert': env !== 'prod' && env === 'uat',
@@ -31,9 +38,9 @@ const AppFrame = ({ children, wideApp }) =>
       title="Caseflow | Home"
       component={() =>
       // eslint-disable-next-line no-undefined
-        (env !== 'prod' && env !== 'production' && env !== undefined && env !== 'demo') &&
+        (env !== 'prod' && env !== 'production' && nodeEnv === 'development') &&
       (<div className={className}>
-        <Alert type="warning">This is the {env} environment!</Alert>
+        <Alert type="warning">This is the {nodeEnv} environment!</Alert>
       </div>)
       } />
     <PageRoute
@@ -41,7 +48,7 @@ const AppFrame = ({ children, wideApp }) =>
       path="/"
       title="Caseflow | Home"
       component={() =>
-        (env !== 'prod' && env !== 'production' && env === 'demo') &&
+        (env !== 'prod' && env !== 'production' && nodeEnv !== 'development') &&
       (<div className={className}>
         <Alert type="warning">This is a {env} environment!</Alert>
       </div>)
