@@ -8,6 +8,7 @@ import LinkToAppeal from '../components/assignHearings/LinkToAppeal';
 import { renderLegacyAppealType } from '../../queue/utils';
 import { ExternalLinkIcon } from '../../components/icons/ExternalLinkIcon';
 import { COLORS, ICON_SIZES } from '../../constants/AppConstants';
+import { Link } from 'react-router-dom';
 
 const styles = {
   checkBoxHeader: css({
@@ -218,7 +219,7 @@ export const hearingTypeColumn = () => {
   };
 };
 
-export const workOrderColumn = (openFile) => {
+export const workOrderColumn = () => {
   return {
     header: <p {...styles.headerWithIcon}>{COPY.TRANSCRIPTION_FILE_DISPATCH_WORK_ORDER_COLUMN_NAME}</p>,
     name: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.WORK_ORDER.name,
@@ -226,12 +227,14 @@ export const workOrderColumn = (openFile) => {
     anyFiltersAreSet: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.WORK_ORDER.anyFiltersAreSet,
     valueFunction: (row) => (
       <div>
-        <a style={styles.workOrderLink} onClick={() => openFile(row.id)}>
+        <Link
+          to={`/transcription_work_order/display_wo_summary/?taskNumber=${row.workOrder}`}
+          style={styles.workOrderLink}>
           #{row.workOrder}
           <span style={styles.workOrderLinkIcon}>
             <ExternalLinkIcon color={COLORS.PRIMARY} size={ICON_SIZES.SMALL} />
           </span>
-        </a>
+        </Link>
       </div>
     )
   };
