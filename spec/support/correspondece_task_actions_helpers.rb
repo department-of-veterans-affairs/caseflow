@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module CorrespondenceTaskActionsHelpers
-
   TASKS = [
     { class: OtherMotionCorrespondenceTask, name: "Other motion",
       assigned_to_type: "User", assigned_to: :user_team,
@@ -26,11 +25,37 @@ module CorrespondenceTaskActionsHelpers
       access_type: :colocated_user_access, team_name: "VLJ Support Staff" },
     { class: PowerOfAttorneyRelatedCorrespondenceTask, name: "Power of attorney-related",
       assigned_to_type: "HearingAdmin", assigned_to: :hearings_team,
-      access_type: :hearnings_user_access, team_name: "Hearing Admin"},
+      access_type: :hearnings_user_access, team_name: "Hearing Admin" },
     { class: StatusInquiryCorrespondenceTask, name: "Status inquiry",
       assigned_to_type: "LitigationSupport", assigned_to: :liti_team,
       access_type: :litigation_user_access, team_name: "Litigation Support" }
   ].freeze
+
+  def correspondence_spec_privacy_user_access
+    PrivacyTeam.singleton.add_user(privacy_user)
+    User.authenticate!(user: privacy_user)
+  end
+
+  def correspondence_spec_cavc_user_access
+    CavcLitigationSupport.singleton.add_user(cavc_user)
+    User.authenticate!(user: cavc_user)
+  end
+
+  def correspondence_spec_litigation_user_access
+    LitigationSupport.singleton.add_user(liti_user)
+    User.authenticate!(user: liti_user)
+  end
+
+  def correspondence_spec_colocated_user_access
+    Colocated.singleton.add_user(colocated_user)
+    User.authenticate!(user: colocated_user)
+  end
+
+  def correspondence_spec_hearnings_user_access
+    HearingAdmin.singleton.add_user(hearings_user)
+    User.authenticate!(user: hearings_user)
+  end
+
 
   def setup_correspondence_task(options = {})
     correspondence = options[:correspondence]
