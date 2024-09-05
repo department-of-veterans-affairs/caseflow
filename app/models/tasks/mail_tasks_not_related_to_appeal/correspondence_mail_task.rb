@@ -25,21 +25,37 @@ class CorrespondenceMailTask < CorrespondenceTask
     )
   end
 
-  # rubocop: disable Metrics/AbcSize
-  def self.available_actions(user)
-    return [] unless user
+  def reassign_users
+    users_list = []
+    # return users if the assignee is an organization
+    if assigned_to.is_a?(Organization)
+      users_list << assigned_to&.users&.pluck(:css_id)
+    end
+    # return the users from other orgs
+    if assigned_to.is_a?(User)
+      users_list = []
+      assigned_to.organizations.each do |org|
+        users_list << org.users.reject { |user| user == assigned_to }.pluck(:css_id)
+      end
+
+      users_list.flatten
+    end
+
+    users_list
+  end
+
+  # disable Metrics/AbcSize
+  def available_actions(user)
+    return [] unless user_can_work_task_correspondence_mail_task(user)
 
     options = [
-      Constants.TASK_ACTIONS.CHANGE_CORR_TASK_TYPE.to_h,
+      Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
       Constants.TASK_ACTIONS.ASSIGN_CORR_TASK_TO_TEAM.to_h,
-      Constants.TASK_ACTIONS.MARK_TASK_COMPLETE.to_h,
-      Constants.TASK_ACTIONS.RETURN_TO_INBOUND_OPS.to_h,
-      Constants.TASK_ACTIONS.CANCEL_CORR_TASK.to_h,
       Constants.TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.to_h,
       Constants.TASK_ACTIONS.COMPLETE_CORRESPONDENCE_TASK.to_h
     ]
 
-    if user.is_a? Organization
+    if assigned_to.is_a? Organization
       options.insert(2, Constants.TASK_ACTIONS.ASSIGN_CORR_TASK_TO_PERSON.to_h)
     else
       options.insert(2, Constants.TASK_ACTIONS.REASSIGN_CORR_TASK_TO_PERSON.to_h)
@@ -47,5 +63,19 @@ class CorrespondenceMailTask < CorrespondenceTask
 
     options
   end
-  # rubocop: enable Metrics/AbcSize
+
+  def reassign_organizations
+    if assigned_to.is_a?(Organization)
+      Organization.where.not(id: assigned_to.id).assignable(self)
+    else
+      # Return all assignable organizations if the task is assigned to a user
+      Organization.assignable(self)
+    end
+  end
+
+  private
+
+  def user_can_work_task_correspondence_mail_task(user)
+    task_is_assigned_to_users_organization?(user) || assigned_to == user
+  end
 end

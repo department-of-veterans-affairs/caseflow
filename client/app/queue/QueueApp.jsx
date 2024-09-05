@@ -94,6 +94,8 @@ import TeamManagement from './teamManagement/TeamManagement';
 import UserManagement from './UserManagement';
 import CorrespondenceReviewPackage from './correspondence/ReviewPackage/CorrespondenceReviewPackage';
 import CorrespondenceIntake from './correspondence/intake/components/CorrespondenceIntake';
+import CorrespondenceAssignTaskModal from './components/CorrespondenceAssignTaskModal';
+import CorrespondenceAssignTeamModal from './components/CorrespondenceAssignTeamModal';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_TITLES } from './constants';
@@ -120,6 +122,7 @@ import EditPOAInformation from './editPOAInformation/EditPOAInformation';
 import NotificationsView from './NotificationsView';
 import CavcDashboard from './cavcDashboard/CavcDashboard';
 import CorrespondenceDetails from './correspondence/details/CorrespondenceDetails';
+import CorrespondenceChangeTaskTypeModal from 'app/queue/components/CorrespondenceChangeTaskTypeModal';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -718,8 +721,16 @@ class QueueApp extends React.PureComponent {
     />
   );
 
+  routedCorrespondenceAssignTaskModal = (props) => (
+    <CorrespondenceAssignTaskModal {...props.match.params} />
+  );
+
   routedCorrespondenceCancelTaskModal = (props) => (
     <CorrespondenceCancelTaskModal {...props.match.params} />
+  );
+
+  routedCorrespondenceChangeTaskTypeModal = (props) => (
+    <CorrespondenceChangeTaskTypeModal {...props.match.params} />
   );
 
   routedCorrespondenceCompleteTaskModal = (props) => (
@@ -739,6 +750,10 @@ class QueueApp extends React.PureComponent {
       {...this.props}
       correspondenceResponseLetters={this.props.correspondenceResponseLetters}
     />
+  );
+
+  routedCorrespondenceAssignTeamModal = (props) => (
+    <CorrespondenceAssignTeamModal {...props.match.params} />
   );
 
   routedCompleteHearingWithdrawalRequest = (props) => (
@@ -1012,7 +1027,27 @@ class QueueApp extends React.PureComponent {
               title={`${PAGE_TITLES.CORRESPONDENCE_INTAKE}`}
               render={this.routedCorrespondenceIntake}
             />
+            <PageRoute
+              exact
+              path={
+                '/queue/correspondence/:correspondence_uuid/tasks/:task_id/' +
+            `(${TASK_ACTIONS.ASSIGN_CORR_TASK_TO_TEAM.value
+            })`
+              }
+              title={`${PAGE_TITLES.ASSIGN_CORR_TASK_TO_TEAM} | Caseflow`}
+              render={this.routedCorrespondenceAssignTeamModal}
+            />
 
+            <PageRoute
+              exact
+              path={
+                '/queue/correspondence/:correspondence_uuid/tasks/:task_id/' +
+                `(${TASK_ACTIONS.ASSIGN_CORR_TASK_TO_PERSON.value
+                })`
+              }
+              title={`${PAGE_TITLES.ASSIGN_TASK} | Caseflow`}
+              render={this.routedCorrespondenceAssignTaskModal}
+            />
             <PageRoute
               exact
               path={
@@ -1022,6 +1057,13 @@ class QueueApp extends React.PureComponent {
               }
               title={`${PAGE_TITLES.CANCEL_TASK} | Caseflow`}
               render={this.routedCorrespondenceCancelTaskModal}
+            />
+
+            <PageRoute
+              exact
+              path="/queue/correspondence/:correspondence_uuid/tasks/:task_id/modal/change_task_type"
+              title={`${PAGE_TITLES.CHANGE_TASK_TYPE} | Caseflow`}
+              render={this.routedCorrespondenceChangeTaskTypeModal}
             />
 
             <PageRoute

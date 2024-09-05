@@ -5,6 +5,9 @@ RSpec.describe CorrespondenceTasksController, :all_dbs, type: :controller do
   let(:correspondence) { create(:correspondence, veteran_id: veteran.id) }
   let(:current_user) { create(:user) }
   let(:task_creation_params) { { correspondence_uuid: correspondence.uuid, correspondence_id: correspondence.id } }
+  let(:correspondence_with_intake) { create(:correspondence, :with_correspondence_intake_task) }
+  let(:assigned_to) { create(:user) }
+  let(:correspondence_task) { CorrespondenceTask.first }
 
   before do
     Fakes::Initializer.load!
@@ -16,7 +19,7 @@ RSpec.describe CorrespondenceTasksController, :all_dbs, type: :controller do
   describe "POST #create_package_action_task" do
     context "RemovePackageTask creation" do
       before do
-        task_creation_params.merge!(type: "removePackage", instructions: ["please remove task, thanks"])
+        task_creation_params.merge!(type: "removePackage", instructions: "please remove task, thanks")
         post :create_package_action_task, params: task_creation_params
       end
 
@@ -34,7 +37,7 @@ RSpec.describe CorrespondenceTasksController, :all_dbs, type: :controller do
 
     context "SplitPackageTask creation" do
       before do
-        task_creation_params.merge!(type: "splitPackage", instructions: ["Reason for SplitPackage"])
+        task_creation_params.merge!(type: "splitPackage", instructions: "Reason for SplitPackage")
         post :create_package_action_task, params: task_creation_params
       end
 
@@ -52,7 +55,7 @@ RSpec.describe CorrespondenceTasksController, :all_dbs, type: :controller do
 
     context "MergePackageTask creation" do
       before do
-        task_creation_params.merge!(type: "mergePackage", instructions: ["Reason for MergePackage"])
+        task_creation_params.merge!(type: "mergePackage", instructions: "Reason for MergePackage")
         post :create_package_action_task, params: task_creation_params
       end
 
@@ -85,6 +88,87 @@ RSpec.describe CorrespondenceTasksController, :all_dbs, type: :controller do
         expect(cit.parent_id).to eq(parent.id)
         expect(review_package_task.status).to eq(Constants.TASK_STATUSES.completed)
         expect(review_package_task.parent_id).to eq(parent.id)
+      end
+    end
+  end
+
+  describe "PATCH #update assign_to_person" do
+    context "Update correspondence task" do
+      before do
+        task_creation_params.merge!(
+          task_id: correspondence_task.id,
+          instructions: ["please update task, thanks"],
+          assigned_to: assigned_to.css_id
+        )
+        patch :assign_to_person, params: task_creation_params
+      end
+
+      it "creates remove package task successfully" do
+        expect(response).to have_http_status(204)
+        correspondence_task.reload
+        expect(correspondence_task.status).to eq(Constants.TASK_STATUSES.assigned)
+        expect(correspondence_task.assigned_to).to eq(assigned_to)
+        expect(correspondence_task.assigned_at).to be_within(1.second).of(Time.zone.now)
+      end
+    end
+  end
+
+  describe "PATCH #change_task_type" do
+    let(:correspondence_task) do
+      create(
+        :correspondence_intake_task,
+        appeal: correspondence,
+        appeal_type: Correspondence.name,
+        assigned_to: current_user
+      )
+    end
+    let(:valid_params) do
+      {
+        task: {
+          type: "PoaClarificationColocatedTask",
+          instructions: "Updated instructions"
+        },
+        task_id: correspondence_task.id
+      }
+    end
+
+    let(:invalid_params) do
+      {
+        task: {
+          type: nil, # Invalid type
+          instructions: "Updated instructions"
+        },
+        task_id: correspondence_task.id
+      }
+    end
+
+    context "with valid params" do
+      it "updates the task with the new type and instructions" do
+        patch :change_task_type, params: valid_params
+
+        updated_task = Task.find_by(id: correspondence_task.id)
+        expect(updated_task.type).to eq("PoaClarificationColocatedTask")
+        expect(updated_task.instructions).to eq(["Updated instructions"])
+        expect(response).to have_http_status(:success)
+      end
+    end
+
+    context "with invalid params" do
+      it "raises an error and does not update the task" do
+        expect do
+          patch :change_task_type, params: invalid_params
+        end.to raise_error(ActiveRecord::RecordInvalid)
+
+        updated_task = Task.find_by(id: correspondence_task.id)
+        expect(updated_task.type).not_to be_nil
+        expect(updated_task.type).to eq("CorrespondenceIntakeTask")
+      end
+    end
+
+    context "with an invalid task ID" do
+      it "raises an error" do
+        patch :change_task_type, params: { task_id: "invalid_id" }
+        expect(response).to have_http_status(404)
       end
     end
   end
