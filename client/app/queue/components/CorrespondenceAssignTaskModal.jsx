@@ -74,10 +74,10 @@ const CorrespondenceAssignTaskModal = (props) => {
     const tempCor = props.correspondenceInfo;
 
     tempCor.tasksUnrelatedToAppeal.find(
-      (task) => task.uniqueId == props.task_id
+      (task) => parseInt(props.task_id, 10) === parseInt(task.uniqueId, 10)
     ).assignedTo = assignee;
     tempCor.tasksUnrelatedToAppeal.find(
-      (task) => task.uniqueId == props.task_id
+      (task) => parseInt(props.task_id, 10) === parseInt(task.uniqueId, 10)
     ).instructions = instructions;
 
     return tempCor;
@@ -85,7 +85,9 @@ const CorrespondenceAssignTaskModal = (props) => {
 
   const submit = () => {
     const correspondence = updateCorrespondence();
-    const updatedTask = correspondence.tasksUnrelatedToAppeal.find((task) => parseInt(props.task_id, 10) === parseInt(task.uniqueId, 10));
+    const updatedTask = correspondence.tasksUnrelatedToAppeal.find(
+      (task) => parseInt(props.task_id, 10) === parseInt(task.uniqueId, 10)
+    );
 
     const payload = {
       data: {
@@ -163,7 +165,9 @@ CorrespondenceAssignTaskModal.propTypes = {
     onHoldDuration: PropTypes.number
   }),
   task_id: PropTypes.string,
-  correspondenceInfo: PropTypes.object
+  correspondenceInfo: PropTypes.object,
+  assignTaskToUser: PropTypes.func,
+  correspondence_uuid: PropTypes.number
 };
 
 const mapStateToProps = (state, ownProps) => ({
