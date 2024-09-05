@@ -61,7 +61,6 @@ class AppealsReadyForDistribution
     veteran_name = format_veteran_name(appeal["snamef"], appeal["snamel"])
     hearing_judge = format_vlj_name(appeal["vlj_namef"], appeal["vlj_namel"])
     appeal_affinity = fetch_affinity_start_date(appeal["bfkey"])
-    binding.pry
 
     {
       docket_number: appeal["tinum"],
