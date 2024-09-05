@@ -73,6 +73,26 @@ module CorrespondenceTaskHelpers
     User.authenticate!(user: privacy_user)
   end
 
+  def correspondence_spec_cavc_user_access
+    CavcLitigationSupport.singleton.add_user(cavc_user)
+    User.authenticate!(user: cavc_user)
+  end
+
+  def correspondence_spec_litigation_user_access
+    LitigationSupport.singleton.add_user(liti_user)
+    User.authenticate!(user: liti_user)
+  end
+
+  def correspondence_spec_colocated_user_access
+    Colocated.singleton.add_user(colocated_user)
+    User.authenticate!(user: colocated_user)
+  end
+
+  def correspondence_spec_hearnings_user_access
+    HearingAdmin.singleton.add_user(hearings_user)
+    User.authenticate!(user: hearings_user)
+  end
+
   def organizations_array_list
     @organizations_array_list ||= [
       "Education",
