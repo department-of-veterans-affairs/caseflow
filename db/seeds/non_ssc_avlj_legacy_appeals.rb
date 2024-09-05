@@ -34,7 +34,7 @@ module Seeds
       create_vlj("REGVLJ02", "Regular VLJ2")
       create_non_ssc_avlj("SIGNAVLJLGC", "NonSSC Signing-AVLJ")
       create_non_ssc_avlj("AVLJLGC2", "Alternate NonSSC-AVLJ")
-      create_ssc_avlj("SSCAVLJLGC", "SSC AVLJ1")
+      create_ssc_avlj("SSCAVLJLGC", "SSC-Two-judges last-is-SSC")
     end
 
     def create_legacy_appeals
