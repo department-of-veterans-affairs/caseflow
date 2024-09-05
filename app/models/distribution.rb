@@ -37,8 +37,6 @@ class Distribution < CaseflowRecord
     multi_transaction do
       ActiveRecord::Base.connection.execute "SET LOCAL statement_timeout = #{transaction_time_out}"
 
-      write_to_distribution_lever_cache(priority_push.value)
-
       priority_push? ? priority_push_distribution(limit) : requested_distribution
 
       ama_stats = ama_statistics
@@ -48,7 +46,7 @@ class Distribution < CaseflowRecord
 
       record_distribution_stats(ama_stats)
 
-      clear_distribution_lever_cache
+      CaseDistributionLever.clear_distribution_cache
     end
   rescue StandardError => error
     process_error(error)
@@ -161,13 +159,5 @@ class Distribution < CaseflowRecord
 
   def record_distribution_stats(stats)
     create_distribution_stats!(stats.merge(levers: CaseDistributionLever.snapshot))
-  end
-
-  def write_to_distribution_lever_cache(values)
-    Rails.cache.write('distribution_lever_cache', values, expires_in: 1.day)
-  end
-
-  def clear_distribution_lever_cache
-    Rails.cache.delete('distribution_lever_cache')
   end
 end

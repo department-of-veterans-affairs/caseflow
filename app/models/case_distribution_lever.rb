@@ -141,6 +141,7 @@ class CaseDistributionLever < ApplicationRecord
     def method_missing(name, *args)
       if Constants.DISTRIBUTION.to_h.key?(name)
         value = method_missing_value(name.to_s)
+        write_to_distribution_lever_cache(value)
         return value unless value.nil?
       end
 
@@ -186,6 +187,10 @@ class CaseDistributionLever < ApplicationRecord
       end
 
       snapshot_hash
+    end
+
+    def clear_distribution_lever_cache
+      Rails.cache.delete('distribution_lever_cache')
     end
 
     private
@@ -252,6 +257,10 @@ class CaseDistributionLever < ApplicationRecord
 
     def check_distribution_lever_cache
       Rails.cache.read('distribution_lever_cache')
+    end
+
+    def write_to_distribution_lever_cache(value)
+      Rails.cache.write('distribution_lever_cache', value, expires_in: 1.day) unless value.nil?
     end
   end
 end
