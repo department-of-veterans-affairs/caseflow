@@ -140,8 +140,8 @@ group :test, :development, :demo do
   gem "rubocop-performance"
   gem "rubocop-rails"
   gem "scss_lint", require: false
-  gem "simplecov", require: false
-  gem "simplecov-lcov", require: false
+  gem "simplecov"
+  gem "simplecov_lcov_formatter", "~> 0.9.0"
   gem "single_cov"
   gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git"
   gem "sql_tracker"
