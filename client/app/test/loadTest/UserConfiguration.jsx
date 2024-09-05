@@ -4,12 +4,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
-import Checkbox from '../../components/Checkbox';
-import OFFICE_INFO from '../../../constants/REGIONAL_OFFICE_FOR_CSS_STATION.json';
+
+import FeatureToggleConfiguration from './FeatureToggleConfiguration';
+import FunctionConfiguration from './FunctionConfiguration';
+// import OFFICE_INFO from '../../../constants/REGIONAL_OFFICE_FOR_CSS_STATION.json';
 
 export default function UserConfiguration(props) {
-
-  // console.log(OFFICE_INFO);
+// console.log(OFFICE_INFO);
 
   // const filteredStations = () => {
   //   let newStations = [];
@@ -65,21 +66,19 @@ export default function UserConfiguration(props) {
       <h2><strong>Functions</strong></h2>
       <div>
         {functionsAvailable.map((functionOption) => (
-          <Checkbox
-            unpadded
-            label={functionOption}
-            name="functions-checkboxes"
+          <FunctionConfiguration
+            key={functionOption}
+            functionOption={functionOption}
           />
         ))}
       </div>
       <br />
       <h2><strong>Feature Toggles</strong></h2>
       <div>
-        {featureToggles.map((feature) => (
-          <Checkbox
-            unpadded
-            label={feature}
-            name="features-checkboxes"
+        {featureToggles.map((featureToggle) => (
+          <FeatureToggleConfiguration
+            key={featureToggle}
+            featureToggle={featureToggle}
           />
         ))}
       </div>
