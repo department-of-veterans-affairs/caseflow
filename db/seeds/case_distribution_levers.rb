@@ -304,7 +304,7 @@ module Seeds
                 text: "Omit variable from distribution rules"
               }
             ],
-            is_disabled_in_ui: false,
+            is_disabled_in_ui: true,
             min_value: 0,
             max_value: 999,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket, Constants.ACD_LEVERS.algorithms.proportion],
@@ -314,7 +314,7 @@ module Seeds
           {
             item: Constants.DISTRIBUTION.cavc_aod_affinity_days,
             title: Constants.DISTRIBUTION.cavc_aod_affinity_days_title,
-            description: "Sets the number of days appeals returned from CAVC that are also AOD respect the affinity to the deciding judge. This is not applicable for legacy appeals for which the deciding judge conducted the most recent hearing.",
+            description: "Sets the number of days appeals returned from CAVC that are also AOD respect the affinity to the deciding judge. This is not applicable for legacy apeals for which the deciding judge conducted the most recent hearing.",
             data_type: Constants.ACD_LEVERS.data_types.radio,
             value: "14",
             unit: Constants.ACD_LEVERS.days,
@@ -338,7 +338,7 @@ module Seeds
                 text: "Omit variable from distribution rules"
               }
             ],
-            is_disabled_in_ui: false,
+            is_disabled_in_ui: true,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion],
             lever_group: Constants.ACD_LEVERS.lever_groups.affinity,
             lever_group_order: 3003

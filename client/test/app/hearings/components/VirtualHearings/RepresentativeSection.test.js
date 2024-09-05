@@ -14,7 +14,6 @@ import { getAppellantTitle } from 'app/hearings/utils';
 import TextField from 'app/components/TextField';
 
 const updateSpy = jest.fn();
-const hearingDayDate = '2025-01-01';
 
 describe('RepresentativeSection', () => {
   test('Matches snapshot with default props', () => {
@@ -26,7 +25,6 @@ describe('RepresentativeSection', () => {
         hearing={defaultHearing}
         type={HEARING_CONVERSION_TYPES[0]}
         update={updateSpy}
-        hearingDayDate={hearingDayDate}
       />
     );
 
@@ -47,7 +45,6 @@ describe('RepresentativeSection', () => {
         hearing={defaultHearing}
         type={HEARING_CONVERSION_TYPES[0]}
         update={updateSpy}
-        hearingDayDate={hearingDayDate}
       />
     );
 
@@ -67,7 +64,6 @@ describe('RepresentativeSection', () => {
         hearing={defaultHearing}
         type={HEARING_CONVERSION_TYPES[0]}
         update={updateSpy}
-        hearingDayDate={hearingDayDate}
       />
     );
 
@@ -87,7 +83,6 @@ describe('RepresentativeSection', () => {
         }}
         type={HEARING_CONVERSION_TYPES[0]}
         update={updateSpy}
-        hearingDayDate={hearingDayDate}
       />
     );
 
@@ -113,7 +108,6 @@ describe('RepresentativeSection', () => {
         }}
         type={HEARING_CONVERSION_TYPES[0]}
         update={updateSpy}
-        hearingDayDate={hearingDayDate}
       />
     );
 
@@ -134,7 +128,6 @@ describe('RepresentativeSection', () => {
         hearing={defaultHearing}
         type={HEARING_CONVERSION_TYPES[0]}
         update={updateSpy}
-        hearingDayDate={hearingDayDate}
       />
     );
 

@@ -34,24 +34,20 @@ export const pageCoordsOfRootCoords = ({ x, y }, pageBoundingBox, scale) => ({
 });
 
 export const rotateCoordinates = ({ x, y }, container, rotation) => {
-  let rotatedCoords = null;
-
-  switch (rotation) {
-  case 90:
-    rotatedCoords = { x: y, y: container.width - x };
-    break;
-  case 180:
-    rotatedCoords = { x: container.width - x, y: container.height - y };
-    break;
-  case 27:
-    rotatedCoords = { x: container.height - y, y: x };
-    break;
-  default:
-    rotatedCoords = { x, y };
-    break;
+  if (rotation === 0) {
+    return { x, y };
+  } else if (rotation === 90) {
+    return { x: y, y: container.width - x };
+  } else if (rotation === 180) {
+    return { x: container.width - x, y: container.height - y };
+  } else if (rotation === 270) {
+    return { x: container.height - y, y: x };
   }
 
-  return rotatedCoords;
+  return {
+    x,
+    y
+  };
 };
 
 export const getPageCoordinatesOfMouseEvent = (event, container, scale, rotation) => {

@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { TimeSlotDetail } from '../scheduleHearing/TimeSlotDetail';
 import { HearingAppellantName } from './AssignHearingsFields';
 import { HearingTime } from '../HearingTime';
-import { HearingTimeScheduledInTimezone } from '../HearingTimeScheduledInTimezone';
 import { Dot } from '../../../components/Dot';
 
 export const TimeSlotCard = ({
@@ -17,21 +16,13 @@ export const TimeSlotCard = ({
   return (
     <div className="usa-grid time-slot-card">
       <div className="usa-width-one-fourth">
-        {hearing.scheduledInTimezone ?
-          <HearingTimeScheduledInTimezone
-            primaryLabel="RO"
-            hearing={hearing}
-            paragraphClasses="time-slot-card-time"
-            labelClasses="time-slot-card-label"
-            breakCharacter=""
-          /> :
-          <HearingTime
-            primaryLabel="RO"
-            hearing={hearing}
-            paragraphClasses="time-slot-card-time"
-            labelClasses="time-slot-card-label"
-            breakCharacter=""
-          />}
+        <HearingTime
+          primaryLabel="RO"
+          hearing={hearing}
+          paragraphClasses="time-slot-card-time"
+          labelClasses="time-slot-card-label"
+          breakCharacter=""
+        />
       </div>
       <div className="usa-width-three-fourths">
         <TimeSlotDetail

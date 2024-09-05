@@ -58,17 +58,7 @@ describe AppealEvent do
 
     context "when disposition is supported" do
       let(:hearing) do
-        vacols_record = create(
-          :case_hearing,
-          hearing_disp: "N",
-          hearing_date: 4.days.ago
-        )
-
-        create(
-          :legacy_hearing,
-          case_hearing: vacols_record,
-          scheduled_in_timezone: Time.zone.name
-        )
+        LegacyHearing.new(scheduled_for: 4.days.ago, disposition: Constants.HEARING_DISPOSITION_TYPES.no_show)
       end
 
       it "sets type and date based off of hearing" do
@@ -81,17 +71,7 @@ describe AppealEvent do
 
     context "when disposition is not supported" do
       let(:hearing) do
-        vacols_record = create(
-          :case_hearing,
-          hearing_disp: "P",
-          hearing_date: 4.days.ago
-        )
-
-        create(
-          :legacy_hearing,
-          scheduled_in_timezone: Time.zone.name,
-          case_hearing: vacols_record
-        )
+        LegacyHearing.new(scheduled_for: 4.days.ago, disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
       end
 
       it "sets type to falsey" do

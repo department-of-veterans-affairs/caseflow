@@ -59,7 +59,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       it "intaking VHA issues creates pre-docket tasks instead of regular docketing tasks" do
         step "BVA Intake user intakes a VHA case" do
           User.authenticate!(user: bva_intake_user)
-          categories.each_with_index do |category, index|
+          categories.each do |category|
             start_appeal(veteran, intake_user: bva_intake_user)
             visit "/intake"
             expect(page).to have_current_path("/intake/review_request")
@@ -71,9 +71,6 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             find("#issue-benefit-type").send_keys :enter
             fill_in "Issue category", with: category
             find("#issue-category").send_keys :enter
-            if index > 0 && page.has_selector?("label", text: "None of these match")
-              find("label", text: "None of these match").click
-            end
             fill_in "Issue description", with: "I am a VHA issue"
             fill_in "Decision date", with: 1.month.ago.mdY
 

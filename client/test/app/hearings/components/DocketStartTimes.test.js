@@ -11,8 +11,7 @@ describe('DocketStartTimes', () => {
     roTimezone: null,
     hearingStartTime: null,
     setSlotCount: jest.fn(),
-    setHearingStartTime: jest.fn(),
-    hearingDayDate: '2025-01-01'
+    setHearingStartTime: jest.fn()
   };
 
   const renderComponent = (props = {}) => render(

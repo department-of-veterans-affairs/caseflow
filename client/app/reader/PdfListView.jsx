@@ -7,7 +7,6 @@ import _ from 'lodash';
 import BackToQueueLink from './BackToQueueLink';
 import LastRetrievalAlert from './LastRetrievalAlert';
 import LastRetrievalInfo from './LastRetrievalInfo';
-import BandwidthAlert from './BandwidthAlert';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import DocumentListHeader from './DocumentListHeader';
 import ClaimsFolderDetails from './ClaimsFolderDetails';
@@ -79,14 +78,13 @@ export class PdfListView extends React.Component {
         queueTaskType={this.props.queueTaskType}
         veteranFullName={this.props.appeal.veteran_full_name}
         vbmsId={this.props.appeal.vbms_id} />}
-      <LastRetrievalAlert
-        userHasEfolderRole={this.props.userHasEfolderRole}
-        efolderExpressUrl={this.props.efolderExpressUrl}
-        appeal={this.props.appeal} />
       <AppSegment filledBackground>
         <div className="section--document-list">
           <ClaimsFolderDetails appeal={this.props.appeal} documents={this.props.documents} />
-          {this.props.featureToggles.bandwidthBanner && <BandwidthAlert /> }
+          <LastRetrievalAlert
+            userHasEfolderRole={this.props.userHasEfolderRole}
+            efolderExpressUrl={this.props.efolderExpressUrl}
+            appeal={this.props.appeal} />
           <DocumentListHeader
             documents={this.props.documents}
             noDocuments={noDocuments}

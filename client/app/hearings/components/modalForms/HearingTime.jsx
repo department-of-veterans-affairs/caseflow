@@ -1,6 +1,6 @@
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
-import React, { useMemo } from 'react';
+import React from 'react';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 
@@ -55,21 +55,14 @@ export const HearingTime = ({
   label,
   vertical,
   hideLabel,
-  requestType,
-  hearingDayDate
+  requestType
 }) => {
-  const basicTimeOptions = useMemo(() => getTimeOptions(regionalOffice, readOnly, requestType),
-    [regionalOffice, readOnly, requestType]
-  );
-  const timeOptions = useMemo(() => enableZone ?
-    hearingTimeOptsWithZone(basicTimeOptions, localZone || enableZone, hearingDayDate) : basicTimeOptions,
-  [basicTimeOptions, hearingDayDate, localZone, enableZone]);
-
+  const timeOptions = getTimeOptions(regionalOffice, readOnly, requestType);
   const isOther = _.isUndefined(
     _.find(timeOptions, (opt) => opt.value === value)
   );
   const onRadioChange = (newValue) => {
-    if (newValue === 'Other') {
+    if (newValue === 'other') {
       onChange(null);
     } else {
       onChange(newValue);
@@ -88,9 +81,9 @@ export const HearingTime = ({
             name={`hearingTime${componentIndex}`}
             label={label || 'Time'}
             strongLabel
-            options={timeOptions}
+            options={enableZone ? hearingTimeOptsWithZone(timeOptions, localZone || enableZone) : timeOptions}
             onChange={onRadioChange}
-            value={isOther ? 'Other' : value}
+            value={isOther ? 'other' : value}
           />
         </span>
       )}
@@ -103,7 +96,7 @@ export const HearingTime = ({
           placeholder="Select a time"
           options={
             enableZone ?
-              hearingTimeOptsWithZone(HEARING_TIME_OPTIONS, localZone || enableZone, hearingDayDate) :
+              hearingTimeOptsWithZone(HEARING_TIME_OPTIONS, localZone || enableZone) :
               HEARING_TIME_OPTIONS
           }
           value={value}
@@ -140,5 +133,4 @@ HearingTime.propTypes = {
       value: PropTypes.string
     })
   ]),
-  hearingDayDate: PropTypes.string
 };

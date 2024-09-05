@@ -57,4 +57,5 @@ describe('Fields', () => {
 
     expectations(fields);
   });
-});
+})
+;

@@ -3,7 +3,6 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { sprintf } from 'sprintf-js';
-import moment from 'moment-timezone';
 
 import * as DateUtil from '../../util/DateUtil';
 import { JudgeDropdown } from '../../components/DataDropdowns/index';
@@ -37,7 +36,6 @@ export const HearingConversion = ({
   const virtual = type === 'change_to_virtual';
   const video = hearing.readableRequestType === 'Video';
   const convertLabel = video ? COPY.VIDEO_CHANGE_FROM_VIRTUAL : COPY.CENTRAL_OFFICE_CHANGE_FROM_VIRTUAL;
-  const hearingDayDate = moment(hearing.scheduledFor).format('YYYY-MM-DD');
 
   let helperLabel = '';
 
@@ -69,8 +67,7 @@ export const HearingConversion = ({
     schedulingToVirtual: virtual,
     userVsoEmployee,
     actionType: 'hearing',
-    setIsValidEmail,
-    hearingDayDate
+    setIsValidEmail
   };
 
   const prefillFields = () => {
@@ -79,11 +76,11 @@ export const HearingConversion = ({
       'hearing', {
         ...hearing,
         representativeTz: userVsoEmployee ?
-        hearing?.currentUserTimezone :
-        hearing?.representativeTz || hearing?.appellantTz,
+          hearing?.currentUserTimezone :
+          hearing?.representativeTz || hearing?.appellantTz,
         representativeEmailAddress: userVsoEmployee ?
-        hearing?.currentUserEmail :
-        hearing?.representativeEmailAddress
+          hearing?.currentUserEmail :
+          hearing?.representativeEmailAddress
       });
   };
 
@@ -118,7 +115,6 @@ export const HearingConversion = ({
               localZone={hearing.regionalOfficeTimezone}
               onChange={(scheduledTimeString) => update('hearing', { scheduledTimeString })}
               value={hearing.scheduledTimeString}
-              hearingDayDate={hearingDayDate}
             />
             {!video && <HelperText label={COPY.VIRTUAL_HEARING_TIME_HELPER_TEXT} />}
           </div>

@@ -16,28 +16,29 @@ import { HEARING_CONVERSION_TYPES } from '../constants';
 import { ReadOnly } from './details/ReadOnly';
 import { emailConfirmationModalStyles } from './details/style';
 
-const getCentralOfficeTime = (hearing, hearingDate) => {
-  return zoneName(hearing.scheduledTimeString, 'America/New_York', 'z', hearingDate);
+const getCentralOfficeTime = (hearing) => {
+  const newTime = `${moment(hearing.scheduledFor).format('YYYY-MM-DD')}T${hearing.scheduledTimeString}`;
+
+  return moment.
+    tz(newTime, hearing.regionalOfficeTimezone).
+    tz('America/New_York').
+    format('HH:mm');
 };
 
-const formatTimeString = (hearing, timeWasEdited, hearingDate) => {
+const formatTimeString = (hearing, timeWasEdited) => {
   // Format the time string with Central Office time for formerly Central hearings
   if (
     hearing.readableRequestType === 'Central' ||
     hearing.regionalOfficeTimezone === 'America/New_York'
   ) {
-    return zoneName(hearing.scheduledTimeString, null, null, hearingDate);
+    return zoneName(hearing.scheduledTimeString);
   }
 
-  const centralOfficeTime = timeWasEdited ?
-    getCentralOfficeTime(hearing, hearingDate) :
-    hearing.centralOfficeTimeString;
+  const centralOfficeTime = timeWasEdited ? getCentralOfficeTime(hearing) : hearing.centralOfficeTimeString;
 
-  let timeString = timeWasEdited ?
-    centralOfficeTime.replace('EDT', 'ET') :
-    `${moment(centralOfficeTime, 'hh:mm').format('h:mm a')} ET`;
+  let timeString = `${moment(centralOfficeTime, 'hh:mm').format('h:mm a')} ET`;
 
-  timeString += ` / ${moment(hearing.scheduledTimeString, 'hh:mm a').format('h:mm a')} `;
+  timeString += ` / ${moment(hearing.scheduledTimeString, 'hh:mm').format('h:mm a')} `;
   timeString += moment().
     tz(hearing.regionalOfficeTimezone).
     format('z');
@@ -45,18 +46,16 @@ const formatTimeString = (hearing, timeWasEdited, hearingDate) => {
   return timeString;
 };
 
-export const DateTime = ({ hearing, timeWasEdited }) => {
-  const unformattedHearingDate = moment(hearing.scheduledFor);
-
-  return (<div>
+export const DateTime = ({ hearing, timeWasEdited }) => (
+  <div>
     <strong>Hearing Date:&nbsp;</strong>
-    {unformattedHearingDate.format('MM/DD/YYYY')}
+    {moment(hearing.scheduledFor).format('MM/DD/YYYY')}
     <br />
     <strong>Hearing Time:&nbsp;</strong>
-    {formatTimeString(hearing, timeWasEdited, unformattedHearingDate.format('YYYY-MM-DD'))}
+    {formatTimeString(hearing, timeWasEdited)}
     {hearing.readableRequestType === 'Central' && <div className="cf-help-divider" />}
-  </div>);
-};
+  </div>
+);
 
 DateTime.propTypes = {
   hearing: PropTypes.shape({
@@ -92,8 +91,6 @@ export const ReadOnlyEmails = ({
   // Determine whether ti display a divider
   const showDivider = representativeEmailAddress && (repEdited || appellantEdited || showAllEmails);
 
-  const hearingDayDate = moment(hearing?.scheduledFor).format('YYYY-MM-DD');
-
   return (
     <div {...emailConfirmationModalStyles}>
       {(appellantTzEdited || appellantEmailEdited || showAllEmails) && (
@@ -101,7 +98,7 @@ export const ReadOnlyEmails = ({
           <ReadOnly
             spacing={15}
             label={`${appellantTitle} Hearing Time`}
-            text={zoneName(hearing.scheduledTimeString, hearing.appellantTz, null, hearingDayDate)}
+            text={zoneName(hearing.scheduledTimeString, hearing.appellantTz)}
           />
           <ReadOnly
             spacing={15}
@@ -119,9 +116,7 @@ export const ReadOnlyEmails = ({
             text={zoneName(
               hearing.scheduledTimeString,
               hearing.representativeTz ||
-              hearing.virtualHearing?.representativeTz,
-              null,
-              hearingDayDate
+                  hearing.virtualHearing?.representativeTz
             )}
           />
           <ReadOnly

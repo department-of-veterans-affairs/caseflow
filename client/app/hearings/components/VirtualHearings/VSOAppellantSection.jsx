@@ -11,8 +11,7 @@ export const VSOAppellantSection = ({
   formFieldsOnly,
   setIsValidEmail,
   update,
-  actionType,
-  hearingDayDate
+  actionType
 }) => {
   // Depending on where this component is used, the *FullName fields will be available.
   // If they aren't, the *FirstName/*LastName fields should be available.
@@ -36,7 +35,6 @@ export const VSOAppellantSection = ({
           setIsValidEmail={setIsValidEmail}
           actionType={actionType}
           errors={errors}
-          hearingDayDate={hearingDayDate}
         />
       </React.Fragment>
     </VirtualHearingSection>
@@ -65,6 +63,5 @@ VSOAppellantSection.propTypes = {
   schedulingToVirtual: PropTypes.bool,
   formFieldsOnly: PropTypes.bool,
   setIsValidEmail: PropTypes.func,
-  actionType: PropTypes.string,
-  hearingDayDate: PropTypes.string
+  actionType: PropTypes.string
 };

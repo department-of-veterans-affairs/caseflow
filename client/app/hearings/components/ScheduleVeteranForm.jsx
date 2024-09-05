@@ -51,11 +51,9 @@ export const ScheduleVeteranForm = ({
     isEmpty(appeal?.availableHearingLocations);
 
   const unscheduledNotes = hearing?.notes;
-  const hearingDayIsVirtual = hearing?.requestType === 'Virtual';
+  const hearingDayIsVirtual = hearing?.hearingDay?.readableRequestType === 'Virtual';
 
-  const hearingDayIsVideo = hearing?.requestType === 'Video';
-
-  const hearingDayDate = hearing.hearingDay?.scheduledFor || initialHearingDay?.scheduledFor;
+  const hearingDayIsVideo = hearing?.hearingDay?.readableRequestType === 'Video';
 
   // Set the section props
   const sectionProps = {
@@ -79,8 +77,7 @@ export const ScheduleVeteranForm = ({
       props.onChange('virtualHearing', {
         ...hearing?.virtualHearing,
         ...virtualHearing,
-      }),
-    hearingDayDate
+      })
   };
 
   const getHearingTime = () => {
@@ -107,7 +104,6 @@ export const ScheduleVeteranForm = ({
       localZone={hearing?.hearingDay?.timezone}
       onChange={onTimeChange}
       value={hearing.scheduledTimeString}
-      hearingDayDate={hearingDayDate}
     />;
 
   };
@@ -180,7 +176,7 @@ export const ScheduleVeteranForm = ({
                   }}
                 />
               </div>
-              {hearing.hearingDay?.scheduledFor && (
+              {hearing.hearingDay?.hearingId && (
                 <div {...marginTop(30)}>
                   {hearingDayIsVirtual && userCanViewTimeSlots ? (
                     <TimeSlot

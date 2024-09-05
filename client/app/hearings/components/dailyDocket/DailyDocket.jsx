@@ -314,7 +314,6 @@ export default class DailyDocket extends React.Component {
           openDispositionModal={this.openDispositionModal}
           regionalOffice={regionalOffice}
           user={user}
-          hearingDayDate={dailyDocket.scheduledFor}
         />
 
         {!hasDocketHearings && (
@@ -338,7 +337,6 @@ export default class DailyDocket extends React.Component {
               hearings={prevHearings}
               regionalOffice={regionalOffice}
               user={user}
-              hearingDayDate={dailyDocket.scheduledFor}
               readOnly
             />
           </div>

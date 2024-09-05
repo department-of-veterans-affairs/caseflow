@@ -1,7 +1,6 @@
 require "#{Rails.root}/app/jobs/middleware/job_monitoring_middleware"
 require "#{Rails.root}/app/jobs/middleware/job_request_store_middleware"
 require "#{Rails.root}/app/jobs/middleware/job_sentry_scope_middleware"
-require "#{Rails.root}/app/jobs/middleware/job_time_zone_middleware"
 require "#{Rails.root}/app/jobs/middleware/job_message_deletion_middleware"
 
 # set up default exponential backoff parameters
@@ -34,7 +33,6 @@ Shoryuken.configure_server do |config|
     chain.add JobMonitoringMiddleware
     chain.add JobRequestStoreMiddleware
     chain.add JobSentryScopeMiddleware
-    chain.add JobTimeZoneMiddleware
     chain.add JobMessageDeletionMiddleware
   end
 end

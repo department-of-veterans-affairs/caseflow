@@ -11,41 +11,36 @@ describe LegacyHearing, :all_dbs do
 
   before do
     RequestStore[:current_user] = create(:user, css_id: "Test user", station_id: "101")
-    Time.zone = "America/New_York"
   end
 
   let(:hearing) do
     create(
       :legacy_hearing,
-      case_hearing: case_hearing,
+      scheduled_for: scheduled_for,
+      disposition: disposition,
+      hold_open: hold_open,
       request_type: request_type,
       regional_office: regional_office
-    )
-  end
-
-  let(:case_hearing) do
-    create(
-      :case_hearing,
-      hearing_date: scheduled_for,
-      hearing_disp: disposition,
-      holddays: hold_open
     )
   end
 
   let(:hearing2) do
     create(
       :legacy_hearing,
-      case_hearing: case_hearing,
+      scheduled_for: scheduled_for,
+      disposition: disposition,
+      hold_open: hold_open,
       request_type: request_type,
       regional_office: regional_office
     )
   end
 
   let(:scheduled_for) do
-    # .floor needed since this VACOLS column's datatype cannot accept times with milliseconds
-    Time.use_zone("America/New_York") { Time.zone.now }.floor
-  end
+    now = Time.zone.now
+    yesterday = Time.zone.yesterday
 
+    Time.zone.local(yesterday.year, yesterday.month, yesterday.day, now.hour, now.min, now.sec)
+  end
   let(:disposition) { nil }
   let(:hold_open) { nil }
   let(:request_type) { HearingDay::REQUEST_TYPES[:video] }
@@ -137,8 +132,7 @@ describe LegacyHearing, :all_dbs do
 
     context "when held open" do
       let(:hold_open) { 30 }
-
-      it { is_expected.to eq(Time.zone.now.utc.to_date + 30.days) }
+      it { is_expected.to eq(29.days.from_now.to_date) }
     end
 
     context "when not held open" do
@@ -149,7 +143,7 @@ describe LegacyHearing, :all_dbs do
   context "#no_show_excuse_letter_due_date" do
     subject { hearing.no_show_excuse_letter_due_date }
 
-    it { is_expected.to eq(Time.zone.now.utc.to_date + 15.days) }
+    it { is_expected.to eq(14.days.from_now.to_date) }
   end
 
   context "#active_appeal_streams" do
@@ -384,14 +378,12 @@ describe LegacyHearing, :all_dbs do
 
   context "#hearing_day" do
     context "associated hearing day exists" do
-      let!(:user) { User.create(css_id: "1111", station_id: "123") }
       let(:hearing_day) { create(:hearing_day) }
-      let(:regional_office) { "C" }
       let(:legacy_hearing) do
         # hearing_day_id is set to nil because the tests are testing if it
         # gets populated correctly. hearing_day is used by the factory to initialize
         # a case hearing in vacols.
-        create(:legacy_hearing, hearing_day: hearing_day, hearing_day_id: nil, regional_office: regional_office)
+        create(:legacy_hearing, hearing_day: hearing_day, hearing_day_id: nil)
       end
 
       context "and hearing day id refers to a row in Caseflow" do
@@ -400,11 +392,8 @@ describe LegacyHearing, :all_dbs do
         end
 
         it "get hearing day calls update once" do
-          # orginally was expected to receive `update`, but with the addition of the
-          # `scheduled_in_timezone` attr within the factory, we're now checking for the full method instead of
-          # a call to `update!`
-          expect(legacy_hearing.hearing_day_id).to eq(legacy_hearing.hearing_day_vacols_id.to_i)
-          expect(legacy_hearing).to receive(:hearing_day_id).at_least(:once)
+          expect(legacy_hearing).to receive(:update!).at_least(:once)
+
           legacy_hearing.hearing_day
         end
 
@@ -458,24 +447,24 @@ describe LegacyHearing, :all_dbs do
     end
   end
 
+  # Note: `scheduled_for` is populated by `HearingRepostiory#vacols_attributes`
   context "#scheduled_for" do
+    let(:hearing) do
+      create(
+        :legacy_hearing,
+        hearing_day: hearing_day,
+        scheduled_for: scheduled_for,
+        request_type: request_type,
+        regional_office: regional_office
+      )
+    end
+
     subject { hearing.scheduled_for }
 
     # Note: This can happen if the hearing is scheduled across state lines
     context "if case hearing regional office differs from hearing day regional office" do
-      let(:hearing) do
-        create(
-          :legacy_hearing,
-          hearing_day: hearing_day,
-          scheduled_for: scheduled_for,
-          request_type: request_type,
-          regional_office: regional_office,
-          scheduled_in_timezone: scheduled_in_timezone
-        )
-      end
       # Oakland regional office
       let(:regional_office) { "RO43" }
-      let(:scheduled_in_timezone) { nil }
       let(:hearing_day) do
         create(
           :hearing_day,
@@ -503,50 +492,6 @@ describe LegacyHearing, :all_dbs do
         expect(subject.hour).to eq(scheduled_for.hour)
         expect(subject.min).to eq(scheduled_for.min)
         expect(subject.sec).to eq(scheduled_for.sec)
-      end
-    end
-
-    context "hearing has a supplied scheduled_in_timezone value" do
-      let(:hearing) do
-        create(
-          :legacy_hearing,
-          hearing_day: hearing_day,
-          case_hearing: case_hearing,
-          request_type: request_type,
-          regional_office: regional_office,
-          scheduled_in_timezone: scheduled_in_timezone
-        )
-      end
-
-      let(:scheduled_in_timezone) { "America/Los_Angeles" }
-      let(:hearing_day) do
-        create(
-          :hearing_day,
-          request_type: HearingDay::REQUEST_TYPES[:central]
-        )
-      end
-      before { Timecop.freeze(Time.utc(2020, 6, 22)) }
-
-      after { Timecop.return }
-
-      it "time is expected value and is in the supplied scheduled_in_timezone for central hearing" do
-        expected_time = scheduled_for.in_time_zone("America/Los_Angeles")
-
-        expect(subject.zone).to eq("PDT")
-        expect(subject.hour).to eq(expected_time.hour)
-        expect(subject.min).to eq(expected_time.min)
-        expect(subject.sec).to eq(expected_time.sec)
-      end
-
-      it "time is expected value and is in the supplied scheduled_in_timezone for video hearing" do
-        hearing.update!(request_type: HearingDay::REQUEST_TYPES[:video])
-
-        expected_time = scheduled_for.in_time_zone("America/Los_Angeles")
-
-        expect(subject.zone).to eq("PDT")
-        expect(subject.hour).to eq(expected_time.hour)
-        expect(subject.min).to eq(expected_time.min)
-        expect(subject.sec).to eq(expected_time.sec)
       end
     end
   end
@@ -591,40 +536,6 @@ describe LegacyHearing, :all_dbs do
         it "returns false" do
           expect(hearing.scheduled_for_past?).to be(false)
         end
-      end
-    end
-  end
-
-  context "use_hearing_datetime?" do
-    let(:hearing) { create(:legacy_hearing) }
-
-    context "scheduled_in_timezone is not nil" do
-      before do
-        hearing.update(scheduled_in_timezone: "America/New_York")
-      end
-
-      it "returns true" do
-        expect(hearing.use_hearing_datetime?).to eq(true)
-      end
-
-      it "uses HearingDatetimeService instance" do
-        time_service_double = instance_double("HearingDatetimeService")
-        allow(HearingDatetimeService).to receive(:new).and_return(time_service_double)
-        hearing.time
-        expect(HearingDatetimeService).to have_received(:new)
-      end
-    end
-
-    context "scheduled_in_timezone is nil" do
-      it "returns false" do
-        expect(hearing.use_hearing_datetime?).to eq(false)
-      end
-
-      it "uses HearingTimeService instance" do
-        time_service_double = instance_double("HearingTimeServicee")
-        allow(HearingTimeService).to receive(:new).and_return(time_service_double)
-        hearing.time
-        expect(HearingTimeService).to have_received(:new)
       end
     end
   end

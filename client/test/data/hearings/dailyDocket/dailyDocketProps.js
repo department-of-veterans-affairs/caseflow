@@ -1,5 +1,4 @@
 /* eslint-disable max-lines */
-
 export const dailyDocketPropsHearingNotVirtualJudgeUser = {
   hearing: {
     aod: false,
@@ -86,8 +85,7 @@ export const dailyDocketPropsHearingNotVirtualJudgeUser = {
   },
   saveHearing: 'ƒ () {}',
   regionalOffice: 'RO08',
-  openDispositionModal: 'ƒ () {}',
-  hearingDayDate: '2022-04-29'
+  openDispositionModal: 'ƒ () {}'
 };
 
 export const dailyDocketPropsHearingNotVirtualAttorneyUser = {
@@ -261,8 +259,7 @@ export const dailyDocketPropsHearingNotVirtualCoordinatorUser = {
   },
   saveHearing: 'ƒ () {}',
   regionalOffice: 'RO08',
-  openDispositionModal: 'ƒ () {}',
-  hearingDayDate: '2022-04-29'
+  openDispositionModal: 'ƒ () {}'
 };
 
 export const dailyDocketPropsHearingNotVirtualVSOUser = {
@@ -348,8 +345,7 @@ export const dailyDocketPropsHearingNotVirtualVSOUser = {
   },
   saveHearing: 'ƒ () {}',
   regionalOffice: 'RO08',
-  openDispositionModal: 'ƒ () {}',
-  hearingDayDate: '2022-04-29'
+  openDispositionModal: 'ƒ () {}'
 };
 
 export const dailyDocketPropsHearingNotVirtualDVCUser = {
@@ -438,10 +434,8 @@ export const dailyDocketPropsHearingNotVirtualDVCUser = {
   },
   saveHearing: 'ƒ () {}',
   regionalOffice: 'RO08',
-  openDispositionModal: 'ƒ () {}',
-  hearingDayDate: '2022-04-29'
+  openDispositionModal: 'ƒ () {}'
 };
-
 export const dailyDocketPropsHearingNotVirtualTranscriberUser = {
   hearing: {
     aod: false,
@@ -529,8 +523,7 @@ export const dailyDocketPropsHearingNotVirtualTranscriberUser = {
   },
   saveHearing: 'ƒ () {}',
   regionalOffice: 'RO08',
-  openDispositionModal: 'ƒ () {}',
-  hearingDayDate: '2022-04-29'
+  openDispositionModal: 'ƒ () {}'
 };
 
 export const dailyDocketPropsHearingIsVirtual = {
@@ -623,8 +616,7 @@ export const dailyDocketPropsHearingIsVirtual = {
   update: 'ƒ () {}',
   onReceiveAlerts: 'ƒ () {}',
   onReceiveTransitioningAlert: 'ƒ () {}',
-  transitionAlert: 'ƒ () {}',
-  hearingDayDate: '2022-04-29'
+  transitionAlert: 'ƒ () {}'
 };
 
 export const dailyDocketPropsConferenceLinkError = {
@@ -655,11 +647,9 @@ export const dailyDocketPropsConferenceLinkError = {
     updatedAt: '2022-05-23T14:04:28.593-04:00',
     conferenceLink: {
       hostPin: '1116504',
-      // eslint-disable-next-line max-len
       hostLink: 'https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000004@example.va.gov&pin=1116504&role=host',
       alias: null
     }
   },
-  conferenceLinkError: true,
-  hearingDayDate: '2022-04-29'
+  conferenceLinkError: true
 };

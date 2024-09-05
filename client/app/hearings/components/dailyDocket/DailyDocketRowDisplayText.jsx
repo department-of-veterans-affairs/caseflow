@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { HearingTime } from '../HearingTime';
-import { HearingTimeScheduledInTimezone } from '../HearingTimeScheduledInTimezone';
 import { PreppedCheckbox } from './DailyDocketRowInputs';
 import COPY from '../../../../COPY';
 import DocketTypeBadge from 'app/components/DocketTypeBadge';
@@ -114,14 +113,7 @@ export default class HearingText extends React.Component {
       </div>
       <div><strong>{index + 1}</strong></div>
       <AppellantInformation hearing={hearing} userCanViewFnodBadgeInHearings={user.userCanViewFnodBadgeInHearings} />
-      {hearing.scheduledInTimezone ?
-        <HearingTimeScheduledInTimezone
-          hearing={initialState}
-          showIssueCount
-          showRegionalOfficeName
-          showRequestType
-        /> :
-        <HearingTime hearing={initialState} showIssueCount showRegionalOfficeName showRequestType />}
+      <HearingTime hearing={initialState} showIssueCount showRegionalOffice showRequestType />
     </React.Fragment>;
   }
 }

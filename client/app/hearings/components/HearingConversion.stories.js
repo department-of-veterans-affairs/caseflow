@@ -90,3 +90,8 @@ export const ConvertToVirtualAsVSO = () => {
 export const ConvertFromVirtual = () => {
   return <Wrapper hearing={amaHearing} type={HEARING_CONVERSION_TYPES[1]} />;
 };
+
+export const ConvertToVirtualAsVSO = () => {
+  return <Wrapper hearing={amaHearing} type={HEARING_CONVERSION_TYPES[0]} userVsoEmployee/>;
+};
+

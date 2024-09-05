@@ -6,16 +6,10 @@ import moment from 'moment-timezone/moment-timezone';
 import { uniq } from 'lodash';
 // caseflow
 import { TimeSlot } from 'app/hearings/components/scheduleHearing/TimeSlot';
-import {
-  formatTimeSlotLabel,
-  hearingTimeOptsWithZone,
-  setTimeSlots,
-  TIMEZONES_WITH_LUNCHBREAK
-} from 'app/hearings/utils';
+import { formatTimeSlotLabel, hearingTimeOptsWithZone, setTimeSlots, TIMEZONES_WITH_LUNCHBREAK } from 'app/hearings/utils';
 // constants
 import REGIONAL_OFFICE_INFORMATION from '../../../../../constants/REGIONAL_OFFICE_INFORMATION';
 import HEARING_TIME_OPTIONS from '../../../../../constants/HEARING_TIME_OPTIONS';
-import TIMEZONES from 'constants/TIMEZONES';
 
 const emptyHearings = [];
 const oneHearing = [{
@@ -29,17 +23,16 @@ const oneHearing = [{
 }];
 const defaultRoCode = 'RO39';
 const mockOnChange = jest.fn();
-const hearingDayDate = moment.tz().format('YYYY-MM-DD');
 const defaultProps = {
   // Denver
   ro: defaultRoCode,
   roTimezone: REGIONAL_OFFICE_INFORMATION[defaultRoCode].timezone,
-  hearingDate: hearingDayDate,
+  hearingDayDate: moment.tz().format('YYYY-MM-DD'),
   scheduledHearingsList: emptyHearings,
   numberOfSlots: 8,
   slotLengthMinutes: 60,
   fetchScheduledHearings: jest.fn(),
-  onChange: mockOnChange,
+  onChange: mockOnChange
 };
 
 const setup = (props = {}) => {
@@ -58,9 +51,7 @@ const setup = (props = {}) => {
 };
 
 const clickTimeslot = (time, timezone) => {
-  const formattedTimeSlotLabel = formatTimeSlotLabel(`${hearingDayDate} ${time}`, timezone);
-
-  fireEvent.click(screen.getByText(formattedTimeSlotLabel));
+  fireEvent.click(screen.getByText(formatTimeSlotLabel(time, timezone)));
 };
 
 describe('TimeSlot', () => {
@@ -153,10 +144,11 @@ describe('TimeSlot', () => {
 
           it(`correctly parses hearings and slots onto the date in beginsAt (${beginsAtString})`, () => {
             const beginsAt = moment(beginsAtString).tz('America/New_York');
+            const hearingDayDate = beginsAt.tz(ro.timezone).format('YYYY-MM-DD');
             const { timeSlots } = setup({
               roTimezone: ro.timezone,
               beginsAt,
-              hearingDayDate: beginsAt.tz(ro.timezone).format('YYYY-MM-DD'),
+              hearingDayDate,
               scheduledHearingsList: oneHearing
             });
 
@@ -188,18 +180,17 @@ describe('TimeSlot', () => {
         });
 
         it('slots have correct time values to submit to backend', () => {
-          const { timeSlots } = setup({ roTimezone: ro.timezone });
+          const { timeSlots, utils } = setup({ roTimezone: ro.timezone });
 
           const roTime = timeSlots[0].hearingTime;
 
-          const tzName = Object.keys(TIMEZONES).find((key) => TIMEZONES[key] === ro.timezone);
-
           clickTimeslot(roTime, ro.timezone);
-          const timeString = `${moment.tz(roTime, 'HH:mm', 'America/New_York').tz(ro.timezone).
-            format('h:mm A')} ${tzName}`;
+          const easternTime = moment.tz(roTime, 'HH:mm', 'America/New_York').tz(ro.timezone).
+            format('HH:mm');
 
-          // Expect that we called onChange with ro timezone
-          expect(mockOnChange).toHaveBeenLastCalledWith('scheduledTimeString', timeString);
+          // Expect that we called onChange with 12:30pm ro timezone
+          expect(mockOnChange).toHaveBeenLastCalledWith('scheduledTimeString', easternTime);
+
         });
 
         it('moves following slots when there is a lunch break', () => {
@@ -276,6 +267,7 @@ describe('TimeSlot', () => {
 
           expect(hearingButton).toHaveLength(1);
           expect(hearingButton[0]).toHaveTextContent(timeString);
+
         });
       });
     });

@@ -24,8 +24,7 @@ export const RepresentativeSection = ({
   formFieldsOnly,
   representativeTimezone,
   representativeEmailAddress,
-  representativeEmailType,
-  hearingDayDate
+  representativeEmailType
 }) => (
   <VirtualHearingSection formFieldsOnly={formFieldsOnly} label="Power of Attorney (POA)" showDivider={showDivider}>
     {hearing?.representative ? (
@@ -61,7 +60,6 @@ export const RepresentativeSection = ({
             roTimezone={hearing?.regionalOfficeTimezone}
             label="POA/Representative Timezone"
             name="representativeTz"
-            hearingDayDate={hearingDayDate}
           />
           <HelperText label={COPY.VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT} />
         </div>
@@ -105,6 +103,5 @@ RepresentativeSection.propTypes = {
   representativeTimezone: PropTypes.string,
   representativeEmailAddress: PropTypes.string,
   representativeEmailType: PropTypes.string,
-  userVsoEmployee: PropTypes.bool,
-  hearingDayDate: PropTypes.string
+  userVsoEmployee: PropTypes.bool
 };

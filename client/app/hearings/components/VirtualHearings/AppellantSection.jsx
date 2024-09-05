@@ -29,8 +29,7 @@ export const AppellantSection = ({
   formFieldsOnly,
   appellantTimezone,
   appellantEmailAddress,
-  appellantEmailType,
-  hearingDayDate
+  appellantEmailType
 }) => {
   // Depending on where this component is used, the *FullName fields will be available.
   // If they aren't, the *FirstName/*LastName fields should be available.
@@ -97,7 +96,6 @@ export const AppellantSection = ({
               label={`${appellantTitle} Timezone`}
               name="appellantTz"
               errorMessage={errors?.appellantTz}
-              hearingDayDate={hearingDayDate}
             />
             <HelperText label={COPY.VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT} />
           </div>
@@ -156,6 +154,5 @@ AppellantSection.propTypes = {
   formFieldsOnly: PropTypes.bool,
   appellantTimezone: PropTypes.string,
   appellantEmailAddress: PropTypes.string,
-  appellantEmailType: PropTypes.string,
-  hearingDayDate: PropTypes.string
+  appellantEmailType: PropTypes.string
 };
