@@ -15,7 +15,7 @@ export default function FeatureToggleConfiguration(props) {
   };
 
   return (
-    <div>
+    <div className="load-test-container-checkbox">
       <Checkbox
         label={feature}
         name={feature}

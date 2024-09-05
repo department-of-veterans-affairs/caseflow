@@ -26,6 +26,7 @@ export default function UserConfiguration(props) {
 
   // console.log(filteredStations());
 
+  const organizations = props.form_values.all_organizations;
   const functionsAvailable = props.form_values.functions_available;
   const featureToggles = props.featuresList;
 
@@ -61,10 +62,16 @@ export default function UserConfiguration(props) {
       <SearchableDropdown
         name="Organizations dropdown"
         hideLabel
+        // onInputChange={handleInputChange}
+        options={organizations} searchable
+        // onChange={handleUserSelect}
+        Disable native filter
+        filterOption={() => true}
+        // value={userSelect}
       />
       <br />
       <h2><strong>Functions</strong></h2>
-      <div>
+      <div className="load-test-container">
         {functionsAvailable.map((functionOption) => (
           <FunctionConfiguration
             key={functionOption}
@@ -74,7 +81,7 @@ export default function UserConfiguration(props) {
       </div>
       <br />
       <h2><strong>Feature Toggles</strong></h2>
-      <div>
+      <div className="load-test-container">
         {featureToggles.map((featureToggle) => (
           <FeatureToggleConfiguration
             key={featureToggle}
@@ -87,6 +94,7 @@ export default function UserConfiguration(props) {
 }
 
 UserConfiguration.propTypes = {
+  all_organizations: PropTypes.array,
   featuresList: PropTypes.array,
   form_values: PropTypes.object,
   functions_available: PropTypes.array

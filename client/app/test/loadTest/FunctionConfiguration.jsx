@@ -15,7 +15,7 @@ export default function FunctionConfiguration(props) {
   };
 
   return (
-    <div>
+    <div className="load-test-container-checkbox">
       <Checkbox
         label={functionOption}
         name={functionOption}
