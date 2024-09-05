@@ -10,7 +10,7 @@ RSpec.feature("The Correspondence Details All Tasks Actions") do
   end
   let(:privacy_user) { create(:user, css_id: "PRIVACY_TEAM_USER", full_name: "Leighton PrivacyAndFOIAUser Naumov") }
   let(:current_user) { create(:user) }
-  let(:user_team) { InboundOpsTeam.singleton}
+  let(:user_team) { InboundOpsTeam.singleton }
   let(:privacy_team) { PrivacyTeam.singleton }
   let!(:veteran) { create(:veteran, first_name: "John", last_name: "Testingman", file_number: "8675309") }
   let!(:correspondence) { create(:correspondence, veteran: veteran) }
@@ -26,22 +26,23 @@ RSpec.feature("The Correspondence Details All Tasks Actions") do
             veteran: veteran,
             va_date_of_receipt: "Wed, 24 Jul 2024 00:00:00 EDT -04:00",
             nod: false,
-            notes: "Notes for #{task_action[:name]}",
+            notes: "Notes for #{task_action[:name]}"
           )
         end
+
         before :each do
           setup_correspondence_task(
-            @correspondence,
-            task_action[:class],
-            task_action[:assigned_to_type],
-            send(task_action[:assigned_to]),
-            "#{task_action[:name]} Instructions"
+            correspondence: @correspondence,
+            task_class: task_action[:class],
+            assigned_to_type: task_action[:assigned_to_type],
+            assigned_to: send(task_action[:assigned_to]),
+            instructions: "#{task_action[:name]} Instructions"
           )
         end
 
         it "checks that #{task_action[:name]} task can be cancelled." do
           check_task_action(
-            @correspondence,
+            correspondence: @correspondence,
             task_name: task_action[:name],
             action: "Cancel task",
             button_id: "Cancel-task-button-id-1",
@@ -53,7 +54,7 @@ RSpec.feature("The Correspondence Details All Tasks Actions") do
 
         it "checks that #{task_action[:name]} task can be completed." do
           check_task_action(
-            @correspondence,
+            correspondence: @correspondence,
             task_name: task_action[:name],
             action: "Mark task complete",
             button_id: "Mark-as-complete-button-id-1",
@@ -73,7 +74,7 @@ RSpec.feature("The Correspondence Details All Tasks Actions") do
           click_button "Assign-Task-button-id-1"
           expect(page).to have_content("#{task_action[:name]} task has been assigned to Education.")
           expect(all(".cf-row-wrapper")[1].text).to include("Education")
-          expect(all(".cf-row-wrapper")[2].text).to include("#{task_action[:name]}")
+          expect(all(".cf-row-wrapper")[2].text).to include(task_action[:name].to_s)
           click_button("View task instructions")
           expect(all(".task-instructions")[1].text).to include("Assign task instructions")
         end
@@ -86,13 +87,12 @@ RSpec.feature("The Correspondence Details All Tasks Actions") do
           click_dropdown(prompt: "Select an action type", text: "CAVC Correspondence")
           find(".cf-form-textarea", match: :first).fill_in with: "Change task type instructions"
           click_button "Change-task-type-button-id-1"
-          expect(page).to have_content("You have changed the task type from #{task_action[:name]} to CAVC Correspondence. " \
-          "These changes are now reflected in the tasks section below.")
+          expect(page).to have_content("You have changed the task type from #{task_action[:name]} " \
+          "to CAVC Correspondence. These changes are now reflected in the tasks section below.")
           expect(all(".cf-row-wrapper")[2].find("dd").text).to eq("CAVC Correspondence")
           click_button("View task instructions")
           expect(all(".task-instructions")[1].text).to include("Change task type instructions")
         end
-
       end
     end
   end
