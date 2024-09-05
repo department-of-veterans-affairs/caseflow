@@ -21,7 +21,7 @@ export default function LoadTest(props) {
           <h2>Scenario Groups</h2>
           <ScenarioConfigurations/>
         </AppSegment>
-        <div {...css({ overflow: 'hidden' })}>
+        <div { ...css({ overflow: 'hidden' }) }>
           <Button
             id="Cancel"
             name="Cancel"

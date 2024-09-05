@@ -1,12 +1,12 @@
 /* eslint-disable max-lines, max-len */
 
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
 import Checkbox from '../../components/Checkbox';
 import TextField from '../../components/TextField';
 
-export default function ScenarioConfiguration(props){
+export default function ScenarioConfiguration(props) {
   const [isChecked, scenarioIsChecked] = useState(false);
 
   let scenario = props.scenario;
@@ -21,25 +21,26 @@ export default function ScenarioConfiguration(props){
       <Checkbox
         label={scenario}
         name={scenario}
-        onChange={() => {onChangeHandle()}}
+        onChange={ () => { onChangeHandle() } }
         value={isChecked || false}
       />
       {isChecked && targetType.length > 0 &&
         (<div className="load-test-checkbox-hidden-content">
           <SearchableDropdown
-            name={`${scenario}-target-type`}
+            name={ `${scenario}-target-type` }
             label="Target Type"
-            options={targetType}
+            options={ targetType}
             isClearable
           />
           <br/>
           <TextField
             name="testTargetID"
             label="Target Type ID"
-            optional={true}
+            optional={ true }
           />
         </div>
-      )}
+        )
+      }
     </div>
   );
 }
