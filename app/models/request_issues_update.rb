@@ -270,9 +270,6 @@ class RequestIssuesUpdate < CaseflowRecord
     process_withdrawn_issues!
     process_edited_issues!
     process_corrected_issues!
-    process_eligible_to_ineligible_issues!
-    process_ineligible_to_eligible_issues!
-    process_ineligible_to_ineligible_issues!
     process_mst_edited_issues! if FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user])
     process_pact_edited_issues! if FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user])
   end

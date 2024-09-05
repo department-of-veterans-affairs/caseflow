@@ -67,7 +67,7 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser d
 
   describe "#ri_closed_at" do
     it "converts closed_at from milliseconds to datetime" do
-      expect(subject.ri_closed_at).to eq(Time.at(1_625_151_600/1000).utc)
+      expect(subject.ri_closed_at).to eq(Time.at(1_625_151_600 / 1000).utc)
     end
   end
 

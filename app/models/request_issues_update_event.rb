@@ -43,6 +43,16 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     true
   end
 
+  def process_issues!
+    review.create_issues!(added_issues, self)
+    process_removed_issues!
+    process_withdrawn_issues!
+    process_edited_issues!
+    process_eligible_to_ineligible_issues!
+    process_ineligible_to_eligible_issues!
+    process_ineligible_to_ineligible_issues!
+  end
+
   def added_issues
     calculate_added_issues
   end
