@@ -44,7 +44,9 @@ const CorrespondenceAssignTaskModal = (props) => {
   const [assigneeAdded, setAssigneeAdded] = useState(false);
   const [assignee, setAssignee] = useState('');
 
-  const task = props.correspondenceInfo.tasksUnrelatedToAppeal.find((task) => parseInt(props.task_id, 10) === parseInt(task.uniqueId, 10));
+  const currentTask = props.correspondenceInfo.tasksUnrelatedToAppeal.find(
+    (task) => parseInt(props.task_id, 10) === parseInt(task.uniqueId, 10)
+  );
 
   useEffect(() => {
     // Handle the instructions boolean for submit button clickability
@@ -72,10 +74,10 @@ const CorrespondenceAssignTaskModal = (props) => {
     const tempCor = props.correspondenceInfo;
 
     tempCor.tasksUnrelatedToAppeal.find(
-      (task) => task.uniqueId == props.task_id
+      (task) => parseInt(props.task_id, 10) === parseInt(task.uniqueId, 10)
     ).assignedTo = assignee;
     tempCor.tasksUnrelatedToAppeal.find(
-      (task) => task.uniqueId == props.task_id
+      (task) => parseInt(props.task_id, 10) === parseInt(task.uniqueId, 10)
     ).instructions = instructions;
 
     return tempCor;
@@ -83,7 +85,9 @@ const CorrespondenceAssignTaskModal = (props) => {
 
   const submit = () => {
     const correspondence = updateCorrespondence();
-    const updatedTask = correspondence.tasksUnrelatedToAppeal.find((task) => parseInt(props.task_id, 10) === parseInt(task.uniqueId, 10));
+    const updatedTask = correspondence.tasksUnrelatedToAppeal.find(
+      (task) => parseInt(props.task_id, 10) === parseInt(task.uniqueId, 10)
+    );
 
     const payload = {
       data: {
@@ -104,7 +108,7 @@ const CorrespondenceAssignTaskModal = (props) => {
 
   return (
     <QueueFlowModal
-      title= {task.assignedToOrg ? 'Assign task' : 'Re-assign to person'}
+      title= {currentTask.assignedToOrg ? 'Assign task' : 'Re-assign to person'}
       button="Assign task"
       submitDisabled= {!validateForm()}
       submitButtonClassNames= "usa-button"
@@ -150,20 +154,24 @@ const CorrespondenceAssignTaskModal = (props) => {
 CorrespondenceAssignTaskModal.propTypes = {
   requestPatch: PropTypes.func,
   task: PropTypes.shape({
-    appeal: PropTypes.shape({
-      hasCompletedSctAssignTask: PropTypes.bool
-    }),
     assignedTo: PropTypes.shape({
       type: PropTypes.string
+    }),
+    appeal: PropTypes.shape({
+      hasCompletedSctAssignTask: PropTypes.bool
     }),
     taskId: PropTypes.string,
     type: PropTypes.string,
     onHoldDuration: PropTypes.number
   }),
+  task_id: PropTypes.string,
+  correspondenceInfo: PropTypes.object,
+  assignTaskToUser: PropTypes.func,
+  correspondence_uuid: PropTypes.number
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  task: taskById(state, { taskId: ownProps.taskId }),
+  task: taskById(state, { taskId: ownProps.task_id }),
   taskNotRelatedToAppealBanner: state.correspondenceDetails.bannerAlert,
   correspondenceInfo: state.correspondenceDetails.correspondenceInfo
 });
