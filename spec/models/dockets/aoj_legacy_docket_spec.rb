@@ -230,7 +230,7 @@ describe AojLegacyDocket do
 
       context "with out in window affinity" do
         it "returns affinity date count" do
-          expect(docket.affinity_date_count(false, true)).to eq(5)
+          expect(docket.affinity_date_count(false, true)).to eq(2)
         end
       end
     end
@@ -238,21 +238,21 @@ describe AojLegacyDocket do
     context "when priority is false" do
       context "with in window affinity" do
         it "returns affinity date count" do
-          expect(docket.affinity_date_count(true, false)).to eq(2)
+          expect(docket.affinity_date_count(true, false)).to eq(0)
         end
       end
 
       context "with out in window affinity" do
         it "returns affinity date count" do
-          expect(docket.affinity_date_count(false, false)).to eq(5)
+          expect(docket.affinity_date_count(false, false)).to eq(3)
         end
       end
     end
   end
-
+  # {priority out of window}
   def create_priority_distributable_legacy_appeal_not_tied_to_judge
     create(
-      :legacy_aoj_appeal,
+      :case,
       :aod,
       bfkey: "12345",
       bfd19: 1.year.ago,
@@ -263,9 +263,10 @@ describe AojLegacyDocket do
     )
   end
 
+  # {nonpriority out of window}
   def create_nonpriority_distributable_legacy_appeal_not_tied_to_judge(bfkey = "12345")
     create(
-      :legacy_aoj_appeal,
+      :case,
       bfkey: bfkey,
       bfd19: 1.year.ago,
       bfac: "3",
@@ -275,10 +276,11 @@ describe AojLegacyDocket do
     )
   end
 
+  # {priority in window}
   def create_aoj_aod_cavc_ready_priority_case_1
     create(:legacy_aoj_appeal,
            :aod,
-           :with_appeal_affinity,
+           affinity_start_date: 1.day.ago,
            cavc: true,
            bfd19: 11.months.ago,
            bfac: "3",
@@ -287,10 +289,10 @@ describe AojLegacyDocket do
            bfdloout: 2.days.ago)
   end
 
+  # {priority out of window}
   def create_aoj_aod_cavc_ready_priority_case_2
     create(:legacy_aoj_appeal,
            :aod,
-           :with_appeal_affinity,
            affinity_start_date: 2.months.ago,
            cavc: true,
            bfd19: 11.months.ago,
@@ -300,9 +302,9 @@ describe AojLegacyDocket do
            bfdloout: 2.days.ago)
   end
 
+  # {priority out of window}
   def create_aoj_cavc_ready_priority_case
     create(:legacy_aoj_appeal,
-           :with_appeal_affinity,
            affinity_start_date: 1.month.ago,
            cavc: true,
            bfd19: 11.months.ago,

@@ -791,6 +791,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
 
     query = <<-SQL
       #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
+      where (PREV_TYPE_ACTION = '7' or AOD = '1')
     SQL
 
     fmtd_query = sanitize_sql_array([query])
@@ -823,6 +824,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
 
     query = <<-SQL
       #{SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19}
+      where ((PREV_TYPE_ACTION is null or PREV_TYPE_ACTION <> '7') and AOD = '0')
     SQL
 
     fmtd_query = sanitize_sql_array([query])
