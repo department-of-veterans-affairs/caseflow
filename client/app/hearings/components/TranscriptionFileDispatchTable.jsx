@@ -63,7 +63,7 @@ const styles = css({
   }
 });
 
-export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFilesForPackage }) => {
+export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFilesForPackage, openModal }) => {
   const [tableData, setTableData] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [selectingFile, setSelectingFile] = useState(false);
@@ -74,14 +74,6 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
    * @param {number} id - id of package
    */
   const unassignPackage = () => {
-    // do something
-  };
-
-  /**
-   * Callback passed into the Queue Table triggered when the order contents is clicked
-   * @param {number} id - id of package
-   */
-  const openPackage = () => {
     // do something
   };
 
@@ -139,7 +131,7 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
     if (!statusFilter || statusFilter[0] === 'Unassigned') {
       return `/hearings/transcription_files/transcription_file_tasks${qs}`;
     } else if (statusFilter[0] === 'Assigned') {
-      return `/hearings/transcription_files/transcription_packages_tasks${qs}`;
+      return `/hearings/transcription_packages/transcription_package_tasks${qs}`;
     }
   };
 
@@ -201,7 +193,7 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
       hearingDateColumn: hearingDateColumn(),
       hearingTypeColumn: hearingTypeColumn(),
       workOrderColumn: workOrderColumn(downloadFile),
-      itemsColumn: itemsColumn(openPackage),
+      itemsColumn: itemsColumn(openModal),
       dateSentColumn: dateSentColumn(),
       expectedReturnDateColumn: expectedReturnDateColumn(),
       contractorColumn: contractorColumn(contractors),
@@ -275,5 +267,6 @@ TranscriptionFileDispatchTable.propTypes = {
     })),
   statusFilter: PropTypes.arrayOf(PropTypes.string),
   selectAll: PropTypes.func,
-  selectFilesForPackage: PropTypes.func
+  selectFilesForPackage: PropTypes.func,
+  openModal: PropTypes.func
 };

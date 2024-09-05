@@ -6,6 +6,30 @@ class TranscriptionPackage < CaseflowRecord
   has_many :hearings, through: :transcription_package_hearings
   has_many :transcription_package_legacy_hearings
   has_many :legacy_hearings, through: :transcription_package_legacy_hearings
+  has_many :transcriptions, foreign_key: :task_number, primary_key: :task_number
+
+  scope :filter_by_date, lambda { |values, field_name|
+    mode = values[0]
+    if mode == "between"
+      start_date = values[1] + " 00:00:00"
+      end_date = values[2] + " 23:59:59"
+      where(Arel.sql(field_name + " >= '" + start_date + "' AND " + field_name + " <= '" + end_date + "'"))
+    elsif mode == "before"
+      date = values[1] + " 00:00:00"
+      where(Arel.sql(field_name + " < '" + date + "'"))
+    elsif mode == "after"
+      date = values[1] + " 23:59:59"
+      where(Arel.sql(field_name + " > '" + date + "'"))
+    elsif mode == "on"
+      start_date = values[1] + " 00:00:00"
+      end_date = values[1] + " 23:59:59"
+      where(Arel.sql(field_name + " >= '" + start_date + "' AND " + field_name + " <= '" + end_date + "'"))
+    end
+  }
+
+  scope :filter_by_contractor, ->(values) { where("transcription_contractors.name IN (?)", values) }
+
+  scope :order_by_field, ->(direction, field_name) { order(Arel.sql(field_name + " " + direction)) }
 
   def contractor_name
     contractor&.name
