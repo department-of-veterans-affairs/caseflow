@@ -68,6 +68,14 @@ const CorrespondenceAssignTaskModal = (props) => {
     setAssignee(user?.value);
   };
 
+  const setActions = (assignedUser) => {
+    if (props.userCssId === assignedUser) {
+      return task.availableActions;
+    }
+
+    return [];
+  };
+
   const updateCorrespondence = () => {
     const tempCor = props.correspondenceInfo;
 
@@ -76,7 +84,10 @@ const CorrespondenceAssignTaskModal = (props) => {
     ).assignedTo = assignee;
     tempCor.tasksUnrelatedToAppeal.find(
       (task) => task.uniqueId == props.task_id
-    ).instructions = instructions;
+    ).instructions.push(instructions);
+    tempCor.tasksUnrelatedToAppeal.find(
+      (task) => task.uniqueId == props.task_id
+    ).availableActions = setActions(assignee);
 
     return tempCor;
   };
@@ -149,6 +160,11 @@ const CorrespondenceAssignTaskModal = (props) => {
 
 CorrespondenceAssignTaskModal.propTypes = {
   requestPatch: PropTypes.func,
+  correspondenceInfo: PropTypes.object,
+  correspondence_uuid: PropTypes.string,
+  task_id: PropTypes.string,
+  assignTaskToUser: PropTypes.func,
+  userCssId: PropTypes.string,
   task: PropTypes.shape({
     appeal: PropTypes.shape({
       hasCompletedSctAssignTask: PropTypes.bool
