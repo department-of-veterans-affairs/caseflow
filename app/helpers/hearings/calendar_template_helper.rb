@@ -18,11 +18,11 @@ module Hearings::CalendarTemplateHelper
     end
 
     def representative_display_time(hearing)
-      format_hearing_time(hearing.time.poa_time)
+      format_hearing_time(hearing.poa_time)
     end
 
     def appellant_display_time(hearing)
-      format_hearing_time(hearing.time.appellant_time)
+      format_hearing_time(hearing.appellant_time)
     end
 
     # time_zone is a TZInfo::DataTimezone object; date_time_utc is a Time object
