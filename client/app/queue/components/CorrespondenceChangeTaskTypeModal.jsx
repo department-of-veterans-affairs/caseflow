@@ -125,8 +125,7 @@ const mapStateToProps = (state, ownProps) => ({
   task: state.correspondenceDetails.
     correspondenceInfo.tasksUnrelatedToAppeal.find((tsk) => tsk.uniqueId.toString() === ownProps.task_id),
   taskNotRelatedToAppealBanner: state.correspondenceDetails.bannerAlert,
-  correspondenceInfo: state.correspondenceDetails.correspondenceInfo,
-  showActionsDropdown: state.correspondenceDetails.showActionsDropdown,
+  correspondenceInfo: state.correspondenceDetails.correspondenceInfo
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
