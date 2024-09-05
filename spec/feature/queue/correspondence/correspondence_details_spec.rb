@@ -190,7 +190,7 @@ RSpec.feature("The Correspondence Details page") do
       visit "/queue/correspondence/#{@correspondence.uuid}"
       click_dropdown(prompt: "Select an action", text: "Cancel task")
       find(".cf-form-textarea", match: :first).fill_in with: "Cancel task test"
-      click_button "Cancel-Task-button-id-1"
+      click_button "Cancel-task-button-id-1"
       expect(page).to have_content("Other Motion task has been cancelled.")
     end
 
