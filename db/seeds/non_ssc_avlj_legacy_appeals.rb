@@ -465,6 +465,7 @@ module Seeds
     end
 
     def make_legacy_appeal_not_ready_for_distribution(legacy_appeal)
+      Rails.logger.info("~~~Marking legacy appeal for Veteran ID: #{legacy_appeal.vbms_id} as Not Ready To Distribute~~~")
       VACOLS::Case.find(legacy_appeal.vacols_id).update!(bfcurloc: "01")
     end
   end
