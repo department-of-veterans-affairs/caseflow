@@ -30,6 +30,7 @@ describe "AssociationWrapper" do
           [:higher_level_review, "HigherLevelReview", "HigherLevelReview", nil, nil],
           [:supplemental_claim, "SupplementalClaim", "SupplementalClaim", nil, nil],
           [:correspondence, "Correspondence", "Correspondence", nil, nil],
+                 [:remand, "Remand", "Remand", nil, nil],
           [:attorney_case_reviews, "AttorneyCaseReview", nil, nil, nil],
           [:task_timers, "TaskTimer", nil, nil, nil],
           [:correspondences_appeals_task, "CorrespondencesAppealsTask", nil, nil, nil],
@@ -58,6 +59,7 @@ describe "AssociationWrapper" do
           [:correspondences_appeals_task, nil],
           [:correspondence_appeal, nil],
           [:cached_appeal, nil],
+          [:remand, nil],
           [:remand, nil]
         ]
       end
@@ -82,6 +84,7 @@ describe "AssociationWrapper" do
           [:correspondences_appeals_task, nil],
           [:correspondence_appeal, nil],
           [:cached_appeal, :appeal_id],
+          [:remand, "appeal_id"],
           [:remand, "appeal_id"]
         ]
       end
@@ -104,8 +107,9 @@ describe "AssociationWrapper" do
           [:legacy_appeal, true, false, "appeal_id", "legacy_appeal_id", nil],
           [:higher_level_review, true, false, "appeal_id", "higher_level_review_id", nil],
           [:supplemental_claim, true, false, "appeal_id", "supplemental_claim_id", nil],
-          [:correspondence, true, false, "appeal_id", "correspondence_id", nil],
+          # Polymorphic `belongs_to :appeal`-related STI associations
           [:remand, true, false, "appeal_id", "remand_id", nil],
+          [:correspondence, true, false, "appeal_id", "correspondence_id", nil],
           [:attorney_case_reviews, false, false, "task_id", "attorney_case_review_id", nil],
           [:task_timers, false, false, "task_id", "task_timer_id", nil],
           [:correspondences_appeals_task, false, true, "task_id", "correspondences_appeals_task_id", nil],
