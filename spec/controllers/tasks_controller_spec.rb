@@ -607,11 +607,12 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       end
     end
 
-    context "When the current user is a member of the Mail team" do
+    context "When the current user is a member of the Inbound Ops team" do
       before do
-        mail_team_user = create(:user)
-        MailTeam.singleton.add_user(mail_team_user)
-        User.authenticate!(user: mail_team_user)
+        inbound_ops_team_user = create(:user)
+        InboundOpsTeam.singleton.add_user(inbound_ops_team_user)
+        MailTeam.singleton.add_user(inbound_ops_team_user)
+        User.authenticate!(user: inbound_ops_team_user)
       end
 
       context "when an AddressChangeMailTask is created for an inactive appeal" do
@@ -722,7 +723,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
       let(:hearing_values) do
         {
-          scheduled_time_string: "08:30",
+          scheduled_time_string: "08:30 AM Central Time (US & Canada)",
           hearing_day_id: hearing_day.id,
           hearing_location: {
             name: "St. Louis Regional Benefit Office",

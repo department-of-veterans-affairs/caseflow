@@ -44,20 +44,20 @@ class AppealsReadyForDistribution
       .flat_map do |sym, docket|
         appeals = docket.ready_to_distribute_appeals
         if sym == :legacy
-          legacy_rows(appeals, sym)
+          legacy_rows(appeals, sym, docket)
         else
           ama_rows(appeals, docket, sym)
         end
       end
   end
 
-  def self.legacy_rows(appeals, sym)
+  def self.legacy_rows(appeals, sym, docket)
     appeals.map do |appeal|
-      build_appeal_row(appeal, sym)
+      build_appeal_row(appeal, sym, docket)
     end
   end
 
-  def self.build_appeal_row(appeal, sym)
+  def self.build_appeal_row(appeal, sym, docket)
     veteran_name = format_veteran_name(appeal["snamef"], appeal["snamel"])
     hearing_judge = format_vlj_name(appeal["vlj_namef"], appeal["vlj_namel"])
     appeal_affinity = fetch_affinity_start_date(appeal["bfkey"])
@@ -69,8 +69,8 @@ class AppealsReadyForDistribution
       cavc: appeal["cavc"] == 1,
       receipt_date: appeal["bfd19"],
       ready_for_distribution_at: appeal["bfdloout"],
-      target_distro_date: target_distro_date(appeal["bfd19"], sym),
-      days_before_goal_date: days_before_goal_date(appeal["bfd19"], sym),
+      target_distro_date: target_distro_date(appeal["bfd19"], docket),
+      days_before_goal_date: days_before_goal_date(appeal["bfd19"], docket),
       hearing_judge: hearing_judge,
       original_judge: legacy_original_deciding_judge(appeal),
       veteran_file_number: appeal["ssn"] || appeal["bfcorlid"],
@@ -99,6 +99,7 @@ class AppealsReadyForDistribution
       ready_for_distribution_at = distribution_task_query(appeal)
       # only look for hearings that were held
       hearing_judge = with_held_hearings(appeal)
+
       priority_appeal = appeal.aod || appeal.cavc
       {
         docket_number: appeal.docket_number,

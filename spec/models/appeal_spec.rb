@@ -1635,7 +1635,12 @@ describe Appeal, :all_dbs do
     context "when an appeal has open DistributionTask and non-blocking MailTask subclass" do
       let!(:appeal_ready_to_distribute_with_evidence_task) do
         appeal = create(:appeal, :direct_review_docket, :ready_for_distribution)
-        create(:evidence_or_argument_mail_task, :assigned, assigned_to: MailTeam.singleton, parent: appeal.root_task)
+        create(
+          :evidence_or_argument_mail_task,
+          :assigned,
+          assigned_to: InboundOpsTeam.singleton,
+          parent: appeal.root_task
+        )
         appeal
       end
 
@@ -1728,12 +1733,17 @@ describe Appeal, :all_dbs do
     let(:appeal) { create(:appeal, :ready_for_distribution) }
     let(:appeal_2) { create(:appeal) }
 
-    it "should return true if appeal has a distribution task" do
-      expect(appeal.distributed?).to be true
+    it "should return false if appeal has a distribution task that is not completed" do
+      expect(appeal.distributed?).to be false
     end
 
     it "should return false for appeal does not have a distribution task" do
       expect(appeal_2.distributed?).to be false
+    end
+
+    it "should return true if appeal has a distribution task that has a 'completed' status" do
+      appeal.tasks.of_type(:DistributionTask).first.completed!
+      expect(appeal.distributed?).to be true
     end
   end
 

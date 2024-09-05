@@ -73,6 +73,9 @@ describe AssignHearingDispositionTask, :all_dbs do
     end
 
     shared_context "reschedule" do
+      let(:webex_user) do
+        create(:user, css_id: "WEBEX_USER").tap { |user| user.meeting_type.update!(service_name: "webex") }
+      end
       it "creates a new hearing with a new AssignHearingDispositionTask" do
         subject
 
@@ -88,6 +91,12 @@ describe AssignHearingDispositionTask, :all_dbs do
         expect(HearingTask.order(:id).last.hearing_task_association.hearing.id).to eq hearing_class.last.id
         expect(AssignHearingDispositionTask.count).to eq 2
         expect(AssignHearingDispositionTask.first.cancelled?).to be_truthy
+      end
+
+      it "hearing creates a new conference link" do
+        RequestStore.store[:current_user] = webex_user
+        subject
+        expect(WebexConferenceLink.count).to eq(1)
       end
 
       context "when params includes virtual_hearing_attributes" do
@@ -309,7 +318,7 @@ describe AssignHearingDispositionTask, :all_dbs do
               new_hearing_attrs: {
                 hearing_day_id: HearingDay.first.id,
                 hearing_location: { facility_id: "vba_370", distance: 10 },
-                scheduled_time_string: "12:30"
+                scheduled_time_string: "12:30 PM Eastern Time (US & Canada)"
               }
             }
           }
@@ -349,7 +358,7 @@ describe AssignHearingDispositionTask, :all_dbs do
               new_hearing_attrs: {
                 hearing_day_id: HearingDay.first.id,
                 hearing_location: { facility_id: "vba_370", distance: 10 },
-                scheduled_time_string: "12:30"
+                scheduled_time_string: "12:30 PM Eastern Time (US & Canada)"
               }
             }
           }
