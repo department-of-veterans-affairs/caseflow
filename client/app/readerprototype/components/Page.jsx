@@ -69,10 +69,6 @@ const Page = ({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale, setRe
     if (canvasRef.current && isVisible) {
 
       if (!renderTaskRef.current) {
-        // renderTaskRef.current.cancel();
-        // Don't do anything
-        // console.log('** Do not start render.');
-
         const renderTask = page.render({ canvasContext: canvasRef.current?.getContext('2d', { alpha: false }), viewport });
 
         renderTaskRef.current = renderTask;
