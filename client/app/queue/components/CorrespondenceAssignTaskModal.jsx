@@ -176,17 +176,10 @@ CorrespondenceAssignTaskModal.propTypes = {
     assignedTo: PropTypes.shape({
       type: PropTypes.string
     }),
-    appeal: PropTypes.shape({
-      hasCompletedSctAssignTask: PropTypes.bool
-    }),
     taskId: PropTypes.string,
     type: PropTypes.string,
     onHoldDuration: PropTypes.number
-  }),
-  task_id: PropTypes.string,
-  correspondenceInfo: PropTypes.object,
-  assignTaskToUser: PropTypes.func,
-  correspondence_uuid: PropTypes.number
+  })
 };
 
 const mapStateToProps = (state, ownProps) => ({
