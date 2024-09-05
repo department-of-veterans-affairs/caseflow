@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class TranscriptionPackage < CaseflowRecord
+class Hearings::TranscriptionPackage < CaseflowRecord
   belongs_to :contractor, class_name: "TranscriptionContractor"
   has_many :transcription_package_hearings
   has_many :hearings, through: :transcription_package_hearings
