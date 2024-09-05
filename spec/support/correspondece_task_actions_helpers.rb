@@ -56,8 +56,8 @@ module CorrespondenceTaskActionsHelpers
     User.authenticate!(user: hearings_user)
   end
 
-
   def setup_correspondence_task(options = {})
+
     correspondence = options[:correspondence]
     task_class = options[:task_class]
     assigned_to_type = options[:assigned_to_type]
