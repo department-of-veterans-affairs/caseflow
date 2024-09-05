@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import Layer from './Comments/Layer';
 
 import { GlobalWorkerOptions, getDocument } from 'pdfjs-dist';
-GlobalWorkerOptions.workerSrc = '/assets/pdf.worker.min.js';
+GlobalWorkerOptions.workerSrc = '/pdfjs/pdf.worker.min.js';
 
 import ApiUtil from '../../util/ApiUtil';
 import Page from './Page';
