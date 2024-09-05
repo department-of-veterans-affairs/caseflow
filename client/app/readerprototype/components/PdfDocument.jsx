@@ -43,6 +43,50 @@ const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel, onLoad }) => {
     }
   };
 
+  const getFirstPageOverallTime = () => {
+    if (pdfPages && pdfPages.length > 0) {
+      const firstPage = pdfPages[0];
+
+      if (firstPage._stats && Array.isArray(firstPage._stats.times)) {
+        const overallTime = firstPage._stats.times.find((time) => time.name === 'Overall');
+
+        if (overallTime) {
+          return overallTime.end - overallTime.start;
+        }
+      }
+    }
+
+    return 0;
+  };
+
+  const logMetrics = () => {
+    const calculatedAverage = Math.round(
+      renderedPageCount.current > 0 ? renderedTimeTotal.current / renderedPageCount.current : 0
+    );
+
+    storeMetrics(
+      doc.id,
+      {
+        document_request_time: getDocumentEnd.current - getDocumentStart.current,
+        number_of_pages_rendered: renderedPageCount.current,
+        rendering_time_for_allPages: renderedTimeTotal.current,
+        average_rendering_time_per_page: calculatedAverage,
+        first_page_overall_time: getFirstPageOverallTime(),
+      },
+      {
+        message: 'Reader Prototype times in milliseconds',
+        type: 'performance',
+        product: 'reader prototype',
+        start: null,
+        end: null,
+        duration: null,
+      },
+      null
+    );
+
+    setMetricsLogged(true);
+  };
+
   useEffect(() => {
     const getDocData = async () => {
       renderedPageCount.current = 0;
@@ -100,56 +144,16 @@ const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel, onLoad }) => {
   }, [pdfDoc]);
 
   useEffect(() => {
-    if (allPagesRendered) {
-      console.log(
-        '** Metric when all pages rendered\n',
-        'Document request time', getDocumentEnd.current - getDocumentStart.current, '\n',
-        'Number of pages rendered', renderedPageCount.current, '\n',
-        'Rendering Time for all pages', renderedTimeTotal.current, '\n',
-        'Average rendering time per Page',
-        Math.round(renderedPageCount.current > 0 ? renderedTimeTotal.current / renderedPageCount.current : 0),
-        '\n',
-        'First page overall time',
-        pdfPages[0]._stats.times.find((time) => time.name === 'Rendering').end - pdfPages[0]._stats.times.find((time) => time.name === 'Rendering').start
-      );
-
-      const calculatedAverage = Math.round(
-        renderedPageCount.current > 0 ? renderedTimeTotal.current / renderedPageCount.current : 0
-      );
-
-      storeMetrics(
-        doc.id,
-        {
-          document_request_time: getDocumentEnd.current - getDocumentStart.current,
-          number_of_pages_rendered: renderedPageCount.current,
-          rendering_time_for_allPages: renderedTimeTotal.current,
-          average_rendering_time_per_page: calculatedAverage
-        },
-        {
-          message: 'Reader Prototype times in milliseconds',
-          type: 'performance',
-          product: 'reader prototype',
-          start: null,
-          end: null,
-          duration: null
-        },
-        null // event_id needed?
-      );
-      // Set metrics to logged when all pages rendered
-      setMetricsLogged(true);
+    if (allPagesRendered && !metricsLogged) {
+      logMetrics();
     }
-  }, [allPagesRendered]);
+  }, [allPagesRendered, metricsLogged]);
 
   useEffect(() => {
     return () => {
       if (!metricsLoggedRef.current) {
-        console.log(
-          '** Metric when all pages NOT rendered\n',
-          'Document request time', getDocumentEnd.current - getDocumentStart.current, '\n',
-          'Number of pages rendered', renderedPageCount.current, '\n',
-          'Rendering Time for rendered pages', renderedTimeTotal.current, '\n',
-          'Document', doc.id
-        );
+
+        logMetrics();
       }
     };
   }, [doc.id]);
