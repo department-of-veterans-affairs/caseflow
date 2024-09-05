@@ -797,7 +797,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
 
     appeals = conn.exec_query(fmtd_query).to_a
     if in_window
-      appeals.reject! do |appeal|
+      appeals.select! do |appeal|
         if appeal["prev_type_action"] == "7" && appeal["aod"] == "0"
           reject_due_to_affinity?(appeal, aoj_cavc_affinity_lever_value)
         else
@@ -805,7 +805,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
         end
       end
     else
-      appeals.select! do |appeal|
+      appeals.reject! do |appeal|
         if appeal["prev_type_action"] == "7" && appeal["aod"] == "0"
           reject_due_to_affinity?(appeal, aoj_cavc_affinity_lever_value)
         else

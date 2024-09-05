@@ -252,7 +252,7 @@ describe AojLegacyDocket do
 
   def create_priority_distributable_legacy_appeal_not_tied_to_judge
     create(
-      :case,
+      :legacy_aoj_appeal,
       :aod,
       bfkey: "12345",
       bfd19: 1.year.ago,
@@ -265,7 +265,7 @@ describe AojLegacyDocket do
 
   def create_nonpriority_distributable_legacy_appeal_not_tied_to_judge(bfkey = "12345")
     create(
-      :case,
+      :legacy_aoj_appeal,
       bfkey: bfkey,
       bfd19: 1.year.ago,
       bfac: "3",
@@ -276,9 +276,10 @@ describe AojLegacyDocket do
   end
 
   def create_aoj_aod_cavc_ready_priority_case_1
-    create(:case,
+    create(:legacy_aoj_appeal,
            :aod,
            :with_appeal_affinity,
+           cavc: true,
            bfd19: 11.months.ago,
            bfac: "3",
            bfmpro: "ACT",
@@ -287,10 +288,11 @@ describe AojLegacyDocket do
   end
 
   def create_aoj_aod_cavc_ready_priority_case_2
-    create(:case,
+    create(:legacy_aoj_appeal,
            :aod,
            :with_appeal_affinity,
            affinity_start_date: 2.months.ago,
+           cavc: true,
            bfd19: 11.months.ago,
            bfac: "3",
            bfmpro: "ACT",
@@ -299,9 +301,10 @@ describe AojLegacyDocket do
   end
 
   def create_aoj_cavc_ready_priority_case
-    create(:case,
+    create(:legacy_aoj_appeal,
            :with_appeal_affinity,
            affinity_start_date: 1.month.ago,
+           cavc: true,
            bfd19: 11.months.ago,
            bfac: "3",
            bfmpro: "ACT",

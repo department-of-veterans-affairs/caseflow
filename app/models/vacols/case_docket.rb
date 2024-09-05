@@ -893,19 +893,23 @@ class VACOLS::CaseDocket < VACOLS::Record
     appeals = conn.exec_query(fmtd_query).to_a
 
     if in_window
-      appeals.reject! do |appeal|
-        if appeal["bfac"] == "7" && appeal["aod"] == 0
-          reject_due_to_affinity?(appeal, cavc_affinity_lever_value)
-        elsif appeal["bfac"] != "7" && appeal["aod"] == 1
-          reject_due_to_affinity?(appeal, cavc_aod_affinity_lever_value)
-        end
-      end
-    else
       appeals.select! do |appeal|
         if appeal["bfac"] == "7" && appeal["aod"] == 0
           reject_due_to_affinity?(appeal, cavc_affinity_lever_value)
-        else
+        elsif appeal["bfac"] == "7" && appeal["aod"] == 1
           reject_due_to_affinity?(appeal, cavc_aod_affinity_lever_value)
+        elsif appeal["bfac"] != "7"
+          false
+        end
+      end
+    else
+      appeals.reject! do |appeal|
+        if appeal["bfac"] == "7" && appeal["aod"] == 0
+          reject_due_to_affinity?(appeal, cavc_affinity_lever_value)
+        elsif appeal["bfac"] == "7" && appeal["aod"] == 1
+          reject_due_to_affinity?(appeal, cavc_aod_affinity_lever_value)
+        elsif appeal["bfac"] != "7"
+          false
         end
       end
     end
