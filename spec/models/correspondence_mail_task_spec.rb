@@ -1,12 +1,26 @@
 require 'rails_helper'
 
 RSpec.describe CorrespondenceMailTask, type: :model do
+  let(:root_task) { create(:root_task) }
+  let(:mail_team) { create(:mail_team) }
+  let(:litigation_user) { create(:user, roles: ['Litigation Support']) }
+  let(:mail_task_user) { create(:user, roles: ['Mail Task']) }
+  let(:user_array) do
+    [
+      { class: CavcCorrespondenceCorrespondenceTask, assigned_to: CavcCorrespondenceTeam.singleton },
+      { class: CongressionalInterestCorrespondenceTask, assigned_to: CongressionalInterestTeam.singleton },
+      { class: DeathCertificateCorrespondenceTask, assigned_to: DeathCertificateTeam.singleton },
+      { class: FoiaRequestCorrespondenceTask, assigned_to: FoiaRequestTeam.singleton },
+      { class: OtherMotionCorrespondenceTask, assigned_to: PrivacyTeam.singleton },
+      { class: PowerOfAttorneyRelatedCorrespondenceTask, assigned_to: PowerOfAttorneyRelatedTeam.singleton },
+      { class: PrivacyActRequestCorrespondenceTask, assigned_to: PrivacyActRequestTeam.singleton },
+      { class: PrivacyComplaintCorrespondenceTask, assigned_to: PrivacyComplaintTeam.singleton },
+      { class: StatusInquiryCorrespondenceTask, assigned_to: StatusInquiryTeam.singleton }
+    ]
+  end
+
   describe ".available_actions" do
-    let(:root_task) { create(:root_task) }
-    let(:mail_team) { create(:mail_team) }
-    let(:litigation_user) { create(:user, roles: ['Litigation Support']) }
-    let(:mail_task_user) { create(:user, roles: ['Mail Task']) }
-    let(:mail_task) { task_class.create!(appeal: root_task.appeal, parent_id: root_task.id, assigned_to: mail_team) }
+    let(:mail_task) { described_class.create!(appeal: root_task.appeal, parent_id: root_task.id, assigned_to: mail_team) }
 
     subject { mail_task.available_actions(current_user) }
 
@@ -41,20 +55,6 @@ RSpec.describe CorrespondenceMailTask, type: :model do
   end
 
   describe ".accessibility_for_users" do
-    let(:user_array) do
-      [
-        { class: CavcCorrespondenceCorrespondenceTask, assigned_to: CavcCorrespondenceTeam.singleton },
-        { class: CongressionalInterestCorrespondenceTask, assigned_to: CongressionalInterestTeam.singleton },
-        { class: DeathCertificateCorrespondenceTask, assigned_to: DeathCertificateTeam.singleton },
-        { class: FoiaRequestCorrespondenceTask, assigned_to: FoiaRequestTeam.singleton },
-        { class: OtherMotionCorrespondenceTask, assigned_to: PrivacyTeam.singleton },
-        { class: PowerOfAttorneyRelatedCorrespondenceTask, assigned_to: PowerOfAttorneyRelatedTeam.singleton },
-        { class: PrivacyActRequestCorrespondenceTask, assigned_to: PrivacyActRequestTeam.singleton },
-        { class: PrivacyComplaintCorrespondenceTask, assigned_to: PrivacyComplaintTeam.singleton },
-        { class: StatusInquiryCorrespondenceTask, assigned_to: StatusInquiryTeam.singleton }
-      ]
-    end
-
     user_array.each do |user|
       context "for #{user[:class]} assigned to #{user[:assigned_to]}" do
         let(:task) { user[:class].create!(appeal: root_task.appeal, parent: root_task, assigned_to: user[:assigned_to]) }
