@@ -150,11 +150,11 @@ const CorrespondenceAssignTaskModal = (props) => {
 CorrespondenceAssignTaskModal.propTypes = {
   requestPatch: PropTypes.func,
   task: PropTypes.shape({
-    appeal: PropTypes.shape({
-      hasCompletedSctAssignTask: PropTypes.bool
-    }),
     assignedTo: PropTypes.shape({
       type: PropTypes.string
+    }),
+    appeal: PropTypes.shape({
+      hasCompletedSctAssignTask: PropTypes.bool
     }),
     taskId: PropTypes.string,
     type: PropTypes.string,
