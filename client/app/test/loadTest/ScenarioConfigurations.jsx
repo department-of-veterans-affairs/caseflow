@@ -12,12 +12,11 @@ export default function ScenarioConfigurations() {
     <div className="load-test-container">
       { loadTestScenarios.map((scenarioGroup) => (
         <ScenarioConfiguration
-          key={ scenarioGroup['scenario']}
-          scenario={scenarioGroup['scenario']}
-          targetType={scenarioGroup['targetType']}
+          key={scenarioGroup.scenario}
+          scenario={scenarioGroup.scenario}
+          targetType={scenarioGroup.targetType}
         />
-        ))
-      }
+      ))}
     </div>
   );
 }

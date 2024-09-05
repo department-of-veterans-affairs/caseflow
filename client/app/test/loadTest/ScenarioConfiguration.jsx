@@ -21,26 +21,29 @@ export default function ScenarioConfiguration(props) {
       <Checkbox
         label={scenario}
         name={scenario}
-        onChange={ () => { onChangeHandle() } }
-        value={isChecked || false}
+        onChange={() => {
+            onChangeHandle();
+          }
+        }
+        value={isChecked}
       />
       {isChecked && targetType.length > 0 &&
         (<div className="load-test-checkbox-hidden-content">
           <SearchableDropdown
-            name={ `${scenario}-target-type` }
+            name={`${scenario}-target-type`}
             label="Target Type"
-            options={ targetType}
+            options={targetType}
             isClearable
           />
           <br/>
           <TextField
             name="testTargetID"
             label="Target Type ID"
-            optional={ true }
+            optional
           />
         </div>
         )
       }
     </div>
   );
-}
+};
