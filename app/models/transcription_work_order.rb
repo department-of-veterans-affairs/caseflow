@@ -138,7 +138,7 @@ class TranscriptionWorkOrder
     {
       docket_number: file.docket_number,
       case_type: file.hearing_type,
-      hearing_date: file.hearing.hearing_day&.scheduled_for.strftime("%m/%d/%Y"),
+      hearing_date: file.hearing&.hearing_day&.scheduled_for&.strftime("%m/%d/%Y"),
       first_name: file.hearing&.appellant_first_name,
       last_name: file.hearing&.appellant_last_name,
       judge_name: file.hearing&.judge&.full_name,
