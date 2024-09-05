@@ -141,7 +141,6 @@ class CaseDistributionLever < ApplicationRecord
     def method_missing(name, *args)
       if Constants.DISTRIBUTION.to_h.key?(name)
         value = method_missing_value(name.to_s)
-        write_to_distribution_lever_cache(value)
         return value unless value.nil?
       end
 
@@ -196,7 +195,7 @@ class CaseDistributionLever < ApplicationRecord
     private
 
     def method_missing_value(name)
-      lever = check_distribution_lever_cache || find_by_item(name).try(:value)
+      lever = check_distribution_lever_cache(name)
       begin
         if INTEGER_LEVERS.include?(name)
           Integer(lever)
@@ -255,12 +254,10 @@ class CaseDistributionLever < ApplicationRecord
       lever["options"] = options
     end
 
-    def check_distribution_lever_cache
-      Rails.cache.read('distribution_lever_cache')
-    end
-
-    def write_to_distribution_lever_cache(value)
-      Rails.cache.write('distribution_lever_cache', value, expires_in: 1.day) unless value.nil?
+    def check_distribution_lever_cache(name)
+      Rails.cache.fetch('distribution_lever_cache', expires_in: 1.day) do
+        find_by_item(name).try(:value)
+      end
     end
   end
 end
