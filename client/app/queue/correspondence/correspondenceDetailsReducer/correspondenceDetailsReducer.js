@@ -32,7 +32,6 @@ export const correspondenceDetailsReducer = (state = initialState, action = {}) 
         $set: action.payload.tasksUnrelatedToAppealEmpty
       }
     });
-
   default:
     return state;
   }

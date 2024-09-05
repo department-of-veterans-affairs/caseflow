@@ -342,6 +342,7 @@ Rails.application.routes.draw do
     post "/correspondence/:correspondence_uuid/current_step", to: "correspondence_intake#current_step", as: :queue_correspondence_intake_current_step
     post "/correspondence/:correspondence_uuid/correspondence_intake_task", to: "correspondence_tasks#create_correspondence_intake_task"
     patch "/correspondence/tasks/:task_id/update", to: "correspondence_tasks#update"
+    patch "/correspondence/tasks/:task_id/assign_to_person", to: "correspondence_tasks#assign_to_person"
     patch "/correspondence/tasks/:task_id/cancel", to: "correspondence_tasks#cancel"
     patch "/correspondence/tasks/:task_id/change_task_type", to: "correspondence_tasks#change_task_type"
     patch "/correspondence/tasks/:task_id/complete", to: "correspondence_tasks#complete"

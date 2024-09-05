@@ -41,6 +41,7 @@ class ActionsDropdown extends React.PureComponent {
     this.props.stageAppeal(appealId);
     this.props.resetDecisionOptions();
 
+    // If correspondence type, routing is separate
     // routing for correspondence
     if (type === 'Correspondence') {
       history.push(`/queue/correspondence/${appealId}/tasks/${task.uniqueId}/${option.value}`);
