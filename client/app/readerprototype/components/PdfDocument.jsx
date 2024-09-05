@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import Layer from './Comments/Layer';
 
 import { GlobalWorkerOptions, getDocument } from 'pdfjs-dist';
-GlobalWorkerOptions.workerSrc = '/assets/pdf.worker.min.js';
+GlobalWorkerOptions.workerSrc = '/pdfjs/pdf.worker.min.js';
 
 import ApiUtil from '../../util/ApiUtil';
 import Page from './Page';
@@ -81,7 +81,7 @@ const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel, onLoad }) => {
           scale={zoomLevel}
           page={page}
           rotation={rotateDeg}
-          key={`page-${index}`}
+          key={`doc-${doc.id}-page-${index}`}
           renderItem={(childProps) => (
             <Layer documentId={doc.id} zoomLevel={zoomLevel} rotation={rotateDeg} {...childProps}>
               <TextLayer page={page} zoomLevel={zoomLevel} rotation={rotateDeg} />
