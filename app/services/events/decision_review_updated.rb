@@ -2,6 +2,7 @@
 
 class Events::DecisionReviewUpdated
   class << self
+    # rubocop:disable Lint/UnusedMethodArgument
     def update!(params, headers, payload)
       consumer_event_id = params[:consumer_event_id]
 
@@ -19,5 +20,6 @@ class Events::DecisionReviewUpdated
         end
       end
     end
+    # rubocop:enable Lint/UnusedMethodArgument
   end
 end
