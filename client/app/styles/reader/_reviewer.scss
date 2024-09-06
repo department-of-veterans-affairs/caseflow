@@ -632,10 +632,6 @@ input[type='search'].cf-search-input-with-close {
   }
 }
 
-.prototype-page-number-input {
-  display: inline-block;
-}
-
 // scss-lint:disable IdSelector
 #pdfContainer {
   position: relative;
@@ -665,5 +661,20 @@ input[type='search'].cf-search-input-with-close {
     &.highlighted {
       background-color: $prototype-highlight;
     }
+  }
+}
+
+.prototype-page-progress-indicator-input {
+  .input-container {
+    width: 6rem;
+    margin: 0 0.5rem;
+
+    > input {
+      text-align: center;
+    }
+  }
+
+  > label {
+    display: inline-block;
   }
 }
