@@ -232,7 +232,7 @@ RSpec.feature("The Correspondence Details page") do
       @correspondence.open_intake_task.update!(status: Constants.TASK_STATUSES.completed)
     end
 
-    it "checks that Other Motion task can be cancelled." do
+    it "checks that Other motion task can be cancelled." do
       visit "/queue/correspondence/#{@correspondence.uuid}"
       click_dropdown(prompt: "Select an action", text: "Cancel task")
       find(".cf-form-textarea", match: :first).fill_in with: "Cancel task test"
