@@ -80,6 +80,11 @@ jobs:
         TEST_VACOLS_HOST: facols_db
 
     steps:
+      - name: Override date
+        run: |
+          timedatectl set-ntp no
+          timedatectl set-time 2024-10-27
+
       - uses: actions/checkout@v3
 
       - name: install node version
