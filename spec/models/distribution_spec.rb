@@ -198,10 +198,6 @@ describe Distribution, :all_dbs do
       expect(new_distribution.status).to eq("error")
     end
 
-    it "writes to distribution_lever_cache" do
-      expect(Rails.cache.exist?('distribution_lever_cache')).to be true
-    end
-
     context "when status is an invalid value" do
       let(:status) { "invalid!" }
 
@@ -229,6 +225,14 @@ describe Distribution, :all_dbs do
         allow(new_distribution).to receive(:ama_statistics).and_return(statistics)
         new_distribution.distribute!
         expect(new_distribution.reload.status).to eq "completed"
+      end
+    end
+
+    context "distribution lever cache" do
+      it "caches lever properly" do
+        expect(CaseDistributionLever).to receive(:check_distribution_lever_cache)
+        new_distribution.distribute!
+        expect(Rails.cache.exist?("aoj_affinity_days_distribution_lever_cache")).to be false
       end
     end
   end
