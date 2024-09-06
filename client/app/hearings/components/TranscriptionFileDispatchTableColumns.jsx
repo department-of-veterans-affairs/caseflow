@@ -345,7 +345,7 @@ export const unassignColumn = (unassignPackage) => {
       <div>
         <a
           style={styles.unassign}
-          onClick={() => unassignPackage(row.id, row.workOrder)}
+          onClick={() => unassignPackage(row.workOrder)}
         >
           Unassign
         </a>
