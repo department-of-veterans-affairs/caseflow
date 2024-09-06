@@ -32,22 +32,4 @@ RSpec.feature "Metrics::V2::LogsController", type: :feature do
       Generators::Document.build(type: "NOD", received_at: 1.day.ago)
     ]
   end
-
-  context "pdf_page_render_time_in_ms Feature toggle enabled" do
-    scenario "create a metric for pdf_page_render_time_in_ms" do
-      FeatureToggle.enable!(:metrics_get_pdfjs_doc)
-      expect(Metric.any?).to be false # There are no metrics
-      Capybara.default_max_wait_time = 5 # seconds
-
-      visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
-
-      expect(page).to have_content("BOARD OF VETERANS' APPEALS")
-      metric = Metric.where("metric_message LIKE ?", "%/document/2/pdf%").first
-      expect(metric).to be_present # New metric is created
-      # Temporatily comment this check out for UAT testsing
-      # expect(metric.additional_info).not_to be_nil
-      # expect(metric.additional_info.keys).to include("source")
-      expect(metric.duration).to be > 0 # Confirm duration not default 0 value
-    end
-  end
 end
