@@ -263,12 +263,12 @@ Rails.application.routes.draw do
   get 'hearings/confirm_work_order', to: redirect("/hearings/transcription_files")
   get 'hearings/transcription_files/selected_files_info/:file_ids', to: 'hearings/transcription_files#selected_files_info'
   post 'hearings/transcription_packages/dispatch', to: 'hearings/transcription_packages#new'
-  post 'hearings/transcription_files/unassign_work_order/:work_order_number', to: 'hearings/transcription_files#unassign_work_order'
 
   post 'hearings/hearing_view/:id', to: 'hearings/hearing_view#create'
   get 'hearings/transcription_work_order/display_wo_summary', to: 'hearings/transcription_work_order#display_wo_summary'
   get 'hearings/transcription_work_order/display_wo_contents', to: 'hearings/transcription_work_order#display_wo_contents'
   get 'hearings/transcription_work_order/unassign_wo', to: 'hearings/transcription_work_order#unassign_wo'
+  post 'hearings/transcription_work_order/unassigning_work_order', to: 'hearings/transcription_work_order#unassigning_work_order'
 
   resources :hearings, only: [:update, :show]
 
