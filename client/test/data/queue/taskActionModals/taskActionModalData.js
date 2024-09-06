@@ -2882,7 +2882,7 @@ const correspondenceAvailableActionsList = [
   { label: 'Mark task complete' },
   { label: 'Cancel task' }
 ];
-const commonCorrespondenceTasksData = {
+const correspondenceTasksCommonData = {
   assignedTo: 'Litigation Support',
   assignedOn: '09/03/2024',
   type: 'Organization',
@@ -2894,47 +2894,47 @@ export const tasksUnrelatedToAnAppeal = [
   {
     label: 'Other motion',
     instructions: ['test OM'],
-    ...commonCorrespondenceTasksData
+    ...correspondenceTasksCommonData
   },
   {
     label: 'FOIA request',
     instructions: ['test OM', 'test cavc2'],
-    ...commonCorrespondenceTasksData
+    ...correspondenceTasksCommonData
   },
   {
     label: 'Privacy act request',
     instructions: ['test PAR', 'test par2'],
-    ...commonCorrespondenceTasksData
+    ...correspondenceTasksCommonData
   },
   {
     label: 'Congressional interest',
     instructions: ['CI'],
-    ...commonCorrespondenceTasksData
+    ...correspondenceTasksCommonData
   },
   {
     label: 'Privacy complaint',
     instructions: ['PC'],
-    ...commonCorrespondenceTasksData
+    ...correspondenceTasksCommonData
   },
   {
     label: 'Death certificate',
     instructions: ['DC'],
-    ...commonCorrespondenceTasksData
+    ...correspondenceTasksCommonData
   },
   {
     label: 'Power of attorney-related',
     instructions: ['PoAR'],
-    ...commonCorrespondenceTasksData
+    ...correspondenceTasksCommonData
   },
   {
     label: 'Status inquiry',
     instructions: ['SI'],
-    ...commonCorrespondenceTasksData
+    ...correspondenceTasksCommonData
   },
   {
     label: 'CAVC Correspondence',
     instructions: ['CAVC C'],
-    ...commonCorrespondenceTasksData
+    ...correspondenceTasksCommonData
   }
 ];
 
