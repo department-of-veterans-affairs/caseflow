@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import QueueTable from '../../queue/QueueTable';
-import
-{ selectColumn,
+import {
+  selectColumn,
   docketNumberColumn,
   caseDetailsColumn,
   typesColumn,
@@ -70,31 +70,20 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
   const [selectingFile, setSelectingFile] = useState(false);
   const [contractors, setContractors] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalData, setModalData] = useState({ id: null, workOrderNumber: null });
-
-
-  // const unassignPackage = (id, workOrder) => {
-  //   console.log(
-  //     "Unassign clicked for ID:",
-  //     id,
-  //     "Work Order Number:",
-  //     workOrder
-  //   );
-  // };
+  const [modalData, setModalData] = useState({ workOrderNumber: null });
 
   /**
-   * Callback passed into the Queue Table triggered when the unnasign link is clicked
-   * @param {number} id - id of package
+   * Callback passed into the Queue Table triggered when the unassign link is clicked
    * @param {object} workOrderNumber - work order number of package
    */
-  const unassignPackage = (id, workOrderNumber) => {
-    setModalData({ id, workOrderNumber });
+  const unassignPackage = (workOrderNumber) => {
+    setModalData({ workOrderNumber });
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
-    setModalData({ id: null, workOrderNumber: null });
+    setModalData({ workOrderNumber: null });
   };
 
   /**
@@ -144,8 +133,8 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
   };
 
   /**
-   * Adds custom url params to the params used for pagenatation
-   * @returns The url params needed to handle pagenation
+   * Adds custom url params to the params used for pagination
+   * @returns The url params needed to handle pagination
    */
   const qs = encodeQueryParams({
     tab: statusFilter
@@ -287,7 +276,6 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
         <WorkOrderUnassign
           onClose={closeModal}
           workOrderNumber={modalData.workOrderNumber}
-          id={modalData.id}
         />
       )}
     </div>
