@@ -6,7 +6,7 @@ class Hearings::TranscriptionPackagesController < ApplicationController
   before_action :verify_transcription_user
 
   def transcription_package_tasks
-    @transcription_packages = Hearings::TranscriptionPackage.joins(:contractor)
+    @transcription_packages = TranscriptionPackage.joins(:contractor)
     apply_filters
     setup_pagination
     apply_sorting
@@ -46,6 +46,8 @@ class Hearings::TranscriptionPackagesController < ApplicationController
       case sort_by
       when "dateSentColumn"
         @transcription_packages.order_by_field(order, "transcription_packages.created_at")
+      when "expectedReturnDateColumn"
+        @transcription_packages.order_by_field(order, "expected_return_date")
       when "contractorColumn"
         @transcription_packages.order_by_field(order, "transcription_contractors.name")
       else
@@ -72,7 +74,7 @@ class Hearings::TranscriptionPackagesController < ApplicationController
       tasks << {
         id: transcription_package.id,
         workOrder: transcription_package.task_number,
-        items: transcription_package.transcriptions.length,
+        items: transcription_package.contents_count,
         dateSent: transcription_package.created_at.to_formatted_s(:short_date),
         expectedReturnDate: transcription_package.expected_return_date.to_formatted_s(:short_date),
         contractor: transcription_package.contractor.name,

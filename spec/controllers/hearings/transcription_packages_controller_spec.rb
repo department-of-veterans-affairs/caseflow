@@ -2,14 +2,14 @@
 
 require "rails_helper"
 
-RSpec.describe Hearings::TranscriptionPackagesController do
+RSpec.describe Hearings::TranscriptionPackagesController, type: :controller do
   describe "GET transcription_package_tasks" do
     let!(:user) { User.authenticate!(roles: ["Transcriptions"]) }
     before { TranscriptionTeam.singleton.add_user(user) }
 
-    let!(:c_1) { create(:transcription_contractor, name: "Contractor 1") }
-    let!(:c_2) { create(:transcription_contractor, name: "Contractor 2") }
-    let!(:c_3) { create(:transcription_contractor, name: "Contractor 3") }
+    let!(:c_1) { create(:transcription_contractor, name: "Contractor One") }
+    let!(:c_2) { create(:transcription_contractor, name: "Contractor Two") }
+    let!(:c_3) { create(:transcription_contractor, name: "Contractor Three") }
 
     let!(:t_1) { create(:transcription,  task_number: "BVA2024001") }
     let!(:t_2) { create(:transcription,  task_number: "BVA2024002") }
@@ -150,6 +150,108 @@ RSpec.describe Hearings::TranscriptionPackagesController do
         task_page_count: 1,
         tasks: {
           data: [package_response_3, package_response_2]
+        },
+        tasks_per_page: 15,
+        total_task_count: 2
+      }.to_json
+
+      expect(response.status).to eq(200)
+      expect(response.body).to eq(expected_response)
+    end
+
+    it "filters by expected return dates" do
+      filter = Rack::Utils.build_query({ col: "expectedReturnDateColumn", val: "between,2024-09-16,2024-09-17" })
+
+      get :transcription_package_tasks, params: { filter: [filter] }
+
+      expected_response = {
+        task_page_count: 1,
+        tasks: {
+          data: [package_response_3, package_response_2]
+        },
+        tasks_per_page: 15,
+        total_task_count: 2
+      }.to_json
+
+      expect(response.status).to eq(200)
+      expect(response.body).to eq(expected_response)
+    end
+
+    it "filters by contractor name" do
+      filter = Rack::Utils.build_query({ col: "contractorColumn", val: "Contractor One" })
+
+      get :transcription_package_tasks, params: { filter: [filter] }
+
+      expected_response = {
+        task_page_count: 1,
+        tasks: {
+          data: [package_response_4, package_response_1]
+        },
+        tasks_per_page: 15,
+        total_task_count: 2
+      }.to_json
+
+      expect(response.status).to eq(200)
+      expect(response.body).to eq(expected_response)
+    end
+
+    it "orders by date sent" do
+      get :transcription_package_tasks, params: { sort_by: "dateSentColumn", order: "desc" }
+
+      expected_response = {
+        task_page_count: 1,
+        tasks: {
+          data: [package_response_4, package_response_3, package_response_2, package_response_1]
+        },
+        tasks_per_page: 15,
+        total_task_count: 4
+      }.to_json
+
+      expect(response.status).to eq(200)
+      expect(response.body).to eq(expected_response)
+    end
+
+    it "orders by expected return date" do
+      get :transcription_package_tasks, params: { sort_by: "expectedReturnDateColumn", order: "asc" }
+
+      expected_response = {
+        task_page_count: 1,
+        tasks: {
+          data: [package_response_1, package_response_2, package_response_3, package_response_4]
+        },
+        tasks_per_page: 15,
+        total_task_count: 4
+      }.to_json
+
+      expect(response.status).to eq(200)
+      expect(response.body).to eq(expected_response)
+    end
+
+    it "orders by contractor name" do
+      get :transcription_package_tasks, params: { sort_by: "contractorColumn", order: "desc" }
+
+      expected_response = {
+        task_page_count: 1,
+        tasks: {
+          data: [package_response_2, package_response_3, package_response_1, package_response_4]
+        },
+        tasks_per_page: 15,
+        total_task_count: 4
+      }.to_json
+
+      expect(response.status).to eq(200)
+      expect(response.body).to eq(expected_response)
+    end
+
+    it "combines ordering and filtering" do
+      filter = Rack::Utils.build_query({ col: "contractorColumn", val: "Contractor One" })
+
+      get :transcription_package_tasks, params: { filter: [filter], sort_by: "dateSentColumn", order: "asc" }
+
+      expected_response = {
+        task_page_count: 1,
+        tasks: {
+          data: [package_response_1, package_response_4]
         },
         tasks_per_page: 15,
         total_task_count: 2

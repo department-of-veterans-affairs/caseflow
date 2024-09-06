@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Hearings::TranscriptionPackage < CaseflowRecord
+class TranscriptionPackage < CaseflowRecord
   belongs_to :contractor, class_name: "TranscriptionContractor"
   has_many :transcription_package_hearings
   has_many :hearings, through: :transcription_package_hearings
@@ -48,7 +48,7 @@ class Hearings::TranscriptionPackage < CaseflowRecord
   end
 
   def contents_count
-    (hearings + legacy_hearings).length
+    transcriptions.length
   end
 
   private
