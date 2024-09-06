@@ -3,7 +3,6 @@ import ApiUtil from '../../util/ApiUtil';
 import QueueTable from '../../queue/QueueTable';
 import PropTypes from 'prop-types';
 
-// Define columns configuration
 const columns = [
   { name: 'docket_number', header: 'Docket Number', valueFunction: (row) => row.docket_number },
   { name: 'first_name', header: 'First Name', valueFunction: (row) => row.first_name },
@@ -20,7 +19,6 @@ export const WorkOrderDetails = ({ taskNumber }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch data using async/await
   const fetchData = async () => {
     try {
       const response = await ApiUtil.get('/hearings/transcription_work_order/display_wo_summary', {
