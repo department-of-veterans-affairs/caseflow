@@ -1,46 +1,19 @@
 # frozen_string_literal: true
 
-require "net/http"
-require "json"
-require "jwt"
-require "openssl"
-require "securerandom"
-require "net/http/post/multipart"
-require "mime/types"
-require "fileutils"
-
 class ExternalApi::VaBoxService
   BASE_URL = "https://api.box.com"
-  FILES_URI = "#{BASE_URL}/2.0/files"
+  UPLOAD_URL = "https://upload.box.com/api/2.0"
+  FILES_URI = "2.0/files"
   CHUNK_SIZE = 50 * 1024 * 1024 # 50 MB
 
   attr_reader :client_secret, :client_id, :enterprise_id, :private_key, :passphrase
 
-  def initialize(client_secret:, client_id:, enterprise_id:, private_key:, passphrase:)
-    @client_secret = client_secret
-    @client_id = client_id
-    @enterprise_id = enterprise_id
-    @private_key = private_key
-    @passphrase = passphrase
-  end
-
-  def initialized?
-    @initialized
-  end
-
-  def fetch_access_token
-    response = fetch_jwt_access_token
-    @access_token = response["access_token"]
-
-    if response["expires_in"] <= Time.now.to_i
-      # Fetch a new JWT access token
-      response = fetch_jwt_access_token
-      @access_token = response["access_token"]
-    end
-  end
-
-  def public_upload_file(file_path, folder_id)
-    upload_file(file_path, folder_id)
+  def initialize
+    @client_secret = ENV["BOX_CLIENT_SECRET"]
+    @client_id = ENV["BOX_CLIENT_ID"]
+    @enterprise_id = ENV["BOX_ENTERPRISE_ID"]
+    @private_key = ENV["BOX_PRIVATE_KEY"].gsub("\\n", "\n")
+    @passphrase = ENV["BOX_PASSPHRASE"]
   end
 
   def download_file(file_id, destination_path)
@@ -70,18 +43,57 @@ class ExternalApi::VaBoxService
     log_error(error)
   end
 
-  def public_folder_details(folder_id)
-    get_child_folders(folder_id)
+  def upload_file(file_path, folder_id)
+    file_size = File.size(file_path)
+
+    if file_size <= CHUNK_SIZE
+      Rails.logger.info("Uploading single file: #{file_path}")
+      upload_single_file(file_path, folder_id)
+    else
+      Rails.logger.info("Chunkifying and uploading file: #{file_path}")
+      chunkify_and_upload(file_path, folder_id)
+    end
+  end
+
+  def get_folder_items(folder_id:, item_type: "folder", query_string: nil)
+    uri = "2.0/folders/#{folder_id}/items"
+    uri += "?" + query_string unless query_string.nil?
+
+    response = box_conn.get(uri)
+    body = parse_json(response.body)
+
+    response.success? ? filter_items_by_type(body[:entries], item_type) : handle_error(response)
   end
 
   def get_child_folder_id(parent_folder_id, child_folder_name)
-    folders = public_folder_details(parent_folder_id)
-    matching_folder = folders.find { |folder| folder["name"] == child_folder_name }
+    folders = get_folder_items(parent_folder_id)
+    matching_folder = folders.find { |folder| folder[:name] == child_folder_name }
     if matching_folder
-      matching_folder["id"]
+      matching_folder[:id]
     else
       fail "Folder '#{child_folder_name}' not found in parent folder '#{parent_folder_id}'"
     end
+  end
+
+  def upload_single_file(file_path, folder_id)
+    uri = "files/content"
+    file = Faraday::UploadIO.new(File.new(file_path), "application/zip")
+
+    response = upload_conn.post(uri) do |request|
+      request.body = {
+        attributes: {
+          name: File.basename(file_path),
+          parent: { id: folder_id }
+        }.to_json,
+        file: file
+      }
+    end
+
+    response.success? ? parse_json(response.body) : handle_error(response)
+  end
+
+  def ensure_access_token
+    @access_token = Rails.cache.read(:box_access_token) || fetch_access_token
   end
 
   private
@@ -160,74 +172,9 @@ class ExternalApi::VaBoxService
     response = http.request(request)
 
     if response.code == "200"
-      body = JSON.parse(response.body)
+      body = JSON.parse(response.body, symbolize_names: true)
       body
     else
-      fail "Error: #{response.body}"
-    end
-  rescue StandardError => error
-    log_error(error)
-  end
-  # rubocop:enable Metrics/MethodLength
-
-  def upload_file(file_path, folder_id)
-    file_size = File.size(file_path)
-
-    if file_size <= CHUNK_SIZE
-      Rails.logger.info("Uploading single file: #{file_path}")
-      upload_single_file(file_path, folder_id)
-    else
-      Rails.logger.info("Chunkifying and uploading file: #{file_path}")
-      chunkify_and_upload(file_path, folder_id)
-    end
-  end
-
-  def get_child_folders(parent_folder_id)
-    url = "#{BASE_URL}/2.0/folders/#{parent_folder_id}/items"
-    uri = URI.parse(url)
-
-    request = Net::HTTP::Get.new(uri.request_uri)
-    request["Authorization"] = "Bearer #{@access_token}"
-
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-
-    response = http.request(request)
-
-    if response.code == "200"
-      body = JSON.parse(response.body)
-      child_folders = body["entries"].select { |item| item["type"] == "folder" }
-      child_folders
-    else
-      fail "Error: #{response.body}"
-    end
-  end
-
-  # rubocop:disable Metrics/MethodLength
-  def upload_single_file(file_path, folder_id)
-    url = "https://upload.box.com/api/2.0/files/content"
-    uri = URI.parse(url)
-
-    request = Net::HTTP::Post::Multipart.new(
-      uri.path,
-      "file" => UploadIO.new(File.new(file_path), "application/zip", File.basename(file_path)),
-      "attributes" => {
-        name: File.basename(file_path),
-        parent: { id: folder_id }
-      }.to_json
-    )
-    request["Authorization"] = "Bearer #{@access_token}"
-
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-
-    response = http.request(request)
-
-    if response.code == "201"
-      body = JSON.parse(response.body)
-      body
-    else
-      Rails.logger.info("Response body: #{response.body}")
       fail "Error: #{response.body}"
     end
   rescue StandardError => error
@@ -264,7 +211,24 @@ class ExternalApi::VaBoxService
   end
 
   def log_error(error)
-    Rails.logger.error(error.message)
     Rails.logger.error(error.backtrace.join("\n"))
+    Rails.logger.error(error.message)
+  end
+
+  def filter_items_by_type(items, item_type)
+    return items unless item_type.in? %w(file folder)
+
+    items.find_all { |item| item[:type] == item_type }
+  end
+
+  def parse_json(json)
+    JSON.parse(json, symbolize_names: true)
+  end
+
+  def handle_error(response)
+    Rails.logger.info("Response body: #{response.body}")
+    fail ::StandardError, "Error: #{response.status} #{response.reason_phrase}"
+  rescue StandardError => error
+    log_error(error)
   end
 end
