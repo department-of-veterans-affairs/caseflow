@@ -32,6 +32,22 @@ class Hearings::TranscriptionWorkOrderController < ApplicationController
     end
   end
 
+  def unassigning_work_order
+    begin
+      Transcription.unassign_by_task_number(@task_number)
+    rescue StandardError => error
+      log_error(error, extra: { task_number: @task_number })
+      Rails.logger.error("Error in unassigning transcription: #{error.message}")
+    end
+
+    begin
+      TranscriptionPackage.cancel_by_task_number(@task_number)
+    rescue StandardError => error
+      log_error(error, extra: { task_number: @task_number })
+      Rails.logger.error("Error in cancelling transcription package: #{error.message}")
+    end
+  end
+
   private
 
   def set_task_number
