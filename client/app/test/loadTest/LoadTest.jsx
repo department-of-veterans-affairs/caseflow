@@ -17,9 +17,9 @@ export default function LoadTest(props) {
         <AppSegment filledBackground>
           <h1>Test Target Configuration</h1>
           <UserConfiguration {...props} />
-          <br />
+          <br/>
           <h2>Scenario Groups</h2>
-          <ScenarioConfigurations />
+          <ScenarioConfigurations/>
         </AppSegment>
         <div {...css({ overflow: 'hidden' })}>
           <Button
