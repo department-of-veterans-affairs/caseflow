@@ -1,6 +1,6 @@
 /* eslint-disable max-lines, max-len */
 
-import React from 'react';
+import React, { useState} from 'react';
 import PropTypes from 'prop-types';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
@@ -26,14 +26,19 @@ export default function UserConfiguration(props) {
 
   // console.log(filteredStations());
 
+  const [orgSelection, setOrgSelection] = useState('');
+
   const functionsAvailable = props.form_values.functions_available;
-  const featureToggles = props.featuresList;
+  const featureToggles = props.featuresList.sort();
+
   const organizations = props.form_values.all_organizations.sort().map((org) => ({
     value: org,
     label: org
   }));
 
-  featureToggles.sort();
+  const handleOrgSelection = ({ value }) => {
+    setOrgSelection(value);
+  };
 
   return (
     <div>
@@ -41,10 +46,9 @@ export default function UserConfiguration(props) {
       <SearchableDropdown
         name="Station id dropdown"
         hideLabel
-        // onInputChange={handleInputChange}
         // options={OFFICE_INFO.keys} searchable
         // onChange={handleUserSelect}
-        filterOption={() => true}
+        // filterOption={() => true}
         // value={userSelect}
       />
       <br />
@@ -52,7 +56,6 @@ export default function UserConfiguration(props) {
       <SearchableDropdown
         name="Regional office dropdown"
         hideLabel
-        // onInputChange={handleInputChange}
         // options={slicedUserOptions} searchable
         // onChange={handleUserSelect}
         // filterOption={() => true}
@@ -63,12 +66,10 @@ export default function UserConfiguration(props) {
       <SearchableDropdown
         name="Organizations dropdown"
         hideLabel
-        // onInputChange={handleInputChange}
+        onChange={handleOrgSelection}
         options={organizations} searchable
-        // onChange={handleUserSelect}
         filterOption={() => true}
-        placeholder=""
-        // value={userSelect}
+        value={orgSelection}
       />
       <br />
       <h2><strong>Functions</strong></h2>
