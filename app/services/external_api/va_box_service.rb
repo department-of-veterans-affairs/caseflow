@@ -17,14 +17,8 @@ class ExternalApi::VaBoxService
   end
 
   def download_file(file_id, destination_path)
-    download_url = "#{FILES_URI}/#{file_id}/content"
-    uri = URI.parse(download_url)
-
-    request = Net::HTTP::Get.new(uri)
-    request["Authorization"] = "Bearer #{@access_token}"
-
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
+    uri = "#{FILES_URI}/#{file_id}/content"
+    response = box_conn.get(uri)
 
     if response.success?
       File.open(destination_path, "wb") do |file|
@@ -32,6 +26,7 @@ class ExternalApi::VaBoxService
       end
       Rails.logger.info("File downloaded successfully to #{destination_path}")
     elsif response.status == 302
+
       redirect_url = response.headers['location']
       follow_redirect_and_download(redirect_url, destination_path)
     else
