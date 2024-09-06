@@ -669,8 +669,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
         fill_in "Document ID:", with: valid_document_id
         expect(page).to have_content(judge.full_name)
         fill_in "notes", with: "all done"
+        binding.pry
         click_on "Submit"
-
+        binding.pry
         expect(page).to have_content(
           "Thank you for drafting #{appeal.veteran_full_name}'s decision. It's been "\
           "sent to #{judge.full_name} for review."
