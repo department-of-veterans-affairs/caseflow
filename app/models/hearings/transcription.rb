@@ -17,6 +17,10 @@ class Transcription < CaseflowRecord
     where(transcription_status: "unassigned").order(:task_id).first
   }
 
+  def self.unassign_by_task_number(task_number)
+    where(task_number: task_number).update_all(transcription_status: "unassigned")
+  end
+
   private
 
   def sequence_task_id
