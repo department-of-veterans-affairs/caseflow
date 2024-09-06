@@ -28,7 +28,7 @@ class VaBoxDownloadJob < CaseflowJob
       tmp_folder = select_folder(@file_name)
       box_service.download_file(current_file[:id], tmp_folder)
       if @file_extension == "zip"
-        unzip_file(tmp_folder)
+        unzip_file(tmp_folder, current_file)
       else
         # update_database(current_file)
       end
@@ -48,11 +48,11 @@ class VaBoxDownloadJob < CaseflowJob
       )
     else
       TranscriptionFile.create!(
-        hearing_id: current_file[:id],
-        hearing_type: current_file[:name].split("_")[2].split(".")[0],
-        docket_number: current_file[:name].split("_")[0],
-        file_name: current_file[:name],
-        file_type: "rtf",
+        hearing_id: @file_name.split("_")[1],
+        hearing_type: @file_name.split("_")[2].split(".")[0],
+        docket_number: @file_name.split("_")[0],
+        file_name: @file_name,
+        file_type: File.extname(@file_name).delete(".").to_s,
         file_status: @file_status,
         date_upload_aws: Time.zone.today
         # aws_link: "vaec-appeals-caseflow-test/#{dir}/#{file_name}"
@@ -67,7 +67,7 @@ class VaBoxDownloadJob < CaseflowJob
     current_path
   end
 
-  def unzip_file(tmp_folder)
+  def unzip_file(tmp_folder, current_file)
     Zip::File.open(tmp_folder) do |zip_file|
       list_files = []
       zip_file.each do |f|
@@ -82,9 +82,8 @@ class VaBoxDownloadJob < CaseflowJob
         #   upload_s3_modified__transcription_file(current_path)
         # end
       end
-
-      list_files.each do |current_file|
-        upload_s3_modified__transcription_file(current_file.to_s)
+      list_files.each do |my_file|
+        upload_s3_modified_transcription_file(my_file.to_s, current_file)
       end
     end
   end
@@ -104,10 +103,10 @@ class VaBoxDownloadJob < CaseflowJob
     "#{folder_name}/transcript_text/#{@file_name}"
   end
 
-  def upload_s3_modified__transcription_file(file_path)
+  def upload_s3_modified_transcription_file(file_path, current_file)
     @file_name = File.basename(file_path)
     # upload_to_s3(file_path)
-    # update_database(current_file)
+    update_database(current_file)
   end
 
 end
