@@ -216,6 +216,7 @@ describe AojLegacyDocket do
       create_aoj_aod_cavc_ready_priority_case_1
       create_aoj_aod_cavc_ready_priority_case_2
       create_aoj_cavc_ready_priority_case
+      create_nonpriority_aoj_ready_case
       create_nonpriority_distributable_legacy_appeal_not_tied_to_judge("123456")
       create_nonpriority_distributable_legacy_appeal_not_tied_to_judge("123457")
       create_nonpriority_distributable_legacy_appeal_not_tied_to_judge("123458")
@@ -238,7 +239,7 @@ describe AojLegacyDocket do
     context "when priority is false" do
       context "with in window affinity" do
         it "returns affinity date count" do
-          expect(docket.affinity_date_count(true, false)).to eq(0)
+          expect(docket.affinity_date_count(true, false)).to eq(1)
         end
       end
 
@@ -268,6 +269,21 @@ describe AojLegacyDocket do
     create(
       :case,
       bfkey: bfkey,
+      bfd19: 1.year.ago,
+      bfac: "3",
+      bfmpro: "ACT",
+      bfcurloc: "81",
+      bfdloout: 3.days.ago
+    )
+  end
+
+  # {nonpriority in window}
+  def create_nonpriority_aoj_ready_case
+    create(
+      :case,
+      :with_appeal_affinity,
+      affinity_start_date: 2.days.ago,
+      bfkey: "122222",
       bfd19: 1.year.ago,
       bfac: "3",
       bfmpro: "ACT",

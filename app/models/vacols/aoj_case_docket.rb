@@ -832,12 +832,20 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
     appeals = conn.exec_query(fmtd_query).to_a
 
     if in_window
-      appeals.reject! do |appeal|
-        reject_due_to_affinity?(appeal, aoj_affinity_lever_value)
+      appeals.select! do |appeal|
+        if VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity&.affinity_start_date.nil?
+          false
+        else
+          reject_due_to_affinity?(appeal, aoj_affinity_lever_value)
+        end
       end
     else
-      appeals.select! do |appeal|
-        reject_due_to_affinity?(appeal, aoj_affinity_lever_value)
+      appeals.reject! do |appeal|
+        if VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity&.affinity_start_date.nil?
+          false
+        else
+          reject_due_to_affinity?(appeal, aoj_affinity_lever_value)
+        end
       end
     end
     appeals
