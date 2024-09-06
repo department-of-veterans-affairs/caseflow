@@ -81,9 +81,7 @@ jobs:
 
     steps:
       - name: Override date
-        run: |
-          timedatectl set-ntp no
-          timedatectl set-time 2024-10-27
+        run: sudo date --set="2024-10-27 12:00:00.000"
 
       - uses: actions/checkout@v3
 
