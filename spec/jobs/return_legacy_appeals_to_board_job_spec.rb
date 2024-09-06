@@ -44,6 +44,9 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
       it "sends a no records moved Slack report" do
         job.perform
 
+        expect(job).to have_received(:create_returned_appeal_job).once
+        expect(job).to have_received(:complete_returned_appeal_job)
+          .with(returned_appeal_job, "Job completed successfully", nil).once
         expect(job).to have_received(:send_job_slack_report).with(["Job Ran Successfully, No Records Moved"]).once
         expect(job).to have_received(:metrics_service_report_runtime).once
       end
