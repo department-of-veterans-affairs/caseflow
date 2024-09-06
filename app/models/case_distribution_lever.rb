@@ -189,13 +189,11 @@ class CaseDistributionLever < ApplicationRecord
     end
 
     def clear_distribution_lever_cache
-      integer_lever_map = generate_lever_cache_map(INTEGER_LEVERS)
-      float_lever_map = generate_lever_cache_map(FLOAT_LEVERS)
-      boolean_lever_map = generate_lever_cache_map(BOOLEAN_LEVERS)
+      lever_items = CaseDistributionLever.all.map(&:item)
 
-      all_lever_map = integer_lever_map.merge(float_lever_map).merge(boolean_lever_map)
-
-      all_lever_map.each_value do |cache_key|
+      # Loop through each lever item and delete the corresponding cache
+      lever_items.each do |item|
+        cache_key = "#{item}_distribution_lever_cache"
         Rails.cache.delete(cache_key)
       end
     end
@@ -263,16 +261,9 @@ class CaseDistributionLever < ApplicationRecord
     end
 
     def check_distribution_lever_cache(name)
-      Rails.cache.fetch("#{name}_distribution_lever_cache", expires_in: 1.day) do
+      Rails.cache.fetch("#{name}_distribution_lever_cache", expires_in: 2.minutes) do
         find_by_item(name).try(:value)
       end
-    end
-
-    def generate_lever_cache_map(levers)
-      levers.map do |lever|
-        transformed_lever = lever.split('.').last
-        [transformed_lever, "#{transformed_lever}_distribution_lever_cache"]
-      end.to_h
     end
   end
 end

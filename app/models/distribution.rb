@@ -46,7 +46,7 @@ class Distribution < CaseflowRecord
 
       record_distribution_stats(ama_stats)
 
-      CaseDistributionLever.clear_distribution_cache
+      CaseDistributionLever.clear_distribution_lever_cache
     end
   rescue StandardError => error
     process_error(error)
