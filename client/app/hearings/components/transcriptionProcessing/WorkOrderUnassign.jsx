@@ -5,24 +5,21 @@ import COPY from '../../../../COPY';
 import ApiUtil from 'app/util/ApiUtil';
 
 const WorkOrderUnassign = ({ onClose, workOrderNumber }) => {
-  const handleUnassignOrder = async () => {
-    try {
-      const response = await ApiUtil.post(`/hearings/transcription_files/unassign_work_order/${workOrderNumber}`, {
-        data: {}
+  const unassignWorkOrder = (orderNumber) => {
+    const cleanedWorkOrderNumber = orderNumber.replace('BVA', '');
+    const data = { task_number: cleanedWorkOrderNumber };
+    const url = '/hearings/transcription_work_order/unassigning_work_order';
+
+    ApiUtil.post(url, { data }).
+      then((response) => {
+        if (response.body.success) {
+          onClose();
+        }
       });
+  };
 
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const data = await response.json();
-      console.log('Success:', data);
-      // Handle success (e.g., show a success message, close the modal, etc.)
-      onClose();
-    } catch (error) {
-      console.error('Error:', error);
-      // Handle error (e.g., show an error message)
-    }
+  const handleConfirm = () => {
+    unassignWorkOrder(workOrderNumber);
   };
 
   const renderContent = () => (
@@ -60,7 +57,7 @@ const WorkOrderUnassign = ({ onClose, workOrderNumber }) => {
           {
             classNames: ['usa-button', 'usa-button-primary'],
             name: 'Unassign order',
-            onClick: handleUnassignOrder
+            onClick: handleConfirm
           },
         ]}
         closeHandler={onClose}
@@ -74,7 +71,8 @@ const WorkOrderUnassign = ({ onClose, workOrderNumber }) => {
 
 WorkOrderUnassign.propTypes = {
   onClose: PropTypes.func.isRequired,
-  workOrderNumber: PropTypes.number.isRequired,
+  workOrderNumber: PropTypes.string.isRequired,
 };
 
 export default WorkOrderUnassign;
+
