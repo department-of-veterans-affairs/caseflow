@@ -1,91 +1,93 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Modal from './Modal';
 import Alert from './Alert';
 import COPY from '../../COPY';
 import PropTypes from 'prop-types';
-import { highlightInvalidFormItems } from '../queue/uiReducer/uiActions';
 
-const FlowModal = ({
-  title = '',
-  button = COPY.MODAL_SUBMIT_BUTTON,
-  children,
-  error,
-  success,
-  submitDisabled = false,
-  submitButtonClassNames = ['usa-button', 'usa-button-hover', 'usa-button-warning'],
-  pathAfterSubmit = '/queue',
-  history,
-  onCancel,
-  submit,
-  validateForm,
-  saveSuccessful,
-  resetSaveState
-}) => {
-  const [loading, setLoading] = useState(false);
-  const [pathAfterSubmitState] = useState(pathAfterSubmit);
-  const [submitSuccess, setSubmitSuccess] = useState(null);
+export default class FlowModal extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: false,
+      pathAfterSubmit: this.props.pathAfterSubmit
+    };
+  }
 
-  useEffect(() => {
-    if (highlightInvalidFormItems) {
-      highlightInvalidFormItems(false);
+  componentDidMount = () => {
+    if (this.props.highlightInvalidFormItems) {
+      this.props.highlightInvalidFormItems(false);
     }
-  }, [highlightInvalidFormItems]);
+  }
 
-  const cancelHandler = () => onCancel ? onCancel() : history.goBack();
+  cancelHandler = () => this.props.onCancel ? this.props.onCancel() : this.props.history.goBack();
 
-  const closeHandler = () => history.replace(pathAfterSubmitState);
+  closeHandler = () => this.props.history.replace(this.state.pathAfterSubmit);
 
-  const handleSubmit = () => {
+  setLoading = (loading) => this.setState({ loading });
+
+  submit = () => {
+    const { validateForm } = this.props;
+
     if (validateForm && !validateForm()) {
-      return highlightInvalidFormItems(true);
+      return this.props.highlightInvalidFormItems(true);
     }
 
-    if (highlightInvalidFormItems) {
-      highlightInvalidFormItems(false);
+    if (this.props.highlightInvalidFormItems) {
+      this.props.highlightInvalidFormItems(false);
     }
+    this.setState({ loading: true });
 
-    setLoading(true);
-
-    submit().
+    this.props.
+      submit().
       then(() => {
-        setSubmitSuccess(saveSuccessful);
+        // Not every component that uses queue flow modal sets saveSuccessful, so we may have a null here. Until every
+        // component sets saveSuccessful on success or failure, this cannot be updated to saveSuccessful === true
+        if (this.props.saveSuccessful !== false) {
+          this.closeHandler();
+        }
       }).
       finally(() => {
-        resetSaveState();
-        setLoading(false);
+        this.props.resetSaveState();
+        this.setState({ loading: false });
       });
   };
 
-  useEffect(() => {
-    if (submitSuccess) {
-      closeHandler();
-    }
-  }, [submitSuccess]);
+  render = () => {
+    const { title, button, children, error, success, submitDisabled, submitButtonClassNames } = this.props;
 
-  return (
-    <Modal
-      title={title}
-      buttons={[
-        {
-          classNames: ['usa-button', 'cf-btn-link'],
-          name: COPY.MODAL_CANCEL_BUTTON,
-          onClick: cancelHandler
-        },
-        {
-          classNames: submitButtonClassNames,
-          name: button,
-          disabled: submitDisabled,
-          loading,
-          onClick: handleSubmit
-        }
-      ]}
-      closeHandler={cancelHandler}
-    >
-      {error && <Alert title={error.title} type="error">{error.detail}</Alert>}
-      {success && <Alert title={success.title} type="success">{success.detail}</Alert>}
-      {children}
-    </Modal>
-  );
+    return (
+      <Modal
+        title={title}
+        buttons={[
+          {
+            classNames: ['usa-button', 'cf-btn-link'],
+            name: COPY.MODAL_CANCEL_BUTTON,
+            onClick: this.cancelHandler
+          },
+          {
+            classNames: submitButtonClassNames,
+            name: button,
+            disabled: submitDisabled,
+            loading: this.state.loading,
+            onClick: this.submit
+          }
+        ]}
+        closeHandler={this.cancelHandler}
+      >
+        {error && <Alert title={error.title} type="error">{error.detail}</Alert>}
+        {success && <Alert title={success.title} type="success">{success.detail}</Alert>}
+        {children}
+      </Modal>
+    );
+  };
+}
+
+FlowModal.defaultProps = {
+  button: COPY.MODAL_SUBMIT_BUTTON,
+  submitButtonClassNames: ['usa-button', 'usa-button-hover', 'usa-button-warning'],
+  pathAfterSubmit: '/queue',
+  submitDisabled: false,
+  title: '',
 };
 
 FlowModal.propTypes = {
@@ -108,5 +110,3 @@ FlowModal.propTypes = {
     PropTypes.string
   )
 };
-
-export default FlowModal;
