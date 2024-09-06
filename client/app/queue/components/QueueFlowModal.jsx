@@ -13,8 +13,7 @@ const QueueFlowModal = (props) => {
 };
 
 const mapStateToProps = (state) => ({
-  //comment to rerun
-  saveSuccessful: state.ui.saveState.saveSuccessful || false,
+  saveSuccessful: state.ui.saveState.saveSuccessful,
   success: state.ui.messages.success,
   error: state.ui.messages.error
 });
