@@ -34,7 +34,7 @@ module Seeds
       create_vlj("REGVLJ02", "Regular VLJ2")
       create_non_ssc_avlj("SIGNAVLJLGC", "NonSSC Signing-AVLJ")
       create_non_ssc_avlj("AVLJLGC2", "Alternate NonSSC-AVLJ")
-      create_ssc_avlj("SSCAVLJLGC", "SSC AVLJ1")
+      create_ssc_avlj("SSCAVLJLGC", "SSC-Two-judges last-is-SSC")
     end
 
     def create_legacy_appeals
@@ -465,6 +465,7 @@ module Seeds
     end
 
     def make_legacy_appeal_not_ready_for_distribution(legacy_appeal)
+      Rails.logger.info("~~~Marking legacy appeal for Veteran ID: #{legacy_appeal.vbms_id} as Not Ready To Distribute~~~")
       VACOLS::Case.find(legacy_appeal.vacols_id).update!(bfcurloc: "01")
     end
   end
