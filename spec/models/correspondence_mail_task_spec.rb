@@ -5,6 +5,7 @@ RSpec.describe CorrespondenceMailTask, type: :model do
   let(:mail_team) { create(:mail_team) }
   let(:litigation_user) { create(:user, roles: ['Litigation Support']) }
   let(:mail_task_user) { create(:user, roles: ['Mail Task']) }
+
   let(:user_array) do
     [
       { class: CavcCorrespondenceCorrespondenceTask, assigned_to: CavcCorrespondenceTeam.singleton },
@@ -55,35 +56,27 @@ RSpec.describe CorrespondenceMailTask, type: :model do
   end
 
   describe ".accessibility_for_users" do
-    user_array.each do |user|
-      context "for #{user[:class]} assigned to #{user[:assigned_to]}" do
-        let(:task) { user[:class].create!(appeal: root_task.appeal, parent: root_task, assigned_to: user[:assigned_to]) }
-        let(:expected_actions) do
-          [
-            Constants.TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.to_h,
-            Constants.TASK_ACTIONS.COMPLETE_CORRESPONDENCE_TASK.to_h,
-            Constants.TASK_ACTIONS.ASSIGN_CORR_TASK_TO_TEAM.to_h,
-            Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h
-          ]
-        end
+    context "mail task actions available for user" do
+      let(:expected_actions) do
+        [
+          Constants.TASK_ACTIONS.CANCEL_CORRESPONDENCE_TASK.to_h,
+          Constants.TASK_ACTIONS.COMPLETE_CORRESPONDENCE_TASK.to_h,
+          Constants.TASK_ACTIONS.ASSIGN_CORR_TASK_TO_TEAM.to_h,
+          Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h
+        ]
+      end
 
-        before do
+      it "allows the assigned user to access task actions and prevents unassigned users" do
+        user_array.each do |user|
           allow_any_instance_of(User).to receive(:organization).and_return(user[:assigned_to])
-          # Assign user to organization
           user[:assigned_to].add_user(litigation_user)
-        end
 
-        after do
-          # Remove user from organization
-          OrganizationsUser.remove_user_from_organization(litigation_user, user[:assigned_to])
-        end
+          task = user[:class].create!(appeal: root_task.appeal, parent: root_task, assigned_to: user[:assigned_to])
 
-        it "allows the assigned user to access task actions" do
           expect(task.available_actions(litigation_user)).to eq(expected_actions)
-        end
-
-        it "does not allow unassigned users to access task actions" do
           expect(task.available_actions(mail_task_user)).to be_empty
+
+          OrganizationsUser.remove_user_from_organization(litigation_user, user[:assigned_to])
         end
       end
     end
