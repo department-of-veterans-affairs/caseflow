@@ -60,38 +60,66 @@ let initialState = {
 const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
 
 describe('CorrespondenceDetails', () => {
+  const availableActionsList = [
+    { label: 'Change task type' },
+    { label: 'Assign to team' },
+    { label: 'Assign to person' },
+    { label: 'Mark task complete' },
+    { label: 'Cancel task' }
+  ];
+  const commonTaskData = {
+    assignedTo: 'Litigation Support',
+    assignedOn: '09/03/2024',
+    type: 'Organization',
+    availableActions: availableActionsList,
+    status: 'assigned'
+  };
   const tasksUnrelatedToAnAppeal = [
     {
       label: 'Other motion',
-      assignedOn: '09/03/2024',
-      assignedTo: 'Litigation Support',
-      type: 'Organization',
       instructions: ['test OM'],
-      availableActions: [
-        { label: 'Cancel task' },
-        { label: 'Mark task complete' },
-        { label: 'Change task type' }
-      ],
-      status: 'assigned'
+      ...commonTaskData
+    },
+    {
+      label: 'FOIA request',
+      instructions: ['test OM', 'test cavc2'],
+      ...commonTaskData
+    },
+    {
+      label: 'Privacy act request',
+      instructions: ['test PAR', 'test par2'],
+      ...commonTaskData
+    },
+    {
+      label: 'Congressional interest',
+      instructions: ['CI'],
+      ...commonTaskData
+    },
+    {
+      label: 'Privacy complaint',
+      instructions: ['PC'],
+      ...commonTaskData
+    },
+    {
+      label: 'Death certificate',
+      instructions: ['DC'],
+      ...commonTaskData
+    },
+    {
+      label: 'Power of attorney-related',
+      instructions: ['PoAR'],
+      ...commonTaskData
+    },
+    {
+      label: 'Status inquiry',
+      instructions: ['SI'],
+      ...commonTaskData
+    },
+    {
+      label: 'CAVC Correspondence',
+      instructions: ['CAVC C'],
+      ...commonTaskData
     }
-    // {
-    //   label: 'FOIA request',
-    //   assignedOn: '08/30/2024',
-    //   assignedTo: 'Litigation Support',
-    //   type: 'Organization',
-    //   instructions: ['test OM', 'test cavc2'],
-    //   availableActions: [],
-    //   status: 'assigned'
-    // },
-    // {
-    //   label: 'FOIA request',
-    //   assignedOn: '08/30/2024',
-    //   assignedTo: 'Litigation Support',
-    //   type: 'Organization',
-    //   instructions: ['test OM', 'test cavc'],
-    //   availableActions: [],
-    //   status: 'assigned'
-    // }
   ];
   const props = {
     organizations: ['Inbound Ops Team'],
