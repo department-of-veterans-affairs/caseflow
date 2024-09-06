@@ -40,9 +40,7 @@ export default class FlowModal extends React.PureComponent {
     this.props.
       submit().
       then(() => {
-        // Not every component that uses queue flow modal sets saveSuccessful, so we may have a null here. Until every
-        // component sets saveSuccessful on success or failure, this cannot be updated to saveSuccessful === true
-        if (this.props.saveSuccessful !== false) {
+        if (this.props.saveSuccessful === true) {
           this.closeHandler();
         }
       }).
