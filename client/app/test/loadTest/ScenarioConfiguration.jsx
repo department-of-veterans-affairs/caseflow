@@ -5,6 +5,12 @@ import React, { useState } from 'react';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import Checkbox from '../../components/Checkbox';
 import TextField from '../../components/TextField';
+import PropTypes from 'prop-types';
+
+ScenarioConfiguration.propTypes = {
+  scenario: PropTypes.string,
+  targetType: PropTypes.array
+};
 
 export default function ScenarioConfiguration(props) {
   const [isChecked, scenarioIsChecked] = useState(false);
