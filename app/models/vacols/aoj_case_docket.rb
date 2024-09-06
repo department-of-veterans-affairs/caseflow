@@ -833,19 +833,13 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
 
     if in_window
       appeals.select! do |appeal|
-        if VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity&.affinity_start_date.nil?
-          false
-        else
-          reject_due_to_affinity?(appeal, aoj_affinity_lever_value)
-        end
+        reject_due_to_affinity?(appeal, aoj_affinity_lever_value) && !appeal["prev_deciding_judge"].nil? &&
+          appeal["prev_deciding_judge"] != appeal["vlj"]
       end
     else
       appeals.reject! do |appeal|
-        if VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity&.affinity_start_date.nil?
-          false
-        else
-          reject_due_to_affinity?(appeal, aoj_affinity_lever_value)
-        end
+        reject_due_to_affinity?(appeal, aoj_affinity_lever_value) && !appeal["prev_deciding_judge"].nil? &&
+          appeal["prev_deciding_judge"] != appeal["vlj"]
       end
     end
     appeals

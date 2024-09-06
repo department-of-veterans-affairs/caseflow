@@ -280,9 +280,9 @@ describe AojLegacyDocket do
   # {nonpriority in window}
   def create_nonpriority_aoj_ready_case
     create(
-      :case,
-      :with_appeal_affinity,
+      :legacy_aoj_appeal,
       affinity_start_date: 2.days.ago,
+      tied_to: false,
       bfkey: "122222",
       bfd19: 1.year.ago,
       bfac: "3",
