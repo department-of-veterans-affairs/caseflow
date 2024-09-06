@@ -8,8 +8,8 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser
     @issue = issue
   end
 
-  # this is new vbms_id column added to requestIssues table, come from appeals-consumer as decision_review_issue_id
-  def ri_vbms_id
+  # this is new reference_id column added to requestIssues table, come from appeals-consumer as decision_review_issue_id
+  def ri_reference_id
     @issue.dig(:decision_review_issue_id)
   end
 

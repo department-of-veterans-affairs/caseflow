@@ -53,9 +53,9 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser d
 
   subject { described_class.new(issue_data) }
 
-  describe "#ri_vbms_id" do
+  describe "#ri_reference_id" do
     it "returns the decision_review_issue_id" do
-      expect(subject.ri_vbms_id).to eq(1)
+      expect(subject.ri_reference_id).to eq(1)
     end
   end
 
