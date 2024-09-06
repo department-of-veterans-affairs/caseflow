@@ -55,6 +55,7 @@ const CorrespondenceTasksAdded = (props) => {
               userCssId={props.userCssId}
               correspondence={props.task_added.correspondence}
               tasksToDisplay={(props.task_added.taskAddedData)}
+              timeline={true}
             />
           </div>
         </div>
