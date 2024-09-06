@@ -57,7 +57,7 @@ export class PdfUIPageNumInput extends React.PureComponent {
 
   render() {
     return (
-      <div style={{ display: 'inline-flex' }}>
+      <div style={{ display: 'inline-block' }}>
         <TextField
           maxLength={4}
           name="page-progress-indicator-input"
