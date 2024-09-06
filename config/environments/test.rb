@@ -71,6 +71,8 @@ Rails.application.configure do
     Bullet.rails_logger  = true
     Bullet.raise = true
     Bullet.unused_eager_loading_enable = false
+
+    Timecop.travel(2024, 10, 27, 12, 0, 0)
   end
 
   ENV["VA_DOT_GOV_API_URL"] = "https://sandbox-api.va.gov/"
