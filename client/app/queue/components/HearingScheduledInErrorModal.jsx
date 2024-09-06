@@ -43,7 +43,6 @@ const HearingScheduledInErrorModal = (props) => {
   } = props;
 
   const [afterDispositionUpdateAction, setAfterDispositionUpdateAction] = useState('');
-  const [saveSuccessful, setSaveSuccessful] = useState(true);
   const [isPosting, setIsPosting] = useState(false);
 
   const hearing = find(appeal.hearings, { externalId: task.externalHearingId });
@@ -94,7 +93,6 @@ const HearingScheduledInErrorModal = (props) => {
 
       // This is a failed Promise to prevent `QueueFlowModal` from thinking the
       // request completed successfully, and redirecting back to the `CaseDetails` page.
-      setSaveSuccessful(false);
       return Promise.resolve();
     } else if (afterDispositionUpdateAction === ACTIONS.SCHEDULE_LATER) {
       if (isPosting) {
@@ -128,7 +126,6 @@ const HearingScheduledInErrorModal = (props) => {
       title={COPY.HEARING_SCHEDULED_IN_ERROR_MODAL_TITLE}
       submit={submit}
       validateForm={() => true}
-      saveSuccessful={saveSuccessful}
       resetSaveState={resetSaveState}
       pathAfterSubmit={`/queue/appeals/${appeal.externalId}`}
     >
