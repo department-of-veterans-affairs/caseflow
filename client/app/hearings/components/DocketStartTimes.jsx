@@ -12,10 +12,11 @@ export const DocketStartTimes = ({
   roTimezone = 'America/New_York',
   amStartTime = '8:30',
   pmStartTime = '12:30',
-  slots = 10
+  slots = 10,
+  hearingDayDate
 }) => {
   const roTimezoneToEastern = (stringInEastern, timezone, withAmPm = false) =>
-    moment.tz(stringInEastern, 'HH:mm', timezone).tz('America/New_York')?.
+    moment.tz(stringInEastern, 'YYYY-MM-DD HH:mm', timezone).tz('America/New_York')?.
       format(withAmPm ? 'h:mm A' : 'HH:mm');
 
   const formatWithAMPM = (timeString) => moment(timeString, 'HH:mm')?.format('h:mm A');
@@ -30,8 +31,8 @@ export const DocketStartTimes = ({
 
   const formatTimeLabels = (amStartTimeString, pmStartTimeString, fullDaySlots, timezone) => {
     const zoneName = shortZoneName(timezone);
-    const amTimeInEastern = roTimezoneToEastern(amStartTimeString, timezone, true);
-    const pmTimeInEastern = roTimezoneToEastern(pmStartTimeString, timezone, true);
+    const amTimeInEastern = roTimezoneToEastern(`${hearingDayDate} ${amStartTimeString}`, timezone, true);
+    const pmTimeInEastern = roTimezoneToEastern(`${hearingDayDate} ${pmStartTimeString}`, timezone, true);
     const amTimeWithAM = formatWithAMPM(amStartTimeString, timezone);
     const pmTimeWithPM = formatWithAMPM(pmStartTimeString, timezone);
 
@@ -49,16 +50,19 @@ export const DocketStartTimes = ({
     );
 
     return [
-      { displayText: fullDayAmPmLabel,
+      {
+        displayText: fullDayAmPmLabel,
         value: 'default',
         slotCount: fullDaySlots
       },
-      { displayText: halfDayAmLabel,
-        value: roTimezoneToEastern(amStartTimeString, roTimezone),
+      {
+        displayText: halfDayAmLabel,
+        value: roTimezoneToEastern(`${hearingDayDate} ${amStartTimeString}`, roTimezone),
         slotCount: fullDaySlots / 2
       },
-      { displayText: halfDayPmLabel,
-        value: roTimezoneToEastern(pmStartTimeString, roTimezone),
+      {
+        displayText: halfDayPmLabel,
+        value: roTimezoneToEastern(`${hearingDayDate} ${pmStartTimeString}`, roTimezone),
         slotCount: fullDaySlots / 2
       }
     ];
@@ -97,5 +101,6 @@ DocketStartTimes.propTypes = {
   setSlotCount: PropTypes.func,
   amStartTime: PropTypes.string,
   pmStartTime: PropTypes.string,
-  slots: PropTypes.number
+  slots: PropTypes.number,
+  hearingDayDate: PropTypes.string
 };
