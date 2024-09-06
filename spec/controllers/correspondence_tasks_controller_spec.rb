@@ -5,6 +5,9 @@ RSpec.describe CorrespondenceTasksController, :all_dbs, type: :controller do
   let(:correspondence) { create(:correspondence, veteran_id: veteran.id) }
   let(:current_user) { create(:user) }
   let(:task_creation_params) { { correspondence_uuid: correspondence.uuid, correspondence_id: correspondence.id } }
+  let(:correspondence_with_intake) { create(:correspondence, :with_correspondence_intake_task) }
+  let(:assigned_to) { create(:user) }
+  let(:correspondence_task) { CorrespondenceTask.first }
 
   before do
     Fakes::Initializer.load!
@@ -85,6 +88,27 @@ RSpec.describe CorrespondenceTasksController, :all_dbs, type: :controller do
         expect(cit.parent_id).to eq(parent.id)
         expect(review_package_task.status).to eq(Constants.TASK_STATUSES.completed)
         expect(review_package_task.parent_id).to eq(parent.id)
+      end
+    end
+  end
+
+  describe "PATCH #update assign_to_person" do
+    context "Update correspondence task" do
+      before do
+        task_creation_params.merge!(
+          task_id: correspondence_task.id,
+          instructions: ["please update task, thanks"],
+          assigned_to: assigned_to.css_id
+        )
+        patch :assign_to_person, params: task_creation_params
+      end
+
+      it "creates remove package task successfully" do
+        expect(response).to have_http_status(204)
+        correspondence_task.reload
+        expect(correspondence_task.status).to eq(Constants.TASK_STATUSES.assigned)
+        expect(correspondence_task.assigned_to).to eq(assigned_to)
+        expect(correspondence_task.assigned_at).to be_within(1.second).of(Time.zone.now)
       end
     end
   end
