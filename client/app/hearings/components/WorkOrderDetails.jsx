@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ApiUtil from '../../util/ApiUtil';
 import QueueTable from '../../queue/QueueTable';
 import PropTypes from 'prop-types';
+import { css } from 'glamor';
 
 const columns = [
   { name: 'docket_number', header: 'Docket Number', valueFunction: (row) => row.docket_number },
@@ -13,6 +14,20 @@ const columns = [
   { name: 'judge_name', header: 'VLJ', valueFunction: (row) => row.judge_name },
   { name: 'case_type', header: 'Appeal Type', valueFunction: (row) => row.case_type }
 ];
+
+const styles = css({
+  '& div *': {
+    outline: 'none'
+  },
+  '& table': {
+    marginTop: '0',
+    position: 'relative',
+  },
+  // Apply the CSS class for bold first cell
+  '& .bold-first-cell td:first-child': {
+    fontWeight: 'bold',
+  }
+});
 
 export const WorkOrderDetails = ({ taskNumber }) => {
   const [data, setData] = useState(null);
@@ -66,13 +81,15 @@ export const WorkOrderDetails = ({ taskNumber }) => {
       <hr style={{ margin: '35px 0' }} />
       <div>
         <h2 className="no-margin-bottom">Number of files: {woFileInfo.length}</h2>
-        <QueueTable
-          id="individual_claim_history_table"
-          columns={columns}
-          rowObjects={woFileInfo}
-          summary="Individual claim history"
-          slowReRendersAreOk
-        />
+        <div {...styles}>
+          <QueueTable
+            columns={columns}
+            rowObjects={woFileInfo}
+            summary="Individual claim history"
+            slowReRendersAreOk
+            className="bold-first-cell"
+          />
+        </div>
       </div>
     </div>
   );
