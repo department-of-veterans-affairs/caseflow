@@ -1,22 +1,23 @@
 require 'rails_helper'
 
 RSpec.describe CorrespondenceMailTask, type: :model do
-  let(:root_task) { create(:root_task) }
+  let(:correspondence) { create(:correspondence) }
+  let(:root_task) { correspondence.root_task }
   let(:mail_team) { create(:mail_team) }
   let(:litigation_user) { create(:user, roles: ['Litigation Support']) }
   let(:mail_task_user) { create(:user, roles: ['Mail Task']) }
 
   let(:user_array) do
     [
-      { class: CavcCorrespondenceCorrespondenceTask, assigned_to: CavcCorrespondenceTeam.singleton },
-      { class: CongressionalInterestCorrespondenceTask, assigned_to: CongressionalInterestTeam.singleton },
-      { class: DeathCertificateCorrespondenceTask, assigned_to: DeathCertificateTeam.singleton },
-      { class: FoiaRequestCorrespondenceTask, assigned_to: FoiaRequestTeam.singleton },
-      { class: OtherMotionCorrespondenceTask, assigned_to: PrivacyTeam.singleton },
-      { class: PowerOfAttorneyRelatedCorrespondenceTask, assigned_to: PowerOfAttorneyRelatedTeam.singleton },
-      { class: PrivacyActRequestCorrespondenceTask, assigned_to: PrivacyActRequestTeam.singleton },
-      { class: PrivacyComplaintCorrespondenceTask, assigned_to: PrivacyComplaintTeam.singleton },
-      { class: StatusInquiryCorrespondenceTask, assigned_to: StatusInquiryTeam.singleton }
+      { class: CavcCorrespondenceCorrespondenceTask, assigned_to: CavcLitigationSupport.singleton },
+      { class: CongressionalInterestCorrespondenceTask, assigned_to: LitigationSupport.singleton },
+      { class: DeathCertificateCorrespondenceTask, assigned_to: InboundOpsTeam.singleton },
+      { class: FoiaRequestCorrespondenceTask, assigned_to: PrivacyTeam.singleton },
+      { class: OtherMotionCorrespondenceTask, assigned_to: LitigationSupport.singleton },
+      { class: PowerOfAttorneyRelatedCorrespondenceTask, assigned_to: HearingAdmin.singleton },
+      { class: PrivacyActRequestCorrespondenceTask, assigned_to: InboundOpsTeam.singleton },
+      { class: PrivacyComplaintCorrespondenceTask, assigned_to: PrivacyTeam.singleton },
+      { class: StatusInquiryCorrespondenceTask, assigned_to: LitigationSupport.singleton }
     ]
   end
 
