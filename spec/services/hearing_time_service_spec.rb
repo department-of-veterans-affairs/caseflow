@@ -208,6 +208,14 @@ describe HearingTimeService, :all_dbs do
       it { is_expected.to be nil }
     end
 
+    context "When date is non-nil and time_string is non-nil" do
+      let(:test_date) { "2024-09-01" }
+      let(:test_time_string) { "2:00 PM Eastern Time (US & Canada)" }
+      let(:expected_time) { Time.use_zone("UTC") { Time.zone.parse("#{test_date} 14:00") } }
+
+      it { is_expected.to eq expected_time }
+    end
+
     describe "When the time_string is Pacific Time" do
       let(:test_time_string) { "10:00 AM Pacific Time (US & Canada)" }
       let(:expected_time) { Time.use_zone("UTC") { Time.zone.parse("#{test_date} 10:00") } }
