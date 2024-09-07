@@ -13,7 +13,7 @@ const config = {
     filename: 'webpack-bundle.js',
     sourceMapFilename: 'sourcemap-[file].map',
     path: path.join(__dirname, '../app/assets/javascripts'),
-    publicPath: devBuild && !testBuild ? 'http://localhost:3500/' : '/assets/'
+    publicPath: devBuild && !testBuild ? 'http://localhost:3500/' : '/assets/',
   },
   plugins: [
     new webpack.EnvironmentPlugin({ NODE_ENV: 'development' }),
@@ -22,7 +22,7 @@ const config = {
     // See https://github.com/mrsteele/dotenv-webpack/blob/master/README.md#properties
     new Dotenv({
       systemvars: true,
-    })
+    }),
   ].filter(Boolean),
   devServer: {
     headers: {
@@ -48,13 +48,10 @@ const config = {
       ie: 'component-ie',
       app: path.resolve('app'),
       constants: path.resolve('constants'),
-      layouts: path.resolve('app/2.0/layouts'),
-      routes: path.resolve('app/2.0/routes'),
-      store: path.resolve('app/2.0/store'),
-      screens: path.resolve('app/2.0/screens'),
-      components: path.resolve('app/2.0/components'),
-      utils: path.resolve('app/2.0/utils'),
-      styles: path.resolve('app/2.0/styles'),
+      store: path.resolve('app/reader/store'),
+      components: path.resolve('app/components'),
+      utils: path.resolve('app/reader/utils'),
+      styles: path.resolve('app/styles'),
       common: path.resolve('app/components/common'),
       test: path.resolve('test'),
     },
@@ -63,18 +60,12 @@ const config = {
     rules: [
       {
         test: /\.jsx?$/,
-        exclude: new RegExp(
-          'node_modules/(?!@department-of-veterans-affairs/caseflow-frontend-toolkit)'
-        ),
+        exclude: new RegExp('node_modules/(?!@department-of-veterans-affairs/caseflow-frontend-toolkit)'),
         use: [
           {
             loader: 'babel-loader',
             options: {
-              plugins: [
-                devBuild &&
-                  !testBuild &&
-                  require.resolve('react-refresh/babel'),
-              ].filter(Boolean),
+              plugins: [devBuild && !testBuild && require.resolve('react-refresh/babel')].filter(Boolean),
             },
           },
         ],
@@ -82,8 +73,7 @@ const config = {
       {
         test: /\.(ttf|eot|woff|woff2)$/,
         use: {
-          loader:
-            'url-loader?limit=1024&name=fonts/[name]-[hash].[ext]&outputPath=../../../public/&publicPath=/',
+          loader: 'url-loader?limit=1024&name=fonts/[name]-[hash].[ext]&outputPath=../../../public/&publicPath=/',
         },
       },
       {
@@ -109,9 +99,7 @@ const config = {
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
-        use: [
-          'url-loader?limit=1024&name=images/[name]-[hash].[ext]&outputPath=../../../public/&publicPath=/',
-        ],
+        use: ['url-loader?limit=1024&name=images/[name]-[hash].[ext]&outputPath=../../../public/&publicPath=/'],
       },
     ],
   },
