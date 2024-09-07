@@ -1,14 +1,16 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import ConfirmWorkOrderModal
   from '../../../../../app/hearings/components/transcriptionProcessing/ConfirmWorkOrderModal';
 import { BrowserRouter as Router } from 'react-router-dom';
 import ApiUtil from '../../../../../app/util/ApiUtil';
 import { axe } from 'jest-axe';
+import COPY from "../../../../../COPY";
 
 const onCancel = jest.fn();
 
 const getSpy = jest.spyOn(ApiUtil, 'get');
+const postSpy = jest.spyOn(ApiUtil, 'post');
 
 const mockedHistoryValues = {
   selectedFiles: [{
@@ -123,6 +125,30 @@ describe('ConfirmWorkOrderModal', () => {
 
     await waitFor(() => {
       expect(results).toHaveNoViolations();
+    });
+  });
+
+  it('dispatches work order on button click', async () => {
+    getSpy.mockImplementationOnce(() => new Promise((resolve) => resolve({ body: advanceOnDocketFiles })));
+    postSpy.mockImplementationOnce(() => new Promise((resolve) => resolve({})));
+
+    setup(
+      mockedHistoryValues.selectedFiles,
+      mockedHistoryValues.workOrder,
+      mockedHistoryValues.returnDateValue,
+      mockedHistoryValues.contractor
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('BVA-2024-0001')).toBeInTheDocument();
+    });
+
+    const dispatchButton = screen.getByText(COPY.TRANSCRIPTION_TABLE_DISPATCH_WORK_ORDER);
+
+    fireEvent.click(dispatchButton);
+
+    await waitFor(() => {
+      expect(postSpy).toHaveBeenCalledWith('/hearings/transcription_packages/dispatch', expect.any(Object));
     });
   });
 });

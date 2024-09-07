@@ -48,7 +48,7 @@ RSpec.describe Hearings::ZipAndUploadTranscriptionPackageJob do
   subject { described_class.perform_now(work_order) }
 
   before do
-    Seeds::TranscriptionContractor.new.seed!
+    Seeds::TranscriptionContractors.new.seed!
     Hearings::WorkOrderFileJob.perform_now(work_order)
     Hearings::ZipAndUploadTranscriptionFilesJob.perform_now(work_order[:hearings])
     Hearings::CreateBillOfMaterialsJob.perform_now(work_order)
