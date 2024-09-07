@@ -4,7 +4,7 @@ class Transcription < CaseflowRecord
   belongs_to :hearing
   belongs_to :transcription_contractor
   has_many :transcription_files
-
+  belongs_to :transcription_package, foreign_key: :task_number, primary_key: :task_number
   before_create :sequence_task_id
 
   scope :counts_for_this_week, lambda {

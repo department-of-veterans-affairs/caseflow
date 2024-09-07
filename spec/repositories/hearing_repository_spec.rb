@@ -41,12 +41,11 @@ describe HearingRepository, :all_dbs do
     it "slots hearing at correct time" do
       HearingRepository.slot_new_hearing(
         hearing_day_id: hearing_day.id,
-        scheduled_time_string: "09:00",
+        scheduled_time_string: "09:00 AM Eastern Time (US & Canada)",
         appeal: legacy_appeal
       )
-
       expect(VACOLS::CaseHearing.find_by(vdkey: hearing_day.id)
-        .hearing_date.to_datetime.in_time_zone("UTC").hour).to eq(9)
+        .hearing_date.to_datetime.in_time_zone("America/New_York").hour).to eq(9)
     end
 
     context "for a full hearing day" do
@@ -68,7 +67,7 @@ describe HearingRepository, :all_dbs do
         expect do
           HearingRepository.slot_new_hearing(
             hearing_day_id: hearing_day.id,
-            scheduled_time_string: "9:30",
+            scheduled_time_string: "9:30 AM UTC",
             appeal: legacy_appeal
           )
         end.to raise_error(HearingRepository::HearingDayFull)
@@ -79,7 +78,7 @@ describe HearingRepository, :all_dbs do
           HearingRepository.slot_new_hearing(
             {
               hearing_day_id: hearing_day.id,
-              scheduled_time_string: "9:30",
+              scheduled_time_string: "9:30 AM UTC",
               appeal: legacy_appeal
             },
             override_full_hearing_day_validation: true
@@ -87,30 +86,58 @@ describe HearingRepository, :all_dbs do
         end.not_to raise_error
       end
     end
+
+    context "for scheduled_in_timezone" do
+      let!(:ama_appeal) { create(:appeal) }
+      let(:ama_attrs) do
+        {
+          hearing_day_id: hearing_day.id,
+          appeal: ama_appeal,
+          scheduled_time_string: "08:30 PM Central Time (US & Canada)"
+        }
+      end
+      let(:legacy_attrs) do
+        {
+          hearing_day_id: hearing_day.id,
+          appeal: legacy_appeal,
+          scheduled_time_string: "08:30 PM Central Time (US & Canada)"
+        }
+      end
+      it "shows up for AMA hearings" do
+        HearingRepository.slot_new_hearing(ama_attrs)
+
+        expect(ama_appeal.hearings.last.scheduled_in_timezone).to eq("America/Chicago")
+      end
+      it "shows up for legacy hearings" do
+        HearingRepository.slot_new_hearing(legacy_attrs)
+
+        expect(legacy_appeal.hearings.last.scheduled_in_timezone).to eq("America/Chicago")
+      end
+    end
   end
 
   context ".set_vacols_values" do
     let(:date) { AppealRepository.normalize_vacols_date(7.days.from_now) }
-    let(:hearing) { create(:legacy_hearing) }
-    let(:hearing_day) { HearingDay.first }
+    let(:hearing_day) { create(:hearing_day) }
     let(:notes) { "test notes" }
     let(:representative_name) { "test representative name" }
     let(:hearing_hash) do
-      OpenStruct.new(
+      case_hearing = create(
+        :case_hearing,
         hearing_date: date,
         hearing_type: HearingDay::REQUEST_TYPES[:video],
-        hearing_pkseq: "12345678",
         hearing_disp: VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:no_show],
         aod: "Y",
         tranreq: nil,
         holddays: 90,
         notes1: notes,
         repname: representative_name,
-        bfso: "E",
-        bfregoff: "RO36",
         vdkey: hearing_day.id
       )
+
+      VACOLS::CaseHearing.load_hearing(case_hearing.hearing_pkseq)
     end
+    let(:hearing) { create(:legacy_hearing, case_hearing: hearing_hash, hearing_day: hearing_day) }
 
     subject { HearingRepository.set_vacols_values(hearing, hearing_hash) }
 
