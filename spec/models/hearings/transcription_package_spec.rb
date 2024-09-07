@@ -112,24 +112,34 @@ RSpec.describe TranscriptionPackage, type: :model do
     expect(transcription_package.contractor_name).to eq("Contractor One")
   end
 
-  # it "can display all hearings serialized" do
-  #   transcription_package = TranscriptionPackage.first
-  #   expect(transcription_package.all_hearings).to match(
-  #     [
-  #       { caseDetails: "Bob Smithbeahan (556410142)", docketNumber: "240904-64", hearingType: "Hearing" },
-  #       { caseDetails: "Bob Smith (556410144)", docketNumber: "150000556410016", hearingType: "LegacyHearing" }
-  #     ]
-  #   )
-  # end
+  it "can display all hearings serialized" do
+    transcription_package = TranscriptionPackage.first
+    expect(transcription_package.all_hearings).to eq(
+      [
+        {
+          caseDetails: h_1.appeal.appellant_or_veteran_name + " (" + h_1.appeal.veteran_file_number + ")",
+          docketNumber: h_1.docket_number,
+          hearingType: "Hearing",
+          appealId: h_1.appeal.external_id
+        },
+        {
+          caseDetails: lh_1.appeal.appellant_or_veteran_name + " (" + lh_1.appeal.veteran_file_number + ")",
+          docketNumber: lh_1.docket_number,
+          hearingType: "LegacyHearing",
+          appealId: lh_1.appeal.external_id
+        }
+      ]
+    )
+  end
 
   it "can format the upload box date" do
     transcription_package = TranscriptionPackage.new(date_upload_box: "2024-09-01")
-    expect(transcription_package.formatted_date_upload_box).to eq("")
+    expect(transcription_package.formatted_date_upload_box).to eq("9/1/2024")
   end
 
   it "can format he returned at date" do
     transcription_package = TranscriptionPackage.new(returned_at: "2024-09-01")
-    expect(transcription_package.formatted_returned_at).to eq("")
+    expect(transcription_package.formatted_returned_at).to eq("9/1/2024")
   end
 
   it "can count the contents" do
@@ -140,35 +150,3 @@ RSpec.describe TranscriptionPackage, type: :model do
     expect(transcription_package.contents_count).to eq(0)
   end
 end
-
-# 1  def formatted_date_upload_box
-# format_date_for_table(date_upload_box)
-# end
-# 1  def formatted_returned_at
-# format_date_for_table(returned_at)
-# end
-# 1  def contents_count
-# transcriptions.length
-# end
-# 1  private
-# 1  def format_date_for_table(date)
-# date.utc.strftime("%-m/%-d/%Y")
-# end
-# 1  def format_case_details(hearing)
-# file_number = format_file_number(hearing.veteran_file_number)
-# full_name = format_full_name(hearing.veteran_first_name, hearing.veteran_last_name)
-# [full_name, file_number].join(" ")
-# end
-# 1  def format_file_number(file_number)
-# "(#{file_number})"
-# end
-# 1  def format_full_name(first_name, last_name)
-# "#{first_name} #{last_name}"
-# end
-# 1  def serialize_hearing(hearing)
-# {
-#   docketNumber: hearing.docket_number,
-#   caseDetails: format_case_details(hearing),
-#   hearingType: hearing.class.name
-# }
-# end

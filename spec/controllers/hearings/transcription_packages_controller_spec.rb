@@ -7,6 +7,8 @@ RSpec.describe Hearings::TranscriptionPackagesController, type: :controller do
     let!(:user) { User.authenticate!(roles: ["Transcriptions"]) }
     before { TranscriptionTeam.singleton.add_user(user) }
 
+    let!(:h_1) { create(:hearing) }
+
     let!(:c_1) { create(:transcription_contractor, name: "Contractor One") }
     let!(:c_2) { create(:transcription_contractor, name: "Contractor Two") }
     let!(:c_3) { create(:transcription_contractor, name: "Contractor Three") }
@@ -27,7 +29,8 @@ RSpec.describe Hearings::TranscriptionPackagesController, type: :controller do
         task_number: "BVA2024001",
         contractor: c_1,
         created_at: "2024-09-01 00:00:00",
-        expected_return_date: "2024-09-15"
+        expected_return_date: "2024-09-15",
+        hearings: [h_1]
       )
     end
 
@@ -37,7 +40,8 @@ RSpec.describe Hearings::TranscriptionPackagesController, type: :controller do
         task_number: "BVA2024002",
         contractor: c_2,
         created_at: "2024-09-02 00:00:00",
-        expected_return_date: "2024-09-16"
+        expected_return_date: "2024-09-16",
+        hearings: [h_1]
       )
     end
 
@@ -47,7 +51,8 @@ RSpec.describe Hearings::TranscriptionPackagesController, type: :controller do
         task_number: "BVA2024003",
         contractor: c_3,
         created_at: "2024-09-03 00:00:00",
-        expected_return_date: "2024-09-17"
+        expected_return_date: "2024-09-17",
+        hearings: [h_1]
       )
     end
 
@@ -57,7 +62,8 @@ RSpec.describe Hearings::TranscriptionPackagesController, type: :controller do
         task_number: "BVA2024004",
         contractor: c_1,
         created_at: "2024-09-04 00:00:00",
-        expected_return_date: "2024-09-18"
+        expected_return_date: "2024-09-18",
+        hearings: [h_1]
       )
     end
 

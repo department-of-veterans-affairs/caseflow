@@ -10,26 +10,14 @@ class TranscriptionWorkOrder
   end
 
   def self.display_wo_contents(task_number)
-    transcriptions = ::Transcription
-      .includes(transcription_files: { hearing: :appeal })
-      .where(task_number: task_number)
-    return {} unless transcriptions
+    transcription_package =
+      TranscriptionPackage
+        .preload(hearings: [:appeal], legacy_hearings: [:appeal])
+        .find_by(task_number: task_number)
 
-    order_contents = []
+    return {} unless transcription_package
 
-    transcriptions.each do |transcription|
-      transcription.transcription_files.each do |t|
-        hearing_type = t.hearing_type
-        order_contents << {
-          docket_number: t.docket_number,
-          case_details: t.case_details,
-          hearing_type: hearing_type,
-          appeal_id: hearing_type == "Hearing" ? t.hearing.appeal.uuid : t.hearing.appeal.vacols_id
-        }
-      end
-    end
-
-    order_contents
+    transcription_package.all_hearings
   end
 
   def self.unassign_wo(task_number)
