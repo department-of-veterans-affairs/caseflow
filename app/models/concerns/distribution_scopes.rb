@@ -303,6 +303,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
     with_appeal_affinities
       .where(hearings: { judge_id: judge_ids })
   end
+
   def exclude_affinity_and_ineligible_judge_ids
     judge_ids = JudgeTeam.judges_with_exclude_appeals_from_affinity
 
