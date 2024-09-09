@@ -14,6 +14,7 @@
   },
   "added_issues": [
     {
+      "decision_review_issue_id": 1,
       "benefit_type": "compensation",
       "contested_decision_issue_id": 201,
       "contested_issue_description": "Service connection for PTSD",
@@ -21,7 +22,7 @@
       "contested_rating_decision_reference_id": null,
       "contested_rating_issue_profile_date": 1625076000,
       "contested_rating_issue_reference_id": "REF9411",
-      "decision_date": "2023-07-01",
+      "decision_date": 19568,
       "ineligible_due_to_id": 301,
       "ineligible_reason": null,
       "is_unidentified": false,
@@ -39,6 +40,7 @@
       "rating_issue_associated_at": 1625076000,
       "nonrating_issue_bgs_id": "13",
       "nonrating_issue_bgs_source": "CORP_AWARD_ATTORNEY_FEE",
+      "type": "RequestIssue",
       "decision":[
         {
           "id": 1738,

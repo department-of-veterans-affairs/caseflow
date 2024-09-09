@@ -36,13 +36,13 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedParser
   def initialize(headers, payload_json)
     @payload = payload_json.to_h.deep_symbolize_keys
     @headers = headers
-    @veteran = @payload.dig(:veteran)
   end
 
   def event_id
     @payload[:event_id]
   end
 
+  # Do we need it in updating event? If yes - why?
   def css_id
     @payload[:css_id]
   end

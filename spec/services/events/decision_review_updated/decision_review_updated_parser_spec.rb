@@ -21,6 +21,7 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
 
   let(:added_issues_payload) do
     [{
+      decision_review_issue_id: 1,
       benefit_type: "compensation",
       closed_at: 1_625_151_600,
       closed_status: "withdrawn",
@@ -31,6 +32,7 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
       contested_rating_issue_diagnostic_code: "9411",
       contested_rating_issue_profile_date: 1_625_076_000,
       contested_rating_issue_reference_id: "REF9411",
+      type: "RequestIssue",
       decision: [
         {
           award_event_id: 679,
@@ -47,7 +49,7 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
           rating_profile_date: nil
         }
       ],
-      decision_date: "2023-07-01",
+      decision_date: 19_568,
       ineligible_due_to_id: 301,
       ineligible_reason: nil,
       is_unidentified: false,
