@@ -91,6 +91,22 @@ class AojAppealRepository < AppealRepository
         VACOLS::AojCaseDocket.ready_to_distribute_appeals
       end
     end
+
+    def priority_appeals_affinity_date_count(in_window)
+      MetricsService.record("VACOLS: priority_appeals_affinity_date_count",
+                            name: "priority_appeals_affinity_date_count",
+                            service: :vacols) do
+        VACOLS::AojCaseDocket.priority_appeals_affinity_date_count(in_window)
+      end
+    end
+
+    def non_priority_appeals_affinity_date_count(in_window)
+      MetricsService.record("VACOLS: non_priority_appeals_affinity_date_count",
+                            name: "non_priority_appeals_affinity_date_count",
+                            service: :vacols) do
+        VACOLS::AojCaseDocket.non_priority_appeals_affinity_date_count(in_window)
+      end
+    end
   end
   # :nocov:
 end
