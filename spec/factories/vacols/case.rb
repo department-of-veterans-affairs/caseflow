@@ -360,7 +360,9 @@ FactoryBot.define do
                 end
 
                 if evaluator.appeal_affinity
-                  create(:appeal_affinity, appeal: new_case, affinity_start_date: evaluator.affinity_start_date)
+                  create(:appeal_affinity,
+                    appeal: new_case,
+                    affinity_start_date: evaluator.affinity_start_date,
                     folder_nr: vacols_case.bfkey,
                     hearing_date: 5.days.ago.to_date,
                     user: User.find_by_css_id(evaluator.judge.sdomainid)
@@ -401,9 +403,9 @@ FactoryBot.define do
                                 )
                               end
 
-                if evaluator.appeal_affinity
-                  create(:appeal_affinity, appeal: cavc_appeal, affinity_start_date: evaluator.affinity_start_date)
-                end
+                # if evaluator.appeal_affinity
+                #   create(:appeal_affinity, appeal: cavc_appeal, affinity_start_date: evaluator.affinity_start_date)
+                # end
               end
             end
           end
