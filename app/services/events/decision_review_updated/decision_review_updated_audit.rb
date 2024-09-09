@@ -11,7 +11,7 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedAudit
     EventRecord.create!(
       event: @event,
       evented_record: @request_issue,
-      info: { update_type: @update_type }
+      info: { update_type: @update_type, record_data: @request_issue }
     )
   end
 end

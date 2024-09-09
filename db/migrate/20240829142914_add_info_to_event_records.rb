@@ -3,13 +3,11 @@ class AddInfoToEventRecords < ActiveRecord::Migration[6.0]
 
   def up
     add_column :event_records, :info, :jsonb, default: {}
-    safety_assured { execute(<<-SQL) }
-      CREATE INDEX CONCURRENTLY index_event_records_on_info
-      ON event_records USING gin (info);
-    SQL
+    add_index :event_records, :info, using: :gin, algorithm: :concurrently
   end
 
   def down
-    safety_assured { remove_column :event_records, :info }
+    remove_index :event_records, column: :info, algorithm: :concurrently
+    remove_column :event_records, :info
   end
 end
