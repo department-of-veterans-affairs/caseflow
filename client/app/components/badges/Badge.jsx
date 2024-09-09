@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import { css } from 'glamor';
 import * as React from 'react';
 
 import Tooltip from 'app/components/Tooltip';
@@ -21,14 +20,14 @@ class Badge extends React.PureComponent {
   render = () => {
     const { color, name, displayName, tooltipText, id, ariaLabel } = this.props;
 
-    const badgeStyling = css({
+    const badgeStyling = {
       ...defaultBadgeStyling,
       background: color || COLORS.RED
-    });
+    };
 
     return <div className={`cf-${name}-badge`}>
       <Tooltip id={`badge-${id}`} text={tooltipText} position="bottom" ariaLabel={ariaLabel ?? ''}>
-        <span {...badgeStyling}>{displayName}</span>
+        <span style={badgeStyling}>{displayName}</span>
       </Tooltip>
     </div>;
   }
