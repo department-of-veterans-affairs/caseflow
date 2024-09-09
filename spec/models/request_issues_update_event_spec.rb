@@ -16,10 +16,10 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
     described_class.new(
       user: user,
       review: review,
-      added_issues_data: parser.added_issues,
-      removed_issues_data: parser.removed_issues,
-      edited_issues_data: parser.updated_issues,
-      withdrawn_issues_data: parser.withdrawn_issues
+      added_issue_data: parser.added_issues,
+      removed_issue_data: parser.removed_issues,
+      edited_issue_data: parser.updated_issues,
+      withdrawn_issue_data: parser.withdrawn_issues
     )
   end
 
@@ -108,10 +108,10 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
   describe "#perform!" do
     context "when only added issues are present" do
       before do
-        subject.instance_variable_set(:@added_issues_data, parser.added_issues)
-        subject.instance_variable_set(:@removed_issues_data, [])
-        subject.instance_variable_set(:@edited_issues_data, [])
-        subject.instance_variable_set(:@withdrawn_issues_data, [])
+        subject.instance_variable_set(:@added_issue_data, parser.added_issues)
+        subject.instance_variable_set(:@removed_issue_data, [])
+        subject.instance_variable_set(:@edited_issue_data, [])
+        subject.instance_variable_set(:@withdrawn_issue_data, [])
 
         allow(subject).to receive(:validate_before_perform).and_return(true)
         allow(subject).to receive(:processed?).and_return(false)
@@ -138,10 +138,10 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
   end
 
   describe "#calculate_added_issues" do
-    let(:multiple_issues_data) { parser.added_issues + parser.added_issues } # Simulating multiple issues
+    let(:multiple_issue_data) { parser.added_issues + parser.added_issues } # Simulating multiple issues
 
     before do
-      subject.instance_variable_set(:@added_issues_data, multiple_issues_data)
+      subject.instance_variable_set(:@added_issue_data, multiple_issue_data)
     end
 
     it "processes all added issues and returns the correct count" do
@@ -152,10 +152,10 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
 
   context "when multiple types of issues are present" do
     before do
-      subject.instance_variable_set(:@added_issues_data, parser.added_issues)
-      subject.instance_variable_set(:@removed_issues_data, parser.removed_issues)
-      subject.instance_variable_set(:@edited_issues_data, parser.updated_issues)
-      subject.instance_variable_set(:@withdrawn_issues_data, parser.withdrawn_issues)
+      subject.instance_variable_set(:@added_issue_data, parser.added_issues)
+      subject.instance_variable_set(:@removed_issue_data, parser.removed_issues)
+      subject.instance_variable_set(:@edited_issue_data, parser.updated_issues)
+      subject.instance_variable_set(:@withdrawn_issue_data, parser.withdrawn_issues)
 
       allow(subject).to receive(:validate_before_perform).and_return(true)
       allow(subject).to receive(:processed?).and_return(false)

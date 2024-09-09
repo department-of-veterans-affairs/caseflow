@@ -101,7 +101,7 @@ describe Events::DecisionReviewCreated::DecisionReviewCreatedParser do
       total_issues = parser.request_issues
       expect(total_issues.count).to eq(1)
       issue = total_issues.first
-      parser_issues = DecisionReviewCreatedIssueParser.new(issue)
+      parser_issues = Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser.new(issue)
       expect(parser_issues.ri_benefit_type).to eq response_hash.request_issues.first["benefit_type"]
       expect(parser_issues.ri_benefit_type).to eq response_hash.request_issues.first["benefit_type"]
       expect(parser_issues.ri_contested_issue_description).to eq response_hash.request_issues.first["contested_issue_description"]
