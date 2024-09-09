@@ -32,7 +32,7 @@ RSpec.feature("The Correspondence Details All Tasks Actions") do
           @correspondence = create(
             :correspondence,
             veteran: veteran,
-            va_date_of_receipt: "Wed, 24 Jul 2024 00:00:00 EDT -04:00",
+            va_date_of_receipt: Time.zone.now,
             nod: false,
             notes: "Notes for #{task_action[:name]}"
           )
