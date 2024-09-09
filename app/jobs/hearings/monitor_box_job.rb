@@ -41,17 +41,30 @@ class Hearings::MonitorBoxJob < ApplicationJob
       Time.parse(file[:created_at]).utc > cursor
     end
 
-    filter_non_webex_files(files)
+    find_webex_formatted_files(files)
   end
 
   def most_recent_returned_file_time
     ::TranscriptionFile.maximum(:date_returned_box)
   end
 
-  def filter_non_webex_files(files)
+  def find_webex_formatted_files(files)
     files.find_all do |file|
-      /\w{1,10}-\d{4}-\d{4}-AMA..{3,4}/.match?(file[:name])
+      file[:name].match?(webex_file_naming_convention)
     end
+  end
+
+  def webex_file_naming_convention
+    # Returns a Regex expression to find files following our naming convention transcription files from Webex hearings.
+    # This is important since the Box.com folders will also contain transcription files from Pexip hearings
+    # that we are not interested in for this workflow.
+    #
+    #   - For transcription files, "<docket number>_<hearing id OR appellant name>_<hearing type>.<file extension>"
+    #     - ex. "123456-7_XXXXX_Hearing.XXX"
+    #     - ex. "1234567_XXXXX_LegacyHearing.XXX"
+    #   - For work orders, "<BVA>-<Four digit year>-<Task number>.xls"
+    #     - ex. "BVA-2024-0001.xls"
+    /(^[^_a-z]+_[^_]+_((Hearing)|(LegacyHearing))+.\w+\z)|(BVA-\d+-\d+.xls)/
   end
 
   def all_files_from_box_subfolders
