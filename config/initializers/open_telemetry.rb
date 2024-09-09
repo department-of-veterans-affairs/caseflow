@@ -30,7 +30,7 @@ Rails.logger.info("DT_API_TOKEN is set to #{DT_API_TOKEN}")
 
 if !Rails.env.development? && !Rails.env.test? && !Rails.env.demo?
   OpenTelemetry::SDK.configure do |c|
-    c.service_name = 'ruby-quickstart'
+    c.service_name = 'caseflow'
     c.service_version = '1.0.1'
 
     c.use 'OpenTelemetry::Instrumentation::ActiveRecord'
