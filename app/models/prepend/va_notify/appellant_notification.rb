@@ -37,7 +37,9 @@ module AppellantNotification
 
   def self.handle_errors(appeal, template_name)
     fail NoAppealError if appeal.nil?
-    fail InactiveAppealError, appeal.external_id if template_name == Constants.EVENT_TYPE_FILTERS.quarterly_notification && !appeal.active?
+    if template_name == Constants.EVENT_TYPE_FILTERS.quarterly_notification && !appeal.active?
+      fail InactiveAppealError, appeal.external_id
+    end
 
     message_attributes = {}
     message_attributes[:appeal_type] = appeal.class.to_s
