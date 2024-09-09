@@ -261,7 +261,7 @@ getFilteredUsers = () => {
 
             }
           </div>
-          {(this.props.organizationPermissions.length > 0) && <div className={['team-member-permission-toggles-container']}>
+          {(this.props.organizationPermissions?.length > 0) && <div className={['team-member-permission-toggles-container']}>
             <OrganizationPermissions
               organization={this.props.organization}
               permissions={this.props.organizationPermissions}
