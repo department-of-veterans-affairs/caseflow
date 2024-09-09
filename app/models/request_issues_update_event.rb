@@ -183,7 +183,11 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     return if edited_issues.empty?
 
     edited_issue_data.each do |edited_issue|
-      request_issue = RequestIssue.find(edited_issue[:reference_id].to_s)
+      begin
+        request_issue = RequestIssue.find(edited_issue[:reference_id].to_s)
+      rescue ActiveRecord::RecordNotFound
+        raise Caseflow::Error::DecisionReviewUpdateMissingIssueError, edited_issue[:reference_id]
+      end
       edit_contention_text(edited_issue, request_issue)
       edit_decision_date(edited_issue, request_issue)
     end
