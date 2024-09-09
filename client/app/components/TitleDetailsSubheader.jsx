@@ -1,11 +1,10 @@
-import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
 
 import { COLORS } from '../constants/AppConstants';
 import { TitleDetailsSubheaderSection } from './TitleDetailsSubheaderSection';
 
-const listStyling = css({
+const listStyling = {
   display: 'flex',
   flexWrap: 'wrap',
   padding: '1rem 0 1rem 0',
@@ -14,17 +13,17 @@ const listStyling = css({
     clear: 'both',
     display: 'block'
   }
-});
+};
 
-const subHeaderContainerStyling = css({
+const subHeaderContainerStyling = {
   backgroundColor: COLORS.GREY_BACKGROUND,
   display: 'block',
   padding: '0 0 0 2rem'
-});
+};
 
 export const TitleDetailsSubheader = ({ columns, children, id }) => (
-  <div {...subHeaderContainerStyling} id={id || ''}>
-    <div {...listStyling}>
+  <div style={subHeaderContainerStyling} id={id || ''}>
+    <div style={listStyling}>
       {columns && columns.map((col, i) => (
         <TitleDetailsSubheaderSection key={i} title={col.label}>
           {col.value}
