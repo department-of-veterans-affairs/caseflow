@@ -59,6 +59,7 @@ const CorrespondenceAssignTeamModal = (props) => {
 
   const updateCorrespondence = () => {
     const updatedCorrespondence = { ...props.correspondenceInfo };
+    const assignedTeam = teamAssignedFlag?.label || '';
     const taskUpdate = updatedCorrespondence.tasksUnrelatedToAppeal.find(
       (task) => task.uniqueId === parseInt(props.task_id, 10)
     );
@@ -68,8 +69,13 @@ const CorrespondenceAssignTeamModal = (props) => {
       const previousOrgValue = taskUpdate.assignedToValue;
 
       // Update the assigned organization
-      taskUpdate.assignedTo = teamAssignedFlag?.label || '';
+      taskUpdate.assignedTo = assignedTeam;
       taskUpdate.instructions.push(instructions);
+
+      // remove available actions if the user isn't part of the org
+      if (!props?.userOrganizations?.includes(assignedTeam)) {
+        taskUpdate.availableActions = [];
+      }
 
       // Remove the newly assigned organization from the list
       taskUpdate.organizations = taskUpdate.organizations.filter(

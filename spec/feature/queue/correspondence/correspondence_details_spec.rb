@@ -5,8 +5,9 @@ RSpec.feature("The Correspondence Details page") do
   include CorrespondenceTaskHelpers
 
   let(:current_user) { create(:user) }
+  let(:current_super) { create(:inbound_ops_team_supervisor) }
   let!(:veteran) { create(:veteran, first_name: "John", last_name: "Testingman", file_number: "8675309") }
-  let!(:correspondence) { create(:correspondence, veteran: veteran) }
+  let!(:correspondence) { create(:correspondence, :pending, veteran: veteran) }
 
   context "correspondence details" do
     before :each do
@@ -58,9 +59,10 @@ RSpec.feature("The Correspondence Details page") do
     end
   end
 
-  context "correspondence record status matches correspondence root task status" do
+  context "correspondence record status matches correspondence root task status and user access" do
     let!(:completed_correspondence) { create(:correspondence, :completed) }
     let!(:pending_correspondence) { create(:correspondence, :pending) }
+    let!(:unassigned_correspondence) { create(:correspondence, :unassigned) }
 
     before do
       InboundOpsTeam.singleton.add_user(current_user)
@@ -77,6 +79,48 @@ RSpec.feature("The Correspondence Details page") do
       visit "/queue/correspondence/#{completed_correspondence.uuid}"
       # Record status - Completed
       expect(page).to have_content("Record status: Completed")
+    end
+  end
+
+  context "checks correspondence details page access and user rerouting - user" do
+    let!(:pending_correspondence) { create(:correspondence, :pending) }
+    let!(:unassigned_correspondence) { create(:correspondence, :unassigned) }
+
+    before do
+      correspondence_spec_user_access
+      FeatureToggle.enable!(:correspondence_queue)
+    end
+
+    it "checks that pending status correspondences will load" do
+      visit "/queue/correspondence/#{pending_correspondence.uuid}"
+      expect(page).to have_content("Record status: Pending")
+      expect(page).to have_content(pending_correspondence.veteran_full_name)
+    end
+
+    it "checks that unassigned status correspondences will be rerouted" do
+      visit "/queue/correspondence/#{unassigned_correspondence.uuid}"
+      expect(page).to have_content("Your Correspondence")
+    end
+  end
+
+  context "checks correspondence details page access and user rerouting - super" do
+    let!(:completed_correspondence) { create(:correspondence, :completed) }
+    let!(:action_correspondence) { create(:correspondence, :action_required) }
+
+    before do
+      correspondence_spec_super_access
+      FeatureToggle.enable!(:correspondence_queue)
+    end
+
+    it "checks that completed status correspondences will load" do
+      visit "/queue/correspondence/#{completed_correspondence.uuid}"
+      expect(page).to have_content("Record status: Completed")
+      expect(page).to have_content(completed_correspondence.veteran_full_name)
+    end
+
+    it "checks that unassigned status correspondences will be rerouted" do
+      visit "/queue/correspondence/#{action_correspondence.uuid}"
+      expect(page).to have_content("Correspondence Cases")
     end
   end
 
@@ -142,6 +186,7 @@ RSpec.feature("The Correspondence Details page") do
       FeatureToggle.enable!(:correspondence_queue)
       @correspondence = create(
         :correspondence,
+        :pending,
         veteran: veteran,
         va_date_of_receipt: "Tue, 23 Jul 2024 00:00:00 EDT -04:00",
         nod: false,
