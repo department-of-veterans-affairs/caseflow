@@ -267,7 +267,7 @@ getFilteredUsers = () => {
               permissions={this.props.organizationPermissions}
               user={user}
               orgUserData={this.state.organizationUsers.find((orgUser) => orgUser.id === user.id)}
-              orgnizationUserPermissions={this.props.orgnizationUserPermissions} />
+              organizationUserPermissions={this.props.organizationUserPermissions} />
           </div>}
         </div>
       </React.Fragment>;
@@ -411,5 +411,5 @@ getFilteredUsers = () => {
 OrganizationUsers.propTypes = {
   organization: PropTypes.string,
   organizationPermissions: PropTypes.array,
-  orgnizationUserPermissions: PropTypes.array
+  organizationUserPermissions: PropTypes.array
 };

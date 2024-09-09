@@ -67,7 +67,7 @@ const OrganizationPermissions = (props) => {
 
     let result = false;
     const parentPermission = props.permissions.find((permission) => permission.id === parentId);
-    const orgUserPermissions = props.orgnizationUserPermissions.find((x) =>
+    const orgUserPermissions = props.organizationUserPermissions.find((x) =>
       x.user_id === Number(userId)).organization_user_permissions;
 
     const checkboxInState = toggledCheckboxes.find((permission) =>
@@ -122,7 +122,7 @@ const OrganizationPermissions = (props) => {
     }
 
     // default state that came in when page loads, used as final fallback.
-    const relevantPermissions = props.orgnizationUserPermissions.find(
+    const relevantPermissions = props.organizationUserPermissions.find(
       (oup) => oup.user_id === Number(user.id)
     ).organization_user_permissions;
 
@@ -213,6 +213,6 @@ OrganizationPermissions.propTypes = {
   user: PropTypes.object,
   organization: PropTypes.string,
   orgUserData: PropTypes.object,
-  orgnizationUserPermissions: PropTypes.array
+  organizationUserPermissions: PropTypes.array
 
 };
