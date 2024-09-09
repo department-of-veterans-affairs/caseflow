@@ -67,7 +67,7 @@ const CorrespondenceCancelTaskModal = (props) => {
 
     tempCor.tasksUnrelatedToAppeal = filteredTasks;
 
-    return props.cancelTaskNotRelatedToAppeal(props.task_id, tempTask.label, tempCor, payload);
+    return props.cancelTaskNotRelatedToAppeal(props.task_id, tempTask.label, tempTask.assignedTo, tempCor, payload);
 
   };
 
