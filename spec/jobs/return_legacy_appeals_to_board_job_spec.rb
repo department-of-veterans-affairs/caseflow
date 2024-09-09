@@ -81,6 +81,83 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
     end
   end
 
+  describe "#create_returned_appeal_job" do
+    let(:job) { described_class.new }
+    context "when called" do
+      it "creates a valid ReturnedAppealJob" do
+        allow(CaseDistributionLever).to receive(:nonsscavlj_number_of_appeals_to_move).and_return(2)
+        returned_appeal_job = job.create_returned_appeal_job
+        expect(returned_appeal_job.started_at).to be_within(1.second).of(Time.zone.now)
+        expect(returned_appeal_job.stats).to eq({ message: "Job started" }.to_json)
+      end
+    end
+  end
+
+  describe "Slack notification" do
+    let(:job) { described_class.new }
+    let(:slack_service) { instance_double("SlackService") }
+
+    before do
+      allow(CaseDistributionLever).to receive(:nonsscavlj_number_of_appeals_to_move).and_return(2)
+      allow(job).to receive(:slack_service).and_return(slack_service)
+      job.instance_variable_set(
+        :@filtered_appeals, {
+          priority_appeals_count: 5,
+          non_priority_appeals_count: 3,
+          remaining_priority_appeals_count: 10,
+          remaining_non_priority_appeals_count: 7,
+          grouped_by_avlj: %w[AVJL1 AVJL2]
+        }
+      )
+    end
+
+    describe "#slack_report" do
+      it "slack_report has an array" do
+        expected_report = [
+          "Job performed successfully",
+          "Total Priority Appeals Moved: 5",
+          "Total Non-Priority Appeals Moved: 3",
+          "Total Remaining Priority Appeals: 10",
+          "Total Remaining Non-Priority Appeals: 7",
+          "SATTYIDs of Non-SSC AVLJs Moved: AVJL1, AVJL2"
+        ]
+
+        expect(job.slack_report).to eq(expected_report)
+      end
+    end
+
+    describe "#send_job_slack_report" do
+      context "when slack_report has messages" do
+        it "sends a notification to Slack with the correct message" do
+          slack_message = job.slack_report
+          expected_message = slack_message.join("\n")
+
+          expect(slack_service).to receive(:send_notification).with(expected_message, job.class.name)
+
+          job.send_job_slack_report(slack_message)
+        end
+      end
+    end
+  end
+
+  describe "#get_tied_appeal_bfkeys" do
+    let(:job) { described_class.new }
+    let(:appeal_1) { { "priority" => 0, "bfd19" => 10.days.ago, "bfkey" => "1" } }
+    let(:appeal_2) { { "priority" => 1, "bfd19" => 8.days.ago, "bfkey" => "2" } }
+    let(:appeal_3) { { "priority" => 0, "bfd19" => 6.days.ago, "bfkey" => "3" } }
+    let(:appeal_4) { { "priority" => 1, "bfd19" => 4.days.ago, "bfkey" => "4" } }
+
+    context "with a mix of priority and non-priority appeals" do
+      let(:tied_appeals) { [appeal_1, appeal_2, appeal_3, appeal_4] }
+
+      it "returns the keys sorted by priority and then bfd19" do
+        allow(CaseDistributionLever).to receive(:nonsscavlj_number_of_appeals_to_move).and_return(2)
+        result = job.get_tied_appeal_bfkeys(tied_appeals)
+        expect(result).to eq(%w[2 4 1 3])
+      end
+    end
+  end
+
   describe "#non_ssc_avljs" do
     context "2 non ssc avljs exist" do
       let!(:non_ssc_avlj_user_1) { create(:user, :non_ssc_avlj_user) }
