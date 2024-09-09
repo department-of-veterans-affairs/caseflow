@@ -2,7 +2,7 @@
 
 class CavcCorrespondenceCorrespondenceTask < CorrespondenceMailTask
   def label
-    COPY::FOIA_REQUEST_MAIL_TASK_LABEL
+    COPY::CAVC_CORRESPONDENCE_MAIL_TASK_LABEL
   end
 
   def task_url
