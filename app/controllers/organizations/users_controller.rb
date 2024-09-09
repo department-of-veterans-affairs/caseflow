@@ -16,7 +16,7 @@ class Organizations::UsersController < OrganizationsController
           organization_permissions: organization.organization_permissions.select(
             :permission, :description, :enabled, :parent_permission_id, :default_for_admin, :id
           ),
-          user_permissions: user_permissions
+          organization_user_permissions: user_permissions
         }
       end
     end
