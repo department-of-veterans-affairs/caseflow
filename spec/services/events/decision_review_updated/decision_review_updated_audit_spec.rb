@@ -15,7 +15,9 @@ describe Events::DecisionReviewUpdated::DecisionReviewUpdatedAudit do
 
       event_record = EventRecord.last
       expect(event_record.evented_record).to eq(request_issue)
-      expect(event_record.info).to eq({ "update_type" => update_type })
+      expect(event_record.info["update_type"]).to eq(update_type)
+      expect(event_record.info["record_data"].except("created_at", "updated_at", "type"))
+        .to eq(request_issue.attributes.except("created_at", "updated_at", "type"))
     end
 
     it "raises an error if EventRecord creation fails" do
