@@ -226,7 +226,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   end
 
   def edit_contention_text(edited_issue_params, request_issue)
-    # method is updated since parser returns issue_data with :edited_description key instead :edited_description
+    # method is updated since parser returns issue_data with :request_issue_id key instead :edited_description
     if edited_issue_params[:edited_description]
       request_issue.save_edited_contention_text!(edited_issue_params[:edited_description])
     end
