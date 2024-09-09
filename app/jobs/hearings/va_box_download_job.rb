@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class VaBoxDownloadJob < CaseflowJob
+class Hearings::VaBoxDownloadJob < CaseflowJob
   include Shoryuken::Worker
   queue_as :low_priority
 
