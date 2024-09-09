@@ -86,7 +86,7 @@ class CorrespondenceTaskRows extends React.PureComponent {
     this.state = {
       taskInstructionsIsVisible: [],
       showEditNodDateModal: false,
-      activeTasks: [props.taskList],
+      activeTasks: props.taskList,
     };
   }
 
