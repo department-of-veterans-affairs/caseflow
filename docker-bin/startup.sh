@@ -34,5 +34,8 @@ bundle exec rails runner scripts/enable_features_dev.rb
 echo "Enabling caching"
 touch tmp/caching-dev.txt
 
+echo "Initializing metabase"
+../metabase/metabase_api_script.sh
+
 echo "Starting Caseflow App RoR"
 rails server --binding 0.0.0.0 -p 3000
