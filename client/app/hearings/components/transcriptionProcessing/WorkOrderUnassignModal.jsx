@@ -1,20 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Modal from '../../../components/Modal';
 import COPY from '../../../../COPY';
 import ApiUtil from 'app/util/ApiUtil';
 
-const WorkOrderUnassign = ({ onClose, workOrderNumber }) => {
-  const unassignWorkOrder = (orderNumber) => {
-    const cleanedWorkOrderNumber = orderNumber.replace('BVA', '');
-    const data = { task_number: cleanedWorkOrderNumber };
-    const url = '/hearings/transcription_work_order/unassigning_work_order';
+const WorkOrderUnassignModal = ({ onClose, workOrderNumber }) => {
+  const [error, setError] = useState(null);
 
-    ApiUtil.post(url, { data }).
-      then((response) => {
-        if (response.body.success) {
+  const unassignWorkOrder = (orderNumber) => {
+    const cleanedWorkOrderNumber = orderNumber.replace("BVA", "");
+    const data = { task_number: cleanedWorkOrderNumber };
+    const url = "/hearings/transcription_work_order/unassigning_work_order";
+
+    ApiUtil.post(url, { data })
+      .then((response) => {
+        if (response.status === 204) {
           onClose();
+        } else {
+          setError("Failed to unassign work order.");
         }
+      })
+      .catch(() => {
+        setError("An error occurred while unassigning the work order.");
       });
   };
 
@@ -31,6 +38,7 @@ const WorkOrderUnassign = ({ onClose, workOrderNumber }) => {
           {COPY.TRANSCRIPTION_FILE_UNASSIGN_WORK_ORDER_MODAL_BOLD_TEXT}
         </strong>
       </p>
+      {error && <p className="error-message">{error}</p>}
     </div>
   );
 
@@ -43,6 +51,10 @@ const WorkOrderUnassign = ({ onClose, workOrderNumber }) => {
           }
           .custom-modal .no-margin {
             margin-bottom: 0 !important;
+          }
+          .error-message {
+            color: red;
+            margin-top: 10px;
           }
         `}
       </style>
@@ -69,10 +81,10 @@ const WorkOrderUnassign = ({ onClose, workOrderNumber }) => {
   );
 };
 
-WorkOrderUnassign.propTypes = {
+WorkOrderUnassignModal.propTypes = {
   onClose: PropTypes.func.isRequired,
   workOrderNumber: PropTypes.string.isRequired,
 };
 
-export default WorkOrderUnassign;
+export default WorkOrderUnassignModal;
 

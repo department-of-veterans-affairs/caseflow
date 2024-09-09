@@ -19,7 +19,7 @@ import {
 import { css } from 'glamor';
 import { encodeQueryParams } from '../../util/QueryParamsUtil';
 import ApiUtil from '../../util/ApiUtil';
-import WorkOrderUnassign from './transcriptionProcessing/WorkOrderUnassign';
+import WorkOrderUnassignModal from './transcriptionProcessing/WorkOrderUnassignModal';
 
 const styles = css({
   '& div *': {
@@ -273,7 +273,7 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
         skipCache
       />
       {isModalOpen && (
-        <WorkOrderUnassign
+        <WorkOrderUnassignModal
           onClose={closeModal}
           workOrderNumber={modalData.workOrderNumber}
         />
