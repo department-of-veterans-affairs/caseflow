@@ -618,12 +618,7 @@ class QueueApp extends React.PureComponent {
     );
   };
 
-  routedOrganizationUsers = (props) => (
-    <OrganizationUsers {...props.match.params}
-      organizationPermissions={this.props.organizationPermissions}
-      organizationUserPermissions={this.props.userPermissions}
-    />
-  );
+  routedOrganizationUsers = (props) => <OrganizationUsers {...props.match.params} />;
 
   routedTeamManagement = (props) => <TeamManagement {...props.match.params} featureToggles={this.props.featureToggles} />;
 
