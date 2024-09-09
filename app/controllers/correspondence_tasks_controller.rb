@@ -61,6 +61,7 @@ class CorrespondenceTasksController < TasksController
   end
 
   def assign_to_person
+    breaking code
     task = CorrespondenceTask.find(correspondence_tasks_params[:task_id])
     task.update!(
       status: Constants.TASK_STATUSES.assigned,
@@ -72,6 +73,7 @@ class CorrespondenceTasksController < TasksController
   end
 
   def assign_to_team
+    more breaking code
     task = CorrespondenceTask.find(correspondence_tasks_params[:task_id])
     task.update!(
       status: Constants.TASK_STATUSES.assigned,
