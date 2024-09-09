@@ -60,7 +60,6 @@ class AppealsReadyForDistribution
   end
 
   def self.build_legacy_appeal_row(appeal, sym)
-    appeal_affinity = fetch_affinity_start_date(appeal["bfkey"])
     hearing_judge = FullName.new(appeal["vlj_namef"], nil, appeal["vlj_namel"]).to_s
     veteran_name = FullName.new(appeal["snamef"], nil, appeal["snamel"]).to_s
 
@@ -78,8 +77,12 @@ class AppealsReadyForDistribution
       original_judge_name: legacy_original_deciding_judge_name(appeal),
       veteran_file_number: appeal["ssn"] || appeal["bfcorlid"],
       veteran_name: veteran_name,
-      affinity_start_date: appeal_affinity&.affinity_start_date
+      affinity_start_date: fetch_affinity_start_date(appeal["bfkey"])
     }
+  end
+  def self.fetch_affinity_start_date(case_id)
+    appeal_affinity = AppealAffinity.find_by(case_id: case_id, case_type: "VACOLS::Case")
+    appeal_affinity&.affinity_start_date
   end
 
   def self.ama_rows(appeals, docket, sym)
@@ -150,7 +153,6 @@ class AppealsReadyForDistribution
 
   def self.legacy_original_deciding_judge_name(appeal)
     staff = VACOLS::Staff.find_by(sattyid: appeal["prev_deciding_judge"])
-    deciding_judge_name = FullName.new(staff["snamef"], nil, staff["snamel"]).to_s
-    deciding_judge_name.empty? ? nil : deciding_judge_name
+    FullName.new(staff["snamef"], nil, staff["snamel"]).to_s if staff != nil
   end
 end
