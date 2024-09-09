@@ -1,6 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { fireEvent, render, screen } from '@testing-library/react';
 
 import { IssueRemandReasonsForm } from 'app/queue/components/remandReasons/IssueRemandReasonsForm';
 import COPY from 'COPY';
@@ -44,7 +43,7 @@ describe('IssueRemandReasonsForm', () => {
         />
       );
 
-      userEvent.click(
+      fireEvent.click(
         screen.getByRole('checkbox', { name: /issue-1-no_medical_opinion/ })
       );
 
@@ -57,7 +56,7 @@ describe('IssueRemandReasonsForm', () => {
         },
       ]);
 
-      userEvent.click(
+      fireEvent.click(
         screen.getByLabelText(COPY.AMA_REMAND_REASON_POST_AOJ_LABEL_BEFORE)
       );
 

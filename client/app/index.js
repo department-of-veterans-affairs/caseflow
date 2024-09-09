@@ -9,7 +9,6 @@ import 'pdfjs-dist/web/pdf_viewer.css';
 // External Dependencies
 import React, { Suspense } from 'react';
 import ReactOnRails from 'react-on-rails';
-import { render } from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import { forOwn } from 'lodash';
 import { BrowserRouter, Switch } from 'react-router-dom';
@@ -161,7 +160,6 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
     const root = createRoot(container);
 
     root.render(element);
-    // render(element, document.getElementById(domNodeId));
   };
 
   renderApp(component);
