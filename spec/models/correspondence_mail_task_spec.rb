@@ -3,9 +3,16 @@ require 'rails_helper'
 RSpec.describe CorrespondenceMailTask, type: :model do
   let(:correspondence) { create(:correspondence) }
   let(:root_task) { correspondence.root_task }
-  let(:mail_team) { create(:mail_team) }
-  let(:litigation_user) { create(:user, roles: ['Litigation Support']) }
-  let(:mail_task_user) { create(:user, roles: ['Mail Task']) }
+  let(:mail_team) { InboundOpsTeam.singleton }
+  let(:litigation_support_org) { LitigationSupport.singleton }
+  let(:mail_team_user) { create(:user) }
+
+
+  # let(:lit_support_team) { LitigationSupport.singleton }
+  let(:random_user) { User.authenticate!(roles: []) }
+  let!(:litigation_user) do
+    LitigationSupport.singleton.add_user(random_user)
+  end
 
   let(:user_array) do
     [
@@ -23,13 +30,12 @@ RSpec.describe CorrespondenceMailTask, type: :model do
 
   describe ".available_actions" do
     let(:mail_task) { described_class.create!(appeal: root_task.appeal, parent_id: root_task.id, assigned_to: mail_team) }
-
     subject { mail_task.available_actions(current_user) }
 
     context "when the current user is a member of the litigation support team" do
       let(:current_user) { litigation_user }
 
-      before { allow_any_instance_of(User).to receive(:litigation_support?).and_return(true) }
+      before { expect(litigation_support_org.user_has_access?(current_user)).to eq(true) }
 
       let(:expected_actions) do
         [
@@ -46,9 +52,9 @@ RSpec.describe CorrespondenceMailTask, type: :model do
     end
 
     context "when the current user is a member of the mail task team and does not have litigation support access" do
-      let(:current_user) { mail_task_user }
+      let(:current_user) { mail_team_user }
 
-      before { allow_any_instance_of(User).to receive(:litigation_support?).and_return(false) }
+      before { expect(litigation_support_org.user_has_access?(current_user)).to eq(false) }
 
       it "returns an empty array for mail task users without litigation access" do
         expect(subject).to eq([])
@@ -69,14 +75,12 @@ RSpec.describe CorrespondenceMailTask, type: :model do
 
       it "allows the assigned user to access task actions and prevents unassigned users" do
         user_array.each do |user|
-          allow_any_instance_of(User).to receive(:organization).and_return(user[:assigned_to])
+          allow(litigation_user).to receive(:organization).and_return(user[:assigned_to])
+
           user[:assigned_to].add_user(litigation_user)
-
           task = user[:class].create!(appeal: root_task.appeal, parent: root_task, assigned_to: user[:assigned_to])
-
           expect(task.available_actions(litigation_user)).to eq(expected_actions)
-          expect(task.available_actions(mail_task_user)).to be_empty
-
+          expect(task.available_actions(mail_team_user)).to be_empty
           OrganizationsUser.remove_user_from_organization(litigation_user, user[:assigned_to])
         end
       end
