@@ -73,7 +73,7 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
         file_type: file_type,
         file_status: @file_status,
         date_upload_aws: Time.zone.today,
-        aws_link: "vaec-appeals-caseflow-test/transcript_text/#{@file_name}"
+        aws_link: "vaec-appeals-caseflow-test/#{@transcript_text}/#{@file_name}"
       )
     end
   rescue ActiveRecord::RecordInvalid => error
@@ -113,8 +113,9 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
   end
 
   def s3_location
+    @transcript_text = @file_extension == "pdf" ? "transcript_pdf": "transcript_text"
     folder_name = (Rails.deploy_env == :prod) ? S3_BUCKET : "#{S3_BUCKET}-#{Rails.deploy_env}"
-    "#{folder_name}/transcript_text/#{@file_name}"
+    "#{folder_name}/@transcript_text/#{@file_name}"
   end
 
   def upload_s3_modified_transcription_file(file_path, current_file)
