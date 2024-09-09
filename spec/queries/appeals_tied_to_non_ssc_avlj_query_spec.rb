@@ -106,7 +106,7 @@ describe AppealsTiedToNonSscAvljQuery do
     end
   end
 
-  context "legacy_rows" do
+  context "Test the CSV generation" do
     let!(:legacy_signed_appeal_with_attributes) do
       create(:legacy_signed_appeal, :type_original, signing_avlj: non_ssc_avlj, assigned_avlj: non_ssc_avlj)
     end
@@ -115,20 +115,44 @@ describe AppealsTiedToNonSscAvljQuery do
 
     subject { described_class.legacy_rows(query_result, :legacy).first }
 
-    it "correctly uses attributes to create a hash for the row" do
-      corres = legacy_signed_appeal_with_attributes.reload.correspondent
+    context "where it uses attributes " do
+      it "to create a hash for the row" do
+        corres = legacy_signed_appeal_with_attributes.reload.correspondent
 
-      expect(subject[:docket_number]).to eq legacy_signed_appeal_with_attributes.folder.tinum
-      expect(subject[:docket]).to eq "legacy"
-      expect(subject[:priority]).to be ""
-      # expect(subject[:receipt_date]).to eq legacy_signed_appeal_with_attributes.bfdnod
-      # expect(subject[:veteran_file_number]).to eq corres
-      expect(subject[:veteran_name]).to eq "#{corres.snamef} #{corres.snamel}"
-      expect(subject[:non_ssc_avlj]).to eq avlj_name
-      expect(subject[:hearing_judge]).to eq avlj_name
-      expect(subject[:most_recent_signing_judge]).to eq avlj_name
-      expect(subject[:bfcurloc]).to eq legacy_signed_appeal_with_attributes.bfcurloc
+        expect(subject[:docket_number]).to eq legacy_signed_appeal_with_attributes.folder.tinum
+        expect(subject[:docket]).to eq "legacy"
+        expect(subject[:priority]).to be ""
+        expect(subject[:veteran_file_number]).to eq corres.ssn
+        expect(subject[:veteran_name]).to eq "#{corres.snamef} #{corres.snamel}"
+        expect(subject[:non_ssc_avlj]).to eq avlj_name
+        expect(subject[:hearing_judge]).to eq avlj_name
+        expect(subject[:most_recent_signing_judge]).to eq avlj_name
+        expect(subject[:bfcurloc]).to eq legacy_signed_appeal_with_attributes.bfcurloc
+      end
+
+      context "to test getting the avlj name from appeal" do
+        it "where appeals vlj is nil" do
+          appeal = query_result.first
+          appeal["vlj"] = nil
+          expect(described_class.get_avlj_name(appeal)).to eq nil
+        end
+        it "where appeals vlj is not nil" do
+          appeal = query_result.first
+          expect(described_class.get_avlj_name(appeal)).to eq avlj_name
+        end
+      end
+
+      context "to test getting the prev judges name from appeal" do
+        it "where appeal has no prev deciding judge" do
+          appeal = query_result.first
+          appeal["prev_deciding_judge"] = nil
+          expect(described_class.get_prev_judge_name(appeal)).to eq nil
+        end
+        it "where appeal has a previous deciding judge" do
+          appeal = query_result.first
+          expect(described_class.get_prev_judge_name(appeal)).to eq avlj_name
+        end
+      end
     end
   end
-
 end
