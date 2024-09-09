@@ -1,4 +1,3 @@
-import { css } from 'glamor';
 import * as React from 'react';
 import ReactTooltip from 'react-tooltip';
 import PropTypes from 'prop-types';
@@ -18,7 +17,7 @@ const Tooltip = (props) => {
   } = props;
 
   const borderToColor = position.charAt(0).toUpperCase() + position.slice(1);
-  const tooltipStyling = css({
+  const tooltipStyling = {
     display: styling,
     [`& #${id}`]: {
       backgroundColor: COLORS.GREY_DARK,
@@ -27,7 +26,7 @@ const Tooltip = (props) => {
       textAlign: 'justify'
     },
     [`& #${id}:after`]: { [`border${borderToColor}Color`]: COLORS.GREY_DARK }
-  });
+  };
 
   // These props are applied to the children in order to establish link to tooltip
   const tooltipProps = {
@@ -43,7 +42,7 @@ const Tooltip = (props) => {
   return (
     <React.Fragment>
       {React.cloneElement(props.children, tooltipProps)}
-      <span {...tooltipStyling}>
+      <span style={tooltipStyling}>
         <ReactTooltip
           effect="solid"
           id={id}
