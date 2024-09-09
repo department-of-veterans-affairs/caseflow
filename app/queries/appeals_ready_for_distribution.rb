@@ -87,7 +87,6 @@ class AppealsReadyForDistribution
       # only look for hearings that were held
       hearing_judge = with_held_hearings(appeal)
       priority_appeal = appeal.aod || appeal.cavc
-      ready_for_distribution_at = distribution_task_query(appeal)
 
       {
         docket_number: appeal["tinum"],
@@ -95,7 +94,7 @@ class AppealsReadyForDistribution
         aod: appeal["aod"] == 1,
         cavc: appeal["cavc"] == 1,
         receipt_date: appeal["bfd19"],
-        ready_for_distribution_at: appeal["bfdloout"],
+        ready_for_distribution_at: appeal["bfdl oout"],
         target_distro_date: priority_appeal ? "N/A" : target_distro_date(appeal.receipt_date, docket),
         days_before_goal_date: priority_appeal ? "N/A" : days_before_goal_date(appeal.receipt_date, docket),
         hearing_judge: hearing_judge,
