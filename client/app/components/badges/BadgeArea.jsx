@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import { css } from 'glamor';
 import * as React from 'react';
 
 import ContestedClaimBadge from './ContestedBadge/ContestedClaimBadge';
@@ -29,6 +28,10 @@ class BadgeArea extends React.PureComponent {
   render = () => {
     const { appeal, isHorizontal, task } = this.props;
 
+    const badgeAreaStyling = {
+      display: isHorizontal ? 'inline-flex' : 'inline-block'
+    };
+
     let badges;
 
     if (appeal) {
@@ -55,11 +58,7 @@ class BadgeArea extends React.PureComponent {
       </React.Fragment>;
     }
 
-    const badgeAreaStyling = css({
-      display: isHorizontal ? 'inline-flex' : 'inline-block'
-    });
-
-    return <div {...badgeAreaStyling}>{badges}</div>;
+    return <div style={badgeAreaStyling}>{badges}</div>;
   }
 }
 
