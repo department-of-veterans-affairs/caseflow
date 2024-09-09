@@ -185,17 +185,17 @@ const OrganizationPermissions = (props) => {
 
       return (parentPermissionChecked(user.id, permission.parent_permission_id) &&
       permissionAdminCheck(user, permission) &&
-       <Checkbox
-         name={`${user.id}-${permission.permission}`}
-         label={permission.description}
-         key={`${user.id}-${permission.permission}`}
-         styling={checkboxStyle}
-         onChange={modifyUserPermission(user.id, permission.permission)}
-         defaultValue={(userPermissions(user, permission.permission) ||
-           checkAdminPermission(user, permission.permission))}
-         disabled={checkAdminPermission(user, permission.permission)}
-         value={getCheckboxEnabled(user, props.orgUserData, permission)}
-       />);
+        <Checkbox
+          name={`${user.id}-${permission.permission}`}
+          label={permission.description}
+          key={`${user.id}-${permission.permission}`}
+          styling={checkboxStyle}
+          onChange={modifyUserPermission(user.id, permission.permission)}
+          defaultValue={(userPermissions(user, permission.permission) ||
+            checkAdminPermission(user, permission.permission))}
+          disabled={checkAdminPermission(user, permission.permission)}
+          value={getCheckboxEnabled(user, props.orgUserData, permission)}
+        />);
     });
   };
 
@@ -214,5 +214,4 @@ OrganizationPermissions.propTypes = {
   organization: PropTypes.string,
   orgUserData: PropTypes.object,
   organizationUserPermissions: PropTypes.array
-
 };
