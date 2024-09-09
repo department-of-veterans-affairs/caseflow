@@ -149,7 +149,7 @@ const CorrespondenceAssignTaskModal = (props) => {
       {shouldShowTaskInstructions &&
         <TextareaField
           name={
-            taskData?.instructions_label ?? COPY.CORRESPONDENCE_CASES_ASSIGN_TASK_MODAL_INSTRUCTIONS_TITLE
+            taskData?.instructions_label ?? COPY.CORRESPONDENCE_CASES_ASSIGN_TO_PERSON_MODAL_INSTRUCTIONS_TITLE
           }
           id="taskInstructions"
           onChange={setInstructions}
