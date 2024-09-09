@@ -120,14 +120,15 @@ class AddColocatedTaskView extends React.PureComponent {
           this.props.deleteTask(task.uniqueId);
         }
 
-      const nextStepUrl = this.getNextStepUrl();
-      if (nextStepUrl) {
-        this.props.history.push(nextStepUrl);
-       }
+        const nextStepUrl = this.getNextStepUrl();
+
+        if (nextStepUrl) {
+          this.props.history.push(nextStepUrl);
+        }
       }).
       catch((error) => {
-          console.error('Error in goToNextStep:', error);
-          // Handle the error appropriately
+        console.error('Error in goToNextStep:', error);
+        // Handle the error appropriately
       });
   };
 
