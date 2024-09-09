@@ -5591,6 +5591,8 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
         "representativeEmail": "tom.brady@caseflow.gov",
         "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
+        "scheduledInTimezone": "America/Chicago",
+        "scheduledTimeString": "03:30",
         "status": "active",
       },
       "wasVirtual": false,
@@ -5626,6 +5628,8 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -5745,6 +5749,8 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
             "representativeEmail": "tom.brady@caseflow.gov",
             "representativeTz": "America/Los_Angeles",
             "requestCancelled": false,
+            "scheduledInTimezone": "America/Chicago",
+            "scheduledTimeString": "03:30",
             "status": "active",
           },
           "wasVirtual": false,
@@ -5771,6 +5777,8 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
           "representativeEmail": "tom.brady@caseflow.gov",
           "representativeTz": "America/Los_Angeles",
           "requestCancelled": false,
+          "scheduledInTimezone": "America/Chicago",
+          "scheduledTimeString": "03:30",
           "status": "active",
         }
       }
@@ -5802,6 +5810,8 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
           "representativeEmail": "tom.brady@caseflow.gov",
           "representativeTz": "America/Los_Angeles",
           "requestCancelled": false,
+          "scheduledInTimezone": "America/Chicago",
+          "scheduledTimeString": "03:30",
           "status": "active",
         }
       }
@@ -5926,6 +5936,8 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
                 "representativeEmail": "tom.brady@caseflow.gov",
                 "representativeTz": "America/Los_Angeles",
                 "requestCancelled": false,
+                "scheduledInTimezone": "America/Chicago",
+                "scheduledTimeString": "03:30",
                 "status": "active",
               },
               "wasVirtual": false,
@@ -5965,6 +5977,8 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
               "representativeEmail": "tom.brady@caseflow.gov",
               "representativeTz": "America/Los_Angeles",
               "requestCancelled": false,
+              "scheduledInTimezone": "America/Chicago",
+              "scheduledTimeString": "03:30",
               "status": "active",
             }
           }
@@ -6080,6 +6094,8 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
                   "representativeEmail": "tom.brady@caseflow.gov",
                   "representativeTz": "America/Los_Angeles",
                   "requestCancelled": false,
+                  "scheduledInTimezone": "America/Chicago",
+                  "scheduledTimeString": "03:30",
                   "status": "active",
                 },
                 "wasVirtual": false,
@@ -6119,6 +6135,8 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
                 "representativeEmail": "tom.brady@caseflow.gov",
                 "representativeTz": "America/Los_Angeles",
                 "requestCancelled": false,
+                "scheduledInTimezone": "America/Chicago",
+                "scheduledTimeString": "03:30",
                 "status": "active",
               }
             }

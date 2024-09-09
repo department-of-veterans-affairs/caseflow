@@ -1,5 +1,5 @@
 module Seeds
-  class TranscriptionContractor < Base
+  class TranscriptionContractors < Base
 
     def seed!
       transcription_contractors = [

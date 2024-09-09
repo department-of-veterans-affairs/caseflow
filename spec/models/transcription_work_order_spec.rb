@@ -3,6 +3,7 @@
 RSpec.describe TranscriptionWorkOrder, type: :model do
   let(:task_number) { "TASK123" }
   let(:current_user) { create(:user) }
+  let(:hearing) { create(:hearing) }
 
   before do
     allow_any_instance_of(TranscriptionWorkOrder).to receive(:current_user).and_return(current_user)
@@ -51,7 +52,7 @@ RSpec.describe TranscriptionWorkOrder, type: :model do
     end
 
     let(:transcription_file) do
-      file = TranscriptionFile.new(docket_number: "D123", transcription: transcription)
+      file = TranscriptionFile.new(docket_number: "D123", transcription: transcription, hearing: hearing)
       allow(file).to receive(:case_details).and_return("Details of case")
       file
     end
@@ -59,7 +60,7 @@ RSpec.describe TranscriptionWorkOrder, type: :model do
     before do
       allow(Transcription).to receive(:includes).and_return(Transcription)
       allow(Transcription).to receive(:find_by).with(task_number: task_number).and_return(transcription)
-      allow(transcription).to receive(:transcription_files).and_return([transcription_file])
+      allow_any_instance_of(Transcription).to receive(:transcription_files).and_return([transcription_file])
     end
 
     it "returns work order contents" do
@@ -67,7 +68,9 @@ RSpec.describe TranscriptionWorkOrder, type: :model do
       expect(result).to eq([
                              {
                                case_details: transcription_file.case_details,
-                               docket_number: transcription_file.docket_number
+                               docket_number: transcription_file.docket_number,
+                               hearing_type: hearing.class.name,
+                               appeal_id: hearing.appeal.uuid
                              }
                            ])
     end
