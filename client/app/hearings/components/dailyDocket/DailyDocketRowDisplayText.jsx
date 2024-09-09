@@ -60,7 +60,7 @@ const AppellantInformation = ({ hearing, userCanViewFnodBadgeInHearings }) => {
       tooltipText = {
         <div>
           <strong>Date of Death Reported</strong>
-          <ul {...tooltipListStyling}>
+          <ul style={tooltipListStyling}>
             <li><strong>Veteran: </strong>{hearing.veteranDateOfDeathInfo?.veteranFullName}</li>
             <li><strong>Source: </strong>{COPY.FNOD_SOURCE}</li>
             <li>

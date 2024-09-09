@@ -1,7 +1,6 @@
-import { css } from 'glamor';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 
-export const tooltipListStyling = css({
+export const tooltipListStyling = {
   listStyle: 'none',
   textAlign: 'left',
   marginBottom: 0,
@@ -12,4 +11,4 @@ export const tooltipListStyling = css({
       color: COLORS.WHITE
     }
   }
-});
+};

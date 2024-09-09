@@ -1,15 +1,14 @@
 import React from 'react';
-import { css } from 'glamor';
 import { LoadingIcon } from '../icons/LoadingIcon';
 import PropTypes from 'prop-types';
 
 const LoadingLabel = ({ text = '' }) => (
-  <span {...css({
+  <span style={{
     '& > *': {
       display: 'inline-block',
       marginRight: '10px'
     }
-  })}>
+  }}>
     <LoadingIcon
       text=""
       size={15}

@@ -52,7 +52,7 @@ class HearingBadge extends React.PureComponent {
 
     const tooltipText = <div>
       This case has a hearing associated with it.
-      <ul {...tooltipListStyling}>
+      <ul style={tooltipListStyling}>
         <li>Judge: <strong>{hearing.heldBy}</strong></li>
         <li>Disposition: <strong>{_.startCase(hearing.disposition)}</strong></li>
         <li>Date: <strong><DateString date={hearing.date} /></strong></li>

@@ -13,7 +13,7 @@ import FnodBadge from './FnodBadge';
 const QueueFnodBadge = ({ fnodBadge, appeal }) => {
   const tooltipText = <div>
     <strong>Date of Death Reported</strong>
-    <ul {...tooltipListStyling}>
+    <ul style={tooltipListStyling}>
       <li><strong>Source:</strong> {COPY.FNOD_SOURCE}</li>
       { appeal.veteranDateOfDeath &&
         <li><strong>Date of Death:</strong> <DateString date={appeal.veteranDateOfDeath} /></li>
