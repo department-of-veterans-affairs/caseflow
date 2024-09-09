@@ -1,13 +1,12 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'glamor';
 
 import { FormLabel } from './FormLabel';
 
-const labelTextStyling = css({
+const labelTextStyling = {
   marginTop: '0.65em',
   marginBottom: '0.65em',
-});
+};
 
 export const TextField = (props) => {
   const handleChange = (event) => props.onChange?.(event.target.value);
@@ -88,7 +87,7 @@ export const TextField = (props) => {
           {strongLabel ? <strong>{labelContents}</strong> : labelContents}
         </label>
       )}
-      {labelText && <p {...labelTextStyling}>{labelText}</p>}
+      {labelText && <p style={labelTextStyling}>{labelText}</p>}
       {errorMessage && (
         <span className="usa-input-error-message" tabIndex={0}>{errorMessage}</span>
       )}
