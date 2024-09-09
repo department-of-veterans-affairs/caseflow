@@ -391,7 +391,7 @@ const AssignToAttorneyWidgetContainer = (props) => {
       setSelectedAssigneeSecondary={(val) => dispatch(setSelectedAssigneeSecondary(val))}
       showErrorMessage={(val) => dispatch(showErrorMessage(val))}
       resetErrorMessages={(val) => dispatch(resetErrorMessages(val))}
-      showSuccessMessage={(val) => flushSync(() => dispatch(showSuccessMessage(val)))}
+      showSuccessMessage={(val) => dispatch(showSuccessMessage(val))}
       resetSuccessMessages={(val) => dispatch(resetSuccessMessages(val))}
       resetAssignees={() => dispatch(resetAssignees())}
       saveFailure={() => flushSync(() => dispatch({ type: ACTIONS.SAVE_FAILURE }))}
