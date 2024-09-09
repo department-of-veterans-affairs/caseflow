@@ -21,7 +21,7 @@ RSpec.feature("The Correspondence Details All Tasks Actions") do
   let(:colocated_team) { Colocated.singleton }
   let(:hearings_team) { HearingAdmin.singleton }
   let!(:veteran) { create(:veteran, first_name: "John", last_name: "Testingman", file_number: "8675309") }
-  let!(:correspondence) { create(:correspondence, veteran: veteran) }
+  let!(:correspondence) { create(:correspondence, :completed, veteran: veteran) }
 
   context "testing tasks actions" do
     CorrespondenceTaskActionsHelpers::TASKS.each do |task_action|
@@ -31,6 +31,7 @@ RSpec.feature("The Correspondence Details All Tasks Actions") do
           FeatureToggle.enable!(:correspondence_queue)
           @correspondence = create(
             :correspondence,
+            :completed,
             veteran: veteran,
             va_date_of_receipt: Time.zone.now,
             nod: false,
