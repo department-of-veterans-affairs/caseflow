@@ -765,6 +765,8 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
         "representativeEmail": "tom.brady@caseflow.gov",
         "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
+        "scheduledInTimezone": "America/Chicago",
+        "scheduledTimeString": "03:30",
         "status": "active",
       },
       "wasVirtual": false,
@@ -788,6 +790,8 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -925,6 +929,8 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
                 "representativeEmail": "tom.brady@caseflow.gov",
                 "representativeTz": "America/Los_Angeles",
                 "requestCancelled": false,
+                "scheduledInTimezone": "America/Chicago",
+                "scheduledTimeString": "03:30",
                 "status": "active",
               },
               "wasVirtual": false,
@@ -959,6 +965,8 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
               "representativeEmail": "tom.brady@caseflow.gov",
               "representativeTz": "America/Los_Angeles",
               "requestCancelled": false,
+              "scheduledInTimezone": "America/Chicago",
+              "scheduledTimeString": "03:30",
               "status": "active",
             }
           }
@@ -1079,6 +1087,8 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
                     "representativeEmail": "tom.brady@caseflow.gov",
                     "representativeTz": "America/Los_Angeles",
                     "requestCancelled": false,
+                    "scheduledInTimezone": "America/Chicago",
+                    "scheduledTimeString": "03:30",
                     "status": "active",
                   },
                   "wasVirtual": false,
@@ -1105,6 +1115,8 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
                   "representativeEmail": "tom.brady@caseflow.gov",
                   "representativeTz": "America/Los_Angeles",
                   "requestCancelled": false,
+                  "scheduledInTimezone": "America/Chicago",
+                  "scheduledTimeString": "03:30",
                   "status": "active",
                 }
               }
@@ -1133,6 +1145,8 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
                   "representativeEmail": "tom.brady@caseflow.gov",
                   "representativeTz": "America/Los_Angeles",
                   "requestCancelled": false,
+                  "scheduledInTimezone": "America/Chicago",
+                  "scheduledTimeString": "03:30",
                   "status": "active",
                 }
               }
@@ -1258,6 +1272,8 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
                         "representativeEmail": "tom.brady@caseflow.gov",
                         "representativeTz": "America/Los_Angeles",
                         "requestCancelled": false,
+                        "scheduledInTimezone": "America/Chicago",
+                        "scheduledTimeString": "03:30",
                         "status": "active",
                       },
                       "wasVirtual": false,
@@ -1294,6 +1310,8 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
                       "representativeEmail": "tom.brady@caseflow.gov",
                       "representativeTz": "America/Los_Angeles",
                       "requestCancelled": false,
+                      "scheduledInTimezone": "America/Chicago",
+                      "scheduledTimeString": "03:30",
                       "status": "active",
                     }
                   }
@@ -1410,6 +1428,8 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
                           "representativeEmail": "tom.brady@caseflow.gov",
                           "representativeTz": "America/Los_Angeles",
                           "requestCancelled": false,
+                          "scheduledInTimezone": "America/Chicago",
+                          "scheduledTimeString": "03:30",
                           "status": "active",
                         },
                         "wasVirtual": false,
@@ -1446,6 +1466,8 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
                         "representativeEmail": "tom.brady@caseflow.gov",
                         "representativeTz": "America/Los_Angeles",
                         "requestCancelled": false,
+                        "scheduledInTimezone": "America/Chicago",
+                        "scheduledTimeString": "03:30",
                         "status": "active",
                       }
                     }
@@ -1814,6 +1836,8 @@ exports[`VirtualHearingFields Renders webex conference when conference provider 
         "representativeEmail": "tom.brady@caseflow.gov",
         "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
+        "scheduledInTimezone": "America/Chicago",
+        "scheduledTimeString": "03:30",
         "status": "active",
       },
       "wasVirtual": false,
@@ -1837,6 +1861,8 @@ exports[`VirtualHearingFields Renders webex conference when conference provider 
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -1974,6 +2000,8 @@ exports[`VirtualHearingFields Renders webex conference when conference provider 
                 "representativeEmail": "tom.brady@caseflow.gov",
                 "representativeTz": "America/Los_Angeles",
                 "requestCancelled": false,
+                "scheduledInTimezone": "America/Chicago",
+                "scheduledTimeString": "03:30",
                 "status": "active",
               },
               "wasVirtual": false,
@@ -2008,6 +2036,8 @@ exports[`VirtualHearingFields Renders webex conference when conference provider 
               "representativeEmail": "tom.brady@caseflow.gov",
               "representativeTz": "America/Los_Angeles",
               "requestCancelled": false,
+              "scheduledInTimezone": "America/Chicago",
+              "scheduledTimeString": "03:30",
               "status": "active",
             }
           }
@@ -2128,6 +2158,8 @@ exports[`VirtualHearingFields Renders webex conference when conference provider 
                     "representativeEmail": "tom.brady@caseflow.gov",
                     "representativeTz": "America/Los_Angeles",
                     "requestCancelled": false,
+                    "scheduledInTimezone": "America/Chicago",
+                    "scheduledTimeString": "03:30",
                     "status": "active",
                   },
                   "wasVirtual": false,
@@ -2154,6 +2186,8 @@ exports[`VirtualHearingFields Renders webex conference when conference provider 
                   "representativeEmail": "tom.brady@caseflow.gov",
                   "representativeTz": "America/Los_Angeles",
                   "requestCancelled": false,
+                  "scheduledInTimezone": "America/Chicago",
+                  "scheduledTimeString": "03:30",
                   "status": "active",
                 }
               }
@@ -2182,6 +2216,8 @@ exports[`VirtualHearingFields Renders webex conference when conference provider 
                   "representativeEmail": "tom.brady@caseflow.gov",
                   "representativeTz": "America/Los_Angeles",
                   "requestCancelled": false,
+                  "scheduledInTimezone": "America/Chicago",
+                  "scheduledTimeString": "03:30",
                   "status": "active",
                 }
               }
@@ -2307,6 +2343,8 @@ exports[`VirtualHearingFields Renders webex conference when conference provider 
                         "representativeEmail": "tom.brady@caseflow.gov",
                         "representativeTz": "America/Los_Angeles",
                         "requestCancelled": false,
+                        "scheduledInTimezone": "America/Chicago",
+                        "scheduledTimeString": "03:30",
                         "status": "active",
                       },
                       "wasVirtual": false,
@@ -2343,6 +2381,8 @@ exports[`VirtualHearingFields Renders webex conference when conference provider 
                       "representativeEmail": "tom.brady@caseflow.gov",
                       "representativeTz": "America/Los_Angeles",
                       "requestCancelled": false,
+                      "scheduledInTimezone": "America/Chicago",
+                      "scheduledTimeString": "03:30",
                       "status": "active",
                     }
                   }
@@ -2459,6 +2499,8 @@ exports[`VirtualHearingFields Renders webex conference when conference provider 
                           "representativeEmail": "tom.brady@caseflow.gov",
                           "representativeTz": "America/Los_Angeles",
                           "requestCancelled": false,
+                          "scheduledInTimezone": "America/Chicago",
+                          "scheduledTimeString": "03:30",
                           "status": "active",
                         },
                         "wasVirtual": false,
@@ -2495,6 +2537,8 @@ exports[`VirtualHearingFields Renders webex conference when conference provider 
                         "representativeEmail": "tom.brady@caseflow.gov",
                         "representativeTz": "America/Los_Angeles",
                         "requestCancelled": false,
+                        "scheduledInTimezone": "America/Chicago",
+                        "scheduledTimeString": "03:30",
                         "status": "active",
                       }
                     }
@@ -2853,6 +2897,8 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
         "representativeEmail": "tom.brady@caseflow.gov",
         "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
+        "scheduledInTimezone": "America/Chicago",
+        "scheduledTimeString": "03:30",
         "status": "active",
       },
       "wasVirtual": false,
@@ -2876,6 +2922,8 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -3013,6 +3061,8 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
                 "representativeEmail": "tom.brady@caseflow.gov",
                 "representativeTz": "America/Los_Angeles",
                 "requestCancelled": false,
+                "scheduledInTimezone": "America/Chicago",
+                "scheduledTimeString": "03:30",
                 "status": "active",
               },
               "wasVirtual": false,
@@ -3047,6 +3097,8 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
               "representativeEmail": "tom.brady@caseflow.gov",
               "representativeTz": "America/Los_Angeles",
               "requestCancelled": false,
+              "scheduledInTimezone": "America/Chicago",
+              "scheduledTimeString": "03:30",
               "status": "active",
             }
           }
@@ -3167,6 +3219,8 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
                     "representativeEmail": "tom.brady@caseflow.gov",
                     "representativeTz": "America/Los_Angeles",
                     "requestCancelled": false,
+                    "scheduledInTimezone": "America/Chicago",
+                    "scheduledTimeString": "03:30",
                     "status": "active",
                   },
                   "wasVirtual": false,
@@ -3193,6 +3247,8 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
                   "representativeEmail": "tom.brady@caseflow.gov",
                   "representativeTz": "America/Los_Angeles",
                   "requestCancelled": false,
+                  "scheduledInTimezone": "America/Chicago",
+                  "scheduledTimeString": "03:30",
                   "status": "active",
                 }
               }
@@ -3221,6 +3277,8 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
                   "representativeEmail": "tom.brady@caseflow.gov",
                   "representativeTz": "America/Los_Angeles",
                   "requestCancelled": false,
+                  "scheduledInTimezone": "America/Chicago",
+                  "scheduledTimeString": "03:30",
                   "status": "active",
                 }
               }
@@ -3346,6 +3404,8 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
                         "representativeEmail": "tom.brady@caseflow.gov",
                         "representativeTz": "America/Los_Angeles",
                         "requestCancelled": false,
+                        "scheduledInTimezone": "America/Chicago",
+                        "scheduledTimeString": "03:30",
                         "status": "active",
                       },
                       "wasVirtual": false,
@@ -3382,6 +3442,8 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
                       "representativeEmail": "tom.brady@caseflow.gov",
                       "representativeTz": "America/Los_Angeles",
                       "requestCancelled": false,
+                      "scheduledInTimezone": "America/Chicago",
+                      "scheduledTimeString": "03:30",
                       "status": "active",
                     }
                   }
@@ -3498,6 +3560,8 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
                           "representativeEmail": "tom.brady@caseflow.gov",
                           "representativeTz": "America/Los_Angeles",
                           "requestCancelled": false,
+                          "scheduledInTimezone": "America/Chicago",
+                          "scheduledTimeString": "03:30",
                           "status": "active",
                         },
                         "wasVirtual": false,
@@ -3534,6 +3598,8 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
                         "representativeEmail": "tom.brady@caseflow.gov",
                         "representativeTz": "America/Los_Angeles",
                         "requestCancelled": false,
+                        "scheduledInTimezone": "America/Chicago",
+                        "scheduledTimeString": "03:30",
                         "status": "active",
                       }
                     }
@@ -3902,6 +3968,8 @@ exports[`VirtualHearingFields Shows only hearing links with no virtualHearing 1`
         "representativeEmail": "tom.brady@caseflow.gov",
         "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
+        "scheduledInTimezone": "America/Chicago",
+        "scheduledTimeString": "03:30",
         "status": "active",
       },
       "wasVirtual": false,
@@ -3925,6 +3993,8 @@ exports[`VirtualHearingFields Shows only hearing links with no virtualHearing 1`
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -4062,6 +4132,8 @@ exports[`VirtualHearingFields Shows only hearing links with no virtualHearing 1`
                 "representativeEmail": "tom.brady@caseflow.gov",
                 "representativeTz": "America/Los_Angeles",
                 "requestCancelled": false,
+                "scheduledInTimezone": "America/Chicago",
+                "scheduledTimeString": "03:30",
                 "status": "active",
               },
               "wasVirtual": false,
@@ -4096,6 +4168,8 @@ exports[`VirtualHearingFields Shows only hearing links with no virtualHearing 1`
               "representativeEmail": "tom.brady@caseflow.gov",
               "representativeTz": "America/Los_Angeles",
               "requestCancelled": false,
+              "scheduledInTimezone": "America/Chicago",
+              "scheduledTimeString": "03:30",
               "status": "active",
             }
           }
@@ -4216,6 +4290,8 @@ exports[`VirtualHearingFields Shows only hearing links with no virtualHearing 1`
                     "representativeEmail": "tom.brady@caseflow.gov",
                     "representativeTz": "America/Los_Angeles",
                     "requestCancelled": false,
+                    "scheduledInTimezone": "America/Chicago",
+                    "scheduledTimeString": "03:30",
                     "status": "active",
                   },
                   "wasVirtual": false,
@@ -4242,6 +4318,8 @@ exports[`VirtualHearingFields Shows only hearing links with no virtualHearing 1`
                   "representativeEmail": "tom.brady@caseflow.gov",
                   "representativeTz": "America/Los_Angeles",
                   "requestCancelled": false,
+                  "scheduledInTimezone": "America/Chicago",
+                  "scheduledTimeString": "03:30",
                   "status": "active",
                 }
               }
@@ -4270,6 +4348,8 @@ exports[`VirtualHearingFields Shows only hearing links with no virtualHearing 1`
                   "representativeEmail": "tom.brady@caseflow.gov",
                   "representativeTz": "America/Los_Angeles",
                   "requestCancelled": false,
+                  "scheduledInTimezone": "America/Chicago",
+                  "scheduledTimeString": "03:30",
                   "status": "active",
                 }
               }
@@ -4395,6 +4475,8 @@ exports[`VirtualHearingFields Shows only hearing links with no virtualHearing 1`
                         "representativeEmail": "tom.brady@caseflow.gov",
                         "representativeTz": "America/Los_Angeles",
                         "requestCancelled": false,
+                        "scheduledInTimezone": "America/Chicago",
+                        "scheduledTimeString": "03:30",
                         "status": "active",
                       },
                       "wasVirtual": false,
@@ -4431,6 +4513,8 @@ exports[`VirtualHearingFields Shows only hearing links with no virtualHearing 1`
                       "representativeEmail": "tom.brady@caseflow.gov",
                       "representativeTz": "America/Los_Angeles",
                       "requestCancelled": false,
+                      "scheduledInTimezone": "America/Chicago",
+                      "scheduledTimeString": "03:30",
                       "status": "active",
                     }
                   }
@@ -4547,6 +4631,8 @@ exports[`VirtualHearingFields Shows only hearing links with no virtualHearing 1`
                           "representativeEmail": "tom.brady@caseflow.gov",
                           "representativeTz": "America/Los_Angeles",
                           "requestCancelled": false,
+                          "scheduledInTimezone": "America/Chicago",
+                          "scheduledTimeString": "03:30",
                           "status": "active",
                         },
                         "wasVirtual": false,
@@ -4583,6 +4669,8 @@ exports[`VirtualHearingFields Shows only hearing links with no virtualHearing 1`
                         "representativeEmail": "tom.brady@caseflow.gov",
                         "representativeTz": "America/Los_Angeles",
                         "requestCancelled": false,
+                        "scheduledInTimezone": "America/Chicago",
+                        "scheduledTimeString": "03:30",
                         "status": "active",
                       }
                     }

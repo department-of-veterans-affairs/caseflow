@@ -7,9 +7,7 @@ import { HearingLinks } from './HearingLinks';
 import { HearingsUserContext } from '../../contexts/HearingsUserContext';
 import StringUtil from '../../../util/StringUtil';
 
-export const VirtualHearingFields = (
-  { hearing, virtualHearing }
-) => {
+export const VirtualHearingFields = ({ hearing, virtualHearing }) => {
   const user = useContext(HearingsUserContext);
 
   const checkCancelled = () => {
