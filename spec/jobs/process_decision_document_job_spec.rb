@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
 describe ProcessDecisionDocumentJob do
-  let(:contested) { true }
-
   context ".perform" do
-    subject { ProcessDecisionDocumentJob.perform_now(decision_document.id, contested) }
+    subject { ProcessDecisionDocumentJob.perform_now(decision_document.id) }
 
     let(:decision_document) { build_stubbed(:decision_document) }
 

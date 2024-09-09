@@ -6,7 +6,7 @@ Object {
   "baseElement": <body>
     <div>
       <div
-        style="display: inline-flex;"
+        style="display: inline-block;"
       >
         <div
           class="page-progress-indicator-input   "
@@ -36,7 +36,7 @@ Object {
   </body>,
   "container": <div>
     <div
-      style="display: inline-flex;"
+      style="display: inline-block;"
     >
       <div
         class="page-progress-indicator-input   "

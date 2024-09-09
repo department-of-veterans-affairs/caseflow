@@ -246,8 +246,10 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       click_dropdown(text: /^(#{time} (A|a)(M|m)( E)?)/, name: "optionalHearingTime0")
     end
 
-    def slots_select_hearing_time(time)
-      find(".time-slot-button", text: "#{time} #{Time.zone.now.zone}").click
+    def slots_select_hearing_time(time, date)
+      tz = Time.zone.parse("#{time} #{date} America/New_York").dst? ? "EDT" : "EST"
+
+      find(".time-slot-button", text: "#{time} #{tz}").click
     end
 
     def slots_select_custom_hearing_time(time)
@@ -821,10 +823,16 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         expect(page).to have_content("When you schedule the hearing, the Veteran, POA, and " \
           "Judge will receive an email with connection information for the virtual hearing.")
 
+        date = if ro_key == "C"
+                 HearingDay.find_by(request_type: "C").scheduled_for.to_s
+               else
+                 HearingDay.find_by(regional_office: ro_key).scheduled_for.to_s
+               end
+
         # Only one of these three gets called, they each represent a different
         # way to select a hearing time
         select_custom_hearing_time(time) unless slots
-        slots_select_hearing_time(time) if slots == "slot"
+        slots_select_hearing_time(time, date) if slots == "slot"
         slots_select_custom_hearing_time(time) if slots == "custom"
 
         # Fill in appellant details

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_08_05_162358) do
+ActiveRecord::Schema.define(version: 2024_08_28_165652) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1450,7 +1450,6 @@ ActiveRecord::Schema.define(version: 2024_08_05_162358) do
     t.string "email_notification_content", comment: "Full Email Text Content of Notification"
     t.string "email_notification_external_id", comment: "VA Notify Notification Id for the email notification send through their API "
     t.string "email_notification_status", comment: "Status of the Email Notification"
-    t.string "email_status_reason", comment: "Context around why this VA Notify notification is in the email status"
     t.date "event_date", null: false, comment: "Date of Event"
     t.string "event_type", null: false, comment: "Type of Event"
     t.bigint "notifiable_id"
@@ -1466,7 +1465,6 @@ ActiveRecord::Schema.define(version: 2024_08_05_162358) do
     t.string "sms_notification_status", comment: "Status of SMS/Text Notification"
     t.string "sms_response_content", comment: "Message body of the sms notification response."
     t.datetime "sms_response_time", comment: "Date and Time of the sms notification response."
-    t.string "sms_status_reason", comment: "Context around why this VA Notify notification is in the sms status"
     t.datetime "updated_at", comment: "TImestamp of when Notification was Updated"
     t.index ["appeals_id", "appeals_type"], name: "index_appeals_notifications_on_appeals_id_and_appeals_type"
     t.index ["email_notification_external_id"], name: "index_notifications_on_email_notification_external_id"
@@ -1787,8 +1785,8 @@ ActiveRecord::Schema.define(version: 2024_08_05_162358) do
     t.bigint "issue_id", null: false, comment: "ID of the issue that was changed"
     t.boolean "mst_from_vbms", comment: "Indication that the MST status originally came from VBMS on intake"
     t.string "mst_reason_for_change", comment: "Reason for changing the MST status on an issue"
-    t.boolean "original_mst_status", null: false, comment: "Original MST special issue status of the issue"
-    t.boolean "original_pact_status", null: false, comment: "Original PACT special issue status of the issue"
+    t.boolean "original_mst_status", comment: "Original MST special issue status of the issue"
+    t.boolean "original_pact_status", comment: "Original PACT special issue status of the issue"
     t.boolean "pact_from_vbms"
     t.string "pact_reason_for_change", comment: "Reason for changing the PACT status on an issue"
     t.bigint "task_id", null: false, comment: "Task ID of the IssueUpdateTask or EstablishmentTask used to log this issue in the case timeline"

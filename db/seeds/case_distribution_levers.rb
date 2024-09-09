@@ -314,7 +314,7 @@ module Seeds
           {
             item: Constants.DISTRIBUTION.cavc_aod_affinity_days,
             title: Constants.DISTRIBUTION.cavc_aod_affinity_days_title,
-            description: "Sets the number of days appeals returned from CAVC that are also AOD respect the affinity to the deciding judge. This is not applicable for legacy apeals for which the deciding judge conducted the most recent hearing.",
+            description: "Sets the number of days appeals returned from CAVC that are also AOD respect the affinity to the deciding judge. This is not applicable for legacy appeals for which the deciding judge conducted the most recent hearing.",
             data_type: Constants.ACD_LEVERS.data_types.radio,
             value: "14",
             unit: Constants.ACD_LEVERS.days,
