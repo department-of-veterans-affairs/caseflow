@@ -1,37 +1,36 @@
 import React from 'react';
-import { css } from 'glamor';
 
 import BENEFIT_TYPES from '../../constants/BENEFIT_TYPES';
 import { COLORS } from '../constants/AppConstants';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 
-const issueListStyling = css({
+const issueListStyling = {
   paddingLeft: '1em'
-});
+};
 
-const singleIssueStyling = css({
+const singleIssueStyling = {
   width: '75%',
   marginBottom: '1.5em !important',
   paddingLeft: '0.75em',
   '@media(max-width: 1200px)': { width: '100%' }
-});
+};
 
-const issueContentStyling = css({
+const issueContentStyling = {
   marginBottom: '0.3em'
-});
+};
 
-const issueNoteStyling = css({
+const issueNoteStyling = {
   fontStyle: 'italic'
-});
+};
 
-const issueClosedStatusStyling = css({
+const issueClosedStatusStyling = {
   color: COLORS.RED_DARK
-});
+};
 
-const issueErrorStyling = css({
+const issueErrorStyling = {
   borderLeft: '4px solid #cd2026'
-});
+};
 
 // format special issues to display 'None', 'PACT', 'MST', or 'MST and PACT'
 const specialIssuesFormatting = (mstStatus, pactStatus) => {
@@ -47,21 +46,24 @@ const specialIssuesFormatting = (mstStatus, pactStatus) => {
 };
 
 export const AmaIssue = (props) => {
-  return <li key={props.index} {...singleIssueStyling} {...props.customStyle}>
-    <div {...issueContentStyling}><strong>Benefit type: </strong>{BENEFIT_TYPES[props.issue.program]}</div>
-    <div {...issueContentStyling}><strong>Issue: </strong>{props.issue.description}</div>
+  const liStyling = { ...singleIssueStyling, ...props.customStyle };
+  const notesStyling = { ...issueContentStyling, ...issueNoteStyling };
+
+  return <li key={props.index} style={liStyling}>
+    <div style={issueContentStyling}><strong>Benefit type: </strong>{BENEFIT_TYPES[props.issue.program]}</div>
+    <div style={issueContentStyling}><strong>Issue: </strong>{props.issue.description}</div>
     { props.issue.diagnostic_code &&
-      <div {...issueContentStyling}><strong>Diagnostic code: </strong>{props.issue.diagnostic_code}</div> }
-    { (props.mstFeatureToggle || props.pactFeatureToggle) && <div {...issueContentStyling}>
+      <div style={issueContentStyling}><strong>Diagnostic code: </strong>{props.issue.diagnostic_code}</div> }
+    { (props.mstFeatureToggle || props.pactFeatureToggle) && <div style={issueContentStyling}>
       <strong>Special Issues: </strong>{
         specialIssuesFormatting(props.issue.mst_status, props.issue.pact_status)
       }
     </div> }
     { props.issue.notes &&
-      <div {...issueContentStyling} {...issueNoteStyling}>Note from NOD: {props.issue.notes}</div> }
+      <div style={notesStyling}>Note from NOD: {props.issue.notes}</div> }
     { props.issue.closed_status && props.issue.closed_status === 'withdrawn' &&
-      <div {...issueContentStyling}>
-        <strong>Disposition</strong>: <span {...issueClosedStatusStyling}>
+      <div style={issueContentStyling}>
+        <strong>Disposition</strong>: <span style={issueClosedStatusStyling}>
           {_.capitalize(props.issue.closed_status)}</span>
       </div> }
     { props.children && React.cloneElement(props.children, { requestIssue: props.issue }) }
@@ -78,7 +80,7 @@ export default class AmaIssueList extends React.PureComponent {
       pactFeatureToggle,
     } = this.props;
 
-    return <ol {...issueListStyling}>
+    return <ol style={issueListStyling}>
       {requestIssues.map((issue, i) => {
         const error = errorMessages && errorMessages[issue.id];
 
