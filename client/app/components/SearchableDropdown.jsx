@@ -5,7 +5,6 @@ import AsyncSelect from 'react-select/async';
 import CreatableSelect from 'react-select/creatable';
 import _, { isPlainObject, isNull, kebabCase, isEmpty, isString } from 'lodash';
 import classNames from 'classnames';
-import { css } from 'glamor';
 import { FormLabel } from './FormLabel';
 import { DoubleArrowIcon } from 'app/components/icons/DoubleArrowIcon';
 
@@ -203,9 +202,10 @@ export class SearchableDropdown extends React.Component {
       />
     );
 
-    const dropdownStyling = css(styling, {
+    const dropdownStyling = {
+      ...styling,
       '& .cf-select__menu': this.props.dropdownStyling,
-    });
+    };
 
     const SelectComponent = this.getSelectComponent();
     let addCreatableOptions = {};
@@ -260,7 +260,7 @@ export class SearchableDropdown extends React.Component {
 
     return (
       <div className={errorMessage ? 'usa-input-error' : ''} ref={this.setWrapperRef}>
-        <div className={dropdownClasses} {...dropdownStyling}>
+        <div className={dropdownClasses} style={dropdownStyling}>
           <label className={labelClasses} htmlFor={`${kebabCase(name)}`} id={`${kebabCase(name)}-label`}>
             {strongLabel ? <strong>{labelContents}</strong> : labelContents}
           </label>
