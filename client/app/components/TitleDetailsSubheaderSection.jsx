@@ -1,10 +1,9 @@
-import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
 
 import { COLORS } from '../constants/AppConstants';
 
-const listItemStyling = css({
+const listItemStyling = {
   display: 'inline-block',
   padding: '0.5rem 1.5rem 0.5rem 0',
   ':not(:last-child)': {
@@ -25,10 +24,10 @@ const listItemStyling = css({
     lineHeight: '1.3'
   },
   '& > div': { minHeight: '22px' }
-});
+};
 
 export const TitleDetailsSubheaderSection = ({ title, children }) => (
-  <div {...listItemStyling}>
+  <div style={listItemStyling}>
     <p>{title}</p>
     <div>
       {children}
