@@ -3,7 +3,6 @@
 class Api::ApplicationController < ActionController::Base
   protect_from_forgery with: :null_session
 
-  force_ssl if: :ssl_enabled?
   before_action :strict_transport_security
 
   before_action :setup_fakes,
@@ -47,6 +46,10 @@ class Api::ApplicationController < ActionController::Base
 
   def unauthorized
     render json: { status: "unauthorized" }, status: :unauthorized
+  end
+
+  def ssl_enabled?
+    Rails.env.production?
   end
 
   def strict_transport_security
