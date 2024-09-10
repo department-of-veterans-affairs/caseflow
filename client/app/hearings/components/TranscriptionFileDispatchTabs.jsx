@@ -95,7 +95,7 @@ const TranscriptionSettingsLink = () => (
 );
 
 // This maps the component to render for each tab
-export const tabConfig = (openPackageModal, selectFilesForPackage, files) => [
+export const tabConfig = (openModal, selectFilesForPackage, files) => [
   {
     label: COPY.CASE_LIST_TABLE_UNASSIGNED_LABEL,
     page: <>
@@ -108,7 +108,7 @@ export const tabConfig = (openPackageModal, selectFilesForPackage, files) => [
               {sprintf(COPY.TRANSCRIPTION_FILE_DISPATCH_FILE_SELECTED, files, files === 1 ? '' : 's')}
             </h2>
             <div className="button-row" style={styles.buttonStyles}>
-              <Button disabled={files === 0} onClick={() => openPackageModal()}>Package files</Button>
+              <Button disabled={files === 0} onClick={() => openModal({ type: 'package' })}>Package files</Button>
               <Button linkStyling>Cancel</Button>
             </div>
           </div>
@@ -159,6 +159,7 @@ export const tabConfig = (openPackageModal, selectFilesForPackage, files) => [
           columns={assignedColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
           statusFilter={['Assigned']}
           selectFilesForPackage={selectFilesForPackage}
+          openModal={openModal}
         />
       </div>
     </>

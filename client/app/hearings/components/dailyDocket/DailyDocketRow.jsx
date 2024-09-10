@@ -292,7 +292,7 @@ class DailyDocketRow extends React.Component {
   };
 
   defaultRightInputs = (rowIndex) => {
-    const { hearing, regionalOffice, readOnly } = this.props;
+    const { hearing, regionalOffice, readOnly, hearingDayDate } = this.props;
     const inputProps = this.getInputProps();
 
     return (
@@ -317,6 +317,7 @@ class DailyDocketRow extends React.Component {
             }
           }}
           value={hearing?.scheduledTimeString}
+          hearingDayDate={hearingDayDate}
         />
       </React.Fragment>
     );
@@ -524,7 +525,8 @@ DailyDocketRow.propTypes = {
   onReceiveTransitioningAlert: PropTypes.func,
   transitionAlert: PropTypes.func,
   conferenceLink: PropTypes.object,
-  conferenceLinkError: PropTypes.bool
+  conferenceLinkError: PropTypes.bool,
+  hearingDayDate: PropTypes.string
 };
 
 const mapStateToProps = (state, props) => ({
