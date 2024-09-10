@@ -66,9 +66,6 @@ class CaseListTable extends React.PureComponent {
                 getLinkText={() => appeal.docketNumber}
                 linkOpensInNewTab={this.props.linkOpensInNewTab}
               /></b>
-              <span className="external-link-icon-wrapper">
-                <ExternalLinkIcon color={COLORS.FOCUS_OUTLINE} />
-              </span>
             </React.Fragment>
           );
         }

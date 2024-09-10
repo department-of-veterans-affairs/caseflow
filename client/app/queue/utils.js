@@ -610,7 +610,10 @@ export const prepareAppealForSearchStore = (appeals) => {
       evidenceSubmissionTask: appeal.attributes.evidence_submission_task,
       hasEvidenceSubmissionTask: appeal.attributes.evidence_submission_task !== null,
       mst: appeal.attributes.mst,
-      pact: appeal.attributes.pact
+      pact: appeal.attributes.pact,
+      status: appeal.attributes.status,
+      decisionDate: appeal.attributes.decision_date,
+      assignedToLocation: appeal.attributes.assigned_to_location
     };
 
     return accumulator;
@@ -1083,6 +1086,7 @@ export const collapseColumn = (requireDasRecord) => (task) =>
  * @returns {string} -- The value of the current location either as a string or JSX
  */
 export const labelForLocation = (appeal, userId) => {
+  console.log("Label for location", appeal, userId);
   // If there is no location or the appeal is cancelled, don't show a location
   if (
     !appeal.assignedToLocation ||
