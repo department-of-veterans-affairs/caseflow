@@ -101,38 +101,36 @@ const OrganizationPermissions = (props) => {
         storedCheckbox.permissionName === permission.permission
     );
 
-    if (
-      toggledCheckboxes.find(
-        (checkboxInState) =>
-          checkboxInState.userId === user.id &&
-          checkboxInState.permissionName === permission.permission &&
-          checkboxInState.checked
-      )
-    ) {
-      isEnabled = true;
-    }
+    const isCheckboxEnabledInState = toggledCheckboxes.find(
+      (checkboxInState) =>
+        checkboxInState.userId === user.id &&
+        checkboxInState.permissionName === permission.permission &&
+        checkboxInState.checked
+    );
 
     // check if user is marked as admin to auto check the checkbox.
-    if (permission.default_for_admin && user.attributes.admin) {
-      isEnabled = true;
-    }
+    const isUserAdmin = permission.default_for_admin && user.attributes.admin;
 
-    if (typeof stateValue !== 'undefined') {
-      isEnabled = stateValue.checked;
-    }
+    const isCheckboxDefinedInState = typeof stateValue !== 'undefined';
 
     // default state that came in when page loads, used as final fallback.
-    const relevantPermissions = props.organizationUserPermissions.find(
-      (oup) => oup.user_id === Number(user.id)
-    ).organization_user_permissions;
+    const isCheckboxPermittedInDefaultState = () => {
+      const relevantPermissions = props.organizationUserPermissions.find(
+        (oup) => oup.user_id === Number(user.id)
+      ).organization_user_permissions;
 
-    if (
-      relevantPermissions.find(
+      return relevantPermissions.find(
         (perm) =>
           perm.organization_permission.permission === permission.permission &&
           perm.permitted
-      )
-    ) {
+      );
+    };
+
+    if (isCheckboxEnabledInState || isUserAdmin) {
+      isEnabled = true;
+    } else if (isCheckboxDefinedInState) {
+      isEnabled = stateValue.checked;
+    } else if (isCheckboxPermittedInDefaultState()) {
       isEnabled = true;
     }
 
