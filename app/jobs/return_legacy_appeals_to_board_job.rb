@@ -11,7 +11,7 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
   def initialize
     @no_records_found_message = [Constants.DISTRIBUTION.no_records_moved_message].freeze
     @nonsscavlj_number_of_appeals_limit = CaseDistributionLever.nonsscavlj_number_of_appeals_to_move || 0
-    @nonsscavlj_number_of_appeals_to_move = @nonsscavlj_number_of_appeals_limit - 1
+    @nonsscavlj_number_of_appeals_to_move_index = @nonsscavlj_number_of_appeals_limit - 1
   end
 
   def perform
@@ -70,6 +70,7 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
   def grouped_by_avlj(moved_appeals)
     return [] if moved_appeals.nil?
 
+    #moved_appeals.group_by { |appeal| appeal["vlj"].vacols_staff&.sattyid }.keys.compact
     moved_appeals.group_by { |appeal| VACOLS::Staff.find_by(sattyid: appeal["vlj"])&.sattyid }.keys.compact
   end
 
@@ -96,7 +97,7 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
       VACOLS::Case.batch_update_vacols_location("63", qualifying_appeals.map { |q_appeal| q_appeal["bfkey"] })
     end
 
-    qualifying_appeals
+    qualifying_appeals || []
   end
 
   def get_tied_appeal_bfkeys(tied_appeals)
@@ -114,11 +115,17 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
   end
 
   def update_qualifying_appeals_bfkeys(tied_appeals_bfkeys, qualifying_appeals_bfkeys)
+    if @nonsscavlj_number_of_appeals_limit < 0
+      raise StandardError.new "CaseDistributionLever.nonsscavlj_number_of_appeals_to_move set below 0"
+    elsif @nonsscavlj_number_of_appeals_limit == 0
+      return qualifying_appeals_bfkeys
+    end
+
     if tied_appeals_bfkeys.any?
       if tied_appeals_bfkeys.count < @nonsscavlj_number_of_appeals_limit
         qualifying_appeals_bfkeys.push(tied_appeals_bfkeys)
       else
-        qualifying_appeals_bfkeys.push(tied_appeals_bfkeys[0..@nonsscavlj_number_of_appeals_to_move])
+        qualifying_appeals_bfkeys.push(tied_appeals_bfkeys[0..@nonsscavlj_number_of_appeals_to_move_index])
       end
     end
 
@@ -142,15 +149,21 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
   # Method to calculate remaining eligible appeals
   def calculate_remaining_appeals(all_appeals, moved_priority_appeals, moved_non_priority_appeals)
     return [] if all_appeals.nil?
+    starting_priority_appeals = all_appeals.select { |appeal| appeal["priority"] == 1 }
+    starting_non_priority_appeals = all_appeals.select { |appeal| appeal["priority"] == 0 }
 
-    remaining_priority_appeals = (
-      all_appeals.select { |appeal| appeal["priority"] == 1 } -
-      moved_priority_appeals
-    ) || []
-    remaining_non_priority_appeals = (
-      all_appeals.select { |appeal| appeal["priority"] == 0 } -
-      moved_non_priority_appeals
-    ) || []
+    if ((moved_priority_appeals - starting_priority_appeals).empty?)
+      remaining_priority_appeals = (starting_priority_appeals - moved_priority_appeals) || []
+    else
+      raise StandardError.new "An invalid priority appeal was detected in the list of moved appeals: #{moved_priority_appeals - starting_priority_appeals}"
+    end
+
+    if ((moved_non_priority_appeals - starting_non_priority_appeals).empty?)
+      remaining_non_priority_appeals = (starting_non_priority_appeals - moved_non_priority_appeals) || []
+    else
+      raise StandardError.new "An invalid non-priority appeal was detected in the list of moved appeals: #{moved_non_priority_appeals - starting_non_priority_appeals}"
+    end
+
     [remaining_priority_appeals, remaining_non_priority_appeals]
   end
 

@@ -76,263 +76,444 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
     end
   end
 
-  describe "#non_ssc_avljs" do #krishna
-    context "2 non ssc avljs exist" do
-      it "returns both non ssc avljs" do
-      end
-    end
+  # describe "#non_ssc_avljs" do #krishna
+  #   context "2 non ssc avljs exist" do
+  #     it "returns both non ssc avljs" do
+  #     end
+  #   end
 
-    context "1 each of non ssc avlj, ssc avlj, regular vlj, inactive non ssc avlj ... exist" do
-      it "returns only the non ssc avlj" do
-      end
-    end
+  #   context "1 each of non ssc avlj, ssc avlj, regular vlj, inactive non ssc avlj ... exist" do
+  #     it "returns only the non ssc avlj" do
+  #     end
+  #   end
 
-    context "no ssc avljs exist" do
-      it "returns an empty array" do
-      end
-    end
-  end
+  #   context "no ssc avljs exist" do
+  #     it "returns an empty array" do
+  #     end
+  #   end
+  # end
 
   describe "#calculate_remaining_appeals" do #chris
+    let(:job) { described_class.new }
+    let(:p1) { { "bfkey" => "1", "priority" => 1 } }
+    let(:p2) { { "bfkey" => "2", "priority" => 1 } }
+    let(:np1) { {"bfkey" => "3", "priority" => 0 } }
+    let(:np2) { { "bfkey" => "4", "priority" => 0 } }
+
+    before do
+      allow(CaseDistributionLever).to receive(:nonsscavlj_number_of_appeals_to_move).and_return(2)
+    end
+
     context "2 priority and 2 non-priority legacy appeals tied to non-ssc avljs exist" do
-      let appeals = [p1, p2, np1, np2]
-      let p_appeals_moved = [p1]
-      let np_appeals_moved = [np1]
-      it "returns [[p2], [np2]]" do
+      let(:appeals) { [p1, p2, np1, np2] }
+      let(:p_appeals_moved) { [p1] }
+      let(:np_appeals_moved) { [np1] }
+
+      it "should return the unmoved legacy appeals" do
+        returned_reamining_appeals = job.send(:calculate_remaining_appeals, appeals, p_appeals_moved, np_appeals_moved)
+        expect(returned_reamining_appeals).to eq([[p2], [np2]])
       end
     end
 
     context "2 priority legacy appeals tied to non-ssc avljs exist" do
-      let appeals = [p1, p2]
-      let p_appeals_moved = [p1]
-      let np_appeals_moved = []
-      it "returns [[p2], []]" do
+      let(:appeals) { [p1, p2] }
+      let(:p_appeals_moved) { [p1] }
+      let(:np_appeals_moved) { [] }
+
+      it "should return the unmoved legacy priority appeal and an empty array of non-priority appeals" do
+        returned_reamining_appeals = job.send(:calculate_remaining_appeals, appeals, p_appeals_moved, np_appeals_moved)
+        expect(returned_reamining_appeals).to eq([[p2], []])
       end
     end
 
     context "2 non-priority legacy appeals tied to non-ssc avljsexist" do
-      let appeals = [np1, np2]
-      let p_appeals_moved = []
-      let np_appeals_moved = [np1, np2]
-      it "returns [[], [np2]]" do
+      let(:appeals) { [np1, np2] }
+      let(:p_appeals_moved) { [] }
+      let(:np_appeals_moved) { [np1] }
+
+      it "should return the unmoved legacy non-priority appeal and an empty array of priority appeals" do
+        returned_reamining_appeals = job.send(:calculate_remaining_appeals, appeals, p_appeals_moved, np_appeals_moved)
+        expect(returned_reamining_appeals).to eq([[], [np2]])
       end
     end
 
+    context "all appeals are moved" do
+      let(:appeals) { [p1, p2, np1, np2] }
+      let(:p_appeals_moved) { [p1, p2] }
+      let(:np_appeals_moved) { [np1, np2] }
 
-    context "2 priority and 2 non-priority legacy appeals tied to non-ssc avljs exist" do
-      let appeals = [p1, p2, np1, np2]
-      let p_appeals_moved = [p1, p2]
-      let np_appeals_moved = [np1, np2]
-      it "returns [[], []]" do
+      it "should return 2 empty arrays" do
+        returned_reamining_appeals = job.send(:calculate_remaining_appeals, appeals, p_appeals_moved, np_appeals_moved)
+        expect(returned_reamining_appeals).to eq([[], []])
       end
     end
 
     context "no legacy appeals tied to non-ssc avljs exist" do
-      let appeals = []
-      let p_appeals_moved = []
-      let np_appeals_moved = []
-      it "returns error to be raised stating that appeals is an empty array" do
+      let(:appeals) { [] }
+      let(:p_appeals_moved) { [] }
+      let(:np_appeals_moved) { [] }
+
+      it "returns an empty array" do
+        returned_reamining_appeals = job.send(:calculate_remaining_appeals, appeals, p_appeals_moved, np_appeals_moved)
+        expect(returned_reamining_appeals).to_not eq([])
       end
     end
   end
 
   describe "#filter_appeals" do #chris
-    let non_ssc_avlj1
-    let non_ssc_avlj2
-    let appeals = [p1, p2, np1, np2]
+    let(:job) { described_class.new }
+    let(:non_ssc_avlj1) { create_non_ssc_avlj("NONSSCAN1", "NonScc User1") }
+    let(:non_ssc_avlj2) { create_non_ssc_avlj("NONSSCAN2", "NonScc User2") }
+    let(:non_ssc_avlj1_sattyid) { non_ssc_avlj1.vacols_staff.sattyid }
+    let(:non_ssc_avlj2_sattyid) { non_ssc_avlj2.vacols_staff.sattyid }
 
-    context "2 priority and 2 non-priority legacy appeals tied to non-ssc avljs exist" do
-      let moved_appeals= [[p1],[np1]]
+    let(:p1) { { "bfkey" => "1", "priority" => 1, "vlj" => non_ssc_avlj1_sattyid } }
+    let(:p2) { { "bfkey" => "2", "priority" => 1, "vlj" =>  non_ssc_avlj2_sattyid } }
+    let(:np1) { {"bfkey" => "3", "priority" => 0, "vlj" =>  non_ssc_avlj2_sattyid } }
+    let(:np2) { { "bfkey" => "4", "priority" => 0, "vlj" =>  non_ssc_avlj1_sattyid } }
+    let(:appeals) { [p1, p2, np1, np2] }
+
+    before do
+      allow(CaseDistributionLever).to receive(:nonsscavlj_number_of_appeals_to_move).and_return(2)
+    end
+
+    context "a single appeal from each of 2 non ssc avljs gets moved" do
+      let(:moved_appeals) { [p1, np1] }
+
       it "returns hash object with correct attributes that match the expected values" do
+        returned_filtered_appeals_info = job.send(:filter_appeals, appeals, moved_appeals)
+        expected_returned_object = {
+          priority_appeals_count: 1,
+          non_priority_appeals_count: 1,
+          remaining_priority_appeals_count: 1,
+          remaining_non_priority_appeals_count: 1,
+          grouped_by_avlj: [non_ssc_avlj1.vacols_staff.sattyid, non_ssc_avlj2.vacols_staff.sattyid]
+        }
+        expect(returned_filtered_appeals_info).to eq(expected_returned_object)
       end
     end
 
-    context "2 priority and 2 non-priority legacy appeals tied to non-ssc avljs exist" do
-      let moved_appeals= [[p1, p2],[np1, np2]]
+    context "all appeals from each of 2 non ssc avljs gets moved" do
+      let(:moved_appeals) { [p1, p2, np1, np2] }
+
       it "returns hash object with correct attributes that match the expected values" do
+        returned_filtered_appeals_info = job.send(:filter_appeals, appeals, moved_appeals)
+        expected_returned_object = {
+          priority_appeals_count: 2,
+          non_priority_appeals_count: 2,
+          remaining_priority_appeals_count: 0,
+          remaining_non_priority_appeals_count: 0,
+          grouped_by_avlj: [non_ssc_avlj1.vacols_staff.sattyid, non_ssc_avlj2.vacols_staff.sattyid]
+        }
+        expect(returned_filtered_appeals_info).to eq(expected_returned_object)
       end
     end
 
-    context "2 priority and 2 non-priority legacy appeals tied to non-ssc avljs exist" do
-      let moved_appeals= [[],[]]
+    context "no appeals are moved" do
+      let(:moved_appeals) { [] }
+
       it "returns hash object with correct attributes that match the expected values" do
+        returned_filtered_appeals_info = job.send(:filter_appeals, appeals, moved_appeals)
+        expected_returned_object = {
+          priority_appeals_count: 0,
+          non_priority_appeals_count: 0,
+          remaining_priority_appeals_count: 2,
+          remaining_non_priority_appeals_count: 2,
+          grouped_by_avlj: []
+        }
+        expect(returned_filtered_appeals_info).to eq(expected_returned_object)
       end
     end
 
-    context "2 priority and 2 non-priority legacy appeals tied to non-ssc avljs exist" do
-      let extra_priority_appeal
-      let moved_appeals= [[p1, extra_priority_appeal],[np1]]
-      it "returns an error to be raised that states there are too many priority appeals in priority appeals moved" do
+    context "no appeals exist" do
+      let(:moved_appeals) { [] }
+      let(:appeals) { [] }
+
+      it "returns hash object with correct attributes that match the expected values" do
+        returned_filtered_appeals_info = job.send(:filter_appeals, appeals, moved_appeals)
+        expected_returned_object = {
+          priority_appeals_count: 0,
+          non_priority_appeals_count: 0,
+          remaining_priority_appeals_count: 0,
+          remaining_non_priority_appeals_count: 0,
+          grouped_by_avlj: []
+        }
+        expect(returned_filtered_appeals_info).to eq(expected_returned_object)
       end
     end
 
-    context "2 priority and 2 non-priority legacy appeals tied to non-ssc avljs exist" do
-      let extra_non_priority_appeal
-      let moved_appeals= [[p1],[np1, extra_non_priority_appeal]]
-      it "returns an error to be raised that states there are too many non-priority appeals in non-priority appeals moved" do
+    context "an extra priority appeal is moved that wasn't in the original list of appeals" do
+      let(:extra_priority_appeal) { { "bfkey" => "5", "priority" => 1, "vlj" => non_ssc_avlj1_sattyid } }
+      let(:moved_appeals) { [p1, np1, extra_priority_appeal] }
+
+      it "raises an ERROR" do
+        expected_msg = "An invalid priority appeal was detected in the list of moved appeals: #{[extra_priority_appeal]}"
+
+        expect{ job.send(:filter_appeals, appeals, moved_appeals) }.to raise_error(StandardError, expected_msg)
+      end
+    end
+
+    context "an extra non-priority appeal is moved that wasn't in the original list of appeals" do
+      let(:extra_non_priority_appeal) { { "bfkey" => "5", "priority" => 0, "vlj" => non_ssc_avlj1_sattyid } }
+      let(:moved_appeals) { [p1, np1, extra_non_priority_appeal] }
+
+      it "raises an ERROR" do
+        expected_msg = "An invalid non-priority appeal was detected in the list of moved appeals: #{[extra_non_priority_appeal]}"
+
+        expect{ job.send(:filter_appeals, appeals, moved_appeals) }.to raise_error(StandardError, expected_msg)
       end
     end
   end
 
-  describe "#create_returned_appeal_job" do #harsha
-    context "when called" do
-      it "creates a valid ReturnedAppealJob" do
-        expect ReturnedAppealJob = { started_at: Time.now stats: { message: "Job started"} }
-      end
-    end
-  end
+  # describe "#create_returned_appeal_job" do #harsha
+  #   context "when called" do
+  #     it "creates a valid ReturnedAppealJob" do
+  #       expect ReturnedAppealJob = { started_at: Time.now stats: { message: "Job started"} }
+  #     end
+  #   end
+  # end
 
-  describe "#send_job_slack_report" do #harsha
-    context "the slack_report has an array" do
-      mock slack_report = ["a", "b", "c"]
-      it "sends successfully" do
-      end
-    end
+  # describe "#send_job_slack_report" do #harsha
+  #   context "the slack_report has an array" do
+  #     mock slack_report = ["a", "b", "c"]
+  #     it "sends successfully" do
+  #     end
+  #   end
 
-    context "the slack_report has an array" do
-      mock slack_report = []
-      it "raises an error message" do
-      end
-    end
-  end
+  #   context "the slack_report has an array" do
+  #     mock slack_report = []
+  #     it "raises an error message" do
+  #     end
+  #   end
+  # end
 
   describe "#move_qualifying_appeals" do #chris
-    let staff1 = VACOLS::Staff
-    let staff2 = VACOLS::Staff
-    mock non_ssc_avljs() = [staff1, staff2]
-    let staff1_p_appeals = [s1_p_appeal1, s1_p_appeal2] with bfd19 = 2.days.ago
-    let staff1_np_appeals = [s1_np_appeal1, s1_np_appeal2] with bfd19 = 10.days.ago
-    let staff2_p_appeals = [s2_p_appeal1, s2_p_appeal2] with bfd19 = 2.days.ago
-    let staff2_np_appeals = [s2_np_appeal1, s2_np_appeal2]  with bfd19 = 10.days.ago
-    let appeals = all of the above appeals
+    let(:job) { described_class.new }
+    let(:non_ssc_avlj1) { create_non_ssc_avlj("NONSSCAN1", "NonScc User1") }
+    let(:non_ssc_avlj2) { create_non_ssc_avlj("NONSSCAN2", "NonScc User2") }
+    let(:non_ssc_avlj1_sattyid) { non_ssc_avlj1.vacols_staff.sattyid }
+    let(:non_ssc_avlj2_sattyid) { non_ssc_avlj2.vacols_staff.sattyid }
+
+    let(:s1_p_appeal1) { { "bfkey" => "1", "priority" => 1, "vlj" => non_ssc_avlj1_sattyid, "bfd19" => 2.days.ago } }
+    let(:s1_p_appeal2) { { "bfkey" => "2", "priority" => 1, "vlj" => non_ssc_avlj1_sattyid, "bfd19" => 2.days.ago } }
+    let(:s1_np_appeal1) { { "bfkey" => "3", "priority" => 0, "vlj" => non_ssc_avlj1_sattyid, "bfd19" => 10.days.ago } }
+    let(:s1_np_appeal2) { { "bfkey" => "4", "priority" => 0, "vlj" => non_ssc_avlj1_sattyid, "bfd19" => 10.days.ago } }
+
+    let(:s2_p_appeal1) { { "bfkey" => "5", "priority" => 1, "vlj" => non_ssc_avlj2_sattyid, "bfd19" => 2.days.ago } }
+    let(:s2_p_appeal2) { { "bfkey" => "6", "priority" => 1, "vlj" => non_ssc_avlj2_sattyid, "bfd19" => 2.days.ago } }
+    let(:s2_np_appeal1) { { "bfkey" => "7", "priority" => 0, "vlj" => non_ssc_avlj2_sattyid, "bfd19" => 10.days.ago } }
+    let(:s2_np_appeal2) { { "bfkey" => "8", "priority" => 0, "vlj" => non_ssc_avlj2_sattyid, "bfd19" => 10.days.ago } }
+
+    let(:staff1_p_appeals) {[s1_p_appeal1, s1_p_appeal2] }
+    let(:staff1_np_appeals) {[s1_np_appeal1, s1_np_appeal2] }
+    let(:staff2_p_appeals) {[s2_p_appeal1, s2_p_appeal2] }
+    let(:staff2_np_appeals) {[s2_np_appeal1, s2_np_appeal2]  }
+    let(:appeals) {
+      [
+        s1_p_appeal1,
+        s1_p_appeal2,
+        s1_np_appeal1,
+        s1_np_appeal2,
+        s2_p_appeal1,
+        s2_p_appeal2,
+        s2_np_appeal1,
+        s2_np_appeal2
+        ]
+      }
+
+    before do
+      allow(CaseDistributionLever).to receive(:nonsscavlj_number_of_appeals_to_move).and_return(2)
+      allow(VACOLS::Case).to receive(:batch_update_vacols_location)
+    end
 
     context "limit is set to 2 per non ssc avlj" do
-      mock CaseDistributionLever.nonsscavlj_number_of_appeals_to_move = 2
-      it "moves the priority appeals to 'BFCURLOC' = '63', BFDLOOUT is updated, and returns those appeals" do
-        moved_appeals = [s1_p_appeal1, s1_p_appeal2, s2_p_appeal1, s2_p_appeal2]
-        non_moved_appeals = [s1_np_appeal1, s1_np_appeal2, s2_np_appeal1, s2_np_appeal2]
+      it "moves the 2 priority appeals per non ssc avlj" do
+        expected_moved_appeals = [s1_p_appeal1, s1_p_appeal2, s2_p_appeal1, s2_p_appeal2]
+        expected_moved_appeal_bf_keys = expected_moved_appeals.map { |m_appeal| m_appeal["bfkey"] }
+        expected_non_moved_appeals = [s1_np_appeal1, s1_np_appeal2, s2_np_appeal1, s2_np_appeal2]
+
+        moved_appeals = job.send(:move_qualifying_appeals, appeals)
+
+        expect(moved_appeals).to match_array(expected_moved_appeals)
+        expect(VACOLS::Case).to have_received(:batch_update_vacols_location).with("63", match_array(expected_moved_appeal_bf_keys))
       end
     end
 
     context "limit is set to 1 per non ssc avlj" do
-      mock CaseDistributionLever.nonsscavlj_number_of_appeals_to_move = 1
-      it "moves 1 priority appeals from each nonssc avlj to 'BFCURLOC' = '63', BFDLOOUT is updated, and returns those appeals" do
-        moved_appeals = [s1_p_appeal1 || s1_p_appeal2, s2_p_appeal1 || s2_p_appeal2]
-        non_moved_appeals = [s1_p_appeal1 || s1_p_appeal2, s1_np_appeal1, s1_np_appeal2, s2_p_appeal1 || s2_p_appeal2, s2_np_appeal1, s2_np_appeal2]
+
+      before do
+        allow(CaseDistributionLever).to receive(:nonsscavlj_number_of_appeals_to_move).and_return(1)
+      end
+
+      it "moves the oldest priority appeals per non ssc avlj" do
+        s1_p_appeal1.update("bfd19" => 15.days.ago)
+        s1_p_appeal2.update("bfd19" => 20.days.ago)
+        s2_p_appeal1.update("bfd19" => 80.days.ago)
+        s2_p_appeal2.update("bfd19" => 40.days.ago)
+
+        expected_moved_appeals = [s1_p_appeal2, s2_p_appeal1]
+        expected_moved_appeal_bf_keys = expected_moved_appeals.map { |m_appeal| m_appeal["bfkey"] }
+        expected_non_moved_appeals = [s1_p_appeal1, s1_np_appeal1, s1_np_appeal2, s2_p_appeal2, s2_np_appeal1, s2_np_appeal2]
+
+        moved_appeals = job.send(:move_qualifying_appeals, appeals)
+        expect(moved_appeals).to match_array(expected_moved_appeals)
+        expect(VACOLS::Case).to have_received(:batch_update_vacols_location).with("63", match_array(expected_moved_appeal_bf_keys))
       end
     end
 
     context "limit is set to 10 per non ssc avlj" do
-      mock CaseDistributionLever.nonsscavlj_number_of_appeals_to_move = 10
-      it "moves all appeals to 'BFCURLOC' = '63', BFDLOOUT is updated, and returns those appeals" do
-        moved_appeals = [all appeals]
-        non_moved_appeals = []
+      before do
+        allow(CaseDistributionLever).to receive(:nonsscavlj_number_of_appeals_to_move).and_return(10)
+      end
+
+      it "moves all appeals" do
+        expected_moved_appeals = appeals
+        expected_moved_appeal_bf_keys = expected_moved_appeals.map { |m_appeal| m_appeal["bfkey"] }
+        expected_non_moved_appeals = []
+
+        moved_appeals = job.send(:move_qualifying_appeals, appeals)
+        expect(moved_appeals).to match_array(expected_moved_appeals)
+        expect(VACOLS::Case).to have_received(:batch_update_vacols_location).with("63", match_array(expected_moved_appeal_bf_keys))
       end
     end
 
     context "there are no non_ssc_avljs" do
-      mock non_ssc_avljs() = []
-      mock CaseDistributionLever.nonsscavlj_number_of_appeals_to_move = 10
-      it "moves no appeals and returns and eempty array and VACOLS::Case.batch_update_vacols_location does not run doesn't run" do
-        moved_appeals = [all appeal]
-        non_moved_appeals = []
+      before do
+        allow(CaseDistributionLever).to receive(:nonsscavlj_number_of_appeals_to_move).and_return(10)
+        allow(job).to receive(:non_ssc_avljs).and_return([])
+      end
+
+      it "returns and empty array and VACOLS::Case.batch_update_vacols_location does not run doesn't run" do
+        expected_moved_appeals = []
+        expected_non_moved_appeals = appeals
+
+        moved_appeals = job.send(:move_qualifying_appeals, appeals)
+        expect(moved_appeals).to match_array(expected_moved_appeals)
+        expect(VACOLS::Case).to_not have_received(:batch_update_vacols_location)
       end
     end
 
     context "there are no appeals" do
-      let appeals = []
-      mock CaseDistributionLever.nonsscavlj_number_of_appeals_to_move = 10
-      it "moves no appeals and returns an empty array and VACOLS::Case.batch_update_vacols_location does not run doesn't run" do
-        moved_appeals = [ ]
-        non_moved_appeals = []
+      it "returns an empty array and VACOLS::Case.batch_update_vacols_location does not run doesn't run" do
+        expected_moved_appeals = []
+        expected_non_moved_appeals = appeals
+
+        moved_appeals = job.send(:move_qualifying_appeals, [])
+        expect(moved_appeals).to match_array(expected_moved_appeals)
+        expect(VACOLS::Case).to_not have_received(:batch_update_vacols_location)
       end
     end
 
-    context "the lever is set with a value below 1" do
-      mock CaseDistributionLever.nonsscavlj_number_of_appeals_to_move = 0
-      it "no appeals are moved and it raises an error message and VACOLS::Case.batch_update_vacols_location does not run doesn't run" do
-        moved_appeals = []
-        non_moved_appeals = []
+    context "the lever is set with a value 0" do
+      before do
+        allow(CaseDistributionLever).to receive(:nonsscavlj_number_of_appeals_to_move).and_return(0)
+      end
+
+      it "returns an empty array and VACOLS::Case.batch_update_vacols_location does not run doesn't run" do
+        expected_moved_appeals = []
+
+        moved_appeals = job.send(:move_qualifying_appeals, appeals)
+        expect(moved_appeals).to match_array(expected_moved_appeals)
+        expect(VACOLS::Case).to_not have_received(:batch_update_vacols_location)
+      end
+    end
+
+    context "the lever is set with a value below 0" do
+      before do
+        allow(CaseDistributionLever).to receive(:nonsscavlj_number_of_appeals_to_move).and_return(-1)
+      end
+
+      it "it raises an ERROR message and VACOLS::Case.batch_update_vacols_location does not run doesn't run" do
+        expected_msg = "CaseDistributionLever.nonsscavlj_number_of_appeals_to_move set below 0"
+        expected_moved_appeals = []
+
+        expect{ job.send(:move_qualifying_appeals, appeals) }.to raise_error(StandardError, expected_msg)
+        expect(VACOLS::Case).to_not have_received(:batch_update_vacols_location)
       end
     end
   end
 
-  describe "#get_tied_appeal_bfkeys" do #harsha
-    let appeal_1 = {priority: 0, bfd19: 10.days.ago, bfkey: "1"}
-    let appeal_2 = {priority: 1, bfd19: 8.days.ago, bfkey: "2"}
-    let appeal_3 = {priority: 0, bfd19: 6.days.ago, bfkey: "3"}
-    let appeal_4 = {priority: 1, bfd19: 4.days.ago, bfkey: "4"}
+  # describe "#get_tied_appeal_bfkeys" do #harsha
+  #   let appeal_1 = {priority: 0, bfd19: 10.days.ago, bfkey: "1"}
+  #   let appeal_2 = {priority: 1, bfd19: 8.days.ago, bfkey: "2"}
+  #   let appeal_3 = {priority: 0, bfd19: 6.days.ago, bfkey: "3"}
+  #   let appeal_4 = {priority: 1, bfd19: 4.days.ago, bfkey: "4"}
 
-    context "with a mix of priority and non-priority appeals" do
-      let tied_appeals = [appeal_1, appeal_2, appeal_3, appeal_4]
-      it "returns the keys sorted by priority and then bfd19" do
-        returned_key_array = ["2", "4", "1", "3"]
-      end
-    end
-  end
+  #   context "with a mix of priority and non-priority appeals" do
+  #     let tied_appeals = [appeal_1, appeal_2, appeal_3, appeal_4]
+  #     it "returns the keys sorted by priority and then bfd19" do
+  #       returned_key_array = ["2", "4", "1", "3"]
+  #     end
+  #   end
+  # end
 
-  describe "#update_qualifying_appeals_bfkeys" do #krishna
-    context "maximum moved appeals per non ssc avlj is 2 and a starting bfkey list of 2 and a tied list of 4 keys" do
-      mock CaseDistributionLever.nonsscavlj_number_of_appeals_to_move = 2
-      let tied_appeals_bfkeys = ["3", "4", "5", "6"]
-      let qualifying_appeals_bfkeys = ["1", "2"]
-      it "adds 2 keys to qualifying bfkey list" do
-        expected_qualifying_appeals_bfkeys = ["1", "2", "3", "4"]
-      end
-    end
+  # describe "#update_qualifying_appeals_bfkeys" do #krishna
+  #   context "maximum moved appeals per non ssc avlj is 2 and a starting bfkey list of 2 and a tied list of 4 keys" do
+  #     mock CaseDistributionLever.nonsscavlj_number_of_appeals_to_move = 2
+  #     let tied_appeals_bfkeys = ["3", "4", "5", "6"]
+  #     let qualifying_appeals_bfkeys = ["1", "2"]
+  #     it "adds 2 keys to qualifying bfkey list" do
+  #       expected_qualifying_appeals_bfkeys = ["1", "2", "3", "4"]
+  #     end
+  #   end
 
-    context "maximum moved appeals per non ssc avlj is 4 and a starting bfkey list of 2 and a tied list of 4 keys" do
-      mock CaseDistributionLever.nonsscavlj_number_of_appeals_to_move = 4
-      let tied_appeals_bfkeys = ["3", "4", "5", "6"]
-      let qualifying_appeals_bfkeys = ["1", "2"]
-      it "adds all tied keys to qualifying bfkey list" do
-        expected_qualifying_appeals_bfkeys = ["1", "2", "3", "4", "5", "6"]
-      end
-    end
+  #   context "maximum moved appeals per non ssc avlj is 4 and a starting bfkey list of 2 and a tied list of 4 keys" do
+  #     mock CaseDistributionLever.nonsscavlj_number_of_appeals_to_move = 4
+  #     let tied_appeals_bfkeys = ["3", "4", "5", "6"]
+  #     let qualifying_appeals_bfkeys = ["1", "2"]
+  #     it "adds all tied keys to qualifying bfkey list" do
+  #       expected_qualifying_appeals_bfkeys = ["1", "2", "3", "4", "5", "6"]
+  #     end
+  #   end
 
-    context "maximum moved appeals per non ssc avlj is higher than the length of the tied list and a starting bfkey list of 2 and a tied list of 4 keys" do
-      mock CaseDistributionLever.nonsscavlj_number_of_appeals_to_move = 10
-      let tied_appeals_bfkeys = ["3", "4", "5", "6"]
-      let qualifying_appeals_bfkeys = ["1", "2"]
-      it "adds all tied keys to qualifying bfkey list" do
-        expected_qualifying_appeals_bfkeys = ["1", "2", "3", "4", "5", "6"]
-      end
-    end
+  #   context "maximum moved appeals per non ssc avlj is higher than the length of the tied list and a starting bfkey list of 2 and a tied list of 4 keys" do
+  #     mock CaseDistributionLever.nonsscavlj_number_of_appeals_to_move = 10
+  #     let tied_appeals_bfkeys = ["3", "4", "5", "6"]
+  #     let qualifying_appeals_bfkeys = ["1", "2"]
+  #     it "adds all tied keys to qualifying bfkey list" do
+  #       expected_qualifying_appeals_bfkeys = ["1", "2", "3", "4", "5", "6"]
+  #     end
+  #   end
 
-    context "maximum moved appeals per non ssc avlj is 2 and a starting bfkey list is empty and a tied list of 4 keys" do
-      mock CaseDistributionLever.nonsscavlj_number_of_appeals_to_move = 2
-      let tied_appeals_bfkeys = ["3", "4", "5", "6"]
-      let qualifying_appeals_bfkeys = []
-      it "adds 2 tied keys to qualifying bfkey list" do
-        expected_qualifying_appeals_bfkeys = ["3", "4"]
-      end
-    end
+  #   context "maximum moved appeals per non ssc avlj is 2 and a starting bfkey list is empty and a tied list of 4 keys" do
+  #     mock CaseDistributionLever.nonsscavlj_number_of_appeals_to_move = 2
+  #     let tied_appeals_bfkeys = ["3", "4", "5", "6"]
+  #     let qualifying_appeals_bfkeys = []
+  #     it "adds 2 tied keys to qualifying bfkey list" do
+  #       expected_qualifying_appeals_bfkeys = ["3", "4"]
+  #     end
+  #   end
 
-    context "maximum moved appeals per non ssc avlj is 2 and a starting bfkey list of 2 keys and a tied list is empty" do
-      mock CaseDistributionLever.nonsscavlj_number_of_appeals_to_move = 2
-      let tied_appeals_bfkeys = []
-      let qualifying_appeals_bfkeys = ["1", "2"]
-      it "adds no tied keys to qualifying bfkey list" do
-        expected_qualifying_appeals_bfkeys = ["1", "2"]
-      end
-    end
+  #   context "maximum moved appeals per non ssc avlj is 2 and a starting bfkey list of 2 keys and a tied list is empty" do
+  #     mock CaseDistributionLever.nonsscavlj_number_of_appeals_to_move = 2
+  #     let tied_appeals_bfkeys = []
+  #     let qualifying_appeals_bfkeys = ["1", "2"]
+  #     it "adds no tied keys to qualifying bfkey list" do
+  #       expected_qualifying_appeals_bfkeys = ["1", "2"]
+  #     end
+  #   end
 
-    context "maximum moved appeals per non ssc avlj is 2 and a starting bfkey list is empty and a tied list is empty" do
-      mock CaseDistributionLever.nonsscavlj_number_of_appeals_to_move = 2
-      let tied_appeals_bfkeys = []
-      let qualifying_appeals_bfkeys = []
-      it "adds no tied keys to qualifying bfkey list and list is empty" do
-        expected_qualifying_appeals_bfkeys = []
-      end
-    end
+  #   context "maximum moved appeals per non ssc avlj is 2 and a starting bfkey list is empty and a tied list is empty" do
+  #     mock CaseDistributionLever.nonsscavlj_number_of_appeals_to_move = 2
+  #     let tied_appeals_bfkeys = []
+  #     let qualifying_appeals_bfkeys = []
+  #     it "adds no tied keys to qualifying bfkey list and list is empty" do
+  #       expected_qualifying_appeals_bfkeys = []
+  #     end
+  #   end
 
-    context "maximum moved appeals per non ssc avlj is 2 and a starting bfkey list is empty and a tied list is empty" do
-      mock CaseDistributionLever.nonsscavlj_number_of_appeals_to_move = 0
-      let tied_appeals_bfkeys = ["3", "4", "5", "6"]
-      let qualifying_appeals_bfkeys = ["1", "2"]
-      it "raises an error saying the lever has been set incorrectly" do
-        expected_qualifying_appeals_bfkeys = ["1", "2"]
-      end
-    end
+  #   context "maximum moved appeals per non ssc avlj is 2 and a starting bfkey list is empty and a tied list is empty" do
+  #     mock CaseDistributionLever.nonsscavlj_number_of_appeals_to_move = 0
+  #     let tied_appeals_bfkeys = ["3", "4", "5", "6"]
+  #     let qualifying_appeals_bfkeys = ["1", "2"]
+  #     it "raises an error saying the lever has been set incorrectly" do
+  #       expected_qualifying_appeals_bfkeys = ["1", "2"]
+  #     end
+  #   end
+  # end
+
+  def create_non_ssc_avlj(css_id, full_name)
+    User.find_by_css_id(css_id) ||
+      create(:user, :non_ssc_avlj_user, css_id: css_id, full_name: full_name)
   end
 end
