@@ -227,9 +227,7 @@ exports[`EmailConfirmationModal ChangeHearingTime sub-component Displays ReadOnl
 
 exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays appellant email error when present 1`] = `
 <DocumentFragment>
-  <div
-    data-testid="datetime-testid"
-  >
+  <div>
     <strong>
       Hearing Date:
     </strong>
@@ -379,9 +377,7 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays input for
 
 exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays representative email error when present 1`] = `
 <DocumentFragment>
-  <div
-    data-testid="datetime-testid"
-  >
+  <div>
     <strong>
       Hearing Date:
     </strong>
@@ -458,9 +454,7 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays represent
 
 exports[`EmailConfirmationModal DateTime sub-component Displays divider for formerly Central hearings 1`] = `
 <DocumentFragment>
-  <div
-    data-testid="datetime-testid"
-  >
+  <div>
     <strong>
       Hearing Date:
     </strong>
@@ -667,9 +661,7 @@ exports[`EmailConfirmationModal Displays ChangeFromVirtual component when type i
               </li>
             </ul>
             <p />
-            <div
-              data-testid="datetime-testid"
-            >
+            <div>
               <strong>
                 Hearing Date:
               </strong>
@@ -833,9 +825,7 @@ exports[`EmailConfirmationModal Displays ChangeHearingTime component when type i
             <p>
               Email notifications will be sent to the Veteran, POA / Representative, and VLJ.
             </p>
-            <div
-              data-testid="datetime-testid"
-            >
+            <div>
               <strong>
                 Hearing Date:
               </strong>
@@ -999,9 +989,7 @@ exports[`EmailConfirmationModal Matches snapshot with default props 1`] = `
             <p>
               Email notifications will be sent to the Veteran, POA / Representative, and VLJ.
             </p>
-            <div
-              data-testid="datetime-testid"
-            >
+            <div>
               <strong>
                 Hearing Date:
               </strong>
