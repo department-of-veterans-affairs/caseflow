@@ -3,26 +3,35 @@ import React from 'react';
 
 import { ContentSection } from '../../../components/ContentSection';
 import TranscriptionDetailsInputs from './TranscriptionDetailsInputs';
+import TranscriptionDetailsWebex from './TranscriptionDetailsWebex';
 import TranscriptionProblemInputs from './TranscriptionProblemInputs';
 import TranscriptionRequestInputs from './TranscriptionRequestInputs';
 import TranscriptionFilesTable from './TranscriptionFilesTable';
 import { genericRow } from './style';
 
 export const TranscriptionFormSection = (
-  { hearing, transcription, readOnly, update, isLegacy }
+  { hearing, transcription, readOnly, update, isLegacy, isWebex }
 ) => (
   <ContentSection header="Transcription Details">
 
     {/* If Legacy Hearing and conference provider Webex, only render Transcription Files table */}
     {!isLegacy && (
       <>
-        <TranscriptionDetailsInputs
+        {(isWebex && <>
+          <div className="cf-help-divider" />
+          <TranscriptionDetailsWebex
+            title="Transcription"
+            transcription={transcription}
+            update={(values) => update('transcription', values)}
+            readOnly={readOnly}
+            transcriptionContractors={hearing.transcriptionContractors}
+          /></>) || <TranscriptionDetailsInputs
           title="Transcription Details"
           transcription={transcription}
           update={(values) => update('transcription', values)}
           readOnly={readOnly}
           transcriptionContractors={hearing.transcriptionContractors}
-        />
+        />}
         <div className="cf-help-divider" />
 
         <h3>Transcription Problem</h3>
@@ -60,5 +69,6 @@ TranscriptionFormSection.propTypes = {
   hearing: PropTypes.object,
   readOnly: PropTypes.bool,
   transcription: PropTypes.object,
-  isLegacy: PropTypes.bool
+  isLegacy: PropTypes.bool,
+  isWebex: PropTypes.bool
 };
