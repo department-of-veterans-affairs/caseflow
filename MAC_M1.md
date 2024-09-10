@@ -194,7 +194,7 @@ Running Caseflow
 5. Start Vacols UTM VM (if not already running)
 6. run `make up-m1` to create the docker containers and volumes
 7. run `make reset` to (re)create and seed the database; this takes a while (~45 minutes)
-	  1. if you get a database not found error, run `bundle exec rake db:drop db:create db:schema:load`, and then run `make reset` again
+	  1. if you get a database not found error, run `bundle exec rake db:drop:primary db:create:primary db:schema:load:primary`, and then run `make reset` again
 8. open a second terminal tab/window
 9. run `make run-backend-m1` in one tab, and `make run-frontend` in the other
 	  1. the backend should launch on `localhost:3000`. go there in your browser to access Caseflow
@@ -566,7 +566,7 @@ The following steps are an alternative to step 7 of the Running Caseflow section
     * d. `make reset`
         * i. Resets caseflow and ETL database schemas, seeds databases, and enables feature flags
         * **If `make reset` returns database not found error:
-            * a. Run command `bundle exec rake db:drop`
+            * a. Run command `bundle exec rake db:drop:primary`
             * b. Download caseflow-db-backup.gz (not able to share this download via policy, ask in the slack channel)
             * c. Enter terminal, navigate to ~/Downloads
             * e. Run command
