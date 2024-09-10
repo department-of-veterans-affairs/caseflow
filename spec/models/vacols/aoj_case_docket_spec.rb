@@ -783,11 +783,13 @@ describe VACOLS::AojCaseDocket, :all_dbs do
 
         # {FOR LEVER BEING A VALUE:}
         aoj_lever.update!(value: 14)
+        CaseDistributionLever.clear_distribution_lever_cache
         expect(VACOLS::AojCaseDocket.distribute_nonpriority_appeals(judge, "any", 100, nil, false, true).map { |c| c["bfkey"] }.sort)
           .to match_array([c1, c4, c10, c11, c12, c13, c14, c15, c16, c17, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30]
           .map { |c| c["bfkey"].to_i.to_s }.sort)
         # {FOR LEVER BEING INFINITE:}
         aoj_lever.update!(value: "infinite")
+        CaseDistributionLever.clear_distribution_lever_cache
         expect(
           VACOLS::AojCaseDocket.distribute_nonpriority_appeals(judge, "any", 100, nil, false, true).map { |c| c["bfkey"] }.sort
         )
@@ -799,6 +801,7 @@ describe VACOLS::AojCaseDocket, :all_dbs do
           .to eq(17)
         # {FOR LEVER BEING OMIT:}
         aoj_lever.update!(value: "omit")
+        CaseDistributionLever.clear_distribution_lever_cache
         expect(VACOLS::AojCaseDocket.distribute_nonpriority_appeals(judge, "any", 100, nil, false, true).map { |c| c["bfkey"] }.sort)
           .to match_array([
             c1, c2, c3, c4, c5, c6, c10, c11, c12, c13, c14, c15, c16, c17, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30
@@ -942,11 +945,13 @@ describe VACOLS::AojCaseDocket, :all_dbs do
 
         # {FOR LEVER BEING A VALUE:}
         aoj_cavc_lever.update!(value: 14)
+        CaseDistributionLever.clear_distribution_lever_cache
         expect(VACOLS::AojCaseDocket.distribute_priority_appeals(judge, "any", 100, true).map { |c| c["bfkey"] }.sort)
           .to match_array([c1, c4, c10, c11, c12, c13, c14, c15, c16, c17, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30]
           .map { |c| c["bfkey"].to_i.to_s }.sort)
         # {FOR LEVER BEING INFINITE:}
         aoj_cavc_lever.update!(value: "infinite")
+        CaseDistributionLever.clear_distribution_lever_cache
         expect(
           VACOLS::AojCaseDocket.distribute_priority_appeals(judge, "any", 100, true).map { |c| c["bfkey"] }.sort
         )
@@ -954,6 +959,7 @@ describe VACOLS::AojCaseDocket, :all_dbs do
             .map { |c| c["bfkey"].to_i.to_s }.sort)
         # {FOR LEVER BEING OMIT:}
         aoj_cavc_lever.update!(value: "omit")
+        CaseDistributionLever.clear_distribution_lever_cache
         expect(VACOLS::AojCaseDocket.distribute_priority_appeals(judge, "any", 100, true).map { |c| c["bfkey"] }.sort)
           .to match_array([
             c1, c2, c3, c4, c5, c6, c10, c11, c12, c13, c14, c15, c16, c17, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30
@@ -1063,6 +1069,7 @@ describe VACOLS::AojCaseDocket, :all_dbs do
 
         # {FOR LEVER HAVING A VALUE:}
         aoj_aod_lever.update!(value: 14)
+        CaseDistributionLever.clear_distribution_lever_cache
         expect(VACOLS::AojCaseDocket.distribute_priority_appeals(judge, "any", 100, true).map { |c| c["bfkey"] }.sort)
           .to match_array([
             ca1, ca4, ca10, ca11, ca12, ca13, ca14, ca15, ca16, ca17, ca21, ca22, ca23, ca24, ca25,
@@ -1071,11 +1078,13 @@ describe VACOLS::AojCaseDocket, :all_dbs do
             .map { |c| c["bfkey"].to_i.to_s }.sort)
         # {FOR LEVER BEING INFINITE:}
         aoj_aod_lever.update!(value: "infinite")
+        CaseDistributionLever.clear_distribution_lever_cache
         expect(VACOLS::AojCaseDocket.distribute_priority_appeals(judge, "any", 100, true).map { |c| c["bfkey"] }.sort)
           .to match_array([ca11, ca12, ca13, ca14, ca15, ca16, ca17, ca21, ca22, ca23, ca24, ca25, ca26, ca27, ca28, ca29, ca30]
             .map { |c| c["bfkey"].to_i.to_s }.sort)
         # {FOR LEVER BEING OMIT:}
         aoj_aod_lever.update!(value: "omit")
+        CaseDistributionLever.clear_distribution_lever_cache
         expect(VACOLS::AojCaseDocket.distribute_priority_appeals(judge, "any", 100, true).map { |c| c["bfkey"] }.sort)
           .to match_array([
             ca1, ca2, ca3, ca4, ca5, ca6, ca10, ca11, ca12, ca13, ca14, ca15, ca16, ca17, ca21, ca22,

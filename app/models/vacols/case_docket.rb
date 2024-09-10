@@ -210,7 +210,6 @@ class VACOLS::CaseDocket < VACOLS::Record
     left join STAFF on APPEALS.VLJ = STAFF.SATTYID
     order by BFD19
   "
-
   # rubocop:disable Metrics/MethodLength
   def self.counts_by_priority_and_readiness
     query = <<-SQL

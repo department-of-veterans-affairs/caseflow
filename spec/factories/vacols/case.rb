@@ -15,6 +15,7 @@ FactoryBot.define do
     bfcorlid { "#{generate :veteran_file_number}S" }
 
     correspondent { association :correspondent }
+    correspondent { association :correspondent }
 
     transient do
       docket_number { "150000#{bfkey}" }
