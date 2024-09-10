@@ -110,6 +110,30 @@ describe ChangeHistoryEventSerializer do
           eventUser: "L. Roth",
           taskID: vha_task.id
         }
+      },
+      {
+        id: expected_uuid,
+        type: :change_history_event,
+        attributes: {
+          eventType: :in_progress,
+          eventUser: "System",
+          claimType: "Higher-Level Review",
+          readableEventType: "Claim status - In progress",
+          claimantName: events[2].claimant_name,
+          details: {
+            benefitType: "vha",
+            issueType: nil,
+            issueDescription: nil,
+            decisionDate: nil,
+            disposition: nil,
+            decisionDescription: nil,
+            dispositionDate: nil,
+            withdrawalRequestDate: nil
+          },
+          modificationRequestDetails: modificationRequestDetailsObject,
+          eventDate: events[2].event_date,
+          taskID: vha_task.id
+        }
       }
     ]
   end
