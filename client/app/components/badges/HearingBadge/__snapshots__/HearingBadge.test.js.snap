@@ -12,17 +12,17 @@ Object {
           aria-describedby="badge-undefined"
           aria-label="Example Disposition Text"
           currentitem="false"
-          data-css-1ffdp9a=""
           data-event="focus mouseenter"
           data-event-off="mouseleave keydown"
           data-for="badge-undefined"
           data-tip="true"
+          style="display: inline-block; color: rgb(255, 255, 255); border-radius: .5rem; line-height: 2rem; margin-left: 1rem; padding: 0px 1rem; background: rgb(46, 133, 64);"
           tabindex="0"
         >
           H
         </span>
         <span
-          data-css-12sli69=""
+          style="display: inline-block;"
         >
           <div
             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -110,7 +110,7 @@ Object {
             <div>
               This case has a hearing associated with it.
               <ul
-                data-css-onwxdl=""
+                style="list-style: none; text-align: left; margin-bottom: 0px; padding: 0px;"
               >
                 <li>
                   Judge: 
@@ -153,17 +153,17 @@ Object {
         aria-describedby="badge-undefined"
         aria-label="Example Disposition Text"
         currentitem="false"
-        data-css-1ffdp9a=""
         data-event="focus mouseenter"
         data-event-off="mouseleave keydown"
         data-for="badge-undefined"
         data-tip="true"
+        style="display: inline-block; color: rgb(255, 255, 255); border-radius: .5rem; line-height: 2rem; margin-left: 1rem; padding: 0px 1rem; background: rgb(46, 133, 64);"
         tabindex="0"
       >
         H
       </span>
       <span
-        data-css-12sli69=""
+        style="display: inline-block;"
       >
         <div
           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -251,7 +251,7 @@ Object {
           <div>
             This case has a hearing associated with it.
             <ul
-              data-css-onwxdl=""
+              style="list-style: none; text-align: left; margin-bottom: 0px; padding: 0px;"
             >
               <li>
                 Judge: 
