@@ -9,8 +9,10 @@ import CommentIcon from './CommentIcon';
 import { keyOfAnnotation, pageNumberOfPageIndex, getPageCoordinatesOfMouseEvent } from './utils';
 import { handleSelectCommentIcon } from '../reader/PdfViewer/PdfViewerActions';
 
-import { placeAnnotation, showPlaceAnnotationIcon,
-  requestMoveAnnotation
+import {
+  placeAnnotation,
+  showPlaceAnnotationIcon,
+  requestMoveAnnotation,
 } from '../reader/AnnotationLayer/AnnotationActions';
 
 import { CATEGORIES } from '../reader/analytics';
@@ -21,18 +23,18 @@ const DIV_STYLING = {
   width: '100%',
   height: '100%',
   zIndex: 10,
-  position: 'relative'
+  position: 'relative',
 };
 
 const SELECTION_STYLING = css({
   '> div': {
     '::selection': {
-      background: COLORS.COLOR_COOL_BLUE_LIGHTER
+      background: COLORS.COLOR_COOL_BLUE_LIGHTER,
     },
     '::-moz-selection': {
-      background: COLORS.COLOR_COOL_BLUE_LIGHTER
-    }
-  }
+      background: COLORS.COLOR_COOL_BLUE_LIGHTER,
+    },
+  },
 });
 
 // The comment layer is a div on top of a page that draws the comment
@@ -64,7 +66,7 @@ class CommentLayer extends PureComponent {
       pageNumberOfPageIndex(this.props.pageIndex),
       {
         xPosition: x,
-        yPosition: y
+        yPosition: y,
       },
       this.props.documentId
     );
@@ -72,17 +74,18 @@ class CommentLayer extends PureComponent {
 
   getPlacingAnnotation = () => {
     if (this.props.placingAnnotationIconPageCoords && this.props.isPlacingAnnotation) {
-      return [{
-        temporaryId: 'placing-annotation-icon',
-        page: pageNumberOfPageIndex(this.props.placingAnnotationIconPageCoords.pageIndex),
-        isPlacingAnnotationIcon: true,
-        ..._.pick(this.props.placingAnnotationIconPageCoords, 'x', 'y')
-      }];
+      return [
+        {
+          temporaryId: 'placing-annotation-icon',
+          page: pageNumberOfPageIndex(this.props.placingAnnotationIconPageCoords.pageIndex),
+          isPlacingAnnotationIcon: true,
+          ..._.pick(this.props.placingAnnotationIconPageCoords, 'x', 'y'),
+        },
+      ];
     }
 
     return [];
-
-  }
+  };
   // Move the comment when it's dropped on a page
   // eslint-disable-next-line max-statements
   onCommentDrop = (event) => {
@@ -126,11 +129,11 @@ class CommentLayer extends PureComponent {
     const droppedAnnotation = {
       ...this.props.allAnnotations[dragAndDropData.uuid],
       ...coordinates,
-      page: pageNumberOfPageIndex(this.props.pageIndex)
+      page: pageNumberOfPageIndex(this.props.pageIndex),
     };
 
     this.props.requestMoveAnnotation(droppedAnnotation);
-  }
+  };
 
   mouseListener = (event) => {
     if (this.props.isPlacingAnnotation) {
@@ -143,25 +146,31 @@ class CommentLayer extends PureComponent {
 
       this.props.showPlaceAnnotationIcon(this.props.pageIndex, pageCoords);
     }
-  }
+  };
 
   // To specify the component as droppable, we need to preventDefault on the event.
-  onPageDragOver = (event) => event.preventDefault()
+  onPageDragOver = (event) => event.preventDefault();
 
-  getCommentLayerDivRef = (ref) => this.commentLayerDiv = ref
+  getCommentLayerDivRef = (ref) => (this.commentLayerDiv = ref);
 
-  getAnnotationsForPage = () => this.props.comments.concat(this.getPlacingAnnotation()).
-    filter((comment) => comment.page === pageNumberOfPageIndex(this.props.pageIndex))
+  getAnnotationsForPage = () =>
+    this.props.comments.
+      concat(this.getPlacingAnnotation()).
+      filter((comment) => comment.page === pageNumberOfPageIndex(this.props.pageIndex));
 
-  getCommentIcons = () => this.getAnnotationsForPage().map((comment) => <CommentIcon
-    comment={comment}
-    rotation={-this.props.rotation}
-    position={{
-      x: comment.x * this.props.scale,
-      y: comment.y * this.props.scale
-    }}
-    key={keyOfAnnotation(comment)}
-    onClick={comment.isPlacingAnnotationIcon ? _.noop : this.props.handleSelectCommentIcon} />)
+  getCommentIcons = () =>
+    this.getAnnotationsForPage().map((comment) => (
+      <CommentIcon
+        comment={comment}
+        rotation={-this.props.rotation}
+        position={{
+          x: comment.x * this.props.scale,
+          y: comment.y * this.props.scale,
+        }}
+        key={keyOfAnnotation(comment)}
+        onClick={comment.isPlacingAnnotationIcon ? _.noop : this.props.handleSelectCommentIcon}
+      />
+    ));
 
   render() {
     // Instead of redrawing the text on scales, we just do a CSS transform which is faster.
@@ -170,38 +179,39 @@ class CommentLayer extends PureComponent {
       height: `${this.props.dimensions.height}px`,
       transform: `scale(${this.props.scale})`,
       transformOrigin: 'left top',
-      opacity: 1
+      opacity: 1,
     };
 
-    return <div
-      id={`comment-layer-${this.props.pageIndex}-${this.props.file}`}
-      style={DIV_STYLING}
-      onDragOver={this.onPageDragOver}
-      onDrop={this.onCommentDrop}
-      onClick={this.onPageClick}
-      onMouseMove={this.mouseListener}
-      ref={this.getCommentLayerDivRef}>
-      {this.props.isVisible && this.getCommentIcons()}
+    return (
       <div
-        {...SELECTION_STYLING}
-        style={TEXT_LAYER_STYLING}
-        ref={this.props.getTextLayerRef}
-        className="textLayer" />
-    </div>;
+        id={`comment-layer-${this.props.pageIndex}-${this.props.file}`}
+        style={DIV_STYLING}
+        onDragOver={this.onPageDragOver}
+        onDrop={this.onCommentDrop}
+        onClick={this.onPageClick}
+        onMouseMove={this.mouseListener}
+        ref={this.getCommentLayerDivRef}
+      >
+        {this.props.isVisible && this.getCommentIcons()}
+        <div {...SELECTION_STYLING} style={TEXT_LAYER_STYLING} ref={this.props.getTextLayerRef} className="textLayer" />
+      </div>
+    );
   }
 }
 
 CommentLayer.propTypes = {
-  comments: PropTypes.arrayOf(PropTypes.shape({
-    comment: PropTypes.string,
-    uuid: PropTypes.number,
-    page: PropTypes.number,
-    x: PropTypes.number,
-    y: PropTypes.number
-  })),
+  comments: PropTypes.arrayOf(
+    PropTypes.shape({
+      comment: PropTypes.string,
+      uuid: PropTypes.number,
+      page: PropTypes.number,
+      x: PropTypes.number,
+      y: PropTypes.number,
+    })
+  ),
   dimensions: PropTypes.shape({
     width: PropTypes.number,
-    height: PropTypes.number
+    height: PropTypes.number,
   }),
   isVisible: PropTypes.bool,
   getTextLayerRef: PropTypes.func,
@@ -212,7 +222,11 @@ CommentLayer.propTypes = {
   rotation: PropTypes.number,
   pageIndex: PropTypes.number,
   file: PropTypes.string,
-  documentId: PropTypes.number
+  documentId: PropTypes.number,
+  allAnnotations: PropTypes.array,
+  showPlaceAnnotationIcon: PropTypes.func,
+  requestMoveAnnotation: PropTypes.func,
+  placeAnnotation: PropTypes.func,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -220,18 +234,22 @@ const mapStateToProps = (state, ownProps) => ({
   comments: makeGetAnnotationsByDocumentId(state)(ownProps.documentId),
   isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation,
   allAnnotations: state.annotationLayer.annotations,
-  rotation: _.get(state.documents, [ownProps.documentId, 'rotation'])
+  rotation: _.get(state.documents, [ownProps.documentId, 'rotation']),
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  ...bindActionCreators({
-    placeAnnotation,
-    handleSelectCommentIcon,
-    requestMoveAnnotation,
-    showPlaceAnnotationIcon
-  }, dispatch)
+  ...bindActionCreators(
+    {
+      placeAnnotation,
+      handleSelectCommentIcon,
+      requestMoveAnnotation,
+      showPlaceAnnotationIcon,
+    },
+    dispatch
+  ),
 });
 
 export default connect(
-  mapStateToProps, mapDispatchToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(CommentLayer);
