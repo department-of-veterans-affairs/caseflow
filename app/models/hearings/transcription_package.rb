@@ -79,7 +79,8 @@ class TranscriptionPackage < CaseflowRecord
     {
       docketNumber: hearing.docket_number,
       caseDetails: format_case_details(hearing),
-      hearingType: hearing.class.name
+      hearingType: hearing.class.name,
+      appealId: hearing.appeal.external_id
     }
   end
 end

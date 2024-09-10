@@ -94,6 +94,21 @@ RSpec.feature "Hearing Details", :all_dbs do
     end
   end
 
+  def check_virtual_hearings_links(virtual_hearing, disable_link = false)
+    # Confirm that the host hearing link details exist
+    within "#vlj-hearings-link" do
+      find("div", text: "Conference Room: #{virtual_hearing.formatted_alias_or_alias_with_host}")
+      find("div", text: "PIN: #{virtual_hearing.host_pin}")
+      ensure_link_present(virtual_hearing.host_link, disable_link)
+    end
+    # Confirm that the guest hearing link details exist
+    within "#guest-hearings-link" do
+      find("div", text: "Conference Room: #{virtual_hearing.formatted_alias_or_alias_with_host}")
+      find("div", text: "PIN: #{virtual_hearing.guest_pin}")
+      ensure_link_present(virtual_hearing.guest_link, disable_link)
+    end
+  end
+
   def check_pexip_hearings_links(link, link_alias, disable_link = false)
     # Confirm that the host hearing link details exist
     within "#vlj-hearings-link" do
