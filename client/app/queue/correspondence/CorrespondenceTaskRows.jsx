@@ -149,7 +149,7 @@ class CorrespondenceTaskRows extends React.PureComponent {
     const divStyles = { marginBottom: '2.4rem', marginTop: '1em' };
 
     return (
-      <React.Fragment key={`${task.uniqueId} fragment`}>
+      <React.Fragment key={`${task.uniqueId} + ${task.instructions} fragment`}>
         {task.instructions.map((text) => (
           <React.Fragment key={`${task.uniqueId} div`}>
             <div
@@ -245,7 +245,7 @@ class CorrespondenceTaskRows extends React.PureComponent {
       task.timelineTitle;
 
     return (
-      <tr key={task.uniqueId}>
+      <tr key={task.uniqueId + task.instructions}>
         <td
           {...taskTimeContainerStyling}
           className={timeline ? taskTimeTimelineContainerStyling : ''}
