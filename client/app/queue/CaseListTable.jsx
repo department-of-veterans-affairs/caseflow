@@ -15,8 +15,6 @@ import { DateString } from '../util/DateUtil';
 import { statusLabel, labelForLocation, renderAppealType, mostRecentHeldHearingForAppeal } from './utils';
 import COPY from '../../COPY';
 import Pagination from 'app/components/Pagination/Pagination';
-import { ExternalLinkIcon } from 'app/components/icons/ExternalLinkIcon';
-import { COLORS } from 'app/constants/AppConstants';
 
 class CaseListTable extends React.PureComponent {
   constructor(props) {
