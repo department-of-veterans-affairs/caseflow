@@ -9,6 +9,12 @@ describe AppealsTiedToAvljsAndVljsQuery do
     User.find_by_css_id("NONSSCTEST") ||
       create(:user, :non_ssc_avlj_user, css_id: "NONSSCTEST", full_name: avlj_name)
   end
+
+  signing_vlj_name = "Smith Cash"
+  let(:signing_vlj) do
+    User.find_by_css_id("VLJTEST") ||
+      create(:user, :vlj_user, css_id: "VLJTEST", full_name: signing_vlj_name)
+  end
   let(:veteran) { create(:veteran) }
 
   let(:correspondent) do
@@ -85,11 +91,11 @@ describe AppealsTiedToAvljsAndVljsQuery do
     end
 
     let!(:legacy_signed_non_priority_tied_to_non_ssc_avlj) do
-      create(:legacy_signed_appeal, :type_original, signing_avlj: non_ssc_avlj, assigned_avlj: non_ssc_avlj)
+      create(:legacy_signed_appeal, :type_original, signing_avlj: signing_vlj, assigned_avlj: non_ssc_avlj)
     end
 
     let!(:legacy_signed_priority_tied_to_non_ssc_avlj) do
-      create(:legacy_signed_appeal, :type_cavc_remand, signing_avlj: non_ssc_avlj, assigned_avlj: non_ssc_avlj)
+      create(:legacy_signed_appeal, :type_cavc_remand, signing_avlj: signing_vlj, assigned_avlj: non_ssc_avlj)
     end
 
     let!(:legacy_original_appeal_with_hearing) do
@@ -109,7 +115,7 @@ describe AppealsTiedToAvljsAndVljsQuery do
 
   context "Test the CSV generation" do
     let!(:legacy_signed_appeal_with_attributes) do
-      create(:legacy_signed_appeal, :type_original, signing_avlj: non_ssc_avlj, assigned_avlj: non_ssc_avlj)
+      create(:legacy_signed_appeal, :type_original, signing_avlj: signing_vlj, assigned_avlj: non_ssc_avlj)
     end
 
     let!(:ama_appeal) do
@@ -135,7 +141,7 @@ describe AppealsTiedToAvljsAndVljsQuery do
         expect(subject_legacy[:veteran_name]).to eq "#{corres.snamef} #{corres.snamel}"
         expect(subject_legacy[:vlj]).to eq avlj_name
         expect(subject_legacy[:hearing_judge]).to eq avlj_name
-        expect(subject_legacy[:most_recent_signing_judge]).to eq avlj_name
+        expect(subject_legacy[:most_recent_signing_judge]).to eq signing_vlj_name
         expect(subject_legacy[:bfcurloc]).to eq legacy_signed_appeal_with_attributes.bfcurloc
 
         expect(subject_ama[:docket_number]).to eq ama_appeal.docket_number
@@ -149,21 +155,18 @@ describe AppealsTiedToAvljsAndVljsQuery do
         expect(subject_ama[:bfcurloc]).to eq nil
       end
 
-      # it "to verify that calculate_field_values is returning the correct items" do
+      it "to verify that calculate_field_values is returning the correct items" do
+        subject = described_class.calculate_field_values(legacy_query_result.first)
 
-      #   subject = described_class.calculate_field_values(legacy_signed_appeal_with_attributes)
+        corres = legacy_signed_appeal_with_attributes.reload.correspondent
 
-      #   legacy_signed_appeal_with_attributes.reload
-      #   p legacy_signed_appeal_with_attributes
-      #   corres = legacy_signed_appeal_with_attributes.reload.correspondent
-
-      #   expect(subject[:veteran_file_number]).to eq corres.ssn
-      #   expect(subject[:veteran_name]).to eq "#{corres.snamef} #{corres.snamel}"
-      #   expect(subject[:vlj]).to eq nil
-      #   expect(subject[:hearing_judge]).to eq nil
-      #   expect(subject[:most_recent_signing_judge]).to eq avlj_name
-      #   expect(subject[:bfcurloc]).to eq legacy_signed_appeal_with_attributes.bfcurloc
-      # end
+        expect(subject[:veteran_file_number]).to eq corres.ssn
+        expect(subject[:veteran_name]).to eq "#{corres.snamef} #{corres.snamel}"
+        expect(subject[:vlj]).to eq avlj_name
+        expect(subject[:hearing_judge]).to eq avlj_name
+        expect(subject[:most_recent_signing_judge]).to eq signing_vlj_name
+        expect(subject[:bfcurloc]).to eq legacy_signed_appeal_with_attributes.bfcurloc
+      end
     end
   end
 end
