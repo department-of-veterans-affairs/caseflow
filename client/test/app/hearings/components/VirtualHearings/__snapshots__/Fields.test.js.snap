@@ -57,7 +57,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                       <div
                         class="cf-select__single-value css-1uccc91-singleValue"
                       >
-                        Pacific Time (US & Canada) (1:15 AM)
+                        Pacific Time (US & Canada) (5:15 AM)
                       </div>
                       <div
                         class="css-81nyic-Input"
@@ -217,7 +217,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                       <div
                         class="cf-select__single-value css-1uccc91-singleValue"
                       >
-                        Pacific Time (US & Canada) (1:15 AM)
+                        Pacific Time (US & Canada) (5:15 AM)
                       </div>
                       <div
                         class="css-81nyic-Input"
@@ -391,7 +391,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                       <div
                         class="cf-select__single-value css-1uccc91-singleValue"
                       >
-                        Pacific Time (US & Canada) (1:15 AM)
+                        Pacific Time (US & Canada) (5:15 AM)
                       </div>
                       <div
                         class="css-81nyic-Input"
@@ -551,7 +551,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                       <div
                         class="cf-select__single-value css-1uccc91-singleValue"
                       >
-                        Pacific Time (US & Canada) (1:15 AM)
+                        Pacific Time (US & Canada) (5:15 AM)
                       </div>
                       <div
                         class="css-81nyic-Input"
