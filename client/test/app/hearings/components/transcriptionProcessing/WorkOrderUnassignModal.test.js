@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import WorkOrderUnassignModal
-from '../../../../../app/hearings/components/transcriptionProcessing/WorkOrderUnassignModal';
+  from '../../../../../app/hearings/components/transcriptionProcessing/WorkOrderUnassignModal';
 import ApiUtil from 'app/util/ApiUtil';
 
 jest.mock('app/util/ApiUtil');
@@ -19,11 +19,13 @@ describe('WorkOrderUnassignModal', () => {
     render(<WorkOrderUnassignModal onClose={onClose} workOrderNumber={workOrderNumber} />);
 
     expect(screen.getByText(`#${workOrderNumber}`)).
-    toBeInTheDocument();
-    expect(screen.getByText('Unassigning this order will return all appeals back to the Unassigned Transcription queue.')).
-    toBeInTheDocument();
-    expect(screen.getByText("Please ensure that all hearing files are removed from the contractors's box.com folder.")).
-    toBeInTheDocument();
+      toBeInTheDocument();
+    expect(screen.getByText(
+      'Unassigning this order will return all appeals back to the Unassigned Transcription queue.'
+    )).toBeInTheDocument();
+    expect(screen.getByText(
+      "Please ensure that all hearing files are removed from the contractors's box.com folder."
+    )).toBeInTheDocument();
   });
 
   test('closes the modal on successful unassign', async () => {
