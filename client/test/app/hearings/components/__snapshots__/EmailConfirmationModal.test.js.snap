@@ -293,7 +293,7 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays appellant
     </div>
   </div>
   <p>
-    Changes to the Veteran and POA / Representative emails will be used to send notifications
+    Changes to the Veteran and POA / Representative emails will be used to send notifications 
     <strong>
       for this hearing only
     </strong>
@@ -443,7 +443,7 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays represent
     </div>
   </div>
   <p>
-    Changes to the Veteran and POA / Representative emails will be used to send notifications
+    Changes to the Veteran and POA / Representative emails will be used to send notifications 
     <strong>
       for this hearing only
     </strong>
@@ -1051,7 +1051,7 @@ exports[`EmailConfirmationModal Matches snapshot with default props 1`] = `
               </div>
             </div>
             <p>
-              Changes to the Veteran and POA / Representative emails will be used to send notifications
+              Changes to the Veteran and POA / Representative emails will be used to send notifications 
               <strong>
                 for this hearing only
               </strong>

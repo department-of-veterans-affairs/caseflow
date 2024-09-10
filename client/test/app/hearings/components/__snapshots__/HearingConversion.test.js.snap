@@ -43,7 +43,7 @@ exports[`HearingConversion Displays email fields when hearing type is switched f
               >
                 <strong>
                   <span>
-                    Hearing Time
+                    Hearing Time 
                   </span>
                 </strong>
               </legend>
@@ -901,9 +901,9 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                       class="cf-select__value-container css-g1d714-ValueContainer"
                     >
                       <div
-                        class="cf-select__single-value css-1uccc91-singleValue"
+                        class="cf-select__placeholder css-1wa3eu0-placeholder"
                       >
-                        3:30 AM Eastern Time (US & Canada)
+                        Select a time
                       </div>
                       <div
                         class="css-81nyic-Input"
@@ -963,7 +963,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                   <input
                     name="optionalHearingTime0"
                     type="hidden"
-                    value="03:30"
+                    value=""
                   />
                 </div>
               </div>
