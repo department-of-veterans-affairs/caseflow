@@ -391,11 +391,11 @@ feature "Appeal Edit issues", :all_dbs do
     end
   end
 
-  context "User is a member of the Supervisory Senior Council" do
+  context "User is a member of the Supervisory Senior Counsel" do
     before do
       User.authenticate!(user: current_user)
       FeatureToggle.enable!(:split_appeal_workflow)
-      OrganizationsUser.make_user_admin(current_user, SupervisorySeniorCouncil.singleton)
+      OrganizationsUser.make_user_admin(current_user, SupervisorySeniorCounsel.singleton)
     end
 
     after { FeatureToggle.disable!(:split_appeal_workflow) }
@@ -611,6 +611,11 @@ feature "Appeal Edit issues", :all_dbs do
             end
 
             step "The appeal should be split succesfully and user should be redirected back to the case details page" do
+              evidence_submission_task = appeal2.tasks.find { |task| task.type == EvidenceSubmissionWindowTask.name }
+              distribution_task = appeal2.tasks.find { |task| task.type == DistributionTask.name }
+              # complete the distribution task so that a SpecialtyCaseTeamAssignTask can be created
+              evidence_submission_task.completed!
+              distribution_task.completed!
               click_button("Split appeal")
               expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}", ignore_query: true)
 
