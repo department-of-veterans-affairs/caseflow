@@ -13,7 +13,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
       >
         <strong>
           <span>
-            Hearing Time
+            Hearing Time 
           </span>
         </strong>
       </legend>
@@ -24,32 +24,32 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
           class="cf-form-radio-option"
         >
           <input
-            id="hearingTime0_08:30"
+            id="hearingTime0_Invalid dateEastern Time (US & Canada)"
             name="hearingTime0"
             type="radio"
-            value="08:30"
+            value="Invalid dateEastern Time (US & Canada)"
           />
           <label
             class=""
-            for="hearingTime0_08:30"
+            for="hearingTime0_Invalid dateEastern Time (US & Canada)"
           >
-            8:30 AM Eastern Time (US & Canada)
+            Invalid dateEastern Time (US & Canada)
           </label>
         </div>
         <div
           class="cf-form-radio-option"
         >
           <input
-            id="hearingTime0_12:30"
+            id="hearingTime0_Invalid dateEastern Time (US & Canada)"
             name="hearingTime0"
             type="radio"
-            value="12:30"
+            value="Invalid dateEastern Time (US & Canada)"
           />
           <label
             class=""
-            for="hearingTime0_12:30"
+            for="hearingTime0_Invalid dateEastern Time (US & Canada)"
           >
-            12:30 PM Eastern Time (US & Canada)
+            Invalid dateEastern Time (US & Canada)
           </label>
         </div>
         <div
@@ -57,14 +57,14 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
         >
           <input
             checked=""
-            id="hearingTime0_other"
+            id="hearingTime0_Other"
             name="hearingTime0"
             type="radio"
-            value="other"
+            value="Other"
           />
           <label
             class=""
-            for="hearingTime0_other"
+            for="hearingTime0_Other"
           >
             Other
           </label>
@@ -99,12 +99,12 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
             class="cf-select__control css-yk16xz-control"
           >
             <div
-              class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+              class="cf-select__value-container css-g1d714-ValueContainer"
             >
               <div
-                class="cf-select__single-value css-1uccc91-singleValue"
+                class="cf-select__placeholder css-1wa3eu0-placeholder"
               >
-                8:15 AM Eastern Time (US & Canada)
+                Select a time
               </div>
               <div
                 class="css-81nyic-Input"
@@ -164,7 +164,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
           <input
             name="optionalHearingTime0"
             type="hidden"
-            value="08:15"
+            value=""
           />
         </div>
       </div>
@@ -186,7 +186,7 @@ exports[`HearingTime Matches snapshot when other time is not selected 1`] = `
       >
         <strong>
           <span>
-            Hearing Time
+            Hearing Time 
           </span>
         </strong>
       </legend>
@@ -197,16 +197,32 @@ exports[`HearingTime Matches snapshot when other time is not selected 1`] = `
           class="cf-form-radio-option"
         >
           <input
-            id="hearingTime0_08:30"
+            id="hearingTime0_8:30 AM"
             name="hearingTime0"
             type="radio"
-            value="08:30"
+            value="8:30 AM"
           />
           <label
             class=""
-            for="hearingTime0_08:30"
+            for="hearingTime0_8:30 AM"
           >
-            8:30 am
+            8:30 AM
+          </label>
+        </div>
+        <div
+          class="cf-form-radio-option"
+        >
+          <input
+            id="hearingTime0_12:30 PM"
+            name="hearingTime0"
+            type="radio"
+            value="12:30 PM"
+          />
+          <label
+            class=""
+            for="hearingTime0_12:30 PM"
+          >
+            12:30 PM
           </label>
         </div>
         <div
@@ -214,105 +230,14 @@ exports[`HearingTime Matches snapshot when other time is not selected 1`] = `
         >
           <input
             checked=""
-            id="hearingTime0_12:30"
+            id="hearingTime0_Other"
             name="hearingTime0"
             type="radio"
-            value="12:30"
+            value="Other"
           />
           <label
             class=""
-            for="hearingTime0_12:30"
-          >
-            12:30 pm
-          </label>
-        </div>
-        <div
-          class="cf-form-radio-option"
-        >
-          <input
-            id="hearingTime0_other"
-            name="hearingTime0"
-            type="radio"
-            value="other"
-          />
-          <label
-            class=""
-            for="hearingTime0_other"
-          >
-            Other
-          </label>
-        </div>
-      </div>
-    </fieldset>
-  </span>
-</DocumentFragment>
-`;
-
-exports[`HearingTime Matches snapshot when other time is selected 1`] = `
-<DocumentFragment>
-  <span
-    data-css-1042gbc=""
-  >
-    <fieldset
-      class="usa-fieldset-inputs cf-form-radio "
-    >
-      <legend
-        class=""
-      >
-        <strong>
-          <span>
-            Hearing Time
-          </span>
-        </strong>
-      </legend>
-      <div
-        class="cf-form-radio-options"
-      >
-        <div
-          class="cf-form-radio-option"
-        >
-          <input
-            id="hearingTime0_08:30"
-            name="hearingTime0"
-            type="radio"
-            value="08:30"
-          />
-          <label
-            class=""
-            for="hearingTime0_08:30"
-          >
-            8:30 am
-          </label>
-        </div>
-        <div
-          class="cf-form-radio-option"
-        >
-          <input
-            id="hearingTime0_12:30"
-            name="hearingTime0"
-            type="radio"
-            value="12:30"
-          />
-          <label
-            class=""
-            for="hearingTime0_12:30"
-          >
-            12:30 pm
-          </label>
-        </div>
-        <div
-          class="cf-form-radio-option"
-        >
-          <input
-            checked=""
-            id="hearingTime0_other"
-            name="hearingTime0"
-            type="radio"
-            value="other"
-          />
-          <label
-            class=""
-            for="hearingTime0_other"
+            for="hearingTime0_Other"
           >
             Other
           </label>
@@ -347,12 +272,12 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
             class="cf-select__control css-yk16xz-control"
           >
             <div
-              class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+              class="cf-select__value-container css-g1d714-ValueContainer"
             >
               <div
-                class="cf-select__single-value css-1uccc91-singleValue"
+                class="cf-select__placeholder css-1wa3eu0-placeholder"
               >
-                1:45 pm
+                Select a time
               </div>
               <div
                 class="css-81nyic-Input"
@@ -412,7 +337,180 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
           <input
             name="optionalHearingTime0"
             type="hidden"
-            value="13:45"
+            value=""
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`HearingTime Matches snapshot when other time is selected 1`] = `
+<DocumentFragment>
+  <span
+    data-css-1042gbc=""
+  >
+    <fieldset
+      class="usa-fieldset-inputs cf-form-radio "
+    >
+      <legend
+        class=""
+      >
+        <strong>
+          <span>
+            Hearing Time 
+          </span>
+        </strong>
+      </legend>
+      <div
+        class="cf-form-radio-options"
+      >
+        <div
+          class="cf-form-radio-option"
+        >
+          <input
+            id="hearingTime0_8:30 AM"
+            name="hearingTime0"
+            type="radio"
+            value="8:30 AM"
+          />
+          <label
+            class=""
+            for="hearingTime0_8:30 AM"
+          >
+            8:30 AM
+          </label>
+        </div>
+        <div
+          class="cf-form-radio-option"
+        >
+          <input
+            id="hearingTime0_12:30 PM"
+            name="hearingTime0"
+            type="radio"
+            value="12:30 PM"
+          />
+          <label
+            class=""
+            for="hearingTime0_12:30 PM"
+          >
+            12:30 PM
+          </label>
+        </div>
+        <div
+          class="cf-form-radio-option"
+        >
+          <input
+            checked=""
+            id="hearingTime0_Other"
+            name="hearingTime0"
+            type="radio"
+            value="Other"
+          />
+          <label
+            class=""
+            for="hearingTime0_Other"
+          >
+            Other
+          </label>
+        </div>
+      </div>
+    </fieldset>
+  </span>
+  <div
+    class=""
+  >
+    <div
+      class="cf-form-dropdown dropdown-optionalHearingTime0"
+    >
+      <label
+        class="question-label usa-sr-only"
+        for="optional-hearing-time-0"
+        id="optional-hearing-time-0-label"
+      >
+        <strong>
+          <span>
+            Hearing Time
+          </span>
+        </strong>
+      </label>
+      <div
+        class="cf-select"
+      >
+        <div
+          class=" css-2b097c-container"
+        >
+          <div
+            class="cf-select__control css-yk16xz-control"
+          >
+            <div
+              class="cf-select__value-container css-g1d714-ValueContainer"
+            >
+              <div
+                class="cf-select__placeholder css-1wa3eu0-placeholder"
+              >
+                Select a time
+              </div>
+              <div
+                class="css-81nyic-Input"
+              >
+                <div
+                  class="cf-select__input"
+                  style="display: inline-block;"
+                >
+                  <input
+                    aria-autocomplete="list"
+                    aria-expanded="false"
+                    aria-haspopup="true"
+                    aria-labelledby="optional-hearing-time-0-label"
+                    aria-owns="optional-hearing-time-0-listbox"
+                    autocapitalize="none"
+                    autocomplete="off"
+                    autocorrect="off"
+                    id="optional-hearing-time-0"
+                    role="combobox"
+                    spellcheck="false"
+                    style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                    tabindex="0"
+                    type="text"
+                    value=""
+                  />
+                  <div
+                    style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                  />
+                </div>
+              </div>
+            </div>
+            <div
+              class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+            >
+              <span
+                class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+              />
+              <div
+                aria-hidden="true"
+                class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="css-6q0nyr-Svg"
+                  focusable="false"
+                  height="20"
+                  viewBox="0 0 20 20"
+                  width="20"
+                >
+                  <path
+                    d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <input
+            name="optionalHearingTime0"
+            type="hidden"
+            value=""
           />
         </div>
       </div>
@@ -434,7 +532,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
       >
         <strong>
           <span>
-            Hearing Time
+            Hearing Time 
           </span>
         </strong>
       </legend>
@@ -446,16 +544,16 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
         >
           <input
             disabled=""
-            id="hearingTime0_08:30"
+            id="hearingTime0_8:30 AM"
             name="hearingTime0"
             type="radio"
-            value="08:30"
+            value="8:30 AM"
           />
           <label
             class="disabled"
-            for="hearingTime0_08:30"
+            for="hearingTime0_8:30 AM"
           >
-            8:30 am
+            8:30 AM
           </label>
         </div>
         <div
@@ -463,16 +561,16 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
         >
           <input
             disabled=""
-            id="hearingTime0_12:30"
+            id="hearingTime0_12:30 PM"
             name="hearingTime0"
             type="radio"
-            value="12:30"
+            value="12:30 PM"
           />
           <label
             class="disabled"
-            for="hearingTime0_12:30"
+            for="hearingTime0_12:30 PM"
           >
-            12:30 pm
+            12:30 PM
           </label>
         </div>
         <div
@@ -481,14 +579,14 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
           <input
             checked=""
             disabled=""
-            id="hearingTime0_other"
+            id="hearingTime0_Other"
             name="hearingTime0"
             type="radio"
-            value="other"
+            value="Other"
           />
           <label
             class="disabled"
-            for="hearingTime0_other"
+            for="hearingTime0_Other"
           >
             Other
           </label>
@@ -585,7 +683,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
       >
         <strong>
           <span>
-            Hearing Time
+            Hearing Time 
           </span>
         </strong>
       </legend>
@@ -596,32 +694,32 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
           class="cf-form-radio-option"
         >
           <input
-            id="hearingTime0_08:30"
+            id="hearingTime0_8:30 AM"
             name="hearingTime0"
             type="radio"
-            value="08:30"
+            value="8:30 AM"
           />
           <label
             class=""
-            for="hearingTime0_08:30"
+            for="hearingTime0_8:30 AM"
           >
-            8:30 am
+            8:30 AM
           </label>
         </div>
         <div
           class="cf-form-radio-option"
         >
           <input
-            id="hearingTime0_12:30"
+            id="hearingTime0_12:30 PM"
             name="hearingTime0"
             type="radio"
-            value="12:30"
+            value="12:30 PM"
           />
           <label
             class=""
-            for="hearingTime0_12:30"
+            for="hearingTime0_12:30 PM"
           >
-            12:30 pm
+            12:30 PM
           </label>
         </div>
         <div
@@ -629,14 +727,14 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
         >
           <input
             checked=""
-            id="hearingTime0_other"
+            id="hearingTime0_Other"
             name="hearingTime0"
             type="radio"
-            value="other"
+            value="Other"
           />
           <label
             class=""
-            for="hearingTime0_other"
+            for="hearingTime0_Other"
           >
             Other
           </label>

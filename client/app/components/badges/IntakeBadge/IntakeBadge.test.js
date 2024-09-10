@@ -1,5 +1,5 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { render } from '@testing-library/react';
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
@@ -15,7 +15,7 @@ describe('IntakeBadge', () => {
   const getStore = () => createStore(rootReducer, applyMiddleware(thunk));
 
   const setupIntakeBadge = (store) => {
-    return mount(
+    return (
       <Provider store={store}>
         <IntakeBadge
           review={defaultReview}
@@ -26,8 +26,8 @@ describe('IntakeBadge', () => {
 
   it('renders correctly', () => {
     const store = getStore();
-    const component = setupIntakeBadge(store);
+    const { asFragment } = render(setupIntakeBadge(store));
 
-    expect(component).toMatchSnapshot();
+    expect(asFragment()).toMatchSnapshot();
   });
 });
