@@ -88,17 +88,19 @@ class AppealsReadyForDistribution
 
   def self.ama_rows(appeals, docket, sym)
     appeals.map do |appeal|
+      # This comes from the DistributionTask's assigned_at date
+      ready_for_distribution_at = distribution_task_query(appeal)
       # only look for hearings that were held
       hearing_judge = with_held_hearings(appeal)
       priority_appeal = appeal.aod || appeal.cavc
 
       {
-        docket_number: appeal["tinum"],
+        docket_number: appeal.docket_number,
         docket: sym.to_s,
-        aod: appeal["aod"] == 1,
-        cavc: appeal["cavc"] == 1,
-        receipt_date: appeal["bfd19"],
-        ready_for_distribution_at: appeal["bfdl oout"],
+        aod: appeal.aod,
+        cavc: appeal.cavc,
+        receipt_date: appeal.receipt_date,
+        ready_for_distribution_at: ready_for_distribution_at,
         target_distro_date: priority_appeal ? "N/A" : target_distro_date(appeal.receipt_date, docket),
         days_before_goal_date: priority_appeal ? "N/A" : days_before_goal_date(appeal.receipt_date, docket),
         hearing_judge: hearing_judge,
