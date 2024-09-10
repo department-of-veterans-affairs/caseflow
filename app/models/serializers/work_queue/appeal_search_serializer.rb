@@ -150,6 +150,16 @@ class WorkQueue::AppealSearchSerializer
     object.veteran ? object.veteran.id : nil
   end
 
+  attribute :docket_switch do |object|
+    if object.docket_switch
+      WorkQueue::DocketSwitchSerializer.new(object.docket_switch).serializable_hash[:data][:attributes]
+    end
+  end
+
+  attribute :evidence_submission_task do |object|
+    object.tasks.find_by(type: "EvidenceSubmissionWindowTask", status: Constants.TASK_STATUSES.assigned)
+  end
+
   attribute :readable_hearing_request_type, &:readable_current_hearing_request_type
 
   attribute :readable_original_hearing_request_type, &:readable_original_hearing_request_type

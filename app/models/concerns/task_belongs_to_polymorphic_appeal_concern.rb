@@ -22,9 +22,14 @@ module TaskBelongsToPolymorphicAppealConcern
                -> { where(tasks: { appeal_type: "SupplementalClaim" }) },
                class_name: "SupplementalClaim", foreign_key: "appeal_id", optional: true
 
+    belongs_to :correspondence,
+               -> { where(tasks: { appeal_type: "Correspondence" }) },
+               class_name: "Correspondence", foreign_key: "appeal_id", optional: true
+
     scope :ama, -> { where(appeal_type: "Appeal") }
     scope :legacy, -> { where(appeal_type: "LegacyAppeal") }
     scope :higher_level_review, -> { where(appeal_type: "HigherLevelReview") }
     scope :supplemental_claim, -> { where(appeal_type: "SupplementalClaim") }
+    scope :correspondence, -> { where(appeal_type: "Correspondence") }
   end
 end
