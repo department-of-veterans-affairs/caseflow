@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import moment from 'moment-timezone';
-import { drop, invert } from 'lodash';
+import { invert } from 'lodash';
 
 
 
@@ -22,6 +22,8 @@ const commonsCount = REGIONAL_OFFICE_TIMEZONES.filter((zone) => Object.values(TI
 
 // Reverse the commons array but don't mutate to move EST to the top for comparison
 const commons = COMMON_TIMEZONES.slice().reverse();
+
+const hearingDayDate = '2025-01-01';
 
 const changeSpy = jest.fn();
 
