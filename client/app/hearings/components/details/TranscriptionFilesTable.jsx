@@ -26,15 +26,15 @@ const transcriptionFileColumns = [
     valueFunction: (rowObject) => {
       const date = rowObject.dateUploadAws || rowObject.dateReturnedBox;
 
-      return date ? moment(date).format('MM/DD/YYYY') : '-';
+      return date ? moment(date).format('MM/DD/YYYY') : '—';
     },
     header: 'Uploaded',
   },
   {
     align: 'left',
     valueFunction: (rowObject) => {
-      // Display file name with download link for pdf files uploaded to AWS succesfully
-      if (rowObject.fileType === 'pdf' && rowObject.fileStatus === 'Successful upload (AWS)') {
+      // Display file name with download link for pdf files uploaded to AWS successfully
+      if (rowObject.fileStatus === 'Successful upload (AWS)') {
         return <Link href={`/hearings/transcription_file/${rowObject.id}/download`}>
           {rowObject.fileName}
           <DownloadIcon color={COLORS.PRIMARY} />
