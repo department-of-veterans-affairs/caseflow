@@ -114,48 +114,78 @@ describe('NonratingRequestIssueModal', () => {
     });
 
     it('does not disable button when valid description entered', () => {
-      expect(submitBtn.prop('disabled')).toBe(true);
+      const { container, rerender } = setup();
 
-      wrapper.setState({
-        benefitType: 'compensation',
-        category: {
-          label: 'Apportionment',
-          value: 'Apportionment'
-        },
-        decisionDate: '06/01/2019',
-        dateError: false,
-        description: ''
-      });
+      let submitBtn = screen.getByRole('button', { name: /Add this issue/i });
+      expect(submitBtn).toBeDisabled();
 
-      // Simulate user input of valid characters
-      const descInput = wrapper.find("input[id='Issue description']");
+      rerender(
+        <NonratingRequestIssueModal
+          {...defaultProps}
+          category={{
+            label: 'Apportionment',
+            value: 'Apportionment'
+          }}
+          decisionDate={'2019-06-01'}
+          dateError={false}
+          description={''}
+        />
+      );
 
-      descInput.simulate('change', { target: { value: '1234567890-=`~!@#$%^&*()_+[]{}\\|;:' } });
+      let issueCategoryInput = screen.getByRole('combobox', { name: /Issue category/i });
+      userEvent.click(issueCategoryInput); // open the dropdown menu
+      userEvent.type(issueCategoryInput, 'Apportionment{enter}'); // select the option
 
-      expect(wrapper.find('.cf-modal-controls .add-issue').prop('disabled')).toBe(false);
+      // Fill out Decision Date
+      let decisionDateInput = container.querySelector('input[id="decision-date"]');
+      fireEvent.change(decisionDateInput, { target: { value: '2019-06-01' } });
+
+      // Fill out Issue description
+      let inputElement = container.querySelector('input[id="Issue description"]');
+      fireEvent.change(inputElement, { target: { value: '1234567890-=`~!@#$%^&*()_+[]{}\\|;:' } });
+
+      submitBtn = screen.getByRole('button', { name: /Add this issue/i });
+      expect(submitBtn).not.toBeDisabled();
     });
 
     it('disables button when invalid description entered', () => {
-      expect(submitBtn.prop('disabled')).toBe(true);
+      const { container, rerender } = setup();
 
-      wrapper.setState({
-        benefitType: 'compensation',
-        category: {
-          label: 'Apportionment',
-          value: 'Apportionment'
-        },
-        decisionDate: '06/01/2019',
-        dateError: false,
-        description: ''
-      });
+      let submitBtn = screen.getByRole('button', { name: /Add this issue/i });
+      expect(submitBtn).toBeDisabled();
+
+      rerender(
+        <NonratingRequestIssueModal
+          {...defaultProps}
+          benefitType= 'compensation'
+          category={{
+            label: 'Apportionment',
+            value: 'Apportionment'
+          }}
+          decisionDate={'2019-06-01'}
+          dateError={false}
+          description={''}
+        />
+      );
 
       // Simulate user input of invalid characters
-      const descInput = wrapper.find("input[id='Issue description']");
+      let issueCategoryInput = screen.getByRole('combobox', { name: /Issue category/i });
+      userEvent.click(issueCategoryInput); // open the dropdown menu
+      userEvent.type(issueCategoryInput, 'Apportionment{enter}'); // select the option
 
-      descInput.simulate('change', { target: { value: 'Not safe: \u{00A7} \u{2600} \u{2603} \u{260E} \u{2615}' } });
+      // Fill out Decision Date
+      let decisionDateInput = container.querySelector('input[id="decision-date"]');
+      fireEvent.change(decisionDateInput, { target: { value: '2019-06-01' } });
 
-      expect(wrapper.find('.cf-modal-controls .add-issue').prop('disabled')).toBe(true);
-      expect(wrapper.find('.usa-input-error-message').text()).toBe('Invalid character');
+      // Fill out Issue description
+      let inputElement = container.querySelector('input[id="Issue description"]');
+      fireEvent.change(inputElement, { target: { value: 'Not safe: \u{00A7} \u{2600} \u{2603} \u{260E} \u{2615}' } });
+
+      submitBtn = screen.getByRole('button', { name: /Add this issue/i });
+      expect(submitBtn).toBeDisabled();
+
+      expect(screen.getByText('Invalid character')).toBeInTheDocument();
+      expect(container.querySelector('.usa-input-error-message')).toBeInTheDocument();
     });
   });
 
