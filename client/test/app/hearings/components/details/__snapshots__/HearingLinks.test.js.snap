@@ -11,7 +11,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
       id="vlj-hearings-link"
     >
       <strong>
-        VLJ Link:
+        VLJ Link: 
       </strong>
       <a
         target="_blank"
@@ -63,7 +63,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
         data-css-1abghdv=""
       >
         <strong>
-          Conference Room:
+          Conference Room: 
         </strong>
         BVA#00000001@localhost
       </div>
@@ -71,7 +71,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
         data-css-6aejb2=""
       >
         <strong>
-          PIN:
+          PIN: 
         </strong>
         1234567890#
       </div>
@@ -113,7 +113,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
           role="tooltip"
         >
           <style>
-
+            
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -187,7 +187,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
           </style>
           Click to copy
         </div>
@@ -198,7 +198,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
       id="guest-hearings-link"
     >
       <strong>
-        Guest Link:
+        Guest Link: 
       </strong>
       <a
         target="_blank"
@@ -250,7 +250,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
         data-css-1abghdv=""
       >
         <strong>
-          Conference Room:
+          Conference Room: 
         </strong>
         BVA#00000001@localhost
       </div>
@@ -258,7 +258,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
         data-css-6aejb2=""
       >
         <strong>
-          PIN:
+          PIN: 
         </strong>
         12345678#
       </div>
@@ -300,7 +300,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
           role="tooltip"
         >
           <style>
-
+            
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -374,7 +374,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
           </style>
           Click to copy
         </div>
@@ -396,7 +396,7 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
       id="vlj-hearings-link"
     >
       <strong>
-        VLJ Link:
+        VLJ Link: 
       </strong>
       <span>
         Expired
@@ -405,7 +405,7 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
         data-css-1abghdv=""
       >
         <strong>
-          Conference Room:
+          Conference Room: 
         </strong>
         BVA#00000001@localhost
       </div>
@@ -413,7 +413,7 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
         data-css-6aejb2=""
       >
         <strong>
-          PIN:
+          PIN: 
         </strong>
         1234567890#
       </div>
@@ -423,7 +423,7 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
       id="guest-hearings-link"
     >
       <strong>
-        Guest Link:
+        Guest Link: 
       </strong>
       <span>
         Expired
@@ -432,7 +432,7 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
         data-css-1abghdv=""
       >
         <strong>
-          Conference Room:
+          Conference Room: 
         </strong>
         BVA#00000001@localhost
       </div>
@@ -440,7 +440,7 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
         data-css-6aejb2=""
       >
         <strong>
-          PIN:
+          PIN: 
         </strong>
         12345678#
       </div>

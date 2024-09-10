@@ -80,7 +80,7 @@ SAN FRANCISCO, CA 94103
                 role="tooltip"
               >
                 <style>
-
+                  
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -154,7 +154,7 @@ SAN FRANCISCO, CA 94103
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
                 </style>
                 Hearing Request
               </div>
@@ -501,7 +501,7 @@ SAN FRANCISCO, CA 94103
                 role="tooltip"
               >
                 <style>
-
+                  
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -575,7 +575,7 @@ SAN FRANCISCO, CA 94103
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
                 </style>
                 Hearing Request
               </div>
@@ -973,7 +973,7 @@ SAN FRANCISCO, CA 94103
                       <div
                         class="cf-select__single-value css-1uccc91-singleValue"
                       >
-
+                         
                       </div>
                       <div
                         class="css-81nyic-Input"
@@ -1055,7 +1055,7 @@ SAN FRANCISCO, CA 94103
               >
                 <strong>
                   <span>
-                    Hearing Time
+                    Hearing Time 
                   </span>
                 </strong>
               </legend>
@@ -1066,14 +1066,14 @@ SAN FRANCISCO, CA 94103
                   class="cf-form-radio-option"
                 >
                   <input
-                    id="hearingTime0_08:30"
+                    id="hearingTime0_8:30 AM Pacific Time (US & Canada)"
                     name="hearingTime0"
                     type="radio"
-                    value="08:30"
+                    value="8:30 AM Pacific Time (US & Canada)"
                   />
                   <label
                     class=""
-                    for="hearingTime0_08:30"
+                    for="hearingTime0_8:30 AM Pacific Time (US & Canada)"
                   >
                     8:30 AM Pacific Time (US & Canada) / 11:30 AM Eastern Time (US & Canada)
                   </label>
@@ -1082,14 +1082,14 @@ SAN FRANCISCO, CA 94103
                   class="cf-form-radio-option"
                 >
                   <input
-                    id="hearingTime0_12:30"
+                    id="hearingTime0_12:30 PM Pacific Time (US & Canada)"
                     name="hearingTime0"
                     type="radio"
-                    value="12:30"
+                    value="12:30 PM Pacific Time (US & Canada)"
                   />
                   <label
                     class=""
-                    for="hearingTime0_12:30"
+                    for="hearingTime0_12:30 PM Pacific Time (US & Canada)"
                   >
                     12:30 PM Pacific Time (US & Canada) / 3:30 PM Eastern Time (US & Canada)
                   </label>
@@ -1099,14 +1099,14 @@ SAN FRANCISCO, CA 94103
                 >
                   <input
                     checked=""
-                    id="hearingTime0_other"
+                    id="hearingTime0_Other"
                     name="hearingTime0"
                     type="radio"
-                    value="other"
+                    value="Other"
                   />
                   <label
                     class=""
-                    for="hearingTime0_other"
+                    for="hearingTime0_Other"
                   >
                     Other
                   </label>
@@ -1141,12 +1141,12 @@ SAN FRANCISCO, CA 94103
                     class="cf-select__control css-yk16xz-control"
                   >
                     <div
-                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                      class="cf-select__value-container css-g1d714-ValueContainer"
                     >
                       <div
-                        class="cf-select__single-value css-1uccc91-singleValue"
+                        class="cf-select__placeholder css-1wa3eu0-placeholder"
                       >
-                        6:00 AM Pacific Time (US & Canada) / 9:00 AM Eastern Time (US & Canada)
+                        Select a time
                       </div>
                       <div
                         class="css-81nyic-Input"
@@ -1206,7 +1206,7 @@ SAN FRANCISCO, CA 94103
                   <input
                     name="optionalHearingTime0"
                     type="hidden"
-                    value="06:00"
+                    value=""
                   />
                 </div>
               </div>
@@ -1299,7 +1299,7 @@ SAN FRANCISCO, CA 94103
                 role="tooltip"
               >
                 <style>
-
+                  
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -1373,7 +1373,7 @@ SAN FRANCISCO, CA 94103
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
                 </style>
                 Hearing Request
               </div>
@@ -1771,7 +1771,7 @@ SAN FRANCISCO, CA 94103
                       <div
                         class="cf-select__single-value css-1uccc91-singleValue"
                       >
-
+                         
                       </div>
                       <div
                         class="css-81nyic-Input"
@@ -1939,7 +1939,7 @@ SAN FRANCISCO, CA 94103
                 role="tooltip"
               >
                 <style>
-
+                  
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -2013,7 +2013,7 @@ SAN FRANCISCO, CA 94103
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
                 </style>
                 Hearing Request
               </div>
@@ -2432,7 +2432,7 @@ SAN FRANCISCO, CA 94103
         class="usa-width-one-whole"
       >
         <h2>
-          Email Notifications
+          Email Notifications 
         </h2>
         <p>
           When you schedule the hearing, the undefined, POA, and Judge will receive an email with connection information for the virtual hearing.
@@ -2441,7 +2441,7 @@ SAN FRANCISCO, CA 94103
           data-css-1jfbwxw=""
         />
         <strong>
-
+           
         </strong>
         <div
           class="usa-grid css-1jfbwxw"
@@ -2487,7 +2487,7 @@ SAN FRANCISCO, CA 94103
                         <div
                           class="cf-select__single-value css-1uccc91-singleValue"
                         >
-                          Mountain Time (US & Canada) (4:00 AM)
+                          Mountain Time (US & Canada)
                         </div>
                         <div
                           class="css-81nyic-Input"
@@ -2661,7 +2661,7 @@ SAN FRANCISCO, CA 94103
                         <div
                           class="cf-select__single-value css-1uccc91-singleValue"
                         >
-                          Pacific Time (US & Canada) (3:00 AM)
+                          Pacific Time (US & Canada)
                         </div>
                         <div
                           class="css-81nyic-Input"
@@ -2862,7 +2862,7 @@ SAN FRANCISCO, CA 94103
                 role="tooltip"
               >
                 <style>
-
+                  
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -2936,7 +2936,7 @@ SAN FRANCISCO, CA 94103
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
                 </style>
                 Hearing Request
               </div>
@@ -3340,7 +3340,7 @@ SAN FRANCISCO, CA 94103
                       <div
                         class="cf-select__single-value css-1uccc91-singleValue"
                       >
-
+                         
                       </div>
                       <div
                         class="css-81nyic-Input"
@@ -4118,7 +4118,7 @@ SAN FRANCISCO, CA 94103
                 role="tooltip"
               >
                 <style>
-
+                  
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -4192,7 +4192,7 @@ SAN FRANCISCO, CA 94103
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
                 </style>
                 Hearing Request
               </div>
@@ -4539,7 +4539,7 @@ SAN FRANCISCO, CA 94103
                 role="tooltip"
               >
                 <style>
-
+                  
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -4613,7 +4613,7 @@ SAN FRANCISCO, CA 94103
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
                 </style>
                 Hearing Request
               </div>
@@ -4893,7 +4893,7 @@ SAN FRANCISCO, CA 94103
         class="usa-width-one-whole"
       >
         <h2>
-          Email Notifications
+          Email Notifications 
         </h2>
         <p>
           When you schedule the hearing, the undefined, POA, and Judge will receive an email with connection information for the virtual hearing.
@@ -4902,7 +4902,7 @@ SAN FRANCISCO, CA 94103
           data-css-1jfbwxw=""
         />
         <strong>
-
+           
         </strong>
         <div
           class="usa-grid css-1jfbwxw"
@@ -4948,7 +4948,7 @@ SAN FRANCISCO, CA 94103
                         <div
                           class="cf-select__single-value css-1uccc91-singleValue"
                         >
-                          Pacific Time (US & Canada) (3:00 AM)
+                          Pacific Time (US & Canada)
                         </div>
                         <div
                           class="css-81nyic-Input"
@@ -5122,7 +5122,7 @@ SAN FRANCISCO, CA 94103
                         <div
                           class="cf-select__single-value css-1uccc91-singleValue"
                         >
-                          Pacific Time (US & Canada) (3:00 AM)
+                          Pacific Time (US & Canada)
                         </div>
                         <div
                           class="css-81nyic-Input"

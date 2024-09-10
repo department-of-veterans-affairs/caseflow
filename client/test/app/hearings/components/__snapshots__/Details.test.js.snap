@@ -43,7 +43,7 @@ exports[`Details Displays HearingConversion when converting from central 1`] = `
               >
                 <strong>
                   <span>
-                    Hearing Time
+                    Hearing Time 
                   </span>
                 </strong>
               </legend>
@@ -54,14 +54,14 @@ exports[`Details Displays HearingConversion when converting from central 1`] = `
                   class="cf-form-radio-option"
                 >
                   <input
-                    id="hearingTime0_08:30"
+                    id="hearingTime0_8:30 AM Eastern Time (US & Canada)"
                     name="hearingTime0"
                     type="radio"
-                    value="08:30"
+                    value="8:30 AM Eastern Time (US & Canada)"
                   />
                   <label
                     class=""
-                    for="hearingTime0_08:30"
+                    for="hearingTime0_8:30 AM Eastern Time (US & Canada)"
                   >
                     8:30 AM Eastern Time (US & Canada)
                   </label>
@@ -70,14 +70,14 @@ exports[`Details Displays HearingConversion when converting from central 1`] = `
                   class="cf-form-radio-option"
                 >
                   <input
-                    id="hearingTime0_12:30"
+                    id="hearingTime0_12:30 PM Eastern Time (US & Canada)"
                     name="hearingTime0"
                     type="radio"
-                    value="12:30"
+                    value="12:30 PM Eastern Time (US & Canada)"
                   />
                   <label
                     class=""
-                    for="hearingTime0_12:30"
+                    for="hearingTime0_12:30 PM Eastern Time (US & Canada)"
                   >
                     12:30 PM Eastern Time (US & Canada)
                   </label>
@@ -87,14 +87,14 @@ exports[`Details Displays HearingConversion when converting from central 1`] = `
                 >
                   <input
                     checked=""
-                    id="hearingTime0_other"
+                    id="hearingTime0_Other"
                     name="hearingTime0"
                     type="radio"
-                    value="other"
+                    value="Other"
                   />
                   <label
                     class=""
-                    for="hearingTime0_other"
+                    for="hearingTime0_Other"
                   >
                     Other
                   </label>
@@ -129,12 +129,12 @@ exports[`Details Displays HearingConversion when converting from central 1`] = `
                     class="cf-select__control css-yk16xz-control"
                   >
                     <div
-                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                      class="cf-select__value-container css-g1d714-ValueContainer"
                     >
                       <div
-                        class="cf-select__single-value css-1uccc91-singleValue"
+                        class="cf-select__placeholder css-1wa3eu0-placeholder"
                       >
-                        3:30 AM Eastern Time (US & Canada)
+                        Select a time
                       </div>
                       <div
                         class="css-81nyic-Input"
@@ -194,7 +194,7 @@ exports[`Details Displays HearingConversion when converting from central 1`] = `
                   <input
                     name="optionalHearingTime0"
                     type="hidden"
-                    value="03:30"
+                    value=""
                   />
                 </div>
               </div>
@@ -648,7 +648,7 @@ exports[`Details Displays HearingConversion when converting from video 1`] = `
               >
                 <strong>
                   <span>
-                    Hearing Time
+                    Hearing Time 
                   </span>
                 </strong>
               </legend>
@@ -659,14 +659,14 @@ exports[`Details Displays HearingConversion when converting from video 1`] = `
                   class="cf-form-radio-option"
                 >
                   <input
-                    id="hearingTime0_08:30"
+                    id="hearingTime0_8:30 AM Eastern Time (US & Canada)"
                     name="hearingTime0"
                     type="radio"
-                    value="08:30"
+                    value="8:30 AM Eastern Time (US & Canada)"
                   />
                   <label
                     class=""
-                    for="hearingTime0_08:30"
+                    for="hearingTime0_8:30 AM Eastern Time (US & Canada)"
                   >
                     8:30 AM Eastern Time (US & Canada)
                   </label>
@@ -675,14 +675,14 @@ exports[`Details Displays HearingConversion when converting from video 1`] = `
                   class="cf-form-radio-option"
                 >
                   <input
-                    id="hearingTime0_12:30"
+                    id="hearingTime0_12:30 PM Eastern Time (US & Canada)"
                     name="hearingTime0"
                     type="radio"
-                    value="12:30"
+                    value="12:30 PM Eastern Time (US & Canada)"
                   />
                   <label
                     class=""
-                    for="hearingTime0_12:30"
+                    for="hearingTime0_12:30 PM Eastern Time (US & Canada)"
                   >
                     12:30 PM Eastern Time (US & Canada)
                   </label>
@@ -692,14 +692,14 @@ exports[`Details Displays HearingConversion when converting from video 1`] = `
                 >
                   <input
                     checked=""
-                    id="hearingTime0_other"
+                    id="hearingTime0_Other"
                     name="hearingTime0"
                     type="radio"
-                    value="other"
+                    value="Other"
                   />
                   <label
                     class=""
-                    for="hearingTime0_other"
+                    for="hearingTime0_Other"
                   >
                     Other
                   </label>
@@ -734,12 +734,12 @@ exports[`Details Displays HearingConversion when converting from video 1`] = `
                     class="cf-select__control css-yk16xz-control"
                   >
                     <div
-                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                      class="cf-select__value-container css-g1d714-ValueContainer"
                     >
                       <div
-                        class="cf-select__single-value css-1uccc91-singleValue"
+                        class="cf-select__placeholder css-1wa3eu0-placeholder"
                       >
-                        6:00 AM Eastern Time (US & Canada)
+                        Select a time
                       </div>
                       <div
                         class="css-81nyic-Input"
@@ -799,7 +799,7 @@ exports[`Details Displays HearingConversion when converting from video 1`] = `
                   <input
                     name="optionalHearingTime0"
                     type="hidden"
-                    value="06:00"
+                    value=""
                   />
                 </div>
               </div>
@@ -1370,7 +1370,7 @@ exports[`Details Displays HearingConversion when converting from virtual 1`] = `
               >
                 <strong>
                   <span>
-                    Hearing Time
+                    Hearing Time 
                   </span>
                 </strong>
               </legend>
@@ -1381,14 +1381,14 @@ exports[`Details Displays HearingConversion when converting from virtual 1`] = `
                   class="cf-form-radio-option"
                 >
                   <input
-                    id="hearingTime0_08:30"
+                    id="hearingTime0_8:30 AM Eastern Time (US & Canada)"
                     name="hearingTime0"
                     type="radio"
-                    value="08:30"
+                    value="8:30 AM Eastern Time (US & Canada)"
                   />
                   <label
                     class=""
-                    for="hearingTime0_08:30"
+                    for="hearingTime0_8:30 AM Eastern Time (US & Canada)"
                   >
                     8:30 AM Eastern Time (US & Canada)
                   </label>
@@ -1397,14 +1397,14 @@ exports[`Details Displays HearingConversion when converting from virtual 1`] = `
                   class="cf-form-radio-option"
                 >
                   <input
-                    id="hearingTime0_12:30"
+                    id="hearingTime0_12:30 PM Eastern Time (US & Canada)"
                     name="hearingTime0"
                     type="radio"
-                    value="12:30"
+                    value="12:30 PM Eastern Time (US & Canada)"
                   />
                   <label
                     class=""
-                    for="hearingTime0_12:30"
+                    for="hearingTime0_12:30 PM Eastern Time (US & Canada)"
                   >
                     12:30 PM Eastern Time (US & Canada)
                   </label>
@@ -1414,14 +1414,14 @@ exports[`Details Displays HearingConversion when converting from virtual 1`] = `
                 >
                   <input
                     checked=""
-                    id="hearingTime0_other"
+                    id="hearingTime0_Other"
                     name="hearingTime0"
                     type="radio"
-                    value="other"
+                    value="Other"
                   />
                   <label
                     class=""
-                    for="hearingTime0_other"
+                    for="hearingTime0_Other"
                   >
                     Other
                   </label>
@@ -1456,12 +1456,12 @@ exports[`Details Displays HearingConversion when converting from virtual 1`] = `
                     class="cf-select__control css-yk16xz-control"
                   >
                     <div
-                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                      class="cf-select__value-container css-g1d714-ValueContainer"
                     >
                       <div
-                        class="cf-select__single-value css-1uccc91-singleValue"
+                        class="cf-select__placeholder css-1wa3eu0-placeholder"
                       >
-                        6:00 AM Eastern Time (US & Canada)
+                        Select a time
                       </div>
                       <div
                         class="css-81nyic-Input"
@@ -1521,7 +1521,7 @@ exports[`Details Displays HearingConversion when converting from virtual 1`] = `
                   <input
                     name="optionalHearingTime0"
                     type="hidden"
-                    value="06:00"
+                    value=""
                   />
                 </div>
               </div>
@@ -2067,7 +2067,7 @@ exports[`Details Displays VirtualHearing details when there is a virtual hearing
           Bob Smith's Hearing Details
         </h1>
         <div>
-          Veteran ID:
+          Veteran ID: 
           <button
             aria-describedby="tooltip-500000003"
             aria-label=""
@@ -2106,7 +2106,7 @@ exports[`Details Displays VirtualHearing details when there is a virtual hearing
               role="tooltip"
             >
               <style>
-
+                
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -2180,7 +2180,7 @@ exports[`Details Displays VirtualHearing details when there is a virtual hearing
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
               </style>
               Click to copy
             </div>
@@ -2245,7 +2245,7 @@ exports[`Details Displays VirtualHearing details when there is a virtual hearing
                     role="tooltip"
                   >
                     <style>
-
+                      
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -2319,7 +2319,7 @@ exports[`Details Displays VirtualHearing details when there is a virtual hearing
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
                     </style>
                     Hearing Request
                   </div>
@@ -2811,7 +2811,7 @@ exports[`Details Displays VirtualHearing details when there is a virtual hearing
                     >
                       Yes, Waive 90 Day Evidence Hold
                     </span>
-
+                     
                   </label>
                 </div>
               </div>
@@ -2862,7 +2862,7 @@ exports[`Details Displays VirtualHearing details when there is a virtual hearing
               id="guest-hearings-link"
             >
               <strong>
-                Guest Link:
+                Guest Link: 
               </strong>
               <a
                 href="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
@@ -2915,7 +2915,7 @@ exports[`Details Displays VirtualHearing details when there is a virtual hearing
                 data-css-1abghdv=""
               >
                 <strong>
-                  Conference Room:
+                  Conference Room: 
                 </strong>
                 BVA0000009@care.evn.va.gov
               </div>
@@ -2923,7 +2923,7 @@ exports[`Details Displays VirtualHearing details when there is a virtual hearing
                 data-css-6aejb2=""
               >
                 <strong>
-                  PIN:
+                  PIN: 
                 </strong>
                 2684353125#
               </div>
@@ -2965,7 +2965,7 @@ exports[`Details Displays VirtualHearing details when there is a virtual hearing
                   role="tooltip"
                 >
                   <style>
-
+                    
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -3039,7 +3039,7 @@ exports[`Details Displays VirtualHearing details when there is a virtual hearing
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
                   </style>
                   Click to copy
                 </div>
@@ -3858,7 +3858,7 @@ exports[`Details Displays VirtualHearing details when there is a virtual hearing
               >
                 <strong>
                   <span>
-                    Requested Remedy
+                    Requested Remedy 
                   </span>
                 </strong>
               </legend>
@@ -3970,7 +3970,7 @@ exports[`Details Displays VirtualHearing details when there is a virtual hearing
                     >
                       Yes, Transcript Requested
                     </span>
-
+                     
                   </label>
                 </div>
               </div>
@@ -4056,7 +4056,7 @@ exports[`Details Does not display EmailConfirmationModal when updating transcrip
           Bob Smith's Hearing Details
         </h1>
         <div>
-          Veteran ID:
+          Veteran ID: 
           <button
             aria-describedby="tooltip-500000003"
             aria-label=""
@@ -4095,7 +4095,7 @@ exports[`Details Does not display EmailConfirmationModal when updating transcrip
               role="tooltip"
             >
               <style>
-
+                
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -4169,7 +4169,7 @@ exports[`Details Does not display EmailConfirmationModal when updating transcrip
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
               </style>
               Click to copy
             </div>
@@ -4234,7 +4234,7 @@ exports[`Details Does not display EmailConfirmationModal when updating transcrip
                     role="tooltip"
                   >
                     <style>
-
+                      
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -4308,7 +4308,7 @@ exports[`Details Does not display EmailConfirmationModal when updating transcrip
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
                     </style>
                     Hearing Request
                   </div>
@@ -4800,7 +4800,7 @@ exports[`Details Does not display EmailConfirmationModal when updating transcrip
                     >
                       Yes, Waive 90 Day Evidence Hold
                     </span>
-
+                     
                   </label>
                 </div>
               </div>
@@ -4851,7 +4851,7 @@ exports[`Details Does not display EmailConfirmationModal when updating transcrip
               id="guest-hearings-link"
             >
               <strong>
-                Guest Link:
+                Guest Link: 
               </strong>
               <a
                 href="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
@@ -4904,7 +4904,7 @@ exports[`Details Does not display EmailConfirmationModal when updating transcrip
                 data-css-1abghdv=""
               >
                 <strong>
-                  Conference Room:
+                  Conference Room: 
                 </strong>
                 BVA0000009@care.evn.va.gov
               </div>
@@ -4912,7 +4912,7 @@ exports[`Details Does not display EmailConfirmationModal when updating transcrip
                 data-css-6aejb2=""
               >
                 <strong>
-                  PIN:
+                  PIN: 
                 </strong>
                 2684353125#
               </div>
@@ -4954,7 +4954,7 @@ exports[`Details Does not display EmailConfirmationModal when updating transcrip
                   role="tooltip"
                 >
                   <style>
-
+                    
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -5028,7 +5028,7 @@ exports[`Details Does not display EmailConfirmationModal when updating transcrip
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
                   </style>
                   Click to copy
                 </div>
@@ -5847,7 +5847,7 @@ exports[`Details Does not display EmailConfirmationModal when updating transcrip
               >
                 <strong>
                   <span>
-                    Requested Remedy
+                    Requested Remedy 
                   </span>
                 </strong>
               </legend>
@@ -5959,7 +5959,7 @@ exports[`Details Does not display EmailConfirmationModal when updating transcrip
                     >
                       Yes, Transcript Requested
                     </span>
-
+                     
                   </label>
                 </div>
               </div>
@@ -6044,7 +6044,7 @@ exports[`Details Does not display transcription section for legacy hearings 1`] 
           Brian Hodkiewicz's Hearing Details
         </h1>
         <div>
-          Veteran ID:
+          Veteran ID: 
           <button
             aria-describedby="tooltip-100000005"
             aria-label=""
@@ -6083,7 +6083,7 @@ exports[`Details Does not display transcription section for legacy hearings 1`] 
               role="tooltip"
             >
               <style>
-
+                
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -6157,7 +6157,7 @@ exports[`Details Does not display transcription section for legacy hearings 1`] 
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
               </style>
               Click to copy
             </div>
@@ -6222,7 +6222,7 @@ exports[`Details Does not display transcription section for legacy hearings 1`] 
                     role="tooltip"
                   >
                     <style>
-
+                      
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -6296,7 +6296,7 @@ exports[`Details Does not display transcription section for legacy hearings 1`] 
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
                     </style>
                     Legacy
                   </div>
@@ -7171,7 +7171,7 @@ exports[`Details Matches snapshot with default props 1`] = `
           John Smith's Hearing Details
         </h1>
         <div>
-          Veteran ID:
+          Veteran ID: 
           <button
             aria-describedby="tooltip-100000005"
             aria-label=""
@@ -7210,7 +7210,7 @@ exports[`Details Matches snapshot with default props 1`] = `
               role="tooltip"
             >
               <style>
-
+                
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -7284,7 +7284,7 @@ exports[`Details Matches snapshot with default props 1`] = `
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
               </style>
               Click to copy
             </div>
@@ -7349,7 +7349,7 @@ exports[`Details Matches snapshot with default props 1`] = `
                     role="tooltip"
                   >
                     <style>
-
+                      
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -7423,7 +7423,7 @@ exports[`Details Matches snapshot with default props 1`] = `
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
                     </style>
                     Hearing Request
                   </div>
@@ -7913,7 +7913,7 @@ exports[`Details Matches snapshot with default props 1`] = `
                     >
                       Yes, Waive 90 Day Evidence Hold
                     </span>
-
+                     
                   </label>
                 </div>
               </div>
@@ -8638,7 +8638,7 @@ exports[`Details Matches snapshot with default props 1`] = `
               >
                 <strong>
                   <span>
-                    Requested Remedy
+                    Requested Remedy 
                   </span>
                 </strong>
               </legend>
@@ -8750,7 +8750,7 @@ exports[`Details Matches snapshot with default props 1`] = `
                     >
                       Yes, Transcript Requested
                     </span>
-
+                     
                   </label>
                 </div>
               </div>
