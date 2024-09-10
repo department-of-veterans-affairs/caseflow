@@ -1086,7 +1086,6 @@ export const collapseColumn = (requireDasRecord) => (task) =>
  * @returns {string} -- The value of the current location either as a string or JSX
  */
 export const labelForLocation = (appeal, userId) => {
-  console.log("Label for location", appeal, userId);
   // If there is no location or the appeal is cancelled, don't show a location
   if (
     !appeal.assignedToLocation ||
