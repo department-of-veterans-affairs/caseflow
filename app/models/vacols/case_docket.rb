@@ -230,7 +230,6 @@ class VACOLS::CaseDocket < VACOLS::Record
     left join STAFF on APPEALS.VLJ = STAFF.SATTYID
     order by BFD19
   "
-<<<<<<< HEAD
 
   FROM_LOC_63_APPEALS = "
     from BRIEFF
@@ -248,8 +247,6 @@ class VACOLS::CaseDocket < VACOLS::Record
     #{FROM_LOC_63_APPEALS}
   "
 
-=======
->>>>>>> master
   # rubocop:disable Metrics/MethodLength
   SELECT_APPEALS_IN_LOCATION_63_FROM_PAST_2_DAYS = "
     select APPEALS.BFKEY, APPEALS.TINUM, APPEALS.BFD19, APPEALS.BFMEMID, APPEALS.BFCURLOC,

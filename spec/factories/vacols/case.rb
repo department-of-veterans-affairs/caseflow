@@ -225,12 +225,11 @@ FactoryBot.define do
                     evaluator.judge || create(:user, :judge, :with_vacols_judge_record).vacols_staff
                   end
 
-                hearing_judge =
-                  if evaluator.assigned_avlj.present?
-                    VACOLS::Staff.find_by_sdomainid(evaluator.assigned_avlj.css_id)
-                  else
-                    evaluator.judge || create(:user, :judge, :with_vacols_judge_record).vacols_staff
-                  end
+                if evaluator.assigned_avlj.present? # hearing_judge
+                  VACOLS::Staff.find_by_sdomainid(evaluator.assigned_avlj.css_id)
+                else
+                  evaluator.judge || create(:user, :judge, :with_vacols_judge_record).vacols_staff
+                end
 
                 signing_sattyid = signing_judge.sattyid
 
@@ -270,7 +269,7 @@ FactoryBot.define do
                   )
                 end
 
-                original_case = create(
+                create( # original_case
                   :case,
                   :status_complete,
                   :disposition_remanded,
@@ -288,6 +287,8 @@ FactoryBot.define do
                   correspondent: new_case.correspondent,
                   case_issues: original_issues
                 )
+              end
+            end
 
             # You can change the judge, attorney, AOD status, and Appeal Affinity of your Legacy CAVC Appeal.
             # The Appeal_Affinity is default but the AOD must be toggled on. Example:
@@ -353,14 +354,6 @@ FactoryBot.define do
                   create(
                     :case_hearing,
                     :disposition_held,
-                    folder_nr: original_case.bfkey,
-                    hearing_date: original_case.bfddec - 1.month,
-                    user: User.find_by_css_id(hearing_judge&.sdomainid)
-                  )
-                end
-
-                if evaluator.appeal_affinity
-                  create(:appeal_affinity, appeal: new_case, affinity_start_date: evaluator.affinity_start_date)
                     folder_nr: vacols_case.bfkey,
                     hearing_date: 5.days.ago.to_date,
                     user: User.find_by_css_id(evaluator.judge.sdomainid)
