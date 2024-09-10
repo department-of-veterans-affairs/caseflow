@@ -36,7 +36,7 @@ const CorrespondenceCaseTimeline = (props) => {
       return {
         assignedOn: task.assigned_at,
         assignedTo: task.assigned_to,
-        label: task.type,
+        label: task.label,
         instructions: task.instructions,
         availableActions: getAvailableActions(task),
       };

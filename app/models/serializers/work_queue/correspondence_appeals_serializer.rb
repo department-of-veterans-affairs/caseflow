@@ -41,7 +41,7 @@ class WorkQueue::CorrespondenceAppealsSerializer
         assigned_to: assigned_to_text,
         assigned_to_type: cor_app_task.task.assigned_to_type,
         instructions: cor_app_task.task.instructions,
-        type: cor_app_task.task.label
+        label: cor_app_task.task.label
       }
       tasks << task_data
     end
