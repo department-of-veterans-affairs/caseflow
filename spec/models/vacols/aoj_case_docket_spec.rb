@@ -1110,22 +1110,7 @@ describe VACOLS::AojCaseDocket, :all_dbs do
       let!(:ca21) { create(:legacy_aoj_appeal, :aod, judge: inel_judge, attorney: attorney, tied_to: false) }
       let!(:ca22) { create(:legacy_aoj_appeal, :aod, judge: inel_judge, attorney: attorney, tied_to: false, affinity_start_date: 3.days.ago) }
       let!(:ca23) { create(:legacy_aoj_appeal, :aod, judge: inel_judge, attorney: attorney, tied_to: false, appeal_affinity: false) }
-      # {no original hearing, decided by other_judge, new hearing held by inel_judge}
-      # {This would have affinity to the original deciding judge}
-      let!(:ca24) do
-        c = create(:legacy_aoj_appeal, :aod, judge: other_judge, attorney: attorney, tied_to: false)
-        original_case = VACOLS::Case.find_by(bfcorlid: c.bfcorlid, bfkey: (c.bfkey.to_i + 1).to_s)
-        create_case_hearing(original_case, inel_judge_caseflow)
-        c
-      end
-      # {original hearing held by tied_judge, decided by tied_judge, new hearing held by inel_judge}
-      # {This would have affinity to the original deciding judge}
-      let!(:ca25) do
-        c = create(:legacy_aoj_appeal, :aod, judge: tied_judge, attorney: attorney, tied_to: true)
-        original_case = VACOLS::Case.find_by(bfcorlid: c.bfcorlid, bfkey: (c.bfkey.to_i + 1).to_s)
-        create_case_hearing(original_case, inel_judge_caseflow)
-        c
-      end
+
       # cavc affinity cases:
       # no hearing held but has previous decision
       let!(:c1) do
@@ -1160,22 +1145,6 @@ describe VACOLS::AojCaseDocket, :all_dbs do
       let!(:c23) do
         create(:legacy_aoj_appeal, judge: inel_judge, attorney: attorney,
                                    tied_to: false, appeal_affinity: false, cavc: true)
-      end
-      # {no original hearing, decided by other_judge, new hearing held by inel_judge}
-      # {This would have affinity to the original deciding judge}
-      let!(:c24) do
-        c = create(:legacy_aoj_appeal, cavc: true, judge: other_judge, attorney: attorney, tied_to: false)
-        original_case = VACOLS::Case.find_by(bfcorlid: c.bfcorlid, bfkey: (c.bfkey.to_i + 1).to_s)
-        create_case_hearing(original_case, inel_judge_caseflow)
-        c
-      end
-      # {original hearing held by tied_judge, decided by tied_judge, new hearing held by inel_judge}
-      # {This would have affinity to the original deciding judge}
-      let!(:c25) do
-        c = create(:legacy_aoj_appeal, cavc: true, judge: tied_judge, attorney: attorney, tied_to: true)
-        original_case = VACOLS::Case.find_by(bfcorlid: c.bfcorlid, bfkey: (c.bfkey.to_i + 1).to_s)
-        create_case_hearing(original_case, inel_judge_caseflow)
-        c
       end
 
       it "successfully runs without timing out" do
@@ -1302,6 +1271,56 @@ describe VACOLS::AojCaseDocket, :all_dbs do
           .to match_array([
             case_7, case_8, case_9, case_10, case_12, case_13
           ].map { |c| c["bfkey"].to_i.to_s }.sort)
+
+        # For case distribution levers set to infinite
+        CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.aoj_affinity_days).update!(value: "infinite")
+        CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.aoj_aod_affinity_days).update!(value: "infinite")
+        CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.aoj_cavc_affinity_days).update!(value: "infinite")
+        CaseDistributionLever.clear_distribution_lever_cache
+
+        new_hrng_judge_infinite = VACOLS::AojCaseDocket.distribute_priority_appeals(new_hearing_judge, "any", 100, true)
+        tied_judge_infinite = VACOLS::AojCaseDocket.distribute_priority_appeals(tied_judge_caseflow, "any", 100, true)
+        other_judge_infinite = VACOLS::AojCaseDocket.distribute_priority_appeals(other_judge_caseflow, "any", 100, true)
+
+        expect(new_hrng_judge_infinite.map { |c| c["bfkey"] }.sort)
+          .to match_array([
+            case_1, case_2, case_3, case_4, case_5, case_10, case_12
+          ].map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
+
+        expect(tied_judge_infinite.map { |c| c["bfkey"] }.sort)
+          .to match_array([
+            case_6, case_9, case_10, case_11, case_12, case_13
+          ].map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
+
+        expect(other_judge_infinite.map { |c| c["bfkey"] }.sort)
+          .to match_array([
+            case_7, case_8, case_10, case_12
+          ].map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
+
+        # For case distribution levers set to omit
+        CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.aoj_affinity_days).update!(value: "infinite").update!(value: "omit")
+        CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.aoj_aod_affinity_days).update!(value: "infinite").update!(value: "omit")
+        CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.aoj_cavc_affinity_days).update!(value: "infinite").update!(value: "omit")
+        CaseDistributionLever.clear_distribution_lever_cache
+
+        new_hearing_judge_omit = VACOLS::AojCaseDocket.distribute_priority_appeals(new_hearing_judge, "any", 100, true)
+        tied_judge_omit = VACOLS::AojCaseDocket.distribute_priority_appeals(tied_judge_caseflow, "any", 100, true)
+        other_judge_omit = VACOLS::AojCaseDocket.distribute_priority_appeals(other_judge_caseflow, "any", 100, true)
+
+        expect(new_hearing_judge_omit.map { |c| c["bfkey"] }.sort)
+          .to match_array([
+            case_1, case_2, case_3, case_4, case_5, case_7, case_8, case_9, case_10, case_11, case_12, case_13
+          ].map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
+
+        expect(tied_judge_omit.map { |c| c["bfkey"] }.sort)
+          .to match_array([
+            case_6, case_7, case_8, case_9, case_10, case_11, case_12, case_13
+          ].map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
+
+        expect(other_judge_omit.map { |c| c["bfkey"] }.sort)
+          .to match_array([
+            case_7, case_8, case_9, case_10, case_11, case_12, case_13
+          ].map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
       end
     end
   end
