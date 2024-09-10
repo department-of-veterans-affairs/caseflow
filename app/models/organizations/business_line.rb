@@ -123,6 +123,15 @@ class BusinessLine < Organization
       }
     }.freeze
 
+    USER_TABLE_ALIASES = [
+      :intake_users,
+      :update_users,
+      :decision_users,
+      :decision_users_completed_by,
+      :requestor,
+      :decider
+    ].freeze
+
     def initialize(query_type: :in_progress, parent: business_line, query_params: {})
       @query_type = query_type
       @parent = parent
@@ -232,7 +241,34 @@ class BusinessLine < Organization
           INNER JOIN issue_modification_requests ON issue_modification_requests.id = versions.item_id
           WHERE versions.item_type = 'IssueModificationRequest'
           GROUP BY
-              versions.item_id, versions.item_type)
+              versions.item_id, versions.item_type
+        ), imr_distinct AS (
+            SELECT DISTINCT ON (imr_cte.id)
+                imr_cte.id,
+                imr_cte.decided_at,
+                imr_cte.created_at,
+                imr_cte.decision_review_type,
+                imr_cte.decision_review_id,
+                imr_cte.status,
+                imr_cte.updated_at
+            FROM issue_modification_requests imr_cte
+        ), imr_lead_decided AS (
+            SELECT id,
+                  decision_review_id,
+                  LEAD(
+                    CASE
+                      WHEN status = 'cancelled' THEN updated_at
+                      ELSE decided_at
+                    END,
+                    1,
+                    '9999-12-31 23:59:59' -- Fake value to indicate out of bounds
+                  ) OVER (PARTITION BY decision_review_id, decision_review_type ORDER BY decided_at, created_at DESC) AS next_decided_or_cancelled_at
+            FROM imr_distinct
+        ), imr_lead_created AS (
+            SELECT id,
+                LEAD(created_at, 1, '9999-12-31 23:59:59') OVER (PARTITION BY decision_review_id, decision_review_type ORDER BY created_at ASC) AS next_created_at
+            FROM imr_distinct
+        )
         SELECT tasks.id AS task_id,
           check_imr_current_status.is_assigned_present,
           tasks.status AS task_status,
@@ -271,7 +307,7 @@ class BusinessLine < Organization
           imr.decision_reason AS decision_reason,
           imr.decider_id decider_id,
           imr.requestor_id as requestor_id,
-          imr.decided_at AS decided_at,
+          CASE WHEN imr.status = 'cancelled' THEN imr.updated_at ELSE imr.decided_at END AS decided_at,
           imr.created_at AS issue_modification_request_created_at,
           imr.updated_at AS issue_modification_request_updated_at,
           imr.edited_at AS issue_modification_request_edited_at,
@@ -285,10 +321,11 @@ class BusinessLine < Organization
           decider.station_id AS decider_station_id,
           decider.css_id AS decider_css_id,
           itv.object_changes_array AS imr_versions,
-          lag(imr.created_at, 1) over (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.created_at) as previous_imr_created_at,
-          lag(imr.decided_at, 1) over (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.decided_at) as previous_imr_decided_at,
+          LAG(imr.created_at, 1) OVER (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.created_at) AS previous_imr_created_at,
+          LAG(CASE WHEN imr.status = 'cancelled' THEN imr.updated_at ELSE imr.decided_at END) OVER (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY CASE WHEN imr.status = 'cancelled' THEN imr.updated_at ELSE imr.decided_at END) AS previous_imr_decided_at,
           itv.object_array as previous_state_array,
-          MAX(imr.decided_at) over (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.updated_at desc)  as imr_last_decided_date
+          imr_lead_decided.next_decided_or_cancelled_at,
+          imr_lead_created.next_created_at
         FROM tasks
         INNER JOIN request_issues ON request_issues.decision_review_type = tasks.appeal_type
         AND request_issues.decision_review_id = tasks.appeal_id
@@ -296,19 +333,20 @@ class BusinessLine < Organization
         AND tasks.appeal_id = higher_level_reviews.id
         INNER JOIN intakes ON tasks.appeal_type = intakes.detail_type
         AND intakes.detail_id = tasks.appeal_id
-        LEFT JOIN LATERAL (
-          SELECT * FROM issue_modification_requests imr
-          WHERE imr.decision_review_id = tasks.appeal_id
-            AND imr.decision_review_type = 'HigherLevelReview'
-            AND imr.request_issue_id = request_issues.id
-          UNION ALL
-          SELECT * FROM issue_modification_requests imr_add
-            where imr_add.decision_review_id = tasks.appeal_id
-              AND imr_add.decision_review_type = 'HigherLevelReview'
-              AND imr_add.request_type = 'addition'
-				) imr  on true
         LEFT JOIN request_issues_updates ON request_issues_updates.review_type = tasks.appeal_type
         AND request_issues_updates.review_id = tasks.appeal_id
+        LEFT JOIN LATERAL (
+          SELECT *
+          FROM issue_modification_requests imr
+          WHERE imr.decision_review_id = tasks.appeal_id
+            AND imr.decision_review_type = 'HigherLevelReview'
+            AND (
+                imr.request_issue_id = request_issues.id
+                OR imr.request_type = 'addition'
+            )
+        ) imr ON true
+        LEFT JOIN imr_lead_decided ON imr_lead_decided.id = imr.id
+        LEFT JOIN imr_lead_created ON imr_lead_created.id = imr.id
         LEFT JOIN request_decision_issues ON request_decision_issues.request_issue_id = request_issues.id
         LEFT JOIN decision_issues ON decision_issues.decision_review_id = tasks.appeal_id
         AND decision_issues.decision_review_type = tasks.appeal_type AND decision_issues.id = request_decision_issues.decision_issue_id
@@ -378,7 +416,7 @@ class BusinessLine < Organization
          imr.decision_reason AS decision_reason,
          imr.decider_id AS decider_id,
          imr.requestor_id AS requestor_id,
-         imr.decided_at AS decided_at,
+         CASE WHEN imr.status = 'cancelled' THEN imr.updated_at ELSE imr.decided_at END AS decided_at,
          imr.created_at AS issue_modification_request_created_at,
          imr.updated_at  AS issue_modification_request_updated_at,
          imr.edited_at AS issue_modification_request_edited_at,
@@ -392,10 +430,11 @@ class BusinessLine < Organization
          decider.station_id AS decider_station_id,
          decider.css_id AS decider_css_id,
          itv.object_changes_array AS imr_versions,
-         lag(imr.created_at, 1) over (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.created_at) as previous_imr_created_at,
-         lag(imr.decided_at, 1) over (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.decided_at) as previous_imr_decided_at,
+         LAG(imr.created_at, 1) OVER (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.created_at) AS previous_imr_created_at,
+         LAG(CASE WHEN imr.status = 'cancelled' THEN imr.updated_at ELSE imr.decided_at END) OVER (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY CASE WHEN imr.status = 'cancelled' THEN imr.updated_at ELSE imr.decided_at END) AS previous_imr_decided_at,
          itv.object_array as previous_state_array,
-         MAX(imr.decided_at) over (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.updated_at desc)  as imr_last_decided_date
+         imr_lead_decided.next_decided_or_cancelled_at,
+         imr_lead_created.next_created_at
       FROM tasks
       INNER JOIN request_issues ON request_issues.decision_review_type = tasks.appeal_type
       AND request_issues.decision_review_id = tasks.appeal_id
@@ -403,19 +442,20 @@ class BusinessLine < Organization
       AND tasks.appeal_id = supplemental_claims.id
       LEFT JOIN intakes ON tasks.appeal_type = intakes.detail_type
       AND intakes.detail_id = tasks.appeal_id
-      LEFT JOIN LATERAL (
-        SELECT * FROM issue_modification_requests imr
-        WHERE imr.decision_review_id = tasks.appeal_id
-          AND imr.decision_review_type = 'SupplementalClaim'
-          AND imr.request_issue_id = request_issues.id
-          UNION ALL
-        SELECT *FROM issue_modification_requests imr_add
-          where imr_add.decision_review_id = tasks.appeal_id
-            AND imr_add.decision_review_type = 'SupplementalClaim'
-            AND imr_add.request_type = 'addition'
-			) imr on true
       LEFT JOIN request_issues_updates ON request_issues_updates.review_type = tasks.appeal_type
       AND request_issues_updates.review_id = tasks.appeal_id
+      LEFT JOIN LATERAL (
+        SELECT *
+        FROM issue_modification_requests imr
+        WHERE imr.decision_review_id = tasks.appeal_id
+          AND imr.decision_review_type = 'SupplementalClaim'
+          AND (
+              imr.request_issue_id = request_issues.id
+              OR imr.request_type = 'addition'
+          )
+      ) imr ON true
+      LEFT JOIN imr_lead_decided ON imr_lead_decided.id = imr.id
+      LEFT JOIN imr_lead_created ON imr_lead_created.id = imr.id
       LEFT JOIN request_decision_issues ON request_decision_issues.request_issue_id = request_issues.id
       LEFT JOIN decision_issues ON decision_issues.decision_review_id = tasks.appeal_id
       AND decision_issues.decision_review_type = tasks.appeal_type AND decision_issues.id = request_decision_issues.decision_issue_id
@@ -571,19 +611,16 @@ class BusinessLine < Organization
       end
     end
 
-    # rubocop:disable Metrics/AbcSize
     def station_id_filter
       if query_params[:facilities].present?
+        conditions = USER_TABLE_ALIASES.map do |alias_name|
+          User.arel_table.alias(alias_name)[:station_id].in(query_params[:facilities]).to_sql
+        end
+
         <<-SQL
           AND
           (
-            #{User.arel_table.alias(:intake_users)[:station_id].in(query_params[:facilities]).to_sql}
-            OR
-            #{User.arel_table.alias(:update_users)[:station_id].in(query_params[:facilities]).to_sql}
-            OR
-            #{User.arel_table.alias(:decision_users)[:station_id].in(query_params[:facilities]).to_sql}
-            OR
-            #{User.arel_table.alias(:decision_users_completed_by)[:station_id].in(query_params[:facilities]).to_sql}
+            #{conditions.join(' OR ')}
           )
         SQL
       end
@@ -591,21 +628,18 @@ class BusinessLine < Organization
 
     def user_css_id_filter
       if query_params[:personnel].present?
+        conditions = USER_TABLE_ALIASES.map do |alias_name|
+          User.arel_table.alias(alias_name)[:css_id].in(query_params[:personnel]).to_sql
+        end
+
         <<-SQL
           AND
           (
-            #{User.arel_table.alias(:intake_users)[:css_id].in(query_params[:personnel]).to_sql}
-            OR
-            #{User.arel_table.alias(:update_users)[:css_id].in(query_params[:personnel]).to_sql}
-            OR
-            #{User.arel_table.alias(:decision_users)[:css_id].in(query_params[:personnel]).to_sql}
-            OR
-            #{User.arel_table.alias(:decision_users_completed_by)[:css_id].in(query_params[:personnel]).to_sql}
+            #{conditions.join(' OR ')}
           )
         SQL
       end
     end
-    # rubocop:enable Metrics/AbcSize
 
     #################### End of Change history filter helpers ########################
 

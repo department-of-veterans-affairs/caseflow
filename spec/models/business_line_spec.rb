@@ -509,7 +509,7 @@ describe BusinessLine do
     let(:hlr_task_1_ri_1_expectation) do
       a_hash_including(
         "nonrating_issue_category" => "Caregiver | Other",
-        "nonrating_issue_description" => "VHA - Caregiver ",
+        "nonrating_issue_description" => "VHA - Caregiver",
         "task_id" => hlr_task.id,
         "veteran_file_number" => hlr_task.appeal.veteran_file_number,
         "intake_user_name" => hlr_task.appeal.intake.user.full_name,
@@ -547,7 +547,7 @@ describe BusinessLine do
     let(:hlr_task_2_ri_1_expectation) do
       a_hash_including(
         "nonrating_issue_category" => "Caregiver | Other",
-        "nonrating_issue_description" => "VHA - Caregiver ",
+        "nonrating_issue_description" => "VHA - Caregiver",
         "task_id" => hlr_task2.id,
         "veteran_file_number" => hlr_task2.appeal.veteran_file_number,
         "intake_user_name" => intake_user.full_name,
