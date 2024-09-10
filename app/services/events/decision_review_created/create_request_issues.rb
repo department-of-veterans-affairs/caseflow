@@ -24,7 +24,7 @@ class Events::DecisionReviewCreated::CreateRequestIssues
 
       request_issues&.each do |issue|
         # create backfill RI object using extracted values
-        parser_issues = DecisionReviewCreatedIssueParser.new(issue)
+        parser_issues = Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser.new(issue)
         ri = RequestIssue.create!(
           benefit_type: parser_issues.ri_benefit_type,
           contested_issue_description: parser_issues.ri_contested_issue_description,
@@ -73,7 +73,7 @@ class Events::DecisionReviewCreated::CreateRequestIssues
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     def create_event_record(event, issue)
-      EventRecord.create!(event: event, evented_record: issue)
+      EventRecord.create!(event: event, evented_record: issue, info: "I")
     end
 
     # Legacy issue checks
