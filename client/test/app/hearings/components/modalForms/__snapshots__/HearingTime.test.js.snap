@@ -52,69 +52,118 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
           <strong>
             <span>
               Hearing Time
-
+               
             </span>
           </strong>
         </legend>
         <div
           className="cf-form-radio-options"
         >
-          <div
-            className="cf-form-radio-option"
-            key="hearingTime0-8:30 AM Eastern Time (US & Canada)-0"
+          <MaybeAddTooltip
+            key="8:30 AM Eastern Time (US & Canada)"
+            option={
+              Object {
+                "disabled": undefined,
+                "displayText": "8:30 AM Eastern Time (US & Canada)",
+                "value": "8:30 AM Eastern Time (US & Canada)",
+              }
+            }
           >
-            <input
-              checked={false}
-              disabled={false}
-              id="hearingTime0_8:30 AM Eastern Time (US & Canada)"
-              name="hearingTime0"
-              onChange={[Function]}
-              type="radio"
-              value="8:30 AM Eastern Time (US & Canada)"
-            />
-            <label
-              className=""
-              htmlFor="hearingTime0_8:30 AM Eastern Time (US & Canada)"
+            <div
+              className="cf-form-radio-option"
+              key="hearingTime0-8:30 AM Eastern Time (US & Canada)-0"
             >
-              8:30 AM Eastern Time (US & Canada)
-            </label>
-          </div>
-          <div
-            className="cf-form-radio-option"
-            key="hearingTime0-12:30 PM Eastern Time (US & Canada)-1"
+              <RadioInput
+                controlled={true}
+                handleChange={[Function]}
+                idPart="hearingTime0"
+                name="hearingTime0"
+                option={
+                  Object {
+                    "disabled": undefined,
+                    "displayText": "8:30 AM Eastern Time (US & Canada)",
+                    "value": "8:30 AM Eastern Time (US & Canada)",
+                  }
+                }
+                value="Other"
+              >
+                <input
+                  checked={false}
+                  disabled={false}
+                  id="hearingTime0_8:30 AM Eastern Time (US & Canada)"
+                  name="hearingTime0"
+                  onChange={[Function]}
+                  type="radio"
+                  value="8:30 AM Eastern Time (US & Canada)"
+                />
+              </RadioInput>
+              <label
+                className=""
+                htmlFor="hearingTime0_8:30 AM Eastern Time (US & Canada)"
+              >
+                8:30 AM Eastern Time (US & Canada)
+              </label>
+            </div>
+          </MaybeAddTooltip>
+          <MaybeAddTooltip
+            key="12:30 PM Eastern Time (US & Canada)"
+            option={
+              Object {
+                "disabled": undefined,
+                "displayText": "12:30 PM Eastern Time (US & Canada)",
+                "value": "12:30 PM Eastern Time (US & Canada)",
+              }
+            }
           >
-            <input
-              checked={false}
-              disabled={false}
-              id="hearingTime0_12:30 PM Eastern Time (US & Canada)"
-              name="hearingTime0"
-              onChange={[Function]}
-              type="radio"
-              value="12:30 PM Eastern Time (US & Canada)"
-            />
-            <label
-              className=""
-              htmlFor="hearingTime0_12:30 PM Eastern Time (US & Canada)"
+            <div
+              className="cf-form-radio-option"
+              key="hearingTime0-12:30 PM Eastern Time (US & Canada)-1"
             >
-              12:30 PM Eastern Time (US & Canada)
-            </label>
-          </div>
-          <div
-            className="cf-form-radio-option"
-            key="hearingTime0-Other-2"
+              <RadioInput
+                controlled={true}
+                handleChange={[Function]}
+                idPart="hearingTime0"
+                name="hearingTime0"
+                option={
+                  Object {
+                    "disabled": undefined,
+                    "displayText": "12:30 PM Eastern Time (US & Canada)",
+                    "value": "12:30 PM Eastern Time (US & Canada)",
+                  }
+                }
+                value="Other"
+              >
+                <input
+                  checked={false}
+                  disabled={false}
+                  id="hearingTime0_12:30 PM Eastern Time (US & Canada)"
+                  name="hearingTime0"
+                  onChange={[Function]}
+                  type="radio"
+                  value="12:30 PM Eastern Time (US & Canada)"
+                />
+              </RadioInput>
+              <label
+                className=""
+                htmlFor="hearingTime0_12:30 PM Eastern Time (US & Canada)"
+              >
+                12:30 PM Eastern Time (US & Canada)
+              </label>
+            </div>
+          </MaybeAddTooltip>
+          <MaybeAddTooltip
+            key="Other"
+            option={
+              Object {
+                "disabled": undefined,
+                "displayText": "Other",
+                "value": "Other",
+              }
+            }
           >
-            <input
-              checked={true}
-              disabled={false}
-              id="hearingTime0_Other"
-              name="hearingTime0"
-              onChange={[Function]}
-              type="radio"
-              value="Other"
-            />
-            <label
-              className=""
-              htmlFor="hearingTime0_Other"
+            <div
+              className="cf-form-radio-option"
+              key="hearingTime0-Other-2"
             >
               <RadioInput
                 controlled={true}
@@ -125,24 +174,24 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                   Object {
                     "disabled": undefined,
                     "displayText": "Other",
-                    "value": "other",
+                    "value": "Other",
                   }
                 }
-                value="other"
+                value="Other"
               >
                 <input
                   checked={true}
                   disabled={false}
-                  id="hearingTime0_other"
+                  id="hearingTime0_Other"
                   name="hearingTime0"
                   onChange={[Function]}
                   type="radio"
-                  value="other"
+                  value="Other"
                 />
               </RadioInput>
               <label
                 className=""
-                htmlFor="hearingTime0_other"
+                htmlFor="hearingTime0_Other"
               >
                 Other
               </label>
@@ -9032,69 +9081,118 @@ exports[`HearingTime Matches snapshot when other time is not selected 1`] = `
           <strong>
             <span>
               Hearing Time
-
+               
             </span>
           </strong>
         </legend>
         <div
           className="cf-form-radio-options"
         >
-          <div
-            className="cf-form-radio-option"
-            key="hearingTime0-8:30 AM Eastern Time (US & Canada)-0"
+          <MaybeAddTooltip
+            key="8:30 AM Eastern Time (US & Canada)"
+            option={
+              Object {
+                "disabled": undefined,
+                "displayText": "8:30 AM Eastern Time (US & Canada)",
+                "value": "8:30 AM Eastern Time (US & Canada)",
+              }
+            }
           >
-            <input
-              checked={false}
-              disabled={false}
-              id="hearingTime0_8:30 AM Eastern Time (US & Canada)"
-              name="hearingTime0"
-              onChange={[Function]}
-              type="radio"
-              value="8:30 AM Eastern Time (US & Canada)"
-            />
-            <label
-              className=""
-              htmlFor="hearingTime0_8:30 AM Eastern Time (US & Canada)"
+            <div
+              className="cf-form-radio-option"
+              key="hearingTime0-8:30 AM Eastern Time (US & Canada)-0"
             >
-              8:30 AM Eastern Time (US & Canada)
-            </label>
-          </div>
-          <div
-            className="cf-form-radio-option"
-            key="hearingTime0-12:30 PM Eastern Time (US & Canada)-1"
+              <RadioInput
+                controlled={true}
+                handleChange={[Function]}
+                idPart="hearingTime0"
+                name="hearingTime0"
+                option={
+                  Object {
+                    "disabled": undefined,
+                    "displayText": "8:30 AM Eastern Time (US & Canada)",
+                    "value": "8:30 AM Eastern Time (US & Canada)",
+                  }
+                }
+                value="12:30 PM Eastern Time (US & Canada)"
+              >
+                <input
+                  checked={false}
+                  disabled={false}
+                  id="hearingTime0_8:30 AM Eastern Time (US & Canada)"
+                  name="hearingTime0"
+                  onChange={[Function]}
+                  type="radio"
+                  value="8:30 AM Eastern Time (US & Canada)"
+                />
+              </RadioInput>
+              <label
+                className=""
+                htmlFor="hearingTime0_8:30 AM Eastern Time (US & Canada)"
+              >
+                8:30 AM Eastern Time (US & Canada)
+              </label>
+            </div>
+          </MaybeAddTooltip>
+          <MaybeAddTooltip
+            key="12:30 PM Eastern Time (US & Canada)"
+            option={
+              Object {
+                "disabled": undefined,
+                "displayText": "12:30 PM Eastern Time (US & Canada)",
+                "value": "12:30 PM Eastern Time (US & Canada)",
+              }
+            }
           >
-            <input
-              checked={true}
-              disabled={false}
-              id="hearingTime0_12:30 PM Eastern Time (US & Canada)"
-              name="hearingTime0"
-              onChange={[Function]}
-              type="radio"
-              value="12:30 PM Eastern Time (US & Canada)"
-            />
-            <label
-              className=""
-              htmlFor="hearingTime0_12:30 PM Eastern Time (US & Canada)"
+            <div
+              className="cf-form-radio-option"
+              key="hearingTime0-12:30 PM Eastern Time (US & Canada)-1"
             >
-              12:30 PM Eastern Time (US & Canada)
-            </label>
-          </div>
-          <div
-            className="cf-form-radio-option"
-            key="hearingTime0-Other-2"
+              <RadioInput
+                controlled={true}
+                handleChange={[Function]}
+                idPart="hearingTime0"
+                name="hearingTime0"
+                option={
+                  Object {
+                    "disabled": undefined,
+                    "displayText": "12:30 PM Eastern Time (US & Canada)",
+                    "value": "12:30 PM Eastern Time (US & Canada)",
+                  }
+                }
+                value="12:30 PM Eastern Time (US & Canada)"
+              >
+                <input
+                  checked={true}
+                  disabled={false}
+                  id="hearingTime0_12:30 PM Eastern Time (US & Canada)"
+                  name="hearingTime0"
+                  onChange={[Function]}
+                  type="radio"
+                  value="12:30 PM Eastern Time (US & Canada)"
+                />
+              </RadioInput>
+              <label
+                className=""
+                htmlFor="hearingTime0_12:30 PM Eastern Time (US & Canada)"
+              >
+                12:30 PM Eastern Time (US & Canada)
+              </label>
+            </div>
+          </MaybeAddTooltip>
+          <MaybeAddTooltip
+            key="Other"
+            option={
+              Object {
+                "disabled": undefined,
+                "displayText": "Other",
+                "value": "Other",
+              }
+            }
           >
-            <input
-              checked={false}
-              disabled={false}
-              id="hearingTime0_Other"
-              name="hearingTime0"
-              onChange={[Function]}
-              type="radio"
-              value="Other"
-            />
-            <label
-              className=""
-              htmlFor="hearingTime0_Other"
+            <div
+              className="cf-form-radio-option"
+              key="hearingTime0-Other-2"
             >
               <RadioInput
                 controlled={true}
@@ -9105,24 +9203,24 @@ exports[`HearingTime Matches snapshot when other time is not selected 1`] = `
                   Object {
                     "disabled": undefined,
                     "displayText": "Other",
-                    "value": "other",
+                    "value": "Other",
                   }
                 }
-                value="12:30"
+                value="12:30 PM Eastern Time (US & Canada)"
               >
                 <input
                   checked={false}
                   disabled={false}
-                  id="hearingTime0_other"
+                  id="hearingTime0_Other"
                   name="hearingTime0"
                   onChange={[Function]}
                   type="radio"
-                  value="other"
+                  value="Other"
                 />
               </RadioInput>
               <label
                 className=""
-                htmlFor="hearingTime0_other"
+                htmlFor="hearingTime0_Other"
               >
                 Other
               </label>
@@ -9187,69 +9285,118 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
           <strong>
             <span>
               Hearing Time
-
+               
             </span>
           </strong>
         </legend>
         <div
           className="cf-form-radio-options"
         >
-          <div
-            className="cf-form-radio-option"
-            key="hearingTime0-8:30 AM-0"
+          <MaybeAddTooltip
+            key="8:30 AM"
+            option={
+              Object {
+                "disabled": undefined,
+                "displayText": "8:30 AM",
+                "value": "8:30 AM",
+              }
+            }
           >
-            <input
-              checked={false}
-              disabled={false}
-              id="hearingTime0_8:30 AM"
-              name="hearingTime0"
-              onChange={[Function]}
-              type="radio"
-              value="8:30 AM"
-            />
-            <label
-              className=""
-              htmlFor="hearingTime0_8:30 AM"
+            <div
+              className="cf-form-radio-option"
+              key="hearingTime0-8:30 AM-0"
             >
-              8:30 AM
-            </label>
-          </div>
-          <div
-            className="cf-form-radio-option"
-            key="hearingTime0-12:30 PM-1"
+              <RadioInput
+                controlled={true}
+                handleChange={[Function]}
+                idPart="hearingTime0"
+                name="hearingTime0"
+                option={
+                  Object {
+                    "disabled": undefined,
+                    "displayText": "8:30 AM",
+                    "value": "8:30 AM",
+                  }
+                }
+                value="Other"
+              >
+                <input
+                  checked={false}
+                  disabled={false}
+                  id="hearingTime0_8:30 AM"
+                  name="hearingTime0"
+                  onChange={[Function]}
+                  type="radio"
+                  value="8:30 AM"
+                />
+              </RadioInput>
+              <label
+                className=""
+                htmlFor="hearingTime0_8:30 AM"
+              >
+                8:30 AM
+              </label>
+            </div>
+          </MaybeAddTooltip>
+          <MaybeAddTooltip
+            key="12:30 PM"
+            option={
+              Object {
+                "disabled": undefined,
+                "displayText": "12:30 PM",
+                "value": "12:30 PM",
+              }
+            }
           >
-            <input
-              checked={false}
-              disabled={false}
-              id="hearingTime0_12:30 PM"
-              name="hearingTime0"
-              onChange={[Function]}
-              type="radio"
-              value="12:30 PM"
-            />
-            <label
-              className=""
-              htmlFor="hearingTime0_12:30 PM"
+            <div
+              className="cf-form-radio-option"
+              key="hearingTime0-12:30 PM-1"
             >
-              12:30 PM
-            </label>
-          </div>
-          <div
-            className="cf-form-radio-option"
-            key="hearingTime0-Other-2"
+              <RadioInput
+                controlled={true}
+                handleChange={[Function]}
+                idPart="hearingTime0"
+                name="hearingTime0"
+                option={
+                  Object {
+                    "disabled": undefined,
+                    "displayText": "12:30 PM",
+                    "value": "12:30 PM",
+                  }
+                }
+                value="Other"
+              >
+                <input
+                  checked={false}
+                  disabled={false}
+                  id="hearingTime0_12:30 PM"
+                  name="hearingTime0"
+                  onChange={[Function]}
+                  type="radio"
+                  value="12:30 PM"
+                />
+              </RadioInput>
+              <label
+                className=""
+                htmlFor="hearingTime0_12:30 PM"
+              >
+                12:30 PM
+              </label>
+            </div>
+          </MaybeAddTooltip>
+          <MaybeAddTooltip
+            key="Other"
+            option={
+              Object {
+                "disabled": undefined,
+                "displayText": "Other",
+                "value": "Other",
+              }
+            }
           >
-            <input
-              checked={true}
-              disabled={false}
-              id="hearingTime0_Other"
-              name="hearingTime0"
-              onChange={[Function]}
-              type="radio"
-              value="Other"
-            />
-            <label
-              className=""
-              htmlFor="hearingTime0_Other"
+            <div
+              className="cf-form-radio-option"
+              key="hearingTime0-Other-2"
             >
               <RadioInput
                 controlled={true}
@@ -9260,24 +9407,24 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                   Object {
                     "disabled": undefined,
                     "displayText": "Other",
-                    "value": "other",
+                    "value": "Other",
                   }
                 }
-                value="other"
+                value="Other"
               >
                 <input
                   checked={true}
                   disabled={false}
-                  id="hearingTime0_other"
+                  id="hearingTime0_Other"
                   name="hearingTime0"
                   onChange={[Function]}
                   type="radio"
-                  value="other"
+                  value="Other"
                 />
               </RadioInput>
               <label
                 className=""
-                htmlFor="hearingTime0_other"
+                htmlFor="hearingTime0_Other"
               >
                 Other
               </label>
@@ -14731,7 +14878,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                     aria-autocomplete="list"
                                     aria-expanded={false}
                                     aria-haspopup={true}
-                                    aria-label="1:45 pm"
+                                    aria-label="1:45 PM Eastern Time (US & Canada)"
                                     aria-owns="optional-hearing-time-0-listbox"
                                     autoCapitalize="none"
                                     autoComplete="off"
@@ -15246,7 +15393,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                           aria-autocomplete="list"
                                           aria-expanded={false}
                                           aria-haspopup={true}
-                                          aria-label="1:45 pm"
+                                          aria-label="1:45 PM Eastern Time (US & Canada)"
                                           aria-owns="optional-hearing-time-0-listbox"
                                           autoCapitalize="none"
                                           autoComplete="off"
@@ -15290,7 +15437,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                               aria-autocomplete="list"
                                               aria-expanded={false}
                                               aria-haspopup={true}
-                                              aria-label="1:45 pm"
+                                              aria-label="1:45 PM Eastern Time (US & Canada)"
                                               aria-owns="optional-hearing-time-0-listbox"
                                               autoCapitalize="none"
                                               autoComplete="off"
@@ -18166,69 +18313,118 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
           <strong>
             <span>
               Hearing Time
-
+               
             </span>
           </strong>
         </legend>
         <div
           className="cf-form-radio-options"
         >
-          <div
-            className="cf-form-radio-option"
-            key="hearingTime0-8:30 AM-0"
+          <MaybeAddTooltip
+            key="8:30 AM"
+            option={
+              Object {
+                "disabled": undefined,
+                "displayText": "8:30 AM",
+                "value": "8:30 AM",
+              }
+            }
           >
-            <input
-              checked={false}
-              disabled={false}
-              id="hearingTime0_8:30 AM"
-              name="hearingTime0"
-              onChange={[Function]}
-              type="radio"
-              value="8:30 AM"
-            />
-            <label
-              className=""
-              htmlFor="hearingTime0_8:30 AM"
+            <div
+              className="cf-form-radio-option"
+              key="hearingTime0-8:30 AM-0"
             >
-              8:30 AM
-            </label>
-          </div>
-          <div
-            className="cf-form-radio-option"
-            key="hearingTime0-12:30 PM-1"
+              <RadioInput
+                controlled={true}
+                handleChange={[Function]}
+                idPart="hearingTime0"
+                name="hearingTime0"
+                option={
+                  Object {
+                    "disabled": undefined,
+                    "displayText": "8:30 AM",
+                    "value": "8:30 AM",
+                  }
+                }
+                value="Other"
+              >
+                <input
+                  checked={false}
+                  disabled={false}
+                  id="hearingTime0_8:30 AM"
+                  name="hearingTime0"
+                  onChange={[Function]}
+                  type="radio"
+                  value="8:30 AM"
+                />
+              </RadioInput>
+              <label
+                className=""
+                htmlFor="hearingTime0_8:30 AM"
+              >
+                8:30 AM
+              </label>
+            </div>
+          </MaybeAddTooltip>
+          <MaybeAddTooltip
+            key="12:30 PM"
+            option={
+              Object {
+                "disabled": undefined,
+                "displayText": "12:30 PM",
+                "value": "12:30 PM",
+              }
+            }
           >
-            <input
-              checked={false}
-              disabled={false}
-              id="hearingTime0_12:30 PM"
-              name="hearingTime0"
-              onChange={[Function]}
-              type="radio"
-              value="12:30 PM"
-            />
-            <label
-              className=""
-              htmlFor="hearingTime0_12:30 PM"
+            <div
+              className="cf-form-radio-option"
+              key="hearingTime0-12:30 PM-1"
             >
-              12:30 PM
-            </label>
-          </div>
-          <div
-            className="cf-form-radio-option"
-            key="hearingTime0-Other-2"
+              <RadioInput
+                controlled={true}
+                handleChange={[Function]}
+                idPart="hearingTime0"
+                name="hearingTime0"
+                option={
+                  Object {
+                    "disabled": undefined,
+                    "displayText": "12:30 PM",
+                    "value": "12:30 PM",
+                  }
+                }
+                value="Other"
+              >
+                <input
+                  checked={false}
+                  disabled={false}
+                  id="hearingTime0_12:30 PM"
+                  name="hearingTime0"
+                  onChange={[Function]}
+                  type="radio"
+                  value="12:30 PM"
+                />
+              </RadioInput>
+              <label
+                className=""
+                htmlFor="hearingTime0_12:30 PM"
+              >
+                12:30 PM
+              </label>
+            </div>
+          </MaybeAddTooltip>
+          <MaybeAddTooltip
+            key="Other"
+            option={
+              Object {
+                "disabled": undefined,
+                "displayText": "Other",
+                "value": "Other",
+              }
+            }
           >
-            <input
-              checked={true}
-              disabled={false}
-              id="hearingTime0_Other"
-              name="hearingTime0"
-              onChange={[Function]}
-              type="radio"
-              value="Other"
-            />
-            <label
-              className=""
-              htmlFor="hearingTime0_Other"
+            <div
+              className="cf-form-radio-option"
+              key="hearingTime0-Other-2"
             >
               <RadioInput
                 controlled={true}
@@ -18239,24 +18435,24 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                   Object {
                     "disabled": undefined,
                     "displayText": "Other",
-                    "value": "other",
+                    "value": "Other",
                   }
                 }
-                value="other"
+                value="Other"
               >
                 <input
                   checked={true}
                   disabled={false}
-                  id="hearingTime0_other"
+                  id="hearingTime0_Other"
                   name="hearingTime0"
                   onChange={[Function]}
                   type="radio"
-                  value="other"
+                  value="Other"
                 />
               </RadioInput>
               <label
                 className=""
-                htmlFor="hearingTime0_other"
+                htmlFor="hearingTime0_Other"
               >
                 Other
               </label>
@@ -27095,69 +27291,118 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
           <strong>
             <span>
               Hearing Time
-
+               
             </span>
           </strong>
         </legend>
         <div
           className="cf-form-radio-options"
         >
-          <div
-            className="cf-form-radio-option"
-            key="hearingTime0-8:30 AM-0"
+          <MaybeAddTooltip
+            key="8:30 AM"
+            option={
+              Object {
+                "disabled": undefined,
+                "displayText": "8:30 AM",
+                "value": "8:30 AM",
+              }
+            }
           >
-            <input
-              checked={false}
-              disabled={false}
-              id="hearingTime0_8:30 AM"
-              name="hearingTime0"
-              onChange={[Function]}
-              type="radio"
-              value="8:30 AM"
-            />
-            <label
-              className=""
-              htmlFor="hearingTime0_8:30 AM"
+            <div
+              className="cf-form-radio-option"
+              key="hearingTime0-8:30 AM-0"
             >
-              8:30 AM
-            </label>
-          </div>
-          <div
-            className="cf-form-radio-option"
-            key="hearingTime0-12:30 PM-1"
+              <RadioInput
+                controlled={true}
+                handleChange={[Function]}
+                idPart="hearingTime0"
+                name="hearingTime0"
+                option={
+                  Object {
+                    "disabled": undefined,
+                    "displayText": "8:30 AM",
+                    "value": "8:30 AM",
+                  }
+                }
+                value="Other"
+              >
+                <input
+                  checked={false}
+                  disabled={false}
+                  id="hearingTime0_8:30 AM"
+                  name="hearingTime0"
+                  onChange={[Function]}
+                  type="radio"
+                  value="8:30 AM"
+                />
+              </RadioInput>
+              <label
+                className=""
+                htmlFor="hearingTime0_8:30 AM"
+              >
+                8:30 AM
+              </label>
+            </div>
+          </MaybeAddTooltip>
+          <MaybeAddTooltip
+            key="12:30 PM"
+            option={
+              Object {
+                "disabled": undefined,
+                "displayText": "12:30 PM",
+                "value": "12:30 PM",
+              }
+            }
           >
-            <input
-              checked={false}
-              disabled={false}
-              id="hearingTime0_12:30 PM"
-              name="hearingTime0"
-              onChange={[Function]}
-              type="radio"
-              value="12:30 PM"
-            />
-            <label
-              className=""
-              htmlFor="hearingTime0_12:30 PM"
+            <div
+              className="cf-form-radio-option"
+              key="hearingTime0-12:30 PM-1"
             >
-              12:30 PM
-            </label>
-          </div>
-          <div
-            className="cf-form-radio-option"
-            key="hearingTime0-Other-2"
+              <RadioInput
+                controlled={true}
+                handleChange={[Function]}
+                idPart="hearingTime0"
+                name="hearingTime0"
+                option={
+                  Object {
+                    "disabled": undefined,
+                    "displayText": "12:30 PM",
+                    "value": "12:30 PM",
+                  }
+                }
+                value="Other"
+              >
+                <input
+                  checked={false}
+                  disabled={false}
+                  id="hearingTime0_12:30 PM"
+                  name="hearingTime0"
+                  onChange={[Function]}
+                  type="radio"
+                  value="12:30 PM"
+                />
+              </RadioInput>
+              <label
+                className=""
+                htmlFor="hearingTime0_12:30 PM"
+              >
+                12:30 PM
+              </label>
+            </div>
+          </MaybeAddTooltip>
+          <MaybeAddTooltip
+            key="Other"
+            option={
+              Object {
+                "disabled": undefined,
+                "displayText": "Other",
+                "value": "Other",
+              }
+            }
           >
-            <input
-              checked={true}
-              disabled={false}
-              id="hearingTime0_Other"
-              name="hearingTime0"
-              onChange={[Function]}
-              type="radio"
-              value="Other"
-            />
-            <label
-              className=""
-              htmlFor="hearingTime0_Other"
+            <div
+              className="cf-form-radio-option"
+              key="hearingTime0-Other-2"
             >
               <RadioInput
                 controlled={true}
@@ -27168,24 +27413,24 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                   Object {
                     "disabled": undefined,
                     "displayText": "Other",
-                    "value": "other",
+                    "value": "Other",
                   }
                 }
-                value="other"
+                value="Other"
               >
                 <input
                   checked={true}
                   disabled={false}
-                  id="hearingTime0_other"
+                  id="hearingTime0_Other"
                   name="hearingTime0"
                   onChange={[Function]}
                   type="radio"
-                  value="other"
+                  value="Other"
                 />
               </RadioInput>
               <label
                 className=""
-                htmlFor="hearingTime0_other"
+                htmlFor="hearingTime0_Other"
               >
                 Other
               </label>
