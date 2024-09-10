@@ -625,6 +625,11 @@ describe VACOLS::AojCaseDocket, :all_dbs do
       VACOLS::Case.where(bfcurloc: %w[81 83]).map { |c| c.update!(bfcurloc: "testing") }
     end
 
+    def create_case_hearing(orig_case, hearing_judge)
+      create(:case_hearing, :disposition_held, folder_nr: (orig_case.bfkey.to_i - 1).to_s,
+                                               hearing_date: Time.zone.today, user: hearing_judge)
+    end
+
     let(:aff_judge_caseflow) { create(:user) }
     let!(:aff_judge) { create(:staff, :judge_role, sdomainid: aff_judge_caseflow.css_id) }
 
@@ -1096,6 +1101,22 @@ describe VACOLS::AojCaseDocket, :all_dbs do
       let!(:ca21) { create(:legacy_aoj_appeal, :aod, judge: inel_judge, attorney: attorney, tied_to: false) }
       let!(:ca22) { create(:legacy_aoj_appeal, :aod, judge: inel_judge, attorney: attorney, tied_to: false, affinity_start_date: 3.days.ago) }
       let!(:ca23) { create(:legacy_aoj_appeal, :aod, judge: inel_judge, attorney: attorney, tied_to: false, appeal_affinity: false) }
+      # {no original hearing, decided by other_judge, new hearing held by inel_judge}
+      # {This would have affinity to the original deciding judge}
+      let!(:ca24) do
+        c = create(:legacy_aoj_appeal, :aod, judge: other_judge, attorney: attorney, tied_to: false)
+        original_case = VACOLS::Case.find_by(bfcorlid: c.bfcorlid, bfkey: (c.bfkey.to_i + 1).to_s)
+        create_case_hearing(original_case, inel_judge_caseflow)
+        c
+      end
+      # {original hearing held by tied_judge, decided by tied_judge, new hearing held by inel_judge}
+      # {This would have affinity to the original deciding judge}
+      let!(:ca25) do
+        c = create(:legacy_aoj_appeal, :aod, judge: tied_judge, attorney: attorney, tied_to: true)
+        original_case = VACOLS::Case.find_by(bfcorlid: c.bfcorlid, bfkey: (c.bfkey.to_i + 1).to_s)
+        create_case_hearing(original_case, inel_judge_caseflow)
+        c
+      end
       # cavc affinity cases:
       # no hearing held but has previous decision
       let!(:c1) do
@@ -1131,6 +1152,22 @@ describe VACOLS::AojCaseDocket, :all_dbs do
         create(:legacy_aoj_appeal, judge: inel_judge, attorney: attorney,
                                    tied_to: false, appeal_affinity: false, cavc: true)
       end
+      # {no original hearing, decided by other_judge, new hearing held by inel_judge}
+      # {This would have affinity to the original deciding judge}
+      let!(:c24) do
+        c = create(:legacy_aoj_appeal, cavc: true, judge: other_judge, attorney: attorney, tied_to: false)
+        original_case = VACOLS::Case.find_by(bfcorlid: c.bfcorlid, bfkey: (c.bfkey.to_i + 1).to_s)
+        create_case_hearing(original_case, inel_judge_caseflow)
+        c
+      end
+      # {original hearing held by tied_judge, decided by tied_judge, new hearing held by inel_judge}
+      # {This would have affinity to the original deciding judge}
+      let!(:c25) do
+        c = create(:legacy_aoj_appeal, cavc: true, judge: tied_judge, attorney: attorney, tied_to: true)
+        original_case = VACOLS::Case.find_by(bfcorlid: c.bfcorlid, bfkey: (c.bfkey.to_i + 1).to_s)
+        create_case_hearing(original_case, inel_judge_caseflow)
+        c
+      end
 
       it "successfully runs without timing out" do
         IneligibleJudgesJob.new.perform_now
@@ -1146,11 +1183,6 @@ describe VACOLS::AojCaseDocket, :all_dbs do
     end
 
     context "for cases where a hearing has been held after the original decision date" do
-      def create_case_hearing(orig_case, hearing_judge)
-        create(:case_hearing, :disposition_held, folder_nr: (orig_case.bfkey.to_i - 1).to_s,
-                                                 hearing_date: Time.zone.today, user: hearing_judge)
-      end
-
       let(:new_hearing_judge) { create(:user, :judge, :with_vacols_judge_record) }
 
       # original hearing held by tied_judge, decided by tied_judge, new hearing held by new_hearing_judge
