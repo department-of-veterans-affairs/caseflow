@@ -1,7 +1,7 @@
 {
   "cancelSuccessBanner": {
     "title": "Success",
-    "message": "%s task has been cancelled. If you have made a mistake, please email Inbound Ops Supervisor for any changes.",
+    "message": "%s task has been cancelled. If you have made a mistake, please email %s for any changes.",
     "type": "success"
   },
 

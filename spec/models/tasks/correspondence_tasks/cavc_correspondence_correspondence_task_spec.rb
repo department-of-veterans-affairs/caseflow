@@ -19,7 +19,7 @@ describe CavcCorrespondenceCorrespondenceTask, :postgres do
       )
     end
 
-    context "FOIA request directs to UUID" do
+    context "CAVC request directs to UUID" do
       it "routes user to correspondence details page" do
         expect(task.task_url).to eq(
           Constants.CORRESPONDENCE_TASK_URL.CORRESPONDENCE_TASK_DETAIL_URL.sub("uuid", correspondence.uuid)
@@ -27,10 +27,10 @@ describe CavcCorrespondenceCorrespondenceTask, :postgres do
       end
     end
 
-    context "FOIA Request Mail Task Label" do
-      it "displays FOIA label" do
+    context "CAVC Request Mail Task Label" do
+      it "displays CAVC label" do
         expect(task.label).to eq(
-          COPY::FOIA_REQUEST_MAIL_TASK_LABEL
+          COPY::CAVC_CORRESPONDENCE_MAIL_TASK_LABEL
         )
       end
     end

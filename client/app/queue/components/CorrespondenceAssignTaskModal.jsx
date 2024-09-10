@@ -44,7 +44,9 @@ const CorrespondenceAssignTaskModal = (props) => {
   const [assigneeAdded, setAssigneeAdded] = useState(false);
   const [assignee, setAssignee] = useState('');
 
-  const task = props.correspondenceInfo.tasksUnrelatedToAppeal.find((task) => parseInt(props.task_id, 10) === parseInt(task.uniqueId, 10));
+  const currentTask = props.correspondenceInfo.tasksUnrelatedToAppeal.find(
+    (task) => parseInt(props.task_id, 10) === parseInt(task.uniqueId, 10)
+  );
 
   useEffect(() => {
     // Handle the instructions boolean for submit button clickability
@@ -68,22 +70,35 @@ const CorrespondenceAssignTaskModal = (props) => {
     setAssignee(user?.value);
   };
 
+  const setActions = (assignedUser) => {
+    if (props.userCssId === assignedUser) {
+      return currentTask?.availableActions;
+    }
+
+    return [];
+  };
+
   const updateCorrespondence = () => {
     const tempCor = props.correspondenceInfo;
 
     tempCor.tasksUnrelatedToAppeal.find(
-      (task) => task.uniqueId == props.task_id
+      (task) => task.uniqueId === parseInt(props.task_id, 10)
     ).assignedTo = assignee;
     tempCor.tasksUnrelatedToAppeal.find(
-      (task) => task.uniqueId == props.task_id
-    ).instructions = instructions;
+      (task) => task.uniqueId === parseInt(props.task_id, 10)
+    ).instructions.push(instructions);
+    tempCor.tasksUnrelatedToAppeal.find(
+      (task) => task.uniqueId === parseInt(props.task_id, 10)
+    ).availableActions = setActions(assignee);
 
     return tempCor;
   };
 
   const submit = () => {
     const correspondence = updateCorrespondence();
-    const updatedTask = correspondence.tasksUnrelatedToAppeal.find((task) => parseInt(props.task_id, 10) === parseInt(task.uniqueId, 10));
+    const updatedTask = correspondence.tasksUnrelatedToAppeal.find(
+      (task) => parseInt(props.task_id, 10) === parseInt(task.uniqueId, 10)
+    );
 
     const payload = {
       data: {
@@ -104,7 +119,7 @@ const CorrespondenceAssignTaskModal = (props) => {
 
   return (
     <QueueFlowModal
-      title= {task.assignedToOrg ? 'Assign task' : 'Re-assign to person'}
+      title= {currentTask?.assignedToOrg ? 'Assign task' : 'Re-assign to person'}
       button="Assign task"
       submitDisabled= {!validateForm()}
       submitButtonClassNames= "usa-button"
@@ -134,7 +149,7 @@ const CorrespondenceAssignTaskModal = (props) => {
       {shouldShowTaskInstructions &&
         <TextareaField
           name={
-            taskData?.instructions_label ?? COPY.CORRESPONDENCE_CASES_ASSIGN_TASK_MODAL_INSTRUCTIONS_TITLE
+            taskData?.instructions_label ?? COPY.CORRESPONDENCE_CASES_ASSIGN_TO_PERSON_MODAL_INSTRUCTIONS_TITLE
           }
           id="taskInstructions"
           onChange={setInstructions}
@@ -149,7 +164,12 @@ const CorrespondenceAssignTaskModal = (props) => {
 
 CorrespondenceAssignTaskModal.propTypes = {
   requestPatch: PropTypes.func,
-  task: PropTypes.shape({
+  correspondenceInfo: PropTypes.object,
+  correspondence_uuid: PropTypes.string,
+  task_id: PropTypes.string,
+  assignTaskToUser: PropTypes.func,
+  userCssId: PropTypes.string,
+  currentTask: PropTypes.shape({
     appeal: PropTypes.shape({
       hasCompletedSctAssignTask: PropTypes.bool
     }),
@@ -159,11 +179,11 @@ CorrespondenceAssignTaskModal.propTypes = {
     taskId: PropTypes.string,
     type: PropTypes.string,
     onHoldDuration: PropTypes.number
-  }),
+  })
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  task: taskById(state, { taskId: ownProps.taskId }),
+  task: taskById(state, { taskId: ownProps.task_id }),
   taskNotRelatedToAppealBanner: state.correspondenceDetails.bannerAlert,
   correspondenceInfo: state.correspondenceDetails.correspondenceInfo
 });

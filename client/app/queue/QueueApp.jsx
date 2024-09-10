@@ -722,7 +722,10 @@ class QueueApp extends React.PureComponent {
   );
 
   routedCorrespondenceAssignTaskModal = (props) => (
-    <CorrespondenceAssignTaskModal {...props.match.params} />
+    <CorrespondenceAssignTaskModal
+      {...props.match.params}
+      userCssId={this.props.userCssId}
+    />
   );
 
   routedCorrespondenceCancelTaskModal = (props) => (
@@ -753,7 +756,10 @@ class QueueApp extends React.PureComponent {
   );
 
   routedCorrespondenceAssignTeamModal = (props) => (
-    <CorrespondenceAssignTeamModal {...props.match.params} />
+    <CorrespondenceAssignTeamModal
+      {...props.match.params}
+      userOrganizations={this.props.organizations}
+    />
   );
 
   routedCompleteHearingWithdrawalRequest = (props) => (

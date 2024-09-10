@@ -1511,6 +1511,7 @@
   "CORRESPONDENCE_CASES_REMOVE_PACKAGE_MODAL_TITLE": "Review request",
   "CORRESPONDENCE_CASES_REASSIGN_PACKAGE_MODAL_TITLE": "Review request",
   "CORRESPONDENCE_CASES_ASSIGN_TASK_MODAL_INSTRUCTIONS_TITLE": "Provide context and instructions for this action",
+  "CORRESPONDENCE_CASES_ASSIGN_TO_PERSON_MODAL_INSTRUCTIONS_TITLE": "Provide instructions and context for this change",
   "VACOLS_UPDATED_MAIL_TASK_LABEL": "VACOLS updated",
   "AUTO_ASSIGN_CORRESPONDENCES_BUTTON": "Auto assign correspondences",
   "BAAA_NO_UNASSIGNED_CORRESPONDENCE": "There are no correspondences available for assignment",
