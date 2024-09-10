@@ -96,7 +96,15 @@ Rails.application.routes.draw do
         get "vacols_issues", to: redirect("api-docs/v3/vacols_issues.yaml")
       end
     end
-    get "metadata", to: "metadata#index"
+
+    namespace :events do
+      namespace :v1 do
+        post '/decision_review_created', to: 'decision_review_created#decision_review_created'
+        post '/decision_review_created_error',  to: 'decision_review_created#decision_review_created_error'
+      end
+    end
+
+    get "metadata", to: 'metadata#index'
   end
 
   namespace :idt do
