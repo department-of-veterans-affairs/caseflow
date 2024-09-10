@@ -7,7 +7,14 @@ import
   caseDetailsColumn,
   typesColumn,
   hearingDateColumn,
-  hearingTypeColumn
+  hearingTypeColumn,
+  workOrderColumn,
+  itemsColumn,
+  dateSentColumn,
+  expectedReturnDateColumn,
+  contractorColumn,
+  statusColumn,
+  unassignColumn
 } from './TranscriptionFileDispatchTableColumns';
 import { css } from 'glamor';
 import { encodeQueryParams } from '../../util/QueryParamsUtil';
@@ -16,6 +23,14 @@ import ApiUtil from '../../util/ApiUtil';
 const styles = css({
   '& div *': {
     outline: 'none'
+  },
+  '& table': {
+    marginTop: '0',
+    position: 'relative',
+    top: '-1em'
+  },
+  '& thead': {
+    margin: '-2em 0 0 0',
   },
   '& .cf-form-textinput': {
     position: 'relative',
@@ -33,32 +48,48 @@ const styles = css({
   },
   '& .cf-pagination-summary': {
     position: 'relative',
-    top: '4em',
-  },
-  '& .cf-pagination:last-child .cf-pagination-summary': {
-    top: '2em'
+    top: '0.4em',
+    margin: '0'
   },
   '& .cf-pagination-pages': {
-    position: 'relative',
+    margin: '0'
   },
   '& th:last-child .cf-dropdown-filter': {
     left: '-200px'
   },
   '& .cf-table-wrapper': {
-    minHeight: '620px'
+    minHeight: '620px',
+    overflow: 'unset'
   }
 });
 
-export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFilesForPackage }) => {
-  const [transcriptionFiles, setTranscriptionFiles] = useState([]);
+export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFilesForPackage, openModal }) => {
+  const [tableData, setTableData] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [selectingFile, setSelectingFile] = useState(false);
+  const [contractors, setContractors] = useState([]);
+
+  /**
+   * Callback passed into the Queue Table triggered when the unnasign link is clicked
+   * @param {number} id - id of package
+   */
+  const unassignPackage = () => {
+    // do something
+  };
+
+  /**
+   * Callback passed into the Queue Table triggered when the work order is clicked
+   * @param {number} id - id of package
+   */
+  const downloadFile = () => {
+    // do something
+  };
 
   /**
    * Callback passed into the Queue Table triggered when table is updated from the API
    */
-  const tableDataUpdated = (files) => {
-    setTranscriptionFiles(files);
+  const tableDataUpdated = (rows) => {
+    setTableData(rows);
   };
 
   /**
@@ -76,12 +107,33 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
   };
 
   /**
+   * Get the list of transcription contractors for use in the filter
+   */
+  const getContractors = () => {
+    ApiUtil.get('/hearings/find_by_contractor/filterable_contractors').
+      // eslint-disable-next-line camelcase
+      then((response) => setContractors(response.body?.transcription_contractors));
+  };
+
+  /**
    * Adds custom url params to the params used for pagenatation
    * @returns The url params needed to handle pagenation
    */
   const qs = encodeQueryParams({
     tab: statusFilter
   });
+
+  /**
+   * Sets the correct API endpoint based on the tab we're in
+   * @returns The url string
+   */
+  const apiEndpoint = () => {
+    if (!statusFilter || statusFilter[0] === 'Unassigned') {
+      return `/hearings/transcription_files/transcription_file_tasks${qs}`;
+    } else if (statusFilter[0] === 'Assigned') {
+      return `/hearings/transcription_packages/transcription_package_tasks${qs}`;
+    }
+  };
 
   /**
    * Calls to the backend to select or unselect a set of file IDs
@@ -122,7 +174,7 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
    */
   const selectAllFiles = (value) => {
     const lockedFileIds = selectedFiles.filter((file) => file.status === 'locked').map((file) => file.id);
-    const ids = transcriptionFiles.filter((file) => !lockedFileIds.includes(file.id)).map((file) => file.id);
+    const ids = tableData.filter((file) => !lockedFileIds.includes(file.id)).map((file) => file.id);
 
     selectFiles(ids, value);
   };
@@ -134,12 +186,19 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
    */
   const createColumnObject = (column) => {
     const functionForColumn = {
-      [columns.SELECT_ALL.name]: selectColumn(selectFiles, selectAllFiles, selectedFiles, transcriptionFiles),
-      [columns.DOCKET_NUMBER.name]: docketNumberColumn(),
-      [columns.CASE_DETAILS.name]: caseDetailsColumn(),
-      [columns.TYPES.name]: typesColumn(),
-      [columns.HEARING_DATE.name]: hearingDateColumn(),
-      [columns.HEARING_TYPE.name]: hearingTypeColumn()
+      selectColumn: selectColumn(selectFiles, selectAllFiles, selectedFiles, tableData),
+      docketNumberColumn: docketNumberColumn(),
+      caseDetailsColumn: caseDetailsColumn(),
+      typesColumn: typesColumn(),
+      hearingDateColumn: hearingDateColumn(),
+      hearingTypeColumn: hearingTypeColumn(),
+      workOrderColumn: workOrderColumn(downloadFile),
+      itemsColumn: itemsColumn(openModal),
+      dateSentColumn: dateSentColumn(),
+      expectedReturnDateColumn: expectedReturnDateColumn(),
+      contractorColumn: contractorColumn(contractors),
+      statusColumn: statusColumn(),
+      unassignColumn: unassignColumn(unassignPackage)
     };
 
     return functionForColumn[column.name];
@@ -169,12 +228,16 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
    * Call for initial selection statuses and set interval to keep refreshing them
    */
   useEffect(() => {
-    getFileStatuses();
-    const interval = setInterval(() => {
+    if (statusFilter[0] === 'Unassigned') {
       getFileStatuses();
-    }, 3000);
+      const interval = setInterval(() => {
+        getFileStatuses();
+      }, 3000);
 
-    return () => clearInterval(interval);
+      return () => clearInterval(interval);
+    } else if (statusFilter[0] === 'Assigned') {
+      getContractors();
+    }
   }, []);
 
   return (
@@ -185,7 +248,7 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
         enablePagination
         casesPerPage={15}
         useTaskPagesApi
-        taskPagesApiEndpoint={`/hearings/transcription_files/transcription_file_tasks${qs}`}
+        taskPagesApiEndpoint={apiEndpoint()}
         anyFiltersAreSet
         tabPaginationOptions={getUrlParams(window.location.search)}
         getKeyForRow={(_, row) => row.id}
@@ -204,5 +267,6 @@ TranscriptionFileDispatchTable.propTypes = {
     })),
   statusFilter: PropTypes.arrayOf(PropTypes.string),
   selectAll: PropTypes.func,
-  selectFilesForPackage: PropTypes.func
+  selectFilesForPackage: PropTypes.func,
+  openModal: PropTypes.func
 };
