@@ -12,11 +12,11 @@ export const VSOEmailNotificationsFields = ({
   errors,
   hearing,
   readOnly,
-  time,
   roTimezone,
   setIsValidEmail,
   actionType,
-  update
+  update,
+  hearingDayDate
 }) => {
   const disableField = readOnly || readOnlyEmails(hearing);
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
@@ -61,12 +61,13 @@ export const VSOEmailNotificationsFields = ({
               update(actionType, { appellantTz })
             }
             readOnly={disableField}
-            time={time}
+            time={hearing?.scheduledTimeString}
             roTimezone={roTimezone}
             name="appellantTz"
             label={`${getAppellantTitle(
               hearing?.appellantIsNotVeteran
             )} Timezone`}
+            hearingDayDate={hearingDayDate}
           />
           <HelperText label={COPY.VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT} />
         </div>
@@ -90,5 +91,6 @@ VSOEmailNotificationsFields.propTypes = {
   setIsValidEmail: PropTypes.func,
   setConfirmIsEmpty: PropTypes.func,
   confirmIsEmpty: PropTypes.bool,
-  actionType: PropTypes.string
+  actionType: PropTypes.string,
+  hearingDayDate: PropTypes.string
 };

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import { css } from 'glamor';
 import { COLORS } from 'app/constants/AppConstants';
+import { FORM_TYPES } from '../constants';
 
 import BenefitType from '../components/BenefitType';
 import PreDocketRadioField from '../components/PreDocketRadioField';
@@ -18,6 +19,7 @@ import { formatDateStr } from 'app/util/DateUtil';
 import { VHA_PRE_DOCKET_ISSUE_BANNER, VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER } from 'app/../COPY';
 import Checkbox from '../../components/Checkbox';
 import { generateSkipButton } from '../util/buttonUtils';
+import descriptionValidator from '../../util/validators/DescriptionValidator';
 
 const NO_MATCH_TEXT = 'None of these match';
 
@@ -54,7 +56,8 @@ class NonratingRequestIssueModal extends React.Component {
       isTaskInProgress: props.intakeData.taskInProgress,
       mstChecked: false,
       pactChecked: false,
-      dateError: ''
+      dateError: '',
+      descriptionError: ''
     };
   }
 
@@ -100,7 +103,8 @@ class NonratingRequestIssueModal extends React.Component {
 
   descriptionOnChange = (value) => {
     this.setState({
-      description: value
+      description: value,
+      descriptionError: descriptionValidator()(value)
     });
   };
 
@@ -228,7 +232,7 @@ class NonratingRequestIssueModal extends React.Component {
         classNames: ['usa-button', 'add-issue'],
         name: this.props.submitText,
         onClick: this.onAddIssue,
-        disabled: this.requiredFieldsMissing() || Boolean(this.state.dateError)
+        disabled: this.requiredFieldsMissing() || Boolean(this.state.dateError) || Boolean(this.state.descriptionError)
       }
     ];
 
@@ -240,9 +244,14 @@ class NonratingRequestIssueModal extends React.Component {
   getNonratingRequestIssueOptions() {
     const { intakeData } = this.props;
     const { category } = this.state;
+    const { featureToggles } = this.props;
 
     const options = intakeData.activeNonratingRequestIssues.
       filter((issue) => {
+        if (!featureToggles.disableAmaEventing) {
+          return category;
+        }
+
         return category && issue.category === category.value;
       }).
       map((issue) => {
@@ -308,7 +317,13 @@ class NonratingRequestIssueModal extends React.Component {
           />
         </div>
 
-        <TextField name="Issue description" strongLabel value={description} onChange={this.descriptionOnChange} />
+        <TextField
+          name="Issue description"
+          strongLabel
+          value={description}
+          onChange={this.descriptionOnChange}
+          errorMessage={this.state.descriptionError}
+        />
       </React.Fragment>
     );
   }
@@ -368,7 +383,7 @@ class NonratingRequestIssueModal extends React.Component {
       formType === 'appeal' ? <PreDocketRadioField value={isPreDocketNeeded}
         onChange={this.isPreDocketNeededOnChange} /> : null;
 
-    const getSpecialIssues = this.props.userCanEditIntakeIssues ?
+    const getSpecialIssues = (this.props.userCanEditIntakeIssues && (formType === FORM_TYPES.APPEAL.key)) ?
       this.getSpecialIssues(mstIdentification, pactIdentification) : null;
 
     return (
