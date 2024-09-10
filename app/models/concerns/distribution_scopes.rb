@@ -162,12 +162,16 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   end
 
   def genpop_by_affinity_start_date
-    with_appeal_affinities
+    result = with_appeal_affinities
       .with_original_appeal_and_judge_task
-      .where(
+
+    if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_affinity_days)
+      result.where(
         "appeal_affinities.affinity_start_date <= ?",
         CaseDistributionLever.cavc_affinity_days.days.ago
       )
+    end
+    result
   end
 
   def ama_non_aod_appeals
@@ -204,11 +208,16 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   end
 
   def non_genpop_by_affinity_start_date
-    with_appeal_affinities
+    result = with_appeal_affinities
       .with_original_appeal_and_judge_task
-      .where("appeal_affinities.affinity_start_date > ? or appeal_affinities.affinity_start_date is null",
-             CaseDistributionLever.cavc_affinity_days.days.ago)
       .where.not(original_judge_task: { assigned_to_id: nil })
+
+    if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_affinity_days)
+      result = result
+        .where("appeal_affinities.affinity_start_date > ? or appeal_affinities.affinity_start_date is null",
+               CaseDistributionLever.cavc_affinity_days.days.ago)
+    end
+    result
   end
 
   def ordered_by_distribution_ready_date
