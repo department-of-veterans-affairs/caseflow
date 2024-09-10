@@ -191,4 +191,126 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       expect(subject.perform!).to be false
     end
   end
+
+  context "when handling errors in #process_edited_issues!" do
+    let(:invalid_reference_id) { "12345" }
+
+    before do
+      subject.instance_variable_set(:@edited_issue_data, [{ reference_id: invalid_reference_id }])
+    end
+
+    context "when a request issue is not found" do
+      before do
+        allow(RequestIssue).to receive(:find).and_raise(ActiveRecord::RecordNotFound)
+      end
+
+      it "raises a DecisionReviewUpdateMissingIssueError with the correct message" do
+        expect { subject.perform! }.to raise_error(Caseflow::Error::DecisionReviewUpdateMissingIssueError, "Request issue not found for REFERENCE_ID: #{invalid_reference_id}")
+      end
+    end
+  end
+
+  context "when handling errors in #process_removed_issues!" do
+    let(:invalid_reference_id) { "12345" }
+
+    before do
+      subject.instance_variable_set(:@removed_issue_data, [{ reference_id: invalid_reference_id }])
+    end
+
+    context "when a request issue is not found" do
+      before do
+        allow(review.request_issues).to receive(:find).and_raise(ActiveRecord::RecordNotFound)
+      end
+
+      it "raises a DecisionReviewUpdateMissingIssueError with the correct message" do
+        expect { subject.perform! }.to raise_error(Caseflow::Error::DecisionReviewUpdateMissingIssueError, "Request issue not found for REFERENCE_ID: #{invalid_reference_id}")
+      end
+    end
+  end
+
+  context "when handling errors in #process_withdrawn_issues!" do
+    let(:invalid_reference_id) { "12345" }
+
+    before do
+      subject.instance_variable_set(:@withdrawn_issue_data, [{ reference_id: invalid_reference_id }])
+    end
+
+    context "when a request issue is not found" do
+      before do
+        allow(RequestIssue).to receive(:find).and_raise(ActiveRecord::RecordNotFound)
+      end
+
+      it "raises a DecisionReviewUpdateMissingIssueError with the correct message" do
+        expect { subject.perform! }.to raise_error(Caseflow::Error::DecisionReviewUpdateMissingIssueError, "Request issue not found for REFERENCE_ID: #{invalid_reference_id}")
+      end
+    end
+  end
+
+  context "when handling errors in #process_eligible_to_ineligible_issues!" do
+    let(:invalid_reference_id) { "12345" }
+    let(:eligible_to_ineligible_issue) { [{ reference_id: invalid_reference_id, ineligible_reason: "higher_level_review_to_higher_level_review" }] }
+
+
+    before do
+      subject.instance_variable_set(:@eligible_to_ineligible_issue_data, [{ reference_id: invalid_reference_id }])
+    end
+
+    context "when a request issue is not found" do
+      before do
+        allow(RequestIssue).to receive(:find).and_raise(ActiveRecord::RecordNotFound)
+
+        allow_any_instance_of(RequestIssue).to receive(:closed_at).and_return(nil)
+        allow_any_instance_of(RequestIssue).to receive(:save!).and_return(true)
+      end
+
+      it "raises a DecisionReviewUpdateMissingIssueError with the correct message" do
+        expect { subject.perform! }.to raise_error(Caseflow::Error::DecisionReviewUpdateMissingIssueError,
+                                                   "Request issue not found for REFERENCE_ID: #{invalid_reference_id}")
+      end
+    end
+  end
+
+  context "when handling errors in #process_ineligible_to_eligible_issues!" do
+    let(:invalid_reference_id) { "12345" }
+    let(:ineligible_to_eligible_issue) { [{ reference_id: invalid_reference_id, ineligible_reason: nil }] }
+
+    before do
+      subject.instance_variable_set(:@ineligible_to_eligible_issue_data, [{ reference_id: invalid_reference_id }])
+
+      allow_any_instance_of(RequestIssue).to receive(:closed_at).and_return(nil)
+      allow_any_instance_of(RequestIssue).to receive(:save!).and_return(true)
+    end
+
+    context "when a request issue is not found" do
+      before do
+        allow(RequestIssue).to receive(:find).and_raise(ActiveRecord::RecordNotFound)
+      end
+
+      it "raises a DecisionReviewUpdateMissingIssueError with the correct message" do
+        expect { subject.perform! }.to raise_error(Caseflow::Error::DecisionReviewUpdateMissingIssueError, "Request issue not found for REFERENCE_ID: #{invalid_reference_id}")
+      end
+    end
+  end
+
+  context "when handling errors in #process_ineligible_to_ineligible_issues!" do
+    let(:invalid_reference_id) { "12345" }
+    let(:ineligible_issue_data) { [{ reference_id: invalid_reference_id, ineligible_reason: "appeal_to_appeal" }] }
+
+    before do
+      subject.instance_variable_set(:@ineligible_to_ineligible_issue_data, [{ reference_id: invalid_reference_id }])
+
+      allow_any_instance_of(RequestIssue).to receive(:closed_at).and_return(nil)
+      allow_any_instance_of(RequestIssue).to receive(:save!).and_return(true)
+    end
+
+    context "when a request issue is not found" do
+      before do
+        allow(RequestIssue).to receive(:find).and_raise(ActiveRecord::RecordNotFound)
+      end
+
+      it "raises a DecisionReviewUpdateMissingIssueError with the correct message" do
+        expect { subject.perform! }.to raise_error(Caseflow::Error::DecisionReviewUpdateMissingIssueError, "Request issue not found for REFERENCE_ID: #{invalid_reference_id}")
+      end
+    end
+  end
 end
