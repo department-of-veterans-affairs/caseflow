@@ -885,8 +885,10 @@ ActiveRecord::Schema.define(version: 2024_09_06_174831) do
     t.integer "event_id", null: false, comment: "ID of the Event that created or updated this record."
     t.bigint "evented_record_id", null: false
     t.string "evented_record_type", null: false
+    t.jsonb "info", default: {}
     t.datetime "updated_at", null: false, comment: "Automatic timestamp whenever the record changes"
     t.index ["evented_record_type", "evented_record_id"], name: "index_event_record_on_evented_record"
+    t.index ["info"], name: "index_event_records_on_info", using: :gin
   end
 
   create_table "events", comment: "Stores events from the Appeals-Consumer application that are processed by Caseflow", force: :cascade do |t|
