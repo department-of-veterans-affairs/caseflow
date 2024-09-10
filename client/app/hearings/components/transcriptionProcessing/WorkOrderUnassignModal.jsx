@@ -1,27 +1,21 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import Modal from '../../../components/Modal';
 import COPY from '../../../../COPY';
 import ApiUtil from 'app/util/ApiUtil';
 
 const WorkOrderUnassignModal = ({ onClose, workOrderNumber }) => {
-  const [error, setError] = useState(null);
 
   const unassignWorkOrder = (orderNumber) => {
-    const cleanedWorkOrderNumber = orderNumber.replace("BVA", "");
+    const cleanedWorkOrderNumber = orderNumber.replace('BVA', '');
     const data = { task_number: cleanedWorkOrderNumber };
-    const url = "/hearings/transcription_work_order/unassigning_work_order";
+    const url = '/hearings/transcription_work_order/unassigning_work_order';
 
     ApiUtil.post(url, { data })
       .then((response) => {
         if (response.status === 204) {
           onClose();
-        } else {
-          setError("Failed to unassign work order.");
         }
-      })
-      .catch(() => {
-        setError("An error occurred while unassigning the work order.");
       });
   };
 
@@ -38,7 +32,6 @@ const WorkOrderUnassignModal = ({ onClose, workOrderNumber }) => {
           {COPY.TRANSCRIPTION_FILE_UNASSIGN_WORK_ORDER_MODAL_BOLD_TEXT}
         </strong>
       </p>
-      {error && <p className="error-message">{error}</p>}
     </div>
   );
 
@@ -52,6 +45,9 @@ const WorkOrderUnassignModal = ({ onClose, workOrderNumber }) => {
           .custom-modal .no-margin {
             margin-bottom: 0 !important;
           }
+          .custom-modal h1 {
+            margin-bottom: 0 !important;
+          }
           .error-message {
             color: red;
             margin-top: 10px;
@@ -63,7 +59,7 @@ const WorkOrderUnassignModal = ({ onClose, workOrderNumber }) => {
         buttons={[
           {
             classNames: ['cf-modal-link', 'cf-btn-link'],
-            name: 'Close',
+            name: 'Cancel',
             onClick: onClose
           },
           {
