@@ -51,7 +51,7 @@ RSpec.feature "User organization", :postgres do
 
       find(".cf-select__control", text: COPY::USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_TEXT).click
 
-      set_field_value_with_delay('#add-user', user_with_role.css_id)
+      set_field_value_with_delay("#add-user", user_with_role.css_id)
 
       expect(page).to have_content(user_with_role.full_name)
       expect(page).to_not have_content(user_without_role.full_name)
