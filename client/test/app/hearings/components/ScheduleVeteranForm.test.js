@@ -14,13 +14,6 @@ const changeSpy = jest.fn();
 const submitSpy = jest.fn();
 const cancelSpy = jest.fn();
 const fetchScheduledHearingsMock = jest.fn();
-const getSpy = jest.spyOn(ApiUtil, 'get');
-
-describe('ScheduleVeteranForm', () => {
-  beforeEach(() => {
-    getSpy.mockImplementation(() => Promise.resolve({ body: {} }));
-  });
-
 jest.mock('app/util/ApiUtil', () => ({
   convertToSnakeCase: jest.fn(obj => obj),
   convertToCamelCase: jest.fn(obj => obj),
