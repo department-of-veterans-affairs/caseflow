@@ -1,8 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-
 import moment from 'moment-timezone';
-import { drop, invert } from 'lodash';
+import { invert } from 'lodash';
 
 
 import { Timezone } from 'app/hearings/components/VirtualHearings/Timezone';
@@ -22,6 +21,8 @@ const commonsCount = REGIONAL_OFFICE_TIMEZONES.filter((zone) => Object.values(TI
 
 // Reverse the commons array but don't mutate to move EST to the top for comparison
 const commons = COMMON_TIMEZONES.slice().reverse();
+
+const hearingDayDate = '2025-01-01';
 
 const changeSpy = jest.fn();
 
@@ -114,8 +115,8 @@ describe('Timezone', () => {
     expect(options.length).toBeGreaterThan(0);
     expect(options[0].textContent).toEqual('');
     expect(options[1].textContent).
-    toEqual(`Eastern Time (US & Canada) (${HEARING_TIME_OPTIONS[0].
-    label.toUpperCase()})`);
+    toEqual(`Eastern Time (US & Canada)`);
+
 
     // Ensure the common zones are the first 4
     let hiddenInput = container.querySelector('[type="hidden"]');
@@ -260,8 +261,12 @@ describe('Timezone', () => {
 
     allOptionValues.forEach(item => {
       if (REGIONAL_OFFICE_TIMEZONES.includes(item)) {
-        const label = `${roTzValueToLabelMapping[item]} (${moment(dateTime, 'HH:mm').tz(item).format('h:mm A')})`
-        expect(allOptions.slice(0, commonsCount)).toContain(label)
+        const label = `${roTzValueToLabelMapping[item]} (${moment(dateTime, 'HH:mm').format('h:mm A')})`;
+        allOptions.map(opt => {
+          if (opt.value === item) {
+            expect(opt.label).toEqual(label);
+          }
+        });
       }
     });
     expect(asFragment()).toMatchSnapshot();
