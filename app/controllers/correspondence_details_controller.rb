@@ -3,6 +3,8 @@
 class CorrespondenceDetailsController < CorrespondenceController
   include CorrespondenceControllerConcern
 
+  before_action :correspondence_details_access
+
   def correspondence_details
     set_instance_variables
 
@@ -53,9 +55,26 @@ class CorrespondenceDetailsController < CorrespondenceController
     }
   end
 
-  # overriding method to allow users to access the correspondence details page
+  # Overriding method to allow users to access the correspondence details page
   def verify_correspondence_access
     true
+  end
+
+  def correspondence_details_access
+    access_redirect unless correspondence.status == Constants.CORRESPONDENCE_STATUSES.pending ||
+                           correspondence.status == Constants.CORRESPONDENCE_STATUSES.completed
+  end
+
+  def access_redirect
+    if !InboundOpsTeam.singleton.user_has_access?(current_user)
+      redirect_to "/queue"
+    elsif current_user.inbound_ops_team_supervisor? || current_user.inbound_ops_team_superuser?
+      redirect_to "/queue/correspondence/team"
+    elsif current_user.inbound_ops_team_user?
+      redirect_to "/queue/correspondence"
+    else
+      redirect_to "/unauthorized"
+    end
   end
 
   private
