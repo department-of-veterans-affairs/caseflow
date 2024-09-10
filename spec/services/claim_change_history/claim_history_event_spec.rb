@@ -76,7 +76,8 @@ describe ClaimHistoryEvent do
       "imr_versions" => imr_versions,
       "previous_imr_created_at" => nil,
       "updater_user_name" => "Monte Mann",
-      "is_assigned_present" => is_assigned_present
+      "is_assigned_present" => is_assigned_present,
+      "previous_state_array" => previous_state_array
     }
   end
 
@@ -95,13 +96,15 @@ describe ClaimHistoryEvent do
   let(:request_issue_update_time) { Time.zone.parse("2023-10-19 22:47:16.233187") }
   let(:request_issue_created_at) { Time.zone.parse("2023-10-19 22:45:43.108934") }
   let(:issue_modification_request_created_at) { Time.zone.parse("2023-10-20 22:47:16.233187") }
-  let(:imr_last_decided_date) { Time.zone.parse("2023-10-21 22:47:16.233187") }
   let(:previous_imr_created_at) { Time.zone.parse("2023-10-19 22:47:16.233187") }
+  let(:out_of_bounds_time) { Time.utc(9999, 12, 31, 23, 59, 59) }
 
   let(:decision_reason) { nil }
   let(:decider_id) { nil }
   let(:decided_at) { nil }
   let(:is_assigned_present) { false }
+  let(:previous_state_array) {}
+
   let(:event_attribute_data) do
     {
       assigned_at: Time.zone.parse("2023-10-19 22:47:16.222148"),
@@ -199,20 +202,29 @@ describe ClaimHistoryEvent do
       event_user_name: "System"
     }
   end
+  let(:modification_request_decision_date) { Time.zone.parse("2024-07-28").to_date }
   let(:modification_attribute_data) do
     {
       event_type: :modification,
       request_type: :modification,
-      new_issue_type: "Caregiver | Tier Level",
-      new_issue_description: "test",
-      new_decision_date: "2024-07-07",
-      modification_request_reason: "Testing"
+      benefit_type: "vha",
+      issue_type: "Clothing Allowance",
+      issue_description: "Clothing allowance no decision date",
+      decision_date: "2023-05-31",
+      new_issue_type: "Caregiver | Eligibility",
+      new_issue_description: "Rejection of withrwaslasas",
+      new_decision_date: modification_request_decision_date,
+      modification_request_reason: "Please withdwasdadsadadadad",
+      previous_issue_type: "Caregiver | Eligibility",
+      previous_issue_description: "Rejection of withrwaslasas",
+      previous_decision_date: modification_request_decision_date,
+      previous_modification_request_reason: "Please withdwasdadsadadadad"
     }
   end
   let(:issue_modification_response_attribute) do
     {
       event_type: :request_approved,
-      request_type: :addition,
+      request_type: request_type,
       new_issue_type: "Caregiver | Tier Level",
       new_issue_description: "test",
       new_decision_date: "2024-07-07",
@@ -223,13 +235,18 @@ describe ClaimHistoryEvent do
   let(:issue_modification_edited_attribute) do
     {
       event_type: :request_edited,
-      request_type: :addition,
+      request_type: :withdrawal,
       issue_type: "Clothing Allowance",
-      new_issue_type: "Caregiver | Tier Level",
+      issue_description: "Clothing allowance no decision date",
+      new_issue_type: "Caregiver | Eligibility",
       new_issue_description: "modifiedvalue",
-      new_decision_date: "2024-07-07",
+      new_decision_date: modification_request_decision_date,
       modification_request_reason: "Addition is the only request issue-modifiedvalue Z",
-      event_user_name: "Monte Mann"
+      event_user_name: "Monte Mann",
+      previous_issue_type: "Caregiver | Eligibility",
+      previous_issue_description: "Rejection of withrwaslasas",
+      previous_decision_date: modification_request_decision_date,
+      previous_modification_request_reason: "Please withdwasdadsadadadad"
     }
   end
 
@@ -748,11 +765,11 @@ describe ClaimHistoryEvent do
       end
     end
 
-    describe ".create_pending_status_events" do
+    describe ".create_pending_status_event" do
       let(:event_date) { change_data["issue_modification_request_created_at"] }
       let(:is_assigned_present) { true }
 
-      subject { described_class.create_pending_status_events(change_data, event_date) }
+      subject { described_class.create_pending_status_event(change_data, event_date) }
 
       it "should return one pending event" do
         expect_attributes(subject, pending_attribute_data)
@@ -783,16 +800,64 @@ describe ClaimHistoryEvent do
     end
 
     describe ".create_issue_modification_request_event" do
-      let(:request_type) { :modification }
+      context "when request type is modification" do
+        let(:request_type) { :modification }
+        let(:previous_state_array) do
+          "{\"---\n" \
+            "id: 150\n" \
+            "status: assigned\n" \
+            "requestor_id: 2000006012\n" \
+            "nonrating_issue_category: Caregiver | Eligibility\n" \
+            "decision_date: 2024-07-28\n" \
+            "nonrating_issue_description: 'Rejection of withrwaslasas'\n" \
+            "request_reason: Please withdwasdadsadadadad\n" \
+            "withdrawal_date: 2024-08-04 04:00:00.000000000 Z\n" \
+            "edited_at: \n" \
+            "request_issue_id: 251\n" \
+            "request_type: modification\n" \
+            "benefit_type: vha\n" \
+            "created_at: 2024-08-26 17:22:53.454663000 Z\n" \
+            "decided_at: \n" \
+            "decider_id: \n" \
+            "decision_reason: \n" \
+            "decision_review_id: 31\n" \
+            "decision_review_type: SupplementalClaim\n" \
+            "remove_original_issue: false\n" \
+            "updated_at: 2024-08-26 17:22:53.454663000 Z\n" \
+            "\",---\n" \
+            "id: 150\n" \
+            "status: assigned\n" \
+            "requestor_id: 2000006012\n" \
+            "nonrating_issue_category: Caregiver | Eligibility\n" \
+            "decision_date: 2024-07-28\n" \
+            "nonrating_issue_description: 'Rejection of withrwaslasas'\n" \
+            "request_reason: Please  Withdraw this one since its no longer valid.\n" \
+            "withdrawal_date: 2024-08-04 04:00:00.000000000 Z\n" \
+            "edited_at: 2024-08-26 17:23:28.055850000 Z\n" \
+            "request_issue_id: 251\n" \
+            "request_type: modification\n" \
+            "benefit_type: vha\n" \
+            "created_at: 2024-08-26 17:22:53.454663000 Z\n" \
+            "decided_at: \n" \
+            "decider_id: \n" \
+            "decision_reason: \n" \
+            "decision_review_id: 31\n" \
+            "decision_review_type: SupplementalClaim\n" \
+            "remove_original_issue: false\n" \
+            "updated_at: 2024-08-26 17:23:28.072803000 Z\n" \
+            "\"}"
+        end
 
-      subject { described_class.create_issue_modification_request_event(change_data) }
+        subject { described_class.create_issue_modification_request_event(change_data) }
 
-      it "should return single event with request_type passed as the request_type" do
-        verify_attributes_and_count(subject, 1, modification_attribute_data)
+        it "should return single event with request_type passed as the request_type" do
+          verify_attributes_and_count(subject, 1, modification_attribute_data)
+        end
       end
     end
 
     describe ".create_edited_request_issue_events" do
+      let(:request_type) { :withdrawal }
       let(:imr_versions) do
         "{\"---\n" \
         "nonrating_issue_description:\n" \
@@ -819,15 +884,64 @@ describe ClaimHistoryEvent do
         "- 2024-07-19 22:47:16.222311778 Z\n" \
         "\"}"
       end
+      let(:previous_state_array) do
+        "{\"---\n" \
+          "id: 150\n" \
+          "status: assigned\n" \
+          "requestor_id: 2000006012\n" \
+          "nonrating_issue_category: Caregiver | Eligibility\n" \
+          "decision_date: 2024-07-28\n" \
+          "nonrating_issue_description: 'Rejection of withrwaslasas'\n" \
+          "request_reason: Please withdwasdadsadadadad\n" \
+          "withdrawal_date: 2024-08-04 04:00:00.000000000 Z\n" \
+          "edited_at: \n" \
+          "request_issue_id: 251\n" \
+          "request_type: withdrawal\n" \
+          "benefit_type: vha\n" \
+          "created_at: 2024-08-26 17:22:53.454663000 Z\n" \
+          "decided_at: \n" \
+          "decider_id: \n" \
+          "decision_reason: \n" \
+          "decision_review_id: 31\n" \
+          "decision_review_type: SupplementalClaim\n" \
+          "remove_original_issue: false\n" \
+          "updated_at: 2024-08-26 17:22:53.454663000 Z\n" \
+          "\",---\n" \
+          "id: 150\n" \
+          "status: assigned\n" \
+          "requestor_id: 2000006012\n" \
+          "nonrating_issue_category: Caregiver | Eligibility\n" \
+          "decision_date: 2024-07-28\n" \
+          "nonrating_issue_description: 'Rejection of withrwaslasas'\n" \
+          "request_reason: Please  Withdraw this one since its no longer valid.\n" \
+          "withdrawal_date: 2024-08-04 04:00:00.000000000 Z\n" \
+          "edited_at: 2024-08-26 17:23:28.055850000 Z\n" \
+          "request_issue_id: 251\n" \
+          "request_type: withdrawal\n" \
+          "benefit_type: vha\n" \
+          "created_at: 2024-08-26 17:22:53.454663000 Z\n" \
+          "decided_at: \n" \
+          "decider_id: \n" \
+          "decision_reason: \n" \
+          "decision_review_id: 31\n" \
+          "decision_review_type: SupplementalClaim\n" \
+          "remove_original_issue: false\n" \
+          "updated_at: 2024-08-26 17:23:28.072803000 Z\n" \
+          "\"}"
+      end
+
       before do
-        change_data["decided_at"] = imr_last_decided_date
-        change_data["imr_last_decided_date"] = imr_last_decided_date
+        change_data["decided_at"] = Time.zone.parse("2023-10-21 22:47:16.233187")
+        change_data["next_decided_or_cancelled_at"] = out_of_bounds_time
+        change_data["next_created_at"] = out_of_bounds_time
+        # The event is generated via the versions so it needs to match the status instead of cancelled.
+        # It's not important for generation, but it's a more correct data state for a claim with a single approved IMR
+        change_data["issue_modification_request_status"] = "approved"
       end
       subject { described_class.create_edited_request_issue_events(change_data) }
 
       it "returns request_edited event type with multiple events" do
         expect(subject.count).to be(4)
-
         expect_attributes(subject[0], pending_attribute_data)
         expect_attributes(subject[1], issue_modification_response_attribute)
         expect_attributes(subject[3], issue_modification_edited_attribute)
@@ -1347,8 +1461,8 @@ describe ClaimHistoryEvent do
     end
   end
 
-  def verify_attributes_and_count(subject, num_of_records, attribute)
+  def verify_attributes_and_count(subject, num_of_records, attributes)
     expect(subject.count).to eq(num_of_records)
-    expect_attributes(subject[0], attribute)
+    expect_attributes(subject[0], attributes)
   end
 end
