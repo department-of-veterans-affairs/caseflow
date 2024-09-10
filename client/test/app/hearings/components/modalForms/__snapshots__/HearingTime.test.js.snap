@@ -13,7 +13,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
       >
         <strong>
           <span>
-            Hearing Time 
+            Hearing Time
           </span>
         </strong>
       </legend>
@@ -186,7 +186,7 @@ exports[`HearingTime Matches snapshot when other time is not selected 1`] = `
       >
         <strong>
           <span>
-            Hearing Time 
+            Hearing Time
           </span>
         </strong>
       </legend>
@@ -261,7 +261,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
       >
         <strong>
           <span>
-            Hearing Time 
+            Hearing Time
           </span>
         </strong>
       </legend>
@@ -434,7 +434,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
       >
         <strong>
           <span>
-            Hearing Time 
+            Hearing Time
           </span>
         </strong>
       </legend>
@@ -585,7 +585,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
       >
         <strong>
           <span>
-            Hearing Time 
+            Hearing Time
           </span>
         </strong>
       </legend>

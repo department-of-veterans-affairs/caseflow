@@ -206,7 +206,7 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
           id="guest-hearings-link"
         >
           <strong>
-            Guest Link:
+            Guest Link: 
           </strong>
           <a
             href="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
@@ -259,7 +259,7 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
             data-css-1abghdv=""
           >
             <strong>
-              Conference Room:
+              Conference Room: 
             </strong>
             BVA0000009@care.evn.va.gov
           </div>
@@ -267,7 +267,7 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
             data-css-6aejb2=""
           >
             <strong>
-              PIN:
+              PIN: 
             </strong>
             2684353125#
           </div>
@@ -309,7 +309,7 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
               role="tooltip"
             >
               <style>
-
+                
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -383,7 +383,7 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
               </style>
               Click to copy
             </div>
@@ -425,7 +425,7 @@ exports[`VirtualHearingFields Renders webex conference when conference provider 
           id="guest-hearings-link"
         >
           <strong>
-            Guest Link:
+            Guest Link: 
           </strong>
           <a
             href="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
