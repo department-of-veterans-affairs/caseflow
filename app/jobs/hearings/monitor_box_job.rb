@@ -55,7 +55,7 @@ class Hearings::MonitorBoxJob < ApplicationJob
   end
 
   def webex_file_naming_convention
-    # Returns a regular expression to find files following our naming convention transcription files from Webex hearings.
+    # Returns a regular expression to find files using our naming convention transcription files from Webex hearings.
     # This is important since the Box.com folders will also contain transcription files from Pexip hearings
     # that we are not interested in for this workflow.
     #
