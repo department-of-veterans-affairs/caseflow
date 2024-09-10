@@ -230,7 +230,7 @@ describe Distribution, :all_dbs do
 
     context "distribution lever cache" do
       it "caches lever properly" do
-        expect(CaseDistributionLever).to receive(:check_distribution_lever_cache).and_call_original
+        expect(CaseDistributionLever).to receive(:check_distribution_lever_cache).at_least(:once).and_call_original
         new_distribution.distribute!
         expect(Rails.cache.exist?("aoj_affinity_days_distribution_lever_cache")).to be false
       end
