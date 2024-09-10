@@ -13,6 +13,25 @@ const detailStyles = css({
   }
 });
 
+const formatDate = (date) => {
+  if (!date) {
+    return null;
+  }
+  const arr = date.split('-');
+
+  arr.push(arr.shift());
+
+  return arr.join('/');
+};
+
+const validateReturnDate = (returnDate, expectedReturnDate) => {
+  if (!returnDate || !expectedReturnDate) {
+    return null;
+  }
+
+  return new Date(returnDate) > new Date(expectedReturnDate);
+};
+
 const TranscriptionDetailsWebex = ({ transcription, title, readOnly, update }) => {
   return (
     <div {...detailStyles}>
@@ -24,7 +43,7 @@ const TranscriptionDetailsWebex = ({ transcription, title, readOnly, update }) =
         </div>
         <div>
           <label>Contractor</label>
-          <p>{transcription?.contractor || 'N/A'}</p>
+          <p>{transcription?.transcriber || 'N/A'}</p>
         </div>
         <DateSelector
           name="uploadedToVbmsDate"
@@ -39,11 +58,11 @@ const TranscriptionDetailsWebex = ({ transcription, title, readOnly, update }) =
       <div {...rowThirds}>
         <div>
           <label>Sent to Contractor</label>
-          <p>{transcription?.sentToTranscriberDate || 'N/A'}</p>
+          <p>{formatDate(transcription.sentToTranscriberDate) || 'N/A'}</p>
         </div>
         <div>
           <label>Expected Return Date</label>
-          <p>{transcription?.expectedReturnDate || 'N/A'}</p>
+          <p>{(formatDate(transcription.expectedReturnDate)) || 'N/A'}</p>
         </div>
         <DateSelector
           name="returnDate"
@@ -51,7 +70,9 @@ const TranscriptionDetailsWebex = ({ transcription, title, readOnly, update }) =
           strongLabel
           type="date"
           readOnly={readOnly}
-          value={transcription?.returnDate}
+          value={
+            (validateReturnDate(transcription.returnDate, transcription.sentToTranscriberDate) &&
+              transcription?.returnDate) || 'N/A'}
           onChange={(returnDate) => update({ returnDate })}
         />
       </div>
@@ -65,7 +86,8 @@ TranscriptionDetailsWebex.propTypes = {
     transcriber: PropTypes.string,
     sentToTranscriberDate: PropTypes.string,
     expectedReturnDate: PropTypes.string,
-    uploadedToVbmsDate: PropTypes.string
+    uploadedToVbmsDate: PropTypes.string,
+    returnDate: PropTypes.string
   }),
   update: PropTypes.func,
   readOnly: PropTypes.bool,
