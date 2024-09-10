@@ -51,7 +51,6 @@ describe AppealsTiedToAvljsAndVljsQuery do
   end
 
   context "#process and #tied_appeals" do
-
     # Base appeals not tied to non ssc avljs that should NOT be grabbed from the query
     let!(:not_ready_ama_original_appeal) { create(:appeal, :evidence_submission_docket, :with_post_intake_tasks) }
     let!(:ama_original_direct_review_appeal) { create(:appeal, :direct_review_docket, :ready_for_distribution) }
@@ -119,14 +118,15 @@ describe AppealsTiedToAvljsAndVljsQuery do
 
     let(:legacy_query_result) { VACOLS::CaseDocket.appeals_tied_to_avljs_and_vljs }
 
-    # let(:ama_query_result) { Docket.tied_to_vljs }
+    let(:docket) { HearingRequestDocket.new }
+    let(:ama_query_result) { docket.tied_to_vljs(described_class.vlj_user_ids) }
 
     context "where it uses attributes " do
-      it "to create a hash for the row" do
+      it "to create a hash for AMA and Legacy rows" do
         subject_legacy = described_class.legacy_rows(legacy_query_result, :legacy).first
-        # subject_ama = described_class.ama_rows(ama_query_result, :hearing).first
+        subject_ama = described_class.ama_rows(ama_query_result, :hearing).first
         corres = legacy_signed_appeal_with_attributes.reload.correspondent
-        # corres_ama = ama_appeal.reload.veteran
+        corres_ama = ama_appeal.reload.veteran
 
         expect(subject_legacy[:docket_number]).to eq legacy_signed_appeal_with_attributes.folder.tinum
         expect(subject_legacy[:docket]).to eq "legacy"
@@ -138,16 +138,32 @@ describe AppealsTiedToAvljsAndVljsQuery do
         expect(subject_legacy[:most_recent_signing_judge]).to eq avlj_name
         expect(subject_legacy[:bfcurloc]).to eq legacy_signed_appeal_with_attributes.bfcurloc
 
-        # expect(subject_ama[:docket_number]).to eq ama_original_hearing_appeal.docket_number
-        # expect(subject_ama[:docket]).to eq "hearing"
-        # expect(subject_ama[:priority]).to be ""
-        # expect(subject_ama[:veteran_file_number]).to eq corres_ama.file_number
-        # expect(subject_ama[:veteran_name]).to eq corres_ama.name.to_s
-        # expect(subject_ama[:vlj]).to eq hearing_judge
-        # expect(subject_ama[:hearing_judge]).to eq hearing_judge
-        # expect(subject_ama[:most_recent_signing_judge]).to eq avlj_name
-        # expect(subject_ama[:bfcurloc]).to eq ama_original_hearing_appeal.bfcurloc
+        expect(subject_ama[:docket_number]).to eq ama_appeal.docket_number
+        expect(subject_ama[:docket]).to eq "hearing"
+        expect(subject_ama[:priority]).to be false
+        expect(subject_ama[:veteran_file_number]).to eq corres_ama.file_number
+        expect(subject_ama[:veteran_name]).to eq corres_ama.name.to_s
+        expect(subject_ama[:vlj]).to eq hearing_judge.full_name
+        expect(subject_ama[:hearing_judge]).to eq hearing_judge.full_name
+        expect(subject_ama[:most_recent_signing_judge]).to eq nil
+        expect(subject_ama[:bfcurloc]).to eq nil
       end
+
+      # it "to verify that calculate_field_values is returning the correct items" do
+
+      #   subject = described_class.calculate_field_values(legacy_signed_appeal_with_attributes)
+
+      #   legacy_signed_appeal_with_attributes.reload
+      #   p legacy_signed_appeal_with_attributes
+      #   corres = legacy_signed_appeal_with_attributes.reload.correspondent
+
+      #   expect(subject[:veteran_file_number]).to eq corres.ssn
+      #   expect(subject[:veteran_name]).to eq "#{corres.snamef} #{corres.snamel}"
+      #   expect(subject[:vlj]).to eq nil
+      #   expect(subject[:hearing_judge]).to eq nil
+      #   expect(subject[:most_recent_signing_judge]).to eq avlj_name
+      #   expect(subject[:bfcurloc]).to eq legacy_signed_appeal_with_attributes.bfcurloc
+      # end
     end
   end
 end
