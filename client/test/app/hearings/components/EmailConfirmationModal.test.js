@@ -23,26 +23,25 @@ const hearingDayDate = '2025-01-01';
 
 const expectAllEmailsAssertion = (screen, container, hearing) => {
   expect(screen.getAllByTestId('read-only-testid')).toHaveLength(4);
-  expect(screen.getAllByText(convertRegexScheduleTime(zoneName(hearing.scheduledTimeString, hearing.appellantTz))).length).toBeGreaterThan(0);
+  expect(screen.getAllByText(convertRegexScheduleTime(zoneName(hearing.scheduledTimeString, hearing.appellantTz, null, hearingDayDate))).length).toBeGreaterThan(0);
   expect(screen.getAllByText(convertRegex(hearing.appellantEmailAddress)).length).toBeGreaterThan(0);
   expect(screen.getAllByText(convertRegex(hearing.representativeEmailAddress)).length).toBeGreaterThan(0);
   expect(container.querySelector('.cf-help-divider')).toBeInTheDocument();
 };
 
-const expectSingleEmailAssertion = (screen, container, hearing) => {
+const expectSingleEmailAssertion = (screen, container, hearing, email, tz) => {
   expect(screen.getAllByTestId('read-only-testid')).toHaveLength(2);
-  expect(screen.getByText(convertRegexScheduleTime(zoneName(hearing.scheduledTimeString, hearing.appellantTz)))).toBeInTheDocument();
-  expect(screen.getByText(convertRegex(hearing.appellantEmailAddress))).toBeInTheDocument();
+  expect(screen.getByText(convertRegexScheduleTime(zoneName(hearing.scheduledTimeString, tz, null, hearingDayDate)))).toBeInTheDocument();
+  expect(screen.getByText(convertRegex(email))).toBeInTheDocument();
   expect(container.querySelector('.cf-help-divider')).not.toBeInTheDocument();
 };
 
 const expectHearingDateAndTime = (screen) => {
   const date = moment(defaultHearing.scheduledFor).format('MM/DD/YYYY');
-  const scheduleTime = zoneName(defaultHearing.scheduledTimeString)
   expect(screen.getByText('Hearing Date:')).toBeInTheDocument();
   expect(screen.getByText(convertRegex(date))).toBeInTheDocument();
   expect(screen.getByText('Hearing Time:')).toBeInTheDocument();
-  expect(screen.getByText(convertRegexScheduleTime(scheduleTime))).toBeInTheDocument();
+  expect(screen.getByTestId('datetime-testid')).toBeInTheDocument();
 };
 
 const convertRegex = (str) => {
@@ -193,7 +192,7 @@ describe('EmailConfirmationModal', () => {
   describe('ChangeFromVirtual sub-component', () => {
     test('Displays ReadOnlyEmails', () => {
       // Run the test
-      const { container, asFragment } = render(
+      const { asFragment } = render(
         <ChangeFromVirtual
           update={updateSpy}
           hearing={defaultHearing}
@@ -243,7 +242,7 @@ describe('EmailConfirmationModal', () => {
   describe('ChangeEmailOrTimezone sub-component', () => {
     test('Displays ReadOnlyEmails component', () => {
       // Run the test
-      const { container, asFragment } = render(
+      const { asFragment } = render(
         <ChangeEmailOrTimezone
           update={updateSpy}
           hearing={defaultHearing}
@@ -269,9 +268,8 @@ describe('EmailConfirmationModal', () => {
       );
 
       // Assertions
-      expect(screen.getByTestId('datetime-testid')).toBeInTheDocument();
-      expect(screen.getByTestId('read-only-emails-testid')).toBeInTheDocument();
       expectHearingDateAndTime(screen);
+      expect(screen.getByTestId('read-only-emails-testid')).toBeInTheDocument();
       expect(screen.queryByRole('textbox', { name: 'Veteran Email' })).not.toBeInTheDocument();
       expect(screen.getByText('Veteran Email')).toBeInTheDocument();
       expect(screen.getAllByText(convertRegex(defaultHearing.appellantEmailAddress)).length).toBeGreaterThan(0);
@@ -294,7 +292,6 @@ describe('EmailConfirmationModal', () => {
       );
 
       // Assertions
-      expect(screen.getByTestId('datetime-testid')).toBeInTheDocument();
       expectHearingDateAndTime(screen);
       expect(container.querySelector('.cf-help-divider')).not.toBeInTheDocument();
       expect(asFragment()).toMatchSnapshot();
@@ -330,7 +327,13 @@ describe('EmailConfirmationModal', () => {
 
       // Assertions
       expect(screen.getByTestId('read-only-emails-testid')).toBeInTheDocument();
-      expectSingleEmailAssertion(screen, container, hearing);
+      expectSingleEmailAssertion(
+        screen,
+        container,
+        hearing,
+        hearing.appellantEmailAddress,
+        hearing.appellantTz
+      );
       expect(asFragment()).toMatchSnapshot();
     });
 
@@ -346,7 +349,13 @@ describe('EmailConfirmationModal', () => {
       );
 
       // Assertions
-      expectSingleEmailAssertion(screen, container, hearing);
+      expectSingleEmailAssertion(
+        screen,
+        container,
+        hearing,
+        hearing.representativeEmailAddress,
+        hearing.representativeTz
+      );
       expect(asFragment()).toMatchSnapshot();
     });
 
@@ -429,7 +438,13 @@ describe('EmailConfirmationModal', () => {
       );
 
       // Assertions
-      expectSingleEmailAssertion(screen, container, hearing);
+      expectSingleEmailAssertion(
+        screen,
+        container,
+        hearing,
+        hearing.appellantEmailAddress,
+        hearing.appellantTz
+      );
       expect(asFragment()).toMatchSnapshot();
     });
 
@@ -445,7 +460,12 @@ describe('EmailConfirmationModal', () => {
       );
 
       // Assertions
-      expectSingleEmailAssertion(screen, container, hearing);
+      expectSingleEmailAssertion(
+        screen,
+        container,
+        hearing,
+        hearing.representativeEmailAddress,
+        hearing.representativeTz);
       expect(asFragment()).toMatchSnapshot();
     });
   };
