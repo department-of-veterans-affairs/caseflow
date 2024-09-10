@@ -3278,7 +3278,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Eastern Time (US & Canada) (8:15 AM)
+                Eastern Time (US & Canada)
               </div>
               <div
                 aria-disabled="false"
@@ -3287,7 +3287,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Central Time (US & Canada) (7:15 AM)
+                Central Time (US & Canada)
               </div>
               <div
                 aria-disabled="false"
@@ -3296,7 +3296,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Mountain Time (US & Canada) (6:15 AM)
+                Mountain Time (US & Canada)
               </div>
               <div
                 aria-disabled="false"
@@ -3305,7 +3305,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Pacific Time (US & Canada) (5:15 AM)
+                Pacific Time (US & Canada)
               </div>
               <div
                 aria-disabled="false"
@@ -3314,7 +3314,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Indiana (East) (8:15 AM)
+                Indiana (East)
               </div>
               <div
                 aria-disabled="false"
@@ -3323,7 +3323,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Puerto Rico (8:15 AM)
+                Puerto Rico
               </div>
               <div
                 aria-disabled="false"
@@ -3332,7 +3332,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Arizona (5:15 AM)
+                Arizona
               </div>
               <div
                 aria-disabled="false"
@@ -3341,7 +3341,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Alaska (4:15 AM)
+                Alaska
               </div>
               <div
                 aria-disabled="false"
@@ -3350,7 +3350,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Philippine Standard Time (8:15 PM)
+                Philippine Standard Time
               </div>
               <div
                 aria-disabled="false"
@@ -3359,7 +3359,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Hawaii (2:15 AM)
+                Hawaii
               </div>
               <div
                 aria-disabled="false"
@@ -3368,7 +3368,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Azores (12:15 PM)
+                Azores
               </div>
               <div
                 aria-disabled="false"
@@ -3377,7 +3377,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Monrovia (12:15 PM)
+                Monrovia
               </div>
               <div
                 aria-disabled="false"
@@ -3386,7 +3386,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                UTC (12:15 PM)
+                UTC
               </div>
               <div
                 aria-disabled="false"
@@ -3395,7 +3395,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Cape Verde Is. (11:15 AM)
+                Cape Verde Is.
               </div>
               <div
                 aria-disabled="false"
@@ -3404,7 +3404,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Dublin (1:15 PM)
+                Dublin
               </div>
               <div
                 aria-disabled="false"
@@ -3413,7 +3413,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Edinburgh (1:15 PM)
+                Edinburgh
               </div>
               <div
                 aria-disabled="false"
@@ -3422,7 +3422,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Lisbon (1:15 PM)
+                Lisbon
               </div>
               <div
                 aria-disabled="false"
@@ -3431,7 +3431,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                London (1:15 PM)
+                London
               </div>
               <div
                 aria-disabled="false"
@@ -3440,7 +3440,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Casablanca (1:15 PM)
+                Casablanca
               </div>
               <div
                 aria-disabled="false"
@@ -3449,7 +3449,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                West Central Africa (1:15 PM)
+                West Central Africa
               </div>
               <div
                 aria-disabled="false"
@@ -3458,7 +3458,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Greenland (10:15 AM)
+                Greenland
               </div>
               <div
                 aria-disabled="false"
@@ -3467,7 +3467,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Mid-Atlantic (10:15 AM)
+                Mid-Atlantic
               </div>
               <div
                 aria-disabled="false"
@@ -3476,7 +3476,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Belgrade (2:15 PM)
+                Belgrade
               </div>
               <div
                 aria-disabled="false"
@@ -3485,7 +3485,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Bratislava (2:15 PM)
+                Bratislava
               </div>
               <div
                 aria-disabled="false"
@@ -3494,7 +3494,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Budapest (2:15 PM)
+                Budapest
               </div>
               <div
                 aria-disabled="false"
@@ -3503,7 +3503,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Ljubljana (2:15 PM)
+                Ljubljana
               </div>
               <div
                 aria-disabled="false"
@@ -3512,7 +3512,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Prague (2:15 PM)
+                Prague
               </div>
               <div
                 aria-disabled="false"
@@ -3521,7 +3521,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Sarajevo (2:15 PM)
+                Sarajevo
               </div>
               <div
                 aria-disabled="false"
@@ -3530,7 +3530,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Skopje (2:15 PM)
+                Skopje
               </div>
               <div
                 aria-disabled="false"
@@ -3539,7 +3539,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Warsaw (2:15 PM)
+                Warsaw
               </div>
               <div
                 aria-disabled="false"
@@ -3548,7 +3548,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Zagreb (2:15 PM)
+                Zagreb
               </div>
               <div
                 aria-disabled="false"
@@ -3557,7 +3557,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Brussels (2:15 PM)
+                Brussels
               </div>
               <div
                 aria-disabled="false"
@@ -3566,7 +3566,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Copenhagen (2:15 PM)
+                Copenhagen
               </div>
               <div
                 aria-disabled="false"
@@ -3575,7 +3575,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Madrid (2:15 PM)
+                Madrid
               </div>
               <div
                 aria-disabled="false"
@@ -3584,7 +3584,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Paris (2:15 PM)
+                Paris
               </div>
               <div
                 aria-disabled="false"
@@ -3593,7 +3593,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Amsterdam (2:15 PM)
+                Amsterdam
               </div>
               <div
                 aria-disabled="false"
@@ -3602,7 +3602,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Berlin (2:15 PM)
+                Berlin
               </div>
               <div
                 aria-disabled="false"
@@ -3611,7 +3611,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Bern (2:15 PM)
+                Bern
               </div>
               <div
                 aria-disabled="false"
@@ -3620,7 +3620,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Zurich (2:15 PM)
+                Zurich
               </div>
               <div
                 aria-disabled="false"
@@ -3629,7 +3629,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Rome (2:15 PM)
+                Rome
               </div>
               <div
                 aria-disabled="false"
@@ -3638,7 +3638,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Stockholm (2:15 PM)
+                Stockholm
               </div>
               <div
                 aria-disabled="false"
@@ -3647,7 +3647,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Vienna (2:15 PM)
+                Vienna
               </div>
               <div
                 aria-disabled="false"
@@ -3656,7 +3656,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Cairo (2:15 PM)
+                Cairo
               </div>
               <div
                 aria-disabled="false"
@@ -3665,7 +3665,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Harare (2:15 PM)
+                Harare
               </div>
               <div
                 aria-disabled="false"
@@ -3674,7 +3674,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Pretoria (2:15 PM)
+                Pretoria
               </div>
               <div
                 aria-disabled="false"
@@ -3683,7 +3683,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Kaliningrad (2:15 PM)
+                Kaliningrad
               </div>
               <div
                 aria-disabled="false"
@@ -3692,7 +3692,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Newfoundland (9:45 AM)
+                Newfoundland
               </div>
               <div
                 aria-disabled="false"
@@ -3701,7 +3701,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Atlantic Time (Canada) (9:15 AM)
+                Atlantic Time (Canada)
               </div>
               <div
                 aria-disabled="false"
@@ -3710,7 +3710,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Brasilia (9:15 AM)
+                Brasilia
               </div>
               <div
                 aria-disabled="false"
@@ -3719,7 +3719,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Buenos Aires (9:15 AM)
+                Buenos Aires
               </div>
               <div
                 aria-disabled="false"
@@ -3728,7 +3728,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Montevideo (9:15 AM)
+                Montevideo
               </div>
               <div
                 aria-disabled="false"
@@ -3737,7 +3737,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Bucharest (3:15 PM)
+                Bucharest
               </div>
               <div
                 aria-disabled="false"
@@ -3746,7 +3746,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Helsinki (3:15 PM)
+                Helsinki
               </div>
               <div
                 aria-disabled="false"
@@ -3755,7 +3755,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Kyiv (3:15 PM)
+                Kyiv
               </div>
               <div
                 aria-disabled="false"
@@ -3764,7 +3764,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Riga (3:15 PM)
+                Riga
               </div>
               <div
                 aria-disabled="false"
@@ -3773,7 +3773,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Sofia (3:15 PM)
+                Sofia
               </div>
               <div
                 aria-disabled="false"
@@ -3782,7 +3782,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Tallinn (3:15 PM)
+                Tallinn
               </div>
               <div
                 aria-disabled="false"
@@ -3791,7 +3791,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Vilnius (3:15 PM)
+                Vilnius
               </div>
               <div
                 aria-disabled="false"
@@ -3800,7 +3800,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Athens (3:15 PM)
+                Athens
               </div>
               <div
                 aria-disabled="false"
@@ -3809,7 +3809,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Istanbul (3:15 PM)
+                Istanbul
               </div>
               <div
                 aria-disabled="false"
@@ -3818,7 +3818,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Minsk (3:15 PM)
+                Minsk
               </div>
               <div
                 aria-disabled="false"
@@ -3827,7 +3827,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Jerusalem (3:15 PM)
+                Jerusalem
               </div>
               <div
                 aria-disabled="false"
@@ -3836,7 +3836,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Moscow (3:15 PM)
+                Moscow
               </div>
               <div
                 aria-disabled="false"
@@ -3845,7 +3845,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                St. Petersburg (3:15 PM)
+                St. Petersburg
               </div>
               <div
                 aria-disabled="false"
@@ -3854,7 +3854,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Kuwait (3:15 PM)
+                Kuwait
               </div>
               <div
                 aria-disabled="false"
@@ -3863,7 +3863,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Riyadh (3:15 PM)
+                Riyadh
               </div>
               <div
                 aria-disabled="false"
@@ -3872,7 +3872,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Nairobi (3:15 PM)
+                Nairobi
               </div>
               <div
                 aria-disabled="false"
@@ -3881,7 +3881,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Baghdad (3:15 PM)
+                Baghdad
               </div>
               <div
                 aria-disabled="false"
@@ -3890,7 +3890,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Caracas (8:15 AM)
+                Caracas
               </div>
               <div
                 aria-disabled="false"
@@ -3899,7 +3899,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                La Paz (8:15 AM)
+                La Paz
               </div>
               <div
                 aria-disabled="false"
@@ -3908,7 +3908,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Santiago (8:15 AM)
+                Santiago
               </div>
               <div
                 aria-disabled="false"
@@ -3917,7 +3917,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Georgetown (8:15 AM)
+                Georgetown
               </div>
               <div
                 aria-disabled="false"
@@ -3926,7 +3926,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Volgograd (4:15 PM)
+                Volgograd
               </div>
               <div
                 aria-disabled="false"
@@ -3935,7 +3935,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Samara (4:15 PM)
+                Samara
               </div>
               <div
                 aria-disabled="false"
@@ -3944,7 +3944,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Abu Dhabi (4:15 PM)
+                Abu Dhabi
               </div>
               <div
                 aria-disabled="false"
@@ -3953,7 +3953,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Muscat (4:15 PM)
+                Muscat
               </div>
               <div
                 aria-disabled="false"
@@ -3962,7 +3962,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Baku (4:15 PM)
+                Baku
               </div>
               <div
                 aria-disabled="false"
@@ -3971,7 +3971,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Tbilisi (4:15 PM)
+                Tbilisi
               </div>
               <div
                 aria-disabled="false"
@@ -3980,7 +3980,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Yerevan (4:15 PM)
+                Yerevan
               </div>
               <div
                 aria-disabled="false"
@@ -3989,7 +3989,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Tehran (4:45 PM)
+                Tehran
               </div>
               <div
                 aria-disabled="false"
@@ -3998,7 +3998,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Kabul (4:45 PM)
+                Kabul
               </div>
               <div
                 aria-disabled="false"
@@ -4007,7 +4007,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Guadalajara (7:15 AM)
+                Guadalajara
               </div>
               <div
                 aria-disabled="false"
@@ -4016,7 +4016,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Mexico City (7:15 AM)
+                Mexico City
               </div>
               <div
                 aria-disabled="false"
@@ -4025,7 +4025,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Monterrey (7:15 AM)
+                Monterrey
               </div>
               <div
                 aria-disabled="false"
@@ -4034,7 +4034,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Bogota (7:15 AM)
+                Bogota
               </div>
               <div
                 aria-disabled="false"
@@ -4043,7 +4043,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Lima (7:15 AM)
+                Lima
               </div>
               <div
                 aria-disabled="false"
@@ -4052,7 +4052,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Quito (7:15 AM)
+                Quito
               </div>
               <div
                 aria-disabled="false"
@@ -4061,7 +4061,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Ekaterinburg (5:15 PM)
+                Ekaterinburg
               </div>
               <div
                 aria-disabled="false"
@@ -4070,7 +4070,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Islamabad (5:15 PM)
+                Islamabad
               </div>
               <div
                 aria-disabled="false"
@@ -4079,7 +4079,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Karachi (5:15 PM)
+                Karachi
               </div>
               <div
                 aria-disabled="false"
@@ -4088,7 +4088,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Tashkent (5:15 PM)
+                Tashkent
               </div>
               <div
                 aria-disabled="false"
@@ -4097,7 +4097,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Chennai (5:45 PM)
+                Chennai
               </div>
               <div
                 aria-disabled="false"
@@ -4106,7 +4106,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Kolkata (5:45 PM)
+                Kolkata
               </div>
               <div
                 aria-disabled="false"
@@ -4115,7 +4115,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Mumbai (5:45 PM)
+                Mumbai
               </div>
               <div
                 aria-disabled="false"
@@ -4124,7 +4124,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                New Delhi (5:45 PM)
+                New Delhi
               </div>
               <div
                 aria-disabled="false"
@@ -4133,7 +4133,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Sri Jayawardenepura (5:45 PM)
+                Sri Jayawardenepura
               </div>
               <div
                 aria-disabled="false"
@@ -4142,7 +4142,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Kathmandu (6:00 PM)
+                Kathmandu
               </div>
               <div
                 aria-disabled="false"
@@ -4151,7 +4151,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Chihuahua (6:15 AM)
+                Chihuahua
               </div>
               <div
                 aria-disabled="false"
@@ -4160,7 +4160,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Mazatlan (6:15 AM)
+                Mazatlan
               </div>
               <div
                 aria-disabled="false"
@@ -4169,7 +4169,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Saskatchewan (6:15 AM)
+                Saskatchewan
               </div>
               <div
                 aria-disabled="false"
@@ -4178,7 +4178,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Central America (6:15 AM)
+                Central America
               </div>
               <div
                 aria-disabled="false"
@@ -4187,7 +4187,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Astana (6:15 PM)
+                Astana
               </div>
               <div
                 aria-disabled="false"
@@ -4196,7 +4196,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Dhaka (6:15 PM)
+                Dhaka
               </div>
               <div
                 aria-disabled="false"
@@ -4205,7 +4205,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Almaty (6:15 PM)
+                Almaty
               </div>
               <div
                 aria-disabled="false"
@@ -4214,7 +4214,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Urumqi (6:15 PM)
+                Urumqi
               </div>
               <div
                 aria-disabled="false"
@@ -4223,7 +4223,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Rangoon (6:45 PM)
+                Rangoon
               </div>
               <div
                 aria-disabled="false"
@@ -4232,7 +4232,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Tijuana (5:15 AM)
+                Tijuana
               </div>
               <div
                 aria-disabled="false"
@@ -4241,7 +4241,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Novosibirsk (7:15 PM)
+                Novosibirsk
               </div>
               <div
                 aria-disabled="false"
@@ -4250,7 +4250,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Bangkok (7:15 PM)
+                Bangkok
               </div>
               <div
                 aria-disabled="false"
@@ -4259,7 +4259,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Hanoi (7:15 PM)
+                Hanoi
               </div>
               <div
                 aria-disabled="false"
@@ -4268,7 +4268,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Jakarta (7:15 PM)
+                Jakarta
               </div>
               <div
                 aria-disabled="false"
@@ -4277,7 +4277,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Krasnoyarsk (7:15 PM)
+                Krasnoyarsk
               </div>
               <div
                 aria-disabled="false"
@@ -4286,7 +4286,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Beijing (8:15 PM)
+                Beijing
               </div>
               <div
                 aria-disabled="false"
@@ -4295,7 +4295,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Chongqing (8:15 PM)
+                Chongqing
               </div>
               <div
                 aria-disabled="false"
@@ -4304,7 +4304,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Hong Kong (8:15 PM)
+                Hong Kong
               </div>
               <div
                 aria-disabled="false"
@@ -4313,7 +4313,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Kuala Lumpur (8:15 PM)
+                Kuala Lumpur
               </div>
               <div
                 aria-disabled="false"
@@ -4322,7 +4322,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Singapore (8:15 PM)
+                Singapore
               </div>
               <div
                 aria-disabled="false"
@@ -4331,7 +4331,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Taipei (8:15 PM)
+                Taipei
               </div>
               <div
                 aria-disabled="false"
@@ -4340,7 +4340,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Perth (8:15 PM)
+                Perth
               </div>
               <div
                 aria-disabled="false"
@@ -4349,7 +4349,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Irkutsk (8:15 PM)
+                Irkutsk
               </div>
               <div
                 aria-disabled="false"
@@ -4358,7 +4358,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Ulaanbaatar (8:15 PM)
+                Ulaanbaatar
               </div>
               <div
                 aria-disabled="false"
@@ -4367,7 +4367,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Seoul (9:15 PM)
+                Seoul
               </div>
               <div
                 aria-disabled="false"
@@ -4376,7 +4376,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Osaka (9:15 PM)
+                Osaka
               </div>
               <div
                 aria-disabled="false"
@@ -4385,7 +4385,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Sapporo (9:15 PM)
+                Sapporo
               </div>
               <div
                 aria-disabled="false"
@@ -4394,7 +4394,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Tokyo (9:15 PM)
+                Tokyo
               </div>
               <div
                 aria-disabled="false"
@@ -4403,7 +4403,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Yakutsk (9:15 PM)
+                Yakutsk
               </div>
               <div
                 aria-disabled="false"
@@ -4412,7 +4412,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Darwin (9:45 PM)
+                Darwin
               </div>
               <div
                 aria-disabled="false"
@@ -4421,7 +4421,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Adelaide (9:45 PM)
+                Adelaide
               </div>
               <div
                 aria-disabled="false"
@@ -4430,7 +4430,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Canberra (10:15 PM)
+                Canberra
               </div>
               <div
                 aria-disabled="false"
@@ -4439,7 +4439,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Melbourne (10:15 PM)
+                Melbourne
               </div>
               <div
                 aria-disabled="false"
@@ -4448,7 +4448,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Sydney (10:15 PM)
+                Sydney
               </div>
               <div
                 aria-disabled="false"
@@ -4457,7 +4457,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Brisbane (10:15 PM)
+                Brisbane
               </div>
               <div
                 aria-disabled="false"
@@ -4466,7 +4466,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Hobart (10:15 PM)
+                Hobart
               </div>
               <div
                 aria-disabled="false"
@@ -4475,7 +4475,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Vladivostok (10:15 PM)
+                Vladivostok
               </div>
               <div
                 aria-disabled="false"
@@ -4484,7 +4484,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Guam (10:15 PM)
+                Guam
               </div>
               <div
                 aria-disabled="false"
@@ -4493,7 +4493,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Port Moresby (10:15 PM)
+                Port Moresby
               </div>
               <div
                 aria-disabled="false"
@@ -4502,7 +4502,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Midway Island (1:15 AM)
+                Midway Island
               </div>
               <div
                 aria-disabled="false"
@@ -4511,7 +4511,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                American Samoa (1:15 AM)
+                American Samoa
               </div>
               <div
                 aria-disabled="false"
@@ -4520,7 +4520,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Magadan (11:15 PM)
+                Magadan
               </div>
               <div
                 aria-disabled="false"
@@ -4529,7 +4529,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Srednekolymsk (11:15 PM)
+                Srednekolymsk
               </div>
               <div
                 aria-disabled="false"
@@ -4538,7 +4538,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Solomon Is. (11:15 PM)
+                Solomon Is.
               </div>
               <div
                 aria-disabled="false"
@@ -4547,7 +4547,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                New Caledonia (11:15 PM)
+                New Caledonia
               </div>
               <div
                 aria-disabled="false"
@@ -4556,7 +4556,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                International Date Line West (12:15 AM)
+                International Date Line West
               </div>
               <div
                 aria-disabled="false"
@@ -4565,7 +4565,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Fiji (12:15 AM)
+                Fiji
               </div>
               <div
                 aria-disabled="false"
@@ -4574,7 +4574,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Kamchatka (12:15 AM)
+                Kamchatka
               </div>
               <div
                 aria-disabled="false"
@@ -4583,7 +4583,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Marshall Is. (12:15 AM)
+                Marshall Is.
               </div>
               <div
                 aria-disabled="false"
@@ -4592,7 +4592,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Auckland (12:15 AM)
+                Auckland
               </div>
               <div
                 aria-disabled="false"
@@ -4601,7 +4601,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Wellington (12:15 AM)
+                Wellington
               </div>
               <div
                 aria-disabled="false"
@@ -4610,7 +4610,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Chatham Is. (1:00 AM)
+                Chatham Is.
               </div>
               <div
                 aria-disabled="false"
@@ -4619,7 +4619,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Nuku'alofa (1:15 AM)
+                Nuku'alofa
               </div>
               <div
                 aria-disabled="false"
@@ -4628,7 +4628,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Tokelau Is. (1:15 AM)
+                Tokelau Is.
               </div>
               <div
                 aria-disabled="false"
@@ -4637,7 +4637,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Samoa (1:15 AM)
+                Samoa
               </div>
             </div>
           </div>

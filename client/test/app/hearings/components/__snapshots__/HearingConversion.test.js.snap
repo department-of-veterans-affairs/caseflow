@@ -43,7 +43,7 @@ exports[`HearingConversion Displays email fields when hearing type is switched f
               >
                 <strong>
                   <span>
-                    Hearing Time
+                    Hearing Time 
                   </span>
                 </strong>
               </legend>
@@ -54,14 +54,14 @@ exports[`HearingConversion Displays email fields when hearing type is switched f
                   class="cf-form-radio-option"
                 >
                   <input
-                    id="hearingTime0_08:30"
+                    id="hearingTime0_8:30 AM Eastern Time (US & Canada)"
                     name="hearingTime0"
                     type="radio"
-                    value="08:30"
+                    value="8:30 AM Eastern Time (US & Canada)"
                   />
                   <label
                     class=""
-                    for="hearingTime0_08:30"
+                    for="hearingTime0_8:30 AM Eastern Time (US & Canada)"
                   >
                     8:30 AM Eastern Time (US & Canada)
                   </label>
@@ -70,14 +70,14 @@ exports[`HearingConversion Displays email fields when hearing type is switched f
                   class="cf-form-radio-option"
                 >
                   <input
-                    id="hearingTime0_12:30"
+                    id="hearingTime0_12:30 PM Eastern Time (US & Canada)"
                     name="hearingTime0"
                     type="radio"
-                    value="12:30"
+                    value="12:30 PM Eastern Time (US & Canada)"
                   />
                   <label
                     class=""
-                    for="hearingTime0_12:30"
+                    for="hearingTime0_12:30 PM Eastern Time (US & Canada)"
                   >
                     12:30 PM Eastern Time (US & Canada)
                   </label>
@@ -87,14 +87,14 @@ exports[`HearingConversion Displays email fields when hearing type is switched f
                 >
                   <input
                     checked=""
-                    id="hearingTime0_other"
+                    id="hearingTime0_Other"
                     name="hearingTime0"
                     type="radio"
-                    value="other"
+                    value="Other"
                   />
                   <label
                     class=""
-                    for="hearingTime0_other"
+                    for="hearingTime0_Other"
                   >
                     Other
                   </label>
@@ -129,12 +129,12 @@ exports[`HearingConversion Displays email fields when hearing type is switched f
                     class="cf-select__control css-yk16xz-control"
                   >
                     <div
-                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                      class="cf-select__value-container css-g1d714-ValueContainer"
                     >
                       <div
-                        class="cf-select__single-value css-1uccc91-singleValue"
+                        class="cf-select__placeholder css-1wa3eu0-placeholder"
                       >
-                        3:30 AM Eastern Time (US & Canada)
+                        Select a time
                       </div>
                       <div
                         class="css-81nyic-Input"
@@ -194,7 +194,7 @@ exports[`HearingConversion Displays email fields when hearing type is switched f
                   <input
                     name="optionalHearingTime0"
                     type="hidden"
-                    value="03:30"
+                    value=""
                   />
                 </div>
               </div>
@@ -636,12 +636,12 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                     class="cf-select__control css-yk16xz-control"
                   >
                     <div
-                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                      class="cf-select__value-container css-g1d714-ValueContainer"
                     >
                       <div
-                        class="cf-select__single-value css-1uccc91-singleValue"
+                        class="cf-select__placeholder css-1wa3eu0-placeholder"
                       >
-                        3:30 AM Eastern Time (US & Canada)
+                        Select a time
                       </div>
                       <div
                         class="css-81nyic-Input"
@@ -701,7 +701,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                   <input
                     name="optionalHearingTime0"
                     type="hidden"
-                    value="03:30"
+                    value=""
                   />
                 </div>
               </div>
