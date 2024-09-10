@@ -80,6 +80,7 @@ class AppealsReadyForDistribution
       affinity_start_date: fetch_affinity_start_date(appeal["bfkey"])
     }
   end
+
   def self.fetch_affinity_start_date(case_id)
     appeal_affinity = AppealAffinity.find_by(case_id: case_id, case_type: "VACOLS::Case")
     appeal_affinity&.affinity_start_date
@@ -153,6 +154,6 @@ class AppealsReadyForDistribution
 
   def self.legacy_original_deciding_judge_name(appeal)
     staff = VACOLS::Staff.find_by(sattyid: appeal["prev_deciding_judge"])
-    FullName.new(staff["snamef"], nil, staff["snamel"]).to_s if staff != nil
+    FullName.new(staff["snamef"], nil, staff["snamel"]).to_s if !staff.nil?
   end
 end

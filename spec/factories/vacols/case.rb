@@ -225,11 +225,11 @@ FactoryBot.define do
                     evaluator.judge || create(:user, :judge, :with_vacols_judge_record).vacols_staff
                   end
 
-                 if evaluator.assigned_avlj.present? # hearing_judge
-                    VACOLS::Staff.find_by_sdomainid(evaluator.assigned_avlj.css_id)
-                  else
-                    evaluator.judge || create(:user, :judge, :with_vacols_judge_record).vacols_staff
-                  end
+                if evaluator.assigned_avlj.present? # hearing_judge
+                  VACOLS::Staff.find_by_sdomainid(evaluator.assigned_avlj.css_id)
+                else
+                  evaluator.judge || create(:user, :judge, :with_vacols_judge_record).vacols_staff
+                end
 
                 signing_sattyid = signing_judge.sattyid
 
