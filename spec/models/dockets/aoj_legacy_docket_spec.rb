@@ -210,6 +210,47 @@ describe AojLegacyDocket do
     end
   end
 
+  context "#affinity_date_count" do
+    before do
+      create_priority_distributable_legacy_appeal_not_tied_to_judge
+      create_aoj_aod_cavc_ready_priority_case_1
+      create_aoj_aod_cavc_ready_priority_case_2
+      create_aoj_cavc_ready_priority_case
+      create_nonpriority_aoj_ready_case
+      create_nonpriority_distributable_legacy_appeal_not_tied_to_judge("123456")
+      create_nonpriority_distributable_legacy_appeal_not_tied_to_judge("123457")
+      create_nonpriority_distributable_legacy_appeal_not_tied_to_judge("123458")
+    end
+
+    context "when priority is true" do
+      context "with in window affinity" do
+        it "returns affinity date count" do
+          expect(docket.affinity_date_count(true, true)).to eq(2)
+        end
+      end
+
+      context "with out in window affinity" do
+        it "returns affinity date count" do
+          expect(docket.affinity_date_count(false, true)).to eq(2)
+        end
+      end
+    end
+
+    context "when priority is false" do
+      context "with in window affinity" do
+        it "returns affinity date count" do
+          expect(docket.affinity_date_count(true, false)).to eq(1)
+        end
+      end
+
+      context "with out in window affinity" do
+        it "returns affinity date count" do
+          expect(docket.affinity_date_count(false, false)).to eq(3)
+        end
+      end
+    end
+  end
+  # {priority out of window}
   def create_priority_distributable_legacy_appeal_not_tied_to_judge
     create(
       :case,
@@ -223,15 +264,69 @@ describe AojLegacyDocket do
     )
   end
 
-  def create_nonpriority_distributable_legacy_appeal_not_tied_to_judge
+  # {nonpriority out of window}
+  def create_nonpriority_distributable_legacy_appeal_not_tied_to_judge(bfkey = "12345")
     create(
       :case,
-      bfkey: "12345",
+      bfkey: bfkey,
       bfd19: 1.year.ago,
       bfac: "3",
       bfmpro: "ACT",
       bfcurloc: "81",
       bfdloout: 3.days.ago
     )
+  end
+
+  # {nonpriority in window}
+  def create_nonpriority_aoj_ready_case
+    create(
+      :legacy_aoj_appeal,
+      affinity_start_date: 2.days.ago,
+      tied_to: false,
+      bfkey: "122222",
+      bfd19: 1.year.ago,
+      bfac: "3",
+      bfmpro: "ACT",
+      bfcurloc: "81",
+      bfdloout: 3.days.ago
+    )
+  end
+
+  # {priority in window}
+  def create_aoj_aod_cavc_ready_priority_case_1
+    create(:legacy_aoj_appeal,
+           :aod,
+           affinity_start_date: 1.day.ago,
+           cavc: true,
+           bfd19: 11.months.ago,
+           bfac: "3",
+           bfmpro: "ACT",
+           bfcurloc: "83",
+           bfdloout: 2.days.ago)
+  end
+
+  # {priority out of window}
+  def create_aoj_aod_cavc_ready_priority_case_2
+    create(:legacy_aoj_appeal,
+           :aod,
+           affinity_start_date: 2.months.ago,
+           cavc: true,
+           bfd19: 11.months.ago,
+           bfac: "3",
+           bfmpro: "ACT",
+           bfcurloc: "83",
+           bfdloout: 2.days.ago)
+  end
+
+  # {priority out of window}
+  def create_aoj_cavc_ready_priority_case
+    create(:legacy_aoj_appeal,
+           affinity_start_date: 1.month.ago,
+           cavc: true,
+           bfd19: 11.months.ago,
+           bfac: "3",
+           bfmpro: "ACT",
+           bfcurloc: "83",
+           bfdloout: 2.days.ago)
   end
 end

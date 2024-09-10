@@ -808,10 +808,9 @@ class VACOLS::CaseDocket < VACOLS::Record
   end
 
   def self.reject_due_to_affinity?(appeal, lever)
-    VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity&.affinity_start_date.nil? ||
-      (VACOLS::Case.find_by(bfkey: appeal["bfkey"])
-        .appeal_affinity
-        .affinity_start_date > lever.to_i.days.ago)
+    appeal_affinity = VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity
+    appeal_affinity&.affinity_start_date.nil? ||
+      (appeal_affinity.affinity_start_date > lever.to_i.days.ago)
   end
 
   def self.ineligible_judges_sattyids
@@ -878,5 +877,44 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     true
   end
+
+  # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize
+  def self.priority_appeals_affinity_date_count(in_window)
+    conn = connection
+    cavc_affinity_lever_value = CaseDistributionLever.cavc_affinity_days
+    cavc_aod_affinity_lever_value = CaseDistributionLever.cavc_aod_affinity_days
+
+    query = <<-SQL
+      #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
+    SQL
+
+    fmtd_query = sanitize_sql_array([query])
+
+    appeals = conn.exec_query(fmtd_query).to_a
+
+    if in_window
+      appeals.select! do |appeal|
+        if appeal["bfac"] == "7" && appeal["aod"] == 0
+          reject_due_to_affinity?(appeal, cavc_affinity_lever_value)
+        elsif appeal["bfac"] == "7" && appeal["aod"] == 1
+          reject_due_to_affinity?(appeal, cavc_aod_affinity_lever_value)
+        elsif appeal["bfac"] != "7"
+          false
+        end
+      end
+    else
+      appeals.reject! do |appeal|
+        if appeal["bfac"] == "7" && appeal["aod"] == 0
+          reject_due_to_affinity?(appeal, cavc_affinity_lever_value)
+        elsif appeal["bfac"] == "7" && appeal["aod"] == 1
+          reject_due_to_affinity?(appeal, cavc_aod_affinity_lever_value)
+        elsif appeal["bfac"] != "7"
+          false
+        end
+      end
+    end
+    appeals
+  end
+  # rubocop:enable Metrics/MethodLength, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize
 end
 # rubocop:enable Metrics/ClassLength
