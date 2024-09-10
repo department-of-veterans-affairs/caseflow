@@ -1120,6 +1120,7 @@ describe VACOLS::CaseDocket, :all_dbs do
           IneligibleJudgesJob.perform_now
 
           # For case distribution levers set to a value
+          CaseDistributionLever.clear_distribution_lever_cache
           new_hearing_judge_cases = VACOLS::CaseDocket.distribute_priority_appeals(new_hearing_judge, "any", 100, true)
           tied_judge_cases = VACOLS::CaseDocket.distribute_priority_appeals(tied_judge_caseflow, "any", 100, true)
           other_judge_cases = VACOLS::CaseDocket.distribute_priority_appeals(other_judge_caseflow, "any", 100, true)
@@ -1142,6 +1143,7 @@ describe VACOLS::CaseDocket, :all_dbs do
           # For case distribution levers set to infinite
           CaseDistributionLever.find_by(item: "cavc_affinity_days").update!(value: "infinite")
           CaseDistributionLever.find_by(item: "cavc_aod_affinity_days").update!(value: "infinite")
+          CaseDistributionLever.clear_distribution_lever_cache
 
           new_hrng_judge_infinite = VACOLS::CaseDocket.distribute_priority_appeals(new_hearing_judge, "any", 100, true)
           tied_judge_infinite = VACOLS::CaseDocket.distribute_priority_appeals(tied_judge_caseflow, "any", 100, true)
@@ -1165,6 +1167,7 @@ describe VACOLS::CaseDocket, :all_dbs do
           # For case distribution levers set to omit
           CaseDistributionLever.find_by(item: "cavc_affinity_days").update!(value: "omit")
           CaseDistributionLever.find_by(item: "cavc_aod_affinity_days").update!(value: "omit")
+          CaseDistributionLever.clear_distribution_lever_cache
 
           new_hearing_judge_omit = VACOLS::CaseDocket.distribute_priority_appeals(new_hearing_judge, "any", 100, true)
           tied_judge_omit = VACOLS::CaseDocket.distribute_priority_appeals(tied_judge_caseflow, "any", 100, true)
