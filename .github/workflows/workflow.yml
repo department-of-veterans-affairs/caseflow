@@ -222,11 +222,18 @@ jobs:
       # circleci is the USER
 
       # Artifacts --- circleci is the USER
+
       - run: (cd /home/circleci && tar -zcvf coverage-${{matrix.ci_node_index}}.tar.gz coverage-${{matrix.ci_node_index}})
       - uses: actions/upload-artifact@v3
         if: success()
         with:
           path: /home/circleci/coverage-${{matrix.ci_node_index}}.tar.gz #circleci is the USER
+
+      - name: Add code coverage comment
+        uses: romeovs/lcov-reporter-action@v0.2.16
+        with:
+         lcov-file: ./coverage/lcov/caseflow.lcov
+         github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/upload-artifact@v3
         # Run even if there is a failure in the previous steps, but not if the run is cancelled
