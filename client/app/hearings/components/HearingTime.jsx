@@ -23,7 +23,7 @@ export const HearingTime = ({
   // Determine whether to display the appellant timezone
   const repTimezone =
     hearing.virtualHearing?.appellantTz === hearing.regionalOfficeTimezone &&
-    hearing.regionalOfficeTimezone === 'America/New_York' ?
+      hearing.regionalOfficeTimezone === 'America/New_York' ?
       '' :
       hearing.virtualHearing?.appellantTz || hearing.regionalOfficeTimezone;
 
@@ -33,11 +33,15 @@ export const HearingTime = ({
       repTimezone :
       hearing.regionalOfficeTimezone || 'America/New_York';
 
+  const hearingDayDate = hearing.hearing_day ?
+    hearing.hearing_day?.scheduledFor :
+    moment(hearing.scheduledFor).format('YYYY-MM-DD');
+
   // Calculate the local time based on either Regional Office or Representative for Virtual hearings
-  const localTime = zoneName(hearing.scheduledTimeString, timezone, 'z');
+  const localTime = zoneName(hearing.scheduledTimeString, timezone, 'z', hearingDayDate);
 
   // Calculate the central office time
-  const coTime = zoneName(hearing.scheduledTimeString, 'America/New_York', 'z');
+  const coTime = zoneName(hearing.scheduledTimeString, 'America/New_York', 'z', hearingDayDate);
 
   // Determine whether to show the Regional Office time as the primary label
   const primaryTime = primaryLabel === 'RO' ? localTime : coTime;
@@ -93,6 +97,10 @@ HearingTime.propTypes = {
     regionalOfficeTimezone: PropTypes.string,
     centralOfficeTimeString: PropTypes.string.isRequired,
     isVirtual: PropTypes.bool,
+    scheduledFor: PropTypes.string,
+    hearing_day: PropTypes.shape({
+      scheduledFor: PropTypes.string
+    })
   }),
   // Show the number of issues related to the given hearing.
   showIssueCount: PropTypes.bool,
