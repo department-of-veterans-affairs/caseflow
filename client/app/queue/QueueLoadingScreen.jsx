@@ -45,6 +45,7 @@ class QueueLoadingScreen extends React.PureComponent {
     if (role === 'sct_coordinator' && userIsSCTCoordinator && type === 'assign') {
       return this.props.fetchSpecialtyCaseTeamTasks(chosenUserId, userRole, type);
     }
+
     return this.props.fetchAmaTasksOfUser(chosenUserId, userRole, type);
   }
 
@@ -103,13 +104,17 @@ class QueueLoadingScreen extends React.PureComponent {
 
       return ApiUtil.get(`/user?id=${targetUserId}`).then((resp) => {
         this.props.setTargetUser(resp.body.user);
-        return resp.body.user; // Ensure the user is returned
+
+        // Ensure the user is returned
+        return resp.body.user;
       });
     }
 
     return ApiUtil.get(`/user?css_id=${userUrlParam}`).then((resp) => {
       this.props.setTargetUser(resp.body.user);
-      return resp.body.user; // Ensure the user is returned
+
+      // Ensure the user is returned
+      return resp.body.user;
     });
   }
 

@@ -220,18 +220,19 @@ RSpec.feature "Admin UI" do
   end
 
   # Added this method to handle the delay in setting the field value
-  # Possibly caused by issue with Chromdirver and Capybara not allowing the field to be cleared before setting the new value
+  # Possibly caused by issue with Chromdirver and Capybara not allowing the
+  # field to be cleared before setting the new value
   # Issue causes the field to be set with the previous value and the new value
   # In addition to each individual character needing being sent with a delay
   def set_field_value_with_delay(field_id, value)
     area = find("##{field_id}")
     area.click
-    area.native.clear  # Clear the field using the native clear method
+    area.native.clear # Clear the field using the native clear method
 
     # Send keys with delay
     value.each_char do |char|
       area.send_keys char
-      sleep 0.1  # 100 ms delay between keystrokes
+      sleep 0.1 # 100 ms delay between keystrokes
     end
   end
 
@@ -247,7 +248,7 @@ RSpec.feature "Admin UI" do
     end
 
     if attempts == max_attempts
-      raise "Failed to clear the field after #{max_attempts} attempts"
+      fail "Failed to clear the field after #{max_attempts} attempts"
     end
   end
 end
