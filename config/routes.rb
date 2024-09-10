@@ -238,6 +238,7 @@ Rails.application.routes.draw do
       get '/:hearing_day_id/filled_hearing_slots', to: "filled_hearing_slots#index"
     end
     get 'find_by_contractor/available_contractors', to: "transcription_contractors#available_contractors"
+    get 'find_by_contractor/filterable_contractors', to: "transcription_contractors#filterable_contractors"
     resources :find_by_contractor, controller: "transcription_contractors", except: [:edit, :new]
     get 'transcriptions/next_transcription', to: "transcriptions#next_transcription"
   end
