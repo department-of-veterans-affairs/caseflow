@@ -45,8 +45,10 @@ const formatTimeString = (hearing, timeWasEdited, hearingDate) => {
   return timeString;
 };
 
-export const DateTime = ({ hearing, timeWasEdited }) => (
-  <div data-testid="datetime-testid">
+export const DateTime = ({ hearing, timeWasEdited }) => {
+  const unformattedHearingDate = moment(hearing.scheduledFor);
+
+  return (<div data-testid="datetime-testid">
     <strong>Hearing Date:&nbsp;</strong>
     {unformattedHearingDate.format('MM/DD/YYYY')}
     <br />
