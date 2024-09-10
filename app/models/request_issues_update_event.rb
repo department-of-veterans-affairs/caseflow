@@ -46,6 +46,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   def process_issues!
     review.create_issues!(added_issues, self)
     process_removed_issues!
+    process_legacy_issues!
     process_withdrawn_issues!
     process_edited_issues!
     process_eligible_to_ineligible_issues!
