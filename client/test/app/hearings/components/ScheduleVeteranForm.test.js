@@ -13,7 +13,7 @@ import ApiUtil from 'app/util/ApiUtil';
 const changeSpy = jest.fn();
 const submitSpy = jest.fn();
 const cancelSpy = jest.fn();
-
+const fetchScheduledHearingsMock = jest.fn();
 jest.mock('app/util/ApiUtil', () => ({
   convertToSnakeCase: jest.fn(obj => obj),
   convertToCamelCase: jest.fn(obj => obj),
