@@ -3,6 +3,7 @@ import ApiUtil from '../../util/ApiUtil';
 import QueueTable from '../../queue/QueueTable';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
+import Link from '../../components/Link';
 
 const columns = [
   { name: 'docket_number', header: 'Docket Number', valueFunction: (row) => row.docket_number },
@@ -15,18 +16,18 @@ const columns = [
   { name: 'case_type', header: 'Appeal Type', valueFunction: (row) => row.case_type }
 ];
 
+// CSS styles
 const styles = css({
   '& div *': {
-    outline: 'none'
+    outline: 'none',
   },
   '& table': {
-    marginTop: '0',
+    marginTop: 0,
     position: 'relative',
   },
-  // Apply the CSS class for bold first cell
   '& .bold-first-cell td:first-child': {
     fontWeight: 'bold',
-  }
+  },
 });
 
 export const WorkOrderDetails = ({ taskNumber }) => {
@@ -37,7 +38,7 @@ export const WorkOrderDetails = ({ taskNumber }) => {
   const fetchData = async () => {
     try {
       const response = await ApiUtil.get('/hearings/transcription_work_order/display_wo_summary', {
-        query: { task_number: taskNumber }
+        query: { task_number: taskNumber },
       });
 
       setData(response.body.data);
@@ -55,9 +56,11 @@ export const WorkOrderDetails = ({ taskNumber }) => {
   if (loading) {
     return <div>Loading...</div>;
   }
+
   if (error) {
     return <div>Error loading data: {error.message}</div>;
   }
+
   if (!data) {
     return <div>No data found</div>;
   }
@@ -65,33 +68,38 @@ export const WorkOrderDetails = ({ taskNumber }) => {
   const { workOrder, returnDate, contractorName, woFileInfo } = data;
 
   return (
-    <div className="cf-app-segment cf-app-segment--alt">
-      <div>
-        <h1>Work order summary #{workOrder}</h1>
-        <div style={{ marginBottom: '20px' }}>
-          <strong>Work order:</strong> #{workOrder}
+    <>
+      <div className="cf-app-segment cf-app-segment--alt">
+        <div>
+          <h1>Work order summary #{workOrder}</h1>
+          <div style={{ marginBottom: '20px' }}>
+            <strong>Work order:</strong> #{workOrder}
+          </div>
+          <div style={{ marginBottom: '20px' }}>
+            <strong>Return date:</strong> {returnDate}
+          </div>
+          <div style={{ marginBottom: '20px' }}>
+            <strong>Contractor:</strong> {contractorName}
+          </div>
         </div>
-        <div style={{ marginBottom: '20px' }}>
-          <strong>Return date:</strong> {returnDate}
-        </div>
-        <div style={{ marginBottom: '20px' }}>
-          <strong>Contractor:</strong> {contractorName}
+        <hr style={{ margin: '35px 0' }} />
+        <div>
+          <h2 className="no-margin-bottom">Number of files: {woFileInfo.length}</h2>
+          <div {...styles}>
+            <QueueTable
+              columns={columns}
+              rowObjects={woFileInfo}
+              summary="Individual claim history"
+              slowReRendersAreOk
+              className="bold-first-cell"
+            />
+          </div>
         </div>
       </div>
-      <hr style={{ margin: '35px 0' }} />
-      <div>
-        <h2 className="no-margin-bottom">Number of files: {woFileInfo.length}</h2>
-        <div {...styles}>
-          <QueueTable
-            columns={columns}
-            rowObjects={woFileInfo}
-            summary="Individual claim history"
-            slowReRendersAreOk
-            className="bold-first-cell"
-          />
-        </div>
-      </div>
-    </div>
+      <Link linkStyling to="/transcription_files?tab=Assigned">
+        Close
+      </Link>
+    </>
   );
 };
 
