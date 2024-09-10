@@ -11,8 +11,8 @@ const WorkOrderUnassignModal = ({ onClose, workOrderNumber }) => {
     const data = { task_number: cleanedWorkOrderNumber };
     const url = '/hearings/transcription_work_order/unassigning_work_order';
 
-    ApiUtil.post(url, { data })
-      .then((response) => {
+    ApiUtil.post(url, { data }).
+      then((response) => {
         if (response.status === 204) {
           onClose();
         }
