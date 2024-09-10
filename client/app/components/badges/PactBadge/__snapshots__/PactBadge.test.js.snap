@@ -1,79 +1,35 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`PactBadge renders correctly 1`] = `
-<Provider
-  store={
-    Object {
-      "dispatch": [Function],
-      "getState": [Function],
-      "replaceReducer": [Function],
-      "subscribe": [Function],
-      Symbol(observable): [Function],
-    }
-  }
->
-  <PactBadge
-    appeal={
-      Object {
-        "pact": true,
-      }
-    }
+<DocumentFragment>
+  <div
+    class="cf-pact-badge"
   >
-    <Badge
-      ariaLabel="pact"
-      color="#BD5727"
-      displayName="PACT"
-      id="pact-undefined"
-      name="pact"
-      tooltipText="Appeal has issue(s) related to Promise to Address Comprehensive Toxics (PACT) Act."
+    <span
+      aria-describedby="badge-pact-undefined"
+      aria-label="pact"
+      currentitem="false"
+      data-css-1j22x9j=""
+      data-event="focus mouseenter"
+      data-event-off="mouseleave keydown"
+      data-for="badge-pact-undefined"
+      data-tip="true"
+      tabindex="0"
+    >
+      PACT
+    </span>
+    <span
+      data-css-7t27cw=""
+      data-testid="tooltip-testid"
     >
       <div
-        className="cf-pact-badge"
+        class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+        data-id="tooltip"
+        id="badge-pact-undefined"
+        role="tooltip"
       >
-        <Tooltip
-          ariaLabel="pact"
-          id="badge-pact-undefined"
-          position="bottom"
-          text="Appeal has issue(s) related to Promise to Address Comprehensive Toxics (PACT) Act."
-        >
-          <span
-            aria-describedby="badge-pact-undefined"
-            aria-label="pact"
-            data-css-1j22x9j=""
-            data-event="focus mouseenter"
-            data-event-off="mouseleave keydown"
-            data-for="badge-pact-undefined"
-            data-tip={true}
-            tabIndex={0}
-          >
-            PACT
-          </span>
-          <span
-            data-css-7t27cw=""
-          >
-            <ReactTooltip
-              className="cf-tooltip"
-              clickable={false}
-              effect="solid"
-              id="badge-pact-undefined"
-              insecure={true}
-              multiline={true}
-              offset={Object {}}
-              place="bottom"
-              resizeHide={true}
-              role="tooltip"
-              wrapper="div"
-            >
-              <div
-                className="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
-                data-id="tooltip"
-                id="badge-pact-undefined"
-                role="tooltip"
-              >
-                <style
-                  dangerouslySetInnerHTML={
-                    Object {
-                      "__html": "
+        <style>
+          
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -147,17 +103,11 @@ exports[`PactBadge renders correctly 1`] = `
         border-right-style: solid;
         border-right-width: 6px;
     }
-  ",
-                    }
-                  }
-                />
-                Appeal has issue(s) related to Promise to Address Comprehensive Toxics (PACT) Act.
-              </div>
-            </ReactTooltip>
-          </span>
-        </Tooltip>
+  
+        </style>
+        Appeal has issue(s) related to Promise to Address Comprehensive Toxics (PACT) Act.
       </div>
-    </Badge>
-  </PactBadge>
-</Provider>
+    </span>
+  </div>
+</DocumentFragment>
 `;

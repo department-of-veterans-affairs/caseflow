@@ -215,7 +215,6 @@ describe('HlrScClaimantForm', () => {
       screen.getByRole('radio', { name: /organization/i })
     );
 
-    screen.debug(undefined, Infinity);
     expect(container).toMatchSnapshot();
 
     // Set type to individual

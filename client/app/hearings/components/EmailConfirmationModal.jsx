@@ -95,7 +95,7 @@ export const ReadOnlyEmails = ({
   const hearingDayDate = moment(hearing?.scheduledFor).format('YYYY-MM-DD');
 
   return (
-    <div {...emailConfirmationModalStyles}>
+    <div {...emailConfirmationModalStyles} data-testid="read-only-emails-testid">
       {(appellantTzEdited || appellantEmailEdited || showAllEmails) && (
         <React.Fragment>
           <ReadOnly
