@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { logRoles, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { HearingTime } from 'app/hearings/components/modalForms/HearingTime';
@@ -24,7 +24,7 @@ describe('HearingTime', () => {
 
     // A single input is checked by default, and it's the "Other" radio
     expect(checkedRadio).toBeInTheDocument();
-    expect(checkedRadio.value).toBe('other');
+    expect(checkedRadio.value).toBe('Other');
     expect(checkedRadio).toBeChecked();
 
     const dropdown = screen.getByRole('combobox');
@@ -62,23 +62,29 @@ describe('HearingTime', () => {
   });
 
   test('Matches snapshot when other time is not selected', () => {
-    const {asFragment} = render(<HearingTime value="12:30" />);
+    const {asFragment} = render(
+    <HearingTime
+      enableZone
+      value="12:30 PM Eastern Time (US & Canada)"
+      hearingDayDate={hearingDayDate}
+    />);
 
     expect(asFragment()).toMatchSnapshot();
-
-    const dropdown = screen.queryByRole('combobox');
-    expect(dropdown).toBeNull();
 
     const radios = screen.getAllByRole('radio');
     const radioValues = radios.map(radio => radio.value);
     expect(radios).toHaveLength(3);
-    expect(radioValues).toContain('12:30');
-    expect(radioValues).toContain('08:30');
-    expect(radioValues).toContain('other');
+    expect(radioValues).toContain('12:30 PM Eastern Time (US & Canada)');
+    expect(radioValues).toContain('8:30 AM Eastern Time (US & Canada)');
+    expect(radioValues).toContain('Other');
+
+    const checkedRadio = screen.getByRole('radio', { name: '12:30 PM Eastern Time (US & Canada)'});
+    expect(checkedRadio).toBeChecked();
+
   });
 
   test('Matches snapshot when other time is selected', async () => {
-    const selectedTime = '13:45';
+    const selectedTime = '1:45 PM Eastern Time (US & Canada)';
     const option = HEARING_TIME_OPTIONS.find(({ value }) => value === selectedTime);
 
     const {asFragment} = render(<HearingTime value={selectedTime} />);
