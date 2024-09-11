@@ -36,23 +36,30 @@ class Test::LoadTestsController < ApplicationController
     case params[:target_type]
     when "Appeal"
       data = params[:target_id].blank? ? Appeal.all.sample : Appeal.find_by(uuid: params[:target_id])
+      target_id = data.uuid
     when "LegacyAppeal"
       data = params[:target_id].blank? ? LegacyAppeal.all.sample : LegacyAppeal.find_by(vacols_id: params[:target_id])
+      target_id = data.vacols_id
     when "Hearing"
       data = params[:target_id].blank? ? Hearing.all.sample : Hearing.find_hearing_by_uuid_or_vacols_id(params[:target_id])
+      target_id = data.uuid
     when "HigherLevelReview"
       data = params[:target_id].blank? ? HigherLevelReview.all.sample : HigherLevelReview.find_by(uuid: params[:target_id])
+      target_id = data.uuid
     when "SupplementalClaim"
       data = params[:target_id].blank? ? SupplementalClaim.all.sample : SupplementalClaim.find_by(uuid: params[:target_id])
+      target_id = data.uuid
     when "Document"
       data = params[:target_id].blank? ? Document.all.sample : Document.find_by(id: params[:target_id])
+      target_id = data.id
     when "Metric"
       data = Metric.all.sample
+      target_id = data.uuid
     end
 
     fail ActiveRecord::RecordNotFound if data.nil?
 
-    data
+    target_id
   end
 
   # Private: Finds or creates the user for load testing, makes them a system admin
