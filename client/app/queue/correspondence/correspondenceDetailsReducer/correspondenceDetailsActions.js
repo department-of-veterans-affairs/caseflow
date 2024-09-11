@@ -260,3 +260,13 @@ export const setTasksUnrelatedToAppealEmpty = (tasksUnrelatedToAppealEmpty) => (
     }
   });
 };
+
+export const savePriorMailCheckboxState = (correspondence, isChecked) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.SAVE_CHECKBOX_STATE,
+      payload: {
+        correspondence, isChecked
+      }
+    });
+  };
