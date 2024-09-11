@@ -12,7 +12,6 @@ import { correspondenceInfo } from './../correspondenceDetailsReducer/correspond
 import CorrespondenceResponseLetters from './CorrespondenceResponseLetters';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
-// import TaskSnapshot from '../../TaskSnapshot';
 import { prepareAppealForSearchStore } from 'app/queue/utils';
 import CorrespondenceTasksAdded from '../CorrespondenceTasksAdded';
 import moment from 'moment';
@@ -22,6 +21,7 @@ import { ExternalLinkIcon } from 'app/components/icons/ExternalLinkIcon';
 import { COLORS } from 'app/constants/AppConstants';
 import Checkbox from 'app/components/Checkbox';
 import CorrespondencePaginationWrapper from 'app/queue/correspondence/CorrespondencePaginationWrapper';
+import Button from 'components/Button';
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
@@ -463,6 +463,11 @@ const CorrespondenceDetails = (props) => {
     }
   ];
 
+  // eslint-disable-next-line no-empty-function
+  const associateCorrespondences = () => {
+
+  };
+
   return (
     <>
       <AppSegment filledBackground extraClassNames="app-segment-cd-details">
@@ -486,8 +491,16 @@ const CorrespondenceDetails = (props) => {
           name="tasks-tabwindow"
           tabs={tabList}
         />
-        <td className="taskContainerStyling taskInformationTimelineContainerStyling"></td>
       </AppSegment>
+      <div className="margin-top-for-add-task-view">
+        <Button
+          type="button"
+          onClick={() => associateCorrespondences()}
+          name="save-changes"
+          classNames={['cf-right-side']}>
+          Save changes
+        </Button>
+      </div>
     </>
   );
 };
