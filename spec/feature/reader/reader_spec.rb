@@ -519,7 +519,6 @@ RSpec.feature "Reader", :all_dbs do
       find("#addComment").send_keys(:arrow_right)
       expect(page).to have_content "Form 9"
 
-      find("h3", text: "Issue tags").click
       fill_in "tags", with: "tag content"
       find("#tags").send_keys(:arrow_left)
       expect(page).to have_content "Form 9"
@@ -752,8 +751,6 @@ RSpec.feature "Reader", :all_dbs do
         click_on documents[0].type
         page.driver.browser.manage.window.resize_to(1024, 1024)
 
-        find("h3", text: "Comments").click
-
         element_id = "cf-sidebar-accordion"
         scroll_to(id: element_id, value: 0)
 
@@ -780,7 +777,6 @@ RSpec.feature "Reader", :all_dbs do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
         click_on(documents[0].type, wait: 10)
-        find("h3", text: "Comments", wait: 5).click
         expect(page).to have_content(annotations[0].comment)
 
         # Wait for PDFJS to render the pages
@@ -1039,7 +1035,6 @@ RSpec.feature "Reader", :all_dbs do
         find(".cf-pdf-header .cf-pdf-doc-type-button-container", text: "BVA Decision")
         expect(cats_in_header).to match_array [cats[:procedural], cats[:case_summary]]
 
-        find("h3", text: "Categories").click
         find(".checkbox-wrapper-procedural", wait: 12).click
         find(".checkbox-wrapper-medical").click
 
@@ -1112,7 +1107,7 @@ RSpec.feature "Reader", :all_dbs do
     context "Tags" do
       let(:new_tag_text) { "Foo" }
 
-      xscenario "adding and deleting tags" do
+      scenario "adding and deleting tags" do
         TAG1 = "Medical"
         TAG2 = "Law document"
 
@@ -1122,7 +1117,6 @@ RSpec.feature "Reader", :all_dbs do
 
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
         click_on(documents[0].type, wait: 10)
-        find("h3", text: "Issue tags", wait: 5).click
 
         fill_in "tags", with: TAG1
 
@@ -1142,7 +1136,6 @@ RSpec.feature "Reader", :all_dbs do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
         click_on documents[1].type
 
-        find("h3", text: "Issue tags", wait: 10).click
         # tags for first document are shared in tag auto suggestions for second document
         page.find("#tags", wait: 10).click
         tag_options = find_all(".cf-select__option", wait: 10)
