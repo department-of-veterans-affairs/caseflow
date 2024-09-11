@@ -3,42 +3,32 @@
 class ReturnLegacyAppealsToBoardJob < CaseflowJob
   # For time_ago_in_words()
   include ActionView::Helpers::DateHelper
-  # include RunAsyncable
 
-  queue_as :low_priority
+  queue_with_priority :low_priority
   application_attr :queue
 
-  def initialize
-    @no_records_found_message = [Constants.DISTRIBUTION.no_records_moved_message].freeze
-    @nonsscavlj_number_of_appeals_limit = CaseDistributionLever.nonsscavlj_number_of_appeals_to_move || 0
-    @nonsscavlj_number_of_appeals_to_move = @nonsscavlj_number_of_appeals_limit - 1
-  end
+  NO_RECORDS_FOUND_MESSAGE = [Constants.DISTRIBUTION.no_records_moved_message].freeze
 
   def perform
-    begin
-      returned_appeal_job = create_returned_appeal_job
+    catch(:abort) do
+      begin
+        returned_appeal_job = create_returned_appeal_job
 
-      appeals, moved_appeals = eligible_and_moved_appeals
+        appeals, moved_appeals = eligible_and_moved_appeals
 
-      return send_job_slack_report(@no_records_found_message) if moved_appeals.nil?
+        check_appeals_available(moved_appeals, returned_appeal_job)
 
-      complete_returned_appeal_job(returned_appeal_job, "Job completed successfully", moved_appeals)
+        complete_returned_appeal_job(returned_appeal_job, "Job completed successfully", moved_appeals)
 
-      # The rest of your code continues here
-      # Filter the appeals and send the filtered report
-      @filtered_appeals = filter_appeals(appeals, moved_appeals)
-      send_job_slack_report(slack_report)
-    rescue StandardError => error
-      @start_time ||= Time.zone.now
-      message = "Job failed with error: #{error.message}"
-      errored_returned_appeal_job(returned_appeal_job, message)
-      duration = time_ago_in_words(@start_time)
-      slack_service.send_notification("<!here>\n [ERROR] after running for #{duration}: #{error.message}",
-                                      self.class.name)
-      log_error(error)
-      message
-    ensure
-      metrics_service_report_runtime(metric_group_name: "return_legacy_appeals_to_board_job")
+        # The rest of your code continues here
+        # Filter the appeals and send the filtered report
+        @filtered_appeals = filter_appeals(appeals, moved_appeals)
+        send_job_slack_report(slack_report)
+      rescue StandardError => error
+        handle_error(error, returned_appeal_job)
+      ensure
+        metrics_service_report_runtime(metric_group_name: "return_legacy_appeals_to_board_job")
+      end
     end
   end
 
@@ -70,6 +60,7 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
   def grouped_by_avlj(moved_appeals)
     return [] if moved_appeals.nil?
 
+    #moved_appeals.group_by { |appeal| appeal["vlj"].vacols_staff&.sattyid }.keys.compact
     moved_appeals.group_by { |appeal| VACOLS::Staff.find_by(sattyid: appeal["vlj"])&.sattyid }.keys.compact
   end
 
@@ -94,7 +85,7 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
       VACOLS::Case.batch_update_vacols_location("63", qualifying_appeals.map { |q_appeal| q_appeal["bfkey"] })
     end
 
-    qualifying_appeals
+    qualifying_appeals || []
   end
 
   def get_tied_appeal_bfkeys(tied_appeals)
@@ -112,8 +103,14 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
   end
 
   def update_qualifying_appeals_bfkeys(tied_appeals_bfkeys, qualifying_appeals_bfkeys)
+    if nonsscavlj_number_of_appeals_limit < 0
+      raise StandardError.new "CaseDistributionLever.nonsscavlj_number_of_appeals_to_move set below 0"
+    elsif nonsscavlj_number_of_appeals_limit == 0
+      return qualifying_appeals_bfkeys
+    end
+
     if tied_appeals_bfkeys.any?
-      if tied_appeals_bfkeys.count < @nonsscavlj_number_of_appeals_limit
+      if tied_appeals_bfkeys.count < nonsscavlj_number_of_appeals_limit
         qualifying_appeals_bfkeys.push(tied_appeals_bfkeys)
       # when @nonsscavlj_number_of_appeals_limit is zero then it's returning all elemetnt from the tied_appeals_bfkeys
       # So to handle it correctly had to added this elsif condition.
@@ -142,15 +139,21 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
   # Method to calculate remaining eligible appeals
   def calculate_remaining_appeals(all_appeals, moved_priority_appeals, moved_non_priority_appeals)
     return [] if all_appeals.nil?
+    starting_priority_appeals = all_appeals.select { |appeal| appeal["priority"] == 1 }
+    starting_non_priority_appeals = all_appeals.select { |appeal| appeal["priority"] == 0 }
 
-    remaining_priority_appeals = (
-      all_appeals.select { |appeal| appeal["priority"] == 1 } -
-      moved_priority_appeals
-    ) || []
-    remaining_non_priority_appeals = (
-      all_appeals.select { |appeal| appeal["priority"] == 0 } -
-      moved_non_priority_appeals
-    ) || []
+    if ((moved_priority_appeals - starting_priority_appeals).empty?)
+      remaining_priority_appeals = (starting_priority_appeals - moved_priority_appeals) || []
+    else
+      raise StandardError.new "An invalid priority appeal was detected in the list of moved appeals: #{moved_priority_appeals - starting_priority_appeals}"
+    end
+
+    if ((moved_non_priority_appeals - starting_non_priority_appeals).empty?)
+      remaining_non_priority_appeals = (starting_non_priority_appeals - moved_non_priority_appeals) || []
+    else
+      raise StandardError.new "An invalid non-priority appeal was detected in the list of moved appeals: #{moved_non_priority_appeals - starting_non_priority_appeals}"
+    end
+
     [remaining_priority_appeals, remaining_non_priority_appeals]
   end
 
@@ -164,11 +167,38 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
       .map(&:sattyid) || []
   end
 
+  def nonsscavlj_number_of_appeals_limit
+    @nonsscavlj_number_of_appeals_limit ||= CaseDistributionLever.nonsscavlj_number_of_appeals_to_move || 0
+  end
+
+  def nonsscavlj_number_of_appeals_to_move_index
+    @nonsscavlj_number_of_appeals_to_move_index ||= nonsscavlj_number_of_appeals_limit - 1
+  end
+
   def create_returned_appeal_job
     ReturnedAppealJob.create!(
       started_at: Time.zone.now,
       stats: { message: "Job started" }.to_json
     )
+  end
+
+  def check_appeals_available(moved_appeals, returned_appeal_job)
+    if moved_appeals.nil?
+      complete_returned_appeal_job(returned_appeal_job, Constants.DISTRIBUTION.no_records_moved_message, [])
+      send_job_slack_report(NO_RECORDS_FOUND_MESSAGE)
+      throw(:abort)
+    end
+  end
+
+  def handle_error(error, returned_appeal_job)
+    @start_time ||= Time.zone.now
+    message = "Job failed with error: #{error.message}"
+    errored_returned_appeal_job(returned_appeal_job, message)
+    duration = time_ago_in_words(@start_time)
+    slack_service.send_notification("<!here>\n [ERROR] after running for #{duration}: #{error.message}",
+                                    self.class.name)
+    log_error(error)
+    message
   end
 
   def complete_returned_appeal_job(returned_appeal_job, message, appeals)

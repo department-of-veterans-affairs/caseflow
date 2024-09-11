@@ -2,7 +2,8 @@
 
 FactoryBot.define do
   factory :document do
-    vbms_document_id { (10_000..999_999).to_a.sample }
+    sequence(:vbms_document_id, 10_000) { |n| "#{Time.zone.today.day}#{n}#{Time.zone.now.to_i.to_s.last(1)}" }
+
     type { "VA 8 Certification of Appeal" }
   end
 end
