@@ -584,18 +584,6 @@ input[type='search'].cf-search-input-with-close {
 }
 
 // scss-lint:disable IdSelector
-#prototype-reader {
-  display: flex;
-}
-
-// scss-lint:disable IdSelector
-#prototype-reader-main {
-  height: 100%;
-  position: relative;
-  flex: 1;
-}
-
-// scss-lint:disable IdSelector
 #prototype-sidebar {
   flex: 0 0 20em;
   display: flex;
@@ -614,21 +602,6 @@ input[type='search'].cf-search-input-with-close {
 
   .toolbar-section {
     overflow: hidden;
-  }
-}
-
-// scss-lint:disable IdSelector
-#prototype-footer {
-  position: absolute;
-  bottom: 0;
-  overflow: hidden;
-  align-items: center;
-
-  @media screen and (max-width: $site-max-width) {
-    .left-button-label,
-    .right-button-label {
-      display: none;
-    }
   }
 }
 

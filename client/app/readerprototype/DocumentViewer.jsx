@@ -14,6 +14,7 @@ import DeleteModal from './components/Comments/DeleteModal';
 import ShareModal from './components/Comments/ShareModal';
 import { getRotationDeg, selectedDoc } from './utils/utils';
 import { ROTATION_DEGREES, ZOOM_LEVEL_MIN, ZOOM_LEVEL_MAX, ZOOM_INCREMENT } from './utils/constants';
+import { documentStyles } from './utils/styles';
 
 const DocumentViewer = (props) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -82,8 +83,8 @@ const DocumentViewer = (props) => {
   }, [window.location.pathname]);
 
   return (
-    <div id="prototype-reader" className="cf-pdf-page-container">
-      <div id="prototype-reader-main">
+    <div className="cf-pdf-page-container" style={documentStyles.container}>
+      <div style={documentStyles.main}>
         <ReaderToolbar
           disableZoomIn={zoomLevel === ZOOM_LEVEL_MAX}
           disableZoomOut={zoomLevel === ZOOM_LEVEL_MIN}
