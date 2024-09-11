@@ -12,7 +12,7 @@ import { CATEGORIES } from '../reader/analytics';
 import { stopPlacingAnnotation } from '../reader/AnnotationLayer/AnnotationActions';
 import DeleteModal from './components/Comments/DeleteModal';
 import ShareModal from './components/Comments/ShareModal';
-import { getNextDocId, getPrevDocId, getRotationDeg, selectedDoc, selectedDocIndex } from './util/documentUtil';
+import { getRotationDeg, selectedDoc } from './util/documentUtil';
 import { ROTATION_DEGREES } from './util/readerConstants';
 
 const ZOOM_LEVEL_MIN = 20;
@@ -109,14 +109,11 @@ const DocumentViewer = (props) => {
         </div>
         <ReaderFooter
           currentPage={currentPage}
-          docCount={props.allDocuments.length}
-          nextDocId={getNextDocId(props)}
+          docId={doc.id}
+          match={props.match}
           numPages={numPages}
-          prevDocId={getPrevDocId(props)}
           setCurrentPage={() => setCurrentPage()}
-          selectedDocIndex={selectedDocIndex(props)}
-          showNextDocument={props.showPdf(getNextDocId(props))}
-          showPreviousDocument={props.showPdf(getPrevDocId(props))}
+          showPdf={props.showPdf}
           disablePreviousNext={disabled}
         />
       </div>

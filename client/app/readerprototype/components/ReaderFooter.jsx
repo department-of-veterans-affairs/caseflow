@@ -1,21 +1,23 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import _ from 'lodash';
 
-import Button from '../../components/Button';
-import TextField from '../../components/TextField';
-import { PageArrowLeftIcon } from '../../components/icons/PageArrowLeftIcon';
-import { PageArrowRightIcon } from '../../components/icons/PageArrowRightIcon';
+import Button from 'components/Button';
+import TextField from 'components/TextField';
+import { PageArrowLeftIcon } from 'components/icons/PageArrowLeftIcon';
+import { PageArrowRightIcon } from 'components/icons/PageArrowRightIcon';
+import { FilterNoOutlineIcon } from 'components/icons/FilterNoOutlineIcon';
+
+import { getFilteredDocIds, getFilteredDocuments, docListIsFiltered } from '../../reader/selectors';
 
 const ReaderFooter = ({
   currentPage,
-  docCount,
-  nextDocId,
+  docId,
+  match,
   numPages,
-  prevDocId,
   setCurrentPage,
-  selectedDocIndex,
-  showNextDocument,
-  showPreviousDocument,
+  showPdf,
   disablePreviousNext,
 }) => {
   const isValidInputPageNumber = (pageNumber) => {
@@ -35,6 +37,18 @@ const ReaderFooter = ({
     return pageNumber;
   };
 
+  const filteredDocs = useSelector(getFilteredDocuments);
+  const filteredDocIds = useSelector(getFilteredDocIds);
+  const currentDocIndex = filteredDocIds.indexOf(docId);
+  const selectedDocId = () => Number(match.params.docId);
+  const selectedDocIndex = () => (
+    _.findIndex(filteredDocs, { id: selectedDocId() })
+  );
+  const getPrevDoc = () => _.get(filteredDocs, [selectedDocIndex() - 1]);
+  const getNextDoc = () => _.get(filteredDocs, [selectedDocIndex() + 1]);
+  const getPrevDocId = () => _.get(getPrevDoc(), 'id');
+  const getNextDocId = () => _.get(getNextDoc(), 'id');
+
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
       const newPageNumber = sanitizedPageNumber(event.target.value);
@@ -47,14 +61,29 @@ const ReaderFooter = ({
     }
   };
 
+  useEffect(() => {
+    const keyHandler = (event) => {
+      if (event.key === 'ArrowLeft') {
+        showPdf(getPrevDocId());
+      }
+      if (event.key === 'ArrowRight') {
+        showPdf(getNextDocId());
+      }
+    };
+
+    window.addEventListener('keydown', keyHandler);
+
+    return () => window.removeEventListener('keydown', keyHandler);
+  }, [currentDocIndex]);
+
   return (
     <div id="prototype-footer" className="cf-pdf-footer cf-pdf-toolbar">
       <div className="cf-pdf-footer-buttons-left">
-        {prevDocId && (
+        {getPrevDocId() && (
           <Button
             name="previous"
             classNames={['cf-pdf-button']}
-            onClick={showPreviousDocument}
+            onClick={showPdf(getPrevDocId())}
             ariaLabel="previous PDF"
             disabled={disablePreviousNext}
           >
@@ -85,17 +114,17 @@ const ReaderFooter = ({
           </span>
           |
         </span>
-        <span className="doc-list-progress-indicator">
-          Document {selectedDocIndex + 1} of {docCount}
+        <span className="doc-list-progress-indicator">{docListIsFiltered && <FilterNoOutlineIcon />}
+          Document {currentDocIndex + 1} of {filteredDocs.length}
         </span>
       </div>
 
       <div className="cf-pdf-footer-buttons-right">
-        {nextDocId && (
+        {getNextDocId() && (
           <Button
             name="next"
             classNames={['cf-pdf-button cf-right-side']}
-            onClick={showNextDocument}
+            onClick={showPdf(getNextDocId())}
             ariaLabel="next PDF"
             disabled={disablePreviousNext}
           >
@@ -110,14 +139,11 @@ const ReaderFooter = ({
 
 ReaderFooter.propTypes = {
   currentPage: PropTypes.number,
-  docCount: PropTypes.number,
-  nextDocId: PropTypes.number,
+  docId: PropTypes.number,
+  match: PropTypes.any,
   numPages: PropTypes.number,
-  prevDocId: PropTypes.number,
   setCurrentPage: PropTypes.func,
-  selectedDocIndex: PropTypes.number,
-  showNextDocument: PropTypes.func,
-  showPreviousDocument: PropTypes.func,
+  showPdf: PropTypes.func,
   disablePreviousNext: PropTypes.bool,
 };
 
