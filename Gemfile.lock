@@ -2005,6 +2005,8 @@ GEM
       racc (~> 1.4)
     nokogiri (1.15.6-x86_64-linux)
       racc (~> 1.4)
+    nokogiri (1.15.6-x86_64-linux)
+      racc (~> 1.4)
     nori (2.6.0)
     notiffany (0.1.3)
       nenv (~> 0.1)
