@@ -98,7 +98,7 @@ class AppealsInLocation63InPast2Days
 
   def self.legacy_original_deciding_judge_name(appeal)
     staff = VACOLS::Staff.find_by(sattyid: appeal["prev_deciding_judge"])
-    deciding_judge_name = FullName.new(staff["snamef"], nil, staff["snamel"]).to_s
+    deciding_judge_name = staff.nil? ? "" : FullName.new(staff["snamef"], nil, staff["snamel"]).to_s
     deciding_judge_name.empty? ? nil : deciding_judge_name
   end
 end
