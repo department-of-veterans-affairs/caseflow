@@ -1285,17 +1285,17 @@ describe VACOLS::AojCaseDocket, :all_dbs do
         expect(new_hrng_judge_infinite.map { |c| c["bfkey"] }.sort)
           .to match_array([
             case_1, case_2, case_3, case_4, case_5, case_10, case_12
-          ].map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
+          ].map { |c| c["bfkey"].to_i.to_s }.sort)
 
         expect(tied_judge_infinite.map { |c| c["bfkey"] }.sort)
           .to match_array([
             case_6, case_9, case_10, case_11, case_12, case_13
-          ].map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
+          ].map { |c| c["bfkey"].to_i.to_s }.sort)
 
         expect(other_judge_infinite.map { |c| c["bfkey"] }.sort)
           .to match_array([
             case_7, case_8, case_10, case_12
-          ].map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
+          ].map { |c| c["bfkey"].to_i.to_s }.sort)
 
         # For case distribution levers set to omit
         CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.aoj_affinity_days).update!(value: "infinite").update!(value: "omit")
@@ -1310,17 +1310,17 @@ describe VACOLS::AojCaseDocket, :all_dbs do
         expect(new_hearing_judge_omit.map { |c| c["bfkey"] }.sort)
           .to match_array([
             case_1, case_2, case_3, case_4, case_5, case_7, case_8, case_9, case_10, case_11, case_12, case_13
-          ].map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
+          ].map { |c| c["bfkey"].to_i.to_s }.sort)
 
         expect(tied_judge_omit.map { |c| c["bfkey"] }.sort)
           .to match_array([
             case_6, case_7, case_8, case_9, case_10, case_11, case_12, case_13
-          ].map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
+          ].map { |c| c["bfkey"].to_i.to_s }.sort)
 
         expect(other_judge_omit.map { |c| c["bfkey"] }.sort)
           .to match_array([
             case_7, case_8, case_9, case_10, case_11, case_12, case_13
-          ].map { |c| (c["bfkey"].to_i + 1).to_s }.sort)
+          ].map { |c| c["bfkey"].to_i.to_s }.sort)
       end
     end
   end
