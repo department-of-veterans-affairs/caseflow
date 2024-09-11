@@ -68,8 +68,6 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
     appeals.map { |appeal| appeal["bfkey"] }.uniq.size
   end
 
-  private
-
   def move_qualifying_appeals(appeals)
     qualifying_appeals_bfkeys = []
 
