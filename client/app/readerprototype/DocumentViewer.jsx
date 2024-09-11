@@ -118,7 +118,6 @@ const DocumentViewer = (props) => {
           numPages={numPages}
           setCurrentPage={() => setCurrentPage()}
           showPdf={props.showPdf}
-          disablePreviousNext={disabled}
         />
       </div>
       {showSideBar && (
