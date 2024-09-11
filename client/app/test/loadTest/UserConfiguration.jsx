@@ -7,11 +7,11 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 
 import FeatureToggleConfiguration from './FeatureToggleConfiguration';
 import FunctionConfiguration from './FunctionConfiguration';
+import OrganizationDropdown from './OrganizationDropdown';
 import OFFICE_INFO from '../../../constants/REGIONAL_OFFICE_FOR_CSS_STATION.json';
 
 export default function UserConfiguration(props) {
   const [isSelectedStation, stationIsSelected] = useState(false);
-  const [orgSelection, setOrgSelection] = useState('');
 
   const filteredStations = [];
   const stationsMapping = new Map();
@@ -30,16 +30,8 @@ export default function UserConfiguration(props) {
     stationIsSelected(true);
   };
 
-  const handleOrgSelection = ({ value }) => {
-    setOrgSelection(value);
-  };
-
   const functionsAvailable = props.form_values.functions_available;
   const featureToggles = props.featuresList;
-  const organizations = props.form_values.all_organizations.sort().map((org) => ({
-    value: org,
-    label: org
-  }));
 
   featureToggles.sort();
 
@@ -72,14 +64,7 @@ export default function UserConfiguration(props) {
           />
           <br />
           <p>Organizations</p>
-          <SearchableDropdown
-            name="Organizations dropdown"
-            hideLabel
-            onChange={handleOrgSelection}
-            options={organizations} searchable
-            filterOption={() => true}
-            value={orgSelection}
-          />
+          <OrganizationDropdown {...props} />
           <br />
           <h2><strong>Functions</strong></h2>
           <div className="load-test-container">
@@ -107,7 +92,6 @@ export default function UserConfiguration(props) {
 }
 
 UserConfiguration.propTypes = {
-  all_organizations: PropTypes.array,
   featuresList: PropTypes.array,
   form_values: PropTypes.object,
   functions_available: PropTypes.array
