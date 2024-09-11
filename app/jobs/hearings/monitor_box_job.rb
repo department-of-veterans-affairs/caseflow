@@ -1,6 +1,19 @@
 # frozen_string_literal: true
 
 class Hearings::MonitorBoxJob < ApplicationJob
+  # This job is responsible for retrieving newly added transcription files from VA Box.com folders.
+  #
+  # It connects to the Box.com API via {ExternalApi::VaBoxService}, queries transcription contractor folders, and
+  # returns a list of files that have been added since the last check.
+  # This class is intended to be used for hourly checks triggered by appeals-lambda
+  # to handle new files from Box.com after being uploaded bt transcription contractors.
+  # The parent folder id is stored as an environment variable.
+  #
+  # Example usage:
+  #
+  #   BoxFileRetrievalJob.perform_later
+  #
+  # The `perform_later` method will enqueue the job to be performed asynchronously.
   queue_as :low_priority
 
   attr_reader :box_service
