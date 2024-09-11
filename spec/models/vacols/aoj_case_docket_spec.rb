@@ -1298,9 +1298,9 @@ describe VACOLS::AojCaseDocket, :all_dbs do
           ].map { |c| c["bfkey"].to_i.to_s }.sort)
 
         # For case distribution levers set to omit
-        CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.aoj_affinity_days).update!(value: "infinite").update!(value: "omit")
-        CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.aoj_aod_affinity_days).update!(value: "infinite").update!(value: "omit")
-        CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.aoj_cavc_affinity_days).update!(value: "infinite").update!(value: "omit")
+        CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.aoj_affinity_days).update!(value: "omit")
+        CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.aoj_aod_affinity_days).update!(value: "omit")
+        CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.aoj_cavc_affinity_days).update!(value: "omit")
         CaseDistributionLever.clear_distribution_lever_cache
 
         new_hearing_judge_omit = VACOLS::AojCaseDocket.distribute_priority_appeals(new_hearing_judge, "any", 100, true)
