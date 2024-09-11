@@ -67,7 +67,7 @@ const OrganizationPermissions = (props) => {
 
     let result = false;
     const parentPermission = props.permissions.find((permission) => permission.id === parentId);
-    const orgUserPermissions = props.orgnizationUserPermissions.find((x) =>
+    const orgUserPermissions = props.organizationUserPermissions.find((x) =>
       x.user_id === Number(userId)).organization_user_permissions;
 
     const checkboxInState = toggledCheckboxes.find((permission) =>
@@ -101,38 +101,36 @@ const OrganizationPermissions = (props) => {
         storedCheckbox.permissionName === permission.permission
     );
 
-    if (
-      toggledCheckboxes.find(
-        (checkboxInState) =>
-          checkboxInState.userId === user.id &&
-          checkboxInState.permissionName === permission.permission &&
-          checkboxInState.checked
-      )
-    ) {
-      isEnabled = true;
-    }
+    const isCheckboxEnabledInState = toggledCheckboxes.find(
+      (checkboxInState) =>
+        checkboxInState.userId === user.id &&
+        checkboxInState.permissionName === permission.permission &&
+        checkboxInState.checked
+    );
 
     // check if user is marked as admin to auto check the checkbox.
-    if (permission.default_for_admin && user.attributes.admin) {
-      isEnabled = true;
-    }
+    const isUserAdmin = permission.default_for_admin && user.attributes.admin;
 
-    if (typeof stateValue !== 'undefined') {
-      isEnabled = stateValue.checked;
-    }
+    const isCheckboxDefinedInState = typeof stateValue !== 'undefined';
 
     // default state that came in when page loads, used as final fallback.
-    const relevantPermissions = props.orgnizationUserPermissions.find(
-      (oup) => oup.user_id === Number(user.id)
-    ).organization_user_permissions;
+    const isCheckboxPermittedInDefaultState = () => {
+      const relevantPermissions = props.organizationUserPermissions.find(
+        (oup) => oup.user_id === Number(user.id)
+      ).organization_user_permissions;
 
-    if (
-      relevantPermissions.find(
+      return relevantPermissions.find(
         (perm) =>
           perm.organization_permission.permission === permission.permission &&
           perm.permitted
-      )
-    ) {
+      );
+    };
+
+    if (isCheckboxEnabledInState || isUserAdmin) {
+      isEnabled = true;
+    } else if (isCheckboxDefinedInState) {
+      isEnabled = stateValue.checked;
+    } else if (isCheckboxPermittedInDefaultState()) {
       isEnabled = true;
     }
 
@@ -185,17 +183,17 @@ const OrganizationPermissions = (props) => {
 
       return (parentPermissionChecked(user.id, permission.parent_permission_id) &&
       permissionAdminCheck(user, permission) &&
-       <Checkbox
-         name={`${user.id}-${permission.permission}`}
-         label={permission.description}
-         key={`${user.id}-${permission.permission}`}
-         styling={checkboxStyle}
-         onChange={modifyUserPermission(user.id, permission.permission)}
-         defaultValue={(userPermissions(user, permission.permission) ||
-           checkAdminPermission(user, permission.permission))}
-         disabled={checkAdminPermission(user, permission.permission)}
-         value={getCheckboxEnabled(user, props.orgUserData, permission)}
-       />);
+        <Checkbox
+          name={`${user.id}-${permission.permission}`}
+          label={permission.description}
+          key={`${user.id}-${permission.permission}`}
+          styling={checkboxStyle}
+          onChange={modifyUserPermission(user.id, permission.permission)}
+          defaultValue={(userPermissions(user, permission.permission) ||
+            checkAdminPermission(user, permission.permission))}
+          disabled={checkAdminPermission(user, permission.permission)}
+          value={getCheckboxEnabled(user, props.orgUserData, permission)}
+        />);
     });
   };
 
@@ -213,6 +211,5 @@ OrganizationPermissions.propTypes = {
   user: PropTypes.object,
   organization: PropTypes.string,
   orgUserData: PropTypes.object,
-  orgnizationUserPermissions: PropTypes.array
-
+  organizationUserPermissions: PropTypes.array
 };
