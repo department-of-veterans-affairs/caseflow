@@ -466,52 +466,74 @@ describe('TranscriptionFileDispatchTable', () => {
     jest.clearAllMocks();
   });
 
-  describe('Unassigned Tab', () => {
-    it('loads a table from backend data and handles selected and locked records', async () => {
-      const { container } = setupUnassignedTable();
+describe('Unassigned Tab', () => {
+  it('loads a table from backend data and handles selected and locked records', async () => {
+    // Mock the API responses directly
+    ApiUtil.get = jest.fn();
+    ApiUtil.post = jest.fn();
 
-      await waitFor(() =>
-        expect(screen.getAllByText('Viewing 1-15 of 40 total')[0]).toBeInTheDocument()
-      );
+    when(ApiUtil.get).calledWith('/hearings/transcription_files/transcription_file_tasks?tab=Unassigned&page=1').
+      mockResolvedValue(mockTranscriptionFilesResponse);
 
-      const select = container.querySelectorAll('.select-file');
-      const checkboxes = container.querySelectorAll('.select-file input');
+    when(ApiUtil.get).calledWith('/hearings/transcription_files/locked').
+      mockResolvedValue(mockLockedResponse);
 
-      expect(checkboxes[0]).toBeChecked();
+    const { container } = setupUnassignedTable();
 
-      expect(checkboxes[1]).toBeDisabled();
-      expect(select[1]).toHaveAttribute('title', 'Locked by QATTY2');
+    await waitFor(() =>
+      expect(screen.getAllByText('Viewing 1-15 of 40 total')[0]).toBeInTheDocument()
+    );
 
-      expect(container).toMatchSnapshot();
+    const select = container.querySelectorAll('.select-file');
+    const checkboxes = container.querySelectorAll('.select-file input');
 
-      const results = await axe(container);
+    expect(checkboxes[0]).toBeChecked();
 
-      expect(results).toHaveNoViolations();
-    }, 20000);
+    expect(checkboxes[1]).toBeDisabled();
+    expect(select[1]).toHaveAttribute('title', 'Locked by QATTY2');
 
-    it('select all checkbox when select-all checkbox is selected', async () => {
-      const { container } = setupUnassignedTable();
+    expect(container).toMatchSnapshot();
 
-      ApiUtil.post.mockResolvedValue(mockSelectAllResponse);
-      await waitFor(() =>
-        expect(screen.getAllByText('Viewing 1-15 of 40 total')[0]).toBeInTheDocument()
-      );
+    const results = await axe(container);
 
-      const selectAllCheckbox = screen.getByRole('checkbox', { name: /select all files checkbox/i });
+    expect(results).toHaveNoViolations();
+  });
 
-      userEvent.click(selectAllCheckbox);
+  it('select all checkbox when select-all checkbox is selected', async () => {
+    // Mock the API responses directly
+    ApiUtil.get = jest.fn();
+    ApiUtil.post = jest.fn();
 
-      const selectFileCheckboxes = container.querySelectorAll('.select-file input');
+    when(ApiUtil.get).calledWith('/hearings/transcription_files/transcription_file_tasks?tab=Unassigned&page=1').
+      mockResolvedValue(mockTranscriptionFilesResponse);
 
-      selectFileCheckboxes.forEach((checkbox) => {
-        if (!checkbox.disabled) {
-          expect(checkbox).toBeChecked();
-        }
-      });
-      expect(ApiUtil.post).toHaveBeenCalledWith(
-        '/hearings/transcription_files/lock', selectAllData
-      );
-    }, 20000);
+    when(ApiUtil.get).calledWith('/hearings/transcription_files/locked').
+      mockResolvedValue(mockLockedResponse);
+
+    ApiUtil.post.mockResolvedValue(mockSelectAllResponse);
+
+    const { container } = setupUnassignedTable();
+
+    await waitFor(() =>
+      expect(screen.getAllByText('Viewing 1-15 of 40 total')[0]).toBeInTheDocument()
+    );
+
+    const selectAllCheckbox = screen.getByRole('checkbox', { name: /select all files checkbox/i });
+
+    userEvent.click(selectAllCheckbox);
+
+    const selectFileCheckboxes = container.querySelectorAll('.select-file input');
+
+    selectFileCheckboxes.forEach((checkbox) => {
+      if (!checkbox.disabled) {
+        expect(checkbox).toBeChecked();
+      }
+    });
+    expect(ApiUtil.post).toHaveBeenCalledWith(
+      '/hearings/transcription_files/lock', selectAllData
+    );
+  });
+});
 
     it('select individual checkbox when single checkbox is checked', async () => {
       const { container } = setupUnassignedTable();
