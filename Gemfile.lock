@@ -1732,6 +1732,8 @@ GEM
     nokogiri (1.15.5)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
+    nokogiri (1.15.6-x86_64-linux)
+      racc (~> 1.4)
     nori (2.6.0)
     notiffany (0.1.1)
       nenv (~> 0.1)
@@ -2199,7 +2201,7 @@ DEPENDENCIES
   pdf-forms
   pdfjs_viewer-rails!
   pdfkit
-  pg
+  pg (~> 1.1.4)
   pluck_to_hash
   pry (~> 0.13.0)
   pry-byebug (~> 3.9)
