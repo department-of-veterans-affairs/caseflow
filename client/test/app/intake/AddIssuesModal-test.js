@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 
 import AddIssuesModal from '../../../app/intake/components/AddIssuesModal';
 import { sample1 } from './testData';
-import { newProps } from '../../helpers/testHelpers';
+import { testRenderingWithNewProps } from '../../helpers/testHelpers';
 
 describe('AddIssuesModal', () => {
   const formType = 'higher_level_review';
@@ -36,15 +36,7 @@ describe('AddIssuesModal', () => {
     });
 
     it('renders with new props', async () => {
-      setup(newProps);
-
-      const cancelBtn = await screen.findByText('cancel');
-      const skipBtn = await screen.findByText('skip');
-      const submitBtn = await screen.findByText('submit');
-
-      expect(cancelBtn.textContent).toBe('cancel');
-      expect(skipBtn.textContent).toBe('skip');
-      expect(submitBtn.textContent).toBe('submit');
+      testRenderingWithNewProps(setup);
     });
 
     it('skip button only with onSkip prop', () => {
@@ -67,7 +59,7 @@ describe('AddIssuesModal', () => {
     });
 
     it('disables button when nothing selected', () => {
-      const { rerender, container } = render(<AddIssuesModal
+      const { rerender } = render(<AddIssuesModal
         featureToggles={featureToggles}
         formType={formType}
         intakeData={intakeData}

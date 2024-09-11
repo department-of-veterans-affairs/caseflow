@@ -3,7 +3,7 @@ import { render, fireEvent, screen } from '@testing-library/react';
 
 import UnidentifiedIssuesModal from '../../../app/intake/components/UnidentifiedIssuesModal';
 import { sample1 } from './testData';
-import { newProps } from '../../helpers/testHelpers';
+import { testRenderingWithNewProps } from '../../helpers/testHelpers';
 describe('UnidentifiedIssuesModal', () => {
   const formType = 'higher_level_review';
   const intakeData = sample1.intakeData;
@@ -31,15 +31,7 @@ describe('UnidentifiedIssuesModal', () => {
 
     });
     it('renders with new props', async () => {
-      setup(newProps);
-
-      const cancelBtn = await screen.findByText('cancel');
-      const skipBtn = await screen.findByText('skip');
-      const submitBtn = await screen.findByText('submit');
-
-      expect(cancelBtn.textContent).toBe('cancel');
-      expect(skipBtn.textContent).toBe('skip');
-      expect(submitBtn.textContent).toBe('submit');
+      testRenderingWithNewProps(setup);
     });
 
     it('skip button only with onSkip prop', () => {

@@ -1,4 +1,5 @@
 import React from 'react';
+import { screen } from '@testing-library/react';
 import superagent from 'superagent';
 import { render as rtlRender } from '@testing-library/react';
 import { hearingDetailsWrapper } from 'test/data/stores/hearingsStore';
@@ -49,8 +50,20 @@ export function customRender(ui, { wrapper: Wrapper, wrapperProps, ...options } 
   return rtlRender(ui, options);
 }
 
-export const newProps = {
-  cancelText: 'cancel',
-  skipText: 'skip',
-  submitText: 'submit'
+export const testRenderingWithNewProps = async (setupFn) => {
+  const newProps = {
+    cancelText: 'cancel',
+    skipText: 'skip',
+    submitText: 'submit'
+  };
+
+  setupFn(newProps);
+
+  const cancelBtn = await screen.findByText('cancel');
+  const skipBtn = await screen.findByText('skip');
+  const submitBtn = await screen.findByText('submit');
+
+  expect(cancelBtn.textContent).toBe('cancel');
+  expect(skipBtn.textContent).toBe('skip');
+  expect(submitBtn.textContent).toBe('submit');
 };

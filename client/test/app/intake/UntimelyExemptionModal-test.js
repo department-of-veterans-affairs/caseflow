@@ -7,7 +7,7 @@ import { reducer, generateInitialState } from '../../../app/intake';
 import ReduxBase from '../../../app/components/ReduxBase';
 import UntimelyExemptionModal from '../../../app/intake/components/UntimelyExemptionModal';
 import { sample1 } from './testData';
-import { newProps } from '../../helpers/testHelpers';
+import { testRenderingWithNewProps } from '../../helpers/testHelpers';
 
 describe('UntimelyExemptionModal', () => {
   const formType = 'higher_level_review';
@@ -49,15 +49,7 @@ describe('UntimelyExemptionModal', () => {
       expect(screen.getByText('Add this issue')).toBeInTheDocument();
     });
     it('renders with new props', async () => {
-      setup(newProps);
-
-      const cancelBtn = await screen.findByText('cancel');
-      const skipBtn = await screen.findByText('skip');
-      const submitBtn = await screen.findByText('submit');
-
-      expect(cancelBtn.textContent).toBe('cancel');
-      expect(skipBtn.textContent).toBe('skip');
-      expect(submitBtn.textContent).toBe('submit');
+      testRenderingWithNewProps(setup);
     });
 
     it('skip button only with onSkip prop', () => {
