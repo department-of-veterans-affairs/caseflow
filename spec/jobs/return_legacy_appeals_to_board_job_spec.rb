@@ -1,20 +1,15 @@
 # frozen_string_literal: true
 
 describe ReturnLegacyAppealsToBoardJob, :all_dbs do
-  let(:job) { described_class.new }
-  let(:nonsscavlj_number_of_appeals_to_move_count) { 2 }
-
-  before do
-    allow(CaseDistributionLever).to receive(:nonsscavlj_number_of_appeals_to_move)
-      .and_return(nonsscavlj_number_of_appeals_to_move_count)
-  end
-
   describe "#perform" do
+    let(:job) { described_class.new }
     let(:returned_appeal_job) { instance_double("ReturnedAppealJob", id: 1) }
     let(:appeals) { [{ "bfkey" => "1", "priority" => 1 }, { "bfkey" => "2", "priority" => 0 }] }
     let(:moved_appeals) { [{ "bfkey" => "1", "priority" => 1 }] }
 
     before do
+      allow(CaseDistributionLever).to receive(:nonsscavlj_number_of_appeals_to_move).and_return(2)
+
       allow(job).to receive(:create_returned_appeal_job).and_return(returned_appeal_job)
       allow(returned_appeal_job).to receive(:update!)
       allow(job).to receive(:eligible_and_moved_appeals).and_return([appeals, moved_appeals])
