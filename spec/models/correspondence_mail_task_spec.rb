@@ -1,4 +1,6 @@
-require 'rails_helper'
+# frozen_string_literal: true
+
+require "rails_helper"
 
 RSpec.describe CorrespondenceMailTask, type: :model do
   include CorrespondenceHelpers
@@ -11,14 +13,12 @@ RSpec.describe CorrespondenceMailTask, type: :model do
   let!(:veteran) { create(:veteran, first_name: "John", last_name: "Testingman", file_number: "8675309") }
   let!(:correspondence) { create(:correspondence, :completed, veteran: veteran) }
 
-
   describe ".verify_user_can_create!" do
     let(:inbound_ops_user) { create(:inbound_ops_team_supervisor) }
 
     context "When an inbound ops team user tries to create a mail task" do
       CorrespondenceTaskActionsHelpers::TASKS.each do |task_action|
-
-        context "#{task_action[:name]}" do
+        context "#{task_action[:name]} task" do
           let(:parent_task) { correspondence.root_task }
 
           it "allows inbound ops team users to create the task" do
@@ -63,7 +63,6 @@ RSpec.describe CorrespondenceMailTask, type: :model do
 
     # iterate through each mail task
     CorrespondenceTaskActionsHelpers::TASKS.each do |task_action|
-
       before do
         send("correspondence_spec_#{task_action[:access_type]}")
         FeatureToggle.enable!(:correspondence_queue)
@@ -133,7 +132,6 @@ RSpec.describe CorrespondenceMailTask, type: :model do
         end
 
         context "The #{task_action[:name]} is assigned to a user" do
-
           before do
             @task.update!(assigned_to: assigned_user)
           end
