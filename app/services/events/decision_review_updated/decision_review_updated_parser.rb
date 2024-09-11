@@ -44,15 +44,15 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedParser
 
   # Do we need it in updating event? If yes - why?
   def css_id
-    @payload[:css_id]
+    @payload[:css_id].presence
   end
 
   def detail_type
-    @payload[:detail_type]
+    @payload[:detail_type].presence
   end
 
-  def station
-    @payload[:station]
+  def station_id
+    @payload[:station].presence
   end
 
   def claim_review_informal_conference
@@ -68,11 +68,11 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedParser
   end
 
   def end_product_establishments_development_item_reference_id
-    @payload.dig(:end_product_establishments, :development_item_reference_id)
+    @payload.dig(:end_product_establishments, :development_item_reference_id).presence
   end
 
   def end_product_establishments_reference_id
-    @payload.dig(:end_product_establishments, :reference_id)
+    @payload.dig(:end_product_establishments, :reference_id).presence
   end
 
   def added_issues
