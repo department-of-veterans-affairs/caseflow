@@ -232,7 +232,6 @@ RSpec.feature "Admin UI" do
     # Send keys with delay
     value.each_char do |char|
       area.send_keys char
-      sleep 0.1 # 100 ms delay between keystrokes
     end
   end
 
@@ -243,7 +242,6 @@ RSpec.feature "Admin UI" do
 
     while find_field(field).value.present? && attempts < max_attempts
       find_field(field).set("")
-      sleep 0.1 # Small delay to allow the field to update
       attempts += 1
     end
 
