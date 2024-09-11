@@ -57,7 +57,7 @@ const CorrespondenceCaseTimeline = (props) => {
       <table id="case-timeline-table" summary="layout table">
         <tbody>
           <CorrespondenceTaskRows
-            organizations={["test"]}
+            organizations={props.organizations}
             correspondence={props.correspondence}
             taskList={formatTaskData()}
             statusSplit
