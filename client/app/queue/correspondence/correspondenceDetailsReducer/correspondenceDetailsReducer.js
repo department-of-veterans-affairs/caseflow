@@ -8,6 +8,7 @@ export const initialState = {
     tasksUnrelatedToAppeal: {}
   },
   tasksUnrelatedToAppealEmpty: false,
+  relatedCorrespondences: []
 
 };
 
@@ -30,6 +31,22 @@ export const correspondenceDetailsReducer = (state = initialState, action = {}) 
     return update(state, {
       tasksUnrelatedToAppealEmpty: {
         $set: action.payload.tasksUnrelatedToAppealEmpty
+      }
+    });
+  case ACTIONS.SAVE_CHECKBOX_STATE:
+    if (action.payload.isChecked) {
+      return update(state, {
+        relatedCorrespondences: {
+          $push: [action.payload.correspondence]
+        }
+      });
+    }
+
+    return update(state, {
+      relatedCorrespondences: {
+        $set: state.relatedCorrespondences.filter((corr) => {
+          return corr.uuid !== action.payload.correspondence.uuid;
+        })
       }
     });
   default:

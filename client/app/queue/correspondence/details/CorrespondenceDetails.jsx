@@ -8,7 +8,10 @@ import TabWindow from '../../../components/TabWindow';
 import CopyTextButton from '../../../components/CopyTextButton';
 import { loadCorrespondence } from '../correspondenceReducer/correspondenceActions';
 import CorrespondenceCaseTimeline from '../CorrespondenceCaseTimeline';
-import { correspondenceInfo } from './../correspondenceDetailsReducer/correspondenceDetailsActions';
+import {
+  correspondenceInfo,
+  savePriorMailCheckboxState
+} from './../correspondenceDetailsReducer/correspondenceDetailsActions';
 import CorrespondenceResponseLetters from './CorrespondenceResponseLetters';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
@@ -32,8 +35,9 @@ const CorrespondenceDetails = (props) => {
   const allCorrespondences = props.correspondence.all_correspondences;
   const [viewAllCorrespondence, setViewAllCorrespondence] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [disableSubmitButton, setDisableSubmitButton] = useState(false);
+  const [disableSubmitButton, setDisableSubmitButton] = useState(true);
   const [showSuccessBanner, setShowSuccessBanner] = useState(false);
+  const [selectedPriorMail, setSelectedPriorMail] = useState([]);
   const totalPages = Math.ceil(allCorrespondences.length / 15);
   const startIndex = (currentPage * 15) - 15;
   const endIndex = (currentPage * 15);
@@ -319,6 +323,20 @@ const CorrespondenceDetails = (props) => {
     );
   };
 
+  const onChangeCheckbox = (corr, isChecked) => {
+    props.savePriorMailCheckboxState(corr, isChecked);
+    let selectedCheckboxes = [...props.priorMailCheckboxes];
+
+    if (isChecked) {
+      selectedCheckboxes.push(corr);
+    } else {
+      selectedCheckboxes = selectedCheckboxes.filter((checkbox) => checkbox.id !== corr.id);
+    }
+    const isAnyCheckboxSelected = selectedCheckboxes.length > 0;
+
+    setDisableSubmitButton(!isAnyCheckboxSelected);
+  };
+
   const getDocumentColumns = (correspondenceRow) => {
     return [
       {
@@ -330,7 +348,7 @@ const CorrespondenceDetails = (props) => {
               id={correspondenceRow.id.toString()}
               hideLabel
               defaultValue={relatedCorrespondenceIds.some((el) => el === correspondenceRow.id)}
-              disabled
+              onChange={(checked) => onChangeCheckbox(correspondenceRow, checked)}
             />
           </div>
         )
@@ -466,8 +484,9 @@ const CorrespondenceDetails = (props) => {
     }
   ];
 
-  const associateCorrespondences = () => {
+  const saveChanges = () => {
     setShowSuccessBanner(true);
+    setSelectedPriorMail([]);
   };
 
   return (
@@ -505,7 +524,7 @@ const CorrespondenceDetails = (props) => {
       <div className="margin-top-for-add-task-view">
         <Button
           type="button"
-          onClick={() => associateCorrespondences()}
+          onClick={() => saveChanges()}
           disabled={disableSubmitButton}
           name="save-changes"
           classNames={['cf-right-side']}>
@@ -524,17 +543,21 @@ CorrespondenceDetails.propTypes = {
   enableTopPagination: PropTypes.bool,
   correspondence_appeal_ids: PropTypes.bool,
   tasksUnrelatedToAppealEmpty: PropTypes.bool,
-  correspondenceResponseLetters: PropTypes.array
+  correspondenceResponseLetters: PropTypes.array,
+  savePriorMailCheckboxState: PropTypes.func,
+  priorMailCheckboxes: PropTypes.array,
 };
 
 const mapStateToProps = (state) => ({
   correspondenceInfo: state.correspondenceDetails.correspondenceInfo,
   tasksUnrelatedToAppealEmpty: state.correspondenceDetails.tasksUnrelatedToAppealEmpty,
+  priorMailCheckboxes: state.correspondenceDetails.relatedCorrespondences
 });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    correspondenceInfo
+    correspondenceInfo,
+    savePriorMailCheckboxState
   }, dispatch)
 );
 
