@@ -68,7 +68,7 @@ gem "pdfjs_viewer-rails", git: "https://github.com/senny/pdfjs_viewer-rails.git"
 # Used to build out PDF files on the backend
 # https://github.com/pdfkit/pdfkit
 gem "pdfkit"
-gem "pg", platforms: :ruby
+gem "pg", "~> 1.1.4", platforms: :ruby
 # Application server: Puma
 # Puma was chosen because it handles load of 40+ concurrent users better than Unicorn and Passenger
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
