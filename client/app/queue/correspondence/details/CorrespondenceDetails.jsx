@@ -37,6 +37,49 @@ const CorrespondenceDetails = (props) => {
   const priorMail = correspondence.prior_mail;
   const relatedCorrespondenceIds = props.correspondence.relatedCorrespondenceIds;
 
+  const [checkboxStates, setCheckboxStates] = useState({});
+  const [originalStates, setOriginalStates] = useState({});
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+
+  // Initialize checkbox states
+  useEffect(() => {
+    const initialStates = {};
+
+    correspondence.prior_mail.forEach((mail) => {
+      initialStates[mail.id] = relatedCorrespondenceIds.includes(mail.id);
+    });
+    setCheckboxStates(initialStates);
+    setOriginalStates(initialStates);
+  }, [correspondence, relatedCorrespondenceIds]);
+
+  // Function to handle checkbox changes
+  const handleCheckboxChange = (mailId) => {
+    setCheckboxStates((prevState) => {
+      const newState = { ...prevState, [mailId]: !prevState[mailId] };
+
+      // Check if any checkbox is different from its original state
+      const isAnyChanged = Object.keys(newState).some(
+        (key) => newState[key] !== originalStates[key]
+      );
+
+      setIsButtonDisabled(!isAnyChanged);
+
+      return newState;
+    });
+  };
+
+  // Function to handle saving changes
+  const handleSave = () => {
+    // Disable the button and log changed checkboxes
+    setIsButtonDisabled(true);
+    const toggledCheckboxes = Object.entries(checkboxStates).
+      filter(([_, isChecked]) => isChecked).
+      map(([mailId]) => mailId);
+
+    console.log('Toggled Checkboxes:', toggledCheckboxes);
+    // Placeholder for future save logic
+  };
+
   priorMail.sort((first, second) => {
     const firstInRelated = relatedCorrespondenceIds.includes(first.id);
     const secondInRelated = relatedCorrespondenceIds.includes(second.id);
@@ -317,7 +360,9 @@ const CorrespondenceDetails = (props) => {
               id={correspondenceRow.id.toString()}
               hideLabel
               defaultValue={relatedCorrespondenceIds.some((el) => el === correspondenceRow.id)}
-              disabled
+              // Changes to go here
+              value={checkboxStates[correspondenceRow.id]}
+              onChange={() => handleCheckboxChange(correspondenceRow.id)}
             />
           </div>
         )
@@ -423,6 +468,15 @@ const CorrespondenceDetails = (props) => {
                 tbodyId="correspondence-table-body"
                 getKeyForRow={getKeyForRow}
               />
+
+              <button
+                type="button"
+                className="save-changes-button"
+                disabled={isButtonDisabled}
+                onClick={handleSave}
+              >
+                Save Changes
+              </button>
             </div>
           </AppSegment>
         </div>
