@@ -22,6 +22,7 @@ import { COLORS } from 'app/constants/AppConstants';
 import Checkbox from 'app/components/Checkbox';
 import CorrespondencePaginationWrapper from 'app/queue/correspondence/CorrespondencePaginationWrapper';
 import Button from 'components/Button';
+import Alert from "components/Alert";
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
@@ -31,6 +32,8 @@ const CorrespondenceDetails = (props) => {
   const allCorrespondences = props.correspondence.all_correspondences;
   const [viewAllCorrespondence, setViewAllCorrespondence] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [disableSubmitButton, setDisableSubmitButton] = useState(false);
+  const [showSuccessBanner, setShowSuccessBanner] = useState(false);
   const totalPages = Math.ceil(allCorrespondences.length / 15);
   const startIndex = (currentPage * 15) - 15;
   const endIndex = (currentPage * 15);
@@ -463,13 +466,20 @@ const CorrespondenceDetails = (props) => {
     }
   ];
 
-  // eslint-disable-next-line no-empty-function
   const associateCorrespondences = () => {
-
+    setShowSuccessBanner(true);
   };
 
   return (
     <>
+      {
+        showSuccessBanner &&
+          <div style={{ padding: '10px' }}>
+            <Alert
+              type="success"
+              title={COPY.CORRESPONDENCE_DETAILS.SAVE_CHANGES_BANNER.MESSAGE} />
+          </div>
+      }
       <AppSegment filledBackground extraClassNames="app-segment-cd-details">
         <div className="correspondence-details-header">
           <h1> {props.correspondence.veteranFullName} </h1>
@@ -496,6 +506,7 @@ const CorrespondenceDetails = (props) => {
         <Button
           type="button"
           onClick={() => associateCorrespondences()}
+          disabled={disableSubmitButton}
           name="save-changes"
           classNames={['cf-right-side']}>
           Save changes
