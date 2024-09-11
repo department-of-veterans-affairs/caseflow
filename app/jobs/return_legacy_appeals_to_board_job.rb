@@ -113,7 +113,7 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
       if tied_appeals_bfkeys.count < nonsscavlj_number_of_appeals_limit
         qualifying_appeals_bfkeys.push(tied_appeals_bfkeys)
       else
-        qualifying_appeals_bfkeys.push(tied_appeals_bfkeys[0...nonsscavlj_number_of_appeals_limit])
+        qualifying_appeals_bfkeys.push(tied_appeals_bfkeys[0..nonsscavlj_number_of_appeals_to_move_index])
       end
     end
 
