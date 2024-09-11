@@ -10,9 +10,6 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
   NO_RECORDS_FOUND_MESSAGE = [Constants.DISTRIBUTION.no_records_moved_message].freeze
 
   def perform
-    @nonsscavlj_number_of_appeals_limit = CaseDistributionLever.nonsscavlj_number_of_appeals_to_move || 0
-    @nonsscavlj_number_of_appeals_to_move_index = @nonsscavlj_number_of_appeals_limit - 1
-
     catch(:abort) do
       begin
         returned_appeal_job = create_returned_appeal_job
@@ -108,17 +105,17 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
   end
 
   def update_qualifying_appeals_bfkeys(tied_appeals_bfkeys, qualifying_appeals_bfkeys)
-    if @nonsscavlj_number_of_appeals_limit < 0
+    if nonsscavlj_number_of_appeals_limit < 0
       raise StandardError.new "CaseDistributionLever.nonsscavlj_number_of_appeals_to_move set below 0"
-    elsif @nonsscavlj_number_of_appeals_limit == 0
+    elsif nonsscavlj_number_of_appeals_limit == 0
       return qualifying_appeals_bfkeys
     end
 
     if tied_appeals_bfkeys.any?
-      if tied_appeals_bfkeys.count < @nonsscavlj_number_of_appeals_limit
+      if tied_appeals_bfkeys.count < nonsscavlj_number_of_appeals_limit
         qualifying_appeals_bfkeys.push(tied_appeals_bfkeys)
       else
-        qualifying_appeals_bfkeys.push(tied_appeals_bfkeys[0..@nonsscavlj_number_of_appeals_to_move_index])
+        qualifying_appeals_bfkeys.push(tied_appeals_bfkeys[0..nonsscavlj_number_of_appeals_to_move_index])
       end
     end
 
@@ -168,6 +165,14 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
       .compact
       .uniq
       .map(&:sattyid) || []
+  end
+
+  def nonsscavlj_number_of_appeals_limit
+    @nonsscavlj_number_of_appeals_limit ||= CaseDistributionLever.nonsscavlj_number_of_appeals_to_move || 0
+  end
+
+  def nonsscavlj_number_of_appeals_to_move_index
+    @nonsscavlj_number_of_appeals_to_move_index ||= nonsscavlj_number_of_appeals_limit - 1
   end
 
   def create_returned_appeal_job
