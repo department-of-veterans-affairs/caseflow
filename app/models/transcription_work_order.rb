@@ -10,26 +10,14 @@ class TranscriptionWorkOrder
   end
 
   def self.display_wo_contents(task_number)
-    transcriptions = ::Transcription
-      .includes(transcription_files: { hearing: :appeal })
-      .where(task_number: task_number)
-    return {} unless transcriptions
+    transcription_package =
+      TranscriptionPackage
+        .preload(hearings: [:appeal], legacy_hearings: [:appeal])
+        .find_by(task_number: task_number)
 
-    order_contents = []
+    return {} unless transcription_package
 
-    transcriptions.each do |transcription|
-      transcription.transcription_files.each do |t|
-        hearing_type = t.hearing_type
-        order_contents << {
-          docket_number: t.docket_number,
-          case_details: t.case_details,
-          hearing_type: hearing_type,
-          appeal_id: hearing_type == "Hearing" ? t.hearing.appeal.uuid : t.hearing.appeal.vacols_id
-        }
-      end
-    end
-
-    order_contents
+    transcription_package.all_hearings
   end
 
   def self.unassign_wo(task_number)
@@ -114,9 +102,9 @@ class TranscriptionWorkOrder
 
     if wo_info
       {
-        return_date: wo_info.expected_return_date,
-        work_order: wo_info.task_number,
-        contractor_name: wo_info.name
+        returnDate: wo_info.expected_return_date.strftime("%m/%d/%Y"),
+        workOrder: wo_info.task_number,
+        contractorName: wo_info.name
       }
     end
   end
@@ -125,7 +113,7 @@ class TranscriptionWorkOrder
     transcription = find_transcription_with_files(task_number)
     return {} unless transcription
 
-    { wo_file_info: transcription.transcription_files.map { |file| build_file_info(file) } }
+    { woFileInfo: transcription.transcription_files.map { |file| build_file_info(file) } }
   end
 
   def self.find_transcription_with_files(task_number)
@@ -138,7 +126,7 @@ class TranscriptionWorkOrder
     {
       docket_number: file.docket_number,
       case_type: file.hearing_type,
-      hearing_date: file.hearing.hearing_day&.scheduled_for,
+      hearing_date: file.hearing&.hearing_day&.scheduled_for&.strftime("%m/%d/%Y"),
       first_name: file.hearing&.appellant_first_name,
       last_name: file.hearing&.appellant_last_name,
       judge_name: file.hearing&.judge&.full_name,

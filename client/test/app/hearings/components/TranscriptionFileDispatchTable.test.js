@@ -8,6 +8,7 @@ import ApiUtil from '../../../../app/util/ApiUtil';
 import { when } from 'jest-when';
 import userEvent from '@testing-library/user-event';
 import { axe } from 'jest-axe';
+import { MemoryRouter as Router } from 'react-router-dom';
 
 const mockTranscriptionFiles = [
   {
@@ -428,10 +429,11 @@ const setupUnassignedTable = () =>
   />);
 
 const setupAssignedTable = () =>
-  render(<TranscriptionFileDispatchTable
+  render(<Router><TranscriptionFileDispatchTable
     columns={assignedColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
     statusFilter={['Assigned']}
-  />);
+  /></Router>);
+
 
 describe('TranscriptionFileDispatchTable', () => {
   beforeEach(async () => {
@@ -465,7 +467,6 @@ describe('TranscriptionFileDispatchTable', () => {
   });
 
   describe('Unassigned Tab', () => {
-
     it('loads a table from backend data and handles selected and locked records', async () => {
       const { container } = setupUnassignedTable();
 
