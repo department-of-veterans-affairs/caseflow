@@ -46,23 +46,22 @@ class AppealsReadyForDistribution
       .flat_map do |sym, docket|
         appeals = docket.ready_to_distribute_appeals
         if sym == :legacy
-          legacy_rows(appeals, sym, docket)
+          legacy_rows(appeals, sym)
         else
           ama_rows(appeals, docket, sym)
         end
       end
   end
 
-  def self.legacy_rows(appeals, sym, docket)
+  def self.legacy_rows(appeals, sym)
     appeals.map do |appeal|
-      build_appeal_row(appeal, sym, docket)
+      build_legacy_appeal_row(appeal, sym)
     end
   end
 
-  def self.build_appeal_row(appeal, sym, docket)
-    veteran_name = format_veteran_name(appeal["snamef"], appeal["snamel"])
-    hearing_judge = format_vlj_name(appeal["vlj_namef"], appeal["vlj_namel"])
-    appeal_affinity = fetch_affinity_start_date(appeal["bfkey"])
+  def self.build_legacy_appeal_row(appeal, sym)
+    hearing_judge = FullName.new(appeal["vlj_namef"], nil, appeal["vlj_namel"]).to_s
+    veteran_name = FullName.new(appeal["snamef"], nil, appeal["snamel"]).to_s
 
     {
       docket_number: appeal["tinum"],
@@ -71,24 +70,15 @@ class AppealsReadyForDistribution
       cavc: appeal["cavc"] == 1,
       receipt_date: appeal["bfd19"],
       ready_for_distribution_at: appeal["bfdloout"],
-      target_distro_date: target_distro_date(appeal["bfd19"], docket),
-      days_before_goal_date: days_before_goal_date(appeal["bfd19"], docket),
+      target_distro_date: "N/A",
+      days_before_goal_date: "N/A",
       hearing_judge: hearing_judge,
       original_judge_id: legacy_original_deciding_judge(appeal),
       original_judge_name: legacy_original_deciding_judge_name(appeal),
       veteran_file_number: appeal["ssn"] || appeal["bfcorlid"],
       veteran_name: veteran_name,
-      affinity_start_date: appeal_affinity
+      affinity_start_date: fetch_affinity_start_date(appeal["bfkey"])
     }
-  end
-
-  def self.format_vlj_name(first_name, last_name)
-    name = FullName.new(first_name, nil, last_name).to_s
-    name.empty? ? nil : name
-  end
-
-  def self.format_veteran_name(first_name, last_name)
-    FullName.new(first_name, nil, last_name).to_s
   end
 
   def self.fetch_affinity_start_date(case_id)
@@ -102,8 +92,8 @@ class AppealsReadyForDistribution
       ready_for_distribution_at = distribution_task_query(appeal)
       # only look for hearings that were held
       hearing_judge = with_held_hearings(appeal)
-
       priority_appeal = appeal.aod || appeal.cavc
+
       {
         docket_number: appeal.docket_number,
         docket: sym.to_s,
@@ -114,6 +104,7 @@ class AppealsReadyForDistribution
         target_distro_date: priority_appeal ? "N/A" : target_distro_date(appeal.receipt_date, docket),
         days_before_goal_date: priority_appeal ? "N/A" : days_before_goal_date(appeal.receipt_date, docket),
         hearing_judge: hearing_judge,
+        original_judge: appeal.cavc? ? ama_cavc_original_deciding_judge(appeal) : nil,
         veteran_file_number: appeal.veteran_file_number,
         veteran_name: appeal.veteran&.name.to_s,
         affinity_start_date: appeal.appeal_affinity&.affinity_start_date
@@ -144,6 +135,20 @@ class AppealsReadyForDistribution
     receipt_date + docket.docket_time_goal.to_i.days
   end
 
+  def self.days_before_goal_date(receipt_date, docket)
+    target_date = target_distro_date(receipt_date, docket)
+    return nil if target_date.nil?
+
+    target_date - docket.start_distribution_prior_to_goal.try(:value).to_i.days
+  end
+
+  def self.ama_cavc_original_deciding_judge(appeal)
+    source_appeal_id = CavcRemand.find_by(remand_appeal: appeal).source_appeal_id
+
+    Task.find_by(appeal_id: source_appeal_id, appeal_type: Appeal.name, type: JudgeDecisionReviewTask.name)
+      &.assigned_to&.css_id
+  end
+
   def self.legacy_original_deciding_judge(appeal)
     staff = VACOLS::Staff.find_by(sattyid: appeal["prev_deciding_judge"])
     staff&.sdomainid || appeal["prev_deciding_judge"]
@@ -151,14 +156,6 @@ class AppealsReadyForDistribution
 
   def self.legacy_original_deciding_judge_name(appeal)
     staff = VACOLS::Staff.find_by(sattyid: appeal["prev_deciding_judge"])
-    deciding_judge_name = FullName.new(staff["snamef"], nil, staff["snamel"]).to_s
-    deciding_judge_name.empty? ? nil : deciding_judge_name
-  end
-
-  def self.days_before_goal_date(receipt_date, docket)
-    target_date = target_distro_date(receipt_date, docket)
-    return nil if target_date.nil?
-
-    target_date - docket.start_distribution_prior_to_goal.try(:value).to_i.days
+    FullName.new(staff["snamef"], nil, staff["snamel"]).to_s if !staff.nil?
   end
 end
