@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 
 import CorrectionTypeModal from '../../../app/intake/components/CorrectionTypeModal';
 import { sample1 } from './testData';
-
+import { newProps } from './testHelpers';
 
 describe('CorrectionTypeModal', () => {
   const formType = 'higher_level_review';
@@ -33,12 +33,6 @@ describe('CorrectionTypeModal', () => {
     });
 
     it('renders with new props', async () => {
-      const newProps = {
-        cancelText: 'cancel',
-        skipText: 'skip',
-        submitText: 'submit'
-      };
-
       setup(newProps);
 
       const cancelBtn = await screen.findByText('cancel');

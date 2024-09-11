@@ -5,6 +5,7 @@ import userEvent from '@testing-library/user-event';
 
 import AddIssuesModal from '../../../app/intake/components/AddIssuesModal';
 import { sample1 } from './testData';
+import { newProps } from './testHelpers';
 
 describe('AddIssuesModal', () => {
   const formType = 'higher_level_review';
@@ -35,12 +36,6 @@ describe('AddIssuesModal', () => {
     });
 
     it('renders with new props', async () => {
-      const newProps = {
-        cancelText: 'cancel',
-        skipText: 'skip',
-        submitText: 'submit'
-      };
-
       setup(newProps);
 
       const cancelBtn = await screen.findByText('cancel');
