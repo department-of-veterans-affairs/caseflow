@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 class CaseSearchResultsForVeteranFileNumber < ::CaseSearchResultsBase
-  validate :file_number_or_ssn_presence
-  validate :veterans_exist, if: :current_user_is_vso_employee?
-
   def initialize(file_number_or_ssn:, user:)
     super(user: user)
     # Ensure we have a string made of solely numeric characters

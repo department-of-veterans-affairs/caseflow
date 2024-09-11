@@ -40,6 +40,7 @@ class SeedDB
     call_and_log_seed_step Seeds::ApiKeys
     call_and_log_seed_step Seeds::Annotations
     call_and_log_seed_step Seeds::Tags
+
     # These must be ran before others
     call_and_log_seed_step Seeds::BusinessLineOrg
     call_and_log_seed_step Seeds::Users
@@ -51,9 +52,13 @@ class SeedDB
     call_and_log_seed_step Seeds::Dispatch
     call_and_log_seed_step Seeds::Jobs
     call_and_log_seed_step Seeds::DecisionIssues
+    call_and_log_seed_step Seeds::Correspondence
     call_and_log_seed_step Seeds::SanitizedJsonSeeds
     call_and_log_seed_step Seeds::BgsServiceRecordMaker
     call_and_log_seed_step Seeds::PopulateCaseflowFromVacols
+    call_and_log_seed_step Seeds::UpdateCorrespondenceNod
+    Judge.list_all
+    Attorney.list_all
     call_and_log_seed_step Seeds::IssueModificationRequest
   end
 end
