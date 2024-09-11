@@ -609,7 +609,7 @@ RSpec.describe Idt::Api::V2::AppealsController, :postgres, :all_dbs, type: :cont
         end
 
         it "should send the appeal decision mailed contested claim notification" do
-          appeal = VACOLS::Representative.create!(repkey: contested_appeal.vacols_id, reptype: "C")
+          VACOLS::Representative.create!(repkey: contested_appeal.vacols_id, reptype: "C")
           params[:appeal_id] = contested_appeal.vacols_id
 
           perform_enqueued_jobs { post :outcode, params: params, as: :json }
