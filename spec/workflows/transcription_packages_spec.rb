@@ -42,7 +42,7 @@ describe TranscriptionPackages do
       end
 
       it "Call to upload_transcription_package method" do
-        expect(VaBoxUploadJob).to receive(:perform_now).with(work_order_params)
+        expect(Hearings::VaBoxUploadJob).to receive(:perform_now).with(work_order_params)
         subject.upload_transcription_package
       end
     end

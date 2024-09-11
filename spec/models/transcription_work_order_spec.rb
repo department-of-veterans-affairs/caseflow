@@ -47,32 +47,23 @@ RSpec.describe TranscriptionWorkOrder, type: :model do
   end
 
   describe ".display_wo_contents" do
-    let(:transcription) do
-      Transcription.create!(task_number: task_number)
+    let!(:hearing) { create(:hearing) }
+    let!(:contractor) { create(:transcription_contractor, name: "Contractor One") }
+    let!(:transcription_package) do
+      create(
+        :transcription_package,
+        task_number: task_number,
+        contractor: contractor,
+        created_at: "2024-09-01 00:00:00",
+        expected_return_date: "2024-09-15",
+        hearings: [hearing]
+      )
     end
 
-    let(:transcription_file) do
-      file = TranscriptionFile.new(docket_number: "D123", transcription: transcription, hearing: hearing)
-      allow(file).to receive(:case_details).and_return("Details of case")
-      file
-    end
-
-    before do
-      allow(Transcription).to receive(:includes).and_return(Transcription)
-      allow(Transcription).to receive(:find_by).with(task_number: task_number).and_return(transcription)
-      allow_any_instance_of(Transcription).to receive(:transcription_files).and_return([transcription_file])
-    end
-
-    it "returns work order contents" do
+    it "returns the contents from a transcription package" do
       result = TranscriptionWorkOrder.display_wo_contents(task_number)
-      expect(result).to eq([
-                             {
-                               case_details: transcription_file.case_details,
-                               docket_number: transcription_file.docket_number,
-                               hearing_type: hearing.class.name,
-                               appeal_id: hearing.appeal.uuid
-                             }
-                           ])
+
+      expect(result).to eq(transcription_package.all_hearings)
     end
   end
 

@@ -30,7 +30,7 @@ class ExternalApi::VaBoxService
       redirect_url = response.headers['location']
       follow_redirect_and_download(redirect_url, destination_path)
     else
-      Rails.logger.info("Failed to download the file. Response code: #{response.code}")
+      Rails.logger.info("Failed to download the file. Response code: #{response.status}")
       Rails.logger.info("Response body: #{response.body}")
       fail "Error: #{response.body}"
     end
