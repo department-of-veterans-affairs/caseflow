@@ -18,7 +18,6 @@ const ReaderFooter = ({
   numPages,
   setCurrentPage,
   showPdf,
-  disablePreviousNext,
 }) => {
   const isValidInputPageNumber = (pageNumber) => {
     if (!isNaN(pageNumber) && pageNumber % 1 === 0) {
@@ -36,6 +35,8 @@ const ReaderFooter = ({
 
     return pageNumber;
   };
+
+  const isFilteredDocs = useSelector((state) => docListIsFiltered(state));
 
   const filteredDocs = useSelector(getFilteredDocuments);
   const filteredDocIds = useSelector(getFilteredDocIds);
@@ -64,10 +65,10 @@ const ReaderFooter = ({
   useEffect(() => {
     const keyHandler = (event) => {
       if (event.key === 'ArrowLeft') {
-        showPdf(getPrevDocId());
+        showPdf(getPrevDocId())();
       }
       if (event.key === 'ArrowRight') {
-        showPdf(getNextDocId());
+        showPdf(getNextDocId())();
       }
     };
 
@@ -85,7 +86,6 @@ const ReaderFooter = ({
             classNames={['cf-pdf-button']}
             onClick={showPdf(getPrevDocId())}
             ariaLabel="previous PDF"
-            disabled={disablePreviousNext}
           >
             <PageArrowLeftIcon />
             <span className="left-button-label">Previous</span>
@@ -114,7 +114,7 @@ const ReaderFooter = ({
           </span>
           |
         </span>
-        <span className="doc-list-progress-indicator">{docListIsFiltered && <FilterNoOutlineIcon />}
+        <span className="doc-list-progress-indicator">{isFilteredDocs && <FilterNoOutlineIcon />}
           Document {currentDocIndex + 1} of {filteredDocs.length}
         </span>
       </div>
@@ -126,7 +126,6 @@ const ReaderFooter = ({
             classNames={['cf-pdf-button cf-right-side']}
             onClick={showPdf(getNextDocId())}
             ariaLabel="next PDF"
-            disabled={disablePreviousNext}
           >
             <span className="right-button-label">Next</span>
             <PageArrowRightIcon />
@@ -144,7 +143,6 @@ ReaderFooter.propTypes = {
   numPages: PropTypes.number,
   setCurrentPage: PropTypes.func,
   showPdf: PropTypes.func,
-  disablePreviousNext: PropTypes.bool,
 };
 
 export default ReaderFooter;

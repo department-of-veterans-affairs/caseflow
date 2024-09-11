@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useRef } from 'react';
-import { ROTATION_DEGREES } from '../util/readerConstants';
+import { ROTATION_DEGREES } from '../utils/constants';
 import usePageVisibility from '../hooks/usePageVisibility';
 
 // This Page component is expected to be used within a flexbox container. Flex doesn't notice when children are

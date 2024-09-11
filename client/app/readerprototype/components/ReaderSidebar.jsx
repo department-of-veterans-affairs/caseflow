@@ -29,7 +29,6 @@ import { appealSelector } from '../selectors';
 
 const ReaderSidebar = ({
   doc,
-  documents,
   toggleSideBar,
   vacolsId
 }) => {
@@ -67,10 +66,7 @@ const ReaderSidebar = ({
             />
           </AccordionSection>
           <AccordionSection title="Categories">
-            <SideBarCategories
-              doc={doc}
-              documents={documents}
-            />
+            <SideBarCategories doc={doc} />
           </AccordionSection>
           <AccordionSection title="Issue tags">
             <IssueTags doc={doc} />
@@ -150,7 +146,6 @@ ReaderSidebar.propTypes = {
     receivedAt: PropTypes.string,
     type: PropTypes.string,
   }),
-  documents: PropTypes.array,
   showSideBar: PropTypes.bool,
   toggleSideBar: PropTypes.func,
   vacolsId: PropTypes.string

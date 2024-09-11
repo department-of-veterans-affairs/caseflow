@@ -586,6 +586,7 @@ input[type='search'].cf-search-input-with-close {
 // scss-lint:disable IdSelector
 #prototype-reader {
   display: flex;
+  overflow: hidden;
 }
 
 // scss-lint:disable IdSelector

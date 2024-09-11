@@ -1,20 +1,5 @@
 import _ from 'lodash';
-import { CATEGORIES, ROTATION_DEGREES } from './readerConstants';
-
-export const isValidWholeNumber = (number) => {
-  return !isNaN(number) && number % 1 === 0;
-};
-
-export const validatePageNumber = (pageNumber, totalPages) => {
-  const RADIX = 10;
-  let pageNum = parseInt(pageNumber, RADIX);
-
-  if (!pageNum || !isValidWholeNumber(pageNum) || (pageNum < 1 || pageNum > totalPages)) {
-    return false;
-  }
-
-  return true;
-};
+import { CATEGORIES, ROTATION_DEGREES } from './constants';
 
 export const selectedDocIndex = (props) => {
   const selectedDocId = Number(props.match.params.docId);
@@ -23,12 +8,6 @@ export const selectedDocIndex = (props) => {
 };
 
 export const selectedDoc = (props) => props.allDocuments[selectedDocIndex(props)];
-
-const getPrevDoc = (props) => _.get(props.allDocuments, [selectedDocIndex(props) - 1]);
-const getNextDoc = (props) => _.get(props.allDocuments, [selectedDocIndex(props) + 1]);
-
-export const getPrevDocId = (props) => _.get(getPrevDoc(props), 'id');
-export const getNextDocId = (props) => _.get(getNextDoc(props), 'id');
 
 export const openDownloadLink = (doc) => {
   window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'download');
