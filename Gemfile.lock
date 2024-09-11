@@ -1861,7 +1861,7 @@ GEM
       activesupport (>= 4.2)
     fasterer (0.11.0)
       ruby_parser (>= 3.19.1)
-    ffi (1.17.0-x86_64-darwin)
+    ffi (1.17.0)
     foreman (0.88.1)
     formatador (1.1.0)
     fuzzy_match (2.1.0)
@@ -2003,6 +2003,8 @@ GEM
     no_proxy_fix (0.1.2)
     nokogiri (1.15.6-x86_64-darwin)
       racc (~> 1.4)
+    nokogiri (1.15.6-x86_64-linux)
+      racc (~> 1.4)
     nori (2.6.0)
     notiffany (0.1.3)
       nenv (~> 0.1)
@@ -2111,7 +2113,7 @@ GEM
       rexml (~> 3.2, >= 3.2.6)
       safe_shell (>= 1.0.3, < 2.0)
     pdfkit (0.8.7.3)
-    pg (1.5.8)
+    pg (1.1.4)
     pluck_to_hash (1.0.2)
       activerecord (>= 4.0.2)
       activesupport (>= 4.0.2)
@@ -2484,7 +2486,7 @@ DEPENDENCIES
   pdf-forms
   pdfjs_viewer-rails!
   pdfkit
-  pg
+  pg (~> 1.1.4)
   pluck_to_hash
   pry (~> 0.13.0)
   pry-byebug (~> 3.9)
