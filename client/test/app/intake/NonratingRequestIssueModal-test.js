@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER } from 'app/../COPY';
 import NonratingRequestIssueModal from '../../../app/intake/components/NonratingRequestIssueModal';
 import { sample1 } from './testData';
-import { newProps } from '../../helpers/testHelpers';
+import { testRenderingWithNewProps } from '../../helpers/testHelpers';
 
 describe('NonratingRequestIssueModal', () => {
   const formType = 'higher_level_review';
@@ -36,15 +36,7 @@ describe('NonratingRequestIssueModal', () => {
     });
 
     it('renders with new props', async () => {
-      setup(newProps);
-
-      const cancelBtn = await screen.findByText('cancel');
-      const skipBtn = await screen.findByText('skip');
-      const submitBtn = await screen.findByText('submit');
-
-      expect(cancelBtn.textContent).toBe('cancel');
-      expect(skipBtn.textContent).toBe('skip');
-      expect(submitBtn.textContent).toBe('submit');
+      testRenderingWithNewProps(setup);
     });
 
     it('skip button when onSkip prop is not defined', () => {
