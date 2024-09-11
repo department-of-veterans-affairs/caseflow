@@ -26,6 +26,9 @@ module Seeds
       legacy_hearings = LegacyHearing.last(40)
       hearings = Hearing.last(40)
 
+      year = '2041'
+      task_index = 0
+
       transcription_files.each do |file|
         (0..39).each do |index|
 
@@ -36,6 +39,20 @@ module Seeds
           end
 
           if hearing
+            task_index += 1
+            task_number = 'BVA' + year + (task_index).to_s.rjust(4, '0')
+
+            TranscriptionPackage.where(task_number: task_number).delete_all
+            transcriptions = Transcription.where(task_number: task_number)
+            if transcriptions
+              transcriptions.each do |transcription|
+                TranscriptionFile.where(transcription_id: transcription.id).delete_all
+              end
+              transcriptions.delete_all
+            end
+
+            transcription = Transcription.create!(task_number: task_number)
+
             TranscriptionFile.find_or_create_by(
               hearing: hearing,
               file_name: file[:fileName],
@@ -43,6 +60,7 @@ module Seeds
               file_type: file[:fileType],
               docket_number: hearing.docket_number,
               aws_link: "aws-link/#{hearing.docket_number}_#{hearing.id}_Hearing.vtt",
+              transcription_id: transcription.id
             )
           end
         end

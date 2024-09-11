@@ -118,17 +118,17 @@ RSpec.feature "Hearing Details", :all_dbs do
   def check_webex_hearings_links(link, disable_link = false)
     # Confirm that the host hearing link details exist
     within "#vlj-hearings-link" do
-      find("div").should have_content(link.host_link)
+      find("div", text: link.host_link)
       ensure_link_present(link.host_link, disable_link)
     end
     # Confirm that the co-host hearing link details exist
     within "#hc-hearings-link" do
-      find("div").should have_content(link.co_host_link)
+      find("div", text: link.co_host_link)
       ensure_link_present(link.co_host_link, disable_link)
     end
     # Confirm that the guest hearing link details exist
     within "#guest-hearings-link" do
-      find("div").should have_content(link.guest_link)
+      find("div", text: link.guest_link)
       ensure_link_present(link.guest_link, disable_link)
     end
   end
@@ -241,7 +241,11 @@ RSpec.feature "Hearing Details", :all_dbs do
 
       click_button("Save")
 
-      hearing.reload
+      expect(page).to have_content(virtual_hearing_alert)
+
+      # expect VSO checkboxes to not be present for non-VSO users
+      expect(page).to_not have_content(COPY::CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS)
+      expect(page).to_not have_content(COPY::CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_PERMISSION)
 
       # Check the Email Notification History
       check_email_event_table(hearing, 2)
@@ -257,8 +261,6 @@ RSpec.feature "Hearing Details", :all_dbs do
       expect(page).to have_field("POA/Representative Email", with: fill_in_rep_email)
       expect(page).to have_content(fill_in_veteran_tz)
       expect(page).to have_content(fill_in_rep_tz)
-
-      check_virtual_hearings_links(hearing.virtual_hearing)
     end
 
     scenario "user can optionally change emails and timezone" do
@@ -337,6 +339,7 @@ RSpec.feature "Hearing Details", :all_dbs do
         User.authenticate!(user: user)
         hearing.hearing_day.update!(regional_office: "RO06", request_type: "V")
       end
+
       include_examples "always updatable fields"
       include_examples "non-virtual hearing types"
     end
@@ -431,6 +434,10 @@ RSpec.feature "Hearing Details", :all_dbs do
           # Confirm the Modal change to cancel the virtual hearing
           click_button("Convert to #{hearing.readable_request_type} Hearing")
 
+          # Confirm the alerts
+          expect(page).to have_content(virtual_hearing_alert)
+          expect(page).to have_content(expected_alert)
+
           # Ensure the emails and timezone were updated
           expect(page).to have_field("Veteran Email", with: fill_in_veteran_email)
           expect(page).to have_field("POA/Representative Email", with: fill_in_rep_email)
@@ -469,9 +476,14 @@ RSpec.feature "Hearing Details", :all_dbs do
         end
 
         context "when hearing conference type is webex" do
+          let!(:hearing) { create(:hearing, :with_webex_non_virtual_conference_link) }
+
           before { hearing.meeting_type.update(service_name: "webex") }
 
           scenario "links display correctly" do
+            FeatureToggle.enable!(:pexip_conference_service)
+            hearing.update(hearing_day_id: hearing_day.id)
+
             visit "hearings/" + hearing.external_id.to_s + "/details"
 
             click_dropdown(name: "hearingType", index: 0)

@@ -5,30 +5,6 @@ class Hearings::TranscriptionPackagesController < ApplicationController
 
   before_action :verify_transcription_user
 
-  def show
-    transcription_package = ::TranscriptionPackage.find_by(task_number: params[:task_number])
-    return render json: { error_code: "Package not found" }, status: :not_found if transcription_package.nil?
-
-    render json: Hearings::TranscriptionPackageSerializer.new(transcription_package).serializable_hash, status: :ok
-  end
-
-  def new
-    work_order_params = params.permit(
-      :work_order_name,
-      :sent_to_transcriber_date,
-      :return_date,
-      :contractor_name,
-      hearings: [:hearing_id, :hearing_type]
-    )
-    transcription_package = TranscriptionPackages.new(work_order_params)
-
-    if transcription_package.call
-      render json: { message: "Work order processed successfully" }, status: :ok
-    else
-      render json: { error_code: "Failed to process work order" }, status: :unprocessable_entity
-    end
-  end
-
   def transcription_package_tasks
     @transcription_packages = TranscriptionPackage.joins(:contractor)
     apply_filters
@@ -48,7 +24,8 @@ class Hearings::TranscriptionPackagesController < ApplicationController
       params[:filter].each do |filter|
         filter_hash = Rack::Utils.parse_query(filter)
         if filter_hash["col"] == "dateSentColumn"
-          @transcription_packages = @transcription_packages.filter_by_date(filter_hash["val"].split(","), "created_at")
+          @transcription_packages =
+            @transcription_packages.filter_by_date(filter_hash["val"].split(","), "transcription_packages.created_at")
         end
         if filter_hash["col"] == "expectedReturnDateColumn"
           @transcription_packages =
@@ -68,11 +45,13 @@ class Hearings::TranscriptionPackagesController < ApplicationController
     @transcription_packages =
       case sort_by
       when "dateSentColumn"
-        @transcription_packages.order_by_field(order, "created_at")
+        @transcription_packages.order_by_field(order, "transcription_packages.created_at")
+      when "expectedReturnDateColumn"
+        @transcription_packages.order_by_field(order, "expected_return_date")
       when "contractorColumn"
         @transcription_packages.order_by_field(order, "transcription_contractors.name")
       else
-        @transcription_packages.order_by_field(order, "id")
+        @transcription_packages.order_by_field(order, "transcription_packages.id")
       end
   end
 
@@ -95,7 +74,7 @@ class Hearings::TranscriptionPackagesController < ApplicationController
       tasks << {
         id: transcription_package.id,
         workOrder: transcription_package.task_number,
-        items: transcription_package.transcriptions.length,
+        items: transcription_package.contents_count,
         dateSent: transcription_package.created_at.to_formatted_s(:short_date),
         expectedReturnDate: transcription_package.expected_return_date.to_formatted_s(:short_date),
         contractor: transcription_package.contractor.name,
