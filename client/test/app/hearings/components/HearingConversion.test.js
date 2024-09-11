@@ -9,57 +9,11 @@ import { userWithJudgeRole, amaHearing, vsoUser, anyUser } from 'test/data';
 import { HEARING_CONVERSION_TYPES } from 'app/hearings/constants';
 import * as DateUtil from 'app/util/DateUtil';
 import COPY from '../../../../../client/COPY.json'
-import superagent from 'superagent';
+import { Wrapper, customRender } from '../../../helpers/testHelpers';
 
 const updateSpy = jest.fn();
 const defaultTitle = 'Convert to Virtual';
 const mockUpdateCheckboxes = jest.fn();
-jest.mock('superagent');
-
-const mockJudges = [
-  { id: 'judge1', name: 'Judge Judy' },
-  { id: 'judge2', name: 'Judge Dredd' },
-];
-
-// Setup the mock implementation
-superagent.get.mockImplementation((url) => {
-  const mockResponse = { body: mockJudges };
-  const mockRequest = {
-    set: jest.fn().mockReturnThis(),
-    query: jest.fn().mockReturnThis(),
-    timeout: jest.fn().mockReturnThis(),
-    on: jest.fn().mockReturnThis(),
-    use: jest.fn().mockReturnThis(), // Add the `use` method
-    then: jest.fn((callback) => {
-      callback(mockResponse);
-      return Promise.resolve(mockResponse);
-    }),
-    catch: jest.fn(() => Promise.resolve(mockResponse)),
-  };
-
-  if (url === '/users?role=Judge') {
-    return mockRequest;
-  } else {
-    return Promise.reject(new Error('connect ECONNREFUSED 127.0.0.1:80'));
-  }
-});
-
-
-function customRender(ui, { wrapper: Wrapper, wrapperProps, ...options }) {
-  if (Wrapper) {
-    ui = <Wrapper {...wrapperProps}>{ui}</Wrapper>;
-  }
-  return rtlRender(ui, options);
-}
-
-const Wrapper = ({ children, user, hearing, judge, store }) => {
-  const HearingDetails = hearingDetailsWrapper(user, hearing, judge);
-  return (
-    <HearingDetails store={store}>
-      {children}
-    </HearingDetails>
-  );
-};
 
 describe('HearingConversion', () => {
   test('Matches snapshot with default props', () => {

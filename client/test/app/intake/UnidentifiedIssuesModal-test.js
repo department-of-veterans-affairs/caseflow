@@ -3,8 +3,7 @@ import { render, fireEvent, screen } from '@testing-library/react';
 
 import UnidentifiedIssuesModal from '../../../app/intake/components/UnidentifiedIssuesModal';
 import { sample1 } from './testData';
-import { newProps } from './testHelpers';
-
+import { newProps } from '../../helpers/testHelpers';
 describe('UnidentifiedIssuesModal', () => {
   const formType = 'higher_level_review';
   const intakeData = sample1.intakeData;
