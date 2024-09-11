@@ -612,9 +612,10 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
       let(:nonsscavlj_number_of_appeals_to_move_count) { -1 }
       let(:tied_appeals_bfkeys) { %w[3 4 5 6] }
       let(:qualifying_appeals_bfkeys) { %w[1 2] }
+      let(:message) { "CaseDistributionLever.nonsscavlj_number_of_appeals_to_move set below 0" }
 
       it "raises an error saying the lever has been set incorrectly" do
-        expect(1).to eq(2)
+        expect { job.send(:update_qualifying_appeals_bfkeys, tied_appeals_bfkeys, qualifying_appeals_bfkeys) }.to raise_error(StandardError, message)
       end
     end
   end
