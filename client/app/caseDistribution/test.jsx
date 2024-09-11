@@ -348,7 +348,7 @@ class CaseDistributionTest extends React.PureComponent {
                             <li>
                               <a href="/case_distribution_levers_tests/appeals_tied_to_avljs_and_vljs?csv=1">
                                 <Button classNames={['usa-button-active']}>
-                                  Download Legacy Appeals Return AVLJ CSV</Button>
+                                  Download Appeals Tied to AVLJ and VLJ CSV</Button>
                               </a>
                             </li>
                             <li>

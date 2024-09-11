@@ -3,42 +3,35 @@
 class ReturnLegacyAppealsToBoardJob < CaseflowJob
   # For time_ago_in_words()
   include ActionView::Helpers::DateHelper
-  # include RunAsyncable
 
-  queue_as :low_priority
+  queue_with_priority :low_priority
   application_attr :queue
 
-  def initialize
-    @no_records_found_message = [Constants.DISTRIBUTION.no_records_moved_message].freeze
-    @nonsscavlj_number_of_appeals_limit = CaseDistributionLever.nonsscavlj_number_of_appeals_to_move || 0
-    @nonsscavlj_number_of_appeals_to_move_index = @nonsscavlj_number_of_appeals_limit - 1
-  end
+  NO_RECORDS_FOUND_MESSAGE = [Constants.DISTRIBUTION.no_records_moved_message].freeze
 
   def perform
-    begin
-      returned_appeal_job = create_returned_appeal_job
+    @nonsscavlj_number_of_appeals_limit = CaseDistributionLever.nonsscavlj_number_of_appeals_to_move || 0
+    @nonsscavlj_number_of_appeals_to_move_index = @nonsscavlj_number_of_appeals_limit - 1
 
-      appeals, moved_appeals = eligible_and_moved_appeals
+    catch(:abort) do
+      begin
+        returned_appeal_job = create_returned_appeal_job
 
-      return send_job_slack_report(@no_records_found_message) if moved_appeals.nil?
+        appeals, moved_appeals = eligible_and_moved_appeals
 
-      complete_returned_appeal_job(returned_appeal_job, "Job completed successfully", moved_appeals)
+        check_appeals_available(moved_appeals, returned_appeal_job)
 
-      # The rest of your code continues here
-      # Filter the appeals and send the filtered report
-      @filtered_appeals = filter_appeals(appeals, moved_appeals)
-      send_job_slack_report(slack_report)
-    rescue StandardError => error
-      @start_time ||= Time.zone.now
-      message = "Job failed with error: #{error.message}"
-      errored_returned_appeal_job(returned_appeal_job, message)
-      duration = time_ago_in_words(@start_time)
-      slack_service.send_notification("<!here>\n [ERROR] after running for #{duration}: #{error.message}",
-                                      self.class.name)
-      log_error(error)
-      message
-    ensure
-      metrics_service_report_runtime(metric_group_name: "return_legacy_appeals_to_board_job")
+        complete_returned_appeal_job(returned_appeal_job, "Job completed successfully", moved_appeals)
+
+        # The rest of your code continues here
+        # Filter the appeals and send the filtered report
+        @filtered_appeals = filter_appeals(appeals, moved_appeals)
+        send_job_slack_report(slack_report)
+      rescue StandardError => error
+        handle_error(error, returned_appeal_job)
+      ensure
+        metrics_service_report_runtime(metric_group_name: "return_legacy_appeals_to_board_job")
+      end
     end
   end
 
@@ -182,6 +175,25 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
       started_at: Time.zone.now,
       stats: { message: "Job started" }.to_json
     )
+  end
+
+  def check_appeals_available(moved_appeals, returned_appeal_job)
+    if moved_appeals.nil?
+      complete_returned_appeal_job(returned_appeal_job, Constants.DISTRIBUTION.no_records_moved_message, [])
+      send_job_slack_report(NO_RECORDS_FOUND_MESSAGE)
+      throw(:abort)
+    end
+  end
+
+  def handle_error(error, returned_appeal_job)
+    @start_time ||= Time.zone.now
+    message = "Job failed with error: #{error.message}"
+    errored_returned_appeal_job(returned_appeal_job, message)
+    duration = time_ago_in_words(@start_time)
+    slack_service.send_notification("<!here>\n [ERROR] after running for #{duration}: #{error.message}",
+                                    self.class.name)
+    log_error(error)
+    message
   end
 
   def complete_returned_appeal_job(returned_appeal_job, message, appeals)
