@@ -63,38 +63,39 @@ RSpec.describe CorrespondenceMailTask, type: :model do
 
     # iterate through each mail task
     CorrespondenceTaskActionsHelpers::TASKS.each do |task_action|
+
+      before do
+        send("correspondence_spec_#{task_action[:access_type]}")
+        FeatureToggle.enable!(:correspondence_queue)
+        @correspondence = create(
+          :correspondence,
+          :completed,
+          veteran: veteran,
+          va_date_of_receipt: Time.zone.now,
+          nod: false,
+          notes: "Notes for #{task_action[:name]}"
+        )
+
+        @task = setup_correspondence_task(
+          correspondence: @correspondence,
+          task_class: task_action[:class],
+          assigned_to_type: task_action[:assigned_to_type],
+          assigned_to: send(task_action[:assigned_to]),
+          instructions: "#{task_action[:name]} Instructions",
+          return_task: true
+        )
+
+        # assign user to organization
+        @task.assigned_to.add_user(assigned_user)
+      end
+
+      # remove user from the organization
+      after do
+        OrganizationsUser.remove_user_from_organization(assigned_user, @task.assigned_to)
+      end
+
       context ".available_actions" do
         context "for #{task_action[:name]} tasks" do
-          before do
-            send("correspondence_spec_#{task_action[:access_type]}")
-            FeatureToggle.enable!(:correspondence_queue)
-            @correspondence = create(
-              :correspondence,
-              :completed,
-              veteran: veteran,
-              va_date_of_receipt: Time.zone.now,
-              nod: false,
-              notes: "Notes for #{task_action[:name]}"
-            )
-
-            @task = setup_correspondence_task(
-              correspondence: @correspondence,
-              task_class: task_action[:class],
-              assigned_to_type: task_action[:assigned_to_type],
-              assigned_to: send(task_action[:assigned_to]),
-              instructions: "#{task_action[:name]} Instructions",
-              return_task: true
-            )
-
-            # assign user to organization
-            @task.assigned_to.add_user(assigned_user)
-          end
-
-          # remove user from the organization
-          after do
-            OrganizationsUser.remove_user_from_organization(assigned_user, @task.assigned_to)
-          end
-
           it "#{task_action[:name]}: available actions show to the assigned user" do
             expect(@task.available_actions(assigned_user)).to eq(expected_actions)
           end
@@ -103,6 +104,36 @@ RSpec.describe CorrespondenceMailTask, type: :model do
             expect(@task.available_actions(unassigned_user)).to eq([])
           end
         end
+      end
+
+      context ".reassign_users" do
+        let(:org_users) { create_list(:user, 10) }
+        let(:organization) { @task.assigned_to }
+
+        # add users to organization
+        before do
+          org_users.each do |user|
+            organization.add_user(user)
+          end
+        end
+
+        after do
+          org_users.each do |user|
+            OrganizationsUser.remove_user_from_organization(user, organization)
+          end
+        end
+
+        context "The CorrespondenceMailTask is assigned to an organization" do
+          let(:parent_task) { correspondence.root_task }
+
+          subject { @task.reassign_users }
+
+          it "returns CSS IDs of all users in the organization" do
+            expect(@task.assigned_to.is_a?(Organization)).to eq(true)
+            expect(subject).to eq(organization.users.pluck(:css_id))
+          end
+        end
+
       end
     end
   end
