@@ -123,9 +123,7 @@ RSpec.describe CorrespondenceMailTask, type: :model do
           end
         end
 
-        context "The CorrespondenceMailTask is assigned to an organization" do
-          let(:parent_task) { correspondence.root_task }
-
+        context "The #{task_action[:name]} is assigned to an organization" do
           subject { @task.reassign_users }
 
           it "returns CSS IDs of all users in the organization" do
@@ -134,6 +132,31 @@ RSpec.describe CorrespondenceMailTask, type: :model do
           end
         end
 
+        context "The #{task_action[:name]} is assigned to a user" do
+
+          before do
+            @task.update!(assigned_to: assigned_user)
+          end
+
+          after do
+            OrganizationsUser.remove_user_from_organization(assigned_user, organization)
+          end
+
+          subject { @task.reassign_users }
+
+          it "returns the CSS IDs of users that share the same organizations" do
+            # get list of adjacent org users
+            adjacent_org_users = []
+            assigned_user.organizations.each do |org|
+              adjacent_org_users << org.users.reject { |user| user == assigned_user }.pluck(:css_id)
+            end
+            adjacent_org_users = adjacent_org_users.flatten
+
+            expect(@task.assigned_to.is_a?(User)).to eq(true)
+            expect(subject.include?(assigned_user.css_id)).to eq(false)
+            expect(subject).to eq(adjacent_org_users)
+          end
+        end
       end
     end
   end
