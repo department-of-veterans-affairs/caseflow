@@ -716,7 +716,6 @@ class QueueApp extends React.PureComponent {
       appName="Queue"
     >
       <AppFrame wideApp>
-
         <ScrollToTop />
         <div className="cf-wide-app">
           {this.props.flash && <FlashAlerts flash={this.props.flash} />}

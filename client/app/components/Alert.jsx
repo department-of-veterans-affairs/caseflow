@@ -17,7 +17,6 @@ export default class Alert extends React.Component {
   }
 
   render() {
-
     const { fixed, title, type, styling, lowerMargin } = this.props;
 
     const typeClass = `usa-alert-${type}`;
