@@ -171,7 +171,6 @@ def set_field_value_with_delay(selector, value)
 
   value.each_char do |char|
     area.send_keys char
-    sleep 0.2
   end
   area.send_keys :space
 end
