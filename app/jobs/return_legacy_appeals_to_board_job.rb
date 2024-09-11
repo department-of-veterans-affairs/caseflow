@@ -60,13 +60,14 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
   def grouped_by_avlj(moved_appeals)
     return [] if moved_appeals.nil?
 
-    #moved_appeals.group_by { |appeal| appeal["vlj"].vacols_staff&.sattyid }.keys.compact
     moved_appeals.group_by { |appeal| VACOLS::Staff.find_by(sattyid: appeal["vlj"])&.sattyid }.keys.compact
   end
 
   def count_unique_bfkeys(appeals)
     appeals.map { |appeal| appeal["bfkey"] }.uniq.size
   end
+
+  private
 
   def move_qualifying_appeals(appeals)
     qualifying_appeals_bfkeys = []
@@ -104,7 +105,7 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
 
   def update_qualifying_appeals_bfkeys(tied_appeals_bfkeys, qualifying_appeals_bfkeys)
     if nonsscavlj_number_of_appeals_limit < 0
-      raise StandardError.new "CaseDistributionLever.nonsscavlj_number_of_appeals_to_move set below 0"
+      fail StandardError, "CaseDistributionLever.nonsscavlj_number_of_appeals_to_move set below 0"
     elsif nonsscavlj_number_of_appeals_limit == 0
       return qualifying_appeals_bfkeys
     end
@@ -137,22 +138,37 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
   # Method to calculate remaining eligible appeals
   def calculate_remaining_appeals(all_appeals, moved_priority_appeals, moved_non_priority_appeals)
     return [] if all_appeals.nil?
-    starting_priority_appeals = all_appeals.select { |appeal| appeal["priority"] == 1 }
-    starting_non_priority_appeals = all_appeals.select { |appeal| appeal["priority"] == 0 }
 
-    if ((moved_priority_appeals - starting_priority_appeals).empty?)
-      remaining_priority_appeals = (starting_priority_appeals - moved_priority_appeals) || []
-    else
-      raise StandardError.new "An invalid priority appeal was detected in the list of moved appeals: #{moved_priority_appeals - starting_priority_appeals}"
-    end
-
-    if ((moved_non_priority_appeals - starting_non_priority_appeals).empty?)
-      remaining_non_priority_appeals = (starting_non_priority_appeals - moved_non_priority_appeals) || []
-    else
-      raise StandardError.new "An invalid non-priority appeal was detected in the list of moved appeals: #{moved_non_priority_appeals - starting_non_priority_appeals}"
-    end
+    remaining_priority_appeals = calculate_remaining_priority_appeals(all_appeals, moved_priority_appeals)
+    remaining_non_priority_appeals = calculate_remaining_non_priority_appeals(all_appeals, moved_non_priority_appeals)
 
     [remaining_priority_appeals, remaining_non_priority_appeals]
+  end
+
+  def calculate_remaining_priority_appeals(all_appeals, moved_priority_appeals)
+    starting_priority_appeals = all_appeals.select { |appeal| appeal["priority"] == 1 }
+
+    if (moved_priority_appeals - starting_priority_appeals).empty?
+      remaining_priority_appeals = (starting_priority_appeals - moved_priority_appeals) || []
+    else
+      fail StandardError, "An invalid priority appeal was detected in the list of moved appeals: "\
+                          "#{moved_priority_appeals - starting_priority_appeals}"
+    end
+
+    remaining_priority_appeals
+  end
+
+  def calculate_remaining_non_priority_appeals(all_appeals, moved_non_priority_appeals)
+    starting_non_priority_appeals = all_appeals.select { |appeal| appeal["priority"] == 0 }
+
+    if (moved_non_priority_appeals - starting_non_priority_appeals).empty?
+      remaining_non_priority_appeals = (starting_non_priority_appeals - moved_non_priority_appeals) || []
+    else
+      fail StandardError, "An invalid non-priority appeal was detected in the list of moved appeals: "\
+                          "#{moved_non_priority_appeals - starting_non_priority_appeals}"
+    end
+
+    remaining_non_priority_appeals
   end
 
   # Method to fetch non-SSC AVLJs SATTYIDS that appeals were moved to location '63'
@@ -216,6 +232,10 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
   end
 
   def send_job_slack_report(slack_message)
+    if slack_message.blank?
+      fail StandardError, "Slack message cannot be empty or nil"
+    end
+
     slack_service.send_notification(slack_message.join("\n"), self.class.name)
   end
 

@@ -117,11 +117,11 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
     end
   end
 
-  describe "#calculate_remaining_appeals" do #chris
+  describe "#calculate_remaining_appeals" do
     let(:job) { described_class.new }
     let(:p1) { { "bfkey" => "1", "priority" => 1 } }
     let(:p2) { { "bfkey" => "2", "priority" => 1 } }
-    let(:np1) { {"bfkey" => "3", "priority" => 0 } }
+    let(:np1) { { "bfkey" => "3", "priority" => 0 } }
     let(:np2) { { "bfkey" => "4", "priority" => 0 } }
 
     before do
@@ -192,9 +192,9 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
     let(:non_ssc_avlj2_sattyid) { non_ssc_avlj2.vacols_staff.sattyid }
 
     let(:p1) { { "bfkey" => "1", "priority" => 1, "vlj" => non_ssc_avlj1_sattyid } }
-    let(:p2) { { "bfkey" => "2", "priority" => 1, "vlj" =>  non_ssc_avlj2_sattyid } }
-    let(:np1) { {"bfkey" => "3", "priority" => 0, "vlj" =>  non_ssc_avlj2_sattyid } }
-    let(:np2) { { "bfkey" => "4", "priority" => 0, "vlj" =>  non_ssc_avlj1_sattyid } }
+    let(:p2) { { "bfkey" => "2", "priority" => 1, "vlj" => non_ssc_avlj2_sattyid } }
+    let(:np1) { { "bfkey" => "3", "priority" => 0, "vlj" => non_ssc_avlj2_sattyid } }
+    let(:np2) { { "bfkey" => "4", "priority" => 0, "vlj" => non_ssc_avlj1_sattyid } }
     let(:appeals) { [p1, p2, np1, np2] }
 
     before do
@@ -271,9 +271,10 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
       let(:moved_appeals) { [p1, np1, extra_priority_appeal] }
 
       it "raises an ERROR" do
-        expected_msg = "An invalid priority appeal was detected in the list of moved appeals: #{[extra_priority_appeal]}"
+        expected_msg = "An invalid priority appeal was detected in the list of moved appeals: "\
+                       "#{[extra_priority_appeal]}"
 
-        expect{ job.send(:filter_appeals, appeals, moved_appeals) }.to raise_error(StandardError, expected_msg)
+        expect { job.send(:filter_appeals, appeals, moved_appeals) }.to raise_error(StandardError, expected_msg)
       end
     end
 
@@ -282,9 +283,10 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
       let(:moved_appeals) { [p1, np1, extra_non_priority_appeal] }
 
       it "raises an ERROR" do
-        expected_msg = "An invalid non-priority appeal was detected in the list of moved appeals: #{[extra_non_priority_appeal]}"
+        expected_msg = "An invalid non-priority appeal was detected in the list of moved appeals: "\
+                       "#{[extra_non_priority_appeal]}"
 
-        expect{ job.send(:filter_appeals, appeals, moved_appeals) }.to raise_error(StandardError, expected_msg)
+        expect { job.send(:filter_appeals, appeals, moved_appeals) }.to raise_error(StandardError, expected_msg)
       end
     end
   end
@@ -295,56 +297,55 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
     context "when called" do
       it "creates a valid ReturnedAppealJob" do
         allow(CaseDistributionLever).to receive(:nonsscavlj_number_of_appeals_to_move).and_return(2)
-        returned_appeal_job = job.create_returned_appeal_job
+        returned_appeal_job = job.send(:create_returned_appeal_job)
         expect(returned_appeal_job.started_at).to be_within(1.second).of(Time.zone.now)
         expect(returned_appeal_job.stats).to eq({ message: "Job started" }.to_json)
       end
     end
   end
 
-  describe "Slack notification" do
+  describe "#send_job_slack_report" do
     let(:job) { described_class.new }
-    let(:slack_service) { instance_double("SlackService") }
+    let(:slack_service_instance) { instance_double(SlackService) }
 
     before do
-      allow(CaseDistributionLever).to receive(:nonsscavlj_number_of_appeals_to_move).and_return(2)
-      allow(job).to receive(:slack_service).and_return(slack_service)
-      job.instance_variable_set(
-        :@filtered_appeals, {
-          priority_appeals_count: 5,
-          non_priority_appeals_count: 3,
-          remaining_priority_appeals_count: 10,
-          remaining_non_priority_appeals_count: 7,
-          grouped_by_avlj: %w[AVJL1 AVJL2]
-        }
-      )
+      allow(SlackService).to receive(:new).and_return(slack_service_instance)
+      allow(slack_service_instance).to receive(:send_notification)
     end
 
-    context "#slack_report" do #fix the naming
-      it "slack_report has an array" do #fix the naming
-        expected_report = [
+    context "is passed a valid message array" do
+      let(:message) do
+        [
           "Job performed successfully",
           "Total Priority Appeals Moved: 5",
           "Total Non-Priority Appeals Moved: 3",
           "Total Remaining Priority Appeals: 10",
           "Total Remaining Non-Priority Appeals: 7",
-          "SATTYIDs of Non-SSC AVLJs Moved: AVJL1, AVJL2"
+          "SATTYIDs of Non-SSC AVLJs Moved: AVJL1, AVJL"
         ]
+      end
 
-        expect(job.slack_report).to eq(expected_report) #this needs to stay as a private function
+      it "sends the message successfully" do
+        expected_report = "Job performed successfully\n"\
+          "Total Priority Appeals Moved: 5\n"\
+          "Total Non-Priority Appeals Moved: 3\n"\
+          "Total Remaining Priority Appeals: 10\n"\
+          "Total Remaining Non-Priority Appeals: 7\n"\
+          "SATTYIDs of Non-SSC AVLJs Moved: AVJL1, AVJL"
+
+        job.send(:send_job_slack_report, message)
+        expect(slack_service_instance)
+          .to have_received(:send_notification)
+          .with(expected_report, "ReturnLegacyAppealsToBoardJob")
       end
     end
 
-    context "#send_job_slack_report" do #make this test for an error when the message is blank
-      context "when slack_report has messages" do #fix the naming
-        it "sends a notification to Slack with the correct message" do #fix the naming
-          slack_message = job.slack_report #this needs to stay as a private function
-          expected_message = slack_message.join("\n")
+    context "is passed an empty array" do
+      let(:message) { [] }
+      it "sends a notification to Slack with the correct message" do
+        expected_msg = "Slack message cannot be empty or nil"
 
-          expect(slack_service).to receive(:send_notification).with(expected_message, job.class.name)
-
-          job.send_job_slack_report(slack_message)
-        end
+        expect { job.send(:send_job_slack_report, message) }.to raise_error(StandardError, expected_msg)
       end
     end
   end
@@ -366,11 +367,11 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
     let(:s2_np_appeal1) { { "bfkey" => "7", "priority" => 0, "vlj" => non_ssc_avlj2_sattyid, "bfd19" => 10.days.ago } }
     let(:s2_np_appeal2) { { "bfkey" => "8", "priority" => 0, "vlj" => non_ssc_avlj2_sattyid, "bfd19" => 10.days.ago } }
 
-    let(:staff1_p_appeals) {[s1_p_appeal1, s1_p_appeal2] }
-    let(:staff1_np_appeals) {[s1_np_appeal1, s1_np_appeal2] }
-    let(:staff2_p_appeals) {[s2_p_appeal1, s2_p_appeal2] }
-    let(:staff2_np_appeals) {[s2_np_appeal1, s2_np_appeal2]  }
-    let(:appeals) {
+    let(:staff1_p_appeals) { [s1_p_appeal1, s1_p_appeal2] }
+    let(:staff1_np_appeals) { [s1_np_appeal1, s1_np_appeal2] }
+    let(:staff2_p_appeals) { [s2_p_appeal1, s2_p_appeal2] }
+    let(:staff2_np_appeals) { [s2_np_appeal1, s2_np_appeal2] }
+    let(:appeals) do
       [
         s1_p_appeal1,
         s1_p_appeal2,
@@ -380,8 +381,8 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
         s2_p_appeal2,
         s2_np_appeal1,
         s2_np_appeal2
-        ]
-      }
+      ]
+    end
 
     before do
       allow(CaseDistributionLever).to receive(:nonsscavlj_number_of_appeals_to_move).and_return(2)
@@ -392,17 +393,16 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
       it "moves the 2 priority appeals per non ssc avlj" do
         expected_moved_appeals = [s1_p_appeal1, s1_p_appeal2, s2_p_appeal1, s2_p_appeal2]
         expected_moved_appeal_bf_keys = expected_moved_appeals.map { |m_appeal| m_appeal["bfkey"] }
-        expected_non_moved_appeals = [s1_np_appeal1, s1_np_appeal2, s2_np_appeal1, s2_np_appeal2]
 
         moved_appeals = job.send(:move_qualifying_appeals, appeals)
 
         expect(moved_appeals).to match_array(expected_moved_appeals)
-        expect(VACOLS::Case).to have_received(:batch_update_vacols_location).with("63", match_array(expected_moved_appeal_bf_keys))
+        expect(VACOLS::Case).to have_received(:batch_update_vacols_location)
+          .with("63", match_array(expected_moved_appeal_bf_keys))
       end
     end
 
     context "limit is set to 1 per non ssc avlj" do
-
       before do
         allow(CaseDistributionLever).to receive(:nonsscavlj_number_of_appeals_to_move).and_return(1)
       end
@@ -415,11 +415,11 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
 
         expected_moved_appeals = [s1_p_appeal2, s2_p_appeal1]
         expected_moved_appeal_bf_keys = expected_moved_appeals.map { |m_appeal| m_appeal["bfkey"] }
-        expected_non_moved_appeals = [s1_p_appeal1, s1_np_appeal1, s1_np_appeal2, s2_p_appeal2, s2_np_appeal1, s2_np_appeal2]
 
         moved_appeals = job.send(:move_qualifying_appeals, appeals)
         expect(moved_appeals).to match_array(expected_moved_appeals)
-        expect(VACOLS::Case).to have_received(:batch_update_vacols_location).with("63", match_array(expected_moved_appeal_bf_keys))
+        expect(VACOLS::Case).to have_received(:batch_update_vacols_location)
+          .with("63", match_array(expected_moved_appeal_bf_keys))
       end
     end
 
@@ -431,11 +431,11 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
       it "moves all appeals" do
         expected_moved_appeals = appeals
         expected_moved_appeal_bf_keys = expected_moved_appeals.map { |m_appeal| m_appeal["bfkey"] }
-        expected_non_moved_appeals = []
 
         moved_appeals = job.send(:move_qualifying_appeals, appeals)
         expect(moved_appeals).to match_array(expected_moved_appeals)
-        expect(VACOLS::Case).to have_received(:batch_update_vacols_location).with("63", match_array(expected_moved_appeal_bf_keys))
+        expect(VACOLS::Case).to have_received(:batch_update_vacols_location)
+          .with("63", match_array(expected_moved_appeal_bf_keys))
       end
     end
 
@@ -447,7 +447,6 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
 
       it "returns and empty array and VACOLS::Case.batch_update_vacols_location does not run doesn't run" do
         expected_moved_appeals = []
-        expected_non_moved_appeals = appeals
 
         moved_appeals = job.send(:move_qualifying_appeals, appeals)
         expect(moved_appeals).to match_array(expected_moved_appeals)
@@ -458,7 +457,6 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
     context "there are no appeals" do
       it "returns an empty array and VACOLS::Case.batch_update_vacols_location does not run doesn't run" do
         expected_moved_appeals = []
-        expected_non_moved_appeals = appeals
 
         moved_appeals = job.send(:move_qualifying_appeals, [])
         expect(moved_appeals).to match_array(expected_moved_appeals)
@@ -487,9 +485,8 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
 
       it "it raises an ERROR message and VACOLS::Case.batch_update_vacols_location does not run doesn't run" do
         expected_msg = "CaseDistributionLever.nonsscavlj_number_of_appeals_to_move set below 0"
-        expected_moved_appeals = []
 
-        expect{ job.send(:move_qualifying_appeals, appeals) }.to raise_error(StandardError, expected_msg)
+        expect { job.send(:move_qualifying_appeals, appeals) }.to raise_error(StandardError, expected_msg)
         expect(VACOLS::Case).to_not have_received(:batch_update_vacols_location)
       end
     end
@@ -507,7 +504,7 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
 
       it "returns the keys sorted by priority and then bfd19" do
         allow(CaseDistributionLever).to receive(:nonsscavlj_number_of_appeals_to_move).and_return(2)
-        result = job.get_tied_appeal_bfkeys(tied_appeals) #this needs to stay as a private function
+        result = job.send(:get_tied_appeal_bfkeys, tied_appeals)
         expect(result).to eq(%w[2 4 1 3])
       end
     end
@@ -607,9 +604,11 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
       let(:nonsscavlj_number_of_appeals_to_move_count) { -1 }
       let(:tied_appeals_bfkeys) { %w[3 4 5 6] }
       let(:qualifying_appeals_bfkeys) { %w[1 2] }
+      let(:message) { "CaseDistributionLever.nonsscavlj_number_of_appeals_to_move set below 0" }
 
       it "raises an error saying the lever has been set incorrectly" do
-        expect(1).to eq(2)
+        expect { job.send(:update_qualifying_appeals_bfkeys, tied_appeals_bfkeys, qualifying_appeals_bfkeys) }
+          .to raise_error(StandardError, message)
       end
     end
   end
