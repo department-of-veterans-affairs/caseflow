@@ -6,7 +6,7 @@ class Hearings::MonitorBoxJob < ApplicationJob
   # It connects to the Box.com API via {ExternalApi::VaBoxService}, queries transcription contractor folders, and
   # returns a list of files that have been added since the last check.
   # This class is intended to be used for hourly checks triggered by appeals-lambda
-  # to handle new files from Box.com after being uploaded bt transcription contractors.
+  # to handle new files from Box.com after being uploaded by transcription contractors.
   # The parent folder id is stored as an environment variable.
   #
   # Example usage:
