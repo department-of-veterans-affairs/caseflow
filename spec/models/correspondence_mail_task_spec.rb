@@ -24,6 +24,32 @@ RSpec.describe CorrespondenceMailTask, type: :model do
   let!(:correspondence) { create(:correspondence, :completed, veteran: veteran) }
 
 
+  describe ".verify_user_can_create!" do
+    let(:inbound_ops_user) { create(:inbound_ops_team_supervisor) }
+
+    context "When an inbound ops team user tries to create a mail task" do
+      CorrespondenceTaskActionsHelpers::TASKS.each do |task_action|
+
+        context "#{task_action[:name]}" do
+          let(:parent_task) { correspondence.root_task }
+
+          it "allows inbound ops team users to create the task" do
+            mail_task_class = task_action[:class]
+            expect(mail_task_class.verify_user_can_create!(inbound_ops_user, parent_task)).to eq(true)
+          end
+
+          it "denies other users from creating the task" do
+            mail_task_class = task_action[:class]
+            expect { mail_task_class.verify_user_can_create!(unassigned_user, parent_task) }.to raise_error(
+              Caseflow::Error::ActionForbiddenError
+            )
+          end
+
+        end
+      end
+    end
+  end
+
   context ".available_actions" do
     let(:expected_actions) do
       [
