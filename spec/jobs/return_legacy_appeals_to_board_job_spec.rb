@@ -295,7 +295,7 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
     context "when called" do
       it "creates a valid ReturnedAppealJob" do
         allow(CaseDistributionLever).to receive(:nonsscavlj_number_of_appeals_to_move).and_return(2)
-        returned_appeal_job = job.create_returned_appeal_job
+        returned_appeal_job = job.send(:create_returned_appeal_job)
         expect(returned_appeal_job.started_at).to be_within(1.second).of(Time.zone.now)
         expect(returned_appeal_job.stats).to eq({ message: "Job started" }.to_json)
       end
@@ -331,19 +331,19 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
           "SATTYIDs of Non-SSC AVLJs Moved: AVJL1, AVJL2"
         ]
 
-        expect(job.slack_report).to eq(expected_report) #this needs to stay as a private function
+        expect(job.send(:slack_report)).to eq(expected_report)
       end
     end
 
     context "#send_job_slack_report" do #make this test for an error when the message is blank
       context "when slack_report has messages" do #fix the naming
         it "sends a notification to Slack with the correct message" do #fix the naming
-          slack_message = job.slack_report #this needs to stay as a private function
+          slack_message = job.send(:slack_report)
           expected_message = slack_message.join("\n")
 
           expect(slack_service).to receive(:send_notification).with(expected_message, job.class.name)
 
-          job.send_job_slack_report(slack_message)
+          job.send(:send_job_slack_report, slack_message)
         end
       end
     end
