@@ -7,6 +7,7 @@ import { reducer, generateInitialState } from '../../../app/intake';
 import ReduxBase from '../../../app/components/ReduxBase';
 import UntimelyExemptionModal from '../../../app/intake/components/UntimelyExemptionModal';
 import { sample1 } from './testData';
+import { newProps } from './testHelpers';
 
 describe('UntimelyExemptionModal', () => {
   const formType = 'higher_level_review';
@@ -48,12 +49,6 @@ describe('UntimelyExemptionModal', () => {
       expect(screen.getByText('Add this issue')).toBeInTheDocument();
     });
     it('renders with new props', async () => {
-      const newProps = {
-        cancelText: 'cancel',
-        skipText: 'skip',
-        submitText: 'submit'
-      };
-
       setup(newProps);
 
       const cancelBtn = await screen.findByText('cancel');

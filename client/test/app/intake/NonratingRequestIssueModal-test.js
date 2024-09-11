@@ -5,6 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER } from 'app/../COPY';
 import NonratingRequestIssueModal from '../../../app/intake/components/NonratingRequestIssueModal';
 import { sample1 } from './testData';
+import { newProps } from './testHelpers';
 
 describe('NonratingRequestIssueModal', () => {
   const formType = 'higher_level_review';
@@ -35,12 +36,6 @@ describe('NonratingRequestIssueModal', () => {
     });
 
     it('renders with new props', async () => {
-      const newProps = {
-        cancelText: 'cancel',
-        skipText: 'skip',
-        submitText: 'submit'
-      };
-
       setup(newProps);
 
       const cancelBtn = await screen.findByText('cancel');

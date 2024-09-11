@@ -3,6 +3,7 @@ import { render, fireEvent, screen } from '@testing-library/react';
 
 import UnidentifiedIssuesModal from '../../../app/intake/components/UnidentifiedIssuesModal';
 import { sample1 } from './testData';
+import { newProps } from './testHelpers';
 
 describe('UnidentifiedIssuesModal', () => {
   const formType = 'higher_level_review';
@@ -31,12 +32,6 @@ describe('UnidentifiedIssuesModal', () => {
 
     });
     it('renders with new props', async () => {
-      const newProps = {
-        cancelText: 'cancel',
-        skipText: 'skip',
-        submitText: 'submit'
-      };
-
       setup(newProps);
 
       const cancelBtn = await screen.findByText('cancel');
