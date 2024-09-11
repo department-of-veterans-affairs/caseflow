@@ -146,7 +146,7 @@ module CaseflowCertification
     config.cache_store = :redis_store, Rails.application.secrets.redis_url_cache, { expires_in: 24.hours }
     config.sso_service_disabled = ENV["SSO_SERVICE_DISABLED"]
 
-    config.google_analytics_account = nil
+    # config.google_analytics_account = nil
 
     config.bgs_environment = ENV["BGS_ENVIRONMENT"] || "beplinktest"
 

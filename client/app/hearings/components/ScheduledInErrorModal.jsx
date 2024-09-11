@@ -60,7 +60,7 @@ export const ScheduledInErrorModal = ({ update, cancelHandler, hearing, saveHear
 
   const submit = async () => {
     // Send the event to google analytics
-    window.analyticsEvent('Hearings', disposition, afterDispositionUpdateAction);
+    // window.analyticsEvent('Hearings', disposition, afterDispositionUpdateAction);
 
     // Determine whether to redirect to the ful page schedule veteran flow
     if (afterDispositionUpdateAction === ACTIONS.RESCHEDULE) {

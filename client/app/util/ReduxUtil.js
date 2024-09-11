@@ -40,7 +40,7 @@ export const getReduxAnalyticsMiddleware = (defaultCategory) => (store) => (next
 
   if (meta?.analytics) {
     if (isFunction(meta.analytics)) {
-      meta.analytics(window.analyticsEvent, defaultCategory, action.type);
+      meta.analytics(defaultCategory, action.type);
     } else {
       // Safe-assign the analytics label
       const label = isFunction(meta?.analytics?.label) ?
@@ -52,8 +52,7 @@ export const getReduxAnalyticsMiddleware = (defaultCategory) => (store) => (next
         const actionName = meta?.analytics?.action || action.type;
 
         debounceFns[action.type] = debounce(
-          (eventLabel) => window.analyticsEvent(category, actionName, eventLabel),
-          meta?.analytics?.debounceMs || 0
+          (eventLabel) => meta?.analytics?.debounceMs || 0
         );
       }
 
