@@ -32,7 +32,7 @@ const validateReturnDate = (returnDate, expectedReturnDate) => {
   return new Date(returnDate) > new Date(expectedReturnDate);
 };
 
-const TranscriptionDetailsWebex = ({ transcription, title, readOnly, update }) => {
+const TranscriptionDetailsWebex = ({ transcription, title, readOnly }) => {
   return (
     <div {...detailStyles}>
       <h2>{title}</h2>
@@ -52,7 +52,6 @@ const TranscriptionDetailsWebex = ({ transcription, title, readOnly, update }) =
           type="date"
           readOnly={readOnly}
           value={transcription?.uploadedToVbmsDate}
-          onChange={(uploadedToVbmsDate) => update({ uploadedToVbmsDate })}
         />
       </div>
       <div {...rowThirds}>
@@ -73,7 +72,6 @@ const TranscriptionDetailsWebex = ({ transcription, title, readOnly, update }) =
           value={
             (validateReturnDate(transcription.returnDate, transcription.sentToTranscriberDate) &&
               transcription?.returnDate) || 'N/A'}
-          onChange={(returnDate) => update({ returnDate })}
         />
       </div>
     </div>
@@ -89,7 +87,6 @@ TranscriptionDetailsWebex.propTypes = {
     uploadedToVbmsDate: PropTypes.string,
     returnDate: PropTypes.string
   }),
-  update: PropTypes.func,
   readOnly: PropTypes.bool,
   title: PropTypes.string
 };

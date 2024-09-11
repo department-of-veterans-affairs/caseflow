@@ -22,9 +22,7 @@ export const TranscriptionFormSection = (
           <TranscriptionDetailsWebex
             title="Transcription"
             transcription={transcription}
-            update={(values) => update('transcription', values)}
             readOnly={readOnly}
-            transcriptionContractors={hearing.transcriptionContractors}
           /></>) || <TranscriptionDetailsInputs
           title="Transcription Details"
           transcription={transcription}
