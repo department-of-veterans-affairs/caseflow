@@ -605,20 +605,25 @@ describe('Unassigned Tab', () => {
     });
   }, 30000);
 
-  describe('Assigned Tab', () => {
-    it('loads a table from backend data', async () => {
-      const { container } = await setupAssignedTable();
+describe('Assigned Tab', () => {
+  it('loads a table from backend data', async () => {
+    // Mock the API responses directly
+    ApiUtil.get = jest.fn();
 
-      await waitFor(() =>
-        expect(screen.getAllByText('Viewing 1-15 of 18 total')[0]).toBeInTheDocument()
-      );
+    when(ApiUtil.get).calledWith('/hearings/transcription_packages/transcription_package_tasks?tab=Assigned&page=1').
+      mockResolvedValue(mockTranscriptionPackagesResponse);
 
-      expect(container).toMatchSnapshot();
+    const { container } = setupAssignedTable();
 
-      const results = await axe(container);
+    await waitFor(() =>
+      expect(screen.getAllByText('Viewing 1-15 of 18 total')[0]).toBeInTheDocument()
+    );
 
-      expect(results).toHaveNoViolations();
-    });
-  }, 30000);
+    expect(container).toMatchSnapshot();
+
+    const results = await axe(container);
+
+    expect(results).toHaveNoViolations();
+  });
 });
 
