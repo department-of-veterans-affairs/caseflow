@@ -11,16 +11,16 @@ const workOrder = 'BVA20240012';
 const mockedContent = {
   data: [
     {
-      docket_number: '123-4567',
-      case_details: 'Joe Shmoe (111111111)',
-      hearing_type: 'Hearing',
-      appeal_id: '9cddd24a-866a-4b88-ac2c-b79cb63d5e02'
+      docketNumber: '123-4567',
+      caseDetails: 'Joe Shmoe (111111111)',
+      hearingType: 'Hearing',
+      appealId: '9cddd24a-866a-4b88-ac2c-b79cb63d5e02'
     },
     {
-      docket_number: '987-6543',
-      case_details: 'Jane Shmoe (111111111)',
-      hearing_type: 'LegacyHearing',
-      appeal_id: '9739'
+      docketNumber: '987-6543',
+      caseDetails: 'Jane Shmoe (111111111)',
+      hearingType: 'LegacyHearing',
+      appealId: '9739'
     }
   ]
 };
