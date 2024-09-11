@@ -565,13 +565,13 @@ describe('TranscriptionFileDispatchTable', () => {
     }, 20000);
 
     it('allows a user to click to lock a record and call the back end', async () => {
-      const { container } = setupUnassignedTable();
+      const { container } = await setupUnassignedTable();
 
       await waitFor(() =>
         expect(screen.getAllByText('Viewing 1-15 of 40 total')[0]).toBeInTheDocument()
       );
 
-      const checkboxes = container.querySelectorAll('.select-file input');
+      const checkboxes = await container.querySelectorAll('.select-file input');
 
       expect(checkboxes[3]).not.toBeChecked();
 
@@ -581,11 +581,11 @@ describe('TranscriptionFileDispatchTable', () => {
       expect(ApiUtil.post).toHaveBeenCalledWith(
         '/hearings/transcription_files/lock', constClickData);
     });
-  }, 45000);
+  }, 30000);
 
   describe('Assigned Tab', () => {
     it('loads a table from backend data', async () => {
-      const { container } = setupAssignedTable();
+      const { container } = await setupAssignedTable();
 
       await waitFor(() =>
         expect(screen.getAllByText('Viewing 1-15 of 18 total')[0]).toBeInTheDocument()
@@ -597,6 +597,6 @@ describe('TranscriptionFileDispatchTable', () => {
 
       expect(results).toHaveNoViolations();
     });
-  }, 45000);
+  }, 30000);
 });
 
