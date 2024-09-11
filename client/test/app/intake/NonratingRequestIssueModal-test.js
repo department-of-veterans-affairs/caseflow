@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER } from 'app/../COPY';
 import NonratingRequestIssueModal from '../../../app/intake/components/NonratingRequestIssueModal';
 import { sample1 } from './testData';
-import { newProps } from './testHelpers';
+import { newProps } from '../../helpers/testHelpers';
 
 describe('NonratingRequestIssueModal', () => {
   const formType = 'higher_level_review';

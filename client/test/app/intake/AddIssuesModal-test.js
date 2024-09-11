@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 
 import AddIssuesModal from '../../../app/intake/components/AddIssuesModal';
 import { sample1 } from './testData';
-import { newProps } from './testHelpers';
+import { newProps } from '../../helpers/testHelpers';
 
 describe('AddIssuesModal', () => {
   const formType = 'higher_level_review';

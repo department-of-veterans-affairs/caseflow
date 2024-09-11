@@ -7,7 +7,7 @@ import { reducer, generateInitialState } from '../../../app/intake';
 import ReduxBase from '../../../app/components/ReduxBase';
 import UntimelyExemptionModal from '../../../app/intake/components/UntimelyExemptionModal';
 import { sample1 } from './testData';
-import { newProps } from './testHelpers';
+import { newProps } from '../../helpers/testHelpers';
 
 describe('UntimelyExemptionModal', () => {
   const formType = 'higher_level_review';

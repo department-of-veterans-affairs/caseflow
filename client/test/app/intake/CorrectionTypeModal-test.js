@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 
 import CorrectionTypeModal from '../../../app/intake/components/CorrectionTypeModal';
 import { sample1 } from './testData';
-import { newProps } from './testHelpers';
+import { newProps } from '../../helpers/testHelpers';
 
 describe('CorrectionTypeModal', () => {
   const formType = 'higher_level_review';

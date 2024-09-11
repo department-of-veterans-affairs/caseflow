@@ -1,8 +1,8 @@
 import React from 'react';
-import { render as rtlRender, screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { detailsStore, hearingDetailsWrapper } from 'test/data/stores/hearingsStore';
+import { detailsStore } from 'test/data/stores/hearingsStore';
 import {
   anyUser,
   legacyHearing,
@@ -12,8 +12,7 @@ import {
 } from 'test/data';
 
 import Details from 'app/hearings/components/Details';
-import superagent from 'superagent';
-
+import { Wrapper, customRender } from '../../../helpers/testHelpers';
 // Define the function spies
 const saveHearingSpy = jest.fn();
 const setHearingSpy = jest.fn();
@@ -22,52 +21,6 @@ const onReceiveAlertsSpy = jest.fn();
 const onReceiveTransitioningAlertSpy = jest.fn();
 const transitionAlertSpy = jest.fn();
 const mockSubmit = jest.fn(() => Promise.resolve());
-
-jest.mock('superagent');
-
-const mockJudges = [
-  { id: 'judge1', name: 'Judge Judy' },
-  { id: 'judge2', name: 'Judge Dredd' },
-];
-
-// Setup the mock implementation
-superagent.get.mockImplementation((url) => {
-  const mockResponse = { body: mockJudges };
-  const mockRequest = {
-    set: jest.fn().mockReturnThis(),
-    query: jest.fn().mockReturnThis(),
-    timeout: jest.fn().mockReturnThis(),
-    on: jest.fn().mockReturnThis(),
-    use: jest.fn().mockReturnThis(), // Add the `use` method
-    then: jest.fn((callback) => {
-      callback(mockResponse);
-      return Promise.resolve(mockResponse);
-    }),
-    catch: jest.fn(() => Promise.resolve(mockResponse)),
-  };
-
-  if (url === '/users?role=Judge') {
-    return mockRequest;
-  } else {
-    return Promise.reject(new Error('connect ECONNREFUSED 127.0.0.1:80'));
-  }
-});
-
-function customRender(ui, { wrapper: Wrapper, wrapperProps, ...options }) {
-  if (Wrapper) {
-    ui = <Wrapper {...wrapperProps}>{ui}</Wrapper>;
-  }
-  return rtlRender(ui, options);
-}
-
-const Wrapper = ({ children, user, hearing, judge, store }) => {
-  const HearingDetails = hearingDetailsWrapper(user, hearing, judge);
-  return (
-    <HearingDetails store={store}>
-      {children}
-    </HearingDetails>
-  );
-};
 
 const convertRegex = (str) => {
   return new RegExp(str, 'i');
