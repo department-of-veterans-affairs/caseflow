@@ -158,6 +158,23 @@ RSpec.describe CorrespondenceMailTask, type: :model do
           end
         end
       end
+
+      context ".reassign_organizations" do
+        let(:organization) { @task.assigned_to }
+        subject { @task.reassign_organizations }
+
+        context "The #{task_action[:name]} is assigned to an organization" do
+          it "returns all organizations except the current assigned organization" do
+            expect(subject).to eq(Organization.where.not(id: organization.id).assignable(@task))
+          end
+        end
+
+        context "The #{task_action[:name]} is assigned to a user" do
+          it "returns all assignable organizations" do
+            expect(subject).to eq(Organization.assignable(@task))
+          end
+        end
+      end
     end
   end
 end
