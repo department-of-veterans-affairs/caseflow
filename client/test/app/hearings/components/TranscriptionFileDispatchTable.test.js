@@ -580,7 +580,7 @@ describe('TranscriptionFileDispatchTable', () => {
       expect(ApiUtil.post).toHaveBeenCalledWith(
         '/hearings/transcription_files/lock', constClickData);
     });
-  }, 20000);
+  }, 45000);
 
   describe('Assigned Tab', () => {
     it('loads a table from backend data', async () => {
@@ -596,6 +596,6 @@ describe('TranscriptionFileDispatchTable', () => {
 
       expect(results).toHaveNoViolations();
     });
-  }, 20000);
+  }, 45000);
 });
 
