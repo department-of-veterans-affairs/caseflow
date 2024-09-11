@@ -8,16 +8,10 @@ import classnames from 'classnames';
 import Alert from './Alert';
 
 // eslint-disable-next-line no-process-env
-// const env = process.env.DEPLOY_ENV;
+const env = process.env.DEPLOY_ENV;
 
 // eslint-disable-next-line no-process-env
-// const nodeEnv = process.env.NODE_ENV;
-// line below is for testing different env presentations, erase before deployment master
-const env = 'demo';
-const nodeEnv = 'production';
-
-// console.log(`Env: ${ env}`);
-// console.log(`nodeEnv: ${ nodeEnv}`);
+const nodeEnv = process.env.NODE_ENV;
 
 const className = classnames(
   {
