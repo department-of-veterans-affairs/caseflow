@@ -21,6 +21,7 @@ SCHEDULED_JOBS = {
     "hearing_email_status_job" => Hearings::HearingEmailStatusJob,
     "heartbeat" => HeartbeatTasksJob,
     "incomplete_distributions_job" => IncompleteDistributionsJob,
+    "monitor_box_job" => Hearings::MonitorBoxJob,
     "monthly_metrics" => MonthlyMetricsReportJob,
     "nightly_syncs" => NightlySyncsJob,
     "out_of_service_reminder" => OutOfServiceReminderJob,
