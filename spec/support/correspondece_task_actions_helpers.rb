@@ -73,6 +73,10 @@ module CorrespondenceTaskActionsHelpers
       instructions: [instructions],
       assigned_at: Time.current
     )
+
+    # return task if testing tasks
+    return task if options[:return_task]
+
     Organization.assignable(task)
     @organizations = task.reassign_organizations.map { |org| { label: org.name, value: org.id } }
   end
