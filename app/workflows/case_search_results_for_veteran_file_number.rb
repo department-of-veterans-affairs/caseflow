@@ -11,7 +11,6 @@ class CaseSearchResultsForVeteranFileNumber < ::CaseSearchResultsBase
 
   attr_reader :file_number_or_ssn
 
-<<<<<<< HEAD
   def appeals
     if user.vso_employee?
       vso_user_search_results
