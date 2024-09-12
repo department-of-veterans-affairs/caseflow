@@ -200,7 +200,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
       context "With a pre-existing scheduled_in_timezone value" do
         let(:hearing_time_selection_string) { "10:00 AM Central Time (US & Canada)" }
         let(:hearing) { initial_hearing.tap { _1.update!(scheduled_in_timezone: "America/Chicago") } }
-        let(:expected_post_update_time) { "10:00 AM Central Time (US & Canada) / 11:00 AM Eastern Time (US & Canada)" }
+        let(:expected_post_update_time) { "10:00 AM CST" }
 
         before do
           hearing.hearing_day.update!(regional_office: "RO30", request_type: "V", scheduled_for: "2024-11-11")
@@ -212,7 +212,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
       context "Without a pre-existing scheduled_in_timezone value" do
         let(:hearing_time_selection_string) { "3:00 PM Central Time (US & Canada)" }
         let(:hearing) { initial_hearing.tap { _1.update!(scheduled_in_timezone: nil) } }
-        let(:expected_post_update_time) { "3:00 PM Central Time (US & Canada) / 4:00 PM Eastern Time (US & Canada)" }
+        let(:expected_post_update_time) { "3:00 PM CST" }
 
         before do
           hearing.hearing_day.update!(regional_office: "RO30", request_type: "T", scheduled_for: "2024-11-11")
@@ -228,7 +228,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
       context "With a pre-existing scheduled_datetime value" do
         let(:hearing_time_selection_string) { "12:00 PM Alaska" }
         let(:hearing) { initial_hearing.tap { _1.update!(scheduled_in_timezone: "America/Juneau") } }
-        let(:expected_post_update_time) { "12:00 PM Alaska / 4:00 PM Eastern Time (US & Canada)" }
+        let(:expected_post_update_time) { "12:00 PM #{Time.zone.now.dst? ? 'AKDT' : 'AKST'}" }
 
         before { hearing.hearing_day.update!(regional_office: "RO63", request_type: "V") }
 
