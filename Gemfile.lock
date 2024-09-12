@@ -1713,7 +1713,6 @@ GEM
     mime-types-data (3.2019.1009)
     mini_histogram (0.3.1)
     mini_mime (1.1.2)
-    mini_portile2 (2.8.7)
     minitest (5.25.1)
     moment_timezone-rails (0.5.0)
     momentjs-rails (2.29.4.1)
@@ -1733,8 +1732,7 @@ GEM
       net-protocol
     nio4r (2.5.9)
     no_proxy_fix (0.1.2)
-    nokogiri (1.15.6)
-      mini_portile2 (~> 2.8.2)
+    nokogiri (1.15.6-x86_64-darwin)
       racc (~> 1.4)
     nori (2.6.0)
     notiffany (0.1.1)
@@ -1801,6 +1799,18 @@ GEM
       opentelemetry-instrumentation-base (~> 0.21.0)
     opentelemetry-instrumentation-pg (0.23.0)
       opentelemetry-api (~> 1.0)
+      opentelemetry-instrumentation-base (~> 0.21.0)
+    opentelemetry-instrumentation-rack (0.22.1)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-common (~> 0.19.3)
+      opentelemetry-instrumentation-base (~> 0.21.0)
+    opentelemetry-instrumentation-rails (0.25.0)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-instrumentation-action_pack (~> 0.5.0)
+      opentelemetry-instrumentation-action_view (~> 0.4.0)
+      opentelemetry-instrumentation-active_job (~> 0.4.0)
+      opentelemetry-instrumentation-active_record (~> 0.5.0)
+      opentelemetry-instrumentation-active_support (~> 0.3.0)
       opentelemetry-instrumentation-base (~> 0.21.0)
     opentelemetry-instrumentation-rake (0.1.1)
       opentelemetry-api (~> 1.0)
@@ -1889,6 +1899,10 @@ GEM
       ffi (~> 1.0)
     rb-readline (0.5.5)
     rchardet (1.8.0)
+    rcredstash (1.1.0)
+      aws-sdk-dynamodb
+      aws-sdk-kms
+      thor
     react_on_rails (11.3.0)
       addressable
       connection_pool
@@ -1965,6 +1979,7 @@ GEM
     rswag-ui (2.13.0)
       actionpack (>= 3.1, < 7.2)
       railties (>= 3.1, < 7.2)
+    rtf (0.3.3)
     rubocop (0.83.0)
       parallel (~> 1.10)
       parser (>= 2.7.0.1)
@@ -2100,6 +2115,7 @@ GEM
     websocket-driver (0.7.6)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
+    webvtt-ruby (0.4.2)
     xmldsig (0.3.2)
       nokogiri
     xmlenc (0.8.0)
@@ -2200,6 +2216,7 @@ DEPENDENCIES
   rails-erd
   rainbow
   rb-readline
+  rcredstash (~> 1.1.0)
   react_on_rails (= 11.3.0)
   redis-mutex
   redis-namespace (~> 1.11.0)
@@ -2214,6 +2231,7 @@ DEPENDENCIES
   rswag-api
   rswag-specs
   rswag-ui
+  rtf
   rubocop (= 0.83)
   rubocop-performance
   rubocop-rails
@@ -2243,6 +2261,7 @@ DEPENDENCIES
   validates_email_format_of
   webdrivers
   webmock
+  webvtt-ruby
   ziptz
 
 BUNDLED WITH

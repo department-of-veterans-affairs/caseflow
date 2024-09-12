@@ -709,3 +709,58 @@ $form-width: 575px;
 .hearing-time-scheduled-in-timezone {
   margin-top: 0;
 }
+
+// Transcription Files Table
+.transcription-files-table {
+  margin-top: 0;
+
+  *:focus {
+    outline: none;
+  }
+
+  th:first-child {
+    padding-left: 2.5rem;
+  }
+
+  tbody {
+
+    tr {
+      &:first-child td {
+        padding-top: 3rem;
+      }
+
+      &.even-row-group td {
+        background-color: $cf-background;
+      }
+
+      td {
+        border: 0;
+        padding-top: 0;
+        padding-bottom: 3rem;
+
+        &:first-child {
+          padding-left: 2.5rem;
+        }
+
+        &:last-child {
+          font-style: italic;
+        }
+
+        a {
+          display: inline-flex;
+          align-items: center;
+        }
+
+        svg {
+          margin-left: 1rem;
+        }
+      }
+    }
+
+    .even-row-group + .odd-row-group td,
+    .odd-row-group + .even-row-group td {
+      border-top: 1px solid $color-gray-lighter;
+      padding-top: 3rem;
+    }
+  }
+}
