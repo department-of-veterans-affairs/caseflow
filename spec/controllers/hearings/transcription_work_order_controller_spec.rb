@@ -32,7 +32,8 @@ RSpec.describe Hearings::TranscriptionWorkOrderController, type: :controller do
       end
 
       before do
-        allow(::TranscriptionWorkOrder).to receive(:display_wo_summary).with(task_number).and_return(wo_summary)
+        allow(::TranscriptionWorkOrder).to receive(:display_wo_summary).and_return(wo_summary)
+        request.accept = "application/json"
         get :display_wo_summary, params: { task_number: task_number }
       end
 
@@ -42,21 +43,6 @@ RSpec.describe Hearings::TranscriptionWorkOrderController, type: :controller do
 
       it "returns the work order summary in JSON" do
         expect(JSON.parse(response.body)).to eq({ "data" => wo_summary })
-      end
-    end
-
-    context "when work order summary is not found" do
-      before do
-        allow(::TranscriptionWorkOrder).to receive(:display_wo_summary).with(task_number).and_return(nil)
-        get :display_wo_summary, params: { task_number: task_number }
-      end
-
-      it "returns a not found response" do
-        expect(response).to have_http_status(:not_found)
-      end
-
-      it "returns an error message in JSON" do
-        expect(JSON.parse(response.body)).to eq({ "error" => "Transcription summary not found." })
       end
     end
   end

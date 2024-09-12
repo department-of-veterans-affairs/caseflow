@@ -229,6 +229,7 @@ export const workOrderColumn = () => {
       <div>
         <Link
           to={`/transcription_work_order/display_wo_summary/?taskNumber=${row.workOrder}`}
+          target="_blank"
           style={styles.workOrderLink}>
           #{row.workOrder}
           <span style={styles.workOrderLinkIcon}>
