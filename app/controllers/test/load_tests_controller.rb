@@ -31,44 +31,47 @@ class Test::LoadTestsController < ApplicationController
 
   private
 
+  # Private: Using the data entered by the user for the target_type and target_id,
+  # returns an appropriate target_id for the test
   # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Layout/LineLength, Metrics/MethodLength
   def data_for_testing
     case params[:target_type]
     when "Appeal"
-      data = params[:target_id].blank? ? Appeal.all.sample : Appeal.find_by(uuid: params[:target_id])
-      target_id = data.uuid
+      sample_data_id = Appeal.all.sample.uuid
     when "LegacyAppeal"
-      data = params[:target_id].blank? ? LegacyAppeal.all.sample : LegacyAppeal.find_by(vacols_id: params[:target_id])
-      target_id = data.vacols_id
+      sample_data_id = LegacyAppeal.all.sample.vacols_id
     when "Hearing"
-      data = params[:target_id].blank? ? Hearing.all.sample : Hearing.find_hearing_by_uuid_or_vacols_id(params[:target_id])
-      target_id = data.uuid
+      sample_data_id = Hearing.all.sample.uuid
     when "HigherLevelReview"
-      data = params[:target_id].blank? ? HigherLevelReview.all.sample : HigherLevelReview.find_by(uuid: params[:target_id])
-      target_id = data.uuid
+      sample_data_id = HigherLevelReview.all.sample.uuid
     when "SupplementalClaim"
-      data = params[:target_id].blank? ? SupplementalClaim.all.sample : SupplementalClaim.find_by(uuid: params[:target_id])
-      target_id = data.uuid
+      sample_data_id = SupplementalClaim.all.sample.uuid
     when "Document"
-      data = params[:target_id].blank? ? Document.all.sample : Document.find_by(id: params[:target_id])
-      target_id = data.id
+      sample_data_id = Document.all.sample.id
     when "Metric"
-      data = Metric.all.sample
-      target_id = data.uuid
+      sample_data_id = Metric.all.sample.uuid
     end
 
-    fail ActiveRecord::RecordNotFound if data.nil?
+    target_id = get_target_data_id(params[:target_id], sample_data_id)
+
+    fail ActiveRecord::RecordNotFound if target_id.nil?
 
     target_id
+  end
+
+  # Private: If no target_id is provided, use the target_id of sample data instead
+  def get_target_data_id(target_id, sample_data_id)
+    target_data_id = target_id.blank? ? sample_data_id : target_id
+    target_data_id
   end
 
   # Private: Finds or creates the user for load testing, makes them a system admin
   # so that it can access any area in Caseflow, and stores their information in the
   # current session. This will be reflected in the session cookie.
   def set_current_user
-    params.require(:user).tap do |u|
-      u.require([:station_id])
-      u.require([:regional_office])
+    params.require(:user).tap do |user_requirement|
+      user_requirement.require([:station_id])
+      user_requirement.require([:regional_office])
     end
     user = user.presence || User.find_or_initialize_by(css_id: LOAD_TESTING_USER)
     user.station_id = params[:user][:station_id]
@@ -76,11 +79,11 @@ class Test::LoadTestsController < ApplicationController
     user.roles = params[:user][:roles]
     user.save
 
-    params[:user][:functions].select { |_k, v| v == true }.each do |k, _v|
-      Functions.grant!(k, users: [LOAD_TESTING_USER])
+    params[:user][:functions].select { |_key, value| value == true }.each do |key, _value|
+      Functions.grant!(key, users: [LOAD_TESTING_USER])
     end
-    params[:user][:functions].select { |_k, v| v == false }.each do |k, _v|
-      Functions.deny!(k, users: [LOAD_TESTING_USER])
+    params[:user][:functions].select { |_key, value| value == false }.each do |key, _value|
+      Functions.deny!(key, users: [LOAD_TESTING_USER])
     end
     params[:user][:organizations].select { |organization| organization[:admin] == true }.each do |org|
       organization = Organization.find_by_name_or_url(org[:url])
@@ -91,11 +94,11 @@ class Test::LoadTestsController < ApplicationController
       organization = Organization.find_by_name_or_url(org[:url])
       organization.add_user(user) unless organization.users.include?(user)
     end
-    params[:user][:feature_toggles].select { |_k, v| v == true }.each do |k, _v|
-      FeatureToggle.enable!(k, users: [LOAD_TESTING_USER]) if !FeatureToggle.enabled?(k, user: user)
+    params[:user][:feature_toggles].select { |_key, value| value == true }.each do |key, _value|
+      FeatureToggle.enable!(key, users: [LOAD_TESTING_USER]) if !FeatureToggle.enabled?(key, user: user)
     end
-    params[:user][:feature_toggles].select { |_k, v| v == false }.each do |k, _v|
-      FeatureToggle.disable!(k, users: [LOAD_TESTING_USER])
+    params[:user][:feature_toggles].select { |_key, value| value == false }.each do |key, _value|
+      FeatureToggle.disable!(key, users: [LOAD_TESTING_USER])
     end
     session["user"] = user.to_session_hash
     session[:regional_office] = user.selected_regional_office
