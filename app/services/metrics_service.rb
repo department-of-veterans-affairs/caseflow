@@ -7,7 +7,7 @@ require "statsd-instrument"
 class MetricsService
 
   # :reek:LongParameterList
-  def self.increment_counter(metric_group:, metric_name:, app_name:, attrs: {}, by: 1)
+  def self.increment_counter(metric_group:, metric_name:, app_name:, attrs: {})
     tags = get_tags(app_name, attrs)
     stat_name = get_stat_name(metric_group, metric_name)
 
@@ -93,7 +93,6 @@ class MetricsService
       }
       MetricsService.emit_gauge(sent_to_info)
 
-      sent_to << Metric::LOG_SYSTEMS[:datadog]
       sent_to << Metric::LOG_SYSTEMS[:dynatrace]
     end
 

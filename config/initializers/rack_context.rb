@@ -1,4 +1,5 @@
 class RackContextGetter < OpenTelemetry::Context::Propagation::RackEnvGetter
+
   def get(carrier, key)
     carrier[to_rack_key(key)] || carrier[key]
   end

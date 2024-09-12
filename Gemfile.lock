@@ -1,13 +1,4 @@
 GIT
-  remote: https://github.com/colszowka/simplecov.git
-  revision: 783c9d7e9995f3ea9baf9fbb517c1d0ceb12acdb
-  specs:
-    simplecov (0.15.1)
-      docile (~> 1.1.0)
-      json (>= 1.8, < 3)
-      simplecov-html (~> 0.10.0)
-
-GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
   revision: 9bd3635fbd8094d25160669f38d8699e2f1d7a98
   ref: 9bd3635fbd8094d25160669f38d8699e2f1d7a98
@@ -1550,10 +1541,10 @@ GEM
       thor (>= 0.19, < 2)
     diff-lcs (1.3)
     docile (1.1.5)
-    dotenv (2.7.5)
-    dotenv-rails (2.7.5)
-      dotenv (= 2.7.5)
-      railties (>= 3.2, < 6.1)
+    dotenv (2.8.1)
+    dotenv-rails (2.8.1)
+      dotenv (= 2.8.1)
+      railties (>= 3.2)
     dry-configurable (0.11.5)
       concurrent-ruby (~> 1.0)
       dry-core (~> 0.4, >= 0.4.7)
@@ -1619,11 +1610,11 @@ GEM
     git (1.13.2)
       addressable (~> 2.8)
       rchardet (~> 1.8)
-    globalid (1.1.0)
-      activesupport (>= 5.0)
-    google-protobuf (3.25.3)
-    googleapis-common-protos-types (1.14.0)
-      google-protobuf (~> 3.18)
+    globalid (1.2.1)
+      activesupport (>= 6.1)
+    google-protobuf (3.25.4)
+    googleapis-common-protos-types (1.15.0)
+      google-protobuf (>= 3.18, < 5.a)
     govdelivery-tms (2.8.4)
       activesupport
       faraday
@@ -1740,7 +1731,6 @@ GEM
       timeout
     net-smtp (0.3.3)
       net-protocol
-    newrelic_rpm (6.5.0.357)
     nio4r (2.5.9)
     no_proxy_fix (0.1.2)
     nokogiri (1.15.6)
@@ -1809,17 +1799,15 @@ GEM
       opentelemetry-api (~> 1.0)
       opentelemetry-common (~> 0.19.3)
       opentelemetry-instrumentation-base (~> 0.21.0)
-    opentelemetry-instrumentation-rack (0.22.1)
+    opentelemetry-instrumentation-pg (0.23.0)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-instrumentation-base (~> 0.21.0)
+    opentelemetry-instrumentation-rake (0.1.1)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-instrumentation-base (~> 0.21.0)
+    opentelemetry-instrumentation-redis (0.24.1)
       opentelemetry-api (~> 1.0)
       opentelemetry-common (~> 0.19.3)
-      opentelemetry-instrumentation-base (~> 0.21.0)
-    opentelemetry-instrumentation-rails (0.25.0)
-      opentelemetry-api (~> 1.0)
-      opentelemetry-instrumentation-action_pack (~> 0.5.0)
-      opentelemetry-instrumentation-action_view (~> 0.4.0)
-      opentelemetry-instrumentation-active_job (~> 0.4.0)
-      opentelemetry-instrumentation-active_record (~> 0.5.0)
-      opentelemetry-instrumentation-active_support (~> 0.3.0)
       opentelemetry-instrumentation-base (~> 0.21.0)
     opentelemetry-registry (0.2.0)
       opentelemetry-api (~> 1.1)
@@ -2042,7 +2030,12 @@ GEM
       thor
     shoulda-matchers (5.3.0)
       activesupport (>= 5.2.0)
+    simplecov (0.15.1)
+      docile (~> 1.1.0)
+      json (>= 1.8, < 3)
+      simplecov-html (~> 0.10.0)
     simplecov-html (0.10.2)
+    simplecov-lcov (0.8.0)
     single_cov (1.3.2)
     sixarm_ruby_unaccent (1.2.0)
     socksify (1.7.1)
@@ -2124,7 +2117,7 @@ GEM
     ziptz (2.1.6)
 
 PLATFORMS
-  ruby
+  x86_64-darwin-22
 
 DEPENDENCIES
   aasm (= 4.11.0)
@@ -2172,7 +2165,6 @@ DEPENDENCIES
   logstasher
   meta_request
   moment_timezone-rails
-  newrelic_rpm
   nokogiri (>= 1.11.0.rc4)
   opentelemetry-exporter-otlp
   opentelemetry-instrumentation-action_pack
@@ -2186,8 +2178,11 @@ DEPENDENCIES
   opentelemetry-instrumentation-http
   opentelemetry-instrumentation-http_client
   opentelemetry-instrumentation-net_http
+  opentelemetry-instrumentation-pg
   opentelemetry-instrumentation-rack
   opentelemetry-instrumentation-rails
+  opentelemetry-instrumentation-rake
+  opentelemetry-instrumentation-redis
   opentelemetry-sdk
   paper_trail (~> 12.0)
   parallel
@@ -2195,7 +2190,7 @@ DEPENDENCIES
   pdf-forms
   pdfjs_viewer-rails!
   pdfkit
-  pg
+  pg (~> 1.1.4)
   pluck_to_hash
   pry (~> 0.13.0)
   pry-byebug (~> 3.9)
@@ -2231,7 +2226,8 @@ DEPENDENCIES
   sentry-raven
   shoryuken (= 3.1.11)
   shoulda-matchers
-  simplecov!
+  simplecov
+  simplecov-lcov
   single_cov
   sniffybara!
   solargraph

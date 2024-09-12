@@ -31,30 +31,27 @@ gem "icalendar"
 gem "kaminari"
 gem "logstasher"
 gem "moment_timezone-rails"
-gem "newrelic_rpm"
 gem "nokogiri", ">= 1.11.0.rc4"
 
-# gem "opentelemetry-exporter-otlp"
-# gem "opentelemetry-instrumentation-all"
-# gem "opentelemetry-sdk"
-
-gem "opentelemetry-sdk", require: false
 gem "opentelemetry-exporter-otlp", require: false
-gem "opentelemetry-instrumentation-rack", require: false
-gem "opentelemetry-instrumentation-rails", require: false
-gem "opentelemetry-instrumentation-active_job", require: false
+gem "opentelemetry-sdk", require: false
+
 gem "opentelemetry-instrumentation-action_pack", require: false
-gem "opentelemetry-instrumentation-active_record", require: false
 gem "opentelemetry-instrumentation-action_view", require: false
+gem "opentelemetry-instrumentation-active_job", require: false
 gem "opentelemetry-instrumentation-active_model_serializers", require: false
+gem "opentelemetry-instrumentation-active_record", require: false
 gem "opentelemetry-instrumentation-aws_sdk", require: false
 gem "opentelemetry-instrumentation-concurrent_ruby", require: false
 gem "opentelemetry-instrumentation-faraday", require: false
 gem "opentelemetry-instrumentation-http", require: false
 gem "opentelemetry-instrumentation-http_client", require: false
 gem "opentelemetry-instrumentation-net_http", require: false
-# gem "opentelemetry-instrumentation-pg", require: false
-# gem "opentelemetry-instrumentation-redis", require: false
+gem "opentelemetry-instrumentation-pg", require: false
+gem "opentelemetry-instrumentation-rack", require: false
+gem "opentelemetry-instrumentation-rails", require: false
+gem "opentelemetry-instrumentation-rake", require: false
+gem "opentelemetry-instrumentation-redis", require: false
 
 gem "paper_trail", "~> 12.0"
 # Used to speed up reporting
@@ -68,7 +65,7 @@ gem "pdfjs_viewer-rails", git: "https://github.com/senny/pdfjs_viewer-rails.git"
 # Used to build out PDF files on the backend
 # https://github.com/pdfkit/pdfkit
 gem "pdfkit"
-gem "pg", platforms: :ruby
+gem "pg", "~> 1.1.4", platforms: :ruby
 # Application server: Puma
 # Puma was chosen because it handles load of 40+ concurrent users better than Unicorn and Passenger
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
@@ -140,7 +137,8 @@ group :test, :development, :demo, :make_docs do
   gem "rubocop-performance"
   gem "rubocop-rails"
   gem "scss_lint", require: false
-  gem "simplecov", git: "https://github.com/colszowka/simplecov.git", require: false
+  gem "simplecov", require: false
+  gem "simplecov-lcov", require: false
   gem "single_cov"
   gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git"
   gem "sql_tracker"
