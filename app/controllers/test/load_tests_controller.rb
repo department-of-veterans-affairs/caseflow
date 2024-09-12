@@ -33,7 +33,7 @@ class Test::LoadTestsController < ApplicationController
 
   # Private: Using the data entered by the user for the target_type and target_id,
   # returns an appropriate target_id for the test
-  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Layout/LineLength, Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
   def data_for_testing
     case params[:target_type]
     when "Appeal"
@@ -61,7 +61,7 @@ class Test::LoadTestsController < ApplicationController
 
   # Private: If no target_id is provided, use the target_id of sample data instead
   def get_target_data_id(target_id, sample_data_id)
-    target_data_id = target_id.blank? ? sample_data_id : target_id
+    target_data_id = target_id.presence || sample_data_id
     target_data_id
   end
 
@@ -103,7 +103,7 @@ class Test::LoadTestsController < ApplicationController
     session["user"] = user.to_session_hash
     session[:regional_office] = user.selected_regional_office
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Layout/LineLength, Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
 
   # Private: Deletes  the load testing API key if it already exists to prevent conflicts
   def ensure_key_does_not_exist_already
