@@ -13,6 +13,11 @@ const detailStyles = css({
   }
 });
 
+/**
+ * Formats a YYYY-MM-DD to be MM/DD/YYYY instead
+ * @param {string} date - The date string to be formatted
+ * @returns the formatted date
+ */
 const formatDate = (date) => {
   if (!date) {
     return null;
@@ -24,6 +29,12 @@ const formatDate = (date) => {
   return arr.join('/');
 };
 
+/**
+ * Validates the return date by making sure its past the expected return date
+ * @param {string} returnDate - The actual return date string
+ * @param {string} expectedReturnDate - The expected return date string
+ * @returns a boolean determining if the return date is valid
+ */
 const validateReturnDate = (returnDate, expectedReturnDate) => {
   if (!returnDate || !expectedReturnDate) {
     return null;
