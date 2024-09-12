@@ -5,6 +5,7 @@ require "statsd-instrument"
 
 # see https://dropwizard.github.io/metrics/3.1.0/getting-started/ for abstractions on metric types
 class MetricsService
+
   # :reek:LongParameterList
   def self.increment_counter(metric_group:, metric_name:, app_name:, attrs: {})
     tags = get_tags(app_name, attrs)
