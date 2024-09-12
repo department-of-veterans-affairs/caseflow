@@ -75,7 +75,7 @@ export const HearingTypeConversionModal = ({
       await ApiUtil.patch(`/tasks/${task.taskId}`, { data });
 
       // Add the google analytics event
-      // window.analyticsEvent('Hearings', 'Convert hearing request type', hearingType);
+      window.analyticsEvent('Hearings', 'Convert hearing request type', hearingType);
 
       props.clearAppealDetails(task.externalAppealId);
       props.showSuccessMessage(getSuccessMsg());

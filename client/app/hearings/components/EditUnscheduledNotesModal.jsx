@@ -38,7 +38,7 @@ export const EditUnscheduledNotesModal = ({
 
       setLoading(true);
       // Add the google analytics event
-      // window.analyticsEvent('Hearings', 'Add/edit notes', 'Case Details');
+      window.analyticsEvent('Hearings', 'Add/edit notes', 'Case Details');
 
       await ApiUtil.patch(`/tasks/${task.taskId}`, { data }).then((resp) => {
         props.onReceiveAmaTasks(resp.body.tasks.data);
