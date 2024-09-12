@@ -70,7 +70,7 @@ class HearingRepository
           notes: attrs[:notes]
         )
       end
-      if ApplicationController.dependencies_faked?
+      if hearing.id > 100 && ApplicationController.dependencies_faked?
         Transcription.create!(
           hearing_id: hearing.id,
           task_number: "5001",
