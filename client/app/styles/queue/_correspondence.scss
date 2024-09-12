@@ -920,6 +920,10 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 }
 
 // Response Letters Card Starts Here
+.response-letter-button-styling {
+  margin-left: 1%;
+}
+
 .response-letter-table-borderless-no-background {
   width: 100%;
   margin-top: 0;
@@ -1323,6 +1327,15 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
     padding-left: 0;
     padding-right: 0;
   }
+}
+
+.details-page-letter-container {
+  float: left;
+  height: 540px;
+  width: 100%;
+  overflow: auto;
+  padding: 18px;
+  position: relative;
 }
 
 .pdf-wrapper {

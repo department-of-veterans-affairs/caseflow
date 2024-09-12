@@ -300,6 +300,10 @@ const CorrespondenceDetails = (props) => {
         <div className="correspondence-package-details">
           <CorrespondenceResponseLetters
             letters={props.correspondenceResponseLetters}
+            addLetterCheck={props.addLetterCheck}
+            isInboundOpsSuperuser={props.isInboundOpsSuperuser}
+            isInboundOpsSupervisor={props.isInboundOpsSupervisor}
+            isInboundOpsUser={props.isInboundOpsUser}
           />
         </div>
       </>
@@ -490,7 +494,12 @@ CorrespondenceDetails.propTypes = {
   enableTopPagination: PropTypes.bool,
   correspondence_appeal_ids: PropTypes.bool,
   tasksUnrelatedToAppealEmpty: PropTypes.bool,
-  correspondenceResponseLetters: PropTypes.array
+  correspondenceResponseLetters: PropTypes.array,
+  inboundOpsTeamUsers: PropTypes.array,
+  isInboundOpsSuperuser: PropTypes.bool,
+  isInboundOpsSupervisor: PropTypes.bool,
+  isInboundOpsUser: PropTypes.bool,
+  addLetterCheck: PropTypes.bool,
 };
 
 const mapStateToProps = (state) => ({
