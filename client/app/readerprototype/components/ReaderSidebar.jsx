@@ -25,7 +25,7 @@ import SideBarDocumentInformation from '../../reader/SideBarDocumentInformation'
 import IssueTags from './IssueTags';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAppealDetails, setOpenedAccordionSections } from '../../reader/PdfViewer/PdfViewerActions';
-import { appealSelector } from '../selectors';
+import { appealSelector, openedAccordionSectionsSelector } from '../selectors';
 
 const ReaderSidebar = ({
   doc,
@@ -42,6 +42,7 @@ const ReaderSidebar = ({
   }, []);
 
   const appeal = useSelector(appealSelector);
+  const openedAccordionSections = useSelector(openedAccordionSectionsSelector);
 
   return (
     <nav id="prototype-sidebar">
@@ -58,7 +59,10 @@ const ReaderSidebar = ({
       </div>
 
       <div className="cf-sidebar-accordion" id="cf-sidebar-accordion">
-        <Accordion style="outline" onChange={onAccordionOpenOrClose}>
+        <Accordion
+          style="outline"
+          onChange={onAccordionOpenOrClose}
+          activeKey={openedAccordionSections}>
           <AccordionSection title="Document information">
             <SideBarDocumentInformation
               appeal={appeal}
