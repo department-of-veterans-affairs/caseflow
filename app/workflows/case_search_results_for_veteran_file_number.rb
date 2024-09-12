@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 class CaseSearchResultsForVeteranFileNumber < ::CaseSearchResultsBase
-  validate :file_number_or_ssn_presence
-  validate :veterans_exist, if: :current_user_is_vso_employee?
-
   def initialize(file_number_or_ssn:, user:)
     super(user: user)
     # Ensure we have a string made of solely numeric characters
@@ -13,6 +10,32 @@ class CaseSearchResultsForVeteranFileNumber < ::CaseSearchResultsBase
   private
 
   attr_reader :file_number_or_ssn
+
+<<<<<<< HEAD
+  def appeals
+    if user.vso_employee?
+      vso_user_search_results
+    else
+      search_results
+    end
+  end
+
+  def vso_user_search_results
+    SearchQueryService::VsoUserSearchResults.new(user: user, search_results: search_results).call
+  end
+
+  def search_results
+    @search_results ||= SearchQueryService.new(file_number: file_number_or_ssn).search_by_veteran_file_number
+  end
+
+  def appeal_finder_appeals
+    AppealFinder.new(user: user).find_appeals_for_veterans(veterans_user_can_access)
+  end
+
+  def validation_hook
+    validate_file_number_or_ssn_presence
+    validate_veterans_exist if current_user_is_vso_employee?
+  end
 
   def file_number_or_ssn_presence
     return if file_number_or_ssn
