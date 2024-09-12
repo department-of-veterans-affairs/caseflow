@@ -19,6 +19,22 @@ class CorrespondenceIntakeProcessor
     do_upload_success_actions(parent_task, intake_params, correspondence, current_user)
   end
 
+  def update_intake(intake_params, current_user)
+    correspondence = Correspondence.find_by(uuid: intake_params[:correspondence_uuid])
+
+    fail "Correspondence not found" if correspondence.blank?
+
+    ActiveRecord::Base.transaction do
+      # Update correspondence-related information
+      update_correspondence_relations(intake_params, correspondence.id)
+    end
+
+    true
+  rescue StandardError => error
+    Rails.logger.error(error.full_message)
+    false
+  end
+
   private
 
   # :reek:LongParameterList
@@ -47,6 +63,18 @@ class CorrespondenceIntakeProcessor
         correspondence_id: correspondence_id,
         related_correspondence_id: Correspondence.find_by(uuid: uuid)&.id
       )
+    end
+  end
+
+  def update_correspondence_relations(intake_params, correspondence_id)
+    return unless intake_params[:related_correspondence_uuids].present?
+
+    intake_params[:related_correspondence_uuids].each do |uuid|
+      correspondence_relation = CorrespondenceRelation.find_or_initialize_by(
+        correspondence_id: correspondence_id,
+        related_correspondence_id: Correspondence.find_by(uuid: uuid)&.id
+      )
+      correspondence_relation.save!
     end
   end
 

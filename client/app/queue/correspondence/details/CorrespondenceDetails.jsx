@@ -50,7 +50,7 @@ const CorrespondenceDetails = (props) => {
     });
     setCheckboxStates(initialStates);
     setOriginalStates(initialStates);
-  }, [correspondence, relatedCorrespondenceIds]);
+  }, [priorMail, relatedCorrespondenceIds]);
 
   // Function to handle checkbox changes
   const handleCheckboxChange = (mailId) => {
@@ -68,16 +68,29 @@ const CorrespondenceDetails = (props) => {
     });
   };
 
-  // Function to handle saving changes
+  // Function to handle the "Save Changes" button click
   const handleSave = () => {
-    // Disable the button and log changed checkboxes
+  // Disable the button
     setIsButtonDisabled(true);
+
+    // Log the details of toggled checkboxes
     const toggledCheckboxes = Object.entries(checkboxStates).
+      // eslint-disable-next-line no-unused-vars
       filter(([_, isChecked]) => isChecked).
-      map(([mailId]) => mailId);
+      map(([mailId]) => {
+        const mail = priorMail.find((pMail) => pMail.id === parseInt(mailId, 10));
+
+        return {
+          id: mail.id,
+          dateOfReceipt: mail.vaDateOfReceipt,
+          notes: mail.notes,
+        };
+      });
 
     console.log('Toggled Checkboxes:', toggledCheckboxes);
-    // Placeholder for future save logic
+
+    // Reset checkboxes to the new initial state
+    setOriginalStates(checkboxStates);
   };
 
   priorMail.sort((first, second) => {
@@ -85,14 +98,17 @@ const CorrespondenceDetails = (props) => {
     const secondInRelated = relatedCorrespondenceIds.includes(second.id);
 
     if (firstInRelated && secondInRelated) {
+      // Sort by vaDateOfReceipt in descending order if both are in relatedCorrespondenceIds
       return new Date(second.vaDateOfReceipt) - new Date(first.vaDateOfReceipt);
     } else if (firstInRelated) {
+      // Ensure that items in relatedCorrespondenceIds come first
       return -1;
     } else if (secondInRelated) {
-      return -1;
+      return 1;
     }
 
-    return 1;
+    // If neither is in relatedCorrespondenceIds, maintain their original order
+    return priorMail.indexOf(first) - priorMail.indexOf(second);
   });
 
   const updatePageHandler = (idx) => {
@@ -360,7 +376,6 @@ const CorrespondenceDetails = (props) => {
               id={correspondenceRow.id.toString()}
               hideLabel
               defaultValue={relatedCorrespondenceIds.some((el) => el === correspondenceRow.id)}
-              // Changes to go here
               value={checkboxStates[correspondenceRow.id]}
               onChange={() => handleCheckboxChange(correspondenceRow.id)}
             />
