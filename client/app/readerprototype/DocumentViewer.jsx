@@ -23,7 +23,6 @@ const DocumentViewer = (props) => {
   const [showSearchBar, setShowSearchBar] = useState(false);
   const [showSideBar, setShowSideBar] = useState(true);
   const [zoomLevel, setZoomLevel] = useState(100);
-  const [disabled, setDisabled] = useState(true);
   const dispatch = useDispatch();
 
   const currentDocumentId = Number(props.match.params.docId);
@@ -108,7 +107,6 @@ const DocumentViewer = (props) => {
             rotateDeg={rotateDeg}
             setNumPages={setNumPages}
             zoomLevel={zoomLevel}
-            onLoad={setDisabled}
           />
         </div>
         <ReaderFooter
