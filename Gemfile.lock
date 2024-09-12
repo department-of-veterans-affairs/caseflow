@@ -1732,7 +1732,7 @@ GEM
       net-protocol
     nio4r (2.5.9)
     no_proxy_fix (0.1.2)
-    nokogiri (1.15.6-x86_64-darwin)
+    nokogiri (1.15.6)
       racc (~> 1.4)
     nori (2.6.0)
     notiffany (0.1.1)
