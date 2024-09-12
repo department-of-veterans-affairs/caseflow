@@ -64,7 +64,15 @@ export default function UserConfiguration(props) {
           />
           <br />
           <p>Organizations</p>
-          <OrganizationDropdown {...props} />
+          <div>
+            {all_organizations.map((organizationOption) => (
+              <OrganizationDropdown
+                key={organizationOption}
+                organizationOption={organizationOption}
+              />
+            ))}
+          </div>
+          {/* <OrganizationDropdown {...props} /> */}
           <br />
           <h2><strong>Functions</strong></h2>
           <div className="load-test-container">
@@ -92,6 +100,7 @@ export default function UserConfiguration(props) {
 }
 
 UserConfiguration.propTypes = {
+  all_organizations: PropTypes.array,
   featuresList: PropTypes.array,
   form_values: PropTypes.object,
   functions_available: PropTypes.array

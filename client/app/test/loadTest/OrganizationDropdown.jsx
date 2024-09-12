@@ -3,35 +3,38 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-import SearchableDropdown from '../../components/SearchableDropdown';
+// import SearchableDropdown from '../../components/SearchableDropdown';
+import Checkbox from '../../components/Checkbox';
 
 export default function OrganizationDropdown(props) {
-  const [orgSelection, setOrgSelection] = useState('');
+  const [isChecked, orgIsChecked] = useState(false);
 
-  const handleOrgSelection = ({ value }) => {
-    setOrgSelection(value);
+  let orgOption = props.orgOption;
+
+  const onChangeHandle = () => {
+    orgIsChecked(!isChecked);
   };
 
-  const organizations = props.form_values.all_organizations.sort().map((org) => ({
-    value: org,
-    label: org
-  }));
+  // const organizations = props.form_values.all_organizations.sort().map((org) => ({
+  //   value: org,
+  //   label: org
+  // }));
 
   return (
     <div>
-      <SearchableDropdown
-        name="Organizations dropdown"
-        hideLabel
-        onChange={handleOrgSelection}
-        options={organizations} searchable
-        filterOption={() => true}
-        value={orgSelection}
+      <Checkbox
+        name={orgOption}
+        label={orgOption}
+        onChange={() => {
+          onChangeHandle();
+        }}
+        value={isChecked}
       />
     </div>
   );
 }
 
 OrganizationDropdown.propTypes = {
-  all_organizations: PropTypes.array,
+  orgOption: PropTypes.string,
   form_values: PropTypes.object,
 };
