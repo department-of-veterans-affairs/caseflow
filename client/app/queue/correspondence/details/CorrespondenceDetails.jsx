@@ -36,6 +36,7 @@ const CorrespondenceDetails = (props) => {
   const endIndex = (currentPage * 15);
   const priorMail = correspondence.prior_mail;
   const relatedCorrespondenceIds = props.correspondence.relatedCorrespondenceIds;
+  const [selectedAppeals, setSelectedAppeals] = useState([])
 
   priorMail.sort((first, second) => {
     const firstInRelated = relatedCorrespondenceIds.includes(first.id);
@@ -111,6 +112,15 @@ const CorrespondenceDetails = (props) => {
   const viewDisplayText = () => {
     return viewAllCorrespondence ? 'Hide all correspondence' : 'View all correspondence';
   };
+
+  const appealCheckboxOnChange = (appealId, isChecked) => {
+    if (isChecked) {
+      setSelectedAppeals(appealId)
+    } else {
+      
+    }
+  };
+
 
   const allCorrespondencesList = () => {
     return viewAllCorrespondence && (
@@ -224,8 +234,8 @@ const CorrespondenceDetails = (props) => {
               paginate="true"
               showCheckboxes
               taskRelatedAppealIds={props.correspondence.correspondenceAppealIds}
-              disabled
               enableTopPagination
+              checkboxOnChange={appealCheckboxOnChange}
             />
           </AppSegment>
           {(props.correspondence.correspondenceAppeals.map((taskAdded) =>

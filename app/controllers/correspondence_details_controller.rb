@@ -77,6 +77,11 @@ class CorrespondenceDetailsController < CorrespondenceController
     end
   end
 
+  def save_correspondence_appeals
+    appeals = Appeal.find(params[:appeal_ids])
+    @correspondence.correspondence_appeals << appeals
+  end
+
   private
 
   def sort_response_letters(response_letters)
