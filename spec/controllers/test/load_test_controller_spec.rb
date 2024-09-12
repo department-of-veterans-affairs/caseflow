@@ -26,14 +26,16 @@ describe Test::LoadTestsController, :postgres, type: :controller do
 
       it "gets Appeal target information" do
         appeal_with_uuid.save!
-        get :target, params: { target_type: "Appeal" }
+        get :target, params: { target_type: "Appeal", target_id: "79166847-1e99-4921-a084-62963d0fc63e" }
         expect(response.status).to eq 200
         expect(JSON.parse(response.body)["data"]).to eq(appeal_with_uuid.uuid)
+        get :target, params: { target_type: "Appeal", target_id: "79166847-1e99-4921-a084-incorrectid" }
+        expect(response.status).to eq 404
       end
 
       it "gets LegacyAppeal target information" do
         legacy_appeal_with_vacols_id.save!
-        get :target, params: { target_type: "LegacyAppeal" }
+        get :target, params: { target_type: "LegacyAppeal", target_id: "123" }
         expect(response.status).to eq 200
         expect(JSON.parse(response.body)["data"]).to eq(legacy_appeal_with_vacols_id.vacols_id)
       end

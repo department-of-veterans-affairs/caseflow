@@ -37,31 +37,43 @@ class Test::LoadTestsController < ApplicationController
   def data_for_testing
     case params[:target_type]
     when "Appeal"
-      sample_data_id = Appeal.all.sample.uuid
+      target_data_type = Appeal
+      target_data_column = "uuid"
     when "LegacyAppeal"
-      sample_data_id = LegacyAppeal.all.sample.vacols_id
+      target_data_type = LegacyAppeal
+      target_data_column = "vacols_id"
     when "Hearing"
-      sample_data_id = Hearing.all.sample.uuid
+      target_data_type = Hearing
+      target_data_column = "uuid"
     when "HigherLevelReview"
-      sample_data_id = HigherLevelReview.all.sample.uuid
+      target_data_type = HigherLevelReview
+      target_data_column = "uuid"
     when "SupplementalClaim"
-      sample_data_id = SupplementalClaim.all.sample.uuid
+      target_data_type = SupplementalClaim
+      target_data_column = "uuid"
     when "Document"
-      sample_data_id = Document.all.sample.id
+      target_data_type = Document
+      target_data_column = "id"
     when "Metric"
-      sample_data_id = Metric.all.sample.uuid
+      target_data_type = Metric
+      target_data_column = "uuid"
     end
 
-    target_id = get_target_data_id(params[:target_id], sample_data_id)
-
-    fail ActiveRecord::RecordNotFound if target_id.nil?
+    target_id = get_target_data_id(params[:target_id], target_data_type, target_data_column)
 
     target_id
   end
 
   # Private: If no target_id is provided, use the target_id of sample data instead
-  def get_target_data_id(target_id, sample_data_id)
-    target_data_id = target_id.presence || sample_data_id
+  def get_target_data_id(target_id, target_data_type, target_data_column)
+    target_data_id = if target_id.presence
+                       target_data_type.find_by("#{target_data_column}": target_id).nil? ? nil : target_id
+                     else
+                       target_data_type.all.sample[target_data_column.to_sym]
+                     end
+
+    fail ActiveRecord::RecordNotFound if target_data_id.nil?
+
     target_data_id
   end
 
