@@ -109,11 +109,13 @@ class NonCompDispositions extends React.PureComponent {
       requestIssues: formatRequestIssuesWithDecisionIssues(
         this.props.task.appeal.activeOrDecidedRequestIssues, this.props.appeal.decisionIssues),
       decisionDate: '',
-      isFilledOut: false
+      isFilledOut: false,
+      errorMessage: ''
     };
   }
 
   handleDecisionDate = (value) => {
+    this.setState({ errorMessage: '' });
     this.setState({ decisionDate: value }, this.checkFormFilledOut);
   }
 
@@ -124,10 +126,27 @@ class NonCompDispositions extends React.PureComponent {
     this.props.handleSave(dispositionData);
   }
 
+  checkDecisionDate = () => {
+    const receiptDate = new Date(this.props.appeal.receiptDate);
+    const decisionDate = new Date(this.state.decisionDate);
+    const currentDate = new Date();
+
+    if (receiptDate > decisionDate || decisionDate > currentDate) {
+      return `Decision date must be between Form Reciept Date
+        (${receiptDate.toLocaleDateString('en-US')}) and current date (${currentDate.toLocaleDateString('en-US')}).`;
+    }
+
+    return '';
+  }
+
   checkFormFilledOut = () => {
     // check if all dispositions have values & date is set
     const allDispositionsSet = this.state.requestIssues.every(
       (requestIssue) => Boolean(requestIssue.decisionIssue.disposition));
+
+    this.setState({
+      errorMessage: this.checkDecisionDate()
+    });
 
     this.setState({ isFilledOut: allDispositionsSet && Boolean(this.state.decisionDate) });
   }
@@ -267,6 +286,8 @@ class NonCompDispositions extends React.PureComponent {
               value={decisionDate}
               onChange={this.handleDecisionDate}
               readOnly={disableIssueFields}
+              errorMessage={this.state.errorMessage}
+              noFutureDates
               type="date"
             />
           </InlineForm>
