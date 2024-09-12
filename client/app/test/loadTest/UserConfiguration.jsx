@@ -32,6 +32,7 @@ export default function UserConfiguration(props) {
 
   const functionsAvailable = props.form_values.functions_available;
   const featureToggles = props.featuresList;
+  const allOrganizations = props.form_values.all_organizations;
 
   featureToggles.sort();
 
@@ -64,15 +65,14 @@ export default function UserConfiguration(props) {
           />
           <br />
           <p>Organizations</p>
-          <div>
-            {all_organizations.map((organizationOption) => (
+          <div className="load-test-container">
+            {allOrganizations.map((organizationOption) => (
               <OrganizationDropdown
                 key={organizationOption}
                 organizationOption={organizationOption}
               />
             ))}
           </div>
-          {/* <OrganizationDropdown {...props} /> */}
           <br />
           <h2><strong>Functions</strong></h2>
           <div className="load-test-container">

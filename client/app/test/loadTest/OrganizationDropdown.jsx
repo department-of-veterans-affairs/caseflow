@@ -9,7 +9,7 @@ import Checkbox from '../../components/Checkbox';
 export default function OrganizationDropdown(props) {
   const [isChecked, orgIsChecked] = useState(false);
 
-  let orgOption = props.orgOption;
+  let orgOption = props.organizationOption;
 
   const onChangeHandle = () => {
     orgIsChecked(!isChecked);
@@ -21,7 +21,7 @@ export default function OrganizationDropdown(props) {
   // }));
 
   return (
-    <div>
+    <div className="load-test-container-checkbox">
       <Checkbox
         name={orgOption}
         label={orgOption}
@@ -35,6 +35,6 @@ export default function OrganizationDropdown(props) {
 }
 
 OrganizationDropdown.propTypes = {
-  orgOption: PropTypes.string,
+  organizationOption: PropTypes.string,
   form_values: PropTypes.object,
 };
