@@ -21,7 +21,7 @@ export const TimeModal = ({ onCancel, onConfirm, ro, title, hearingDayDate }) =>
     if (selectedOption) {
       const formattedValue = selectedOption.value.tz('America/New_York').format('HH:mm');
 
-      window.analyticsEvent('Hearings', 'Schedule Veteran – Choose a custom time', formattedValue);
+      // window.analyticsEvent('Hearings', 'Schedule Veteran – Choose a custom time', formattedValue);
       onConfirm(selectedOption.value);
     }
   };

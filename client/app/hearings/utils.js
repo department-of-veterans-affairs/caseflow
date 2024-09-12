@@ -930,16 +930,16 @@ export const selectHearingDayEvent = (cb) => (hearingDay) => {
     diff(date, 'days'));
 
   // Send the analytics event
-  window.analyticsEvent(
-    // Category
-    'Hearings',
-    // Action
-    'Available Hearing Days – Select',
-    // Label
-    '',
-    // Value
-    `${diff} days between selected hearing day and today`
-  );
+  // window.analyticsEvent(
+  //   // Category
+  //   'Hearings',
+  //   // Action
+  //   'Available Hearing Days – Select',
+  //   // Label
+  //   '',
+  //   // Value
+  //   `${diff} days between selected hearing day and today`
+  // );
 
   // Change the hearing day to the selected hearing day
   cb(hearingDay);

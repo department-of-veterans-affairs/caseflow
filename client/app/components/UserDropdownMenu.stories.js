@@ -4,7 +4,7 @@ import DropdownMenu from '@department-of-veterans-affairs/caseflow-frontend-tool
 const Template = (args) => <DropdownMenu {...args} />;
 
 // Mock analyticsEvent sent by window in DropdownMenu component
-window.analyticsEvent = (...args) => {};
+// window.analyticsEvent = (...args) => {};
 
 export const UserDropdownMenu = Template.bind({});
 UserDropdownMenu.parameters = {

@@ -31,13 +31,13 @@ export const getPrevDocId = (props) => _.get(getPrevDoc(props), 'id');
 export const getNextDocId = (props) => _.get(getNextDoc(props), 'id');
 
 export const openDownloadLink = (doc) => {
-  window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'download');
+  // window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'download');
   window.open(`${doc.content_url}?type=${doc.type}&download=true`);
 };
 
-export const handleClickDocumentTypeLink = () => {
-  window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'document-type-link');
-};
+// export const handleClickDocumentTypeLink = () => {
+//   window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'document-type-link');
+// };
 
 export const getRotationDeg = (rotateDeg) => {
   let updatedRotateDeg;

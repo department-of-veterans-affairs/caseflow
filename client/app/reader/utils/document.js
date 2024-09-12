@@ -85,7 +85,7 @@ export const documentRows = (ids, documents, annotations) => ids.reduce((acc, id
  */
 export const openDownloadLink = (contentUrl, type) => {
   // Update the windows analytics with the action
-  window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'download');
+  // window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'download');
 
   // Trigger the file download
   window.open(`${contentUrl}?type=${type}&download=true`);

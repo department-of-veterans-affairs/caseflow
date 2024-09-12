@@ -147,7 +147,7 @@ export const CaseDetailsView = (props) => {
     );
 
   useEffect(() => {
-    window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
+    // window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
 
     // Prevent error messages from being reset if a modal is being displayed. This allows
     // the modal to show error messages without them being cleared by the CaseDetailsView.

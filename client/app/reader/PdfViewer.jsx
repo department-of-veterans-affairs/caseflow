@@ -108,20 +108,20 @@ export class PdfViewer extends React.Component {
     }
 
     if (event.key === 'ArrowLeft') {
-      window.analyticsEvent(
-        CATEGORIES.VIEW_DOCUMENT_PAGE,
-        ACTION_NAMES.VIEW_PREVIOUS_DOCUMENT,
-        INTERACTION_TYPES.KEYBOARD_SHORTCUT
-      );
+      // window.analyticsEvent(
+      //   CATEGORIES.VIEW_DOCUMENT_PAGE,
+      //   ACTION_NAMES.VIEW_PREVIOUS_DOCUMENT,
+      //   INTERACTION_TYPES.KEYBOARD_SHORTCUT
+      // );
       this.props.showPdf(this.getPrevDocId())();
       this.props.stopPlacingAnnotation(INTERACTION_TYPES.KEYBOARD_SHORTCUT);
     }
     if (event.key === 'ArrowRight') {
-      window.analyticsEvent(
-        CATEGORIES.VIEW_DOCUMENT_PAGE,
-        ACTION_NAMES.VIEW_NEXT_DOCUMENT,
-        INTERACTION_TYPES.KEYBOARD_SHORTCUT
-      );
+      // window.analyticsEvent(
+      //   CATEGORIES.VIEW_DOCUMENT_PAGE,
+      //   ACTION_NAMES.VIEW_NEXT_DOCUMENT,
+      //   INTERACTION_TYPES.KEYBOARD_SHORTCUT
+      // );
       this.props.showPdf(this.getNextDocId())();
       this.props.stopPlacingAnnotation(INTERACTION_TYPES.KEYBOARD_SHORTCUT);
     }

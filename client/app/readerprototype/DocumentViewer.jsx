@@ -48,7 +48,7 @@ const DocumentViewer = (props) => {
       }
 
       if (event.altKey && event.code === 'Backspace') {
-        window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'back-to-claims-folder');
+        // window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'back-to-claims-folder');
         dispatch(stopPlacingAnnotation('from-back-to-documents'));
         props.history.push(props.documentPathBase);
       }
