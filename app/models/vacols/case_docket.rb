@@ -727,7 +727,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
         reject_due_to_affinity?(appeal, cavc_affinity_lever_value)
       elsif cavc_affinity_lever_value == Constants.ACD_LEVERS.infinite
-        next if ineligible_judges_sattyids&.include?(appeal["vlj"])
+        next if hearing_judge_ineligible_with_no_hearings_after_decision(appeal)
 
         appeal["prev_deciding_judge"] != judge_sattyid
       elsif cavc_affinity_lever_value == Constants.ACD_LEVERS.omit
@@ -759,7 +759,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
         reject_due_to_affinity?(appeal, cavc_aod_affinity_lever_value)
       elsif cavc_aod_affinity_lever_value == Constants.ACD_LEVERS.infinite
-        next if ineligible_judges_sattyids&.include?(appeal["vlj"])
+        next if hearing_judge_ineligible_with_no_hearings_after_decision(appeal)
 
         appeal["prev_deciding_judge"] != judge_sattyid
       elsif cavc_aod_affinity_lever_value == Constants.ACD_LEVERS.omit
@@ -810,6 +810,10 @@ class VACOLS::CaseDocket < VACOLS::Record
     appeal_affinity = VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity
     appeal_affinity&.affinity_start_date.nil? ||
       (appeal_affinity.affinity_start_date > lever.to_i.days.ago)
+  end
+
+  def self.hearing_judge_ineligible_with_no_hearings_after_decision(appeal)
+    ineligible_judges_sattyids&.include?(appeal["vlj"]) && !appeal_has_hearing_after_previous_decision?(appeal)
   end
 
   def self.ineligible_judges_sattyids
