@@ -9,7 +9,7 @@ class ApplicationController < ApplicationBaseController
   before_action :set_raven_user
   before_action :verify_authentication
   before_action :set_paper_trail_whodunnit
-  before_action :deny_vso_access, except: [:unauthorized, :feedback]
+  before_action :deny_vso_access, except: [:unauthorized, :feedback, :under_construction]
   before_action :set_no_cache_headers
 
   rescue_from StandardError do |e|
@@ -32,6 +32,15 @@ class ApplicationController < ApplicationBaseController
     else
       render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: :bad_request
     end
+  end
+
+  rescue_from BGS::SensitivityLevelCheckFailure do |e|
+    render json: {
+      status: e.message,
+      featureToggles: {
+        checkUserSensitivity: FeatureToggle.enabled?(:check_user_sensitivity)
+      }
+    }, status: :forbidden
   end
 
   private
@@ -196,7 +205,12 @@ class ApplicationController < ApplicationBaseController
   def manage_teams_menu_items
     current_user.administered_teams.map do |team|
       {
-        title: "#{team.name} team management",
+        title:
+          if team.type == InboundOpsTeam.singleton.type
+            "#{team.name} management"
+          else
+            "#{team.name} team management"
+          end,
         link: team.user_admin_path
       }
     end
@@ -273,7 +287,7 @@ class ApplicationController < ApplicationBaseController
   # https://stackoverflow.com/a/748646
   def no_cache
     # :nocov:
-    response.headers["Cache-Control"] = "no-cache, no-store"
+    response.headers["Cache-Control"] = "no-store"
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT" # waaaay in the past
     # :nocov:

@@ -6,6 +6,16 @@ class WorkQueue::AppealSearchSerializer
 
   set_type :appeal
 
+  RESTRICTED_STATUSES =
+    [
+      :distributed_to_judge,
+      :ready_for_signature,
+      :on_hold,
+      :misc,
+      :unknown,
+      :assigned_to_attorney
+    ].freeze
+
   attribute :contested_claim, &:contested_claim?
 
   attribute :mst, &:mst?
@@ -73,10 +83,11 @@ class WorkQueue::AppealSearchSerializer
   attribute :veteran_appellant_deceased, &:veteran_appellant_deceased?
 
   attribute :assigned_to_location do |object, params|
-    if object&.status&.status == :distributed_to_judge
-      if params[:user]&.judge? || params[:user]&.attorney? || User.list_hearing_coordinators.include?(params[:user])
+    if RESTRICTED_STATUSES.include?(object&.status&.status)
+      unless params[:user]&.vso_employee?
         object.assigned_to_location
       end
+    # if not in a restricted status, show assigned location to all users
     else
       object.assigned_to_location
     end
@@ -137,6 +148,16 @@ class WorkQueue::AppealSearchSerializer
 
   attribute :caseflow_veteran_id do |object|
     object.veteran ? object.veteran.id : nil
+  end
+
+  attribute :docket_switch do |object|
+    if object.docket_switch
+      WorkQueue::DocketSwitchSerializer.new(object.docket_switch).serializable_hash[:data][:attributes]
+    end
+  end
+
+  attribute :evidence_submission_task do |object|
+    object.tasks.find_by(type: "EvidenceSubmissionWindowTask", status: Constants.TASK_STATUSES.assigned)
   end
 
   attribute :readable_hearing_request_type, &:readable_current_hearing_request_type
