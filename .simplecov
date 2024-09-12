@@ -1,4 +1,4 @@
-# if ENV["RAILS_ENV"] == "test"
+if ENV["RAILS_ENV"] == "test"
   require "simplecov_lcov_formatter"
   formatters = [
   SimpleCov::Formatter::HTMLFormatter,
@@ -30,5 +30,5 @@
   if ENV["GHA_NODE_INDEX"]
     SimpleCov.command_name "RSpec" + ENV["GHA_NODE_INDEX"]
   end
-# end
+end
 
