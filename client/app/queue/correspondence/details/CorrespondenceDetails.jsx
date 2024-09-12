@@ -498,12 +498,13 @@ const CorrespondenceDetails = (props) => {
     }
   };
 
-  const getTabIndex = (value) => {
+  const tabChange = (value) => {
     setCurrentTabIndex(value);
-
-    // Resetting the selected Prior Mail to 0
     setDisableSubmitButton(true);
-    setSelectedPriorMail([]);
+
+    if (value === 3 && selectedPriorMail.length > 0) {
+      setDisableSubmitButton(false);
+    }
   };
 
   return (
@@ -536,7 +537,7 @@ const CorrespondenceDetails = (props) => {
         <TabWindow
           name="tasks-tabwindow"
           tabs={tabList}
-          onChange={((value) => getTabIndex(value))}
+          onChange={((value) => tabChange(value))}
         />
       </AppSegment>
       <div className="margin-top-for-add-task-view">
