@@ -1,0 +1,147 @@
+import React, { useEffect, useState } from 'react';
+import QueueOrganizationDropdown from '../../queue/components/QueueOrganizationDropdown';
+import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
+import { css } from 'glamor';
+import TabWindow from '../../components/TabWindow';
+import { tabConfig } from './TranscriptionFileDispatchTabs';
+import Alert from '../../components/Alert';
+import PackageFilesModal from './transcriptionProcessing/PackageFilesModal';
+import ApiUtil from '../../util/ApiUtil';
+import { getQueryParams, encodeQueryParams } from '../../util/QueryParamsUtil';
+import WorkOrderHightlightsModal from './transcriptionProcessing/WorkOrderHighlightsModal';
+const defaultAlert = {
+  title: '',
+  message: '',
+  type: '',
+};
+
+const styles = css({
+  '& .cf-dropdown': {
+    marginRight: 0
+  },
+  '& h1': {
+    display: 'inline-block',
+    marginBottom: 0
+  }
+});
+
+export const TranscriptionFileDispatchView = () => {
+  const [alert, setAlert] = useState(defaultAlert);
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [modalConfig, setModalConfig] = useState({ opened: false, type: '' });
+  const [contractors, setContractors] = useState({ transcription_contractors: [], return_dates: ['---', '---'] });
+
+  const tabFromUrl = () => {
+    const params = getQueryParams(window.location.search);
+    let page = 0;
+
+    if (params.tab === 'Assigned') {
+      page = 1;
+    } else if (params.tab === 'Completed') {
+      page = 2;
+    } else if (params.tab === 'All') {
+      page = 3;
+    }
+
+    return page;
+  };
+  const [currentTab] = useState(tabFromUrl());
+
+  /**
+   * Fetches available contractors
+   */
+  const getContractors = () => {
+    ApiUtil.get('/hearings/find_by_contractor/available_contractors').
+      // eslint-disable-next-line camelcase
+      then((response) => setContractors(response.body));
+  };
+
+  const selectFilesForPackage = (files) => {
+    setSelectedFiles(files.filter((file) => file.status === 'selected'));
+    if (files.filter((file) => file.status === 'locked').length) {
+      setAlert({
+        title: 'Another user is in the assignment queue.',
+        message: 'Some files may not be available for assignment.',
+        type: 'warning'
+      });
+    } else {
+      setAlert(defaultAlert);
+    }
+  };
+
+  // Opens the modal
+  const openModal = (config) => {
+    setModalConfig({ opened: true, ...config });
+  };
+
+  // Closes the modal
+  const closeModal = () => {
+    setModalConfig({ opened: false, type: '' });
+  };
+
+  /**
+   * @param {object} config - object to describe what type of modal to render
+   * @returns the modal
+   */
+  const renderModal = (config) => {
+    switch (config.type) {
+    case 'package':
+      return (
+        <PackageFilesModal
+          onCancel={closeModal}
+          contractors={contractors.transcription_contractors}
+          returnDates={contractors.return_dates}
+          selectedFiles={selectedFiles}
+        />
+      );
+    case 'highlights':
+      return (
+        <WorkOrderHightlightsModal
+          onCancel={closeModal}
+          workOrder={config.workOrder}
+        />
+      );
+    default: return <></>;
+    }
+  };
+
+  const onTabChange = () => {
+    // reset pagenation and filtering settings when tab changes
+    const base = `${window.location.origin}${window.location.pathname}`;
+    const params = getQueryParams(window.location.search);
+    const qs = encodeQueryParams({ tab: params.tab, page: 1 });
+
+    history.pushState('', '', `${base}${qs}`);
+  };
+
+  useEffect(() => {
+    getContractors();
+  }, []);
+
+  return (
+    <>
+      {alert.title && (
+        <Alert
+          title={alert.title}
+          message={alert.message}
+          type={alert.type}
+        />
+      )}
+
+      <AppSegment filledBackground>
+        <div {...styles}>
+          <h1>Transcription file dispatch</h1>
+          <QueueOrganizationDropdown organizations={[{ name: 'Transcription', url: 'transcription-team' }]} />
+        </div>
+        <TabWindow
+          name="transcription-tabwindow"
+          defaultPage={currentTab}
+          fullPage={false}
+          onChange={onTabChange}
+          tabs={tabConfig(openModal, selectFilesForPackage, selectedFiles.length)}
+        />
+        { modalConfig.opened && renderModal(modalConfig)}
+      </AppSegment>
+    </>
+  );
+};

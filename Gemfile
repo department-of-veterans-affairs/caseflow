@@ -16,6 +16,7 @@ gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git"
 # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
 gem "bootsnap", require: false
 gem "browser"
+gem "bundler", "~> 2.4.22"
 gem "business_time", "~> 0.9.3"
 gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "716b58caf2116da5fca21c3b3aeea6c9712f3b9d"
 gem "connect_mpi", git: "https://github.com/department-of-veterans-affairs/connect-mpi.git", ref: "a3a58c64f85b980a8b5ea6347430dd73a99ea74c"
@@ -25,11 +26,14 @@ gem "countries"
 gem "ddtrace"
 gem "dogstatsd-ruby"
 gem "dry-schema", "~> 1.4"
+gem "faraday"
+gem "faraday-multipart"
 gem "fast_jsonapi"
 gem "fuzzy_match"
 gem "govdelivery-tms", require: "govdelivery/tms/mail/delivery_method"
 gem "holidays", "~> 6.4"
 gem "icalendar"
+gem "jwt"
 gem "kaminari"
 gem "logstasher"
 gem "moment_timezone-rails"
@@ -59,6 +63,7 @@ gem "rack", "~> 2.2.6.2"
 gem "rails", "6.0.6.1"
 # Used to colorize output for rake tasks
 gem "rainbow"
+gem "rcredstash", "~> 1.1.0"
 # React
 gem "react_on_rails", "11.3.0"
 gem "redis-mutex"
@@ -68,12 +73,14 @@ gem "request_store"
 gem "roo", "~> 2.7"
 gem "rswag-api"
 gem "rswag-ui"
+gem "rtf"
 gem "ruby_claim_evidence_api", git: "https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git", ref: "fed623802afe7303f4b8b5fe27cff0e903699873"
 # Use SCSS for stylesheets
 gem "sass-rails", "~> 5.0"
 # Error reporting to Sentry
 gem "sentry-raven"
 gem "shoryuken", "3.1.11"
+gem "spreadsheet", "~> 1.3"
 gem "statsd-instrument"
 gem "stringex", require: false
 # catch problematic migrations at development/test time
@@ -84,6 +91,8 @@ gem "tzinfo", "1.2.10"
 # Use Uglifier as compressor for JavaScript assets
 gem "uglifier", ">= 1.3.0"
 gem "validates_email_format_of"
+gem "webvtt-ruby"
+
 gem "ziptz"
 
 group :production, :staging, :ssh_forwarding, :development, :test do
@@ -114,8 +123,8 @@ group :test, :development, :demo do
   gem "rails-erd"
   gem "rb-readline"
   gem "rspec"
-  gem "rspec-rails"
   # For CircleCI test metadata analysis
+  gem "rspec-rails"
   gem "rspec_junit_formatter"
   gem "rswag-specs"
   gem "rubocop", "= 0.83", require: false
