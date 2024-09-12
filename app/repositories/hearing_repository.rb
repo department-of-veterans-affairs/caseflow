@@ -48,7 +48,7 @@ class HearingRepository
       scheduled_timezone = HearingDatetimeService.timezone_from_time_string(attrs[:scheduled_time_string])
 
       if attrs[:appeal].is_a?(LegacyAppeal)
-        vacols_hearing = create_vacols_hearing(
+        hearing = vacols_hearing = create_vacols_hearing(
           hearing_day: hearing_day,
           appeal: attrs[:appeal],
           scheduled_for: scheduled_for,
@@ -59,7 +59,7 @@ class HearingRepository
         AppealRepository.update_location!(attrs[:appeal], LegacyAppeal::LOCATION_CODES[:caseflow])
         vacols_hearing
       else
-        Hearing.create!(
+        hearing = Hearing.create!(
           appeal: attrs[:appeal],
           hearing_day_id: hearing_day.id,
           hearing_location_attributes: attrs[:hearing_location_attrs] || {},
@@ -70,6 +70,18 @@ class HearingRepository
           notes: attrs[:notes]
         )
       end
+      if ApplicationController.dependencies_faked?
+        Transcription.create!(
+          hearing_id: hearing.id,
+          task_number: "5001",
+          transcriber: "Real Contractor",
+          sent_to_transcriber_date: Time.zone.today,
+          expected_return_date: Time.zone.tomorrow,
+          uploaded_to_vbms_date: Time.zone.today,
+          return_date: Time.zone.tomorrow
+        )
+      end
+      hearing
     end
     # rubocop:enable Metrics/MethodLength
 
