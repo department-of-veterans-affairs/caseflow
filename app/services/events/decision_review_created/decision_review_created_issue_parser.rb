@@ -8,6 +8,10 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser
     @issue = issue
   end
 
+  def ri_reference_id
+    @issue.dig(:decision_review_issue_id)
+  end
+
   def ri_benefit_type
     @issue.dig(:benefit_type)
   end

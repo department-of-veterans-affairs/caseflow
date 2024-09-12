@@ -26,6 +26,7 @@ class Events::DecisionReviewCreated::CreateRequestIssues
         # create backfill RI object using extracted values
         parser_issues = Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser.new(issue)
         ri = RequestIssue.create!(
+          reference_id: parser_issues.ri_reference_id,
           benefit_type: parser_issues.ri_benefit_type,
           contested_issue_description: parser_issues.ri_contested_issue_description,
           contention_reference_id: parser_issues.ri_contention_reference_id,
