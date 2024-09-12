@@ -2133,7 +2133,7 @@ GEM
     ziptz (2.1.6)
 
 PLATFORMS
-  x86_64-darwin-22
+  ruby
 
 DEPENDENCIES
   aasm (= 4.11.0)
