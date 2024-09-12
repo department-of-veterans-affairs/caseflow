@@ -37,11 +37,7 @@ class SeedDB
     RequestStore[:current_user] = User.system_user
     call_and_log_seed_step :clean_db
 
-<<<<<<< HEAD
-    call_and_log_seed_step Seeds::ConsumerApiKey
-=======
     call_and_log_seed_step Seeds::ApiKeys
->>>>>>> master
     call_and_log_seed_step Seeds::Annotations
     call_and_log_seed_step Seeds::Tags
     # These must be ran before others
