@@ -41,8 +41,8 @@ const WorkOrderHightlightsModal = ({ onCancel, workOrder }) => {
     return items.map((item, index) =>
       <tr key={index}>
         <td>{index + 1}.</td>
-        <td><DocketTypeBadge name={item.hearing_type} number={index} />{item.docket_number}</td>
-        <td><a href={`/queue/appeals/${item.appeal_id}`}>{item.case_details}</a></td>
+        <td><DocketTypeBadge name={item.hearingType} number={index} />{item.docketNumber}</td>
+        <td><a href={`/queue/appeals/${item.appealId}`}>{item.caseDetails}</a></td>
       </tr>
     );
   };

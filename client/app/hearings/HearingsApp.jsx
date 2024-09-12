@@ -1,4 +1,4 @@
-import { BrowserRouter, Switch } from 'react-router-dom';
+import { BrowserRouter, Switch, useLocation } from 'react-router-dom';
 import { detect } from 'detect-browser';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import PropTypes from 'prop-types';
@@ -26,6 +26,7 @@ import ScrollToTop from '../components/ScrollToTop';
 import UnsupportedBrowserBanner from '../components/UnsupportedBrowserBanner';
 import { TranscriptionFileDispatchView } from './components/TranscriptionFileDispatchView';
 import ConfirmWorkOrderModal from './components/transcriptionProcessing/ConfirmWorkOrderModal';
+import { WorkOrderDetails } from './components/WorkOrderDetails';
 
 export default class HearingsApp extends React.PureComponent {
   userPermissionProps = () => {
@@ -125,6 +126,13 @@ export default class HearingsApp extends React.PureComponent {
   routeForTranscriptionFileDispatch = () =>
     <TranscriptionFileDispatchView />
 
+  routeForWorkOrderSummary =() => {
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const taskNumber = queryParams.get('taskNumber');
+
+    return <WorkOrderDetails taskNumber={taskNumber} />;
+  }
   routeForTranscriptionSettings = ({ match: history }) => (
     <HearingsUserContext.Provider value={this.userPermissionProps()}>
       <TranscriptionSettingsContainer history={history} />
@@ -240,6 +248,12 @@ export default class HearingsApp extends React.PureComponent {
               path="/find_by_contractor"
               title="Transcription Settings"
               component={this.routeForTranscriptionSettings}
+            />
+            <PageRoute
+              exact
+              path="/transcription_work_order/display_wo_summary"
+              title="Transcription work order"
+              component={this.routeForWorkOrderSummary}
             />
             <PageRoute
               exact
