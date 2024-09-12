@@ -67,7 +67,7 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git
-  revision: 793fb5e7b39d0d8fa4d25f006d8229ce68149f64
+  revision: 34bc7bff0abea570abd7a7c1ae401c1d528a8d91
   branch: feature/APPEALS-43121-efolder
   specs:
     ruby_claim_evidence_api (0.1.0)
@@ -1717,7 +1717,7 @@ GEM
     mime-types-data (3.2019.1009)
     mini_mime (1.1.2)
     mini_portile2 (2.8.7)
-    minitest (5.25.0)
+    minitest (5.25.1)
     moment_timezone-rails (0.5.0)
     momentjs-rails (2.29.4.1)
       railties (>= 3.1)
@@ -1859,7 +1859,7 @@ GEM
       rack (>= 1.4)
     reverse_markdown (1.4.0)
       nokogiri
-    rexml (3.2.6)
+    rexml (3.3.7)
     roo (2.8.2)
       nokogiri (~> 1)
       rubyzip (>= 1.2.1, < 2.0.0)
@@ -2041,7 +2041,7 @@ GEM
       nokogiri (~> 1.8)
     yard (0.9.27)
       webrick (~> 1.7.0)
-    zeitwerk (2.6.17)
+    zeitwerk (2.6.18)
     ziptz (2.1.6)
 
 PLATFORMS
