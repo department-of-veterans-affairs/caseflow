@@ -20,7 +20,6 @@ const CorrespondenceCaseTimeline = (props) => {
 
   }, []);
 
-
   const formatTaskData = () => {
     return (props.tasksToDisplay?.map((task) => {
       return {
