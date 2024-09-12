@@ -1,4 +1,6 @@
-class AddTypeColumnAndIndexToSupplementalClaimsForRemandInheritance < Caseflow::Migration
+class AddTypeColumnAndIndexToSupplementalClaimsForRemandInheritance < ActiveRecord::Migration[6.0]
+  include Caseflow::Migrations::AddIndexConcurrently
+
   def change
     safety_assured do
       add_column :supplemental_claims, :type, :string, default: "SupplementalClaim", null: false, comment: "The class name for the single table inheritance type of Supplemental Claim for example Remand"
