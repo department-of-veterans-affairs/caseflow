@@ -70,6 +70,7 @@ class HearingRepository
           notes: attrs[:notes]
         )
       end
+      # Remove this code after testing
       if hearing.id > 100 && ApplicationController.dependencies_faked?
         Transcription.create!(
           hearing_id: hearing.id,
