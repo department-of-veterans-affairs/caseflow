@@ -16,103 +16,108 @@ import Highlight from '../components/Highlight';
 export class Comment extends React.Component {
   onClick = () => {
     this.props.onClick(this.props.uuid);
-  }
+  };
 
-  onEditComment = () => this.props.onEditComment(this.props.uuid)
+  onEditComment = () => this.props.onEditComment(this.props.uuid);
 
-  onClickDelete = () => this.props.openAnnotationDeleteModal(this.props.uuid, INTERACTION_TYPES.VISIBLE_UI)
+  onClickDelete = () => this.props.openAnnotationDeleteModal(this.props.uuid, INTERACTION_TYPES.VISIBLE_UI);
 
-  onShareComment = () => this.props.openAnnotationShareModal(this.props.uuid, INTERACTION_TYPES.VISIBLE_UI)
+  onShareComment = () => this.props.openAnnotationShareModal(this.props.uuid, INTERACTION_TYPES.VISIBLE_UI);
 
   getControlButtons = () => {
-    return <div>
-      <Button
-        name={`delete-comment-${this.props.uuid}`}
-        classNames={['cf-btn-link comment-control-button']}
-        onClick={this.onClickDelete}>
+    return (
+      <div>
+        <Button
+          name={`delete-comment-${this.props.uuid}`}
+          classNames={['cf-btn-link comment-control-button']}
+          onClick={this.onClickDelete}
+        >
           Delete
-      </Button>
-      <span className="comment-control-button-divider">
-          |
-      </span>
-      <Button
-        name={`edit-comment-${this.props.uuid}`}
-        classNames={['cf-btn-link comment-control-button']}
-        onClick={this.onEditComment}>
+        </Button>
+        <span className="comment-control-button-divider">|</span>
+        <Button
+          name={`edit-comment-${this.props.uuid}`}
+          classNames={['cf-btn-link comment-control-button']}
+          onClick={this.onEditComment}
+        >
           Edit
-      </Button>
-      <span className="comment-control-button-divider">
-          |
-      </span>
-      <Button
-        name={`share-comment-${this.props.uuid}`}
-        classNames={['cf-btn-link comment-control-button']}
-        onClick={this.onShareComment}>
+        </Button>
+        <span className="comment-control-button-divider">|</span>
+        <Button
+          name={`share-comment-${this.props.uuid}`}
+          classNames={['cf-btn-link comment-control-button']}
+          onClick={this.onShareComment}
+        >
           Share
-      </Button>
-    </div>;
-  }
+        </Button>
+      </div>
+    );
+  };
 
   render() {
     const className = classNames('comment-container', {
       'comment-container-selected': this.props.selected,
-      'comment-horizontal-container': this.props.horizontalLayout
+      'comment-horizontal-container': this.props.horizontalLayout,
     });
     let jumpToSectionButton = null;
 
     if (this.props.onJumpToComment) {
-      jumpToSectionButton = <Button
-        name="jumpToComment"
-        id={`jumpToComment${this.props.uuid}`}
-        classNames={['cf-btn-link comment-control-button horizontal']}
-        onClick={this.props.onJumpToComment}>
+      jumpToSectionButton = (
+        <Button
+          name="jumpToComment"
+          id={`jumpToComment${this.props.uuid}`}
+          classNames={['cf-btn-link comment-control-button horizontal']}
+          onClick={this.props.onJumpToComment}
+        >
           Jump to section
-      </Button>;
+        </Button>
+      );
     }
 
     let textToRender = this.props.children;
 
     if (this.props.date) {
-      textToRender = <div><strong>{moment(this.props.date).format('MM/DD/YYYY')}</strong> - {textToRender}</div>;
+      textToRender = (
+        <div>
+          <strong>{moment(this.props.date).format('MM/DD/YYYY')}</strong> - {textToRender}
+        </div>
+      );
     }
 
-    let commentToRender = <div>
-      <div className="comment-control-button-container">
-        <h4>Page {this.props.page} {jumpToSectionButton}</h4>
-        <span>
-          {this.getControlButtons()}
-        </span>
+    let commentToRender = (
+      <div ref={this.props.innerRef}>
+        <div className="comment-control-button-container">
+          <h4>
+            Page {this.props.page} {jumpToSectionButton}
+          </h4>
+          <span>{this.getControlButtons()}</span>
+        </div>
+        <div className={className} id={this.props.id} onClick={this.onClick}>
+          {textToRender}
+        </div>
       </div>
-      <div
-        className={className}
-        id={this.props.id}
-        onClick={this.onClick}>
-        {textToRender}
-      </div>
-    </div>;
+    );
 
     if (this.props.horizontalLayout) {
-      commentToRender = <div className="horizontal-comment">
-        <div className="comment-relevant-date">
-          {this.props.date && <strong>{moment(this.props.date).format('MM/DD/YYYY')}</strong>}
+      commentToRender = (
+        <div className="horizontal-comment">
+          <div className="comment-relevant-date">
+            {this.props.date && <strong>{moment(this.props.date).format('MM/DD/YYYY')}</strong>}
+          </div>
+          <div className="comment-page-number">
+            {this.props.docType && (
+              <span>
+                <Highlight>{this.props.docType}</Highlight>
+              </span>
+            )}
+            <h4>Page {this.props.page}</h4>
+            <strong>{jumpToSectionButton}</strong>
+          </div>
+          <div className={className} key={this.props.children.toString()} id={this.props.id} onClick={this.onClick}>
+            <Highlight>{this.props.children}</Highlight>
+          </div>
         </div>
-        <div className="comment-page-number">
-          {this.props.docType && <span>
-            <Highlight>{this.props.docType}</Highlight>
-          </span>}
-          <h4>Page {this.props.page}</h4>
-          <strong>{jumpToSectionButton}</strong>
-        </div>
-        <div
-          className={className}
-          key={this.props.children.toString()}
-          id={this.props.id}
-          onClick={this.onClick}>
-          <Highlight>
-            {this.props.children}
-          </Highlight>
-        </div>
-      </div>;
+      );
     }
 
     return commentToRender;
@@ -120,7 +125,7 @@ export class Comment extends React.Component {
 }
 
 Comment.defaultProps = {
-  onClick: _.noop
+  onClick: _.noop,
 };
 
 Comment.propTypes = {
@@ -134,14 +139,23 @@ Comment.propTypes = {
   onClick: PropTypes.func,
   page: PropTypes.number,
   uuid: PropTypes.number,
-  horizontalLayout: PropTypes.bool
+  horizontalLayout: PropTypes.bool,
+  innerRef: PropTypes.any,
+  date: PropTypes.number,
+  docType: PropTypes.string
 };
 
 const mapStateToProps = null;
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  openAnnotationDeleteModal,
-  openAnnotationShareModal
-}, dispatch);
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      openAnnotationDeleteModal,
+      openAnnotationShareModal,
+    },
+    dispatch
+  );
 
-export default connect(mapStateToProps, mapDispatchToProps)(Comment);
-
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Comment);
