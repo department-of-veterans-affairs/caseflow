@@ -38,6 +38,7 @@ const CorrespondenceDetails = (props) => {
   const [disableSubmitButton, setDisableSubmitButton] = useState(true);
   const [showSuccessBanner, setShowSuccessBanner] = useState(false);
   const [selectedPriorMail, setSelectedPriorMail] = useState([]);
+  const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const totalPages = Math.ceil(allCorrespondences.length / 15);
   const startIndex = (currentPage * 15) - 15;
   const endIndex = (currentPage * 15);
@@ -93,9 +94,8 @@ const CorrespondenceDetails = (props) => {
           const year = date.getFullYear();
           const month = String(date.getMonth() + 1).padStart(2, '0');
           const day = String(date.getDate()).padStart(2, '0');
-          const formattedDate = `${month}/${day}/${year}`;
 
-          return formattedDate;
+          return `${month}/${day}/${year}`;
         }
       },
       {
@@ -313,15 +313,16 @@ const CorrespondenceDetails = (props) => {
     );
   };
 
-  const onChangeCheckbox = (corr, isChecked) => {
-    props.savePriorMailCheckboxState(corr, isChecked);
-    let selectedCheckboxes = [...props.priorMailCheckboxes];
+  const onPriorMailCheckboxChange = (corr, isChecked) => {
+    // props.savePriorMailCheckboxState(corr, isChecked);
+    let selectedCheckboxes = [...selectedPriorMail];
 
     if (isChecked) {
       selectedCheckboxes.push(corr);
     } else {
       selectedCheckboxes = selectedCheckboxes.filter((checkbox) => checkbox.id !== corr.id);
     }
+    setSelectedPriorMail(selectedCheckboxes);
     const isAnyCheckboxSelected = selectedCheckboxes.length > 0;
 
     setDisableSubmitButton(!isAnyCheckboxSelected);
@@ -338,7 +339,8 @@ const CorrespondenceDetails = (props) => {
               id={correspondenceRow.id.toString()}
               hideLabel
               defaultValue={relatedCorrespondenceIds.some((el) => el === correspondenceRow.id)}
-              onChange={(checked) => onChangeCheckbox(correspondenceRow, checked)}
+              value={selectedPriorMail.some((el) => el.id === correspondenceRow.id)}
+              onChange={(checked) => onPriorMailCheckboxChange(correspondenceRow, checked)}
             />
           </div>
         )
@@ -475,7 +477,22 @@ const CorrespondenceDetails = (props) => {
   ];
 
   const saveChanges = () => {
-    setShowSuccessBanner(true);
+    if (currentTabIndex === 3) {
+      setShowSuccessBanner(true);
+      setSelectedPriorMail([]);
+      setDisableSubmitButton(true);
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const getTabIndex = (value) => {
+    setCurrentTabIndex(value);
+
+    // Resetting the selected Prior Mail to 0
+    setDisableSubmitButton(true);
     setSelectedPriorMail([]);
   };
 
@@ -509,6 +526,7 @@ const CorrespondenceDetails = (props) => {
         <TabWindow
           name="tasks-tabwindow"
           tabs={tabList}
+          onChange={((value) => getTabIndex(value))}
         />
       </AppSegment>
       <div className="margin-top-for-add-task-view">
