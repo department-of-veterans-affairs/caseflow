@@ -25,6 +25,11 @@ class Events::DecisionReviewCreated::CreateRequestIssues
       request_issues&.each do |issue|
         # create backfill RI object using extracted values
         parser_issues = Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser.new(issue)
+
+        if parser_issues.ri_reference_id.nil?
+          fail Caseflow::Error::DecisionReviewCreatedRequestIssuesError, "reference_id cannot be null"
+        end
+
         ri = RequestIssue.create!(
           reference_id: parser_issues.ri_reference_id,
           benefit_type: parser_issues.ri_benefit_type,
