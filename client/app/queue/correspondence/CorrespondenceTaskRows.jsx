@@ -140,7 +140,7 @@ class CorrespondenceTaskRows extends React.PureComponent {
   };
 
   taskInstructionsWithLineBreaks = (task) => {
-    if (!task.instructions || !task.instructions.length) {
+    if (!task.instructions || !task.instructions?.length) {
       return <br />;
     }
 
@@ -166,7 +166,7 @@ class CorrespondenceTaskRows extends React.PureComponent {
   };
 
   taskInstructionsListItem = (task) => {
-    if (!task.instructions || !task.instructions.length > 0) {
+    if (!task.instructions || !task.instructions?.length > 0) {
       return null;
     }
 
@@ -202,7 +202,7 @@ class CorrespondenceTaskRows extends React.PureComponent {
   };
 
   showActionsListItem = (task, correspondence) => {
-    if (task.availableActions.length <= 0) {
+    if (task.availableActions?.length === 0) {
       return null;
     }
 
@@ -261,8 +261,8 @@ class CorrespondenceTaskRows extends React.PureComponent {
         >
           {isCancelled(task) ? <CancelIcon /> : closedAtIcon(task, timeline)}
 
-          {((index < sortedTimelineEvents.length && timeline) ||
-            (index < this.state.activeTasks.length - 1 && !timeline)) && (
+          {((index < sortedTimelineEvents?.length && timeline) ||
+            (index < this.state.activeTasks?.length - 1 && !timeline)) && (
             <div
               {...grayLineStyling}
               className={[
@@ -284,7 +284,7 @@ class CorrespondenceTaskRows extends React.PureComponent {
         </td>
         {!timeline && (
           <td className="taskContainerStyling taskActionsContainerStyling">
-            {this.showActionsListItem(task, correspondence)}{' '}
+            {this.showActionsListItem(task, correspondence)}
           </td>
         )}
       </tr>

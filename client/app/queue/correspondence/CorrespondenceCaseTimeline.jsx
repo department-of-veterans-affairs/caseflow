@@ -20,16 +20,6 @@ const CorrespondenceCaseTimeline = (props) => {
 
   }, []);
 
-  const getAvailableActions = (task) => {
-    const organizations = props.organizations || [];
-
-    if (organizations.includes(task.assigned_to) || props.userCssId === task.assigned_to) {
-      return task.available_actions || [];
-    }
-
-    return [];
-
-  };
 
   const formatTaskData = () => {
     return (props.tasksToDisplay?.map((task) => {
@@ -38,7 +28,7 @@ const CorrespondenceCaseTimeline = (props) => {
         assignedTo: task.assigned_to,
         label: task.label,
         instructions: task.instructions,
-        availableActions: getAvailableActions(task),
+        availableActions: task.availableActions,
       };
     }));
   };
