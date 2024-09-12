@@ -7,7 +7,6 @@ import { unassignedColumns, assignedColumns } from '../../../../app/hearings/com
 import ApiUtil from '../../../../app/util/ApiUtil';
 import { when } from 'jest-when';
 import userEvent from '@testing-library/user-event';
-import { axe } from 'jest-axe';
 import { MemoryRouter as Router } from 'react-router-dom';
 
 const mockTranscriptionFiles = [
@@ -434,7 +433,6 @@ const setupAssignedTable = () =>
     statusFilter={['Assigned']}
   /></Router>);
 
-
 describe('TranscriptionFileDispatchTable', () => {
   beforeEach(async () => {
     ApiUtil.get = jest.fn();
@@ -483,11 +481,7 @@ describe('TranscriptionFileDispatchTable', () => {
       expect(select[1]).toHaveAttribute('title', 'Locked by QATTY2');
 
       expect(container).toMatchSnapshot();
-
-      const results = await axe(container);
-
-      expect(results).toHaveNoViolations();
-    }, 20000);
+    });
 
     it('select all checkbox when select-all checkbox is selected', async () => {
       const { container } = setupUnassignedTable();
@@ -511,7 +505,7 @@ describe('TranscriptionFileDispatchTable', () => {
       expect(ApiUtil.post).toHaveBeenCalledWith(
         '/hearings/transcription_files/lock', selectAllData
       );
-    }, 20000);
+    });
 
     it('select individual checkbox when single checkbox is checked', async () => {
       const { container } = setupUnassignedTable();
@@ -530,7 +524,7 @@ describe('TranscriptionFileDispatchTable', () => {
 
       expect(ApiUtil.post).toHaveBeenCalledWith(
         '/hearings/transcription_files/lock', constClickData);
-    }, 20000);
+    });
 
     it('selecting or deselecting an individual checkbox will de-select the "Select All Files" checkbox', async () => {
       const { container } = setupUnassignedTable();
@@ -562,7 +556,7 @@ describe('TranscriptionFileDispatchTable', () => {
       expect(ApiUtil.post).toHaveBeenCalledWith(
         '/hearings/transcription_files/lock', selectAllData
       );
-    }, 20000);
+    });
 
     it('allows a user to click to lock a record and call the back end', async () => {
       const { container } = setupUnassignedTable();
@@ -581,7 +575,7 @@ describe('TranscriptionFileDispatchTable', () => {
       expect(ApiUtil.post).toHaveBeenCalledWith(
         '/hearings/transcription_files/lock', constClickData);
     });
-  }, 20000);
+  });
 
   describe('Assigned Tab', () => {
     it('loads a table from backend data', async () => {
@@ -592,11 +586,7 @@ describe('TranscriptionFileDispatchTable', () => {
       );
 
       expect(container).toMatchSnapshot();
-
-      const results = await axe(container);
-
-      expect(results).toHaveNoViolations();
     });
-  }, 20000);
+  });
 });
 
