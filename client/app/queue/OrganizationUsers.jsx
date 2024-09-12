@@ -59,7 +59,9 @@ export default class OrganizationUsers extends React.PureComponent {
         membershipRequests: response.body.membership_requests,
         remainingUsers: [],
         isVhaOrg: response.body.isVhaOrg,
-        loading: false
+        loading: false,
+        organizationPermissions: response.body.organization_permissions,
+        organizationUserPermissions: response.body.organization_user_permissions
       });
     }, (error) => {
       this.setState({
@@ -284,14 +286,14 @@ getFilteredUsers = () => {
                 </div>
               )}
 
-              {(this.props.organizationPermissions.length > 0) &&
+              {(this.state.organizationPermissions?.length > 0) &&
             <div className={['team-member-permission-toggles-container']}>
               <OrganizationPermissions
                 organization={this.props.organization}
-                permissions={this.props.organizationPermissions}
+                permissions={this.state.organizationPermissions}
                 user={user}
                 orgUserData={this.state.organizationUsers.find((orgUser) => orgUser.id === user.id)}
-                orgnizationUserPermissions={this.props.orgnizationUserPermissions} />
+                organizationUserPermissions={this.state.organizationUserPermissions} />
             </div>
               }
             </div>
@@ -437,7 +439,5 @@ getFilteredUsers = () => {
 
 OrganizationUsers.propTypes = {
   organization: PropTypes.string,
-  conferenceSelectionVisibility: PropTypes.bool,
-  organizationPermissions: PropTypes.array,
-  orgnizationUserPermissions: PropTypes.array
+  conferenceSelectionVisibility: PropTypes.bool
 };
