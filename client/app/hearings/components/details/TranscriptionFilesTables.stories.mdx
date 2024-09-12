@@ -1,14 +1,14 @@
 import { Meta, Story, Props, Preview } from '@storybook/addon-docs/blocks';
 import TranscriptionFilesTable from './TranscriptionFilesTable';
 
-<Meta title="Components/TranscriptionFilesTable" component={TranscriptionFilesTable} />
+<Meta title="Hearings/Components/Details/TranscriptionFilesTable" component={TranscriptionFilesTable} />
 
 # Transcription Files Table
 
 <Preview>
   <Story name="Default Table">
     {() => {
-      const hearing = {
+      return <TranscriptionFilesTable hearing={{
         transcriptionFiles: {
           123: {
             { id: 1, fileName: 'File1.pdf', dateUploadAws: '2024-09-01', fileStatus: 'Successful upload (AWS)', hearingType: 'Type A', docketNumber: '12345' },
@@ -18,9 +18,7 @@ import TranscriptionFilesTable from './TranscriptionFilesTable';
             { id: 3, fileName: 'File3.pdf', dateUploadAws: '2024-09-03', fileStatus: 'Successful upload (AWS)', hearingType: 'Type B', docketNumber: '67890' },
           }
         }
-      };
-
-      return <TranscriptionFilesTable hearing={hearing} />;
+      }} />;
     }}
   </Story>
 </Preview>
