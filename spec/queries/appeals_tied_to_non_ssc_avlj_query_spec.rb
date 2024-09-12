@@ -51,7 +51,6 @@ describe AppealsTiedToNonSscAvljQuery do
   end
 
   context "#process and #tied_appeals" do
-
     # Base appeals not tied to non ssc avljs that should NOT be grabbed from the query
     let!(:not_ready_ama_original_appeal) { create(:appeal, :evidence_submission_docket, :with_post_intake_tasks) }
     let!(:ama_original_direct_review_appeal) { create(:appeal, :direct_review_docket, :ready_for_distribution) }
