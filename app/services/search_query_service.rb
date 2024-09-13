@@ -1,21 +1,15 @@
 # frozen_string_literal: true
 
 class SearchQueryService
-  def initialize(file_number: nil, docket_number: nil)
+  def initialize(file_number: nil, docket_number: nil, veteran_ids: nil)
     @docket_number = docket_number
     @file_number = file_number
+    @veteran_ids = veteran_ids
     @queries = SearchQueryService::Query.new
   end
 
   def search_by_veteran_file_number
-    search_results.map do |row|
-      if row["type"] != "legacy_appeal"
-        AppealRow.new(row).search_response
-      else
-        vacols_row = vacols_results.find { |result| result["vacols_id"] == row["external_id"] }
-        LegacyAppealRow.new(row, vacols_row).search_response
-      end
-    end
+    combined_results
   end
 
   def search_by_docket_number
@@ -28,9 +22,24 @@ class SearchQueryService
     end
   end
 
+  def search_by_veteran_ids
+    combined_results
+  end
+
   private
 
-  attr_reader :docket_number, :file_number, :queries
+  attr_reader :docket_number, :file_number, :queries, :veteran_ids
+
+  def combined_results
+    search_results.map do |row|
+      if row["type"] != "legacy_appeal"
+        AppealRow.new(row).search_response
+      else
+        vacols_row = vacols_results.find { |result| result["vacols_id"] == row["external_id"] }
+        LegacyAppealRow.new(row, vacols_row).search_response
+      end
+    end
+  end
 
   def vacols_ids
     legacy_results.map { |result| result["external_id"] }
@@ -41,7 +50,25 @@ class SearchQueryService
   end
 
   def search_results
-    @search_results = ActiveRecord::Base
+    @search_results ||=
+      if file_number.present?
+        file_number_search_results
+      else
+        veteran_ids_search_results
+      end
+  end
+
+  def veteran_ids_search_results
+    ActiveRecord::Base
+      .connection
+      .exec_query(
+        sanitize([queries.veteran_ids_query, veteran_ids, veteran_ids])
+      )
+      .uniq { |result| result["external_id"] }
+  end
+
+  def file_number_search_results
+    ActiveRecord::Base
       .connection
       .exec_query(file_number_or_ssn_query)
       .uniq { |result| result["external_id"] }

@@ -16,6 +16,7 @@ SearchQueryService::Attributes = Struct.new(
   :hearings,
   :issues,
   :mst,
+  :overtime,
   :pact,
   :paper_case,
   :status,

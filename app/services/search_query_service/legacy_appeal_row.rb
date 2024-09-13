@@ -22,6 +22,7 @@ class SearchQueryService::LegacyAppealRow
 
   attr_reader :search_row, :vacols_row
 
+  # rubocop:disable Metrics/MethodLength
   def attributes
     SearchQueryService::LegacyAttributes.new(
       aod: aod,
@@ -35,6 +36,7 @@ class SearchQueryService::LegacyAppealRow
       hearings: hearings,
       issues: [{}] * vacols_row["issues_count"],
       mst: mst,
+      overtime: search_row["overtime"],
       pact: pact,
       paper_case: paper_case,
       status: status,
@@ -44,6 +46,7 @@ class SearchQueryService::LegacyAppealRow
       veteran_full_name: veteran_full_name
     )
   end
+  # rubocop:enable Metrics/MethodLength
 
   def hearings
     vacols_json_array("hearings").map do |attrs|
