@@ -79,7 +79,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
         expect(response.status).to eq 200
         expect(response.headers["Content-Type"]).to include "text/csv"
         expect(response.body).to start_with("business_line")
-        expect(response.body.match?(task.appeal_type)).to eq true
+        expect(response.body.match?(task.appeal.class.review_title)).to eq true
       end
     end
   end
