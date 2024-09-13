@@ -6,10 +6,9 @@ class Hearings::TranscriptionWorkOrderController < ApplicationController
 
   def display_wo_summary
     wo_summary = ::TranscriptionWorkOrder.display_wo_summary(@task_number)
-    if wo_summary.present?
-      render json: { data: wo_summary }
-    else
-      render_error("Transcription summary not found.", :not_found)
+    respond_to do |format|
+      format.html { render "hearings/index" }
+      format.json { render json: { data: wo_summary } }
     end
   end
 
