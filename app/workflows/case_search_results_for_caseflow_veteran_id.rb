@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class CaseSearchResultsForCaseflowVeteranId < ::CaseSearchResultsBase
-  validate :veterans_exist
-
   def initialize(caseflow_veteran_ids:, user:)
     super(user: user)
     @caseflow_veteran_ids = caseflow_veteran_ids
@@ -17,6 +15,10 @@ class CaseSearchResultsForCaseflowVeteranId < ::CaseSearchResultsBase
   private
 
   attr_reader :caseflow_veteran_ids
+
+  def validation_hook
+    validate_veterans_exist
+  end
 
   def not_found_error
     {
