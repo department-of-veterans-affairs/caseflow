@@ -1,4 +1,4 @@
-class CreateRemandsView < ActiveRecord::Migration[6.0]
+class CreateRemandsView < ActiveRecord::Migration[6.1]
   def up
     safety_assured do
       execute <<-SQL

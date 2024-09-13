@@ -1,4 +1,4 @@
-class AddTypeColumnAndIndexToSupplementalClaimsForRemandInheritance < ActiveRecord::Migration[6.0]
+class AddTypeColumnAndIndexToSupplementalClaimsForRemandInheritance < ActiveRecord::Migration[6.1]
   include Caseflow::Migrations::AddIndexConcurrently
 
   def change

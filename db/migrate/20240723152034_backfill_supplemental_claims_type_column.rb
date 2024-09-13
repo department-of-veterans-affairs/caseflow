@@ -1,4 +1,4 @@
-class BackfillSupplementalClaimsTypeColumn < ActiveRecord::Migration[6.0]
+class BackfillSupplementalClaimsTypeColumn < ActiveRecord::Migration[6.1]
   disable_ddl_transaction!
 
   def up
