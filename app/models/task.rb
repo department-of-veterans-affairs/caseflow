@@ -724,14 +724,15 @@ class Task < CaseflowRecord
   def cancel_task_and_child_subtasks
     # Cancel all descendants at the same time to avoid after_update hooks marking some tasks as completed.
     # it would be better if we could allow the callbacks to happen sanely
+    descendant_ids = descendants.pluck(:id)
 
     # by avoiding callbacks, we aren't saving PaperTrail versions
     # Manually save the state before and after.
-    tasks = Task.open.where(id: descendants).to_a
+    tasks = Task.open.where(id: descendant_ids)
 
     transaction do
       tasks.each { |task| task.paper_trail.save_with_version }
-      Task.where(id: tasks).update_all(
+      tasks.update_all(
         status: Constants.TASK_STATUSES.cancelled,
         cancelled_by_id: RequestStore[:current_user]&.id,
         closed_at: Time.zone.now
