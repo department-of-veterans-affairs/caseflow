@@ -9,8 +9,8 @@ import { setCategoryFilter } from '../store/documentList';
 /**
  * Method to change to Single Document Mode
  */
-export const singleDocumentMode = memoize(() =>
-  window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'single-document-mode'));
+// export const singleDocumentMode = memoize(() =>
+//   window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'single-document-mode'));
 
 /**
  * Method to navigate between PDF files

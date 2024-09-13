@@ -101,28 +101,28 @@ export class PdfUI extends React.Component {
     const nextScale = Math.max(MINIMUM_ZOOM, _.round(this.props.scale + delta, 2));
     const zoomDirection = delta > 0 ? 'in' : 'out';
 
-    window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, `zoom ${zoomDirection}`, nextScale);
+    // window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, `zoom ${zoomDirection}`, nextScale);
 
     this.props.setZoomLevel(nextScale);
   }
 
   openDownloadLink = () => {
-    window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'download');
+    // window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'download');
     window.open(`${this.props.doc.content_url}?type=${this.props.doc.type}&download=true`);
   }
 
   showPreviousDocument = () => {
-    window.analyticsEvent(
-      CATEGORIES.VIEW_DOCUMENT_PAGE,
-      ACTION_NAMES.VIEW_PREVIOUS_DOCUMENT,
-      INTERACTION_TYPES.VISIBLE_UI
-    );
+    // window.analyticsEvent(
+    //   CATEGORIES.VIEW_DOCUMENT_PAGE,
+    //   ACTION_NAMES.VIEW_PREVIOUS_DOCUMENT,
+    //   INTERACTION_TYPES.VISIBLE_UI
+    // );
     this.props.showPdf(this.props.prevDocId)();
     this.props.stopPlacingAnnotation(INTERACTION_TYPES.VISIBLE_UI);
   }
 
   showNextDocument = () => {
-    window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, ACTION_NAMES.VIEW_NEXT_DOCUMENT, INTERACTION_TYPES.VISIBLE_UI);
+    // window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, ACTION_NAMES.VIEW_NEXT_DOCUMENT, INTERACTION_TYPES.VISIBLE_UI);
     this.props.showPdf(this.props.nextDocId)();
     this.props.stopPlacingAnnotation(INTERACTION_TYPES.VISIBLE_UI);
   }
@@ -185,7 +185,7 @@ export class PdfUI extends React.Component {
   }
 
   fitToScreen = () => {
-    window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'fit to screen');
+    // window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'fit to screen');
 
     // Toggle fit to screen property.
     if (this.props.scale === this.state.fitToScreenZoom) {
@@ -203,11 +203,11 @@ export class PdfUI extends React.Component {
   }
 
   onBackToClaimsFolder = () => {
-    window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'back-to-claims-folder');
+    // window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'back-to-claims-folder');
     this.props.stopPlacingAnnotation(INTERACTION_TYPES.VISIBLE_UI);
   }
 
-  handleClickDocumentTypeLink = () => window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'document-type-link')
+  // handleClickDocumentTypeLink = () => window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'document-type-link')
 
   render() {
     const pdfUiClass = classNames(
@@ -247,7 +247,7 @@ export class PdfUI extends React.Component {
                 ariaLabel="open document in new tab"
                 target="_blank"
                 button="matte"
-                onClick={this.handleClickDocumentTypeLink}
+                // onClick={this.handleClickDocumentTypeLink}
                 href={`/reader/appeal${this.props.documentPathBase}/${this.props.doc.id}`}>
                 <h1 className="cf-pdf-vertically-center cf-non-stylized-header">
                   <span title="Open in new tab">{this.props.doc.type}</span>

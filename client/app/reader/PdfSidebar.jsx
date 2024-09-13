@@ -71,11 +71,11 @@ export class PdfSidebar extends React.Component {
       const nextStateModalIsOpen = !prevState.modal;
       const eventActionPrefix = nextStateModalIsOpen ? 'open' : 'close';
 
-      window.analyticsEvent(
-        CATEGORIES.VIEW_DOCUMENT_PAGE,
-        `${eventActionPrefix}-keyboard-shortcuts-modal`,
-        sourceLabel
-      );
+      // window.analyticsEvent(
+      //   CATEGORIES.VIEW_DOCUMENT_PAGE,
+      //   `${eventActionPrefix}-keyboard-shortcuts-modal`,
+      //   sourceLabel
+      // );
 
       return {
         modal: nextStateModalIsOpen,

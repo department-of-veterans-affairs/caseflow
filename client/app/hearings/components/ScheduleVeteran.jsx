@@ -324,11 +324,11 @@ export const ScheduleVeteran = ({
       // Patch the hearing task with the form data
       const { body } = await ApiUtil.patch(`/tasks/${taskId}`, payload);
 
-      window.analyticsEvent('Hearings', 'Schedule Veteran - Schedule');
+      // window.analyticsEvent('Hearings', 'Schedule Veteran - Schedule');
 
-      if (hearing?.notes !== parentHearingTask?.unscheduledHearingNotes?.notes) {
-        window.analyticsEvent('Hearings', 'Add/edit notes', 'Schedule Veteran');
-      }
+      // if (hearing?.notes !== parentHearingTask?.unscheduledHearingNotes?.notes) {
+      //   window.analyticsEvent('Hearings', 'Add/edit notes', 'Schedule Veteran');
+      // }
       // Find the most recently created AssignHearingDispositionTask. This task will have the ID of the
       // most recently created hearing.
       const mostRecentTask = maxBy(
@@ -450,7 +450,7 @@ export const ScheduleVeteran = ({
         name="Cancel"
         linkStyling
         onClick={() => {
-          window.analyticsEvent('Hearings', 'Schedule Veteran - Cancel');
+          // window.analyticsEvent('Hearings', 'Schedule Veteran - Cancel');
           history.goBack();
         }}
         styling={cancelButton}

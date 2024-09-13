@@ -100,7 +100,7 @@ class CommentLayer extends PureComponent {
 
     // Anything can be dragged and dropped. If the item that was
     // dropped doesn't match what we expect, we just silently ignore it.
-    const logInvalidDragAndDrop = () => window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'invalid-drag-and-drop');
+    const logInvalidDragAndDrop = () => window.console.log(CATEGORIES.VIEW_DOCUMENT_PAGE, 'invalid-drag-and-drop');
 
     try {
       dragAndDropData = JSON.parse(dragAndDropPayload);

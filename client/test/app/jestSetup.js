@@ -8,7 +8,7 @@ import faker from 'faker';
 enzyme.configure({ adapter: new EnzymeAdapterReact16() });
 
 global.window.performance.now = jest.fn().mockReturnValue('RUNNING_IN_NODE');
-global.window.analyticsEvent = jest.fn();
+// global.window.analyticsEvent = jest.fn();
 global.scrollTo = jest.fn();
 
 // Spy to ignore console warnings

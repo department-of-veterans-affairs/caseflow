@@ -363,7 +363,7 @@ export const AddHearingDay = ({
         name="Cancel"
         linkStyling
         onClick={() => {
-          window.analyticsEvent('Hearings', 'Add Hearing Day - Cancel');
+          // window.analyticsEvent('Hearings', 'Add Hearing Day - Cancel');
           history.push('/schedule');
         }}
         styling={cancelButton}

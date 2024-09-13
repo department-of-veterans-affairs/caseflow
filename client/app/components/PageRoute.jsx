@@ -26,7 +26,7 @@ const PageRoute = (props) => {
   useEffect(() => {
     document.title = isFunction(title) ? title(props) : title;
 
-    window.analyticsPageView(window.location.pathname);
+    // window.analyticsPageView(window.location.pathname);
   }, [history.location]);
 
   // Render the Loading Screen while the default route props are loading

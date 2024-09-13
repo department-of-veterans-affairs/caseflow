@@ -20,7 +20,7 @@ const defaultTimeoutSettings = {
 
 const makeSendAnalyticsTimingFn = (httpVerbName) => (timeElapsedMs, url, options, endpointName) => {
   if (endpointName) {
-    window.analyticsTiming({
+    window.console.log({
       timingCategory: 'api-request',
       timingVar: endpointName,
       timingValue: timeElapsedMs,
