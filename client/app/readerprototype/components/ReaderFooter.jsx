@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 import Button from '../../components/Button';
@@ -60,6 +60,21 @@ const ReaderFooter = ({
   const getNextDoc = () => _.get(filteredDocs, [selectedDocIndex() + 1]);
   const getPrevDocId = () => _.get(getPrevDoc(), 'id');
   const getNextDocId = () => _.get(getNextDoc(), 'id');
+
+  useEffect(() => {
+    const keyHandler = (event) => {
+      if (event.key === 'ArrowLeft') {
+        showPdf(getPrevDocId())();
+      }
+      if (event.key === 'ArrowRight') {
+        showPdf(getNextDocId())();
+      }
+    };
+
+    window.addEventListener('keydown', keyHandler);
+
+    return () => window.removeEventListener('keydown', keyHandler);
+  }, [currentDocIndex]);
 
   return (
     <div className="cf-pdf-footer cf-pdf-toolbar" {...pdfToolbarStyles.footer}>
