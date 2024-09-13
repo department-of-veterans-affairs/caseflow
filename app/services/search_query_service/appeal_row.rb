@@ -38,6 +38,7 @@ class SearchQueryService::AppealRow
       hearings: hearings,
       issues: issues,
       mst: mst_status,
+      overtime: query_row["overtime"],
       pact: pact_status,
       paper_case: false,
       status: queried_appeal.status,
