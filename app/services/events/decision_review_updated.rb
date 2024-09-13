@@ -5,8 +5,15 @@ class Events::DecisionReviewUpdated
     # rubocop:disable Lint/UnusedMethodArgument
     def update!(params, headers, payload)
       consumer_event_id = params[:consumer_event_id]
-
       ActiveRecord::Base.transaction do
+        parser = Events::DecisionReviewUpdated::DecisionReviewUpdatedParser.new(headers, payload)
+
+        user = Events::CreateUserOnEvent.handle_user_creation_on_event(event: event, css_id: parser.css_id,
+                                                                       station_id: parser.station_id)
+
+        RequestIssuesUpdateEvent.new(user: user, review: review, parser: parser)
+          .perform!
+
         event = find_or_create_event(consumer_event_id)
         # Update the Event after all backfills have completed
         event.update!(completed_at: Time.now.in_time_zone, error: nil, info: {})

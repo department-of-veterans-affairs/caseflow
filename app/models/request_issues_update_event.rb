@@ -3,6 +3,7 @@
 class RequestIssuesUpdateEvent < RequestIssuesUpdate
   # example of calling RequestIssuesUpdateEvent
   # RequestIssuesUpdateEvent.new(
+  #  do we really need user here?
   #   user: user,
   #   review: review,
   #   added_issue_data: parser.added_issues,
@@ -14,24 +15,27 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   #   ineligible_to_ineligible_issue_data: parser.ineligible_to_ineligible_issues
   # )
 
-  attr_writer :added_issue_data
-  attr_writer :removed_issue_data
-  attr_writer :edited_issue_data
-  attr_writer :withdrawn_issue_data
-  attr_writer :eligible_to_ineligible_issue_data
-  attr_writer :ineligible_to_eligible_issue_data
-  attr_writer :ineligible_to_ineligible_issue_data
+  # attr_writer :added_issue_data
+  # attr_writer :removed_issue_data
+  # attr_writer :edited_issue_data
+  # attr_writer :withdrawn_issue_data
+  # attr_writer :eligible_to_ineligible_issue_data
+  # attr_writer :ineligible_to_eligible_issue_data
+  # attr_writer :ineligible_to_ineligible_issue_data
+  # attr_reader :parser
 
-  def initialize(*args)
-    super
+  def initialize(user:, review:, parser:)
+    @parser = parser
+    super(user: user, review: review)
 
-    @eligible_to_ineligible_issue_data ||= []
-    @ineligible_to_ineligible_issue_data ||= []
-    @ineligible_to_eligible_issue_data ||= []
-    @withdrawn_issue_data ||= []
-    @edited_issue_data ||= []
-    @removed_issue_data ||= []
-    @added_issue_data ||= []
+    # @added_issue_data = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(@added_issue_data)
+    @eligible_to_ineligible_issue_data = parser.eligible_to_ineligible_issues
+    @ineligible_to_ineligible_issue_data = parser.ineligible_to_ineligible_issues
+    @ineligible_to_eligible_issue_data = parser.ineligible_to_eligible_issues
+    @withdrawn_issue_data = parser.withdrawn_issues
+    @edited_issue_data = parser.updated_issues
+    @removed_issue_data = parser.removed_issues
+    @added_issue_data = parser.added_issues
   end
 
   def perform!
@@ -56,7 +60,8 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   end
 
   def process_issues!
-    review.create_issues!(added_issues, self)
+    process_added_issues!
+    # review.create_issues!(added_issues, self)
     process_removed_issues!
     process_withdrawn_issues!
     process_edited_issues!
@@ -65,12 +70,30 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     process_ineligible_to_ineligible_issues!
   end
 
+  def process_added_issues!
+    review.create_issues!(added_issues, self)
+  end
+
+  def process_removed_issues!
+    return if removed_issues.nil?
+
+    removed_issues.each(&:remove!)
+  end
+
   def added_issues
     calculate_added_issues
   end
 
   def removed_issues
-    calculate_removed_issues
+    return if @removed_issue_data.empty?
+
+    @removed_issue_data.map do |issue_data|
+      begin
+        review.request_issues.find(issue_data[:reference_id])
+      rescue ActiveRecord::RecordNotFound
+        raise Caseflow::Error::DecisionReviewUpdateMissingIssueError, issue_data[:reference_id]
+      end
+    end
   end
 
   def withdrawn_issues
@@ -78,7 +101,8 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   end
 
   def all_updated_issues
-    added_issues + removed_issues + withdrawn_issues + edited_issues
+    (added_issues || []) + (removed_issues || []) + (withdrawn_issues || []) + (edited_issues || [])
+    # added_issues + removed_issues + withdrawn_issues + edited_issues
   end
 
   private
@@ -102,7 +126,8 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   end
 
   def calculate_after_issues
-    before_issues + added_issues - removed_issues
+    (before_issues || []) + (added_issues || []) - (removed_issues || [])
+    # before_issues + added_issues - removed_issues
   end
 
   def calculate_edited_issues
@@ -117,15 +142,18 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     calculate_issues(@withdrawn_issue_data)
   end
 
-  def calculate_removed_issues
-    @removed_issue_data.map do |issue_data|
-      begin
-        review.request_issues.find(issue_data[:reference_id])
-      rescue ActiveRecord::RecordNotFound
-        raise Caseflow::Error::DecisionReviewUpdateMissingIssueError, issue_data[:reference_id]
-      end
-    end
-  end
+  # def calculate_removed_issues
+  #   return if @removed_issue_data.empty?
+
+  #   byebug
+  #   @removed_issue_data.map do |issue_data|
+  #     begin
+  #       review.request_issues.find(issue_data[:reference_id])
+  #     rescue ActiveRecord::RecordNotFound
+  #       raise Caseflow::Error::DecisionReviewUpdateMissingIssueError, issue_data[:reference_id]
+  #     end
+  #   end
+  # end
 
   def calculate_issues(issues_data)
     issues_data.map do |issue_data|
@@ -153,40 +181,41 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     RequestIssue.new(attrs).tap(&:validate_eligibility!)
   end
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Layout/LineLength
   def attributes_from_intake_data(data)
+    parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(nil, data)
     contested_issue_present = attributes_look_like_contested_issue?(data)
-    issue_text = (data[:ri_is_unidentified] || data[:ri_verified_unidentified_issue]) ? data[:ri_decision_text] : nil
+    issue_text = (data[parser_issue.ri_is_unidentified] || data[parser_issue.ri_verified_unidentified_issue]) ? data[parser_issue.ri_decision_text] : nil
 
     {
-      benefit_type: data[:ri_benefit_type],
-      closed_at: data[:ri_closed_at],
-      closed_status: data[:ri_closed_status],
-      contention_reference_id: data[:ri_contention_reference_id],
-      contested_decision_issue_id: data[:ri_contested_decision_issue_id],
-      contested_rating_issue_reference_id: data[:ri_contested_rating_issue_reference_id],
-      contested_rating_issue_diagnostic_code: data[:ri_contested_rating_issue_diagnostic_code],
-      contested_rating_decision_reference_id: data[:ri_rating_decision_reference_id],
-      contested_issue_description: contested_issue_present ? data[:ri_decision_text] : nil,
-      contested_rating_issue_profile_date: data[:ri_contested_rating_issue_profile_date],
-      nonrating_issue_description: data[:ri_nonrating_issue_category] ? data[:ri_decision_text] : nil,
+      benefit_type: data[parser_issue.ri_benefit_type],
+      closed_at: data[parser_issue.ri_closed_at],
+      closed_status: data[parser_issue.ri_closed_status],
+      contention_reference_id: data[parser_issue.ri_contention_reference_id],
+      contested_decision_issue_id: data[parser_issue.ri_contested_decision_issue_id],
+      contested_rating_issue_reference_id: data[parser_issue.ri_contested_rating_issue_reference_id],
+      contested_rating_issue_diagnostic_code: data[parser_issue.ri_contested_rating_issue_diagnostic_code],
+      contested_rating_decision_reference_id: data[parser_issue.ri_rating_decision_reference_id],
+      contested_issue_description: contested_issue_present ? data[parser_issue.ri_decision_text] : nil,
+      contested_rating_issue_profile_date: data[parser_issue.ri_contested_rating_issue_profile_date],
+      nonrating_issue_description: data[parser_issue.ri_nonrating_issue_category] ? data[parser_issue.ri_decision_text] : nil,
       unidentified_issue_text: issue_text,
-      decision_date: data[:ri_decision_date],
-      nonrating_issue_category: data[:ri_nonrating_issue_category],
-      is_unidentified: data[:ri_is_unidentified],
-      untimely_exemption: data[:ri_untimely_exemption],
-      untimely_exemption_notes: data[:ri_untimely_exemption_notes],
-      ramp_claim_id: data[:ri_ramp_claim_id],
-      vacols_id: data[:ri_vacols_id],
-      vacols_sequence_id: data[:ri_vacols_sequence_id],
-      ineligible_reason: data[:ri_ineligible_reason],
-      ineligible_due_to_id: data[:ri_ineligible_due_to_id],
-      reference_id: data[:ri_reference_id],
-      type: data[:ri_type],
-      veteran_participant_id: data[:ri_veteran_participant_id],
-      rating_issue_associated_at: data[:ri_rating_issue_associated_at],
-      nonrating_issue_bgs_source: data[:ri_nonrating_issue_bgs_source],
-      nonrating_issue_bgs_id: data[:ri_nonrating_issue_bgs_id]
+      decision_date: data[parser_issue.ri_decision_date],
+      nonrating_issue_category: data[parser_issue.ri_nonrating_issue_category],
+      is_unidentified: data[parser_issue.ri_is_unidentified],
+      untimely_exemption: data[parser_issue.ri_untimely_exemption],
+      untimely_exemption_notes: data[parser_issue.ri_untimely_exemption_notes],
+      ramp_claim_id: data[parser_issue.ri_ramp_claim_id],
+      vacols_id: data[parser_issue.ri_vacols_id],
+      vacols_sequence_id: data[parser_issue.ri_vacols_sequence_id],
+      ineligible_reason: data[parser_issue.ri_ineligible_reason],
+      ineligible_due_to_id: data[parser_issue.ri_ineligible_due_to_id],
+      reference_id: data[parser_issue.ri_reference_id],
+      type: data[parser_issue.ri_type],
+      veteran_participant_id: data[parser_issue.ri_veteran_participant_id],
+      rating_issue_associated_at: data[parser_issue.ri_rating_issue_associated_at],
+      nonrating_issue_bgs_source: data[parser_issue.ri_nonrating_issue_bgs_source],
+      nonrating_issue_bgs_id: data[parser_issue.ri_nonrating_issue_bgs_id]
     }
   end
 
@@ -196,14 +225,14 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       data[:ri_rating_decision_reference_id] ||
       data[:ri_contested_rating_issue_diagnostic_code]
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Layout/LineLength
 
   def fetch_withdrawn_issues
     RequestIssue.where(reference_id: withdrawn_request_issue_ids)
   end
 
   def process_withdrawn_issues!
-    return if withdrawn_issues.empty?
+    return if withdrawn_issue_data.empty?
 
     @withdrawn_issue_data.each do |withdrawn_issue|
       begin
