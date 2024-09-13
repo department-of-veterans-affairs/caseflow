@@ -444,7 +444,7 @@ class DailyDocketRow extends React.Component {
             readOnly={readOnly}
             update={this.update}
             hearing={hearing}
-            initialState={this.props.hearing}
+            initialState={this.state.initialState}
             user={user}
             index={index}
           />
