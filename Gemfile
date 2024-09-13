@@ -5,7 +5,7 @@ source ENV["GEM_SERVER_URL"] || "https://rubygems.org"
 
 # State machine
 gem "aasm", "4.11.0"
-gem "activerecord-import", "1.0.3"
+gem "activerecord-import"
 gem "acts_as_tree"
 
 # amoeba gem for cloning appeals
@@ -17,7 +17,7 @@ gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git"
 gem "bootsnap", require: false
 gem "browser"
 gem "business_time", "~> 0.9.3"
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "9bd3635fbd8094d25160669f38d8699e2f1d7a98"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "716b58caf2116da5fca21c3b3aeea6c9712f3b9d"
 gem "connect_mpi", git: "https://github.com/department-of-veterans-affairs/connect-mpi.git", ref: "a3a58c64f85b980a8b5ea6347430dd73a99ea74c"
 gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "9807d9c9f0f3e3494a60b6693dc4f455c1e3e922"
 gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
@@ -33,6 +33,9 @@ gem "icalendar"
 gem "kaminari"
 gem "logstasher"
 gem "moment_timezone-rails"
+# Rails 6 has native support for multiple dbs, so prefer that over multiverse after upgrade.
+# https://github.com/ankane/multiverse#upgrading-to-rails-6
+gem "multiverse"
 gem "newrelic_rpm"
 gem "nokogiri", ">= 1.11.0.rc4"
 gem "paper_trail", "~> 12.0"
@@ -53,7 +56,7 @@ gem "pg", platforms: :ruby
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
 gem "puma", "5.6.4"
 gem "rack", "~> 2.2.6.2"
-gem "rails", "6.1.7.7"
+gem "rails", "6.0.6.1"
 # Used to colorize output for rake tasks
 gem "rainbow"
 # React
@@ -77,7 +80,7 @@ gem "stringex", require: false
 gem "strong_migrations"
 # print trees
 gem "tty-tree"
-gem "tzinfo", "~> 2.0"
+gem "tzinfo", "1.2.10"
 # Use Uglifier as compressor for JavaScript assets
 gem "uglifier", ">= 1.3.0"
 gem "validates_email_format_of"
@@ -85,14 +88,14 @@ gem "ziptz"
 
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
-  gem "activerecord-oracle_enhanced-adapter", "~> 6.1.0"
+  gem "activerecord-oracle_enhanced-adapter", "~> 6.0.0"
   gem "ruby-oci8", "~> 2.2"
 end
 
-group :test, :development, :demo, :make_docs do
+group :test, :development, :demo do
   # Security scanners
   gem "brakeman"
-  gem "bullet", "~> 6.1.0"
+  gem "bullet"
   gem "bundler-audit"
   # Testing tools
   gem "capybara"
