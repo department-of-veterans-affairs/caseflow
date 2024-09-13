@@ -379,6 +379,82 @@ RSpec.feature("The Correspondence Cases page") do
     end
   end
 
+  context "Correspondence Cases - Pending Tasks - part 2" do
+    before :each do
+      correspondence_spec_super_access
+      FeatureToggle.enable!(:correspondence_queue)
+      # @correspondence_uuid = "123456789"
+    end
+
+    let :correspondence_uuids[]
+    # let(:correspondence_uuids) do
+    #   (0..3).map { create(:correspondence, :pending) }.pluck(:uuid)
+    # end
+
+    # Creating correspondence with each task type
+    before do
+      Timecop.freeze(Time.zone.local(2020, 5, 15))
+      4.times do
+        corres_array = (0..3).map { create(:correspondence) }
+        task_array = [PrivacyActRequestCorrespondenceTask,
+                      DeathCertificateCorrespondenceTask,
+                      OtherMotionCorrespondenceTask,
+                      CavcCorrespondenceCorrespondenceTask]
+
+        corres_array.each_with_index do |corres, index|
+          task_array[index].create!(
+            appeal_id: corres.id,
+            appeal_type: "Correspondence",
+            assigned_to: InboundOpsTeam.singleton
+          )
+          correspondence_uuids << corres_array[index]
+        end
+      end
+
+      # Used to mock a single task to compare task sorting
+      # PrivacyActRequestCorrespondenceTask.first.correspondence.update!(
+      #   va_date_of_receipt: Date.new(2000, 10, 10)
+      # )
+      # PrivacyActRequestCorrespondenceTask.last.correspondence.update!(
+      #   va_date_of_receipt: Date.new(2050, 10, 10)
+      # )
+    end
+
+    # it "successfully tests the pending tab" do
+    #   visit "/queue/correspondence/team?tab=correspondence_pending&page=1&sort_by=vaDor&order=asc"
+    #   expect(page).to have_content("Correspondence that is currently assigned to non-mail team users:")
+    #   expect(page).to have_content("Veteran Details")
+    #   expect(page).to have_content("Package Document Type")
+    #   expect(page).to have_content("VA DOR")
+    #   expect(page).to have_content("Days Waiting")
+    #   expect(page).to have_content("Tasks")
+    #   expect(page).to have_content("Assigned To")
+    # end
+
+    it "verifies routes for different task types on the pending tab." do
+      visit "/queue/correspondence/team?tab=correspondence_pending&page=1&sort_by=vaDor&order=asc"
+      # put page in the sorted A-Z state
+      find("[aria-label='Sort by Tasks']").click
+      first_task_type = find("tbody > tr:nth-child(1) > td:nth-child(3)").text
+      # put page in the sorted Z-A state
+      find("[aria-label='Sort by Tasks']").click
+      second_task_type = find("tbody > tr:nth-child(1) > td:nth-child(3)").text
+      # return to A-Z, compare veteran details
+      find("[aria-label='Sort by Tasks']").click
+      expect(find("tbody > tr:nth-child(1) > td:nth-child(3)").text == first_task_type)
+      # return to Z-A, compare details again
+      find("[aria-label='Sort by Tasks']").click
+      expect(find("tbody > tr:nth-child(1) > td:nth-child(3)").text == second_task_type)
+    end
+
+    it "uses uses task filter correctly" do
+      visit "/queue/correspondence/team?tab=correspondence_pending&page=1&sort_by=vaDor&order=asc"
+      all(".unselected-filter-icon")[2].click
+      find("label", text: "Death Certificate Correspondence Task (5)").click
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 5)
+    end
+  end
+
   context "Correspondence Cases - Assigned" do
     before :each do
       correspondence_spec_super_access
