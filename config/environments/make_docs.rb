@@ -1,6 +1,5 @@
 require "active_support/core_ext/integer/time"
 require "fileutils"
-require_relative "../../config/initializers/deprecation_warnings"
 
 # The test environment is used exclusively to run your application's
 # test suite. You never need to work with it otherwise. Remember that
@@ -46,15 +45,6 @@ Rails.application.configure do
   # The :test delivery method accumulates sent emails in the
   # ActionMailer::Base.deliveries array.
   config.action_mailer.delivery_method = :test
-
-  # Print deprecation notices to the stderr.
-  config.active_support.deprecation = :stderr
-
-  # Raise exceptions for disallowed deprecations.
-  config.active_support.disallowed_deprecation = :raise
-
-  # Tell Active Support which deprecation messages to disallow.
-  config.active_support.disallowed_deprecation_warnings = DeprecationWarnings::DISALLOWED_DEPRECATION_WARNING_REGEXES
 
   unless ENV['RAILS_ENABLE_TEST_LOG']
     config.logger = Logger.new(nil)
@@ -135,8 +125,8 @@ Rails.application.configure do
   # One time Appeal States migration for Legacy & AMA Appeal Batch Sizes
   ENV["STATE_MIGRATION_JOB_BATCH_SIZE"] ||= "1000"
 
-  # Syncing decided appeals in select batch sizes
-  ENV["VACOLS_QUERY_BATCH_SIZE"] ||= "800"
+  # Quarterly Notifications Batch Sizes
+  ENV["QUARTERLY_NOTIFICATIONS_JOB_BATCH_SIZE"] ||= "1000"
 
   # Travel Board Sync Batch Size
   ENV["TRAVEL_BOARD_HEARING_SYNC_BATCH_LIMIT"] ||= "250"
@@ -159,7 +149,4 @@ Rails.application.configure do
 
   # Dynatrace variables
   ENV["STATSD_ENV"] = "test"
-
-  config.sqs_create_queues = true
-  config.sqs_endpoint = ENV["CI"] ? 'http://localstack:4566' : 'http://localhost:4566'
 end
