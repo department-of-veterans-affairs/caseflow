@@ -56,6 +56,7 @@ module CorrespondenceTaskActionsHelpers
     User.authenticate!(user: hearings_user)
   end
 
+  # :reek:FeatureEnvy
   def setup_correspondence_task(options = {})
     correspondence = options[:correspondence]
     task_class = options[:task_class]
