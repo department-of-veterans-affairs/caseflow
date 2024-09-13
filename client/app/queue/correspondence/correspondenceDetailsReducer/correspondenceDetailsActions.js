@@ -286,3 +286,13 @@ export const updateCorrespondenceRelations = (correspondence) =>
       }
     });
   };
+
+export const updateCorrespondenceRelations = (correspondence) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.CORRESPONDENCE_INFO,
+      payload: {
+        correspondence
+      }
+    });
+  };
