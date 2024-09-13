@@ -279,7 +279,9 @@ describe "SearchQueryService" do
         expect(attributes.appellant_full_name).to eq veteran_full_name
         expect(attributes.assigned_to_location).to eq legacy_appeal.assigned_to_location
         expect(attributes.caseflow_veteran_id).to eq veteran.id
-        expect(attributes.decision_date).to eq AppealRepository.normalize_vacols_date(vacols_decision_date)
+        expect(attributes.decision_date).to eq AppealRepository.normalize_vacols_date(
+          Date.parse(vacols_decision_date.to_s)
+        )
         expect(attributes.docket_name).to eq "legacy"
         expect(attributes.docket_number).to eq vacols_folder.tinum
         expect(attributes.external_id).to eq vacols_case.id
