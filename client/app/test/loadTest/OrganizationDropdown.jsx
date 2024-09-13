@@ -8,6 +8,7 @@ import Checkbox from '../../components/Checkbox';
 
 export default function OrganizationDropdown(props) {
   const [isChecked, orgIsChecked] = useState(false);
+  const [isAdmin, adminIsChecked] = useState(false);
 
   let orgOption = props.organizationOption;
 
@@ -15,10 +16,9 @@ export default function OrganizationDropdown(props) {
     orgIsChecked(!isChecked);
   };
 
-  // const organizations = props.form_values.all_organizations.sort().map((org) => ({
-  //   value: org,
-  //   label: org
-  // }));
+  const isAdminHandle = () => {
+    adminIsChecked(!isAdmin);
+  }
 
   return (
     <div className="load-test-container-checkbox">
@@ -30,6 +30,15 @@ export default function OrganizationDropdown(props) {
         }}
         value={isChecked}
       />
+      { isChecked &&
+        <Checkbox
+          name="Admin?"
+          label="Admin?"
+          onChange={() => {
+            isAdminHandle();
+          }}
+          value={isAdmin}
+        /> }
     </div>
   );
 }
