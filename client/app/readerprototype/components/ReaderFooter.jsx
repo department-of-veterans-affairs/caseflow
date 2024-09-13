@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import Button from 'components/Button';
-import TextField from 'components/TextField';
-import { FilterNoOutlineIcon } from 'components/icons/FilterNoOutlineIcon';
-import { PageArrowLeftIcon } from 'components/icons/PageArrowLeftIcon';
-import { PageArrowRightIcon } from 'components/icons/PageArrowRightIcon';
+import Button from '../../components/Button';
+import TextField from '../../components/TextField';
+import { FilterNoOutlineIcon } from '../../components/icons/FilterNoOutlineIcon';
+import { PageArrowLeftIcon } from '../../components/icons/PageArrowLeftIcon';
+import { PageArrowRightIcon } from '../../components/icons/PageArrowRightIcon';
 import { docListIsFiltered, getFilteredDocIds, getFilteredDocuments } from '../../reader/selectors';
 import { pdfToolbarStyles } from '../util/styles';
 
