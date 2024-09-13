@@ -50,9 +50,8 @@ class DocumentSeriesIdAssigner
       result = {}
       document_series.each do |doc|
         result[doc.document_id] = doc.series_id
-        Rails.logger.info("result[doc.document_id]: #{result[doc.document_id]}.
+        Rails.logger.info("result[doc.document_id]: #{result[doc.document_id]}.")
       end
-
       result
     end
   end
