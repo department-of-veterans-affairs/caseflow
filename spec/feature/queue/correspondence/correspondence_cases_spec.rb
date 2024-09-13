@@ -383,23 +383,28 @@ RSpec.feature("The Correspondence Cases page") do
     before :each do
       correspondence_spec_super_access
       FeatureToggle.enable!(:correspondence_queue)
-      # @correspondence_uuid = "123456789"
     end
 
     let :correspondence_uuids[]
-    # let(:correspondence_uuids) do
-    #   (0..3).map { create(:correspondence, :pending) }.pluck(:uuid)
-    # end
 
     # Creating correspondence with each task type
     before do
       Timecop.freeze(Time.zone.local(2020, 5, 15))
-      4.times do
-        corres_array = (0..3).map { create(:correspondence) }
-        task_array = [PrivacyActRequestCorrespondenceTask,
-                      DeathCertificateCorrespondenceTask,
-                      OtherMotionCorrespondenceTask,
-                      CavcCorrespondenceCorrespondenceTask]
+      corres_array = (0..7).map { create(:correspondence) }
+
+      8.times do
+        # This line may need to be called before the do 8 times block
+        # corres_array = (0..7).map { create(:correspondence) }
+        task_array = [
+          PrivacyComplaintCorrespondenceTask,
+          CongressionalInterestCorrespondenceTask,
+          StatusInquiryCorrespondenceTask,
+          PowerOfAttorneyRelatedCorrespondenceTask,
+          PrivacyActRequestCorrespondenceTask,
+          DeathCertificateCorrespondenceTask,
+          OtherMotionCorrespondenceTask,
+          CavcCorrespondenceCorrespondenceTask
+        ]
 
         corres_array.each_with_index do |corres, index|
           task_array[index].create!(
@@ -407,11 +412,13 @@ RSpec.feature("The Correspondence Cases page") do
             appeal_type: "Correspondence",
             assigned_to: InboundOpsTeam.singleton
           )
+          # this line may not be functioning correctly
+          # it was inteded to create an array of uuids to more easily access the specific correspondences.
           correspondence_uuids << corres_array[index]
         end
       end
 
-      # Used to mock a single task to compare task sorting
+      # Used to mock a single task to compare task sorting -- may not be required in this case
       # PrivacyActRequestCorrespondenceTask.first.correspondence.update!(
       #   va_date_of_receipt: Date.new(2000, 10, 10)
       # )
@@ -420,16 +427,9 @@ RSpec.feature("The Correspondence Cases page") do
       # )
     end
 
-    # it "successfully tests the pending tab" do
-    #   visit "/queue/correspondence/team?tab=correspondence_pending&page=1&sort_by=vaDor&order=asc"
-    #   expect(page).to have_content("Correspondence that is currently assigned to non-mail team users:")
-    #   expect(page).to have_content("Veteran Details")
-    #   expect(page).to have_content("Package Document Type")
-    #   expect(page).to have_content("VA DOR")
-    #   expect(page).to have_content("Days Waiting")
-    #   expect(page).to have_content("Tasks")
-    #   expect(page).to have_content("Assigned To")
-    # end
+    it "Ryan's work to be filled in" do
+      # stubbed
+    end
 
     it "verifies routes for different task types on the pending tab." do
       visit "/queue/correspondence/team?tab=correspondence_pending&page=1&sort_by=vaDor&order=asc"
