@@ -392,7 +392,8 @@ RSpec.feature("The Correspondence Cases page") do
       Timecop.freeze(Time.zone.local(2020, 5, 15))
       corres_array = (0..7).map { create(:correspondence) }
 
-      8.times do
+      # Creating 3 Correspondences with each task type
+      3.times do
         # This line may need to be called before the do 8 times block
         # corres_array = (0..7).map { create(:correspondence) }
         task_array = [
