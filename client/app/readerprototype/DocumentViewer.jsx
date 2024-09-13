@@ -30,6 +30,7 @@ const DocumentViewer = (props) => {
 
   useEffect(() => {
     setShowSearchBar(false);
+    document.title = `${(doc && doc.type) || ''} | Document Viewer | Caseflow Reader`;
   }, [currentDocumentId]);
 
   useEffect(() => {
