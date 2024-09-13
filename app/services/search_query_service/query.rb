@@ -26,6 +26,20 @@ class SearchQueryService::Query
     SQL
   end
 
+  def veteran_ids_query
+    <<-SQL
+      (
+        #{appeals_internal_query}
+        where v.id in (?)
+      )
+      UNION
+      (
+        #{legacy_appeals_internal_query}
+        where v.id in (?)
+      )
+    SQL
+  end
+
   def vacols_query
     <<-SQL
       select

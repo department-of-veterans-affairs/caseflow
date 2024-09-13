@@ -24,12 +24,22 @@ class CaseSearchResultsForCaseflowVeteranId < ::CaseSearchResultsBase
     AppealFinder.new(user: user).find_appeals_for_veterans(veterans_user_can_access)
   end
 
-  def case_search_results
-    api_case_search_results
+  def search_results
+    @search_results ||= SearchQueryService.new(
+      veteran_ids: veterans_user_can_access.map(&:id)
+    ).search_by_veteran_ids
   end
 
-  def search_results
-    api_search_result
+  def vso_user_search_results
+    SearchQueryService::VsoUserSearchResults.new(user: user, search_results: search_results).call
+  end
+
+  def appeals
+    if user.vso_employee?
+      vso_user_search_results
+    else
+      search_results
+    end
   end
 
   def not_found_error

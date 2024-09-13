@@ -35,6 +35,7 @@ class SearchQueryService::LegacyAppealRow
       hearings: hearings,
       issues: [{}] * vacols_row["issues_count"],
       mst: mst,
+      overtime: search_row["overtime"],
       pact: pact,
       paper_case: paper_case,
       status: status,
