@@ -1,3 +1,4 @@
+/* eslint-disable import/extensions */
 /* eslint-disable max-lines, max-len */
 
 import React, { useState } from 'react';
@@ -12,6 +13,9 @@ import OFFICE_INFO from '../../../constants/REGIONAL_OFFICE_FOR_CSS_STATION.json
 
 export default function UserConfiguration(props) {
   const [isSelectedStation, stationIsSelected] = useState(false);
+  const [stationSelected, setStationSelected] = useState('');
+  const [isSelectedOffice, officeIsSelected] = useState(false);
+  const [officeSelected, setOfficeSelected] = useState('');
 
   const filteredStations = [];
   const stationsMapping = new Map();
@@ -22,12 +26,35 @@ export default function UserConfiguration(props) {
         info[1] = [info[1]];
       }
       stationsMapping.set(info[0], info[1]);
-      filteredStations.push({value: info[0], label: info[0]});
+      filteredStations.push({ value: info[0], label: info[0] });
     }
   });
 
-  const handleStationSelect = () => {
+  const handleStationSelect = ({ value }) => {
     stationIsSelected(true);
+    setStationSelected(value);
+  };
+
+  const stationAssignedOffices = OFFICE_INFO[stationSelected];
+
+  const officeAvailable = [];
+  let officesAvailable;
+
+  if (typeof stationAssignedOffices === 'object') {
+    stationAssignedOffices.forEach((station) => {
+      officesAvailable = {
+        value: station,
+        label: station
+      };
+      officeAvailable.push(officesAvailable);
+    });
+  } else if (typeof stationAssignedOffices === 'string') {
+    officeAvailable.push({ value: stationAssignedOffices, label: stationAssignedOffices });
+  }
+
+  const handleOfficeSelect = ({ value }) => {
+    officeIsSelected(true);
+    setOfficeSelected(value);
   };
 
   const functionsAvailable = props.form_values.functions_available;
@@ -41,13 +68,12 @@ export default function UserConfiguration(props) {
       <SearchableDropdown
         name="Station id dropdown"
         hideLabel
-        // onInputChange={handleInputChange}
         options={filteredStations} searchable
-        onChange={() => {
-          handleStationSelect();
+        onChange={(newVal) => {
+          handleStationSelect(newVal);
         }}
-        // filterOption={() => true}
-        // value={userSelect}
+        filterOption={() => true}
+        value={stationSelected}
       />
       { isSelectedStation &&
         (<div>
@@ -56,35 +82,40 @@ export default function UserConfiguration(props) {
           <SearchableDropdown
             name="Regional office dropdown"
             hideLabel
-            // onInputChange={handleInputChange}
-            // options={slicedUserOptions} searchable
-            // onChange={handleUserSelect}
-            // filterOption={() => true}
-            // value={userSelect}
+            options={officeAvailable} searchable
+            onChange={(newVal) => {
+              handleOfficeSelect(newVal);
+            }}
+            filterOption={() => true}
+            value={officeSelected}
           />
-          <br />
-          <p>Organizations</p>
-          <OrganizationDropdown {...props} />
-          <br />
-          <h2><strong>Functions</strong></h2>
-          <div className="load-test-container">
-            {functionsAvailable.map((functionOption) => (
-              <FunctionConfiguration
-                key={functionOption}
-                functionOption={functionOption}
-              />
-            ))}
+          { isSelectedOffice &&
+          (<div>
+            <br />
+            <p>Organizations</p>
+            <OrganizationDropdown {...props} />
+            <br />
+            <h2><strong>Functions</strong></h2>
+            <div className="load-test-container">
+              {functionsAvailable.map((functionOption) => (
+                <FunctionConfiguration
+                  key={functionOption}
+                  functionOption={functionOption}
+                />
+              ))}
+            </div>
+            <br />
+            <h2><strong>Feature Toggles</strong></h2>
+            <div className="load-test-container">
+              {featureToggles.map((featureToggle) => (
+                <FeatureToggleConfiguration
+                  key={featureToggle}
+                  featureToggle={featureToggle}
+                />
+              ))}
+            </div>
           </div>
-          <br />
-          <h2><strong>Feature Toggles</strong></h2>
-          <div className="load-test-container">
-            {featureToggles.map((featureToggle) => (
-              <FeatureToggleConfiguration
-                key={featureToggle}
-                featureToggle={featureToggle}
-              />
-            ))}
-          </div>
+          )}
         </div>
         )}
     </div>
