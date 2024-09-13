@@ -3,6 +3,7 @@
 require "./app/queries/appeals_in_location_63_in_past_2_days"
 
 describe AppealsInLocation63InPast2Days do
+  let(:job) { described_class }
   let(:avlj_name) { "Avlj Judge" }
   let(:avlj_fname) { "Avlj" }
   let(:avlj_lname) { "Judge" }
@@ -66,5 +67,241 @@ describe AppealsInLocation63InPast2Days do
         expect(subject_legacy[:bfcurloc]).to eq appeal["bfcurloc"]
       end
     end
+  end
+
+  describe ".loc_63_appeals" do
+    let(:non_ssc_avlj1) do
+      User.find_by_css_id("NONSSCTST1") ||
+        create(:user, :non_ssc_avlj_user, css_id: "NONSSCTST1", full_name: "First AVLJ")
+    end
+
+    let(:non_ssc_avlj2) do
+      User.find_by_css_id("NONSSCTST2") ||
+        create(:user, :non_ssc_avlj_user, css_id: "NONSSCTST2", full_name: "Second AVLJ")
+    end
+    let(:veteran) { create(:veteran) }
+
+    let(:correspondent) do
+      create(
+        :correspondent,
+        snamef: veteran.first_name,
+        snamel: veteran.last_name,
+        ssalut: "", ssn: veteran.file_number
+      )
+    end
+
+    let(:vacols_prio_case) do
+      create(
+        :case,
+        :aod,
+        :tied_to_judge,
+        :video_hearing_requested,
+        :type_original,
+        :ready_for_distribution,
+        tied_judge: non_ssc_avlj1,
+        correspondent: correspondent,
+        bfcorlid: "#{veteran.file_number}S",
+        case_issues: create_list(:case_issue, 3, :compensation),
+        bfd19: 60.days.ago
+      )
+    end
+
+    let(:vacols_non_prio_case) do
+      create(
+        :case,
+        :tied_to_judge,
+        :video_hearing_requested,
+        :type_original,
+        :ready_for_distribution,
+        tied_judge: non_ssc_avlj2,
+        correspondent: correspondent,
+        bfcorlid: "#{veteran.file_number}S",
+        case_issues: create_list(:case_issue, 3, :compensation),
+        bfd19: 7.days.ago
+      )
+    end
+
+    let!(:legacy_unsigned_priority_tied_to_non_ssc_avlj1) do
+      legacy_appeal = create(
+        :legacy_appeal,
+        :with_root_task,
+        vacols_case: vacols_prio_case,
+        closest_regional_office: "RO17"
+      )
+      create(:available_hearing_locations, "RO17", appeal: legacy_appeal)
+    end
+
+    let!(:legacy_unsigned_non_priority_tied_to_non_ssc_avlj2) do
+      legacy_appeal = create(
+        :legacy_appeal,
+        :with_root_task,
+        vacols_case: vacols_non_prio_case,
+        closest_regional_office: "RO17"
+      )
+      create(:available_hearing_locations, "RO17", appeal: legacy_appeal)
+    end
+
+    let!(:legacy_signed_non_priority_tied_to_non_ssc_avlj1) do
+      create(:legacy_signed_appeal, :type_original, signing_avlj: non_ssc_avlj, assigned_avlj: non_ssc_avlj)
+    end
+
+    let!(:legacy_signed_priority_tied_to_non_ssc_avlj2) do
+      create(:legacy_signed_appeal, :type_cavc_remand, signing_avlj: non_ssc_avlj2, assigned_avlj: non_ssc_avlj2)
+    end
+
+    let(:appeals) { [] }
+
+    context "there are 2 appeals still in loc 81" do
+      let(:vacols_prio_case_81) do
+        create(
+          :case,
+          :aod,
+          :tied_to_judge,
+          :video_hearing_requested,
+          :type_original,
+          :ready_for_distribution,
+          tied_judge: non_ssc_avlj1,
+          correspondent: correspondent,
+          bfcorlid: "#{veteran.file_number}S",
+          case_issues: create_list(:case_issue, 3, :compensation),
+          bfd19: 60.days.ago
+        )
+      end
+
+      let(:vacols_non_prio_case_81) do
+        create(
+          :case,
+          :tied_to_judge,
+          :video_hearing_requested,
+          :type_original,
+          :ready_for_distribution,
+          tied_judge: non_ssc_avlj2,
+          correspondent: correspondent,
+          bfcorlid: "#{veteran.file_number}S",
+          case_issues: create_list(:case_issue, 3, :compensation),
+          bfd19: 7.days.ago
+        )
+      end
+
+      let!(:legacy_unsigned_priority_tied_to_non_ssc_avlj1_81) do
+        legacy_appeal = create(
+          :legacy_appeal,
+          :with_root_task,
+          vacols_case: vacols_prio_case_81,
+          closest_regional_office: "RO17"
+        )
+        create(:available_hearing_locations, "RO17", appeal: legacy_appeal)
+      end
+
+      let!(:legacy_unsigned_non_priority_tied_to_non_ssc_avlj2_81) do
+        legacy_appeal = create(
+          :legacy_appeal,
+          :with_root_task,
+          vacols_case: vacols_non_prio_case_81,
+          closest_regional_office: "RO17"
+        )
+        create(:available_hearing_locations, "RO17", appeal: legacy_appeal)
+      end
+
+      it "fetches the correct matching appeals only in loc 63" do
+        move_to_loc_63(vacols_prio_case, 0.days.ago)
+        move_to_loc_63(vacols_non_prio_case, 1.day.ago)
+        move_to_loc_63(legacy_signed_non_priority_tied_to_non_ssc_avlj1, 1.day.ago)
+        move_to_loc_63(legacy_signed_priority_tied_to_non_ssc_avlj2, 2.days.ago)
+
+        expected_appeals = [
+          vacols_prio_case,
+          vacols_non_prio_case,
+          legacy_signed_non_priority_tied_to_non_ssc_avlj1,
+          legacy_signed_priority_tied_to_non_ssc_avlj2
+        ]
+        expected_appeals_appended_bfkeys = expected_appeals.map { |ea| "150000#{ea.bfkey}" }
+        returned_appeals = job.send(:loc_63_appeals)
+
+        expect(returned_appeals.size).to eq(4)
+        expect(returned_appeals.map { |ra| ra[:docket_number] }).to match_array(expected_appeals_appended_bfkeys)
+      end
+    end
+
+    context "there are 2 appeals still in loc 81" do
+      let(:vacols_prio_case_3_days) do
+        create(
+          :case,
+          :aod,
+          :tied_to_judge,
+          :video_hearing_requested,
+          :type_original,
+          :ready_for_distribution,
+          tied_judge: non_ssc_avlj1,
+          correspondent: correspondent,
+          bfcorlid: "#{veteran.file_number}S",
+          case_issues: create_list(:case_issue, 3, :compensation),
+          bfd19: 60.days.ago
+        )
+      end
+
+      let(:vacols_non_prio_case_90_days) do
+        create(
+          :case,
+          :tied_to_judge,
+          :video_hearing_requested,
+          :type_original,
+          :ready_for_distribution,
+          tied_judge: non_ssc_avlj2,
+          correspondent: correspondent,
+          bfcorlid: "#{veteran.file_number}S",
+          case_issues: create_list(:case_issue, 3, :compensation),
+          bfd19: 7.days.ago
+        )
+      end
+
+      let!(:legacy_unsigned_priority_tied_to_non_ssc_avlj1_3_days) do
+        legacy_appeal = create(
+          :legacy_appeal,
+          :with_root_task,
+          vacols_case: vacols_prio_case_3_days,
+          closest_regional_office: "RO17"
+        )
+        create(:available_hearing_locations, "RO17", appeal: legacy_appeal)
+      end
+
+      let!(:legacy_unsigned_non_priority_tied_to_non_ssc_avlj2_90_days) do
+        legacy_appeal = create(
+          :legacy_appeal,
+          :with_root_task,
+          vacols_case: vacols_non_prio_case_90_days,
+          closest_regional_office: "RO17"
+        )
+        create(:available_hearing_locations, "RO17", appeal: legacy_appeal)
+      end
+
+      it "fetches the correct matching appeals only in loc 63" do
+        move_to_loc_63(vacols_prio_case, 0.days.ago)
+        move_to_loc_63(vacols_non_prio_case, 1.day.ago)
+        move_to_loc_63(legacy_signed_non_priority_tied_to_non_ssc_avlj1, 1.day.ago)
+        move_to_loc_63(legacy_signed_priority_tied_to_non_ssc_avlj2, 2.days.ago)
+        move_to_loc_63(vacols_prio_case_3_days, 3.days.ago)
+        move_to_loc_63(vacols_non_prio_case_90_days, 90.days.ago)
+
+        expected_appeals = [
+          vacols_prio_case,
+          vacols_non_prio_case,
+          legacy_signed_non_priority_tied_to_non_ssc_avlj1,
+          legacy_signed_priority_tied_to_non_ssc_avlj2
+        ]
+        expected_appeals_appended_bfkeys = expected_appeals.map { |ea| "150000#{ea.bfkey}" }
+        returned_appeals = job.send(:loc_63_appeals)
+
+        expect(returned_appeals.size).to eq(4)
+        expect(returned_appeals.map { |ra| ra[:docket_number] }).to match_array(expected_appeals_appended_bfkeys)
+      end
+    end
+  end
+
+  def move_to_loc_63(legacy_case, date)
+    value = date.in_time_zone("America/New_York")
+    date_time = Time.utc(value.year, value.month, value.day, value.hour, value.min, value.sec)
+
+    legacy_case.update!(bfcurloc: 63, bfdlocin: date_time)
   end
 end
