@@ -347,9 +347,14 @@ export const unassignColumn = (unassignPackage) => {
   return {
     valueFunction: (row) => (
       <div>
-        <a style={styles.unassign} onClick={() => unassignPackage(row.id)}>Unassign</a>
+        <a
+          style={styles.unassign}
+          onClick={() => unassignPackage(row.workOrder)}
+        >
+          Unassign
+        </a>
       </div>
-    )
+    ),
   };
 };
 

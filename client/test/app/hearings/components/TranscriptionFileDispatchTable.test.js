@@ -3,7 +3,10 @@ import React from 'react';
 import { render, waitFor, screen, cleanup } from '@testing-library/react';
 import { TranscriptionFileDispatchTable } from '../../../../app/hearings/components/TranscriptionFileDispatchTable';
 import TRANSCRIPTION_FILE_DISPATCH_CONFIG from '../../../../constants/TRANSCRIPTION_FILE_DISPATCH_CONFIG';
-import { unassignedColumns, assignedColumns } from '../../../../app/hearings/components/TranscriptionFileDispatchTabs';
+import {
+  unassignedColumns,
+  assignedColumns,
+} from '../../../../app/hearings/components/TranscriptionFileDispatchTabs';
 import ApiUtil from '../../../../app/util/ApiUtil';
 import { when } from 'jest-when';
 import userEvent from '@testing-library/user-event';
@@ -20,7 +23,7 @@ const mockTranscriptionFiles = [
     caseType: 'Original',
     hearingDate: '11/02/2020',
     hearingType: 'Hearing',
-    fileStatus: 'Successful upload (AWS)'
+    fileStatus: 'Successful upload (AWS)',
   },
   {
     id: 39,
@@ -31,7 +34,7 @@ const mockTranscriptionFiles = [
     caseType: 'Original',
     hearingDate: '08/27/2020',
     hearingType: 'Hearing',
-    fileStatus: 'Successful upload (AWS)'
+    fileStatus: 'Successful upload (AWS)',
   },
   {
     id: 38,
@@ -42,7 +45,7 @@ const mockTranscriptionFiles = [
     caseType: 'Original',
     hearingDate: '04/30/2020',
     hearingType: 'Hearing',
-    fileStatus: 'Successful upload (AWS)'
+    fileStatus: 'Successful upload (AWS)',
   },
   {
     id: 37,
@@ -53,7 +56,7 @@ const mockTranscriptionFiles = [
     caseType: 'Original',
     hearingDate: '01/13/2020',
     hearingType: 'Hearing',
-    fileStatus: 'Successful upload (AWS)'
+    fileStatus: 'Successful upload (AWS)',
   },
   {
     id: 36,
@@ -64,7 +67,7 @@ const mockTranscriptionFiles = [
     caseType: 'Original',
     hearingDate: '10/24/2019',
     hearingType: 'Hearing',
-    fileStatus: 'Successful upload (AWS)'
+    fileStatus: 'Successful upload (AWS)',
   },
   {
     id: 35,
@@ -75,7 +78,7 @@ const mockTranscriptionFiles = [
     caseType: 'Original',
     hearingDate: '04/04/2019',
     hearingType: 'Hearing',
-    fileStatus: 'Successful upload (AWS)'
+    fileStatus: 'Successful upload (AWS)',
   },
   {
     id: 34,
@@ -86,7 +89,7 @@ const mockTranscriptionFiles = [
     caseType: 'Original',
     hearingDate: '07/01/2024',
     hearingType: 'Hearing',
-    fileStatus: 'Successful upload (AWS)'
+    fileStatus: 'Successful upload (AWS)',
   },
   {
     id: 33,
@@ -97,7 +100,7 @@ const mockTranscriptionFiles = [
     caseType: 'Original',
     hearingDate: '07/01/2024',
     hearingType: 'Hearing',
-    fileStatus: 'Successful upload (AWS)'
+    fileStatus: 'Successful upload (AWS)',
   },
   {
     id: 32,
@@ -108,7 +111,7 @@ const mockTranscriptionFiles = [
     caseType: 'Original',
     hearingDate: '06/18/2024',
     hearingType: 'Hearing',
-    fileStatus: 'Successful upload (AWS)'
+    fileStatus: 'Successful upload (AWS)',
   },
   {
     id: 31,
@@ -119,7 +122,7 @@ const mockTranscriptionFiles = [
     caseType: 'Original',
     hearingDate: '06/18/2024',
     hearingType: 'Hearing',
-    fileStatus: 'Successful upload (AWS)'
+    fileStatus: 'Successful upload (AWS)',
   },
   {
     id: 30,
@@ -130,7 +133,7 @@ const mockTranscriptionFiles = [
     caseType: 'Original',
     hearingDate: '06/18/2024',
     hearingType: 'Hearing',
-    fileStatus: 'Successful upload (AWS)'
+    fileStatus: 'Successful upload (AWS)',
   },
   {
     id: 29,
@@ -141,7 +144,7 @@ const mockTranscriptionFiles = [
     caseType: 'Original',
     hearingDate: '07/01/2024',
     hearingType: 'Hearing',
-    fileStatus: 'Successful upload (AWS)'
+    fileStatus: 'Successful upload (AWS)',
   },
   {
     id: 28,
@@ -152,7 +155,7 @@ const mockTranscriptionFiles = [
     caseType: 'Original',
     hearingDate: '07/01/2024',
     hearingType: 'Hearing',
-    fileStatus: 'Successful upload (AWS)'
+    fileStatus: 'Successful upload (AWS)',
   },
   {
     id: 27,
@@ -163,7 +166,7 @@ const mockTranscriptionFiles = [
     caseType: 'Original',
     hearingDate: '06/18/2024',
     hearingType: 'Hearing',
-    fileStatus: 'Successful upload (AWS)'
+    fileStatus: 'Successful upload (AWS)',
   },
   {
     id: 26,
@@ -174,19 +177,19 @@ const mockTranscriptionFiles = [
     caseType: 'Original',
     hearingDate: '06/18/2024',
     hearingType: 'Hearing',
-    fileStatus: 'Successful upload (AWS)'
-  }
+    fileStatus: 'Successful upload (AWS)',
+  },
 ];
 
 const mockTranscriptionFilesResponse = {
   body: {
     task_page_count: 3,
     tasks: {
-      data: mockTranscriptionFiles
+      data: mockTranscriptionFiles,
     },
     tasks_per_page: 15,
-    total_task_count: 40
-  }
+    total_task_count: 40,
+  },
 };
 
 const mockLockedResponse = {
@@ -194,21 +197,21 @@ const mockLockedResponse = {
     {
       id: 40,
       status: 'selected',
-      message: ''
+      message: '',
     },
     {
       id: 39,
       status: 'locked',
-      message: 'Locked by QATTY2'
-    }
-  ]
+      message: 'Locked by QATTY2',
+    },
+  ],
 };
 
 const selectAllData = {
   data: {
     file_ids: [40, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26],
-    status: true
-  }
+    status: true,
+  },
 };
 
 const mockSelectAllResponse = {
@@ -216,19 +219,19 @@ const mockSelectAllResponse = {
     {
       id: 40,
       status: 'selected',
-      message: ''
+      message: '',
     },
     {
       id: 38,
       status: 'selected',
-      message: ''
+      message: '',
     },
     {
       id: 37,
       status: 'selected',
-      message: ''
-    }
-  ]
+      message: '',
+    },
+  ],
 };
 
 const mockClickedResponse = {
@@ -236,19 +239,19 @@ const mockClickedResponse = {
     {
       id: 40,
       status: 'selected',
-      message: ''
+      message: '',
     },
     {
       id: 39,
       status: 'locked',
-      message: 'Locked by QATTY2'
+      message: 'Locked by QATTY2',
     },
     {
       id: 38,
       status: 'selected',
-      message: ''
-    }
-  ]
+      message: '',
+    },
+  ],
 };
 
 const constClickData = { data: { file_ids: [37], status: true } };
@@ -261,7 +264,7 @@ const mockTranscriptionPackages = [
     dateSent: '01/01/2024',
     expectedReturnDate: '01/15/2024',
     contractor: 'Genesis Government Solutions, Inc.',
-    status: 'Sent'
+    status: 'Sent',
   },
   {
     id: 2,
@@ -270,7 +273,7 @@ const mockTranscriptionPackages = [
     dateSent: '01/01/2024',
     expectedReturnDate: '01/15/2024',
     contractor: 'Jamison Professional Services',
-    status: 'Sent'
+    status: 'Sent',
   },
   {
     id: 3,
@@ -279,7 +282,7 @@ const mockTranscriptionPackages = [
     dateSent: '01/01/2024',
     expectedReturnDate: '01/15/2024',
     contractor: 'Genesis Government Solutions, Inc.',
-    status: 'Sent'
+    status: 'Sent',
   },
   {
     id: 4,
@@ -288,7 +291,7 @@ const mockTranscriptionPackages = [
     dateSent: '01/08/2024',
     expectedReturnDate: '01/23/2024',
     contractor: 'Genesis Government Solutions, Inc.',
-    status: 'Overdue'
+    status: 'Overdue',
   },
   {
     id: 5,
@@ -297,7 +300,7 @@ const mockTranscriptionPackages = [
     dateSent: '01/08/2024',
     expectedReturnDate: '01/23/2024',
     contractor: 'Jamison Professional Services',
-    status: 'Sent'
+    status: 'Sent',
   },
   {
     id: 6,
@@ -306,7 +309,7 @@ const mockTranscriptionPackages = [
     dateSent: '01/08/2024',
     expectedReturnDate: '01/23/2024',
     contractor: 'Jamison Professional Services',
-    status: 'Sent'
+    status: 'Sent',
   },
   {
     id: 7,
@@ -315,7 +318,7 @@ const mockTranscriptionPackages = [
     dateSent: '01/10/2024',
     expectedReturnDate: '01/25/2024',
     contractor: 'Genesis Government Solutions, Inc.',
-    status: 'Sent'
+    status: 'Sent',
   },
   {
     id: 8,
@@ -324,7 +327,7 @@ const mockTranscriptionPackages = [
     dateSent: '01/10/2024',
     expectedReturnDate: '01/25/2024',
     contractor: 'Jamison Professional Services',
-    status: 'Sent'
+    status: 'Sent',
   },
   {
     id: 9,
@@ -333,7 +336,7 @@ const mockTranscriptionPackages = [
     dateSent: '01/10/2024',
     expectedReturnDate: '01/25/2024',
     contractor: 'The Ravens Group, Inc.',
-    status: 'Sent'
+    status: 'Sent',
   },
   {
     id: 10,
@@ -342,7 +345,7 @@ const mockTranscriptionPackages = [
     dateSent: '01/12/2024',
     expectedReturnDate: '01/27/2024',
     contractor: 'Jamison Professional Services',
-    status: 'Sent'
+    status: 'Sent',
   },
   {
     id: 11,
@@ -351,7 +354,7 @@ const mockTranscriptionPackages = [
     dateSent: '01/12/2024',
     expectedReturnDate: '01/27/2024',
     contractor: 'Jamison Professional Services',
-    status: 'Sent'
+    status: 'Sent',
   },
   {
     id: 12,
@@ -360,7 +363,7 @@ const mockTranscriptionPackages = [
     dateSent: '01/12/2024',
     expectedReturnDate: '01/27/2024',
     contractor: 'The Ravens Group, Inc.',
-    status: 'Sent'
+    status: 'Sent',
   },
   {
     id: 13,
@@ -369,7 +372,7 @@ const mockTranscriptionPackages = [
     dateSent: '01/17/2024',
     expectedReturnDate: '02/01/2024',
     contractor: 'Genesis Government Solutions, Inc.',
-    status: 'Sent'
+    status: 'Sent',
   },
   {
     id: 14,
@@ -378,7 +381,7 @@ const mockTranscriptionPackages = [
     dateSent: '01/17/2024',
     expectedReturnDate: '02/01/2024',
     contractor: 'The Ravens Group, Inc.',
-    status: 'Sent'
+    status: 'Sent',
   },
   {
     id: 15,
@@ -387,75 +390,90 @@ const mockTranscriptionPackages = [
     dateSent: '01/17/2024',
     expectedReturnDate: '02/01/2024',
     contractor: 'The Ravens Group, Inc.',
-    status: 'Sent'
-  }
+    status: 'Sent',
+  },
 ];
 
 const mockTranscriptionPackagesResponse = {
   body: {
     task_page_count: 2,
     tasks: {
-      data: mockTranscriptionPackages
+      data: mockTranscriptionPackages,
     },
     tasks_per_page: 15,
-    total_task_count: 18
-  }
+    total_task_count: 18,
+  },
 };
 
 const mockTranscriptionContractorsResponse = {
   transcription_contractors: [
     {
       id: 1,
-      name: 'Genesis Government Solutions, Inc.'
+      name: 'Genesis Government Solutions, Inc.',
     },
     {
       id: 2,
-      name: 'Jamison Professional Services'
+      name: 'Jamison Professional Services',
     },
     {
       id: 3,
-      name: 'The Ravens Group, Inc.'
-    }
-  ]
+      name: 'The Ravens Group, Inc.',
+    },
+  ],
 };
 
 const selectFilesForPackage = () => '';
 
 const setupUnassignedTable = () =>
-  render(<TranscriptionFileDispatchTable
-    columns={unassignedColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
-    statusFilter={['Unassigned']}
-    selectFilesForPackage={selectFilesForPackage}
-  />);
+  render(
+    <TranscriptionFileDispatchTable
+      columns={unassignedColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
+      statusFilter={['Unassigned']}
+      selectFilesForPackage={selectFilesForPackage}
+    />
+  );
 
 const setupAssignedTable = () =>
-  render(<Router><TranscriptionFileDispatchTable
-    columns={assignedColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
-    statusFilter={['Assigned']}
-  /></Router>);
-
+  render(
+    <Router>
+      <TranscriptionFileDispatchTable
+        columns={assignedColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
+        statusFilter={['Assigned']}
+      />
+    </Router>
+  );
 
 describe('TranscriptionFileDispatchTable', () => {
   beforeEach(async () => {
     ApiUtil.get = jest.fn();
     ApiUtil.post = jest.fn();
 
-    when(ApiUtil.get).calledWith('/hearings/find_by_contractor/available_contractors').
+    when(ApiUtil.get).
+      calledWith('/hearings/find_by_contractor/available_contractors').
       mockResolvedValue(mockTranscriptionContractorsResponse);
 
-    when(ApiUtil.get).calledWith('/hearings/transcription_files/transcription_file_tasks?tab=Unassigned&page=1').
+    when(ApiUtil.get).
+      calledWith(
+        '/hearings/transcription_files/transcription_file_tasks?tab=Unassigned&page=1'
+      ).
       mockResolvedValue(mockTranscriptionFilesResponse);
 
-    when(ApiUtil.get).calledWith('/hearings/transcription_files/locked').
+    when(ApiUtil.get).
+      calledWith('/hearings/transcription_files/locked').
       mockResolvedValue(mockLockedResponse);
 
-    when(ApiUtil.post).calledWith('/hearings/transcription_files/lock', constClickData).
+    when(ApiUtil.post).
+      calledWith('/hearings/transcription_files/lock', constClickData).
       mockResolvedValue(mockClickedResponse);
 
-    when(ApiUtil.get).calledWith('/hearings/transcription_packages/transcription_package_tasks?tab=Assigned&page=1').
+    when(ApiUtil.get).
+      calledWith(
+        '/hearings/transcription_packages/transcription_package_tasks?tab=Assigned&page=1'
+      ).
       mockResolvedValue(mockTranscriptionPackagesResponse);
 
-    when(ApiUtil.get).calledWith('/hearings/find_by_contractor/filterable_contractors').
+    when(ApiUtil.get).
+      calledWith('/hearings/find_by_contractor/filterable_contractors').
       mockResolvedValue(mockTranscriptionContractorsResponse);
 
     global.setInterval = jest.fn();
@@ -466,12 +484,30 @@ describe('TranscriptionFileDispatchTable', () => {
     jest.clearAllMocks();
   });
 
+  describe('Tabs have no validation issues', () => {
+    it('Unassigned tab has no violations', async () => {
+      const { container } = setupUnassignedTable();
+      const results = await axe(container);
+
+      expect(results).toHaveNoViolations();
+    });
+
+    it('Assigned tab has no violations', async () => {
+      const { container } = setupAssignedTable();
+      const results = await axe(container);
+
+      expect(results).toHaveNoViolations();
+    });
+  });
+
   describe('Unassigned Tab', () => {
     it('loads a table from backend data and handles selected and locked records', async () => {
       const { container } = setupUnassignedTable();
 
       await waitFor(() =>
-        expect(screen.getAllByText('Viewing 1-15 of 40 total')[0]).toBeInTheDocument()
+        expect(
+          screen.getAllByText('Viewing 1-15 of 40 total')[0]
+        ).toBeInTheDocument()
       );
 
       const select = container.querySelectorAll('.select-file');
@@ -484,24 +520,27 @@ describe('TranscriptionFileDispatchTable', () => {
 
       expect(container).toMatchSnapshot();
 
-      const results = await axe(container);
-
-      expect(results).toHaveNoViolations();
-    }, 20000);
+    });
 
     it('select all checkbox when select-all checkbox is selected', async () => {
       const { container } = setupUnassignedTable();
 
       ApiUtil.post.mockResolvedValue(mockSelectAllResponse);
       await waitFor(() =>
-        expect(screen.getAllByText('Viewing 1-15 of 40 total')[0]).toBeInTheDocument()
+        expect(
+          screen.getAllByText('Viewing 1-15 of 40 total')[0]
+        ).toBeInTheDocument()
       );
 
-      const selectAllCheckbox = screen.getByRole('checkbox', { name: /select all files checkbox/i });
+      const selectAllCheckbox = screen.getByRole('checkbox', {
+        name: /select all files checkbox/i,
+      });
 
       userEvent.click(selectAllCheckbox);
 
-      const selectFileCheckboxes = container.querySelectorAll('.select-file input');
+      const selectFileCheckboxes = container.querySelectorAll(
+        '.select-file input'
+      );
 
       selectFileCheckboxes.forEach((checkbox) => {
         if (!checkbox.disabled) {
@@ -509,7 +548,8 @@ describe('TranscriptionFileDispatchTable', () => {
         }
       });
       expect(ApiUtil.post).toHaveBeenCalledWith(
-        '/hearings/transcription_files/lock', selectAllData
+        '/hearings/transcription_files/lock',
+        selectAllData
       );
     }, 20000);
 
@@ -517,7 +557,9 @@ describe('TranscriptionFileDispatchTable', () => {
       const { container } = setupUnassignedTable();
 
       await waitFor(() =>
-        expect(screen.getAllByText('Viewing 1-15 of 40 total')[0]).toBeInTheDocument()
+        expect(
+          screen.getAllByText('Viewing 1-15 of 40 total')[0]
+        ).toBeInTheDocument()
       );
 
       const checkboxes = container.querySelectorAll('.select-file input');
@@ -529,7 +571,9 @@ describe('TranscriptionFileDispatchTable', () => {
       expect(checkboxes[3]).toBeChecked();
 
       expect(ApiUtil.post).toHaveBeenCalledWith(
-        '/hearings/transcription_files/lock', constClickData);
+        '/hearings/transcription_files/lock',
+        constClickData
+      );
     }, 20000);
 
     it('selecting or deselecting an individual checkbox will de-select the "Select All Files" checkbox', async () => {
@@ -538,14 +582,20 @@ describe('TranscriptionFileDispatchTable', () => {
       ApiUtil.post.mockResolvedValue(mockSelectAllResponse);
 
       await waitFor(() =>
-        expect(screen.getAllByText('Viewing 1-15 of 40 total')[0]).toBeInTheDocument()
+        expect(
+          screen.getAllByText('Viewing 1-15 of 40 total')[0]
+        ).toBeInTheDocument()
       );
 
-      const selectAllCheckbox = screen.getByRole('checkbox', { name: /select all files checkbox/i });
+      const selectAllCheckbox = screen.getByRole('checkbox', {
+        name: /select all files checkbox/i,
+      });
 
       userEvent.click(selectAllCheckbox);
 
-      const individualCheckboxes = container.querySelectorAll('.select-file input');
+      const individualCheckboxes = container.querySelectorAll(
+        '.select-file input'
+      );
 
       individualCheckboxes.forEach((checkbox) => {
         if (!checkbox.disabled) {
@@ -560,7 +610,8 @@ describe('TranscriptionFileDispatchTable', () => {
       expect(selectAllCheckbox).not.toBeChecked();
 
       expect(ApiUtil.post).toHaveBeenCalledWith(
-        '/hearings/transcription_files/lock', selectAllData
+        '/hearings/transcription_files/lock',
+        selectAllData
       );
     }, 20000);
 
@@ -568,7 +619,9 @@ describe('TranscriptionFileDispatchTable', () => {
       const { container } = setupUnassignedTable();
 
       await waitFor(() =>
-        expect(screen.getAllByText('Viewing 1-15 of 40 total')[0]).toBeInTheDocument()
+        expect(
+          screen.getAllByText('Viewing 1-15 of 40 total')[0]
+        ).toBeInTheDocument()
       );
 
       const checkboxes = container.querySelectorAll('.select-file input');
@@ -579,7 +632,9 @@ describe('TranscriptionFileDispatchTable', () => {
 
       expect(checkboxes[3]).toBeChecked();
       expect(ApiUtil.post).toHaveBeenCalledWith(
-        '/hearings/transcription_files/lock', constClickData);
+        '/hearings/transcription_files/lock',
+        constClickData
+      );
     });
   }, 20000);
 
@@ -588,15 +643,12 @@ describe('TranscriptionFileDispatchTable', () => {
       const { container } = setupAssignedTable();
 
       await waitFor(() =>
-        expect(screen.getAllByText('Viewing 1-15 of 18 total')[0]).toBeInTheDocument()
+        expect(
+          screen.getAllByText('Viewing 1-15 of 18 total')[0]
+        ).toBeInTheDocument()
       );
 
       expect(container).toMatchSnapshot();
-
-      const results = await axe(container);
-
-      expect(results).toHaveNoViolations();
     });
-  }, 20000);
+  });
 });
-

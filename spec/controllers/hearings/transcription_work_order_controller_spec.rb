@@ -130,4 +130,28 @@ RSpec.describe Hearings::TranscriptionWorkOrderController, type: :controller do
       end
     end
   end
+
+  describe "POST #unassigning_work_order" do
+    context "when unassigning work order is successful" do
+      before do
+        allow(Transcription)
+          .to receive(:unassign_by_task_number)
+          .with(task_number).and_return(true)
+
+        allow(TranscriptionPackage)
+          .to receive(:cancel_by_task_number)
+          .with(task_number).and_return(true)
+
+        allow(TranscriptionFile)
+          .to receive(:reset_files)
+          .with(task_number).and_return(true)
+
+        post :unassigning_work_order, params: { task_number: task_number }
+      end
+
+      it "returns a success response" do
+        expect(response).to have_http_status(:no_content)
+      end
+    end
+  end
 end

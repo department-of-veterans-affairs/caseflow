@@ -200,4 +200,15 @@ class TranscriptionFile < CaseflowRecord
   def lockable?(user_id)
     !locked_by_id || locked_by_id == user_id || locked_at < Time.now.utc - 2.hours
   end
+
+  def self.reset_files(task_number)
+    transcription = Transcription.find_by(task_number: task_number)
+    return unless transcription
+
+    transcription_files = TranscriptionFile.where(transcription_id: transcription.id)
+
+    transcription_files.each do |file|
+      file.update(file_status: "Successful upload (AWS)", date_upload_box: nil)
+    end
+  end
 end
