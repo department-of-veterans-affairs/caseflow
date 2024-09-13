@@ -22,6 +22,18 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   attr_writer :ineligible_to_eligible_issue_data
   attr_writer :ineligible_to_ineligible_issue_data
 
+  def initialize(*args)
+    super
+
+    @eligible_to_ineligible_issue_data ||= []
+    @ineligible_to_ineligible_issue_data ||= []
+    @ineligible_to_eligible_issue_data ||= []
+    @withdrawn_issue_data ||= []
+    @edited_issue_data ||= []
+    @removed_issue_data ||= []
+    @added_issue_data ||= []
+  end
+
   def perform!
     return false unless validate_before_perform
     return false if processed?
