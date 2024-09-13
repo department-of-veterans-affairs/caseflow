@@ -15,11 +15,11 @@ export const HearingDaysNav = ({ upcomingHearingDays, selectedHearingDay, onSele
   const hearingDays = groupHearingDays(upcomingHearingDays);
 
   // Send a google analytics event on scroll
-  // const handleScroll = debounce(() => window.analyticsEvent('Hearings', 'Available Hearing Days – Scroll '), 250);
+  const handleScroll = debounce(() => window.console.log('Hearings', 'Available Hearing Days – Scroll '), 250);
 
   return (
     <div className="usa-width-one-sixth" {...roSelectionStyling}>
-      <div className="hearing-day-list" >
+      <div className="hearing-day-list" onScroll={handleScroll}>
         <ul className="usa-sidenav-list" {...sectionNavigationListStyling}>
           {Object.keys(hearingDays).map((month) => (
             <React.Fragment key={month}>

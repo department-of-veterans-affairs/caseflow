@@ -100,24 +100,24 @@ class CommentLayer extends PureComponent {
 
     // Anything can be dragged and dropped. If the item that was
     // dropped doesn't match what we expect, we just silently ignore it.
-    // const logInvalidDragAndDrop = () => window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'invalid-drag-and-drop');
+    const logInvalidDragAndDrop = () => window.console.log(CATEGORIES.VIEW_DOCUMENT_PAGE, 'invalid-drag-and-drop');
 
-    // try {
-    //   dragAndDropData = JSON.parse(dragAndDropPayload);
+    try {
+      dragAndDropData = JSON.parse(dragAndDropPayload);
 
-    //   if (!dragAndDropData.iconCoordinates || !dragAndDropData.uuid) {
-    //     logInvalidDragAndDrop();
+      if (!dragAndDropData.iconCoordinates || !dragAndDropData.uuid) {
+        logInvalidDragAndDrop();
 
-    //     return;
-    //   }
-    // } catch (err) {
-    //   if (err instanceof SyntaxError) {
-    //     logInvalidDragAndDrop();
+        return;
+      }
+    } catch (err) {
+      if (err instanceof SyntaxError) {
+        logInvalidDragAndDrop();
 
-    //     return;
-    //   }
-    //   throw err;
-    // }
+        return;
+      }
+      throw err;
+    }
 
     const coordinates = getPageCoordinatesOfMouseEvent(
       event,
