@@ -20,15 +20,20 @@ class CorrespondenceIntakeProcessor
   end
 
   def update_intake(intake_params, current_user)
+    # Fetch the correspondence using the UUID from the intake params
     correspondence = Correspondence.find_by(uuid: intake_params[:correspondence_uuid])
 
+    # Fail if correspondence is not found
     fail "Correspondence not found" if correspondence.blank?
 
     ActiveRecord::Base.transaction do
-      # Update correspondence-related information
-      update_correspondence_relations(intake_params, correspondence.id)
+      # Ensure relations removal logic is in place
+      remove_correspondence_relations(intake_params, correspondence)
+
+      # Additional logic to update correspondence fields if necessary (optional)
     end
 
+    # Return success after successful update
     true
   rescue StandardError => error
     Rails.logger.error(error.full_message)
@@ -66,17 +71,22 @@ class CorrespondenceIntakeProcessor
     end
   end
 
-  def update_correspondence_relations(intake_params, correspondence_id)
-    return unless intake_params[:related_correspondence_uuids].present?
+# Removes correspondence relations that were unchecked or flagged for removal
+def remove_correspondence_relations(intake_params, correspondence)
+  # Collect the UUIDs of related correspondences that should remain
+  remaining_related_uuids = intake_params[:correspondence_relations]&.map { |data| data[:uuid] }
 
-    intake_params[:related_correspondence_uuids].each do |uuid|
-      correspondence_relation = CorrespondenceRelation.find_or_initialize_by(
-        correspondence_id: correspondence_id,
-        related_correspondence_id: Correspondence.find_by(uuid: uuid)&.id
-      )
-      correspondence_relation.save!
+  # Find all related correspondences for this correspondence
+  relations_to_remove = CorrespondenceRelation.where(correspondence_id: correspondence.id)
+
+  # Iterate through and delete the relations that are no longer present in the params
+  relations_to_remove.each do |relation|
+    # Ensure the related correspondence exists before attempting to delete
+    if remaining_related_uuids.exclude?(relation.related_correspondence&.uuid)
+      relation.destroy!
     end
   end
+end
 
   def create_response_letter(intake_params, correspondence_id)
     current_user = RequestStore.store[:current_user] ||= User.system_user

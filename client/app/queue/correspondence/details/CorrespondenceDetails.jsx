@@ -22,6 +22,7 @@ import { ExternalLinkIcon } from 'app/components/icons/ExternalLinkIcon';
 import { COLORS } from 'app/constants/AppConstants';
 import Checkbox from 'app/components/Checkbox';
 import CorrespondencePaginationWrapper from 'app/queue/correspondence/CorrespondencePaginationWrapper';
+import ApiUtil from '../../../util/ApiUtil';
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
@@ -68,26 +69,41 @@ const CorrespondenceDetails = (props) => {
     });
   };
 
-  // Function to handle the "Save Changes" button click
-  const handleSave = () => {
+  // Function to handle the "Save Changes" button click, including the PATCH request
+  const handleSave = async () => {
   // Disable the button
     setIsButtonDisabled(true);
 
     // Log the details of toggled checkboxes
     const toggledCheckboxes = Object.entries(checkboxStates).
-      // eslint-disable-next-line no-unused-vars
+    // eslint-disable-next-line no-unused-vars
       filter(([_, isChecked]) => isChecked).
       map(([mailId]) => {
         const mail = priorMail.find((pMail) => pMail.id === parseInt(mailId, 10));
 
         return {
-          id: mail.id,
-          dateOfReceipt: mail.vaDateOfReceipt,
-          notes: mail.notes,
+          uuid: mail.uuid
         };
       });
 
     console.log('Toggled Checkboxes:', toggledCheckboxes);
+
+    // Prepare data for the PATCH request
+    // const submitData = {
+    //   correspondence_relations: Object.entries(checkboxStates).map(([mailId]) => ({
+    //     id: parseInt(mailId, 10)
+    //   }))
+    // };
+
+    // Make the PATCH request to update the backend
+    try {
+      console.log('PATCH data:', toggledCheckboxes);
+      const response = await ApiUtil.patch(`/queue/correspondence/${correspondence.uuid}`, { data: toggledCheckboxes });
+
+      console.log('PATCH request status:', response.status);
+    } catch (error) {
+      console.error('Error during PATCH request:', error.message);
+    }
 
     // Reset checkboxes to the new initial state
     setOriginalStates(checkboxStates);

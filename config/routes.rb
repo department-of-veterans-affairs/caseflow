@@ -365,7 +365,7 @@ Rails.application.routes.draw do
     patch "/correspondence/:id/update_document", to: "correspondence_document#update_document"
     patch "/correspondence/tasks/:task_id/assign_to_team", to: "correspondence_tasks#assign_to_team"
     post "/correspondence/:correspondence_uuid/intake", to: "correspondence_intake#process_intake", as: :queue_correspondence_intake_process_intake
-    patch "/correspondence/:correspondence_uuid/intake", to: "correspondence_intake#update_intake", as: :queue_correspondence_intake_update_intake
+    patch "/correspondence/:correspondence_uuid", to: "correspondence_intake#update_intake", as: :queue_correspondence_intake_update_intake
     post "/correspondence/:correspondence_uuid/cancel_intake", to: "correspondence_intake#cancel_intake", as: :queue_correspondence_intake_cancel_intake
     post "/correspondence/:correspondence_uuid/task", to: "correspondence_tasks#create_package_action_task"
     post "/correspondence_response_letters", to: "correspondence_response_letters#create"
