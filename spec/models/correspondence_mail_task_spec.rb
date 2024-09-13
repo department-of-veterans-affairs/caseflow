@@ -125,9 +125,11 @@ RSpec.describe CorrespondenceMailTask, type: :model do
         context "The #{task_action[:name]} is assigned to an organization" do
           subject { @task.reassign_users }
 
-          it "returns CSS IDs of all users in the organization" do
+          it "returns CSS IDs of all users in the organization except for the current user" do
             expect(@task.assigned_to.is_a?(Organization)).to eq(true)
-            expect(subject).to eq(organization.users.pluck(:css_id))
+            expect(subject).to eq(organization.users.reject do |user|
+              user == RequestStore[:current_user]
+            end.pluck(:css_id))
           end
         end
 
@@ -153,6 +155,40 @@ RSpec.describe CorrespondenceMailTask, type: :model do
             expect(@task.assigned_to.is_a?(User)).to eq(true)
             expect(subject.include?(assigned_user.css_id)).to eq(false)
             expect(subject).to eq(adjacent_org_users)
+          end
+        end
+
+        context "The #{task_action[:name]} is assigned to a user in multiple orgs" do
+          let(:other_org_users) { create_list(:user, 10) }
+          let(:other_organization) { @task.assigned_to }
+          subject { @task.reassign_users }
+
+          before do
+            other_org_users.each do |user|
+              other_organization.add_user(user)
+            end
+
+            @task.update!(assigned_to: assigned_user)
+          end
+
+          after do
+            other_org_users.each do |user|
+              OrganizationsUser.remove_user_from_organization(user, organization)
+            end
+            OrganizationsUser.remove_user_from_organization(assigned_user, organization)
+          end
+
+          it "returns the CSS IDs of users that share the same organizations" do
+            # get list of adjacent org users
+            adjacent_org_users = []
+            assigned_user.organizations.each do |org|
+              adjacent_org_users << org.users.reject { |user| user == assigned_user }.pluck(:css_id)
+            end
+            adjacent_org_users.flatten!
+
+            expect(@task.assigned_to.is_a?(User)).to eq(true)
+            expect(subject.include?(assigned_user.css_id)).to eq(false)
+            expect(subject).to eq(adjacent_org_users.uniq)
           end
         end
       end
