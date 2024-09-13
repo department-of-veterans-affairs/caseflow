@@ -304,5 +304,4 @@ describe AppealsInLocation63InPast2Days do
 
     legacy_case.update!(bfcurloc: 63, bfdlocin: date_time)
   end
-
 end
