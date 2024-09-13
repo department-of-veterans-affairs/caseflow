@@ -27,7 +27,7 @@ class InboundOpsTeam < Organization
     false
   end
 
-  # inbound ops can only work mail tasks
+  # inbound ops can only work Correspondence Tasks
   # inbound ops cannot work tasks not related to an appeal
   def can_receive_task?(task)
     return false unless task.is_a?(CorrespondenceTask)
