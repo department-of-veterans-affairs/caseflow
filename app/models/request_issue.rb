@@ -62,7 +62,8 @@ class RequestIssue < CaseflowRecord
     appeal_to_higher_level_review: "appeal_to_higher_level_review",
     before_ama: "before_ama",
     legacy_issue_not_withdrawn: "legacy_issue_not_withdrawn",
-    legacy_appeal_not_eligible: "legacy_appeal_not_eligible"
+    legacy_appeal_not_eligible: "legacy_appeal_not_eligible",
+    contested: "contested"
   }
 
   enum closed_status: {
@@ -920,7 +921,9 @@ class RequestIssue < CaseflowRecord
     return unless decision_review
 
     if contested_decision_issue
+      self.ineligible_reason = :contested
       ContestableIssue.from_decision_issue(contested_decision_issue, decision_review)
+
     elsif contested_rating_issue
       ContestableIssue.from_rating_issue(contested_rating_issue, decision_review)
     end
