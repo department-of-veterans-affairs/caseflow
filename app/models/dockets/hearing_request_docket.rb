@@ -113,7 +113,7 @@ class HearingRequestDocket < Docket
   def affinity_date_count(in_window, priority)
     scope = docket_appeals.ready_for_distribution
 
-    scope = 
+    scope = scope.with_held_hearings
 
     scope = if in_window
               scope.non_genpop_by_affinity_start_date
