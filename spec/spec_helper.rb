@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 ENV["RAILS_ENV"] ||= "test"
-if ENV["SINGLE_COV"] && !ENV["CI"]
+if ENV["SINGLE_COV"]
   # get coverage selectively in local dev
   # add the line 'SingleCov.covered!' to the top of any *_spec.rb file to enable.
   require "single_cov"
