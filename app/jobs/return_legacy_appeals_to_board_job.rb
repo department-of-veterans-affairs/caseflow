@@ -86,7 +86,7 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
       VACOLS::Case.batch_update_vacols_location("63", qualifying_appeals.map { |q_appeal| q_appeal["bfkey"] })
     end
 
-    qualifying_appeals
+    qualifying_appeals || []
   end
 
   def get_tied_appeal_bfkeys(tied_appeals)
@@ -104,11 +104,17 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
   end
 
   def update_qualifying_appeals_bfkeys(tied_appeals_bfkeys, qualifying_appeals_bfkeys)
+    if nonsscavlj_number_of_appeals_limit < 0
+      fail StandardError, "CaseDistributionLever.nonsscavlj_number_of_appeals_to_move set below 0"
+    elsif nonsscavlj_number_of_appeals_limit == 0
+      return qualifying_appeals_bfkeys
+    end
+
     if tied_appeals_bfkeys.any?
       if tied_appeals_bfkeys.count < nonsscavlj_number_of_appeals_limit
         qualifying_appeals_bfkeys.push(tied_appeals_bfkeys)
       else
-        qualifying_appeals_bfkeys.push(tied_appeals_bfkeys[0..max_appeals_limit_index])
+        qualifying_appeals_bfkeys.push(tied_appeals_bfkeys[0..nonsscavlj_number_of_appeals_to_move_index])
       end
     end
 
@@ -117,14 +123,6 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
 
   def non_ssc_avljs
     VACOLS::Staff.where("sactive = 'A' AND svlj = 'A' AND sattyid <> smemgrp")
-  end
-
-  def nonsscavlj_number_of_appeals_limit
-    @nonsscavlj_number_of_appeals_limit ||= (CaseDistributionLever.nonsscavlj_number_of_appeals_to_move || 0)
-  end
-
-  def max_appeals_limit_index
-    nonsscavlj_number_of_appeals_limit - 1
   end
 
   # Method to separate appeals by priority
@@ -141,15 +139,36 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
   def calculate_remaining_appeals(all_appeals, moved_priority_appeals, moved_non_priority_appeals)
     return [] if all_appeals.nil?
 
-    remaining_priority_appeals = (
-      all_appeals.select { |appeal| appeal["priority"] == 1 } -
-      moved_priority_appeals
-    ) || []
-    remaining_non_priority_appeals = (
-      all_appeals.select { |appeal| appeal["priority"] == 0 } -
-      moved_non_priority_appeals
-    ) || []
+    remaining_priority_appeals = calculate_remaining_priority_appeals(all_appeals, moved_priority_appeals)
+    remaining_non_priority_appeals = calculate_remaining_non_priority_appeals(all_appeals, moved_non_priority_appeals)
+
     [remaining_priority_appeals, remaining_non_priority_appeals]
+  end
+
+  def calculate_remaining_priority_appeals(all_appeals, moved_priority_appeals)
+    starting_priority_appeals = all_appeals.select { |appeal| appeal["priority"] == 1 }
+
+    if (moved_priority_appeals - starting_priority_appeals).empty?
+      remaining_priority_appeals = (starting_priority_appeals - moved_priority_appeals) || []
+    else
+      fail StandardError, "An invalid priority appeal was detected in the list of moved appeals: "\
+                          "#{moved_priority_appeals - starting_priority_appeals}"
+    end
+
+    remaining_priority_appeals
+  end
+
+  def calculate_remaining_non_priority_appeals(all_appeals, moved_non_priority_appeals)
+    starting_non_priority_appeals = all_appeals.select { |appeal| appeal["priority"] == 0 }
+
+    if (moved_non_priority_appeals - starting_non_priority_appeals).empty?
+      remaining_non_priority_appeals = (starting_non_priority_appeals - moved_non_priority_appeals) || []
+    else
+      fail StandardError, "An invalid non-priority appeal was detected in the list of moved appeals: "\
+                          "#{moved_non_priority_appeals - starting_non_priority_appeals}"
+    end
+
+    remaining_non_priority_appeals
   end
 
   # Method to fetch non-SSC AVLJs SATTYIDS that appeals were moved to location '63'
@@ -160,6 +179,14 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
       .compact
       .uniq
       .map(&:sattyid) || []
+  end
+
+  def nonsscavlj_number_of_appeals_limit
+    @nonsscavlj_number_of_appeals_limit ||= CaseDistributionLever.nonsscavlj_number_of_appeals_to_move || 0
+  end
+
+  def nonsscavlj_number_of_appeals_to_move_index
+    @nonsscavlj_number_of_appeals_to_move_index ||= nonsscavlj_number_of_appeals_limit - 1
   end
 
   def create_returned_appeal_job
@@ -205,6 +232,10 @@ class ReturnLegacyAppealsToBoardJob < CaseflowJob
   end
 
   def send_job_slack_report(slack_message)
+    if slack_message.blank?
+      fail StandardError, "Slack message cannot be empty or nil"
+    end
+
     slack_service.send_notification(slack_message.join("\n"), self.class.name)
   end
 
