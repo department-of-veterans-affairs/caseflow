@@ -1,4 +1,4 @@
-class CreateRemandsView < Caseflow::Migration
+class CreateRemandsView < ActiveRecord::Migration[6.1]
   def up
     safety_assured do
       execute <<-SQL
