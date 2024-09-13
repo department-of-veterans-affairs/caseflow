@@ -2,8 +2,8 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# This file is the source Rails uses to define your schema when running `rails
-# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
 # be faster and is potentially less error prone than running all of your
 # migrations from scratch. Old migrations may fail to apply correctly if those
 # migrations use external dependencies or application code.
@@ -745,9 +745,9 @@ ActiveRecord::Schema.define(version: 2024_08_28_165652) do
 
   create_table "correspondences_appeals_tasks", force: :cascade do |t|
     t.bigint "correspondence_appeal_id"
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: 6, null: false
     t.bigint "task_id", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.index ["task_id"], name: "index_correspondences_appeals_tasks_on_task_id"
   end
 
@@ -1906,6 +1906,16 @@ ActiveRecord::Schema.define(version: 2024_08_28_165652) do
     t.index ["user_id"], name: "index_request_issues_updates_on_user_id"
   end
 
+  create_table "returned_appeal_jobs", force: :cascade do |t|
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "errored_at"
+    t.text "returned_appeals", default: [], array: true
+    t.datetime "started_at"
+    t.json "stats"
+    t.datetime "updated_at", null: false
+  end
+
   create_table "schedule_periods", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "end_date", null: false
@@ -2289,46 +2299,6 @@ ActiveRecord::Schema.define(version: 2024_08_28_165652) do
     t.datetime "created_at", null: false
     t.integer "doc_type_id"
     t.datetime "updated_at", null: false
-  end
-
-  create_table "vbms_ext_claim", primary_key: "CLAIM_ID", id: :decimal, precision: 38, force: :cascade do |t|
-    t.string "ALLOW_POA_ACCESS", limit: 5
-    t.decimal "CLAIMANT_PERSON_ID", precision: 38
-    t.datetime "CLAIM_DATE"
-    t.string "CLAIM_SOJ", limit: 25
-    t.integer "CONTENTION_COUNT"
-    t.datetime "CREATEDDT", null: false
-    t.string "EP_CODE", limit: 25
-    t.datetime "ESTABLISHMENT_DATE"
-    t.datetime "EXPIRATIONDT"
-    t.string "INTAKE_SITE", limit: 25
-    t.datetime "LASTUPDATEDT", null: false
-    t.string "LEVEL_STATUS_CODE", limit: 25
-    t.datetime "LIFECYCLE_STATUS_CHANGE_DATE"
-    t.string "LIFECYCLE_STATUS_NAME", limit: 50
-    t.string "ORGANIZATION_NAME", limit: 100
-    t.string "ORGANIZATION_SOJ", limit: 25
-    t.string "PAYEE_CODE", limit: 25
-    t.string "POA_CODE", limit: 25
-    t.integer "PREVENT_AUDIT_TRIG", limit: 2, default: 0, null: false
-    t.string "PRE_DISCHARGE_IND", limit: 5
-    t.string "PRE_DISCHARGE_TYPE_CODE", limit: 10
-    t.string "PRIORITY", limit: 10
-    t.string "PROGRAM_TYPE_CODE", limit: 10
-    t.string "RATING_SOJ", limit: 25
-    t.string "SERVICE_TYPE_CODE", limit: 10
-    t.string "SUBMITTER_APPLICATION_CODE", limit: 25
-    t.string "SUBMITTER_ROLE_CODE", limit: 25
-    t.datetime "SUSPENSE_DATE"
-    t.string "SUSPENSE_REASON_CODE", limit: 25
-    t.string "SUSPENSE_REASON_COMMENTS", limit: 1000
-    t.decimal "SYNC_ID", precision: 38, null: false
-    t.string "TEMPORARY_CLAIM_SOJ", limit: 25
-    t.string "TYPE_CODE", limit: 25
-    t.decimal "VERSION", precision: 38, null: false
-    t.decimal "VETERAN_PERSON_ID", precision: 15
-    t.index ["CLAIM_ID"], name: "claim_id_index"
-    t.index ["LEVEL_STATUS_CODE"], name: "level_status_code_index"
   end
 
   create_table "vbms_uploaded_documents", force: :cascade do |t|

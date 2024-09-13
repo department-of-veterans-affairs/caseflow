@@ -12,6 +12,16 @@ FactoryBot.define do
 
         new_sattyid
       end
+
+      judge do
+        judge_staff = VACOLS::Staff.find_by(slogid: "STAFF_FCT_JUDGE") ||
+                      create(:staff, :judge_role, slogid: "STAFF_FCT_JUDGE")
+        judge_staff
+      end
+
+      generated_smemgrp_not_equal_to_sattyid do
+        judge.sattyid
+      end
     end
 
     sequence(:stafkey) do |n|
@@ -115,6 +125,31 @@ FactoryBot.define do
     trait :has_sattyid do
       svlj { nil }
       sattyid { generated_sattyid }
+    end
+
+    trait :non_ssc_avlj do
+      svlj { "A" }
+      sattyid { generated_sattyid }
+      smemgrp { generated_smemgrp_not_equal_to_sattyid }
+    end
+
+    trait :inactive_non_ssc_avlj do
+      svlj { "A" }
+      sactive { "I" }
+      sattyid { generated_sattyid }
+      smemgrp { generated_smemgrp_not_equal_to_sattyid }
+    end
+
+    trait :ssc_avlj do
+      svlj { "A" }
+      sattyid { generated_sattyid }
+      smemgrp { sattyid }
+    end
+
+    trait :vlj do
+      svlj { "J" }
+      sattyid { generated_sattyid }
+      smemgrp { sattyid }
     end
 
     after(:build) do |staff, evaluator|
