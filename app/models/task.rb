@@ -101,7 +101,7 @@ class Task < CaseflowRecord
   # Equivalent to .reject(&:hide_from_queue_table_view) but offloads that to the database.
   scope :visible_in_queue_table_view, lambda {
     where.not(
-      type: Task.descendants.select(&:hide_from_queue_table_view).map(&:name)
+      type: hidden_task_classes
     )
   }
 
@@ -137,6 +137,10 @@ class Task < CaseflowRecord
     # To cache docoments from VBMS to S3 for appeals
     # With taks that are likely to need Reader to complete
     READER_PRIORITY_TASK_TYPES = [JudgeAssignTask.name, JudgeDecisionReviewTask.name].freeze
+
+    def hidden_task_classes
+      Task.descendants.select(&:hide_from_queue_table_view).map(&:name)
+    end
 
     def reader_priority_task_types
       READER_PRIORITY_TASK_TYPES
@@ -724,15 +728,14 @@ class Task < CaseflowRecord
   def cancel_task_and_child_subtasks
     # Cancel all descendants at the same time to avoid after_update hooks marking some tasks as completed.
     # it would be better if we could allow the callbacks to happen sanely
-    descendant_ids = descendants.pluck(:id)
 
     # by avoiding callbacks, we aren't saving PaperTrail versions
     # Manually save the state before and after.
-    tasks = Task.open.where(id: descendant_ids)
+    tasks = Task.open.where(id: descendants).to_a
 
     transaction do
       tasks.each { |task| task.paper_trail.save_with_version }
-      tasks.update_all(
+      Task.where(id: tasks).update_all(
         status: Constants.TASK_STATUSES.cancelled,
         cancelled_by_id: RequestStore[:current_user]&.id,
         closed_at: Time.zone.now

@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class CaseSearchResultsForDocketNumber < ::CaseSearchResultsBase
-  validate :veterans_exist, if: :current_user_is_vso_employee?
-
   def initialize(docket_number:, user:)
     super(user: user)
     @docket_number = docket_number.to_s if docket_number
@@ -15,12 +13,20 @@ class CaseSearchResultsForDocketNumber < ::CaseSearchResultsBase
   end
 
   def appeals
+    SearchQueryService.new(docket_number: docket_number).search_by_docket_number
+  end
+
+  def appeal_finder_appeals
     AppealFinder.find_appeals_by_docket_number(docket_number)
   end
 
   private
 
   attr_reader :docket_number
+
+  def validation_hook
+    validate_veterans_exist if current_user_is_vso_employee?
+  end
 
   def not_found_error
     {
@@ -31,7 +37,7 @@ class CaseSearchResultsForDocketNumber < ::CaseSearchResultsBase
 
   def veterans
     # Determine vet that corresponds to docket number so we can validate user can access
-    @file_numbers_for_appeals ||= appeals.map(&:veteran_file_number)
+    @file_numbers_for_appeals ||= appeals.map(&:api_response).map(&:attributes).map(&:veteran_file_number)
     @veterans ||= VeteranFinder.find_or_create_all(@file_numbers_for_appeals)
   end
 end
