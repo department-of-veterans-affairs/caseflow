@@ -51,10 +51,10 @@ class SearchQueryService
 
   def search_results
     @search_results ||= if file_number.present?
-      file_number_search_results
-    else
-      veteran_ids_search_results
-    end
+                          file_number_search_results
+                        else
+                          veteran_ids_search_results
+                        end
   end
 
   def veteran_ids_search_results

@@ -22,6 +22,7 @@ class SearchQueryService::AppealRow
   attr_reader :query_row
 
   # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
   def attributes
     SearchQueryService::Attributes.new(
       aod: query_row["aod_granted_for_person"].present?,
@@ -50,6 +51,7 @@ class SearchQueryService::AppealRow
     )
   end
   # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
 
   def decision_issues
     json_array("decision_issues")

@@ -500,5 +500,16 @@ FactoryBot.define do
       lever_group_order { 103 }
       control_group { "priority" }
     end
+
+    trait :nonsscavlj_number_of_appeals_to_move do
+      item { "nonsscavlj_number_of_appeals_to_move" }
+      title { "Non-SSC/AVLJ Number of Appeals to Move" }
+      data_type { "number" }
+      value { 2 }
+      unit { "" }
+      algorithms_used { [] }
+      lever_group { "internal" }
+      lever_group_order { 999 }
+    end
   end
 end
