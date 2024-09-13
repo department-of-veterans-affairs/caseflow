@@ -135,6 +135,23 @@ describe "SearchQueryService" do
           expect(result.type).to eq "appeal"
         end
       end
+
+      context "finds by veteran ids" do
+        subject { SearchQueryService.new(veteran_ids: [veteran.id]) }
+
+        it "finds by veteran ids" do
+          expect(appeal).to be_persisted
+
+          search_results = subject.search_by_veteran_ids
+
+          expect(search_results.length).to eq(1)
+
+          result = search_results.first.api_response
+
+          expect(result.id).to be
+          expect(result.type).to eq "appeal"
+        end
+      end
     end
   end
 
@@ -276,6 +293,18 @@ describe "SearchQueryService" do
         expect(attributes.veteran_file_number).to eq ssn
         expect(attributes.veteran_full_name).to eq veteran_full_name
         expect(attributes.withdrawn).to be_falsy
+      end
+
+      context "finds by veteran ids" do
+        subject { SearchQueryService.new(veteran_ids: [veteran.id]) }
+
+        it "finds by veteran ids" do
+          search_results = subject.search_by_veteran_ids
+          result = search_results.first.api_response
+
+          expect(result.id).to be
+          expect(result.type).to eq "legacy_appeal"
+        end
       end
     end
   end
