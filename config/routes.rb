@@ -272,6 +272,7 @@ Rails.application.routes.draw do
   get 'hearings/transcription_work_order/display_wo_summary', to: 'hearings/transcription_work_order#display_wo_summary'
   get 'hearings/transcription_work_order/display_wo_contents', to: 'hearings/transcription_work_order#display_wo_contents'
   get 'hearings/transcription_work_order/unassign_wo', to: 'hearings/transcription_work_order#unassign_wo'
+  post 'hearings/transcription_work_order/unassigning_work_order', to: 'hearings/transcription_work_order#unassigning_work_order'
 
   resources :hearings, only: [:update, :show]
 
