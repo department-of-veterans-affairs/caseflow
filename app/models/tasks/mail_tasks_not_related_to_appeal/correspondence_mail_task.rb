@@ -39,11 +39,9 @@ class CorrespondenceMailTask < CorrespondenceTask
       assigned_to.organizations.each do |org|
         users_list << org.users.reject { |user| user == assigned_to }.pluck(:css_id)
       end
-
-      users_list.flatten
     end
 
-    users_list
+    users_list.uniq.flatten!
   end
 
   # disable Metrics/AbcSize
