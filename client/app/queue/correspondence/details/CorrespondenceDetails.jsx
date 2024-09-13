@@ -98,7 +98,7 @@ const CorrespondenceDetails = (props) => {
     // Make the PATCH request to update the backend
     try {
       console.log('PATCH data:', toggledCheckboxes);
-      const response = await ApiUtil.patch(`/queue/correspondence/${correspondence.uuid}`, { data: toggledCheckboxes });
+      const response = await ApiUtil.patch(`/queue/correspondence/${correspondence.uuid}/update_intake`, { data: toggledCheckboxes });
 
       console.log('PATCH request status:', response.status);
     } catch (error) {
