@@ -587,7 +587,6 @@ RSpec.describe Idt::Api::V2::AppealsController, :postgres, :all_dbs, type: :cont
 
       context "when notifications are enabled" do
         include ActiveJob::TestHelper
-        let(:contested_issue) { create(:request_issue, :nonrating)}
         let(:veteran) { create(:veteran) }
         let(:contested_appeal) do
           create(
