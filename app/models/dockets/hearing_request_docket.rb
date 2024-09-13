@@ -106,4 +106,24 @@ class HearingRequestDocket < Docket
     # appeals is a 2x2 array containing 4 cases overall and we will end up distributing 4 cases rather than 2.
     # Instead, reinstate the limit here by filtering out the newest cases
   end
+
+  # used for distribution_stats
+  # :reek:ControlParameter
+  # :reek:FeatureEnvy
+  def affinity_date_count(in_window, priority)
+    scope = docket_appeals.ready_for_distribution
+
+    scope = 
+
+    scope = if in_window
+              scope.non_genpop_by_affinity_start_date
+            else
+              scope.genpop_by_affinity_start_date
+            end
+
+    return scoped_for_priority(scope).ids.size if priority
+
+    scope.nonpriority.ids.size
+  end
+
 end
