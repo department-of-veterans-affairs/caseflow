@@ -41,7 +41,7 @@ class CorrespondenceMailTask < CorrespondenceTask
       end
     end
 
-    users_list.flatten
+    users_list.uniq.flatten!
   end
 
   # disable Metrics/AbcSize
