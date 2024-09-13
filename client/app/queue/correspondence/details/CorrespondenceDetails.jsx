@@ -304,6 +304,7 @@ const CorrespondenceDetails = (props) => {
             isInboundOpsSuperuser={props.isInboundOpsSuperuser}
             isInboundOpsSupervisor={props.isInboundOpsSupervisor}
             isInboundOpsUser={props.isInboundOpsUser}
+            correspondence={props.correspondence}
           />
         </div>
       </>

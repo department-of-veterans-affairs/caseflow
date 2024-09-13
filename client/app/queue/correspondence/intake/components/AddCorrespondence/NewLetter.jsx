@@ -15,6 +15,7 @@ import {
 
 export const NewLetter = (props) => {
   const index = props.index;
+  const onFormCompletion = props.onFormCompletion;
   const currentDate = moment(new Date()).format('YYYY-MM-DD');
   const currentLetter = props.currentLetter;
   const letterHash = {};
@@ -121,6 +122,13 @@ export const NewLetter = (props) => {
 
     return false;
   };
+
+  useEffect(() => {
+    if(props.addLetterCheck === true){
+      const isComplete = canContinue();
+      onFormCompletion(isComplete);
+    }
+  }, [letterCard]);
 
   const findSub = (option, aux) => {
     const subCate = [];
@@ -249,7 +257,9 @@ export const NewLetter = (props) => {
 
   const changeLetterTitle = (val) => {
     setLetterCard({ ...letterCard,
-      title: val
+      title: val,
+      subType: '',
+      reason: '',
     });
   };
 
@@ -441,7 +451,8 @@ NewLetter.propTypes = {
   setUnrelatedTasksCanContinue: PropTypes.func,
   currentLetter: PropTypes.func,
   taskUpdatedCallback: PropTypes.func,
-  onContinueStatusChange: PropTypes.func
+  onContinueStatusChange: PropTypes.func,
+  onFormCompletion: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = (dispatch) => (

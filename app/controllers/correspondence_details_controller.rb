@@ -19,6 +19,10 @@ class CorrespondenceDetailsController < CorrespondenceController
     end
   end
 
+  def create_response_letter_for_correspondence
+    correspondence_intake_processor.create_letter(params, current_user)
+  end
+
   def set_instance_variables
     @correspondence = serialized_correspondence
 

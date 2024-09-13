@@ -243,6 +243,20 @@ export const assignTaskToTeam = (payload, frontendParams, correspondence) => (di
     });
 };
 
+export const submitLetterResponse = (payload, correspondence) => (dispatch) => {
+  const uuid = correspondence.uuid;
+  const url = `/queue/correspondence/${uuid}/correspondence_response_letter`;
+  return ApiUtil.post(url, payload).
+    then(() => {
+      dispatch({
+        type: ACTIONS.CORRESPONDENCE_INFO,
+        payload: {
+          correspondence
+        }
+      });
+    })
+};
+
 export const correspondenceInfo = (correspondence) => (dispatch) => {
   dispatch({
     type: ACTIONS.CORRESPONDENCE_INFO,
