@@ -1,4 +1,13 @@
 if ENV["RAILS_ENV"] == "test"
+#   require "simplecov_lcov_formatter"
+#   formatters = [
+#   SimpleCov::Formatter::HTMLFormatter,
+#   SimpleCov::Formatter::LcovFormatter
+# ]
+
+#   SimpleCov::Formatter::LcovFormatter.config.report_with_single_file = true
+#   SimpleCov.formatters = SimpleCov::Formatter::MultiFormatter.new(formatters)
+
   SimpleCov.start do
     add_filter "app/services/test_data_service.rb"
     add_filter "lib/fakes"

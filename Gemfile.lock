@@ -1861,7 +1861,7 @@ GEM
       activesupport (>= 4.2)
     fasterer (0.11.0)
       ruby_parser (>= 3.19.1)
-    ffi (1.17.0)
+    ffi (1.17.0-x86_64-darwin)
     foreman (0.88.1)
     formatador (1.1.0)
     fuzzy_match (2.1.0)
@@ -2002,8 +2002,6 @@ GEM
     nio4r (2.7.3)
     no_proxy_fix (0.1.2)
     nokogiri (1.15.6-x86_64-darwin)
-      racc (~> 1.4)
-    nokogiri (1.15.6-x86_64-linux)
       racc (~> 1.4)
     nori (2.6.0)
     notiffany (0.1.3)
@@ -2324,11 +2322,12 @@ GEM
       docile (~> 1.1)
       simplecov-html (~> 0.11)
       simplecov_json_formatter (~> 0.1)
-    simplecov-html (0.13.1)
-    simplecov-lcov (0.8.0)
+    simplecov-html (0.12.3)
     simplecov_json_formatter (0.1.4)
+    simplecov_lcov_formatter (0.9.0)
+      simplecov (>= 0.18)
     simpleidn (0.2.3)
-    single_cov (1.11.0)
+    single_cov (1.3.2)
     socksify (1.7.1)
     solargraph (0.48.0)
       backport (~> 1.2)
@@ -2523,7 +2522,7 @@ DEPENDENCIES
   shoryuken (= 3.1.11)
   shoulda-matchers
   simplecov
-  simplecov-lcov
+  simplecov_lcov_formatter (~> 0.9.0)
   single_cov
   sniffybara!
   solargraph
@@ -2542,4 +2541,4 @@ DEPENDENCIES
   ziptz
 
 BUNDLED WITH
-   2.4.22
+   2.4.19
