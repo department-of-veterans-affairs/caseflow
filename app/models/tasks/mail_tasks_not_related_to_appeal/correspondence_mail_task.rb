@@ -29,7 +29,9 @@ class CorrespondenceMailTask < CorrespondenceTask
     users_list = []
     # return users if the assignee is an organization
     if assigned_to.is_a?(Organization)
-      users_list << assigned_to&.users&.pluck(:css_id)
+      users_list << assigned_to&.users&.pluck(:css_id)&.reject do |current_user|
+        current_user.include?(RequestStore.store[:current_user].css_id)
+      end
     end
     # return the users from other orgs
     if assigned_to.is_a?(User)
