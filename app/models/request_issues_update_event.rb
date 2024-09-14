@@ -171,7 +171,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     rescue ActiveRecord::RecordNotFound
       raise Caseflow::Error::DecisionReviewUpdateMissingIssueError, issue_data[:reference_id]
     end
-    RequestIssue.from_intake_data(issue_data, decision_review: review)
+    from_intake_data(issue_data, decision_review: review)
   end
 
   def from_intake_data(data, decision_review: nil)
@@ -183,9 +183,10 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
 
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Layout/LineLength
   def attributes_from_intake_data(data)
-    parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(nil, data)
+    parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(data)
     contested_issue_present = attributes_look_like_contested_issue?(data)
-    issue_text = (data[parser_issue.ri_is_unidentified] || data[parser_issue.ri_verified_unidentified_issue]) ? data[parser_issue.ri_decision_text] : nil
+    # issue_text = (data[parser_issue.ri_is_unidentified] || data[parser_issue.ri_verified_unidentified_issue]) ? data[parser_issue.ri_contested_issue_description] : nil
+    issue_text = data[parser_issue.ri_is_unidentified] ? data[parser_issue.ri_contested_issue_description] : nil
 
     {
       benefit_type: data[parser_issue.ri_benefit_type],
@@ -195,10 +196,10 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       contested_decision_issue_id: data[parser_issue.ri_contested_decision_issue_id],
       contested_rating_issue_reference_id: data[parser_issue.ri_contested_rating_issue_reference_id],
       contested_rating_issue_diagnostic_code: data[parser_issue.ri_contested_rating_issue_diagnostic_code],
-      contested_rating_decision_reference_id: data[parser_issue.ri_rating_decision_reference_id],
-      contested_issue_description: contested_issue_present ? data[parser_issue.ri_decision_text] : nil,
+      contested_rating_decision_reference_id: data[parser_issue.ri_contested_rating_decision_reference_id],
+      contested_issue_description: contested_issue_present ? data[parser_issue.ri_contested_issue_description] : nil,
       contested_rating_issue_profile_date: data[parser_issue.ri_contested_rating_issue_profile_date],
-      nonrating_issue_description: data[parser_issue.ri_nonrating_issue_category] ? data[parser_issue.ri_decision_text] : nil,
+      nonrating_issue_description: data[parser_issue.ri_nonrating_issue_category] ? data[parser_issue.ri_contested_issue_description] : nil,
       unidentified_issue_text: issue_text,
       decision_date: data[parser_issue.ri_decision_date],
       nonrating_issue_category: data[parser_issue.ri_nonrating_issue_category],
@@ -222,7 +223,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   def attributes_look_like_contested_issue?(data)
     data[:ri_contested_rating_issue_reference_id] ||
       data[:ri_contested_decision_issue_id] ||
-      data[:ri_rating_decision_reference_id] ||
+      data[:ri_contested_rating_decision_reference_id] ||
       data[:ri_contested_rating_issue_diagnostic_code]
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Layout/LineLength
@@ -232,7 +233,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   end
 
   def process_withdrawn_issues!
-    return if withdrawn_issue_data.empty?
+    return if @withdrawn_issue_data.empty?
 
     @withdrawn_issue_data.each do |withdrawn_issue|
       begin
