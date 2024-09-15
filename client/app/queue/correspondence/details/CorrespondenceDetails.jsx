@@ -9,8 +9,7 @@ import CopyTextButton from '../../../components/CopyTextButton';
 import { loadCorrespondence } from '../correspondenceReducer/correspondenceActions';
 import CorrespondenceCaseTimeline from '../CorrespondenceCaseTimeline';
 import {
-  correspondenceInfo,
-  savePriorMailCheckboxState
+  correspondenceInfo, updateCorrespondenceRelations
 } from './../correspondenceDetailsReducer/correspondenceDetailsActions';
 import CorrespondenceResponseLetters from './CorrespondenceResponseLetters';
 import COPY from '../../../../COPY';
@@ -26,6 +25,7 @@ import Checkbox from 'app/components/Checkbox';
 import CorrespondencePaginationWrapper from 'app/queue/correspondence/CorrespondencePaginationWrapper';
 import Button from 'components/Button';
 import Alert from "components/Alert";
+import ApiUtil from "app/util/ApiUtil";
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
@@ -43,8 +43,9 @@ const CorrespondenceDetails = (props) => {
   const startIndex = (currentPage * 15) - 15;
   const endIndex = (currentPage * 15);
   const priorMail = correspondence.prior_mail;
-  const relatedCorrespondenceIds = props.correspondence.relatedCorrespondenceIds;
   const [selectedAppeals, setSelectedAppeals] = useState([])
+  // eslint-disable-next-line max-len
+  const [relatedCorrespondenceIds, setRelatedCorrespondenceIds] = useState(props.correspondence.relatedCorrespondenceIds);
 
   priorMail.sort((first, second) => {
     const firstInRelated = relatedCorrespondenceIds.includes(first.id);
@@ -350,6 +351,7 @@ const CorrespondenceDetails = (props) => {
               hideLabel
               defaultValue={relatedCorrespondenceIds.some((el) => el === correspondenceRow.id)}
               value={selectedPriorMail.some((el) => el.id === correspondenceRow.id)}
+              disabled={relatedCorrespondenceIds.some((corrId) => corrId === correspondenceRow.id)}
               onChange={(checked) => onPriorMailCheckboxChange(correspondenceRow, checked)}
             />
           </div>
@@ -488,13 +490,38 @@ const CorrespondenceDetails = (props) => {
 
   const saveChanges = () => {
     if (currentTabIndex === 3) {
-      setShowSuccessBanner(true);
-      setSelectedPriorMail([]);
-      setDisableSubmitButton(true);
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
+
+      const priorMailIds = selectedPriorMail.map((mail) => mail.id);
+      const payload = {
+        data: {
+          priorMailIds: selectedPriorMail.map((mail) => mail.id)
+        }
+      };
+
+      const tempCor = props.correspondence;
+
+      tempCor.relatedCorrespondenceIds = priorMailIds;
+
+      return ApiUtil.put(`/queue/correspondence/${correspondence.uuid}/update_correspondence_relations`, payload).
+        then(() => {
+          props.updateCorrespondenceRelations(tempCor);
+
+          setRelatedCorrespondenceIds([...relatedCorrespondenceIds, ...priorMailIds]);
+          setShowSuccessBanner(true);
+          setSelectedPriorMail([]);
+          setDisableSubmitButton(true);
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        }).
+        catch((error) => {
+          const errorMessage = error?.response?.body?.message ?
+            error.response.body.message.replace(/^Error:\s*/, '') :
+            error.message;
+
+          console.error(errorMessage);
+        });
     }
   };
 
@@ -563,20 +590,18 @@ CorrespondenceDetails.propTypes = {
   correspondence_appeal_ids: PropTypes.bool,
   tasksUnrelatedToAppealEmpty: PropTypes.bool,
   correspondenceResponseLetters: PropTypes.array,
-  savePriorMailCheckboxState: PropTypes.func,
-  priorMailCheckboxes: PropTypes.array,
+  updateCorrespondenceRelations: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({
   correspondenceInfo: state.correspondenceDetails.correspondenceInfo,
-  tasksUnrelatedToAppealEmpty: state.correspondenceDetails.tasksUnrelatedToAppealEmpty,
-  priorMailCheckboxes: state.correspondenceDetails.relatedCorrespondences
+  tasksUnrelatedToAppealEmpty: state.correspondenceDetails.tasksUnrelatedToAppealEmpty
 });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
     correspondenceInfo,
-    savePriorMailCheckboxState
+    updateCorrespondenceRelations
   }, dispatch)
 );
 
