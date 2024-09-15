@@ -46,6 +46,8 @@ const CorrespondenceDetails = (props) => {
   const [selectedAppeals, setSelectedAppeals] = useState([])
   // eslint-disable-next-line max-len
   const [relatedCorrespondenceIds, setRelatedCorrespondenceIds] = useState(props.correspondence.relatedCorrespondenceIds);
+  const relatedCorrespondenceIds = props.correspondence.relatedCorrespondenceIds;
+  const [selectedAppeals, setSelectedAppeals] = useState([])
 
   priorMail.sort((first, second) => {
     const firstInRelated = relatedCorrespondenceIds.includes(first.id);
