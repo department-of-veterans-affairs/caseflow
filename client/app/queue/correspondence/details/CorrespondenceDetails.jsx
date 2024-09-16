@@ -43,11 +43,11 @@ const CorrespondenceDetails = (props) => {
   const startIndex = (currentPage * 15) - 15;
   const endIndex = (currentPage * 15);
   const priorMail = correspondence.prior_mail;
-  const [selectedAppeals, setSelectedAppeals] = useState([])
   // eslint-disable-next-line max-len
   const [relatedCorrespondenceIds, setRelatedCorrespondenceIds] = useState(props.correspondence.relatedCorrespondenceIds);
-  const relatedCorrespondenceIds = props.correspondence.relatedCorrespondenceIds;
-  const [selectedAppeals, setSelectedAppeals] = useState([])
+  const [selectedAppeals, setSelectedAppeals] = useState(correspondence.correspondenceAppealIds)
+  const [unSelectedAppeals, setUnSelectedAppeals] = useState([])
+  const userAccess = correspondence.user_access
 
   priorMail.sort((first, second) => {
     const firstInRelated = relatedCorrespondenceIds.includes(first.id);
@@ -124,12 +124,17 @@ const CorrespondenceDetails = (props) => {
   };
 
   const appealCheckboxOnChange = (appealId, isChecked) => {
+    setDisableSubmitButton(false);
     if (isChecked) {
-      setSelectedAppeals(appealId)
+      setSelectedAppeals([...selectedAppeals, appealId])
     } else {
-      
+      setUnSelectedAppeals([...unSelectedAppeals, appealId])
     }
   };
+
+  const toggleCheckboxState = (checked) => {
+    return checked ? userAccess !== "admin_access" : false;
+  }
 
 
   const allCorrespondencesList = () => {
@@ -243,9 +248,11 @@ const CorrespondenceDetails = (props) => {
               appeals={appeals}
               paginate="true"
               showCheckboxes
-              taskRelatedAppealIds={props.correspondence.correspondenceAppealIds}
+              taskRelatedAppealIds={selectedAppeals}
               enableTopPagination
               checkboxOnChange={appealCheckboxOnChange}
+              toggleCheckboxState={toggleCheckboxState}
+              disabled={false}
             />
           </AppSegment>
           {(props.correspondence.correspondenceAppeals.map((taskAdded) =>
@@ -491,6 +498,29 @@ const CorrespondenceDetails = (props) => {
   ];
 
   const saveChanges = () => {
+    if(currentTabIndex == 0) {
+      let appealsSelected = selectedAppeals.filter(val => !correspondence.correspondenceAppealIds.includes(val));
+
+      const payload = {
+        data: {
+          selected_appeal_ids: appealsSelected,
+          unselected_appeal_ids: unSelectedAppeals
+        }
+      };
+
+      return ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/save_correspondence_appeals`, payload).
+        then((resp) => {
+         console.log('saved')
+        }).
+        catch((error) => {
+          const errorMessage = error?.response?.body?.message ?
+            error.response.body.message.replace(/^Error:\s*/, '') :
+            error.message;
+
+          console.error(errorMessage);
+        });
+    }
+
     if (currentTabIndex === 3) {
 
       const priorMailIds = selectedPriorMail.map((mail) => mail.id);
