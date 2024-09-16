@@ -45,7 +45,7 @@ describe Seeds::CaseDistributionTestData do
       seed.seed!
 
       # checking CaseDistributionlevers count
-      expect(CaseDistributionLever.count).to eq 28
+      expect(CaseDistributionLever.count).to eq 30
 
       expect(Appeal.where(docket_type: "direct_review").count).to eq 38
       expect(Appeal.where(docket_type: "direct_review").first.receipt_date).to eq(Time.zone.today - (20.years + 1.day))
