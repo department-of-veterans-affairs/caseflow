@@ -24,7 +24,7 @@ class SearchQueryService::AppealRow
   # rubocop:disable Metrics/MethodLength
   def attributes
     SearchQueryService::Attributes.new(
-      aod: query_row["aod_granted_for_person"].present?,
+      aod: aod,
       appellant_full_name: appellant_full_name,
       assigned_to_location: queried_appeal.assigned_to_location,
       assigned_attorney: assigned_attorney,
@@ -50,6 +50,10 @@ class SearchQueryService::AppealRow
     )
   end
   # rubocop:enable Metrics/MethodLength
+
+  def aod
+    query_row["aod_granted_for_person"].present?
+  end
 
   def decision_issues
     json_array("decision_issues")
