@@ -12,7 +12,7 @@ const mockHearing = {
         dateUploadAws: '2023-08-01',
         hearingType: 'Hearing Type 1',
         docketNumber: '12345'
-      }
+      },
     },
     2: {
       0: {
@@ -22,6 +22,16 @@ const mockHearing = {
         dateReturnedBox: '2023-08-05',
         hearingType: 'Hearing Type 2',
         docketNumber: '67890'
+      }
+    },
+    3: {
+      0: {
+        id: 3,
+        fileStatus: 'Successful upload (AWS)',
+        fileName: 'transcription.doc',
+        dateUploadAws: '2023-09-01',
+        hearingType: 'Hearing Type 3',
+        docketNumber: '45678'
       }
     }
   }
@@ -53,8 +63,19 @@ describe('TranscriptionFilesTable', () => {
     render(<TranscriptionFilesTable hearing={mockHearing} />);
 
     const downloadLink = screen.getByRole('link', { name: 'transcription1.pdf' });
+    const downloadLink2 = screen.getByRole('link', { name: 'transcription.doc' });
 
     expect(downloadLink).toHaveAttribute('href', '/hearings/transcription_file/1/download');
+    expect(downloadLink2).toHaveAttribute('href', '/hearings/transcription_file/3/download');
+  });
+
+  it('displays file name without link for pending AWS uploads', () => {
+    render(<TranscriptionFilesTable hearing={mockHearing} />);
+
+    const downloadLink = screen.queryByRole('link', { name: 'transcription2.pdf' });
+
+    expect(downloadLink).not.toBeInTheDocument();
+    expect(screen.getByText('transcription2.pdf')).toBeInTheDocument();
   });
 
   it('renders alternating row classes based on isEvenGroup', () => {
