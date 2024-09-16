@@ -508,8 +508,12 @@ const CorrespondenceDetails = (props) => {
       };
 
       return ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/save_correspondence_appeals`, payload).
-        then((resp) => {
-          console.log(resp.status);
+        then(() => {
+          setShowSuccessBanner(true);
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
         }).
         catch((error) => {
           const errorMessage = error?.response?.body?.message ?
