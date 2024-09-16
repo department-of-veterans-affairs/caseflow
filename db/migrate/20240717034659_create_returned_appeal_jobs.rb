@@ -1,4 +1,4 @@
-class CreateReturnedAppealJobs < Caseflow::Migration
+class CreateReturnedAppealJobs < ActiveRecord::Migration[6.0]
   def change
     create_table :returned_appeal_jobs do |t|
       t.timestamp :started_at
