@@ -19,7 +19,7 @@ class CorrespondenceIntakeProcessor
     do_upload_success_actions(parent_task, intake_params, correspondence, current_user)
   end
 
-  def update_intake(intake_params, current_user)
+  def update_correspondence(intake_params, current_user)
     # Fetch the correspondence using the UUID from the intake params
     correspondence = Correspondence.find_by(uuid: intake_params[:correspondence_uuid])
 
@@ -71,22 +71,15 @@ class CorrespondenceIntakeProcessor
     end
   end
 
-# Removes correspondence relations that were unchecked or flagged for removal
-def remove_correspondence_relations(intake_params, correspondence)
-  # Collect the UUIDs of related correspondences that should remain
-  remaining_related_uuids = intake_params[:correspondence_relations]&.map { |data| data[:uuid] }
+  def remove_correspondence_relations(intake_params, correspondence)
+    # Get the UUIDs of related correspondences that are to be removed (unchecked)
+    removed_related_uuids = intake_params[:correspondence_relations]&.map { |data| data[:uuid] }
 
-  # Find all related correspondences for this correspondence
-  relations_to_remove = CorrespondenceRelation.where(correspondence_id: correspondence.id)
+    # Find and remove only those relations that were unchecked
+    relations_to_remove = CorrespondenceRelation.where(correspondence_id: correspondence.id, related_correspondence_id: Correspondence.where(uuid: removed_related_uuids).pluck(:id))
 
-  # Iterate through and delete the relations that are no longer present in the params
-  relations_to_remove.each do |relation|
-    # Ensure the related correspondence exists before attempting to delete
-    if remaining_related_uuids.exclude?(relation.related_correspondence&.uuid)
-      relation.destroy!
-    end
+    relations_to_remove.each(&:destroy!)
   end
-end
 
   def create_response_letter(intake_params, correspondence_id)
     current_user = RequestStore.store[:current_user] ||= User.system_user

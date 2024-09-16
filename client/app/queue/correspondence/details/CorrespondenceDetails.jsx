@@ -71,41 +71,43 @@ const CorrespondenceDetails = (props) => {
 
   // Function to handle the "Save Changes" button click, including the PATCH request
   const handleSave = async () => {
-  // Disable the button
+  // Disable the button to prevent duplicate requests
     setIsButtonDisabled(true);
 
-    // Log the details of toggled checkboxes
-    const toggledCheckboxes = Object.entries(checkboxStates).
-    // eslint-disable-next-line no-unused-vars
-      filter(([_, isChecked]) => isChecked).
+    // Get the initial and current checkbox states
+    const uncheckedCheckboxes = Object.entries(checkboxStates).
+      filter(([mailId, isChecked]) => !isChecked && originalStates[mailId]).
       map(([mailId]) => {
         const mail = priorMail.find((pMail) => pMail.id === parseInt(mailId, 10));
 
-        return {
-          uuid: mail.uuid
-        };
+        return { uuid: mail.uuid };
       });
 
-    console.log('Toggled Checkboxes:', toggledCheckboxes);
+    console.log('Unchecked Checkboxes:', uncheckedCheckboxes);
 
-    // Prepare data for the PATCH request
-    // const submitData = {
-    //   correspondence_relations: Object.entries(checkboxStates).map(([mailId]) => ({
-    //     id: parseInt(mailId, 10)
-    //   }))
-    // };
+    // Data for the PATCH request to remove unchecked relations
+    const patchData = {
+      correspondence_uuid: correspondence.uuid,
+      correspondence_relations: uncheckedCheckboxes // Send only unchecked relations
+    };
 
-    // Make the PATCH request to update the backend
     try {
-      console.log('PATCH data:', toggledCheckboxes);
-      const response = await ApiUtil.patch(`/queue/correspondence/${correspondence.uuid}/update_intake`, { data: toggledCheckboxes });
+    // Send PATCH request to update the backend
+      const response = await ApiUtil.patch(`/queue/correspondence/${correspondence.uuid}/update_correspondence`, {
+        data: patchData
+      });
 
-      console.log('PATCH request status:', response.status);
+      if (response.status === 201) {
+        console.log('Correspondence updated successfully.', response.status);
+        console.log('Correspondence update data:', patchData);
+      }
     } catch (error) {
       console.error('Error during PATCH request:', error.message);
+    } finally {
+      setIsButtonDisabled(true);
     }
 
-    // Reset checkboxes to the new initial state
+    // Reset checkboxes to the new state
     setOriginalStates(checkboxStates);
   };
 

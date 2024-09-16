@@ -77,6 +77,15 @@ class CorrespondenceDetailsController < CorrespondenceController
     end
   end
 
+  def update_correspondence
+    if correspondence_intake_processor.update_correspondence(params, current_user)
+      set_flash_intake_success_message
+      render json: {}, status: :created
+    else
+      render json: { error: "Failed to update records" }, status: :bad_request
+    end
+  end
+
   private
 
   def sort_response_letters(response_letters)
