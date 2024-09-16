@@ -1729,7 +1729,7 @@ GEM
       net-protocol
     nio4r (2.5.9)
     no_proxy_fix (0.1.2)
-    nokogiri (1.15.5)
+    nokogiri (1.15.5-x86_64-darwin)
       racc (~> 1.4)
     nori (2.6.0)
     notiffany (0.1.1)
@@ -2125,7 +2125,7 @@ GEM
     ziptz (2.1.6)
 
 PLATFORMS
-  ruby
+  x86_64-darwin-22
 
 DEPENDENCIES
   aasm (= 4.11.0)
