@@ -105,5 +105,45 @@ describe ETLBuilderJob, :etl, :all_dbs do
         end
       end
     end
+
+    context "hearings" do
+      let(:appeal) { create(:appeal) }
+      let(:judge) { create(:user, station_id: User::BOARD_STATION_ID, email: "new_judge_email@caseflow.gov") }
+      let(:hearing_day) do
+        create(:hearing_day,
+               request_type: HearingDay::REQUEST_TYPES[:video],
+               regional_office: "RO18",
+               scheduled_for: Time.zone.today + 1.week)
+      end
+
+      before do
+        ETL::Builder.new.full
+        create(:hearing, appeal: appeal)
+        create(:hearing, judge: judge)
+        create(:hearing, hearing_day: hearing_day)
+        create(:hearing)
+      end
+
+      it "migrates hearing data to ETL" do
+        expect(Hearing.count).to eq 4
+        expect(ETL::Hearing.count).to eq 0
+
+        Timecop.travel(1.hour.ago) { subject }
+
+        expect(ETL::Hearing.count).to eq 4
+        hearing_appeal = ETL::Hearing.find_by(appeal_id: appeal.id)
+        expect(hearing_appeal).not_to be nil
+
+        hearing_judge = ETL::Hearing.find_by(judge_id: judge.id)
+        expect(hearing_judge).not_to be nil
+        expect(hearing_judge.judge_full_name).to eq judge.full_name
+        expect(hearing_judge.judge_css_id).to eq judge.css_id
+
+        hearing_hearing_day = ETL::Hearing.find_by(hearing_day_id: hearing_day.id)
+        expect(hearing_hearing_day).not_to be nil
+        expect(hearing_hearing_day.hearing_day_bva_poc).to eq hearing_day.bva_poc
+        expect(hearing_hearing_day.hearing_day_created_by_id).to eq hearing_day.created_by_id
+      end
+    end
   end
 end

@@ -17,7 +17,7 @@ Rails.application.config.assets.precompile += %w( explain-appeal-timeline.js )
 Rails.application.config.assets.precompile += %w( explain-appeal-network.js )
 Rails.application.config.assets.precompile += %w( stats.js )
 Rails.application.config.assets.precompile += %w( task-tree.js )
-Rails.application.config.assets.precompile += %w( pdf.worker.js )
+Rails.application.config.assets.precompile += %w( pdf.worker.min.js )
 
 Rails.application.config.assets.precompile += %w( webpack-bundle.js )
 Rails.application.config.assets.precompile += %w( 0.webpack-bundle.js )
