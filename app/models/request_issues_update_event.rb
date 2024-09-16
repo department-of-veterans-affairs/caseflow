@@ -3,26 +3,10 @@
 class RequestIssuesUpdateEvent < RequestIssuesUpdate
   # example of calling RequestIssuesUpdateEvent
   # RequestIssuesUpdateEvent.new(
-  #  do we really need user here?
   #   user: user,
   #   review: review,
-  #   added_issue_data: parser.added_issues,
-  #   removed_issue_data: parser.removed_issues,
-  #   edited_issue_data: parser.updated_issues,
-  #   withdrawn_issue_data: parser.withdrawn_issues
-  #   eligible_to_ineligible_issue_data: parser.eligible_to_ineligible_issues
-  #   ineligible_to_eligible_issue_data: parser.ineligible_to_eligible_issues
-  #   ineligible_to_ineligible_issue_data: parser.ineligible_to_ineligible_issues
+  #   parser: parser
   # )
-
-  # attr_writer :added_issue_data
-  # attr_writer :removed_issue_data
-  # attr_writer :edited_issue_data
-  # attr_writer :withdrawn_issue_data
-  # attr_writer :eligible_to_ineligible_issue_data
-  # attr_writer :ineligible_to_eligible_issue_data
-  # attr_writer :ineligible_to_ineligible_issue_data
-  # attr_reader :parser
 
   def initialize(user:, review:, parser:)
     @parser = parser
@@ -61,7 +45,6 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
 
   def process_issues!
     process_added_issues!
-    # review.create_issues!(added_issues, self)
     process_removed_issues!
     process_withdrawn_issues!
     process_edited_issues!
@@ -141,19 +124,6 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   def calculate_withdrawn_issues
     calculate_issues(@withdrawn_issue_data)
   end
-
-  # def calculate_removed_issues
-  #   return if @removed_issue_data.empty?
-
-  #   byebug
-  #   @removed_issue_data.map do |issue_data|
-  #     begin
-  #       review.request_issues.find(issue_data[:reference_id])
-  #     rescue ActiveRecord::RecordNotFound
-  #       raise Caseflow::Error::DecisionReviewUpdateMissingIssueError, issue_data[:reference_id]
-  #     end
-  #   end
-  # end
 
   def calculate_issues(issues_data)
     issues_data.map do |issue_data|
