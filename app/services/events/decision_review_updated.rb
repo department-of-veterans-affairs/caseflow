@@ -12,11 +12,9 @@ class Events::DecisionReviewUpdated
                                                                        station_id: parser.station_id)
 
         review = EndProductEstablishment.find_by(
-          reference_id: parser.end_product_establishments_reference_id
-        )&.source
+          reference_id: parser.end_product_establishments_reference_id)&.source
 
-        RequestIssuesUpdateEvent.new(user: user, review: review, parser: parser)
-          .perform!
+        RequestIssuesUpdateEvent.new(user: user, review: review, parser: parser).perform!
 
         event = find_or_create_event(consumer_event_id)
         # Update the Event after all backfills have completed
