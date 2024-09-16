@@ -34,7 +34,8 @@ class CaseListTable extends React.PureComponent {
         {
           header: '',
           valueFunction: (appeal) => {
-            let isChecked = this.props.taskRelatedAppealIds.includes(appeal.id)
+            const isChecked = this.props.taskRelatedAppealIds.includes(appeal.id);
+
             return (
               <div className="checkbox-column-inline-style">
                 <Checkbox
@@ -198,7 +199,8 @@ CaseListTable.propTypes = {
   currentPage: PropTypes.number,
   updatePageHandlerCallback: PropTypes.func,
   disabled: PropTypes.bool,
-  enableTopPagination: PropTypes.bool
+  enableTopPagination: PropTypes.bool,
+  toggleCheckboxState: PropTypes.func
 };
 
 CaseListTable.defaultProps = {
