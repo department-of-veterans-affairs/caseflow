@@ -11,7 +11,7 @@ class EvidenceSubmissionWindowTask < Task
 
   before_validation :set_assignee
 
-  def initialize(args)
+  def initialize(args = {})
     @end_date = args&.fetch(:end_date, nil)
     super(args&.except(:end_date))
   end
