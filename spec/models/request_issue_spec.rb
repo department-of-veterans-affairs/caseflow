@@ -1935,6 +1935,49 @@ describe RequestIssue, :all_dbs do
       expect(rating_request_issue.duplicate_of_rating_issue_in_active_review?).to eq(true)
     end
 
+    # contested specs here
+    context "when the issue is eligible and has a contested_decision_issue_id" do
+      before do
+        allow(rating_request_issue).to receive(:eligible?).and_return(true)
+        rating_request_issue.contested_decision_issue_id = 123
+      end
+
+      it "sets ineligible_reason to contested if ineligible_reason is not set" do
+        rating_request_issue.validate_eligibility!
+        expect(rating_request_issue.ineligible_reason).to eq("contested")
+      end
+
+      it "does not change ineligible_reason if it is already set" do
+        rating_request_issue.ineligible_reason = :untimely
+        rating_request_issue.validate_eligibility!
+        expect(rating_request_issue.ineligible_reason).to eq("untimely")
+      end
+    end
+
+    context "when the issue is not eligible" do
+      before do
+        allow(rating_request_issue).to receive(:eligible?).and_return(false)
+        rating_request_issue.contested_decision_issue_id = 123
+      end
+
+      it "does not set ineligible_reason to contested" do
+        rating_request_issue.validate_eligibility!
+        expect(rating_request_issue.ineligible_reason).to be_nil
+      end
+    end
+
+    context "when there is no contested_decision_issue_id" do
+      before do
+        allow(rating_request_issue).to receive(:eligible?).and_return(true)
+        rating_request_issue.contested_decision_issue_id = nil
+      end
+
+      it "does not set ineligible_reason to contested" do
+        rating_request_issue.validate_eligibility!
+        expect(rating_request_issue.ineligible_reason).to be_nil
+      end
+    end
+
     context "issues with previous decision reviews" do
       let(:contested_rating_issue_reference_id) { higher_level_review_reference_id }
 
