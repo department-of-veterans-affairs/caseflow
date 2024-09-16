@@ -923,7 +923,6 @@ class RequestIssue < CaseflowRecord
 
     if contested_decision_issue
       ContestableIssue.from_decision_issue(contested_decision_issue, decision_review)
-
     elsif contested_rating_issue
       ContestableIssue.from_rating_issue(contested_rating_issue, decision_review)
     end
