@@ -110,9 +110,9 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
 
         parser = Events::DecisionReviewCreated::DecisionReviewCreatedParser.new({}, invalid_payload)
 
-        expect {
+        expect do
           described_class.process!(event: event, parser: parser, epe: epe, decision_review: higher_level_review)
-        }.to raise_error(Caseflow::Error::DecisionReviewCreatedRequestIssuesError, "reference_id cannot be null")
+        end.to raise_error(Caseflow::Error::DecisionReviewCreatedRequestIssuesError, "reference_id cannot be null")
       end
 
       it "does not create any RequestIssues when ri_reference_id is nil" do
@@ -121,9 +121,9 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
 
         parser = Events::DecisionReviewCreated::DecisionReviewCreatedParser.new({}, invalid_payload)
 
-        expect {
+        expect do
           described_class.process!(event: event, parser: parser, epe: epe, decision_review: higher_level_review)
-        }.to raise_error(Caseflow::Error::DecisionReviewCreatedRequestIssuesError)
+        end.to raise_error(Caseflow::Error::DecisionReviewCreatedRequestIssuesError)
 
         # Ensure no RequestIssues or EventRecords are created
         expect(RequestIssue.count).to eq(0)

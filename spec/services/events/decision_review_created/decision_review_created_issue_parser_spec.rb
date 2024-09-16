@@ -153,7 +153,8 @@ RSpec.describe Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser, 
 
   describe "#ri_closed_at" do
     it "returns the closed_at datetime converted from milliseconds" do
-      allow(parser).to receive(:convert_milliseconds_to_datetime).with(1_683_072_000_000).and_return(Time.zone.at(1_683_072_000))
+      allow(parser).to receive(:convert_milliseconds_to_datetime).with(1_683_072_000_000)
+        .and_return(Time.zone.at(1_683_072_000))
       expect(parser.ri_closed_at).to eq(Time.zone.at(1_683_072_000))
     end
   end
@@ -178,7 +179,8 @@ RSpec.describe Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser, 
 
   describe "#ri_rating_issue_associated_at" do
     it "returns the rating issue associated datetime converted from milliseconds" do
-      allow(parser).to receive(:convert_milliseconds_to_datetime).with(1_683_072_000_000).and_return(Time.zone.at(1_683_072_000))
+      allow(parser).to receive(:convert_milliseconds_to_datetime)
+        .with(1_683_072_000_000).and_return(Time.zone.at(1_683_072_000))
       expect(parser.ri_rating_issue_associated_at).to eq(Time.zone.at(1_683_072_000))
     end
   end
