@@ -88,7 +88,8 @@ describe Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser do
   end
 
   it "parses nonrating_issue_description correctly" do
-    expect(subject.ri_nonrating_issue_description).to eq("The user entered description if the issue is a nonrating issue")
+    expect(subject.ri_nonrating_issue_description)
+      .to eq("The user entered description if the issue is a nonrating issue")
   end
 
   it "parses untimely_exemption correctly" do
