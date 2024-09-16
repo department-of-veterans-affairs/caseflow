@@ -123,7 +123,6 @@ const DocumentViewer = (props) => {
       {showSideBar && (
         <ReaderSidebar
           doc={doc}
-          documents={props.allDocuments}
           toggleSideBar={() => setShowSideBar(false)}
           vacolsId={props.match.params.vacolsId}
         />

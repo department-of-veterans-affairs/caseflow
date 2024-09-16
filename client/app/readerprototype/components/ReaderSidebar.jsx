@@ -29,7 +29,6 @@ import { appealSelector, openedAccordionSectionsSelector } from '../selectors';
 
 const ReaderSidebar = ({
   doc,
-  documents,
   toggleSideBar,
   vacolsId
 }) => {
@@ -70,7 +69,6 @@ const ReaderSidebar = ({
           <AccordionSection title="Categories">
             <SideBarCategories
               doc={doc}
-              documents={documents}
             />
           </AccordionSection>
           <AccordionSection title="Issue tags">
