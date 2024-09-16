@@ -69,7 +69,7 @@ class PostDecisionMotionUpdater
     end
 
     unless motion.valid?
-      errors.messages.merge!(motion.errors.messages)
+      errors.merge!(motion.errors)
       return
     end
 
@@ -85,13 +85,13 @@ class PostDecisionMotionUpdater
 
     abstract_task = create_abstract_task
     unless abstract_task.valid?
-      errors.messages.merge!(abstract_task.errors.messages)
+      errors.merge!(abstract_task.errors)
       return
     end
 
     new_task = create_denial_or_dismissal_task(abstract_task)
     unless new_task.valid?
-      errors.messages.merge!(new_task.errors.messages)
+      errors.merge!(new_task.errors)
       return
     end
     new_task.save
@@ -132,7 +132,7 @@ class PostDecisionMotionUpdater
     )
 
     unless attorney_task.valid?
-      errors.messages.merge!(attorney_task.errors.messages)
+      errors.merge!(attorney_task.errors)
       return
     end
 

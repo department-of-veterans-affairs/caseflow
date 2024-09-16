@@ -2,8 +2,6 @@ Rails.application.routes.draw do
   mount Rswag::Ui::Engine => '/api-docs'
   mount Rswag::Api::Engine => '/api-docs'
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
-  # The priority is based upon order of creation: first created -> highest priority.
-  # See how all your routes lay out with "rake routes".
 
   resources :sessions, only: [:new, :update]
   resources :certifications, path_names: { new: "new/:vacols_id" } do
@@ -272,6 +270,7 @@ Rails.application.routes.draw do
   get 'hearings/transcription_work_order/display_wo_summary', to: 'hearings/transcription_work_order#display_wo_summary'
   get 'hearings/transcription_work_order/display_wo_contents', to: 'hearings/transcription_work_order#display_wo_contents'
   get 'hearings/transcription_work_order/unassign_wo', to: 'hearings/transcription_work_order#unassign_wo'
+  post 'hearings/transcription_work_order/unassigning_work_order', to: 'hearings/transcription_work_order#unassigning_work_order'
 
   resources :hearings, only: [:update, :show]
 

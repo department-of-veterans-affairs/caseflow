@@ -6,10 +6,9 @@ class Hearings::TranscriptionWorkOrderController < ApplicationController
 
   def display_wo_summary
     wo_summary = ::TranscriptionWorkOrder.display_wo_summary(@task_number)
-    if wo_summary.present?
-      render json: { data: wo_summary }
-    else
-      render_error("Transcription summary not found.", :not_found)
+    respond_to do |format|
+      format.html { render "hearings/index" }
+      format.json { render json: { data: wo_summary } }
     end
   end
 
@@ -29,6 +28,17 @@ class Hearings::TranscriptionWorkOrderController < ApplicationController
     rescue StandardError => error
       Rails.logger.error("Failed to unassign work order: #{error.message}")
       render_error("Something went wrong.", :internal_server_error)
+    end
+  end
+
+  def unassigning_work_order
+    begin
+      Transcription.unassign_by_task_number(@task_number)
+      TranscriptionPackage.cancel_by_task_number(@task_number)
+      TranscriptionFile.reset_files(@task_number)
+    rescue StandardError => error
+      log_error(error, extra: { task_number: @task_number })
+      Rails.logger.error("Error in unassigning work order: #{error.message}")
     end
   end
 
