@@ -11,6 +11,10 @@ class Events::DecisionReviewUpdated
         user = Events::CreateUserOnEvent.handle_user_creation_on_event(event: event, css_id: parser.css_id,
                                                                        station_id: parser.station_id)
 
+        review = EndProductEstablishment.find_by(
+          reference_id: parser.end_product_establishments_reference_id
+        )&.source
+
         RequestIssuesUpdateEvent.new(user: user, review: review, parser: parser)
           .perform!
 
