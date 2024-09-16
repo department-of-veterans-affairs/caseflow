@@ -5,7 +5,7 @@ import _ from 'lodash';
 import moment from 'moment';
 
 import { getDate, getDisplayTime } from '../../../util/DateUtil';
-import { isPreviouslyScheduledHearing, sortHearings, dispositionLabel } from '../../utils';
+import { isPreviouslyScheduledHearing, sortHearings, dispositionLabel, timeWithTimeZone } from '../../utils';
 import { openPrintDialogue } from '../../../util/PrintUtil';
 import AOD_CODE_TO_LABEL_MAP from '../../../../constants/AOD_CODE_TO_LABEL_MAP';
 import Table from '../../../components/Table';
@@ -27,9 +27,13 @@ export class DailyDocketPrinted extends React.Component {
     {
       header: 'Time',
       valueFunction: (hearing) => {
+        if (hearing.scheduledInTimezone) {
+          return timeWithTimeZone(hearing.scheduledFor, hearing.scheduledInTimezone);
+        }
+
         const localTimezone = hearing.regionalOfficeTimezone || 'America/New_York';
 
-        return getDisplayTime(hearing.scheduledTimeString, localTimezone);
+        return getDisplayTime(this.props.docket.scheduledFor, hearing.scheduledTimeString, localTimezone);
       }
     },
     {
