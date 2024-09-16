@@ -51,6 +51,10 @@ class TranscriptionPackage < CaseflowRecord
     (hearings + legacy_hearings).length
   end
 
+  def self.cancel_by_task_number(task_number)
+    find_by(task_number: task_number)&.update(status: "cancelled")
+  end
+
   private
 
   def format_date_for_table(date)
