@@ -20,18 +20,6 @@ const CorrespondenceCaseTimeline = (props) => {
 
   }, []);
 
-  const formatTaskData = () => {
-    return (props.tasksToDisplay?.map((task) => {
-      return {
-        assignedOn: task.assigned_at,
-        assignedTo: task.assigned_to,
-        label: task.label,
-        instructions: task.instructions,
-        availableActions: task.availableActions,
-      };
-    }));
-  };
-
   return (
     <React.Fragment>
       { (Object.keys(taskNotRelatedToAppealBanner).length > 0) && (
@@ -48,9 +36,8 @@ const CorrespondenceCaseTimeline = (props) => {
           <CorrespondenceTaskRows
             organizations={props.organizations}
             correspondence={props.correspondence}
-            taskList={formatTaskData()}
+            taskList={correspondenceInfo.tasksUnrelatedToAppeal}
             statusSplit
-
           />
         </tbody>
       </table>
