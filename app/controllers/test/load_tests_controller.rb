@@ -152,7 +152,7 @@ class Test::LoadTestsController < ApplicationController
   # Params: user
   # Response: None
   def save_session(user)
-    session["user"] = user.to_session_hash
+    session[:user] = user.to_session_hash
     session[:regional_office] = user.selected_regional_office
   end
 
