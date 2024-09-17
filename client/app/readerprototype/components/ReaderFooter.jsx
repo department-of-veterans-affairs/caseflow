@@ -14,7 +14,6 @@ import { pdfToolbarStyles } from '../util/styles';
 const ReaderFooter = ({
   currentPage,
   docId,
-  match,
   numPages,
   setCurrentPage,
   showPdf,
@@ -52,9 +51,8 @@ const ReaderFooter = ({
   const filteredDocs = useSelector(getFilteredDocuments);
   const filteredDocIds = useSelector(getFilteredDocIds);
   const currentDocIndex = filteredDocIds.indexOf(docId);
-  const selectedDocId = () => Number(match.params.docId);
   const selectedDocIndex = () => (
-    _.findIndex(filteredDocs, { id: selectedDocId() })
+    _.findIndex(filteredDocs, { id: docId })
   );
   const getPrevDoc = () => _.get(filteredDocs, [selectedDocIndex() - 1]);
   const getNextDoc = () => _.get(filteredDocs, [selectedDocIndex() + 1]);
@@ -123,7 +121,6 @@ const ReaderFooter = ({
 ReaderFooter.propTypes = {
   currentPage: PropTypes.number,
   docId: PropTypes.number,
-  match: PropTypes.any,
   numPages: PropTypes.number,
   setCurrentPage: PropTypes.func,
   showPdf: PropTypes.func,
