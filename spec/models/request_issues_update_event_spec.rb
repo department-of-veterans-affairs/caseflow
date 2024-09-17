@@ -9,7 +9,6 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
                                 "services", "events", "decision_review_updated",
                                 "decision_review_updated_example.json")
     json_content = File.read(json_path)
-    # Events::DecisionReviewUpdated::DecisionReviewUpdatedParser.new({}, JSON.parse(json_content))
     Events::DecisionReviewUpdated::DecisionReviewUpdatedParser.new(nil, JSON.parse(json_content))
   end
 
@@ -18,10 +17,6 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       user: user,
       review: review,
       parser: parser
-      # added_issue_data: parser.added_issues,
-      # removed_issue_data: parser.removed_issues,
-      # edited_issue_data: parser.updated_issues,
-      # withdrawn_issue_data: parser.withdrawn_issues
     )
   end
 
@@ -207,7 +202,8 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       end
 
       it "raises a DecisionReviewUpdateMissingIssueError with the correct message" do
-        expect { subject.perform! }.to raise_error(Caseflow::Error::DecisionReviewUpdateMissingIssueError, "Request issue not found for REFERENCE_ID: #{invalid_reference_id}")
+        expect { subject.perform! }.to raise_error(Caseflow::Error::DecisionReviewUpdateMissingIssueError,
+                                                   "Request issue not found for REFERENCE_ID: #{invalid_reference_id}")
       end
     end
   end
@@ -225,7 +221,8 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       end
 
       it "raises a DecisionReviewUpdateMissingIssueError with the correct message" do
-        expect { subject.perform! }.to raise_error(Caseflow::Error::DecisionReviewUpdateMissingIssueError, "Request issue not found for REFERENCE_ID: #{invalid_reference_id}")
+        expect { subject.perform! }.to raise_error(Caseflow::Error::DecisionReviewUpdateMissingIssueError,
+                                                   "Request issue not found for REFERENCE_ID: #{invalid_reference_id}")
       end
     end
   end
@@ -243,15 +240,17 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       end
 
       it "raises a DecisionReviewUpdateMissingIssueError with the correct message" do
-        expect { subject.perform! }.to raise_error(Caseflow::Error::DecisionReviewUpdateMissingIssueError, "Request issue not found for REFERENCE_ID: #{invalid_reference_id}")
+        expect { subject.perform! }.to raise_error(Caseflow::Error::DecisionReviewUpdateMissingIssueError,
+                                                   "Request issue not found for REFERENCE_ID: #{invalid_reference_id}")
       end
     end
   end
 
   context "when handling errors in #process_eligible_to_ineligible_issues!" do
     let(:invalid_reference_id) { "12345" }
-    let(:eligible_to_ineligible_issue) { [{ reference_id: invalid_reference_id, ineligible_reason: "higher_level_review_to_higher_level_review" }] }
-
+    let(:eligible_to_ineligible_issue) do
+      [{ reference_id: invalid_reference_id, ineligible_reason: "higher_level_review_to_higher_level_review" }]
+    end
 
     before do
       subject.instance_variable_set(:@eligible_to_ineligible_issue_data, [{ reference_id: invalid_reference_id }])
@@ -312,7 +311,8 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       end
 
       it "raises a DecisionReviewUpdateMissingIssueError with the correct message" do
-        expect { subject.perform! }.to raise_error(Caseflow::Error::DecisionReviewUpdateMissingIssueError, "Request issue not found for REFERENCE_ID: #{invalid_reference_id}")
+        expect { subject.perform! }.to raise_error(Caseflow::Error::DecisionReviewUpdateMissingIssueError,
+                                                   "Request issue not found for REFERENCE_ID: #{invalid_reference_id}")
       end
     end
   end
@@ -322,7 +322,8 @@ describe "additional tests " do
   let(:user) { create(:user) }
   let(:review) { create(:supplemental_claim) }
   let(:parser) do
-    json_path = Rails.root.join("app", "services", "events", "decision_review_updated", "decision_review_updated_example.json")
+    json_path = Rails.root.join("app", "services", "events",
+                                "decision_review_updated", "decision_review_updated_example.json")
     json_content = File.read(json_path)
     Events::DecisionReviewUpdated::DecisionReviewUpdatedParser.new(nil, JSON.parse(json_content))
   end

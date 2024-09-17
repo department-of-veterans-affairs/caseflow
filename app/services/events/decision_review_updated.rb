@@ -2,7 +2,6 @@
 
 class Events::DecisionReviewUpdated
   class << self
-    # rubocop:disable Lint/UnusedMethodArgument
     def update!(params, headers, payload)
       consumer_event_id = params[:consumer_event_id]
       ActiveRecord::Base.transaction do
@@ -12,7 +11,8 @@ class Events::DecisionReviewUpdated
                                                                        station_id: parser.station_id)
 
         review = EndProductEstablishment.find_by(
-          reference_id: parser.end_product_establishments_reference_id)&.source
+          reference_id: parser.end_product_establishments_reference_id
+        )&.source
 
         RequestIssuesUpdateEvent.new(user: user, review: review, parser: parser).perform!
 
@@ -29,6 +29,5 @@ class Events::DecisionReviewUpdated
         end
       end
     end
-    # rubocop:enable Lint/UnusedMethodArgument
   end
 end
