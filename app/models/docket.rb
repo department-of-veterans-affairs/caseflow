@@ -26,7 +26,7 @@ class Docket
     if ready
       scope = scope.ready_for_distribution
       scope = adjust_for_genpop(scope, genpop, judge) if judge.present? && !use_by_docket_date?
-      scope = adjust_for_affinity(scope, judge) if judge.present? && FeatureToggle.enabled?(:acd_exclude_from_affinity)
+      scope = adjust_for_affinity(scope, judge) if FeatureToggle.enabled?(:acd_exclude_from_affinity)
     end
 
     return scoped_for_priority(scope) if priority == true
@@ -203,8 +203,12 @@ class Docket
     (genpop == "not_genpop") ? scope.non_genpop_for_judge(judge) : scope.genpop
   end
 
-  def adjust_for_affinity(scope, judge)
-    scope.genpop_with_case_distribution_lever.or(scope.non_genpop_with_case_distribution_lever(judge))
+  def adjust_for_affinity(scope, judge = nil)
+    if judge.present?
+      scope.genpop_with_case_distribution_lever.or(scope.non_genpop_with_case_distribution_lever(judge))
+    else
+      scope.genpop_with_case_distribution_lever
+    end
   end
 
   def scoped_for_priority(scope)
