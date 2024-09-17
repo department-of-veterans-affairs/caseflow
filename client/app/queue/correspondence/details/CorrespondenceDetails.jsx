@@ -50,15 +50,16 @@ const CorrespondenceDetails = (props) => {
     const firstInRelated = relatedCorrespondenceIds.includes(first.id);
     const secondInRelated = relatedCorrespondenceIds.includes(second.id);
 
-    if (firstInRelated && secondInRelated) {
-      return new Date(second.vaDateOfReceipt) - new Date(first.vaDateOfReceipt);
-    } else if (firstInRelated) {
-      return -1;
-    } else if (secondInRelated) {
+    // If both or neither are in relatedCorrespondenceIds, sort by vaDateOfReceipt
+    if (firstInRelated && !secondInRelated) {
       return -1;
     }
+    if (!firstInRelated && secondInRelated) {
+      return 1;
+    }
 
-    return 1;
+    // Otherwise, sort by vaDateOfReceipt
+    return new Date(first.vaDateOfReceipt) - new Date(second.vaDateOfReceipt);
   });
 
   const updatePageHandler = (idx) => {
