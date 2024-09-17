@@ -40,16 +40,36 @@ const CorrespondenceResponseLetters = (props) => {
     setIsFormComplete(isComplete);
   };
 
+  const filterNewLetters = () => {
+    // Filter out letters that already have an id (existing letters)
+    return dataLetter.filter((letter) => !letter.id);
+  };
+
   const handleSubmitFunction = () => {
     setShowAddLetterModal(false);
     setIsFormComplete(false);
 
+    const newLetters = filterNewLetters();
     const payload = {
       data: {
-        response_letters: dataLetter
+        response_letters: newLetters
       }
     };
-    return props.submitLetterResponse(payload, props.correspondence);
+
+    if (typeof props.submitLetterResponse === 'function') {
+      props.submitLetterResponse(payload, props.correspondence)
+        .then((response) => {
+          const newLetterFromResponse = response.correspondence;
+          const updatedLetters = [...letters, ...newLetterFromResponse];
+          console.log("Updated letters:", updatedLetters);
+          setDataLetter(updatedLetters);
+        })
+        .catch((error) => {
+          console.error('Error submitting letter response:', error);
+        });
+    } else {
+      console.error('submitLetterResponse is not a function');
+    }
   };
 
   return (

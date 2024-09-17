@@ -20,7 +20,21 @@ class CorrespondenceDetailsController < CorrespondenceController
   end
 
   def create_response_letter_for_correspondence
-    correspondence_intake_processor.create_letter(params, current_user)
+    updated_correspondences = correspondence_intake_processor.create_letter(params, current_user)
+
+    if updated_correspondences.is_a?(Array) && updated_correspondences.any?
+      updated_correspondence = updated_correspondences.first
+
+      correspondence = Correspondence.find_by(id: updated_correspondence.correspondence_id)
+
+      if correspondence
+        render json: { correspondence: correspondence.correspondence_response_letters }, status: :ok
+      else
+        render json: { error: "Correspondence not found" }, status: :not_found
+      end
+    else
+      render json: { error: "No response letter created" }, status: :unprocessable_entity
+    end
   end
 
   def set_instance_variables
