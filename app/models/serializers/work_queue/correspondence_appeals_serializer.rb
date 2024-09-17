@@ -31,17 +31,22 @@ class WorkQueue::CorrespondenceAppealsSerializer
     object.appeal.issues.length
   end
 
+  attribute :appeal do |object|
+    WorkQueue::AppealSerializer.new(object.appeal, params: { user: RequestStore[:current_user] })
+  end
+
   attribute :task_added_data do |object|
     tasks = []
     object.correspondences_appeals_tasks.each do |cor_app_task|
       assigned_to = cor_app_task.task.assigned_to
       assigned_to_text = assigned_to.is_a?(Organization) ? assigned_to.name : assigned_to.css_id
       task_data = {
-        assigned_at: cor_app_task.task.assigned_at,
-        assigned_to: assigned_to_text,
+        assignedOn: cor_app_task.task.assigned_at.strftime("%m/%d/%Y"),
+        assignedTo: assigned_to_text,
         assigned_to_type: cor_app_task.task.assigned_to_type,
         instructions: cor_app_task.task.instructions,
         label: cor_app_task.task.label,
+        uniqueId: cor_app_task.id,
         availableActions: cor_app_task.task.available_actions_unwrapper(RequestStore[:current_user])
       }
       tasks << task_data

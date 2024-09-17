@@ -235,6 +235,7 @@ const CorrespondenceDetails = (props) => {
               correspondence={props.correspondence}
               organizations={props.organizations}
               userCssId={props.userCssId}
+              appeal={taskAdded.appeal.data.attributes}
             />
           )
           )}
