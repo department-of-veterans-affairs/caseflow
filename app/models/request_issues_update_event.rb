@@ -85,7 +85,6 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
 
   def all_updated_issues
     (added_issues || []) + (removed_issues || []) + (withdrawn_issues || []) + (edited_issues || [])
-    # added_issues + removed_issues + withdrawn_issues + edited_issues
   end
 
   private
@@ -110,7 +109,6 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
 
   def calculate_after_issues
     (before_issues || []) + (added_issues || []) - (removed_issues || [])
-    # before_issues + added_issues - removed_issues
   end
 
   def calculate_edited_issues
@@ -155,7 +153,6 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   def attributes_from_intake_data(data)
     parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(data)
     contested_issue_present = attributes_look_like_contested_issue?(data)
-    # issue_text = (data[parser_issue.ri_is_unidentified] || data[parser_issue.ri_verified_unidentified_issue]) ? data[parser_issue.ri_contested_issue_description] : nil
     issue_text = data[parser_issue.ri_is_unidentified] ? data[parser_issue.ri_contested_issue_description] : nil
 
     {
