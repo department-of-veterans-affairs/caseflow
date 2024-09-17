@@ -3,6 +3,7 @@
 require "./scripts/enable_features_dev.rb"
 class Test::LoadTestsController < ApplicationController
   before_action :check_environment
+  skip_before_action :verify_authenticity_token
 
   API_KEY_CACHE_KEY = "load_test_api_key"
   IDT_TOKEN_CACHE_KEY = "load_test_idt_token"
@@ -33,7 +34,7 @@ class Test::LoadTestsController < ApplicationController
 
   # Private: Using the data entered by the user for the target_type and target_id,
   # returns an appropriate target_id for the test
-  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength
   def data_for_testing
     case params[:target_type]
     when "Appeal"
@@ -63,6 +64,7 @@ class Test::LoadTestsController < ApplicationController
 
     target_id
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength
 
   # Private: If no target_id is provided, use the target_id of sample data instead
   def get_target_data_id(target_id, target_data_type, target_data_column)
@@ -86,36 +88,74 @@ class Test::LoadTestsController < ApplicationController
       user_requirement.require([:regional_office])
     end
     user = user.presence || User.find_or_initialize_by(css_id: LOAD_TESTING_USER)
-    user.station_id = params[:user][:station_id]
-    user.selected_regional_office = params[:user][:regional_office]
-    user.roles = params[:user][:roles]
-    user.save
+    save_user_params(user, params[:user])
 
-    params[:user][:functions].select { |_key, value| value == true }.each do |key, _value|
-      Functions.grant!(key, users: [LOAD_TESTING_USER])
+    grant_or_deny_functions(params[:user][:functions])
+
+    add_user_to_org(params[:user][:organizations], user)
+
+    enable_or_disable_feature_toggles(params[:user][:feature_toggles], user)
+
+    save_session(user)
+  end
+
+  # Private: Assign the user_params to the user and save the updates
+  # Params: user, user_params
+  # Response: None
+  def save_user_params(user, user_params)
+    user.station_id = user_params[:station_id]
+    user.selected_regional_office = user_params[:regional_office]
+    user.roles = user_params[:roles]
+    user.save
+  end
+
+  # Private: Method to grant or deny specific functions to the LOAD_TESTING_USER
+  # Params: functions
+  # Response: None
+  def grant_or_deny_functions(functions)
+    functions.select { |_k, v| v == true }.each do |k, _v|
+      Functions.grant!(k, users: [LOAD_TESTING_USER])
     end
-    params[:user][:functions].select { |_key, value| value == false }.each do |key, _value|
-      Functions.deny!(key, users: [LOAD_TESTING_USER])
+    functions.select { |_k, v| v == false }.each do |k, _v|
+      Functions.deny!(k, users: [LOAD_TESTING_USER])
     end
-    params[:user][:organizations].select { |organization| organization[:admin] == true }.each do |org|
+  end
+
+  # Private: Method to add the LOAD_TESTING_USER to specific organizations,
+  # and adding them as an admin where necessary
+  # Params: organizations
+  # Response: None
+  def add_user_to_org(organizations, user)
+    organizations.select { |organization| organization[:admin] == true }.each do |org|
       organization = Organization.find_by_name_or_url(org[:url])
       organization.add_user(user) unless organization.users.include?(user)
       OrganizationsUser.make_user_admin(user, organization)
     end
-    params[:user][:organizations].select { |organization| organization[:admin] == false }.each do |org|
+    organizations.select { |organization| organization[:admin] == false }.each do |org|
       organization = Organization.find_by_name_or_url(org[:url])
       organization.add_user(user) unless organization.users.include?(user)
     end
-    params[:user][:feature_toggles].select { |_key, value| value == true }.each do |key, _value|
+  end
+
+  # Private: Method to enable or disable feature toggles for the LOAD_TESTING_USER
+  # Params: feature_toggles
+  # Response: None
+  def enable_or_disable_feature_toggles(feature_toggles, user)
+    feature_toggles.select { |_key, value| value == true }.each do |key, _value|
       FeatureToggle.enable!(key, users: [LOAD_TESTING_USER]) if !FeatureToggle.enabled?(key, user: user)
     end
-    params[:user][:feature_toggles].select { |_key, value| value == false }.each do |key, _value|
+    feature_toggles.select { |_key, value| value == false }.each do |key, _value|
       FeatureToggle.disable!(key, users: [LOAD_TESTING_USER])
     end
+  end
+
+  # Private: Method to save the current_user's session cookie
+  # Params: user
+  # Response: None
+  def save_session(user)
     session["user"] = user.to_session_hash
     session[:regional_office] = user.selected_regional_office
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
 
   # Private: Deletes  the load testing API key if it already exists to prevent conflicts
   def ensure_key_does_not_exist_already
