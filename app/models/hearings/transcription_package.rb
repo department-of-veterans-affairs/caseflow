@@ -29,6 +29,8 @@ class TranscriptionPackage < CaseflowRecord
 
   scope :filter_by_contractor, ->(values) { where("transcription_contractors.name IN (?)", values) }
 
+  scope :filter_by_status, ->(values) { where(status: values) }
+
   scope :order_by_field, ->(direction, field_name) { order(Arel.sql(field_name + " " + direction)) }
 
   def contractor_name

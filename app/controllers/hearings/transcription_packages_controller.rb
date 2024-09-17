@@ -35,6 +35,10 @@ class Hearings::TranscriptionPackagesController < ApplicationController
           @transcription_packages =
             @transcription_packages.filter_by_contractor(filter_hash["val"].split("|"))
         end
+        if filter_hash["col"] == "statusColumn"
+          @transcription_packages =
+            @transcription_packages.filter_by_status(filter_hash["val"].split("|"))
+        end
       end
     end
   end
@@ -84,3 +88,8 @@ class Hearings::TranscriptionPackagesController < ApplicationController
     tasks
   end
 end
+
+
+# Successful upload (AWS)
+
+# transcription_packages = TranscriptionPackage.filter_by_status(['Sent', 'Successful upload (AWS)'])
