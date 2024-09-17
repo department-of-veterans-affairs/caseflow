@@ -1,3 +1,7 @@
+.no-env-color {
+  display: none;
+}
+
 .prodtest-env-color {
   color: $color-black-light;
 }
@@ -12,6 +16,12 @@
 
 .demo-env-color {
   color: $color-green-light;
+}
+
+.no-env-alert {
+  .usa-alert {
+    display: none;
+  }
 }
 
 .prodtest-env-alert {

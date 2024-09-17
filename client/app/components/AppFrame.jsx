@@ -12,8 +12,9 @@ const env = process.env.DEPLOY_ENV;
 
 const className = classnames(
   {
-    'prodtest-env-alert': env !== 'prod' && env && env === 'prodtest',
+    'no-env-alert': env !== 'prodtest' || env !== 'preprod' || env !== 'uat' || env !== 'demo',
     'preprod-env-alert': env !== 'prod' && env === 'preprod',
+    'prodtest-env-alert': env !== 'prod' && env === 'prodtest',
     'uat-env-alert': env !== 'prod' && env === 'uat',
     'demo-env-alert': env !== 'prod' && env === 'demo',
   },
