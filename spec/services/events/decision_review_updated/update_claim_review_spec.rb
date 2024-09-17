@@ -28,7 +28,7 @@ RSpec.describe Events::DecisionReviewUpdated::UpdateClaimReview do
     end
     context "legacy_opt_in_approved false to true" do
       before do
-        hlr.update!(informal_conference: false)
+        hlr.update!(legacy_opt_in_approved: false)
       end
 
       it "updates the value to true" do
