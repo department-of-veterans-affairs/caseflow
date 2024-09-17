@@ -41,19 +41,13 @@ const CorrespondenceResponseLetters = (props) => {
     setIsFormComplete(isComplete);
   };
 
-  const updateLetter = () => {
-    const updatedLetters = [...letters, ...dataLetter];
-    return updatedLetters;
-  };
-
   const handleSubmitFunction = () => {
     setShowAddLetterModal(false);
     setIsFormComplete(false);
 
-    const newLetter = updateLetter();
     const payload = {
       data: {
-        response_letters: newLetter
+        response_letters: dataLetter
       }
     };
 
@@ -182,12 +176,13 @@ CorrespondenceResponseLetters.propTypes = {
   isInboundOpsUser: PropTypes.bool.isRequired,
   addLetterCheck: PropTypes.bool.isRequired,
   correspondence: PropTypes.object.isRequired,
-  submitLetterResponse: PropTypes.func.isRequired
+  submitLetterResponse: PropTypes.func.isRequired,
+  // correspondenceResponseLetters: PropTypes.array
+  // responseLetters: PropTypes.array
 };
 
 // const mapStateToProps = (state) => ({
-//   correspondence: state.correspondenceDetails.correspondenceInfo.correspondence,
-//   letters: state.correspondenceDetails.correspondenceInfo.correspondenceResponseLetters,
+//   correspondenceResponseLetters: state.correspondenceDetails.correspondenceInfo.correspondenceResponseLetters
 // });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
