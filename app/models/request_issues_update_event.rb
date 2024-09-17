@@ -12,7 +12,6 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     @parser = parser
     super(user: user, review: review)
 
-    # @added_issue_data = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(@added_issue_data)
     @eligible_to_ineligible_issue_data = parser.eligible_to_ineligible_issues
     @ineligible_to_ineligible_issue_data = parser.ineligible_to_ineligible_issues
     @ineligible_to_eligible_issue_data = parser.ineligible_to_eligible_issues
@@ -20,18 +19,6 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     @edited_issue_data = parser.updated_issues
     @removed_issue_data = parser.removed_issues
     @added_issue_data = parser.added_issues
-  end
-
-  def initialize(*args)
-    super
-
-    @eligible_to_ineligible_issue_data ||= []
-    @ineligible_to_ineligible_issue_data ||= []
-    @ineligible_to_eligible_issue_data ||= []
-    @withdrawn_issue_data ||= []
-    @edited_issue_data ||= []
-    @removed_issue_data ||= []
-    @added_issue_data ||= []
   end
 
   def perform!
