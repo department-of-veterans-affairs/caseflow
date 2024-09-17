@@ -8,11 +8,12 @@ import classnames from 'classnames';
 import Alert from './Alert';
 
 // eslint-disable-next-line no-process-env
-const env = process.env.DEPLOY_ENV;
+// const env = process.env.DEPLOY_ENV;
+const env = 'tigg3R';
 
 const className = classnames(
   {
-    'no-env-alert': env !== 'prodtest' || env !== 'preprod' || env !== 'uat' || env !== 'demo',
+    'no-env-alert': env !== 'prodtest' && env !== 'preprod' && env !== 'uat' && env !== 'demo',
     'preprod-env-alert': env !== 'prod' && env === 'preprod',
     'prodtest-env-alert': env !== 'prod' && env === 'prodtest',
     'uat-env-alert': env !== 'prod' && env === 'uat',
