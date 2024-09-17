@@ -8,7 +8,11 @@ class Events::DecisionReviewUpdated
 
       ActiveRecord::Base.transaction do
         event = find_or_create_event(consumer_event_id)
-        # Update the Event after all backfills have completed
+
+        # Events::DecisionReviewUpdated::UpdateInformalConference.process!(event: event, parser: parser)
+        # Events::DecisionReviewUpdated::UpdateClaimReview.process!(event: event, parser: parser)
+
+        # Update the Event after all operations have completed
         event.update!(completed_at: Time.now.in_time_zone, error: nil, info: {})
 
         request_issues.each do |request_issue|
