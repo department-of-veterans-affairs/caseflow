@@ -500,6 +500,7 @@ describe('TranscriptionFileDispatchTable', () => {
     });
   });
 
+  
   describe('Unassigned Tab', () => {
     it('loads a table from backend data and handles selected and locked records', async () => {
       const { container } = setupUnassignedTable();
