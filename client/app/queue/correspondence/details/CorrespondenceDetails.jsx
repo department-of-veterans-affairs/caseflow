@@ -346,7 +346,9 @@ const CorrespondenceDetails = (props) => {
               hideLabel
               defaultValue={relatedCorrespondenceIds.some((el) => el === correspondenceRow.id)}
               value={selectedPriorMail.some((el) => el.id === correspondenceRow.id)}
-              disabled={relatedCorrespondenceIds.some((corrId) => corrId === correspondenceRow.id)}
+              disabled={
+                relatedCorrespondenceIds.some((corrId) => corrId === correspondenceRow.id) || !props.isInboundOpsUser
+              }
               onChange={(checked) => onPriorMailCheckboxChange(correspondenceRow, checked)}
             />
           </div>
@@ -562,16 +564,18 @@ const CorrespondenceDetails = (props) => {
           onChange={((value) => tabChange(value))}
         />
       </AppSegment>
-      <div className="margin-top-for-add-task-view">
-        <Button
-          type="button"
-          onClick={() => saveChanges()}
-          disabled={disableSubmitButton}
-          name="save-changes"
-          classNames={['cf-right-side']}>
+      {
+        props.isInboundOpsUser && <div className="margin-top-for-add-task-view">
+          <Button
+            type="button"
+            onClick={() => saveChanges()}
+            disabled={disableSubmitButton}
+            name="save-changes"
+            classNames={['cf-right-side']}>
           Save changes
-        </Button>
-      </div>
+          </Button>
+        </div>
+      }
     </>
   );
 };
@@ -583,6 +587,7 @@ CorrespondenceDetails.propTypes = {
   userCssId: PropTypes.string,
   enableTopPagination: PropTypes.bool,
   correspondence_appeal_ids: PropTypes.bool,
+  isInboundOpsUser: PropTypes.bool,
   tasksUnrelatedToAppealEmpty: PropTypes.bool,
   correspondenceResponseLetters: PropTypes.array,
   inboundOpsTeamUsers: PropTypes.array,
