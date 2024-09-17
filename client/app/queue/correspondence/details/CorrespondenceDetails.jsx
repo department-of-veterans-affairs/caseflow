@@ -492,7 +492,7 @@ const CorrespondenceDetails = (props) => {
 
       tempCor.relatedCorrespondenceIds = priorMailIds;
 
-      return ApiUtil.put(`/queue/correspondence/${correspondence.uuid}/update_correspondence_relations`, payload).
+      return ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/create_correspondence_relations`, payload).
         then(() => {
           props.updateCorrespondenceRelations(tempCor);
 

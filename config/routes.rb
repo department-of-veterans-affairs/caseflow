@@ -370,7 +370,7 @@ Rails.application.routes.draw do
     post "/correspondence_response_letters", to: "correspondence_response_letters#create"
     get "/correspondence/:correspondence_uuid", to: "correspondence_details#correspondence_details"
     resources :correspondence, param: :correspondence_uuid do
-      put :update_correspondence_relations, on: :member, to: "correspondence_details#update_correspondence_relations"
+      post :create_correspondence_relations, on: :member, to: "correspondence_details#create_correspondence_relations"
     end
     get "/appeals/:vacols_id", to: "queue#index"
     get "/appeals/:appealId/notifications", to: "queue#index"
