@@ -207,8 +207,13 @@ class CaseDistributionTest extends React.PureComponent {
                               </a>
                             </li>
                             <li>
-                              <a href="#distribution_status">
-                                <button className="btn btn-primary">Distribution Status</button>
+                              <a href="#access_csvs">
+                                <button className="btn btn-primary">Access CSVs</button>
+                              </a>
+                            </li>
+                            <li>
+                              <a href="#run_seeds">
+                                <button className="btn btn-primary">Create Seeded Appeals</button>
                               </a>
                             </li>
                             <li>
@@ -313,54 +318,81 @@ class CaseDistributionTest extends React.PureComponent {
                             </tbody>
                           </table>
                           <hr />
-                          <h2 id="distribution_status">Distribution Status</h2>
-                          <ul>
-                            <li>
+                          <div className="lever-content">
+                            <div className="lever-head">
+                              <h2 id="access_csvs">Access CSVs</h2>
+                            </div>
+                            <div className="lever-left csv-download-left">
                               <a href="/case_distribution_levers_tests/appeals_ready_to_distribute?csv=1">
-                                <Button classNames={['usa-button-active']}>
-                                  Download Appeals Ready to Distribute CSV
-                                </Button>
+                                  <Button classNames={['usa-button-active']}>
+                                    Download Appeals Ready to Distribute CSV
+                                  </Button>
                               </a>
-                            </li>
-                            <li>
-                              <a href="/case_distribution_levers_tests/appeals_distributed?csv=1">
-                                <Button classNames={['usa-button-active']}>Download Distributed Appeals CSV</Button>
-                              </a>
-                            </li>
-                            <li>
-                              <a href="/case_distribution_levers_tests/ineligible_judge_list?csv=1">
-                                <Button classNames={['usa-button-active']}>Download Ineligible Judge List</Button>
-                              </a>
-                            </li>
-                            <li>
+                            </div>
+                            <div className="lever-right csv-download-right">
+                              <strong>Download Appeals Ready to Distribute CSV</strong> - Appeals with an assigned at date: Includes appeals with additional date conditions (like AMA non-priority appeals with a Days Before Goal date, or appeals within their affinity period, or tied to a specific judge) which may not yet be distributable to any judge.
+                            </div>
+                            <div className="lever-left csv-download-left">
                               <a href="/case_distribution_levers_tests/appeals_non_priority_ready_to_distribute?csv=1">
                                 <Button classNames={['usa-button-active']}>
                                   Download AMA Non-priority Distributable CSV
                                 </Button>
                               </a>
-                            </li>
-                            <li>
+                            </div>
+                            <div className="lever-right csv-download-right">
+                              <strong>Download AMA Non-priority Distributable CSV</strong> - Subset of Appeals Ready to Distribute: Only includes AMA non-priority appeals that are distributable based on the additional date criteria for Days Before Goal date. (If the lever is turned on, appeal meets goal date criteria; or any ready to distribute appeals in that docket if the lever is off).
+                            </div>
+                            <div className="lever-left csv-download-left">
                               <a href="/case_distribution_levers_tests/appeals_tied_to_non_ssc_avlj?csv=1">
                                 <Button classNames={['usa-button-active']}>
-                                  Download Appeals tied to Non-SSC AVLJs CSV</Button>
+                                  Download Appeals tied to Non-SSC AVLJs CSV
+                                </Button>
                               </a>
-                            </li>
-                            <li>
-                              <a href="/case_distribution_levers_tests/appeals_tied_to_avljs_and_vljs?csv=1">
-                                <Button classNames={['usa-button-active']}>
-                                  Download Appeals Tied to AVLJ and VLJ CSV</Button>
+                            </div>
+                            <div className="lever-right csv-download-right">
+                              <strong>Download Appeals tied to Non-SSC AVLJs CSV</strong> - List of assigned/distributed appeals for which the hearing judge or the deciding judge is a Non-SSC AVLJ.
+                            </div>
+                            <div className="lever-left csv-download-left">
+                              <a href="/case_distribution_levers_tests/ineligible_judge_list?csv=1">
+                                <Button classNames={['usa-button-active']}>Download Ineligible Judge List
+                                </Button>
                               </a>
-                            </li>
-                            <li>
+                            </div>
+                            <div className="lever-right csv-download-right">
+                              <strong>Download Ineligible Judge List</strong> - Very specific: Export of judges who are considered ineligible based on their current attributes. (Does or does not include those with a checkbox making them excluded from appeals.)
+                            </div>
+                            <div className="lever-left csv-download-left">
+                              <a href="/case_distribution_levers_tests/appeals_distributed?csv=1">
+                                <Button classNames={['usa-button-active']}>Download Distributed Appeals CSV
+                                </Button>
+                              </a>
+                            </div>
+                            <div className="lever-right csv-download-right">
+                              <strong>Download Distributed Appeals CSV</strong> - Includes appeals assigned to judges since the latest deployment in this demo environment (varies).
+                            </div>
+                            <div className="lever-left csv-download-left">
                               <a href="/case_distribution_levers_tests/appeals_in_location_63_in_past_2_days?csv=1">
                                 <Button classNames={['usa-button-active']}>
                                   Download Loc 63 Appeals Last 48 hrs CSV
                                 </Button>
                               </a>
-                            </li>
-                          </ul>
+                            </div>
+                            <div className="lever-right csv-download-right">
+                              <strong>Download Loc 63 Appeals Last 48 hrs CSV</strong> - Very specific. Time-ordered list of legacy appeals for which the location changed to 63. Contains all appeals that met this criteria within the last rolling 48 hours
+                            </div>
+                            <div className="lever-left csv-download-left">
+                              <a href="/case_distribution_levers_tests/appeals_tied_to_avljs_and_vljs?csv=1">
+                                <Button classNames={['usa-button-active']}>
+                                  Download Appeals Tied to AVLJ and VLJ CSV
+                                </Button>
+                              </a>
+                            </div>
+                            <div className="lever-right csv-download-right">
+                              <strong>Download Appeals Tied to AVLJ and VLJ CSV</strong> - List of legacy appeals tied to judges that are AVLJ and VLJ
+                            </div>
+                          </div>
                           <hr />
-                          <h2 id="run_seeds">Run Seed Files</h2>
+                          <h2 id="run_seeds">Create Seeded Appeals</h2>
                           { this.state.showAlert &&
                             <Alert type={this.state.alertType} scrollOnAlert={false}>{this.state.alertMsg}</Alert>
                           }
@@ -407,22 +439,27 @@ class CaseDistributionTest extends React.PureComponent {
                             </li>
                           </ul>
                           <hr />
-                          <h2 id="case_movement">Case Movement</h2>
-                          { this.state.showLegacyAppealsAlert &&
-                            <Alert type={this.state.legacyAppealsAlertType} scrollOnAlert={false}>
-                              {this.state.legacyAppealsAlertMsg}
-                            </Alert>
-                          }
-                          <ul>
-                            <li>
+                          <div className="lever-content">
+                            <div className="lever-head">
+                              <h2 id="case_movement">Case Movement</h2>
+                              { this.state.showLegacyAppealsAlert &&
+                              <Alert type={this.state.legacyAppealsAlertType} scrollOnAlert={false}>
+                                {this.state.legacyAppealsAlertMsg}
+                              </Alert>
+                              }
+                            </div>
+                            <div className="lever-left csv-download-left">
                               <Button classNames={['usa-button-case-movement']}
-                                onClick={this.returnLegacyAppealsToBoard}
-                                name="Run ReturnLegacyAppealsToBoard job"
-                                loading={this.state.isReturnLegacyAppeals}
-                                loadingText="Processing ReturnLegacyAppealsToBoard job"
-                              />
-                            </li>
-                          </ul>
+                                  onClick={this.returnLegacyAppealsToBoard}
+                                  name="Run ReturnLegacyAppealsToBoard job"
+                                  loading={this.state.isReturnLegacyAppeals}
+                                  loadingText="Processing ReturnLegacyAppealsToBoard job"
+                                />
+                            </div>
+                            <div className="lever-right csv-download-right">
+                              <strong>ReturnLegacyAppealsToBoard job</strong> - Click to run the ReturnLegacyAppealsToBoard job. This job changes the location to 63 for qualifying legacy appeals.
+                            </div>
+                          </div>
                           <hr />
                           <h2 id="log_of_most_recent_appeals">Log of 15 most recent appeals moved to location 63</h2>
                           <CollapsibleTable returnedAppealJobs={this.props.returnedAppealJobs} />
