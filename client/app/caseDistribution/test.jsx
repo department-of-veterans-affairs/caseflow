@@ -195,7 +195,7 @@ class CaseDistributionTest extends React.PureComponent {
                           <p>This page is for lower env use only and provides a convient place to review{' '}
                           Case Distribution related data</p>
                           <h2>Navigation</h2>
-                          <ul>
+                          <ul style={{ listStyleType: 'none', paddingLeft: 0 }}>
                             <li>
                               <a href="#levers">
                                 <button className="btn btn-primary">Case Distribution Levers</button>
@@ -360,52 +360,86 @@ class CaseDistributionTest extends React.PureComponent {
                             </li>
                           </ul>
                           <hr />
-                          <h2 id="run_seeds">Run Seed Files</h2>
-                          { this.state.showAlert &&
+                          <div className="lever-content">
+                            <div className="lever-head">
+                              <h2 id="run_seeds">Run Seed Files</h2>
+                              { this.state.showAlert &&
                             <Alert type={this.state.alertType} scrollOnAlert={false}>{this.state.alertMsg}</Alert>
-                          }
-                          <ul>
-                            <li>
+                              }
+                              <table
+                                id="case-table-description"
+                                className="usa-table"
+                                style={tablestyle}
+                              >
+                                <thead>
+                                  <td><p>Clicking any button in this section creates specific appeals.
+                                The creation process triggered by any button click can
+                                take up to 20 minutes to complete.</p>
+                                  <p>While appeals are being created, system performance is considerably slowed,
+                                  and actions related to requesting appeals or CSVs in the
+                                  Distribution Status section above will produce unexpected results.</p>
+                                  <p>We recommend you only run the seed file identified for your specific testing
+                                effort.</p>
+                                  </td>
+                                </thead>
+                              </table>
+                            </div>
+                            <div className="lever-left csv-download-left">
                               <Button
                                 onClick={this.reseedAod}
                                 name="Run Demo AOD Hearing Held Seeds"
                                 loading={this.state.isReseedingAod}
                                 loadingText="Reseeding AOD Hearing Held Seeds"
                               />
-                            </li>
-                            <li>
+                            </div>
+                            <div className="lever-right csv-download-right">
+                              <strong>Run Demo AOD Hearing Held Seeds</strong> - Creates 204 appeals with an assigned at date. 75% are AMA AOD hearings with a mix of hearing judges (eligible and ineligible).
+                            </div>
+                            <div className="lever-left csv-download-left">
                               <Button
                                 onClick={this.reseedNonAod}
                                 name="Run Demo NON AOD Hearing Held Seeds"
                                 loading={this.state.isReseedingNonAod}
                                 loadingText="Reseeding NON AOD Hearing Held Seeds"
                               />
-                            </li>
-                            <li>
+                            </div>
+                            <div className="lever-right csv-download-right">
+                              <strong>Run Demo NON AOD Hearing Held Seeds</strong> - Creates 192 appeals with an assigned at date. 80% are AMA non-priority hearings with a mix of hearing judges (eligible and ineligible).
+                            </div>
+                            <div className="lever-left csv-download-left">
                               <Button
                                 onClick={this.reseedAmaDocketGoals}
                                 name="Run Docket Time Goal (AMA non-pri) Seeds"
                                 loading={this.state.isReseedingAmaDocketGoals}
                                 loadingText="Reseeding Docket Time Goal (AMA non-pri) Seeds"
                               />
-                            </li>
-                            <li>
+                            </div>
+                            <div className="lever-right csv-download-right">
+                              <strong>Run Docket Time Goal (AMA non-pri) Seeds</strong> - Creates 117 appeals with an assigned at date. 60% are AMA Non-priority appeals. Useful when testing Docket Time Goals.
+                            </div>
+                            <div className="lever-left csv-download-left">
                               <Button
                                 onClick={this.reseedDocketPriority}
                                 name="Run Docket-type Seeds"
                                 loading={this.state.isReseedingDocketPriority}
                                 loadingText="Reseeding Docket-type Seeds"
                               />
-                            </li>
-                            <li>
+                            </div>
+                            <div className="lever-right csv-download-right">
+                              <strong>Run Docket-type Seeds</strong> - Creates 185 appeals with an assigned at date. 35% legacy, remainder mix of AMA original appeals.
+                            </div>
+                            <div className="lever-left csv-download-left">
                               <Button
                                 onClick={this.reseedNonSSCAVLJAppeals}
                                 name="Run non-SSC AVLJ and Appeal Seeds"
                                 loading={this.state.isReseedingNonSSCAVLJAppeals}
                                 loadingText="Reseeding non-SSC AVLJ and Appeal Seeds"
                               />
-                            </li>
-                          </ul>
+                            </div>
+                            <div className="lever-right csv-download-right">
+                              <strong>Run Non-SSC AVLJ and Appeal Seeds</strong> - Creates 66 assigned legacy appeals. About 50% assigned to Non-SSC AVLJs.
+                            </div>
+                          </div>
                           <hr />
                           <h2 id="case_movement">Case Movement</h2>
                           { this.state.showLegacyAppealsAlert &&
