@@ -552,7 +552,6 @@ const CorrespondenceDetails = (props) => {
         <TabWindow
           name="tasks-tabwindow"
           tabs={tabList}
-          onChange={((value) => tabChange(value))}
         />
       </AppSegment>
       {
