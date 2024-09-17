@@ -38,7 +38,6 @@ const CorrespondenceDetails = (props) => {
   const [disableSubmitButton, setDisableSubmitButton] = useState(true);
   const [showSuccessBanner, setShowSuccessBanner] = useState(false);
   const [selectedPriorMail, setSelectedPriorMail] = useState([]);
-  const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const totalPages = Math.ceil(allCorrespondences.length / 15);
   const startIndex = (currentPage * 15) - 15;
   const endIndex = (currentPage * 15);
@@ -487,7 +486,7 @@ const CorrespondenceDetails = (props) => {
   ];
 
   const saveChanges = () => {
-    if (currentTabIndex === 3) {
+    if (selectedPriorMail.length > 0) {
 
       const priorMailIds = selectedPriorMail.map((mail) => mail.id);
       const payload = {
@@ -520,15 +519,6 @@ const CorrespondenceDetails = (props) => {
 
           console.error(errorMessage);
         });
-    }
-  };
-
-  const tabChange = (value) => {
-    setCurrentTabIndex(value);
-    setDisableSubmitButton(true);
-
-    if (value === 3 && selectedPriorMail.length > 0) {
-      setDisableSubmitButton(false);
     }
   };
 
