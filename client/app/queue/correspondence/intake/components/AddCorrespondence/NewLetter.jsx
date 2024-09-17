@@ -124,8 +124,9 @@ export const NewLetter = (props) => {
   };
 
   useEffect(() => {
-    if(props.addLetterCheck === true){
+    if (props.addLetterCheck === true) {
       const isComplete = canContinue();
+
       onFormCompletion(isComplete);
     }
   }, [letterCard]);
@@ -453,6 +454,7 @@ NewLetter.propTypes = {
   taskUpdatedCallback: PropTypes.func,
   onContinueStatusChange: PropTypes.func,
   onFormCompletion: PropTypes.func.isRequired,
+  addLetterCheck: PropTypes.bool
 };
 
 const mapDispatchToProps = (dispatch) => (

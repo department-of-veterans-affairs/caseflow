@@ -28,7 +28,15 @@ class CorrespondenceDetailsController < CorrespondenceController
       correspondence = Correspondence.find_by(id: updated_correspondence.correspondence_id)
 
       if correspondence
-        render json: { correspondence: correspondence.correspondence_response_letters }, status: :ok
+
+        serialized_response_letters = WorkQueue::CorrespondenceResponseLetterSerializer
+          .new(correspondence.correspondence_response_letters)
+          .serializable_hash[:data]
+
+        response_letters = serialized_response_letters.map { |letter| letter[:attributes] }
+        sorted_response_letters = sort_response_letters(response_letters)
+
+        render json: { responseLetters: sorted_response_letters }, status: :ok
       else
         render json: { error: "Correspondence not found" }, status: :not_found
       end

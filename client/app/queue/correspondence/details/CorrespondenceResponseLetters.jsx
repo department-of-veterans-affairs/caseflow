@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { bindActionCreators } from 'redux';
@@ -8,12 +8,13 @@ import Button from '../../../components/Button';
 import QueueFlowModal from '../../components/QueueFlowModal';
 import NewLetter from '../intake/components/AddCorrespondence/NewLetter';
 import {
-  submitLetterResponse
+  submitLetterResponse,
+  correspondenceInfo
 } from '../../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
 
 const CorrespondenceResponseLetters = (props) => {
+  const letters = props.correspondence.correspondenceResponseLetters;
   const {
-    letters,
     isInboundOpsSuperuser,
     isInboundOpsSupervisor,
     isInboundOpsUser
@@ -141,7 +142,7 @@ const CorrespondenceResponseLetters = (props) => {
           submit={handleSubmitFunction}
         >
           <NewLetter
-            setUnrelatedTasksCanContinue={() => {}}
+            setUnrelatedTasksCanContinue={() => true}
             addLetterCheck={props.addLetterCheck}
             taskUpdatedCallback={taskUpdatedCallback}
             onFormCompletion={onFormCompletion}
@@ -153,45 +154,27 @@ const CorrespondenceResponseLetters = (props) => {
 };
 
 CorrespondenceResponseLetters.propTypes = {
-  letters: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      correspondence_id: PropTypes.number,
-      letter_type: PropTypes.string,
-      title: PropTypes.string,
-      subcategory: PropTypes.string,
-      reason: PropTypes.string,
-      date_sent: PropTypes.string,
-      response_window: PropTypes.number,
-      user_id: PropTypes.number,
-      days_left: PropTypes.string,
-      expired: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.bool
-      ]),
-    })
-  ).isRequired,
+  letters: PropTypes.array.isRequired,
   isInboundOpsSuperuser: PropTypes.bool.isRequired,
   isInboundOpsSupervisor: PropTypes.bool.isRequired,
   isInboundOpsUser: PropTypes.bool.isRequired,
   addLetterCheck: PropTypes.bool.isRequired,
   correspondence: PropTypes.object.isRequired,
   submitLetterResponse: PropTypes.func.isRequired,
-  // correspondenceResponseLetters: PropTypes.array
-  // responseLetters: PropTypes.array
 };
 
-// const mapStateToProps = (state) => ({
-//   correspondenceResponseLetters: state.correspondenceDetails.correspondenceInfo.correspondenceResponseLetters
-// });
+const mapStateToProps = (state) => ({
+  correspondenceInfo: state.correspondenceDetails.correspondenceInfo,
+});
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
+  correspondenceInfo,
   submitLetterResponse: (payload, correspondence) => submitLetterResponse(payload, correspondence)
 }, dispatch);
 
 export default withRouter(
   connect(
-    null,
+    mapStateToProps,
     mapDispatchToProps
   )(CorrespondenceResponseLetters)
 );

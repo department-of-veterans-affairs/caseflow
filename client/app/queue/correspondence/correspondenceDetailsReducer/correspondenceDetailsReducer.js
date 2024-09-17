@@ -8,7 +8,6 @@ export const initialState = {
     tasksUnrelatedToAppeal: {}
   },
   tasksUnrelatedToAppealEmpty: false,
-  letters: []
 };
 
 export const correspondenceDetailsReducer = (state = initialState, action = {}) => {
@@ -30,13 +29,6 @@ export const correspondenceDetailsReducer = (state = initialState, action = {}) 
     return update(state, {
       tasksUnrelatedToAppealEmpty: {
         $set: action.payload.tasksUnrelatedToAppealEmpty
-      }
-    });
-  case ACTIONS.ADD_LETTER_RESPONSE_SUCCESS:
-    console.log(JSON.stringify(action.payload.letters));
-    return update(state, {
-      letters: {
-        $set: action.payload.letters
       }
     });
   default:

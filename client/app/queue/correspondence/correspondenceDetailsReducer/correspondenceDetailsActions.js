@@ -246,19 +246,16 @@ export const assignTaskToTeam = (payload, frontendParams, correspondence) => (di
 export const submitLetterResponse = (payload, correspondence) => (dispatch) => {
   const uuid = correspondence.uuid;
   const url = `/queue/correspondence/${uuid}/correspondence_response_letter`;
-  console.log("Payload: " + JSON.stringify(payload));
+
   return ApiUtil.post(url, payload).
     then((response) => {
-      console.log("API response:", response);
-      const updatedCorrespondence = response.body.correspondence;
-      console.log("Updated Correspondence:", updatedCorrespondence);
+      const responseLetters = response.body.responseLetters;
+      correspondence.correspondenceResponseLetters = responseLetters
+
       dispatch({
-        type: ACTIONS.ADD_LETTER_RESPONSE_SUCCESS,
-        payload: {
-          letters: updatedCorrespondence
-        }
+        type: ACTIONS.CORRESPONDENCE_INFO,
+        payload: correspondence
       });
-      return updatedCorrespondence;
     })
 };
 

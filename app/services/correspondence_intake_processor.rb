@@ -19,10 +19,11 @@ class CorrespondenceIntakeProcessor
     do_upload_success_actions(parent_task, intake_params, correspondence, current_user)
   end
 
-  def create_letter(params, current_user)
+  def create_letter(params, _current_user)
     correspondence = Correspondence.find_by(uuid: params[:correspondence_uuid])
 
     fail "Correspondence not found" if correspondence.blank?
+
     create_response_letter(params, correspondence.id)
   end
 
