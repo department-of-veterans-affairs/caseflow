@@ -258,21 +258,20 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       end
       request_issue.update(ineligible_reason: ineligible_to_ineligible_issue.ineligible_reason,
                            closed_at: ineligible_to_ineligible_issue.closed_at)
-      # closed_at from parser has milliseconds format.
     end
   end
 
-  def edit_contention_text(edited_issue_params, request_issue)
+  def edit_contention_text(edited_issue, request_issue)
     # method is updated since parser returns issue_data with :request_issue_id key instead :edited_description
-    if edited_issue_params[:edited_description]
-      request_issue.save_edited_contention_text!(edited_issue_params[:edited_description])
+    if edited_issue[:edited_description]
+      request_issue.save_edited_contention_text!(edited_issue[:edited_description])
     end
   end
 
-  def edit_decision_date(edited_issue_params, request_issue)
+  def edit_decision_date(edited_issue, request_issue)
     # method is updated since parser returns issue_data with :decision_date key instead :edited_decision_date
-    if edited_issue_params[:decision_date]
-      request_issue.save_decision_date!(edited_issue_params[:decision_date])
+    if edited_issue[:decision_date]
+      request_issue.save_decision_date!(edited_issue[:decision_date])
     end
   end
 end
