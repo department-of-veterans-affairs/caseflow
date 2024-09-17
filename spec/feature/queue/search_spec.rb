@@ -612,9 +612,7 @@ feature "Search", :all_dbs do
 
     context "when backend returns non-serialized error" do
       it "displays generic server error message" do
-        allow_any_instance_of(SearchQueryService).to(
-          receive(:search_by_veteran_file_number).and_raise(StandardError)
-        )
+        allow(LegacyAppeal).to receive(:fetch_appeals_by_file_number).and_raise(StandardError)
         visit "/search"
         fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
         click_on "Search"
@@ -657,7 +655,7 @@ feature "Search", :all_dbs do
 
     it "shows 'Withdrawn' text on search results page" do
       policy = instance_double(WithdrawnDecisionReviewPolicy)
-      allow(WithdrawnDecisionReviewPolicy).to receive(:new).and_return policy
+      allow(WithdrawnDecisionReviewPolicy).to receive(:new).with(caseflow_appeal).and_return policy
       allow(policy).to receive(:satisfied?).and_return true
       perform_search
 

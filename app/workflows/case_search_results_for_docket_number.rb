@@ -13,10 +13,6 @@ class CaseSearchResultsForDocketNumber < ::CaseSearchResultsBase
   end
 
   def appeals
-    SearchQueryService.new(docket_number: docket_number).search_by_docket_number
-  end
-
-  def appeal_finder_appeals
     AppealFinder.find_appeals_by_docket_number(docket_number)
   end
 
@@ -37,7 +33,7 @@ class CaseSearchResultsForDocketNumber < ::CaseSearchResultsBase
 
   def veterans
     # Determine vet that corresponds to docket number so we can validate user can access
-    @file_numbers_for_appeals ||= appeals.map(&:api_response).map(&:attributes).map(&:veteran_file_number)
+    @file_numbers_for_appeals ||= appeals.map(&:veteran_file_number)
     @veterans ||= VeteranFinder.find_or_create_all(@file_numbers_for_appeals)
   end
 end
