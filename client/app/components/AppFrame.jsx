@@ -8,8 +8,7 @@ import classnames from 'classnames';
 import Alert from './Alert';
 
 // eslint-disable-next-line no-process-env
-// const env = process.env.DEPLOY_ENV;
-const env = 'tigg3R';
+const env = process.env.DEPLOY_ENV;
 
 const className = classnames(
   {
