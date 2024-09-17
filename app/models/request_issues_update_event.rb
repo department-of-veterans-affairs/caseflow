@@ -22,6 +22,18 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     @added_issue_data = parser.added_issues
   end
 
+  def initialize(*args)
+    super
+
+    @eligible_to_ineligible_issue_data ||= []
+    @ineligible_to_ineligible_issue_data ||= []
+    @ineligible_to_eligible_issue_data ||= []
+    @withdrawn_issue_data ||= []
+    @edited_issue_data ||= []
+    @removed_issue_data ||= []
+    @added_issue_data ||= []
+  end
+
   def perform!
     return false unless validate_before_perform
     return false if processed?
@@ -46,6 +58,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   def process_issues!
     process_added_issues!
     process_removed_issues!
+    process_legacy_issues!
     process_withdrawn_issues!
     process_edited_issues!
     process_eligible_to_ineligible_issues!

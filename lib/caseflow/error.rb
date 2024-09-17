@@ -511,6 +511,7 @@ module Caseflow::Error
       super("Request issue not found for REFERENCE_ID: #{reference_id}")
     end
   end
+  class DecisionReviewUpdatedClaimReviewError < StandardError; end
   class MaximumBatchSizeViolationError < StandardError
     def initialize(msg = "The batch size of jobs must not exceed 10")
       super(msg)
