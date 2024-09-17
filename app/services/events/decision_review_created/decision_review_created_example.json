@@ -54,6 +54,7 @@
   },
   "request_issues": [
     {
+      "decision_review_issue_id": "1",
       "benefit_type": "compensation",
       "contested_issue_description": null,
       "contention_reference_id": 7905752,

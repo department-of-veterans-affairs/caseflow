@@ -14,7 +14,7 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser
   end
 
   def ri_benefit_type
-    @issue.dig(:benefit_type)
+    @issue.dig(:benefit_type).presence
   end
 
   def ri_closed_at
@@ -27,7 +27,7 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser
   end
 
   def ri_contested_issue_description
-    @issue.dig(:contested_issue_description)
+    @issue.dig(:contested_issue_description).presence
   end
 
   def ri_contention_reference_id
@@ -35,19 +35,19 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser
   end
 
   def ri_contested_rating_issue_diagnostic_code
-    @issue.dig(:contested_rating_issue_diagnostic_code)
+    @issue.dig(:contested_rating_issue_diagnostic_code).presence
   end
 
   def ri_contested_rating_decision_reference_id
-    @issue.dig(:contested_rating_decision_reference_id)
+    @issue.dig(:contested_rating_decision_reference_id).presence
   end
 
   def ri_contested_rating_issue_profile_date
-    @issue.dig(:contested_rating_issue_profile_date)
+    @issue.dig(:contested_rating_issue_profile_date).presence
   end
 
   def ri_contested_rating_issue_reference_id
-    @issue.dig(:contested_rating_issue_reference_id)
+    @issue.dig(:contested_rating_issue_reference_id).presence
   end
 
   def ri_contested_decision_issue_id
@@ -65,7 +65,7 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser
   end
 
   def ri_ineligible_reason
-    @issue.dig(:ineligible_reason)
+    @issue.dig(:ineligible_reason).presence
   end
 
   def ri_is_unidentified
@@ -73,27 +73,27 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser
   end
 
   def ri_unidentified_issue_text
-    @issue.dig(:unidentified_issue_text)
+    @issue.dig(:unidentified_issue_text).presence
   end
 
   def ri_nonrating_issue_category
-    @issue.dig(:nonrating_issue_category)
+    @issue.dig(:nonrating_issue_category).presence
   end
 
   def ri_nonrating_issue_description
-    @issue.dig(:nonrating_issue_description)
+    @issue.dig(:nonrating_issue_description).presence
   end
 
   def ri_nonrating_issue_bgs_id
-    @issue.dig(:nonrating_issue_bgs_id)
+    @issue.dig(:nonrating_issue_bgs_id).presence
   end
 
   def ri_nonrating_issue_bgs_source
-    @issue.dig(:nonrating_issue_bgs_source)
+    @issue.dig(:nonrating_issue_bgs_source).presence
   end
 
   def ri_ramp_claim_id
-    @issue.dig(:ramp_claim_id)
+    @issue.dig(:ramp_claim_id).presence
   end
 
   def ri_rating_issue_associated_at
@@ -106,11 +106,11 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser
   end
 
   def ri_untimely_exemption_notes
-    @issue.dig(:untimely_exemption_notes)
+    @issue.dig(:untimely_exemption_notes).presence
   end
 
   def ri_vacols_id
-    @issue.dig(:vacols_id)
+    @issue.dig(:vacols_id).presence
   end
 
   def ri_vacols_sequence_id
@@ -118,11 +118,11 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser
   end
 
   def ri_veteran_participant_id
-    @issue.dig(:veteran_participant_id)
+    @issue.dig(:veteran_participant_id).presence
   end
 
   def ri_type
-    @issue.dig(:type)
+    @issue.dig(:type).presence
   end
 
   def ri_decision
