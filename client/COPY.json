@@ -1626,7 +1626,11 @@
   "VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_ADMIN": "Requests for issue modifications have been submitted for this case. Dispositions cannot be made until a VHA admin completes review of the requested changes. Click the \"Edit issues\" button above to review the issue modification requests.",
   "CORRESPONDENCE_DETAILS": {
     "COMPLETED_MAIL_TASKS": "Completed Mail Tasks",
-    "NO_COMPLETED_MAIL_TASKS": "No previously completed mail tasks prior to intake."
+    "NO_COMPLETED_MAIL_TASKS": "No previously completed mail tasks prior to intake.",
+    "SAVE_CHANGES_BANNER": {
+      "MESSAGE": "You have successfully saved changes to this page",
+      "TYPE": "success"
+    }
   },
   "ALL_CORRESPONDENCES": "All Correspondence"
 }
