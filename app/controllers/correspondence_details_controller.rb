@@ -77,7 +77,7 @@ class CorrespondenceDetailsController < CorrespondenceController
     end
   end
 
-  def update_correspondence_relations
+  def create_correspondence_relations
     params[:priorMailIds]&.map do |corr_id|
       CorrespondenceRelation.create!(
         correspondence_id: corr_id,
