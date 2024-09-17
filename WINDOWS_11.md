@@ -134,9 +134,9 @@ Run each line is a separate command, run them one at a time
 
 26. ```cd ~/appeals/caseflow in terminal```
 
-27. ```bin/rails db:migrate RAILS_ENV=development```
+27. ```bin/rails db:migrate:primary RAILS_ENV=development```
 
-28. Run ```bundle install``` to install missing gems and then ```bin/rails db:migrate``` ```RAILS_ENV=development``` command if you have too again.
+28. Run ```bundle install``` to install missing gems and then ```bin/rails db:migrate:primary``` ```RAILS_ENV=development``` command if you have too again.
 
 29. ```make reset``` (should have split_correlation_tables)
 
