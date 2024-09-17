@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# sanity check
 
 class ApplicationController < ApplicationBaseController
   include AuthenticatedControllerAction
