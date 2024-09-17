@@ -20,10 +20,11 @@ const CorrespondenceResponseLetters = (props) => {
   } = props;
 
   const [showAddLetterModal, setShowAddLetterModal] = useState(false);
-  const [ dataLetter, setDataLetter] = useState([]);
+  const [dataLetter, setDataLetter] = useState([]);
   const [isFormComplete, setIsFormComplete] = useState(false);
 
   const canAddLetter = isInboundOpsUser || isInboundOpsSupervisor || isInboundOpsSuperuser;
+
   const handleAddLetterClick = () => {
     setShowAddLetterModal(true);
   };
@@ -40,36 +41,23 @@ const CorrespondenceResponseLetters = (props) => {
     setIsFormComplete(isComplete);
   };
 
-  const filterNewLetters = () => {
-    // Filter out letters that already have an id (existing letters)
-    return dataLetter.filter((letter) => !letter.id);
+  const updateLetter = () => {
+    const updatedLetters = [...letters, ...dataLetter];
+    return updatedLetters;
   };
 
   const handleSubmitFunction = () => {
     setShowAddLetterModal(false);
     setIsFormComplete(false);
 
-    const newLetters = filterNewLetters();
+    const newLetter = updateLetter();
     const payload = {
       data: {
-        response_letters: newLetters
+        response_letters: newLetter
       }
     };
 
-    if (typeof props.submitLetterResponse === 'function') {
-      props.submitLetterResponse(payload, props.correspondence)
-        .then((response) => {
-          const newLetterFromResponse = response.correspondence;
-          const updatedLetters = [...letters, ...newLetterFromResponse];
-          console.log("Updated letters:", updatedLetters);
-          setDataLetter(updatedLetters);
-        })
-        .catch((error) => {
-          console.error('Error submitting letter response:', error);
-        });
-    } else {
-      console.error('submitLetterResponse is not a function');
-    }
+    return props.submitLetterResponse(payload, props.correspondence);
   };
 
   return (
@@ -81,14 +69,14 @@ const CorrespondenceResponseLetters = (props) => {
             <Button
               type="button"
               onClick={handleAddLetterClick}
-              disabled= {!(letters.length < 3)}
+              disabled={!(letters.length < 3)}
               name="addLetter"
-              classNames={['cf-left-side']}>
-            + Add letter
+              classNames={['cf-left-side']}
+            >
+              + Add letter
             </Button>
           )}
         </span>
-
       </h2>
       {letters.map((letter, index) => (
         <div key={index}>
@@ -158,13 +146,12 @@ const CorrespondenceResponseLetters = (props) => {
           onCancel={handleCloseAddLetterModal}
           submit={handleSubmitFunction}
         >
-        <NewLetter
-          setUnrelatedTasksCanContinue= {() => {}}
-          addLetterCheck={props.addLetterCheck}
-          taskUpdatedCallback={taskUpdatedCallback}
-          onFormCompletion={onFormCompletion}
-
-        />
+          <NewLetter
+            setUnrelatedTasksCanContinue={() => {}}
+            addLetterCheck={props.addLetterCheck}
+            taskUpdatedCallback={taskUpdatedCallback}
+            onFormCompletion={onFormCompletion}
+          />
         </QueueFlowModal>
       )}
     </div>
@@ -194,10 +181,14 @@ CorrespondenceResponseLetters.propTypes = {
   isInboundOpsSupervisor: PropTypes.bool.isRequired,
   isInboundOpsUser: PropTypes.bool.isRequired,
   addLetterCheck: PropTypes.bool.isRequired,
-  addButtonCheck: PropTypes.bool.isRequired,
-  correspondence: PropTypes.object,
+  correspondence: PropTypes.object.isRequired,
   submitLetterResponse: PropTypes.func.isRequired
 };
+
+// const mapStateToProps = (state) => ({
+//   correspondence: state.correspondenceDetails.correspondenceInfo.correspondence,
+//   letters: state.correspondenceDetails.correspondenceInfo.correspondenceResponseLetters,
+// });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   submitLetterResponse: (payload, correspondence) => submitLetterResponse(payload, correspondence)
