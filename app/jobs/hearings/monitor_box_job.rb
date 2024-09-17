@@ -23,10 +23,15 @@ class Hearings::MonitorBoxJob < ApplicationJob
   end
 
   def perform
-    poll_box_dot_com_for_new_files
+    files = poll_box_dot_com_for_new_files
+    files.count() > 0 ? download_box_files(files) : true
   rescue StandardError => error
     log_error(error)
     raise error
+  end
+
+  def download_box_files(files)
+    Hearings::VaBoxDownloadJob.perform_now(files)
   end
 
   private
@@ -48,7 +53,7 @@ class Hearings::MonitorBoxJob < ApplicationJob
   end
 
   def net_new_files
-    cursor = most_recent_returned_file_time || 1.hour.ago.utc
+    cursor = most_recent_returned_file_time || 1.year.ago.utc
 
     files = all_files_from_box_subfolders&.find_all do |file|
       Time.parse(file[:created_at]).utc > cursor

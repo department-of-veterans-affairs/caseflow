@@ -11,19 +11,12 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
   class BoxDownloadError < StandardError; end
   class BoxDownloadJobFileUploadError < StandardError; end
 
+  def initialize(files_info)
+    @files_info = files_info
+  end
+
   def perform
-    box_service = ExternalApi::VaBoxService.new
-
-    files_info = [
-      { type: "file", id: "1640091891785", name: "242551_1_LegacyHearing.pdf", created_at: "2024-09-05T06:12:53-07:00" },
-      { type: "file", id: "1640098775769", name: "230903-1_1_Hearing.zip", created_at: "2024-09-05T06:12:51-07:00" },
-      { type: "file", id: "1640089532504", name: "242551_1_LegacyHearing.zip", created_at: "2024-09-05T06:12:50-07:00" },
-      { type: "file", id: "1640086914155", name: "242551_1_LegacyHearing.doc", created_at: "2024-09-05T06:12:49-07:00" },
-      { type: "file", id: "1640093104372", name: "240903-1_1_Hearing.doc", created_at: "2024-09-05T06:12:47-07:00" },
-      { type: "file", id: "1640086880469", name: "240903-1_1_Hearing.pdf", created_at: "2024-09-05T06:12:46-07:00" }
-    ]
-
-    files_info.collect do |current_file|
+    @files_info.collect do |current_file|
       @file_status = "Successful upload (AWS)"
       @file_name = current_file[:name]
       tmp_folder = select_folder(@file_name)
