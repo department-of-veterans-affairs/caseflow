@@ -506,6 +506,7 @@ module Caseflow::Error
   class DecisionReviewCreatedRequestIssuesError < StandardError; end
   class DecisionReviewUpdatedRequestIssuesError < StandardError; end
   class DecisionReviewUpdatedInformalConferenceError < StandardError; end
+  class DecisionReviewUpdatedClaimReviewError < StandardError; end
   class MaximumBatchSizeViolationError < StandardError
     def initialize(msg = "The batch size of jobs must not exceed 10")
       super(msg)
