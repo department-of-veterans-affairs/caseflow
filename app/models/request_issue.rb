@@ -1115,7 +1115,7 @@ class RequestIssue < CaseflowRecord
   end
 
   def check_for_contested!
-    return unless eligible?
+    return if eligible?
     return unless contested_decision_issue_id
 
     self.ineligible_reason = :contested unless ineligible_reason
