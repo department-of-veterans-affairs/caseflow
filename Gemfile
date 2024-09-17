@@ -120,6 +120,7 @@ group :test, :development, :demo, :make_docs do
   gem "rubocop-rails"
   gem "scss_lint", require: false
   gem "simplecov", git: "https://github.com/colszowka/simplecov.git", require: false
+  gem "simplecov-lcov", require: false
   gem "single_cov"
   gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git"
   gem "sql_tracker"
