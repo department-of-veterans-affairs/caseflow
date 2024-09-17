@@ -56,6 +56,7 @@ module CorrespondenceTaskActionsHelpers
     User.authenticate!(user: hearings_user)
   end
 
+  # :reek:FeatureEnvy
   def setup_correspondence_task(options = {})
     correspondence = options[:correspondence]
     task_class = options[:task_class]
@@ -73,6 +74,10 @@ module CorrespondenceTaskActionsHelpers
       instructions: [instructions],
       assigned_at: Time.current
     )
+
+    # return task if testing tasks
+    return task if options[:return_task]
+
     Organization.assignable(task)
     @organizations = task.reassign_organizations.map { |org| { label: org.name, value: org.id } }
   end
