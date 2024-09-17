@@ -83,7 +83,7 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
     end
 
     it "returns the correct station" do
-      expect(subject.station).to eq("123")
+      expect(subject.station_id).to eq("123")
     end
 
     describe "claim_review" do
@@ -151,6 +151,37 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
       it "returns an empty array if no removed_issues" do
         expect(subject.removed_issues).to eq([])
       end
+    end
+  end
+
+  context "when attributes use .presence and values are empty strings" do
+    let(:empty_payload) do
+      payload.merge(
+        css_id: "",
+        detail_type: "",
+        end_product_establishments: {
+          development_item_reference_id: "",
+          reference_id: ""
+        }
+      )
+    end
+
+    subject { described_class.new(headers, empty_payload) }
+
+    it "returns nil for css_id if the value is an empty string" do
+      expect(subject.css_id).to be_nil
+    end
+
+    it "returns nil for detail_type if the value is an empty string" do
+      expect(subject.detail_type).to be_nil
+    end
+
+    it "returns nil for development_item_reference_id if the value is an empty string" do
+      expect(subject.end_product_establishments_development_item_reference_id).to be_nil
+    end
+
+    it "returns nil for reference_id if the value is an empty string" do
+      expect(subject.end_product_establishments_reference_id).to be_nil
     end
   end
 end

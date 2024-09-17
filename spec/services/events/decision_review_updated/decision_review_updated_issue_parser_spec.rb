@@ -243,4 +243,98 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser d
       )
     end
   end
+
+  context "when attributes use .presence and values are empty strings" do
+    let(:empty_issue_data) do
+      issue_data.merge(
+        benefit_type: "",
+        contested_issue_description: "",
+        contested_rating_issue_diagnostic_code: "",
+        contested_rating_decision_reference_id: "",
+        contested_rating_issue_profile_date: "",
+        contested_rating_issue_reference_id: "",
+        ineligible_reason: "",
+        unidentified_issue_text: "",
+        nonrating_issue_category: "",
+        nonrating_issue_description: "",
+        nonrating_issue_bgs_id: "",
+        nonrating_issue_bgs_source: "",
+        ramp_claim_id: "",
+        untimely_exemption_notes: "",
+        vacols_id: "",
+        veteran_participant_id: "",
+        type: ""
+      )
+    end
+
+    subject { described_class.new(empty_issue_data) }
+
+    it "returns nil for benefit_type if the value is an empty string" do
+      expect(subject.ri_benefit_type).to be_nil
+    end
+
+    it "returns nil for contested_issue_description if the value is an empty string" do
+      expect(subject.ri_contested_issue_description).to be_nil
+    end
+
+    it "returns nil for contested_rating_issue_diagnostic_code if the value is an empty string" do
+      expect(subject.ri_contested_rating_issue_diagnostic_code).to be_nil
+    end
+
+    it "returns nil for contested_rating_decision_reference_id if the value is an empty string" do
+      expect(subject.ri_contested_rating_decision_reference_id).to be_nil
+    end
+
+    it "returns nil for contested_rating_issue_profile_date if the value is an empty string" do
+      expect(subject.ri_contested_rating_issue_profile_date).to be_nil
+    end
+
+    it "returns nil for contested_rating_issue_reference_id if the value is an empty string" do
+      expect(subject.ri_contested_rating_issue_reference_id).to be_nil
+    end
+
+    it "returns nil for ineligible_reason if the value is an empty string" do
+      expect(subject.ri_ineligible_reason).to be_nil
+    end
+
+    it "returns nil for unidentified_issue_text if the value is an empty string" do
+      expect(subject.ri_unidentified_issue_text).to be_nil
+    end
+
+    it "returns nil for nonrating_issue_category if the value is an empty string" do
+      expect(subject.ri_nonrating_issue_category).to be_nil
+    end
+
+    it "returns nil for nonrating_issue_description if the value is an empty string" do
+      expect(subject.ri_nonrating_issue_description).to be_nil
+    end
+
+    it "returns nil for nonrating_issue_bgs_id if the value is an empty string" do
+      expect(subject.ri_nonrating_issue_bgs_id).to be_nil
+    end
+
+    it "returns nil for nonrating_issue_bgs_source if the value is an empty string" do
+      expect(subject.ri_nonrating_issue_bgs_source).to be_nil
+    end
+
+    it "returns nil for ramp_claim_id if the value is an empty string" do
+      expect(subject.ri_ramp_claim_id).to be_nil
+    end
+
+    it "returns nil for untimely_exemption_notes if the value is an empty string" do
+      expect(subject.ri_untimely_exemption_notes).to be_nil
+    end
+
+    it "returns nil for vacols_id if the value is an empty string" do
+      expect(subject.ri_vacols_id).to be_nil
+    end
+
+    it "returns nil for veteran_participant_id if the value is an empty string" do
+      expect(subject.ri_veteran_participant_id).to be_nil
+    end
+
+    it "returns nil for type if the value is an empty string" do
+      expect(subject.ri_type).to be_nil
+    end
+  end
 end
