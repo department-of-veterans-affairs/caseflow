@@ -2,6 +2,7 @@
 
 class Events::DecisionReviewUpdated
   class << self
+    # rubocop: disable Metrics/MethodLength
     def update!(params, headers, payload)
       consumer_event_id = params[:consumer_event_id]
       ActiveRecord::Base.transaction do
@@ -33,5 +34,6 @@ class Events::DecisionReviewUpdated
         end
       end
     end
+    # rubocop: enable Metrics/MethodLength
   end
 end
