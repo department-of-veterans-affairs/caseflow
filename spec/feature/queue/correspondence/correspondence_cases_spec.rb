@@ -429,56 +429,56 @@ RSpec.feature("The Correspondence Cases page") do
       all(".unselected-filter-icon")[2].click
       find("label", text: /Privacy Complaint Correspondence Task/).click
       all("a", id: "task-link")[0].click
-      expect(page).to have_content("Record status: Pending")
+      expect(page).to have_content(/Record status: Pending/)
 
       # filter CongressionalInterestCorrespondenceTask on pending tab & verify link to Correspondence Details
       visit "/queue/correspondence/team?tab=correspondence_pending"
       all(".unselected-filter-icon")[2].click
       find("label", text: /Congressional Interest Correspondence Task/).click
       all("a", id: "task-link")[0].click
-      expect(page).to have_content("Record status: Pending")
+      expect(page).to have_content(/Record status: Pending/)
 
       # filter StatusInquiryCorrespondenceTask on pending tab & verify link to Correspondence Details
       visit "/queue/correspondence/team?tab=correspondence_pending"
       all(".unselected-filter-icon")[2].click
       find("label", text: /Status Inquiry Correspondence Task/).click
       all("a", id: "task-link")[0].click
-      expect(page).to have_content("Record status: Pending")
+      expect(page).to have_content(/Record status: Pending/)
 
       # filter PowerOfAttorneyRelatedCorrespondenceTask on pending tab & verify link to Correspondence Details
       visit "/queue/correspondence/team?tab=correspondence_pending"
       all(".unselected-filter-icon")[2].click
       find("label", text: /Power Of Attorney Related Correspondence Task/).click
       all("a", id: "task-link")[0].click
-      expect(page).to have_content("Record status: Pending")
+      expect(page).to have_content(/Record status: Pending/)
 
       # filter PrivacyActRequestCorrespondenceTask on pending tab & verify link to Correspondence Details
       visit "/queue/correspondence/team?tab=correspondence_pending"
       all(".unselected-filter-icon")[2].click
       find("label", text: /Privacy Act Request Correspondence Task/).click
       all("a", id: "task-link")[0].click
-      expect(page).to have_content("Record status: Pending")
+      expect(page).to have_content(/Record status: Pending/)
 
       # filter DeathCertificateCorrespondenceTask on pending tab & verify link to Correspondence Details
       visit "/queue/correspondence/team?tab=correspondence_pending"
       all(".unselected-filter-icon")[2].click
       find("label", text: /Death Certificate Correspondence Task/).click
       all("a", id: "task-link")[0].click
-      expect(page).to have_content("Record status: Pending")
+      expect(page).to have_content(/Record status: Pending/)
 
       # filter OtherMotionCorrespondenceTask on pending tab & verify link to Correspondence Details
       visit "/queue/correspondence/team?tab=correspondence_pending"
       all(".unselected-filter-icon")[2].click
       find("label", text: /Other Motion Correspondence Task/).click
       all("a", id: "task-link")[0].click
-      expect(page).to have_content("Record status: Pending")
+      expect(page).to have_content(/Record status: Pending/)
 
       # filter CavcCorrespondenceCorrespondenceTask on pending tab & verify link to Correspondence Details
       visit "/queue/correspondence/team?tab=correspondence_pending"
       all(".unselected-filter-icon")[2].click
       find("label", text: /Cavc Correspondence Correspondence Task/).click
       all("a", id: "task-link")[0].click
-      expect(page).to have_content("Record status: Pending")
+      expect(page).to have_content(/Record status: Pending/)
     end
   end
 
