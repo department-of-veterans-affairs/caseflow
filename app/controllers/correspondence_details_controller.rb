@@ -100,7 +100,7 @@ class CorrespondenceDetailsController < CorrespondenceController
     end
     respond_to do |format|
       format.html
-      format.json { render json: @correspondence.appeals, status: :ok }
+      format.json { render json: @correspondence.appeal_ids, status: :ok }
     end
   end
 

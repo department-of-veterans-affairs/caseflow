@@ -45,6 +45,7 @@ const CorrespondenceDetails = (props) => {
   const priorMail = correspondence.prior_mail;
   // eslint-disable-next-line max-len
   const [relatedCorrespondenceIds, setRelatedCorrespondenceIds] = useState(props.correspondence.relatedCorrespondenceIds);
+  const [initialSelectedAppeals, setInitialSelectedAppeals] = useState(correspondence.correspondenceAppealIds);
   const [selectedAppeals, setSelectedAppeals] = useState(correspondence.correspondenceAppealIds);
   const [unSelectedAppeals, setUnSelectedAppeals] = useState([]);
   const userAccess = correspondence.user_access;
@@ -132,7 +133,10 @@ const CorrespondenceDetails = (props) => {
     }
   };
 
-  const toggleCheckboxState = (checked) => {
+  const toggleCheckboxState = (appealId) => {
+    const appealsToConsider = disableSubmitButton ? selectedAppeals : initialSelectedAppeals;
+    const checked = appealsToConsider?.includes(appealId) || appealsToConsider?.includes(parseInt(appealId));
+
     return checked ? userAccess !== 'admin_access' : false;
   };
 
@@ -508,8 +512,11 @@ const CorrespondenceDetails = (props) => {
       };
 
       return ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/save_correspondence_appeals`, payload).
-        then(() => {
+        then((resp) => {
+          setSelectedAppeals(resp.body);
+          setInitialSelectedAppeals(resp.body);
           setShowSuccessBanner(true);
+          setDisableSubmitButton(true);
           window.scrollTo({
             top: 0,
             behavior: 'smooth'
