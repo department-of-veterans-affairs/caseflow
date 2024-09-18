@@ -7,6 +7,8 @@ RSpec.describe CorrespondenceDetailsController, :all_dbs, type: :controller do
     let!(:current_user) { create(:inbound_ops_team_supervisor) }
     let(:veteran) { create(:veteran) }
     let!(:correspondence) { create(:correspondence, :with_correspondence_intake_task, assigned_to: current_user) }
+    let!(:appeal1) { create(:appeal) }
+    let!(:appeal2) { create(:appeal) }
 
     before :each do
       Fakes::Initializer.load!
@@ -34,6 +36,33 @@ RSpec.describe CorrespondenceDetailsController, :all_dbs, type: :controller do
         expect(json["correspondence"]).to be_present
         expect(json["correspondence"]["appeals_information"]).to be_present
         expect(json["correspondence"]["all_correspondences"]).to be_present
+      end
+    end
+
+    describe "POST #save_correspondence_appeals" do
+      context "when selected_appeal_ids are present" do
+        before do
+          params = { correspondence_uuid: correspondence.uuid, selected_appeal_ids: [appeal1.id] }
+          post :save_correspondence_appeals, params: params, format: :json
+        end
+
+        it "creates correspondence appeals for each selected appeal id" do
+          expect(correspondence.correspondence_appeals.pluck(:appeal_id)).to include(appeal1.id)
+        end
+      end
+
+      context "when selected_appeal_ids are present" do
+        before do
+          correspondence.correspondence_appeals.create!(appeal_id: appeal1.id)
+          correspondence.correspondence_appeals.create!(appeal_id: appeal2.id)
+
+          params = { correspondence_uuid: correspondence.uuid, unselected_appeal_ids: [appeal1.id, appeal2.id] }
+          post :save_correspondence_appeals, params: params, format: :json
+        end
+
+        it "creates correspondence appeals for each selected appeal id" do
+          expect(correspondence.correspondence_appeals.pluck(:appeal_id)).to eq([])
+        end
       end
     end
   end
