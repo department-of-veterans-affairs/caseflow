@@ -226,9 +226,9 @@ class CaseDistributionTest extends React.PureComponent {
                             </li>
                             <li>
                               <a href="#case_movement">
-                              <button className="btn btn-primary">
-                                {COPY.TEST_CASE_MOVEMENT_BUTTON}
-                              </button></a>
+                                <button className="btn btn-primary">
+                                  {COPY.TEST_CASE_MOVEMENT_BUTTON}
+                                </button></a>
                             </li>
                             <li>
                               <a href="#log_of_most_recent_appeals">
@@ -341,7 +341,10 @@ class CaseDistributionTest extends React.PureComponent {
                               </a>
                             </div>
                             <div className="lever-right csv-download-right">
-                              <strong>{COPY.TEST_DOWNLOAD_APPEALS_READY_BUTTON}</strong>{COPY.TEST_DOWNLOAD_APPEALS_READY_BUTTON_DESCRIPTION}
+                              <strong>
+                                {COPY.TEST_DOWNLOAD_APPEALS_READY_BUTTON}
+                              </strong>
+                              {COPY.TEST_DOWNLOAD_APPEALS_READY_BUTTON_DESCRIPTION}
                             </div>
                             <div className="lever-left csv-download-left">
                               <a href="/case_distribution_levers_tests/appeals_non_priority_ready_to_distribute?csv=1">
@@ -351,7 +354,10 @@ class CaseDistributionTest extends React.PureComponent {
                               </a>
                             </div>
                             <div className="lever-right csv-download-right">
-                              <strong>{COPY.TEST_DOWNLOAD_AMA_NON_PRIO_DISTR_BUTTON}</strong>{COPY.TEST_DOWNLOAD_AMA_NON_PRIO_DISTR_BUTTON_DESCRIPTION}
+                              <strong>
+                                {COPY.TEST_DOWNLOAD_AMA_NON_PRIO_DISTR_BUTTON}
+                              </strong>
+                              {COPY.TEST_DOWNLOAD_AMA_NON_PRIO_DISTR_BUTTON_DESCRIPTION}
                             </div>
                             <div className="lever-left csv-download-left">
                               <a href="/case_distribution_levers_tests/appeals_tied_to_non_ssc_avlj?csv=1">
@@ -361,25 +367,36 @@ class CaseDistributionTest extends React.PureComponent {
                               </a>
                             </div>
                             <div className="lever-right csv-download-right">
-                              <strong>{COPY.TEST_DOWNLOAD_APPEALS_TIED_NONSSC_AVLJS_BUTTON}</strong>{COPY.TEST_DOWNLOAD_APPEALS_TIED_NONSSC_AVLJS_BUTTON_DESCRIPTION}
+                              <strong>
+                                {COPY.TEST_DOWNLOAD_APPEALS_TIED_NONSSC_AVLJS_BUTTON}
+                              </strong>
+                              {COPY.TEST_DOWNLOAD_APPEALS_TIED_NONSSC_AVLJS_BUTTON_DESCRIPTION}
                             </div>
                             <div className="lever-left csv-download-left">
                               <a href="/case_distribution_levers_tests/ineligible_judge_list?csv=1">
-                                <Button classNames={['usa-button-active']}>{COPY.TEST_DOWNLOAD_INELIGIBLE_JUDGE_BUTTON}
+                                <Button classNames={['usa-button-active']}>
+                                  {COPY.TEST_DOWNLOAD_INELIGIBLE_JUDGE_BUTTON}
                                 </Button>
                               </a>
                             </div>
                             <div className="lever-right csv-download-right">
-                              <strong>{COPY.TEST_DOWNLOAD_INELIGIBLE_JUDGE_BUTTON}</strong>{COPY.TEST_DOWNLOAD_INELIGIBLE_JUDGE_BUTTON_DESCRIPTION}
+                              <strong>
+                                {COPY.TEST_DOWNLOAD_INELIGIBLE_JUDGE_BUTTON}
+                              </strong>
+                              {COPY.TEST_DOWNLOAD_INELIGIBLE_JUDGE_BUTTON_DESCRIPTION}
                             </div>
                             <div className="lever-left csv-download-left">
                               <a href="/case_distribution_levers_tests/appeals_distributed?csv=1">
-                                <Button classNames={['usa-button-active']}>{COPY.TEST_DOWNLOAD_DISTRIBUTED_APPEALS_BUTTON}
+                                <Button classNames={['usa-button-active']}>
+                                  {COPY.TEST_DOWNLOAD_DISTRIBUTED_APPEALS_BUTTON}
                                 </Button>
                               </a>
                             </div>
                             <div className="lever-right csv-download-right">
-                              <strong>{COPY.TEST_DOWNLOAD_DISTRIBUTED_APPEALS_BUTTON}</strong>{COPY.TEST_DOWNLOAD_DISTRIBUTED_APPEALS_BUTTON_DESCRIPTION}
+                              <strong>
+                                {COPY.TEST_DOWNLOAD_DISTRIBUTED_APPEALS_BUTTON}
+                              </strong>
+                              {COPY.TEST_DOWNLOAD_DISTRIBUTED_APPEALS_BUTTON_DESCRIPTION}
                             </div>
                             <div className="lever-left csv-download-left">
                               <a href="/case_distribution_levers_tests/appeals_in_location_63_in_past_2_days?csv=1">
@@ -389,7 +406,10 @@ class CaseDistributionTest extends React.PureComponent {
                               </a>
                             </div>
                             <div className="lever-right csv-download-right">
-                              <strong>{COPY.TEST_DOWNLOAD_LOC_63_APPEALS_BUTTON}</strong>{COPY.TEST_DOWNLOAD_LOC_63_APPEALS_BUTTON_DESCRIPTION}
+                              <strong>
+                                {COPY.TEST_DOWNLOAD_LOC_63_APPEALS_BUTTON}
+                              </strong>
+                              {COPY.TEST_DOWNLOAD_LOC_63_APPEALS_BUTTON_DESCRIPTION}
                             </div>
                             <div className="lever-left csv-download-left">
                               <a href="/case_distribution_levers_tests/appeals_tied_to_avljs_and_vljs?csv=1">
@@ -399,7 +419,10 @@ class CaseDistributionTest extends React.PureComponent {
                               </a>
                             </div>
                             <div className="lever-right csv-download-right">
-                              <strong>{COPY.TEST_DOWNLOAD_APPEALS_TIED_AVLJ_VLJ_BUTTON}</strong>{COPY.TEST_DOWNLOAD_APPEALS_TIED_AVLJ_VLJ_BUTTON_DESCRIPTION}
+                              <strong>
+                                {COPY.TEST_DOWNLOAD_APPEALS_TIED_AVLJ_VLJ_BUTTON}
+                              </strong>
+                              {COPY.TEST_DOWNLOAD_APPEALS_TIED_AVLJ_VLJ_BUTTON_DESCRIPTION}
                             </div>
                           </div>
                           <hr />
@@ -468,11 +491,16 @@ class CaseDistributionTest extends React.PureComponent {
                               />
                             </div>
                             <div className="lever-right csv-download-right">
-                              <strong>{COPY.TEST_RETURN_LEGACY_APPEALS_TO_BOARD_JOB_TITLE}</strong>{COPY.TEST_RETURN_LEGACY_APPEALS_TO_BOARD_JOB_DESCRIPTION}
+                              <strong>
+                                {COPY.TEST_RETURN_LEGACY_APPEALS_TO_BOARD_JOB_TITLE}
+                              </strong>
+                              {COPY.TEST_RETURN_LEGACY_APPEALS_TO_BOARD_JOB_DESCRIPTION}
                             </div>
                           </div>
                           <hr />
-                          <h2 id="log_of_most_recent_appeals">{COPY.TEST_LOG_OF_MOST_RECENT_APPEALS_MOVED_TITLE}</h2>
+                          <h2 id="log_of_most_recent_appeals">
+                            {COPY.TEST_LOG_OF_MOST_RECENT_APPEALS_MOVED_TITLE}
+                          </h2>
                           <CollapsibleTable returnedAppealJobs={this.props.returnedAppealJobs} />
                           <hr />
                           <a href="#top">
