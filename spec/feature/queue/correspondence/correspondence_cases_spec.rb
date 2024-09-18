@@ -385,17 +385,12 @@ RSpec.feature("The Correspondence Cases page") do
       FeatureToggle.enable!(:correspondence_queue)
     end
 
-    let :correspondence_uuids[]
-
     # Creating correspondence with each task type
     before do
       Timecop.freeze(Time.zone.local(2020, 5, 15))
-      corres_array = (0..7).map { create(:correspondence) }
 
-      # Creating 3 Correspondences with each task type
       3.times do
-        # This line may need to be called before the do 8 times block
-        # corres_array = (0..7).map { create(:correspondence) }
+        corres_array = (1..8).map { create(:correspondence, :pending) }
         task_array = [
           PrivacyComplaintCorrespondenceTask,
           CongressionalInterestCorrespondenceTask,
@@ -406,53 +401,49 @@ RSpec.feature("The Correspondence Cases page") do
           OtherMotionCorrespondenceTask,
           CavcCorrespondenceCorrespondenceTask
         ]
-
         corres_array.each_with_index do |corres, index|
           task_array[index].create!(
             appeal_id: corres.id,
             appeal_type: "Correspondence",
             assigned_to: InboundOpsTeam.singleton
           )
-          # this line may not be functioning correctly
-          # it was inteded to create an array of uuids to more easily access the specific correspondences.
-          correspondence_uuids << corres_array[index]
         end
       end
-
-      # Used to mock a single task to compare task sorting -- may not be required in this case
-      # PrivacyActRequestCorrespondenceTask.first.correspondence.update!(
-      #   va_date_of_receipt: Date.new(2000, 10, 10)
-      # )
-      # PrivacyActRequestCorrespondenceTask.last.correspondence.update!(
-      #   va_date_of_receipt: Date.new(2050, 10, 10)
-      # )
     end
 
-    it "Ryan's work to be filled in" do
-      # stubbed
-    end
+    # it "Ryan's work to be filled in" do
+    #   # stubbed
+    # end
 
     it "verifies routes for different task types on the pending tab." do
-      visit "/queue/correspondence/team?tab=correspondence_pending&page=1&sort_by=vaDor&order=asc"
-      # put page in the sorted A-Z state
-      find("[aria-label='Sort by Tasks']").click
-      first_task_type = find("tbody > tr:nth-child(1) > td:nth-child(3)").text
-      # put page in the sorted Z-A state
-      find("[aria-label='Sort by Tasks']").click
-      second_task_type = find("tbody > tr:nth-child(1) > td:nth-child(3)").text
-      # return to A-Z, compare veteran details
-      find("[aria-label='Sort by Tasks']").click
-      expect(find("tbody > tr:nth-child(1) > td:nth-child(3)").text == first_task_type)
-      # return to Z-A, compare details again
-      find("[aria-label='Sort by Tasks']").click
-      expect(find("tbody > tr:nth-child(1) > td:nth-child(3)").text == second_task_type)
-    end
-
-    it "uses uses task filter correctly" do
-      visit "/queue/correspondence/team?tab=correspondence_pending&page=1&sort_by=vaDor&order=asc"
+      # filter PrivacyActRequestCorrespondenceTask on pending tab & verify link to Correspondence Details
+      visit "/queue/correspondence/team?tab=correspondence_pending"
       all(".unselected-filter-icon")[2].click
-      find("label", text: "Death Certificate Correspondence Task (5)").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 5)
+      find("label", text: "Privacy Act Request Correspondence Task (3)").click
+      all("a", id: "task-link")[0].click
+      binding.pry
+      expect(page).to have_content("Completed Mail Tasks")
+
+      # filter DeathCertificateCorrespondenceTask on pending tab & verify link to Correspondence Details
+      visit "/queue/correspondence/team?tab=correspondence_pending"
+      all(".unselected-filter-icon")[2].click
+      find("label", text: "Death Certificate Correspondence Task (3)").click
+      all("a", id: "task-link")[0].click
+      expect(page).to have_content("Completed Mail Tasks")
+
+      # filter OtherMotionCorrespondenceTask on pending tab & verify link to Correspondence Details
+      visit "/queue/correspondence/team?tab=correspondence_pending"
+      all(".unselected-filter-icon")[2].click
+      find("label", text: "Other Motion Correspondence Task (3)").click
+      all("a", id: "task-link")[0].click
+      expect(page).to have_content("Completed Mail Tasks")
+
+      # filter CavcCorrespondenceCorrespondenceTask on pending tab & verify link to Correspondence Details
+      visit "/queue/correspondence/team?tab=correspondence_pending"
+      all(".unselected-filter-icon")[2].click
+      find("label", text: "Cavc Correspondence Correspondence Task (3)").click
+      all("a", id: "task-link")[0].click
+      expect(page).to have_content("Completed Mail Tasks")
     end
   end
 
