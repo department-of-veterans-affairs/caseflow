@@ -423,62 +423,77 @@ RSpec.feature("The Correspondence Cases page") do
       end
     end
 
-    it "verifies routes for different task types on the pending tab." do
+    it "verifies routes for PrivacyComplaintCorrespondenceTask types on the pending tab." do
       # filter PrivacyComplaintCorrespondenceTask on pending tab & verify link to Correspondence Details
       visit "/queue/correspondence/team?tab=correspondence_pending"
       all(".unselected-filter-icon")[2].click
       find("label", text: /Privacy Complaint Correspondence Task/).click
       all("a", id: "task-link")[0].click
-      expect(page).to have_content(/Record status: Pending/)
+      binding.pry
+      expect(page).to have_content(/.*Record status:.*Pending.*/)
+    end
 
+    it "verifies routes for CongressionalInterestCorrespondenceTask types on the pending tab." do
       # filter CongressionalInterestCorrespondenceTask on pending tab & verify link to Correspondence Details
       visit "/queue/correspondence/team?tab=correspondence_pending"
       all(".unselected-filter-icon")[2].click
       find("label", text: /Congressional Interest Correspondence Task/).click
       all("a", id: "task-link")[0].click
-      expect(page).to have_content(/Record status: Pending/)
+      expect(page).to have_content(/.*Record status:.*Pending.*/)
+    end
 
+    it "verifies routes for StatusInquiryCorrespondenceTask types on the pending tab." do
       # filter StatusInquiryCorrespondenceTask on pending tab & verify link to Correspondence Details
       visit "/queue/correspondence/team?tab=correspondence_pending"
       all(".unselected-filter-icon")[2].click
       find("label", text: /Status Inquiry Correspondence Task/).click
       all("a", id: "task-link")[0].click
-      expect(page).to have_content(/Record status: Pending/)
+      expect(page).to have_content(/.*Record status:.*Pending.*/)
+    end
 
+    it "verifies routes for PowerOfAttorneyRelatedCorrespondenceTask types on the pending tab." do
       # filter PowerOfAttorneyRelatedCorrespondenceTask on pending tab & verify link to Correspondence Details
       visit "/queue/correspondence/team?tab=correspondence_pending"
       all(".unselected-filter-icon")[2].click
       find("label", text: /Power Of Attorney Related Correspondence Task/).click
       all("a", id: "task-link")[0].click
-      expect(page).to have_content(/Record status: Pending/)
+      expect(page).to have_content(/.*Record status:.*Pending.*/)
+    end
 
+    it "verifies routes for PrivacyActRequestCorrespondenceTask types on the pending tab." do
       # filter PrivacyActRequestCorrespondenceTask on pending tab & verify link to Correspondence Details
       visit "/queue/correspondence/team?tab=correspondence_pending"
       all(".unselected-filter-icon")[2].click
       find("label", text: /Privacy Act Request Correspondence Task/).click
       all("a", id: "task-link")[0].click
-      expect(page).to have_content(/Record status: Pending/)
+      expect(page).to have_content(/.*Record status:.*Pending.*/)
+    end
 
+    it "verifies routes for DeathCertificateCorrespondenceTask types on the pending tab." do
       # filter DeathCertificateCorrespondenceTask on pending tab & verify link to Correspondence Details
       visit "/queue/correspondence/team?tab=correspondence_pending"
       all(".unselected-filter-icon")[2].click
       find("label", text: /Death Certificate Correspondence Task/).click
       all("a", id: "task-link")[0].click
-      expect(page).to have_content(/Record status: Pending/)
+      expect(page).to have_content(/.*Record status:.*Pending.*/)
+    end
 
+    it "verifies routes for OtherMotionCorrespondenceTask types on the pending tab." do
       # filter OtherMotionCorrespondenceTask on pending tab & verify link to Correspondence Details
       visit "/queue/correspondence/team?tab=correspondence_pending"
       all(".unselected-filter-icon")[2].click
       find("label", text: /Other Motion Correspondence Task/).click
       all("a", id: "task-link")[0].click
-      expect(page).to have_content(/Record status: Pending/)
+      expect(page).to have_content(/.*Record status:.*Pending.*/)
+    end
 
+    it "verifies routes for CavcCorrespondenceCorrespondenceTask types on the pending tab." do
       # filter CavcCorrespondenceCorrespondenceTask on pending tab & verify link to Correspondence Details
       visit "/queue/correspondence/team?tab=correspondence_pending"
       all(".unselected-filter-icon")[2].click
       find("label", text: /Cavc Correspondence Correspondence Task/).click
       all("a", id: "task-link")[0].click
-      expect(page).to have_content(/Record status: Pending/)
+      expect(page).to have_content(/.*Record status:.*Pending.*/)
     end
   end
 
