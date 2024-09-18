@@ -9,7 +9,6 @@ import { FilterNoOutlineIcon } from '../../components/icons/FilterNoOutlineIcon'
 import { PageArrowLeftIcon } from '../../components/icons/PageArrowLeftIcon';
 import { PageArrowRightIcon } from '../../components/icons/PageArrowRightIcon';
 import { docListIsFiltered, getFilteredDocIds, getFilteredDocuments } from '../../reader/selectors';
-import { pdfToolbarStyles } from '../util/styles';
 
 const ReaderFooter = ({
   currentPage,
@@ -77,7 +76,7 @@ const ReaderFooter = ({
   }, [currentDocIndex]);
 
   return (
-    <div className="cf-pdf-footer cf-pdf-toolbar" {...pdfToolbarStyles.footer}>
+    <div id="prototype-footer" className="cf-pdf-footer cf-pdf-toolbar">
       <div className="cf-pdf-footer-buttons-left">
         {getPrevDocId() && (
           <Button
