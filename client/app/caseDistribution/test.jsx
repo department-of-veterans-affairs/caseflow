@@ -393,7 +393,9 @@ class CaseDistributionTest extends React.PureComponent {
                               />
                             </div>
                             <div className="lever-right csv-download-right">
-                              <strong>Run Demo AOD Hearing Held Seeds</strong> - Creates 204 appeals with an assigned at date. 75% are AMA AOD hearings with a mix of hearing judges (eligible and ineligible).
+                              <strong>Run Demo AOD Hearing Held Seeds</strong> - Creates 204 appeals with an
+                              assigned at date. 75% are AMA AOD hearings with a mix of hearing judges
+                              (eligible and ineligible).
                             </div>
                             <div className="lever-left csv-download-left">
                               <Button
@@ -404,7 +406,9 @@ class CaseDistributionTest extends React.PureComponent {
                               />
                             </div>
                             <div className="lever-right csv-download-right">
-                              <strong>Run Demo NON AOD Hearing Held Seeds</strong> - Creates 192 appeals with an assigned at date. 80% are AMA non-priority hearings with a mix of hearing judges (eligible and ineligible).
+                              <strong>Run Demo NON AOD Hearing Held Seeds</strong> - Creates 192 appeals with an
+                              assigned at date. 80% are AMA non-priority hearings with a
+                              mix of hearing judges (eligible and ineligible).
                             </div>
                             <div className="lever-left csv-download-left">
                               <Button
@@ -415,7 +419,9 @@ class CaseDistributionTest extends React.PureComponent {
                               />
                             </div>
                             <div className="lever-right csv-download-right">
-                              <strong>Run Docket Time Goal (AMA non-pri) Seeds</strong> - Creates 117 appeals with an assigned at date. 60% are AMA Non-priority appeals. Useful when testing Docket Time Goals.
+                              <strong>Run Docket Time Goal (AMA non-pri) Seeds</strong> - Creates 117 appeals with an
+                               assigned at date. 60% are AMA Non-priority appeals.
+                               Useful when testing Docket Time Goals.
                             </div>
                             <div className="lever-left csv-download-left">
                               <Button
@@ -426,7 +432,8 @@ class CaseDistributionTest extends React.PureComponent {
                               />
                             </div>
                             <div className="lever-right csv-download-right">
-                              <strong>Run Docket-type Seeds</strong> - Creates 185 appeals with an assigned at date. 35% legacy, remainder mix of AMA original appeals.
+                              <strong>Run Docket-type Seeds</strong> - Creates 185 appeals with an assigned at date.
+                              35% legacy, remainder mix of AMA original appeals.
                             </div>
                             <div className="lever-left csv-download-left">
                               <Button
@@ -437,7 +444,8 @@ class CaseDistributionTest extends React.PureComponent {
                               />
                             </div>
                             <div className="lever-right csv-download-right">
-                              <strong>Run Non-SSC AVLJ and Appeal Seeds</strong> - Creates 66 assigned legacy appeals. About 50% assigned to Non-SSC AVLJs.
+                              <strong>Run Non-SSC AVLJ and Appeal Seeds</strong> - Creates 66 assigned legacy appeals.
+                              About 50% assigned to Non-SSC AVLJs.
                             </div>
                           </div>
                           <hr />
