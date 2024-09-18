@@ -361,11 +361,6 @@ describe('Unfiltered', () => {
     const { container } = render(<UnFilteredComponent docId={doc.id} showPdf={() => { }} />);
 
     expect(container).toHaveTextContent('4 of 5');
-  });
-
-  it('does not show the filtered icon', () => {
-    const { container } = render(<UnFilteredComponent docId={doc.id} showPdf={() => {}} />);
-
     expect(container).not.toHaveTextContent('filtered indicator');
   });
 });
