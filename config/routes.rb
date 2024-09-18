@@ -370,6 +370,9 @@ Rails.application.routes.draw do
     post "/correspondence_response_letters", to: "correspondence_response_letters#create"
     post "/correspondence/:correspondence_uuid/correspondence_response_letter", to: "correspondence_details#create_response_letter_for_correspondence"
     get "/correspondence/:correspondence_uuid", to: "correspondence_details#correspondence_details"
+    resources :correspondence, param: :correspondence_uuid do
+      post :create_correspondence_relations, on: :member, to: "correspondence_details#create_correspondence_relations"
+    end
     get "/appeals/:vacols_id", to: "queue#index"
     get "/appeals/:appealId/notifications", to: "queue#index"
     get "/appeals/:appeal_id/cavc_dashboard", to: "cavc_dashboard#index"
