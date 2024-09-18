@@ -783,13 +783,13 @@ export default class QueueTable extends React.PureComponent {
     let currentCases;
 
     if (enablePagination && !this.state.loadingComponent) {
-      let pageSize;
       if (searchValue){
-         currentCases = totalTaskCount, numberOfPages  = this.filterTasksFromSearchbar(rowObjects, searchValue)?.length
+         currentCases = this.filterTasksFromSearchbar(rowObjects, searchValue)?.length
+        // numberOfPages  = this.filterTasksFromSearchbar(rowObjects, searchValue)?.length
       }else {
-         currentCases = totalTaskCount = rowObjects ? rowObjects.length : 0
+         currentCases = rowObjects ? rowObjects.length : 0
       }
-      debugger;
+      console.log(numberOfPages,currentCases,rowObjects,'+++++++++');
       paginationElements = (
         <Pagination
           pageSize={casesPerPage || DEFAULT_CASES_PER_PAGE}
