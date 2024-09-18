@@ -182,9 +182,9 @@ class BusinessLine < Organization
       nonrating_issue_count = ActiveRecord::Base.connection.execute <<-SQL
         WITH task_review_issues AS (
             #{hlr_query.to_sql}
-          UNION ALL
+          UNION
             #{sc_query.to_sql}
-          UNION ALL
+          UNION
             #{appeals_query.to_sql}
         )
         SELECT issue_category, COUNT(1) AS nonrating_issue_count
