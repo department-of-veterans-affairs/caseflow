@@ -24,8 +24,8 @@ import { COLORS } from 'app/constants/AppConstants';
 import Checkbox from 'app/components/Checkbox';
 import CorrespondencePaginationWrapper from 'app/queue/correspondence/CorrespondencePaginationWrapper';
 import Button from 'components/Button';
-import Alert from "components/Alert";
-import ApiUtil from "app/util/ApiUtil";
+import Alert from 'components/Alert';
+import ApiUtil from 'app/util/ApiUtil';
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
