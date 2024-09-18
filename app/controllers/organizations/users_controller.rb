@@ -2,12 +2,6 @@
 
 class Organizations::UsersController < OrganizationsController
   def index
-    @permissions = organization.organization_permissions.select(
-      :permission, :description, :enabled, :parent_permission_id, :default_for_admin, :id
-    )
-
-    @user_permissions = user_permissions
-
     respond_to do |format|
       format.html { render template: "queue/index" }
       format.json do
@@ -18,7 +12,11 @@ class Organizations::UsersController < OrganizationsController
           dvc_team: organization.type == DvcTeam.name,
           organization_users: json_administered_users(organization_users),
           membership_requests: pending_membership_requests,
-          isVhaOrg: vha_organization?
+          isVhaOrg: vha_organization?,
+          organization_permissions: organization.organization_permissions.select(
+            :permission, :description, :enabled, :parent_permission_id, :default_for_admin, :id
+          ),
+          organization_user_permissions: user_permissions
         }
       end
     end

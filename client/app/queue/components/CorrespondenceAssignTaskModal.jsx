@@ -23,7 +23,7 @@ const CorrespondenceAssignTaskModal = (props) => {
     const storeData = useSelector((state) =>
       state.correspondenceDetails.correspondenceInfo.tasksUnrelatedToAppeal.find(
         (task) => parseInt(task.uniqueId, 10) === parseInt(props.task_id, 10)
-      ).reassignUsers[0]
+      ).reassignUsers
     );
 
     return storeData.map((userIteration) => {

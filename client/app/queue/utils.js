@@ -610,7 +610,10 @@ export const prepareAppealForSearchStore = (appeals) => {
       evidenceSubmissionTask: appeal.attributes.evidence_submission_task,
       hasEvidenceSubmissionTask: appeal.attributes.evidence_submission_task !== null,
       mst: appeal.attributes.mst,
-      pact: appeal.attributes.pact
+      pact: appeal.attributes.pact,
+      status: appeal.attributes.status,
+      decisionDate: appeal.attributes.decision_date,
+      assignedToLocation: appeal.attributes.assigned_to_location
     };
 
     return accumulator;
