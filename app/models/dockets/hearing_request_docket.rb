@@ -111,9 +111,10 @@ class HearingRequestDocket < Docket
   # :reek:ControlParameter
   # :reek:FeatureEnvy
   def affinity_date_count(in_window, priority)
+    scope = Appeal.extending(DistributionScopes).with_held_hearings
+            .non_genpop_without_judge # need to pass in 'lever' arg
+    
     scope = docket_appeals.ready_for_distribution
-
-    scope = scope.with_held_hearings
 
     scope = if in_window
               scope.non_genpop_by_affinity_start_date

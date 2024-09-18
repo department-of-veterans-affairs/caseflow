@@ -203,7 +203,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
       .where(original_judge_task: { assigned_to_id: judge&.id })
   end
 
-  def non_genpop_without_judge(judge, lever)
+  def non_genpop_without_judge(lever)
     return unless hearing_lever?(lever)
 
     genpop_base_query

@@ -376,6 +376,18 @@ describe HearingRequestDocket, :postgres do
     end
   end
 
+  
+  context "#affinity_date_count" do
+    let!(:hearing_judge) { create(:user, :judge, :with_vacols_judge_record) }
+    let!(:hearing_docket_appeal) { create(:appeal, :hearing_docket, :held_hearing_and_ready_to_distribute, :with_appeal_affinity, tied_judge: hearing_judge)}
+
+    subject { HearingRequestDocket.affinity_date_count(true, false) }
+
+    it "correctly accounts for affinities to judges based on most recently held hearing" do
+      expect(subject).to eq(1)
+    end
+  end
+
   context "#distribute_appeals" do
     let!(:requesting_judge_no_attorneys) { create(:user, :judge, :with_vacols_judge_record) }
     let!(:requesting_judge_with_attorneys) { create(:user, :judge, :with_vacols_judge_record) }
