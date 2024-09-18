@@ -32,6 +32,7 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser d
       nonrating_issue_bgs_id: "13",
       nonrating_issue_bgs_source: "CORP_AWARD_ATTORNEY_FEE",
       type: "RequestIssue",
+      original_caseflow_request_issue_id: 679,
       decision: [
         {
           id: 1738,
@@ -218,6 +219,12 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser d
   describe "#ri_type" do
     it "returns the type" do
       expect(subject.ri_type).to eq("RequestIssue")
+    end
+  end
+
+  describe "#original_caseflow_request_issue_id" do
+    it "returns the original caseflow request issue id" do
+      expect(subject.ri_original_caseflow_request_issue_id).to eq(679)
     end
   end
 

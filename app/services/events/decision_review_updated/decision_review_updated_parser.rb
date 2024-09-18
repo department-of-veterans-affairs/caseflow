@@ -42,7 +42,10 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedParser
     @payload[:event_id]
   end
 
-  # Do we need it in updating event? If yes - why?
+  def claim_creation_time
+    @payload[:claim_creation_time]
+  end
+
   def css_id
     @payload[:css_id].presence
   end
@@ -73,6 +76,102 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedParser
 
   def end_product_establishments_reference_id
     @payload.dig(:end_product_establishments, :reference_id).presence
+  end
+
+  def ep_code
+    @payload.dig(:ep_code)
+  end
+
+  def ep_code_category
+    @payload.dig(:ep_code_category)
+  end
+
+  def original_source
+    @payload.dig(:original_source)
+  end
+
+  def decision_review_type
+    @payload.dig(:decision_review_type)
+  end
+
+  def veteran_first_name
+    @payload.dig(:veteran_first_name)
+  end
+
+  def veteran_last_name
+    @payload.dig(:veteran_last_name)
+  end
+
+  def veteran_participant_id
+    @payload.dig(:veteran_participant_id)
+  end
+
+  def file_number
+    @payload.dig(:file_number)
+  end
+
+  def claimant_participant_id
+    @payload.dig(:claimant_participant_id)
+  end
+
+  def claim_category
+    @payload.dig(:claim_category)
+  end
+
+  def claim_received_date
+    @payload.dig(:claim_received_date)
+  end
+
+  def claim_lifecycle_status
+    @payload.dig(:claim_lifecycle_status)
+  end
+
+  def payee_code
+    @payload.dig(:payee_code)
+  end
+
+  def ols_issue
+    @payload.dig(:ols_issue)
+  end
+
+  def originated_from_vacols_issue
+    @payload.dig(:originated_from_vacols_issue)
+  end
+
+  def limited_poa_code
+    @payload.dig(:limited_poa_code)
+  end
+
+  def tracked_item_action
+    @payload.dig(:tracked_item_action)
+  end
+
+  def tracked_item_id
+    @payload.dig(:tracked_item_id)
+  end
+
+  def informal_conference_requested
+    @payload.dig(:informal_conference_requested)
+  end
+
+  def same_station_review_requested
+    @payload.dig(:same_station_review_requested)
+  end
+
+  def claim_time
+    @payload.dig(:claim_time)
+  end
+
+  def catror_username
+    @payload.dig(:catror_username)
+  end
+
+  def catror_application
+    @payload.dig(:catror_application)
+  end
+
+  def auto_remand
+    @payload.dig(:auto_remand)
   end
 
   def added_issues

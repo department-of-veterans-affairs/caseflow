@@ -33,6 +33,7 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
       contested_rating_issue_profile_date: 1_625_076_000,
       contested_rating_issue_reference_id: "REF9411",
       type: "RequestIssue",
+      original_caseflow_request_issue_id: nil,
       decision: [
         {
           award_event_id: 679,
@@ -152,6 +153,151 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
         expect(subject.removed_issues).to eq([])
       end
     end
+
+    describe "ep_code" do
+      it "returns the correct ep_code" do
+        expect(subject.ep_code).to eq(payload["ep_code"])
+      end
+    end
+
+    describe "ep_code_category" do
+      it "returns the correct ep_code_category" do
+        expect(subject.ep_code_category).to eq(payload["ep_code_category"])
+      end
+    end
+
+    describe "original_source" do
+      it "returns the correct original_source" do
+        expect(subject.original_source).to eq(payload["original_source"])
+      end
+    end
+
+    describe "decision_review_type" do
+      it "returns the correct decision_review_type" do
+        expect(subject.decision_review_type).to eq(payload["decision_review_type"])
+      end
+    end
+
+    describe "veteran_first_name" do
+      it "returns the correct veteran_first_name" do
+        expect(subject.veteran_first_name).to eq(payload["veteran_first_name"])
+      end
+    end
+
+    describe "veteran_last_name" do
+      it "returns the correct veteran_last_name" do
+        expect(subject.veteran_last_name).to eq(payload["veteran_last_name"])
+      end
+    end
+
+    describe "veteran_participant_id" do
+      it "returns the correct veteran_participant_id" do
+        expect(subject.veteran_participant_id).to eq(payload["veteran_participant_id"])
+      end
+    end
+
+    describe "file_number" do
+      it "returns the correct file_number" do
+        expect(subject.file_number).to eq(payload["file_number"])
+      end
+    end
+
+    describe "claimant_participant_id" do
+      it "returns the correct claimant_participant_id" do
+        expect(subject.claimant_participant_id).to eq(payload["claimant_participant_id"])
+      end
+    end
+
+    describe "claim_category" do
+      it "returns the correct claim_category" do
+        expect(subject.claim_category).to eq(payload["claim_category"])
+      end
+    end
+
+    describe "claim_received_date" do
+      it "returns the correct claim_received_date" do
+        expect(subject.claim_received_date).to eq(payload["claim_received_date"])
+      end
+    end
+
+    describe "claim_lifecycle_status" do
+      it "returns the correct claim_lifecycle_status" do
+        expect(subject.claim_lifecycle_status).to eq(payload["claim_lifecycle_status"])
+      end
+    end
+
+    describe "payee_code" do
+      it "returns the correct payee_code" do
+        expect(subject.payee_code).to eq(payload["payee_code"])
+      end
+    end
+
+    describe "ols_issue" do
+      it "returns the correct ols_issue" do
+        expect(subject.ols_issue).to eq(payload["ols_issue"])
+      end
+    end
+
+    describe "originated_from_vacols_issue" do
+      it "returns the correct originated_from_vacols_issue" do
+        expect(subject.originated_from_vacols_issue).to eq(payload["originated_from_vacols_issue"])
+      end
+    end
+
+    describe "limited_poa_code" do
+      it "returns the correct limited_poa_code" do
+        expect(subject.limited_poa_code).to eq(payload["limited_poa_code"])
+      end
+    end
+
+    describe "tracked_item_action" do
+      it "returns the correct tracked_item_action" do
+        expect(subject.tracked_item_action).to eq(payload["tracked_item_action"])
+      end
+    end
+
+    describe "tracked_item_id" do
+      it "returns the correct tracked_item_id" do
+        expect(subject.tracked_item_id).to eq(payload["tracked_item_id"])
+      end
+    end
+
+    describe "informal_conference_requested" do
+      it "returns the correct informal_conference_requested" do
+        expect(subject.informal_conference_requested).to eq(payload["informal_conference_requested"])
+      end
+    end
+
+    describe "same_station_review_requested" do
+      it "returns the correct same_station_review_requested" do
+        expect(subject.same_station_review_requested).to eq(payload["same_station_review_requested"])
+      end
+    end
+
+    describe "claim_time" do
+      it "returns the correct claim_time" do
+        expect(subject.claim_time).to eq(payload["claim_time"])
+      end
+    end
+
+    describe "catror_username" do
+      it "returns the correct catror_username" do
+        expect(subject.catror_username).to eq(payload["catror_username"])
+      end
+    end
+
+    describe "catror_application" do
+      it "returns the correct catror_application" do
+        expect(subject.catror_application).to eq(payload["catror_application"])
+      end
+    end
+
+    describe "auto_remand" do
+      it "returns the correct auto_remand" do
+        expect(subject.auto_remand).to eq(payload["auto_remand"])
+      end
+    end
+
   end
 
   context "when attributes use .presence and values are empty strings" do
