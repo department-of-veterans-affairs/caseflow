@@ -6,7 +6,7 @@ class Reader::DocumentsController < Reader::ApplicationController
       format.html { return render "reader/appeal/index" }
       format.json do
         AppealView.find_or_create_by(appeal: appeal, user: current_user).update!(last_viewed_at: Time.zone.now)
-        MetricsService.record "Get appeal #{appeal_id} document data for user: #{current_user.css_id}" do
+        MetricsService.record "Get appeal #{appeal_id} document data" do
           render json: {
             appealDocuments: documents,
             annotations: annotations,
