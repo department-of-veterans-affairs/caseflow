@@ -33,7 +33,7 @@ const transcriptionFileColumns = [
   {
     align: 'left',
     valueFunction: (rowObject) => {
-      // Display file name with download link for pdf files uploaded to AWS successfully
+      // Display file name with download link for files uploaded to AWS successfully
       if (rowObject.fileStatus === 'Successful upload (AWS)') {
         return <Link href={`/hearings/transcription_file/${rowObject.id}/download`}>
           {rowObject.fileName}
