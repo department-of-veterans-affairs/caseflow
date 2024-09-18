@@ -88,7 +88,8 @@ const CorrespondenceDetails = (props) => {
     // Data for the PATCH request to remove unchecked relations
     const patchData = {
       correspondence_uuid: correspondence.uuid,
-      correspondence_relations: uncheckedCheckboxes // Send only unchecked relations
+      // Send only unchecked relations
+      correspondence_relations: uncheckedCheckboxes
     };
 
     try {
@@ -109,6 +110,15 @@ const CorrespondenceDetails = (props) => {
 
     // Reset checkboxes to the new state
     setOriginalStates(checkboxStates);
+  };
+
+  const isAdminLoggedIn = () => {
+    if (props.isInboundOpsSuperuser || props.isInboundOpsSupervisor === true) {
+      return false;
+    }
+
+    return true;
+
   };
 
   priorMail.sort((first, second) => {
@@ -396,6 +406,7 @@ const CorrespondenceDetails = (props) => {
               defaultValue={relatedCorrespondenceIds.some((el) => el === correspondenceRow.id)}
               value={checkboxStates[correspondenceRow.id]}
               onChange={() => handleCheckboxChange(correspondenceRow.id)}
+              disabled= {isAdminLoggedIn()}
             />
           </div>
         )
@@ -577,6 +588,8 @@ CorrespondenceDetails.propTypes = {
   enableTopPagination: PropTypes.bool,
   correspondence_appeal_ids: PropTypes.bool,
   tasksUnrelatedToAppealEmpty: PropTypes.bool,
+  isInboundOpsSuperuser: PropTypes.bool,
+  isInboundOpsSupervisor: PropTypes.bool,
   correspondenceResponseLetters: PropTypes.array
 };
 
