@@ -358,7 +358,7 @@ const doc = {
 
 describe('Unfiltered', () => {
   it('shows the correct document count', () => {
-    const { container } = render(<UnFilteredComponent docId={doc.id} showPdf={() => { }} />);
+    const { container } = render(<UnFilteredComponent docId={doc.id} showPdf={() => jest.fn()} />);
 
     expect(container).toHaveTextContent('4 of 5');
     expect(container).not.toHaveTextContent('filtered indicator');
@@ -367,14 +367,14 @@ describe('Unfiltered', () => {
 
 describe('Filtered', () => {
   it('shows the correct document count', () => {
-    const { container } = render(<FilteredComponent currentPage={1} docId={doc.id} numPages={2} showPdf={() => { }} />);
+    const { container } = render(<FilteredComponent currentPage={1} docId={doc.id} numPages={2} showPdf={() => jest.fn()} />);
 
     expect(container).toHaveTextContent('1 of 2');
   });
 
   it('shows the filtered icon', () => {
     const { getByTitle } = render(
-      <FilteredComponent currentPage={1} docId={doc.id} numPages={2} showPdf={() => { }} />)
+      <FilteredComponent currentPage={1} docId={doc.id} numPages={2} showPdf={() => jest.fn()} />)
     ;
 
     expect(getByTitle('filtered indicator')).toBeTruthy();
