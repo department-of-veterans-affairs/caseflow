@@ -411,11 +411,38 @@ RSpec.feature("The Correspondence Cases page") do
       end
     end
 
-    # it "Ryan's work to be filled in" do
-    #   # stubbed
-    # end
+    it "verifies first four routes for different task types on the pending tab." do
+      # filter PrivacyComplaintCorrespondenceTask on pending tab & verify link to Correspondence Details
+      visit "/queue/correspondence/team?tab=correspondence_pending"
+      all(".unselected-filter-icon")[2].click
+      find("label", text: "Privacy Complaint Correspondence Task (3)").click
+      all("a", id: "task-link")[0].click
+      binding.pry
+      expect(page).to have_content("Completed Mail Tasks")
 
-    it "verifies routes for different task types on the pending tab." do
+      # filter CongressionalInterestCorrespondenceTask on pending tab & verify link to Correspondence Details
+      visit "/queue/correspondence/team?tab=correspondence_pending"
+      all(".unselected-filter-icon")[2].click
+      find("label", text: "Congressional Interest Correspondence Task (3)").click
+      all("a", id: "task-link")[0].click
+      expect(page).to have_content("Completed Mail Tasks")
+
+      # filter StatusInquiryCorrespondenceTask on pending tab & verify link to Correspondence Details
+      visit "/queue/correspondence/team?tab=correspondence_pending"
+      all(".unselected-filter-icon")[2].click
+      find("label", text: "Status Inquiry Correspondence Task (3)").click
+      all("a", id: "task-link")[0].click
+      expect(page).to have_content("Completed Mail Tasks")
+
+      # filter PowerOfAttorneyRelatedCorrespondenceTask on pending tab & verify link to Correspondence Details
+      visit "/queue/correspondence/team?tab=correspondence_pending"
+      all(".unselected-filter-icon")[2].click
+      find("label", text: "Power Of Attorney Related Correspondence Task (3)").click
+      all("a", id: "task-link")[0].click
+      expect(page).to have_content("Completed Mail Tasks")
+    end
+
+    it "verifies last four routes for different task types on the pending tab." do
       # filter PrivacyActRequestCorrespondenceTask on pending tab & verify link to Correspondence Details
       visit "/queue/correspondence/team?tab=correspondence_pending"
       all(".unselected-filter-icon")[2].click
