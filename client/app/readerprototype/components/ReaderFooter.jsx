@@ -1,4 +1,3 @@
-import findIndex from 'lodash/findIndex';
 import PropTypes from 'prop-types';
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
@@ -13,7 +12,6 @@ import { docListIsFiltered, getFilteredDocIds, getFilteredDocuments } from '../.
 const ReaderFooter = ({
   currentPage,
   docId,
-  match,
   numPages,
   setCurrentPage,
   showPdf,
@@ -48,18 +46,11 @@ const ReaderFooter = ({
   };
 
   const isDocListFiltered = useSelector((state) => docListIsFiltered(state));
-  const filteredDocs = useSelector(getFilteredDocuments);
+
   const filteredDocIds = useSelector(getFilteredDocIds);
   const currentDocIndex = filteredDocIds.indexOf(docId);
-  const selectedDocId = () => Number(match.params.docId);
-  const selectedDocIndex = () => (
-    findIndex(filteredDocs, { id: selectedDocId() })
-  );
-
-  const getPrevDoc = () => filteredDocs?.[selectedDocIndex() - 1];
-  const getNextDoc = () => filteredDocs?.[selectedDocIndex() + 1];
-  const getPrevDocId = () => getPrevDoc()?.id;
-  const getNextDocId = () => getNextDoc()?.id;
+  const getPrevDocId = () => filteredDocIds?.[currentDocIndex - 1];
+  const getNextDocId = () => filteredDocIds?.[currentDocIndex + 1];
 
   useEffect(() => {
     const keyHandler = (event) => {
@@ -114,7 +105,7 @@ const ReaderFooter = ({
           |
         </span>
         <span className="doc-list-progress-indicator">
-          { isDocListFiltered && <FilterNoOutlineIcon /> } Document {currentDocIndex + 1} of {filteredDocs.length}
+          { isDocListFiltered && <FilterNoOutlineIcon /> } Document {currentDocIndex + 1} of {filteredDocIds.length}
         </span>
       </div>
 
@@ -138,7 +129,6 @@ const ReaderFooter = ({
 ReaderFooter.propTypes = {
   currentPage: PropTypes.number,
   docId: PropTypes.number,
-  match: PropTypes.any,
   numPages: PropTypes.number,
   setCurrentPage: PropTypes.func,
   showPdf: PropTypes.func,

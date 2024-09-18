@@ -106,7 +106,6 @@ const DocumentViewer = (props) => {
         <ReaderFooter
           currentPage={currentPage}
           docId={doc.id}
-          match={props.match}
           numPages={numPages}
           setCurrentPage={() => setCurrentPage()}
           showPdf={props.showPdf}
