@@ -1,4 +1,5 @@
-import _ from 'lodash';
+import get from 'lodash/get';
+import findIndex from 'lodash/findIndex';
 import PropTypes from 'prop-types';
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
@@ -53,12 +54,12 @@ const ReaderFooter = ({
   const currentDocIndex = filteredDocIds.indexOf(docId);
   const selectedDocId = () => Number(match.params.docId);
   const selectedDocIndex = () => (
-    _.findIndex(filteredDocs, { id: selectedDocId() })
+    findIndex(filteredDocs, { id: selectedDocId() })
   );
-  const getPrevDoc = () => _.get(filteredDocs, [selectedDocIndex() - 1]);
-  const getNextDoc = () => _.get(filteredDocs, [selectedDocIndex() + 1]);
-  const getPrevDocId = () => _.get(getPrevDoc(), 'id');
-  const getNextDocId = () => _.get(getNextDoc(), 'id');
+  const getPrevDoc = () => get(filteredDocs, [selectedDocIndex() - 1]);
+  const getNextDoc = () => get(filteredDocs, [selectedDocIndex() + 1]);
+  const getPrevDocId = () => get(getPrevDoc(), 'id');
+  const getNextDocId = () => get(getNextDoc(), 'id');
 
   useEffect(() => {
     const keyHandler = (event) => {
