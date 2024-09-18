@@ -1,5 +1,5 @@
 require "active_support/core_ext/integer/time"
-require_relative "../../config/initializers/deprecation_warnings"
+require_relative "../../lib/deprecation_warnings"
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
