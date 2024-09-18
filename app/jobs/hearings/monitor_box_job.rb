@@ -24,7 +24,7 @@ class Hearings::MonitorBoxJob < ApplicationJob
 
   def perform
     files = poll_box_dot_com_for_new_files
-    files.count() > 0 ? download_box_files(files) : true
+    files.count > 0 ? download_box_files(files) : true
   rescue StandardError => error
     log_error(error)
     raise error

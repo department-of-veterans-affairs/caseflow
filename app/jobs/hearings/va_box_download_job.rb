@@ -76,7 +76,7 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
   def select_folder(filename)
     @file_extension = File.extname(filename).delete(".").to_s
     current_path = Rails.root.join("tmp", "file_from_box", @file_extension.to_s, filename.to_s)
-    FileUtils.mkdir_p(File.dirname(current_path)) unless Dir.exists?(@file_extension)
+    FileUtils.mkdir_p(File.dirname(current_path)) unless Dir.exist?(@file_extension)
     current_path
   end
 

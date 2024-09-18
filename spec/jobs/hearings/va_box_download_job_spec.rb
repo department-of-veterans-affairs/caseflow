@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe Hearings::VaBoxDownloadJob, type: :job do
-
   describe "#perform" do
     subject { described_class.perform_now }
 
@@ -12,7 +11,6 @@ RSpec.describe Hearings::VaBoxDownloadJob, type: :job do
 
     # # see data setup in Fakes::VaBoxService for expectations
     it "call job to download file and upload to S3 and create/update in transciption_table" do
-      binding.pry
       expect(subject).to eq(true)
     end
 

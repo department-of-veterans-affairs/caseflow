@@ -27,7 +27,7 @@ class ExternalApi::VaBoxService
       Rails.logger.info("File downloaded successfully to #{destination_path}")
     elsif response.status == 302
 
-      redirect_url = response.headers['location']
+      redirect_url = response.headers["location"]
       follow_redirect_and_download(redirect_url, destination_path)
     else
       Rails.logger.info("Failed to download the file. Response code: #{response.status}")
@@ -97,12 +97,14 @@ class ExternalApi::VaBoxService
     redirect_response = Faraday.get(url)
 
     if redirect_response.status == 200
-      File.open(destination_path, 'wb') do |file|
+      File.open(destination_path, "wb") do |file|
         file.write(redirect_response.body)
       end
-      puts "File downloaded successfully to #{destination_path} via redirect"
+      Rails.logger.info("File downloaded successfully to #{destination_path} via redirect")
     else
-      puts "Failed to download file from redirect. Status: #{redirect_response.status}, Body: #{redirect_response.body}"
+      Rails.logger.info(
+        "Failed to download file from redirect. Status: #{redirect_response.status}, Body: #{redirect_response.body}"
+      )
     end
   end
 
