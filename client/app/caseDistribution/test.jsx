@@ -319,14 +319,14 @@ class CaseDistributionTest extends React.PureComponent {
                           </table>
                           <hr />
                           <div className="lever-content">
-                            <div className="lever-head">
+                            <div className="lever-head csv-download-alignment">
                               <h2 id="access_csvs">Access CSVs</h2>
                             </div>
                             <div className="lever-left csv-download-left">
                               <a href="/case_distribution_levers_tests/appeals_ready_to_distribute?csv=1">
-                                  <Button classNames={['usa-button-active']}>
+                                <Button classNames={['usa-button-active']}>
                                     Download Appeals Ready to Distribute CSV
-                                  </Button>
+                                </Button>
                               </a>
                             </div>
                             <div className="lever-right csv-download-right">
@@ -440,7 +440,7 @@ class CaseDistributionTest extends React.PureComponent {
                           </ul>
                           <hr />
                           <div className="lever-content">
-                            <div className="lever-head">
+                            <div className="lever-head csv-download-alignment">
                               <h2 id="case_movement">Case Movement</h2>
                               { this.state.showLegacyAppealsAlert &&
                               <Alert type={this.state.legacyAppealsAlertType} scrollOnAlert={false}>
@@ -450,11 +450,11 @@ class CaseDistributionTest extends React.PureComponent {
                             </div>
                             <div className="lever-left csv-download-left">
                               <Button classNames={['usa-button-case-movement']}
-                                  onClick={this.returnLegacyAppealsToBoard}
-                                  name="Run ReturnLegacyAppealsToBoard job"
-                                  loading={this.state.isReturnLegacyAppeals}
-                                  loadingText="Processing ReturnLegacyAppealsToBoard job"
-                                />
+                                onClick={this.returnLegacyAppealsToBoard}
+                                name="Run ReturnLegacyAppealsToBoard job"
+                                loading={this.state.isReturnLegacyAppeals}
+                                loadingText="Processing ReturnLegacyAppealsToBoard job"
+                              />
                             </div>
                             <div className="lever-right csv-download-right">
                               <strong>ReturnLegacyAppealsToBoard job</strong> - Click to run the ReturnLegacyAppealsToBoard job. This job changes the location to 63 for qualifying legacy appeals.

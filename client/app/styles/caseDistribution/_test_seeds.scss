@@ -134,6 +134,7 @@ $case-movement-button-bg-color: #07648d;
 
 .download-csv-buttons {
   list-style: none;
+
   li {
     margin-left: -35px;
   }
@@ -145,11 +146,15 @@ $case-movement-button-bg-color: #07648d;
 
 .csv-download-left {
   width: 32%;
-
+  margin-bottom: 50px;
 }
 
 .csv-download-right {
   width: 65%;
-  margin-bottom: 40px;
-  margin-top: 50px;
+  margin-bottom: 50px;
+  vertical-align: top;
+}
+
+.csv-download-alignment {
+  border-bottom: 0;
 }
