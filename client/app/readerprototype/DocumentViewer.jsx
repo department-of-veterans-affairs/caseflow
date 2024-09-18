@@ -12,9 +12,8 @@ import { CATEGORIES } from '../reader/analytics';
 import { stopPlacingAnnotation } from '../reader/AnnotationLayer/AnnotationActions';
 import DeleteModal from './components/Comments/DeleteModal';
 import ShareModal from './components/Comments/ShareModal';
-import { getRotationDeg, selectedDoc } from './util/documentUtil';
+import { getRotationDeg } from './util/documentUtil';
 import { ROTATION_DEGREES, ZOOM_INCREMENT, ZOOM_LEVEL_MAX, ZOOM_LEVEL_MIN } from './util/readerConstants';
-
 
 const DocumentViewer = (props) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -26,7 +25,7 @@ const DocumentViewer = (props) => {
   const dispatch = useDispatch();
 
   const currentDocumentId = Number(props.match.params.docId);
-  const doc = selectedDoc(props);
+  const doc = props.allDocuments.find((x) => x.id === currentDocumentId);
 
   useEffect(() => {
     setShowSearchBar(false);
