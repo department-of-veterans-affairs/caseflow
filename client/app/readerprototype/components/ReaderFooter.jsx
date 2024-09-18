@@ -7,7 +7,7 @@ import TextField from '../../components/TextField';
 import { FilterNoOutlineIcon } from '../../components/icons/FilterNoOutlineIcon';
 import { PageArrowLeftIcon } from '../../components/icons/PageArrowLeftIcon';
 import { PageArrowRightIcon } from '../../components/icons/PageArrowRightIcon';
-import { docListIsFiltered, getFilteredDocIds, getFilteredDocuments } from '../../reader/selectors';
+import { docListIsFiltered, getFilteredDocIds } from '../../reader/selectors';
 
 const ReaderFooter = ({
   currentPage,
