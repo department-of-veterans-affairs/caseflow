@@ -389,12 +389,10 @@ class ClaimHistoryEvent
     end
 
     def parse_versions(versions)
-      if versions
-        # Quite a bit faster but less safe. Should probably be fine since it's coming from the database
-        # rubocop:disable Security/YAMLLoad
-        versions[1..-2].split(",").map { |yaml| YAML.load(yaml.gsub(/^"|"$/, "")) }
-        # rubocop:enable Security/YAMLLoad
-      end
+      # Quite a bit faster but less safe. Should probably be fine since it's coming from the database
+      # rubocop:disable Security/YAMLLoad
+      versions&.split("|||")&.map { |yaml| YAML.load(yaml.gsub(/^"|"$/, "")) }
+      # rubocop:enable Security/YAMLLoad
     end
 
     def create_issue_events(change_data)
