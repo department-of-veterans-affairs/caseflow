@@ -216,6 +216,7 @@ module CaseflowCertification
       "#{root}/lib/assets",
       "#{root}/lib/pdfs",
       "#{root}/lib/tasks",
+      "#{root}/lib/deprecation_warnings.rb",
     )
 
     config.exceptions_app = self.routes
