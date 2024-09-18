@@ -276,7 +276,7 @@ export const TranscriptionFileDispatchTable = ({
     } else if (statusFilter[0] === "Assigned") {
       getContractors();
     }
-  }, [statusFilter]);
+  }, []);
 
   return (
     <div {...styles}>
