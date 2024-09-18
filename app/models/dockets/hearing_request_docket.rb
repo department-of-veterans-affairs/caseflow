@@ -110,7 +110,7 @@ class HearingRequestDocket < Docket
   # used for distribution_stats
   # :reek:ControlParameter
   # :reek:FeatureEnvy
-  def affinity_date_count(in_window, priority)
+  def self.affinity_date_count(in_window, priority)
     scope = Appeal.extending(DistributionScopes).with_held_hearings
             .non_genpop_without_judge # need to pass in 'lever' arg
     
