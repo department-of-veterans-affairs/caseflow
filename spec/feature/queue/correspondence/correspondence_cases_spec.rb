@@ -389,20 +389,21 @@ RSpec.feature("The Correspondence Cases page") do
     before do
       Timecop.freeze(Time.zone.local(2020, 5, 15))
 
+      task_array = [
+        PrivacyComplaintCorrespondenceTask,
+        CongressionalInterestCorrespondenceTask,
+        StatusInquiryCorrespondenceTask,
+        PowerOfAttorneyRelatedCorrespondenceTask,
+        PrivacyActRequestCorrespondenceTask,
+        DeathCertificateCorrespondenceTask,
+        OtherMotionCorrespondenceTask,
+        CavcCorrespondenceCorrespondenceTask
+      ]
+
       3.times do
         corres_array = (1..8).map { create(:correspondence, :pending) }
-        task_array = [
-          PrivacyComplaintCorrespondenceTask,
-          CongressionalInterestCorrespondenceTask,
-          StatusInquiryCorrespondenceTask,
-          PowerOfAttorneyRelatedCorrespondenceTask,
-          PrivacyActRequestCorrespondenceTask,
-          DeathCertificateCorrespondenceTask,
-          OtherMotionCorrespondenceTask,
-          CavcCorrespondenceCorrespondenceTask
-        ]
         corres_array.each_with_index do |corres, index|
-          task_array[index].create!(
+          task_array.each_with_index[ind].create!(
             appeal_id: corres.id,
             appeal_type: "Correspondence",
             assigned_to: InboundOpsTeam.singleton
@@ -448,7 +449,6 @@ RSpec.feature("The Correspondence Cases page") do
       all(".unselected-filter-icon")[2].click
       find("label", text: "Privacy Act Request Correspondence Task (3)").click
       all("a", id: "task-link")[0].click
-      binding.pry
       expect(page).to have_content("Completed Mail Tasks")
 
       # filter DeathCertificateCorrespondenceTask on pending tab & verify link to Correspondence Details
