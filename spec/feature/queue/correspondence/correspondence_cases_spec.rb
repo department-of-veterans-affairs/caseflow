@@ -402,12 +402,6 @@ RSpec.feature("The Correspondence Cases page") do
 
       3.times do
         corres_array = (1..8).map { create(:correspondence, :pending) }
-        # corres_array.each_with_index do |corres, index|
-        #   task_array.each_with_index[ind].create!(
-        #     appeal_id: corres.id,
-        #     appeal_type: "Correspondence",
-        #     assigned_to: InboundOpsTeam.singleton
-        #   )
 
         corres_array.each do |corres|
           task_array.each do |task|
@@ -429,7 +423,6 @@ RSpec.feature("The Correspondence Cases page") do
       all(".unselected-filter-icon")[2].click
       find("label", text: /Privacy Complaint Correspondence Task/).click
       all("a", id: "task-link")[0].click
-      binding.pry
       expect(page).to have_content(/.*Record status:.*Pending.*/)
     end
 
