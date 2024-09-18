@@ -7,8 +7,7 @@ export const initialState = {
   correspondenceInfo: {
     tasksUnrelatedToAppeal: {}
   },
-  tasksUnrelatedToAppealEmpty: false,
-
+  tasksUnrelatedToAppealEmpty: false
 };
 
 export const correspondenceDetailsReducer = (state = initialState, action = {}) => {

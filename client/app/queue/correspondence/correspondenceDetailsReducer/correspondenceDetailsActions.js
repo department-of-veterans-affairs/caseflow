@@ -260,3 +260,13 @@ export const setTasksUnrelatedToAppealEmpty = (tasksUnrelatedToAppealEmpty) => (
     }
   });
 };
+
+export const updateCorrespondenceRelations = (correspondence) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.CORRESPONDENCE_INFO,
+      payload: {
+        correspondence
+      }
+    });
+  };
