@@ -15,7 +15,6 @@ import ShareModal from './components/Comments/ShareModal';
 import { getRotationDeg, selectedDoc } from './util/documentUtil';
 import { ROTATION_DEGREES, ZOOM_INCREMENT, ZOOM_LEVEL_MAX, ZOOM_LEVEL_MIN } from './util/readerConstants';
 
-
 const DocumentViewer = (props) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [numPages, setNumPages] = useState(null);
