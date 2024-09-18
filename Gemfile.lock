@@ -1,11 +1,12 @@
 GIT
   remote: https://github.com/colszowka/simplecov.git
-  revision: 783c9d7e9995f3ea9baf9fbb517c1d0ceb12acdb
+  revision: b6c2d4208a5fa395ce09d7e1d3b074f680ee29b0
+  branch: main
   specs:
-    simplecov (0.15.1)
-      docile (~> 1.1.0)
-      json (>= 1.8, < 3)
-      simplecov-html (~> 0.10.0)
+    simplecov (0.22.0)
+      docile (~> 1.1)
+      simplecov-html (~> 0.11)
+      simplecov_json_formatter (~> 0.1)
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
@@ -1548,7 +1549,7 @@ GEM
       ruby-statistics (>= 2.1)
       thor (>= 0.19, < 2)
     diff-lcs (1.3)
-    docile (1.1.5)
+    docile (1.4.1)
     dogstatsd-ruby (4.4.0)
     dotenv (2.8.1)
     dotenv-rails (2.8.1)
@@ -1664,7 +1665,6 @@ GEM
       rails-dom-testing (>= 1, < 3)
       railties (>= 4.2.0)
       thor (>= 0.14, < 2.0)
-    json (2.3.0)
     json-schema (4.3.0)
       addressable (>= 2.8)
     json_schemer (0.2.16)
@@ -1963,8 +1963,9 @@ GEM
       thor
     shoulda-matchers (5.3.0)
       activesupport (>= 5.2.0)
-    simplecov-html (0.10.2)
+    simplecov-html (0.13.1)
     simplecov-lcov (0.8.0)
+    simplecov_json_formatter (0.1.4)
     single_cov (1.3.2)
     sixarm_ruby_unaccent (1.2.0)
     socksify (1.7.1)
