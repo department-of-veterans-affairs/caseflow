@@ -1,4 +1,3 @@
-import get from 'lodash/get';
 import findIndex from 'lodash/findIndex';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -56,10 +55,11 @@ const ReaderFooter = ({
   const selectedDocIndex = () => (
     findIndex(filteredDocs, { id: selectedDocId() })
   );
-  const getPrevDoc = () => get(filteredDocs, [selectedDocIndex() - 1]);
-  const getNextDoc = () => get(filteredDocs, [selectedDocIndex() + 1]);
-  const getPrevDocId = () => get(getPrevDoc(), 'id');
-  const getNextDocId = () => get(getNextDoc(), 'id');
+
+  const getPrevDoc = () => filteredDocs?.[selectedDocIndex() - 1];
+  const getNextDoc = () => filteredDocs?.[selectedDocIndex() + 1];
+  const getPrevDocId = () => getPrevDoc()?.id;
+  const getNextDocId = () => getNextDoc()?.id;
 
   return (
     <div id="prototype-footer" className="cf-pdf-footer cf-pdf-toolbar">
