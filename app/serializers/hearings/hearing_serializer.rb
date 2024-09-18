@@ -142,6 +142,6 @@ class HearingSerializer
     hearing.scheduled_time&.strftime("%m/%d/%Y")
   end
   attribute :date_receipt_recording do |hearing|
-    hearing.transcription_files.where(file_type: 'mp3').last.date_receipt_recording&.strftime("%m/%d/%Y")
+    hearing.transcription_files.where(file_type: "mp3").last.date_receipt_recording&.strftime("%m/%d/%Y")
   end
 end
