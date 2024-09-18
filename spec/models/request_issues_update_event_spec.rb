@@ -189,22 +189,21 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
     end
   end
 
-  context "when handling errors in #process_edited_issues!" do
+  context "when handling errors in #process_withdrawn_issues!" do
     let(:invalid_reference_id) { "12345" }
 
     before do
-      subject.instance_variable_set(:@edited_issue_data, [{ reference_id: invalid_reference_id }])
+      subject.instance_variable_set(:@withdrawn_issue_data, [{ reference_id: invalid_reference_id }])
+      allow(review.request_issues).to receive(:find_by)
+        .with(reference_id: invalid_reference_id)
+        .and_return(nil)
     end
 
-    context "when a request issue is not found" do
-      before do
-        allow(RequestIssue).to receive(:find).and_raise(ActiveRecord::RecordNotFound)
-      end
-
-      it "raises a DecisionReviewUpdateMissingIssueError with the correct message" do
-        expect { subject.perform! }.to raise_error(Caseflow::Error::DecisionReviewUpdateMissingIssueError,
-                                                   "Request issue not found for REFERENCE_ID: #{invalid_reference_id}")
-      end
+    it "raises a DecisionReviewUpdateMissingIssueError with the correct message" do
+      expect { subject.perform! }.to raise_error(
+        Caseflow::Error::DecisionReviewUpdateMissingIssueError,
+        "Request issue not found for REFERENCE_ID: #{invalid_reference_id}"
+      )
     end
   end
 
@@ -213,17 +212,16 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
 
     before do
       subject.instance_variable_set(:@removed_issue_data, [{ reference_id: invalid_reference_id }])
+      allow(review.request_issues).to receive(:find_by)
+        .with(reference_id: invalid_reference_id)
+        .and_return(nil)
     end
 
-    context "when a request issue is not found" do
-      before do
-        allow(review.request_issues).to receive(:find).and_raise(ActiveRecord::RecordNotFound)
-      end
-
-      it "raises a DecisionReviewUpdateMissingIssueError with the correct message" do
-        expect { subject.perform! }.to raise_error(Caseflow::Error::DecisionReviewUpdateMissingIssueError,
-                                                   "Request issue not found for REFERENCE_ID: #{invalid_reference_id}")
-      end
+    it "raises a DecisionReviewUpdateMissingIssueError with the correct message" do
+      expect { subject.perform! }.to raise_error(
+        Caseflow::Error::DecisionReviewUpdateMissingIssueError,
+        "Request issue not found for REFERENCE_ID: #{invalid_reference_id}"
+      )
     end
   end
 
@@ -273,52 +271,42 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
 
   context "when handling errors in #process_ineligible_to_eligible_issues!" do
     let(:invalid_reference_id) { "12345" }
-    let(:ineligible_to_eligible_issue) { [{ reference_id: invalid_reference_id, ineligible_reason: nil }] }
 
     before do
       subject.instance_variable_set(:@ineligible_to_eligible_issue_data, [{ reference_id: invalid_reference_id }])
-
-      allow_any_instance_of(RequestIssue).to receive(:closed_at).and_return(nil)
-      allow_any_instance_of(RequestIssue).to receive(:save!).and_return(true)
+      allow(review.request_issues).to receive(:find_by)
+        .with(reference_id: invalid_reference_id)
+        .and_return(nil)
     end
 
-    context "when a request issue is not found" do
-      before do
-        allow(RequestIssue).to receive(:find).and_raise(ActiveRecord::RecordNotFound)
-      end
-
-      it "raises a DecisionReviewUpdateMissingIssueError with the correct message" do
-        expect { subject.perform! }.to raise_error(Caseflow::Error::DecisionReviewUpdateMissingIssueError,
-                                                   "Request issue not found for REFERENCE_ID: #{invalid_reference_id}")
-      end
+    it "raises a DecisionReviewUpdateMissingIssueError with the correct message" do
+      expect { subject.perform! }.to raise_error(
+        Caseflow::Error::DecisionReviewUpdateMissingIssueError,
+        "Request issue not found for REFERENCE_ID: #{invalid_reference_id}"
+      )
     end
   end
 
   context "when handling errors in #process_ineligible_to_ineligible_issues!" do
     let(:invalid_reference_id) { "12345" }
-    let(:ineligible_issue_data) { [{ reference_id: invalid_reference_id, ineligible_reason: "appeal_to_appeal" }] }
 
     before do
       subject.instance_variable_set(:@ineligible_to_ineligible_issue_data, [{ reference_id: invalid_reference_id }])
-
-      allow_any_instance_of(RequestIssue).to receive(:closed_at).and_return(nil)
-      allow_any_instance_of(RequestIssue).to receive(:save!).and_return(true)
+      allow(review.request_issues).to receive(:find_by)
+        .with(reference_id: invalid_reference_id)
+        .and_return(nil)
     end
 
-    context "when a request issue is not found" do
-      before do
-        allow(RequestIssue).to receive(:find).and_raise(ActiveRecord::RecordNotFound)
-      end
-
-      it "raises a DecisionReviewUpdateMissingIssueError with the correct message" do
-        expect { subject.perform! }.to raise_error(Caseflow::Error::DecisionReviewUpdateMissingIssueError,
-                                                   "Request issue not found for REFERENCE_ID: #{invalid_reference_id}")
-      end
+    it "raises a DecisionReviewUpdateMissingIssueError with the correct message" do
+      expect { subject.perform! }.to raise_error(
+        Caseflow::Error::DecisionReviewUpdateMissingIssueError,
+        "Request issue not found for REFERENCE_ID: #{invalid_reference_id}"
+      )
     end
   end
 end
 
-describe "additional tests " do
+describe "additional positive tests" do
   let(:user) { create(:user) }
   let(:review) { create(:supplemental_claim) }
   let(:parser) do
@@ -388,5 +376,317 @@ describe "additional tests " do
 
       request_issues_update_event.process_issues!
     end
+  end
+
+  context "new tests" do
+    let(:user) { create(:user) }
+    let(:review) { create(:supplemental_claim) }
+
+    let(:parser) do
+      json_path = Rails.root.join("app", "services", "events", "decision_review_updated",
+                                  "decision_review_updated_example.json")
+      json_content = File.read(json_path)
+      Events::DecisionReviewUpdated::DecisionReviewUpdatedParser.new(nil, JSON.parse(json_content))
+    end
+
+    let(:request_issues_update_event) do
+      RequestIssuesUpdateEvent.new(
+        user: user,
+        review: review,
+        parser: parser
+      )
+    end
+
+    describe "#perform!" do
+      context "when processing all types of issues successfully" do
+        let!(:existing_issue1) { create(:request_issue, decision_review: review, reference_id: "1") }
+        let!(:existing_issue2) { create(:request_issue, decision_review: review, reference_id: "2") }
+
+        let(:added_issue_data) do
+          [{
+            reference_id: "3",
+            ri_contested_issue_description: "Added Issue",
+            ri_benefit_type: "compensation"
+          }]
+        end
+
+        let(:removed_issue_data) { [{ reference_id: "1" }] }
+        let(:edited_issue_data) do
+          [{ reference_id: "2",
+             edited_description: "Edited Issue", decision_date: Time.zone.today }]
+        end
+        let(:withdrawn_issue_data) { [{ reference_id: "2", closed_at: Time.zone.now }] }
+
+        before do
+          # Create the added issue in the database before running the test
+          create(:request_issue, decision_review: review, reference_id: "3")
+
+          request_issues_update_event.instance_variable_set(:@added_issue_data, added_issue_data)
+          request_issues_update_event.instance_variable_set(:@removed_issue_data, removed_issue_data)
+          request_issues_update_event.instance_variable_set(:@edited_issue_data, edited_issue_data)
+          request_issues_update_event.instance_variable_set(:@withdrawn_issue_data, withdrawn_issue_data)
+
+          allow(request_issues_update_event).to receive(:validate_before_perform).and_return(true)
+          allow(request_issues_update_event).to receive(:processed?).and_return(false)
+          allow(review).to receive(:mark_rating_request_issues_to_reassociate!)
+          allow(request_issues_update_event).to receive(:process_job)
+        end
+
+        it "marks the issue as removed" do
+          request_issues_update_event.perform!
+          existing_issue1.reload
+          expect(existing_issue1.closed_status).to eq("removed")
+          expect(existing_issue1.closed_at).not_to be_nil
+        end
+      end
+    end
+
+    # 1. Testing #process_added_issues!
+    describe "#process_added_issues!" do
+      context "when there are added issues" do
+        let!(:existing_issue1) { create(:request_issue, decision_review: review, reference_id: "1") }
+        let!(:existing_issue2) { create(:request_issue, decision_review: review, reference_id: "2") }
+
+        let(:added_issue_data) do
+          [
+            {
+              reference_id: "3",
+              ri_contested_issue_description: "Issue 3",
+              ri_benefit_type: "compensation"
+            },
+            {
+              reference_id: "4",
+              ri_contested_issue_description: "Issue 4",
+              ri_benefit_type: "compensation"
+            }
+          ]
+        end
+
+        before do
+          # Create the added issues in the database
+          create(:request_issue, decision_review: review, reference_id: "3")
+          create(:request_issue, decision_review: review, reference_id: "4")
+
+          request_issues_update_event.instance_variable_set(:@added_issue_data, added_issue_data)
+        end
+        # rubocop: disable Lint/AmbiguousBlockAssociation
+
+        it "processes existing added issues without creating new ones" do
+          expect { request_issues_update_event.process_added_issues! }
+            .not_to change { review.request_issues.count }
+          expect(review.request_issues.exists?(reference_id: "3")).to be_truthy
+          expect(review.request_issues.exists?(reference_id: "4")).to be_truthy
+        end
+      end
+
+      context "when there are no added issues" do
+        before do
+          request_issues_update_event.instance_variable_set(:@added_issue_data, [])
+        end
+
+        it "does not create any new request issues" do
+          expect { request_issues_update_event.process_added_issues! }.not_to change { review.request_issues.count }
+        end
+      end
+    end
+
+    # 2. Testing #process_removed_issues!
+    describe "#process_removed_issues!" do
+      context "when there are removed issues" do
+        let!(:existing_issue) { create(:request_issue, decision_review: review, reference_id: "1") }
+        let(:removed_issue_data) { [{ reference_id: "1" }] }
+
+        before do
+          request_issues_update_event.instance_variable_set(:@removed_issue_data, removed_issue_data)
+        end
+
+        it "marks the issue as removed" do
+          request_issues_update_event.process_removed_issues!
+          existing_issue.reload
+          expect(existing_issue.closed_status).to eq("removed")
+          expect(existing_issue.closed_at).not_to be_nil
+        end
+      end
+
+      context "when there are no removed issues" do
+        before do
+          request_issues_update_event.instance_variable_set(:@removed_issue_data, [])
+        end
+
+        it "does not alter any request issues" do
+          expect { request_issues_update_event.process_removed_issues! }.not_to change { review.request_issues.count }
+        end
+      end
+    end
+
+    # 3. Testing #process_withdrawn_issues!
+    describe "#process_withdrawn_issues!" do
+      context "when there are withdrawn issues" do
+        let!(:existing_issue) { create(:request_issue, decision_review: review, reference_id: "2") }
+        let(:withdrawn_issue_data) { [{ reference_id: "2", closed_at: Time.zone.now }] }
+
+        before do
+          request_issues_update_event.instance_variable_set(:@withdrawn_issue_data, withdrawn_issue_data)
+        end
+
+        it "marks the issue as withdrawn with the correct closed_at date" do
+          request_issues_update_event.send(:process_withdrawn_issues!)
+          existing_issue.reload
+          expect(existing_issue.closed_status).to eq("withdrawn")
+          expect(existing_issue.closed_at).to be_within(1.second).of(withdrawn_issue_data.first[:closed_at])
+        end
+      end
+    end
+
+    # 4. Testing #process_edited_issues!
+    describe "#process_edited_issues!" do
+      context "when there are edited issues" do
+        let!(:existing_issue) do
+          create(:request_issue, decision_review: review, reference_id: "2", decision_date: 1.day.ago)
+        end
+
+        let(:edited_issue_data) do
+          [{ reference_id: "2", edited_description: "Updated Issue", decision_date: Time.zone.today }]
+        end
+
+        before do
+          request_issues_update_event.instance_variable_set(:@edited_issue_data, edited_issue_data)
+        end
+
+        it "updates the edited_description and decision date of the issue" do
+          request_issues_update_event.send(:process_edited_issues!)
+          existing_issue.reload
+          expect(existing_issue.edited_description).to eq("Updated Issue")
+          expect(existing_issue.decision_date).to eq(Time.zone.today)
+        end
+      end
+    end
+
+    # 5. Testing #process_eligible_to_ineligible_issues!
+    describe "#process_eligible_to_ineligible_issues!" do
+      context "when there are eligible to ineligible issues" do
+        let!(:existing_issue) do
+          create(:request_issue, decision_review: review, reference_id: "2", ineligible_reason: nil)
+        end
+        let(:issue_data) do
+          [{ reference_id: "2", ineligible_reason: "duplicate_of_rating_issue_in_active_review",
+             closed_at: Time.zone.now }]
+        end
+
+        before do
+          request_issues_update_event.instance_variable_set(:@eligible_to_ineligible_issue_data, issue_data)
+        end
+
+        it "updates the issue to be ineligible with the correct reason and closed_at date" do
+          request_issues_update_event.send(:process_eligible_to_ineligible_issues!)
+          existing_issue.reload
+          expect(existing_issue.ineligible_reason).to eq("duplicate_of_rating_issue_in_active_review")
+          expect(existing_issue.closed_at).to be_within(1.second).of(issue_data.first[:closed_at])
+          expect(existing_issue.contention_reference_id).to be_nil
+        end
+      end
+    end
+
+    # 6. Testing #process_ineligible_to_eligible_issues!
+    describe "#process_ineligible_to_eligible_issues!" do
+      context "when there are ineligible to eligible issues" do
+        let!(:existing_issue) do
+          create(:request_issue, decision_review: review, reference_id: "2",
+                                 ineligible_reason: "untimely", closed_at: Time.zone.now)
+        end
+        let(:issue_data) { [{ reference_id: "2" }] }
+
+        before do
+          request_issues_update_event.instance_variable_set(:@ineligible_to_eligible_issue_data, issue_data)
+        end
+
+        it "updates the issue to be eligible by clearing ineligible_reason and closed_at" do
+          request_issues_update_event.send(:process_ineligible_to_eligible_issues!)
+          existing_issue.reload
+          expect(existing_issue.ineligible_reason).to be_nil
+          expect(existing_issue.closed_at).to be_nil
+        end
+      end
+
+      context "when there are no ineligible to eligible issues" do
+        before do
+          request_issues_update_event.instance_variable_set(:@ineligible_to_eligible_issue_data, [])
+        end
+
+        it "does not alter any request issues" do
+          expect { request_issues_update_event.send(:process_ineligible_to_eligible_issues!) }
+            .not_to change { review.request_issues.pluck(:ineligible_reason) }
+        end
+      end
+    end
+
+    # 7. Testing #process_ineligible_to_ineligible_issues!
+    describe "#process_ineligible_to_ineligible_issues!" do
+      context "when there are ineligible to ineligible issues with new reasons" do
+        let!(:existing_issue) do
+          create(:request_issue, decision_review: review, reference_id: "2", ineligible_reason: "untimely",
+                                 closed_at: Time.zone.now)
+        end
+        let(:issue_data) do
+          [{ reference_id: "2", ineligible_reason: "higher_level_review_to_higher_level_review",
+             closed_at: Time.zone.now }]
+        end
+
+        before do
+          request_issues_update_event.instance_variable_set(:@ineligible_to_ineligible_issue_data, issue_data)
+        end
+
+        it "updates the issue with the new ineligible reason and closed_at date" do
+          request_issues_update_event.send(:process_ineligible_to_ineligible_issues!)
+          existing_issue.reload
+          expect(existing_issue.ineligible_reason).to eq("higher_level_review_to_higher_level_review")
+          expect(existing_issue.closed_at).to be_within(1.second).of(issue_data.first[:closed_at])
+          expect(existing_issue.contention_reference_id).to be_nil
+        end
+      end
+
+      context "when there are no ineligible to ineligible issues" do
+        before do
+          request_issues_update_event.instance_variable_set(:@ineligible_to_ineligible_issue_data, [])
+        end
+
+        it "does not alter any request issues" do
+          expect { request_issues_update_event.send(:process_ineligible_to_ineligible_issues!) }
+            .not_to change { review.request_issues.pluck(:ineligible_reason) }
+        end
+      end
+    end
+
+    # 8. Testing #calculate_added_issues
+    describe "#calculate_added_issues" do
+      let!(:existing_issue1) { create(:request_issue, decision_review: review, reference_id: "3") }
+      let!(:existing_issue2) { create(:request_issue, decision_review: review, reference_id: "4") }
+
+      let(:added_issue_data) do
+        [
+          {
+            reference_id: "3",
+            ri_contested_issue_description: "New Issue 3",
+            ri_benefit_type: "compensation"
+          },
+          {
+            reference_id: "4",
+            ri_contested_issue_description: "New Issue 4",
+            ri_benefit_type: "pension"
+          }
+        ]
+      end
+
+      before do
+        request_issues_update_event.instance_variable_set(:@added_issue_data, added_issue_data)
+      end
+
+      it "fetches existing request issues from the added issue data" do
+        added_issues = request_issues_update_event.send(:calculate_added_issues)
+        expect(added_issues.size).to eq(2)
+        expect(added_issues.map(&:reference_id)).to include("3", "4")
+      end
+    end
+    # rubocop: enable Lint/AmbiguousBlockAssociation
   end
 end

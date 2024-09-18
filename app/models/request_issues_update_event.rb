@@ -71,11 +71,12 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     return if @removed_issue_data.empty?
 
     @removed_issue_data.map do |issue_data|
-      begin
-        review.request_issues.find(issue_data[:reference_id])
-      rescue ActiveRecord::RecordNotFound
-        raise Caseflow::Error::DecisionReviewUpdateMissingIssueError, issue_data[:reference_id]
+      issue = review.request_issues.find_by(reference_id: issue_data[:reference_id])
+      unless issue
+        fail Caseflow::Error::DecisionReviewUpdateMissingIssueError, issue_data[:reference_id]
       end
+
+      issue
     end
   end
 
@@ -90,16 +91,16 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   private
 
   def process_edited_issues!
-    return if edited_issues.empty?
+    return if @edited_issue_data.empty?
 
-    edited_issue_data.each do |edited_issue|
-      begin
-        request_issue = RequestIssue.find(edited_issue[:reference_id].to_s)
-      rescue ActiveRecord::RecordNotFound
-        raise Caseflow::Error::DecisionReviewUpdateMissingIssueError, edited_issue[:reference_id]
+    @edited_issue_data.each do |issue_data|
+      request_issue = review.request_issues.find_by(reference_id: issue_data[:reference_id])
+      unless request_issue
+        fail Caseflow::Error::DecisionReviewUpdateMissingIssueError, issue_data[:reference_id]
       end
-      edit_contention_text(edited_issue, request_issue)
-      edit_decision_date(edited_issue, request_issue)
+
+      request_issue.save_edited_contention_text!(issue_data[:edited_description])
+      request_issue.save_decision_date!(issue_data[:decision_date]) if issue_data[:decision_date]
     end
   end
 
@@ -135,7 +136,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     # method in the DecisionReview model which uses :requested_issue_id key
     # when in our case parser returns issue_data with :reference_id key
     begin
-      return review.request_issues.find(issue_data[:reference_id]) if issue_data[:reference_id]
+      return review.request_issues.find_by(reference_id: issue_data[:reference_id]) if issue_data[:reference_id]
     rescue ActiveRecord::RecordNotFound
       raise Caseflow::Error::DecisionReviewUpdateMissingIssueError, issue_data[:reference_id]
     end
@@ -203,11 +204,11 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     return if @withdrawn_issue_data.empty?
 
     @withdrawn_issue_data.each do |withdrawn_issue|
-      begin
-        request_issue = RequestIssue.find(withdrawn_issue[:reference_id].to_s)
-      rescue ActiveRecord::RecordNotFound
-        raise Caseflow::Error::DecisionReviewUpdateMissingIssueError, withdrawn_issue[:reference_id]
+      issue = request_issue = RequestIssue.find_by(reference_id: withdrawn_issue[:reference_id].to_s)
+      unless issue
+        fail Caseflow::Error::DecisionReviewUpdateMissingIssueError, withdrawn_issue[:reference_id]
       end
+
       request_issue.withdraw!(withdrawn_issue[:closed_at])
     end
   end
@@ -215,60 +216,47 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   def process_eligible_to_ineligible_issues!
     return if @eligible_to_ineligible_issue_data.empty?
 
-    @eligible_to_ineligible_issue_data.each do |eligible_to_ineligible_issue|
-      begin
-        request_issue = RequestIssue.find(eligible_to_ineligible_issue[:reference_id].to_s)
-        next if !request_issue.ineligible_reason.nil?
-      rescue ActiveRecord::RecordNotFound
-        raise Caseflow::Error::DecisionReviewUpdateMissingIssueError, eligible_to_ineligible_issue[:reference_id]
+    @eligible_to_ineligible_issue_data.each do |issue_data|
+      request_issue = review.request_issues.find_by(reference_id: issue_data[:reference_id])
+      unless request_issue
+        fail Caseflow::Error::DecisionReviewUpdateMissingIssueError, issue_data[:reference_id]
       end
 
-      request_issue.update(ineligible_reason: eligible_to_ineligible_issue.ineligible_reason,
-                           closed_at: ineligible_to_ineligible_issue.closed_at)
+      request_issue.update(
+        ineligible_reason: issue_data[:ineligible_reason],
+        closed_at: issue_data[:closed_at],
+        contention_reference_id: nil
+      )
     end
   end
 
   def process_ineligible_to_eligible_issues!
     return if @ineligible_to_eligible_issue_data.empty?
 
-    @ineligible_to_eligible_issue_data.each do |ineligible_to_eligible_issue|
-      begin
-        request_issue = RequestIssue.find(ineligible_to_eligible_issue[:reference_id].to_s)
-        next if request_issue.ineligible_reason.nil?
-      rescue ActiveRecord::RecordNotFound
-        raise Caseflow::Error::DecisionReviewUpdateMissingIssueError, ineligible_to_eligible_issue[:reference_id]
+    @ineligible_to_eligible_issue_data.each do |issue_data|
+      issue = review.request_issues.find_by(reference_id: issue_data[:reference_id])
+      unless issue
+        fail Caseflow::Error::DecisionReviewUpdateMissingIssueError, issue_data[:reference_id]
       end
 
-      request_issue.update(ineligible_reason: nil, closed_status: nil, closed_at: nil)
+      issue.update(ineligible_reason: nil, closed_status: nil, closed_at: nil)
     end
   end
 
   def process_ineligible_to_ineligible_issues!
     return if @ineligible_to_ineligible_issue_data.empty?
 
-    @ineligible_to_ineligible_issue_data.each do |ineligible_to_ineligible_issue|
-      begin
-        request_issue = RequestIssue.find(ineligible_to_ineligible_issue[:reference_id].to_s)
-        next if request_issue.ineligible_reason.nil?
-      rescue ActiveRecord::RecordNotFound
-        raise Caseflow::Error::DecisionReviewUpdateMissingIssueError, ineligible_to_ineligible_issue[:reference_id]
+    @ineligible_to_ineligible_issue_data.each do |issue_data|
+      issue = review.request_issues.find_by(reference_id: issue_data[:reference_id])
+      unless issue
+        fail Caseflow::Error::DecisionReviewUpdateMissingIssueError, issue_data[:reference_id]
       end
-      request_issue.update(ineligible_reason: ineligible_to_ineligible_issue.ineligible_reason,
-                           closed_at: ineligible_to_ineligible_issue.closed_at)
-    end
-  end
 
-  def edit_contention_text(edited_issue, request_issue)
-    # method is updated since parser returns issue_data with :request_issue_id key instead :edited_description
-    if edited_issue[:edited_description]
-      request_issue.save_edited_contention_text!(edited_issue[:edited_description])
-    end
-  end
-
-  def edit_decision_date(edited_issue, request_issue)
-    # method is updated since parser returns issue_data with :decision_date key instead :edited_decision_date
-    if edited_issue[:decision_date]
-      request_issue.save_decision_date!(edited_issue[:decision_date])
+      issue.update(
+        ineligible_reason: issue_data[:ineligible_reason],
+        closed_at: issue_data[:closed_at],
+        contention_reference_id: nil
+      )
     end
   end
 end
