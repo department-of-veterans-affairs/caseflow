@@ -789,7 +789,6 @@ export default class QueueTable extends React.PureComponent {
       }else {
          currentCases = rowObjects ? rowObjects.length : 0
       }
-      console.log(numberOfPages,currentCases,rowObjects,'+++++++++');
       paginationElements = (
         <Pagination
           pageSize={casesPerPage || DEFAULT_CASES_PER_PAGE}
