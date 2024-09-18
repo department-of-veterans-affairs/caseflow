@@ -8,7 +8,7 @@ class Events::DecisionReviewUpdated::UpdateClaimReview
       event = params[:event]
       parser = params[:parser]
       claim_review = EndProductEstablishment.find_by(
-        reference_id: parser.end_product_establishments_reference_id
+        reference_id: parser.end_product_establishment_reference_id
       )&.source
       claim_review.update!(legacy_opt_in_approved: parser.claim_review_legacy_opt_in_approved)
       EventRecord.create!(event: event, evented_record: claim_review)
