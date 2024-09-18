@@ -14,6 +14,7 @@ import ApiUtil from '../util/ApiUtil';
 import Button from '../components/Button';
 import Alert from 'app/components/Alert';
 import CollapsibleTable from './components/CollapsibleTable';
+import COPY from '../../COPY';
 
 class CaseDistributionTest extends React.PureComponent {
   constructor(props) {
@@ -44,7 +45,7 @@ class CaseDistributionTest extends React.PureComponent {
       this.setState({
         isReseedingAod: false,
         showAlert: true,
-        alertMsg: 'Successfully Completed Seeding Aod Hearing Held Appeals.',
+        alertMsg: '{COPY.TEST_RESEED_AOD_ALERTMSG}',
       });
     }, (err) => {
       console.warn(err);
@@ -63,7 +64,7 @@ class CaseDistributionTest extends React.PureComponent {
       this.setState({
         isReseedingNonAod: false,
         showAlert: true,
-        alertMsg: 'Successfully Completed Seeding Non Aod Hearing Held Appeals.',
+        alertMsg: '{COPY.TEST_RESEED_NON_AOD_ALERTMSG}',
       });
     }, (err) => {
       console.warn(err);
@@ -82,7 +83,7 @@ class CaseDistributionTest extends React.PureComponent {
       this.setState({
         isReseedingAmaDocketGoals: false,
         showAlert: true,
-        alertMsg: 'Successfully Completed Seeding Ama Docket Time Goal Non Priority Appeals.',
+        alertMsg: '{COPY.TEST_RESEED_AMA_DOCKET_GOALS_ALERTMSG}',
       });
     }, (err) => {
       console.warn(err);
@@ -101,7 +102,7 @@ class CaseDistributionTest extends React.PureComponent {
       this.setState({
         isReseedingDocketPriority: false,
         showAlert: true,
-        alertMsg: 'Successfully Completed Seeding Docket Type Appeals.',
+        alertMsg: '{COPY.TEST_RESEED_AMA_DOCKET_PRIORITY_ALERTMSG}',
       });
     }, (err) => {
       console.warn(err);
@@ -120,7 +121,7 @@ class CaseDistributionTest extends React.PureComponent {
       this.setState({
         isReseedingNonSSCAVLJAppeals: false,
         showAlert: true,
-        alertMsg: 'Successfully Completed Seeding non-SSC AVLJ and Appeals.',
+        alertMsg: '{COPY.TEST_RESEED_NONSSCAVLJAPPEALS_ALERTMSG}',
       });
     }, (err) => {
       console.warn(err);
@@ -140,7 +141,7 @@ class CaseDistributionTest extends React.PureComponent {
         isReturnLegacyAppeals: false,
         showLegacyAppealsAlert: true,
         legacyAppealsAlertType: 'success',
-        legacyAppealsAlertMsg: 'Successfully Completed Return Legacy Appeals To Board Job.',
+        legacyAppealsAlertMsg: '{COPY.TEST_RESEED_RETURN_LEGACY_APPEALS_ALERTMSG}',
       });
     }, (err) => {
       console.warn(err);
@@ -191,43 +192,53 @@ class CaseDistributionTest extends React.PureComponent {
                     component={() => {
                       return (
                         <div>
-                          <h1 id="top">Case Distribution Levers Dashboard</h1>
-                          <p>This page is for lower env use only and provides a convient place to review{' '}
-                          Case Distribution related data</p>
-                          <h2>Navigation</h2>
+                          <h1 id="top">{COPY.TEST_CASE_DISTRIBUTION_LEVERS_DASHBOARD_TITLE}</h1>
+                          <p>{COPY.TEST_CASE_DISTRIBUTION_LEVERS_DESCRIPTION}</p>
+                          <h2>{COPY.TEST_NAVIGATION_H2}</h2>
                           <ul>
                             <li>
                               <a href="#levers">
-                                <button className="btn btn-primary">Case Distribution Levers</button>
+                                <button className="btn btn-primary">
+                                  {COPY.TEST_CASE_DISTRIBUTION_LEVERS_BUTTON}
+                                </button>
                               </a>
                             </li>
                             <li>
                               <a href="#audit">
-                                <button className="btn btn-primary">Case Distribution Audit Levers</button>
+                                <button className="btn btn-primary">
+                                  {COPY.TEST_CASE_DISTRIBUTION_AUDIT_LEVERS_BUTTON}
+                                </button>
                               </a>
                             </li>
                             <li>
                               <a href="#access_csvs">
-                                <button className="btn btn-primary">Access CSVs</button>
+                                <button className="btn btn-primary">
+                                  {COPY.TEST_ACCESS_CSVS_BUTTON}
+                                </button>
                               </a>
                             </li>
                             <li>
                               <a href="#run_seeds">
-                                <button className="btn btn-primary">Create Seeded Appeals</button>
+                                <button className="btn btn-primary">
+                                  {COPY.TEST_CREATE_SEEDED_APPEALS_TITLE}
+                                </button>
                               </a>
                             </li>
                             <li>
-                              <a href="#case_movement"><button className="btn btn-primary">Case Movement</button></a>
+                              <a href="#case_movement">
+                              <button className="btn btn-primary">
+                                {COPY.TEST_CASE_MOVEMENT_BUTTON}
+                              </button></a>
                             </li>
                             <li>
                               <a href="#log_of_most_recent_appeals">
                                 <button className="btn btn-primary">
-                                  Log of 15 most recent appeals moved to location 63
+                                  {COPY.LOG_OF_MOST_RECENT_APPEALS_BUTTON}
                                 </button>
                               </a>
                             </li>
                           </ul>
-                          <h2 id="levers"> Case Distribution Levers </h2>
+                          <h2 id="levers">{COPY.TEST_CASE_DISTRIBUTION_LEVERS_H2}</h2>
                           <table
                             id="case-table-description"
                             className="usa-table-borderless undefined"
@@ -235,23 +246,23 @@ class CaseDistributionTest extends React.PureComponent {
                           >
                             <thead>
                               <tr>
-                                <td> ID </td>
-                                <td> Title </td>
-                                <td> Item </td>
-                                <td> Control Group </td>
-                                <td> Lever Group </td>
-                                <td> Lever Group Order </td>
-                                <td> Description </td>
-                                <td> Data Type </td>
-                                <td> Value </td>
-                                <td> Min / Max Value </td>
-                                <td> Unit </td>
-                                <td> Option Values</td>
-                                <td> Toggle Active </td>
-                                <td> Disabled In UI</td>
-                                <td> Algorithms Used </td>
-                                <td> Created At </td>
-                                <td> Updated At </td>
+                                <td> {COPY.TEST_ID_TD}</td>
+                                <td> {COPY.TEST_TITLE_TD}</td>
+                                <td> {COPY.TEST_ITEM_TD}</td>
+                                <td> {COPY.TEST_CONTROL_GROUP_TD}</td>
+                                <td> {COPY.TEST_LEVER_GROUP_TD}</td>
+                                <td> {COPY.TEST_LEVER_GROUP_ORDER_TD}</td>
+                                <td> {COPY.TEST_DESCRIPTION_TD}</td>
+                                <td> {COPY.TEST_DATA_TYPE_TD}</td>
+                                <td> {COPY.TEST_VALUE_TD}</td>
+                                <td> {COPY.TEST_MIN_MAX_VALUE_TD}</td>
+                                <td> {COPY.TEST_UNIT_TD}</td>
+                                <td> {COPY.TEST_OPTION_VALUES_TD}</td>
+                                <td> {COPY.TEST_TOGGLE_ACTIVE_TD}</td>
+                                <td> {COPY.TEST_DISABLED_IN_UI_TD}</td>
+                                <td> {COPY.TEST_ALGORITHMS_USED_TD}</td>
+                                <td> {COPY.TEST_CREATED_AT_TD}</td>
+                                <td> {COPY.TEST_UPDATED_AT_TD}</td>
                               </tr>
                             </thead>
                             <tbody>
@@ -281,20 +292,20 @@ class CaseDistributionTest extends React.PureComponent {
                             </tbody>
                           </table>
                           <hr />
-                          <h2 id="audit"> Case Distribution Audit Levers </h2>
+                          <h2 id="audit">{COPY.TEST_CASE_DISTRIBUTION_AUDIT_LEVERS_BUTTON}</h2>
                           <table>
                             <thead>
                               <tr>
-                                <td> ID </td>
-                                <td> Lever ID </td>
-                                <td> Created At </td>
-                                <td> Previous Value</td>
-                                <td> Update Value </td>
-                                <td> User CSS ID </td>
-                                <td> User Name</td>
-                                <td> Lever Title </td>
-                                <td> Lever Data Type </td>
-                                <td> Lever Unit </td>
+                                <td>{COPY.TEST_ID_TD}</td>
+                                <td>{COPY.TEST_LEVER_ID_TD}</td>
+                                <td>{COPY.TEST_CREATED_AT_TD}</td>
+                                <td>{COPY.TEST_PREVIOUS_VALUE_TD}</td>
+                                <td>{COPY.TEST_UPDATE_VALUE_TD}</td>
+                                <td>{COPY.TEST_USER_CSS_ID_TD}</td>
+                                <td>{COPY.TEST_USER_NAME_TD}</td>
+                                <td>{COPY.TEST_LEVER_TITLE_TD}</td>
+                                <td>{COPY.TEST_LEVER_DATA_TYPE_TD}</td>
+                                <td>{COPY.TEST_LEVER_UNIT_TD}</td>
                               </tr>
                             </thead>
                             <tbody>
@@ -320,79 +331,79 @@ class CaseDistributionTest extends React.PureComponent {
                           <hr />
                           <div className="lever-content">
                             <div className="lever-head csv-download-alignment">
-                              <h2 id="access_csvs">Access CSVs</h2>
+                              <h2 id="access_csvs">{COPY.TEST_ACCESS_CSVS_BUTTON}</h2>
                             </div>
                             <div className="lever-left csv-download-left">
                               <a href="/case_distribution_levers_tests/appeals_ready_to_distribute?csv=1">
                                 <Button classNames={['usa-button-active']}>
-                                    Download Appeals Ready to Distribute CSV
+                                  {COPY.TEST_DOWNLOAD_APPEALS_READY_BUTTON}
                                 </Button>
                               </a>
                             </div>
                             <div className="lever-right csv-download-right">
-                              <strong>Download Appeals Ready to Distribute CSV</strong> - Appeals with an assigned at date: Includes appeals with additional date conditions (like AMA non-priority appeals with a Days Before Goal date, or appeals within their affinity period, or tied to a specific judge) which may not yet be distributable to any judge.
+                              <strong>{COPY.TEST_DOWNLOAD_APPEALS_READY_BUTTON}</strong>{COPY.TEST_DOWNLOAD_APPEALS_READY_BUTTON_DESCRIPTION}
                             </div>
                             <div className="lever-left csv-download-left">
                               <a href="/case_distribution_levers_tests/appeals_non_priority_ready_to_distribute?csv=1">
                                 <Button classNames={['usa-button-active']}>
-                                  Download AMA Non-priority Distributable CSV
+                                  {COPY.TEST_DOWNLOAD_AMA_NON_PRIO_DISTR_BUTTON}
                                 </Button>
                               </a>
                             </div>
                             <div className="lever-right csv-download-right">
-                              <strong>Download AMA Non-priority Distributable CSV</strong> - Subset of Appeals Ready to Distribute: Only includes AMA non-priority appeals that are distributable based on the additional date criteria for Days Before Goal date. (If the lever is turned on, appeal meets goal date criteria; or any ready to distribute appeals in that docket if the lever is off).
+                              <strong>{COPY.TEST_DOWNLOAD_AMA_NON_PRIO_DISTR_BUTTON}</strong>{COPY.TEST_DOWNLOAD_AMA_NON_PRIO_DISTR_BUTTON_DESCRIPTION}
                             </div>
                             <div className="lever-left csv-download-left">
                               <a href="/case_distribution_levers_tests/appeals_tied_to_non_ssc_avlj?csv=1">
                                 <Button classNames={['usa-button-active']}>
-                                  Download Appeals tied to Non-SSC AVLJs CSV
+                                  {COPY.TEST_DOWNLOAD_APPEALS_TIED_NONSSC_AVLJS_BUTTON}
                                 </Button>
                               </a>
                             </div>
                             <div className="lever-right csv-download-right">
-                              <strong>Download Appeals tied to Non-SSC AVLJs CSV</strong> - List of assigned/distributed appeals for which the hearing judge or the deciding judge is a Non-SSC AVLJ.
+                              <strong>{COPY.TEST_DOWNLOAD_APPEALS_TIED_NONSSC_AVLJS_BUTTON}</strong>{COPY.TEST_DOWNLOAD_APPEALS_TIED_NONSSC_AVLJS_BUTTON_DESCRIPTION}
                             </div>
                             <div className="lever-left csv-download-left">
                               <a href="/case_distribution_levers_tests/ineligible_judge_list?csv=1">
-                                <Button classNames={['usa-button-active']}>Download Ineligible Judge List
+                                <Button classNames={['usa-button-active']}>{COPY.TEST_DOWNLOAD_INELIGIBLE_JUDGE_BUTTON}
                                 </Button>
                               </a>
                             </div>
                             <div className="lever-right csv-download-right">
-                              <strong>Download Ineligible Judge List</strong> - Very specific: Export of judges who are considered ineligible based on their current attributes. (Does or does not include those with a checkbox making them excluded from appeals.)
+                              <strong>{COPY.TEST_DOWNLOAD_INELIGIBLE_JUDGE_BUTTON}</strong>{COPY.TEST_DOWNLOAD_INELIGIBLE_JUDGE_BUTTON_DESCRIPTION}
                             </div>
                             <div className="lever-left csv-download-left">
                               <a href="/case_distribution_levers_tests/appeals_distributed?csv=1">
-                                <Button classNames={['usa-button-active']}>Download Distributed Appeals CSV
+                                <Button classNames={['usa-button-active']}>{COPY.TEST_DOWNLOAD_DISTRIBUTED_APPEALS_BUTTON}
                                 </Button>
                               </a>
                             </div>
                             <div className="lever-right csv-download-right">
-                              <strong>Download Distributed Appeals CSV</strong> - Includes appeals assigned to judges since the latest deployment in this demo environment (varies).
+                              <strong>{COPY.TEST_DOWNLOAD_DISTRIBUTED_APPEALS_BUTTON}</strong>{COPY.TEST_DOWNLOAD_DISTRIBUTED_APPEALS_BUTTON_DESCRIPTION}
                             </div>
                             <div className="lever-left csv-download-left">
                               <a href="/case_distribution_levers_tests/appeals_in_location_63_in_past_2_days?csv=1">
                                 <Button classNames={['usa-button-active']}>
-                                  Download Loc 63 Appeals Last 48 hrs CSV
+                                  {COPY.TEST_DOWNLOAD_LOC_63_APPEALS_BUTTON}
                                 </Button>
                               </a>
                             </div>
                             <div className="lever-right csv-download-right">
-                              <strong>Download Loc 63 Appeals Last 48 hrs CSV</strong> - Very specific. Time-ordered list of legacy appeals for which the location changed to 63. Contains all appeals that met this criteria within the last rolling 48 hours
+                              <strong>{COPY.TEST_DOWNLOAD_LOC_63_APPEALS_BUTTON}</strong>{COPY.TEST_DOWNLOAD_LOC_63_APPEALS_BUTTON_DESCRIPTION}
                             </div>
                             <div className="lever-left csv-download-left">
                               <a href="/case_distribution_levers_tests/appeals_tied_to_avljs_and_vljs?csv=1">
                                 <Button classNames={['usa-button-active']}>
-                                  Download Appeals Tied to AVLJ and VLJ CSV
+                                  {COPY.TEST_DOWNLOAD_APPEALS_TIED_AVLJ_VLJ_BUTTON}
                                 </Button>
                               </a>
                             </div>
                             <div className="lever-right csv-download-right">
-                              <strong>Download Appeals Tied to AVLJ and VLJ CSV</strong> - List of legacy appeals tied to judges that are AVLJ and VLJ
+                              <strong>{COPY.TEST_DOWNLOAD_APPEALS_TIED_AVLJ_VLJ_BUTTON}</strong>{COPY.TEST_DOWNLOAD_APPEALS_TIED_AVLJ_VLJ_BUTTON_DESCRIPTION}
                             </div>
                           </div>
                           <hr />
-                          <h2 id="run_seeds">Create Seeded Appeals</h2>
+                          <h2 id="run_seeds">{COPY.TEST_CREATE_SEEDED_APPEALS_TITLE}</h2>
                           { this.state.showAlert &&
                             <Alert type={this.state.alertType} scrollOnAlert={false}>{this.state.alertMsg}</Alert>
                           }
@@ -441,7 +452,7 @@ class CaseDistributionTest extends React.PureComponent {
                           <hr />
                           <div className="lever-content">
                             <div className="lever-head csv-download-alignment">
-                              <h2 id="case_movement">Case Movement</h2>
+                              <h2 id="case_movement">{COPY.TEST_CASE_MOVEMENT_TITLE}</h2>
                               { this.state.showLegacyAppealsAlert &&
                               <Alert type={this.state.legacyAppealsAlertType} scrollOnAlert={false}>
                                 {this.state.legacyAppealsAlertMsg}
@@ -457,14 +468,18 @@ class CaseDistributionTest extends React.PureComponent {
                               />
                             </div>
                             <div className="lever-right csv-download-right">
-                              <strong>ReturnLegacyAppealsToBoard job</strong> - Click to run the ReturnLegacyAppealsToBoard job. This job changes the location to 63 for qualifying legacy appeals.
+                              <strong>{COPY.TEST_RETURN_LEGACY_APPEALS_TO_BOARD_JOB_TITLE}</strong>{COPY.TEST_RETURN_LEGACY_APPEALS_TO_BOARD_JOB_DESCRIPTION}
                             </div>
                           </div>
                           <hr />
-                          <h2 id="log_of_most_recent_appeals">Log of 15 most recent appeals moved to location 63</h2>
+                          <h2 id="log_of_most_recent_appeals">{COPY.TEST_LOG_OF_MOST_RECENT_APPEALS_MOVED_TITLE}</h2>
                           <CollapsibleTable returnedAppealJobs={this.props.returnedAppealJobs} />
                           <hr />
-                          <a href="#top"><button className="btn btn-primary">Back to Top</button></a>
+                          <a href="#top">
+                            <button className="btn btn-primary">
+                              {COPY.TEST_BACK_TO_TOP_BUTTON}
+                            </button>
+                          </a>
                         </div>
 
                       );
