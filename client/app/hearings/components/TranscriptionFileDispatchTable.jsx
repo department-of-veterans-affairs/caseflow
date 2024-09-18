@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import QueueTable from '../../queue/QueueTable';
-import
-{ selectColumn,
+import {
+  selectColumn,
   docketNumberColumn,
   caseDetailsColumn,
   typesColumn,
@@ -19,6 +19,7 @@ import
 import { css } from 'glamor';
 import { encodeQueryParams } from '../../util/QueryParamsUtil';
 import ApiUtil from '../../util/ApiUtil';
+import WorkOrderUnassignModal from './transcriptionProcessing/WorkOrderUnassignModal';
 
 const styles = css({
   '& div *': {
@@ -68,13 +69,21 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [selectingFile, setSelectingFile] = useState(false);
   const [contractors, setContractors] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalData, setModalData] = useState({ workOrderNumber: null });
 
   /**
-   * Callback passed into the Queue Table triggered when the unnasign link is clicked
-   * @param {number} id - id of package
+   * Callback passed into the Queue Table triggered when the unassign link is clicked
+   * @param {object} workOrderNumber - work order number of package
    */
-  const unassignPackage = () => {
-    // do something
+  const unassignPackage = (workOrderNumber) => {
+    setModalData({ workOrderNumber });
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setModalData({ workOrderNumber: null });
   };
 
   /**
@@ -116,8 +125,8 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
   };
 
   /**
-   * Adds custom url params to the params used for pagenatation
-   * @returns The url params needed to handle pagenation
+   * Adds custom url params to the params used for pagination
+   * @returns The url params needed to handle pagination
    */
   const qs = encodeQueryParams({
     tab: statusFilter
@@ -255,6 +264,12 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
         onTableDataUpdated={tableDataUpdated}
         skipCache
       />
+      {isModalOpen && (
+        <WorkOrderUnassignModal
+          onClose={closeModal}
+          workOrderNumber={modalData.workOrderNumber}
+        />
+      )}
     </div>
   );
 };
