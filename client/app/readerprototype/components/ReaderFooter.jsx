@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-=======
-import get from 'lodash/get';
-import findIndex from 'lodash/findIndex';
->>>>>>> 60c454ad9b (Update lodash imports to reduce size)
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useSelector } from 'react-redux';
