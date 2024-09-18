@@ -28,9 +28,10 @@ const DocumentViewer = (props) => {
   const currentDocumentId = Number(props.match.params.docId);
   const doc = selectedDoc(props);
 
+  document.title = `${(doc && doc.type) || ''} | Document Viewer | Caseflow Reader`;
+
   useEffect(() => {
     setShowSearchBar(false);
-    document.title = `${(doc && doc.type) || ''} | Document Viewer | Caseflow Reader`;
   }, [currentDocumentId]);
 
   useEffect(() => {
