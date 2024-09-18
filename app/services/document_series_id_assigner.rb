@@ -15,7 +15,7 @@ class DocumentSeriesIdAssigner
     return unless documents_with_no_series_id.load.any?
 
     Rails.logger.info("Docs with no series id:
-       #{documents_with_no_series_id}. user: #{RequestStore.store[:current_user]}")
+       #{documents_with_no_series_id}.")
 
     # This uses the activerecord-import gem to update the series_id of multiple
     # documents using a single SQL statement. This requires Postgres 9.5+.
