@@ -77,9 +77,7 @@ const DocumentViewer = (props) => {
   };
 
   useEffect(() => {
-    if (window.location.pathname.includes('/documents/')) {
-      document.body.style.overflow = 'hidden';
-    }
+    document.body.style.overflow = 'hidden';
 
     return () => document.body.style.overflow = 'auto';
   }, [window.location.pathname]);
