@@ -29,7 +29,7 @@ const TranscriberDetails = ({ hearing }) => {
           <p>{hearing?.dateReceiptRecording || 'N/A'}</p>
         </div>
       </div>
-    </div>  
+    </div>
   );
 };
 
