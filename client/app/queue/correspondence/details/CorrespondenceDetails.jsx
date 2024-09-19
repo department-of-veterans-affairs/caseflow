@@ -23,7 +23,7 @@ import { ExternalLinkIcon } from 'app/components/icons/ExternalLinkIcon';
 import { COLORS } from 'app/constants/AppConstants';
 import Checkbox from 'app/components/Checkbox';
 import CorrespondencePaginationWrapper from 'app/queue/correspondence/CorrespondencePaginationWrapper';
-import Button from 'app/components/Button'
+import Button from 'app/components/Button';
 import Alert from 'app/components/Alert';
 import ApiUtil from 'app/util/ApiUtil';
 
