@@ -84,7 +84,8 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedParser
   end
 
   def end_product_establishment_last_synced_at
-    @payload.dig(:end_product_establishment, :last_synced_at)
+    last_synced_at_milliseconds = @payload.dig(:end_product_establishment, :last_synced_at)
+    convert_milliseconds_to_datetime(last_synced_at_milliseconds)
   end
 
   def added_issues
