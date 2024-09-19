@@ -45,5 +45,16 @@ RSpec.feature("Correspondence Details Response Letters Module") do
       expect(first_element_text).to include("Expired on")
       expect(second_element_text).not_to include("Expired on")
     end
+
+    it "Verify the Add button for Response Letters in details page" do
+      correspondence = setup_response_letters_data
+      visit "/queue/correspondence/#{correspondence.uuid}"
+      find_by_id("tasks-tabwindow-tab-2", wait: 10).click
+      perform_add_letter_popup_window
+      containers = all('.response-letter-table-borderless-no-background')
+      expect(containers.size).to eq(2)
+      perform_add_letter_popup_window
+      expect(page).not_to have_button('+ Add letter')
+    end
   end
 end
