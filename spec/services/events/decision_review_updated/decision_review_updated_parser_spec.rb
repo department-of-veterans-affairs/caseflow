@@ -100,13 +100,13 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
       end
     end
 
-    describe "end_product_establishments" do
+    describe "end_product_establishment" do
       it "returns the correct development_item_reference_id" do
-        expect(subject.end_product_establishments_development_item_reference_id).to eq("DEV123")
+        expect(subject.end_product_establishment_development_item_reference_id).to eq("DEV123")
       end
 
       it "returns the correct reference_id" do
-        expect(subject.end_product_establishments_reference_id).to eq("REF123")
+        expect(subject.end_product_establishment_reference_id).to eq("REF123")
       end
     end
 
@@ -159,7 +159,7 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
       payload.merge(
         css_id: "",
         detail_type: "",
-        end_product_establishments: {
+        end_product_establishment: {
           development_item_reference_id: "",
           reference_id: ""
         }
@@ -177,11 +177,11 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
     end
 
     it "returns nil for development_item_reference_id if the value is an empty string" do
-      expect(subject.end_product_establishments_development_item_reference_id).to be_nil
+      expect(subject.end_product_establishment_development_item_reference_id).to be_nil
     end
 
     it "returns nil for reference_id if the value is an empty string" do
-      expect(subject.end_product_establishments_reference_id).to be_nil
+      expect(subject.end_product_establishment_reference_id).to be_nil
     end
   end
 end

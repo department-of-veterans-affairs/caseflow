@@ -67,12 +67,25 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedParser
     @payload.dig(:claim_review, :legacy_opt_in_approved)
   end
 
-  def end_product_establishments_development_item_reference_id
-    @payload.dig(:end_product_establishments, :development_item_reference_id).presence
+  def end_product_establishment_development_item_reference_id
+    @payload.dig(:end_product_establishment, :development_item_reference_id).presence
   end
 
-  def end_product_establishments_reference_id
-    @payload.dig(:end_product_establishments, :reference_id).presence
+  def end_product_establishment_reference_id
+    @payload.dig(:end_product_establishment, :reference_id).presence
+  end
+
+  def end_product_establishment_code
+    @payload.dig(:end_product_establishment, :code).presence
+  end
+
+  def end_product_establishment_synced_status
+    @payload.dig(:end_product_establishment, :synced_status).presence
+  end
+
+  def end_product_establishment_last_synced_at
+    last_synced_at_milliseconds = @payload.dig(:end_product_establishment, :last_synced_at)
+    convert_milliseconds_to_datetime(last_synced_at_milliseconds)
   end
 
   def added_issues

@@ -8,9 +8,12 @@
     "same_office": true,
     "legacy_opt_in_approved": false
   },
-  "end_product_establishments": {
+  "end_product_establishment": {
     "development_item_reference_id": "DEV123",
-    "reference_id": "REF123"
+    "reference_id": "REF123",
+    "code": "030HLRNR",
+    "synced_status": "RFD",
+    "last_synced_at": 1726688419000
   },
   "added_issues": [
     {
