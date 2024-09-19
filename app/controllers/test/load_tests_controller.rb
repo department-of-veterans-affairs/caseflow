@@ -78,7 +78,7 @@ class Test::LoadTestsController < ApplicationController
                        target_data_type.all.sample[target_data_column.to_sym]
                      end
 
-    fail ActiveRecord::RecordNotFound if target_data_id.nil?
+    fail "Data returned nil when trying to find #{params[:target_type]}" if target_data_id.nil?
 
     target_data_id
   end
