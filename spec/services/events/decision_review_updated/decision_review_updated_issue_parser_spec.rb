@@ -210,12 +210,6 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser d
     end
   end
 
-  describe "#ri_veteran_participant_id" do
-    it "returns the veteran_participant_id" do
-      expect(subject.ri_veteran_participant_id).to be_nil
-    end
-  end
-
   describe "#ri_type" do
     it "returns the type" do
       expect(subject.ri_type).to eq("RequestIssue")
@@ -225,29 +219,6 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser d
   describe "#original_caseflow_request_issue_id" do
     it "returns the original caseflow request issue id" do
       expect(subject.ri_original_caseflow_request_issue_id).to eq(679)
-    end
-  end
-
-  describe "#ri_decision" do
-    it "returns the decision array" do
-      expect(subject.ri_decision).to eq(
-        [
-          {
-            id: 1738,
-            award_event_id: 679,
-            category: "decision",
-            contention_id: 35,
-            decision_source: "the source",
-            decision_recorded_time: nil,
-            decision_text: "",
-            description: nil,
-            disposition: nil,
-            dta_error_explanation: nil,
-            rating_profile_date: nil,
-            decision_finalized_time: nil
-          }
-        ]
-      )
     end
   end
 
@@ -334,10 +305,6 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser d
 
     it "returns nil for vacols_id if the value is an empty string" do
       expect(subject.ri_vacols_id).to be_nil
-    end
-
-    it "returns nil for veteran_participant_id if the value is an empty string" do
-      expect(subject.ri_veteran_participant_id).to be_nil
     end
 
     it "returns nil for type if the value is an empty string" do

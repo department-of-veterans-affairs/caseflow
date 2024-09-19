@@ -117,17 +117,17 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser
     @issue.dig(:vacols_sequence_id)
   end
 
-  def ri_veteran_participant_id
-    @issue.dig(:veteran_participant_id).presence
-  end
+  # def ri_veteran_participant_id
+  #   @issue.dig(:veteran_participant_id).presence
+  # end
 
   def ri_type
     @issue.dig(:type).presence
   end
 
-  def ri_decision
-    @issue.dig(:decision)
-  end
+  # def ri_decision
+  #   @issue.dig(:decision)
+  # end
 
   def ri_original_caseflow_request_issue_id
     @issue.dig(:original_caseflow_request_issue_id)

@@ -42,6 +42,10 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedParser
     @payload[:event_id]
   end
 
+  def claim_id
+    @payload[:claim_id]
+  end
+
   def claim_creation_time
     @payload[:claim_creation_time]
   end
@@ -71,15 +75,15 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedParser
   end
 
   def end_product_establishments_development_item_reference_id
-    @payload.dig(:end_product_establishments, :development_item_reference_id).presence
+    @payload.dig(:end_product_establishment, :development_item_reference_id).presence
   end
 
   def end_product_establishments_reference_id
-    @payload.dig(:end_product_establishments, :reference_id).presence
+    @payload.dig(:end_product_establishment, :reference_id).presence
   end
 
   def ep_code
-    @payload.dig(:ep_code)
+    @payload.dig(:end_product_establishment, :code).presence
   end
 
   def ep_code_category
