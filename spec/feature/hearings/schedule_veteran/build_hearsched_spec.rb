@@ -246,8 +246,10 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       click_dropdown(text: /^(#{time} (A|a)(M|m)( E)?)/, name: "optionalHearingTime0")
     end
 
-    def slots_select_hearing_time(time)
-      find(".time-slot-button", text: "#{time} #{Time.zone.now.zone}").click
+    def slots_select_hearing_time(time, date)
+      tz = Time.zone.parse("#{time} #{date} America/New_York").dst? ? "EDT" : "EST"
+
+      find(".time-slot-button", text: "#{time} #{tz}").click
     end
 
     def slots_select_custom_hearing_time(time)
@@ -472,7 +474,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
           expect(page).to have_content("You have successfully assigned")
 
           new_hearing = hearing_day.reload.open_hearings.first
-          scheduled_time = new_hearing.scheduled_for.in_time_zone("America/Denver").strftime("%I:%M")
+          scheduled_time = new_hearing.scheduled_for.in_time_zone("America/Denver").strftime("%H:%M")
           expect(scheduled_time).to eq(expected_time)
         end
       end
@@ -821,10 +823,16 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         expect(page).to have_content("When you schedule the hearing, the Veteran, POA, and " \
           "Judge will receive an email with connection information for the virtual hearing.")
 
+        date = if ro_key == "C"
+                 HearingDay.find_by(request_type: "C").scheduled_for.to_s
+               else
+                 HearingDay.find_by(regional_office: ro_key).scheduled_for.to_s
+               end
+
         # Only one of these three gets called, they each represent a different
         # way to select a hearing time
         select_custom_hearing_time(time) unless slots
-        slots_select_hearing_time(time) if slots == "slot"
+        slots_select_hearing_time(time, date) if slots == "slot"
         slots_select_custom_hearing_time(time) if slots == "custom"
 
         # Fill in appellant details
@@ -868,22 +876,22 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       end
     end
 
-    shared_examples "change from Central hearing" do
+    shared_examples "change from Central hearing" do |time, slots = false|
       include_context "central_hearing"
       include_context "hearing subtree"
 
       before { cache_appeals }
 
-      it_behaves_like "scheduling a virtual hearing", "C", "11:00"
+      it_behaves_like "scheduling a virtual hearing", "C", time, slots
     end
 
-    shared_examples "change from Video hearing" do
+    shared_examples "change from Video hearing" do |time, slots = false|
       include_context "video_hearing"
       include_context "hearing subtree"
 
       before { cache_appeals }
 
-      it_behaves_like "scheduling a virtual hearing", "RO39", "10:30"
+      it_behaves_like "scheduling a virtual hearing", "RO39", time, slots
     end
 
     shared_examples "withdraw a hearing" do
@@ -1071,9 +1079,9 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
         it_behaves_like "an appeal where there is an open hearing"
 
-        it_behaves_like "change from Central hearing"
+        it_behaves_like "change from Central hearing", "11:00"
 
-        it_behaves_like "change from Video hearing"
+        it_behaves_like "change from Video hearing", "10:30"
 
         it_behaves_like "withdraw a hearing"
       end
@@ -1106,9 +1114,9 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
       it_behaves_like "an appeal where there is an open hearing"
 
-      it_behaves_like "change from Central hearing"
+      it_behaves_like "change from Central hearing", "11:00 AM", "slot"
 
-      it_behaves_like "change from Video hearing"
+      it_behaves_like "change from Video hearing", "10:30 AM", "slot"
 
       it_behaves_like "withdraw a hearing"
     end
