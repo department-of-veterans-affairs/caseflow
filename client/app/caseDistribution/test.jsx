@@ -102,7 +102,7 @@ class CaseDistributionTest extends React.PureComponent {
       this.setState({
         isReseedingDocketPriority: false,
         showAlert: true,
-        alertMsg: '{COPY.TEST_RESEED_AMA_DOCKET_PRIORITY_ALERTMSG',
+        alertMsg: '{COPY.TEST_RESEED_AMA_DOCKET_PRIORITY_ALERTMSG}',
       });
     }, (err) => {
       console.warn(err);
