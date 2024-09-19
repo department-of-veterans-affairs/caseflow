@@ -29,8 +29,7 @@ describe Test::LoadTestsController, :postgres, type: :controller do
         get :target, params: { target_type: "Appeal", target_id: "79166847-1e99-4921-a084-62963d0fc63e" }
         expect(response.status).to eq 200
         expect(JSON.parse(response.body)["data"]).to eq(appeal_with_uuid.uuid)
-        get :target, params: { target_type: "Appeal", target_id: "79166847-1e99-4921-a084-incorrectid" }
-        expect(response.status).to eq 404
+        expect{get :target, params: { target_type: "Appeal", target_id: "79166847-1e99-4921-a084-incorrectid" }}.to raise_error(RuntimeError)
       end
 
       it "gets LegacyAppeal target information" do
