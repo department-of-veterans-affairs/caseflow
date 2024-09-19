@@ -100,7 +100,7 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
       end
     end
 
-    describe "end_product_establishments" do
+    describe "end_product_establishment" do
       it "returns the correct development_item_reference_id" do
         expect(subject.end_product_establishment_development_item_reference_id).to eq("DEV123")
       end
@@ -159,7 +159,7 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
       payload.merge(
         css_id: "",
         detail_type: "",
-        end_product_establishments: {
+        end_product_establishment: {
           development_item_reference_id: "",
           reference_id: ""
         }
