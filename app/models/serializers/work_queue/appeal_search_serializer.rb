@@ -6,16 +6,6 @@ class WorkQueue::AppealSearchSerializer
 
   set_type :appeal
 
-  RESTRICTED_STATUSES =
-    [
-      :distributed_to_judge,
-      :ready_for_signature,
-      :on_hold,
-      :misc,
-      :unknown,
-      :assigned_to_attorney
-    ].freeze
-
   attribute :contested_claim, &:contested_claim?
 
   attribute :mst, &:mst?
@@ -83,11 +73,10 @@ class WorkQueue::AppealSearchSerializer
   attribute :veteran_appellant_deceased, &:veteran_appellant_deceased?
 
   attribute :assigned_to_location do |object, params|
-    if RESTRICTED_STATUSES.include?(object&.status&.status)
-      unless params[:user]&.vso_employee?
+    if object&.status&.status == :distributed_to_judge
+      if params[:user]&.judge? || params[:user]&.attorney? || User.list_hearing_coordinators.include?(params[:user])
         object.assigned_to_location
       end
-    # if not in a restricted status, show assigned location to all users
     else
       object.assigned_to_location
     end

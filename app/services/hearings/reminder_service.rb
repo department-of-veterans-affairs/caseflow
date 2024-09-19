@@ -51,6 +51,7 @@ class Hearings::ReminderService
       metric_name: "emails.would_be_sent",
       attrs: {
         reminder_type: type,
+        hearing_id: hearing.id,
         request_type: hearing.hearing_request_type,
         hearing_type: hearing.class.name
       }

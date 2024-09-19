@@ -2,7 +2,6 @@ $seed-table-border-color: #d6d7d9;
 $seed-button-background-color: #0071bc;
 $seed-button-font-color: #fff;
 $seed-table-preview-bg-color: #f1f1f1;
-$case-movement-button-bg-color: #07648d;
 
 .test-seeds-num-field {
   // width: auto;
@@ -122,12 +121,4 @@ $case-movement-button-bg-color: #07648d;
   display: flex;
   justify-content: flex-end;
   flex-direction: row;
-}
-
-.usa-button-case-movement {
-  background: $case-movement-button-bg-color;
-}
-
-.usa-button-case-movement:hover {
-  background: $case-movement-button-bg-color;
 }

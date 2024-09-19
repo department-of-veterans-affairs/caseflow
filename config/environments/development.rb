@@ -116,10 +116,10 @@ Rails.application.configure do
   # Set to true to get the documents from efolder running locally on port 4000.
   config.use_efolder_locally = false
 
-  # set to true to create queues and override the sqs endpoint
+  # set to true to create queues and override the sqs endpiont
   config.sqs_create_queues = true
 
-  config.sqs_endpoint = ENV.has_key?('DOCKERIZED') ? 'http://localstack:4566' : 'http://localhost:4566'
+  config.sqs_endpoint = ENV.has_key?('DOCKERIZED') ? 'http://localstack:4576' : 'http://localhost:4576'
 
   # since we mock aws using localstack, provide dummy creds to the aws gem
   ENV["AWS_ACCESS_KEY_ID"] ||= "dummykeyid"
@@ -146,16 +146,11 @@ Rails.application.configure do
   # One time Appeal States migration for Legacy & AMA Appeal Batch Sizes
   ENV["STATE_MIGRATION_JOB_BATCH_SIZE"] ||= "1000"
 
-  # Syncing decided appeals in select batch sizes
-  ENV["VACOLS_QUERY_BATCH_SIZE"] ||= "800"
-
   # Travel Board Sync Batch Size
   ENV["TRAVEL_BOARD_HEARING_SYNC_BATCH_LIMIT"] ||= "250"
 
   # Time in seconds before the sync lock expires
   LOCK_TIMEOUT = ENV["SYNC_LOCK_MAX_DURATION"] ||= "60"
-
-  ENV["CASEFLOW_BASE_URL"] ||= "http://localhost:3000"
 
   # Notifications page eFolder link
   ENV["CLAIM_EVIDENCE_EFOLDER_BASE_URL"] ||= "https://vefs-claimevidence-ui-uat.stage.bip.va.gov"
