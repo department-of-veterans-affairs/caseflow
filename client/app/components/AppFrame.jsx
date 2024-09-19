@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import PageRoute from '../components/PageRoute';
+import { Route } from 'react-router-dom';
 import getAppWidthStyling from
   '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/util/getAppWidthStyling';
 import classnames from 'classnames';
@@ -22,7 +22,7 @@ const className = classnames(
 
 const AppFrame = ({ children, wideApp }) =>
   <main {...getAppWidthStyling(wideApp)} role="main" id="Main">
-    <PageRoute
+    <Route
       exact
       path="/"
       title="Caseflow | Home"
