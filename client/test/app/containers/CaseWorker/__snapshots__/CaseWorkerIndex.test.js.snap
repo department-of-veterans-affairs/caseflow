@@ -70,18 +70,6 @@ exports[`CaseWorkerIndex renders correctly 1`] = `
             <div
               data-css-1mdtwij=""
             />
-            <span
-              style="padding-left: 3rem;"
-            >
-              <strong>
-                Environment: 
-                <span
-                  class="uat-env-color"
-                >
-                  uat
-                </span>
-              </strong>
-            </span>
           </nav>
           <span
             class="cf-push-right"
