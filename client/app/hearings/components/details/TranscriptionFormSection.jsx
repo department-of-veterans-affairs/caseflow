@@ -20,8 +20,10 @@ export const TranscriptionFormSection = (
     {!isLegacy && (
       <>
         {(isWebex && <>
+ 
           <TranscriberDetails hearing={hearing} />
           <div className= "cf-help-divider" />
+
           <TranscriptionDetailsWebex
             title="Transcription"
             transcription={transcription}
