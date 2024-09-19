@@ -4,8 +4,6 @@ class Hearings::TranscriptionPackagesController < ApplicationController
   include HearingsConcerns::VerifyAccess
 
   before_action :verify_transcription_user
-  
-
   def transcription_package_tasks
     # Initial filter to get only the transcription packages with statuses 'Sent-Overdue' and 'Sent'
     @transcription_packages = TranscriptionPackage.with_status_overdue_or_sent
