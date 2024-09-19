@@ -122,7 +122,7 @@ class TranscriptionFile < CaseflowRecord
 
   # Purpose: Maps file handling process with associated field to update
   DATE_FIELDS = {
-    retrieval: :date_receipt_webex,
+    retrieval: :date_receipt_recording,
     upload: :date_upload_aws,
     conversion: :date_converted
   }.freeze
