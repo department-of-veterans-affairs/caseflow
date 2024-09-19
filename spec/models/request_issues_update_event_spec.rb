@@ -585,6 +585,72 @@ describe "additional positive tests" do
           expect(existing_issue.contention_reference_id).to be_nil
         end
       end
+
+      context "when there are 2 issues to process" do
+        let!(:existing_issue1) do
+          create(:request_issue, decision_review: review, reference_id: "1", ineligible_reason: nil)
+        end
+
+        let!(:existing_issue2) do
+          create(:request_issue, decision_review: review, reference_id: "2", ineligible_reason: nil)
+        end
+
+        let(:issue_data) do
+          [
+            { reference_id: "1", ineligible_reason: "untimely", closed_at: Time.zone.now },
+            { reference_id: "2", ineligible_reason: "appeal_to_appeal", closed_at: Time.zone.now }
+          ]
+        end
+
+        before do
+          request_issues_update_event.instance_variable_set(:@eligible_to_ineligible_issue_data, issue_data)
+        end
+
+        it "updates all eligible issues" do
+          request_issues_update_event.send(:process_eligible_to_ineligible_issues!)
+
+          existing_issue1.reload
+          existing_issue2.reload
+
+          expect(existing_issue1.ineligible_reason).to eq("untimely")
+          expect(existing_issue1.closed_at).to be_within(1.second).of(issue_data[0][:closed_at])
+          expect(existing_issue1.contention_reference_id).to be_nil
+
+          expect(existing_issue2.ineligible_reason).to eq("appeal_to_appeal")
+          expect(existing_issue2.closed_at).to be_within(1.second).of(issue_data[1][:closed_at])
+          expect(existing_issue2.contention_reference_id).to be_nil
+        end
+      end
+
+      context "when processing 2 issues and one is missing" do
+        let!(:existing_issue) do
+          create(:request_issue, decision_review: review, reference_id: "1", ineligible_reason: nil)
+        end
+
+        let(:issue_data) do
+          [
+            { reference_id: "1", ineligible_reason: "untimely", closed_at: Time.zone.now },
+            { reference_id: "non_existent_id", ineligible_reason: "appeal_to_appeal", closed_at: Time.zone.now }
+          ]
+        end
+
+        before do
+          request_issues_update_event.instance_variable_set(:@eligible_to_ineligible_issue_data, issue_data)
+        end
+
+        it "updates existing issues and raises an error for the missing one" do
+          expect {
+            request_issues_update_event.send(:process_eligible_to_ineligible_issues!)
+          }.to raise_error(Caseflow::Error::DecisionReviewUpdateMissingIssueError,
+                           "Request issue not found for REFERENCE_ID: non_existent_id")
+
+          # Ensure that the existing issue was updated before the error was raised
+          existing_issue.reload
+          expect(existing_issue.ineligible_reason).to eq("untimely")
+          expect(existing_issue.closed_at).to be_within(1.second).of(issue_data[0][:closed_at])
+          expect(existing_issue.contention_reference_id).to be_nil
+        end
+      end
     end
 
     # 6. Testing #process_ineligible_to_eligible_issues!
