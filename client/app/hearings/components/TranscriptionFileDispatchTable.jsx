@@ -12,6 +12,8 @@ import {
   itemsColumn,
   dateSentColumn,
   expectedReturnDateColumn,
+  returnDateColumn,
+  uploadDateColumn,
   contractorColumn,
   statusColumn,
   unassignColumn
@@ -106,13 +108,13 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
    * including files locked by other users
    */
   const getFileStatuses = () => {
-    ApiUtil.get('/hearings/transcription_files/locked').
-      then((response) => {
-        if (!selectingFile) {
-          setSelectedFiles(response.body);
-          selectFilesForPackage(response.body);
-        }
-      });
+    // ApiUtil.get('/hearings/transcription_files/locked').
+    //   then((response) => {
+    //     if (!selectingFile) {
+    //       setSelectedFiles(response.body);
+    //       selectFilesForPackage(response.body);
+    //     }
+    //   });
   };
 
   /**
@@ -141,6 +143,8 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
       return `/hearings/transcription_files/transcription_file_tasks${qs}`;
     } else if (statusFilter[0] === 'Assigned') {
       return `/hearings/transcription_packages/transcription_package_tasks${qs}`;
+    } else if (statusFilter[0] === 'AllTranscription') {
+      return `/hearings/transcription_files/transcription_file_tasks${qs}`;
     }
   };
 
@@ -207,7 +211,9 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
       expectedReturnDateColumn: expectedReturnDateColumn(),
       contractorColumn: contractorColumn(contractors),
       statusColumn: statusColumn(),
-      unassignColumn: unassignColumn(unassignPackage)
+      unassignColumn: unassignColumn(unassignPackage),
+      returnDateColumn: returnDateColumn(),
+      uploadDateColumn: uploadDateColumn(),
     };
 
     return functionForColumn[column.name];

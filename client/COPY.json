@@ -1579,6 +1579,8 @@
   "TRANSCRIPTION_FILE_UNASSIGN_WORK_ORDER_MODAL_BOLD_TEXT": "Please ensure that all hearing files are removed from the contractors's box.com folder.",
   "TRANSCRIPTION_FILE_DISPATCH_DATE_SENT_COLUMN_NAME": "Date Sent",
   "TRANSCRIPTION_FILE_DISPATCH_EXPECTED_RETURN_DATE_COLUMN_NAME": "Expected Return Date",
+  "TRANSCRIPTION_FILE_DISPATCH_RETURN_DATE_COLUMN_NAME": "Return Date",
+  "TRANSCRIPTION_FILE_DISPATCH_UPLOAD_DATE_COLUMN_NAME": "Upload Date",
   "TRANSCRIPTION_FILE_DISPATCH_CONTRACTOR_COLUMN_NAME": "Contractor",
   "TRANSCRIPTION_FILE_DISPATCH_UNASSIGNED_TAB_DESCRIPTION": "Transcription owned by the Transcription Team are unassigned to a contractor:",
   "TRANSCRIPTION_FILE_DISPATCH_UNASSIGNED_TAB_SEARCH": "Search by Docket Number, Claimant Name, File Number, or SSN",
