@@ -71,9 +71,9 @@ class Test::LoadTestsController < ApplicationController
   def get_target_data_id(target_id, target_data_type, target_data_column)
     target_data_id = if target_id.presence
                        target_data_type.find_by("#{target_data_column}": target_id).nil? ? nil : target_id
-                      elsif target_data_type.to_s == "Metric"
-                        target_data_type.all.sample
-                      else
+                     elsif target_data_type.to_s == "Metric"
+                       target_data_type.all.sample
+                     else
                        target_data_type.all.sample[target_data_column.to_sym]
                      end
 
