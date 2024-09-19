@@ -86,10 +86,6 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedParser
     @payload.dig(:end_product_establishment, :code).presence
   end
 
-  def ep_code_category
-    @payload.dig(:ep_code_category)
-  end
-
   def original_source
     @payload.dig(:original_source)
   end

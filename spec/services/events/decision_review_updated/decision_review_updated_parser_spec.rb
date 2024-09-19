@@ -214,12 +214,6 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
       end
     end
 
-    describe "ep_code_category" do
-      it "returns the correct ep_code_category" do
-        expect(subject.ep_code_category).to eq(payload["ep_code_category"])
-      end
-    end
-
     describe "original_source" do
       it "returns the correct original_source" do
         expect(subject.original_source).to eq(payload["original_source"])
