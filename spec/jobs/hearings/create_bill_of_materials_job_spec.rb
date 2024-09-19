@@ -120,8 +120,10 @@ RSpec.describe Hearings::CreateBillOfMaterialsJob do
     allow_any_instance_of(described_class).to receive(:perform)
       .and_raise(TranscriptionFileUpload::FileUploadError)
 
-    expect { perform_enqueued_jobs { subject } }.to raise_error(
-      Hearings::CreateBillOfMaterialsJob::BomFileUploadError
-    )
+    perform_enqueued_jobs do
+      expect { subject }.to raise_error(
+        Hearings::CreateBillOfMaterialsJob::BomFileUploadError
+      )
+    end
   end
 end
