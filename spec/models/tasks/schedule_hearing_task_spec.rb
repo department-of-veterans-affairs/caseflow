@@ -174,6 +174,21 @@ describe ScheduleHearingTask, :all_dbs do
         end
       end
 
+      context "for non virtual hearings scheduled by a webex users" do
+        before do
+          hearings_management_user.meeting_type.update!(service_name: "webex")
+        end
+        it "creates a webex conference associated to the hearing" do
+          subject
+          conference_link = ConferenceLink.find_by(hearing_id: Hearing.first.id)
+          expect(Hearing.count).to eq(1)
+          expect(Hearing.first.virtual?).to eq(false)
+          expect(Hearing.first.virtual_hearing).to eq(nil)
+          expect(conference_link.nil?).to eq(false)
+          expect(conference_link.host_link).to include("instant-usgov.webex.com")
+        end
+      end
+
       context "when params includes virtual_hearing_attributes" do
         let(:appellant_email) { "fake@email.com" }
         let(:virtual_hearing_attributes) do

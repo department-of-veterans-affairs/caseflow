@@ -71,40 +71,129 @@ RSpec.feature "Hearing Details", :all_dbs do
     check_email_event_rows(hearing, row_count)
   end
 
-  def check_virtual_hearings_links_expired(virtual_hearing)
+  def check_pexip_hearings_links_expired
     within "#vlj-hearings-link" do
       expect(page).to have_content(
-        "VLJ Link: Expired\n" \
-        "Conference Room: #{virtual_hearing.formatted_alias_or_alias_with_host}\n" \
-        "PIN: #{virtual_hearing.host_pin}"
+        "Conference Room: N/A\n" \
+        "PIN: N/A"
+      )
+    end
+    within "#hc-hearings-link" do
+      expect(page).to have_content(
+        "Conference Room: N/A\n" \
+        "PIN: N/A"
       )
     end
     within "#guest-hearings-link" do
       expect(page).to have_content(
-        "Guest Link: Expired\n" \
-        "Conference Room: #{virtual_hearing.formatted_alias_or_alias_with_host}\n" \
-        "PIN: #{virtual_hearing.guest_pin}"
+        "Conference Room: N/A\n" \
+        "PIN: N/A"
       )
     end
   end
 
-  def check_virtual_hearings_links(virtual_hearing, disable_link = false)
+  def check_pexip_hearings_links(link, link_alias, disable_link = false)
     # Confirm that the host hearing link details exist
     within "#vlj-hearings-link" do
-      find("div", text: "Conference Room: #{virtual_hearing.formatted_alias_or_alias_with_host}")
-      find("div", text: "PIN: #{virtual_hearing.host_pin}")
-      ensure_link_present(virtual_hearing.host_link, disable_link)
+      find("div", text: "Conference Room: #{link_alias}")
+      find("div", text: "PIN: #{link.host_pin}")
+      ensure_link_present(link.host_link, disable_link)
+    end
+    # Confirm that the co-host hearing link details exist
+    within "#hc-hearings-link" do
+      find("div", text: "Conference Room: #{link_alias}")
+      find("div", text: "PIN: #{link.host_pin}")
+      ensure_link_present(link.host_link, disable_link)
     end
     # Confirm that the guest hearing link details exist
     within "#guest-hearings-link" do
-      find("div", text: "Conference Room: #{virtual_hearing.formatted_alias_or_alias_with_host}")
-      find("div", text: "PIN: #{virtual_hearing.guest_pin}")
-      ensure_link_present(virtual_hearing.guest_link, disable_link)
+      find("div", text: "Conference Room: #{link_alias}")
+      find("div", text: "PIN: #{link.guest_pin}")
+      ensure_link_present(link.guest_link, disable_link)
+    end
+  end
+
+  def check_webex_hearings_links(link, disable_link = false)
+    # Confirm that the host hearing link details exist
+    within "#vlj-hearings-link" do
+      find("div", text: link.host_link)
+      ensure_link_present(link.host_link, disable_link)
+    end
+    # Confirm that the co-host hearing link details exist
+    within "#hc-hearings-link" do
+      find("div", text: link.co_host_link)
+      ensure_link_present(link.co_host_link, disable_link)
+    end
+    # Confirm that the guest hearing link details exist
+    within "#guest-hearings-link" do
+      find("div", text: link.guest_link)
+      ensure_link_present(link.guest_link, disable_link)
     end
   end
 
   def ensure_link_present(link, disable)
     expect(page).to have_selector(:css, "a[href='#{link}']") unless disable
+  end
+
+  def check_transcription_files_table(hearing)
+    check_transcription_files_table_headers
+
+    within "table.transcription-files-table > tbody" do
+      expect(find_all("tr").length).to eq(hearing.transcription_files.size)
+
+      # Group transcription files by docket number to ensure table styled accordingly
+      hearing.transcription_files_by_docket_number.each_with_index do |recording, group_index|
+        group_class = "#{group_index.even? ? 'even' : 'odd'}-row-group"
+
+        recording.each_with_index do |file, file_index|
+          row_number = (group_index * 4) + file_index
+          expect(find("#table-row-#{row_number}")["class"]).to match(/#{group_class}/)
+
+          check_transcription_file_row_content(file, row_number, file_index)
+          check_transcription_file_download(file)
+        end
+      end
+    end
+  end
+
+  def check_transcription_files_table_headers
+    within "table.transcription-files-table > thead > tr" do
+      expect(find("th:first-child")).to have_content("Docket(s)")
+      expect(find("th:nth-child(2)")).to have_content("Uploaded")
+      expect(find("th:nth-child(3)")).to have_content("File Link")
+      expect(find("th:last-child")).to have_content("Status")
+    end
+  end
+
+  def check_transcription_file_row_content(file, row_number, file_index)
+    docket_number = file_index == 0 ? file.docket_number : ""
+    formatted_date = file.date_upload_aws.strftime("%m/%d/%Y")
+
+    within "#table-row-#{row_number}" do
+      download_url = "/hearings/transcription_file/#{file.id}/download"
+
+      expect(find("td:first-child")).to have_content(docket_number)
+      expect(find("td:nth-child(2)")).to have_content(formatted_date)
+      expect(find("td:nth-child(3)")).to have_link(file.file_name, href: download_url)
+      expect(find("td:last-child")).to have_content(file.file_status)
+    end
+  end
+
+  def check_transcription_file_download(file)
+    file_location = Rails.root.join("tmp/downloads_#{ENV['TEST_SUBCATEGORY'] || 'all'}", file.file_name).to_s
+
+    File.delete(file_location) if File.exist?(file_location)
+    click_link(file.file_name)
+    wait_for_download(file_location)
+    expect(File.exist?(file_location)).to be true
+    File.delete(file_location)
+  end
+
+  def wait_for_download(file_location)
+    count = 0
+    Timeout.timeout(60) do
+      count += 1 until !DownloadHelpers.downloading? && File.exist?(file_location)
+    end
   end
 
   shared_examples "always updatable fields" do
@@ -150,7 +239,11 @@ RSpec.feature "Hearing Details", :all_dbs do
 
       click_button("Save")
 
-      hearing.reload
+      expect(page).to have_content(virtual_hearing_alert)
+
+      # expect VSO checkboxes to not be present for non-VSO users
+      expect(page).to_not have_content(COPY::CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS)
+      expect(page).to_not have_content(COPY::CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_PERMISSION)
 
       # Check the Email Notification History
       check_email_event_table(hearing, 2)
@@ -166,8 +259,6 @@ RSpec.feature "Hearing Details", :all_dbs do
       expect(page).to have_field("POA/Representative Email", with: fill_in_rep_email)
       expect(page).to have_content(fill_in_veteran_tz)
       expect(page).to have_content(fill_in_rep_tz)
-
-      check_virtual_hearings_links(hearing.virtual_hearing)
     end
 
     scenario "user can optionally change emails and timezone" do
@@ -246,6 +337,7 @@ RSpec.feature "Hearing Details", :all_dbs do
         User.authenticate!(user: user)
         hearing.hearing_day.update!(regional_office: "RO06", request_type: "V")
       end
+
       include_examples "always updatable fields"
       include_examples "non-virtual hearing types"
     end
@@ -293,6 +385,8 @@ RSpec.feature "Hearing Details", :all_dbs do
           )
         end
 
+        let!(:hearing_day) { create(:hearing_day, :future_with_link) }
+
         # Mock an Email Event for the Veteran
         let!(:veteran_email_event) do
           create(
@@ -338,6 +432,10 @@ RSpec.feature "Hearing Details", :all_dbs do
           # Confirm the Modal change to cancel the virtual hearing
           click_button("Convert to #{hearing.readable_request_type} Hearing")
 
+          # Confirm the alerts
+          expect(page).to have_content(virtual_hearing_alert)
+          expect(page).to have_content(expected_alert)
+
           # Ensure the emails and timezone were updated
           expect(page).to have_field("Veteran Email", with: fill_in_veteran_email)
           expect(page).to have_field("POA/Representative Email", with: fill_in_rep_email)
@@ -346,6 +444,9 @@ RSpec.feature "Hearing Details", :all_dbs do
         end
 
         scenario "email notifications and links display correctly" do
+          FeatureToggle.enable!(:pexip_conference_service)
+          hearing.update(hearing_day_id: hearing_day.id)
+
           visit "hearings/" + hearing.external_id.to_s + "/details"
 
           click_dropdown(name: "hearingType", index: 0)
@@ -367,27 +468,50 @@ RSpec.feature "Hearing Details", :all_dbs do
           check_email_event_table(hearing, 4)
 
           # Check that links were generated correctly
-          check_virtual_hearings_links_expired(virtual_hearing)
+          visit "hearings/" + hearing.external_id.to_s + "/details"
+          link = hearing.daily_docket_conference_link
+          check_pexip_hearings_links(link, link.alias_with_host)
+        end
+
+        context "when hearing conference type is webex" do
+          let!(:hearing) { create(:hearing, :with_webex_non_virtual_conference_link) }
+
+          before { hearing.meeting_type.update(service_name: "webex") }
+
+          scenario "links display correctly" do
+            FeatureToggle.enable!(:pexip_conference_service)
+            hearing.update(hearing_day_id: hearing_day.id)
+
+            visit "hearings/" + hearing.external_id.to_s + "/details"
+
+            click_dropdown(name: "hearingType", index: 0)
+
+            # Confirm the Modal change to cancel the virtual hearing
+            click_button("Convert to #{hearing.readable_request_type} Hearing")
+
+            # Reload to get the updated page contents
+            hearing.reload
+            virtual_hearing.reload
+
+            # Check that links were generated correctly
+            visit "hearings/" + hearing.external_id.to_s + "/details"
+            link = hearing.non_virtual_conference_link
+            check_webex_hearings_links(link)
+          end
         end
       end
 
       context "Links display correctly when scheduling Virtual Hearings" do
-        let!(:virtual_hearing) { create(:virtual_hearing, :all_emails_sent, hearing: hearing) }
-
-        scenario "displays in progress when the virtual hearing is being scheduled" do
-          visit "hearings/" + hearing.external_id.to_s + "/details"
-
-          # Test the links are not present
-          within "#vlj-hearings-link" do
-            expect(page).to have_content("Scheduling in progress")
-          end
-          within "#guest-hearings-link" do
-            expect(page).to have_content("Scheduling in progress")
-          end
+        let!(:virtual_hearing) do
+          create(:virtual_hearing, :all_emails_sent, hearing: hearing)
         end
 
         context "after the virtual hearing is scheduled" do
           let!(:hearing_day) { create(:hearing_day, scheduled_for: Date.yesterday - 2) }
+          let!(:virtual_hearing) do
+            create(:virtual_hearing, :all_emails_sent, :initialized, hearing: hearing)
+          end
+
           before do
             # Mock the conference details
             virtual_hearing.alias_name = rand(1..9).to_s[0..6]
@@ -399,21 +523,21 @@ RSpec.feature "Hearing Details", :all_dbs do
 
           scenario "displays details when the date is before the hearing date" do
             visit "hearings/" + hearing.external_id.to_s + "/details"
-            check_virtual_hearings_links(virtual_hearing)
+            check_pexip_hearings_links(virtual_hearing, virtual_hearing.formatted_alias_or_alias_with_host)
           end
 
-          scenario "displays expired when the date is after the hearing date" do
+          scenario "displays N/A when the date is after the hearing date" do
             hearing.update(hearing_day_id: hearing_day.id)
             visit "hearings/" + hearing.external_id.to_s + "/details"
             hearing.reload
-            check_virtual_hearings_links_expired(virtual_hearing)
+            check_pexip_hearings_links_expired
           end
 
           scenario "displays expired when the virtual hearing is cancelled" do
             virtual_hearing.update(request_cancelled: true)
             visit "hearings/" + hearing.external_id.to_s + "/details"
             hearing.reload
-            check_virtual_hearings_links_expired(virtual_hearing)
+            check_pexip_hearings_links_expired
           end
 
           scenario "displays disabled virtual hearing link when changing emails" do
@@ -422,13 +546,15 @@ RSpec.feature "Hearing Details", :all_dbs do
             virtual_hearing.hearing.judge_recipient.update!(email_sent: false)
             visit "hearings/" + hearing.external_id.to_s + "/details"
             hearing.reload
-            check_virtual_hearings_links(virtual_hearing, true)
+            check_pexip_hearings_links(virtual_hearing, virtual_hearing.formatted_alias_or_alias_with_host)
           end
         end
       end
 
       context "Hearing type dropdown and vet and poa fields are disabled while async job is running" do
-        let!(:virtual_hearing) { create(:virtual_hearing, :all_emails_sent, hearing: hearing) }
+        let!(:virtual_hearing) do
+          create(:virtual_hearing, :all_emails_sent, hearing: hearing)
+        end
 
         scenario "async job is not completed" do
           visit "hearings/" + hearing.external_id.to_s + "/details"
@@ -438,6 +564,11 @@ RSpec.feature "Hearing Details", :all_dbs do
         end
 
         scenario "async job is completed" do
+          virtual_hearing.update!(
+            host_hearing_link: "https://example.va.gov/sample/?conference",
+            guest_hearing_link: "https://example.va.gov/sample/?conference"
+          )
+
           # Mock the conference details
           virtual_hearing.alias_name = rand(1..9).to_s[0..6]
           virtual_hearing.guest_pin = rand(1..9).to_s[0..3].to_i
@@ -459,6 +590,7 @@ RSpec.feature "Hearing Details", :all_dbs do
             :virtual_hearing,
             :all_emails_sent,
             :timezones_initialized,
+            :initialized,
             status: :active,
             hearing: hearing
           )
@@ -511,6 +643,7 @@ RSpec.feature "Hearing Details", :all_dbs do
             :virtual_hearing,
             :all_emails_sent,
             :timezones_initialized,
+            :initialized,
             status: :active,
             hearing: hearing
           )
@@ -571,6 +704,7 @@ RSpec.feature "Hearing Details", :all_dbs do
             :virtual_hearing,
             :all_emails_sent,
             :timezones_initialized,
+            :initialized,
             status: :active,
             hearing: hearing
           )
@@ -607,6 +741,7 @@ RSpec.feature "Hearing Details", :all_dbs do
           create(:virtual_hearing,
                  :all_emails_sent,
                  :timezones_initialized,
+                 :initialized,
                  status: :active,
                  hearing: hearing)
         end
@@ -641,6 +776,7 @@ RSpec.feature "Hearing Details", :all_dbs do
           create(:virtual_hearing,
                  :all_emails_sent,
                  :timezones_initialized,
+                 :initialized,
                  status: :active,
                  hearing: hearing)
         end
@@ -676,6 +812,7 @@ RSpec.feature "Hearing Details", :all_dbs do
           create(:virtual_hearing,
                  :all_emails_sent,
                  :timezones_initialized,
+                 :initialized,
                  status: :active,
                  hearing: hearing)
         end
@@ -714,6 +851,7 @@ RSpec.feature "Hearing Details", :all_dbs do
           create(:virtual_hearing,
                  :all_emails_sent,
                  :timezones_initialized,
+                 :initialized,
                  status: :active,
                  hearing: hearing)
         end
@@ -746,6 +884,14 @@ RSpec.feature "Hearing Details", :all_dbs do
           check_email_event_table(hearing, 2)
         end
       end
+    end
+  end
+
+  shared_examples "conference type webex" do
+    scenario "renders transcription files table and downloads files" do
+      visit "hearings/#{hearing.external_id}/details"
+
+      check_transcription_files_table(hearing)
     end
   end
 
@@ -852,6 +998,12 @@ RSpec.feature "Hearing Details", :all_dbs do
           end
         end
       end
+
+      context "when conference type is webex" do
+        let!(:hearing) { create(:hearing, :with_transcription_files, :with_webex_non_virtual_conference_link) }
+
+        include_examples "conference type webex"
+      end
     end
 
     context "when hearing is Legacy" do
@@ -882,6 +1034,12 @@ RSpec.feature "Hearing Details", :all_dbs do
         expect(page).to have_no_field("requestedRemedy")
         expect(page).to have_no_field("copySentDate")
         expect(page).to have_no_field("copyRequested")
+      end
+
+      context "when conference type is webex" do
+        let!(:hearing) { create(:legacy_hearing, :with_transcription_files, :with_webex_non_virtual_conference_link) }
+
+        include_examples "conference type webex"
       end
     end
   end
