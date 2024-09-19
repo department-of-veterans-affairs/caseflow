@@ -639,10 +639,10 @@ describe "additional positive tests" do
         end
 
         it "updates existing issues and raises an error for the missing one" do
-          expect {
+          expect do
             request_issues_update_event.send(:process_eligible_to_ineligible_issues!)
-          }.to raise_error(Caseflow::Error::DecisionReviewUpdateMissingIssueError,
-                           "Request issue not found for REFERENCE_ID: non_existent_id")
+          end.to raise_error(Caseflow::Error::DecisionReviewUpdateMissingIssueError,
+                             "Request issue not found for REFERENCE_ID: non_existent_id")
 
           # Ensure that the existing issue was updated before the error was raised
           existing_issue.reload
