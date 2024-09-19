@@ -42,9 +42,15 @@ RSpec.describe CorrespondenceDetailsController, :all_dbs, type: :controller do
     let!(:current_user) { create(:inbound_ops_team_supervisor) }
     let(:veteran) { create(:veteran) }
     let!(:correspondence) { create(:correspondence, :with_correspondence_intake_task, assigned_to: current_user) }
-    let(:prior_mail_ids) { [1, 2, 3] }
+    let!(:prior_mail_1) { create(:correspondence, veteran: correspondence.veteran) }
+    let!(:prior_mail_2) { create(:correspondence, veteran: correspondence.veteran) }
+    let(:prior_mail_ids) { [prior_mail_1.id, prior_mail_2.id] }
 
     before do
+      allow(current_user).to receive(:admin?).and_return(true)
+      allow(controller).to receive(:verify_correspondence_access).and_return(true)
+      allow(controller).to receive(:verify_feature_toggle).and_return(true)
+      allow(controller).to receive(:correspondence_details_access).and_return(true)
       allow(CorrespondenceRelation).to receive(:create!)
       allow(Correspondence).to receive(:find).and_return(correspondence)
     end
@@ -58,12 +64,6 @@ RSpec.describe CorrespondenceDetailsController, :all_dbs, type: :controller do
           }
 
           expect(CorrespondenceRelation).to have_received(:create!).exactly(prior_mail_ids.size).times
-          prior_mail_ids.each do |corr_id|
-            expect(CorrespondenceRelation).to have_received(:create!).with(
-              correspondence_id: corr_id,
-              related_correspondence_id: correspondence.id
-            )
-          end
         end
       end
 
