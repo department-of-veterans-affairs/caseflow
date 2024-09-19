@@ -1,12 +1,13 @@
 if ENV["RAILS_ENV"] == "test"
   require "simplecov-lcov"
-  
+
   formatters = [
   SimpleCov::Formatter::HTMLFormatter,
   SimpleCov::Formatter::LcovFormatter
 ]
   SimpleCov::Formatter::LcovFormatter.config.report_with_single_file = true
   SimpleCov.formatters = SimpleCov::Formatter::MultiFormatter.new(formatters)
+  SimpleCov.coverage_dir "coverage/lcov"
 
   SimpleCov.start do
     add_filter "app/services/test_data_service.rb"
@@ -25,7 +26,7 @@ if ENV["RAILS_ENV"] == "test"
     add_filter "spec/factories"
     add_filter "spec/"
   end
-  SimpleCov.coverage_dir ENV["COVERAGE_DIR"] || nil
+
   SimpleCov.command_name ENV["TEST_SUBCATEGORY"] || "all"
   if ENV["GHA_NODE_INDEX"]
     SimpleCov.command_name "RSpec" + ENV["GHA_NODE_INDEX"]
