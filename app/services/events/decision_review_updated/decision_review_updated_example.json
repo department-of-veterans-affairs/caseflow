@@ -11,7 +11,9 @@
   "end_product_establishment": {
     "development_item_reference_id": "DEV123",
     "reference_id": "REF123",
-    "code": "030HLRNR"
+    "code": "030HLRNR",
+    "synced_status": "RFD",
+    "last_synced_at": 1726688419000
   },
   "added_issues": [
     {
