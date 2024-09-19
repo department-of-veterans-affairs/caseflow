@@ -108,13 +108,13 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
    * including files locked by other users
    */
   const getFileStatuses = () => {
-    // ApiUtil.get('/hearings/transcription_files/locked').
-    //   then((response) => {
-    //     if (!selectingFile) {
-    //       setSelectedFiles(response.body);
-    //       selectFilesForPackage(response.body);
-    //     }
-    //   });
+    ApiUtil.get('/hearings/transcription_files/locked').
+      then((response) => {
+        if (!selectingFile) {
+          setSelectedFiles(response.body);
+          selectFilesForPackage(response.body);
+        }
+      });
   };
 
   /**
