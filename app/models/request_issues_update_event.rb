@@ -181,7 +181,6 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       ineligible_due_to_id: data[parser_issue.ri_ineligible_due_to_id],
       reference_id: data[parser_issue.ri_reference_id],
       type: data[parser_issue.ri_type],
-      veteran_participant_id: data[parser_issue.ri_veteran_participant_id],
       rating_issue_associated_at: data[parser_issue.ri_rating_issue_associated_at],
       nonrating_issue_bgs_source: data[parser_issue.ri_nonrating_issue_bgs_source],
       nonrating_issue_bgs_id: data[parser_issue.ri_nonrating_issue_bgs_id]
