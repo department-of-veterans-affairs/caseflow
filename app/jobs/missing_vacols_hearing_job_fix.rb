@@ -24,8 +24,8 @@ class MissingVacolsHearingJobFix
     process_missing_vacols_records
 
     unless @tasks_missing_hearings.blank?
-      Rails.logger.error "ALERT------- Task Id's: #{@tasks_missing_hearings.to_sentence} are missing" \
-      " associated hearings. This requires manual remediation------- ALERT"
+      Rails.logger.error("ALERT------- Task Id's: #{@tasks_missing_hearings.to_sentence} are missing" \
+      " associated hearings. This requires manual remediation------- ALERT")
     end
     end_time
     log_processing_time
@@ -44,7 +44,7 @@ class MissingVacolsHearingJobFix
       process_vacols_record(attributes, task)
     end
   rescue StandardError => error
-    log_error("Something went wrong. Requires manual remediation. Error: #{error} Aborting...")
+    Rails.logger.error("Something went wrong. Requires manual remediation. Error: #{error} Aborting...")
     raise error
   end
 
@@ -85,7 +85,7 @@ class MissingVacolsHearingJobFix
       vacols_record.destroy!
     end
   rescue StandardError => error
-    log_error("Something went wrong. Requires manual remediation. Error: #{error} Aborting...")
+    Rails.logger.error("Something went wrong. Requires manual remediation. Error: #{error} Aborting...")
     raise Interrupt
   end
 
@@ -106,9 +106,9 @@ class MissingVacolsHearingJobFix
   end
 
   def get_attributes(appeal, hearing)
-    scheduled_for = HearingTimeService.legacy_formatted_scheduled_for(
-      scheduled_for: hearing.hearing_day.scheduled_for,
-      scheduled_time_string: "12:00"
+    scheduled_for = HearingDatetimeService.prepare_datetime_for_storage(
+      date: hearing.hearing_day.scheduled_for,
+      time_string: "1:00 PM Central Time (US & Canada)"
     )
 
     attrs = {
