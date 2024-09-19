@@ -162,8 +162,8 @@ class Hearings::TranscriptionFilesController < ApplicationController
         hearingDate: transcription_file.hearing_date,
         hearingType: transcription_file.hearing_type,
         fileStatus: transcription_file.file_status,
-        # returnDate: transcription_file.date_returned_box,
-        uploadDate: transcription_file.date_upload_box,
+        returnDate: transcription_file.date_returned_box&.to_formatted_s(:short_date),
+        uploadDate: transcription_file.date_upload_box&.to_formatted_s(:short_date),
         contractor: transcription_file.transcription&.transcription_package&.contractor&.name,
         workOrder: transcription_file.transcription&.task_number,
         status: transcription_file.transcription&.transcription_package&.status

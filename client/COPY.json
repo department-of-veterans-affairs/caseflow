@@ -1590,7 +1590,7 @@
   "TRANSCRIPTION_FILE_DISPATCH_COMPLETED_TAB_SEARCH": "Search by work Order, or Docket Number",
   "TRANSCRIPTION_FILE_DISPATCH_COMPLETED_TAB_DESCRIPTION": "Transcription owned by the Transcription Team are returned from contractor:",
   "TRANSCRIPTION_FILE_DISPATCH_ALL_TAB_SEARCH": "Search by work Order, or Docket Number",
-  "TRANSCRIPTION_FILE_DISPATCH_ALL_TAB_DESCRIPTION": "All transcription owned by the Transcription team:",
+  "TRANSCRIPTION_FILE_DISPATCH_ALL_TAB_DESCRIPTION": "All transcriptions owned by the Transcription team:",
   "TRANSCRIPTION_FILE_DISPATCH_TYPE": "Type to search...",
   "TRANSCRIPTION_FILE_DISPATCH_LINK": "Transcription settings",
   "TRANSCRIPTION_FILE_DISPATCH_FILE_SELECTED": "%s file%s selected",
