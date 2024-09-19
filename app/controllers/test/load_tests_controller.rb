@@ -59,7 +59,7 @@ class Test::LoadTestsController < ApplicationController
         target_id = data.uuid
       end
     rescue NoMethodError
-      fail "Data returned nil when trying to find #{params[:target_type]}" if data.nil?
+      raise "Data returned nil when trying to find #{params[:target_type]}" if data.nil?
     else
       target_id
     end
