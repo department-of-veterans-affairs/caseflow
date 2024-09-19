@@ -329,12 +329,12 @@ export const statusColumn = () => {
     label: 'status filter',
     filterOptions: [
       { value: 'Completed', displayText: 'Completed' },
-      { value: 'Overdue', displayText: 'Overdue' },
+      { value: 'Sent-Overdue', displayText: 'Sent-Overdue' },
       { value: 'Retrieval Failure', displayText: 'Retrieval Failure' },
       { value: 'Sent', displayText: 'Sent' }
     ],
     valueFunction: (row) => (
-      <div style={row.status === 'Overdue' || row.status === 'Retrieval Failure' ? styles.error : {}}>
+      <div style={row.status === 'Sent-Overdue' || row.status === 'Retrieval Failure' ? styles.error : {}}>
         {row.status}
       </div>
     ),

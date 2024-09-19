@@ -6,8 +6,12 @@ class Hearings::TranscriptionPackagesController < ApplicationController
   before_action :verify_transcription_user
 
   def transcription_package_tasks
-    @transcription_packages = TranscriptionPackage.joins(:contractor)
+    # Initial filter to get only the transcription packages with statuses 'Sent-Overdue' and 'Sent'
+    @transcription_packages = TranscriptionPackage.with_status_overdue_or_sent
+    # Apply additional filters
     apply_filters
+
+    # Setup pagination and sorting
     setup_pagination
     apply_sorting
 
@@ -88,8 +92,3 @@ class Hearings::TranscriptionPackagesController < ApplicationController
     tasks
   end
 end
-
-
-# Successful upload (AWS)
-
-# transcription_packages = TranscriptionPackage.filter_by_status(['Sent', 'Successful upload (AWS)'])

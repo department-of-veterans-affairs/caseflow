@@ -33,6 +33,8 @@ class TranscriptionPackage < CaseflowRecord
 
   scope :order_by_field, ->(direction, field_name) { order(Arel.sql(field_name + " " + direction)) }
 
+  scope :with_status_overdue_or_sent, -> { joins(:contractor).where(status: %w[Sent-Overdue Sent]) }
+
   def contractor_name
     contractor&.name
   end
