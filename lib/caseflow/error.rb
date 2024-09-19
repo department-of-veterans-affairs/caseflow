@@ -506,6 +506,11 @@ module Caseflow::Error
   class DecisionReviewCreatedRequestIssuesError < StandardError; end
   class DecisionReviewUpdatedRequestIssuesError < StandardError; end
   class DecisionReviewUpdatedInformalConferenceError < StandardError; end
+  class DecisionReviewUpdateMissingIssueError < StandardError
+    def initialize(reference_id)
+      super("Request issue not found for REFERENCE_ID: #{reference_id}")
+    end
+  end
   class DecisionReviewUpdatedClaimReviewError < StandardError; end
   class DecisionReviewUpdatedEndProductEstablishmentError < StandardError; end
   class MaximumBatchSizeViolationError < StandardError
