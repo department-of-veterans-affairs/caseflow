@@ -82,8 +82,17 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedParser
     @payload.dig(:end_product_establishment, :reference_id).presence
   end
 
-  def ep_code
+  def end_product_establishment_code
     @payload.dig(:end_product_establishment, :code).presence
+  end
+
+  def end_product_establishment_synced_status
+    @payload.dig(:end_product_establishment, :synced_status).presence
+  end
+
+  def end_product_establishment_last_synced_at
+    last_synced_at_milliseconds = @payload.dig(:end_product_establishment, :last_synced_at)
+    convert_milliseconds_to_datetime(last_synced_at_milliseconds)
   end
 
   def original_source
