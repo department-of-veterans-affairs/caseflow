@@ -91,7 +91,8 @@ class VACOLS::CaseDocket < VACOLS::Record
   "
 
   # Judges 000, 888, and 999 are not real judges, but rather VACOLS codes.
-
+  # This query will create multiple records/rows for each BRIEFF if the BRIEFF has multiple hearings
+  # This may need to be accounted for by making sure the resultant set is filtered by BFKEY
   JOIN_ASSOCIATED_VLJS_BY_HEARINGS = "
     left join (
       select distinct TITRNUM, TINUM,
@@ -114,7 +115,6 @@ class VACOLS::CaseDocket < VACOLS::Record
       F.TITRNUM as PREV_TITRNUM
       from BRIEFF B
       inner join FOLDER F on F.TICKNUM = B.BFKEY
-
       where B.BFMPRO = 'HIS' and B.BFMEMID not in ('000', '888', '999') and B.BFATTID is not null
     ) PREV_APPEAL
       on PREV_APPEAL.PREV_BFKEY != BRIEFF.BFKEY and PREV_APPEAL.PREV_BFCORLID = BRIEFF.BFCORLID
@@ -187,8 +187,28 @@ class VACOLS::CaseDocket < VACOLS::Record
     )
   "
 
-  # this query should not be used during distribution it is only intended for reporting usage
+  # selects both priority and non-priority appeals that are ready to distribute
   SELECT_READY_TO_DISTRIBUTE_APPEALS_ORDER_BY_BFD19 = "
+    select APPEALS.BFKEY, APPEALS.TINUM, APPEALS.BFD19, APPEALS.BFDLOOUT,
+      case when APPEALS.BFAC = '7' or APPEALS.AOD = 1 then 1 else 0 end PRIORITY,
+      APPEALS.VLJ, APPEALS.PREV_DECIDING_JUDGE, APPEALS.HEARING_DATE, APPEALS.PREV_BFDDEC
+    from (
+      select BRIEFF.BFKEY, BRIEFF.TINUM, BFD19, BFDLOOUT, BFAC, AOD,
+        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
+        , PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
+        , VLJ_HEARINGS.HEARING_DATE HEARING_DATE
+        , PREV_APPEAL.PREV_BFDDEC PREV_BFDDEC
+      from (
+        #{SELECT_READY_APPEALS}
+      ) BRIEFF
+      #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+      #{JOIN_PREVIOUS_APPEALS}
+      order by BFD19
+    ) APPEALS
+  "
+
+  # this query should not be used during distribution it is only intended for reporting usage
+  SELECT_READY_TO_DISTRIBUTE_APPEALS_ORDER_BY_BFD19_ADDITIONAL_COLS = "
     select APPEALS.BFKEY, APPEALS.TINUM, APPEALS.BFD19, APPEALS.BFDLOOUT, APPEALS.AOD, APPEALS.BFCORLID,
       CORRES.SNAMEF, CORRES.SNAMEL, CORRES.SSN,
       STAFF.SNAMEF as VLJ_NAMEF, STAFF.SNAMEL as VLJ_NAMEL,
@@ -210,7 +230,51 @@ class VACOLS::CaseDocket < VACOLS::Record
     left join STAFF on APPEALS.VLJ = STAFF.SATTYID
     order by BFD19
   "
+
+  FROM_LOC_63_APPEALS = "
+    from BRIEFF
+      #{VACOLS::Case::JOIN_AOD}
+      inner join FOLDER on FOLDER.TICKNUM = BRIEFF.BFKEY
+      where BRIEFF.BFCURLOC in ('63')
+        and BRIEFF.BFBOX is null
+        and BRIEFF.BFAC is not null
+        and BRIEFF.BFD19 is not null
+  "
+
+  SELECT_LOC_63_APPEALS = "
+    select BFKEY, BFD19, BFDLOCIN, BFCORLID, BFDLOOUT, BFMPRO, BFCORKEY, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD,
+    BFMEMID, BFDPDCN
+    #{FROM_LOC_63_APPEALS}
+  "
+
   # rubocop:disable Metrics/MethodLength
+  SELECT_APPEALS_IN_LOCATION_63_FROM_PAST_2_DAYS = "
+    select APPEALS.BFKEY, APPEALS.TINUM, APPEALS.BFD19, APPEALS.BFMEMID, APPEALS.BFCURLOC,
+      APPEALS.BFDLOCIN, APPEALS.BFCORLID, APPEALS.BFDLOOUT,
+      case when APPEALS.BFAC = '7' or APPEALS.AOD = 1 then 1 else 0 end AOD,
+      case when APPEALS.BFAC = '7' then 1 else 0 end CAVC,
+      APPEALS.VLJ, APPEALS.PREV_DECIDING_JUDGE, APPEALS.HEARING_DATE, APPEALS.PREV_BFDDEC,
+      CORRES.SNAMEF, CORRES.SNAMEL, CORRES.SSN,
+      STAFF.SNAMEF as VLJ_NAMEF, STAFF.SNAMEL as VLJ_NAMEL
+    from (
+      select BRIEFF.BFKEY, BRIEFF.TINUM, BFD19, BFDLOOUT, BFAC, BFCORKEY, BFMEMID, BFCURLOC,
+        BRIEFF.BFDLOCIN, BFCORLID, AOD,
+        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
+        , PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
+        , VLJ_HEARINGS.HEARING_DATE HEARING_DATE
+        , PREV_APPEAL.PREV_BFDDEC PREV_BFDDEC
+      from (
+        #{SELECT_LOC_63_APPEALS}
+      ) BRIEFF
+      #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+      #{JOIN_PREVIOUS_APPEALS}
+      where BRIEFF.BFDLOCIN >= TRUNC(CURRENT_DATE) - 2
+      order by BFD19
+    ) APPEALS
+    left join CORRES on APPEALS.BFCORKEY = CORRES.STAFKEY
+    left join STAFF on APPEALS.VLJ = STAFF.SATTYID
+  "
+
   def self.counts_by_priority_and_readiness
     query = <<-SQL
       select count(*) N, PRIORITY, READY
@@ -486,7 +550,51 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   def self.ready_to_distribute_appeals
     query = <<-SQL
+      #{SELECT_READY_TO_DISTRIBUTE_APPEALS_ORDER_BY_BFD19_ADDITIONAL_COLS}
+    SQL
+
+    fmtd_query = sanitize_sql_array([query])
+    connection.exec_query(fmtd_query).to_a
+  end
+
+  def self.loc_63_appeals
+    query = <<-SQL
+      #{SELECT_APPEALS_IN_LOCATION_63_FROM_PAST_2_DAYS}
+    SQL
+
+    fmtd_query = sanitize_sql_array([query])
+    connection.exec_query(fmtd_query).to_a
+  end
+
+  def self.appeals_tied_to_non_ssc_avljs
+    query = <<-SQL
+      with non_ssc_avljs as (
+        #{VACOLS::Staff::NON_SSC_AVLJS}
+      )
       #{SELECT_READY_TO_DISTRIBUTE_APPEALS_ORDER_BY_BFD19}
+      where APPEALS.VLJ in (select * from non_ssc_avljs)
+      and (
+        APPEALS.PREV_DECIDING_JUDGE is null or
+        (
+          APPEALS.PREV_DECIDING_JUDGE = APPEALS.VLJ
+          AND APPEALS.HEARING_DATE <= APPEALS.PREV_BFDDEC
+        )
+      )
+      order by BFD19
+    SQL
+
+    fmtd_query = sanitize_sql_array([query])
+    connection.exec_query(fmtd_query).to_a
+  end
+
+  def self.appeals_tied_to_avljs_and_vljs
+    query = <<-SQL
+      with all_avljs_andvljs as (
+        #{VACOLS::Staff::ALL_AVLJS_AND_VLJS}
+      )
+      #{SELECT_READY_TO_DISTRIBUTE_APPEALS_ORDER_BY_BFD19}
+      where APPEALS.VLJ in (select * from all_avljs_andvljs)
+      order by BFD19
     SQL
 
     fmtd_query = sanitize_sql_array([query])
@@ -727,7 +835,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
         reject_due_to_affinity?(appeal, cavc_affinity_lever_value)
       elsif cavc_affinity_lever_value == Constants.ACD_LEVERS.infinite
-        next if ineligible_judges_sattyids&.include?(appeal["vlj"])
+        next if hearing_judge_ineligible_with_no_hearings_after_decision(appeal)
 
         appeal["prev_deciding_judge"] != judge_sattyid
       elsif cavc_affinity_lever_value == Constants.ACD_LEVERS.omit
@@ -759,7 +867,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
         reject_due_to_affinity?(appeal, cavc_aod_affinity_lever_value)
       elsif cavc_aod_affinity_lever_value == Constants.ACD_LEVERS.infinite
-        next if ineligible_judges_sattyids&.include?(appeal["vlj"])
+        next if hearing_judge_ineligible_with_no_hearings_after_decision(appeal)
 
         appeal["prev_deciding_judge"] != judge_sattyid
       elsif cavc_aod_affinity_lever_value == Constants.ACD_LEVERS.omit
@@ -811,6 +919,10 @@ class VACOLS::CaseDocket < VACOLS::Record
       (VACOLS::Case.find_by(bfkey: appeal["bfkey"])
         .appeal_affinity
         .affinity_start_date > lever.to_i.days.ago)
+  end
+
+  def self.hearing_judge_ineligible_with_no_hearings_after_decision(appeal)
+    ineligible_judges_sattyids&.include?(appeal["vlj"]) && !appeal_has_hearing_after_previous_decision?(appeal)
   end
 
   def self.ineligible_judges_sattyids

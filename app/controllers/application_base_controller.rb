@@ -6,8 +6,6 @@ class ApplicationBaseController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
-  include TrackRequestId
-
   before_action :check_out_of_service
   before_action :strict_transport_security
 

@@ -6,6 +6,7 @@
 class NightlySyncsJob < CaseflowJob
   queue_with_priority :low_priority
   application_attr :queue # arbitrary
+  include SyncDecidedAppealsHelper
 
   def perform
     RequestStore.store[:current_user] = User.system_user
@@ -16,6 +17,7 @@ class NightlySyncsJob < CaseflowJob
     sync_vacols_users
     sync_decision_review_tasks
     sync_bgs_attorneys
+    sync_all_decided_appeals
 
     slack_service.send_notification(@slack_report.join("\n"), self.class.name) if @slack_report.any?
   end
@@ -84,6 +86,14 @@ class NightlySyncsJob < CaseflowJob
     @slack_report << "*Fatal error in sync_bgs_attorneys:* #{error}"
   end
 
+  def sync_all_decided_appeals
+    begin
+      sync_decided_appeals
+    rescue StandardError => error
+      @slack_report << "*Fatal error in sync_decided_appeals* #{error}"
+    end
+  end
+
   def dangling_legacy_appeals
     reporter = LegacyAppealsWithNoVacolsCase.new
     reporter.call
@@ -105,5 +115,7 @@ class NightlySyncsJob < CaseflowJob
         state.scheduled_in_error_appeal_state_update_action!
       end
     end
+  rescue StandardError => error
+    @slack_report << "*Fatal error in sync_hearing_states* #{error}"
   end
 end

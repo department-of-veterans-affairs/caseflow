@@ -32,8 +32,6 @@ if DatabaseRequestCounter.valid_env?
     # $> REACT_ON_RAILS_ENV=HOT SIMULATE_VACOLS_LATENCY=true bundle exec rails s -p 3000
     return unless ENV["SIMULATE_VACOLS_LATENCY"]
 
-    # Default determined from metrics sent to Datadog:
-    # https://app.datadoghq.com/dashboard/54w-efy-r5d/va-systems?fullscreen_widget=399796003
     latency = ENV["VACOLS_DELAY_MS"] || 80
     sleep(latency / 1000.0)
   end

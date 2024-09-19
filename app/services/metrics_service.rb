@@ -1,18 +1,14 @@
 # frozen_string_literal: true
 
 require "benchmark"
-require "datadog/statsd"
 require "statsd-instrument"
 
 # see https://dropwizard.github.io/metrics/3.1.0/getting-started/ for abstractions on metric types
 class MetricsService
-  @statsd = Datadog::Statsd.new
-
   # :reek:LongParameterList
-  def self.increment_counter(metric_group:, metric_name:, app_name:, attrs: {}, by: 1)
+  def self.increment_counter(metric_group:, metric_name:, app_name:, attrs: {})
     tags = get_tags(app_name, attrs)
     stat_name = get_stat_name(metric_group, metric_name)
-    @statsd.increment(stat_name, tags: tags, by: by)
 
     # Dynatrace statD implementation
     StatsD.increment(stat_name, tags: tags)
@@ -34,7 +30,6 @@ class MetricsService
   def self.emit_gauge(metric_group:, metric_name:, metric_value:, app_name:, attrs: {})
     tags = get_tags(app_name, attrs)
     stat_name = get_stat_name(metric_group, metric_name)
-    @statsd.gauge(stat_name, metric_value, tags: tags)
 
     # Dynatrace statD implementation
     StatsD.gauge(stat_name, metric_value, tags: tags)
@@ -45,7 +40,6 @@ class MetricsService
   def self.histogram(metric_group:, metric_name:, metric_value:, app_name:, attrs: {})
     tags = get_tags(app_name, attrs)
     stat_name = get_stat_name(metric_group, metric_name)
-    @statsd.histogram(stat_name, metric_value, tags: tags)
 
     # Dynatrace statD implementation
     StatsD.histogram(stat_name, metric_value, tags: tags)
@@ -98,7 +92,6 @@ class MetricsService
       }
       MetricsService.emit_gauge(sent_to_info)
 
-      sent_to << Metric::LOG_SYSTEMS[:datadog]
       sent_to << Metric::LOG_SYSTEMS[:dynatrace]
     end
 
