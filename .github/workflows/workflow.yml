@@ -277,11 +277,32 @@ jobs:
       - name: List coverage files for debugging
         run: ls -R ./coverage
 
-      - name: Add code coverage comment
-        uses: romeovs/lcov-reporter-action@v0.4.0
+  # New job to merge and upload the code coverage
+  merge_coverage_job:
+    runs-on: ubuntu-latest
+    needs: caseflow_rspec_job
+    steps:
+      - name: Download coverage from all nodes
+        uses: actions/download-artifact@v3
         with:
-         lcov-file: ./coverage/lcov/caseflow.lcov
-         github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: ./coverage
+
+      - name: Extract all coverage reports
+        run: |
+          mkdir -p merged_coverage
+          for f in ./coverage/coverage-*.tar.gz; do tar -xzf "$f" -C merged_coverage; done
+
+      - name: Merge coverage results
+        run: bundle exec rake simplecov:merge_coverage
+
+      - name: List merged coverage files for debugging
+        run: ls -R ./merged_coverage
+
+      - name: Add code coverage comment
+        uses: romeovs/lcov-reporter-action@v0.2.16
+        with:
+          lcov-file: ./merged_coverage/lcov/caseflow.lcov
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
   caseflow_jest_job:
     # This job will run the jest, change the value below to false if you wish to turn it off.

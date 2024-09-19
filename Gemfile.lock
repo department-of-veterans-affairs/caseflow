@@ -1548,7 +1548,6 @@ GEM
       thor (>= 0.19, < 2)
     diff-lcs (1.3)
     docile (1.4.1)
-    dogstatsd-ruby (4.4.0)
     dotenv (2.8.1)
     dotenv-rails (2.8.1)
       dotenv (= 2.8.1)
@@ -2052,8 +2051,9 @@ GEM
     shoulda-matchers (5.3.0)
       activesupport (>= 5.2.0)
     simplecov-html (0.13.1)
-    simplecov-lcov (0.8.0)
     simplecov_json_formatter (0.1.4)
+    simplecov_lcov_formatter (0.9.0)
+      simplecov (>= 0.18)
     single_cov (1.3.2)
     sixarm_ruby_unaccent (1.2.0)
     socksify (1.7.1)
@@ -2245,7 +2245,7 @@ DEPENDENCIES
   shoryuken (= 3.1.11)
   shoulda-matchers
   simplecov!
-  simplecov-lcov
+  simplecov_lcov_formatter (~> 0.9.0)
   single_cov
   sniffybara!
   solargraph
