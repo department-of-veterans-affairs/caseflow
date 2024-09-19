@@ -274,6 +274,9 @@ jobs:
         with:
           path: ./log/bullet-${{matrix.ci_node_index}}.log
 
+      - name: List coverage files for debugging
+        run: ls -R ./coverage
+
       - name: Add code coverage comment
         uses: romeovs/lcov-reporter-action@v0.4.0
         with:
