@@ -73,6 +73,7 @@ class GeomatchService
       metric_name: "geomatched_appeals",
       attrs: {
         status: status,
+        appeal_external_id: appeal.external_id,
         hearing_request_type: appeal.current_hearing_request_type
       }
     )
