@@ -56,7 +56,7 @@ class Test::LoadTestsController < ApplicationController
       target_data_column = "id"
     when "Metric"
       target_data_type = Metric
-      target_data_column = "uuid"
+      target_data_column = nil
     end
 
     target_id = get_target_data_id(params[:target_id], target_data_type, target_data_column)
@@ -66,10 +66,14 @@ class Test::LoadTestsController < ApplicationController
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength
 
   # Private: If no target_id is provided, use the target_id of sample data instead
+  # Returns the target_data_id of each target_data_type
+  # For Metric returns the entire target_data object
   def get_target_data_id(target_id, target_data_type, target_data_column)
     target_data_id = if target_id.presence
                        target_data_type.find_by("#{target_data_column}": target_id).nil? ? nil : target_id
-                     else
+                      elsif target_data_type.to_s == "Metric"
+                        target_data_type.all.sample
+                      else
                        target_data_type.all.sample[target_data_column.to_sym]
                      end
 
