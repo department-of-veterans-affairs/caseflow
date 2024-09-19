@@ -1,6 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
+import moment from 'moment-timezone';
 
 import { marginTop, input8px } from '../details/style';
 import { HearingEmail } from './HearingEmail';
@@ -21,9 +22,9 @@ export const EmailNotificationFields = ({
   roTimezone,
   header
 }) => {
-
   const disableField = readOnly || readOnlyEmails(hearing);
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
+  const hearingDayDate = moment(hearing.scheduledFor).format('YYYY-MM-DD');
 
   return (
     <ContentSection header={header}>
@@ -41,6 +42,7 @@ export const EmailNotificationFields = ({
               roTimezone={roTimezone}
               name="appellantTz"
               label={`${getAppellantTitle(hearing?.appellantIsNotVeteran)} Timezone`}
+              hearingDayDate={hearingDayDate}
             />
             <HelperText label={COPY.VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT} />
           </div>
@@ -71,6 +73,7 @@ export const EmailNotificationFields = ({
               roTimezone={roTimezone}
               name="representativeTz"
               label="POA/Representative Timezone"
+              hearingDayDate={hearingDayDate}
             />
             <HelperText label={COPY.VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT} />
           </div>

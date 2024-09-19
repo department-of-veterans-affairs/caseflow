@@ -5,9 +5,7 @@ import { ContentSection } from '../../../components/ContentSection';
 import { HearingLinks } from './HearingLinks';
 import { HearingsUserContext } from '../../contexts/HearingsUserContext';
 
-export const VirtualHearingFields = (
-  { hearing, virtualHearing }
-) => {
+export const VirtualHearingFields = ({ hearing, virtualHearing }) => {
   if (!hearing?.isVirtual && !hearing?.wasVirtual) {
     return null;
   }
