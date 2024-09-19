@@ -206,7 +206,7 @@ RSpec.feature("The Correspondence Details page") do
   end
 
 
-  context "correspondence details" do
+  context "correspondence details Prior Mail tab" do
     let(:current_user) { create(:inbound_ops_team_supervisor) }
     let(:correspondences) do
       (0..1).map do |i|
@@ -234,9 +234,8 @@ RSpec.feature("The Correspondence Details page") do
       CorrespondenceRelation.create!(correspondence_id: correspondence.id,related_correspondence_id: related_correspondence.id)
     end
 
-    it "properly loads the details page with related correspondence" do
+    it "properly removes prior mail relationship from corespondence" do
       visit "/queue/correspondence/#{correspondence.uuid}"
-# binding.pry
         click_on "Associated Prior Mail"
         page.execute_script('
         document.querySelectorAll(".cf-form-checkbox input[type=\'checkbox\']").forEach((checkbox, index) => {
@@ -246,6 +245,17 @@ RSpec.feature("The Correspondence Details page") do
         });
         ')
         click_button("Save changes")
+        visit current_path
+        click_on "Associated Prior Mail"
+
+        # Confirm that all checkboxes are unchecked after the page refresh
+        page.execute_script('
+          document.querySelectorAll(".cf-form-checkbox input[type=\'checkbox\']").forEach((checkbox) => {
+            if (checkbox.checked) {
+              throw new Error("Checkbox should be unchecked, but it is checked.");
+            }
+          });
+        ')
     end
   end
 
