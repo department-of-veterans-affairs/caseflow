@@ -195,40 +195,30 @@ class CaseDistributionTest extends React.PureComponent {
                           <h1 id="top">{COPY.TEST_CASE_DISTRIBUTION_LEVERS_DASHBOARD_TITLE}</h1>
                           <p>{COPY.TEST_CASE_DISTRIBUTION_LEVERS_DESCRIPTION}</p>
                           <h2>{COPY.TEST_NAVIGATION_H2}</h2>
-                          <ul style={{ listStyleType: 'none', paddingLeft: 0 }}>
+                          <ul>
                             <li>
                               <a href="#levers">
-                                <button className="btn btn-primary">
-                                  {COPY.TEST_CASE_DISTRIBUTION_LEVERS_BUTTON}
-                                </button>
+                                {COPY.TEST_CASE_DISTRIBUTION_LEVERS_BUTTON}
                               </a>
                             </li>
                             <li>
                               <a href="#audit">
-                                <button className="btn btn-primary">
-                                  {COPY.TEST_CASE_DISTRIBUTION_AUDIT_LEVERS_BUTTON}
-                                </button>
+                                {COPY.TEST_CASE_DISTRIBUTION_AUDIT_LEVERS_BUTTON}
                               </a>
                             </li>
                             <li>
                               <a href="#distribution_status">
-                                <button className="btn btn-primary">
-                                  {COPY.TEST_ACCESS_CSVS_BUTTON}
-                                </button>
+                                {COPY.TEST_ACCESS_CSVS_BUTTON}
                               </a>
                             </li>
                             <li>
                               <a href="#case_movement">
-                                <button className="btn btn-primary">
-                                  {COPY.TEST_CASE_MOVEMENT_BUTTON}
-                                </button>
+                                {COPY.TEST_CASE_MOVEMENT_BUTTON}
                               </a>
                             </li>
                             <li>
                               <a href="#log_of_most_recent_appeals">
-                                <button className="btn btn-primary">
-                                  {COPY.LOG_OF_MOST_RECENT_APPEALS_BUTTON}
-                                </button>
+                                {COPY.LOG_OF_MOST_RECENT_APPEALS_BUTTON}
                               </a>
                             </li>
                           </ul>
