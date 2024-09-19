@@ -79,6 +79,14 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedParser
     @payload.dig(:end_product_establishment, :code).presence
   end
 
+  def end_product_establishment_synced_status
+    @payload.dig(:end_product_establishment, :synced_status).presence
+  end
+
+  def end_product_establishment_last_synced_at
+    @payload.dig(:end_product_establishment, :last_synced_at)
+  end
+
   def added_issues
     @payload[:added_issues] || []
   end
