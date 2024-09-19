@@ -198,43 +198,32 @@ class CaseDistributionTest extends React.PureComponent {
                           <ul>
                             <li>
                               <a href="#levers">
-                                <button className="btn btn-primary">
-                                  {COPY.TEST_CASE_DISTRIBUTION_LEVERS_BUTTON}
-                                </button>
+                                {COPY.TEST_CASE_DISTRIBUTION_LEVERS_BUTTON}
                               </a>
                             </li>
                             <li>
                               <a href="#audit">
-                                <button className="btn btn-primary">
-                                  {COPY.TEST_CASE_DISTRIBUTION_AUDIT_LEVERS_BUTTON}
-                                </button>
+                                {COPY.TEST_CASE_DISTRIBUTION_AUDIT_LEVERS_BUTTON}
                               </a>
                             </li>
                             <li>
                               <a href="#access_csvs">
-                                <button className="btn btn-primary">
-                                  {COPY.TEST_ACCESS_CSVS_BUTTON}
-                                </button>
+                                {COPY.TEST_ACCESS_CSVS_BUTTON}
                               </a>
                             </li>
                             <li>
                               <a href="#run_seeds">
-                                <button className="btn btn-primary">
-                                  {COPY.TEST_CREATE_SEEDED_APPEALS_TITLE}
-                                </button>
+                                {COPY.TEST_CREATE_SEEDED_APPEALS_TITLE}
                               </a>
                             </li>
                             <li>
                               <a href="#case_movement">
-                                <button className="btn btn-primary">
-                                  {COPY.TEST_CASE_MOVEMENT_BUTTON}
-                                </button></a>
+                                {COPY.TEST_CASE_MOVEMENT_BUTTON}
+                              </a>
                             </li>
                             <li>
                               <a href="#log_of_most_recent_appeals">
-                                <button className="btn btn-primary">
-                                  {COPY.LOG_OF_MOST_RECENT_APPEALS_BUTTON}
-                                </button>
+                                {COPY.LOG_OF_MOST_RECENT_APPEALS_BUTTON}
                               </a>
                             </li>
                           </ul>
