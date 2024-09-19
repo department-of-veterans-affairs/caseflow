@@ -58,7 +58,7 @@ class Test::LoadTestsController < ApplicationController
         data = Metric.all.sample
         target_id = data.uuid
       end
-    rescue
+    rescue StandardError
       raise "Data returned nil when trying to find #{params[:target_type]}" if data.nil?
     else
       target_id
