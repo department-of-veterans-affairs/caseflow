@@ -23,9 +23,9 @@ import { ExternalLinkIcon } from 'app/components/icons/ExternalLinkIcon';
 import { COLORS } from 'app/constants/AppConstants';
 import Checkbox from 'app/components/Checkbox';
 import CorrespondencePaginationWrapper from 'app/queue/correspondence/CorrespondencePaginationWrapper';
-import Button from 'app/components/Button';
-import Alert from 'app/components/Alert';
-import ApiUtil from 'app/util/ApiUtil';
+import Button from '../../../components/Button';
+import Alert from '../../../components/Alert';
+import ApiUtil from '../../../util/ApiUtil';
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
@@ -583,7 +583,6 @@ CorrespondenceDetails.propTypes = {
   inboundOpsTeamUsers: PropTypes.array,
   isInboundOpsSuperuser: PropTypes.bool,
   isInboundOpsSupervisor: PropTypes.bool,
-  isInboundOpsUser: PropTypes.bool,
   addLetterCheck: PropTypes.bool,
   updateCorrespondenceRelations: PropTypes.func,
 };
