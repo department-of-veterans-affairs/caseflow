@@ -263,7 +263,7 @@ jobs:
           path: ./log/bullet-${{matrix.ci_node_index}}.log
 
       - name: Add code coverage comment
-        uses: romeovs/lcov-reporter-action@v0.2.16
+        uses: romeovs/lcov-reporter-action@v0.4.0
         with:
          lcov-file: ./coverage/lcov/caseflow.lcov
          github-token: ${{ secrets.GITHUB_TOKEN }}
