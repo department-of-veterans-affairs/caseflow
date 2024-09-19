@@ -1,5 +1,6 @@
 if ENV["RAILS_ENV"] == "test"
   require "simplecov-lcov"
+  
   formatters = [
   SimpleCov::Formatter::HTMLFormatter,
   SimpleCov::Formatter::LcovFormatter
