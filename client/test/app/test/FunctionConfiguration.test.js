@@ -6,7 +6,7 @@ import { Provider } from 'react-redux';
 import { applyMiddleware, createStore, compose } from 'redux';
 import thunk from 'redux-thunk';
 
-import FunctionConfiguration from '../../../app/test/loadTest/FeatureToggleConfiguration';
+import FunctionConfiguration from '../../../app/test/loadTest/FunctionConfiguration';
 
 const createStoreWithReducer = (initialState) => {
   const reducer = (state = initialState) => state;
@@ -29,11 +29,10 @@ const renderFunctionConfiguration = (props) => {
 describe('FeatureToggleConfiguration', () => {
   it('renders the FeatureToggleConfiguration component', async () => {
     const mockProps = {
-      form_values: {},
-      page: 'Test App',
+      functionOption: 'Function1',
     };
 
     renderFunctionConfiguration(mockProps);
-    expect(await screen.findByText(/Functions/)).toBeInTheDocument();
+    expect(await screen.findByText(/Function1/)).toBeInTheDocument();
   });
 });

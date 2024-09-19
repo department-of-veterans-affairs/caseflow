@@ -29,11 +29,10 @@ const renderFeatureToggleConfiguration = (props) => {
 describe('FeatureToggleConfiguration', () => {
   it('renders the FeatureToggleConfiguration component', async () => {
     const mockProps = {
-      form_values: {},
-      page: 'Test App',
+      featureToggle: 'Feature1',
     };
 
     renderFeatureToggleConfiguration(mockProps);
-    expect(await screen.findByText(/Feature Toggles/)).toBeInTheDocument();
+    expect(await screen.findByText(/Feature1/)).toBeInTheDocument();
   });
 });
