@@ -204,4 +204,67 @@ RSpec.feature("The Correspondence Details page") do
       expect(page).to have_content("Note Test")
     end
   end
+
+
+  context "correspondence details" do
+    let(:current_user) { create(:inbound_ops_team_supervisor) }
+
+    before :each do
+      InboundOpsTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user, roles: ["Inbound Ops Team"])
+      correspondence_spec_user_access
+      FeatureToggle.enable!(:correspondence_queue)
+
+      correspondences = []
+      2.times do |i|
+        correspondences << create(
+          :correspondence,
+          :related_correspondence,
+          :pending,
+          veteran: veteran,
+          va_date_of_receipt: i == 0 ? "Tue, 23 Jul 2024 00:00:00 EDT -04:00" : "Wed, 24 Jul 2024 00:00:00 EDT -04:00",
+          nod: false,
+          notes: i == 0 ? "Note Test" : "Related Correspondence Test"
+        )
+      end
+
+      @correspondence = correspondences[0]
+      @related_correspondence = correspondences[1]
+
+
+
+      # Create the relation between @correspondence and @related_correspondence
+      CorrespondenceRelation.create!(related_correspondence_id: @related_correspondence.id)
+
+      # CorrespondenceRelation.create!(
+      #   correspondence: @correspondence,
+      #   related_correspondence: @related_correspondence
+      # )
+    end
+
+    it "properly loads the details page with related correspondence" do
+      visit "/queue/correspondence/#{correspondence.uuid}"
+binding.pry
+      # Veteran Details
+      expect(page).to have_content("8675309")
+      expect(page).to have_content("John Testingman")
+
+      # View all correspondence link
+      expect(page).to have_content("View all correspondence")
+
+      # Record status
+      expect(page).to have_content("Record status:")
+
+      # Tabs
+      expect(page).to have_content("Correspondence and Appeal Tasks")
+      expect(page).to have_content("Package Details")
+      expect(page).to have_content("Response Letters")
+      expect(page).to have_content("Associated Prior Mail")
+
+      # Check that the related correspondence appears
+      expect(page).to have_content("Related Correspondence Test")
+    end
+  end
+
+
 end

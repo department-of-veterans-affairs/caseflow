@@ -72,6 +72,7 @@ const CorrespondenceDetails = (props) => {
       );
 
       setIsButtonDisabled(!isAnyChanged);
+      setDisableSubmitButton(!isAnyChanged);
 
       return newState;
     });
@@ -81,6 +82,7 @@ const CorrespondenceDetails = (props) => {
   const handlepriorMailUpdate = async () => {
   // Disable the button to prevent duplicate requests
     setIsButtonDisabled(true);
+    setDisableSubmitButton(true);
 
     // Get the initial and current checkbox states
     const uncheckedCheckboxes = Object.entries(checkboxStates).
@@ -114,6 +116,7 @@ const CorrespondenceDetails = (props) => {
       console.error('Error during PATCH request:', error.message);
     } finally {
       setIsButtonDisabled(true);
+      setDisableSubmitButton(true);
     }
 
     // Reset checkboxes to the new state
@@ -586,7 +589,10 @@ const CorrespondenceDetails = (props) => {
   ];
 
   const saveChanges = () => {
-    if (currentTabIndex === 3) {
+
+    if (isAdminNotLoggedIn() === false) {
+      handlepriorMailUpdate();
+    } else if (currentTabIndex === 3) {
 
       const priorMailIds = selectedPriorMail.map((mail) => mail.id);
       const payload = {
