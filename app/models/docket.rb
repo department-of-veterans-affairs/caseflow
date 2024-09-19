@@ -114,6 +114,12 @@ class Docket
     appeals(priority: true, ready: true).pluck(:uuid)
   end
 
+  def tied_to_vljs(judge_ids)
+    docket_appeals.ready_for_distribution
+      .most_recent_hearings
+      .tied_to_judges(judge_ids)
+  end
+
   # rubocop:disable Metrics/MethodLength, Lint/UnusedMethodArgument, Metrics/PerceivedComplexity
   # :reek:FeatureEnvy
   def distribute_appeals(distribution, priority: false, genpop: nil, limit: 1, style: "push")
