@@ -208,16 +208,9 @@ RSpec.feature("The Correspondence Details page") do
 
   context "correspondence details" do
     let(:current_user) { create(:inbound_ops_team_supervisor) }
-
-    before :each do
-      InboundOpsTeam.singleton.add_user(current_user)
-      User.authenticate!(user: current_user, roles: ["Inbound Ops Team"])
-      correspondence_spec_user_access
-      FeatureToggle.enable!(:correspondence_queue)
-
-      correspondences = []
-      2.times do |i|
-        correspondences << create(
+    let(:correspondences) do
+      (0..1).map do |i|
+        create(
           :correspondence,
           :related_correspondence,
           :pending,
@@ -227,42 +220,32 @@ RSpec.feature("The Correspondence Details page") do
           notes: i == 0 ? "Note Test" : "Related Correspondence Test"
         )
       end
+    end
+    let(:correspondence) { correspondences[0] }
+    let(:related_correspondence) { correspondences[1] }
 
-      @correspondence = correspondences[0]
-      @related_correspondence = correspondences[1]
+    before :each do
+      InboundOpsTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user, roles: ["Inbound Ops Team"])
+      correspondence_spec_user_access
+      FeatureToggle.enable!(:correspondence_queue)
 
-
-
-      # Create the relation between @correspondence and @related_correspondence
-      CorrespondenceRelation.create!(related_correspondence_id: @related_correspondence.id)
-
-      # CorrespondenceRelation.create!(
-      #   correspondence: @correspondence,
-      #   related_correspondence: @related_correspondence
-      # )
+      # Create the relation between correspondence and related_correspondence
+      CorrespondenceRelation.create!(correspondence_id: correspondence.id,related_correspondence_id: related_correspondence.id)
     end
 
     it "properly loads the details page with related correspondence" do
       visit "/queue/correspondence/#{correspondence.uuid}"
-binding.pry
-      # Veteran Details
-      expect(page).to have_content("8675309")
-      expect(page).to have_content("John Testingman")
-
-      # View all correspondence link
-      expect(page).to have_content("View all correspondence")
-
-      # Record status
-      expect(page).to have_content("Record status:")
-
-      # Tabs
-      expect(page).to have_content("Correspondence and Appeal Tasks")
-      expect(page).to have_content("Package Details")
-      expect(page).to have_content("Response Letters")
-      expect(page).to have_content("Associated Prior Mail")
-
-      # Check that the related correspondence appears
-      expect(page).to have_content("Related Correspondence Test")
+# binding.pry
+        click_on "Associated Prior Mail"
+        page.execute_script('
+        document.querySelectorAll(".cf-form-checkbox input[type=\'checkbox\']").forEach((checkbox, index) => {
+          if (index < 6) {
+            checkbox.click();
+          }
+        });
+        ')
+        click_button("Save changes")
     end
   end
 

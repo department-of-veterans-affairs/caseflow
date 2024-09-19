@@ -48,7 +48,6 @@ const CorrespondenceDetails = (props) => {
 
   const [checkboxStates, setCheckboxStates] = useState({});
   const [originalStates, setOriginalStates] = useState({});
-  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
   // Initialize checkbox states
   useEffect(() => {
@@ -71,7 +70,6 @@ const CorrespondenceDetails = (props) => {
         (key) => newState[key] !== originalStates[key]
       );
 
-      setIsButtonDisabled(!isAnyChanged);
       setDisableSubmitButton(!isAnyChanged);
 
       return newState;
@@ -81,7 +79,6 @@ const CorrespondenceDetails = (props) => {
   // Function to handle the "Save Changes" button click, including the PATCH request
   const handlepriorMailUpdate = async () => {
   // Disable the button to prevent duplicate requests
-    setIsButtonDisabled(true);
     setDisableSubmitButton(true);
 
     // Get the initial and current checkbox states
@@ -92,8 +89,6 @@ const CorrespondenceDetails = (props) => {
 
         return { uuid: mail.uuid };
       });
-
-    console.log('Unchecked Checkboxes:', uncheckedCheckboxes);
 
     // Data for the PATCH request to remove unchecked relations
     const patchData = {
@@ -109,13 +104,11 @@ const CorrespondenceDetails = (props) => {
       });
 
       if (response.status === 201) {
-        console.log('Correspondence updated successfully.', response.status);
-        console.log('Correspondence update data:', patchData);
+        console.log('Correspondence updated successfully.', response.status); // eslint-disable-line no-console
       }
     } catch (error) {
       console.error('Error during PATCH request:', error.message);
     } finally {
-      setIsButtonDisabled(true);
       setDisableSubmitButton(true);
     }
 
@@ -549,15 +542,6 @@ const CorrespondenceDetails = (props) => {
                 tbodyId="correspondence-table-body"
                 getKeyForRow={getKeyForRow}
               />
-
-              <button
-                type="button"
-                className="save-changes-button"
-                disabled={isButtonDisabled}
-                onClick={handlepriorMailUpdate}
-              >
-                Save Changes
-              </button>
             </div>
           </AppSegment>
         </div>
