@@ -62,8 +62,11 @@ module CorrespondenceResponseLettersHelpers
     perform_dropdown_actions(dropdowns)
     page.execute_script("document.querySelector('.cf-form-radio-options').scrollIntoView();")
     page.execute_script(
-      "document.getElementById('How-long-should-the-response-window-be-for-this-response-letter-undefined_Custom').click()"
+      "document.getElementById(" \
+      "'How-long-should-the-response-window-be-for-this-response-letter-undefined_Custom')" \
+      ".click()"
     )
+
     find_by_id("content").fill_in with: "2"
     click_on("Add")
     @correspondence

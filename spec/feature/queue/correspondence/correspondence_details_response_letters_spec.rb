@@ -51,10 +51,10 @@ RSpec.feature("Correspondence Details Response Letters Module") do
       visit "/queue/correspondence/#{correspondence.uuid}"
       find_by_id("tasks-tabwindow-tab-2", wait: 10).click
       perform_add_letter_popup_window
-      containers = all('.response-letter-table-borderless-no-background')
+      containers = all(".response-letter-table-borderless-no-background")
       expect(containers.size).to eq(2)
       perform_add_letter_popup_window
-      expect(page).not_to have_button('+ Add letter')
+      expect(page).not_to have_button("+ Add letter")
     end
   end
 end
