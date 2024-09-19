@@ -65,7 +65,7 @@ const Page = ({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale }) => 
 
   useEffect(() => {
     if (canvasRef.current && isVisible) {
-      page.render({ canvasContext: canvasRef.current?.getContext('2d', { alpha: false }), viewport }).
+      page.render({ canvasContext: canvasRef.current?.getContext('2d'), viewport }).
         promise.catch(() => {
         // this catch is necessary to prevent the error: Cannot use the same canvas during multiple render operations
         });
