@@ -297,7 +297,6 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
         expect(subject.auto_remand).to eq(payload["auto_remand"])
       end
     end
-
   end
 
   context "when attributes use .presence and values are empty strings" do
