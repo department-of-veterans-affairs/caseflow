@@ -37,4 +37,62 @@ RSpec.describe CorrespondenceDetailsController, :all_dbs, type: :controller do
       end
     end
   end
+
+  describe "POST #create_correspondence_relations" do
+    let!(:current_user) { create(:inbound_ops_team_supervisor) }
+    let(:veteran) { create(:veteran) }
+    let!(:correspondence) { create(:correspondence, :with_correspondence_intake_task, assigned_to: current_user) }
+    let(:prior_mail_ids) { [1, 2, 3] }
+
+    before do
+      allow(CorrespondenceRelation).to receive(:create!)
+      allow(Correspondence).to receive(:find).and_return(correspondence)
+    end
+
+    describe "POST #create_correspondence_relations" do
+      context "with valid priorMailIds" do
+        it "creates the correspondence relations" do
+          post :create_correspondence_relations, params: { priorMailIds: prior_mail_ids, correspondence_id: correspondence.id }
+
+          expect(CorrespondenceRelation).to have_received(:create!).exactly(prior_mail_ids.size).times
+          prior_mail_ids.each do |corr_id|
+            expect(CorrespondenceRelation).to have_received(:create!).with(
+              correspondence_id: corr_id,
+              related_correspondence_id: correspondence.id
+            )
+          end
+        end
+      end
+
+      context "when priorMailIds is empty" do
+        it "does not create any correspondence relations" do
+          post :create_correspondence_relations, params: { priorMailIds: [], correspondence_id: correspondence.id }
+
+          expect(CorrespondenceRelation).not_to have_received(:create!)
+        end
+      end
+
+      context "when priorMailIds is missing" do
+        it "does not create any correspondence relations" do
+          post :create_correspondence_relations, params: { correspondence_id: correspondence.id }
+
+          expect(CorrespondenceRelation).not_to have_received(:create!)
+        end
+      end
+
+      context "when CorrespondenceRelation creation raises an error" do
+        before do
+          allow(CorrespondenceRelation).to receive(:create!).and_raise(ActiveRecord::RecordInvalid)
+        end
+
+        it "raises an error and does not create any relations" do
+          expect {
+            post :create_correspondence_relations, params: { priorMailIds: prior_mail_ids, correspondence_id: correspondence.id }
+          }.to raise_error(ActiveRecord::RecordInvalid)
+
+          expect(CorrespondenceRelation).to have_received(:create!).once
+        end
+      end
+    end
+  end
 end
