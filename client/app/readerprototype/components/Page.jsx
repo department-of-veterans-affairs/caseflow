@@ -35,9 +35,10 @@ const Page = ({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale }) => 
 
   // limit to single column doc displayed by default
   let scaleFraction = scale / 100;
+
   if (scaleFraction === 1.0) {
     if (window.innerWidth >= 1280) {
-      scaleFraction = window.innerWidth / (1100 + 200);
+      scaleFraction = window.innerWidth / 1300;
     }
   }
 
