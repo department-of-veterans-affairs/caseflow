@@ -1517,6 +1517,7 @@
   "TEST_LEVER_GROUP_TD": "Lever Group",
   "TEST_LEVER_GROUP_ORDER_TD": "Lever Group Order",
   "TEST_DESCRIPTION_TD": "Description",
+  "TEST_DATA_TYPE_TD": "Data Type",
   "TEST_VALUE_TD": "Value",
   "TEST_MIN_MAX_VALUE_TD": "Min / Max Value",
   "TEST_UNIT_TD": "Unit",
