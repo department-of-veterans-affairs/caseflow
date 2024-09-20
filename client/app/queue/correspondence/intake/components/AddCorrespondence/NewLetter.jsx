@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import TextField from '../../../../../components/TextField';
 import Button from '../../../../../components/Button';
 import SearchableDropdown from 'app/components/SearchableDropdown';
-import DateSelector from 'app/components/DateSelector';
+import DateSelector from '../../../../../components/DateSelector';
 import RadioField from '../../../../../components/RadioField';
 import { ADD_CORRESPONDENCE_LETTER_SELECTIONS } from '../../../../constants';
 import moment from 'moment';
@@ -42,6 +42,7 @@ export const NewLetter = (props) => {
   const [responseWindows, setResponseWindows] = useState(displayLetter ? currentLetter.responseWindows : '');
   const naValue = 'N/A';
   const dispatch = useDispatch();
+  const isPastOrCurrentDate = moment(letterCard.date).isSameOrBefore(moment(), 'day');
 
   const radioOptions = [
     { displayText: '65 days',
@@ -280,9 +281,24 @@ export const NewLetter = (props) => {
   };
 
   const changeDate = (val) => {
-    setLetterCard({ ...letterCard,
-      date: val
-    });
+    const isFutureDate = moment(val).isAfter(moment(), 'day');
+
+    if (isFutureDate) {
+      setLetterCard({
+        ...letterCard,
+        date: val,
+        type: '',
+        title: '',
+        subType: '',
+        reason: '',
+        responseWindows: ''
+      });
+    } else {
+      setLetterCard({
+        ...letterCard,
+        date: val
+      });
+    }
   };
 
   const removeLetter = () => {
@@ -300,6 +316,7 @@ export const NewLetter = (props) => {
             value={letterCard.date}
             onChange={(val) => changeDate(val)}
             type="date"
+            noFutureDates
           />
         </div>
         <br />
@@ -310,6 +327,7 @@ export const NewLetter = (props) => {
           options={letterTypesData}
           value={letterCard.type}
           onChange={(val) => changeLetterType(val.value)}
+          readOnly={!isPastOrCurrentDate}
         />
         <br />
         <SearchableDropdown
