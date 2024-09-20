@@ -233,6 +233,12 @@ jobs:
       # --tty forces Rspec to produce color
       # circleci is the USER
 
+      - name: Debugging Test Run
+        run: |
+          echo "current Node Index: ${{ matrix.ci_node_index }}"
+          ls -R /home/circleci
+          cat /home/circleci/coverage-${{ matrix.ci_node_index }}/index.html
+
       # Archive the coverage reports for each node
       - name: Archive coverage report
         run: |
