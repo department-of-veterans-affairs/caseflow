@@ -6,22 +6,29 @@ USER_EMAIL=caseflow@caseflow.demo
 USER_PASSWORD=caseflow1
 
 CASEFLOW_HOST=appeals-db
+# The Metabase port needs to be 3000 because this will run in the appeals-app container in AWS and the port mapping
+# in docker-compose is for the host only
+METABASE_HOST=appeals-metabase
+METABASE_PORT=3000
 VACOLS_HOST=host.docker.internal
 
-echo "⌚︎ Waiting for Metabase to start"
-while (! curl -s -m 5 http://localhost:3002/api/session/properties -o /dev/null); do sleep 5; done
+echo "Installing JQ"
+yum install -y jq
 
-echo "😎 Creating admin user"
+echo "Waiting for Metabase to start"
+while (! curl -s -m 5 http://${METABASE_HOST}:${METABASE_PORT}/api/session/properties -o /dev/null); do sleep 5; done
+
+echo "Creating admin user"
 
 SETUP_TOKEN=$(curl -s -m 5 -X GET \
     -H "Content-Type: application/json" \
-    http://localhost:3002/api/session/properties \
+    http://${METABASE_HOST}:${METABASE_PORT}/api/session/properties \
     | jq -r '.["setup-token"]'
 )
 
 MB_TOKEN=$(curl -s -X POST \
     -H "Content-type: application/json" \
-    http://localhost:3002/api/setup \
+    http://${METABASE_HOST}:${METABASE_PORT}/api/setup \
     -d '{
     "token": "'${SETUP_TOKEN}'",
     "user": {
@@ -38,19 +45,19 @@ MB_TOKEN=$(curl -s -X POST \
 
 echo "Logging in as admin"
 ADMIN_SESSION_ID=$(curl -s -X POST -H \
-    "Content-type: application/json" http://localhost:3002/api/session \
+    "Content-type: application/json" http://${METABASE_HOST}:${METABASE_PORT}/api/session \
     -d '{"username": "'${ADMIN_EMAIL}'", "password": "'${ADMIN_PASSWORD}'"}' \
     | jq -r '.id')
 
 echo "Getting Sample Database ID"
-SAMPLE_DB_ID=$(curl -X GET http://localhost:3002/api/database -H "X-Metabase-Session: ${ADMIN_SESSION_ID}" \
+SAMPLE_DB_ID=$(curl -X GET http://${METABASE_HOST}:${METABASE_PORT}/api/database -H "X-Metabase-Session: ${ADMIN_SESSION_ID}" \
     | jq '.data[0].id')
 
 echo "Deleting Sample Database"
-curl -X DELETE http://localhost:3002/api/database/${SAMPLE_DB_ID} -H "X-Metabase-Session: ${ADMIN_SESSION_ID}"
+curl -X DELETE http://${METABASE_HOST}:${METABASE_PORT}/api/database/${SAMPLE_DB_ID} -H "X-Metabase-Session: ${ADMIN_SESSION_ID}"
 
 echo "Creating Caseflow Database connection"
-curl -X POST http://localhost:3002/api/database \
+curl -X POST http://${METABASE_HOST}:${METABASE_PORT}/api/database \
   -H "Content-type: application/json" \
   -H "X-Metabase-Session: ${ADMIN_SESSION_ID}" \
   -d '{
@@ -62,7 +69,7 @@ curl -X POST http://localhost:3002/api/database \
   }'
 
 echo -e "\nCreating VACOLS Database connection"
-curl -X POST http://localhost:3002/api/database \
+curl -X POST http://${METABASE_HOST}:${METABASE_PORT}/api/database \
   -H "Content-type: application/json" \
   -H "X-Metabase-Session: ${ADMIN_SESSION_ID}" \
   -d '{
@@ -73,8 +80,8 @@ curl -X POST http://localhost:3002/api/database \
     }
   }'
 
-echo -e "\n👥 Creating a basic user: "
-curl -s "http://localhost:3002/api/user" \
+echo -e "\nCreating a basic user: "
+curl -s "http://${METABASE_HOST}:${METABASE_PORT}/api/user" \
     -H 'Content-Type: application/json' \
     -H "X-Metabase-Session: ${ADMIN_SESSION_ID}" \
     -d '{"first_name": "Caseflow", "last_name": "User", "email": "'${USER_EMAIL}'", "login_attributes": {"region_filter": "WA"}, "password":"'${USER_PASSWORD}'"}'
