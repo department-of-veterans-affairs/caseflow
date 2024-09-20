@@ -13,7 +13,8 @@ import CorrespondenceResponseLetters from './CorrespondenceResponseLetters';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
 // import TaskSnapshot from '../../TaskSnapshot';
-import { prepareAppealForSearchStore } from 'app/queue/utils';
+import { prepareAppealForSearchStore, prepareAppealForStore } from 'app/queue/utils';
+import { onReceiveAppealDetails } from '../../QueueActions';
 import CorrespondenceTasksAdded from '../CorrespondenceTasksAdded';
 import moment from 'moment';
 import Pagination from 'app/components/Pagination/Pagination';
@@ -172,6 +173,11 @@ const CorrespondenceDetails = (props) => {
   useEffect(() => {
     dispatch(loadCorrespondence(correspondence));
     dispatch(correspondenceInfo(correspondence));
+    // load appeals related to the correspondence into the store
+    // eslint-disable-next-line array-callback-return
+    props.correspondence.correspondenceAppeals.map((corAppeal) => {
+      dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal.appeal.data])));
+    });
   }, []);
 
   const isTasksUnrelatedToAppealEmpty = () => {

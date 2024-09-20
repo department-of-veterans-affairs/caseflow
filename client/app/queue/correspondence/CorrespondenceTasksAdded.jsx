@@ -2,10 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import CaseDetailsLink from '../CaseDetailsLink';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
-import CorrespondenceCaseTimeline from './CorrespondenceCaseTimeline';
+import TaskRows from '../components/TaskRows';
+import { useSelector } from 'react-redux';
 
 const CorrespondenceTasksAdded = (props) => {
   const veteranFullName = props.correspondence.veteranFullName;
+  const storedAppeals = useSelector((state) => state.queue.appeals);
+  const matchedAppeal = storedAppeals[props.appeal.external_id];
 
   return (
     <>
@@ -46,15 +49,15 @@ const CorrespondenceTasksAdded = (props) => {
             <p>{props.task_added.assignedTo ? props.task_added.assignedTo.name : ''}</p>
           </div>
 
-        </div >
+        </div>
         <div className="tasks-added-details">
           <span className="tasks-added-text">Tasks added to appeal</span>
           <div >
-            <CorrespondenceCaseTimeline
-              organizations={props.organizations}
-              userCssId={props.userCssId}
-              correspondence={props.appeal}
-              tasksToDisplay={(props.task_added.taskAddedData)}
+            <TaskRows appeal={matchedAppeal}
+              taskList={props.task_added.taskAddedData}
+              editNodDateEnabled={false}
+              timeline={false}
+              hideDropdown={false}
             />
           </div>
         </div>
@@ -68,6 +71,7 @@ CorrespondenceTasksAdded.propTypes = {
   task_added: PropTypes.object,
   organizations: PropTypes.array,
   userCssId: PropTypes.string,
+  appeal: PropTypes.object
 };
 
 export default CorrespondenceTasksAdded;

@@ -38,16 +38,28 @@ class WorkQueue::CorrespondenceAppealsSerializer
   attribute :task_added_data do |object|
     tasks = []
     object.correspondences_appeals_tasks.each do |cor_app_task|
+      task = cor_app_task.task
       assigned_to = cor_app_task.task.assigned_to
       assigned_to_text = assigned_to.is_a?(Organization) ? assigned_to.name : assigned_to.css_id
       task_data = {
-        assignedOn: cor_app_task.task.assigned_at.strftime("%m/%d/%Y"),
+        assignedOn: task.assigned_at.strftime("%m/%d/%Y"),
         assignedTo: assigned_to_text,
-        assigned_to_type: cor_app_task.task.assigned_to_type,
-        instructions: cor_app_task.task.instructions,
-        label: cor_app_task.task.label,
-        uniqueId: cor_app_task.id,
-        availableActions: cor_app_task.task.available_actions_unwrapper(RequestStore[:current_user])
+        assignedBy: {
+          firstName: task.assigned_by_display_name.first,
+          lastName: task.assigned_by_display_name.last,
+          fullName: task.assigned_by.try(:full_name),
+          cssId: task.assigned_by.try(:css_id)
+        },
+        assigned_to_type: task.assigned_to_type,
+        instructions: task.instructions,
+        label: task.label,
+        uniqueId: task.id,
+        availableActions: task.available_actions_unwrapper(RequestStore[:current_user]),
+        status: task.status,
+        type: task.type,
+        assigneeName: task.assigned_by.try(:full_name),
+
+
       }
       tasks << task_data
     end
