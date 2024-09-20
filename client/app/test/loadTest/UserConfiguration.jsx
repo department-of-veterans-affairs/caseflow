@@ -96,7 +96,7 @@ export default function UserConfiguration(props) {
             <OrganizationDropdown {...props} />
             <br />
             <h2><strong>Functions</strong></h2>
-            <div className="load-test-container">
+            <div className="load-test-container test-class-sizing">
               {functionsAvailable.map((functionOption) => (
                 <FunctionConfiguration
                   key={functionOption}
@@ -106,7 +106,7 @@ export default function UserConfiguration(props) {
             </div>
             <br />
             <h2><strong>Feature Toggles</strong></h2>
-            <div className="load-test-container">
+            <div className="load-test-container test-class-sizing">
               {featureToggles.map((featureToggle) => (
                 <FeatureToggleConfiguration
                   key={featureToggle}

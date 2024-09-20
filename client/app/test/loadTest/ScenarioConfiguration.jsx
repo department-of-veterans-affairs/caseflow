@@ -18,7 +18,7 @@ export default function ScenarioConfiguration(props) {
   };
 
   return (
-    <div className="load-test-container-checkbox">
+    <div className="load-test-container-checkbox test-class-sizing">
       <Checkbox
         label={scenario}
         name={scenario}
