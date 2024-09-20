@@ -32,8 +32,6 @@ const Page = ({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale }) => 
   const canvasRef = useRef(null);
   const isVisible = usePageVisibility(canvasRef);
   const wrapperRef = useRef(null);
-
-  // limit to single column doc displayed by default
   const scaleFraction = scale / 100;
   const viewport = page.getViewport({ scale: scaleFraction });
   const scaledHeight = viewport.height;
