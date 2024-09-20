@@ -60,6 +60,10 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser
     logical_date_converter(decision_date_int)
   end
 
+  def ri_edited_description
+    @issue.dig(:edited_description)
+  end
+
   def ri_ineligible_due_to_id
     @issue.dig(:ineligible_due_to_id)
   end
