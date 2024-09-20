@@ -142,7 +142,9 @@ const CorrespondenceDetails = (props) => {
     }
 
     // If neither is in relatedCorrespondenceIds, maintain their original order
-    return priorMail.indexOf(first) - priorMail.indexOf(second);
+    const returnSort = priorMail.indexOf(first) - priorMail.indexOf(second);
+
+    return returnSort;
   });
 
   const updatePageHandler = (idx) => {

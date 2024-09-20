@@ -19,7 +19,7 @@ class CorrespondenceIntakeProcessor
     do_upload_success_actions(parent_task, intake_params, correspondence, current_user)
   end
 
-  def update_correspondence(intake_params, current_user)
+  def update_correspondence(intake_params)
     # Fetch the correspondence using the UUID from the intake params
     correspondence = Correspondence.find_by(uuid: intake_params[:correspondence_uuid])
 
@@ -84,7 +84,10 @@ class CorrespondenceIntakeProcessor
     removed_related_uuids = intake_params[:correspondence_relations]&.map { |data| data[:uuid] }
 
     # Find and remove only those relations that were unchecked
-    relations_to_remove = CorrespondenceRelation.where(correspondence_id: correspondence.id, related_correspondence_id: Correspondence.where(uuid: removed_related_uuids).pluck(:id))
+    relations_to_remove = CorrespondenceRelation.where(
+      correspondence_id: correspondence.id,
+      related_correspondence_id: Correspondence.where(uuid: removed_related_uuids).pluck(:id)
+    )
 
     relations_to_remove.each(&:destroy!)
   end

@@ -205,7 +205,6 @@ RSpec.feature("The Correspondence Details page") do
     end
   end
 
-
   context "correspondence details Prior Mail tab" do
     let(:current_user) { create(:inbound_ops_team_supervisor) }
     let(:correspondences) do
@@ -231,33 +230,34 @@ RSpec.feature("The Correspondence Details page") do
       FeatureToggle.enable!(:correspondence_queue)
 
       # Create the relation between correspondence and related_correspondence
-      CorrespondenceRelation.create!(correspondence_id: correspondence.id,related_correspondence_id: related_correspondence.id)
+      CorrespondenceRelation.create!(
+        correspondence_id: correspondence.id,
+        related_correspondence_id: related_correspondence.id
+      )
     end
 
     it "properly removes prior mail relationship from corespondence" do
       visit "/queue/correspondence/#{correspondence.uuid}"
-        click_on "Associated Prior Mail"
-        page.execute_script('
-        document.querySelectorAll(".cf-form-checkbox input[type=\'checkbox\']").forEach((checkbox, index) => {
-          if (index < 6) {
-            checkbox.click();
+      click_on "Associated Prior Mail"
+      page.execute_script('
+      document.querySelectorAll(".cf-form-checkbox input[type=\'checkbox\']").forEach((checkbox, index) => {
+        if (index < 6) {
+          checkbox.click();
+        }
+      });
+      ')
+      click_button("Save changes")
+      visit current_path
+      click_on "Associated Prior Mail"
+
+      # Confirm that all checkboxes are unchecked after the page refresh
+      page.execute_script('
+        document.querySelectorAll(".cf-form-checkbox input[type=\'checkbox\']").forEach((checkbox) => {
+          if (checkbox.checked) {
+            throw new Error("Checkbox should be unchecked, but it is checked.");
           }
         });
-        ')
-        click_button("Save changes")
-        visit current_path
-        click_on "Associated Prior Mail"
-
-        # Confirm that all checkboxes are unchecked after the page refresh
-        page.execute_script('
-          document.querySelectorAll(".cf-form-checkbox input[type=\'checkbox\']").forEach((checkbox) => {
-            if (checkbox.checked) {
-              throw new Error("Checkbox should be unchecked, but it is checked.");
-            }
-          });
-        ')
+      ')
     end
   end
-
-
 end
