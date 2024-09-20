@@ -1,1 +1,6 @@
-VANotifyService = (ApplicationController.dependencies_faked? ? Fakes::VANotifyService : ExternalApi::VANotifyService)
+case Rails.deploy_env
+when :uat, :prod
+  VANotifyService = ExternalApi::VANotifyService
+else
+  VANotifyService = Fakes::VANotifyService
+end
