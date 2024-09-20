@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require "rails_helper"
-include ParserHelper
 
 RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
+  include ParserHelper
   let(:headers) do
     {
       "X-VA-Vet-SSN" => "123456789",
