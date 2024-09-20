@@ -70,6 +70,16 @@ class CorrespondenceDetailsController < CorrespondenceController
       .merge(appeals)
       .merge(all_correspondences)
       .merge(prior_mail)
+      .merge(user_access)
+  end
+
+  def user_access
+    user_access = if current_user.inbound_ops_team_supervisor? || current_user.inbound_ops_team_superuser?
+                    "admin_access"
+                  elsif current_user.inbound_ops_team_user?
+                    "user_access"
+                  end
+    { user_access: user_access }
   end
 
   def build_json_response
@@ -117,6 +127,23 @@ class CorrespondenceDetailsController < CorrespondenceController
         correspondence_id: corr_id,
         related_correspondence_id: @correspondence.id
       )
+    end
+  end
+
+  def save_correspondence_appeals
+    if params[:selected_appeal_ids].present?
+      params[:selected_appeal_ids].each do |appeal_id|
+        @correspondence.correspondence_appeals.create!(appeal_id: appeal_id)
+      end
+    end
+    if params[:unselected_appeal_ids].present?
+      @correspondence.correspondence_appeals
+        .where(appeal_id: params[:unselected_appeal_ids])
+        .delete_all
+    end
+    respond_to do |format|
+      format.html
+      format.json { render json: @correspondence.appeal_ids, status: :ok }
     end
   end
 

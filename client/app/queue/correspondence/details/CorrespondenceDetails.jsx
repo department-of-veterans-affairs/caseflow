@@ -44,6 +44,11 @@ const CorrespondenceDetails = (props) => {
   const priorMail = correspondence.prior_mail;
   // eslint-disable-next-line max-len
   const [relatedCorrespondenceIds, setRelatedCorrespondenceIds] = useState(props.correspondence.relatedCorrespondenceIds);
+  const [initialSelectedAppeals, setInitialSelectedAppeals] = useState(correspondence.correspondenceAppealIds);
+  const [selectedAppeals, setSelectedAppeals] = useState(correspondence.correspondenceAppealIds);
+  const [unSelectedAppeals, setUnSelectedAppeals] = useState([]);
+  const [appealsToDisplay, setAppealsToDisplay] = useState([]);
+  const userAccess = correspondence.user_access;
 
   const [checkboxStates, setCheckboxStates] = useState({});
   const [originalStates, setOriginalStates] = useState({});
@@ -233,35 +238,61 @@ const CorrespondenceDetails = (props) => {
     );
   };
 
-  const appealsResult = props.correspondence.appeals_information;
-  const appeals = [];
-  let filteredAppeals = [];
-  let unfilteredAppeals = [];
-
-  appealsResult.appeals.map((appeal) => {
-    if (correspondence.correspondenceAppealIds?.includes(appeal.id)) {
-      return filteredAppeals.push(appeal);
+  const appealCheckboxOnChange = (appealId, isChecked) => {
+    setDisableSubmitButton(false);
+    if (isChecked) {
+      setSelectedAppeals([...selectedAppeals, appealId]);
+    } else {
+      setUnSelectedAppeals([...unSelectedAppeals, appealId]);
     }
+  };
 
-    return unfilteredAppeals.push(appeal);
-  });
+  const toggleCheckboxState = (appealId) => {
+    const appealsToConsider = disableSubmitButton ? selectedAppeals : initialSelectedAppeals;
+    const checked = appealsToConsider?.includes(appealId) || appealsToConsider?.includes(Number(appealId));
 
-  filteredAppeals = filteredAppeals.sort((leftAppeal, rightAppeal) => leftAppeal.id - rightAppeal.id);
-  unfilteredAppeals = unfilteredAppeals.sort((leftAppeal, rightAppeal) => leftAppeal.id - rightAppeal.id);
-  const sortedAppeals = filteredAppeals.concat(unfilteredAppeals);
+    return checked ? userAccess !== 'admin_access' : false;
+  };
 
-  const searchStoreAppeal = prepareAppealForSearchStore(sortedAppeals);
-  const appeall = searchStoreAppeal.appeals;
-  const appealldetail = searchStoreAppeal.appealDetails;
-  const hashKeys = Object.keys(appeall);
+  let appeals;
 
-  hashKeys.map((key) => {
-    const combinedHash = { ...appeall[key], ...appealldetail[key] };
+  const sortAppeals = (selectedList) => {
+    appeals = [];
+    let filteredAppeals = [];
+    let unfilteredAppeals = [];
 
-    appeals.push(combinedHash);
+    correspondence.appeals_information.appeals.map((appeal) => {
+      if (selectedList?.includes(appeal.id)) {
+        filteredAppeals.push(appeal);
+      } else {
+        unfilteredAppeals.push(appeal);
+      }
 
-    return appeals;
-  });
+      return true;
+    });
+
+    filteredAppeals = filteredAppeals.sort((leftAppeal, rightAppeal) => leftAppeal.id - rightAppeal.id);
+    unfilteredAppeals = unfilteredAppeals.sort((leftAppeal, rightAppeal) => leftAppeal.id - rightAppeal.id);
+
+    const sortedAppeals = filteredAppeals.concat(unfilteredAppeals);
+    const searchStoreAppeal = prepareAppealForSearchStore(sortedAppeals);
+    const appeall = searchStoreAppeal.appeals;
+    const appealldetail = searchStoreAppeal.appealDetails;
+    const hashKeys = Object.keys(appeall);
+
+    hashKeys.map((key) => {
+      const combinedHash = { ...appeall[key], ...appealldetail[key] };
+
+      appeals.push(combinedHash);
+
+      return true;
+    });
+    setAppealsToDisplay(appeals);
+  };
+
+  useEffect(() => {
+    sortAppeals(initialSelectedAppeals);
+  }, []);
 
   useEffect(() => {
     dispatch(loadCorrespondence(correspondence));
@@ -314,12 +345,13 @@ const CorrespondenceDetails = (props) => {
             </span>
 
             <CaseListTable
-              appeals={appeals}
+              appeals={appealsToDisplay}
               paginate="true"
               showCheckboxes
               taskRelatedAppealIds={props.correspondence.correspondenceAppealIds}
-              disabled
               enableTopPagination
+              checkboxOnChange={appealCheckboxOnChange}
+              toggleCheckboxState={toggleCheckboxState}
             />
           </AppSegment>
           {(props.correspondence.correspondenceAppeals.map((taskAdded) =>
@@ -604,10 +636,42 @@ const CorrespondenceDetails = (props) => {
       return ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/create_correspondence_relations`, payload).
         then(() => {
           props.updateCorrespondenceRelations(tempCor);
-
           setRelatedCorrespondenceIds([...relatedCorrespondenceIds, ...priorMailIds]);
           setShowSuccessBanner(true);
           setSelectedPriorMail([]);
+          setDisableSubmitButton(true);
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        }).
+        catch((error) => {
+          const errorMessage = error?.response?.body?.message ?
+            error.response.body.message.replace(/^Error:\s*/, '') :
+            error.message;
+
+          console.error(errorMessage);
+        });
+    }
+
+    if (selectedAppeals.length > 0) {
+      const appealsSelected = selectedAppeals.filter((val) => !correspondence.correspondenceAppealIds.includes(val));
+
+      const payload = {
+        data: {
+          selected_appeal_ids: appealsSelected,
+          unselected_appeal_ids: unSelectedAppeals
+        }
+      };
+
+      return ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/save_correspondence_appeals`, payload).
+        then((resp) => {
+          const appealIds = resp.body.map((num) => num.toString());
+
+          setSelectedAppeals(appealIds);
+          setInitialSelectedAppeals(appealIds);
+          sortAppeals(appealIds);
+          setShowSuccessBanner(true);
           setDisableSubmitButton(true);
           window.scrollTo({
             top: 0,
