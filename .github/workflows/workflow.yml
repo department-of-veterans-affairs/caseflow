@@ -268,15 +268,12 @@ jobs:
       - name: Rename bullet.log
         if: success() || failure()
         run: mv ./log/bullet.log ./log/bullet-${{matrix.ci_node_index}}.log
-        
+
       - uses: actions/upload-artifact@v3
         if: success() || failure()
         name: bullet-${{matrix.ci_node_index}}.log
         with:
           path: ./log/bullet-${{matrix.ci_node_index}}.log
-
-      - name: List coverage files for debugging
-        run: ls -R ./coverage
 
       - name: Add code coverage comment
         uses: romeovs/lcov-reporter-action@v0.4.0
