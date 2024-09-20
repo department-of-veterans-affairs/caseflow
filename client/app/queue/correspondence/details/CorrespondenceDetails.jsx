@@ -14,7 +14,7 @@ import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
 // import TaskSnapshot from '../../TaskSnapshot';
 import { prepareAppealForSearchStore, prepareAppealForStore } from 'app/queue/utils';
-import { onReceiveAmaTasks, onReceiveAppealDetails } from '../../QueueActions';
+import { onReceiveTasks, onReceiveAppealDetails } from '../../QueueActions';
 import CorrespondenceTasksAdded from '../CorrespondenceTasksAdded';
 import moment from 'moment';
 import Pagination from 'app/components/Pagination/Pagination';
@@ -23,6 +23,7 @@ import { ExternalLinkIcon } from 'app/components/icons/ExternalLinkIcon';
 import { COLORS } from 'app/constants/AppConstants';
 import Checkbox from 'app/components/Checkbox';
 import CorrespondencePaginationWrapper from 'app/queue/correspondence/CorrespondencePaginationWrapper';
+import { prepareTasksForStore } from '../../utils';
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
@@ -174,12 +175,27 @@ const CorrespondenceDetails = (props) => {
     dispatch(loadCorrespondence(correspondence));
     dispatch(correspondenceInfo(correspondence));
     // load appeals related to the correspondence into the store
-    // eslint-disable-next-line array-callback-return
+    const corAppealTasks = [];
+
     props.correspondence.correspondenceAppeals.map((corAppeal) => {
       dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal.appeal.data])));
-      // load appeal tasks into the store
-      dispatch(onReceiveAmaTasks(corAppeal.taskAddedData.data));
+
+      corAppeal.taskAddedData.data.map((taskData) => {
+        const formattedTask = {};
+
+        formattedTask[taskData.id] = taskData;
+
+        corAppealTasks.push(taskData);
+      });
+
     });
+    // // load appeal tasks into the store
+    const preparedTasks = prepareTasksForStore(corAppealTasks);
+
+    dispatch(onReceiveTasks({
+      amaTasks: preparedTasks
+    }));
+
   }, []);
 
   const isTasksUnrelatedToAppealEmpty = () => {
