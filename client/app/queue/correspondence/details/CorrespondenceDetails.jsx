@@ -655,7 +655,8 @@ const CorrespondenceDetails = (props) => {
         />
       </AppSegment>
       {
-        props.isInboundOpsUser && <div className="margin-top-for-add-task-view">
+        // eslint-disable-next-line max-len
+        (props.isInboundOpsUser || props.isInboundOpsSuperuser || props.isInboundOpsSupervisor) && <div className="margin-top-for-add-task-view">
           <Button
             type="button"
             onClick={() => saveChanges()}
