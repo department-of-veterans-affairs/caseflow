@@ -880,7 +880,44 @@ describe DecisionReviewsController, :postgres, type: :controller do
         end
 
         let!(:task_event) do
-          create(:higher_level_review_vha_task_with_decision)
+          create(:issue_modification_request,
+                 :with_higher_level_review_with_decision,
+                 :edit_of_request,
+                 :update_decider,
+                 :with_request_issue,
+                 nonrating_issue_category: "Medical and Dental Care Reimbursement")
+        end
+
+        let!(:issue_modification_request_modification) do
+          create(:issue_modification_request,
+                 :with_request_issue,
+                 request_type: "modification",
+                 decision_review: task_event.decision_review)
+        end
+
+        let!(:issue_modification_request_withdrawal) do
+          create(:issue_modification_request,
+                 :with_request_issue,
+                 :withdrawal,
+                 decision_review: task_event.decision_review)
+        end
+
+        let!(:issue_modification_request_removal) do
+          create(:issue_modification_request,
+                 :with_request_issue,
+                 request_type: "removal",
+                 decision_review: task_event.decision_review)
+        end
+        let!(:issue_modification_request_cancel) do
+          create(:issue_modification_request,
+                 :cancel_of_request,
+                 decision_review: task_event.decision_review)
+        end
+
+        let(:task_id) { task_event.decision_review.tasks.ids[0] }
+
+        let!(:remand_task_event) do
+          create(:remand_vha_task)
         end
 
         let!(:remand_task_event) do
@@ -888,7 +925,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
         end
 
         it "should return task details" do
-          get :history, params: { task_id: task_event.id, decision_review_business_line_slug: vha_org.url },
+          get :history, params: { task_id: task_id, decision_review_business_line_slug: vha_org.url },
                         format: :json
 
           expect(response.status).to eq 200
@@ -896,11 +933,38 @@ describe DecisionReviewsController, :postgres, type: :controller do
           res = JSON.parse(response.body)
 
           expected_events = [
-            { "taskID" => task_event.id, "eventType" => "added_issue", "claimType" => "Higher-Level Review",
+            { "taskID" => task_id, "eventType" => "added_issue", "claimType" => "Higher-Level Review",
               "readableEventType" => "Added issue" },
             { "eventType" => "claim_creation", "readableEventType" => "Claim created" },
             { "eventType" => "in_progress", "readableEventType" => "Claim status - In progress" },
-            { "eventType" => "completed_disposition", "readableEventType" => "Completed disposition" }
+            { "eventType" => "completed_disposition", "readableEventType" => "Completed disposition" },
+            { "eventType" => "addition", "readableEventType" => "Requested issue addition" },
+            { "eventType" => "pending", "readableEventType" => "Claim status - Pending" },
+            { "eventType" => "request_approved", "readableEventType" => "Approval of request - issue addition" },
+            { "eventType" => "request_edited", "readableEventType" => "Edit of request - issue addition" },
+            { "eventType" => "modification", "readableEventType" => "Requested issue modification" },
+            { "eventType" => "removal", "readableEventType" => "Requested issue removal" },
+            { "eventType" => "request_cancelled", "readableEventType" => "Cancellation of request" },
+            { "eventType" => "withdrawal", "readableEventType" => "Requested issue withdrawal" }
+          ]
+
+          expected_events.each do |expected_attributes|
+            expect(res).to include(
+              a_hash_including("attributes" => a_hash_including(expected_attributes))
+            )
+          end
+        end
+
+        it "should return remand task details" do
+          get :history, params: { task_id: remand_task_event.id, decision_review_business_line_slug: vha_org.url },
+                        format: :json
+
+          expect(response.status).to eq 200
+
+          res = JSON.parse(response.body)
+
+          expected_events = [
+            { "taskID" => remand_task_event.id, "eventType" => "added_issue", "claimType" => "Remand" }
           ]
 
           expected_events.each do |expected_attributes|
