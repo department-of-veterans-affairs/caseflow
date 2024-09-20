@@ -221,6 +221,11 @@ jobs:
         run: |
           ./ci-bin/capture-log "bundle exec rake assets:precompile"
 
+      - name: Check directory before tests
+        run: |
+          echo "Checking /home/circleci before tests"
+          ls /home/circleci
+
       # Changing the user and permissions as Chrome/Chromedriver can't run as root
       - name: RSpec via knapsack_pro Queue Mode
         run: |
@@ -236,9 +241,13 @@ jobs:
 
       - name: Debugging Test Run
         run: |
-          echo "current Node Index: ${{ matrix.ci_node_index }}"
-          ls -R /home/circleci
-          cat /home/circleci/coverage-${{ matrix.ci_node_index }}/index.html
+          echo "Checking coverage directory for node $GHA_NODE_INDEX"
+          if [ -d $COVERAGE_DIR ]; then
+            echo "Coverage directory exists at $COVERAGE_DIR"
+            ls $COVERAGE_DIR
+          else
+            echo "Coverage directory doesnt exist"
+          fi
 
       # Archive the coverage reports for each node
       - name: Archive coverage report
