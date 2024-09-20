@@ -19,7 +19,7 @@ class CorrespondenceIntakeProcessor
     do_upload_success_actions(parent_task, intake_params, correspondence, current_user)
   end
 
-  def update_correspondence(intake_params, current_user)
+  def update_correspondence(intake_params)
     # Fetch the correspondence using the UUID from the intake params
     correspondence = Correspondence.find_by(uuid: intake_params[:correspondence_uuid])
 
