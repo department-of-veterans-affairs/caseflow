@@ -15,7 +15,7 @@ RSpec.describe Events::DecisionReviewUpdated::UpdateClaimReview do
       it "updates the value to false" do
         hash = JSON.parse(payload)
         hash["detail_type"] = "HigherLevelReview"
-        hash["end_product_establishments"]["reference_id"] = epe.reference_id.to_s
+        hash["end_product_establishment"]["reference_id"] = epe.reference_id.to_s
         hash["claim_review"]["legacy_opt_in_approved"] = false
         parser = Events::DecisionReviewUpdated::DecisionReviewUpdatedParser.new({}, hash)
         expect do
@@ -34,7 +34,7 @@ RSpec.describe Events::DecisionReviewUpdated::UpdateClaimReview do
       it "updates the value to true" do
         hash = JSON.parse(payload)
         hash["detail_type"] = "HigherLevelReview"
-        hash["end_product_establishments"]["reference_id"] = epe.reference_id.to_s
+        hash["end_product_establishment"]["reference_id"] = epe.reference_id.to_s
         hash["claim_review"]["legacy_opt_in_approved"] = true
         parser = Events::DecisionReviewUpdated::DecisionReviewUpdatedParser.new({}, hash)
         expect do
