@@ -166,8 +166,6 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
       co_host_hearing_link: create_webex_conference_response.co_host_link,
       guest_hearing_link: create_webex_conference_response.guest_link
     )
-
-    MetricsService.increment_counter(metric_name: "created_conference.successful", **create_conference_tags)
   end
 
   def conference_creation_error(create_conference_response)
