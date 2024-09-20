@@ -31,6 +31,7 @@ gem "icalendar"
 gem "kaminari"
 gem "logstasher"
 gem "moment_timezone-rails"
+gem "newrelic_rpm"
 gem "nokogiri", ">= 1.11.0.rc4"
 
 gem "opentelemetry-exporter-otlp", require: false

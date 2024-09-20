@@ -419,6 +419,30 @@ describe DecisionIssue, :postgres do
           end
         end
       end
+      context "decision review type" do
+        context "when type is Appeal" do
+          let(:decision_review) { create(:appeal) }
+
+          it "creates a Remand class" do
+            expect(subject.type).to eq(Remand.name)
+          end
+        end
+
+        context "when type is HLR" do
+          let(:decision_review) { create(:higher_level_review) }
+          before do
+            decision_review.create_claimant!(
+              participant_id: "98765",
+              payee_code: "00",
+              type: "VeteranClaimant"
+            )
+          end
+
+          it "creates a SupplementalClaim class" do
+            expect(subject.type).to eq(SupplementalClaim.name)
+          end
+        end
+      end
     end
   end
 end
