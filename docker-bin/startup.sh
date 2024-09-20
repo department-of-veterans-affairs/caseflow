@@ -35,7 +35,7 @@ echo "Enabling caching"
 touch tmp/caching-dev.txt
 
 echo "Initializing metabase"
-/caseflow/metabase/metabase_api_script.sh
+/caseflow/metabase/metabase_api_script_demo.sh
 
 echo "Starting Caseflow App RoR"
 rails server --binding 0.0.0.0 -p 3000
