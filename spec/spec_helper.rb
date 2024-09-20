@@ -13,7 +13,7 @@ else
   # This ensures the command name is unique for each CI node
   SimpleCov.command_name "RSpec-#{ENV['GHA_NODE_INDEX']}" if ENV["GHA_NODE_INDEX"]
   # Specify the coverage directory
-  SimpleCov.coverage_dir "coverage/coverage-#{ENV['GHA_NODE_INDEX']}"
+  SimpleCov.coverage_dir "coverage/coverage-#{ENV['GHA_NODE_INDEX'] || 0}"
   formatters = [
     SimpleCov::Formatter::HTMLFormatter,
     SimpleCov::Formatter::LcovFormatter
@@ -23,7 +23,7 @@ else
 
   # Set the formatters for both HTML and LCOV reports
   SimpleCov.formatters = SimpleCov::Formatter::MultiFormatter.new(formatters)
-  puts "SimpleCov is running on #{ENV['GHA_NODE_INDEX']} storing coverage in coverage/coverage-#{ENV['GHA_NODE_INDEX']}"
+  puts "SimpleCov is running on #{ENV['GHA_NODE_INDEX'] || 0} storing coverage in coverage/coverage-#{ENV['GHA_NODE_INDEX'] || 0}"
 
   # Define which files to filter out from coverage reports
   SimpleCov.start do
