@@ -44,7 +44,7 @@ class CaseListTable extends React.PureComponent {
                   defaultValue={isChecked}
                   hideLabel
                   onChange={(checked) => this.props.checkboxOnChange(appeal.id, checked)}
-                  disabled={this.props.disabled || this.props.toggleCheckboxState(appeal.id) || false}
+                  disabled={this.props.disabled || this.props.toggleCheckboxState ? (this.props.toggleCheckboxState(appeal.id)) : false}
                 />
               </div>
             );
