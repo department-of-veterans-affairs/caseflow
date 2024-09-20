@@ -585,6 +585,37 @@ RSpec.describe Idt::Api::V2::AppealsController, :postgres, :all_dbs, type: :cont
         expect(JSON.parse(response.body)["message"]).to eq("Successful dispatch!")
       end
 
+      context "when notifications are enabled" do
+        include ActiveJob::TestHelper
+        let(:veteran) { create(:veteran) }
+        let(:contested_appeal) do
+          create(
+            :legacy_appeal,
+            vacols_case: create(:case, bfcorlid: veteran.file_number),
+            vbms_id: "#{veteran.file_number}S"
+          )
+        end
+        before do
+          FeatureToggle.enable!(:va_notify_sms)
+          FeatureToggle.enable!(:va_notify_email)
+          Seeds::NotificationEvents.new.seed! unless NotificationEvent.count > 0
+        end
+
+        it "should send the appeal decision mailed non contested claim notification" do
+          perform_enqueued_jobs { post :outcode, params: params, as: :json }
+
+          expect(Notification.last.event_type).to eq("Appeal decision mailed (Non-contested claims)")
+        end
+
+        it "should send the appeal decision mailed contested claim notification" do
+          VACOLS::Representative.create!(repkey: contested_appeal.vacols_id, reptype: "C")
+          params[:appeal_id] = contested_appeal.vacols_id
+
+          perform_enqueued_jobs { post :outcode, params: params, as: :json }
+          expect(Notification.last.event_type).to eq("Appeal decision mailed (Contested claims)")
+        end
+      end
+
       context "when dispatch is associated with a mail request" do
         include ActiveJob::TestHelper
 
