@@ -371,7 +371,8 @@ Rails.application.routes.draw do
     post "/correspondence/:correspondence_uuid/correspondence_response_letter",
          to: "correspondence_details#create_response_letter_for_correspondence"
     get "/correspondence/:correspondence_uuid", to: "correspondence_details#correspondence_details"
-    post "/correspondence/:correspondence_uuid/save_correspondence_appeals", to: "correspondence_details#save_correspondence_appeals"
+    post "/correspondence/:correspondence_uuid/save_correspondence_appeals",
+         to: "correspondence_details#save_correspondence_appeals"
 
     resources :correspondence, param: :correspondence_uuid do
       post :create_correspondence_relations, on: :member, to: "correspondence_details#create_correspondence_relations"
