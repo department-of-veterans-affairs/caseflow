@@ -72,6 +72,7 @@ jobs:
         RAILS_ENV: test
         NODE_ENV: test
         BUNDLE_PATH: vendor/bundle
+        GHA_NODE_INDEX:   ${{ matrix.ci_node_index }}
         COVERAGE_DIR: /home/circleci/coverage-${{matrix.ci_node_index}} #circleci is the USER
         POSTGRES_HOST: postgres
         POSTGRES_USER: root
@@ -220,6 +221,11 @@ jobs:
         run: |
           ./ci-bin/capture-log "bundle exec rake assets:precompile"
 
+      - name: Check directory permissions
+        run: |
+          echo "Checking permission /home/circleci before tests"
+          ls -ld /home/circleci
+
       # Changing the user and permissions as Chrome/Chromedriver can't run as root
       - name: RSpec via knapsack_pro Queue Mode
         run: |
@@ -233,12 +239,35 @@ jobs:
       # --tty forces Rspec to produce color
       # circleci is the USER
 
-      # Artifacts --- circleci is the USER
-      - run: (cd /home/circleci && tar -zcvf coverage-${{matrix.ci_node_index}}.tar.gz coverage-${{matrix.ci_node_index}})
+      - name: Debugging Test Run
+        run: |
+          echo "Checking coverage directory for node $GHA_NODE_INDEX"
+          if [ -d $COVERAGE_DIR ]; then
+            echo "Coverage directory exists at $COVERAGE_DIR"
+            ls $COVERAGE_DIR
+          else
+            echo "Coverage directory doesnt exist"
+          fi
+
+      # Archive the coverage reports for each node
+      - name: Archive coverage report
+        if: success()
+        run: |
+          tar -zcvf coverage-${{ matrix.ci_node_index }}.tar.gz coverage-${{ matrix.ci_node_index }})
+
       - uses: actions/upload-artifact@v3
         if: success()
+        name: Upload coverage report
         with:
-          path: /home/circleci/coverage-${{matrix.ci_node_index}}.tar.gz #circleci is the USER
+          name: coverage-${{ matrix.ci_node_index }}
+          path: /home/circleci/coverage-${{ matrix.ci_node_index }}.tar.gz
+
+      # # Artifacts --- circleci is the USER
+      # - run: (cd /home/circleci && tar -zcvf coverage-${{matrix.ci_node_index}}.tar.gz coverage-${{matrix.ci_node_index}})
+      # - uses: actions/upload-artifact@v3
+      #   if: success()
+      #   with:
+      #     path: /home/circleci/coverage-${{matrix.ci_node_index}}.tar.gz #circleci is the USER
 
       - uses: actions/upload-artifact@v3
         # Run even if there is a failure in the previous steps, but not if the run is cancelled
@@ -273,6 +302,37 @@ jobs:
         name: bullet-${{matrix.ci_node_index}}.log
         with:
           path: ./log/bullet-${{matrix.ci_node_index}}.log
+
+      - name: List coverage files for debugging
+        run: ls -R ./coverage
+
+  # New job to merge and upload the code coverage
+  merge_coverage_job:
+    runs-on: ubuntu-latest
+    needs: caseflow_rspec_job
+    if: always()
+    steps:
+      - name: Download coverage from all nodes
+        uses: actions/download-artifact@v3
+        with:
+          path: ./coverage
+
+      - name: Extract all coverage reports
+        run: |
+          mkdir -p merged_coverage
+          for f in ./coverage/coverage-*.tar.gz; do tar -xzf "$f" -C merged_coverage; done
+
+      - name: Merge coverage results
+        run: bundle exec rake simplecov:merge_coverage
+
+      - name: List merged coverage files for debugging
+        run: ls -R ./merged_coverage
+
+      - name: Add code coverage comment
+        uses: romeovs/lcov-reporter-action@v0.2.16
+        with:
+          lcov-file: ./merged_coverage/lcov/caseflow.lcov
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
   caseflow_jest_job:
     # This job will run the jest, change the value below to false if you wish to turn it off.
