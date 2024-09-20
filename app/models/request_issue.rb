@@ -537,7 +537,6 @@ class RequestIssue < CaseflowRecord
     check_for_before_ama!
     check_for_legacy_issue_not_withdrawn!
     check_for_legacy_appeal_not_eligible!
-    check_for_contested!
     self
   end
 
@@ -1112,13 +1111,6 @@ class RequestIssue < CaseflowRecord
     unless issue_eligible_for_opt_in? && legacy_appeal_eligible_for_opt_in?
       self.ineligible_reason = :legacy_appeal_not_eligible
     end
-  end
-
-  def check_for_contested!
-    return if eligible?
-    return unless contested_decision_issue_id
-
-    self.ineligible_reason = :contested unless ineligible_reason
   end
 
   def issue_eligible_for_opt_in?
