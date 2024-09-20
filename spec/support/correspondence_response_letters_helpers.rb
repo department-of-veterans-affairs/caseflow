@@ -49,7 +49,6 @@ module CorrespondenceResponseLettersHelpers
   end
 
   def add_popup_response_letter
-    click_on("+ Add letter", wait: 10)
     all("#date-set")[0].click
     ten_days_before = 10.days.ago.strftime("%m/%d/%Y")
     all("#date-set")[0].fill_in(with: ten_days_before)
