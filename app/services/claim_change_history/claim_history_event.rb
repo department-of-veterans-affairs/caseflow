@@ -214,9 +214,9 @@ class ClaimHistoryEvent
     end
 
     def create_imr_in_progress_status_event?(change_data)
-      # If the next imr is decided already in the same transaction then defer creation and it's not in reverse order
-      return false if next_imr_decided_or_cancelled_in_same_transaction?(change_data) &&
-                      !imr_reverse_order?(change_data)
+      # If the next imr is already decided in the same transaction, it's not in reverse order, and it's
+      # not the last imr then defer creation
+      return false if early_deferral?(change_data)
 
       if do_not_defer_in_progress_creation?(change_data)
         # If it's in reverse order and the creation of the next imr is after the current decision time then generate
@@ -316,6 +316,11 @@ class ClaimHistoryEvent
       end
     end
 
+    def early_deferral?(change_data)
+      next_imr_decided_or_cancelled_in_same_transaction?(change_data) &&
+        !imr_reverse_order?(change_data) && !last_imr?(change_data)
+    end
+
     def create_pending_status_event(change_data, event_date)
       pending_system_hash_events = pending_system_hash
         .merge("event_date" => event_date)
@@ -384,12 +389,10 @@ class ClaimHistoryEvent
     end
 
     def parse_versions(versions)
-      if versions
-        # Quite a bit faster but less safe. Should probably be fine since it's coming from the database
-        # rubocop:disable Security/YAMLLoad
-        versions[1..-2].split(",").map { |yaml| YAML.load(yaml.gsub(/^"|"$/, "")) }
-        # rubocop:enable Security/YAMLLoad
-      end
+      # Quite a bit faster but less safe. Should probably be fine since it's coming from the database
+      # rubocop:disable Security/YAMLLoad
+      versions&.split("|||")&.map { |yaml| YAML.load(yaml.gsub(/^"|"$/, "")) }
+      # rubocop:enable Security/YAMLLoad
     end
 
     def create_issue_events(change_data)

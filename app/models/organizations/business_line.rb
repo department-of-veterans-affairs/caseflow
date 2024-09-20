@@ -219,9 +219,9 @@ class BusinessLine < Organization
       nonrating_issue_count = ActiveRecord::Base.connection.execute <<-SQL
         WITH task_review_issues AS (
             #{hlr_query.to_sql}
-          UNION ALL
+          UNION
             #{sc_query.to_sql}
-          UNION ALL
+          UNION
             #{appeals_query.to_sql}
         )
         SELECT issue_category, COUNT(1) AS nonrating_issue_count
@@ -255,7 +255,7 @@ class BusinessLine < Organization
           SELECT
               versions.item_id,
               versions.item_type,
-              ARRAY_AGG(versions.object_changes ORDER BY versions.id) AS object_changes_array,
+              STRING_AGG(versions.object_changes, '|||' ORDER BY versions.id) AS object_changes_array,
               MAX(CASE
                   WHEN versions.object_changes LIKE '%closed_at:%' THEN versions.whodunnit
                   ELSE NULL
@@ -271,8 +271,8 @@ class BusinessLine < Organization
         ), imr_version_agg AS (SELECT
               versions.item_id,
               versions.item_type,
-              ARRAY_AGG(versions.object ORDER BY versions.id) AS object_array,
-              ARRAY_AGG(versions.object_changes ORDER BY versions.id) AS object_changes_array
+              STRING_AGG(versions.object, '|||' ORDER BY versions.id) AS object_array,
+              STRING_AGG(versions.object_changes, '|||' ORDER BY versions.id) AS object_changes_array
           FROM
               versions
           INNER JOIN issue_modification_requests ON issue_modification_requests.id = versions.item_id
