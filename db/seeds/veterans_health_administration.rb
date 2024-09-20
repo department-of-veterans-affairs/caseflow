@@ -54,6 +54,7 @@ module Seeds
         3.times do
           CLAIMANT_TYPES.each do |claimant_type|
             create_sc_with_claimant(benefit_type, claimant_type)
+            create_sc_remand(benefit_type, claimant_type)
           end
         end
       end
@@ -76,6 +77,16 @@ module Seeds
         :supplemental_claim,
         :with_request_issue,
         :processed,
+        benefit_type: benefit_type,
+        claimant_type: claimant_type,
+        number_of_claimants: 1
+      )
+      sc.create_business_line_tasks!
+    end
+
+    def create_sc_remand(benefit_type, claimant_type)
+      sc = create(
+        :remand,
         benefit_type: benefit_type,
         claimant_type: claimant_type,
         number_of_claimants: 1
