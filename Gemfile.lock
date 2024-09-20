@@ -1,14 +1,4 @@
 GIT
-  remote: https://github.com/colszowka/simplecov.git
-  revision: b6c2d4208a5fa395ce09d7e1d3b074f680ee29b0
-  branch: main
-  specs:
-    simplecov (0.22.0)
-      docile (~> 1.1)
-      simplecov-html (~> 0.11)
-      simplecov_json_formatter (~> 0.1)
-
-GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
   revision: 9bd3635fbd8094d25160669f38d8699e2f1d7a98
   ref: 9bd3635fbd8094d25160669f38d8699e2f1d7a98
@@ -2050,6 +2040,10 @@ GEM
       thor
     shoulda-matchers (5.3.0)
       activesupport (>= 5.2.0)
+    simplecov (0.22.0)
+      docile (~> 1.1)
+      simplecov-html (~> 0.11)
+      simplecov_json_formatter (~> 0.1)
     simplecov-html (0.13.1)
     simplecov_json_formatter (0.1.4)
     simplecov_lcov_formatter (0.9.0)
@@ -2244,7 +2238,7 @@ DEPENDENCIES
   sentry-raven
   shoryuken (= 3.1.11)
   shoulda-matchers
-  simplecov!
+  simplecov
   simplecov_lcov_formatter (~> 0.9.0)
   single_cov
   sniffybara!

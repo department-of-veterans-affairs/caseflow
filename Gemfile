@@ -137,7 +137,7 @@ group :test, :development, :demo, :make_docs do
   gem "rubocop-performance"
   gem "rubocop-rails"
   gem "scss_lint", require: false
-  gem "simplecov", git: "https://github.com/colszowka/simplecov.git", branch: "main", require: false
+  gem "simplecov"
   gem "simplecov_lcov_formatter", "~> 0.9.0"
   gem "single_cov"
   gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git"
