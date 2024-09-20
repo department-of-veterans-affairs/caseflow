@@ -663,8 +663,12 @@ const calculateAvailableTimeslots = ({
 }) => {
   // Extract the hearing time, add the hearing_day date from beginsAt, set the timezone be the ro timezone
   const hearingTimes = scheduledHearings.map((hearing) => {
-    const [hearingHour, hearingMinute] = hearing.hearingTime.split(':');
-    const hearingTimeMoment = beginsAt.clone().set({ hour: hearingHour, minute: hearingMinute });
+    const hearingClockTime = splitSelectedTime(hearing.hearingTime)[0];
+    const parsedClockTime = moment(hearingClockTime, 'h:mm A');
+
+    const hearingTimeMoment = beginsAt.clone().set({
+      hour: parsedClockTime.get('Hour'), minute: parsedClockTime.get('Minute')
+    });
 
     // Change which zone the time is in but don't convert, "08:15 EDT" -> "08:15 PDT"
     return hearingTimeMoment.tz(roTimezone, true);
@@ -725,11 +729,11 @@ const combineSlotsAndHearings = ({ roTimezone, availableSlots, scheduledHearings
     key: `${slot?.slotId}-${slot?.time_string}`,
     full: false,
     // This is a moment object, always in "America/New_York"
-    hearingTime: slot.time.format('HH:mm')
+    hearingTime: slot.time.format('HH:mm A')
   }));
 
   const formattedHearings = scheduledHearings.map((hearing) => {
-    const time = moment.tz(`${hearing?.hearingTime} ${hearingDayDate}`, 'HH:mm YYYY-MM-DD', roTimezone).clone().
+    const time = moment.tz(`${hearing?.hearingTime} ${hearingDayDate}`, 'HH:mm A YYYY-MM-DD', roTimezone).clone().
       tz('America/New_York');
 
     return {
@@ -740,7 +744,7 @@ const combineSlotsAndHearings = ({ roTimezone, availableSlots, scheduledHearings
       time,
       // The hearingTime is in roTimezone, but it looks like "09:30", this takes that "09:30"
       // in roTimezone, and converts it to Eastern zone because slots are always in eastern.
-      hearingTime: time.format('HH:mm')
+      hearingTime: time.format('HH:mm A')
     };
   });
 
