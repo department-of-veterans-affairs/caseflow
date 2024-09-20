@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require "helpers/sanitized_json_configuration.rb"
-require "helpers/sanitized_json_exporter.rb"
-require "helpers/intake_renderer.rb"
-require "helpers/hearing_renderer.rb"
+require "helpers/sanitized_json_configuration"
+require "helpers/sanitized_json_exporter"
+require "helpers/intake_renderer"
+require "helpers/hearing_renderer"
 
 describe ExplainController, :all_dbs, type: :controller do
   include TaskHelpers
@@ -141,6 +141,55 @@ describe ExplainController, :all_dbs, type: :controller do
           expect(json_body.keys).to include("metadata", "appeals", "veterans", "tasks", "users", "organizations")
           expect(json_body["veterans"].first["file_number"]).to eq veteran.file_number
         end
+      end
+    end
+  end
+
+  describe "GET explain/correspondence/:correspondence_uuid/" do
+    let(:user_roles) { ["System Admin"] }
+    let(:veteran) { create(:veteran) }
+    let(:correspondence) do
+      create(
+        :correspondence,
+        :with_single_doc,
+        veteran_id: veteran.id
+      )
+    end
+
+    subject do
+      get :show,
+          params: { correspondence_uuid: correspondence.uuid, any: "review_package" },
+          as: response_format
+    end
+
+    before do
+      User.authenticate!(roles: user_roles)
+    end
+
+    context ".html (default) request" do
+      let(:response_format) { :html }
+      it "responds without error" do
+        subject
+        expect(response).to be_ok
+      end
+    end
+
+    context ".json request" do
+      let(:response_format) { :json }
+      it "returns 'unsupported' string" do
+        subject
+        expect(JSON.parse(response.body)).to eq "(Correspondences are not yet supported)"
+      end
+    end
+
+    context ".text request" do
+      let(:response_format) { :text }
+      it "returns plain text task tree" do
+        subject
+        # task tree
+        expect(response.body).to include "Correspondence #{correspondence.id}"
+        expect(response.body).to include "CorrespondenceRootTask"
+        expect(response.body).to include "ReviewPackageTask"
       end
     end
   end
