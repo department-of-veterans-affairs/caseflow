@@ -50,20 +50,106 @@ const CorrespondenceDetails = (props) => {
   const [appealsToDisplay, setAppealsToDisplay] = useState([]);
   const userAccess = correspondence.user_access;
 
+  const [checkboxStates, setCheckboxStates] = useState({});
+  const [originalStates, setOriginalStates] = useState({});
+
+  // Initialize checkbox states
+  useEffect(() => {
+    const initialStates = {};
+
+    correspondence.prior_mail.forEach((mail) => {
+      initialStates[mail.id] = relatedCorrespondenceIds.includes(mail.id);
+    });
+    setCheckboxStates(initialStates);
+    setOriginalStates(initialStates);
+  }, [priorMail, relatedCorrespondenceIds]);
+
+  // Function to handle checkbox changes
+  const handleCheckboxChange = (mailId) => {
+    setCheckboxStates((prevState) => {
+      const newState = { ...prevState, [mailId]: !prevState[mailId] };
+
+      // Check if any checkbox is different from its original state
+      const isAnyChanged = Object.keys(newState).some(
+        (key) => newState[key] !== originalStates[key]
+      );
+
+      setDisableSubmitButton(!isAnyChanged);
+
+      return newState;
+    });
+  };
+
+  // Function to handle the "Save Changes" button click, including the PATCH request
+  const handlepriorMailUpdate = async () => {
+  // Disable the button to prevent duplicate requests
+    setDisableSubmitButton(true);
+
+    // Get the initial and current checkbox states
+    const uncheckedCheckboxes = Object.entries(checkboxStates).
+      filter(([mailId, isChecked]) => !isChecked && originalStates[mailId]).
+      map(([mailId]) => {
+        const mail = priorMail.find((pMail) => pMail.id === parseInt(mailId, 10));
+
+        return { uuid: mail.uuid };
+      });
+
+    // Data for the PATCH request to remove unchecked relations
+    const patchData = {
+      correspondence_uuid: correspondence.uuid,
+      // Send only unchecked relations
+      correspondence_relations: uncheckedCheckboxes
+    };
+
+    try {
+    // Send PATCH request to update the backend
+      const response = await ApiUtil.patch(`/queue/correspondence/${correspondence.uuid}/update_correspondence`, {
+        data: patchData
+      });
+
+      if (response.status === 201) {
+        console.log('Correspondence updated successfully.', response.status); // eslint-disable-line no-console
+      }
+    } catch (error) {
+      console.error('Error during PATCH request:', error.message);
+    } finally {
+      setDisableSubmitButton(true);
+    }
+
+    // Reset checkboxes to the new state
+    setOriginalStates(checkboxStates);
+  };
+
+  const isAdminNotLoggedIn = () => {
+    if (props.isInboundOpsSuperuser || props.isInboundOpsSupervisor === true) {
+      return false;
+    }
+
+    return true;
+
+  };
+
   priorMail.sort((first, second) => {
     const firstInRelated = relatedCorrespondenceIds.includes(first.id);
     const secondInRelated = relatedCorrespondenceIds.includes(second.id);
 
-    // If both or neither are in relatedCorrespondenceIds, sort by vaDateOfReceipt
-    if (firstInRelated && !secondInRelated) {
+    if (firstInRelated && secondInRelated) {
+      // Sort by vaDateOfReceipt in descending order if both are in relatedCorrespondenceIds
+      return new Date(second.vaDateOfReceipt) - new Date(first.vaDateOfReceipt);
+    } else if (firstInRelated) {
+      // Ensure that items in relatedCorrespondenceIds come first
       return -1;
+    } else if (secondInRelated) {
+      return 1;
     }
     if (!firstInRelated && secondInRelated) {
       return 1;
     }
 
-    // Otherwise, sort by vaDateOfReceipt
-    return new Date(first.vaDateOfReceipt) - new Date(second.vaDateOfReceipt);
+    // If neither is in relatedCorrespondenceIds, maintain their original order
+    const returnSort = priorMail.indexOf(first) - priorMail.indexOf(second);
+
+    return returnSort;
   });
 
   const updatePageHandler = (idx) => {
@@ -372,17 +458,30 @@ const CorrespondenceDetails = (props) => {
         cellClass: 'checkbox-column',
         valueFunction: () => (
           <div className="checkbox-column-inline-style">
-            <Checkbox
-              name={correspondenceRow.id.toString()}
-              id={correspondenceRow.id.toString()}
-              hideLabel
-              defaultValue={relatedCorrespondenceIds.some((el) => el === correspondenceRow.id)}
-              value={selectedPriorMail.some((el) => el.id === correspondenceRow.id)}
-              disabled={
-                relatedCorrespondenceIds.some((corrId) => corrId === correspondenceRow.id) || !props.isInboundOpsUser
-              }
-              onChange={(checked) => onPriorMailCheckboxChange(correspondenceRow, checked)}
-            />
+            {
+              isAdminNotLoggedIn() ?
+                <Checkbox
+                  name={correspondenceRow.id.toString()}
+                  id={correspondenceRow.id.toString()}
+                  hideLabel
+                  defaultValue={relatedCorrespondenceIds.some((el) => el === correspondenceRow.id)}
+                  value={selectedPriorMail.some((el) => el.id === correspondenceRow.id)}
+                  disabled={
+                    // eslint-disable-next-line max-len
+                    relatedCorrespondenceIds.some((corrId) => corrId === correspondenceRow.id) || !props.isInboundOpsUser
+                  }
+                  onChange={(checked) => onPriorMailCheckboxChange(correspondenceRow, checked)}
+                /> :
+                <Checkbox
+                  name={correspondenceRow.id.toString()}
+                  id={correspondenceRow.id.toString()}
+                  hideLabel
+                  defaultValue={relatedCorrespondenceIds.some((el) => el === correspondenceRow.id)}
+                  value={checkboxStates[correspondenceRow.id]}
+                  onChange={() => handleCheckboxChange(correspondenceRow.id)}
+                  disabled= {isAdminNotLoggedIn()}
+                />
+            }
           </div>
         )
       },
@@ -518,7 +617,10 @@ const CorrespondenceDetails = (props) => {
   ];
 
   const saveChanges = () => {
-    if (selectedPriorMail.length > 0) {
+
+    if (isAdminNotLoggedIn() === false) {
+      handlepriorMailUpdate();
+    } else if (selectedPriorMail.length > 0) {
 
       const priorMailIds = selectedPriorMail.map((mail) => mail.id);
       const payload = {
@@ -619,7 +721,8 @@ const CorrespondenceDetails = (props) => {
         />
       </AppSegment>
       {
-        props.isInboundOpsUser && <div className="margin-top-for-add-task-view">
+        // eslint-disable-next-line max-len
+        (props.isInboundOpsUser || props.isInboundOpsSuperuser || props.isInboundOpsSupervisor) && <div className="margin-top-for-add-task-view">
           <Button
             type="button"
             onClick={() => saveChanges()}
@@ -643,10 +746,10 @@ CorrespondenceDetails.propTypes = {
   correspondence_appeal_ids: PropTypes.bool,
   isInboundOpsUser: PropTypes.bool,
   tasksUnrelatedToAppealEmpty: PropTypes.bool,
-  correspondenceResponseLetters: PropTypes.array,
-  inboundOpsTeamUsers: PropTypes.array,
   isInboundOpsSuperuser: PropTypes.bool,
   isInboundOpsSupervisor: PropTypes.bool,
+  correspondenceResponseLetters: PropTypes.array,
+  inboundOpsTeamUsers: PropTypes.array,
   addLetterCheck: PropTypes.bool,
   updateCorrespondenceRelations: PropTypes.func,
 };

@@ -113,6 +113,14 @@ class CorrespondenceDetailsController < CorrespondenceController
     end
   end
 
+  def update_correspondence
+    if correspondence_intake_processor.update_correspondence(params)
+      render json: {}, status: :created
+    else
+      render json: { error: "Failed to update records" }, status: :bad_request
+    end
+  end
+
   def create_correspondence_relations
     params[:priorMailIds]&.map do |corr_id|
       CorrespondenceRelation.create!(
