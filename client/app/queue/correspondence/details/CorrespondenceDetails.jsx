@@ -44,6 +44,10 @@ const CorrespondenceDetails = (props) => {
   const priorMail = correspondence.prior_mail;
   // eslint-disable-next-line max-len
   const [relatedCorrespondenceIds, setRelatedCorrespondenceIds] = useState(props.correspondence.relatedCorrespondenceIds);
+  const [initialSelectedAppeals, setInitialSelectedAppeals] = useState(correspondence.correspondenceAppealIds);
+  const [selectedAppeals, setSelectedAppeals] = useState(correspondence.correspondenceAppealIds);
+  const [unSelectedAppeals, setUnSelectedAppeals] = useState([]);
+  const userAccess = correspondence.user_access;
 
   priorMail.sort((first, second) => {
     const firstInRelated = relatedCorrespondenceIds.includes(first.id);
@@ -147,6 +151,22 @@ const CorrespondenceDetails = (props) => {
     );
   };
 
+  const appealCheckboxOnChange = (appealId, isChecked) => {
+    setDisableSubmitButton(false);
+    if (isChecked) {
+      setSelectedAppeals([...selectedAppeals, appealId]);
+    } else {
+      setUnSelectedAppeals([...unSelectedAppeals, appealId]);
+    }
+  };
+
+  const toggleCheckboxState = (appealId) => {
+    const appealsToConsider = disableSubmitButton ? selectedAppeals : initialSelectedAppeals;
+    const checked = appealsToConsider?.includes(appealId) || appealsToConsider?.includes(Number(appealId));
+
+    return checked ? userAccess !== 'admin_access' : false;
+  };
+
   const appealsResult = props.correspondence.appeals_information;
   const appeals = [];
   let filteredAppeals = [];
@@ -232,8 +252,9 @@ const CorrespondenceDetails = (props) => {
               paginate="true"
               showCheckboxes
               taskRelatedAppealIds={props.correspondence.correspondenceAppealIds}
-              disabled
               enableTopPagination
+              checkboxOnChange={appealCheckboxOnChange}
+              toggleCheckboxState={toggleCheckboxState}
             />
           </AppSegment>
           {(props.correspondence.correspondenceAppeals.map((taskAdded) =>
@@ -522,6 +543,73 @@ const CorrespondenceDetails = (props) => {
     }
   };
 
+  const saveChanges = () => {
+    if (selectedPriorMail.length > 0) {
+
+      const priorMailIds = selectedPriorMail.map((mail) => mail.id);
+      const payload = {
+        data: {
+          priorMailIds: selectedPriorMail.map((mail) => mail.id)
+        }
+      };
+
+      const tempCor = props.correspondence;
+
+      tempCor.relatedCorrespondenceIds = priorMailIds;
+
+      return ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/create_correspondence_relations`, payload).
+        then(() => {
+          props.updateCorrespondenceRelations(tempCor);
+
+          setRelatedCorrespondenceIds([...relatedCorrespondenceIds, ...priorMailIds]);
+          setShowSuccessBanner(true);
+          setSelectedPriorMail([]);
+          setDisableSubmitButton(true);
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        }).
+        catch((error) => {
+          const errorMessage = error?.response?.body?.message ?
+            error.response.body.message.replace(/^Error:\s*/, '') :
+            error.message;
+
+          console.error(errorMessage);
+        });
+    }
+
+     if (selectedAppeals.length > 0) {
+      const appealsSelected = selectedAppeals.filter((val) => !correspondence.correspondenceAppealIds.includes(val));
+
+      const payload = {
+        data: {
+          selected_appeal_ids: appealsSelected,
+          unselected_appeal_ids: unSelectedAppeals
+        }
+      };
+
+      return ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/save_correspondence_appeals`, payload).
+        then((resp) => {
+          setSelectedAppeals(resp.body);
+          setInitialSelectedAppeals(resp.body);
+          setShowSuccessBanner(true);
+          setDisableSubmitButton(true);
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        }).
+        catch((error) => {
+          const errorMessage = error?.response?.body?.message ?
+            error.response.body.message.replace(/^Error:\s*/, '') :
+            error.message;
+
+          console.error(errorMessage);
+        });
+    }
+
+  };
   return (
     <>
       {
