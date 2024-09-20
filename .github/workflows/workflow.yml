@@ -221,10 +221,10 @@ jobs:
         run: |
           ./ci-bin/capture-log "bundle exec rake assets:precompile"
 
-      - name: Check directory before tests
+      - name: Check directory permissions
         run: |
-          echo "Checking /home/circleci before tests"
-          ls /home/circleci
+          echo "Checking permission /home/circleci before tests"
+          ls -ld /home/circleci
 
       # Changing the user and permissions as Chrome/Chromedriver can't run as root
       - name: RSpec via knapsack_pro Queue Mode
