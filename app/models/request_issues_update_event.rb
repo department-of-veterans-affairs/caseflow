@@ -153,46 +153,46 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Layout/LineLength
   def attributes_from_intake_data(data)
     parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(data)
-    contested_issue_present = attributes_look_like_contested_issue?(data)
-    issue_text = data[parser_issue.ri_is_unidentified] ? data[parser_issue.ri_contested_issue_description] : nil
+    contested_issue_present = attributes_look_like_contested_issue?(parser_issue)
+    issue_text = parser_issue.ri_is_unidentified ? parser_issue.ri_contested_issue_description : nil
 
     {
-      benefit_type: data[parser_issue.ri_benefit_type],
-      closed_at: data[parser_issue.ri_closed_at],
-      closed_status: data[parser_issue.ri_closed_status],
-      contention_reference_id: data[parser_issue.ri_contention_reference_id],
-      contested_decision_issue_id: data[parser_issue.ri_contested_decision_issue_id],
-      contested_rating_issue_reference_id: data[parser_issue.ri_contested_rating_issue_reference_id],
-      contested_rating_issue_diagnostic_code: data[parser_issue.ri_contested_rating_issue_diagnostic_code],
-      contested_rating_decision_reference_id: data[parser_issue.ri_contested_rating_decision_reference_id],
-      contested_issue_description: contested_issue_present ? data[parser_issue.ri_contested_issue_description] : nil,
-      contested_rating_issue_profile_date: data[parser_issue.ri_contested_rating_issue_profile_date],
-      nonrating_issue_description: data[parser_issue.ri_nonrating_issue_category] ? data[parser_issue.ri_contested_issue_description] : nil,
+      benefit_type: parser_issue.ri_benefit_type,
+      withdrawal_date: parser_issue.ri_closed_at,
+      closed_status: parser_issue.ri_closed_status,
+      contention_reference_id: parser_issue.ri_contention_reference_id,
+      contested_decision_issue_id: parser_issue.ri_contested_decision_issue_id,
+      contested_rating_issue_reference_id: parser_issue.ri_contested_rating_issue_reference_id,
+      contested_rating_issue_diagnostic_code: parser_issue.ri_contested_rating_issue_diagnostic_code,
+      contested_rating_decision_reference_id: parser_issue.ri_contested_rating_decision_reference_id,
+      contested_issue_description: contested_issue_present ? parser_issue.ri_contested_issue_description : nil,
+      contested_rating_issue_profile_date: parser_issue.ri_contested_rating_issue_profile_date,
+      nonrating_issue_description: parser_issue.ri_nonrating_issue_category ? parser_issue.ri_contested_issue_description : nil,
       unidentified_issue_text: issue_text,
-      decision_date: data[parser_issue.ri_decision_date],
-      nonrating_issue_category: data[parser_issue.ri_nonrating_issue_category],
-      is_unidentified: data[parser_issue.ri_is_unidentified],
-      untimely_exemption: data[parser_issue.ri_untimely_exemption],
-      untimely_exemption_notes: data[parser_issue.ri_untimely_exemption_notes],
-      ramp_claim_id: data[parser_issue.ri_ramp_claim_id],
-      vacols_id: data[parser_issue.ri_vacols_id],
-      vacols_sequence_id: data[parser_issue.ri_vacols_sequence_id],
-      ineligible_reason: data[parser_issue.ri_ineligible_reason],
-      ineligible_due_to_id: data[parser_issue.ri_ineligible_due_to_id],
-      reference_id: data[parser_issue.ri_reference_id],
-      type: data[parser_issue.ri_type],
-      veteran_participant_id: data[parser_issue.ri_veteran_participant_id],
-      rating_issue_associated_at: data[parser_issue.ri_rating_issue_associated_at],
-      nonrating_issue_bgs_source: data[parser_issue.ri_nonrating_issue_bgs_source],
-      nonrating_issue_bgs_id: data[parser_issue.ri_nonrating_issue_bgs_id]
+      decision_date: parser_issue.ri_decision_date,
+      nonrating_issue_category: parser_issue.ri_nonrating_issue_category,
+      is_unidentified: parser_issue.ri_is_unidentified,
+      untimely_exemption: parser_issue.ri_untimely_exemption,
+      untimely_exemption_notes: parser_issue.ri_untimely_exemption_notes,
+      ramp_claim_id: parser_issue.ri_ramp_claim_id,
+      vacols_id: parser_issue.ri_vacols_id,
+      vacols_sequence_id: parser_issue.ri_vacols_sequence_id,
+      ineligible_reason: parser_issue.ri_ineligible_reason,
+      ineligible_due_to_id: parser_issue.ri_ineligible_due_to_id,
+      reference_id: parser_issue.ri_reference_id,
+      type: parser_issue.ri_type,
+      veteran_participant_id: parser_issue.ri_veteran_participant_id,
+      rating_issue_associated_at: parser_issue.ri_rating_issue_associated_at,
+      nonrating_issue_bgs_source: parser_issue.ri_nonrating_issue_bgs_source,
+      nonrating_issue_bgs_id: parser_issue.ri_nonrating_issue_bgs_id
     }
   end
 
-  def attributes_look_like_contested_issue?(data)
-    data[:ri_contested_rating_issue_reference_id] ||
-      data[:ri_contested_decision_issue_id] ||
-      data[:ri_contested_rating_decision_reference_id] ||
-      data[:ri_contested_rating_issue_diagnostic_code]
+  def attributes_look_like_contested_issue?(parser_issue)
+    parser_issue.ri_contested_rating_issue_reference_id ||
+      parser_issue.ri_contested_decision_issue_id ||
+      parser_issue.ri_contested_rating_decision_reference_id ||
+      parser_issue.ri_contested_rating_issue_diagnostic_code
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Layout/LineLength
 
@@ -217,14 +217,15 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     return if @eligible_to_ineligible_issue_data.empty?
 
     @eligible_to_ineligible_issue_data.each do |issue_data|
-      request_issue = review.request_issues.find_by(reference_id: issue_data[:reference_id])
+      parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(issue_data)
+      request_issue = review.request_issues.find_by(reference_id: parser_issue.reference_id)
       unless request_issue
-        fail Caseflow::Error::DecisionReviewUpdateMissingIssueError, issue_data[:reference_id]
+        fail Caseflow::Error::DecisionReviewUpdateMissingIssueError, parser_issue.reference_id
       end
 
       request_issue.update(
-        ineligible_reason: issue_data[:ineligible_reason],
-        closed_at: issue_data[:closed_at],
+        ineligible_reason: parser_issue.ineligible_reason,
+        closed_at: parser_issue.closed_at,
         contention_reference_id: nil
       )
     end
@@ -234,9 +235,10 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     return if @ineligible_to_eligible_issue_data.empty?
 
     @ineligible_to_eligible_issue_data.each do |issue_data|
-      issue = review.request_issues.find_by(reference_id: issue_data[:reference_id])
+      parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(issue_data)
+      issue = review.request_issues.find_by(reference_id: parser_issue.reference_id)
       unless issue
-        fail Caseflow::Error::DecisionReviewUpdateMissingIssueError, issue_data[:reference_id]
+        fail Caseflow::Error::DecisionReviewUpdateMissingIssueError, parser_issue.reference_id
       end
 
       issue.update(ineligible_reason: nil, closed_status: nil, closed_at: nil)
@@ -247,14 +249,15 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     return if @ineligible_to_ineligible_issue_data.empty?
 
     @ineligible_to_ineligible_issue_data.each do |issue_data|
-      issue = review.request_issues.find_by(reference_id: issue_data[:reference_id])
+      parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(issue_data)
+      issue = review.request_issues.find_by(reference_id: parser_issue.reference_id)
       unless issue
-        fail Caseflow::Error::DecisionReviewUpdateMissingIssueError, issue_data[:reference_id]
+        fail Caseflow::Error::DecisionReviewUpdateMissingIssueError, parser_issue.reference_id
       end
 
       issue.update(
-        ineligible_reason: issue_data[:ineligible_reason],
-        closed_at: issue_data[:closed_at],
+        ineligible_reason: parser_issue.ineligible_reason,
+        closed_at: parser_issue.closed_at,
         contention_reference_id: nil
       )
     end
