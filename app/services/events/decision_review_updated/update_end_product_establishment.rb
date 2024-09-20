@@ -7,7 +7,7 @@ class Events::DecisionReviewUpdated::UpdateEndProductEstablishment
       event = params[:event]
       parser = params[:parser]
       epe = EndProductEstablishment.find_by(
-        reference_id: parser.end_product_establishment_reference_id
+        reference_id: parser.end_product_establishments_reference_id
       )
       epe.update!(
         code: parser.end_product_establishment_code,

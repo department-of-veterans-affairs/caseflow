@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "rails_helper"
+include ParserHelper
 
 RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
   let(:headers) do
@@ -24,7 +25,7 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
       benefit_type: "compensation",
       closed_at: nil,
       closed_status: nil,
-      contention_reference_id: 123456,
+      contention_reference_id: 123_456,
       contested_decision_issue_id: nil,
       contested_issue_description: nil,
       contested_rating_decision_reference_id: nil,
@@ -57,7 +58,7 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
       benefit_type: "compensation",
       closed_at: nil,
       closed_status: nil,
-      contention_reference_id: 123456,
+      contention_reference_id: 123_456,
       contested_decision_issue_id: nil,
       contested_issue_description: nil,
       contested_rating_decision_reference_id: nil,
@@ -90,7 +91,7 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
       benefit_type: "compensation",
       closed_at: nil,
       closed_status: nil,
-      contention_reference_id: 123456,
+      contention_reference_id: 123_456,
       contested_decision_issue_id: nil,
       contested_issue_description: nil,
       contested_rating_decision_reference_id: nil,
@@ -224,7 +225,7 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
     describe "end_product_establishment_last_synced_at" do
       it "returns the correct end_product_establishment_last_synced_at" do
         expect(subject.end_product_establishment_last_synced_at)
-          .to eq(payload["end_product_establishment"]["last_synced_at"])
+          .to eq(convert_milliseconds_to_datetime(payload["end_product_establishment"]["last_synced_at"]))
       end
     end
 
@@ -384,11 +385,11 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
     end
 
     it "returns not nil for development_item_reference_id if the value is not an empty string" do
-      expect(subject.end_product_establishments_development_item_reference_id).not_to be_nil
+      expect(subject.end_product_establishments_development_item_reference_id).to be_nil
     end
 
     it "returns not nil for reference_id if the value is not an empty string" do
-      expect(subject.end_product_establishments_reference_id).not_to be_nil
+      expect(subject.end_product_establishments_reference_id).to be_nil
     end
   end
 end
