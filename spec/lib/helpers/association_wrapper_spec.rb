@@ -103,7 +103,7 @@ describe "AssocationWrapper" do
           [:correspondences_appeals_task, false, true, "task_id", "correspondences_appeals_task_id", nil],
           [:correspondence_appeal, false, true, "correspondence_appeal_id", "correspondence_appeal_id", nil],
           # has_one declared in Task
-          [:cached_appeal, false, true, :appeal_id, "cached_appeal_id", nil]
+          [:cached_appeal, false, true, "appeal_id", "cached_appeal_id", nil]
         ]
       end
     end
