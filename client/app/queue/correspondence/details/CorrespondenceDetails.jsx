@@ -170,16 +170,19 @@ const CorrespondenceDetails = (props) => {
 
   let appeals;
 
-  const sortedAppeals = (selectedList) => {
-    appeals = []
+  const sortAppeals = (selectedList) => {
+    appeals = [];
     let filteredAppeals = [];
     let unfilteredAppeals = [];
+
     correspondence.appeals_information.appeals.map((appeal) => {
       if (selectedList?.includes(appeal.id)) {
-         filteredAppeals.push(appeal);
+        filteredAppeals.push(appeal);
       } else {
-         unfilteredAppeals.push(appeal);
+        unfilteredAppeals.push(appeal);
       }
+
+      return true;
     });
 
     filteredAppeals = filteredAppeals.sort((leftAppeal, rightAppeal) => leftAppeal.id - rightAppeal.id);
@@ -193,13 +196,16 @@ const CorrespondenceDetails = (props) => {
 
     hashKeys.map((key) => {
       const combinedHash = { ...appeall[key], ...appealldetail[key] };
+
       appeals.push(combinedHash);
+
+      return true;
     });
-   setAppealsToDisplay(appeals);
-  }
+    setAppealsToDisplay(appeals);
+  };
 
   useEffect(() => {
-    sortedAppeals(initialSelectedAppeals)
+    sortAppeals(initialSelectedAppeals);
   }, []);
 
   useEffect(() => {
@@ -558,10 +564,11 @@ const CorrespondenceDetails = (props) => {
 
       return ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/save_correspondence_appeals`, payload).
         then((resp) => {
-          let appealIds = resp.body.map(num => num.toString());
+          const appealIds = resp.body.map((num) => num.toString());
+
           setSelectedAppeals(appealIds);
           setInitialSelectedAppeals(appealIds);
-          sortedAppeals(appealIds)
+          sortAppeals(appealIds);
           setShowSuccessBanner(true);
           setDisableSubmitButton(true);
           window.scrollTo({
