@@ -1465,6 +1465,7 @@ ActiveRecord::Schema.define(version: 2024_08_28_165652) do
     t.string "email_notification_content", comment: "Full Email Text Content of Notification"
     t.string "email_notification_external_id", comment: "VA Notify Notification Id for the email notification send through their API "
     t.string "email_notification_status", comment: "Status of the Email Notification"
+    t.string "email_status_reason", comment: "Context around why this VA Notify notification is in the email status"
     t.date "event_date", null: false, comment: "Date of Event"
     t.string "event_type", null: false, comment: "Type of Event"
     t.bigint "notifiable_id"
@@ -1480,6 +1481,7 @@ ActiveRecord::Schema.define(version: 2024_08_28_165652) do
     t.string "sms_notification_status", comment: "Status of SMS/Text Notification"
     t.string "sms_response_content", comment: "Message body of the sms notification response."
     t.datetime "sms_response_time", comment: "Date and Time of the sms notification response."
+    t.string "sms_status_reason", comment: "Context around why this VA Notify notification is in the sms status"
     t.datetime "updated_at", comment: "TImestamp of when Notification was Updated"
     t.index ["appeals_id", "appeals_type"], name: "index_appeals_notifications_on_appeals_id_and_appeals_type"
     t.index ["email_notification_external_id"], name: "index_notifications_on_email_notification_external_id"
@@ -1751,6 +1753,16 @@ ActiveRecord::Schema.define(version: 2024_08_28_165652) do
     t.index ["review_type", "review_id"], name: "index_request_issues_updates_on_review_type_and_review_id"
     t.index ["updated_at"], name: "index_request_issues_updates_on_updated_at"
     t.index ["user_id"], name: "index_request_issues_updates_on_user_id"
+  end
+
+  create_table "returned_appeal_jobs", force: :cascade do |t|
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "errored_at"
+    t.text "returned_appeals", default: [], array: true
+    t.datetime "started_at"
+    t.json "stats"
+    t.datetime "updated_at", null: false
   end
 
   create_table "schedule_periods", force: :cascade do |t|
