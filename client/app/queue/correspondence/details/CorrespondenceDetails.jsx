@@ -542,7 +542,7 @@ const CorrespondenceDetails = (props) => {
         });
     }
 
-     if (selectedAppeals.length > 0) {
+    if (selectedAppeals.length > 0) {
       const appealsSelected = selectedAppeals.filter((val) => !correspondence.correspondenceAppealIds.includes(val));
 
       const payload = {
@@ -571,7 +571,6 @@ const CorrespondenceDetails = (props) => {
           console.error(errorMessage);
         });
     }
-
   };
 
   return (
