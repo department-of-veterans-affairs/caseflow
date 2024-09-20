@@ -60,6 +60,10 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser
     logical_date_converter(decision_date_int)
   end
 
+  def ri_edited_description
+    @issue.dig(:edited_description)
+  end
+
   def ri_ineligible_due_to_id
     @issue.dig(:ineligible_due_to_id)
   end
@@ -117,15 +121,11 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser
     @issue.dig(:vacols_sequence_id)
   end
 
-  def ri_veteran_participant_id
-    @issue.dig(:veteran_participant_id).presence
-  end
-
   def ri_type
     @issue.dig(:type).presence
   end
 
-  def ri_decision
-    @issue.dig(:decision)
+  def ri_original_caseflow_request_issue_id
+    @issue.dig(:original_caseflow_request_issue_id)
   end
 end
