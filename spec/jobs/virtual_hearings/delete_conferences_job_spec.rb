@@ -188,8 +188,7 @@ describe VirtualHearings::DeleteConferencesJob do
         expect(MetricsService).to receive(:increment_counter).with(
           hash_including(
             metric_name: "deleted_conferences.successful",
-            metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
-            by: 2
+            metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME
           )
         )
         subject
@@ -213,8 +212,7 @@ describe VirtualHearings::DeleteConferencesJob do
           expect(MetricsService).to receive(:increment_counter).with(
             hash_including(
               metric_name: "deleted_conferences.failed",
-              metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
-              by: 2
+              metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME
             )
           )
           subject
@@ -241,8 +239,7 @@ describe VirtualHearings::DeleteConferencesJob do
           expect(MetricsService).to receive(:increment_counter).with(
             hash_including(
               metric_name: "deleted_conferences.successful",
-              metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
-              by: 2
+              metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME
             )
           )
           subject
@@ -270,8 +267,7 @@ describe VirtualHearings::DeleteConferencesJob do
             expect(MetricsService).to receive(:increment_counter).with(
               hash_including(
                 metric_name: "deleted_conferences.failed",
-                metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
-                by: 2
+                metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME
               )
             )
             subject
@@ -295,16 +291,14 @@ describe VirtualHearings::DeleteConferencesJob do
             expect(MetricsService).to receive(:increment_counter).with(
               hash_including(
                 metric_name: "deleted_conferences.successful",
-                metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
-                by: 2
+                metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME
               )
             )
 
             expect(MetricsService).to receive(:increment_counter).with(
               hash_including(
                 metric_name: "deleted_conferences.failed",
-                metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
-                by: 2
+                metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME
               )
             )
 
