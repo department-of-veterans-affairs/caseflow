@@ -47,6 +47,7 @@ const CorrespondenceDetails = (props) => {
   const [initialSelectedAppeals, setInitialSelectedAppeals] = useState(correspondence.correspondenceAppealIds);
   const [selectedAppeals, setSelectedAppeals] = useState(correspondence.correspondenceAppealIds);
   const [unSelectedAppeals, setUnSelectedAppeals] = useState([]);
+  const [appealsToDisplay, setAppealsToDisplay] = useState([]);
   const userAccess = correspondence.user_access;
 
   priorMail.sort((first, second) => {
@@ -167,35 +168,39 @@ const CorrespondenceDetails = (props) => {
     return checked ? userAccess !== 'admin_access' : false;
   };
 
-  const appealsResult = props.correspondence.appeals_information;
-  const appeals = [];
-  let filteredAppeals = [];
-  let unfilteredAppeals = [];
+  let appeals;
 
-  appealsResult.appeals.map((appeal) => {
-    if (correspondence.correspondenceAppealIds?.includes(appeal.id)) {
-      return filteredAppeals.push(appeal);
-    }
+  const sortedAppeals = (selectedList) => {
+    appeals = []
+    let filteredAppeals = [];
+    let unfilteredAppeals = [];
+    correspondence.appeals_information.appeals.map((appeal) => {
+      if (selectedList?.includes(appeal.id)) {
+         filteredAppeals.push(appeal);
+      } else {
+         unfilteredAppeals.push(appeal);
+      }
+    });
 
-    return unfilteredAppeals.push(appeal);
-  });
+    filteredAppeals = filteredAppeals.sort((leftAppeal, rightAppeal) => leftAppeal.id - rightAppeal.id);
+    unfilteredAppeals = unfilteredAppeals.sort((leftAppeal, rightAppeal) => leftAppeal.id - rightAppeal.id);
 
-  filteredAppeals = filteredAppeals.sort((leftAppeal, rightAppeal) => leftAppeal.id - rightAppeal.id);
-  unfilteredAppeals = unfilteredAppeals.sort((leftAppeal, rightAppeal) => leftAppeal.id - rightAppeal.id);
-  const sortedAppeals = filteredAppeals.concat(unfilteredAppeals);
+    const sortedAppeals = filteredAppeals.concat(unfilteredAppeals);
+    const searchStoreAppeal = prepareAppealForSearchStore(sortedAppeals);
+    const appeall = searchStoreAppeal.appeals;
+    const appealldetail = searchStoreAppeal.appealDetails;
+    const hashKeys = Object.keys(appeall);
 
-  const searchStoreAppeal = prepareAppealForSearchStore(sortedAppeals);
-  const appeall = searchStoreAppeal.appeals;
-  const appealldetail = searchStoreAppeal.appealDetails;
-  const hashKeys = Object.keys(appeall);
+    hashKeys.map((key) => {
+      const combinedHash = { ...appeall[key], ...appealldetail[key] };
+      appeals.push(combinedHash);
+    });
+   setAppealsToDisplay(appeals);
+  }
 
-  hashKeys.map((key) => {
-    const combinedHash = { ...appeall[key], ...appealldetail[key] };
-
-    appeals.push(combinedHash);
-
-    return appeals;
-  });
+  useEffect(() => {
+    sortedAppeals(initialSelectedAppeals)
+  }, []);
 
   useEffect(() => {
     dispatch(loadCorrespondence(correspondence));
@@ -248,7 +253,7 @@ const CorrespondenceDetails = (props) => {
             </span>
 
             <CaseListTable
-              appeals={appeals}
+              appeals={appealsToDisplay}
               paginate="true"
               showCheckboxes
               taskRelatedAppealIds={props.correspondence.correspondenceAppealIds}
@@ -523,7 +528,6 @@ const CorrespondenceDetails = (props) => {
       return ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/create_correspondence_relations`, payload).
         then(() => {
           props.updateCorrespondenceRelations(tempCor);
-
           setRelatedCorrespondenceIds([...relatedCorrespondenceIds, ...priorMailIds]);
           setShowSuccessBanner(true);
           setSelectedPriorMail([]);
@@ -554,8 +558,10 @@ const CorrespondenceDetails = (props) => {
 
       return ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/save_correspondence_appeals`, payload).
         then((resp) => {
-          setSelectedAppeals(resp.body);
-          setInitialSelectedAppeals(resp.body);
+          let appealIds = resp.body.map(num => num.toString());
+          setSelectedAppeals(appealIds);
+          setInitialSelectedAppeals(appealIds);
+          sortedAppeals(appealIds)
           setShowSuccessBanner(true);
           setDisableSubmitButton(true);
           window.scrollTo({
