@@ -13,7 +13,8 @@ METABASE_PORT=3000
 VACOLS_HOST=host.docker.internal
 
 echo "Installing JQ"
-yum install -y jq
+apt-get update
+apt-get install -y jq
 
 echo "Waiting for Metabase to start"
 while (! curl -s -m 5 http://${METABASE_HOST}:${METABASE_PORT}/api/session/properties -o /dev/null); do sleep 5; done
