@@ -74,7 +74,6 @@ export const TranscriptionFileDispatchTable = ({
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [selectingFile, setSelectingFile] = useState(false);
   const [contractors, setContractors] = useState([]);
-  const [statuses, setStatuses] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalData, setModalData] = useState({ workOrderNumber: null });
 
@@ -136,8 +135,7 @@ export const TranscriptionFileDispatchTable = ({
    * @returns The url params needed to handle pagination
    */
   const qs = encodeQueryParams({
-    tab: statusFilter[0],
-    statuses: statuses.join("|"),
+    tab: statusFilter[0]
   });
 
   /**
@@ -228,7 +226,7 @@ export const TranscriptionFileDispatchTable = ({
       dateSentColumn: dateSentColumn(),
       expectedReturnDateColumn: expectedReturnDateColumn(),
       contractorColumn: contractorColumn(contractors),
-      statusColumn: statusColumn(setStatuses),
+      statusColumn: statusColumn(statusFilter[0]),
       unassignColumn: unassignColumn(unassignPackage),
     };
 

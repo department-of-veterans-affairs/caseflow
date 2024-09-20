@@ -386,7 +386,33 @@ export const contractorColumn = (contractors) => {
   };
 };
 
-export const statusColumn = () => {
+export const statusColumn = (currentTab) => {
+  let filterOptions;
+
+  if (currentTab === 'Assigned') {
+    filterOptions = [
+      { value: 'Overdue', displayText: 'Overdue' },
+      { value: 'Sent', displayText: 'Sent' }
+    ];
+  } else if (currentTab === 'Completed') {
+    filterOptions = [
+      { value: "Completed", displayText: "Completed" },
+      { value: "Retrieval Failure", displayText: "Retrieval Failure" },
+      { value: "Overdue", displayText: "Overdue" },
+    ];
+  } else if (currentTab === 'All Transcriptions') {
+    filterOptions = [
+      { value: 'Completed', displayText: 'Completed' },
+      { value: 'Overdue', displayText: 'Overdue' },
+      { value: 'Retrieval Failure', displayText: 'Retrieval Failure' },
+      { value: 'Sent', displayText: 'Sent' },
+      { value: 'Unassigned', displayText: 'Unassigned' },
+      { value: 'Pending', displayText: 'Pending' }
+    ];
+  } else {
+    filterOptions = [];
+  }
+
   return {
     header: (
       <p {...styles.headerWithIcon}>
@@ -398,21 +424,10 @@ export const statusColumn = () => {
     anyFiltersAreSet:
       TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.STATUS.anyFiltersAreSet,
     columnName: COPY.TRANSCRIPTION_FILE_DISPATCH_STATUS_COLUMN_NAME,
-    label: "status filter",
-    filterOptions: [
-      { value: "Completed", displayText: "Completed" },
-      { value: "Sent-Overdue", displayText: "Sent-Overdue" },
-      { value: "Retrieval Failure", displayText: "Retrieval Failure" },
-      { value: "Sent", displayText: "Sent" },
-    ],
+    label: 'status filter',
+    filterOptions: filterOptions,
     valueFunction: (row) => (
-      <div
-        style={
-          row.status === "Sent-Overdue" || row.status === "Retrieval Failure"
-            ? styles.error
-            : {}
-        }
-      >
+      <div style={row.status === 'Overdue' || row.status === 'Retrieval Failure' ? styles.error : {}}>
         {row.status}
       </div>
     ),
