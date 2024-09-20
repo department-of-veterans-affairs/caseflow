@@ -25,7 +25,6 @@ const DocumentViewer = (props) => {
   const [rotateDeg, setRotateDeg] = useState('0deg');
   const [showSearchBar, setShowSearchBar] = useState(false);
   const [showSideBar, setShowSideBar] = useState(true);
-  const [zoomLevel, setZoomLevel] = useState(100);
   const [disabled, setDisabled] = useState(true);
   const dispatch = useDispatch();
 
@@ -76,26 +75,38 @@ const DocumentViewer = (props) => {
     }
   };
 
+  const handleZoomIn = () => {
+    const newZoomLevel = props.zoomLevel + ZOOM_INCREMENT;
+
+    props.onZoomChange(newZoomLevel);
+  };
+
+  const handleZoomOut = () => {
+    const newZoomLevel = props.zoomLevel - ZOOM_INCREMENT;
+
+    props.onZoomChange(newZoomLevel);
+  };
+
   document.body.style.overflow = 'hidden';
 
   return (
     <div id="prototype-reader" className="cf-pdf-page-container">
       <div id="prototype-reader-main">
         <ReaderToolbar
-          disableZoomIn={zoomLevel === ZOOM_LEVEL_MAX}
-          disableZoomOut={zoomLevel === ZOOM_LEVEL_MIN}
+          disableZoomIn={props.zoomLevel === ZOOM_LEVEL_MAX}
+          disableZoomOut={props.zoomLevel === ZOOM_LEVEL_MIN}
           doc={doc}
           documentPathBase={props.documentPathBase}
-          resetZoomLevel={() => setZoomLevel(100)}
+          resetZoomLevel={() => props.onZoomChange(100)}
           rotateDocument={() => setRotateDeg(getRotationDeg(rotateDeg))}
-          setZoomInLevel={() => setZoomLevel(zoomLevel + ZOOM_INCREMENT)}
-          setZoomOutLevel={() => setZoomLevel(zoomLevel - ZOOM_INCREMENT)}
+          setZoomInLevel={handleZoomIn}
+          setZoomOutLevel={handleZoomOut}
           showClaimsFolderNavigation={props.allDocuments.length > 1}
           showSearchBar={showSearchBar}
           toggleSearchBar={setShowSearchBar}
           showSideBar={showSideBar}
           toggleSideBar={() => setShowSideBar(true)}
-          zoomLevel={zoomLevel}
+          zoomLevel={props.zoomLevel}
         />
         {showSearchBar && <ReaderSearchBar />}
         <div className="cf-pdf-scroll-view" onScroll={getPageNumFromScrollTop}>
@@ -103,7 +114,7 @@ const DocumentViewer = (props) => {
             doc={doc}
             rotateDeg={rotateDeg}
             setNumPages={setNumPages}
-            zoomLevel={zoomLevel}
+            zoomLevel={props.zoomLevel}
             onLoad={setDisabled}
           />
         </div>
@@ -141,7 +152,9 @@ DocumentViewer.propTypes = {
   fetchAppealDetails: PropTypes.func,
   history: PropTypes.any,
   showPdf: PropTypes.func,
-  match: PropTypes.object
+  match: PropTypes.object,
+  zoomLevel: PropTypes.number,
+  onZoomChange: PropTypes.func
 };
 
 export default DocumentViewer;
