@@ -400,6 +400,7 @@ FactoryBot.define do
       # > overridden parameters in the instance variable @overrides.
       # It's a clean solution that doesn't require updating tests or adding a new transient attribute.
       appeal { @overrides[:parent] ? @overrides[:parent].appeal : create(:appeal) }
+      appeal_type { appeal.class.name }
 
       before :create do |task, _eval|
         task.update(type: task.class.name)
@@ -768,6 +769,38 @@ FactoryBot.define do
       factory :returned_undeliverable_correspondence_mail_task, class: ReturnedUndeliverableCorrespondenceMailTask do
         assigned_to { BvaDispatch.singleton }
         parent { create(:root_task, appeal: appeal) }
+      end
+
+      factory :correspondence_intake_task, class: CorrespondenceIntakeTask do
+        appeal_type { Correspondence.name }
+      end
+
+      factory :review_package_task, class: ReviewPackageTask do
+        appeal { create(:correspondence) }
+        appeal_type { Correspondence.name }
+      end
+
+      factory :merge_package_task, class: MergePackageTask do
+        appeal { create(:correspondence) }
+        appeal_type { Correspondence.name }
+      end
+
+      factory :reassign_package_task, class: ReassignPackageTask do
+        appeal { create(:correspondence) }
+        appeal_type { Correspondence.name }
+      end
+
+      factory :split_package_task, class: SplitPackageTask do
+        appeal { create(:correspondence) }
+        appeal_type { Correspondence.name }
+      end
+
+      factory :other_motion_correspondence_task, class: OtherMotionCorrespondenceTask do
+        appeal { create(:correspondence) }
+        appeal_type { Correspondence.name }
+      end
+
+      factory :efolder_upload_failed_task, class: EfolderUploadFailedTask do
       end
 
       factory :no_show_hearing_task, class: NoShowHearingTask do

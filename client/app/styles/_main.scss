@@ -411,3 +411,7 @@ select {
     transform: translateX(0);
   }
 }
+
+.gray-border {
+  border: 2px solid $color-gray-lighter;
+}
