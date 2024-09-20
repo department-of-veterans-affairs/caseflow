@@ -369,6 +369,8 @@ Rails.application.routes.draw do
     post "/correspondence/:correspondence_uuid/cancel_intake", to: "correspondence_intake#cancel_intake", as: :queue_correspondence_intake_cancel_intake
     post "/correspondence/:correspondence_uuid/task", to: "correspondence_tasks#create_package_action_task"
     post "/correspondence_response_letters", to: "correspondence_response_letters#create"
+    post "/correspondence/:correspondence_uuid/correspondence_response_letter",
+         to: "correspondence_details#create_response_letter_for_correspondence"
     get "/correspondence/:correspondence_uuid", to: "correspondence_details#correspondence_details"
     resources :correspondence, param: :correspondence_uuid do
       post :create_correspondence_relations, on: :member, to: "correspondence_details#create_correspondence_relations"

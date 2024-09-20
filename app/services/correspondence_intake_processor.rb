@@ -40,6 +40,14 @@ class CorrespondenceIntakeProcessor
     false
   end
 
+  def create_letter(params, _current_user)
+    correspondence = Correspondence.find_by(uuid: params[:correspondence_uuid])
+
+    fail "Correspondence not found" if correspondence.blank?
+
+    create_response_letter(params, correspondence.id)
+  end
+
   private
 
   # :reek:LongParameterList

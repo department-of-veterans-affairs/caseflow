@@ -23,9 +23,9 @@ import { ExternalLinkIcon } from 'app/components/icons/ExternalLinkIcon';
 import { COLORS } from 'app/constants/AppConstants';
 import Checkbox from 'app/components/Checkbox';
 import CorrespondencePaginationWrapper from 'app/queue/correspondence/CorrespondencePaginationWrapper';
-import Button from 'components/Button';
-import Alert from 'components/Alert';
-import ApiUtil from 'app/util/ApiUtil';
+import Button from '../../../components/Button';
+import Alert from '../../../components/Alert';
+import ApiUtil from '../../../util/ApiUtil';
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
@@ -38,7 +38,6 @@ const CorrespondenceDetails = (props) => {
   const [disableSubmitButton, setDisableSubmitButton] = useState(true);
   const [showSuccessBanner, setShowSuccessBanner] = useState(false);
   const [selectedPriorMail, setSelectedPriorMail] = useState([]);
-  const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const totalPages = Math.ceil(allCorrespondences.length / 15);
   const startIndex = (currentPage * 15) - 15;
   const endIndex = (currentPage * 15);
@@ -136,6 +135,9 @@ const CorrespondenceDetails = (props) => {
       // Ensure that items in relatedCorrespondenceIds come first
       return -1;
     } else if (secondInRelated) {
+      return 1;
+    }
+    if (!firstInRelated && secondInRelated) {
       return 1;
     }
 
@@ -390,6 +392,11 @@ const CorrespondenceDetails = (props) => {
         <div className="correspondence-package-details">
           <CorrespondenceResponseLetters
             letters={props.correspondenceResponseLetters}
+            addLetterCheck={props.addLetterCheck}
+            isInboundOpsSuperuser={props.isInboundOpsSuperuser}
+            isInboundOpsSupervisor={props.isInboundOpsSupervisor}
+            isInboundOpsUser={props.isInboundOpsUser}
+            correspondence={props.correspondence}
           />
         </div>
       </>
@@ -425,7 +432,10 @@ const CorrespondenceDetails = (props) => {
                   hideLabel
                   defaultValue={relatedCorrespondenceIds.some((el) => el === correspondenceRow.id)}
                   value={selectedPriorMail.some((el) => el.id === correspondenceRow.id)}
-                  disabled={relatedCorrespondenceIds.some((corrId) => corrId === correspondenceRow.id)}
+                  disabled={
+                    // eslint-disable-next-line max-len
+                    relatedCorrespondenceIds.some((corrId) => corrId === correspondenceRow.id) || !props.isInboundOpsUser
+                  }
                   onChange={(checked) => onPriorMailCheckboxChange(correspondenceRow, checked)}
                 /> :
                 <Checkbox
@@ -576,7 +586,7 @@ const CorrespondenceDetails = (props) => {
 
     if (isAdminNotLoggedIn() === false) {
       handlepriorMailUpdate();
-    } else if (currentTabIndex === 3) {
+    } else if (selectedPriorMail.length > 0) {
 
       const priorMailIds = selectedPriorMail.map((mail) => mail.id);
       const payload = {
@@ -612,15 +622,6 @@ const CorrespondenceDetails = (props) => {
     }
   };
 
-  const tabChange = (value) => {
-    setCurrentTabIndex(value);
-    setDisableSubmitButton(true);
-
-    if (value === 3 && selectedPriorMail.length > 0) {
-      setDisableSubmitButton(false);
-    }
-  };
-
   return (
     <>
       {
@@ -651,19 +652,20 @@ const CorrespondenceDetails = (props) => {
         <TabWindow
           name="tasks-tabwindow"
           tabs={tabList}
-          onChange={((value) => tabChange(value))}
         />
       </AppSegment>
-      <div className="margin-top-for-add-task-view">
-        <Button
-          type="button"
-          onClick={() => saveChanges()}
-          disabled={disableSubmitButton}
-          name="save-changes"
-          classNames={['cf-right-side']}>
+      {
+        props.isInboundOpsUser && <div className="margin-top-for-add-task-view">
+          <Button
+            type="button"
+            onClick={() => saveChanges()}
+            disabled={disableSubmitButton}
+            name="save-changes"
+            classNames={['cf-right-side']}>
           Save changes
-        </Button>
-      </div>
+          </Button>
+        </div>
+      }
     </>
   );
 };
@@ -675,10 +677,13 @@ CorrespondenceDetails.propTypes = {
   userCssId: PropTypes.string,
   enableTopPagination: PropTypes.bool,
   correspondence_appeal_ids: PropTypes.bool,
+  isInboundOpsUser: PropTypes.bool,
   tasksUnrelatedToAppealEmpty: PropTypes.bool,
   isInboundOpsSuperuser: PropTypes.bool,
   isInboundOpsSupervisor: PropTypes.bool,
   correspondenceResponseLetters: PropTypes.array,
+  inboundOpsTeamUsers: PropTypes.array,
+  addLetterCheck: PropTypes.bool,
   updateCorrespondenceRelations: PropTypes.func,
 };
 
