@@ -18,6 +18,7 @@ RSpec.describe CaseDistributionLever, :all_dbs do
        ama_hearing_docket_time_goals
        ama_hearing_start_distribution_prior_to_goals
        ama_evidence_submission_start_distribution_prior_to_goals
+       nonsscavlj_number_of_appeals_to_move
        aoj_affinity_days
        aoj_aod_affinity_days
        aoj_cavc_affinity_days]
