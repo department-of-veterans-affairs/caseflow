@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "simplecov"
-require "simplecov_lcov_formatter"
-
 ENV["RAILS_ENV"] ||= "test"
 if ENV["SINGLE_COV"]
   # get coverage selectively in local dev
@@ -10,6 +7,9 @@ if ENV["SINGLE_COV"]
   require "single_cov"
   SingleCov.setup :rspec
 else
+  require "simplecov"
+  require "simplecov_lcov_formatter"
+
   # This ensures the command name is unique for each CI node
   SimpleCov.command_name "RSpec-#{ENV['GHA_NODE_INDEX']}" if ENV["GHA_NODE_INDEX"]
   # Specify the coverage directory
