@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "models/concerns/has_virtual_hearing_examples"
+require "models/hearings_shared_examples"
 
 describe Hearing, :postgres do
   it_should_behave_like "a model that can have a virtual hearing" do
@@ -301,6 +302,39 @@ describe Hearing, :postgres do
     include_context "hearing associated with an appeal with an unrecognized claimant"
     it "returns false if the appeals claimant is an unrecognized claimant" do
       expect(hearing.aod?).to eq(false)
+    end
+  end
+
+  context "#conference_provider" do
+    let(:hearing_type) { :hearing }
+
+    include_context "Pexip and Webex Users"
+
+    include_examples "Conference provider values are transferred between base entity and new hearings"
+  end
+
+  context "#daily_docket_conference_link" do
+    let(:hearing_day) { create(:hearing_day) }
+    let(:hearing) { create(:hearing, hearing_day: hearing_day) }
+    let(:conference_link) { "https://example.com" }
+
+    before do
+      allow(hearing_day).to receive(:conference_link).and_return(conference_link)
+    end
+
+    it "returns the conference links of the hearing day" do
+      expect(hearing.daily_docket_conference_link).to eq(conference_link)
+    end
+  end
+
+  context "correct subject nbf and exp" do
+    let(:hearing_day) { create(:hearing_day) }
+    let(:hearing) { create(:hearing, hearing_day: hearing_day) }
+
+    it "sub nbf and exp are correct" do
+      expect(hearing.subject_for_conference).to eq("#{hearing.docket_number}_#{hearing.id}_#{hearing.class}")
+      expect(hearing.nbf).to eq(hearing.scheduled_for.beginning_of_day.to_i)
+      expect(hearing.exp).to eq(hearing.scheduled_for.end_of_day.to_i)
     end
   end
 

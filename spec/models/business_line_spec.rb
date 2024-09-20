@@ -533,7 +533,6 @@ describe BusinessLine do
              nonrating_issue_category: "Medical and Dental Care Reimbursement",
              nonrating_issue_description: "Reimbursement note description")
     end
-
     let!(:remand_task) do
       create(:remand_vha_task,
              appeal: create(:remand,
@@ -748,6 +747,7 @@ describe BusinessLine do
     context "without filters" do
       it "should return all rows" do
         expect(subject.count).to eq 8
+        expect(subject.count).to eq 6
         expect(subject.entries).to include(*all_expectations)
       end
     end
