@@ -518,6 +518,22 @@ describe BusinessLine do
                             benefit_type: "vha",
                             claimant_type: :dependent_claimant))
     end
+    let!(:hlr_task_with_imr) do
+      create(:issue_modification_request,
+             :with_higher_level_review,
+             :edit_of_request,
+             nonrating_issue_category: "Medical and Dental Care Reimbursement",
+             nonrating_issue_description: "Reimbursement note description")
+    end
+
+    let!(:sc_task_with_imr) do
+      create(:issue_modification_request,
+             :with_supplemental_claim,
+             :edit_of_request,
+             nonrating_issue_category: "Medical and Dental Care Reimbursement",
+             nonrating_issue_description: "Reimbursement note description")
+    end
+
     let!(:remand_task) do
       create(:remand_vha_task,
              appeal: create(:remand,
@@ -533,7 +549,7 @@ describe BusinessLine do
     let(:hlr_task_1_ri_1_expectation) do
       a_hash_including(
         "nonrating_issue_category" => "Caregiver | Other",
-        "nonrating_issue_description" => "VHA - Caregiver ",
+        "nonrating_issue_description" => "VHA - Caregiver",
         "task_id" => hlr_task.id,
         "veteran_file_number" => hlr_task.appeal.veteran_file_number,
         "intake_user_name" => hlr_task.appeal.intake.user.full_name,
@@ -571,7 +587,7 @@ describe BusinessLine do
     let(:hlr_task_2_ri_1_expectation) do
       a_hash_including(
         "nonrating_issue_category" => "Caregiver | Other",
-        "nonrating_issue_description" => "VHA - Caregiver ",
+        "nonrating_issue_description" => "VHA - Caregiver",
         "task_id" => hlr_task2.id,
         "veteran_file_number" => hlr_task2.appeal.veteran_file_number,
         "intake_user_name" => intake_user.full_name,
@@ -623,6 +639,29 @@ describe BusinessLine do
         "task_status" => sc_task.status,
         "request_issue_benefit_type" => "vha",
         "days_waiting" => (Time.zone.today - Date.parse(sc_task.assigned_at.iso8601)).to_i
+      )
+    end
+    let(:imr_hlr_expectation) do
+      a_hash_including(
+        "requested_issue_type" => "Medical and Dental Care Reimbursement",
+        "requested_issue_description" => "Reimbursement note description",
+        "remove_original_issue" => false,
+        "modification_request_reason" => "I edited this request.",
+        "request_type" => "addition",
+        "issue_modification_request_status" => "assigned",
+        "decision_review_type" => "HigherLevelReview"
+      )
+    end
+    let(:imr_sc_expectation) do
+      a_hash_including(
+        "requested_issue_type" => "Medical and Dental Care Reimbursement",
+        "requested_issue_description" => "Reimbursement note description",
+        "remove_original_issue" => false,
+        "modification_request_reason" => "I edited this request.",
+        "request_type" => "addition",
+        "issue_modification_request_status" => "assigned",
+        "decision_reason" => nil,
+        "decision_review_type" => "SupplementalClaim"
       )
     end
     let(:remand_task_1_ri_1_expectation) do
@@ -708,7 +747,7 @@ describe BusinessLine do
 
     context "without filters" do
       it "should return all rows" do
-        expect(subject.count).to eq 6
+        expect(subject.count).to eq 8
         expect(subject.entries).to include(*all_expectations)
       end
     end
@@ -744,7 +783,7 @@ describe BusinessLine do
         let(:change_history_filters) { { claim_type: "SupplementalClaim" } }
 
         it "should only return rows for the filtered claim type" do
-          expect(subject.entries.count).to eq(1)
+          expect(subject.entries.count).to eq(2)
           expect(subject.entries).to include(sc_task_1_ri_1_expectation)
         end
       end
@@ -753,7 +792,7 @@ describe BusinessLine do
         let(:change_history_filters) { { claim_type: "HigherLevelReview" } }
 
         it "should only return rows for the filtered claim type" do
-          expect(subject.entries.count).to eq(4)
+          expect(subject.entries.count).to eq(5)
           expect(subject.entries).to include(
             *(all_expectations - [sc_task_1_ri_1_expectation] - [remand_task_1_ri_1_expectation])
           )
@@ -778,6 +817,32 @@ describe BusinessLine do
         expect(subject.entries).to include(
           hlr_task_1_ri_1_expectation,
           hlr_task_1_ri_2_expectation
+        )
+      end
+    end
+
+    context "with task status filter pending" do
+      let(:change_history_filters) { { task_status: ["pending"] } }
+
+      it "should only return rows for the filtered status types" do
+        expect(subject.entries.count).to eq(2)
+        expect(subject.entries).to include(
+          imr_hlr_expectation,
+          imr_sc_expectation
+        )
+      end
+    end
+
+    context "with task status filter pending and completed" do
+      let(:change_history_filters) { { task_status: %w[pending completed] } }
+
+      it "should only return rows for the filtered status types" do
+        expect(subject.entries.count).to eq(4)
+        expect(subject.entries).to include(
+          hlr_task_1_ri_1_expectation,
+          hlr_task_1_ri_2_expectation,
+          imr_hlr_expectation,
+          imr_sc_expectation
         )
       end
     end
@@ -808,7 +873,7 @@ describe BusinessLine do
         let(:change_history_filters) { { dispositions: ["Blank"] } }
 
         it "should return rows that do not have a disposition" do
-          expect(subject.entries.count).to eq(4)
+          expect(subject.entries.count).to eq(6)
           expect(subject.entries).to include(
             hlr_task_2_ri_1_expectation,
             hlr_task_2_ri_2_expectation,
@@ -821,7 +886,7 @@ describe BusinessLine do
           let(:change_history_filters) { { dispositions: %w[denied Blank] } }
 
           it "should return rows that match denied or have no disposition" do
-            expect(subject.entries.count).to eq(5)
+            expect(subject.entries.count).to eq(7)
             expect(subject.entries).to include(
               hlr_task_1_ri_2_expectation,
               hlr_task_2_ri_1_expectation,
@@ -832,6 +897,14 @@ describe BusinessLine do
           end
         end
       end
+
+      context "with a single disposition filter and task status pending" do
+        let(:change_history_filters) { { dispositions: ["denied"], task_status: ["pending"] } }
+
+        it "should only not return any row since pending task cannot have disposition" do
+          expect(subject.entries.count).to eq(0)
+        end
+      end
     end
 
     context "with issue types filter" do
@@ -839,7 +912,7 @@ describe BusinessLine do
         let(:change_history_filters) { { issue_types: ["Beneficiary Travel", "CHAMPVA"] } }
 
         it "should only return rows for the filtered issue type values" do
-          expect(subject.entries.count).to eq(2)
+          expect(subject.entries.count).to eq(3)
           expect(subject.entries).to include(
             hlr_task_1_ri_2_expectation,
             sc_task_1_ri_1_expectation
@@ -851,11 +924,20 @@ describe BusinessLine do
         let(:change_history_filters) { { issue_types: ["Caregiver | Other"] } }
 
         it "should only return rows for the filtered issue type values" do
-          expect(subject.entries.count).to eq(2)
+          expect(subject.entries.count).to eq(3)
           expect(subject.entries).to include(
             hlr_task_1_ri_1_expectation,
             hlr_task_2_ri_1_expectation
           )
+        end
+      end
+
+      context "with a single issue type filter and pending task status" do
+        let(:change_history_filters) { { issue_types: ["Caregiver | Other"], task_status: ["pending"] } }
+
+        it "should only return rows for the filtered issue type values" do
+          expect(subject.entries.count).to eq(1)
+          expect(subject.entries).to include(imr_hlr_expectation)
         end
       end
     end
@@ -865,7 +947,7 @@ describe BusinessLine do
         let(:change_history_filters) { { days_waiting: { number_of_days: 6, operator: "<" } } }
 
         it "should only return rows that are under the filtered days waiting value" do
-          expect(subject.entries.count).to eq(2)
+          expect(subject.entries.count).to eq(4)
           expect(subject.entries).to include(
             hlr_task_2_ri_1_expectation,
             hlr_task_2_ri_2_expectation
@@ -934,7 +1016,7 @@ describe BusinessLine do
         let(:change_history_filters) { { facilities: ["101"] } }
 
         it "only return rows where either an intake, decisions, or updates user matches the station id" do
-          expect(subject.entries.count).to eq(3)
+          expect(subject.entries.count).to eq(5)
           expect(subject.entries).to include(
             hlr_task_1_ri_1_expectation,
             hlr_task_1_ri_2_expectation,
@@ -994,8 +1076,19 @@ describe BusinessLine do
         end
 
         it "should only return rows that match both filters" do
-          expect(subject.entries.count).to eq(1)
+          expect(subject.entries.count).to eq(2)
           expect(subject.entries).to include(sc_task_1_ri_1_expectation)
+        end
+      end
+
+      context "multiple issue types and claim type and task status pending" do
+        let(:change_history_filters) do
+          { issue_types: ["Beneficiary Travel", "CHAMPVA"], claim_type: "SupplementalClaim", task_status: ["pending"] }
+        end
+
+        it "should only return rows that match both filters" do
+          expect(subject.entries.count).to eq(1)
+          expect(subject.entries).to include(imr_sc_expectation)
         end
       end
     end

@@ -63,6 +63,7 @@ module Seeds
     def create_hlr_with_claimant(benefit_type, claimant_type)
       hlr = create(
         :higher_level_review,
+        :with_intake,
         :with_request_issue,
         :processed,
         benefit_type: benefit_type,
@@ -75,6 +76,7 @@ module Seeds
     def create_sc_with_claimant(benefit_type, claimant_type)
       sc = create(
         :supplemental_claim,
+        :with_intake,
         :with_request_issue,
         :processed,
         benefit_type: benefit_type,

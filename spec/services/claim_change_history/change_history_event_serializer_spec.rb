@@ -36,6 +36,29 @@ describe ChangeHistoryEventSerializer do
     ClaimHistoryService.new(vha_org, task_id: vha_task.id).build_events
   end
 
+  let(:modificationRequestDetailsObject) do
+    {
+      benefitType: "vha",
+      requestType: nil,
+      issueModificationRequestWithdrawalDate: nil,
+      modificationRequestReason: nil,
+      newDecisionDate: nil,
+      newIssueDescription: nil,
+      newIssueType: nil,
+      previousDecisionDate: nil,
+      previousIssueDescription: nil,
+      previousIssueType: nil,
+      previousModificationRequestReason: nil,
+      previousWithdrawalDate: nil,
+      removeOriginalIssue: nil,
+      issueModificationRequestStatus: nil,
+      requestor: nil,
+      decider: nil,
+      decidedAtDate: nil,
+      decisionReason: nil
+    }
+  end
+
   let(:serialized_hash_array) do
     [
       {
@@ -43,23 +66,24 @@ describe ChangeHistoryEventSerializer do
         type: :change_history_event,
         attributes: {
           claimType: "Higher-Level Review",
+          readableEventType: "Claim created",
           claimantName: events[0].claimant_name,
-          details:
-          {
-            benefitType: "vha",
-            decisionDate: nil,
-            decisionDescription: nil,
-            disposition: nil,
-            dispositionDate: nil,
-            issueDescription: nil,
-            issueType: nil,
-            withdrawalRequestDate: nil
-          },
+          eventUser: "L. Roth",
           eventDate: events[0].event_date,
           eventType: :claim_creation,
-          eventUser: "L. Roth",
-          readableEventType: "Claim created",
-          taskID: vha_task.id
+          taskID: vha_task.id,
+          details:
+            {
+              benefitType: "vha",
+              decisionDate: nil,
+              decisionDescription: nil,
+              disposition: nil,
+              dispositionDate: nil,
+              issueDescription: nil,
+              issueType: nil,
+              withdrawalRequestDate: nil
+            },
+          modificationRequestDetails: modificationRequestDetailsObject
         }
       },
       {
@@ -67,6 +91,7 @@ describe ChangeHistoryEventSerializer do
         type: :change_history_event,
         attributes: {
           claimType: "Higher-Level Review",
+          readableEventType: "Added issue",
           claimantName: events[1].claimant_name,
           details:
           {
@@ -79,10 +104,34 @@ describe ChangeHistoryEventSerializer do
             issueType: "Other",
             withdrawalRequestDate: nil
           },
+          modificationRequestDetails: modificationRequestDetailsObject,
           eventDate: events[1].event_date,
           eventType: :added_issue,
           eventUser: "L. Roth",
-          readableEventType: "Added issue",
+          taskID: vha_task.id
+        }
+      },
+      {
+        id: expected_uuid,
+        type: :change_history_event,
+        attributes: {
+          eventType: :in_progress,
+          eventUser: "System",
+          claimType: "Higher-Level Review",
+          readableEventType: "Claim status - In progress",
+          claimantName: events[2].claimant_name,
+          details: {
+            benefitType: "vha",
+            issueType: nil,
+            issueDescription: nil,
+            decisionDate: nil,
+            disposition: nil,
+            decisionDescription: nil,
+            dispositionDate: nil,
+            withdrawalRequestDate: nil
+          },
+          modificationRequestDetails: modificationRequestDetailsObject,
+          eventDate: events[2].event_date,
           taskID: vha_task.id
         }
       }
