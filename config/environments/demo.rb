@@ -85,6 +85,8 @@ Rails.application.configure do
   # eFolder Express URL for demo environment used as a mock link
   ENV["EFOLDER_EXPRESS_URL"] ||= "http://localhost:4000"
 
+  ENV["CASEFLOW_BASE_URL"] ||= "https://www.demo.appeals.va.gov"
+
   # BatchProcess ENVs
   # priority_ep_sync
   ENV["BATCH_PROCESS_JOB_DURATION"] ||= "1" # Number of hours the job will run for
