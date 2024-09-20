@@ -23,6 +23,7 @@ export const DateSelector = (props) => {
     value,
     dateErrorMessage,
     noFutureDates = false,
+    min = '1776-07-04',
     inputStyling,
     validateDate,
     ...passthroughProps
@@ -74,6 +75,7 @@ export const DateSelector = (props) => {
       required={required}
       {...passthroughProps}
       max={max}
+      min={min}
       dateErrorMessage={dateErrorMessage}
       inputStyling={inputStyling}
     />
@@ -155,7 +157,9 @@ DateSelector.propTypes = {
   /**
    * Disables form submission if date is empty or invalid
    */
-  validateDate: PropTypes.func
+  validateDate: PropTypes.func,
+
+  min: PropTypes.any
 };
 
 export default DateSelector;

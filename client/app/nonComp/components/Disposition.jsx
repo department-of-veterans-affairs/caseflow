@@ -130,6 +130,11 @@ class NonCompDispositions extends React.PureComponent {
     const receiptDate = new Date(this.props.appeal.receiptDate);
     const decisionDate = new Date(this.state.decisionDate);
     const currentDate = new Date();
+    console.log('receiptDate', receiptDate);
+    console.log('currentDate', currentDate);
+    console.log('decisionDate', decisionDate);
+    console.log('receiptDate > decisionDate', receiptDate > decisionDate);
+    console.log('decisionDate > currentDate', decisionDate > currentDate);
 
     if (receiptDate > decisionDate || decisionDate > currentDate) {
       return `Decision date must be between Form Reciept Date
@@ -190,6 +195,8 @@ class NonCompDispositions extends React.PureComponent {
     let completeDiv = null;
 
     let decisionDate = this.state.decisionDate;
+
+    const receiptDate = formatDateStrUtc(this.props.appeal.receiptDate, 'YYYY-MM-DD');
 
     if (appeal.decisionIssues.length > 0) {
       decisionDate = formatDateStrUtc(appeal.decisionIssues[0].approxDecisionDate, 'YYYY-MM-DD');
@@ -288,6 +295,7 @@ class NonCompDispositions extends React.PureComponent {
               readOnly={disableIssueFields}
               errorMessage={this.state.errorMessage}
               noFutureDates
+              min={receiptDate}
               type="date"
             />
           </InlineForm>
