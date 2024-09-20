@@ -237,14 +237,17 @@ jobs:
       - name: Archive coverage report
         run: |
           if [ -d /home/circleci/coverage-${{ matrix.ci_node_index }} ]; then
+            echo "Archiving coverage for node ${{ matrix.ci_node_index }}"
             (cd /home/circleci && tar -zcvf coverage-${{ matrix.ci_node_index }}.tar.gz coverage-${{ matrix.ci_node_index }})
           else
             echo "No coverage directory found for node ${{ matrix.ci_node_index }}"
           fi
 
       - uses: actions/upload-artifact@v3
-        if: success()
+        name: Upload coverage report for node ${{ matrix.ci_node_index }}
+        if: always()
         with:
+          name: coverage-${{ matrix.ci_node_index }}
           path: /home/circleci/coverage-${{ matrix.ci_node_index }}.tar.gz
 
       # # Artifacts --- circleci is the USER
