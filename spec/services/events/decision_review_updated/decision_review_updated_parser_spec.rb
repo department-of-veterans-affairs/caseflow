@@ -34,7 +34,7 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
       contested_rating_issue_reference_id: nil,
       edited_description: "DIC: Service connection denied (UPDATED)",
       decision_date: nil,
-      decision_review_issue_id: 777,
+      decision_review_issue_id: 772_37,
       ineligible_due_to_id: nil,
       ineligible_reason: nil,
       is_unidentified: true,
@@ -42,7 +42,7 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
       nonrating_issue_bgs_source: nil,
       nonrating_issue_category: nil,
       nonrating_issue_description: nil,
-      original_caseflow_request_issue_id: nil,
+      original_caseflow_request_issue_id: 123_45,
       ramp_claim_id: nil,
       rating_issue_associated_at: nil,
       type: "RequestIssue",
@@ -68,7 +68,7 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
       contested_rating_issue_reference_id: nil,
       edited_description: "DIC: Service connection denied (UPDATED)",
       decision_date: nil,
-      decision_review_issue_id: 777,
+      decision_review_issue_id: 123,
       ineligible_due_to_id: nil,
       ineligible_reason: nil,
       is_unidentified: true,
@@ -76,11 +76,113 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
       nonrating_issue_bgs_source: nil,
       nonrating_issue_category: nil,
       nonrating_issue_description: nil,
-      original_caseflow_request_issue_id: nil,
+      original_caseflow_request_issue_id: 123_45,
       ramp_claim_id: nil,
       rating_issue_associated_at: nil,
       type: "RequestIssue",
-      unidentified_issue_text: nil,
+      unidentified_issue_text: "An unidentified issue added during the edit",
+      untimely_exemption: false,
+      untimely_exemption_notes: nil,
+      vacols_id: nil,
+      vacols_sequence_id: nil
+    }]
+  end
+
+  let(:updated_issues) do
+    [{
+      benefit_type: "compensation",
+      closed_at: nil,
+      closed_status: nil,
+      contention_reference_id: 123_456,
+      contested_decision_issue_id: nil,
+      contested_issue_description: nil,
+      contested_rating_decision_reference_id: nil,
+      contested_rating_issue_diagnostic_code: nil,
+      contested_rating_issue_profile_date: nil,
+      contested_rating_issue_reference_id: nil,
+      edited_description: "DIC: Service connection denied (UPDATED)",
+      decision_date: nil,
+      decision_review_issue_id: 908,
+      ineligible_due_to_id: nil,
+      ineligible_reason: nil,
+      is_unidentified: true,
+      nonrating_issue_bgs_id: nil,
+      nonrating_issue_bgs_source: nil,
+      nonrating_issue_category: nil,
+      nonrating_issue_description: nil,
+      original_caseflow_request_issue_id: 123_45,
+      ramp_claim_id: nil,
+      rating_issue_associated_at: nil,
+      type: "RequestIssue",
+      unidentified_issue_text: "An unidentified issue added during the edit",
+      untimely_exemption: false,
+      untimely_exemption_notes: nil,
+      vacols_id: nil,
+      vacols_sequence_id: nil
+    }]
+  end
+
+  let(:removed_issues) do
+    [{
+      benefit_type: "compensation",
+      closed_at: nil,
+      closed_status: nil,
+      contention_reference_id: 123_456,
+      contested_decision_issue_id: nil,
+      contested_issue_description: nil,
+      contested_rating_decision_reference_id: nil,
+      contested_rating_issue_diagnostic_code: nil,
+      contested_rating_issue_profile_date: nil,
+      contested_rating_issue_reference_id: nil,
+      edited_description: "DIC: Service connection denied (UPDATED)",
+      decision_date: nil,
+      decision_review_issue_id: 8755,
+      ineligible_due_to_id: nil,
+      ineligible_reason: nil,
+      is_unidentified: true,
+      nonrating_issue_bgs_id: nil,
+      nonrating_issue_bgs_source: nil,
+      nonrating_issue_category: nil,
+      nonrating_issue_description: nil,
+      original_caseflow_request_issue_id: 123_45,
+      ramp_claim_id: nil,
+      rating_issue_associated_at: nil,
+      type: "RequestIssue",
+      unidentified_issue_text: "An unidentified issue added during the edit",
+      untimely_exemption: false,
+      untimely_exemption_notes: nil,
+      vacols_id: nil,
+      vacols_sequence_id: nil
+    }]
+  end
+
+  let(:withdrawn_issues) do
+    [{
+      benefit_type: "compensation",
+      closed_at: nil,
+      closed_status: nil,
+      contention_reference_id: 123_456,
+      contested_decision_issue_id: nil,
+      contested_issue_description: nil,
+      contested_rating_decision_reference_id: nil,
+      contested_rating_issue_diagnostic_code: nil,
+      contested_rating_issue_profile_date: nil,
+      contested_rating_issue_reference_id: nil,
+      edited_description: "DIC: Service connection denied (UPDATED)",
+      decision_date: nil,
+      decision_review_issue_id: 9876,
+      ineligible_due_to_id: nil,
+      ineligible_reason: nil,
+      is_unidentified: true,
+      nonrating_issue_bgs_id: nil,
+      nonrating_issue_bgs_source: nil,
+      nonrating_issue_category: nil,
+      nonrating_issue_description: nil,
+      original_caseflow_request_issue_id: 123_45,
+      ramp_claim_id: nil,
+      rating_issue_associated_at: nil,
+      type: "RequestIssue",
+      unidentified_issue_text: "An unidentified issue added during the edit",
       untimely_exemption: false,
       untimely_exemption_notes: nil,
       vacols_id: nil,
@@ -102,7 +204,7 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
       contested_rating_issue_reference_id: nil,
       edited_description: "DIC: Service connection denied (UPDATED)",
       decision_date: nil,
-      decision_review_issue_id: 777,
+      decision_review_issue_id: 234,
       ineligible_due_to_id: nil,
       ineligible_reason: nil,
       is_unidentified: true,
@@ -110,11 +212,45 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
       nonrating_issue_bgs_source: nil,
       nonrating_issue_category: nil,
       nonrating_issue_description: nil,
-      original_caseflow_request_issue_id: nil,
+      original_caseflow_request_issue_id: 123_45,
       ramp_claim_id: nil,
       rating_issue_associated_at: nil,
       type: "RequestIssue",
-      unidentified_issue_text: nil,
+      unidentified_issue_text: "An unidentified issue added during the edit",
+      untimely_exemption: false,
+      untimely_exemption_notes: nil,
+      vacols_id: nil,
+      vacols_sequence_id: nil
+    }]
+  end
+
+  let(:ineligible_to_eligible_issues_payload) do
+    [{
+      benefit_type: "compensation",
+      closed_at: nil,
+      closed_status: nil,
+      contention_reference_id: 123_456,
+      contested_decision_issue_id: nil,
+      contested_issue_description: nil,
+      contested_rating_decision_reference_id: nil,
+      contested_rating_issue_diagnostic_code: nil,
+      contested_rating_issue_profile_date: nil,
+      contested_rating_issue_reference_id: nil,
+      edited_description: "DIC: Service connection denied (UPDATED)",
+      decision_date: nil,
+      decision_review_issue_id: 876,
+      ineligible_due_to_id: nil,
+      ineligible_reason: nil,
+      is_unidentified: true,
+      nonrating_issue_bgs_id: nil,
+      nonrating_issue_bgs_source: nil,
+      nonrating_issue_category: nil,
+      nonrating_issue_description: nil,
+      original_caseflow_request_issue_id: 123_45,
+      ramp_claim_id: nil,
+      rating_issue_associated_at: nil,
+      type: "RequestIssue",
+      unidentified_issue_text: "An unidentified issue added during the edit",
       untimely_exemption: false,
       untimely_exemption_notes: nil,
       vacols_id: nil,
@@ -172,7 +308,7 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
     # We are testing that each attribute returns the correct value
     describe "updated_issues" do
       it "returns an empty array if no updated issues" do
-        expect(subject.updated_issues).to eq([])
+        expect(subject.updated_issues).to eq(updated_issues)
       end
     end
 
@@ -190,7 +326,7 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
 
     describe "ineligible_to_eligible_issues" do
       it "returns an empty array if no ineligible_to_eligible_issues" do
-        expect(subject.ineligible_to_eligible_issues).to eq([])
+        expect(subject.ineligible_to_eligible_issues).to eq(ineligible_to_eligible_issues_payload)
       end
     end
 
@@ -202,13 +338,13 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
 
     describe "withdrawn_issues" do
       it "returns an empty array if no uwithdrawn_issues" do
-        expect(subject.withdrawn_issues).to eq([])
+        expect(subject.withdrawn_issues).to eq(withdrawn_issues)
       end
     end
 
     describe "removed_issues" do
       it "returns an empty array if no removed_issues" do
-        expect(subject.removed_issues).to eq([])
+        expect(subject.removed_issues).to eq(removed_issues)
       end
     end
 

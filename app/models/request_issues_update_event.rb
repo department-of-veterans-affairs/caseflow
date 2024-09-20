@@ -217,6 +217,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
 
     @eligible_to_ineligible_issue_data.each do |issue_data|
       request_issue = review.request_issues.find_by(reference_id: issue_data[:reference_id])
+      binding.pry
       unless request_issue
         fail Caseflow::Error::DecisionReviewUpdateMissingIssueError, issue_data[:reference_id]
       end

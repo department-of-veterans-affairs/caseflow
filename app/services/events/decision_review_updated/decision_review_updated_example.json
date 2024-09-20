@@ -18,7 +18,7 @@
   },
   "added_issues": [
     {
-      "original_caseflow_request_issue_id": null,
+      "original_caseflow_request_issue_id": 12345,
       "contested_rating_decision_reference_id": null,
       "contested_rating_issue_reference_id": null,
       "contested_decision_issue_id": null,
@@ -29,7 +29,7 @@
       "vacols_sequence_id": null,
       "nonrating_issue_bgs_id": null,
       "type": "RequestIssue",
-      "decision_review_issue_id": 777,
+      "decision_review_issue_id": 77237,
       "contention_reference_id": 123456,
       "benefit_type": "compensation",
       "contested_issue_description": null,
@@ -51,7 +51,7 @@
   ],
   "updated_issues": [
     {
-      "original_caseflow_request_issue_id": null,
+      "original_caseflow_request_issue_id": 12345,
       "contested_rating_decision_reference_id": null,
       "contested_rating_issue_reference_id": null,
       "contested_decision_issue_id": null,
@@ -62,7 +62,7 @@
       "vacols_sequence_id": null,
       "nonrating_issue_bgs_id": null,
       "type": "RequestIssue",
-      "decision_review_issue_id": 777,
+      "decision_review_issue_id": 908,
       "contention_reference_id": 123456,
       "benefit_type": "compensation",
       "contested_issue_description": null,
@@ -84,7 +84,7 @@
   ],
   "removed_issues": [
     {
-      "original_caseflow_request_issue_id": null,
+      "original_caseflow_request_issue_id": 12345,
       "contested_rating_decision_reference_id": null,
       "contested_rating_issue_reference_id": null,
       "contested_decision_issue_id": null,
@@ -95,7 +95,7 @@
       "vacols_sequence_id": null,
       "nonrating_issue_bgs_id": null,
       "type": "RequestIssue",
-      "decision_review_issue_id": 777,
+      "decision_review_issue_id": 8755,
       "contention_reference_id": 123456,
       "benefit_type": "compensation",
       "contested_issue_description": null,
@@ -117,7 +117,7 @@
   ],
   "withdrawn_issues": [
     {
-      "original_caseflow_request_issue_id": null,
+      "original_caseflow_request_issue_id": 12345,
       "contested_rating_decision_reference_id": null,
       "contested_rating_issue_reference_id": null,
       "contested_decision_issue_id": null,
@@ -128,7 +128,7 @@
       "vacols_sequence_id": null,
       "nonrating_issue_bgs_id": null,
       "type": "RequestIssue",
-      "decision_review_issue_id": 777,
+      "decision_review_issue_id": 9876,
       "contention_reference_id": 123456,
       "benefit_type": "compensation",
       "contested_issue_description": null,
@@ -150,7 +150,7 @@
   ],
   "ineligible_to_eligible_issues": [
     {
-      "original_caseflow_request_issue_id": null,
+      "original_caseflow_request_issue_id": 12345,
       "contested_rating_decision_reference_id": null,
       "contested_rating_issue_reference_id": null,
       "contested_decision_issue_id": null,
@@ -161,7 +161,7 @@
       "vacols_sequence_id": null,
       "nonrating_issue_bgs_id": null,
       "type": "RequestIssue",
-      "decision_review_issue_id": 777,
+      "decision_review_issue_id": 876,
       "contention_reference_id": 123456,
       "benefit_type": "compensation",
       "contested_issue_description": null,
@@ -183,7 +183,7 @@
   ],
   "eligible_to_ineligible_issues": [
     {
-      "original_caseflow_request_issue_id": null,
+      "original_caseflow_request_issue_id": 12345,
       "contested_rating_decision_reference_id": null,
       "contested_rating_issue_reference_id": null,
       "contested_decision_issue_id": null,
@@ -194,7 +194,7 @@
       "vacols_sequence_id": null,
       "nonrating_issue_bgs_id": null,
       "type": "RequestIssue",
-      "decision_review_issue_id": 777,
+      "decision_review_issue_id": 123,
       "contention_reference_id": 123456,
       "benefit_type": "compensation",
       "contested_issue_description": null,
@@ -216,7 +216,7 @@
   ],
   "ineligible_to_ineligible_issues": [
     {
-      "original_caseflow_request_issue_id": null,
+      "original_caseflow_request_issue_id": 12345,
       "contested_rating_decision_reference_id": null,
       "contested_rating_issue_reference_id": null,
       "contested_decision_issue_id": null,
@@ -227,7 +227,7 @@
       "vacols_sequence_id": null,
       "nonrating_issue_bgs_id": null,
       "type": "RequestIssue",
-      "decision_review_issue_id": 777,
+      "decision_review_issue_id": 234,
       "contention_reference_id": 123456,
       "benefit_type": "compensation",
       "contested_issue_description": null,
