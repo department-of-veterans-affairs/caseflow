@@ -541,43 +541,6 @@ const CorrespondenceDetails = (props) => {
           console.error(errorMessage);
         });
     }
-  };
-
-  const saveChanges = () => {
-    if (selectedPriorMail.length > 0) {
-
-      const priorMailIds = selectedPriorMail.map((mail) => mail.id);
-      const payload = {
-        data: {
-          priorMailIds: selectedPriorMail.map((mail) => mail.id)
-        }
-      };
-
-      const tempCor = props.correspondence;
-
-      tempCor.relatedCorrespondenceIds = priorMailIds;
-
-      return ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/create_correspondence_relations`, payload).
-        then(() => {
-          props.updateCorrespondenceRelations(tempCor);
-
-          setRelatedCorrespondenceIds([...relatedCorrespondenceIds, ...priorMailIds]);
-          setShowSuccessBanner(true);
-          setSelectedPriorMail([]);
-          setDisableSubmitButton(true);
-          window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-          });
-        }).
-        catch((error) => {
-          const errorMessage = error?.response?.body?.message ?
-            error.response.body.message.replace(/^Error:\s*/, '') :
-            error.message;
-
-          console.error(errorMessage);
-        });
-    }
 
      if (selectedAppeals.length > 0) {
       const appealsSelected = selectedAppeals.filter((val) => !correspondence.correspondenceAppealIds.includes(val));
@@ -610,6 +573,7 @@ const CorrespondenceDetails = (props) => {
     }
 
   };
+
   return (
     <>
       {
