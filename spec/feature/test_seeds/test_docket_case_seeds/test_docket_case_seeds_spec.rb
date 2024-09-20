@@ -175,7 +175,7 @@ RSpec.feature "Test Docket Case Seeds" do
   end
 
   def login
-    visit "test/seeds"
+    Sniffybara::Driver.path_exclusions << /test\/seeds/
     visit "test/seeds"
   end
 end
