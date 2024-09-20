@@ -25,6 +25,20 @@ FactoryBot.define do
       end
     end
 
+    trait :related_correspondence do
+      after(:create) do |correspondence|
+        related_correspondence = Correspondence.create!(
+          veteran: correspondence.veteran,
+          uuid: SecureRandom.uuid,
+          notes: "Related correspondence"
+        )
+        CorrespondenceRelation.create!(
+          correspondence_id: correspondence.id,
+          related_correspondence_id: related_correspondence.id
+        )
+      end
+    end
+
     trait :action_required do
       after(:create) do |correspondence|
         ReassignPackageTask.create!(

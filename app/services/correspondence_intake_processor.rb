@@ -19,6 +19,27 @@ class CorrespondenceIntakeProcessor
     do_upload_success_actions(parent_task, intake_params, correspondence, current_user)
   end
 
+  def update_correspondence(intake_params)
+    # Fetch the correspondence using the UUID from the intake params
+    correspondence = Correspondence.find_by(uuid: intake_params[:correspondence_uuid])
+
+    # Fail if correspondence is not found
+    fail "Correspondence not found" if correspondence.blank?
+
+    ActiveRecord::Base.transaction do
+      # Ensure relations removal logic is in place
+      remove_correspondence_relations(intake_params, correspondence)
+
+      # Additional logic to update correspondence fields if necessary (optional)
+    end
+
+    # Return success after successful update
+    true
+  rescue StandardError => error
+    Rails.logger.error(error.full_message)
+    false
+  end
+
   def create_letter(params, _current_user)
     correspondence = Correspondence.find_by(uuid: params[:correspondence_uuid])
 
@@ -56,6 +77,19 @@ class CorrespondenceIntakeProcessor
         related_correspondence_id: Correspondence.find_by(uuid: uuid)&.id
       )
     end
+  end
+
+  def remove_correspondence_relations(intake_params, correspondence)
+    # Get the UUIDs of related correspondences that are to be removed (unchecked)
+    removed_related_uuids = intake_params[:correspondence_relations]&.map { |data| data[:uuid] }
+
+    # Find and remove only those relations that were unchecked
+    relations_to_remove = CorrespondenceRelation.where(
+      correspondence_id: correspondence.id,
+      related_correspondence_id: Correspondence.where(uuid: removed_related_uuids).pluck(:id)
+    )
+
+    relations_to_remove.each(&:destroy!)
   end
 
   def create_response_letter(intake_params, correspondence_id)
