@@ -14,7 +14,7 @@ import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
 // import TaskSnapshot from '../../TaskSnapshot';
 import { prepareAppealForSearchStore, prepareAppealForStore } from 'app/queue/utils';
-import { onReceiveAppealDetails } from '../../QueueActions';
+import { onReceiveAmaTasks, onReceiveAppealDetails } from '../../QueueActions';
 import CorrespondenceTasksAdded from '../CorrespondenceTasksAdded';
 import moment from 'moment';
 import Pagination from 'app/components/Pagination/Pagination';
@@ -177,6 +177,8 @@ const CorrespondenceDetails = (props) => {
     // eslint-disable-next-line array-callback-return
     props.correspondence.correspondenceAppeals.map((corAppeal) => {
       dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal.appeal.data])));
+      // load appeal tasks into the store
+      dispatch(onReceiveAmaTasks(corAppeal.taskAddedData.data));
     });
   }, []);
 
