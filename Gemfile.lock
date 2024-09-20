@@ -1732,8 +1732,6 @@ GEM
       net-protocol
     nio4r (2.5.9)
     no_proxy_fix (0.1.2)
-    nokogiri (1.15.6-x86_64-darwin)
-      racc (~> 1.4)
     nokogiri (1.15.6-x86_64-linux)
       racc (~> 1.4)
     nori (2.6.0)
@@ -1843,7 +1841,7 @@ GEM
       cliver (~> 0.3.2)
       safe_shell (>= 1.0.3, < 2.0)
     pdfkit (0.8.7.2)
-    pg (1.1.4)
+    pg (1.5.7)
     pluck_to_hash (1.0.2)
       activerecord (>= 4.0.2)
       activesupport (>= 4.0.2)
@@ -1999,7 +1997,7 @@ GEM
     ruby-debug-ide (0.7.3)
       rake (>= 0.8.1)
     ruby-graphviz (1.2.4)
-    ruby-oci8 (2.2.7)
+    ruby-oci8 (2.2.14)
     ruby-ole (1.2.13.1)
     ruby-plsql (0.8.0)
     ruby-prof (1.4.1)
@@ -2140,7 +2138,6 @@ GEM
     ziptz (2.1.6)
 
 PLATFORMS
-  x86_64-darwin-22
   x86_64-linux
 
 DEPENDENCIES
@@ -2218,7 +2215,7 @@ DEPENDENCIES
   pdf-forms
   pdfjs_viewer-rails!
   pdfkit
-  pg
+  pg (~> 1.5.7)
   pluck_to_hash
   pry (~> 0.13.0)
   pry-byebug (~> 3.9)
@@ -2248,7 +2245,7 @@ DEPENDENCIES
   rubocop-performance
   rubocop-rails
   ruby-debug-ide
-  ruby-oci8 (~> 2.2)
+  ruby-oci8 (~> 2.2.14)
   ruby-prof (~> 1.4)
   ruby_claim_evidence_api!
   sass-rails (~> 5.0)
