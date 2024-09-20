@@ -2,11 +2,9 @@
 
 # rubocop:disable Rails/ApplicationController
 class HealthChecksController < ActionController::Base
-  include TrackRequestId
   include CollectCustomMetrics
 
   protect_from_forgery with: :exception
-  newrelic_ignore_apdex
 
   def show
     body = {
