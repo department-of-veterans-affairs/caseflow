@@ -391,7 +391,8 @@ class ClaimHistoryEvent
     def parse_versions(versions)
       # Quite a bit faster but less safe. Should probably be fine since it's coming from the database
       # rubocop:disable Security/YAMLLoad
-      versions&.split("|||")&.map { |yaml| YAML.load(yaml.gsub(/^"|"$/, "")) }
+      # versions&.split("|||")&.map { |yaml| YAML.load(yaml.gsub(/^"|"$/, "")) }
+      versions&.split("|||")&.map { |yaml| YAML.load(yaml) }
       # rubocop:enable Security/YAMLLoad
     end
 
