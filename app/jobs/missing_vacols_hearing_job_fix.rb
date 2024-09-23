@@ -32,10 +32,10 @@ class MissingVacolsHearingJobFix
   end
 
   def process_missing_vacols_records
-    questionable_tasks = questionable_tasks()
+    questionable_tasks
     # These tasks are stuck because they have a LegacyHearing associated with them that do not exist in VACOLS
-    stuck_tasks = stuck_tasks(questionable_tasks)
-    stuck_tasks.each do |task|
+
+    stuck_tasks(questionable_tasks).each do |task|
       task = Task.find(task.id)
       appeal = task.appeal
       hearing = task.hearing
@@ -45,18 +45,17 @@ class MissingVacolsHearingJobFix
     end
   rescue StandardError => error
     Rails.logger.error("Something went wrong. Requires manual remediation. Error: #{error} Aborting...")
+
     raise error
   end
 
   def questionable_tasks
-    questionable_tasks = Task.where(
+    Task.where(
       type: "AssignHearingDispositionTask",
       status: "assigned",
       appeal_type: "LegacyAppeal",
       assigned_at: 7.years.ago..6.months.ago
     )
-
-    questionable_tasks
   end
 
   # :reek:FeatureEnvy
@@ -64,7 +63,7 @@ class MissingVacolsHearingJobFix
     tasks_with_hearing_missing_vacols_records = []
     questionable_tasks.each do |task|
       if task.hearing.nil?
-        @tasks_missing_hearings << task.id
+        @tasks_missing_hearings.push(task.id)
         next
       end
 
