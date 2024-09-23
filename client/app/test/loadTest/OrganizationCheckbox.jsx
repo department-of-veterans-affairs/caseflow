@@ -13,11 +13,12 @@ export default function OrganizationCheckbox(props) {
 
   let orgOption = props.organizationOption;
 
+  // Handles the checking of the Primary checkbox
   const onChangeHandle = () => {
     orgIsChecked(!isChecked);
-
   };
 
+  // Handles the checking of the Secondary checkbox
   const isAdminHandle = () => {
     adminIsChecked(!isAdmin);
   };
