@@ -62,7 +62,8 @@ class RequestIssue < CaseflowRecord
     appeal_to_higher_level_review: "appeal_to_higher_level_review",
     before_ama: "before_ama",
     legacy_issue_not_withdrawn: "legacy_issue_not_withdrawn",
-    legacy_appeal_not_eligible: "legacy_appeal_not_eligible"
+    legacy_appeal_not_eligible: "legacy_appeal_not_eligible",
+    contested: "contested"
   }
 
   enum closed_status: {
