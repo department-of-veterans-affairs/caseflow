@@ -108,6 +108,7 @@ const CorrespondenceDetails = (props) => {
       });
 
       if (response.status === 201) {
+        setShowSuccessBanner(true);
         console.log('Correspondence updated successfully.', response.status); // eslint-disable-line no-console
       }
     } catch (error) {
