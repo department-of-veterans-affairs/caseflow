@@ -22,6 +22,7 @@ class Hearings::TranscriptionPackagesController < ApplicationController
     }
   end
 
+  # rubocop:disable Metrics/MethodLength
   def apply_filters
     if params[:filter].present?
       params[:filter].each do |filter|
@@ -45,6 +46,7 @@ class Hearings::TranscriptionPackagesController < ApplicationController
       end
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   def apply_sorting
     sort_by = params[:sort_by] || "id"
