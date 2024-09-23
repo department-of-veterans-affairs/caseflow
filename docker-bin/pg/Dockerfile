@@ -11,9 +11,16 @@ COPY instantclient-basic-linux.x64-12.2.0.1.0.zip \
   instantclient-sqlplus-linux.x64-12.2.0.1.0.zip \
   oracle_libs/
 
-# Install dependencies
+# Install ZScaler root certificate
+COPY ZscalerRootCertificate-2048-SHA256.crt /etc/ssl/certs/
+
 RUN true \
   && apt-get update \
+  && apt-get install ca-certificates \
+  && update-ca-certificates --fresh
+
+# Install dependencies
+RUN true \
   && apt-get install -y libaio1 \
   libaio-dev \
   unzip \
