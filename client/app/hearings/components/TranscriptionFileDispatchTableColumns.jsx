@@ -392,23 +392,38 @@ export const statusColumn = (currentTab) => {
 
   if (currentTab === 'Assigned') {
     filterOptions = [
-      { value: 'Overdue', displayText: 'Overdue' },
-      { value: 'Sent', displayText: 'Sent' }
+      {
+        value: COPY.TRANSCRIPTION_STATUS_OVERDUE_FILTER_OPTION,
+        displayText: COPY.TRANSCRIPTION_STATUS_OVERDUE_FILTER_OPTION,
+      },
+      { value: COPY.TRANSCRIPTION_STATUS_SENT_FILTER_OPTION,
+        displayText: COPY.TRANSCRIPTION_STATUS_SENT_FILTER_OPTION },
     ];
   } else if (currentTab === 'Completed') {
     filterOptions = [
-      { value: 'Completed', displayText: 'Completed' },
-      { value: 'Retrieval Failure', displayText: 'Retrieval Failure' },
-      { value: 'Overdue', displayText: 'Overdue' },
+      { value: COPY.TRANSCRIPTION_STATUS_COMPLETED_FILTER_OPTION,
+        displayText: COPY.TRANSCRIPTION_STATUS_COMPLETED_FILTER_OPTION },
+      { value: COPY.TRANSCRIPTION_STATUS_RETRIEVAL_FAILURE_FILTER_OPTION,
+        displayText: COPY.TRANSCRIPTION_STATUS_RETRIEVAL_FAILURE_FILTER_OPTION },
+      { value: COPY.TRANSCRIPTION_STATUS_OVERDUE_FILTER_OPTION,
+        displayText: COPY.TRANSCRIPTION_STATUS_OVERDUE_FILTER_OPTION },
     ];
   } else if (currentTab === 'All Transcriptions') {
     filterOptions = [
-      { value: 'Completed', displayText: 'Completed' },
-      { value: 'Overdue', displayText: 'Overdue' },
-      { value: 'Retrieval Failure', displayText: 'Retrieval Failure' },
-      { value: 'Sent', displayText: 'Sent' },
-      { value: 'Unassigned', displayText: 'Unassigned' },
-      { value: 'Pending', displayText: 'Pending' }
+      { value: COPY.TRANSCRIPTION_STATUS_COMPLETED_FILTER_OPTION,
+        displayText: COPY.TRANSCRIPTION_STATUS_COMPLETED_FILTER_OPTION },
+      {
+        value: COPY.TRANSCRIPTION_STATUS_OVERDUE_FILTER_OPTION,
+        displayText: COPY.TRANSCRIPTION_STATUS_OVERDUE_FILTER_OPTION,
+      },
+      {
+        value: COPY.TRANSCRIPTION_STATUS_RETRIEVAL_FAILURE_FILTER_OPTION,
+        displayText: COPY.TRANSCRIPTION_STATUS_RETRIEVAL_FAILURE_FILTER_OPTION,
+      },
+      {
+        value: COPY.TRANSCRIPTION_STATUS_SENT_FILTER_OPTION,
+        displayText: COPY.TRANSCRIPTION_STATUS_SENT_FILTER_OPTION,
+      }
     ];
   } else {
     filterOptions = [];
