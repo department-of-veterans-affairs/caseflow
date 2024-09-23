@@ -121,6 +121,13 @@ let props = {
           correspondence_id: 322,
           created_at: '2024-08-14T10:53:47.213-04:00',
           updated_at: '2024-08-14T10:53:47.213-04:00'
+        },
+        appeal: {
+          data: {
+            attributes: {
+              external_id: "2398523958"
+            }
+          }
         }
       },
       {
@@ -188,6 +195,13 @@ let props = {
           correspondence_id: 322,
           created_at: '2024-08-14T10:53:47.217-04:00',
           updated_at: '2024-08-14T10:53:47.217-04:00'
+        },
+        appeal: {
+          data: {
+            attributes: {
+              external_id: "2398523958"
+            }
+          }
         }
       },
       {
@@ -271,6 +285,13 @@ let props = {
           correspondence_id: 322,
           created_at: '2024-08-14T10:53:47.221-04:00',
           updated_at: '2024-08-14T10:53:47.221-04:00'
+        },
+        appeal: {
+          data: {
+            attributes: {
+              external_id: "2398523958"
+            }
+          }
         }
       }
     ],
