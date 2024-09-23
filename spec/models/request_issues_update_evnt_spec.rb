@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe RequestIssuesUpdateEvent, type: :model do
+RSpec.describe RequestIssuesUpdateEvnt, type: :model do
   let(:user) { create(:user) }
   let(:review) { create(:higher_level_review) }
   let!(:existing_request_issue) { create(:request_issue, decision_review: review, reference_id: "some_reference_id") }
@@ -97,7 +97,7 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
 
   describe "#initialize" do
     it "calls build_request_issues_data" do
-      expect_any_instance_of(described_class).to receive(:build_request_issues_data)
+      expect_any_instance_of(RequestIssuesUpdateEvnt).to receive(:build_request_issues_data)
       described_class.new(review: review, user: user, parser: parser)
     end
   end

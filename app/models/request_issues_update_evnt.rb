@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class RequestIssuesUpdateEvent < RequestIssuesUpdate
+class RequestIssuesUpdateEvnt < RequestIssuesUpdate
   def initialize(review:, user:, parser:)
     @parser = parser
     @request_issues_data = build_request_issues_data

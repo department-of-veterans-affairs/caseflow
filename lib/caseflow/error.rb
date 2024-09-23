@@ -511,6 +511,11 @@ module Caseflow::Error
       super("Request issue not found for REFERENCE_ID: #{reference_id}")
     end
   end
+  class DecisionReviewUpdateMismatchedRemovedIssuesError < StandardError
+    def initialize(msg = "Decision review update mismatched removed issues")
+      super(msg)
+    end
+  end
   class DecisionReviewUpdatedClaimReviewError < StandardError; end
   class DecisionReviewUpdatedEndProductEstablishmentError < StandardError; end
   class MaximumBatchSizeViolationError < StandardError
