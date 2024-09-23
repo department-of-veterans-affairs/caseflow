@@ -6,7 +6,7 @@ import { appealWithDetailSelector, taskSnapshotTasksForAppeal } from '../selecto
 import { useSelector } from 'react-redux';
 import TaskRows from '../components/TaskRows';
 
-const CorrespondenceTasksAdded = (props) => {
+const CorrespondenceAppealTasks = (props) => {
   const veteranFullName = props.correspondence.veteranFullName;
   const appealId = props.appeal.external_id;
   const appeal = useSelector((state) =>
@@ -73,7 +73,7 @@ const CorrespondenceTasksAdded = (props) => {
   );
 };
 
-CorrespondenceTasksAdded.propTypes = {
+CorrespondenceAppealTasks.propTypes = {
   correspondence: PropTypes.object,
   task_added: PropTypes.object,
   organizations: PropTypes.array,
@@ -81,4 +81,4 @@ CorrespondenceTasksAdded.propTypes = {
   appeal: PropTypes.object
 };
 
-export default CorrespondenceTasksAdded;
+export default CorrespondenceAppealTasks;

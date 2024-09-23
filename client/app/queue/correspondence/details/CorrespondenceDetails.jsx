@@ -16,8 +16,6 @@ import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
 import { prepareAppealForSearchStore, prepareAppealForStore } from 'app/queue/utils';
 import { onReceiveTasks, onReceiveAppealDetails } from '../../QueueActions';
-import { prepareAppealForSearchStore } from 'app/queue/utils';
-import CorrespondenceTasksAdded from '../CorrespondenceTasksAdded';
 import moment from 'moment';
 import Pagination from 'app/components/Pagination/Pagination';
 import Table from 'app/components/Table';
@@ -29,6 +27,7 @@ import { prepareTasksForStore } from '../../utils';
 import Button from '../../../components/Button';
 import Alert from '../../../components/Alert';
 import ApiUtil from '../../../util/ApiUtil';
+import CorrespondenceAppealTasks from '../CorrespondenceAppealTasks';
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
@@ -381,7 +380,7 @@ const CorrespondenceDetails = (props) => {
           </AppSegment>
           {(props.correspondence.correspondenceAppeals.map((taskAdded) =>
 
-            taskAdded.correspondencesAppealsTasks?.length > 0 && <CorrespondenceTasksAdded
+            taskAdded.correspondencesAppealsTasks?.length > 0 && <CorrespondenceAppealTasks
               task_added={taskAdded}
               correspondence={props.correspondence}
               organizations={props.organizations}

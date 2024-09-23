@@ -36,7 +36,7 @@ const CorrespondenceCaseTimeline = (props) => {
           <CorrespondenceTaskRows
             organizations={props.organizations}
             correspondence={props.correspondence}
-            taskList={props.tasksToDisplay}
+            taskList={correspondenceInfo.tasksUnrelatedToAppeal}
             statusSplit
           />
         </tbody>
