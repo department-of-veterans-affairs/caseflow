@@ -48,6 +48,13 @@ class CaseDistributionLeversTestsController < ApplicationController
     head :ok
   end
 
+  def run_generic_full_suite_appeals_seeds
+    Rake::Task["db:seed:generic_full_suite_seeds"].reenable
+    Rake::Task["db:seed:generic_full_suite_seeds"].invoke
+
+    head :ok
+  end
+
   def appeals_ready_to_distribute
     csv_data = AppealsReadyForDistribution.process
 
