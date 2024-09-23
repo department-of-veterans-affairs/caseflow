@@ -49,6 +49,14 @@ class Fakes::VaBoxService
   end
   # rubocop:enable Metrics/MethodLength
 
+  def download_file(id, tmp_folder)
+    binding.pry
+    if id == "1111111111111"
+      raise StandardError
+    end
+    true
+  end
+
   private
 
   def recent_date

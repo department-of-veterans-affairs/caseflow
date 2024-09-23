@@ -38,7 +38,7 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
 
   def update_database(current_information)
     transcription_records = TranscriptionFile.where(
-      hearing_id: current_information["id"],
+      hearing_id: current_information["id"].to_i,
       hearing_type: current_information["hearing_type"],
       file_type: current_information["file_type"]
     )
