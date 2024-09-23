@@ -74,11 +74,11 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedParser
     @payload.dig(:claim_review, :legacy_opt_in_approved)
   end
 
-  def end_product_establishments_development_item_reference_id
+  def end_product_establishment_development_item_reference_id
     @payload.dig(:end_product_establishment, :development_item_reference_id).presence
   end
 
-  def end_product_establishments_reference_id
+  def end_product_establishment_reference_id
     @payload.dig(:end_product_establishment, :reference_id).presence
   end
 
