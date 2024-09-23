@@ -42,6 +42,7 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       allow(issue).to receive(:ri_vacols_id).and_return("some_vacols_id")
       allow(issue).to receive(:ri_vacols_sequence_id).and_return("some_sequence_id")
       allow(issue).to receive(:ri_type).and_return("some_type")
+      allow(issue).to receive(:ri_edited_description).and_return("Edited description")
     end
   end
 
@@ -89,7 +90,8 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       untimely_exemption: nil,
       untimely_exemption_notes: nil,
       vacols_id: "VAC123",
-      vacols_sequence_id: nil
+      vacols_sequence_id: nil,
+      edited_description: "Edited description"
     }
   end
 
@@ -154,7 +156,8 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
           type: parser_issue.ri_type,
           rating_issue_associated_at: parser_issue.ri_rating_issue_associated_at,
           nonrating_issue_bgs_source: parser_issue.ri_nonrating_issue_bgs_source,
-          nonrating_issue_bgs_id: parser_issue.ri_nonrating_issue_bgs_id
+          nonrating_issue_bgs_id: parser_issue.ri_nonrating_issue_bgs_id,
+          edited_description: parser_issue.ri_edited_description
         }
       )
     end
@@ -285,7 +288,9 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       issue_payload[:ineligible_reason] = "before_ama"
       issue_payload[:closed_at] = 1_625_151_600
       allow(parser).to receive(:ineligible_to_ineligible_issues).and_return([issue_payload])
-      expect(described_class.new(review: review, user: user, parser: parser).process_ineligible_to_ineligible_issues!).to be_truthy
+      expect(
+        described_class.new(review: review, user: user, parser: parser).process_ineligible_to_ineligible_issues!
+      ).to be_truthy
       existing_request_issue.reload
       expect(existing_request_issue.ineligible_reason).to eq(issue_payload[:ineligible_reason])
       expect(existing_request_issue.closed_at).to eq("1970-01-19 14:25:51.000000000 -0500")

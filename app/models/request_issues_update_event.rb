@@ -11,12 +11,6 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     )
   end
 
-  # closures havppen by calling liunes similar to that in EP establishment line 460
-  # should not add closure issues becused the base class calcuates the delta from before and after
-  # Question: should there be handling for corrected issues?
-  # Contentions are never removed, contention_removed_date is set instead
-  # do we need to update attributes for eligibility change issues or just status?
-
   def perform!
     # Call the base class's perform! method
     result = super
@@ -109,8 +103,8 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     base_only = base_removed_issues - parser_removed_issues
 
     if parser_only.any? || base_only.any?
-      fail Caseflow::Error::DecisionReviewUpdateMismatchedRemovedIssuesError,
-            "Mismatched removed issues: CaseFlow only = #{base_only.join(', ')} - Event only = #{parser_only.join(', ')}"
+      fail  Caseflow::Error::DecisionReviewUpdateMismatchedRemovedIssuesError,
+            "CaseFlow only = #{base_only.join(', ')} - Event only = #{parser_only.join(', ')}"
     end
     true
   end
@@ -143,18 +137,17 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   def build_issue_data(parser_issue:, is_withdrawn: false, is_new: false)
     return {} if parser_issue.nil?
 
-    issue_data = base_issue_data(parser_issue, is_withdrawn, is_new)
+    issue_data = base_issue_data(parser_issue)
     issue_data.merge!(contested_issue_data(parser_issue))
     issue_data.merge!(nonrating_issue_data(parser_issue))
+    issue_data.merge!(conditional_issue_data(parser_issue, is_withdrawn, is_new))
     issue_data
   end
 
-  def base_issue_data(parser_issue, is_withdrawn, is_new)
+  def base_issue_data(parser_issue)
     {
-      request_issue_id: is_new ? nil : find_request_issue_id(parser_issue),
       benefit_type: parser_issue.ri_benefit_type,
       closed_date: parser_issue.ri_closed_at,
-      withdrawal_date: is_withdrawn ? parser_issue.ri_closed_at : nil,
       closed_status: parser_issue.ri_closed_status,
       unidentified_issue_text: parser_issue.ri_unidentified_issue_text,
       decision_date: parser_issue.ri_decision_date,
@@ -168,7 +161,15 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       ineligible_due_to_id: parser_issue.ri_ineligible_due_to_id,
       reference_id: parser_issue.ri_reference_id,
       type: parser_issue.ri_type,
-      rating_issue_associated_at: parser_issue.ri_rating_issue_associated_at
+      rating_issue_associated_at: parser_issue.ri_rating_issue_associated_at,
+      edited_description: parser_issue.ri_edited_description
+    }
+  end
+
+  def conditional_issue_data(parser_issue, is_withdrawn, is_new)
+    {
+      request_issue_id: is_new ? nil : find_request_issue_id(parser_issue),
+      withdrawal_date: is_withdrawn ? parser_issue.ri_closed_at : nil,
     }
   end
 
