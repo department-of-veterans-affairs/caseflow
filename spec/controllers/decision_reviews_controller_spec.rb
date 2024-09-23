@@ -942,7 +942,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
           params = { business_line_slug: non_comp_org.url }.merge(generate_report_filters.except("report_type"))
           get :generate_report, format: :csv, params: params
           expect(response).to have_http_status(:bad_request)
-          expect(response.content_type).to eq("application/json")
+          expect(response.content_type).to eq("application/json; charset=utf-8")
           json_response = JSON.parse(response.body)
           expect(json_response["error"]).to eq("param is missing or the value is empty: reportType")
         end

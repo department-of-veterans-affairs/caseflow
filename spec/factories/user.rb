@@ -62,6 +62,11 @@ FactoryBot.define do
       roles { ["Hearing Prep"] }
     end
 
+    trait :judge_with_appeals_excluded_from_affinity do
+      with_appeals_excluded_from_affinity_judge_team
+      roles { ["Hearing Prep"] }
+    end
+
     trait :ama_only_judge do
       after(:create) do |judge|
         JudgeTeam.for_judge(judge)&.update(ama_only_push: true, ama_only_request: true) ||
@@ -106,6 +111,13 @@ FactoryBot.define do
       after(:create) do |judge|
         judge_team = JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
         judge_team.inactive!
+      end
+    end
+
+    trait :with_appeals_excluded_from_affinity_judge_team do
+      after(:create) do |judge|
+        judge_team = JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
+        judge_team.update!(exclude_appeals_from_affinity: true)
       end
     end
 
@@ -166,6 +178,30 @@ FactoryBot.define do
         Functions.grant!("System Admin", users: existing_sysadmins + [user.css_id])
         Bva.singleton.add_user(user)
         OrganizationsUser.make_user_admin(user, Bva.singleton)
+      end
+    end
+
+    trait :non_ssc_avlj_user do
+      after(:create) do |user|
+        create(:staff, :non_ssc_avlj, user: user)
+      end
+    end
+
+    trait :ssc_avlj_user do
+      after(:create) do |user|
+        create(:staff, :ssc_avlj, user: user)
+      end
+    end
+
+    trait :vlj_user do
+      after(:create) do |user|
+        create(:staff, :vlj, user: user)
+      end
+    end
+
+    trait :inactive_non_ssc_avlj_user do
+      after(:create) do |user|
+        create(:staff, :inactive_non_ssc_avlj, user: user)
       end
     end
 
