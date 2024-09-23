@@ -73,7 +73,12 @@ RSpec.describe Hearings::TranscriptionFilesController do
         caseType: "Original",
         hearingDate: hearing_1.hearing_day.scheduled_for.to_formatted_s(:short_date),
         hearingType: transcription_file_1.hearing_type,
-        fileStatus: file_status_uploaded
+        fileStatus: file_status_uploaded,
+        returnDate: transcription_file_1.date_returned_box&.to_formatted_s(:short_date),
+        uploadDate: transcription_file_1.date_upload_box&.to_formatted_s(:short_date),
+        contractor: transcription_file_1.transcription&.transcription_package&.contractor&.name,
+        workOrder: transcription_file_1.transcription&.task_number,
+        status: transcription_file_1.transcription&.transcription_package&.status
       }
     end
 
@@ -87,7 +92,12 @@ RSpec.describe Hearings::TranscriptionFilesController do
         caseType: "Original",
         hearingDate: hearing_2.hearing_day.scheduled_for.to_formatted_s(:short_date),
         hearingType: transcription_file_2.hearing_type,
-        fileStatus: file_status_uploaded
+        fileStatus: file_status_uploaded,
+        returnDate: transcription_file_2.date_returned_box&.to_formatted_s(:short_date),
+        uploadDate: transcription_file_2.date_upload_box&.to_formatted_s(:short_date),
+        contractor: transcription_file_2.transcription&.transcription_package&.contractor&.name,
+        workOrder: transcription_file_2.transcription&.task_number,
+        status: transcription_file_2.transcription&.transcription_package&.status
       }
     end
 
@@ -102,7 +112,12 @@ RSpec.describe Hearings::TranscriptionFilesController do
         caseType: "Original",
         hearingDate: legacy_hearing_1.hearing_day.scheduled_for.to_formatted_s(:short_date),
         hearingType: transcription_file_3.hearing_type,
-        fileStatus: file_status_uploaded
+        fileStatus: file_status_uploaded,
+        returnDate: transcription_file_3.date_returned_box&.to_formatted_s(:short_date),
+        uploadDate: transcription_file_3.date_upload_box&.to_formatted_s(:short_date),
+        contractor: transcription_file_3.transcription&.transcription_package&.contractor&.name,
+        workOrder: transcription_file_3.transcription&.task_number,
+        status: transcription_file_3.transcription&.transcription_package&.status
       }
     end
 
@@ -117,7 +132,12 @@ RSpec.describe Hearings::TranscriptionFilesController do
         caseType: "Original",
         hearingDate: hearing_3.hearing_day.scheduled_for.to_formatted_s(:short_date),
         hearingType: transcription_file_4.hearing_type,
-        fileStatus: file_status_retrieval
+        fileStatus: file_status_retrieval,
+        returnDate: transcription_file_4.date_returned_box&.to_formatted_s(:short_date),
+        uploadDate: transcription_file_4.date_upload_box&.to_formatted_s(:short_date),
+        contractor: transcription_file_4.transcription&.transcription_package&.contractor&.name,
+        workOrder: transcription_file_4.transcription&.task_number,
+        status: transcription_file_4.transcription&.transcription_package&.status
       }
     end
 
