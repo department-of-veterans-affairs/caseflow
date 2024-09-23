@@ -182,20 +182,17 @@ class CorrespondenceDetailsController < CorrespondenceController
   end
 
   def all_correspondences
-    { all_correspondences: serialized_correspondences }
-  end
-
-  def serialized_correspondences
-    serialized_data.map { |correspondence| correspondence[:attributes] }
-  end
-
-  def serialized_data
-    serializer = WorkQueue::CorrespondenceSerializer.new(ordered_correspondences)
-    serializer.serializable_hash[:data]
+    { all_correspondences: ordered_correspondences }
   end
 
   def ordered_correspondences
-    @correspondence.veteran.correspondences.order(va_date_of_receipt: :asc)
+    @correspondence.veteran.correspondences.order(va_date_of_receipt: :asc).select(
+      :id,
+      :va_date_of_receipt,
+      :nod,
+      :uuid,
+      :notes
+    )
   end
 
   def prior_mail
