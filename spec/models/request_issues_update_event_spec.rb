@@ -41,9 +41,7 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       allow(issue).to receive(:ri_untimely_exemption_notes).and_return("some_notes")
       allow(issue).to receive(:ri_vacols_id).and_return("some_vacols_id")
       allow(issue).to receive(:ri_vacols_sequence_id).and_return("some_sequence_id")
-      allow(issue).to receive(:ri_veteran_participant_id).and_return("some_participant_id")
       allow(issue).to receive(:ri_type).and_return("some_type")
-      allow(issue).to receive(:ri_decision).and_return("some_decision")
     end
   end
 
@@ -154,7 +152,6 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
           ineligible_due_to_id: parser_issue.ri_ineligible_due_to_id,
           reference_id: parser_issue.ri_reference_id,
           type: parser_issue.ri_type,
-          veteran_participant_id: parser_issue.ri_veteran_participant_id,
           rating_issue_associated_at: parser_issue.ri_rating_issue_associated_at,
           nonrating_issue_bgs_source: parser_issue.ri_nonrating_issue_bgs_source,
           nonrating_issue_bgs_id: parser_issue.ri_nonrating_issue_bgs_id
@@ -203,7 +200,9 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       allow_any_instance_of(RequestIssueClosure).to receive(:with_no_decision!).and_return(true)
       allow(parser).to receive(:removed_issues).and_return([issue_payload])
       allow_any_instance_of(described_class).to receive(:check_for_mismatched_closed_issues!).and_return(true)
-      expect(described_class.new(review: review, user: user, parser: parser).remove_request_issues_with_no_decision!).to be_truthy
+      expect(
+        described_class.new(review: review, user: user, parser: parser).remove_request_issues_with_no_decision!
+      ).to be_truthy
     end
   end
 
@@ -248,7 +247,9 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       issue_payload[:contention_reference_id] = nil
       issue_payload[:closed_at] = 1_625_151_600
       allow(parser).to receive(:eligible_to_ineligible_issues).and_return([issue_payload])
-      expect(described_class.new(review: review, user: user, parser: parser).process_eligible_to_ineligible_issues!).to be_truthy
+      expect(
+        described_class.new(review: review, user: user, parser: parser).process_eligible_to_ineligible_issues!
+      ).to be_truthy
       request_issue = RequestIssue.find(existing_request_issue.id)
       expect(request_issue.ineligible_reason).to eq(issue_payload[:ineligible_reason])
       expect(request_issue.closed_at).to eq("1970-01-19 14:25:51.000000000 -0500")
@@ -264,7 +265,9 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
         closed_at: Time.zone.now
       )
       allow(parser).to receive(:ineligible_to_eligible_issues).and_return([issue_payload])
-      expect(described_class.new(review: review, user: user, parser: parser).process_ineligible_to_eligible_issues!).to be_truthy
+      expect(
+        described_class.new(review: review, user: user, parser: parser).process_ineligible_to_eligible_issues!
+      ).to be_truthy
       existing_request_issue.reload
       expect(existing_request_issue.ineligible_reason).to eq(nil)
       expect(existing_request_issue.closed_status).to eq(nil)

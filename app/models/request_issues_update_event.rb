@@ -43,7 +43,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
 
       request_issue.update(
         ineligible_reason: parser_issue.ri_ineligible_reason,
-        closed_at: parser_issue.ri_closed_at,
+        closed_at: parser_issue.ri_closed_at
       )
       RequestIssueContention.new(request_issue).remove!
     end
@@ -58,6 +58,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       unless request_issue
         fail Caseflow::Error::DecisionReviewUpdateMissingIssueError, parser_issue.ri_reference_id
       end
+
       request_issue.update(
         ineligible_reason: nil,
         closed_status: nil,
@@ -78,7 +79,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
 
       request_issue.update(
         ineligible_reason: parser_issue.ri_ineligible_reason,
-        closed_at: parser_issue.ri_closed_at,
+        closed_at: parser_issue.ri_closed_at
       )
     end
   end
@@ -108,7 +109,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     base_only = base_removed_issues - parser_removed_issues
 
     if parser_only.any? || base_only.any?
-      raise Caseflow::Error::DecisionReviewUpdateMismatchedRemovedIssuesError,
+      fail Caseflow::Error::DecisionReviewUpdateMismatchedRemovedIssuesError,
             "Mismatched removed issues: CaseFlow only = #{base_only.join(', ')} - Event only = #{parser_only.join(', ')}"
     end
     true
@@ -142,23 +143,21 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   def build_issue_data(parser_issue:, is_withdrawn: false, is_new: false)
     return {} if parser_issue.nil?
 
+    issue_data = base_issue_data(parser_issue, is_withdrawn, is_new)
+    issue_data.merge!(contested_issue_data(parser_issue))
+    issue_data.merge!(nonrating_issue_data(parser_issue))
+    issue_data
+  end
+
+  def base_issue_data(parser_issue, is_withdrawn, is_new)
     {
       request_issue_id: is_new ? nil : find_request_issue_id(parser_issue),
       benefit_type: parser_issue.ri_benefit_type,
       closed_date: parser_issue.ri_closed_at,
       withdrawal_date: is_withdrawn ? parser_issue.ri_closed_at : nil,
       closed_status: parser_issue.ri_closed_status,
-      contention_reference_id: parser_issue.ri_contention_reference_id,
-      contested_decision_issue_id: parser_issue.ri_contested_decision_issue_id,
-      contested_rating_issue_reference_id: parser_issue.ri_contested_rating_issue_reference_id,
-      contested_rating_issue_diagnostic_code: parser_issue.ri_contested_rating_issue_diagnostic_code,
-      contested_rating_decision_reference_id: parser_issue.ri_contested_rating_decision_reference_id,
-      contested_issue_description: parser_issue.ri_contested_issue_description,
-      contested_rating_issue_profile_date: parser_issue.ri_contested_rating_issue_profile_date,
-      nonrating_issue_description: parser_issue.ri_nonrating_issue_category ? parser_issue.ri_contested_issue_description : nil,
       unidentified_issue_text: parser_issue.ri_unidentified_issue_text,
       decision_date: parser_issue.ri_decision_date,
-      nonrating_issue_category: parser_issue.ri_nonrating_issue_category,
       is_unidentified: parser_issue.ri_is_unidentified,
       untimely_exemption: parser_issue.ri_untimely_exemption,
       untimely_exemption_notes: parser_issue.ri_untimely_exemption_notes,
@@ -169,10 +168,28 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       ineligible_due_to_id: parser_issue.ri_ineligible_due_to_id,
       reference_id: parser_issue.ri_reference_id,
       type: parser_issue.ri_type,
-      veteran_participant_id: parser_issue.ri_veteran_participant_id,
-      rating_issue_associated_at: parser_issue.ri_rating_issue_associated_at,
+      rating_issue_associated_at: parser_issue.ri_rating_issue_associated_at
+    }
+  end
+
+  def nonrating_issue_data(parser_issue)
+    {
+      nonrating_issue_category: parser_issue.ri_nonrating_issue_category,
+      nonrating_issue_description: parser_issue.ri_contested_issue_description,
       nonrating_issue_bgs_source: parser_issue.ri_nonrating_issue_bgs_source,
       nonrating_issue_bgs_id: parser_issue.ri_nonrating_issue_bgs_id
+    }
+  end
+
+  def contested_issue_data(parser_issue)
+    {
+      contention_reference_id: parser_issue.ri_contention_reference_id,
+      contested_decision_issue_id: parser_issue.ri_contested_decision_issue_id,
+      contested_rating_issue_reference_id: parser_issue.ri_contested_rating_issue_reference_id,
+      contested_rating_issue_diagnostic_code: parser_issue.ri_contested_rating_issue_diagnostic_code,
+      contested_rating_decision_reference_id: parser_issue.ri_contested_rating_decision_reference_id,
+      contested_issue_description: parser_issue.ri_contested_issue_description,
+      contested_rating_issue_profile_date: parser_issue.ri_contested_rating_issue_profile_date
     }
   end
 
@@ -181,7 +198,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     if request_issue
       request_issue.id
     else
-      raise(Caseflow::Error::DecisionReviewUpdateMissingIssueError, parser_issue.ri_reference_id)
+      fail(Caseflow::Error::DecisionReviewUpdateMissingIssueError, parser_issue.ri_reference_id)
     end
   end
 end
