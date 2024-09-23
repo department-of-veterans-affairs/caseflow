@@ -150,6 +150,8 @@ module CaseflowCertification
     Rails.autoloaders.main.collapse(
       "#{root}/app/jobs/batch_processes",
       "#{root}/app/models/hearings",
+      "#{root}/app/models/prepend",
+      "#{root}/app/models/prepend/va_notify",
     )
 
     config.exceptions_app = self.routes
