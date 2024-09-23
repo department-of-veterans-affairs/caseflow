@@ -12,7 +12,7 @@ class Events::DecisionReviewUpdated
                                                                        station_id: parser.station_id)
 
         review = EndProductEstablishment.find_by(
-          reference_id: parser.end_product_establishments_reference_id
+          reference_id: parser.end_product_establishment_reference_id
         )&.source
 
         RequestIssuesUpdateEvent.new(user: user, review: review, parser: parser).perform!
