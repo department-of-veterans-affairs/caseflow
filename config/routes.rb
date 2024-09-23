@@ -30,11 +30,16 @@ Rails.application.routes.draw do
       get 'appeals_ready_to_distribute'
       get 'appeals_non_priority_ready_to_distribute'
       get 'appeals_distributed'
+      get 'appeals_in_location_63_in_past_2_days'
       get 'ineligible_judge_list'
+      get 'appeals_tied_to_non_ssc_avlj'
+      get 'appeals_tied_to_avljs_and_vljs'
       post 'run_demo_aod_hearing_seeds'
       post 'run_demo_non_aod_hearing_seeds'
       post 'run-demo-ama-docket-goals'
-      post 'run-demo-docket-priority'
+      post 'run_demo_non_avlj_appeals'
+      post 'run_demo_docket_priority'
+      post 'run_return_legacy_appeals_to_board'
     end
   end
 
