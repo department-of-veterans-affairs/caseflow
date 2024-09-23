@@ -249,6 +249,7 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       issue_payload[:ineligible_reason] = "untimely"
       issue_payload[:contention_reference_id] = nil
       issue_payload[:closed_at] = 1_625_151_600
+      issue_payload[:nonrating_issue_description] = "some_nonrating_issue_description"
       allow(parser).to receive(:eligible_to_ineligible_issues).and_return([issue_payload])
       expect(
         described_class.new(review: review, user: user, parser: parser).process_eligible_to_ineligible_issues!
@@ -257,6 +258,9 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       expect(request_issue.ineligible_reason).to eq(issue_payload[:ineligible_reason])
       expect(request_issue.closed_at).to eq("1970-01-19 14:25:51.000000000 -0500")
       expect(request_issue.contention_removed_at).to be
+      expect(request_issue.contested_issue_description).to eq(issue_payload[:contested_issue_description])
+      expect(request_issue.nonrating_issue_category).to eq(issue_payload[:nonrating_issue_category])
+      expect(request_issue.nonrating_issue_description).to eq(issue_payload[:nonrating_issue_description])
     end
   end
 
@@ -279,6 +283,9 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       expect(existing_request_issue.closed_at).to eq(nil)
       expect(existing_request_issue.contention_reference_id).to eq(issue_payload[:contention_reference_id])
       expect(existing_request_issue.contention_removed_at).to eq(nil)
+      expect(existing_request_issue.contested_issue_description).to eq(issue_payload[:contested_issue_description])
+      expect(existing_request_issue.nonrating_issue_category).to eq(issue_payload[:nonrating_issue_category])
+      expect(existing_request_issue.nonrating_issue_description).to eq(issue_payload[:nonrating_issue_description])
     end
   end
 
@@ -298,6 +305,9 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       existing_request_issue.reload
       expect(existing_request_issue.ineligible_reason).to eq(issue_payload[:ineligible_reason])
       expect(existing_request_issue.closed_at).to eq("1970-01-19 14:25:51.000000000 -0500")
+      expect(existing_request_issue.contested_issue_description).to eq(issue_payload[:contested_issue_description])
+      expect(existing_request_issue.nonrating_issue_category).to eq(issue_payload[:nonrating_issue_category])
+      expect(existing_request_issue.nonrating_issue_description).to eq(issue_payload[:nonrating_issue_description])
     end
   end
 end
