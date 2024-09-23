@@ -155,6 +155,7 @@ module CaseflowCertification
       "#{root}/app/models/prepend",
       "#{root}/app/models/prepend/va_notify",
       "#{root}/app/models/tasks",
+      "#{root}/app/models/tasks/docket_switch",
       "#{root}/app/models/tasks/pre_docket",
       "#{root}/app/models/validators",
     )
