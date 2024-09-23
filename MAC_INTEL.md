@@ -96,12 +96,12 @@
 
 27. Run `make reset`
    * If issues occur:
-      1.  Run `bundle exec rake db:create`
+      1.  Run `bundle exec rake db:create:primary`
          * If you get connection issues stating no file to be found, run the following:
             * `rm /opt/homebrew/var/postgres/postmaster.pid` or possibly `rm /usr/local/var/postgres/postmaster.pid`
             * `brew services restart postgresql`
       2. Run `bundle exec rake local:vacols:seed`
-      3. Run `bundle exec rake db:schema:load db:seed`
+      3. Run `bundle exec rake db:schema:load:primary db:seed`
 
 27. Open a new tab in terminal
 
