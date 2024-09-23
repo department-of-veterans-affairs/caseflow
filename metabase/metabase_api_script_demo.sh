@@ -10,7 +10,7 @@ CASEFLOW_HOST=appeals-db
 # in docker-compose is for the host only
 METABASE_HOST=appeals-metabase
 METABASE_PORT=3000
-VACOLS_HOST=host.docker.internal
+VACOLS_HOST=vacols-db
 
 echo "Installing JQ"
 apt-get update
