@@ -136,6 +136,12 @@ module CaseflowCertification
 
     Rails.autoloaders.log! # Enable Zeitwerk logging for compliance troubleshooting
 
+    Rails.autoloaders.each do |autoloader|
+      autoloader.inflector.inflect(
+        "amo_metrics_report_job" => "AMOMetricsReportJob",
+      )
+    end
+
     config.autoload_paths += [
       "#{root}/lib",
     ]
