@@ -189,11 +189,13 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       allow_any_instance_of(described_class).to receive(:process_eligible_to_ineligible_issues!).and_return(true)
       allow_any_instance_of(described_class).to receive(:process_ineligible_to_eligible_issues!).and_return(true)
       allow_any_instance_of(described_class).to receive(:process_ineligible_to_ineligible_issues!).and_return(true)
+      allow_any_instance_of(described_class).to receive(:process_request_issues_data!).and_return(true)
       subject = described_class.new(review: review, user: user, parser: parser)
       expect(subject).to receive(:remove_request_issues_with_no_decision!)
       expect(subject).to receive(:process_eligible_to_ineligible_issues!)
       expect(subject).to receive(:process_ineligible_to_eligible_issues!)
       expect(subject).to receive(:process_ineligible_to_ineligible_issues!)
+      expect(subject).to receive(:process_request_issues_data!)
       expect(subject.perform!).to be_truthy
     end
   end
@@ -305,6 +307,19 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       existing_request_issue.reload
       expect(existing_request_issue.ineligible_reason).to eq(issue_payload[:ineligible_reason])
       expect(existing_request_issue.closed_at).to eq("1970-01-19 14:25:51.000000000 -0500")
+      expect(existing_request_issue.contested_issue_description).to eq(issue_payload[:contested_issue_description])
+      expect(existing_request_issue.nonrating_issue_category).to eq(issue_payload[:nonrating_issue_category])
+      expect(existing_request_issue.nonrating_issue_description).to eq(issue_payload[:nonrating_issue_description])
+    end
+  end
+
+  describe "#process_request_issues_data!" do
+    it "updates addtional fields" do
+      allow(parser).to receive(:updated_issues).and_return([issue_payload])
+      expect(
+        described_class.new(review: review, user: user, parser: parser).process_request_issues_data!
+      ).to be_truthy
+      existing_request_issue.reload
       expect(existing_request_issue.contested_issue_description).to eq(issue_payload[:contested_issue_description])
       expect(existing_request_issue.nonrating_issue_category).to eq(issue_payload[:nonrating_issue_category])
       expect(existing_request_issue.nonrating_issue_description).to eq(issue_payload[:nonrating_issue_description])

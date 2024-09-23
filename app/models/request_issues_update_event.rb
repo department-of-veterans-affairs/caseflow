@@ -19,9 +19,29 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       process_eligible_to_ineligible_issues!
       process_ineligible_to_eligible_issues!
       process_ineligible_to_ineligible_issues!
+      process_request_issues_data!
       true
     else
       false
+    end
+  end
+
+  # Process aditional updates for all data that was passed to base class
+  def process_request_issues_data!
+    return if @request_issues_data.empty?
+
+    @request_issues_data.each do |issue_data|
+      parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(issue_data)
+      request_issue = review.request_issues.find_by(reference_id: issue_data[:reference_id])
+      unless request_issue
+        fail Caseflow::Error::DecisionReviewUpdateMissingIssueError, issue_data[:reference_id]
+      end
+
+      request_issue.update(
+        contested_issue_description: parser_issue.ri_contested_issue_description,
+        nonrating_issue_category: parser_issue.ri_nonrating_issue_category,
+        nonrating_issue_description: parser_issue.ri_nonrating_issue_description
+      )
     end
   end
 
@@ -187,7 +207,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   def nonrating_issue_data(parser_issue)
     {
       nonrating_issue_category: parser_issue.ri_nonrating_issue_category,
-      nonrating_issue_description: parser_issue.ri_contested_issue_description,
+      nonrating_issue_description: parser_issue.ri_nonrating_issue_description,
       nonrating_issue_bgs_source: parser_issue.ri_nonrating_issue_bgs_source,
       nonrating_issue_bgs_id: parser_issue.ri_nonrating_issue_bgs_id
     }
