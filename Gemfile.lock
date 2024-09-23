@@ -56,8 +56,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git
-  revision: 95dd3726bbc50851bdf7d3a63dc10c6e01568e5a
-  ref: 95dd3726bbc50851bdf7d3a63dc10c6e01568e5a
+  revision: c56381d2bea2ffabe79bebbac6598f00450691ff
+  ref: c56381d2bea2ffabe79bebbac6598f00450691ff
   specs:
     ruby_claim_evidence_api (0.1.0)
       activesupport
@@ -1451,6 +1451,7 @@ GEM
     base64 (0.2.0)
     benchmark (0.3.0)
     benchmark-ips (2.14.0)
+    bigdecimal (3.1.8)
     bootsnap (1.7.5)
       msgpack (~> 1.0)
     brakeman (4.7.1)
@@ -1713,7 +1714,7 @@ GEM
     mini_histogram (0.3.1)
     mini_mime (1.1.2)
     mini_portile2 (2.8.7)
-    minitest (5.19.0)
+    minitest (5.25.1)
     moment_timezone-rails (0.5.0)
     momentjs-rails (2.29.4.1)
       railties (>= 3.1)
