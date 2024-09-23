@@ -160,6 +160,7 @@ module CaseflowCertification
       "#{root}/app/models/tasks/docket_switch",
       "#{root}/app/models/tasks/hearing_mail_tasks",
       "#{root}/app/models/tasks/pre_docket",
+      "#{root}/app/models/tasks/special_case_movement",
       "#{root}/app/models/validators",
     )
 
