@@ -46,6 +46,7 @@ feature "NonComp Report Page", :postgres do
       create(:supplemental_claim_vha_task_with_decision)
     end
 
+    # rubocop:disable Layout/LineLength
     it "should submit several types of event reports successfully and generate csvs for each submission", skip: "Flaky test" do
       expect(page).to have_content("Generate task report")
       # Start an event report
@@ -118,7 +119,9 @@ feature "NonComp Report Page", :postgres do
       number_of_rows = CSV.read(csv_file).length
       expect(number_of_rows).to eq(2)
     end
+    # rubocop:enable Layout/LineLength
 
+    # rubocop:disable Layout/LineLength
     it "should submit several types of status reports successfully and generate CSVs for each submission", skip: "Flaky test" do
       expect(page).to have_content("Generate task report")
       # Start a status report
@@ -182,6 +185,7 @@ feature "NonComp Report Page", :postgres do
       number_of_rows = CSV.read(csv_file).length
       expect(number_of_rows).to eq(2)
     end
+    # rubocop:enable Layout/LineLength
 
     context "when request fails" do
       # Force an error
