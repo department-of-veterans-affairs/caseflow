@@ -146,6 +146,10 @@ module CaseflowCertification
       "#{root}/lib",
     ]
 
+    Rails.autoloaders.main.collapse(
+      "#{root}/app/jobs/batch_processes",
+    )
+
     config.exceptions_app = self.routes
 
     config.cache_store = :redis_store, Rails.application.secrets.redis_url_cache, { expires_in: 24.hours }
