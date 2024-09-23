@@ -19,6 +19,32 @@ class CorrespondenceDetailsController < CorrespondenceController
     end
   end
 
+  def create_response_letter_for_correspondence
+    updated_correspondences = correspondence_intake_processor.create_letter(params, current_user)
+
+    if updated_correspondences.is_a?(Array) && updated_correspondences.any?
+      updated_correspondence = updated_correspondences.first
+
+      correspondence = Correspondence.find_by(id: updated_correspondence.correspondence_id)
+
+      if correspondence
+
+        serialized_response_letters = WorkQueue::CorrespondenceResponseLetterSerializer
+          .new(correspondence.correspondence_response_letters)
+          .serializable_hash[:data]
+
+        response_letters = serialized_response_letters.map { |letter| letter[:attributes] }
+        sorted_response_letters = sort_response_letters(response_letters)
+
+        render json: { responseLetters: sorted_response_letters }, status: :ok
+      else
+        render json: { error: "Correspondence not found" }, status: :not_found
+      end
+    else
+      render json: { error: "No response letter created" }, status: :unprocessable_entity
+    end
+  end
+
   def set_instance_variables
     @correspondence = serialized_correspondence
 
@@ -44,6 +70,16 @@ class CorrespondenceDetailsController < CorrespondenceController
       .merge(appeals)
       .merge(all_correspondences)
       .merge(prior_mail)
+      .merge(user_access)
+  end
+
+  def user_access
+    user_access = if current_user.inbound_ops_team_supervisor? || current_user.inbound_ops_team_superuser?
+                    "admin_access"
+                  elsif current_user.inbound_ops_team_user?
+                    "user_access"
+                  end
+    { user_access: user_access }
   end
 
   def build_json_response
@@ -74,6 +110,40 @@ class CorrespondenceDetailsController < CorrespondenceController
       redirect_to "/queue/correspondence"
     else
       redirect_to "/unauthorized"
+    end
+  end
+
+  def update_correspondence
+    if correspondence_intake_processor.update_correspondence(params)
+      render json: {}, status: :created
+    else
+      render json: { error: "Failed to update records" }, status: :bad_request
+    end
+  end
+
+  def create_correspondence_relations
+    params[:priorMailIds]&.map do |corr_id|
+      CorrespondenceRelation.create!(
+        correspondence_id: corr_id,
+        related_correspondence_id: @correspondence.id
+      )
+    end
+  end
+
+  def save_correspondence_appeals
+    if params[:selected_appeal_ids].present?
+      params[:selected_appeal_ids].each do |appeal_id|
+        @correspondence.correspondence_appeals.create!(appeal_id: appeal_id)
+      end
+    end
+    if params[:unselected_appeal_ids].present?
+      @correspondence.correspondence_appeals
+        .where(appeal_id: params[:unselected_appeal_ids])
+        .delete_all
+    end
+    respond_to do |format|
+      format.html
+      format.json { render json: @correspondence.appeal_ids, status: :ok }
     end
   end
 

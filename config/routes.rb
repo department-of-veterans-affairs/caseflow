@@ -4,8 +4,6 @@ Rails.application.routes.draw do
   mount Rswag::Ui::Engine => "/api-docs"
   mount Rswag::Api::Engine => "/api-docs"
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
-  # The priority is based upon order of creation: first created -> highest priority.
-  # See how all your routes lay out with "rake routes".
 
   resources :sessions, only: [:new, :update]
   resources :certifications, path_names: { new: "new/:vacols_id" } do
@@ -34,11 +32,16 @@ Rails.application.routes.draw do
       get 'appeals_ready_to_distribute'
       get 'appeals_non_priority_ready_to_distribute'
       get 'appeals_distributed'
+      get 'appeals_in_location_63_in_past_2_days'
       get 'ineligible_judge_list'
+      get 'appeals_tied_to_non_ssc_avlj'
+      get 'appeals_tied_to_avljs_and_vljs'
       post 'run_demo_aod_hearing_seeds'
       post 'run_demo_non_aod_hearing_seeds'
       post 'run-demo-ama-docket-goals'
-      post 'run-demo-docket-priority'
+      post 'run_demo_non_avlj_appeals'
+      post 'run_demo_docket_priority'
+      post 'run_return_legacy_appeals_to_board'
     end
   end
 
@@ -365,10 +368,19 @@ Rails.application.routes.draw do
     patch "/correspondence/:id/update_document", to: "correspondence_document#update_document"
     patch "/correspondence/tasks/:task_id/assign_to_team", to: "correspondence_tasks#assign_to_team"
     post "/correspondence/:correspondence_uuid/intake", to: "correspondence_intake#process_intake", as: :queue_correspondence_intake_process_intake
+    patch "/correspondence/:correspondence_uuid/update_correspondence", to: "correspondence_details#update_correspondence"
     post "/correspondence/:correspondence_uuid/cancel_intake", to: "correspondence_intake#cancel_intake", as: :queue_correspondence_intake_cancel_intake
     post "/correspondence/:correspondence_uuid/task", to: "correspondence_tasks#create_package_action_task"
     post "/correspondence_response_letters", to: "correspondence_response_letters#create"
+    post "/correspondence/:correspondence_uuid/correspondence_response_letter",
+         to: "correspondence_details#create_response_letter_for_correspondence"
     get "/correspondence/:correspondence_uuid", to: "correspondence_details#correspondence_details"
+    post "/correspondence/:correspondence_uuid/save_correspondence_appeals",
+         to: "correspondence_details#save_correspondence_appeals"
+
+    resources :correspondence, param: :correspondence_uuid do
+      post :create_correspondence_relations, on: :member, to: "correspondence_details#create_correspondence_relations"
+    end
     get "/appeals/:vacols_id", to: "queue#index"
     get "/appeals/:appealId/notifications", to: "queue#index"
     get "/appeals/:appeal_id/cavc_dashboard", to: "cavc_dashboard#index"

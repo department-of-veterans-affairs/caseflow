@@ -8,13 +8,15 @@ import TabWindow from '../../../components/TabWindow';
 import CopyTextButton from '../../../components/CopyTextButton';
 import { loadCorrespondence } from '../correspondenceReducer/correspondenceActions';
 import CorrespondenceCaseTimeline from '../CorrespondenceCaseTimeline';
-import { correspondenceInfo } from './../correspondenceDetailsReducer/correspondenceDetailsActions';
+import {
+  correspondenceInfo, updateCorrespondenceRelations
+} from './../correspondenceDetailsReducer/correspondenceDetailsActions';
 import CorrespondenceResponseLetters from './CorrespondenceResponseLetters';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
-// import TaskSnapshot from '../../TaskSnapshot';
 import { prepareAppealForSearchStore, prepareAppealForStore } from 'app/queue/utils';
 import { onReceiveTasks, onReceiveAppealDetails } from '../../QueueActions';
+import { prepareAppealForSearchStore } from 'app/queue/utils';
 import CorrespondenceTasksAdded from '../CorrespondenceTasksAdded';
 import moment from 'moment';
 import Pagination from 'app/components/Pagination/Pagination';
@@ -24,6 +26,9 @@ import { COLORS } from 'app/constants/AppConstants';
 import Checkbox from 'app/components/Checkbox';
 import CorrespondencePaginationWrapper from 'app/queue/correspondence/CorrespondencePaginationWrapper';
 import { prepareTasksForStore } from '../../utils';
+import Button from '../../../components/Button';
+import Alert from '../../../components/Alert';
+import ApiUtil from '../../../util/ApiUtil';
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
@@ -33,25 +38,121 @@ const CorrespondenceDetails = (props) => {
   const allCorrespondences = props.correspondence.all_correspondences;
   const [viewAllCorrespondence, setViewAllCorrespondence] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [disableSubmitButton, setDisableSubmitButton] = useState(true);
+  const [showSuccessBanner, setShowSuccessBanner] = useState(false);
+  const [selectedPriorMail, setSelectedPriorMail] = useState([]);
   const totalPages = Math.ceil(allCorrespondences.length / 15);
   const startIndex = (currentPage * 15) - 15;
   const endIndex = (currentPage * 15);
   const priorMail = correspondence.prior_mail;
-  const relatedCorrespondenceIds = props.correspondence.relatedCorrespondenceIds;
+  // eslint-disable-next-line max-len
+  const [relatedCorrespondenceIds, setRelatedCorrespondenceIds] = useState(props.correspondence.relatedCorrespondenceIds);
+  const [initialSelectedAppeals, setInitialSelectedAppeals] = useState(correspondence.correspondenceAppealIds);
+  const [selectedAppeals, setSelectedAppeals] = useState(correspondence.correspondenceAppealIds);
+  const [unSelectedAppeals, setUnSelectedAppeals] = useState([]);
+  const [appealsToDisplay, setAppealsToDisplay] = useState([]);
+  const userAccess = correspondence.user_access;
+
+  const [checkboxStates, setCheckboxStates] = useState({});
+  const [originalStates, setOriginalStates] = useState({});
+
+  // Initialize checkbox states
+  useEffect(() => {
+    const initialStates = {};
+
+    correspondence.prior_mail.forEach((mail) => {
+      initialStates[mail.id] = relatedCorrespondenceIds.includes(mail.id);
+    });
+    setCheckboxStates(initialStates);
+    setOriginalStates(initialStates);
+  }, [priorMail, relatedCorrespondenceIds]);
+
+  // Function to handle checkbox changes
+  const handleCheckboxChange = (mailId) => {
+    setCheckboxStates((prevState) => {
+      const newState = { ...prevState, [mailId]: !prevState[mailId] };
+
+      // Check if any checkbox is different from its original state
+      const isAnyChanged = Object.keys(newState).some(
+        (key) => newState[key] !== originalStates[key]
+      );
+
+      setDisableSubmitButton(!isAnyChanged);
+
+      return newState;
+    });
+  };
+
+  // Function to handle the "Save Changes" button click, including the PATCH request
+  const handlepriorMailUpdate = async () => {
+  // Disable the button to prevent duplicate requests
+    setDisableSubmitButton(true);
+
+    // Get the initial and current checkbox states
+    const uncheckedCheckboxes = Object.entries(checkboxStates).
+      filter(([mailId, isChecked]) => !isChecked && originalStates[mailId]).
+      map(([mailId]) => {
+        const mail = priorMail.find((pMail) => pMail.id === parseInt(mailId, 10));
+
+        return { uuid: mail.uuid };
+      });
+
+    // Data for the PATCH request to remove unchecked relations
+    const patchData = {
+      correspondence_uuid: correspondence.uuid,
+      // Send only unchecked relations
+      correspondence_relations: uncheckedCheckboxes
+    };
+
+    try {
+    // Send PATCH request to update the backend
+      const response = await ApiUtil.patch(`/queue/correspondence/${correspondence.uuid}/update_correspondence`, {
+        data: patchData
+      });
+
+      if (response.status === 201) {
+        console.log('Correspondence updated successfully.', response.status); // eslint-disable-line no-console
+      }
+    } catch (error) {
+      console.error('Error during PATCH request:', error.message);
+    } finally {
+      setDisableSubmitButton(true);
+    }
+
+    // Reset checkboxes to the new state
+    setOriginalStates(checkboxStates);
+  };
+
+  const isAdminNotLoggedIn = () => {
+    if (props.isInboundOpsSuperuser || props.isInboundOpsSupervisor === true) {
+      return false;
+    }
+
+    return true;
+
+  };
 
   priorMail.sort((first, second) => {
     const firstInRelated = relatedCorrespondenceIds.includes(first.id);
     const secondInRelated = relatedCorrespondenceIds.includes(second.id);
 
     if (firstInRelated && secondInRelated) {
+      // Sort by vaDateOfReceipt in descending order if both are in relatedCorrespondenceIds
       return new Date(second.vaDateOfReceipt) - new Date(first.vaDateOfReceipt);
     } else if (firstInRelated) {
+      // Ensure that items in relatedCorrespondenceIds come first
       return -1;
     } else if (secondInRelated) {
-      return -1;
+      return 1;
+    }
+    if (!firstInRelated && secondInRelated) {
+      return 1;
     }
 
-    return 1;
+    // If neither is in relatedCorrespondenceIds, maintain their original order
+    const returnSort = priorMail.indexOf(first) - priorMail.indexOf(second);
+
+    return returnSort;
   });
 
   const updatePageHandler = (idx) => {
@@ -88,9 +189,8 @@ const CorrespondenceDetails = (props) => {
           const year = date.getFullYear();
           const month = String(date.getMonth() + 1).padStart(2, '0');
           const day = String(date.getDate()).padStart(2, '0');
-          const formattedDate = `${month}/${day}/${year}`;
 
-          return formattedDate;
+          return `${month}/${day}/${year}`;
         }
       },
       {
@@ -141,35 +241,61 @@ const CorrespondenceDetails = (props) => {
     );
   };
 
-  const appealsResult = props.correspondence.appeals_information;
-  const appeals = [];
-  let filteredAppeals = [];
-  let unfilteredAppeals = [];
-
-  appealsResult.appeals.map((appeal) => {
-    if (correspondence.correspondenceAppealIds?.includes(appeal.id)) {
-      return filteredAppeals.push(appeal);
+  const appealCheckboxOnChange = (appealId, isChecked) => {
+    setDisableSubmitButton(false);
+    if (isChecked) {
+      setSelectedAppeals([...selectedAppeals, appealId]);
+    } else {
+      setUnSelectedAppeals([...unSelectedAppeals, appealId]);
     }
+  };
 
-    return unfilteredAppeals.push(appeal);
-  });
+  const toggleCheckboxState = (appealId) => {
+    const appealsToConsider = disableSubmitButton ? selectedAppeals : initialSelectedAppeals;
+    const checked = appealsToConsider?.includes(appealId) || appealsToConsider?.includes(Number(appealId));
 
-  filteredAppeals = filteredAppeals.sort((leftAppeal, rightAppeal) => leftAppeal.id - rightAppeal.id);
-  unfilteredAppeals = unfilteredAppeals.sort((leftAppeal, rightAppeal) => leftAppeal.id - rightAppeal.id);
-  const sortedAppeals = filteredAppeals.concat(unfilteredAppeals);
+    return checked ? userAccess !== 'admin_access' : false;
+  };
 
-  const searchStoreAppeal = prepareAppealForSearchStore(sortedAppeals);
-  const appeall = searchStoreAppeal.appeals;
-  const appealldetail = searchStoreAppeal.appealDetails;
-  const hashKeys = Object.keys(appeall);
+  let appeals;
 
-  hashKeys.map((key) => {
-    const combinedHash = { ...appeall[key], ...appealldetail[key] };
+  const sortAppeals = (selectedList) => {
+    appeals = [];
+    let filteredAppeals = [];
+    let unfilteredAppeals = [];
 
-    appeals.push(combinedHash);
+    correspondence.appeals_information.appeals.map((appeal) => {
+      if (selectedList?.includes(appeal.id)) {
+        filteredAppeals.push(appeal);
+      } else {
+        unfilteredAppeals.push(appeal);
+      }
 
-    return appeals;
-  });
+      return true;
+    });
+
+    filteredAppeals = filteredAppeals.sort((leftAppeal, rightAppeal) => leftAppeal.id - rightAppeal.id);
+    unfilteredAppeals = unfilteredAppeals.sort((leftAppeal, rightAppeal) => leftAppeal.id - rightAppeal.id);
+
+    const sortedAppeals = filteredAppeals.concat(unfilteredAppeals);
+    const searchStoreAppeal = prepareAppealForSearchStore(sortedAppeals);
+    const appeall = searchStoreAppeal.appeals;
+    const appealldetail = searchStoreAppeal.appealDetails;
+    const hashKeys = Object.keys(appeall);
+
+    hashKeys.map((key) => {
+      const combinedHash = { ...appeall[key], ...appealldetail[key] };
+
+      appeals.push(combinedHash);
+
+      return true;
+    });
+    setAppealsToDisplay(appeals);
+  };
+
+  useEffect(() => {
+    sortAppeals(initialSelectedAppeals);
+  }, []);
 
   useEffect(() => {
     dispatch(loadCorrespondence(correspondence));
@@ -244,12 +370,13 @@ const CorrespondenceDetails = (props) => {
             </span>
 
             <CaseListTable
-              appeals={appeals}
+              appeals={appealsToDisplay}
               paginate="true"
               showCheckboxes
               taskRelatedAppealIds={props.correspondence.correspondenceAppealIds}
-              disabled
               enableTopPagination
+              checkboxOnChange={appealCheckboxOnChange}
+              toggleCheckboxState={toggleCheckboxState}
             />
           </AppSegment>
           {(props.correspondence.correspondenceAppeals.map((taskAdded) =>
@@ -325,10 +452,30 @@ const CorrespondenceDetails = (props) => {
         <div className="correspondence-package-details">
           <CorrespondenceResponseLetters
             letters={props.correspondenceResponseLetters}
+            addLetterCheck={props.addLetterCheck}
+            isInboundOpsSuperuser={props.isInboundOpsSuperuser}
+            isInboundOpsSupervisor={props.isInboundOpsSupervisor}
+            isInboundOpsUser={props.isInboundOpsUser}
+            correspondence={props.correspondence}
           />
         </div>
       </>
     );
+  };
+
+  const onPriorMailCheckboxChange = (corr, isChecked) => {
+    // props.savePriorMailCheckboxState(corr, isChecked);
+    let selectedCheckboxes = [...selectedPriorMail];
+
+    if (isChecked) {
+      selectedCheckboxes.push(corr);
+    } else {
+      selectedCheckboxes = selectedCheckboxes.filter((checkbox) => checkbox.id !== corr.id);
+    }
+    setSelectedPriorMail(selectedCheckboxes);
+    const isAnyCheckboxSelected = selectedCheckboxes.length > 0;
+
+    setDisableSubmitButton(!isAnyCheckboxSelected);
   };
 
   const getDocumentColumns = (correspondenceRow) => {
@@ -337,13 +484,30 @@ const CorrespondenceDetails = (props) => {
         cellClass: 'checkbox-column',
         valueFunction: () => (
           <div className="checkbox-column-inline-style">
-            <Checkbox
-              name={correspondenceRow.id.toString()}
-              id={correspondenceRow.id.toString()}
-              hideLabel
-              defaultValue={relatedCorrespondenceIds.some((el) => el === correspondenceRow.id)}
-              disabled
-            />
+            {
+              isAdminNotLoggedIn() ?
+                <Checkbox
+                  name={correspondenceRow.id.toString()}
+                  id={correspondenceRow.id.toString()}
+                  hideLabel
+                  defaultValue={relatedCorrespondenceIds.some((el) => el === correspondenceRow.id)}
+                  value={selectedPriorMail.some((el) => el.id === correspondenceRow.id)}
+                  disabled={
+                    // eslint-disable-next-line max-len
+                    relatedCorrespondenceIds.some((corrId) => corrId === correspondenceRow.id) || !props.isInboundOpsUser
+                  }
+                  onChange={(checked) => onPriorMailCheckboxChange(correspondenceRow, checked)}
+                /> :
+                <Checkbox
+                  name={correspondenceRow.id.toString()}
+                  id={correspondenceRow.id.toString()}
+                  hideLabel
+                  defaultValue={relatedCorrespondenceIds.some((el) => el === correspondenceRow.id)}
+                  value={checkboxStates[correspondenceRow.id]}
+                  onChange={() => handleCheckboxChange(correspondenceRow.id)}
+                  disabled= {isAdminNotLoggedIn()}
+                />
+            }
           </div>
         )
       },
@@ -478,8 +642,88 @@ const CorrespondenceDetails = (props) => {
     }
   ];
 
+  const saveChanges = () => {
+
+    if (isAdminNotLoggedIn() === false) {
+      handlepriorMailUpdate();
+    } else if (selectedPriorMail.length > 0) {
+
+      const priorMailIds = selectedPriorMail.map((mail) => mail.id);
+      const payload = {
+        data: {
+          priorMailIds: selectedPriorMail.map((mail) => mail.id)
+        }
+      };
+
+      const tempCor = props.correspondence;
+
+      tempCor.relatedCorrespondenceIds = priorMailIds;
+
+      return ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/create_correspondence_relations`, payload).
+        then(() => {
+          props.updateCorrespondenceRelations(tempCor);
+          setRelatedCorrespondenceIds([...relatedCorrespondenceIds, ...priorMailIds]);
+          setShowSuccessBanner(true);
+          setSelectedPriorMail([]);
+          setDisableSubmitButton(true);
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        }).
+        catch((error) => {
+          const errorMessage = error?.response?.body?.message ?
+            error.response.body.message.replace(/^Error:\s*/, '') :
+            error.message;
+
+          console.error(errorMessage);
+        });
+    }
+
+    if (selectedAppeals.length > 0) {
+      const appealsSelected = selectedAppeals.filter((val) => !correspondence.correspondenceAppealIds.includes(val));
+
+      const payload = {
+        data: {
+          selected_appeal_ids: appealsSelected,
+          unselected_appeal_ids: unSelectedAppeals
+        }
+      };
+
+      return ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/save_correspondence_appeals`, payload).
+        then((resp) => {
+          const appealIds = resp.body.map((num) => num.toString());
+
+          setSelectedAppeals(appealIds);
+          setInitialSelectedAppeals(appealIds);
+          sortAppeals(appealIds);
+          setShowSuccessBanner(true);
+          setDisableSubmitButton(true);
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        }).
+        catch((error) => {
+          const errorMessage = error?.response?.body?.message ?
+            error.response.body.message.replace(/^Error:\s*/, '') :
+            error.message;
+
+          console.error(errorMessage);
+        });
+    }
+  };
+
   return (
     <>
+      {
+        showSuccessBanner &&
+          <div style={{ padding: '10px' }}>
+            <Alert
+              type="success"
+              title={COPY.CORRESPONDENCE_DETAILS.SAVE_CHANGES_BANNER.MESSAGE} />
+          </div>
+      }
       <AppSegment filledBackground extraClassNames="app-segment-cd-details">
         <div className="correspondence-details-header">
           <h1> {props.correspondence.veteranFullName} </h1>
@@ -501,8 +745,20 @@ const CorrespondenceDetails = (props) => {
           name="tasks-tabwindow"
           tabs={tabList}
         />
-        <td className="taskContainerStyling taskInformationTimelineContainerStyling"></td>
       </AppSegment>
+      {
+        // eslint-disable-next-line max-len
+        (props.isInboundOpsUser || props.isInboundOpsSuperuser || props.isInboundOpsSupervisor) && <div className="margin-top-for-add-task-view">
+          <Button
+            type="button"
+            onClick={() => saveChanges()}
+            disabled={disableSubmitButton}
+            name="save-changes"
+            classNames={['cf-right-side']}>
+          Save changes
+          </Button>
+        </div>
+      }
     </>
   );
 };
@@ -514,18 +770,25 @@ CorrespondenceDetails.propTypes = {
   userCssId: PropTypes.string,
   enableTopPagination: PropTypes.bool,
   correspondence_appeal_ids: PropTypes.bool,
+  isInboundOpsUser: PropTypes.bool,
   tasksUnrelatedToAppealEmpty: PropTypes.bool,
-  correspondenceResponseLetters: PropTypes.array
+  isInboundOpsSuperuser: PropTypes.bool,
+  isInboundOpsSupervisor: PropTypes.bool,
+  correspondenceResponseLetters: PropTypes.array,
+  inboundOpsTeamUsers: PropTypes.array,
+  addLetterCheck: PropTypes.bool,
+  updateCorrespondenceRelations: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({
   correspondenceInfo: state.correspondenceDetails.correspondenceInfo,
-  tasksUnrelatedToAppealEmpty: state.correspondenceDetails.tasksUnrelatedToAppealEmpty,
+  tasksUnrelatedToAppealEmpty: state.correspondenceDetails.tasksUnrelatedToAppealEmpty
 });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    correspondenceInfo
+    correspondenceInfo,
+    updateCorrespondenceRelations
   }, dispatch)
 );
 
