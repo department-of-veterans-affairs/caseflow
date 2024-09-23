@@ -139,6 +139,7 @@ module CaseflowCertification
     Rails.autoloaders.each do |autoloader|
       autoloader.inflector.inflect(
         "amo_metrics_report_job" => "AMOMetricsReportJob",
+        "etl_builder_job" => "ETLBuilderJob",
       )
     end
 
