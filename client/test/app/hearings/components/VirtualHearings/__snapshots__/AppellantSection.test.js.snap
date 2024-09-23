@@ -10953,7 +10953,7 @@ SAN FRANCISCO, CA 94103
                                             aria-autocomplete="list"
                                             aria-expanded={false}
                                             aria-haspopup={true}
-                                            aria-labelledby="appellant-tz-label"
+                                            aria-label="Pacific Time (US & Canada) (3:00 AM)"
                                             aria-owns="appellant-tz-listbox"
                                             autoCapitalize="none"
                                             autoComplete="off"
@@ -11849,7 +11849,7 @@ SAN FRANCISCO, CA 94103
                                                   aria-autocomplete="list"
                                                   aria-expanded={false}
                                                   aria-haspopup={true}
-                                                  aria-labelledby="appellant-tz-label"
+                                                  aria-label="Pacific Time (US & Canada) (3:00 AM)"
                                                   aria-owns="appellant-tz-listbox"
                                                   autoCapitalize="none"
                                                   autoComplete="off"
@@ -11893,7 +11893,7 @@ SAN FRANCISCO, CA 94103
                                                       aria-autocomplete="list"
                                                       aria-expanded={false}
                                                       aria-haspopup={true}
-                                                      aria-labelledby="appellant-tz-label"
+                                                      aria-label="Pacific Time (US & Canada) (3:00 AM)"
                                                       aria-owns="appellant-tz-listbox"
                                                       autoCapitalize="none"
                                                       autoComplete="off"

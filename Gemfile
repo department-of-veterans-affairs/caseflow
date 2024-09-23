@@ -65,7 +65,7 @@ gem "pdfjs_viewer-rails", git: "https://github.com/senny/pdfjs_viewer-rails.git"
 # Used to build out PDF files on the backend
 # https://github.com/pdfkit/pdfkit
 gem "pdfkit"
-gem "pg", "~> 1.5.7", platforms: :ruby
+gem "pg", platforms: :ruby
 # Application server: Puma
 # Puma was chosen because it handles load of 40+ concurrent users better than Unicorn and Passenger
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
@@ -85,7 +85,7 @@ gem "roo", "~> 2.7"
 gem "rswag-api"
 gem "rswag-ui"
 gem "rtf"
-gem "ruby_claim_evidence_api", git: "https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git", ref: "fed623802afe7303f4b8b5fe27cff0e903699873"
+gem "ruby_claim_evidence_api", git: "https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git", ref: "c56381d2bea2ffabe79bebbac6598f00450691ff"
 # Use SCSS for stylesheets
 gem "sass-rails", "~> 5.0"
 # Error reporting to Sentry
@@ -107,7 +107,7 @@ gem "ziptz"
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
   gem "activerecord-oracle_enhanced-adapter", "~> 6.1.0"
-  gem "ruby-oci8", "~> 2.2.14"
+  gem "ruby-oci8", "~> 2.2"
 end
 
 group :test, :development, :demo, :make_docs do
@@ -132,8 +132,8 @@ group :test, :development, :demo, :make_docs do
   gem "rails-erd"
   gem "rb-readline"
   gem "rspec"
-  gem "rspec-rails"
   # For CircleCI test metadata analysis
+  gem "rspec-rails"
   gem "rspec_junit_formatter"
   gem "rswag-specs"
   gem "rubocop", "= 0.83", require: false
