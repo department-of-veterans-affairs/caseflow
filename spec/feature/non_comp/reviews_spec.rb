@@ -10,6 +10,7 @@ feature "NonComp Reviews Queue", :postgres do
   let(:veteran_b_on_hold) { create(:veteran, first_name: "Gaius", participant_id: "601172", ssn: "191039395") }
   let(:veteran_a_pending) { create(:veteran, first_name: "Dave", participant_id: "55667788", ssn: "123456789") }
   let(:veteran_c) { create(:veteran, first_name: "Ccc", participant_id: "1002345", ssn: "128455943") }
+  let(:veteran_remand) { create(:veteran, first_name: "B. Stark", participant_id: "100234567", ssn: "128455999") }
   let(:claimant_type) { :veteran_claimant }
   let(:hlr_a_on_hold) do
     create(:higher_level_review, veteran_file_number: veteran_a_on_hold.file_number, claimant_type: claimant_type)
@@ -24,6 +25,7 @@ feature "NonComp Reviews Queue", :postgres do
   let(:hlr_b) { create(:higher_level_review, veteran_file_number: veteran_b.file_number, claimant_type: claimant_type) }
   let(:hlr_c) { create(:higher_level_review, veteran_file_number: veteran_c.file_number, claimant_type: claimant_type) }
   let(:appeal) { create(:appeal, veteran: veteran_c) }
+  let(:remand) { create(:remand, veteran_file_number: veteran_remand.file_number, claimant_type: claimant_type) }
 
   let!(:request_issue_a) do
     create(:request_issue, :nonrating, nonrating_issue_category: "Caregiver | Other", decision_review: hlr_a)
@@ -55,6 +57,10 @@ feature "NonComp Reviews Queue", :postgres do
 
   let!(:request_issue_a_pending) do
     create(:request_issue, :nonrating, nonrating_issue_category: "Other", decision_review: hlr_a_pending)
+  end
+
+  let!(:remand_request_issue) do
+    create(:request_issue, :nonrating, nonrating_issue_category: "Beneficiary Travel", decision_review: remand)
   end
 
   let!(:modification_request_a) do
@@ -107,7 +113,12 @@ feature "NonComp Reviews Queue", :postgres do
              :in_progress,
              appeal: appeal,
              assigned_to: non_comp_org,
-             assigned_at: 1.day.ago)
+             assigned_at: 1.day.ago),
+      create(:higher_level_review_task,
+             :in_progress,
+             appeal: remand,
+             assigned_to: non_comp_org,
+             assigned_at: today)
     ]
   end
 
@@ -188,9 +199,9 @@ feature "NonComp Reviews Queue", :postgres do
     scenario "displays tasks page with decision_review_queue_ssn_column feature toggle disabled" do
       visit BASE_URL
       expect(page).to have_content("Veterans Health Administration")
-      expect(page).to have_content("Incomplete Tasks")
-      expect(page).to have_content("Pending Tasks")
-      expect(page).to have_content("In Progress Tasks")
+      expect(page).to have_content("Incomplete Tasks (2)")
+      expect(page).to have_content("Pending Tasks (1)")
+      expect(page).to have_content("In Progress Tasks (4)")
       expect(page).to have_content("Completed Tasks")
 
       # default is the in progress page if no tab is specified in the url
@@ -198,21 +209,24 @@ feature "NonComp Reviews Queue", :postgres do
       expect(page).to have_content("Issues")
       expect(page).to have_content("Issue Type")
       expect(page).to have_content("Higher-Level Review", count: 2)
+      expect(page).to have_content("Remand", count: 1)
       expect(page).to have_content("Board Grant")
       expect(page).to have_content(veteran_a.name)
       expect(page).to have_content(veteran_b.name)
       expect(page).to have_content(veteran_c.name)
+      expect(page).to have_content(veteran_remand.name)
       expect(page).to_not have_content(veteran_a_on_hold.name)
       expect(page).to_not have_content(veteran_b_on_hold.name)
       expect(page).to have_content(vet_id_column_header)
       expect(page).to have_content(vet_a_id_column_value)
       expect(page).to have_content(vet_b_id_column_value)
       expect(page).to have_content(vet_c_id_column_value)
+
       expect(page).to have_no_content(search_box_label)
 
       # ordered by assigned_at descending
       expect(page).to have_content(
-        /#{veteran_b.name}.+\s#{veteran_c.name}.+\s#{veteran_a.name}/
+        /#{veteran_b.name}.+\s#{veteran_remand.name}.+\s#{veteran_c.name}.+\s#{veteran_a.name}/
       )
 
       click_on "Incomplete Tasks"
@@ -241,7 +255,6 @@ feature "NonComp Reviews Queue", :postgres do
       expect(page).to have_content("Higher-Level Review", count: 2)
       expect(page).to have_content("Date Completed")
 
-      # decision_date = hlr_b.request_issues.first.decision_date.strftime("%m\/%d\/%y")
       decision_date = hlr_b.tasks.first.closed_at.strftime("%m/%d/%y")
       # ordered by closed_at descending
       expect(page).to have_content(
@@ -262,9 +275,9 @@ feature "NonComp Reviews Queue", :postgres do
       scenario "displays tasks page" do
         visit BASE_URL
         expect(page).to have_content("Veterans Health Administration")
-        expect(page).to have_content("Incomplete Tasks")
-        expect(page).to have_content("Pending Tasks")
-        expect(page).to have_content("In Progress Tasks")
+        expect(page).to have_content("Incomplete Tasks (2)")
+        expect(page).to have_content("Pending Tasks (1)")
+        expect(page).to have_content("In Progress Tasks (4)")
         expect(page).to have_content("Completed Tasks")
 
         # default is the in progress page if no tab is specified in the url
@@ -374,7 +387,7 @@ feature "NonComp Reviews Queue", :postgres do
       table_rows = current_table_rows
 
       expect(table_rows.last.include?("Caregiver | Other\nCHAMPVA\n")).to eq true
-      expect(table_rows.first.include?(" Camp Lejune Family Member ")).to eq true
+      expect(table_rows.first.include?(" Beneficiary Travel ")).to eq true
 
       # Issue Types desc
       order_buttons[:issues_type].click
@@ -383,7 +396,7 @@ feature "NonComp Reviews Queue", :postgres do
       )
       table_rows = current_table_rows
 
-      expect(table_rows.last.include?(" Camp Lejune Family Member ")).to eq true
+      expect(table_rows.last.include?(" Beneficiary Travel ")).to eq true
       expect(table_rows.first.include?("Caregiver | Other\nCHAMPVA")).to eq true
 
       # Days waiting asc
@@ -515,22 +528,30 @@ feature "NonComp Reviews Queue", :postgres do
       end
     end
 
-    scenario "filtering reviews by appeal type", skip: true do
+    scenario "filtering reviews by appeal type" do
       visit BASE_URL
+
+      expect(page).to have_content("Higher-Level Review")
+      expect(page).to have_content("Board Grant")
+      expect(page).to have_content("Remand")
+
       find("[aria-label='Filter by type']").click
 
       # Check that task counts are being transmitted correctly from backend
       expect(page).to have_content("Board Grant (1)")
       expect(page).to have_content("Higher-Level Review (2)")
+      expect(page).to have_content("Remand (1)")
 
       find("label", text: "Higher-Level Review").click
-      expect(page).to have_content("Higher-Level Review")
+      expect(page).to have_content("Higher-Level Review", count: 2)
       expect(page).to_not have_content("Board Grant")
+      expect(page).to_not have_content("Remand")
       find(".cf-clear-filters-link").click
       expect(page).to have_content("Board Grant")
+      expect(page).to have_content("Remand")
     end
 
-    scenario "filtering reviews by issue type", skip: true do
+    scenario "filtering reviews by issue type" do
       visit BASE_URL
       find("[aria-label='Filter by issue type']").click
 
@@ -538,6 +559,7 @@ feature "NonComp Reviews Queue", :postgres do
       expect(page).to have_content("Caregiver | Other (1)")
       expect(page).to have_content("Camp Lejune Family Member (1)")
       expect(page).to have_content("CHAMPVA (1)")
+      expect(page).to have_content("Beneficiary Travel (1)")
 
       find("label", text: "Caregiver | Other").click
       expect(page).to have_content("Caregiver | Other")
@@ -547,16 +569,19 @@ feature "NonComp Reviews Queue", :postgres do
 
       # Verify the filter counts for the incomplete tab
       click_on "Incomplete Tasks"
+      expect(page).to have_content(COPY::VHA_INCOMPLETE_TAB_DESCRIPTION)
       find("[aria-label='Filter by issue type']").click
       expect(page).to have_content("Clothing Allowance (1)")
       expect(page).to have_content("Other (1)")
 
       click_on "Pending Tasks"
+      expect(page).to have_content(COPY::VHA_PENDING_REQUESTS_TAB_DESCRIPTION)
       find("[aria-label='Filter by issue type']").click
       expect(page).to have_content("Other (1)")
 
       # Verify the filter counts for the completed tab
       click_on "Completed Tasks"
+      expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION)
       find("[aria-label='Filter by issue type']").click
       expect(page).to have_content("Apportionment (1)")
       expect(page).to have_content("Camp Lejune Family Member (1)")
@@ -750,16 +775,16 @@ feature "NonComp Reviews Queue", :postgres do
                assigned_at: last_week)
       ]
     end
-    scenario "Duplicate issue types like Beneficiary Travel should be removed from the visible list of issue types" do
-      visit BASE_URL
-      hlr_c_regex = /#{veteran_c.name} #{veteran_c.ssn} 3\nBeneficiary Travel\nEligibility for Dental Treatment\n6 days Higher-Level Review/ # rubocop:disable Layout/LineLength
-      expect(page).to have_content(
-        hlr_c_regex
-      )
-    end
 
     scenario "Ordering issue types should ignore duplicates when ordering" do
       visit BASE_URL
+
+      step "Duplicate issue types like Beneficiary Travel should be removed from the visible list of issue types" do
+        hlr_c_regex = /#{veteran_c.name} #{veteran_c.ssn} 3\nBeneficiary Travel\nEligibility for Dental Treatment\n6 days Higher-Level Review/ # rubocop:disable Layout/LineLength
+        expect(page).to have_content(
+          hlr_c_regex
+        )
+      end
 
       issues_type_sort_button = find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[4]/span/span[2]')
 
@@ -788,7 +813,7 @@ feature "NonComp Reviews Queue", :postgres do
       expect(table_rows.first.include?("B Veteran")).to eq true
     end
 
-    scenario "The Issue type column should orderable and filterable at the same time", skip: true do
+    scenario "The Issue type column should orderable and filterable at the same time" do
       visit BASE_URL
       issues_type_sort_button = find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[4]/span/span[2]')
 
@@ -816,12 +841,18 @@ feature "NonComp Reviews Queue", :postgres do
 
       table_rows = current_table_rows
 
+      sort_header = find('th[aria-labelledby="header-appealIssueTypes"]')
+      expect(sort_header[:'aria-sort']).to eq("ascending")
+
       expect(table_rows.first.include?("A Veteran")).to eq true
       expect(table_rows.last.include?("D Veteran")).to eq true
 
       issues_type_sort_button.click
 
       table_rows = current_table_rows
+
+      sort_header = find('th[aria-labelledby="header-appealIssueTypes"]')
+      expect(sort_header[:'aria-sort']).to eq("descending")
 
       expect(table_rows.first.include?("D Veteran")).to eq true
       expect(table_rows.last.include?("A Veteran")).to eq true
@@ -830,6 +861,9 @@ feature "NonComp Reviews Queue", :postgres do
       expect(page).to have_content("Spina Bifida Treatment (Non-Compensation)")
 
       table_rows = current_table_rows
+
+      sort_header = find('th[aria-labelledby="header-appealIssueTypes"]')
+      expect(sort_header[:'aria-sort']).to eq("descending")
       expect(table_rows.first.include?("B Veteran")).to eq true
       expect(table_rows.last.include?("A Veteran")).to eq true
     end
@@ -965,7 +999,7 @@ feature "NonComp Reviews Queue", :postgres do
       pagination = page.find(class: "cf-pagination-pages", match: :first)
       pagination.find("Button", text: "2", match: :first).click
 
-      expect(page).to have_content("Viewing 16-30 of 33 total")
+      expect(page).to have_content("Viewing 16-30 of 34 total")
 
       # Navigate to another tab
       click_button("Incomplete Tasks")
@@ -997,9 +1031,11 @@ feature "NonComp Reviews Queue", :postgres do
       expect(page).to have_content("Issue Type")
       expect(page).to have_content("Higher-Level Review", count: 4)
       expect(page).to have_content("Board Grant")
+      expect(page).to have_content("Remand")
       expect(page).to have_content(veteran_a.name)
       expect(page).to have_content(veteran_b.name)
       expect(page).to have_content(veteran_c.name)
+      expect(page).to have_content(veteran_remand.name)
       expect(page).to have_content(veteran_a_on_hold.name)
       expect(page).to have_content(veteran_b_on_hold.name)
       expect(page).to have_content(vet_id_column_header)
@@ -1010,7 +1046,7 @@ feature "NonComp Reviews Queue", :postgres do
 
       # ordered by assigned_at descending
       expect(page).to have_content(
-        /#{veteran_b.name}.+\s#{veteran_c.name}.+\s#{veteran_a.name}/
+        /#{veteran_b.name}.+\s#{veteran_remand.name}.+\s#{veteran_c.name}.+\s#{veteran_a.name}/
       )
 
       click_on "Completed Tasks"
