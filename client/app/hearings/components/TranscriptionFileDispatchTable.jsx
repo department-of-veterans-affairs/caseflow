@@ -123,11 +123,11 @@ export const TranscriptionFileDispatchTable = ({
    * Get the list of transcription contractors for use in the filter
    */
   const getContractors = () => {
-    ApiUtil.get('/hearings/find_by_contractor/filterable_contractors')
-      // eslint-disable-next-line camelcase
-      .then((response) =>
+    ApiUtil.get('/hearings/find_by_contractor/filterable_contractors').then(
+      (response) =>
+        // eslint-disable-next-line camelcase
         setContractors(response.body?.transcription_contractors)
-      );
+    );
   };
 
   /**
