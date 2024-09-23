@@ -152,6 +152,7 @@ module CaseflowCertification
       "#{root}/app/models/hearings",
       "#{root}/app/models/prepend",
       "#{root}/app/models/prepend/va_notify",
+      "#{root}/app/models/tasks",
     )
 
     config.exceptions_app = self.routes
