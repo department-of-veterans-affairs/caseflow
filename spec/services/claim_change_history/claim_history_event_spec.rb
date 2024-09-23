@@ -346,7 +346,7 @@ describe ClaimHistoryEvent do
 
       context "if the task status was assigned -> completed" do
         let(:version_changes) do
-          "\"---\n" \
+          "---\n" \
           "closed_at:\n" \
           "- \n" \
           "- 2023-11-08 19:22:47.244142348 Z\n" \
@@ -355,8 +355,7 @@ describe ClaimHistoryEvent do
           "- completed\n" \
           "updated_at:\n" \
           "- 2023-11-08 19:22:47.227634704 Z\n" \
-          "- 2023-11-09 19:22:47.244304624 Z\n" \
-          "\""
+          "- 2023-11-09 19:22:47.244304624 Z\n"
         end
 
         it "should create an in progress event and a completed status event" do
@@ -373,7 +372,7 @@ describe ClaimHistoryEvent do
 
       context "if the task status was assigned -> cancelled" do
         let(:version_changes) do
-          "\"---\n" \
+          "---\n" \
           "closed_at:\n" \
           "- \n" \
           "- 2023-11-09 23:16:28.446266110 Z\n" \
@@ -382,8 +381,7 @@ describe ClaimHistoryEvent do
           "- cancelled\n" \
           "updated_at:\n" \
           "- 2023-11-09 23:16:15.724150103 Z\n" \
-          "- 2023-11-11 23:16:28.446399290 Z\n" \
-          "\""
+          "- 2023-11-11 23:16:28.446399290 Z\n"
         end
 
         it "should generate an in progress and a cancelled status event" do
@@ -400,7 +398,7 @@ describe ClaimHistoryEvent do
 
       context "if the task status was assigned -> on_hold -> assigned -> completed" do
         let(:version_changes) do
-          "\"---\n" \
+          "---\n" \
           "status:\n" \
           "- assigned\n" \
           "- on_hold\n" \
@@ -410,7 +408,7 @@ describe ClaimHistoryEvent do
           "updated_at:\n" \
           "- 2023-10-19 22:39:14.207143000 Z\n" \
           "- 2023-10-19 22:45:43.148742110 Z\n" \
-          "\"|||---\n" \
+          "|||---\n" \
           "status:\n" \
           "- on_hold\n" \
           "- assigned\n" \
@@ -420,7 +418,7 @@ describe ClaimHistoryEvent do
           "updated_at:\n" \
           "- 2023-10-19 22:45:43.148742000 Z\n" \
           "- 2023-10-19 22:47:16.222311778 Z\n" \
-          "\"|||---\n" \
+          "|||---\n" \
           "status:\n" \
           "- assigned\n" \
           "- completed\n" \
@@ -429,8 +427,7 @@ describe ClaimHistoryEvent do
           "- 2023-10-19 22:48:25.322988083 Z\n" \
           "updated_at:\n" \
           "- 2023-10-19 22:47:16.222311000 Z\n" \
-          "- 2023-10-19 22:48:25.324023984 Z\n" \
-          "\""
+          "- 2023-10-19 22:48:25.324023984 Z\n"
         end
 
         it "should generate four status events" do
@@ -457,7 +454,7 @@ describe ClaimHistoryEvent do
 
       context "if the task has no decision date and the task status was immediately set to on hold during intake" do
         let(:version_changes) do
-          "\"---\n" \
+          "---\n" \
           "status:\n" \
           "- assigned\n" \
           "- on_hold\n" \
@@ -467,7 +464,7 @@ describe ClaimHistoryEvent do
           "updated_at:\n" \
           "- 2023-10-19 22:39:14.207143000 Z\n" \
           "- 2023-10-19 22:39:14.207143000 Z\n" \
-          "\"|||---\n" \
+          "|||---\n" \
           "status:\n" \
           "- on_hold\n" \
           "- assigned\n" \
@@ -477,7 +474,7 @@ describe ClaimHistoryEvent do
           "updated_at:\n" \
           "- 2023-10-19 22:45:43.148742000 Z\n" \
           "- 2023-10-19 22:47:16.222311778 Z\n" \
-          "\"|||---\n" \
+          "|||---\n" \
           "status:\n" \
           "- assigned\n" \
           "- completed\n" \
@@ -486,8 +483,7 @@ describe ClaimHistoryEvent do
           "- 2023-10-19 22:48:25.322988083 Z\n" \
           "updated_at:\n" \
           "- 2023-10-19 22:47:16.222311000 Z\n" \
-          "- 2023-10-19 22:48:25.324023984 Z\n" \
-          "\""
+          "- 2023-10-19 22:48:25.324023984 Z\n"
         end
 
         it "should create an on_hold event, an in progress event, and a completed event" do
@@ -522,7 +518,7 @@ describe ClaimHistoryEvent do
 
       context "if the task versions are from a hookless papertrail cancelled task" do
         let(:version_changes) do
-          "\"--- {}\n\"|||\"--- {}\n\""
+          "--- {}\n|||--- {}\n"
         end
 
         it "should create an assigned and a cancelled task status event" do
@@ -803,7 +799,7 @@ describe ClaimHistoryEvent do
       context "when request type is modification" do
         let(:request_type) { :modification }
         let(:previous_state_array) do
-          "\"---\n" \
+          "---\n" \
             "id: 150\n" \
             "status: assigned\n" \
             "requestor_id: 2000006012\n" \
@@ -824,7 +820,7 @@ describe ClaimHistoryEvent do
             "decision_review_type: SupplementalClaim\n" \
             "remove_original_issue: false\n" \
             "updated_at: 2024-08-26 17:22:53.454663000 Z\n" \
-            "\"|||---\n" \
+            "|||---\n" \
             "id: 150\n" \
             "status: assigned\n" \
             "requestor_id: 2000006012\n" \
@@ -844,8 +840,7 @@ describe ClaimHistoryEvent do
             "decision_review_id: 31\n" \
             "decision_review_type: SupplementalClaim\n" \
             "remove_original_issue: false\n" \
-            "updated_at: 2024-08-26 17:23:28.072803000 Z\n" \
-            "\""
+            "updated_at: 2024-08-26 17:23:28.072803000 Z\n"
         end
 
         subject { described_class.create_issue_modification_request_event(change_data) }
@@ -859,7 +854,7 @@ describe ClaimHistoryEvent do
     describe ".create_edited_request_issue_events" do
       let(:request_type) { :withdrawal }
       let(:imr_versions) do
-        "\"---\n" \
+        "---\n" \
         "nonrating_issue_description:\n" \
         "- First value\n" \
         "- modifiedvalue\n" \
@@ -872,7 +867,7 @@ describe ClaimHistoryEvent do
         "updated_at:\n" \
         "- 2024-07-19 22:39:14.207143000 Z\n" \
         "- 2024-07-19 22:39:14.207143000 Z\n" \
-        "\"|||---\n" \
+        "|||---\n" \
         "status:\n" \
         "- assigned\n" \
         "- approved\n" \
@@ -881,11 +876,10 @@ describe ClaimHistoryEvent do
         "- approved by me\n" \
         "updated_at:\n" \
         "- 2024-07-19 22:45:43.148742000 Z\n" \
-        "- 2024-07-19 22:47:16.222311778 Z\n" \
-        "\""
+        "- 2024-07-19 22:47:16.222311778 Z\n"
       end
       let(:previous_state_array) do
-        "\"---\n" \
+        "---\n" \
           "id: 150\n" \
           "status: assigned\n" \
           "requestor_id: 2000006012\n" \
@@ -906,7 +900,7 @@ describe ClaimHistoryEvent do
           "decision_review_type: SupplementalClaim\n" \
           "remove_original_issue: false\n" \
           "updated_at: 2024-08-26 17:22:53.454663000 Z\n" \
-          "\"|||---\n" \
+          "|||---\n" \
           "id: 150\n" \
           "status: assigned\n" \
           "requestor_id: 2000006012\n" \
@@ -926,8 +920,7 @@ describe ClaimHistoryEvent do
           "decision_review_id: 31\n" \
           "decision_review_type: SupplementalClaim\n" \
           "remove_original_issue: false\n" \
-          "updated_at: 2024-08-26 17:23:28.072803000 Z\n" \
-          "\""
+          "updated_at: 2024-08-26 17:23:28.072803000 Z\n"
       end
 
       before do
