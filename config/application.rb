@@ -149,6 +149,7 @@ module CaseflowCertification
 
     Rails.autoloaders.main.collapse(
       "#{root}/app/jobs/batch_processes",
+      "#{root}/app/models/hearings",
     )
 
     config.exceptions_app = self.routes
