@@ -327,3 +327,30 @@ TABLE IF NOT EXISTS f_vacols_rep (
     SCHEMA 'VACOLS_DEV',
     TABLE 'REP'
 );
+
+-- ISSUES Table
+CREATE FOREIGN
+TABLE IF NOT EXISTS f_vacols_issues (
+    ISSKEY varchar(12),
+    ISSSEQ smallint,
+    ISSPROG varchar(6),
+    ISSCODE varchar(6),
+    ISSLEV1 varchar(6),
+    ISSLEV2 varchar(6),
+    ISSLEV3 varchar(6),
+    ISSDC varchar(1),
+    ISSDCLS date,
+    ISSADTIME date,
+    ISSADUSER varchar(16),
+    ISSMDTIME date,
+    ISSMDUSER varchar(16),
+    ISSDESC varchar(100),
+    ISSSEL varchar(1),
+    ISSGR varchar(1),
+    ISSDEV varchar(2),
+    ISSMST varchar(1),
+    ISSPACT varchar(1)
+) SERVER vacols_sv OPTIONS (
+    SCHEMA 'VACOLS_DEV',
+    TABLE 'ISSUES'
+);
