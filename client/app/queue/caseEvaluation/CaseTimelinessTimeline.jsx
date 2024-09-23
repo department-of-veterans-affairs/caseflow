@@ -5,6 +5,7 @@ import COPY from '../../../COPY';
 import { AttorneyDaysWorked } from './AttorneyDaysWorked';
 import { AttorneyTasksTreeTimeline } from './AttorneyTasksTreeTimeline';
 import { LegacyCaseTimeline } from './LegacyCaseTimeline';
+import ErrorMessage from '../../certification/components/ErrorMessage';
 
 export const CaseTimelinessTimeline = (props) => {
   const { appeal,
@@ -13,6 +14,10 @@ export const CaseTimelinessTimeline = (props) => {
     attorneyChildrenTasks,
     displayCaseTimelinessTimeline,
   } = props;
+
+  if (!task) {
+    return <ErrorMessage />;
+  }
 
   let dateAssigned = moment(task.previousTaskAssignedOn);
   const decisionSubmitted = moment(task.assignedOn);

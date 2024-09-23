@@ -411,7 +411,7 @@ export const ScheduleVeteran = ({
   return scheduledHearing?.taskId && !scheduledHearing?.action ? (
     <Redirect to={`/queue/appeals/${props.appealId}`} />
   ) : (
-    <div {...regionalOfficeSection}>
+    <div {...regionalOfficeSection} data-testid="schedule-veteran-testid" errors-test={JSON.stringify(errors)}>
       <AppSegment filledBackground extraClassNames="schedule-veteran-page">
         <h1 {...headerStyle} >{header}</h1>
         {error && <Alert title={error.title} type="error">{error.detail}</Alert>}

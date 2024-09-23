@@ -1,11 +1,13 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 import { reducer, generateInitialState } from '../../../app/intake';
 
 import ReduxBase from '../../../app/components/ReduxBase';
 import UntimelyExemptionModal from '../../../app/intake/components/UntimelyExemptionModal';
 import { sample1 } from './testData';
+import { testRenderingWithNewProps } from '../../helpers/testHelpers';
 
 describe('UntimelyExemptionModal', () => {
   const formType = 'higher_level_review';
@@ -24,59 +26,74 @@ describe('UntimelyExemptionModal', () => {
     intakeData,
     currentIssue,
     onSubmit: () => null,
-    onCancel: () => null
+    onCancel: () => null,
+    onSkip: () => null,
   };
+
+  const setup = (props) => {
+    return render(
+      <UntimelyExemptionModal
+        {...defaultProps} {...props}
+      />,
+      {
+        wrapper: wrappingComponent,
+      }
+    );
+  }
 
   describe('renders', () => {
     it('renders button text', () => {
-      const wrapper = mount(<UntimelyExemptionModal {...defaultProps} onSkip={() => null} />, { wrappingComponent });
-
-      const cancelBtn = wrapper.find('.cf-modal-controls .close-modal');
-      const skipBtn = wrapper.find('.cf-modal-controls .no-matching-issues');
-      const submitBtn = wrapper.find('.cf-modal-controls .add-issue');
-
-      expect(cancelBtn.text()).toBe('Cancel adding this issue');
-      expect(skipBtn.text()).toBe('None of these match, see more options');
-      expect(submitBtn.text()).toBe('Add this issue');
-
-      wrapper.setProps({
-        cancelText: 'cancel',
-        skipText: 'skip',
-        submitText: 'submit'
-      });
-
-      expect(cancelBtn.text()).toBe('cancel');
-      expect(skipBtn.text()).toBe('skip');
-      expect(submitBtn.text()).toBe('submit');
+      setup();
+      expect(screen.getByText('Cancel adding this issue')).toBeInTheDocument();
+      expect(screen.getByText('None of these match, see more options')).toBeInTheDocument();
+      expect(screen.getByText('Add this issue')).toBeInTheDocument();
+    });
+    it('renders with new props', async () => {
+      testRenderingWithNewProps(setup);
     });
 
     it('skip button only with onSkip prop', () => {
-      const wrapper = mount(<UntimelyExemptionModal {...defaultProps} />, { wrappingComponent });
+      const {container, rerender}=render(<UntimelyExemptionModal
+        formType={formType}
+        intakeData={intakeData}
+        currentIssue={currentIssue}
+        onSubmit={() => null}
+        onCancel={() => null}
+        />,
+        { wrapper: wrappingComponent });
 
-      expect(wrapper.find('.cf-modal-controls .no-matching-issues').exists()).toBe(false);
+      expect(container.querySelector('.cf-modal-controls .no-matching-issues')).not.toBeInTheDocument();
 
-      wrapper.setProps({ onSkip: () => null });
-      expect(wrapper.find('.cf-modal-controls .no-matching-issues').exists()).toBe(true);
+      rerender(<UntimelyExemptionModal
+        formType={formType}
+        intakeData={intakeData}
+        currentIssue={currentIssue}
+        onSubmit={() => null}
+        onCancel={() => null}
+        onSkip={() => null}
+        />);
+
+      expect(container.querySelector('.cf-modal-controls .no-matching-issues')).toBeInTheDocument();
     });
 
-    // Disabling this for now until we switch to more robust JS testing framework
-    // it('disables button when nothing selected', () => {
-    //   const wrapper = mount(<UntimelyExemptionModal {...defaultProps} />, { wrappingComponent });
+    it('disables button when nothing selected', () => {
+      const { rerender } = render(<UntimelyExemptionModal
+        {...defaultProps}
+        />,
+        { wrapper: wrappingComponent });
 
-    //   const submitBtn = wrapper.find('.cf-modal-controls .add-issue');
+        let submitBtn = screen.getByRole('button', { name: /Add this issue/i });
+        expect(submitBtn).toBeDisabled();
 
-    //   expect(submitBtn.prop('disabled')).to.be.eql(true);
+        rerender(<UntimelyExemptionModal
+          {...defaultProps}
+          untimelyExemption={'true'}
+          />);
 
-    //   // This used to work for class component
-    //   // wrapper.setState({
-    //   //   untimelyExemption: true
-    //   // });
-
-    //   // This... also doesn't appear to be sufficient to trigger the React click handlers and state change
-    //   wrapper.find('.cf-modal-body label[htmlFor="untimely-exemption_true"]').simulate('click');
-
-    //   // We need to find element again, or it won't appear updated
-    //   expect(wrapper.find('.cf-modal-controls .add-issue').prop('disabled')).to.be.eql(false);
-    // });
+        submitBtn = screen.getByRole('button', { name: /Add this issue/i });
+        const yesRadio = screen.getByRole('radio', { name: /Yes/i });
+        userEvent.click(yesRadio);
+        expect(submitBtn).not.toBeDisabled();
+    });
   });
 });

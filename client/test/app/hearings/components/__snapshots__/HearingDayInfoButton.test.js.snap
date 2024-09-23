@@ -34,6 +34,7 @@ exports[`HearingDayInfoButton renders correctly 1`] = `
             </span>
             <span
               data-css-10mgax4=""
+              data-testid="tooltip-testid"
             >
               <div
                 class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -177,6 +178,7 @@ exports[`HearingDayInfoButton renders the Docket readable request type when Dock
             </span>
             <span
               data-css-10mgax4=""
+              data-testid="tooltip-testid"
             >
               <div
                 class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"

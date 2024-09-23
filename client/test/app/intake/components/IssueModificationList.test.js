@@ -1,6 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { fireEvent, render, screen } from '@testing-library/react';
 import COPY from '../../../../COPY';
 import IssueModificationList from 'app/intake/components/IssueModificationList';
 import {
@@ -48,7 +47,7 @@ describe('IssueModificationList', () => {
       expect(screen.getByText(COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.SECTION_TITLE)).toBeInTheDocument();
       expect(dropdown).toBeInTheDocument();
 
-      userEvent.click(dropdown);
+      fireEvent.keyDown(dropdown, { key: 'ArrowDown' });
 
       expect(document.querySelector(menuClass)).toBeInTheDocument();
       expect(screen.getByText('Edit addition request')).toBeInTheDocument();
@@ -62,7 +61,7 @@ describe('IssueModificationList', () => {
       expect(screen.getByText(COPY.ISSUE_MODIFICATION_REQUESTS.MODIFICATION.SECTION_TITLE)).toBeInTheDocument();
       expect(dropdown).toBeInTheDocument();
 
-      userEvent.click(dropdown);
+      fireEvent.keyDown(dropdown, { key: 'ArrowDown' });
 
       expect(document.querySelector(menuClass)).toBeInTheDocument();
       expect(screen.getByText('Edit modification request')).toBeInTheDocument();
@@ -76,7 +75,7 @@ describe('IssueModificationList', () => {
       expect(screen.getByText(COPY.ISSUE_MODIFICATION_REQUESTS.REMOVAL.SECTION_TITLE)).toBeInTheDocument();
       expect(dropdown).toBeInTheDocument();
 
-      userEvent.click(dropdown);
+      fireEvent.keyDown(dropdown, { key: 'ArrowDown' });
 
       expect(document.querySelector(menuClass)).toBeInTheDocument();
       expect(screen.getByText('Edit removal request')).toBeInTheDocument();
@@ -89,7 +88,7 @@ describe('IssueModificationList', () => {
 
       expect(dropdown).toBeInTheDocument();
 
-      userEvent.click(dropdown);
+      fireEvent.keyDown(dropdown, { key: 'ArrowDown' });
 
       expect(document.querySelector(menuClass)).toBeInTheDocument();
       expect(screen.getByText('Edit withdrawal request')).toBeInTheDocument();
@@ -106,7 +105,7 @@ describe('IssueModificationList', () => {
 
       expect(dropdown).toBeInTheDocument();
 
-      userEvent.click(dropdown);
+      fireEvent.keyDown(dropdown, { key: 'ArrowDown' });
 
       expect(document.querySelector(menuClass)).toBeInTheDocument();
       expect(screen.getByText('Review issue addition request')).toBeInTheDocument();
@@ -118,7 +117,7 @@ describe('IssueModificationList', () => {
 
       expect(dropdown).toBeInTheDocument();
 
-      userEvent.click(dropdown);
+      fireEvent.keyDown(dropdown, { key: 'ArrowDown' });
 
       expect(document.querySelector(menuClass)).toBeInTheDocument();
       expect(screen.getByText('Review issue modification request')).toBeInTheDocument();
@@ -130,7 +129,7 @@ describe('IssueModificationList', () => {
 
       expect(dropdown).toBeInTheDocument();
 
-      userEvent.click(dropdown);
+      fireEvent.keyDown(dropdown, { key: 'ArrowDown' });
 
       expect(document.querySelector(menuClass)).toBeInTheDocument();
       expect(screen.getByText('Review issue removal request')).toBeInTheDocument();
@@ -142,7 +141,7 @@ describe('IssueModificationList', () => {
 
       expect(dropdown).toBeInTheDocument();
 
-      userEvent.click(dropdown);
+      fireEvent.keyDown(dropdown, { key: 'ArrowDown' });
 
       expect(document.querySelector(menuClass)).toBeInTheDocument();
       expect(screen.getByText('Review issue withdrawal request')).toBeInTheDocument();

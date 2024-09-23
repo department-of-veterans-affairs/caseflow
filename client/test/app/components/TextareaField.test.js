@@ -1,7 +1,6 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { render, screen, fireEvent} from '@testing-library/react';
 import TextareaField from 'app/components/TextareaField';
-import { FormLabel } from 'app/components/FormLabel';
 
 // Setup the constants
 const limit = 10;
@@ -12,131 +11,162 @@ const name = 'Test Field';
 const error = 'Something went wrong';
 
 describe('TextareaField', () => {
+  const setup = (props) => {
+    return render(
+      <TextareaField
+      onChange={changeSpy}
+      name={name}
+      {...props}
+      />
+    )
+  };
   test('Matches snapshot with default props', () => {
     // Run the test
-    const textField = mount(<TextareaField onChange={changeSpy} name={name} />);
+    const {container, asFragment} = setup();
 
-    // Assertions
-    expect(textField.find('textarea')).toHaveLength(1);
-    expect(textField.find('label').prop('className')).toEqual('question-label');
-    expect(textField.find(FormLabel).prop('name')).toEqual(name);
-    expect(textField.prop('disabled')).toEqual(false);
-    expect(textField.prop('optional')).toEqual(false);
-    expect(textField.prop('required')).toEqual(false);
-    expect(textField).toMatchSnapshot();
+    expect(screen.getByRole('textbox', {name: `${name}` })).toBeInTheDocument();
+    expect(container.querySelector('.question-label')).toBeInTheDocument();
+    expect(screen.getByText(name)).toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Can accept input', () => {
     // Setup the test
-    const textField = mount(<TextareaField onChange={changeSpy} name={name} />);
+    const { asFragment} = setup();
 
     // Run the test
-    textField.find('textarea').simulate('change', { target: { value: testValue } });
+    const textField = screen.getByRole('textbox', {name: `${name}` });
+    fireEvent.change(textField, { target: { value: testValue } });
 
     // Assertions
     expect(changeSpy).toHaveBeenCalledWith(testValue);
-    expect(textField).toMatchSnapshot();
+    expect(textField.value).toEqual(testValue);
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Respects disabled prop on the textarea field', () => {
     // Setup the test
-    const textField = mount(<TextareaField disabled onChange={changeSpy} name={name} />);
+    const { asFragment} = setup({
+      disabled: true
+    });
+
+    const textField = screen.getByRole('textbox', {name: `${name}` });
 
     // Assertions
-    expect(textField.find('textarea').prop('disabled')).toEqual(true);
-    expect(textField).toMatchSnapshot();
+    expect(textField).toBeDisabled();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Respects optional prop on the textarea field', () => {
     // Setup the test
-    const textField = mount(<TextareaField optional onChange={changeSpy} name={name} />);
+    const {container, asFragment} = setup({
+      optional: true
+    });
 
     // Assertions
-    expect(textField.find(FormLabel).prop('optional')).toEqual(true);
-    expect(textField.find('.cf-optional').text()).toEqual('Optional');
-    expect(textField).toMatchSnapshot();
+    expect(screen.getByRole('textbox', {name: `${name} Optional` })).toBeInTheDocument();
+    expect(screen.getByText('Optional')).toBeInTheDocument();
+    expect(container.querySelector('.cf-optional')).toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Respects required prop on the textarea field', () => {
     // Setup the test
-    const textField = mount(<TextareaField required onChange={changeSpy} name={name} />);
+    const {container, asFragment} = setup({
+      required: true
+    });
 
     // Assertions
-    expect(textField.find(FormLabel).prop('required')).toEqual(true);
-    expect(textField.find('.cf-required').text()).toEqual('Required');
-    expect(textField).toMatchSnapshot();
+    expect(screen.getByRole('textbox', {name: `${name} Required` })).toBeInTheDocument();
+    expect(screen.getByText('Required')).toBeInTheDocument();
+    expect(container.querySelector('.cf-required')).toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Displays screen-reader only label when hideLabel prop is true', () => {
     // Setup the test
-    const textField = mount(<TextareaField hideLabel onChange={changeSpy} name={name} />);
+    const {container, asFragment} = setup({
+      hideLabel: true
+    });
 
     // Assertions
-    expect(textField.find('label').prop('className')).toEqual('sr-only question-label');
-    expect(textField).toMatchSnapshot();
+    expect(container.querySelector('.sr-only')).toBeInTheDocument();
+    expect(container.querySelector('.question-label')).toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Displays a bold label when strongLabel prop is true', () => {
     // Setup the test
-    const textField = mount(<TextareaField strongLabel onChange={changeSpy} name={name} />);
+    const {container, asFragment} = setup({
+      strongLabel: true
+    });
 
     // Assertions
-    expect(textField.find('strong').text()).toEqual(name);
-    expect(textField).toMatchSnapshot();
+    const strongElement = container.querySelector('strong');
+    expect(strongElement).toHaveTextContent(name);
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Displays error message when present', () => {
     // Setup the test
-    const textField = mount(<TextareaField errorMessage={error} onChange={changeSpy} name={name} />);
+    const {container, asFragment} = setup({
+      errorMessage: error
+    });
 
     // Assertions
-    expect(textField.find('.usa-input-error-message').text()).toEqual(error);
-    expect(textField).toMatchSnapshot();
+    expect(screen.getByText(error)).toBeInTheDocument();
+    expect(container.querySelector('.usa-input-error')).toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Displays character count when maxlength and value are present', () => {
     // Setup the test
-    const textField = mount(<TextareaField maxlength={limit} value={testValue} onChange={changeSpy} name={name} />);
+    const { asFragment} = setup({
+      maxlength: limit,
+      value: testValue
+    });
 
     // Assertions
-    expect(textField.find('i').text()).toEqual(`${limit - testValue.length} characters left`);
-    expect(textField).toMatchSnapshot();
+    expect(screen.getByText(`${limit - testValue.length} characters left`)).toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Emojis consume 2 characters', () => {
     // Setup the test
-    const textField = mount(<TextareaField maxlength={2} value={emoji} onChange={changeSpy} name={name} />);
+    const { asFragment} = setup({
+      maxlength: 2,
+      value: emoji
+    });
 
     // Assertions
-    expect(textField.find('i').text()).toEqual('0 characters left');
-    expect(textField).toMatchSnapshot();
-
+    expect(screen.getByText('0 characters left')).toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Does not display character count when maxlength is present, but value is not present', () => {
     // Setup the test
-    const textField = mount(<TextareaField maxlength={limit} onChange={changeSpy} name={name} />);
+    const {container, asFragment} = setup({
+      maxlength: limit
+    });
 
     // Assertions
-    expect(textField.find('i')).toHaveLength(0);
-    expect(textField).toMatchSnapshot();
+    const iElements = container.querySelectorAll('i');
+    expect(iElements).toHaveLength(0);
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Respects characterLimitTopRight prop on the textarea field', () => {
     // Setup the test
-    const textField = mount(
-      <TextareaField
-        maxlength={limit}
-        onChange={changeSpy}
-        name={name}
-        characterLimitTopRight={true}
-        value={'Notes'}
-      />
-    );
-    expect(textField.find('i')).toHaveLength(1);
-    expect(textField.find('p').first().props().style).toEqual(
-      { float: 'right', marginBottom: 0, lineHeight: 'inherit' }
-    );
-    expect(textField).toMatchSnapshot();
+    const {container, asFragment} = setup({
+      maxlength: limit,
+      characterLimitTopRight: true,
+      value: 'Notes'
+    });
+
+    const iElements = container.querySelectorAll('i');
+    expect(iElements).toHaveLength(1);
+    const pElement = container.querySelector('p[style="float: right; margin-bottom: 0px; line-height: inherit;"]');
+    expect(pElement).toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
   })
 });
