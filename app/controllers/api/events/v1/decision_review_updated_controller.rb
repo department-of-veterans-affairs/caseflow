@@ -97,7 +97,16 @@ class Api::Events::V1::DecisionReviewUpdatedController < Api::ApplicationControl
         :untimely_exemption_notes,
         :vacols_id,
         :vacols_sequence_id,
-        :veteran_participant_id
+        :veteran_participant_id,
+        :claim_id,
+        :end_product_establishment,
+        :added_issues,
+        :updated_issues,
+        :removed_issues,
+        :withdrawn_issues,
+        :ineligible_to_eligible_issues,
+        :eligible_to_ineligible_issues,
+        :ineligible_to_ineligible_issues
       ]
     )
   end

@@ -2,757 +2,327 @@
 
 RSpec.describe RequestIssuesUpdateEvent, type: :model do
   let(:user) { create(:user) }
-  let(:review) { create(:supplemental_claim) }
-
+  let(:review) { create(:higher_level_review) }
+  let!(:existing_request_issue) { create(:request_issue, decision_review: review, reference_id: "some_reference_id") }
   let(:parser) do
-    json_path = Rails.root.join("app",
-                                "services", "events", "decision_review_updated",
-                                "decision_review_updated_example.json")
-    json_content = File.read(json_path)
-    Events::DecisionReviewUpdated::DecisionReviewUpdatedParser.new(nil, JSON.parse(json_content))
+    instance_double(Events::DecisionReviewUpdated::DecisionReviewUpdatedParser).tap do |parser|
+      allow(parser).to receive(:updated_issues).and_return([])
+      allow(parser).to receive(:withdrawn_issues).and_return([])
+      allow(parser).to receive(:added_issues).and_return([])
+      allow(parser).to receive(:removed_issues).and_return([])
+    end
   end
 
-  subject do
-    described_class.new(
-      user: user,
-      review: review,
-      parser: parser
-    )
+  let(:parser_issue) do
+    instance_double(Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser).tap do |issue|
+      allow(issue).to receive(:ri_reference_id).and_return("some_reference_id")
+      allow(issue).to receive(:ri_benefit_type).and_return("some_benefit_type")
+      allow(issue).to receive(:ri_closed_at).and_return(Time.zone.now)
+      allow(issue).to receive(:ri_closed_status).and_return("some_status")
+      allow(issue).to receive(:ri_contested_issue_description).and_return("some_description")
+      allow(issue).to receive(:ri_contention_reference_id).and_return("some_contention_id")
+      allow(issue).to receive(:ri_contested_rating_issue_diagnostic_code).and_return("some_diagnostic_code")
+      allow(issue).to receive(:ri_contested_rating_decision_reference_id).and_return("some_decision_id")
+      allow(issue).to receive(:ri_contested_rating_issue_profile_date).and_return(Time.zone.today)
+      allow(issue).to receive(:ri_contested_rating_issue_reference_id).and_return("some_issue_id")
+      allow(issue).to receive(:ri_contested_decision_issue_id).and_return("some_decision_issue_id")
+      allow(issue).to receive(:ri_decision_date).and_return(Time.zone.today)
+      allow(issue).to receive(:ri_ineligible_due_to_id).and_return("some_ineligible_id")
+      allow(issue).to receive(:ri_ineligible_reason).and_return("some_reason")
+      allow(issue).to receive(:ri_is_unidentified).and_return(false)
+      allow(issue).to receive(:ri_unidentified_issue_text).and_return("some_text")
+      allow(issue).to receive(:ri_nonrating_issue_category).and_return("some_category")
+      allow(issue).to receive(:ri_nonrating_issue_description).and_return("some_description")
+      allow(issue).to receive(:ri_nonrating_issue_bgs_id).and_return("some_bgs_id")
+      allow(issue).to receive(:ri_nonrating_issue_bgs_source).and_return("some_source")
+      allow(issue).to receive(:ri_ramp_claim_id).and_return("some_claim_id")
+      allow(issue).to receive(:ri_rating_issue_associated_at).and_return(Time.zone.now)
+      allow(issue).to receive(:ri_untimely_exemption).and_return(false)
+      allow(issue).to receive(:ri_untimely_exemption_notes).and_return("some_notes")
+      allow(issue).to receive(:ri_vacols_id).and_return("some_vacols_id")
+      allow(issue).to receive(:ri_vacols_sequence_id).and_return("some_sequence_id")
+      allow(issue).to receive(:ri_type).and_return("some_type")
+      allow(issue).to receive(:ri_edited_description).and_return("Edited description")
+    end
+  end
+
+  let(:issue_payload) do
+    {
+      decision_review_issue_id: "some_reference_id",
+      benefit_type: "compensation",
+      closed_at: 1_625_151_600,
+      closed_status: "withdrawn",
+      contention_reference_id: 7_905_752,
+      contested_decision_issue_id: 201,
+      contested_issue_description: "Service connection for PTSD",
+      contested_rating_decision_reference_id: nil,
+      contested_rating_issue_diagnostic_code: "9411",
+      contested_rating_issue_profile_date: 1_625_076_000,
+      contested_rating_issue_reference_id: "REF9411",
+      type: "RequestIssue",
+      decision: [
+        {
+          award_event_id: 679,
+          category: "decision",
+          contention_id: 35,
+          decision_finalized_time: nil,
+          decision_recorded_time: nil,
+          decision_source: "the source",
+          decision_text: "",
+          description: nil,
+          disposition: nil,
+          dta_error_explanation: nil,
+          id: 1738,
+          rating_profile_date: nil
+        }
+      ],
+      decision_date: 19_568,
+      ineligible_due_to_id: 301,
+      ineligible_reason: nil,
+      is_unidentified: false,
+      nonrating_issue_bgs_id: "13",
+      nonrating_issue_bgs_source: "CORP_AWARD_ATTORNEY_FEE",
+      nonrating_issue_category: "Accrued Benefits",
+      nonrating_issue_description: "Chapter 35 benefits",
+      ramp_claim_id: "RAMP123",
+      rating_issue_associated_at: 1_625_076_000,
+      unidentified_issue_text: nil,
+      untimely_exemption: nil,
+      untimely_exemption_notes: nil,
+      vacols_id: "VAC123",
+      vacols_sequence_id: nil,
+      edited_description: "Edited description"
+    }
+  end
+
+  describe "#initialize" do
+    it "calls build_request_issues_data" do
+      expect_any_instance_of(described_class).to receive(:build_request_issues_data)
+      described_class.new(review: review, user: user, parser: parser)
+    end
+  end
+
+  describe "#find_request_issue_id" do
+    it "returns the request issue id" do
+      result = described_class.new(review: review, user: user, parser: parser).find_request_issue_id(parser_issue)
+      expect(result).to eq(existing_request_issue.id)
+    end
+
+    it "raises an error if the request issue is not found" do
+      allow(RequestIssue).to receive(:find_by).and_return(nil)
+      expect do
+        described_class.new(review: review, user: user, parser: parser).find_request_issue_id(parser_issue)
+      end.to raise_error(Caseflow::Error::DecisionReviewUpdateMissingIssueError)
+    end
+  end
+
+  describe "#build_issue_data" do
+    it "returns an empty hash if the parser issue is nil" do
+      result = described_class.new(review: review, user: user, parser: parser).build_issue_data(parser_issue: nil)
+      expect(result).to eq({})
+    end
+
+    it "returns a hash of request issue data" do
+      result = described_class.new(review: review, user: user, parser: parser).build_issue_data(
+        parser_issue: parser_issue
+      )
+      expect(result).to eq(
+        {
+          request_issue_id: existing_request_issue.id,
+          benefit_type: parser_issue.ri_benefit_type,
+          closed_date: parser_issue.ri_closed_at,
+          withdrawal_date: nil,
+          closed_status: parser_issue.ri_closed_status,
+          contention_reference_id: parser_issue.ri_contention_reference_id,
+          contested_decision_issue_id: parser_issue.ri_contested_decision_issue_id,
+          contested_rating_issue_reference_id: parser_issue.ri_contested_rating_issue_reference_id,
+          contested_rating_issue_diagnostic_code: parser_issue.ri_contested_rating_issue_diagnostic_code,
+          contested_rating_decision_reference_id: parser_issue.ri_contested_rating_decision_reference_id,
+          contested_rating_issue_profile_date: parser_issue.ri_contested_rating_issue_profile_date,
+          contested_issue_description: parser_issue.ri_contested_issue_description,
+          unidentified_issue_text: parser_issue.ri_unidentified_issue_text,
+          decision_date: parser_issue.ri_decision_date,
+          nonrating_issue_category: parser_issue.ri_nonrating_issue_category,
+          nonrating_issue_description: parser_issue.ri_nonrating_issue_description,
+          is_unidentified: parser_issue.ri_is_unidentified,
+          untimely_exemption: parser_issue.ri_untimely_exemption,
+          untimely_exemption_notes: parser_issue.ri_untimely_exemption_notes,
+          ramp_claim_id: parser_issue.ri_ramp_claim_id,
+          vacols_id: parser_issue.ri_vacols_id,
+          vacols_sequence_id: parser_issue.ri_vacols_sequence_id,
+          ineligible_reason: parser_issue.ri_ineligible_reason,
+          ineligible_due_to_id: parser_issue.ri_ineligible_due_to_id,
+          reference_id: parser_issue.ri_reference_id,
+          type: parser_issue.ri_type,
+          rating_issue_associated_at: parser_issue.ri_rating_issue_associated_at,
+          nonrating_issue_bgs_source: parser_issue.ri_nonrating_issue_bgs_source,
+          nonrating_issue_bgs_id: parser_issue.ri_nonrating_issue_bgs_id,
+          edited_description: parser_issue.ri_edited_description
+        }
+      )
+    end
+
+    it "returns a hash of request issue data with a withdrawal date equal to the closed date" do
+      result = described_class.new(
+        review: review, user: user, parser: parser
+      ).build_issue_data(parser_issue: parser_issue, is_withdrawn: true)
+      expect(result[:withdrawal_date]).to eq(result[:closed_date])
+    end
+  end
+
+  describe "#build_request_issues_data" do
+    it "returns an array of request issue data for updated issues" do
+      allow(parser).to receive(:updated_issues).and_return([issue_payload])
+      allow(Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser).to receive(:new).and_return(parser_issue)
+      issue_data = described_class.new(review: review, user: user, parser: parser).build_issue_data(
+        parser_issue: parser_issue
+      )
+      result = described_class.new(review: review, user: user, parser: parser).build_request_issues_data
+      expect(result).to eq([issue_data])
+    end
   end
 
   describe "#perform!" do
-    context "when valid and not processed" do
-      before do
-        allow(subject).to receive(:validate_before_perform).and_return(true)
-        allow(subject).to receive(:processed?).and_return(false)
-        allow(subject).to receive(:transaction).and_yield
-        allow(subject).to receive(:process_job).and_return(true)
-      end
-
-      it "processes issues and returns true" do
-        expect(subject).to receive(:process_issues!)
-        expect(subject.perform!).to be true
-      end
-
-      it "updates the review and issues" do
-        allow(subject).to receive(:process_issues!)
-        expect(subject).to receive(:update!).with(
-          before_request_issue_ids: anything,
-          after_request_issue_ids: anything,
-          withdrawn_request_issue_ids: anything,
-          edited_request_issue_ids: anything
-        )
-        subject.perform!
-      end
-    end
-
-    context "when validation fails" do
-      it "returns false" do
-        allow(subject).to receive(:validate_before_perform).and_return(false)
-        expect(subject.perform!).to be false
-      end
+    it "returns true if the base perform! is successful" do
+      allow_any_instance_of(RequestIssuesUpdate).to receive(:perform!).and_return(true)
+      allow_any_instance_of(described_class).to receive(:remove_request_issues_with_no_decision!).and_return(true)
+      allow_any_instance_of(described_class).to receive(:process_eligible_to_ineligible_issues!).and_return(true)
+      allow_any_instance_of(described_class).to receive(:process_ineligible_to_eligible_issues!).and_return(true)
+      allow_any_instance_of(described_class).to receive(:process_ineligible_to_ineligible_issues!).and_return(true)
+      allow_any_instance_of(described_class).to receive(:process_request_issues_data!).and_return(true)
+      subject = described_class.new(review: review, user: user, parser: parser)
+      expect(subject).to receive(:remove_request_issues_with_no_decision!)
+      expect(subject).to receive(:process_eligible_to_ineligible_issues!)
+      expect(subject).to receive(:process_ineligible_to_eligible_issues!)
+      expect(subject).to receive(:process_ineligible_to_ineligible_issues!)
+      expect(subject).to receive(:process_request_issues_data!)
+      expect(subject.perform!).to be_truthy
     end
   end
 
-  describe "#after_issues" do
-    it "calculates or fetches the after issues" do
-      allow(subject).to receive(:after_request_issue_ids).and_return(nil)
-      expect(subject).to receive(:calculate_after_issues).and_return([])
-      subject.after_issues
+  describe "#remove_request_issues_with_no_decision!" do
+    it "removes request issues with no decision" do
+      allow_any_instance_of(RequestIssueClosure).to receive(:with_no_decision!).and_return(true)
+      allow(parser).to receive(:removed_issues).and_return([issue_payload])
+      allow_any_instance_of(described_class).to receive(:check_for_mismatched_closed_issues!).and_return(true)
+      expect(
+        described_class.new(review: review, user: user, parser: parser).remove_request_issues_with_no_decision!
+      ).to be_truthy
     end
   end
 
-  describe "#edited_issues" do
-    it "calculates or fetches the edited issues" do
-      allow(subject).to receive(:edited_request_issue_ids).and_return(nil)
-      expect(subject).to receive(:calculate_edited_issues).and_return([])
-      subject.edited_issues
+  describe "#check_for_mismatched_closed_issues!" do
+    it "raises an error if the issues are mismatched" do
+      issue_payload[:decision_review_issue_id] = "some_diff_reference_id"
+      allow(parser).to receive(:removed_issues).and_return([issue_payload])
+      allow_any_instance_of(RequestIssuesUpdate).to receive(:removed_issues).and_return([existing_request_issue])
+      expect do
+        described_class.new(review: review, user: user, parser: parser).check_for_mismatched_closed_issues!
+      end.to raise_error(Caseflow::Error::DecisionReviewUpdateMismatchedRemovedIssuesError)
+    end
+
+    it "does not raise an error if the removed issues are matched" do
+      allow(parser).to receive(:removed_issues).and_return([issue_payload])
+      allow_any_instance_of(RequestIssuesUpdate).to receive(:removed_issues).and_return([existing_request_issue])
+      expect do
+        described_class.new(review: review, user: user, parser: parser).check_for_mismatched_closed_issues!
+      end.to_not raise_error
+    end
+
+    it "raises an error if the removed issues are missing in Caseflow" do
+      allow(parser).to receive(:removed_issues).and_return([issue_payload])
+      allow_any_instance_of(RequestIssuesUpdate).to receive(:removed_issues).and_return([])
+      expect do
+        described_class.new(review: review, user: user, parser: parser).check_for_mismatched_closed_issues!
+      end.to raise_error(Caseflow::Error::DecisionReviewUpdateMismatchedRemovedIssuesError)
+    end
+
+    it "raises an error if the removed issues are missing in parser" do
+      allow(parser).to receive(:removed_issues).and_return([])
+      allow_any_instance_of(RequestIssuesUpdate).to receive(:removed_issues).and_return([existing_request_issue])
+      expect do
+        described_class.new(review: review, user: user, parser: parser).check_for_mismatched_closed_issues!
+      end.to raise_error(Caseflow::Error::DecisionReviewUpdateMismatchedRemovedIssuesError)
     end
   end
 
-  describe "#added_issues" do
-    it "calculates the added issues" do
-      expect(subject).to receive(:calculate_added_issues).and_return(parser.added_issues)
-      subject.added_issues
+  describe "#process_eligible_to_ineligible_issues!" do
+    it "updates the request issues to ineligible" do
+      issue_payload[:ineligible_reason] = "untimely"
+      issue_payload[:contention_reference_id] = nil
+      issue_payload[:closed_at] = 1_625_151_600
+      issue_payload[:nonrating_issue_description] = "some_nonrating_issue_description"
+      allow(parser).to receive(:eligible_to_ineligible_issues).and_return([issue_payload])
+      expect(
+        described_class.new(review: review, user: user, parser: parser).process_eligible_to_ineligible_issues!
+      ).to be_truthy
+      request_issue = RequestIssue.find(existing_request_issue.id)
+      expect(request_issue.ineligible_reason).to eq(issue_payload[:ineligible_reason])
+      expect(request_issue.closed_at).to eq("1970-01-19 14:25:51.000000000 -0500")
+      expect(request_issue.contention_removed_at).to be
+      expect(request_issue.contested_issue_description).to eq(issue_payload[:contested_issue_description])
+      expect(request_issue.nonrating_issue_category).to eq(issue_payload[:nonrating_issue_category])
+      expect(request_issue.nonrating_issue_description).to eq(issue_payload[:nonrating_issue_description])
     end
   end
 
-  describe "#removed_issues" do
-    it "calculates the removed issues" do
-      expect(subject).to receive(:removed_issues).and_return(parser.removed_issues)
-      subject.removed_issues
-    end
-  end
-
-  describe "#withdrawn_issues" do
-    it "calculates or fetches the withdrawn issues" do
-      allow(subject).to receive(:withdrawn_request_issue_ids).and_return(nil)
-      expect(subject).to receive(:calculate_withdrawn_issues).and_return(parser.withdrawn_issues)
-      subject.withdrawn_issues
-    end
-  end
-
-  describe "#validate_before_perform" do
-    context "when there are no changes" do
-      it "sets error_code to :no_changes and returns false" do
-        allow(subject).to receive(:changes?).and_return(false)
-        expect(subject.send(:validate_before_perform)).to be false
-        expect(subject.error_code).to eq(:no_changes)
-      end
-    end
-  end
-
-  describe "#perform!" do
-    context "when only added issues are present" do
-      before do
-        subject.instance_variable_set(:@added_issue_data, parser.added_issues)
-        subject.instance_variable_set(:@removed_issue_data, [])
-        subject.instance_variable_set(:@edited_issue_data, [])
-        subject.instance_variable_set(:@withdrawn_issue_data, [])
-
-        allow(subject).to receive(:validate_before_perform).and_return(true)
-        allow(subject).to receive(:processed?).and_return(false)
-        allow(subject).to receive(:transaction).and_yield
-        allow(subject).to receive(:process_job).and_return(true)
-      end
-
-      it "processes only the added issues and returns true" do
-        expect(subject).to receive(:process_issues!)
-        expect(subject.perform!).to be true
-      end
-
-      it "updates the review and issues with added issues only" do
-        allow(subject).to receive(:process_issues!)
-        expect(subject).to receive(:update!).with(
-          before_request_issue_ids: anything,
-          after_request_issue_ids: anything,
-          withdrawn_request_issue_ids: anything,
-          edited_request_issue_ids: anything
-        )
-        subject.perform!
-      end
-    end
-  end
-
-  describe "#calculate_added_issues" do
-    let(:multiple_issue_data) { parser.added_issues + parser.added_issues } # Simulating multiple issues
-
-    before do
-      subject.instance_variable_set(:@added_issue_data, multiple_issue_data)
-    end
-
-    it "processes all added issues and returns the correct count" do
-      added_issues = subject.send(:calculate_added_issues)
-      expect(added_issues.size).to eq(2)
-    end
-  end
-
-  context "when multiple types of issues are present" do
-    before do
-      subject.instance_variable_set(:@added_issue_data, parser.added_issues)
-      subject.instance_variable_set(:@removed_issue_data, parser.removed_issues)
-      subject.instance_variable_set(:@edited_issue_data, parser.updated_issues)
-      subject.instance_variable_set(:@withdrawn_issue_data, parser.withdrawn_issues)
-
-      allow(subject).to receive(:validate_before_perform).and_return(true)
-      allow(subject).to receive(:processed?).and_return(false)
-      allow(subject).to receive(:transaction).and_yield
-    end
-
-    it "processes all types of issues and returns true" do
-      expect(subject).to receive(:process_issues!)
-      expect(subject.perform!).to be true
-    end
-  end
-
-  context "when an exception occurs during transaction" do
-    before do
-      allow(subject).to receive(:validate_before_perform).and_return(true)
-      allow(subject).to receive(:processed?).and_return(false)
-      allow(subject).to receive(:transaction).and_raise(StandardError)
-    end
-
-    it "raises an error and does not commit changes" do
-      expect { subject.perform! }.to raise_error(StandardError)
-      expect(subject).not_to receive(:process_issues!)
-    end
-  end
-
-  context "when validation fails" do
-    before do
-      allow(subject).to receive(:validate_before_perform).and_return(false)
-    end
-
-    it "returns false and does not process issues" do
-      expect(subject).not_to receive(:process_issues!)
-      expect(subject.perform!).to be false
-    end
-  end
-
-  context "when handling errors in #process_withdrawn_issues!" do
-    let(:invalid_reference_id) { "12345" }
-
-    before do
-      subject.instance_variable_set(:@withdrawn_issue_data, [{ reference_id: invalid_reference_id }])
-      allow(review.request_issues).to receive(:find_by)
-        .with(reference_id: invalid_reference_id)
-        .and_return(nil)
-    end
-
-    it "raises a DecisionReviewUpdateMissingIssueError with the correct message" do
-      expect { subject.perform! }.to raise_error(
-        Caseflow::Error::DecisionReviewUpdateMissingIssueError,
-        "Request issue not found for REFERENCE_ID: #{invalid_reference_id}"
+  describe "#process_ineligible_to_eligible_issues!" do
+    it "updates the request issues to eligible" do
+      existing_request_issue.update(
+        ineligible_reason: "untimely",
+        closed_status: "ineligible",
+        closed_at: Time.zone.now,
+        contention_reference_id: nil,
+        contention_removed_at: nil
       )
+      allow(parser).to receive(:ineligible_to_eligible_issues).and_return([issue_payload])
+      expect(
+        described_class.new(review: review, user: user, parser: parser).process_ineligible_to_eligible_issues!
+      ).to be_truthy
+      existing_request_issue.reload
+      expect(existing_request_issue.ineligible_reason).to eq(nil)
+      expect(existing_request_issue.closed_status).to eq(nil)
+      expect(existing_request_issue.closed_at).to eq(nil)
+      expect(existing_request_issue.contention_reference_id).to eq(issue_payload[:contention_reference_id])
+      expect(existing_request_issue.contention_removed_at).to eq(nil)
+      expect(existing_request_issue.contested_issue_description).to eq(issue_payload[:contested_issue_description])
+      expect(existing_request_issue.nonrating_issue_category).to eq(issue_payload[:nonrating_issue_category])
+      expect(existing_request_issue.nonrating_issue_description).to eq(issue_payload[:nonrating_issue_description])
     end
   end
 
-  context "when handling errors in #process_removed_issues!" do
-    let(:invalid_reference_id) { "12345" }
-
-    before do
-      subject.instance_variable_set(:@removed_issue_data, [{ reference_id: invalid_reference_id }])
-      allow(review.request_issues).to receive(:find_by)
-        .with(reference_id: invalid_reference_id)
-        .and_return(nil)
-    end
-
-    it "raises a DecisionReviewUpdateMissingIssueError with the correct message" do
-      expect { subject.perform! }.to raise_error(
-        Caseflow::Error::DecisionReviewUpdateMissingIssueError,
-        "Request issue not found for REFERENCE_ID: #{invalid_reference_id}"
+  describe "#process_ineligible_to_ineligible_issues!" do
+    it "updates the request issues to ineligible" do
+      existing_request_issue.update(
+        ineligible_reason: "untimely",
+        closed_status: "ineligible",
+        closed_at: Time.zone.now
       )
+      issue_payload[:ineligible_reason] = "before_ama"
+      issue_payload[:closed_at] = 1_625_151_600
+      allow(parser).to receive(:ineligible_to_ineligible_issues).and_return([issue_payload])
+      expect(
+        described_class.new(review: review, user: user, parser: parser).process_ineligible_to_ineligible_issues!
+      ).to be_truthy
+      existing_request_issue.reload
+      expect(existing_request_issue.ineligible_reason).to eq(issue_payload[:ineligible_reason])
+      expect(existing_request_issue.closed_at).to eq("1970-01-19 14:25:51.000000000 -0500")
+      expect(existing_request_issue.contested_issue_description).to eq(issue_payload[:contested_issue_description])
+      expect(existing_request_issue.nonrating_issue_category).to eq(issue_payload[:nonrating_issue_category])
+      expect(existing_request_issue.nonrating_issue_description).to eq(issue_payload[:nonrating_issue_description])
     end
   end
 
-  context "when handling errors in #process_withdrawn_issues!" do
-    let(:invalid_reference_id) { "12345" }
-
-    before do
-      subject.instance_variable_set(:@withdrawn_issue_data, [{ reference_id: invalid_reference_id }])
+  describe "#process_request_issues_data!" do
+    it "updates addtional fields" do
+      allow(parser).to receive(:updated_issues).and_return([issue_payload])
+      expect(
+        described_class.new(review: review, user: user, parser: parser).process_request_issues_data!
+      ).to be_truthy
+      existing_request_issue.reload
+      expect(existing_request_issue.contested_issue_description).to eq(issue_payload[:contested_issue_description])
+      expect(existing_request_issue.nonrating_issue_category).to eq(issue_payload[:nonrating_issue_category])
+      expect(existing_request_issue.nonrating_issue_description).to eq(issue_payload[:nonrating_issue_description])
     end
-
-    context "when a request issue is not found" do
-      before do
-        allow(RequestIssue).to receive(:find).and_raise(ActiveRecord::RecordNotFound)
-      end
-
-      it "raises a DecisionReviewUpdateMissingIssueError with the correct message" do
-        expect { subject.perform! }.to raise_error(Caseflow::Error::DecisionReviewUpdateMissingIssueError,
-                                                   "Request issue not found for REFERENCE_ID: #{invalid_reference_id}")
-      end
-    end
-  end
-
-  context "when handling errors in #process_eligible_to_ineligible_issues!" do
-    let(:invalid_reference_id) { "12345" }
-    let(:eligible_to_ineligible_issue) do
-      [{ reference_id: invalid_reference_id, ineligible_reason: "higher_level_review_to_higher_level_review" }]
-    end
-
-    before do
-      subject.instance_variable_set(:@eligible_to_ineligible_issue_data, [{ reference_id: invalid_reference_id }])
-    end
-
-    context "when a request issue is not found" do
-      before do
-        allow(RequestIssue).to receive(:find).and_raise(ActiveRecord::RecordNotFound)
-
-        allow_any_instance_of(RequestIssue).to receive(:closed_at).and_return(nil)
-        allow_any_instance_of(RequestIssue).to receive(:save!).and_return(true)
-      end
-
-      it "raises a DecisionReviewUpdateMissingIssueError with the correct message" do
-        expect { subject.perform! }.to raise_error(Caseflow::Error::DecisionReviewUpdateMissingIssueError,
-                                                   "Request issue not found for REFERENCE_ID: #{invalid_reference_id}")
-      end
-    end
-  end
-
-  context "when handling errors in #process_ineligible_to_eligible_issues!" do
-    let(:invalid_reference_id) { "12345" }
-
-    before do
-      subject.instance_variable_set(:@ineligible_to_eligible_issue_data, [{ reference_id: invalid_reference_id }])
-      allow(review.request_issues).to receive(:find_by)
-        .with(reference_id: invalid_reference_id)
-        .and_return(nil)
-    end
-
-    it "raises a DecisionReviewUpdateMissingIssueError with the correct message" do
-      expect { subject.perform! }.to raise_error(
-        Caseflow::Error::DecisionReviewUpdateMissingIssueError,
-        "Request issue not found for REFERENCE_ID: #{invalid_reference_id}"
-      )
-    end
-  end
-
-  context "when handling errors in #process_ineligible_to_ineligible_issues!" do
-    let(:invalid_reference_id) { "12345" }
-
-    before do
-      subject.instance_variable_set(:@ineligible_to_ineligible_issue_data, [{ reference_id: invalid_reference_id }])
-      allow(review.request_issues).to receive(:find_by)
-        .with(reference_id: invalid_reference_id)
-        .and_return(nil)
-    end
-
-    it "raises a DecisionReviewUpdateMissingIssueError with the correct message" do
-      expect { subject.perform! }.to raise_error(
-        Caseflow::Error::DecisionReviewUpdateMissingIssueError,
-        "Request issue not found for REFERENCE_ID: #{invalid_reference_id}"
-      )
-    end
-  end
-end
-
-describe "additional positive tests" do
-  let(:user) { create(:user) }
-  let(:review) { create(:supplemental_claim) }
-  let(:parser) do
-    json_path = Rails.root.join("app", "services", "events",
-                                "decision_review_updated", "decision_review_updated_example.json")
-    json_content = File.read(json_path)
-    Events::DecisionReviewUpdated::DecisionReviewUpdatedParser.new(nil, JSON.parse(json_content))
-  end
-
-  let(:request_issues_update_event) do
-    RequestIssuesUpdateEvent.new(
-      user: user,
-      review: review,
-      parser: parser
-    )
-  end
-
-  describe "#perform!" do
-    context "when validation passes and issues are processed" do
-      before do
-        allow(request_issues_update_event).to receive(:validate_before_perform).and_return(true)
-        allow(request_issues_update_event).to receive(:processed?).and_return(false)
-        allow(review).to receive(:mark_rating_request_issues_to_reassociate!)
-        allow(request_issues_update_event).to receive(:process_job)
-      end
-
-      it "processes issues and updates review" do
-        expect(request_issues_update_event).to receive(:process_issues!)
-        expect(request_issues_update_event).to receive(:update!)
-
-        expect(request_issues_update_event.perform!).to be_truthy
-      end
-    end
-
-    context "when validation fails" do
-      before do
-        allow(request_issues_update_event).to receive(:validate_before_perform).and_return(false)
-      end
-
-      it "does not process issues" do
-        expect(request_issues_update_event.perform!).to be_falsey
-        expect(request_issues_update_event).not_to receive(:process_issues!)
-      end
-    end
-
-    context "when already processed" do
-      before do
-        allow(request_issues_update_event).to receive(:processed?).and_return(true)
-      end
-
-      it "does not process issues" do
-        expect(request_issues_update_event.perform!).to be_falsey
-        expect(request_issues_update_event).not_to receive(:process_issues!)
-      end
-    end
-  end
-
-  describe "#process_issues!" do
-    it "calls individual issue processing methods" do
-      expect(request_issues_update_event).to receive(:process_added_issues!)
-      expect(request_issues_update_event).to receive(:process_removed_issues!)
-      expect(request_issues_update_event).to receive(:process_withdrawn_issues!)
-      expect(request_issues_update_event).to receive(:process_edited_issues!)
-      expect(request_issues_update_event).to receive(:process_eligible_to_ineligible_issues!)
-      expect(request_issues_update_event).to receive(:process_ineligible_to_eligible_issues!)
-      expect(request_issues_update_event).to receive(:process_ineligible_to_ineligible_issues!)
-
-      request_issues_update_event.process_issues!
-    end
-  end
-
-  context "new tests" do
-    let(:user) { create(:user) }
-    let(:review) { create(:supplemental_claim) }
-
-    let(:parser) do
-      json_path = Rails.root.join("app", "services", "events", "decision_review_updated",
-                                  "decision_review_updated_example.json")
-      json_content = File.read(json_path)
-      Events::DecisionReviewUpdated::DecisionReviewUpdatedParser.new(nil, JSON.parse(json_content))
-    end
-
-    let(:request_issues_update_event) do
-      RequestIssuesUpdateEvent.new(
-        user: user,
-        review: review,
-        parser: parser
-      )
-    end
-
-    describe "#perform!" do
-      context "when processing all types of issues successfully" do
-        let!(:existing_issue1) { create(:request_issue, decision_review: review, reference_id: "1") }
-        let!(:existing_issue2) { create(:request_issue, decision_review: review, reference_id: "2") }
-
-        let(:added_issue_data) do
-          [{
-            reference_id: "3",
-            ri_contested_issue_description: "Added Issue",
-            ri_benefit_type: "compensation"
-          }]
-        end
-
-        let(:removed_issue_data) { [{ reference_id: "1" }] }
-        let(:edited_issue_data) do
-          [{ reference_id: "2",
-             edited_description: "Edited Issue", decision_date: Time.zone.today }]
-        end
-        let(:withdrawn_issue_data) { [{ reference_id: "2", closed_at: Time.zone.now }] }
-
-        before do
-          # Create the added issue in the database before running the test
-          create(:request_issue, decision_review: review, reference_id: "3")
-
-          request_issues_update_event.instance_variable_set(:@added_issue_data, added_issue_data)
-          request_issues_update_event.instance_variable_set(:@removed_issue_data, removed_issue_data)
-          request_issues_update_event.instance_variable_set(:@edited_issue_data, edited_issue_data)
-          request_issues_update_event.instance_variable_set(:@withdrawn_issue_data, withdrawn_issue_data)
-
-          allow(request_issues_update_event).to receive(:validate_before_perform).and_return(true)
-          allow(request_issues_update_event).to receive(:processed?).and_return(false)
-          allow(review).to receive(:mark_rating_request_issues_to_reassociate!)
-          allow(request_issues_update_event).to receive(:process_job)
-        end
-
-        it "marks the issue as removed" do
-          request_issues_update_event.perform!
-          existing_issue1.reload
-          expect(existing_issue1.closed_status).to eq("removed")
-          expect(existing_issue1.closed_at).not_to be_nil
-        end
-      end
-    end
-
-    # 1. Testing #process_added_issues!
-    describe "#process_added_issues!" do
-      context "when there are added issues" do
-        let!(:existing_issue1) { create(:request_issue, decision_review: review, reference_id: "1") }
-        let!(:existing_issue2) { create(:request_issue, decision_review: review, reference_id: "2") }
-
-        let(:added_issue_data) do
-          [
-            {
-              reference_id: "3",
-              ri_contested_issue_description: "Issue 3",
-              ri_benefit_type: "compensation"
-            },
-            {
-              reference_id: "4",
-              ri_contested_issue_description: "Issue 4",
-              ri_benefit_type: "compensation"
-            }
-          ]
-        end
-
-        before do
-          # Create the added issues in the database
-          create(:request_issue, decision_review: review, reference_id: "3")
-          create(:request_issue, decision_review: review, reference_id: "4")
-
-          request_issues_update_event.instance_variable_set(:@added_issue_data, added_issue_data)
-        end
-        # rubocop: disable Lint/AmbiguousBlockAssociation
-
-        it "processes existing added issues without creating new ones" do
-          expect { request_issues_update_event.process_added_issues! }
-            .not_to change { review.request_issues.count }
-          expect(review.request_issues.exists?(reference_id: "3")).to be_truthy
-          expect(review.request_issues.exists?(reference_id: "4")).to be_truthy
-        end
-      end
-
-      context "when there are no added issues" do
-        before do
-          request_issues_update_event.instance_variable_set(:@added_issue_data, [])
-        end
-
-        it "does not create any new request issues" do
-          expect { request_issues_update_event.process_added_issues! }.not_to change { review.request_issues.count }
-        end
-      end
-    end
-
-    # 2. Testing #process_removed_issues!
-    describe "#process_removed_issues!" do
-      context "when there are removed issues" do
-        let!(:existing_issue) { create(:request_issue, decision_review: review, reference_id: "1") }
-        let(:removed_issue_data) { [{ reference_id: "1" }] }
-
-        before do
-          request_issues_update_event.instance_variable_set(:@removed_issue_data, removed_issue_data)
-        end
-
-        it "marks the issue as removed" do
-          request_issues_update_event.process_removed_issues!
-          existing_issue.reload
-          expect(existing_issue.closed_status).to eq("removed")
-          expect(existing_issue.closed_at).not_to be_nil
-        end
-      end
-
-      context "when there are no removed issues" do
-        before do
-          request_issues_update_event.instance_variable_set(:@removed_issue_data, [])
-        end
-
-        it "does not alter any request issues" do
-          expect { request_issues_update_event.process_removed_issues! }.not_to change { review.request_issues.count }
-        end
-      end
-    end
-
-    # 3. Testing #process_withdrawn_issues!
-    describe "#process_withdrawn_issues!" do
-      context "when there are withdrawn issues" do
-        let!(:existing_issue) { create(:request_issue, decision_review: review, reference_id: "2") }
-        let(:withdrawn_issue_data) { [{ reference_id: "2", closed_at: Time.zone.now }] }
-
-        before do
-          request_issues_update_event.instance_variable_set(:@withdrawn_issue_data, withdrawn_issue_data)
-        end
-
-        it "marks the issue as withdrawn with the correct closed_at date" do
-          request_issues_update_event.send(:process_withdrawn_issues!)
-          existing_issue.reload
-          expect(existing_issue.closed_status).to eq("withdrawn")
-          expect(existing_issue.closed_at).to be_within(1.second).of(withdrawn_issue_data.first[:closed_at])
-        end
-      end
-    end
-
-    # 4. Testing #process_edited_issues!
-    describe "#process_edited_issues!" do
-      context "when there are edited issues" do
-        let!(:existing_issue) do
-          create(:request_issue, decision_review: review, reference_id: "2", decision_date: 1.day.ago)
-        end
-
-        let(:edited_issue_data) do
-          [{ reference_id: "2", edited_description: "Updated Issue", decision_date: Time.zone.today }]
-        end
-
-        before do
-          request_issues_update_event.instance_variable_set(:@edited_issue_data, edited_issue_data)
-        end
-
-        it "updates the edited_description and decision date of the issue" do
-          request_issues_update_event.send(:process_edited_issues!)
-          existing_issue.reload
-          expect(existing_issue.edited_description).to eq("Updated Issue")
-          expect(existing_issue.decision_date).to eq(Time.zone.today)
-        end
-      end
-    end
-
-    # 5. Testing #process_eligible_to_ineligible_issues!
-    describe "#process_eligible_to_ineligible_issues!" do
-      context "when there are eligible to ineligible issues" do
-        let!(:existing_issue) do
-          create(:request_issue, decision_review: review, reference_id: "2", ineligible_reason: nil)
-        end
-        let(:issue_data) do
-          [{ reference_id: "2", ineligible_reason: "duplicate_of_rating_issue_in_active_review",
-             closed_at: Time.zone.now }]
-        end
-
-        before do
-          request_issues_update_event.instance_variable_set(:@eligible_to_ineligible_issue_data, issue_data)
-        end
-
-        it "updates the issue to be ineligible with the correct reason and closed_at date" do
-          request_issues_update_event.send(:process_eligible_to_ineligible_issues!)
-          existing_issue.reload
-          expect(existing_issue.ineligible_reason).to eq("duplicate_of_rating_issue_in_active_review")
-          expect(existing_issue.closed_at).to be_within(1.second).of(issue_data.first[:closed_at])
-          expect(existing_issue.contention_reference_id).to be_nil
-        end
-      end
-
-      context "when there are 2 issues to process" do
-        let!(:existing_issue1) do
-          create(:request_issue, decision_review: review, reference_id: "1", ineligible_reason: nil)
-        end
-
-        let!(:existing_issue2) do
-          create(:request_issue, decision_review: review, reference_id: "2", ineligible_reason: nil)
-        end
-
-        let(:issue_data) do
-          [
-            { reference_id: "1", ineligible_reason: "untimely", closed_at: Time.zone.now },
-            { reference_id: "2", ineligible_reason: "appeal_to_appeal", closed_at: Time.zone.now }
-          ]
-        end
-
-        before do
-          request_issues_update_event.instance_variable_set(:@eligible_to_ineligible_issue_data, issue_data)
-        end
-
-        it "updates all eligible issues" do
-          request_issues_update_event.send(:process_eligible_to_ineligible_issues!)
-
-          existing_issue1.reload
-          existing_issue2.reload
-
-          expect(existing_issue1.ineligible_reason).to eq("untimely")
-          expect(existing_issue1.closed_at).to be_within(1.second).of(issue_data[0][:closed_at])
-          expect(existing_issue1.contention_reference_id).to be_nil
-
-          expect(existing_issue2.ineligible_reason).to eq("appeal_to_appeal")
-          expect(existing_issue2.closed_at).to be_within(1.second).of(issue_data[1][:closed_at])
-          expect(existing_issue2.contention_reference_id).to be_nil
-        end
-      end
-
-      context "when processing 2 issues and one is missing" do
-        let!(:existing_issue) do
-          create(:request_issue, decision_review: review, reference_id: "1", ineligible_reason: nil)
-        end
-
-        let(:issue_data) do
-          [
-            { reference_id: "1", ineligible_reason: "untimely", closed_at: Time.zone.now },
-            { reference_id: "non_existent_id", ineligible_reason: "appeal_to_appeal", closed_at: Time.zone.now }
-          ]
-        end
-
-        before do
-          request_issues_update_event.instance_variable_set(:@eligible_to_ineligible_issue_data, issue_data)
-        end
-
-        it "updates existing issues and raises an error for the missing one" do
-          expect do
-            request_issues_update_event.send(:process_eligible_to_ineligible_issues!)
-          end.to raise_error(Caseflow::Error::DecisionReviewUpdateMissingIssueError,
-                             "Request issue not found for REFERENCE_ID: non_existent_id")
-
-          # Ensure that the existing issue was updated before the error was raised
-          existing_issue.reload
-          expect(existing_issue.ineligible_reason).to eq("untimely")
-          expect(existing_issue.closed_at).to be_within(1.second).of(issue_data[0][:closed_at])
-          expect(existing_issue.contention_reference_id).to be_nil
-        end
-      end
-    end
-
-    # 6. Testing #process_ineligible_to_eligible_issues!
-    describe "#process_ineligible_to_eligible_issues!" do
-      context "when there are ineligible to eligible issues" do
-        let!(:existing_issue) do
-          create(:request_issue, decision_review: review, reference_id: "2",
-                                 ineligible_reason: "untimely", closed_at: Time.zone.now)
-        end
-        let(:issue_data) { [{ reference_id: "2" }] }
-
-        before do
-          request_issues_update_event.instance_variable_set(:@ineligible_to_eligible_issue_data, issue_data)
-        end
-
-        it "updates the issue to be eligible by clearing ineligible_reason and closed_at" do
-          request_issues_update_event.send(:process_ineligible_to_eligible_issues!)
-          existing_issue.reload
-          expect(existing_issue.ineligible_reason).to be_nil
-          expect(existing_issue.closed_at).to be_nil
-        end
-      end
-
-      context "when there are no ineligible to eligible issues" do
-        before do
-          request_issues_update_event.instance_variable_set(:@ineligible_to_eligible_issue_data, [])
-        end
-
-        it "does not alter any request issues" do
-          expect { request_issues_update_event.send(:process_ineligible_to_eligible_issues!) }
-            .not_to change { review.request_issues.pluck(:ineligible_reason) }
-        end
-      end
-    end
-
-    # 7. Testing #process_ineligible_to_ineligible_issues!
-    describe "#process_ineligible_to_ineligible_issues!" do
-      context "when there are ineligible to ineligible issues with new reasons" do
-        let!(:existing_issue) do
-          create(:request_issue, decision_review: review, reference_id: "2", ineligible_reason: "untimely",
-                                 closed_at: Time.zone.now)
-        end
-        let(:issue_data) do
-          [{ reference_id: "2", ineligible_reason: "higher_level_review_to_higher_level_review",
-             closed_at: Time.zone.now }]
-        end
-
-        before do
-          request_issues_update_event.instance_variable_set(:@ineligible_to_ineligible_issue_data, issue_data)
-        end
-
-        it "updates the issue with the new ineligible reason and closed_at date" do
-          request_issues_update_event.send(:process_ineligible_to_ineligible_issues!)
-          existing_issue.reload
-          expect(existing_issue.ineligible_reason).to eq("higher_level_review_to_higher_level_review")
-          expect(existing_issue.closed_at).to be_within(1.second).of(issue_data.first[:closed_at])
-          expect(existing_issue.contention_reference_id).to be_nil
-        end
-      end
-
-      context "when there are no ineligible to ineligible issues" do
-        before do
-          request_issues_update_event.instance_variable_set(:@ineligible_to_ineligible_issue_data, [])
-        end
-
-        it "does not alter any request issues" do
-          expect { request_issues_update_event.send(:process_ineligible_to_ineligible_issues!) }
-            .not_to change { review.request_issues.pluck(:ineligible_reason) }
-        end
-      end
-    end
-
-    # 8. Testing #calculate_added_issues
-    describe "#calculate_added_issues" do
-      let!(:existing_issue1) { create(:request_issue, decision_review: review, reference_id: "3") }
-      let!(:existing_issue2) { create(:request_issue, decision_review: review, reference_id: "4") }
-
-      let(:added_issue_data) do
-        [
-          {
-            reference_id: "3",
-            ri_contested_issue_description: "New Issue 3",
-            ri_benefit_type: "compensation"
-          },
-          {
-            reference_id: "4",
-            ri_contested_issue_description: "New Issue 4",
-            ri_benefit_type: "pension"
-          }
-        ]
-      end
-
-      before do
-        request_issues_update_event.instance_variable_set(:@added_issue_data, added_issue_data)
-      end
-
-      it "fetches existing request issues from the added issue data" do
-        added_issues = request_issues_update_event.send(:calculate_added_issues)
-        expect(added_issues.size).to eq(2)
-        expect(added_issues.map(&:reference_id)).to include("3", "4")
-      end
-    end
-    # rubocop: enable Lint/AmbiguousBlockAssociation
   end
 end
