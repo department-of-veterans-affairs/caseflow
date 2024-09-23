@@ -9,11 +9,14 @@ import ApiUtil from '../../util/ApiUtil';
 import Page from './Page';
 import TextLayer from './TextLayer';
 import DocumentLoadError from './DocumentLoadError';
+import {useDispatch} from "react-redux";
+import {selectCurrentPdf} from "app/reader/Documents/DocumentsActions";
 
 const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel }) => {
   const [isDocumentLoadError, setIsDocumentLoadError] = useState(false);
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
+  const dispatch = useDispatch();
 
   const containerStyle = {
     width: '100%',
@@ -70,6 +73,10 @@ const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel }) => {
 
     getPdfData();
   }, [pdfDoc]);
+
+  useEffect(() => {
+    dispatch(selectCurrentPdf(doc.id));
+  }, [doc.id]);
 
   return (
     <div id="pdfContainer" style={containerStyle}>
