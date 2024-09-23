@@ -417,28 +417,28 @@ export const statusColumn = (currentTab) => {
       },
     ];
   } else if (currentTab === COPY.TRANSCRIPTION_FILE_DISPATCH_ALL_TAB) {
-           filterOptions = [
-             {
-               value: COPY.TRANSCRIPTION_STATUS_COMPLETED_FILTER_OPTION,
-               displayText: COPY.TRANSCRIPTION_STATUS_COMPLETED_FILTER_OPTION,
-             },
-             {
-               value: COPY.TRANSCRIPTION_STATUS_OVERDUE_FILTER_OPTION,
-               displayText: COPY.TRANSCRIPTION_STATUS_OVERDUE_FILTER_OPTION,
-             },
-             {
-               value: COPY.TRANSCRIPTION_STATUS_RETRIEVAL_FAILURE_FILTER_OPTION,
-               displayText:
-                 COPY.TRANSCRIPTION_STATUS_RETRIEVAL_FAILURE_FILTER_OPTION,
-             },
-             {
-               value: COPY.TRANSCRIPTION_STATUS_SENT_FILTER_OPTION,
-               displayText: COPY.TRANSCRIPTION_STATUS_SENT_FILTER_OPTION,
-             },
-           ];
-         } else {
-           filterOptions = [];
-         }
+    filterOptions = [
+      {
+        value: COPY.TRANSCRIPTION_STATUS_COMPLETED_FILTER_OPTION,
+        displayText: COPY.TRANSCRIPTION_STATUS_COMPLETED_FILTER_OPTION,
+      },
+      {
+        value: COPY.TRANSCRIPTION_STATUS_OVERDUE_FILTER_OPTION,
+        displayText: COPY.TRANSCRIPTION_STATUS_OVERDUE_FILTER_OPTION,
+      },
+      {
+        value: COPY.TRANSCRIPTION_STATUS_RETRIEVAL_FAILURE_FILTER_OPTION,
+        displayText:
+          COPY.TRANSCRIPTION_STATUS_RETRIEVAL_FAILURE_FILTER_OPTION,
+      },
+      {
+        value: COPY.TRANSCRIPTION_STATUS_SENT_FILTER_OPTION,
+        displayText: COPY.TRANSCRIPTION_STATUS_SENT_FILTER_OPTION,
+      },
+    ];
+  } else {
+    filterOptions = [];
+  }
 
   return {
     header: (
