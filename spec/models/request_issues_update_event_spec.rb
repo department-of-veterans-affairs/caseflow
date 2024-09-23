@@ -265,7 +265,9 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       existing_request_issue.update(
         ineligible_reason: "untimely",
         closed_status: "ineligible",
-        closed_at: Time.zone.now
+        closed_at: Time.zone.now,
+        contention_reference_id: nil,
+        contention_removed_at: nil
       )
       allow(parser).to receive(:ineligible_to_eligible_issues).and_return([issue_payload])
       expect(
@@ -275,6 +277,8 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       expect(existing_request_issue.ineligible_reason).to eq(nil)
       expect(existing_request_issue.closed_status).to eq(nil)
       expect(existing_request_issue.closed_at).to eq(nil)
+      expect(existing_request_issue.contention_reference_id).to eq(issue_payload[:contention_reference_id])
+      expect(existing_request_issue.contention_removed_at).to eq(nil)
     end
   end
 

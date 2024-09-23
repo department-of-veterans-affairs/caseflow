@@ -56,7 +56,9 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       request_issue.update(
         ineligible_reason: nil,
         closed_status: nil,
-        closed_at: nil
+        closed_at: nil,
+        contention_reference_id: parser_issue.ri_contention_reference_id,
+        contention_removed_at: nil
       )
     end
   end
@@ -169,7 +171,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   def conditional_issue_data(parser_issue, is_withdrawn, is_new)
     {
       request_issue_id: is_new ? nil : find_request_issue_id(parser_issue),
-      withdrawal_date: is_withdrawn ? parser_issue.ri_closed_at : nil,
+      withdrawal_date: is_withdrawn ? parser_issue.ri_closed_at : nil
     }
   end
 
