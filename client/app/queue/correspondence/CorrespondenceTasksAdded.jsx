@@ -2,10 +2,20 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import CaseDetailsLink from '../CaseDetailsLink';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
-import TaskSnapshot from '../TaskSnapshot';
+import { appealWithDetailSelector, taskSnapshotTasksForAppeal } from '../selectors';
+import { useSelector } from 'react-redux';
+import TaskRows from '../components/TaskRows';
 
 const CorrespondenceTasksAdded = (props) => {
   const veteranFullName = props.correspondence.veteranFullName;
+  const appealId = props.appeal.external_id;
+  const appeal = useSelector((state) =>
+    appealWithDetailSelector(state, { appealId })
+  );
+
+  const tasks = useSelector((state) =>
+    taskSnapshotTasksForAppeal(state, { appealId })
+  );
 
   return (
     <>
@@ -49,10 +59,12 @@ const CorrespondenceTasksAdded = (props) => {
         </div>
         <div className="tasks-added-details">
           <span className="tasks-added-text">Tasks added to appeal</span>
-          <div >
-            <TaskSnapshot
-              appealId={props.appeal.external_id}
-              showPulacCerulloAlert={false}
+          <div>
+            <TaskRows appeal={appeal}
+              taskList={tasks}
+              timeline={false}
+              editNodDateEnabled={false}
+              hideDropdown
             />
           </div>
         </div>
