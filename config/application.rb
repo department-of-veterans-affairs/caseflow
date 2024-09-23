@@ -140,6 +140,7 @@ module CaseflowCertification
       autoloader.inflector.inflect(
         "amo_metrics_report_job" => "AMOMetricsReportJob",
         "etl_builder_job" => "ETLBuilderJob",
+        "vacols" => "VACOLS",
       )
     end
 
