@@ -7,7 +7,7 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 
 import FeatureToggleConfiguration from './FeatureToggleConfiguration';
 import FunctionConfiguration from './FunctionConfiguration';
-import OrganizationDropdown from './OrganizationDropdown';
+import OrganizationCheckbox from './OrganizationCheckbox';
 import OFFICE_INFO from '../../../constants/REGIONAL_OFFICE_FOR_CSS_STATION.json';
 
 export default function UserConfiguration(props) {
@@ -67,7 +67,7 @@ export default function UserConfiguration(props) {
           <p>Organizations</p>
           <div className="load-test-container">
             {allOrganizations.map((organizationOption) => (
-              <OrganizationDropdown
+              <OrganizationCheckbox
                 key={organizationOption}
                 organizationOption={organizationOption}
               />

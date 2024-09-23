@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import Checkbox from '../../components/Checkbox';
 import { css } from 'glamor';
 
-export default function OrganizationDropdown(props) {
+export default function OrganizationCheckbox(props) {
   const [isChecked, orgIsChecked] = useState(false);
   const [isAdmin, adminIsChecked] = useState(false);
 
@@ -15,6 +15,7 @@ export default function OrganizationDropdown(props) {
 
   const onChangeHandle = () => {
     orgIsChecked(!isChecked);
+
   };
 
   const isAdminHandle = () => {
@@ -38,7 +39,7 @@ export default function OrganizationDropdown(props) {
       { isChecked && (
         <Checkbox
           name={`${orgOption}-admin`}
-          label="Admin?"
+          label="Admin"
           onChange={() => {
             isAdminHandle();
           }}
@@ -50,6 +51,6 @@ export default function OrganizationDropdown(props) {
   );
 }
 
-OrganizationDropdown.propTypes = {
+OrganizationCheckbox.propTypes = {
   organizationOption: PropTypes.string
 };
