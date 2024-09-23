@@ -3,6 +3,8 @@
 SearchQueryService::LegacyAttributes = Struct.new(
   :aod,
   :appellant_full_name,
+  :assigned_attorney,
+  :assigned_judge,
   :assigned_to_location,
   :caseflow_veteran_id,
   :decision_date,

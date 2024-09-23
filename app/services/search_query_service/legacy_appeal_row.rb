@@ -27,6 +27,8 @@ class SearchQueryService::LegacyAppealRow
     SearchQueryService::LegacyAttributes.new(
       aod: aod,
       appellant_full_name: appellant_full_name,
+      assigned_attorney: assigned_attorney,
+      assigned_judge: assigned_judge,
       assigned_to_location: vacols_row["bfcurloc"],
       caseflow_veteran_id: search_row["veteran_id"],
       decision_date: decision_date,
@@ -34,7 +36,7 @@ class SearchQueryService::LegacyAppealRow
       docket_number: vacols_row["tinum"],
       external_id: vacols_row["vacols_id"],
       hearings: hearings,
-      issues: [{}] * vacols_row["issues_count"],
+      issues: issues,
       mst: mst,
       overtime: search_row["overtime"],
       pact: pact,
@@ -84,6 +86,26 @@ class SearchQueryService::LegacyAppealRow
     end
   end
 
+  def issues
+    vacols_json_array("issues").map do |attrs|
+      WorkQueue::LegacyIssueSerializer.new(
+        Issue.load_from_vacols(attrs)
+      ).serializable_hash[:data][:attributes]
+    end
+  end
+
+  def assigned_attorney
+    json_array("assigned_attorney").first
+  end
+
+  def assigned_judge
+    json_array("assigned_judge").first
+  end
+
+  def json_array(key)
+    JSON.parse(search_row[key] || "[]")
+  end
+
   def vacols_json_array(key)
     JSON.parse(vacols_row[key] || "[]")
   end
@@ -110,11 +132,11 @@ class SearchQueryService::LegacyAppealRow
   end
 
   def mst
-    vacols_row["issues_mst_count"] > 0
+    vacols_row["issues_mst_count"].to_i > 0
   end
 
   def pact
-    vacols_row["issues_pact_count"] > 0
+    vacols_row["issues_pact_count"].to_i > 0
   end
 
   def appellant_full_name
@@ -126,7 +148,7 @@ class SearchQueryService::LegacyAppealRow
   end
 
   def aod
-    vacols_row["aod"] == 1
+    vacols_row["aod"].to_i == 1
   end
 
   def decision_date

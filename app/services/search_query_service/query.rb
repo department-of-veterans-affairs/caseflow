@@ -1,19 +1,20 @@
 # frozen_string_literal: true
 
 class SearchQueryService::Query
-  def docket_number_query
-    <<-SQL
+  def initialize
+    @vacols = SearchQueryService::VacolsQuery.new
+  end
+
+  def docket_number_query(docket_number)
+    query = <<-SQL
       #{appeals_internal_query}
       where a.stream_docket_number=?;
     SQL
+    [query, docket_number]
   end
 
-  def veteran_file_number_num_params
-    4
-  end
-
-  def veteran_file_number_query
-    <<-SQL
+  def veteran_file_number_query(file_number)
+    query = <<-SQL
       (
         #{appeals_internal_query}
         where v.ssn=? or v.file_number=?
@@ -24,10 +25,12 @@ class SearchQueryService::Query
         where v.ssn=? or v.file_number=?
       )
     SQL
+    num_params = 4
+    [query, *[file_number].cycle(num_params).to_a]
   end
 
-  def veteran_ids_query
-    <<-SQL
+  def veteran_ids_query(veteran_id)
+    query = <<-SQL
       (
         #{appeals_internal_query}
         where v.id in (?)
@@ -38,65 +41,16 @@ class SearchQueryService::Query
         where v.id in (?)
       )
     SQL
+    [query, veteran_id, veteran_id]
   end
 
-  def vacols_query
-    <<-SQL
-      select
-        aod,
-        "cases".bfkey vacols_id,
-        "cases".bfcurloc,
-        "cases".bfddec,
-        "cases".bfmpro,
-        "cases".bfac,
-        "cases".bfcorlid,
-        "correspondents".snamef,
-        "correspondents".snamel,
-        "correspondents".sspare1,
-        "correspondents".sspare2,
-        "correspondents".slogid,
-        "folders".tinum,
-        "folders".tivbms,
-        "folders".tisubj2,
-        (select
-          JSON_ARRAYAGG(JSON_OBJECT(
-            'venue' value #{case_hearing_venue_select},
-            'external_id' value "h".hearing_pkseq,
-            'type' value "h".hearing_type,
-            'disposition' value "h".hearing_disp,
-            'date' value "h".hearing_date
-          ))
-          from hearsched "h"
-          where "h".folder_nr="cases".bfkey
-        ) hearings,
-        (select count("issues".isskey) from issues "issues" where "issues".isskey="cases".bfkey) issues_count,
-        (select count("hearings".hearing_pkseq) from hearsched "hearings" where "hearings".folder_nr="cases".bfkey) hearing_count,
-        (select count("issues".isskey) from issues "issues" where "issues".isskey="cases".bfkey and "issues".issmst='Y') issues_mst_count,
-        (select count("issues".isskey) from issues "issues" where "issues".isskey="cases".bfkey and "issues".isspact='Y') issues_pact_count
-      from
-        brieff "cases"
-      left join folder "folders"
-        on "cases".bfkey="folders".ticknum
-      left join corres "correspondents"
-        on "cases".bfcorkey="correspondents".stafkey
-      #{VACOLS::Case::JOIN_AOD}
-      where
-        "cases".bfkey in (?)
-    SQL
+  def vacols_query(vacols_ids)
+    [vacols.query, vacols_ids]
   end
 
   private
 
-  def case_hearing_venue_select
-    <<-SQL
-      case
-        when "h".hearing_type='#{VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:video]}' AND
-              "h".hearing_date < '#{VACOLS::CaseHearing::VACOLS_VIDEO_HEARINGS_END_DATE}'
-        then #{Rails.application.config.vacols_db_name}.HEARING_VENUE("h".vdkey)
-        else "cases".bfregoff
-      end
-    SQL
-  end
+  attr_reader :vacols
 
   def legacy_appeals_internal_query
     <<-SQL
@@ -150,12 +104,30 @@ class SearchQueryService::Query
             where
               t.appeal_type = 'LegacyAppeal' and
               t.appeal_id=a.id and
-              t.type='AttorneyTask' and
+              t.type in ('#{attorney_task_classes.join("','")}') and
               t.status != '#{Constants.TASK_STATUSES.cancelled}'
             order by t.created_at desc
             limit 1
           ) u2
         ) assigned_attorney,
+        (
+          select jsonb_agg(u2) from
+          (
+            select
+              u.*
+            from tasks t
+            left join users u on
+              t.assigned_to_id=u.id and
+              t.assigned_to_type='User'
+            where
+              t.appeal_type = 'LegacyAppeal' and
+              t.appeal_id=a.id and
+              t.type in ('#{judge_task_classes.join("','")}') and
+              t.status != '#{Constants.TASK_STATUSES.cancelled}'
+            order by t.created_at desc
+            limit 1
+          ) u2
+        ) assigned_judge,
         null request_issues,
         null active_request_issues,
         null withdrawn_request_issues,
@@ -259,12 +231,30 @@ class SearchQueryService::Query
             where
               t.appeal_type = 'Appeal' and
               t.appeal_id=a.id and
-              t.type='AttorneyTask' and
+              t.type in ('#{attorney_task_classes.join("','")}') and
               t.status != '#{Constants.TASK_STATUSES.cancelled}'
             order by t.created_at desc
             limit 1
           ) u2
         ) assigned_attorney,
+        (
+          select jsonb_agg(u2) from
+          (
+            select
+              u.*
+            from tasks t
+            left join users u on
+              t.assigned_to_id=u.id and
+              t.assigned_to_type='User'
+            where
+              t.appeal_type = 'Appeal' and
+              t.appeal_id=a.id and
+              t.type in ('#{judge_task_classes.join("','")}') and
+              t.status != '#{Constants.TASK_STATUSES.cancelled}'
+            order by t.created_at desc
+            limit 1
+          ) u2
+        ) assigned_judge,
         (
           select jsonb_agg(ri2) from
           (
@@ -323,7 +313,7 @@ class SearchQueryService::Query
               di.mst_status,
               di.pact_status,
               array(
-                  select rdi.id
+                  select rdi.request_issue_id
                   from request_decision_issues rdi
                   where rdi.decision_issue_id=di.id
               ) request_issue_ids,
@@ -386,5 +376,29 @@ class SearchQueryService::Query
       left join advance_on_docket_motions aod on aod.appeal_id=a.id and aod.person_id=pp.id and aod.appeal_type='Appeal'
       left join veterans v on a.veteran_file_number=v.file_number or a.veteran_file_number=v.ssn
     SQL
+  end
+
+  def attorney_task_classes
+    [
+      "AttorneyTask",
+      *AttorneyTask.descendants.map(&:name)
+      # 'AttorneyRewriteTask',
+      # 'AttorneyDispatchReturnTask',
+      # 'DocketSwitchGrantedTask',
+      # 'DocketSwitchDeniedTask',
+    ]
+  end
+
+  def judge_task_classes
+    [
+      "JudgeTask",
+      *JudgeTask.descendants.map(&:name)
+      # 'JudgeAddressMotionToVacateTask',
+      # 'JudgeQualityReviewTask',
+      # 'JudgeDispatchReturnTask',
+      # 'JudgeAssignTask',
+      # 'DocketSwitchRulingTask',
+      # 'JudgeDecisionReviewTask'
+    ]
   end
 end

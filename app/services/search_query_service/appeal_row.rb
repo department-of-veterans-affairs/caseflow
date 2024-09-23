@@ -28,6 +28,7 @@ class SearchQueryService::AppealRow
       appellant_full_name: appellant_full_name,
       assigned_to_location: queried_appeal.assigned_to_location,
       assigned_attorney: assigned_attorney,
+      assigned_judge: assigned_judge,
       caseflow_veteran_id: query_row["veteran_id"],
       contested_claim: contested_claim,
       decision_date: decision_date,
@@ -159,6 +160,10 @@ class SearchQueryService::AppealRow
 
   def assigned_attorney
     json_array("assigned_attorney").first
+  end
+
+  def assigned_judge
+    json_array("assigned_judge").first
   end
 
   def json_array(key)

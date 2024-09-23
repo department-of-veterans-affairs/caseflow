@@ -14,7 +14,9 @@ class SearchQueryService
 
   def search_by_docket_number
     results = ActiveRecord::Base.connection.exec_query(
-      sanitize([queries.docket_number_query, docket_number])
+      sanitize(
+        queries.docket_number_query(docket_number)
+      )
     )
 
     results.map do |row|
@@ -36,9 +38,27 @@ class SearchQueryService
         AppealRow.new(row).search_response
       else
         vacols_row = vacols_results.find { |result| result["vacols_id"] == row["external_id"] }
-        LegacyAppealRow.new(row, vacols_row).search_response
+
+        Rails.logger.warn(no_vacols_record_warning(result)) if vacols_row.blank?
+        LegacyAppealRow.new(row, vacols_row || null_vacols_row).search_response
       end
     end
+  end
+
+  def null_vacols_row
+    {}
+  end
+
+  def no_vacols_record_warning(result)
+    <<-WARN
+      No corresponding VACOLS record found for appeal with:
+        id: #{result['id']}
+        vacols_id: #{result['vacols_id']}
+      searching with:
+        #{file_number.present? "file_number #{file_number}"} \
+        #{veteran_ids.present? "veteran_ids #{veteran_ids.join(',')}"} \
+        #{file_number.present? "docket_number #{docket_number}"}
+    WARN
   end
 
   def vacols_ids
@@ -62,7 +82,7 @@ class SearchQueryService
     ActiveRecord::Base
       .connection
       .exec_query(
-        sanitize([queries.veteran_ids_query, veteran_ids, veteran_ids])
+        sanitize(queries.veteran_ids_query(veteran_ids))
       )
       .uniq { |result| result["external_id"] }
   end
@@ -76,16 +96,13 @@ class SearchQueryService
 
   def file_number_or_ssn_query
     sanitize(
-      [
-        queries.veteran_file_number_query,
-        *[file_number].cycle(queries.veteran_file_number_num_params).to_a
-      ]
+      queries.veteran_file_number_query(file_number)
     )
   end
 
   def vacols_results
     @vacols_results ||= begin
-      vacols_query = VACOLS::Record.sanitize_sql_array([queries.vacols_query, vacols_ids])
+      vacols_query = VACOLS::Record.sanitize_sql_array(queries.vacols_query(vacols_ids))
       VACOLS::Record.connection.exec_query(vacols_query)
     end
   end
