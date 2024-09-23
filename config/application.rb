@@ -151,6 +151,7 @@ module CaseflowCertification
       "#{root}/app/jobs/batch_processes",
       "#{root}/app/models/hearings",
       "#{root}/app/models/mixins",
+      "#{root}/app/models/organizations",
       "#{root}/app/models/prepend",
       "#{root}/app/models/prepend/va_notify",
       "#{root}/app/models/tasks",
