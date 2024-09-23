@@ -399,8 +399,6 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def contested_claim
-    return false unless FeatureToggle.enabled?(:indicator_for_contested_claims)
-
     vacols_representatives&.any? do |r|
       VACOLS::Representative::CONTESTED_REPTYPES.values.pluck(:code).include?(r.reptype)
     end
