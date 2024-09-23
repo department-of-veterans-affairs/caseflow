@@ -150,6 +150,7 @@ module CaseflowCertification
     Rails.autoloaders.main.collapse(
       "#{root}/app/jobs/batch_processes",
       "#{root}/app/models/hearings",
+      "#{root}/app/models/mixins",
       "#{root}/app/models/prepend",
       "#{root}/app/models/prepend/va_notify",
       "#{root}/app/models/tasks",
