@@ -25,6 +25,7 @@ class CaseDistributionTest extends React.PureComponent {
       isReseedingAmaDocketGoals: false,
       isReseedingDocketPriority: false,
       isReturnLegacyAppeals: false,
+      isReseedingGenericFullSuiteAppealsSeeds: false,
       isFailReturnLegacyAppeals: false,
       showLegacyAppealsAlert: false,
       showAlert: false,
@@ -121,7 +122,7 @@ class CaseDistributionTest extends React.PureComponent {
       this.setState({
         isReseedingNonSSCAVLJAppeals: false,
         showAlert: true,
-        alertMsg: '{COPY.TEST_RESEED_NLNSSCAVLJAPPEALS_ALERTMSG}',
+        alertMsg: '{COPY.TEST_RESEED_NONSSCAVLJAPPEALS_ALERTMSG}',
       });
     }, (err) => {
       console.warn(err);
@@ -150,6 +151,25 @@ class CaseDistributionTest extends React.PureComponent {
         showLegacyAppealsAlert: true,
         legacyAppealsAlertType: 'error',
         legacyAppealsAlertMsg: err
+      });
+    });
+  };
+
+  reseedGenericFullSuiteAppealsSeeds = () => {
+    this.setState({ isReseedingGenericFullSuiteAppealsSeeds: true });
+    ApiUtil.post('/case_distribution_levers_tests/run_generic_full_suite_appeals_seeds').then(() => {
+      this.setState({
+        isReseedingGenericFullSuiteAppealsSeeds: false,
+        showAlert: true,
+        alertMsg: '{COPY.TEST_RESEED_GENERIC_FULL_SUITE_APPEALS_ALERTMSG}',
+      });
+    }, (err) => {
+      console.warn(err);
+      this.setState({
+        isReseedingGenericFullSuiteAppealsSeeds: false,
+        showAlert: true,
+        alertMsg: err,
+        alertType: 'error',
       });
     });
   };
@@ -444,6 +464,18 @@ class CaseDistributionTest extends React.PureComponent {
                             <div className="lever-right csv-download-right">
                               <strong>{COPY.TEST_RUN_NONSSC_AVLJ_APPEAL_TITLE}</strong>
                               {COPY.TEST_RUN_NONSSC_AVLJ_APPEAL_DESCRIPTION}
+                            </div>
+                            <div className="lever-left csv-download-left">
+                              <Button
+                                onClick={this.reseedGenericFullSuiteAppealsSeeds}
+                                name="Run Generic Full Suite Appeals Seeds"
+                                loading={this.state.isReseedingAod}
+                                loadingText="Reseeding Generic Full Suite Appeals Seeds"
+                              />
+                            </div>
+                            <div className="lever-right csv-download-right">
+                              <strong>{COPY.TEST_RUN_GENERIC_FULL_SUITE_APPEALS_TITLE}</strong>
+                              {COPY.TEST_RUN_GENERIC_FULL_SUITE_APPEALS_DESCRIPTION}
                             </div>
                           </div>
                           <hr />
