@@ -156,6 +156,7 @@ module CaseflowCertification
         "mpi_service" => "MPIService",
         "sc_status_serializer" => "SCStatusSerializer",
         "update_poa_concern" => "UpdatePOAConcern",
+        "va_dot_gov_service" => "VADotGovService",
         "va_notify_send_message_template" => "VANotifySendMessageTemplate",
         "vacols" => "VACOLS",
         "veteran_record_requests_open_for_vre_query" => "VeteranRecordRequestsOpenForVREQuery",
