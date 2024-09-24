@@ -158,6 +158,7 @@ module CaseflowCertification
         "update_poa_concern" => "UpdatePOAConcern",
         "va_dot_gov_service" => "VADotGovService",
         "va_notify_send_message_template" => "VANotifySendMessageTemplate",
+        "va_notify_service" => "VANotifyService",
         "vacols" => "VACOLS",
         "veteran_record_requests_open_for_vre_query" => "VeteranRecordRequestsOpenForVREQuery",
       )
