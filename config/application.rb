@@ -139,6 +139,7 @@ module CaseflowCertification
     Rails.autoloaders.each do |autoloader|
       autoloader.inflector.inflect(
         "amo_metrics_report_job" => "AMOMetricsReportJob",
+        "cavc_decision" => "CAVCDecision",
         "etl_builder_job" => "ETLBuilderJob",
         "update_poa_concern" => "UpdatePOAConcern",
         "vacols" => "VACOLS",
