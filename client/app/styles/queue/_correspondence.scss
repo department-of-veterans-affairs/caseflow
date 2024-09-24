@@ -1354,6 +1354,18 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   margin-bottom: 20px;
 }
 
+.corr-title-with-button {
+  width: 100%;
+  display: inline-flex;
+  align-items: start;
+  gap: 20px;
+
+  .button-style {
+    display: inline-block;
+    margin-top: 0px;
+  }
+}
+
 .correspondence-admin-container {
   .textarea-div-styling-test-correspondence {
     margin-top: 45px;

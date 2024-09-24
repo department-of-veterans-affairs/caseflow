@@ -26,14 +26,22 @@ import CorrespondencePaginationWrapper from 'app/queue/correspondence/Correspond
 import Button from '../../../components/Button';
 import Alert from '../../../components/Alert';
 import ApiUtil from '../../../util/ApiUtil';
+import CorrespondenceEditGeneralInformationModal from '../../components/CorrespondenceEditGeneralInformationModal';
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
   const correspondence = props.correspondence;
   const mailTasks = props.correspondence.mailTasks;
-
+  const veteranFileNumber = props.correspondence.veteranFileNumber;
   const allCorrespondences = props.correspondence.all_correspondences;
   const [viewAllCorrespondence, setViewAllCorrespondence] = useState(false);
+  const [editGeneralInformationModal, setEditGeneralInformationModal] = useState(false);
+  const [vaDor, setVaDor] = useState(moment.utc((props.correspondence.vaDateOfReceipt)).format('YYYY-MM-DD'));
+  const [correspondenceTypeId, setCorrespondenceTypeId] = useState(
+    props.correspondence.correspondence_type_id
+  );
+  const [notes, setNotes] = useState(props.correspondence.notes);
+  const [errorMessage, setErrorMessage] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [disableSubmitButton, setDisableSubmitButton] = useState(true);
   const [showSuccessBanner, setShowSuccessBanner] = useState(false);
@@ -383,11 +391,21 @@ const CorrespondenceDetails = (props) => {
     </div>
   </>;
 
+  const handleEditGeneralInformationModal = () => {
+    setEditGeneralInformationModal(!editGeneralInformationModal);
+  };
+
   const correspondencePackageDetails = () => {
     return (
       <>
         <div className="correspondence-package-details">
-          <h2 className="correspondence-h2">General Information</h2>
+          <div className="corr-title-with-button">
+            <h2 className="correspondence-h2">General Information</h2>
+            <Button
+              onClick={handleEditGeneralInformationModal}
+              classNames={['button-style']}
+            >Edit</Button>
+          </div>
           <table className="corr-table-borderless-no-background gray-border">
             <tbody>
               <tr>
@@ -416,6 +434,25 @@ const CorrespondenceDetails = (props) => {
               </tr>
             </tbody>
           </table>
+          {editGeneralInformationModal && (
+            <CorrespondenceEditGeneralInformationModal
+              {...{
+                errorMessage,
+                setErrorMessage,
+                notes,
+                setNotes,
+                veteranFileNumber,
+                correspondenceTypeId,
+                setCorrespondenceTypeId,
+                vaDor,
+                setVaDor,
+                handleEditGeneralInformationModal
+              }}
+              {...props}
+              onCancel={handleEditGeneralInformationModal}
+              correspondence={props.correspondence}
+            />
+          )}
         </div>
       </>
     );
@@ -424,7 +461,7 @@ const CorrespondenceDetails = (props) => {
   const correspondenceResponseLetters = () => {
     return (
       <>
-        <div className="correspondence-package-details">
+        <div className="correspondence-response-letters">
           <CorrespondenceResponseLetters
             letters={props.correspondenceResponseLetters}
             addLetterCheck={props.addLetterCheck}

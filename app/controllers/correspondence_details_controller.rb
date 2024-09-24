@@ -91,6 +91,26 @@ class CorrespondenceDetailsController < CorrespondenceController
     }
   end
 
+  def correspondence_params
+    params.require(:correspondence).permit(:correspondence, :va_date_of_receipt, :correspondence_type_id, :notes)
+      .merge(params.require(:veteran).permit(:file_number, :first_name, :last_name))
+  end
+
+  def edit_general_information
+    veteran = Veteran.find_by(file_number: correspondence_params[:file_number])
+    if veteran
+      correspondence.update!(
+        veteran_id: veteran.id,
+        va_date_of_receipt: correspondence_params[:va_date_of_receipt],
+        correspondence_type_id: correspondence_params[:correspondence_type_id],
+        notes: correspondence_params[:notes]
+      )
+      true
+    else
+      false
+    end
+  end
+
   # Overriding method to allow users to access the correspondence details page
   def verify_correspondence_access
     true
