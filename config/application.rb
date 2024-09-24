@@ -141,6 +141,7 @@ module CaseflowCertification
         "amo_metrics_report_job" => "AMOMetricsReportJob",
         "cavc_case_decision" => "CAVCCaseDecision",
         "cavc_decision" => "CAVCDecision",
+        "cavc_decision_repository" => "CAVCDecisionRepository",
         "cda_control_group" => "CDAControlGroup",
         "etl" => "ETL",
         "etl_builder_job" => "ETLBuilderJob",
