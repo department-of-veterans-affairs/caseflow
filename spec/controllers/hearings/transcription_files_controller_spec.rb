@@ -500,7 +500,8 @@ RSpec.describe Hearings::TranscriptionFilesController do
         get :selected_files_info, params: { file_ids: [transcription_file_1.id, transcription_file_4.id], status: true }
 
         expect(response.status).to eq(200)
-        expect(JSON.parse(response.body).pluck("id")).to eq([transcription_file_4.id, transcription_file_1.id]).or eq([transcription_file_1.id, transcription_file_4.id])
+        expect(JSON.parse(response.body).pluck("id")).to eq([transcription_file_4.id, transcription_file_1.id])
+          .or eq([transcription_file_1.id, transcription_file_4.id])
       end
     end
   end

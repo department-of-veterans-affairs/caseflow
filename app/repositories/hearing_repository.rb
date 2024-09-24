@@ -36,7 +36,7 @@ class HearingRepository
       vacols_record.update_hearing!(hearing_hash.merge(staff_id: vacols_record.slogid)) if hearing_hash.present?
     end
 
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def slot_new_hearing(attrs, override_full_hearing_day_validation: false)
       hearing_day = HearingDay.find(attrs[:hearing_day_id])
       fail HearingDayFull if !override_full_hearing_day_validation && hearing_day.hearing_day_full?
@@ -84,7 +84,7 @@ class HearingRepository
       end
       hearing
     end
-    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     def load_vacols_data(hearing)
       vacols_record = MetricsService.record("VACOLS: HearingRepository.load_vacols_data: #{hearing.vacols_id}",
@@ -127,9 +127,10 @@ class HearingRepository
 
       case_hearings.map do |vacols_record|
         begin
-          hearing = LegacyHearing
-            .assign_or_create_from_vacols_record(vacols_record,
-                                                 legacy_hearing: fetched_hearings_hash[vacols_record.hearing_pkseq])
+          hearing = LegacyHearing.assign_or_create_from_vacols_record(
+            vacols_record,
+            legacy_hearing: fetched_hearings_hash[vacols_record.hearing_pkseq]
+          )
           set_vacols_values(hearing, vacols_record)
         rescue RegionalOffice::NotFoundError => error
           Raven.capture_exception(error, extra: { legacy_hearing_vacols_id: vacols_record.hearing_pkseq })
