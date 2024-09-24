@@ -34,6 +34,7 @@ Rails.application.routes.draw do
       get 'ineligible_judge_list'
       get 'appeals_tied_to_non_ssc_avlj'
       get 'appeals_tied_to_avljs_and_vljs'
+      post 'reset_all_appeals'
       post 'run_demo_aod_hearing_seeds'
       post 'run_demo_non_aod_hearing_seeds'
       post 'run-demo-ama-docket-goals'

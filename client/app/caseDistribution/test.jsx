@@ -14,6 +14,7 @@ import ApiUtil from '../util/ApiUtil';
 import Button from '../components/Button';
 import Alert from 'app/components/Alert';
 import CollapsibleTable from './components/CollapsibleTable';
+import COPY from '../../COPY';
 
 class CaseDistributionTest extends React.PureComponent {
   constructor(props) {
@@ -25,6 +26,7 @@ class CaseDistributionTest extends React.PureComponent {
       isReseedingDocketPriority: false,
       isReturnLegacyAppeals: false,
       isFailReturnLegacyAppeals: false,
+      isClearingAppeals: false,
       showLegacyAppealsAlert: false,
       showAlert: false,
       alertType: 'success',
@@ -50,6 +52,25 @@ class CaseDistributionTest extends React.PureComponent {
       console.warn(err);
       this.setState({
         isReseedingAod: false,
+        showAlert: true,
+        alertMsg: err,
+        alertType: 'error',
+      });
+    });
+  };
+
+  resetAllAppeals = () => {
+    this.setState({ isClearingAppeals: true });
+    ApiUtil.post('/case_distribution_levers_tests/reset_all_appeals').then(() => {
+      this.setState({
+        isClearingAppeals: false,
+        showAlert: true,
+        alertMsg: 'Successfully cleared Ready-to-Distribute Appeals',
+      });
+    }, (err) => {
+      console.warn(err);
+      this.setState({
+        isClearingAppeals: false,
         showAlert: true,
         alertMsg: err,
         alertType: 'error',
@@ -365,6 +386,18 @@ class CaseDistributionTest extends React.PureComponent {
                             <Alert type={this.state.alertType} scrollOnAlert={false}>{this.state.alertMsg}</Alert>
                           }
                           <ul>
+                            <div className="lever-left csv-download-left">
+                              <Button
+                                onClick={this.resetAllAppeals}
+                                name="Clear Ready-to-Distribute Appeals"
+                                loading={this.state.isClearingAppeals}
+                                loadingText="Clearing Ready-to-Distribute Appeals"
+                              />
+                            </div>
+                            <div className="lever-right csv-download-right">
+                              <strong>{COPY.TEST_CLEAR_READY_TO_DISTRIBUTE_APPEALS_TITLE}</strong>
+                              {COPY.TEST_CLEAR_READY_TO_DISTRIBUTE_APPEALS_DESCRIPTION}
+                            </div>
                             <li>
                               <Button
                                 onClick={this.reseedAod}
