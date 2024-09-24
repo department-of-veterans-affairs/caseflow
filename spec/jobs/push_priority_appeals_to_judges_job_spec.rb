@@ -1,6 +1,22 @@
 # frozen_string_literal: true
 
 describe PushPriorityAppealsToJudgesJob, :all_dbs do
+  before do
+    allow_any_instance_of(Docket).to receive(:calculate_days_for_time_goal_with_prior_to_goal).and_return(20)
+
+    create(:case_distribution_lever, :request_more_cases_minimum)
+    create(:case_distribution_lever, :alternative_batch_size)
+    create(:case_distribution_lever, :nod_adjustment)
+    create(:case_distribution_lever, :batch_size_per_attorney)
+    create(:case_distribution_lever, :cavc_affinity_days)
+    create(:case_distribution_lever, :cavc_aod_affinity_days)
+    create(:case_distribution_lever, :ama_hearing_case_affinity_days)
+    create(:case_distribution_lever, :ama_hearing_case_aod_affinity_days)
+    create(:case_distribution_lever, :ama_direct_review_start_distribution_prior_to_goals)
+    create(:case_distribution_lever, :disable_legacy_non_priority)
+    create(:case_distribution_lever, :nonsscavlj_number_of_appeals_to_move)
+  end
+
   def to_judge_hash(arr)
     arr.each_with_index.map { |count, i| [i, count] }.to_h
   end
@@ -9,8 +25,6 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     before do
       expect_any_instance_of(PushPriorityAppealsToJudgesJob)
         .to receive(:distribute_genpop_priority_appeals).and_return([])
-      expect_any_instance_of(PushPriorityAppealsToJudgesJob)
-        .to receive(:send_job_report).and_return([])
     end
 
     after { FeatureToggle.disable!(:acd_distribute_by_docket_date) }
@@ -31,6 +45,19 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
       subject
     end
+
+    it "queues the UpdateAppealAffinityDatesJob" do
+      expect_any_instance_of(UpdateAppealAffinityDatesJob).to receive(:perform).with(no_args)
+
+      subject
+    end
+
+    it "calls send_job_report method" do
+      expect_any_instance_of(PushPriorityAppealsToJudgesJob)
+        .to receive(:generate_report).and_return([])
+
+      subject
+    end
   end
 
   context ".distribute_non_genpop_priority_appeals" do
@@ -38,6 +65,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     let(:ready_priority_bfkey2) { "12346" }
     let(:ready_priority_uuid) { "bece6907-3b6f-4c49-a580-6d5f2e1ca65c" }
     let(:ready_priority_uuid2) { "bece6907-3b6f-4c49-a580-6d5f2e1ca65d" }
+    let(:receipt_date) { 30.days.ago }
     let!(:judge_with_ready_priority_cases) do
       create(:user, :judge, :with_vacols_judge_record).tap do |judge|
         vacols_case = create(
@@ -64,8 +92,10 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
           :appeal,
           :ready_for_distribution,
           :advanced_on_docket_due_to_age,
+          :with_appeal_affinity,
           uuid: ready_priority_uuid,
-          docket_type: Constants.AMA_DOCKETS.hearing
+          docket_type: Constants.AMA_DOCKETS.hearing,
+          receipt_date: receipt_date
         )
         most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
         hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
@@ -96,7 +126,9 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         appeal = create(
           :appeal,
           :ready_for_distribution,
-          docket_type: Constants.AMA_DOCKETS.hearing
+          :with_appeal_affinity,
+          docket_type: Constants.AMA_DOCKETS.hearing,
+          receipt_date: receipt_date
         )
         most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
         hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
@@ -129,7 +161,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         appeal = create(
           :appeal,
           :advanced_on_docket_due_to_age,
-          docket_type: Constants.AMA_DOCKETS.hearing
+          docket_type: Constants.AMA_DOCKETS.hearing,
+          receipt_date: receipt_date
         )
         most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
         hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
@@ -162,8 +195,10 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
           :appeal,
           :ready_for_distribution,
           :advanced_on_docket_due_to_age,
-          uuid: "bece6907-3b6f-4c49-a580-6d5f2e1ca65d",
-          docket_type: Constants.AMA_DOCKETS.hearing
+          :with_appeal_affinity,
+          uuid: ready_priority_uuid2,
+          docket_type: Constants.AMA_DOCKETS.hearing,
+          receipt_date: receipt_date
         )
         most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
         hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
@@ -191,28 +226,6 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
     subject { PushPriorityAppealsToJudgesJob.new.distribute_non_genpop_priority_appeals }
 
-    context "using Automatic Case Distribution module" do
-      before do
-        allow_any_instance_of(PushPriorityAppealsToJudgesJob).to receive(:eligible_judges).and_return(eligible_judges)
-      end
-
-      it "should only distribute the ready priority cases tied to a judge" do
-        expect(subject.count).to eq eligible_judges.count
-        expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [2, 2, 0, 0]
-
-        # Ensure we only distributed the 2 ready legacy and hearing priority cases that are tied to a judge
-        distributed_cases = DistributedCase.where(distribution: subject)
-        expect(distributed_cases.count).to eq 4
-        expected_array = [ready_priority_bfkey, ready_priority_bfkey2, ready_priority_uuid, ready_priority_uuid2]
-        expect(distributed_cases.map(&:case_id)).to match_array expected_array
-        # Ensure all docket types cases are distributed, including the 5 cavc evidence submission cases
-        expected_array2 = [Constants.AMA_DOCKETS.hearing, Constants.AMA_DOCKETS.hearing, "legacy", "legacy"]
-        expect(distributed_cases.map(&:docket)).to match_array expected_array2
-        expect(distributed_cases.map(&:priority).uniq).to match_array [true]
-        expect(distributed_cases.map(&:genpop).uniq).to match_array [false]
-      end
-    end
-
     context "using By Docket Date Distribution module" do
       before do
         FeatureToggle.enable!(:acd_distribute_by_docket_date)
@@ -221,29 +234,14 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       end
       after do
         FeatureToggle.disable!(:acd_distribute_by_docket_date)
-        FeatureToggle.enable!(:acd_exclude_from_affinity)
-      end
-
-      it "should only distribute the ready priority cases tied to a judge" do
-        expect(subject.count).to eq eligible_judges.count
-        expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [2, 2, 0, 0]
-
-        # Ensure we only distributed the 2 ready legacy and hearing priority cases that are tied to a judge
-        distributed_cases = DistributedCase.where(distribution: subject)
-        expect(distributed_cases.count).to eq 4
-        expected_array = [ready_priority_bfkey, ready_priority_bfkey2, ready_priority_uuid, ready_priority_uuid2]
-        expect(distributed_cases.map(&:case_id)).to match_array expected_array
-        # Ensure all docket types cases are distributed, including the 5 cavc evidence submission cases
-        expected_array2 = %w[hearing hearing legacy legacy]
-        expect(distributed_cases.map(&:docket)).to match_array expected_array2
-        expect(distributed_cases.map(&:priority).uniq).to match_array [true]
-        expect(distributed_cases.map(&:genpop).uniq).to match_array [false, true]
+        FeatureToggle.disable!(:acd_exclude_from_affinity)
       end
     end
   end
 
   context ".distribute_genpop_priority_appeals" do
     before do
+      create(:case_distribution_lever, :disable_legacy_priority)
       allow_any_instance_of(DirectReviewDocket)
         .to receive(:nonpriority_receipts_per_year)
         .and_return(100)
@@ -292,7 +290,10 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         appeal = create(:appeal,
                         :advanced_on_docket_due_to_age,
                         :ready_for_distribution,
-                        docket_type: Constants.AMA_DOCKETS.hearing)
+                        :with_appeal_affinity,
+                        docket_type: Constants.AMA_DOCKETS.hearing,
+                        affinity_start_date: i.months.ago,
+                        receipt_date: 1.month.ago)
         appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: i.months.ago)
         appeal.reload
       end
@@ -302,7 +303,10 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         appeal = create(:appeal,
                         :type_cavc_remand,
                         :cavc_ready_for_distribution,
-                        docket_type: Constants.AMA_DOCKETS.evidence_submission)
+                        :with_appeal_affinity,
+                        affinity_start_date: i.months.ago,
+                        docket_type: Constants.AMA_DOCKETS.evidence_submission,
+                        receipt_date: 1.month.ago)
         appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: i.month.ago)
         appeal
       end
@@ -321,6 +325,10 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
     let(:priority_count) { Appeal.count { |a| a.aod? || a.cavc? } + legacy_priority_cases.count }
     let(:priority_target) { (priority_count + judge_distributions_this_month.sum) / judges.count }
+
+    before do
+      ready_priority_evidence_cases.each { |appeal| appeal.update(receipt_date: 1.month.ago) }
+    end
 
     context "using Automatic Case Distribution module" do
       it "should distribute ready priority appeals to the judges" do
@@ -396,7 +404,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     end
   end
 
-  context ".slack_report" do
+  context ".generate_report" do
     let!(:job) { PushPriorityAppealsToJudgesJob.new }
     let(:previous_distributions) { to_judge_hash([4, 3, 2, 1, 0]) }
     let!(:judge) { create(:user, :judge, :with_vacols_judge_record) }
@@ -478,77 +486,101 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       end
     end
 
-    subject { job.slack_report }
+    subject { job.generate_report }
 
     before do
+      FeatureToggle.disable!(:acd_distribute_by_docket_date)
       job.instance_variable_set(:@tied_distributions, distributed_cases)
       job.instance_variable_set(:@genpop_distributions, distributed_cases)
       job.instance_variable_set(:@distributions, distributed_cases)
       allow_any_instance_of(PushPriorityAppealsToJudgesJob)
         .to receive(:priority_distributions_this_month_for_eligible_judges).and_return(previous_distributions)
       allow_any_instance_of(DocketCoordinator).to receive(:genpop_priority_count).and_return(20)
+      allow_any_instance_of(Docket).to receive(:calculate_days_for_time_goal_with_prior_to_goal).and_return(0)
     end
 
     after { FeatureToggle.disable!(:acd_distribute_by_docket_date) }
 
     it "using Automatic Case Distribution module" do
-      expect(subject.second).to eq "*Number of cases tied to judges distributed*: 10"
-      expect(subject.third).to eq "*Number of general population cases distributed*: 10"
-
       today = Time.zone.now.to_date
       legacy_days_waiting = (today - legacy_priority_case.bfdloout.to_date).to_i
-      expect(subject[3]).to eq "*Age of oldest legacy case*: #{legacy_days_waiting} days"
       direct_review_days_waiting = (today - ready_priority_direct_case.ready_for_distribution_at.to_date).to_i
-      expect(subject[4]).to eq "*Age of oldest direct_review case*: #{direct_review_days_waiting} days"
       evidence_submission_days_waiting = (today - ready_priority_evidence_case.ready_for_distribution_at.to_date).to_i
-      expect(subject[5]).to eq "*Age of oldest evidence_submission case*: #{evidence_submission_days_waiting} days"
       hearing_days_waiting = (today - ready_priority_hearing_case.ready_for_distribution_at.to_date).to_i
-      expect(subject[6]).to eq "*Age of oldest hearing case*: #{hearing_days_waiting} days"
+      excluded_judges = JudgeTeam.judges_with_exclude_appeals_from_affinity.pluck(:css_id)
 
-      expect(subject[7]).to eq "*Total Number of appeals _not_ distributed*: 4"
-      expect(subject[8]).to eq "*Number of legacy appeals _not_ distributed*: 1"
-      expect(subject[9]).to eq "*Number of direct_review appeals _not_ distributed*: 1"
-      expect(subject[10]).to eq "*Number of evidence_submission appeals _not_ distributed*: 1"
-      expect(subject[11]).to eq "*Number of hearing appeals _not_ distributed*: 1"
-      expect(subject[12]).to eq "*Number of Legacy Hearing Non Genpop appeals _not_ distributed*: 1"
-
-      expect(subject[15]).to eq "Priority Target: 6"
-      expect(subject[16]).to eq "Previous monthly distributions {judge_id=>count}: #{previous_distributions}"
-      expect(subject[17]).to eq COPY::PRIORITY_PUSH_WARNING_MESSAGE
-      expect(subject[18].include?(ready_priority_hearing_case.uuid)).to be true
-      expect(subject[18].include?(ready_priority_evidence_case.uuid)).to be true
-      expect(subject[18].include?(ready_priority_direct_case.uuid)).to be true
-      expect(subject[19].include?(legacy_priority_case.bfkey)).to be true
+      [
+        "*Number of cases tied to judges distributed*: 10",
+        "*Number of general population cases distributed*: 10",
+        "Priority Target: 6",
+        "*Age of oldest legacy case*: #{legacy_days_waiting} days",
+        "*Age of oldest direct_review case*: #{direct_review_days_waiting} days",
+        "*Age of oldest evidence_submission case*: #{evidence_submission_days_waiting} days",
+        "*Age of oldest hearing case*: #{hearing_days_waiting} days",
+        "",
+        "*Total Number of appeals _not_ distributed*: 4",
+        "*Number of legacy appeals _not_ distributed*: 1",
+        "*Number of direct_review appeals _not_ distributed*: 1",
+        "*Number of evidence_submission appeals _not_ distributed*: 1",
+        "*Number of hearing appeals _not_ distributed*: 1",
+        "*Number of Legacy Hearing Non Genpop appeals _not_ distributed*: 1",
+        "",
+        "*Number of legacy appeals in affinity date window*: not implemented",
+        "*Number of legacy appeals out of affinity date window*: not implemented",
+        "*Number of direct_review appeals in affinity date window*: 0",
+        "*Number of direct_review appeals out of affinity date window*: 0",
+        "*Number of evidence_submission appeals in affinity date window*: 0",
+        "*Number of evidence_submission appeals out of affinity date window*: 0",
+        "*Number of hearing appeals in affinity date window*: 0",
+        "*Number of hearing appeals out of affinity date window*: 0",
+        "",
+        "*Debugging information*",
+        "*Excluded Judges*: #{excluded_judges}",
+        "Previous monthly distributions {judge_id=>count}: #{previous_distributions}"
+      ].each_with_index do |line, index|
+        expect(subject[index]).to eq line
+      end
     end
 
     it "using By Docket Date Distribution module" do
       FeatureToggle.enable!(:acd_distribute_by_docket_date)
-      expect(subject.second).to eq "*Number of cases distributed*: 10"
-
       today = Time.zone.now.to_date
       legacy_days_waiting = (today - legacy_priority_case.bfd19.to_date).to_i
-      expect(subject[2]).to eq "*Age of oldest legacy case*: #{legacy_days_waiting} days"
       direct_review_days_waiting = (today - ready_priority_direct_case.receipt_date).to_i
-      expect(subject[3]).to eq "*Age of oldest direct_review case*: #{direct_review_days_waiting} days"
       evidence_submission_days_waiting = (today - ready_priority_evidence_case.receipt_date).to_i
-      expect(subject[4]).to eq "*Age of oldest evidence_submission case*: #{evidence_submission_days_waiting} days"
       hearing_days_waiting = (today - ready_priority_hearing_case.receipt_date).to_i
-      expect(subject[5]).to eq "*Age of oldest hearing case*: #{hearing_days_waiting} days"
+      excluded_judges = JudgeTeam.judges_with_exclude_appeals_from_affinity.pluck(:css_id)
 
-      expect(subject[6]).to eq "*Total Number of appeals _not_ distributed*: 4"
-      expect(subject[7]).to eq "*Number of legacy appeals _not_ distributed*: 1"
-      expect(subject[8]).to eq "*Number of direct_review appeals _not_ distributed*: 1"
-      expect(subject[9]).to eq "*Number of evidence_submission appeals _not_ distributed*: 1"
-      expect(subject[10]).to eq "*Number of hearing appeals _not_ distributed*: 1"
-      expect(subject[11]).to eq "*Number of Legacy Hearing Non Genpop appeals _not_ distributed*: 1"
-
-      expect(subject[14]).to eq "Priority Target: 6"
-      expect(subject[15]).to eq "Previous monthly distributions {judge_id=>count}: #{previous_distributions}"
-      expect(subject[16]).to eq COPY::PRIORITY_PUSH_WARNING_MESSAGE
-      expect(subject[17].include?(ready_priority_hearing_case.uuid)).to be true
-      expect(subject[17].include?(ready_priority_evidence_case.uuid)).to be true
-      expect(subject[17].include?(ready_priority_direct_case.uuid)).to be true
-      expect(subject[18].include?(legacy_priority_case.bfkey)).to be true
+      [
+        "*Number of cases distributed*: 10",
+        "Priority Target: 6",
+        "*Age of oldest legacy case*: #{legacy_days_waiting} days",
+        "*Age of oldest direct_review case*: #{direct_review_days_waiting} days",
+        "*Age of oldest evidence_submission case*: #{evidence_submission_days_waiting} days",
+        "*Age of oldest hearing case*: #{hearing_days_waiting} days",
+        "",
+        "*Total Number of appeals _not_ distributed*: 4",
+        "*Number of legacy appeals _not_ distributed*: 1",
+        "*Number of direct_review appeals _not_ distributed*: 1",
+        "*Number of evidence_submission appeals _not_ distributed*: 1",
+        "*Number of hearing appeals _not_ distributed*: 1",
+        "*Number of Legacy Hearing Non Genpop appeals _not_ distributed*: 1",
+        "",
+        "*Number of legacy appeals in affinity date window*: not implemented",
+        "*Number of legacy appeals out of affinity date window*: not implemented",
+        "*Number of direct_review appeals in affinity date window*: 0",
+        "*Number of direct_review appeals out of affinity date window*: 0",
+        "*Number of evidence_submission appeals in affinity date window*: 0",
+        "*Number of evidence_submission appeals out of affinity date window*: 0",
+        "*Number of hearing appeals in affinity date window*: 0",
+        "*Number of hearing appeals out of affinity date window*: 0",
+        "",
+        "*Debugging information*",
+        "*Excluded Judges*: #{excluded_judges}",
+        "Previous monthly distributions {judge_id=>count}: #{previous_distributions}"
+      ].each_with_index do |line, index|
+        expect(subject[index]).to eq line
+      end
     end
   end
 

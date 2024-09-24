@@ -10,7 +10,10 @@ class VbmsUploadedDocument < CaseflowRecord
   attribute :file, :string
 
   scope :successfully_uploaded, lambda {
-    where(error: nil).where.not(uploaded_to_vbms_at: nil, attempted_at: nil, processed_at: nil)
+    where(error: nil)
+      .where.not(uploaded_to_vbms_at: nil)
+      .where.not(attempted_at: nil)
+      .where.not(processed_at: nil)
   }
 
   def cache_file

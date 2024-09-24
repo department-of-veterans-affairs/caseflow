@@ -85,6 +85,15 @@ class QueueTab
     false
   end
 
+  # This is a queue tab parameter that allows for client side queue tabs to have more than 15 tasks
+  def no_task_limit
+    false
+  end
+
+  def custom_task_limit
+    TaskPager::TASKS_PER_PAGE
+  end
+
   # rubocop:disable Metrics/AbcSize
   def self.attorney_column_names
     [

@@ -18,6 +18,7 @@ class PollDocketedLegacyAppealsJob < CaseflowJob
     RequestStore.store[:current_user] = User.system_user
     vacols_ids = most_recent_docketed_appeals(LEGACY_DOCKETED)
     filtered_vacols_ids = filter_duplicate_legacy_notifications(vacols_ids)
+    create_corresponding_appeal_states(filtered_vacols_ids.uniq)
     send_legacy_notifications(filtered_vacols_ids)
   end
 
@@ -38,6 +39,25 @@ class PollDocketedLegacyAppealsJob < CaseflowJob
     vacols_ids.reject { |id| duplicate_ids.include?(id) }
   end
 
+  # Purpose: To create an AppealState record for the docketed legacy  appeals
+  # Params: An array of vacols_ids for docketed legacy appeals
+  # Return: None
+  def create_corresponding_appeal_states(vacols_ids)
+    vacols_ids.each do |vacols_id|
+      appeal = LegacyAppeal.find_by_vacols_id(vacols_id)
+      appeal_state = AppealState.find_by(appeal: appeal)
+      if appeal_state
+        appeal_state.appeal_docketed = true
+        appeal_state.save!
+      else
+        AppealState.new(appeal: appeal,
+                        created_by_id: User.system_user.id,
+                        appeal_docketed: true)
+          .save!
+      end
+    end
+  end
+
   # rubocop:disable all
   # Purpose: To send the 'appeal docketed' notification for the legacy appeals
   # Params: vacols_ids - An array of filtered vacols ids for legacy appeals that didnt already have notifications sent
@@ -46,7 +66,10 @@ class PollDocketedLegacyAppealsJob < CaseflowJob
     Rails.logger.info("Found #{vacols_ids.count} legacy appeals that have been recently docketed and have not gotten docketed notifications")
     vacols_ids.each do |vacols_id|
       begin
-        AppellantNotification.notify_appellant(LegacyAppeal.find_by_vacols_id(vacols_id), "Appeal docketed")
+        AppellantNotification.notify_appellant(
+          LegacyAppeal.find_by_vacols_id(vacols_id),
+          Constants.EVENT_TYPE_FILTERS.appeal_docketed
+        )
       rescue Exception => ex
         Rails.logger.error("#{ex.class}: #{ex.message} for vacols id:#{vacols_id} on #{JOB_ATTR.class} of ID:#{JOB_ATTR.job_id}\n #{ex.backtrace.join("\n")}")
         next

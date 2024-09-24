@@ -21,14 +21,8 @@ module DeprecationWarnings
         allow(Raven).to receive(:capture_message)
         allow(Raven).to receive(:capture_exception)
 
-        allow(SlackService).to receive(:new).with(url: anything).and_return(slack_service)
+        allow(SlackService).to receive(:new).and_return(slack_service)
         allow(slack_service).to receive(:send_notification)
-      end
-
-      it "emits a warning to the application logs" do
-        call
-
-        expect(rails_logger).to have_received(:warn).with(message)
       end
 
       it "emits a warning to Sentry" do

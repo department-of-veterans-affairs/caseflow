@@ -4,13 +4,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import { sprintf } from 'sprintf-js';
-
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 import ApiUtil from '../util/ApiUtil';
 import Alert from '../components/Alert';
 import Button from '../components/Button';
 import SearchableDropdown from '../components/SearchableDropdown';
+import SearchBar from 'app/components/SearchBar';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
 import COPY from '../../COPY';
@@ -56,6 +56,7 @@ export default class OrganizationUsers extends React.PureComponent {
       membershipRequests: [],
       loading: true,
       error: null,
+      searchValue: '',
       success: null,
       addingUser: null,
       changingAdminRights: {},
@@ -240,10 +241,24 @@ export default class OrganizationUsers extends React.PureComponent {
       loading={this.state.removingUser[user.id]}
       onClick={this.removeUser(user)} /></div>
 
+getFilteredUsers = () => {
+  if (this.state.searchValue.length > 1) {
+
+    // return name or css id if match
+    return this.state.organizationUsers.filter((user) =>
+      user.attributes.full_name.toLowerCase().includes(this.state.searchValue.toLowerCase()) ||
+      user.attributes.css_id.toLowerCase().includes(this.state.searchValue.toLowerCase())
+    );
+  }
+
+  return this.state.organizationUsers;
+
+};
+
   mainContent = () => {
     const judgeTeam = this.state.judgeTeam;
     const dvcTeam = this.state.dvcTeam;
-    const listOfUsers = this.state.organizationUsers.map((user, i) => {
+    const listOfUsers = this.getFilteredUsers().map((user, i) => {
       const { dvc, admin } = user.attributes;
       const style = i === 0 ? topUserStyle : userStyle;
 
@@ -262,6 +277,18 @@ export default class OrganizationUsers extends React.PureComponent {
           </div> }
       </React.Fragment>;
     });
+
+    const handleSearchChange = (value) => {
+      this.setState({
+        searchValue: value
+      });
+    };
+
+    const handleClearSearch = () => {
+      this.setState({
+        searchValue: ''
+      });
+    };
 
     return <React.Fragment>
       <h2>{COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_LABEL}</h2>
@@ -290,8 +317,32 @@ export default class OrganizationUsers extends React.PureComponent {
               COPY.USER_MANAGEMENT_JUDGE_TEAM_REMOVE_USER_DESCRIPTION :
               COPY.USER_MANAGEMENT_REMOVE_USER_DESCRIPTION }</li>
           </ul>
+          <div className="make-content-centered">
+            <p className="text-styling-for-filter-search-bar">
+          Filter by username or CSS ID</p>
+            <div className="search-bar-styling-for-filter">
+              <SearchBar
+                id="searchBar"
+                placeholder="Type to filter..."
+                isSearchAhead
+                size="small"
+                onChange={(value) => handleSearchChange(value)}
+                onClearSearch={handleClearSearch}
+                value= {this.state.searchValue}
+              />
+            </div>
+          </div>
         </div>
-        <ul>{listOfUsers}</ul>
+        { listOfUsers.length > 0 ? (
+          <ul>{listOfUsers}</ul>
+        ) : (
+          <>
+            <p className="no-results-found-styling">No results found</p>
+            <p className="reenter-valid-username-styling" >Please enter a valid username or CSS ID and try again.</p>
+          </>
+        )
+        }
+
       </div>
     </React.Fragment>;
   }

@@ -11,7 +11,7 @@ class SendFinalNotificationLetterTaskFactory
         appeal: @task.appeal,
         parent: @task.parent,
         assigned_to: Organization.find_by_url("clerk-of-the-board"),
-        assigned_by: current_user
+        assigned_by: @task.assigned_by
       )
       # sfnlt.instructions.push(instructions)
       sfnlt.update!(status: Constants.TASK_STATUSES.assigned)

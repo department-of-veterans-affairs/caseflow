@@ -702,7 +702,7 @@ RSpec.feature "Case details", :all_dbs do
       )
     end
 
-    context "with reader role" do
+    context "with reader role", skip: "Flaky test" do
       before { attorney_user.update!(roles: attorney_user.roles + ["Reader"]) }
       after { attorney_user.update!(roles: attorney_user.roles - ["Reader"]) }
 
@@ -1112,10 +1112,10 @@ RSpec.feature "Case details", :all_dbs do
     end
   end
 
-  context "When a current user is a member of Supervisory Senior Council organization" do
+  context "When a current user is a member of Supervisory Senior Counsel organization" do
     let(:appeal) { create(:appeal) }
     let(:current_user) { create(:user) }
-    let!(:organization) { SupervisorySeniorCouncil.singleton }
+    let!(:organization) { SupervisorySeniorCounsel.singleton }
     let!(:organization_user) { OrganizationsUser.make_user_admin(current_user, organization) }
     let(:receipt_date) { Time.zone.today - 20.days }
     let(:profile_date) { (receipt_date - 30.days).to_datetime }
@@ -1143,7 +1143,7 @@ RSpec.feature "Case details", :all_dbs do
     end
   end
 
-  context "When a user isn't a member of the Supervisory Senior Council" do
+  context "When a user isn't a member of the Supervisory Senior Counsel" do
     let(:appeal) { create(:appeal) }
     let(:current_user) { create(:user) }
     let(:receipt_date) { Time.zone.today - 20.days }

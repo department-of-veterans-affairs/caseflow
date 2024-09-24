@@ -3,9 +3,6 @@
 class Api::ApplicationController < ActionController::Base
   protect_from_forgery with: :null_session
 
-  include TrackRequestId
-
-  force_ssl if: :ssl_enabled?
   before_action :strict_transport_security
 
   before_action :setup_fakes,
@@ -51,10 +48,6 @@ class Api::ApplicationController < ActionController::Base
     render json: { status: "unauthorized" }, status: :unauthorized
   end
 
-  def ssl_enabled?
-    Rails.env.production?
-  end
-
   def strict_transport_security
     response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains" if request.ssl?
   end
@@ -91,5 +84,15 @@ class Api::ApplicationController < ActionController::Base
         "detail": error.body
       ]
     }, status: error.code || :bad_request
+  end
+
+  def endpoint_disabled(message)
+    result = {
+      uuid: SecureRandom.uuid,
+      code: "VEFSERR50102",
+      message: "Operation not enabled. #{message}"
+    }
+
+    render json: result, status: :not_implemented
   end
 end

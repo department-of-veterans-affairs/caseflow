@@ -221,9 +221,13 @@ describe AssignHearingDispositionTask, :all_dbs do
       it "sets the hearing disposition and calls hold!", :aggregate_failures do
         expect(disposition_task).to receive(:hold!).exactly(1).times.and_call_original
 
+        state = appeal.appeal_state.tap { _1.update!(hearing_scheduled: true) }
+        expect(state.hearing_scheduled).to eq true
+
         subject
 
         expect(hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.held
+        expect(state.reload.hearing_scheduled).to eq false
 
         if appeal.is_a? Appeal
           expect(Hearing.count).to eq 1
@@ -305,7 +309,7 @@ describe AssignHearingDispositionTask, :all_dbs do
               new_hearing_attrs: {
                 hearing_day_id: HearingDay.first.id,
                 hearing_location: { facility_id: "vba_370", distance: 10 },
-                scheduled_time_string: "12:30"
+                scheduled_time_string: "12:30 PM Eastern Time (US & Canada)"
               }
             }
           }
@@ -345,7 +349,7 @@ describe AssignHearingDispositionTask, :all_dbs do
               new_hearing_attrs: {
                 hearing_day_id: HearingDay.first.id,
                 hearing_location: { facility_id: "vba_370", distance: 10 },
-                scheduled_time_string: "12:30"
+                scheduled_time_string: "12:30 PM Eastern Time (US & Canada)"
               }
             }
           }

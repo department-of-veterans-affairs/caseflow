@@ -273,7 +273,7 @@ class Dispatch::Task < CaseflowRecord
   end
 
   def no_open_tasks_for_appeal
-    if self.class.to_complete_task_for_appeal(appeal).any?
+    if self.class.default_scoped.to_complete_task_for_appeal(appeal).any?
       errors.add(:appeal, "Uncompleted task already exists for this appeal")
     end
   end

@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
+  mount Rswag::Ui::Engine => '/api-docs'
+  mount Rswag::Api::Engine => '/api-docs'
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
-  # The priority is based upon order of creation: first created -> highest priority.
-  # See how all your routes lay out with "rake routes".
 
   resources :sessions, only: [:new, :update]
   resources :certifications, path_names: { new: "new/:vacols_id" } do
@@ -25,11 +25,22 @@ Rails.application.routes.draw do
   constraints(lambda { |request| Rails.env.demo? || Rails.env.test? || Rails.env.development? }) do
     get 'acd-controls', :to => 'case_distribution_levers#acd_lever_index'
     get 'acd-controls/test', :to => 'case_distribution_levers_tests#acd_lever_index_test'
-    get 'appeals-ready-to-distribute', to: 'case_distribution_levers_tests#appeals_ready_to_distribute'
-    get 'appeals-distributed', to: 'case_distribution_levers_tests#appeals_distributed'
-    get 'ineligible-judge-list', to: 'case_distribution_levers_tests#ineligible_judge_list'
-    post 'run-demo-aod-seeds', to: 'case_distribution_levers_tests#run_demo_aod_hearing_seeds', as: "run-demo-aod-seeds"
-    post 'run-demo-non-aod-seeds', to: 'case_distribution_levers_tests#run_demo_non_aod_hearing_seeds', as: "run-demo-non-aod-seeds"
+
+    namespace :case_distribution_levers_tests do
+      get 'appeals_ready_to_distribute'
+      get 'appeals_non_priority_ready_to_distribute'
+      get 'appeals_distributed'
+      get 'appeals_in_location_63_in_past_2_days'
+      get 'ineligible_judge_list'
+      get 'appeals_tied_to_non_ssc_avlj'
+      get 'appeals_tied_to_avljs_and_vljs'
+      post 'run_demo_aod_hearing_seeds'
+      post 'run_demo_non_aod_hearing_seeds'
+      post 'run-demo-ama-docket-goals'
+      post 'run_demo_non_avlj_appeals'
+      post 'run_demo_docket_priority'
+      post 'run_return_legacy_appeals_to_board'
+    end
   end
 
   get 'case-distribution-controls', :to => 'case_distribution_levers#acd_lever_index'
@@ -47,6 +58,7 @@ Rails.application.routes.draw do
       resources :jobs, only: :create
       post 'mpi', to: 'mpi#veteran_updates'
       post 'va_notify_update', to: 'va_notify#notifications_update'
+      post 'cmp', to: 'cmp#upload'
     end
     namespace :v2 do
       resources :appeals, only: :index
@@ -80,11 +92,19 @@ Rails.application.routes.draw do
     end
     namespace :docs do
       namespace :v3, defaults: { format: 'json' } do
-        get 'decision_reviews', to: 'docs#decision_reviews'
-        get "ama_issues", to: "docs#ama_issues"
-        get "vacols_issues", to: "docs#vacols_issues"
+        get 'decision_reviews', to: redirect('api-docs/v3/decision_reviews.yaml')
+        get "ama_issues", to: redirect('api-docs/v3/ama_issues.yaml')
+        get "vacols_issues", to: redirect('api-docs/v3/vacols_issues.yaml')
       end
     end
+
+    namespace :events do
+      namespace :v1 do
+        post '/decision_review_created', to: 'decision_review_created#decision_review_created'
+        post '/decision_review_created_error',  to: 'decision_review_created#decision_review_created_error'
+      end
+    end
+
     get "metadata", to: 'metadata#index'
   end
 
@@ -424,9 +444,15 @@ Rails.application.routes.draw do
   post "docket_switches", to: "docket_switches#create"
   post "docket_switches/address_ruling", to: "docket_switches#address_ruling"
 
+  scope path: 'seeds', as: 'seeds' do
+    post 'run-demo', to: 'test_docket_seeds#seed_dockets'
+    get 'reset_all_appeals', to: 'test_docket_seeds#reset_all_appeals'
+  end
+
   # :nocov:
   namespace :test do
     get "/error", to: "users#show_error"
+    get "/seeds", to: "test_seeds#seeds" # test seed buttons routes
 
     resources :hearings, only: [:index]
 
@@ -435,6 +461,7 @@ Rails.application.routes.draw do
       post "/set_user/:id", to: "users#set_user", as: "set_user"
       post "/set_end_products", to: "users#set_end_products", as: 'set_end_products'
       post "/reseed", to: "users#reseed", as: "reseed"
+      post "/optional_seed", to: "users#optional_seed", as: "optional_seed"
       get "/data", to: "users#data"
     end
     post "/log_in_as_user", to: "users#log_in_as_user", as: "log_in_as_user"

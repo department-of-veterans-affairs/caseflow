@@ -2,7 +2,7 @@
 
 require "csv"
 
-class TestSeedsController < ApplicationController
+class Test::TestSeedsController < ApplicationController
   before_action :check_environment
   before_action :verify_access, only: [:seeds]
   before_action :authorize_admin, only: [:seeds]

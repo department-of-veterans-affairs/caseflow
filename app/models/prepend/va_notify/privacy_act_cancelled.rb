@@ -18,12 +18,7 @@ module PrivacyActCancelled
     if PRIVACY_ACT_TASKS.include?(type) &&
        !PRIVACY_ACT_TASKS.include?(parent&.type) &&
        status == Constants.TASK_STATUSES.cancelled
-      MetricsService.record("Updating PRIVACY_ACT_PENDING column in Appeal States Table to FALSE "\
-        "for #{appeal.class} ID #{appeal.id}",
-                            service: nil,
-                            name: "AppellantNotification.appeal_mapper") do
-        AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "privacy_act_cancelled")
-      end
+      appeal.appeal_state.privacy_act_cancelled_appeal_state_update_action!
     end
   end
 end

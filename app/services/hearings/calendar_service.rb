@@ -95,27 +95,10 @@ class Hearings::CalendarService
     end
 
     def render_virtual_hearing_calendar_event_template(email_recipient_info, event_type, locals)
-      template = ActionView::Base.new(ActionMailer::Base.view_paths, {})
-      template.class_eval do
-        include Hearings::CalendarTemplateHelper
-        include Hearings::AppellantNameHelper
-      end
+      template_name =
+        "hearing_mailer/calendar_events/#{email_recipient_info.title.downcase}_#{event_type}_event_description"
 
-      # Some *~ magic ~* here. The recipient title is used to determine which template to load:
-      #
-      #              judge_confirmation_event_description
-      #     representative_confirmation_event_description
-      #            veteran_confirmation_event_description
-      #
-      # representative_changed_to_video_event_description
-      #        veteran_changed_to_video_event_description
-
-      template_name = "#{email_recipient_info.title.downcase}_#{event_type}_event_description"
-
-      template.render(
-        file: "hearing_mailer/calendar_events/#{template_name}",
-        locals: locals
-      )
+      ApplicationController.render(template: template_name, locals: locals)
     end
   end
 end

@@ -12,16 +12,15 @@ const MstBadge = (props) => {
   const { appeal } = props;
 
   // During decision review workflow, saved/staged changes made are updated to appeal.decisionIssues
-  // if legacy check issues for changes, if ama check decision for changes
-  const issues = (appeal.isLegacyAppeal || appeal.type === 'LegacyAppeal') ? appeal.issues : appeal.decisionIssues;
+  const decisionIssues = appeal?.decisionIssues;
 
-  // check the issues/decisions for mst/pact changes in flight
-  if (issues && issues?.length > 0) {
-    if (!issues.some((issue) => issue.mst_status === true)) {
+  // check the decisions for mst changes in flight
+  if (decisionIssues?.length > 0) {
+    if (!decisionIssues.some((issue) => issue.mst_status === true)) {
       return null;
     }
   } else if (!appeal?.mst) {
-    // if issues are empty/undefined, use appeal model mst check
+    // if decisions are empty/undefined, use appeal model mst check
     return null;
   }
 

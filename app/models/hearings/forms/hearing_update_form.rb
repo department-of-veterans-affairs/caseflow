@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
 class HearingUpdateForm < BaseHearingUpdateForm
+  # VA Notify Hooks
   prepend DocketHearingPostponed
   prepend DocketHearingWithdrawn
+  prepend DocketHearingHeld
+
   attr_accessor :advance_on_docket_motion_attributes,
                 :evidence_window_waived, :hearing_issue_notes_attributes,
                 :transcript_sent_date, :transcription_attributes
@@ -56,7 +59,11 @@ class HearingUpdateForm < BaseHearingUpdateForm
       prepped: prepped,
       representative_name: representative_name,
       room: room,
-      scheduled_time: scheduled_time_string,
+      scheduled_time: HearingTimeService.process_scheduled_time(scheduled_time_string),
+      scheduled_datetime: hearing.time.class.prepare_datetime_for_storage(
+        date: hearing.hearing_day&.scheduled_for,
+        time_string: scheduled_time_string
+      ),
       summary: summary,
       transcript_requested: transcript_requested,
       transcript_sent_date: transcript_sent_date,

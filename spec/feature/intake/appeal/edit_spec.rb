@@ -18,9 +18,7 @@ feature "Appeal Edit issues", :all_dbs do
            last_name: "Merica")
   end
 
-  let!(:current_user) do
-    User.authenticate!(roles: ["Mail Intake"])
-  end
+  let!(:current_user) { User.authenticate!(roles: ["Mail Intake"]) }
 
   let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
   let(:last_week) { Time.zone.now - 7.days }
@@ -83,106 +81,152 @@ feature "Appeal Edit issues", :all_dbs do
 
   let!(:rating_request_issue) { create(:request_issue, rating_request_issue_attributes) }
 
-  scenario "allows adding/removing issues" do
-    visit "appeals/#{appeal.uuid}/edit/"
-
-    expect(page).to have_content(nonrating_request_issue.description)
-
-    # remove an issue
-    click_remove_intake_issue_dropdown(nonrating_request_issue.description)
-    expect(page.has_no_content?(nonrating_request_issue.description)).to eq(true)
-    expect(page).to have_content("When you finish making changes, click \"Save\" to continue")
-
-    # add a different issue
-    click_intake_add_issue
-    add_intake_rating_issue("Left knee granted")
-    # save flash should still occur because issues are different
-    expect(page).to have_content("When you finish making changes, click \"Save\" to continue")
-
-    # save
-    expect(page).to have_content("Left knee granted")
-    safe_click("#button-submit-update")
-
-    # should redirect to queue
-    expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
-
-    # going back to edit page should show those issues
-    visit "appeals/#{appeal.uuid}/edit/"
-    expect(page).to have_content("Left knee granted")
-    expect(page.has_no_content?("nonrating description")).to eq(true)
-
-    # canceling should redirect to queue
-    click_on "Cancel"
-    expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+  # This veteran and appeal are a "blank canvas" with no request issues or pre-existing ratings/issues
+  let(:vet_no_history) { create(:veteran) }
+  let(:appeal3) do
+    create(:appeal,
+           veteran_file_number: vet_no_history.file_number,
+           receipt_date: receipt_date,
+           docket_type: Constants.AMA_DOCKETS.evidence_submission,
+           veteran_is_not_claimant: false,
+           legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
   end
 
-  scenario "allows removing and re-adding same issue" do
-    issue_description = rating_request_issue.description
-
-    visit "appeals/#{appeal.uuid}/edit/"
-
-    expect(page).to have_content(issue_description)
-    expect(page).to have_button("Save", disabled: true)
-    # remove
-    click_remove_intake_issue_dropdown(issue_description)
-    expect(page.has_no_content?(issue_description)).to eq(true)
-    expect(page).to have_content("When you finish making changes, click \"Save\" to continue")
-
-    # re-add
-    click_intake_add_issue
-    add_intake_rating_issue(issue_description, "a new comment")
-    expect(page).to have_content(issue_description)
-    expect(page).to_not have_content(
-      Constants.INELIGIBLE_REQUEST_ISSUES.duplicate_of_rating_issue_in_active_review.gsub("{review_title}", "Appeal")
-    )
-    expect(page).to have_content("When you finish making changes, click \"Save\" to continue")
-
-    # issue note was added
-    expect(page).to have_button("Save", disabled: false)
-  end
-
-  scenario "when selecting a new benefit type the issue category dropdown should return to a default state" do
-    new_vet = create(:veteran, first_name: "Ed", last_name: "Merica")
-    new_appeal = create(:appeal,
-                        veteran_file_number: new_vet.file_number,
-                        receipt_date: receipt_date,
-                        docket_type: Constants.AMA_DOCKETS.evidence_submission,
-                        veteran_is_not_claimant: false,
-                        legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
-
-    visit "appeals/#{new_appeal.uuid}/edit/"
-
-    click_intake_add_issue
-
-    dropdown_select_string = "Select or enter..."
-    benefit_text = "Compensation"
-
-    # Select the first benefit type
-    all(".cf-select__control", text: dropdown_select_string).first.click
-    find("div", class: "cf-select__option", text: benefit_text).click
-
-    # Select the first issue category
-    find(".cf-select__control", text: dropdown_select_string).click
-    find("div", class: "cf-select__option", text: "Unknown Issue Category").click
-
-    # Verify that the default dropdown text is missing from the page
-    expect(page).to_not have_content(dropdown_select_string)
-
-    # Select a different benefit type
-    find(".cf-select__control", text: benefit_text).click
-    find("div", class: "cf-select__option", text: "Education").click
-
-    # Verify that the default dropdown text once again present on the page
-    expect(page).to have_content(dropdown_select_string)
-  end
-
-  context "with remove decision review enabled" do
-    scenario "allows all request issues to be removed and saved" do
+  scenario "Add, edit, and remove request issues" do
+    step "allows adding/removing issues" do
       visit "appeals/#{appeal.uuid}/edit/"
+
+      expect(page).to have_content(nonrating_request_issue.description)
+
+      # remove an issue
+      click_remove_intake_issue_dropdown(nonrating_request_issue.description)
+      expect(page.has_no_content?(nonrating_request_issue.description)).to eq(true)
+      expect(page).to have_content("When you finish making changes, click \"Save\" to continue")
+
+      # add a different issue
+      click_intake_add_issue
+      add_intake_rating_issue("Left knee granted")
+      # save flash should still occur because issues are different
+      expect(page).to have_content("When you finish making changes, click \"Save\" to continue")
+
+      # save
+      expect(page).to have_content("Left knee granted")
+      safe_click("#button-submit-update")
+
+      # should redirect to queue
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+      expect(page).to have_content("added 1 issue")
+      expect(page).to have_content("removed 1 issue")
+
+      # going back to edit page should show those issues
+      visit "appeals/#{appeal.uuid}/edit/"
+      expect(page).to have_content("Left knee granted")
+      expect(page.has_no_content?("nonrating description")).to eq(true)
+
+      # canceling should redirect to queue
+      click_on "Cancel"
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+    end
+
+    step "allows removing and re-adding same issue" do
+      issue_description = rating_request_issue.description
+
+      visit "appeals/#{appeal.uuid}/edit/"
+
+      expect(page).to have_content(issue_description)
+      expect(page).to have_button("Save", disabled: true)
+      # remove
+      click_remove_intake_issue_dropdown(issue_description)
+      expect(page.has_no_content?(issue_description)).to eq(true)
+      expect(page).to have_content("When you finish making changes, click \"Save\" to continue")
+
+      # re-add
+      click_intake_add_issue
+      add_intake_rating_issue(issue_description, "a new comment")
+      expect(page).to have_content(issue_description)
+      expect(page).to_not have_content(
+        Constants.INELIGIBLE_REQUEST_ISSUES.duplicate_of_rating_issue_in_active_review.gsub("{review_title}", "Appeal")
+      )
+      expect(page).to have_content("When you finish making changes, click \"Save\" to continue")
+
+      # issue note was added
+      expect(page).to have_button("Save", disabled: false)
+    end
+
+    step "when selecting a new benefit type the issue category dropdown should return to a default state" do
+      visit "appeals/#{appeal3.uuid}/edit/"
+
+      click_intake_add_issue
+
+      dropdown_select_string = "Select or enter..."
+      benefit_text = "Compensation"
+
+      # Select the first benefit type
+      all(".cf-select__control", text: dropdown_select_string).first.click
+      find("div", class: "cf-select__option", text: benefit_text).click
+
+      # Select the first issue category
+      find(".cf-select__control", text: dropdown_select_string).click
+      find("div", class: "cf-select__option", text: "Unknown Issue Category").click
+
+      # Verify that the default dropdown text is missing from the page
+      expect(page).to_not have_content(dropdown_select_string)
+
+      # Select a different benefit type
+      find(".cf-select__control", text: benefit_text).click
+      find("div", class: "cf-select__option", text: "Education").click
+
+      # Verify that the default dropdown text once again present on the page
+      expect(page).to have_content(dropdown_select_string)
+    end
+
+    # this validates a bug fix from https://github.com/department-of-veterans-affairs/caseflow/pull/10197
+    step "adding an issue with a non-comp benefit type returns to case details page" do
+      visit "appeals/#{appeal.uuid}/edit/"
+
+      # Add issue that is not a VBMS issue
+      click_intake_add_issue
+      click_intake_no_matching_issues
+      add_intake_nonrating_issue(
+        benefit_type: "Education",
+        category: "Accrued",
+        description: "Description for Accrued",
+        date: 1.day.ago.to_date.mdY
+      )
+
+      expect(page).to_not have_content("Check the Veteran's profile for invalid information")
+      expect(page).to have_button("Save", disabled: false)
+
+      click_edit_submit_and_confirm
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+      page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
+      expect(page).not_to have_content("Loading this case")
+      expect(page).to have_content(veteran.name)
+      expect(RequestIssue.find_by(
+               benefit_type: "education",
+               decision_review: appeal
+             )).to_not be_nil
+    end
+
+    # originally added in https://github.com/department-of-veterans-affairs/caseflow/pull/10241
+    step "allows all request issues to be removed and saved and cancels all active tasks" do
+      visit "appeals/#{appeal.uuid}/edit/"
+
+      # A VeteranRecordRequest task is added when the non-comp request issue is added. Complete it
+      # to ensure that cancelling the appeal does not update its status to 'cancelled' later on
+      appeal.tasks.where(type: VeteranRecordRequest.name).first.completed!
+
       # remove all issues
       click_remove_intake_issue_dropdown("PTSD denied")
-      click_remove_intake_issue_dropdown("Military Retired Pay")
+      click_remove_intake_issue_dropdown("Left knee granted")
+      click_remove_intake_issue_dropdown("Accrued")
       expect(page).to have_button("Save", disabled: false)
+      click_edit_submit_and_confirm
+
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+      expect(appeal.tasks.filter(&:open?).any?).to eq false
+      expect(appeal.tasks.where(type: VeteranRecordRequest.name).first.status).to eq(Constants.TASK_STATUSES.completed)
+      expect(appeal.tasks.map(&:closed_at)).to match_array([Time.zone.now, Time.zone.now, Time.zone.now, Time.zone.now])
     end
   end
 
@@ -347,501 +391,289 @@ feature "Appeal Edit issues", :all_dbs do
     end
   end
 
-  def add_contested_claim_issue
-    click_intake_add_issue
-    click_intake_no_matching_issues
-
-    # add the cc issue
-    dropdown_select_string = "Select or enter..."
-    benefit_text = "Insurance"
-
-    # Select the benefit type
-    all(".cf-select__control", text: dropdown_select_string).first.click
-    find("div", class: "cf-select__option", text: benefit_text).click
-
-    # Select the issue category
-    find(".cf-select__control", text: dropdown_select_string).click
-    find("div", class: "cf-select__option", text: "Contested Death Claim | Intent of Insured").click
-
-    # fill in date and issue description
-    fill_in "Decision date", with: 1.day.ago.to_date.mdY.to_s
-    fill_in "Issue description", with: "CC Instructions"
-
-    # click buttons
-    click_on "Add this issue"
-    click_on "Save"
-    click_on "Yes, save"
-  end
-
-  context "A contested claim is added to an evidence submission appeal" do
-    let!(:cc_appeal) do
-      create(:appeal,
-             veteran_file_number: veteran.file_number,
-             receipt_date: receipt_date,
-             docket_type: Constants.AMA_DOCKETS.evidence_submission,
-             veteran_is_not_claimant: false,
-             legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
-    end
-
+  context "User is a member of the Supervisory Senior Counsel" do
     before do
       User.authenticate!(user: current_user)
-      FeatureToggle.enable!(:cc_appeal_workflow)
-      FeatureToggle.enable!(:indicator_for_contested_claims)
-      FeatureToggle.enable!(:indicator_for_contested_claims)
-      ClerkOfTheBoard.singleton
+      FeatureToggle.enable!(:split_appeal_workflow)
+      OrganizationsUser.make_user_admin(current_user, SupervisorySeniorCounsel.singleton)
     end
 
-    scenario "the cc_appeal_workflow feature toggle is not enabled" do
-      FeatureToggle.disable!(:cc_appeal_workflow)
-      visit("/appeals/#{cc_appeal.uuid}/edit")
-      add_contested_claim_issue
+    after { FeatureToggle.disable!(:split_appeal_workflow) }
 
-      assert page.has_content?("You have successfully added 1 issue")
-      expect(cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").nil?).to be true
-    end
-
-    scenario "a cc issue is assigned to an evidence submission appeal" do
-      visit("/appeals/#{cc_appeal.uuid}/edit")
-      add_contested_claim_issue
-
-      assert page.has_content?("You have successfully added 1 issue")
-      expect(cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").nil?).to be false
-      expect(
-        cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").parent
-      ).to eql(cc_appeal.tasks.find_by(type: "EvidenceSubmissionWindowTask"))
-      expect(
-        cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").assigned_to
-      ).to eql(ClerkOfTheBoard.singleton)
-      expect(
-        cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").assigned_by
-      ).to eql(current_user)
-    end
-  end
-
-  context "A contested claim is added to an hearing appeal" do
-    let!(:cc_appeal) do
-      create(:appeal,
-             veteran_file_number: veteran.file_number,
-             receipt_date: receipt_date,
-             docket_type: Constants.AMA_DOCKETS.hearing,
-             veteran_is_not_claimant: false,
-             legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
-    end
-
-    before do
-      User.authenticate!(user: current_user)
-      FeatureToggle.enable!(:cc_appeal_workflow)
-      FeatureToggle.enable!(:indicator_for_contested_claims)
-      FeatureToggle.enable!(:indicator_for_contested_claims)
-      ClerkOfTheBoard.singleton
-    end
-
-    scenario "a cc issue is assigned to a hearing appeal" do
-      visit("/appeals/#{cc_appeal.uuid}/edit")
-      add_contested_claim_issue
-
-      assert page.has_content?("You have successfully added 1 issue")
-      expect(cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").nil?).to be false
-      expect(
-        cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").parent
-      ).to eql(cc_appeal.tasks.find_by(type: "ScheduleHearingTask"))
-      expect(
-        cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").assigned_to
-      ).to eql(ClerkOfTheBoard.singleton)
-      expect(
-        cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").assigned_by
-      ).to eql(current_user)
-    end
-  end
-
-  context "A contested claim is added to a direct review appeal" do
-    let!(:cc_appeal) do
-      create(:appeal,
-             veteran_file_number: veteran.file_number,
-             receipt_date: receipt_date,
-             docket_type: Constants.AMA_DOCKETS.direct_review,
-             veteran_is_not_claimant: false,
-             legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
-    end
-
-    before do
-      User.authenticate!(user: current_user)
-      FeatureToggle.enable!(:cc_appeal_workflow)
-      FeatureToggle.enable!(:indicator_for_contested_claims)
-      FeatureToggle.enable!(:indicator_for_contested_claims)
-      ClerkOfTheBoard.singleton
-    end
-
-    scenario "a cc issue is assigned to a direct review appeal" do
-      visit("/appeals/#{cc_appeal.uuid}/edit")
-      add_contested_claim_issue
-
-      assert page.has_content?("You have successfully added 1 issue")
-      expect(cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").nil?).to be false
-      expect(
-        cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").parent
-      ).to eql(cc_appeal.tasks.find_by(type: "DistributionTask"))
-      expect(
-        cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").assigned_to
-      ).to eql(ClerkOfTheBoard.singleton)
-      expect(
-        cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").assigned_by
-      ).to eql(current_user)
-    end
-  end
-
-  context "A cc issue is added to a cc appeal with the initial letter task" do
-    let!(:cc_appeal) do
-      create(:appeal,
-             veteran_file_number: veteran.file_number,
-             receipt_date: receipt_date,
-             docket_type: Constants.AMA_DOCKETS.direct_review,
-             veteran_is_not_claimant: false,
-             legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
-    end
-
-    let(:initial_letter_task) do
-      SendInitialNotificationLetterTask.create!(
-        appeal: cc_appeal,
-        parent: appeal.tasks.find_by(type: "DistributionTask"),
-        assigned_to: ClerkOfTheBoard.singleton,
-        assigned_by: current_user
-      )
-    end
-
-    before do
-      User.authenticate!(user: current_user)
-      FeatureToggle.enable!(:cc_appeal_workflow)
-      FeatureToggle.enable!(:indicator_for_contested_claims)
-      FeatureToggle.enable!(:indicator_for_contested_claims)
-      ClerkOfTheBoard.singleton
-    end
-
-    scenario "if the first task is open, a 2nd SendInitialNotificationLetterTask is not created" do
-      visit("/appeals/#{cc_appeal.uuid}/edit")
-      add_contested_claim_issue
-
-      assert page.has_content?("You have successfully added 1 issue")
-      expect(cc_appeal.reload.tasks.where(type: "SendInitialNotificationLetterTask").count).to eq 1
-      # expect(cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask")).to be initial_letter_task
-    end
-
-    scenario "if the first task is completed, a new SendInitialNotificationLetterTask is created" do
-      initial_letter_task.completed!
-
-      visit("/appeals/#{cc_appeal.uuid}/edit")
-      add_contested_claim_issue
-
-      assert page.has_content?("You have successfully added 1 issue")
-      expect(cc_appeal.reload.tasks.where(type: "SendInitialNotificationLetterTask").count).to eq 2
-      expect(cc_appeal.reload.tasks.where(
-        type: "SendInitialNotificationLetterTask"
-      ).where(status: "assigned").count).to eq 1
-    end
-
-    scenario "if the first task is cancelled, a new SendInitialNotificationLetterTask is created" do
-      initial_letter_task.cancelled!
-
-      visit("/appeals/#{cc_appeal.uuid}/edit")
-      add_contested_claim_issue
-
-      assert page.has_content?("You have successfully added 1 issue")
-      expect(cc_appeal.reload.tasks.where(type: "SendInitialNotificationLetterTask").count).to eq 2
-      expect(cc_appeal.reload.tasks.where(
-        type: "SendInitialNotificationLetterTask"
-      ).where(status: "assigned").count).to eq 1
-    end
-  end
-
-  context "User is a member of the Supervisory Senior Council" do
-    let!(:organization) { SupervisorySeniorCouncil.singleton }
-    let!(:current_user) { create(:user, roles: ["Mail Intake"]) }
-    let!(:organization_user) { OrganizationsUser.make_user_admin(current_user, organization) }
     scenario "less than 2 request issues on the appeal, the split appeal button doesn't show" do
-      User.authenticate!(user: current_user)
       visit "appeals/#{appeal2.uuid}/edit/"
       expect(appeal2.decision_issues.length + appeal2.request_issues.length).to be < 2
       expect(page).to_not have_button("Split appeal")
     end
-  end
 
-  context "The user is a member of Supervisory Senior Council and the appeal has 2 or more tasks" do
-    let!(:organization) { SupervisorySeniorCouncil.singleton }
-    let!(:current_user) { create(:user, roles: ["Mail Intake"]) }
-    let!(:organization_user) { OrganizationsUser.make_user_admin(current_user, organization) }
-    let!(:request_issue_1) do
-      create(:request_issue,
-             id: 22,
-             decision_review: appeal2,
-             decision_date: profile_date,
-             contested_rating_issue_reference_id: "def456",
-             contested_rating_issue_profile_date: profile_date,
-             contested_issue_description: "PTSD denied",
-             contention_reference_id: "3897",
-             benefit_type: "Education")
-    end
-
-    let!(:request_issue_2) do
-      create(:request_issue,
-             id: 25,
-             decision_review: appeal2,
-             decision_date: profile_date,
-             contested_rating_issue_reference_id: "blah1234",
-             contested_rating_issue_profile_date: profile_date,
-             contested_issue_description: "Other Issue Description",
-             contention_reference_id: "78910",
-             benefit_type: "Education")
-    end
-
-    before do
-      # Login with the user
-      User.authenticate!(user: current_user)
-      FeatureToggle.enable!(:split_appeal_workflow)
-    end
-
-    after do
-      FeatureToggle.disable!(:split_appeal_workflow)
-    end
-
-    scenario "Split appeal page behavior" do
-      step "SSC user navigates to the split appeal page" do
-        visit "appeals/#{appeal2.uuid}/edit/"
-
-        expect(page).to have_button("Split appeal")
-        # clicking the button takes the user to the next page
-        click_button("Split appeal")
-
-        expect(page).to have_current_path("/appeals/#{appeal2.uuid}/edit/create_split")
-      end
-
-      step "The split appeal page contains the appropriate information" do
-        expect(page).to have_content("PTSD denied")
-        expect(page).to have_content("Other Issue Description")
-
-        # expect the select bar, cancel button, and continue button to show
-        expect(page).to have_content("Select...")
-        expect(page).to have_content("Cancel")
-
-        # expect the continue button to be disabled
-        expect(page).to have_button("Continue", disabled: true)
-
-        # The cancel button goes back to the edit page
-        click_button("Cancel")
-        expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}")
-      end
-
-      step "If no issues and no reason are selected on the split appeal page, the Continue button is disabled" do
-        visit("/appeals/#{appeal2.uuid}/edit/create_split")
-
-        # expect issue descriptions to display
-        expect(page).to have_content("PTSD denied")
-        expect(page).to have_content("Other Issue Description")
-        expect(page).to have_content("Select...")
-        expect(page).to have_button("Continue", disabled: true)
-      end
-
-      step "If a reason is selected the button remains disabled" do
-        find(:css, ".cf-select").select_option
-        find(:css, ".cf-select__menu").click
-        expect(page).to have_button("Continue", disabled: true)
-      end
-
-      step "If an issue is selected and then de-selected the Continue button behaves correctly" do
-        find("label", text: "PTSD denied").click
-        expect(page).to have_button("Continue", disabled: false)
-        find("label", text: "PTSD denied").click
-        expect(page).to have_button("Continue", disabled: true)
-      end
-
-      step "If all issues are selected on the split appeal page, the Continue button is disabled" do
-        find("label", text: "PTSD denied").click
-        find("label", text: "Other Issue Description").click
-
-        expect(page).to have_button("Continue", disabled: true)
-      end
-
-      step "The SSC user navigates to the split appeal page to review page" do
-        find("label", text: "PTSD denied").click
-        click_button("Continue")
-        expect(page).to have_content("Reason for new appeal stream:")
-        expect(page).to have_current_path("/appeals/#{appeal2.uuid}/edit/review_split")
-      end
-    end
-
-    def skill_form(appeal)
-      visit("/appeals/#{appeal.uuid}/edit/create_split")
-
-      # expect issue descritions to display
-      expect(page).to have_content("PTSD denied")
-      expect(page).to have_content("Other Issue Description")
-      find("label", text: "PTSD denied").click
-      expect(page).to have_content("Select...")
-
-      find(:css, ".cf-select").select_option
-      find(:css, ".cf-select__menu").click
-
-      click_button("Continue")
-      expect(page).to have_current_path("/appeals/#{appeal.uuid}/edit/review_split")
-    end
-
-    def specialty_case_team_split_form(appeal)
-      visit("/appeals/#{appeal.uuid}/edit/create_split")
-
-      # expect issue descritions to display
-      expect(page).to have_content("PTSD denied")
-      expect(page).to have_content("Other Issue Description")
-      expect(page).to have_content("CHAMPVA Split Issue")
-      find("label", text: "CHAMPVA Split Issue").click
-      expect(page).to have_content("Select...")
-
-      find(:css, ".cf-select").select_option
-      find(:css, ".cf-select__menu").click
-
-      click_button("Continue")
-      expect(page).to have_current_path("/appeals/#{appeal.uuid}/edit/review_split")
-    end
-
-    # scenario "When the user accesses the review_split page, the page renders as expected" do
-    scenario "Review split page behavior" do
-      step "When the user accesses the review_split page, the page renders as expected" do
-        skill_form(appeal2)
-
-        expect(page).to have_table("review_table")
-        expect(page).to have_content("Cancel")
-        expect(page).to have_button("Back")
-        expect(page).to have_button("Split appeal")
-        expect(page).to have_content("Reason for new appeal stream:")
-        expect(appeal2.docket_type).not_to have_content("hearing")
-
-        # Verify table information
-        row2_1 = page.find(:xpath, ".//table/tr[2]/td[1]/em").text
-        row3_1 = page.find(:xpath, ".//table/tr[3]/td[1]/em").text
-        expect(row2_1).to eq("Veteran")
-        if expect(appeal2.veteran_is_not_claimant).to be(false)
-          expect(row3_1).to eq("Docket Number")
-        else
-          expect(row3_1).to eq("Appellant")
-        end
-      end
-
-      step "the back button takes the user back" do
-        click_button("Back")
-        expect(page).to have_content("Create new appeal stream")
-        expect(page).to have_current_path("/appeals/#{appeal2.uuid}/edit/create_split")
-      end
-
-      step "the cancel button takes the user back to the appeal case details page" do
-        skill_form(appeal2)
-        expect(page).to have_button("Split appeal")
-        click_button("Cancel")
-        expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}")
-      end
-
-      step "the Split appeal button splits appeal and takes the user back to the original appeal case details page" do
-        skill_form(appeal2)
-
-        click_button("Split appeal")
-        expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}", ignore_query: true)
-
-        # Verify the success banner
-        expect(page).to have_content("You have successfully split #{appeal2.claimant.name}'s appeal")
-        expect(page).to have_content(COPY::SPLIT_APPEAL_BANNER_SUCCESS_MESSAGE)
-
-        # Verify the spit appeal information
-        appeal2.reload
-        split_record = SplitCorrelationTable.last
-        new_appeal = Appeal.find(split_record.appeal_id)
-        expect(split_record.original_appeal_id).to eq(appeal2.id)
-        expect(new_appeal.request_issues.first.contested_issue_description).to eq("PTSD denied")
-        expect(appeal2.request_issues.active.count).to eq(1)
-        expect(new_appeal.docket_number).to eq(appeal2.docket_number)
-      end
-    end
-
-    context "When splitting appeals with Specialty Case Team issues" do
-      let!(:request_issue_3) do
+    context "and the appeal has 2 or more tasks" do
+      let!(:request_issue_1) do
         create(:request_issue,
-               id: 28,
+               id: 22,
                decision_review: appeal2,
                decision_date: profile_date,
-               benefit_type: "vha",
-               nonrating_issue_category: "CHAMPVA",
-               nonrating_issue_description: "CHAMPVA Split Issue")
+               contested_rating_issue_reference_id: "def456",
+               contested_rating_issue_profile_date: profile_date,
+               contested_issue_description: "PTSD denied",
+               contention_reference_id: "3897",
+               benefit_type: "Education")
       end
 
-      context "With feature toggle enabled" do
-        before do
-          FeatureToggle.enable!(:specialty_case_team_distribution)
+      let!(:request_issue_2) do
+        create(:request_issue,
+               id: 25,
+               decision_review: appeal2,
+               decision_date: profile_date,
+               contested_rating_issue_reference_id: "blah1234",
+               contested_rating_issue_profile_date: profile_date,
+               contested_issue_description: "Other Issue Description",
+               contention_reference_id: "78910",
+               benefit_type: "Education")
+      end
+
+      scenario "Split appeal page behavior" do
+        step "SSC user navigates to the split appeal page" do
+          visit "appeals/#{appeal2.uuid}/edit/"
+
+          expect(page).to have_button("Split appeal")
+          # clicking the button takes the user to the next page
+          click_button("Split appeal")
+
+          expect(page).to have_current_path("/appeals/#{appeal2.uuid}/edit/create_split")
         end
-        after do
-          FeatureToggle.disable!(:specialty_case_team_distribution)
+
+        step "The split appeal page contains the appropriate information" do
+          expect(page).to have_content("PTSD denied")
+          expect(page).to have_content("Other Issue Description")
+
+          # expect the select bar, cancel button, and continue button to show
+          expect(page).to have_content("Select...")
+          expect(page).to have_content("Cancel")
+
+          # expect the continue button to be disabled
+          expect(page).to have_button("Continue", disabled: true)
+
+          # The cancel button goes back to the edit page
+          click_button("Cancel")
+          expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}")
         end
 
-        scenario "Split appeal with Vha issue" do
-          step "The split appeal should progress through to the review split page" do
-            specialty_case_team_split_form(appeal2)
-          end
+        step "If no issues and no reason are selected on the split appeal page, the Continue button is disabled" do
+          visit("/appeals/#{appeal2.uuid}/edit/create_split")
 
-          step "the banner should be on the page indicating that it is a specialty case team issue" do
-            expect(page).to have_content(COPY::SPLIT_APPEAL_SPECIALTY_CASE_TEAM_ISSUE_MESSAGE)
-          end
+          # expect issue descriptions to display
+          expect(page).to have_content("PTSD denied")
+          expect(page).to have_content("Other Issue Description")
+          expect(page).to have_content("Select...")
+          expect(page).to have_button("Continue", disabled: true)
+        end
 
-          step "The appeal should be split succesfully and user should be redirected back to the case details page" do
-            click_button("Split appeal")
-            expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}", ignore_query: true)
+        step "If a reason is selected the button remains disabled" do
+          find(:css, ".cf-select").select_option
+          find(:css, ".cf-select__menu").click
+          expect(page).to have_button("Continue", disabled: true)
+        end
 
-            # Verify the success banner
-            expect(page).to have_content("You have successfully split #{appeal2.claimant.name}'s appeal")
-            expect(page).to have_content(COPY::SPLIT_APPEAL_BANNER_SUCCESS_MESSAGE)
+        step "If an issue is selected and then de-selected the Continue button behaves correctly" do
+          find("label", text: "PTSD denied").click
+          expect(page).to have_button("Continue", disabled: false)
+          find("label", text: "PTSD denied").click
+          expect(page).to have_button("Continue", disabled: true)
+        end
 
-            # Verify the spit appeal information
-            appeal2.reload
-            split_record = SplitCorrelationTable.last
-            new_appeal = Appeal.find(split_record.appeal_id)
-            expect(split_record.original_appeal_id).to eq(appeal2.id)
-            expect(new_appeal.request_issues.first.nonrating_issue_category).to eq("CHAMPVA")
-            expect(appeal2.request_issues.active.count).to eq(2)
-            expect(new_appeal.request_issues.active.count).to eq(1)
-            expect(new_appeal.docket_number).to eq(appeal2.docket_number)
+        step "If all issues are selected on the split appeal page, the Continue button is disabled" do
+          find("label", text: "PTSD denied").click
+          find("label", text: "Other Issue Description").click
 
-            # The new appeal should have an assigned SCT task
-            sct_task = new_appeal.tasks.find { |task| task.type == SpecialtyCaseTeamAssignTask.name }
-            expect(sct_task.status).to eq(Constants.TASK_STATUSES.assigned)
-          end
+          expect(page).to have_button("Continue", disabled: true)
+        end
+
+        step "The SSC user navigates to the split appeal page to review page" do
+          find("label", text: "PTSD denied").click
+          click_button("Continue")
+          expect(page).to have_content("Reason for new appeal stream:")
+          expect(page).to have_current_path("/appeals/#{appeal2.uuid}/edit/review_split")
         end
       end
 
-      context "With sct feature toggle disabled" do
-        scenario "Split appeal with Vha issue" do
-          step "The split appeal should progress through to the review split page" do
-            specialty_case_team_split_form(appeal2)
+      def skill_form(appeal)
+        visit("/appeals/#{appeal.uuid}/edit/create_split")
+
+        # expect issue descritions to display
+        expect(page).to have_content("PTSD denied")
+        expect(page).to have_content("Other Issue Description")
+        find("label", text: "PTSD denied").click
+        expect(page).to have_content("Select...")
+
+        find(:css, ".cf-select").select_option
+        find(:css, ".cf-select__menu").click
+
+        click_button("Continue")
+        expect(page).to have_current_path("/appeals/#{appeal.uuid}/edit/review_split")
+      end
+
+      def specialty_case_team_split_form(appeal)
+        visit("/appeals/#{appeal.uuid}/edit/create_split")
+
+        # expect issue descritions to display
+        expect(page).to have_content("PTSD denied")
+        expect(page).to have_content("Other Issue Description")
+        expect(page).to have_content("CHAMPVA Split Issue")
+        find("label", text: "CHAMPVA Split Issue").click
+        expect(page).to have_content("Select...")
+
+        find(:css, ".cf-select").select_option
+        find(:css, ".cf-select__menu").click
+
+        click_button("Continue")
+        expect(page).to have_current_path("/appeals/#{appeal.uuid}/edit/review_split")
+      end
+
+      # scenario "When the user accesses the review_split page, the page renders as expected" do
+      scenario "Review split page behavior" do
+        step "When the user accesses the review_split page, the page renders as expected" do
+          skill_form(appeal2)
+
+          expect(page).to have_table("review_table")
+          expect(page).to have_content("Cancel")
+          expect(page).to have_button("Back")
+          expect(page).to have_button("Split appeal")
+          expect(page).to have_content("Reason for new appeal stream:")
+          expect(appeal2.docket_type).not_to have_content("hearing")
+
+          # Verify table information
+          row2_1 = page.find(:xpath, ".//table/tr[2]/td[1]/em").text
+          row3_1 = page.find(:xpath, ".//table/tr[3]/td[1]/em").text
+          expect(row2_1).to eq("Veteran")
+          if expect(appeal2.veteran_is_not_claimant).to be(false)
+            expect(row3_1).to eq("Docket Number")
+          else
+            expect(row3_1).to eq("Appellant")
           end
+        end
 
-          step "the sct banner should not be on the page indicating that it is a specialty case team issue" do
-            expect(page).to_not have_content(COPY::SPLIT_APPEAL_SPECIALTY_CASE_TEAM_ISSUE_MESSAGE)
+        step "the back button takes the user back" do
+          click_button("Back")
+          expect(page).to have_content("Create new appeal stream")
+          expect(page).to have_current_path("/appeals/#{appeal2.uuid}/edit/create_split")
+        end
+
+        step "the cancel button takes the user back to the appeal case details page" do
+          skill_form(appeal2)
+          expect(page).to have_button("Split appeal")
+          click_button("Cancel")
+          expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}")
+        end
+
+        step "the Split appeal button splits appeal and takes the user back to the original appeal case details page" do
+          skill_form(appeal2)
+
+          click_button("Split appeal")
+          expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}", ignore_query: true)
+
+          # Verify the success banner
+          expect(page).to have_content("You have successfully split #{appeal2.claimant.name}'s appeal")
+          expect(page).to have_content(COPY::SPLIT_APPEAL_BANNER_SUCCESS_MESSAGE)
+
+          # Verify the spit appeal information
+          appeal2.reload
+          split_record = SplitCorrelationTable.last
+          new_appeal = Appeal.find(split_record.appeal_id)
+          expect(split_record.original_appeal_id).to eq(appeal2.id)
+          expect(new_appeal.request_issues.first.contested_issue_description).to eq("PTSD denied")
+          expect(appeal2.request_issues.active.count).to eq(1)
+          expect(new_appeal.docket_number).to eq(appeal2.docket_number)
+        end
+      end
+
+      context "When splitting appeals with Specialty Case Team issues" do
+        let!(:request_issue_3) do
+          create(:request_issue,
+                 id: 28,
+                 decision_review: appeal2,
+                 decision_date: profile_date,
+                 benefit_type: "vha",
+                 nonrating_issue_category: "CHAMPVA",
+                 nonrating_issue_description: "CHAMPVA Split Issue")
+        end
+
+        context "With feature toggle enabled" do
+          before { FeatureToggle.enable!(:specialty_case_team_distribution) }
+          after { FeatureToggle.disable!(:specialty_case_team_distribution) }
+
+          scenario "Split appeal with Vha issue" do
+            step "The split appeal should progress through to the review split page" do
+              specialty_case_team_split_form(appeal2)
+            end
+
+            step "the banner should be on the page indicating that it is a specialty case team issue" do
+              expect(page).to have_content(COPY::SPLIT_APPEAL_SPECIALTY_CASE_TEAM_ISSUE_MESSAGE)
+            end
+
+            step "The appeal should be split succesfully and user should be redirected back to the case details page" do
+              evidence_submission_task = appeal2.tasks.find { |task| task.type == EvidenceSubmissionWindowTask.name }
+              distribution_task = appeal2.tasks.find { |task| task.type == DistributionTask.name }
+              # complete the distribution task so that a SpecialtyCaseTeamAssignTask can be created
+              evidence_submission_task.completed!
+              distribution_task.completed!
+              click_button("Split appeal")
+              expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}", ignore_query: true)
+
+              # Verify the success banner
+              expect(page).to have_content("You have successfully split #{appeal2.claimant.name}'s appeal")
+              expect(page).to have_content(COPY::SPLIT_APPEAL_BANNER_SUCCESS_MESSAGE)
+
+              # Verify the spit appeal information
+              appeal2.reload
+              split_record = SplitCorrelationTable.last
+              new_appeal = Appeal.find(split_record.appeal_id)
+              expect(split_record.original_appeal_id).to eq(appeal2.id)
+              expect(new_appeal.request_issues.first.nonrating_issue_category).to eq("CHAMPVA")
+              expect(appeal2.request_issues.active.count).to eq(2)
+              expect(new_appeal.request_issues.active.count).to eq(1)
+              expect(new_appeal.docket_number).to eq(appeal2.docket_number)
+
+              # The new appeal should have an assigned SCT task
+              sct_task = new_appeal.tasks.find { |task| task.type == SpecialtyCaseTeamAssignTask.name }
+              expect(sct_task.status).to eq(Constants.TASK_STATUSES.assigned)
+            end
           end
+        end
 
-          step "The appeal should be split succesfully and user should be redirected back to the case details page" do
-            click_button("Split appeal")
-            expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}", ignore_query: true)
+        context "With sct feature toggle disabled" do
+          scenario "Split appeal with Vha issue" do
+            step "The split appeal should progress through to the review split page" do
+              specialty_case_team_split_form(appeal2)
+            end
 
-            # Verify the success banner
-            expect(page).to have_content("You have successfully split #{appeal2.claimant.name}'s appeal")
-            expect(page).to have_content(COPY::SPLIT_APPEAL_BANNER_SUCCESS_MESSAGE)
+            step "the sct banner should not be on the page indicating that it is a specialty case team issue" do
+              expect(page).to_not have_content(COPY::SPLIT_APPEAL_SPECIALTY_CASE_TEAM_ISSUE_MESSAGE)
+            end
 
-            # Verify the spit appeal information
-            appeal2.reload
-            split_record = SplitCorrelationTable.last
-            new_appeal = Appeal.find(split_record.appeal_id)
-            expect(split_record.original_appeal_id).to eq(appeal2.id)
-            expect(new_appeal.request_issues.first.nonrating_issue_category).to eq("CHAMPVA")
-            expect(appeal2.request_issues.active.count).to eq(2)
-            expect(new_appeal.request_issues.active.count).to eq(1)
-            expect(new_appeal.docket_number).to eq(appeal2.docket_number)
+            step "The appeal should be split succesfully and user should be redirected back to the case details page" do
+              click_button("Split appeal")
+              expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}", ignore_query: true)
 
-            # The new appeal should not have an assigned SCT task
-            sct_task = new_appeal.tasks.find { |task| task.type == SpecialtyCaseTeamAssignTask.name }
-            expect(sct_task).to eq(nil)
+              page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
+
+              # Verify the success banner
+              expect(page).to have_content("You have successfully split #{appeal2.claimant.name}'s appeal")
+              expect(page).to have_content(COPY::SPLIT_APPEAL_BANNER_SUCCESS_MESSAGE)
+
+              # Verify the spit appeal information
+              appeal2.reload
+              split_record = SplitCorrelationTable.last
+              new_appeal = Appeal.find(split_record.appeal_id)
+              expect(split_record.original_appeal_id).to eq(appeal2.id)
+              expect(new_appeal.request_issues.first.nonrating_issue_category).to eq("CHAMPVA")
+              expect(appeal2.request_issues.active.count).to eq(2)
+              expect(new_appeal.request_issues.active.count).to eq(1)
+              expect(new_appeal.docket_number).to eq(appeal2.docket_number)
+
+              # The new appeal should not have an assigned SCT task
+              sct_task = new_appeal.tasks.find { |task| task.type == SpecialtyCaseTeamAssignTask.name }
+              expect(sct_task).to eq(nil)
+            end
           end
         end
       end
@@ -908,8 +740,8 @@ feature "Appeal Edit issues", :all_dbs do
     end
   end
 
-  context "when appeal Type is Veterans Health Administration By default (Predocket option)" do
-    scenario "appeal with benefit type VHA" do
+  context "when appeal Type is Veterans Health Administration" do
+    scenario "appeal with benefit type VHA (predocket)" do
       visit "appeals/#{appeal.uuid}/edit/"
       click_intake_add_issue
       click_intake_no_matching_issues
@@ -926,9 +758,7 @@ feature "Appeal Edit issues", :all_dbs do
       expect(find("#is-predocket-needed_false", visible: false).checked?).to eq(false)
       expect(page).to have_content(COPY::VHA_PRE_DOCKET_ISSUE_BANNER)
     end
-  end
 
-  context "when appeal Type is Veterans Health Administration NO Predocket" do
     scenario "appeal with benefit type VHA no - predocket" do
       visit "appeals/#{appeal.uuid}/edit/"
       click_intake_add_issue
@@ -950,35 +780,6 @@ feature "Appeal Edit issues", :all_dbs do
     end
   end
 
-  context "appeal is non-comp benefit type" do
-    let!(:request_issue) { create(:request_issue, benefit_type: "education") }
-
-    scenario "adding an issue with a non-comp benefit type" do
-      visit "appeals/#{appeal.uuid}/edit/"
-
-      # Add issue that is not a VBMS issue
-      click_intake_add_issue
-      click_intake_no_matching_issues
-      add_intake_nonrating_issue(
-        benefit_type: "Education",
-        category: "Accrued",
-        description: "Description for Accrued",
-        date: 1.day.ago.to_date.mdY
-      )
-
-      expect(page).to_not have_content("Check the Veteran's profile for invalid information")
-      expect(page).to have_button("Save", disabled: false)
-
-      click_edit_submit_and_confirm
-      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
-      expect(page).to_not have_content("Unable to load this case")
-      expect(RequestIssue.find_by(
-               benefit_type: "education",
-               veteran_participant_id: nil
-             )).to_not be_nil
-    end
-  end
-
   context "appeal is outcoded" do
     let(:appeal) { create(:appeal, :outcoded, veteran: veteran) }
 
@@ -992,20 +793,6 @@ feature "Appeal Edit issues", :all_dbs do
   end
 
   context "when withdraw decision reviews is enabled" do
-    scenario "remove an issue with dropdown and show alert message" do
-      visit "appeals/#{appeal.uuid}/edit/"
-      expect(page).to have_content("PTSD denied")
-      click_remove_intake_issue_dropdown("PTSD denied")
-
-      expect(page).to_not have_content("PTSD denied")
-
-      click_edit_submit_and_confirm
-
-      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
-
-      expect(page).to have_content("You have successfully removed 1 issue.")
-    end
-
     let(:withdraw_date) { 1.day.ago.to_date.mdY }
 
     let!(:in_progress_task) do
@@ -1014,6 +801,59 @@ feature "Appeal Edit issues", :all_dbs do
              appeal: appeal,
              assigned_to: non_comp_org,
              assigned_at: last_week)
+    end
+
+    scenario "user can withdraw single issue and edit page shows previously withdrawn issues" do
+      step "withdraw an issue" do
+        visit "appeals/#{appeal.uuid}/edit/"
+
+        expect(page).to_not have_content("Withdrawn issues")
+        expect(page).to_not have_content("Please include the date the withdrawal was requested")
+
+        click_withdraw_intake_issue_dropdown("PTSD denied")
+
+        expect(page).to have_content(
+          /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawal pending/i
+        )
+        expect(page).to have_content("Please include the date the withdrawal was requested")
+
+        expect(page).to have_button("Save", disabled: true)
+
+        fill_in "withdraw-date", with: withdraw_date
+
+        safe_click("#button-submit-update")
+        expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+
+        withdrawn_issue = RequestIssue.where(closed_status: "withdrawn").first
+
+        expect(withdrawn_issue).to_not be_nil
+        expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
+        expect(page).to have_content("You have successfully withdrawn 1 issue.")
+      end
+
+      step "show withdrawn issue when appeal edit page is reloaded" do
+        # reload to verify that the new issues populate the form
+        visit "appeals/#{appeal.uuid}/edit/"
+
+        expect(page).to have_content(
+          /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: #{request_issue_decision_mdY}\s*Withdrawn on/i
+        )
+      end
+
+      step "show alert when withdrawal date is not valid" do
+        click_withdraw_intake_issue_dropdown("Military Retired Pay - nonrating description")
+        fill_in "withdraw-date", with: 50.days.ago.to_date.mdY
+
+        expect(page).to have_content(
+          "We cannot process your request. Please select a date after the Appeal's receipt date."
+        )
+        expect(page).to have_button("Withdraw", disabled: true)
+
+        fill_in "withdraw-date", with: 2.years.from_now.to_date.mdY
+
+        expect(page).to have_content("We cannot process your request. Please select a date prior to today's date.")
+        expect(page).to have_button("Withdraw", disabled: true)
+      end
     end
 
     scenario "withdraw entire review and show alert" do
@@ -1026,6 +866,7 @@ feature "Appeal Edit issues", :all_dbs do
       expect(page).to have_button("Save", disabled: false)
 
       click_withdraw_intake_issue_dropdown("Military Retired Pay - nonrating description")
+      fill_in "withdraw-date", with: 2.days.ago.to_date.mdY
 
       expect(page).to have_content("This review will be withdrawn.")
       expect(page).to have_button("Withdraw", disabled: false)
@@ -1037,78 +878,6 @@ feature "Appeal Edit issues", :all_dbs do
       expect(page).to have_content("You have successfully withdrawn a review.")
 
       expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
-    end
-
-    scenario "withdraw an issue" do
-      visit "appeals/#{appeal.uuid}/edit/"
-
-      expect(page).to_not have_content("Withdrawn issues")
-      expect(page).to_not have_content("Please include the date the withdrawal was requested")
-
-      click_withdraw_intake_issue_dropdown("PTSD denied")
-
-      expect(page).to have_content(
-        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawal pending/i
-      )
-      expect(page).to have_content("Please include the date the withdrawal was requested")
-
-      expect(page).to have_button("Save", disabled: true)
-
-      fill_in "withdraw-date", with: withdraw_date
-
-      safe_click("#button-submit-update")
-      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
-
-      withdrawn_issue = RequestIssue.where(closed_status: "withdrawn").first
-
-      expect(withdrawn_issue).to_not be_nil
-      expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
-      expect(page).to have_content("You have successfully withdrawn 1 issue.")
-    end
-
-    scenario "show withdrawn issue when appeal edit page is reloaded" do
-      visit "appeals/#{appeal.uuid}/edit/"
-
-      click_intake_add_issue
-      add_intake_rating_issue("Left knee granted")
-
-      expect(page).to have_button("Save", disabled: false)
-
-      safe_click("#button-submit-update")
-      expect(page).to have_content("Number of issues has changed")
-
-      safe_click ".confirm"
-      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
-
-      # reload to verify that the new issues populate the form
-      visit "appeals/#{appeal.uuid}/edit/"
-      expect(page).to have_content("Left knee granted")
-
-      click_withdraw_intake_issue_dropdown("PTSD denied")
-
-      expect(page).to_not have_content(/Requested issues\s*[0-9]+\. PTSD denied/i)
-      expect(page).to have_content(
-        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawal pending/i
-      )
-      expect(page).to have_content("Please include the date the withdrawal was requested")
-
-      fill_in "withdraw-date", with: withdraw_date
-
-      safe_click("#button-submit-update")
-      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
-
-      withdrawn_issue = RequestIssue.where(closed_status: "withdrawn").first
-      expect(withdrawn_issue).to_not be_nil
-      expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
-
-      sleep 1
-
-      # reload to verify that the new issues populate the form
-      visit "appeals/#{appeal.uuid}/edit/"
-
-      expect(page).to have_content(
-        /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: #{request_issue_decision_mdY}\s*Withdrawn on/i
-      )
     end
 
     scenario "show alert when issue is added, removed and withdrawn" do
@@ -1146,135 +915,6 @@ feature "Appeal Edit issues", :all_dbs do
 
       expect(page).to have_content("You have successfully added 1 issue, removed 1 issue, and withdrawn 1 issue.")
     end
-
-    scenario "show alert when withdrawal date is not valid" do
-      visit "appeals/#{appeal.uuid}/edit/"
-      click_withdraw_intake_issue_dropdown("PTSD denied")
-      fill_in "withdraw-date", with: 50.days.ago.to_date.mdY
-
-      expect(page).to have_content(
-        "We cannot process your request. Please select a date after the Appeal's receipt date."
-      )
-      expect(page).to have_button("Save", disabled: true)
-
-      fill_in "withdraw-date", with: 2.years.from_now.to_date.mdY
-
-      expect(page).to have_content("We cannot process your request. Please select a date prior to today's date.")
-      expect(page).to have_button("Save", disabled: true)
-    end
-  end
-
-  context "when remove decision reviews is enabled" do
-    let(:today) { Time.zone.now }
-    let(:appeal) do
-      # reload to get uuid
-      create(:appeal, veteran_file_number: veteran.file_number).reload
-    end
-    let!(:existing_request_issues) do
-      [create(:request_issue, :nonrating, decision_review: appeal),
-       create(:request_issue, :nonrating, decision_review: appeal)]
-    end
-
-    let!(:completed_task) do
-      create(:appeal_task,
-             :completed,
-             appeal: appeal,
-             assigned_to: non_comp_org,
-             closed_at: last_week)
-    end
-
-    let!(:cancelled_task) do
-      create(:appeal_task,
-             :cancelled,
-             appeal: appeal,
-             assigned_to: non_comp_org,
-             closed_at: Time.zone.now)
-    end
-
-    context "when review has multiple active tasks" do
-      let!(:in_progress_task) do
-        create(:appeal_task,
-               :in_progress,
-               appeal: appeal,
-               assigned_to: non_comp_org,
-               assigned_at: last_week)
-      end
-
-      scenario "cancel all active tasks when all request issues are removed" do
-        visit "appeals/#{appeal.uuid}/edit"
-        # remove all request issues
-        click_remove_intake_issue_dropdown("Apportionment")
-        click_remove_intake_issue_dropdown("Apportionment")
-        click_remove_intake_issue_dropdown("PTSD denied")
-        click_remove_intake_issue_dropdown("Military Retired Pay")
-
-        click_edit_submit_and_confirm
-        expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
-
-        expect(RequestIssue.find_by(
-                 benefit_type: "compensation",
-                 veteran_participant_id: nil
-               )).to_not be_nil
-
-        visit "appeals/#{appeal.uuid}/edit"
-        expect(page.has_no_content?(existing_request_issues.first.description)).to eq(true)
-        expect(page.has_no_content?(existing_request_issues.second.description)).to eq(true)
-        expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
-        expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
-      end
-
-      context "when appeal is non-comp benefit type" do
-        let!(:request_issue) { create(:request_issue, benefit_type: "education") }
-
-        scenario "remove all non-comp decision reviews" do
-          visit "appeals/#{appeal.uuid}/edit"
-
-          # remove all request issues
-          click_remove_intake_issue_dropdown("Apportionment")
-          click_remove_intake_issue_dropdown("Apportionment")
-          click_remove_intake_issue_dropdown("PTSD denied")
-          click_remove_intake_issue_dropdown("Military Retired Pay")
-          click_edit_submit_and_confirm
-
-          expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
-          expect(page).to have_content("Edit Completed")
-        end
-      end
-
-      context "when review has no active tasks" do
-        scenario "no tasks are cancelled when all request issues are removed" do
-          visit "appeals/#{appeal.uuid}/edit"
-
-          click_remove_intake_issue_dropdown("Apportionment")
-          click_remove_intake_issue_dropdown("Apportionment")
-          click_remove_intake_issue_dropdown("PTSD denied")
-          click_remove_intake_issue_dropdown("Military Retired Pay")
-          click_edit_submit_and_confirm
-          expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
-        end
-      end
-
-      context "when appeal task is cancelled" do
-        scenario "show timestamp when all request issues are cancelled" do
-          visit "appeals/#{appeal.uuid}/edit"
-          # remove all request issues
-
-          click_remove_intake_issue_dropdown("Apportionment")
-          click_remove_intake_issue_dropdown("Apportionment")
-          click_remove_intake_issue_dropdown("PTSD denied")
-          click_remove_intake_issue_dropdown("Military Retired Pay")
-
-          click_edit_submit_and_confirm
-          expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
-
-          visit "appeals/#{appeal.uuid}/edit"
-          expect(page.has_no_content?(existing_request_issues.first.description)).to eq(true)
-          expect(page.has_no_content?(existing_request_issues.second.description)).to eq(true)
-          expect(cancelled_task.status).to eq(Constants.TASK_STATUSES.cancelled)
-          expect(cancelled_task.closed_at).to eq(Time.zone.now)
-        end
-      end
-    end
   end
 
   context "with BVA Intake Admin user" do
@@ -1291,19 +931,6 @@ feature "Appeal Edit issues", :all_dbs do
           :case,
           case_issues: [
             create(:case_issue, issmst: "N", isspact: "N")
-          ]
-        )
-      )
-    end
-
-    let(:legacy_appeal_mst_pact_checked) do
-      create(
-        :legacy_appeal,
-        :with_veteran,
-        vacols_case: create(
-          :case,
-          case_issues: [
-            create(:case_issue, issmst: "Y", isspact: "Y")
           ]
         )
       )
@@ -1338,70 +965,66 @@ feature "Appeal Edit issues", :all_dbs do
         FeatureToggle.disable!(:legacy_mst_pact_identification)
       end
 
-      scenario "can add MST/PACT to issues" do
-        go_to_queue_edit_issues_page_with_legacy_appeal(legacy_appeal_mst_pact_unchecked)
-        find("select", id: "issue-action-0").click
-        find("option", id: "issue-action-0_edit").click
-        check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
-        find(:xpath, "//label[@for='PACT Act']").click(allow_label_click: true, visible: false)
-        click_on "Save"
+      it "issues can be modified" do
+        step "can add MST/PACT to issues" do
+          go_to_queue_edit_issues_page_with_legacy_appeal(legacy_appeal_mst_pact_unchecked)
+          click_edit_intake_issue_dropdown_by_number(1)
+          check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
+          find(:xpath, "//label[@for='PACT Act']").click(allow_label_click: true, visible: false)
+          click_on "Save"
 
-        click_on "Save"
+          click_on "Save"
 
-        expect(page).to have_content("MST and PACT")
-      end
+          expect(page).to have_content("MST and PACT")
+        end
 
-      scenario "can remove MST/PACT issues" do
-        go_to_queue_edit_issues_page_with_legacy_appeal(legacy_appeal_mst_pact_checked)
-        find("select", id: "issue-action-0").click
-        find("option", id: "issue-action-0_edit").click
-        uncheck("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
-        find(:xpath, "//label[@for='PACT Act']").click(allow_label_click: true, visible: false)
-        click_on "Save"
+        step "can remove MST/PACT issues" do
+          click_on "Correct issues"
+          click_edit_intake_issue_dropdown_by_number(1)
+          uncheck("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
+          find(:xpath, "//label[@for='PACT Act']").click(allow_label_click: true, visible: false)
+          click_on "Save"
 
-        click_on "Save"
+          click_on "Save"
 
-        expect(page).to have_no_content("MST and PACT")
-      end
+          expect(page).to have_no_content("MST and PACT")
+        end
 
-      scenario "can add and remove only PACT to an issue" do
-        go_to_queue_edit_issues_page_with_legacy_appeal(legacy_appeal_mst_pact_unchecked)
-        find("select", id: "issue-action-0").click
-        find("option", id: "issue-action-0_edit").click
-        find(:xpath, "//label[@for='PACT Act']").click(allow_label_click: true, visible: false)
-        click_on "Save"
+        step "can add and remove only PACT to an issue" do
+          click_on "Correct issues"
+          click_edit_intake_issue_dropdown_by_number(1)
+          find(:xpath, "//label[@for='PACT Act']").click(allow_label_click: true, visible: false)
+          click_on "Save"
 
-        click_on "Save"
-        expect(page).to have_content("SPECIAL ISSUES\nPACT")
+          click_on "Save"
+          expect(page).to have_content("SPECIAL ISSUES\nPACT")
 
-        click_on "Correct issues"
-        find("select", id: "issue-action-0").click
-        find("option", id: "issue-action-0_edit").click
-        find(:xpath, "//label[@for='PACT Act']").click(allow_label_click: true, visible: false)
-        click_on "Save"
+          click_on "Correct issues"
+          click_edit_intake_issue_dropdown_by_number(1)
+          find(:xpath, "//label[@for='PACT Act']").click(allow_label_click: true, visible: false)
+          click_on "Save"
 
-        click_on "Save"
-        expect(page).to have_no_content("SPECIAL ISSUES\nPact")
-      end
+          click_on "Save"
+          expect(page).to have_no_content("SPECIAL ISSUES\nPact")
+        end
 
-      scenario "can add and remove only MST to an issue" do
-        go_to_queue_edit_issues_page_with_legacy_appeal(legacy_appeal_mst_pact_unchecked)
-        find("select", id: "issue-action-0").click
-        find("option", id: "issue-action-0_edit").click
-        check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
-        click_on "Save"
+        step "can add and remove only MST to an issue" do
+          click_on "Correct issues"
+          click_edit_intake_issue_dropdown_by_number(1)
+          check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
+          click_on "Save"
 
-        click_on "Save"
-        expect(page).to have_content("SPECIAL ISSUES\nMST")
+          click_on "Save"
+          expect(page).to have_content("SPECIAL ISSUES\nMST")
 
-        click_on "Correct issues"
-        find("select", id: "issue-action-0").click
-        find("option", id: "issue-action-0_edit").click
-        uncheck("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
-        click_on "Save"
+          click_on "Correct issues"
+          click_edit_intake_issue_dropdown_by_number(1)
+          uncheck("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
+          click_on "Save"
 
-        click_on "Save"
-        expect(page).to have_no_content("SPECIAL ISSUES\nMST")
+          click_on "Save"
+          expect(page).to have_no_content("SPECIAL ISSUES\nMST")
+        end
       end
     end
   end
@@ -1432,102 +1055,69 @@ feature "Appeal Edit issues", :all_dbs do
     end
     after { FeatureToggle.disable!(:specialty_case_team_distribution) }
 
-    scenario "appeal moves to sct queue when vha issue is added" do
-      reload_case_detail_page(appeal3.uuid)
-      click_on "Correct issues"
-      click_remove_intake_issue_dropdown("Unknown Issue Category")
-      click_intake_add_issue
-      fill_in "Benefit type", with: "Veterans Health Administration"
-      find("#issue-benefit-type").send_keys :enter
-      fill_in "Issue category", with: "Beneficiary Travel"
-      find("#issue-category").send_keys :enter
-      fill_in "Issue description", with: "I am a VHA issue"
-      fill_in "Decision date", with: 5.months.ago.mdY
+    scenario "appeal moves to sct queue when vha issue is added and moves back to distribution when removed" do
+      step "add VHA issue and remove non-VHA issue" do
+        reload_case_detail_page(appeal3.uuid)
+        click_on "Correct issues"
+        click_remove_intake_issue_dropdown("Unknown Issue Category")
+        click_intake_add_issue
+        fill_in "Benefit type", with: "Veterans Health Administration"
+        find("#issue-benefit-type").send_keys :enter
+        fill_in "Issue category", with: "Beneficiary Travel"
+        find("#issue-category").send_keys :enter
+        fill_in "Issue description", with: "I am a VHA issue"
+        fill_in "Decision date", with: 5.months.ago.mdY
+        radio_choices = page.all(".cf-form-radio-option > label")
+        radio_choices[1].click
+        safe_click ".add-issue"
 
-      radio_choices = page.all(".cf-form-radio-option > label")
-      radio_choices[1].click
+        click_edit_submit
+        expect(page).to have_content("Move appeal to SCT queue")
+        expect(page).to have_button("Move")
+        safe_click ".confirm"
+        expect(page).to have_content("You have successfully updated issues on this appeal")
+        expect(page).to have_content(
+          "The appeal for #{appeal3.claimant.name} " \
+          "(ID: #{appeal3.veteran.file_number}) has been moved to the SCT queue."
+        )
+      end
 
-      safe_click ".add-issue"
-      click_edit_submit
-      expect(page).to have_content("Move appeal to SCT queue")
-      expect(page).to have_button("Move")
-      safe_click ".confirm"
-      expect(page).to have_content("You have successfully updated issues on this appeal")
-      expect(page).to have_content(
-        "The appeal for #{appeal3.claimant.name} " \
-        "(ID: #{appeal3.veteran.file_number}) has been moved to the SCT queue."
-      )
-    end
-  end
+      step "remove VHA issue and add non-VHA issue" do
+        reload_case_detail_page(appeal3.uuid)
+        click_on "Correct issues"
+        click_remove_intake_issue_dropdown("Beneficiary Travel")
+        click_intake_add_issue
+        add_intake_nonrating_issue(
+          benefit_type: "compensation",
+          category: "Unknown Issue Category",
+          description: "non vha issue",
+          date: 1.day.ago.to_date.mdY
+        )
 
-  context "Removing all Specialty Case Team issues from an appeal" do
-    let!(:appeal3) do
-      create(:appeal,
-             :assigned_to_judge,
-             :completed_distribution_task,
-             veteran_file_number: create(:veteran).file_number,
-             receipt_date: receipt_date,
-             docket_type: Constants.AMA_DOCKETS.direct_review)
-    end
-    let!(:request_issue) do
-      create(:request_issue,
-             benefit_type: "compensation",
-             nonrating_issue_category: "Unknown Issue Category",
-             nonrating_issue_description: "Compensation issue",
-             decision_date: 5.months.ago,
-             decision_review: appeal3)
-    end
-    let!(:sct_request_issue) do
-      create(:request_issue,
-             benefit_type: "vha",
-             nonrating_issue_category: "CHAMPVA",
-             nonrating_issue_description: "VHA issue",
-             decision_date: 5.months.ago,
-             decision_review: appeal3)
-    end
+        click_edit_submit
+        expect(page).to have_content(COPY::MOVE_TO_DISTRIBUTION_MODAL_TITLE)
+        expect(page).to have_content(COPY::MOVE_TO_DISTRIBUTION_MODAL_BODY)
+        expect(page).to have_button("Move")
+        safe_click ".confirm"
+        expect(page).to have_content("You have successfully updated issues on this appeal")
+        expect(page).to have_content(
+          "The appeal for #{appeal3.claimant.name} " \
+          "(ID: #{appeal3.veteran.file_number}) has been moved to the regular distribution pool."
+        )
+        expect(page).to have_current_path("/queue/appeals/#{appeal3.uuid}")
 
-    before do
-      SpecialtyCaseTeam.singleton.add_user(current_user)
-      BvaIntake.singleton.add_user(current_user)
-      User.authenticate!(user: current_user)
-      FeatureToggle.enable!(:specialty_case_team_distribution)
-
-      # Add a Specialty Case Team Assign Task to the appeal
-      SpecialtyCaseTeamAssignTask.create!(appeal: appeal3,
-                                          parent: appeal3.root_task,
-                                          assigned_to: SpecialtyCaseTeam.singleton)
-    end
-
-    after { FeatureToggle.disable!(:specialty_case_team_distribution) }
-
-    scenario "appeal moves back to distribution when all SCT issues are removed" do
-      reload_case_detail_page(appeal3.uuid)
-      click_on "Correct issues"
-      click_remove_intake_issue_dropdown("CHAMPVA")
-      click_edit_submit_and_confirm
-
-      expect(page).to have_content(COPY::MOVE_TO_DISTRIBUTION_MODAL_TITLE)
-      expect(page).to have_content(COPY::MOVE_TO_DISTRIBUTION_MODAL_BODY)
-      expect(page).to have_button("Move")
-      safe_click ".confirm"
-      expect(page).to have_content("You have successfully updated issues on this appeal")
-      expect(page).to have_content(
-        "The appeal for #{appeal3.claimant.name} " \
-        "(ID: #{appeal3.veteran.file_number}) has been moved to the regular distribution pool."
-      )
-      expect(page).to have_current_path("/queue/appeals/#{appeal3.uuid}")
-
-      # Verify task tree status
-      appeal3.reload
-      appeal3.tasks.reload
-      appeal3.request_issues.reload
-      distribution_task = appeal3.tasks.find { |task| task.is_a?(DistributionTask) }
-      expect(distribution_task.assigned_by).to eq(current_user)
-      expect(distribution_task.status).to eq("assigned")
-      expect(appeal3.ready_for_distribution?).to eq(true)
-      expect(appeal3.can_redistribute_appeal?).to eq(true)
-      expect(appeal3.request_issues.active.count).to eq(1)
-      expect(appeal3.tasks.find { |task| task.is_a?(SpecialtyCaseTeamAssignTask) }.status).to eq("cancelled")
+        # Verify task tree status
+        appeal3.reload
+        appeal3.tasks.reload
+        appeal3.request_issues.reload
+        distribution_task = appeal3.tasks.find { |task| task.is_a?(DistributionTask) }
+        expect(distribution_task.assigned_by).to eq(current_user)
+        expect(distribution_task.status).to eq("assigned")
+        expect(appeal3.ready_for_distribution?).to eq(true)
+        expect(appeal3.can_redistribute_appeal?).to eq(true)
+        expect(appeal3.request_issues.active.count).to eq(1)
+        expect(appeal3.tasks.find { |task| task.is_a?(SpecialtyCaseTeamAssignTask) }.status).to eq("cancelled")
+      end
     end
   end
 end

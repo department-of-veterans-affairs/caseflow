@@ -35,10 +35,13 @@ class LegacyHearing < CaseflowRecord
   include UpdatedByUserConcern
   include HearingConcern
   include HasHearingEmailRecipientsConcern
+
+  # VA Notify Hooks
   prepend HearingScheduled
   prepend HearingWithdrawn
   prepend HearingPostponed
   prepend HearingScheduledInError
+  prepend HearingHeld
 
   # When these instance variable getters are called, first check if we've
   # fetched the values from VACOLS. If not, first fetch all values and save them
@@ -134,8 +137,10 @@ class LegacyHearing < CaseflowRecord
   end
 
   def hearing_day_id_refers_to_vacols_row?
-    (original_request_type == HearingDay::REQUEST_TYPES[:central] && scheduled_for.to_date < Date.new(2019, 1, 1)) ||
-      (original_request_type == HearingDay::REQUEST_TYPES[:video] && scheduled_for.to_date < Date.new(2019, 4, 1))
+    perform_vacols_request unless @vacols_load_status == :success
+
+    (original_request_type == HearingDay::REQUEST_TYPES[:central] && @scheduled_for.to_date < Date.new(2019, 1, 1)) ||
+      (original_request_type == HearingDay::REQUEST_TYPES[:video] && @scheduled_for.to_date < Date.new(2019, 4, 1))
   end
 
   def hearing_day_id
@@ -202,6 +207,12 @@ class LegacyHearing < CaseflowRecord
                      end
 
     scheduled_date < DateTime.yesterday.in_time_zone(regional_office_timezone)
+  end
+
+  # Checks the scheduled_in_timezone value and returns
+  # @return [Boolean] true if scheduled_in_timezone is not nil, else false
+  def use_hearing_datetime?
+    scheduled_in_timezone.present?
   end
 
   def held_open?
@@ -357,6 +368,23 @@ class LegacyHearing < CaseflowRecord
     end
   end
 
+  # The scheduled time for a legacy hearing after it have been retrieved from VACOLS and processed for time zone.
+  #
+  # @return [Time] a Time object in the calculated time zone and DST offset
+  def scheduled_for
+    perform_vacols_request unless @vacols_load_status == :success
+
+    return nil unless @scheduled_for
+
+    return @scheduled_for.in_time_zone(scheduled_in_timezone) if scheduled_in_timezone
+
+    HearingMapper.datetime_based_on_type(
+      datetime: @scheduled_for,
+      regional_office: HearingRepository.regional_office_for_scheduled_timezone(self, vacols_record),
+      type: vacols_record.hearing_type
+    )
+  end
+
   class << self
     def venues
       RegionalOffice::CITIES.merge(RegionalOffice::SATELLITE_OFFICES)
@@ -397,6 +425,7 @@ class LegacyHearing < CaseflowRecord
     update_appeal_states_on_hearing_scheduled_in_error
     update_appeal_states_on_hearing_postponed
     update_appeal_states_on_hearing_withdrawn
+    update_appeal_states_on_hearing_held
   end
 
   def assign_created_by_user

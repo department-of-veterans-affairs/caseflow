@@ -44,10 +44,10 @@ RUN apt -y update && \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
     apt -y update
 
-#install node
+# Install node
 RUN mkdir /usr/local/nvm
 ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION 14.20.0
+ENV NODE_VERSION 16.16.0
 ENV NVM_INSTALL_PATH $NVM_DIR/versions/node/v$NODE_VERSION
 RUN curl --silent -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
 RUN source $NVM_DIR/nvm.sh \
@@ -65,10 +65,6 @@ RUN apt install -y ${CASEFLOW} &&  \
 
 # install jemalloc
 RUN apt install -y --no-install-recommends libjemalloc-dev
-
-
-# install datadog agent
-RUN DD_INSTALL_ONLY=true DD_AGENT_MAJOR_VERSION=7 DD_API_KEY=$(cat config/datadog.key) bash -c "$(curl -L https://raw.githubusercontent.com/DataDog/datadog-agent/master/cmd/agent/install_script.sh)"
 
 RUN rm -rf /var/lib/apt/lists/*
 

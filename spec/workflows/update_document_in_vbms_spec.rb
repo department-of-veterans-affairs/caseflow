@@ -21,7 +21,7 @@ describe UpdateDocumentInVbms, :postgres do
   end
   let(:uploaded_to_vbms_at) { nil }
   let(:processed_at) { nil }
-  let!(:doc_to_upload) { UpdateDocumentInVbms.new(document: document) }
+  let!(:document_transaction) { UpdateDocumentInVbms.new(document: document) }
   let(:transaction_method) { :update_document_in_vbms }
   let(:upload_arg) { document.appeal }
 
@@ -29,19 +29,19 @@ describe UpdateDocumentInVbms, :postgres do
 
   describe "#source" do
     it "is hardcoded to BVA" do
-      expect(doc_to_upload.source).to eq "BVA"
+      expect(document_transaction.source).to eq "BVA"
     end
   end
 
   describe "#document_type_id" do
     it "fetches the ID corresponding to the document type string" do
-      expect(doc_to_upload.document_type_id).to eq 482
+      expect(document_transaction.document_type_id).to eq 482
     end
   end
 
   describe "#document_type" do
     it "reads it from the document instance" do
-      expect(doc_to_upload.document_type).to eq document.document_type
+      expect(document_transaction.document_type).to eq document.document_type
     end
   end
 end

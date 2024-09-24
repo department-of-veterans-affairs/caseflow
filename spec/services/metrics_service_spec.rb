@@ -38,8 +38,7 @@ describe MetricsService do
           app_name: "other",
           attrs: {
             service: service,
-            endpoint: name,
-            uuid: anything
+            endpoint: name
           }
         )
         expect(MetricsService).to receive(:increment_counter).with(
@@ -64,7 +63,7 @@ describe MetricsService do
               service: service,
               endpoint: name
             },
-            sent_to: [["rails_console"], "datadog", "dynatrace"],
+            sent_to: [["rails_console"], "dynatrace"],
             sent_to_info: {
               metric_group: "service",
               metric_name: "request_latency",
@@ -72,8 +71,7 @@ describe MetricsService do
               app_name: "other",
               attrs: {
                 service: service,
-                endpoint: name,
-                uuid: anything
+                endpoint: name
               }
             },
             start: anything,

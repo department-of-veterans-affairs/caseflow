@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_02_27_154315) do
+ActiveRecord::Schema.define(version: 2024_08_28_165652) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -76,6 +76,19 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
     t.string "source"
     t.datetime "updated_at"
     t.string "vbms_id"
+  end
+
+  create_table "appeal_affinities", force: :cascade do |t|
+    t.datetime "affinity_start_date", comment: "The date from which to calculate an appeal's affinity window"
+    t.string "case_id", null: false, comment: "Appeal UUID for AMA or BRIEFF.BFKEY for Legacy"
+    t.string "case_type", null: false, comment: "Appeal type for ActiveRecord Associations"
+    t.datetime "created_at", precision: 6, null: false
+    t.bigint "distribution_id", comment: "The distribution which caused the affinity start date to be set, if by a distribution"
+    t.string "docket", null: false, comment: "The docket of the appeal"
+    t.boolean "priority", null: false, comment: "Priority status (true/false)"
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["case_id", "case_type"], name: "index_appeal_affinities_on_case_id_and_case_type", unique: true
+    t.index ["distribution_id"], name: "index_appeal_affinities_on_distribution_id"
   end
 
   create_table "appeal_series", id: :serial, force: :cascade do |t|
@@ -198,10 +211,6 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
     t.index ["appeal_type", "appeal_id"], name: "index_attorney_case_reviews_on_appeal_type_and_appeal_id"
     t.index ["task_id"], name: "index_attorney_case_reviews_on_task_id"
     t.index ["updated_at"], name: "index_attorney_case_reviews_on_updated_at"
-  end
-
-  create_table "auto_texts", force: :cascade do |t|
-    t.string "name"
   end
 
   create_table "available_hearing_locations", force: :cascade do |t|
@@ -361,7 +370,7 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
 
   create_table "case_distribution_levers", comment: "A generalized table for Case Distribution lever records within caseflow", force: :cascade do |t|
     t.json "algorithms_used", comment: "stores an array of which algorithms the lever is used in. There are some UI niceties that are implemented to indicate which algorithm is used."
-    t.json "control_group", comment: "supports the exclusion table that has toggles that control multiple levers"
+    t.string "control_group", comment: "supports the exclusion table that has toggles that control multiple levers"
     t.datetime "created_at", null: false
     t.string "data_type", null: false, comment: "Indicates which type of record either BOOLEAN/RADIO/COMBO"
     t.text "description", comment: "Indicates the description of the Lever"
@@ -623,76 +632,6 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
     t.index ["updated_by_id"], name: "index_updated_by_id"
   end
 
-  create_table "correspondence_documents", force: :cascade do |t|
-    t.bigint "correspondence_id"
-    t.datetime "created_at", null: false, comment: "Date and Time of creation."
-    t.string "document_file_number", comment: "From CMP documents table"
-    t.integer "document_type", comment: "ID of the doc to lookup VBMS Doc Type"
-    t.integer "pages", comment: "Number of pages in the CMP Document"
-    t.datetime "updated_at", null: false, comment: "Date and Time of last update."
-    t.uuid "uuid", comment: "Reference to document in AWS S3"
-    t.bigint "vbms_document_type_id", comment: "From CMP documents table"
-    t.index ["correspondence_id"], name: "index_correspondence_documents_on_correspondence_id"
-  end
-
-  create_table "correspondence_intakes", force: :cascade do |t|
-    t.bigint "correspondence_id", comment: "Foreign key on correspondences table"
-    t.datetime "created_at", null: false
-    t.integer "current_step", null: false, comment: "Tracks users progress on intake workflow"
-    t.jsonb "redux_store", null: false, comment: "JSON representation of the data for the current step"
-    t.datetime "updated_at", null: false
-    t.bigint "user_id", comment: "Foreign key on users table"
-    t.index ["correspondence_id"], name: "index_on_correspondence_id"
-    t.index ["user_id"], name: "index_on_user_id"
-  end
-
-  create_table "correspondence_relations", force: :cascade do |t|
-    t.bigint "correspondence_id"
-    t.datetime "created_at", null: false
-    t.bigint "related_correspondence_id"
-    t.datetime "updated_at", null: false
-    t.index ["correspondence_id", "related_correspondence_id"], name: "index_correspondence_relations_on_correspondences", unique: true
-    t.index ["related_correspondence_id", "correspondence_id"], name: "index_correspondence_relations_on_related_correspondences", unique: true
-  end
-
-  create_table "correspondence_types", force: :cascade do |t|
-    t.boolean "active", default: true, null: false
-    t.datetime "created_at", null: false
-    t.string "name", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "correspondences", force: :cascade do |t|
-    t.bigint "assigned_by_id", comment: "Foreign key to users table"
-    t.bigint "cmp_packet_number", comment: "Included in CMP mail package"
-    t.integer "cmp_queue_id", comment: "Foreign key to CMP queues table"
-    t.integer "correspondence_type_id", comment: "Foreign key for correspondence_types table"
-    t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
-    t.text "notes", comment: "Comes from CMP; can be updated by user"
-    t.integer "package_document_type_id", comment: "Represents entire CMP package document type"
-    t.datetime "portal_entry_date", comment: "Time when correspondence is created in Caseflow"
-    t.string "source_type", comment: "An information identifier we get from CMP"
-    t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
-    t.bigint "updated_by_id", comment: "Foreign key to users table"
-    t.uuid "uuid", comment: "Unique identifier"
-    t.datetime "va_date_of_receipt", comment: "Date package delivered"
-    t.bigint "veteran_id", comment: "Foreign key to veterans table"
-    t.index ["assigned_by_id"], name: "index_correspondences_on_assigned_by_id"
-    t.index ["cmp_queue_id"], name: "index_correspondences_on_cmp_queue_id"
-    t.index ["correspondence_type_id"], name: "index_correspondences_on_correspondence_type_id"
-    t.index ["updated_by_id"], name: "index_correspondences_on_updated_by_id"
-    t.index ["veteran_id"], name: "index_correspondences_on_veteran_id"
-  end
-
-  create_table "correspondences_appeals", force: :cascade do |t|
-    t.bigint "appeal_id"
-    t.bigint "correspondence_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["appeal_id"], name: "index on appeal_id"
-    t.index ["correspondence_id"], name: "index on correspondence_id"
-  end
-
   create_table "decision_documents", force: :cascade do |t|
     t.bigint "appeal_id", null: false
     t.string "appeal_type"
@@ -783,7 +722,17 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
 
   create_table "distribution_stats", comment: "A database table to store a snapshot of variables used during a case distribution event", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.json "direct_review_priority_stats", comment: "Priority statistics for Direct Review Docket"
+    t.json "direct_review_stats", comment: "Statistics for Direct Review Docket"
     t.bigint "distribution_id", comment: "ID of the associated Distribution"
+    t.json "evidence_submission_priority_stats", comment: "Priority statistics for Evidence Submission Docket"
+    t.json "evidence_submission_stats", comment: "Statistics for Evidence Submission Docket"
+    t.json "hearing_priority_stats", comment: "Priority statistics for Hearings Docket"
+    t.json "hearing_stats", comment: "Statistics for Hearings Docket"
+    t.json "ineligible_judge_stats", comment: "Statistics about appeals tied to ineligible judges"
+    t.json "judge_stats", comment: "Statistics that are specific to judge"
+    t.json "legacy_priority_stats", comment: "Priority statistics for any VACOLS Docket"
+    t.json "legacy_stats", comment: "Statistics for any VACOLS Docket"
     t.json "levers", comment: "Indicates a snapshot of lever values and is_toggle_active for a distribution"
     t.json "statistics", comment: "Indicates a snapshot of variables used during the distribution"
     t.datetime "updated_at", null: false
@@ -929,6 +878,26 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
     t.index ["end_product_establishment_id"], name: "index_end_product_updates_on_end_product_establishment_id"
     t.index ["original_decision_review_type", "original_decision_review_id"], name: "index_epupdates_on_decision_review_type_and_decision_review_id"
     t.index ["user_id"], name: "index_end_product_updates_on_user_id"
+  end
+
+  create_table "event_records", comment: "Stores records that are created or updated by an event from the Appeals-Consumer application.", force: :cascade do |t|
+    t.datetime "created_at", null: false, comment: "Automatic timestamp when row was created"
+    t.integer "event_id", null: false, comment: "ID of the Event that created or updated this record."
+    t.bigint "evented_record_id", null: false
+    t.string "evented_record_type", null: false
+    t.datetime "updated_at", null: false, comment: "Automatic timestamp whenever the record changes"
+    t.index ["evented_record_type", "evented_record_id"], name: "index_event_record_on_evented_record"
+  end
+
+  create_table "events", comment: "Stores events from the Appeals-Consumer application that are processed by Caseflow", force: :cascade do |t|
+    t.datetime "completed_at", comment: "Timestamp of when event was successfully completed"
+    t.datetime "created_at", null: false, comment: "Automatic timestamp when row was created"
+    t.string "error", comment: "Error message captured during a failed event"
+    t.jsonb "info", default: {}
+    t.string "reference_id", null: false, comment: "Id of Event Record being referenced within the Appeals Consumer Application"
+    t.string "type", null: false, comment: "Type of Event (e.g. DecisionReviewCreatedEvent)"
+    t.datetime "updated_at", null: false, comment: "Automatic timestamp whenever the record changes"
+    t.index ["info"], name: "index_events_on_info", using: :gin
   end
 
   create_table "form8s", id: :serial, force: :cascade do |t|
@@ -1132,6 +1101,8 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
     t.boolean "prepped", comment: "Determines whether the judge has checked the hearing as prepped"
     t.string "representative_name", comment: "Name of Appellant's representative if applicable"
     t.string "room", comment: "The room at BVA where the hearing will take place; ported from associated HearingDay"
+    t.datetime "scheduled_datetime", comment: "Timestamp with zone datatype a hearing is scheduled to take place in UTC. Intended to eventually replace scheduled_time column."
+    t.string "scheduled_in_timezone", comment: "Named TZ string that the hearing will have to provide accurate hearing times."
     t.time "scheduled_time", null: false, comment: "Date and Time when hearing will take place"
     t.text "summary", comment: "Summary of hearing"
     t.boolean "transcript_requested", comment: "Determines whether the veteran/appellant has requested the hearing transcription"
@@ -1205,6 +1176,38 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
     t.index ["user_id"], name: "unique_index_to_avoid_multiple_intakes", unique: true, where: "(completed_at IS NULL)"
     t.index ["veteran_file_number"], name: "index_intakes_on_veteran_file_number"
     t.index ["veteran_id"], name: "index_intakes_on_veteran_id"
+  end
+
+  create_table "issue_modification_requests", comment: "A database table to store issue modification requests for a decision review for altering or adding additional request_issues", force: :cascade do |t|
+    t.string "benefit_type", comment: "This will primarily apply when the request type is an addition, indicating the benefit type of the issue that will be created if the modification request is approved."
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "decided_at", comment: "Timestamp when the decision was made by the decider/admin. it can be approved or denied date."
+    t.bigint "decider_id", comment: "The user who decides approval/denial of the issue modification request."
+    t.date "decision_date", comment: "The decision date of the request issue that is being modified"
+    t.text "decision_reason", comment: "The reason behind the approve/denial of the modification request provided by the user (admin) that is acting on the request."
+    t.bigint "decision_review_id", comment: "The decision review that this issue modification request belongs to"
+    t.string "decision_review_type"
+    t.datetime "edited_at", comment: "Timestamp when the requestor or decider edits the issue modification request."
+    t.string "nonrating_issue_category", comment: "The nonrating issue category of the request issue that is being modified or added by the request"
+    t.string "nonrating_issue_description", comment: "The nonrating issue description of the request issue that is being modified or added by the request"
+    t.boolean "remove_original_issue", default: false, comment: "flag to indicate if the original issue was removed or not."
+    t.bigint "request_issue_id", comment: "Specifies the request issue targeted by the modification request."
+    t.text "request_reason", comment: "The reason behind the modification request provided by the user initiating it."
+    t.string "request_type", default: "addition", comment: "The type of issue modification request. The possible types are addition, modification, withdrawal and cancelled."
+    t.bigint "requestor_id", comment: "The user who requests modification or addition of request issues"
+    t.string "status", default: "assigned", comment: "The status of the issue modifications request. The possible status values are assigned, approved, denied, and cancelled"
+    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "withdrawal_date", comment: "The withdrawal date for issue modification requests with a request type of withdrawal"
+    t.index ["decider_id"], name: "index_issue_modification_requests_on_decider_id"
+    t.index ["decision_review_type", "decision_review_id"], name: "index_issue_modification_requests_decision_review"
+    t.index ["request_issue_id"], name: "index_issue_modification_requests_on_request_issue_id"
+    t.index ["requestor_id"], name: "index_issue_modification_requests_on_requestor_id"
+  end
+
+  create_table "job_execution_times", id: :serial, force: :cascade do |t|
+    t.string "job_name", comment: "Name of the Job whose Last Execution Time is being tracked"
+    t.datetime "last_executed_at", comment: "DateTime value when the Job was Last Executed"
+    t.index ["job_name"], name: "index_job_execution_times_on_job_name", unique: true
   end
 
   create_table "job_notes", force: :cascade do |t|
@@ -1299,6 +1302,7 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
     t.string "military_service", comment: "Periods and circumstances of military service"
     t.string "original_vacols_request_type", comment: "The original request type of the hearing in VACOLS, before it was changed to Virtual"
     t.boolean "prepped", comment: "Determines whether the judge has checked the hearing as prepped"
+    t.string "scheduled_in_timezone", comment: "Named TZ string that the legacy hearing will have to provide accurate hearing times."
     t.text "summary", comment: "Summary of hearing"
     t.datetime "updated_at", comment: "Timestamp when record was last updated."
     t.bigint "updated_by_id", comment: "The ID of the user who most recently updated the Legacy Hearing"
@@ -1446,8 +1450,11 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
     t.string "email_notification_content", comment: "Full Email Text Content of Notification"
     t.string "email_notification_external_id", comment: "VA Notify Notification Id for the email notification send through their API "
     t.string "email_notification_status", comment: "Status of the Email Notification"
+    t.string "email_status_reason", comment: "Context around why this VA Notify notification is in the email status"
     t.date "event_date", null: false, comment: "Date of Event"
     t.string "event_type", null: false, comment: "Type of Event"
+    t.bigint "notifiable_id"
+    t.string "notifiable_type"
     t.text "notification_content", comment: "Full Text Content of Notification"
     t.string "notification_type", null: false, comment: "Type of Notification that was created"
     t.datetime "notified_at", comment: "Time Notification was created"
@@ -1457,10 +1464,14 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
     t.string "sms_notification_content", comment: "Full SMS Text Content of Notification"
     t.string "sms_notification_external_id", comment: "VA Notify Notification Id for the sms notification send through their API "
     t.string "sms_notification_status", comment: "Status of SMS/Text Notification"
+    t.string "sms_response_content", comment: "Message body of the sms notification response."
+    t.datetime "sms_response_time", comment: "Date and Time of the sms notification response."
+    t.string "sms_status_reason", comment: "Context around why this VA Notify notification is in the sms status"
     t.datetime "updated_at", comment: "TImestamp of when Notification was Updated"
     t.index ["appeals_id", "appeals_type"], name: "index_appeals_notifications_on_appeals_id_and_appeals_type"
     t.index ["email_notification_external_id"], name: "index_notifications_on_email_notification_external_id"
     t.index ["email_notification_status"], name: "index_notifications_on_email_notification_status"
+    t.index ["notifiable_type", "notifiable_id"], name: "index_notifications_on_notifiable_type_and_notifiable_id"
     t.index ["participant_id"], name: "index_participant_id"
     t.index ["sms_notification_external_id"], name: "index_notifications_on_sms_notification_external_id"
     t.index ["sms_notification_status"], name: "index_notifications_on_sms_notification_status"
@@ -1496,13 +1507,6 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
     t.index ["organization_id"], name: "index_organizations_users_on_organization_id"
     t.index ["updated_at"], name: "index_organizations_users_on_updated_at"
     t.index ["user_id", "organization_id"], name: "index_organizations_users_on_user_id_and_organization_id", unique: true
-  end
-
-  create_table "package_document_types", force: :cascade do |t|
-    t.boolean "active", default: true
-    t.datetime "created_at", null: false
-    t.string "name"
-    t.datetime "updated_at", null: false
   end
 
   create_table "people", force: :cascade do |t|
@@ -1679,6 +1683,7 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
     t.boolean "mst_status", default: false, comment: "Indicates if issue is related to Military Sexual Trauma (MST)"
     t.text "mst_status_update_reason_notes", comment: "The reason for why Request Issue is Military Sexual Trauma (MST)"
     t.string "nonrating_issue_bgs_id", comment: "If the contested issue is a nonrating issue, this is the nonrating issue's reference id. Will be nil if this request issue contests a decision issue."
+    t.string "nonrating_issue_bgs_source", comment: "Name of Table in Corporate Database where the nonrating issue is stored. This datapoint is correlated with the nonrating_issue_bgs_id."
     t.string "nonrating_issue_category", comment: "The category selected for nonrating request issues. These vary by business line."
     t.string "nonrating_issue_description", comment: "The user entered description if the issue is a nonrating issue"
     t.text "notes", comment: "Notes added by the Claims Assistant when adding request issues. This may be used to capture handwritten notes on the form, or other comments the CA wants to capture."
@@ -1735,6 +1740,16 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
     t.index ["user_id"], name: "index_request_issues_updates_on_user_id"
   end
 
+  create_table "returned_appeal_jobs", force: :cascade do |t|
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "errored_at"
+    t.text "returned_appeals", default: [], array: true
+    t.datetime "started_at"
+    t.json "stats"
+    t.datetime "updated_at", null: false
+  end
+
   create_table "schedule_periods", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "end_date", null: false
@@ -1782,8 +1797,8 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
     t.bigint "issue_id", null: false, comment: "ID of the issue that was changed"
     t.boolean "mst_from_vbms", comment: "Indication that the MST status originally came from VBMS on intake"
     t.string "mst_reason_for_change", comment: "Reason for changing the MST status on an issue"
-    t.boolean "original_mst_status", null: false, comment: "Original MST special issue status of the issue"
-    t.boolean "original_pact_status", null: false, comment: "Original PACT special issue status of the issue"
+    t.boolean "original_mst_status", comment: "Original MST special issue status of the issue"
+    t.boolean "original_pact_status", comment: "Original PACT special issue status of the issue"
     t.boolean "pact_from_vbms"
     t.string "pact_reason_for_change", comment: "Reason for changing the PACT status on an issue"
     t.bigint "task_id", null: false, comment: "Task ID of the IssueUpdateTask or EstablishmentTask used to log this issue in the case timeline"
@@ -2088,12 +2103,6 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
     t.index ["vbms_communication_package_id"], name: "index_vbms_distributions_on_vbms_communication_package_id"
   end
 
-  create_table "vbms_document_types", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.integer "doc_type_id"
-    t.datetime "updated_at", null: false
-  end
-
   create_table "vbms_ext_claim", primary_key: "CLAIM_ID", id: :decimal, precision: 38, force: :cascade do |t|
     t.string "ALLOW_POA_ACCESS", limit: 5
     t.decimal "CLAIMANT_PERSON_ID", precision: 38
@@ -2284,6 +2293,7 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
   add_foreign_key "allocations", "schedule_periods"
   add_foreign_key "annotations", "users"
   add_foreign_key "api_views", "api_keys"
+  add_foreign_key "appeal_affinities", "distributions"
   add_foreign_key "appeal_states", "users", column: "created_by_id"
   add_foreign_key "appeal_states", "users", column: "updated_by_id"
   add_foreign_key "appeal_views", "users"
@@ -2331,18 +2341,6 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
   add_foreign_key "conference_links", "hearing_days"
   add_foreign_key "conference_links", "users", column: "created_by_id"
   add_foreign_key "conference_links", "users", column: "updated_by_id"
-  add_foreign_key "correspondence_documents", "correspondences"
-  add_foreign_key "correspondence_intakes", "correspondences"
-  add_foreign_key "correspondence_intakes", "users"
-  add_foreign_key "correspondence_relations", "correspondences"
-  add_foreign_key "correspondence_relations", "correspondences", column: "related_correspondence_id"
-  add_foreign_key "correspondences", "correspondence_types"
-  add_foreign_key "correspondences", "package_document_types"
-  add_foreign_key "correspondences", "users", column: "assigned_by_id"
-  add_foreign_key "correspondences", "users", column: "updated_by_id"
-  add_foreign_key "correspondences", "veterans"
-  add_foreign_key "correspondences_appeals", "appeals"
-  add_foreign_key "correspondences_appeals", "correspondences"
   add_foreign_key "dispatch_tasks", "legacy_appeals", column: "appeal_id"
   add_foreign_key "dispatch_tasks", "users"
   add_foreign_key "distributed_cases", "distributions"
@@ -2358,6 +2356,7 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
   add_foreign_key "end_product_establishments", "users"
   add_foreign_key "end_product_updates", "end_product_establishments"
   add_foreign_key "end_product_updates", "users"
+  add_foreign_key "event_records", "events", name: "event_records_event_id_fk"
   add_foreign_key "hearing_appeal_stream_snapshots", "legacy_appeals", column: "appeal_id"
   add_foreign_key "hearing_appeal_stream_snapshots", "legacy_hearings", column: "hearing_id"
   add_foreign_key "hearing_days", "users", column: "created_by_id"
@@ -2375,6 +2374,9 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
   add_foreign_key "ihp_drafts", "organizations"
   add_foreign_key "intakes", "users"
   add_foreign_key "intakes", "veterans"
+  add_foreign_key "issue_modification_requests", "request_issues"
+  add_foreign_key "issue_modification_requests", "users", column: "decider_id"
+  add_foreign_key "issue_modification_requests", "users", column: "requestor_id"
   add_foreign_key "job_notes", "users"
   add_foreign_key "judge_case_reviews", "users", column: "attorney_id"
   add_foreign_key "judge_case_reviews", "users", column: "judge_id"

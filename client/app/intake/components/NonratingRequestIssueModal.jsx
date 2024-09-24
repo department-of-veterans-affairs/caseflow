@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import { css } from 'glamor';
 import { COLORS } from 'app/constants/AppConstants';
+import { FORM_TYPES } from '../constants';
 
 import BenefitType from '../components/BenefitType';
 import PreDocketRadioField from '../components/PreDocketRadioField';
@@ -15,9 +16,10 @@ import Alert from 'app/components/Alert';
 import ISSUE_CATEGORIES from '../../../constants/ISSUE_CATEGORIES';
 import { validateDateNotInFuture, isTimely } from '../util/issues';
 import { formatDateStr } from 'app/util/DateUtil';
-import { VHA_PRE_DOCKET_ISSUE_BANNER } from 'app/../COPY';
+import { VHA_PRE_DOCKET_ISSUE_BANNER, VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER } from 'app/../COPY';
 import Checkbox from '../../components/Checkbox';
 import { generateSkipButton } from '../util/buttonUtils';
+import descriptionValidator from '../../util/validators/DescriptionValidator';
 
 const NO_MATCH_TEXT = 'None of these match';
 
@@ -50,9 +52,12 @@ class NonratingRequestIssueModal extends React.Component {
       decisionReviewTitle: null,
       isPreDocketNeeded: null,
       userCanEditIntakeIssues: props.userCanEditIntakeIssues,
+      userIsVhaAdmin: props.userIsVhaAdmin,
+      isTaskInProgress: props.intakeData.taskInProgress,
       mstChecked: false,
       pactChecked: false,
-      dateError: ''
+      dateError: '',
+      descriptionError: ''
     };
   }
 
@@ -98,7 +103,8 @@ class NonratingRequestIssueModal extends React.Component {
 
   descriptionOnChange = (value) => {
     this.setState({
-      description: value
+      description: value,
+      descriptionError: descriptionValidator()(value)
     });
   };
 
@@ -181,7 +187,7 @@ class NonratingRequestIssueModal extends React.Component {
       category,
       decisionDate,
       benefitType,
-      isPreDocketNeeded,
+      isPreDocketNeeded
     } = this.state;
 
     const enforcePreDocketRequirement = (
@@ -196,7 +202,9 @@ class NonratingRequestIssueModal extends React.Component {
       !category ||
       (!this.vhaHlrOrSC() && !decisionDate) ||
       (formType === 'appeal' && !benefitType) ||
-      enforcePreDocketRequirement
+      enforcePreDocketRequirement ||
+      // if the claim is in progress tab, then decision date should be required.
+      (this.vhaHlrOrSC() && this.isTaskInProgress() && !decisionDate)
     );
   }
 
@@ -205,6 +213,12 @@ class NonratingRequestIssueModal extends React.Component {
     const { formType } = this.props;
 
     return ((formType === 'higher_level_review' || formType === 'supplemental_claim') && benefitType === 'vha');
+  }
+
+  isTaskInProgress() {
+    const { isTaskInProgress } = this.state;
+
+    return isTaskInProgress;
   }
 
   getModalButtons() {
@@ -218,7 +232,7 @@ class NonratingRequestIssueModal extends React.Component {
         classNames: ['usa-button', 'add-issue'],
         name: this.props.submitText,
         onClick: this.onAddIssue,
-        disabled: this.requiredFieldsMissing() || Boolean(this.state.dateError)
+        disabled: this.requiredFieldsMissing() || Boolean(this.state.dateError) || Boolean(this.state.descriptionError)
       }
     ];
 
@@ -230,9 +244,14 @@ class NonratingRequestIssueModal extends React.Component {
   getNonratingRequestIssueOptions() {
     const { intakeData } = this.props;
     const { category } = this.state;
+    const { featureToggles } = this.props;
 
     const options = intakeData.activeNonratingRequestIssues.
       filter((issue) => {
+        if (!featureToggles.disableAmaEventing) {
+          return category;
+        }
+
         return category && issue.category === category.value;
       }).
       map((issue) => {
@@ -278,6 +297,13 @@ class NonratingRequestIssueModal extends React.Component {
 
     return (
       <React.Fragment>
+        {(this.vhaHlrOrSC() && this.isTaskInProgress()) ?
+          <Alert
+            message={VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER}
+            type="info"
+          /> :
+          null
+        }
         <div className="decision-date">
           <DateSelector
             name="decision-date"
@@ -287,11 +313,17 @@ class NonratingRequestIssueModal extends React.Component {
             errorMessage={this.state.dateError}
             onChange={this.decisionDateOnChange}
             type="date"
-            optional={this.vhaHlrOrSC()}
+            optional={this.vhaHlrOrSC() && !this.isTaskInProgress()}
           />
         </div>
 
-        <TextField name="Issue description" strongLabel value={description} onChange={this.descriptionOnChange} />
+        <TextField
+          name="Issue description"
+          strongLabel
+          value={description}
+          onChange={this.descriptionOnChange}
+          errorMessage={this.state.descriptionError}
+        />
       </React.Fragment>
     );
   }
@@ -318,7 +350,12 @@ class NonratingRequestIssueModal extends React.Component {
 
   render() {
     const { formType, intakeData, onCancel, featureToggles } = this.props;
-    const { benefitType, category, selectedNonratingIssueId, isPreDocketNeeded } = this.state;
+    const {
+      benefitType,
+      category,
+      selectedNonratingIssueId,
+      isPreDocketNeeded
+    } = this.state;
     const eduPreDocketAppeals = featureToggles.eduPreDocketAppeals;
     const mstIdentification = featureToggles.mstIdentification && formType === 'appeal';
     const pactIdentification = featureToggles.pactIdentification && formType === 'appeal';
@@ -346,7 +383,7 @@ class NonratingRequestIssueModal extends React.Component {
       formType === 'appeal' ? <PreDocketRadioField value={isPreDocketNeeded}
         onChange={this.isPreDocketNeededOnChange} /> : null;
 
-    const getSpecialIssues = this.props.userCanEditIntakeIssues ?
+    const getSpecialIssues = (this.props.userCanEditIntakeIssues && (formType === FORM_TYPES.APPEAL.key)) ?
       this.getSpecialIssues(mstIdentification, pactIdentification) : null;
 
     return (
@@ -400,7 +437,9 @@ NonratingRequestIssueModal.propTypes = {
   activeNonratingRequestIssues: PropTypes.object,
   receiptDate: PropTypes.string,
   addedIssues: PropTypes.array,
+  isTaskInProgress: PropTypes.bool,
   userCanEditIntakeIssues: PropTypes.bool,
+  userIsVhaAdmin: PropTypes.bool,
   mstChecked: PropTypes.bool,
   pactChecked: PropTypes.bool,
   featureToggles: PropTypes.object

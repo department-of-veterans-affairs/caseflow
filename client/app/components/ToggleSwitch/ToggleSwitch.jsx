@@ -8,7 +8,8 @@ const ToggleSwitch = ({
   selected,
   toggleSelected,
   optionLabels,
-  disabled
+  disabled,
+  isIdle
 }) => {
 
   const buttonStyles = cx('toggleButton', {
@@ -17,6 +18,7 @@ const ToggleSwitch = ({
 
   const h5Style = cx('toggleButtonText', {
     switchDisabled: disabled,
+    switchIdle: isIdle,
     switchOn: selected,
     switchOff: !selected
   });
@@ -49,7 +51,8 @@ ToggleSwitch.propTypes = {
   id: PropTypes.string,
   name: PropTypes.string,
   optionLabels: PropTypes.array,
-  disabled: PropTypes.bool
+  disabled: PropTypes.bool,
+  isIdle: PropTypes.bool
 };
 
 export default ToggleSwitch;

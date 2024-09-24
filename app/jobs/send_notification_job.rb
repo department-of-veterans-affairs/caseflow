@@ -3,30 +3,48 @@
 # Purpose: Active Job that handles the processing of VA Notifcation event trigger.
 # This job saves the data to an audit table and If the corresponding feature flag is enabled will send
 # an email or SMS request to VA Notify API
+# :reek:RepeatedConditional
 class SendNotificationJob < CaseflowJob
   include Hearings::EnsureCurrentUserIsSet
+  include IgnoreJobExecutionTime
 
-  queue_as ApplicationController.dependencies_faked? ? :send_notifications : :"send_notifications.fifo"
-  application_attr :hearing_schedule
+  queue_as { self.class.queue_name_suffix }
+  application_attr :va_notify
+  attr_accessor :notification_audit, :message
 
-  retry_on(Caseflow::Error::VANotifyNotFoundError, attempts: 5, wait: :exponentially_longer) do |job, exception|
-    Rails.logger.error("Retrying #{job.class.name} (#{job.job_id}) because failed with error: #{exception}")
+  class SendNotificationJobError < StandardError; end
+
+  RETRY_ERRORS = [
+    Caseflow::Error::VANotifyNotFoundError,
+    Caseflow::Error::VANotifyInternalServerError,
+    Caseflow::Error::VANotifyRateLimitError,
+    HTTPClient::ReceiveTimeoutError
+  ].freeze
+
+  DISCARD_ERRORS = [
+    Caseflow::Error::VANotifyUnauthorizedError,
+    Caseflow::Error::VANotifyForbiddenError,
+    SendNotificationJobError
+  ].freeze
+
+  RETRY_ERRORS.each do |err|
+    retry_on(err, attempts: 5, wait: :exponentially_longer) do |job, exception|
+      Rails.logger.error("Retrying #{job.class.name} (#{job.job_id}) because failed with error: #{exception}")
+    end
   end
 
-  retry_on(Caseflow::Error::VANotifyInternalServerError, attempts: 5, wait: :exponentially_longer) do |job, exception|
-    Rails.logger.error("Retrying #{job.class.name} (#{job.job_id}) because failed with error: #{exception}")
+  DISCARD_ERRORS.each do |err|
+    discard_on(err) do |job, exception|
+      error_message = "Discarding #{job.class.name} (#{job.job_id}) because failed with error: #{exception}"
+      err_level = exception.instance_of?(SendNotificationJobError) ? :error : :warn
+      Rails.logger.send(err_level, error_message)
+    end
   end
 
-  retry_on(Caseflow::Error::VANotifyRateLimitError, attempts: 5, wait: :exponentially_longer) do |job, exception|
-    Rails.logger.error("Retrying #{job.class.name} (#{job.job_id}) because failed with error: #{exception}")
-  end
-
-  discard_on(Caseflow::Error::VANotifyUnauthorizedError) do |job, exception|
-    Rails.logger.warn("Discarding #{job.class.name} (#{job.job_id}) because failed with error: #{exception}")
-  end
-
-  discard_on(Caseflow::Error::VANotifyForbiddenError) do |job, exception|
-    Rails.logger.warn("Discarding #{job.class.name} (#{job.job_id}) because failed with error: #{exception}")
+  class << self
+    def queue_name_suffix
+      :"send_notifications.fifo"
+    end
   end
 
   # Must receive JSON string as argument
@@ -34,195 +52,223 @@ class SendNotificationJob < CaseflowJob
     ensure_current_user_is_set
 
     begin
-      unless message_json
-        fail Caseflow::Error::NotificationInitializationError,
-             message: "There was no message passed into the " \
-               "SendNotificationJob.perform_later function. Exiting job."
-      end
+      fail SendNotificationJobError, "Message argument of value nil supplied to job" if message_json.nil?
 
-      handle_message_json(message_json)
+      @message = validate_message(JSON.parse(message_json, object_class: OpenStruct))
+
+      ActiveRecord::Base.transaction do
+        @notification_audit = find_or_create_notification_audit
+        update_notification_statuses
+        send_to_va_notify if message_status_valid?
+      end
     rescue StandardError => error
       log_error(error)
+      raise error
     end
   end
 
   private
 
-  # Purpose: Conditionally handles a JSON outline of a notification and maybe sends it to
-  #          to a veteran via VANotify.
+  def event_type
+    message.template_name
+  end
+
+  def event
+    @event ||= NotificationEvent.find_by(event_type: event_type)
+  end
+
+  def appeal
+    @appeal ||= find_appeal_by_external_id
+  end
+
+  # Purpose: Find appeal by external ID
   #
-  # Params: A JSON object containing notification data
+  # Returns: Appeal object
+  def find_appeal_by_external_id
+    appeal = Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(message.appeal_id)
+
+    return appeal unless appeal.nil?
+
+    fail SendNotificationJobError, "Associated appeal cannot be found for external ID #{message.appeal_id}"
+  end
+
+  # Purpose: Determine if either a quarterly sms notification or non-quarterly sms notification
   #
-  # Response: nil
-  # rubocop:disable Layout/LineLength, Metrics/BlockNesting
-  def handle_message_json(message_json) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
-    @va_notify_email = FeatureToggle.enabled?(:va_notify_email)
-    @va_notify_sms = FeatureToggle.enabled?(:va_notify_sms)
-    @va_notify_quarterly_sms = FeatureToggle.enabled?(:va_notify_quarterly_sms)
-    message = JSON.parse(message_json, object_class: OpenStruct)
-    if message.appeal_id && message.appeal_type && message.template_name
-      notification_audit_record = create_notification_audit_record(
-        message.appeal_id,
-        message.appeal_type,
-        message.template_name,
-        message.participant_id
-      )
-      if notification_audit_record
-        if message.status != "No participant_id" && message.status != "No claimant"
-          to_update = {}
-          if @va_notify_email
-            to_update[:email_notification_status] = message.status
-          end
-          if @va_notify_sms && message.template_name != "Quarterly Notification" ||
-             @va_notify_quarterly_sms && message.template_name == "Quarterly Notification"
-            to_update[:sms_notification_status] = message.status
-          end
-          update_notification_audit_record(notification_audit_record, to_update)
-          if message.template_name == "Appeal docketed" && message.appeal_type == "LegacyAppeal" && !FeatureToggle.enabled?(:appeal_docketed_notification)
-            notification_audit_record.update!(email_enabled: false)
-          else
-            send_to_va_notify(message, notification_audit_record)
-          end
-        else
-          status = (message.status == "No participant_id") ? "No Participant Id Found" : "No Claimant Found"
-          to_update = {}
-          if @va_notify_email
-            to_update[:email_notification_status] = status
-          end
-          if @va_notify_sms && message.template_name != "Quarterly Notification" ||
-             @va_notify_quarterly_sms && message.template_name == "Quarterly Notification"
-            to_update[:sms_notification_status] = status
-          end
-          update_notification_audit_record(notification_audit_record, to_update)
-        end
-        notification_audit_record.save!
-      else
-        fail Caseflow::Error::NotificationInitializationError,
-             message: "Audit record was unable to be found or created in SendNotificationJob. Exiting Job."
-      end
+  # Returns: Boolean
+  def sms_enabled?
+    @sms_enabled ||= va_notify_sms_enabled? || va_notify_quarterly_sms_enabled?
+  end
+
+  def va_notify_sms_enabled?
+    FeatureToggle.enabled?(:va_notify_sms) && !quarterly_notification?
+  end
+
+  def va_notify_quarterly_sms_enabled?
+    FeatureToggle.enabled?(:va_notify_quarterly_sms) && quarterly_notification?
+  end
+
+  def quarterly_notification?
+    event_type == Constants.EVENT_TYPE_FILTERS.quarterly_notification
+  end
+
+  # Purpose: Ensure necessary message attributes present to send notification
+  #
+  # Params: message: object containing details from appeal for notification
+  #
+  # Returns: message
+  # :reek:FeatureEnvy
+  def validate_message(message_to_validate)
+    nil_attributes = [:appeal_id, :appeal_type, :template_name].filter { |attr| message_to_validate.send(attr).nil? }
+
+    return message_to_validate unless nil_attributes.any?
+
+    fail SendNotificationJobError, "Nil message attribute(s): #{nil_attributes.map(&:to_s).join(', ')}"
+  end
+
+  # Purpose: Find or create a new notification table row for the appeal
+  #
+  # Returns: Notification active model or nil
+  def find_or_create_notification_audit
+    params = {
+      appeals_id: message.appeal_id,
+      appeals_type: message.appeal_type,
+      event_type: event_type,
+      event_date: Time.zone.today,
+      notification_type: notification_type,
+      notifiable: appeal
+    }
+
+    if legacy_appeal_docketed_event? && FeatureToggle.enabled?(:appeal_docketed_event)
+      notification = Notification.where(params).last
+
+      return notification unless notification.nil?
+    end
+
+    create_notification(params.merge(participant_id: message.participant_id, notified_at: Time.zone.now))
+  end
+
+  # Purpose: Determine if the notification event is for a legacy appeal that has been docketed
+  #
+  # Returns: Boolean
+  def legacy_appeal_docketed_event?
+    event_type == Constants.EVENT_TYPE_FILTERS.appeal_docketed && appeal.is_a?(LegacyAppeal)
+  end
+
+  # Purpose: Create notification audit record
+  #
+  # Params: params: Payload of attributes with which to create notification object
+  #
+  # Returns: Notification object
+  def create_notification(params)
+    notification = Notification.create(params)
+
+    return notification unless notification.nil?
+
+    fail SendNotificationJobError, "Notification audit record was unable to be found or created"
+  end
+
+  # Purpose: Updates and saves notification status for notification object
+  #
+  # Response: Updated notification object
+  def update_notification_statuses
+    status = format_message_status
+    params = {}
+    params[:email_notification_status] = status
+    params[:sms_notification_status] = status if sms_enabled?
+
+    notification_audit.update(params)
+  end
+
+  # Purpose: Reformat message status if status belongs to invalid category
+  #
+  # Response: Message string
+  def format_message_status
+    return message.status if message_status_valid?
+
+    case message.status
+    when "No participant_id" then "No Participant Id Found"
+    when "No claimant" then "No Claimant Found"
+    when "Failure Due to Deceased" then "Failure Due to Deceased"
     else
-      fail Caseflow::Error::NotificationInitializationError,
-           message: "appeals_id or appeal_type or event_type was nil in the SendNotificationJob. Exiting job."
+      fail StandardError, "Message status #{message.status} is not recognized."
     end
   end
-  # rubocop:enable Layout/LineLength, Metrics/BlockNesting
 
-  # Purpose: Updates and saves notification status for notification_audit_record
+  # Purpose: Determine if message status belongs to invalid
   #
-  # Params: notification_audit_record: object,
-  #         to_update: hash. key corresponds to notification_events column and value corresponds to new value
-  #
-  # Response: Updated notification_audit_record
-  def update_notification_audit_record(notification_audit_record, to_update)
-    to_update.each do |key, value|
-      notification_audit_record[key] = value
-    end
+  # Response: Boolean
+  def message_status_valid?
+    ["No participant_id", "No claimant", "Failure Due to Deceased"].exclude?(message.status)
   end
 
   # Purpose: Send message to VA Notify to send notification
   #
-  # Params: message (object containing participant_id, template_name, and others) Details from appeal for notification
-  #         notification_id: ID of the notification_audit record (must be converted to string to work with API)
+  # Response: Updated Notification object
+  def send_to_va_notify
+    send_va_notify_email
+    send_va_notify_sms if sms_enabled?
+  end
+
+  # Purpose: Build payload for VA Notify request body
   #
-  # Response: Updated Notification object (still not saved)
-  def send_to_va_notify(message, notification_audit_record) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
-    event = NotificationEvent.find_by(event_type: message.template_name)
-    email_template_id = event.email_template_id
-    sms_template_id = event.sms_template_id
-    quarterly_sms_template_id = NotificationEvent.find_by(event_type: "Quarterly Notification").sms_template_id
-    appeal = Appeal.find_by_uuid(message.appeal_id) || LegacyAppeal.find_by(vacols_id: message.appeal_id)
-    first_name = appeal&.appellant_or_veteran_name&.split(" ")&.first || "Appellant"
-    status = message.appeal_status || ""
-    docket_number = appeal.docket_number
+  # Response: Payload object
+  def va_notify_payload
+    {
+      participant_id: message.participant_id,
+      notification_id: notification_audit.id.to_s,
+      first_name: first_name || "Appellant",
+      docket_number: appeal.docket_number,
+      status: message.appeal_status || ""
+    }
+  end
 
-    if @va_notify_email
-      response = VANotifyService.send_email_notifications(
-        message.participant_id,
-        notification_audit_record.id.to_s,
-        email_template_id,
-        first_name,
-        docket_number,
-        status
-      )
-      if !response.nil? && response != ""
-        to_update = { notification_content: response.body["content"]["body"],
-                      email_notification_content: response.body["content"]["body"],
-                      email_notification_external_id: response.body["id"] }
-        update_notification_audit_record(notification_audit_record, to_update)
-      end
-    end
+  # Purpose: Send payload to VA Notify to send email notification
+  #
+  # Response: Updated notification object
+  def send_va_notify_email
+    email_response = VANotifyService.send_email_notifications(
+      va_notify_payload.merge(email_template_id: event.email_template_id)
+    )
 
-    if @va_notify_sms && sms_template_id != quarterly_sms_template_id ||
-       @va_notify_quarterly_sms && sms_template_id == quarterly_sms_template_id
-      response = VANotifyService.send_sms_notifications(
-        message.participant_id,
-        notification_audit_record.id.to_s,
-        sms_template_id,
-        first_name,
-        docket_number,
-        status
+    if email_response.present?
+      body = email_response.body
+      notification_audit.update(
+        notification_content: body["content"]["body"],
+        email_notification_content: body["content"]["body"],
+        email_notification_external_id: body["id"]
       )
-      if !response.nil? && response != ""
-        to_update = {
-          sms_notification_content: response.body["content"]["body"], sms_notification_external_id: response.body["id"]
-        }
-        update_notification_audit_record(notification_audit_record, to_update)
-      end
     end
   end
 
-  # Purpose: Method to create a new notification table row for the appeal
+  # Purpose: Send payload to VA Notify to send sms notification
   #
-  # Params:
-  # - appeals_id - UUID or vacols_id of the appeals the event triggered
-  # - appeals_type - Polymorphic column to identify the type of appeal
-  # - - Appeal
-  # - - LegacyAppeal
-  # - event_type: Name of the event that has transpired. Event names can be found in the notification_events table
+  # Response: Updated notification object
+  def send_va_notify_sms
+    response = VANotifyService.send_sms_notifications(va_notify_payload.merge(sms_template_id: event.sms_template_id))
+
+    if response.present?
+      notification_audit.update(
+        sms_notification_content: response.body["content"]["body"],
+        sms_notification_external_id: response.body["id"]
+      )
+    end
+  end
+
+  # Purpose: Determine notification type depending on enabled feature toggles and event type
   #
-  # Returns: Notification active model or nil
-
-  # rubocop:disable all
-  def create_notification_audit_record(appeals_id, appeals_type, event_type, participant_id)
-    notification_type =
-      if @va_notify_email && @va_notify_sms && event_type != "Quarterly Notification" ||
-         @va_notify_email && @va_notify_quarterly_sms && event_type == "Quarterly Notification"
-        "Email and SMS"
-      elsif @va_notify_email
-        "Email"
-      elsif @va_notify_sms && event_type != "Quarterly Notification" ||
-            @va_notify_quarterly_sms && event_type == "Quarterly Notification"
-        "SMS"
-      else
-        "None"
-      end
-
-    if event_type == "Appeal docketed" && appeals_type == "LegacyAppeal" && FeatureToggle.enabled?(:appeal_docketed_event)
-      notification = Notification.where(appeals_id: appeals_id, event_type: event_type, notification_type: notification_type, appeals_type: appeals_type, event_date: Time.zone.today).last
-      if !notification.nil?
-        notification
-      else
-        Notification.new(
-          appeals_id: appeals_id,
-          appeals_type: appeals_type,
-          event_type: event_type,
-          notification_type: notification_type,
-          participant_id: participant_id,
-          notified_at: Time.zone.now,
-          event_date: Time.zone.today
-        )
-      end
+  # Response: String
+  def notification_type
+    if sms_enabled?
+      "Email and SMS"
     else
-      Notification.new(
-        appeals_id: appeals_id,
-        appeals_type: appeals_type,
-        event_type: event_type,
-        notification_type: notification_type,
-        participant_id: participant_id,
-        notified_at: Time.zone.now,
-        event_date: Time.zone.today
-      )
+      "Email"
     end
   end
-  # rubocop:enable all
+
+  # Purpose: Parse first name of veteran or appellant from appeal
+  #
+  # Response: String
+  def first_name
+    appeal&.appellant_or_veteran_name&.split(" ")&.first
+  end
 end

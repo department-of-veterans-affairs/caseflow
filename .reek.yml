@@ -198,6 +198,7 @@ detectors:
       - UpdateCachedAppealsAttributesJob
       - Veteran
       - LegacyDocket
+      - Test::UsersController
   TooManyConstants:
     exclude:
       - Fakes::BGSServicePOA
@@ -290,5 +291,5 @@ directories:
 # Directories and files below will not be scanned at all
 exclude_paths:
   - db/migrate
-  - db/etl/migrate
+  - db/etl_migrate
   - spec
