@@ -2,8 +2,8 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# This file is the source Rails uses to define your schema when running `rails
-# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
 # be faster and is potentially less error prone than running all of your
 # migrations from scratch. Old migrations may fail to apply correctly if those
 # migrations use external dependencies or application code.
@@ -1481,6 +1481,8 @@ ActiveRecord::Schema.define(version: 2024_09_10_105904) do
     t.string "sms_response_content", comment: "Message body of the sms notification response."
     t.datetime "sms_response_time", comment: "Date and Time of the sms notification response."
     t.datetime "updated_at", comment: "TImestamp of when Notification was Updated"
+    t.string "sms_status_reason", comment: "Context around why this VA Notify notification is in the sms status"
+    t.string "email_status_reason", comment: "Context around why this VA Notify notification is in the email status"
     t.index ["appeals_id", "appeals_type"], name: "index_appeals_notifications_on_appeals_id_and_appeals_type"
     t.index ["email_notification_external_id"], name: "index_notifications_on_email_notification_external_id"
     t.index ["email_notification_status"], name: "index_notifications_on_email_notification_status"
@@ -1751,6 +1753,16 @@ ActiveRecord::Schema.define(version: 2024_09_10_105904) do
     t.index ["review_type", "review_id"], name: "index_request_issues_updates_on_review_type_and_review_id"
     t.index ["updated_at"], name: "index_request_issues_updates_on_updated_at"
     t.index ["user_id"], name: "index_request_issues_updates_on_user_id"
+  end
+
+  create_table "returned_appeal_jobs", force: :cascade do |t|
+    t.datetime "started_at"
+    t.datetime "completed_at"
+    t.datetime "errored_at"
+    t.json "stats"
+    t.text "returned_appeals", default: [], array: true
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "schedule_periods", force: :cascade do |t|
@@ -2189,6 +2201,46 @@ ActiveRecord::Schema.define(version: 2024_09_10_105904) do
     t.index ["created_by_id"], name: "index_vbms_distributions_on_created_by_id"
     t.index ["updated_by_id"], name: "index_vbms_distributions_on_updated_by_id"
     t.index ["vbms_communication_package_id"], name: "index_vbms_distributions_on_vbms_communication_package_id"
+  end
+
+  create_table "vbms_ext_claim", primary_key: "CLAIM_ID", id: { type: :decimal, precision: 38 }, force: :cascade do |t|
+    t.datetime "CLAIM_DATE"
+    t.string "EP_CODE", limit: 25
+    t.datetime "SUSPENSE_DATE"
+    t.string "SUSPENSE_REASON_CODE", limit: 25
+    t.string "SUSPENSE_REASON_COMMENTS", limit: 1000
+    t.decimal "CLAIMANT_PERSON_ID", precision: 38
+    t.integer "CONTENTION_COUNT"
+    t.string "CLAIM_SOJ", limit: 25
+    t.string "TEMPORARY_CLAIM_SOJ", limit: 25
+    t.string "PRIORITY", limit: 10
+    t.string "TYPE_CODE", limit: 25
+    t.string "LIFECYCLE_STATUS_NAME", limit: 50
+    t.string "LEVEL_STATUS_CODE", limit: 25
+    t.string "SUBMITTER_APPLICATION_CODE", limit: 25
+    t.string "SUBMITTER_ROLE_CODE", limit: 25
+    t.decimal "VETERAN_PERSON_ID", precision: 15
+    t.datetime "ESTABLISHMENT_DATE"
+    t.string "INTAKE_SITE", limit: 25
+    t.string "PAYEE_CODE", limit: 25
+    t.decimal "SYNC_ID", precision: 38, null: false
+    t.datetime "CREATEDDT", null: false
+    t.datetime "LASTUPDATEDT", null: false
+    t.datetime "EXPIRATIONDT"
+    t.decimal "VERSION", precision: 38, null: false
+    t.datetime "LIFECYCLE_STATUS_CHANGE_DATE"
+    t.string "RATING_SOJ", limit: 25
+    t.string "PROGRAM_TYPE_CODE", limit: 10
+    t.string "SERVICE_TYPE_CODE", limit: 10
+    t.integer "PREVENT_AUDIT_TRIG", limit: 2, default: 0, null: false
+    t.string "PRE_DISCHARGE_TYPE_CODE", limit: 10
+    t.string "PRE_DISCHARGE_IND", limit: 5
+    t.string "ORGANIZATION_NAME", limit: 100
+    t.string "ORGANIZATION_SOJ", limit: 25
+    t.string "ALLOW_POA_ACCESS", limit: 5
+    t.string "POA_CODE", limit: 25
+    t.index ["CLAIM_ID"], name: "claim_id_index"
+    t.index ["LEVEL_STATUS_CODE"], name: "level_status_code_index"
   end
 
   create_table "vbms_uploaded_documents", force: :cascade do |t|

@@ -137,4 +137,15 @@ class HearingSerializer
     params[:user]&.timezone
   end
   attribute :scheduled_in_timezone
+  attribute :determine_service_name
+  attribute :scheduled_time do |hearing|
+    hearing.scheduled_time&.strftime("%m/%d/%Y")
+  end
+  attribute :date_receipt_recording do |hearing|
+    hearing.transcription_files
+      .where(file_type: "mp3")
+      .limit(1)
+      .pluck(:date_receipt_recording)
+      .first&.strftime("%m/%d/%Y")
+  end
 end
