@@ -266,7 +266,7 @@ const CorrespondenceDetails = (props) => {
   };
 
   useEffect(() => {
-    const buttonDisable = (selectedAppeals.length === initialSelectedAppeals.length);
+    const buttonDisable = (selectedAppeals?.length === initialSelectedAppeals?.length);
 
     setDisableSubmitButton(buttonDisable);
   },[selectedAppeals]);
