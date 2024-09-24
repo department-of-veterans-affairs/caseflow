@@ -9,7 +9,7 @@
   {"scenario": "advanceOnDocketMotions",
     "targetType": [{
       "value": "appeal",
-      "label": "Appeal" },
+      "label": "Appeal"},
     {
       "value": "legacy_appeal",
       "label": "Legacy Appeal"
