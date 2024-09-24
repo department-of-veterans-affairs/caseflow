@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Generators::Vacols::Decass
+class Generators::VACOLS::Decass
   class << self
     # rubocop:disable Metrics/MethodLength
     def decass_attrs
