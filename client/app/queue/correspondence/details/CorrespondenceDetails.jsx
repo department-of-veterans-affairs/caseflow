@@ -246,14 +246,14 @@ const CorrespondenceDetails = (props) => {
         const filtedAppeals = unSelectedAppeals.filter((item) => item !== appealId);
 
         setUnSelectedAppeals(filtedAppeals);
-      } else {
-        setSelectedAppeals([...selectedAppeals, appealId]);
       }
-    } else if (selectedAppeals?.includes(appealId)) {
-      const filtedAppeals = selectedAppeals.filter((item) => item !== appealId);
-
-      setSelectedAppeals(filtedAppeals);
+      setSelectedAppeals([...selectedAppeals, appealId]);
     } else {
+      if (selectedAppeals?.includes(appealId)) {
+        const filtedAppeals = selectedAppeals.filter((item) => item !== appealId);
+
+        setSelectedAppeals(filtedAppeals);
+      }
       setUnSelectedAppeals([...unSelectedAppeals, appealId]);
     }
   };
@@ -269,7 +269,7 @@ const CorrespondenceDetails = (props) => {
     const buttonDisable = (selectedAppeals?.length === initialSelectedAppeals?.length);
 
     setDisableSubmitButton(buttonDisable);
-  },[selectedAppeals]);
+  }, [selectedAppeals]);
 
   let appeals;
 
@@ -637,7 +637,6 @@ const CorrespondenceDetails = (props) => {
   ];
 
   const saveChanges = () => {
-
     if (isAdminNotLoggedIn() === false) {
       handlepriorMailUpdate();
     } else if (selectedPriorMail.length > 0) {
