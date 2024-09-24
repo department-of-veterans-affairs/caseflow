@@ -164,6 +164,10 @@ module CaseflowCertification
       "#{root}/app/models/validators",
     )
 
+    Rails.autoloaders.main.ignore(
+      "#{root}/app/jobs/middleware",
+    )
+
     config.exceptions_app = self.routes
 
     config.cache_store = :redis_store, Rails.application.secrets.redis_url_cache, { expires_in: 24.hours }
