@@ -156,6 +156,7 @@ module CaseflowCertification
       "#{root}/app/models/batch_processes",
       "#{root}/app/models/dockets",
       "#{root}/app/models/events",
+      "#{root}/app/models/external_models",
       "#{root}/app/models/hearings",
       "#{root}/app/models/mixins",
       "#{root}/app/models/organizations",
