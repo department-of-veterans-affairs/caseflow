@@ -310,6 +310,18 @@ class Appeal < DecisionReview
     AppealStatusApiDecorator.new(self)
   end
 
+  def open_tasks
+    tasks.open
+  end
+
+  def pending_schedule_hearing_tasks
+    tasks.open.where(type: ScheduleHearingTask.name)
+  end
+
+  def evidence_submission_hold_pending_tasks
+    tasks.open.where(type: EvidenceSubmissionWindowTask.name)
+  end
+
   # :reek:RepeatedConditionals
   def active_request_issues_or_decision_issues
     decision_issues.empty? ? active_request_issues : fetch_all_decision_issues
@@ -635,7 +647,7 @@ class Appeal < DecisionReview
   end
 
   def active?
-    tasks.open.of_type(:RootTask).any?
+    open_tasks.of_type(:RootTask).any?
   end
 
   def ready_for_distribution?
@@ -750,7 +762,7 @@ class Appeal < DecisionReview
   end
 
   def status
-    @status ||= BVAAppealStatus.new(appeal: self)
+    @status ||= BVAAppealStatus.new(tasks: tasks)
   end
 
   def previously_selected_for_quality_review
