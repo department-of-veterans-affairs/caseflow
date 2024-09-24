@@ -69,7 +69,7 @@ const ReaderFooter = ({
   }, [currentDocIndex]);
 
   return (
-    <div className="cf-pdf-footer cf-pdf-toolbar" {...pdfToolbarStyles.footer}>
+    <div id="prototype-footer" className="cf-pdf-footer cf-pdf-toolbar">
       <div className="cf-pdf-footer-buttons-left">
         {getPrevDocId() && (
           <Button
