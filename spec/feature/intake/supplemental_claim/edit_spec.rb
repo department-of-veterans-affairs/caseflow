@@ -930,6 +930,26 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       safe_click "#decision-date"
       expect(page).to have_button("Add this issue", disabled: true)
     end
+
+    context "with a remand" do
+      let(:remand) { create(:remand_vha_task, assigned_at: 1.minute.ago) }
+
+      before do
+        remand.appeal.establish!
+      end
+
+      let(:edit_url) do
+        "/supplemental_claims/#{remand.appeal.uuid}/edit"
+      end
+
+      it "should not allow editing" do
+        visit edit_url
+
+        expect(page).to have_content(COPY::REMANDS_NOT_EDITABLE)
+        expect(page).not_to have_css(".cf-select__control")
+        expect(page).to have_button("Establish", disabled: true)
+      end
+    end
   end
 
   context "when remove_comp_and_pen_intake is enabled and benefit type is compensation or pension" do
