@@ -45,6 +45,15 @@ jobs:
         ports:
           - 1521:1521
 
+      localstack:
+        image: localstack/localstack:0.14.5
+        ports:
+          - 4566:4566
+        env:
+          SERVICES: "sqs"
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock
+
     strategy:
       fail-fast: false
       matrix:
@@ -188,13 +197,16 @@ jobs:
       - name: "Wait for database"
         run: dockerize -wait tcp://postgres:5432 -timeout 1m
 
+      - name: "Wait for localstack"
+        run: dockerize -wait tcp://localstack:4566 -timeout 30s
+
       - name: "Wait for FACOLS"
         run: ./ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
 
       - name: Database setup
         run: |
-          ./ci-bin/capture-log "DB=etl bundle exec rake db:create db:schema:load db:migrate"
-          ./ci-bin/capture-log "bundle exec rake db:create db:schema:load db:migrate"
+          ./ci-bin/capture-log "bundle exec rake db:create:etl db:schema:load:etl"
+          ./ci-bin/capture-log "bundle exec rake db:create:primary db:schema:load:primary"
           ./ci-bin/capture-log "make -f Makefile.example external-db-create"
         # added line to create external table(s) that are needed for tests
 
