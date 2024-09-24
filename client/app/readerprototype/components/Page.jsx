@@ -33,7 +33,6 @@ const Page = ({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale }) => 
   const isVisible = usePageVisibility(canvasRef);
   const wrapperRef = useRef(null);
   const scaleFraction = scale / 100;
-
   const viewport = page.getViewport({ scale: scaleFraction });
   const scaledHeight = viewport.height;
   const scaledWidth = viewport.width;

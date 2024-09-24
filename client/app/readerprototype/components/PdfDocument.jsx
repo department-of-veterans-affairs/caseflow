@@ -20,9 +20,11 @@ const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel }) => {
     height: '100%',
     overflow: 'auto',
     paddingTop: '10px',
+    paddingLeft: '6px',
+    paddingRight: '6px',
     alignContent: 'start',
     justifyContent: 'center',
-    gap: '5rem',
+    gap: '8rem',
   };
 
   useEffect(() => {
