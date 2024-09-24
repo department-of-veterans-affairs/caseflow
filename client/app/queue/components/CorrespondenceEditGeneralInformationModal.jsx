@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import ApiUtil from '../../util/ApiUtil';
-
+import moment from 'moment';
 import DateSelector from '../../components/DateSelector';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextareaField from '../../components/TextareaField';
@@ -15,9 +15,12 @@ import { correspondenceInfo } from
   '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
 
 const CorrespondenceEditGeneralInformationModal = (props) => {
-  const correspondenceTypes = props.correspondenceTypes;
-
-  const { vaDor, correspondenceTypeId, notes, veteranFileNumber, handleEditGeneralInformationModal} = props;
+  const { correspondence, correspondenceTypes, veteranFileNumber, handleEditGeneralInformationModal } = props;
+  const [changeVaDor, setChangeVaDor] = useState(moment.utc((props.vaDor)).format('YYYY-MM-DD'));
+  const [changeCorrespondenceTypeId, setChangeCorrespondenceTypeId] = useState(
+    props.correspondenceTypeId
+  );
+  const [changeNotes, setChangeNotes] = useState(props.notes);
   const [dateError, setDateError] = useState(false);
   const [saveButton, setSaveButton] = useState(true);
 
@@ -37,7 +40,7 @@ const CorrespondenceEditGeneralInformationModal = (props) => {
     // check for future issue
     const error = validateDateNotInFuture(value) ? false : 'Receipt date cannot be in the future';
 
-    props.setVaDor(value);
+    setChangeVaDor(value);
     setDateError(error);
 
     // if no errors, enable the save button
@@ -57,24 +60,25 @@ const CorrespondenceEditGeneralInformationModal = (props) => {
   const handleSelectCorrespondenceType = (value) => {
     // update the correspondence type id and update the correspondence type
     // in the dropdown with placeholder
-    props.setCorrespondenceTypeId(value.id);
+    setChangeCorrespondenceTypeId(value.id);
     setSaveButton(false);
   };
 
   const handleCorrespondenceTypeEmpty = () => {
-    if (correspondenceTypeId === null) {
+    if (props.correspondenceTypeId === null) {
       return 'Select...';
     }
 
-    const type = correspondenceTypes.find((value) => value.id === correspondenceTypeId);
+    const type = correspondenceTypes.find((value) => value.id === props.correspondenceTypeId);
     // const type = 'Abeyance';
 
-    return type.name;
+    return type?.name;
+    // return "banananananananan"
   };
 
   // Handling Notes Changes
   const handleChangeNotes = (value) => {
-    props.setNotes(value);
+    setChangeNotes(value);
     setSaveButton(false);
   };
 
@@ -84,13 +88,12 @@ const CorrespondenceEditGeneralInformationModal = (props) => {
     setSaveButton(true);
 
     // props.setCreateRecordIsReadOnly('');
-    const correspondence = props;
     const payloadData = {
       data: {
         correspondence: {
-          va_date_of_receipt: vaDor,
-          correspondence_type_id: correspondenceTypeId,
-          notes
+          va_date_of_receipt: changeVaDor,
+          correspondence_type_id: changeCorrespondenceTypeId,
+          notes: changeNotes
         },
         veteran: {
           file_number: veteranFileNumber
@@ -146,7 +149,7 @@ const CorrespondenceEditGeneralInformationModal = (props) => {
         name="date"
         type="date"
         onChange={handleSelectVaDor}
-        value={vaDor}
+        value={changeVaDor}
         errorMessage={dateError}
       />
       <br></br>
@@ -162,7 +165,7 @@ const CorrespondenceEditGeneralInformationModal = (props) => {
         name="Notes"
         id="taskInstructions"
         onChange={handleChangeNotes}
-        value={notes}
+        value={changeNotes}
       />
     </QueueFlowModal>
   );
@@ -186,7 +189,8 @@ CorrespondenceEditGeneralInformationModal.propTypes = {
   setVaDor: PropTypes.func,
   errorMessage: PropTypes.any,
   userIsInboundOpsSupervisor: PropTypes.bool,
-  correspondence: PropTypes.object
+  correspondence: PropTypes.object,
+  handleEditGeneralInformationModal: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({

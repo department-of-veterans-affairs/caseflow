@@ -32,16 +32,9 @@ const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
   const correspondence = props.correspondence;
   const mailTasks = props.correspondence.mailTasks;
-  const veteranFileNumber = props.correspondence.veteranFileNumber;
   const allCorrespondences = props.correspondence.all_correspondences;
   const [viewAllCorrespondence, setViewAllCorrespondence] = useState(false);
   const [editGeneralInformationModal, setEditGeneralInformationModal] = useState(false);
-  const [vaDor, setVaDor] = useState(moment.utc((props.correspondence.vaDateOfReceipt)).format('YYYY-MM-DD'));
-  const [correspondenceTypeId, setCorrespondenceTypeId] = useState(
-    props.correspondence.correspondence_type_id
-  );
-  const [notes, setNotes] = useState(props.correspondence.notes);
-  const [errorMessage, setErrorMessage] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [disableSubmitButton, setDisableSubmitButton] = useState(true);
   const [showSuccessBanner, setShowSuccessBanner] = useState(false);
@@ -436,21 +429,13 @@ const CorrespondenceDetails = (props) => {
           </table>
           {editGeneralInformationModal && (
             <CorrespondenceEditGeneralInformationModal
-              {...{
-                errorMessage,
-                setErrorMessage,
-                notes,
-                setNotes,
-                veteranFileNumber,
-                correspondenceTypeId,
-                setCorrespondenceTypeId,
-                vaDor,
-                setVaDor,
-                handleEditGeneralInformationModal
-              }}
-              {...props}
-              onCancel={handleEditGeneralInformationModal}
+              vaDor={props.correspondence.vaDateOfReceipt}
+              correspondenceTypeId={props.correspondence.correspondence_type_id}
+              notes={props.correspondence.notes}
+              veteranFileNumber={props.correspondence.veteranFileNumber}
+              handleEditGeneralInformationModal={handleEditGeneralInformationModal}
               correspondence={props.correspondence}
+              {...props}
             />
           )}
         </div>
