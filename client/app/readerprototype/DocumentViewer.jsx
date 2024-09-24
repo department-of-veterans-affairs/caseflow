@@ -72,7 +72,11 @@ const DocumentViewer = (props) => {
     }
   };
 
-  document.body.style.overflow = 'hidden';
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+
+    return () => document.body.style.overflow = 'auto';
+  }, [window.location.pathname]);
 
   return (
     <div id="prototype-reader" className="cf-pdf-page-container">
