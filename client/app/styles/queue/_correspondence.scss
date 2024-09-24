@@ -15,6 +15,7 @@ $color-background-color: #f1f1f1;
 $color-red: #cd2026;
 $color-dark-red: #ff0000;
 $color-gray-darker: #5b616b;
+$color-black-darker: black;
 $color-bg-hsl: hsl(0, 0%, 100%);
 $color-bg-hsl-a: hsl(0, 0%, 80%);
 
@@ -1536,7 +1537,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   flex-grow: 0;
 
   button {
-    color: black;
+    color: $color-black-darker;
     background-color: transparent;
     border: none;
     font-style: normal;
@@ -1551,8 +1552,8 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
     &:hover {
       text-decoration: none;
-      background-color: #f9f9f9;
-      color: black;
+      background-color: $color-gray-inverse-base;
+      color: $color-black-darker;
     }
     .plus-symbol {
       line-height: 1;
