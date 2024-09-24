@@ -728,7 +728,6 @@ CorrespondenceDetails.propTypes = {
   organizations: PropTypes.array,
   userCssId: PropTypes.string,
   enableTopPagination: PropTypes.bool,
-  correspondence_appeal_ids: PropTypes.bool,
   isInboundOpsUser: PropTypes.bool,
   tasksUnrelatedToAppealEmpty: PropTypes.bool,
   isInboundOpsSuperuser: PropTypes.bool,
