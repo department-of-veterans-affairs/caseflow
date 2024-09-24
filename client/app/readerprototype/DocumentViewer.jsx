@@ -27,6 +27,8 @@ const DocumentViewer = (props) => {
   const currentDocumentId = Number(props.match.params.docId);
   const doc = props.allDocuments.find((x) => x.id === currentDocumentId);
 
+  document.title = `${(doc && doc.type) || ''} | Document Viewer | Caseflow Reader`;
+
   useEffect(() => {
     setShowSearchBar(false);
   }, [currentDocumentId]);
@@ -70,7 +72,11 @@ const DocumentViewer = (props) => {
     }
   };
 
-  document.body.style.overflow = 'hidden';
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+
+    return () => document.body.style.overflow = 'auto';
+  }, [window.location.pathname]);
 
   return (
     <div id="prototype-reader" className="cf-pdf-page-container">
