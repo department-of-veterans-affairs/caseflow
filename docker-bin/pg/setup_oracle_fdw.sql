@@ -4,6 +4,10 @@ CREATE EXTENSION oracle_fdw;
 -- Print extension version
 SELECT oracle_diag ();
 
+-- Create Caseflow Database
+-- Skip if you aren't running this as part of an initialization script.
+CREATE DATABASE caseflow_certification_development OWNER postgres ENCODING UTF8;
+
 -- #####################
 -- Init foreign server
 -- #####################
@@ -24,6 +28,9 @@ CREATE USER MAPPING FOR postgres SERVER vacols_sv OPTIONS (
 -- #####################
 -- Create foreign tables
 -- #####################
+
+-- Switch to Caseflow database
+\c caseflow_certification_development
 
 -- BRIEFF Table
 CREATE FOREIGN
