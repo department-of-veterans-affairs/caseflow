@@ -690,6 +690,7 @@ const CorrespondenceDetails = (props) => {
           setSelectedAppeals(appealIds);
           setInitialSelectedAppeals(appealIds);
           sortAppeals(appealIds);
+          setShowSuccessBanner(true);
           setDisableSubmitButton(true);
           window.scrollTo({
             top: 0,
