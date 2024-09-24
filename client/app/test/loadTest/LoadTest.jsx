@@ -13,27 +13,29 @@ export default function LoadTest(props) {
   return <BrowserRouter>
     <div>
       <AppFrame>
-        <AppSegment filledBackground>
-          <h1>Test Target Configuration</h1>
-          <UserConfiguration {...props} />
-        </AppSegment>
-        <div {...css({ overflow: 'hidden' })}>
-          <Button
-            id="Cancel"
-            name="Cancel"
-            linkStyling
-            styling={css({ float: 'left', paddingLeft: 0, paddingRight: 0 })}
-          >
-            Cancel
-          </Button>
-          <span {...css({ float: 'right' })}>
+        <form>
+          <AppSegment filledBackground>
+            <h1>Test Target Configuration</h1>
+            <UserConfiguration {...props} />
+          </AppSegment>
+          <div {...css({ overflow: 'hidden' })}>
             <Button
-              id="Submit"
-              name="Submit"
-              className="usa-button"
-            />
-          </span>
-        </div>
+              id="Cancel"
+              name="Cancel"
+              linkStyling
+              styling={css({ float: 'left', paddingLeft: 0, paddingRight: 0 })}
+            >
+              Cancel
+            </Button>
+            <span {...css({ float: 'right' })}>
+              <Button
+                id="Submit"
+                name="Submit"
+                className="usa-button"
+              />
+            </span>
+          </div>
+        </form>
       </AppFrame>
     </div>
   </BrowserRouter>;
