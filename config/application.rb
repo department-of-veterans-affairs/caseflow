@@ -170,6 +170,7 @@ module CaseflowCertification
       "#{root}/app/models/priority_queues",
       "#{root}/app/models/queue_tabs",
       "#{root}/app/models/queues",
+      "#{root}/app/models/serializers",
       "#{root}/app/models/tasks",
       "#{root}/app/models/tasks/docket_switch",
       "#{root}/app/models/tasks/hearing_mail_tasks",
