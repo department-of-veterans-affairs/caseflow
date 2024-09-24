@@ -158,6 +158,7 @@ module CaseflowCertification
       "#{root}/app/models/events",
       "#{root}/app/models/external_models",
       "#{root}/app/models/hearings",
+      "#{root}/app/models/legacy_tasks",
       "#{root}/app/models/mixins",
       "#{root}/app/models/organizations",
       "#{root}/app/models/prepend",
