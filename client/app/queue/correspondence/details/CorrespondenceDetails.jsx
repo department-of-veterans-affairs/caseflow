@@ -429,13 +429,8 @@ const CorrespondenceDetails = (props) => {
           </table>
           {editGeneralInformationModal && (
             <CorrespondenceEditGeneralInformationModal
-              vaDor={props.correspondence.vaDateOfReceipt}
-              correspondenceTypeId={props.correspondence.correspondence_type_id}
-              notes={props.correspondence.notes}
-              veteranFileNumber={props.correspondence.veteranFileNumber}
+              correspondenceTypes={props.correspondenceTypes}
               handleEditGeneralInformationModal={handleEditGeneralInformationModal}
-              correspondence={props.correspondence}
-              {...props}
             />
           )}
         </div>
@@ -778,6 +773,7 @@ CorrespondenceDetails.propTypes = {
   inboundOpsTeamUsers: PropTypes.array,
   addLetterCheck: PropTypes.bool,
   updateCorrespondenceRelations: PropTypes.func,
+  correspondenceTypes: PropTypes.array
 };
 
 const mapStateToProps = (state) => ({

@@ -286,3 +286,26 @@ export const updateCorrespondenceRelations = (correspondence) =>
       }
     });
   };
+
+export const editCorrespondenceGeneralInformation = (payload, correspondence) => (dispatch) => {
+  return ApiUtil.patch(`/queue/correspondence/${correspondence.uuid}/edit_general_information`, payload).
+    then((response) => {
+      const correspondenceReturn = response.body.correspondence;
+      console.log(JSON.stringify(correspondenceReturn, 1, 1));
+
+      dispatch({
+        type: ACTIONS.CORRESPONDENCE_INFO,
+        payload: {
+          correspondenceReturn
+        }
+      });
+
+    }).
+    catch((error) => {
+      const errorMessage = error?.response?.body?.message ?
+        error.response.body.message.replace(/^Error:\s*/, '') :
+        error.message;
+
+      console.error(errorMessage);
+    });
+};

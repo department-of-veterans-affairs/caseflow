@@ -10,17 +10,17 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import TextareaField from '../../components/TextareaField';
 import COPY from '../../../COPY';
 import QueueFlowModal from './QueueFlowModal';
-
-import { correspondenceInfo } from
+import { editCorrespondenceGeneralInformation } from
   '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
 
 const CorrespondenceEditGeneralInformationModal = (props) => {
-  const { correspondence, correspondenceTypes, veteranFileNumber, handleEditGeneralInformationModal } = props;
-  const [changeVaDor, setChangeVaDor] = useState(moment.utc((props.vaDor)).format('YYYY-MM-DD'));
+  const { correspondence, correspondenceTypes, handleEditGeneralInformationModal } = props;
+  const [changeVaDor, setChangeVaDor] = useState(moment.utc((correspondence?.vaDateOfReceipt)).format('YYYY-MM-DD'));
   const [changeCorrespondenceTypeId, setChangeCorrespondenceTypeId] = useState(
-    props.correspondenceTypeId
+    // eslint-disable-next-line camelcase
+    correspondence?.correspondence_type_id
   );
-  const [changeNotes, setChangeNotes] = useState(props.notes);
+  const [changeNotes, setChangeNotes] = useState(correspondence?.notes);
   const [dateError, setDateError] = useState(false);
   const [saveButton, setSaveButton] = useState(true);
 
@@ -37,13 +37,13 @@ const CorrespondenceEditGeneralInformationModal = (props) => {
   };
 
   const handleSelectVaDor = (value) => {
-    // check for future issue
+    // Check for future date
     const error = validateDateNotInFuture(value) ? false : 'Receipt date cannot be in the future';
 
     setChangeVaDor(value);
     setDateError(error);
 
-    // if no errors, enable the save button
+    // If no errors, enable the save button
     if (!error) {
       setSaveButton(false);
     }
@@ -58,22 +58,21 @@ const CorrespondenceEditGeneralInformationModal = (props) => {
     }));
 
   const handleSelectCorrespondenceType = (value) => {
-    // update the correspondence type id and update the correspondence type
-    // in the dropdown with placeholder
+    // Update the corresppondence type and type id with placeholder
     setChangeCorrespondenceTypeId(value.id);
     setSaveButton(false);
   };
 
   const handleCorrespondenceTypeEmpty = () => {
-    if (props.correspondenceTypeId === null) {
+    // eslint-disable-next-line camelcase
+    if (correspondence?.correspondence_type_id === null) {
       return 'Select...';
     }
 
-    const type = correspondenceTypes.find((value) => value.id === props.correspondenceTypeId);
-    // const type = 'Abeyance';
+    // eslint-disable-next-line camelcase
+    const type = correspondenceTypes?.find((value) => value?.id === correspondence?.correspondence_type_id);
 
     return type?.name;
-    // return "banananananananan"
   };
 
   // Handling Notes Changes
@@ -84,52 +83,30 @@ const CorrespondenceEditGeneralInformationModal = (props) => {
 
   // Handling Submit
   const handleSubmit = async () => {
-    // disable the save button on submit
+    // Disable the save button on submit
     setSaveButton(true);
 
-    // props.setCreateRecordIsReadOnly('');
-    const payloadData = {
+    const payload = {
       data: {
         correspondence: {
           va_date_of_receipt: changeVaDor,
           correspondence_type_id: changeCorrespondenceTypeId,
           notes: changeNotes
-        },
-        veteran: {
-          file_number: veteranFileNumber
         }
-      },
+      }
     };
 
-    try {
-      const response = await ApiUtil.patch(
-        `/queue/correspondence/${correspondence.correspondence_uuid}/edit_general_information"`,
-        payloadData
-      );
+    handleEditGeneralInformationModal();
 
-      const { body } = response;
+    return props.editCorrespondenceGeneralInformation(payload, correspondence);
 
-      // console.log(`response: ${JSON.stringify(response.body.correspondence, 1, 1)}`);
-      // console.log(`body status: ${response.body.status}`);
-
-      if (body.status === 'ok') {
-        // set error message to false and update redux stored correspondence
-        props.setErrorMessage('');
-        props.correspondenceInfo(response.body.correspondence);
-
-      }
-    } catch (error) {
-      const { body } = error.response;
-
-      props.setErrorMessage(body.error);
-    }
   };
 
   // useEffects to activate save button
   // enable save button if changes happen to form (with no errors)
   useEffect(() => {
     // error validation
-    if (dateError || props.errorMessage) {
+    if (dateError || props?.errorMessage) {
       setSaveButton(true);
     }
   }, [handleSelectVaDor, handleSelectCorrespondenceType, handleChangeNotes]);
@@ -139,7 +116,7 @@ const CorrespondenceEditGeneralInformationModal = (props) => {
       title={COPY.CORRESPONDENCE_EDIT_GENERAL_INFORMATION_MODAL_TITLE}
       button={COPY.MODAL_SAVE_BUTTON}
       submitDisabled={saveButton}
-      pathAfterSubmit={`/queue/correspondence/${props.correspondence_uuid}`}
+      pathAfterSubmit={`/queue/correspondence/${correspondence?.uuid}`}
       submit={handleSubmit}
       onCancel={handleEditGeneralInformationModal}
     >
@@ -156,7 +133,7 @@ const CorrespondenceEditGeneralInformationModal = (props) => {
       <SearchableDropdown
         name="correspondence-dropdown"
         label="Correspondence type"
-        options={generateOptions(props.correspondenceTypes)}
+        options={generateOptions(props?.correspondenceTypes)}
         onChange={handleSelectCorrespondenceType}
         placeholder={handleCorrespondenceTypeEmpty()}
       />
@@ -173,13 +150,13 @@ const CorrespondenceEditGeneralInformationModal = (props) => {
 
 CorrespondenceEditGeneralInformationModal.propTypes = {
   correspondence_uuid: PropTypes.string,
-  correspondenceInfo: PropTypes.func,
+  editCorrespondenceGeneralInformation: PropTypes.func,
   team: PropTypes.string,
   correspondenceTypes: PropTypes.array,
   correspondenceTypeId: PropTypes.number,
   setCorrespondenceTypeId: PropTypes.func,
   notes: PropTypes.string,
-  vaDor: PropTypes.string,
+  vaDateOfReceipt: PropTypes.string,
   veteranFileNumber: PropTypes.string,
   setSaveButton: PropTypes.bool,
   setCorrespondence: PropTypes.func,
@@ -187,18 +164,18 @@ CorrespondenceEditGeneralInformationModal.propTypes = {
   setVeteranFileNumber: PropTypes.func,
   setNotes: PropTypes.func,
   setVaDor: PropTypes.func,
-  errorMessage: PropTypes.any,
+  errorMessage: PropTypes.string,
   userIsInboundOpsSupervisor: PropTypes.bool,
   correspondence: PropTypes.object,
   handleEditGeneralInformationModal: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
-  correspondence: state.correspondenceDetails.correspondence
+  correspondence: state.correspondenceDetails.correspondenceInfo
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  correspondenceInfo
+  editCorrespondenceGeneralInformation
 }, dispatch);
 
 export default (withRouter(
