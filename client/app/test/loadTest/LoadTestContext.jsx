@@ -1,8 +1,8 @@
 /* eslint-disable max-lines, max-len */
 
-import { createContext } from 'react';
+// import { createContext } from 'react';
 
-export const LoadTestContext = createContext({});
+// export const LoadTestContext = createContext({});
 
 // const dataReducer = (state, action) =>{
 //   switch (action.type){

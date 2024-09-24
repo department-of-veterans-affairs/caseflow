@@ -7,11 +7,12 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 
 import FeatureToggleConfiguration from './FeatureToggleConfiguration';
 import FunctionConfiguration from './FunctionConfiguration';
-import OrganizationCheckbox from './OrganizationCheckbox';
-import OFFICE_INFO from '../../../constants/REGIONAL_OFFICE_FOR_CSS_STATION.json';
+import Checkbox from '../../components/Checkbox';
+import OFFICE_INFO from '../../../constants/REGIONAL_OFFICE_FOR_CSS_STATION';
 
 export default function UserConfiguration(props) {
   const [isSelectedStation, stationIsSelected] = useState(false);
+  const [selectedOrganizations, setSelectedOrganizations] = useState({});
 
   const filteredStations = [];
   const stationsMapping = new Map();
@@ -22,12 +23,42 @@ export default function UserConfiguration(props) {
         info[1] = [info[1]];
       }
       stationsMapping.set(info[0], info[1]);
-      filteredStations.push({value: info[0], label: info[0]});
+      filteredStations.push({ value: info[0], label: info[0] });
     }
   });
 
   const handleStationSelect = () => {
     stationIsSelected(true);
+  };
+
+  const handleOrganizationSelect = (org) => {
+    setSelectedOrganizations((prev) => {
+      const updatedSelections = { ...prev };
+
+      if (updatedSelections[org]) {
+        delete updatedSelections[org];
+        delete updatedSelections[`${org}-admin`];
+      } else {
+        updatedSelections[org] = true;
+      }
+
+      return updatedSelections;
+    });
+  };
+
+  const handleAdminChange = (org) => {
+    // console.log(org);
+    setSelectedOrganizations((prev) => {
+      const updatedSelections = { ...prev };
+
+      if (updatedSelections[`${org}-admin`]) {
+        delete updatedSelections[`${org}-admin`];
+      } else {
+        updatedSelections[`${org}-admin`] = true;
+      }
+
+      return updatedSelections;
+    });
   };
 
   const functionsAvailable = props.form_values.functions_available;
@@ -66,11 +97,26 @@ export default function UserConfiguration(props) {
           <br />
           <p>Organizations</p>
           <div className="load-test-container">
-            {allOrganizations.map((organizationOption) => (
-              <OrganizationCheckbox
-                key={organizationOption}
-                organizationOption={organizationOption}
-              />
+            {allOrganizations.map((org) => (
+              <div className="load-test-container-checkbox" key={org}>
+                <Checkbox
+                  label={org}
+                  name={org}
+                  isChecked={Boolean(selectedOrganizations[org])}
+                  onChange={() => handleOrganizationSelect(org)}
+                />
+                <div style={{ marginLeft: '20px' }}>
+                  {selectedOrganizations[org] && (
+                    <Checkbox
+                      label="Admin"
+                      name={`${org}-admin`}
+                      isChecked={Boolean(selectedOrganizations[`${org}-admin`])}
+                      onChange={() => handleAdminChange(org)}
+                      style={{ marginLeft: '20px' }}
+                    />
+                  )}
+                </div>
+              </div>
             ))}
           </div>
           <br />
