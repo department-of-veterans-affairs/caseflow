@@ -145,6 +145,7 @@ module CaseflowCertification
         "etl" => "ETL",
         "etl_builder_job" => "ETLBuilderJob",
         "hlr_status_serializer" => "HLRStatusSerializer",
+        "sc_status_serializer" => "SCStatusSerializer",
         "update_poa_concern" => "UpdatePOAConcern",
         "va_notify_send_message_template" => "VANotifySendMessageTemplate",
         "vacols" => "VACOLS",
