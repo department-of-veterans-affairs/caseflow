@@ -203,25 +203,12 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
       .where(original_judge_task: { assigned_to_id: judge&.id })
   end
 
-  def non_genpop_without_judge(lever = CaseDistributionLever.ama_hearing_case_affinity_days)
-    genpop_base_query
-      .where("appeal_affinities.affinity_start_date > ? or appeal_affinities.affinity_start_date is null",
-             lever.value.to_i.days.ago)
-  end
-
   def non_genpop_by_affinity_start_date
     with_appeal_affinities
       .with_original_appeal_and_judge_task
       .where("appeal_affinities.affinity_start_date > ? or appeal_affinities.affinity_start_date is null",
              CaseDistributionLever.cavc_affinity_days.days.ago)
       .where.not(original_judge_task: { assigned_to_id: nil })
-  end
-
-  def non_genpop_by_affinity_start_date_for_hearing_request
-    with_appeal_affinities
-      .with_original_appeal_and_judge_task
-      .where("appeal_affinities.affinity_start_date > ? or appeal_affinities.affinity_start_date is null",
-             CaseDistributionLever.cavc_affinity_days.days.ago)
   end
 
   def ordered_by_distribution_ready_date
