@@ -140,6 +140,7 @@ module CaseflowCertification
       autoloader.inflector.inflect(
         "amo_metrics_report_job" => "AMOMetricsReportJob",
         "cavc_decision" => "CAVCDecision",
+        "cda_control_group" => "CDAControlGroup",
         "etl" => "ETL",
         "etl_builder_job" => "ETLBuilderJob",
         "update_poa_concern" => "UpdatePOAConcern",
