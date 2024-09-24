@@ -145,6 +145,7 @@ module CaseflowCertification
         "cavc_decision" => "CAVCDecision",
         "cavc_decision_repository" => "CAVCDecisionRepository",
         "cda_control_group" => "CDAControlGroup",
+        "db_service" => "DBService",
         "etl" => "ETL",
         "etl_builder_job" => "ETLBuilderJob",
         "hlr_status_serializer" => "HLRStatusSerializer",
