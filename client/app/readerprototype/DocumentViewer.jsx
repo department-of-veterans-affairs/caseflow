@@ -12,12 +12,8 @@ import { CATEGORIES } from '../reader/analytics';
 import { stopPlacingAnnotation } from '../reader/AnnotationLayer/AnnotationActions';
 import DeleteModal from './components/Comments/DeleteModal';
 import ShareModal from './components/Comments/ShareModal';
-import { getNextDocId, getPrevDocId, getRotationDeg, selectedDoc, selectedDocIndex } from './util/documentUtil';
-import { ROTATION_DEGREES } from './util/readerConstants';
-
-const ZOOM_LEVEL_MIN = 20;
-const ZOOM_LEVEL_MAX = 300;
-const ZOOM_INCREMENT = 20;
+import { getRotationDeg } from './util/documentUtil';
+import { ROTATION_DEGREES, ZOOM_INCREMENT, ZOOM_LEVEL_MAX, ZOOM_LEVEL_MIN } from './util/readerConstants';
 
 const DocumentViewer = (props) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -26,10 +22,10 @@ const DocumentViewer = (props) => {
   const [showSearchBar, setShowSearchBar] = useState(false);
   const [showSideBar, setShowSideBar] = useState(true);
   const [zoomLevel, setZoomLevel] = useState(100);
-  const [disabled, setDisabled] = useState(true);
   const dispatch = useDispatch();
 
   const currentDocumentId = Number(props.match.params.docId);
+  const doc = props.allDocuments.find((x) => x.id === currentDocumentId);
 
   useEffect(() => {
     setShowSearchBar(false);
@@ -58,8 +54,6 @@ const DocumentViewer = (props) => {
 
     return () => window.removeEventListener('keydown', keyHandler);
   }, []);
-
-  const doc = selectedDoc(props);
 
   const getPageNumFromScrollTop = (event) => {
     const { clientHeight, scrollTop, scrollHeight } = event.target;
@@ -104,20 +98,14 @@ const DocumentViewer = (props) => {
             rotateDeg={rotateDeg}
             setNumPages={setNumPages}
             zoomLevel={zoomLevel}
-            onLoad={setDisabled}
           />
         </div>
         <ReaderFooter
           currentPage={currentPage}
-          docCount={props.allDocuments.length}
-          nextDocId={getNextDocId(props)}
+          docId={doc.id}
           numPages={numPages}
-          prevDocId={getPrevDocId(props)}
           setCurrentPage={() => setCurrentPage()}
-          selectedDocIndex={selectedDocIndex(props)}
-          showNextDocument={props.showPdf(getNextDocId(props))}
-          showPreviousDocument={props.showPdf(getPrevDocId(props))}
-          disablePreviousNext={disabled}
+          showPdf={props.showPdf}
         />
       </div>
       {showSideBar && (
