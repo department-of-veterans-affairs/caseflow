@@ -149,6 +149,7 @@ module CaseflowCertification
         "duplicate_veteran_participant_id_finder" => "DuplicateVeteranParticipantIDFinder",
         "etl" => "ETL",
         "etl_builder_job" => "ETLBuilderJob",
+        "etl_classes" => "ETLClasses",
         "hlr_status_serializer" => "HLRStatusSerializer",
         "sc_status_serializer" => "SCStatusSerializer",
         "update_poa_concern" => "UpdatePOAConcern",
