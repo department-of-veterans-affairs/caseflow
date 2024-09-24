@@ -107,6 +107,7 @@ const CorrespondenceDetails = (props) => {
       });
 
       if (response.status === 201) {
+        setShowSuccessBanner(true);
         console.log('Correspondence updated successfully.', response.status); // eslint-disable-line no-console
       }
     } catch (error) {
@@ -450,10 +451,13 @@ const CorrespondenceDetails = (props) => {
                   id={correspondenceRow.id.toString()}
                   hideLabel
                   defaultValue={relatedCorrespondenceIds.some((el) => el === correspondenceRow.id)}
-                  value={selectedPriorMail.some((el) => el.id === correspondenceRow.id)}
+                  value={
+                    selectedPriorMail.some((el) => el.id === correspondenceRow.id) ||
+                          relatedCorrespondenceIds.some((corrId) => corrId === correspondenceRow.id)
+                  }
                   disabled={
-                    // eslint-disable-next-line max-len
-                    relatedCorrespondenceIds.some((corrId) => corrId === correspondenceRow.id) || !props.isInboundOpsUser
+                    relatedCorrespondenceIds.some((corrId) => corrId === correspondenceRow.id) ||
+                      !props.isInboundOpsUser
                   }
                   onChange={(checked) => onPriorMailCheckboxChange(correspondenceRow, checked)}
                 /> :
