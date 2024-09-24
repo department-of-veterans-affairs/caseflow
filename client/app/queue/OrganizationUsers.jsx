@@ -17,7 +17,34 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import COPY from '../../COPY';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import MembershipRequestTable from './MembershipRequestTable';
-import SelectConferenceTypeRadioField from './SelectConferenceTypeRadioField';
+import { flushSync } from 'react-dom';
+
+const userStyle = css({
+  margin: '.5rem 0 .5rem',
+  padding: '.5rem 0 .5rem',
+  listStyle: 'none'
+});
+const topUserStyle = css({
+  borderTop: '.1rem solid gray',
+  margin: '.5rem 0 .5rem',
+  padding: '1rem 0 .5rem',
+  listStyle: 'none'
+});
+const topUserBorder = css({
+  borderBottom: '.1rem solid gray',
+});
+const buttonStyle = css({
+  paddingRight: '1rem',
+  display: 'inline-block'
+});
+const buttonContainerStyle = css({
+  borderBottom: '1rem solid gray',
+  borderWidth: '1px',
+  padding: '.5rem 0 2rem',
+});
+const listStyle = css({
+  listStyle: 'none'
+});
 
 export default class OrganizationUsers extends React.PureComponent {
   constructor(props) {
@@ -192,8 +219,10 @@ export default class OrganizationUsers extends React.PureComponent {
     return ApiUtil.get(`/users?exclude_org=${this.props.organization}&css_id=${inputValue}`).then((response) => {
       const users = response.body.users.data;
 
-      this.setState({
-        remainingUsers: users
+      flushSync(() => {
+        this.setState({
+          remainingUsers: users
+        });
       });
 
       return this.dropdownOptions();
