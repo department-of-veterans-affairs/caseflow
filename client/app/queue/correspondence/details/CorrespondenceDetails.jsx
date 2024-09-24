@@ -14,7 +14,6 @@ import {
 import CorrespondenceResponseLetters from './CorrespondenceResponseLetters';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
-import { prepareAppealForSearchStore } from 'app/queue/utils';
 import CorrespondenceTasksAdded from '../CorrespondenceTasksAdded';
 import moment from 'moment';
 import Pagination from 'app/components/Pagination/Pagination';
@@ -254,14 +253,11 @@ const CorrespondenceDetails = (props) => {
     return checked ? userAccess !== 'admin_access' : false;
   };
 
-  let appeals;
-
   const sortAppeals = (selectedList) => {
-    appeals = [];
     let filteredAppeals = [];
     let unfilteredAppeals = [];
 
-    correspondence.appeals_information.appeals.map((appeal) => {
+    correspondence.appeals_information.map((appeal) => {
       if (selectedList?.includes(appeal.id)) {
         filteredAppeals.push(appeal);
       } else {
@@ -275,19 +271,8 @@ const CorrespondenceDetails = (props) => {
     unfilteredAppeals = unfilteredAppeals.sort((leftAppeal, rightAppeal) => leftAppeal.id - rightAppeal.id);
 
     const sortedAppeals = filteredAppeals.concat(unfilteredAppeals);
-    const searchStoreAppeal = prepareAppealForSearchStore(sortedAppeals);
-    const appeall = searchStoreAppeal.appeals;
-    const appealldetail = searchStoreAppeal.appealDetails;
-    const hashKeys = Object.keys(appeall);
 
-    hashKeys.map((key) => {
-      const combinedHash = { ...appeall[key], ...appealldetail[key] };
-
-      appeals.push(combinedHash);
-
-      return true;
-    });
-    setAppealsToDisplay(appeals);
+    setAppealsToDisplay(sortedAppeals);
   };
 
   useEffect(() => {
