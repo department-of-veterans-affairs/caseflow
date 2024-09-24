@@ -140,6 +140,7 @@ module CaseflowCertification
       autoloader.inflector.inflect(
         "amo_metrics_report_job" => "AMOMetricsReportJob",
         "appeals_for_poa" => "AppealsForPOA",
+        "bgs_service" => "BGSService",
         "bgs_service_concern" => "BGSServiceConcern",
         "bva_appeal_status" => "BVAAppealStatus",
         "cavc_case_decision" => "CAVCCaseDecision",
