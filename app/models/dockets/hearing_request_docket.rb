@@ -110,24 +110,35 @@ class HearingRequestDocket < Docket
   # used for distribution_stats
   # :reek:ControlParameter
   # :reek:FeatureEnvy
-  # rubocop:disable Metrics/LineLength
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Style/ConditionalAssignment\
   def affinity_date_count(in_window, priority)
-    scope = docket_appeals.joins(:hearings)
-    .genpop_base_query
-    .ready_for_distribution
-    .with_held_hearings
+    scope = docket_appeals
+      .joins(:hearings)
+      .genpop_base_query
+      .ready_for_distribution
+      .with_held_hearings
 
     non_aod_lever = CaseDistributionLever.ama_hearing_case_affinity_days
     aod_lever = CaseDistributionLever.ama_hearing_case_aod_affinity_days
 
     return scope.none if priority && aod_lever&.is_a?(String)
     return scope.none if !priority && non_aod_lever&.is_a?(String)
-    
-    scope = scope.affinitized_ama_affinity_cases(aod_lever) if priority && in_window && aod_lever&.is_a?(Integer)
-    scope = scope.affinitized_ama_affinity_cases(non_aod_lever) if !priority && in_window && non_aod_lever&.is_a?(Integer)
-    scope = scope.expired_ama_affinity_cases(aod_lever) if priority && !in_window && aod_lever&.is_a?(Integer)
-    scope = scope.expired_ama_affinity_cases(non_aod_lever) if !priority && !in_window && non_aod_lever&.is_a?(Integer)
-    
+
+    if in_window
+      scope = priority ? affinitized_scope(scope, aod_lever) : affinitized_scope(scope, non_aod_lever)
+    else
+      scope = priority ? expired_scope(scope, aod_lever) : expired_scope(scope, non_aod_lever)
+    end
+
     priority ? scoped_for_priority(scope).ids.size : scope.nonpriority.ids.size
-  end # rubocop:enable Metrics/LineLength
+  end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Style/ConditionalAssignment
+
+  def affinitized_scope(scope, lever)
+    lever.is_a?(Integer) ? scope.affinitized_ama_affinity_cases(lever) : scope
+  end
+
+  def expired_scope(scope, lever)
+    lever.is_a?(Integer) ? scope.expired_ama_affinity_cases(lever) : scope
+  end
 end
