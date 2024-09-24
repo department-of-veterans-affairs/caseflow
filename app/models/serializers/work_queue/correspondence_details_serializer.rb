@@ -13,4 +13,7 @@ class WorkQueue::CorrespondenceDetailsSerializer
   attribute :status
   attribute :type
   attribute :veteran_id
+  attribute :correspondence_type do |object|
+    object.correspondence_type&.name
+  end
 end
