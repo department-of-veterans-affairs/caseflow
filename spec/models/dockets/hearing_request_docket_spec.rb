@@ -380,13 +380,15 @@ describe HearingRequestDocket, :postgres do
   context "#affinity_date_count" do
     let!(:hearing_judge) { create(:user, :judge, :with_vacols_judge_record) }
     let!(:hearing_docket_appeal) { create(:appeal, :hearing_docket, :held_hearing_and_ready_to_distribute, :with_appeal_affinity, tied_judge: hearing_judge)}
+    let!(:aod_hearing_docket_appeal) { create(:appeal, :hearing_docket, :advanced_on_docket_due_to_age, :held_hearing_and_ready_to_distribute, :with_appeal_affinity, tied_judge: hearing_judge)}
     let!(:hearing_lever) { create(:case_distribution_lever, :ama_hearing_case_affinity_days) }
+    let!(:aod_hearing_lever) { create(:case_distribution_lever, :ama_hearing_case_aod_affinity_days) }
     let!(:hearing_request_instance) { HearingRequestDocket.new }
 
-    subject { hearing_request_instance.affinity_date_count(true, false, hearing_lever) }
+    subject { hearing_request_instance.affinity_date_count(true, false) }
 
     it "correctly accounts for affinities to judges based on most recently held hearing" do
-      expect(subject).to eq(1)
+      expect(subject).to eq(2)
     end
   end
 

@@ -110,21 +110,24 @@ class HearingRequestDocket < Docket
   # used for distribution_stats
   # :reek:ControlParameter
   # :reek:FeatureEnvy
-  def affinity_date_count(in_window, priority, lever)
-    scope = docket_appeals.ready_for_distribution
-                          .joins(:hearings)
-                          .with_held_hearings
-                          .non_genpop_without_judge(lever)
+  # rubocop:disable Metrics/LineLength
+  def affinity_date_count(in_window, priority)
+    scope = docket_appeals.joins(:hearings)
+    .genpop_base_query
+    .ready_for_distribution
+    .with_held_hearings
 
-    scope = if in_window
-              scope.non_genpop_by_affinity_start_date_for_hearing_request
-            else
-              scope.genpop_by_affinity_start_date
-            end
+    non_aod_lever = CaseDistributionLever.ama_hearing_case_affinity_days
+    aod_lever = CaseDistributionLever.ama_hearing_case_aod_affinity_days
 
-    return scoped_for_priority(scope).ids.size if priority
-
-    scope.nonpriority.ids.size
-  end
-
+    return scope.none if priority && aod_lever&.is_a?(String)
+    return scope.none if !priority && non_aod_lever&.is_a?(String)
+    
+    scope = scope.affinitized_ama_affinity_cases(aod_lever) if priority && in_window && aod_lever&.is_a?(Integer)
+    scope = scope.affinitized_ama_affinity_cases(non_aod_lever) if !priority && in_window && non_aod_lever&.is_a?(Integer)
+    scope = scope.expired_ama_affinity_cases(aod_lever) if priority && !in_window && aod_lever&.is_a?(Integer)
+    scope = scope.expired_ama_affinity_cases(non_aod_lever) if !priority && !in_window && non_aod_lever&.is_a?(Integer)
+    
+    priority ? scoped_for_priority(scope).ids.size : scope.nonpriority.ids.size
+  end # rubocop:enable Metrics/LineLength
 end
