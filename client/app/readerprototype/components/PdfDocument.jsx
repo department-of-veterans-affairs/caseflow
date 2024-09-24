@@ -9,8 +9,8 @@ import ApiUtil from '../../util/ApiUtil';
 import Page from './Page';
 import TextLayer from './TextLayer';
 import DocumentLoadError from './DocumentLoadError';
-import {useDispatch} from "react-redux";
-import {selectCurrentPdf} from "app/reader/Documents/DocumentsActions";
+import { useDispatch } from 'react-redux';
+import { selectCurrentPdf } from 'app/reader/Documents/DocumentsActions';
 
 const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel, onLoad }) => {
   const [isDocumentLoadError, setIsDocumentLoadError] = useState(false);
