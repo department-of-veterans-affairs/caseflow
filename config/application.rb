@@ -174,6 +174,7 @@ module CaseflowCertification
       "#{root}/app/models/tasks/pre_docket",
       "#{root}/app/models/tasks/special_case_movement",
       "#{root}/app/models/validators",
+      "#{root}/app/models/vanotify",
     )
 
     Rails.autoloaders.main.ignore(
