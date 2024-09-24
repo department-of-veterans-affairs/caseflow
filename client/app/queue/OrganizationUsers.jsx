@@ -19,7 +19,7 @@ import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import MembershipRequestTable from './MembershipRequestTable';
 import { flushSync } from 'react-dom';
 import SelectConferenceTypeRadioField from './SelectConferenceTypeRadioField';
-
+import { flushSync } from 'react-dom';
 export default class OrganizationUsers extends React.PureComponent {
   constructor(props) {
     super(props);
