@@ -376,16 +376,17 @@ describe HearingRequestDocket, :postgres do
     end
   end
 
-  
   context "#affinity_date_count" do
     let!(:hearing_judge) do
       create(:user, :judge, :with_vacols_judge_record)
     end
     let!(:hearing_docket_appeal) do
-      create(:appeal, :hearing_docket, :held_hearing_and_ready_to_distribute, :with_appeal_affinity, tied_judge: hearing_judge)
+      create(:appeal, :hearing_docket, :held_hearing_and_ready_to_distribute,
+             :with_appeal_affinity, tied_judge: hearing_judge)
     end
     let!(:aod_hearing_docket_appeal) do
-      create(:appeal, :hearing_docket, :advanced_on_docket_due_to_age, :held_hearing_and_ready_to_distribute, :with_appeal_affinity, tied_judge: hearing_judge)
+      create(:appeal, :hearing_docket, :advanced_on_docket_due_to_age, :held_hearing_and_ready_to_distribute,
+             :with_appeal_affinity, tied_judge: hearing_judge)
     end
     let!(:hearing_lever) do
       create(:case_distribution_lever, :ama_hearing_case_affinity_days)
