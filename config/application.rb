@@ -183,6 +183,7 @@ module CaseflowCertification
       "#{root}/app/models/validators",
       "#{root}/app/models/vanotify",
       "#{root}/app/serializers/case_distribution",
+      "#{root}/app/serializers/hearings",
     )
 
     Rails.autoloaders.main.ignore(
