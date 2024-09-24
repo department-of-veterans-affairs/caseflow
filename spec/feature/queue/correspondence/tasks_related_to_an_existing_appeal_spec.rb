@@ -144,7 +144,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
         end
         expect(page).to have_selector("#react-select-2-input[disabled]")
         expect(page).to have_text("Evidence Window Submission Task")
-        expect(page).to have_text("Provide context and instruction on this task")
+        expect(page).to have_text("Provide context and instructions on this task")
         field = find_field("content", disabled: true)
         expect(field.tag_name).to eq("textarea")
         checkbox_label = "Waive Evidence Window"

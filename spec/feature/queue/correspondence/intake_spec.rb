@@ -154,7 +154,7 @@ RSpec.feature("The Correspondence Intake page") do
 
     it "Two unrelated tasks have been added" do
       click_on("+ Add tasks")
-      expect(page).to have_text("Provide context and instruction on this task")
+      expect(page).to have_text("Provide context and instructions on this task")
       expect(page.all(".cf-form-textarea").count).to eq(1)
       click_on("+ Add tasks")
       expect(page.all(".cf-form-textarea").count).to eq(2)
@@ -162,14 +162,14 @@ RSpec.feature("The Correspondence Intake page") do
 
     it "Closes out new section when unrelated tasks have been removed" do
       click_on("+ Add tasks")
-      expect(page).to have_text("Provide context and instruction on this task")
+      expect(page).to have_text("Provide context and instructions on this task")
       click_on("button-Remove")
       expect(page).to_not have_text("New Tasks")
     end
 
     it "Disables continue button when task is added" do
       click_on("+ Add tasks")
-      expect(page).to have_text("Provide context and instruction on this task")
+      expect(page).to have_text("Provide context and instructions on this task")
       expect(page).to have_button("button-continue", disabled: true)
     end
 
