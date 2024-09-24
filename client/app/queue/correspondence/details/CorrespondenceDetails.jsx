@@ -242,7 +242,17 @@ const CorrespondenceDetails = (props) => {
   const appealCheckboxOnChange = (appealId, isChecked) => {
     setDisableSubmitButton(false);
     if (isChecked) {
-      setSelectedAppeals([...selectedAppeals, appealId]);
+      if (unSelectedAppeals?.includes(appealId)) {
+        const filtedAppeals = unSelectedAppeals.filter((item) => item !== appealId);
+
+        setUnSelectedAppeals(filtedAppeals);
+      } else {
+        setSelectedAppeals([...selectedAppeals, appealId]);
+      }
+    } else if (selectedAppeals?.includes(appealId)) {
+      const filtedAppeals = selectedAppeals.filter((item) => item !== appealId);
+
+      setSelectedAppeals(filtedAppeals);
     } else {
       setUnSelectedAppeals([...unSelectedAppeals, appealId]);
     }
@@ -254,6 +264,12 @@ const CorrespondenceDetails = (props) => {
 
     return checked ? userAccess !== 'admin_access' : false;
   };
+
+  useEffect(() => {
+    const buttonDisable = (selectedAppeals.length === initialSelectedAppeals.length);
+
+    setDisableSubmitButton(buttonDisable);
+  },[selectedAppeals]);
 
   let appeals;
 
@@ -349,7 +365,7 @@ const CorrespondenceDetails = (props) => {
               appeals={appealsToDisplay}
               paginate="true"
               showCheckboxes
-              taskRelatedAppealIds={props.correspondence.correspondenceAppealIds}
+              taskRelatedAppealIds={initialSelectedAppeals}
               enableTopPagination
               checkboxOnChange={appealCheckboxOnChange}
               toggleCheckboxState={toggleCheckboxState}
@@ -675,7 +691,6 @@ const CorrespondenceDetails = (props) => {
           setSelectedAppeals(appealIds);
           setInitialSelectedAppeals(appealIds);
           sortAppeals(appealIds);
-          setShowSuccessBanner(true);
           setDisableSubmitButton(true);
           window.scrollTo({
             top: 0,
