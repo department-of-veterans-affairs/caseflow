@@ -144,6 +144,7 @@ module CaseflowCertification
         "cda_control_group" => "CDAControlGroup",
         "etl" => "ETL",
         "etl_builder_job" => "ETLBuilderJob",
+        "hlr_status_serializer" => "HLRStatusSerializer",
         "update_poa_concern" => "UpdatePOAConcern",
         "va_notify_send_message_template" => "VANotifySendMessageTemplate",
         "vacols" => "VACOLS",
