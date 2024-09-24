@@ -332,6 +332,25 @@ export const dateSentColumn = () => {
   };
 };
 
+export const returnDateColumn = () => {
+  return {
+    header: <p {...styles.headerWithIcon}>{COPY.TRANSCRIPTION_FILE_DISPATCH_RETURN_DATE_COLUMN_NAME}</p>,
+    name: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.RETURN_DATE.name,
+    enableFilter: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.RETURN_DATE.filterable,
+    anyFiltersAreSet: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.RETURN_DATE.anyFiltersAreSet,
+    columnName: COPY.TRANSCRIPTION_FILE_DISPATCH_RETURN_DATE_COLUMN_NAME,
+    label: 'return date filter',
+    valueFunction: (row) => row.returnDate,
+    backendCanSort: true,
+    getSortValue: (row) => row.returnDate,
+    filterType: 'date-picker',
+    filterSettings: {
+      buttons: false,
+      position: 'right'
+    }
+  };
+};
+
 export const expectedReturnDateColumn = () => {
   return {
     header: (
