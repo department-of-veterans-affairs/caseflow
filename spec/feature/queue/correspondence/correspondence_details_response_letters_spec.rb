@@ -49,13 +49,13 @@ RSpec.feature("Correspondence Details Response Letters Module") do
     it "Verify the Add button for Response Letters in details page" do
       correspondence = setup_response_letters_data
       visit "/queue/correspondence/#{correspondence.uuid}"
-      find_by_id("tasks-tabwindow-tab-2", wait: 20).click
-      sleep 5
+      find_by_id("tasks-tabwindow-tab-2", wait: 10).click
+      expect(page).to have_button('+ Add letter', disabled: false, wait: 5)
       click_button("+ Add letter")
       add_popup_response_letter
       containers = all(".response-letter-table-borderless-no-background")
       expect(containers.size).to eq(2)
-      sleep 5
+      expect(page).to have_button('+ Add letter', disabled: false, wait: 5)
       click_button("+ Add letter")
       add_popup_response_letter
       expect(page).not_to have_button("+ Add letter")
