@@ -2,8 +2,8 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# This file is the source Rails uses to define your schema when running `rails
-# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
 # be faster and is potentially less error prone than running all of your
 # migrations from scratch. Old migrations may fail to apply correctly if those
 # migrations use external dependencies or application code.
@@ -13,6 +13,7 @@
 ActiveRecord::Schema.define(version: 2024_08_28_165652) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "oracle_fdw"
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
 
@@ -2103,7 +2104,7 @@ ActiveRecord::Schema.define(version: 2024_08_28_165652) do
     t.index ["vbms_communication_package_id"], name: "index_vbms_distributions_on_vbms_communication_package_id"
   end
 
-  create_table "vbms_ext_claim", primary_key: "CLAIM_ID", id: :decimal, precision: 38, force: :cascade do |t|
+  create_table "vbms_ext_claim", primary_key: "CLAIM_ID", id: { type: :decimal, precision: 38 }, force: :cascade do |t|
     t.string "ALLOW_POA_ACCESS", limit: 5
     t.decimal "CLAIMANT_PERSON_ID", precision: 38
     t.datetime "CLAIM_DATE"
