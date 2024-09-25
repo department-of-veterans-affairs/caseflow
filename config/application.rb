@@ -160,6 +160,7 @@ module CaseflowCertification
         "va_notify_send_message_template" => "VANotifySendMessageTemplate",
         "va_notify_service" => "VANotifyService",
         "vacols" => "VACOLS",
+        "vbms_caseflow_logger" => "VBMSCaseflowLogger",
         "vbms_request" => "VBMSRequest",
         "veteran_record_requests_open_for_vre_query" => "VeteranRecordRequestsOpenForVREQuery",
       )
