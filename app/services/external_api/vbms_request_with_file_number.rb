@@ -60,7 +60,7 @@ class ExternalApi::VbmsRequestWithFileNumber
   end
 
   def verify_current_user_veteran_access(veteran)
-    return if !FeatureToggle.enabled?(:check_user_sensitivity)
+    return if !FeatureToggle.enabled?(:send_current_user_cred)
 
     current_user = RequestStore[:current_user]
 
