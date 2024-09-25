@@ -66,7 +66,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
 
     context "a payload that ONLY affects the soc optin on the claim review" do
       before do
-        allow(FeatureToggle).to receive(:enabled?).with(:disable_ama_eventing).and_return(false)
+        FeatureToggle.enable!(:disable_ama_eventing)
       end
       it "updates the HLR accordingly" do
         request.headers["Authorization"] = "Token #{api_key.key_string}"
