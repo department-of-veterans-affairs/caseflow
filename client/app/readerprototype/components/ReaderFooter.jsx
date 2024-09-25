@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import PropTypes from 'prop-types';
-<<<<<<< HEAD
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -10,26 +9,10 @@ import { FilterNoOutlineIcon } from '../../components/icons/FilterNoOutlineIcon'
 import { PageArrowLeftIcon } from '../../components/icons/PageArrowLeftIcon';
 import { PageArrowRightIcon } from '../../components/icons/PageArrowRightIcon';
 import { docListIsFiltered, getFilteredDocIds } from '../../reader/selectors';
-=======
-import React from 'react';
-import { useSelector } from 'react-redux';
-
-import Button from 'components/Button';
-import TextField from 'components/TextField';
-import { FilterNoOutlineIcon } from 'components/icons/FilterNoOutlineIcon';
-import { PageArrowLeftIcon } from 'components/icons/PageArrowLeftIcon';
-import { PageArrowRightIcon } from 'components/icons/PageArrowRightIcon';
-import { docListIsFiltered, getFilteredDocIds, getFilteredDocuments } from '../../reader/selectors';
-import { pdfToolbarStyles } from '../util/styles';
->>>>>>> acc28d4d87 (Add fix for filtered docs bug)
 
 const ReaderFooter = ({
   currentPage,
   docId,
-<<<<<<< HEAD
-=======
-  match,
->>>>>>> acc28d4d87 (Add fix for filtered docs bug)
   numPages,
   setCurrentPage,
   showPdf,
