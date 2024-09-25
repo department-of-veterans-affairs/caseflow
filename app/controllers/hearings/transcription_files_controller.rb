@@ -211,7 +211,7 @@ class Hearings::TranscriptionFilesController < ApplicationController
   def build_transcription_json(transcription_files)
     tasks = []
     transcription_files.each do |transcription_file|
-      tasks << {
+      task = {
         id: transcription_file.id,
         externalAppealId: transcription_file.external_appeal_id,
         docketNumber: transcription_file.docket_number,
@@ -220,15 +220,25 @@ class Hearings::TranscriptionFilesController < ApplicationController
         caseType: transcription_file.case_type,
         hearingDate: transcription_file.hearing_date,
         hearingType: transcription_file.hearing_type,
-        fileStatus: transcription_file.file_status,
+        fileStatus: transcription_file.file_status
+      }
+
+      task = add_completed_tab_fields(task) if params[:tab] == "Completed"
+      tasks << task
+    end
+    tasks
+  end
+
+  def add_completed_tab_fields(task)
+    task.merge(
+      {
         workOrder: transcription_file.transcription&.task_number,
         status: transcription_file.transcription&.transcription_package&.status,
         expectedReturnDate: transcription_file&.transcription&.transcription_package
           &.expected_return_date&.to_formatted_s(:short_date),
         returnDate: transcription_file.date_returned_box&.to_formatted_s(:short_date),
-        contractor: transcription_file&.transcription&.transcription_package&.contractor&.name,
+        contractor: transcription_file&.transcription&.transcription_package&.contractor&.name
       }
-    end
-    tasks
+    )
   end
 end
