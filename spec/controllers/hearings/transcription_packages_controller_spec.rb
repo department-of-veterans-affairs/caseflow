@@ -91,7 +91,7 @@ RSpec.describe Hearings::TranscriptionPackagesController, type: :controller do
         dateSent: transcription_package_2.created_at.to_formatted_s(:short_date),
         expectedReturnDate: transcription_package_2.expected_return_date.to_formatted_s(:short_date),
         contractor: transcription_package_2.contractor.name,
-        status: "Sent"
+        status: "Successful Upload (BOX)"
       }
     end
 
@@ -103,7 +103,7 @@ RSpec.describe Hearings::TranscriptionPackagesController, type: :controller do
         dateSent: transcription_package_3.created_at.to_formatted_s(:short_date),
         expectedReturnDate: transcription_package_3.expected_return_date.to_formatted_s(:short_date),
         contractor: transcription_package_3.contractor.name,
-        status: "Sent"
+        status: "Successful Upload (BOX)"
       }
     end
 

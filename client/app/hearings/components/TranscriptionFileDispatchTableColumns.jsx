@@ -466,9 +466,9 @@ export const statusColumn = (currentTab) => {
       return (
         <div
           style={
-            row.status === "Overdue" || row.status === "Failed Retrieval (BOX)"
-              ? styles.error
-              : {}
+            row.status === 'Overdue' || row.status === 'Failed Retrieval (BOX)' ?
+              styles.error :
+              {}
           }
         >
           {displayStatus}
