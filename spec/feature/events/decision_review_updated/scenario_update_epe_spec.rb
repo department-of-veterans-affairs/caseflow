@@ -43,7 +43,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
 
     context "a payload that ONLY affects the EPE" do
       before do
-        FeatureToggle.enable!(:disable_ama_eventing)
+        FeatureToggle.disable!(:disable_ama_eventing)
         request.headers["Authorization"] = "Token token=#{api_key.key_string}"
       end
       it "updates the EPE accordingly" do
