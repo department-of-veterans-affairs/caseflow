@@ -14,6 +14,9 @@ class SupplementalClaim < ClaimReview
 
   attr_accessor :appeal_split_process
 
+  # contested issue description pattern
+  DESCRIPTION_CHARACTERS_BLACKLIST = /[^a-zA-Z0-9\s.\-_|\/\\@#~=%,;?!'"`():$+*^\[\]&><{}]/.freeze
+
   def ui_hash
     Intake::SupplementalClaimSerializer.new(self).serializable_hash[:data][:attributes]
   end
@@ -118,6 +121,12 @@ class SupplementalClaim < ClaimReview
 
   def build_request_issues_from_remand
     remanded_decision_issues_needing_request_issues.map do |remand_decision_issue|
+<<<<<<< Updated upstream
+=======
+      # Sanitize invalid characters
+      contested_issue_description = remand_decision_issue.description.gsub(DESCRIPTION_CHARACTERS_BLACKLIST, "")
+
+>>>>>>> Stashed changes
       RequestIssue.new(
         decision_review: self,
         contested_decision_issue_id: remand_decision_issue.id,
