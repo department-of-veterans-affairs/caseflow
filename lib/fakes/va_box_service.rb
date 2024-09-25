@@ -50,11 +50,10 @@ class Fakes::VaBoxService
   # rubocop:enable Metrics/MethodLength
 
   def download_file(id, tmp_folder)
-    binding.pry
     if id == "1111111111111"
       raise StandardError
     end
-    true
+    File.open("tmp/test.txt", "w") { |f| f.write "Test" }
   end
 
   private

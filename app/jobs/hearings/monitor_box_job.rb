@@ -37,7 +37,7 @@ class Hearings::MonitorBoxJob < ApplicationJob
   end
 
   def download_box_files(files)
-    Hearings::VaBoxDownloadJob.perform_now(files)
+    Hearings::VaBoxDownloadJob.perform_later(files)
   end
 
   private
