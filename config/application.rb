@@ -171,6 +171,10 @@ module CaseflowCertification
       "#{root}/lib",
     ]
 
+    config.eager_load_paths += [
+      "#{root}/lib",
+    ]
+
     Rails.autoloaders.main.collapse(
       "#{root}/app/jobs/batch_processes",
       "#{root}/app/models/batch_processes",
@@ -202,6 +206,9 @@ module CaseflowCertification
 
     Rails.autoloaders.main.ignore(
       "#{root}/app/jobs/middleware",
+      "#{root}/lib/assets",
+      "#{root}/lib/pdfs",
+      "#{root}/lib/tasks",
     )
 
     config.exceptions_app = self.routes
