@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import PropTypes from 'prop-types';
 import React, { useEffect, useRef } from 'react';
 import { ROTATION_DEGREES } from '../util/readerConstants';
@@ -28,11 +29,13 @@ import usePageVisibility from '../hooks/usePageVisibility';
 // When rotating, we swap height and width of the container.
 // The child is still centered in the container, so we must offset it put it back to the
 // top / center of the container.
-const Page = ({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale }) => {
+const Page = ({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale, setRenderingMetrics }) => {
   const canvasRef = useRef(null);
   const isVisible = usePageVisibility(canvasRef);
   const wrapperRef = useRef(null);
   const scaleFraction = scale / 100;
+  const reportedStats = useRef(false);
+  const renderTaskRef = useRef(null);
 
   const viewport = page.getViewport({ scale: scaleFraction });
   const scaledHeight = viewport.height;
@@ -65,12 +68,32 @@ const Page = ({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale }) => 
 
   useEffect(() => {
     if (canvasRef.current && isVisible) {
-      page.render({ canvasContext: canvasRef.current?.getContext('2d', { alpha: false }), viewport }).
-        promise.catch(() => {
-        // this catch is necessary to prevent the error: Cannot use the same canvas during multiple render operations
-        });
+      if (!renderTaskRef.current) {
+        const renderTask = page.render(
+          { canvasContext: canvasRef.current?.getContext('2d', { alpha: false }), viewport }
+        );
+
+        renderTaskRef.current = renderTask;
+
+        renderTask.promise.
+          then(() => {
+            if (page._stats && Array.isArray(page._stats.times)) {
+
+              const renderingTimes = page._stats.times.find((time) => time.name === 'Rendering');
+
+              if (!reportedStats.current) {
+                setRenderingMetrics(renderingTimes.end - renderingTimes.start);
+                reportedStats.current = true;
+              }
+            }
+          }).
+          catch(() => {
+            // catch is necessary to prevent the error: Cannot use the same canvas during multiple render operations
+          });
+      }
     }
   }, [canvasRef.current, viewport, isVisible]);
+  // [page, isVisible, viewport, setRenderingMetrics]);
 
   return (
     <div
@@ -107,6 +130,7 @@ Page.propTypes = {
   rotation: PropTypes.string,
   renderItem: PropTypes.func,
   scale: PropTypes.number,
+  setRenderingMetrics: PropTypes.func,
 };
 
 export default Page;
