@@ -24,6 +24,7 @@ class Api::Events::V1::DecisionReviewUpdatedController < Api::ApplicationControl
     :contested_decision_issue_id,
     :untimely_exemption,
     :untimely_exemption_notes,
+    :edited_description,
     :vacols_id,
     :vacols_sequence_id,
     :nonrating_issue_bgs_id,
@@ -54,7 +55,7 @@ class Api::Events::V1::DecisionReviewUpdatedController < Api::ApplicationControl
     headers = request.headers
     consumer_and_claim_ids = { consumer_event_id: consumer_event_id, reference_id: claim_id }
     ::Events::DecisionReviewUpdated.update!(consumer_and_claim_ids, headers, dru_params)
-    render json: { message: "DecisionReviewCreatedEvent successfully updated" }, status: :ok
+    render json: { message: "DecisionReviewUpdatedEvent successfully updated" }, status: :ok
   rescue Caseflow::Error::RedisLockFailed => error
     render json: { message: error.message }, status: :conflict
   rescue StandardError => error
