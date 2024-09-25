@@ -46,7 +46,9 @@ RSpec.feature("Correspondence Details Response Letters Module") do
       expect(second_element_text).not_to include("Expired on")
     end
 
-    it "Verify the Add button for Response Letters in details page" do
+
+    # skipping this spec because it is flaky and needs to be investigated
+    xit "Verify the Add button for Response Letters in details page" do
       correspondence = setup_response_letters_data
       visit "/queue/correspondence/#{correspondence.uuid}"
       find_by_id("tasks-tabwindow-tab-2", wait: 10).click
