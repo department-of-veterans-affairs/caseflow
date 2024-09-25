@@ -60,6 +60,46 @@ const CustomSeeds = () => {
           obj.judge_css_id = colValue;
           break;
 
+        case 'Disposition':
+          obj.disposition = colValue;
+          break;
+
+        case 'Hearing Type':
+          obj.hearing_type = colValue;
+          break;
+
+        case 'Date/Time of Hearing':
+          obj.hearing_date = colValue;
+          break;
+
+        case 'Advance on Docket indicator':
+          obj.aod = colValue;
+          break;
+
+        case 'AOD based on age':
+          obj.aod_based_on_age = Number(colValue)
+          break;
+
+        case 'Regional Office':
+          obj.closest_regional_office = colValue;
+          break;
+
+        case 'UUID':
+          obj.uuid = colValue;
+          break;
+
+        case 'Genpop':
+          obj.genpop = colValue;
+          break;
+
+        case 'Priority':
+          obj.priority = colValue;
+          break;
+
+        case 'Docket':
+          obj.docket = colValue;
+          break;
+
         default:
           break;
         }
