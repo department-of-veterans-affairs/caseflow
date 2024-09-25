@@ -8,18 +8,19 @@ module Seeds
       contractors = TranscriptionContractor.all
 
       statuses = [
-        "Successful upload (AWS)"
+        "Successful Upload (BOX)",
+        "Overdue"
       ]
 
       year = '2040'
-      transcription_files_per_transcription = [1,2]
-      hearings_per_package = [1,2,3]
+      transcription_files_per_transcription = [1, 2]
+      hearings_per_package = [1, 2, 3]
 
       transcription_file_index = 0
       hearing_index = 0
 
       (0..39).each do |package_index|
-        task_number = 'BVA' + year + (package_index+1).to_s.rjust(4, '0')
+        task_number = 'BVA' + year + (package_index + 1).to_s.rjust(4, '0')
         contractor = contractors[package_index % contractors.length]
         status = statuses[package_index % statuses.length]
         user = User.where(css_id: "TRANSCRIPTION_USER").first
@@ -73,10 +74,10 @@ module Seeds
               transcription_id: transcription.id
             )
 
-            transcription_file_index+=1
+            transcription_file_index += 1
           end
 
-          hearing_index+=1
+          hearing_index += 1
         end
 
         created_at = Time.parse('2024-09-01') + (package_index * 2).days
