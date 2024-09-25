@@ -104,6 +104,7 @@ const DocumentViewer = (props) => {
             rotateDeg={rotateDeg}
             setNumPages={setNumPages}
             zoomLevel={zoomLevel}
+            currentPage={currentPage}
           />
         </div>
         <ReaderFooter
