@@ -7,7 +7,11 @@ import { axe } from 'jest-axe';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter as Router } from 'react-router-dom';
 
-const setup = () => render(<Router><TranscriptionFileDispatchView /></Router>);
+const organizations = [
+  { name: 'Transcription Dispatch', url: 'hearings/transcription_files' }
+];
+
+const setup = () => render(<Router><TranscriptionFileDispatchView organizations={organizations} /></Router>);
 
 const mockTranscriptionFiles = [
   {

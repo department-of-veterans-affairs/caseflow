@@ -383,7 +383,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   def selectable_organizations
     orgs = organizations.select(&:selectable_in_queue?)
     if in_hearing_and_transcription_organization?
-      orgs << {name: "Transcription Dispatch", url: "/hearings/transcription_files"}
+      orgs << { name: "Transcription Dispatch", url: "/hearings/transcription_files" }
     end
     judge_team_judges = judge? ? [self] : []
     judge_team_judges |= administered_judge_teams.map(&:judge) if FeatureToggle.enabled?(:judge_admin_scm)
