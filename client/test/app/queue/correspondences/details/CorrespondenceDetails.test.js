@@ -8,11 +8,12 @@ import { applyMiddleware, createStore } from 'redux';
 import rootReducer from 'app/queue/reducers';
 import thunk from 'redux-thunk';
 import moment from 'moment';
-import { prepareAppealForSearchStore, sortCaseTimelineEvents } from 'app/queue/utils';
+import { prepareAppealForSearchStore, sortCaseTimelineEvents, prepareAppealForStore, prepareTasksForStore } from 'app/queue/utils';
 import { MemoryRouter, Route } from 'react-router-dom';
 import { within } from '@testing-library/dom';
 import { tasksUnrelatedToAnAppeal } from 'test/data/queue/taskActionModals/taskActionModalData';
 import ApiUtil from 'app/util/ApiUtil';
+import { correspondenceAppeals, correspondence } from '../../../../data/correspondence';
 
 jest.mock('redux', () => ({
   ...jest.requireActual('redux'),
@@ -21,7 +22,9 @@ jest.mock('redux', () => ({
 
 jest.mock('app/queue/utils', () => ({
   prepareAppealForSearchStore: jest.fn(),
-  sortCaseTimelineEvents: jest.fn()
+  sortCaseTimelineEvents: jest.fn(),
+  prepareAppealForStore: jest.fn(),
+  prepareTasksForStore: jest.fn()
 }));
 
 jest.mock('app/queue/CaseListTable', () => ({ appeals }) => (
@@ -67,251 +70,525 @@ const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
 
 let props = {
   organizations: ['Inbound Ops Team'],
+  appeal: {
+    externalId:'debug'
+  },
   isInboundOpsUser: true,
   updateCorrespondenceRelations: jest.fn(),
-  correspondence: {
-    uuid: '123',
-    veteranFullName: 'John Doe',
-    veteranFileNumber: '123456789',
-    correspondenceType: 'Abeyance',
-    nod: false,
-    notes: 'Note Test',
-    mailTasks: ['Task 1', 'Task 2'],
-    all_correspondences: Array.from({ length: 30 }, (_, i) => ({ uuid: `uuid${i}`,
-      vaDateOfReceipt: '2024-08-06T00:00:00Z',
-      notes: `Note ${i}`,
-      status: `Status ${i}` })),
-    prior_mail: [
-      { id: 1, vaDateOfReceipt: '2023-08-20T00:00:00Z' },
-      { id: 2, vaDateOfReceipt: '2023-08-19T00:00:00Z' }
-    ],
-    relatedCorrespondenceIds: [2],
-    tasksUnrelatedToAppeal: tasksUnrelatedToAnAppeal,
-    correspondenceAppeals: [
-      {
-        id: 50,
-        correspondencesAppealsTasks: [],
-        docketNumber: '240714-252',
-        veteranName: {
-          id: 88,
-          bgs_last_synced_at: null,
-          closest_regional_office: null,
-          created_at: '2024-07-15T16:47:17.658-04:00',
-          date_of_death: null,
-          date_of_death_reported_at: null,
-          file_number: '550000017',
-          first_name: 'John',
-          last_name: 'Doe',
-          middle_name: null,
-          name_suffix: '88',
-          participant_id: '650000017',
-          ssn: '252858736',
-          updated_at: '2024-07-15T16:47:17.658-04:00'
-        },
-        streamType: 'original',
-        appealUuid: 'b36f1011-a34b-413b-a2b9-90fe0d8b2927',
-        appealType: 'evidence_submission',
-        numberOfIssues: 2,
-        taskAddedData: [],
-        status: 'Pending',
-        assignedTo: null,
-        correspondence: {
-          id: 50,
-          appeal_id: 252,
-          correspondence_id: 322,
-          created_at: '2024-08-14T10:53:47.213-04:00',
-          updated_at: '2024-08-14T10:53:47.213-04:00'
-        },
-        appeal: {
-          data: {
-            attributes: {
-              external_id: "2398523958"
-            }
-          }
-        }
-      },
-      {
-        id: 51,
-        correspondencesAppealsTasks: [
-          {
-            id: 27,
-            correspondence_appeal_id: 51,
-            task_id: 3158,
-            created_at: '2024-08-14T10:53:47.616-04:00',
-            updated_at: '2024-08-14T10:53:47.616-04:00'
-          }
-        ],
-        docketNumber: '240714-253',
-        veteranName: {
-          id: 88,
-          bgs_last_synced_at: null,
-          closest_regional_office: null,
-          created_at: '2024-07-15T16:47:17.658-04:00',
-          date_of_death: null,
-          date_of_death_reported_at: null,
-          file_number: '550000017',
-          first_name: 'John',
-          last_name: 'Doe',
-          middle_name: null,
-          name_suffix: '88',
-          participant_id: '650000017',
-          ssn: '252858736',
-          updated_at: '2024-07-15T16:47:17.658-04:00'
-        },
-        streamType: 'original',
-        appealUuid: 'a9b2523e-880d-4ef4-9f12-eae9d593631d',
-        appealType: 'evidence_submission',
-        numberOfIssues: 2,
-        taskAddedData: [
-          {
-            assigned_at: '2024-08-14T10:53:47.560-04:00',
-            assigned_to: 'Hearing Admin',
-            assigned_to_type: 'Organization',
-            instructions: [
-              'COA'
-            ],
-            type: 'Change of address'
-          }
-        ],
-        status: 'Pending',
-        assignedTo: {
-          id: 39,
-          accepts_priority_pushed_cases: null,
-          ama_only_push: false,
-          ama_only_request: false,
-          created_at: '2024-07-15T16:46:00.263-04:00',
-          exclude_appeals_from_affinity: false,
-          name: 'Hearing Admin',
-          participant_id: null,
-          role: null,
-          status: 'active',
-          status_updated_at: null,
-          updated_at: '2024-07-15T16:46:00.263-04:00',
-          url: 'hearing-admin'
-        },
-        correspondence: {
-          id: 51,
-          appeal_id: 253,
-          correspondence_id: 322,
-          created_at: '2024-08-14T10:53:47.217-04:00',
-          updated_at: '2024-08-14T10:53:47.217-04:00'
-        },
-        appeal: {
-          data: {
-            attributes: {
-              external_id: "2398523958"
-            }
-          }
-        }
-      },
-      {
-        id: 52,
-        correspondencesAppealsTasks: [
-          {
-            id: 1,
-            correspondence_appeal_id: 52,
-            task_id: 3160,
-            created_at: '2024-08-14T10:53:47.678-04:00',
-            updated_at: '2024-08-14T10:53:47.678-04:00'
-          },
-          {
-            id: 29,
-            correspondence_appeal_id: 52,
-            task_id: 3162,
-            created_at: '2024-08-14T10:53:47.733-04:00',
-            updated_at: '2024-08-14T10:53:47.733-04:00'
-          }
-        ],
-        docketNumber: '240714-254',
-        veteranName: {
-          id: 88,
-          bgs_last_synced_at: null,
-          closest_regional_office: null,
-          created_at: '2024-07-15T16:47:17.658-04:00',
-          date_of_death: null,
-          date_of_death_reported_at: null,
-          file_number: '550000017',
-          first_name: 'John',
-          last_name: 'Doe',
-          middle_name: null,
-          name_suffix: '88',
-          participant_id: '650000017',
-          ssn: '252858736',
-          updated_at: '2024-07-15T16:47:17.658-04:00'
-        },
-        streamType: 'original',
-        appealUuid: '7bd8281d-3b6e-442f-8e44-21b033f7049e',
-        appealType: 'evidence_submission',
-        numberOfIssues: 2,
-        taskAddedData: [
-          {
-            assigned_at: '2024-08-14T10:53:47.656-04:00',
-            assigned_to: 'VLJ Support Staff',
-            assigned_to_type: 'Organization',
-            instructions: [
-              'DC'
-            ],
-            type: 'Death certificate'
-          },
-          {
-            assigned_at: '2024-08-14T10:53:47.716-04:00',
-            assigned_to: 'Litigation Support',
-            assigned_to_type: 'Organization',
-            instructions: [
-              'cong int'
-            ],
-            type: 'Congressional interest'
-          }
-        ],
-        status: 'Pending',
-        assignedTo: {
-          id: 8,
-          accepts_priority_pushed_cases: null,
-          ama_only_push: false,
-          ama_only_request: false,
-          created_at: '2024-07-15T16:45:56.066-04:00',
-          exclude_appeals_from_affinity: false,
-          name: 'VLJ Support Staff',
-          participant_id: null,
-          role: null,
-          status: 'active',
-          status_updated_at: null,
-          updated_at: '2024-07-15T16:45:56.066-04:00',
-          url: 'vlj-support'
-        },
-        correspondence: {
-          id: 52,
-          appeal_id: 254,
-          correspondence_id: 322,
-          created_at: '2024-08-14T10:53:47.221-04:00',
-          updated_at: '2024-08-14T10:53:47.221-04:00'
-        },
-        appeal: {
-          data: {
-            attributes: {
-              external_id: "2398523958"
-            }
-          }
-        }
-      }
-    ],
+  correspondence
+  // correspondence: {
+  //   uuid: '123',
+  //   veteranFullName: 'John Doe',
+  //   veteranFileNumber: '123456789',
+  //   correspondenceType: 'Abeyance',
+  //   nod: false,
+  //   notes: 'Note Test',
+  //   mailTasks: ['Task 1', 'Task 2'],
+  //   all_correspondences: Array.from({ length: 30 }, (_, i) => ({ uuid: `uuid${i}`,
+  //     vaDateOfReceipt: '2024-08-06T00:00:00Z',
+  //     notes: `Note ${i}`,
+  //     status: `Status ${i}` })),
+  //   prior_mail: [
+  //     { id: 1, vaDateOfReceipt: '2023-08-20T00:00:00Z' },
+  //     { id: 2, vaDateOfReceipt: '2023-08-19T00:00:00Z' }
+  //   ],
+  //   relatedCorrespondenceIds: [2],
+  //   tasksUnrelatedToAppeal: tasksUnrelatedToAnAppeal,
+  //   correspondenceAppeals: [
+  //     {
+  //       "id": 63,
+  //       "correspondencesAppealsTasks": [
+  //         {
+  //           "id": 44,
+  //           "correspondence_appeal_id": 63,
+  //           "task_id": 3203,
+  //           "created_at": "2024-09-24T12:54:23.632-04:00",
+  //           "updated_at": "2024-09-24T12:54:23.632-04:00"
+  //         },
+  //         {
+  //           "id": 45,
+  //           "correspondence_appeal_id": 63,
+  //           "task_id": 3205,
+  //           "created_at": "2024-09-24T12:54:23.696-04:00",
+  //           "updated_at": "2024-09-24T12:54:23.696-04:00"
+  //         },
+  //         {
+  //           "id": 46,
+  //           "correspondence_appeal_id": 63,
+  //           "task_id": 3207,
+  //           "created_at": "2024-09-24T12:54:23.739-04:00",
+  //           "updated_at": "2024-09-24T12:54:23.739-04:00"
+  //         }
+  //       ],
+  //       "docketNumber": "240714-447",
+  //       "veteranName": {
+  //         "id": 101,
+  //         "bgs_last_synced_at": null,
+  //         "closest_regional_office": null,
+  //         "created_at": "2024-07-15T16:47:46.377-04:00",
+  //         "date_of_death": null,
+  //         "date_of_death_reported_at": null,
+  //         "file_number": "550000030",
+  //         "first_name": "John",
+  //         "last_name": "Doe",
+  //         "middle_name": null,
+  //         "name_suffix": "101",
+  //         "participant_id": "650000030",
+  //         "ssn": "787549808",
+  //         "updated_at": "2024-07-15T16:47:46.377-04:00"
+  //       },
+  //       "streamType": "original",
+  //       "appealUuid": "0f6bb359-8624-4cef-8690-0891297f224f",
+  //       "appealType": "evidence_submission",
+  //       "numberOfIssues": 2,
+  //       "appeal": {
+  //         "data": {
+  //           "id": "447",
+  //           "type": "appeal",
+  //           "attributes": {
+  //             "assigned_attorney": null,
+  //             "assigned_judge": null,
+  //             "appellant_hearing_email_recipient": null,
+  //             "representative_hearing_email_recipient": null,
+  //             "appellant_email_address": "Bob.Smithbeier@test.com",
+  //             "current_user_email": null,
+  //             "current_user_timezone": "America/New_York",
+  //             "contested_claim": false,
+  //             "mst": null,
+  //             "pact": false,
+  //             "issues": [],
+  //             "status": "not_distributed",
+  //             "decision_issues": [],
+  //             "substitute_appellant_claimant_options": [
+  //               {
+  //                 "displayText": "BOB VANCE, Spouse",
+  //                 "value": "CLAIMANT_WITH_PVA_AS_VSO"
+  //               },
+  //               {
+  //                 "displayText": "CATHY SMITH, Child",
+  //                 "value": "1129318238"
+  //               },
+  //               {
+  //                 "displayText": "TOM BRADY, Child",
+  //                 "value": "no-such-pid"
+  //               }
+  //             ],
+  //             "nod_date_updates": [],
+  //             "can_edit_request_issues": false,
+  //             "hearings": [],
+  //             "withdrawn": false,
+  //             "removed": false,
+  //             "overtime": false,
+  //             "veteran_appellant_deceased": false,
+  //             "assigned_to_location": "Litigation Support",
+  //             "distributed_to_a_judge": false,
+  //             "completed_hearing_on_previous_appeal?": false,
+  //             "appellant_is_not_veteran": false,
+  //             "appellant_full_name": "John Doe",
+  //             "appellant_first_name": "John",
+  //             "appellant_middle_name": null,
+  //             "appellant_last_name": "Doe",
+  //             "appellant_suffix": null,
+  //             "appellant_date_of_birth": "1994-07-15",
+  //             "appellant_address": {
+  //               "address_line_1": "9999 MISSION ST",
+  //               "address_line_2": "UBER",
+  //               "address_line_3": "APT 2",
+  //               "city": "SAN FRANCISCO",
+  //               "zip": "94103",
+  //               "country": "USA",
+  //               "state": "CA"
+  //             },
+  //             "appellant_phone_number": null,
+  //             "appellant_tz": "America/Los_Angeles",
+  //             "appellant_relationship": "Veteran",
+  //             "appellant_type": "VeteranClaimant",
+  //             "appellant_party_type": null,
+  //             "unrecognized_appellant_id": null,
+  //             "has_poa": {
+  //               "id": 30,
+  //               "authzn_change_clmant_addrs_ind": null,
+  //               "authzn_poa_access_ind": null,
+  //               "claimant_participant_id": "650000030",
+  //               "created_at": "2024-07-15T16:47:46.454-04:00",
+  //               "file_number": "00001234",
+  //               "last_synced_at": "2024-07-15T16:47:46.454-04:00",
+  //               "legacy_poa_cd": "100",
+  //               "poa_participant_id": "600153863",
+  //               "representative_name": "Clarence Darrow",
+  //               "representative_type": "Attorney",
+  //               "updated_at": "2024-07-15T16:47:46.454-04:00"
+  //             },
+  //             "cavc_remand": null,
+  //             "show_post_cavc_stream_msg": false,
+  //             "remand_source_appeal_id": null,
+  //             "remand_judge_name": null,
+  //             "appellant_substitution": null,
+  //             "substitutions": [],
+  //             "veteran_death_date": null,
+  //             "veteran_file_number": "550000030",
+  //             "veteran_participant_id": "650000030",
+  //             "efolder_link": "https://vefs-claimevidence-ui-uat.stage.bip.va.gov",
+  //             "veteran_full_name": "John Doe",
+  //             "closest_regional_office": null,
+  //             "closest_regional_office_label": null,
+  //             "available_hearing_locations": [],
+  //             "external_id": "0f6bb359-8624-4cef-8690-0891297f224f",
+  //             "externalId": "0f6bb359-8624-4cef-8690-0891297f224f",
+  //             "type": "Original",
+  //             "vacate_type": null,
+  //             "aod": false,
+  //             "docket_name": "evidence_submission",
+  //             "docket_number": "240714-447",
+  //             "docket_range_date": null,
+  //             "decision_date": null,
+  //             "nod_date": "2024-07-14",
+  //             "withdrawal_date": null,
+  //             "certification_date": null,
+  //             "paper_case": false,
+  //             "regional_office": null,
+  //             "caseflow_veteran_id": 101,
+  //             "document_id": null,
+  //             "attorney_case_review_id": null,
+  //             "attorney_case_rewrite_details": {
+  //               "note_from_attorney": null,
+  //               "untimely_evidence": null
+  //             },
+  //             "can_edit_document_id": false,
+  //             "readable_hearing_request_type": null,
+  //             "readable_original_hearing_request_type": null,
+  //             "docket_switch": null,
+  //             "switched_dockets": [],
+  //             "has_notifications": false,
+  //             "cavc_remands_with_dashboard": 0,
+  //             "evidence_submission_task": {
+  //               "id": 2163,
+  //               "appeal_id": 447,
+  //               "appeal_type": "Appeal",
+  //               "assigned_at": "2024-07-15T16:47:46.499-04:00",
+  //               "assigned_by_id": null,
+  //               "assigned_to_id": 16,
+  //               "assigned_to_type": "Organization",
+  //               "cancellation_reason": null,
+  //               "cancelled_by_id": null,
+  //               "closed_at": null,
+  //               "completed_by_id": null,
+  //               "created_at": "2024-07-15T16:47:46.499-04:00",
+  //               "instructions": [],
+  //               "parent_id": 2162,
+  //               "placed_on_hold_at": null,
+  //               "started_at": null,
+  //               "status": "assigned",
+  //               "updated_at": "2024-07-15T16:47:46.499-04:00"
+  //             },
+  //             "has_completed_sct_assign_task": false
+  //           }
+  //         }
+  //       },
+  //       "taskAddedData": {
+  //         "data": [
+  //           {
+  //             "id": "3203",
+  //             "type": "task",
+  //             "attributes": {
+  //               "is_legacy": false,
+  //               "type": "DeathCertificateMailTask",
+  //               "label": "Death certificate",
+  //               "appeal_id": 447,
+  //               "status": "assigned",
+  //               "assigned_at": "2024-09-24T12:54:23.602-04:00",
+  //               "started_at": null,
+  //               "created_at": "2024-09-24T12:54:23.602-04:00",
+  //               "closed_at": null,
+  //               "cancellation_reason": null,
+  //               "instructions": [
+  //                 "dc"
+  //               ],
+  //               "appeal_type": "Appeal",
+  //               "parent_id": 3202,
+  //               "timeline_title": "DeathCertificateMailTask completed",
+  //               "hide_from_queue_table_view": false,
+  //               "hide_from_case_timeline": false,
+  //               "hide_from_task_snapshot": false,
+  //               "assigned_by": {
+  //                 "first_name": "Jon",
+  //                 "last_name": "Admin",
+  //                 "full_name": "Jon MailTeam Snow Admin",
+  //                 "css_id": "INBOUND_OPS_TEAM_ADMIN_USER",
+  //                 "pg_id": 65
+  //               },
+  //               "completed_by": null,
+  //               "assigned_to": {
+  //                 "css_id": null,
+  //                 "full_name": "VLJ Support Staff",
+  //                 "is_organization": true,
+  //                 "name": "VLJ Support Staff",
+  //                 "status": "active",
+  //                 "type": "Colocated",
+  //                 "id": 8
+  //               },
+  //               "cancelled_by": {
+  //                 "css_id": null
+  //               },
+  //               "converted_by": {
+  //                 "css_id": null
+  //               },
+  //               "converted_on": null,
+  //               "assignee_name": "VLJ Support Staff",
+  //               "placed_on_hold_at": null,
+  //               "on_hold_duration": null,
+  //               "docket_name": "evidence_submission",
+  //               "case_type": "Original",
+  //               "docket_number": "240714-447",
+  //               "docket_range_date": null,
+  //               "veteran_full_name": "John Doe",
+  //               "veteran_file_number": "550000030",
+  //               "closest_regional_office": null,
+  //               "external_appeal_id": "0f6bb359-8624-4cef-8690-0891297f224f",
+  //               "aod": false,
+  //               "overtime": false,
+  //               "contested_claim": false,
+  //               "mst": null,
+  //               "pact": false,
+  //               "veteran_appellant_deceased": false,
+  //               "issue_count": 0,
+  //               "issue_types": "",
+  //               "external_hearing_id": null,
+  //               "available_hearing_locations": [],
+  //               "previous_task": {
+  //                 "assigned_at": null
+  //               },
+  //               "document_id": null,
+  //               "decision_prepared_by": {
+  //                 "first_name": null,
+  //                 "last_name": null
+  //               },
+  //               "available_actions": [],
+  //               "can_move_on_docket_switch": true,
+  //               "timer_ends_at": null,
+  //               "unscheduled_hearing_notes": null,
+  //               "appeal_receipt_date": "2024-07-14",
+  //               "days_since_last_status_change": 0,
+  //               "days_since_board_intake": 0,
+  //               "owned_by": "VLJ Support Staff"
+  //             }
+  //           },
+  //           {
+  //             "id": "3205",
+  //             "type": "task",
+  //             "attributes": {
+  //               "is_legacy": false,
+  //               "type": "AddressChangeMailTask",
+  //               "label": "Change of address",
+  //               "appeal_id": 447,
+  //               "status": "assigned",
+  //               "assigned_at": "2024-09-24T12:54:23.679-04:00",
+  //               "started_at": null,
+  //               "created_at": "2024-09-24T12:54:23.679-04:00",
+  //               "closed_at": null,
+  //               "cancellation_reason": null,
+  //               "instructions": [
+  //                 "coa"
+  //               ],
+  //               "appeal_type": "Appeal",
+  //               "parent_id": 3204,
+  //               "timeline_title": "AddressChangeMailTask completed",
+  //               "hide_from_queue_table_view": false,
+  //               "hide_from_case_timeline": false,
+  //               "hide_from_task_snapshot": false,
+  //               "assigned_by": {
+  //                 "first_name": "Jon",
+  //                 "last_name": "Admin",
+  //                 "full_name": "Jon MailTeam Snow Admin",
+  //                 "css_id": "INBOUND_OPS_TEAM_ADMIN_USER",
+  //                 "pg_id": 65
+  //               },
+  //               "completed_by": null,
+  //               "assigned_to": {
+  //                 "css_id": null,
+  //                 "full_name": "Hearing Admin",
+  //                 "is_organization": true,
+  //                 "name": "Hearing Admin",
+  //                 "status": "active",
+  //                 "type": "HearingAdmin",
+  //                 "id": 39
+  //               },
+  //               "cancelled_by": {
+  //                 "css_id": null
+  //               },
+  //               "converted_by": {
+  //                 "css_id": null
+  //               },
+  //               "converted_on": null,
+  //               "assignee_name": "Hearing Admin",
+  //               "placed_on_hold_at": null,
+  //               "on_hold_duration": null,
+  //               "docket_name": "evidence_submission",
+  //               "case_type": "Original",
+  //               "docket_number": "240714-447",
+  //               "docket_range_date": null,
+  //               "veteran_full_name": "John Doe",
+  //               "veteran_file_number": "550000030",
+  //               "closest_regional_office": null,
+  //               "external_appeal_id": "0f6bb359-8624-4cef-8690-0891297f224f",
+  //               "aod": false,
+  //               "overtime": false,
+  //               "contested_claim": false,
+  //               "mst": null,
+  //               "pact": false,
+  //               "veteran_appellant_deceased": false,
+  //               "issue_count": 0,
+  //               "issue_types": "",
+  //               "external_hearing_id": null,
+  //               "available_hearing_locations": [],
+  //               "previous_task": {
+  //                 "assigned_at": null
+  //               },
+  //               "document_id": null,
+  //               "decision_prepared_by": {
+  //                 "first_name": null,
+  //                 "last_name": null
+  //               },
+  //               "available_actions": [],
+  //               "can_move_on_docket_switch": true,
+  //               "timer_ends_at": null,
+  //               "unscheduled_hearing_notes": null,
+  //               "appeal_receipt_date": "2024-07-14",
+  //               "days_since_last_status_change": 0,
+  //               "days_since_board_intake": 0,
+  //               "owned_by": "Hearing Admin"
+  //             }
+  //           },
+  //           {
+  //             "id": "3207",
+  //             "type": "task",
+  //             "attributes": {
+  //               "is_legacy": false,
+  //               "type": "StatusInquiryMailTask",
+  //               "label": "Status inquiry",
+  //               "appeal_id": 447,
+  //               "status": "assigned",
+  //               "assigned_at": "2024-09-24T12:54:23.721-04:00",
+  //               "started_at": null,
+  //               "created_at": "2024-09-24T12:54:23.721-04:00",
+  //               "closed_at": null,
+  //               "cancellation_reason": null,
+  //               "instructions": [
+  //                 "si"
+  //               ],
+  //               "appeal_type": "Appeal",
+  //               "parent_id": 3206,
+  //               "timeline_title": "StatusInquiryMailTask completed",
+  //               "hide_from_queue_table_view": false,
+  //               "hide_from_case_timeline": false,
+  //               "hide_from_task_snapshot": false,
+  //               "assigned_by": {
+  //                 "first_name": "Jon",
+  //                 "last_name": "Admin",
+  //                 "full_name": "Jon MailTeam Snow Admin",
+  //                 "css_id": "INBOUND_OPS_TEAM_ADMIN_USER",
+  //                 "pg_id": 65
+  //               },
+  //               "completed_by": null,
+  //               "assigned_to": {
+  //                 "css_id": null,
+  //                 "full_name": "Litigation Support",
+  //                 "is_organization": true,
+  //                 "name": "Litigation Support",
+  //                 "status": "active",
+  //                 "type": "LitigationSupport",
+  //                 "id": 18
+  //               },
+  //               "cancelled_by": {
+  //                 "css_id": null
+  //               },
+  //               "converted_by": {
+  //                 "css_id": null
+  //               },
+  //               "converted_on": null,
+  //               "assignee_name": "Litigation Support",
+  //               "placed_on_hold_at": null,
+  //               "on_hold_duration": null,
+  //               "docket_name": "evidence_submission",
+  //               "case_type": "Original",
+  //               "docket_number": "240714-447",
+  //               "docket_range_date": null,
+  //               "veteran_full_name": "John Doe",
+  //               "veteran_file_number": "550000030",
+  //               "closest_regional_office": null,
+  //               "external_appeal_id": "0f6bb359-8624-4cef-8690-0891297f224f",
+  //               "aod": false,
+  //               "overtime": false,
+  //               "contested_claim": false,
+  //               "mst": null,
+  //               "pact": false,
+  //               "veteran_appellant_deceased": false,
+  //               "issue_count": 0,
+  //               "issue_types": "",
+  //               "external_hearing_id": null,
+  //               "available_hearing_locations": [],
+  //               "previous_task": {
+  //                 "assigned_at": null
+  //               },
+  //               "document_id": null,
+  //               "decision_prepared_by": {
+  //                 "first_name": null,
+  //                 "last_name": null
+  //               },
+  //               "available_actions": [],
+  //               "can_move_on_docket_switch": true,
+  //               "timer_ends_at": null,
+  //               "unscheduled_hearing_notes": null,
+  //               "appeal_receipt_date": "2024-07-14",
+  //               "days_since_last_status_change": 0,
+  //               "days_since_board_intake": 0,
+  //               "owned_by": "Litigation Support"
+  //             }
+  //           }
+  //         ]
+  //       },
+  //       "status": "Pending",
+  //       "assignedTo": {
+  //         "id": 8,
+  //         "accepts_priority_pushed_cases": null,
+  //         "ama_only_push": false,
+  //         "ama_only_request": false,
+  //         "created_at": "2024-07-15T16:45:56.066-04:00",
+  //         "exclude_appeals_from_affinity": false,
+  //         "name": "VLJ Support Staff",
+  //         "participant_id": null,
+  //         "role": null,
+  //         "status": "active",
+  //         "status_updated_at": null,
+  //         "updated_at": "2024-07-15T16:45:56.066-04:00",
+  //         "url": "vlj-support"
+  //       },
+  //       "correspondence": {
+  //         "id": 63,
+  //         "appeal_id": 447,
+  //         "correspondence_id": 555,
+  //         "created_at": "2024-09-24T12:54:23.566-04:00",
+  //         "updated_at": "2024-09-24T12:54:23.566-04:00"
+  //       }
+  //     }
+  //   ],
 
-    appeals_information: {
-      appeals: [
-        {
-          id: 1,
-          type: 'Correspondence',
-          attributes: {
-            assigned_to_location: 'Mail',
-            appellant_full_name: 'John Doe',
-            type: 'Original',
-            docket_number: '123-456'
-          }
-        }
-      ],
-      claim_reviews: []
-    }
-  }
+  //   appeals_information: {
+  //     appeals: [
+  //       {
+  //         id: 1,
+  //         type: 'Correspondence',
+  //         attributes: {
+  //           assigned_to_location: 'Mail',
+  //           appellant_full_name: 'John Doe',
+  //           type: 'Original',
+  //           docket_number: '123-456'
+  //         }
+  //       }
+  //     ],
+  //     claim_reviews: []
+  //   }
+  // }
 };
 
 describe('CorrespondenceDetails', () => {
@@ -326,6 +603,222 @@ describe('CorrespondenceDetails', () => {
     sortCaseTimelineEvents.mockReturnValue(
       tasksUnrelatedToAnAppeal
     );
+    prepareAppealForStore.mockReturnValue([]);
+    prepareTasksForStore.mockReturnValue({
+      "3203": {
+          "uniqueId": "3203",
+          "isLegacy": false,
+          "type": "DeathCertificateMailTask",
+          "appealType": "Appeal",
+          "addedByCssId": null,
+          "appealId": 447,
+          "externalAppealId": "0f6bb359-8624-4cef-8690-0891297f224f",
+          "assignedOn": "2024-09-24T12:54:23.602-04:00",
+          "closestRegionalOffice": null,
+          "createdAt": "2024-09-24T12:54:23.602-04:00",
+          "closedAt": null,
+          "startedAt": null,
+          "assigneeName": "VLJ Support Staff",
+          "assignedTo": {
+              "cssId": null,
+              "name": "VLJ Support Staff",
+              "id": 8,
+              "isOrganization": true,
+              "type": "Colocated"
+          },
+          "assignedBy": {
+              "firstName": "Jon",
+              "lastName": "Admin",
+              "cssId": "INBOUND_OPS_TEAM_ADMIN_USER",
+              "pgId": 65
+          },
+          "completedBy": {
+              "cssId": null
+          },
+          "cancelledBy": {
+              "cssId": null
+          },
+          "cancelReason": null,
+          "convertedBy": {
+              "cssId": null
+          },
+          "convertedOn": null,
+          "taskId": "3203",
+          "parentId": 3202,
+          "label": "Death certificate",
+          "documentId": null,
+          "externalHearingId": null,
+          "workProduct": null,
+          "caseType": "Original",
+          "aod": false,
+          "previousTaskAssignedOn": null,
+          "placedOnHoldAt": null,
+          "status": "assigned",
+          "onHoldDuration": null,
+          "instructions": [
+              "dc"
+          ],
+          "decisionPreparedBy": null,
+          "availableActions": [],
+          "timelineTitle": "DeathCertificateMailTask completed",
+          "hideFromQueueTableView": false,
+          "hideFromTaskSnapshot": false,
+          "hideFromCaseTimeline": false,
+          "availableHearingLocations": [],
+          "latestInformalHearingPresentationTask": {},
+          "canMoveOnDocketSwitch": true,
+          "timerEndsAt": null,
+          "unscheduledHearingNotes": {},
+          "ownedBy": "VLJ Support Staff",
+          "daysSinceLastStatusChange": 0,
+          "daysSinceBoardIntake": 0,
+          "id": "3203",
+          "claimant": {},
+          "appeal_receipt_date": "2024-07-14"
+      },
+      "3205": {
+          "uniqueId": "3205",
+          "isLegacy": false,
+          "type": "AddressChangeMailTask",
+          "appealType": "Appeal",
+          "addedByCssId": null,
+          "appealId": 447,
+          "externalAppealId": "0f6bb359-8624-4cef-8690-0891297f224f",
+          "assignedOn": "2024-09-24T12:54:23.679-04:00",
+          "closestRegionalOffice": null,
+          "createdAt": "2024-09-24T12:54:23.679-04:00",
+          "closedAt": null,
+          "startedAt": null,
+          "assigneeName": "Hearing Admin",
+          "assignedTo": {
+              "cssId": null,
+              "name": "Hearing Admin",
+              "id": 39,
+              "isOrganization": true,
+              "type": "HearingAdmin"
+          },
+          "assignedBy": {
+              "firstName": "Jon",
+              "lastName": "Admin",
+              "cssId": "INBOUND_OPS_TEAM_ADMIN_USER",
+              "pgId": 65
+          },
+          "completedBy": {
+              "cssId": null
+          },
+          "cancelledBy": {
+              "cssId": null
+          },
+          "cancelReason": null,
+          "convertedBy": {
+              "cssId": null
+          },
+          "convertedOn": null,
+          "taskId": "3205",
+          "parentId": 3204,
+          "label": "Change of address",
+          "documentId": null,
+          "externalHearingId": null,
+          "workProduct": null,
+          "caseType": "Original",
+          "aod": false,
+          "previousTaskAssignedOn": null,
+          "placedOnHoldAt": null,
+          "status": "assigned",
+          "onHoldDuration": null,
+          "instructions": [
+              "coa"
+          ],
+          "decisionPreparedBy": null,
+          "availableActions": [],
+          "timelineTitle": "AddressChangeMailTask completed",
+          "hideFromQueueTableView": false,
+          "hideFromTaskSnapshot": false,
+          "hideFromCaseTimeline": false,
+          "availableHearingLocations": [],
+          "latestInformalHearingPresentationTask": {},
+          "canMoveOnDocketSwitch": true,
+          "timerEndsAt": null,
+          "unscheduledHearingNotes": {},
+          "ownedBy": "Hearing Admin",
+          "daysSinceLastStatusChange": 0,
+          "daysSinceBoardIntake": 0,
+          "id": "3205",
+          "claimant": {},
+          "appeal_receipt_date": "2024-07-14"
+      },
+      "3207": {
+          "uniqueId": "3207",
+          "isLegacy": false,
+          "type": "StatusInquiryMailTask",
+          "appealType": "Appeal",
+          "addedByCssId": null,
+          "appealId": 447,
+          "externalAppealId": "0f6bb359-8624-4cef-8690-0891297f224f",
+          "assignedOn": "2024-09-24T12:54:23.721-04:00",
+          "closestRegionalOffice": null,
+          "createdAt": "2024-09-24T12:54:23.721-04:00",
+          "closedAt": null,
+          "startedAt": null,
+          "assigneeName": "Litigation Support",
+          "assignedTo": {
+              "cssId": null,
+              "name": "Litigation Support",
+              "id": 18,
+              "isOrganization": true,
+              "type": "LitigationSupport"
+          },
+          "assignedBy": {
+              "firstName": "Jon",
+              "lastName": "Admin",
+              "cssId": "INBOUND_OPS_TEAM_ADMIN_USER",
+              "pgId": 65
+          },
+          "completedBy": {
+              "cssId": null
+          },
+          "cancelledBy": {
+              "cssId": null
+          },
+          "cancelReason": null,
+          "convertedBy": {
+              "cssId": null
+          },
+          "convertedOn": null,
+          "taskId": "3207",
+          "parentId": 3206,
+          "label": "Status inquiry",
+          "documentId": null,
+          "externalHearingId": null,
+          "workProduct": null,
+          "caseType": "Original",
+          "aod": false,
+          "previousTaskAssignedOn": null,
+          "placedOnHoldAt": null,
+          "status": "assigned",
+          "onHoldDuration": null,
+          "instructions": [
+              "si"
+          ],
+          "decisionPreparedBy": null,
+          "availableActions": [],
+          "timelineTitle": "StatusInquiryMailTask completed",
+          "hideFromQueueTableView": false,
+          "hideFromTaskSnapshot": false,
+          "hideFromCaseTimeline": false,
+          "availableHearingLocations": [],
+          "latestInformalHearingPresentationTask": {},
+          "canMoveOnDocketSwitch": true,
+          "timerEndsAt": null,
+          "unscheduledHearingNotes": {},
+          "ownedBy": "Litigation Support",
+          "daysSinceLastStatusChange": 0,
+          "daysSinceBoardIntake": 0,
+          "id": "3207",
+          "claimant": {},
+          "appeal_receipt_date": "2024-07-14"
+      }
+  })
 
     render(
       <Provider store={store}>
@@ -509,6 +1002,222 @@ describe('Correspondence details without beforeEach', () => {
     sortCaseTimelineEvents.mockReturnValue(
       tasksUnrelatedToAnAppeal
     );
+    prepareAppealForStore.mockReturnValue([]);
+    prepareTasksForStore.mockReturnValue({
+      "3203": {
+          "uniqueId": "3203",
+          "isLegacy": false,
+          "type": "DeathCertificateMailTask",
+          "appealType": "Appeal",
+          "addedByCssId": null,
+          "appealId": 447,
+          "externalAppealId": "0f6bb359-8624-4cef-8690-0891297f224f",
+          "assignedOn": "2024-09-24T12:54:23.602-04:00",
+          "closestRegionalOffice": null,
+          "createdAt": "2024-09-24T12:54:23.602-04:00",
+          "closedAt": null,
+          "startedAt": null,
+          "assigneeName": "VLJ Support Staff",
+          "assignedTo": {
+              "cssId": null,
+              "name": "VLJ Support Staff",
+              "id": 8,
+              "isOrganization": true,
+              "type": "Colocated"
+          },
+          "assignedBy": {
+              "firstName": "Jon",
+              "lastName": "Admin",
+              "cssId": "INBOUND_OPS_TEAM_ADMIN_USER",
+              "pgId": 65
+          },
+          "completedBy": {
+              "cssId": null
+          },
+          "cancelledBy": {
+              "cssId": null
+          },
+          "cancelReason": null,
+          "convertedBy": {
+              "cssId": null
+          },
+          "convertedOn": null,
+          "taskId": "3203",
+          "parentId": 3202,
+          "label": "Death certificate",
+          "documentId": null,
+          "externalHearingId": null,
+          "workProduct": null,
+          "caseType": "Original",
+          "aod": false,
+          "previousTaskAssignedOn": null,
+          "placedOnHoldAt": null,
+          "status": "assigned",
+          "onHoldDuration": null,
+          "instructions": [
+              "dc"
+          ],
+          "decisionPreparedBy": null,
+          "availableActions": [],
+          "timelineTitle": "DeathCertificateMailTask completed",
+          "hideFromQueueTableView": false,
+          "hideFromTaskSnapshot": false,
+          "hideFromCaseTimeline": false,
+          "availableHearingLocations": [],
+          "latestInformalHearingPresentationTask": {},
+          "canMoveOnDocketSwitch": true,
+          "timerEndsAt": null,
+          "unscheduledHearingNotes": {},
+          "ownedBy": "VLJ Support Staff",
+          "daysSinceLastStatusChange": 0,
+          "daysSinceBoardIntake": 0,
+          "id": "3203",
+          "claimant": {},
+          "appeal_receipt_date": "2024-07-14"
+      },
+      "3205": {
+          "uniqueId": "3205",
+          "isLegacy": false,
+          "type": "AddressChangeMailTask",
+          "appealType": "Appeal",
+          "addedByCssId": null,
+          "appealId": 447,
+          "externalAppealId": "0f6bb359-8624-4cef-8690-0891297f224f",
+          "assignedOn": "2024-09-24T12:54:23.679-04:00",
+          "closestRegionalOffice": null,
+          "createdAt": "2024-09-24T12:54:23.679-04:00",
+          "closedAt": null,
+          "startedAt": null,
+          "assigneeName": "Hearing Admin",
+          "assignedTo": {
+              "cssId": null,
+              "name": "Hearing Admin",
+              "id": 39,
+              "isOrganization": true,
+              "type": "HearingAdmin"
+          },
+          "assignedBy": {
+              "firstName": "Jon",
+              "lastName": "Admin",
+              "cssId": "INBOUND_OPS_TEAM_ADMIN_USER",
+              "pgId": 65
+          },
+          "completedBy": {
+              "cssId": null
+          },
+          "cancelledBy": {
+              "cssId": null
+          },
+          "cancelReason": null,
+          "convertedBy": {
+              "cssId": null
+          },
+          "convertedOn": null,
+          "taskId": "3205",
+          "parentId": 3204,
+          "label": "Change of address",
+          "documentId": null,
+          "externalHearingId": null,
+          "workProduct": null,
+          "caseType": "Original",
+          "aod": false,
+          "previousTaskAssignedOn": null,
+          "placedOnHoldAt": null,
+          "status": "assigned",
+          "onHoldDuration": null,
+          "instructions": [
+              "coa"
+          ],
+          "decisionPreparedBy": null,
+          "availableActions": [],
+          "timelineTitle": "AddressChangeMailTask completed",
+          "hideFromQueueTableView": false,
+          "hideFromTaskSnapshot": false,
+          "hideFromCaseTimeline": false,
+          "availableHearingLocations": [],
+          "latestInformalHearingPresentationTask": {},
+          "canMoveOnDocketSwitch": true,
+          "timerEndsAt": null,
+          "unscheduledHearingNotes": {},
+          "ownedBy": "Hearing Admin",
+          "daysSinceLastStatusChange": 0,
+          "daysSinceBoardIntake": 0,
+          "id": "3205",
+          "claimant": {},
+          "appeal_receipt_date": "2024-07-14"
+      },
+      "3207": {
+          "uniqueId": "3207",
+          "isLegacy": false,
+          "type": "StatusInquiryMailTask",
+          "appealType": "Appeal",
+          "addedByCssId": null,
+          "appealId": 447,
+          "externalAppealId": "0f6bb359-8624-4cef-8690-0891297f224f",
+          "assignedOn": "2024-09-24T12:54:23.721-04:00",
+          "closestRegionalOffice": null,
+          "createdAt": "2024-09-24T12:54:23.721-04:00",
+          "closedAt": null,
+          "startedAt": null,
+          "assigneeName": "Litigation Support",
+          "assignedTo": {
+              "cssId": null,
+              "name": "Litigation Support",
+              "id": 18,
+              "isOrganization": true,
+              "type": "LitigationSupport"
+          },
+          "assignedBy": {
+              "firstName": "Jon",
+              "lastName": "Admin",
+              "cssId": "INBOUND_OPS_TEAM_ADMIN_USER",
+              "pgId": 65
+          },
+          "completedBy": {
+              "cssId": null
+          },
+          "cancelledBy": {
+              "cssId": null
+          },
+          "cancelReason": null,
+          "convertedBy": {
+              "cssId": null
+          },
+          "convertedOn": null,
+          "taskId": "3207",
+          "parentId": 3206,
+          "label": "Status inquiry",
+          "documentId": null,
+          "externalHearingId": null,
+          "workProduct": null,
+          "caseType": "Original",
+          "aod": false,
+          "previousTaskAssignedOn": null,
+          "placedOnHoldAt": null,
+          "status": "assigned",
+          "onHoldDuration": null,
+          "instructions": [
+              "si"
+          ],
+          "decisionPreparedBy": null,
+          "availableActions": [],
+          "timelineTitle": "StatusInquiryMailTask completed",
+          "hideFromQueueTableView": false,
+          "hideFromTaskSnapshot": false,
+          "hideFromCaseTimeline": false,
+          "availableHearingLocations": [],
+          "latestInformalHearingPresentationTask": {},
+          "canMoveOnDocketSwitch": true,
+          "timerEndsAt": null,
+          "unscheduledHearingNotes": {},
+          "ownedBy": "Litigation Support",
+          "daysSinceLastStatusChange": 0,
+          "daysSinceBoardIntake": 0,
+          "id": "3207",
+          "claimant": {},
+          "appeal_receipt_date": "2024-07-14"
+      }
+  })
     props.isInboundOpsUser = false;
 
     render(
