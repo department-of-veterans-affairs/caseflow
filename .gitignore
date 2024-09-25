@@ -83,3 +83,6 @@ docs/schema/*
 !.vscode/settings.json
 !.vscode/launch.json
 !.vscode/tasks.json
+
+docker-bin/pg/*.zip
+docker-bin/pg/*.crt
