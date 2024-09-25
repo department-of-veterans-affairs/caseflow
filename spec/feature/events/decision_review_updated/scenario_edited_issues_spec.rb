@@ -3,7 +3,7 @@
 require "rails_helper"
 
 RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controller do
-  describe "POST #decision_review_created" do
+  describe "POST #decision_review_updated" do
     let!(:current_user) { User.authenticate! }
     let(:api_key) { ApiKey.create!(consumer_name: "API TEST TOKEN") }
     let!(:epe) { create(:end_product_establishment, :active_hlr, reference_id: 12_345_678) }
