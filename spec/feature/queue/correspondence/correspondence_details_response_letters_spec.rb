@@ -51,9 +51,9 @@ RSpec.feature("Correspondence Details Response Letters Module") do
       visit "/queue/correspondence/#{correspondence.uuid}"
       find_by_id("tasks-tabwindow-tab-2", wait: 10).click
 
-      within('.response-letter-button-styling', wait: 10) do
-        expect(page).to have_selector('#button-addLetter', visible: true)
-        button = find('#button-addLetter')
+      within(".response-letter-button-styling", wait: 10) do
+        expect(page).to have_selector("#button-addLetter", visible: true)
+        button = find("#button-addLetter")
         expect(button).not_to be_disabled
         click_button("+ Add letter")
       end
