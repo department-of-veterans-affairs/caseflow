@@ -53,7 +53,9 @@ class Fakes::VaBoxService
     if id == "1111111111111"
       raise StandardError
     end
-    File.open("tmp/test.txt", "w") { |f| f.write "Test" }
+    file_extension = File.extname(tmp_folder).delete(".").to_s
+    FileUtils.mkdir_p(File.dirname(tmp_folder)) unless Dir.exist?(file_extension)
+    File.open("#{tmp_folder}", "w") { |f| f.write "test" }
   end
 
   private

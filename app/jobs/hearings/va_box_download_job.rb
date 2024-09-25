@@ -8,7 +8,8 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
   class BoxDownloadError < StandardError; end
   class BoxDownloadJobFileUploadError < StandardError; end
 
-  def perform
+  def perform(files_info)
+
     @all_paths = []
     box_service = ExternalApi::VaBoxService.new
 
@@ -18,6 +19,7 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
       file_extension = extract_file_extension(file_name)
       begin
         box_service.download_file(current_file[:id], tmp_folder)
+        binding.pry
         @all_paths << tmp_folder
         if file_extension == "zip"
           unzip_file(tmp_folder, current_file)
