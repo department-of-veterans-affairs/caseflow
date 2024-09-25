@@ -85,6 +85,19 @@ describe Docket, :all_dbs do
       end
     end
 
+    describe "affinity_date_count" do
+      context "when case distribution lever value is infinite" do
+        subject { DirectReviewDocket.new.affinity_date_count(true, true) }
+        before do
+          CaseDistributionLever.find_by(item: "cavc_affinity_days").update(value: "infinite")
+        end
+
+        it "Does not raise an error and return results" do
+          expect(subject).to eq(1)
+        end
+      end
+    end
+
     context "appeals" do
       context "when no options given" do
         subject { DirectReviewDocket.new.appeals }
