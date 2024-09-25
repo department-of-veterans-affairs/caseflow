@@ -134,7 +134,8 @@ module CaseflowCertification
     # setup the deploy env environment variable
     ENV['DEPLOY_ENV'] ||= Rails.env
 
-    Rails.autoloaders.log! # Enable Zeitwerk logging for compliance troubleshooting
+    # Enable logging for Zeitwerk compliance troubleshooting
+    # Rails.autoloaders.log!
 
     Rails.autoloaders.each do |autoloader|
       autoloader.inflector.inflect(
