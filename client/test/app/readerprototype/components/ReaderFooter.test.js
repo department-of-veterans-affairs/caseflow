@@ -395,7 +395,6 @@ describe('Document Navigation', () => {
     expect(container).toHaveTextContent('1 of 5');
     expect(container).not.toHaveTextContent('Previous');
     userEvent.click(getByText('Next'));
-    // expect(container).toHaveTextContent('2 of 5');
     expect(showPdf).toHaveBeenCalledTimes(1);
 
   });
@@ -406,7 +405,6 @@ describe('Document Navigation', () => {
     expect(container).toHaveTextContent('5 of 5');
     expect(container).not.toHaveTextContent('Next');
     userEvent.click(getByText('Previous'));
-    // expect(container).toHaveTextContent('4 of 5');
     expect(showPdf).toHaveBeenCalledTimes(1);
 
   });
