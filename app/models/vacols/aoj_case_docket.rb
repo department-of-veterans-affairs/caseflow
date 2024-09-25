@@ -862,4 +862,25 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
     end
     appeals
   end
+
+  def self.appeals_tied_to_non_ssc_avljs
+    query = <<-SQL
+      with non_ssc_avljs as (
+        #{VACOLS::Staff::NON_SSC_AVLJS}
+      )
+      #{SELECT_READY_TO_DISTRIBUTE_APPEALS_ORDER_BY_BFD19}
+      where APPEALS.VLJ in (select * from non_ssc_avljs)
+      and (
+        APPEALS.PREV_DECIDING_JUDGE is null or
+        (
+          APPEALS.PREV_DECIDING_JUDGE = APPEALS.VLJ
+          AND APPEALS.HEARING_DATE <= APPEALS.PREV_BFDDEC
+        )
+      )
+      order by BFD19
+    SQL
+
+    fmtd_query = sanitize_sql_array([query])
+    connection.exec_query(fmtd_query).to_a
+  end
 end
