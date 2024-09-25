@@ -2,6 +2,7 @@
 
 class Hearings::TranscriptionPackagesController < ApplicationController
   include HearingsConcerns::VerifyAccess
+  
 
   before_action :verify_transcription_user
   def transcription_package_tasks
