@@ -39,7 +39,6 @@ SCHEDULED_JOBS = {
     "update_appellant_representation_job" => UpdateAppellantRepresentationJob,
     "update_cached_appeals_attributes_job" => UpdateCachedAppealsAttributesJob,
     "warm_bgs_caches_job" => WarmBgsCachesJob,
-    "va_notify_status_update_job" => VANotifyStatusUpdateJob,
     "poll_docketed_legacy_appeals_job" => PollDocketedLegacyAppealsJob,
     "retrieve_and_cache_reader_documents_job" => RetrieveAndCacheReaderDocumentsJob,
     "travel_board_hearing_sync_job" => Hearings::TravelBoardHearingSyncJob,
