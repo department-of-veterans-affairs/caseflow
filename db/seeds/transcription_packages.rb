@@ -9,8 +9,14 @@ module Seeds
 
       statuses = [
         "Successful Upload (BOX)",
-        "Overdue"
+        "Overdue",
+        "Successful Upload (AWS)",
+        "Failed Upload (BOX)",
+        "Successful Retrieval (BOX)",
+        "Failed Retrieval (BOX)"
       ]
+
+
 
       year = '2040'
       transcription_files_per_transcription = [1, 2]
