@@ -34,6 +34,7 @@ class Test::LoadTestsController < ApplicationController
 
   # Private: Using the data entered by the user for the target_type and target_id,
   # returns an appropriate target_id for the test
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength
   def data_for_testing
     case params[:target_type]
     when "Appeal"
@@ -63,6 +64,7 @@ class Test::LoadTestsController < ApplicationController
 
     target_id
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength
 
   # Private: If no target_id is provided, use the target_id of sample data instead
   # Returns the target_data_id of each target_data_type
@@ -77,7 +79,7 @@ class Test::LoadTestsController < ApplicationController
                      end
 
     fail ActiveRecord::RecordNotFound.new(
-        message: "Data returned nil when trying to find #{params[:target_type]}"
+        message: "Data returned nil when trying to find #{params[:target_type]}"]
     ) if target_data_id.nil?
 
     target_data_id
