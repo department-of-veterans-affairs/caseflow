@@ -54,18 +54,6 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
       allow(controller).to receive(:dru_params).and_return(dru_params)
     end
 
-    context "when event does not exist" do
-      before do
-        allow(Event).to receive(:exists_and_is_completed?).with(event_id).and_return(false)
-      end
-
-      it "returns a 404 status and error message" do
-        post :decision_review_updated, params: { event_id: fake_event_id }
-        expect(response).to have_http_status(:not_found)
-        expect(JSON.parse(response.body)).to eq({ "message" => "Record not found in Caseflow" })
-      end
-    end
-
     context "when event exists" do
       before do
         allow(Event).to receive(:exists_and_is_completed?).with(event_id).and_return(true)

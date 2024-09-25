@@ -2,10 +2,9 @@
 
 class Events::DecisionReviewUpdated
   class << self
-    # rubocop: disable Metrics/MethodLength
     def update!(params, headers, payload)
       consumer_event_id = params[:consumer_event_id]
-      event = find_or_create_event(consumer_event_id)
+      event = DecisionReviewUpdatedEvent.find_or_create_by(reference_id: consumer_event_id)
 
       ActiveRecord::Base.transaction do
         parser = Events::DecisionReviewUpdated::DecisionReviewUpdatedParser.new(headers, payload)
@@ -34,12 +33,5 @@ class Events::DecisionReviewUpdated
         # end
       end
     end
-
-    # Check if there's already a CF Event that references that Appeals-Consumer EventID
-    # We will update the existing Event instead of creating a new one
-    def find_or_create_event(consumer_event_id)
-      DecisionReviewUpdatedEvent.find_or_create_by(reference_id: consumer_event_id)
-    end
-    # rubocop: enable Metrics/MethodLength
   end
 end
