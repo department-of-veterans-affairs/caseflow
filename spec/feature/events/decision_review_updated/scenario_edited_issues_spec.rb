@@ -96,16 +96,10 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
 
     context "updates issue" do
       before do
-        # allow(FeatureToggle).to receive(:enabled?).with(:disable_ama_eventing).and_return(false)
         request.headers["Authorization"] = "Token token=#{api_key.key_string}"
-        request.headers["X-VA-Vet-SSN"] = "123456789"
-        request.headers["X-VA-File-Number"] = "77799777"
-        request.headers["X-VA-Vet-First-Name"] = "John"
-        request.headers["X-VA-Vet-Last-Name"] = "Smith"
-        request.headers["X-VA-Vet-Middle-Name"] = "Alexander"
       end
 
-      it "returns success response whith updated edited_description and edited_decision_date" do
+      it "returns success response whith updated edited_description" do
         request.headers["Authorization"] = "Token token=#{api_key.key_string}"
         post :decision_review_updated, params: valid_params
         expect(response).to have_http_status(:ok)
