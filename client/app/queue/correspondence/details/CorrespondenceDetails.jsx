@@ -350,7 +350,7 @@ const CorrespondenceDetails = (props) => {
               appeals={appealsToDisplay}
               paginate="true"
               showCheckboxes
-              taskRelatedAppealIds={initialSelectedAppeals}
+              taskRelatedAppealIds={selectedAppeals}
               enableTopPagination
               checkboxOnChange={appealCheckboxOnChange}
               toggleCheckboxState={toggleCheckboxState}
