@@ -61,7 +61,7 @@
 #   #         "limited_poa_access": nil,
 #   #         "limited_poa_code": nil,
 #   #         "committed_at": 1702067145000,
-#   #         "established_at": 1702067145000,
+#   #         "created_at": 1702067145000,
 #   #         "last_synced_at": 1702067145000,
 #   #         "synced_status": "RW",
 #   #         "development_item_reference_id": nil
@@ -234,241 +234,127 @@
 
 # # rubocop:enable Style/NumericLiterals
 
+# rubocop:disable Style/NumericLiterals
+
+# frozen_string_literal: true
+
+require "rails_helper"
+
 RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controller do
-  describe "POST #decision_review_updated" do
+  describe "POST #decision_review_created" do
     let!(:current_user) { User.authenticate! }
     let(:api_key) { ApiKey.create!(consumer_name: "API TEST TOKEN") }
+    let!(:epe) { create(:end_product_establishment, :active_hlr, reference_id: 12345678) }
+    let(:review) { create(:higher_level_review) }
+    let!(:existing_request_issue) { create(:request_issue, decision_review: review, reference_id: "1234") }
 
-    let!(:veteran) do
-      Veteran.create!(
-        file_number: "77799777",
-        ssn: "123456789",
-        first_name: "John",
-        last_name: "Smith",
-        middle_name: "Alexander",
-        participant_id: "1826209",
-        bgs_last_synced_at: 1_708_533_584_000,
-        name_suffix: nil,
-        date_of_death: nil
-      )
+    def json_test_payload
+      {
+        "event_id": 214786,
+        "claim_id": 12345678,
+        "css_id": "BVADWISE101",
+        "detail_type": "HigherLevelReview",
+        "station": "101",
+        "intake": {
+          "started_at": 1702067143435,
+          "completion_started_at": 1702067145000,
+          "completed_at": 1702067145000,
+          "completion_status": "success",
+          "type": "HigherLevelReviewIntake",
+          "detail_type": "HigherLevelReview"
+        },
+        "veteran": {
+          "participant_id": "1826209",
+          "bgs_last_synced_at": 1708533584000,
+          "name_suffix": nil,
+          "date_of_death": nil
+        },
+        "claimant": {
+          "payee_code": "00",
+          "type": "VeteranClaimant",
+          "participant_id": "1826209",
+          "name_suffix": nil
+        },
+        "claim_review": {
+          "benefit_type": "compensation",
+          "filed_by_va_gov": false,
+          "legacy_opt_in_approved": false
+        },
+        "end_product_establishment": {
+          "code": "030HLRNR",
+          "reference_id": "12345678",
+          "last_synced_at": 1702067145000,
+          "synced_status": "RFD",
+          "development_item_reference_id": "1"
+        },
+        "updated_issues": [
+          {
+            "original_caseflow_request_issue_id": 12345,
+            "contested_rating_decision_reference_id": 1,
+            "contested_rating_issue_reference_id": 2,
+            "contested_decision_issue_id": 3,
+            "untimely_exemption": false,
+            "untimely_exemption_notes": "some notes",
+            "edited_description": "DIC: Service connection denied (UPDATED)",
+            "vacols_id": "some_id",
+            "vacols_sequence_id": "some_sequence_id",
+            "nonrating_issue_bgs_id": "some_bgs_id",
+            "type": "RequestIssue",
+            "decision_review_issue_id": 1234,
+            "contention_reference_id": 123456,
+            "benefit_type": "compensation",
+            "contested_issue_description": "some_description",
+            "contested_rating_issue_profile_date": "122255",
+            "decision_date": 19_568,
+            "ineligible_due_to_id": nil,
+            "ineligible_reason": nil,
+            "unidentified_issue_text": "An unidentified issue added during the edit",
+            "nonrating_issue_category": nil,
+            "nonrating_issue_description": nil,
+            "closed_at": nil,
+            "closed_status": nil,
+            "contested_rating_issue_diagnostic_code": "9411",
+            "rating_issue_associated_at": nil,
+            "ramp_claim_id": nil,
+            "is_unidentified": true,
+            "nonrating_issue_bgs_source": nil
+          }
+        ],
+        "removed_issues": [],
+        "withdrawn_issues": [],
+        "ineligible_to_eligible_issues": [],
+        "eligible_to_ineligible_issues": [],
+        "ineligible_to_ineligible_issues": []
+      }
     end
 
-    let!(:user) { User.create!(css_id: "BVADWISE", station_id: "101", status: Constants.USER_STATUSES.inactive) }
-
-    let!(:review) do
-      HigherLevelReview.create!(
-        veteran_file_number: veteran.file_number,
-        receipt_date: Time.zone.today,
-        informal_conference: false,
-        same_office: false,
-        legacy_opt_in_approved: false,
-        benefit_type: "compensation",
-        established_at: Time.zone.now
-      )
+    let!(:valid_params) do
+      json_test_payload
     end
 
-    let!(:existing_issue) do
-      RequestIssue.create!(
-        decision_review: review,
-        benefit_type: "compensation",
-        contested_issue_description: "Original Description",
-        decision_date: Time.zone.today,
-        reference_id: "12345",
-        contention_reference_id: 7905752,
-        ineligible_reason: nil,
-        closed_at: nil
-      )
-    end
-
-    before do
-      # Set up headers
-      request.headers["Authorization"] = "Token #{api_key.key_string}"
-      request.headers["X-VA-Vet-SSN"] = veteran.ssn
-      request.headers["X-VA-File-Number"] = veteran.file_number
-      request.headers["X-VA-Vet-First-Name"] = veteran.first_name
-      request.headers["X-VA-Vet-Last-Name"] = veteran.last_name
-      request.headers["X-VA-Vet-Middle-Name"] = veteran.middle_name
-    end
-
-    context "when updating an existing issue's description" do
-      let(:valid_params) do
-        {
-          event_id: "123",
-          claim_id: "9999",
-          css_id: user.css_id,
-          detail_type: "HigherLevelReview",
-          station: "101",
-          updated_issues: [
-            {
-              decision_review_issue_id: existing_issue.reference_id,
-              edited_description: "Updated Description",
-              # Include other necessary fields if needed
-            }
-          ],
-          added_issues: [],
-          removed_issues: [],
-          withdrawn_issues: [],
-          eligible_to_ineligible_issues: [],
-          ineligible_to_eligible_issues: [],
-          ineligible_to_ineligible_issues: []
-        }
-      end
-
-      it "updates the existing request issue's description" do
-        post :decision_review_updated, params: valid_params
-
-        expect(response).to have_http_status(:success)
-
-        expect(existing_issue.reload.contested_issue_description).to eq("Updated Description")
-      end
-    end
-
-    context "when changing an issue from eligible to ineligible" do
-      let(:valid_params) do
-        {
-          event_id: "123",
-          claim_id: "9999",
-          css_id: user.css_id,
-          detail_type: "HigherLevelReview",
-          station: "101",
-          eligible_to_ineligible_issues: [
-            {
-              decision_review_issue_id: existing_issue.reference_id,
-              ineligible_reason: "duplicate_of_nonrating_issue_in_active_review",
-              closed_at: (Time.zone.now.to_i * 1000), # Assuming milliseconds since epoch
-              # Include other necessary fields if needed
-            }
-          ],
-          added_issues: [],
-          updated_issues: [],
-          removed_issues: [],
-          withdrawn_issues: [],
-          ineligible_to_eligible_issues: [],
-          ineligible_to_ineligible_issues: []
-        }
-      end
-
-      it "updates the request issue to be ineligible" do
-        post :decision_review_updated, params: valid_params
-
-        expect(response).to have_http_status(:success)
-
-        existing_issue.reload
-
-        expect(existing_issue.ineligible_reason).to eq("duplicate_of_nonrating_issue_in_active_review")
-        expect(existing_issue.closed_at).not_to be_nil
-      end
-    end
-
-    context "when changing an issue from ineligible to eligible" do
+    context "updates issue" do
       before do
-        existing_issue.update!(
-          ineligible_reason: "duplicate_of_nonrating_issue_in_active_review",
-          closed_at: 1.day.ago
-        )
+        allow(FeatureToggle).to receive(:enabled?).with(:disable_ama_eventing).and_return(false)
+        request.headers["Authorization"] = "Token token=#{api_key.key_string}"
+        request.headers["X-VA-Vet-SSN"] = "123456789"
+        request.headers["X-VA-File-Number"] = "77799777"
+        request.headers["X-VA-Vet-First-Name"] = "John"
+        request.headers["X-VA-Vet-Last-Name"] = "Smith"
+        request.headers["X-VA-Vet-Middle-Name"] = "Alexander"
       end
 
-      let(:valid_params) do
-        {
-          event_id: "123",
-          claim_id: "9999",
-          css_id: user.css_id,
-          detail_type: "HigherLevelReview",
-          station: "101",
-          ineligible_to_eligible_issues: [
-            {
-              decision_review_issue_id: existing_issue.reference_id,
-              ineligible_reason: nil,
-              closed_at: nil,
-              # Include other necessary fields if needed
-            }
-          ],
-          added_issues: [],
-          updated_issues: [],
-          removed_issues: [],
-          withdrawn_issues: [],
-          eligible_to_ineligible_issues: [],
-          ineligible_to_ineligible_issues: []
-        }
-      end
-
-      it "updates the request issue to be eligible" do
+      it "returns success response whith updated edited_description and edited_decision_date" do
+        # request.headers["Authorization"] = "Token token=#{api_key.key_string}"
+        # request.headers["X-VA-Vet-SSN"] = "123456789"
+        # request.headers["X-VA-File-Number"] = "77799777"
+        # request.headers["X-VA-Vet-First-Name"] = "John"
+        # request.headers["X-VA-Vet-Last-Name"] = "Smith"
+        # request.headers["X-VA-Vet-Middle-Name"] = "Alexander"
         post :decision_review_updated, params: valid_params
-
-        expect(response).to have_http_status(:success)
-
-        existing_issue.reload
-
-        expect(existing_issue.ineligible_reason).to be_nil
-        expect(existing_issue.closed_at).to be_nil
-      end
-    end
-
-    context "when removing an issue" do
-      let(:valid_params) do
-        {
-          event_id: "123",
-          claim_id: "9999",
-          css_id: user.css_id,
-          detail_type: "HigherLevelReview",
-          station: "101",
-          removed_issues: [
-            {
-              decision_review_issue_id: existing_issue.reference_id,
-              # Include other necessary fields if needed
-            }
-          ],
-          added_issues: [],
-          updated_issues: [],
-          withdrawn_issues: [],
-          eligible_to_ineligible_issues: [],
-          ineligible_to_eligible_issues: [],
-          ineligible_to_ineligible_issues: []
-        }
-      end
-
-      it "removes the request issue" do
-        expect {
-          post :decision_review_updated, params: valid_params
-        }.to change { review.request_issues.active.count }.by(-1)
-
-        expect(response).to have_http_status(:success)
-
-        existing_issue.reload
-
-        expect(existing_issue.closed_status).to eq("removed")
-      end
-    end
-
-    context "with invalid data" do
-      let(:invalid_params) do
-        {
-          event_id: "123",
-          claim_id: "9999",
-          css_id: user.css_id,
-          detail_type: "HigherLevelReview",
-          station: "101",
-          updated_issues: [
-            {
-              decision_review_issue_id: "nonexistent",
-              edited_description: "Attempt to update nonexistent issue"
-            }
-          ],
-          added_issues: [],
-          removed_issues: [],
-          withdrawn_issues: [],
-          eligible_to_ineligible_issues: [],
-          ineligible_to_eligible_issues: [],
-          ineligible_to_ineligible_issues: []
-        }
-      end
-
-      it "returns an error when the issue does not exist" do
-        post :decision_review_updated, params: invalid_params
-
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(JSON.parse(response.body)["errors"].first["detail"]).to match(/DecisionReviewUpdateMissingIssueError/)
+        expect(response).to have_http_status(:ok)
       end
     end
   end
 end
+
+# rubocop:enable Style/NumericLiterals

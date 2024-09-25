@@ -354,6 +354,7 @@ class DecisionReview < CaseflowRecord
   end
 
   def find_or_build_request_issue_from_intake_data(data)
+    byebug
     return request_issues.find(data[:request_issue_id]) if data[:request_issue_id]
 
     RequestIssue.from_intake_data(data, decision_review: self)
