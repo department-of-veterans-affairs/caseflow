@@ -9,6 +9,7 @@ import FeatureToggleConfiguration from './FeatureToggleConfiguration';
 import FunctionConfiguration from './FunctionConfiguration';
 import Checkbox from '../../components/Checkbox';
 import OFFICE_INFO from '../../../constants/REGIONAL_OFFICE_FOR_CSS_STATION';
+// import { register } from 'module';
 
 export default function UserConfiguration(props) {
   const [isSelectedStation, stationIsSelected] = useState(false);
@@ -100,6 +101,7 @@ export default function UserConfiguration(props) {
             {allOrganizations.map((org) => (
               <div className="load-test-container-checkbox" key={org}>
                 <Checkbox
+                  inputRef={props.register}
                   label={org}
                   name={org}
                   isChecked={Boolean(selectedOrganizations[org])}
@@ -149,5 +151,6 @@ UserConfiguration.propTypes = {
   all_organizations: PropTypes.array,
   featuresList: PropTypes.array,
   form_values: PropTypes.object,
-  functions_available: PropTypes.array
+  functions_available: PropTypes.array,
+  register: PropTypes.func
 };

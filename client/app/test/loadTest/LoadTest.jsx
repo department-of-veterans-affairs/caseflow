@@ -3,20 +3,26 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import AppFrame from '../../components/AppFrame';
 import { BrowserRouter } from 'react-router-dom';
 import { css } from 'glamor';
+import { useForm } from 'react-hook-form';
 
 import Button from '../../components/Button';
 
 import UserConfiguration from './UserConfiguration';
 
 export default function LoadTest(props) {
+  const { register, handleSubmit } = useForm();
+
+  const onSubmit = () => {
+    console.log();
+  }
 
   return <BrowserRouter>
     <div>
       <AppFrame>
-        <form>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <AppSegment filledBackground>
             <h1>Test Target Configuration</h1>
-            <UserConfiguration {...props} />
+            <UserConfiguration {...props} register={register} />
           </AppSegment>
           <div {...css({ overflow: 'hidden' })}>
             <Button
@@ -31,6 +37,7 @@ export default function LoadTest(props) {
               <Button
                 id="Submit"
                 name="Submit"
+                type="submit"
                 className="usa-button"
               />
             </span>
