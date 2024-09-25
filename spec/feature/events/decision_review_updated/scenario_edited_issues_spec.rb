@@ -51,7 +51,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
         },
         "updated_issues": [
           {
-            "original_caseflow_request_issue_id": 12_345,
+            "original_caseflow_request_issue_id": 1,
             "contested_rating_decision_reference_id": 1,
             "contested_rating_issue_reference_id": 2,
             "contested_decision_issue_id": 3,
@@ -101,11 +101,13 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
 
       it "returns success response whith updated edited_description" do
         request.headers["Authorization"] = "Token token=#{api_key.key_string}"
+        expect(existing_request_issue.edited_description).to_not eq("DIC: Service connection denied (UPDATED)")
         post :decision_review_updated, params: valid_params
         expect(response).to have_http_status(:ok)
-        expect(response.body).to include("DecisionReviewUpdatedEvent successfully updated")
+        expect(response.body).to include("DecisionReviewUpdatedEvent successfully processed")
         existing_request_issue.reload
         expect(existing_request_issue.edited_description).to eq("DIC: Service connection denied (UPDATED)")
+        expect(existing_request_issue.any_updates?).to eq(true)
       end
     end
   end
