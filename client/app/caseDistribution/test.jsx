@@ -14,6 +14,7 @@ import ApiUtil from '../util/ApiUtil';
 import Button from '../components/Button';
 import Alert from 'app/components/Alert';
 import CollapsibleTable from './components/CollapsibleTable';
+import ResetButton from './components/testPage/ResetButton';
 import COPY from '../../COPY';
 
 class CaseDistributionTest extends React.PureComponent {
@@ -387,11 +388,9 @@ class CaseDistributionTest extends React.PureComponent {
                           }
                           <ul>
                             <div className="lever-left csv-download-left">
-                              <Button
+                              <ResetButton
                                 onClick={this.resetAllAppeals}
-                                name="Clear Ready-to-Distribute Appeals"
                                 loading={this.state.isClearingAppeals}
-                                loadingText="Clearing Ready-to-Distribute Appeals"
                               />
                             </div>
                             <div className="lever-right csv-download-right">
