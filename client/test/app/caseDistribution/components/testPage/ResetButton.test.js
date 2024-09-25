@@ -22,7 +22,7 @@ describe('ResetButton', () => {
 
   it('shows loading state when loading prop is true', () => {
     render(<ResetButton onClick={mockOnClick} loading={true} />);
-    const button = screen.getByRole('button', { name: /Clear Ready-to-Distribute Appeals/i });
-    expect(button).toHaveAttribute('loading', 'true'); // Adjust if your implementation uses a different attribute for loading state
+    const button = screen.getByRole('button', { name: /Clearing Ready-to-Distribute Appeals/i });
+    expect(button).toBeInTheDocument();
   });
 });
