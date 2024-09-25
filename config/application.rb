@@ -162,6 +162,7 @@ module CaseflowCertification
         "vacols" => "VACOLS",
         "vbms_caseflow_logger" => "VBMSCaseflowLogger",
         "vbms_request" => "VBMSRequest",
+        "vbms_service" => "VBMSService",
         "veteran_record_requests_open_for_vre_query" => "VeteranRecordRequestsOpenForVREQuery",
       )
     end
