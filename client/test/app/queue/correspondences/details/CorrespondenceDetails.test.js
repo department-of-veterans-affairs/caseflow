@@ -8,7 +8,15 @@ import { applyMiddleware, createStore } from 'redux';
 import rootReducer from 'app/queue/reducers';
 import thunk from 'redux-thunk';
 import moment from 'moment';
-import { prepareAppealForSearchStore, sortCaseTimelineEvents, prepareAppealForStore, prepareTasksForStore } from 'app/queue/utils';
+import {
+  prepareAppealForSearchStore,
+  sortCaseTimelineEvents,
+  prepareAppealForStore,
+  prepareTasksForStore,
+  taskIsOnHold,
+  timelineEventsFromAppeal
+
+} from 'app/queue/utils';
 import { MemoryRouter, Route } from 'react-router-dom';
 import { within } from '@testing-library/dom';
 import { tasksUnrelatedToAnAppeal } from 'test/data/queue/taskActionModals/taskActionModalData';
@@ -23,7 +31,9 @@ jest.mock('app/queue/utils', () => ({
   prepareAppealForSearchStore: jest.fn(),
   sortCaseTimelineEvents: jest.fn(),
   prepareAppealForStore: jest.fn(),
-  prepareTasksForStore: jest.fn()
+  prepareTasksForStore: jest.fn(),
+  taskIsOnHold: jest.fn(),
+  timelineEventsFromAppeal: jest.fn()
 }));
 
 jest.mock('app/queue/CaseListTable', () => ({ appeals }) => (
@@ -68,7 +78,19 @@ let initialState = {
       '0f6bb359-8624-4cef-8690-0891297f224f': {
         externalId: '0f6bb359-8624-4cef-8690-0891297f224f',
         external_id: '0f6bb359-8624-4cef-8690-0891297f224f'
-
+      },
+      amaTasks: {
+        3203: {
+          uniqueId: '3203',
+          type: 'test',
+          externalAppealId: '0f6bb359-8624-4cef-8690-0891297f224f',
+          assignedBy: {
+            firstName: 'Willow',
+            lastName: 'Green',
+            cssId: 'INBOUND_OPS_TEAM_SUPERUSER1',
+            pgId: 74
+          }
+        }
       }
 
     },
@@ -100,10 +122,84 @@ const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
 
 let props = {
   organizations: ['Inbound Ops Team'],
+  appealId: '0f6bb359-8624-4cef-8690-0891297f224f',
   appeal: {
     externalId: 'debug'
   },
   isInboundOpsUser: true,
+  taskList: [
+    {
+      uniqueId: '3203',
+      isLegacy: false,
+      type: 'AddressChangeMailTask',
+      appealType: 'Appeal',
+      addedByCssId: null,
+      appealId: 449,
+      externalAppealId: '0f6bb359-8624-4cef-8690-0891297f224f',
+      assignedOn: '2024-09-26T12:21:20.165-04:00',
+      closestRegionalOffice: null,
+      createdAt: '2024-09-26T12:21:20.165-04:00',
+      closedAt: null,
+      startedAt: null,
+      assigneeName: 'Hearing Admin',
+      assignedTo: {
+        cssId: null,
+        name: 'Hearing Admin',
+        id: 39,
+        isOrganization: true,
+        type: 'HearingAdmin'
+      },
+      assignedBy: {
+        firstName: 'Willow',
+        lastName: 'Green',
+        cssId: 'INBOUND_OPS_TEAM_SUPERUSER1',
+        pgId: 74
+      },
+      completedBy: {
+        cssId: null
+      },
+      cancelledBy: {
+        cssId: null
+      },
+      cancelReason: null,
+      convertedBy: {
+        cssId: null
+      },
+      convertedOn: null,
+      taskId: '3181',
+      parentId: 3180,
+      label: 'Change of address',
+      documentId: null,
+      externalHearingId: null,
+      workProduct: null,
+      caseType: 'Original',
+      aod: false,
+      previousTaskAssignedOn: null,
+      placedOnHoldAt: null,
+      status: 'assigned',
+      onHoldDuration: null,
+      instructions: [
+        'test'
+      ],
+      decisionPreparedBy: null,
+      availableActions: [],
+      timelineTitle: 'AddressChangeMailTask completed',
+      hideFromQueueTableView: false,
+      hideFromTaskSnapshot: false,
+      hideFromCaseTimeline: false,
+      availableHearingLocations: [],
+      latestInformalHearingPresentationTask: {},
+      canMoveOnDocketSwitch: true,
+      timerEndsAt: null,
+      unscheduledHearingNotes: {},
+      ownedBy: 'Hearing Admin',
+      daysSinceLastStatusChange: 0,
+      daysSinceBoardIntake: 0,
+      id: '3181',
+      claimant: {},
+      appeal_receipt_date: '2024-08-14'
+    }
+  ],
   updateCorrespondenceRelations: jest.fn(),
   correspondence
   // correspondence: {
@@ -630,9 +726,92 @@ describe('CorrespondenceDetails', () => {
       appeals: {},
       appealDetails: {}
     });
-    sortCaseTimelineEvents.mockReturnValue(
-      tasksUnrelatedToAnAppeal
+
+    timelineEventsFromAppeal.mockReturnValue(
+      [
+        {
+          type: 'decisionDate',
+          createdAt: null
+        }
+      ]
     );
+
+    sortCaseTimelineEvents.mockReturnValue(
+      [
+        {
+          uniqueId: '3203',
+          isLegacy: false,
+          type: 'AddressChangeMailTask',
+          appealType: 'Appeal',
+          addedByCssId: null,
+          appealId: 449,
+          externalAppealId: '0f6bb359-8624-4cef-8690-0891297f224f',
+          assignedOn: '2024-09-26T12:21:20.165-04:00',
+          closestRegionalOffice: null,
+          createdAt: '2024-09-26T12:21:20.165-04:00',
+          closedAt: null,
+          startedAt: null,
+          assigneeName: 'Hearing Admin',
+          assignedTo: {
+            cssId: null,
+            name: 'Hearing Admin',
+            id: 39,
+            isOrganization: true,
+            type: 'HearingAdmin'
+          },
+          assignedBy: {
+            firstName: 'Willow',
+            lastName: 'Green',
+            cssId: 'INBOUND_OPS_TEAM_SUPERUSER1',
+            pgId: 74
+          },
+          completedBy: {
+            cssId: null
+          },
+          cancelledBy: {
+            cssId: null
+          },
+          cancelReason: null,
+          convertedBy: {
+            cssId: null
+          },
+          convertedOn: null,
+          taskId: '3181',
+          parentId: 3180,
+          label: 'Change of address',
+          documentId: null,
+          externalHearingId: null,
+          workProduct: null,
+          caseType: 'Original',
+          aod: false,
+          previousTaskAssignedOn: null,
+          placedOnHoldAt: null,
+          status: 'assigned',
+          onHoldDuration: null,
+          instructions: [
+            'test'
+          ],
+          decisionPreparedBy: null,
+          availableActions: [],
+          timelineTitle: 'AddressChangeMailTask completed',
+          hideFromQueueTableView: false,
+          hideFromTaskSnapshot: false,
+          hideFromCaseTimeline: false,
+          availableHearingLocations: [],
+          latestInformalHearingPresentationTask: {},
+          canMoveOnDocketSwitch: true,
+          timerEndsAt: null,
+          unscheduledHearingNotes: {},
+          ownedBy: 'Hearing Admin',
+          daysSinceLastStatusChange: 0,
+          daysSinceBoardIntake: 0,
+          id: '3181',
+          claimant: {},
+          appeal_receipt_date: '2024-08-14'
+        }
+      ]
+    );
+    taskIsOnHold.mockReturnValue(false);
     prepareAppealForStore.mockReturnValue([]);
     prepareTasksForStore.mockReturnValue({
       3203: {
