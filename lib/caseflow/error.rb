@@ -514,7 +514,21 @@ module Caseflow::Error
   class DecisionReviewCreatedCreateClaimReviewError < StandardError; end
   class DecisionReviewCreatedEpEstablishmentError < StandardError; end
   class DecisionReviewCreatedRequestIssuesError < StandardError; end
-
+  class DecisionReviewUpdatedRequestIssuesError < StandardError; end
+  class DecisionReviewUpdatedInformalConferenceError < StandardError; end
+  class DecisionReviewUpdateMissingReviewError < StandardError; end
+  class DecisionReviewUpdateMissingIssueError < StandardError
+    def initialize(reference_id)
+      super("Request issue not found for REFERENCE_ID: #{reference_id}")
+    end
+  end
+  class DecisionReviewUpdateMismatchedRemovedIssuesError < StandardError
+    def initialize(msg = "Decision review update mismatched removed issues")
+      super(msg)
+    end
+  end
+  class DecisionReviewUpdatedClaimReviewError < StandardError; end
+  class DecisionReviewUpdatedEndProductEstablishmentError < StandardError; end
   class MaximumBatchSizeViolationError < StandardError
     def initialize(msg = "The batch size of jobs must not exceed 10")
       super(msg)

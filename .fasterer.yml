@@ -14,3 +14,7 @@ exclude_paths:
   - "db/seeds.rb"
   - "vendor/**/*.rb"
   - "app/mappers/zip_code_to_lat_lng_mapper.rb"
+
+  # Flagged for using sort instead of using sort_by - however due to complexity of sorting
+  # conditionally makes more sense to use sort
+  - "app/services/auto_assignable_user_finder.rb"
