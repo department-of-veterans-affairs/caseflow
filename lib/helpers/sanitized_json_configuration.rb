@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "helpers/association_wrapper.rb"
-require "helpers/sanitation_transforms.rb"
+require "helpers/sanitization_transforms.rb"
 
 # Configuration for exporting/importing data from/to Caseflow's database.
 # Needed by SanitizedJsonExporter and SanitizedJsonImporter.
