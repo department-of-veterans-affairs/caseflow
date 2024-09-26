@@ -114,6 +114,25 @@ export const TranscriptionFileDispatchView = () => {
     history.pushState('', '', `${base}${qs}`);
   };
 
+  const handleSearchBarChange = (input) => {
+    const base = `${window.location.origin}${window.location.pathname}`;
+    const params = getQueryParams(window.location.search);
+    const qs = encodeQueryParams({
+      tab: params.tab,
+      filter: params.filter,
+      sort_by: params.sort_by,
+      order: params.order,
+      page: 1,
+      search: input
+    });
+
+    history.replaceState('', '', `${base}${qs}`);
+  };
+
+  const handleSearchBarSubmit = () => {
+    location.reload();
+  };
+
   useEffect(() => {
     getContractors();
   }, []);
@@ -138,7 +157,13 @@ export const TranscriptionFileDispatchView = () => {
           defaultPage={currentTab}
           fullPage={false}
           onChange={onTabChange}
-          tabs={tabConfig(openModal, selectFilesForPackage, selectedFiles.length)}
+          tabs={tabConfig(
+            openModal,
+            selectFilesForPackage,
+            selectedFiles.length,
+            handleSearchBarChange,
+            handleSearchBarSubmit
+          )}
         />
         { modalConfig.opened && renderModal(modalConfig)}
       </AppSegment>
