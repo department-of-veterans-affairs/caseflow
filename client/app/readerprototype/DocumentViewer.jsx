@@ -57,6 +57,18 @@ const DocumentViewer = (props) => {
     return () => window.removeEventListener('keydown', keyHandler);
   }, []);
 
+  useEffect(() => {
+    const keyHandler = (event) => {
+      if (event.altKey && event.code === 'KeyM' && !event.shiftKey) {
+        setShowSideBar(!showSideBar);
+      }
+    };
+
+    window.addEventListener('keydown', keyHandler);
+
+    return () => window.removeEventListener('keydown', keyHandler);
+  }, [showSideBar]);
+
   const getPageNumFromScrollTop = (event) => {
     const { clientHeight, scrollTop, scrollHeight } = event.target;
     const pageHeightEstimate =
@@ -117,6 +129,7 @@ const DocumentViewer = (props) => {
       {showSideBar && (
         <ReaderSidebar
           doc={doc}
+          showSideBar={showSideBar}
           toggleSideBar={() => setShowSideBar(false)}
           vacolsId={props.match.params.vacolsId}
         />
