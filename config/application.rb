@@ -143,6 +143,7 @@ module CaseflowCertification
         "appeals_for_poa" => "AppealsForPOA",
         "bgs_service" => "BGSService",
         "bgs_service_concern" => "BGSServiceConcern",
+        "bgs_service_grants" => "BGSServiceGrants",
         "bva_appeal_status" => "BVAAppealStatus",
         "cavc_case_decision" => "CAVCCaseDecision",
         "cavc_decision" => "CAVCDecision",
