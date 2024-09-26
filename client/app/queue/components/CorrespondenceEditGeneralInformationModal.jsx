@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import ApiUtil from '../../util/ApiUtil';
 import moment from 'moment';
 import DateSelector from '../../components/DateSelector';
 import SearchableDropdown from '../../components/SearchableDropdown';
@@ -14,13 +13,15 @@ import { editCorrespondenceGeneralInformation } from
   '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
 
 const CorrespondenceEditGeneralInformationModal = (props) => {
-  const { correspondence, correspondenceTypes, handleEditGeneralInformationModal } = props;
-  const [changeVaDor, setChangeVaDor] = useState(moment.utc((correspondence?.vaDateOfReceipt)).format('YYYY-MM-DD'));
+  const { correspondenceInfo, correspondenceTypes, handleEditGeneralInformationModal } = props;
+  const [changeVaDor, setChangeVaDor] = useState(
+    moment.utc((correspondenceInfo?.vaDateOfReceipt)).format('YYYY-MM-DD')
+  );
   const [changeCorrespondenceTypeId, setChangeCorrespondenceTypeId] = useState(
     // eslint-disable-next-line camelcase
-    correspondence?.correspondence_type_id
+    correspondenceInfo?.correspondence_type_id
   );
-  const [changeNotes, setChangeNotes] = useState(correspondence?.notes);
+  const [changeNotes, setChangeNotes] = useState(correspondenceInfo?.notes);
   const [dateError, setDateError] = useState(false);
   const [saveButton, setSaveButton] = useState(true);
 
@@ -65,12 +66,12 @@ const CorrespondenceEditGeneralInformationModal = (props) => {
 
   const handleCorrespondenceTypeEmpty = () => {
     // eslint-disable-next-line camelcase
-    if (correspondence?.correspondence_type_id === null) {
+    if (correspondenceInfo?.correspondence_type_id === null) {
       return 'Select...';
     }
 
     // eslint-disable-next-line camelcase
-    const type = correspondenceTypes?.find((value) => value?.id === correspondence?.correspondence_type_id);
+    const type = correspondenceTypes?.find((value) => value?.id === correspondenceInfo?.correspondence_type_id);
 
     return type?.name;
   };
@@ -96,10 +97,9 @@ const CorrespondenceEditGeneralInformationModal = (props) => {
       }
     };
 
+    await (props.editCorrespondenceGeneralInformation(payload, correspondenceInfo.uuid));
+
     handleEditGeneralInformationModal();
-
-    return props.editCorrespondenceGeneralInformation(payload, correspondence);
-
   };
 
   // useEffects to activate save button
@@ -116,7 +116,9 @@ const CorrespondenceEditGeneralInformationModal = (props) => {
       title={COPY.CORRESPONDENCE_EDIT_GENERAL_INFORMATION_MODAL_TITLE}
       button={COPY.MODAL_SAVE_BUTTON}
       submitDisabled={saveButton}
-      pathAfterSubmit={`/queue/correspondence/${correspondence?.uuid}`}
+      // eslint-disable-next-line camelcase
+      pathAfterSubmit={correspondenceInfo?.redirect_after ??
+         `/queue/correspondence/${correspondenceInfo.uuid}`}
       submit={handleSubmit}
       onCancel={handleEditGeneralInformationModal}
     >
@@ -157,21 +159,19 @@ CorrespondenceEditGeneralInformationModal.propTypes = {
   setCorrespondenceTypeId: PropTypes.func,
   notes: PropTypes.string,
   vaDateOfReceipt: PropTypes.string,
-  veteranFileNumber: PropTypes.string,
   setSaveButton: PropTypes.bool,
   setCorrespondence: PropTypes.func,
   setErrorMessage: PropTypes.func,
-  setVeteranFileNumber: PropTypes.func,
   setNotes: PropTypes.func,
   setVaDor: PropTypes.func,
   errorMessage: PropTypes.string,
   userIsInboundOpsSupervisor: PropTypes.bool,
-  correspondence: PropTypes.object,
+  correspondenceInfo: PropTypes.object,
   handleEditGeneralInformationModal: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
-  correspondence: state.correspondenceDetails.correspondenceInfo
+  correspondenceInfo: state.correspondenceDetails.correspondenceInfo
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

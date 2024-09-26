@@ -68,7 +68,7 @@ const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
 let props = {
   organizations: ['Inbound Ops Team'],
   isInboundOpsUser: true,
-  updateCorrespondenceRelations: jest.fn(),
+  updateCorrespondenceInfo: jest.fn(),
   correspondence: {
     uuid: '123',
     veteranFullName: 'John Doe',
@@ -458,6 +458,7 @@ describe('CorrespondenceDetails', () => {
 
     fireEvent.click(associatedPriorMailTab);
     const checkbox = screen.getByRole('checkbox', { name: '1' });
+
     fireEvent.click(checkbox);
 
     // Mock API call

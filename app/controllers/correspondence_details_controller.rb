@@ -101,7 +101,7 @@ class CorrespondenceDetailsController < CorrespondenceController
       correspondence_type_id: correspondence_params[:correspondence_type_id],
       notes: correspondence_params[:notes]
     )
-    render json: { correspondence: correspondence }, status: :created
+    render json: { correspondence: serialized_correspondence }, status: :created
   end
 
   # Overriding method to allow users to access the correspondence details page

@@ -8,9 +8,7 @@ import TabWindow from '../../../components/TabWindow';
 import CopyTextButton from '../../../components/CopyTextButton';
 import { loadCorrespondence } from '../correspondenceReducer/correspondenceActions';
 import CorrespondenceCaseTimeline from '../CorrespondenceCaseTimeline';
-import {
-  correspondenceInfo, updateCorrespondenceRelations
-} from './../correspondenceDetailsReducer/correspondenceDetailsActions';
+import { updateCorrespondenceInfo } from './../correspondenceDetailsReducer/correspondenceDetailsActions';
 import CorrespondenceResponseLetters from './CorrespondenceResponseLetters';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
@@ -31,6 +29,7 @@ import CorrespondenceEditGeneralInformationModal from '../../components/Correspo
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
   const correspondence = props.correspondence;
+  const correspondenceInfo = props.correspondenceInfo;
   const mailTasks = props.correspondence.mailTasks;
   const allCorrespondences = props.correspondence.all_correspondences;
   const [viewAllCorrespondence, setViewAllCorrespondence] = useState(false);
@@ -298,7 +297,7 @@ const CorrespondenceDetails = (props) => {
 
   useEffect(() => {
     dispatch(loadCorrespondence(correspondence));
-    dispatch(correspondenceInfo(correspondence));
+    dispatch(updateCorrespondenceInfo(correspondence));
   }, []);
 
   const isTasksUnrelatedToAppealEmpty = () => {
@@ -409,12 +408,12 @@ const CorrespondenceDetails = (props) => {
               </tr>
               <tr>
                 <td className="corr-table-borderless-first-item">
-                  {props.correspondence.veteranFullName} ({props.correspondence.veteranFileNumber})
+                  {correspondenceInfo?.veteranFullName} ({correspondenceInfo?.veteranFileNumber})
                 </td>
-                <td>{props.correspondence.correspondenceType}</td>
-                <td>{props.correspondence.nod ? 'NOD' : 'Non-NOD'}</td>
+                <td>{correspondenceInfo?.correspondenceType}</td>
+                <td>{correspondenceInfo?.nod ? 'NOD' : 'Non-NOD'}</td>
                 <td className="corr-table-borderless-last-item">
-                  {moment(props.correspondence.vaDateOfReceipt).format('MM/DD/YYYY')}
+                  {moment(correspondenceInfo?.vaDateOfReceipt).format('MM/DD/YYYY')}
                 </td>
               </tr>
               <tr>
@@ -423,7 +422,7 @@ const CorrespondenceDetails = (props) => {
               </tr>
               <tr>
                 <td colSpan={6} className="corr-table-borderless-first-item corr-table-borderless-last-item">
-                  {props.correspondence.notes}</td>
+                  {correspondenceInfo?.notes}</td>
               </tr>
             </tbody>
           </table>
@@ -656,7 +655,7 @@ const CorrespondenceDetails = (props) => {
 
       return ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/create_correspondence_relations`, payload).
         then(() => {
-          props.updateCorrespondenceRelations(tempCor);
+          props.updateCorrespondenceInfo(tempCor);
           setRelatedCorrespondenceIds([...relatedCorrespondenceIds, ...priorMailIds]);
           setShowSuccessBanner(true);
           setSelectedPriorMail([]);
@@ -721,7 +720,7 @@ const CorrespondenceDetails = (props) => {
       }
       <AppSegment filledBackground extraClassNames="app-segment-cd-details">
         <div className="correspondence-details-header">
-          <h1> {props.correspondence.veteranFullName} </h1>
+          <h1> {correspondence?.veteranFullName} </h1>
           <div className="copy-id">
             <p className="vet-id-margin">Veteran ID:</p>
             <CopyTextButton
@@ -761,6 +760,7 @@ const CorrespondenceDetails = (props) => {
 CorrespondenceDetails.propTypes = {
   loadCorrespondence: PropTypes.func,
   correspondence: PropTypes.object,
+  correspondenceInfo: PropTypes.object,
   organizations: PropTypes.array,
   userCssId: PropTypes.string,
   enableTopPagination: PropTypes.bool,
@@ -772,7 +772,7 @@ CorrespondenceDetails.propTypes = {
   correspondenceResponseLetters: PropTypes.array,
   inboundOpsTeamUsers: PropTypes.array,
   addLetterCheck: PropTypes.bool,
-  updateCorrespondenceRelations: PropTypes.func,
+  updateCorrespondenceInfo: PropTypes.func,
   correspondenceTypes: PropTypes.array
 };
 
@@ -783,8 +783,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    correspondenceInfo,
-    updateCorrespondenceRelations
+    updateCorrespondenceInfo
   }, dispatch)
 );
 

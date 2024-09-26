@@ -194,7 +194,7 @@ RSpec.feature("The Correspondence Details page") do
       )
     end
 
-    it "checks the General Information of Veteran" do
+    it "checks the General Information of Veteran and allows edits to it" do
       visit "/queue/correspondence/#{@correspondence.uuid}"
       safe_click "#tasks-tabwindow-tab-1"
       expect(page).to have_content("John Testingman (8675309)")
@@ -202,6 +202,16 @@ RSpec.feature("The Correspondence Details page") do
       expect(page).to have_content("Non-NOD")
       expect(page).to have_content("07/23/2024")
       expect(page).to have_content("Note Test")
+
+      # Edit information and check
+      safe_click "#tasks-tabwindow-tab-1"
+      # fill in vador
+      # fill in type
+      # fill in notes
+      # save
+      expect(page).to have_content("Abeyance")
+      expect(page).to have_content("8/23/2024")
+      expect(page).to have_content("Note Test Changed")
     end
   end
 
