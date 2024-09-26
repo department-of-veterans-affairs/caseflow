@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import { Provider } from 'react-redux';
 import CorrespondenceDetails from 'app/queue/correspondence/details/CorrespondenceDetails';
-import { correspondenceDetailsData } from 'test/data/correspondence';
+import { correspondenceDetailsData, correspondenceAppeals, correspondence } from 'test/data/correspondence';
 import { applyMiddleware, createStore } from 'redux';
 import rootReducer from 'app/queue/reducers';
 import thunk from 'redux-thunk';
@@ -13,7 +13,6 @@ import { MemoryRouter, Route } from 'react-router-dom';
 import { within } from '@testing-library/dom';
 import { tasksUnrelatedToAnAppeal } from 'test/data/queue/taskActionModals/taskActionModalData';
 import ApiUtil from 'app/util/ApiUtil';
-import { correspondenceAppeals, correspondence } from '../../../../data/correspondence';
 
 jest.mock('redux', () => ({
   ...jest.requireActual('redux'),
@@ -63,15 +62,46 @@ jest.mock('app/util/ApiUtil', () => ({
 }));
 
 let initialState = {
-  correspondence: correspondenceDetailsData
+  correspondence,
+  queue: {
+    appeals: {
+      '0f6bb359-8624-4cef-8690-0891297f224f': {
+        externalId: '0f6bb359-8624-4cef-8690-0891297f224f',
+        external_id: '0f6bb359-8624-4cef-8690-0891297f224f'
+
+      }
+
+    },
+    stagedChanges: {
+      appeals: {},
+      taskDecision: {
+        type: '',
+        opts: {}
+      }
+    }
+
+  }
 };
+
+// let initialState = {
+//   queue: {
+//     appeals: [
+//       {
+//         external_id:"testing"
+//       }
+//     ],
+//     stagedChanges: {
+//       appeals: [{external_id:"testing", externalId:"Testing"}]
+//     }
+//   },
+// };
 
 const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
 
 let props = {
   organizations: ['Inbound Ops Team'],
   appeal: {
-    externalId:'debug'
+    externalId: 'debug'
   },
   isInboundOpsUser: true,
   updateCorrespondenceRelations: jest.fn(),
@@ -605,220 +635,220 @@ describe('CorrespondenceDetails', () => {
     );
     prepareAppealForStore.mockReturnValue([]);
     prepareTasksForStore.mockReturnValue({
-      "3203": {
-          "uniqueId": "3203",
-          "isLegacy": false,
-          "type": "DeathCertificateMailTask",
-          "appealType": "Appeal",
-          "addedByCssId": null,
-          "appealId": 447,
-          "externalAppealId": "0f6bb359-8624-4cef-8690-0891297f224f",
-          "assignedOn": "2024-09-24T12:54:23.602-04:00",
-          "closestRegionalOffice": null,
-          "createdAt": "2024-09-24T12:54:23.602-04:00",
-          "closedAt": null,
-          "startedAt": null,
-          "assigneeName": "VLJ Support Staff",
-          "assignedTo": {
-              "cssId": null,
-              "name": "VLJ Support Staff",
-              "id": 8,
-              "isOrganization": true,
-              "type": "Colocated"
-          },
-          "assignedBy": {
-              "firstName": "Jon",
-              "lastName": "Admin",
-              "cssId": "INBOUND_OPS_TEAM_ADMIN_USER",
-              "pgId": 65
-          },
-          "completedBy": {
-              "cssId": null
-          },
-          "cancelledBy": {
-              "cssId": null
-          },
-          "cancelReason": null,
-          "convertedBy": {
-              "cssId": null
-          },
-          "convertedOn": null,
-          "taskId": "3203",
-          "parentId": 3202,
-          "label": "Death certificate",
-          "documentId": null,
-          "externalHearingId": null,
-          "workProduct": null,
-          "caseType": "Original",
-          "aod": false,
-          "previousTaskAssignedOn": null,
-          "placedOnHoldAt": null,
-          "status": "assigned",
-          "onHoldDuration": null,
-          "instructions": [
-              "dc"
-          ],
-          "decisionPreparedBy": null,
-          "availableActions": [],
-          "timelineTitle": "DeathCertificateMailTask completed",
-          "hideFromQueueTableView": false,
-          "hideFromTaskSnapshot": false,
-          "hideFromCaseTimeline": false,
-          "availableHearingLocations": [],
-          "latestInformalHearingPresentationTask": {},
-          "canMoveOnDocketSwitch": true,
-          "timerEndsAt": null,
-          "unscheduledHearingNotes": {},
-          "ownedBy": "VLJ Support Staff",
-          "daysSinceLastStatusChange": 0,
-          "daysSinceBoardIntake": 0,
-          "id": "3203",
-          "claimant": {},
-          "appeal_receipt_date": "2024-07-14"
+      3203: {
+        uniqueId: '3203',
+        isLegacy: false,
+        type: 'DeathCertificateMailTask',
+        appealType: 'Appeal',
+        addedByCssId: null,
+        appealId: 447,
+        externalAppealId: '0f6bb359-8624-4cef-8690-0891297f224f',
+        assignedOn: '2024-09-24T12:54:23.602-04:00',
+        closestRegionalOffice: null,
+        createdAt: '2024-09-24T12:54:23.602-04:00',
+        closedAt: null,
+        startedAt: null,
+        assigneeName: 'VLJ Support Staff',
+        assignedTo: {
+          cssId: null,
+          name: 'VLJ Support Staff',
+          id: 8,
+          isOrganization: true,
+          type: 'Colocated'
+        },
+        assignedBy: {
+          firstName: 'Jon',
+          lastName: 'Admin',
+          cssId: 'INBOUND_OPS_TEAM_ADMIN_USER',
+          pgId: 65
+        },
+        completedBy: {
+          cssId: null
+        },
+        cancelledBy: {
+          cssId: null
+        },
+        cancelReason: null,
+        convertedBy: {
+          cssId: null
+        },
+        convertedOn: null,
+        taskId: '3203',
+        parentId: 3202,
+        label: 'Death certificate',
+        documentId: null,
+        externalHearingId: null,
+        workProduct: null,
+        caseType: 'Original',
+        aod: false,
+        previousTaskAssignedOn: null,
+        placedOnHoldAt: null,
+        status: 'assigned',
+        onHoldDuration: null,
+        instructions: [
+          'dc'
+        ],
+        decisionPreparedBy: null,
+        availableActions: [],
+        timelineTitle: 'DeathCertificateMailTask completed',
+        hideFromQueueTableView: false,
+        hideFromTaskSnapshot: false,
+        hideFromCaseTimeline: false,
+        availableHearingLocations: [],
+        latestInformalHearingPresentationTask: {},
+        canMoveOnDocketSwitch: true,
+        timerEndsAt: null,
+        unscheduledHearingNotes: {},
+        ownedBy: 'VLJ Support Staff',
+        daysSinceLastStatusChange: 0,
+        daysSinceBoardIntake: 0,
+        id: '3203',
+        claimant: {},
+        appeal_receipt_date: '2024-07-14'
       },
-      "3205": {
-          "uniqueId": "3205",
-          "isLegacy": false,
-          "type": "AddressChangeMailTask",
-          "appealType": "Appeal",
-          "addedByCssId": null,
-          "appealId": 447,
-          "externalAppealId": "0f6bb359-8624-4cef-8690-0891297f224f",
-          "assignedOn": "2024-09-24T12:54:23.679-04:00",
-          "closestRegionalOffice": null,
-          "createdAt": "2024-09-24T12:54:23.679-04:00",
-          "closedAt": null,
-          "startedAt": null,
-          "assigneeName": "Hearing Admin",
-          "assignedTo": {
-              "cssId": null,
-              "name": "Hearing Admin",
-              "id": 39,
-              "isOrganization": true,
-              "type": "HearingAdmin"
-          },
-          "assignedBy": {
-              "firstName": "Jon",
-              "lastName": "Admin",
-              "cssId": "INBOUND_OPS_TEAM_ADMIN_USER",
-              "pgId": 65
-          },
-          "completedBy": {
-              "cssId": null
-          },
-          "cancelledBy": {
-              "cssId": null
-          },
-          "cancelReason": null,
-          "convertedBy": {
-              "cssId": null
-          },
-          "convertedOn": null,
-          "taskId": "3205",
-          "parentId": 3204,
-          "label": "Change of address",
-          "documentId": null,
-          "externalHearingId": null,
-          "workProduct": null,
-          "caseType": "Original",
-          "aod": false,
-          "previousTaskAssignedOn": null,
-          "placedOnHoldAt": null,
-          "status": "assigned",
-          "onHoldDuration": null,
-          "instructions": [
-              "coa"
-          ],
-          "decisionPreparedBy": null,
-          "availableActions": [],
-          "timelineTitle": "AddressChangeMailTask completed",
-          "hideFromQueueTableView": false,
-          "hideFromTaskSnapshot": false,
-          "hideFromCaseTimeline": false,
-          "availableHearingLocations": [],
-          "latestInformalHearingPresentationTask": {},
-          "canMoveOnDocketSwitch": true,
-          "timerEndsAt": null,
-          "unscheduledHearingNotes": {},
-          "ownedBy": "Hearing Admin",
-          "daysSinceLastStatusChange": 0,
-          "daysSinceBoardIntake": 0,
-          "id": "3205",
-          "claimant": {},
-          "appeal_receipt_date": "2024-07-14"
+      3205: {
+        uniqueId: '3205',
+        isLegacy: false,
+        type: 'AddressChangeMailTask',
+        appealType: 'Appeal',
+        addedByCssId: null,
+        appealId: 447,
+        externalAppealId: '0f6bb359-8624-4cef-8690-0891297f224f',
+        assignedOn: '2024-09-24T12:54:23.679-04:00',
+        closestRegionalOffice: null,
+        createdAt: '2024-09-24T12:54:23.679-04:00',
+        closedAt: null,
+        startedAt: null,
+        assigneeName: 'Hearing Admin',
+        assignedTo: {
+          cssId: null,
+          name: 'Hearing Admin',
+          id: 39,
+          isOrganization: true,
+          type: 'HearingAdmin'
+        },
+        assignedBy: {
+          firstName: 'Jon',
+          lastName: 'Admin',
+          cssId: 'INBOUND_OPS_TEAM_ADMIN_USER',
+          pgId: 65
+        },
+        completedBy: {
+          cssId: null
+        },
+        cancelledBy: {
+          cssId: null
+        },
+        cancelReason: null,
+        convertedBy: {
+          cssId: null
+        },
+        convertedOn: null,
+        taskId: '3205',
+        parentId: 3204,
+        label: 'Change of address',
+        documentId: null,
+        externalHearingId: null,
+        workProduct: null,
+        caseType: 'Original',
+        aod: false,
+        previousTaskAssignedOn: null,
+        placedOnHoldAt: null,
+        status: 'assigned',
+        onHoldDuration: null,
+        instructions: [
+          'coa'
+        ],
+        decisionPreparedBy: null,
+        availableActions: [],
+        timelineTitle: 'AddressChangeMailTask completed',
+        hideFromQueueTableView: false,
+        hideFromTaskSnapshot: false,
+        hideFromCaseTimeline: false,
+        availableHearingLocations: [],
+        latestInformalHearingPresentationTask: {},
+        canMoveOnDocketSwitch: true,
+        timerEndsAt: null,
+        unscheduledHearingNotes: {},
+        ownedBy: 'Hearing Admin',
+        daysSinceLastStatusChange: 0,
+        daysSinceBoardIntake: 0,
+        id: '3205',
+        claimant: {},
+        appeal_receipt_date: '2024-07-14'
       },
-      "3207": {
-          "uniqueId": "3207",
-          "isLegacy": false,
-          "type": "StatusInquiryMailTask",
-          "appealType": "Appeal",
-          "addedByCssId": null,
-          "appealId": 447,
-          "externalAppealId": "0f6bb359-8624-4cef-8690-0891297f224f",
-          "assignedOn": "2024-09-24T12:54:23.721-04:00",
-          "closestRegionalOffice": null,
-          "createdAt": "2024-09-24T12:54:23.721-04:00",
-          "closedAt": null,
-          "startedAt": null,
-          "assigneeName": "Litigation Support",
-          "assignedTo": {
-              "cssId": null,
-              "name": "Litigation Support",
-              "id": 18,
-              "isOrganization": true,
-              "type": "LitigationSupport"
-          },
-          "assignedBy": {
-              "firstName": "Jon",
-              "lastName": "Admin",
-              "cssId": "INBOUND_OPS_TEAM_ADMIN_USER",
-              "pgId": 65
-          },
-          "completedBy": {
-              "cssId": null
-          },
-          "cancelledBy": {
-              "cssId": null
-          },
-          "cancelReason": null,
-          "convertedBy": {
-              "cssId": null
-          },
-          "convertedOn": null,
-          "taskId": "3207",
-          "parentId": 3206,
-          "label": "Status inquiry",
-          "documentId": null,
-          "externalHearingId": null,
-          "workProduct": null,
-          "caseType": "Original",
-          "aod": false,
-          "previousTaskAssignedOn": null,
-          "placedOnHoldAt": null,
-          "status": "assigned",
-          "onHoldDuration": null,
-          "instructions": [
-              "si"
-          ],
-          "decisionPreparedBy": null,
-          "availableActions": [],
-          "timelineTitle": "StatusInquiryMailTask completed",
-          "hideFromQueueTableView": false,
-          "hideFromTaskSnapshot": false,
-          "hideFromCaseTimeline": false,
-          "availableHearingLocations": [],
-          "latestInformalHearingPresentationTask": {},
-          "canMoveOnDocketSwitch": true,
-          "timerEndsAt": null,
-          "unscheduledHearingNotes": {},
-          "ownedBy": "Litigation Support",
-          "daysSinceLastStatusChange": 0,
-          "daysSinceBoardIntake": 0,
-          "id": "3207",
-          "claimant": {},
-          "appeal_receipt_date": "2024-07-14"
+      3207: {
+        uniqueId: '3207',
+        isLegacy: false,
+        type: 'StatusInquiryMailTask',
+        appealType: 'Appeal',
+        addedByCssId: null,
+        appealId: 447,
+        externalAppealId: '0f6bb359-8624-4cef-8690-0891297f224f',
+        assignedOn: '2024-09-24T12:54:23.721-04:00',
+        closestRegionalOffice: null,
+        createdAt: '2024-09-24T12:54:23.721-04:00',
+        closedAt: null,
+        startedAt: null,
+        assigneeName: 'Litigation Support',
+        assignedTo: {
+          cssId: null,
+          name: 'Litigation Support',
+          id: 18,
+          isOrganization: true,
+          type: 'LitigationSupport'
+        },
+        assignedBy: {
+          firstName: 'Jon',
+          lastName: 'Admin',
+          cssId: 'INBOUND_OPS_TEAM_ADMIN_USER',
+          pgId: 65
+        },
+        completedBy: {
+          cssId: null
+        },
+        cancelledBy: {
+          cssId: null
+        },
+        cancelReason: null,
+        convertedBy: {
+          cssId: null
+        },
+        convertedOn: null,
+        taskId: '3207',
+        parentId: 3206,
+        label: 'Status inquiry',
+        documentId: null,
+        externalHearingId: null,
+        workProduct: null,
+        caseType: 'Original',
+        aod: false,
+        previousTaskAssignedOn: null,
+        placedOnHoldAt: null,
+        status: 'assigned',
+        onHoldDuration: null,
+        instructions: [
+          'si'
+        ],
+        decisionPreparedBy: null,
+        availableActions: [],
+        timelineTitle: 'StatusInquiryMailTask completed',
+        hideFromQueueTableView: false,
+        hideFromTaskSnapshot: false,
+        hideFromCaseTimeline: false,
+        availableHearingLocations: [],
+        latestInformalHearingPresentationTask: {},
+        canMoveOnDocketSwitch: true,
+        timerEndsAt: null,
+        unscheduledHearingNotes: {},
+        ownedBy: 'Litigation Support',
+        daysSinceLastStatusChange: 0,
+        daysSinceBoardIntake: 0,
+        id: '3207',
+        claimant: {},
+        appeal_receipt_date: '2024-07-14'
       }
-  })
+    });
 
     render(
       <Provider store={store}>
@@ -972,6 +1002,7 @@ describe('CorrespondenceDetails', () => {
 
     fireEvent.click(associatedPriorMailTab);
     const checkbox = screen.getByRole('checkbox', { name: '1' });
+
     fireEvent.click(checkbox);
 
     // Mock API call
@@ -1004,220 +1035,220 @@ describe('Correspondence details without beforeEach', () => {
     );
     prepareAppealForStore.mockReturnValue([]);
     prepareTasksForStore.mockReturnValue({
-      "3203": {
-          "uniqueId": "3203",
-          "isLegacy": false,
-          "type": "DeathCertificateMailTask",
-          "appealType": "Appeal",
-          "addedByCssId": null,
-          "appealId": 447,
-          "externalAppealId": "0f6bb359-8624-4cef-8690-0891297f224f",
-          "assignedOn": "2024-09-24T12:54:23.602-04:00",
-          "closestRegionalOffice": null,
-          "createdAt": "2024-09-24T12:54:23.602-04:00",
-          "closedAt": null,
-          "startedAt": null,
-          "assigneeName": "VLJ Support Staff",
-          "assignedTo": {
-              "cssId": null,
-              "name": "VLJ Support Staff",
-              "id": 8,
-              "isOrganization": true,
-              "type": "Colocated"
-          },
-          "assignedBy": {
-              "firstName": "Jon",
-              "lastName": "Admin",
-              "cssId": "INBOUND_OPS_TEAM_ADMIN_USER",
-              "pgId": 65
-          },
-          "completedBy": {
-              "cssId": null
-          },
-          "cancelledBy": {
-              "cssId": null
-          },
-          "cancelReason": null,
-          "convertedBy": {
-              "cssId": null
-          },
-          "convertedOn": null,
-          "taskId": "3203",
-          "parentId": 3202,
-          "label": "Death certificate",
-          "documentId": null,
-          "externalHearingId": null,
-          "workProduct": null,
-          "caseType": "Original",
-          "aod": false,
-          "previousTaskAssignedOn": null,
-          "placedOnHoldAt": null,
-          "status": "assigned",
-          "onHoldDuration": null,
-          "instructions": [
-              "dc"
-          ],
-          "decisionPreparedBy": null,
-          "availableActions": [],
-          "timelineTitle": "DeathCertificateMailTask completed",
-          "hideFromQueueTableView": false,
-          "hideFromTaskSnapshot": false,
-          "hideFromCaseTimeline": false,
-          "availableHearingLocations": [],
-          "latestInformalHearingPresentationTask": {},
-          "canMoveOnDocketSwitch": true,
-          "timerEndsAt": null,
-          "unscheduledHearingNotes": {},
-          "ownedBy": "VLJ Support Staff",
-          "daysSinceLastStatusChange": 0,
-          "daysSinceBoardIntake": 0,
-          "id": "3203",
-          "claimant": {},
-          "appeal_receipt_date": "2024-07-14"
+      3203: {
+        uniqueId: '3203',
+        isLegacy: false,
+        type: 'DeathCertificateMailTask',
+        appealType: 'Appeal',
+        addedByCssId: null,
+        appealId: 447,
+        externalAppealId: '0f6bb359-8624-4cef-8690-0891297f224f',
+        assignedOn: '2024-09-24T12:54:23.602-04:00',
+        closestRegionalOffice: null,
+        createdAt: '2024-09-24T12:54:23.602-04:00',
+        closedAt: null,
+        startedAt: null,
+        assigneeName: 'VLJ Support Staff',
+        assignedTo: {
+          cssId: null,
+          name: 'VLJ Support Staff',
+          id: 8,
+          isOrganization: true,
+          type: 'Colocated'
+        },
+        assignedBy: {
+          firstName: 'Jon',
+          lastName: 'Admin',
+          cssId: 'INBOUND_OPS_TEAM_ADMIN_USER',
+          pgId: 65
+        },
+        completedBy: {
+          cssId: null
+        },
+        cancelledBy: {
+          cssId: null
+        },
+        cancelReason: null,
+        convertedBy: {
+          cssId: null
+        },
+        convertedOn: null,
+        taskId: '3203',
+        parentId: 3202,
+        label: 'Death certificate',
+        documentId: null,
+        externalHearingId: null,
+        workProduct: null,
+        caseType: 'Original',
+        aod: false,
+        previousTaskAssignedOn: null,
+        placedOnHoldAt: null,
+        status: 'assigned',
+        onHoldDuration: null,
+        instructions: [
+          'dc'
+        ],
+        decisionPreparedBy: null,
+        availableActions: [],
+        timelineTitle: 'DeathCertificateMailTask completed',
+        hideFromQueueTableView: false,
+        hideFromTaskSnapshot: false,
+        hideFromCaseTimeline: false,
+        availableHearingLocations: [],
+        latestInformalHearingPresentationTask: {},
+        canMoveOnDocketSwitch: true,
+        timerEndsAt: null,
+        unscheduledHearingNotes: {},
+        ownedBy: 'VLJ Support Staff',
+        daysSinceLastStatusChange: 0,
+        daysSinceBoardIntake: 0,
+        id: '3203',
+        claimant: {},
+        appeal_receipt_date: '2024-07-14'
       },
-      "3205": {
-          "uniqueId": "3205",
-          "isLegacy": false,
-          "type": "AddressChangeMailTask",
-          "appealType": "Appeal",
-          "addedByCssId": null,
-          "appealId": 447,
-          "externalAppealId": "0f6bb359-8624-4cef-8690-0891297f224f",
-          "assignedOn": "2024-09-24T12:54:23.679-04:00",
-          "closestRegionalOffice": null,
-          "createdAt": "2024-09-24T12:54:23.679-04:00",
-          "closedAt": null,
-          "startedAt": null,
-          "assigneeName": "Hearing Admin",
-          "assignedTo": {
-              "cssId": null,
-              "name": "Hearing Admin",
-              "id": 39,
-              "isOrganization": true,
-              "type": "HearingAdmin"
-          },
-          "assignedBy": {
-              "firstName": "Jon",
-              "lastName": "Admin",
-              "cssId": "INBOUND_OPS_TEAM_ADMIN_USER",
-              "pgId": 65
-          },
-          "completedBy": {
-              "cssId": null
-          },
-          "cancelledBy": {
-              "cssId": null
-          },
-          "cancelReason": null,
-          "convertedBy": {
-              "cssId": null
-          },
-          "convertedOn": null,
-          "taskId": "3205",
-          "parentId": 3204,
-          "label": "Change of address",
-          "documentId": null,
-          "externalHearingId": null,
-          "workProduct": null,
-          "caseType": "Original",
-          "aod": false,
-          "previousTaskAssignedOn": null,
-          "placedOnHoldAt": null,
-          "status": "assigned",
-          "onHoldDuration": null,
-          "instructions": [
-              "coa"
-          ],
-          "decisionPreparedBy": null,
-          "availableActions": [],
-          "timelineTitle": "AddressChangeMailTask completed",
-          "hideFromQueueTableView": false,
-          "hideFromTaskSnapshot": false,
-          "hideFromCaseTimeline": false,
-          "availableHearingLocations": [],
-          "latestInformalHearingPresentationTask": {},
-          "canMoveOnDocketSwitch": true,
-          "timerEndsAt": null,
-          "unscheduledHearingNotes": {},
-          "ownedBy": "Hearing Admin",
-          "daysSinceLastStatusChange": 0,
-          "daysSinceBoardIntake": 0,
-          "id": "3205",
-          "claimant": {},
-          "appeal_receipt_date": "2024-07-14"
+      3205: {
+        uniqueId: '3205',
+        isLegacy: false,
+        type: 'AddressChangeMailTask',
+        appealType: 'Appeal',
+        addedByCssId: null,
+        appealId: 447,
+        externalAppealId: '0f6bb359-8624-4cef-8690-0891297f224f',
+        assignedOn: '2024-09-24T12:54:23.679-04:00',
+        closestRegionalOffice: null,
+        createdAt: '2024-09-24T12:54:23.679-04:00',
+        closedAt: null,
+        startedAt: null,
+        assigneeName: 'Hearing Admin',
+        assignedTo: {
+          cssId: null,
+          name: 'Hearing Admin',
+          id: 39,
+          isOrganization: true,
+          type: 'HearingAdmin'
+        },
+        assignedBy: {
+          firstName: 'Jon',
+          lastName: 'Admin',
+          cssId: 'INBOUND_OPS_TEAM_ADMIN_USER',
+          pgId: 65
+        },
+        completedBy: {
+          cssId: null
+        },
+        cancelledBy: {
+          cssId: null
+        },
+        cancelReason: null,
+        convertedBy: {
+          cssId: null
+        },
+        convertedOn: null,
+        taskId: '3205',
+        parentId: 3204,
+        label: 'Change of address',
+        documentId: null,
+        externalHearingId: null,
+        workProduct: null,
+        caseType: 'Original',
+        aod: false,
+        previousTaskAssignedOn: null,
+        placedOnHoldAt: null,
+        status: 'assigned',
+        onHoldDuration: null,
+        instructions: [
+          'coa'
+        ],
+        decisionPreparedBy: null,
+        availableActions: [],
+        timelineTitle: 'AddressChangeMailTask completed',
+        hideFromQueueTableView: false,
+        hideFromTaskSnapshot: false,
+        hideFromCaseTimeline: false,
+        availableHearingLocations: [],
+        latestInformalHearingPresentationTask: {},
+        canMoveOnDocketSwitch: true,
+        timerEndsAt: null,
+        unscheduledHearingNotes: {},
+        ownedBy: 'Hearing Admin',
+        daysSinceLastStatusChange: 0,
+        daysSinceBoardIntake: 0,
+        id: '3205',
+        claimant: {},
+        appeal_receipt_date: '2024-07-14'
       },
-      "3207": {
-          "uniqueId": "3207",
-          "isLegacy": false,
-          "type": "StatusInquiryMailTask",
-          "appealType": "Appeal",
-          "addedByCssId": null,
-          "appealId": 447,
-          "externalAppealId": "0f6bb359-8624-4cef-8690-0891297f224f",
-          "assignedOn": "2024-09-24T12:54:23.721-04:00",
-          "closestRegionalOffice": null,
-          "createdAt": "2024-09-24T12:54:23.721-04:00",
-          "closedAt": null,
-          "startedAt": null,
-          "assigneeName": "Litigation Support",
-          "assignedTo": {
-              "cssId": null,
-              "name": "Litigation Support",
-              "id": 18,
-              "isOrganization": true,
-              "type": "LitigationSupport"
-          },
-          "assignedBy": {
-              "firstName": "Jon",
-              "lastName": "Admin",
-              "cssId": "INBOUND_OPS_TEAM_ADMIN_USER",
-              "pgId": 65
-          },
-          "completedBy": {
-              "cssId": null
-          },
-          "cancelledBy": {
-              "cssId": null
-          },
-          "cancelReason": null,
-          "convertedBy": {
-              "cssId": null
-          },
-          "convertedOn": null,
-          "taskId": "3207",
-          "parentId": 3206,
-          "label": "Status inquiry",
-          "documentId": null,
-          "externalHearingId": null,
-          "workProduct": null,
-          "caseType": "Original",
-          "aod": false,
-          "previousTaskAssignedOn": null,
-          "placedOnHoldAt": null,
-          "status": "assigned",
-          "onHoldDuration": null,
-          "instructions": [
-              "si"
-          ],
-          "decisionPreparedBy": null,
-          "availableActions": [],
-          "timelineTitle": "StatusInquiryMailTask completed",
-          "hideFromQueueTableView": false,
-          "hideFromTaskSnapshot": false,
-          "hideFromCaseTimeline": false,
-          "availableHearingLocations": [],
-          "latestInformalHearingPresentationTask": {},
-          "canMoveOnDocketSwitch": true,
-          "timerEndsAt": null,
-          "unscheduledHearingNotes": {},
-          "ownedBy": "Litigation Support",
-          "daysSinceLastStatusChange": 0,
-          "daysSinceBoardIntake": 0,
-          "id": "3207",
-          "claimant": {},
-          "appeal_receipt_date": "2024-07-14"
+      3207: {
+        uniqueId: '3207',
+        isLegacy: false,
+        type: 'StatusInquiryMailTask',
+        appealType: 'Appeal',
+        addedByCssId: null,
+        appealId: 447,
+        externalAppealId: '0f6bb359-8624-4cef-8690-0891297f224f',
+        assignedOn: '2024-09-24T12:54:23.721-04:00',
+        closestRegionalOffice: null,
+        createdAt: '2024-09-24T12:54:23.721-04:00',
+        closedAt: null,
+        startedAt: null,
+        assigneeName: 'Litigation Support',
+        assignedTo: {
+          cssId: null,
+          name: 'Litigation Support',
+          id: 18,
+          isOrganization: true,
+          type: 'LitigationSupport'
+        },
+        assignedBy: {
+          firstName: 'Jon',
+          lastName: 'Admin',
+          cssId: 'INBOUND_OPS_TEAM_ADMIN_USER',
+          pgId: 65
+        },
+        completedBy: {
+          cssId: null
+        },
+        cancelledBy: {
+          cssId: null
+        },
+        cancelReason: null,
+        convertedBy: {
+          cssId: null
+        },
+        convertedOn: null,
+        taskId: '3207',
+        parentId: 3206,
+        label: 'Status inquiry',
+        documentId: null,
+        externalHearingId: null,
+        workProduct: null,
+        caseType: 'Original',
+        aod: false,
+        previousTaskAssignedOn: null,
+        placedOnHoldAt: null,
+        status: 'assigned',
+        onHoldDuration: null,
+        instructions: [
+          'si'
+        ],
+        decisionPreparedBy: null,
+        availableActions: [],
+        timelineTitle: 'StatusInquiryMailTask completed',
+        hideFromQueueTableView: false,
+        hideFromTaskSnapshot: false,
+        hideFromCaseTimeline: false,
+        availableHearingLocations: [],
+        latestInformalHearingPresentationTask: {},
+        canMoveOnDocketSwitch: true,
+        timerEndsAt: null,
+        unscheduledHearingNotes: {},
+        ownedBy: 'Litigation Support',
+        daysSinceLastStatusChange: 0,
+        daysSinceBoardIntake: 0,
+        id: '3207',
+        claimant: {},
+        appeal_receipt_date: '2024-07-14'
       }
-  })
+    });
     props.isInboundOpsUser = false;
 
     render(
