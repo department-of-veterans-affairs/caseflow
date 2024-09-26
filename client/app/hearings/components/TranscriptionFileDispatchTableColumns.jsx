@@ -416,18 +416,18 @@ export const statusColumn = (currentTab) => {
         displayText: COPY.TRANSCRIPTION_STATUS_OVERDUE_FILTER_OPTION,
       },
       {
-        value: COPY.TRANSCRIPTION_STATUS_SENT_FILTER_OPTION,
+        value: COPY.TRANSCRIPTION_STATUS_BOX_UPLOAD_SUCCESS_FILTER_OPTION_VALUE,
         displayText: COPY.TRANSCRIPTION_STATUS_SENT_FILTER_OPTION,
-      },
+      }
     ];
   } else if (currentTab === COPY.TRANSCRIPTION_DISPATCH_COMPLETED_TAB) {
     filterOptions = [
       {
-        value: COPY.TRANSCRIPTION_STATUS_COMPLETED_FILTER_OPTION,
+        value: COPY.TRANSCRIPTION_STATUS_BOX_UPLOAD_SUCCESS_FILTER_OPTION_VALUE,
         displayText: COPY.TRANSCRIPTION_STATUS_COMPLETED_FILTER_OPTION,
       },
       {
-        value: COPY.TRANSCRIPTION_STATUS_RETRIEVAL_FAILURE_FILTER_OPTION,
+        value: COPY.TRANSCRIPTION_STATUS_RETRIEVAL_FAILURE_FILTER_VALUE,
         displayText: COPY.TRANSCRIPTION_STATUS_RETRIEVAL_FAILURE_FILTER_OPTION,
       },
       {
@@ -446,12 +446,11 @@ export const statusColumn = (currentTab) => {
         displayText: COPY.TRANSCRIPTION_STATUS_OVERDUE_FILTER_OPTION,
       },
       {
-        value: COPY.TRANSCRIPTION_STATUS_RETRIEVAL_FAILURE_FILTER_OPTION,
-        displayText:
-          COPY.TRANSCRIPTION_STATUS_RETRIEVAL_FAILURE_FILTER_OPTION,
+        value: COPY.TRANSCRIPTION_STATUS_RETRIEVAL_FAILURE_FILTER_VALUE,
+        displayText: COPY.TRANSCRIPTION_STATUS_RETRIEVAL_FAILURE_FILTER_OPTION,
       },
       {
-        value: COPY.TRANSCRIPTION_STATUS_SENT_FILTER_OPTION,
+        value: COPY.TRANSCRIPTION_STATUS_BOX_UPLOAD_SUCCESS_FILTER_OPTION_VALUE,
         displayText: COPY.TRANSCRIPTION_STATUS_SENT_FILTER_OPTION,
       },
     ];
@@ -472,11 +471,29 @@ export const statusColumn = (currentTab) => {
     columnName: COPY.TRANSCRIPTION_FILE_DISPATCH_STATUS_COLUMN_NAME,
     label: 'status filter',
     filterOptions,
-    valueFunction: (row) => (
-      <div style={row.status === 'Overdue' || row.status === 'Retrieval Failure' ? styles.error : {}}>
-        {row.status}
-      </div>
-    ),
+    valueFunction: (row) => {
+      let displayStatus = row.status;
+
+      if (row.status === 'Successful Upload (BOX)') {
+        displayStatus = 'Sent';
+      }
+
+      if (row.status === 'Failed Retrieval (BOX)') {
+        displayStatus = 'Retrieval Failure';
+      }
+
+      return (
+        <div
+          style={
+            row.status === 'Overdue' || row.status === 'Failed Retrieval (BOX)' ?
+              styles.error :
+              {}
+          }
+        >
+          {displayStatus}
+        </div>
+      );
+    },
     backendCanSort: true,
     getSortValue: (row) => row.status,
   };
