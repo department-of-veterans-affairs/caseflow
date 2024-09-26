@@ -576,6 +576,11 @@ describe ChangeHistoryReporter do
           "Claim created",
           nil,
           "Claim created.",
+          nil,
+          nil,
+          nil,
+          nil,
+          nil,
           nil
         ]
       end
@@ -594,6 +599,11 @@ describe ChangeHistoryReporter do
           "Claim status - In progress",
           nil,
           "Claim can be processed.",
+          nil,
+          nil,
+          nil,
+          nil,
+          nil,
           nil
         ]
       end
@@ -611,7 +621,12 @@ describe ChangeHistoryReporter do
           remand_cancelled_status_event.readable_event_date,
           "Claim closed",
           nil,
-          "Claim closed.",
+          "Claim cancelled.",
+          nil,
+          nil,
+          nil,
+          nil,
+          nil,
           nil
         ]
       end
@@ -629,6 +644,11 @@ describe ChangeHistoryReporter do
           "Claim closed",
           nil,
           "Claim closed.",
+          nil,
+          nil,
+          nil,
+          nil,
+          nil,
           nil
         ]
       end
@@ -646,6 +666,11 @@ describe ChangeHistoryReporter do
           "Claim status - Incomplete",
           nil,
           "Claim cannot be processed until decision date is entered.",
+          nil,
+          nil,
+          nil,
+          nil,
+          nil,
           nil
         ]
       end
@@ -664,6 +689,11 @@ describe ChangeHistoryReporter do
           "CHAMPVA",
           "CHAMPVA issue description",
           remand_added_issue_without_decision_date_event.readable_decision_date,
+          nil,
+          nil,
+          nil,
+          nil,
+          nil,
           nil
         ]
       end
@@ -682,6 +712,11 @@ describe ChangeHistoryReporter do
           "CHAMPVA",
           "CHAMPVA issue description",
           remand_completed_disposition_event.readable_decision_date,
+          nil,
+          nil,
+          nil,
+          nil,
+          nil,
           "Granted",
           "Decision for CHAMPVA issue",
           remand_completed_disposition_event.readable_disposition_date
@@ -702,6 +737,11 @@ describe ChangeHistoryReporter do
           "CHAMPVA",
           "CHAMPVA issue description",
           remand_added_decision_date_event.readable_decision_date,
+          nil,
+          nil,
+          nil,
+          nil,
+          nil,
           nil
         ]
       end
@@ -720,6 +760,11 @@ describe ChangeHistoryReporter do
           "CHAMPVA",
           "CHAMPVA issue description",
           remand_removed_issue_event.readable_decision_date,
+          nil,
+          nil,
+          nil,
+          nil,
+          nil,
           nil
         ]
       end
@@ -738,6 +783,11 @@ describe ChangeHistoryReporter do
           "CHAMPVA",
           "CHAMPVA issue description",
           remand_withdrew_issue_event.readable_decision_date,
+          nil,
+          nil,
+          nil,
+          nil,
+          nil,
           nil
         ]
       end
