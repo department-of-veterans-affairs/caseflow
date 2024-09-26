@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import noop from 'lodash/noop';
 import PropTypes from 'prop-types';
 import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,6 +13,7 @@ import {
 import { handleSelectCommentIcon } from '../../../reader/PdfViewer/PdfViewerActions';
 import { getPageCoordinatesOfMouseEventPrototype } from '../../../reader/utils';
 import { annotationPlacement, annotationsForDocumentId, annotationsForDocumentIdAndPageId } from '../../selectors';
+import { centerOfPage, iconKeypressOffset } from '../../util/coordinates';
 import Icon from './Icon';
 
 // This comment provides the framework for positioning, moving and selecting comment icons.
@@ -27,7 +28,7 @@ import Icon from './Icon';
 // The second is after they've clicked but haven't saved it yet (ie, they still need to type in their comment)
 // The third is the display of the comments already saved that were fetched from the db.
 const Layer = (props) => {
-  const { zoomLevel, pageNumber, documentId, rotation, children, dimensions } = props;
+  const { zoomLevel, pageNumber, documentId, rotation, children, dimensions, isCurrentPage } = props;
   const scale = zoomLevel / 100;
   const rotationDegrees = Number(rotation.replace('deg', ''));
 
@@ -55,8 +56,37 @@ const Layer = (props) => {
         }
       }
 
-      if (event.altKey && event.code === 'KeyC') {
+      if (isPlacingAnnotation && placingAnnotationIconPageCoords?.pageIndex === pageNumber && [
+        'ArrowUp',
+        'ArrowDown',
+        'ArrowLeft',
+        'ArrowRight'
+      ].includes(event.key)
+      ) {
+        event.preventDefault();
+
+        dispatch(
+          showPlaceAnnotationIcon(
+            pageNumber,
+            iconKeypressOffset(
+              placingAnnotationIconPageCoords,
+              event.key,
+              rotation
+            )
+          )
+        );
+      }
+
+      if (event.altKey && event.code === 'KeyC' && isCurrentPage) {
         dispatch(startPlacingAnnotation(INTERACTION_TYPES.KEYBOARD_SHORTCUT));
+
+        const boundingRect = layerRef.current?.getBoundingClientRect();
+
+        if (boundingRect) {
+          const coords = centerOfPage(boundingRect, rotationDegrees);
+
+          dispatch(showPlaceAnnotationIcon(pageNumber, coords));
+        }
       }
 
       if (event.altKey && event.code === 'Enter') {
@@ -78,7 +108,7 @@ const Layer = (props) => {
     window.addEventListener('keydown', keyHandler);
 
     return () => window.removeEventListener('keydown', keyHandler);
-  }, [isPlacingAnnotation, placingAnnotationIconPageCoords]);
+  }, [isPlacingAnnotation, placingAnnotationIconPageCoords, rotation, isCurrentPage]);
 
   const onPageDragOver = (event) => {
     event.preventDefault();
@@ -199,7 +229,7 @@ const Layer = (props) => {
                 pageIndex: placingAnnotationIconPageCoords.pageIndex,
               }}
               comment={{}}
-              onClick={_.noop}
+              onClick={noop}
             />
           )}
           {!isPlacingAnnotation && placedButUnsavedAnnotation && placedButUnsavedAnnotation.page === pageNumber && (
@@ -208,7 +238,7 @@ const Layer = (props) => {
               comment={placedButUnsavedAnnotation}
               rotation={-rotationDegrees}
               position={{ x: placedButUnsavedAnnotation.x * scale, y: placedButUnsavedAnnotation.y * scale }}
-              onClick={_.noop}
+              onClick={noop}
             />
           )}
           {annotations.map((annotation) => (
@@ -218,7 +248,7 @@ const Layer = (props) => {
               comment={annotation}
               rotation={-rotationDegrees}
               position={{ x: annotation.x * scale, y: annotation.y * scale }}
-              onClick={annotation.isPlacingAnnotation ? _.noop : () => onIconClick(annotation)}
+              onClick={annotation.isPlacingAnnotation ? noop : () => onIconClick(annotation)}
             />
           ))}
         </div>
@@ -235,6 +265,7 @@ Layer.propTypes = {
   rotation: PropTypes.string,
   children: PropTypes.element,
   dimensions: PropTypes.object,
+  isCurrentPage: PropTypes.bool
 };
 
 export default Layer;
