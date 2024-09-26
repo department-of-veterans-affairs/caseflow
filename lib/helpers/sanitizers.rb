@@ -13,7 +13,7 @@ require "faker"
 # You'll also need a method called sanitize_klassname which assigns_attributes to any fields you want
 # to fake out. The first line of this method should use a key from the table to seed the Faker randomization
 # so that our randomizations are deterministic for a given row.
-class Helpers::Sanitizers
+class Sanitizers
   def errors
     @errors ||= []
   end
