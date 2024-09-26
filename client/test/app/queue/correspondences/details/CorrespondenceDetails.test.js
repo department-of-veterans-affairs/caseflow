@@ -329,6 +329,7 @@ describe('CorrespondenceDetails', () => {
 
     expect(userNameCount).toBeGreaterThan(0);
     const packageDetailsTab = screen.getByText('Package Details');
+    const existingAppealButton = screen.getByText('+');
     // const responseLettersTab = screen.getByText('Response Letters');
     const associatedPriorMailTab = screen.getByText('Associated Prior Mail');
 
@@ -344,6 +345,7 @@ describe('CorrespondenceDetails', () => {
     expect(screen.getByText('Task 2')).toBeInTheDocument();
 
     // Existing Appeals Table and Columns
+    fireEvent.click(existingAppealButton);
     expect(screen.getByText('Existing Appeals')).toBeInTheDocument();
     expect(screen.getByText('Appellant Name')).toBeInTheDocument();
     expect(screen.getByText('Appeal Status')).toBeInTheDocument();
