@@ -15,9 +15,9 @@ describe ExternalApi::VBMSService do
   describe ".verify_current_user_veteran_access" do
     let!(:appeal) { create(:appeal) }
 
-    context "with send_current_user_cred feature flag enabled" do
-      before { FeatureToggle.enable!(:send_current_user_cred) }
-      after { FeatureToggle.disable!(:send_current_user_cred) }
+    context "with send_current_user_cred_to_ce_api feature flag enabled" do
+      before { FeatureToggle.enable!(:send_current_user_cred_to_ce_api) }
+      after { FeatureToggle.disable!(:send_current_user_cred_to_ce_api) }
 
       let!(:user) do
         user = create(:user)
@@ -64,7 +64,7 @@ describe ExternalApi::VBMSService do
 
     context "with use_ce_api feature toggle disabled" do
       it "calls the VbmsDocumentSeriesForAppeal service" do
-        expect(FeatureToggle).to receive(:enabled?).with(:send_current_user_cred).and_return(false)
+        expect(FeatureToggle).to receive(:enabled?).with(:send_current_user_cred_to_ce_api).and_return(false)
         expect(FeatureToggle).to receive(:enabled?).with(:use_ce_api).and_return(false)
         expect(ExternalApi::VbmsDocumentSeriesForAppeal).to receive(:new).with(file_number: appeal.veteran_file_number)
         expect(mock_vbms_document_series_for_appeal).to receive(:fetch)
@@ -96,7 +96,7 @@ describe ExternalApi::VBMSService do
 
     context "with use_ce_api feature toggle disabled" do
       it "calls the VbmsDocumentsForAppeal service" do
-        expect(FeatureToggle).to receive(:enabled?).with(:send_current_user_cred).and_return(false)
+        expect(FeatureToggle).to receive(:enabled?).with(:send_current_user_cred_to_ce_api).and_return(false)
         expect(FeatureToggle).to receive(:enabled?).with(:use_ce_api).and_return(false)
         expect(ExternalApi::VbmsDocumentsForAppeal).to receive(:new).with(file_number: appeal.veteran_file_number)
         expect(mock_vbms_document_series_for_appeal).to receive(:fetch)
@@ -124,8 +124,8 @@ describe ExternalApi::VBMSService do
       end
 
       context "with check_user_sensitivty feature toggle enabled" do
-        before { FeatureToggle.enable!(:send_current_user_cred) }
-        after { FeatureToggle.disable!(:send_current_user_cred) }
+        before { FeatureToggle.enable!(:send_current_user_cred_to_ce_api) }
+        after { FeatureToggle.disable!(:send_current_user_cred_to_ce_api) }
 
         let(:fake_veteran) do
           Generators::Veteran.build(file_number: fake_document.file_number)
