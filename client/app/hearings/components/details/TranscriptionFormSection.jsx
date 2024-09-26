@@ -7,6 +7,8 @@ import TranscriptionDetailsWebex from './TranscriptionDetailsWebex';
 import TranscriptionProblemInputs from './TranscriptionProblemInputs';
 import TranscriptionRequestInputs from './TranscriptionRequestInputs';
 import TranscriptionFilesTable from './TranscriptionFilesTable';
+import TranscriberDetails from './TranscriberDetails';
+
 import { genericRow } from './style';
 
 export const TranscriptionFormSection = (
@@ -18,7 +20,10 @@ export const TranscriptionFormSection = (
     {!isLegacy && (
       <>
         {(isWebex && <>
-          <div className="cf-help-divider" />
+
+          <TranscriberDetails hearing={hearing} />
+          <div className= "cf-help-divider" />
+
           <TranscriptionDetailsWebex
             title="Transcription"
             transcription={transcription}

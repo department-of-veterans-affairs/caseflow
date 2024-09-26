@@ -1,1 +1,1 @@
-VaBoxService = ApplicationController.dependencies_faked? ? Fakes::VaBoxService : ExternalApi::VaBoxService
+VaBoxService = Rails.deploy_env?(:test) ? Fakes::VaBoxService : ExternalApi::VaBoxService

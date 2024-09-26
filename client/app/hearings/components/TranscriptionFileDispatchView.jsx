@@ -9,6 +9,8 @@ import PackageFilesModal from './transcriptionProcessing/PackageFilesModal';
 import ApiUtil from '../../util/ApiUtil';
 import { getQueryParams, encodeQueryParams } from '../../util/QueryParamsUtil';
 import WorkOrderHightlightsModal from './transcriptionProcessing/WorkOrderHighlightsModal';
+import PropTypes from 'prop-types';
+
 const defaultAlert = {
   title: '',
   message: '',
@@ -25,7 +27,7 @@ const styles = css({
   }
 });
 
-export const TranscriptionFileDispatchView = () => {
+export const TranscriptionFileDispatchView = ({ organizations }) => {
   const [alert, setAlert] = useState(defaultAlert);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [modalConfig, setModalConfig] = useState({ opened: false, type: '' });
@@ -131,7 +133,7 @@ export const TranscriptionFileDispatchView = () => {
       <AppSegment filledBackground>
         <div {...styles}>
           <h1>Transcription file dispatch</h1>
-          <QueueOrganizationDropdown organizations={[{ name: 'Transcription', url: 'transcription-team' }]} />
+          <QueueOrganizationDropdown organizations={organizations} />
         </div>
         <TabWindow
           name="transcription-tabwindow"
@@ -144,4 +146,8 @@ export const TranscriptionFileDispatchView = () => {
       </AppSegment>
     </>
   );
+};
+
+TranscriptionFileDispatchView.propTypes = {
+  organizations: PropTypes.array
 };

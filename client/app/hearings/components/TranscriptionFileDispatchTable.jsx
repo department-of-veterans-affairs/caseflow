@@ -16,7 +16,7 @@ import {
   uploadDateColumn,
   contractorColumn,
   statusColumn,
-  unassignColumn
+  unassignColumn,
 } from './TranscriptionFileDispatchTableColumns';
 import { css } from 'glamor';
 import { encodeQueryParams } from '../../util/QueryParamsUtil';
@@ -25,12 +25,12 @@ import WorkOrderUnassignModal from './transcriptionProcessing/WorkOrderUnassignM
 
 const styles = css({
   '& div *': {
-    outline: 'none'
+    outline: 'none',
   },
   '& table': {
     marginTop: '0',
     position: 'relative',
-    top: '-1em'
+    top: '-1em',
   },
   '& thead': {
     margin: '-2em 0 0 0',
@@ -44,29 +44,34 @@ const styles = css({
   },
   '& thead > :first-child': {
     position: 'relative',
-    top: '1em'
+    top: '1em',
   },
   '& svg': {
-    marginTop: '0.3em'
+    marginTop: '0.3em',
   },
   '& .cf-pagination-summary': {
     position: 'relative',
     top: '0.4em',
-    margin: '0'
+    margin: '0',
   },
   '& .cf-pagination-pages': {
-    margin: '0'
+    margin: '0',
   },
   '& th:last-child .cf-dropdown-filter': {
-    left: '-200px'
+    left: '-200px',
   },
   '& .cf-table-wrapper': {
     minHeight: '620px',
-    overflow: 'unset'
-  }
+    overflow: 'unset',
+  },
 });
 
-export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFilesForPackage, openModal }) => {
+export const TranscriptionFileDispatchTable = ({
+  columns,
+  statusFilter,
+  selectFilesForPackage,
+  openModal,
+}) => {
   const [tableData, setTableData] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [selectingFile, setSelectingFile] = useState(false);
@@ -108,22 +113,23 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
    * including files locked by other users
    */
   const getFileStatuses = () => {
-    ApiUtil.get('/hearings/transcription_files/locked').
-      then((response) => {
-        if (!selectingFile) {
-          setSelectedFiles(response.body);
-          selectFilesForPackage(response.body);
-        }
-      });
+    ApiUtil.get('/hearings/transcription_files/locked').then((response) => {
+      if (!selectingFile) {
+        setSelectedFiles(response.body);
+        selectFilesForPackage(response.body);
+      }
+    });
   };
 
   /**
    * Get the list of transcription contractors for use in the filter
    */
   const getContractors = () => {
-    ApiUtil.get('/hearings/find_by_contractor/filterable_contractors').
-      // eslint-disable-next-line camelcase
-      then((response) => setContractors(response.body?.transcription_contractors));
+    ApiUtil.get('/hearings/find_by_contractor/filterable_contractors').then(
+      (response) =>
+        // eslint-disable-next-line camelcase
+        setContractors(response.body?.transcription_contractors)
+    );
   };
 
   /**
@@ -131,7 +137,7 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
    * @returns The url params needed to handle pagination
    */
   const qs = encodeQueryParams({
-    tab: statusFilter
+    tab: statusFilter[0]
   });
 
   /**
@@ -158,9 +164,13 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
     let newlySelectedFiles;
 
     if (value) {
-      newlySelectedFiles = selectedFiles.concat(ids.map((id) => ({ id, status: 'selected' })));
+      newlySelectedFiles = selectedFiles.concat(
+        ids.map((id) => ({ id, status: 'selected' }))
+      );
     } else {
-      newlySelectedFiles = selectedFiles.filter((file) => !ids.includes(file.id));
+      newlySelectedFiles = selectedFiles.filter(
+        (file) => !ids.includes(file.id)
+      );
     }
 
     setSelectedFiles(newlySelectedFiles);
@@ -168,16 +178,17 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
 
     const data = {
       file_ids: ids,
-      status: value
+      status: value,
     };
 
     // send lock requests and return actual list of locks to refresh the view
-    ApiUtil.post('/hearings/transcription_files/lock', { data }).
-      then((response) => {
+    ApiUtil.post('/hearings/transcription_files/lock', { data }).then(
+      (response) => {
         setSelectingFile(false);
         setSelectedFiles(response.body);
         selectFilesForPackage(response.body);
-      });
+      }
+    );
   };
 
   /**
@@ -186,8 +197,12 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
    * @param {string} value - Selecting or unselecting
    */
   const selectAllFiles = (value) => {
-    const lockedFileIds = selectedFiles.filter((file) => file.status === 'locked').map((file) => file.id);
-    const ids = tableData.filter((file) => !lockedFileIds.includes(file.id)).map((file) => file.id);
+    const lockedFileIds = selectedFiles.
+      filter((file) => file.status === 'locked').
+      map((file) => file.id);
+    const ids = tableData.
+      filter((file) => !lockedFileIds.includes(file.id)).
+      map((file) => file.id);
 
     selectFiles(ids, value);
   };
@@ -199,7 +214,12 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
    */
   const createColumnObject = (column) => {
     const functionForColumn = {
-      selectColumn: selectColumn(selectFiles, selectAllFiles, selectedFiles, tableData),
+      selectColumn: selectColumn(
+        selectFiles,
+        selectAllFiles,
+        selectedFiles,
+        tableData
+      ),
       docketNumberColumn: docketNumberColumn(),
       caseDetailsColumn: caseDetailsColumn(),
       typesColumn: typesColumn(),
@@ -210,10 +230,8 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
       dateSentColumn: dateSentColumn(),
       expectedReturnDateColumn: expectedReturnDateColumn(),
       contractorColumn: contractorColumn(contractors),
-      statusColumn: statusColumn(),
+      statusColumn: statusColumn(statusFilter[0]),
       unassignColumn: unassignColumn(unassignPackage),
-      returnDateColumn: returnDateColumn(),
-      uploadDateColumn: uploadDateColumn(),
     };
 
     return functionForColumn[column.name];
@@ -233,11 +251,16 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
    * @returns The restored params object
    */
   const getUrlParams = (query) =>
-    Array.from(new URLSearchParams(query)).reduce((pValue, [kValue, vValue]) =>
-      Object.assign({}, pValue, {
-        [kValue]: pValue[kValue] ? (Array.isArray(pValue[kValue]) ?
-          pValue[kValue] : [pValue[kValue]]).concat(vValue) : vValue
-      }), {});
+    Array.from(new URLSearchParams(query)).reduce(
+      (pValue, [kValue, vValue]) =>
+        Object.assign({}, pValue, {
+          [kValue]: pValue[kValue] ?
+            (Array.isArray(pValue[kValue]) ?
+              pValue[kValue] :
+              [pValue[kValue]]).concat(vValue) : vValue,
+        }),
+      {}
+    );
 
   /**
    * Call for initial selection statuses and set interval to keep refreshing them
@@ -256,7 +279,7 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
   }, []);
 
   return (
-    <div {...styles} >
+    <div {...styles}>
       <QueueTable
         columns={columnsFromConfig(columns)}
         rowObjects={[]}
@@ -284,10 +307,11 @@ TranscriptionFileDispatchTable.propTypes = {
   columns: PropTypes.objectOf(
     PropTypes.shape({
       name: PropTypes.string,
-      filterable: PropTypes.bool || PropTypes.string
-    })),
+      filterable: PropTypes.bool || PropTypes.string,
+    })
+  ),
   statusFilter: PropTypes.arrayOf(PropTypes.string),
   selectAll: PropTypes.func,
   selectFilesForPackage: PropTypes.func,
-  openModal: PropTypes.func
+  openModal: PropTypes.func,
 };

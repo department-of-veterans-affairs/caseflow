@@ -30,6 +30,7 @@ RSpec.describe Hearings::TranscriptionPackagesController, type: :controller do
         contractor: c_1,
         created_at: "2024-09-01 00:00:00",
         expected_return_date: "2024-09-15",
+        status: "Overdue",
         hearings: [h_1]
       )
     end
@@ -41,6 +42,7 @@ RSpec.describe Hearings::TranscriptionPackagesController, type: :controller do
         contractor: c_2,
         created_at: "2024-09-02 00:00:00",
         expected_return_date: "2024-09-16",
+        status: "Successful Upload (BOX)",
         hearings: [h_1]
       )
     end
@@ -52,6 +54,7 @@ RSpec.describe Hearings::TranscriptionPackagesController, type: :controller do
         contractor: c_3,
         created_at: "2024-09-03 00:00:00",
         expected_return_date: "2024-09-17",
+        status: "Successful Upload (BOX)",
         hearings: [h_1]
       )
     end
@@ -63,6 +66,7 @@ RSpec.describe Hearings::TranscriptionPackagesController, type: :controller do
         contractor: c_1,
         created_at: "2024-09-04 00:00:00",
         expected_return_date: "2024-09-18",
+        status: "Overdue",
         hearings: [h_1]
       )
     end
@@ -87,7 +91,7 @@ RSpec.describe Hearings::TranscriptionPackagesController, type: :controller do
         dateSent: transcription_package_2.created_at.to_formatted_s(:short_date),
         expectedReturnDate: transcription_package_2.expected_return_date.to_formatted_s(:short_date),
         contractor: transcription_package_2.contractor.name,
-        status: transcription_package_2.status
+        status: "Successful Upload (BOX)"
       }
     end
 
@@ -99,7 +103,7 @@ RSpec.describe Hearings::TranscriptionPackagesController, type: :controller do
         dateSent: transcription_package_3.created_at.to_formatted_s(:short_date),
         expectedReturnDate: transcription_package_3.expected_return_date.to_formatted_s(:short_date),
         contractor: transcription_package_3.contractor.name,
-        status: transcription_package_3.status
+        status: "Successful Upload (BOX)"
       }
     end
 
@@ -115,7 +119,7 @@ RSpec.describe Hearings::TranscriptionPackagesController, type: :controller do
       }
     end
 
-    it "returns a pagenated result" do
+    it "returns a paginated result" do
       get :transcription_package_tasks, params: { page_size: 2 }
 
       expected_response = {
@@ -131,7 +135,7 @@ RSpec.describe Hearings::TranscriptionPackagesController, type: :controller do
       expect(response.body).to eq(expected_response)
     end
 
-    it "returns second page of pagenated results" do
+    it "returns second page of paginated results" do
       get :transcription_package_tasks, params: { page: 2, page_size: 2 }
 
       expected_response = {
