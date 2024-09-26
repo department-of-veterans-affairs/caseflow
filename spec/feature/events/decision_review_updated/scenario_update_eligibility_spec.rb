@@ -120,7 +120,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
           expect(existing_request_issue.contention_removed_at).to be_within(1.second).of(DateTime.now)
           expect(existing_request_issue.contention_reference_id).to eq(100_500)
           expect(response).to have_http_status(:ok)
-          expect(response.body).to include("DecisionReviewUpdatedEvent successfully updated")
+          expect(response.body).to include("DecisionReviewUpdatedEvent successfully processed")
           existing_request_issue.reload
 
           expect(existing_request_issue.ineligible_reason).to eq(nil)
@@ -245,7 +245,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
           expect(existing_request_issue.reference_id).to eq("1234")
           post :decision_review_updated, params: valid_params
           expect(response).to have_http_status(:ok)
-          expect(response.body).to include("DecisionReviewUpdatedEvent successfully updated")
+          expect(response.body).to include("DecisionReviewUpdatedEvent successfully processed")
           existing_request_issue.reload
           expect(existing_request_issue.ineligible_reason).to eq("appeal_to_appeal")
           expect(existing_request_issue.contested_issue_description).to eq("Eligible UPDATED")
@@ -368,7 +368,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
           expect(existing_request_issue.reference_id).to eq("1234")
           post :decision_review_updated, params: valid_params
           expect(response).to have_http_status(:ok)
-          expect(response.body).to include("DecisionReviewUpdatedEvent successfully updated")
+          expect(response.body).to include("DecisionReviewUpdatedEvent successfully processed")
           existing_request_issue.reload
           expect(existing_request_issue.ineligible_reason).to eq("appeal_to_appeal")
           expect(existing_request_issue.contested_issue_description).to eq("UPDATED contested issue deascription")
