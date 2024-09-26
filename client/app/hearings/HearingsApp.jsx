@@ -124,7 +124,7 @@ export default class HearingsApp extends React.PureComponent {
   };
 
   routeForTranscriptionFileDispatch = () =>
-    <TranscriptionFileDispatchView />
+    <TranscriptionFileDispatchView organizations={this.props.organizations} />
 
   routeForWorkOrderSummary =() => {
     const location = useLocation();
@@ -300,5 +300,6 @@ HearingsApp.propTypes = {
   mstIdentification: PropTypes.bool,
   pactIdentification: PropTypes.bool,
   legacyMstPactIdentification: PropTypes.bool,
-  userIsNonBoardEmployee: PropTypes.bool
+  userIsNonBoardEmployee: PropTypes.bool,
+  organizations: PropTypes.array,
 };
