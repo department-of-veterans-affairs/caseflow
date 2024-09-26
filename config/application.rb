@@ -165,6 +165,7 @@ module CaseflowCertification
         "va_notify_send_message_template" => "VANotifySendMessageTemplate",
         "va_notify_service" => "VANotifyService",
         "vacols" => "VACOLS",
+        "vacols_csv_reader" => "VacolsCSVReader",
         "vbms_caseflow_logger" => "VBMSCaseflowLogger",
         "vbms_request" => "VBMSRequest",
         "vbms_service" => "VBMSService",
