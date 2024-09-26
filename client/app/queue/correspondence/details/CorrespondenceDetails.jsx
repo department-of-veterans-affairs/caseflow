@@ -362,7 +362,7 @@ const CorrespondenceDetails = (props) => {
               >
                 View veteran documents
                 <div className="external-link-icon-wrapper">
-                 <ExternalLinkIcon color={COLORS.PRIMARY} />
+                  <ExternalLinkIcon color={COLORS.PRIMARY} />
                 </div>
               </a>
             </div>
@@ -374,34 +374,34 @@ const CorrespondenceDetails = (props) => {
               aria-label="Toggle section"
               aria-expanded={isExpanded}
             >
-             {isExpanded ? '_' : <span className="plus-symbol">+</span>}
+              {isExpanded ? '_' : <span className="plus-symbol">+</span>}
             </Button>
           </div>
         </div>
         <div className="collapse-section-container">
-           {isExpanded && (
-              <AppSegment filledBackground noMarginTop>
-                <CaseListTable
-                  appeals={appealsToDisplay}
-                  paginate="true"
-                  showCheckboxes
-                  taskRelatedAppealIds={selectedAppeals}
-                  enableTopPagination
-                  checkboxOnChange={appealCheckboxOnChange}
-                  toggleCheckboxState={toggleCheckboxState}
-                />
-              </AppSegment>
-            )}
-            {(props.correspondence.correspondenceAppeals.map((taskAdded) =>
-              taskAdded.correspondencesAppealsTasks?.length > 0 && <CorrespondenceTasksAdded
-                task_added={taskAdded}
-                correspondence={props.correspondence}
-                organizations={props.organizations}
-                userCssId={props.userCssId}
+          {isExpanded && (
+            <AppSegment filledBackground noMarginTop>
+              <CaseListTable
+                appeals={appealsToDisplay}
+                paginate="true"
+                showCheckboxes
+                taskRelatedAppealIds={selectedAppeals}
+                enableTopPagination
+                checkboxOnChange={appealCheckboxOnChange}
+                toggleCheckboxState={toggleCheckboxState}
               />
-              )
-            )}
-          </div>
+            </AppSegment>
+          )}
+          {(props.correspondence.correspondenceAppeals.map((taskAdded) =>
+              taskAdded.correspondencesAppealsTasks?.length > 0 && <CorrespondenceTasksAdded
+              task_added={taskAdded}
+              correspondence={props.correspondence}
+              organizations={props.organizations}
+              userCssId={props.userCssId}
+            />
+          )
+          )}
+        </div>
       </React.Fragment>
     );
   };

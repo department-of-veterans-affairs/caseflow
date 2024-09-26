@@ -143,6 +143,15 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   margin-bottom: -7px;
 }
 
+.a-r-h2-response-letter {
+  margin: 0px;
+  padding: 0px;
+}
+
+.a-r-hr {
+  border-top: 1px solid #d6d7d9;
+}
+
 .correspondence-doctype-edit-dropdown .cf-select .cf-select__control {
   max-width: 43rem;
 }
@@ -1625,4 +1634,84 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
 .tasks-added-details {
   margin-left: 40px;
+}
+
+.grayLineStyling {
+  width: 5px;
+  background: gray;
+  margin: auto;
+  position: absolute;
+  top: 30px;
+  left: 45.5%;
+  bottom: 0;
+}
+
+.grayLineTimelineStyling {
+  @extend .grayLineStyling;
+  left: 9%;
+  margin-left: 12px;
+  top: 39px;
+}
+
+.greyDotAndlineStyling {
+  top: 0px;
+  position: absolute; // Ensure it's positioned correctly
+}
+
+.taskContainerStyling {
+  border: none;
+  vertical-align: top;
+  padding: 3px;
+  padding-bottom: 1.5em;
+}
+
+.taskTimeContainerStyling {
+  @extend .taskContainerStyling;
+  width: 20%;
+}
+
+.taskInformationContainerStyling {
+  @extend .taskContainerStyling;
+  width: 25%;
+}
+
+.taskTimeTimelineContainerStyling {
+  @extend .taskContainerStyling;
+  width: 40%;
+}
+
+.taskInfoWithIconContainer {
+  text-align: center;
+  border: none;
+  padding: 0;
+  position: relative;
+  vertical-align: top;
+  width: 15px;
+}
+
+.taskInfoWithIconTimelineContainer {
+  @extend .taskInfoWithIconContainer;
+  text-align: left;
+  margin-left: 5px;
+  width: 10%;
+  padding-left: 0;
+}
+
+.task-instructions {
+  margin-bottom: 2.4rem;
+  margin-top: 1em;
+}
+
+.cf-row-wrapper {
+  margin-bottom: 0px;
+}
+
+.button-left-aligned {
+  text-align: left;
+  padding-left: 0;
+  padding-top: 0;
+}
+
+.button-left-aligned > span {
+  margin-left: 0;
 }
