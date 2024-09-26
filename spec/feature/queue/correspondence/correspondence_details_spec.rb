@@ -192,6 +192,9 @@ RSpec.feature("The Correspondence Details page") do
         nod: false,
         notes: "Note Test"
       )
+      CorrespondenceType.create!(
+        name: "General Information Test Correspondence Type"
+      )
     end
 
     it "checks the General Information of Veteran and allows edits to it" do
@@ -205,12 +208,13 @@ RSpec.feature("The Correspondence Details page") do
 
       # Edit information and check
       safe_click "#tasks-tabwindow-tab-1"
-      # fill in vador
-      # fill in type
-      # fill in notes
-      # save
-      expect(page).to have_content("Abeyance")
+      click_button("Edit")
+      all("div.input-container > input")[0].fill_in(with: "08/23/2024")
+      click_dropdown(text: "General Information Test Correspondence Type")
+      find("textarea").fill_in(with: "Note Test Changed")
+      click_button("Save")
       expect(page).to have_content("8/23/2024")
+      expect(page).to have_content("General Information Test Correspondence Type")
       expect(page).to have_content("Note Test Changed")
     end
   end
