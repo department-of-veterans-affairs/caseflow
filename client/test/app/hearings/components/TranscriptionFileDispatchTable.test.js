@@ -524,7 +524,7 @@ const setupAllTranscriptionTable = () =>
     <Router>
       <TranscriptionFileDispatchTable
         columns={allTranscriptionColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
-        statusFilter={['AllTranscription']}
+        statusFilter={['All']}
       />
     </Router>
   );
@@ -560,7 +560,7 @@ describe('TranscriptionFileDispatchTable', () => {
 
     when(ApiUtil.get).
       calledWith(
-        '/hearings/transcription_files/transcription_file_tasks?tab=AllTranscription&page=1'
+        '/hearings/transcription_files/transcription_file_tasks?tab=All&page=1'
       ).
       mockResolvedValue(mockTranscriptionFilesResponse);
 

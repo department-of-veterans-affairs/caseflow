@@ -219,7 +219,7 @@ export const tabConfig = (openModal, selectFilesForPackage, files) => [
       <div style={styles.tableWrapper}>
         <TranscriptionFileDispatchTable
           columns={allTranscriptionColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
-          statusFilter={['AllTranscription']}
+          statusFilter={['All']}
           openModal={openModal}
         />
       </div>

@@ -41,6 +41,8 @@ class TranscriptionFile < CaseflowRecord
 
   scope :unassigned, -> { where(file_status: Constants.TRANSCRIPTION_FILE_STATUSES.upload.success) }
 
+  scope :sent_or_completed, -> { joins(transcription: :transcription_package).distinct }
+
   scope :filter_by_hearing_type, ->(values) { where("hearing_type IN (?)", values) }
 
   scope :filter_by_types, lambda { |values|
