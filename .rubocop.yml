@@ -104,7 +104,7 @@ Metrics/MethodLength:
     - app/jobs/middleware/job_sentry_scope_middleware.rb
     - lib/helpers/unrecognized_appellant.rb
     - lib/helpers/duplicate_veteran_checker.rb
-    - lib/helpers/report_load_end_product_sync.rb
+    - lib/helpers/war_room/report_load_end_product_sync.rb
     - lib/helpers/claim_label_change.rb
     - "spec/**/*"
 
@@ -213,7 +213,7 @@ Layout/LineLength:
   Max: 120
   Exclude:
     - lib/helpers/duplicate_veteran_checker.rb
-    - lib/helpers/report_load_end_product_sync.rb
+    - lib/helpers/war_room/report_load_end_product_sync.rb
 
 
 Layout/MultilineMethodCallIndentation:
