@@ -71,6 +71,7 @@ export const TranscriptionFileDispatchTable = ({
   statusFilter,
   selectFilesForPackage,
   openModal,
+  searchValue,
 }) => {
   const [tableData, setTableData] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -137,7 +138,8 @@ export const TranscriptionFileDispatchTable = ({
    * @returns The url params needed to handle pagination
    */
   const qs = encodeQueryParams({
-    tab: statusFilter[0]
+    tab: statusFilter[0],
+    search: searchValue
   });
 
   /**

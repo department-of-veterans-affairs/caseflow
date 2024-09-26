@@ -9,6 +9,7 @@ import { TranscriptionFileDispatchTable } from './TranscriptionFileDispatchTable
 import { css } from 'glamor';
 import TRANSCRIPTION_FILE_DISPATCH_CONFIG from '../../../constants/TRANSCRIPTION_FILE_DISPATCH_CONFIG';
 import { sprintf } from 'sprintf-js';
+import { getQueryParams } from '../../util/QueryParamsUtil';
 
 const styles = {
   tabColumns: {
@@ -111,7 +112,7 @@ const TranscriptionSettingsLink = () => (
 );
 
 // This maps the component to render for each tab
-export const tabConfig = (openModal, selectFilesForPackage, files) => [
+export const tabConfig = (openModal, selectFilesForPackage, files, handleSearchBarChange, handleSearchBarSubmit) => [
   {
     label: COPY.CASE_LIST_TABLE_UNASSIGNED_LABEL,
     page: <>
@@ -138,6 +139,9 @@ export const tabConfig = (openModal, selectFilesForPackage, files) => [
               id="transcription-table-search"
               isSearchAhead
               title={COPY.TRANSCRIPTION_FILE_DISPATCH_UNASSIGNED_TAB_SEARCH}
+              onChange={handleSearchBarChange}
+              onSubmit={handleSearchBarSubmit}
+              submitUsingEnterKey
             />
           </div>
         </div>
@@ -147,6 +151,7 @@ export const tabConfig = (openModal, selectFilesForPackage, files) => [
           columns={unassignedColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
           statusFilter={['Unassigned']}
           selectFilesForPackage={selectFilesForPackage}
+          searchValue={getQueryParams(window.location.search).search}
         />
       </div>
     </>
