@@ -145,6 +145,7 @@ module CaseflowCertification
         "bgs_service_concern" => "BGSServiceConcern",
         "bgs_service_grants" => "BGSServiceGrants",
         "bgs_service_poa" => "BGSServicePOA",
+        "bgs_service_record_maker" => "BGSServiceRecordMaker",
         "bva_appeal_status" => "BVAAppealStatus",
         "cavc_case_decision" => "CAVCCaseDecision",
         "cavc_decision" => "CAVCDecision",
