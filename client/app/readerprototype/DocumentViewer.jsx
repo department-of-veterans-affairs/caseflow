@@ -69,21 +69,6 @@ const DocumentViewer = (props) => {
     return () => window.removeEventListener('keydown', keyHandler);
   }, [showSideBar]);
 
-  const getPageNumFromScrollTop = (event) => {
-    const { clientHeight, scrollTop, scrollHeight } = event.target;
-    const pageHeightEstimate =
-      rotateDeg === ROTATION_DEGREES.NINETY || rotateDeg === ROTATION_DEGREES.TWO_SEVENTY ?
-        clientHeight :
-        scrollHeight / numPages;
-    const pageNumber = Math.ceil((pageHeightEstimate + scrollTop) / pageHeightEstimate);
-
-    if (pageNumber > numPages) {
-      setCurrentPage(numPages);
-    } else {
-      setCurrentPage(pageNumber);
-    }
-  };
-
   useEffect(() => {
     document.body.style.overflow = 'hidden';
 
@@ -110,10 +95,11 @@ const DocumentViewer = (props) => {
           zoomLevel={zoomLevel}
         />
         {showSearchBar && <ReaderSearchBar />}
-        <div className="cf-pdf-scroll-view" onScroll={getPageNumFromScrollTop}>
+        <div className="cf-pdf-scroll-view">
           <PdfDocument
             doc={doc}
             rotateDeg={rotateDeg}
+            setCurrentPage={setCurrentPage}
             setNumPages={setNumPages}
             zoomLevel={zoomLevel}
             currentPage={currentPage}

@@ -10,7 +10,7 @@ import Page from './Page';
 import TextLayer from './TextLayer';
 import DocumentLoadError from './DocumentLoadError';
 
-const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel, currentPage }) => {
+const PdfDocument = ({ currentPage, doc, rotateDeg, setCurrentPage, setNumPages, zoomLevel }) => {
   const [isDocumentLoadError, setIsDocumentLoadError] = useState(false);
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
@@ -78,6 +78,7 @@ const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel, currentPage }) =>
       {isDocumentLoadError && <DocumentLoadError doc={doc} />}
       {pdfPages.map((page, index) => (
         <Page
+          setCurrentPage={setCurrentPage}
           scale={zoomLevel}
           page={page}
           rotation={rotateDeg}
@@ -103,6 +104,7 @@ PdfDocument.propTypes = {
     type: PropTypes.string,
   }),
   rotateDeg: PropTypes.string,
+  setCurrentPage: PropTypes.func,
   setNumPages: PropTypes.func,
   zoomLevel: PropTypes.number,
 };

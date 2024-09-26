@@ -28,7 +28,7 @@ import { ROTATION_DEGREES } from '../util/readerConstants';
 // When rotating, we swap height and width of the container.
 // The child is still centered in the container, so we must offset it put it back to the
 // top / center of the container.
-const Page = memo(({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale }) => {
+const Page = memo(({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale, setCurrentPage }) => {
   const canvasRef = useRef(null);
   const isVisible = usePageVisibility(canvasRef);
   const wrapperRef = useRef(null);
@@ -96,6 +96,7 @@ const Page = memo(({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale }
   // so that scrolling doesn't trigger rerenders
   useEffect(() => {
     if (isVisible) {
+      setCurrentPage(page.pageNumber);
       clearTimeout(renderTimeout.current);
       renderTimeout.current = setTimeout(render, 500);
     }
@@ -172,6 +173,7 @@ Page.propTypes = {
   rotation: PropTypes.string,
   renderItem: PropTypes.func,
   scale: PropTypes.number,
+  setCurrentPage: PropTypes.func,
 };
 
 export default Page;
