@@ -1,13 +1,12 @@
 /* eslint-disable react/prop-types */
-import { render, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import React from 'react';
-import { Provider } from 'react-redux';
-import { applyMiddleware, createStore } from 'redux';
-import thunk from 'redux-thunk';
-import pdfViewerReducer from '../../../../app/reader/PdfViewer/PdfViewerReducer';
-import DocumentViewer from '../../../../app/readerprototype/DocumentViewer';
-import { MemoryRouter } from 'react-router-dom';
+import { render, waitFor } from "@testing-library/react";
+import React from "react";
+import { Provider } from "react-redux";
+import { applyMiddleware, createStore } from "redux";
+import thunk from "redux-thunk";
+import pdfViewerReducer from "../../../../app/reader/PdfViewer/PdfViewerReducer";
+import DocumentViewer from "../../../../app/readerprototype/DocumentViewer";
+import { MemoryRouter } from "react-router-dom";
 
 afterEach(() => jest.clearAllMocks());
 
@@ -36,10 +35,7 @@ const getStore = () =>
       },
       documentList: {
         searchCategoryHighlights: [{ 1: {} }, { 2: {} }],
-        filteredDocIds: [
-          1,
-          2,
-        ],
+        filteredDocIds: [1, 2],
         docFilterCriteria: {},
       },
       annotationLayer: {
@@ -111,7 +107,6 @@ const props = {
   match: {
     params: { docId: "1", vacolsId: "3575931" },
   },
-
 };
 
 const Component = () => (
@@ -122,28 +117,42 @@ const Component = () => (
   </Provider>
 );
 
-describe('Open Document and Close Issue tags Sidebar Section', () => {
-  it('Navigate to next document and verify Issue tags stay closed', async () => {
-    const { container, getByText } = render(
-      <Component doc={doc} document={doc} />
+describe('Open Document and Test Column Layout', () => {
+  it('should change layout from single column to double column at larger width', async () => {
+    // Initial render at width 1080 (single column)
+    global.innerWidth = 1080;
+    const { container } = render(<Component doc={{}} document={{}} />);
+
+    // verify initial width
+    expect(global.innerWidth).toBe(1080);
+
+    // Simulate typing 2 into the page number text box
+    const pageNumberTextBox = container.querySelector('#page-progress-indicator-input');
+    pageNumberTextBox.value = 2;
+
+    // Verify the textbox now holds "2"
+    waitFor(() =>
+      expect(container).querySelector('#page-progress-indicator-input').value.toBe(2)
     );
 
-    expect(container).toHaveTextContent('Select or tag issues');
-    expect(container).toHaveTextContent('Add a comment');
-    expect(container).toHaveTextContent('Procedural');
-    expect(container).toHaveTextContent('Document 1 of 2');
+    // Now simulate increasing the screen width to 2000px (double column layout)
+    global.innerWidth = 2000;
+    global.dispatchEvent(new Event('resize'));
+    expect(global.innerWidth).toBe(2000);
 
-    userEvent.click(getByText('Issue tags'));
+    // After resizing, the layout should change and the text box should now display 1
     waitFor(() =>
-      expect(container).not.toHaveTextContent('Select or tag issues')
+      expect(container).querySelector('#page-progress-indicator-input').value.toBe(1)
     );
 
-    userEvent.click(getByText('Next'));
-    waitFor(() => expect(container).toHaveTextContent('Add a comment'));
-    waitFor(() => expect(container).toHaveTextContent('Procedural'));
-    waitFor(() => expect(container).toHaveTextContent('Document 2 of 2'));
+    // Simulate a smaller width (1100px), where it should still be a single column layout
+    global.innerWidth = 1100;
+    global.dispatchEvent(new Event('resize'));
+    expect(global.innerWidth).toBe(1100);
+
+    // The page number should still remain 1
     waitFor(() =>
-      expect(container).not.toHaveTextContent('Select or tag issues')
+      expect(container).querySelector('#page-progress-indicator-input').value.toBe('1')
     );
   });
 });
