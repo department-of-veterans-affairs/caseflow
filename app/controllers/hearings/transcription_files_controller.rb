@@ -119,6 +119,12 @@ class Hearings::TranscriptionFilesController < ApplicationController
         if filter_hash["col"] == "hearingDateColumn"
           @transcription_files = @transcription_files.filter_by_hearing_dates(filter_hash["val"].split(","))
         end
+        if filter_hash["col"] == "returnDateColumn"
+          @transcription_files = @transcription_files.filter_by_return_dates(filter_hash["val"].split(","))
+        end
+        if filter_hash["col"] == "uploadDateColumn"
+          @transcription_files = @transcription_files.filter_by_upload_dates(filter_hash["val"].split(","))
+        end
         if filter_hash["col"] == "contractorColumn"
           @transcription_files =
             @transcription_files.filter_by_contractor(filter_hash["val"].split("|"))
@@ -138,6 +144,10 @@ class Hearings::TranscriptionFilesController < ApplicationController
         @transcription_files.order_by_hearing_type(order)
       when "typesColumn"
         @transcription_files.order_by_case_type(order)
+      when "returnDateColumn"
+        @transcription_files.order_by_return_date(order)
+      when "uploadDateColumn"
+        @transcription_files.order_by_upload_date(order)
       else
         @transcription_files.order_by_id(order)
       end
@@ -169,8 +179,8 @@ class Hearings::TranscriptionFilesController < ApplicationController
         hearingDate: transcription_file.hearing_date,
         hearingType: transcription_file.hearing_type,
         fileStatus: transcription_file.file_status,
-        returnDate: transcription_file.date_returned_box&.to_formatted_s(:short_date),
-        uploadDate: transcription_file.date_upload_box&.to_formatted_s(:short_date),
+        returnDate: transcription_file.date_returned_box&.utc&.to_formatted_s(:short_date),
+        uploadDate: transcription_file.date_upload_box&.utc&.to_formatted_s(:short_date),
         contractor: transcription_file.transcription&.transcription_package&.contractor&.name,
         workOrder: transcription_file.transcription&.task_number,
         status: transcription_file.transcription&.transcription_package&.status

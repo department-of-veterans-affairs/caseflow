@@ -85,10 +85,51 @@ class TranscriptionFile < CaseflowRecord
     end
   }
 
+  scope :filter_by_return_dates, lambda { |values|
+    mode = values[0]
+    if mode == "between"
+      start_date = values[1] + " 00:00:00"
+      end_date = values[2] + " 23:59:59"
+      where(Arel.sql("date_returned_box >= '" + start_date + "' AND date_returned_box <= '" + end_date + "'"))
+    elsif mode == "before"
+      date = values[1] + " 00:00:00"
+      where(Arel.sql("date_returned_box < '" + date + "'"))
+    elsif mode == "after"
+      date = values[1] + " 23:59:59"
+      where(Arel.sql("date_returned_box > '" + date + "'"))
+    elsif mode == "on"
+      start_date = values[1] + " 00:00:00"
+      end_date = values[1] + " 23:59:59"
+      where(Arel.sql("date_returned_box >= '" + start_date + "' AND date_returned_box <= '" + end_date + "'"))
+    end
+  }
+
+  scope :filter_by_upload_dates, lambda { |values|
+    mode = values[0]
+    date = "transcription_files.date_upload_box"
+    if mode == "between"
+      start_date = values[1] + " 00:00:00"
+      end_date = values[2] + " 23:59:59"
+      where(Arel.sql("#{date} >= '" + start_date + "' AND #{date} <= '" + end_date + "'"))
+    elsif mode == "before"
+      date = values[1] + " 00:00:00"
+      where(Arel.sql("transcription_files.date_upload_box < '" + date + "'"))
+    elsif mode == "after"
+      date = values[1] + " 23:59:59"
+      where(Arel.sql("transcription_files.date_upload_box > '" + date + "'"))
+    elsif mode == "on"
+      start_date = values[1] + " 00:00:00"
+      end_date = values[1] + " 23:59:59"
+      where(Arel.sql("#{date} >= '" + start_date + "' AND #{date} <= '" + end_date + "'"))
+    end
+  }
+
   scope :order_by_id, ->(direction) { order(Arel.sql("id " + direction)) }
   scope :order_by_hearing_date, ->(direction) { order(Arel.sql("scheduled_for " + direction)) }
   scope :order_by_hearing_type, ->(direction) { order(Arel.sql("hearing_type " + direction)) }
   scope :order_by_case_type, ->(direction) { order(Arel.sql("sortable_case_type " + direction)) }
+  scope :order_by_return_date, ->(direction) { order(Arel.sql("date_returned_box " + direction)) }
+  scope :order_by_upload_date, ->(direction) { order(Arel.sql("date_upload_box " + direction)) }
 
   scope :locked, -> { where(locked_at: (Time.now.utc - 2.hours)..Time.now.utc) }
 
