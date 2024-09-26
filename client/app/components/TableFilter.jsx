@@ -75,11 +75,7 @@ class TableFilter extends React.PureComponent {
       });
 
       // Case insensitive ordering for the filter options
-      return _.orderBy(
-        filterOptionsFromApi.filter((option) => option.displayText),
-        [(option) => option.displayText.toLowerCase()],
-        ['asc']
-      );
+      return _.orderBy(filterOptionsFromApi, [(option) => option.displayText.toLowerCase()], ['asc']);
     }
 
     const columnValues = tableDataByRow.map((obj) => {

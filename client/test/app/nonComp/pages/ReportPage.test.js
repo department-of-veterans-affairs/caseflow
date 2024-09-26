@@ -195,34 +195,28 @@ describe('ReportPage', () => {
 
     it('shows the correct checkbox fields', async () => {
       await navigateToConditionInput('Decision Review Type');
-      const dropdown = screen.getByLabelText('Decision Review Type');
 
-      await selectEvent.select(dropdown, ['Higher-Level Reviews']);
-      expect(screen.getByText('Higher-Level Reviews')).toBeInTheDocument();
-
-      await selectEvent.select(dropdown, ['Supplemental Claims']);
-      expect(screen.getByText('Supplemental Claims')).toBeInTheDocument();
-
-      await selectEvent.select(dropdown, ['Remands']);
       expect(screen.getByText('Higher-Level Reviews')).toBeInTheDocument();
       expect(screen.getByText('Supplemental Claims')).toBeInTheDocument();
-      expect(screen.getByText('Remands')).toBeInTheDocument();
     });
 
-    it('renders an error if no selection is made', async () => {
+    it('clicking the checkbox should toggle the checked status', async () => {
       await navigateToConditionInput('Decision Review Type');
 
-      const generateTaskReport = screen.getByRole('button', { name: 'Generate task report' });
+      const checkbox = screen.getByLabelText('Higher-Level Reviews');
 
-      expect(generateTaskReport).not.toHaveClass('usa-button-disabled');
+      await userEvent.click(checkbox);
+      expect(checkbox.checked).toEqual(true);
 
-      // Wait for the validation text to appear before making assertions
-      await fireEvent.click(generateTaskReport);
-      await waitFor(() => {
-        const validationText = screen.getByText('Please select at least one option');
+      await userEvent.click(checkbox);
+      expect(checkbox.checked).toEqual(false);
 
-        expect(validationText).toBeInTheDocument();
-      });
+    });
+
+    it('should render an error if no checkbox is checked', async () => {
+      await navigateToConditionInput('Decision Review Type');
+      expect(screen.getByText('Higher-Level Reviews')).toBeInTheDocument();
+      await checkForValidationText('Please select at least one option');
     });
   });
 

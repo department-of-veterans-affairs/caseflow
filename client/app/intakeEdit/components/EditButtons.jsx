@@ -164,7 +164,6 @@ class SaveButtonUnconnected extends React.Component {
       benefitType,
       pendingIssueModificationRequests,
       originalPendingIssueModificationRequests,
-      isRemand,
       openIssueModificationRequests
     } = this.props;
 
@@ -191,7 +190,7 @@ class SaveButtonUnconnected extends React.Component {
     const saveDisabled = (_.isEqual(addedIssues, originalIssues) &&
        _.isEqual(pendingIssueModificationRequests, originalPendingIssueModificationRequests)) ||
       invalidVeteran ||
-      !withdrawDateValid || hasPendingAdditionRequests || isRemand;
+      !withdrawDateValid || hasPendingAdditionRequests;
 
     let saveButtonText;
 
@@ -302,7 +301,6 @@ SaveButtonUnconnected.propTypes = {
   specialtyCaseTeamDistribution: PropTypes.bool,
   pendingIssueModificationRequests: PropTypes.array,
   originalPendingIssueModificationRequests: PropTypes.array,
-  isRemand: PropTypes.bool,
   openIssueModificationRequests: PropTypes.array,
   state: PropTypes.shape({
     addedIssues: PropTypes.array
@@ -327,7 +325,6 @@ const SaveButton = connect(
     specialtyCaseTeamDistribution: state.featureToggles.specialtyCaseTeamDistribution,
     pendingIssueModificationRequests: state.pendingIssueModificationRequests,
     openIssueModificationRequests: getOpenPendingIssueModificationRequests(state),
-    isRemand: state.isRemand,
     originalPendingIssueModificationRequests: state.originalPendingIssueModificationRequests,
     state
   }),

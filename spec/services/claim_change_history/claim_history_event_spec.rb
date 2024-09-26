@@ -48,8 +48,7 @@ describe ClaimHistoryEvent do
       "event_date" => change_data_event_date,
       "task_versions" => version_changes,
       "days_waiting" => 25,
-      "task_closed_at" => "2023-10-19 22:47:16.233187",
-      "type_classifier" => change_data_claim_type
+      "task_closed_at" => "2023-10-19 22:47:16.233187"
     }
   end
 
@@ -850,14 +849,6 @@ describe ClaimHistoryEvent do
 
           it "readable claim type of Supplemental Claim" do
             expect(subject).to eq("Supplemental Claim")
-          end
-        end
-
-        context "when the claim type is Remand" do
-          let(:change_data_claim_type) { "Remand" }
-
-          it "readable claim type of Remand" do
-            expect(subject).to eq("Remand")
           end
         end
       end
