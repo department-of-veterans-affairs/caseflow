@@ -1490,7 +1490,7 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
                            
                           <ExternalLinkIcon
                             className=""
-                            color="#757575"
+                            color="#0071bc"
                             size={20}
                           >
                             <svg
@@ -1507,7 +1507,7 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
                                 strokeWidth="1"
                               >
                                 <g
-                                  fill="#757575"
+                                  fill="#0071bc"
                                   fillRule="nonzero"
                                 >
                                   <g
@@ -2561,7 +2561,7 @@ exports[`VirtualHearingFields Renders webex conference when conference provider 
                            
                           <ExternalLinkIcon
                             className=""
-                            color="#757575"
+                            color="#0071bc"
                             size={20}
                           >
                             <svg
@@ -2578,7 +2578,7 @@ exports[`VirtualHearingFields Renders webex conference when conference provider 
                                 strokeWidth="1"
                               >
                                 <g
-                                  fill="#757575"
+                                  fill="#0071bc"
                                   fillRule="nonzero"
                                 >
                                   <g
@@ -3622,7 +3622,7 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
                            
                           <ExternalLinkIcon
                             className=""
-                            color="#757575"
+                            color="#0071bc"
                             size={20}
                           >
                             <svg
@@ -3639,7 +3639,7 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
                                 strokeWidth="1"
                               >
                                 <g
-                                  fill="#757575"
+                                  fill="#0071bc"
                                   fillRule="nonzero"
                                 >
                                   <g
@@ -4693,7 +4693,7 @@ exports[`VirtualHearingFields Shows only hearing links with no virtualHearing 1`
                            
                           <ExternalLinkIcon
                             className=""
-                            color="#757575"
+                            color="#0071bc"
                             size={20}
                           >
                             <svg
@@ -4710,7 +4710,7 @@ exports[`VirtualHearingFields Shows only hearing links with no virtualHearing 1`
                                 strokeWidth="1"
                               >
                                 <g
-                                  fill="#757575"
+                                  fill="#0071bc"
                                   fillRule="nonzero"
                                 >
                                   <g
