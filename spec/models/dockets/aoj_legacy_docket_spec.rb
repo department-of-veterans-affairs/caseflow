@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe LegacyDocket do
+describe AojLegacyDocket do
   before do
     create(:case_distribution_lever, :request_more_cases_minimum)
     create(:case_distribution_lever, :nod_adjustment)
@@ -14,7 +14,7 @@ describe LegacyDocket do
   end
 
   let(:docket) do
-    LegacyDocket.new
+    AojLegacyDocket.new
   end
 
   let(:counts_by_priority_and_readiness) do
@@ -32,49 +32,23 @@ describe LegacyDocket do
     end
   end
 
-  context "#ready_priority_nonpriority_legacy_appeals" do
-    context "when priority is true" do
-      it "returns false when the lever is set to true" do
-        CaseDistributionLever.where(item: "disable_legacy_priority").update_all(value: true)
-        expect(docket.ready_priority_nonpriority_legacy_appeals(priority: true)).to be_falsey
-      end
-
-      it "returns true when the lever is set to false" do
-        CaseDistributionLever.where(item: "disable_legacy_priority").update_all(value: false)
-        expect(docket.ready_priority_nonpriority_legacy_appeals(priority: true)).to be_truthy
-      end
-    end
-
-    context "when priority is false" do
-      it "returns false when the lever is set to true" do
-        CaseDistributionLever.where(item: "disable_legacy_non_priority").update_all(value: true)
-        expect(docket.ready_priority_nonpriority_legacy_appeals(priority: false)).to be_falsey
-      end
-
-      it "returns true when the lever is set to false" do
-        CaseDistributionLever.where(item: "disable_legacy_non_priority").update_all(value: false)
-        expect(docket.ready_priority_nonpriority_legacy_appeals(priority: false)).to be_truthy
-      end
-    end
-  end
-
   context "#genpop_priority_count" do
-    it "calls AppealRepository.genpop_priority_count" do
-      expect(AppealRepository).to receive(:genpop_priority_count)
+    it "calls AojAppealRepository.genpop_priority_count" do
+      expect(AojAppealRepository).to receive(:genpop_priority_count)
       subject.genpop_priority_count
     end
   end
 
   context "#ready_priority_appeal_ids" do
-    it "calls AppealRepository.priority_ready_appeal_vacols_ids" do
-      expect(AppealRepository).to receive(:priority_ready_appeal_vacols_ids)
+    it "calls AojAppealRepository.priority_ready_appeal_vacols_ids" do
+      expect(AojAppealRepository).to receive(:priority_ready_appeal_vacols_ids)
       subject.ready_priority_appeal_ids
     end
   end
 
   context "#count" do
     before do
-      allow(LegacyAppeal.repository).to receive(:docket_counts_by_priority_and_readiness)
+      allow(LegacyAppeal.aoj_appeal_repository).to receive(:docket_counts_by_priority_and_readiness)
         .and_return(counts_by_priority_and_readiness)
     end
 
@@ -84,18 +58,6 @@ describe LegacyDocket do
       expect(docket.count(priority: false)).to eq(12)
       expect(docket.count(ready: false, priority: true)).to eq(2)
     end
-  end
-
-  context "#weight" do
-    subject { docket.weight }
-
-    before do
-      allow(LegacyAppeal.repository).to receive(:docket_counts_by_priority_and_readiness)
-        .and_return(counts_by_priority_and_readiness)
-      allow(LegacyAppeal.repository).to receive(:nod_count).and_return(1)
-    end
-
-    it { is_expected.to eq(12.4) }
   end
 
   context "#oldest_priority_appeals_days_waiting" do
@@ -127,7 +89,7 @@ describe LegacyDocket do
 
   context "#age_of_n_oldest_priority_appeals_available_to_judge" do
     let(:judge) { create(:user, :with_vacols_judge_record) }
-    subject { LegacyDocket.new.age_of_n_oldest_priority_appeals_available_to_judge(judge, 3) }
+    subject { AojLegacyDocket.new.age_of_n_oldest_priority_appeals_available_to_judge(judge, 3) }
 
     it "returns the receipt_date(BFD19) field of the oldest legacy priority appeals ready for distribution" do
       appeal = create_priority_distributable_legacy_appeal_not_tied_to_judge
@@ -137,7 +99,7 @@ describe LegacyDocket do
 
   context "#age_of_n_oldest_nonpriority_appeals_available_to_judge" do
     let(:judge) { create(:user, :with_vacols_judge_record) }
-    subject { LegacyDocket.new.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, 3) }
+    subject { AojLegacyDocket.new.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, 3) }
 
     it "returns the receipt_date(BFD19) field of the oldest legacy nonpriority appeals ready for distribution" do
       appeal = create_nonpriority_distributable_legacy_appeal_not_tied_to_judge
@@ -149,7 +111,7 @@ describe LegacyDocket do
     context "use_by_docket_date is true" do
       before { FeatureToggle.enable!(:acd_distribute_by_docket_date) }
       after { FeatureToggle.disable!(:acd_distribute_by_docket_date) }
-      subject { LegacyDocket.new.age_of_oldest_priority_appeal }
+      subject { AojLegacyDocket.new.age_of_oldest_priority_appeal }
       it "returns the receipt_date(BFD19) field of the oldest legacy priority appeals ready for distribution" do
         appeal = create_priority_distributable_legacy_appeal_not_tied_to_judge
         expect(subject).to eq(appeal.bfd19.to_date)
@@ -157,121 +119,10 @@ describe LegacyDocket do
     end
 
     context "use by_docket_date is false" do
-      subject { LegacyDocket.new.age_of_oldest_priority_appeal }
+      subject { AojLegacyDocket.new.age_of_oldest_priority_appeal }
       it "returns the receipt_date(BFDLOOUT) field of the oldest legacy priority appeals ready for distribution" do
         appeal = create_priority_distributable_legacy_appeal_not_tied_to_judge
         expect(subject).to eq(appeal.bfdloout)
-      end
-    end
-  end
-
-  context "#should_distribute?" do
-    let(:judge) { create(:user, :judge, :with_vacols_judge_record) }
-    let(:distribution) { Distribution.create!(judge: judge) }
-    let(:style) { "request" }
-    let(:genpop) { "any" }
-
-    subject { docket.should_distribute?(distribution, style: style, genpop: genpop) }
-
-    context "with tied cases" do
-      let(:genpop) { "not_genpop" }
-
-      it "always returns true" do
-        expect(subject).to be_truthy
-      end
-    end
-
-    context "with genpop cases" do
-      let(:genpop) { "any" }
-      context "when the JudgeTeam is set AMA only for the relevant type" do
-        context "when this is a push distribution" do
-          let(:style) { "push" }
-
-          before do
-            JudgeTeam.for_judge(judge).update!(ama_only_push: true, ama_only_request: false)
-          end
-
-          it "should return false since this is a legacy (non-AMA) docket" do
-            expect(subject).to be_falsey
-          end
-        end
-
-        context "when this is a requested distribution" do
-          let(:style) { "request" }
-
-          before do
-            JudgeTeam.for_judge(judge).update!(ama_only_push: true, ama_only_request: true)
-          end
-
-          it "should return false since this is a legacy (non-AMA) docket" do
-            expect(subject).to be_falsey
-          end
-        end
-      end
-
-      context "when the JudgeTeam is not AMA-only" do
-        before do
-          JudgeTeam.for_judge(judge).update!(ama_only_push: false, ama_only_request: false)
-        end
-
-        context "when this is a push distribution" do
-          let(:style) { "push" }
-
-          it "should return true" do
-            expect(subject).to be_truthy
-          end
-        end
-
-        context "when this is a requested distribution" do
-          let(:style) { "request" }
-
-          it "should return true" do
-            expect(subject).to be_truthy
-          end
-        end
-      end
-    end
-  end
-
-  context "#distribute_appeals" do
-    let(:judge) { create(:user, :judge, :with_vacols_judge_record) }
-    let(:distribution) { Distribution.create!(judge: judge) }
-    let(:style) { "request" }
-    let(:genpop) { "any" }
-    let(:priority) { false }
-    let(:limit) { 10 }
-
-    subject { docket.distribute_appeals(distribution, style: style, priority: priority, genpop: genpop, limit: limit) }
-
-    context "when should_distribute? returns false" do
-      it "returns an empty array" do
-        expect(docket).to receive(:should_distribute?)
-          .with(distribution, style: style, genpop: genpop)
-          .and_return(false)
-
-        expect(subject).to eq []
-      end
-    end
-
-    context "when this is a priority distribution" do
-      let(:priority) { true }
-
-      it "calls distribute_priority_appeals" do
-        expect(docket).to receive(:distribute_priority_appeals)
-          .with(distribution, style: style, genpop: genpop, limit: limit)
-
-        subject
-      end
-    end
-
-    context "when this is a non-priority distribution" do
-      let(:priority) { false }
-
-      it "calls distribute_nonpriority_appeals" do
-        expect(docket).to receive(:distribute_nonpriority_appeals)
-          .with(distribution, style: style, genpop: genpop, limit: limit, range: nil)
-
-        subject
       end
     end
   end
@@ -295,15 +146,15 @@ describe LegacyDocket do
     end
 
     context "when should_distribute? allows distribution" do
-      let!(:some_cases) { create_list(:case, 2) }
+      let!(:some_cases) { create_list(:case, 2, :type_post_remand) }
 
-      # AppealRepository doesn't do much but call VACOLS::CaseDocket.distribute_appeals,
+      # AojAppealRepository doesn't do much but call VACOLS::AojCaseDocket.distribute_appeals,
       # for which we have good coverage. Just unit-test our part here:
-      it "uses AppealRepository's distribute_priority_appeals method and returns VACOLS cases" do
+      it "uses AojAppealRepository's distribute_priority_appeals method and returns VACOLS cases" do
         expect(docket).to receive(:should_distribute?)
           .with(distribution, genpop: genpop, style: style)
           .and_return(true)
-        expect(AppealRepository).to receive(:distribute_priority_appeals)
+        expect(AojAppealRepository).to receive(:distribute_priority_appeals)
           .with(judge, genpop, limit)
           .and_return(some_cases)
 
@@ -336,7 +187,7 @@ describe LegacyDocket do
       let(:range) { 0 }
       it "returns an empty array" do
         expect(subject).to eq []
-        expect(AppealRepository).not_to receive(:distribute_nonpriority_appeals)
+        expect(AojAppealRepository).not_to receive(:distribute_nonpriority_appeals)
       end
     end
 
@@ -349,8 +200,8 @@ describe LegacyDocket do
         end
       end
 
-      it "calls AppealRepository.distribute_nonpriority_appeals and returns cases" do
-        expect(AppealRepository).to receive(:distribute_nonpriority_appeals)
+      it "calls AojAppealRepository.distribute_nonpriority_appeals and returns cases" do
+        expect(AojAppealRepository).to receive(:distribute_nonpriority_appeals)
           .with(judge, genpop, range, limit, bust_backlog)
           .and_return(two_cases_as_hashes)
 
@@ -362,9 +213,10 @@ describe LegacyDocket do
   context "#affinity_date_count" do
     before do
       create_priority_distributable_legacy_appeal_not_tied_to_judge
-      create_aod_cavc_ready_priority_case_1
-      create_aod_cavc_ready_priority_case_2
-      create_cavc_ready_priority_case
+      create_aoj_aod_cavc_ready_priority_case_1
+      create_aoj_aod_cavc_ready_priority_case_2
+      create_aoj_cavc_ready_priority_case
+      create_nonpriority_aoj_ready_case
       create_nonpriority_distributable_legacy_appeal_not_tied_to_judge("123456")
       create_nonpriority_distributable_legacy_appeal_not_tied_to_judge("123457")
       create_nonpriority_distributable_legacy_appeal_not_tied_to_judge("123458")
@@ -373,13 +225,13 @@ describe LegacyDocket do
     context "when priority is true" do
       context "with in window affinity" do
         it "returns affinity date count" do
-          expect(docket.affinity_date_count(true, true)).to eq(1)
+          expect(docket.affinity_date_count(true, true)).to eq(2)
         end
       end
 
       context "with out in window affinity" do
         it "returns affinity date count" do
-          expect(docket.affinity_date_count(false, true)).to eq(3)
+          expect(docket.affinity_date_count(false, true)).to eq(2)
         end
       end
     end
@@ -387,74 +239,92 @@ describe LegacyDocket do
     context "when priority is false" do
       context "with in window affinity" do
         it "returns affinity date count" do
-          expect(docket.affinity_date_count(true, false))
-            .to eq("N/A for legacy appeals which are nonpriority and non-AOJ")
+          expect(docket.affinity_date_count(true, false)).to eq(1)
         end
       end
 
       context "with out in window affinity" do
         it "returns affinity date count" do
-          expect(docket.affinity_date_count(false, false))
-            .to eq("N/A for legacy appeals which are nonpriority and non-AOJ")
+          expect(docket.affinity_date_count(false, false)).to eq(3)
         end
       end
     end
   end
-
+  # {priority out of window}
   def create_priority_distributable_legacy_appeal_not_tied_to_judge
     create(
       :case,
       :aod,
       bfkey: "12345",
       bfd19: 1.year.ago,
-      bfac: "1",
+      bfac: "3",
       bfmpro: "ACT",
       bfcurloc: "81",
       bfdloout: 3.days.ago
     )
   end
 
+  # {nonpriority out of window}
   def create_nonpriority_distributable_legacy_appeal_not_tied_to_judge(bfkey = "12345")
     create(
       :case,
       bfkey: bfkey,
       bfd19: 1.year.ago,
-      bfac: "1",
+      bfac: "3",
       bfmpro: "ACT",
       bfcurloc: "81",
       bfdloout: 3.days.ago
     )
   end
 
-  def create_aod_cavc_ready_priority_case_1
-    create(:case,
+  # {nonpriority in window}
+  def create_nonpriority_aoj_ready_case
+    create(
+      :legacy_aoj_appeal,
+      affinity_start_date: 2.days.ago,
+      tied_to: false,
+      bfkey: "122222",
+      bfd19: 1.year.ago,
+      bfac: "3",
+      bfmpro: "ACT",
+      bfcurloc: "81",
+      bfdloout: 3.days.ago
+    )
+  end
+
+  # {priority in window}
+  def create_aoj_aod_cavc_ready_priority_case_1
+    create(:legacy_aoj_appeal,
            :aod,
-           :with_appeal_affinity,
+           affinity_start_date: 1.day.ago,
+           cavc: true,
            bfd19: 11.months.ago,
-           bfac: "7",
+           bfac: "3",
            bfmpro: "ACT",
            bfcurloc: "83",
            bfdloout: 2.days.ago)
   end
 
-  def create_aod_cavc_ready_priority_case_2
-    create(:case,
+  # {priority out of window}
+  def create_aoj_aod_cavc_ready_priority_case_2
+    create(:legacy_aoj_appeal,
            :aod,
-           :with_appeal_affinity,
            affinity_start_date: 2.months.ago,
+           cavc: true,
            bfd19: 11.months.ago,
-           bfac: "7",
+           bfac: "3",
            bfmpro: "ACT",
            bfcurloc: "83",
            bfdloout: 2.days.ago)
   end
 
-  def create_cavc_ready_priority_case
-    create(:case,
-           :with_appeal_affinity,
+  # {priority out of window}
+  def create_aoj_cavc_ready_priority_case
+    create(:legacy_aoj_appeal,
            affinity_start_date: 1.month.ago,
+           cavc: true,
            bfd19: 11.months.ago,
-           bfac: "7",
+           bfac: "3",
            bfmpro: "ACT",
            bfcurloc: "83",
            bfdloout: 2.days.ago)

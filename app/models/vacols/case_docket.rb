@@ -71,7 +71,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     where BRIEFF.BFMPRO = 'ACT'
       and BRIEFF.BFCURLOC in ('81', '83')
       and BRIEFF.BFBOX is null
-      and BRIEFF.BFAC is not null
+      and BRIEFF.BFAC <> '3'
       and BRIEFF.BFD19 is not null
       and MAIL_BLOCKS_DISTRIBUTION = 0
       and DIARY_BLOCKS_DISTRIBUTION = 0
@@ -115,7 +115,8 @@ class VACOLS::CaseDocket < VACOLS::Record
       F.TITRNUM as PREV_TITRNUM
       from BRIEFF B
       inner join FOLDER F on F.TICKNUM = B.BFKEY
-      where B.BFMPRO = 'HIS' and B.BFMEMID not in ('000', '888', '999') and B.BFATTID is not null
+
+      where B.BFMPRO = 'HIS'
     ) PREV_APPEAL
       on PREV_APPEAL.PREV_BFKEY != BRIEFF.BFKEY and PREV_APPEAL.PREV_BFCORLID = BRIEFF.BFCORLID
       and PREV_APPEAL.PREV_TINUM = BRIEFF.TINUM and PREV_APPEAL.PREV_TITRNUM = BRIEFF.TITRNUM
@@ -279,7 +280,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     query = <<-SQL
       select count(*) N, PRIORITY, READY
       from (
-        select case when BFAC = '7' or nvl(AOD_DIARIES.CNT, 0) + nvl(AOD_HEARINGS.CNT, 0) > 0 then 1 else 0 end as PRIORITY,
+        select case when BFAC <> '3' and (BFAC = '7' or nvl(AOD_DIARIES.CNT, 0) + nvl(AOD_HEARINGS.CNT, 0) > 0) then 1 else 0 end as PRIORITY,
           case when BFCURLOC in ('81', '83') and MAIL_BLOCKS_DISTRIBUTION = 0 and DIARY_BLOCKS_DISTRIBUTION = 0
             then 1 else 0 end as READY
         from BRIEFF
@@ -617,7 +618,7 @@ class VACOLS::CaseDocket < VACOLS::Record
         PREV_DECIDING_JUDGE
       from (
         select BFKEY, BRIEFF.TINUM, BFD19, BFDLOOUT, BFAC, BFCORKEY, AOD, BFCORLID,
-          case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ,
+          VLJ_HEARINGS.VLJ,
           PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
           PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
         from (
@@ -915,10 +916,9 @@ class VACOLS::CaseDocket < VACOLS::Record
   end
 
   def self.reject_due_to_affinity?(appeal, lever)
-    VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity&.affinity_start_date.nil? ||
-      (VACOLS::Case.find_by(bfkey: appeal["bfkey"])
-        .appeal_affinity
-        .affinity_start_date > lever.to_i.days.ago)
+    appeal_affinity = VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity
+    appeal_affinity&.affinity_start_date.nil? ||
+      (appeal_affinity.affinity_start_date > lever.to_i.days.ago)
   end
 
   def self.hearing_judge_ineligible_with_no_hearings_after_decision(appeal)
@@ -989,5 +989,44 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     true
   end
+
+  # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize
+  def self.priority_appeals_affinity_date_count(in_window)
+    conn = connection
+    cavc_affinity_lever_value = CaseDistributionLever.cavc_affinity_days
+    cavc_aod_affinity_lever_value = CaseDistributionLever.cavc_aod_affinity_days
+
+    query = <<-SQL
+      #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
+    SQL
+
+    fmtd_query = sanitize_sql_array([query])
+
+    appeals = conn.exec_query(fmtd_query).to_a
+
+    if in_window
+      appeals.select! do |appeal|
+        if appeal["bfac"] == "7" && appeal["aod"] == 0
+          reject_due_to_affinity?(appeal, cavc_affinity_lever_value)
+        elsif appeal["bfac"] == "7" && appeal["aod"] == 1
+          reject_due_to_affinity?(appeal, cavc_aod_affinity_lever_value)
+        elsif appeal["bfac"] != "7"
+          false
+        end
+      end
+    else
+      appeals.reject! do |appeal|
+        if appeal["bfac"] == "7" && appeal["aod"] == 0
+          reject_due_to_affinity?(appeal, cavc_affinity_lever_value)
+        elsif appeal["bfac"] == "7" && appeal["aod"] == 1
+          reject_due_to_affinity?(appeal, cavc_aod_affinity_lever_value)
+        elsif appeal["bfac"] != "7"
+          false
+        end
+      end
+    end
+    appeals
+  end
+  # rubocop:enable Metrics/MethodLength, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize
 end
 # rubocop:enable Metrics/ClassLength

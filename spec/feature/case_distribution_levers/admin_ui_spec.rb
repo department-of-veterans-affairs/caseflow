@@ -9,20 +9,15 @@ RSpec.feature "Admin UI" do
     User.authenticate!(user: user)
   end
 
-  let(:disabled_lever_list) do
-    [
-      Constants.DISTRIBUTION.aoj_affinity_days,
-      Constants.DISTRIBUTION.aoj_aod_affinity_days,
-      Constants.DISTRIBUTION.aoj_cavc_affinity_days
-    ]
-  end
-
   let(:enabled_lever_list) do
     [
       Constants.DISTRIBUTION.ama_hearing_case_affinity_days,
       Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days,
       Constants.DISTRIBUTION.cavc_aod_affinity_days,
-      Constants.DISTRIBUTION.cavc_affinity_days
+      Constants.DISTRIBUTION.cavc_affinity_days,
+      Constants.DISTRIBUTION.aoj_affinity_days,
+      Constants.DISTRIBUTION.aoj_aod_affinity_days,
+      Constants.DISTRIBUTION.aoj_cavc_affinity_days
     ]
   end
 
@@ -59,15 +54,9 @@ RSpec.feature "Admin UI" do
 
       EMPTY_ERROR_MESSAGE = "Please enter a value greater than or equal to 0"
 
-      step "enabled and disabled levers display correctly" do
+      step "enabled levers display correctly" do
         # From affinity_days_levers_spec.rb
         option_list = [Constants.ACD_LEVERS.omit, Constants.ACD_LEVERS.infinite, Constants.ACD_LEVERS.value]
-
-        disabled_lever_list.each do |disabled_lever|
-          option_list.each do |option|
-            expect(find("##{disabled_lever}-#{option}", visible: false)).to be_disabled
-          end
-        end
 
         enabled_lever_list.each do |enabled_lever|
           option_list.each do |option|

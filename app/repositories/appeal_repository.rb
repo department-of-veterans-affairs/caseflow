@@ -881,6 +881,14 @@ class AppealRepository
       end
     end
 
+    def priority_appeals_affinity_date_count(in_window)
+      MetricsService.record("VACOLS: priority_appeals_affinity_date_count",
+                            name: "priority_appeals_affinity_date_count",
+                            service: :vacols) do
+        VACOLS::CaseDocket.priority_appeals_affinity_date_count(in_window)
+      end
+    end
+
     private
 
     # NOTE: this should be called within a transaction where you are closing an appeal
