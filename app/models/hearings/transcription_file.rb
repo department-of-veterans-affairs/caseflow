@@ -45,6 +45,11 @@ class TranscriptionFile < CaseflowRecord
 
   scope :filter_by_hearing_type, ->(values) { where("hearing_type IN (?)", values) }
 
+  scope :filter_by_contractor, ->(values) do
+    joins(transcription: { transcription_package: :contractor })
+      .where(transcription_contractors: { name: values })
+  end
+
   scope :filter_by_types, lambda { |values|
     filter_parts = []
     stream_types = []

@@ -119,6 +119,10 @@ class Hearings::TranscriptionFilesController < ApplicationController
         if filter_hash["col"] == "hearingDateColumn"
           @transcription_files = @transcription_files.filter_by_hearing_dates(filter_hash["val"].split(","))
         end
+        if filter_hash["col"] == "contractorColumn"
+          @transcription_files =
+            @transcription_files.filter_by_contractor(filter_hash["val"].split("|"))
+        end
       end
     end
   end
