@@ -46,7 +46,7 @@ module JailerPolymorphicAssociations
   def jailer_assocs_hash(base_class)
     jailer_assocs_hash = {}
     jailer_record_classes(base_class).each do |klass|
-      polymorphic_assocs = AssocationWrapper.new(klass).belongs_to.polymorphic.select_associations
+      polymorphic_assocs = AssociationWrapper.new(klass).belongs_to.polymorphic.select_associations
       # Skip if there are no polymorphic_associations or the table has already been processed
       next if polymorphic_assocs.blank? || jailer_assocs_hash.key?(klass.table_name)
 
