@@ -52,6 +52,8 @@ const CorrespondenceDetails = (props) => {
 
   const [checkboxStates, setCheckboxStates] = useState({});
   const [originalStates, setOriginalStates] = useState({});
+  const [sortedPriorMail, setSortedPriorMail] = useState([]);
+  const [isExpanded, setIsExpanded] = useState(true);
 
   // Initialize checkbox states
   useEffect(() => {
@@ -63,6 +65,15 @@ const CorrespondenceDetails = (props) => {
     setCheckboxStates(initialStates);
     setOriginalStates(initialStates);
   }, [priorMail, relatedCorrespondenceIds]);
+
+  useEffect(() => {
+    // Initialize sortedPriorMail with the initial priorMail list
+    setSortedPriorMail(priorMail);
+  }, [priorMail]);
+
+  const toggleSection = () => {
+    setIsExpanded((prev) => !prev);
+  };
 
   // Function to handle checkbox changes
   const handleCheckboxChange = (mailId) => {
@@ -82,7 +93,7 @@ const CorrespondenceDetails = (props) => {
 
   // Function to handle the "Save Changes" button click, including the PATCH request
   const handlepriorMailUpdate = async () => {
-  // Disable the button to prevent duplicate requests
+    // Disable the button to prevent duplicate requests
     setDisableSubmitButton(true);
 
     // Get the initial and current checkbox states
@@ -102,7 +113,7 @@ const CorrespondenceDetails = (props) => {
     };
 
     try {
-    // Send PATCH request to update the backend
+      // Send PATCH request to update the backend
       const response = await ApiUtil.patch(`/queue/correspondence/${correspondence.uuid}/update_correspondence`, {
         data: patchData
       });
@@ -110,6 +121,28 @@ const CorrespondenceDetails = (props) => {
       if (response.status === 201) {
         setShowSuccessBanner(true);
         console.log('Correspondence updated successfully.', response.status); // eslint-disable-line no-console
+
+        // Sort the prior mail based on the updated state after successful update
+        const updatedSortedPriorMail = [...priorMail].sort((first, second) => {
+          const firstInState = checkboxStates[first.id];
+          const secondInState = checkboxStates[second.id];
+
+          if (firstInState && secondInState) {
+            // Sort by vaDateOfReceipt in descending order if both are checked
+            return new Date(second.vaDateOfReceipt) - new Date(first.vaDateOfReceipt);
+          } else if (firstInState) {
+            // Ensure that items in the state come first
+            return -1;
+          } else if (secondInState) {
+            return 1;
+          }
+
+          // Maintain original order otherwise
+          return 0;
+        });
+
+        // Update the state with the sorted list after saving changes
+        setSortedPriorMail(updatedSortedPriorMail);
       }
     } catch (error) {
       console.error('Error during PATCH request:', error.message);
@@ -242,8 +275,18 @@ const CorrespondenceDetails = (props) => {
   const appealCheckboxOnChange = (appealId, isChecked) => {
     setDisableSubmitButton(false);
     if (isChecked) {
+      if (unSelectedAppeals?.includes(appealId)) {
+        const filtedAppeals = unSelectedAppeals.filter((item) => item !== appealId);
+
+        setUnSelectedAppeals(filtedAppeals);
+      }
       setSelectedAppeals([...selectedAppeals, appealId]);
     } else {
+      if (selectedAppeals?.includes(appealId)) {
+        const filtedAppeals = selectedAppeals.filter((item) => item !== appealId);
+
+        setSelectedAppeals(filtedAppeals);
+      }
       setUnSelectedAppeals([...unSelectedAppeals, appealId]);
     }
   };
@@ -254,6 +297,12 @@ const CorrespondenceDetails = (props) => {
 
     return checked ? userAccess !== 'admin_access' : false;
   };
+
+  useEffect(() => {
+    const buttonDisable = (selectedAppeals?.length === initialSelectedAppeals?.length);
+
+    setDisableSubmitButton(buttonDisable);
+  }, [selectedAppeals]);
 
   let appeals;
 
@@ -331,33 +380,48 @@ const CorrespondenceDetails = (props) => {
           </AppSegment>
         </div>
         <div className="correspondence-existing-appeals">
-          <h2>Existing Appeals</h2>
-          <AppSegment filledBackground noMarginTop>
-            <span>
-              <a rel="noopener noreferrer"
+          <div className="left-section">
+            <h2>Existing Appeals</h2>
+            <div className="correspondence-details-view-documents">
+              <a
+                rel="noopener noreferrer"
                 target="_blank"
                 href={`/reader/appeal/${correspondence.veteranFileNumber}`}
-                className="correspondence-details-view-documents">
-              View veteran documents
-                <div className="link-icon-spacing">
-                  <ExternalLinkIcon color={COLORS.FOCUS_OUTLINE} />
+              >
+                View veteran documents
+                <div className="external-link-icon-wrapper">
+                  <ExternalLinkIcon color={COLORS.PRIMARY} />
                 </div>
               </a>
-            </span>
-
-            <CaseListTable
-              appeals={appealsToDisplay}
-              paginate="true"
-              showCheckboxes
-              taskRelatedAppealIds={props.correspondence.correspondenceAppealIds}
-              enableTopPagination
-              checkboxOnChange={appealCheckboxOnChange}
-              toggleCheckboxState={toggleCheckboxState}
-            />
-          </AppSegment>
+            </div>
+          </div>
+          <div className="toggleButton-plus-or-minus">
+            <Button
+              onClick={toggleSection}
+              linkStyling
+              aria-label="Toggle section"
+              aria-expanded={isExpanded}
+            >
+              {isExpanded ? '_' : <span className="plus-symbol">+</span>}
+            </Button>
+          </div>
+        </div>
+        <div className="collapse-section-container">
+          {isExpanded && (
+            <AppSegment filledBackground noMarginTop>
+              <CaseListTable
+                appeals={appealsToDisplay}
+                paginate="true"
+                showCheckboxes
+                taskRelatedAppealIds={selectedAppeals}
+                enableTopPagination
+                checkboxOnChange={appealCheckboxOnChange}
+                toggleCheckboxState={toggleCheckboxState}
+              />
+            </AppSegment>
+          )}
           {(props.correspondence.correspondenceAppeals.map((taskAdded) =>
-
-            taskAdded.correspondencesAppealsTasks?.length > 0 && <CorrespondenceTasksAdded
+              taskAdded.correspondencesAppealsTasks?.length > 0 && <CorrespondenceTasksAdded
               task_added={taskAdded}
               correspondence={props.correspondence}
               organizations={props.organizations}
@@ -484,11 +548,11 @@ const CorrespondenceDetails = (props) => {
                   defaultValue={relatedCorrespondenceIds.some((el) => el === correspondenceRow.id)}
                   value={
                     selectedPriorMail.some((el) => el.id === correspondenceRow.id) ||
-                          relatedCorrespondenceIds.some((corrId) => corrId === correspondenceRow.id)
+                  relatedCorrespondenceIds.some((corrId) => corrId === correspondenceRow.id)
                   }
                   disabled={
                     relatedCorrespondenceIds.some((corrId) => corrId === correspondenceRow.id) ||
-                      !props.isInboundOpsUser
+                  !props.isInboundOpsUser
                   }
                   onChange={(checked) => onPriorMailCheckboxChange(correspondenceRow, checked)}
                 /> :
@@ -598,7 +662,7 @@ const CorrespondenceDetails = (props) => {
               <CorrespondencePaginationWrapper
                 columns={getDocumentColumns}
                 columnsToDisplay={15}
-                rowObjects={priorMail}
+                rowObjects={sortedPriorMail}
                 summary="Correspondence list"
                 className="correspondence-table"
                 headerClassName="cf-correspondence-list-header-row"
@@ -637,7 +701,6 @@ const CorrespondenceDetails = (props) => {
   ];
 
   const saveChanges = () => {
-
     if (isAdminNotLoggedIn() === false) {
       handlepriorMailUpdate();
     } else if (selectedPriorMail.length > 0) {
