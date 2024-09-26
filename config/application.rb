@@ -159,6 +159,7 @@ module CaseflowCertification
         "hlr_status_serializer" => "HLRStatusSerializer",
         "mpi_service" => "MPIService",
         "sc_status_serializer" => "SCStatusSerializer",
+        "sync_attributes_with_bgs" => "SyncAttributesWithBGS",
         "update_poa_concern" => "UpdatePOAConcern",
         "va_dot_gov_service" => "VADotGovService",
         "va_notify_send_message_template" => "VANotifySendMessageTemplate",
