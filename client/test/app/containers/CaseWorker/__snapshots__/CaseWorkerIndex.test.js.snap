@@ -4,7 +4,7 @@ exports[`CaseWorkerIndex renders correctly 1`] = `
 <div>
   <div>
     <header
-      data-css-uo1yys=""
+      style="background: rgb(255, 255, 255); line-height: 4em;"
     >
       <div>
         <div
@@ -12,13 +12,13 @@ exports[`CaseWorkerIndex renders correctly 1`] = `
         >
           <nav
             class="cf-push-left"
-            data-css-1vh8afw=""
+            style="display: flex; align-items: center; line-height: 4em;"
           >
             <a
               href="/dispatch/establish-claim/"
             >
               <p
-                data-css-14vgq4z=""
+                style="margin: 0px; display: inline-block; font-size: 1.7rem; font-weight: 900; line-height: 4em;"
               >
                 <a
                   href="/dispatch/establish-claim/"
@@ -59,6 +59,7 @@ exports[`CaseWorkerIndex renders correctly 1`] = `
                     class="cf-application-title"
                     data-css-1mdtwij=""
                     id="page-title"
+                    style="padding-left: .3em;"
                     tabindex="-1"
                   >
                     Dispatch
@@ -93,7 +94,7 @@ exports[`CaseWorkerIndex renders correctly 1`] = `
         </div>
       </div>
       <div
-        data-css-1tukvsd=""
+        style="border-bottom: 1px solid #d6d7d9; clear: both;"
       >
          
       </div>
