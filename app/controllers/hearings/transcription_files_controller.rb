@@ -15,6 +15,7 @@ class Hearings::TranscriptionFilesController < ApplicationController
   def transcription_file_tasks
     @transcription_files = Hearings::TranscriptionFile.filterable_values
     select_based_on_tab
+    apply_search if params[:search].present?
     apply_filters
     setup_pagination
     apply_sorting
@@ -183,6 +184,22 @@ class Hearings::TranscriptionFilesController < ApplicationController
         end
       end
     end
+  end
+
+  def apply_search
+    case params[:tab]
+    when "Unassigned"
+      unassigned_search
+    end
+  end
+
+  def unassigned_search
+    @transcription_files = @transcription_files.
+      where("docket_number LIKE :query", query: "%#{params[:search]}%")
+      # .or(
+      #   @transcription_files.
+      # where(" LIKE :query", query: "%#{params[:search]}%")
+      # )
   end
 
   def apply_sorting
