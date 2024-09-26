@@ -229,7 +229,7 @@ class SanitizedJsonConfiguration
       reassociate_types.map do |klass|
         [
           klass,
-          AssocationWrapper.new(klass).grouped_fieldnames_of_typed_associations_with(known_types.map(&:name))
+          AssociationWrapper.new(klass).grouped_fieldnames_of_typed_associations_with(known_types.map(&:name))
             .values.flatten.sort
         ]
       end.to_h.tap do |class_to_fieldnames_hash|
@@ -361,7 +361,7 @@ class SanitizedJsonConfiguration
       # Typed polymorphic association fields will be associated based on the '_type' field
       type: reassociate_types.map do |klass|
         [klass,
-         AssocationWrapper.new(klass).fieldnames_of_typed_associations(excluding: offset_id_fields[klass]).presence]
+         AssociationWrapper.new(klass).fieldnames_of_typed_associations(excluding: offset_id_fields[klass]).presence]
       end.to_h.compact
     }.merge(
       # Untyped association fields (ie, without the matching '_type' field) will associate to their corresponding type
@@ -370,7 +370,7 @@ class SanitizedJsonConfiguration
           assoc_class.name,
           reassociate_types.map do |klass|
             [klass,
-             AssocationWrapper.new(klass).fieldnames_of_untyped_associations_with(assoc_class).presence]
+             AssociationWrapper.new(klass).fieldnames_of_untyped_associations_with(assoc_class).presence]
           end.to_h.compact
         ]
       end.to_h
@@ -397,7 +397,7 @@ class SanitizedJsonConfiguration
            "\n\tPossible fixes:" \
            "\n\t- Check for a `belongs_to:` association in #{klass}" \
            "\n\t- Check @configuration.reassociate_fields, specifically:" \
-           "\n\t  AssocationWrapper.new(#{klass}).fieldnames_of_untyped_associations_with(assoc_class)"
+           "\n\t  AssociationWrapper.new(#{klass}).fieldnames_of_untyped_associations_with(assoc_class)"
     end
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Lint/UnusedMethodArgument
