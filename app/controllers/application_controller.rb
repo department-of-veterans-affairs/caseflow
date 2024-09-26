@@ -38,7 +38,7 @@ class ApplicationController < ApplicationBaseController
     render json: {
       status: e.message,
       featureToggles: {
-        checkUserSensitivity: FeatureToggle.enabled?(:send_current_user_cred)
+        checkUserSensitivity: FeatureToggle.enabled?(:send_current_user_cred_to_ce_api)
       }
     }, status: :forbidden
   end

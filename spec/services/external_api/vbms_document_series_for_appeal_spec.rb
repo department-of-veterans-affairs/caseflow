@@ -9,7 +9,7 @@ describe ExternalApi::VbmsDocumentSeriesForAppeal do
   end
 
   describe "#fetch" do
-    context "with send_current_user_cred feature toggle enabled" do
+    context "with send_current_user_cred_to_ce_api feature toggle enabled" do
       let!(:user) do
         user = create(:user)
         RequestStore.store[:current_user] = user
@@ -18,10 +18,10 @@ describe ExternalApi::VbmsDocumentSeriesForAppeal do
       before do
         expect(VBMS::Client).to receive(:from_env_vars).and_return(true)
         expect(ExternalApi::VBMSService).to receive(:send_and_log_request).and_return(true)
-        FeatureToggle.enable!(:send_current_user_cred)
+        FeatureToggle.enable!(:send_current_user_cred_to_ce_api)
       end
 
-      after { FeatureToggle.disable!(:send_current_user_cred) }
+      after { FeatureToggle.disable!(:send_current_user_cred_to_ce_api) }
 
       it "check user sensitivity compatibility before calling any APIs" do
         expect(mock_sensitivity_checker).to receive(:sensitivity_levels_compatible?)
