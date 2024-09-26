@@ -206,6 +206,7 @@ module CaseflowCertification
       "#{root}/app/serializers/case_distribution",
       "#{root}/app/serializers/hearings",
       "#{root}/app/services/claim_change_history",
+      "#{root}/lib/helpers",
     )
 
     Rails.autoloaders.main.ignore(
