@@ -286,7 +286,7 @@ module Seeds
     def create_hearing_subtree(appeal, hearing)
       root_task = create(:root_task, appeal: appeal)
 
-      distribution_task = create( :distribution_task, appeal: appeal, parent: root_task) if appeal.is_a?(Appeal)
+      distribution_task = create(:distribution_task, appeal: appeal, parent: root_task) if appeal.is_a?(Appeal)
 
       parent_hearing_task = create(
         :hearing_task,
