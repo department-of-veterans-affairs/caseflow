@@ -36,6 +36,11 @@ const getStore = () =>
       },
       documentList: {
         searchCategoryHighlights: [{ 1: {} }, { 2: {} }],
+        filteredDocIds: [
+          1,
+          2,
+        ],
+        docFilterCriteria: {},
       },
       annotationLayer: {
         annotations: 1,
@@ -106,6 +111,7 @@ const props = {
   match: {
     params: { docId: "1", vacolsId: "3575931" },
   },
+
 };
 
 const Component = () => (
