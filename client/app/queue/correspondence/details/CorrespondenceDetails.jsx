@@ -147,7 +147,7 @@ const CorrespondenceDetails = (props) => {
     } catch (error) {
       console.error('Error during PATCH request:', error.message);
     } finally {
-      setDisableSubmitButton(false);
+      setDisableSubmitButton(true);
     }
 
     // Reset checkboxes to the new state
