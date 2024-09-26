@@ -121,7 +121,7 @@ class CaseDistributionTest extends React.PureComponent {
       this.setState({
         isReseedingNonSSCAVLJAppeals: false,
         showAlert: true,
-        alertMsg: '{COPY.TEST_RESEED_NLNSSCAVLJAPPEALS_ALERTMSG}',
+        alertMsg: '{COPY.TEST_RESEED_NONSSCAVLJAPPEALS_ALERTMSG}',
       });
     }, (err) => {
       console.warn(err);
@@ -207,8 +207,13 @@ class CaseDistributionTest extends React.PureComponent {
                               </a>
                             </li>
                             <li>
-                              <a href="#distribution_status">
+                              <a href="#access_csvs">
                                 {COPY.TEST_ACCESS_CSVS_BUTTON}
+                              </a>
+                            </li>
+                            <li>
+                              <a href="#run_seeds">
+                                {COPY.TEST_CREATE_SEEDED_APPEALS_TITLE}
                               </a>
                             </li>
                             <li>
@@ -230,23 +235,23 @@ class CaseDistributionTest extends React.PureComponent {
                           >
                             <thead>
                               <tr>
-                                <td>{COPY.TEST_ID_TD}</td>
-                                <td>{COPY.TEST_TITLE_TD}</td>
-                                <td>{COPY.TEST_ITEM_TD}</td>
-                                <td>{COPY.TEST_CONTROL_GROUP_TD}</td>
-                                <td>{COPY.TEST_LEVER_GROUP_TD}</td>
-                                <td>{COPY.TEST_LEVER_GROUP_ORDER_TD}</td>
-                                <td>{COPY.TEST_DESCRIPTION_TD}</td>
-                                <td>{COPY.TEST_DATA_TYPE_TD}</td>
-                                <td>{COPY.TEST_VALUE_TD}</td>
-                                <td>{COPY.TEST_MIN_MAX_VALUE_TD}</td>
-                                <td>{COPY.TEST_UNIT_TD}</td>
-                                <td>{COPY.TEST_OPTION_VALUES_TD}</td>
-                                <td>{COPY.TEST_TOGGLE_ACTIVE_TD}</td>
-                                <td>{COPY.TEST_DISABLED_IN_UI_TD}</td>
-                                <td>{COPY.TEST_ALGORITHMS_USED_TD}</td>
-                                <td>{COPY.TEST_CREATED_AT_TD}</td>
-                                <td>{COPY.TEST_UPDATED_AT_TD}</td>
+                                <td> {COPY.TEST_ID_TD} </td>
+                                <td> {COPY.TEST_TITLE_TD} </td>
+                                <td> {COPY.TEST_ITEM_TD} </td>
+                                <td> {COPY.TEST_CONTROL_GROUP_TD} </td>
+                                <td> {COPY.TEST_LEVER_GROUP_TD} </td>
+                                <td> {COPY.TEST_LEVER_GROUP_ORDER_TD} </td>
+                                <td> {COPY.TEST_DESCRIPTION_TD} </td>
+                                <td> {COPY.TEST_DATA_TYPE_TD} </td>
+                                <td> {COPY.TEST_VALUE_TD} </td>
+                                <td> {COPY.TEST_MIN_MAX_VALUE_TD} </td>
+                                <td> {COPY.TEST_UNIT_TD} </td>
+                                <td> {COPY.TEST_OPTION_VALUES_TD} </td>
+                                <td> {COPY.TEST_TOGGLE_ACTIVE_TD} </td>
+                                <td> {COPY.TEST_DISABLED_IN_UI_TD} </td>
+                                <td> {COPY.TEST_ALGORITHMS_USED_TD} </td>
+                                <td> {COPY.TEST_CREATED_AT_TD} </td>
+                                <td> {COPY.TEST_UPDATED_AT_TD} </td>
                               </tr>
                             </thead>
                             <tbody>
@@ -276,20 +281,20 @@ class CaseDistributionTest extends React.PureComponent {
                             </tbody>
                           </table>
                           <hr />
-                          <h2 id="audit"> Case Distribution Audit Levers </h2>
+                          <h2 id="audit"> {COPY.TEST_CASE_DISTRIBUTION_AUDIT_LEVERS_BUTTON} </h2>
                           <table>
                             <thead>
                               <tr>
-                                <td>{COPY.TEST_ID_TD}</td>
-                                <td>{COPY.TEST_LEVER_ID_TD}</td>
-                                <td>{COPY.TEST_CREATED_AT_TD}</td>
-                                <td>{COPY.TEST_PREVIOUS_VALUE_TD}</td>
-                                <td>{COPY.TEST_UPDATE_VALUE_TD}</td>
-                                <td>{COPY.TEST_USER_CSS_ID_TD}</td>
-                                <td>{COPY.TEST_USER_NAME_TD}</td>
-                                <td>{COPY.TEST_LEVER_TITLE_TD}</td>
-                                <td>{COPY.TEST_LEVER_DATA_TYPE_TD}</td>
-                                <td>{COPY.TEST_LEVER_UNIT_TD}</td>
+                                <td> {COPY.TEST_ID_TD} </td>
+                                <td> {COPY.TEST_LEVER_ID_TD} </td>
+                                <td> {COPY.TEST_CREATED_AT_TD} </td>
+                                <td> {COPY.TEST_PREVIOUS_VALUE_TD} </td>
+                                <td> {COPY.TEST_UPDATE_VALUE_TD} </td>
+                                <td> {COPY.TEST_USER_CSS_ID_TD} </td>
+                                <td> {COPY.TEST_USER_NAME_TD} </td>
+                                <td> {COPY.TEST_LEVER_TITLE_TD} </td>
+                                <td> {COPY.TEST_LEVER_DATA_TYPE_TD} </td>
+                                <td> {COPY.TEST_LEVER_UNIT_TD} </td>
                               </tr>
                             </thead>
                             <tbody>
@@ -313,78 +318,120 @@ class CaseDistributionTest extends React.PureComponent {
                             </tbody>
                           </table>
                           <hr />
-                          <h2 id="distribution_status">{COPY.TEST_ACCESS_CSVS_BUTTON}</h2>
-                          <ul>
-                            <li>
+                          <div className="lever-content">
+                            <div className="lever-head csv-download-alignment">
+                              <h2 id="access_csvs">{COPY.TEST_ACCESS_CSVS_BUTTON}</h2>
+                            </div>
+                            <div className="lever-left csv-download-left">
                               <a href="/case_distribution_levers_tests/appeals_ready_to_distribute?csv=1">
                                 <Button classNames={['usa-button-active']}>
                                   {COPY.TEST_DOWNLOAD_APPEALS_READY_BUTTON}
                                 </Button>
                               </a>
-                            </li>
-                            <li>
-                              <a href="/case_distribution_levers_tests/appeals_distributed?csv=1">
-                                <Button classNames={['usa-button-active']}>
-                                  {COPY.TEST_DOWNLOAD_DISTRIBUTED_APPEALS_BUTTON}
-                                </Button>
-                              </a>
-                            </li>
-                            <li>
-                              <a href="/case_distribution_levers_tests/ineligible_judge_list?csv=1">
-                                <Button classNames={['usa-button-active']}>
-                                  {COPY.TEST_DOWNLOAD_INELIGIBLE_JUDGE_BUTTON}
-                                </Button>
-                              </a>
-                            </li>
-                            <li>
+                            </div>
+                            <div className="lever-right csv-download-right">
+                              <strong>
+                                {COPY.TEST_DOWNLOAD_APPEALS_READY_BUTTON}
+                              </strong>
+                              {COPY.TEST_DOWNLOAD_APPEALS_READY_BUTTON_DESCRIPTION}
+                            </div>
+                            <div className="lever-left csv-download-left">
                               <a href="/case_distribution_levers_tests/appeals_non_priority_ready_to_distribute?csv=1">
                                 <Button classNames={['usa-button-active']}>
                                   {COPY.TEST_DOWNLOAD_AMA_NON_PRIO_DISTR_BUTTON}
                                 </Button>
                               </a>
-                            </li>
-                            <li>
+                            </div>
+                            <div className="lever-right csv-download-right">
+                              <strong>
+                                {COPY.TEST_DOWNLOAD_AMA_NON_PRIO_DISTR_BUTTON}
+                              </strong>
+                              {COPY.TEST_DOWNLOAD_AMA_NON_PRIO_DISTR_BUTTON_DESCRIPTION}
+                            </div>
+                            <div className="lever-left csv-download-left">
                               <a href="/case_distribution_levers_tests/appeals_tied_to_non_ssc_avlj?csv=1">
                                 <Button classNames={['usa-button-active']}>
                                   {COPY.TEST_DOWNLOAD_APPEALS_TIED_NONSSC_AVLJS_BUTTON}
                                 </Button>
                               </a>
-                            </li>
-                            <li>
-                              <a href="/case_distribution_levers_tests/appeals_tied_to_avljs_and_vljs?csv=1">
+                            </div>
+                            <div className="lever-right csv-download-right">
+                              <strong>
+                                {COPY.TEST_DOWNLOAD_APPEALS_TIED_NONSSC_AVLJS_BUTTON}
+                              </strong>
+                              {COPY.TEST_DOWNLOAD_APPEALS_TIED_NONSSC_AVLJS_BUTTON_DESCRIPTION}
+                            </div>
+                            <div className="lever-left csv-download-left">
+                              <a href="/case_distribution_levers_tests/ineligible_judge_list?csv=1">
                                 <Button classNames={['usa-button-active']}>
-                                  {COPY.TEST_DOWNLOAD_APPEALS_TIED_AVLJ_VLJ_BUTTON}
+                                  {COPY.TEST_DOWNLOAD_INELIGIBLE_JUDGE_BUTTON}
                                 </Button>
                               </a>
-                            </li>
-                            <li>
+                            </div>
+                            <div className="lever-right csv-download-right">
+                              <strong>
+                                {COPY.TEST_DOWNLOAD_INELIGIBLE_JUDGE_BUTTON}
+                              </strong>
+                              {COPY.TEST_DOWNLOAD_INELIGIBLE_JUDGE_BUTTON_DESCRIPTION}
+                            </div>
+                            <div className="lever-left csv-download-left">
+                              <a href="/case_distribution_levers_tests/appeals_distributed?csv=1">
+                                <Button classNames={['usa-button-active']}>
+                                  {COPY.TEST_DOWNLOAD_DISTRIBUTED_APPEALS_BUTTON}
+                                </Button>
+                              </a>
+                            </div>
+                            <div className="lever-right csv-download-right">
+                              <strong>
+                                {COPY.TEST_DOWNLOAD_DISTRIBUTED_APPEALS_BUTTON}
+                              </strong>
+                              {COPY.TEST_DOWNLOAD_DISTRIBUTED_APPEALS_BUTTON_DESCRIPTION}
+                            </div>
+                            <div className="lever-left csv-download-left">
                               <a href="/case_distribution_levers_tests/appeals_in_location_63_in_past_2_days?csv=1">
                                 <Button classNames={['usa-button-active']}>
                                   {COPY.TEST_DOWNLOAD_LOC_63_APPEALS_BUTTON}
                                 </Button>
                               </a>
-                            </li>
-                          </ul>
-                          <hr />
-                          <div className="lever-content">
-                            <div className="lever-head">
-                              <h2 id="run_seeds">{COPY.TEST_CREATE_SEEDED_APPEALS_TITLE}</h2>
-                              { this.state.showAlert &&
-                            <Alert type={this.state.alertType} scrollOnAlert={false}>{this.state.alertMsg}</Alert>
-                              }
-                              <table
-                                id="case-table-description"
-                                className="usa-table"
-                                style={tablestyle}
-                              >
-                                <thead>
-                                  <td><p>{COPY.TEST_WARNING_P1}</p>
-                                    <p>{COPY.TEST_WARNING_P2}</p>
-                                    <p>{COPY.TEST_WARNING_P3}</p>
-                                  </td>
-                                </thead>
-                              </table>
                             </div>
+                            <div className="lever-right csv-download-right">
+                              <strong>
+                                {COPY.TEST_DOWNLOAD_LOC_63_APPEALS_BUTTON}
+                              </strong>
+                              {COPY.TEST_DOWNLOAD_LOC_63_APPEALS_BUTTON_DESCRIPTION}
+                            </div>
+                            <div className="lever-left csv-download-left">
+                              <a href="/case_distribution_levers_tests/appeals_tied_to_avljs_and_vljs?csv=1">
+                                <Button classNames={['usa-button-active']}>
+                                  {COPY.TEST_DOWNLOAD_APPEALS_TIED_AVLJ_VLJ_BUTTON}
+                                </Button>
+                              </a>
+                            </div>
+                            <div className="lever-right csv-download-right">
+                              <strong>
+                                {COPY.TEST_DOWNLOAD_APPEALS_TIED_AVLJ_VLJ_BUTTON}
+                              </strong>
+                              {COPY.TEST_DOWNLOAD_APPEALS_TIED_AVLJ_VLJ_BUTTON_DESCRIPTION}
+                            </div>
+                          </div>
+                          <hr />
+                          <h2 id="run_seeds">{COPY.TEST_CREATE_SEEDED_APPEALS_TITLE}</h2>
+                          { this.state.showAlert &&
+                            <Alert type={this.state.alertType} scrollOnAlert={false}>{this.state.alertMsg}</Alert>
+                          }
+                          <div>
+                            <table
+                              id="case-table-description"
+                              className="usa-table"
+                              style={tablestyle}
+                            >
+                              <thead>
+                                <td><p>{COPY.TEST_WARNING_P1}</p>
+                                  <p>{COPY.TEST_WARNING_P2}</p>
+                                  <p>{COPY.TEST_WARNING_P3}</p>
+                                </td>
+                              </thead>
+                            </table>
                             <div className="lever-left csv-download-left">
                               <Button
                                 onClick={this.reseedAod}
@@ -447,24 +494,34 @@ class CaseDistributionTest extends React.PureComponent {
                             </div>
                           </div>
                           <hr />
-                          <h2 id="case_movement">{COPY.TEST_CASE_MOVEMENT_TITLE}</h2>
-                          { this.state.showLegacyAppealsAlert &&
-                            <Alert type={this.state.legacyAppealsAlertType} scrollOnAlert={false}>
-                              {this.state.legacyAppealsAlertMsg}
-                            </Alert>
-                          }
-                          <ul>
-                            <li>
+                          <div className="lever-content">
+                            <div className="lever-head csv-download-alignment">
+                              <h2 id="case_movement">{COPY.TEST_CASE_MOVEMENT_TITLE}</h2>
+                              { this.state.showLegacyAppealsAlert &&
+                              <Alert type={this.state.legacyAppealsAlertType} scrollOnAlert={false}>
+                                {this.state.legacyAppealsAlertMsg}
+                              </Alert>
+                              }
+                            </div>
+                            <div className="lever-left csv-download-left">
                               <Button classNames={['usa-button-case-movement']}
                                 onClick={this.returnLegacyAppealsToBoard}
                                 name="Run ReturnLegacyAppealsToBoard job"
                                 loading={this.state.isReturnLegacyAppeals}
                                 loadingText="Processing ReturnLegacyAppealsToBoard job"
                               />
-                            </li>
-                          </ul>
+                            </div>
+                            <div className="lever-right csv-download-right">
+                              <strong>
+                                {COPY.TEST_RETURN_LEGACY_APPEALS_TO_BOARD_JOB_TITLE}
+                              </strong>
+                              {COPY.TEST_RETURN_LEGACY_APPEALS_TO_BOARD_JOB_DESCRIPTION}
+                            </div>
+                          </div>
                           <hr />
-                          <h2 id="log_of_most_recent_appeals">{COPY.TEST_LOG_OF_MOST_RECENT_APPEALS_MOVED_TITLE}</h2>
+                          <h2 id="log_of_most_recent_appeals">
+                            {COPY.TEST_LOG_OF_MOST_RECENT_APPEALS_MOVED_TITLE}
+                          </h2>
                           <CollapsibleTable returnedAppealJobs={this.props.returnedAppealJobs} />
                           <hr />
                           <a href="#top">
