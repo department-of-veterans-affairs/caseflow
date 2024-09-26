@@ -1,4 +1,4 @@
-class UpdateTranscriptionFilesTable < Caseflow::Migration
+class UpdateTranscriptionFilesTable < ActiveRecord::Migration[6.1]
   def change
     add_column :transcription_files, :recording_task_number, :string, comment: "Number associated with recording, is the created id from the recording system"
     add_column :transcription_files, :recording_transcriber, :string, comment: "Contractor who created the closed caption transcription for the recording; i.e, 'Webex'"
