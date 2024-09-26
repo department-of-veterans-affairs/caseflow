@@ -42,9 +42,7 @@ describe DistributionsController, :all_dbs do
 
         expect(response.status).to eq 200
         body = JSON.parse(response.body)
-        expect(body["distribution"].keys).to match_array(
-          %w[id created_at updated_at status distributed_cases_count distribution_stats]
-        )
+        expect(body["distribution"].keys).to match_array(%w[id created_at updated_at status distributed_cases_count])
       end
 
       context "but is not the logged in user" do
@@ -69,7 +67,7 @@ describe DistributionsController, :all_dbs do
             body = JSON.parse(response.body)
             expect(body["errors"]).to eq nil
             expect(body["distribution"].keys).to match_array(
-              %w[id created_at updated_at status distributed_cases_count distribution_stats]
+              %w[id created_at updated_at status distributed_cases_count]
             )
           end
         end
@@ -118,9 +116,7 @@ describe DistributionsController, :all_dbs do
 
         body = JSON.parse(response.body)
         expect(body["distribution"]["id"]).to eq distribution.id
-        expect(body["distribution"].keys).to match_array(
-          %w[id created_at updated_at status distributed_cases_count distribution_stats]
-        )
+        expect(body["distribution"].keys).to match_array(%w[id created_at updated_at status distributed_cases_count])
       end
     end
   end

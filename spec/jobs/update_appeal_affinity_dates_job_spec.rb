@@ -21,7 +21,7 @@ describe UpdateAppealAffinityDatesJob do
   end
 
   context "#latest_receipt_dates" do
-    before { Seeds::CaseDistributionLevers.new.seed! }
+    before { create(:case_distribution_lever, :request_more_cases_minimum) }
 
     let(:judge) { create(:user, :judge, :with_vacols_judge_record) }
     let(:distribution_requested) { create(:distribution, :completed, judge: judge) }
@@ -198,7 +198,7 @@ describe UpdateAppealAffinityDatesJob do
   end
 
   context "#create_or_update_appeal_affinties" do
-    before { Seeds::CaseDistributionLevers.new.seed! }
+    before { create(:case_distribution_lever, :request_more_cases_minimum) }
 
     let(:judge) { create(:user, :judge, :with_vacols_judge_record) }
     let(:distribution) { create(:distribution, :completed, judge: judge) }
@@ -228,7 +228,7 @@ describe UpdateAppealAffinityDatesJob do
   end
 
   context "#legacy_appeals_with_no_appeal_affinities" do
-    before { Seeds::CaseDistributionLevers.new.seed! }
+    before { create(:case_distribution_lever, :request_more_cases_minimum) }
 
     let(:judge) { create(:user, :judge, :with_vacols_judge_record) }
     let(:distribution) { create(:distribution, :completed, judge: judge) }
@@ -280,7 +280,7 @@ describe UpdateAppealAffinityDatesJob do
     end
 
     context "full run" do
-      before { Seeds::CaseDistributionLevers.new.seed! }
+      before { create(:case_distribution_lever, :request_more_cases_minimum) }
 
       let!(:judge) { create(:user, :judge, :with_vacols_judge_record) }
       let!(:previous_distribution) { create(:distribution, :completed, :this_month, judge: judge) }

@@ -162,23 +162,12 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   end
 
   def genpop_by_affinity_start_date
-    query = ""
-    cavc_aod_affinity_days = CaseDistributionLever.cavc_aod_affinity_days
-    cavc_affinity_days = CaseDistributionLever.cavc_affinity_days
-
-    result = with_appeal_affinities
+    with_appeal_affinities
       .with_original_appeal_and_judge_task
-
-    if case_affinity_days_lever_value_is_selected?(cavc_affinity_days)
-      query += "appeal_affinities.affinity_start_date <= '#{cavc_affinity_days.days.ago}'"
-    end
-
-    if case_affinity_days_lever_value_is_selected?(cavc_aod_affinity_days)
-      cavc_aod_query = "appeal_affinities.affinity_start_date <= '#{cavc_aod_affinity_days.days.ago}'"
-      query += query.present? ? " OR #{cavc_aod_query}" : cavc_aod_query
-    end
-
-    query.present? ? result.where(query) : result
+      .where(
+        "appeal_affinities.affinity_start_date <= ?",
+        CaseDistributionLever.cavc_affinity_days.days.ago
+      )
   end
 
   def ama_non_aod_appeals
@@ -215,26 +204,11 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   end
 
   def non_genpop_by_affinity_start_date
-    query = ""
-    cavc_aod_affinity_days = CaseDistributionLever.cavc_aod_affinity_days
-    cavc_affinity_days = CaseDistributionLever.cavc_affinity_days
-
-    result = with_appeal_affinities
+    with_appeal_affinities
       .with_original_appeal_and_judge_task
+      .where("appeal_affinities.affinity_start_date > ? or appeal_affinities.affinity_start_date is null",
+             CaseDistributionLever.cavc_affinity_days.days.ago)
       .where.not(original_judge_task: { assigned_to_id: nil })
-
-    if case_affinity_days_lever_value_is_selected?(cavc_affinity_days)
-      query += "appeal_affinities.affinity_start_date > '#{cavc_affinity_days.days.ago}' or "\
-        "appeal_affinities.affinity_start_date is null"
-    end
-
-    if case_affinity_days_lever_value_is_selected?(cavc_aod_affinity_days)
-      cavc_aod_query = "appeal_affinities.affinity_start_date > '#{cavc_aod_affinity_days.days.ago}' or "\
-        "appeal_affinities.affinity_start_date is null"
-      query += query.present? ? " OR #{cavc_aod_query}" : cavc_aod_query
-    end
-
-    query.present? ? result.where(query) : result
   end
 
   def ordered_by_distribution_ready_date

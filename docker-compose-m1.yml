@@ -27,13 +27,5 @@ services:
     volumes:
       - ./local/sqs/conf:/conf
 
-  appeals-metabase:
-    platform: linux/amd64
-    container_name: metabase
-    build:
-      context: metabase
-    ports:
-      - "3002:3000"
-
 volumes:
   postgresdata:

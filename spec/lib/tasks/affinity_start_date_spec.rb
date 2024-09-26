@@ -3,7 +3,7 @@
 describe "affinity_start_date" do
   include_context "rake"
 
-  before { Seeds::CaseDistributionLevers.new.seed! }
+  before { create(:case_distribution_lever, :request_more_cases_minimum) }
 
   let!(:judge) { create(:user, :judge, :with_vacols_judge_record) }
   let!(:distribution) { create(:distribution, :completed, :this_month, judge: judge) }
