@@ -53,6 +53,7 @@ const CorrespondenceDetails = (props) => {
   const [checkboxStates, setCheckboxStates] = useState({});
   const [originalStates, setOriginalStates] = useState({});
   const [sortedPriorMail, setSortedPriorMail] = useState([]);
+  const [isExpanded, setIsExpanded] = useState(true);
 
   // Initialize checkbox states
   useEffect(() => {
@@ -69,6 +70,10 @@ const CorrespondenceDetails = (props) => {
     // Initialize sortedPriorMail with the initial priorMail list
     setSortedPriorMail(priorMail);
   }, [priorMail]);
+
+  const toggleSection = () => {
+    setIsExpanded((prev) => !prev);
+  };
 
   // Function to handle checkbox changes
   const handleCheckboxChange = (mailId) => {
@@ -375,33 +380,48 @@ const CorrespondenceDetails = (props) => {
           </AppSegment>
         </div>
         <div className="correspondence-existing-appeals">
-          <h2>Existing Appeals</h2>
-          <AppSegment filledBackground noMarginTop>
-            <span>
-              <a rel="noopener noreferrer"
+          <div className="left-section">
+            <h2>Existing Appeals</h2>
+            <div className="correspondence-details-view-documents">
+              <a
+                rel="noopener noreferrer"
                 target="_blank"
                 href={`/reader/appeal/${correspondence.veteranFileNumber}`}
-                className="correspondence-details-view-documents">
-              View veteran documents
-                <div className="link-icon-spacing">
-                  <ExternalLinkIcon color={COLORS.FOCUS_OUTLINE} />
+              >
+                View veteran documents
+                <div className="external-link-icon-wrapper">
+                  <ExternalLinkIcon color={COLORS.PRIMARY} />
                 </div>
               </a>
-            </span>
-
-            <CaseListTable
-              appeals={appealsToDisplay}
-              paginate="true"
-              showCheckboxes
-              taskRelatedAppealIds={selectedAppeals}
-              enableTopPagination
-              checkboxOnChange={appealCheckboxOnChange}
-              toggleCheckboxState={toggleCheckboxState}
-            />
-          </AppSegment>
+            </div>
+          </div>
+          <div className="toggleButton-plus-or-minus">
+            <Button
+              onClick={toggleSection}
+              linkStyling
+              aria-label="Toggle section"
+              aria-expanded={isExpanded}
+            >
+              {isExpanded ? '_' : <span className="plus-symbol">+</span>}
+            </Button>
+          </div>
+        </div>
+        <div className="collapse-section-container">
+          {isExpanded && (
+            <AppSegment filledBackground noMarginTop>
+              <CaseListTable
+                appeals={appealsToDisplay}
+                paginate="true"
+                showCheckboxes
+                taskRelatedAppealIds={selectedAppeals}
+                enableTopPagination
+                checkboxOnChange={appealCheckboxOnChange}
+                toggleCheckboxState={toggleCheckboxState}
+              />
+            </AppSegment>
+          )}
           {(props.correspondence.correspondenceAppeals.map((taskAdded) =>
-
-            taskAdded.correspondencesAppealsTasks?.length > 0 && <CorrespondenceTasksAdded
+              taskAdded.correspondencesAppealsTasks?.length > 0 && <CorrespondenceTasksAdded
               task_added={taskAdded}
               correspondence={props.correspondence}
               organizations={props.organizations}
