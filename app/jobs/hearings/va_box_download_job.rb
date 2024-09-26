@@ -9,7 +9,6 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
   class BoxDownloadJobFileUploadError < StandardError; end
 
   def perform(files_info)
-
     @all_paths = []
     box_service = ExternalApi::VaBoxService.new
 
@@ -19,7 +18,6 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
       file_extension = extract_file_extension(file_name)
       begin
         box_service.download_file(current_file[:id], tmp_folder)
-        binding.pry
         @all_paths << tmp_folder
         if file_extension == "zip"
           unzip_file(tmp_folder, current_file)
@@ -42,30 +40,35 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
   end
 
   def update_database(current_information, file_status)
-    transcription_records = TranscriptionFile.where(
+    transcription_records = Hearings::TranscriptionFile.where(
       hearing_id: current_information["id"].to_i,
       hearing_type: current_information["hearing_type"],
       file_type: current_information["file_type"]
     )
 
+    current_extension = extract_file_extension(current_information["file_name"])
+    transcript_text_path = (current_extension == "pdf") ? "transcript_pdf" : "transcript_text"
+    aws_link = create_link_aws(current_information, file_status, transcript_text_path)
+
     if transcription_records.count > 0
-      transcription_records.each do |tr|
-        tr.update!(
-          date_upload_aws: Time.zone.now,
-          updated_at: Time.zone.now,
-          date_returned_box: current_information["date_returned_box"]
-        )
-      end
+      update_transcription_file_record(transcription_records, current_information, file_status, aws_link)
     else
-      create_transcription_file_record(current_information, file_status)
+      create_transcription_file_record(current_information, file_status, aws_link)
     end
   rescue ActiveRecord::RecordInvalid => error
     Rails.logger.error "Failed to create transcription file: #{error.message}"
   end
 
-  def create_transcription_file_record(current_information, file_status)
-    transcript_text = (extract_file_extension(current_information["file_name"]) == "pdf") ? "transcript_pdf" : "transcript_text"
-    TranscriptionFile.create!(
+  def create_link_aws(current_information, file_status, transcript_text_path)
+    if file_status == "Failed upload (AWS)"
+      nil
+    else
+      "vaec-appeals-caseflow-test/#{transcript_text_path}/#{current_information['file_name']}"
+    end
+  end
+
+  def create_transcription_file_record(current_information, file_status, aws_link)
+    Hearings::TranscriptionFile.create!(
       hearing_id: current_information["id"],
       hearing_type: current_information["hearing_type"],
       docket_number: current_information["docket_number"],
@@ -73,8 +76,20 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
       file_type: current_information["file_type"],
       file_status: file_status,
       date_upload_aws: Time.zone.now,
-      aws_link: "vaec-appeals-caseflow-test/#{transcript_text}/#{current_information['file_name']}"
+      aws_link: aws_link
     )
+  end
+
+  def update_transcription_file_record(transcription_records, current_information, file_status, aws_link)
+    transcription_records.each do |tr|
+      tr.update!(
+        date_upload_aws: Time.zone.now,
+        updated_at: Time.zone.now,
+        date_returned_box: current_information["date_returned_box"],
+        file_status: file_status,
+        aws_link: aws_link
+      )
+    end
   end
 
   def select_folder(file_name)
@@ -111,9 +126,9 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
   end
 
   def s3_location(file_name)
-    transcript_text = (extract_file_extension(file_name) == "pdf") ? "transcript_pdf" : "transcript_text"
+    transcript_text_path = (extract_file_extension(file_name) == "pdf") ? "transcript_pdf" : "transcript_text"
     folder_name = (Rails.deploy_env == :prod) ? S3_BUCKET : "#{S3_BUCKET}-#{Rails.deploy_env}"
-    "#{folder_name}/#{transcript_text}/#{file_name}"
+    "#{folder_name}/#{transcript_text_path}/#{file_name}"
   end
 
   def get_information(file_name, current_file)
@@ -137,7 +152,7 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
         update_database(info, file_status)
       end
     rescue StandardError => error
-      Rails.logger.error "Failed, the file does not exist"
+      Rails.logger.error "#{error} - Failed, the file does not exist"
     end
   end
 
