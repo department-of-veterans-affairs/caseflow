@@ -8,6 +8,7 @@ import { FilterNoOutlineIcon } from '../../components/icons/FilterNoOutlineIcon'
 import { PageArrowLeftIcon } from '../../components/icons/PageArrowLeftIcon';
 import { PageArrowRightIcon } from '../../components/icons/PageArrowRightIcon';
 import { docListIsFiltered, getFilteredDocIds } from '../../reader/selectors';
+import { annotationPlacement } from '../selectors';
 
 const ReaderFooter = ({
   currentPage,
@@ -16,6 +17,8 @@ const ReaderFooter = ({
   setCurrentPage,
   showPdf,
 }) => {
+  const { isPlacingAnnotation } = useSelector(annotationPlacement);
+
   const isValidInputPageNumber = (pageNumber) => {
     if (!isNaN(pageNumber) && pageNumber % 1 === 0) {
 
@@ -54,10 +57,10 @@ const ReaderFooter = ({
 
   useEffect(() => {
     const keyHandler = (event) => {
-      if (event.key === 'ArrowLeft') {
+      if (event.key === 'ArrowLeft' && !isPlacingAnnotation) {
         showPdf(getPrevDocId())();
       }
-      if (event.key === 'ArrowRight') {
+      if (event.key === 'ArrowRight' && !isPlacingAnnotation) {
         showPdf(getNextDocId())();
       }
     };
@@ -65,7 +68,7 @@ const ReaderFooter = ({
     window.addEventListener('keydown', keyHandler);
 
     return () => window.removeEventListener('keydown', keyHandler);
-  }, [currentDocIndex]);
+  }, [currentDocIndex, isPlacingAnnotation]);
 
   return (
     <div id="prototype-footer" className="cf-pdf-footer cf-pdf-toolbar">

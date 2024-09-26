@@ -12,6 +12,8 @@ export const ROTATION_DEGREES = {
   THREE_SIXTY: '360deg',
 };
 
+export const OFFSET_INCREMENT = 5;
+
 export const ZOOM_LEVEL_MIN = 10;
 export const ZOOM_LEVEL_MAX = 300;
 export const ZOOM_INCREMENT = 10;
