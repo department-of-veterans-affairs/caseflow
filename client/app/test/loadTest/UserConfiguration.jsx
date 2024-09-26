@@ -1,3 +1,4 @@
+/* eslint-disable import/extensions */
 /* eslint-disable max-lines, max-len */
 
 import React, { useState } from 'react';
@@ -12,24 +13,22 @@ import OFFICE_INFO from '../../../constants/REGIONAL_OFFICE_FOR_CSS_STATION';
 // import { register } from 'module';
 
 export default function UserConfiguration(props) {
+  const [stationSelected, setStationSelected] = useState('');
   const [isSelectedStation, stationIsSelected] = useState(false);
   const [selectedOrganizations, setSelectedOrganizations] = useState({});
+  const [isSelectedOffice, officeIsSelected] = useState(false);
+  const [officeSelected, setOfficeSelected] = useState('');
 
   const filteredStations = [];
   const stationsMapping = new Map();
 
-  Object.entries(OFFICE_INFO).forEach((info) => {
-    if (info[1] !== 'NA') {
-      if (info[1] !== Array) {
-        info[1] = [info[1]];
-      }
-      stationsMapping.set(info[0], info[1]);
-      filteredStations.push({ value: info[0], label: info[0] });
-    }
-  });
+  const functionsAvailable = props.form_values.functions_available;
+  const featureToggles = props.featuresList;
+  const allOrganizations = props.form_values.all_organizations;
 
-  const handleStationSelect = () => {
+  const handleStationSelect = ({ value }) => {
     stationIsSelected(true);
+    setStationSelected(value);
   };
 
   const handleOrganizationSelect = (org) => {
@@ -48,7 +47,6 @@ export default function UserConfiguration(props) {
   };
 
   const handleAdminChange = (org) => {
-    // console.log(org);
     setSelectedOrganizations((prev) => {
       const updatedSelections = { ...prev };
 
@@ -62,9 +60,37 @@ export default function UserConfiguration(props) {
     });
   };
 
-  const functionsAvailable = props.form_values.functions_available;
-  const featureToggles = props.featuresList;
-  const allOrganizations = props.form_values.all_organizations;
+  Object.entries(OFFICE_INFO).forEach((info) => {
+    if (info[1] !== 'NA') {
+      if (info[1] !== Array) {
+        info[1] = [info[1]];
+      }
+      stationsMapping.set(info[0], info[1]);
+      filteredStations.push({ value: info[0], label: info[0] });
+    }
+  });
+
+  const stationAssignedOffices = OFFICE_INFO[stationSelected];
+
+  const officeAvailable = [];
+  let officesAvailable;
+
+  if (typeof stationAssignedOffices === 'object') {
+    stationAssignedOffices.forEach((station) => {
+      officesAvailable = {
+        value: station,
+        label: station
+      };
+      officeAvailable.push(officesAvailable);
+    });
+  } else if (typeof stationAssignedOffices === 'string') {
+    officeAvailable.push({ value: stationAssignedOffices, label: stationAssignedOffices });
+  }
+
+  const handleOfficeSelect = ({ value }) => {
+    officeIsSelected(true);
+    setOfficeSelected(value);
+  };
 
   featureToggles.sort();
 
@@ -74,13 +100,12 @@ export default function UserConfiguration(props) {
       <SearchableDropdown
         name="Station id dropdown"
         hideLabel
-        // onInputChange={handleInputChange}
         options={filteredStations} searchable
-        onChange={() => {
-          handleStationSelect();
+        onChange={(newVal) => {
+          handleStationSelect(newVal);
         }}
-        // filterOption={() => true}
-        // value={userSelect}
+        filterOption={() => true}
+        value={stationSelected}
       />
       { isSelectedStation &&
         (<div>
@@ -89,58 +114,63 @@ export default function UserConfiguration(props) {
           <SearchableDropdown
             name="Regional office dropdown"
             hideLabel
-            // onInputChange={handleInputChange}
-            // options={slicedUserOptions} searchable
-            // onChange={handleUserSelect}
-            // filterOption={() => true}
-            // value={userSelect}
+            options={officeAvailable} searchable
+            onChange={(newVal) => {
+              handleOfficeSelect(newVal);
+            }}
+            filterOption={() => true}
+            value={officeSelected}
           />
-          <br />
-          <p>Organizations</p>
-          <div className="load-test-container">
-            {allOrganizations.map((org) => (
-              <div className="load-test-container-checkbox" key={org}>
-                <Checkbox
-                  inputRef={props.register}
-                  label={org}
-                  name={org}
-                  isChecked={Boolean(selectedOrganizations[org])}
-                  onChange={() => handleOrganizationSelect(org)}
-                />
-                <div style={{ marginLeft: '20px' }}>
-                  {selectedOrganizations[org] && (
+          { isSelectedOffice &&
+            (<div>
+              <br />
+              <p>Organizations</p>
+              <div className="load-test-container">
+                {allOrganizations.map((org) => (
+                  <div className="load-test-container-checkbox test-class-sizing" key={org}>
                     <Checkbox
-                      label="Admin"
-                      name={`${org}-admin`}
-                      isChecked={Boolean(selectedOrganizations[`${org}-admin`])}
-                      onChange={() => handleAdminChange(org)}
-                      style={{ marginLeft: '20px' }}
+                      inputRef={props.register}
+                      label={org}
+                      name={org}
+                      isChecked={Boolean(selectedOrganizations[org])}
+                      onChange={() => handleOrganizationSelect(org)}
                     />
-                  )}
-                </div>
+                    <div style={{ marginLeft: '20px' }}>
+                      {selectedOrganizations[org] && (
+                        <Checkbox
+                          label="Admin"
+                          name={`${org}-admin`}
+                          isChecked={Boolean(selectedOrganizations[`${org}-admin`])}
+                          onChange={() => handleAdminChange(org)}
+                          style={{ marginLeft: '20px' }}
+                        />
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-          <br />
-          <h2><strong>Functions</strong></h2>
-          <div className="load-test-container">
-            {functionsAvailable.map((functionOption) => (
-              <FunctionConfiguration
-                key={functionOption}
-                functionOption={functionOption}
-              />
-            ))}
-          </div>
-          <br />
-          <h2><strong>Feature Toggles</strong></h2>
-          <div className="load-test-container">
-            {featureToggles.map((featureToggle) => (
-              <FeatureToggleConfiguration
-                key={featureToggle}
-                featureToggle={featureToggle}
-              />
-            ))}
-          </div>
+              <br />
+              <h2><strong>Functions</strong></h2>
+              <div className="load-test-container test-class-sizing">
+                {functionsAvailable.map((functionOption) => (
+                  <FunctionConfiguration
+                    key={functionOption}
+                    functionOption={functionOption}
+                  />
+                ))}
+              </div>
+              <br />
+              <h2><strong>Feature Toggles</strong></h2>
+              <div  className="load-test-container test-class-sizing">
+                {featureToggles.map((featureToggle) => (
+                  <FeatureToggleConfiguration
+                    key={featureToggle}
+                    featureToggle={featureToggle}
+                  />
+                ))}
+              </div>
+            </div>
+            )}
         </div>
         )}
     </div>
