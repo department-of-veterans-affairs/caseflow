@@ -10,7 +10,6 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
 
   context "ineligible_to_eligible" do
     describe "POST #decision_review_updated" do
-
       let!(:existing_request_issue) do
         create(:request_issue,
                decision_review: review, reference_id: "1234", closed_status: "ineligible", closed_at: DateTime.now,
