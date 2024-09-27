@@ -115,7 +115,7 @@ const AffinityDays = () => {
 
     return (
       <div key={`${lever.item}-${index}-${option.item}`}>
-        <div>
+        <div className="radio-with-text">
           <input
             checked={isOptionSelected(lever, option)}
             type={ACD_LEVERS.data_types.radio}
@@ -125,9 +125,8 @@ const AffinityDays = () => {
             name={lever.item}
             onChange={onChangeRadio(lever, option)}
           />
-          <label htmlFor={`${lever.item}-${option.item}`}>
-            {option.text}
-          </label>
+          <label htmlFor={`${lever.item}-${option.item}`} />
+          <div>{`${option.text}-fffffffffffff`}</div>
         </div>
         <div>
           <div className={className} aria-label={option.unit}>
