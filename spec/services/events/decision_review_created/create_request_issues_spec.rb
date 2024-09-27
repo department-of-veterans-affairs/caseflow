@@ -21,8 +21,8 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
         expect(backfilled_issues.count).to eq(2)
         expect(RequestIssue.count).to eq(2)
         expect(EventRecord.count).to eq(2)
-        expect(backfilled_issues.first.event_record).to eq(EventRecord.first)
-        expect(backfilled_issues.last.event_record).to eq(EventRecord.last)
+        expect(backfilled_issues.first.event_records.first).to eq(EventRecord.first)
+        expect(backfilled_issues.last.event_records.first).to eq(EventRecord.last)
 
         # check if attributes match
         ri1 = backfilled_issues.first
