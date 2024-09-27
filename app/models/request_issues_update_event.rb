@@ -32,10 +32,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
 
     @request_issues_data.each do |issue_data|
       parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(issue_data)
-      request_issue = review.request_issues.find_by(reference_id: issue_data[:reference_id])
-      unless request_issue
-        fail Caseflow::Error::DecisionReviewUpdateMissingIssueError, issue_data[:reference_id]
-      end
+      request_issue = find_request_issue(parser_issue) unless issue_data[:request_issue_id].nil?
 
       request_issue.update(
         contested_issue_description: parser_issue.ri_contested_issue_description,
@@ -50,10 +47,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
 
     @parser.eligible_to_ineligible_issues.each do |issue_data|
       parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(issue_data)
-      request_issue = review.request_issues.find_by(reference_id: parser_issue.ri_reference_id)
-      unless request_issue
-        fail Caseflow::Error::DecisionReviewUpdateMissingIssueError, parser_issue.ri_reference_id
-      end
+      request_issue = find_request_issue(parser_issue)
 
       request_issue.update(
         ineligible_reason: parser_issue.ri_ineligible_reason,
@@ -71,10 +65,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
 
     @parser.ineligible_to_eligible_issues.each do |issue_data|
       parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(issue_data)
-      request_issue = review.request_issues.find_by(reference_id: parser_issue.ri_reference_id)
-      unless request_issue
-        fail Caseflow::Error::DecisionReviewUpdateMissingIssueError, parser_issue.ri_reference_id
-      end
+      request_issue = find_request_issue(parser_issue)
 
       request_issue.update(
         ineligible_reason: nil,
@@ -94,10 +85,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
 
     @parser.ineligible_to_ineligible_issues.each do |issue_data|
       parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(issue_data)
-      request_issue = review.request_issues.find_by(reference_id: parser_issue.ri_reference_id)
-      unless request_issue
-        fail Caseflow::Error::DecisionReviewUpdateMissingIssueError, parser_issue.ri_reference_id
-      end
+      request_issue = find_request_issue(parser_issue)
 
       request_issue.update(
         ineligible_reason: parser_issue.ri_ineligible_reason,
@@ -119,6 +107,17 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     @parser.removed_issues.each do |issue|
       RequestIssueClosure.new(issue).with_no_decision!
     end
+  end
+
+  def remove_request_issues_with_no_decision!
+    return if @parser.removed_issues.empty?
+
+    @parser.removed_issues.each do |issue_data|
+      parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(issue_data)
+      request_issue = find_request_issue(parser_issue)
+      RequestIssueClosure.new(request_issue).with_no_decision!
+    end
+    check_for_mismatched_closed_issues!
   end
 
   def check_for_mismatched_closed_issues!
@@ -199,7 +198,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
 
   def conditional_issue_data(parser_issue, is_withdrawn, is_new)
     {
-      request_issue_id: is_new ? nil : find_request_issue_id(parser_issue),
+      request_issue_id: is_new ? nil : find_request_issue(parser_issue).id,
       withdrawal_date: is_withdrawn ? parser_issue.ri_closed_at : nil
     }
   end
@@ -225,7 +224,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     }
   end
 
-  def find_request_issue_id(parser_issue)
+  def find_request_issue(parser_issue)
     request_issue = RequestIssue.find_by(reference_id: parser_issue.ri_reference_id)
     if request_issue
       request_issue.id
