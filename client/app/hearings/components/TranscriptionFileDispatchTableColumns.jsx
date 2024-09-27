@@ -303,6 +303,8 @@ export const workOrderColumn = () => {
     enableFilter: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.WORK_ORDER.filterable,
     anyFiltersAreSet:
       TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.WORK_ORDER.anyFiltersAreSet,
+    backendCanSort: true,
+    getSortValue: (row) => row.workOrder,
     valueFunction: (row) => (
       <div>
         <Link

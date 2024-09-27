@@ -130,6 +130,11 @@ class TranscriptionFile < CaseflowRecord
   scope :order_by_case_type, ->(direction) { order(Arel.sql("sortable_case_type " + direction)) }
   scope :order_by_return_date, ->(direction) { order(Arel.sql("date_returned_box " + direction)) }
   scope :order_by_upload_date, ->(direction) { order(Arel.sql("date_upload_box " + direction)) }
+  scope :order_by_work_order, ->(direction) do
+    joins(:transcription)
+    .select("transcription_files.*, transcriptions.task_number AS work_order")
+    .order("work_order #{direction}")
+  end
 
   scope :locked, -> { where(locked_at: (Time.now.utc - 2.hours)..Time.now.utc) }
 

@@ -148,6 +148,8 @@ class Hearings::TranscriptionFilesController < ApplicationController
         @transcription_files.order_by_return_date(order)
       when "uploadDateColumn"
         @transcription_files.order_by_upload_date(order)
+      when "workOrderColumn"
+        @transcription_files.order_by_work_order(order)
       else
         @transcription_files.order_by_id(order)
       end
