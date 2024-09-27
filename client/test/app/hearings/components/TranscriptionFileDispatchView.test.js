@@ -126,7 +126,7 @@ describe('TranscriptionFileDispatch', () => {
     await waitFor(() =>
       expect(
         screen.getByText(
-          "Hearing audio files owned by the Transcription team that are unassigned to a contractor:"
+          'Hearing audio files owned by the Transcription team that are unassigned to a contractor:'
         )
       ).toBeInTheDocument()
     );
