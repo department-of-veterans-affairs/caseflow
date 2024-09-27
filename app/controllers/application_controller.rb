@@ -36,10 +36,7 @@ class ApplicationController < ApplicationBaseController
 
   rescue_from BGS::SensitivityLevelCheckFailure do |e|
     render json: {
-      status: e.message,
-      featureToggles: {
-        checkUserSensitivity: FeatureToggle.enabled?(:check_user_sensitivity)
-      }
+      status: e.message
     }, status: :forbidden
   end
 
