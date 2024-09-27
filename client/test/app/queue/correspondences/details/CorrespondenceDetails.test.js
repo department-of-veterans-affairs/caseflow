@@ -344,10 +344,12 @@ describe('CorrespondenceDetails', () => {
     expect(screen.getByText('Task 1')).toBeInTheDocument();
     expect(screen.getByText('Task 2')).toBeInTheDocument();
 
-    const collapsibleButtons = document.getElementsByClassName('plus-symbol');
+    let collapsibleButtons = document.getElementsByClassName('plus-symbol');
 
     expect(collapsibleButtons.length).toBe(2);
+    fireEvent.click(collapsibleButtons[0]);
 
+    expect(document.getElementsByClassName('plus-symbol').length).toBe(1);
     // Existing Appeals Table and Columns
     fireEvent.click(existingAppealButton);
     expect(screen.getByText('Existing Appeals')).toBeInTheDocument();
@@ -358,6 +360,11 @@ describe('CorrespondenceDetails', () => {
     expect(screen.getByText('Decision Date')).toBeInTheDocument();
     expect(screen.getByText('Appeal Location')).toBeInTheDocument();
     expect(screen.getByText('View veteran documents')).toBeInTheDocument();
+
+    collapsibleButtons = document.getElementsByClassName('plus-symbol');
+    fireEvent.click(collapsibleButtons[0]);
+
+    expect(document.getElementsByClassName('plus-symbol').length).toBe(0);
 
     // Appeals related
     const existingAppeals = screen.getAllByText('Tasks added to appeal').length;
