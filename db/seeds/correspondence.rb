@@ -169,6 +169,9 @@ module Seeds
         # Correspondences with the CorrespondenceRootTask with the status of canceled
         create_correspondence_with_canceled_root_task(user, veteran)
 
+        # Creating Inactive Appeals that have a RootTask with the status of canceled
+        create_inactive_appeals(user, veteran)
+
         # Correspondences with the tasks for CAVC and Congress Interest
         create_cavc_mailtask(user, veteran)
 
@@ -277,6 +280,21 @@ module Seeds
       corres.root_task.update!(status: Constants.TASK_STATUSES.cancelled)
     end
 
+    def create_inactive_appeals(user, veteran = {})
+      # creating two appeals with cancelled root task
+      2.times do
+        appeal = create(:appeal, veteran: veteran)
+        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+        appeal.root_task.update!(status: Constants.TASK_STATUSES.cancelled)
+      end
+      # creating two appeals with completed root task
+      2.times do
+        appeal = create(:appeal, veteran: veteran)
+        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+        appeal.root_task.update!(status: Constants.TASK_STATUSES.completed)
+      end
+    end
+
     def create_cavc_mailtask(user, veteran = {})
       correspondence = create_correspondence(user, veteran)
       process_correspondence(correspondence, user)
@@ -358,6 +376,10 @@ module Seeds
           enabled: true
         }
       ]
+    end
+
+    def create_appeals_with_cancelled_correspondence_tasks
+
     end
   end
 end
