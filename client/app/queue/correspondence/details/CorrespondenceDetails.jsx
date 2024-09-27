@@ -53,7 +53,7 @@ const CorrespondenceDetails = (props) => {
   const [checkboxStates, setCheckboxStates] = useState({});
   const [originalStates, setOriginalStates] = useState({});
   const [sortedPriorMail, setSortedPriorMail] = useState([]);
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   // Initialize checkbox states
   useEffect(() => {
