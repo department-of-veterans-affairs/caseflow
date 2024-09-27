@@ -149,7 +149,8 @@ class Hearings::TranscriptionFilesController < ApplicationController
       "typesColumn" => :order_by_case_type,
       "returnDateColumn" => :order_by_return_date,
       "uploadDateColumn" => :order_by_upload_date,
-      "workOrderColumn" => :order_by_work_order
+      "workOrderColumn" => :order_by_work_order,
+      "contractorColumn" => :order_by_contractor
     }
 
     sort_method = sort_methods[sort_by] || :order_by_id
