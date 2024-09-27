@@ -28,18 +28,18 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
 
   # Process aditional updates for all data that was passed to base class
   def process_request_issues_data!
-    return if @request_issues_data.empty?
+    return true if after_issues.empty?
 
-    @request_issues_data.each do |issue_data|
-      parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(issue_data)
-      request_issue = find_request_issue(parser_issue) unless issue_data[:request_issue_id].nil?
-
+    after_issues.each do |request_issue|
+      issue_data =
+        @request_issues_data.find { |data| data[:reference_id] == request_issue.reference_id }
       request_issue.update(
-        contested_issue_description: parser_issue.ri_contested_issue_description,
-        nonrating_issue_category: parser_issue.ri_nonrating_issue_category,
-        nonrating_issue_description: parser_issue.ri_nonrating_issue_description
+        contested_issue_description: issue_data[:contested_issue_description],
+        nonrating_issue_category: issue_data[:nonrating_issue_category],
+        nonrating_issue_description: issue_data[:nonrating_issue_description]
       )
     end
+    true
   end
 
   def process_eligible_to_ineligible_issues!
@@ -99,16 +99,6 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
 
   # check to see if the there are closed issues that are deferent from before - after
   # if so, then raise an error
-
-  def remove_request_issues_with_no_decision!
-    return if @parser.removed_issues.empty?
-
-    check_for_mismatched_closed_issues!
-    @parser.removed_issues.each do |issue|
-      RequestIssueClosure.new(issue).with_no_decision!
-    end
-  end
-
   def remove_request_issues_with_no_decision!
     return if @parser.removed_issues.empty?
 
@@ -192,14 +182,15 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       reference_id: parser_issue.ri_reference_id,
       type: parser_issue.ri_type,
       rating_issue_associated_at: parser_issue.ri_rating_issue_associated_at,
-      edited_description: parser_issue.ri_edited_description
+      edited_description: parser_issue.ri_edited_description,
     }
   end
 
   def conditional_issue_data(parser_issue, is_withdrawn, is_new)
     {
       request_issue_id: is_new ? nil : find_request_issue(parser_issue).id,
-      withdrawal_date: is_withdrawn ? parser_issue.ri_closed_at : nil
+      withdrawal_date: is_withdrawn ? parser_issue.ri_closed_at : nil,
+      decision_text: parser_issue.ri_nonrating_issue_description
     }
   end
 
@@ -225,11 +216,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   end
 
   def find_request_issue(parser_issue)
-    request_issue = RequestIssue.find_by(reference_id: parser_issue.ri_reference_id)
-    if request_issue
-      request_issue.id
-    else
+    RequestIssue.find_by(reference_id: parser_issue.ri_reference_id) ||
       fail(Caseflow::Error::DecisionReviewUpdateMissingIssueError, parser_issue.ri_reference_id)
-    end
   end
 end

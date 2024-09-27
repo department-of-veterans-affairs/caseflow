@@ -10,6 +10,9 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       allow(parser).to receive(:withdrawn_issues).and_return([])
       allow(parser).to receive(:added_issues).and_return([])
       allow(parser).to receive(:removed_issues).and_return([])
+      allow(parser).to receive(:eligible_to_ineligible_issues).and_return([])
+      allow(parser).to receive(:ineligible_to_eligible_issues).and_return([])
+      allow(parser).to receive(:ineligible_to_ineligible_issues).and_return([])
     end
   end
 
@@ -102,16 +105,16 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
     end
   end
 
-  describe "#find_request_issue_id" do
+  describe "#find_request_issue" do
     it "returns the request issue id" do
-      result = described_class.new(review: review, user: user, parser: parser).find_request_issue_id(parser_issue)
-      expect(result).to eq(existing_request_issue.id)
+      result = described_class.new(review: review, user: user, parser: parser).find_request_issue(parser_issue)
+      expect(result).to eq(existing_request_issue)
     end
 
     it "raises an error if the request issue is not found" do
       allow(RequestIssue).to receive(:find_by).and_return(nil)
       expect do
-        described_class.new(review: review, user: user, parser: parser).find_request_issue_id(parser_issue)
+        described_class.new(review: review, user: user, parser: parser).find_request_issue(parser_issue)
       end.to raise_error(Caseflow::Error::DecisionReviewUpdateMissingIssueError)
     end
   end
@@ -157,7 +160,8 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
           rating_issue_associated_at: parser_issue.ri_rating_issue_associated_at,
           nonrating_issue_bgs_source: parser_issue.ri_nonrating_issue_bgs_source,
           nonrating_issue_bgs_id: parser_issue.ri_nonrating_issue_bgs_id,
-          edited_description: parser_issue.ri_edited_description
+          edited_description: parser_issue.ri_edited_description,
+          decision_text: parser_issue.ri_nonrating_issue_description
         }
       )
     end
@@ -197,6 +201,41 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       expect(subject).to receive(:process_ineligible_to_ineligible_issues!)
       expect(subject).to receive(:process_request_issues_data!)
       expect(subject.perform!).to be_truthy
+    end
+
+    it "saves a new request issue" do
+      issue_payload[:ineligible_due_to_id] = nil
+      issue_payload[:contested_decision_issue_id] = nil
+      issue_payload[:decision_review_issue_id] = "some_new_reference_id"
+      allow(parser).to receive(:added_issues).and_return([issue_payload])
+      subject = described_class.new(review: review, user: user, parser: parser)
+      expect(subject.perform!).to be_truthy
+      request_issue = RequestIssue.find_by(reference_id: "some_new_reference_id")
+      expect(request_issue).to be
+      expect(request_issue.contested_issue_description).to eq(issue_payload[:contested_issue_description])
+      expect(request_issue.nonrating_issue_category).to eq(issue_payload[:nonrating_issue_category])
+      expect(request_issue.nonrating_issue_description).to eq(issue_payload[:nonrating_issue_description])
+      expect(request_issue.reference_id).to eq(issue_payload[:decision_review_issue_id])
+      # expect(request_issue.contention_reference_id).to eq(issue_payload[:contention_reference_id])
+      expect(request_issue.contested_decision_issue_id).to eq(issue_payload[:contested_decision_issue_id])
+      expect(request_issue.ineligible_due_to_id).to eq(issue_payload[:ineligible_due_to_id])
+      expect(request_issue.is_unidentified).to eq(issue_payload[:is_unidentified])
+      expect(request_issue.unidentified_issue_text).to eq(issue_payload[:unidentified_issue_text])
+      expect(request_issue.vacols_id).to eq(issue_payload[:vacols_id])
+      expect(request_issue.vacols_sequence_id).to eq(issue_payload[:vacols_sequence_id])
+      expect(request_issue.type).to eq(issue_payload[:type])
+      expect(request_issue.edited_description).to eq(issue_payload[:edited_description])
+      expect(request_issue.benefit_type).to eq(issue_payload[:benefit_type])
+      expect(request_issue.untimely_exemption).to eq(issue_payload[:untimely_exemption])
+      expect(request_issue.untimely_exemption_notes).to eq(issue_payload[:untimely_exemption_notes])
+      expect(request_issue.ramp_claim_id).to eq(issue_payload[:ramp_claim_id])
+      # TODO: Need to validate these fields are set correctly for new request issues
+      # expect(request_issue.ineligible_reason).to eq(issue_payload[:ineligible_reason])
+      # expect(request_issue.rating_issue_associated_at).to eq(issue_payload[:rating_issue_associated_at])
+      # expect(request_issue.contested_rating_issue_reference_id).to eq(issue_payload[:contested_rating_issue_reference_id])
+      # expect(request_issue.contested_rating_issue_diagnostic_code).to eq(issue_payload[:contested_rating_issue_diagnostic_code])
+      # expect(request_issue.contested_rating_decision_reference_id).to eq(issue_payload[:contested_rating_decision_reference_id])
+      # expect(request_issue.decision_date).to eq(issue_payload[:decision_date])
     end
   end
 
