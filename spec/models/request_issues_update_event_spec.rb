@@ -232,9 +232,12 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       # TODO: Need to validate these fields are set correctly for new request issues
       # expect(request_issue.ineligible_reason).to eq(issue_payload[:ineligible_reason])
       # expect(request_issue.rating_issue_associated_at).to eq(issue_payload[:rating_issue_associated_at])
-      # expect(request_issue.contested_rating_issue_reference_id).to eq(issue_payload[:contested_rating_issue_reference_id])
-      # expect(request_issue.contested_rating_issue_diagnostic_code).to eq(issue_payload[:contested_rating_issue_diagnostic_code])
-      # expect(request_issue.contested_rating_decision_reference_id).to eq(issue_payload[:contested_rating_decision_reference_id])
+      # expect(request_issue.contested_rating_issue_reference_id).to
+      #  eq(issue_payload[:contested_rating_issue_reference_id])
+      # expect(request_issue.contested_rating_issue_diagnostic_code).to
+      #  eq(issue_payload[:contested_rating_issue_diagnostic_code])
+      # expect(request_issue.contested_rating_decision_reference_id).to
+      #  eq(issue_payload[:contested_rating_decision_reference_id])
       # expect(request_issue.decision_date).to eq(issue_payload[:decision_date])
     end
   end
