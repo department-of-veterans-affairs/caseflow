@@ -13,7 +13,7 @@ class Claimant < CaseflowRecord
   has_one :unrecognized_appellant, lambda { |claimant|
     where(id: UnrecognizedAppellant.order(:id).find_by(claimant: claimant)&.id)
   }, dependent: :destroy
-  has_many :event_records, as: :evented_record
+  has_one :event_record, as: :evented_record
 
   # rubocop:disable Rails/UniqueValidationWithoutIndex
   validates :participant_id,
