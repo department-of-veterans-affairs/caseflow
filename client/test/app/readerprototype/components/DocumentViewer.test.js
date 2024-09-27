@@ -1,15 +1,13 @@
-/* eslint-disable react/prop-types */
-import React from 'react';
 import { render, waitFor } from '@testing-library/react';
-import { createMemoryHistory } from 'history';
-import { Router, MemoryRouter } from 'react-router-dom';
+import userEvent from '@testing-library/user-event';
+import DocumentViewer from 'app/readerprototype/DocumentViewer';
+import React, { useState } from 'react';
 import { Provider } from 'react-redux';
+import { MemoryRouter } from 'react-router-dom';
 import { applyMiddleware, createStore } from 'redux';
 import thunk from 'redux-thunk';
-import DocumentViewer from 'app/readerprototype/DocumentViewer';
-import ApiUtil from 'app/util/ApiUtil';
 import { rootReducer } from 'app/reader/reducers';
-import userEvent from "@testing-library/user-event";
+import ApiUtil from 'app/util/ApiUtil';
 
 afterEach(() => jest.clearAllMocks());
 
@@ -85,7 +83,6 @@ const props = {
   match: {
     params: { docId: '1', vacolsId: '3575931' },
   },
-
 };
 
 const getStore = () =>
@@ -121,14 +118,16 @@ const getStore = () =>
     },
     applyMiddleware(thunk));
 
-// <Router history={history}>
-const Component = () => (
-  <Provider store={getStore()}>
+const Component = () => {
+  const [zoomLevel, setZoomLevel] = useState(100);
+
+  return <Provider store={getStore()}>
     <MemoryRouter>
-      <DocumentViewer {...props} />
+      <DocumentViewer {...props} zoomLevel={zoomLevel}
+        onZoomChange={(newZoomLevel) => setZoomLevel(newZoomLevel)} />
     </MemoryRouter>
-  </Provider>
-);
+  </Provider>;
+};
 
 describe('user visiting a document', () => {
 
@@ -175,4 +174,19 @@ describe('Open Document and Close Issue tags Sidebar Section', () => {
     );
 
   });
+});
+
+test('should change zoom level to 80%, then to 60% to simulate parent states update', async () => {
+  const { container, getByRole } = render(<Component {...props} />);
+
+  expect(container).toHaveTextContent('100%');
+  const zoomOutButton = getByRole('button', { name: /zoom out/i });
+
+  userEvent.click(zoomOutButton);
+
+  await waitFor(() => expect(container).toHaveTextContent('90%'));
+
+  userEvent.click(zoomOutButton);
+
+  await waitFor(() => expect(container).toHaveTextContent('80%'));
 });
