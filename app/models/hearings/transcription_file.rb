@@ -50,6 +50,11 @@ class TranscriptionFile < CaseflowRecord
       .where(transcription_contractors: { name: values })
   }
 
+  scope :filter_by_status, lambda { |values|
+    joins(transcription: :transcription_package)
+      .where(transcription_packages: { status: values })
+  }
+
   scope :filter_by_types, lambda { |values|
     filter_parts = []
     stream_types = []
@@ -141,6 +146,12 @@ class TranscriptionFile < CaseflowRecord
     joins(transcription: { transcription_package: :contractor })
       .select("transcription_files.*, transcription_contractors.name AS contractor_name")
       .order("contractor_name #{direction}")
+  }
+
+  scope :order_by_status, lambda { |direction|
+    joins(transcription: :transcription_package)
+      .select("transcription_files.*, transcription_packages.status AS package_status")
+      .order("package_status #{direction}")
   }
 
   scope :locked, -> { where(locked_at: (Time.now.utc - 2.hours)..Time.now.utc) }

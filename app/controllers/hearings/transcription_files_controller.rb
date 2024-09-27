@@ -115,7 +115,8 @@ class Hearings::TranscriptionFilesController < ApplicationController
       "hearingDateColumn" => :filter_by_hearing_dates,
       "returnDateColumn" => :filter_by_return_dates,
       "uploadDateColumn" => :filter_by_upload_dates,
-      "contractorColumn" => :filter_by_contractor
+      "contractorColumn" => :filter_by_contractor,
+      "statusColumn" => :filter_by_status
     }
 
     params[:filter].each do |filter|
@@ -150,7 +151,8 @@ class Hearings::TranscriptionFilesController < ApplicationController
       "returnDateColumn" => :order_by_return_date,
       "uploadDateColumn" => :order_by_upload_date,
       "workOrderColumn" => :order_by_work_order,
-      "contractorColumn" => :order_by_contractor
+      "contractorColumn" => :order_by_contractor,
+      "statusColumn" => :order_by_status
     }
 
     sort_method = sort_methods[sort_by] || :order_by_id
