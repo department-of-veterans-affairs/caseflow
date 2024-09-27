@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import PropTypes from 'prop-types';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ROTATION_DEGREES } from '../util/readerConstants';
 import usePageVisibility from '../hooks/usePageVisibility';
 
@@ -34,8 +34,8 @@ const Page = ({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale, setRe
   const isVisible = usePageVisibility(canvasRef);
   const wrapperRef = useRef(null);
   const scaleFraction = scale / 100;
-  const reportedStats = useRef(false);
-  const renderTaskRef = useRef(null);
+  const reportedStatsRef = useRef(false);
+  const [isRenderingDone, setIsRenderingDone] = useState(false);
 
   const viewport = page.getViewport({ scale: scaleFraction });
   const scaledHeight = viewport.height;
@@ -68,32 +68,32 @@ const Page = ({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale, setRe
 
   useEffect(() => {
     if (canvasRef.current && isVisible) {
-      if (!renderTaskRef.current) {
-        const renderTask = page.render(
-          { canvasContext: canvasRef.current?.getContext('2d', { alpha: false }), viewport }
-        );
+      const canvasContext = canvasRef.current.getContext('2d', { alpha: false });
+      const renderTask = page.render({ canvasContext, viewport });
 
-        renderTaskRef.current = renderTask;
-
-        renderTask.promise.
-          then(() => {
-            if (page._stats && Array.isArray(page._stats.times)) {
-
-              const renderingTimes = page._stats.times.find((time) => time.name === 'Rendering');
-
-              if (!reportedStats.current) {
-                setRenderingMetrics(renderingTimes.end - renderingTimes.start);
-                reportedStats.current = true;
-              }
-            }
-          }).
-          catch(() => {
-            // catch is necessary to prevent the error: Cannot use the same canvas during multiple render operations
-          });
-      }
+      renderTask.promise.
+        then(() => {
+          setIsRenderingDone(true);
+        }).
+        catch(() => {
+          // catch is necessary to prevent the error: Cannot use the same canvas during multiple render operations
+        });
     }
   }, [canvasRef.current, viewport, isVisible]);
-  // [page, isVisible, viewport, setRenderingMetrics]);
+
+  useEffect(() => {
+    if (isRenderingDone) {
+      if (page._stats && Array.isArray(page._stats.times)) {
+
+        const renderingTimes = page._stats.times.find((time) => time.name === 'Rendering');
+
+        if (!reportedStatsRef.current) {
+          setRenderingMetrics(renderingTimes.end - renderingTimes.start);
+          reportedStatsRef.current = true;
+        }
+      }
+    }
+  }, [isRenderingDone]);
 
   return (
     <div

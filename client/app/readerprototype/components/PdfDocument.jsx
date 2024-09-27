@@ -111,7 +111,7 @@ const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel, onLoad }) => {
 
       getDocumentEnd.current = new Date().getTime();
       onLoad(false);
-      const docProxy = await getDocument({ data: byteArr, pdfBug: true }).promise;
+      const docProxy = await getDocument({ data: byteArr, pdfBug: true, verbosity: 0 }).promise;
 
       if (docProxy) {
         setPdfDoc(docProxy);
