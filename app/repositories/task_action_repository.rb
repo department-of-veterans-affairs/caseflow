@@ -2,6 +2,39 @@
 
 class TaskActionRepository # rubocop:disable Metrics/ClassLength
   class << self
+    def assign_corr_task_to_team(_task, _user = nil)
+      {
+        modal_title: COPY::ASSIGN_TASK_TITLE,
+        modal_body: format(COPY::ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER),
+        message_title: format(
+          COPY::CORRESPONDENCE_CASES_ASSIGN_TASK_MODAL_INSTRUCTIONS_TITLE
+        ),
+        redirect_after: "/queue/correspondence/:correspondence_uuid/"
+      }
+    end
+
+    def assign_corr_task_to_person(task, _user = nil)
+      {
+        modal_title: task.assigned_to.is_a?(Organization) ? COPY::ASSIGN_TASK_TITLE : COPY::REASSIGN_TASK_TITLE,
+        modal_body: COPY::ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER,
+        message_title: COPY::CORRESPONDENCE_CASES_ASSIGN_TASK_MODAL_INSTRUCTIONS_TITLE,
+        redirect_after: "/queue/correspondence/:correspondence_uuid/"
+      }
+    end
+
+    # this is used to build the modal and handle redirect after modal is closed
+    def cancel_correspondence_task_data(task, _user = nil)
+      return_to_name = task_assigner_name(task)
+
+      {
+        modal_title: COPY::CANCEL_TASK_MODAL_TITLE,
+        modal_body: format_cancel_body(task, COPY::CANCEL_TASK_MODAL_DETAIL, return_to_name),
+        message_title: format(COPY::CANCEL_TASK_CONFIRMATION, task.correspondence&.veteran_full_name),
+        message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, return_to_name),
+        redirect_after: "/queue/correspondence/:correspondence_uuid/"
+      }
+    end
+
     def assign_to_organization_data(task, _user = nil)
       organizations = Organization.assignable(task).map do |organization|
         {
@@ -374,6 +407,18 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       end
 
       params
+    end
+
+    def complete_correspondence_task_data(task, _user = nil)
+      return_to_name = task_assigner_name(task)
+
+      {
+        modal_title: COPY::MARK_TASK_COMPLETE_TITLE,
+        modal_body: COPY::CORRESPONDENCE_OTHER_MOTION_MODAL_DETAIL,
+        message_title: format(COPY::CORRESPONDENCE_COMPLETE_TASK_CONFIRMATION, task.correspondence&.veteran_full_name),
+        message_detail: format(COPY::CORRESPONDENCE_COMPLETE_TASK_CONFIRMATION_DETAIL, return_to_name),
+        redirect_after: "/queue/correspondence/:correspondence_uuid/"
+      }
     end
 
     def proceed_final_notification_letter_data(task, _user = nil)
