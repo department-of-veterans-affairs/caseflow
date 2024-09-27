@@ -12,8 +12,6 @@ class ExternalApi::VbmsDocumentsForAppeal < ExternalApi::VbmsRequestWithFileNumb
   protected
 
   def do_request(ssn_or_claim_number)
-    verify_current_user_veteran_access(Veteran.find_by_file_number_or_ssn(ssn_or_claim_number))
-
     if FeatureToggle.enabled?(:vbms_pagination, user: RequestStore[:current_user])
       ExternalApi::VBMSService.call_and_log_service(
         service: vbms_paged_documents_service,
