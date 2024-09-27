@@ -221,6 +221,7 @@ module CaseflowCertification
       "#{root}/lib/pdfs",
       "#{root}/lib/tasks",
       "#{root}/lib/deprecation_warnings.rb",
+      "#{root}/lib/helpers/console_methods.rb"
     )
 
     # ==================================================================================================================
