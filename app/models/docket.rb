@@ -26,7 +26,7 @@ class Docket
     if ready
       scope = scope.ready_for_distribution
       scope = adjust_for_genpop(scope, genpop, judge) if judge.present? && !use_by_docket_date?
-      scope = adjust_for_affinity(scope, judge, not_affinity) if FeatureToggle.enabled?(:acd_exclude_from_affinity)
+      scope = adjust_for_affinity(scope, not_affinity, judge) if FeatureToggle.enabled?(:acd_exclude_from_affinity)
     end
 
     return scoped_for_priority(scope) if priority == true
@@ -100,7 +100,8 @@ class Docket
       if use_by_docket_date?
         ready_priority_nonpriority_appeals(priority: true, ready: true, not_affinity: true).limit(1).first&.receipt_date
       else
-        ready_priority_nonpriority_appeals(priority: true, ready: true, not_affinity: true).limit(1).first&.ready_for_distribution_at
+        ready_priority_nonpriority_appeals(priority: true, ready: true, not_affinity: true)
+          .limit(1).first&.ready_for_distribution_at
       end
   end
 
