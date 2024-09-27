@@ -68,7 +68,6 @@ class DocumentFetcher
     Document.import(docs_to_create)
     Rails.logger.info("Docs to create post import: #{docs_to_create}")
 
-
     # For newly created documents that have a series_id, copy over the metadata (annotations, tags, category labels)
     # from the latest version of the document (i.e., the latest id having the same series_id) in Caseflow.
     # The created document then becomes the latest version among the documents with the same series_id.
