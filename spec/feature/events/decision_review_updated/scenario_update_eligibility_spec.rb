@@ -8,9 +8,9 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
   let!(:epe) { create(:end_product_establishment, :active_hlr, reference_id: 12_345_678) }
   let(:review) { epe.source }
 
-  context "ineligible_to_eligible" do
+  context "tests processing ineligible_to_eligible request issues" do
     describe "POST #decision_review_updated" do
-      let!(:existing_request_issue) do
+      let!(:ineligible_to_eligible_request_issue) do
         create(:request_issue,
                decision_review: review, reference_id: "1234", closed_status: "ineligible", closed_at: DateTime.now,
                ineligible_reason: "appeal_to_appeal", contention_removed_at: DateTime.now,
@@ -109,36 +109,36 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
 
         it "returns success response whith eligible request_issue" do
           request.headers["Authorization"] = "Token token=#{api_key.key_string}"
+          expect(ineligible_to_eligible_request_issue.reference_id).to eq("1234")
+          expect(ineligible_to_eligible_request_issue.ineligible_reason).to eq("appeal_to_appeal")
+          expect(ineligible_to_eligible_request_issue.contested_issue_description).to eq("original description")
+          expect(ineligible_to_eligible_request_issue.nonrating_issue_category).to eq("original category")
+          expect(ineligible_to_eligible_request_issue.nonrating_issue_description).to eq("original nonrating description")
+          expect(ineligible_to_eligible_request_issue.closed_at).to be_within(100.seconds).of(DateTime.now)
+          expect(ineligible_to_eligible_request_issue.closed_status).to eq("ineligible")
+          expect(ineligible_to_eligible_request_issue.contention_removed_at).to be_within(1.second).of(DateTime.now)
+          expect(ineligible_to_eligible_request_issue.contention_reference_id).to eq(100_500)
           post :decision_review_updated, params: valid_params
-          expect(existing_request_issue.reference_id).to eq("1234")
-          expect(existing_request_issue.ineligible_reason).to eq("appeal_to_appeal")
-          expect(existing_request_issue.contested_issue_description).to eq("original description")
-          expect(existing_request_issue.nonrating_issue_category).to eq("original category")
-          expect(existing_request_issue.nonrating_issue_description).to eq("original nonrating description")
-          expect(existing_request_issue.closed_at).to be_within(100.seconds).of(DateTime.now)
-          expect(existing_request_issue.closed_status).to eq("ineligible")
-          expect(existing_request_issue.contention_removed_at).to be_within(1.second).of(DateTime.now)
-          expect(existing_request_issue.contention_reference_id).to eq(100_500)
           expect(response).to have_http_status(:ok)
           expect(response.body).to include("DecisionReviewUpdatedEvent successfully processed")
-          existing_request_issue.reload
+          ineligible_to_eligible_request_issue.reload
 
-          expect(existing_request_issue.ineligible_reason).to eq(nil)
-          expect(existing_request_issue.contested_issue_description).to eq("UPDATED DESCRIPTION")
-          expect(existing_request_issue.nonrating_issue_category).to eq("Military Retired Pay UPDATED")
-          expect(existing_request_issue.nonrating_issue_description).to eq("UPDATED TESTING")
-          expect(existing_request_issue.closed_at).to eq(nil)
-          expect(existing_request_issue.closed_status).to eq(nil)
-          expect(existing_request_issue.contention_removed_at).to eq(nil)
-          expect(existing_request_issue.contention_reference_id).to eq(123_456)
+          expect(ineligible_to_eligible_request_issue.ineligible_reason).to eq(nil)
+          expect(ineligible_to_eligible_request_issue.contested_issue_description).to eq("UPDATED DESCRIPTION")
+          expect(ineligible_to_eligible_request_issue.nonrating_issue_category).to eq("Military Retired Pay UPDATED")
+          expect(ineligible_to_eligible_request_issue.nonrating_issue_description).to eq("UPDATED TESTING")
+          expect(ineligible_to_eligible_request_issue.closed_at).to eq(nil)
+          expect(ineligible_to_eligible_request_issue.closed_status).to eq(nil)
+          expect(ineligible_to_eligible_request_issue.contention_removed_at).to eq(nil)
+          expect(ineligible_to_eligible_request_issue.contention_reference_id).to eq(123_456)
         end
       end
     end
   end
 
-  context "eligible_to_ineligible" do
+  context "tests processing eligible_to_ineligible request issues" do
     describe "POST #decision_review_updated" do
-      let!(:existing_request_issue) do
+      let!(:eligible_to_ineligible_request_issue) do
         create(:request_issue,
                decision_review: review, reference_id: "1234", closed_at: nil,
                ineligible_reason: nil, contested_issue_description: nil,
@@ -236,31 +236,31 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
 
         it "returns success response whith ineligible request_issue" do
           request.headers["Authorization"] = "Token token=#{api_key.key_string}"
-          expect(existing_request_issue.ineligible_reason).to eq(nil)
-          expect(existing_request_issue.contested_issue_description).to eq(nil)
-          expect(existing_request_issue.nonrating_issue_category).to eq(nil)
-          expect(existing_request_issue.closed_at).to eq(nil)
-          expect(existing_request_issue.nonrating_issue_description).to eq(nil)
-          expect(existing_request_issue.closed_status).to eq(nil)
-          expect(existing_request_issue.reference_id).to eq("1234")
+          expect(eligible_to_ineligible_request_issue.ineligible_reason).to eq(nil)
+          expect(eligible_to_ineligible_request_issue.contested_issue_description).to eq(nil)
+          expect(eligible_to_ineligible_request_issue.nonrating_issue_category).to eq(nil)
+          expect(eligible_to_ineligible_request_issue.closed_at).to eq(nil)
+          expect(eligible_to_ineligible_request_issue.nonrating_issue_description).to eq(nil)
+          expect(eligible_to_ineligible_request_issue.closed_status).to eq(nil)
+          expect(eligible_to_ineligible_request_issue.reference_id).to eq("1234")
           post :decision_review_updated, params: valid_params
           expect(response).to have_http_status(:ok)
           expect(response.body).to include("DecisionReviewUpdatedEvent successfully processed")
-          existing_request_issue.reload
-          expect(existing_request_issue.ineligible_reason).to eq("appeal_to_appeal")
-          expect(existing_request_issue.contested_issue_description).to eq("Eligible UPDATED")
-          expect(existing_request_issue.nonrating_issue_category).to eq("Military Retired Pay ELIGIBLE")
-          expect(existing_request_issue.nonrating_issue_description).to eq("UPDATED ELIGIBLE")
-          expect(existing_request_issue.closed_at).to eq("2023-12-07 20:49:05.000000000 -0500")
-          expect(existing_request_issue.closed_status).to eq("removed")
+          eligible_to_ineligible_request_issue.reload
+          expect(eligible_to_ineligible_request_issue.ineligible_reason).to eq("appeal_to_appeal")
+          expect(eligible_to_ineligible_request_issue.contested_issue_description).to eq("Eligible UPDATED")
+          expect(eligible_to_ineligible_request_issue.nonrating_issue_category).to eq("Military Retired Pay ELIGIBLE")
+          expect(eligible_to_ineligible_request_issue.nonrating_issue_description).to eq("UPDATED ELIGIBLE")
+          expect(eligible_to_ineligible_request_issue.closed_at).to eq("2023-12-07 20:49:05.000000000 -0500")
+          expect(eligible_to_ineligible_request_issue.closed_status).to eq("removed")
         end
       end
     end
   end
 
-  context "ineligible_to_ineligible" do
+  context "tests processing ineligible_to_ineligible request issues" do
     describe "POST #decision_review_updated" do
-      let!(:existing_request_issue) do
+      let!(:ineligible_to_ineligible_request_issue) do
         create(:request_issue,
                decision_review: review, reference_id: "1234", closed_status: "ineligible", closed_at: DateTime.now,
                ineligible_reason: "appeal_to_appeal", contention_removed_at: DateTime.now,
@@ -359,22 +359,22 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
 
         it "returns success response whith updated ineligible request_issue" do
           request.headers["Authorization"] = "Token token=#{api_key.key_string}"
-          expect(existing_request_issue.ineligible_reason).to eq("appeal_to_appeal")
-          expect(existing_request_issue.contested_issue_description).to eq("original description")
-          expect(existing_request_issue.nonrating_issue_category).to eq("original category")
-          expect(existing_request_issue.closed_at).to be_within(100.seconds).of(DateTime.now)
-          expect(existing_request_issue.nonrating_issue_description).to eq("original nonrating description")
-          expect(existing_request_issue.closed_status).to eq("ineligible")
-          expect(existing_request_issue.reference_id).to eq("1234")
+          expect(ineligible_to_ineligible_request_issue.ineligible_reason).to eq("appeal_to_appeal")
+          expect(ineligible_to_ineligible_request_issue.contested_issue_description).to eq("original description")
+          expect(ineligible_to_ineligible_request_issue.nonrating_issue_category).to eq("original category")
+          expect(ineligible_to_ineligible_request_issue.closed_at).to be_within(100.seconds).of(DateTime.now)
+          expect(ineligible_to_ineligible_request_issue.nonrating_issue_description).to eq("original nonrating description")
+          expect(ineligible_to_ineligible_request_issue.closed_status).to eq("ineligible")
+          expect(ineligible_to_ineligible_request_issue.reference_id).to eq("1234")
           post :decision_review_updated, params: valid_params
           expect(response).to have_http_status(:ok)
           expect(response.body).to include("DecisionReviewUpdatedEvent successfully processed")
-          existing_request_issue.reload
-          expect(existing_request_issue.ineligible_reason).to eq("appeal_to_appeal")
-          expect(existing_request_issue.contested_issue_description).to eq("UPDATED contested issue deascription")
-          expect(existing_request_issue.nonrating_issue_category).to eq("UPDATED category")
-          expect(existing_request_issue.nonrating_issue_description).to eq("UPDATED ELIGIBLE")
-          expect(existing_request_issue.closed_at).to eq("2023-12-07 20:49:05.000000000 -0500")
+          ineligible_to_ineligible_request_issue.reload
+          expect(ineligible_to_ineligible_request_issue.ineligible_reason).to eq("appeal_to_appeal")
+          expect(ineligible_to_ineligible_request_issue.contested_issue_description).to eq("UPDATED contested issue deascription")
+          expect(ineligible_to_ineligible_request_issue.nonrating_issue_category).to eq("UPDATED category")
+          expect(ineligible_to_ineligible_request_issue.nonrating_issue_description).to eq("UPDATED ELIGIBLE")
+          expect(ineligible_to_ineligible_request_issue.closed_at).to eq("2023-12-07 20:49:05.000000000 -0500")
         end
       end
     end
