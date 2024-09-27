@@ -275,8 +275,8 @@ let props = {
       }
     ],
 
-    appeals_information: {
-      appeals: [
+    appeals_information:
+      [
         {
           id: 1,
           type: 'Correspondence',
@@ -288,8 +288,7 @@ let props = {
           }
         }
       ],
-      claim_reviews: []
-    }
+    claim_reviews: []
   }
 };
 
@@ -471,6 +470,7 @@ describe('CorrespondenceDetails', () => {
 
     fireEvent.click(associatedPriorMailTab);
     const checkbox = screen.getByRole('checkbox', { name: '1' });
+
     fireEvent.click(checkbox);
 
     // Mock API call
