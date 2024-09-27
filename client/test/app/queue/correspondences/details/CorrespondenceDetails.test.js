@@ -344,6 +344,10 @@ describe('CorrespondenceDetails', () => {
     expect(screen.getByText('Task 1')).toBeInTheDocument();
     expect(screen.getByText('Task 2')).toBeInTheDocument();
 
+    const collapsibleButtons = document.getElementsByClassName('plus-symbol');
+
+    expect(collapsibleButtons.length).toBe(2);
+
     // Existing Appeals Table and Columns
     fireEvent.click(existingAppealButton);
     expect(screen.getByText('Existing Appeals')).toBeInTheDocument();
