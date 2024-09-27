@@ -116,6 +116,12 @@ body {
 }
 
 // Used for Caseflow app header rendered in React
+nav {
+  &.cf-push-left p a {
+    color: $color-gray-dark;
+  }
+}
+
 .cf-wide-app {
   .usa-grid {
     padding-left: 0;
