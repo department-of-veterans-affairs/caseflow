@@ -12,7 +12,7 @@ import DocumentLoadError from './DocumentLoadError';
 import { useDispatch } from 'react-redux';
 import { selectCurrentPdf } from 'app/reader/Documents/DocumentsActions';
 
-const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel, onLoad }) => {
+const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel, currentPage }) => {
   const [isDocumentLoadError, setIsDocumentLoadError] = useState(false);
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
@@ -23,16 +23,17 @@ const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel, onLoad }) => {
     height: '100%',
     overflow: 'auto',
     paddingTop: '10px',
+    paddingLeft: '6px',
+    paddingRight: '6px',
     alignContent: 'start',
     justifyContent: 'center',
-    gap: '5rem',
+    gap: '8rem',
   };
 
   useEffect(() => {
     const getDocData = async () => {
       setPdfDoc(null);
       setPdfPages([]);
-      onLoad(true);
       const requestOptions = {
         cache: true,
         withCredentials: true,
@@ -43,7 +44,6 @@ const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel, onLoad }) => {
         return response.body;
       });
 
-      onLoad(false);
       const docProxy = await getDocument({ data: byteArr }).promise;
 
       if (docProxy) {
@@ -90,7 +90,8 @@ const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel, onLoad }) => {
           rotation={rotateDeg}
           key={`doc-${doc.id}-page-${index}`}
           renderItem={(childProps) => (
-            <Layer documentId={doc.id} zoomLevel={zoomLevel} rotation={rotateDeg} {...childProps}>
+            <Layer isCurrentPage={currentPage === page.pageNumber}
+              documentId={doc.id} zoomLevel={zoomLevel} rotation={rotateDeg} {...childProps}>
               <TextLayer page={page} zoomLevel={zoomLevel} rotation={rotateDeg} />
             </Layer>
           )}
@@ -101,6 +102,7 @@ const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel, onLoad }) => {
 };
 
 PdfDocument.propTypes = {
+  currentPage: PropTypes.number,
   doc: PropTypes.shape({
     content_url: PropTypes.string,
     filename: PropTypes.string,
@@ -110,7 +112,6 @@ PdfDocument.propTypes = {
   rotateDeg: PropTypes.string,
   setNumPages: PropTypes.func,
   zoomLevel: PropTypes.number,
-  onLoad: PropTypes.func,
 };
 
 export default PdfDocument;
