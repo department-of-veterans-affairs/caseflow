@@ -134,7 +134,11 @@ module CaseflowCertification
     # setup the deploy env environment variable
     ENV['DEPLOY_ENV'] ||= Rails.env
 
-    # Enable logging for Zeitwerk compliance troubleshooting
+    # ------------------------------------------------------------------------------------------------------------------
+    # Autoloading & Eager loading
+    # ------------------------------------------------------------------------------------------------------------------
+
+    # Uncomment the line below to enable autoloader logging for troubleshooting
     # Rails.autoloaders.log!
 
     Rails.autoloaders.each do |autoloader|
@@ -218,6 +222,8 @@ module CaseflowCertification
       "#{root}/lib/tasks",
       "#{root}/lib/deprecation_warnings.rb",
     )
+
+    # ==================================================================================================================
 
     config.exceptions_app = self.routes
 
