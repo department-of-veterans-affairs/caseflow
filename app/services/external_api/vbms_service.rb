@@ -24,8 +24,9 @@ end
 class ExternalApi::VBMSService
   def self.fetch_document_file(document)
     DBService.release_db_connections
-    verify_current_user_veteran_file_number_access(document.file_number) unless document.file_number.nil?
+
     if FeatureToggle.enabled?(:use_ce_api)
+      verify_current_user_veteran_file_number_access(document.file_number)
       VeteranFileFetcher.get_document_content(doc_series_id: document.series_id)
     else
       @vbms_client ||= init_vbms_client
@@ -39,9 +40,9 @@ class ExternalApi::VBMSService
   end
 
   def self.fetch_documents_for(appeal, _user = nil)
-    verify_current_user_veteran_access(appeal.veteran)
-
     if FeatureToggle.enabled?(:use_ce_api)
+      verify_current_user_veteran_access(appeal.veteran)
+
       response = VeteranFileFetcher.fetch_veteran_file_list(veteran_file_number: appeal.veteran_file_number)
       documents = JsonApiResponseAdapter.new.adapt_fetch_document_series_for(response)
       {
@@ -55,9 +56,8 @@ class ExternalApi::VBMSService
   end
 
   def self.fetch_document_series_for(appeal)
-    verify_current_user_veteran_access(appeal.veteran)
-
     if FeatureToggle.enabled?(:use_ce_api)
+      verify_current_user_veteran_access(appeal.veteran)
       response = VeteranFileFetcher.fetch_veteran_file_list(veteran_file_number: appeal.veteran_file_number)
       JsonApiResponseAdapter.new.adapt_fetch_document_series_for(response)
     else
@@ -335,9 +335,11 @@ class ExternalApi::VBMSService
   end
 
   def self.verify_current_user_veteran_access(veteran)
-    return if !FeatureToggle.enabled?(:send_current_user_cred_to_ce_api)
-
     current_user = RequestStore[:current_user]
+
+    # Non-UI invocations (i.e., jobs) may not set the current user,
+    # in which case we do not need to check sensitivity
+    return if current_user.blank?
 
     fail BGS::SensitivityLevelCheckFailure, "User does not have permission to access this information" unless
       SensitivityChecker.new(current_user).sensitivity_levels_compatible?(
@@ -347,6 +349,8 @@ class ExternalApi::VBMSService
   end
 
   def self.verify_current_user_veteran_file_number_access(file_number)
+    return if file_number.blank?
+
     veteran = Veteran.find_by_file_number_or_ssn(file_number)
     verify_current_user_veteran_access(veteran)
   end
