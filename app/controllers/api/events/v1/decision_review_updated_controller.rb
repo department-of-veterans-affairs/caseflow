@@ -48,7 +48,6 @@ class Api::Events::V1::DecisionReviewUpdatedController < Api::ApplicationControl
     :nonrating_issue_bgs_source
   ].freeze
 
-  # rubocop:disable Layout/LineLength
   def decision_review_updated
     consumer_event_id = dru_params[:event_id]
     claim_id = dru_params[:claim_id]
@@ -76,12 +75,11 @@ class Api::Events::V1::DecisionReviewUpdatedController < Api::ApplicationControl
 
   private
 
-  # rubocop:disable Metrics/MethodLength
-
   def dru_error_params
     params.permit(:event_id, :errored_claim_id, :error)
   end
 
+  # rubocop:disable Metrics/MethodLength
   def dru_params
     params.permit(
       :event_id,

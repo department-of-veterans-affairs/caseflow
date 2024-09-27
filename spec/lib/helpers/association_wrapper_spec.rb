@@ -31,7 +31,7 @@ describe "AssocationWrapper" do
                  [:task_timers, "TaskTimer", nil, nil, nil],
                  [:cached_appeal, "CachedAppeal", nil, nil, nil],
                  [:correspondences_appeals_task, "CorrespondencesAppealsTask", nil, nil, nil],
-                 [:correspondence_appeal, "CorrespondenceAppeal", nil, nil, nil],
+                 [:correspondence_appeal, "CorrespondenceAppeal", nil, nil, nil]
                ]
         expect(subject.select_associations.map { |assoc| [assoc.name, assoc.options[:primary_key]] }).to match_array [
           [:versions, nil],

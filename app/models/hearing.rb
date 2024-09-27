@@ -191,6 +191,7 @@ class Hearing < CaseflowRecord
 
   def scheduled_for
     scheduled_for_hearing_day(hearing_day, updated_by, regional_office_timezone)
+  end
 
   def daily_docket_conference_link
     hearing_day.conference_link
