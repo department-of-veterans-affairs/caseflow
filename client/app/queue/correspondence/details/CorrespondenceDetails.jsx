@@ -14,7 +14,7 @@ import {
 import CorrespondenceResponseLetters from './CorrespondenceResponseLetters';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
-import { prepareAppealForSearchStore, prepareAppealForStore } from 'app/queue/utils';
+import { prepareAppealForSearchStore, prepareAppealForStore, prepareTasksForStore } from 'app/queue/utils';
 import { onReceiveTasks, onReceiveAppealDetails } from '../../QueueActions';
 import moment from 'moment';
 import Pagination from 'app/components/Pagination/Pagination';
@@ -23,7 +23,7 @@ import { ExternalLinkIcon } from 'app/components/icons/ExternalLinkIcon';
 import { COLORS } from 'app/constants/AppConstants';
 import Checkbox from 'app/components/Checkbox';
 import CorrespondencePaginationWrapper from 'app/queue/correspondence/CorrespondencePaginationWrapper';
-import { prepareTasksForStore } from '../../utils';
+
 import Button from '../../../components/Button';
 import Alert from '../../../components/Alert';
 import ApiUtil from '../../../util/ApiUtil';
@@ -444,6 +444,7 @@ const CorrespondenceDetails = (props) => {
               />
             </AppSegment>
           )}
+          {(props.correspondence.correspondenceAppeals.map((taskAdded) =>
             <CorrespondenceAppealTasks
               task_added={taskAdded}
               correspondence={props.correspondence}
