@@ -6,6 +6,10 @@ describe ExternalApi::VBMSService do
   subject(:described) { described_class }
   let(:mock_json_adapter) { instance_double(JsonApiResponseAdapter) }
   let(:mock_sensitivity_checker) { instance_double(SensitivityChecker, sensitivity_levels_compatible?: true) }
+  let!(:user) do
+    user = create(:user)
+    RequestStore.store[:current_user] = user
+  end
 
   before do
     allow(JsonApiResponseAdapter).to receive(:new).and_return(mock_json_adapter)
@@ -15,29 +19,27 @@ describe ExternalApi::VBMSService do
   describe ".verify_current_user_veteran_access" do
     let!(:appeal) { create(:appeal) }
 
-    context "with send_current_user_cred_to_ce_api feature flag enabled" do
-      before { FeatureToggle.enable!(:send_current_user_cred_to_ce_api) }
-      after { FeatureToggle.disable!(:send_current_user_cred_to_ce_api) }
+    it "checks the user's sensitivity" do
+      expect(mock_sensitivity_checker).to receive(:sensitivity_levels_compatible?)
+        .with(user: user, veteran: appeal.veteran).and_return(true)
 
-      let!(:user) do
-        user = create(:user)
-        RequestStore.store[:current_user] = user
-      end
+      described.verify_current_user_veteran_access(appeal.veteran)
+    end
 
-      it "checks the user's sensitivity" do
-        expect(mock_sensitivity_checker).to receive(:sensitivity_levels_compatible?)
-          .with(user: user, veteran: appeal.veteran).and_return(true)
+    it "does not check sensitivity if the user is not present" do
+      RequestStore.store[:current_user] = nil
 
-        described.verify_current_user_veteran_access(appeal.veteran)
-      end
+      expect(mock_sensitivity_checker).not_to receive(:sensitivity_levels_compatible?)
 
-      it "raises an exception when the sensitivity level is not compatible" do
-        expect(mock_sensitivity_checker).to receive(:sensitivity_levels_compatible?)
-          .with(user: user, veteran: appeal.veteran).and_return(false)
+      described.verify_current_user_veteran_access(appeal.veteran)
+    end
 
-        expect { described.verify_current_user_veteran_access(appeal.veteran) }
-          .to raise_error(BGS::SensitivityLevelCheckFailure, "User does not have permission to access this information")
-      end
+    it "raises an exception when the sensitivity levels are not compatible" do
+      expect(mock_sensitivity_checker).to receive(:sensitivity_levels_compatible?)
+        .with(user: user, veteran: appeal.veteran).and_return(false)
+
+      expect { described.verify_current_user_veteran_access(appeal.veteran) }
+        .to raise_error(BGS::SensitivityLevelCheckFailure, "User does not have permission to access this information")
     end
   end
 
@@ -54,6 +56,8 @@ describe ExternalApi::VBMSService do
       after { FeatureToggle.disable!(:use_ce_api) }
 
       it "calls the CE API" do
+        expect(mock_sensitivity_checker).to receive(:sensitivity_levels_compatible?)
+          .with(user: user, veteran: appeal.veteran).and_return(true)
         expect(VeteranFileFetcher).to receive(:fetch_veteran_file_list)
           .with(veteran_file_number: appeal.veteran_file_number)
         expect(mock_json_adapter).to receive(:adapt_fetch_document_series_for).and_return([])
@@ -64,7 +68,6 @@ describe ExternalApi::VBMSService do
 
     context "with use_ce_api feature toggle disabled" do
       it "calls the VbmsDocumentSeriesForAppeal service" do
-        expect(FeatureToggle).to receive(:enabled?).with(:send_current_user_cred_to_ce_api).and_return(false)
         expect(FeatureToggle).to receive(:enabled?).with(:use_ce_api).and_return(false)
         expect(ExternalApi::VbmsDocumentSeriesForAppeal).to receive(:new).with(file_number: appeal.veteran_file_number)
         expect(mock_vbms_document_series_for_appeal).to receive(:fetch)
@@ -87,27 +90,31 @@ describe ExternalApi::VBMSService do
       after { FeatureToggle.disable!(:use_ce_api) }
 
       it "calls the CE API" do
+        expect(mock_sensitivity_checker).to receive(:sensitivity_levels_compatible?)
+          .with(user: user, veteran: appeal.veteran).and_return(true)
         expect(VeteranFileFetcher).to receive(:fetch_veteran_file_list)
           .with(veteran_file_number: appeal.veteran_file_number)
         expect(mock_json_adapter).to receive(:adapt_fetch_document_series_for).and_return([])
+
         described.fetch_documents_for(appeal)
       end
     end
 
     context "with use_ce_api feature toggle disabled" do
       it "calls the VbmsDocumentsForAppeal service" do
-        expect(FeatureToggle).to receive(:enabled?).with(:send_current_user_cred_to_ce_api).and_return(false)
         expect(FeatureToggle).to receive(:enabled?).with(:use_ce_api).and_return(false)
         expect(ExternalApi::VbmsDocumentsForAppeal).to receive(:new).with(file_number: appeal.veteran_file_number)
         expect(mock_vbms_document_series_for_appeal).to receive(:fetch)
+
         described.fetch_documents_for(appeal)
       end
     end
   end
 
   describe ".fetch_document_file" do
+    let!(:appeal) { create(:appeal) }
     let(:fake_document) do
-      Generators::Document.build(id: 201, type: "NOD", series_id: "{ABC-123}")
+      Generators::Document.build(id: 201, type: "NOD", series_id: "{ABC-123}", file_number: appeal.veteran.file_number)
     end
 
     context "with use_ce_api feature toggle enabled" do
@@ -115,38 +122,14 @@ describe ExternalApi::VBMSService do
       after { FeatureToggle.disable!(:use_ce_api) }
 
       it "calls the CE API" do
+        expect(mock_sensitivity_checker).to receive(:sensitivity_levels_compatible?)
+          .with(user: user, veteran: appeal.veteran).and_return(true)
         expect(VeteranFileFetcher)
           .to receive(:get_document_content)
           .with(doc_series_id: fake_document.series_id)
           .and_return("Pdf Byte String")
 
         described.fetch_document_file(fake_document)
-      end
-
-      context "with check_user_sensitivty feature toggle enabled" do
-        before { FeatureToggle.enable!(:send_current_user_cred_to_ce_api) }
-        after { FeatureToggle.disable!(:send_current_user_cred_to_ce_api) }
-
-        let(:fake_veteran) do
-          Generators::Veteran.build(file_number: fake_document.file_number)
-        end
-
-        let(:current_user) { create(:user) }
-        let(:mock_sensitivity_checker) do
-          instance_double(SensitivityChecker, sensitivity_levels_compatible?: true)
-        end
-
-        it "checks user sensitivity for veteran file access" do
-          RequestStore[:current_user] = current_user
-          expect(Veteran).to receive(:find_by_file_number_or_ssn)
-            .with(fake_veteran.file_number)
-            .and_return(fake_veteran)
-          expect(SensitivityChecker).to receive(:new)
-            .and_return(mock_sensitivity_checker)
-          expect(mock_sensitivity_checker).to receive(:sensitivity_levels_compatible?)
-            .with(veteran: fake_veteran, user: RequestStore[:current_user])
-          described.fetch_document_file(fake_document)
-        end
       end
     end
   end
