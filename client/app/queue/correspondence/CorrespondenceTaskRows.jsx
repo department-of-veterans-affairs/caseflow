@@ -188,10 +188,14 @@ class CorrespondenceTaskRows extends React.PureComponent {
 
     return (
       <tr key={task.uniqueId}>
-        <td className={timeline ? 'taskTimeTimelineContainerStyling' : 'taskTimeContainerStyling'}>
+        <td
+          className={timeline ? 'taskTimeTimelineContainerStyling' : 'taskTimeContainerStyling'}
+          role="cell"
+        >
           <CaseDetailsDescriptionList>
-            {this.assignedOnListItem(task)}
-
+            <div aria-label={`Task assigned on ${moment(task.assignedOn).format('MMMM DD, YYYY')}`}>
+              {this.assignedOnListItem(task)}
+            </div>
           </CaseDetailsDescriptionList>
         </td>
         <td className={tdClassNamesforCorrespondence(timeline, task)}>
