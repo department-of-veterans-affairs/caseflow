@@ -3,9 +3,7 @@
 class SearchQueryService::QueriedHearing < SimpleDelegator
   def initialize(attributes)
     @attributes = attributes
-
     manage_attributes!
-
     super(hearing)
   end
 
@@ -54,7 +52,7 @@ class SearchQueryService::QueriedHearing < SimpleDelegator
   end
 
   private
-
+    
   attr_reader(
     :attributes,
     :hearing_day_attributes,

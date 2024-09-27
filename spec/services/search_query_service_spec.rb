@@ -77,6 +77,7 @@ describe "SearchQueryService" do
           appeal.hearings.first.update(updated_by: judge)
           appeal.hearings.first.hearing_day.update(regional_office: "RO19")
           appeal.hearings.first.hearing_views.create(user_id: judge.id)
+          
           # create work mode
           appeal.overtime = true
           AdvanceOnDocketMotion.create(

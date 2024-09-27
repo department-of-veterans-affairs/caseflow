@@ -31,6 +31,7 @@ class Hearing < CaseflowRecord
   include UpdatedByUserConcern
   include HearingConcern
   include HasHearingEmailRecipientsConcern
+  include ConferenceableConcern
 
   # VA Notify Hooks
   prepend HearingScheduled
@@ -49,6 +50,7 @@ class Hearing < CaseflowRecord
   has_many :hearing_issue_notes
   has_many :email_events, class_name: "SentHearingEmailEvent"
   has_many :email_recipients, class_name: "HearingEmailRecipient"
+  has_many :transcription_files, as: :hearing
 
   class HearingDayFull < StandardError; end
 
@@ -189,6 +191,9 @@ class Hearing < CaseflowRecord
 
   def scheduled_for
     scheduled_for_hearing_day(hearing_day, updated_by, regional_office_timezone)
+
+  def daily_docket_conference_link
+    hearing_day.conference_link
   end
 
   # returns scheduled datetime object considering the timezones
