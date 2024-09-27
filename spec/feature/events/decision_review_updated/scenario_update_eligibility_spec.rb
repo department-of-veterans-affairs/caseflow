@@ -102,7 +102,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
         json_test_payload
       end
 
-      context "updates issue" do
+      context "ineligible_to_eligible updates issue" do
         before do
           request.headers["Authorization"] = "Token token=#{api_key.key_string}"
         end
@@ -229,7 +229,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
         json_test_payload
       end
 
-      context "updates issue" do
+      context "eligible_to_ineligible updates issue" do
         before do
           request.headers["Authorization"] = "Token token=#{api_key.key_string}"
         end
@@ -352,7 +352,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
         json_test_payload
       end
 
-      context "updates issue" do
+      context "ineligible_to_ineligible updates issue" do
         before do
           request.headers["Authorization"] = "Token token=#{api_key.key_string}"
         end
