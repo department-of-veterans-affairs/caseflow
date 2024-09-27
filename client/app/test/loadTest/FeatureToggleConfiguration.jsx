@@ -10,8 +10,22 @@ export default function FeatureToggleConfiguration(props) {
 
   let feature = props.featureToggle;
 
-  const onChangeHandle = () => {
+  const onChangeHandle = (value) => {
     featureIsChecked(!isChecked);
+    props.updateState(
+      {
+        ...props.currentState,
+        user: {
+          ...props.currentState.user,
+          user: {
+            ...props.currentState.user.user,
+            functions: {
+              [feature]: value
+            }
+          }
+        }
+      }
+    );
   };
 
   return (
@@ -19,8 +33,8 @@ export default function FeatureToggleConfiguration(props) {
       <Checkbox
         label={feature}
         name={feature}
-        onChange={() => {
-          onChangeHandle();
+        onChange={(value) => {
+          onChangeHandle(value);
         }}
         value={isChecked}
       />
@@ -29,5 +43,7 @@ export default function FeatureToggleConfiguration(props) {
 }
 
 FeatureToggleConfiguration.propTypes = {
-  featureToggle: PropTypes.string
+  featureToggle: PropTypes.string,
+  currentState: PropTypes.object,
+  updateState: PropTypes.func
 };

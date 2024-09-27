@@ -10,8 +10,22 @@ export default function FunctionConfiguration(props) {
 
   let functionOption = props.functionOption;
 
-  const onChangeHandle = () => {
+  const onChangeHandle = (value) => {
     functionIsChecked(!isChecked);
+    props.updateState(
+      {
+        ...props.currentState,
+        user: {
+          ...props.currentState.user,
+          user: {
+            ...props.currentState.user.user,
+            functions: {
+              [functionOption]: value
+            }
+          }
+        }
+      }
+    );
   };
 
   return (
@@ -19,8 +33,8 @@ export default function FunctionConfiguration(props) {
       <Checkbox
         label={functionOption}
         name={functionOption}
-        onChange={() => {
-          onChangeHandle();
+        onChange={(newVal) => {
+          onChangeHandle(newVal);
         }}
         value={isChecked}
       />
@@ -29,5 +43,8 @@ export default function FunctionConfiguration(props) {
 }
 
 FunctionConfiguration.propTypes = {
-  functionOption: PropTypes.string
+  functionOption: PropTypes.string,
+  currentState: PropTypes.object,
+  updateState: PropTypes.func
 };
+//Works, but need to figure out how to add to the object instead of overwrite it.

@@ -12,12 +12,16 @@ import UserConfiguration from './UserConfiguration';
 import ScenarioConfigurations from './ScenarioConfigurations';
 
 export default function LoadTestForm(props) {
-  const { register, handleSubmit } = useForm();
+  const { handleSubmit } = useForm();
+
+  const currentState = props.currentState;
 
   const onSubmit = (event) => {
     event.preventDefault();
-    console.log(props.currentState);
+    console.log(currentState);
   };
+
+  const updateState = props.updateState;
 
   return <BrowserRouter>
     <div>
@@ -25,10 +29,10 @@ export default function LoadTestForm(props) {
         <form onSubmit={handleSubmit(onSubmit)} >
           <AppSegment filledBackground>
             <h1>Test Target Configuration</h1>
-            <UserConfiguration {...props} register={register} />
+            <UserConfiguration {...props} updateState={updateState} />
             <br />
             <h2>Scenario Groups</h2>
-            <ScenarioConfigurations register={register} />
+            <ScenarioConfigurations />
           </AppSegment>
           <div {...css({ overflow: 'hidden' })}>
             <Button

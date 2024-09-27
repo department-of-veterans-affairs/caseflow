@@ -25,10 +25,23 @@ export default function UserConfiguration(props) {
   const functionsAvailable = props.form_values.functions_available;
   const featureToggles = props.featuresList;
   const allOrganizations = props.form_values.all_organizations;
+  const currentState = props.currentState;
 
   const handleStationSelect = ({ value }) => {
     stationIsSelected(true);
     setStationSelected(value);
+    props.updateState(
+      {
+        ...currentState,
+        user: {
+          ...currentState.user,
+          user: {
+            ...currentState.user.user,
+            station_id: value
+          }
+        }
+      }
+    );
   };
 
   const handleOrganizationSelect = (org) => {
@@ -41,6 +54,18 @@ export default function UserConfiguration(props) {
       } else {
         updatedSelections[org] = true;
       }
+      props.updateState(
+        {
+          ...currentState,
+          user: {
+            ...currentState.user,
+            user: {
+              ...currentState.user.user,
+              organizations: updatedSelections
+            }
+          }
+        }
+      );
 
       return updatedSelections;
     });
@@ -90,6 +115,18 @@ export default function UserConfiguration(props) {
   const handleOfficeSelect = ({ value }) => {
     officeIsSelected(true);
     setOfficeSelected(value);
+    props.updateState(
+      {
+        ...currentState,
+        user: {
+          ...currentState.user,
+          user: {
+            ...currentState.user.user,
+            regional_office: value
+          }
+        }
+      }
+    );
   };
 
   featureToggles.sort();
@@ -129,7 +166,6 @@ export default function UserConfiguration(props) {
                 {allOrganizations.map((org) => (
                   <div className="load-test-container-checkbox test-class-sizing" key={org}>
                     <Checkbox
-                      inputRef={props.register}
                       label={org}
                       name={org}
                       isChecked={Boolean(selectedOrganizations[org])}
@@ -156,16 +192,20 @@ export default function UserConfiguration(props) {
                   <FunctionConfiguration
                     key={functionOption}
                     functionOption={functionOption}
+                    currentState={currentState}
+                    updateState={props.updateState}
                   />
                 ))}
               </div>
               <br />
               <h2><strong>Feature Toggles</strong></h2>
-              <div  className="load-test-container test-class-sizing">
+              <div className="load-test-container test-class-sizing">
                 {featureToggles.map((featureToggle) => (
                   <FeatureToggleConfiguration
                     key={featureToggle}
                     featureToggle={featureToggle}
+                    currentState={currentState}
+                    updateState={props.updateState}
                   />
                 ))}
               </div>
@@ -182,5 +222,7 @@ UserConfiguration.propTypes = {
   featuresList: PropTypes.array,
   form_values: PropTypes.object,
   functions_available: PropTypes.array,
-  register: PropTypes.func
+  register: PropTypes.func,
+  currentState: PropTypes.object,
+  updateState: PropTypes.func
 };
