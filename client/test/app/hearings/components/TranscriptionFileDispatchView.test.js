@@ -133,7 +133,7 @@ describe('TranscriptionFileDispatch', () => {
     expect(tabs[0].textContent).toBe('Unassigned');
     expect(tabs[1].textContent).toBe('Assigned');
     expect(tabs[2].textContent).toBe('Completed');
-    expect(tabs[3].textContent).toBe('All transcription');
+    expect(tabs[3].textContent).toBe('All');
   });
 
   it('starts in the unassigned tab', async () => {
