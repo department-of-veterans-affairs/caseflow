@@ -21,6 +21,8 @@ const DocumentViewer = (props) => {
   const [rotateDeg, setRotateDeg] = useState('0deg');
   const [showSearchBar, setShowSearchBar] = useState(false);
   const [showSideBar, setShowSideBar] = useState(true);
+  const [isDocumentLoadError, setIsDocumentLoadError] = useState(false);
+
   const dispatch = useDispatch();
 
   const currentDocumentId = Number(props.match.params.docId);
@@ -123,16 +125,19 @@ const DocumentViewer = (props) => {
         {showSearchBar && <ReaderSearchBar />}
         <div className="cf-pdf-scroll-view" onScroll={getPageNumFromScrollTop}>
           <PdfDocument
+            currentPage={currentPage}
             doc={doc}
+            isDocumentLoadError={isDocumentLoadError}
             rotateDeg={rotateDeg}
+            setIsDocumentLoadError={setIsDocumentLoadError}
             setNumPages={setNumPages}
             zoomLevel={props.zoomLevel}
-            currentPage={currentPage}
           />
         </div>
         <ReaderFooter
           currentPage={currentPage}
           docId={doc.id}
+          isDocumentLoadError={isDocumentLoadError}
           numPages={numPages}
           setCurrentPage={() => setCurrentPage()}
           showPdf={props.showPdf}

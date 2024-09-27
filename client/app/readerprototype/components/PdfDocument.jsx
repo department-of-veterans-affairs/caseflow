@@ -12,8 +12,14 @@ import DocumentLoadError from './DocumentLoadError';
 import { useDispatch } from 'react-redux';
 import { selectCurrentPdf } from 'app/reader/Documents/DocumentsActions';
 
-const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel, currentPage }) => {
-  const [isDocumentLoadError, setIsDocumentLoadError] = useState(false);
+const PdfDocument = ({
+  currentPage,
+  doc,
+  isDocumentLoadError,
+  rotateDeg,
+  setIsDocumentLoadError,
+  setNumPages,
+  zoomLevel }) => {
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
   const dispatch = useDispatch();
@@ -109,7 +115,9 @@ PdfDocument.propTypes = {
     id: PropTypes.number,
     type: PropTypes.string,
   }),
+  isDocumentLoadError: PropTypes.bool,
   rotateDeg: PropTypes.string,
+  setIsDocumentLoadError: PropTypes.func,
   setNumPages: PropTypes.func,
   zoomLevel: PropTypes.number,
 };
