@@ -329,7 +329,7 @@ describe('CorrespondenceDetails', () => {
 
     expect(userNameCount).toBeGreaterThan(0);
     const packageDetailsTab = screen.getByText('Package Details');
-    const existingAppealButton = screen.getByText('+');
+    const existingAppealButton = document.getElementsByClassName('plus-symbol')[0];
     // const responseLettersTab = screen.getByText('Response Letters');
     const associatedPriorMailTab = screen.getByText('Associated Prior Mail');
 
