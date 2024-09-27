@@ -13,6 +13,7 @@ import { annotationPlacement } from '../selectors';
 const ReaderFooter = ({
   currentPage,
   docId,
+  isDocumentLoadError,
   numPages,
   setCurrentPage,
   showPdf,
@@ -70,6 +71,32 @@ const ReaderFooter = ({
     return () => window.removeEventListener('keydown', keyHandler);
   }, [currentDocIndex, isPlacingAnnotation]);
 
+  const footerCenterContent = () => {
+    let content = <em>Loading document...</em>;
+
+    if (numPages) {
+      content = (
+        <span>
+          <div style={{ display: 'inline-flex' }}>
+            <TextField
+              maxLength={4}
+              name="page-progress-indicator-input"
+              label="Page"
+              onChange={setCurrentPage}
+              onKeyPress={handleKeyPress}
+              value={currentPage}
+              required={false}
+              className={['prototype-page-progress-indicator-input']}
+            />
+          </div>
+              of {numPages}
+        </span>
+      );
+    }
+
+    return content;
+  };
+
   return (
     <div id="prototype-footer" className="cf-pdf-footer cf-pdf-toolbar">
       <div className="cf-pdf-footer-buttons-left">
@@ -89,21 +116,7 @@ const ReaderFooter = ({
       <div className="cf-pdf-buttons-center">
         <span>
           <span className="page-progress-indicator">
-            <span>
-              <div style={{ display: 'inline-flex' }}>
-                <TextField
-                  maxLength={4}
-                  name="page-progress-indicator-input"
-                  label="Page"
-                  onChange={setCurrentPage}
-                  onKeyPress={handleKeyPress}
-                  value={currentPage}
-                  required={false}
-                  className={['prototype-page-progress-indicator-input']}
-                />
-              </div>
-              of {numPages}
-            </span>
+            {!isDocumentLoadError && footerCenterContent()}
           </span>
           |
         </span>
@@ -132,6 +145,7 @@ const ReaderFooter = ({
 ReaderFooter.propTypes = {
   currentPage: PropTypes.number,
   docId: PropTypes.number,
+  isDocumentLoadError: PropTypes.bool,
   numPages: PropTypes.number,
   setCurrentPage: PropTypes.func,
   showPdf: PropTypes.func,
