@@ -3,12 +3,6 @@
 # Extends the Appeal model with methods for the Appeals Status API
 
 class AppealStatusApiDecorator < ApplicationDecorator
-  def initialize(appeal, scheduled_hearing = nil)
-    super(appeal)
-
-    @scheduled_hearing = scheduled_hearing
-  end
-
   def appeal_status_id
     "A#{id}"
   end
@@ -168,11 +162,11 @@ class AppealStatusApiDecorator < ApplicationDecorator
   end
 
   def open_pre_docket_task?
-    open_tasks.any? { |task| task.is_a?(PreDocketTask) }
+    tasks.open.any? { |task| task.is_a?(PreDocketTask) }
   end
 
   def pending_schedule_hearing_task?
-    pending_schedule_hearing_tasks.any?
+    tasks.open.where(type: ScheduleHearingTask.name).any?
   end
 
   def hearing_pending?
@@ -180,7 +174,7 @@ class AppealStatusApiDecorator < ApplicationDecorator
   end
 
   def evidence_submission_hold_pending?
-    evidence_submission_hold_pending_tasks.any?
+    tasks.open.where(type: EvidenceSubmissionWindowTask.name).any?
   end
 
   def at_vso?
