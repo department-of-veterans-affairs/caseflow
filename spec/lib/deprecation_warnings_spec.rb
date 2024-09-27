@@ -11,7 +11,6 @@ describe DeprecationWarnings::ProductionHandler do
 
     let(:rails_logger) { Rails.logger }
     let(:slack_service) { SlackService.new(url: "dummy-url") }
-    let(:deploy_env) { ENV["DEPLOY_ENV"] }
 
     before do
       allow(Rails).to receive(:logger).and_return(rails_logger)
@@ -41,7 +40,7 @@ describe DeprecationWarnings::ProductionHandler do
     end
 
     it "emits a warning to Slack channel" do
-      slack_alert_title = "Deprecation Warning - caseflow (#{deploy_env})"
+      slack_alert_title = "Deprecation Warning - caseflow (test)"
 
       call
 
