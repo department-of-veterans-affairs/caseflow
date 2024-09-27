@@ -8,8 +8,6 @@ class ExternalApi::VbmsDocumentSeriesForAppeal < ExternalApi::VbmsRequestWithFil
   protected
 
   def do_request(ssn_or_claim_number)
-    verify_current_user_veteran_access(Veteran.find_by_file_number_or_ssn(ssn_or_claim_number))
-
     if FeatureToggle.enabled?(:vbms_pagination, user: RequestStore[:current_user])
       service = VBMS::Service::PagedDocuments.new(client: vbms_client)
 
