@@ -1565,7 +1565,7 @@
   "VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_ADMIN": "Requests for issue modifications have been submitted for this case. Dispositions cannot be made until a VHA admin completes review of the requested changes. Click the \"Edit issues\" button above to review the issue modification requests.",
   "TRANSCRIPTION_DISPATCH_ASSIGNED_TAB": "Assigned",
   "TRANSCRIPTION_DISPATCH_COMPLETED_TAB": "Completed",
-  "TRANSCRIPTION_FILE_DISPATCH_ALL_TAB": "All transcription",
+  "TRANSCRIPTION_FILE_DISPATCH_ALL_TAB": "All",
   "TRANSCRIPTION_STATUS_OVERDUE_FILTER_OPTION": "Overdue",
   "TRANSCRIPTION_STATUS_SENT_FILTER_OPTION": "Sent",
   "TRANSCRIPTION_STATUS_BOX_UPLOAD_SUCCESS_FILTER_OPTION_VALUE" : "Successful Upload (BOX)",
