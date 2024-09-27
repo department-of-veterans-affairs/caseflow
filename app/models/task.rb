@@ -101,7 +101,7 @@ class Task < CaseflowRecord
   # Equivalent to .reject(&:hide_from_queue_table_view) but offloads that to the database.
   scope :visible_in_queue_table_view, lambda {
     where.not(
-      type: Task.descendants.select(&:hide_from_queue_table_view).map(&:name)
+      type: hidden_task_classes
     )
   }
 
@@ -137,6 +137,10 @@ class Task < CaseflowRecord
     # To cache docoments from VBMS to S3 for appeals
     # With taks that are likely to need Reader to complete
     READER_PRIORITY_TASK_TYPES = [JudgeAssignTask.name, JudgeDecisionReviewTask.name].freeze
+
+    def hidden_task_classes
+      Task.descendants.select(&:hide_from_queue_table_view).map(&:name)
+    end
 
     def reader_priority_task_types
       READER_PRIORITY_TASK_TYPES
