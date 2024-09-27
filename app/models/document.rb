@@ -246,6 +246,7 @@ class Document < CaseflowRecord
       alt_types: source_document.alt_types,   # used by type?(type)
       filename: source_document.filename      # sent to the frontend
     )
+
     Rails.logger.info("object after assign_nondatabase_attributes: #{self}")
     self
   end
