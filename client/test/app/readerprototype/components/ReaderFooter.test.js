@@ -172,6 +172,9 @@ const getUnFilteredStore = () =>
         ],
         docFilterCriteria: {},
       },
+      annotationLayer: {
+        annotations: 1,
+      },
     },
     applyMiddleware(thunk)
   );
@@ -336,7 +339,10 @@ const getFilteredStore = () =>
           4,
           2,
         ],
-      }
+      },
+      annotationLayer: {
+        annotations: 1,
+      },
     },
     applyMiddleware(thunk)
   );
