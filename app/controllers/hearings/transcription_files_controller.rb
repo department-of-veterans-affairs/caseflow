@@ -175,6 +175,9 @@ class Hearings::TranscriptionFilesController < ApplicationController
         if filter_hash["col"] == "hearingDateColumn"
           @transcription_files = @transcription_files.filter_by_hearing_dates(filter_hash["val"].split(","))
         end
+        if filter_hash["col"] == "statusColumn"
+          @transcription_files = @transcription_files.filter_by_status(filter_hash["val"].split("|"))
+        end
       end
     end
   end
@@ -223,17 +226,16 @@ class Hearings::TranscriptionFilesController < ApplicationController
         fileStatus: transcription_file.file_status
       }
 
-      task = add_completed_tab_fields(task) if params[:tab] == "Completed"
+      task = add_completed_tab_fields(task, transcription_file) if params[:tab] == "Completed"
       tasks << task
     end
     tasks
   end
 
-  def add_completed_tab_fields(task)
+  def add_completed_tab_fields(task, transcription_file)
     task.merge(
       {
         workOrder: transcription_file.transcription&.task_number,
-        status: transcription_file.transcription&.transcription_package&.status,
         expectedReturnDate: transcription_file&.transcription&.transcription_package
           &.expected_return_date&.to_formatted_s(:short_date),
         returnDate: transcription_file.date_returned_box&.to_formatted_s(:short_date),

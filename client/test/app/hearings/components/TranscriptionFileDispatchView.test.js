@@ -64,7 +64,6 @@ const mockCompletedTranscriptionFiles = [
     expectedReturnDate: '12/15/2020',
     contractor: 'Genesis Government Solutions, Inc.',
     workOrder: 'BVAXXXXXX',
-    status: 'Completed',
   },
   {
     id: 39,
@@ -80,7 +79,6 @@ const mockCompletedTranscriptionFiles = [
     uploadDate: '10/01/2020',
     contractor: 'Jamison Professional Services',
     workOrder: 'BVAXXXXXX',
-    status: 'Completed-Overdue',
   }
 ];
 

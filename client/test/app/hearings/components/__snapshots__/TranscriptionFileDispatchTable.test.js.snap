@@ -3610,7 +3610,7 @@ exports[`TranscriptionFileDispatchTable Completed Tab loads a table from backend
               tabindex="-1"
             >
               <div>
-                Completed-Overdue
+                Completed
               </div>
             </td>
             <td
