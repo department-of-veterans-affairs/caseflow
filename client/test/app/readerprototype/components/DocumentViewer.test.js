@@ -1,89 +1,192 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { createMemoryHistory } from 'history';
-import { Router } from 'react-router-dom';
+import DocumentViewer from 'app/readerprototype/DocumentViewer';
+import React, { useState } from 'react';
 import { Provider } from 'react-redux';
+import { MemoryRouter } from 'react-router-dom';
 import { applyMiddleware, createStore } from 'redux';
 import thunk from 'redux-thunk';
-import DocumentViewer from '../../../../app/readerprototype/DocumentViewer';
-import documentsReducer from '../../../../app/reader/Documents/DocumentsReducer';
+import { rootReducer } from 'app/reader/reducers';
+import ApiUtil from 'app/util/ApiUtil';
 
-const mockDocuments = [
-  { id: 1, type: 'Form 9' },
-  { id: 2, type: 'NOD' }
-];
+afterEach(() => jest.clearAllMocks());
 
-const mockShowPdf = jest.fn();
-const mockOnZoomChange = jest.fn();
+const doc = {
+  id: 1,
+  tags: [],
+  category_procedural: true,
+  category_other: false,
+  category_medical: false,
+  category_case_summary: false,
+  opened_by_current_user: false,
+};
+
+const props = {
+  allDocuments: [
+    {
+      id: 1,
+      category_medical: null,
+      category_other: null,
+      category_procedural: true,
+      created_at: '2024-09-17T12:30:52.925-04:00',
+      description: null,
+      file_number: '216979849',
+      previous_document_version_id: null,
+      received_at: '2024-09-14',
+      series_id: '377120',
+      type: 'NOD',
+      updated_at: '2024-09-17T12:41:11.000-04:00',
+      upload_date: '2024-09-15',
+      vbms_document_id: '1',
+      content_url: '/document/39/pdf',
+      filename: 'filename-798447.pdf',
+      category_case_summary: true,
+      serialized_vacols_date: '',
+      serialized_receipt_date: '09/14/2024',
+      matching: false,
+      opened_by_current_user: false,
+      tags: [],
+      receivedAt: '2024-09-14',
+      listComments: false,
+      wasUpdated: false,
+    },
+    {
+      id: 2,
+      category_medical: null,
+      category_other: null,
+      category_procedural: true,
+      created_at: '2024-09-17T12:30:52.925-04:00',
+      description: null,
+      file_number: '216979849',
+      previous_document_version_id: null,
+      received_at: '2024-09-14',
+      series_id: '377120',
+      type: 'NOD',
+      updated_at: '2024-09-17T12:41:11.000-04:00',
+      upload_date: '2024-09-15',
+      vbms_document_id: '1',
+      content_url: '/document/39/pdf',
+      filename: 'filename-798447.pdf',
+      category_case_summary: true,
+      serialized_vacols_date: '',
+      serialized_receipt_date: '09/14/2024',
+      matching: false,
+      opened_by_current_user: false,
+      tags: [],
+      receivedAt: '2024-09-14',
+      listComments: false,
+      wasUpdated: false,
+    },
+  ],
+  showPdf: jest.fn(),
+  documentPathBase: '/3575931/documents',
+  match: {
+    params: { docId: '1', vacolsId: '3575931' },
+  },
+};
 
 const getStore = () =>
   createStore(
-    documentsReducer,
+    rootReducer,
     {
-      pdfViewer: {
-        openedAccordionSections: [],
-      },
       annotationLayer: {
+        annotations: 1,
         deleteAnnotationModalIsOpenFor: null,
         shareAnnotationModalIsOpenFor: null
       },
+      documents: { 1: doc },
       documentList: {
-        searchCategoryHighlights: {
-          1: {},
-          2: {}
-        }
+        pdfList: {
+          lastReadDocId: null,
+        },
+        searchCategoryHighlights: [{ 1: {} }, { 2: {} }],
+        filteredDocIds: [
+          1,
+          2,
+        ],
+        docFilterCriteria: {},
+        pdfViewer: {
+          pdfSideBarError: {
+            category: {
+              visible: false,
+            },
+          },
+          tagOptions: [],
+          openedAccordionSections: ['Issue tags', 'Comments', 'Categories'],
+        },
       },
     },
-    applyMiddleware(thunk)
-  );
+    applyMiddleware(thunk));
 
-const defaultProps = {
-  allDocuments: mockDocuments,
-  match: { params: { docId: '1', vacolsId: '123' } },
-  zoomLevel: 100,
-  onZoomChange: mockOnZoomChange,
-  showPdf: mockShowPdf,
-  documentPathBase: '/123/documents'
+const Component = () => {
+  const [zoomLevel, setZoomLevel] = useState(100);
+
+  return <Provider store={getStore()}>
+    <MemoryRouter>
+      <DocumentViewer {...props} zoomLevel={zoomLevel}
+        onZoomChange={(newZoomLevel) => setZoomLevel(newZoomLevel)} />
+    </MemoryRouter>
+  </Provider>;
 };
 
-const updatedProps = {
-  allDocuments: mockDocuments,
-  match: { params: { docId: '1', vacolsId: '123' } },
-  zoomLevel: 80,
-  onZoomChange: mockOnZoomChange,
-  showPdf: mockShowPdf,
-  documentPathBase: '/123/documents'
-};
+describe('user visiting a document', () => {
 
-const history = createMemoryHistory();
+  beforeEach(() => {
+    jest.mock('app/util/ApiUtil', () => ({
+      patch: jest.fn(),
+    }));
+  });
 
-const Component = (props) => (
-  <Provider store={getStore()}>
-    <Router history={history}>
-      <DocumentViewer {...props} />
-    </Router>
-  </Provider>
-);
+  it('records the viewing of the document', () => {
+    const spy = jest.spyOn(ApiUtil, 'patch');
 
-test('should change zoom level to 80%, then to 60% to simulate parent states update', () => {
-  // Initial render with zoomLevel 100%
-  const { rerender } = render(<Component {...defaultProps} />);
+    render(<Component {...props} />);
+    expect(spy).
+      toHaveBeenCalledWith(
+        '/document/1/mark-as-read',
+        { start: '2020-07-06T06:00:00-04:00', t0: 'RUNNING_IN_NODE' },
+        'mark-doc-as-read');
+  });
+});
 
-  expect(screen.getByText(/100%/i)).toBeInTheDocument();
+describe('Open Document and Close Issue tags Sidebar Section', () => {
+  it('Navigate to next document and verify Issue tags stay closed', async () => {
+    const { container, getByText } = render(
+      <Component doc={doc} document={doc} />
+    );
 
-  const zoomOutButton = screen.getByRole('button', { name: /zoom out/i });
+    expect(container).toHaveTextContent('Select or tag issues');
+    expect(container).toHaveTextContent('Add a comment');
+    expect(container).toHaveTextContent('Procedural');
+    expect(container).toHaveTextContent('Document 1 of 2');
 
-  // Simulate clicking zoom-out button to go to 80%
+    userEvent.click(getByText('Issue tags'));
+    waitFor(() =>
+      expect(container).not.toHaveTextContent('Select or tag issues')
+    );
+
+    userEvent.click(getByText('Next'));
+    waitFor(() => expect(container).toHaveTextContent('Add a comment'));
+    waitFor(() => expect(container).toHaveTextContent('Procedural'));
+    waitFor(() => expect(container).toHaveTextContent('Document 2 of 2'));
+    waitFor(() =>
+      expect(container).not.toHaveTextContent('Select or tag issues')
+    );
+
+  });
+});
+
+test('should change zoom level to 80%, then to 60% to simulate parent states update', async () => {
+  const { container, getByRole } = render(<Component {...props} />);
+
+  expect(container).toHaveTextContent('100%');
+  const zoomOutButton = getByRole('button', { name: /zoom out/i });
+
   userEvent.click(zoomOutButton);
-  expect(mockOnZoomChange).toHaveBeenNthCalledWith(1, 80);
 
-  // Now re-render the component with zoomLevel 80 to simulate parent state update
-  rerender(<Component {...updatedProps} />);
+  await waitFor(() => expect(container).toHaveTextContent('90%'));
 
-  // Verify that component now displays zoom level 80%
-  expect(screen.getByText(/80%/i)).toBeInTheDocument();
-  // Click zoom-out button again and confirm correct new zoomLevel value
   userEvent.click(zoomOutButton);
-  expect(mockOnZoomChange).toHaveBeenNthCalledWith(2, 60);
+
+  await waitFor(() => expect(container).toHaveTextContent('80%'));
 });
