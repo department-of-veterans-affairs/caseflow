@@ -5,7 +5,7 @@ const usePageVisibility = (ref) => {
 
   useEffect(() => {
     const observer = new IntersectionObserver(([entry]) =>
-      setIntersecting(entry.isIntersecting), { threshold: 0.8 }
+      setIntersecting(entry.isIntersecting), { threshold: 0.25 }
     );
 
     observer.observe(ref.current);
