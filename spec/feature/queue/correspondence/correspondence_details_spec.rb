@@ -180,6 +180,21 @@ RSpec.feature("The Correspondence Details page") do
     end
   end
 
+  context "Correspondence Details - Existing Appeals section" do
+    before do
+      correspondence_spec_user_access
+      FeatureToggle.enable!(:correspondence_queue)
+    end
+
+    it "checks the Existing Appeal section" do
+      visit "/queue/correspondence/#{correspondence.uuid}"
+      expect(page).to have_button("+", class: "cf-submit cf-btn-link usa-button")
+      button = find_button("+", class: "cf-submit cf-btn-link usa-button")
+      button.click
+      expect(page).to have_button("_", class: "cf-submit cf-btn-link usa-button")
+    end
+  end
+
   context "correspondence package details tab" do
     before do
       correspondence_spec_user_access
