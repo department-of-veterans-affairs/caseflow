@@ -15,6 +15,7 @@ $color-background-color: #f1f1f1;
 $color-red: #cd2026;
 $color-dark-red: #ff0000;
 $color-gray-darker: #5b616b;
+$color-gray: #5b616b;
 $color-bg-hsl: hsl(0, 0%, 100%);
 $color-bg-hsl-a: hsl(0, 0%, 80%);
 
@@ -144,12 +145,12 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 }
 
 .a-r-h2-response-letter {
-  margin: 0px;
-  padding: 0px;
+  margin: 0;
+  padding: 0;
 }
 
 .a-r-hr {
-  border-top: 1px solid #d6d7d9;
+  border-top: 1px solid $color-cream;
 }
 
 .correspondence-doctype-edit-dropdown .cf-select .cf-select__control {
@@ -1638,7 +1639,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
 .grayLineStyling {
   width: 5px;
-  background: gray;
+  background: $color-gray;
   margin: auto;
   position: absolute;
   top: 30px;
@@ -1654,8 +1655,8 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 }
 
 .greyDotAndlineStyling {
-  top: 0px;
-  position: absolute; // Ensure it's positioned correctly
+  top: 0;
+  position: absolute;
 }
 
 .taskContainerStyling {
@@ -1703,15 +1704,11 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 }
 
 .cf-row-wrapper {
-  margin-bottom: 0px;
+  margin-bottom: 0;
 }
 
 .button-left-aligned {
   text-align: left;
   padding-left: 0;
   padding-top: 0;
-}
-
-.button-left-aligned > span {
-  margin-left: 0;
 }
