@@ -28,7 +28,7 @@ describe "Backfill early AMA appeal" do
     let(:atty_draft_date) { dispatch_date - 2.hours }
 
     it "creates tasks and other records associated with a dispatched appeal" do
-      expect(BVAAppealStatus.new(appeal: appeal).status).to eq :unknown # We will fix this
+      expect(BVAAppealStatus.new(tasks: appeal.tasks).status).to eq :unknown # We will fix this
       expect(appeal.root_task.status).to eq "completed"
 
       # 1. Create tasks to associate appeal with a judge and attorney
@@ -134,7 +134,7 @@ describe "Backfill early AMA appeal" do
       decision_doc = DecisionDocument.create!(params)
       expect(appeal.decision_document).to eq decision_doc
 
-      expect(BVAAppealStatus.new(appeal: appeal).status).to eq :dispatched
+      expect(BVAAppealStatus.new(tasks: appeal.tasks).status).to eq :dispatched
     end
   end
 end
