@@ -189,8 +189,8 @@ RSpec.feature("The Correspondence Details page") do
     it "checks the Existing Appeal section" do
       visit "/queue/correspondence/#{correspondence.uuid}"
       expect(page).to have_button("+", class: "cf-submit cf-btn-link usa-button")
-      button = find_button("+", class: "cf-submit cf-btn-link usa-button")
-      button.click
+      buttons = all("button.cf-submit.cf-btn-link.usa-button", text: "+")
+      buttons.first.click
       expect(page).to have_button("_", class: "cf-submit cf-btn-link usa-button")
     end
   end
