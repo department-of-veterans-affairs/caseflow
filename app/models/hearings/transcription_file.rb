@@ -45,10 +45,10 @@ class TranscriptionFile < CaseflowRecord
 
   scope :filter_by_hearing_type, ->(values) { where("hearing_type IN (?)", values) }
 
-  scope :filter_by_contractor, ->(values) do
+  scope :filter_by_contractor, lambda { |values|
     joins(transcription: { transcription_package: :contractor })
       .where(transcription_contractors: { name: values })
-  end
+  }
 
   scope :filter_by_types, lambda { |values|
     filter_parts = []
@@ -130,11 +130,11 @@ class TranscriptionFile < CaseflowRecord
   scope :order_by_case_type, ->(direction) { order(Arel.sql("sortable_case_type " + direction)) }
   scope :order_by_return_date, ->(direction) { order(Arel.sql("date_returned_box " + direction)) }
   scope :order_by_upload_date, ->(direction) { order(Arel.sql("date_upload_box " + direction)) }
-  scope :order_by_work_order, ->(direction) do
+  scope :order_by_work_order, lambda { |direction|
     joins(:transcription)
-    .select("transcription_files.*, transcriptions.task_number AS work_order")
-    .order("work_order #{direction}")
-  end
+      .select("transcription_files.*, transcriptions.task_number AS work_order")
+      .order("work_order #{direction}")
+  }
 
   scope :locked, -> { where(locked_at: (Time.now.utc - 2.hours)..Time.now.utc) }
 

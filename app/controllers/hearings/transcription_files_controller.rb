@@ -107,52 +107,53 @@ class Hearings::TranscriptionFilesController < ApplicationController
   end
 
   def apply_filters
-    if params[:filter].present?
-      params[:filter].each do |filter|
-        filter_hash = Rack::Utils.parse_query(filter)
-        if filter_hash["col"] == "hearingTypeColumn"
-          @transcription_files = @transcription_files.filter_by_hearing_type(filter_hash["val"].split("|"))
-        end
-        if filter_hash["col"] == "typesColumn"
-          @transcription_files = @transcription_files.filter_by_types(filter_hash["val"].split("|"))
-        end
-        if filter_hash["col"] == "hearingDateColumn"
-          @transcription_files = @transcription_files.filter_by_hearing_dates(filter_hash["val"].split(","))
-        end
-        if filter_hash["col"] == "returnDateColumn"
-          @transcription_files = @transcription_files.filter_by_return_dates(filter_hash["val"].split(","))
-        end
-        if filter_hash["col"] == "uploadDateColumn"
-          @transcription_files = @transcription_files.filter_by_upload_dates(filter_hash["val"].split(","))
-        end
-        if filter_hash["col"] == "contractorColumn"
-          @transcription_files =
-            @transcription_files.filter_by_contractor(filter_hash["val"].split("|"))
-        end
-      end
+    return if params[:filter].blank?
+
+    filter_methods = {
+      "hearingTypeColumn" => :filter_by_hearing_type,
+      "typesColumn" => :filter_by_types,
+      "hearingDateColumn" => :filter_by_hearing_dates,
+      "returnDateColumn" => :filter_by_return_dates,
+      "uploadDateColumn" => :filter_by_upload_dates,
+      "contractorColumn" => :filter_by_contractor
+    }
+
+    params[:filter].each do |filter|
+      filter_hash = Rack::Utils.parse_query(filter)
+      column = filter_hash["col"]
+      method = filter_methods[column]
+
+      next unless method
+
+      delimiter = determine_delimiter(column)
+      values = filter_hash["val"].split(delimiter)
+      @transcription_files = @transcription_files.send(method, values)
+    end
+  end
+
+  def determine_delimiter(column)
+    if %w[hearingDateColumn returnDateColumn uploadDateColumn].include?(column)
+      ","
+    else
+      "|"
     end
   end
 
   def apply_sorting
     sort_by = params[:sort_by] || "id"
     order = params[:order] == "asc" ? "ASC" : "DESC"
-    @transcription_files =
-      case sort_by
-      when "hearingDateColumn"
-        @transcription_files.order_by_hearing_date(order)
-      when "hearingTypeColumn"
-        @transcription_files.order_by_hearing_type(order)
-      when "typesColumn"
-        @transcription_files.order_by_case_type(order)
-      when "returnDateColumn"
-        @transcription_files.order_by_return_date(order)
-      when "uploadDateColumn"
-        @transcription_files.order_by_upload_date(order)
-      when "workOrderColumn"
-        @transcription_files.order_by_work_order(order)
-      else
-        @transcription_files.order_by_id(order)
-      end
+
+    sort_methods = {
+      "hearingDateColumn" => :order_by_hearing_date,
+      "hearingTypeColumn" => :order_by_hearing_type,
+      "typesColumn" => :order_by_case_type,
+      "returnDateColumn" => :order_by_return_date,
+      "uploadDateColumn" => :order_by_upload_date,
+      "workOrderColumn" => :order_by_work_order
+    }
+
+    sort_method = sort_methods[sort_by] || :order_by_id
+    @transcription_files = @transcription_files.send(sort_method, order)
   end
 
   def setup_pagination
