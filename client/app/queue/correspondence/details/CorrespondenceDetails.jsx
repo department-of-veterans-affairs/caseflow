@@ -16,6 +16,7 @@ import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
 import { prepareAppealForSearchStore, prepareAppealForStore, prepareTasksForStore } from 'app/queue/utils';
 import { onReceiveTasks, onReceiveAppealDetails } from '../../QueueActions';
+import CorrespondenceTasksAdded from '../CorrespondenceTasksAdded';
 import moment from 'moment';
 import Pagination from 'app/components/Pagination/Pagination';
 import Table from 'app/components/Table';
@@ -56,6 +57,7 @@ const CorrespondenceDetails = (props) => {
   const [originalStates, setOriginalStates] = useState({});
   const [sortedPriorMail, setSortedPriorMail] = useState([]);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isTasksUnrelatedSectionExpanded, setIsTasksUnrelatedSectionExpanded] = useState(false);
 
   // Initialize checkbox states
   useEffect(() => {
@@ -75,6 +77,10 @@ const CorrespondenceDetails = (props) => {
 
   const toggleSection = () => {
     setIsExpanded((prev) => !prev);
+  };
+
+  const toggleTasksUnrelatedSection = () => {
+    setIsTasksUnrelatedSectionExpanded((prev) => !prev);
   };
 
   // Function to handle checkbox changes
@@ -306,14 +312,11 @@ const CorrespondenceDetails = (props) => {
     setDisableSubmitButton(buttonDisable);
   }, [selectedAppeals]);
 
-  let appeals;
-
   const sortAppeals = (selectedList) => {
-    appeals = [];
     let filteredAppeals = [];
     let unfilteredAppeals = [];
 
-    correspondence.appeals_information.appeals.map((appeal) => {
+    correspondence.appeals_information.map((appeal) => {
       if (selectedList?.includes(appeal.id)) {
         filteredAppeals.push(appeal);
       } else {
@@ -327,19 +330,8 @@ const CorrespondenceDetails = (props) => {
     unfilteredAppeals = unfilteredAppeals.sort((leftAppeal, rightAppeal) => leftAppeal.id - rightAppeal.id);
 
     const sortedAppeals = filteredAppeals.concat(unfilteredAppeals);
-    const searchStoreAppeal = prepareAppealForSearchStore(sortedAppeals);
-    const appeall = searchStoreAppeal.appeals;
-    const appealldetail = searchStoreAppeal.appealDetails;
-    const hashKeys = Object.keys(appeall);
 
-    hashKeys.map((key) => {
-      const combinedHash = { ...appeall[key], ...appealldetail[key] };
-
-      appeals.push(combinedHash);
-
-      return true;
-    });
-    setAppealsToDisplay(appeals);
+    setAppealsToDisplay(sortedAppeals);
   };
 
   useEffect(() => {
@@ -461,15 +453,31 @@ const CorrespondenceDetails = (props) => {
   const correspondenceAndAppealTaskComponents = <>
     {correspondenceTasks()}
 
-    <section className="task-not-related-title">Tasks not related to an appeal</section>
-    <div className="correspondence-case-timeline-container">
-      <CorrespondenceCaseTimeline
-        organizations={props.organizations}
-        userCssId={props.userCssId}
-        correspondence={props.correspondence}
-        tasksToDisplay={props.correspondence.tasksUnrelatedToAppeal}
-      />
+    <div className="correspondence-existing-appeals">
+      <div className="left-section">
+        <h2>Tasks not related to an appeal</h2>
+      </div>
+      <div className="toggleButton-plus-or-minus">
+        <Button
+          onClick={toggleTasksUnrelatedSection}
+          linkStyling
+          aria-label="Toggle section"
+          aria-expanded={isTasksUnrelatedSectionExpanded}
+        >
+          {isTasksUnrelatedSectionExpanded ? '_' : <span className="plus-symbol">+</span>}
+        </Button>
+      </div>
     </div>
+    {isTasksUnrelatedSectionExpanded && (
+      <div className="correspondence-case-timeline-container">
+        <CorrespondenceCaseTimeline
+          organizations={props.organizations}
+          userCssId={props.userCssId}
+          correspondence={props.correspondence}
+          tasksToDisplay={props.correspondence.tasksUnrelatedToAppeal}
+        />
+      </div>
+    )}
   </>;
 
   const correspondencePackageDetails = () => {
@@ -835,7 +843,6 @@ CorrespondenceDetails.propTypes = {
   organizations: PropTypes.array,
   userCssId: PropTypes.string,
   enableTopPagination: PropTypes.bool,
-  correspondence_appeal_ids: PropTypes.bool,
   isInboundOpsUser: PropTypes.bool,
   tasksUnrelatedToAppealEmpty: PropTypes.bool,
   isInboundOpsSuperuser: PropTypes.bool,

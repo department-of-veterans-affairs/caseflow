@@ -5,7 +5,7 @@ class WorkQueue::CorrespondenceAppealsSerializer
 
   set_key_transform :camel_lower
 
-  attribute :id
+  attribute :id, &:appeal_id
   attribute :correspondences_appeals_tasks
   attribute :docket_number do |object|
     object.appeal.docket_number
