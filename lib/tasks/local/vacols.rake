@@ -2,7 +2,6 @@
 
 require "csv"
 require "rainbow"
-require_relative "../../helpers/vacols_csv_reader"
 require_relative "../../../db/seeds/base"
 require_relative "../../../db/seeds/facols"
 
