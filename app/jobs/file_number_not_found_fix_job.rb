@@ -6,6 +6,15 @@ class FileNumberNotFoundFixJob < CaseflowJob
   queue_with_priority :low_priority
   application_attr :intake
 
+  class FixfileNumberCollections
+    ASSOCIATED_OBJECTS = FixFileNumberWizard::ASSOCIATIONS
+    def self.get_collections(veteran)
+      ASSOCIATED_OBJECTS.map do |klass|
+        FixFileNumberWizard::Collection.new(klass, veteran.ssn)
+      end
+    end
+  end
+
   def initialize
     @stuck_job_report_service = StuckJobReportService.new
     @start_time = nil
@@ -102,16 +111,6 @@ class FileNumberNotFoundFixJob < CaseflowJob
   class FetchFileNumberBySSN
     def self.call(ssn)
       BGSService.new.fetch_file_number_by_ssn(ssn)
-    end
-  end
-end
-
-# created this class below so as to mock FixFileNumberWizard::Collection instance
-class FixfileNumberCollections
-  ASSOCIATED_OBJECTS = FixFileNumberWizard::ASSOCIATIONS
-  def self.get_collections(veteran)
-    ASSOCIATED_OBJECTS.map do |klass|
-      FixFileNumberWizard::Collection.new(klass, veteran.ssn)
     end
   end
 end
