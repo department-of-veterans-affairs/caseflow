@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require_relative "../../lib/helpers/fix_file_number_wizard"
-require_relative "../../lib/helpers/duplicate_veteran_checker"
-
 class FileNumberNotFoundFixJob < CaseflowJob
   include MasterSchedulerInterface
   ASSOCIATED_OBJECTS = FixFileNumberWizard::ASSOCIATIONS
