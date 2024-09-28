@@ -2,7 +2,6 @@
 
 class FileNumberNotFoundFixJob < CaseflowJob
   include MasterSchedulerInterface
-  ASSOCIATED_OBJECTS = FixFileNumberWizard::ASSOCIATIONS
 
   queue_with_priority :low_priority
   application_attr :intake
