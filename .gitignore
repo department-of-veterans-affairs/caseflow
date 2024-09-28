@@ -41,6 +41,7 @@ tags
 !.dockerignore
 !.fasterer.yml
 !.reek.yml
+!.rubocop
 !/.circleci/config.yml
 
 # React on Rails
