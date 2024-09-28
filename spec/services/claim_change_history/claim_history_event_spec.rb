@@ -277,7 +277,7 @@ describe ClaimHistoryEvent do
       context "when the event type is invalid" do
         let(:event_type) { :invalid_event }
         it "should raise InvalidEventType error" do
-          expect { subject }.to raise_error(InvalidEventType)
+          expect { subject }.to raise_error(described_class::InvalidEventType)
         end
       end
 
@@ -1072,7 +1072,7 @@ describe ClaimHistoryEvent do
         context "when the event type is invalid" do
           let(:event_type) { :invalid_event }
           it "should raise InvalidEventType error" do
-            expect { subject }.to raise_error(InvalidEventType)
+            expect { subject }.to raise_error(described_class::InvalidEventType)
           end
         end
 
