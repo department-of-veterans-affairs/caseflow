@@ -1,6 +1,7 @@
 require:
   - rubocop-performance
   - rubocop-rails
+  - .rubocop/custom_cop/top_level_constants_per_file.rb
 
 AllCops:
   Exclude:
@@ -224,3 +225,11 @@ Layout/EmptyLinesAroundAttributeAccessor:
 
 Layout/SpaceAroundMethodCallOperator:
   Enabled: true
+
+CustomCop/TopLevelConstantsPerFile:
+  Enabled: true
+  Include:
+    - 'app/**/*'
+    - 'lib/**/*'
+  Exclude:
+    - '**/*[^.rb]' # exclude non-.rb files (ex: .rake files)
