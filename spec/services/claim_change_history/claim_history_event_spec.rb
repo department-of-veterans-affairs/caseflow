@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative "../../../app/services/claim_change_history/claim_history_event.rb"
-
 describe ClaimHistoryEvent do
   let(:change_data) do
     {
