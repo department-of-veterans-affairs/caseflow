@@ -76,10 +76,14 @@ class Events::DecisionReviewCreated::CreateRequestIssues
       end
       newly_created_issues
     end
-    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
     def create_event_record(event, issue)
-      EventRecord.create!(event: event, evented_record: issue, info: "I")
+      EventRecord.create!(
+        event: event,
+        evented_record: issue,
+        info: { update_type: "I", record_data: issue }
+      )
     end
 
     # Legacy issue checks
