@@ -10,6 +10,7 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedAudit
     audit_updated_request_issue
     audit_added_request_issue
     audit_removed_request_issue
+    audit_withdrawn_request_issue
     audit_ineligible_to_eligible_request_issue
     audit_eligible_to_ineligible_request_issue
     audit_ineligible_to_ineligible_request_issue
@@ -81,8 +82,20 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedAudit
     end
   end
 
+  def audit_withdrawn_request_issue
+    @parser.withdrawn_issues.each do |request_issue_data|
+      request_issue = find_request_issue(request_issue_data)
+      EventRecord.create!(
+        event: @event,
+        evented_record: request_issue,
+        info: { update_type: "W", record_data: request_issue, event_data: request_issue_data }
+      )
+    end
+  end
+
   def find_request_issue(request_issues_data)
-    RequestIssue.find_by(reference_id: request_issues_data[:reference_id]) ||
-      fail(Caseflow::Error::DecisionReviewUpdateMissingIssueError, request_issues_data[:reference_id])
+    parsed_data = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(request_issues_data)
+    RequestIssue.find_by(reference_id: parsed_data.ri_reference_id) ||
+      fail(Caseflow::Error::DecisionReviewUpdateMissingIssueError, parsed_data.ri_reference_id)
   end
 end

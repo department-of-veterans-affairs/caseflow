@@ -250,6 +250,9 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       expect(
         described_class.new(review: review, user: user, parser: parser).remove_request_issues_with_no_decision!
       ).to be_truthy
+      req = RequestIssue.find_by(reference_id: issue_payload[:decision_review_issue_id])
+      expect(req.closed_at).to be
+      expect(req.closed_status).to eq(RequestIssue::CLOSED_STATUSES[:denied])
     end
   end
 

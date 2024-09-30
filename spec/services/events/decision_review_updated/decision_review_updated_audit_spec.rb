@@ -11,6 +11,7 @@ describe Events::DecisionReviewUpdated::DecisionReviewUpdatedAudit do
     allow(parser).to receive(:updated_issues).and_return([])
     allow(parser).to receive(:added_issues).and_return([])
     allow(parser).to receive(:removed_issues).and_return([])
+    allow(parser).to receive(:withdrawn_issues).and_return([])
     allow(parser).to receive(:ineligible_to_eligible_issues).and_return([])
     allow(parser).to receive(:eligible_to_ineligible_issues).and_return([])
     allow(parser).to receive(:ineligible_to_ineligible_issues).and_return([])
@@ -80,6 +81,17 @@ describe Events::DecisionReviewUpdated::DecisionReviewUpdatedAudit do
 
     it "creates an event record for ineligible to ineligible request issues" do
       allow(parser).to receive(:ineligible_to_ineligible_issues).and_return([{ reference_id: "1234567890" }])
+
+      audit_service = described_class.new(event: event, parser: parser)
+
+      expect { audit_service.call! }.to change { EventRecord.count }.by(1)
+
+      event_record = EventRecord.last
+      expect(event_record.evented_record).to eq(request_issue)
+    end
+
+    it "creates an event record for withdrawn request issues" do
+      allow(parser).to receive(:withdrawn_issues).and_return([{ reference_id: "1234567890" }])
 
       audit_service = described_class.new(event: event, parser: parser)
 
