@@ -12,6 +12,7 @@ class RequestIssue < CaseflowRecord
   include DecisionSyncable
   include HasDecisionReviewUpdatedSince
   include SyncLock
+  include DescriptionCharacterMap
 
   # Pagination for VBMS API
   paginates_per ENV["REQUEST_ISSUE_PAGINATION_OFFSET"].to_i
@@ -24,9 +25,6 @@ class RequestIssue < CaseflowRecord
 
   # don't need to try as frequently as default 3 hours
   DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS = 12
-
-  # contested issue description pattern
-  DESC_ALLOWED_CHARACTERS_REGEX = /\A[a-zA-Z0-9\s.\-_|\/\\@#~=%,;?!'"`():$+*^\[\]&><{}]+\z/.freeze
 
   belongs_to :decision_review, polymorphic: true
   belongs_to :end_product_establishment, dependent: :destroy
@@ -45,13 +43,6 @@ class RequestIssue < CaseflowRecord
 
   # enum is symbol, but validates requires a string
   validates :ineligible_reason, exclusion: { in: ["untimely"] }, if: proc { |reqi| reqi.untimely_exemption }
-
-  # only allow specified characters for description
-  validates(
-    :contested_issue_description,
-    format: { with: DESC_ALLOWED_CHARACTERS_REGEX, message: "invalid characters used" },
-    allow_blank: true
-  )
 
   enum ineligible_reason: {
     duplicate_of_nonrating_issue_in_active_review: "duplicate_of_nonrating_issue_in_active_review",
@@ -86,6 +77,7 @@ class RequestIssue < CaseflowRecord
 
   before_save :set_contested_rating_issue_profile_date
   before_save :close_if_ineligible!
+  before_save :sanitize_contested_issue_description
 
   after_create :set_decision_date_added_at, if: :decision_date_exists?
   # amoeba gem for splitting appeal request issues
@@ -1180,6 +1172,16 @@ class RequestIssue < CaseflowRecord
   def set_decision_date_added_at
     self.decision_date_added_at = created_at
     save!
+  end
+
+  def sanitize_contested_issue_description
+    # substitute known invalid characters
+    DESCRIPTION_CHARACTER_MAP.each do |c|
+      self.contested_issue_description&.gsub!(c[:invalid], c[:valid])
+    end
+
+    # sanitize remaining characters
+    self.contested_issue_description&.gsub!(DESCRIPTION_CHARACTER_BLACKLIST, "")
   end
 end
 # rubocop:enable Metrics/ClassLength
