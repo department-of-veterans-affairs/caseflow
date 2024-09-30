@@ -1,4 +1,3 @@
-import { css } from 'glamor';
 import React from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
@@ -8,56 +7,14 @@ import COPY from '../../../COPY';
 import { CancelIcon } from '../../components/icons/CancelIcon';
 import { GrayDotIcon } from '../../components/icons/GrayDotIcon';
 import { GreenCheckmarkIcon } from '../../components/icons/GreenCheckmarkIcon';
-import { COLORS } from '../../constants/AppConstants';
 import { sortCaseTimelineEvents } from '../utils';
 import CaseDetailsDescriptionList from '../components/CaseDetailsDescriptionList';
 import ActionsDropdown from '../components/ActionsDropdown';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 
-export const grayLineStyling = css({
-  width: '5px',
-  background: COLORS.GREY_LIGHT,
-  margin: 'auto',
-  position: 'absolute',
-  top: '30px',
-  left: '45.5%',
-  bottom: 0
-});
-
-export const grayLineTimelineStyling = css(grayLineStyling, { left: '9%',
-  marginLeft: '12px',
-  top: '39px' });
-
-const greyDotAndlineStyling = css({ top: '25px' });
-
 const closedAtIcon = (task, timeline) => {
-  return (task.closedAt && timeline ? <GreenCheckmarkIcon /> : <GrayDotIcon size={25} />);
+  return task.closedAt && timeline ? <GreenCheckmarkIcon /> : <GrayDotIcon size={25} />;
 };
-
-const taskContainerStyling = css({
-  border: 'none',
-  verticalAlign: 'top',
-  padding: '3px',
-  paddingBottom: '3rem'
-});
-
-const taskInfoWithIconContainer = css({
-  textAlign: 'center',
-  border: 'none',
-  padding: '0 0 0 0',
-  position: 'relative',
-  verticalAlign: 'top',
-  width: '15px'
-});
-
-const taskTimeContainerStyling = css(taskContainerStyling, { width: '20%' });
-const taskInformationContainerStyling = css(taskContainerStyling, { width: '25%' });
-const taskTimeTimelineContainerStyling = css(taskContainerStyling, { width: '40%' });
-const taskInfoWithIconTimelineContainer =
-  css(taskInfoWithIconContainer, { textAlign: 'left',
-    marginLeft: '5px',
-    width: '10%',
-    paddingLeft: '0px' });
 
 const isCancelled = (task) => {
   return task.status === TASK_STATUSES.cancelled;
@@ -67,19 +24,19 @@ const establishmentTaskCorrespondence = (task) => {
   return task.type === 'EstablishmentTask';
 };
 
+// Update function to use class names as strings
 const tdClassNamesforCorrespondence = (timeline, task) => {
-  const closedAtClass = task.closedAt ? null : <span className="greyDotTimelineStyling"></span>;
-  const containerClass = timeline ? taskInfoWithIconTimelineContainer : '';
+  const closedAtClass = task.closedAt ? '' : 'greyDotAndlineStyling';
+  const containerClass = timeline ? 'taskInfoWithIconTimelineContainer' : 'taskInfoWithIconContainer';
 
-  return [containerClass, closedAtClass].filter((val) => val).join(' ');
+  return [containerClass, closedAtClass].filter(Boolean).join(' ');
 };
 
 const cancelGrayTimeLineStyle = (timeline) => {
-  return timeline ? grayLineTimelineStyling : '';
+  return timeline ? 'grayLineTimelineStyling' : 'grayLineStyling';
 };
 
 class CorrespondenceTaskRows extends React.PureComponent {
-
   constructor(props) {
     super(props);
 
@@ -91,23 +48,22 @@ class CorrespondenceTaskRows extends React.PureComponent {
   }
 
   toggleTaskInstructionsVisibility = (taskKey) => {
-    if (this.state.taskInstructionsIsVisible.includes(taskKey)) {
-      const state = this.state.taskInstructionsIsVisible;
+    const { taskInstructionsIsVisible } = this.state;
 
-      const index = this.state.taskInstructionsIsVisible.indexOf(taskKey);
-
-      state.splice(index, 1);
-      this.setState({ taskInstructionsIsVisible: [...state] });
+    if (taskInstructionsIsVisible.includes(taskKey)) {
+      this.setState({
+        taskInstructionsIsVisible: taskInstructionsIsVisible.filter(
+          (key) => key !== taskKey
+        ),
+      });
     } else {
-      const state = this.state.taskInstructionsIsVisible;
-
-      state.push(taskKey);
-      this.setState({ taskInstructionsIsVisible: [...state] });
+      this.setState({
+        taskInstructionsIsVisible: [...taskInstructionsIsVisible, taskKey],
+      });
     }
   };
 
   assignedOnListItem = (task) => {
-
     return task.assignedOn ? (
       <div className="cf-row-wrapper">
         <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL}</dt>
@@ -117,7 +73,6 @@ class CorrespondenceTaskRows extends React.PureComponent {
   };
 
   assignedToListItem = (task) => {
-
     return (
       <div className="cf-row-wrapper">
         <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt>
@@ -144,22 +99,14 @@ class CorrespondenceTaskRows extends React.PureComponent {
       return <br />;
     }
 
-    // We specify the same 2.4rem margin-bottom as paragraphs to each set of instructions
-    // to ensure a consistent margin between instruction content and the "Hide" button
-    const divStyles = { marginBottom: '2.4rem', marginTop: '1em' };
-
     return (
       <React.Fragment key={`${task.uniqueId} + ${task.instructions} fragment`}>
         {task.instructions.map((text) => (
-          <React.Fragment key={`${task.uniqueId} div`}>
-            <div
-              key={`${task.uniqueId} instructions`}
-              style={divStyles}
-              className="task-instructions"
-            >
-              <p>{text}</p>
-            </div>
-          </React.Fragment>
+          <div
+            key={`${task.uniqueId} instructions`}
+            className="task-instructions">
+            <p>{text}</p>
+          </div>
         ))}
       </React.Fragment>
     );
@@ -176,19 +123,19 @@ class CorrespondenceTaskRows extends React.PureComponent {
       <div className="cf-row-wrapper">
         {taskInstructionsVisible && (
           <React.Fragment key={`${task.assignedOn}${task.label}`}>
-            {!establishmentTaskCorrespondence(task) &&
-            <dt>
-              {COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}
-            </dt>
-            }
+            {!establishmentTaskCorrespondence(task) && (
+              <dt>
+                {COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}
+              </dt>
+            )}
             <dd>
               {this.taskInstructionsWithLineBreaks(task)}
+
             </dd>
           </React.Fragment>
         )}
         <Button
           linkStyling
-          styling={css({ padding: '0' })}
           id={task.uniqueId}
           name={
             taskInstructionsVisible ?
@@ -196,6 +143,7 @@ class CorrespondenceTaskRows extends React.PureComponent {
               COPY.TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL
           }
           onClick={() => this.toggleTaskInstructionsVisibility(task.label)}
+          classNames={['button-left-aligned']}
         />
       </div>
     );
@@ -221,7 +169,6 @@ class CorrespondenceTaskRows extends React.PureComponent {
   showActionsSection = (task) => task && !this.props.hideDropdown;
 
   showTimelineDescriptionItems = (task) => {
-
     return (
       <React.Fragment>
         {task.type !== 'IssuesUpdateTask' && this.assignedToListItem(task)}
@@ -237,66 +184,51 @@ class CorrespondenceTaskRows extends React.PureComponent {
       sortedTimelineEvents,
       index,
       timeline,
-      correspondence,
+      correspondence
+
     } = templateConfig;
 
-    const timelineTitle = isCancelled(task) ?
-      `${task.type} cancelled` :
-      task.timelineTitle;
+    const timelineTitle = isCancelled(task) ? `${task.type} cancelled` : task.timelineTitle;
 
     return (
       <tr key={task.uniqueId + task.instructions}>
         <td
-          {...taskTimeContainerStyling}
-          className={timeline ? taskTimeTimelineContainerStyling : ''}
+          className={timeline ? 'taskTimeTimelineContainerStyling' : 'taskTimeContainerStyling'}
+          role="cell"
         >
           <CaseDetailsDescriptionList>
-            {this.assignedOnListItem(task)}
+            <div aria-label={`Task assigned on ${moment(task.assignedOn).format('MMMM DD, YYYY')}`}>
+              {this.assignedOnListItem(task)}
+            </div>
           </CaseDetailsDescriptionList>
-
         </td>
-        <td
-          {...taskInfoWithIconContainer}
-          className={tdClassNamesforCorrespondence(timeline, task)}
-        >
+        <td className={tdClassNamesforCorrespondence(timeline, task)}>
           {isCancelled(task) ? <CancelIcon /> : closedAtIcon(task, timeline)}
 
           {((index < sortedTimelineEvents?.length && timeline) ||
             (index < this.state.activeTasks?.length - 1 && !timeline)) && (
-            <div
-              {...grayLineStyling}
-              className={[
-                cancelGrayTimeLineStyle(timeline),
-                task.closedAt ? '' : greyDotAndlineStyling,
-              ].join(' ')}
-            />
+            <div className={['grayLineStyling', cancelGrayTimeLineStyle(timeline)].join(' ')} />
           )}
         </td>
         <td
-          {...taskInformationContainerStyling}
-          className={timeline ? 'taskInformationTimelineContainerStyling' : ''}
+          className={timeline ? 'taskInformationTimelineContainerStyling' : 'taskInformationContainerStyling'}
         >
           <CaseDetailsDescriptionList>
             {timeline && timelineTitle}
             {this.showTimelineDescriptionItems(task)}
           </CaseDetailsDescriptionList>
-
         </td>
-        {!timeline && (
-          <td className="taskContainerStyling taskActionsContainerStyling">
-            {this.showActionsListItem(task, correspondence)}
-          </td>
-        )}
+        {!timeline && <td className="taskContainerStyling taskActionsContainerStyling">
+          {this.showActionsListItem(task, correspondence)}
+        </td>}
       </tr>
     );
   };
 
   render = () => {
     const { correspondence, taskList } = this.props;
-    // Non-tasks are only relevant for the main Case Timeline
-    const sortedTimelineEvents = sortCaseTimelineEvents(
-      taskList,
-    );
+
+    const sortedTimelineEvents = sortCaseTimelineEvents(taskList);
 
     return (
       <React.Fragment key={correspondence.uuid}>
@@ -328,5 +260,5 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(
-  mapStateToProps,
+  mapStateToProps
 )(CorrespondenceTaskRows);
