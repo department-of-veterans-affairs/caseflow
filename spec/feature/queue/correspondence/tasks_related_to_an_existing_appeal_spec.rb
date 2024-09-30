@@ -307,5 +307,48 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
         expect(find_all("#reactSelectContainer").length).to eq(1)
       end
     end
+
+    describe "tasks related to an existing appeal that is inactive" do
+      it "displays inactive appeals in the table of tasks related" do
+        visit_intake_form_step_2_with_inactive_appeals
+        existing_appeal_radio_options[:yes].click
+        binding.pry
+        expect(page).to have_content("CAVC Correspondence")
+        expect(page).to_not have_content("Change Of Address")
+        binding.pry
+      end
+
+      it "allows user to add tasks related to an appeal with a root task of closed" do
+        visit_intake_form_step_2_with_inactive_appeals
+        existing_appeal_radio_options[:yes].click
+        using_wait_time(wait_time) do
+          within ".cf-case-list-table" do
+            page.all(".cf-form-checkbox").last.click
+          end
+        end
+        find_by_id("button-addTasks").click
+        all("#reactSelectContainer")[0].click
+        find_by_id("react-select-2-option-15").click
+        find_by_id("content").fill_in with: "Correspondence Text"
+        expect((all("#reactSelectContainer")[0]).text).to include("Other Motion")
+
+        page.all("#button-addTasks").first.click
+        all("#reactSelectContainer")[1].click
+        find_by_id("react-select-3-option-15").click
+        all("textarea")[1].fill_in with: "Correspondence Text"
+        expect(all("#reactSelectContainer")[1].text).to include("Other Motion")
+
+        page.all("#button-addTasks").first.click
+        all("#reactSelectContainer")[2].click
+        find_by_id("react-select-4-option-15").click
+        all("textarea")[2].fill_in with: "Correspondence Text"
+        binding.pry
+      end
+
+      it "shows expected list for tasks related to inactive appeals" do
+        visit_intake_form_step_2_with_inactive_appeals
+        # code here
+      end
+    end
   end
 end
