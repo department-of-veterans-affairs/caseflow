@@ -85,6 +85,4 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedAudit
     RequestIssue.find_by(reference_id: request_issues_data[:reference_id]) ||
       fail(Caseflow::Error::DecisionReviewUpdateMissingIssueError, request_issues_data[:reference_id])
   end
-
-
 end
