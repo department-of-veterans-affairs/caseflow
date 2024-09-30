@@ -25,7 +25,7 @@ class CaseDistributionTest extends React.PureComponent {
       isReseedingAmaDocketGoals: false,
       isReseedingDocketPriority: false,
       isReturnLegacyAppeals: false,
-      isReseedingOptionalSeed: false,
+      isReseedingOptionalSeeds: false,
       isFailReturnLegacyAppeals: false,
       showLegacyAppealsAlert: false,
       showAlert: false,
@@ -156,17 +156,19 @@ class CaseDistributionTest extends React.PureComponent {
   };
 
   reseedGenericFullSuiteAppealsSeeds = () => {
-    this.setState({ isReseedingOptionalSeed: true });
+    this.setState({ isReseedingOptionalSeeds: true });
     ApiUtil.post('/test/optional_seed').then(() => {
+      const currentTime = new Date().toLocaleString();
+
       this.setState({
-        isReseedingOptionalSeed: false,
+        isReseedingOptionalSeeds: false,
         showAlert: true,
-        alertMsg: '{COPY.TEST_RESEED_GENERIC_FULL_SUITE_APPEALS_ALERTMSG}',
+        alertMsg: `${COPY.TEST_RESEED_GENERIC_FULL_SUITE_APPEALS_ALERTMSG} ${currentTime}`,
       });
     }, (err) => {
       console.warn(err);
       this.setState({
-        isReseedingOptionalSeed: false,
+        isReseedingOptionalSeeds: false,
         showAlert: true,
         alertMsg: err,
         alertType: 'error',
@@ -469,7 +471,7 @@ class CaseDistributionTest extends React.PureComponent {
                               <Button
                                 onClick={this.reseedGenericFullSuiteAppealsSeeds}
                                 name="Run Generic Full Suite Appeals Seeds"
-                                loading={this.state.isReseedingAod}
+                                loading={this.state.isReseedingOptionalSeeds}
                                 loadingText="Reseeding Generic Full Suite Appeals Seeds"
                               />
                             </div>
