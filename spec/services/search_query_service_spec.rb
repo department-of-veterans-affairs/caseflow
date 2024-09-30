@@ -70,7 +70,13 @@ describe "SearchQueryService" do
             mst_status: true,
             pact_status: true
           )
+          create(
+            :virtual_hearing,
+            hearing: appeal.hearings.first
+          )
           appeal.hearings.first.update(updated_by: judge)
+          appeal.hearings.first.hearing_day.update(regional_office: "RO19")
+          appeal.hearings.first.hearing_views.create(user_id: judge.id)
           # create work mode
           appeal.overtime = true
           AdvanceOnDocketMotion.create(
@@ -106,6 +112,7 @@ describe "SearchQueryService" do
           expect(attributes.docket_number).to eq appeal.stream_docket_number
           expect(attributes.external_id).to eq appeal.uuid
           expect(attributes.hearings.length).to eq appeal.hearings.length
+          expect(attributes.hearings.first[:held_by]).to eq judge.full_name
           expect(attributes.issues.length).to eq(appeal.request_issues.length)
           expect(attributes.mst).to eq appeal.decision_issues.any?(&:mst_status)
           expect(attributes.pact).to eq appeal.decision_issues.any?(&:pact_status)

@@ -102,7 +102,12 @@ class SearchQueryService::AppealRow
   end
 
   def hearings
-    json_array("hearings")
+    json_array("hearings").map do |attrs|
+      AppealHearingSerializer.new(
+        SearchQueryService::QueriedHearing.new(attrs),
+        { user: RequestStore[:current_user] }
+      ).serializable_hash[:data][:attributes]
+    end
   end
 
   def withdrawn

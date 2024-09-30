@@ -347,7 +347,19 @@ class SearchQueryService::Query
               (
                 select row_to_json(hd2)
                 from (select * from hearing_days hd where hd.id=h.hearing_day_id limit 1) hd2
-              ) hearing_day
+              ) hearing_day,
+              (
+                select row_to_json(vh2)
+                from (select * from virtual_hearings vh where vh.hearing_id=h.id limit 1) vh2
+              ) virtual_hearing,
+              (
+                select jsonb_agg(hv2)
+                from (select * from hearing_views hv where hv.hearing_id=h.id) hv2
+              ) views,
+              (
+                select row_to_json(j2)
+                from (select u.full_name from users u where u.id=h.judge_id limit 1) j2
+              ) judge
             from
               hearings h
             where
