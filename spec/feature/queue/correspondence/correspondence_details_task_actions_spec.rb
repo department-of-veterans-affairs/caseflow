@@ -76,7 +76,7 @@ RSpec.feature("The Correspondence Details All Tasks Actions") do
         it "Verify #{task_action[:name]} task with Assign to team action dropdown" do
           visit "/queue/correspondence/#{@correspondence.uuid}"
           click_dropdown(prompt: "Select an action", text: "Assign to team")
-          expect(page).to have_content("Assign Task")
+          expect(page).to have_content("Assign task")
           expect(page).to have_content("Select a team")
           click_dropdown(prompt: "Select or search", text: "Education")
           find(".cf-form-textarea", match: :first).fill_in with: "Assign task instructions"
