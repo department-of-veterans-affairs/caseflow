@@ -30,7 +30,8 @@ import { ROTATION_DEGREES } from '../util/readerConstants';
 // top / center of the container.
 const Page = memo(({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale, setCurrentPage }) => {
   const canvasRef = useRef(null);
-  const isVisible = usePageVisibility(canvasRef);
+  const isVisible = usePageVisibility(canvasRef, 0);
+  const isPageVisible = usePageVisibility(canvasRef, 0.25);
   const wrapperRef = useRef(null);
   const renderTimeout = useRef(null);
   const [previousScale, setPreviousScale] = useState(scale);
@@ -96,12 +97,20 @@ const Page = memo(({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale, 
   // so that scrolling doesn't trigger rerenders
   useEffect(() => {
     if (isVisible) {
-      setCurrentPage(page.pageNumber);
+      // setCurrentPage(page.pageNumber);
       clearTimeout(renderTimeout.current);
       renderTimeout.current = setTimeout(render, 500);
     }
 
   }, [isVisible]);
+
+
+  useEffect(() => {
+    if (isPageVisible) {
+      setCurrentPage(page.pageNumber);
+    }
+
+  }, [isPageVisible]);
 
   // render when hasRendered has been reset to false. if the page isn't visible, the render
   // function ignores the render request
