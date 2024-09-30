@@ -269,7 +269,7 @@ export const formattedLevers = [
     id: 10,
     item: 'lever_11',
     title: 'CAVC AOD Affinity Days',
-    description: 'Sets the number of days appeals returned from CAVC that are also AOD respect the affinity to the deciding judge. This is not applicable for legacy apeals for which the deciding judge conducted the most recent hearing.',
+    description: 'Sets the number of days appeals returned from CAVC that are also AOD respect the affinity to the deciding judge. This is not applicable for legacy appeals for which the deciding judge conducted the most recent hearing.',
     data_type: ACD_LEVERS.data_types.radio,
     value: ACD_LEVERS.value,
     unit: ACD_LEVERS.days,

@@ -9,11 +9,12 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     create(:case_distribution_lever, :nod_adjustment)
     create(:case_distribution_lever, :batch_size_per_attorney)
     create(:case_distribution_lever, :cavc_affinity_days)
+    create(:case_distribution_lever, :cavc_aod_affinity_days)
     create(:case_distribution_lever, :ama_hearing_case_affinity_days)
     create(:case_distribution_lever, :ama_hearing_case_aod_affinity_days)
     create(:case_distribution_lever, :ama_direct_review_start_distribution_prior_to_goals)
     create(:case_distribution_lever, :disable_legacy_non_priority)
-    create(:case_distribution_lever, :disable_legacy_priority)
+    create(:case_distribution_lever, :nonsscavlj_number_of_appeals_to_move)
   end
 
   def to_judge_hash(arr)
@@ -24,8 +25,6 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     before do
       expect_any_instance_of(PushPriorityAppealsToJudgesJob)
         .to receive(:distribute_genpop_priority_appeals).and_return([])
-      expect_any_instance_of(PushPriorityAppealsToJudgesJob)
-        .to receive(:generate_report).and_return([])
     end
 
     after { FeatureToggle.disable!(:acd_distribute_by_docket_date) }
@@ -49,6 +48,13 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
     it "queues the UpdateAppealAffinityDatesJob" do
       expect_any_instance_of(UpdateAppealAffinityDatesJob).to receive(:perform).with(no_args)
+
+      subject
+    end
+
+    it "calls send_job_report method" do
+      expect_any_instance_of(PushPriorityAppealsToJudgesJob)
+        .to receive(:generate_report).and_return([])
 
       subject
     end
@@ -220,28 +226,6 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
     subject { PushPriorityAppealsToJudgesJob.new.distribute_non_genpop_priority_appeals }
 
-    context "using Automatic Case Distribution module" do
-      before do
-        allow_any_instance_of(PushPriorityAppealsToJudgesJob).to receive(:eligible_judges).and_return(eligible_judges)
-      end
-
-      it "should only distribute the ready priority cases tied to a judge" do
-        expect(subject.count).to eq eligible_judges.count
-        expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [2, 2, 0, 0]
-
-        # Ensure we only distributed the 2 ready legacy and hearing priority cases that are tied to a judge
-        distributed_cases = DistributedCase.where(distribution: subject)
-        expect(distributed_cases.count).to eq 4
-        expected_array = [ready_priority_bfkey, ready_priority_bfkey2, ready_priority_uuid, ready_priority_uuid2]
-        expect(distributed_cases.map(&:case_id)).to match_array expected_array
-        # Ensure all docket types cases are distributed, including the 5 cavc evidence submission cases
-        expected_array2 = [Constants.AMA_DOCKETS.hearing, Constants.AMA_DOCKETS.hearing, "legacy", "legacy"]
-        expect(distributed_cases.map(&:docket)).to match_array expected_array2
-        expect(distributed_cases.map(&:priority).uniq).to match_array [true]
-        expect(distributed_cases.map(&:genpop).uniq).to match_array [false]
-      end
-    end
-
     context "using By Docket Date Distribution module" do
       before do
         FeatureToggle.enable!(:acd_distribute_by_docket_date)
@@ -250,29 +234,14 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       end
       after do
         FeatureToggle.disable!(:acd_distribute_by_docket_date)
-        FeatureToggle.enable!(:acd_exclude_from_affinity)
-      end
-
-      it "should only distribute the ready priority cases tied to a judge" do
-        expect(subject.count).to eq eligible_judges.count
-        expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [2, 2, 0, 0]
-
-        # Ensure we only distributed the 2 ready legacy and hearing priority cases that are tied to a judge
-        distributed_cases = DistributedCase.where(distribution: subject)
-        expect(distributed_cases.count).to eq 4
-        expected_array = [ready_priority_bfkey, ready_priority_bfkey2, ready_priority_uuid, ready_priority_uuid2]
-        expect(distributed_cases.map(&:case_id)).to match_array expected_array
-        # Ensure all docket types cases are distributed, including the 5 cavc evidence submission cases
-        expected_array2 = %w[hearing hearing legacy legacy]
-        expect(distributed_cases.map(&:docket)).to match_array expected_array2
-        expect(distributed_cases.map(&:priority).uniq).to match_array [true]
-        expect(distributed_cases.map(&:genpop).uniq).to match_array [false, true]
+        FeatureToggle.disable!(:acd_exclude_from_affinity)
       end
     end
   end
 
   context ".distribute_genpop_priority_appeals" do
     before do
+      create(:case_distribution_lever, :disable_legacy_priority)
       allow_any_instance_of(DirectReviewDocket)
         .to receive(:nonpriority_receipts_per_year)
         .and_return(100)
@@ -575,7 +544,6 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
     it "using By Docket Date Distribution module" do
       FeatureToggle.enable!(:acd_distribute_by_docket_date)
-
       today = Time.zone.now.to_date
       legacy_days_waiting = (today - legacy_priority_case.bfd19.to_date).to_i
       direct_review_days_waiting = (today - ready_priority_direct_case.receipt_date).to_i

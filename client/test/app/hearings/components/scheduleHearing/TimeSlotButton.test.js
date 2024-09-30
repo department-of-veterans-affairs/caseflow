@@ -4,7 +4,8 @@ import { TimeSlotButton } from 'app/hearings/components/scheduleHearing/TimeSlot
 import { render } from '@testing-library/react';
 import { roTimezones, formatTimeSlotLabel } from 'app/hearings/utils';
 
-const time = '08:15';
+const time = '15:15 PM';
+const hearingDayDate = '2025-01-01';
 const issueCount = 2;
 const poaName = 'Something';
 
@@ -15,13 +16,13 @@ describe('TimeSlotButton', () => {
   beforeEach(() => {
 
     roTimezone = roTimezones()[0];
-    expectedTime = formatTimeSlotLabel(time, roTimezone);
+    expectedTime = formatTimeSlotLabel(`${hearingDayDate} ${time}`, roTimezone);
   });
 
   test('Matches snapshot with default props', () => {
     // Run the test
     const button = render(
-      <TimeSlotButton roTimezone={roTimezone} hearingTime={time} />
+      <TimeSlotButton roTimezone={roTimezone} hearingTime={time} hearingDayDate={hearingDayDate} />
     );
 
     // Assertions
@@ -35,7 +36,7 @@ describe('TimeSlotButton', () => {
   test('Applies selected styling when selected is true', () => {
     // Run the test
     const button = render(
-      <TimeSlotButton roTimezone={roTimezone} hearingTime={time} selected />
+      <TimeSlotButton roTimezone={roTimezone} hearingTime={time} selected hearingDayDate={hearingDayDate} />
     );
 
     // Assertions
@@ -47,7 +48,14 @@ describe('TimeSlotButton', () => {
   test('Displays full time details and is disabled when full is true', () => {
     // Run the test
     const button = render(
-      <TimeSlotButton roTimezone={roTimezone} hearingTime={time} full issueCount={issueCount} poaName={poaName} />
+      <TimeSlotButton
+        roTimezone={roTimezone}
+        hearingTime={time}
+        full
+        issueCount={issueCount}
+        poaName={poaName}
+        hearingDayDate={hearingDayDate}
+      />
     );
 
     // Assertions
