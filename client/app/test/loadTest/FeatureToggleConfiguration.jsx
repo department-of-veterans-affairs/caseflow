@@ -19,7 +19,8 @@ export default function FeatureToggleConfiguration(props) {
           ...props.currentState.user,
           user: {
             ...props.currentState.user.user,
-            functions: {
+            feature_toggles: {
+              ...props.currentState.user.user.feature_toggles,
               [feature]: value
             }
           }

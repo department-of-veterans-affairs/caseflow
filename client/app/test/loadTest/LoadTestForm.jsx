@@ -15,13 +15,12 @@ export default function LoadTestForm(props) {
   const { handleSubmit } = useForm();
 
   const currentState = props.currentState;
+  const updateState = props.updateState;
 
   const onSubmit = (event) => {
     event.preventDefault();
     console.log(currentState);
   };
-
-  const updateState = props.updateState;
 
   return <BrowserRouter>
     <div>
@@ -29,10 +28,10 @@ export default function LoadTestForm(props) {
         <form onSubmit={handleSubmit(onSubmit)} >
           <AppSegment filledBackground>
             <h1>Test Target Configuration</h1>
-            <UserConfiguration {...props} updateState={updateState} />
+            <UserConfiguration {...props} updateState={updateState} currentState={currentState} />
             <br />
             <h2>Scenario Groups</h2>
-            <ScenarioConfigurations />
+            <ScenarioConfigurations {...props} updateState={updateState} currentState={currentState} />
           </AppSegment>
           <div {...css({ overflow: 'hidden' })}>
             <Button

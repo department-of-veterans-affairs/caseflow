@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import Checkbox from '../../components/Checkbox';
+import { functions } from 'lodash';
 
 export default function FunctionConfiguration(props) {
   const [isChecked, functionIsChecked] = useState(false);
@@ -20,6 +21,7 @@ export default function FunctionConfiguration(props) {
           user: {
             ...props.currentState.user.user,
             functions: {
+              ...functions,
               [functionOption]: value
             }
           }
@@ -47,4 +49,3 @@ FunctionConfiguration.propTypes = {
   currentState: PropTypes.object,
   updateState: PropTypes.func
 };
-//Works, but need to figure out how to add to the object instead of overwrite it.
