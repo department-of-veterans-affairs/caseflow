@@ -46,7 +46,7 @@ const CorrespondenceTasksAdded = (props) => {
             <p>{props.task_added.assignedTo ? props.task_added.assignedTo.name : ''}</p>
           </div>
 
-        </div >
+        </div>
         <div className="tasks-added-details">
           <span className="tasks-added-text">Tasks added to appeal</span>
           <div >

@@ -401,7 +401,7 @@ const CorrespondenceDetails = (props) => {
             <AppSegment filledBackground noMarginTop>
               <CaseListTable
                 appeals={appealsToDisplay}
-                paginate="true"
+                paginate={true}
                 showCheckboxes
                 taskRelatedAppealIds={selectedAppeals}
                 enableTopPagination
@@ -411,7 +411,7 @@ const CorrespondenceDetails = (props) => {
             </AppSegment>
           )}
           {(props.correspondence.correspondenceAppeals.map((taskAdded) =>
-              taskAdded.correspondencesAppealsTasks?.length > 0 && <CorrespondenceTasksAdded
+             <CorrespondenceTasksAdded
               task_added={taskAdded}
               correspondence={props.correspondence}
               organizations={props.organizations}
@@ -726,8 +726,7 @@ const CorrespondenceDetails = (props) => {
           console.error(errorMessage);
         });
     }
-
-    if (selectedAppeals.length > 0) {
+    if ((selectedAppeals.length || correspondence.correspondenceAppealIds.length) > 0) {
       const appealsSelected = selectedAppeals.filter((val) => !correspondence.correspondenceAppealIds.includes(val));
 
       const payload = {

@@ -133,10 +133,11 @@ class CorrespondenceDetailsController < CorrespondenceController
   def save_correspondence_appeals
     if params[:selected_appeal_ids].present?
       params[:selected_appeal_ids].each do |appeal_id|
-        @correspondence.correspondence_appeals.create!(appeal_id: appeal_id)
+        @correspondence.correspondence_appeals.find_or_create_by(appeal_id: appeal_id)
       end
     end
     if params[:unselected_appeal_ids].present?
+      puts "unselected_appeal_ids: #{params[:unselected_appeal_ids]}"
       @correspondence.correspondence_appeals
         .where(appeal_id: params[:unselected_appeal_ids])
         .delete_all
