@@ -527,5 +527,261 @@ RSpec.describe Hearings::TranscriptionFilesController do
         ).or eq([transcription_file_1.id, transcription_file_4.id])
       end
     end
+
+    context "When on the all transcriptions tab" do
+      let(:transcription_1) { Transcription.create!(task_number: "BVA-1111-0001") }
+      let(:transcription_2) { Transcription.create!(task_number: "BVA-1111-0002") }
+
+      before do
+        TranscriptionPackage.create!(
+          task_number: "BVA-1111-0001",
+          contractor: create(:transcription_contractor, name: "A Contracting Company, Inc."),
+          status: "Successful Upload (BOX)"
+        )
+        TranscriptionPackage.create!(
+          task_number: "BVA-1111-0002",
+          contractor: create(:transcription_contractor, name: "Zeke's Contractors, Inc."),
+          status: "Overdue"
+        )
+        transcription_file_1.update(
+          transcription_id: transcription_1.id,
+          date_upload_box: Time.utc(2024, 10, 10),
+          date_returned_box: Time.utc(2024, 10, 15)
+        )
+        transcription_file_2.update(
+          transcription_id: transcription_2.id,
+          date_upload_box: Time.utc(2024, 10, 12),
+          date_returned_box: Time.utc(2024, 10, 17)
+        )
+      end
+
+      it "only displays sent and completed transcription files" do
+        get :transcription_file_tasks, params: { tab: "All" }
+
+        res = JSON.parse(response.body, symbolize_names: true)
+
+        expect(res[:total_task_count]).to eq(2)
+      end
+
+      it "filters by return date - before" do
+        filter = Rack::Utils.build_query({ col: "returnDateColumn", val: "before,10/16/2024," })
+
+        get :transcription_file_tasks, params: { tab: "All", filter: [filter] }
+
+        res = JSON.parse(response.body, symbolize_names: true)
+
+        expect(res[:tasks][:data].first[:returnDate]).to eq("10/15/2024")
+        expect(res[:total_task_count]).to eq(1)
+      end
+
+      it "filters by return date - after" do
+        filter = Rack::Utils.build_query({ col: "returnDateColumn", val: "after,10/16/2024," })
+
+        get :transcription_file_tasks, params: { tab: "All", filter: [filter] }
+
+        res = JSON.parse(response.body, symbolize_names: true)
+
+        expect(res[:tasks][:data].first[:returnDate]).to eq("10/17/2024")
+        expect(res[:total_task_count]).to eq(1)
+      end
+
+      it "filters by return date - between" do
+        filter = Rack::Utils.build_query({ col: "returnDateColumn", val: "between,10/10/2024,10/16/2024," })
+
+        get :transcription_file_tasks, params: { tab: "All", filter: [filter] }
+
+        res = JSON.parse(response.body, symbolize_names: true)
+
+        expect(res[:tasks][:data].first[:returnDate]).to eq("10/15/2024")
+        expect(res[:total_task_count]).to eq(1)
+      end
+
+      it "filters by return date - on" do
+        filter = Rack::Utils.build_query({ col: "returnDateColumn", val: "on,10/17/2024," })
+
+        get :transcription_file_tasks, params: { tab: "All", filter: [filter] }
+
+        res = JSON.parse(response.body, symbolize_names: true)
+
+        expect(res[:tasks][:data].first[:returnDate]).to eq("10/17/2024")
+        expect(res[:total_task_count]).to eq(1)
+      end
+
+      it "filters by upload date - before" do
+        filter = Rack::Utils.build_query({ col: "uploadDateColumn", val: "before,10/11/2024," })
+
+        get :transcription_file_tasks, params: { tab: "All", filter: [filter] }
+
+        res = JSON.parse(response.body, symbolize_names: true)
+
+        expect(res[:tasks][:data].first[:uploadDate]).to eq("10/10/2024")
+        expect(res[:total_task_count]).to eq(1)
+      end
+
+      it "filters by upload date - after" do
+        filter = Rack::Utils.build_query({ col: "uploadDateColumn", val: "after,10/11/2024," })
+
+        get :transcription_file_tasks, params: { tab: "All", filter: [filter] }
+
+        res = JSON.parse(response.body, symbolize_names: true)
+
+        expect(res[:tasks][:data].first[:uploadDate]).to eq("10/12/2024")
+        expect(res[:total_task_count]).to eq(1)
+      end
+
+      it "filters by upload date - between" do
+        filter = Rack::Utils.build_query({ col: "uploadDateColumn", val: "between,10/09/2024,10/11/2024," })
+
+        get :transcription_file_tasks, params: { tab: "All", filter: [filter] }
+
+        res = JSON.parse(response.body, symbolize_names: true)
+
+        expect(res[:tasks][:data].first[:uploadDate]).to eq("10/10/2024")
+        expect(res[:total_task_count]).to eq(1)
+      end
+
+      it "filters by upload date - on" do
+        filter = Rack::Utils.build_query({ col: "uploadDateColumn", val: "on,10/12/2024," })
+
+        get :transcription_file_tasks, params: { tab: "All", filter: [filter] }
+
+        res = JSON.parse(response.body, symbolize_names: true)
+
+        expect(res[:tasks][:data].first[:uploadDate]).to eq("10/12/2024")
+        expect(res[:total_task_count]).to eq(1)
+      end
+
+      it "filters by contractor" do
+        filter = Rack::Utils.build_query({ col: "contractorColumn", val: "A Contracting Company, Inc." })
+
+        get :transcription_file_tasks, params: { tab: "All", filter: [filter] }
+
+        res = JSON.parse(response.body, symbolize_names: true)
+
+        expect(res[:tasks][:data].first[:contractor]).to eq("A Contracting Company, Inc.")
+        expect(res[:total_task_count]).to eq(1)
+      end
+
+      it "filters by transcription package status" do
+        filter = Rack::Utils.build_query({ col: "statusColumn", val: "Overdue" })
+
+        get :transcription_file_tasks, params: { tab: "All", filter: [filter] }
+
+        res = JSON.parse(response.body, symbolize_names: true)
+
+        expect(res[:tasks][:data].first[:status]).to eq("Overdue")
+        expect(res[:total_task_count]).to eq(1)
+      end
+
+      it "sorts by return date - asc" do
+        get :transcription_file_tasks, params: { tab: "All", sort_by: "returnColumn", order: "asc" }
+
+        res = JSON.parse(response.body, symbolize_names: true)
+
+        time_1 = Time.strptime(res[:tasks][:data].first[:returnDate], "%m/%d/%Y")
+        time_2 = Time.strptime(res[:tasks][:data].second[:returnDate], "%m/%d/%Y")
+
+        expect(time_1 < time_2).to eq(true)
+      end
+
+      it "sorts by return date - desc" do
+        get :transcription_file_tasks, params: { tab: "All", sort_by: "returnColumn", order: "desc" }
+
+        res = JSON.parse(response.body, symbolize_names: true)
+
+        time_1 = Time.strptime(res[:tasks][:data].first[:returnDate], "%m/%d/%Y")
+        time_2 = Time.strptime(res[:tasks][:data].second[:returnDate], "%m/%d/%Y")
+
+        expect(time_1 > time_2).to eq(true)
+      end
+
+      it "sorts by upload date - asc" do
+        get :transcription_file_tasks, params: { tab: "All", sort_by: "uploadColumn", order: "asc" }
+
+        res = JSON.parse(response.body, symbolize_names: true)
+
+        time_1 = Time.strptime(res[:tasks][:data].first[:uploadDate], "%m/%d/%Y")
+        time_2 = Time.strptime(res[:tasks][:data].second[:uploadDate], "%m/%d/%Y")
+
+        expect(time_1 < time_2).to eq(true)
+      end
+
+      it "sorts by upload date - desc" do
+        get :transcription_file_tasks, params: { tab: "All", sort_by: "uploadColumn", order: "desc" }
+
+        res = JSON.parse(response.body, symbolize_names: true)
+
+        time_1 = Time.strptime(res[:tasks][:data].first[:uploadDate], "%m/%d/%Y")
+        time_2 = Time.strptime(res[:tasks][:data].second[:uploadDate], "%m/%d/%Y")
+
+        expect(time_1 > time_2).to eq(true)
+      end
+
+      it "sorts by contractor - asc" do
+        get :transcription_file_tasks, params: { tab: "All", sort_by: "contractorColumn", order: "asc" }
+
+        res = JSON.parse(response.body, symbolize_names: true)
+
+        contractor_name_1 = res[:tasks][:data].first[:contractor]
+        contractor_name_2 = res[:tasks][:data].second[:contractor]
+
+        expect(contractor_name_1 < contractor_name_2).to eq(true)
+      end
+
+      it "sorts by contractor - desc" do
+        get :transcription_file_tasks, params: { tab: "All", sort_by: "contractorColumn", order: "desc" }
+
+        res = JSON.parse(response.body, symbolize_names: true)
+
+        contractor_name_1 = res[:tasks][:data].first[:contractor]
+        contractor_name_2 = res[:tasks][:data].second[:contractor]
+
+        expect(contractor_name_1 > contractor_name_2).to eq(true)
+      end
+
+      it "sorts by package status - asc" do
+        get :transcription_file_tasks, params: { tab: "All", sort_by: "statusColumn", order: "asc" }
+
+        res = JSON.parse(response.body, symbolize_names: true)
+
+        status_1 = res[:tasks][:data].first[:status]
+        status_2 = res[:tasks][:data].second[:status]
+
+        expect(status_1 < status_2).to eq(true)
+      end
+
+      it "sorts by package status - desc" do
+        get :transcription_file_tasks, params: { tab: "All", sort_by: "statusColumn", order: "desc" }
+
+        res = JSON.parse(response.body, symbolize_names: true)
+
+        status_1 = res[:tasks][:data].first[:status]
+        status_2 = res[:tasks][:data].second[:status]
+
+        expect(status_1 > status_2).to eq(true)
+      end
+
+      it "sorts by work order - asc" do
+        get :transcription_file_tasks, params: { tab: "All", sort_by: "workOrderColumn", order: "asc" }
+
+        res = JSON.parse(response.body, symbolize_names: true)
+
+        work_order_1 = res[:tasks][:data].first[:workOrder]
+        work_order_2 = res[:tasks][:data].second[:workOrder]
+
+        expect(work_order_1 < work_order_2).to eq(true)
+      end
+
+      it "sorts by work order - desc" do
+        get :transcription_file_tasks, params: { tab: "All", sort_by: "workOrderColumn", order: "desc" }
+
+        res = JSON.parse(response.body, symbolize_names: true)
+
+        work_order_1 = res[:tasks][:data].first[:workOrder]
+        work_order_2 = res[:tasks][:data].second[:workOrder]
+
+        expect(work_order_1 > work_order_2).to eq(true)
+      end
+    end
   end
 end
