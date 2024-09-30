@@ -10,10 +10,10 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
 
   context "tests processing withdrawn request issues" do
     describe "POST #decision_review_updated" do
-      let!(:withdrawn_request_issues) do
+      let!(:withdrawn_request_issue) do
         create(:request_issue,
                decision_review: review, reference_id: "1234", closed_status: nil, closed_at: nil,
-               contention_removed_at: DateTime.now, contention_reference_id: 100_500)
+               contention_removed_at: nil, contention_reference_id: 100_500)
       end
 
       def json_test_payload
@@ -107,30 +107,18 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
 
         it "returns success response whith updated closed_at date" do
           request.headers["Authorization"] = "Token token=#{api_key.key_string}"
-          expect(withdrawn_request_issues.reference_id).to eq("1234")
-          # expect(withdrawn_request_issues.ineligible_reason).to eq(nil)
-          # expect(withdrawn_request_issues.contested_issue_description).to eq("original description")
-          # expect(withdrawn_request_issues.nonrating_issue_category).to eq("original category")
-          expect(withdrawn_request_issues.closed_at).to eq(nil)
-          expect(withdrawn_request_issues.contention_reference_id).to eq(100_500)
-          # byebug
+          expect(withdrawn_request_issue.reference_id).to eq("1234")
+          expect(withdrawn_request_issue.closed_at).to eq(nil)
+          expect(withdrawn_request_issue.contention_reference_id).to eq(100_500)
+          expect(withdrawn_request_issue.any_updates?).to eq(false)
           post :decision_review_updated, params: valid_params
           expect(response).to have_http_status(:ok)
           expect(response.body).to include("DecisionReviewUpdatedEvent successfully processed")
-          withdrawn_request_issues.reload
-          # byebug
-          expect(withdrawn_request_issues.closed_at).to eq("2023-12-07 20:49:05.000000000 -0500")
-          expect(withdrawn_request_issues.closed_status).to eq("withdrawn")
-          expect(withdrawn_request_issues.contention_removed_at).to be_within(100.seconds).of(DateTime.now)
-          expect(withdrawn_request_issues.updated_at).to be_within(100.seconds).of(DateTime.now)
-          # expect(withdrawn_request_issues.ineligible_reason).to eq(nil)
-          # expect(withdrawn_request_issues.contested_issue_description).to eq("UPDATED DESCRIPTION")
-          # expect(withdrawn_request_issues.nonrating_issue_category).to eq("Military Retired Pay UPDATED")
-          # expect(withdrawn_request_issues.nonrating_issue_description).to eq("UPDATED TESTING")
-          # expect(withdrawn_request_issues.closed_at).to eq(nil)
-          # expect(withdrawn_request_issues.closed_status).to eq(nil)
-          # expect(withdrawn_request_issues.contention_removed_at).to eq(nil)
-          # expect(withdrawn_request_issues.contention_reference_id).to eq(123_456)
+          withdrawn_request_issue.reload
+          expect(withdrawn_request_issue.closed_at).to eq("2023-12-07 20:49:05.000000000 -0500")
+          expect(withdrawn_request_issue.closed_status).to eq("withdrawn")
+          expect(withdrawn_request_issue.any_updates?).to eq(true)
+          expect(withdrawn_request_issue.updated_at).to be_within(100.seconds).of(DateTime.now)
         end
       end
     end
