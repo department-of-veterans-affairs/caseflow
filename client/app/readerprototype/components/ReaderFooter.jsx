@@ -42,9 +42,9 @@ const ReaderFooter = ({
       const newPageNumber = sanitizedPageNumber(event.target.value);
 
       setCurrentPage(newPageNumber);
-      event.target.value = newPageNumber;
-      if (setCurrentPage !== newPageNumber) {
-        document.getElementById(`canvasWrapper-${newPageNumber}`).scrollIntoView();
+      // event.target.value = newPageNumber;
+      if (currentPage !== newPageNumber) {
+        document.getElementById(`canvasWrapper-${newPageNumber}`)?.scrollIntoView();
       }
     }
   };

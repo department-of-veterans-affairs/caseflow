@@ -13,7 +13,7 @@ import { stopPlacingAnnotation } from '../reader/AnnotationLayer/AnnotationActio
 import DeleteModal from './components/Comments/DeleteModal';
 import ShareModal from './components/Comments/ShareModal';
 import { getRotationDeg } from './util/documentUtil';
-import { ROTATION_DEGREES, ZOOM_INCREMENT, ZOOM_LEVEL_MAX, ZOOM_LEVEL_MIN } from './util/readerConstants';
+import { ZOOM_INCREMENT, ZOOM_LEVEL_MAX, ZOOM_LEVEL_MIN } from './util/readerConstants';
 
 const DocumentViewer = (props) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -70,20 +70,20 @@ const DocumentViewer = (props) => {
     return () => window.removeEventListener('keydown', keyHandler);
   }, [showSideBar]);
 
-  const getPageNumFromScrollTop = (event) => {
-    const { clientHeight, scrollTop, scrollHeight } = event.target;
-    const pageHeightEstimate =
-      rotateDeg === ROTATION_DEGREES.NINETY || rotateDeg === ROTATION_DEGREES.TWO_SEVENTY ?
-        clientHeight :
-        scrollHeight / numPages;
-    const pageNumber = Math.ceil((pageHeightEstimate + scrollTop) / pageHeightEstimate);
+  // const getPageNumFromScrollTop = (event) => {
+  //   const { clientHeight, scrollTop, scrollHeight } = event.target;
+  //   const pageHeightEstimate =
+  //     rotateDeg === ROTATION_DEGREES.NINETY || rotateDeg === ROTATION_DEGREES.TWO_SEVENTY ?
+  //       clientHeight :
+  //       scrollHeight / numPages;
+  //   const pageNumber = Math.ceil((pageHeightEstimate + scrollTop) / pageHeightEstimate);
 
-    if (pageNumber > numPages) {
-      setCurrentPage(numPages);
-    } else {
-      setCurrentPage(pageNumber);
-    }
-  };
+  //   if (pageNumber > numPages) {
+  //     setCurrentPage(numPages);
+  //   } else {
+  //     setCurrentPage(pageNumber);
+  //   }
+  // };
 
   const handleZoomIn = () => {
     const newZoomLevel = props.zoomLevel + ZOOM_INCREMENT;
@@ -123,7 +123,7 @@ const DocumentViewer = (props) => {
           zoomLevel={props.zoomLevel}
         />
         {showSearchBar && <ReaderSearchBar />}
-        <div className="cf-pdf-scroll-view" onScroll={getPageNumFromScrollTop}>
+        <div className="cf-pdf-scroll-view" >
           <PdfDocument
             currentPage={currentPage}
             doc={doc}
@@ -132,6 +132,7 @@ const DocumentViewer = (props) => {
             setIsDocumentLoadError={setIsDocumentLoadError}
             setNumPages={setNumPages}
             zoomLevel={props.zoomLevel}
+            setCurrentPage={setCurrentPage}
           />
         </div>
         <ReaderFooter
