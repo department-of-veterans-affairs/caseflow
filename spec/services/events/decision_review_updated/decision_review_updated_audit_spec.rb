@@ -11,6 +11,7 @@ describe Events::DecisionReviewUpdated::DecisionReviewUpdatedAudit do
     allow(parser).to receive(:updated_issues).and_return([])
     allow(parser).to receive(:added_issues).and_return([])
     allow(parser).to receive(:removed_issues).and_return([])
+    allow(parser).to receive(:withdrawn_issues).and_return([])
     allow(parser).to receive(:ineligible_to_eligible_issues).and_return([])
     allow(parser).to receive(:eligible_to_ineligible_issues).and_return([])
     allow(parser).to receive(:ineligible_to_ineligible_issues).and_return([])
