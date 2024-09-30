@@ -70,6 +70,8 @@ describe AppealsInLocation63InPast2Days do
   end
 
   describe ".loc_63_appeals" do
+    # before { Timecop.travel(Time.utc(2024, 9, 25, 1, 0, 0)) }
+
     let(:non_ssc_avlj1) do
       User.find_by_css_id("NONSSCTST1") ||
         create(:user, :non_ssc_avlj_user, css_id: "NONSSCTST1", full_name: "First AVLJ")
@@ -152,6 +154,12 @@ describe AppealsInLocation63InPast2Days do
     let(:appeals) { [] }
 
     context "there are 2 appeals still in loc 81" do
+      before do
+        current_time = Time.current + 1.day
+        Timecop.travel(Time.new(current_time.year, current_time.month, current_time.day, rand(13..17), rand(0..59), 0, current_time.utc_offset))
+      end
+      after { Timecop.return }
+
       let(:vacols_prio_case_81) do
         create(
           :case,
@@ -223,7 +231,13 @@ describe AppealsInLocation63InPast2Days do
       end
     end
 
-    context "there are 2 appeals still in loc 81" do
+    context "there are 2 appeals still in loc 81 " do
+      before do
+        current_time = Time.current + 1.day
+        Timecop.travel(Time.new(current_time.year, current_time.month, current_time.day, 21, rand(0..59), 0, current_time.utc_offset))
+      end
+      after { Timecop.return }
+
       let(:vacols_prio_case_3_days) do
         create(
           :case,
