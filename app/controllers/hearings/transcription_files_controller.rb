@@ -157,6 +157,8 @@ class Hearings::TranscriptionFilesController < ApplicationController
   def select_based_on_tab
     if params[:tab] == "Unassigned"
       @transcription_files = @transcription_files.unassigned
+    elsif params[:tab] == "Completed"
+      @transcription_files = @transcription_files.completed
     end
   end
 
@@ -172,6 +174,9 @@ class Hearings::TranscriptionFilesController < ApplicationController
         end
         if filter_hash["col"] == "hearingDateColumn"
           @transcription_files = @transcription_files.filter_by_hearing_dates(filter_hash["val"].split(","))
+        end
+        if filter_hash["col"] == "statusColumn"
+          @transcription_files = @transcription_files.filter_by_status(filter_hash["val"].split("|"))
         end
       end
     end
@@ -209,7 +214,7 @@ class Hearings::TranscriptionFilesController < ApplicationController
   def build_transcription_json(transcription_files)
     tasks = []
     transcription_files.each do |transcription_file|
-      tasks << {
+      task = {
         id: transcription_file.id,
         externalAppealId: transcription_file.external_appeal_id,
         docketNumber: transcription_file.docket_number,
@@ -220,7 +225,22 @@ class Hearings::TranscriptionFilesController < ApplicationController
         hearingType: transcription_file.hearing_type,
         fileStatus: transcription_file.file_status
       }
+
+      task = add_completed_tab_fields(task, transcription_file) if params[:tab] == "Completed"
+      tasks << task
     end
     tasks
+  end
+
+  def add_completed_tab_fields(task, transcription_file)
+    task.merge(
+      {
+        workOrder: transcription_file.transcription&.task_number,
+        expectedReturnDate: transcription_file&.transcription&.transcription_package
+          &.expected_return_date&.to_formatted_s(:short_date),
+        returnDate: transcription_file.date_returned_box&.to_formatted_s(:short_date),
+        contractor: transcription_file&.transcription&.transcription_package&.contractor&.name
+      }
+    )
   end
 end
