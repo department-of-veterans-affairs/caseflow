@@ -275,8 +275,8 @@ let props = {
       }
     ],
 
-    appeals_information: {
-      appeals: [
+    appeals_information:
+      [
         {
           id: 1,
           type: 'Correspondence',
@@ -288,8 +288,7 @@ let props = {
           }
         }
       ],
-      claim_reviews: []
-    }
+    claim_reviews: []
   }
 };
 
@@ -329,7 +328,7 @@ describe('CorrespondenceDetails', () => {
 
     expect(userNameCount).toBeGreaterThan(0);
     const packageDetailsTab = screen.getByText('Package Details');
-    const existingAppealButton = screen.getByText('+');
+    const existingAppealButton = document.getElementsByClassName('plus-symbol')[0];
     // const responseLettersTab = screen.getByText('Response Letters');
     const associatedPriorMailTab = screen.getByText('Associated Prior Mail');
 
@@ -344,6 +343,12 @@ describe('CorrespondenceDetails', () => {
     expect(screen.getByText('Task 1')).toBeInTheDocument();
     expect(screen.getByText('Task 2')).toBeInTheDocument();
 
+    let collapsibleButtons = document.getElementsByClassName('plus-symbol');
+
+    expect(collapsibleButtons.length).toBe(2);
+    fireEvent.click(collapsibleButtons[0]);
+
+    expect(document.getElementsByClassName('plus-symbol').length).toBe(1);
     // Existing Appeals Table and Columns
     fireEvent.click(existingAppealButton);
     expect(screen.getByText('Existing Appeals')).toBeInTheDocument();
@@ -354,6 +359,11 @@ describe('CorrespondenceDetails', () => {
     expect(screen.getByText('Decision Date')).toBeInTheDocument();
     expect(screen.getByText('Appeal Location')).toBeInTheDocument();
     expect(screen.getByText('View veteran documents')).toBeInTheDocument();
+
+    collapsibleButtons = document.getElementsByClassName('plus-symbol');
+    fireEvent.click(collapsibleButtons[0]);
+
+    expect(document.getElementsByClassName('plus-symbol').length).toBe(0);
 
     // Appeals related
     const existingAppeals = screen.getAllByText('Tasks added to appeal').length;
@@ -460,6 +470,7 @@ describe('CorrespondenceDetails', () => {
 
     fireEvent.click(associatedPriorMailTab);
     const checkbox = screen.getByRole('checkbox', { name: '1' });
+
     fireEvent.click(checkbox);
 
     // Mock API call
