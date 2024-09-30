@@ -126,22 +126,26 @@ const CorrespondenceDetails = (props) => {
         setShowSuccessBanner(true);
         console.log('Correspondence updated successfully.', response.status); // eslint-disable-line no-console
 
-        // Sort the prior mail based on the updated state after successful update
+        // Sort the prior mail into linked (checked) and unlinked (unchecked) groups
         const updatedSortedPriorMail = [...priorMail].sort((first, second) => {
           const firstInState = checkboxStates[first.id];
           const secondInState = checkboxStates[second.id];
 
+          // If both are linked or both are unlinked, sort by vaDateOfReceipt
           if (firstInState && secondInState) {
-            // Sort by vaDateOfReceipt in descending order if both are checked
+            // Sort linked mail from most recent to oldest
             return new Date(second.vaDateOfReceipt) - new Date(first.vaDateOfReceipt);
+          } else if (!firstInState && !secondInState) {
+            // Sort unlinked mail from oldest to most recent
+            return new Date(first.vaDateOfReceipt) - new Date(second.vaDateOfReceipt);
           } else if (firstInState) {
-            // Ensure that items in the state come first
+            // Ensure linked items come before unlinked items
             return -1;
           } else if (secondInState) {
             return 1;
           }
-
           // Maintain original order otherwise
+
           return 0;
         });
 
