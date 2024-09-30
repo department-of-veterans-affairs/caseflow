@@ -65,7 +65,7 @@ const errorHandling = (url, error, method, options = {}) => {
   options.end = moment().format();
   options.duration = options.t1 - options.t0;
 
-  // Need to renable this check before going to master
+  // Need to renable this check before going to main
   if (options?.metricsLogRestError) {
     const data = {
       metric: {
@@ -95,7 +95,7 @@ const successHandling = (url, res, method, options = {}) => {
   const id = uuid.v4();
   const message = `UUID: ${id}.\nSuccess with ${method} ${url}.\n${res.status}`;
 
-  // Need to renable this check before going to master
+  // Need to renable this check before going to main
   options.t1 = performance.now();
   options.end = moment().format();
   options.duration = options.t1 - options.t0;

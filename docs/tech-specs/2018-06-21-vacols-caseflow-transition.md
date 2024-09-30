@@ -1,16 +1,16 @@
-This document was moved from [appeals-team](https://github.com/department-of-veterans-affairs/appeals-team/blob/master/Project%20Folders/Caseflow%20Projects/Hearings/Hearing%20Schedule/Tech%20Specs/VacolsCaseflowTransition.md).
+This document was moved from [appeals-team](https://github.com/department-of-veterans-affairs/appeals-team/blob/main/Project%20Folders/Caseflow%20Projects/Hearings/Hearing%20Schedule/Tech%20Specs/VacolsCaseflowTransition.md).
 
-## VACOLS to Caseflow Transition  
+## VACOLS to Caseflow Transition
 
-Owner: Oscar Ramirez  
-Date: 2018-06-21 (Updated 2018-08-08)  
-Reviewer(s): Sharon Warner, Alex Prokop  
-Review by:  2018-08-13  
+Owner: Oscar Ramirez
+Date: 2018-06-21 (Updated 2018-08-08)
+Reviewer(s): Sharon Warner, Alex Prokop
+Review by:  2018-08-13
 
 ## Context
-Once the AMA legislation goes live on February 14, 2019 the Board will assign appeals to specific hearing days, taking over a task performed by regional offices today. This technical specification outlines the events that need to take place to make this transition of responsibilities as smooth as possible  
+Once the AMA legislation goes live on February 14, 2019 the Board will assign appeals to specific hearing days, taking over a task performed by regional offices today. This technical specification outlines the events that need to take place to make this transition of responsibilities as smooth as possible
 
-## Overview 
+## Overview
 AMA appeals are any appeals processed under the workflow defined by the new legislation. AMA appeals will be processed exclusively in Caseflow, while Legacy appeals will continue to be stored in the VACOLS database. New Legacy Appeals may continue to flow into the system after February of 2019 as Veterans have up to a year to appeal a claim.
 
 For the August 2018 release of the Hearing Schedule product the calendar of hearing days allocated to regional offices will be stored in VACOLS. Regional offices will continue to manage slotting appeals to hearing days using the VACOLS UI.
@@ -21,7 +21,7 @@ When the AMA legislation is in place the calendar of hearing days will be stored
 
 This hearing type is discontinued for AMA appeals but we need to continue to support it while there are legacy appeals that chose this hearing in the system.
 
-A Travel Board Hearing Schedule is very different than the next two types of hearings. They are organized in trips that last several days. Each trip has one or more participants. The participants are one or more judges, and possibly one or more attorneys. 
+A Travel Board Hearing Schedule is very different than the next two types of hearings. They are organized in trips that last several days. Each trip has one or more participants. The participants are one or more judges, and possibly one or more attorneys.
 
 **Central Office Hearings**
 
@@ -33,7 +33,7 @@ These hearings will continue with the AMA legislation. The Veteran travels to a 
 
 The Board allocates a certain number of hearing days for a Fiscal Year to each regional office based on the number of appeals requiring hearings.
 
-The ER diagram below highlights the different data attributes for each hearing type. 
+The ER diagram below highlights the different data attributes for each hearing type.
 
 ![Data Model](2018-06-21-hearing-schedule-data-model.png)
 
@@ -79,28 +79,28 @@ Once AMA hearings start, the audio files for these hearings may have to be store
 ## Reports
 The Hearing Management team is reviewing the existing reports to let us know which continue to be valid and need migration to Caseflow. Their review is ongoing as of this writing. A cursory review of the applications used by the Regional Offices and by Hearing Management reveals the following reports. There may be more but these are the obvious ones directly dealing with hearings data.
 
-vclrpts app  
-Custom Rpts --> CO, Travel Board, Video Request Summary  
-Annual Rpts -->  BVA Hearings Held  
+vclrpts app
+Custom Rpts --> CO, Travel Board, Video Request Summary
+Annual Rpts -->  BVA Hearings Held
 
-Vacols3 app  
-Hearings --> Video Hearings  
-Hearings --> Travel Board Hearings  
-Hearings --> CO Hearings  
+Vacols3 app
+Hearings --> Video Hearings
+Hearings --> Travel Board Hearings
+Hearings --> CO Hearings
 
-Roaccess  
-Hearings --> Travel Board Requests  
-Hearings --> Formal Hearings Pending  
-Hearings --> Formal Hearing Disposition Detail  
-Hearings --> Forman Hearing Disposition Summary  
-Hearings --> Certified BVA Awaiting Travel Board  
-Hearings --> BVA VLJs --> Update Travel Board Docket  
-Hearings --> BVA VLJs --> Update Video Docket           <-- Are these used by VLJs or Hearing Coordinators?  
-Hearings --> BVA VLJs --> Update / Print CO Docket  
-Hearings --> View/Print Virtual TB or Video Docket  
+Roaccess
+Hearings --> Travel Board Requests
+Hearings --> Formal Hearings Pending
+Hearings --> Formal Hearing Disposition Detail
+Hearings --> Forman Hearing Disposition Summary
+Hearings --> Certified BVA Awaiting Travel Board
+Hearings --> BVA VLJs --> Update Travel Board Docket
+Hearings --> BVA VLJs --> Update Video Docket           <-- Are these used by VLJs or Hearing Coordinators?
+Hearings --> BVA VLJs --> Update / Print CO Docket
+Hearings --> View/Print Virtual TB or Video Docket
 
-Mgmt Rpts --> BVA Hearing Schedule (TB, Video, CO)  
-Mgmt Rpts --> BVA Hearing Disposition Summary by RO  
+Mgmt Rpts --> BVA Hearing Schedule (TB, Video, CO)
+Mgmt Rpts --> BVA Hearing Disposition Summary by RO
 
 **NB: Outcome of Hearing Management report review may affect the data model as additional attributes may need to be associated with either individual hearings or the schedule.**
 
@@ -112,7 +112,7 @@ Mgmt Rpts --> BVA Hearing Disposition Summary by RO
 - appeal_id - how do we associate to both LegacyAppeal and Appeal models.
 - How is team assigned? Do we need it? In VACOLS UI the team field is populated based on what is on the staff table for the judge.
 - Remove veteran_id as this information can be fetched from the appeal.
-- Remove media_type? For hearings since September 2017 there were 25 which used cassette tape. 
+- Remove media_type? For hearings since September 2017 there were 25 which used cassette tape.
 - Rename media_problem to recording_problem.
 - Rename hold_days_vlj to hold_days. Does it generate an alert after n days?
 - Separate hearing prep data from hearings data? When appeal is rescheduled do we want to keep the hearings detail data? We would move the hearings row and associate it with another HearingDay row.
