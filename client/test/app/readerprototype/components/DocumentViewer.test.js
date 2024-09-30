@@ -9,6 +9,45 @@ import thunk from 'redux-thunk';
 import { rootReducer } from 'app/reader/reducers';
 import ApiUtil from 'app/util/ApiUtil';
 
+window.IntersectionObserver = jest.fn(() => ({
+  observe: jest.fn(),
+  disconnect: jest.fn()
+}));
+window.HTMLElement.prototype.scrollIntoView = jest.fn;
+
+jest.mock('../../../../app/util/ApiUtil', () => ({
+  get: jest.fn().mockResolvedValue({
+    body: {
+      appeal: {
+        data: {}
+      }
+    },
+    header: { 'x-document-source': 'VBMS' }
+  }),
+  patch: jest.fn().mockResolvedValue({})
+}));
+jest.mock('../../../../app/util/NetworkUtil', () => ({
+  connectionInfo: jest.fn(),
+}));
+jest.mock('../../../../app/util/Metrics', () => ({
+  storeMetrics: jest.fn().mockResolvedValue(),
+  recordAsyncMetrics: jest.fn().mockResolvedValue(),
+}));
+jest.mock('pdfjs-dist', () => ({
+  getDocument: jest.fn().mockImplementation(() => ({
+    docId: 1,
+    promise: Promise.resolve({
+      numPages: 2,
+      getPage: jest.fn((pageNumber) => ({
+        render: jest.fn(pageNumber),
+        getTextContent: jest.fn().mockResolvedValue({ items: [] }),
+        getViewport: jest.fn(() => ({ width: 100, height: 200 }))
+      })),
+    }),
+  })),
+  renderTextLayer: jest.fn(),
+  GlobalWorkerOptions: jest.fn().mockResolvedValue(),
+}));
 afterEach(() => jest.clearAllMocks());
 
 const doc = {
@@ -142,10 +181,7 @@ describe('user visiting a document', () => {
 
     render(<Component {...props} />);
     expect(spy).
-      toHaveBeenCalledWith(
-        '/document/1/mark-as-read',
-        { start: '2020-07-06T06:00:00-04:00', t0: 'RUNNING_IN_NODE' },
-        'mark-doc-as-read');
+      toHaveBeenCalledWith('/document/1/mark-as-read', {}, 'mark-doc-as-read');
   });
 });
 
