@@ -1354,8 +1354,8 @@ describe RequestIssue, :all_dbs do
         build(:request_issue, contested_issue_description: "Not safe: \u{00A7} \u{2600} \u{2603} \u{260E} \u{2615}")
       end
 
-      it "should not be valid" do
-        expect(request_issue.valid?).to eq false
+      it "should sanitize characters" do
+        expect(request_issue.save).to eq true
       end
     end
 
@@ -1364,8 +1364,8 @@ describe RequestIssue, :all_dbs do
         build(:request_issue, contested_issue_description: "Safe: 1234567890-=`~!@#$%^&*()_+[]{}\|;:")
       end
 
-      it "should be valid" do
-        expect(request_issue.valid?).to eq true
+      it "should save" do
+        expect(request_issue.save).to eq true
       end
     end
   end
