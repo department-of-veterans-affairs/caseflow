@@ -30,7 +30,14 @@ class Events::DecisionReviewCreated::CreateRequestIssues
           fail Caseflow::Error::DecisionReviewCreatedRequestIssuesError, "reference_id cannot be null"
         end
 
+        parser_issues = Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser.new(issue)
+
+        if parser_issues.ri_reference_id.nil?
+          fail Caseflow::Error::DecisionReviewCreatedRequestIssuesError, "reference_id cannot be null"
+        end
+
         ri = RequestIssue.create!(
+          reference_id: parser_issues.ri_reference_id,
           reference_id: parser_issues.ri_reference_id,
           benefit_type: parser_issues.ri_benefit_type,
           contested_issue_description: parser_issues.ri_contested_issue_description,

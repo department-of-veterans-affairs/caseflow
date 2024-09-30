@@ -12,6 +12,8 @@ class SupplementalClaim < ClaimReview
       .where("#{table_name}.decision_review_remanded_type='Appeal'")
   }
 
+  scope :remand, -> { where(type: Remand.name) }
+
   attr_accessor :appeal_split_process
 
   def ui_hash
