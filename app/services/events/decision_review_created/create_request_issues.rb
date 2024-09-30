@@ -85,6 +85,11 @@ class Events::DecisionReviewCreated::CreateRequestIssues
         evented_record: issue,
         info: { update_type: "I", record_data: issue }
       )
+      EventRecord.create!(
+        event: event,
+        evented_record: issue,
+        info: { update_type: "I", record_data: issue }
+      )
     end
 
     # Legacy issue checks
