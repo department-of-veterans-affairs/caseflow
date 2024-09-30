@@ -28,9 +28,11 @@ import { ROTATION_DEGREES } from '../util/readerConstants';
 // When rotating, we swap height and width of the container.
 // The child is still centered in the container, so we must offset it put it back to the
 // top / center of the container.
-const Page = memo(({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale }) => {
+const Page = memo(({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale, setCurrentPage }) => {
   const canvasRef = useRef(null);
   const isVisible = usePageVisibility(canvasRef);
+  const isCurrentPage = usePageVisibility(canvasRef, 0.5);
+
   const wrapperRef = useRef(null);
   const renderTimeout = useRef(null);
   const [previousScale, setPreviousScale] = useState(scale);
@@ -124,6 +126,12 @@ const Page = memo(({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale }
     };
   }, []);
 
+  useEffect(() => {
+    console.log(isCurrentPage, page.pageNumber);
+    if (isCurrentPage) {
+      setCurrentPage(page.pageNumber);
+    }
+  }, [isCurrentPage]);
   // previousScale keeps track of the previous value of scale. if scale changes, that will trigger a component
   // rerender. before that happens, we'd normally try to finish the current component render.
   // since we are about to rerender the whole component anyway, short-circuit the current one to improve
