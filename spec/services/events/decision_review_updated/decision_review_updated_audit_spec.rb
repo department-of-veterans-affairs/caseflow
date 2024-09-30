@@ -20,6 +20,10 @@ describe Events::DecisionReviewUpdated::DecisionReviewUpdatedAudit do
   before do
     request_issue.update(reference_id: "1234567890")
     request_issue.reload
+
+    issue_parser_double = double("IssueParser", ri_reference_id: "1234567890")
+    allow(Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser)
+      .to receive(:new).and_return(issue_parser_double)
   end
 
   describe "#call" do
