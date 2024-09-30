@@ -393,20 +393,20 @@ class CaseDistributionTest extends React.PureComponent {
                               <h2 id="run_seeds">{COPY.TEST_CREATE_SEEDED_APPEALS_TITLE}</h2>
                               { this.state.showAlert &&
                             <Alert type={this.state.alertType} scrollOnAlert={false}>{this.state.alertMsg}</Alert>
-                              }
-                              <table
-                                id="case-table-description"
-                                className="usa-table"
-                                style={tablestyle}
-                              >
-                                <thead>
-                                  <td><p>{COPY.TEST_WARNING_P1}</p>
-                                    <p>{COPY.TEST_WARNING_P2}</p>
-                                    <p>{COPY.TEST_WARNING_P3}</p>
-                                  </td>
-                                </thead>
-                              </table>
-                            </div>
+                          }
+                          <div>
+                            <table
+                              id="case-table-description"
+                              className="usa-table"
+                              style={tablestyle}
+                            >
+                              <thead>
+                                <td><p>{COPY.TEST_WARNING_P1}</p>
+                                  <p>{COPY.TEST_WARNING_P2}</p>
+                                  <p>{COPY.TEST_WARNING_P3}</p>
+                                </td>
+                              </thead>
+                            </table>
                             <div className="lever-left csv-download-left">
                               <Button
                                 onClick={this.reseedAod}
@@ -466,6 +466,17 @@ class CaseDistributionTest extends React.PureComponent {
                             <div className="lever-right csv-download-right">
                               <strong>{COPY.TEST_RUN_NONSSC_AVLJ_APPEAL_TITLE}</strong>
                               {COPY.TEST_RUN_NONSSC_AVLJ_APPEAL_DESCRIPTION}
+                            </div>
+                          </div>
+                          <hr />
+                          <div className="lever-content">
+                            <div className="lever-head csv-download-alignment">
+                              <h2 id="case_movement">{COPY.TEST_CASE_MOVEMENT_TITLE}</h2>
+                              { this.state.showLegacyAppealsAlert &&
+                              <Alert type={this.state.legacyAppealsAlertType} scrollOnAlert={false}>
+                                {this.state.legacyAppealsAlertMsg}
+                              </Alert>
+                              }
                             </div>
                             <div className="lever-left csv-download-left">
                               <Button
