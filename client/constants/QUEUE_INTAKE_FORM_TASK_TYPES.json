@@ -206,12 +206,6 @@
       "label": "CUE-Related"
     }, {
       "value": {
-        "klass": "AddressChangeMailTask",
-        "assigned_to": "HearingAdmin"
-        },
-      "label": "Change Of Address"
-    }, {
-      "value": {
         "klass": "CongressionalInterestMailTask",
         "assigned_to": "LitigationSupport"
         },
@@ -224,52 +218,10 @@
       "label": "Controlled Correspondence"
     }, {
       "value": {
-        "klass": "DeathCertificateMailTask",
-        "assigned_to": "Colocated"
-        },
-      "label": "Death Certificate"
-    }, {
-      "value": {
-        "klass": "DocketSwitchMailTask",
-        "assigned_to": "ClerkOfTheBoard"
-        },
-      "label": "Docket Switch"
-    }, {
-      "value": {
-        "klass": "EvidenceOrArgumentMailTask",
-        "assigned_to": "Colocated"
-        },
-      "label": "Evidence Or Argument"
-    }, {
-      "value": {
-        "klass": "ExtensionRequestMailTask",
-        "assigned_to": "Colocated"
-        },
-      "label": "Extension Request"
-    }, {
-      "value": {
         "klass": "FoiaRequestMailTask",
         "assigned_to": "PrivacyTeam"
         },
       "label": "FOIA Request"
-    }, {
-      "value": {
-        "klass": "HearingPostponementRequestMailTask",
-        "assigned_to": "HearingAdmin"
-        },
-      "label": "Hearing Postponement Request"
-    }, {
-      "value": {
-        "klass": "HearingRelatedMailTask",
-        "assigned_to": "HearingAdmin"
-        },
-      "label": "Hearing-Related"
-    }, {
-      "value": {
-        "klass": "HearingWithdrawalRequestMailTask",
-        "assigned_to": "HearingAdmin"
-        },
-      "label": "Hearing Withdrawal Request"
     }, {
       "value": {
         "klass": "ReconsiderationMotionMailTask",
@@ -288,12 +240,6 @@
         "assigned_to": "LitigationSupport"
         },
       "label": "Other Motion"
-    }, {
-      "value": {
-        "klass": "PowerOfAttorneyRelatedMailTask",
-        "assigned_to": "HearingAdmin"
-        },
-      "label": "Power Of Attorney-Related"
     }, {
       "value": {
         "klass": "PrivacyActRequestMailTask",
@@ -318,12 +264,6 @@
         "assigned_to": "LitigationSupport"
         },
       "label": "Status Inquiry"
-    }, {
-      "value": {
-        "klass": "AppealWithdrawalMailTask",
-        "assigned_to": "CaseReview"
-        },
-      "label": "Withdrawal Of Appeal"
     }
   ]
 }
