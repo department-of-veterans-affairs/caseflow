@@ -57,6 +57,10 @@ class EvidenceSubmissionWindowTask < Task
     [self]
   end
 
+  def is_waivable?
+    (assigned_at > 90.days.ago && status == Constants.TASK_STATUSES.completed)
+  end
+
   private
 
   def set_assignee
