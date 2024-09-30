@@ -1543,7 +1543,6 @@
   "TEST_LEVER_UNIT_TD": "Lever Unit",
   "TEST_CASE_DISTRIBUTION_LEVERS_H2": " Case Distribution Levers ",
   "TEST_CREATE_SEEDED_APPEALS_TITLE": "Create Seeded Appeals",
-<<<<<<< HEAD
   "TEST_WARNING_P1": "Clicking any button in this section creates specific appeals. The creation process triggered by any button click can take up to 20 minutes to complete.",
   "TEST_WARNING_P2": "While appeals are being created, system performance is considerably slowed, and actions related to requesting appeals or CSVs in the Distribution Status section above will produce unexpected results.",
   "TEST_WARNING_P3": "We recommend you only run the seed file identified for your specific testing effort.",
@@ -1558,11 +1557,8 @@
   "TEST_RUN_NONSSC_AVLJ_APPEAL_TITLE": "Run Non-SSC AVLJ and Appeal Seeds",
   "TEST_RUN_NONSSC_AVLJ_APPEAL_DESCRIPTION": " - Creates 66 assigned legacy appeals. About 50% assigned to Non-SSC AVLJs.",
   "TEST_CASE_MOVEMENT_TITLE": "Case Movement",
-=======
-  "TEST_CASE_MOVEMENT_TITLE": "Case Movement",
   "TEST_RETURN_LEGACY_APPEALS_TO_BOARD_JOB_TITLE": "ReturnLegacyAppealsToBoard job",
   "TEST_RETURN_LEGACY_APPEALS_TO_BOARD_JOB_DESCRIPTION": " - Click to run the ReturnLegacyAppealsToBoard job. This job changes the location to 63 for qualifying legacy appeals.",
->>>>>>> feature/APPEALS-49028
   "TEST_LOG_OF_MOST_RECENT_APPEALS_MOVED_TITLE": "Log of 15 most recent appeals moved to location 63",
   "TEST_BACK_TO_TOP_BUTTON": "Back to Top",
   "TEST_SEEDS_ALERT_MESSAGE": " in progress",
