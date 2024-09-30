@@ -1,4 +1,4 @@
-import { render, waitFor } from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DocumentViewer from 'app/readerprototype/DocumentViewer';
 import React, { useState } from 'react';
@@ -8,6 +8,7 @@ import { applyMiddleware, createStore } from 'redux';
 import thunk from 'redux-thunk';
 import { rootReducer } from 'app/reader/reducers';
 import ApiUtil from 'app/util/ApiUtil';
+import { documents } from '../data/documents';
 
 window.IntersectionObserver = jest.fn(() => ({
   observe: jest.fn(),
@@ -26,13 +27,16 @@ jest.mock('../../../../app/util/ApiUtil', () => ({
   }),
   patch: jest.fn().mockResolvedValue({})
 }));
+
 jest.mock('../../../../app/util/NetworkUtil', () => ({
   connectionInfo: jest.fn(),
 }));
+
 jest.mock('../../../../app/util/Metrics', () => ({
   storeMetrics: jest.fn().mockResolvedValue(),
   recordAsyncMetrics: jest.fn().mockResolvedValue(),
 }));
+
 jest.mock('pdfjs-dist', () => ({
   getDocument: jest.fn().mockImplementation(() => ({
     docId: 1,
@@ -48,74 +52,16 @@ jest.mock('pdfjs-dist', () => ({
   renderTextLayer: jest.fn(),
   GlobalWorkerOptions: jest.fn().mockResolvedValue(),
 }));
+
 afterEach(() => jest.clearAllMocks());
 
-const doc = {
-  id: 1,
-  tags: [],
-  category_procedural: true,
-  category_other: false,
-  category_medical: false,
-  category_case_summary: false,
-  opened_by_current_user: false,
-};
-
-const props = {
+const defaultProps = {
   allDocuments: [
-    {
-      id: 1,
-      category_medical: null,
-      category_other: null,
-      category_procedural: true,
-      created_at: '2024-09-17T12:30:52.925-04:00',
-      description: null,
-      file_number: '216979849',
-      previous_document_version_id: null,
-      received_at: '2024-09-14',
-      series_id: '377120',
-      type: 'NOD',
-      updated_at: '2024-09-17T12:41:11.000-04:00',
-      upload_date: '2024-09-15',
-      vbms_document_id: '1',
-      content_url: '/document/39/pdf',
-      filename: 'filename-798447.pdf',
-      category_case_summary: true,
-      serialized_vacols_date: '',
-      serialized_receipt_date: '09/14/2024',
-      matching: false,
-      opened_by_current_user: false,
-      tags: [],
-      receivedAt: '2024-09-14',
-      listComments: false,
-      wasUpdated: false,
-    },
-    {
-      id: 2,
-      category_medical: null,
-      category_other: null,
-      category_procedural: true,
-      created_at: '2024-09-17T12:30:52.925-04:00',
-      description: null,
-      file_number: '216979849',
-      previous_document_version_id: null,
-      received_at: '2024-09-14',
-      series_id: '377120',
-      type: 'NOD',
-      updated_at: '2024-09-17T12:41:11.000-04:00',
-      upload_date: '2024-09-15',
-      vbms_document_id: '1',
-      content_url: '/document/39/pdf',
-      filename: 'filename-798447.pdf',
-      category_case_summary: true,
-      serialized_vacols_date: '',
-      serialized_receipt_date: '09/14/2024',
-      matching: false,
-      opened_by_current_user: false,
-      tags: [],
-      receivedAt: '2024-09-14',
-      listComments: false,
-      wasUpdated: false,
-    },
+    documents[1],
+    documents[2],
+    documents[3],
+    documents[4],
+    documents[5]
   ],
   showPdf: jest.fn(),
   documentPathBase: '/3575931/documents',
@@ -133,7 +79,7 @@ const getStore = () =>
         deleteAnnotationModalIsOpenFor: null,
         shareAnnotationModalIsOpenFor: null
       },
-      documents: { 1: doc },
+      documents,
       documentList: {
         pdfList: {
           lastReadDocId: null,
@@ -142,6 +88,9 @@ const getStore = () =>
         filteredDocIds: [
           1,
           2,
+          3,
+          4,
+          5
         ],
         docFilterCriteria: {},
         pdfViewer: {
@@ -157,7 +106,7 @@ const getStore = () =>
     },
     applyMiddleware(thunk));
 
-const Component = () => {
+const Component = (props) => {
   const [zoomLevel, setZoomLevel] = useState(100);
 
   return <Provider store={getStore()}>
@@ -168,33 +117,52 @@ const Component = () => {
   </Provider>;
 };
 
-describe('user visiting a document', () => {
-
+describe('Marked as Read', () => {
   beforeEach(() => {
+    jest.clearAllMocks();
     jest.mock('app/util/ApiUtil', () => ({
       patch: jest.fn(),
     }));
   });
 
-  it('records the viewing of the document', () => {
+  it('marks document with docId 1 as read', () => {
     const spy = jest.spyOn(ApiUtil, 'patch');
 
+    render(<Component {...defaultProps} />);
+    expect(spy).toHaveBeenCalledWith('/document/1/mark-as-read', {}, 'mark-doc-as-read');
+
+  });
+
+  it('marks document with docId 4 as read', () => {
+    const spy = jest.spyOn(ApiUtil, 'patch');
+    const props = {
+      allDocuments: [
+        documents[1],
+        documents[2],
+        documents[3],
+        documents[4],
+        documents[5]
+      ],
+      showPdf: jest.fn(),
+      documentPathBase: '/3575931/documents',
+      match: {
+        params: { docId: '4', vacolsId: '3575931' },
+      },
+    };
+
     render(<Component {...props} />);
-    expect(spy).
-      toHaveBeenCalledWith('/document/1/mark-as-read', {}, 'mark-doc-as-read');
+    expect(spy).toHaveBeenCalledWith('/document/4/mark-as-read', {}, 'mark-doc-as-read');
   });
 });
 
 describe('Open Document and Close Issue tags Sidebar Section', () => {
   it('Navigate to next document and verify Issue tags stay closed', async () => {
-    const { container, getByText } = render(
-      <Component doc={doc} document={doc} />
-    );
+    const { container, getByText } = render(<Component {...defaultProps} />);
 
     expect(container).toHaveTextContent('Select or tag issues');
     expect(container).toHaveTextContent('Add a comment');
     expect(container).toHaveTextContent('Procedural');
-    expect(container).toHaveTextContent('Document 1 of 2');
+    expect(container).toHaveTextContent('Document 1 of 5');
 
     userEvent.click(getByText('Issue tags'));
     waitFor(() =>
@@ -204,7 +172,7 @@ describe('Open Document and Close Issue tags Sidebar Section', () => {
     userEvent.click(getByText('Next'));
     waitFor(() => expect(container).toHaveTextContent('Add a comment'));
     waitFor(() => expect(container).toHaveTextContent('Procedural'));
-    waitFor(() => expect(container).toHaveTextContent('Document 2 of 2'));
+    waitFor(() => expect(container).toHaveTextContent('Document 2 of 5'));
     waitFor(() =>
       expect(container).not.toHaveTextContent('Select or tag issues')
     );
@@ -212,17 +180,59 @@ describe('Open Document and Close Issue tags Sidebar Section', () => {
   });
 });
 
-test('should change zoom level to 80%, then to 60% to simulate parent states update', async () => {
-  const { container, getByRole } = render(<Component {...props} />);
+describe('Zoom', () => {
+  it('updates zoom level when zoom out button clicked', async() => {
+    const { container, getByRole } = render(<Component {...defaultProps} />);
 
-  expect(container).toHaveTextContent('100%');
-  const zoomOutButton = getByRole('button', { name: /zoom out/i });
+    expect(container).toHaveTextContent('100%');
+    const zoomOutButton = getByRole('button', { name: /zoom out/i });
 
-  userEvent.click(zoomOutButton);
+    userEvent.click(zoomOutButton);
+    await waitFor(() => expect(container).toHaveTextContent('90%'));
+    userEvent.click(zoomOutButton);
+    await waitFor(() => expect(container).toHaveTextContent('80%'));
+  });
+});
 
-  await waitFor(() => expect(container).toHaveTextContent('90%'));
+describe('Document Navigation', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
-  userEvent.click(zoomOutButton);
+  it('navigates to the next document when Next button or right arrow key is pressed', async() => {
+    const { container, getByText } = render(<Component {...defaultProps} />);
 
-  await waitFor(() => expect(container).toHaveTextContent('80%'));
+    expect(container).toHaveTextContent('1 of 5');
+    expect(container).not.toHaveTextContent('Previous');
+    userEvent.click(getByText('Next'));
+    waitFor(() => expect(container).toHaveTextContent('Document 2 of 5'));
+    userEvent.click(getByText('Next'));
+    waitFor(() => expect(container).toHaveTextContent('Document 3 of 5'));
+  });
+
+  it('navigates to the previous document when Previous button or left arrow key is pressed', async() => {
+    const props = {
+      allDocuments: [
+        documents[1],
+        documents[2],
+        documents[3],
+        documents[4],
+        documents[5]
+      ],
+      showPdf: jest.fn(),
+      documentPathBase: '/3575931/documents',
+      match: {
+        params: { docId: '5', vacolsId: '3575931' },
+      },
+    };
+
+    const { container, getByText } = render(<Component {...props} />);
+
+    expect(container).toHaveTextContent('5 of 5');
+    expect(container).not.toHaveTextContent('Next');
+    userEvent.click(getByText('Previous'));
+    waitFor(() => expect(container).toHaveTextContent('Document 4 of 5'));
+    userEvent.click(getByText('Previous'));
+    waitFor(() => expect(container).toHaveTextContent('Document 3 of 5'));
+  });
 });

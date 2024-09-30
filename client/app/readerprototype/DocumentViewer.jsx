@@ -136,6 +136,7 @@ const DocumentViewer = (props) => {
         </div>
         <ReaderFooter
           currentPage={currentPage}
+          doc={doc}
           docId={doc.id}
           isDocumentLoadError={isDocumentLoadError}
           numPages={numPages}
