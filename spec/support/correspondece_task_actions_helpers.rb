@@ -91,9 +91,13 @@ module CorrespondenceTaskActionsHelpers
     expected_message = options[:expected_message]
 
     visit "/queue/correspondence/#{correspondence.uuid}"
+    page.all(".cf-btn-link").each(&:click)
     click_dropdown(prompt: "Select an action", text: action)
     find(".cf-form-textarea", match: :first).fill_in with: form_text
     click_button button_id
+    using_wait_time(10) do
+      page.all(".cf-btn-link").each(&:click)
+    end
     expect(page).to have_content("#{task_name} #{expected_message}")
   end
 end
