@@ -192,8 +192,9 @@ export const AddAppealRelatedTaskView = (props) => {
                     nextTaskId={nextTaskId}
                     setRelatedTasksCanContinue={props.setRelatedTasksCanContinue}
                     unlinkAppeal={appealCheckboxOnChange}
-                    // allTaskTypeOptions={props.allTaskTypeOptions}
-                    allTaskTypeOptions={appealById(appealId).active ? props.allTaskTypeOptions : INTAKE_FORM_TASK_TYPES.relatedToAppealInactive}
+                    allTaskTypeOptions={
+                      appealById(appealId).active ? props.allTaskTypeOptions : INTAKE_FORM_TASK_TYPES.relatedToAppealInactive
+                    }
                     filterUnavailableTaskTypeOptions={props.filterUnavailableTaskTypeOptions}
                     autoTexts={props.autoTexts}
                   />
