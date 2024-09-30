@@ -53,6 +53,7 @@ const CorrespondenceDetails = (props) => {
   const [originalStates, setOriginalStates] = useState({});
   const [sortedPriorMail, setSortedPriorMail] = useState([]);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isTasksUnrelatedSectionExpanded, setIsTasksUnrelatedSectionExpanded] = useState(false);
 
   // Initialize checkbox states
   useEffect(() => {
@@ -72,6 +73,10 @@ const CorrespondenceDetails = (props) => {
 
   const toggleSection = () => {
     setIsExpanded((prev) => !prev);
+  };
+
+  const toggleTasksUnrelatedSection = () => {
+    setIsTasksUnrelatedSectionExpanded((prev) => !prev);
   };
 
   // Function to handle checkbox changes
@@ -421,15 +426,31 @@ const CorrespondenceDetails = (props) => {
   const correspondenceAndAppealTaskComponents = <>
     {correspondenceTasks()}
 
-    <section className="task-not-related-title">Tasks not related to an appeal</section>
-    <div className="correspondence-case-timeline-container">
-      <CorrespondenceCaseTimeline
-        organizations={props.organizations}
-        userCssId={props.userCssId}
-        correspondence={props.correspondence}
-        tasksToDisplay={props.correspondence.tasksUnrelatedToAppeal}
-      />
+    <div className="correspondence-existing-appeals">
+      <div className="left-section">
+        <h2>Tasks not related to an appeal</h2>
+      </div>
+      <div className="toggleButton-plus-or-minus">
+        <Button
+          onClick={toggleTasksUnrelatedSection}
+          linkStyling
+          aria-label="Toggle section"
+          aria-expanded={isTasksUnrelatedSectionExpanded}
+        >
+          {isTasksUnrelatedSectionExpanded ? '_' : <span className="plus-symbol">+</span>}
+        </Button>
+      </div>
     </div>
+    {isTasksUnrelatedSectionExpanded && (
+      <div className="correspondence-case-timeline-container">
+        <CorrespondenceCaseTimeline
+          organizations={props.organizations}
+          userCssId={props.userCssId}
+          correspondence={props.correspondence}
+          tasksToDisplay={props.correspondence.tasksUnrelatedToAppeal}
+        />
+      </div>
+    )}
   </>;
 
   const correspondencePackageDetails = () => {
