@@ -31,6 +31,7 @@ class Hearing < CaseflowRecord
   include UpdatedByUserConcern
   include HearingConcern
   include HasHearingEmailRecipientsConcern
+  include ConferenceableConcern
 
   # VA Notify Hooks
   prepend HearingScheduled
@@ -49,6 +50,7 @@ class Hearing < CaseflowRecord
   has_many :hearing_issue_notes
   has_many :email_events, class_name: "SentHearingEmailEvent"
   has_many :email_recipients, class_name: "HearingEmailRecipient"
+  has_many :transcription_files, as: :hearing
 
   class HearingDayFull < StandardError; end
 
@@ -187,12 +189,19 @@ class Hearing < CaseflowRecord
       .first
   end
 
+  def daily_docket_conference_link
+    hearing_day.conference_link
+  end
+
+  def scheduled_for
+    scheduled_for_hearing_day(hearing_day, updated_by, regional_office_timezone)
+  end
+
   # returns scheduled datetime object considering the timezones
   # @return [nil] if hearing_day is nil
   # @return [Time] in scheduled_in_timezone timezone - if scheduled_datetime and scheduled_in_timezone are present
   # @return [Time] else datetime in regional office timezone
-  # rubocop:disable Metrics/AbcSize
-  def scheduled_for
+  def scheduled_for_hearing_day(hearing_day, updated_by, regional_office_timezone)
     return nil unless hearing_day
 
     # returns datetime in scheduled_in_timezone timezone
@@ -234,7 +243,6 @@ class Hearing < CaseflowRecord
       )
     end
   end
-  # rubocop:enable Metrics/AbcSize
 
   def scheduled_for_past?
     scheduled_for < DateTime.yesterday.in_time_zone(regional_office_timezone)

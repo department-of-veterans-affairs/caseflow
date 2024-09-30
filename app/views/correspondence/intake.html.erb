@@ -1,0 +1,20 @@
+<% content_for :full_page_content do %>
+  <%= react_component("Queue", props: {
+    userDisplayName: current_user.display_name,
+    userId: current_user.id,
+    userRole: (current_user.vacols_roles.first || "").capitalize,
+    userCssId: current_user.css_id,
+    dropdownUrls: dropdown_urls,
+    applicationUrls: application_urls,
+    feedbackUrl: feedback_url,
+    organizations: current_user.selectable_organizations.map {|o| o.slice(:name, :url)},
+    featureToggles: {
+      correspondence_queue: FeatureToggle.enabled?(:correspondence_queue, user: current_user)
+    },
+    priorMail: @prior_mail,
+    correspondence: @correspondence,
+    isInboundOpsSupervisor: current_user.inbound_ops_team_supervisor?,
+    reduxStore: @redux_store,
+    autoTexts: @auto_texts,
+  }) %>
+<% end %>

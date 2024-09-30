@@ -42,8 +42,7 @@ class SideBarCategories extends PureComponent {
 
     const categoryToggleStates = _.mapValues(
       Constants.documentCategories,
-      (val, key) =>
-        documents[doc.id][categoryFieldNameOfCategoryName(key)]
+      (val, key) => documents[doc.id][categoryFieldNameOfCategoryName(key)]
     );
 
     return <div className="cf-category-sidebar">
@@ -58,7 +57,7 @@ class SideBarCategories extends PureComponent {
 
 SideBarCategories.propTypes = {
   doc: PropTypes.object,
-  documents: PropTypes.object,
+  documents: PropTypes.array,
   id: PropTypes.number,
   category_medical: PropTypes.bool,
   category_procedural: PropTypes.bool,
