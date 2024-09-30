@@ -88,5 +88,16 @@ describe Events::DecisionReviewUpdated::DecisionReviewUpdatedAudit do
       event_record = EventRecord.last
       expect(event_record.evented_record).to eq(request_issue)
     end
+
+    it "creates an event record for withdrawn request issues" do
+      allow(parser).to receive(:withdrawn_issues).and_return([{ reference_id: "1234567890" }])
+
+      audit_service = described_class.new(event: event, parser: parser)
+
+      expect { audit_service.call! }.to change { EventRecord.count }.by(1)
+
+      event_record = EventRecord.last
+      expect(event_record.evented_record).to eq(request_issue)
+    end
   end
 end
