@@ -12,7 +12,8 @@ import {
   amaHearing,
   defaultHearing,
   virtualHearing,
-  vsoUser
+  amaWebexHearing,
+  legacyWebexHearing
 } from 'test/data';
 import Button from 'app/components/Button';
 import DateSelector from 'app/components/DateSelector';
@@ -20,11 +21,12 @@ import Details from 'app/hearings/components/Details';
 import DetailsForm from 'app/hearings/components/details/DetailsForm';
 import HearingTypeDropdown from 'app/hearings/components/details/HearingTypeDropdown';
 import SearchableDropdown from 'app/components/SearchableDropdown';
-import TranscriptionRequestInputs from
-  'app/hearings/components/details/TranscriptionRequestInputs';
+import TranscriptionDetailsInputs from 'app/hearings/components/details/TranscriptionDetailsInputs';
+import TranscriptionProblemInputs from 'app/hearings/components/details/TranscriptionProblemInputs';
+import TranscriptionRequestInputs from 'app/hearings/components/details/TranscriptionRequestInputs';
+import TranscriptionFilesTable from 'app/hearings/components/details/TranscriptionFilesTable';
 import EmailConfirmationModal from 'app/hearings/components/EmailConfirmationModal';
 import toJson from 'enzyme-to-json';
-import { node } from 'prop-types';
 
 // Define the function spies
 const saveHearingSpy = jest.fn();
@@ -74,7 +76,9 @@ describe('Details', () => {
     expect(details.find(VirtualHearingFields).prop('virtualHearing')).toEqual(
       null
     );
-    expect(details.find(VirtualHearingFields).children()).toHaveLength(0);
+    // VirtualHearingFields will always show for any virtual or non virtual hearing
+    // as we move forward with Webex integration
+    expect(details.find(VirtualHearingFields).children()).toHaveLength(1);
 
     // Ensure the transcription section is displayed by default for ama hearings
     expect(details.find(TranscriptionFormSection)).toHaveLength(1);
@@ -230,43 +234,133 @@ describe('Details', () => {
     expect(toJson(details, { noKey: true })).toMatchSnapshot();
   });
 
-  test('Does not display transcription section for legacy hearings', () => {
-    const details = mount(
-      <Details
-        hearing={legacyHearing}
-        saveHearing={saveHearingSpy}
-        setHearing={setHearingSpy}
-        goBack={goBackSpy}
-        onReceiveAlerts={onReceiveAlertsSpy}
-        onReceiveTransitioningAlert={onReceiveTransitioningAlertSpy}
-        transitionAlert={transitionAlertSpy}
-      />,
-      {
-        wrappingComponent: hearingDetailsWrapper(
-          anyUser,
-          legacyHearing
-        ),
-        wrappingComponentProps: { store: detailsStore },
-      }
-    );
+  describe('TranscriptiomFormSection', () => {
+    describe('pexip hearing', () => {
+      test('Displays transcription section but not transcription files table for AMA hearings', () => {
+        const details = mount(
+          <Details
+            hearing={amaHearing}
+            saveHearing={saveHearingSpy}
+            setHearing={setHearingSpy}
+            goBack={goBackSpy}
+            onReceiveAlerts={onReceiveAlertsSpy}
+            onReceiveTransitioningAlert={onReceiveTransitioningAlertSpy}
+            transitionAlert={transitionAlertSpy}
+          />,
+          {
+            wrappingComponent: hearingDetailsWrapper(
+              anyUser,
+              amaHearing
+            ),
+            wrappingComponentProps: { store: detailsStore },
+          }
+        );
 
-    // Assertions
-    expect(details.find(DetailsHeader)).toHaveLength(1);
-    expect(details.find(DetailsForm)).toHaveLength(1);
+        expect(details.find(TranscriptionFormSection)).toHaveLength(1);
+        expect(details.find(TranscriptionDetailsInputs)).toHaveLength(1);
+        expect(details.find(TranscriptionProblemInputs)).toHaveLength(1);
+        expect(details.find(TranscriptionRequestInputs)).toHaveLength(1);
+        expect(details.find(TranscriptionFilesTable)).toHaveLength(0);
+      });
 
-    // Ensure that the virtualHearing form is not displayed by default
-    expect(details.find(VirtualHearingFields).prop('virtualHearing')).toEqual(
-      null
-    );
-    expect(details.find(VirtualHearingFields).children()).toHaveLength(0);
+      test('Does not display transcription section for legacy hearings', () => {
+        const details = mount(
+          <Details
+            hearing={legacyHearing}
+            saveHearing={saveHearingSpy}
+            setHearing={setHearingSpy}
+            goBack={goBackSpy}
+            onReceiveAlerts={onReceiveAlertsSpy}
+            onReceiveTransitioningAlert={onReceiveTransitioningAlertSpy}
+            transitionAlert={transitionAlertSpy}
+          />,
+          {
+            wrappingComponent: hearingDetailsWrapper(
+              anyUser,
+              legacyHearing
+            ),
+            wrappingComponentProps: { store: detailsStore },
+          }
+        );
 
-    // Ensure the transcription form is not displayed for legacy hearings
-    expect(details.find(TranscriptionFormSection)).toHaveLength(0);
+        // Assertions
+        expect(details.find(DetailsHeader)).toHaveLength(1);
+        expect(details.find(DetailsForm)).toHaveLength(1);
 
-    // Ensure the save and cancel buttons are present
-    detailButtonsTest(details);
+        // Ensure that the virtualHearing form is not displayed by default
+        expect(details.find(VirtualHearingFields).prop('virtualHearing')).toEqual(
+          null
+        );
+        // VirtualHearingFields will always show for any virtual or non virtual hearing
+        // as we move forward with Webex integration
+        expect(details.find(VirtualHearingFields).children()).toHaveLength(1);
 
-    expect(toJson(details, { noKey: true })).toMatchSnapshot();
+        // Ensure the transcription form is not displayed for legacy hearings
+        expect(details.find(TranscriptionFormSection)).toHaveLength(0);
+        // expect(details.find(TranscriptionFilesTable)).toHaveLength(0);
+
+        // Ensure the save and cancel buttons are present
+        detailButtonsTest(details);
+
+        expect(toJson(details, { noKey: true })).toMatchSnapshot();
+      });
+    });
+
+    describe('webex hearing', () => {
+      test('Displays transcription section, including transcription files table, for AMA hearings', () => {
+        const details = mount(
+          <Details
+            hearing={amaWebexHearing}
+            saveHearing={saveHearingSpy}
+            setHearing={setHearingSpy}
+            goBack={goBackSpy}
+            onReceiveAlerts={onReceiveAlertsSpy}
+            onReceiveTransitioningAlert={onReceiveTransitioningAlertSpy}
+            transitionAlert={transitionAlertSpy}
+          />,
+          {
+            wrappingComponent: hearingDetailsWrapper(
+              anyUser,
+              amaWebexHearing
+            ),
+            wrappingComponentProps: { store: detailsStore },
+          }
+        );
+
+        expect(details.find(TranscriptionFormSection)).toHaveLength(1);
+        expect(details.find(TranscriptionDetailsInputs)).toHaveLength(1);
+        expect(details.find(TranscriptionProblemInputs)).toHaveLength(1);
+        expect(details.find(TranscriptionRequestInputs)).toHaveLength(1);
+        expect(details.find(TranscriptionFilesTable)).toHaveLength(1);
+      });
+
+      test('Only displays transcription files table, and not other transcription form inputs, for legacy hearings', () => {
+        const details = mount(
+          <Details
+            hearing={legacyWebexHearing}
+            saveHearing={saveHearingSpy}
+            setHearing={setHearingSpy}
+            goBack={goBackSpy}
+            onReceiveAlerts={onReceiveAlertsSpy}
+            onReceiveTransitioningAlert={onReceiveTransitioningAlertSpy}
+            transitionAlert={transitionAlertSpy}
+          />,
+          {
+            wrappingComponent: hearingDetailsWrapper(
+              anyUser,
+              legacyWebexHearing
+            ),
+            wrappingComponentProps: { store: detailsStore },
+          }
+        );
+
+        expect(details.find(TranscriptionFormSection)).toHaveLength(1);
+        expect(details.find(TranscriptionDetailsInputs)).toHaveLength(0);
+        expect(details.find(TranscriptionProblemInputs)).toHaveLength(0);
+        expect(details.find(TranscriptionRequestInputs)).toHaveLength(0);
+        expect(details.find(TranscriptionFilesTable)).toHaveLength(1);
+      });
+    });
   });
 
   test('Displays VirtualHearing details when there is a virtual hearing', () => {

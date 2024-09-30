@@ -20,6 +20,28 @@ class CaseSearchResultsForCaseflowVeteranId < ::CaseSearchResultsBase
     validate_veterans_exist
   end
 
+  def appeal_finder_appeals
+    AppealFinder.new(user: user).find_appeals_for_veterans(veterans_user_can_access)
+  end
+
+  def search_results
+    @search_results ||= SearchQueryService.new(
+      veteran_ids: veterans_user_can_access.map(&:id)
+    ).search_by_veteran_ids
+  end
+
+  def vso_user_search_results
+    SearchQueryService::VsoUserSearchResults.new(user: user, search_results: search_results).call
+  end
+
+  def appeals
+    if user.vso_employee?
+      vso_user_search_results
+    else
+      search_results
+    end
+  end
+
   def not_found_error
     {
       "title": "Veteran not found",

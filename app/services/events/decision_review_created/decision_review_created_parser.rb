@@ -41,23 +41,23 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   def css_id
-    @payload.dig(:css_id)
+    @payload.dig(:css_id).presence
   end
 
   def detail_type
-    @payload.dig(:detail_type)
+    @payload.dig(:detail_type).presence
   end
 
   def station_id
-    @payload.dig(:station)
+    @payload.dig(:station).presence
   end
 
   def event_id
-    @payload.dig(:event_id)
+    @payload.dig(:event_id).presence
   end
 
   def claim_id
-    @payload.dig(:claim_id)
+    @payload.dig(:claim_id).presence
   end
 
   # Intake attributes
@@ -81,15 +81,15 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   def intake_completion_status
-    @payload.dig(:intake, :completion_status)
+    @payload.dig(:intake, :completion_status).presence
   end
 
   def intake_type
-    @payload.dig(:intake, :type)
+    @payload.dig(:intake, :type).presence
   end
 
   def intake_detail_type
-    @payload.dig(:intake, :detail_type)
+    @payload.dig(:intake, :detail_type).presence
   end
 
   # Veteran attributes
@@ -143,7 +143,7 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   def veteran_participant_id
-    @payload.dig(:veteran, :participant_id)
+    @payload.dig(:veteran, :participant_id).presence
   end
 
   def veteran_bgs_last_synced_at
@@ -152,7 +152,7 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   def veteran_name_suffix
-    @payload.dig(:veteran, :name_suffix)
+    @payload.dig(:veteran, :name_suffix).presence
   end
 
   def veteran_date_of_death
@@ -166,19 +166,19 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   def claimant_payee_code
-    @payload.dig(:claimant, :payee_code)
+    @payload.dig(:claimant, :payee_code).presence
   end
 
   def claimant_type
-    @payload.dig(:claimant, :type)
+    @payload.dig(:claimant, :type).presence
   end
 
   def claimant_participant_id
-    @payload.dig(:claimant, :participant_id)
+    @payload.dig(:claimant, :participant_id).presence
   end
 
   def claimant_name_suffix
-    @payload.dig(:claimant, :name_suffix)
+    @payload.dig(:claimant, :name_suffix).presence
   end
 
   # ClaimReview attributes
@@ -187,7 +187,7 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   def claim_review_benefit_type
-    @payload.dig(:claim_review, :benefit_type)
+    @payload.dig(:claim_review, :benefit_type).presence
   end
 
   def claim_review_filed_by_va_gov
@@ -241,7 +241,7 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   def epe_benefit_type_code
-    @payload.dig(:end_product_establishment, :benefit_type_code)
+    @payload.dig(:end_product_establishment, :benefit_type_code).presence
   end
 
   def epe_claim_date
@@ -250,27 +250,27 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   def epe_code
-    @payload.dig(:end_product_establishment, :code)
+    @payload.dig(:end_product_establishment, :code).presence
   end
 
   def epe_modifier
-    @payload.dig(:end_product_establishment, :modifier)
+    @payload.dig(:end_product_establishment, :modifier).presence
   end
 
   def epe_payee_code
-    @payload.dig(:end_product_establishment, :payee_code)
+    @payload.dig(:end_product_establishment, :payee_code).presence
   end
 
   def epe_reference_id
-    @payload.dig(:end_product_establishment, :reference_id)
+    @payload.dig(:end_product_establishment, :reference_id).presence
   end
 
   def epe_limited_poa_access
-    @payload.dig(:end_product_establishment, :limited_poa_access)
+    @payload.dig(:end_product_establishment, :limited_poa_access).presence
   end
 
   def epe_limited_poa_code
-    @payload.dig(:end_product_establishment, :limited_poa_code)
+    @payload.dig(:end_product_establishment, :limited_poa_code).presence
   end
 
   def epe_committed_at
@@ -289,11 +289,11 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   def epe_synced_status
-    @payload.dig(:end_product_establishment, :synced_status)
+    @payload.dig(:end_product_establishment, :synced_status).presence
   end
 
   def epe_development_item_reference_id
-    @payload.dig(:end_product_establishment, :development_item_reference_id)
+    @payload.dig(:end_product_establishment, :development_item_reference_id).presence
   end
 
   # RequestIssues attr

@@ -33,7 +33,7 @@ class Api::V3::Issues::Ama::RequestIssueSerializer
   attribute :caseflow_considers_eligible, &:eligible?
 
   attribute :claimant_participant_id do |object|
-    object.decision_review.claimant.participant_id
+    object&.decision_review&.claimant&.participant_id
   end
 
   attribute :claim_id do |object|

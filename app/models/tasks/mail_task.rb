@@ -60,6 +60,12 @@ class MailTask < Task
       parent_task
     end
 
+    def verify_user_can_create!(user, parent)
+      return true if InboundOpsTeam.singleton.user_has_access?(user)
+
+      super(user, parent)
+    end
+
     def create_from_params(params, user)
       parent_task = Task.find(params[:parent_id])
 

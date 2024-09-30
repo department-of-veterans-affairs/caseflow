@@ -4,13 +4,15 @@ class SupplementalClaim < ClaimReview
   END_PRODUCT_MODIFIERS = %w[040 041 042 043 044 045 046 047 048 049].freeze
 
   belongs_to :decision_review_remanded, polymorphic: true
-  has_one :event_record, as: :evented_record
+  has_many :event_records, as: :evented_record
 
   scope :updated_since_for_appeals, lambda { |since|
     select(:decision_review_remanded_id)
       .where("#{table_name}.updated_at >= ?", since)
       .where("#{table_name}.decision_review_remanded_type='Appeal'")
   }
+
+  scope :remand, -> { where(type: Remand.name) }
 
   attr_accessor :appeal_split_process
 

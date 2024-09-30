@@ -1,0 +1,12 @@
+<% content_for :page_title do %>&nbsp &gt &nbspTest Correspondence<% end %>
+
+<% content_for :full_page_content do %>
+  <%= react_component("TestCorrespondence", props: {
+    userDisplayName: current_user.display_name,
+    dropdownUrls: dropdown_urls,
+    applicationUrls: application_urls,
+    featureToggles: {
+
+    }
+  }) %>
+<% end %>

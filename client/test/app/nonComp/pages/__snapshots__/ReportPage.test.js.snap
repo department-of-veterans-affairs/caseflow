@@ -57,7 +57,6 @@ exports[`ReportPage renders correctly renders correctly 1`] = `
                             aria-autocomplete="list"
                             aria-expanded="false"
                             aria-haspopup="true"
-                            aria-labelledby="report-type-label"
                             aria-owns="report-type-listbox"
                             autocapitalize="none"
                             autocomplete="off"

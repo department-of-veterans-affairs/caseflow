@@ -1,0 +1,30 @@
+# frozen_string_literal: true
+
+SearchQueryService::Attributes = Struct.new(
+  :aod,
+  :power_of_attorney,
+  :appellant_full_name,
+  :assigned_attorney,
+  :assigned_judge,
+  :assigned_to_location,
+  :caseflow_veteran_id,
+  :decision_date,
+  :decision_issues,
+  :docket_name,
+  :docket_number,
+  :external_id,
+  :hearings,
+  :issues,
+  :mst,
+  :overtime,
+  :pact,
+  :paper_case,
+  :status,
+  :type,
+  :veteran_appellant_deceased,
+  :veteran_file_number,
+  :veteran_full_name,
+  :contested_claim,
+  :withdrawn,
+  keyword_init: true
+)

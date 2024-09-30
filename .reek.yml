@@ -55,6 +55,7 @@ detectors:
     exclude:
       - Address
       - Api::V3::DecisionReviews::ContestableIssueFinder#initialize
+      - ExternalApi::WebexService::RecordingsListResponse::Recording#initialize
   DataClump:
     exclude:
       - ForeignKeyPolymorphicAssociationJob
@@ -135,6 +136,11 @@ detectors:
       - ExternalApi::PexipService#send_pexip_request
       - ControllerSchema#remove_unknown_keys
       - BusinessLineReporter#as_csv
+      - Hearings::DownloadTranscriptionFileJob#build_error_explanation
+      - Hearings::RefreshWebexAccessTokenJob#perform
+      - TranscriptionFile#update_status!
+      - ExternalApi::WebexService#create_conference
+      - TranscriptionTransformer
   InstanceVariableAssumption:
     exclude:
       - Appeal
@@ -143,6 +149,7 @@ detectors:
       - Api::V3::DecisionReviews::HigherLevelReviewIntakeProcessor
       - ETL::Syncer
       - User
+      - Hearings::DownloadTranscriptionFileJob
   IrresponsibleModule:
     enabled: false
   LongParameterList:
@@ -163,6 +170,8 @@ detectors:
       - LegacyDocket#distribute_priority_appeals
       - LegacyDocket#distribute_nonpriority_appeals
       - ExternalApi::MPIService#search_people_info
+      - Hearings::FetchWebexRecordingsDetailsJob#send_file
+      - ExternalApi::WebexService#initialize
   ManualDispatch:
     exclude:
       - Api::V3::DecisionReviews::IntakeError#potential_error_code
@@ -180,6 +189,7 @@ detectors:
     max_allowed_nesting: 2
     exclude:
       - AsyncableJobsReporter
+      - TranscriptionTransformer#create_transcription_pages
   NilCheck:
     enabled: false
   RepeatedConditional:
@@ -199,6 +209,8 @@ detectors:
       - Veteran
       - LegacyDocket
       - Test::UsersController
+      - Fakes::WebexService
+      - Hearings::DownloadTranscriptionFileJob
   TooManyConstants:
     exclude:
       - Fakes::BGSServicePOA
@@ -216,6 +228,8 @@ detectors:
       - Api::V3::DecisionReviews::IntakeError
       - ControllerSchema::Field
       - HearingEmailStatusMailer
+      - ExternalApi::WebexService
+      - TranscriptionFileIssuesMailer
   TooManyMethods:
     enabled: false
   TooManyStatements:
@@ -255,10 +269,14 @@ detectors:
       - UpdatePOAConcern
       - VBMSCaseflowLogger#log
       - LegacyDocket
+      - ExternalApi::PexipService#not_found_response
+      - WebexConcern
   UnusedParameters:
     exclude:
       - Docket#distribute_appeals
       - HearingRequestDocket#distribute_appeals
+      - Fakes::WebexService#fetch_recording_details
+      - Fakes::WebexService#fetch_room_details
 
 
 ### Directory specific configuration

@@ -14,11 +14,11 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
     result = if docket_number?(case_search)
                CaseSearchResultsForDocketNumber.new(
                  docket_number: case_search, user: current_user
-               ).call
+               ).api_call
              else
                CaseSearchResultsForVeteranFileNumber.new(
                  file_number_or_ssn: case_search, user: current_user
-               ).call
+               ).api_call
              end
 
     render_search_results_as_json(result)

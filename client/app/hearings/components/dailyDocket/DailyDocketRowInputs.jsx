@@ -19,6 +19,7 @@ import HEARING_DISPOSITION_TYPES from '../../../../constants/HEARING_DISPOSITION
 import {
   virtualHearingRoleForUser,
   virtualHearingLinkLabelFull,
+  virtualHearingScheduledDatePassedLabelFull,
   VIRTUAL_HEARING_HOST
 } from '../../utils';
 
@@ -108,7 +109,7 @@ export const HearingDetailsLink = ({ hearing }) => (
     <br />
     <div {...staticSpacing}>
       <Link to={`/${hearing.externalId}/details`}>
-        Edit Hearing Details
+       Hearing Details and links
         <span {...css({ position: 'absolute' })}><PencilIcon size={25} /></span>
       </Link>
     </div>
@@ -350,18 +351,22 @@ PreppedCheckbox.propTypes = {
 
 export const StaticVirtualHearing = ({ hearing, user }) => (
   <div>
-    <VirtualHearingLink
-      label={virtualHearingLinkLabelFull(virtualHearingRoleForUser(user, hearing))}
-      user={user}
-      hearing={hearing}
-      isVirtual={hearing.isVirtual}
-      virtualHearing={hearing.virtualHearing}
-      link={
-        virtualHearingRoleForUser(user, hearing) === VIRTUAL_HEARING_HOST ?
-        hearing?.virtualHearing?.hostLink :
-        hearing?.virtualHearing?.guestLink
-      }
-    />
+    { hearing?.scheduledForIsPast ? (
+      <span>{virtualHearingScheduledDatePassedLabelFull(virtualHearingRoleForUser(user, hearing))}</span>
+    ) : (
+      <VirtualHearingLink
+        label={virtualHearingLinkLabelFull(virtualHearingRoleForUser(user, hearing))}
+        user={user}
+        hearing={hearing}
+        isVirtual={hearing.isVirtual}
+        virtualHearing={hearing.virtualHearing}
+        link={
+          virtualHearingRoleForUser(user, hearing) === VIRTUAL_HEARING_HOST ?
+          hearing?.virtualHearing?.hostLink :
+          hearing?.virtualHearing?.guestLink
+        }
+      />
+    )}
     {hearing?.virtualHearing?.status === 'pending' && (
       <div {...staticSpacing}>
         <span {...css({ color: COLORS.GREY_MEDIUM })}>{COPY.VIRTUAL_HEARING_SCHEDULING_IN_PROGRESS}</span>

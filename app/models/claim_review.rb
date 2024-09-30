@@ -8,7 +8,7 @@ class ClaimReview < DecisionReview
 
   has_many :end_product_establishments, as: :source
   has_many :messages, as: :detail
-  has_one :event_record, as: :evented_record
+  has_many :event_records, as: :evented_record
   with_options if: :saving_review do
     validate :validate_receipt_date
     validate :validate_veteran

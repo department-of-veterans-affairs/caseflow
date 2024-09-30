@@ -86,17 +86,17 @@ describe EventRecord, :postgres do
 
       expect(request_issue_event_record.evented_record_type).to eq("RequestIssue")
       expect(request_issue_event_record.evented_record_id).to eq(request_issue.id)
-      expect(request_issue.event_record).to eq request_issue_event_record
+      expect(request_issue.event_records.first).to eq request_issue_event_record
       expect(request_issue.from_decision_review_created_event?).to eq(true)
 
       expect(legacy_issue_event_record.evented_record_type).to eq("LegacyIssue")
       expect(legacy_issue_event_record.evented_record_id).to eq(legacy_issue.id)
-      expect(legacy_issue.event_record).to eq legacy_issue_event_record
+      expect(legacy_issue.event_records.first).to eq legacy_issue_event_record
       expect(legacy_issue.from_decision_review_created_event?).to eq(true)
 
       expect(legacy_issue_optin_event_record.evented_record_type).to eq("LegacyIssueOptin")
       expect(legacy_issue_optin_event_record.evented_record_id).to eq(legacy_issue_optin.id)
-      expect(legacy_issue_optin.event_record).to eq legacy_issue_optin_event_record
+      expect(legacy_issue_optin.event_records.first).to eq legacy_issue_optin_event_record
       expect(legacy_issue_optin.from_decision_review_created_event?).to eq(true)
 
       expect(user_event_record.evented_record_type).to eq("User")

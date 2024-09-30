@@ -14,7 +14,8 @@ describe('HearingBadge', () => {
     heldBy: 'ExampleJudgeName',
     disposition: 'ExampleDispositionText',
     date: '2020-01-15',
-    type: 'AMA'
+    type: 'AMA',
+    is_virtual: false
   };
 
   const tooltipText = 'H';
@@ -23,7 +24,7 @@ describe('HearingBadge', () => {
 
   const getHearingBadge = (store, hearing) => render(
     <Provider store={store}>
-      <HearingBadge hearing={defaultHearing} />
+      <HearingBadge hearing={hearing} />
     </Provider>
   );
 
@@ -32,6 +33,15 @@ describe('HearingBadge', () => {
     const component = getHearingBadge(store, defaultHearing);
 
     expect(component).toMatchSnapshot();
+  });
+
+
+  it('displays "Virtual" when is_virtual is true', () => {
+    const store = getStore();
+    const hearingWithVirtual = { ...defaultHearing, is_virtual: true };
+
+    getHearingBadge(store, hearingWithVirtual);
+    expect(screen.getByText('Virtual')).toBeInTheDocument();
   });
 
   it('displays if there are hearings', async () => {

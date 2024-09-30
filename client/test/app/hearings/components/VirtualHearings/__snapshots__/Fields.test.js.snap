@@ -25,6 +25,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
       "centralOfficeTimeString": "04:00",
       "claimantId": 604,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 0,
       "disposition": null,
       "dispositionEditable": true,
@@ -10162,7 +10163,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                 aria-autocomplete="list"
                                                 aria-expanded={false}
                                                 aria-haspopup={true}
-                                                aria-labelledby="appellant-tz-label"
+                                                aria-label="Pacific Time (US & Canada) (5:15 AM)"
                                                 aria-owns="appellant-tz-listbox"
                                                 autoCapitalize="none"
                                                 autoComplete="off"
@@ -11058,7 +11059,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                       aria-autocomplete="list"
                                                       aria-expanded={false}
                                                       aria-haspopup={true}
-                                                      aria-labelledby="appellant-tz-label"
+                                                      aria-label="Pacific Time (US & Canada) (5:15 AM)"
                                                       aria-owns="appellant-tz-listbox"
                                                       autoCapitalize="none"
                                                       autoComplete="off"
@@ -11102,7 +11103,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                           aria-autocomplete="list"
                                                           aria-expanded={false}
                                                           aria-haspopup={true}
-                                                          aria-labelledby="appellant-tz-label"
+                                                          aria-label="Pacific Time (US & Canada) (5:15 AM)"
                                                           aria-owns="appellant-tz-listbox"
                                                           autoCapitalize="none"
                                                           autoComplete="off"
@@ -26359,7 +26360,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                 aria-autocomplete="list"
                                                 aria-expanded={false}
                                                 aria-haspopup={true}
-                                                aria-labelledby="representative-tz-label"
+                                                aria-label="Pacific Time (US & Canada) (5:15 AM)"
                                                 aria-owns="representative-tz-listbox"
                                                 autoCapitalize="none"
                                                 autoComplete="off"
@@ -27255,7 +27256,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                       aria-autocomplete="list"
                                                       aria-expanded={false}
                                                       aria-haspopup={true}
-                                                      aria-labelledby="representative-tz-label"
+                                                      aria-label="Pacific Time (US & Canada) (5:15 AM)"
                                                       aria-owns="representative-tz-listbox"
                                                       autoCapitalize="none"
                                                       autoComplete="off"
@@ -27299,7 +27300,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                           aria-autocomplete="list"
                                                           aria-expanded={false}
                                                           aria-haspopup={true}
-                                                          aria-labelledby="representative-tz-label"
+                                                          aria-label="Pacific Time (US & Canada) (5:15 AM)"
                                                           aria-owns="representative-tz-listbox"
                                                           autoCapitalize="none"
                                                           autoComplete="off"
@@ -32531,6 +32532,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
       "centralOfficeTimeString": "04:00",
       "claimantId": 604,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 0,
       "disposition": null,
       "dispositionEditable": true,
@@ -42668,7 +42670,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                 aria-autocomplete="list"
                                                 aria-expanded={false}
                                                 aria-haspopup={true}
-                                                aria-labelledby="appellant-tz-label"
+                                                aria-label="Pacific Time (US & Canada) (5:15 AM)"
                                                 aria-owns="appellant-tz-listbox"
                                                 autoCapitalize="none"
                                                 autoComplete="off"
@@ -43564,7 +43566,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                       aria-autocomplete="list"
                                                       aria-expanded={false}
                                                       aria-haspopup={true}
-                                                      aria-labelledby="appellant-tz-label"
+                                                      aria-label="Pacific Time (US & Canada) (5:15 AM)"
                                                       aria-owns="appellant-tz-listbox"
                                                       autoCapitalize="none"
                                                       autoComplete="off"
@@ -43608,7 +43610,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                           aria-autocomplete="list"
                                                           aria-expanded={false}
                                                           aria-haspopup={true}
-                                                          aria-labelledby="appellant-tz-label"
+                                                          aria-label="Pacific Time (US & Canada) (5:15 AM)"
                                                           aria-owns="appellant-tz-listbox"
                                                           autoCapitalize="none"
                                                           autoComplete="off"
@@ -58865,7 +58867,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                 aria-autocomplete="list"
                                                 aria-expanded={false}
                                                 aria-haspopup={true}
-                                                aria-labelledby="representative-tz-label"
+                                                aria-label="Pacific Time (US & Canada) (5:15 AM)"
                                                 aria-owns="representative-tz-listbox"
                                                 autoCapitalize="none"
                                                 autoComplete="off"
@@ -59761,7 +59763,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                       aria-autocomplete="list"
                                                       aria-expanded={false}
                                                       aria-haspopup={true}
-                                                      aria-labelledby="representative-tz-label"
+                                                      aria-label="Pacific Time (US & Canada) (5:15 AM)"
                                                       aria-owns="representative-tz-listbox"
                                                       autoCapitalize="none"
                                                       autoComplete="off"
@@ -59805,7 +59807,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                           aria-autocomplete="list"
                                                           aria-expanded={false}
                                                           aria-haspopup={true}
-                                                          aria-labelledby="representative-tz-label"
+                                                          aria-label="Pacific Time (US & Canada) (5:15 AM)"
                                                           aria-owns="representative-tz-listbox"
                                                           autoCapitalize="none"
                                                           autoComplete="off"
