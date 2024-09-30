@@ -30,14 +30,7 @@ class Events::DecisionReviewCreated::CreateRequestIssues
           fail Caseflow::Error::DecisionReviewCreatedRequestIssuesError, "reference_id cannot be null"
         end
 
-        parser_issues = Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser.new(issue)
-
-        if parser_issues.ri_reference_id.nil?
-          fail Caseflow::Error::DecisionReviewCreatedRequestIssuesError, "reference_id cannot be null"
-        end
-
         ri = RequestIssue.create!(
-          reference_id: parser_issues.ri_reference_id,
           reference_id: parser_issues.ri_reference_id,
           benefit_type: parser_issues.ri_benefit_type,
           contested_issue_description: parser_issues.ri_contested_issue_description,
@@ -84,8 +77,14 @@ class Events::DecisionReviewCreated::CreateRequestIssues
       newly_created_issues
     end
 
+
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
     def create_event_record(event, issue)
+      EventRecord.create!(
+        event: event,
+        evented_record: issue,
+        info: { update_type: "I", record_data: issue }
+      )
       EventRecord.create!(
         event: event,
         evented_record: issue,
