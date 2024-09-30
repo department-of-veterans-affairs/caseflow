@@ -171,12 +171,12 @@ class AddCorrespondenceView extends React.Component {
       <div className="add-related-correspondence">
         <h1 className="a-r-h1">Add Related Correspondence</h1>
         <p className="a-r-p1">Add any related correspondence to the mail package that is in progress.</p>
-        <h2 style={{ margin: '0px', padding: '0px' }}>Response Letter</h2>
+        <h2 className="a-r-h2-response-letter">Response Letter</h2>
         {/* add letter here */}
         <AddLetter
           onContinueStatusChange={this.props.onContinueStatusChange}
         />
-        <hr style={{ borderTop: '1px solid #d6d7d9' }} />
+        <hr className="a-r-hr" />
         <h2 className="a-r-h2">Associate with prior Mail</h2>
         <p className="a-r-p2">Is this correspondence related to prior mail?</p>
         <RadioField
