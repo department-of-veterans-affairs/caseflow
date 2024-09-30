@@ -1175,13 +1175,23 @@ class RequestIssue < CaseflowRecord
   end
 
   def sanitize_contested_issue_description
-    # substitute known invalid characters
-    DESCRIPTION_CHARACTER_MAP.each do |c|
-      self.contested_issue_description&.gsub!(c[:invalid], c[:valid])
-    end
+    # TODO: add test
+    # TODO: update method naming
+    [
+      self.contested_issue_description,
+      self.nonrating_issue_description
+    ].each do |d|
+      next unless !d.nil?
 
-    # sanitize remaining characters
-    self.contested_issue_description&.gsub!(DESCRIPTION_CHARACTER_BLACKLIST, "")
+      # substitute known invalid characters
+      DESCRIPTION_CHARACTER_MAP.each do |c|
+        d.gsub!(/#{c[:invalid]}/, c[:valid])
+      end
+
+      # sanitize remaining characters
+      d.gsub!(DESCRIPTION_CHARACTERS_BLACKLIST, "")
+    end
   end
+
 end
 # rubocop:enable Metrics/ClassLength
