@@ -89,7 +89,9 @@ class TaskPageUnconnected extends React.PureComponent {
           <div className="usa-grid-full">
             <div className="usa-width-two-thirds">
               <div className="cf-form-details">
-                <div><strong>Form being processed</strong> {longFormNameFromKey(appeal.formType)}</div>
+                <div><strong>Form being processed</strong> {
+                  task.type === 'Remand' ? task.type : longFormNameFromKey(appeal.formType)
+                }</div>
                 <div><strong>Informal conference requested</strong> {appeal.informalConference ? 'Yes' : 'No'}</div>
                 <div><strong>Review by same office requested</strong> {appeal.sameOffice ? 'Yes' : 'No'}</div>
               </div>
