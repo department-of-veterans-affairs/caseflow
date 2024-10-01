@@ -13,7 +13,9 @@ import { stopPlacingAnnotation } from '../reader/AnnotationLayer/AnnotationActio
 import DeleteModal from './components/Comments/DeleteModal';
 import ShareModal from './components/Comments/ShareModal';
 import { getRotationDeg } from './util/documentUtil';
-import { ZOOM_INCREMENT, ZOOM_LEVEL_MAX, ZOOM_LEVEL_MIN } from './util/readerConstants';
+import { ROTATION_DEGREES, ZOOM_INCREMENT, ZOOM_LEVEL_MAX, ZOOM_LEVEL_MIN } from './util/readerConstants';
+import { showSideBarSelector } from './selectors';
+import { togglePdfSidebar } from '../reader/PdfViewer/PdfViewerActions';
 
 const DocumentViewer = (props) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -50,6 +52,10 @@ const DocumentViewer = (props) => {
         window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'back-to-claims-folder');
         dispatch(stopPlacingAnnotation('from-back-to-documents'));
         props.history.push(props.documentPathBase);
+      }
+
+      if (event.altKey && event.code === 'KeyM' && !event.shiftKey) {
+        dispatch(togglePdfSidebar());
       }
     };
 
@@ -119,7 +125,7 @@ const DocumentViewer = (props) => {
           showSearchBar={showSearchBar}
           toggleSearchBar={setShowSearchBar}
           showSideBar={showSideBar}
-          toggleSideBar={() => setShowSideBar(true)}
+          toggleSideBar={() => dispatch(togglePdfSidebar())}
           zoomLevel={props.zoomLevel}
         />
         {showSearchBar && <ReaderSearchBar />}
@@ -148,7 +154,7 @@ const DocumentViewer = (props) => {
         <ReaderSidebar
           doc={doc}
           showSideBar={showSideBar}
-          toggleSideBar={() => setShowSideBar(false)}
+          toggleSideBar={() => dispatch(togglePdfSidebar())}
           vacolsId={props.match.params.vacolsId}
         />
       )}
