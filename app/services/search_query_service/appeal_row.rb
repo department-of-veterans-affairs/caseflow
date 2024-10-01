@@ -22,6 +22,7 @@ class SearchQueryService::AppealRow
   attr_reader :query_row
 
   # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
   def attributes
     SearchQueryService::Attributes.new(
       aod: aod,
@@ -42,6 +43,8 @@ class SearchQueryService::AppealRow
       overtime: query_row["overtime"],
       pact: pact_status,
       paper_case: false,
+      readable_hearing_request_type: readable_hearing_request_type,
+      readable_original_hearing_request_type: readable_original_hearing_request_type,
       status: queried_appeal.status,
       type: stream_type,
       veteran_appellant_deceased: veteran_appellant_deceased,
@@ -50,6 +53,7 @@ class SearchQueryService::AppealRow
       withdrawn: withdrawn
     )
   end
+  # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/MethodLength
 
   def aod
@@ -149,6 +153,14 @@ class SearchQueryService::AppealRow
     json_array("decision_issues").any? do |issue|
       issue["mst_status"]
     end
+  end
+
+  def readable_original_hearing_request_type
+    queried_appeal.readable_original_hearing_request_type
+  end
+
+  def readable_hearing_request_type
+    queried_appeal.readable_current_hearing_request_type
   end
 
   def queried_appeal

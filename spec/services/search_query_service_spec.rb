@@ -39,11 +39,13 @@ describe "SearchQueryService" do
       let(:appeal_attributes) do
         {
           aod_based_on_age: false,
+          changed_hearing_request_type: "V",
+          original_hearing_request_type: "central",
           stream_docket_number: docket_number,
-          veteran_file_number: ssn,
-          veteran: veteran,
           stream_type: Constants.AMA_STREAM_TYPES.original,
-          uuid: uuid
+          uuid: uuid,
+          veteran: veteran,
+          veteran_file_number: ssn
         }
       end
 
@@ -70,13 +72,6 @@ describe "SearchQueryService" do
             mst_status: true,
             pact_status: true
           )
-          create(
-            :virtual_hearing,
-            hearing: appeal.hearings.first
-          )
-          appeal.hearings.first.update(updated_by: judge)
-          appeal.hearings.first.hearing_day.update(regional_office: "RO19")
-          appeal.hearings.first.hearing_views.create(user_id: judge.id)
           # create work mode
           appeal.overtime = true
           AdvanceOnDocketMotion.create(
@@ -90,6 +85,14 @@ describe "SearchQueryService" do
         subject { SearchQueryService.new(docket_number: appeal.stream_docket_number) }
 
         it "finds by docket number" do
+          create(
+            :virtual_hearing,
+            hearing: appeal.hearings.first
+          )
+          appeal.hearings.first.update(updated_by: judge)
+          appeal.hearings.first.hearing_day.update(regional_office: "RO19")
+          appeal.hearings.first.hearing_views.create(user_id: judge.id)
+
           expect(appeal).to be_persisted
 
           search_results = subject.search_by_docket_number
@@ -117,12 +120,22 @@ describe "SearchQueryService" do
           expect(attributes.mst).to eq appeal.decision_issues.any?(&:mst_status)
           expect(attributes.pact).to eq appeal.decision_issues.any?(&:pact_status)
           expect(attributes.paper_case).to be_falsy
+          expect(attributes.readable_hearing_request_type).to eq("Video")
+          expect(attributes.readable_original_hearing_request_type).to eq("Central")
           expect(attributes.status).to eq Appeal.find(appeal.id).status.status
           expect(attributes.veteran_appellant_deceased).to be_falsy
           expect(attributes.veteran_file_number).to eq ssn
           expect(attributes.veteran_full_name).to eq veteran_full_name
           expect(attributes.contested_claim).to be_falsy
           expect(attributes.withdrawn).to eq(false)
+        end
+
+        it "finds by docket number with not all hearing values" do
+          expect(appeal).to be_persisted
+
+          search_results = subject.search_by_docket_number
+
+          expect(search_results.length).to eq(1)
         end
       end
 
