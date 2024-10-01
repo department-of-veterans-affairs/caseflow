@@ -157,28 +157,23 @@ describe('Marked as Read', () => {
   });
 });
 
-describe('Open Document and Close Issue tags Sidebar Section', () => {
-  it('Navigate to next document and verify Issue tags stay closed', async () => {
+describe('Sidebar Section', () => {
+  it('close Issue Tags section and verify it stays closed on next document', async () => {
     const { container, getByText } = render(<Component {...defaultProps} />);
 
-    expect(container).toHaveTextContent('Select or tag issues');
-    expect(container).toHaveTextContent('Add a comment');
-    expect(container).toHaveTextContent('Procedural');
-    expect(container).toHaveTextContent('Document 1 of 5');
+    waitFor(() => expect(container).toHaveTextContent('Select or tag issues'));
+    waitFor(() => expect(container).toHaveTextContent('Add a comment'));
+    waitFor(() => expect(container).toHaveTextContent('Procedural'));
+    waitFor(() => expect(container).toHaveTextContent('Document 1 of 5'));
 
-    userEvent.click(getByText('Issue tags'));
-    waitFor(() =>
-      expect(container).not.toHaveTextContent('Select or tag issues')
-    );
+    waitFor(() => userEvent.click(getByText('Issue tags')));
+    waitFor(() => expect(container).not.toHaveTextContent('Select or tag issues'));
 
-    userEvent.click(getByText('Next'));
+    waitFor(() => userEvent.click(getByText('Next')));
     waitFor(() => expect(container).toHaveTextContent('Add a comment'));
     waitFor(() => expect(container).toHaveTextContent('Procedural'));
     waitFor(() => expect(container).toHaveTextContent('Document 2 of 5'));
-    waitFor(() =>
-      expect(container).not.toHaveTextContent('Select or tag issues')
-    );
-
+    waitFor(() => expect(container).not.toHaveTextContent('Select or tag issues'));
   });
 });
 
