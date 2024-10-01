@@ -116,8 +116,6 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       parser_issue.ri_reference_id
     end
     base_removed_issues = removed_issues&.map(&:reference_id)
-    parser_only = []
-    base_only = []
 
     # Check for issues in parser.removed_issues but not in base removed_issues
     parser_only = parser_removed_issues - base_removed_issues
