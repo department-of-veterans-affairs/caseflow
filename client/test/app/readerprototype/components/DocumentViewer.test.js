@@ -158,9 +158,14 @@ describe('Marked as Read', () => {
 });
 
 describe('Sidebar Section', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('close Issue Tags section and verify it stays closed on next document', async () => {
     const { container, getByText } = render(<Component {...defaultProps} />);
 
+    waitFor(() => expect(document.title).toBe(`${documents[1].type} | Document Viewer | Caseflow Reader`));
     waitFor(() => expect(container).toHaveTextContent('Select or tag issues'));
     waitFor(() => expect(container).toHaveTextContent('Add a comment'));
     waitFor(() => expect(container).toHaveTextContent('Procedural'));
@@ -170,6 +175,7 @@ describe('Sidebar Section', () => {
     waitFor(() => expect(container).not.toHaveTextContent('Select or tag issues'));
 
     waitFor(() => userEvent.click(getByText('Next')));
+    waitFor(() => expect(document.title).toBe(`${documents[2].type} | Document Viewer | Caseflow Reader`));
     waitFor(() => expect(container).toHaveTextContent('Add a comment'));
     waitFor(() => expect(container).toHaveTextContent('Procedural'));
     waitFor(() => expect(container).toHaveTextContent('Document 2 of 5'));
