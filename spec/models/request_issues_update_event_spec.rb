@@ -3,7 +3,9 @@
 RSpec.describe RequestIssuesUpdateEvent, type: :model do
   let(:user) { create(:user) }
   let(:review) { create(:higher_level_review) }
-  let!(:existing_request_issue) { create(:request_issue, decision_review: review, reference_id: "some_reference_id") }
+  let!(:existing_request_issue) do
+    create(:request_issue_with_epe, decision_review: review, reference_id: "some_reference_id")
+  end
   let(:parser) do
     instance_double(Events::DecisionReviewUpdated::DecisionReviewUpdatedParser).tap do |parser|
       allow(parser).to receive(:updated_issues).and_return([])
@@ -244,7 +246,7 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
 
   describe "#remove_request_issues_with_no_decision!" do
     it "removes request issues with no decision" do
-      allow_any_instance_of(RequestIssueClosure).to receive(:with_no_decision!).and_return(true)
+      existing_request_issue.end_product_establishment.update(status: EndProductEstablishment::STATUSES[:cleared])
       allow(parser).to receive(:removed_issues).and_return([issue_payload])
       allow_any_instance_of(described_class).to receive(:check_for_mismatched_closed_issues!).and_return(true)
       expect(

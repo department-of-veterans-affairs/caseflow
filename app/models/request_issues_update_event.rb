@@ -105,6 +105,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     @parser.removed_issues.each do |issue_data|
       parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(issue_data)
       request_issue = find_request_issue(parser_issue)
+      byebug
       RequestIssueClosure.new(request_issue).with_no_decision!
     end
     check_for_mismatched_closed_issues!
