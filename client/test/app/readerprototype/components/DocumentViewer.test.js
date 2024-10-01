@@ -173,7 +173,7 @@ describe('Sidebar Section', () => {
   });
 });
 
-describe('Zoom', () => {
+describe('Zoom Out', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -189,6 +189,12 @@ describe('Zoom', () => {
     waitFor(() => userEvent.click(getByText('Next')));
     waitFor(() => expect(document.title).toBe(`${documents[2].type} | Document Viewer | Caseflow Reader`));
     waitFor(() => expect(container).toHaveTextContent('90%'));
+  });
+});
+
+describe('Zoom In', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
   it('zoom in and verify zoom level persists on previous document', async() => {
