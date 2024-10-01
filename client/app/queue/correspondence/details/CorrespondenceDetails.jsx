@@ -11,7 +11,8 @@ import { updateCorrespondenceInfo } from './../correspondenceDetailsReducer/corr
 import CorrespondenceResponseLetters from './CorrespondenceResponseLetters';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
-import CorrespondenceTasksAdded from '../CorrespondenceTasksAdded';
+import { prepareAppealForSearchStore, prepareAppealForStore, prepareTasksForStore } from 'app/queue/utils';
+import { onReceiveTasks, onReceiveAppealDetails } from '../../QueueActions';
 import moment from 'moment';
 import Pagination from 'app/components/Pagination/Pagination';
 import Table from 'app/components/Table';
@@ -19,10 +20,12 @@ import { ExternalLinkIcon } from 'app/components/icons/ExternalLinkIcon';
 import { COLORS } from 'app/constants/AppConstants';
 import Checkbox from 'app/components/Checkbox';
 import CorrespondencePaginationWrapper from 'app/queue/correspondence/CorrespondencePaginationWrapper';
+
 import Button from '../../../components/Button';
 import Alert from '../../../components/Alert';
 import ApiUtil from '../../../util/ApiUtil';
 import CorrespondenceEditGeneralInformationModal from '../../components/CorrespondenceEditGeneralInformationModal';
+import CorrespondenceAppealTasks from '../CorrespondenceAppealTasks';
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
@@ -335,6 +338,28 @@ const CorrespondenceDetails = (props) => {
 
   useEffect(() => {
     dispatch(updateCorrespondenceInfo(correspondence));
+    // load appeals related to the correspondence into the store
+    const corAppealTasks = [];
+
+    props.correspondence.correspondenceAppeals.map((corAppeal) => {
+      dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal.appeal.data])));
+
+      corAppeal.taskAddedData.data.map((taskData) => {
+        const formattedTask = {};
+
+        formattedTask[taskData.id] = taskData;
+
+        corAppealTasks.push(taskData);
+      });
+
+    });
+    // // load appeal tasks into the store
+    const preparedTasks = prepareTasksForStore(corAppealTasks);
+
+    dispatch(onReceiveTasks({
+      amaTasks: preparedTasks
+    }));
+
   }, []);
 
   const isTasksUnrelatedToAppealEmpty = () => {
@@ -409,11 +434,12 @@ const CorrespondenceDetails = (props) => {
             </AppSegment>
           )}
           {(props.correspondence.correspondenceAppeals.map((taskAdded) =>
-              taskAdded.correspondencesAppealsTasks?.length > 0 && <CorrespondenceTasksAdded
+            <CorrespondenceAppealTasks
               task_added={taskAdded}
               correspondence={props.correspondence}
               organizations={props.organizations}
               userCssId={props.userCssId}
+              appeal={taskAdded.appeal.data.attributes}
             />
           )
           )}

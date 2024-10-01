@@ -2,10 +2,20 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import CaseDetailsLink from '../CaseDetailsLink';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
-import CorrespondenceCaseTimeline from './CorrespondenceCaseTimeline';
+import { appealWithDetailSelector, taskSnapshotTasksForAppeal } from '../selectors';
+import { useSelector } from 'react-redux';
+import TaskRows from '../components/TaskRows';
 
-const CorrespondenceTasksAdded = (props) => {
+const CorrespondenceAppealTasks = (props) => {
   const veteranFullName = props.correspondence.veteranFullName;
+  const appealId = props.appeal.external_id;
+  const appeal = useSelector((state) =>
+    appealWithDetailSelector(state, { appealId })
+  );
+
+  const tasks = useSelector((state) =>
+    taskSnapshotTasksForAppeal(state, { appealId })
+  );
 
   return (
     <>
@@ -46,15 +56,15 @@ const CorrespondenceTasksAdded = (props) => {
             <p>{props.task_added.assignedTo ? props.task_added.assignedTo.name : ''}</p>
           </div>
 
-        </div >
+        </div>
         <div className="tasks-added-details">
           <span className="tasks-added-text">Tasks added to appeal</span>
-          <div >
-            <CorrespondenceCaseTimeline
-              organizations={props.organizations}
-              userCssId={props.userCssId}
-              correspondence={props.task_added.correspondence}
-              tasksToDisplay={(props.task_added.taskAddedData)}
+          <div>
+            <TaskRows appeal={appeal}
+              taskList={tasks}
+              timeline={false}
+              editNodDateEnabled={false}
+              hideDropdown
             />
           </div>
         </div>
@@ -63,11 +73,12 @@ const CorrespondenceTasksAdded = (props) => {
   );
 };
 
-CorrespondenceTasksAdded.propTypes = {
+CorrespondenceAppealTasks.propTypes = {
   correspondence: PropTypes.object,
   task_added: PropTypes.object,
   organizations: PropTypes.array,
   userCssId: PropTypes.string,
+  appeal: PropTypes.object
 };
 
-export default CorrespondenceTasksAdded;
+export default CorrespondenceAppealTasks;
