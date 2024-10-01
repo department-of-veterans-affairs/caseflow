@@ -282,7 +282,7 @@ feature "NonComp Report Page", :postgres do
 
   def add_decision_review_condition_with_values(values)
     add_condition("Decision Review Type")
-    fill_in_decision_review_type(values)
+    fill_in_multi_select_condition(values, "Decision Review Type", ".decision-review-types")
   end
 
   def add_days_waiting_with_values(time_range, num_days, end_days = nil)
@@ -297,7 +297,7 @@ feature "NonComp Report Page", :postgres do
 
   def add_issue_type_with_values(values)
     add_condition("Issue Type")
-    fill_in_multi_select_condition(values, "Issue Type", "issue-types")
+    fill_in_multi_select_condition(values, "Issue Type", ".issue-types")
   end
 
   def clear_filters
