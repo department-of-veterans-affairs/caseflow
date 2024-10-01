@@ -400,7 +400,7 @@ const CorrespondenceDetails = (props) => {
           {isExpanded && (
             <AppSegment filledBackground noMarginTop>
               <p className="correspondence-details-p">
-                Please select prior appeal(s) to link to this correspondence, if applicable.
+                Please select prior appeal(s) to link to this correspondence.
               </p>
               <CaseListTable
                 appeals={appealsToDisplay}
