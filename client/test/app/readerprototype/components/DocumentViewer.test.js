@@ -1,15 +1,14 @@
-import { fireEvent, render, waitFor } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import DocumentViewer from 'app/readerprototype/DocumentViewer';
 import React, { useState } from 'react';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { applyMiddleware, createStore } from 'redux';
 import thunk from 'redux-thunk';
-import { rootReducer } from 'app/reader/reducers';
-import ApiUtil from 'app/util/ApiUtil';
+import { rootReducer } from '../../../../app/reader/reducers';
+import DocumentViewer from '../../../../app/readerprototype/DocumentViewer';
+import ApiUtil from '../../../../app/util/ApiUtil';
 import { documents } from '../data/documents';
-import ReaderFooter from '../../../../app/readerprototype/components/ReaderFooter';
 
 window.IntersectionObserver = jest.fn(() => ({
   observe: jest.fn(),
@@ -53,8 +52,6 @@ jest.mock('pdfjs-dist', () => ({
   renderTextLayer: jest.fn(),
   GlobalWorkerOptions: jest.fn().mockResolvedValue(),
 }));
-
-afterEach(() => jest.clearAllMocks());
 
 const defaultProps = {
   allDocuments: [
@@ -112,9 +109,7 @@ const Component = (props) => {
 
   return <Provider store={getStore()}>
     <MemoryRouter>
-      <DocumentViewer {...props} zoomLevel={zoomLevel} onZoomChange={(newZoomLevel) => setZoomLevel(newZoomLevel)}>
-        <ReaderFooter {...props} />
-      </DocumentViewer>
+      <DocumentViewer {...props} zoomLevel={zoomLevel} onZoomChange={(newZoomLevel) => setZoomLevel(newZoomLevel)} />
     </MemoryRouter>
   </Provider>;
 };
@@ -188,7 +183,7 @@ describe('Zoom', () => {
     jest.clearAllMocks();
   });
 
-  it('persists zoom level on next document', async() => {
+  it('zoom out and verify zoom level persists on next document', async() => {
     const { container, getByRole, getByText } = render(<Component {...defaultProps} />);
 
     waitFor(() => expect(document.title).toBe(`${documents[1].type} | Document Viewer | Caseflow Reader`));
@@ -200,32 +195,8 @@ describe('Zoom', () => {
     waitFor(() => expect(document.title).toBe(`${documents[2].type} | Document Viewer | Caseflow Reader`));
     waitFor(() => expect(container).toHaveTextContent('90%'));
   });
-});
 
-describe('Document Navigation', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  it('navigates to the next document and updates browser tab', async() => {
-    const { container, getByText } = render(<Component {...defaultProps} showPdf={() => jest.fn()} />);
-
-    waitFor(() => expect(document.title).toBe(`${documents[1].type} | Document Viewer | Caseflow Reader`));
-    waitFor(() => expect(container).toHaveTextContent('Document 1 of 5'));
-    expect(container).not.toHaveTextContent('Previous');
-
-    waitFor(() => userEvent.click(getByText('Next')));
-    waitFor(() => expect(document.title).toBe(`${documents[2].type} | Document Viewer | Caseflow Reader`));
-    waitFor(() => expect(container).toHaveTextContent('Document 2 of 5'));
-    waitFor(() => expect(container).toHaveTextContent('Previous'));
-
-    fireEvent.keyDown(container, { key: 'ArrowRight', code: 39 });
-    waitFor(() => expect(document.title).toBe(`${documents[3].type} | Document Viewer | Caseflow Reader`));
-    waitFor(() => expect(container).toHaveTextContent('Document 3 of 5'));
-    waitFor(() => expect(container).toHaveTextContent('Previous'));
-  });
-
-  it('navigates to the previous document and updates browser tab', async() => {
+  it('zoom in and verify zoom level persists on previous document', async() => {
     const props = {
       allDocuments: [
         documents[1],
@@ -241,20 +212,15 @@ describe('Document Navigation', () => {
       },
     };
 
-    const { container, getByText } = render(<Component {...props} showPdf={() => jest.fn()} />);
+    const { container, getByRole, getByText } = render(<Component {...props} showPdf={() => jest.fn()} />);
 
     waitFor(() => expect(document.title).toBe(`${documents[5].type} | Document Viewer | Caseflow Reader`));
-    waitFor(() => expect(container).toHaveTextContent('Document 5 of 5'));
-    expect(container).not.toHaveTextContent('Next');
+    waitFor(() => expect(container).toHaveTextContent('100%'));
+    waitFor(() => userEvent.click(getByRole('button', { name: /zoom in/i })));
+    waitFor(() => expect(container).toHaveTextContent('110%'));
 
     waitFor(() => userEvent.click(getByText('Previous')));
     waitFor(() => expect(document.title).toBe(`${documents[4].type} | Document Viewer | Caseflow Reader`));
-    waitFor(() => expect(container).toHaveTextContent('Document 4 of 5'));
-    waitFor(() => expect(container).toHaveTextContent('Next'));
-
-    fireEvent.keyDown(container, { key: 'ArrowLeft', code: 37 });
-    waitFor(() => expect(document.title).toBe(`${documents[3].type} | Document Viewer | Caseflow Reader`));
-    waitFor(() => expect(container).toHaveTextContent('Document 3 of 5'));
-    waitFor(() => expect(container).toHaveTextContent('Next'));
+    waitFor(() => expect(container).toHaveTextContent('110%'));
   });
 });

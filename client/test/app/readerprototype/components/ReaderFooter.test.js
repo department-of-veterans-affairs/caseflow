@@ -1,38 +1,97 @@
-import { applyMiddleware, createStore } from 'redux';
-import pdfSearchReducer from '../../../../app/reader/PdfSearch/PdfSearchReducer';
-import thunk from 'redux-thunk';
-import { Provider } from 'react-redux';
-import React from 'react';
-import ReaderFooter from 'app/readerprototype/components/ReaderFooter';
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
+import { Provider } from 'react-redux';
+import { MemoryRouter } from 'react-router-dom';
+import { applyMiddleware, createStore } from 'redux';
+import thunk from 'redux-thunk';
+import { rootReducer } from '../../../../app/reader/reducers';
+import ReaderFooter from '../../../../app/readerprototype/components/ReaderFooter';
 import { documents } from '../data/documents';
+import DocumentViewer from '../../../../app/readerprototype/DocumentViewer';
+
+window.IntersectionObserver = jest.fn(() => ({
+  observe: jest.fn(),
+  disconnect: jest.fn()
+}));
+window.HTMLElement.prototype.scrollIntoView = jest.fn;
+
+jest.mock('../../../../app/util/ApiUtil', () => ({
+  get: jest.fn().mockResolvedValue({
+    body: {
+      appeal: {
+        data: {}
+      }
+    },
+    header: { 'x-document-source': 'VBMS' }
+  }),
+  patch: jest.fn().mockResolvedValue({})
+}));
+
+jest.mock('../../../../app/util/NetworkUtil', () => ({
+  connectionInfo: jest.fn(),
+}));
+
+jest.mock('../../../../app/util/Metrics', () => ({
+  storeMetrics: jest.fn().mockResolvedValue(),
+  recordAsyncMetrics: jest.fn().mockResolvedValue(),
+}));
+
+jest.mock('pdfjs-dist', () => ({
+  getDocument: jest.fn().mockImplementation(() => ({
+    docId: 1,
+    promise: Promise.resolve({
+      numPages: 2,
+      getPage: jest.fn((pageNumber) => ({
+        render: jest.fn(pageNumber),
+        getTextContent: jest.fn().mockResolvedValue({ items: [] }),
+        getViewport: jest.fn(() => ({ width: 100, height: 200 }))
+      })),
+    }),
+  })),
+  renderTextLayer: jest.fn(),
+  GlobalWorkerOptions: jest.fn().mockResolvedValue(),
+}));
 
 const getUnFilteredStore = () =>
   createStore(
-    pdfSearchReducer,
+    rootReducer,
     {
+      annotationLayer: {
+        annotations: 1,
+        deleteAnnotationModalIsOpenFor: null,
+        shareAnnotationModalIsOpenFor: null
+      },
       documents,
       documentList: {
+        pdfList: {
+          lastReadDocId: null,
+        },
+        searchCategoryHighlights: [{ 1: {} }, { 2: {} }],
         filteredDocIds: [
           1,
           2,
           3,
           4,
-          5,
+          5
         ],
         docFilterCriteria: {},
-      },
-      annotationLayer: {
-        annotations: 1,
+        pdfViewer: {
+          pdfSideBarError: {
+            category: {
+              visible: false,
+            },
+          },
+          tagOptions: [],
+          openedAccordionSections: ['Issue tags', 'Comments', 'Categories'],
+        },
       },
     },
-    applyMiddleware(thunk)
-  );
+    applyMiddleware(thunk));
 
 const getFilteredStore = () =>
   createStore(
-    pdfSearchReducer,
+    rootReducer,
     {
       documents,
       documentList: {
@@ -89,44 +148,84 @@ describe('Filtered', () => {
   });
 });
 
-describe('Document Navigation', () => {
-  const showPdf = jest.fn();
+const defaultProps = {
+  allDocuments: [
+    documents[1],
+    documents[2],
+    documents[3],
+    documents[4],
+    documents[5]
+  ],
+  showPdf: jest.fn(),
+  documentPathBase: '/3575931/documents',
+  match: {
+    params: { docId: '1', vacolsId: '3575931' },
+  },
+};
 
+const Component = (props) => {
+
+  return <Provider store={getUnFilteredStore()}>
+    <MemoryRouter>
+      <DocumentViewer {...props} />
+    </MemoryRouter>
+  </Provider>;
+};
+
+describe('Document Navigation', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it('calls showPdf() when Next button is clicked', () => {
-    const { container, getByText } = render(<UnFilteredComponent docId={1} showPdf={() => showPdf} />);
+  it('navigates to the next document and updates browser tab', async() => {
+    const { container, getByText } = render(<Component {...defaultProps} showPdf={() => jest.fn()} />);
 
-    expect(container).toHaveTextContent('1 of 5');
+    waitFor(() => expect(document.title).toBe(`${documents[1].type} | Document Viewer | Caseflow Reader`));
+    waitFor(() => expect(container).toHaveTextContent('Document 1 of 5'));
     expect(container).not.toHaveTextContent('Previous');
-    userEvent.click(getByText('Next'));
-    expect(showPdf).toHaveBeenCalledTimes(1);
 
-  });
-
-  it('calls showPdf() when Previous button is clicked', () => {
-    const { container, getByText } = render(<UnFilteredComponent docId={5} showPdf={() => showPdf} />);
-
-    expect(container).toHaveTextContent('5 of 5');
-    expect(container).not.toHaveTextContent('Next');
-    userEvent.click(getByText('Previous'));
-    expect(showPdf).toHaveBeenCalledTimes(1);
-
-  });
-
-  it('calls showPdf() when right arrow key is pressed', () => {
-    const { container } = render(<UnFilteredComponent docId={1} showPdf={() => showPdf} />);
+    waitFor(() => userEvent.click(getByText('Next')));
+    waitFor(() => expect(document.title).toBe(`${documents[2].type} | Document Viewer | Caseflow Reader`));
+    waitFor(() => expect(container).toHaveTextContent('Document 2 of 5'));
+    waitFor(() => expect(container).toHaveTextContent('Previous'));
 
     fireEvent.keyDown(container, { key: 'ArrowRight', code: 39 });
-    expect(showPdf).toHaveBeenCalledTimes(1);
+    waitFor(() => expect(document.title).toBe(`${documents[3].type} | Document Viewer | Caseflow Reader`));
+    waitFor(() => expect(container).toHaveTextContent('Document 3 of 5'));
+    waitFor(() => expect(container).toHaveTextContent('Previous'));
   });
 
-  it('calls showPdf() when left arrow key is pressed', () => {
-    const { container } = render(<UnFilteredComponent docId={5} showPdf={() => showPdf} />);
+  it('navigates to the previous document and updates browser tab', async() => {
+    const props = {
+      allDocuments: [
+        documents[1],
+        documents[2],
+        documents[3],
+        documents[4],
+        documents[5]
+      ],
+      showPdf: jest.fn(),
+      documentPathBase: '/3575931/documents',
+      match: {
+        params: { docId: '5', vacolsId: '3575931' },
+      },
+    };
+
+    const { container, getByText } = render(<Component {...props} showPdf={() => jest.fn()} />);
+
+    waitFor(() => expect(document.title).toBe(`${documents[5].type} | Document Viewer | Caseflow Reader`));
+    waitFor(() => expect(container).toHaveTextContent('Document 5 of 5'));
+    expect(container).not.toHaveTextContent('Next');
+
+    waitFor(() => userEvent.click(getByText('Previous')));
+    waitFor(() => expect(document.title).toBe(`${documents[4].type} | Document Viewer | Caseflow Reader`));
+    waitFor(() => expect(container).toHaveTextContent('Document 4 of 5'));
+    waitFor(() => expect(container).toHaveTextContent('Next'));
 
     fireEvent.keyDown(container, { key: 'ArrowLeft', code: 37 });
-    expect(showPdf).toHaveBeenCalledTimes(1);
+    waitFor(() => expect(document.title).toBe(`${documents[3].type} | Document Viewer | Caseflow Reader`));
+    waitFor(() => expect(container).toHaveTextContent('Document 3 of 5'));
+    waitFor(() => expect(container).toHaveTextContent('Next'));
   });
 });
+
