@@ -14,8 +14,8 @@ import {
 import CorrespondenceResponseLetters from './CorrespondenceResponseLetters';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
-import { prepareAppealForSearchStore } from 'app/queue/utils';
-import CorrespondenceTasksAdded from '../CorrespondenceTasksAdded';
+import { prepareAppealForSearchStore, prepareAppealForStore, prepareTasksForStore } from 'app/queue/utils';
+import { onReceiveTasks, onReceiveAppealDetails } from '../../QueueActions';
 import moment from 'moment';
 import Pagination from 'app/components/Pagination/Pagination';
 import Table from 'app/components/Table';
@@ -23,9 +23,11 @@ import { ExternalLinkIcon } from 'app/components/icons/ExternalLinkIcon';
 import { COLORS } from 'app/constants/AppConstants';
 import Checkbox from 'app/components/Checkbox';
 import CorrespondencePaginationWrapper from 'app/queue/correspondence/CorrespondencePaginationWrapper';
+
 import Button from '../../../components/Button';
 import Alert from '../../../components/Alert';
 import ApiUtil from '../../../util/ApiUtil';
+import CorrespondenceAppealTasks from '../CorrespondenceAppealTasks';
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
@@ -54,6 +56,7 @@ const CorrespondenceDetails = (props) => {
   const [originalStates, setOriginalStates] = useState({});
   const [sortedPriorMail, setSortedPriorMail] = useState([]);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isTasksUnrelatedSectionExpanded, setIsTasksUnrelatedSectionExpanded] = useState(false);
 
   // Initialize checkbox states
   useEffect(() => {
@@ -73,6 +76,10 @@ const CorrespondenceDetails = (props) => {
 
   const toggleSection = () => {
     setIsExpanded((prev) => !prev);
+  };
+
+  const toggleTasksUnrelatedSection = () => {
+    setIsTasksUnrelatedSectionExpanded((prev) => !prev);
   };
 
   // Function to handle checkbox changes
@@ -304,14 +311,11 @@ const CorrespondenceDetails = (props) => {
     setDisableSubmitButton(buttonDisable);
   }, [selectedAppeals]);
 
-  let appeals;
-
   const sortAppeals = (selectedList) => {
-    appeals = [];
     let filteredAppeals = [];
     let unfilteredAppeals = [];
 
-    correspondence.appeals_information.appeals.map((appeal) => {
+    correspondence.appeals_information.map((appeal) => {
       if (selectedList?.includes(appeal.id)) {
         filteredAppeals.push(appeal);
       } else {
@@ -325,19 +329,8 @@ const CorrespondenceDetails = (props) => {
     unfilteredAppeals = unfilteredAppeals.sort((leftAppeal, rightAppeal) => leftAppeal.id - rightAppeal.id);
 
     const sortedAppeals = filteredAppeals.concat(unfilteredAppeals);
-    const searchStoreAppeal = prepareAppealForSearchStore(sortedAppeals);
-    const appeall = searchStoreAppeal.appeals;
-    const appealldetail = searchStoreAppeal.appealDetails;
-    const hashKeys = Object.keys(appeall);
 
-    hashKeys.map((key) => {
-      const combinedHash = { ...appeall[key], ...appealldetail[key] };
-
-      appeals.push(combinedHash);
-
-      return true;
-    });
-    setAppealsToDisplay(appeals);
+    setAppealsToDisplay(sortedAppeals);
   };
 
   useEffect(() => {
@@ -347,6 +340,28 @@ const CorrespondenceDetails = (props) => {
   useEffect(() => {
     dispatch(loadCorrespondence(correspondence));
     dispatch(correspondenceInfo(correspondence));
+    // load appeals related to the correspondence into the store
+    const corAppealTasks = [];
+
+    props.correspondence.correspondenceAppeals.map((corAppeal) => {
+      dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal.appeal.data])));
+
+      corAppeal.taskAddedData.data.map((taskData) => {
+        const formattedTask = {};
+
+        formattedTask[taskData.id] = taskData;
+
+        corAppealTasks.push(taskData);
+      });
+
+    });
+    // // load appeal tasks into the store
+    const preparedTasks = prepareTasksForStore(corAppealTasks);
+
+    dispatch(onReceiveTasks({
+      amaTasks: preparedTasks
+    }));
+
   }, []);
 
   const isTasksUnrelatedToAppealEmpty = () => {
@@ -421,11 +436,12 @@ const CorrespondenceDetails = (props) => {
             </AppSegment>
           )}
           {(props.correspondence.correspondenceAppeals.map((taskAdded) =>
-              taskAdded.correspondencesAppealsTasks?.length > 0 && <CorrespondenceTasksAdded
+            <CorrespondenceAppealTasks
               task_added={taskAdded}
               correspondence={props.correspondence}
               organizations={props.organizations}
               userCssId={props.userCssId}
+              appeal={taskAdded.appeal.data.attributes}
             />
           )
           )}
@@ -436,15 +452,31 @@ const CorrespondenceDetails = (props) => {
   const correspondenceAndAppealTaskComponents = <>
     {correspondenceTasks()}
 
-    <section className="task-not-related-title">Tasks not related to an appeal</section>
-    <div className="correspondence-case-timeline-container">
-      <CorrespondenceCaseTimeline
-        organizations={props.organizations}
-        userCssId={props.userCssId}
-        correspondence={props.correspondence}
-        tasksToDisplay={props.correspondence.tasksUnrelatedToAppeal}
-      />
+    <div className="correspondence-existing-appeals">
+      <div className="left-section">
+        <h2>Tasks not related to an appeal</h2>
+      </div>
+      <div className="toggleButton-plus-or-minus">
+        <Button
+          onClick={toggleTasksUnrelatedSection}
+          linkStyling
+          aria-label="Toggle section"
+          aria-expanded={isTasksUnrelatedSectionExpanded}
+        >
+          {isTasksUnrelatedSectionExpanded ? '_' : <span className="plus-symbol">+</span>}
+        </Button>
+      </div>
     </div>
+    {isTasksUnrelatedSectionExpanded && (
+      <div className="correspondence-case-timeline-container">
+        <CorrespondenceCaseTimeline
+          organizations={props.organizations}
+          userCssId={props.userCssId}
+          correspondence={props.correspondence}
+          tasksToDisplay={props.correspondence.tasksUnrelatedToAppeal}
+        />
+      </div>
+    )}
   </>;
 
   const correspondencePackageDetails = () => {
@@ -810,7 +842,6 @@ CorrespondenceDetails.propTypes = {
   organizations: PropTypes.array,
   userCssId: PropTypes.string,
   enableTopPagination: PropTypes.bool,
-  correspondence_appeal_ids: PropTypes.bool,
   isInboundOpsUser: PropTypes.bool,
   tasksUnrelatedToAppealEmpty: PropTypes.bool,
   isInboundOpsSuperuser: PropTypes.bool,

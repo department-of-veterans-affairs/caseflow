@@ -168,11 +168,13 @@ class CorrespondenceDetailsController < CorrespondenceController
   end
 
   def appeals
-    case_search_results = CaseSearchResultsForCaseflowVeteranId.new(
-      caseflow_veteran_ids: [@correspondence.veteran_id], user: current_user
-    ).search_call
+    appeals = Appeal.where(veteran_file_number: @correspondence.veteran.file_number)
 
-    { appeals_information: case_search_results.extra[:case_search_results] }
+    serialized_appeals = appeals.map do |appeal|
+      WorkQueue::CorrespondenceDetailsAppealSerializer.new(appeal).serializable_hash[:data][:attributes]
+    end
+
+    { appeals_information: serialized_appeals }
   end
 
   def mail_tasks
@@ -190,7 +192,7 @@ class CorrespondenceDetailsController < CorrespondenceController
   end
 
   def serialized_data
-    serializer = WorkQueue::CorrespondenceSerializer.new(ordered_correspondences)
+    serializer = WorkQueue::CorrespondenceDetailsSerializer.new(ordered_correspondences)
     serializer.serializable_hash[:data]
   end
 
@@ -202,7 +204,7 @@ class CorrespondenceDetailsController < CorrespondenceController
     prior_mail = Correspondence.prior_mail(veteran_by_correspondence.id, correspondence.uuid).order(:va_date_of_receipt)
       .select { |corr| corr.status == "Completed" || corr.status == "Pending" }
     serialized_mail = prior_mail.map do |correspondence|
-      WorkQueue::CorrespondenceSerializer.new(correspondence).serializable_hash[:data][:attributes]
+      WorkQueue::CorrespondenceDetailsSerializer.new(correspondence).serializable_hash[:data][:attributes]
     end
 
     { prior_mail: serialized_mail }

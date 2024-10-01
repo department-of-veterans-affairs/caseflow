@@ -7,8 +7,8 @@ RSpec.describe CorrespondenceDetailsController, :all_dbs, type: :controller do
     let!(:current_user) { create(:inbound_ops_team_supervisor) }
     let(:veteran) { create(:veteran) }
     let!(:correspondence) { create(:correspondence, :with_correspondence_intake_task, assigned_to: current_user) }
-    let!(:appeal1) { create(:appeal) }
-    let!(:appeal2) { create(:appeal) }
+    let!(:appeal1) { create(:appeal, veteran_file_number: veteran.file_number) }
+    let!(:appeal2) { create(:appeal, veteran_file_number: veteran.file_number) }
 
     before :each do
       Fakes::Initializer.load!
