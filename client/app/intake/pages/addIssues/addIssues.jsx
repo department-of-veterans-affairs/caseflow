@@ -330,6 +330,7 @@ class AddIssuesPage extends React.Component {
       userIsVhaAdmin,
       userCanSplitAppeal,
       userCanRequestIssueUpdates,
+      isRemand,
       isLegacy,
       pendingIssueModificationRequests,
       intakeFromVbms
@@ -426,6 +427,7 @@ class AddIssuesPage extends React.Component {
     const showRequestIssueUpdateOptions = editPage &&
       userCanRequestIssueUpdates &&
       !originalIssuesHaveNoDecisionDate() &&
+      !isRemand &&
       intakeData.benefitType === 'vha';
 
     const disableIssueActions = editPage &&
@@ -868,6 +870,8 @@ class AddIssuesPage extends React.Component {
 
         {editPage && this.establishmentCredits()}
 
+        {editPage && isRemand ? <Alert type="info" message={COPY.REMANDS_NOT_EDITABLE} /> : null}
+
         <Table columns={columns} rowObjects={rowObjects} rowClassNames={additionalRowClasses} slowReRendersAreOk />
 
         {!_.isEmpty(issuesPendingWithdrawal) && (
@@ -971,6 +975,7 @@ export const EditAddIssuesPage = connect(
     userIsVhaAdmin: state.userIsVhaAdmin,
     userCanSplitAppeal: state.userCanSplitAppeal,
     userCanRequestIssueUpdates: state.userCanRequestIssueUpdates,
+    isRemand: state.isRemand,
     isLegacy: state.isLegacy,
     intakeFromVbms: state.intakeFromVbms
   }),
