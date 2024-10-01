@@ -20,10 +20,14 @@ class SearchQueryService::QueriedHearing < SimpleDelegator
 
   def hearing_views
     @hearing_views ||=
-      views_attributes.map do |view_attrs|
-        HearingView.new.tap do |v|
-          v.assign_attributes view_attrs
+      if views_attributes.present?
+        views_attributes.map do |view_attrs|
+          HearingView.new.tap do |v|
+            v.assign_attributes view_attrs
+          end
         end
+      else
+        []
       end
   end
 
@@ -32,20 +36,26 @@ class SearchQueryService::QueriedHearing < SimpleDelegator
   end
 
   def hearing_day
-    @hearing_day ||= HearingDay.new.tap do |hd|
-      hd.assign_attributes hearing_day_attributes
-    end
+    @hearing_day ||=
+      if hearing_day_attributes.present?
+        HearingDay.new.tap do |hd|
+          hd.assign_attributes hearing_day_attributes
+        end
+      end
   end
 
   def updated_by
-    @updated_by ||= User.new.tap do |u|
-      u.assign_attributes updated_by_attributes
-    end
+    @updated_by ||=
+      if updated_by_attributes.present?
+        User.new.tap do |u|
+          u.assign_attributes updated_by_attributes
+        end
+      end
   end
 
   def virtual?
     %w(pending active closed).include?(
-      virtual_hearing.status
+      virtual_hearing&.status
     )
   end
 
@@ -69,9 +79,12 @@ class SearchQueryService::QueriedHearing < SimpleDelegator
   end
 
   def virtual_hearing
-    @virtual_hearing ||= VirtualHearing.new.tap do |vh|
-      vh.assign_attributes virtual_hearing_attributes
-    end
+    @virtual_hearing ||=
+      if virtual_hearing_attributes.present?
+        VirtualHearing.new.tap do |vh|
+          vh.assign_attributes virtual_hearing_attributes
+        end
+      end
   end
 
   def hearing

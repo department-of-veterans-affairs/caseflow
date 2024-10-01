@@ -41,6 +41,8 @@ class SearchQueryService::LegacyAppealRow
       overtime: search_row["overtime"],
       pact: pact,
       paper_case: paper_case,
+      readable_hearing_request_type: readable_hearing_request_type,
+      readable_original_hearing_request_type: readable_original_hearing_request_type,
       status: status,
       type: stream_type,
       veteran_appellant_deceased: veteran_appellant_deceased,
@@ -153,6 +155,14 @@ class SearchQueryService::LegacyAppealRow
 
   def decision_date
     AppealRepository.normalize_vacols_date(vacols_row["bfddec"])
+  end
+
+  def readable_original_hearing_request_type
+    legacy_appeal.readable_original_hearing_request_type
+  end
+
+  def readable_hearing_request_type
+    legacy_appeal.readable_current_hearing_request_type
   end
 
   def legacy_appeal

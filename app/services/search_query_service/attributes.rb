@@ -19,6 +19,8 @@ SearchQueryService::Attributes = Struct.new(
   :overtime,
   :pact,
   :paper_case,
+  :readable_hearing_request_type,
+  :readable_original_hearing_request_type,
   :status,
   :type,
   :veteran_appellant_deceased,
