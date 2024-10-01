@@ -12,6 +12,7 @@ import { annotationPlacement } from '../selectors';
 
 const ReaderFooter = ({
   currentPage,
+  doc,
   docId,
   isDocumentLoadError,
   numPages,
@@ -43,7 +44,7 @@ const ReaderFooter = ({
 
       setCurrentPage(newPageNumber);
       event.target.value = newPageNumber;
-      if (setCurrentPage !== newPageNumber) {
+      if (currentPage !== newPageNumber) {
         document.getElementById(`canvasWrapper-${newPageNumber}`).scrollIntoView();
       }
     }
@@ -60,8 +61,10 @@ const ReaderFooter = ({
     const keyHandler = (event) => {
       if (event.key === 'ArrowLeft' && !isPlacingAnnotation) {
         showPdf(getPrevDocId())();
+        document.title = `${(doc && doc.type) || ''} | Document Viewer | Caseflow Reader`;
       }
       if (event.key === 'ArrowRight' && !isPlacingAnnotation) {
+        // document.title = `${(doc && doc.type) || ''} | Document Viewer | Caseflow Reader`;
         showPdf(getNextDocId())();
       }
     };
@@ -144,6 +147,7 @@ const ReaderFooter = ({
 
 ReaderFooter.propTypes = {
   currentPage: PropTypes.number,
+  doc: PropTypes.object,
   docId: PropTypes.number,
   isDocumentLoadError: PropTypes.bool,
   numPages: PropTypes.number,
