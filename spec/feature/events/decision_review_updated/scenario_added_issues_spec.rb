@@ -127,7 +127,8 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
     let!(:existing_issue) do
       create(:request_issue,
              decision_review: review, reference_id: "1234", closed_status: nil, closed_at: nil,
-             contention_removed_at: nil, contested_issue_description: "existed_issue_description", contention_reference_id: 100_500)
+             contention_removed_at: nil,
+             contested_issue_description: "existed_issue_description", contention_reference_id: 100_500)
     end
 
     def json_test_payload
