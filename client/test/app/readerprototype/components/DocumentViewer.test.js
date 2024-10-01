@@ -181,14 +181,14 @@ describe('Zoom Out', () => {
   it('zoom out and verify zoom level persists on next document', async() => {
     const { container, getByRole, getByText } = render(<Component {...defaultProps} showPdf={jest.fn()} />);
 
-    waitFor(() => expect(document.title).toBe(`${documents[1].type} | Document Viewer | Caseflow Reader`));
     waitFor(() => expect(container).toHaveTextContent('100%'));
+    waitFor(() => expect(document.title).toBe(`${documents[1].type} | Document Viewer | Caseflow Reader`));
     waitFor(() => userEvent.click(getByRole('button', { name: /zoom out/i })));
     waitFor(() => expect(container).toHaveTextContent('90%'));
 
     waitFor(() => userEvent.click(getByText('Next')));
-    waitFor(() => expect(document.title).toBe(`${documents[2].type} | Document Viewer | Caseflow Reader`));
     waitFor(() => expect(container).toHaveTextContent('90%'));
+    waitFor(() => expect(document.title).toBe(`${documents[2].type} | Document Viewer | Caseflow Reader`));
   });
 });
 
@@ -215,13 +215,13 @@ describe('Zoom In', () => {
 
     const { container, getByRole, getByText } = render(<Component {...props} showPdf={() => jest.fn()} />);
 
-    waitFor(() => expect(document.title).toBe(`${documents[5].type} | Document Viewer | Caseflow Reader`));
     waitFor(() => expect(container).toHaveTextContent('100%'));
+    waitFor(() => expect(document.title).toBe(`${documents[5].type} | Document Viewer | Caseflow Reader`));
     waitFor(() => userEvent.click(getByRole('button', { name: /zoom in/i })));
     waitFor(() => expect(container).toHaveTextContent('110%'));
 
     waitFor(() => userEvent.click(getByText('Previous')));
-    waitFor(() => expect(document.title).toBe(`${documents[4].type} | Document Viewer | Caseflow Reader`));
     waitFor(() => expect(container).toHaveTextContent('110%'));
+    waitFor(() => expect(document.title).toBe(`${documents[4].type} | Document Viewer | Caseflow Reader`));
   });
 });
