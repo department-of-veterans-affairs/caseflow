@@ -6,7 +6,6 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import PropTypes from 'prop-types';
 import TabWindow from '../../../components/TabWindow';
 import CopyTextButton from '../../../components/CopyTextButton';
-import { loadCorrespondence } from '../correspondenceReducer/correspondenceActions';
 import CorrespondenceCaseTimeline from '../CorrespondenceCaseTimeline';
 import { updateCorrespondenceInfo } from './../correspondenceDetailsReducer/correspondenceDetailsActions';
 import CorrespondenceResponseLetters from './CorrespondenceResponseLetters';
@@ -335,7 +334,6 @@ const CorrespondenceDetails = (props) => {
   }, []);
 
   useEffect(() => {
-    dispatch(loadCorrespondence(correspondence));
     dispatch(updateCorrespondenceInfo(correspondence));
   }, []);
 
@@ -827,7 +825,6 @@ const CorrespondenceDetails = (props) => {
 };
 
 CorrespondenceDetails.propTypes = {
-  loadCorrespondence: PropTypes.func,
   correspondence: PropTypes.object,
   correspondenceInfo: PropTypes.object,
   organizations: PropTypes.array,
