@@ -8,6 +8,7 @@ import { applyMiddleware, createStore } from 'redux';
 import thunk from 'redux-thunk';
 import { rootReducer } from 'app/reader/reducers';
 import ApiUtil from 'app/util/ApiUtil';
+import { get } from 'lodash';
 
 afterEach(() => jest.clearAllMocks());
 
@@ -189,4 +190,26 @@ test('should change zoom level to 80%, then to 60% to simulate parent states upd
   userEvent.click(zoomOutButton);
 
   await waitFor(() => expect(container).toHaveTextContent('80%'));
+});
+
+test('Sidebar remembers its state between document views', () => {
+  const { container, getByText } = render(
+    <Component doc={doc} document={doc} />
+  );
+
+  // Initially, the sidebar should be visible with button to close
+  expect(container).toHaveTextContent('Hide menu');
+
+  // Simulate clicking 'Hide menu' to close menu
+  userEvent.click(getByText('Hide menu'));
+
+  // Sidebar should have 'Open menu' to reopen sidebar
+  expect(container).toHaveTextContent('Open menu');
+
+  // Simulate navigating to another document
+  userEvent.click(getByText('Next'));
+
+  // Sidebar should remain hidden and have open menu
+  expect(container).toHaveTextContent('Open menu');
+
 });
