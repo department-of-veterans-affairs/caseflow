@@ -48,7 +48,6 @@ const DocumentViewer = (props) => {
 
       if (event.altKey && event.code === 'Backspace') {
         window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'back-to-claims-folder');
-        dispatch(stopPlacingAnnotation('from-back-to-documents'));
         props.history.push(props.documentPathBase);
       }
     };
@@ -102,6 +101,10 @@ const DocumentViewer = (props) => {
 
     return () => document.body.style.overflow = 'auto';
   }, [window.location.pathname]);
+
+  useEffect(() => {
+    dispatch(stopPlacingAnnotation('navigation'));
+  }, [doc.id]);
 
   return (
     <div id="prototype-reader" className="cf-pdf-page-container">
