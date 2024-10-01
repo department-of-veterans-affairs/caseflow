@@ -368,7 +368,7 @@ describe('CorrespondenceDetails', () => {
     // Appeals related
     const existingAppeals = screen.getAllByText('Tasks added to appeal').length;
 
-    expect(existingAppeals).toBe(2);
+    expect(existingAppeals).toBe(3);
     expect(screen.getByText('240714-253')).toBeInTheDocument();
     expect(screen.getByText('240714-254')).toBeInTheDocument();
     expect(screen.getByText('VLJ Support Staff')).toBeInTheDocument();
