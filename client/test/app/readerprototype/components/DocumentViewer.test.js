@@ -1,88 +1,84 @@
 import { render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import DocumentViewer from 'app/readerprototype/DocumentViewer';
 import React, { useState } from 'react';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { applyMiddleware, createStore } from 'redux';
 import thunk from 'redux-thunk';
-import { rootReducer } from 'app/reader/reducers';
-import ApiUtil from 'app/util/ApiUtil';
+import { rootReducer } from '../../../../app/reader/reducers';
+import DocumentViewer from '../../../../app/readerprototype/DocumentViewer';
+import ApiUtil from '../../../../app/util/ApiUtil';
+import { documents } from '../data/documents';
+
+window.IntersectionObserver = jest.fn(() => ({
+  observe: jest.fn(),
+  disconnect: jest.fn()
+}));
+window.HTMLElement.prototype.scrollIntoView = jest.fn;
+
+jest.mock('../../../../app/util/ApiUtil', () => ({
+  get: jest.fn().mockResolvedValue({
+    body: {
+      appeal: {
+        data: {}
+      }
+    },
+    header: { 'x-document-source': 'VBMS' }
+  }),
+  patch: jest.fn().mockResolvedValue({})
+}));
+
+jest.mock('../../../../app/util/NetworkUtil', () => ({
+  connectionInfo: jest.fn(),
+}));
+
+jest.mock('../../../../app/util/Metrics', () => ({
+  storeMetrics: jest.fn().mockResolvedValue(),
+  recordAsyncMetrics: jest.fn().mockResolvedValue(),
+}));
+
+jest.mock('pdfjs-dist', () => ({
+  getDocument: jest.fn().mockImplementation(() => ({
+    docId: 1,
+    promise: Promise.resolve({
+      numPages: 2,
+      getPage: jest.fn((pageNumber) => ({
+        render: jest.fn(pageNumber),
+        getTextContent: jest.fn().mockResolvedValue({ items: [] }),
+        getViewport: jest.fn(() => ({ width: 100, height: 200 }))
+      })),
+    }),
+  })),
+  renderTextLayer: jest.fn(),
+  GlobalWorkerOptions: jest.fn().mockResolvedValue(),
+}));
 
 afterEach(() => jest.clearAllMocks());
 
-const doc = {
-  id: 1,
-  tags: [],
-  category_procedural: true,
-  category_other: false,
-  category_medical: false,
-  category_case_summary: false,
-  opened_by_current_user: false,
-};
-
-const props = {
-  allDocuments: [
-    {
-      id: 1,
-      category_medical: null,
-      category_other: null,
-      category_procedural: true,
-      created_at: '2024-09-17T12:30:52.925-04:00',
-      description: null,
-      file_number: '216979849',
-      previous_document_version_id: null,
-      received_at: '2024-09-14',
-      series_id: '377120',
-      type: 'NOD',
-      updated_at: '2024-09-17T12:41:11.000-04:00',
-      upload_date: '2024-09-15',
-      vbms_document_id: '1',
-      content_url: '/document/39/pdf',
-      filename: 'filename-798447.pdf',
-      category_case_summary: true,
-      serialized_vacols_date: '',
-      serialized_receipt_date: '09/14/2024',
-      matching: false,
-      opened_by_current_user: false,
-      tags: [],
-      receivedAt: '2024-09-14',
-      listComments: false,
-      wasUpdated: false,
-    },
-    {
-      id: 2,
-      category_medical: null,
-      category_other: null,
-      category_procedural: true,
-      created_at: '2024-09-17T12:30:52.925-04:00',
-      description: null,
-      file_number: '216979849',
-      previous_document_version_id: null,
-      received_at: '2024-09-14',
-      series_id: '377120',
-      type: 'NOD',
-      updated_at: '2024-09-17T12:41:11.000-04:00',
-      upload_date: '2024-09-15',
-      vbms_document_id: '1',
-      content_url: '/document/39/pdf',
-      filename: 'filename-798447.pdf',
-      category_case_summary: true,
-      serialized_vacols_date: '',
-      serialized_receipt_date: '09/14/2024',
-      matching: false,
-      opened_by_current_user: false,
-      tags: [],
-      receivedAt: '2024-09-14',
-      listComments: false,
-      wasUpdated: false,
-    },
-  ],
+const props1 = {
+  allDocuments: [documents[1], documents[2]],
   showPdf: jest.fn(),
   documentPathBase: '/3575931/documents',
   match: {
     params: { docId: '1', vacolsId: '3575931' },
   },
+};
+
+const defaultProps = (docId) => {
+  return {
+    allDocuments: [
+      documents[1],
+      documents[2],
+      documents[3],
+      documents[4],
+      documents[5],
+    ],
+    showPdf: jest.fn(),
+    documentPathBase: '/3575931/documents',
+    match: {
+      params: { docId, vacolsId: '3575931' },
+    },
+  };
 };
 
 const getStore = () =>
@@ -94,7 +90,7 @@ const getStore = () =>
         deleteAnnotationModalIsOpenFor: null,
         shareAnnotationModalIsOpenFor: null
       },
-      documents: { 1: doc },
+      documents,
       documentList: {
         pdfList: {
           lastReadDocId: null,
@@ -118,7 +114,7 @@ const getStore = () =>
     },
     applyMiddleware(thunk));
 
-const Component = () => {
+const Component = (props) => {
   const [zoomLevel, setZoomLevel] = useState(100);
 
   return <Provider store={getStore()}>
@@ -129,31 +125,25 @@ const Component = () => {
   </Provider>;
 };
 
-describe('user visiting a document', () => {
-
+describe('Marked as Read', () => {
   beforeEach(() => {
+    jest.clearAllMocks();
     jest.mock('app/util/ApiUtil', () => ({
       patch: jest.fn(),
     }));
   });
 
-  it('records the viewing of the document', () => {
+  it('marks document with docId 1 as read', () => {
     const spy = jest.spyOn(ApiUtil, 'patch');
 
-    render(<Component {...props} />);
-    expect(spy).
-      toHaveBeenCalledWith(
-        '/document/1/mark-as-read',
-        { start: '2020-07-06T06:00:00-04:00', t0: 'RUNNING_IN_NODE' },
-        'mark-doc-as-read');
+    render(<Component {...defaultProps('1')} />);
+    expect(spy).toHaveBeenCalledWith('/document/1/mark-as-read', {}, 'mark-doc-as-read');
   });
 });
 
-describe('Open Document and Close Issue tags Sidebar Section', () => {
-  it('Navigate to next document and verify Issue tags stay closed', async () => {
-    const { container, getByText } = render(
-      <Component doc={doc} document={doc} />
-    );
+describe('Sidebar Section', () => {
+  it('closes Issue Tags section and verify it stays closed on next document', async () => {
+    const { container, getByText } = render(<Component {...defaultProps('1')} />);
 
     expect(container).toHaveTextContent('Select or tag issues');
     expect(container).toHaveTextContent('Add a comment');
@@ -176,17 +166,20 @@ describe('Open Document and Close Issue tags Sidebar Section', () => {
   });
 });
 
-test('should change zoom level to 80%, then to 60% to simulate parent states update', async () => {
-  const { container, getByRole } = render(<Component {...props} />);
+describe('Zoom Out', () => {
+  it('zooms out and verify zoom level persists on next document', async() => {
 
-  expect(container).toHaveTextContent('100%');
-  const zoomOutButton = getByRole('button', { name: /zoom out/i });
+    const { container, getByRole } = render(<Component {...defaultProps('1')} />);
 
-  userEvent.click(zoomOutButton);
+    expect(container).toHaveTextContent('100%');
+    const zoomOutButton = getByRole('button', { name: /zoom out/i });
 
-  await waitFor(() => expect(container).toHaveTextContent('90%'));
+    userEvent.click(zoomOutButton);
 
-  userEvent.click(zoomOutButton);
+    await waitFor(() => expect(container).toHaveTextContent('90%'));
 
-  await waitFor(() => expect(container).toHaveTextContent('80%'));
+    userEvent.click(zoomOutButton);
+
+    await waitFor(() => expect(container).toHaveTextContent('80%'));
+  });
 });
