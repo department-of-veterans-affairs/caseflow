@@ -77,7 +77,7 @@ class RequestIssue < CaseflowRecord
 
   before_save :set_contested_rating_issue_profile_date
   before_save :close_if_ineligible!
-  before_save :sanitize_contested_issue_description
+  before_save :sanitize_issue_descriptions
 
   after_create :set_decision_date_added_at, if: :decision_date_exists?
   # amoeba gem for splitting appeal request issues
@@ -1174,9 +1174,8 @@ class RequestIssue < CaseflowRecord
     save!
   end
 
-  def sanitize_contested_issue_description
+  def sanitize_issue_descriptions
     # TODO: add test
-    # TODO: update method naming
     [
       self.contested_issue_description,
       self.nonrating_issue_description
