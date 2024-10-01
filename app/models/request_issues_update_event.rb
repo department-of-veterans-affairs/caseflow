@@ -33,6 +33,9 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     after_issues.each do |request_issue|
       issue_data =
         @request_issues_data.find { |data| data[:reference_id] == request_issue.reference_id }
+
+      next if issue_data.nil?
+
       request_issue.update(
         contested_issue_description: issue_data[:contested_issue_description],
         nonrating_issue_category: issue_data[:nonrating_issue_category],
