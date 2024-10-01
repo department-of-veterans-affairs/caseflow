@@ -35,21 +35,16 @@ class WorkQueue::CorrespondenceAppealsSerializer
     object.appeal.issues.length
   end
 
+  attribute :appeal do |object|
+    WorkQueue::AppealSerializer.new(object.appeal, params: { user: RequestStore[:current_user] })
+  end
+
   attribute :task_added_data do |object|
-    tasks = []
-    object.correspondences_appeals_tasks.each do |cor_app_task|
-      assigned_to = cor_app_task.task.assigned_to
-      assigned_to_text = assigned_to.is_a?(Organization) ? assigned_to.name : assigned_to.css_id
-      task_data = {
-        assigned_at: cor_app_task.task.assigned_at,
-        assigned_to: assigned_to_text,
-        assigned_to_type: cor_app_task.task.assigned_to_type,
-        instructions: cor_app_task.task.instructions,
-        type: cor_app_task.task.label
-      }
-      tasks << task_data
-    end
-    tasks
+    AmaAndLegacyTaskSerializer.create_and_preload_legacy_appeals(
+      params: { user: RequestStore[:current_user], role: "generic" },
+      tasks: object.tasks,
+      ama_serializer: WorkQueue::TaskSerializer
+    ).call
   end
 
   attribute :status do |object|
