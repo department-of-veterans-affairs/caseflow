@@ -185,6 +185,21 @@ module CaseflowCertification
       "#{root}/lib",
     ]
 
+    # Ensure that all STI models are eager loaded, even when eager loading is disabled for the environment.
+    #   Single Table Inheritance doesn't play well with lazy loading: Active Record has to be aware of STI hierarchies
+    #   to work correctly, but when lazy loading, classes are only loaded only on demand.
+    #   To address this fundamental mismatch, we need to preload STIs when eager loading is disabled.
+    #
+    # See https://guides.rubyonrails.org/autoloading_and_reloading_constants.html#single-table-inheritance
+    unless config.eager_load
+      Rails.application.config.to_prepare do
+        # [TECH DEBT] Because we have so many STI models, it was deemed more pragmatic in the moment to just preload the
+        #   entire models directory. In the future, we may wish to consider a more targeted approach, such as moving all
+        #   STI models into their own dedicated sub-directories and then selectively preloading them instead.
+        Rails.autoloaders.main.eager_load_dir("#{Rails.root}/app/models")
+      end
+    end
+
     Rails.autoloaders.main.collapse(
       "#{root}/app/jobs/batch_processes",
       "#{root}/app/models/batch_processes",
