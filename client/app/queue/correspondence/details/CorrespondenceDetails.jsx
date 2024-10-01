@@ -739,7 +739,7 @@ const CorrespondenceDetails = (props) => {
 
       return ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/save_correspondence_appeals`, payload).
         then((resp) => {
-          const appealIds = resp.body.map((num) => num.toString());
+          const appealIds = resp.body;
 
           setSelectedAppeals(appealIds);
           setInitialSelectedAppeals(appealIds);
