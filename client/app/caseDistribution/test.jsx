@@ -26,6 +26,7 @@ class CaseDistributionTest extends React.PureComponent {
       isReseedingDocketPriority: false,
       isReturnLegacyAppeals: false,
       isFailReturnLegacyAppeals: false,
+      isReseedingOptionalSeeds: false,
       showLegacyAppealsAlert: false,
       showAlert: false,
       alertType: 'success',
