@@ -28,15 +28,6 @@ jest.mock('../../../../app/util/ApiUtil', () => ({
   patch: jest.fn().mockResolvedValue({})
 }));
 
-jest.mock('../../../../app/util/NetworkUtil', () => ({
-  connectionInfo: jest.fn(),
-}));
-
-jest.mock('../../../../app/util/Metrics', () => ({
-  storeMetrics: jest.fn().mockResolvedValue(),
-  recordAsyncMetrics: jest.fn().mockResolvedValue(),
-}));
-
 jest.mock('pdfjs-dist', () => ({
   getDocument: jest.fn().mockImplementation(() => ({
     docId: 1,
@@ -52,6 +43,10 @@ jest.mock('pdfjs-dist', () => ({
   renderTextLayer: jest.fn(),
   GlobalWorkerOptions: jest.fn().mockResolvedValue(),
 }));
+
+afterEach(() => {
+  jest.clearAllMocks();
+});
 
 const getUnFilteredStore = () =>
   createStore(
