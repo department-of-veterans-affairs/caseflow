@@ -9,37 +9,27 @@ import ApiUtil from '../../util/ApiUtil';
 import Page from './Page';
 import TextLayer from './TextLayer';
 import DocumentLoadError from './DocumentLoadError';
-import { useDispatch } from 'react-redux';
-import { selectCurrentPdf } from 'app/reader/Documents/DocumentsActions';
 
-const PdfDocument = ({
-  currentPage,
-  doc,
-  isDocumentLoadError,
-  rotateDeg,
-  setIsDocumentLoadError,
-  setNumPages,
-  zoomLevel }) => {
+const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel, onLoad }) => {
+  const [isDocumentLoadError, setIsDocumentLoadError] = useState(false);
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
-  const dispatch = useDispatch();
 
   const containerStyle = {
     width: '100%',
     height: '100%',
     overflow: 'auto',
     paddingTop: '10px',
-    paddingLeft: '6px',
-    paddingRight: '6px',
     alignContent: 'start',
     justifyContent: 'center',
-    gap: '8rem',
+    gap: '5rem',
   };
 
   useEffect(() => {
     const getDocData = async () => {
       setPdfDoc(null);
       setPdfPages([]);
+      onLoad(true);
       const requestOptions = {
         cache: true,
         withCredentials: true,
@@ -50,6 +40,7 @@ const PdfDocument = ({
         return response.body;
       });
 
+      onLoad(false);
       const docProxy = await getDocument({ data: byteArr }).promise;
 
       if (docProxy) {
@@ -82,10 +73,6 @@ const PdfDocument = ({
     getPdfData();
   }, [pdfDoc]);
 
-  useEffect(() => {
-    dispatch(selectCurrentPdf(doc.id));
-  }, [doc.id]);
-
   return (
     <div id="pdfContainer" style={containerStyle}>
       {isDocumentLoadError && <DocumentLoadError doc={doc} />}
@@ -96,8 +83,7 @@ const PdfDocument = ({
           rotation={rotateDeg}
           key={`doc-${doc.id}-page-${index}`}
           renderItem={(childProps) => (
-            <Layer isCurrentPage={currentPage === page.pageNumber}
-              documentId={doc.id} zoomLevel={zoomLevel} rotation={rotateDeg} {...childProps}>
+            <Layer documentId={doc.id} zoomLevel={zoomLevel} rotation={rotateDeg} {...childProps}>
               <TextLayer page={page} zoomLevel={zoomLevel} rotation={rotateDeg} />
             </Layer>
           )}
@@ -108,18 +94,16 @@ const PdfDocument = ({
 };
 
 PdfDocument.propTypes = {
-  currentPage: PropTypes.number,
   doc: PropTypes.shape({
     content_url: PropTypes.string,
     filename: PropTypes.string,
     id: PropTypes.number,
     type: PropTypes.string,
   }),
-  isDocumentLoadError: PropTypes.bool,
   rotateDeg: PropTypes.string,
-  setIsDocumentLoadError: PropTypes.func,
   setNumPages: PropTypes.func,
   zoomLevel: PropTypes.number,
+  onLoad: PropTypes.func,
 };
 
 export default PdfDocument;

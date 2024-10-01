@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import { keyBy, memoize, reject, sum, uniqBy, map, mapValues, filter, size, values, some } from 'lodash';
 
-export const getFilteredDocIds = (state) => state.documentList.filteredDocIds;
+const getFilteredDocIds = (state) => state.documentList.filteredDocIds;
 const getAllDocs = (state) => state.documents;
 
 export const getFilteredDocuments = createSelector(
