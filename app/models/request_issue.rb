@@ -1175,7 +1175,6 @@ class RequestIssue < CaseflowRecord
   end
 
   def sanitize_issue_descriptions
-    # TODO: add test
     [
       self.contested_issue_description,
       self.nonrating_issue_description
