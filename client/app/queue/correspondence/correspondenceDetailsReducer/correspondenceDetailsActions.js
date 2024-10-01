@@ -43,9 +43,9 @@ export const cancelTaskNotRelatedToAppeal = (taskID, taskName, teamName, corresp
 
     }).
     catch((error) => {
-      const errorMessage = error?.response?.body?.message
-        ? error.response.body.message.replace(/^Error:\s*/, '')
-        : error.message;
+      const errorMessage = error?.response?.body?.message ?
+        error.response.body.message.replace(/^Error:\s*/, '') :
+        error.message;
 
       dispatch({
         type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
@@ -87,9 +87,9 @@ export const changeTaskTypeNotRelatedToAppeal = (taskID, payload, taskNames, cor
       });
     }).
     catch((error) => {
-      const errorMessage = error?.response?.body?.message
-        ? error.response.body.message.replace(/^Error:\s*/, '')
-        : error.message;
+      const errorMessage = error?.response?.body?.message ?
+        error.response.body.message.replace(/^Error:\s*/, '') :
+        error.message;
 
       dispatch({
         type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
@@ -133,9 +133,9 @@ export const completeTaskNotRelatedToAppeal = (payload, frontendParams, correspo
 
     }).
     catch((error) => {
-      const errorMessage = error?.response?.body?.message
-        ? error.response.body.message.replace(/^Error:\s*/, '')
-        : error.message;
+      const errorMessage = error?.response?.body?.message ?
+        error.response.body.message.replace(/^Error:\s*/, '') :
+        error.message;
 
       dispatch({
         type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
@@ -179,9 +179,9 @@ export const assignTaskToUser = (taskID, payload, frontendParams, correspondence
 
     }).
     catch((error) => {
-      const errorMessage = error?.response?.body?.message
-        ? error.response.body.message.replace(/^Error:\s*/, '')
-        : error.message;
+      const errorMessage = error?.response?.body?.message ?
+        error.response.body.message.replace(/^Error:\s*/, '') :
+        error.message;
 
       dispatch({
         type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
@@ -224,9 +224,9 @@ export const assignTaskToTeam = (payload, frontendParams, correspondence) => (di
 
     }).
     catch((error) => {
-      const errorMessage = error?.response?.body?.message
-        ? error.response.body.message.replace(/^Error:\s*/, '')
-        : error.message;
+      const errorMessage = error?.response?.body?.message ?
+        error.response.body.message.replace(/^Error:\s*/, '') :
+        error.message;
 
       dispatch({
         type: ACTIONS.SET_CORRESPONDENCE_TASK_NOT_RELATED_TO_APPEAL_BANNER,
@@ -250,22 +250,14 @@ export const submitLetterResponse = (payload, correspondence) => (dispatch) => {
   return ApiUtil.post(url, payload).
     then((response) => {
       const responseLetters = response.body.responseLetters;
+
       correspondence.correspondenceResponseLetters = responseLetters
 
       dispatch({
         type: ACTIONS.CORRESPONDENCE_INFO,
         payload: correspondence
       });
-    })
-};
-
-export const correspondenceInfo = (correspondence) => (dispatch) => {
-  dispatch({
-    type: ACTIONS.CORRESPONDENCE_INFO,
-    payload: {
-      correspondence
-    }
-  });
+    });
 };
 
 export const setTasksUnrelatedToAppealEmpty = (tasksUnrelatedToAppealEmpty) => (dispatch) => {
@@ -277,7 +269,7 @@ export const setTasksUnrelatedToAppealEmpty = (tasksUnrelatedToAppealEmpty) => (
   });
 };
 
-export const updateCorrespondenceRelations = (correspondence) =>
+export const updateCorrespondenceInfo = (correspondence) =>
   (dispatch) => {
     dispatch({
       type: ACTIONS.CORRESPONDENCE_INFO,
@@ -286,3 +278,25 @@ export const updateCorrespondenceRelations = (correspondence) =>
       }
     });
   };
+
+export const editCorrespondenceGeneralInformation = (payload, uuid) => (dispatch) => {
+  return ApiUtil.patch(`/queue/correspondence/${uuid}/edit_general_information`, payload).
+    then((response) => {
+      const correspondence = response.body.correspondence;
+
+      dispatch({
+        type: ACTIONS.CORRESPONDENCE_INFO,
+        payload: {
+          correspondence
+        }
+      });
+
+    }).
+    catch((error) => {
+      const errorMessage = error?.response?.body?.message ?
+        error.response.body.message.replace(/^Error:\s*/, '') :
+        error.message;
+
+      console.error(errorMessage);
+    });
+};

@@ -56,7 +56,7 @@ const CorrespondenceResponseLetters = (props) => {
   };
 
   return (
-    <div className="correspondence-package-details">
+    <div className="correspondence-response-letters">
       <h2 className="correspondence-h2">
         <strong>Response Letter</strong>
         <span className="response-letter-button-styling">
