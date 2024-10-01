@@ -25,7 +25,7 @@ import SideBarDocumentInformation from '../../reader/SideBarDocumentInformation'
 import IssueTags from './IssueTags';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAppealDetails, setOpenedAccordionSections } from '../../reader/PdfViewer/PdfViewerActions';
-import { appealSelector, openedAccordionSectionsSelector } from '../selectors';
+import { appealSelector, openedAccordionSectionsSelector, showSideBarSelector } from '../selectors';
 
 const ReaderSidebar = ({
   doc,
