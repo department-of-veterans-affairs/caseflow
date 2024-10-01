@@ -22,7 +22,6 @@ const DocumentViewer = (props) => {
   const [numPages, setNumPages] = useState(null);
   const [rotateDeg, setRotateDeg] = useState('0deg');
   const [showSearchBar, setShowSearchBar] = useState(false);
-  // const [showSideBar, setShowSideBar] = useState(true);
   const [isDocumentLoadError, setIsDocumentLoadError] = useState(false);
   const showSideBar = useSelector(showSideBarSelector);
   const dispatch = useDispatch();
