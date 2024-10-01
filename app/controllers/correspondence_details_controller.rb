@@ -137,7 +137,6 @@ class CorrespondenceDetailsController < CorrespondenceController
       end
     end
     if params[:unselected_appeal_ids].present?
-      puts "unselected_appeal_ids: #{params[:unselected_appeal_ids]}"
       @correspondence.correspondence_appeals
         .where(appeal_id: params[:unselected_appeal_ids])
         .delete_all
