@@ -1174,6 +1174,10 @@ class RequestIssue < CaseflowRecord
     save!
   end
 
+  # The purpose of this code is sanitize the `contested_issue_description` and
+  # `nonrating_issue_description` of `RequestIssue`'s to match what is expected
+  # from VBMS. We ideally want to swap commonly used characters with safe alternatives
+  # to maintain readability, and sanitize the remaining to ensure it's validity.
   def sanitize_issue_descriptions
     [
       self.contested_issue_description,
@@ -1182,6 +1186,7 @@ class RequestIssue < CaseflowRecord
       next unless !d.nil?
 
       # substitute known invalid characters
+      # note - Ruby treats these symbols as valid UTF-8, so we have to manually swap them out
       DESCRIPTION_CHARACTER_MAP.each do |c|
         d.gsub!(/#{c[:invalid]}/, c[:valid])
       end

@@ -1,7 +1,8 @@
 module DescriptionCharacterMap
-  # contested issue description pattern
+  # Invalid character pattern for contested / nonrating issue descriptions
   DESCRIPTION_CHARACTERS_BLACKLIST = /[^a-zA-Z0-9\s.\-_|\/\\@#~=%,;?!'"`():$+*^\[\]&><{}]/.freeze
 
+  # Look up table for contested / nonrating issue description symbol replacement
   DESCRIPTION_CHARACTER_MAP = [
     { invalid: "\u00A7", valid: "S" },
     { invalid: "\u2014", valid: "-" },
