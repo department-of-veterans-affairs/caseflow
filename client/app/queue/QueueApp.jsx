@@ -1019,12 +1019,6 @@ class QueueApp extends React.PureComponent {
             />
             <PageRoute
               path="/queue/correspondence/:correspondence_uuid/intake"
-              title={`${PAGE_TITLES.USER_MANAGEMENT} | Caseflow`}
-              render={this.routedCorrespondenceIntake}
-            />
-
-            <PageRoute
-              path="/queue/correspondence/:correspondence_uuid/intake"
               title={`${PAGE_TITLES.CORRESPONDENCE_INTAKE}`}
               render={this.routedCorrespondenceIntake}
             />
