@@ -184,7 +184,7 @@ describe('Zoom', () => {
   });
 
   it('zoom out and verify zoom level persists on next document', async() => {
-    const { container, getByRole, getByText } = render(<Component {...defaultProps} />);
+    const { container, getByRole, getByText } = render(<Component {...defaultProps} showPdf={jest.fn()} />);
 
     waitFor(() => expect(document.title).toBe(`${documents[1].type} | Document Viewer | Caseflow Reader`));
     waitFor(() => expect(container).toHaveTextContent('100%'));
