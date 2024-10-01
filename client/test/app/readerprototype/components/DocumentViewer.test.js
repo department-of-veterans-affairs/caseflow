@@ -181,16 +181,17 @@ describe('Open Document and Close Issue tags Sidebar Section', () => {
 });
 
 describe('Zoom', () => {
-  it('updates zoom level when zoom out button clicked', async() => {
-    const { container, getByRole } = render(<Component {...defaultProps} />);
+  it('persists zoom level on next document', async() => {
+    const { container, getByRole, getByText } = render(<Component {...defaultProps} />);
 
-    expect(container).toHaveTextContent('100%');
-    const zoomOutButton = getByRole('button', { name: /zoom out/i });
+    waitFor(() => expect(document.title).toBe(`${documents[1].type} | Document Viewer | Caseflow Reader`));
+    waitFor(() => expect(container).toHaveTextContent('100%'));
+    waitFor(() => userEvent.click(getByRole('button', { name: /zoom out/i })));
+    waitFor(() => expect(container).toHaveTextContent('90%'));
 
-    userEvent.click(zoomOutButton);
-    await waitFor(() => expect(container).toHaveTextContent('90%'));
-    userEvent.click(zoomOutButton);
-    await waitFor(() => expect(container).toHaveTextContent('80%'));
+    waitFor(() => userEvent.click(getByText('Next')));
+    waitFor(() => expect(document.title).toBe(`${documents[2].type} | Document Viewer | Caseflow Reader`));
+    waitFor(() => expect(container).toHaveTextContent('90%'));
   });
 });
 
@@ -199,18 +200,25 @@ describe('Document Navigation', () => {
     jest.clearAllMocks();
   });
 
-  it('navigates to the next document when Next button or right arrow key is pressed', async() => {
+  it('navigates to the next document and updates browser tab', async() => {
     const { container, getByText } = render(<Component {...defaultProps} />);
 
-    expect(container).toHaveTextContent('1 of 5');
+    waitFor(() => expect(document.title).toBe(`${documents[1].type} | Document Viewer | Caseflow Reader`));
+    waitFor(() => expect(container).toHaveTextContent('Document 1 of 5'));
     expect(container).not.toHaveTextContent('Previous');
-    userEvent.click(getByText('Next'));
+
+    waitFor(() => userEvent.click(getByText('Next')));
+    waitFor(() => expect(document.title).toBe(`${documents[2].type} | Document Viewer | Caseflow Reader`));
     waitFor(() => expect(container).toHaveTextContent('Document 2 of 5'));
-    userEvent.click(getByText('Next'));
+    waitFor(() => expect(container).toHaveTextContent('Previous'));
+
+    waitFor(() => userEvent.click(getByText('Next')));
+    waitFor(() => expect(document.title).toBe(`${documents[3].type} | Document Viewer | Caseflow Reader`));
     waitFor(() => expect(container).toHaveTextContent('Document 3 of 5'));
+    waitFor(() => expect(container).toHaveTextContent('Previous'));
   });
 
-  it('navigates to the previous document when Previous button or left arrow key is pressed', async() => {
+  it('navigates to the previous document and updates browser tab', async() => {
     const props = {
       allDocuments: [
         documents[1],
@@ -228,11 +236,18 @@ describe('Document Navigation', () => {
 
     const { container, getByText } = render(<Component {...props} />);
 
-    expect(container).toHaveTextContent('5 of 5');
+    waitFor(() => expect(document.title).toBe(`${documents[5].type} | Document Viewer | Caseflow Reader`));
+    waitFor(() => expect(container).toHaveTextContent('Document 5 of 5'));
     expect(container).not.toHaveTextContent('Next');
-    userEvent.click(getByText('Previous'));
+
+    waitFor(() => userEvent.click(getByText('Previous')));
+    waitFor(() => expect(document.title).toBe(`${documents[4].type} | Document Viewer | Caseflow Reader`));
     waitFor(() => expect(container).toHaveTextContent('Document 4 of 5'));
-    userEvent.click(getByText('Previous'));
+    waitFor(() => expect(container).toHaveTextContent('Next'));
+
+    waitFor(() => userEvent.click(getByText('Previous')));
+    waitFor(() => expect(document.title).toBe(`${documents[3].type} | Document Viewer | Caseflow Reader`));
     waitFor(() => expect(container).toHaveTextContent('Document 3 of 5'));
+    waitFor(() => expect(container).toHaveTextContent('Next'));
   });
 });
