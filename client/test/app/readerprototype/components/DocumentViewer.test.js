@@ -176,17 +176,17 @@ describe('Open Document and Close Issue tags Sidebar Section', () => {
   });
 });
 
-test('should change zoom level to 80%, then to 60% to simulate parent states update', async () => {
-  const { container, getByRole } = render(<Component {...props} />);
+describe('User changes the document zoom level', () => {
+  it('changes the zoomLevel from 100% to 90% to 80%', async () => {
+    const { container, getByRole } = render(<Component {...props} />);
 
-  expect(container).toHaveTextContent('100%');
-  const zoomOutButton = getByRole('button', { name: /zoom out/i });
+    expect(container).toHaveTextContent('100%');
+    const zoomOutButton = getByRole('button', { name: /zoom out/i });
 
-  userEvent.click(zoomOutButton);
+    userEvent.click(zoomOutButton);
+    await waitFor(() => expect(container).toHaveTextContent('90%'));
 
-  await waitFor(() => expect(container).toHaveTextContent('90%'));
-
-  userEvent.click(zoomOutButton);
-
-  await waitFor(() => expect(container).toHaveTextContent('80%'));
+    userEvent.click(zoomOutButton);
+    await waitFor(() => expect(container).toHaveTextContent('80%'));
+  });
 });
