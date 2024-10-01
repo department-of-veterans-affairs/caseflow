@@ -101,9 +101,7 @@ export const setOpenedAccordionSections = (openedAccordionSections, prevSections
   }
 });
 
-export const togglePdfSidebar = () => {
-  console.log('TOGGELING');
-  return {
+export const togglePdfSidebar = () => ({
   type: Constants.TOGGLE_PDF_SIDEBAR,
   meta: {
     analytics: {
@@ -112,7 +110,7 @@ export const togglePdfSidebar = () => {
       label: (nextState) => nextState.pdfViewer.hidePdfSidebar ? 'hide' : 'show'
     }
   }
-}};
+});
 
 export const toggleSearchBar = () => ({
   type: Constants.TOGGLE_SEARCH_BAR

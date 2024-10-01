@@ -33,4 +33,4 @@ export const modalInfoSelector = (state) => ({
   shareAnnotationModalIsOpenFor: state.annotationLayer.shareAnnotationModalIsOpenFor,
 });
 
-export const showSideBarSelector = (state) => state.pdfViewer.showSideBar;
+export const showSideBarSelector = (state) => !state.pdfViewer.hidePdfSidebar;

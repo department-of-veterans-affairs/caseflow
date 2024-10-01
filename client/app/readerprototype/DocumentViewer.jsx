@@ -17,7 +17,6 @@ import { ROTATION_DEGREES, ZOOM_INCREMENT, ZOOM_LEVEL_MAX, ZOOM_LEVEL_MIN } from
 import { showSideBarSelector } from './selectors';
 import { togglePdfSidebar } from '../reader/PdfViewer/PdfViewerActions';
 
-
 const DocumentViewer = (props) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [numPages, setNumPages] = useState(null);
@@ -30,10 +29,6 @@ const DocumentViewer = (props) => {
 
   const currentDocumentId = Number(props.match.params.docId);
   const doc = props.allDocuments.find((x) => x.id === currentDocumentId);
-
-
-
-  console.log('SHOW SIDEBAR', showSideBar);
 
   document.title = `${(doc && doc.type) || ''} | Document Viewer | Caseflow Reader`;
 
@@ -58,24 +53,16 @@ const DocumentViewer = (props) => {
         dispatch(stopPlacingAnnotation('from-back-to-documents'));
         props.history.push(props.documentPathBase);
       }
-    };
 
-    window.addEventListener('keydown', keyHandler);
-
-    return () => window.removeEventListener('keydown', keyHandler);
-  }, []);
-
-  useEffect(() => {
-    const keyHandler = (event) => {
       if (event.altKey && event.code === 'KeyM' && !event.shiftKey) {
-        dispatch(togglePdfSidebar);
+        dispatch(togglePdfSidebar());
       }
     };
 
     window.addEventListener('keydown', keyHandler);
 
     return () => window.removeEventListener('keydown', keyHandler);
-  }, [showSideBar]);
+  }, []);
 
   const getPageNumFromScrollTop = (event) => {
     const { clientHeight, scrollTop, scrollHeight } = event.target;
@@ -126,7 +113,7 @@ const DocumentViewer = (props) => {
           showSearchBar={showSearchBar}
           toggleSearchBar={setShowSearchBar}
           showSideBar={showSideBar}
-          toggleSideBar={() => dispatch(togglePdfSidebar)}
+          toggleSideBar={() => dispatch(togglePdfSidebar())}
           zoomLevel={props.zoomLevel}
         />
         {showSearchBar && <ReaderSearchBar />}
@@ -154,7 +141,7 @@ const DocumentViewer = (props) => {
         <ReaderSidebar
           doc={doc}
           showSideBar={showSideBar}
-          toggleSideBar={() => dispatch(togglePdfSidebar)}
+          toggleSideBar={() => dispatch(togglePdfSidebar())}
           vacolsId={props.match.params.vacolsId}
         />
       )}

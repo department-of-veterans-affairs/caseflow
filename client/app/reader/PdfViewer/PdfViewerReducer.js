@@ -89,7 +89,6 @@ export const pdfViewerReducer = (state = initialState, action = {}) => {
       }
     });
   case Constants.TOGGLE_PDF_SIDEBAR:
-    console.log("IN REDUCER");
     return update(state, {
       hidePdfSidebar: { $set: !state.hidePdfSidebar } }
     );
