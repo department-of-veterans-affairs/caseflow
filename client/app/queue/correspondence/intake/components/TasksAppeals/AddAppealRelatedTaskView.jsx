@@ -46,6 +46,12 @@ export const AddAppealRelatedTaskView = (props) => {
     return appeals.find((el) => el.id === appealId);
   };
 
+  const appealActive = (appealId) => {
+    let thisAppeal = appeals.find((el) => el.id === appealId);
+
+    return thisAppeal.active
+  };
+
   const appealsPageUpdateHandler = (newCurrentPage) => {
     setCurrentAppealPage(newCurrentPage);
     setTableUpdateTrigger((prev) => prev + 1);
@@ -193,7 +199,7 @@ export const AddAppealRelatedTaskView = (props) => {
                     setRelatedTasksCanContinue={props.setRelatedTasksCanContinue}
                     unlinkAppeal={appealCheckboxOnChange}
                     allTaskTypeOptions={
-                      appealById(appealId).active ? props.allTaskTypeOptions : INTAKE_FORM_TASK_TYPES.relatedToAppealInactive
+                      appealActive(appealId) ? props.allTaskTypeOptions : INTAKE_FORM_TASK_TYPES.relatedToAppealInactive
                     }
                     filterUnavailableTaskTypeOptions={props.filterUnavailableTaskTypeOptions}
                     autoTexts={props.autoTexts}

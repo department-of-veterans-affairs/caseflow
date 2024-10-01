@@ -22,6 +22,8 @@ class WorkQueue::AppealSearchSerializer
 
   attribute :pact, &:pact?
 
+  attribute :active, &:active?
+
   attribute :issues do |object|
     object.request_issues.active_or_decided_or_withdrawn.includes(:remand_reasons).map do |issue|
       {
