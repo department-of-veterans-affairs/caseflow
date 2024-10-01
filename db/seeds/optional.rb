@@ -26,29 +26,32 @@ module Seeds
     end
 
     def seed!
+      before_count = Appeal.count + VACOLS::Case.count
       RequestStore[:current_user] = User.system_user
 
       call_and_log_seed_step Seeds::Tasks
-      call_and_log_seed_step Seeds::Hearings
-      call_and_log_seed_step Seeds::Intake
-      call_and_log_seed_step Seeds::VeteransHealthAdministration
-      call_and_log_seed_step Seeds::MTV
-      call_and_log_seed_step Seeds::TestCaseData
-      call_and_log_seed_step Seeds::CaseDistributionAuditLeverEntries
-      call_and_log_seed_step Seeds::Notifications
-      call_and_log_seed_step Seeds::CavcDashboardData
-      call_and_log_seed_step Seeds::Substitutions
-      call_and_log_seed_step Seeds::VbmsExtClaim
-      call_and_log_seed_step Seeds::CasesTiedToJudgesNoLongerWithBoard
-      call_and_log_seed_step Seeds::VhaChangeHistory
-      call_and_log_seed_step Seeds::CavcAmaAppeals
-      call_and_log_seed_step Seeds::AmaAffinityCases
-      call_and_log_seed_step Seeds::MstPactLegacyCaseAppeals
-      call_and_log_seed_step Seeds::AmaIntake
-      call_and_log_seed_step Seeds::StaticTestCaseData
-      call_and_log_seed_step Seeds::StaticDispatchedAppealsTestData
-      call_and_log_seed_step Seeds::RemandedAmaAppeals
-      call_and_log_seed_step Seeds::RemandedLegacyAppeals
+      # call_and_log_seed_step Seeds::Hearings
+      # call_and_log_seed_step Seeds::Intake
+      # call_and_log_seed_step Seeds::VeteransHealthAdministration
+      # call_and_log_seed_step Seeds::MTV
+      # call_and_log_seed_step Seeds::TestCaseData
+      # call_and_log_seed_step Seeds::CaseDistributionAuditLeverEntries
+      # call_and_log_seed_step Seeds::Notifications
+      # call_and_log_seed_step Seeds::CavcDashboardData
+      # call_and_log_seed_step Seeds::Substitutions
+      # call_and_log_seed_step Seeds::VbmsExtClaim
+      # call_and_log_seed_step Seeds::CasesTiedToJudgesNoLongerWithBoard
+      # call_and_log_seed_step Seeds::VhaChangeHistory
+      # call_and_log_seed_step Seeds::CavcAmaAppeals
+      # call_and_log_seed_step Seeds::AmaAffinityCases
+      # call_and_log_seed_step Seeds::MstPactLegacyCaseAppeals
+      # call_and_log_seed_step Seeds::AmaIntake
+      # call_and_log_seed_step Seeds::StaticTestCaseData
+      # call_and_log_seed_step Seeds::StaticDispatchedAppealsTestData
+      # call_and_log_seed_step Seeds::RemandedAmaAppeals
+      # call_and_log_seed_step Seeds::RemandedLegacyAppeals
+      after_count = Appeal.count + VACOLS::Case.count
+      after_count - before_count
     end
   end
 end

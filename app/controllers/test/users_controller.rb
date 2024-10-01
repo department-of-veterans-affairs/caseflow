@@ -114,8 +114,10 @@ class Test::UsersController < ApplicationController
   def optional_seed
     return unless Rails.deploy_env?(:demo)
 
-    system "bundle exec rake db:seed:optional"
-    head :ok
+    appeal_count = system "bundle exec rake db:seed:optional"
+    binding.pry
+
+    render json: { message: "Success", appeal_count: appeal_count }, status: :ok
   end
 
   def toggle_feature
