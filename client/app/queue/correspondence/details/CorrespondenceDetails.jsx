@@ -14,7 +14,7 @@ import {
 import CorrespondenceResponseLetters from './CorrespondenceResponseLetters';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
-import { prepareAppealForSearchStore, prepareAppealForStore, prepareTasksForStore } from 'app/queue/utils';
+import { prepareAppealForStore, prepareTasksForStore } from 'app/queue/utils';
 import { onReceiveTasks, onReceiveAppealDetails } from '../../QueueActions';
 import moment from 'moment';
 import Pagination from 'app/components/Pagination/Pagination';
@@ -787,6 +787,12 @@ const CorrespondenceDetails = (props) => {
     }
   };
 
+  const customSuccessBannerStyles = {
+    style: {
+      backgroundPosition: '2rem 1.8rem'
+    }
+  };
+
   return (
     <>
       {
@@ -794,7 +800,9 @@ const CorrespondenceDetails = (props) => {
           <div style={{ padding: '10px' }}>
             <Alert
               type="success"
-              title={COPY.CORRESPONDENCE_DETAILS.SAVE_CHANGES_BANNER.MESSAGE} />
+              title={COPY.CORRESPONDENCE_DETAILS.SAVE_CHANGES_BANNER.MESSAGE}
+              styling={customSuccessBannerStyles}
+            />
           </div>
       }
       <AppSegment filledBackground extraClassNames="app-segment-cd-details">
