@@ -10,7 +10,7 @@ RSpec.feature "acd-controls/test Page Run Generic Full Suite Appeals Seeds Butto
   end
 
   let(:success_response) do
-    HTTPI::Response.new(200, {}, {})
+    HTTPI::Response.new(200, {}, { appealCount: 4094 }.to_json)
   end
 
   before do
@@ -22,6 +22,7 @@ RSpec.feature "acd-controls/test Page Run Generic Full Suite Appeals Seeds Butto
 
     click_button "Run Generic Full Suite Appeals Seeds"
 
-    expect(page).to have_content(COPY::TEST_RESEED_GENERIC_FULL_SUITE_APPEALS_ALERTMSG)
+    expected_message = COPY::TEST_RESEED_GENERIC_FULL_SUITE_APPEALS_ALERTMSG.gsub("{count}", "4094")
+    expect(page).to have_content(expected_message)
   end
 end
