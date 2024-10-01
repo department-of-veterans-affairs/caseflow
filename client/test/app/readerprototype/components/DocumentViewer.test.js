@@ -158,7 +158,7 @@ describe('Sidebar Section', () => {
   });
 
   it('close Issue Tags section and verify it stays closed on next document', async () => {
-    const { container, getByText } = render(<Component {...defaultProps} />);
+    const { container, getByText } = render(<Component {...defaultProps} showPdf={jest.fn()} />);
 
     waitFor(() => expect(document.title).toBe(`${documents[1].type} | Document Viewer | Caseflow Reader`));
     waitFor(() => expect(container).toHaveTextContent('Select or tag issues'));
