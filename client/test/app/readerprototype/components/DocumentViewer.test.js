@@ -9,6 +9,7 @@ import thunk from 'redux-thunk';
 import { rootReducer } from 'app/reader/reducers';
 import ApiUtil from 'app/util/ApiUtil';
 import { documents } from '../data/documents';
+import ReaderFooter from '../../../../app/readerprototype/components/ReaderFooter';
 
 window.IntersectionObserver = jest.fn(() => ({
   observe: jest.fn(),
@@ -111,8 +112,9 @@ const Component = (props) => {
 
   return <Provider store={getStore()}>
     <MemoryRouter>
-      <DocumentViewer {...props} zoomLevel={zoomLevel}
-        onZoomChange={(newZoomLevel) => setZoomLevel(newZoomLevel)} />
+      <DocumentViewer {...props} zoomLevel={zoomLevel} onZoomChange={(newZoomLevel) => setZoomLevel(newZoomLevel)}>
+        <ReaderFooter {...props} />
+      </DocumentViewer>
     </MemoryRouter>
   </Provider>;
 };
@@ -181,6 +183,10 @@ describe('Open Document and Close Issue tags Sidebar Section', () => {
 });
 
 describe('Zoom', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('persists zoom level on next document', async() => {
     const { container, getByRole, getByText } = render(<Component {...defaultProps} />);
 
@@ -201,7 +207,7 @@ describe('Document Navigation', () => {
   });
 
   it('navigates to the next document and updates browser tab', async() => {
-    const { container, getByText } = render(<Component {...defaultProps} />);
+    const { container, getByText } = render(<Component {...defaultProps} showPdf={() => jest.fn()} />);
 
     waitFor(() => expect(document.title).toBe(`${documents[1].type} | Document Viewer | Caseflow Reader`));
     waitFor(() => expect(container).toHaveTextContent('Document 1 of 5'));
@@ -212,7 +218,7 @@ describe('Document Navigation', () => {
     waitFor(() => expect(container).toHaveTextContent('Document 2 of 5'));
     waitFor(() => expect(container).toHaveTextContent('Previous'));
 
-    waitFor(() => userEvent.click(getByText('Next')));
+    fireEvent.keyDown(container, { key: 'ArrowRight', code: 39 });
     waitFor(() => expect(document.title).toBe(`${documents[3].type} | Document Viewer | Caseflow Reader`));
     waitFor(() => expect(container).toHaveTextContent('Document 3 of 5'));
     waitFor(() => expect(container).toHaveTextContent('Previous'));
@@ -234,7 +240,7 @@ describe('Document Navigation', () => {
       },
     };
 
-    const { container, getByText } = render(<Component {...props} />);
+    const { container, getByText } = render(<Component {...props} showPdf={() => jest.fn()} />);
 
     waitFor(() => expect(document.title).toBe(`${documents[5].type} | Document Viewer | Caseflow Reader`));
     waitFor(() => expect(container).toHaveTextContent('Document 5 of 5'));
@@ -245,7 +251,7 @@ describe('Document Navigation', () => {
     waitFor(() => expect(container).toHaveTextContent('Document 4 of 5'));
     waitFor(() => expect(container).toHaveTextContent('Next'));
 
-    waitFor(() => userEvent.click(getByText('Previous')));
+    fireEvent.keyDown(container, { key: 'ArrowLeft', code: 37 });
     waitFor(() => expect(document.title).toBe(`${documents[3].type} | Document Viewer | Caseflow Reader`));
     waitFor(() => expect(container).toHaveTextContent('Document 3 of 5'));
     waitFor(() => expect(container).toHaveTextContent('Next'));
