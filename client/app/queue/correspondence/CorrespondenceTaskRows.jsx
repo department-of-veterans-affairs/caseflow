@@ -43,7 +43,7 @@ class CorrespondenceTaskRows extends React.PureComponent {
     this.state = {
       taskInstructionsIsVisible: [],
       showEditNodDateModal: false,
-      activeTasks: [props.taskList],
+      activeTasks: props.taskList,
     };
   }
 
@@ -95,12 +95,12 @@ class CorrespondenceTaskRows extends React.PureComponent {
   };
 
   taskInstructionsWithLineBreaks = (task) => {
-    if (!task.instructions || !task.instructions.length) {
+    if (!task.instructions || !task.instructions?.length) {
       return <br />;
     }
 
     return (
-      <React.Fragment key={`${task.uniqueId} fragment`}>
+      <React.Fragment key={`${task.uniqueId} + ${task.instructions} fragment`}>
         {task.instructions.map((text) => (
           <div
             key={`${task.uniqueId} instructions`}
@@ -113,6 +113,10 @@ class CorrespondenceTaskRows extends React.PureComponent {
   };
 
   taskInstructionsListItem = (task) => {
+    if (!task.instructions || !task.instructions?.length > 0) {
+      return null;
+    }
+
     const taskInstructionsVisible = this.state.taskInstructionsIsVisible.includes(task.label);
 
     return (
@@ -146,7 +150,7 @@ class CorrespondenceTaskRows extends React.PureComponent {
   };
 
   showActionsListItem = (task, correspondence) => {
-    if (task.availableActions.length <= 0) {
+    if (task.availableActions?.length === 0) {
       return null;
     }
 
@@ -187,7 +191,7 @@ class CorrespondenceTaskRows extends React.PureComponent {
     const timelineTitle = isCancelled(task) ? `${task.type} cancelled` : task.timelineTitle;
 
     return (
-      <tr key={task.uniqueId}>
+      <tr key={task.uniqueId + task.instructions}>
         <td
           className={timeline ? 'taskTimeTimelineContainerStyling' : 'taskTimeContainerStyling'}
           role="cell"
@@ -201,8 +205,8 @@ class CorrespondenceTaskRows extends React.PureComponent {
         <td className={tdClassNamesforCorrespondence(timeline, task)}>
           {isCancelled(task) ? <CancelIcon /> : closedAtIcon(task, timeline)}
 
-          {((index < sortedTimelineEvents.length && timeline) ||
-            (index < this.state.activeTasks.length - 1 && !timeline)) && (
+          {((index < sortedTimelineEvents?.length && timeline) ||
+            (index < this.state.activeTasks?.length - 1 && !timeline)) && (
             <div className={['grayLineStyling', cancelGrayTimeLineStyle(timeline)].join(' ')} />
           )}
         </td>

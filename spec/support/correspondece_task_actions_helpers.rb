@@ -91,9 +91,20 @@ module CorrespondenceTaskActionsHelpers
     expected_message = options[:expected_message]
 
     visit "/queue/correspondence/#{correspondence.uuid}"
+    expect(page).to have_current_path("/queue/correspondence/#{correspondence.uuid}")
+
+    # find + dropdowns and click last one for tasks unrelated to appeal
+    dropdowns = page.all(".cf-btn-link")
+    dropdowns.last.click
+
     click_dropdown(prompt: "Select an action", text: action)
     find(".cf-form-textarea", match: :first).fill_in with: form_text
     click_button button_id
+    expect(page).to have_current_path("/queue/correspondence/#{correspondence.uuid}")
+    # find + dropdowns and click last one for tasks unrelated to appeal
+    dropdowns = page.all(".cf-btn-link")
+    dropdowns.last.click
+
     expect(page).to have_content("#{task_name} #{expected_message}")
   end
 end
