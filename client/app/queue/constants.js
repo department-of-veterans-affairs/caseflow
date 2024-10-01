@@ -225,6 +225,7 @@ export const PAGE_TITLES = {
   CORRESPONDENCE_CASES_LIST: 'Correspondence Cases',
   CORRESPONDENCE_INTAKE: 'Correspondence Intake',
   CORRESPONDENCE_DETAILS: 'Correspondence Details',
+  EDIT_GENERAL_INFORMATION: 'Edit General Information',
   ASSIGN_CORR_TASK_TO_TEAM: 'Assign Task',
 };
 
