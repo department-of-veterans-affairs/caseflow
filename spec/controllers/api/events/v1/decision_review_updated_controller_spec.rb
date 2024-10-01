@@ -71,7 +71,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
           post :decision_review_updated, params: { event_id: event_id }
           expect(response).to have_http_status(:ok)
           expect(JSON.parse(response.body)).to eq(
-            { "message" => "DecisionReviewCreatedEvent successfully updated" }
+            { "message" => "DecisionReviewUpdatedEvent successfully processed" }
           )
         end
       end

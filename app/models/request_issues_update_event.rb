@@ -115,7 +115,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(issue)
       parser_issue.ri_reference_id
     end
-    base_removed_issues = removed_issues.map(&:reference_id)
+    base_removed_issues = removed_issues&.map(&:reference_id)
 
     # Check for issues in parser.removed_issues but not in base removed_issues
     parser_only = parser_removed_issues - base_removed_issues
@@ -124,7 +124,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
 
     if parser_only.any? || base_only.any?
       fail  Caseflow::Error::DecisionReviewUpdateMismatchedRemovedIssuesError,
-            "CaseFlow only = #{base_only.join(', ')} - Event only = #{parser_only.join(', ')}"
+            "Removed Issues in CaseFlow only = #{base_only.join(', ')} vs in Event only = #{parser_only.join(', ')}"
     end
     true
   end

@@ -75,7 +75,6 @@ paths:
                     legacy_appeals_present: true
                     request_issues:
                       - id: 1
-                        reference_id: 11
                         benefit_type: compensation
                         closed_at: nil
                         closed_status: nil
@@ -185,7 +184,6 @@ paths:
                     legacy_appeals_present: true,
                     request_issues:
                       - id: 1
-                        reference_id: 11
                         benefit_type: compensation
                         closed_at: nil
                         closed_status: nil
@@ -253,7 +251,6 @@ paths:
                       legacy_appeals_present: false,
                       request_issues:
                         - id: 1
-                          reference_id: 11
                           benefit_type: compensation
                           closed_at: nil
                           closed_status: nil
@@ -378,9 +375,6 @@ components:
             id:
               type: integer
               description: "The unique identifier for a request issue"
-            reference_id:
-              type: integer
-              description: "The unique VBMS identifier for a request issue saved during AMA event"
             added_by_css_id:
               type: string
               description: "It comes from the user record tied to the RequestIssuesUpdate.  If there is no RequestIssuesUpdate for the issue being added, then it comes from the user record linked to intake."

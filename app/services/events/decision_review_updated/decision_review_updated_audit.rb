@@ -94,7 +94,8 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedAudit
   end
 
   def find_request_issue(request_issues_data)
-    RequestIssue.find_by(reference_id: request_issues_data[:reference_id]) ||
-      fail(Caseflow::Error::DecisionReviewUpdateMissingIssueError, request_issues_data[:reference_id])
+    parsed_data = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(request_issues_data)
+    RequestIssue.find_by(reference_id: parsed_data.ri_reference_id) ||
+      fail(Caseflow::Error::DecisionReviewUpdateMissingIssueError, parsed_data.ri_reference_id)
   end
 end
