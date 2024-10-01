@@ -246,7 +246,7 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
 
   describe "#remove_request_issues_with_no_decision!" do
     it "removes request issues with no decision" do
-      existing_request_issue.end_product_establishment.update(status: EndProductEstablishment::STATUSES[:cleared])
+      existing_request_issue.end_product_establishment.update(synced_status: EndProductEstablishment::CLEARED_STATUS)
       allow(parser).to receive(:removed_issues).and_return([issue_payload])
       allow_any_instance_of(described_class).to receive(:check_for_mismatched_closed_issues!).and_return(true)
       expect(
@@ -254,7 +254,7 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       ).to be_truthy
       req = RequestIssue.find_by(reference_id: issue_payload[:decision_review_issue_id])
       expect(req.closed_at).to be
-      expect(req.closed_status).to eq(RequestIssue::CLOSED_STATUSES[:denied])
+      expect(req.closed_status).to eq("no_decision")
     end
   end
 
