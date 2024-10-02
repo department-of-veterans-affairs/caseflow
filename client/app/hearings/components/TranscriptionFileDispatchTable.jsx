@@ -57,7 +57,7 @@ const styles = css({
     margin: '0',
   },
   '& th:last-child .cf-dropdown-filter': {
-    left: '-200px',
+    left: '-231px',
   },
   '& .cf-table-wrapper': {
     minHeight: '620px',

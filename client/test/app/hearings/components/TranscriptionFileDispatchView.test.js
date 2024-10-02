@@ -174,8 +174,11 @@ describe('TranscriptionFileDispatch', () => {
     const { container } = setup();
 
     await waitFor(() =>
-      expect(screen.getByText(
-        'Transcription owned by the Transcription Team are unassigned to a contractor:')).toBeInTheDocument()
+      expect(
+        screen.getByText(
+          'Hearing audio files owned by the Transcription team that are unassigned to a contractor:'
+        )
+      ).toBeInTheDocument()
     );
 
     const results = await axe(container);
@@ -215,7 +218,7 @@ describe('TranscriptionFileDispatch', () => {
 
     await waitFor(() =>
       expect(screen.getByText(
-        'Transcription owned by the Transcription Team are returned from contractor:')).toBeInTheDocument()
+        'Work orders owned by the Transcription team that have been sent to a contractor:')).toBeInTheDocument()
     );
 
     const results = await axe(container);
@@ -233,7 +236,7 @@ describe('TranscriptionFileDispatch', () => {
 
     await waitFor(() =>
       expect(screen.getByText(
-        'Transcription owned by the Transcription Team are returned from contractor:')).toBeInTheDocument()
+        'Work orders owned by the Transcription team that have been returned from a contractor:')).toBeInTheDocument()
     );
 
     const results = await axe(container);
