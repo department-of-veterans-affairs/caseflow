@@ -1557,7 +1557,7 @@
   "TEST_RUN_NONSSC_AVLJ_APPEAL_TITLE": "Run Non-SSC AVLJ and Appeal Seeds",
   "TEST_RUN_NONSSC_AVLJ_APPEAL_DESCRIPTION": " - Creates 66 assigned legacy appeals. About 50% assigned to Non-SSC AVLJs.",
   "TEST_CASE_MOVEMENT_TITLE": "Case Movement",
-  "TEST_RETURN_LEGACY_APPEALS_TO_BOARD_JOB_TITLE": "ReturnLegacyAppealsToBoard job",
+  "TEST_RETURN_LEGACY_APPEALS_TO_BOARD_JOB_TITLE": "Run ReturnLegacyAppealsToBoard job",
   "TEST_RETURN_LEGACY_APPEALS_TO_BOARD_JOB_DESCRIPTION": " - Click to run the ReturnLegacyAppealsToBoard job. This job changes the location to 63 for qualifying legacy appeals.",
   "TEST_LOG_OF_MOST_RECENT_APPEALS_MOVED_TITLE": "Log of 15 most recent appeals moved to location 63",
   "TEST_BACK_TO_TOP_BUTTON": "Back to Top",
