@@ -155,9 +155,10 @@ class Hearings::TranscriptionFilesController < ApplicationController
   end
 
   def select_based_on_tab
-    if params[:tab] == "Unassigned"
+    case params[:tab]
+    when "Unassigned"
       @transcription_files = @transcription_files.unassigned
-    elsif params[:tab] == "Completed"
+    when "Completed"
       @transcription_files = @transcription_files.completed
     end
   end
