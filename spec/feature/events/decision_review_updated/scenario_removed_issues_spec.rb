@@ -61,7 +61,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
               "original_caseflow_request_issue_id": 1,
               "decision_review_issue_id": 1234,
               "closed_at": 1_702_000_145_000,
-              "closed_status": "removed",
+              "closed_status": "removed"
             }
           ],
           "withdrawn_issues": [],

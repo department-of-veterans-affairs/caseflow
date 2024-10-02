@@ -96,7 +96,6 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
     end
 
     context "add issue with already existing issue" do
-
       before do
         request.headers["Authorization"] = "Token token=#{api_key.key_string}"
       end
