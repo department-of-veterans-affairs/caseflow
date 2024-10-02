@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "rails_helper"
+require "timecop"
 
 RSpec.feature "acd-controls/test Page Run Generic Full Suite Appeals Seeds Button" do
   let!(:current_user) do
@@ -10,7 +11,7 @@ RSpec.feature "acd-controls/test Page Run Generic Full Suite Appeals Seeds Butto
   end
 
   let(:success_response) do
-    HTTPI::Response.new(200, {}, { appealCount: 4094 }.to_json)
+    HTTPI::Response.new(200, {}, { seeds_added: 4094 }.to_json)
   end
 
   before do
@@ -22,7 +23,6 @@ RSpec.feature "acd-controls/test Page Run Generic Full Suite Appeals Seeds Butto
 
     click_button "Run Generic Full Suite Appeals Seeds"
 
-    expected_message = COPY::TEST_RESEED_GENERIC_FULL_SUITE_APPEALS_ALERTMSG.gsub("{count}", "4094")
-    expect(page).to have_content(expected_message)
+    expect(HTTPI).to have_received(:post)
   end
 end

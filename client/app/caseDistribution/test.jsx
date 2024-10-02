@@ -182,8 +182,7 @@ class CaseDistributionTest extends React.PureComponent {
       const Router = this.props.router || BrowserRouter;
       const appName = 'Case Distribution';
       const tablestyle = {
-        display: 'block',
-        overflowX: 'scroll'
+        display: 'block'
       };
 
       return (
