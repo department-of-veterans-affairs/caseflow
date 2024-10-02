@@ -11,7 +11,7 @@ import { updateCorrespondenceInfo } from './../correspondenceDetailsReducer/corr
 import CorrespondenceResponseLetters from './CorrespondenceResponseLetters';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
-import { prepareAppealForSearchStore, prepareAppealForStore, prepareTasksForStore } from 'app/queue/utils';
+import { prepareAppealForStore, prepareTasksForStore } from 'app/queue/utils';
 import { onReceiveTasks, onReceiveAppealDetails } from '../../QueueActions';
 import moment from 'moment';
 import Pagination from 'app/components/Pagination/Pagination';
@@ -447,7 +447,7 @@ const CorrespondenceDetails = (props) => {
               <CaseListTable
                 key={appealTableKey}
                 appeals={appealsToDisplay}
-                paginate="true"
+                paginate
                 showCheckboxes
                 taskRelatedAppealIds={disableSubmitButton ? selectedAppeals : initialSelectedAppeals}
                 enableTopPagination
