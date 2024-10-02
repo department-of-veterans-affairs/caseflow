@@ -68,6 +68,7 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
   end
 
   def create_transcription_file_record(current_information, file_status, aws_link)
+    transcription_id = Hearing.find(current_information["id"])&.transcription&.id
     Hearings::TranscriptionFile.create!(
       hearing_id: current_information["id"],
       hearing_type: current_information["hearing_type"],
@@ -75,6 +76,7 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
       file_name: current_information["file_name"],
       file_type: current_information["file_type"],
       file_status: file_status,
+      transcription_id: transcription_id,
       date_upload_aws: Time.zone.now,
       aws_link: aws_link
     )
