@@ -90,7 +90,7 @@ describe VirtualHearings::CreateConferenceJob do
         subject.perform_now
 
         virtual_hearing.reload
-        expect(virtual_hearing.conference_id).to eq("9001")
+        expect(virtual_hearing.conference_id).to eq(9001)
         expect(virtual_hearing.status).to eq(:active)
         expect(virtual_hearing.alias).to eq("0000001")
         expect(virtual_hearing.alias_with_host).to eq("BVA0000001@#{pexip_url}")
