@@ -182,14 +182,16 @@ describe SupplementalClaim, :postgres do
         benefit_type: benefit_type
       )
 
-      expect(RequestIssue.find_by(
-        decision_review: supplemental_claim,
-        contested_decision_issue_id: already_contested_remanded_di.id,
-        contested_rating_issue_reference_id: already_contested_remanded_di.rating_issue_reference_id,
-        contested_rating_issue_profile_date: already_contested_remanded_di.rating_profile_date,
-        contested_issue_description: already_contested_remanded_di.description,
-        benefit_type: benefit_type
-      )).to be_nil
+      expect(
+        RequestIssue.find_by(
+          decision_review: supplemental_claim,
+          contested_decision_issue_id: already_contested_remanded_di.id,
+          contested_rating_issue_reference_id: already_contested_remanded_di.rating_issue_reference_id,
+          contested_rating_issue_profile_date: already_contested_remanded_di.rating_profile_date,
+          contested_issue_description: already_contested_remanded_di.description,
+          benefit_type: benefit_type
+        )
+      ).to be_nil
     end
 
     it "doesn't create duplicate remand issues" do

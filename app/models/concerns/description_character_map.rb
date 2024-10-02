@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DescriptionCharacterMap
   # Invalid character pattern for contested / nonrating issue descriptions
   DESCRIPTION_CHARACTERS_BLACKLIST = /[^a-zA-Z0-9\s.\-_|\/\\@#~=%,;?!'"`():$+*^\[\]&><{}]/.freeze
