@@ -12,19 +12,19 @@ class Hearings::UpdateTranscriptionPackageStatusJob < ApplicationJob
   private
 
   def update_overdue_for_assigned_packages
-    TranscriptionPackage.where(status: "Sent")
+    TranscriptionPackage.where(status: COPY.const_get("TRANSCRIPTION_STATUS_SENT_FILTER_OPTION"))
       .where("expected_return_date > ?", Time.zone.now)
-      .update_all(status: "Overdue")
+      .update_all(status: COPY.const_get("TRANSCRIPTION_STATUS_OVERDUE_FILTER_OPTION"))
   end
 
   def update_overdue_for_completed_packages
-    TranscriptionPackage.where(status: "Completed")
+    TranscriptionPackage.where(status: COPY.const_get("TRANSCRIPTION_DISPATCH_COMPLETED_TAB"))
       .where("returned_at > ?", Time.zone.now)
-      .update_all(status: "Overdue")
+      .update_all(status: COPY.const_get("TRANSCRIPTION_STATUS_OVERDUE_FILTER_OPTION"))
   end
 
   def update_failed_retrieval_packages
-    TranscriptionPackage.where(status: "Failed retrieval (BOX)")
-      .update_all(status: "Retrieval failure")
+    TranscriptionPackage.where(status: COPY.const_get("TRANSCRIPTION_STATUS_RETRIEVAL_FAILURE_FILTER_VALUE"))
+      .update_all(status: COPY.const_get("TRANSCRIPTION_STATUS_RETRIEVAL_FAILURE_FILTER_OPTION"))
   end
 end

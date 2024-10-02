@@ -11,7 +11,7 @@ RSpec.describe Hearings::UpdateTranscriptionPackageStatusJob, type: :job do
     )
   end
   let!(:completed_package) { create(:transcription_package, status: "Completed", returned_at: Time.zone.now + 7.days) }
-  let!(:failed_retrieval_package) { create(:transcription_package, status: "Failed retrieval (BOX)") }
+  let!(:failed_retrieval_package) { create(:transcription_package, status: "Failed Retrieval (BOX)") }
 
   describe "#perform" do
     it 'updates overdue assigned packages to "Overdue"' do
@@ -24,7 +24,7 @@ RSpec.describe Hearings::UpdateTranscriptionPackageStatusJob, type: :job do
     end
     it 'updates failed retrieval packages to "Retrieval failure"' do
       described_class.perform_now
-      expect(failed_retrieval_package.reload.status).to eq("Retrieval failure")
+      expect(failed_retrieval_package.reload.status).to eq("Retrieval Failure")
     end
   end
 end
