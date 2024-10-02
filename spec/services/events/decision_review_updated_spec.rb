@@ -55,7 +55,7 @@ describe Events::DecisionReviewUpdated do
         expect(Rails.logger).to receive(:error)
           .with("Failed to acquire lock for Claim ID: #{claim_id}! This Event is being"\
                 " processed. Please try again later.")
-        subject
+        expect { subject }.to raise_error(RedisMutex::LockError)
       end
     end
 
