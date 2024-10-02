@@ -51,7 +51,8 @@ module Seeds
       # call_and_log_seed_step Seeds::RemandedAmaAppeals
       # call_and_log_seed_step Seeds::RemandedLegacyAppeals
       after_count = Appeal.count + VACOLS::Case.count
-      after_count - before_count
+      added_appeals = after_count - before_count
+      puts "#{added_appeals} APPEALS_ADDED"
     end
   end
 end

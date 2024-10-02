@@ -158,7 +158,7 @@ class CaseDistributionTest extends React.PureComponent {
     reseedGenericFullSuiteAppealsSeeds = () => {
       this.setState({ isReseedingOptionalSeeds: true });
       ApiUtil.post('/test/optional_seed').then((response) => {
-        const appealCount = response.data.appeal_count || 0;
+        const appealCount = response.body.seeds_added || 0;
         const currentTime = new Date().toLocaleString();
 
         this.setState({
