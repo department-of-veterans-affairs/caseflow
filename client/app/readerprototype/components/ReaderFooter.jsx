@@ -20,31 +20,18 @@ const ReaderFooter = ({
 }) => {
   const { isPlacingAnnotation } = useSelector(annotationPlacement);
 
-  const isValidInputPageNumber = (pageNumber) => {
-    if (!isNaN(pageNumber) && pageNumber % 1 === 0) {
+  const isValidInputPageNumber = (pageNumberInput) => {
+    let pageNumber = parseInt(pageNumberInput, 10);
 
+    if (!isNaN(pageNumber) && pageNumber % 1 === 0) {
       return pageNumber >= 1 && pageNumber <= numPages;
     }
   };
 
-  const sanitizedPageNumber = (pageNumberInput) => {
-    let pageNumber = parseInt(pageNumberInput, 10);
-
-    if (!pageNumber || !isValidInputPageNumber(pageNumber)) {
-      return setCurrentPage;
-    }
-
-    return pageNumber;
-  };
-
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
-      const newPageNumber = sanitizedPageNumber(event.target.value);
-
-      setCurrentPage(newPageNumber);
-      // event.target.value = newPageNumber;
-      if (currentPage !== newPageNumber) {
-        document.getElementById(`canvasWrapper-${newPageNumber}`)?.scrollIntoView();
+      if (isValidInputPageNumber(event.target.value)) {
+        document.getElementById(`canvasWrapper-${event.target.value}`)?.scrollIntoView();
       }
     }
   };
