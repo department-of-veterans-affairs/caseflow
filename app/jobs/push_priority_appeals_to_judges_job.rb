@@ -29,6 +29,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     slack_msg = "<!here>\n [ERROR] after running for #{duration}: #{error.message}"
     slack_service.send_notification(slack_msg, self.class.name)
     log_error(error)
+    Raven.capture_exception(error, extra: { error_uuid: SecureRandom.uuid })
   ensure
     metrics_service_report_runtime(metric_group_name: "priority_appeal_push_job")
   end
