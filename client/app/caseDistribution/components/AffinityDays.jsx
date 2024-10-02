@@ -124,9 +124,10 @@ const AffinityDays = () => {
             id={`${lever.item}-${option.item}`}
             name={lever.item}
             onChange={onChangeRadio(lever, option)}
+            title={option.text}
           />
           <label htmlFor={`${lever.item}-${option.item}`} />
-          <div>{option.text}</div>
+          <div> {option.text} </div>
         </div>
         <div>
           <div className={className} aria-label={option.unit}>
