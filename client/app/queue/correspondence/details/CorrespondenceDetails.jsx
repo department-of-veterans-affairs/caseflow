@@ -25,6 +25,8 @@ import CorrespondencePaginationWrapper from 'app/queue/correspondence/Correspond
 import Button from '../../../components/Button';
 import Alert from '../../../components/Alert';
 import ApiUtil from '../../../util/ApiUtil';
+import { prepareAppealForSearchStore } from 'app/queue/utils';
+
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
@@ -308,12 +310,15 @@ const CorrespondenceDetails = (props) => {
     setDisableSubmitButton(buttonDisable);
   }, [selectedAppeals]);
 
+  let appeals;
+
   const sortAppeals = (selectedList) => {
+    appeals = [];
     let filteredAppeals = [];
     let unfilteredAppeals = [];
 
-    correspondence.appeals_information.map((appeal) => {
-      if (selectedList?.includes(appeal.id)) {
+    correspondence.appeals_information.appeals.map((appeal) => {
+      if (selectedList?.includes(Number(appeal.id))) {
         filteredAppeals.push(appeal);
       } else {
         unfilteredAppeals.push(appeal);
@@ -326,9 +331,21 @@ const CorrespondenceDetails = (props) => {
     unfilteredAppeals = unfilteredAppeals.sort((leftAppeal, rightAppeal) => leftAppeal.id - rightAppeal.id);
 
     const sortedAppeals = filteredAppeals.concat(unfilteredAppeals);
+    const searchStoreAppeal = prepareAppealForSearchStore(sortedAppeals);
+    const appeall = searchStoreAppeal.appeals;
+    const appealldetail = searchStoreAppeal.appealDetails;
+    const hashKeys = Object.keys(appeall);
 
-    setAppealsToDisplay(sortedAppeals);
+    hashKeys.map((key) => {
+      const combinedHash = { ...appeall[key], ...appealldetail[key] };
+
+      appeals.push(combinedHash);
+
+      return true;
+    });
+    setAppealsToDisplay(appeals);
   };
+
 
   useEffect(() => {
     sortAppeals(initialSelectedAppeals);
@@ -727,7 +744,7 @@ const CorrespondenceDetails = (props) => {
         });
     }
 
-    if (selectedAppeals.length > 0) {
+    if (selectedAppeals.length > 0 || unSelectedAppeals.length > 0) {
       const appealsSelected = selectedAppeals.filter((val) => !correspondence.correspondenceAppealIds.includes(val));
 
       const payload = {
@@ -740,7 +757,6 @@ const CorrespondenceDetails = (props) => {
       return ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/save_correspondence_appeals`, payload).
         then((resp) => {
           const appealIds = resp.body;
-
           setSelectedAppeals(appealIds);
           setInitialSelectedAppeals(appealIds);
           sortAppeals(appealIds);

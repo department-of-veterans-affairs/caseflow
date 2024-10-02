@@ -168,13 +168,11 @@ class CorrespondenceDetailsController < CorrespondenceController
   end
 
   def appeals
-    appeals = Appeal.where(veteran_file_number: @correspondence.veteran.file_number)
+    case_search_results = CaseSearchResultsForCaseflowVeteranId.new(
+      caseflow_veteran_ids: [@correspondence.veteran_id], user: current_user
+    ).search_call
 
-    serialized_appeals = appeals.map do |appeal|
-      WorkQueue::CorrespondenceDetailsAppealSerializer.new(appeal).serializable_hash[:data][:attributes]
-    end
-
-    { appeals_information: serialized_appeals }
+    { appeals_information: case_search_results.extra[:case_search_results] }
   end
 
   def mail_tasks
