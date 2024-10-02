@@ -350,7 +350,6 @@ describe('CorrespondenceDetails', () => {
 
     expect(document.getElementsByClassName('plus-symbol').length).toBe(1);
     // Existing Appeals Table and Columns
-    fireEvent.click(existingAppealButton);
     expect(screen.getByText('Existing Appeals')).toBeInTheDocument();
     expect(screen.getByText('Appellant Name')).toBeInTheDocument();
     expect(screen.getByText('Appeal Status')).toBeInTheDocument();

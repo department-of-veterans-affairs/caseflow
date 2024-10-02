@@ -75,12 +75,19 @@ RSpec.feature("The Correspondence Details All Tasks Actions") do
 
         it "Verify #{task_action[:name]} task with Assign to team action dropdown" do
           visit "/queue/correspondence/#{@correspondence.uuid}"
+          # find + dropdowns and click last one for tasks unrelated to appeal
+          dropdowns = page.all(".cf-btn-link")
+          dropdowns.last.click
+
           click_dropdown(prompt: "Select an action", text: "Assign to team")
           expect(page).to have_content("Assign Task")
           expect(page).to have_content("Select a team")
           click_dropdown(prompt: "Select or search", text: "Education")
           find(".cf-form-textarea", match: :first).fill_in with: "Assign task instructions"
           click_button "Assign-Task-button-id-1"
+          # find + dropdowns and click last one for tasks unrelated to appeal
+          dropdowns = page.all(".cf-btn-link")
+          dropdowns.last.click
           expect(page).to have_content("#{task_action[:name]} task has been assigned to Education.")
           expect(all(".cf-row-wrapper")[1].text).to include("Education")
           expect(all(".cf-row-wrapper")[2].text).to include(task_action[:name].to_s)
@@ -90,12 +97,18 @@ RSpec.feature("The Correspondence Details All Tasks Actions") do
 
         it "Verify #{task_action[:name]} task with Change task type action dropdown" do
           visit "/queue/correspondence/#{@correspondence.uuid}"
+          # find + dropdowns and click last one for tasks unrelated to appeal
+          dropdowns = page.all(".cf-btn-link")
+          dropdowns.last.click
           click_dropdown(prompt: "Select an action", text: "Change task type")
           expect(page).to have_content("Change task type")
           expect(page).to have_content("Select another task type from the list of available options:")
           click_dropdown(prompt: "Select an action type", text: "CAVC Correspondence")
           find(".cf-form-textarea", match: :first).fill_in with: "Change task type instructions"
           click_button "Change-task-type-button-id-1"
+          # find + dropdowns and click last one for tasks unrelated to appeal
+          dropdowns = page.all(".cf-btn-link")
+          dropdowns.last.click
           expect(page).to have_content("You have changed the task type from #{task_action[:name]} " \
           "to CAVC Correspondence. These changes are now reflected in the tasks section below.")
           expect(all(".cf-row-wrapper")[2].find("dd").text).to eq("CAVC Correspondence")

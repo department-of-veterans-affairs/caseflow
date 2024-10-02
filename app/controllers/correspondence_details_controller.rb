@@ -91,6 +91,19 @@ class CorrespondenceDetailsController < CorrespondenceController
     }
   end
 
+  def correspondence_params
+    params.require(:correspondence).permit(:correspondence, :va_date_of_receipt, :correspondence_type_id, :notes)
+  end
+
+  def edit_general_information
+    correspondence.update!(
+      va_date_of_receipt: correspondence_params[:va_date_of_receipt],
+      correspondence_type_id: correspondence_params[:correspondence_type_id],
+      notes: correspondence_params[:notes]
+    )
+    render json: { correspondence: serialized_correspondence }, status: :created
+  end
+
   # Overriding method to allow users to access the correspondence details page
   def verify_correspondence_access
     true

@@ -6,15 +6,13 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import PropTypes from 'prop-types';
 import TabWindow from '../../../components/TabWindow';
 import CopyTextButton from '../../../components/CopyTextButton';
-import { loadCorrespondence } from '../correspondenceReducer/correspondenceActions';
 import CorrespondenceCaseTimeline from '../CorrespondenceCaseTimeline';
-import {
-  correspondenceInfo, updateCorrespondenceRelations
-} from './../correspondenceDetailsReducer/correspondenceDetailsActions';
+import { updateCorrespondenceInfo } from './../correspondenceDetailsReducer/correspondenceDetailsActions';
 import CorrespondenceResponseLetters from './CorrespondenceResponseLetters';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
-import CorrespondenceTasksAdded from '../CorrespondenceTasksAdded';
+import { prepareAppealForSearchStore, prepareAppealForStore, prepareTasksForStore } from 'app/queue/utils';
+import { onReceiveTasks, onReceiveAppealDetails } from '../../QueueActions';
 import moment from 'moment';
 import Pagination from 'app/components/Pagination/Pagination';
 import Table from 'app/components/Table';
@@ -22,19 +20,22 @@ import { ExternalLinkIcon } from 'app/components/icons/ExternalLinkIcon';
 import { COLORS } from 'app/constants/AppConstants';
 import Checkbox from 'app/components/Checkbox';
 import CorrespondencePaginationWrapper from 'app/queue/correspondence/CorrespondencePaginationWrapper';
+
 import Button from '../../../components/Button';
 import Alert from '../../../components/Alert';
 import ApiUtil from '../../../util/ApiUtil';
 import { prepareAppealForSearchStore } from 'app/queue/utils';
-
+import CorrespondenceEditGeneralInformationModal from '../../components/CorrespondenceEditGeneralInformationModal';
+import CorrespondenceAppealTasks from '../CorrespondenceAppealTasks';
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
   const correspondence = props.correspondence;
+  const correspondenceInfo = props.correspondenceInfo;
   const mailTasks = props.correspondence.mailTasks;
-
   const allCorrespondences = props.correspondence.all_correspondences;
   const [viewAllCorrespondence, setViewAllCorrespondence] = useState(false);
+  const [editGeneralInformationModal, setEditGeneralInformationModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [disableSubmitButton, setDisableSubmitButton] = useState(true);
   const [showSuccessBanner, setShowSuccessBanner] = useState(false);
@@ -352,8 +353,29 @@ const CorrespondenceDetails = (props) => {
   }, []);
 
   useEffect(() => {
-    dispatch(loadCorrespondence(correspondence));
-    dispatch(correspondenceInfo(correspondence));
+    dispatch(updateCorrespondenceInfo(correspondence));
+    // load appeals related to the correspondence into the store
+    const corAppealTasks = [];
+
+    props.correspondence.correspondenceAppeals.map((corAppeal) => {
+      dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal.appeal.data])));
+
+      corAppeal.taskAddedData.data.map((taskData) => {
+        const formattedTask = {};
+
+        formattedTask[taskData.id] = taskData;
+
+        corAppealTasks.push(taskData);
+      });
+
+    });
+    // // load appeal tasks into the store
+    const preparedTasks = prepareTasksForStore(corAppealTasks);
+
+    dispatch(onReceiveTasks({
+      amaTasks: preparedTasks
+    }));
+
   }, []);
 
   const isTasksUnrelatedToAppealEmpty = () => {
@@ -428,11 +450,12 @@ const CorrespondenceDetails = (props) => {
             </AppSegment>
           )}
           {(props.correspondence.correspondenceAppeals.map((taskAdded) =>
-              taskAdded.correspondencesAppealsTasks?.length > 0 && <CorrespondenceTasksAdded
+            <CorrespondenceAppealTasks
               task_added={taskAdded}
               correspondence={props.correspondence}
               organizations={props.organizations}
               userCssId={props.userCssId}
+              appeal={taskAdded.appeal.data.attributes}
             />
           )
           )}
@@ -470,11 +493,21 @@ const CorrespondenceDetails = (props) => {
     )}
   </>;
 
+  const handleEditGeneralInformationModal = () => {
+    setEditGeneralInformationModal(!editGeneralInformationModal);
+  };
+
   const correspondencePackageDetails = () => {
     return (
       <>
         <div className="correspondence-package-details">
-          <h2 className="correspondence-h2">General Information</h2>
+          <div className="corr-title-with-button">
+            <h2 className="correspondence-h2">General Information</h2>
+            <Button
+              onClick={handleEditGeneralInformationModal}
+              classNames={['button-style']}
+            >Edit</Button>
+          </div>
           <table className="corr-table-borderless-no-background gray-border">
             <tbody>
               <tr>
@@ -485,12 +518,12 @@ const CorrespondenceDetails = (props) => {
               </tr>
               <tr>
                 <td className="corr-table-borderless-first-item">
-                  {props.correspondence.veteranFullName} ({props.correspondence.veteranFileNumber})
+                  {correspondenceInfo?.veteranFullName} ({correspondenceInfo?.veteranFileNumber})
                 </td>
-                <td>{props.correspondence.correspondenceType}</td>
-                <td>{props.correspondence.nod ? 'NOD' : 'Non-NOD'}</td>
+                <td>{correspondenceInfo?.correspondenceType}</td>
+                <td>{correspondenceInfo?.nod ? 'NOD' : 'Non-NOD'}</td>
                 <td className="corr-table-borderless-last-item">
-                  {moment(props.correspondence.vaDateOfReceipt).format('MM/DD/YYYY')}
+                  {moment(correspondenceInfo?.vaDateOfReceipt).format('MM/DD/YYYY')}
                 </td>
               </tr>
               <tr>
@@ -499,10 +532,16 @@ const CorrespondenceDetails = (props) => {
               </tr>
               <tr>
                 <td colSpan={6} className="corr-table-borderless-first-item corr-table-borderless-last-item">
-                  {props.correspondence.notes}</td>
+                  {correspondenceInfo?.notes}</td>
               </tr>
             </tbody>
           </table>
+          {editGeneralInformationModal && (
+            <CorrespondenceEditGeneralInformationModal
+              correspondenceTypes={props.correspondenceTypes}
+              handleEditGeneralInformationModal={handleEditGeneralInformationModal}
+            />
+          )}
         </div>
       </>
     );
@@ -511,7 +550,7 @@ const CorrespondenceDetails = (props) => {
   const correspondenceResponseLetters = () => {
     return (
       <>
-        <div className="correspondence-package-details">
+        <div className="correspondence-response-letters">
           <CorrespondenceResponseLetters
             letters={props.correspondenceResponseLetters}
             addLetterCheck={props.addLetterCheck}
@@ -725,7 +764,7 @@ const CorrespondenceDetails = (props) => {
 
       return ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/create_correspondence_relations`, payload).
         then(() => {
-          props.updateCorrespondenceRelations(tempCor);
+          props.updateCorrespondenceInfo(tempCor);
           setRelatedCorrespondenceIds([...relatedCorrespondenceIds, ...priorMailIds]);
           setShowSuccessBanner(true);
           setSelectedPriorMail([]);
@@ -789,7 +828,7 @@ const CorrespondenceDetails = (props) => {
       }
       <AppSegment filledBackground extraClassNames="app-segment-cd-details">
         <div className="correspondence-details-header">
-          <h1> {props.correspondence.veteranFullName} </h1>
+          <h1> {correspondence?.veteranFullName} </h1>
           <div className="copy-id">
             <p className="vet-id-margin">Veteran ID:</p>
             <CopyTextButton
@@ -827,8 +866,8 @@ const CorrespondenceDetails = (props) => {
 };
 
 CorrespondenceDetails.propTypes = {
-  loadCorrespondence: PropTypes.func,
   correspondence: PropTypes.object,
+  correspondenceInfo: PropTypes.object,
   organizations: PropTypes.array,
   userCssId: PropTypes.string,
   enableTopPagination: PropTypes.bool,
@@ -839,7 +878,8 @@ CorrespondenceDetails.propTypes = {
   correspondenceResponseLetters: PropTypes.array,
   inboundOpsTeamUsers: PropTypes.array,
   addLetterCheck: PropTypes.bool,
-  updateCorrespondenceRelations: PropTypes.func,
+  updateCorrespondenceInfo: PropTypes.func,
+  correspondenceTypes: PropTypes.array
 };
 
 const mapStateToProps = (state) => ({
@@ -849,8 +889,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    correspondenceInfo,
-    updateCorrespondenceRelations
+    updateCorrespondenceInfo
   }, dispatch)
 );
 
