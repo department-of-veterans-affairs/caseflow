@@ -81,9 +81,12 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
   end
 
   context "aoj case docket is called" do
+    Rails.logger = Logger.new(STDOUT)
     let(:job) { described_class.new }
+
     let!(:non_ssc_avlj_user_1) { create(:user, :non_ssc_avlj_user).vacols_staff }
     let!(:legacy_aoj_appeal) { create(:legacy_aoj_appeal, tied_to: non_ssc_avlj_user_1) }
+
     it "runs eligible and moved appeals with AOJ Dockets" do
       job.perform
       expect(legacy_aoj_appeal.reload.bfcurloc).to eq("63")
