@@ -3,7 +3,6 @@
 require "./scripts/enable_features_dev.rb"
 class Test::LoadTestsController < ApplicationController
   before_action :check_environment
-  skip_before_action :verify_authenticity_token, only: [:target, :user]
 
   API_KEY_CACHE_KEY = "load_test_api_key"
   IDT_TOKEN_CACHE_KEY = "load_test_idt_token"
