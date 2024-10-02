@@ -8,7 +8,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
     let(:api_key) { ApiKey.create!(consumer_name: "API TEST TOKEN") }
     let!(:epe) { create(:end_product_establishment, :active_hlr, reference_id: 12_345_678) }
     let(:review) { epe.source }
-    let!(:existing_request_issue) { create(:request_issue, decision_review: review, reference_id: "1234") }
+    let!(:existing_request_issue) { create(:request_issue, decision_review: review, reference_id: "6789") }
 
     def json_test_payload
       {
@@ -95,7 +95,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
       json_test_payload
     end
 
-    context "updates issue" do
+    context "add issue with already existing issue" do
       before do
         request.headers["Authorization"] = "Token token=#{api_key.key_string}"
       end
@@ -108,6 +108,14 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
         expect(response.body).to include("DecisionReviewUpdatedEvent successfully processed")
         existing_request_issue.reload
         expect(existing_request_issue.any_updates?).to eq(true)
+        new_request_issue = RequestIssue.find_by(reference_id: "1234")
+        expect(new_request_issue).to be
+        request_issue_update = review.request_issues_updates.first
+        expect(request_issue_update).to be
+        expect(request_issue_update.before_request_issue_ids).to eq([existing_request_issue.id])
+        expect(request_issue_update.after_request_issue_ids).to eq([new_request_issue.id, existing_request_issue.id])
+        expect(request_issue_update.edited_request_issue_ids).to eq([])
+        expect(request_issue_update.withdrawn_request_issue_ids).to eq([])
       end
     end
   end
