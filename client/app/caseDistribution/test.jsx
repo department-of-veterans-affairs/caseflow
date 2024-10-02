@@ -419,48 +419,80 @@ class CaseDistributionTest extends React.PureComponent {
                           { this.state.showAlert &&
                             <Alert type={this.state.alertType} scrollOnAlert={false}>{this.state.alertMsg}</Alert>
                           }
-                          <ul>
-                            <li>
+                          <div>
+                            <table
+                              id="case-table-description"
+                              className="usa-table"
+                              style={tablestyle}
+                            >
+                              <thead>
+                                <td><p>{COPY.TEST_WARNING_P1}</p>
+                                  <p>{COPY.TEST_WARNING_P2}</p>
+                                  <p>{COPY.TEST_WARNING_P3}</p>
+                                </td>
+                              </thead>
+                            </table>
+                            <div className="lever-left csv-download-left">
                               <Button
                                 onClick={this.reseedAod}
                                 name="Run Demo AOD Hearing Held Seeds"
                                 loading={this.state.isReseedingAod}
                                 loadingText="Reseeding AOD Hearing Held Seeds"
                               />
-                            </li>
-                            <li>
+                            </div>
+                            <div className="lever-right csv-download-right">
+                              <strong>{COPY.TEST_RUN_DEMO_AOD_HEARING_HELD_TITLE}</strong>
+                              {COPY.TEST_RUN_DEMO_AOD_HEARING_HELD_DESCRIPTION}
+                            </div>
+                            <div className="lever-left csv-download-left">
                               <Button
                                 onClick={this.reseedNonAod}
                                 name="Run Demo NON AOD Hearing Held Seeds"
                                 loading={this.state.isReseedingNonAod}
                                 loadingText="Reseeding NON AOD Hearing Held Seeds"
                               />
-                            </li>
-                            <li>
+                            </div>
+                            <div className="lever-right csv-download-right">
+                              <strong>{COPY.TEST_RUN_DEMO_NON_AOD_HEARING_HELD_TITLE}</strong>
+                              {COPY.TEST_RUN_DEMO_NON_AOD_HEARING_HELD_DESCRIPTION}
+                            </div>
+                            <div className="lever-left csv-download-left">
                               <Button
                                 onClick={this.reseedAmaDocketGoals}
                                 name="Run Docket Time Goal (AMA non-pri) Seeds"
                                 loading={this.state.isReseedingAmaDocketGoals}
                                 loadingText="Reseeding Docket Time Goal (AMA non-pri) Seeds"
                               />
-                            </li>
-                            <li>
+                            </div>
+                            <div className="lever-right csv-download-right">
+                              <strong>{COPY.TEST_RUN_DOCKET_TIME_GOAL_TITLE}</strong>
+                              {COPY.TEST_RUN_DOCKET_TIME_GOAL_DESCRIPTION}
+                            </div>
+                            <div className="lever-left csv-download-left">
                               <Button
                                 onClick={this.reseedDocketPriority}
                                 name="Run Docket-type Seeds"
                                 loading={this.state.isReseedingDocketPriority}
                                 loadingText="Reseeding Docket-type Seeds"
                               />
-                            </li>
-                            <li>
+                            </div>
+                            <div className="lever-right csv-download-right">
+                              <strong>{COPY.TEST_RUN_DOCKET_TYPE_SEEDS_TITLE}</strong>
+                              {COPY.TEST_RUN_DOCKET_TYPE_SEEDS_DESCRIPTION}
+                            </div>
+                            <div className="lever-left csv-download-left">
                               <Button
                                 onClick={this.reseedNonSSCAVLJAppeals}
                                 name="Run non-SSC AVLJ and Appeal Seeds"
                                 loading={this.state.isReseedingNonSSCAVLJAppeals}
                                 loadingText="Reseeding non-SSC AVLJ and Appeal Seeds"
                               />
-                            </li>
-                          </ul>
+                            </div>
+                            <div className="lever-right csv-download-right">
+                              <strong>{COPY.TEST_RUN_NONSSC_AVLJ_APPEAL_TITLE}</strong>
+                              {COPY.TEST_RUN_NONSSC_AVLJ_APPEAL_DESCRIPTION}
+                            </div>
+                          </div>
                           <hr />
                           <div className="lever-content">
                             <div className="lever-head csv-download-alignment">
