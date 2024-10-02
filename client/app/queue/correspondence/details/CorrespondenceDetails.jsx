@@ -49,6 +49,7 @@ const CorrespondenceDetails = (props) => {
   const [selectedAppeals, setSelectedAppeals] = useState(correspondence.correspondenceAppealIds);
   const [unSelectedAppeals, setUnSelectedAppeals] = useState([]);
   const [appealsToDisplay, setAppealsToDisplay] = useState([]);
+  const [appealTableKey, setAppealTableKey] = useState(0);
   const userAccess = correspondence.user_access;
 
   const [checkboxStates, setCheckboxStates] = useState({});
@@ -324,13 +325,6 @@ const CorrespondenceDetails = (props) => {
     }
   };
 
-  const toggleCheckboxState = (appealId) => {
-    const appealsToConsider = disableSubmitButton ? selectedAppeals : initialSelectedAppeals;
-    const checked = appealsToConsider?.includes(appealId) || appealsToConsider?.includes(Number(appealId));
-
-    return checked ? userAccess !== 'admin_access' : false;
-  };
-
   useEffect(() => {
     const buttonDisable = (selectedAppeals?.length === initialSelectedAppeals?.length);
 
@@ -451,13 +445,14 @@ const CorrespondenceDetails = (props) => {
           {isExpanded && (
             <AppSegment filledBackground noMarginTop>
               <CaseListTable
+                key={appealTableKey}
                 appeals={appealsToDisplay}
                 paginate="true"
                 showCheckboxes
-                taskRelatedAppealIds={selectedAppeals}
+                taskRelatedAppealIds={disableSubmitButton ? selectedAppeals : initialSelectedAppeals}
                 enableTopPagination
+                userAccess={userAccess}
                 checkboxOnChange={appealCheckboxOnChange}
-                toggleCheckboxState={toggleCheckboxState}
               />
             </AppSegment>
           )}
@@ -808,11 +803,13 @@ const CorrespondenceDetails = (props) => {
       return ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/save_correspondence_appeals`, payload).
         then((resp) => {
           const appealIds = resp.body;
+
           setSelectedAppeals(appealIds);
           setInitialSelectedAppeals(appealIds);
           sortAppeals(appealIds);
           setShowSuccessBanner(true);
           setDisableSubmitButton(true);
+          setAppealTableKey((key) => key + 1);
           window.scrollTo({
             top: 0,
             behavior: 'smooth'
