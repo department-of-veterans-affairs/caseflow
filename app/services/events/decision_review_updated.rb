@@ -47,9 +47,10 @@ class Events::DecisionReviewUpdated
       Rails.logger.error("Key RedisMutex:EndProductEstablishment:#{claim_id} is already in the Redis Cache")
       event&.update!(error: error.message)
       raise error
-    rescue RedisMutex::LockError
+    rescue RedisMutex::LockError => error
       Rails.logger.error("Failed to acquire lock for Claim ID: #{claim_id}! This Event is being"\
                          " processed. Please try again later.")
+      raise error
     rescue StandardError => error
       Rails.logger.error("#{error.class} : #{error.message}")
       event&.update!(error: "#{error.class} : #{error.message}", info:

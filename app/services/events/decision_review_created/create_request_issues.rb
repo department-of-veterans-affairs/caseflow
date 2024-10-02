@@ -76,6 +76,7 @@ class Events::DecisionReviewCreated::CreateRequestIssues
       end
       newly_created_issues
     end
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     def create_event_record(event, issue)
       EventRecord.create!(
