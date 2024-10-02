@@ -24,7 +24,6 @@ import CorrespondencePaginationWrapper from 'app/queue/correspondence/Correspond
 import Button from '../../../components/Button';
 import Alert from '../../../components/Alert';
 import ApiUtil from '../../../util/ApiUtil';
-import { prepareAppealForSearchStore } from 'app/queue/utils';
 import CorrespondenceEditGeneralInformationModal from '../../components/CorrespondenceEditGeneralInformationModal';
 import CorrespondenceAppealTasks from '../CorrespondenceAppealTasks';
 
@@ -311,14 +310,11 @@ const CorrespondenceDetails = (props) => {
     setDisableSubmitButton(buttonDisable);
   }, [selectedAppeals]);
 
-  let appeals;
-
   const sortAppeals = (selectedList) => {
-    appeals = [];
     let filteredAppeals = [];
     let unfilteredAppeals = [];
 
-    correspondence.appeals_information.appeals.map((appeal) => {
+    correspondence.appeals_information.map((appeal) => {
       if (selectedList?.includes(Number(appeal.id))) {
         filteredAppeals.push(appeal);
       } else {
@@ -332,19 +328,8 @@ const CorrespondenceDetails = (props) => {
     unfilteredAppeals = unfilteredAppeals.sort((leftAppeal, rightAppeal) => leftAppeal.id - rightAppeal.id);
 
     const sortedAppeals = filteredAppeals.concat(unfilteredAppeals);
-    const searchStoreAppeal = prepareAppealForSearchStore(sortedAppeals);
-    const appeall = searchStoreAppeal.appeals;
-    const appealldetail = searchStoreAppeal.appealDetails;
-    const hashKeys = Object.keys(appeall);
 
-    hashKeys.map((key) => {
-      const combinedHash = { ...appeall[key], ...appealldetail[key] };
-
-      appeals.push(combinedHash);
-
-      return true;
-    });
-    setAppealsToDisplay(appeals);
+    setAppealsToDisplay(sortedAppeals);
   };
 
 
