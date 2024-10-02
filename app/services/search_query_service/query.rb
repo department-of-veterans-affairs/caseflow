@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ClassLength
 class SearchQueryService::Query
   def initialize
     @vacols = SearchQueryService::VacolsQuery.new
@@ -93,6 +94,19 @@ class SearchQueryService::Query
         v.file_number as veteran_file_number,
         v.date_of_death,
         (
+          select jsonb_agg(her2) from
+          (
+            select
+              her.*
+            from hearing_email_recipients her
+            where
+              her.appeal_type = 'LegacyAppeal' and
+              her.appeal_id = a.id and
+              her.type = 'AppellantHearingEmailRecipient'
+            limit 1
+          ) her2
+        ) hearing_email_recipient,
+        (
           select jsonb_agg(u2) from
           (
             select
@@ -175,7 +189,7 @@ class SearchQueryService::Query
         a.id,
         a.uuid::varchar external_id,
         a.stream_type type,
-        aod.id aod_granted_for_person,
+        aod.granted aod_granted_for_person,
         a.docket_type,
         (
           select jsonb_agg(a2)
@@ -198,9 +212,17 @@ class SearchQueryService::Query
                   select jsonb_agg(c2) from
                   (
                     select
-                      c.id,
-                      c.participant_id
+                      c.*,
+                      row_to_json(p.*) person,
+                      row_to_json(ua.*) unrecognized_appellants,
+                      row_to_json(upd.*) unrecognized_party_details
                     from claimants c
+                    left join unrecognized_appellants ua on
+                      c.id = ua.claimant_id
+                    left join unrecognized_party_details upd on
+                      ua.unrecognized_party_detail_id = upd.id
+                    left join people p on
+                      c.participant_id = p.participant_id
                     where
                       c.decision_review_type = 'Appeal' and
                       c.decision_review_id=a.id
@@ -219,6 +241,19 @@ class SearchQueryService::Query
         v.last_name veteran_last_name,
         v.file_number as veteran_file_number,
         v.date_of_death,
+        (
+          select jsonb_agg(her2) from
+          (
+            select
+              her.*
+            from hearing_email_recipients her
+            where
+              her.appeal_type = 'Appeal' and
+              her.appeal_id = a.id and
+              her.type = 'AppellantHearingEmailRecipient'
+            limit 1
+          ) her2
+        ) hearing_email_recipient,
         (
           select jsonb_agg(u2) from
           (
@@ -414,3 +449,4 @@ class SearchQueryService::Query
     ]
   end
 end
+# rubocop:enable Metrics/ClassLength

@@ -28,10 +28,14 @@ class SearchQueryService::QueriedAppeal < SimpleDelegator
     claimants.map(&:participant_id)
   end
 
+  def claimant
+    claimants.max_by(&:id)
+  end
+
   def claimants
     @claimants ||= begin
       attributes.claimants.map do |attrs|
-        Struct.new(:participant_id).new(attrs["participant_id"])
+        OpenStruct.new(attrs)
       end
     end
   end
@@ -44,6 +48,10 @@ class SearchQueryService::QueriedAppeal < SimpleDelegator
         end
       end
     end
+  end
+
+  def advanced_on_docket_based_on_age?
+    claimant&.date_of_birth.present? && Date.parse(claimant.date_of_birth) < 75.years.ago
   end
 
   def open_tasks

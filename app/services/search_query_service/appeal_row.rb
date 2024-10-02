@@ -27,6 +27,20 @@ class SearchQueryService::AppealRow
     SearchQueryService::Attributes.new(
       aod: aod,
       appellant_full_name: appellant_full_name,
+      appellant_date_of_birth: appellant_date_of_birth,
+      appellant_email_address: appellant_person["email_address"],
+      appellant_first_name: appellant_person["first_name"],
+      appellant_hearing_email_recipient: json_array("hearing_email_recipient").first,
+      appellant_is_not_veteran: !!queried_appeal.veteran_is_not_claimant,
+      appellant_last_name: appellant_person["last_name"],
+      appellant_middle_name: appellant_person["middle_name"],
+      appellant_party_type: appellant_party_type,
+      appellant_phone_number: appellant_phone_number,
+      appellant_relationship: nil,
+      appellant_substitution: nil,
+      appellant_suffix: appellant_person["name_suffix"],
+      appellant_type: appellant&.type,
+      appellant_tz: nil,
       assigned_to_location: queried_appeal.assigned_to_location,
       assigned_attorney: assigned_attorney,
       assigned_judge: assigned_judge,
@@ -56,8 +70,32 @@ class SearchQueryService::AppealRow
   # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/MethodLength
 
+  def appellant_date_of_birth
+    if appellant.person.present?
+      Date.parse appellant.person.try(:[], "date_of_birth")
+    end
+  rescue TypeError
+    nil
+  end
+
+  def appellant_party_type
+    appellant&.unrecognized_party_details.try(:[], "party_type")
+  end
+
+  def appellant_phone_number
+    appellant&.unrecognized_party_details.try(:[], "phone_number")
+  end
+
   def aod
-    query_row["aod_granted_for_person"].present?
+    queried_appeal.advanced_on_docket_based_on_age? || query_row["aod_granted_for_person"]
+  end
+
+  def appellant_person
+    appellant.person || {}
+  end
+
+  def appellant
+    queried_appeal.claimant
   end
 
   def decision_issues
@@ -88,7 +126,7 @@ class SearchQueryService::AppealRow
     attrs["veteran_file_number"]
   end
 
-  def issue(attributes)
+  def clean_issue_attributes!(attributes)
     unless FeatureToggle.enabled?(:pact_identification)
       attributes.delete("pact_status")
     end
@@ -100,7 +138,7 @@ class SearchQueryService::AppealRow
   def issues
     json_array("request_issues").map do |attributes|
       attributes.tap do |attrs|
-        issue(attrs)
+        clean_issue_attributes!(attrs)
       end
     end
   end
