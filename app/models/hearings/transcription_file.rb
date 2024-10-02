@@ -205,7 +205,7 @@ class Hearings::TranscriptionFile < CaseflowRecord
     transcription = Transcription.find_by(task_number: task_number)
     return unless transcription
 
-    transcription_files = TranscriptionFile.where(transcription_id: transcription.id)
+    transcription_files = Hearings::TranscriptionFile.where(transcription_id: transcription.id)
 
     transcription_files.each do |file|
       file.update(file_status: "Successful upload (AWS)", date_upload_box: nil)

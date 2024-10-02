@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe TranscriptionFile do
+describe Hearings::TranscriptionFile do
   let(:file) { create(:transcription_file) }
   let(:uploaded_file) { create(:transcription_file, :uploaded) }
 

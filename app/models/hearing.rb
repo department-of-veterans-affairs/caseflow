@@ -50,7 +50,7 @@ class Hearing < CaseflowRecord
   has_many :hearing_issue_notes
   has_many :email_events, class_name: "SentHearingEmailEvent"
   has_many :email_recipients, class_name: "HearingEmailRecipient"
-  has_many :transcription_files, as: :hearing
+  has_many :transcription_files, class_name: "Hearings::TranscriptionFile", as: :hearing
 
   class HearingDayFull < StandardError; end
 
