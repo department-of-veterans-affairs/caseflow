@@ -36,7 +36,10 @@ class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationControl
   # rubocop:enable Layout/LineLength
 
   def decision_review_created_error
-    fail Caseflow::Error::RedisLockFailed, "Test Error for DRC Caseflow::Error::RedisLockFailed"
+    if drc_error_params[:event_id] == 1 # Needs to be changed
+      fail Caseflow::Error::RedisLockFailed, "Test Error for DRC Caseflow::Error::RedisLockFailed"
+    end
+
     event_id = drc_error_params[:event_id]
     errored_claim_id = drc_error_params[:errored_claim_id]
     error_message = drc_error_params[:error]
