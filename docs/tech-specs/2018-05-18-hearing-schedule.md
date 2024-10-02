@@ -1,11 +1,11 @@
-This document was moved from [appeals-team](https://github.com/department-of-veterans-affairs/appeals-team/blob/master/Project%20Folders/Caseflow%20Projects/Hearings/Hearing%20Schedule/Tech%20Specs/HearingSchedule.md).
+This document was moved from [appeals-team](https://github.com/department-of-veterans-affairs/appeals-team/blob/main/Project%20Folders/Caseflow%20Projects/Hearings/Hearing%20Schedule/Tech%20Specs/HearingSchedule.md).
 
 ## Caseflow Hearing Schedule
 
-Owner: Sharon Warner  
-Date: 2018-05-18  
-Reviewer(s):   
-Review by:   
+Owner: Sharon Warner
+Date: 2018-05-18
+Reviewer(s):
+Review by:
 
 ## Context
 
@@ -64,9 +64,9 @@ Because of the tight deadline, and the amount of data we need to input, we're go
 1) Hearings allocation
 1) Judge non-availability dates
 
-The RO non-availability dates, board non-availability dates, and hearings allocation will be uploaded together semi-annually, and the judge non-availability dates will be uploaded separately quarterly. The spreadsheet templates can be found [here](https://github.com/department-of-veterans-affairs/appeals-team/tree/master/Project%20Folders/Caseflow%20Projects/Hearings/Hearing%20Schedule/Designs).
+The RO non-availability dates, board non-availability dates, and hearings allocation will be uploaded together semi-annually, and the judge non-availability dates will be uploaded separately quarterly. The spreadsheet templates can be found [here](https://github.com/department-of-veterans-affairs/appeals-team/tree/main/Project%20Folders/Caseflow%20Projects/Hearings/Hearing%20Schedule/Designs).
 
-We will pull already-scheduled video and central office hearings and travel board hearings from VACOLS. 
+We will pull already-scheduled video and central office hearings and travel board hearings from VACOLS.
 
 ## Overview - December Release
 
@@ -98,29 +98,29 @@ The NonAvailability table will include information for all three types of non-av
 
 Each time a valid spreadsheet is uploaded, we'll record the dates that spreadsheet covers in SchedulePeriods. If a user uploads a second spreadsheet of the same type that covers date that have already been uploaded, we'll check to see if Finalized for the original spreadsheet is true or false. If Finalized is true, that means the information has already been uploaded to VACOLS, and we'll tell the user that they cannot re-upload a spreadsheet for those dates. If Finalized is false, we'll tell the user that they have already uploaded a spreadsheet for those dates and ask if they want to proceed. If the user wants to proceed, we'll delete all information associated with the original spreadsheet and then upload the new spreadsheet.
 
-We'll also check the following validations for each spreadsheet. If the uploaded spreadsheet breaks any of these validations, we'll ask the user to fix the error and re-upload the spreadsheet.	
-	
-1) The headers much match the template exactly.	
+We'll also check the following validations for each spreadsheet. If the uploaded spreadsheet breaks any of these validations, we'll ask the user to fix the error and re-upload the spreadsheet.
+
+1) The headers much match the template exactly.
 1) All dates should all be in this format: mm/dd/yyyy.
 1) All dates should be within the date range specified by the hearing coordinator.
 
 *RO Non-Availability*
 
-1) All BFREGOFF codes should match the city, state we have listed in regional_office.rb.	
-1) Every RO listed in regional_office.rb should have a column.	
-1) The dates listed for each RO should be unique.	
+1) All BFREGOFF codes should match the city, state we have listed in regional_office.rb.
+1) Every RO listed in regional_office.rb should have a column.
+1) The dates listed for each RO should be unique.
 
 *CO Non-Availability*
-	
-1) The dates should be unique.	
+
+1) The dates should be unique.
 
 *Judge Non-Availability*
-1) The CSS id and judge name should match what we already have stored in our database.	
+1) The CSS id and judge name should match what we already have stored in our database.
 
-*Hearing Allocations*	
-	
-1) All BFREGOFF codes should match the city, state we have listed in regional_office.rb.	
-1) Every RO listed in regional_office.rb should have a row.	
+*Hearing Allocations*
+
+1) All BFREGOFF codes should match the city, state we have listed in regional_office.rb.
+1) Every RO listed in regional_office.rb should have a row.
 
 **User Permissions (May)**
 
@@ -155,7 +155,7 @@ We'll create two new buckets within the dsva-appeals-caseflow-prod bucket to sto
     2. 2nd source is the travel board dates fetched from VACOLS
 4. Divide the number of hearing days for each RO by the number of months selected in the timeframe. (RO1: 12 for 6 months ) -> 2 days per month.
     1. It’s preferred to have RO hearing days distributed among the selected months (example:  if an RO has 2 hearing days; it’s preferred to have each hearing day distributed among different months)
-    2. A priority is given for ROs that have multiple rooms available since they can hold more hearings per day 
+    2. A priority is given for ROs that have multiple rooms available since they can hold more hearings per day
     3. It’s preferred to have whole number hearing days even if the hearing days cannot be evenly distributed ~ (if an RO has 25 hearing days, 25/6 = 4.16, each month shall have at least 4 hearing days for this RO and the remainder of days can be distributed among random months selected based on the calendar days available to the RO).
     4. If the RO hearing days cannot be distributed evenly among the selected months due to increased non-availability days for the month, the remaining hearings are distributed through out the other months based on the available calendars days for the RO)
 5. Select a random RO available date in the month to assign each of the divided RO hearing days.
@@ -194,8 +194,8 @@ To support querying for Travel Board hearings we need to add the following opera
     2. If a judge is on a travel board, it’s for an entire week
         1. No RO hearing days can be allocated to that judge a week prior or after the travel board week.
 
-Notes: 
-There are three options for allocating judges: 
+Notes:
+There are three options for allocating judges:
 
 1. Shuffle the judges and allocate the hearing days one at a time to all the judges (It doesn't verify complete balance, since it's randomized for the current scheduled period)
 2. Fetch all hearing days for all judges for the current federal fiscal year, allocate the hearing days to initially to the judges with the least amount of hearings to make sure the hearing days are evently distributed to all judges.
@@ -214,7 +214,7 @@ Example error:
 
 **August Rollout**
 
-Unfortunately, the hearing coordinators are required to build the schedule for the first six months of FY2019 before our August 1st roll-out date. However, the hearing coordinators will use Caseflow to assign those hearing days to judges and to build the schedule for the second six months of FY2019. 
+Unfortunately, the hearing coordinators are required to build the schedule for the first six months of FY2019 before our August 1st roll-out date. However, the hearing coordinators will use Caseflow to assign those hearing days to judges and to build the schedule for the second six months of FY2019.
 
 We will also create a test case that the hearing coordinators can use to create a mock hearing schedule for the first six months of FY2019. They can compare this mock schedule to the schedule they have already manually created to confirm the scheduling is working as expected.
 
