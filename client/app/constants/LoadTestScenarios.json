@@ -109,7 +109,7 @@
     }],
     "targetId": ""
   },
-  {"scenario": "readerIndex",
+  {"scenario": "amaReader",
     "targetType": [{
       "value": "appeal",
       "label": "Appeal"
