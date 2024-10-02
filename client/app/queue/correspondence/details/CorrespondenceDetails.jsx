@@ -421,7 +421,7 @@ const CorrespondenceDetails = (props) => {
         </div>
         <div className="correspondence-existing-appeals">
           <div className="left-section">
-            <h2>Existing Appeals</h2>
+            <h2>Existing appeals</h2>
             <div className="correspondence-details-view-documents">
               <a
                 rel="noopener noreferrer"
@@ -449,6 +449,9 @@ const CorrespondenceDetails = (props) => {
         <div className="collapse-section-container">
           {isExpanded && (
             <AppSegment filledBackground noMarginTop>
+              <p className="correspondence-details-p">
+                Please select prior appeal(s) to link to this correspondence.
+              </p>
               <CaseListTable
                 appeals={appealsToDisplay}
                 paginate
