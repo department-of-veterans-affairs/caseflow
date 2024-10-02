@@ -75,6 +75,8 @@ module CorrespondenceHelpers
     appeals = (1..10).map { create(:appeal, veteran_file_number: veteran.file_number, docket_type: "direct_review") }
     appeals.each do |appeal|
       InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+    end
+    appeals.each do |appeal|
       appeal.root_task.update!(status: Constants.TASK_STATUSES.completed)
     end
     3.times do
