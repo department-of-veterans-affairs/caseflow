@@ -49,6 +49,50 @@ const mockTranscriptionFilesResponse = {
   }
 };
 
+const mockCompletedTranscriptionFiles = [
+  {
+    id: 40,
+    externalAppealId: 'b5eba21a-9baf-41a3-ac1c-08470c2b79c4',
+    docketNumber: '200103-61110',
+    caseDetails: 'Danial Reynolds (000543695)',
+    isAdvancedOnDocket: true,
+    caseType: 'Original',
+    hearingDate: '11/02/2020',
+    hearingType: 'Hearing',
+    fileStatus: 'Successful upload (AWS)',
+    returnDate: '01/02/2021',
+    expectedReturnDate: '12/15/2020',
+    contractor: 'Genesis Government Solutions, Inc.',
+    workOrder: 'BVAXXXXXX',
+  },
+  {
+    id: 39,
+    externalAppealId: '12bb84ff-65fb-4422-bee4-fe7553fdf5c3',
+    docketNumber: '190227-4821',
+    caseDetails: 'Craig Wintheiser (000562812)',
+    isAdvancedOnDocket: true,
+    caseType: 'Original',
+    hearingDate: '08/27/2020',
+    hearingType: 'Hearing',
+    fileStatus: 'Successful upload (AWS)',
+    returnDate: '10/10/2020',
+    uploadDate: '10/01/2020',
+    contractor: 'Jamison Professional Services',
+    workOrder: 'BVAXXXXXX',
+  }
+];
+
+const mockCompletedTranscriptionFilesResponse = {
+  body: {
+    task_page_count: 1,
+    tasks: {
+      data: mockCompletedTranscriptionFiles,
+    },
+    tasks_per_page: 15,
+    total_task_count: 2,
+  },
+};
+
 const mockLockedResponse = {
   body: [
     {
@@ -96,6 +140,12 @@ describe('TranscriptionFileDispatch', () => {
 
     when(ApiUtil.get).calledWith('/hearings/find_by_contractor/filterable_contractors').
       mockResolvedValue(mockTranscriptionContractorsResponse);
+
+    when(ApiUtil.get).
+      calledWith(
+        '/hearings/transcription_files/transcription_file_tasks?tab=Completed&page=1'
+      ).
+      mockResolvedValue(mockCompletedTranscriptionFilesResponse);
   });
 
   afterEach(() => {

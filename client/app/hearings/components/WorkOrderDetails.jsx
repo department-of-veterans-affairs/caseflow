@@ -3,6 +3,7 @@ import ApiUtil from '../../util/ApiUtil';
 import QueueTable from '../../queue/QueueTable';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
+import { CSVLink } from 'react-csv';
 
 const columns = [
   { name: 'docket_number', header: 'Docket Number', valueFunction: (row) => row.docket_number },
@@ -17,6 +18,9 @@ const columns = [
 
 // CSS styles
 const styles = css({
+  '& .information': {
+    display: 'flex'
+  },
   '& div *': {
     outline: 'none',
   },
@@ -68,33 +72,53 @@ export const WorkOrderDetails = ({ taskNumber }) => {
     return <div>No data found</div>;
   }
 
-  const { workOrder, returnDate, contractorName, woFileInfo } = data;
+  const { workOrder, returnDate, contractorName, woFileInfo, workOrderStatus, workOrderLink } = data;
 
   return (
     <div className="cf-app-segment cf-app-segment--alt">
-      <div>
-        <h1>Work order summary #{workOrder}</h1>
-        <div style={{ marginBottom: '20px' }}>
-          <strong>Work order:</strong> #{workOrder}
+      <div className="information" style={{ display: 'flex' }}>
+        <div style={{ float: 'left', width: '50%' }}>
+          <h1>Work order summary #{workOrder}</h1>
+          <div style={{ marginBottom: '20px' }}>
+            <strong>Work order:</strong> #{workOrder}
+          </div>
+          <div style={{ marginBottom: '20px' }}>
+            <strong>Return date:</strong> {returnDate}
+          </div>
+          <div style={{ marginBottom: '20px' }}>
+            <strong>Contractor:</strong> {contractorName}
+          </div>
         </div>
-        <div style={{ marginBottom: '20px' }}>
-          <strong>Return date:</strong> {returnDate}
-        </div>
-        <div style={{ marginBottom: '20px' }}>
-          <strong>Contractor:</strong> {contractorName}
+        <div style={{ float: 'right', width: '50%', position: 'relative' }}>
+
+          { workOrderStatus.currentStatus &&
+          <CSVLink
+            className="csv-link"
+            data={workOrderLink}
+            target="_blank"
+            filename={`HearingSchedule ${workOrder}.zip`}>
+            <button className={['usa-button-secondary']}
+              aria-label="Download return work order"
+              style= {{ position: 'absolute', bottom: '0', right: '0' }}>
+              Download return work order
+            </button>
+          </CSVLink>
+          }
         </div>
       </div>
-      <hr style={{ margin: '35px 0' }} />
-      <div>
-        <h2 className="no-margin-bottom">Number of files: {woFileInfo.length}</h2>
-        <div {...styles}>
-          <QueueTable
-            columns={columns}
-            rowObjects={woFileInfo}
-            summary="Individual claim history"
-            slowReRendersAreOk
-            className="bold-first-cell"
-          />
+      <div className="woTableInfo">
+        <hr style={{ margin: '35px 0' }} />
+        <div>
+          <h2 className="no-margin-bottom">Number of files: {woFileInfo.length}</h2>
+          <div {...styles}>
+            <QueueTable
+              columns={columns}
+              rowObjects={woFileInfo}
+              summary="Individual claim history"
+              slowReRendersAreOk
+              className="bold-first-cell"
+            />
+          </div>
         </div>
       </div>
     </div>
