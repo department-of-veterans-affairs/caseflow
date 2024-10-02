@@ -396,7 +396,9 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                       id="ama_hearing_case_affinity_days"
                     >
                       <div>
-                        <div>
+                        <div
+                          class="radio-with-text"
+                        >
                           <input
                             checked=""
                             disabled=""
@@ -407,9 +409,10 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                           />
                           <label
                             for="ama_hearing_case_affinity_days-value"
-                          >
+                          />
+                          <div>
                             Attempt distribution to current judge for max of:
-                          </label>
+                          </div>
                         </div>
                         <div>
                           <div
@@ -451,7 +454,9 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                         </div>
                       </div>
                       <div>
-                        <div>
+                        <div
+                          class="radio-with-text"
+                        >
                           <input
                             disabled=""
                             id="ama_hearing_case_affinity_days-infinite"
@@ -461,9 +466,10 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                           />
                           <label
                             for="ama_hearing_case_affinity_days-infinite"
-                          >
+                          />
+                          <div>
                             Always distribute to current judge
-                          </label>
+                          </div>
                         </div>
                         <div>
                           <div
@@ -472,7 +478,9 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                         </div>
                       </div>
                       <div>
-                        <div>
+                        <div
+                          class="radio-with-text"
+                        >
                           <input
                             disabled=""
                             id="ama_hearing_case_affinity_days-omit"
@@ -482,9 +490,10 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                           />
                           <label
                             for="ama_hearing_case_affinity_days-omit"
-                          >
+                          />
+                          <div>
                             Omit variable from distribution rules
-                          </label>
+                          </div>
                         </div>
                         <div>
                           <div
@@ -516,7 +525,9 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                       id="ama_hearing_case_aod_affinity_days"
                     >
                       <div>
-                        <div>
+                        <div
+                          class="radio-with-text"
+                        >
                           <input
                             disabled=""
                             id="ama_hearing_case_aod_affinity_days-value"
@@ -526,9 +537,10 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                           />
                           <label
                             for="ama_hearing_case_aod_affinity_days-value"
-                          >
+                          />
+                          <div>
                             Attempt distribution to current judge for max of:
-                          </label>
+                          </div>
                         </div>
                         <div>
                           <div
@@ -559,7 +571,9 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                         </div>
                       </div>
                       <div>
-                        <div>
+                        <div
+                          class="radio-with-text"
+                        >
                           <input
                             checked=""
                             disabled=""
@@ -570,9 +584,10 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                           />
                           <label
                             for="ama_hearing_case_aod_affinity_days-infinite"
-                          >
+                          />
+                          <div>
                             Always distribute to current judge
-                          </label>
+                          </div>
                         </div>
                         <div>
                           <div
@@ -582,7 +597,9 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                         </div>
                       </div>
                       <div>
-                        <div>
+                        <div
+                          class="radio-with-text"
+                        >
                           <input
                             disabled=""
                             id="ama_hearing_case_aod_affinity_days-omit"
@@ -592,9 +609,10 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                           />
                           <label
                             for="ama_hearing_case_aod_affinity_days-omit"
-                          >
+                          />
+                          <div>
                             Omit variable from distribution rules
-                          </label>
+                          </div>
                         </div>
                         <div>
                           <div
