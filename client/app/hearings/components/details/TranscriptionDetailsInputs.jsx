@@ -38,8 +38,8 @@ const TranscriptionDetailsInputs = ({ transcription, update, readOnly }) => (
             value: 'Jamison Professional Services'
           },
           {
-            label: 'The Ravens Group, Inc.',
-            value: 'The Ravens Group, Inc.'
+            label: 'Vet Reporting',
+            value: 'Vet Reporting'
           }
         ]}
         onChange={(option) => update({ transcriber: (option || {}).value })}
