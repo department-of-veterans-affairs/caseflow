@@ -127,7 +127,6 @@ const Page = memo(({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale, 
   }, []);
 
   useEffect(() => {
-    console.log(isCurrentPage, page.pageNumber);
     if (isCurrentPage) {
       setCurrentPage(page.pageNumber);
     }

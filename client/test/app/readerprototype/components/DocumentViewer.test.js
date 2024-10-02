@@ -143,43 +143,43 @@ describe('Marked as Read', () => {
   });
 });
 
-// describe('Sidebar Section', () => {
-//   beforeEach(() => {
-//     jest.clearAllMocks();
-//   });
+describe('Sidebar Section', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
-//   it('closes Sidebar and verify it stays closed on the next document', async () => {
-//     const { container, getByText, rerender } = render(<Component {...defaultProps('1')} />);
+  it('closes Sidebar and verify it stays closed on the next document', async () => {
+    const { container, getByText, rerender } = render(<Component {...defaultProps('1')} />);
 
-//     act(() => userEvent.click(getByText('Hide menu')));
-//     expect(container).toHaveTextContent('Open menu');
+    act(() => userEvent.click(getByText('Hide menu')));
+    expect(container).toHaveTextContent('Open menu');
 
-//     // act(() => userEvent.click(getByText('Next')));
-//     rerender(<Component {...defaultProps('2')} />);
-//     expect(document.title).toBe(`${documents[2].type} | Document Viewer | Caseflow Reader`);
-//     expect(screen.findByText('Open menu')).toBeInTheDocument();
-//   });
+    // act(() => userEvent.click(getByText('Next')));
+    rerender(<Component {...defaultProps('2')} />);
+    expect(document.title).toBe(`${documents[2].type} | Document Viewer | Caseflow Reader`);
+    expect(screen.findByText('Open menu')).toBeInTheDocument();
+  });
 
-//   it('closes Issue Tags section and verify it stays closed on next document', async () => {
-//     const { container, getByText, rerender } = render(<Component {...defaultProps('1')} />);
+  it('closes Issue Tags section and verify it stays closed on next document', async () => {
+    const { container, getByText, rerender } = render(<Component {...defaultProps('1')} />);
 
-//     expect(document.title).toBe(`${documents[1].type} | Document Viewer | Caseflow Reader`);
-//     expect(container).toHaveTextContent('Select or tag issues');
-//     expect(container).toHaveTextContent('Add a comment');
-//     expect(container).toHaveTextContent('Procedural');
-//     expect(container).toHaveTextContent('Document 1 of 5');
-//     act(() => userEvent.click(getByText('Issue tags')));
-//     expect(container).not.toHaveTextContent('Select or tag issues');
+    expect(document.title).toBe(`${documents[1].type} | Document Viewer | Caseflow Reader`);
+    expect(container).toHaveTextContent('Select or tag issues');
+    expect(container).toHaveTextContent('Add a comment');
+    expect(container).toHaveTextContent('Procedural');
+    expect(container).toHaveTextContent('Document 1 of 5');
+    act(() => userEvent.click(getByText('Issue tags')));
+    expect(container).not.toHaveTextContent('Select or tag issues');
 
-//     // act(() => userEvent.click(getByText('Next')));
-//     rerender(<Component {...defaultProps('2')} />);
-//     expect(document.title).toBe(`${documents[2].type} | Document Viewer | Caseflow Reader`);
-//     expect(container).toHaveTextContent('Document 2 of 5');
-//     expect(screen.findByText('Add a comment')).toBeInTheDocument();
-//     expect(screen.findByText('Procedural')).toBeInTheDocument();
-//     expect(screen.queryByText('Select or tag issues')).not.toBeInTheDocument();
-//   });
-// });
+    // act(() => userEvent.click(getByText('Next')));
+    rerender(<Component {...defaultProps('2')} />);
+    expect(document.title).toBe(`${documents[2].type} | Document Viewer | Caseflow Reader`);
+    expect(container).toHaveTextContent('Document 2 of 5');
+    expect(screen.findByText('Add a comment')).toBeInTheDocument();
+    expect(screen.findByText('Procedural')).toBeInTheDocument();
+    expect(screen.queryByText('Select or tag issues')).not.toBeInTheDocument();
+  });
+});
 
 describe('Zoom', () => {
   beforeEach(() => {
