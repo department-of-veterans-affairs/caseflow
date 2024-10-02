@@ -1,12 +1,53 @@
 /* eslint-disable react/prop-types */
-import { render, waitFor } from "@testing-library/react";
-import React from "react";
-import { Provider } from "react-redux";
-import { applyMiddleware, createStore } from "redux";
-import thunk from "redux-thunk";
-import pdfViewerReducer from "../../../../app/reader/PdfViewer/PdfViewerReducer";
-import DocumentViewer from "../../../../app/readerprototype/DocumentViewer";
-import { MemoryRouter } from "react-router-dom";
+import { render, waitFor } from '@testing-library/react';
+import React from 'react';
+import { Provider } from 'react-redux';
+import { applyMiddleware, createStore } from 'redux';
+import thunk from 'redux-thunk';
+import pdfViewerReducer from '../../../../app/reader/PdfViewer/PdfViewerReducer';
+import DocumentViewer from '../../../../app/readerprototype/DocumentViewer';
+import { MemoryRouter } from 'react-router-dom';
+import userEvent from '@testing-library/user-event';
+
+window.IntersectionObserver = jest.fn(() => ({
+  observe: jest.fn(),
+  disconnect: jest.fn()
+}));
+window.HTMLElement.prototype.scrollIntoView = jest.fn;
+
+jest.mock('../../../../app/util/ApiUtil', () => ({
+  get: jest.fn().mockResolvedValue({
+    body: {
+      appeal: {
+        data: {}
+      }
+    },
+    header: { 'x-document-source': 'VBMS' }
+  }),
+  patch: jest.fn().mockResolvedValue({})
+}));
+jest.mock('../../../../app/util/NetworkUtil', () => ({
+  connectionInfo: jest.fn(),
+}));
+jest.mock('../../../../app/util/Metrics', () => ({
+  storeMetrics: jest.fn().mockResolvedValue(),
+  recordAsyncMetrics: jest.fn().mockResolvedValue(),
+}));
+jest.mock('pdfjs-dist', () => ({
+  getDocument: jest.fn().mockImplementation(() => ({
+    docId: 1,
+    promise: Promise.resolve({
+      numPages: 2,
+      getPage: jest.fn((pageNumber) => ({
+        render: jest.fn(pageNumber),
+        getTextContent: jest.fn().mockResolvedValue({ items: [] }),
+        getViewport: jest.fn(() => ({ width: 100, height: 200 }))
+      })),
+    }),
+  })),
+  renderTextLayer: jest.fn(),
+  GlobalWorkerOptions: jest.fn().mockResolvedValue(),
+}));
 
 afterEach(() => jest.clearAllMocks());
 
@@ -31,7 +72,7 @@ const getStore = () =>
           },
         },
         tagOptions: [],
-        openedAccordionSections: ["Issue tags", "Comments", "Categories"],
+        openedAccordionSections: ['Issue tags', 'Comments', 'Categories'],
       },
       documentList: {
         searchCategoryHighlights: [{ 1: {} }, { 2: {} }],
@@ -52,25 +93,25 @@ const props = {
       category_medical: null,
       category_other: null,
       category_procedural: true,
-      created_at: "2024-09-17T12:30:52.925-04:00",
+      created_at: '2024-09-17T12:30:52.925-04:00',
       description: null,
-      file_number: "216979849",
+      file_number: '216979849',
       previous_document_version_id: null,
-      received_at: "2024-09-14",
-      series_id: "377120",
-      type: "NOD",
-      updated_at: "2024-09-17T12:41:11.000-04:00",
-      upload_date: "2024-09-15",
-      vbms_document_id: "1",
-      content_url: "/document/39/pdf",
-      filename: "filename-798447.pdf",
+      received_at: '2024-09-14',
+      series_id: '377120',
+      type: 'NOD',
+      updated_at: '2024-09-17T12:41:11.000-04:00',
+      upload_date: '2024-09-15',
+      vbms_document_id: '1',
+      content_url: '/document/39/pdf',
+      filename: 'filename-798447.pdf',
       category_case_summary: true,
-      serialized_vacols_date: "",
-      serialized_receipt_date: "09/14/2024",
+      serialized_vacols_date: '',
+      serialized_receipt_date: '09/14/2024',
       matching: false,
       opened_by_current_user: false,
       tags: [],
-      receivedAt: "2024-09-14",
+      receivedAt: '2024-09-14',
       listComments: false,
       wasUpdated: false,
     },
@@ -79,34 +120,35 @@ const props = {
       category_medical: null,
       category_other: null,
       category_procedural: true,
-      created_at: "2024-09-17T12:30:52.925-04:00",
+      created_at: '2024-09-17T12:30:52.925-04:00',
       description: null,
-      file_number: "216979849",
+      file_number: '216979849',
       previous_document_version_id: null,
-      received_at: "2024-09-14",
-      series_id: "377120",
-      type: "NOD",
-      updated_at: "2024-09-17T12:41:11.000-04:00",
-      upload_date: "2024-09-15",
-      vbms_document_id: "1",
-      content_url: "/document/39/pdf",
-      filename: "filename-798447.pdf",
+      received_at: '2024-09-14',
+      series_id: '377120',
+      type: 'NOD',
+      updated_at: '2024-09-17T12:41:11.000-04:00',
+      upload_date: '2024-09-15',
+      vbms_document_id: '1',
+      content_url: '/document/39/pdf',
+      filename: 'filename-798447.pdf',
       category_case_summary: true,
-      serialized_vacols_date: "",
-      serialized_receipt_date: "09/14/2024",
+      serialized_vacols_date: '',
+      serialized_receipt_date: '09/14/2024',
       matching: false,
       opened_by_current_user: false,
       tags: [],
-      receivedAt: "2024-09-14",
+      receivedAt: '2024-09-14',
       listComments: false,
       wasUpdated: false,
     },
   ],
   showPdf: jest.fn(),
-  documentPathBase: "/3575931/documents",
+  documentPathBase: '/3575931/documents',
   match: {
-    params: { docId: "1", vacolsId: "3575931" },
+    params: { docId: '1', vacolsId: '3575931' },
   },
+  zoomLevel: 100
 };
 
 const Component = () => (
@@ -121,18 +163,22 @@ describe('Open Document and Test Column Layout', () => {
   it('should change layout from single column to double column at larger width', async () => {
     // Initial render at width 1080 (single column)
     global.innerWidth = 1080;
-    const { container } = render(<Component doc={{}} document={{}} />);
+    const { container, getByLabelText, debug } = render(<Component />);
 
     // verify initial width
     expect(global.innerWidth).toBe(1080);
 
     // Simulate typing 2 into the page number text box
-    const pageNumberTextBox = container.querySelector('#page-progress-indicator-input');
-    pageNumberTextBox.value = 2;
+    await waitFor(() => expect(container).not.toHaveTextContent('Loading document...'));
+
+    expect(container).not.toHaveTextContent('Loading document...');
+    const pageNumberTextBox = getByLabelText('Page');
+
+    userEvent.type(pageNumberTextBox, '{backspace}2{enter}');
 
     // Verify the textbox now holds "2"
-    waitFor(() =>
-      expect(container).querySelector('#page-progress-indicator-input').value.toBe(2)
+    await waitFor(() =>
+      expect(pageNumberTextBox.value).toBe('2')
     );
 
     // Now simulate increasing the screen width to 2000px (double column layout)
@@ -141,8 +187,8 @@ describe('Open Document and Test Column Layout', () => {
     expect(global.innerWidth).toBe(2000);
 
     // After resizing, the layout should change and the text box should now display 1
-    waitFor(() =>
-      expect(container).querySelector('#page-progress-indicator-input').value.toBe(1)
+    await waitFor(() =>
+      expect(pageNumberTextBox.value).toBe('1')
     );
 
     // Simulate a smaller width (1100px), where it should still be a single column layout
@@ -151,8 +197,8 @@ describe('Open Document and Test Column Layout', () => {
     expect(global.innerWidth).toBe(1100);
 
     // The page number should still remain 1
-    waitFor(() =>
-      expect(container).querySelector('#page-progress-indicator-input').value.toBe('1')
+    await waitFor(() =>
+      expect(pageNumberTextBox.value).toBe('1')
     );
   });
 });
