@@ -26,6 +26,9 @@ describe VACOLS::CaseDocket, :all_dbs do
   let(:inactive_judge) { create(:user, :inactive) }
   let!(:inactive_vacols_judge) { create(:staff, :judge_role, svlj: "V", sdomainid: inactive_judge.css_id) }
 
+  let(:caseflow_attorney) { create(:user) }
+  let!(:vacols_attorney) { create(:staff, :attorney_role, sdomainid: caseflow_attorney.css_id) }
+
   let(:nonpriority_ready_case_bfbox) { nil }
   let(:nonpriority_ready_case_docket_number) { "1801001" }
   let!(:nonpriority_ready_case) do
@@ -157,6 +160,36 @@ describe VACOLS::CaseDocket, :all_dbs do
     subject { VACOLS::CaseDocket.nod_count }
     it "counts nod stage appeals" do
       expect(subject).to eq(1)
+    end
+  end
+
+  context ".genpop_priority_count" do
+    subject { VACOLS::CaseDocket.genpop_priority_count }
+    it "counts genpop priority appeals" do
+      expect(subject).to eq(2)
+    end
+
+    context "with affinitized appeals" do
+      let!(:aod_cavc_ready_case_within_affinity) do
+        create(:legacy_cavc_appeal,
+               judge: vacols_judge,
+               attorney: vacols_attorney,
+               aod: true,
+               tied_to: false,
+               affinity_start_date: 3.days.ago)
+      end
+
+      let!(:cavc_ready_case_within_affinity) do
+        create(:legacy_cavc_appeal,
+               judge: vacols_judge,
+               attorney: vacols_attorney,
+               tied_to: false,
+               affinity_start_date: 3.days.ago)
+      end
+
+      it "correctly filters out appeals based on the lever filters" do
+        expect(subject).to eq(2)
+      end
     end
   end
 
