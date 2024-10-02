@@ -4,30 +4,45 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import Checkbox from '../../components/Checkbox';
-import { functions } from 'lodash';
 
 export default function FunctionConfiguration(props) {
   const [isChecked, functionIsChecked] = useState(false);
+  const [selectedFunctions, setSelectedFunctions] = useState({});
 
   let functionOption = props.functionOption;
+  let currentState = props.currentState;
+  let updateState = props.updateState;
 
-  const onChangeHandle = (value) => {
+  /**
+ * This function handles the checking of the box and updates state.
+ * @param {selectedFunction} selectedFunction is the selected checkbox value
+ * @returns {updatedSelections} a copy of the state object that tracks function selections.
+ */
+  const handleFunctionSelect = (selectedFunction) => {
     functionIsChecked(!isChecked);
-    props.updateState(
-      {
-        ...props.currentState,
-        user: {
-          ...props.currentState.user,
+    setSelectedFunctions((prev) => {
+      const updatedSelections = { ...prev };
+
+      if (updatedSelections[selectedFunction]) {
+        delete updatedSelections[selectedFunction];
+      } else {
+        updatedSelections[selectedFunction] = true;
+      }
+      updateState(
+        {
+          ...currentState,
           user: {
-            ...props.currentState.user.user,
-            functions: {
-              ...functions,
-              [functionOption]: value
+            ...currentState.user,
+            user: {
+              ...currentState.user.user,
+              functions: updatedSelections
             }
           }
         }
-      }
-    );
+      );
+
+      return updatedSelections;
+    });
   };
 
   return (
@@ -35,9 +50,10 @@ export default function FunctionConfiguration(props) {
       <Checkbox
         label={functionOption}
         name={functionOption}
-        onChange={(newVal) => {
-          onChangeHandle(newVal);
+        onChange={() => {
+          handleFunctionSelect(functionOption);
         }}
+        isChecked={Boolean(selectedFunctions[functionOption])}
         value={isChecked}
       />
     </div>

@@ -26,11 +26,12 @@ export default function UserConfiguration(props) {
   const featureToggles = props.featuresList;
   const allOrganizations = props.form_values.all_organizations;
   const currentState = props.currentState;
+  const updateState = props.updateState;
 
   const handleStationSelect = ({ value }) => {
     stationIsSelected(true);
     setStationSelected(value);
-    props.updateState(
+    updateState(
       {
         ...currentState,
         user: {
@@ -54,7 +55,7 @@ export default function UserConfiguration(props) {
       } else {
         updatedSelections[org] = true;
       }
-      props.updateState(
+      updateState(
         {
           ...currentState,
           user: {
