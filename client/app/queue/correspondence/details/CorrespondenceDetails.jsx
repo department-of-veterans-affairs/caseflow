@@ -830,6 +830,12 @@ const CorrespondenceDetails = (props) => {
     }
   };
 
+  const customSuccessBannerStyles = {
+    style: {
+      backgroundPosition: '2rem 1.8rem'
+    }
+  };
+
   return (
     <>
       {
@@ -837,7 +843,9 @@ const CorrespondenceDetails = (props) => {
           <div style={{ padding: '10px' }}>
             <Alert
               type="success"
-              title={COPY.CORRESPONDENCE_DETAILS.SAVE_CHANGES_BANNER.MESSAGE} />
+              title={COPY.CORRESPONDENCE_DETAILS.SAVE_CHANGES_BANNER.MESSAGE}
+              styling={customSuccessBannerStyles}
+            />
           </div>
       }
       <AppSegment filledBackground extraClassNames="app-segment-cd-details">
