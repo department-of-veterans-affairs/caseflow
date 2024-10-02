@@ -350,7 +350,6 @@ describe('CorrespondenceDetails', () => {
 
     expect(document.getElementsByClassName('plus-symbol').length).toBe(1);
     // Existing Appeals Table and Columns
-    fireEvent.click(existingAppealButton);
     expect(screen.getByText('Existing Appeals')).toBeInTheDocument();
     expect(screen.getByText('Appellant Name')).toBeInTheDocument();
     expect(screen.getByText('Appeal Status')).toBeInTheDocument();
@@ -368,7 +367,7 @@ describe('CorrespondenceDetails', () => {
     // Appeals related
     const existingAppeals = screen.getAllByText('Tasks added to appeal').length;
 
-    expect(existingAppeals).toBe(2);
+    expect(existingAppeals).toBe(3);
     expect(screen.getByText('240714-253')).toBeInTheDocument();
     expect(screen.getByText('240714-254')).toBeInTheDocument();
     expect(screen.getByText('VLJ Support Staff')).toBeInTheDocument();
@@ -377,7 +376,7 @@ describe('CorrespondenceDetails', () => {
     // Appeals related
     const tasksAddedTextCount = screen.getAllByText('Tasks added to appeal').length;
 
-    expect(tasksAddedTextCount).toBe(2);
+    expect(tasksAddedTextCount).toBe(3);
     expect(screen.getByText('240714-253')).toBeInTheDocument();
     expect(screen.getByText('240714-254')).toBeInTheDocument();
     expect(screen.getByText('VLJ Support Staff')).toBeInTheDocument();

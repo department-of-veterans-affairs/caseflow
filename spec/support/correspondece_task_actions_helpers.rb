@@ -84,16 +84,41 @@ module CorrespondenceTaskActionsHelpers
 
   def check_task_action(options = {})
     correspondence = options[:correspondence]
-    task_name = options[:task_name]
-    action = options[:action]
-    form_text = options[:form_text]
-    button_id = options[:button_id]
-    expected_message = options[:expected_message]
+    visit_correspondence(correspondence)
 
+    dropdowns = open_last_task_dropdown
+    perform_task_action(dropdowns, options)
+
+    expect_task_message(dropdowns, options)
+  end
+
+  private
+
+  def visit_correspondence(correspondence)
     visit "/queue/correspondence/#{correspondence.uuid}"
-    click_dropdown(prompt: "Select an action", text: action)
+    expect(page).to have_current_path("/queue/correspondence/#{correspondence.uuid}")
+  end
+
+  def open_last_task_dropdown
+    dropdowns = page.all(".cf-btn-link")
+    dropdowns.last.click
+    dropdowns
+  end
+
+  def perform_task_action(dropdowns, options)
+    click_dropdown(prompt: "Select an action", text: options[:action])
+    fill_in_form_text(options[:form_text])
+    click_button options[:button_id]
+    expect(page).to have_current_path("/queue/correspondence/#{options[:correspondence].uuid}")
+    dropdowns
+  end
+
+  def fill_in_form_text(form_text)
     find(".cf-form-textarea", match: :first).fill_in with: form_text
-    click_button button_id
-    expect(page).to have_content("#{task_name} #{expected_message}")
+  end
+
+  def expect_task_message(_dropdowns, options)
+    open_last_task_dropdown
+    expect(page).to have_content("#{options[:task_name]} #{options[:expected_message]}")
   end
 end

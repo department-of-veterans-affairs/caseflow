@@ -91,6 +91,19 @@ class CorrespondenceDetailsController < CorrespondenceController
     }
   end
 
+  def correspondence_params
+    params.require(:correspondence).permit(:correspondence, :va_date_of_receipt, :correspondence_type_id, :notes)
+  end
+
+  def edit_general_information
+    correspondence.update!(
+      va_date_of_receipt: correspondence_params[:va_date_of_receipt],
+      correspondence_type_id: correspondence_params[:correspondence_type_id],
+      notes: correspondence_params[:notes]
+    )
+    render json: { correspondence: serialized_correspondence }, status: :created
+  end
+
   # Overriding method to allow users to access the correspondence details page
   def verify_correspondence_access
     true
@@ -133,7 +146,7 @@ class CorrespondenceDetailsController < CorrespondenceController
   def save_correspondence_appeals
     if params[:selected_appeal_ids].present?
       params[:selected_appeal_ids].each do |appeal_id|
-        @correspondence.correspondence_appeals.create!(appeal_id: appeal_id)
+        @correspondence.correspondence_appeals.find_or_create_by(appeal_id: appeal_id)
       end
     end
     if params[:unselected_appeal_ids].present?
