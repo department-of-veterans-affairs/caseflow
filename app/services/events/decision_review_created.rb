@@ -12,7 +12,7 @@ class Events::DecisionReviewCreated
   #                 # with the one who held the lock and failed to unlock. (default: 10)
 
   class << self
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Lint/UselessAssignment
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def create!(params, headers, payload)
       consumer_event_id = params[:consumer_event_id]
       claim_id = params[:claim_id]
@@ -95,7 +95,7 @@ class Events::DecisionReviewCreated
         })
       raise error
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Lint/UselessAssignment
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     # Check if there's already a CF Event that references that Appeals-Consumer EventID
     # We will update the existing Event instead of creating a new one
