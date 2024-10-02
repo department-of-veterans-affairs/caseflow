@@ -24,13 +24,9 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
         else
           upload_s3_modified_transcription_file(tmp_folder, current_file)
         end
-      rescue StandardError => error
-        Rails.logger.error "Error to download the file #{file_name} from Box: #{error.message}"
-        raise BoxDownloadError
-      ensure
-        cleanup_tmp_files
       end
     end
+    cleanup_tmp_files
   end
 
   private
@@ -68,7 +64,11 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
   end
 
   def create_transcription_file_record(current_information, file_status, aws_link)
-    transcription_id = Hearing.find(current_information["id"])&.transcription&.id
+    if current_information["hearing_type"] == "Hearing"
+      transcription_id = Hearing.find(current_information["id"])&.transcription&.id
+    elsif current_information["hearing_type"] == "LegacyHearing"
+      transcription_id = LegacyHearing.find(current_information["id"])&.transcription&.id
+    end
     Hearings::TranscriptionFile.create!(
       hearing_id: current_information["id"],
       hearing_type: current_information["hearing_type"],
@@ -152,9 +152,9 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
         file_status = (s3_upload_result == file_path) ? "Failed upload (AWS)" : "Successful upload (AWS)"
         info = get_information(file_name, current_file)
         update_database(info, file_status)
+      else
+        fail "The file does not exist"
       end
-    rescue StandardError => error
-      Rails.logger.error "#{error} - Failed, the file does not exist"
     end
   end
 

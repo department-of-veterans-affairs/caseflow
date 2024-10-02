@@ -74,6 +74,7 @@ class LegacyHearing < CaseflowRecord
   has_many :hearing_views, as: :hearing
   has_many :appeal_stream_snapshots, foreign_key: :hearing_id
   has_one :hearing_location, as: :hearing
+  has_one :transcription, -> { order(created_at: :desc) }
   has_many :email_events, class_name: "SentHearingEmailEvent", foreign_key: :hearing_id
   has_many :email_recipients, class_name: "HearingEmailRecipient", foreign_key: :hearing_id
   has_many :transcription_files, class_name: "Hearings::TranscriptionFile", as: :hearing
