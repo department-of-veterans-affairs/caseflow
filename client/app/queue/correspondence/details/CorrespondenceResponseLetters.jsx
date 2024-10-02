@@ -9,7 +9,7 @@ import QueueFlowModal from '../../components/QueueFlowModal';
 import NewLetter from '../intake/components/AddCorrespondence/NewLetter';
 import {
   submitLetterResponse,
-  correspondenceInfo
+  updateCorrespondenceInfo
 } from '../../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
 
 const CorrespondenceResponseLetters = (props) => {
@@ -164,11 +164,11 @@ CorrespondenceResponseLetters.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  correspondenceInfo: state.correspondenceDetails.correspondenceInfo,
+  updateCorrespondenceInfo: state.correspondenceDetails.updateCorrespondenceInfo,
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  correspondenceInfo,
+  updateCorrespondenceInfo,
   submitLetterResponse: (payload, correspondence) => submitLetterResponse(payload, correspondence)
 }, dispatch);
 

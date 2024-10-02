@@ -11,7 +11,7 @@ import { updateCorrespondenceInfo } from './../correspondenceDetailsReducer/corr
 import CorrespondenceResponseLetters from './CorrespondenceResponseLetters';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
-import { prepareAppealForSearchStore, prepareAppealForStore, prepareTasksForStore } from 'app/queue/utils';
+import { prepareAppealForStore, prepareTasksForStore } from 'app/queue/utils';
 import { onReceiveTasks, onReceiveAppealDetails } from '../../QueueActions';
 import moment from 'moment';
 import Pagination from 'app/components/Pagination/Pagination';
@@ -451,7 +451,7 @@ const CorrespondenceDetails = (props) => {
             <AppSegment filledBackground noMarginTop>
               <CaseListTable
                 appeals={appealsToDisplay}
-                paginate="true"
+                paginate
                 showCheckboxes
                 taskRelatedAppealIds={selectedAppeals}
                 enableTopPagination
@@ -793,8 +793,7 @@ const CorrespondenceDetails = (props) => {
           console.error(errorMessage);
         });
     }
-
-    if (selectedAppeals.length > 0) {
+    if ((selectedAppeals.length || correspondence.correspondenceAppealIds.length) > 0) {
       const appealsSelected = selectedAppeals.filter((val) => !correspondence.correspondenceAppealIds.includes(val));
 
       const payload = {
