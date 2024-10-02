@@ -1180,10 +1180,10 @@ class RequestIssue < CaseflowRecord
   # to maintain readability, and sanitize the remaining to ensure it's validity.
   def sanitize_issue_descriptions
     [
-      self.contested_issue_description,
-      self.nonrating_issue_description
+      contested_issue_description,
+      nonrating_issue_description
     ].each do |d|
-      next unless !d.nil?
+      next if d.nil?
 
       # substitute known invalid characters
       # note - Ruby treats these symbols as valid UTF-8, so we have to manually swap them out
@@ -1195,6 +1195,5 @@ class RequestIssue < CaseflowRecord
       d.gsub!(DESCRIPTION_CHARACTERS_BLACKLIST, "")
     end
   end
-
 end
 # rubocop:enable Metrics/ClassLength
