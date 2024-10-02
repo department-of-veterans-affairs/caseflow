@@ -123,6 +123,7 @@ import NotificationsView from './NotificationsView';
 import CavcDashboard from './cavcDashboard/CavcDashboard';
 import CorrespondenceDetails from './correspondence/details/CorrespondenceDetails';
 import CorrespondenceChangeTaskTypeModal from 'app/queue/components/CorrespondenceChangeTaskTypeModal';
+import CorrespondenceEditGeneralInformationModal from './components/CorrespondenceEditGeneralInformationModal';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -747,6 +748,7 @@ class QueueApp extends React.PureComponent {
     <CorrespondenceDetails {...props.match.params}
       {...this.props}
       correspondenceResponseLetters={this.props.correspondenceResponseLetters}
+      correspondenceTypes={this.props.correspondenceTypes}
     />
   );
 
@@ -754,6 +756,12 @@ class QueueApp extends React.PureComponent {
     <CorrespondenceAssignTeamModal
       {...props.match.params}
       userOrganizations={this.props.organizations}
+    />
+  );
+
+  routedCorrespondenceEditGeneralInformationModal = (props) => (
+    <CorrespondenceEditGeneralInformationModal {...props.match.params}
+      {...this.props}
     />
   );
 
@@ -1022,6 +1030,7 @@ class QueueApp extends React.PureComponent {
               title={`${PAGE_TITLES.CORRESPONDENCE_INTAKE}`}
               render={this.routedCorrespondenceIntake}
             />
+
             <PageRoute
               exact
               path={
@@ -1043,6 +1052,7 @@ class QueueApp extends React.PureComponent {
               title={`${PAGE_TITLES.ASSIGN_TASK} | Caseflow`}
               render={this.routedCorrespondenceAssignTaskModal}
             />
+
             <PageRoute
               exact
               path={
@@ -1070,6 +1080,13 @@ class QueueApp extends React.PureComponent {
               }
               title={`${PAGE_TITLES.MARK_TASK_COMPLETE} | Caseflow`}
               render={this.routedCorrespondenceCompleteTaskModal}
+            />
+
+            <PageRoute
+              exact
+              path ="/queue/correspondence/:correspondence_uuid/modal/edit_correspondence_general_information"
+              title={`${PAGE_TITLES.EDIT_GENERAL_INFORMATION} | Caseflow}`}
+              render={this.routedCorrespondenceEditGeneralInformationModal}
             />
 
             {motionToVacateRoutes.page}
