@@ -38,9 +38,9 @@ class Events::DecisionReviewUpdated
           Events::DecisionReviewUpdated::UpdateEndProductEstablishment.process!(event: event, parser: parser)
           RequestIssuesUpdateEvent.new(user: user, review: review, parser: parser).perform!
           # Update the Event after all operations have completed
-          event.update!(completed_at: Time.now.in_time_zone, error: nil, info: {})
+          event.update!(completed_at: Time.now.in_time_zone, error: nil, info: { "event_payload" => payload })
           # Audit all request issues
-          Events::DecisionReviewUpdated::DecisionReviewUpdatedAudit.new(event: event, parser: parser).call!
+          # Events::DecisionReviewUpdated::DecisionReviewUpdatedAudit.new(event: event, parser: parser).call!
         end
       end
     rescue Caseflow::Error::RedisLockFailed => error
@@ -58,7 +58,8 @@ class Events::DecisionReviewUpdated
           "failed_claim_id" => claim_id,
           "error" => error.message,
           "error_class" => error.class.name,
-          "error_backtrace" => error.backtrace
+          "error_backtrace" => error.backtrace,
+          "event_payload" => payload
         })
       raise error
     end
