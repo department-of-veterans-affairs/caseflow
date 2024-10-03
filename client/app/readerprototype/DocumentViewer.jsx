@@ -29,9 +29,8 @@ const DocumentViewer = (props) => {
   const currentDocumentId = Number(props.match.params.docId);
   const doc = props.allDocuments.find((x) => x.id === currentDocumentId);
 
-  document.title = `${(doc && doc.type) || ''} | Document Viewer | Caseflow Reader`;
-
   useEffect(() => {
+    document.title = `${(doc && doc.type) || ''} | Document Viewer | Caseflow Reader`;
     setShowSearchBar(false);
   }, [currentDocumentId]);
 
