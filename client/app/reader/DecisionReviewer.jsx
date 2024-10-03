@@ -23,6 +23,7 @@ import { CATEGORIES } from './analytics';
 import { documentCategories } from './constants';
 
 import DocumentViewer from '../readerprototype/DocumentViewer';
+import ReaderRoute from '../components/ReaderRoute';
 
 const fireSingleDocumentModeEvent = _.memoize(() => {
   window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'single-document-mode');
@@ -173,7 +174,7 @@ export class DecisionReviewer extends React.PureComponent {
       rightNavElement={<CaseSearchLink />}
       defaultUrl="/queue"
       outsideCurrentRouter>
-      <PageRoute
+      <ReaderRoute
         exact
         title="Document Viewer | Caseflow Reader"
         breadcrumb="Document Viewer"

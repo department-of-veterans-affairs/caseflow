@@ -1,0 +1,30 @@
+let documentId = 0;
+
+export const documentFactory = (overrides = {}) => ({
+  id: documentId += 1,
+  category_medical: null,
+  category_other: null,
+  category_procedural: true,
+  created_at: '2024-09-17T12:30:52.925-04:00',
+  description: null,
+  file_number: '216979849',
+  previous_document_version_id: null,
+  received_at: '2024-09-14',
+  series_id: '377120',
+  type: 'NOD',
+  updated_at: '2024-09-17T12:41:11.000-04:00',
+  upload_date: '2024-09-15',
+  vbms_document_id: '1',
+  content_url: '/document/39/pdf',
+  filename: 'filename-798447.pdf',
+  category_case_summary: true,
+  serialized_vacols_date: '',
+  serialized_receipt_date: '09/14/2024',
+  matching: false,
+  opened_by_current_user: false,
+  tags: [],
+  receivedAt: '2024-09-14',
+  listComments: false,
+  wasUpdated: false,
+  ...overrides
+});

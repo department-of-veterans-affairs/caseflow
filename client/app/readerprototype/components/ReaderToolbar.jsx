@@ -138,14 +138,14 @@ const ReaderToolbar = ({
           <SearchIcon />
         </Button>
         {!showSideBar &&
-          (<span>
+          <span>
             <Button
               name="open sidebar menu"
               classNames={['cf-pdf-button']}
-              onClick={() => toggleSideBar()}>
+              onClick={toggleSideBar}>
               <strong> Open menu </strong>
             </Button>
-          </span>)
+          </span>
         }
       </div>
     </div>

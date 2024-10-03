@@ -1,146 +1,86 @@
-import { render, waitFor } from '@testing-library/react';
+import { act, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DocumentViewer from 'app/readerprototype/DocumentViewer';
+import ApiUtil from 'app/util/ApiUtil';
+import { def, get, set } from 'bdd-lazy-var/getter';
 import React, { useState } from 'react';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
-import { applyMiddleware, createStore } from 'redux';
-import thunk from 'redux-thunk';
-import { rootReducer } from 'app/reader/reducers';
-import ApiUtil from 'app/util/ApiUtil';
+import { documentFactory } from '../factories';
+import getStore from '../mockReaderStore';
+
+beforeEach(() => {
+  window.IntersectionObserver = jest.fn(() => ({
+    observe: jest.fn(),
+    disconnect: jest.fn()
+  }));
+  window.HTMLElement.prototype.scrollIntoView = jest.fn;
+});
 
 afterEach(() => jest.clearAllMocks());
 
-const doc = {
-  id: 1,
-  tags: [],
-  category_procedural: true,
-  category_other: false,
-  category_medical: false,
-  category_case_summary: false,
-  opened_by_current_user: false,
-};
-
-const props = {
+def('history', () => []);
+def('match', () => ({
+  params: { docId: '1', vacolsId: '3575931' },
+}));
+def('document1', () => documentFactory({ id: 1, type: 'VA 8 Certification of Appeal' }));
+def('document2', () => documentFactory({ id: 2, type: 'Supplemental Statement of the Case' }));
+def('document3', () => documentFactory({ id: 3, type: 'CAPRI' }));
+def('document4', () => documentFactory({ id: 4, type: 'Notice of Disagreement' }));
+def('document5', () => documentFactory({ id: 5, type: 'Rating Decision - Codesheet' }));
+def('props', () => ({
   allDocuments: [
-    {
-      id: 1,
-      category_medical: null,
-      category_other: null,
-      category_procedural: true,
-      created_at: '2024-09-17T12:30:52.925-04:00',
-      description: null,
-      file_number: '216979849',
-      previous_document_version_id: null,
-      received_at: '2024-09-14',
-      series_id: '377120',
-      type: 'NOD',
-      updated_at: '2024-09-17T12:41:11.000-04:00',
-      upload_date: '2024-09-15',
-      vbms_document_id: '1',
-      content_url: '/document/39/pdf',
-      filename: 'filename-798447.pdf',
-      category_case_summary: true,
-      serialized_vacols_date: '',
-      serialized_receipt_date: '09/14/2024',
-      matching: false,
-      opened_by_current_user: false,
-      tags: [],
-      receivedAt: '2024-09-14',
-      listComments: false,
-      wasUpdated: false,
-    },
-    {
-      id: 2,
-      category_medical: null,
-      category_other: null,
-      category_procedural: true,
-      created_at: '2024-09-17T12:30:52.925-04:00',
-      description: null,
-      file_number: '216979849',
-      previous_document_version_id: null,
-      received_at: '2024-09-14',
-      series_id: '377120',
-      type: 'NOD',
-      updated_at: '2024-09-17T12:41:11.000-04:00',
-      upload_date: '2024-09-15',
-      vbms_document_id: '1',
-      content_url: '/document/39/pdf',
-      filename: 'filename-798447.pdf',
-      category_case_summary: true,
-      serialized_vacols_date: '',
-      serialized_receipt_date: '09/14/2024',
-      matching: false,
-      opened_by_current_user: false,
-      tags: [],
-      receivedAt: '2024-09-14',
-      listComments: false,
-      wasUpdated: false,
-    },
+    get.document1,
+    get.document2,
+    get.document3,
+    get.document4,
+    get.document5,
   ],
-  showPdf: jest.fn(),
-  documentPathBase: '/3575931/documents',
-  match: {
-    params: { docId: '1', vacolsId: '3575931' },
+  showPdf: (docId) => () => {
+    get.history.push(`/3575931/documents/${docId}`);
+    get.match.params = { docId, vacolsId: '3575931' };
   },
+  history: get.history,
+  match: get.match,
+  documentPathBase: '/3575931/documents',
+  fetchAppealDetails: jest.fn(() => Promise.resolve(true)),
+  onZoomChange: jest.fn()
+}));
+def('storeProps', () => ({
+  filteredDocIds: [1, 2],
+}));
+
+const docIdProp = (docId) => {
+  return {
+    match: {
+      params: { docId, vacolsId: '3575931' },
+    },
+  };
 };
 
-const getStore = () =>
-  createStore(
-    rootReducer,
-    {
-      annotationLayer: {
-        annotations: 1,
-        deleteAnnotationModalIsOpenFor: null,
-        shareAnnotationModalIsOpenFor: null
-      },
-      documents: { 1: doc },
-      documentList: {
-        pdfList: {
-          lastReadDocId: null,
-        },
-        searchCategoryHighlights: [{ 1: {} }, { 2: {} }],
-        filteredDocIds: [
-          1,
-          2,
-        ],
-        docFilterCriteria: {},
-        pdfViewer: {
-          pdfSideBarError: {
-            category: {
-              visible: false,
-            },
-          },
-          tagOptions: [],
-          openedAccordionSections: ['Issue tags', 'Comments', 'Categories'],
-        },
-      },
-    },
-    applyMiddleware(thunk));
-
-const Component = () => {
+const Component = (props = {}) => {
   const [zoomLevel, setZoomLevel] = useState(100);
 
-  return <Provider store={getStore()}>
-    <MemoryRouter>
-      <DocumentViewer {...props} zoomLevel={zoomLevel}
-        onZoomChange={(newZoomLevel) => setZoomLevel(newZoomLevel)} />
-    </MemoryRouter>
-  </Provider>;
+  return (
+    <Provider store={getStore({ ...get.storeProps })}>
+      <MemoryRouter history={get.history}>
+        <DocumentViewer
+          {...get.props}
+          onZoomChange={(newZoomLevel) => setZoomLevel(newZoomLevel)}
+          zoomLevel={zoomLevel}
+          {...props}
+        />
+      </MemoryRouter>
+    </Provider>
+  );
 };
 
-describe('user visiting a document', () => {
-
-  beforeEach(() => {
-    jest.mock('app/util/ApiUtil', () => ({
-      patch: jest.fn(),
-    }));
-  });
-
-  it('records the viewing of the document', () => {
+describe('Marked as Read', () => {
+  it('marks document with docId 1 as read', () => {
+    jest.clearAllMocks();
     const spy = jest.spyOn(ApiUtil, 'patch');
 
-    render(<Component {...props} />);
+    render(<Component />);
     expect(spy).
       toHaveBeenCalledWith(
         '/document/1/mark-as-read',
@@ -149,44 +89,80 @@ describe('user visiting a document', () => {
   });
 });
 
-describe('Open Document and Close Issue tags Sidebar Section', () => {
-  it('Navigate to next document and verify Issue tags stay closed', async () => {
-    const { container, getByText } = render(
-      <Component doc={doc} document={doc} />
-    );
+describe('Sidebar Section', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.spyOn(ApiUtil, 'patch').mockResolvedValue();
+  });
 
-    expect(container).toHaveTextContent('Select or tag issues');
-    expect(container).toHaveTextContent('Add a comment');
-    expect(container).toHaveTextContent('Procedural');
+  it('closes the Issue Tags section and verify it stays closed on next document', async () => {
+    const { container, getByText } = render(<Component />);
+
     expect(container).toHaveTextContent('Document 1 of 2');
-
+    expect(document.title).toBe(`${get.document1.type} | Document Viewer | Caseflow Reader`);
+    // there are 3 open sections in the sidebar
+    expect(container.querySelectorAll('div.rc-collapse-item-active').length).toEqual(3);
     userEvent.click(getByText('Issue tags'));
-    waitFor(() =>
-      expect(container).not.toHaveTextContent('Select or tag issues')
-    );
+    // we closed a section in the sidebar, so now there are 2 open
+    expect(container.querySelectorAll('div.rc-collapse-item-active').length).toEqual(2);
 
     userEvent.click(getByText('Next'));
-    waitFor(() => expect(container).toHaveTextContent('Add a comment'));
-    waitFor(() => expect(container).toHaveTextContent('Procedural'));
-    waitFor(() => expect(container).toHaveTextContent('Document 2 of 2'));
-    waitFor(() =>
-      expect(container).not.toHaveTextContent('Select or tag issues')
-    );
+    // we make sure we are on the next document
+    await waitFor(() => expect(container).toHaveTextContent('Document 2 of 2'));
+    expect(document.title).toBe(`${get.document2.type} | Document Viewer | Caseflow Reader`);
+    // there are still only 2 open sections in the sidebar
+    expect(container.querySelectorAll('div.rc-collapse-item-active').length).toEqual(2);
+  });
 
+  it('closes Sidebar and verify it stays closed on the next document', async () => {
+    const { container, getByText } = render(<Component />);
+
+    expect(container).toHaveTextContent('Document 1 of 2');
+    // Initially, the sidebar should be visible with button to close
+    expect(container).toHaveTextContent('Hide menu');
+    // Simulate clicking 'Hide menu' to close menu
+    userEvent.click(getByText('Hide menu'));
+    // Sidebar should have 'Open menu' to reopen sidebar
+    expect(container).toHaveTextContent('Open menu');
+
+    // Simulate navigating to another document
+    userEvent.click(getByText('Next'));
+    // we make sure we are on the next document
+    await waitFor(() => expect(container).toHaveTextContent('Document 2 of 2'));
+    // Sidebar should remain hidden and have open menu
+    expect(container).toHaveTextContent('Open menu');
   });
 });
 
-test('should change zoom level to 80%, then to 60% to simulate parent states update', async () => {
-  const { container, getByRole } = render(<Component {...props} />);
+describe('Zoom', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.spyOn(ApiUtil, 'patch').mockResolvedValue();
+  });
 
-  expect(container).toHaveTextContent('100%');
-  const zoomOutButton = getByRole('button', { name: /zoom out/i });
+  it('zooms out and verify zoom level persists on next document', async () => {
+    const { container, getByText } = render(<Component />);
 
-  userEvent.click(zoomOutButton);
+    await waitFor(() => expect(container).toHaveTextContent('Document 1 of 2'));
+    expect(container).toHaveTextContent('100%');
+    userEvent.click(document.querySelector('#button-zoomOut'));
+    await waitFor(() => expect(container).toHaveTextContent('90%'));
 
-  await waitFor(() => expect(container).toHaveTextContent('90%'));
+    userEvent.click(getByText('Next'));
+    // await waitFor(() => expect(container).toHaveTextContent('Document 2 of 2'));
+    await waitFor(() => expect(container).toHaveTextContent('90%'));
+  });
 
-  userEvent.click(zoomOutButton);
+  it('zooms in and verify zoom level persists on previous document', async () => {
+    const { container, getByText } = render(<Component {...docIdProp('2')} />);
 
-  await waitFor(() => expect(container).toHaveTextContent('80%'));
+    await waitFor(() => expect(container).toHaveTextContent('Document 2 of 2'));
+    expect(container).toHaveTextContent('100%');
+    userEvent.click(document.querySelector('#button-zoomIn'));
+    await waitFor(() => expect(container).toHaveTextContent('110%'));
+
+    userEvent.click(getByText('Previous'));
+    // await waitFor(() => expect(container).toHaveTextContent('Document 1 of 2'));
+    await waitFor(() => expect(container).toHaveTextContent('110%'));
+  });
 });

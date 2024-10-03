@@ -7,30 +7,30 @@ import ReaderSearchBar from './components/ReaderSearchBar';
 import ReaderSidebar from './components/ReaderSidebar';
 import ReaderToolbar from './components/ReaderToolbar';
 
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { CATEGORIES } from '../reader/analytics';
 import { stopPlacingAnnotation } from '../reader/AnnotationLayer/AnnotationActions';
 import DeleteModal from './components/Comments/DeleteModal';
 import ShareModal from './components/Comments/ShareModal';
 import { getRotationDeg } from './util/documentUtil';
 import { ROTATION_DEGREES, ZOOM_INCREMENT, ZOOM_LEVEL_MAX, ZOOM_LEVEL_MIN } from './util/readerConstants';
+import { showSideBarSelector } from './selectors';
+import { togglePdfSidebar } from '../reader/PdfViewer/PdfViewerActions';
 
 const DocumentViewer = (props) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [numPages, setNumPages] = useState(null);
   const [rotateDeg, setRotateDeg] = useState('0deg');
   const [showSearchBar, setShowSearchBar] = useState(false);
-  const [showSideBar, setShowSideBar] = useState(true);
   const [isDocumentLoadError, setIsDocumentLoadError] = useState(false);
-
+  const showSideBar = useSelector(showSideBarSelector);
   const dispatch = useDispatch();
 
   const currentDocumentId = Number(props.match.params.docId);
   const doc = props.allDocuments.find((x) => x.id === currentDocumentId);
 
-  document.title = `${(doc && doc.type) || ''} | Document Viewer | Caseflow Reader`;
-
   useEffect(() => {
+    document.title = `${(doc && doc.type) || ''} | Document Viewer | Caseflow Reader`;
     setShowSearchBar(false);
   }, [currentDocumentId]);
 
@@ -51,24 +51,16 @@ const DocumentViewer = (props) => {
         dispatch(stopPlacingAnnotation('from-back-to-documents'));
         props.history.push(props.documentPathBase);
       }
-    };
 
-    window.addEventListener('keydown', keyHandler);
-
-    return () => window.removeEventListener('keydown', keyHandler);
-  }, []);
-
-  useEffect(() => {
-    const keyHandler = (event) => {
       if (event.altKey && event.code === 'KeyM' && !event.shiftKey) {
-        setShowSideBar(!showSideBar);
+        dispatch(togglePdfSidebar());
       }
     };
 
     window.addEventListener('keydown', keyHandler);
 
     return () => window.removeEventListener('keydown', keyHandler);
-  }, [showSideBar]);
+  }, []);
 
   const getPageNumFromScrollTop = (event) => {
     const { clientHeight, scrollTop, scrollHeight } = event.target;
@@ -119,7 +111,7 @@ const DocumentViewer = (props) => {
           showSearchBar={showSearchBar}
           toggleSearchBar={setShowSearchBar}
           showSideBar={showSideBar}
-          toggleSideBar={() => setShowSideBar(true)}
+          toggleSideBar={() => dispatch(togglePdfSidebar())}
           zoomLevel={props.zoomLevel}
         />
         {showSearchBar && <ReaderSearchBar />}
@@ -147,7 +139,7 @@ const DocumentViewer = (props) => {
         <ReaderSidebar
           doc={doc}
           showSideBar={showSideBar}
-          toggleSideBar={() => setShowSideBar(false)}
+          toggleSideBar={() => dispatch(togglePdfSidebar())}
           vacolsId={props.match.params.vacolsId}
         />
       )}
