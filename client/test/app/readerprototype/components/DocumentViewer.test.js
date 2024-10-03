@@ -1,8 +1,8 @@
-import { render, waitFor } from '@testing-library/react';
+import { act, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DocumentViewer from 'app/readerprototype/DocumentViewer';
 import ApiUtil from 'app/util/ApiUtil';
-import { def, get } from 'bdd-lazy-var/getter';
+import { def, get, set } from 'bdd-lazy-var/getter';
 import React, { useState } from 'react';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
@@ -43,18 +43,32 @@ def('props', () => ({
   history: get.history,
   match: get.match,
   documentPathBase: '/3575931/documents',
+  fetchAppealDetails: jest.fn(() => Promise.resolve(true)),
+  onZoomChange: jest.fn()
+}));
+def('storeProps', () => ({
+  filteredDocIds: [1, 2],
 }));
 
-const Component = () => {
+const docIdProp = (docId) => {
+  return {
+    match: {
+      params: { docId, vacolsId: '3575931' },
+    },
+  };
+};
+
+const Component = (props = {}) => {
   const [zoomLevel, setZoomLevel] = useState(100);
 
   return (
-    <Provider store={getStore()}>
-      <MemoryRouter history={history}>
+    <Provider store={getStore({ ...get.storeProps })}>
+      <MemoryRouter history={get.history}>
         <DocumentViewer
           {...get.props}
           onZoomChange={(newZoomLevel) => setZoomLevel(newZoomLevel)}
           zoomLevel={zoomLevel}
+          {...props}
         />
       </MemoryRouter>
     </Provider>
@@ -84,7 +98,7 @@ describe('Sidebar Section', () => {
   it('closes the Issue Tags section and verify it stays closed on next document', async () => {
     const { container, getByText } = render(<Component />);
 
-    expect(container).toHaveTextContent('Document 1 of 5');
+    expect(container).toHaveTextContent('Document 1 of 2');
     expect(document.title).toBe(`${get.document1.type} | Document Viewer | Caseflow Reader`);
     // there are 3 open sections in the sidebar
     expect(container.querySelectorAll('div.rc-collapse-item-active').length).toEqual(3);
@@ -94,7 +108,7 @@ describe('Sidebar Section', () => {
 
     userEvent.click(getByText('Next'));
     // we make sure we are on the next document
-    await waitFor(() => expect(container).toHaveTextContent('Document 2 of 5'));
+    await waitFor(() => expect(container).toHaveTextContent('Document 2 of 2'));
     expect(document.title).toBe(`${get.document2.type} | Document Viewer | Caseflow Reader`);
     // there are still only 2 open sections in the sidebar
     expect(container.querySelectorAll('div.rc-collapse-item-active').length).toEqual(2);
@@ -103,7 +117,7 @@ describe('Sidebar Section', () => {
   it('closes Sidebar and verify it stays closed on the next document', async () => {
     const { container, getByText } = render(<Component />);
 
-    expect(container).toHaveTextContent('Document 1 of 5');
+    expect(container).toHaveTextContent('Document 1 of 2');
     // Initially, the sidebar should be visible with button to close
     expect(container).toHaveTextContent('Hide menu');
     // Simulate clicking 'Hide menu' to close menu
@@ -114,7 +128,7 @@ describe('Sidebar Section', () => {
     // Simulate navigating to another document
     userEvent.click(getByText('Next'));
     // we make sure we are on the next document
-    await waitFor(() => expect(container).toHaveTextContent('Document 2 of 5'));
+    await waitFor(() => expect(container).toHaveTextContent('Document 2 of 2'));
     // Sidebar should remain hidden and have open menu
     expect(container).toHaveTextContent('Open menu');
   });
@@ -127,34 +141,28 @@ describe('Zoom', () => {
   });
 
   it('zooms out and verify zoom level persists on next document', async () => {
-    const { container, getByRole, getByText } = render(<Component />);
+    const { container, getByText } = render(<Component />);
 
-    await waitFor(() => expect(container).toHaveTextContent('Document 1 of 5'));
+    await waitFor(() => expect(container).toHaveTextContent('Document 1 of 2'));
     expect(container).toHaveTextContent('100%');
-    const zoomOutButton = getByRole('button', { name: /zoom out/i });
-
-    userEvent.click(zoomOutButton);
+    userEvent.click(document.querySelector('#button-zoomOut'));
     await waitFor(() => expect(container).toHaveTextContent('90%'));
 
     userEvent.click(getByText('Next'));
-    // await waitFor(() => expect(container).toHaveTextContent('Document 2 of 5'));
+    // await waitFor(() => expect(container).toHaveTextContent('Document 2 of 2'));
     await waitFor(() => expect(container).toHaveTextContent('90%'));
   });
 
   it('zooms in and verify zoom level persists on previous document', async () => {
-    const { container, getByRole, getByText } = render(<Component />);
+    const { container, getByText } = render(<Component {...docIdProp('2')} />);
 
-    await waitFor(() => expect(container).toHaveTextContent('Document 1 of 5'));
+    await waitFor(() => expect(container).toHaveTextContent('Document 2 of 2'));
     expect(container).toHaveTextContent('100%');
-    userEvent.click(getByText('Next'));
-    await waitFor(() => expect(container).toHaveTextContent('Document 2 of 5'));
-
-    const zoomInButton = getByRole('button', { name: /zoom in/i });
-
-    userEvent.click(zoomInButton);
+    userEvent.click(document.querySelector('#button-zoomIn'));
     await waitFor(() => expect(container).toHaveTextContent('110%'));
+
     userEvent.click(getByText('Previous'));
-    // await waitFor(() => expect(container).toHaveTextContent('Document 1 of 5'));
+    // await waitFor(() => expect(container).toHaveTextContent('Document 1 of 2'));
     await waitFor(() => expect(container).toHaveTextContent('110%'));
   });
 });

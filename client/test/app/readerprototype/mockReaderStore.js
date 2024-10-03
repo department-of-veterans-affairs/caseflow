@@ -1,9 +1,9 @@
 import { applyMiddleware, createStore } from 'redux';
 import thunk from 'redux-thunk';
 import { rootReducer } from 'app/reader/reducers';
-import { get } from 'bdd-lazy-var/getter';
+import { documentFactory } from './factories';
 
-const getStore = (documentListOverride = {}) => (
+const getStore = (overrides = {}) => (
   createStore(
     rootReducer,
     {
@@ -13,20 +13,21 @@ const getStore = (documentListOverride = {}) => (
         shareAnnotationModalIsOpenFor: null,
       },
       documents: {
-        1: get.document1,
-        2: get.document2,
-        3: get.document3,
-        4: get.document4,
-        5: get.document5,
+        1: documentFactory(),
+        2: documentFactory(),
+        3: documentFactory(),
+        4: documentFactory(),
+        5: documentFactory(),
+        ...overrides
       },
       documentList: {
         pdfList: {
           lastReadDocId: null,
         },
         searchCategoryHighlights: [{ 1: {} }, { 2: {} }],
-        filteredDocIds: [1, 2, 3, 4, 5],
+        filteredDocIds: [1],
         docFilterCriteria: {},
-        ...documentListOverride
+        ...overrides
       },
       pdfViewer: {
         hidePdfSidebar: false,
