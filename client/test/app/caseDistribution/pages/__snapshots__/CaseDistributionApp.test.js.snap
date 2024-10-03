@@ -410,11 +410,15 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                           />
                           <label
                             for="ama_hearing_case_affinity_days-value"
-                          />
+                          >
+                            <span
+                              class="hidden-label-text"
+                            >
+                              Attempt distribution to current judge for max of:
+                            </span>
+                          </label>
                           <div>
-                             
                             Attempt distribution to current judge for max of:
-                             
                           </div>
                         </div>
                         <div>
@@ -470,11 +474,15 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                           />
                           <label
                             for="ama_hearing_case_affinity_days-infinite"
-                          />
+                          >
+                            <span
+                              class="hidden-label-text"
+                            >
+                              Always distribute to current judge
+                            </span>
+                          </label>
                           <div>
-                             
                             Always distribute to current judge
-                             
                           </div>
                         </div>
                         <div>
@@ -497,11 +505,15 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                           />
                           <label
                             for="ama_hearing_case_affinity_days-omit"
-                          />
+                          >
+                            <span
+                              class="hidden-label-text"
+                            >
+                              Omit variable from distribution rules
+                            </span>
+                          </label>
                           <div>
-                             
                             Omit variable from distribution rules
-                             
                           </div>
                         </div>
                         <div>
@@ -547,11 +559,15 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                           />
                           <label
                             for="ama_hearing_case_aod_affinity_days-value"
-                          />
+                          >
+                            <span
+                              class="hidden-label-text"
+                            >
+                              Attempt distribution to current judge for max of:
+                            </span>
+                          </label>
                           <div>
-                             
                             Attempt distribution to current judge for max of:
-                             
                           </div>
                         </div>
                         <div>
@@ -597,11 +613,15 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                           />
                           <label
                             for="ama_hearing_case_aod_affinity_days-infinite"
-                          />
+                          >
+                            <span
+                              class="hidden-label-text"
+                            >
+                              Always distribute to current judge
+                            </span>
+                          </label>
                           <div>
-                             
                             Always distribute to current judge
-                             
                           </div>
                         </div>
                         <div>
@@ -625,11 +645,15 @@ exports[`render Case Distribution Application matches snapshot 1`] = `
                           />
                           <label
                             for="ama_hearing_case_aod_affinity_days-omit"
-                          />
+                          >
+                            <span
+                              class="hidden-label-text"
+                            >
+                              Omit variable from distribution rules
+                            </span>
+                          </label>
                           <div>
-                             
                             Omit variable from distribution rules
-                             
                           </div>
                         </div>
                         <div>
