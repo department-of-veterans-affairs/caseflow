@@ -85,6 +85,7 @@ describe('Sidebar Section', () => {
     const { container, getByText } = render(<Component />);
 
     expect(container).toHaveTextContent('Document 1 of 5');
+    expect(document.title).toBe(`${get.document1.type} | Document Viewer | Caseflow Reader`);
     // there are 3 open sections in the sidebar
     expect(container.querySelectorAll('div.rc-collapse-item-active').length).toEqual(3);
     userEvent.click(getByText('Issue tags'));
@@ -94,6 +95,7 @@ describe('Sidebar Section', () => {
     userEvent.click(getByText('Next'));
     // we make sure we are on the next document
     await waitFor(() => expect(container).toHaveTextContent('Document 2 of 5'));
+    expect(document.title).toBe(`${get.document2.type} | Document Viewer | Caseflow Reader`);
     // there are still only 2 open sections in the sidebar
     expect(container.querySelectorAll('div.rc-collapse-item-active').length).toEqual(2);
   });
