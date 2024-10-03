@@ -416,7 +416,7 @@ const CorrespondenceDetails = (props) => {
         </div>
         <div className="correspondence-existing-appeals">
           <div className="left-section">
-            <h2>Existing Appeals</h2>
+            <h2>Existing appeals</h2>
             <div className="correspondence-details-view-documents">
               <a
                 rel="noopener noreferrer"
@@ -444,6 +444,9 @@ const CorrespondenceDetails = (props) => {
         <div className="collapse-section-container">
           {isExpanded && (
             <AppSegment filledBackground noMarginTop>
+              <p className="correspondence-details-p">
+                Please select prior appeal(s) to link to this correspondence.
+              </p>
               <CaseListTable
                 key={appealTableKey}
                 appeals={appealsToDisplay}
@@ -825,6 +828,12 @@ const CorrespondenceDetails = (props) => {
     }
   };
 
+  const customSuccessBannerStyles = {
+    style: {
+      backgroundPosition: '2rem 1.8rem'
+    }
+  };
+
   return (
     <>
       {
@@ -832,7 +841,9 @@ const CorrespondenceDetails = (props) => {
           <div style={{ padding: '10px' }}>
             <Alert
               type="success"
-              title={COPY.CORRESPONDENCE_DETAILS.SAVE_CHANGES_BANNER.MESSAGE} />
+              title={COPY.CORRESPONDENCE_DETAILS.SAVE_CHANGES_BANNER.MESSAGE}
+              styling={customSuccessBannerStyles}
+            />
           </div>
       }
       <AppSegment filledBackground extraClassNames="app-segment-cd-details">
