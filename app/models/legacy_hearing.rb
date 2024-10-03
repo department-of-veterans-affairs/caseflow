@@ -80,6 +80,7 @@ class LegacyHearing < CaseflowRecord
   has_many :transcription_files, class_name: "Hearings::TranscriptionFile", as: :hearing
 
   alias_attribute :location, :hearing_location
+  accepts_nested_attributes_for :transcription, reject_if: proc { |attributes| attributes.blank? }
   accepts_nested_attributes_for :hearing_location, reject_if: proc { |attributes| attributes.blank? }
   accepts_nested_attributes_for :email_recipients, reject_if: proc { |attributes| attributes.blank? }
 

@@ -3,7 +3,7 @@
 RSpec.describe Hearings::VaBoxDownloadJob, type: :job do
   let(:file_info) do
     [{
-      name: "242551_1_LegacyHearing.pdf",
+      name: "242551_6_Hearing.pdf",
       id: "1640086158231",
       created_at: "2024-09-05T061314-0700",
       modified_at: "2024-09-05T061314-0700"
