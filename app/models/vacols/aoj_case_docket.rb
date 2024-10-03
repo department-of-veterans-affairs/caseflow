@@ -168,7 +168,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
   # selects both priority and non-priority appeals that are ready to distribute
   SELECT_READY_TO_DISTRIBUTE_APPEALS_ORDER_BY_BFD19 = "
     select APPEALS.BFKEY, APPEALS.TINUM, APPEALS.BFD19, APPEALS.BFDLOOUT,
-      case when APPEALS.BFAC = '7' or APPEALS.AOD = 1 then 1 else 0 end PRIORITY,
+      case when APPEALS.PREV_TYPE_ACTION = '7' or APPEALS.AOD = 1 then 1 else 0 end PRIORITY,
       APPEALS.VLJ, APPEALS.PREV_DECIDING_JUDGE, APPEALS.HEARING_DATE, APPEALS.PREV_BFDDEC
     from (
       select BRIEFF.BFKEY, BRIEFF.TINUM, BFD19, BFDLOOUT, BFAC, AOD,
@@ -176,6 +176,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
         , PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
         , VLJ_HEARINGS.HEARING_DATE HEARING_DATE
         , PREV_APPEAL.PREV_BFDDEC PREV_BFDDEC
+        , PREV_APPEAL.PREV_TYPE_ACTION
       from (
         #{SELECT_READY_APPEALS}
       ) BRIEFF
@@ -190,8 +191,8 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
     select APPEALS.BFKEY, APPEALS.TINUM, APPEALS.BFD19, APPEALS.BFDLOOUT, APPEALS.AOD, APPEALS.BFCORLID,
       CORRES.SNAMEF, CORRES.SNAMEL, CORRES.SSN,
       STAFF.SNAMEF as VLJ_NAMEF, STAFF.SNAMEL as VLJ_NAMEL,
-      case when APPEALS.BFAC = '7' then 1 else 0 end CAVC, PREV_TYPE_ACTION,
-         PREV_DECIDING_JUDGE
+      case when APPEALS.PREV_TYPE_ACTION = '7' then 1 else 0 end CAVC, PREV_TYPE_ACTION,
+        PREV_DECIDING_JUDGE
     from (
       select BFKEY, BRIEFF.TINUM, BFD19, BFDLOOUT, BFAC, BFCORKEY, AOD, BFCORLID,
         VLJ_HEARINGS.VLJ,
