@@ -136,7 +136,13 @@ class LegacyTasksController < ApplicationController
   end
 
   def validate_user_role
-    return invalid_role_error unless ROLES.include?(user_role)
+    return true if ROLES.include?(user_role)
+
+    Rails.logger.info("User with roles #{current_user.roles.join(', ')} "\
+      "couldn't access #{request.original_url}: Error: #{invalid_role_error}")
+
+    session["return_to"] = request.original_url
+    redirect_to "/unauthorized"
   end
 
   def user
