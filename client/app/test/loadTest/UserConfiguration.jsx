@@ -62,7 +62,7 @@ export default function UserConfiguration(props) {
             ...currentState.user,
             user: {
               ...currentState.user.user,
-              organizations: updatedSelections
+              organizations: [updatedSelections]
             }
           }
         }
@@ -81,6 +81,18 @@ export default function UserConfiguration(props) {
       } else {
         updatedSelections[`${org}-admin`] = true;
       }
+      updateState(
+        {
+          ...currentState,
+          user: {
+            ...currentState.user,
+            user: {
+              ...currentState.user.user,
+              organizations: updatedSelections
+            }
+          }
+        }
+      );
 
       return updatedSelections;
     });
