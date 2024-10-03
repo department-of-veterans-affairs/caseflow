@@ -602,6 +602,12 @@ class AppealsController < ApplicationController
     when "direct_review"
       parent_task = appeal.tasks.find_by(type: "DistributionTask")
     end
+
+    # set root task as parent task if distributed
+    if appeal.distributed?
+      # parent_task = appeal.tasks.find_by(type: "RootTask")
+    end
+
     unless parent_task.nil?
       @send_initial_notification_letter ||= appeal.tasks.open.find_by(type: :SendInitialNotificationLetterTask) ||
                                             SendInitialNotificationLetterTask.create!(
