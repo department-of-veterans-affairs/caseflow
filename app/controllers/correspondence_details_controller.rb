@@ -151,7 +151,7 @@ class CorrespondenceDetailsController < CorrespondenceController
     end
     if params[:unselected_appeal_ids].present?
       correspondence_appeals_to_delete = @correspondence.correspondence_appeals
-      .where(appeal_id: params[:unselected_appeal_ids])
+        .where(appeal_id: params[:unselected_appeal_ids])
 
       CorrespondencesAppealsTask.where(correspondence_appeal_id: correspondence_appeals_to_delete.pluck(:id)).delete_all
 
