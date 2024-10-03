@@ -197,7 +197,7 @@ RSpec.feature("The Correspondence Details page") do
 
   context "correspondence package details tab" do
     before do
-      correspondence_spec_user_access
+      correspondence_spec_super_access
       FeatureToggle.enable!(:correspondence_queue)
       @correspondence = create(
         :correspondence,
