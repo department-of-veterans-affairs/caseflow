@@ -11,6 +11,12 @@ class Hearings::FetchWebexRoomMeetingDetailsJob < CaseflowJob
 
   attr_reader :room_id, :meeting_title
 
+  class NoMeetingIdError < StandardError; end
+
+  discard_on(NoMeetingIdError) do |job, exception|
+    job.log_error(exception)
+  end
+
   retry_on(Caseflow::Error::WebexApiError, wait: :exponentially_longer) do |job, exception|
     room_id = job.arguments&.first&.[](:room_id)
     meeting_title = job.arguments&.first&.[](:meeting_title)
@@ -30,6 +36,8 @@ class Hearings::FetchWebexRoomMeetingDetailsJob < CaseflowJob
   def perform(room_id:, meeting_title:)
     ensure_current_user_is_set
     room_meeting_details = fetch_room_details(room_id)
+    fail NoMeetingIdError if room_meeting_details.meeting_id.nil?
+
     Hearings::FetchWebexRecordingsListJob.perform_later(
       meeting_id: room_meeting_details.meeting_id,
       meeting_title: meeting_title
