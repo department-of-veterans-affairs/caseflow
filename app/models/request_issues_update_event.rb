@@ -161,7 +161,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
 
   # Add all review issue ids and reference ids not included in the request_issues_data
   # but not included in the removed_issues
-  # Note that review issues are not included in the request_issues_data
+  # Note that removed issues are not included in the request_issues_data
   # This is to ensure all removed issues are derived from the (before - after) comparison in base class
   def add_existing_review_issues
     @review.request_issues.each do |request_issue|
@@ -175,7 +175,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       end
 
       # Only add the reference_id and request_issue_id to the request_issues_data
-      # The base class does not deed to update existing issues not included in event data
+      # The base class does not need to update existing issues not included in event data
       @request_issues_data << {
         request_issue_id: request_issue.id,
         reference_id: request_issue.reference_id
@@ -184,7 +184,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     @request_issues_data
   end
 
-  # Orveride remoed_issues to explicity set the removed issues received from the event
+  # Orveride removed_issues to explicity set the removed issues received from the event
   # Thechnically these issues are calculated by the base class, but this is more direct
   def removed_issues
     @parser.removed_issues.map do |issue|
