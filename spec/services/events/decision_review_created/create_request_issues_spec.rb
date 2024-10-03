@@ -91,6 +91,8 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
         expect(LegacyIssue.count).to eq(1)
         expect(LegacyIssueOptin.count).to eq(1)
         expect(EventRecord.count).to eq(3)
+        expect(backfilled_issues.first.event_records.first.info["update_type"]).to eq("I")
+        expect(backfilled_issues.first.event_records.first.info["record_data"]["reference_id"]).to eq("1")
       end
     end
 

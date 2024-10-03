@@ -24,6 +24,7 @@ class Api::Events::V1::DecisionReviewUpdatedController < Api::ApplicationControl
     :contested_decision_issue_id,
     :untimely_exemption,
     :untimely_exemption_notes,
+    :edited_description,
     :vacols_id,
     :vacols_sequence_id,
     :nonrating_issue_bgs_id,

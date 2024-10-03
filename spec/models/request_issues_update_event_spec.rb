@@ -3,7 +3,9 @@
 RSpec.describe RequestIssuesUpdateEvent, type: :model do
   let(:user) { create(:user) }
   let(:review) { create(:higher_level_review) }
-  let!(:existing_request_issue) { create(:request_issue, decision_review: review, reference_id: "some_reference_id") }
+  let!(:existing_request_issue) do
+    create(:request_issue_with_epe, decision_review: review, reference_id: "some_reference_id")
+  end
   let(:parser) do
     instance_double(Events::DecisionReviewUpdated::DecisionReviewUpdatedParser).tap do |parser|
       allow(parser).to receive(:updated_issues).and_return([])
@@ -189,17 +191,16 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
   describe "#perform!" do
     it "returns true if the base perform! is successful" do
       allow_any_instance_of(RequestIssuesUpdate).to receive(:perform!).and_return(true)
-      allow_any_instance_of(described_class).to receive(:remove_request_issues_with_no_decision!).and_return(true)
       allow_any_instance_of(described_class).to receive(:process_eligible_to_ineligible_issues!).and_return(true)
       allow_any_instance_of(described_class).to receive(:process_ineligible_to_eligible_issues!).and_return(true)
       allow_any_instance_of(described_class).to receive(:process_ineligible_to_ineligible_issues!).and_return(true)
       allow_any_instance_of(described_class).to receive(:process_request_issues_data!).and_return(true)
       subject = described_class.new(review: review, user: user, parser: parser)
-      expect(subject).to receive(:remove_request_issues_with_no_decision!)
       expect(subject).to receive(:process_eligible_to_ineligible_issues!)
       expect(subject).to receive(:process_ineligible_to_eligible_issues!)
       expect(subject).to receive(:process_ineligible_to_ineligible_issues!)
       expect(subject).to receive(:process_request_issues_data!)
+      expect(subject).to receive(:update_removed_issues!)
       expect(subject.perform!).to be_truthy
     end
 
@@ -239,52 +240,6 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       # expect(request_issue.contested_rating_decision_reference_id).to
       #  eq(issue_payload[:contested_rating_decision_reference_id])
       # expect(request_issue.decision_date).to eq(issue_payload[:decision_date])
-    end
-  end
-
-  describe "#remove_request_issues_with_no_decision!" do
-    it "removes request issues with no decision" do
-      allow_any_instance_of(RequestIssueClosure).to receive(:with_no_decision!).and_return(true)
-      allow(parser).to receive(:removed_issues).and_return([issue_payload])
-      allow_any_instance_of(described_class).to receive(:check_for_mismatched_closed_issues!).and_return(true)
-      expect(
-        described_class.new(review: review, user: user, parser: parser).remove_request_issues_with_no_decision!
-      ).to be_truthy
-    end
-  end
-
-  describe "#check_for_mismatched_closed_issues!" do
-    it "raises an error if the issues are mismatched" do
-      issue_payload[:decision_review_issue_id] = "some_diff_reference_id"
-      allow(parser).to receive(:removed_issues).and_return([issue_payload])
-      allow_any_instance_of(RequestIssuesUpdate).to receive(:removed_issues).and_return([existing_request_issue])
-      expect do
-        described_class.new(review: review, user: user, parser: parser).check_for_mismatched_closed_issues!
-      end.to raise_error(Caseflow::Error::DecisionReviewUpdateMismatchedRemovedIssuesError)
-    end
-
-    it "does not raise an error if the removed issues are matched" do
-      allow(parser).to receive(:removed_issues).and_return([issue_payload])
-      allow_any_instance_of(RequestIssuesUpdate).to receive(:removed_issues).and_return([existing_request_issue])
-      expect do
-        described_class.new(review: review, user: user, parser: parser).check_for_mismatched_closed_issues!
-      end.to_not raise_error
-    end
-
-    it "raises an error if the removed issues are missing in Caseflow" do
-      allow(parser).to receive(:removed_issues).and_return([issue_payload])
-      allow_any_instance_of(RequestIssuesUpdate).to receive(:removed_issues).and_return([])
-      expect do
-        described_class.new(review: review, user: user, parser: parser).check_for_mismatched_closed_issues!
-      end.to raise_error(Caseflow::Error::DecisionReviewUpdateMismatchedRemovedIssuesError)
-    end
-
-    it "raises an error if the removed issues are missing in parser" do
-      allow(parser).to receive(:removed_issues).and_return([])
-      allow_any_instance_of(RequestIssuesUpdate).to receive(:removed_issues).and_return([existing_request_issue])
-      expect do
-        described_class.new(review: review, user: user, parser: parser).check_for_mismatched_closed_issues!
-      end.to raise_error(Caseflow::Error::DecisionReviewUpdateMismatchedRemovedIssuesError)
     end
   end
 
@@ -365,6 +320,45 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       expect(existing_request_issue.contested_issue_description).to eq(issue_payload[:contested_issue_description])
       expect(existing_request_issue.nonrating_issue_category).to eq(issue_payload[:nonrating_issue_category])
       expect(existing_request_issue.nonrating_issue_description).to eq(issue_payload[:nonrating_issue_description])
+    end
+  end
+
+  describe "#removed_issues" do
+    it "returns an array of request issue data for removed issues" do
+      allow(parser).to receive(:removed_issues).and_return([issue_payload])
+      subject = described_class.new(review: review, user: user, parser: parser)
+      expect(subject.removed_issues).to eq([existing_request_issue])
+    end
+  end
+
+  describe "#add_existing_review_issues" do
+    it "adds existing issues to the request issues data" do
+      subject = described_class.new(review: review, user: user, parser: parser)
+      expect(subject.add_existing_review_issues).to eq(
+        [
+          {
+            request_issue_id: existing_request_issue.id,
+            reference_id: existing_request_issue.reference_id
+          }
+        ]
+      )
+    end
+
+    it "adds existing issues to the request issues data but not removed issues" do
+      allow(parser).to receive(:removed_issues).and_return([issue_payload])
+      subject = described_class.new(review: review, user: user, parser: parser)
+      expect(subject.add_existing_review_issues).to eq([])
+    end
+  end
+
+  describe "#update_removed_issues!" do
+    it "updates the closed_at date and closed_status for removed issues" do
+      allow(parser).to receive(:removed_issues).and_return([issue_payload])
+      subject = described_class.new(review: review, user: user, parser: parser)
+      expect(subject.update_removed_issues!).to be_truthy
+      existing_request_issue.reload
+      expect(existing_request_issue.closed_at).to eq("1970-01-19 14:25:51.000000000 -0500")
+      expect(existing_request_issue.closed_status).to eq(issue_payload[:closed_status])
     end
   end
 end

@@ -1,9 +1,19 @@
 # frozen_string_literal: true
 
+# This class is used to update request issues for a decision review based on event data
+# The event data is parsed into an object that is in the same format as an intake dataset from the UI
+# The base class is used to update the request issues and calculate the before and after issues
+# This class is used to update the request issues with the event data and process additional updates
+# that are specific to event updates
+
+# Special logic is needed for exisiting issues that are not included in the event data
+# but need to be part of the data sent to the base class to ensure
+# the correct before and after issues are calculated
 class RequestIssuesUpdateEvent < RequestIssuesUpdate
   def initialize(review:, user:, parser:)
     @parser = parser
-    @request_issues_data = build_request_issues_data
+    @review = review
+    build_request_issues_data
     super(
       user: user,
       review: review,
@@ -15,28 +25,52 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     # Call the base class's perform! method
     result = super
     if result
-      remove_request_issues_with_no_decision!
       process_eligible_to_ineligible_issues!
       process_ineligible_to_eligible_issues!
       process_ineligible_to_ineligible_issues!
       process_request_issues_data!
+      update_removed_issues!
       true
     else
       false
     end
   end
 
-  # Process aditional updates for all data that was passed to base class
+  # Process aditional updates for all data that was passed to base class but not processed by it
+  # This impliments additional logic for event updates that was not added for intakes
   def process_request_issues_data!
     return true if after_issues.empty?
 
     after_issues.each do |request_issue|
       issue_data =
         @request_issues_data.find { |data| data[:reference_id] == request_issue.reference_id }
+
+      next if issue_data.nil?
+
       request_issue.update(
         contested_issue_description: issue_data[:contested_issue_description],
         nonrating_issue_category: issue_data[:nonrating_issue_category],
         nonrating_issue_description: issue_data[:nonrating_issue_description]
+      )
+    end
+    true
+  end
+
+  # Set the closed_at date and closed_status for removed issues based on the event data
+  def update_removed_issues!
+    removed_issues.each do |request_issue|
+      issue_data =
+        @parser.removed_issues.find do |data|
+          parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(data)
+          parser_issue.ri_reference_id == request_issue.reference_id
+        end
+
+      next if issue_data.nil?
+
+      parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(issue_data)
+      request_issue.update(
+        closed_at: parser_issue.ri_closed_at,
+        closed_status: parser_issue.ri_closed_status
       )
     end
     true
@@ -97,63 +131,70 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     end
   end
 
-  # check to see if the there are closed issues that are deferent from before - after
-  # if so, then raise an error
-  def remove_request_issues_with_no_decision!
-    return if @parser.removed_issues.empty?
-
-    @parser.removed_issues.each do |issue_data|
-      parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(issue_data)
-      request_issue = find_request_issue(parser_issue)
-      RequestIssueClosure.new(request_issue).with_no_decision!
-    end
-    check_for_mismatched_closed_issues!
-  end
-
-  def check_for_mismatched_closed_issues!
-    parser_removed_issues = @parser.removed_issues.map do |issue|
-      parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(issue)
-      parser_issue.ri_reference_id
-    end
-    base_removed_issues = removed_issues.map(&:reference_id)
-
-    # Check for issues in parser.removed_issues but not in base removed_issues
-    parser_only = parser_removed_issues - base_removed_issues
-    # Check for issues in base removed_issues but not in parser.removed_issues
-    base_only = base_removed_issues - parser_removed_issues
-
-    if parser_only.any? || base_only.any?
-      fail  Caseflow::Error::DecisionReviewUpdateMismatchedRemovedIssuesError,
-            "CaseFlow only = #{base_only.join(', ')} - Event only = #{parser_only.join(', ')}"
-    end
-    true
-  end
-
-  # Add any other methods you need
+  # Assymble the request issues data in the format expected by the base class
   def build_request_issues_data
     @request_issues_data = []
 
-    # Handle updated issues
+    # Add updated issues
     @parser.updated_issues.each do |issue|
       parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(issue)
       @request_issues_data << build_issue_data(parser_issue: parser_issue)
     end
 
-    # Handle withdrawn issues
+    # Add withdrawn issues
     @parser.withdrawn_issues.each do |issue|
       parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(issue)
       @request_issues_data << build_issue_data(parser_issue: parser_issue, is_withdrawn: true)
     end
 
-    # Handle added issues
+    # Add added issues
     @parser.added_issues.each do |issue|
       parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(issue)
       @request_issues_data << build_issue_data(parser_issue: parser_issue, is_new: true)
     end
 
+    # This is to ensure all request issues associated with the review are included in the after_issues
+    add_existing_review_issues
+
     @request_issues_data
   end
 
+  # Add all review issue ids and reference ids not included in the request_issues_data
+  # but not included in the removed_issues
+  # Note that removed issues are not included in the request_issues_data
+  # This is to ensure all removed issues are derived from the (before - after) comparison in base class
+  def add_existing_review_issues
+    @review.request_issues.each do |request_issue|
+      # Skip if the request issue is already in the request_issues_data
+      next if @request_issues_data.find { |data| data[:reference_id] == request_issue.reference_id }
+
+      # Skip if the request issue is in the removed_issues
+      next if @parser.removed_issues.find do |data|
+        parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(data)
+        parser_issue.ri_reference_id == request_issue.reference_id
+      end
+
+      # Only add the reference_id and request_issue_id to the request_issues_data
+      # The base class does not need to update existing issues not included in event data
+      @request_issues_data << {
+        request_issue_id: request_issue.id,
+        reference_id: request_issue.reference_id
+      }
+    end
+    @request_issues_data
+  end
+
+  # Orveride removed_issues to explicity set the removed issues received from the event
+  # Thechnically these issues are calculated by the base class, but this is more direct
+  def removed_issues
+    @parser.removed_issues.map do |issue|
+      parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(issue)
+      find_request_issue(parser_issue)
+    end
+  end
+
+  # Build the request issue data in the format expected by the base class
+  # This is for event updates to follow the same logic as an intake that created from the UI
   def build_issue_data(parser_issue:, is_withdrawn: false, is_new: false)
     return {} if parser_issue.nil?
 
@@ -164,6 +205,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     issue_data
   end
 
+  # Add base issue data to the issue data
   def base_issue_data(parser_issue)
     {
       benefit_type: parser_issue.ri_benefit_type,
@@ -186,6 +228,8 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     }
   end
 
+  # Add the request issue id to the issue data if it is a new issue
+  # Add addtional fields that are userd buy the base class to identify the type of update
   def conditional_issue_data(parser_issue, is_withdrawn, is_new)
     {
       request_issue_id: is_new ? nil : find_request_issue(parser_issue).id,
@@ -194,6 +238,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     }
   end
 
+  # Add nonrating issue data to the issue data
   def nonrating_issue_data(parser_issue)
     {
       nonrating_issue_category: parser_issue.ri_nonrating_issue_category,
@@ -203,6 +248,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     }
   end
 
+  # Add contested issue data to the issue data
   def contested_issue_data(parser_issue)
     {
       contention_reference_id: parser_issue.ri_contention_reference_id,
