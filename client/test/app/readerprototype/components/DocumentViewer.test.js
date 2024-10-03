@@ -1,91 +1,48 @@
 import { render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { rootReducer } from 'app/reader/reducers';
 import DocumentViewer from 'app/readerprototype/DocumentViewer';
+import ApiUtil from 'app/util/ApiUtil';
+import { def, get } from 'bdd-lazy-var/getter';
+import fs from 'fs';
 import React, { useState } from 'react';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { applyMiddleware, createStore } from 'redux';
 import thunk from 'redux-thunk';
-import { rootReducer } from 'app/reader/reducers';
-import ApiUtil from 'app/util/ApiUtil';
+import { documentFactory } from '../factories';
+
+beforeEach(() => {
+  window.IntersectionObserver = jest.fn(() => ({
+    observe: jest.fn(),
+    disconnect: jest.fn()
+  }));
+  window.HTMLElement.prototype.scrollIntoView = jest.fn;
+});
 
 afterEach(() => jest.clearAllMocks());
 
-const doc = {
-  id: 1,
-  tags: [],
-  category_procedural: true,
-  category_other: false,
-  category_medical: false,
-  category_case_summary: false,
-  opened_by_current_user: false,
-};
-
-const props = {
+def('history', () => []);
+def('match', () => ({
+  params: { docId: '1', vacolsId: '3575931' },
+}));
+def('document1', () => documentFactory({ id: 1 }));
+def('document2', () => documentFactory({ id: 2 }));
+def('props', () => ({
   allDocuments: [
-    {
-      id: 1,
-      category_medical: null,
-      category_other: null,
-      category_procedural: true,
-      created_at: '2024-09-17T12:30:52.925-04:00',
-      description: null,
-      file_number: '216979849',
-      previous_document_version_id: null,
-      received_at: '2024-09-14',
-      series_id: '377120',
-      type: 'NOD',
-      updated_at: '2024-09-17T12:41:11.000-04:00',
-      upload_date: '2024-09-15',
-      vbms_document_id: '1',
-      content_url: '/document/39/pdf',
-      filename: 'filename-798447.pdf',
-      category_case_summary: true,
-      serialized_vacols_date: '',
-      serialized_receipt_date: '09/14/2024',
-      matching: false,
-      opened_by_current_user: false,
-      tags: [],
-      receivedAt: '2024-09-14',
-      listComments: false,
-      wasUpdated: false,
-    },
-    {
-      id: 2,
-      category_medical: null,
-      category_other: null,
-      category_procedural: true,
-      created_at: '2024-09-17T12:30:52.925-04:00',
-      description: null,
-      file_number: '216979849',
-      previous_document_version_id: null,
-      received_at: '2024-09-14',
-      series_id: '377120',
-      type: 'NOD',
-      updated_at: '2024-09-17T12:41:11.000-04:00',
-      upload_date: '2024-09-15',
-      vbms_document_id: '1',
-      content_url: '/document/39/pdf',
-      filename: 'filename-798447.pdf',
-      category_case_summary: true,
-      serialized_vacols_date: '',
-      serialized_receipt_date: '09/14/2024',
-      matching: false,
-      opened_by_current_user: false,
-      tags: [],
-      receivedAt: '2024-09-14',
-      listComments: false,
-      wasUpdated: false,
-    },
+    get.document1,
+    get.document2,
   ],
-  showPdf: jest.fn(),
-  documentPathBase: '/3575931/documents',
-  match: {
-    params: { docId: '1', vacolsId: '3575931' },
+  showPdf: (docId) => () => {
+    get.history.push(`/3575931/documents/${docId}`);
+    get.match.params = { docId, vacolsId: '3575931' };
   },
-};
+  history: get.history,
+  match: get.match,
+  documentPathBase: '/3575931/documents',
+}));
 
-const getStore = () =>
+const getStore = () => (
   createStore(
     rootReducer,
     {
@@ -94,7 +51,7 @@ const getStore = () =>
         deleteAnnotationModalIsOpenFor: null,
         shareAnnotationModalIsOpenFor: null
       },
-      documents: { 1: doc },
+      documents: { 1: get.document1, 2: get.document2 },
       documentList: {
         pdfList: {
           lastReadDocId: null,
@@ -116,31 +73,28 @@ const getStore = () =>
         },
       },
     },
-    applyMiddleware(thunk));
+    applyMiddleware(thunk)
+  )
+);
 
 const Component = () => {
   const [zoomLevel, setZoomLevel] = useState(100);
 
-  return <Provider store={getStore()}>
-    <MemoryRouter>
-      <DocumentViewer {...props} zoomLevel={zoomLevel}
-        onZoomChange={(newZoomLevel) => setZoomLevel(newZoomLevel)} />
-    </MemoryRouter>
-  </Provider>;
+  return (
+    <Provider store={getStore()}>
+      <MemoryRouter history={get.history}>
+        <DocumentViewer {...get.props} zoomLevel={zoomLevel}
+          onZoomChange={(newZoomLevel) => setZoomLevel(newZoomLevel)} />
+      </MemoryRouter>
+    </Provider>
+  );
 };
 
 describe('user visiting a document', () => {
-
-  beforeEach(() => {
-    jest.mock('app/util/ApiUtil', () => ({
-      patch: jest.fn(),
-    }));
-  });
-
   it('records the viewing of the document', () => {
     const spy = jest.spyOn(ApiUtil, 'patch');
 
-    render(<Component {...props} />);
+    render(<Component />);
     expect(spy).
       toHaveBeenCalledWith(
         '/document/1/mark-as-read',
@@ -151,51 +105,45 @@ describe('user visiting a document', () => {
 
 describe('Open Document and Close Issue tags Sidebar Section', () => {
   it('Navigate to next document and verify Issue tags stay closed', async () => {
-    const { container, getByText } = render(
-      <Component doc={doc} document={doc} />
-    );
+    jest.spyOn(ApiUtil, 'patch').mockResolvedValue();
 
-    expect(container).toHaveTextContent('Select or tag issues');
-    expect(container).toHaveTextContent('Add a comment');
-    expect(container).toHaveTextContent('Procedural');
+    const { container, getByText } = render(<Component />);
+
     expect(container).toHaveTextContent('Document 1 of 2');
-
+    // there are 3 open sections in the sidebar
+    expect(container.querySelectorAll('div.rc-collapse-item-active').length).toEqual(3);
     userEvent.click(getByText('Issue tags'));
-    waitFor(() =>
-      expect(container).not.toHaveTextContent('Select or tag issues')
-    );
+    // we closed a section in the sidebar, so now there are 2 open
+    expect(container.querySelectorAll('div.rc-collapse-item-active').length).toEqual(2);
 
     userEvent.click(getByText('Next'));
-    waitFor(() => expect(container).toHaveTextContent('Add a comment'));
-    waitFor(() => expect(container).toHaveTextContent('Procedural'));
-    waitFor(() => expect(container).toHaveTextContent('Document 2 of 2'));
-    waitFor(() =>
-      expect(container).not.toHaveTextContent('Select or tag issues')
-    );
-
+    // we make sure we are on the next document
+    await waitFor(() => expect(container).toHaveTextContent('Document 2 of 2'));
+    // there are still only 2 open sections in the sidebar
+    expect(container.querySelectorAll('div.rc-collapse-item-active').length).toEqual(2);
   });
 });
 
-test('should change zoom level to 80%, then to 60% to simulate parent states update', async () => {
-  const { container, getByRole } = render(<Component {...props} />);
+it('should change zoom level to 90%, then to 80% to simulate parent states update', async () => {
+  jest.spyOn(ApiUtil, 'patch').mockResolvedValue();
+
+  const { container, getByRole } = render(<Component />);
 
   expect(container).toHaveTextContent('100%');
   const zoomOutButton = getByRole('button', { name: /zoom out/i });
 
   userEvent.click(zoomOutButton);
-
   await waitFor(() => expect(container).toHaveTextContent('90%'));
-
   userEvent.click(zoomOutButton);
-
   await waitFor(() => expect(container).toHaveTextContent('80%'));
 });
 
-it('Sidebar remembers its state between document views', () => {
-  const { container, getByText } = render(
-    <Component doc={doc} document={doc} />
-  );
+it('Sidebar remembers its state between document views', async () => {
+  jest.spyOn(ApiUtil, 'patch').mockResolvedValue();
 
+  const { container, getByText } = render(<Component />);
+
+  expect(container).toHaveTextContent('Document 1 of 2');
   // Initially, the sidebar should be visible with button to close
   expect(container).toHaveTextContent('Hide menu');
 
@@ -208,7 +156,56 @@ it('Sidebar remembers its state between document views', () => {
   // Simulate navigating to another document
   userEvent.click(getByText('Next'));
 
+  // we make sure we are on the next document
+  await waitFor(() => expect(container).toHaveTextContent('Document 2 of 2'));
   // Sidebar should remain hidden and have open menu
   expect(container).toHaveTextContent('Open menu');
-
 });
+
+// describe('Open Document and Test Column Layout', () => {
+//   it('should change layout from single column to double column at larger width', async () => {
+//     const raw = fs.readFileSync('test/fixtures/pdfs/Informal_Form9.pdf');
+//     const arrayBuffer = raw.buffer;
+
+//     jest.spyOn(ApiUtil, 'patch').mockResolvedValue();
+//     jest.spyOn(ApiUtil, 'get').mockResolvedValueOnce({ body: arrayBuffer });
+//     // Initial render at width 1080 (single column)
+//     global.innerWidth = 1080;
+//     const { container, getByTitle, debug } = render(<Component doc={{}} document={{}} />);
+
+//     // verify initial width
+//     expect(global.innerWidth).toBe(1080);
+//     await waitFor(() => expect(container).not.toHaveTextContent('Loading document...'));
+
+//     // Simulate typing 2 into the page number text box
+//     debug(container, 200000);
+//     const pageNumberTextBox = getByTitle('Page');
+
+//     userEvent.type(pageNumberTextBox, '{backspace}2{enter}');
+
+//     // Verify the textbox now holds "2"
+//     await waitFor(() =>
+//       expect(container.querySelector('#page-progress-indicator-input').value).toBe(2)
+//     );
+
+//     // Now simulate increasing the screen width to 2000px (double column layout)
+//     global.innerWidth = 2000;
+//     global.dispatchEvent(new Event('resize'));
+//     expect(global.innerWidth).toBe(2000);
+
+//     // After resizing, the layout should change and the text box should now display 1
+//     await waitFor(() =>
+//       expect(container).querySelector('#page-progress-indicator-input').value.toBe(1)
+//     );
+
+//     // Simulate a smaller width (1100px), where it should still be a single column layout
+//     global.innerWidth = 1100;
+//     global.dispatchEvent(new Event('resize'));
+//     expect(global.innerWidth).toBe(1100);
+
+//     // The page number should still remain 1
+//     await waitFor(() =>
+//       expect(container).querySelector('#page-progress-indicator-input').value.toBe('1')
+//     );
+//   });
+// });
