@@ -1217,10 +1217,10 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
           let(:docket) { Constants.AMA_DOCKETS.direct_review }
 
           it "creates SendInitialNotificationLetterTask as child of RootTask" do
+            appeal.tasks.of_type(:DistributionTask).first.completed!
+
             subject
             task = Task.find_by(type: SendInitialNotificationLetterTask.name, appeal: appeal)
-
-            appeal.tasks.of_type(:DistributionTask).first.completed!
 
             expect(response).to be_successful
             expect(task.present?).to be true
