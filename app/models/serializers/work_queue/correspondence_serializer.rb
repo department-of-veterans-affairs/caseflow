@@ -87,9 +87,7 @@ class WorkQueue::CorrespondenceSerializer
     object.veteran&.file_number
   end
 
-  attribute :correspondence_appeal_ids do |object|
-    object.appeal_ids.map(&:to_s)
-  end
+  attribute :correspondence_appeal_ids, &:appeal_ids
 
   attribute :correspondence_response_letters do |object|
     object.correspondence_response_letters.map do |response_letter|

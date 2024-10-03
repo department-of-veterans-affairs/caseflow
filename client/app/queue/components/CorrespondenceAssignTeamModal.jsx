@@ -128,8 +128,8 @@ const CorrespondenceAssignTeamModal = (props) => {
   return (
     <QueueFlowModal
       {...modalProps}
-      title="Assign Task"
-      button="Assign Task"
+      title="Assign task"
+      button="Assign task"
       pathAfterSubmit={taskData?.redirect_after ?? `/queue/correspondence/${props.correspondence_uuid}`}
       submit={submit}
       validateForm={validateForm}

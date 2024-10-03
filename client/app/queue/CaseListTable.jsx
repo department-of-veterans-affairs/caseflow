@@ -26,6 +26,12 @@ class CaseListTable extends React.PureComponent {
 
   getKeyForRow = (rowNumber, object) => object.id;
 
+  toggleCheckboxState = (appealId) => {
+    const checked = this.props?.taskRelatedAppealIds.includes(Number(appealId));
+
+    return checked ? this.props?.userAccess !== 'admin_access' : false;
+  };
+
   getColumns = () => {
     const columns = [];
 
@@ -34,7 +40,7 @@ class CaseListTable extends React.PureComponent {
         {
           header: '',
           valueFunction: (appeal) => {
-            const isChecked = this.props.taskRelatedAppealIds.includes(appeal.id);
+            const isChecked = this.props.taskRelatedAppealIds.includes(Number(appeal.id));
 
             return (
               <div className="checkbox-column-inline-style">
@@ -45,8 +51,7 @@ class CaseListTable extends React.PureComponent {
                   hideLabel
                   onChange={(checked) => this.props.checkboxOnChange(appeal.id, checked)}
                   disabled={
-                    this.props.disabled ||
-                    this.props.toggleCheckboxState ? (this.props.toggleCheckboxState(appeal.id)) : false
+                    this.props.disabled || this.toggleCheckboxState(appeal.id)
                   }
                 />
               </div>

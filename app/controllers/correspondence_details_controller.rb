@@ -91,6 +91,19 @@ class CorrespondenceDetailsController < CorrespondenceController
     }
   end
 
+  def correspondence_params
+    params.require(:correspondence).permit(:correspondence, :va_date_of_receipt, :correspondence_type_id, :notes)
+  end
+
+  def edit_general_information
+    correspondence.update!(
+      va_date_of_receipt: correspondence_params[:va_date_of_receipt],
+      correspondence_type_id: correspondence_params[:correspondence_type_id],
+      notes: correspondence_params[:notes]
+    )
+    render json: { correspondence: serialized_correspondence }, status: :created
+  end
+
   # Overriding method to allow users to access the correspondence details page
   def verify_correspondence_access
     true
@@ -133,7 +146,7 @@ class CorrespondenceDetailsController < CorrespondenceController
   def save_correspondence_appeals
     if params[:selected_appeal_ids].present?
       params[:selected_appeal_ids].each do |appeal_id|
-        @correspondence.correspondence_appeals.create!(appeal_id: appeal_id)
+        @correspondence.correspondence_appeals.find_or_create_by(appeal_id: appeal_id)
       end
     end
     if params[:unselected_appeal_ids].present?
@@ -168,11 +181,13 @@ class CorrespondenceDetailsController < CorrespondenceController
   end
 
   def appeals
-    case_search_results = CaseSearchResultsForCaseflowVeteranId.new(
-      caseflow_veteran_ids: [@correspondence.veteran_id], user: current_user
-    ).search_call
+    appeals = Appeal.where(veteran_file_number: @correspondence.veteran.file_number)
 
-    { appeals_information: case_search_results.extra[:case_search_results] }
+    serialized_appeals = appeals.map do |appeal|
+      WorkQueue::CorrespondenceDetailsAppealSerializer.new(appeal).serializable_hash[:data][:attributes]
+    end
+
+    { appeals_information: serialized_appeals }
   end
 
   def mail_tasks
@@ -190,7 +205,7 @@ class CorrespondenceDetailsController < CorrespondenceController
   end
 
   def serialized_data
-    serializer = WorkQueue::CorrespondenceSerializer.new(ordered_correspondences)
+    serializer = WorkQueue::CorrespondenceDetailsSerializer.new(ordered_correspondences)
     serializer.serializable_hash[:data]
   end
 
@@ -202,7 +217,7 @@ class CorrespondenceDetailsController < CorrespondenceController
     prior_mail = Correspondence.prior_mail(veteran_by_correspondence.id, correspondence.uuid).order(:va_date_of_receipt)
       .select { |corr| corr.status == "Completed" || corr.status == "Pending" }
     serialized_mail = prior_mail.map do |correspondence|
-      WorkQueue::CorrespondenceSerializer.new(correspondence).serializable_hash[:data][:attributes]
+      WorkQueue::CorrespondenceDetailsSerializer.new(correspondence).serializable_hash[:data][:attributes]
     end
 
     { prior_mail: serialized_mail }

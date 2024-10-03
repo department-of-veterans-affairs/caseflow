@@ -15,6 +15,7 @@ $color-background-color: #f1f1f1;
 $color-red: #cd2026;
 $color-dark-red: #ff0000;
 $color-gray-darker: #5b616b;
+$color-gray: #5b616b;
 $color-bg-hsl: hsl(0, 0%, 100%);
 $color-bg-hsl-a: hsl(0, 0%, 80%);
 
@@ -141,6 +142,15 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 .a-r-p2 {
   margin-top: 0;
   margin-bottom: -7px;
+}
+
+.a-r-h2-response-letter {
+  margin: 0;
+  padding: 0;
+}
+
+.a-r-hr {
+  border-top: 1px solid $color-cream;
 }
 
 .correspondence-doctype-edit-dropdown .cf-select .cf-select__control {
@@ -928,18 +938,21 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   width: 100%;
   margin-top: 0;
   margin-bottom: 1.25em;
-  table-layout: fixed;
+  table-layout: auto;
+  border-collapse: collapse;
+  overflow-x: auto;
+  display: block;
 
   th,
   td {
     border: 0;
-    padding-bottom: 0;
+    padding: 0.9rem;
     vertical-align: top;
   }
 
   .response-letter-table-borderless-first-item {
     display: block;
-    width: 168%;
+    width: 100%;
     margin-left: 5%;
     padding-bottom: 1.25rem;
   }
@@ -1354,6 +1367,18 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   margin-bottom: 20px;
 }
 
+.corr-title-with-button {
+  width: 100%;
+  display: inline-flex;
+  align-items: start;
+  gap: 20px;
+
+  .button-style {
+    display: inline-block;
+    margin-top: 0;
+  }
+}
+
 .correspondence-admin-container {
   .textarea-div-styling-test-correspondence {
     margin-top: 45px;
@@ -1444,7 +1469,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 }
 
 .correspondence-case-timeline-container {
-  border: 1px solid $color-gray-darker;
+  border: 1px solid $color-gray-lighter;
   min-height: 200px;
   padding-left: 30px;
 
@@ -1565,6 +1590,10 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   margin-top: 0;
 }
 
+.correspondence-details-p {
+  margin-top: 0;
+}
+
 .link-icon-spacing {
   // margin-bottom: -10px;
   margin-left: 10px;
@@ -1626,3 +1655,80 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 .tasks-added-details {
   margin-left: 40px;
 }
+
+.grayLineStyling {
+  width: 5px;
+  background: $color-gray;
+  margin: auto;
+  position: absolute;
+  top: 30px;
+  left: 45.5%;
+  bottom: 0;
+}
+
+.grayLineTimelineStyling {
+  @extend .grayLineStyling;
+  left: 9%;
+  margin-left: 12px;
+  top: 39px;
+}
+
+.greyDotAndlineStyling {
+  top: 0;
+  position: absolute;
+}
+
+.taskContainerStyling {
+  border: none;
+  vertical-align: top;
+  padding: 3px;
+  padding-bottom: 1.5em;
+}
+
+.taskTimeContainerStyling {
+  @extend .taskContainerStyling;
+  width: 20%;
+}
+
+.taskInformationContainerStyling {
+  @extend .taskContainerStyling;
+  width: 25%;
+}
+
+.taskTimeTimelineContainerStyling {
+  @extend .taskContainerStyling;
+  width: 40%;
+}
+
+.taskInfoWithIconContainer {
+  text-align: center;
+  border: none;
+  padding: 0;
+  position: relative;
+  vertical-align: top;
+  width: 15px;
+}
+
+.taskInfoWithIconTimelineContainer {
+  @extend .taskInfoWithIconContainer;
+  text-align: left;
+  margin-left: 5px;
+  width: 10%;
+  padding-left: 0;
+}
+
+.task-instructions {
+  margin-bottom: 2.4rem;
+  margin-top: 1em;
+}
+
+.cf-row-wrapper {
+  margin-bottom: 0;
+}
+
+.button-left-aligned {
+  text-align: left;
+  padding-left: 0;
+  padding-top: 0;
+}
+
