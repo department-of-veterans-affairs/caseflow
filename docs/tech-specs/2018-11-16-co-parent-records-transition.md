@@ -1,11 +1,11 @@
-This document was moved from [appeals-team](https://github.com/department-of-veterans-affairs/appeals-team/blob/main/Project%20Folders/Caseflow%20Projects/Hearings/Hearing%20Schedule/Tech%20Specs/COParentRecordsTransition.md).
+This document was moved from [appeals-team](https://github.com/department-of-veterans-affairs/appeals-team/blob/master/Project%20Folders/Caseflow%20Projects/Hearings/Hearing%20Schedule/Tech%20Specs/COParentRecordsTransition.md).
 
-## CO Parent Records to Caseflow
+## CO Parent Records to Caseflow  
 
-Owner: Sharon Warner
+Owner: Sharon Warner  
 Date: 2018-11-16
-Reviewer(s): Oscar Ramirez, Meredith Stewart, & Andrew Lomax
-Review by:  2018-11-18
+Reviewer(s): Oscar Ramirez, Meredith Stewart, & Andrew Lomax  
+Review by:  2018-11-18 
 
 ## Context
 

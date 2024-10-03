@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 import React, { useEffect } from 'react';
 import { useController, useForm, FormProvider, useFormContext } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
@@ -6,7 +5,6 @@ import { downloadReportCSV } from 'app/nonComp/actions/changeHistorySlice';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 
-import Alert from 'app/components/Alert';
 import Button from 'app/components/Button';
 import NonCompLayout from '../components/NonCompLayout';
 import { conditionsSchema, ReportPageConditions } from '../components/ReportPage/ReportPageConditions';
@@ -29,7 +27,7 @@ import {
   RADIO_STATUS_OPTIONS,
   RADIO_STATUS_REPORT_TYPE_OPTIONS,
   SPECIFIC_STATUS_OPTIONS,
-  SPECIFIC_EVENT_OPTIONS
+  SPECTIFIC_EVENT_OPTIONS
 } from 'constants/REPORT_TYPE_CONSTANTS';
 import * as ERRORS from 'constants/REPORT_PAGE_VALIDATION_ERRORS';
 
@@ -44,13 +42,6 @@ const buttonOuterContainerStyling = css({
   marginTop: '4rem',
 });
 
-const outerContainerStyling = css({
-  display: 'flex',
-  justifyContent: 'space-between',
-  paddingLeft: '30px',
-  gap: '3em',
-});
-
 const specificEventTypeSchema = yup.lazy((value) => {
   // eslint-disable-next-line no-undefined
   if (value === undefined) {
@@ -61,22 +52,13 @@ const specificEventTypeSchema = yup.lazy((value) => {
     added_decision_date: yup.boolean(),
     added_issue: yup.boolean(),
     added_issue_no_decision_date: yup.boolean(),
-    removed_issue: yup.boolean(),
-    withdrew_issue: yup.boolean(),
-    completed_disposition: yup.boolean(),
     claim_created: yup.boolean(),
     claim_closed: yup.boolean(),
     claim_status_incomplete: yup.boolean(),
-    claim_status_pending: yup.boolean(),
     claim_status_inprogress: yup.boolean(),
-    requested_issue_modification: yup.boolean(),
-    requested_issue_addition: yup.boolean(),
-    requested_issue_removal: yup.boolean(),
-    requested_issue_withdrawal: yup.boolean(),
-    approval_of_request: yup.boolean(),
-    rejection_of_request: yup.boolean(),
-    cancellation_of_request: yup.boolean(),
-    edit_of_request: yup.boolean(),
+    completed_disposition: yup.boolean(),
+    removed_issue: yup.boolean(),
+    withdrew_issue: yup.boolean(),
   }).test('at-least-one-true', ERRORS.AT_LEAST_ONE_OPTION, (obj) => {
     return Object.values(obj).some((val) => val === true);
   });
@@ -148,11 +130,28 @@ const ReportPageButtons = ({
   );
 };
 
-const EventCheckboxGroup = ({ header, options, name, onChange }) => {
+const RHFCheckboxGroup = ({ options, name, control }) => {
+  const { field } = useController({
+    control,
+    name
+  });
+
+  const { errors } = useFormContext();
+
+  const [value, setValue] = React.useState({});
+
+  let fieldClasses = 'checkbox';
+
+  const errorMessage = get(errors, name)?.message;
+
+  if (errorMessage) {
+    fieldClasses += ' usa-input-error';
+    fieldClasses += ' less-error-padding';
+  }
 
   return (
-    <div>
-      { header && <h4>{header}</h4> }
+    <fieldset className={fieldClasses} style={{ paddingLeft: '30px' }}>
+      {errorMessage ? <div className="usa-input-error-message">{ errorMessage }</div> : null}
       {options.map((option) => (
         <div key={option.id}>
           <Checkbox
@@ -160,86 +159,16 @@ const EventCheckboxGroup = ({ header, options, name, onChange }) => {
             key={`${name}.${option.id}`}
             label={option.label}
             stronglabel
+            onChange={(val) => {
+              value[option.id] = val;
+              field.onChange(value);
+              setValue(value);
+            }}
             unpadded
-            onChange={(val) => onChange({ option, val })}
           />
         </div>
       ))}
-    </div>
-  );
-};
-
-const RHFCheckboxGroup = ({ options, name, control }) => {
-  const { errors } = useFormContext();
-
-  let fieldClasses = 'checkbox';
-  const errorMessage = get(errors, name)?.message;
-
-  const { field } = useController({
-    control,
-    name
-  });
-
-  if (errorMessage) {
-    fieldClasses += ' usa-input-error';
-    fieldClasses += ' less-error-padding';
-  }
-
-  const [value, setValue] = React.useState({});
-
-  const onCheckboxClick = ({ option, val }) => {
-    value[option.id] = val;
-    field.onChange(value);
-    setValue(value);
-  };
-
-  const messageStyling = css({
-    fontSize: '17px !important',
-    paddingTop: '2px !important'
-  });
-
-  return (
-    <div>
-      {name === 'specificEventType' ?
-        <fieldset>
-          {errorMessage &&
-            <Alert
-              type="error"
-              message={ERRORS.AT_LEAST_ONE_CHECKBOX_OPTION}
-              messageStyling={messageStyling}
-            />
-          }
-          <div {...outerContainerStyling} style={{ paddingTop: '30px' }} >
-            <EventCheckboxGroup
-              header="System"
-              options={options[0].system}
-              name={name}
-              onChange={onCheckboxClick}
-            />
-            <EventCheckboxGroup
-              header="General"
-              options={options[0].general}
-              name={name}
-              onChange={onCheckboxClick}
-            />
-            <EventCheckboxGroup
-              header="Requests"
-              options={options[0].requests}
-              name={name}
-              onChange={onCheckboxClick}
-            />
-          </div>
-        </fieldset> :
-        <fieldset className={fieldClasses} style={{ paddingLeft: '30px' }}>
-          {errorMessage ? <div className="usa-input-error-message">{ errorMessage }</div> : null}
-          <EventCheckboxGroup
-            options={options}
-            name={name}
-            onChange={onCheckboxClick}
-          />
-        </fieldset>
-      }
-    </div>
+    </fieldset>
   );
 };
 
@@ -281,30 +210,20 @@ const ReportPage = ({ history }) => {
     specificStatus: {
       incomplete: '',
       in_progress: '',
-      pending: '',
       completed: '',
       cancelled: ''
     },
     specificEventType: {
-      claim_created: '',
-      claim_closed: '',
-      claim_status_incomplete: '',
-      claim_status_pending: '',
-      claim_status_inprogress: '',
       added_decision_date: '',
       added_issue: '',
       added_issue_no_decision_date: '',
+      claim_created: '',
+      claim_closed: '',
+      claim_status_incomplete: '',
+      claim_status_inprogress: '',
+      completed_disposition: '',
       removed_issue: '',
       withdrew_issue: '',
-      completed_disposition: '',
-      requested_issue_modification: '',
-      requested_issue_addition: '',
-      requested_issue_removal: '',
-      requested_issue_withdrawal: '',
-      approval_of_request: '',
-      rejection_of_request: '',
-      cancellation_of_request: '',
-      edit_of_request: '',
     }
   };
 
@@ -328,12 +247,14 @@ const ReportPage = ({ history }) => {
     let formattedOptions;
 
     switch (condition) {
+    case 'decisionReviewType':
+      formattedOptions = Object.keys(options).filter((key) => options[key]);
+      break;
     // Multi select conditions
     case 'personnel':
     case 'facility':
     case 'issueDisposition':
     case 'issueType':
-    case 'decisionReviewType':
       formattedOptions = Object.values(options)[0].map((item) => item.value);
       break;
     // Else it is probably already an object, so it just pass the existing options
@@ -453,7 +374,7 @@ const ReportPage = ({ history }) => {
           {watchReportType === 'event_type_action' &&
           watchRadioEventAction === 'specific_events_action' ? (
               <RHFCheckboxGroup
-                options={SPECIFIC_EVENT_OPTIONS}
+                options={SPECTIFIC_EVENT_OPTIONS}
                 control={control}
                 name="specificEventType"
               />
@@ -490,13 +411,6 @@ RHFCheckboxGroup.propTypes = {
   errorMessage: PropTypes.string
 };
 
-EventCheckboxGroup.propTypes = {
-  options: PropTypes.array,
-  onChange: PropTypes.func,
-  header: PropTypes.string,
-  name: PropTypes.string
-};
-
 RHFRadioButton.propTypes = {
   options: PropTypes.array,
   control: PropTypes.object,
@@ -505,4 +419,3 @@ RHFRadioButton.propTypes = {
 };
 
 export default ReportPage;
-/* eslint-enable max-lines */

@@ -1,58 +1,69 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Controller, useFormContext } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
+import Checkbox from 'app/components/Checkbox';
 import * as yup from 'yup';
 import { get } from 'lodash';
-import SearchableDropdown from 'app/components/SearchableDropdown';
 import { AT_LEAST_ONE_OPTION } from 'constants/REPORT_PAGE_VALIDATION_ERRORS';
 
-const DROPDOWN_OPTIONS = [
+const CHECKBOX_OPTIONS = [
   {
     label: 'Higher-Level Reviews',
-    value: 'HigherLevelReview'
+    name: 'HigherLevelReview'
   },
   {
     label: 'Supplemental Claims',
-    value: 'SupplementalClaim'
-  },
-  {
-    label: 'Remands',
-    value: 'Remand'
+    name: 'SupplementalClaim'
   }
 ];
 
 export const decisionReviewTypeSchema = yup.object({
-  decisionReviewTypes: yup.array().min(1, AT_LEAST_ONE_OPTION)
+  HigherLevelReview: yup.boolean(),
+  SupplementalClaim: yup.boolean(),
+}).test('at-least-one-true', AT_LEAST_ONE_OPTION, (obj) => {
+  const atLeastOneTrue = Object.values(obj).some((value) => value === true);
+
+  if (!atLeastOneTrue) {
+    return false;
+  }
+
+  return true;
 });
 
-export const DecisionReviewType = ({ control, field, name }) => {
+export const DecisionReviewType = ({ field, name, register }) => {
   const { errors } = useFormContext();
-  const nameDecisionReviewTypes = `${name}.options.decisionReviewTypes`;
+  const hasFormErrors = get(errors, name);
+
+  const classNames = hasFormErrors ?
+    'decisionReviewTypeContainer decisionReviewTypeContainerError' :
+    'decisionReviewTypeContainer';
+
+  const errorMessage = get(errors, name)?.options?.message;
 
   return (
-    <div className="report-page-multi-select-dropdown decision-review-types">
-      <Controller
-        control={control}
-        name={nameDecisionReviewTypes}
-        defaultValue={field.options.decisionReviewTypes ?? []}
-        render={({ onChange, ref, ...rest }) => (
-          <SearchableDropdown
-            {...rest}
-            errorMessage={get(errors, nameDecisionReviewTypes)?.message}
-            inputRef={ref}
-            label="Decision Review Type"
-            multi
-            onChange={onChange}
-            options={DROPDOWN_OPTIONS}
+    <div className={classNames}>
+      {hasFormErrors ?
+        <div className="usa-input-error-message" style={{ padding: 0 }}>{errorMessage}</div> :
+        null
+      }
+      <div className="decisionReviewCheckboxContainer">
+        {CHECKBOX_OPTIONS.map((checkbox) => (
+          <Checkbox
+            defaultValue={field.options?.[checkbox.name]}
+            key={`checkbox-${checkbox.name}`}
+            inputRef={register}
+            label={checkbox.label}
+            name={`${name}.options.${checkbox.name}`}
+            unpadded
           />
-        )}
-      />
+        ))}
+      </div>
     </div>
   );
 };
 
 DecisionReviewType.propTypes = {
-  control: PropTypes.object,
   field: PropTypes.object,
   name: PropTypes.string,
+  register: PropTypes.func
 };

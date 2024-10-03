@@ -1,4 +1,4 @@
-This document was moved from [appeals-team](https://github.com/department-of-veterans-affairs/appeals-team/blob/main/Project%20Folders/Caseflow%20Projects/Intake/Tech%20Specs/legacy-issue-establishment.md).
+This document was moved from [appeals-team](https://github.com/department-of-veterans-affairs/appeals-team/blob/master/Project%20Folders/Caseflow%20Projects/Intake/Tech%20Specs/legacy-issue-establishment.md).
 
 # Legacy Issue Optin
 
@@ -37,9 +37,9 @@ Example schema:
 -------------------------------+-----------------------------+-----------+-------------------------------
  id                            | bigint                      |  not null | autoincrement
  request_issue_id              | bigint                      |  not null |
- submitted_at                  | timestamp without time zone |           |
- attempted_at                  | timestamp without time zone |           |
- processed_at                  | timestamp without time zone |           |
+ submitted_at                  | timestamp without time zone |           | 
+ attempted_at                  | timestamp without time zone |           | 
+ processed_at                  | timestamp without time zone |           | 
  error                         | character varying           |           |
 ```
 

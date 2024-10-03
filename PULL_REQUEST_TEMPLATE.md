@@ -11,7 +11,7 @@ Please explain the changes you made here.
 <!-- Change JIRA-12345 to reflect the URL of the location of the test plan(s) for this PR -->
 1. Go to [Jira Issue/Test Plan Link](https://jira.devops.va.gov/browse/JIRA-12345) or list them below
 
-- [ ] For feature branches merging into main: Was this deployed to UAT?
+- [ ] For feature branches merging into master: Was this deployed to UAT?
 
 # Frontend
 ## User Facing Changes
@@ -31,7 +31,7 @@ Please explain the changes you made here.
 *Only for Schema Changes*
 
 * [ ] Add typical timestamps (`created_at`, `updated_at`) for new tables
-* [ ] Update column comments; include a "PII" prefix to indicate definite or potential [PII data content](https://github.com/department-of-veterans-affairs/appeals-team/blob/main/caseflow-team/0-how-we-work/pii-handbook.md#what-is-pii)
+* [ ] Update column comments; include a "PII" prefix to indicate definite or potential [PII data content](https://github.com/department-of-veterans-affairs/appeals-team/blob/master/caseflow-team/0-how-we-work/pii-handbook.md#what-is-pii)
 * [ ] Have your migration classes inherit from `Caseflow::Migration`, especially when adding indexes (use `add_safe_index`) (see [Writing DB migrations](https://github.com/department-of-veterans-affairs/caseflow/wiki/Writing-DB-migrations))
 * [ ] Verify that `migrate:rollback` works as desired ([`change` supported functions](https://edgeguides.rubyonrails.org/active_record_migrations.html#using-the-change-method))
 * [ ] Perform query profiling (eyeball Rails log, check bullet and fasterer output)

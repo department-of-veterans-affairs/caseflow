@@ -1,14 +1,14 @@
-This document was moved from [appeals-team](https://github.com/department-of-veterans-affairs/appeals-team/blob/main/Project%20Folders/Caseflow%20Projects/Hearings/Hearing%20Schedule/Tech%20Specs/ScheduleHearingTask.md).
+This document was moved from [appeals-team](https://github.com/department-of-veterans-affairs/appeals-team/blob/master/Project%20Folders/Caseflow%20Projects/Hearings/Hearing%20Schedule/Tech%20Specs/ScheduleHearingTask.md).
 
 ## Schedule Hearing Task
 
-Owner: Sharon Warner & Andrew Lomax
-Date: 2018-11-14
+Owner: Sharon Warner & Andrew Lomax   
+Date: 2018-11-14   
 Reviewers: Lowell Wood
 
 ## Context
 
-We are refactoring the way we create Hearing Scheduling tasks on the Case Details page!
+We are refactoring the way we create Hearing Scheduling tasks on the Case Details page! 
 
 Previously, we created a Schedule Hearing task anytime a user navigated to the Case Details page from the Assign Hearings page. Unfortunately this leaves out necessary functionality; for example, sometimes users will navigate to the Case Details page from search and need to schedule a hearing.
 
@@ -16,7 +16,7 @@ To fix this, we are now going to allow Hearings Management Branch users to creat
 
 ## Overview
 
-When on the Case Details page, all Hearings Management Branch users will have the ability to create a Schedule Hearing task for the appeal as long as 1) The appeal does not already have a hearing with no disposition, and 2) The appeal does not already have an open Schedule Hearing task.
+When on the Case Details page, all Hearings Management Branch users will have the ability to create a Schedule Hearing task for the appeal as long as 1) The appeal does not already have a hearing with no disposition, and 2) The appeal does not already have an open Schedule Hearing task. 
 
 When a user begins working on the Schedule Hearing task, a modal is displayed. This modal will display a noneditable hearing location (Central Office or the RO for a video hearing) and dropdown of upcoming hearing dates with available slots for that hearing location. If the user has navigated to the Case Details page from the Assign Hearings page, the hearing date will be prepopulated with the date the user selected on the Assign Hearings page. If the user has navigated to the Case Details page a different way, the date will not be prepopulated.
 
