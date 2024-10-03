@@ -8,6 +8,18 @@ import { applyMiddleware, createStore } from 'redux';
 import thunk from 'redux-thunk';
 import { rootReducer } from 'app/reader/reducers';
 import ApiUtil from 'app/util/ApiUtil';
+import { stopPlacingAnnotation } from '../../../../app/reader/AnnotationLayer/AnnotationActions';
+
+jest.mock('../../../../app/reader/AnnotationLayer/AnnotationActions', () => ({
+  stopPlacingAnnotation: jest.fn(),
+}));
+
+beforeEach(() => {
+  stopPlacingAnnotation.mockImplementation((reason) => ({
+    type: 'STOP_PLACING_ANNOTATION',
+    payload: { reason }
+  }));
+});
 
 afterEach(() => jest.clearAllMocks());
 
@@ -90,7 +102,7 @@ const getStore = () =>
     rootReducer,
     {
       annotationLayer: {
-        annotations: 1,
+        annotations: {},
         deleteAnnotationModalIsOpenFor: null,
         shareAnnotationModalIsOpenFor: null
       },
@@ -188,5 +200,13 @@ describe('User changes the document zoom level', () => {
 
     userEvent.click(zoomOutButton);
     await waitFor(() => expect(container).toHaveTextContent('80%'));
+  });
+});
+
+describe('Unsaved comments are dismissed when user naviagtes away from document', () => {
+  it('dispatches stop placing annotation when component mounts', () => {
+    render(<Component {...props} />);
+
+    expect(stopPlacingAnnotation).toHaveBeenCalledWith('navigation');
   });
 });

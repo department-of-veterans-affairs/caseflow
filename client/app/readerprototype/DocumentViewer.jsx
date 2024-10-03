@@ -104,7 +104,7 @@ const DocumentViewer = (props) => {
 
   useEffect(() => {
     dispatch(stopPlacingAnnotation('navigation'));
-  }, [doc.id]);
+  }, [doc.id, dispatch]);
 
   return (
     <div id="prototype-reader" className="cf-pdf-page-container">
