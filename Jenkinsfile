@@ -13,9 +13,9 @@ def APP_VERSION = env.APP_VERSION ?: 'HEAD';
 
 def DEPLOY_MESSAGE = null
 
-// Allows appeals-deployment branch (defaults to master) to be overridden for
+// Allows appeals-deployment branch (defaults to main) to be overridden for
 // testing purposes
-def DEPLOY_BRANCH = (env.DEPLOY_BRANCH != null) ? env.DEPLOY_BRANCH : 'master'
+def DEPLOY_BRANCH = (env.DEPLOY_BRANCH != null) ? env.DEPLOY_BRANCH : 'main'
 
 /************************ Common Pipeline boilerplate ************************/
 
@@ -43,7 +43,7 @@ node('deploy') {
         checkout scm
         DEPLOY_MESSAGE = sh (
           // this script will:
-          // get the latest `deployed` release created by: https://github.com/department-of-veterans-affairs/appeals-deployment/blob/master/ansible/utility-roles/deployed-version/files/tag_deployed_commit.py
+          // get the latest `deployed` release created by: https://github.com/department-of-veterans-affairs/appeals-deployment/blob/main/ansible/utility-roles/deployed-version/files/tag_deployed_commit.py
           // compare current HEAD commit to the last deployed release
           // save the message to be announced in Slack by the pipeline
           script: "git log \$(git ls-remote --tags https://${env.GIT_CREDENTIAL}@github.com/department-of-veterans-affairs/caseflow.git \
