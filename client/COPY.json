@@ -1490,7 +1490,7 @@
   "CASE_DISTRIBUTION_STATIC_LEVERS_VALUES": "Values",
   "TEST_CLEAR_READY_TO_DISTRIBUTE_APPEALS_TITLE": "Clear Ready-to-Distribute Appeals",
   "TEST_CLEAR_READY_TO_DISTRIBUTE_APPEALS_ALERTMSG": "Successfully cleared Ready-to-Distribute Appeals",
-  "TEST_CLEAR_READY_TO_DISTRIBUTE_APPEALS_DESCRIPTION": "This process changes an appeal's status from Ready to Distribute. It will apply to all Ready to Distribute appeals. They will no longer be eligible for distribution. This may take a few minutes to complete.",
+  "TEST_CLEAR_READY_TO_DISTRIBUTE_APPEALS_DESCRIPTION": " - This process changes an appeal's status from Ready to Distribute. It will apply to all Ready to Distribute appeals. They will no longer be eligible for distribution. This may take a few minutes to complete.",
   "TEST_SEEDS_ALERT_MESSAGE": " in progress",
   "TEST_SEEDS_RUN_SEEDS": "Scenario Seeds",
   "TEST_SEEDS_CUSTOM_SEEDS": "Custom Seeds",
