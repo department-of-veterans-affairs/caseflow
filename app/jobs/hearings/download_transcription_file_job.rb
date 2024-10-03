@@ -69,9 +69,14 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     if @transcription_file.date_upload_aws.nil?
       download_file_to_tmp!(download_link)
       @transcription_file.upload_to_s3!
-      convert_to_rtf_and_upload_to_s3! if @transcription_file.file_type == "vtt"
     end
+    convert_to_rtf_and_upload_to_s3! if valid_to_convert_and_upload?
     @transcription_file.clean_up_tmp_location
+  end
+
+  # Checks if file is a vtt and was not already converted
+  def valid_to_convert_and_upload?
+    @transcription_file.file_type == "vtt" && @transcription_file.date_converted.nil?
   end
 
   # Purpose: Builds hash of values to be listed in mail template
