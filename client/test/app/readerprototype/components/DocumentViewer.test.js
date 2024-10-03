@@ -1,16 +1,13 @@
 import { render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { rootReducer } from 'app/reader/reducers';
 import DocumentViewer from 'app/readerprototype/DocumentViewer';
 import ApiUtil from 'app/util/ApiUtil';
 import { def, get } from 'bdd-lazy-var/getter';
-import fs from 'fs';
 import React, { useState } from 'react';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
-import { applyMiddleware, createStore } from 'redux';
-import thunk from 'redux-thunk';
 import { documentFactory } from '../factories';
+import getStore from '../mockReaderStore';
 
 beforeEach(() => {
   window.IntersectionObserver = jest.fn(() => ({
@@ -26,12 +23,18 @@ def('history', () => []);
 def('match', () => ({
   params: { docId: '1', vacolsId: '3575931' },
 }));
-def('document1', () => documentFactory({ id: 1 }));
-def('document2', () => documentFactory({ id: 2 }));
+def('document1', () => documentFactory({ id: 1, type: 'VA 8 Certification of Appeal' }));
+def('document2', () => documentFactory({ id: 2, type: 'Supplemental Statement of the Case' }));
+def('document3', () => documentFactory({ id: 3, type: 'CAPRI' }));
+def('document4', () => documentFactory({ id: 4, type: 'Notice of Disagreement' }));
+def('document5', () => documentFactory({ id: 5, type: 'Rating Decision - Codesheet' }));
 def('props', () => ({
   allDocuments: [
     get.document1,
     get.document2,
+    get.document3,
+    get.document4,
+    get.document5,
   ],
   showPdf: (docId) => () => {
     get.history.push(`/3575931/documents/${docId}`);
@@ -41,41 +44,6 @@ def('props', () => ({
   match: get.match,
   documentPathBase: '/3575931/documents',
 }));
-
-const getStore = () => (
-  createStore(
-    rootReducer,
-    {
-      annotationLayer: {
-        annotations: 1,
-        deleteAnnotationModalIsOpenFor: null,
-        shareAnnotationModalIsOpenFor: null,
-      },
-      documents: { 1: get.document1, 2: get.document2 },
-      documentList: {
-        pdfList: {
-          lastReadDocId: null,
-        },
-        searchCategoryHighlights: [{ 1: {} }, { 2: {} }],
-        filteredDocIds: [
-          1,
-          2,
-        ],
-        docFilterCriteria: {},
-        pdfViewer: {
-          pdfSideBarError: {
-            category: {
-              visible: false,
-            },
-          },
-          tagOptions: [],
-          openedAccordionSections: ['Issue tags', 'Comments', 'Categories'],
-        },
-      },
-    },
-    applyMiddleware(thunk)
-  )
-);
 
 const Component = () => {
   const [zoomLevel, setZoomLevel] = useState(100);
@@ -103,8 +71,8 @@ describe('user visiting a document', () => {
   });
 });
 
-describe('Open Document and Close Issue tags Sidebar Section', () => {
-  it('Navigate to next document and verify Issue tags stay closed', async () => {
+describe('Sidebar Section', () => {
+  it('closes Sidebar and verify it stays closed on the next document', async () => {
     jest.spyOn(ApiUtil, 'patch').mockResolvedValue();
 
     const { container, getByText } = render(<Component />);
