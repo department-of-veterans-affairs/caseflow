@@ -69,6 +69,12 @@ class SearchQueryService::LegacyAppealRow
         request_type: attributes["type"],
         appeal_type: VACOLS::Case::TYPES[attributes["bfac"]],
         external_id: attributes["external_id"],
+        held_by: held_by,
+        is_virtual: false,
+        notes: attributes["notes"],
+        type: type,
+        created_at: nil,
+        scheduled_in_timezone: nil,
         date: HearingMapper.datetime_based_on_type(
           datetime: attributes["date"],
           regional_office: regional_office(attributes["venue"]),
@@ -80,6 +86,19 @@ class SearchQueryService::LegacyAppealRow
     private
 
     attr_reader :attributes
+
+    def type
+      Hearing::HEARING_TYPES[attributes["hearing_type"]&.to_sym]
+    end
+
+    def held_by
+      fname = attributes["held_by_first_name"]
+      lname = attributes["held_by_last_name"]
+
+      if fname.present? && lname.present?
+        "#{fname} #{lname}"
+      end
+    end
 
     def regional_office(ro_key)
       RegionalOffice.find!(ro_key)

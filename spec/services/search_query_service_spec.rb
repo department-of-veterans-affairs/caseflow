@@ -76,6 +76,7 @@ describe "SearchQueryService" do
           appeal.overtime = true
           AdvanceOnDocketMotion.create(
             person: appeal.claimants.first.person,
+            granted: false,
             appeal: appeal
           )
         end.reload
@@ -84,7 +85,7 @@ describe "SearchQueryService" do
       context "finds by docket number" do
         subject { SearchQueryService.new(docket_number: appeal.stream_docket_number) }
 
-        it "finds by docket number" do
+        before do
           create(
             :virtual_hearing,
             hearing: appeal.hearings.first
@@ -92,7 +93,12 @@ describe "SearchQueryService" do
           appeal.hearings.first.update(updated_by: judge)
           appeal.hearings.first.hearing_day.update(regional_office: "RO19")
           appeal.hearings.first.hearing_views.create(user_id: judge.id)
+          AppellantHearingEmailRecipient.first.update(
+            appeal: appeal
+          )
+        end
 
+        it "finds by docket number" do
           expect(appeal).to be_persisted
 
           search_results = subject.search_by_docket_number
@@ -106,7 +112,7 @@ describe "SearchQueryService" do
 
           attributes = result.attributes
 
-          expect(attributes.aod).to be_truthy
+          expect(attributes.aod).to be_falsy
           expect(attributes.appellant_full_name).to eq veteran_full_name
           expect(attributes.assigned_to_location).to eq appeal.assigned_to_location
           expect(attributes.caseflow_veteran_id).to eq veteran.id
@@ -197,6 +203,15 @@ describe "SearchQueryService" do
     )
   end
 
+  let(:judge) do
+    create(
+      :staff,
+      :hearing_judge,
+      snamel: Faker::Name.last_name,
+      snamef: Faker::Name.first_name
+    )
+  end
+
   # must be created first for legacy_appeal factory to find it
   let!(:veteran) do
     create(
@@ -238,10 +253,17 @@ describe "SearchQueryService" do
 
   let(:hearings_count) { 5 }
   let(:vacols_case_hearings) do
-    create_list(
+    hearings = create_list(
       :case_hearing,
       hearings_count
     )
+
+    hearings.map do |hearing|
+      hearing.board_member = judge.sattyid
+      hearing.save
+    end
+
+    hearings
   end
 
   let(:vacols_correspondent) do
@@ -304,6 +326,7 @@ describe "SearchQueryService" do
         expect(attributes.docket_number).to eq vacols_folder.tinum
         expect(attributes.external_id).to eq vacols_case.id
         expect(attributes.hearings.length).to eq hearings_count
+        expect(attributes.hearings.first[:held_by]).to eq "#{judge.snamef} #{judge.snamel}"
         expect(attributes.issues.length).to eq issues_count
         expect(attributes.mst).to be_truthy
         expect(attributes.pact).to be_truthy

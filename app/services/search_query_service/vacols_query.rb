@@ -25,9 +25,13 @@ class SearchQueryService::VacolsQuery
             'external_id' value "h".hearing_pkseq,
             'type' value "h".hearing_type,
             'disposition' value "h".hearing_disp,
-            'date' value "h".hearing_date
+            'date' value "h".hearing_date,
+            'held_by_first_name' value "s".snamef,
+            'held_by_last_name' value "s".snamel,
+            'notes' value "h".notes1
           ))
           from hearsched "h"
+          left outer join staff "s" on "s".sattyid = "h".board_member
           where "h".folder_nr="cases".bfkey
         ) hearings,
         (select
