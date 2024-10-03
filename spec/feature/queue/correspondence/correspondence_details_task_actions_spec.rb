@@ -84,7 +84,7 @@ RSpec.feature("The Correspondence Details All Tasks Actions") do
           expect(page).to have_content("Select a team")
           click_dropdown(prompt: "Select or search", text: "Education")
           find(".cf-form-textarea", match: :first).fill_in with: "Assign task instructions"
-          click_button "Assign-Task-button-id-1"
+          click_button "Assign-task-button-id-1"
           # find + dropdowns and click last one for tasks unrelated to appeal
           dropdowns = page.all(".cf-btn-link")
           dropdowns.last.click
