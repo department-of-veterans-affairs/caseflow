@@ -676,7 +676,6 @@ class TaskRows extends React.PureComponent {
       eventsFromAppeal
     );
 
-
     return (
       <React.Fragment key={appeal.externalId}>
         {sortedTimelineEvents.map((timelineEvent, index) => {

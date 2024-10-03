@@ -353,7 +353,6 @@ const CorrespondenceDetails = (props) => {
     setAppealsToDisplay(sortedAppeals);
   };
 
-
   useEffect(() => {
     sortAppeals(initialSelectedAppeals);
   }, []);
@@ -452,7 +451,8 @@ const CorrespondenceDetails = (props) => {
                 appeals={appealsToDisplay}
                 paginate
                 showCheckboxes
-                taskRelatedAppealIds={disableSubmitButton ? selectedAppeals : initialSelectedAppeals}
+                taskRelatedAppealIds={selectedAppeals}
+                initialAppealIds={initialSelectedAppeals}
                 enableTopPagination
                 userAccess={userAccess}
                 checkboxOnChange={appealCheckboxOnChange}

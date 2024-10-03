@@ -27,7 +27,8 @@ class CaseListTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
 
   toggleCheckboxState = (appealId) => {
-    const checked = this.props?.taskRelatedAppealIds.includes(Number(appealId));
+    const appealsToConsider = this.props?.initialAppealIds || this.props?.taskRelatedAppealIds;
+    const checked = appealsToConsider.includes(Number(appealId));
 
     return checked ? this.props?.userAccess !== 'admin_access' : false;
   };
@@ -208,7 +209,8 @@ CaseListTable.propTypes = {
   updatePageHandlerCallback: PropTypes.func,
   disabled: PropTypes.bool,
   enableTopPagination: PropTypes.bool,
-  toggleCheckboxState: PropTypes.func
+  toggleCheckboxState: PropTypes.func,
+  initialAppealIds: PropTypes.func
 
 };
 
