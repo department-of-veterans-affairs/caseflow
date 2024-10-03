@@ -49,6 +49,7 @@ const CorrespondenceDetails = (props) => {
   const [selectedAppeals, setSelectedAppeals] = useState(correspondence.correspondenceAppealIds);
   const [unSelectedAppeals, setUnSelectedAppeals] = useState([]);
   const [appealsToDisplay, setAppealsToDisplay] = useState([]);
+  const [appealTableKey, setAppealTableKey] = useState(0);
   const userAccess = correspondence.user_access;
 
   const [checkboxStates, setCheckboxStates] = useState({});
@@ -324,13 +325,6 @@ const CorrespondenceDetails = (props) => {
     }
   };
 
-  const toggleCheckboxState = (appealId) => {
-    const appealsToConsider = disableSubmitButton ? selectedAppeals : initialSelectedAppeals;
-    const checked = appealsToConsider?.includes(appealId) || appealsToConsider?.includes(Number(appealId));
-
-    return checked ? userAccess !== 'admin_access' : false;
-  };
-
   useEffect(() => {
     const buttonDisable = (selectedAppeals?.length === initialSelectedAppeals?.length);
 
@@ -342,7 +336,7 @@ const CorrespondenceDetails = (props) => {
     let unfilteredAppeals = [];
 
     correspondence.appeals_information.map((appeal) => {
-      if (selectedList?.includes(appeal.id)) {
+      if (selectedList?.includes(Number(appeal.id))) {
         filteredAppeals.push(appeal);
       } else {
         unfilteredAppeals.push(appeal);
@@ -358,6 +352,7 @@ const CorrespondenceDetails = (props) => {
 
     setAppealsToDisplay(sortedAppeals);
   };
+
 
   useEffect(() => {
     sortAppeals(initialSelectedAppeals);
@@ -453,13 +448,14 @@ const CorrespondenceDetails = (props) => {
                 Please select prior appeal(s) to link to this correspondence.
               </p>
               <CaseListTable
+                key={appealTableKey}
                 appeals={appealsToDisplay}
                 paginate
                 showCheckboxes
-                taskRelatedAppealIds={selectedAppeals}
+                taskRelatedAppealIds={disableSubmitButton ? selectedAppeals : initialSelectedAppeals}
                 enableTopPagination
+                userAccess={userAccess}
                 checkboxOnChange={appealCheckboxOnChange}
-                toggleCheckboxState={toggleCheckboxState}
               />
             </AppSegment>
           )}
@@ -796,7 +792,8 @@ const CorrespondenceDetails = (props) => {
           console.error(errorMessage);
         });
     }
-    if ((selectedAppeals.length || correspondence.correspondenceAppealIds.length) > 0) {
+
+    if (selectedAppeals.length > 0 || unSelectedAppeals.length > 0) {
       const appealsSelected = selectedAppeals.filter((val) => !correspondence.correspondenceAppealIds.includes(val));
 
       const payload = {
@@ -808,13 +805,14 @@ const CorrespondenceDetails = (props) => {
 
       return ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/save_correspondence_appeals`, payload).
         then((resp) => {
-          const appealIds = resp.body.map((num) => num.toString());
+          const appealIds = resp.body;
 
           setSelectedAppeals(appealIds);
           setInitialSelectedAppeals(appealIds);
           sortAppeals(appealIds);
           setShowSuccessBanner(true);
           setDisableSubmitButton(true);
+          setAppealTableKey((key) => key + 1);
           window.scrollTo({
             top: 0,
             behavior: 'smooth'
