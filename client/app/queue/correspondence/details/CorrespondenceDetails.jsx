@@ -513,10 +513,12 @@ const CorrespondenceDetails = (props) => {
         <div className="correspondence-package-details">
           <div className="corr-title-with-button">
             <h2 className="correspondence-h2">General Information</h2>
-            <Button
-              onClick={handleEditGeneralInformationModal}
-              classNames={['button-style']}
-            >Edit</Button>
+            {isAdminNotLoggedIn() ?
+              '' :
+              <Button
+                onClick={handleEditGeneralInformationModal}
+                classNames={['button-style']}
+              >Edit</Button> }
           </div>
           <table className="corr-table-borderless-no-background gray-border">
             <tbody>
