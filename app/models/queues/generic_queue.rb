@@ -17,6 +17,7 @@ class GenericQueue
   def relevant_tasks
     Task.incomplete_or_recently_completed.visible_in_queue_table_view
       .where(assigned_to: user)
+      .not_correspondence
       .includes(*task_includes)
       .order(created_at: :asc)
       .limit(limit)

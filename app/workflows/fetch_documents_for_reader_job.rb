@@ -16,8 +16,9 @@ class FetchDocumentsForReaderJob
     # application: "reader" }
     setup_debug_context
     # loop through appeals object to fetch each appeal with
+    # guard clause added as "appeals" pulled using appeal_id may be a Correspondence object
     # private method fetch_for_appeal
-    appeals.each { |appeal| fetch_for_appeal(appeal) }
+    appeals.each { |appeal| fetch_for_appeal(appeal) if !appeal.is_a?(Correspondence) }
     # private method on line 89
     # returns logger info message status of success with user.id and successful appeals
     # retrieved along with the total count of appeals in a string
