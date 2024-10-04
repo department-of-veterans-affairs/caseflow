@@ -1,13 +1,11 @@
 /* eslint-disable react/prop-types */
 import { render } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import thunk from 'redux-thunk';
 import pdfViewerReducer from '../../../../app/reader/PdfViewer/PdfViewerReducer';
 import ReaderSidebar from '../../../../app/readerprototype/components/ReaderSidebar';
-import IssueTags from 'app/readerprototype/components/IssueTags';
 
 afterEach(() => jest.clearAllMocks());
 
