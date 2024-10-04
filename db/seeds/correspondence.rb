@@ -377,9 +377,5 @@ module Seeds
         }
       ]
     end
-
-    def create_appeals_with_cancelled_correspondence_tasks
-
-    end
   end
 end
