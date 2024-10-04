@@ -27,6 +27,7 @@ class CaseDistributionTest extends React.PureComponent {
       isReseedingDocketPriority: false,
       isReturnLegacyAppeals: false,
       isFailReturnLegacyAppeals: false,
+      isReseedingOptionalSeeds: false,
       isClearingAppeals: false,
       showLegacyAppealsAlert: false,
       showAlert: false,
@@ -171,6 +172,29 @@ class CaseDistributionTest extends React.PureComponent {
         showLegacyAppealsAlert: true,
         legacyAppealsAlertType: 'error',
         legacyAppealsAlertMsg: err
+      });
+    });
+  };
+
+  reseedGenericFullSuiteAppealsSeeds = () => {
+    this.setState({ isReseedingOptionalSeeds: true });
+    ApiUtil.post('/test/optional_seed').then((response) => {
+      const appealCount = response.body.seeds_added || 0;
+      const currentTime = new Date().toLocaleString();
+
+      this.setState({
+        isReseedingOptionalSeeds: false,
+        showAlert: true,
+        alertMsg: `${COPY.TEST_RESEED_GENERIC_FULL_SUITE_APPEALS_ALERTMSG.replace(
+          '{count}', appealCount)} ${currentTime}`,
+      });
+    }, (err) => {
+      console.warn(err);
+      this.setState({
+        isReseedingOptionalSeeds: false,
+        showAlert: true,
+        alertMsg: err,
+        alertType: 'error',
       });
     });
   };
@@ -522,6 +546,18 @@ class CaseDistributionTest extends React.PureComponent {
                             <div className="lever-right csv-download-right">
                               <strong>{COPY.TEST_RUN_NONSSC_AVLJ_APPEAL_TITLE}</strong>
                               {COPY.TEST_RUN_NONSSC_AVLJ_APPEAL_DESCRIPTION}
+                            </div>
+                            <div className="lever-left csv-download-left">
+                              <Button
+                                onClick={this.reseedGenericFullSuiteAppealsSeeds}
+                                name="Run Generic Full Suite Appeals Seeds"
+                                loading={this.state.isReseedingOptionalSeeds}
+                                loadingText="Reseeding Generic Full Suite Appeals Seeds"
+                              />
+                            </div>
+                            <div className="lever-right csv-download-right">
+                              <strong>{COPY.TEST_RUN_GENERIC_FULL_SUITE_APPEALS_TITLE}</strong>
+                              {COPY.TEST_RUN_GENERIC_FULL_SUITE_APPEALS_DESCRIPTION}
                             </div>
                           </div>
                           <hr />
