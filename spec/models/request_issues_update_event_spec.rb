@@ -371,6 +371,23 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       expect(existing_request_issue.nonrating_issue_description).to eq(issue_payload[:nonrating_issue_description])
       expect(existing_request_issue.contention_updated_at).to eq(parser.end_product_establishment_last_synced_at)
     end
+
+    it "does not update fields if they are not in the payload" do
+      issue_payload.delete(:contested_issue_description)
+      issue_payload.delete(:nonrating_issue_category)
+      issue_payload.delete(:nonrating_issue_description)
+      allow(parser).to receive(:updated_issues).and_return([issue_payload])
+      existing_request_issue.update(contested_issue_description: "original description")
+      existing_request_issue.update(nonrating_issue_category: "original category")
+      existing_request_issue.update(nonrating_issue_description: "original description")
+      expect(
+        described_class.new(review: review, user: user, parser: parser, event: event).process_request_issues_data!
+      ).to be_truthy
+      existing_request_issue.reload
+      expect(existing_request_issue.contested_issue_description).to eq("original description")
+      expect(existing_request_issue.nonrating_issue_category).to eq("original category")
+      expect(existing_request_issue.nonrating_issue_description).to eq("original description")
+    end
   end
 
   describe "#removed_issues" do
