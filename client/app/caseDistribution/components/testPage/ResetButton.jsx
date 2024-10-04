@@ -1,5 +1,6 @@
 import React from 'react';
 import Button from '../../../components/Button';
+import PropTypes from 'prop-types';
 
 const ResetButton = ({ onClick, loading }) => {
   return (
@@ -12,6 +13,11 @@ const ResetButton = ({ onClick, loading }) => {
       loadingText="Clearing Ready-to-Distribute Appeals"
     />
   );
+};
+
+ResetButton.propTypes = {
+  onClick: PropTypes.func,
+  loading: PropTypes.bool
 };
 
 export default ResetButton;

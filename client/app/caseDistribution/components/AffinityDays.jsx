@@ -127,7 +127,7 @@ const AffinityDays = () => {
             title={option.text}
           />
           <label htmlFor={`${lever.item}-${option.item}`}>
-            <span className='hidden-label-text'>{option.text}</span>
+            <span className="hidden-label-text">{option.text}</span>
           </label>
           <div>{option.text}</div>
         </div>
