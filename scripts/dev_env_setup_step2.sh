@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Continuation of Developer Setup at
-# https://github.com/department-of-veterans-affairs/caseflow/blob/main/README.md#install-ruby-dependencies
+# https://github.com/department-of-veterans-affairs/caseflow/blob/master/README.md#install-ruby-dependencies
 
 function detectVersion(){
 	# https://stackoverflow.com/questions/3466166/how-to-check-if-running-in-cygwin-mac-or-linux
@@ -50,5 +50,5 @@ Congratulations
 "
 
 echo 'Finish the manual set up from "Database environment setup":
-   https://github.com/department-of-veterans-affairs/caseflow/blob/main/README.md#database-environment-setup
+   https://github.com/department-of-veterans-affairs/caseflow/blob/master/README.md#database-environment-setup
 '

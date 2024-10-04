@@ -5,7 +5,7 @@
 # video hearings and CO hearings in a specified date range after filtering out weekends,
 # holidays, and board non-availability dates. Full details of the algorithm can be
 # found `HearingSchedule.md` in Appeals-team repo (link: https://github.com/department-of-veterans-affairs/appeals-team/
-# blob/main/Project%20Folders/Caseflow%20Projects/Hearings/Hearing%20Schedule/Tech%20Specs/HearingSchedule.md).
+# blob/master/Project%20Folders/Caseflow%20Projects/Hearings/Hearing%20Schedule/Tech%20Specs/HearingSchedule.md).
 # WIKI : https://github.com/department-of-veterans-affairs/caseflow/wiki/Caseflow-Hearings#build-hearing-schedule
 ##
 class HearingSchedule::GenerateHearingDaysSchedule

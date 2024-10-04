@@ -25,17 +25,6 @@ describe SupplementalClaim, :postgres do
     )
   end
 
-  let(:remand) do
-    Remand.new(
-      veteran_file_number: veteran_file_number,
-      receipt_date: receipt_date,
-      benefit_type: benefit_type,
-      legacy_opt_in_approved: legacy_opt_in_approved,
-      veteran_is_not_claimant: veteran_is_not_claimant,
-      decision_review_remanded: decision_review_remanded
-    )
-  end
-
   let!(:intake) do
     create(:intake, user: current_user, detail: supplemental_claim, veteran_file_number: veteran_file_number)
   end
@@ -54,11 +43,6 @@ describe SupplementalClaim, :postgres do
         let(:benefit_type) { "compensation" }
         let(:legacy_opt_in_approved) { false }
         let(:receipt_date) { 1.day.ago }
-
-        it "sets the type column correctly" do
-          expect(supplemental_claim.type).to eq(SupplementalClaim.name)
-          expect(remand.type).to eq(Remand.name)
-        end
 
         it "is valid" do
           is_expected.to be true
@@ -136,17 +120,6 @@ describe SupplementalClaim, :postgres do
   end
 
   context "create_remand_issues!" do
-    let(:classifier) { Remand }
-    let(:supplemental_claim) do
-      classifier.new(
-        veteran_file_number: veteran_file_number,
-        receipt_date: receipt_date,
-        benefit_type: benefit_type,
-        legacy_opt_in_approved: legacy_opt_in_approved,
-        veteran_is_not_claimant: veteran_is_not_claimant,
-        decision_review_remanded: decision_review_remanded
-      )
-    end
     subject { supplemental_claim.create_remand_issues! }
 
     let(:decision_review_remanded) { create(:appeal) }

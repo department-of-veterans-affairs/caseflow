@@ -1,11 +1,11 @@
-This document was moved from [appeals-team](https://github.com/department-of-veterans-affairs/appeals-team/blob/main/Project%20Folders/Caseflow%20Projects/Hearings/Hearing%20Schedule/Tech%20Specs/SlottingVeterans.md).
+This document was moved from [appeals-team](https://github.com/department-of-veterans-affairs/appeals-team/blob/master/Project%20Folders/Caseflow%20Projects/Hearings/Hearing%20Schedule/Tech%20Specs/SlottingVeterans.md).
 
 ## Slotting Veterans - October 19th Release
 
-Owner: Sharon Warner
-Date: 2018-08-16
-Reviewer(s):
-Review by:
+Owner: Sharon Warner  
+Date: 2018-08-16  
+Reviewer(s):   
+Review by:   
 
 ## Context
 
@@ -18,7 +18,7 @@ While previously, RO hearing coordinators handled assigning veterans to hearing 
 In order to allow our users to slot veterans to hearing days, we will provide two data elements:
 
 1) A list of veterans who are ready for hearings, filtered by RO and hearing type, and sorted by priority and docket order (CAVC, AOD, other)
-2) A list of upcoming hearing days, filtered by RO and hearing type, along with the number of available slots
+2) A list of upcoming hearing days, filtered by RO and hearing type, along with the number of available slots  
 
 The hearing coordinators will use these data elements to assign veterans to the appropriate hearing days. We will also build search functionality so hearing coordinators can search for individual cases.
 
@@ -66,12 +66,12 @@ The homepage for this functionality will exist at /hearings/schedule/assign.
 
 ## Rollout Plan
 
-**CO Hearings**— This functionality will be released October 19th, 2018. Our first user will be the Central Office Hearing Coordinator at the Board. They will use Caseflow to slot veterans for central office hearings. We confirmed with the Hearings Management Branch that all Central Office appeals to be scheduled area already available in Location 57, which is already part of their normal processes for scheduling CO hearings.
+**CO Hearings**— This functionality will be released October 19th, 2018. Our first user will be the Central Office Hearing Coordinator at the Board. They will use Caseflow to slot veterans for central office hearings. We confirmed with the Hearings Management Branch that all Central Office appeals to be scheduled area already available in Location 57, which is already part of their normal processes for scheduling CO hearings. 
 
-The Project Management Team will develop training materials and we will schedule a training with the CO Hearing Coordinator.
+The Project Management Team will develop training materials and we will schedule a training with the CO Hearing Coordinator. 
 
-**One Regional Office** — After successful rollout to Central Office hearings, the board will take over slotting veterans for 1 RO that does not have any alternate hearing locations through Caseflow. For this to work, the Board will need to activate, case review, and move these appeals to Location 57 so that Caseflow can display those Veterans to schedule.
+**One Regional Office** — After successful rollout to Central Office hearings, the board will take over slotting veterans for 1 RO that does not have any alternate hearing locations through Caseflow. For this to work, the Board will need to activate, case review, and move these appeals to Location 57 so that Caseflow can display those Veterans to schedule.  
 
-**Full Roll out** - On February 14th, 2019, the board will take over slotting veterans for all ROs.  The Board will need to have appeals that are ready to be scheduled activated, reviewed, and in location 57.
+**Full Roll out** - On February 14th, 2019, the board will take over slotting veterans for all ROs.  The Board will need to have appeals that are ready to be scheduled activated, reviewed, and in location 57. 
 
 ## Research Notes
