@@ -14,7 +14,7 @@ RSpec.describe Events::DecisionReviewUpdated::UpdateInformalConference do
 
       it "updates the value to false" do
         hash = JSON.parse(payload)
-        hash["detail_type"] = "HIGHER_LEVEL_REVIEW"
+        hash["detail_type"] = "HigherLevelReview"
         hash["end_product_establishment"]["reference_id"] = epe.reference_id.to_s
         hash["claim_review"]["informal_conference"] = false
         parser = Events::DecisionReviewUpdated::DecisionReviewUpdatedParser.new({}, hash)
@@ -33,7 +33,7 @@ RSpec.describe Events::DecisionReviewUpdated::UpdateInformalConference do
 
       it "updates the value to true" do
         hash = JSON.parse(payload)
-        hash["detail_type"] = "HIGHER_LEVEL_REVIEW"
+        hash["detail_type"] = "HigherLevelReview"
         hash["end_product_establishment"]["reference_id"] = epe.reference_id.to_s
         hash["claim_review"]["informal_conference"] = true
         parser = Events::DecisionReviewUpdated::DecisionReviewUpdatedParser.new({}, hash)
@@ -53,7 +53,7 @@ RSpec.describe Events::DecisionReviewUpdated::UpdateInformalConference do
 
       it "updates the value to false" do
         hash = JSON.parse(payload)
-        hash["detail_type"] = "HIGHER_LEVEL_REVIEW"
+        hash["detail_type"] = "HigherLevelReview"
         hash["end_product_establishment"]["reference_id"] = epe.reference_id.to_s
         hash["claim_review"]["same_office"] = false
         parser = Events::DecisionReviewUpdated::DecisionReviewUpdatedParser.new({}, hash)
@@ -72,7 +72,7 @@ RSpec.describe Events::DecisionReviewUpdated::UpdateInformalConference do
 
       it "updates the value to true" do
         hash = JSON.parse(payload)
-        hash["detail_type"] = "HIGHER_LEVEL_REVIEW"
+        hash["detail_type"] = "HigherLevelReview"
         hash["end_product_establishment"]["reference_id"] = epe.reference_id.to_s
         hash["claim_review"]["same_office"] = true
         parser = Events::DecisionReviewUpdated::DecisionReviewUpdatedParser.new({}, hash)
