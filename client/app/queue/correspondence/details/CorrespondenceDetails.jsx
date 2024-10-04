@@ -326,10 +326,16 @@ const CorrespondenceDetails = (props) => {
   };
 
   useEffect(() => {
-    const buttonDisable = (selectedAppeals?.length === initialSelectedAppeals?.length);
+    const isButtonDisabled = () => {
+      if (selectedAppeals?.length !== initialSelectedAppeals?.length) {
+        return false;
+      }
 
-    setDisableSubmitButton(buttonDisable);
-  }, [selectedAppeals]);
+      return initialSelectedAppeals.every((appeal) => selectedAppeals.includes(appeal));
+    };
+
+    setDisableSubmitButton(isButtonDisabled());
+  }, [selectedAppeals, initialSelectedAppeals]);
 
   const sortAppeals = (selectedList) => {
     let filteredAppeals = [];
@@ -352,7 +358,6 @@ const CorrespondenceDetails = (props) => {
 
     setAppealsToDisplay(sortedAppeals);
   };
-
 
   useEffect(() => {
     sortAppeals(initialSelectedAppeals);
