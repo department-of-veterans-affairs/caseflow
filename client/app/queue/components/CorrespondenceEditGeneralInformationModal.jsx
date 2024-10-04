@@ -15,7 +15,7 @@ import { editCorrespondenceGeneralInformation } from
 const CorrespondenceEditGeneralInformationModal = (props) => {
   const { correspondenceInfo, correspondenceTypes, handleEditGeneralInformationModal } = props;
   const [changeVaDor, setChangeVaDor] = useState(
-    moment.utc((correspondenceInfo?.vaDateOfReceipt)).format('YYYY-MM-DD')
+    moment(correspondenceInfo?.vaDateOfReceipt).format('YYYY-MM-DD')
   );
   const [changeCorrespondenceTypeId, setChangeCorrespondenceTypeId] = useState(
     // eslint-disable-next-line camelcase
