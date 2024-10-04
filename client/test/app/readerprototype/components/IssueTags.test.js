@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { render } from '@testing-library/react';
+import { render, waitFor, fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { Provider } from 'react-redux';
@@ -8,6 +8,7 @@ import thunk from 'redux-thunk';
 import { addNewTag, removeTag } from '../../../../app/reader/Documents/DocumentsActions';
 import pdfViewerReducer from '../../../../app/reader/PdfViewer/PdfViewerReducer';
 import IssueTags from '../../../../app/readerprototype/components/IssueTags';
+
 
 afterEach(() => jest.clearAllMocks());
 
@@ -52,10 +53,16 @@ const doc = {
 };
 
 describe('Adds and removes tag', () => {
-  it('succeeds', () => {
+  it('succeeds', async () => {
     const { container, getByLabelText, getByText } = render(<Component doc={doc} errorVisible={false} />);
 
-    userEvent.click(getByLabelText('Select or tag issues'));
+    const dropdown = getByLabelText('Select or tag issues');
+    fireEvent.keyDown(dropdown, { key: 'ArrowDown' });
+
+    await waitFor(() => {
+      expect(getByText('Service')).toBeInTheDocument();
+    });
+
     userEvent.click(getByText('Service'));
 
     expect(addNewTag).toHaveBeenCalledWith(doc, [

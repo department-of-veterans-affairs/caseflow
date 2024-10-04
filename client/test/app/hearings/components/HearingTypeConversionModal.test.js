@@ -1,6 +1,5 @@
 import React from 'react';
-
-import { mount } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 
 import { appealData } from '../../../data/appeals';
 import { queueWrapper } from '../../../data/stores/queueStore';
@@ -8,39 +7,50 @@ import HearingTypeConversionModal from '../../../../app/hearings/components/Hear
 import Modal from '../../../../app/components/Modal';
 import COPY from 'COPY';
 
+const Wrapper = ({ children }) => {
+  return queueWrapper({ children });
+};
+
 describe('HearingTypeConversion', () => {
   test('Displays convert to Video text when converting from Video', () => {
-    const hearingTypeConversion = mount(
+    const {asFragment} = render(
       <HearingTypeConversionModal
         appeal={appealData}
         hearingType="Video"
       />,
       {
-        wrappingComponent: queueWrapper,
+        wrapper: Wrapper,
       }
     );
 
-    expect(hearingTypeConversion.exists(Modal)).toBeTruthy();
-    expect(hearingTypeConversion.find(Modal).text()).not.toContain('Central Office');
-    expect(hearingTypeConversion.find(Modal).text()).toContain(COPY.CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT);
-    expect(hearingTypeConversion).toMatchSnapshot();
+    const heading = screen.getByRole('heading', { name: /Convert Hearing To Video/i });
+    expect(heading).toBeInTheDocument();
+
+    expect(screen.queryByText(/Central Office/i)).not.toBeInTheDocument();
+    expect(
+      screen.queryByText((content) => content.includes(COPY.CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT))
+    ).toBeInTheDocument();
+    console.log(COPY.CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT)
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Displays convert to Central text when converting from Central', () => {
-    const hearingTypeConversion = mount(
+    const { asFragment } = render(
       <HearingTypeConversionModal
         appeal={appealData}
         hearingType="Central"
       />,
       {
-        wrappingComponent: queueWrapper,
+        wrapper: Wrapper,
       }
     );
 
-    expect(hearingTypeConversion.exists(Modal)).toBeTruthy();
-    expect(hearingTypeConversion.find(Modal).text()).toContain('Central Office');
-    expect(hearingTypeConversion.find(Modal).text()).
-      not.toContain(COPY.CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT);
-    expect(hearingTypeConversion).toMatchSnapshot();
+    const heading = screen.getByRole('heading', { name: /Convert Hearing To Central/i });
+    expect(heading).toBeInTheDocument();
+
+    expect(screen.queryByText(/Central Office/i)).toBeInTheDocument();
+    expect(screen.queryByText((content) => content.includes(COPY.CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT))
+    ).not.toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
   });
 });

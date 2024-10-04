@@ -19,8 +19,7 @@ module.exports = {
   collectCoverageFrom: ['app/**/*.{js,jsx}', '!**/*.stories.*'],
   testMatch: ['<rootDir>/test/**/*-test.js?(x)', '**/?(*.)(spec|test).js?(x)'],
   testTimeout: 10000,
-  snapshotSerializers: ['enzyme-to-json/serializer'],
-  testPathIgnorePatterns: ['test.jsx']
+  testPathIgnorePatterns: ['test.jsx'],
 };
 
 /* eslint-enable no-process-env */
