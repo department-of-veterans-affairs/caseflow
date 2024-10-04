@@ -8,7 +8,7 @@ class TranscriptionFile < CaseflowRecord
 
   belongs_to :locked_by, class_name: "User"
 
-  VALID_FILE_TYPES = %w[mp3 mp4 vtt rtf xls csv zip].freeze
+  VALID_FILE_TYPES = %w[pdf doc mp3 mp4 vtt rtf xls csv zip].freeze
 
   validates :file_type, inclusion: { in: VALID_FILE_TYPES, message: "'%<value>s' is not valid" }
 
@@ -41,7 +41,12 @@ class TranscriptionFile < CaseflowRecord
 
   scope :unassigned, -> { where(file_status: Constants.TRANSCRIPTION_FILE_STATUSES.upload.success) }
 
-  scope :sent_or_completed, -> { joins(transcription: :transcription_package).distinct }
+  scope :sent_or_completed, lambda {
+    where(file_type: ["pdf", "doc"])
+    .where.not(file_status: "Failed Upload (BOX)")
+    .joins(transcription: :transcription_package)
+    .distinct
+  }
 
   scope :filter_by_hearing_type, ->(values) { where("hearing_type IN (?)", values) }
 
@@ -150,8 +155,15 @@ class TranscriptionFile < CaseflowRecord
 
   scope :order_by_status, lambda { |direction|
     joins(transcription: :transcription_package)
-      .select("transcription_files.*, transcription_packages.status AS package_status")
-      .order("package_status #{direction}")
+      .select("
+        transcription_files.*,
+        (CASE file_status
+          WHEN \'Completed\' THEN 1
+          WHEN \'Overdue\' THEN 2
+          WHEN \'Failed Retrieval (BOX)\' THEN 3
+          WHEN \'Successful Upload (BOX)\' THEN 4
+        END) AS status_order")
+      .order("status_order #{direction}")
   }
 
   scope :locked, -> { where(locked_at: (Time.now.utc - 2.hours)..Time.now.utc) }
