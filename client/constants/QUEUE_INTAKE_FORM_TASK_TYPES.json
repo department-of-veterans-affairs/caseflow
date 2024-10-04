@@ -190,5 +190,80 @@
         },
       "label": "Withdrawal Of Appeal"
     }
+  ],
+  "relatedToAppealInactive": [
+    {
+      "value": {
+        "klass": "CavcCorrespondenceMailTask",
+        "assigned_to": "CavcLitigationSupport"
+        },
+      "label": "CAVC Correspondence"
+    }, {
+      "value": {
+        "klass": "ClearAndUnmistakeableErrorMailTask",
+        "assigned_to": "LitigationSupport"
+        },
+      "label": "CUE-Related"
+    }, {
+      "value": {
+        "klass": "CongressionalInterestMailTask",
+        "assigned_to": "LitigationSupport"
+        },
+      "label": "Congressional Interest"
+    }, {
+      "value": {
+        "klass": "ControlledCorrespondenceMailTask",
+        "assigned_to": "LitigationSupport"
+        },
+      "label": "Controlled Correspondence"
+    }, {
+      "value": {
+        "klass": "FoiaRequestMailTask",
+        "assigned_to": "PrivacyTeam"
+        },
+      "label": "FOIA Request"
+    }, {
+      "value": {
+        "klass": "ReconsiderationMotionMailTask",
+        "assigned_to": "LitigationSupport"
+        },
+      "label": "Motion For Reconsideration"
+    }, {
+      "value": {
+        "klass": "AodMotionMailTask",
+        "assigned_to": "AodTeam"
+        },
+      "label": "Motion To Advance On Docket"
+    }, {
+      "value": {
+        "klass": "OtherMotionMailTask",
+        "assigned_to": "LitigationSupport"
+        },
+      "label": "Other Motion"
+    }, {
+      "value": {
+        "klass": "PrivacyActRequestMailTask",
+        "assigned_to": "PrivacyTeam"
+        },
+      "label": "Privacy Act Request"
+    }, {
+      "value": {
+        "klass": "PrivacyComplaintMailTask",
+        "assigned_to": "PrivacyTeam"
+        },
+      "label": "Privacy Complaint"
+    }, {
+      "value": {
+        "klass": "ReturnedUndeliverableCorrespondenceMailTask",
+        "assigned_to": "BvaDispatch"
+        },
+      "label": "Returned Or Undeliverable Mail"
+    }, {
+      "value": {
+        "klass": "StatusInquiryMailTask",
+        "assigned_to": "LitigationSupport"
+        },
+      "label": "Status Inquiry"
+    }
   ]
 }

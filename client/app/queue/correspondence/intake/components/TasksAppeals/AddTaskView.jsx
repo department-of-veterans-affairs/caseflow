@@ -137,7 +137,7 @@ const AddTaskView = (props) => {
               <div className="provide-context-text-styling" />
               <TextareaField
                 name="content"
-                label="Provide context and instruction on this task"
+                label="Provide context and instructions on this task"
                 value={task.content}
                 onChange={updateTaskContent}
               />
