@@ -435,7 +435,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
 
   def self.ready_to_distribute_appeals
     query = <<-SQL
-      #{SELECT_READY_TO_DISTRIBUTE_APPEALS_ORDER_BY_BFD19}
+      #{SELECT_READY_TO_DISTRIBUTE_APPEALS_ORDER_BY_BFD19_ADDITIONAL_COLS}
     SQL
 
     fmtd_query = sanitize_sql_array([query])
