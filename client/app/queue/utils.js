@@ -903,7 +903,7 @@ export const currentDaysOnHold = (task) => {
 };
 
 export const taskIsActive = (task) =>
-  ![TASK_STATUSES.completed, TASK_STATUSES.cancelled].includes(task.status);
+  ![TASK_STATUSES.completed, TASK_STATUSES.cancelled].includes(task.status) || task.type === 'EvidenceSubmissionWindowTask'
 
 export const taskActionData = ({ task, match }) => {
   if (!task) {
