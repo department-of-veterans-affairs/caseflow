@@ -63,8 +63,10 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
 
   # Override the base class's process_job method to set the status to attempted and processed
   def process_job
-    attempted!
-    processed!
+    update!(last_submitted_at: @parser.end_product_establishment_last_synced_at)
+    update!(submitted_at: @parser.end_product_establishment_last_synced_at)
+    update!(attempted_at: @parser.end_product_establishment_last_synced_at)
+    update!(processed_at: @parser.end_product_establishment_last_synced_at)
   end
 
   # Process aditional updates for all data that was passed to base class but not processed by it
@@ -81,7 +83,8 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       request_issue.update(
         contested_issue_description: issue_data[:contested_issue_description],
         nonrating_issue_category: issue_data[:nonrating_issue_category],
-        nonrating_issue_description: issue_data[:nonrating_issue_description]
+        nonrating_issue_description: issue_data[:nonrating_issue_description],
+        contention_updated_at: @parser.end_product_establishment_last_synced_at
       )
     end
     true
@@ -101,7 +104,8 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(issue_data)
       request_issue.update(
         closed_at: parser_issue.ri_closed_at,
-        closed_status: parser_issue.ri_closed_status
+        closed_status: parser_issue.ri_closed_status,
+        contention_removed_at: @parser.end_product_establishment_last_synced_at
       )
     end
     true
@@ -119,9 +123,9 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
         closed_at: parser_issue.ri_closed_at,
         contested_issue_description: parser_issue.ri_contested_issue_description,
         nonrating_issue_category: parser_issue.ri_nonrating_issue_category,
-        nonrating_issue_description: parser_issue.ri_nonrating_issue_description
+        nonrating_issue_description: parser_issue.ri_nonrating_issue_description,
+        contention_removed_at: @parser.end_product_establishment_last_synced_at
       )
-      RequestIssueContention.new(request_issue).remove!
       add_event_record(request_issue, "E2I")
     end
   end
@@ -159,7 +163,8 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
         closed_at: parser_issue.ri_closed_at,
         contested_issue_description: parser_issue.ri_contested_issue_description,
         nonrating_issue_category: parser_issue.ri_nonrating_issue_category,
-        nonrating_issue_description: parser_issue.ri_nonrating_issue_description
+        nonrating_issue_description: parser_issue.ri_nonrating_issue_description,
+        contention_removed_at: @parser.end_product_establishment_last_synced_at
       )
       add_event_record(request_issue, "I2I")
     end
@@ -200,12 +205,16 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   def add_existing_review_issues
     @review.request_issues.each do |request_issue|
       # Skip if the request issue is already in the request_issues_data
-      next if @request_issues_data.find { |data| data[:reference_id] == request_issue.reference_id }
+      next if @request_issues_data.find do |data|
+        data[:reference_id] == request_issue.reference_id ||
+        data[:original_caseflow_request_issue_id] == request_issue.id
+      end
 
       # Skip if the request issue is in the removed_issues
       next if @parser.removed_issues.find do |data|
         parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(data)
-        parser_issue.ri_reference_id == request_issue.reference_id
+        parser_issue.ri_reference_id == request_issue.reference_id ||
+        parser_issue.ri_original_caseflow_request_issue_id == request_issue.id
       end
 
       # Only add the reference_id and request_issue_id to the request_issues_data
@@ -296,8 +305,26 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   end
 
   def find_request_issue(parser_issue)
-    RequestIssue.find_by(reference_id: parser_issue.ri_reference_id) ||
-      fail(Caseflow::Error::DecisionReviewUpdateMissingIssueError, parser_issue.ri_reference_id)
+    request_issue = RequestIssue.find_by(reference_id: parser_issue.ri_reference_id)
+
+    if request_issue.nil?
+      original_request_issue = RequestIssue.find_by(id: parser_issue.ri_original_caseflow_request_issue_id)
+
+      if original_request_issue
+        original_request_issue.update!(reference_id: parser_issue.ri_reference_id)
+        request_issue = original_request_issue
+      end
+    end
+
+    if request_issue.nil?
+      fail(
+        Caseflow::Error::DecisionReviewUpdateMissingIssueError,
+        "Reference ID: #{parser_issue.ri_reference_id}, " \
+        "Original Reference ID: #{parser_issue.ri_original_caseflow_request_issue_id}"
+      )
+    end
+
+    request_issue
   end
 
   def add_event_record(request_issue, update_type)

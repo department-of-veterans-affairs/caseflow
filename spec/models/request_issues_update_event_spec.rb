@@ -7,6 +7,7 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
   let!(:existing_request_issue) do
     create(:request_issue_with_epe, decision_review: review, reference_id: "some_reference_id")
   end
+  let(:last_synced_at) { Time.zone.now }
   let(:parser) do
     instance_double(Events::DecisionReviewUpdated::DecisionReviewUpdatedParser).tap do |parser|
       allow(parser).to receive(:updated_issues).and_return([])
@@ -16,14 +17,16 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       allow(parser).to receive(:eligible_to_ineligible_issues).and_return([])
       allow(parser).to receive(:ineligible_to_eligible_issues).and_return([])
       allow(parser).to receive(:ineligible_to_ineligible_issues).and_return([])
+      allow(parser).to receive(:end_product_establishment_last_synced_at).and_return(last_synced_at)
     end
   end
 
   let(:parser_issue) do
     instance_double(Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser).tap do |issue|
       allow(issue).to receive(:ri_reference_id).and_return("some_reference_id")
+      allow(issue).to receive(:ri_original_caseflow_request_issue_id).and_return(nil)
       allow(issue).to receive(:ri_benefit_type).and_return("some_benefit_type")
-      allow(issue).to receive(:ri_closed_at).and_return(Time.zone.now)
+      allow(issue).to receive(:ri_closed_at).and_return(last_synced_at)
       allow(issue).to receive(:ri_closed_status).and_return("some_status")
       allow(issue).to receive(:ri_contested_issue_description).and_return("some_description")
       allow(issue).to receive(:ri_contention_reference_id).and_return("some_contention_id")
@@ -42,7 +45,7 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       allow(issue).to receive(:ri_nonrating_issue_bgs_id).and_return("some_bgs_id")
       allow(issue).to receive(:ri_nonrating_issue_bgs_source).and_return("some_source")
       allow(issue).to receive(:ri_ramp_claim_id).and_return("some_claim_id")
-      allow(issue).to receive(:ri_rating_issue_associated_at).and_return(Time.zone.now)
+      allow(issue).to receive(:ri_rating_issue_associated_at).and_return(last_synced_at)
       allow(issue).to receive(:ri_untimely_exemption).and_return(false)
       allow(issue).to receive(:ri_untimely_exemption_notes).and_return("some_notes")
       allow(issue).to receive(:ri_vacols_id).and_return("some_vacols_id")
@@ -109,11 +112,21 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
   end
 
   describe "#find_request_issue" do
-    it "returns the request issue id" do
+    it "returns the request issue id based on reference_id" do
       result = described_class.new(
         review: review, user: user, parser: parser, event: event
       ).find_request_issue(parser_issue)
       expect(result).to eq(existing_request_issue)
+    end
+
+    it "returns the request issue id based on original_caseflow_request_issue_id and updates the reference_id" do
+      existing_request_issue.update(reference_id: nil)
+      allow(parser_issue).to receive(:ri_original_caseflow_request_issue_id).and_return(existing_request_issue.id)
+      result = described_class.new(
+        review: review, user: user, parser: parser, event: event
+      ).find_request_issue(parser_issue)
+      expect(result).to eq(existing_request_issue)
+      expect(result.reference_id).to eq(parser_issue.ri_reference_id)
     end
 
     it "raises an error if the request issue is not found" do
@@ -278,6 +291,7 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       expect(request_issue.contested_issue_description).to eq(issue_payload[:contested_issue_description])
       expect(request_issue.nonrating_issue_category).to eq(issue_payload[:nonrating_issue_category])
       expect(request_issue.nonrating_issue_description).to eq(issue_payload[:nonrating_issue_description])
+      expect(request_issue.contention_removed_at).to eq(parser.end_product_establishment_last_synced_at)
       expect(request_issue.event_records.last.info["update_type"]).to eq("E2I")
       expect(request_issue.event_records.last.info["record_data"]["id"]).to eq(request_issue.id)
     end
@@ -341,6 +355,7 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       expect(existing_request_issue.nonrating_issue_description).to eq(issue_payload[:nonrating_issue_description])
       expect(existing_request_issue.event_records.last.info["update_type"]).to eq("I2I")
       expect(existing_request_issue.event_records.last.info["record_data"]["id"]).to eq(existing_request_issue.id)
+      expect(existing_request_issue.contention_removed_at).to eq(parser.end_product_establishment_last_synced_at)
     end
   end
 
@@ -354,6 +369,7 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       expect(existing_request_issue.contested_issue_description).to eq(issue_payload[:contested_issue_description])
       expect(existing_request_issue.nonrating_issue_category).to eq(issue_payload[:nonrating_issue_category])
       expect(existing_request_issue.nonrating_issue_description).to eq(issue_payload[:nonrating_issue_description])
+      expect(existing_request_issue.contention_updated_at).to eq(parser.end_product_establishment_last_synced_at)
     end
   end
 
@@ -378,7 +394,32 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       )
     end
 
+    it "adds existing issues to the request issue that were originally in CF" do
+      existing_request_issue.update(reference_id: nil)
+      allow(parser_issue).to receive(:ri_original_caseflow_request_issue_id).and_return(existing_request_issue.id)
+
+      subject = described_class.new(review: review, user: user, parser: parser, event: event)
+      result = subject.add_existing_review_issues
+
+      expect(result).to eq(
+        [
+          {
+            request_issue_id: existing_request_issue.id,
+            reference_id: nil
+          }
+        ]
+      )
+    end
+
     it "adds existing issues to the request issues data but not removed issues" do
+      allow(parser).to receive(:removed_issues).and_return([issue_payload])
+      subject = described_class.new(review: review, user: user, parser: parser, event: event)
+      expect(subject.add_existing_review_issues).to eq([])
+    end
+
+    it "adds existing issues to the request issues data but not removed issues that are in the parser" do
+      existing_request_issue.update(reference_id: nil)
+      issue_payload[:original_caseflow_request_issue_id] = existing_request_issue.id
       allow(parser).to receive(:removed_issues).and_return([issue_payload])
       subject = described_class.new(review: review, user: user, parser: parser, event: event)
       expect(subject.add_existing_review_issues).to eq([])
@@ -393,6 +434,7 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       existing_request_issue.reload
       expect(existing_request_issue.closed_at).to eq("1970-01-19 14:25:51.000000000 -0500")
       expect(existing_request_issue.closed_status).to eq(issue_payload[:closed_status])
+      expect(existing_request_issue.contention_removed_at).to eq(parser.end_product_establishment_last_synced_at)
     end
   end
 
@@ -434,6 +476,17 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       existing_request_issue.reload
       expect(existing_request_issue.event_records.last.info["update_type"]).to eq("E")
       expect(existing_request_issue.event_records.last.info["record_data"]["id"]).to eq(existing_request_issue.id)
+    end
+  end
+
+  describe "#process_job" do
+    it "updates the statuses to attempted, submitted, processed" do
+      allow(parser).to receive(:updated_issues).and_return([issue_payload])
+      subject = described_class.new(review: review, user: user, parser: parser, event: event)
+      expect(subject.perform!).to be_truthy
+      expect(subject.attempted_at).to eq(parser.end_product_establishment_last_synced_at)
+      expect(subject.submitted_at).to eq(parser.end_product_establishment_last_synced_at)
+      expect(subject.processed_at).to eq(parser.end_product_establishment_last_synced_at)
     end
   end
 end
