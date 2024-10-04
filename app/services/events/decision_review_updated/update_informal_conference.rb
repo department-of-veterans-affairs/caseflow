@@ -7,7 +7,7 @@ class Events::DecisionReviewUpdated::UpdateInformalConference
     def process!(params)
       event = params[:event]
       parser = params[:parser]
-      if parser.detail_type == "HigherLevelReview"
+      if parser.detail_type == "HIGHER_LEVEL_REVIEW"
         # fetch the EPE and use it to get the source (i.e. HLR)
         hlr = EndProductEstablishment.find_by(reference_id: parser.end_product_establishment_reference_id)&.source
         hlr.update!(
