@@ -162,7 +162,7 @@ class CaseDistributionTest extends React.PureComponent {
         isReturnLegacyAppeals: false,
         showLegacyAppealsAlert: true,
         legacyAppealsAlertType: 'success',
-        legacyAppealsAlertMsg: '{COPY.TEST_RESEED_RETURN_LEGACY_APPEALS_ALERTMSG}',
+        legacyAppealsAlertMsg: 'Successfully Completed Return Legacy Appeals To Board Job.',
       });
     }, (err) => {
       console.warn(err);
