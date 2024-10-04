@@ -36,26 +36,24 @@ class Events::DecisionReviewUpdated
           Events::DecisionReviewUpdated::UpdateInformalConference.process!(event: event, parser: parser)
           Events::DecisionReviewUpdated::UpdateClaimReview.process!(event: event, parser: parser)
           Events::DecisionReviewUpdated::UpdateEndProductEstablishment.process!(event: event, parser: parser)
-          RequestIssuesUpdateEvent.new(user: user, review: review, parser: parser).perform!
+          RequestIssuesUpdateEvent.new(user: user, review: review, parser: parser, event: event).perform!
           # Update the Event after all operations have completed
           event.update!(completed_at: Time.now.in_time_zone, error: nil, info: { "event_payload" => payload })
-          # Audit all request issues
-          # Events::DecisionReviewUpdated::DecisionReviewUpdatedAudit.new(event: event, parser: parser).call!
         end
       end
     rescue Caseflow::Error::RedisLockFailed => error
-      Rails.logger.error("Key RedisMutex:EndProductEstablishment:#{claim_id} is already in the Redis Cache")
+      Rails.logger.error("Key RedisMutex:EndProductEstablishment:#{params[:claim_id]} is already in the Redis Cache")
       event&.update!(error: error.message)
       raise error
     rescue RedisMutex::LockError => error
-      Rails.logger.error("Failed to acquire lock for Claim ID: #{claim_id}! This Event is being"\
+      Rails.logger.error("Failed to acquire lock for Claim ID: #{params[:claim_id]}! This Event is being"\
                          " processed. Please try again later.")
       raise error
     rescue StandardError => error
       Rails.logger.error("#{error.class} : #{error.message}")
       event&.update!(error: "#{error.class} : #{error.message}", info:
         {
-          "failed_claim_id" => claim_id,
+          "failed_claim_id" => params[:claim_id],
           "error" => error.message,
           "error_class" => error.class.name,
           "error_backtrace" => error.backtrace,
