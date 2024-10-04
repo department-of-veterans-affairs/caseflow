@@ -1,10 +1,10 @@
 name: Make-docs-to-webpage
 
-# Trigger whenever changes are made to the main branch
+# Trigger whenever changes are made to the master branch
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   make_docs:

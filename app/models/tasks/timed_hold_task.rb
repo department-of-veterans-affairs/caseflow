@@ -55,7 +55,7 @@ class TimedHoldTask < Task
     # Since we expect to always instantiate TimedHoldTasks with a delay we need to take that into account
     # to know when the timer will complete.
     #
-    # https://github.com/department-of-veterans-affairs/caseflow/blob/main/app/models/concerns/asyncable.rb#L125
+    # https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/models/concerns/asyncable.rb#L125
     #
     # If we allow TimedHoldTasks to be submitted without delay this will need to change.
     task_timers.first ? task_timers.first.last_submitted_at + TaskTimer.processing_retry_interval_hours.hours : nil

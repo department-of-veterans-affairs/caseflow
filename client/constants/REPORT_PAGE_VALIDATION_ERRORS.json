@@ -8,6 +8,5 @@
   "END_DATE_SMALL": "End date must be greater than the start date",
   "DATE_FUTURE": "Date cannot be in the future",
   "AT_LEAST_ONE_OPTION": "Please select at least one option",
-  "AT_LEAST_ONE_CHECKBOX_OPTION": "Please select at least one checkbox from one of the sections below.",
   "MISSING_PERSONNEL": "Please select at least one team member"
 }
