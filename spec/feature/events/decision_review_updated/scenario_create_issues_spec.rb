@@ -116,6 +116,8 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
         expect(request_issue_update.after_request_issue_ids).to eq([new_request_issue.id, existing_request_issue.id])
         expect(request_issue_update.edited_request_issue_ids).to eq([])
         expect(request_issue_update.withdrawn_request_issue_ids).to eq([])
+        expect(new_request_issue.event_records.last.info["update_type"]).to eq("A")
+        expect(new_request_issue.event_records.last.info["record_data"]["id"]).to eq(new_request_issue.id)
       end
     end
   end
