@@ -25,23 +25,18 @@ describe('CaseDistributionTest Component reseedGenericFullSuiteAppealsSeeds', ()
   });
 
   it('calls the reseedGenericFullSuiteAppealsSeeds function and handles success', async () => {
-    // Mock the successful API response
     mockPost.mockResolvedValue({
       body: { seeds_added: 4094 },
     });
 
-    // Directly invoke the reseedGenericFullSuiteAppealsSeeds function
     const instance = wrapper.find(CaseDistributionTest).instance();
-    instance.reseedGenericFullSuiteAppealsSeeds();
 
-    // Wait for the state update
-    await new Promise(setImmediate);
+    await instance.reseedGenericFullSuiteAppealsSeeds();
+
     wrapper.update();
 
-    // Check that the API was called with the correct URL
     expect(mockPost).toHaveBeenCalledWith('/test/optional_seed');
 
-    // Verify the expected state changes
     expect(wrapper.find(CaseDistributionTest).state('isReseedingOptionalSeeds')).toBe(false);
     expect(wrapper.find(CaseDistributionTest).state('showAlert')).toBe(true);
     expect(wrapper.find(CaseDistributionTest).state('alertMsg')).toContain(
@@ -50,24 +45,18 @@ describe('CaseDistributionTest Component reseedGenericFullSuiteAppealsSeeds', ()
   });
 
   it('calls the reseedGenericFullSuiteAppealsSeeds function and handles error', async () => {
-    // Mock a failed API response
     const errorMessage = 'API Error';
 
     mockPost.mockRejectedValue((errorMessage));
 
-    // Directly invoke the reseedGenericFullSuiteAppealsSeeds function
     const instance = wrapper.find(CaseDistributionTest).instance();
 
-    instance.reseedGenericFullSuiteAppealsSeeds();
+    await instance.reseedGenericFullSuiteAppealsSeeds();
 
-    // Wait for the state update
-    await new Promise(setImmediate);
     wrapper.update();
 
-    // Check that the API was called with the correct URL
     expect(mockPost).toHaveBeenCalledWith('/test/optional_seed');
 
-    // Verify the expected state changes after error
     expect(wrapper.find(CaseDistributionTest).state('isReseedingOptionalSeeds')).toBe(false);
     expect(wrapper.find(CaseDistributionTest).state('showAlert')).toBe(true);
     expect(wrapper.find(CaseDistributionTest).state('alertMsg')).toBe(errorMessage);
