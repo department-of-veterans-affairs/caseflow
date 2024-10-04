@@ -7,7 +7,7 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
   let!(:existing_request_issue) do
     create(:request_issue_with_epe, decision_review: review, reference_id: "some_reference_id")
   end
-  let(:last_synced_at) { Time.zone.now }
+  let(:last_synced_at) { Time.zone.local(2023, 7, 1, 12, 0, 0) }
   let(:parser) do
     instance_double(Events::DecisionReviewUpdated::DecisionReviewUpdatedParser).tap do |parser|
       allow(parser).to receive(:updated_issues).and_return([])
