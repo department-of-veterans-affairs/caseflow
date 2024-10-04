@@ -435,6 +435,7 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       expect(existing_request_issue.closed_at).to eq("1970-01-19 14:25:51.000000000 -0500")
       expect(existing_request_issue.closed_status).to eq(issue_payload[:closed_status])
       expect(existing_request_issue.contention_removed_at).to eq(parser.end_product_establishment_last_synced_at)
+      expect(existing_request_issue.contention_updated_at).to eq(parser.end_product_establishment_last_synced_at)
     end
   end
 

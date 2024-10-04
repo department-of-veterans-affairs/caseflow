@@ -81,9 +81,9 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       next if issue_data.nil?
 
       request_issue.update(
-        contested_issue_description: issue_data[:contested_issue_description],
-        nonrating_issue_category: issue_data[:nonrating_issue_category],
-        nonrating_issue_description: issue_data[:nonrating_issue_description],
+        contested_issue_description: issue_data[:contested_issue_description] || request_issue.contested_issue_description  ,
+        nonrating_issue_category: issue_data[:nonrating_issue_category] || request_issue.nonrating_issue_category,
+        nonrating_issue_description: issue_data[:nonrating_issue_description] || request_issue.nonrating_issue_description,
         contention_updated_at: @parser.end_product_establishment_last_synced_at
       )
     end
@@ -105,7 +105,8 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       request_issue.update(
         closed_at: parser_issue.ri_closed_at,
         closed_status: parser_issue.ri_closed_status,
-        contention_removed_at: @parser.end_product_establishment_last_synced_at
+        contention_removed_at: @parser.end_product_establishment_last_synced_at,
+        contention_updated_at: @parser.end_product_establishment_last_synced_at
       )
     end
     true
