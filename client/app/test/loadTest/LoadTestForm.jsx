@@ -9,7 +9,7 @@ import Button from '../../components/Button';
 
 import UserConfiguration from './UserConfiguration';
 import ScenarioConfigurations from './ScenarioConfigurations';
-// import ApiUtil from '../../util/ApiUtil';
+import ApiUtil from '../../util/ApiUtil';
 
 export default function LoadTestForm(props) {
 
@@ -40,7 +40,7 @@ export default function LoadTestForm(props) {
         }
       }
     });
-    // ApiUtil.post('/test/load_tests/run_load_tests', payload);
+    ApiUtil.post('/test/load_tests/run_load_tests', payload);
 
   };
 

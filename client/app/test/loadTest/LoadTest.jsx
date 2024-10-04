@@ -24,3 +24,20 @@ export default function LoadTest(props) {
     <LoadTestForm {...props} currentState={state} updateState={setUpdatedState} />
   </div>;
 }
+
+/*
+This file acts as a container to the LoadTestForm. While I know this strategy is not conventional,
+as the developer that was assigned this front-end task, I stumbled my way to get this completed. Consider
+this a note on what the overall behavior of this portion of the app is.
+
+The component tree is as follows:
+    -LoadTestForm // the actual form for the load test. The onSubmit happens here when the button is clicked.
+      the body of the POST request is set up here as well through the use of the currentState method.
+    -UserConfiguration and Scenario Configurations are rendered through the LoadTestForm. Both making
+      use of the updateState and currentState methods.
+
+State is created in this file and then passed in to the rendered component,
+  both the getter and setter methods that will provide updates to state as
+  the changes are made in the form. As selections happen, state wil be updated providing an 'easy'
+  way to create the body for the POST request.
+*/
