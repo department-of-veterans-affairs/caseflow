@@ -1,5 +1,6 @@
 # frozen_string_literal: true
-require 'webmock/rspec'
+
+require "webmock/rspec"
 
 describe Test::LoadTestsController, :postgres, type: :controller do
   let(:css_id) { "VACOUSER" }
