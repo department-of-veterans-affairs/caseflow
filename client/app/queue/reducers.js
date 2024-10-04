@@ -23,7 +23,10 @@ import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
 
 import editClaimantReducer from './editAppellantInformation/editAppellantInformationSlice';
 import cavcDashboardReducer from './cavcDashboard/cavcDashboardReducer';
+import intakeCorrespondenceReducer from './correspondence/correspondenceReducer/correspondenceReducer';
+import reviewPackageReducer from './correspondence/correspondenceReducer/reviewPackageReducer';
 import cachingReducer from './caching/cachingReducer';
+import correspondenceDetailsReducer from './correspondence/correspondenceDetailsReducer/correspondenceDetailsReducer';
 
 export const initialState = {
   judges: {},
@@ -813,7 +816,10 @@ const rootReducer = combineReducers({
   cavcRemand: editCavRemandReducer,
   editClaimantReducer,
   cavcDashboard: cavcDashboardReducer,
-  caching: cachingReducer
+  intakeCorrespondence: intakeCorrespondenceReducer,
+  reviewPackage: reviewPackageReducer,
+  caching: cachingReducer,
+  correspondenceDetails: correspondenceDetailsReducer
 });
 
 export default timeFunction(

@@ -113,6 +113,10 @@ realclean: clean ## TODO
 	rm -rf client/node_modules
 	rm -f client/package-lock.json
 
+precompile: ## Precompiles assets for testing
+	bundle exec rake assets:precompile
+
+
 facols-bash:  ## Connect to the docker FACOLS instance
 	docker exec --tty -i VACOLS_DB bash
 
@@ -287,6 +291,8 @@ client-build-all client-all: client-test client-demo ## Builds webpack for both 
 
 one-test:  ## run the rspec test passed in
 	bundle exec rspec $(RUN_ARGS)
+
+clean-test: clean precompile one-test ## Cleans and precompiles assets for testing, then runs spec test passed in
 
 one-test-headless: # run the rspec test headless.
 	CI=1 bundle exec rspec $(RUN_ARGS) --format progress

@@ -333,5 +333,9 @@ class WorkQueue::AppealSerializer
     ]).count
   end
 
+  attribute :evidence_submission_task do |object|
+    object.tasks.find_by(type: "EvidenceSubmissionWindowTask", status: Constants.TASK_STATUSES.assigned)
+  end
+
   attribute :has_completed_sct_assign_task, &:completed_specialty_case_team_assign_task?
 end

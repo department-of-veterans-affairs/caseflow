@@ -36,7 +36,6 @@ const FilterOption = ({ options, setSelectedValue,
         <label htmlFor={`${index}-${option.value}`}>
           {option.displayText}
         </label>
-
       </li>;
     })}
   </ul>;
