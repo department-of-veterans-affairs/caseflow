@@ -1,4 +1,4 @@
-This document was moved from [appeals-team](https://github.com/department-of-veterans-affairs/appeals-team/blob/master/Project%20Folders/Caseflow%20Projects/Intake/Tech%20Specs/establish-930-corrections.md).
+This document was moved from [appeals-team](https://github.com/department-of-veterans-affairs/appeals-team/blob/main/Project%20Folders/Caseflow%20Projects/Intake/Tech%20Specs/establish-930-corrections.md).
 
 # Creating 930 corrections for request issues with decision issues
 **Notes:**
