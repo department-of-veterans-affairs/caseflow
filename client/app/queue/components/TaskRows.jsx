@@ -280,7 +280,7 @@ class TaskRows extends React.PureComponent {
   };
 
   taskLabelListItem = (task) => {
-    if (task.closedAt) {
+    if (task.closedAt && task.type != 'EvidenceSubmissionWindowTask') {
       return null;
     }
 
