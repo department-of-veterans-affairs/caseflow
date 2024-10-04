@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import PropTypes from 'prop-types';
 import React, { memo, useEffect, useRef, useState } from 'react';
 import usePageVisibility from '../hooks/usePageVisibility';
@@ -28,13 +29,14 @@ import { ROTATION_DEGREES } from '../util/readerConstants';
 // When rotating, we swap height and width of the container.
 // The child is still centered in the container, so we must offset it put it back to the
 // top / center of the container.
-const Page = memo(({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale }) => {
+const Page = memo(({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale, setRenderingMetrics }) => {
   const canvasRef = useRef(null);
   const isVisible = usePageVisibility(canvasRef);
   const wrapperRef = useRef(null);
   const renderTimeout = useRef(null);
   const [previousScale, setPreviousScale] = useState(scale);
   const [hasRendered, setHasRendered] = useState(false);
+  const reportedStatsRef = useRef(false);
 
   const scaleFraction = scale / 100;
   const viewport = page.getViewport({ scale: scaleFraction });
@@ -105,7 +107,17 @@ const Page = memo(({ page, rotation = ROTATION_DEGREES.ZERO, renderItem, scale }
   // render when hasRendered has been reset to false. if the page isn't visible, the render
   // function ignores the render request
   useEffect(() => {
-    if (!hasRendered) {
+    if (hasRendered) {
+      if (page._stats && Array.isArray(page._stats.times)) {
+        
+        const renderingTimes = page._stats.times.find((time) => time.name === 'Rendering');
+        
+        if (!reportedStatsRef.current && renderingTimes) {
+          setRenderingMetrics(renderingTimes.end - renderingTimes.start);
+          reportedStatsRef.current = true;
+        }
+      }
+    } else {
       clearTimeout(renderTimeout.current);
       renderTimeout.current = setTimeout(render, 0);
     }
@@ -172,6 +184,7 @@ Page.propTypes = {
   rotation: PropTypes.string,
   renderItem: PropTypes.func,
   scale: PropTypes.number,
+  setRenderingMetrics: PropTypes.func,
 };
 
 export default Page;
