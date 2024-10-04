@@ -124,6 +124,37 @@ namespace :db do
       HEREDOC
     end
 
+    # The original definition of the `db:migrate:down:{name}` task invokes `db:schema:dump`, which we have prohibited
+    # in favor of `db:schema:dump:{name}`.
+    # https://github.com/rails/rails/blob/ac87f58207cff18880593263be9d83456aa3a2ef/activerecord/lib/active_record/railties/databases.rake#L102
+    #
+    # This re-definiton of `db:migrate:down:{name}` will instead call the DB-specific `db:schema:dump:{name}`
+
+    namespace :down do
+      %w[primary etl].each do |name|
+        Rake::Task["db:migrate:down:#{name}"].clear if Rake::Task.task_defined?("db:migrate:down:#{name}")
+        task name => :load_config do
+          raise "VERSION is required" if !ENV["VERSION"] || ENV["VERSION"].empty?
+
+          db_config = ActiveRecord::Base.configurations.configs_for(env_name: Rails.env, name: name)
+
+          ActiveRecord::Base.establish_connection(db_config)
+          ActiveRecord::Tasks::DatabaseTasks.check_target_version
+          ActiveRecord::Base.connection.migration_context.run(
+            :down,
+            ActiveRecord::Tasks::DatabaseTasks.target_version
+          )
+
+          if ActiveRecord::Base.dump_schema_after_migration
+            db_namespace["schema:dump:#{name}"].invoke
+          end
+          # Allow this task to be called as many times as required. An example is the
+          # `migrate:redo` task, which calls `migrate:down` and `migrate:up` internally, which depend on this one.
+          db_namespace["schema:dump:#{name}"].reenable
+        end
+      end
+    end
+
     Rake::Task["db:migrate:redo"].clear if Rake::Task.task_defined?("db:migrate:redo")
     desc "[PROHIBITED] Use the appropriate database-specific tasks instead"
     task :redo do
