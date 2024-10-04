@@ -141,7 +141,9 @@ class Hearings::TranscriptionFilesController < ApplicationController
   end
 
   def apply_sorting
-    sort_by = params[:sort_by] || "id"
+    return @transcription_files = @transcription_files.order_by_hearing_date("ASC") if params[:sort_by].blank?
+
+    sort_by = params[:sort_by]
     order = params[:order] == "asc" ? "ASC" : "DESC"
 
     sort_methods = {
@@ -189,7 +191,7 @@ class Hearings::TranscriptionFilesController < ApplicationController
         uploadDate: transcription_file.date_upload_box&.utc&.to_formatted_s(:short_date),
         contractor: transcription_file.transcription&.transcription_package&.contractor&.name,
         workOrder: transcription_file.transcription&.task_number,
-        status: transcription_file.transcription&.transcription_package&.status
+        status: transcription_file.transcription&.transcription_status
       }
     end
     tasks
