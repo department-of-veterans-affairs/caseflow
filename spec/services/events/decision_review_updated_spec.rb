@@ -40,8 +40,6 @@ describe Events::DecisionReviewUpdated do
     allow(RequestIssuesUpdateEvent).to receive(:new)
       .with(user: user, review: review, parser: parser, event: event)
       .and_return(double("RequestIssuesUpdateEvent", perform!: nil))
-    allow(Events::DecisionReviewUpdated::DecisionReviewUpdatedAudit).to receive(:new)
-      .with(event: event, parser: parser).and_return(double("DecisionReviewUpdatedAudit", call!: nil))
   end
 
   describe ".update!" do
