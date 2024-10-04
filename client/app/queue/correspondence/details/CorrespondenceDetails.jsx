@@ -123,12 +123,12 @@ const CorrespondenceDetails = (props) => {
     // Data for the PATCH request to remove unchecked relations
     const patchData = {
       correspondence_uuid: correspondence.uuid,
-      correspondence_relations: uncheckedCheckboxes,
+      correspondence_relations: uncheckedCheckboxes
     };
 
     // Data for the POST request to add checked relations
     const postData = {
-      priorMailIds: checkedCheckboxes,
+      priorMailIds: checkedCheckboxes
     };
 
     try {
