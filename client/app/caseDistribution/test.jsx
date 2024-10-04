@@ -204,7 +204,6 @@ class CaseDistributionTest extends React.PureComponent {
     const appName = 'Case Distribution';
     const tablestyle = {
       display: 'block',
-      overflowX: 'scroll'
     };
 
     return (
@@ -502,7 +501,7 @@ class CaseDistributionTest extends React.PureComponent {
                             <div className="lever-left csv-download-left">
                               <Button
                                 onClick={this.reseedNonAod}
-                                name="Run Demo NON AOD Hearing Held Seeds"
+                                name="Run Demo Non-AOD Hearing Held Seeds"
                                 loading={this.state.isReseedingNonAod}
                                 loadingText="Reseeding NON AOD Hearing Held Seeds"
                               />
