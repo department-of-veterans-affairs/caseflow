@@ -58,7 +58,15 @@ class EvidenceSubmissionWindowTask < Task
   end
 
   def is_waivable?
-    (assigned_at > 90.days.ago && status == Constants.TASK_STATUSES.completed)
+    (assigned_at < 90.days.ago && status == Constants.TASK_STATUSES.completed)
+  end
+
+  def available_actions(user)
+    if (user.inbound_ops_team_superuser? || user.inbound_ops_team_supervisor?) && is_waivable?
+      return [Constants.TASK_ACTIONS.REMOVE_WAIVE_EVIDENCE_WINDOW.to_h]
+    end
+
+    []
   end
 
   private
@@ -79,6 +87,8 @@ class EvidenceSubmissionWindowTask < Task
 
     from_date
   end
+
+
 
   def open_schedule_hearing_task
     parent.children.open.find_by(type: ScheduleHearingTask.name)

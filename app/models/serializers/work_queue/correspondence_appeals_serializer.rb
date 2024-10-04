@@ -40,9 +40,10 @@ class WorkQueue::CorrespondenceAppealsSerializer
   end
 
   attribute :task_added_data do |object|
+    evidence_window_task = object.appeal.tasks.find_by(type: "EvidenceSubmissionWindowTask")
     AmaAndLegacyTaskSerializer.create_and_preload_legacy_appeals(
       params: { user: RequestStore[:current_user], role: "generic" },
-      tasks: object.tasks,
+      tasks: object.tasks << evidence_window_task,
       ama_serializer: WorkQueue::TaskSerializer
     ).call
   end

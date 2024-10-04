@@ -64,7 +64,6 @@ const CorrespondenceAppealTasks = (props) => {
               taskList={tasks}
               timeline={false}
               editNodDateEnabled={false}
-              hideDropdown
             />
           </div>
         </div>
