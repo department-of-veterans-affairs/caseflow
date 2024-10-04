@@ -938,18 +938,21 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   width: 100%;
   margin-top: 0;
   margin-bottom: 1.25em;
-  table-layout: fixed;
+  table-layout: auto;
+  border-collapse: collapse;
+  overflow-x: auto;
+  display: block;
 
   th,
   td {
     border: 0;
-    padding-bottom: 0;
+    padding: 0.9rem;
     vertical-align: top;
   }
 
   .response-letter-table-borderless-first-item {
     display: block;
-    width: 168%;
+    width: 100%;
     margin-left: 5%;
     padding-bottom: 1.25rem;
   }
@@ -1364,6 +1367,18 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   margin-bottom: 20px;
 }
 
+.corr-title-with-button {
+  width: 100%;
+  display: inline-flex;
+  align-items: start;
+  gap: 20px;
+
+  .button-style {
+    display: inline-block;
+    margin-top: 0;
+  }
+}
+
 .correspondence-admin-container {
   .textarea-div-styling-test-correspondence {
     margin-top: 45px;
@@ -1572,6 +1587,10 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 }
 
 .collapse-section-container {
+  margin-top: 0;
+}
+
+.correspondence-details-p {
   margin-top: 0;
 }
 

@@ -197,7 +197,7 @@ RSpec.feature("The Correspondence Details page") do
 
   context "correspondence package details tab" do
     before do
-      correspondence_spec_user_access
+      correspondence_spec_super_access
       FeatureToggle.enable!(:correspondence_queue)
       @correspondence = create(
         :correspondence,
@@ -207,9 +207,12 @@ RSpec.feature("The Correspondence Details page") do
         nod: false,
         notes: "Note Test"
       )
+      CorrespondenceType.create!(
+        name: "General Information Test Correspondence Type"
+      )
     end
 
-    it "checks the General Information of Veteran" do
+    it "checks the General Information of Veteran and allows edits to it" do
       visit "/queue/correspondence/#{@correspondence.uuid}"
       safe_click "#tasks-tabwindow-tab-1"
       expect(page).to have_content("John Testingman (8675309)")
@@ -217,6 +220,17 @@ RSpec.feature("The Correspondence Details page") do
       expect(page).to have_content("Non-NOD")
       expect(page).to have_content("07/23/2024")
       expect(page).to have_content("Note Test")
+
+      # Edit information and check
+      safe_click "#tasks-tabwindow-tab-1"
+      click_button("Edit")
+      all("div.input-container > input")[0].fill_in(with: "08/23/2024")
+      click_dropdown(text: "General Information Test Correspondence Type")
+      find("textarea").fill_in(with: "Note Test Changed")
+      click_button("Save")
+      expect(page).to have_content("8/23/2024")
+      expect(page).to have_content("General Information Test Correspondence Type")
+      expect(page).to have_content("Note Test Changed")
     end
   end
 
