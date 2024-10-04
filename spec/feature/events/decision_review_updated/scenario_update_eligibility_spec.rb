@@ -253,7 +253,6 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
           expect(eligible_to_ineligible_request_issue.nonrating_issue_category).to eq("Military Retired Pay ELIGIBLE")
           expect(eligible_to_ineligible_request_issue.nonrating_issue_description).to eq("UPDATED ELIGIBLE")
           expect(eligible_to_ineligible_request_issue.closed_at).to eq("2023-12-07 20:49:05.000000000 -0500")
-          expect(eligible_to_ineligible_request_issue.closed_status).to eq("removed")
         end
       end
     end

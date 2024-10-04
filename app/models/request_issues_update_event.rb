@@ -10,7 +10,8 @@
 # but need to be part of the data sent to the base class to ensure
 # the correct before and after issues are calculated
 class RequestIssuesUpdateEvent < RequestIssuesUpdate
-  def initialize(review:, user:, parser:)
+  def initialize(review:, user:, parser:, event:)
+    @event = event
     @parser = parser
     @review = review
     build_request_issues_data
@@ -24,16 +25,46 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   def perform!
     # Call the base class's perform! method
     result = super
-    if result
+    if result || !changes?
       process_eligible_to_ineligible_issues!
       process_ineligible_to_eligible_issues!
       process_ineligible_to_ineligible_issues!
       process_request_issues_data!
       update_removed_issues!
+      process_audit_records!
       true
     else
       false
     end
+  end
+
+  # This method may create more than one audit record for a single issue
+  # if the issue is updated in multiple ways such as a desctiption change
+  # and a withdrawal
+  def process_audit_records!
+    return true if all_updated_issues.empty?
+
+    edited_issues.each do |request_issue|
+      add_event_record(request_issue, "E")
+    end
+
+    added_issues.each do |request_issue|
+      add_event_record(request_issue, "A")
+    end
+
+    removed_issues.each do |request_issue|
+      add_event_record(request_issue, "R")
+    end
+
+    withdrawn_issues.each do |request_issue|
+      add_event_record(request_issue, "W")
+    end
+  end
+
+  # Override the base class's process_job method to set the status to attempted and processed
+  def process_job
+    attempted!
+    processed!
   end
 
   # Process aditional updates for all data that was passed to base class but not processed by it
@@ -41,7 +72,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   def process_request_issues_data!
     return true if after_issues.empty?
 
-    after_issues.each do |request_issue|
+    all_updated_issues.each do |request_issue|
       issue_data =
         @request_issues_data.find { |data| data[:reference_id] == request_issue.reference_id }
 
@@ -91,6 +122,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
         nonrating_issue_description: parser_issue.ri_nonrating_issue_description
       )
       RequestIssueContention.new(request_issue).remove!
+      add_event_record(request_issue, "E2I")
     end
   end
 
@@ -111,6 +143,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
         nonrating_issue_category: parser_issue.ri_nonrating_issue_category,
         nonrating_issue_description: parser_issue.ri_nonrating_issue_description
       )
+      add_event_record(request_issue, "I2E")
     end
   end
 
@@ -128,6 +161,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
         nonrating_issue_category: parser_issue.ri_nonrating_issue_category,
         nonrating_issue_description: parser_issue.ri_nonrating_issue_description
       )
+      add_event_record(request_issue, "I2I")
     end
   end
 
@@ -264,5 +298,13 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   def find_request_issue(parser_issue)
     RequestIssue.find_by(reference_id: parser_issue.ri_reference_id) ||
       fail(Caseflow::Error::DecisionReviewUpdateMissingIssueError, parser_issue.ri_reference_id)
+  end
+
+  def add_event_record(request_issue, update_type)
+    EventRecord.create!(
+      event: @event,
+      evented_record: request_issue,
+      info: { update_type: update_type, record_data: request_issue }
+    )
   end
 end
