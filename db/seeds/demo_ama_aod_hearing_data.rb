@@ -35,21 +35,29 @@ module Seeds
           receipt_date: @days_ago,
           tied_judge: @hearing_judge,
           adding_user: User.first,
-          aod_based_on_age: @aod_based_on_age,
-          closest_regional_office: @closest_regional_office,
-          uuid: @uuid,
-          docket_type: @docket
         )
-      update_hearing
+      update_data
       Timecop.return
     end
 
-    def update_hearing
-      hearing = @appeal.hearing.update(disposition: @disposition)
-      hearing_day = hearing.hearing_day
-      hearing_day.request_type = @hearing_type
-      hearing_day.scheduled_for = @hearing_date
-      hearing_day.save
+    def update_data
+      appeal_data = {}
+      appeal_data[:aod_based_on_age] = @aod_based_on_age if @aod_based_on_age.present?
+      appeal_data[:closest_regional_office] = @closest_regional_office if @closest_regional_office.present?
+      appeal_data[:uuid] = @uuid if @uuid.present?
+      appeal_data[:docket_type] = @docket if @docket.present?
+      @appeal.update!(appeal_data) if appeal_data.present?
+
+      hearing = @appeal.hearings.first
+      if hearing
+        hearing.update!(disposition: @disposition) if @disposition.present?
+        hearing_day = hearing.hearing_day
+        if hearing_day
+          hearing_day.request_type = @hearing_type if @hearing_type.present?
+          hearing_day.scheduled_for = @hearing_date if @hearing_date.present?
+          hearing_day.save!
+        end
+      end
     end
 
     #TODO: put the below into helper module
