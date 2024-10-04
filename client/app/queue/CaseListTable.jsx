@@ -41,7 +41,7 @@ class CaseListTable extends React.PureComponent {
         {
           header: '',
           valueFunction: (appeal) => {
-            const isChecked = this.props.taskRelatedAppealIds.includes(Number(appeal.id));
+            const isChecked = this.props.taskRelatedAppealIds.map(Number).includes(Number(appeal.id));
 
             return (
               <div className="checkbox-column-inline-style">
