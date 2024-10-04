@@ -126,7 +126,7 @@ namespace :db do
 
     # The original definition of the `db:migrate:down:{name}` task invokes `db:schema:dump`, which we have prohibited
     # in favor of `db:schema:dump:{name}`.
-    # https://github.com/rails/rails/blob/ac87f58207cff18880593263be9d83456aa3a2ef/activerecord/lib/active_record/railties/databases.rake#L102
+    # https://github.com/rails/rails/blob/ac87f58207cff18880593263be9d83456aa3a2ef/activerecord/lib/active_record/railties/databases.rake#L223
     #
     # This re-definiton of `db:migrate:down:{name}` will instead call the DB-specific `db:schema:dump:{name}`
 
@@ -199,7 +199,7 @@ namespace :db do
 
     # The original definition of the `db:migrate:up:{name}` task invokes `db:schema:dump`, which we have prohibited
     # in favor of `db:schema:dump:{name}`.
-    # https://github.com/rails/rails/blob/ac87f58207cff18880593263be9d83456aa3a2ef/activerecord/lib/active_record/railties/databases.rake#L187
+    # https://github.com/rails/rails/blob/ac87f58207cff18880593263be9d83456aa3a2ef/activerecord/lib/active_record/railties/databases.rake#L189
     #
     # This re-definiton of `db:migrate:up:{name}` will instead call the DB-specific `db:schema:dump:{name}`
 
