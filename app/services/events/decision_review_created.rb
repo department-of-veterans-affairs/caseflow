@@ -12,7 +12,7 @@ class Events::DecisionReviewCreated
   #                 # with the one who held the lock and failed to unlock. (default: 10)
 
   class << self
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Lint/UselessAssignment
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def create!(params, headers, payload)
       consumer_event_id = params[:consumer_event_id]
       claim_id = params[:claim_id]
@@ -82,6 +82,8 @@ class Events::DecisionReviewCreated
     rescue RedisMutex::LockError => error
       Rails.logger.error("Failed to acquire lock for Claim ID: #{claim_id}! This Event is being"\
                          " processed. Please try again later.")
+      event&.update!(error: error.message)
+      raise error
     rescue StandardError => error
       Rails.logger.error("#{error.class} : #{error.message}")
       event&.update!(error: "#{error.class} : #{error.message}", info:
@@ -93,7 +95,7 @@ class Events::DecisionReviewCreated
         })
       raise error
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Lint/UselessAssignment
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     # Check if there's already a CF Event that references that Appeals-Consumer EventID
     # We will update the existing Event instead of creating a new one

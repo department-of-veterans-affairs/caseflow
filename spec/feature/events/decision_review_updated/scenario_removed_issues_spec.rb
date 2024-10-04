@@ -8,9 +8,9 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
   let!(:epe) { create(:end_product_establishment, :active_hlr, reference_id: 12_345_678) }
   let(:review) { epe.source }
 
-  context "tests processing withdrawn request issues" do
+  context "tests processing removed request issues" do
     describe "POST #decision_review_updated" do
-      let!(:withdrawn_request_issue) do
+      let!(:removed_request_issue) do
         create(:request_issue,
                decision_review: review, reference_id: "1234", closed_status: nil, closed_at: nil,
                contention_removed_at: nil, contention_reference_id: 100_500)
@@ -56,39 +56,15 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
             "development_item_reference_id": "1"
           },
           "updated_issues": [],
-          "removed_issues": [],
-          "withdrawn_issues": [
+          "removed_issues": [
             {
-              "original_caseflow_request_issue_id": 12_345,
-              "contested_rating_decision_reference_id": nil,
-              "contested_rating_issue_reference_id": nil,
-              "contested_decision_issue_id": nil,
-              "untimely_exemption": false,
-              "untimely_exemption_notes": nil,
-              "vacols_id": nil,
-              "vacols_sequence_id": nil,
-              "nonrating_issue_bgs_id": nil,
-              "type": "RequestIssue",
+              "original_caseflow_request_issue_id": 1,
               "decision_review_issue_id": 1234,
-              "contention_reference_id": 123_456,
-              "benefit_type": "compensation",
-              "contested_issue_description": nil,
-              "contested_rating_issue_profile_date": nil,
-              "decision_date": nil,
-              "ineligible_due_to_id": nil,
-              "ineligible_reason": nil,
-              "unidentified_issue_text": "An unidentified issue added during the edit",
-              "nonrating_issue_category": nil,
-              "nonrating_issue_description": nil,
               "closed_at": 1_702_000_145_000,
-              "closed_status": nil,
-              "contested_rating_issue_diagnostic_code": nil,
-              "rating_issue_associated_at": nil,
-              "ramp_claim_id": nil,
-              "is_unidentified": true,
-              "nonrating_issue_bgs_source": nil
+              "closed_status": "removed"
             }
           ],
+          "withdrawn_issues": [],
           "ineligible_to_eligible_issues": [],
           "eligible_to_ineligible_issues": [],
           "ineligible_to_ineligible_issues": []
@@ -99,36 +75,68 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
         json_test_payload
       end
 
-      context "withdrawn issue with already existing issue not edited or withdrawn" do
+      context "removed issue with already existing issue not edited or removed" do
         let!(:existing_request_issue) do
-          create(:request_issue, decision_review: review, reference_id: "6789")
+          create(:request_issue, decision_review: review, reference_id: "6789", edited_description: "edited")
         end
         before do
           request.headers["Authorization"] = "Token token=#{api_key.key_string}"
         end
 
         it "returns success response whith updated closed_at date" do
-          expect(withdrawn_request_issue.reference_id).to eq("1234")
-          expect(withdrawn_request_issue.closed_at).to eq(nil)
-          expect(withdrawn_request_issue.contention_reference_id).to eq(100_500)
-          expect(withdrawn_request_issue.any_updates?).to eq(false)
+          expect(removed_request_issue.reference_id).to eq("1234")
+          expect(removed_request_issue.closed_at).to eq(nil)
+          expect(removed_request_issue.contention_reference_id).to eq(100_500)
+          expect(removed_request_issue.any_updates?).to eq(false)
+          expect(existing_request_issue.edited_description).to eq("edited")
           post :decision_review_updated, params: valid_params
           expect(response).to have_http_status(:ok)
           expect(response.body).to include("DecisionReviewUpdatedEvent successfully processed")
-          withdrawn_request_issue.reload
-          expect(withdrawn_request_issue.closed_at).to eq("2023-12-07 20:49:05.000000000 -0500")
-          expect(withdrawn_request_issue.closed_status).to eq("withdrawn")
-          expect(withdrawn_request_issue.any_updates?).to eq(true)
-          expect(withdrawn_request_issue.updated_at).to be_within(100.seconds).of(DateTime.now)
+          removed_request_issue.reload
+          expect(removed_request_issue.closed_at).to eq("2023-12-07 20:49:05.000000000 -0500")
+          expect(removed_request_issue.closed_status).to eq("removed")
+          expect(removed_request_issue.any_updates?).to eq(true)
+          expect(removed_request_issue.updated_at).to be_within(100.seconds).of(DateTime.now)
           request_issue_update = review.request_issues_updates.first
-          expect(request_issue_update.withdrawn_request_issue_ids).to eq([withdrawn_request_issue.id])
+          expect(request_issue_update.withdrawn_request_issue_ids).to eq([])
           expect(request_issue_update.before_request_issue_ids).to eq(
-            [withdrawn_request_issue.id, existing_request_issue.id]
+            [removed_request_issue.id, existing_request_issue.id]
           )
           expect(request_issue_update.after_request_issue_ids).to eq(
-            [withdrawn_request_issue.id, existing_request_issue.id]
+            [existing_request_issue.id]
           )
           expect(request_issue_update.edited_request_issue_ids).to eq([])
+          expect(existing_request_issue.edited_description).to eq("edited")
+        end
+
+        it "returns success response with updated closed_at date and has edits to description" do
+          valid_params[:updated_issues] <<
+            {
+              "decision_review_issue_id": "6789",
+              "edited_description": "edited again"
+            }
+          expect(removed_request_issue.reference_id).to eq("1234")
+          expect(removed_request_issue.closed_at).to eq(nil)
+          expect(removed_request_issue.contention_reference_id).to eq(100_500)
+          expect(removed_request_issue.any_updates?).to eq(false)
+          post :decision_review_updated, params: valid_params
+          expect(response).to have_http_status(:ok)
+          expect(response.body).to include("DecisionReviewUpdatedEvent successfully processed")
+          removed_request_issue.reload
+          existing_request_issue.reload
+          expect(removed_request_issue.closed_at).to eq("2023-12-07 20:49:05.000000000 -0500")
+          expect(removed_request_issue.closed_status).to eq("removed")
+          expect(existing_request_issue.edited_description).to eq("edited again")
+          expect(existing_request_issue.updated_at).to be_within(100.seconds).of(DateTime.now)
+          request_issue_update = review.request_issues_updates.first
+          expect(request_issue_update.withdrawn_request_issue_ids).to eq([])
+          expect(request_issue_update.before_request_issue_ids).to eq(
+            [removed_request_issue.id, existing_request_issue.id]
+          )
+          expect(request_issue_update.after_request_issue_ids).to eq(
+            [existing_request_issue.id]
+          )
+          expect(request_issue_update.edited_request_issue_ids).to eq([existing_request_issue.id])
         end
       end
     end
