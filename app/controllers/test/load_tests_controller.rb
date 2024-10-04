@@ -57,13 +57,13 @@ class Test::LoadTestsController < ApplicationController
       request_headers = generate_request_headers(crumb_response)
       encoded_test_recipe = encode_test_recipe(params[:data].to_s)
 
-      send_jenkins_run_request(request_headers, encoded_test_recipe)
+      jenkins_response = send_jenkins_run_request(request_headers, encoded_test_recipe)
     else
       fail StandardError, "Crumb Response: #{crumb_response.body}"
     end
 
     render json: {
-      load_test_run: "201"
+      load_test_run: "#{jenkins_response.code} #{jenkins_response.body}"
     }
   rescue StandardError => error
     render json: {
@@ -274,5 +274,7 @@ class Test::LoadTestsController < ApplicationController
     unless jenkins_response.is_a?(Net::HTTPCreated)
       fail StandardError, "Jenkins Response: #{jenkins_response.body}"
     end
+
+    jenkins_response
   end
 end
