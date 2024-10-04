@@ -25,7 +25,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   def perform!
     # Call the base class's perform! method
     result = super
-    if result || !change?
+    if result || !changes?
       process_eligible_to_ineligible_issues!
       process_ineligible_to_eligible_issues!
       process_ineligible_to_ineligible_issues!
