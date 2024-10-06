@@ -830,7 +830,7 @@ class RequestIssue < CaseflowRecord
   end
 
   def title_of_active_review
-    duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
+    duplicate_of_issue_in_active_review? ? ineligible_due_to&.review_title : nil
   end
 
   def handle_legacy_issues!

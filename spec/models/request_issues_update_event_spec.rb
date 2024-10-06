@@ -18,6 +18,7 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       allow(parser).to receive(:ineligible_to_eligible_issues).and_return([])
       allow(parser).to receive(:ineligible_to_ineligible_issues).and_return([])
       allow(parser).to receive(:end_product_establishment_last_synced_at).and_return(last_synced_at)
+      allow(parser).to receive(:end_product_establishment_code).and_return("some_end_product_code")
     end
   end
 
@@ -189,7 +190,8 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
           nonrating_issue_bgs_source: parser_issue.ri_nonrating_issue_bgs_source,
           nonrating_issue_bgs_id: parser_issue.ri_nonrating_issue_bgs_id,
           edited_description: parser_issue.ri_edited_description,
-          decision_text: parser_issue.ri_nonrating_issue_description
+          decision_text: parser_issue.ri_nonrating_issue_description,
+          end_product_code: parser.end_product_establishment_code
         }
       )
     end
