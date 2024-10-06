@@ -271,7 +271,8 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       reference_id: parser_issue.ri_reference_id,
       type: parser_issue.ri_type,
       rating_issue_associated_at: parser_issue.ri_rating_issue_associated_at,
-      edited_description: parser_issue.ri_edited_description
+      edited_description: parser_issue.ri_edited_description,
+      end_product_code: @parser.end_product_establishment_code
     }
   end
 
