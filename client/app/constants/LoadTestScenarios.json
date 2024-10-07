@@ -109,18 +109,14 @@
     }],
     "targetId": ""
   },
-  {"scenario": "amaReader",
+  {"scenario": "readerIndex",
     "targetType": [{
       "value": "appeal",
       "label": "Appeal"
-    }],
-    "targetId": "Appeal uuid"
-  },
-  {"scenario": "legacyReader",
-    "targetType": [{
+    }, {
       "value": "legacy_appeal",
       "label": "Legacy Appeal"
     }],
-    "targetId": "Legacy Appeal vacols_id"
+    "targetId": "Appeal uuid, Legacy Appeal vacols_id"
   }
 ]
