@@ -2,15 +2,12 @@ class BackfillSupplementalClaimsTypeColumn < ActiveRecord::Migration[6.1]
   disable_ddl_transaction!
 
   def up
-    SupplementalClaim.in_batches do |batch|
-      batch.update_all(
-        <<-SQL
-          UPDATE supplemental_claims SET type = 'Remand'
-            WHERE decision_review_remanded_id IS NOT NULL
-              AND decision_review_remanded_type = 'Appeal';
-        SQL
-      )
-    end
+    execute <<-SQL
+      UPDATE supplemental_claims
+      SET type = 'Remand'
+      WHERE decision_review_remanded_id IS NOT NULL
+        AND decision_review_remanded_type = 'Appeal';
+    SQL
   end
 
   def down
