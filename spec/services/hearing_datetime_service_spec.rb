@@ -239,7 +239,6 @@ RSpec.describe HearingDatetimeService do
             date: "2025-01-01",
             time_string: "12:00 PM Eastern Time (US & Canada)"
           )
-
         end
 
         let(:hearing) do
