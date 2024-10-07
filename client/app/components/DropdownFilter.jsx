@@ -1,21 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
-import { css } from 'glamor';
 
-const dropdownFilterViewListStyle = css({
+const dropdownFilterViewListStyle = {
   margin: 0
-});
-const dropdownFilterViewListItemStyle = css(
-  {
-    padding: '14px',
-    ':hover':
-    {
-      backgroundColor: '#5b616b',
-      color: COLORS.WHITE
-    }
+};
+const dropdownFilterViewListItemStyle = {
+  padding: '14px',
+  ':hover': {
+    backgroundColor: '#5b616b',
+    color: COLORS.WHITE
   }
-);
+};
 
 class DropdownFilter extends React.PureComponent {
   constructor() {
@@ -85,7 +81,8 @@ DropdownFilter.propTypes = {
   isClearEnabled: PropTypes.bool,
   clearFilters: PropTypes.func,
   handleClose: PropTypes.func,
-  addClearFiltersRow: PropTypes.bool
+  addClearFiltersRow: PropTypes.bool,
+  name: PropTypes.string
 };
 
 export default DropdownFilter;
