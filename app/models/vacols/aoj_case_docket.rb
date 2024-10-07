@@ -690,7 +690,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
 
         reject_due_to_affinity?(appeal, lever_value)
       elsif lever_value == Constants.ACD_LEVERS.infinite
-        next if hearing_judge_ineligible_with_no_hearings_after_decision(appeal)
+        next if deciding_judge_ineligible_with_no_hearings_after_decision(appeal) || appeal["prev_deciding_judge"].nil?
 
         appeal["prev_deciding_judge"] != judge_sattyid
       elsif lever_value == Constants.ACD_LEVERS.omit
@@ -721,7 +721,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
 
         reject_due_to_affinity?(appeal, aoj_cavc_affinity_lever_value)
       elsif aoj_cavc_affinity_lever_value == Constants.ACD_LEVERS.infinite
-        next if hearing_judge_ineligible_with_no_hearings_after_decision(appeal)
+        next if deciding_judge_ineligible_with_no_hearings_after_decision(appeal) || appeal["prev_deciding_judge"].nil?
 
         appeal["prev_deciding_judge"] != judge_sattyid
       elsif aoj_cavc_affinity_lever_value == Constants.ACD_LEVERS.omit
@@ -753,7 +753,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
 
         reject_due_to_affinity?(appeal, lever_value)
       elsif lever_value == Constants.ACD_LEVERS.infinite
-        next if hearing_judge_ineligible_with_no_hearings_after_decision(appeal)
+        next if deciding_judge_ineligible_with_no_hearings_after_decision(appeal) || appeal["prev_deciding_judge"].nil?
 
         appeal["prev_deciding_judge"] != judge_sattyid
       elsif lever_value == Constants.ACD_LEVERS.omit
