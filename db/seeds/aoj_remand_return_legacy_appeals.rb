@@ -95,15 +95,15 @@ module Seeds
     end
 
     def excluded_judge
-      @excluded_judge ||= find_or_create_active_excluded_judge("EXCLUDED_JUDGE", "Excluded FromAffinity Judge")
+      @excluded_judge ||= find_or_create_active_excluded_judge("EXCL_JUDGE", "Excluded FromAffinity Judge")
     end
 
     def ineligible_judge
-      @ineligible_judge ||= find_or_create_ineligible_judge("INELIGIBLE_JUDGE", "Ineligible Vacols Judge")
+      @ineligible_judge ||= find_or_create_ineligible_judge("INEL_JUDGE", "Ineligible Vacols Judge")
     end
 
     def attorney
-      @attorney ||= find_or_create_attorney("AFFINITY_ATTORNEY", "Affinity Cases Attorney")
+      @attorney ||= find_or_create_attorney("AFF_ATTY", "Affinity Cases Attorney")
     end
 
     def other_judge
@@ -827,42 +827,42 @@ module Seeds
         # hearing held with previous decision where judge is not the same
         ca14 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "AffinityToIneligibleUser", snamel: "60DaysAffinity").ssn}S", judge: other_judge, attorney: attorney)
         VACOLS::Case.where(bfcorlid: ca14.bfcorlid, bfac: "1").update(bfmemid: ineligible_judge.sattyid)
-        
+
         cb11 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "AffinityToIneligibleUser", snamel: "25DaysAffinity").ssn}S", judge: other_judge, attorney: attorney,
                                             affinity_start_date: 25.days.ago)
         VACOLS::Case.where(bfcorlid: cb11.bfcorlid, bfac: "1").update(bfmemid: ineligible_judge.sattyid)
-        
+
         ca15 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "AffinityToIneligibleUser", snamel: "3DaysAffinity").ssn}S", judge: other_judge, attorney: attorney,
                                             affinity_start_date: 3.days.ago)
         VACOLS::Case.where(bfcorlid: ca15.bfcorlid, bfac: "1").update(bfmemid: ineligible_judge.sattyid)
-        
+
         ca16 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "AffinityToIneligibleUser", snamel: "NoAppealAffinity").ssn}S", judge: other_judge, attorney: attorney, appeal_affinity: false)
         VACOLS::Case.where(bfcorlid: ca16.bfcorlid, bfac: "1").update(bfmemid: ineligible_judge.sattyid)
-        
+
         cb12 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "AffinityToBVAGSPORER", snamel: "25DaysAffinity").ssn}S", judge: ineligible_judge, attorney: attorney,
                                             affinity_start_date: 25.days.ago)
         VACOLS::Case.where(bfcorlid: cb12.bfcorlid, bfac: "1").update(bfmemid: affinity_judge.sattyid)
-        
+
         cb13 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "AffinityToBVAEEMARD", snamel: "25DaysAffinity").ssn}S", judge: ineligible_judge, attorney: attorney,
                                             affinity_start_date: 25.days.ago)
         VACOLS::Case.where(bfcorlid: cb13.bfcorlid, bfac: "1").update(bfmemid: affinity_and_tied_to_judge.sattyid)
-        
+
         cb14 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "AffinityToBVABDANIEL", snamel: "25DaysAffinity").ssn}S", judge: ineligible_judge, attorney: attorney,
                                             affinity_start_date: 25.days.ago)
         VACOLS::Case.where(bfcorlid: cb14.bfcorlid, bfac: "1").update(bfmemid: tied_to_judge.sattyid)
-        
+
         cb15 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "AffinityToBVAGSPORER", snamel: "3DaysAffinity").ssn}S", judge: ineligible_judge, attorney: attorney,
                                             affinity_start_date: 3.days.ago)
         VACOLS::Case.where(bfcorlid: cb15.bfcorlid, bfac: "1").update(bfmemid: affinity_judge.sattyid)
-        
+
         cb16 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "AffinityToBVAEEMARD", snamel: "3DaysAffinity").ssn}S", judge: ineligible_judge, attorney: attorney,
                                             affinity_start_date: 3.days.ago)
         VACOLS::Case.where(bfcorlid: cb16.bfcorlid, bfac: "1").update(bfmemid: affinity_and_tied_to_judge.sattyid)
-        
+
         cb17 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "AffinityToBVABDANIEL", snamel: "3DaysAffinity").ssn}S", judge: ineligible_judge, attorney: attorney,
                                             affinity_start_date: 3.days.ago)
         VACOLS::Case.where(bfcorlid: cb17.bfcorlid, bfac: "1").update(bfmemid: tied_to_judge.sattyid)
-        
+
         # hearing held with previous decision where judge is same (THIS IS TIED TO)
         create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "TiedToIneligibleJudge", snamel: "60DaysAffinity").ssn}S", judge: ineligible_judge, attorney: attorney)
         create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "TiedToIneligibleJudge", snamel: "25DaysAffinity").ssn}S", judge: ineligible_judge, attorney: attorney,  affinity_start_date: 25.days.ago)
@@ -876,48 +876,48 @@ module Seeds
     def create_cases_for_aoj_with_hearing_after_decision
       ch1 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "TiedToBVAGSPORER", snamel: "60DaysAffinityAfterDec").ssn}S", judge: affinity_judge, attorney: attorney, hearing_after_decision: true)
       VACOLS::Case.where(bfcorlid: ch1.bfcorlid, bfac: "1").update(bfmemid: nil)
-      
+
       ch2 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "TiedToBVAEEMARD", snamel: "60DaysAffinityAfterDec").ssn}S", judge: affinity_and_tied_to_judge, attorney: attorney, hearing_after_decision: true)
       VACOLS::Case.where(bfcorlid: ch2.bfcorlid, bfac: "1").update(bfmemid: nil)
-      
+
       ch3 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "TiedToBVABDANIEL", snamel: "60DaysAffinityAfterDec").ssn}S", judge: tied_to_judge, attorney: attorney, hearing_after_decision: true)
       VACOLS::Case.where(bfcorlid: ch3.bfcorlid, bfac: "1").update(bfmemid: nil)
-      
+
       ch4 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "TiedToBVAGSPORER", snamel: "3DaysAffinityAfterDec").ssn}S", judge: affinity_judge, attorney: attorney, affinity_start_date: 3.days.ago, hearing_after_decision: true)
       VACOLS::Case.where(bfcorlid: ch4.bfcorlid, bfac: "1").update(bfmemid: nil)
-      
+
       ch5 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "TiedToBVAEEMARD", snamel: "3DaysAffinityAfterDec").ssn}S", judge: affinity_and_tied_to_judge, attorney: attorney, affinity_start_date: 3.days.ago, hearing_after_decision: true)
       VACOLS::Case.where(bfcorlid: ch5.bfcorlid, bfac: "1").update(bfmemid: nil)
-      
+
       ch6 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "TiedToBVABDANIEL", snamel: "3DaysAffinityAfterDec").ssn}S", judge: tied_to_judge, attorney: attorney, affinity_start_date: 3.days.ago, hearing_after_decision: true)
       VACOLS::Case.where(bfcorlid: ch6.bfcorlid, bfac: "1").update(bfmemid: nil)
-      
+
       ch7 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "TiedToBVAEEMARD", snamel: "60DaysAffinityAfterDec").ssn}S", judge: affinity_and_tied_to_judge, attorney: attorney, hearing_after_decision: true)
       VACOLS::Case.where(bfcorlid: ch7.bfcorlid, bfac: "1").update(bfmemid: affinity_judge.sattyid)
-      
+
       ch8 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "TiedToBVABDANIEL", snamel: "60DaysAffinityAfterDec").ssn}S", judge: tied_to_judge, attorney: attorney, hearing_after_decision: true)
       VACOLS::Case.where(bfcorlid: ch8.bfcorlid, bfac: "1").update(bfmemid: affinity_and_tied_to_judge.sattyid)
-      
+
       ch9 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "TiedToBVAGSPORER", snamel: "60DaysAffinityAfterDec").ssn}S", judge: affinity_judge, attorney: attorney, hearing_after_decision: true)
       VACOLS::Case.where(bfcorlid: ch9.bfcorlid, bfac: "1").update(bfmemid: tied_to_judge.sattyid)
-      
+
       ch10 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "TiedToExcludedJudge", snamel: "60DaysAffinityAfterDec").ssn}S", judge: excluded_judge, attorney: attorney, hearing_after_decision: true)
       VACOLS::Case.where(bfcorlid: ch10.bfcorlid, bfac: "1").update(bfmemid: affinity_judge.sattyid)
-      
+
       ch11 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "TiedToExcludedJudge", snamel: "60DaysAffinityAfterDec").ssn}S", judge: excluded_judge, attorney: attorney, hearing_after_decision: true)
       VACOLS::Case.where(bfcorlid: ch11.bfcorlid, bfac: "1").update(bfmemid: affinity_and_tied_to_judge.sattyid)
-      
+
       ch12 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "TiedToExcludedJudge", snamel: "60DaysAffinityAfterDec").ssn}S", judge: excluded_judge, attorney: attorney, hearing_after_decision: true)
       VACOLS::Case.where(bfcorlid: ch12.bfcorlid, bfac: "1").update(bfmemid: tied_to_judge.sattyid)
       ch13 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "AffinityToBVAGSPORER", snamel: "3DaysAffinityAfterDec").ssn}S", judge: ineligible_judge, attorney: attorney, affinity_start_date: 3.days.ago, hearing_after_decision: true)
       VACOLS::Case.where(bfcorlid: ch13.bfcorlid, bfac: "1").update(bfmemid: affinity_judge.sattyid)
-      
+
       ch14 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "AffinityToBVAEEMARD", snamel: "3DaysAffinityAfterDec").ssn}S", judge: ineligible_judge, attorney: attorney, affinity_start_date: 3.days.ago, hearing_after_decision: true)
       VACOLS::Case.where(bfcorlid: ch14.bfcorlid, bfac: "1").update(bfmemid: affinity_and_tied_to_judge.sattyid)
-      
+
       ch15 = create(:legacy_aoj_appeal, bfcorlid: "#{create_correspondent(snamef: "AffinityToBVABDANIEL", snamel: "3DaysAffinityAfterDec").ssn}S", judge: ineligible_judge, attorney: attorney, affinity_start_date: 3.days.ago, hearing_after_decision: true)
       VACOLS::Case.where(bfcorlid: ch15.bfcorlid, bfac: "1").update(bfmemid: tied_to_judge.sattyid)
-      
+
       create(:legacy_cavc_appeal, bfcorlid: "#{create_correspondent(snamef: "Genpop90Days", snamel: "AffinityStartDate").ssn}S",  judge: affinity_judge, attorney: attorney,
                                 tied_to: false, affinity_start_date: 90.days.ago)
       create(:legacy_cavc_appeal, bfcorlid: "#{create_correspondent(snamef: "Genpop60Days", snamel: "AffinityStartDate").ssn}S",  judge: affinity_judge, attorney: attorney,
