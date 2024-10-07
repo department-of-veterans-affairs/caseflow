@@ -79,6 +79,17 @@ export const assignedColumns = (columns) => {
 };
 
 /**
+ * Configuring a table for the all transcription tab
+ * @param {object} column - The json object that has all the columns listed with required attributes
+ * @returns An object for configuring the table
+ */
+export const allTranscriptionColumns = (columns) => {
+  const { DOCKET_NUMBER, TYPES, HEARING_DATE, RETURN_DATE, UPLOAD_DATE, CONTRACTOR, STATUS, WORK_ORDER } = columns;
+
+  return { DOCKET_NUMBER, TYPES, HEARING_DATE, RETURN_DATE, UPLOAD_DATE, CONTRACTOR, STATUS, WORK_ORDER };
+};
+
+/**
  * Configuring a table for the completed tab
  * @param {object} column - The json object that has all the columns listed with required attributes
  * @returns An object for configuring the table
@@ -222,7 +233,13 @@ export const tabConfig = (openModal, selectFilesForPackage, files) => [
           </div>
         </div>
       </div>
-      <div style={styles.tableWrapper}></div>
+      <div style={styles.tableWrapper}>
+        <TranscriptionFileDispatchTable
+          columns={allTranscriptionColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
+          statusFilter={['All']}
+          openModal={openModal}
+        />
+      </div>
     </>
   }
 ];

@@ -6,6 +6,7 @@ import TRANSCRIPTION_FILE_DISPATCH_CONFIG from '../../../../constants/TRANSCRIPT
 import {
   unassignedColumns,
   assignedColumns,
+  allTranscriptionColumns,
   completedColumns,
 } from '../../../../app/hearings/components/TranscriptionFileDispatchTabs';
 import ApiUtil from '../../../../app/util/ApiUtil';
@@ -25,6 +26,11 @@ const mockTranscriptionFiles = [
     hearingDate: '11/02/2020',
     hearingType: 'Hearing',
     fileStatus: 'Successful upload (AWS)',
+    returnDate: '01/02/2021',
+    uploadDate: '12/15/2020',
+    contractor: 'Genesis Government Solutions, Inc.',
+    workOrder: 'BVAXXXXXX',
+    status: 'Completed',
   },
   {
     id: 39,
@@ -36,6 +42,11 @@ const mockTranscriptionFiles = [
     hearingDate: '08/27/2020',
     hearingType: 'Hearing',
     fileStatus: 'Successful upload (AWS)',
+    returnDate: '10/10/2020',
+    uploadDate: '10/01/2020',
+    contractor: 'Jamison Professional Services',
+    workOrder: 'BVAXXXXXX',
+    status: 'Completed-Overdue',
   },
   {
     id: 38,
@@ -47,6 +58,11 @@ const mockTranscriptionFiles = [
     hearingDate: '04/30/2020',
     hearingType: 'Hearing',
     fileStatus: 'Successful upload (AWS)',
+    returnDate: '05/05/2020',
+    uploadDate: '05/01/2020',
+    contractor: 'The Ravens Group, Inc.',
+    workOrder: 'BVAXXXXXX',
+    status: 'Completed',
   },
   {
     id: 37,
@@ -58,6 +74,11 @@ const mockTranscriptionFiles = [
     hearingDate: '01/13/2020',
     hearingType: 'Hearing',
     fileStatus: 'Successful upload (AWS)',
+    returnDate: null,
+    uploadDate: '02/02/2020',
+    contractor: 'Genesis Government Solutions, Inc.',
+    workOrder: 'BVAXXXXXX',
+    status: 'Sent',
   },
   {
     id: 36,
@@ -69,6 +90,11 @@ const mockTranscriptionFiles = [
     hearingDate: '10/24/2019',
     hearingType: 'Hearing',
     fileStatus: 'Successful upload (AWS)',
+    returnDate: null,
+    uploadDate: '01/01/2020',
+    contractor: 'Jamison Professional Services',
+    workOrder: 'BVAXXXXXX',
+    status: 'Overdue',
   },
   {
     id: 35,
@@ -80,6 +106,11 @@ const mockTranscriptionFiles = [
     hearingDate: '04/04/2019',
     hearingType: 'Hearing',
     fileStatus: 'Successful upload (AWS)',
+    returnDate: '05/05/2019',
+    uploadDate: '05/01/2019',
+    contractor: 'The Ravens Group, Inc.',
+    workOrder: 'BVAXXXXXX',
+    status: 'Retrieval Failure',
   },
   {
     id: 34,
@@ -91,6 +122,11 @@ const mockTranscriptionFiles = [
     hearingDate: '07/01/2024',
     hearingType: 'Hearing',
     fileStatus: 'Successful upload (AWS)',
+    returnDate: '09/09/2024',
+    uploadDate: '09/01/2024',
+    contractor: 'Genesis Government Solutions, Inc.',
+    workOrder: 'BVAXXXXXX',
+    status: 'Completed',
   },
   {
     id: 33,
@@ -102,6 +138,11 @@ const mockTranscriptionFiles = [
     hearingDate: '07/01/2024',
     hearingType: 'Hearing',
     fileStatus: 'Successful upload (AWS)',
+    returnDate: '08/08/2024',
+    uploadDate: '08/01/2024',
+    contractor: 'Jamison Professional Services',
+    workOrder: 'BVAXXXXXX',
+    status: 'Completed',
   },
   {
     id: 32,
@@ -113,6 +154,11 @@ const mockTranscriptionFiles = [
     hearingDate: '06/18/2024',
     hearingType: 'Hearing',
     fileStatus: 'Successful upload (AWS)',
+    returnDate: '07/07/2024',
+    uploadDate: '07/01/2024',
+    contractor: 'The Ravens Group, Inc.',
+    workOrder: 'BVAXXXXXX',
+    status: 'Completed',
   },
   {
     id: 31,
@@ -124,6 +170,11 @@ const mockTranscriptionFiles = [
     hearingDate: '06/18/2024',
     hearingType: 'Hearing',
     fileStatus: 'Successful upload (AWS)',
+    returnDate: '06/30/2024',
+    uploadDate: '06/29/2024',
+    contractor: 'Genesis Government Solutions, Inc.',
+    workOrder: 'BVAXXXXXX',
+    status: 'Completed',
   },
   {
     id: 30,
@@ -135,6 +186,11 @@ const mockTranscriptionFiles = [
     hearingDate: '06/18/2024',
     hearingType: 'Hearing',
     fileStatus: 'Successful upload (AWS)',
+    returnDate: '06/20/2024',
+    uploadDate: '06/19/2024',
+    contractor: 'Jamison Professional Services',
+    workOrder: 'BVAXXXXXX',
+    status: 'Completed',
   },
   {
     id: 29,
@@ -146,6 +202,11 @@ const mockTranscriptionFiles = [
     hearingDate: '07/01/2024',
     hearingType: 'Hearing',
     fileStatus: 'Successful upload (AWS)',
+    returnDate: '07/30/2024',
+    uploadDate: '07/20/2024',
+    contractor: 'The Ravens Group, Inc.',
+    workOrder: 'BVAXXXXXX',
+    status: 'Completed',
   },
   {
     id: 28,
@@ -157,6 +218,11 @@ const mockTranscriptionFiles = [
     hearingDate: '07/01/2024',
     hearingType: 'Hearing',
     fileStatus: 'Successful upload (AWS)',
+    returnDate: '07/29/2024',
+    uploadDate: '07/19/2024',
+    contractor: 'Genesis Government Solutions, Inc.',
+    workOrder: 'BVAXXXXXX',
+    status: 'Completed',
   },
   {
     id: 27,
@@ -168,6 +234,11 @@ const mockTranscriptionFiles = [
     hearingDate: '06/18/2024',
     hearingType: 'Hearing',
     fileStatus: 'Successful upload (AWS)',
+    returnDate: '11/21/2024',
+    uploadDate: '11/12/2024',
+    contractor: 'Jamison Professional Services',
+    workOrder: 'BVAXXXXXX',
+    status: 'Completed',
   },
   {
     id: 26,
@@ -179,6 +250,11 @@ const mockTranscriptionFiles = [
     hearingDate: '06/18/2024',
     hearingType: 'Hearing',
     fileStatus: 'Successful upload (AWS)',
+    returnDate: '09/18/2024',
+    uploadDate: '09/15/2024',
+    contractor: 'Genesis Government Solutions, Inc.',
+    workOrder: 'BVAXXXXXX',
+    status: 'Completed',
   },
 ];
 
@@ -490,6 +566,16 @@ const setupAssignedTable = () =>
     </Router>
   );
 
+const setupAllTranscriptionTable = () =>
+  render(
+    <Router>
+      <TranscriptionFileDispatchTable
+        columns={allTranscriptionColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
+        statusFilter={['All']}
+      />
+    </Router>
+  );
+
 const setupCompletedTable = () =>
   render(
     <Router>
@@ -531,6 +617,12 @@ describe('TranscriptionFileDispatchTable', () => {
 
     when(ApiUtil.get).
       calledWith(
+        '/hearings/transcription_files/transcription_file_tasks?tab=All&page=1'
+      ).
+      mockResolvedValue(mockTranscriptionFilesResponse);
+
+    when(ApiUtil.get).
+      calledWith(
         '/hearings/transcription_files/transcription_file_tasks?tab=Completed&page=1'
       ).
       mockResolvedValue(mockCompletedTranscriptionFilesResponse);
@@ -557,6 +649,13 @@ describe('TranscriptionFileDispatchTable', () => {
 
     it('Assigned tab has no violations', async () => {
       const { container } = setupAssignedTable();
+      const results = await axe(container);
+
+      expect(results).toHaveNoViolations();
+    });
+
+    it('All Transcription tab has no violations', async () => {
+      const { container } = setupAllTranscriptionTable();
       const results = await axe(container);
 
       expect(results).toHaveNoViolations();
@@ -715,6 +814,20 @@ describe('TranscriptionFileDispatchTable', () => {
       await waitFor(() =>
         expect(
           screen.getAllByText('Viewing 1-15 of 18 total')[0]
+        ).toBeInTheDocument()
+      );
+
+      expect(container).toMatchSnapshot();
+    });
+  });
+
+  describe('All Transcription Tab', () => {
+    it('loads a table from backend data', async () => {
+      const { container } = setupAllTranscriptionTable();
+
+      await waitFor(() =>
+        expect(
+          screen.getAllByText('Viewing 1-15 of 40 total')[0]
         ).toBeInTheDocument()
       );
 

@@ -8,12 +8,13 @@ class TranscriptionFile < CaseflowRecord
 
   belongs_to :locked_by, class_name: "User"
 
-  VALID_FILE_TYPES = %w[mp3 mp4 vtt rtf xls csv zip].freeze
+  VALID_FILE_TYPES = %w[pdf doc mp3 mp4 vtt rtf xls csv zip].freeze
 
   validates :file_type, inclusion: { in: VALID_FILE_TYPES, message: "'%<value>s' is not valid" }
 
   scope :filterable_values, lambda {
     select("
+      transcription_files.*,
       transcription_files.*,
       (CASE WHEN aod_based_on_age IS NOT NULL THEN aod_based_on_age ELSE false END) AS aod_based_on_age,
       (CASE WHEN aodm.granted IS NOT NULL THEN aodm.granted ELSE false END) AS aod_motion_granted,
@@ -41,13 +42,28 @@ class TranscriptionFile < CaseflowRecord
 
   scope :unassigned, -> { where(file_status: Constants.TRANSCRIPTION_FILE_STATUSES.upload.success) }
 
+  scope :sent_or_completed, lambda {
+    where(file_type: ["pdf", "doc"])
+    .where.not(file_status: "Failed Upload (BOX)")
+    .joins(transcription: :transcription_package)
+    .distinct
+  }
+
   scope :completed, lambda {
     where(file_status: ["Successful upload (AWS)", "Failed Retrieval (BOX)", "Overdue"])
   }
 
   scope :filter_by_hearing_type, ->(values) { where("hearing_type IN (?)", values) }
 
-  scope :filter_by_status, ->(values) { where("file_status IN (?)", values) }
+  scope :filter_by_contractor, lambda { |values|
+    joins(transcription: { transcription_package: :contractor })
+      .where(transcription_contractors: { name: values })
+  }
+
+  scope :filter_by_status, lambda { |values|
+    joins(:transcription)
+      .where(transcription: { transcription_status: values })
+  }
 
   scope :filter_by_types, lambda { |values|
     filter_parts = []
@@ -84,10 +100,76 @@ class TranscriptionFile < CaseflowRecord
     end
   }
 
+  scope :filter_by_return_dates, lambda { |values|
+    mode = values[0]
+    if mode == "between"
+      start_date = values[1] + " 00:00:00"
+      end_date = values[2] + " 23:59:59"
+      where(Arel.sql("date_returned_box >= '" + start_date + "' AND date_returned_box <= '" + end_date + "'"))
+    elsif mode == "before"
+      date = values[1] + " 00:00:00"
+      where(Arel.sql("date_returned_box < '" + date + "'"))
+    elsif mode == "after"
+      date = values[1] + " 23:59:59"
+      where(Arel.sql("date_returned_box > '" + date + "'"))
+    elsif mode == "on"
+      start_date = values[1] + " 00:00:00"
+      end_date = values[1] + " 23:59:59"
+      where(Arel.sql("date_returned_box >= '" + start_date + "' AND date_returned_box <= '" + end_date + "'"))
+    end
+  }
+
+  scope :filter_by_upload_dates, lambda { |values|
+    mode = values[0]
+    date = "transcription_files.date_upload_box"
+    if mode == "between"
+      start_date = values[1] + " 00:00:00"
+      end_date = values[2] + " 23:59:59"
+      where(Arel.sql("#{date} >= '" + start_date + "' AND #{date} <= '" + end_date + "'"))
+    elsif mode == "before"
+      date = values[1] + " 00:00:00"
+      where(Arel.sql("transcription_files.date_upload_box < '" + date + "'"))
+    elsif mode == "after"
+      date = values[1] + " 23:59:59"
+      where(Arel.sql("transcription_files.date_upload_box > '" + date + "'"))
+    elsif mode == "on"
+      start_date = values[1] + " 00:00:00"
+      end_date = values[1] + " 23:59:59"
+      where(Arel.sql("#{date} >= '" + start_date + "' AND #{date} <= '" + end_date + "'"))
+    end
+  }
+
   scope :order_by_id, ->(direction) { order(Arel.sql("id " + direction)) }
   scope :order_by_hearing_date, ->(direction) { order(Arel.sql("scheduled_for " + direction)) }
   scope :order_by_hearing_type, ->(direction) { order(Arel.sql("hearing_type " + direction)) }
   scope :order_by_case_type, ->(direction) { order(Arel.sql("sortable_case_type " + direction)) }
+  scope :order_by_return_date, ->(direction) { order(Arel.sql("date_returned_box " + direction)) }
+  scope :order_by_upload_date, ->(direction) { order(Arel.sql("date_upload_box " + direction)) }
+
+  scope :order_by_work_order, lambda { |direction|
+    joins(:transcription)
+      .select("transcription_files.*, transcriptions.task_number AS work_order")
+      .order("work_order #{direction}")
+  }
+
+  scope :order_by_contractor, lambda { |direction|
+    joins(transcription: { transcription_package: :contractor })
+      .select("transcription_files.*, transcription_contractors.name AS contractor_name")
+      .order("contractor_name #{direction}")
+  }
+
+  scope :order_by_status, lambda { |direction|
+    joins(transcription: :transcription_package)
+      .select("
+        transcription_files.*,
+        (CASE file_status
+          WHEN \'Completed\' THEN 1
+          WHEN \'Overdue\' THEN 2
+          WHEN \'Failed Retrieval (BOX)\' THEN 3
+          WHEN \'Successful Upload (BOX)\' THEN 4
+        END) AS status_order")
+      .order("status_order #{direction}")
+  }
 
   scope :locked, -> { where(locked_at: (Time.now.utc - 2.hours)..Time.now.utc) }
 

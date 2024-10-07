@@ -12,10 +12,11 @@ import {
   itemsColumn,
   dateSentColumn,
   expectedReturnDateColumn,
+  returnDateColumn,
+  uploadDateColumn,
   contractorColumn,
   statusColumn,
-  unassignColumn,
-  returnDateColumn
+  unassignColumn
 } from './TranscriptionFileDispatchTableColumns';
 import { css } from 'glamor';
 import { encodeQueryParams } from '../../util/QueryParamsUtil';
@@ -148,6 +149,8 @@ export const TranscriptionFileDispatchTable = ({
       return `/hearings/transcription_files/transcription_file_tasks${qs}`;
     } else if (statusFilter[0] === 'Assigned') {
       return `/hearings/transcription_packages/transcription_package_tasks${qs}`;
+    } else if (statusFilter[0] === 'All') {
+      return `/hearings/transcription_files/transcription_file_tasks${qs}`;
     }
   };
 
@@ -230,6 +233,8 @@ export const TranscriptionFileDispatchTable = ({
       contractorColumn: contractorColumn(contractors),
       statusColumn: statusColumn(statusFilter[0]),
       unassignColumn: unassignColumn(unassignPackage),
+      returnDateColumn: returnDateColumn(),
+      uploadDateColumn: uploadDateColumn(),
     };
 
     return functionForColumn[column.name];
@@ -271,7 +276,7 @@ export const TranscriptionFileDispatchTable = ({
       }, 3000);
 
       return () => clearInterval(interval);
-    } else if (statusFilter[0] === 'Assigned') {
+    } else if (['Assigned', 'All'].includes(statusFilter[0])) {
       getContractors();
     }
   }, []);

@@ -59,8 +59,13 @@
     },
     "RETURN_DATE": {
       "name": "returnDateColumn",
-      "filterable": false,
-      "anyFiltersAreSet": false
+      "filterable": true,
+      "anyFiltersAreSet": true
+    },
+    "UPLOAD_DATE": {
+      "name": "uploadDateColumn",
+      "filterable": true,
+      "anyFiltersAreSet": true
     },
     "EXPECTED_RETURN_DATE": {
       "name": "expectedReturnDateColumn",

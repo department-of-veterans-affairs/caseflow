@@ -23,7 +23,12 @@ const mockTranscriptionFiles = [
     caseType: 'Original',
     hearingDate: '11/02/2020',
     hearingType: 'Hearing',
-    fileStatus: 'Successful upload (AWS)'
+    fileStatus: 'Successful upload (AWS)',
+    returnDate: '01/02/2021',
+    uploadDate: '12/15/2020',
+    contractor: 'Genesis Government Solutions, Inc.',
+    workOrder: 'BVAXXXXXX',
+    status: 'Completed',
   },
   {
     id: 39,
@@ -34,7 +39,12 @@ const mockTranscriptionFiles = [
     caseType: 'Original',
     hearingDate: '08/27/2020',
     hearingType: 'Hearing',
-    fileStatus: 'Successful upload (AWS)'
+    fileStatus: 'Successful upload (AWS)',
+    returnDate: '10/10/2020',
+    uploadDate: '10/01/2020',
+    contractor: 'Jamison Professional Services',
+    workOrder: 'BVAXXXXXX',
+    status: 'Completed-Overdue',
   }
 ];
 
@@ -130,6 +140,12 @@ describe('TranscriptionFileDispatch', () => {
       mockResolvedValue(mockTranscriptionContractorsResponse);
 
     when(ApiUtil.get).calledWith('/hearings/transcription_files/transcription_file_tasks?tab=Unassigned&page=1').
+      mockResolvedValue(mockTranscriptionFilesResponse);
+
+    when(ApiUtil.get).
+      calledWith(
+        '/hearings/transcription_files/transcription_file_tasks?tab=All&page=1'
+      ).
       mockResolvedValue(mockTranscriptionFilesResponse);
 
     when(ApiUtil.get).calledWith('/hearings/transcription_files/locked').
@@ -254,7 +270,7 @@ describe('TranscriptionFileDispatch', () => {
 
     await waitFor(() =>
       expect(screen.getByText(
-        'All transcription owned by the Transcription team:')).toBeInTheDocument()
+        'All transcriptions owned by the Transcription team:')).toBeInTheDocument()
     );
 
     const results = await axe(container);
