@@ -57,12 +57,12 @@ class EvidenceSubmissionWindowTask < Task
     [self]
   end
 
-  def is_waivable?
+  def waivable?
     (assigned_at > 90.days.ago && status == Constants.TASK_STATUSES.completed)
   end
 
   def available_actions_unwrapper(user)
-    if (user.inbound_ops_team_superuser? || user.inbound_ops_team_supervisor?) && is_waivable?
+    if (user.inbound_ops_team_superuser? || user.inbound_ops_team_supervisor?) && waivable?
       return [Constants.TASK_ACTIONS.REMOVE_WAIVE_EVIDENCE_WINDOW.to_h]
     end
 

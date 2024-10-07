@@ -25,7 +25,7 @@ class WorkQueue::CorrespondenceAppealsSerializer
 
   attribute :waivable do |object|
     evidence_window_task = object.appeal.tasks.find_by(type: "EvidenceSubmissionWindowTask")
-    evidence_window_task.is_waivable?
+    evidence_window_task.waivable?
   end
   attribute :appeal_type do |object|
     object.appeal.docket_type
