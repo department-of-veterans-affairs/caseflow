@@ -232,7 +232,37 @@ RSpec.describe HearingDatetimeService do
           expect(time_service.scheduled_time_string).to eq(expected_string)
         end
       end
+
+      context "For special timezones" do
+        let(:hearing) do
+          create(
+            :hearing,
+            scheduled_in_timezone: zone_name,
+            hearing_day: create(
+              :hearing_day,
+              scheduled_for: winter_date
+            )
+          )
+        end
+
+        context "For a Boise hearing" do
+          let(:zone_name) { "America/Boise" }
+
+          it do
+            byebug
+          end
+        end
+
+        context "For a Louisville hearing" do
+          let(:zone_name) { "America/Kentucky/Louisville" }
+
+          it do
+
+          end
+        end
+      end
     end
+
     context "hearing is Legacy" do
       describe "local_time" do
         it "returns the scheduled_for value for a hearing" do
