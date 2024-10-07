@@ -137,6 +137,7 @@ class BusinessLine < Organization
         .from(combined_decision_review_tasks_query)
         .includes(*decision_review_task_includes)
         .where(task_filter_predicate(query_params[:filters]))
+        .where(closed_at_filter_predicate(query_params[:filters]))
         .order(order_clause)
     end
 
@@ -833,6 +834,63 @@ class BusinessLine < Organization
 
     def where_clause_from_array(table_class, column, values_array)
       table_class.arel_table[column].in(values_array)
+    end
+
+    def closed_at_filter_predicate(filters)
+      return "" if filters.nil?
+
+      closed_at_filter = locate_closed_at_filter(filters)
+
+      return "" unless closed_at_filter
+
+      # ex: "val"=> val=[before,2024-09-08,]
+      closed_at_params = closed_at_filter["val"].first.split(",")
+
+      build_closed_at_filter_predicate(closed_at_params) || ""
+    end
+
+    def locate_closed_at_filter(filters)
+      parsed_filters = parse_filters(filters)
+
+      parsed_filters.find do |filter|
+        filter["col"].include?("completedDateColumn")
+      end
+    end
+
+    def build_closed_at_filter_predicate(closed_at_params)
+      return "" if closed_at_params.blank?
+
+      mode, start_date, end_date = closed_at_params
+      operator = date_filter_mode_to_operator(mode)
+
+      date_filters = {
+        ">" => -> { start_date ? "tasks.closed_at::date > '#{start_date}'::date" : "" },
+        "<" => -> { start_date ? "tasks.closed_at::date < '#{start_date}'::date" : "" },
+        "=" => -> { start_date ? "tasks.closed_at::date = '#{start_date}'::date" : "" },
+        "between" => lambda {
+          end_date ? "tasks.closed_at::date BETWEEN '#{start_date}'::date AND '#{end_date}'::date" : ""
+        },
+        "last_7_days" => -> { { closed_at: 1.week.ago..Time.zone.now } },
+        "last_30_days" => -> { { closed_at: 30.days.ago..Time.zone.now } },
+        "last_365_days" => -> { { closed_at: 365.days.ago..Time.zone.now } }
+      }
+
+      date_filters.fetch(operator, lambda {
+        Rails.logger.error("Unsupported mode **#{operator}** used for closed at date filtering")
+        ""
+      }).call
+    end
+
+    def date_filter_mode_to_operator(mode)
+      {
+        "between" => "between",
+        "after" => ">",
+        "before" => "<",
+        "on" => "=",
+        "last_7_days" => "last_7_days",
+        "last_30_days" => "last_30_days",
+        "last_365_days" => "last_365_days"
+      }[mode]
     end
   end
   # rubocop:enable Metrics/ClassLength
