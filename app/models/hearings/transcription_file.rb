@@ -15,6 +15,7 @@ class TranscriptionFile < CaseflowRecord
   scope :filterable_values, lambda {
     select("
       transcription_files.*,
+      transcription_files.*,
       (CASE WHEN aod_based_on_age IS NOT NULL THEN aod_based_on_age ELSE false END) AS aod_based_on_age,
       (CASE WHEN aodm.granted IS NOT NULL THEN aodm.granted ELSE false END) AS aod_motion_granted,
       scheduled_for,
@@ -48,6 +49,10 @@ class TranscriptionFile < CaseflowRecord
     .distinct
   }
 
+  scope :completed, lambda {
+    where(file_status: ["Successful upload (AWS)", "Failed Retrieval (BOX)", "Overdue"])
+  }
+
   scope :filter_by_hearing_type, ->(values) { where("hearing_type IN (?)", values) }
 
   scope :filter_by_contractor, lambda { |values|
@@ -56,8 +61,8 @@ class TranscriptionFile < CaseflowRecord
   }
 
   scope :filter_by_status, lambda { |values|
-    joins(transcription: :transcription_package)
-      .where(transcription_packages: { status: values })
+    joins(:transcription)
+      .where(transcription: { transcription_status: values })
   }
 
   scope :filter_by_types, lambda { |values|

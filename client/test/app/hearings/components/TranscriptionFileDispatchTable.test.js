@@ -6,7 +6,8 @@ import TRANSCRIPTION_FILE_DISPATCH_CONFIG from '../../../../constants/TRANSCRIPT
 import {
   unassignedColumns,
   assignedColumns,
-  allTranscriptionColumns
+  allTranscriptionColumns,
+  completedColumns,
 } from '../../../../app/hearings/components/TranscriptionFileDispatchTabs';
 import ApiUtil from '../../../../app/util/ApiUtil';
 import { when } from 'jest-when';
@@ -256,6 +257,52 @@ const mockTranscriptionFiles = [
     status: 'Completed',
   },
 ];
+
+const mockCompletedTranscriptionFiles = [
+  {
+    id: 40,
+    externalAppealId: 'b5eba21a-9baf-41a3-ac1c-08470c2b79c4',
+    docketNumber: '200103-61110',
+    caseDetails: 'Danial Reynolds (000543695)',
+    isAdvancedOnDocket: true,
+    caseType: 'Original',
+    hearingDate: '11/02/2020',
+    hearingType: 'Hearing',
+    fileStatus: 'Successful upload (AWS)',
+    returnDate: '01/02/2021',
+    expectedReturnDate: '12/15/2020',
+    contractor: 'Genesis Government Solutions, Inc.',
+    workOrder: 'BVAXXXXXX',
+    status: 'Completed',
+  },
+  {
+    id: 39,
+    externalAppealId: '12bb84ff-65fb-4422-bee4-fe7553fdf5c3',
+    docketNumber: '190227-4821',
+    caseDetails: 'Craig Wintheiser (000562812)',
+    isAdvancedOnDocket: true,
+    caseType: 'Original',
+    hearingDate: '08/27/2020',
+    hearingType: 'Hearing',
+    fileStatus: 'Successful upload (AWS)',
+    returnDate: '10/10/2020',
+    uploadDate: '10/01/2020',
+    contractor: 'Jamison Professional Services',
+    workOrder: 'BVAXXXXXX',
+    status: 'Completed-Overdue',
+  }
+];
+
+const mockCompletedTranscriptionFilesResponse = {
+  body: {
+    task_page_count: 1,
+    tasks: {
+      data: mockCompletedTranscriptionFiles,
+    },
+    tasks_per_page: 15,
+    total_task_count: 2,
+  },
+};
 
 const mockTranscriptionFilesResponse = {
   body: {
@@ -529,6 +576,16 @@ const setupAllTranscriptionTable = () =>
     </Router>
   );
 
+const setupCompletedTable = () =>
+  render(
+    <Router>
+      <TranscriptionFileDispatchTable
+        columns={completedColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
+        statusFilter={['Completed']}
+      />
+    </Router>
+  );
+
 describe('TranscriptionFileDispatchTable', () => {
   beforeEach(async () => {
     ApiUtil.get = jest.fn();
@@ -565,6 +622,12 @@ describe('TranscriptionFileDispatchTable', () => {
       mockResolvedValue(mockTranscriptionFilesResponse);
 
     when(ApiUtil.get).
+      calledWith(
+        '/hearings/transcription_files/transcription_file_tasks?tab=Completed&page=1'
+      ).
+      mockResolvedValue(mockCompletedTranscriptionFilesResponse);
+
+    when(ApiUtil.get).
       calledWith('/hearings/find_by_contractor/filterable_contractors').
       mockResolvedValue(mockTranscriptionContractorsResponse);
 
@@ -593,6 +656,13 @@ describe('TranscriptionFileDispatchTable', () => {
 
     it('All Transcription tab has no violations', async () => {
       const { container } = setupAllTranscriptionTable();
+      const results = await axe(container);
+
+      expect(results).toHaveNoViolations();
+    });
+
+    it('Completed tab has no violations', async () => {
+      const { container } = setupCompletedTable();
       const results = await axe(container);
 
       expect(results).toHaveNoViolations();
@@ -758,6 +828,20 @@ describe('TranscriptionFileDispatchTable', () => {
       await waitFor(() =>
         expect(
           screen.getAllByText('Viewing 1-15 of 40 total')[0]
+        ).toBeInTheDocument()
+      );
+
+      expect(container).toMatchSnapshot();
+    });
+  });
+
+  describe('Completed Tab', () => {
+    it('loads a table from backend data', async () => {
+      const { container } = setupCompletedTable();
+
+      await waitFor(() =>
+        expect(
+          screen.getAllByText('Viewing 1-2 of 2 total')[0]
         ).toBeInTheDocument()
       );
 

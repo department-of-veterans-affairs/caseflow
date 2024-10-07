@@ -90,6 +90,17 @@ export const allTranscriptionColumns = (columns) => {
 };
 
 /**
+ * Configuring a table for the completed tab
+ * @param {object} column - The json object that has all the columns listed with required attributes
+ * @returns An object for configuring the table
+ */
+export const completedColumns = (columns) => {
+  const { DOCKET_NUMBER, TYPES, HEARING_DATE, EXPECTED_RETURN_DATE, RETURN_DATE, CONTRACTOR, STATUS, WORK_ORDER } = columns;
+
+  return { DOCKET_NUMBER, TYPES, HEARING_DATE, EXPECTED_RETURN_DATE, RETURN_DATE, CONTRACTOR, STATUS, WORK_ORDER };
+};
+
+/**
  * A mini template component for transcription settings link
  */
 const TranscriptionSettingsLink = () => (
@@ -194,7 +205,13 @@ export const tabConfig = (openModal, selectFilesForPackage, files) => [
           </div>
         </div>
       </div>
-      <div style={styles.tableWrapper}></div>
+      <div style={styles.tableWrapper}>
+        <TranscriptionFileDispatchTable
+          columns={completedColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
+          statusFilter={['Completed']}
+          selectFilesForPackage={selectFilesForPackage}
+        />
+      </div>
     </>
   },
   {

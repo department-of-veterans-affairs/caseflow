@@ -444,7 +444,7 @@ export const statusColumn = (currentTab) => {
   } else if (currentTab === COPY.TRANSCRIPTION_DISPATCH_COMPLETED_TAB) {
     filterOptions = [
       {
-        value: COPY.TRANSCRIPTION_STATUS_BOX_UPLOAD_SUCCESS_FILTER_OPTION_VALUE,
+        value: COPY.TRANSCRIPTION_STATUS_AWS_UPLOAD_SUCCESS_FILTER_OPTION_VALUE,
         displayText: COPY.TRANSCRIPTION_STATUS_COMPLETED_FILTER_OPTION,
       },
       {
@@ -493,13 +493,15 @@ export const statusColumn = (currentTab) => {
     label: 'status filter',
     filterOptions,
     valueFunction: (row) => {
-      let displayStatus = row.status;
+      let status = currentTab === COPY.TRANSCRIPTION_DISPATCH_COMPLETED_TAB ?
+        row.fileStatus : row.status;
+      let displayStatus = status;
 
-      if (row.status === 'Successful Upload (BOX)') {
+      if (status === 'Successful upload (AWS)') {
+        displayStatus = 'Completed';
+      } else if (status === 'Successful Upload (BOX)') {
         displayStatus = 'Sent';
-      }
-
-      if (row.status === 'Failed Retrieval (BOX)') {
+      } else if (status === 'Failed Retrieval (BOX)') {
         displayStatus = 'Retrieval Failure';
       }
 

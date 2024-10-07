@@ -103,6 +103,8 @@ class Hearings::TranscriptionFilesController < ApplicationController
       @transcription_files = @transcription_files.unassigned
     when "All"
       @transcription_files = @transcription_files.sent_or_completed
+    when "Completed"
+      @transcription_files = @transcription_files.completed
     end
   end
 
@@ -177,7 +179,7 @@ class Hearings::TranscriptionFilesController < ApplicationController
   def build_transcription_json(transcription_files)
     tasks = []
     transcription_files.each do |transcription_file|
-      tasks << {
+      task = {
         id: transcription_file.id,
         externalAppealId: transcription_file.external_appeal_id,
         docketNumber: transcription_file.docket_number,
@@ -187,13 +189,25 @@ class Hearings::TranscriptionFilesController < ApplicationController
         hearingDate: transcription_file.hearing_date,
         hearingType: transcription_file.hearing_type,
         fileStatus: transcription_file.file_status,
-        returnDate: transcription_file.date_returned_box&.utc&.to_formatted_s(:short_date),
         uploadDate: transcription_file.date_upload_box&.utc&.to_formatted_s(:short_date),
-        contractor: transcription_file.transcription&.transcription_package&.contractor&.name,
-        workOrder: transcription_file.transcription&.task_number,
         status: transcription_file.transcription&.transcription_status
       }
+
+      task = add_completed_tab_fields(task, transcription_file) if %w(Completed All).include?(params[:tab])
+      tasks << task
     end
     tasks
+  end
+
+  def add_completed_tab_fields(task, transcription_file)
+    task.merge(
+      {
+        workOrder: transcription_file.transcription&.task_number,
+        expectedReturnDate: transcription_file&.transcription&.transcription_package
+          &.expected_return_date&.to_formatted_s(:short_date),
+        returnDate: transcription_file.date_returned_box&.to_formatted_s(:short_date),
+        contractor: transcription_file&.transcription&.transcription_package&.contractor&.name
+      }
+    )
   end
 end
