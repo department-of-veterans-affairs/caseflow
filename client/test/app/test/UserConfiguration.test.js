@@ -82,8 +82,9 @@ describe('UserConfiguration', () => {
     const mockProps = {
       filteredStations: [{ value: '101', label: '101' }],
       officeAvailable: 'VACO',
-      form_values: { functions_available: [''] },
-      all_organizations: ['AOD'],
+      form_values: { functions_available: [''],
+        all_organizations: ['AOD']
+      },
       featuresList: ['Toggle1', 'Toggle2', 'Toggle3'],
       currentState: {
         scenarios: [],
