@@ -90,8 +90,8 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   def should_download?
     file = @transcription_file
 
-    (file.file_type == "vtt" && file.file_status != "Successful conversion") ||
-      (file.file_type != "vtt" && file.file_status != "Successful upload (AWS)")
+    (file.file_type == "vtt" && file.file_status != Constants.TRANSCRIPTION_FILE_STATUSES.conversion.success) ||
+      (file.file_type != "vtt" && file.file_status != Constants.TRANSCRIPTION_FILE_STATUSES.upload.success)
   end
 
   # Purpose: Builds hash of values to be listed in mail template
