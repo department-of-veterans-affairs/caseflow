@@ -7,7 +7,7 @@ describe "Timezone Initializer" do
     context "Asia/Manila" do
       let(:tz_name) { "Asia/Manila" }
 
-      it { subject.to eq 28_800 }
+      it { is_expected.to eq 28_800 }
     end
   end
 
@@ -24,7 +24,7 @@ describe "Timezone Initializer" do
         ActiveSupport::TimeZone.find_tzinfo("America/Denver").utc_offset
       end
 
-      it { subject.to eq comparable_offset }
+      it { is_expected.to eq comparable_offset }
     end
 
     context "America/Kentucky/Louisville" do
@@ -33,7 +33,7 @@ describe "Timezone Initializer" do
         ActiveSupport::TimeZone.find_tzinfo("America/New_York").utc_offset
       end
 
-      it { subject.to eq comparable_offset }
+      it { is_expected.to eq comparable_offset }
     end
   end
 end
