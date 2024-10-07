@@ -6,6 +6,7 @@ import { css } from 'glamor';
 import PropTypes from 'prop-types';
 
 import Button from 'app/components/Button';
+import Link from 'app/components/Link';
 import NonCompLayout from '../components/NonCompLayout';
 import { conditionsSchema, ReportPageConditions } from '../components/ReportPage/ReportPageConditions';
 
@@ -331,7 +332,10 @@ const ReportPage = ({ history }) => {
         />
       }
     >
-      <h1>Generate task report</h1>
+      <div className="report-page-header">
+        <h1>Generate task report</h1>
+        <Link button="secondary" to="searches">View saved searches</Link>
+      </div>
       <FormProvider {...methods}>
         <form>
           <RHFControlledDropdownContainer
