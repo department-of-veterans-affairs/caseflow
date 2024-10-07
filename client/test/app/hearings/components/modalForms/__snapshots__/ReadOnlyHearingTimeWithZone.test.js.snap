@@ -174,7 +174,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 >
   <ReadOnly
     label="Hearing Time"
-    text="Invalid date Indiana (East) / Invalid date Eastern"
+    text="Invalid date Eastern"
   >
     <div
       data-css-1a5irm0=""
@@ -183,7 +183,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
         Hearing Time
       </strong>
       <pre>
-        Invalid date Indiana (East) / Invalid date Eastern
+        Invalid date Eastern
       </pre>
     </div>
   </ReadOnly>
@@ -364,7 +364,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 >
   <ReadOnly
     label="Hearing Time"
-    text="Invalid date Indiana (East) / Invalid date Eastern"
+    text="Invalid date Eastern"
   >
     <div
       data-css-1a5irm0=""
@@ -373,7 +373,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
         Hearing Time
       </strong>
       <pre>
-        Invalid date Indiana (East) / Invalid date Eastern
+        Invalid date Eastern
       </pre>
     </div>
   </ReadOnly>
@@ -554,7 +554,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
 >
   <ReadOnly
     label="Hearing Time"
-    text="Invalid date Indiana (East) / Invalid date Eastern"
+    text="Invalid date Eastern"
   >
     <div
       data-css-1a5irm0=""
@@ -563,7 +563,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
         Hearing Time
       </strong>
       <pre>
-        Invalid date Indiana (East) / Invalid date Eastern
+        Invalid date Eastern
       </pre>
     </div>
   </ReadOnly>
