@@ -73,7 +73,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     @file_name = file_name
     @transcription_file ||= find_or_create_transcription_file
     ensure_hearing_held
-    if should_convert_and_upload?
+    if should_download?
       download_file_to_tmp!(download_link)
       @transcription_file.upload_to_s3! if @transcription_file.date_upload_aws.nil?
       convert_to_rtf_and_upload_to_s3! if should_convert_and_upload?
@@ -87,11 +87,11 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   end
 
   # Checks if the file either never started or failed to finish processing
-  def should_convert_and_upload?
+  def should_download?
     file = @transcription_file
 
-    (file.file_type == "vtt" && file.file_status != Constants.TRANSCRIPTION_FILE_STATUSES.conversion.success) ||
-      (file.file_type != "vtt" && file.file_status != Constants.TRANSCRIPTION_FILE_STATUSES.upload_success)
+    (file.file_type == "vtt" && file.file_status != "Successful conversion") ||
+      (file.file_type != "vtt" && file.file_status != "Successful upload (AWS)")
   end
 
   # Purpose: Builds hash of values to be listed in mail template
