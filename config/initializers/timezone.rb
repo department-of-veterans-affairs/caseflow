@@ -4,9 +4,7 @@
 ### Add timezones to here for more timezone support
 ### ###
 TIMEZONE_MAPPINGS = {
-  "Philippine Standard Time" => "Asia/Manila",
-  "Mountain Time (US & Canada)" => "America/Boise",
-  "Eastern Time (US & Canada)" => "America/Kentucky/Louisville"
+  "Philippine Standard Time" => "Asia/Manila"
 }
 ActiveSupport::TimeZone.const_set(:MAPPING, ActiveSupport::TimeZone::MAPPING.merge(TIMEZONE_MAPPINGS))
 
