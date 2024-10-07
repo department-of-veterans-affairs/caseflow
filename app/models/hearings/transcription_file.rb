@@ -41,7 +41,13 @@ class TranscriptionFile < CaseflowRecord
 
   scope :unassigned, -> { where(file_status: Constants.TRANSCRIPTION_FILE_STATUSES.upload.success) }
 
+  scope :completed, lambda {
+    where(file_status: ["Successful upload (AWS)", "Failed Retrieval (BOX)", "Overdue"])
+  }
+
   scope :filter_by_hearing_type, ->(values) { where("hearing_type IN (?)", values) }
+
+  scope :filter_by_status, ->(values) { where("file_status IN (?)", values) }
 
   scope :filter_by_types, lambda { |values|
     filter_parts = []
