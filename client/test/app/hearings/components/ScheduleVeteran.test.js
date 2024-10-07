@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { ScheduleVeteranForm } from 'app/hearings/components/ScheduleVeteranForm';
 import { amaAppeal, defaultHearing, virtualHearing } from 'test/data';
 import { generateAmaTask } from 'test/data/tasks';
@@ -162,8 +163,7 @@ describe('ScheduleVeteranForm', () => {
     />,
     {
       wrapper: queueWrapper,
-    }
-    );
+    });
 
     const regionalOffice = screen.getByRole('combobox', { name: 'Regional Office' });
 
@@ -339,5 +339,89 @@ describe('ScheduleVeteranForm', () => {
       screen.getByRole('radio', { name: '12:30 PM Pacific Time (US & Canada) / 3:30 PM Eastern Time (US & Canada)' })
     ).toBeInTheDocument();
     expect(asFragment()).toMatchSnapshot();
+  });
+
+  describe('Timezone dropdowns show correct preview times', () => {
+    const renderForm = (timezone, regionalOfficeKey, timeString, hearingDate = '2024-10-01') => {
+      ApiUtil.get.mockResolvedValue(mockResponse);
+
+      render(
+        <ScheduleVeteranForm
+          goBack={cancelSpy}
+          submit={submitSpy}
+          fetchScheduledVeterans={fetchScheduledHearingsMock}
+          appeal={{
+            ...amaAppeal,
+            regionalOffice: defaultHearing.regionalOfficeKey,
+            readableHearingRequestType: 'Virtual',
+            readableOriginalHearingRequestType: 'Video'
+          }}
+          hearing={{
+            ...defaultHearing,
+            regionalOffice: defaultHearing.regionalOfficeKey,
+            requestType: 'Virtual',
+            hearingDay: {
+              ...defaultHearing.hearingDay,
+              scheduledFor: hearingDate,
+              timezone
+            },
+            hearingLocation: null,
+            scheduledTimeString: timeString
+          }}
+          virtualHearing={{
+            status: 'active'
+          }}
+          appellantTitle="Veteran"
+          userCanCollectVideoCentralEmails
+          userCanViewTimeSlots
+          virtual
+          hearingRequestTypeDropdownCurrentOption={{
+            value: true, label: 'Virtual'
+          }}
+          initialRegionalOffice={regionalOfficeKey}
+          onChange={changeSpy}
+        />,
+        {
+          wrapper: queueWrapper,
+        }
+      );
+    };
+
+    test('Boise RO has times persisted correctly when Daylight Savings Time is active', () => {
+      renderForm('America/Boise', 'RO47', null);
+
+      const timeSlotButton = screen.getByRole('button', { name: '12:30 PM MDT (2:30 PM EDT)' });
+
+      userEvent.click(timeSlotButton);
+
+      const lastCallArgs = changeSpy.mock.calls[changeSpy.mock.calls.length - 1];
+
+      expect(lastCallArgs[0]).toEqual('scheduledTimeString');
+      expect(lastCallArgs[1]).toEqual('12:30 PM Mountain Time (US & Canada)');
+    });
+
+    test('Boise RO has times persisted correctly when Daylight Savings Time is NOT active', () => {
+      renderForm('America/Boise', 'RO47', null, '2025-01-01');
+
+      const timeSlotButton = screen.getByRole('button', { name: '12:30 PM MST (2:30 PM EST)' });
+
+      userEvent.click(timeSlotButton);
+
+      const lastCallArgs = changeSpy.mock.calls[changeSpy.mock.calls.length - 1];
+
+      expect(lastCallArgs[0]).toEqual('scheduledTimeString');
+      expect(lastCallArgs[1]).toEqual('12:30 PM Mountain Time (US & Canada)');
+    });
+
+    test('Timezone Dropdowns show accurate time previews', () => {
+      renderForm(
+        'America/Boise',
+        'RO47',
+        '12:30 PM Mountain Time (US & Canada)',
+        '2024-10-01'
+      );
+      expect(screen.getAllByText('Pacific Time (US & Canada) (11:30 AM)').length).toBe(2);
+
+    });
   });
 });
