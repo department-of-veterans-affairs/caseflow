@@ -66,7 +66,7 @@ describe HearingTimeService, :all_dbs do
               )
             end
 
-            it { is_expected.to eq "1:00 PM Mountain Time (US & Canada)" }
+            it { is_expected.to eq "3:00 PM Mountain Time (US & Canada)" }
           end
 
           context "Set to take place in Louisville, KY" do
@@ -88,7 +88,7 @@ describe HearingTimeService, :all_dbs do
               create(:hearing, regional_office: "RO47", scheduled_time: "3:00 PM")
             end
 
-            it { is_expected.to eq "1:00 PM Mountain Time (US & Canada)" }
+            it { is_expected.to eq "3:00 PM Mountain Time (US & Canada)" }
           end
 
           context "Set to take place in Louisville, KY" do
