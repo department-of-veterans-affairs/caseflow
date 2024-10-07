@@ -14,7 +14,7 @@ class HearingTimeService
 
       tz = ActiveSupport::TimeZone::MAPPING.key(hearing.regional_office_timezone)
       tz ||= ActiveSupport::TimeZone::MAPPING.key(
-        TIMEZONE_ALIASES[@hearing.scheduled_in_timezone]
+        TIMEZONE_ALIASES[hearing.regional_office_timezone]
       )
 
       "#{datetime.strftime('%l:%M %p')} #{tz}".lstrip
