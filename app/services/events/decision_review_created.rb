@@ -72,7 +72,7 @@ class Events::DecisionReviewCreated
           Events::DecisionReviewCreated::UpdateVacolsOnOptin.process!(decision_review: decision_review)
 
           # Update the Event after all backfills have completed
-          event.update!(completed_at: Time.now.in_time_zone, error: nil, info: {})
+          event.update!(completed_at: Time.now.in_time_zone, error: nil, info: { "event_payload" => payload })
         end
       end
     rescue Caseflow::Error::RedisLockFailed => error

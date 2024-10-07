@@ -15,10 +15,10 @@ describe Events::DecisionReviewCreated do
     subject { described_class.create!(params, headers, read_json_payload) }
 
     context "When event is completed info field returns to default state" do
-      it "event field is an empty json object" do
+      it "event field is only payload" do
         subject # runs and completes the process
         completed = DecisionReviewCreatedEvent.find_by(reference_id: consumer_event_id)
-        expect(completed.info).to eq({})
+        expect(completed.info).to eq({ "event_payload" => json_payload })
       end
     end
 
