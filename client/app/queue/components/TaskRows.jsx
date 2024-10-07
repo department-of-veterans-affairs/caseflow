@@ -280,7 +280,7 @@ class TaskRows extends React.PureComponent {
   };
 
   taskLabelListItem = (task) => {
-    if (task.closedAt && task.type != 'EvidenceSubmissionWindowTask') {
+    if (task.closedAt && !task?.waivable) {
       return null;
     }
 
@@ -524,7 +524,9 @@ class TaskRows extends React.PureComponent {
     ) : null;
   };
 
-  showActionsSection = (task) => task && !this.props.hideDropdown;
+  taskIsWaivable = (task) => task?.waivable && this.props.waivableUser;
+
+  showActionsSection = (task) => task && (!this.props.hideDropdown || this.taskIsWaivable(task));
 
   hearingRequestTypeConvertedAtListItem = (task) => {
     return task.convertedOn ? (
@@ -773,6 +775,7 @@ TaskRows.propTypes = {
   hideDropdown: PropTypes.bool,
   taskList: PropTypes.array,
   timeline: PropTypes.bool,
+  waivableUser: PropTypes.bool
 };
 
 export default TaskRows;

@@ -471,6 +471,7 @@ const CorrespondenceDetails = (props) => {
               organizations={props.organizations}
               userCssId={props.userCssId}
               appeal={taskAdded.appeal.data.attributes}
+              waivableUser={props.isInboundOpsSuperuser || props.isInboundOpsSupervisor}
             />
           )
           )}
