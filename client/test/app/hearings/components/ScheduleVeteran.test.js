@@ -91,6 +91,7 @@ describe('ScheduleVeteranForm', () => {
           ...defaultHearing,
           regionalOffice: defaultHearing.regionalOfficeKey,
         }}
+        appellantTitle="Veteran"
       />,
       {
         wrapper: queueWrapper,
@@ -102,7 +103,7 @@ describe('ScheduleVeteranForm', () => {
     expect(screen.getByRole('heading', { name: `${amaAppeal.veteranInfo.veteran.full_name}` })).toBeInTheDocument();
     expect(screen.getByRole('combobox', { name: 'Hearing Location' })).toBeInTheDocument();
     expect(screen.getByRole('combobox', { name: 'Hearing Date' })).toBeInTheDocument();
-    expect(screen.queryByRole('combobox', { name: 'undefined Timezone Required' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('combobox', { name: 'Veteran Timezone Required' })).not.toBeInTheDocument();
     expect(screen.queryByRole('combobox', { name: 'POA/Representative Timezone Required' })).not.toBeInTheDocument();
     expect(asFragment()).toMatchSnapshot();
   });
@@ -125,6 +126,7 @@ describe('ScheduleVeteranForm', () => {
           regionalOffice: defaultHearing.regionalOfficeKey,
           virtualHearing: virtualHearing.virtualHearing
         }}
+        appellantTitle="Veteran"
       />,
       {
         wrapper: queueWrapper,
@@ -132,7 +134,7 @@ describe('ScheduleVeteranForm', () => {
     );
 
     // Check for virtual hearing fields
-    expect(screen.getByRole('combobox', { name: 'undefined Timezone Required' })).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'Veteran Timezone Required' })).toBeInTheDocument();
     expect(screen.getByRole('combobox', { name: 'POA/Representative Timezone Required' })).toBeInTheDocument();
     expect(screen.getByRole('combobox', { name: 'Hearing Date' })).toBeInTheDocument();
 
@@ -142,7 +144,7 @@ describe('ScheduleVeteranForm', () => {
     // Assert that "Hearing Location" is present
     expect(screen.getByText('Hearing Location')).toBeInTheDocument();
     expect(screen.getByText('Virtual')).toBeInTheDocument();
-    expect(screen.queryByRole('combobox', { name: 'undefined Timezone Required' })).toBeInTheDocument();
+    expect(screen.queryByRole('combobox', { name: 'Veteran Timezone Required' })).toBeInTheDocument();
     expect(screen.queryByRole('combobox', { name: 'POA/Representative Timezone Required' })).toBeInTheDocument();
 
     rerender(<ScheduleVeteranForm
