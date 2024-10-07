@@ -65,7 +65,7 @@ end
 # To avoid accidents, we re-define these tasks here to no-op and output a helpful message to redirect developers toward
 # using their new database-specific counterparts instead.
 
-# rubocop:disable Rails/RakeEnvironment, Layout/HeredocIndentation
+# rubocop:disable Rails/RakeEnvironment, Layout/HeredocIndentation, Style/SignalException, Rails/Blank
 namespace :db do
   Rake::Task["db:create"].clear if Rake::Task.task_defined?("db:create")
   desc "[PROHIBITED] Use the appropriate database-specific tasks instead"
@@ -359,4 +359,4 @@ namespace :db do
     end
   end
 end
-# rubocop:enable Rails/RakeEnvironment, Layout/HeredocIndentation
+# rubocop:enable Rails/RakeEnvironment, Layout/HeredocIndentation, Style/SignalException, Rails/Blank
