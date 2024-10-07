@@ -9,3 +9,8 @@ TIMEZONE_MAPPINGS = {
   "Eastern Time (US & Canada)" => "America/Kentucky/Louisville"
 }
 ActiveSupport::TimeZone.const_set(:MAPPING, ActiveSupport::TimeZone::MAPPING.merge(TIMEZONE_MAPPINGS))
+
+TIMEZONE_ALIASES = {
+  "America/Boise" => "America/Denver",
+  "America/Kentucky/Louisville" => "America/New_York"
+}.freeze
