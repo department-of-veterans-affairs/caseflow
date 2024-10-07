@@ -5,14 +5,13 @@ import draftToHtml from 'draftjs-to-html';
 import htmlToDraft from 'html-to-draftjs';
 import { Editor } from 'react-draft-wysiwyg';
 import classnames from 'classnames';
-import { css } from 'glamor';
 
-const editorStyling = css({
+const editorStyling = {
   border: '1px solid #aeb0b5',
   resize: 'vertical',
   '& .rdw-editor-main': {
     paddingLeft: '10px'
-  } });
+  } };
 
 export default class CFRichTextEditor extends React.PureComponent {
 
@@ -62,7 +61,7 @@ export default class CFRichTextEditor extends React.PureComponent {
         {label || name} {required && <span className="cf-required">Required</span>}
       </label>
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
-      <section {...editorStyling}>
+      <section style={editorStyling}>
         <Editor
           onEditorStateChange={this.onChange}
           editorState={this.state.editorState}
@@ -81,5 +80,7 @@ CFRichTextEditor.propTypes = {
   label: PropTypes.string,
   name: PropTypes.string,
   required: PropTypes.bool,
-  onChange: PropTypes.func
+  onChange: PropTypes.func,
+  toolbar: PropTypes.object,
+  value: PropTypes.string
 };

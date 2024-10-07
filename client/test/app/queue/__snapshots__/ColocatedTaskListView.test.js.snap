@@ -753,11 +753,11 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                       aria-describedby="badge-200603-71"
                       aria-label=""
                       currentitem="false"
-                      data-css-2moai0=""
                       data-event="focus mouseenter"
                       data-event-off="mouseleave keydown"
                       data-for="badge-200603-71"
                       data-tip="true"
+                      style="display: inline-block; background: rgb(214, 215, 217); border-radius: 1rem; line-height: 2rem; margin-right: 0.5rem; padding: 0px 1rem;"
                       tabindex="0"
                     >
                       D
@@ -961,11 +961,11 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                       aria-describedby="badge-200603-72"
                       aria-label=""
                       currentitem="false"
-                      data-css-2moai0=""
                       data-event="focus mouseenter"
                       data-event-off="mouseleave keydown"
                       data-for="badge-200603-72"
                       data-tip="true"
+                      style="display: inline-block; background: rgb(214, 215, 217); border-radius: 1rem; line-height: 2rem; margin-right: 0.5rem; padding: 0px 1rem;"
                       tabindex="0"
                     >
                       D
@@ -1906,11 +1906,11 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                       aria-describedby="badge-200603-73"
                       aria-label=""
                       currentitem="false"
-                      data-css-2moai0=""
                       data-event="focus mouseenter"
                       data-event-off="mouseleave keydown"
                       data-for="badge-200603-73"
                       data-tip="true"
+                      style="display: inline-block; background: rgb(214, 215, 217); border-radius: 1rem; line-height: 2rem; margin-right: 0.5rem; padding: 0px 1rem;"
                       tabindex="0"
                     >
                       D
@@ -2108,11 +2108,11 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                       aria-describedby="badge-200603-74"
                       aria-label=""
                       currentitem="false"
-                      data-css-2moai0=""
                       data-event="focus mouseenter"
                       data-event-off="mouseleave keydown"
                       data-for="badge-200603-74"
                       data-tip="true"
+                      style="display: inline-block; background: rgb(214, 215, 217); border-radius: 1rem; line-height: 2rem; margin-right: 0.5rem; padding: 0px 1rem;"
                       tabindex="0"
                     >
                       D

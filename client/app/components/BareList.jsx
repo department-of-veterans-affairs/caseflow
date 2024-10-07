@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { css } from 'glamor';
 
 export default class BareList extends React.PureComponent {
-  bottomMargin = () => css({
+  bottomMargin = () => ({
     marginBottom: this.props.compact ? '5px' : ''
   });
 
@@ -16,10 +15,10 @@ export default class BareList extends React.PureComponent {
     } = this.props;
     const className = classNames('cf-bare-list', this.props.className);
 
-    return <ListElementComponent {...listStyle} className={className}>
+    return <ListElementComponent style={listStyle} className={className}>
       {
         items.map((itemFn, index) =>
-          <li {...this.bottomMargin()} key={index}>{itemFn()}</li>
+          <li style={this.bottomMargin()} key={index}>{itemFn()}</li>
         )
       }
     </ListElementComponent>;
@@ -30,7 +29,8 @@ BareList.propTypes = {
   ListElementComponent: PropTypes.string,
   items: PropTypes.array.isRequired,
   compact: PropTypes.bool,
-  listStyle: PropTypes.object
+  listStyle: PropTypes.object,
+  className: PropTypes.string
 };
 
 BareList.defaultProps = {

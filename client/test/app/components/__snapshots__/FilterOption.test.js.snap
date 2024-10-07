@@ -3,11 +3,11 @@
 exports[`FilterOption renders correctly 1`] = `
 <div>
   <ul
-    data-css-rbmpqz=""
+    style="padding-bottom: 0px; margin: 0px; max-height: 345px; word-break: break-word; width: 218px; overflow-y: auto; list-style-type: none; padding-left: 0px;"
   >
     <li
       class="cf-filter-option-row"
-      data-css-ewovsq=""
+      style="padding: 1px; position: relative;"
     >
       <input
         checked=""
@@ -23,7 +23,7 @@ exports[`FilterOption renders correctly 1`] = `
     </li>
     <li
       class="cf-filter-option-row"
-      data-css-ewovsq=""
+      style="padding: 1px; position: relative;"
     >
       <input
         id="1-EstablishClaim"

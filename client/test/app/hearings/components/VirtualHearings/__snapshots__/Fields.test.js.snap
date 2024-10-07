@@ -103,10 +103,25 @@ exports[`Fields Display timezone and divider for Central 1`] = `
       className="cf-app-segment"
     >
       <h2
-        data-css-3rhuy2=""
+        style={
+          Object {
+            "backgroundColor": "#f9f9f9",
+            "border": "1px solid #d6d7d9",
+            "borderBottom": 0,
+            "borderRadius": "0.5rem 0.5rem 0 0",
+            "margin": 0,
+            "padding": "1rem 2rem",
+          }
+        }
       />
       <div
-        data-css-1571z6o=""
+        style={
+          Object {
+            "border": "1px solid #d6d7d9",
+            "borderTop": "0px",
+            "padding": "1rem 2rem",
+          }
+        }
       >
         <div
           className="usa-grid"
@@ -32607,10 +32622,25 @@ exports[`Fields Display timezone and divider for Video 1`] = `
       className="cf-app-segment"
     >
       <h2
-        data-css-3rhuy2=""
+        style={
+          Object {
+            "backgroundColor": "#f9f9f9",
+            "border": "1px solid #d6d7d9",
+            "borderBottom": 0,
+            "borderRadius": "0.5rem 0.5rem 0 0",
+            "margin": 0,
+            "padding": "1rem 2rem",
+          }
+        }
       />
       <div
-        data-css-1571z6o=""
+        style={
+          Object {
+            "border": "1px solid #d6d7d9",
+            "borderTop": "0px",
+            "padding": "1rem 2rem",
+          }
+        }
       >
         <div
           className="usa-grid"

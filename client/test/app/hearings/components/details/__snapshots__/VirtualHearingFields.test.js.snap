@@ -240,12 +240,27 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
       className="cf-app-segment"
     >
       <h2
-        data-css-3rhuy2=""
+        style={
+          Object {
+            "backgroundColor": "#f9f9f9",
+            "border": "1px solid #d6d7d9",
+            "borderBottom": 0,
+            "borderRadius": "0.5rem 0.5rem 0 0",
+            "margin": 0,
+            "padding": "1rem 2rem",
+          }
+        }
       >
         Virtual Hearing Links
       </h2>
       <div
-        data-css-1571z6o=""
+        style={
+          Object {
+            "border": "1px solid #d6d7d9",
+            "borderTop": "0px",
+            "padding": "1rem 2rem",
+          }
+        }
       >
         <HearingLinks
           hearing={
@@ -947,12 +962,33 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
                           aria-describedby="tooltip-Copy Guest Link"
                           aria-label=""
                           className="cf-apppeal-id"
-                          data-css-cjlnsd=""
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
                           data-for="tooltip-Copy Guest Link"
                           data-tip={true}
                           onClick={[Function]}
+                          style={
+                            Object {
+                              "& > svg path": Object {
+                                "fill": "#d6d7d9",
+                              },
+                              "&:hover > svg path": Object {
+                                "fill": "#0071bc",
+                              },
+                              ":hover": Object {
+                                "backgroundColor": "transparent",
+                                "borderBottomWidth": "1px",
+                                "borderColor": "#0071bc",
+                                "color": "#323a45",
+                              },
+                              "borderColor": "#d6d7d9",
+                              "borderWidth": "1px",
+                              "color": "#323a45",
+                              "margin": "-0.75rem 0",
+                              "overflowWrap": "break-word",
+                              "padding": "0.75rem",
+                            }
+                          }
                           tabIndex={0}
                           type="submit"
                         >
@@ -1224,12 +1260,27 @@ exports[`VirtualHearingFields Shows only hearing links with no virtualHearing 1`
       className="cf-app-segment"
     >
       <h2
-        data-css-3rhuy2=""
+        style={
+          Object {
+            "backgroundColor": "#f9f9f9",
+            "border": "1px solid #d6d7d9",
+            "borderBottom": 0,
+            "borderRadius": "0.5rem 0.5rem 0 0",
+            "margin": 0,
+            "padding": "1rem 2rem",
+          }
+        }
       >
         Virtual Hearing Links
       </h2>
       <div
-        data-css-1571z6o=""
+        style={
+          Object {
+            "border": "1px solid #d6d7d9",
+            "borderTop": "0px",
+            "padding": "1rem 2rem",
+          }
+        }
       >
         <HearingLinks
           hearing={

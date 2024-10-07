@@ -25,11 +25,11 @@ exports[`NotificationsTest matches snapshot 1`] = `
             aria-label=""
             class="cf-apppeal-id"
             currentitem="false"
-            data-css-cjlnsd=""
             data-event="focus mouseenter"
             data-event-off="mouseleave keydown"
             data-for="tooltip-200000161"
             data-tip="true"
+            style="border-color: #d6d7d9; border-width: 1px; color: rgb(50, 58, 69); padding: 0.75rem; margin: -0.75rem 0px; overflow-wrap: break-word;"
             tabindex="0"
             type="submit"
           >
@@ -185,7 +185,7 @@ exports[`NotificationsTest matches snapshot 1`] = `
             >
               Open eFolder 
               <span
-                data-css-wevxet=""
+                style="position: relative; top: 3px;"
               >
                 <svg
                   class=""
