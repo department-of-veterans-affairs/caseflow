@@ -237,10 +237,10 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
   def self.genpop_priority_count
     query = <<-SQL
       #{SELECT_PRIORITY_APPEALS}
-      where (VLJ is null or #{ineligible_judges_sattyid_cache}) and (PREV_TYPE_ACTION = '7' or AOD = '1')
+      where (VLJ is null or VLJ != PREV_DECIDING_JUDGE or #{ineligible_judges_sattyid_cache}) and (PREV_TYPE_ACTION = '7' or AOD = '1')
     SQL
 
-    connection.exec_query(query).to_a.size
+    filter_genpop_appeals_for_affinity(query).size
   end
 
   def self.not_genpop_priority_count
@@ -664,6 +664,26 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
     else
       "VLJ = ?"
     end
+  end
+
+  def self.filter_genpop_appeals_for_affinity(query)
+    aoj_cavc_affinity_lever_value = CaseDistributionLever.aoj_cavc_affinity_days
+    aoj_aod_affinity_lever_value = CaseDistributionLever.aoj_aod_affinity_days
+    aoj_affinity_lever_value = CaseDistributionLever.aoj_affinity_days
+    excluded_judges_attorney_ids = excluded_judges_sattyids
+
+    conn = connection
+
+    appeals = conn.exec_query(query).to_a
+
+    aoj_affinity_filter(appeals, nil, aoj_affinity_lever_value, excluded_judges_attorney_ids)
+
+    aoj_cavc_affinity_filter(appeals, nil, aoj_cavc_affinity_lever_value, excluded_judges_attorney_ids)
+
+    aoj_aod_affinity_filter(appeals, nil, aoj_aod_affinity_lever_value,
+                            excluded_judges_attorney_ids)
+
+    appeals
   end
 
   # rubocop:disable Metrics/AbcSize

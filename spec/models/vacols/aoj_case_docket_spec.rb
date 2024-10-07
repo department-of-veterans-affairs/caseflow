@@ -29,6 +29,9 @@ describe VACOLS::AojCaseDocket, :all_dbs do
   let(:inactive_judge) { create(:user, :inactive) }
   let!(:inactive_vacols_judge) { create(:staff, :judge_role, svlj: "V", sdomainid: inactive_judge.css_id) }
 
+  let(:caseflow_attorney) { create(:user) }
+  let!(:vacols_attorney) { create(:staff, :attorney_role, sdomainid: caseflow_attorney.css_id) }
+
   let(:nonpriority_ready_case_bfbox) { nil }
   let(:nonpriority_ready_case_docket_number) { "1801001" }
   let!(:nonpriority_ready_case) do
@@ -156,6 +159,47 @@ describe VACOLS::AojCaseDocket, :all_dbs do
                                        { "n" => 1, "priority" => 0, "ready" => 0 },
                                        { "n" => 2, "priority" => 0, "ready" => 1 }
                                      ])
+    end
+  end
+
+  context ".genpop_priority_count" do
+    subject { VACOLS::AojCaseDocket.genpop_priority_count }
+    it "counts genpop priority appeals" do
+      expect(subject).to eq(2)
+    end
+
+    context "with affinitized appeals" do
+      let!(:aoj_aod_cavc_ready_case_within_affinity) do
+        create(:legacy_aoj_appeal,
+               :aod,
+               cavc: true,
+               judge: vacols_judge,
+               attorney: vacols_attorney,
+               tied_to: false,
+               affinity_start_date: 3.days.ago)
+      end
+
+      let!(:aoj_aod_ready_case_within_affinity) do
+        create(:legacy_aoj_appeal,
+               :aod,
+               judge: vacols_judge,
+               attorney: vacols_attorney,
+               tied_to: false,
+               affinity_start_date: 3.days.ago)
+      end
+
+      let!(:aoj_cavc_ready_case_within_affinity) do
+        create(:legacy_aoj_appeal,
+               cavc: true,
+               judge: vacols_judge,
+               attorney: vacols_attorney,
+               tied_to: false,
+               affinity_start_date: 3.days.ago)
+      end
+
+      it "correctly filters out appeals based on the lever filters" do
+        expect(subject).to eq(2)
+      end
     end
   end
 
