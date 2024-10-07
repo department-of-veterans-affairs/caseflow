@@ -234,10 +234,19 @@ RSpec.describe HearingDatetimeService do
       end
 
       context "For special timezones" do
+        let(:hearing_time) do
+          HearingDatetimeService.prepare_datetime_for_storage(
+            date: "2025-01-01",
+            time_string: "12:00 PM Eastern Time (US & Canada)"
+          )
+
+        end
+
         let(:hearing) do
           create(
             :hearing,
             scheduled_in_timezone: zone_name,
+            scheduled_datetime: hearing_time,
             hearing_day: create(
               :hearing_day,
               scheduled_for: winter_date
@@ -245,20 +254,18 @@ RSpec.describe HearingDatetimeService do
           )
         end
 
+        subject { hearing.scheduled_time_string }
+
         context "For a Boise hearing" do
           let(:zone_name) { "America/Boise" }
 
-          it do
-            byebug
-          end
+          it { is_expected.to eq "10:00 AM Mountain Time (US & Canada)" }
         end
 
         context "For a Louisville hearing" do
           let(:zone_name) { "America/Kentucky/Louisville" }
 
-          it do
-
-          end
+          it { is_expected.to eq "12:00 PM Eastern Time (US & Canada)" }
         end
       end
     end
