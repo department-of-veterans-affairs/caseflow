@@ -125,10 +125,14 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       request_issue.update(
         ineligible_reason: parser_issue.ri_ineligible_reason,
         closed_at: parser_issue.ri_closed_at,
-        contested_issue_description: parser_issue.ri_contested_issue_description,
-        nonrating_issue_category: parser_issue.ri_nonrating_issue_category,
-        nonrating_issue_description: parser_issue.ri_nonrating_issue_description,
-        contention_removed_at: @parser.end_product_establishment_last_synced_at
+        contested_issue_description: parser_issue.ri_contested_issue_description ||
+          request_issue.contested_issue_description,
+        nonrating_issue_category: parser_issue.ri_nonrating_issue_category ||
+          request_issue.nonrating_issue_category,
+        nonrating_issue_description: parser_issue.ri_nonrating_issue_description ||
+          request_issue.nonrating_issue_description,
+        contention_removed_at: @parser.end_product_establishment_last_synced_at,
+        contention_updated_at: @parser.end_product_establishment_last_synced_at
       )
       add_event_record(request_issue, "E2I")
     end
@@ -147,9 +151,13 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
         closed_at: nil,
         contention_reference_id: parser_issue.ri_contention_reference_id,
         contention_removed_at: nil,
-        contested_issue_description: parser_issue.ri_contested_issue_description,
-        nonrating_issue_category: parser_issue.ri_nonrating_issue_category,
-        nonrating_issue_description: parser_issue.ri_nonrating_issue_description
+        contested_issue_description: parser_issue.ri_contested_issue_description ||
+          request_issue.contested_issue_description,
+        nonrating_issue_category: parser_issue.ri_nonrating_issue_category ||
+          request_issue.nonrating_issue_category,
+        nonrating_issue_description: parser_issue.ri_nonrating_issue_description ||
+          request_issue.nonrating_issue_description,
+        contention_updated_at: @parser.end_product_establishment_last_synced_at
       )
       add_event_record(request_issue, "I2E")
     end
@@ -165,10 +173,14 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       request_issue.update(
         ineligible_reason: parser_issue.ri_ineligible_reason,
         closed_at: parser_issue.ri_closed_at,
-        contested_issue_description: parser_issue.ri_contested_issue_description,
-        nonrating_issue_category: parser_issue.ri_nonrating_issue_category,
-        nonrating_issue_description: parser_issue.ri_nonrating_issue_description,
-        contention_removed_at: @parser.end_product_establishment_last_synced_at
+        contested_issue_description: parser_issue.ri_contested_issue_description ||
+          request_issue.contested_issue_description,
+        nonrating_issue_category: parser_issue.ri_nonrating_issue_category ||
+          request_issue.nonrating_issue_category,
+        nonrating_issue_description: parser_issue.ri_nonrating_issue_description ||
+          request_issue.nonrating_issue_description,
+        contention_removed_at: @parser.end_product_establishment_last_synced_at,
+        contention_updated_at: @parser.end_product_establishment_last_synced_at
       )
       add_event_record(request_issue, "I2I")
     end
