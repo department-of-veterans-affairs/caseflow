@@ -248,7 +248,7 @@ RSpec.describe HearingDatetimeService do
             scheduled_datetime: hearing_time,
             hearing_day: create(
               :hearing_day,
-              scheduled_for: winter_date
+              scheduled_for: "2025-01-01"
             )
           )
         end
