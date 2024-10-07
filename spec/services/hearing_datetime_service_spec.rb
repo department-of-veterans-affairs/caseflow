@@ -325,7 +325,7 @@ RSpec.describe HearingDatetimeService do
                 scheduled_for: "2025-01-01"
               )
             ).tap do |hear|
-              hearing.case_hearing.update!(hearing_date: hearing_time)
+              hear.case_hearing.update!(hearing_date: hearing_time)
             end
           end
 
