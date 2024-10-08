@@ -261,6 +261,9 @@ seed-dbs:	## Seed all databases
 	bundle exec rake spec:setup_vacols
 	bundle exec rake db:seed
 
+setup-metabase:
+	./metabase/metabase_api_script.sh
+
 enable-feature-flags: ## enable all feature flags
 	bundle exec rails runner scripts/enable_features_dev.rb
 
