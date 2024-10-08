@@ -102,6 +102,8 @@ Rails.application.routes.draw do
       namespace :v1 do
         post '/decision_review_created', to: 'decision_review_created#decision_review_created'
         post '/decision_review_created_error',  to: 'decision_review_created#decision_review_created_error'
+        post '/decision_review_updated', to: 'decision_review_updated#decision_review_updated'
+        post '/decision_review_updated_error', to: 'decision_review_updated#decision_review_updated_error'
       end
     end
 
