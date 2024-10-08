@@ -75,7 +75,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     ensure_hearing_held
     if should_download?
       download_file_to_tmp!(download_link)
-      @transcription_file.upload_to_s3! if @transcription_file.date_upload_aws.nil?
+      @transcription_file.upload_to_s3!
       convert_to_rtf_and_upload_to_s3! if should_convert_and_upload?
     end
     @transcription_file.clean_up_tmp_location
