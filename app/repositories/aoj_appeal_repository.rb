@@ -107,6 +107,14 @@ class AojAppealRepository < AppealRepository
         VACOLS::AojCaseDocket.non_priority_appeals_affinity_date_count(in_window)
       end
     end
+
+    def appeals_tied_to_non_ssc_avljs
+      MetricsService.record("VACOLS: appeals_tied_to_non_ssc_avljs",
+                            name: "appeals_tied_to_non_ssc_avljs",
+                            service: :vacols) do
+        VACOLS::AojCaseDocket.appeals_tied_to_non_ssc_avljs
+      end
+    end
   end
   # :nocov:
 end
