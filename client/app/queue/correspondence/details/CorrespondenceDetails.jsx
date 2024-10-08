@@ -131,55 +131,77 @@ const CorrespondenceDetails = (props) => {
     };
 
     try {
-    // Send PATCH request to remove unchecked relations
-      const patchResponse = await ApiUtil.patch(`/queue/correspondence/${correspondence.uuid}/update_correspondence`, {
-        data: patchData
-      });
+    // Helper function to check for success response
+      const isSuccess = (response) => response.ok;
 
-      if (patchResponse.status === 201) {
-      // If successful, proceed with POST request for checked relations
-        if (checkedCheckboxes.length > 0) {
-          // eslint-disable-next-line max-len
-          const postResponse = await ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/create_correspondence_relations`, {
-            data: postData
-          });
+      // Send PATCH request to remove unchecked relations if necessary
+      // If no unchecked items, PATCH is already successful
+      let patchSuccess = uncheckedCheckboxes.length === 0;
 
-          if (postResponse.status === 201) {
-            setShowSuccessBanner(true);
-            // eslint-disable-next-line max-len
-            console.log('Correspondence relations updated successfully.', postResponse.status); // eslint-disable-line no-console
-          }
+      if (uncheckedCheckboxes.length > 0) {
+      // Send PATCH request to update the backend
+        const patchResponse = await ApiUtil.patch(
+        `/queue/correspondence/${correspondence.uuid}/update_correspondence`,
+        { data: patchData }
+        );
+
+        // Check for general success status (any 2xx status)
+        patchSuccess = isSuccess(patchResponse);
+        console.log('PATCH successful:', patchResponse.status); // eslint-disable-line no-console
+      }
+
+      // Send POST request to add checked relations if necessary
+      // If no checked items, POST is already successful
+      let postSuccess = checkedCheckboxes.length === 0;
+
+      if (checkedCheckboxes.length > 0) {
+      // Send POST request to create relations
+        const postResponse = await ApiUtil.post(
+        `/queue/correspondence/${correspondence.uuid}/create_correspondence_relations`,
+        { data: postData }
+        );
+
+        // Check for general success status (any 2xx status)
+        postSuccess = isSuccess(postResponse);
+        console.log('POST successful:', postResponse.status); // eslint-disable-line no-console
+      }
+
+      // Only show success banner if both PATCH and POST requests succeeded
+      if (patchSuccess && postSuccess) {
+        setShowSuccessBanner(true);
+      }
+
+      // Sort the prior mail into linked (checked) and unlinked (unchecked) groups
+      const updatedSortedPriorMail = [...priorMail].sort((first, second) => {
+        const firstInState = checkboxStates[first.id];
+        const secondInState = checkboxStates[second.id];
+
+        // Default sorting order
+        let sortOrder = 0;
+
+        if (firstInState && secondInState) {
+        // Sort linked mail from most recent to oldest
+          sortOrder = new Date(second.vaDateOfReceipt) - new Date(first.vaDateOfReceipt);
+        } else if (!firstInState && !secondInState) {
+        // Sort unlinked mail from oldest to most recent
+          sortOrder = new Date(first.vaDateOfReceipt) - new Date(second.vaDateOfReceipt);
+        } else if (firstInState) {
+        // Ensure linked items come before unlinked items
+          sortOrder = -1;
+        } else if (secondInState) {
+          sortOrder = 1;
         }
 
-        // Sort the prior mail into linked (checked) and unlinked (unchecked) groups
-        const updatedSortedPriorMail = [...priorMail].sort((first, second) => {
-          const firstInState = checkboxStates[first.id];
-          const secondInState = checkboxStates[second.id];
+        // Single return for sorting
+        return sortOrder;
+      });
 
-          // If both are linked or both are unlinked, sort by vaDateOfReceipt
-          if (firstInState && secondInState) {
-            // Sort linked mail from most recent to oldest
-            return new Date(second.vaDateOfReceipt) - new Date(first.vaDateOfReceipt);
-          } else if (!firstInState && !secondInState) {
-            // Sort unlinked mail from oldest to most recent
-            return new Date(first.vaDateOfReceipt) - new Date(second.vaDateOfReceipt);
-          } else if (firstInState) {
-            // Ensure linked items come before unlinked items
-            return -1;
-          } else if (secondInState) {
-            return 1;
-          }
-          // Maintain original order otherwise
-
-          return 0;
-        });
-
-        // Update the state with the sorted list after saving changes
-        setSortedPriorMail(updatedSortedPriorMail);
-      }
+      // Update the state with the sorted list after saving changes
+      setSortedPriorMail(updatedSortedPriorMail);
     } catch (error) {
-      console.error('Error during PATCH/POST request:', error.message);
+      console.error('Error during PATCH/POST request:', error.message); // eslint-disable-line no-console
     } finally {
+      // Re-enable the button
       setDisableSubmitButton(true);
     }
 
