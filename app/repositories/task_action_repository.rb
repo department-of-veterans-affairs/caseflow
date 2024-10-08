@@ -13,6 +13,15 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       }
     end
 
+    def remove_waive_of_evidence_window_data(_task, _user = nil)
+      {
+        modal_title: "Some text",
+        modal_body: "Some text",
+        message_title: "Some text",
+        redirect_after: "/queue/correspondence/:correspondence_uuid/"
+      }
+    end
+
     def assign_corr_task_to_person(task, _user = nil)
       {
         modal_title: task.assigned_to.is_a?(Organization) ? COPY::ASSIGN_TASK_TITLE : COPY::REASSIGN_TASK_TITLE,
