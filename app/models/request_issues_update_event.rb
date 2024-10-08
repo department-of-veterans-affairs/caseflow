@@ -146,7 +146,6 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     @parser.ineligible_to_eligible_issues.each do |issue_data|
       parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(issue_data)
       request_issue = find_request_issue(parser_issue)
-
       request_issue.update(
         ineligible_reason: nil,
         closed_status: nil,
@@ -159,8 +158,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
           request_issue.nonrating_issue_category,
         nonrating_issue_description: parser_issue.ri_nonrating_issue_description ||
           request_issue.nonrating_issue_description,
-        contention_updated_at: @parser.end_product_establishment_last_synced_at,
-        contention_reference_id: parser_issue.ri_contention_reference_id
+        contention_updated_at: @parser.end_product_establishment_last_synced_at
       )
       add_event_record(request_issue, "I2E")
     end
@@ -288,8 +286,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       reference_id: parser_issue.ri_reference_id,
       type: parser_issue.ri_type,
       rating_issue_associated_at: parser_issue.ri_rating_issue_associated_at,
-      edited_description: parser_issue.ri_edited_description,
-      end_product_code: @parser.end_product_establishment_code
+      edited_description: parser_issue.ri_edited_description
     }
   end
 
@@ -299,7 +296,8 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     {
       request_issue_id: is_new ? nil : find_request_issue(parser_issue).id,
       withdrawal_date: is_withdrawn ? parser_issue.ri_closed_at : nil,
-      decision_text: parser_issue.ri_nonrating_issue_description
+      decision_text: parser_issue.ri_nonrating_issue_description,
+      end_product_code: @parser.end_product_establishment_code
     }
   end
 
