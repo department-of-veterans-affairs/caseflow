@@ -56,6 +56,10 @@ RUN locale-gen en_US.UTF-8
 
 RUN initdb
 
+# Open up to all addresses for local development
+RUN echo "local all all trust" >> /var/lib/postgresql/data/pg_hba.conf \
+  && echo "host all all 0.0.0.0/0 trust" >> /var/lib/postgresql/data/pg_hba.conf
+
 EXPOSE 5432
 
-CMD ["postgres"]
+CMD postgres -c listen_addresses='*'
