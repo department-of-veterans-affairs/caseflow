@@ -868,6 +868,8 @@ class BusinessLine < Organization
         "<" => -> { start_date ? "tasks.closed_at::date < '#{start_date}'::date" : "" },
         "=" => -> { start_date ? "tasks.closed_at::date = '#{start_date}'::date" : "" },
         "between" => lambda {
+          # Ensure the dates are sorted correctly so either ordering works e.g. start > end or end > start
+          start_date, end_date = [start_date, end_date].map(&:to_date).sort
           end_date ? "tasks.closed_at::date BETWEEN '#{start_date}'::date AND '#{end_date}'::date" : ""
         },
         "last_7_days" => -> { { closed_at: 1.week.ago..Time.zone.now } },

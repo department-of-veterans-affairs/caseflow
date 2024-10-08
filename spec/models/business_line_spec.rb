@@ -115,43 +115,41 @@ describe BusinessLine do
   end
 
   describe ".in_progress_tasks" do
-    let!(:hlr_tasks_on_active_decision_reviews) do
-      create_list(:higher_level_review_vha_task, 5, assigned_to: business_line)
-    end
+    before(:all) do
+      @business_line = VhaBusinessLine.singleton
+      @veteran = create(:veteran)
 
-    let!(:sc_tasks_on_active_decision_reviews) do
-      create_list(:supplemental_claim_vha_task, 5, assigned_to: business_line)
-    end
+      @hlr_tasks_on_active_decision_reviews =
+        create_list(:higher_level_review_vha_task, 5, assigned_to: @business_line)
 
-    let!(:decision_review_tasks_on_inactive_decision_reviews) do
-      create_list(:higher_level_review_task, 5, assigned_to: business_line)
-    end
+      @sc_tasks_on_active_decision_reviews =
+        create_list(:supplemental_claim_vha_task, 5, assigned_to: @business_line)
 
-    let!(:board_grant_effectuation_tasks) do
-      tasks = create_list(:board_grant_effectuation_task, 5, assigned_to: business_line)
+      @decision_review_tasks_on_inactive_decision_reviews =
+        create_list(:higher_level_review_task, 5, assigned_to: @business_line)
 
-      tasks.each do |task|
+      @board_grant_effectuation_tasks =
+        create_list(:board_grant_effectuation_task, 5, assigned_to: @business_line)
+
+      @board_grant_effectuation_tasks.each do |task|
         create(
           :request_issue,
           :nonrating,
           decision_review: task.appeal,
-          benefit_type: business_line.url,
+          benefit_type: @business_line.url,
           closed_at: Time.zone.now,
           closed_status: "decided"
         )
       end
 
-      tasks
-    end
-
-    let!(:veteran_record_request_on_active_appeals) do
-      add_veteran_and_request_issues_to_decision_reviews(
-        create_list(:veteran_record_request_task, 5, assigned_to: business_line)
+      @veteran_record_request_on_active_appeals = add_veteran_and_request_issues_to_decision_reviews(
+        create_list(:veteran_record_request_task, 5, assigned_to: @business_line),
+        @veteran,
+        @business_line
       )
-    end
 
-    let!(:veteran_record_request_on_inactive_appeals) do
-      create_list(:veteran_record_request_task, 5, assigned_to: business_line)
+      @veteran_record_request_on_inactive_appeals =
+        create_list(:veteran_record_request_task, 5, assigned_to: @business_line)
     end
 
     subject { business_line.in_progress_tasks(filters: task_filters) }
@@ -167,10 +165,10 @@ describe BusinessLine do
       it "All tasks associated with active decision reviews and BoardGrantEffectuationTasks are included" do
         expect(subject.size).to eq 20
         expect(subject.map(&:id)).to match_array(
-          (veteran_record_request_on_active_appeals +
-            board_grant_effectuation_tasks +
-            hlr_tasks_on_active_decision_reviews +
-            sc_tasks_on_active_decision_reviews
+          (@veteran_record_request_on_active_appeals +
+            @board_grant_effectuation_tasks +
+            @hlr_tasks_on_active_decision_reviews +
+            @sc_tasks_on_active_decision_reviews
           ).pluck(:id)
         )
       end
@@ -184,9 +182,9 @@ describe BusinessLine do
       it "All tasks associated with active decision reviews are included, but not BoardGrantEffectuationTasks" do
         expect(subject.size).to eq 15
         expect(subject.map(&:id)).to match_array(
-          (veteran_record_request_on_active_appeals +
-            hlr_tasks_on_active_decision_reviews +
-            sc_tasks_on_active_decision_reviews
+          (@veteran_record_request_on_active_appeals +
+            @hlr_tasks_on_active_decision_reviews +
+            @sc_tasks_on_active_decision_reviews
           ).pluck(:id)
         )
       end
@@ -194,22 +192,18 @@ describe BusinessLine do
   end
 
   describe ".incomplete_tasks" do
-    let!(:hlr_tasks_on_active_decision_reviews) do
-      tasks = create_list(:higher_level_review_vha_task, 5, assigned_to: business_line)
-      tasks.each(&:on_hold!)
-      tasks
-    end
+    before(:all) do
+      @business_line = VhaBusinessLine.singleton
+      @veteran = create(:veteran)
 
-    let!(:sc_tasks_on_active_decision_reviews) do
-      tasks = create_list(:supplemental_claim_vha_task, 5, assigned_to: business_line)
-      tasks.each(&:on_hold!)
-      tasks
-    end
+      @hlr_tasks_on_active_decision_reviews =
+        create_list(:higher_level_review_vha_task, 5, assigned_to: @business_line).each(&:on_hold!)
 
-    let!(:decision_review_tasks_on_inactive_decision_reviews) do
-      tasks = create_list(:higher_level_review_task, 5, assigned_to: business_line)
-      tasks.each(&:on_hold!)
-      tasks
+      @sc_tasks_on_active_decision_reviews =
+        create_list(:supplemental_claim_vha_task, 5, assigned_to: @business_line).each(&:on_hold!)
+
+      @decision_review_tasks_on_inactive_decision_reviews =
+        create_list(:higher_level_review_task, 5, assigned_to: @business_line).each(&:on_hold!)
     end
 
     subject { business_line.incomplete_tasks(filters: task_filters) }
@@ -222,8 +216,8 @@ describe BusinessLine do
       it "All tasks associated with active decision reviews and BoardGrantEffectuationTasks are included" do
         expect(subject.size).to eq 10
         expect(subject.map(&:id)).to match_array(
-          (hlr_tasks_on_active_decision_reviews +
-            sc_tasks_on_active_decision_reviews
+          (@hlr_tasks_on_active_decision_reviews +
+            @sc_tasks_on_active_decision_reviews
           ).pluck(:id)
         )
       end
@@ -231,59 +225,64 @@ describe BusinessLine do
   end
 
   describe ".completed_tasks" do
-    let!(:open_hlr_tasks) do
-      add_veteran_and_request_issues_to_decision_reviews(
-        create_list(:higher_level_review_task, 5, assigned_to: business_line)
-      )
-    end
+    before(:all) do
+      @business_line = VhaBusinessLine.singleton
+      @veteran = create(:veteran)
 
-    let!(:completed_hlr_tasks) do
-      add_veteran_and_request_issues_to_decision_reviews(
+      @open_hlr_tasks = add_veteran_and_request_issues_to_decision_reviews(
+        create_list(:higher_level_review_task, 5, assigned_to: @business_line),
+        @veteran,
+        @business_line
+      )
+
+      @completed_hlr_tasks = add_veteran_and_request_issues_to_decision_reviews(
         complete_all_tasks(
-          create_list(:higher_level_review_task, 5, assigned_to: business_line)
-        )
+          create_list(:higher_level_review_task, 5, assigned_to: @business_line)
+        ),
+        @veteran,
+        @business_line
       )
-    end
 
-    let!(:open_sc_tasks) do
-      add_veteran_and_request_issues_to_decision_reviews(
-        create_list(:supplemental_claim_task, 5, assigned_to: business_line)
+      @open_sc_tasks = add_veteran_and_request_issues_to_decision_reviews(
+        create_list(:supplemental_claim_task, 5, assigned_to: @business_line),
+        @veteran,
+        @business_line
       )
-    end
 
-    let!(:completed_sc_tasks) do
-      add_veteran_and_request_issues_to_decision_reviews(
+      @completed_sc_tasks = add_veteran_and_request_issues_to_decision_reviews(
         complete_all_tasks(
-          create_list(:supplemental_claim_task, 5, assigned_to: business_line)
-        )
+          create_list(:supplemental_claim_task, 5, assigned_to: @business_line)
+        ),
+        @veteran,
+        @business_line
       )
-    end
 
-    let!(:open_board_grant_effectuation_tasks) do
-      add_veteran_and_request_issues_to_decision_reviews(
-        create_list(:board_grant_effectuation_task, 5, assigned_to: business_line)
+      @open_board_grant_effectuation_tasks = add_veteran_and_request_issues_to_decision_reviews(
+        create_list(:board_grant_effectuation_task, 5, assigned_to: @business_line),
+        @veteran,
+        @business_line
       )
-    end
 
-    let!(:completed_board_grant_effectuation_tasks) do
-      add_veteran_and_request_issues_to_decision_reviews(
+      @completed_board_grant_effectuation_tasks = add_veteran_and_request_issues_to_decision_reviews(
         complete_all_tasks(
-          create_list(:board_grant_effectuation_task, 5, assigned_to: business_line)
-        )
+          create_list(:board_grant_effectuation_task, 5, assigned_to: @business_line)
+        ),
+        @veteran,
+        @business_line
       )
-    end
 
-    let!(:open_veteran_record_requests) do
-      add_veteran_and_request_issues_to_decision_reviews(
-        create_list(:veteran_record_request_task, 5, assigned_to: business_line)
+      @open_veteran_record_request = add_veteran_and_request_issues_to_decision_reviews(
+        create_list(:veteran_record_request_task, 5, assigned_to: @business_line),
+        @veteran,
+        @business_line
       )
-    end
 
-    let!(:completed_veteran_record_requests) do
-      add_veteran_and_request_issues_to_decision_reviews(
+      @completed_veteran_record_requests = add_veteran_and_request_issues_to_decision_reviews(
         complete_all_tasks(
-          create_list(:veteran_record_request_task, 5, assigned_to: business_line)
-        )
+          create_list(:veteran_record_request_task, 5, assigned_to: @business_line)
+        ),
+        @veteran,
+        @business_line
       )
     end
 
@@ -297,12 +296,216 @@ describe BusinessLine do
       it "All completed tasks are included in results" do
         expect(subject.size).to eq 20
         expect(subject.map(&:id)).to match_array(
-          (completed_hlr_tasks +
-            completed_sc_tasks +
-            completed_board_grant_effectuation_tasks +
-            completed_veteran_record_requests
+          (@completed_hlr_tasks +
+            @completed_sc_tasks +
+            @completed_board_grant_effectuation_tasks +
+            @completed_veteran_record_requests
           ).pluck(:id)
         )
+      end
+    end
+
+    context "With closed at filters" do
+      context "with a before filter" do
+        # Create some closed tasks that should match before the filter
+        let!(:tasks_for_closed_at_filter) do
+          tasks = add_veteran_and_request_issues_to_decision_reviews(
+            complete_all_tasks(
+              create_list(:supplemental_claim_task, 5, assigned_to: @business_line)
+            ),
+            @veteran,
+            @business_line
+          )
+          tasks.each do |task|
+            task.closed_at = 5.days.ago
+            task.save
+          end
+          tasks
+        end
+
+        let(:task_filters) do
+          ["col=completedDateColumn&val=before,#{3.days.ago.strftime('%Y-%m-%d')},"]
+        end
+
+        it "should filter the tasks for a date before the closed at date" do
+          expect(subject.size).to eq 5
+          expect(subject.map(&:id)).to match_array(tasks_for_closed_at_filter.pluck(:id))
+        end
+      end
+
+      context "with an after filter" do
+        # Create some closed tasks that should not match the after filter
+        let!(:tasks_for_closed_at_filter) do
+          tasks = add_veteran_and_request_issues_to_decision_reviews(
+            complete_all_tasks(
+              create_list(:supplemental_claim_task, 5, assigned_to: @business_line)
+            ),
+            @veteran,
+            @business_line
+          )
+          tasks.each do |task|
+            task.closed_at = 5.days.ago
+            task.save
+          end
+          tasks
+        end
+
+        let(:task_filters) do
+          ["col=completedDateColumn&val=after,#{3.days.ago.strftime('%Y-%m-%d')},"]
+        end
+
+        it "should filter the tasks for a date after the closed at date" do
+          expect(subject.size).to eq 20
+          expect(subject.map(&:id)).to match_array(
+            (@completed_hlr_tasks +
+             @completed_sc_tasks +
+             @completed_board_grant_effectuation_tasks +
+             @completed_veteran_record_requests
+            ).pluck(:id)
+          )
+        end
+      end
+
+      context "with a between filter" do
+        # Create some closed tasks that should match the between filter
+        let!(:tasks_for_closed_at_filter) do
+          tasks = add_veteran_and_request_issues_to_decision_reviews(
+            complete_all_tasks(
+              create_list(:supplemental_claim_task, 3, assigned_to: @business_line)
+            ),
+            @veteran,
+            @business_line
+          )
+          # Set two tasks to fit into the between range
+          tasks[0].closed_at = 5.days.ago
+          tasks[1].closed_at = 1.day.ago
+          tasks[2].closed_at = 8.days.ago
+          tasks[0].save
+          tasks[1].save
+          tasks[2].save
+          tasks
+        end
+
+        let(:task_filters) do
+          start_date = 3.days.ago.strftime("%Y-%m-%d")
+          end_date = 10.days.ago.strftime("%Y-%m-%d")
+          ["col=completedDateColumn&val=between,#{start_date},#{end_date}"]
+        end
+
+        it "should filter the tasks for a closed at date between two dates" do
+          expect(subject.size).to eq 2
+          expect(subject.map(&:id)).to match_array(
+            [
+              tasks_for_closed_at_filter[0].id,
+              tasks_for_closed_at_filter[2].id
+            ]
+          )
+        end
+      end
+
+      context "with last 7 days filter" do
+        # Create some closed tasks that should not match the last 7 days filter
+        let!(:tasks_for_closed_at_filter) do
+          tasks = add_veteran_and_request_issues_to_decision_reviews(
+            complete_all_tasks(
+              create_list(:supplemental_claim_task, 3, assigned_to: @business_line)
+            ),
+            @veteran,
+            @business_line
+          )
+          tasks.each do |task|
+            task.closed_at = 10.days.ago
+            task.save
+          end
+          tasks
+        end
+
+        let(:task_filters) do
+          ["col=completedDateColumn&val=last_7_days,,"]
+        end
+
+        it "should filter the tasks for a closed at in the last 7 days" do
+          expect(subject.size).to eq 20
+          expect(subject.map(&:id)).to match_array(
+            (@completed_hlr_tasks +
+             @completed_sc_tasks +
+             @completed_board_grant_effectuation_tasks +
+             @completed_veteran_record_requests
+            ).pluck(:id)
+          )
+        end
+      end
+
+      context "with last 30 days filter" do
+        # Create some closed tasks that should match the last 30 days filter and one that does not
+        let!(:tasks_for_closed_at_filter) do
+          tasks = add_veteran_and_request_issues_to_decision_reviews(
+            complete_all_tasks(
+              create_list(:supplemental_claim_task, 3, assigned_to: @business_line)
+            ),
+            @veteran,
+            @business_line
+          )
+          tasks.first(2) do |task|
+            task.closed_at = 10.days.ago
+            task.save
+          end
+          tasks.last.closed_at = 31.days.ago
+          tasks.last.save
+          tasks
+        end
+
+        let(:task_filters) do
+          ["col=completedDateColumn&val=last_30_days,,"]
+        end
+
+        it "should filter the tasks for a closed at in the last 30 days" do
+          expect(subject.size).to eq 22
+          expect(subject.map(&:id)).to match_array(
+            (@completed_hlr_tasks +
+             @completed_sc_tasks +
+             @completed_board_grant_effectuation_tasks +
+             @completed_veteran_record_requests +
+             tasks_for_closed_at_filter.first(2)
+            ).pluck(:id)
+          )
+        end
+      end
+
+      context "with last 365 days filter" do
+        # Create some closed tasks that should match the last 365 days filter and one that does not
+        let!(:tasks_for_closed_at_filter) do
+          tasks = add_veteran_and_request_issues_to_decision_reviews(
+            complete_all_tasks(
+              create_list(:supplemental_claim_task, 3, assigned_to: @business_line)
+            ),
+            @veteran,
+            @business_line
+          )
+          tasks.first(2) do |task|
+            task.closed_at = 200.days.ago
+            task.save
+          end
+          tasks.last.closed_at = 400.days.ago
+          tasks.last.save
+          tasks
+        end
+
+        let(:task_filters) do
+          ["col=completedDateColumn&val=last_365_days,,"]
+        end
+
+        it "should filter the tasks for a closed at in the last 365 days" do
+          expect(subject.size).to eq 22
+          expect(subject.map(&:id)).to match_array(
+            (@completed_hlr_tasks +
+             @completed_sc_tasks +
+             @completed_board_grant_effectuation_tasks +
+             @completed_veteran_record_requests +
+             tasks_for_closed_at_filter.first(2)
+            ).pluck(:id)
+          )
+        end
       end
     end
   end
@@ -385,54 +588,51 @@ describe BusinessLine do
     end
 
     describe ".in_progress_tasks" do
-      let(:current_time) { Time.zone.now }
-      let!(:hlr_tasks_on_active_decision_reviews) do
-        create_list(:higher_level_review_vha_task, 5, assigned_to: business_line)
-      end
+      before(:all) do
+        @current_time = Time.zone.now
+        # Use a different url and name since the let variable can't be used in before all setup
+        @business_line = create(:business_line, name: "NONCOMPORG2", url: "nco2")
 
-      let!(:sc_tasks_on_active_decision_reviews) do
-        create_list(:supplemental_claim_vha_task, 5, assigned_to: business_line)
-      end
+        @veteran = create(:veteran)
 
-      # Set some on hold tasks as well
-      let!(:on_hold_sc_tasks_on_active_decision_reviews) do
-        tasks = create_list(:supplemental_claim_vha_task, 5, assigned_to: business_line)
-        tasks.each(&:on_hold!)
-        tasks
-      end
+        @hlr_tasks_on_active_decision_reviews =
+          create_list(:higher_level_review_vha_task, 5, assigned_to: @business_line)
 
-      let!(:decision_review_tasks_on_inactive_decision_reviews) do
-        create_list(:higher_level_review_task, 5, assigned_to: business_line)
-      end
+        @sc_tasks_on_active_decision_reviews =
+          create_list(:supplemental_claim_vha_task, 5, assigned_to: @business_line)
 
-      let!(:board_grant_effectuation_tasks) do
-        tasks = create_list(:board_grant_effectuation_task, 5, assigned_to: business_line)
+        @on_hold_sc_tasks_on_active_decision_reviews =
+          create_list(:supplemental_claim_vha_task, 5, assigned_to: @business_line).each(&:on_hold!)
 
-        tasks.each do |task|
+        @decision_review_tasks_on_inactive_decision_reviews =
+          create_list(:higher_level_review_task, 5, assigned_to: @business_line)
+
+        @board_grant_effectuation_tasks =
+          create_list(:board_grant_effectuation_task, 5, assigned_to: @business_line)
+
+        @board_grant_effectuation_tasks.each do |task|
           create(
             :request_issue,
             :nonrating,
             decision_review: task.appeal,
-            benefit_type: business_line.url,
-            closed_at: current_time,
+            benefit_type: @business_line.url,
+            closed_at: @current_time,
             closed_status: "decided"
           )
         end
 
-        tasks
+        @veteran_record_request_on_active_appeals =
+          add_veteran_and_request_issues_to_decision_reviews(
+            create_list(:veteran_record_request_task, 5, assigned_to: @business_line),
+            @veteran,
+            @business_line
+          )
+
+        @veteran_record_request_on_inactive_appeals =
+          create_list(:veteran_record_request_task, 5, assigned_to: @business_line)
       end
 
-      let!(:veteran_record_request_on_active_appeals) do
-        add_veteran_and_request_issues_to_decision_reviews(
-          create_list(:veteran_record_request_task, 5, assigned_to: business_line)
-        )
-      end
-
-      let!(:veteran_record_request_on_inactive_appeals) do
-        create_list(:veteran_record_request_task, 5, assigned_to: business_line)
-      end
-
-      subject { business_line.in_progress_tasks(filters: task_filters) }
+      subject { @business_line.in_progress_tasks(filters: task_filters) }
 
       include_examples "task filtration"
 
@@ -445,11 +645,11 @@ describe BusinessLine do
         it "All tasks associated with active decision reviews and BoardGrantEffectuationTasks are included" do
           expect(subject.size).to eq 25
           expect(subject.map(&:id)).to match_array(
-            (veteran_record_request_on_active_appeals +
-              board_grant_effectuation_tasks +
-              hlr_tasks_on_active_decision_reviews +
-              sc_tasks_on_active_decision_reviews +
-              on_hold_sc_tasks_on_active_decision_reviews
+            (@veteran_record_request_on_active_appeals +
+              @board_grant_effectuation_tasks +
+              @hlr_tasks_on_active_decision_reviews +
+              @sc_tasks_on_active_decision_reviews +
+              @on_hold_sc_tasks_on_active_decision_reviews
             ).pluck(:id)
           )
         end
@@ -463,10 +663,10 @@ describe BusinessLine do
         it "All tasks associated with active decision reviews are included, but not BoardGrantEffectuationTasks" do
           expect(subject.size).to eq 20
           expect(subject.map(&:id)).to match_array(
-            (veteran_record_request_on_active_appeals +
-              hlr_tasks_on_active_decision_reviews +
-              sc_tasks_on_active_decision_reviews +
-              on_hold_sc_tasks_on_active_decision_reviews
+            (@veteran_record_request_on_active_appeals +
+              @hlr_tasks_on_active_decision_reviews +
+              @sc_tasks_on_active_decision_reviews +
+              @on_hold_sc_tasks_on_active_decision_reviews
             ).pluck(:id)
           )
         end
@@ -913,7 +1113,7 @@ describe BusinessLine do
     end
   end
 
-  def add_veteran_and_request_issues_to_decision_reviews(tasks)
+  def add_veteran_and_request_issues_to_decision_reviews(tasks, veteran, business_line)
     tasks.each do |task|
       task.appeal.update!(veteran_file_number: veteran.file_number)
       rand(1..4).times do
