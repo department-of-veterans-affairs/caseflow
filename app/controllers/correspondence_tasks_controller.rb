@@ -100,6 +100,12 @@ class CorrespondenceTasksController < TasksController
     )
   end
 
+  def remove_waive_of_evidence_window
+    puts "Removing evidence window task method..."
+    task = CorrespondenceTask.find(correspondence_tasks_params[:task_id])
+    binding.pry
+  end
+
   private
 
   def correspondence_tasks_params
