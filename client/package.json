@@ -15,7 +15,7 @@
     "test:jest:watch": "NODE_ENV=test jest --watch",
     "test:jest:update": "NODE_ENV=test jest --updateSnapshot",
     "test:legacy:watch": "yarn run test:legacy --watch",
-    "lint": "eslint --max-warnings 0 --cache $(git diff --name-only --diff-filter=d --relative $(git merge-base $(git rev-parse --abbrev-ref HEAD) origin/master) *.js *.jsx)",
+    "lint": "eslint --max-warnings 0 --cache $(git diff --name-only --diff-filter=d --relative $(git merge-base $(git rev-parse --abbrev-ref HEAD) origin/main) *.js *.jsx)",
     "lint:fix": "yarn run lint --fix",
     "pretty": "yarn run prettier constants/TASK_ACTIONS.json",
     "pretty:check": "yarn run pretty --check",
