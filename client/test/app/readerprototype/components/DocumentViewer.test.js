@@ -12,6 +12,18 @@ import { applyMiddleware, createStore } from 'redux';
 import thunk from 'redux-thunk';
 import { documentFactory } from '../factories';
 import { storeMetrics } from 'app/util/Metrics';
+import { stopPlacingAnnotation } from '../../../../app/reader/AnnotationLayer/AnnotationActions';
+
+jest.mock('../../../../app/reader/AnnotationLayer/AnnotationActions', () => ({
+  stopPlacingAnnotation: jest.fn(),
+}));
+
+beforeEach(() => {
+  stopPlacingAnnotation.mockImplementation((reason) => ({
+    type: 'STOP_PLACING_ANNOTATION',
+    payload: { reason }
+  }));
+});
 
 beforeEach(() => {
   window.IntersectionObserver = jest.fn(() => ({
@@ -49,7 +61,7 @@ const getStore = () => (
     rootReducer,
     {
       annotationLayer: {
-        annotations: 1,
+        annotations: {},
         deleteAnnotationModalIsOpenFor: null,
         shareAnnotationModalIsOpenFor: null
       },
@@ -180,4 +192,12 @@ it('Sidebar remembers its state between document views', async () => {
   await waitFor(() => expect(container).toHaveTextContent('Document 2 of 2'));
   // Sidebar should remain hidden and have open menu
   expect(container).toHaveTextContent('Open menu');
+});
+
+describe('Unsaved comments are dismissed when user naviagtes away from document', () => {
+  it('dispatches stop placing annotation when component mounts', () => {
+    render(<Component />);
+
+    expect(stopPlacingAnnotation).toHaveBeenCalledWith('navigation');
+  });
 });
