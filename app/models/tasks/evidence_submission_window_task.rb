@@ -58,7 +58,8 @@ class EvidenceSubmissionWindowTask < Task
   end
 
   def waivable?
-    (assigned_at > 90.days.ago && status == Constants.TASK_STATUSES.completed)
+    (assigned_at > 90.days.ago && status == Constants.TASK_STATUSES.completed &&
+      (RequestStore[:current_user].inbound_ops_team_superuser? || RequestStore[:current_user].inbound_ops_team_supervisor?))
   end
 
   def actions_available?(user)
@@ -68,7 +69,7 @@ class EvidenceSubmissionWindowTask < Task
   end
 
   def available_actions(user)
-    if (user.inbound_ops_team_superuser? || user.inbound_ops_team_supervisor?) && waivable?
+    if (user&.inbound_ops_team_superuser? || user&.inbound_ops_team_supervisor?) && waivable?
       return [Constants.TASK_ACTIONS.REMOVE_WAIVE_EVIDENCE_WINDOW.to_h]
     end
 
