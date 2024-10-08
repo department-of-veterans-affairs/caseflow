@@ -1637,7 +1637,7 @@ GEM
     gyoku (1.3.1)
       builder (>= 2.1.2)
     hana (1.3.6)
-    hashdiff (1.0.0)
+    hashdiff (1.1.1)
     heapy (0.2.0)
       thor
     holidays (6.6.1)
@@ -1842,7 +1842,7 @@ GEM
       cliver (~> 0.3.2)
       safe_shell (>= 1.0.3, < 2.0)
     pdfkit (0.8.7.2)
-    pg (1.1.4)
+    pg (1.5.7)
     pluck_to_hash (1.0.2)
       activerecord (>= 4.0.2)
       activesupport (>= 4.0.2)
@@ -1993,7 +1993,7 @@ GEM
     ruby-debug-ide (0.7.3)
       rake (>= 0.8.1)
     ruby-graphviz (1.2.4)
-    ruby-oci8 (2.2.7)
+    ruby-oci8 (2.2.14)
     ruby-plsql (0.8.0)
     ruby-prof (1.4.1)
     ruby-progressbar (1.13.0)
@@ -2203,7 +2203,7 @@ DEPENDENCIES
   pdf-forms
   pdfjs_viewer-rails!
   pdfkit
-  pg
+  pg (~> 1.5.7)
   pluck_to_hash
   pry (~> 0.13.0)
   pry-byebug (~> 3.9)
@@ -2231,7 +2231,7 @@ DEPENDENCIES
   rubocop-performance
   rubocop-rails
   ruby-debug-ide
-  ruby-oci8 (~> 2.2)
+  ruby-oci8 (~> 2.2.14)
   ruby-prof (~> 1.4)
   ruby_claim_evidence_api!
   sass-rails (~> 5.0)

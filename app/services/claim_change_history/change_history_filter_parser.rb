@@ -25,6 +25,7 @@ class ChangeHistoryFilterParser
 
   private
 
+  # rubocop:disable Metrics/MethodLength
   def events_filter_helper
     event_mapping = {
       "added_decision_date" => :added_decision_date,
@@ -34,21 +35,32 @@ class ChangeHistoryFilterParser
       "claim_closed" => [:completed, :cancelled],
       "claim_status_incomplete" => :incomplete,
       "claim_status_inprogress" => :in_progress,
+      "claim_status_pending" => :pending,
       "completed_disposition" => :completed_disposition,
       "removed_issue" => :removed_issue,
       "withdrew_issue" => :withdrew_issue,
-      "claim_cancelled" => :cancelled
+      "claim_cancelled" => :cancelled,
+      "requested_issue_modification" => :modification,
+      "requested_issue_addition" => :addition,
+      "requested_issue_removal" => :removal,
+      "requested_issue_withdrawal" => :withdrawal,
+      "approval_of_request" => :request_approved,
+      "rejection_of_request" => :request_denied,
+      "cancellation_of_request" => :request_cancelled,
+      "edit_of_request" => :request_edited
     }
 
     filter_params[:events]&.values&.map { |event_type| event_mapping[event_type] }&.flatten
   end
+  # rubocop:enable Metrics/MethodLength
 
   def task_status_filter_helper
     status_mapping = {
       "incomplete" => "on_hold",
       "in_progress" => %w[assigned in_progress],
       "completed" => "completed",
-      "cancelled" => "cancelled"
+      "cancelled" => "cancelled",
+      "pending" => "pending"
     }
 
     filter_params[:statuses]&.values&.map { |task_status| status_mapping[task_status] }&.flatten
