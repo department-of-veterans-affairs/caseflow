@@ -11,6 +11,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { applyMiddleware, createStore } from 'redux';
 import thunk from 'redux-thunk';
 import { documentFactory } from '../factories';
+import { storeMetrics } from 'app/util/Metrics';
 
 beforeEach(() => {
   window.IntersectionObserver = jest.fn(() => ({
@@ -18,6 +19,7 @@ beforeEach(() => {
     disconnect: jest.fn()
   }));
   window.HTMLElement.prototype.scrollIntoView = jest.fn;
+
 });
 
 afterEach(() => jest.clearAllMocks());
@@ -77,6 +79,9 @@ const getStore = () => (
   )
 );
 
+jest.mock('../../../../app/util/Metrics', () => ({
+  storeMetrics: jest.fn(),
+}));
 const Component = () => {
   const [zoomLevel, setZoomLevel] = useState(100);
 
@@ -103,6 +108,21 @@ describe('user visiting a document', () => {
   });
 });
 
+describe('Sending document render metrics', () => {
+  it('sends document metrics when component is loaded', async () => {
+
+    const { getByText } = render(<Component />);
+
+    userEvent.click(getByText('Next'));
+
+    await waitFor(() => expect(storeMetrics).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.anything(),
+      expect.anything(),
+      null,
+    ));
+  });
+});
 describe('Open Document and Close Issue tags Sidebar Section', () => {
   it('Navigate to next document and verify Issue tags stay closed', async () => {
     jest.spyOn(ApiUtil, 'patch').mockResolvedValue();
