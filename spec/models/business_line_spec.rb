@@ -542,45 +542,6 @@ describe BusinessLine do
                                             decider: @decider,
                                             decision_review: @extra_decision_review)
     end
-    # let!(:requestor) { create(:user) }
-    # let!(:decider) { create(:user) }
-    # let!(:hlr_pending_tasks) do
-    #   create_list(:issue_modification_request,
-    #               3,
-    #               :with_higher_level_review,
-    #               status: "assigned",
-    #               requestor: requestor,
-    #               decider: decider)
-    # end
-
-    # let!(:sc_pending_tasks) do
-    #   create_list(:issue_modification_request,
-    #               3,
-    #               :with_supplemental_claim,
-    #               status: "assigned",
-    #               requestor: requestor,
-    #               decider: decider)
-    # end
-
-    # let!(:extra_modification_request) do
-    #   create(:issue_modification_request,
-    #          :with_higher_level_review,
-    #          status: "assigned",
-    #          requestor: requestor,
-    #          decider: decider)
-    # end
-
-    # let(:extra_decision_review) do
-    #   extra_modification_request.decision_review
-    # end
-
-    # let!(:extra_modification_request2) do
-    #   create(:issue_modification_request,
-    #          status: "assigned",
-    #          requestor: requestor,
-    #          decider: decider,
-    #          decision_review: extra_decision_review)
-    # end
 
     subject { business_line.pending_tasks(filters: task_filters) }
 
@@ -816,7 +777,8 @@ describe BusinessLine do
     end
 
     before(:all) do
-      DatabaseCleaner.clean_with(:truncation)
+      # Make sure the previous data from the before alls is cleaned up.
+      Task.delete_all
 
       @hlr_task = create(:higher_level_review_vha_task_with_decision)
       @hlr_task2 = create(:higher_level_review_vha_task)
