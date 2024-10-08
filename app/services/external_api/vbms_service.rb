@@ -368,21 +368,13 @@ class ExternalApi::VBMSService
   end
 
   def self.claim_evidence_request
-    user_css_id = if RequestStore[:current_user].present? && FeatureToggle.enabled?(:send_current_user_cred_to_ce_api)
-                    RequestStore[:current_user].css_id
-                  else
-                    ENV["CLAIM_EVIDENCE_VBMS_USER"]
-                  end
-
-    station_id = if RequestStore[:current_user].present? && FeatureToggle.enabled?(:send_current_user_cred_to_ce_api)
-                   RequestStore[:current_user].station_id
-                 else
-                   ENV["CLAIM_EVIDENCE_STATION_ID"]
-                 end
-
     ClaimEvidenceRequest.new(
-      user_css_id: user_css_id,
-      station_id: station_id
+      user_css_id: send_user_info? ? RequestStore[:current_user].css_id : ENV['CLAIM_EVIDENCE_VBMS_USER'],
+      station_id: send_user_info? ? RequestStore[:current_user].station_id : ENV['CLAIM_EVIDENCE_STATION_ID'],
     )
+  end
+
+  def self.send_user_info?
+    RequestStore[:current_user].present? && FeatureToggle.enabled?(:send_current_user_cred_to_ce_api)
   end
 end
