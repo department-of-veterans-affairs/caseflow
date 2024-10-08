@@ -58,4 +58,16 @@ class ExternalApi::VbmsRequestWithFileNumber
   def bgs_claim_number
     @bgs_claim_number ||= bgs_client.fetch_veteran_info(file_number)[:claim_number]
   end
+
+  def verify_current_user_veteran_access(veteran)
+    return if !FeatureToggle.enabled?(:check_user_sensitivity)
+
+    current_user = RequestStore[:current_user]
+
+    fail BGS::SensitivityLevelCheckFailure, "User does not have permission to access this information" unless
+      SensitivityChecker.new(current_user).sensitivity_levels_compatible?(
+        user: current_user,
+        veteran: veteran
+      )
+  end
 end
