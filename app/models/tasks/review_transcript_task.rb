@@ -16,4 +16,8 @@ class ReviewTranscriptTask < Task
     return USER_ACTIONS if assigned_to == user
     []
   end
+
+  def default_instructions
+    "Review the hearing transcript and upload the final to VBMS once it has been reviewed for errors or corrected."
+  end
 end
