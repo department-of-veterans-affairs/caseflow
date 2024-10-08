@@ -2024,6 +2024,9 @@ GEM
     sawyer (0.8.2)
       addressable (>= 2.3.5)
       faraday (> 0.8, < 2.0)
+    scenic (1.8.0)
+      activerecord (>= 4.0.0)
+      railties (>= 4.0.0)
     scss_lint (0.60.0)
       sass (~> 3.5, >= 3.5.5)
     selenium-webdriver (4.9.0)
@@ -2233,6 +2236,7 @@ DEPENDENCIES
   ruby-prof (~> 1.4)
   ruby_claim_evidence_api!
   sass-rails (~> 5.0)
+  scenic
   scss_lint
   sentry-raven
   shoryuken (= 3.1.11)
