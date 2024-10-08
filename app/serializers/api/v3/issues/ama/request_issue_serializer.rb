@@ -25,7 +25,7 @@ class Api::V3::Issues::Ama::RequestIssueSerializer
              :nonrating_issue_bgs_source, :nonrating_issue_description,
              :notes, :ramp_claim_id, :split_issue_status, :unidentified_issue_text,
              :untimely_exemption, :untimely_exemption_notes, :updated_at, :vacols_id,
-             :vacols_sequence_id, :verified_unidentified_issue, :veteran_participant_id
+             :vacols_sequence_id, :verified_unidentified_issue, :veteran_participant_id, :reference_id
 
   attribute :caseflow_considers_decision_review_active, &:status_active?
   attribute :caseflow_considers_issue_active, &:active?
@@ -33,7 +33,7 @@ class Api::V3::Issues::Ama::RequestIssueSerializer
   attribute :caseflow_considers_eligible, &:eligible?
 
   attribute :claimant_participant_id do |object|
-    object.decision_review.claimant.participant_id
+    object&.decision_review&.claimant&.participant_id
   end
 
   attribute :claim_id do |object|
