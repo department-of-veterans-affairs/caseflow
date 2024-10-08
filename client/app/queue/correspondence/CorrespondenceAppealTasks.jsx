@@ -65,6 +65,7 @@ const CorrespondenceAppealTasks = (props) => {
               timeline={false}
               editNodDateEnabled={false}
               hideDropdown
+              waivableUser={props.waivableUser}
             />
           </div>
         </div>
@@ -78,7 +79,9 @@ CorrespondenceAppealTasks.propTypes = {
   task_added: PropTypes.object,
   organizations: PropTypes.array,
   userCssId: PropTypes.string,
-  appeal: PropTypes.object
+  appeal: PropTypes.object,
+  waivableUser: PropTypes.bool
+
 };
 
 export default CorrespondenceAppealTasks;
