@@ -1,11 +1,16 @@
 # frozen_string_literal: true
 
 class Transcription < CaseflowRecord
-  belongs_to :hearing
+  self.ignored_columns = ["hearing_id"]
+
+  belongs_to :hearing, polymorphic: true, dependent: :restrict_with_exception
   belongs_to :transcription_contractor
   has_many :transcription_files
   belongs_to :transcription_package, foreign_key: :task_number, primary_key: :task_number
   before_create :sequence_task_id
+
+  validates :hearing_type, inclusion: { in: %w[Hearing LegacyHearing] }
+  validates :hearing, presence: true
 
   scope :counts_for_this_week, lambda {
     where(sent_to_transcriber_date: Time.zone.today.beginning_of_week.yesterday..Time.zone.today)
