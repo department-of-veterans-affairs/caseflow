@@ -31,6 +31,7 @@ describe('LoadTest', () => {
     const mockProps = {
       form_values: {},
       page: 'Test App',
+      featuresList: ['Toggle1', 'Toggle2', 'Toggle3']
     };
 
     renderLoadTest(mockProps);
