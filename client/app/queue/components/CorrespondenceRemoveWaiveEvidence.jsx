@@ -4,8 +4,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import QueueFlowModal from './QueueFlowModal';
 
-/* eslint-disable camelcase */
-const RemoveEvidenceSubmissionWindow = (props) => {
+const CorrespondenceRemoveWaiveEvidence = (props) => {
 
   return (
     <QueueFlowModal
@@ -15,9 +14,9 @@ const RemoveEvidenceSubmissionWindow = (props) => {
     </QueueFlowModal>
   );
 };
-/* eslint-enable camelcase */
 
-RemoveEvidenceSubmissionWindow.propTypes = {
+
+CorrespondenceRemoveWaiveEvidence.propTypes = {
 
 };
 
@@ -33,5 +32,6 @@ export default withRouter(
   connect(
     mapStateToProps,
     mapDispatchToProps
-  )(RemoveEvidenceSubmissionWindow)
+  )(CorrespondenceRemoveWaiveEvidence)
 );
+

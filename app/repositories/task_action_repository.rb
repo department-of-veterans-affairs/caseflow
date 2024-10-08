@@ -15,9 +15,8 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
 
     def remove_waive_of_evidence_window_data(_task, _user = nil)
       {
-        modal_title: "Some text",
-        modal_body: "Some text",
-        message_title: "Some text",
+        modal_title: COPY::CONFIRM_WAIVE_REMOVAL,
+        modal_body: format(COPY::WAIVE_REMOVAL_NOTE),
         redirect_after: "/queue/correspondence/:correspondence_uuid/"
       }
     end

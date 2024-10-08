@@ -367,6 +367,8 @@ Rails.application.routes.draw do
     patch "/correspondence/:correspondence_uuid/review_package", to: "correspondence_review_package#update"
     patch "/correspondence/:id/update_document", to: "correspondence_document#update_document"
     patch "/correspondence/tasks/:task_id/assign_to_team", to: "correspondence_tasks#assign_to_team"
+    patch "/correspondence/tasks/:task_id/remove_waive_of_evidence_window",
+          to: "correspondence_tasks#remove_waive_of_evidence_window"
     post "/correspondence/:correspondence_uuid/intake", to: "correspondence_intake#process_intake", as: :queue_correspondence_intake_process_intake
     patch "/correspondence/:correspondence_uuid/update_correspondence", to: "correspondence_details#update_correspondence"
     post "/correspondence/:correspondence_uuid/cancel_intake", to: "correspondence_intake#cancel_intake", as: :queue_correspondence_intake_cancel_intake

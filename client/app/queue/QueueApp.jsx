@@ -96,7 +96,7 @@ import CorrespondenceReviewPackage from './correspondence/ReviewPackage/Correspo
 import CorrespondenceIntake from './correspondence/intake/components/CorrespondenceIntake';
 import CorrespondenceAssignTaskModal from './components/CorrespondenceAssignTaskModal';
 import CorrespondenceAssignTeamModal from './components/CorrespondenceAssignTeamModal';
-import RemoveEvidenceSubmissionWindow from './components/RemoveEvidenceSubmissionWindow';
+import CorrespondenceRemoveWaiveEvidenceModal from './components/CorrespondenceRemoveWaiveEvidence.jsx';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_TITLES } from './constants';
@@ -761,7 +761,10 @@ class QueueApp extends React.PureComponent {
   );
 
   routedCorrespondenceRemoveWaiveEvidenceModal = (props) => (
-    <RemoveEvidenceSubmissionWindow {...props.match.params} />
+    <CorrespondenceRemoveWaiveEvidenceModal
+      {...props.match.params}
+      {...this.props}
+    />
   );
 
   routedCorrespondenceEditGeneralInformationModal = (props) => (
