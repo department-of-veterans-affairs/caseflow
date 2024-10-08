@@ -13,6 +13,7 @@ import { getVhaUsers } from 'test/helpers/reportPageHelper';
 import CombinedNonCompReducer from 'app/nonComp/reducers';
 
 import REPORT_TYPE_CONSTANTS from 'constants/REPORT_TYPE_CONSTANTS';
+import * as ERRORS from 'constants/REPORT_PAGE_VALIDATION_ERRORS';
 
 describe('ReportPage', () => {
   const setup = (storeValues = {}) => {
@@ -381,7 +382,7 @@ describe('ReportPage', () => {
 
     });
 
-    it('should add 10 checkboxes when radio Specific Events/ Actions is clicked', async () => {
+    it('should add 19 checkboxes when radio Specific Events/ Actions is clicked', async () => {
       setup();
 
       await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
@@ -392,9 +393,17 @@ describe('ReportPage', () => {
       expect(specificEvents.length).toBe(1);
 
       fireEvent.click(screen.getByLabelText('Specific Events / Actions'));
-      expect(screen.getAllByRole('checkbox').length).toBe(10);
+      expect(screen.getAllByRole('checkbox').length).toBe(19);
 
-      REPORT_TYPE_CONSTANTS.SPECTIFIC_EVENT_OPTIONS.forEach((option) => {
+      REPORT_TYPE_CONSTANTS.SPECIFIC_EVENT_OPTIONS[0].system.forEach((option) => {
+        expect(screen.getAllByText(option.label)).toBeTruthy();
+      });
+
+      REPORT_TYPE_CONSTANTS.SPECIFIC_EVENT_OPTIONS[0].general.forEach((option) => {
+        expect(screen.getAllByText(option.label)).toBeTruthy();
+      });
+
+      REPORT_TYPE_CONSTANTS.SPECIFIC_EVENT_OPTIONS[0].requests.forEach((option) => {
         expect(screen.getAllByText(option.label)).toBeTruthy();
       });
     });
@@ -413,14 +422,14 @@ describe('ReportPage', () => {
 
         fireEvent.click(screen.getByLabelText('Specific Events / Actions'));
 
-        expect(screen.getAllByRole('checkbox').length).toBe(10);
+        expect(screen.getAllByRole('checkbox').length).toBe(19);
 
         const generateTaskReport = screen.getByRole('button', { name: /Generate task report/i });
 
         await userEvent.click(generateTaskReport);
 
         await waitFor(() => {
-          expect(screen.getAllByText('Please select at least one option').length).toBe(1);
+          expect(screen.getAllByText(ERRORS.AT_LEAST_ONE_CHECKBOX_OPTION).length).toBe(1);
         });
 
       });
@@ -436,7 +445,7 @@ describe('ReportPage', () => {
       expect(specificEvents.length).toBe(1);
 
       fireEvent.click(screen.getByLabelText('Specific Status'));
-      expect(screen.getAllByRole('checkbox').length).toBe(4);
+      expect(screen.getAllByRole('checkbox').length).toBe(5);
 
       REPORT_TYPE_CONSTANTS.SPECIFIC_STATUS_OPTIONS.map((option) =>
         expect(screen.getAllByText(option.label)).toBeTruthy()

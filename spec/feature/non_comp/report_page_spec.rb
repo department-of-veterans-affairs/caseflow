@@ -6,11 +6,13 @@ require_relative "../../../app/services/claim_change_history/claim_history_event
 require_relative "../../../app/services/claim_change_history/change_history_filter_parser.rb"
 
 feature "NonComp Report Page", :postgres do
+  include DownloadHelpers
   let(:non_comp_org) { VhaBusinessLine.singleton }
   let(:user) { create(:default_user, css_id: "REPORT USER", full_name: "Report User") }
   let(:vha_report_url) { "/decision_reviews/vha/report" }
 
   before do
+    clear_downloads
     User.stub = user
     non_comp_org.add_user(user)
     OrganizationsUser.make_user_admin(user, non_comp_org)
@@ -57,9 +59,7 @@ feature "NonComp Report Page", :postgres do
       click_button "Generate task report"
 
       # Check the csv to make sure it returns the filter row, the column header row, and all 15 event rows
-      csv_file = change_history_csv_file
-      number_of_rows = CSV.read(csv_file).length
-      expect(number_of_rows).to eq(17)
+      change_history_csv_file(17)
 
       # Add in some specific event filters now
       fill_in_specific_event_filters(["Added issue", "Completed disposition"])
@@ -69,9 +69,7 @@ feature "NonComp Report Page", :postgres do
       click_button "Generate task report"
 
       # Check the csv to make sure it returns the filter row, the column header row, and the 6 event rows
-      csv_file = change_history_csv_file
-      number_of_rows = CSV.read(csv_file).length
-      expect(number_of_rows).to eq(8)
+      change_history_csv_file(8)
 
       clear_filters
 
@@ -87,9 +85,7 @@ feature "NonComp Report Page", :postgres do
       expect(page).to have_button("Generate task report", disabled: false)
       click_button "Generate task report"
 
-      csv_file = change_history_csv_file
-      number_of_rows = CSV.read(csv_file).length
-      expect(number_of_rows).to eq(6)
+      change_history_csv_file(6)
 
       # After submitting the form add one more condition and submit the form again
       add_personnel_condition_with_values([user.full_name])
@@ -106,9 +102,7 @@ feature "NonComp Report Page", :postgres do
       expect(page).to have_button("Generate task report", disabled: false)
       click_button "Generate task report"
 
-      csv_file = change_history_csv_file
-      number_of_rows = CSV.read(csv_file).length
-      expect(number_of_rows).to eq(2)
+      change_history_csv_file(2)
     end
 
     it "should submit several types of status reports successfully and generate CSVs for each submission" do
@@ -122,9 +116,7 @@ feature "NonComp Report Page", :postgres do
       click_button "Generate task report"
 
       # Check the csv to make sure it returns the filter row, the column header row, and one event row per task (3)
-      csv_file = change_history_csv_file
-      number_of_rows = CSV.read(csv_file).length
-      expect(number_of_rows).to eq(5)
+      change_history_csv_file(5)
 
       # Click the status Summary radio button
       find("label", text: "Summary").click
@@ -133,9 +125,7 @@ feature "NonComp Report Page", :postgres do
       click_button "Generate task report"
 
       # Check the csv to make sure it returns the filter row, the column header row, all 15 event rows
-      csv_file = change_history_csv_file
-      number_of_rows = CSV.read(csv_file).length
-      expect(number_of_rows).to eq(17)
+      change_history_csv_file(17)
 
       # Select a specific status of cancelled
       fill_in_specific_status_filters(["Cancelled"])
@@ -144,9 +134,7 @@ feature "NonComp Report Page", :postgres do
       click_button "Generate task report"
 
       # Check the csv to make sure it returns the filter row, the column header row, and 0 event rows
-      csv_file = change_history_csv_file
-      number_of_rows = CSV.read(csv_file).length
-      expect(number_of_rows).to eq(2)
+      change_history_csv_file(2)
 
       clear_filters
 
@@ -160,9 +148,7 @@ feature "NonComp Report Page", :postgres do
       click_button "Generate task report"
 
       # Check the csv to make sure it returns the filter row, the column header row, and the last two HLR event rows
-      csv_file = change_history_csv_file
-      number_of_rows = CSV.read(csv_file).length
-      expect(number_of_rows).to eq(4)
+      change_history_csv_file(4)
 
       # Add another condition that has no matches
       add_issue_disposition_with_values(["Denied"])
@@ -170,9 +156,7 @@ feature "NonComp Report Page", :postgres do
       click_button "Generate task report"
 
       # Check the csv to make sure it returns the filter row, the column header row, all 0 event rows
-      csv_file = change_history_csv_file
-      number_of_rows = CSV.read(csv_file).length
-      expect(number_of_rows).to eq(2)
+      change_history_csv_file(2)
     end
 
     context "when request fails" do
@@ -322,14 +306,19 @@ feature "NonComp Report Page", :postgres do
     expect(page).to have_button("Generate task report", disabled: true)
   end
 
-  def change_history_csv_file
-    sleep 5
-    # Copied from Capybara setup
-    download_directory = Rails.root.join("tmp/downloads_#{ENV['TEST_SUBCATEGORY'] || 'all'}")
-    list_of_files = Dir.glob(File.join(download_directory, "*")).select { |f| File.file?(f) }
-    latest_file = list_of_files.max_by { |f| File.birthtime(f) }
+  def latest_download
+    downloads.max_by { |file| File.mtime(file) }
+  end
 
-    expect(latest_file).to_not eq(nil)
-    latest_file
+  def download_csv
+    wait_for_download
+    CSV.read(latest_download)
+  end
+
+  def change_history_csv_file(rows)
+    csv_file = download_csv
+    expect(csv_file).to_not eq(nil)
+    expect(csv_file.length).to eq(rows)
+    clear_downloads
   end
 end
