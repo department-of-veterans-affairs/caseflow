@@ -57,19 +57,22 @@ class EvidenceSubmissionWindowTask < Task
     [self]
   end
 
+  # only inbound ops superusers/supervisors can waive the Evidence Window task.
   def waivable?
-    (assigned_at > 90.days.ago && status == Constants.TASK_STATUSES.completed &&
-      (RequestStore[:current_user].inbound_ops_team_superuser? || RequestStore[:current_user].inbound_ops_team_supervisor?))
+    return false unless RequestStore[:current_user].inbound_ops_team_superuser? ||
+                        RequestStore[:current_user].inbound_ops_team_supervisor?
+
+    assigned_at > 90.days.ago && status == Constants.TASK_STATUSES.completed
   end
 
   def actions_available?(user)
-    return true if waivable? && (user.inbound_ops_team_superuser? || user.inbound_ops_team_supervisor?)
+    return true if user_can_waive_task?(user)
 
     super
   end
 
   def available_actions(user)
-    if (user&.inbound_ops_team_superuser? || user&.inbound_ops_team_supervisor?) && waivable?
+    if user_can_waive_task?(user)
       return [Constants.TASK_ACTIONS.REMOVE_WAIVE_EVIDENCE_WINDOW.to_h]
     end
 
@@ -109,5 +112,9 @@ class EvidenceSubmissionWindowTask < Task
 
   def update_params_will_create_ihp_task?(params)
     params[:status].eql?(Constants.TASK_STATUSES.completed)
+  end
+
+  def user_can_waive_task?(user)
+    (user&.inbound_ops_team_superuser? || user&.inbound_ops_team_supervisor?) && waivable?
   end
 end
