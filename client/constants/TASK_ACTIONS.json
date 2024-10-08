@@ -580,6 +580,7 @@
   },
   "REMOVE_WAIVE_EVIDENCE_WINDOW": {
     "label": "Remove waive of evidence window",
-    "value:": "remove_waive_of_evidence_window"
+    "value": "remove_waive_of_evidence_window",
+    "func": "remove_waive_of_evidence_window_data"
   }
 }
