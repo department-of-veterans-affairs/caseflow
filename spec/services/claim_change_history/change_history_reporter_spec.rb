@@ -145,95 +145,6 @@ describe ChangeHistoryReporter do
         new_event.instance_variable_set(:@task_status, "cancelled")
         new_event
       end
-      let(:pending_issue_event) do
-        new_event = removed_issue_event.clone
-        new_event.instance_variable_set(:@event_type, :pending)
-        new_event.instance_variable_set(:@task_status, "assigned")
-        new_event
-      end
-      let(:issue_modification_request_event) do
-        new_event = pending_issue_event.clone
-        new_event.instance_variable_set(:@event_type, :modification)
-        new_event.instance_variable_set(:@task_status, "assigned")
-        new_event
-      end
-
-      let(:remand_claim_creation_event) do
-        new_event = added_issue_event.clone
-        new_event.instance_variable_set(:@event_type, :claim_creation)
-        new_event.instance_variable_set(:@event_user_name, "System")
-        new_event.instance_variable_set(:@user_facility, nil)
-        new_event.instance_variable_set(:@claim_type, "Remand")
-        new_event
-      end
-      let(:remand_in_progress_status_event) do
-        new_event = claim_creation_event.clone
-        new_event.instance_variable_set(:@event_type, :in_progress)
-        new_event.instance_variable_set(:@claim_type, "Remand")
-        new_event
-      end
-      let(:remand_cancelled_status_event) do
-        new_event = in_progress_status_event.clone
-        new_event.instance_variable_set(:@event_type, :cancelled)
-        new_event.instance_variable_set(:@task_status, "cancelled")
-        new_event.instance_variable_set(:@claim_type, "Remand")
-        new_event
-      end
-      let(:remand_completed_status_event) do
-        new_event = in_progress_status_event.clone
-        new_event.instance_variable_set(:@event_type, :completed)
-        new_event.instance_variable_set(:@task_status, "completed")
-        new_event.instance_variable_set(:@claim_type, "Remand")
-        new_event
-      end
-      let(:remand_incomplete_status_event) do
-        new_event = in_progress_status_event.clone
-        new_event.instance_variable_set(:@event_type, :incomplete)
-        new_event.instance_variable_set(:@task_status, "on_hold")
-        new_event.instance_variable_set(:@claim_type, "Remand")
-        new_event
-      end
-      let(:remand_added_issue_without_decision_date_event) do
-        new_event = added_issue_event.clone
-        new_event.instance_variable_set(:@event_type, :added_issue_without_decision_date)
-        new_event.instance_variable_set(:@task_status, "on_hold")
-        new_event.instance_variable_set(:@claim_type, "Remand")
-        new_event.instance_variable_set(:@decision_date, nil)
-        new_event
-      end
-      let(:remand_completed_disposition_event) do
-        new_event = added_issue_event.clone
-        new_event.instance_variable_set(:@event_type, :completed_disposition)
-        new_event.instance_variable_set(:@task_status, "completed")
-        new_event.instance_variable_set(:@disposition, "Granted")
-        new_event.instance_variable_set(:@decision_description, "Decision for CHAMPVA issue")
-        new_event.instance_variable_set(:@disposition_date, 4.days.ago.iso8601)
-        new_event.instance_variable_set(:@user_facility, "200")
-        new_event.instance_variable_set(:@claim_type, "Remand")
-        new_event
-      end
-      let(:remand_added_decision_date_event) do
-        new_event = completed_disposition_event.clone
-        new_event.instance_variable_set(:@event_type, :added_decision_date)
-        new_event.instance_variable_set(:@task_status, "assigned")
-        new_event.instance_variable_set(:@task_id, 900)
-        new_event.instance_variable_set(:@claim_type, "Remand")
-        new_event
-      end
-      let(:remand_removed_issue_event) do
-        new_event = added_decision_date_event.clone
-        new_event.instance_variable_set(:@event_type, :removed_issue)
-        new_event.instance_variable_set(:@task_status, "cancelled")
-        new_event.instance_variable_set(:@claim_type, "Remand")
-        new_event
-      end
-      let(:remand_withdrew_issue_event) do
-        new_event = removed_issue_event.clone
-        new_event.instance_variable_set(:@event_type, :withdrew_issue)
-        new_event.instance_variable_set(:@task_status, "cancelled")
-        new_event.instance_variable_set(:@claim_type, "Remand")
-        new_event
-      end
 
       let(:events) do
         [
@@ -247,19 +158,7 @@ describe ChangeHistoryReporter do
           completed_disposition_event,
           added_decision_date_event,
           removed_issue_event,
-          withdrew_issue_event,
-          pending_issue_event,
-          issue_modification_request_event,
-          remand_claim_creation_event,
-          remand_in_progress_status_event,
-          remand_cancelled_status_event,
-          remand_completed_status_event,
-          remand_incomplete_status_event,
-          remand_added_issue_without_decision_date_event,
-          remand_completed_disposition_event,
-          remand_added_decision_date_event,
-          remand_removed_issue_event,
-          remand_withdrew_issue_event
+          withdrew_issue_event
         ]
       end
 
@@ -278,11 +177,6 @@ describe ChangeHistoryReporter do
           "CHAMPVA",
           "CHAMPVA issue description",
           added_issue_event.readable_decision_date,
-          nil,
-          nil,
-          nil,
-          nil,
-          nil,
           nil
         ]
       end
@@ -301,11 +195,6 @@ describe ChangeHistoryReporter do
           "Claim created",
           nil,
           "Claim created.",
-          nil,
-          nil,
-          nil,
-          nil,
-          nil,
           nil
         ]
       end
@@ -324,11 +213,6 @@ describe ChangeHistoryReporter do
           "Claim status - In progress",
           nil,
           "Claim can be processed.",
-          nil,
-          nil,
-          nil,
-          nil,
-          nil,
           nil
         ]
       end
@@ -346,12 +230,7 @@ describe ChangeHistoryReporter do
           cancelled_status_event.readable_event_date,
           "Claim closed",
           nil,
-          "Claim cancelled.",
-          nil,
-          nil,
-          nil,
-          nil,
-          nil,
+          "Claim closed.",
           nil
         ]
       end
@@ -369,11 +248,6 @@ describe ChangeHistoryReporter do
           "Claim closed",
           nil,
           "Claim closed.",
-          nil,
-          nil,
-          nil,
-          nil,
-          nil,
           nil
         ]
       end
@@ -391,11 +265,6 @@ describe ChangeHistoryReporter do
           "Claim status - Incomplete",
           nil,
           "Claim cannot be processed until decision date is entered.",
-          nil,
-          nil,
-          nil,
-          nil,
-          nil,
           nil
         ]
       end
@@ -414,11 +283,6 @@ describe ChangeHistoryReporter do
           "CHAMPVA",
           "CHAMPVA issue description",
           added_issue_without_decision_date_event.readable_decision_date,
-          nil,
-          nil,
-          nil,
-          nil,
-          nil,
           nil
         ]
       end
@@ -437,11 +301,6 @@ describe ChangeHistoryReporter do
           "CHAMPVA",
           "CHAMPVA issue description",
           completed_disposition_event.readable_decision_date,
-          nil,
-          nil,
-          nil,
-          nil,
-          nil,
           "Granted",
           "Decision for CHAMPVA issue",
           completed_disposition_event.readable_disposition_date
@@ -462,11 +321,6 @@ describe ChangeHistoryReporter do
           "CHAMPVA",
           "CHAMPVA issue description",
           added_decision_date_event.readable_decision_date,
-          nil,
-          nil,
-          nil,
-          nil,
-          nil,
           nil
         ]
       end
@@ -485,11 +339,6 @@ describe ChangeHistoryReporter do
           "CHAMPVA",
           "CHAMPVA issue description",
           removed_issue_event.readable_decision_date,
-          nil,
-          nil,
-          nil,
-          nil,
-          nil,
           nil
         ]
       end
@@ -508,293 +357,12 @@ describe ChangeHistoryReporter do
           "CHAMPVA",
           "CHAMPVA issue description",
           withdrew_issue_event.readable_decision_date,
-          nil,
-          nil,
-          nil,
-          nil,
-          nil,
-          nil
-        ]
-      end
-      let(:pending_issue_event_row) do
-        [
-          "242080004",
-          "Mason Rodriguez",
-          "/decision_reviews/vha/tasks/900",
-          "in progress",
-          "20",
-          "Higher-Level Review",
-          "Austin AAC (200)",
-          "E. Thompson",
-          added_issue_event.readable_event_date,
-          "Claim status - Pending",
-          nil,
-          "Claim cannot be processed until VHA admin reviews pending requests.",
-          nil,
-          nil,
-          nil,
-          nil,
-          nil,
-          nil
-        ]
-      end
-      let(:modification_issue_event_row) do
-        [
-          "242080004",
-          "Mason Rodriguez",
-          "/decision_reviews/vha/tasks/900",
-          "in progress",
-          "20",
-          "Higher-Level Review",
-          "Austin AAC (200)",
-          "E. Thompson",
-          added_issue_event.readable_event_date,
-          "Requested issue modification",
-          "CHAMPVA",
-          "CHAMPVA issue description",
-          added_issue_event.readable_decision_date,
-          nil,
-          nil,
-          nil,
-          nil,
-          nil,
-          nil
-        ]
-      end
-
-      let(:remand_claim_creation_event_row) do
-        [
-          "242080004",
-          "Mason Rodriguez",
-          "/decision_reviews/vha/tasks/999",
-          "in progress",
-          "20",
-          "Remand",
-          "",
-          "System",
-          remand_claim_creation_event.readable_event_date,
-          "Claim created",
-          nil,
-          "Claim created.",
-          nil,
-          nil,
-          nil,
-          nil,
-          nil,
-          nil
-        ]
-      end
-
-      let(:remand_in_progress_status_event_row) do
-        [
-          "242080004",
-          "Mason Rodriguez",
-          "/decision_reviews/vha/tasks/999",
-          "in progress",
-          "20",
-          "Remand",
-          "",
-          "System",
-          remand_in_progress_status_event.readable_event_date,
-          "Claim status - In progress",
-          nil,
-          "Claim can be processed.",
-          nil,
-          nil,
-          nil,
-          nil,
-          nil,
-          nil
-        ]
-      end
-
-      let(:remand_cancelled_status_event_row) do
-        [
-          "242080004",
-          "Mason Rodriguez",
-          "/decision_reviews/vha/tasks/999",
-          "cancelled",
-          "20",
-          "Remand",
-          "",
-          "System",
-          remand_cancelled_status_event.readable_event_date,
-          "Claim closed",
-          nil,
-          "Claim cancelled.",
-          nil,
-          nil,
-          nil,
-          nil,
-          nil,
-          nil
-        ]
-      end
-      let(:remand_completed_status_event_row) do
-        [
-          "242080004",
-          "Mason Rodriguez",
-          "/decision_reviews/vha/tasks/999",
-          "completed",
-          "20",
-          "Remand",
-          "",
-          "System",
-          remand_completed_status_event.readable_event_date,
-          "Claim closed",
-          nil,
-          "Claim closed.",
-          nil,
-          nil,
-          nil,
-          nil,
-          nil,
-          nil
-        ]
-      end
-      let(:remand_incomplete_status_event_row) do
-        [
-          "242080004",
-          "Mason Rodriguez",
-          "/decision_reviews/vha/tasks/999",
-          "incomplete",
-          "20",
-          "Remand",
-          "",
-          "System",
-          remand_incomplete_status_event.readable_event_date,
-          "Claim status - Incomplete",
-          nil,
-          "Claim cannot be processed until decision date is entered.",
-          nil,
-          nil,
-          nil,
-          nil,
-          nil,
-          nil
-        ]
-      end
-      let(:remand_added_issue_without_decision_date_event_row) do
-        [
-          "242080004",
-          "Mason Rodriguez",
-          "/decision_reviews/vha/tasks/999",
-          "incomplete",
-          "20",
-          "Remand",
-          "VACO (101)",
-          "E. Thompson",
-          remand_added_issue_without_decision_date_event.readable_event_date,
-          "Added issue - No decision date",
-          "CHAMPVA",
-          "CHAMPVA issue description",
-          remand_added_issue_without_decision_date_event.readable_decision_date,
-          nil,
-          nil,
-          nil,
-          nil,
-          nil,
-          nil
-        ]
-      end
-      let(:remand_completed_disposition_event_row) do
-        [
-          "242080004",
-          "Mason Rodriguez",
-          "/decision_reviews/vha/tasks/999",
-          "completed",
-          "20",
-          "Remand",
-          "Austin AAC (200)",
-          "E. Thompson",
-          remand_completed_disposition_event.readable_event_date,
-          "Completed disposition",
-          "CHAMPVA",
-          "CHAMPVA issue description",
-          remand_completed_disposition_event.readable_decision_date,
-          nil,
-          nil,
-          nil,
-          nil,
-          nil,
-          "Granted",
-          "Decision for CHAMPVA issue",
-          remand_completed_disposition_event.readable_disposition_date
-        ]
-      end
-      let(:remand_added_decision_date_event_row) do
-        [
-          "242080004",
-          "Mason Rodriguez",
-          "/decision_reviews/vha/tasks/900",
-          "in progress",
-          "20",
-          "Remand",
-          "Austin AAC (200)",
-          "E. Thompson",
-          remand_added_decision_date_event.readable_event_date,
-          "Added decision date",
-          "CHAMPVA",
-          "CHAMPVA issue description",
-          remand_added_decision_date_event.readable_decision_date,
-          nil,
-          nil,
-          nil,
-          nil,
-          nil,
-          nil
-        ]
-      end
-      let(:remand_removed_issue_event_row) do
-        [
-          "242080004",
-          "Mason Rodriguez",
-          "/decision_reviews/vha/tasks/900",
-          "cancelled",
-          "20",
-          "Remand",
-          "Austin AAC (200)",
-          "E. Thompson",
-          remand_removed_issue_event.readable_event_date,
-          "Removed issue",
-          "CHAMPVA",
-          "CHAMPVA issue description",
-          remand_removed_issue_event.readable_decision_date,
-          nil,
-          nil,
-          nil,
-          nil,
-          nil,
-          nil
-        ]
-      end
-      let(:remand_withdrew_issue_event_row) do
-        [
-          "242080004",
-          "Mason Rodriguez",
-          "/decision_reviews/vha/tasks/900",
-          "cancelled",
-          "20",
-          "Remand",
-          "Austin AAC (200)",
-          "E. Thompson",
-          remand_withdrew_issue_event.readable_event_date,
-          "Withdrew issue",
-          "CHAMPVA",
-          "CHAMPVA issue description",
-          remand_withdrew_issue_event.readable_decision_date,
-          nil,
-          nil,
-          nil,
-          nil,
-          nil,
           nil
         ]
       end
 
       it "returns a csv string with the column headers, filters, and event rows" do
         rows = CSV.parse(subject)
-
         expect(rows.count).to eq(2 + events.length)
         expect(rows[0]).to eq([])
         expect(rows[1]).to eq(column_headers)
@@ -809,18 +377,6 @@ describe ChangeHistoryReporter do
         expect(rows[10]).to eq(added_decision_date_event_row)
         expect(rows[11]).to eq(removed_issue_event_row)
         expect(rows[12]).to eq(withdrew_issue_event_row)
-        expect(rows[13]).to eq(pending_issue_event_row)
-        expect(rows[14]).to eq(modification_issue_event_row)
-        expect(rows[15]).to eq(remand_claim_creation_event_row)
-        expect(rows[16]).to eq(remand_in_progress_status_event_row)
-        expect(rows[17]).to eq(remand_cancelled_status_event_row)
-        expect(rows[18]).to eq(remand_completed_status_event_row)
-        expect(rows[19]).to eq(remand_incomplete_status_event_row)
-        expect(rows[20]).to eq(remand_added_issue_without_decision_date_event_row)
-        expect(rows[21]).to eq(remand_completed_disposition_event_row)
-        expect(rows[22]).to eq(remand_added_decision_date_event_row)
-        expect(rows[23]).to eq(remand_removed_issue_event_row)
-        expect(rows[24]).to eq(remand_withdrew_issue_event_row)
       end
     end
   end
