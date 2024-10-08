@@ -23,10 +23,6 @@ class WorkQueue::CorrespondenceAppealsSerializer
     object.appeal.uuid
   end
 
-  attribute :waivable do |object|
-    evidence_window_task = object.appeal.tasks.find_by(type: "EvidenceSubmissionWindowTask")
-    evidence_window_task.waivable?
-  end
   attribute :appeal_type do |object|
     object.appeal.docket_type
   end
@@ -40,10 +36,9 @@ class WorkQueue::CorrespondenceAppealsSerializer
   end
 
   attribute :task_added_data do |object|
-    evidence_window_task = object.appeal.tasks.find_by(type: "EvidenceSubmissionWindowTask")
     AmaAndLegacyTaskSerializer.create_and_preload_legacy_appeals(
       params: { user: RequestStore[:current_user], role: "generic" },
-      tasks: object.tasks << evidence_window_task,
+      tasks: object.tasks,
       ama_serializer: WorkQueue::TaskSerializer
     ).call
   end
