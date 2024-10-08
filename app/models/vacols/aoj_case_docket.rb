@@ -165,18 +165,39 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
     )
   "
 
-  # this query should not be used during distribution it is only intended for reporting usage
+  # selects both priority and non-priority appeals that are ready to distribute
   SELECT_READY_TO_DISTRIBUTE_APPEALS_ORDER_BY_BFD19 = "
+    select APPEALS.BFKEY, APPEALS.TINUM, APPEALS.BFD19, APPEALS.BFDLOOUT,
+      case when APPEALS.PREV_TYPE_ACTION = '7' or APPEALS.AOD = 1 then 1 else 0 end PRIORITY,
+      APPEALS.VLJ, APPEALS.PREV_DECIDING_JUDGE, APPEALS.HEARING_DATE, APPEALS.PREV_BFDDEC
+    from (
+      select BRIEFF.BFKEY, BRIEFF.TINUM, BFD19, BFDLOOUT, BFAC, AOD,
+        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
+        , PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
+        , VLJ_HEARINGS.HEARING_DATE HEARING_DATE
+        , PREV_APPEAL.PREV_BFDDEC PREV_BFDDEC
+        , PREV_APPEAL.PREV_TYPE_ACTION
+      from (
+        #{SELECT_READY_APPEALS}
+      ) BRIEFF
+      #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+      #{JOIN_PREVIOUS_APPEALS}
+      order by BFD19
+    ) APPEALS
+  "
+
+  # this query should not be used during distribution it is only intended for reporting usage
+  SELECT_READY_TO_DISTRIBUTE_APPEALS_ORDER_BY_BFD19_ADDITIONAL_COLS = "
     select APPEALS.BFKEY, APPEALS.TINUM, APPEALS.BFD19, APPEALS.BFDLOOUT, APPEALS.AOD, APPEALS.BFCORLID,
       CORRES.SNAMEF, CORRES.SNAMEL, CORRES.SSN,
       STAFF.SNAMEF as VLJ_NAMEF, STAFF.SNAMEL as VLJ_NAMEL,
-      case when APPEALS.PREV_TYPE_ACTION = '7' then 1 else 0 end CAVC, APPEALS.PREV_TYPE_ACTION,
-         APPEALS.PREV_DECIDING_JUDGE
+      case when APPEALS.PREV_TYPE_ACTION = '7' then 1 else 0 end CAVC, PREV_TYPE_ACTION,
+        PREV_DECIDING_JUDGE
     from (
       select BFKEY, BRIEFF.TINUM, BFD19, BFDLOOUT, BFAC, BFCORKEY, AOD, BFCORLID,
         VLJ_HEARINGS.VLJ,
-         PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
-         PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
+        PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
+        PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
       from (
         #{SELECT_READY_APPEALS_ADDITIONAL_COLS}
       ) BRIEFF
@@ -188,6 +209,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
     left join STAFF on APPEALS.VLJ = STAFF.SATTYID
     order by BFD19
   "
+
   # rubocop:disable Metrics/MethodLength
   def self.counts_by_priority_and_readiness
     query = <<-SQL
@@ -237,10 +259,10 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
   def self.genpop_priority_count
     query = <<-SQL
       #{SELECT_PRIORITY_APPEALS}
-      where (VLJ is null or #{ineligible_judges_sattyid_cache}) and (PREV_TYPE_ACTION = '7' or AOD = '1')
+      where (VLJ is null or VLJ != PREV_DECIDING_JUDGE or #{ineligible_judges_sattyid_cache}) and (PREV_TYPE_ACTION = '7' or AOD = '1')
     SQL
 
-    connection.exec_query(query).to_a.size
+    filter_genpop_appeals_for_affinity(query).size
   end
 
   def self.not_genpop_priority_count
@@ -413,7 +435,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
 
   def self.ready_to_distribute_appeals
     query = <<-SQL
-      #{SELECT_READY_TO_DISTRIBUTE_APPEALS_ORDER_BY_BFD19}
+      #{SELECT_READY_TO_DISTRIBUTE_APPEALS_ORDER_BY_BFD19_ADDITIONAL_COLS}
     SQL
 
     fmtd_query = sanitize_sql_array([query])
@@ -666,6 +688,26 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
     end
   end
 
+  def self.filter_genpop_appeals_for_affinity(query)
+    aoj_cavc_affinity_lever_value = CaseDistributionLever.aoj_cavc_affinity_days
+    aoj_aod_affinity_lever_value = CaseDistributionLever.aoj_aod_affinity_days
+    aoj_affinity_lever_value = CaseDistributionLever.aoj_affinity_days
+    excluded_judges_attorney_ids = excluded_judges_sattyids
+
+    conn = connection
+
+    appeals = conn.exec_query(query).to_a
+
+    aoj_affinity_filter(appeals, nil, aoj_affinity_lever_value, excluded_judges_attorney_ids)
+
+    aoj_cavc_affinity_filter(appeals, nil, aoj_cavc_affinity_lever_value, excluded_judges_attorney_ids)
+
+    aoj_aod_affinity_filter(appeals, nil, aoj_aod_affinity_lever_value,
+                            excluded_judges_attorney_ids)
+
+    appeals
+  end
+
   # rubocop:disable Metrics/AbcSize
   def self.aoj_affinity_filter(appeals, judge_sattyid, lever_value, excluded_judges_attorney_ids)
     appeals.reject! do |appeal|
@@ -861,5 +903,26 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
       end
     end
     appeals
+  end
+
+  def self.appeals_tied_to_non_ssc_avljs
+    query = <<-SQL
+      with non_ssc_avljs as (
+        #{VACOLS::Staff::NON_SSC_AVLJS}
+      )
+      #{SELECT_READY_TO_DISTRIBUTE_APPEALS_ORDER_BY_BFD19}
+      where APPEALS.VLJ in (select * from non_ssc_avljs)
+      and (
+        APPEALS.PREV_DECIDING_JUDGE is null or
+        (
+          APPEALS.PREV_DECIDING_JUDGE = APPEALS.VLJ
+          AND APPEALS.HEARING_DATE <= APPEALS.PREV_BFDDEC
+        )
+      )
+      order by BFD19
+    SQL
+
+    fmtd_query = sanitize_sql_array([query])
+    connection.exec_query(fmtd_query).to_a
   end
 end

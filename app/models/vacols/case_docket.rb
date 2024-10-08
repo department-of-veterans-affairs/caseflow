@@ -311,10 +311,10 @@ class VACOLS::CaseDocket < VACOLS::Record
   def self.genpop_priority_count
     query = <<-SQL
       #{SELECT_PRIORITY_APPEALS}
-      where VLJ is null or #{ineligible_judges_sattyid_cache}
+      where VLJ is null or VLJ != PREV_DECIDING_JUDGE or #{ineligible_judges_sattyid_cache}
     SQL
 
-    connection.exec_query(query).to_a.size
+    filter_genpop_appeals_for_affinity(query).size
   end
 
   def self.not_genpop_priority_count
@@ -784,6 +784,22 @@ class VACOLS::CaseDocket < VACOLS::Record
     end
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength, Metrics/ParameterLists
+
+  def self.filter_genpop_appeals_for_affinity(query)
+    cavc_affinity_lever_value = CaseDistributionLever.cavc_affinity_days
+    cavc_aod_affinity_lever_value = CaseDistributionLever.cavc_aod_affinity_days
+    excluded_judges_attorney_ids = excluded_judges_sattyids
+
+    conn = connection
+
+    appeals = conn.exec_query(query).to_a
+
+    cavc_affinity_filter(appeals, nil, cavc_affinity_lever_value, excluded_judges_attorney_ids)
+    cavc_aod_affinity_filter(appeals, nil, cavc_aod_affinity_lever_value,
+                             excluded_judges_attorney_ids)
+
+    appeals
+  end
 
   def self.generate_priority_case_distribution_lever_query(cavc_affinity_lever_value)
     if case_affinity_days_lever_value_is_selected?(cavc_affinity_lever_value) ||

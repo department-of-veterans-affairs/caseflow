@@ -94,6 +94,10 @@ class AojLegacyDocket < LegacyDocket
     LegacyAppeal.aoj_appeal_repository.non_priority_appeals_affinity_date_count(in_window).size
   end
 
+  def appeals_tied_to_non_ssc_avljs
+    LegacyAppeal.aoj_appeal_repository.appeals_tied_to_non_ssc_avljs
+  end
+
   private
 
   def counts_by_priority_and_readiness
