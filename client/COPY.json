@@ -1562,6 +1562,8 @@
   },
   "VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_NON_ADMIN": "Requests for issue modifications have been submitted for this case. Dispositions cannot be made until a VHA admin completes review of the requested changes.",
   "VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_ADMIN": "Requests for issue modifications have been submitted for this case. Dispositions cannot be made until a VHA admin completes review of the requested changes. Click the \"Edit issues\" button above to review the issue modification requests.",
+  "REVIEW_TRANSCRIPT_TASK_LABEL": "Review Transcript task",
+  "REVIEW_TRANSCRIPT_TASK_DEFAULT_INSTRUCTIONS": "Review the hearing transcript and upload the final to VBMS once it has been reviewed for errors or corrected.",
   "TRANSCRIPTION_DISPATCH_ASSIGNED_TAB": "Assigned",
   "TRANSCRIPTION_DISPATCH_COMPLETED_TAB": "Completed",
   "TRANSCRIPTION_FILE_DISPATCH_ALL_TAB": "All transcription",
