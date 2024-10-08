@@ -104,7 +104,7 @@ gem "ziptz"
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
   gem "activerecord-oracle_enhanced-adapter", "~> 6.1.0"
-  gem "ruby-oci8", "~> 2.2"
+  gem "ruby-oci8", "~> 2.2.14"
 end
 
 group :test, :development, :demo, :make_docs do
