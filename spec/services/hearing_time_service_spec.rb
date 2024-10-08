@@ -78,7 +78,7 @@ describe HearingTimeService, :all_dbs do
               )
             end
 
-            it { is_expected.to eq "3:00 PM Mountain Time (US & Canada)" }
+            it { is_expected.to eq "3:00 PM Eastern Time (US & Canada)" }
           end
         end
 
@@ -96,7 +96,7 @@ describe HearingTimeService, :all_dbs do
               create(:hearing, regional_office: "RO27", scheduled_time: "3:00 PM")
             end
 
-            it { is_expected.to eq "3:00 PM Mountain Time (US & Canada)" }
+            it { is_expected.to eq "3:00 PM Eastern Time (US & Canada)" }
           end
         end
       end
