@@ -19,6 +19,7 @@ services:
     environment:
      - POSTGRES_USER=postgres
      - POSTGRES_PASSWORD=postgres
+    network_mode: host
 
   appeals-localstack-aws:
     platform: linux/amd64

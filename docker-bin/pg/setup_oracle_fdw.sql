@@ -14,7 +14,7 @@ CREATE DATABASE caseflow_certification_development OWNER postgres ENCODING UTF8;
 
 -- Create the foreign server
 CREATE SERVER vacols_sv FOREIGN DATA WRAPPER oracle_fdw OPTIONS (
-    dbserver 'vacols-db:1521/BVAP'
+    dbserver 'localhost:1521/BVAP'
 );
 
 GRANT USAGE ON FOREIGN SERVER vacols_sv TO postgres;
