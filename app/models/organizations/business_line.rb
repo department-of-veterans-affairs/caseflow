@@ -863,10 +863,20 @@ class BusinessLine < Organization
       mode, start_date, end_date = closed_at_params
       operator = date_filter_mode_to_operator(mode)
 
-      date_filters = {
-        ">" => -> { start_date ? "tasks.closed_at::date > '#{start_date}'::date" : "" },
-        "<" => -> { start_date ? "tasks.closed_at::date < '#{start_date}'::date" : "" },
-        "=" => -> { start_date ? "tasks.closed_at::date = '#{start_date}'::date" : "" },
+      # Break early if start date is not present and it's not one of these 3 filter types
+      return "" if !%w[last_7_days last_30_days last_365_days].include?(operator) && start_date.blank?
+
+      date_filter_lambda_hash(start_date, end_date).fetch(operator, lambda {
+        Rails.logger.error("Unsupported mode **#{operator}** used for closed at date filtering")
+        ""
+      }).call
+    end
+
+    def date_filter_lambda_hash(start_date, end_date)
+      {
+        ">" => -> { "tasks.closed_at::date > '#{start_date}'::date" },
+        "<" => -> { "tasks.closed_at::date < '#{start_date}'::date" },
+        "=" => -> { "tasks.closed_at::date = '#{start_date}'::date" },
         "between" => lambda {
           # Ensure the dates are sorted correctly so either ordering works e.g. start > end or end > start
           start_date, end_date = [start_date, end_date].map(&:to_date).sort
@@ -876,11 +886,6 @@ class BusinessLine < Organization
         "last_30_days" => -> { { closed_at: 30.days.ago..Time.zone.now } },
         "last_365_days" => -> { { closed_at: 365.days.ago..Time.zone.now } }
       }
-
-      date_filters.fetch(operator, lambda {
-        Rails.logger.error("Unsupported mode **#{operator}** used for closed at date filtering")
-        ""
-      }).call
     end
 
     def date_filter_mode_to_operator(mode)
