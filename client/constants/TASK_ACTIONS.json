@@ -577,5 +577,9 @@
     "label": "Cancel task",
     "value": "modal/cancel_correspondence_task",
     "func": "cancel_correspondence_task_data"
+  },
+  "REMOVE_WAIVE_EVIDENCE_WINDOW": {
+    "label": "Remove waive of evidence window",
+    "value:": "remove_waive_of_evidence_window"
   }
 }
