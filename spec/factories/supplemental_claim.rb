@@ -282,16 +282,5 @@ FactoryBot.define do
                decision_review: sc)
       end
     end
-
-    factory :remand, class: Remand do
-      type { Remand.name }
-      decision_review_remanded do
-        create(
-          :appeal,
-          :with_decision_issue,
-          disposition: "remanded"
-        )
-      end
-    end
   end
 end

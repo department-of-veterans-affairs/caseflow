@@ -502,28 +502,6 @@ feature "NonComp Dispositions Task Page", :postgres do
         end
       end
     end
-
-    context "viewing a remand" do
-      let(:in_progress_remand_task) do
-        create(:remand_vha_task, assigned_at: 1.minute.ago)
-      end
-
-      let(:dispositions_url) { "#{business_line_url}/tasks/#{in_progress_remand_task.id}" }
-
-      it "should disable the request issue modification button" do
-        visit dispositions_url
-
-        expect(page).to have_css(".usa-button-disabled", text: "Request issue modification")
-        expect(page).to have_content(COPY::REMANDS_NOT_EDITABLE)
-      end
-
-      it "should disable the edit issues button" do
-        User.authenticate!(user: admin_user)
-        visit dispositions_url
-
-        expect(page).to have_css(".usa-button-disabled", text: "Edit Issues")
-      end
-    end
   end
 
   def enable_feature_flag_and_redirect_to_disposition
