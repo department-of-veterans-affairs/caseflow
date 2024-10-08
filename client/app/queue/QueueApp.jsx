@@ -1053,7 +1053,7 @@ class QueueApp extends React.PureComponent {
             <PageRoute
               exact
               path={
-                '/queue/correspondence/:correspondence_uuid/tasks/:task_id/' +
+                '/queue/appeals/:appealId/tasks/:taskId/' +
             `(${TASK_ACTIONS.REMOVE_WAIVE_EVIDENCE_WINDOW.value
             })`
               }
