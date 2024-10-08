@@ -154,7 +154,7 @@ class LegacyTasksController < ApplicationController
 
   def legacy_task_params
     task_params = params.require("tasks")
-      .permit(:appeal_id)
+      .permit(:appeal_id, :assigned_to_id, :instructions)
       .merge(assigned_by: current_user)
       .merge(assigned_to: User.find_by(id: params[:tasks][:assigned_to_id]))
 
