@@ -87,7 +87,8 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
           issue_data[:nonrating_issue_category] || request_issue.nonrating_issue_category,
         nonrating_issue_description:
           issue_data[:nonrating_issue_description] || request_issue.nonrating_issue_description,
-        contention_updated_at: @parser.end_product_establishment_last_synced_at
+        contention_updated_at: @parser.end_product_establishment_last_synced_at,
+        contention_reference_id: issue_data[:contention_reference_id]
       )
     end
     true
@@ -132,7 +133,8 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
         nonrating_issue_description: parser_issue.ri_nonrating_issue_description ||
           request_issue.nonrating_issue_description,
         contention_removed_at: @parser.end_product_establishment_last_synced_at,
-        contention_updated_at: @parser.end_product_establishment_last_synced_at
+        contention_updated_at: @parser.end_product_establishment_last_synced_at,
+        contention_reference_id: parser_issue.ri_contention_reference_id
       )
       add_event_record(request_issue, "E2I")
     end
@@ -157,7 +159,8 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
           request_issue.nonrating_issue_category,
         nonrating_issue_description: parser_issue.ri_nonrating_issue_description ||
           request_issue.nonrating_issue_description,
-        contention_updated_at: @parser.end_product_establishment_last_synced_at
+        contention_updated_at: @parser.end_product_establishment_last_synced_at,
+        contention_reference_id: parser_issue.ri_contention_reference_id
       )
       add_event_record(request_issue, "I2E")
     end
@@ -180,7 +183,8 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
         nonrating_issue_description: parser_issue.ri_nonrating_issue_description ||
           request_issue.nonrating_issue_description,
         contention_removed_at: @parser.end_product_establishment_last_synced_at,
-        contention_updated_at: @parser.end_product_establishment_last_synced_at
+        contention_updated_at: @parser.end_product_establishment_last_synced_at,
+        contention_reference_id: parser_issue.ri_contention_reference_id
       )
       add_event_record(request_issue, "I2I")
     end
@@ -271,6 +275,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       closed_date: parser_issue.ri_closed_at,
       closed_status: parser_issue.ri_closed_status,
       unidentified_issue_text: parser_issue.ri_unidentified_issue_text,
+      issue_text: parser_issue.ri_unidentified_issue_text,
       decision_date: parser_issue.ri_decision_date,
       is_unidentified: parser_issue.ri_is_unidentified,
       untimely_exemption: parser_issue.ri_untimely_exemption,

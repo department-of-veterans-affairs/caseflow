@@ -191,7 +191,8 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
           nonrating_issue_bgs_id: parser_issue.ri_nonrating_issue_bgs_id,
           edited_description: parser_issue.ri_edited_description,
           decision_text: parser_issue.ri_nonrating_issue_description,
-          end_product_code: parser.end_product_establishment_code
+          end_product_code: parser.end_product_establishment_code,
+          issue_text: parser_issue.ri_unidentified_issue_text
         }
       )
     end
@@ -296,6 +297,7 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       expect(request_issue.contention_removed_at).to eq(parser.end_product_establishment_last_synced_at)
       expect(request_issue.event_records.last.info["update_type"]).to eq("E2I")
       expect(request_issue.event_records.last.info["record_data"]["id"]).to eq(request_issue.id)
+      expect(request_issue.contention_reference_id).to eq(issue_payload[:contention_reference_id])
     end
   end
 
@@ -328,6 +330,7 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       expect(existing_request_issue.nonrating_issue_description).to eq(issue_payload[:nonrating_issue_description])
       expect(existing_request_issue.event_records.last.info["update_type"]).to eq("I2E")
       expect(existing_request_issue.event_records.last.info["record_data"]["id"]).to eq(existing_request_issue.id)
+      expect(existing_request_issue.contention_reference_id).to eq(issue_payload[:contention_reference_id])
     end
   end
 
@@ -358,6 +361,7 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       expect(existing_request_issue.event_records.last.info["update_type"]).to eq("I2I")
       expect(existing_request_issue.event_records.last.info["record_data"]["id"]).to eq(existing_request_issue.id)
       expect(existing_request_issue.contention_removed_at).to eq(parser.end_product_establishment_last_synced_at)
+      expect(existing_request_issue.contention_reference_id).to eq(issue_payload[:contention_reference_id])
     end
   end
 
@@ -372,6 +376,7 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       expect(existing_request_issue.nonrating_issue_category).to eq(issue_payload[:nonrating_issue_category])
       expect(existing_request_issue.nonrating_issue_description).to eq(issue_payload[:nonrating_issue_description])
       expect(existing_request_issue.contention_updated_at).to eq(parser.end_product_establishment_last_synced_at)
+      expect(existing_request_issue.contention_reference_id).to eq(issue_payload[:contention_reference_id])
     end
 
     it "does not update fields if they are not in the payload" do
@@ -389,6 +394,7 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       expect(existing_request_issue.contested_issue_description).to eq("original description")
       expect(existing_request_issue.nonrating_issue_category).to eq("original category")
       expect(existing_request_issue.nonrating_issue_description).to eq("original description")
+      expect(existing_request_issue.contention_reference_id).to eq(issue_payload[:contention_reference_id])
     end
   end
 
