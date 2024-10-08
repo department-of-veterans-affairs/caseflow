@@ -1,0 +1,2 @@
+class NationalHearingQueueEntry < ApplicationRecord
+end
