@@ -11,6 +11,7 @@ services:
       context: ./docker-bin/pg
       dockerfile: Dockerfile
     container_name: appeals-db
+    platform: linux/amd64
     ports:
       - "5432:5432"
     volumes:
