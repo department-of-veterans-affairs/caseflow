@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_08_28_165652) do
+ActiveRecord::Schema.define(version: 2024_09_23_175743) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "oracle_fdw"
@@ -2450,4 +2450,35 @@ ActiveRecord::Schema.define(version: 2024_08_28_165652) do
   add_foreign_key "virtual_hearings", "users", column: "updated_by_id"
   add_foreign_key "vso_configs", "organizations"
   add_foreign_key "worksheet_issues", "legacy_appeals", column: "appeal_id"
+
+  create_view "national_hearing_queue_entries", materialized: true, sql_definition: <<-SQL
+      SELECT appeals.id,
+      appeals.aod_based_on_age,
+      appeals.changed_hearing_request_type,
+      appeals.closest_regional_office,
+      appeals.created_at,
+      appeals.docket_range_date,
+      appeals.docket_type,
+      appeals.established_at,
+      appeals.establishment_attempted_at,
+      appeals.establishment_canceled_at,
+      appeals.establishment_error,
+      appeals.establishment_last_submitted_at,
+      appeals.establishment_processed_at,
+      appeals.establishment_submitted_at,
+      appeals.filed_by_va_gov,
+      appeals.homelessness,
+      appeals.legacy_opt_in_approved,
+      appeals.original_hearing_request_type,
+      appeals.poa_participant_id,
+      appeals.receipt_date,
+      appeals.stream_docket_number,
+      appeals.stream_type,
+      appeals.target_decision_date,
+      appeals.updated_at,
+      appeals.uuid,
+      appeals.veteran_file_number,
+      appeals.veteran_is_not_claimant
+     FROM appeals;
+  SQL
 end
