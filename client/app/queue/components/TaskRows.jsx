@@ -516,7 +516,7 @@ class TaskRows extends React.PureComponent {
       return null;
     }
 
-    return this.showActionsSection(task) ? (
+    return this.showActionsSection(task) || this.taskIsWaivable(task) ? (
       <div>
         <h3>{COPY.TASK_SNAPSHOT_ACTION_BOX_TITLE}</h3>
         <ActionsDropdown task={task} appealId={appeal.externalId} />
@@ -526,7 +526,7 @@ class TaskRows extends React.PureComponent {
 
   taskIsWaivable = (task) => task?.waivable && this.props.waivableUser;
 
-  showActionsSection = (task) => task && (!this.props.hideDropdown || this.taskIsWaivable(task));
+  showActionsSection = (task) => task && !this.props.hideDropdown;
 
   hearingRequestTypeConvertedAtListItem = (task) => {
     return task.convertedOn ? (

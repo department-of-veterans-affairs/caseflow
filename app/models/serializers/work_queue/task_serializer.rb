@@ -53,7 +53,7 @@ class WorkQueue::TaskSerializer
   end
 
   attribute :waivable do |object|
-    object.try(:waivable?)
+    object.try(:waivable?) ? true : false
   end
 
   attribute :cancelled_by do |object|
