@@ -63,7 +63,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
             "nonrating_issue_bgs_id": "some_bgs_id",
             "type": "RequestIssue",
             "decision_review_issue_id": 1234,
-            "contention_reference_id": 123_456,
+            "contention_reference_id": 123_457,
             "benefit_type": "compensation",
             "contested_issue_description": "some_description",
             "contested_rating_issue_profile_date": "122255",
@@ -198,7 +198,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
         }
       end
 
-      it "returns success response whith updated edited_description" do
+      it "returns success response with updated edited_description" do
         expect(existing_request_issue.edited_description).to_not eq("DIC: Service connection denied (UPDATED)")
         expect(existing_request_issue_2.edited_description).to_not eq("DIC: Service connection denied 2 (UPDATED)")
         post :decision_review_updated, params: valid_params
