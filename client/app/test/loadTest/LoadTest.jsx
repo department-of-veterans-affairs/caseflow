@@ -33,8 +33,8 @@ this a note on what the overall behavior of this portion of the app is.
 The component tree is as follows:
     -LoadTestForm // the actual form for the load test. The onSubmit happens here when the button is clicked.
       the body of the POST request is set up here as well through the use of the currentState method.
-    -UserConfiguration and Scenario Configurations are rendered through the LoadTestForm. Both making
-      use of the updateState and currentState methods.
+        -UserConfiguration and Scenario Configurations are rendered through the LoadTestForm. Both making
+          use of the updateState and currentState methods.
 
 State is created in this file and then passed in to the rendered component,
   both the getter and setter methods that will provide updates to state as

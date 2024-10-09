@@ -18,13 +18,18 @@ export default function LoadTestForm(props) {
 
   const onSubmit = (event) => {
     event.preventDefault();
+    // the variable of organizationsObject is set to the single object held within the array.
+    // this is because of how it is set through the updateState method. properlyFormatOrgsArray
+    // is a method in whice we interate through that single object of the array and instead reformat it so that it holds
+    // multiple object. each of which will have a url and admin key.
     const organizationsObject = currentState.user.user.organizations[0];
-
-    const properlyFormattedOrgsArray = Object.keys(organizationsObject).map((orgName) => ({
-      url: orgName,
-      // eslint-disable-next-line no-prototype-builtins
-      admin: organizationsObject.hasOwnProperty(`${orgName}-admin`) ?? false
-    }));
+    const properlyFormattedOrgsArray = Object.keys(organizationsObject).flatMap((orgName) => {
+      return orgName.endsWith('-admin') ? {} : {
+        url: orgName,
+        // eslint-disable-next-line no-prototype-builtins
+        admin: organizationsObject.hasOwnProperty(`${orgName}-admin`) ?? false
+      };
+    });
     const payload = JSON.stringify({
       data: {
         scenarios: [],
