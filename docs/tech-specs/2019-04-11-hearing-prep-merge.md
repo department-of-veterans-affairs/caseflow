@@ -1,15 +1,15 @@
-This document was moved from [appeals-team](https://github.com/department-of-veterans-affairs/appeals-team/blob/master/Project%20Folders/Caseflow%20Projects/Hearings/Hearing%20Schedule/Tech%20Specs/HearingPrepMerge.md).
+This document was moved from [appeals-team](https://github.com/department-of-veterans-affairs/appeals-team/blob/main/Project%20Folders/Caseflow%20Projects/Hearings/Hearing%20Schedule/Tech%20Specs/HearingPrepMerge.md).
 
 ## Hearing Prep Merge
 
-Owner: Sharon Warner  
-Date: 2019-04-11  
-Reviewer(s):   
-Review by:   
+Owner: Sharon Warner
+Date: 2019-04-11
+Reviewer(s):
+Review by:
 
 ## Context
 
-When Caseflow Hearing Prep was first developed 2 years ago, hearings' master records (records that group hearings by type, date, regional office, and judge) were stored in inconsistent ways in VACOLS. Video hearings were all linked to master records in the hearings table; CO hearings did not have any concept of master records; and travel board hearings had master records stored in a completely different table. Because these master records were so inconsistent, we determined it would be easier to not use master records within hearing prep and instead group hearings in our own way. 
+When Caseflow Hearing Prep was first developed 2 years ago, hearings' master records (records that group hearings by type, date, regional office, and judge) were stored in inconsistent ways in VACOLS. Video hearings were all linked to master records in the hearings table; CO hearings did not have any concept of master records; and travel board hearings had master records stored in a completely different table. Because these master records were so inconsistent, we determined it would be easier to not use master records within hearing prep and instead group hearings in our own way.
 
 Since Caseflow Hearing Schedule's rollout, however, we now have a consistent implementation of master records, now called hearing days, stored in caseflow's database. We also already have implemented hearing schedule views and daily dockets based on these hearing days. In order to minimize discrepancies between Hearing Prep and Hearing Schedule, we are merging Hearing Prep's hearing schedule views and daily dockets into Hearing Schedule.
 
