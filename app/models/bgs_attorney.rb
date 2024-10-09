@@ -4,7 +4,7 @@
 # who might not already be associated with a record (hence the use of a different model/table)
 
 class BgsAttorney < CaseflowRecord
-  include BgsService
+  include BGSServiceConcern
 
   delegate :address,
            :address_line_1,

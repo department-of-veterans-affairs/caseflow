@@ -2,7 +2,6 @@
 
 require "csv"
 require "rainbow"
-require_relative "../../helpers/vacols_csv_reader"
 require_relative "../../../db/seeds/base"
 require_relative "../../../db/seeds/facols"
 
@@ -63,7 +62,7 @@ namespace :local do
         :decass
       ).find(ids)
 
-      sanitizer = Helpers::Sanitizers.new
+      sanitizer = Sanitizers.new
 
       VACOLS::Staff.all.each_with_index do |staff, row_index|
         sanitizer.generate_staff_mapping(staff, row_index)
@@ -72,7 +71,7 @@ namespace :local do
       write_csv(VACOLS::Staff, VACOLS::Staff.all, sanitizer)
 
       # In order to add a new table, you'll also need to add a sanitize and white_list method
-      # to the Helpers::Sanitizers class.
+      # to the Sanitizers class.
       write_csv(VACOLS::Case, cases, sanitizer)
       write_csv(VACOLS::Folder, cases.map(&:folder), sanitizer)
       write_csv(VACOLS::Representative, cases.map(&:vacols_representatives), sanitizer)

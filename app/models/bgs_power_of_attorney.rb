@@ -2,7 +2,7 @@
 
 class BgsPowerOfAttorney < CaseflowRecord
   include AssociatedBgsRecord
-  include BgsService
+  include BGSServiceConcern
 
   has_many :claimants, primary_key: :claimant_participant_id, foreign_key: :participant_id
   has_one :representative, primary_key: :poa_participant_id, foreign_key: :participant_id

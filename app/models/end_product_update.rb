@@ -3,7 +3,7 @@
 # This is for updating the claim label for end products established from Caseflow
 
 class EndProductUpdate < CaseflowRecord
-  include BgsService
+  include BGSServiceConcern
 
   belongs_to :end_product_establishment, optional: false
   belongs_to :original_decision_review, polymorphic: true, optional: false
