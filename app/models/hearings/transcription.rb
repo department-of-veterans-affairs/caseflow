@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Transcription < CaseflowRecord
-
   belongs_to :hearing, polymorphic: true
   belongs_to :transcription_contractor
   has_many :transcription_files
