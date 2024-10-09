@@ -91,7 +91,7 @@ describe ScheduleHearingTask, :all_dbs do
             description: "Update",
             values: {
               hearing_day_id: hearing_day.id,
-              scheduled_time_string: "09:00"
+              scheduled_time_string: "09:00 AM America/New_York"
             }
           }
         }

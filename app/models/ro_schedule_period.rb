@@ -17,8 +17,9 @@ class RoSchedulePeriod < SchedulePeriod
 
   # Run various validations on the uploaded spreadsheet and record errors
   def validate_spreadsheet
-    validate_spreadsheet = HearingSchedule::ValidateRoSpreadsheet.new(spreadsheet, start_date, end_date)
-    errors[:base] << validate_spreadsheet.validate
+    spreadsheet_errors = HearingSchedule::ValidateRoSpreadsheet.new(spreadsheet, start_date, end_date).validate
+    errors.add(:base, spreadsheet_errors) if spreadsheet_errors.any?
+    errors[:base]
   end
 
   # Create NonAvailibility records for ROs and CO and Allocation records for each RO

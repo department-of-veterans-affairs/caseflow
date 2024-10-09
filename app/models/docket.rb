@@ -114,6 +114,12 @@ class Docket
     appeals(priority: true, ready: true).pluck(:uuid)
   end
 
+  def tied_to_vljs(judge_ids)
+    docket_appeals.ready_for_distribution
+      .most_recent_hearings
+      .tied_to_judges(judge_ids)
+  end
+
   # rubocop:disable Metrics/MethodLength, Lint/UnusedMethodArgument, Metrics/PerceivedComplexity
   # :reek:FeatureEnvy
   def distribute_appeals(distribution, priority: false, genpop: nil, limit: 1, style: "push")
@@ -204,7 +210,7 @@ class Docket
   end
 
   def adjust_for_affinity(scope, judge)
-    scope.genpop.or(scope.non_genpop_for_judge(judge))
+    scope.genpop_with_case_distribution_lever.or(scope.non_genpop_with_case_distribution_lever(judge))
   end
 
   def scoped_for_priority(scope)

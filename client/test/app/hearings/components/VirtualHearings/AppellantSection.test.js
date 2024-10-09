@@ -13,6 +13,7 @@ import TextField from 'app/components/TextField';
 import { ReadOnly } from 'app/hearings/components/details/ReadOnly';
 
 const updateSpy = jest.fn();
+const hearingDayDate = '2025-01-01';
 
 describe('Appellant', () => {
   test('Matches snapshot with default props', () => {
@@ -24,6 +25,7 @@ describe('Appellant', () => {
         hearing={defaultHearing}
         type={HEARING_CONVERSION_TYPES[0]}
         update={updateSpy}
+        hearingDayDate={hearingDayDate}
       />
     );
 
@@ -44,6 +46,7 @@ describe('Appellant', () => {
         hearing={defaultHearing}
         type={HEARING_CONVERSION_TYPES[0]}
         update={updateSpy}
+        hearingDayDate={hearingDayDate}
       />
     );
 
@@ -63,6 +66,7 @@ describe('Appellant', () => {
         hearing={defaultHearing}
         type={HEARING_CONVERSION_TYPES[0]}
         update={updateSpy}
+        hearingDayDate={hearingDayDate}
       />
     );
 
@@ -80,6 +84,7 @@ describe('Appellant', () => {
         hearing={{ ...defaultHearing, appellantEmailAddress: null }}
         type={HEARING_CONVERSION_TYPES[0]}
         update={updateSpy}
+        hearingDayDate={hearingDayDate}
         readOnly
         showMissingEmailAlert
       />
@@ -99,6 +104,7 @@ describe('Appellant', () => {
         hearing={{ ...defaultHearing, appellantEmailAddress: undefined }}
         type={HEARING_CONVERSION_TYPES[0]}
         update={updateSpy}
+        hearingDayDate={hearingDayDate}
         readOnly
         showMissingEmailAlert
       />
@@ -122,6 +128,7 @@ describe('Appellant', () => {
         }
         type={HEARING_CONVERSION_TYPES[0]}
         update={updateSpy}
+        hearingDayDate={hearingDayDate}
       />
     );
 
@@ -145,6 +152,7 @@ describe('Appellant', () => {
         hearing={defaultHearing}
         type={HEARING_CONVERSION_TYPES[0]}
         update={updateSpy}
+        hearingDayDate={hearingDayDate}
       />
     );
 

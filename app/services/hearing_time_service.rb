@@ -9,40 +9,30 @@ class HearingTimeService
   CENTRAL_OFFICE_TIMEZONE = "America/New_York"
 
   class << self
-    def build_legacy_params_with_time(hearing, update_params)
-      # takes hearing update_legacy_params from controller and adds
-      # vacols-formatted scheduled_for
-      return update_params if update_params[:scheduled_time_string].nil?
-
-      scheduled_for = legacy_formatted_scheduled_for(
-        scheduled_for: update_params[:scheduled_for] || hearing.scheduled_for,
-        scheduled_time_string: update_params[:scheduled_time_string]
-      )
-
-      remove_time_string_params(update_params).merge(scheduled_for: scheduled_for)
-    end
-
-    def build_params_with_time(_hearing, update_params)
-      return update_params if update_params[:scheduled_time_string].nil?
-
-      remove_time_string_params(update_params).merge(scheduled_time: update_params[:scheduled_time_string])
-    end
-
-    def legacy_formatted_scheduled_for(scheduled_for:, scheduled_time_string:)
-      hour, min = scheduled_time_string.split(":")
-      time = scheduled_for.to_datetime
-      Time.use_zone(VacolsHelper::VACOLS_DEFAULT_TIMEZONE) do
-        Time.zone.now.change(
-          year: time.year, month: time.month, day: time.day, hour: hour.to_i, min: min.to_i
-        )
-      end
-    end
-
-    def time_to_string(time)
-      return time if time.is_a?(String)
-
+    def time_to_string(time, hearing)
       datetime = time.to_datetime
-      "#{pad_time(datetime.hour)}:#{pad_time(datetime.min)}"
+
+      tz = ActiveSupport::TimeZone::MAPPING.key(hearing.regional_office_timezone)
+
+      "#{datetime.strftime('%l:%M %p')} #{tz}".lstrip
+    end
+
+    # Used to satisfy an interface for a façade between {HearingDatetimeService}
+    #  and {HearingTimeService}. It will always return nil since this service
+    #  does not pertain to datetime processing.
+    # @return [nil] nil will always be returned.
+    def prepare_datetime_for_storage(**_args)
+      nil
+    end
+
+    # Checks the time_string value and returns the formatted time in %H:%M
+    # @return [String, nil] - Time string in "%H:%M" format
+    # @example Extract the hour and minute from a string.
+    #   process_scheduled_time("1:00 PM Eastern Time (US & Canada)") #=> "13:00"
+    def process_scheduled_time(time_string)
+      return nil if time_string.blank?
+
+      Time.strptime(time_string, "%I:%M %p").strftime("%H:%M")
     end
 
     private
@@ -61,23 +51,20 @@ class HearingTimeService
   end
 
   def scheduled_time_string
-    self.class.time_to_string(local_time)
+    self.class.time_to_string(local_time, @hearing)
   end
 
   def central_office_time_string
-    self.class.time_to_string(central_office_time)
+    datetime = central_office_time.to_datetime
+
+    "#{datetime.strftime('%l:%M %p')} Eastern Time (US & Canada)".lstrip
   end
 
   def local_time
-    # returns the date and time a hearing is scheduled for in the regional
-    # office's time zone; or the central office's time zone if no regional
-    # office is associated with the hearing.
-
     # for AMA hearings, return the hearing object's scheduled_for
     return @hearing.scheduled_for if @hearing.is_a?(Hearing)
 
-    # for legacy hearings, convert to the regional office's time zone
-
+    # for legacy hearings with nil scheduled_in_timezone, convert to the regional office's time zone.
     # if the hearing's regional_office_timezone is nil, assume this is a
     # central office hearing (eastern time)
     regional_office_timezone = @hearing.regional_office_timezone || CENTRAL_OFFICE_TIMEZONE
@@ -99,34 +86,27 @@ class HearingTimeService
     local_time.in_time_zone(CENTRAL_OFFICE_TIMEZONE)
   end
 
-  def normalized_time(timezone)
-    return local_time if timezone.nil?
+  # Casts incoming scheduled_time_strings into Eastern Time, and then into a quasi-UTC Time object.
+  # @see - HearingMapper.datetime_based_on_type is where these values are coverted to their correct
+  #   local time whenever retreiving them from the database.
+  #
+  # Used to facilitate updates to hearing times submitted via the {LegacyHearingUpdateForm}
+  #
+  # @param date [Date] a Date object for which a hearing will be scheduled.
+  # @param time_string [String] a formatted string with scheduling details. ex: 12:00 PM Eastern Time (US & Canada).
+  # @return [Time] The time a hearing is set to take place in cast to UTC time.
+  # @return [nil] If either the date or time_string params are absent.
+  def process_legacy_scheduled_time_string(date:, time_string:)
+    return nil unless date && time_string
 
-    # throws an error here if timezone is invalid
-    local_time.in_time_zone(timezone)
-  end
+    hour, min = self.class.process_scheduled_time(time_string).split(":")
+    time = date.to_datetime
+    unformatted_time = Time.use_zone(VacolsHelper::VACOLS_DEFAULT_TIMEZONE) do
+      Time.zone.now.change(
+        year: time.year, month: time.month, day: time.day, hour: hour.to_i, min: min.to_i
+      )
+    end
 
-  # hearing time in poa timezone
-  def poa_time
-    # Check if there's a recipient, and if it has a timezone, it it does use that to set tz
-    representative_tz_from_recipient = @hearing.representative_recipient&.timezone
-    return normalized_time(representative_tz_from_recipient) if representative_tz_from_recipient.present?
-    # If there's a virtual hearing, use that tz even if it's empty
-    return normalized_time(@hearing.virtual_hearing[:representative_tz]) if @hearing.virtual_hearing.present?
-
-    # No recipient and no virtual hearing? Use the normalized_time fallback
-    normalized_time(nil)
-  end
-
-  # hearing time in appellant timezone
-  def appellant_time
-    # Check if there's a recipient, and if it has a timezone, it it does use that to set tz
-    appellant_tz_from_recipient = @hearing.appellant_recipient&.timezone
-    return normalized_time(appellant_tz_from_recipient) if appellant_tz_from_recipient.present?
-    # If there's a virtual hearing, use that tz even if it's empty
-    return normalized_time(@hearing.virtual_hearing[:appellant_tz]) if @hearing.virtual_hearing.present?
-
-    # No recipient and no virtual hearing? Use the normalized_time fallback
-    normalized_time(nil)
+    VacolsHelper.format_datetime_with_utc_timezone(unformatted_time)
   end
 end

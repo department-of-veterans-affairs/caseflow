@@ -15,7 +15,8 @@ export const TimeSlotButton = ({
   docketName,
   docketNumber,
   full,
-  onClick
+  onClick,
+  hearingDayDate
 }) => {
   const selectedClass = selected ? 'time-slot-button-selected' : '';
   const fullClass = full ? 'time-slot-button-full' : '';
@@ -36,7 +37,7 @@ export const TimeSlotButton = ({
           <TimeSlotDetail
             constrainWidth
             showDetails={Boolean(full && issueCount !== null && poaName)}
-            label={formatTimeSlotLabel(hearingTime, roTimezone)}
+            label={formatTimeSlotLabel(`${hearingDayDate} ${hearingTime}`, roTimezone)}
             issueCount={issueCount}
             poaName={poaName}
             docketName={docketName}
@@ -68,4 +69,5 @@ TimeSlotButton.propTypes = {
   hearingTime: PropTypes.string,
   roTimezone: PropTypes.string,
   selected: PropTypes.bool,
+  hearingDayDate: PropTypes.string
 };

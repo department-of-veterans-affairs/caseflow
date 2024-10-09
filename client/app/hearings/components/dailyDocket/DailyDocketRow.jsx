@@ -276,7 +276,6 @@ class DailyDocketRow extends React.Component {
     const { conferenceLink } = this.props;
 
     window.open(conferenceLink?.hostLink, 'Recording Session').focus();
-
   }
 
   getInputProps = () => {
@@ -290,7 +289,7 @@ class DailyDocketRow extends React.Component {
   };
 
   defaultRightInputs = (rowIndex) => {
-    const { hearing, regionalOffice, readOnly } = this.props;
+    const { hearing, regionalOffice, readOnly, hearingDayDate } = this.props;
     const inputProps = this.getInputProps();
 
     return (
@@ -315,6 +314,7 @@ class DailyDocketRow extends React.Component {
             }
           }}
           value={hearing?.scheduledTimeString}
+          hearingDayDate={hearingDayDate}
         />
       </React.Fragment>
     );
@@ -379,7 +379,7 @@ class DailyDocketRow extends React.Component {
           classNames={['usa-button-secondary']}
           type="button"
           disabled={this.props.conferenceLinkError}
-          onClick={this.conferenceLinkOnClick} > Connect to Recording System</Button> }
+          onClick={this.conferenceLinkOnClick} > Connect to Recording System</Button>}
         <DispositionDropdown
           {...inputProps}
           cancelUpdate={this.cancelUpdate}
@@ -511,7 +511,8 @@ DailyDocketRow.propTypes = {
   onReceiveTransitioningAlert: PropTypes.func,
   transitionAlert: PropTypes.func,
   conferenceLink: PropTypes.object,
-  conferenceLinkError: PropTypes.bool
+  conferenceLinkError: PropTypes.bool,
+  hearingDayDate: PropTypes.string
 };
 
 const mapStateToProps = (state, props) => ({

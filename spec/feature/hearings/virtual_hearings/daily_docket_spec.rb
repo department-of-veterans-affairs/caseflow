@@ -43,7 +43,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
         .strftime("%F %T")
         .in_time_zone(regional_office_timezone) # cast the updated hearing time to the ro timezone
         .in_time_zone(HearingTimeService::CENTRAL_OFFICE_TIMEZONE) # convert it to the central office timezone
-        .strftime("%-l:%M %P ET") # and render it in the format expected in the modal
+        .strftime("%-l:%M %p ET") # and render it in the format expected in the modal
     end
 
     scenario "Virtual hearing time is updated" do
@@ -174,6 +174,74 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
 
         expect(page).to have_content(vlj_virtual_hearing_link)
         expect(page).to have_xpath "//a[contains(@href,'role=host')]"
+      end
+    end
+  end
+
+  context "Updating a hearing's time" do
+    shared_examples "The hearing time is updated correctly" do
+      scenario do
+        visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+        click_dropdown(name: "optionalHearingTime0", text: hearing_time_selection_string)
+        click_button("Update Hearing Time")
+
+        expect(page).to have_content(expected_post_update_time)
+      end
+    end
+
+    context "Legacy Hearing" do
+      let(:case_hearing) { create(:case_hearing) }
+      let(:initial_hearing) { create(:legacy_hearing, case_hearing: case_hearing) }
+
+      # Ensure that the times are always in standard time.
+      before { initial_hearing.hearing_day.update!(scheduled_for: "2024-11-11") }
+
+      context "With a pre-existing scheduled_in_timezone value" do
+        let(:hearing_time_selection_string) { "10:00 AM Central Time (US & Canada)" }
+        let(:hearing) { initial_hearing.tap { _1.update!(scheduled_in_timezone: "America/Chicago") } }
+        let(:expected_post_update_time) { "10:00 AM CST" }
+
+        before do
+          hearing.hearing_day.update!(regional_office: "RO30", request_type: "V", scheduled_for: "2024-11-11")
+        end
+
+        include_examples "The hearing time is updated correctly"
+      end
+
+      context "Without a pre-existing scheduled_in_timezone value" do
+        let(:hearing_time_selection_string) { "3:00 PM Central Time (US & Canada)" }
+        let(:hearing) { initial_hearing.tap { _1.update!(scheduled_in_timezone: nil) } }
+        let(:expected_post_update_time) { "3:00 PM CST" }
+
+        before do
+          hearing.hearing_day.update!(regional_office: "RO30", request_type: "T", scheduled_for: "2024-11-11")
+        end
+
+        include_examples "The hearing time is updated correctly"
+      end
+    end
+
+    context "AMA Hearing" do
+      let(:initial_hearing) { create(:hearing) }
+
+      context "With a pre-existing scheduled_datetime value" do
+        let(:hearing_time_selection_string) { "12:00 PM Alaska" }
+        let(:hearing) { initial_hearing.tap { _1.update!(scheduled_in_timezone: "America/Juneau") } }
+        let(:expected_post_update_time) { "12:00 PM #{Time.zone.now.dst? ? 'AKDT' : 'AKST'}" }
+
+        before { hearing.hearing_day.update!(regional_office: "RO63", request_type: "V") }
+
+        include_examples "The hearing time is updated correctly"
+      end
+
+      context "Without a pre-existing scheduled_datetime value" do
+        let(:hearing_time_selection_string) { "11:00 AM Hawaii" }
+        let(:hearing) { initial_hearing.tap { _1.update!(scheduled_in_timezone: nil) } }
+        let(:expected_post_update_time) { "11:00 AM HST" }
+
+        before { hearing.hearing_day.update!(regional_office: "RO59", request_type: "V") }
+
+        include_examples "The hearing time is updated correctly"
       end
     end
   end

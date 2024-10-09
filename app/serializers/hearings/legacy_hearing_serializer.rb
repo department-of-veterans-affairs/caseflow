@@ -17,9 +17,7 @@ class LegacyHearingSerializer
   attribute :appellant_email_address do |hearing|
     hearing.appellant_email_address || hearing.appeal.appellant_email_address
   end
-  attribute :appellant_tz do |hearing|
-    hearing.appellant_tz || hearing.appeal.appellant_tz
-  end
+  attribute :appellant_tz
   attribute :appellant_email_id, if: for_full do |hearing|
     hearing.appellant_recipient&.id.to_s
   end
@@ -75,9 +73,7 @@ class LegacyHearingSerializer
   attribute :representative_name, if: for_full
   attribute :representative_address, if: for_full
   attribute :representative_email_address, if: for_full
-  attribute :representative_tz, if: for_full do |hearing|
-    hearing.representative_tz || hearing.appeal.appellant_tz
-  end
+  attribute :representative_tz
   attribute :representative_email_id, if: for_full do |hearing|
     hearing.representative_recipient&.id.to_s
   end
@@ -122,6 +118,8 @@ class LegacyHearingSerializer
   attribute :current_user_timezone do |_, params|
     params[:user]&.timezone
   end
+
+  attribute :scheduled_in_timezone
 
   attribute :worksheet_issues, &:prepare_worksheet_issues
   attribute :mst do |object|

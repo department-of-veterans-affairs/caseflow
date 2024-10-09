@@ -25,6 +25,9 @@ class RequestIssue < CaseflowRecord
   # don't need to try as frequently as default 3 hours
   DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS = 12
 
+  # contested issue description pattern
+  DESC_ALLOWED_CHARACTERS_REGEX = /\A[a-zA-Z0-9\s.\-_|\/\\@#~=%,;?!'"`():$+*^\[\]&><{}]+\z/.freeze
+
   belongs_to :decision_review, polymorphic: true
   belongs_to :end_product_establishment, dependent: :destroy
   has_many :request_decision_issues, dependent: :destroy
@@ -35,12 +38,20 @@ class RequestIssue < CaseflowRecord
   has_one :legacy_issue_optin
   has_many :legacy_issues
   has_many :issue_modification_requests, dependent: :destroy
+  has_one :event_record, as: :evented_record
   belongs_to :correction_request_issue, class_name: "RequestIssue", foreign_key: "corrected_by_request_issue_id"
   belongs_to :ineligible_due_to, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
   belongs_to :contested_decision_issue, class_name: "DecisionIssue"
 
   # enum is symbol, but validates requires a string
   validates :ineligible_reason, exclusion: { in: ["untimely"] }, if: proc { |reqi| reqi.untimely_exemption }
+
+  # only allow specified characters for description
+  validates(
+    :contested_issue_description,
+    format: { with: DESC_ALLOWED_CHARACTERS_REGEX, message: "invalid characters used" },
+    allow_blank: true
+  )
 
   enum ineligible_reason: {
     duplicate_of_nonrating_issue_in_active_review: "duplicate_of_nonrating_issue_in_active_review",
@@ -417,6 +428,87 @@ class RequestIssue < CaseflowRecord
     closed_at if withdrawn?
   end
 
+  def removed?
+    closed_status == "removed"
+  end
+
+  # check if this RequestIssue was edited
+  def edited?
+    edited_description&.present?
+  end
+
+  # check for any RequestIssuesUpdates on the associated DecisionReview
+  def any_updates?
+    decision_review.request_issues_updates.any?
+  end
+
+  # Retrieve all Updates tied to the DecisionReview (Appeal, HLR/SC)
+  def fetch_request_issues_updates
+    decision_review.request_issues_updates if any_updates?
+  end
+
+  def fetch_removed_by_user
+    if removed?
+      relevant_update = request_issues_updates.find do |update|
+        update.removed_issues.any? { |issue| issue.id == id }
+      end
+
+      User.find(relevant_update&.user_id) if relevant_update
+    end
+  end
+
+  def fetch_withdrawn_by_user
+    if withdrawn?
+      relevant_update = request_issues_updates.find do |update|
+        update.withdrawn_issues.any? { |issue| issue.id == id }
+      end
+
+      User.find(relevant_update&.user_id) if relevant_update
+    end
+  end
+
+  def fetch_edited_by_user
+    if edited? && any_updates?
+      # Find the most recent update where the current issue ID is in the edited_issues list
+      relevant_update = request_issues_updates
+        .select { |update| update.edited_issues.any? { |issue| issue.id == id } }
+        .max_by(&:updated_at)
+
+      User.find(relevant_update&.user_id) if relevant_update
+    end
+  end
+
+  # This retrieves the User who added the Issue as a result of a RequestIssuesUpdate and NOT during the initial Intake
+  def fetch_added_by_user_from_update
+    if any_updates?
+      relevant_update = request_issues_updates.find do |update|
+        update.added_issues.any? { |issue| issue.id == id }
+      end
+
+      User.find(relevant_update&.user_id) if relevant_update
+    end
+  end
+
+  def request_issues_updates
+    @request_issues_updates ||= fetch_request_issues_updates
+  end
+
+  def removed_by_user
+    @removed_by_user ||= fetch_removed_by_user
+  end
+
+  def withdrawn_by_user
+    @withdrawn_by_user ||= fetch_withdrawn_by_user
+  end
+
+  def edited_by_user
+    @edited_by_user ||= fetch_edited_by_user
+  end
+
+  def added_by_user
+    @added_by_user ||= fetch_added_by_user_from_update || decision_review&.intake&.user
+  end
+
   def serialize
     Intake::RequestIssueSerializer.new(self).serializable_hash[:data][:attributes]
   end
@@ -752,6 +844,11 @@ class RequestIssue < CaseflowRecord
     return true if untimely_exemption
 
     decision_date >= (receipt_date - Rating::ONE_YEAR_PLUS_DAYS)
+  end
+
+  def from_decision_review_created_event?
+    # refer back to the associated Intake to see if both objects came from DRCE
+    decision_review&.from_decision_review_created_event?
   end
 
   private

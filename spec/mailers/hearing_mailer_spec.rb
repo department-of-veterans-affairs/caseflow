@@ -42,6 +42,11 @@ describe HearingMailer do
   end
   let(:pexip_url) { "fake.va.gov" }
   let(:reminder_type) { Hearings::ReminderService::TWO_DAY_REMINDER }
+
+  before do
+    allow_any_instance_of(BgsAddressService).to receive(:address).and_return(nil)
+  end
+
   shared_context "ama_hearing" do
     let(:appeal) { create(:appeal, :hearing_docket) }
     let(:hearing) do
@@ -236,7 +241,7 @@ describe HearingMailer do
       # Date and Time section
       expect(subject.body).to include("Date and Time")
       expect(subject.body).to include(
-        Hearings::CalendarTemplateHelper.format_hearing_time(hearing.time.appellant_time)
+        Hearings::CalendarTemplateHelper.format_hearing_time(virtual_hearing.hearing.appellant_time)
       )
 
       # Signature section
@@ -286,7 +291,7 @@ describe HearingMailer do
       # Date and Time section
       expect(subject.body).to include("Date and Time")
       expect(subject.body).to include(
-        Hearings::CalendarTemplateHelper.format_hearing_time(hearing.time.appellant_time)
+        Hearings::CalendarTemplateHelper.format_hearing_time(hearing.appellant_time)
       )
 
       # Signature section
@@ -392,6 +397,7 @@ describe HearingMailer do
     expected_ama_times = {
       ro_and_recipient_both_eastern: "8:30am EST",
       ro_pacific_recipient_eastern: "11:30am EST"
+
     }
     # legacy hearing is scheduled at 11:30am in the regional office's time zone
     expected_legacy_times = {
@@ -861,7 +867,6 @@ describe HearingMailer do
 
     context "with legacy virtual hearing" do
       let(:hearing_email_recipient) { virtual_hearing.hearing.appellant_recipient }
-
       include_context "legacy_hearing"
 
       describe "#cancellation" do
@@ -893,6 +898,8 @@ describe HearingMailer do
         context "regional office is in pacific timezone" do
           let(:regional_office) { oakland_ro_pacific }
 
+          before { hearing_email_recipient.update(timezone: "America/Los_Angeles") }
+
           it "has the correct time in the email" do
             expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_pacific])
           end
@@ -901,12 +908,16 @@ describe HearingMailer do
         describe "appellant_tz is present" do
           let(:appellant_tz) { "America/Los_Angeles" }
 
+          before { hearing_email_recipient.update(timezone: "America/Los_Angeles") }
+
           it "displays pacific standard time (PT)" do
             expect(subject.html_part.body).to include(expected_legacy_times[:ro_eastern_recipient_pacific])
           end
         end
 
         describe "appellant_tz is not present" do
+          before { hearing_email_recipient.update(timezone: nil) }
+
           it "displays eastern standard time (ET)" do
             expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_eastern])
           end
@@ -926,6 +937,8 @@ describe HearingMailer do
 
         context "regional office is in pacific timezone" do
           let(:regional_office) { oakland_ro_pacific }
+
+          before { hearing_email_recipient.update(timezone: "America/Los_Angeles") }
 
           it "has the correct time in the email" do
             expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_pacific])
@@ -974,6 +987,8 @@ describe HearingMailer do
             end
 
             it "has appellant's state of residence" do
+              allow_any_instance_of(LegacyAppeal).to receive(:appellant_state).and_return("NY")
+
               expect(subject.html_part.body.decoded).to include("For internal Board use:\r\n  NY")
             end
           end
@@ -993,6 +1008,8 @@ describe HearingMailer do
 
         context "regional office is in pacific timezone" do
           let(:regional_office) { oakland_ro_pacific }
+
+          before { hearing_email_recipient.update(timezone: "America/Los_Angeles") }
 
           it "has the correct time in the email" do
             expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_pacific])
@@ -1030,6 +1047,8 @@ describe HearingMailer do
 
         context "regional office is in western timezone" do
           let(:regional_office) { oakland_ro_pacific }
+
+          before { hearing_email_recipient.update(timezone: "America/Los_Angeles") }
 
           it "has the correct subject line" do
             expect(subject.subject).to eq(
@@ -1316,6 +1335,8 @@ describe HearingMailer do
         context "appellant_tz is present" do
           let(:appellant_tz) { "America/Los_Angeles" }
 
+          before { hearing_email_recipient.update(timezone: "America/Los_Angeles") }
+
           it "has the correct subject line" do
             expect(subject.subject).to eq(
               "#{first_clause} #{expected_ama_times[:ro_eastern_recipient_pacific]} #{do_not_reply_clause}"
@@ -1528,6 +1549,8 @@ describe HearingMailer do
 
         context "appellant_tz is present" do
           let(:appellant_tz) { "America/Los_Angeles" }
+
+          before { hearing_email_recipient.update(timezone: "America/Los_Angeles") }
 
           it "has the correct subject line" do
             expect(subject.subject).to eq(

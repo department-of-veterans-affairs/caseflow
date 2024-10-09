@@ -304,7 +304,7 @@ module Seeds
                 text: "Omit variable from distribution rules"
               }
             ],
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             min_value: 0,
             max_value: 999,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket, Constants.ACD_LEVERS.algorithms.proportion],
@@ -314,7 +314,7 @@ module Seeds
           {
             item: Constants.DISTRIBUTION.cavc_aod_affinity_days,
             title: Constants.DISTRIBUTION.cavc_aod_affinity_days_title,
-            description: "Sets the number of days appeals returned from CAVC that are also AOD respect the affinity to the deciding judge. This is not applicable for legacy apeals for which the deciding judge conducted the most recent hearing.",
+            description: "Sets the number of days appeals returned from CAVC that are also AOD respect the affinity to the deciding judge. This is not applicable for legacy appeals for which the deciding judge conducted the most recent hearing.",
             data_type: Constants.ACD_LEVERS.data_types.radio,
             value: "14",
             unit: Constants.ACD_LEVERS.days,
@@ -338,7 +338,7 @@ module Seeds
                 text: "Omit variable from distribution rules"
               }
             ],
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion],
             lever_group: Constants.ACD_LEVERS.lever_groups.affinity,
             lever_group_order: 3003
@@ -784,6 +784,30 @@ module Seeds
               }
             ]
           },
+          {
+            item: Constants.DISTRIBUTION.enable_nonsscavlj,
+            title: Constants.DISTRIBUTION.enable_nonsscavlj_title,
+            description: "This is the internal lever used to enable and disable Non-SSC AVLJ work.",
+            data_type: Constants.ACD_LEVERS.data_types.boolean,
+            value: true,
+            unit: "",
+            is_disabled_in_ui: true,
+            algorithms_used: [],
+            lever_group: Constants.ACD_LEVERS.lever_groups.internal,
+            lever_group_order: 0
+          },
+          {
+            item: Constants.DISTRIBUTION.nonsscavlj_number_of_appeals_to_move,
+            title: Constants.DISTRIBUTION.nonsscavlj_number_of_appeals_to_move_title,
+            description: "This is the internal lever used to alter the number of appeals to be returned for Non-SSC AVLJs",
+            data_type: Constants.ACD_LEVERS.data_types.number,
+            value: 2,
+            unit: "",
+            is_disabled_in_ui: true,
+            algorithms_used: [],
+            lever_group: Constants.ACD_LEVERS.lever_groups.internal,
+            lever_group_order: 999
+          },
         ]
       end
 
@@ -824,7 +848,6 @@ module Seeds
       # DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER
       def full_update_lever(lever)
         existing_lever = CaseDistributionLever.find_by_item(lever[:item])
-
         existing_lever.update(
           title: lever[:title],
           description: lever[:description],

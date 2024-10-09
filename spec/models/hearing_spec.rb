@@ -303,4 +303,104 @@ describe Hearing, :postgres do
       expect(hearing.aod?).to eq(false)
     end
   end
+
+  context "scheduled_for" do
+    let(:hearing) { create(:hearing) }
+
+    context "when hearing_day is nil" do
+      it "returns nil" do
+        hearing.hearing_day.destroy!
+        hearing.reload
+        expect(hearing.scheduled_for).to be nil
+      end
+    end
+
+    context "when scheduled_datetime and scheduled_in_timezone are present" do
+      it "returns scheduled_datetime in scheduled_in_timezone timezone with daylight savings ON" do
+        hearing.update(scheduled_datetime: "2021-04-23T11:30:00-04:00", scheduled_in_timezone: "America/Los_Angeles")
+        expect(hearing.scheduled_for.strftime("%Y-%m-%d %H:%M:%S %z")).to eq "2021-04-23 08:30:00 -0700"
+      end
+
+      it "returns scheduled_datetime in scheduled_in_timezone timezone with daylight savings OFF" do
+        hearing.update(scheduled_datetime: "2021-12-23T11:30:00-05:00", scheduled_in_timezone: "America/Los_Angeles")
+        expect(hearing.scheduled_for.strftime("%Y-%m-%d %H:%M:%S %z")).to eq "2021-12-23 08:30:00 -0800"
+      end
+
+      it "returns scheduled_datetime in scheduled_in_timezone timezone - America/Phoenix" do
+        hearing.update(scheduled_datetime: "2021-04-23T11:30:00-04:00", scheduled_in_timezone: "America/Phoenix")
+        expect(hearing.scheduled_for.strftime("%Y-%m-%d %H:%M:%S %z")).to eq "2021-04-23 08:30:00 -0700"
+      end
+
+      it "returns scheduled_datetime in scheduled_in_timezone timezone - Pacific/Honolulu" do
+        hearing.update(scheduled_datetime: "2021-04-23T11:30:00-04:00", scheduled_in_timezone: "Pacific/Honolulu")
+        expect(hearing.scheduled_for.strftime("%Y-%m-%d %H:%M:%S %z")).to eq "2021-04-23 05:30:00 -1000"
+      end
+
+      it "returns scheduled_datetime in scheduled_in_timezone timezone - Asia/Manila" do
+        hearing.update(scheduled_datetime: "2021-04-23T11:30:00-04:00", scheduled_in_timezone: "Asia/Manila")
+        expect(hearing.scheduled_for.strftime("%Y-%m-%d %H:%M:%S %z")).to eq "2021-04-23 23:30:00 +0800"
+      end
+
+      it "returns scheduled_datetime in scheduled_in_timezone timezone - America/Puerto_Rico" do
+        hearing.update(scheduled_datetime: "2021-04-23T11:30:00-04:00", scheduled_in_timezone: "America/Puerto_Rico")
+        expect(hearing.scheduled_for.strftime("%Y-%m-%d %H:%M:%S %z")).to eq "2021-04-23 11:30:00 -0400"
+      end
+    end
+
+    context "when scheduled_datetime or/and scheduled_in_timezone is null" do
+      let(:expected_scheduled_for) do
+        time_string = "08:30:00 #{Time.zone.now.dst? ? '-0400' : '-0500'}"
+        "#{Time.zone.today.strftime('%Y-%m-%d')} #{time_string}"
+      end
+
+      it "returns scheduled_time in regional_office timezone when scheduled_datetime is null" do
+        hearing.update(scheduled_datetime: nil, scheduled_in_timezone: "America/Los_Angeles")
+        expect(hearing.scheduled_for.strftime("%Y-%m-%d %H:%M:%S %z")).to eq expected_scheduled_for
+      end
+
+      it "returns scheduled_time in regional_office timezone when scheduled_in_timezone is null" do
+        hearing.update(scheduled_datetime: "2021-04-23T11:30:00-04:00", scheduled_in_timezone: nil)
+        expect(hearing.scheduled_for.strftime("%Y-%m-%d %H:%M:%S %z")).to eq expected_scheduled_for
+      end
+
+      it "returns scheduled_time in regional_office timezone when both null" do
+        hearing.update(scheduled_datetime: nil, scheduled_in_timezone: nil)
+        expect(hearing.scheduled_for.strftime("%Y-%m-%d %H:%M:%S %z")).to eq expected_scheduled_for
+      end
+    end
+  end
+
+  context "use_hearing_datetime?" do
+    let(:hearing) { create(:hearing) }
+
+    context "scheduled_datetime is not nil" do
+      before do
+        hearing.update(scheduled_datetime: "2023-04-15 14:30:00+00")
+      end
+
+      it "returns true" do
+        expect(hearing.use_hearing_datetime?).to eq(true)
+      end
+
+      it "uses HearingDatetimeService instance" do
+        time_service_double = instance_double("HearingDatetimeService")
+        allow(HearingDatetimeService).to receive(:new).and_return(time_service_double)
+        hearing.time
+        expect(HearingDatetimeService).to have_received(:new)
+      end
+    end
+
+    context "scheduled_datetime is nil" do
+      it "returns false" do
+        expect(hearing.use_hearing_datetime?).to eq(false)
+      end
+
+      it "uses HearingTimeService instance" do
+        time_service_double = instance_double("HearingTimeService")
+        allow(HearingTimeService).to receive(:new).and_return(time_service_double)
+        hearing.time
+        expect(HearingTimeService).to have_received(:new)
+      end
+    end
+  end
 end

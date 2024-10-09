@@ -14,6 +14,18 @@ class LegacyDocket < Docket
     LegacyAppeal.repository.ready_to_distribute_appeals
   end
 
+  def appeals_tied_to_non_ssc_avljs
+    LegacyAppeal.repository.appeals_tied_to_non_ssc_avljs
+  end
+
+  def appeals_tied_to_avljs_and_vljs
+    LegacyAppeal.repository.appeals_tied_to_avljs_and_vljs
+  end
+
+  def loc_63_appeals
+    LegacyAppeal.repository.loc_63_appeals
+  end
+
   # rubocop:disable Metrics/CyclomaticComplexity
   def count(priority: nil, ready: nil)
     counts_by_priority_and_readiness.inject(0) do |sum, row|

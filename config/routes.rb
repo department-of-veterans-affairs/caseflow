@@ -2,8 +2,6 @@ Rails.application.routes.draw do
   mount Rswag::Ui::Engine => '/api-docs'
   mount Rswag::Api::Engine => '/api-docs'
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
-  # The priority is based upon order of creation: first created -> highest priority.
-  # See how all your routes lay out with "rake routes".
 
   resources :sessions, only: [:new, :update]
   resources :certifications, path_names: { new: "new/:vacols_id" } do
@@ -32,11 +30,16 @@ Rails.application.routes.draw do
       get 'appeals_ready_to_distribute'
       get 'appeals_non_priority_ready_to_distribute'
       get 'appeals_distributed'
+      get 'appeals_in_location_63_in_past_2_days'
       get 'ineligible_judge_list'
+      get 'appeals_tied_to_non_ssc_avlj'
+      get 'appeals_tied_to_avljs_and_vljs'
       post 'run_demo_aod_hearing_seeds'
       post 'run_demo_non_aod_hearing_seeds'
       post 'run-demo-ama-docket-goals'
-      post 'run-demo-docket-priority'
+      post 'run_demo_non_avlj_appeals'
+      post 'run_demo_docket_priority'
+      post 'run_return_legacy_appeals_to_board'
     end
   end
 
@@ -94,6 +97,14 @@ Rails.application.routes.draw do
         get "vacols_issues", to: redirect('api-docs/v3/vacols_issues.yaml')
       end
     end
+
+    namespace :events do
+      namespace :v1 do
+        post '/decision_review_created', to: 'decision_review_created#decision_review_created'
+        post '/decision_review_created_error',  to: 'decision_review_created#decision_review_created_error'
+      end
+    end
+
     get "metadata", to: 'metadata#index'
   end
 
@@ -291,6 +302,7 @@ Rails.application.routes.draw do
     post 'edit_ep', on: :member
   end
   match '/supplemental_claims/:claim_id/edit/:any' => 'supplemental_claims#edit', via: [:get]
+  get '/remands(/*path)', to: redirect('/supplemental_claims/%{path}')
 
   resources :decision_reviews, param: :business_line_slug do
     resources :tasks, controller: :decision_reviews, param: :task_id, only: [:show, :update] do

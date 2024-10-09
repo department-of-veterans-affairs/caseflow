@@ -27,7 +27,7 @@ class BVAAppealStatus
   DEFINITIONS = {
     not_distributed: "1. Not distributed",
     distributed_to_judge: "2. Distributed to judge",
-    distributed_to_specialty_case_team: "2. Distributed to Specialty Case Team",
+    distributed_to_specialty_case_team: "2. Distributed to SCT",
     assigned_to_attorney: "3. Assigned to attorney",
     assigned_to_colocated: "4. Assigned to colocated",
     in_progress: "5. Decision in progress",

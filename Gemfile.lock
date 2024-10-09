@@ -1,24 +1,13 @@
 GIT
-  remote: https://github.com/colszowka/simplecov.git
-  revision: 783c9d7e9995f3ea9baf9fbb517c1d0ceb12acdb
-  specs:
-    simplecov (0.15.1)
-      docile (~> 1.1.0)
-      json (>= 1.8, < 3)
-      simplecov-html (~> 0.10.0)
-
-GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: 716b58caf2116da5fca21c3b3aeea6c9712f3b9d
-  ref: 716b58caf2116da5fca21c3b3aeea6c9712f3b9d
+  revision: 9bd3635fbd8094d25160669f38d8699e2f1d7a98
+  ref: 9bd3635fbd8094d25160669f38d8699e2f1d7a98
   specs:
     caseflow (0.4.8)
       aws-sdk-s3
-      bourbon (= 4.2.7)
       d3-rails
       jquery-rails
       momentjs-rails
-      neat
       rails (>= 4.2.7.1)
       redis-namespace
       redis-rails
@@ -100,66 +89,70 @@ GEM
   remote: https://rubygems.org/
   specs:
     aasm (4.11.0)
-    actioncable (6.0.6.1)
-      actionpack (= 6.0.6.1)
+    actioncable (6.1.7.7)
+      actionpack (= 6.1.7.7)
+      activesupport (= 6.1.7.7)
       nio4r (~> 2.0)
       websocket-driver (>= 0.6.1)
-    actionmailbox (6.0.6.1)
-      actionpack (= 6.0.6.1)
-      activejob (= 6.0.6.1)
-      activerecord (= 6.0.6.1)
-      activestorage (= 6.0.6.1)
-      activesupport (= 6.0.6.1)
+    actionmailbox (6.1.7.7)
+      actionpack (= 6.1.7.7)
+      activejob (= 6.1.7.7)
+      activerecord (= 6.1.7.7)
+      activestorage (= 6.1.7.7)
+      activesupport (= 6.1.7.7)
       mail (>= 2.7.1)
-    actionmailer (6.0.6.1)
-      actionpack (= 6.0.6.1)
-      actionview (= 6.0.6.1)
-      activejob (= 6.0.6.1)
+    actionmailer (6.1.7.7)
+      actionpack (= 6.1.7.7)
+      actionview (= 6.1.7.7)
+      activejob (= 6.1.7.7)
+      activesupport (= 6.1.7.7)
       mail (~> 2.5, >= 2.5.4)
       rails-dom-testing (~> 2.0)
-    actionpack (6.0.6.1)
-      actionview (= 6.0.6.1)
-      activesupport (= 6.0.6.1)
-      rack (~> 2.0, >= 2.0.8)
+    actionpack (6.1.7.7)
+      actionview (= 6.1.7.7)
+      activesupport (= 6.1.7.7)
+      rack (~> 2.0, >= 2.0.9)
       rack-test (>= 0.6.3)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.0, >= 1.2.0)
-    actiontext (6.0.6.1)
-      actionpack (= 6.0.6.1)
-      activerecord (= 6.0.6.1)
-      activestorage (= 6.0.6.1)
-      activesupport (= 6.0.6.1)
+    actiontext (6.1.7.7)
+      actionpack (= 6.1.7.7)
+      activerecord (= 6.1.7.7)
+      activestorage (= 6.1.7.7)
+      activesupport (= 6.1.7.7)
       nokogiri (>= 1.8.5)
-    actionview (6.0.6.1)
-      activesupport (= 6.0.6.1)
+    actionview (6.1.7.7)
+      activesupport (= 6.1.7.7)
       builder (~> 3.1)
       erubi (~> 1.4)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.1, >= 1.2.0)
-    activejob (6.0.6.1)
-      activesupport (= 6.0.6.1)
+    activejob (6.1.7.7)
+      activesupport (= 6.1.7.7)
       globalid (>= 0.3.6)
-    activemodel (6.0.6.1)
-      activesupport (= 6.0.6.1)
-    activerecord (6.0.6.1)
-      activemodel (= 6.0.6.1)
-      activesupport (= 6.0.6.1)
-    activerecord-import (1.0.2)
+    activemodel (6.1.7.7)
+      activesupport (= 6.1.7.7)
+    activerecord (6.1.7.7)
+      activemodel (= 6.1.7.7)
+      activesupport (= 6.1.7.7)
+    activerecord-import (1.0.3)
       activerecord (>= 3.2)
-    activerecord-oracle_enhanced-adapter (6.0.6)
-      activerecord (~> 6.0.0)
+    activerecord-oracle_enhanced-adapter (6.1.6)
+      activerecord (~> 6.1.0)
       ruby-plsql (>= 0.6.0)
-    activestorage (6.0.6.1)
-      actionpack (= 6.0.6.1)
-      activejob (= 6.0.6.1)
-      activerecord (= 6.0.6.1)
+    activestorage (6.1.7.7)
+      actionpack (= 6.1.7.7)
+      activejob (= 6.1.7.7)
+      activerecord (= 6.1.7.7)
+      activesupport (= 6.1.7.7)
       marcel (~> 1.0)
-    activesupport (6.0.6.1)
+      mini_mime (>= 1.1.0)
+    activesupport (6.1.7.7)
       concurrent-ruby (~> 1.0, >= 1.0.2)
-      i18n (>= 0.7, < 2)
-      minitest (~> 5.1)
-      tzinfo (~> 1.1)
-      zeitwerk (~> 2.2, >= 2.2.2)
+      i18n (>= 1.6, < 2)
+      minitest (>= 5.1)
+      tzinfo (~> 2.0)
+      zeitwerk (~> 2.3)
     acts_as_tree (2.9.0)
       activerecord (>= 3.0.0)
     addressable (2.8.0)
@@ -1455,24 +1448,22 @@ GEM
       aws-eventstream (~> 1, >= 1.0.2)
     backport (1.2.0)
     base64 (0.2.0)
-    benchmark-ips (2.7.2)
+    benchmark (0.3.0)
+    benchmark-ips (2.14.0)
     bootsnap (1.7.5)
       msgpack (~> 1.0)
-    bourbon (4.2.7)
-      sass (~> 3.4)
-      thor (~> 0.19)
     brakeman (4.7.1)
     browser (5.3.1)
     builder (3.2.4)
-    bullet (6.0.1)
+    bullet (6.1.5)
       activesupport (>= 3.0.0)
       uniform_notifier (~> 1.11)
     bummr (0.5.0)
       rainbow
       thor
-    bundler-audit (0.6.1)
+    bundler-audit (0.9.1)
       bundler (>= 1.2.0, < 3)
-      thor (~> 0.18)
+      thor (~> 1.0)
     business_time (0.9.3)
       activesupport (>= 3.2.0)
       tzinfo
@@ -1529,26 +1520,28 @@ GEM
       database_cleaner-core (~> 2.0.0)
     database_cleaner-core (2.0.1)
     date (3.3.3)
-    ddtrace (0.34.1)
-      msgpack
+    dead_end (4.0.0)
     debase (0.2.4.1)
       debase-ruby_core_source (>= 0.10.2)
     debase-ruby_core_source (0.10.14)
-    derailed_benchmarks (1.3.6)
+    derailed_benchmarks (2.1.2)
       benchmark-ips (~> 2)
+      dead_end
       get_process_mem (~> 0)
       heapy (~> 0)
-      memory_profiler (~> 0)
+      memory_profiler (>= 0, < 2)
+      mini_histogram (>= 0.3.0)
       rack (>= 1)
-      rake (> 10, < 13)
-      thor (~> 0.19)
+      rack-test
+      rake (> 10, < 14)
+      ruby-statistics (>= 2.1)
+      thor (>= 0.19, < 2)
     diff-lcs (1.3)
-    docile (1.1.5)
-    dogstatsd-ruby (4.4.0)
-    dotenv (2.7.5)
-    dotenv-rails (2.7.5)
-      dotenv (= 2.7.5)
-      railties (>= 3.2, < 6.1)
+    docile (1.4.1)
+    dotenv (2.8.1)
+    dotenv-rails (2.8.1)
+      dotenv (= 2.8.1)
+      railties (>= 3.2)
     dry-configurable (0.11.5)
       concurrent-ruby (~> 1.0)
       dry-core (~> 0.4, >= 0.4.7)
@@ -1580,6 +1573,7 @@ GEM
       dry-equalizer (~> 0.3)
       dry-inflector (~> 0.1, >= 0.1.2)
       dry-logic (~> 1.0, >= 1.0.2)
+    e2mmap (0.1.0)
     ecma-re-validator (0.2.1)
       regexp_parser (~> 1.2)
     erubi (1.12.0)
@@ -1608,13 +1602,16 @@ GEM
     foreman (0.87.2)
     formatador (0.2.5)
     fuzzy_match (2.1.0)
-    get_process_mem (0.2.4)
+    get_process_mem (0.2.7)
       ffi (~> 1.0)
     git (1.13.2)
       addressable (~> 2.8)
       rchardet (~> 1.8)
-    globalid (1.1.0)
-      activesupport (>= 5.0)
+    globalid (1.2.1)
+      activesupport (>= 6.1)
+    google-protobuf (3.25.4)
+    googleapis-common-protos-types (1.15.0)
+      google-protobuf (>= 3.18, < 5.a)
     govdelivery-tms (2.8.4)
       activesupport
       faraday
@@ -1638,7 +1635,8 @@ GEM
       builder (>= 2.1.2)
     hana (1.3.6)
     hashdiff (1.0.0)
-    heapy (0.1.4)
+    heapy (0.2.0)
+      thor
     holidays (6.6.1)
     httpclient (2.8.3)
     httpi (2.4.4)
@@ -1658,7 +1656,6 @@ GEM
       rails-dom-testing (>= 1, < 3)
       railties (>= 4.2.0)
       thor (>= 0.14, < 2.0)
-    json (2.3.0)
     json-schema (4.3.0)
       addressable (>= 2.8)
     json_schemer (0.2.16)
@@ -1702,9 +1699,8 @@ GEM
       net-imap
       net-pop
       net-smtp
-    marcel (1.0.2)
-    maruku (0.7.3)
-    memory_profiler (0.9.14)
+    marcel (1.0.4)
+    memory_profiler (1.0.2)
     meta_request (0.7.2)
       rack-contrib (>= 1.1, < 3)
       railties (>= 3.0.0, < 7)
@@ -1712,21 +1708,16 @@ GEM
     mime-types (3.3)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2019.1009)
+    mini_histogram (0.3.1)
     mini_mime (1.1.2)
-    mini_portile2 (2.8.5)
+    mini_portile2 (2.8.7)
     minitest (5.19.0)
     moment_timezone-rails (0.5.0)
     momentjs-rails (2.29.4.1)
       railties (>= 3.1)
     msgpack (1.4.2)
     multipart-post (2.1.1)
-    multiverse (0.2.2)
-      activerecord (>= 4.2)
-      activesupport (>= 4.2)
-      railties (>= 4.2)
     nap (1.1.0)
-    neat (4.0.0)
-      thor (~> 0.19)
     nenv (0.3.0)
     net-imap (0.3.7)
       date
@@ -1737,7 +1728,6 @@ GEM
       timeout
     net-smtp (0.3.3)
       net-protocol
-    newrelic_rpm (6.5.0.357)
     nio4r (2.5.9)
     no_proxy_fix (0.1.2)
     nokogiri (1.15.5)
@@ -1751,19 +1741,105 @@ GEM
       faraday (>= 0.9)
       sawyer (~> 0.8.0, >= 0.5.3)
     open4 (1.3.4)
+    opentelemetry-api (1.1.0)
+    opentelemetry-common (0.19.7)
+      opentelemetry-api (~> 1.0)
+    opentelemetry-exporter-otlp (0.24.2)
+      google-protobuf (~> 3.19)
+      googleapis-common-protos-types (~> 1.3)
+      opentelemetry-api (~> 1.1)
+      opentelemetry-common (~> 0.19.6)
+      opentelemetry-sdk (~> 1.2)
+      opentelemetry-semantic_conventions
+    opentelemetry-instrumentation-action_pack (0.5.0)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-instrumentation-base (~> 0.21.0)
+      opentelemetry-instrumentation-rack (~> 0.21)
+    opentelemetry-instrumentation-action_view (0.4.0)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-instrumentation-active_support (~> 0.1)
+      opentelemetry-instrumentation-base (~> 0.20)
+    opentelemetry-instrumentation-active_job (0.4.0)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-instrumentation-base (~> 0.21.0)
+    opentelemetry-instrumentation-active_model_serializers (0.19.1)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-instrumentation-base (~> 0.21.0)
+    opentelemetry-instrumentation-active_record (0.5.0)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-instrumentation-base (~> 0.21.0)
+      ruby2_keywords
+    opentelemetry-instrumentation-active_support (0.3.0)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-instrumentation-base (~> 0.21.0)
+    opentelemetry-instrumentation-aws_sdk (0.3.2)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-instrumentation-base (~> 0.21.0)
+    opentelemetry-instrumentation-base (0.21.1)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-registry (~> 0.1)
+    opentelemetry-instrumentation-concurrent_ruby (0.20.1)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-instrumentation-base (~> 0.21.0)
+    opentelemetry-instrumentation-faraday (0.22.0)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-common (~> 0.19.3)
+      opentelemetry-instrumentation-base (~> 0.21.0)
+    opentelemetry-instrumentation-http (0.21.0)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-instrumentation-base (~> 0.21.0)
+    opentelemetry-instrumentation-http_client (0.21.0)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-common (~> 0.19.3)
+      opentelemetry-instrumentation-base (~> 0.21.0)
+    opentelemetry-instrumentation-net_http (0.21.1)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-common (~> 0.19.3)
+      opentelemetry-instrumentation-base (~> 0.21.0)
+    opentelemetry-instrumentation-pg (0.23.0)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-instrumentation-base (~> 0.21.0)
+    opentelemetry-instrumentation-rack (0.22.1)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-common (~> 0.19.3)
+      opentelemetry-instrumentation-base (~> 0.21.0)
+    opentelemetry-instrumentation-rails (0.25.0)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-instrumentation-action_pack (~> 0.5.0)
+      opentelemetry-instrumentation-action_view (~> 0.4.0)
+      opentelemetry-instrumentation-active_job (~> 0.4.0)
+      opentelemetry-instrumentation-active_record (~> 0.5.0)
+      opentelemetry-instrumentation-active_support (~> 0.3.0)
+      opentelemetry-instrumentation-base (~> 0.21.0)
+    opentelemetry-instrumentation-rake (0.1.1)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-instrumentation-base (~> 0.21.0)
+    opentelemetry-instrumentation-redis (0.24.1)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-common (~> 0.19.3)
+      opentelemetry-instrumentation-base (~> 0.21.0)
+    opentelemetry-registry (0.2.0)
+      opentelemetry-api (~> 1.1)
+    opentelemetry-sdk (1.2.1)
+      opentelemetry-api (~> 1.1)
+      opentelemetry-common (~> 0.19.3)
+      opentelemetry-registry (~> 0.2)
+      opentelemetry-semantic_conventions
+    opentelemetry-semantic_conventions (1.10.0)
+      opentelemetry-api (~> 1.0)
     paper_trail (12.3.0)
       activerecord (>= 5.2)
       request_store (~> 1.1)
     parallel (1.23.0)
-    paranoia (2.4.2)
-      activerecord (>= 4.0, < 6.1)
+    paranoia (2.6.3)
+      activerecord (>= 5.1, < 7.2)
     parser (2.7.2.0)
       ast (~> 2.4.1)
     pdf-forms (1.2.0)
       cliver (~> 0.3.2)
       safe_shell (>= 1.0.3, < 2.0)
     pdfkit (0.8.7.2)
-    pg (1.1.4)
+    pg (1.5.7)
     pluck_to_hash (1.0.2)
       activerecord (>= 4.0.2)
       activesupport (>= 4.0.2)
@@ -1782,20 +1858,20 @@ GEM
       rack (~> 2.0)
     rack-test (2.1.0)
       rack (>= 1.3)
-    rails (6.0.6.1)
-      actioncable (= 6.0.6.1)
-      actionmailbox (= 6.0.6.1)
-      actionmailer (= 6.0.6.1)
-      actionpack (= 6.0.6.1)
-      actiontext (= 6.0.6.1)
-      actionview (= 6.0.6.1)
-      activejob (= 6.0.6.1)
-      activemodel (= 6.0.6.1)
-      activerecord (= 6.0.6.1)
-      activestorage (= 6.0.6.1)
-      activesupport (= 6.0.6.1)
-      bundler (>= 1.3.0)
-      railties (= 6.0.6.1)
+    rails (6.1.7.7)
+      actioncable (= 6.1.7.7)
+      actionmailbox (= 6.1.7.7)
+      actionmailer (= 6.1.7.7)
+      actionpack (= 6.1.7.7)
+      actiontext (= 6.1.7.7)
+      actionview (= 6.1.7.7)
+      activejob (= 6.1.7.7)
+      activemodel (= 6.1.7.7)
+      activerecord (= 6.1.7.7)
+      activestorage (= 6.1.7.7)
+      activesupport (= 6.1.7.7)
+      bundler (>= 1.15.0)
+      railties (= 6.1.7.7)
       sprockets-rails (>= 2.0.0)
     rails-dom-testing (2.1.1)
       activesupport (>= 5.0.0)
@@ -1809,12 +1885,12 @@ GEM
     rails-html-sanitizer (1.6.0)
       loofah (~> 2.21)
       nokogiri (~> 1.14)
-    railties (6.0.6.1)
-      actionpack (= 6.0.6.1)
-      activesupport (= 6.0.6.1)
+    railties (6.1.7.7)
+      actionpack (= 6.1.7.7)
+      activesupport (= 6.1.7.7)
       method_source
-      rake (>= 0.8.7)
-      thor (>= 0.20.3, < 2.0)
+      rake (>= 12.2)
+      thor (~> 1.0)
     rainbow (3.1.1)
     rake (12.3.3)
     rb-fsevent (0.11.2)
@@ -1840,8 +1916,8 @@ GEM
       redis-namespace (~> 1.0)
     redis-mutex (4.0.2)
       redis-classy (~> 2.0)
-    redis-namespace (1.6.0)
-      redis (>= 3.0.4)
+    redis-namespace (1.11.0)
+      redis (>= 4)
     redis-rack (2.0.4)
       rack (>= 1.5, < 3)
       redis-store (>= 1.2, < 2)
@@ -1914,10 +1990,12 @@ GEM
     ruby-debug-ide (0.7.3)
       rake (>= 0.8.1)
     ruby-graphviz (1.2.4)
-    ruby-oci8 (2.2.7)
+    ruby-oci8 (2.2.14)
     ruby-plsql (0.8.0)
     ruby-prof (1.4.1)
     ruby-progressbar (1.13.0)
+    ruby-statistics (3.0.2)
+    ruby2_keywords (0.0.5)
     ruby_dep (1.5.0)
     ruby_parser (3.20.3)
       sexp_processor (~> 4.16)
@@ -1962,22 +2040,30 @@ GEM
       thor
     shoulda-matchers (5.3.0)
       activesupport (>= 5.2.0)
-    simplecov-html (0.10.2)
+    simplecov (0.22.0)
+      docile (~> 1.1)
+      simplecov-html (~> 0.11)
+      simplecov_json_formatter (~> 0.1)
+    simplecov-html (0.13.1)
+    simplecov-lcov (0.8.0)
+    simplecov_json_formatter (0.1.4)
     single_cov (1.3.2)
     sixarm_ruby_unaccent (1.2.0)
     socksify (1.7.1)
-    solargraph (0.38.0)
+    solargraph (0.40.1)
       backport (~> 1.1)
+      benchmark
       bundler (>= 1.17.2)
+      e2mmap
       jaro_winkler (~> 1.5)
-      maruku (~> 0.7, >= 0.7.3)
-      nokogiri (~> 1.9, >= 1.9.1)
+      kramdown (~> 2.3)
+      kramdown-parser-gfm (~> 1.1)
       parser (~> 2.3)
-      reverse_markdown (~> 1.0, >= 1.0.5)
-      rubocop (~> 0.52)
-      thor (~> 0.19, >= 0.19.4)
+      reverse_markdown (>= 1.0.5, < 3)
+      rubocop (>= 0.52)
+      thor (~> 1.0)
       tilt (~> 2.0)
-      yard (~> 0.9)
+      yard (~> 0.9, >= 0.9.24)
     sprockets (3.7.2)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
@@ -1993,19 +2079,18 @@ GEM
     terminal-table (1.8.0)
       unicode-display_width (~> 1.1, >= 1.1.1)
     test-prof (0.10.1)
-    thor (0.20.3)
-    thread_safe (0.3.6)
+    thor (1.3.1)
     tilt (2.0.8)
     timecop (0.9.1)
     timeout (0.4.0)
     tty-tree (0.3.0)
-    tzinfo (1.2.10)
-      thread_safe (~> 0.1)
+    tzinfo (2.0.6)
+      concurrent-ruby (~> 1.0)
     uglifier (4.1.20)
       execjs (>= 0.3.0, < 3)
     unicode-display_width (1.8.0)
     unicode_utils (1.4.0)
-    uniform_notifier (1.12.1)
+    uniform_notifier (1.16.0)
     uri_template (0.7.0)
     validates_email_format_of (1.6.3)
       i18n
@@ -2047,8 +2132,8 @@ PLATFORMS
 
 DEPENDENCIES
   aasm (= 4.11.0)
-  activerecord-import
-  activerecord-oracle_enhanced-adapter (~> 6.0.0)
+  activerecord-import (= 1.0.3)
+  activerecord-oracle_enhanced-adapter (~> 6.1.0)
   acts_as_tree
   amoeba
   anbt-sql-formatter
@@ -2057,7 +2142,7 @@ DEPENDENCIES
   bootsnap
   brakeman
   browser
-  bullet
+  bullet (~> 6.1.0)
   bummr
   bundler-audit
   business_time (~> 0.9.3)
@@ -2070,10 +2155,8 @@ DEPENDENCIES
   countries
   danger (~> 6.2.2)
   database_cleaner-active_record (= 2.0.0)
-  ddtrace
   debase
   derailed_benchmarks
-  dogstatsd-ruby
   dotenv-rails
   dry-schema (~> 1.4)
   factory_bot_rails (~> 5.2)
@@ -2093,28 +2176,44 @@ DEPENDENCIES
   logstasher
   meta_request
   moment_timezone-rails
-  multiverse
-  newrelic_rpm
   nokogiri (>= 1.11.0.rc4)
+  opentelemetry-exporter-otlp
+  opentelemetry-instrumentation-action_pack
+  opentelemetry-instrumentation-action_view
+  opentelemetry-instrumentation-active_job
+  opentelemetry-instrumentation-active_model_serializers
+  opentelemetry-instrumentation-active_record
+  opentelemetry-instrumentation-aws_sdk
+  opentelemetry-instrumentation-concurrent_ruby
+  opentelemetry-instrumentation-faraday
+  opentelemetry-instrumentation-http
+  opentelemetry-instrumentation-http_client
+  opentelemetry-instrumentation-net_http
+  opentelemetry-instrumentation-pg
+  opentelemetry-instrumentation-rack
+  opentelemetry-instrumentation-rails
+  opentelemetry-instrumentation-rake
+  opentelemetry-instrumentation-redis
+  opentelemetry-sdk
   paper_trail (~> 12.0)
   parallel
   paranoia (~> 2.2)
   pdf-forms
   pdfjs_viewer-rails!
   pdfkit
-  pg
+  pg (~> 1.5.7)
   pluck_to_hash
   pry (~> 0.13.0)
   pry-byebug (~> 3.9)
   puma (= 5.6.4)
   rack (~> 2.2.6.2)
-  rails (= 6.0.6.1)
+  rails (= 6.1.7.7)
   rails-erd
   rainbow
   rb-readline
   react_on_rails (= 11.3.0)
   redis-mutex
-  redis-namespace
+  redis-namespace (~> 1.11.0)
   redis-rails (~> 5.0.2)
   request_store
   roo (~> 2.7)
@@ -2130,7 +2229,7 @@ DEPENDENCIES
   rubocop-performance
   rubocop-rails
   ruby-debug-ide
-  ruby-oci8 (~> 2.2)
+  ruby-oci8 (~> 2.2.14)
   ruby-prof (~> 1.4)
   ruby_claim_evidence_api!
   sass-rails (~> 5.0)
@@ -2138,7 +2237,8 @@ DEPENDENCIES
   sentry-raven
   shoryuken (= 3.1.11)
   shoulda-matchers
-  simplecov!
+  simplecov
+  simplecov-lcov
   single_cov
   sniffybara!
   solargraph
@@ -2149,7 +2249,7 @@ DEPENDENCIES
   test-prof
   timecop
   tty-tree
-  tzinfo (= 1.2.10)
+  tzinfo (~> 2.0)
   uglifier (>= 1.3.0)
   validates_email_format_of
   webdrivers

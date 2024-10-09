@@ -18,12 +18,15 @@ const defaultProps = {
 };
 
 const vhaTooltipText = sprintf(COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT, COPY.VHA_BENEFIT_EMAIL_ADDRESS);
+const penAndCompTooltipText = sprintf(COPY.INTAKE_REMOVE_COMP_AND_PEN);
 
 const renderBenefitType = (props) => {
   return render(<BenefitType {...props} />);
 };
 
 const getVhaRadioOption = () => screen.getByRole('radio', { name: BENEFIT_TYPES.vha });
+const getCompRadioOption = () => screen.getByRole('radio', { name: BENEFIT_TYPES.compensation });
+const getPenRadioOption = () => screen.getByRole('radio', { name: BENEFIT_TYPES.pension });
 
 const getVhaOptionTooltip = () => {
   return screen.getByRole(
@@ -69,6 +72,70 @@ describe('BenefitType', () => {
 
         await waitFor(() => {
           expect(getVhaOptionTooltip()).toBeVisible();
+        });
+      });
+    });
+
+    describe('when remove comp and pen intake is disabled', () => {
+      const props = {
+        ...defaultProps,
+        featureToggles: { removeCompAndPenIntake: false }
+
+      };
+
+      beforeEach(() => {
+        renderBenefitType(props);
+      });
+
+      it('The "Veterans Health Administration" option is enabled', () => {
+        expect(getCompRadioOption()).not.toBeDisabled();
+        expect(getPenRadioOption()).not.toBeDisabled();
+      });
+
+      it('Tooltip does not appear whenever Compensation option is hovered over', () => {
+        hoverOverRadioOption(getCompRadioOption());
+
+        expect(
+          screen.queryByText(vhaTooltipText)
+        ).not.toBeInTheDocument();
+      });
+
+      it('Tooltip does not appear whenever Pension option is hovered over', () => {
+        hoverOverRadioOption(getPenRadioOption());
+
+        expect(
+          screen.queryByText(vhaTooltipText)
+        ).not.toBeInTheDocument();
+      });
+    });
+
+    describe('when remove comp and pen intake is enabled', () => {
+      const props = {
+        ...defaultProps,
+        featureToggles: { removeCompAndPenIntake: true }
+
+      };
+
+      beforeEach(() => {
+        renderBenefitType(props);
+      });
+
+      it('The "Veterans Health Administration" option is enabled', () => {
+        expect(getCompRadioOption()).toBeDisabled();
+        expect(getPenRadioOption()).toBeDisabled();
+      });
+
+      it('Tooltip appear whenever Comp and Pen option is hovered over', async () => {
+
+        await waitFor(() => {
+          const toolTipElements = screen.getAllByRole('tooltip');
+
+          toolTipElements.forEach((toolTipElement) => {
+            if (toolTipElement.id === 'tooltip-pension' || toolTipElement.id === 'tooltip-compensation') {
+              expect(toolTipElement).toBeInTheDocument();
+              expect(toolTipElement).toHaveTextContent(penAndCompTooltipText);
+            }
+          });
         });
       });
     });

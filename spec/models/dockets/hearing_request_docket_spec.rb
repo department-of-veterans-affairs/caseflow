@@ -6,10 +6,10 @@ describe HearingRequestDocket, :postgres do
     # back to what the tests were originally written for
     create(:case_distribution_lever, :ama_hearing_case_affinity_days, value: "60")
     create(:case_distribution_lever, :ama_hearing_case_aod_affinity_days, value: "14")
+    create(:case_distribution_lever, :cavc_affinity_days, value: "21")
+    create(:case_distribution_lever, :cavc_aod_affinity_days, value: "14")
     create(:case_distribution_lever, :request_more_cases_minimum)
     create(:case_distribution_lever, :batch_size_per_attorney)
-    create(:case_distribution_lever, :cavc_affinity_days)
-    create(:case_distribution_lever, :cavc_aod_affinity_days)
     create(:case_distribution_lever, :ama_hearing_docket_time_goals)
     create(:case_distribution_lever, :ama_hearing_start_distribution_prior_to_goals)
 
@@ -17,11 +17,7 @@ describe HearingRequestDocket, :postgres do
 
     # these were the defaut values at time of writing tests but can change over time, so ensure they are set
     # back to what the tests were originally written for
-    CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_case_affinity_days).update!(value: "60")
-    CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days).update!(value: "14")
     CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_docket_time_goals).update!(value: 60)
-    CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_start_distribution_prior_to_goals)
-      .update!(is_toggle_active: true)
   end
 
   context "#ready_priority_appeals" do
@@ -696,16 +692,30 @@ describe HearingRequestDocket, :postgres do
     context "with multiple levers enabled and appeals meeting each criteria" do
       # ready non-aod appeals
       let!(:ready_cavc_appeal_tied_to_requesting_judge_in_window) do
-        create_ready_cavc_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 7.days.ago)
+        create_ready_cavc_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 15.days.ago)
       end
-      let!(:ready_cavc_appeal_tied_to_requesting_judge_out_of_window_21_days) do
-        create_ready_cavc_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 21.days.ago)
+      let!(:ready_cavc_appeal_tied_to_requesting_judge_out_of_window_22_days) do
+        create_ready_cavc_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 22.days.ago)
       end
       let!(:ready_cavc_appeal_tied_to_other_judge_in_window) do
-        create_ready_cavc_appeal(tied_judge: other_judge, created_date: 7.days.ago)
+        create_ready_cavc_appeal(tied_judge: other_judge, created_date: 15.days.ago)
       end
-      let!(:ready_cavc_appeal_tied_to_other_judge_out_of_window_21_days) do
-        create_ready_cavc_appeal(tied_judge: other_judge, created_date: 21.days.ago)
+      let!(:ready_cavc_appeal_tied_to_other_judge_out_of_window_22_days) do
+        create_ready_cavc_appeal(tied_judge: other_judge, created_date: 22.days.ago)
+      end
+
+      # ready aod + cavc appeals to verify that distribution uses the lowest lever value to distribute
+      let!(:ready_cavc_aod_appeal_tied_to_requesting_judge_in_window) do
+        create_ready_cavc_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 5.days.ago, aod: true)
+      end
+      let!(:ready_cavc_aod_appeal_tied_to_requesting_judge_out_of_window_10_days) do
+        create_ready_cavc_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 10.days.ago, aod: true)
+      end
+      let!(:ready_cavc_aod_appeal_tied_to_other_judge_in_window) do
+        create_ready_cavc_appeal(tied_judge: other_judge, created_date: 5.days.ago, aod: true)
+      end
+      let!(:ready_cavc_aod_appeal_tied_to_other_judge_out_of_window_10_days) do
+        create_ready_cavc_appeal(tied_judge: other_judge, created_date: 10.days.ago, aod: true)
       end
 
       # ready aod appeals
@@ -738,7 +748,8 @@ describe HearingRequestDocket, :postgres do
       before do
         FeatureToggle.enable!(:specialty_case_team_distribution)
         CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_case_affinity_days).update!(value: "30")
-        CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.cavc_affinity_days).update!(value: "14")
+        CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.cavc_affinity_days).update!(value: "21")
+        CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.cavc_aod_affinity_days).update!(value: "7")
         CaseDistributionLever
           .find_by_item(Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days)
           .update!(value: "15")
@@ -750,8 +761,11 @@ describe HearingRequestDocket, :postgres do
         it "distributes appeals as expected" do
           expect(subject.map(&:case_id)).to match_array(
             [ready_cavc_appeal_tied_to_requesting_judge_in_window.uuid,
-             ready_cavc_appeal_tied_to_requesting_judge_out_of_window_21_days.uuid,
-             ready_cavc_appeal_tied_to_other_judge_out_of_window_21_days.uuid,
+             ready_cavc_appeal_tied_to_requesting_judge_out_of_window_22_days.uuid,
+             ready_cavc_appeal_tied_to_other_judge_out_of_window_22_days.uuid,
+             ready_cavc_aod_appeal_tied_to_requesting_judge_in_window.uuid,
+             ready_cavc_aod_appeal_tied_to_requesting_judge_out_of_window_10_days.uuid,
+             ready_cavc_aod_appeal_tied_to_other_judge_out_of_window_10_days.uuid,
              ready_aod_tied_to_requesting_judge_in_window.uuid,
              ready_aod_tied_to_requesting_judge_out_of_window_20_days.uuid,
              ready_aod_tied_to_other_judge_out_of_window_20_days.uuid,
@@ -887,7 +901,7 @@ describe HearingRequestDocket, :postgres do
     appeal
   end
 
-  def create_ready_cavc_appeal(tied_judge: nil, created_date: 1.year.ago)
+  def create_ready_cavc_appeal(tied_judge: nil, created_date: 1.year.ago, aod: false)
     Timecop.travel(created_date - 6.months)
     if tied_judge
       judge = tied_judge
@@ -920,7 +934,20 @@ describe HearingRequestDocket, :postgres do
     create(:appeal_affinity, appeal: remand_appeal)
     Timecop.return
 
+    create_aod_motion(remand_appeal, remand_appeal.claimant.person) if aod
+
     remand_appeal
+  end
+
+  def create_aod_motion(appeal, person)
+    create(
+      :advance_on_docket_motion,
+      appeal: appeal,
+      granted: true,
+      person: person,
+      reason: Constants.AOD_REASONS.financial_distress,
+      user_id: User.system_user.id
+    )
   end
 
   def create_ready_nonpriority_appeal(tied_judge: nil, created_date: 1.year.ago)

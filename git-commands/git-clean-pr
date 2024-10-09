@@ -1,0 +1,143 @@
+#!/bin/bash
+
+# git command to run relevant jest, rubocop, and rspecs on files changed
+# can accept a branch parameter to compare changes to another given branch
+# can also accept codeclimate param to run codeclimate CLI or autofix to run autofix options
+
+# syntax is: git clean-pr [branch-name] -- [codeclimate] [autofix]
+
+# get script directory
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+# get current directory
+CURRENT_DIR=$(pwd)
+
+# determine if branch param was passed
+if [ ! -z "$1" ] && [ "$1" != "codeclimate" ]; then
+  # get the list of files changed that are eligible for testing
+  jsxCommits=$(git diff --name-only "$1" | grep -E '.jsx$') # get the list of jsx files
+  jsCommits=$(git diff --name-only "$1" | grep -E '.js$') # get the list of js files
+  rbCommits=$(git diff --name-only "$1" | grep -E '.rb$') # get the list of ruby files
+  scssCommits=$(git diff --name-only "$1" | grep -E '.scss$') # get the list of scss files
+  allCommits=$(git diff --name-only "$1")
+else
+  # else default to no branch comparison
+  # get the list of files changed that are eligible for testing
+  jsxCommits=$(git diff --name-only | grep -E '.jsx$') # get the list of jsx files
+  jsCommits=$(git diff --name-only | grep -E '.js$') # get the list of js files
+  rbCommits=$(git diff --name-only | grep -E '.rb$') # get the list of ruby files
+  scssCommits=$(git diff --name-only | grep -E '.scss$') # get the list of scss files
+  allCommits=$(git diff --name-only)
+fi
+
+# cycle through ruby suite of tests
+for commit in $rbCommits; do
+  # change to appeals directory
+  cd "$SCRIPT_DIR"
+  cd ..
+
+  # attempt to find unit test
+  # get base file name
+  base=$(basename $commit .rb)
+  # find the corresponding unit test (if any, ignoring feature)
+  testFile=$(find . -path ./spec/feature -prune -o -name ${base}_spec.rb -print)
+  # find the correspondening feature test (if any)
+  featureTestFile=$(find ./spec/feature -name "${base}_spec.rb")
+
+  # check that there is a path for unit tests
+  if [ ! -z "$testFile" ]; then
+    echo "running spec test for $testFile path"; echo "";
+
+    # run spec if there is a corresponding spec test for the file
+    bundle exec rspec $testFile --format progress
+  else
+    echo "no test file found at $testFile"
+  fi
+
+  # check that there is a path for feature tests
+  if [ ! -z "$featureTestFile" ]; then
+    echo "running feature test for $featureTestFile path"; echo "";
+    # run feature test headless
+    make one-test-headless $featureTestFile
+  else
+    echo "no test file found at $featureTestFile"
+  fi
+
+  # run rubocop
+  # check all params for 'auto-fix' option
+  autofix="";
+  for var in "$@"; do
+    if [ "$var" == "autofix" ]; then
+      autofix="-a"
+    fi
+  done
+
+  bundle exec rubocop $autofix $commit
+
+  # run fasterer
+  bundle exec fasterer $commit
+
+  # return to current path
+  cd $CURRENT_DIR
+done
+echo "Relevant spec, rubocop, and fasterer tests have been run"; echo "";
+
+# run scss commits if file committed
+if [[ ! -z "$scssCommits" ]]; then
+  echo "running scss-lint --color"; echo ""
+  scss-lint --color
+fi
+
+# if there is a jsx or js file, use jest -o to run tests that cover file
+if [[ ! -z "$jsxCommits" || ! -z "$jsCommits" ]]; then
+  echo "running jest tests for $jsCommits"; echo "";
+  # use SCRIPT_DIR to get to appeals/client/test
+  cd "$SCRIPT_DIR"
+
+  # check for autofix option in parameters
+  # run -o for autofix jest and update snapshots
+  for var in "$@"
+  do
+    if [ "$var" == "autofix" ]; then
+      cd ../client && yarn jest $var
+      yarn jest --updateSnapshot
+    else
+      cd ../client && yarn jest
+    fi
+  done
+
+  # run lint:fix
+  yarn run lint:fix
+
+  # run prettier
+  yarn run pretty:format
+
+  # return to current path
+  cd $CURRENT_DIR
+fi
+echo "Relevant jest, lint, and prettier tests have been run"; echo "";
+
+
+# run code climate for all changed files
+  for var in "$@"; do
+    if [ "$var" == "codeclimate" ]; then
+      docker pull codeclimate/codeclimate
+
+      docker run \
+        --interactive --tty --rm \
+        --env CODECLIMATE_CODE="$PWD" \
+        --volume "$PWD":/code \
+        --volume /var/run/docker.sock:/var/run/docker.sock \
+        --volume /tmp/cc:/tmp/cc \
+        codeclimate/codeclimate
+
+      codeclimate engines:install
+
+      # analyze each of the commits
+      for commit in $allCommits; do
+        echo "running codeClimate CLI for $commit"
+        codeclimate analyze $commit
+      done
+    fi
+  done
+
+echo "All tests relevant to current code changes have been run"

@@ -4,7 +4,8 @@ import { mount } from 'enzyme';
 import { VIRTUAL_HEARING_LABEL } from 'app/hearings/constants';
 import { ScheduleVeteranForm } from 'app/hearings/components/ScheduleVeteranForm';
 import { ReadOnly } from 'app/hearings/components/details/ReadOnly';
-import { amaAppeal, defaultHearing, virtualHearing } from 'test/data';
+import { amaAppeal } from 'test/data';
+import { defaultHearing, virtualHearing } from 'test/data/hearings';
 import { generateAmaTask } from 'test/data/tasks';
 import { queueWrapper } from 'test/data/stores/queueStore';
 import HearingTypeDropdown from 'app/hearings/components/details/HearingTypeDropdown';
@@ -21,14 +22,20 @@ import { Timezone } from 'app/hearings/components/VirtualHearings/Timezone';
 import { UnscheduledNotes } from 'app/hearings/components/UnscheduledNotes';
 import { HearingTime } from 'app/hearings/components/modalForms/HearingTime';
 import { ReadOnlyHearingTimeWithZone } from 'app/hearings/components/modalForms/ReadOnlyHearingTimeWithZone';
+import ApiUtil from 'app/util/ApiUtil';
 
 // Set the spies
 const changeSpy = jest.fn();
 const submitSpy = jest.fn();
 const cancelSpy = jest.fn();
+const fetchScheduledHearingsMock = jest.fn();
+const getSpy = jest.spyOn(ApiUtil, 'get');
 
-/* eslint-disable jest/no-disabled-tests */
-describe.skip('ScheduleVeteranForm', () => {
+describe('ScheduleVeteranForm', () => {
+  beforeEach(() => {
+    getSpy.mockImplementation(() => Promise.resolve({ body: {} }));
+  });
+
   test('Matches snapshot with default props', () => {
     // Render the address component
     const scheduleVeteran = mount(
@@ -51,13 +58,14 @@ describe.skip('ScheduleVeteranForm', () => {
     expect(scheduleVeteran).toMatchSnapshot();
   });
 
-  test('Displays hearing form when regional office is selected', () => {
+  test('Displays hearing form when regional office is selected', async () => {
     // Render the address component
     const scheduleVeteran = mount(
       <ScheduleVeteranForm
         goBack={cancelSpy}
         submit={submitSpy}
         onChange={changeSpy}
+        fetchScheduledVeterans={fetchScheduledHearingsMock}
         appeal={{
           ...amaAppeal,
           regionalOffice: defaultHearing.regionalOfficeKey,
@@ -221,13 +229,15 @@ describe.skip('ScheduleVeteranForm', () => {
   test('Displays ReadOnlyHearingTimeWithZone when video is selected and halfDay is true', () => {
     const hearing = {
       ...defaultHearing,
+      requestType: 'Video',
       regionalOffice: defaultHearing.regionalOfficeKey,
       hearingDay: {
         hearingId: 1,
         readableRequestType: 'Video',
         beginsAt: '2021-07-29T11:30:00-04:00',
         halfDay: true,
-        timezone: 'America/Los_Angeles'
+        timezone: 'America/Los_Angeles',
+        scheduledFor: '2025-01-01'
       }
     };
     const scheduleVeteran = mount(
@@ -262,7 +272,8 @@ describe.skip('ScheduleVeteranForm', () => {
         readableRequestType: 'Video',
         beginsAt: null,
         halfDay: false,
-        timezone: 'America/Los_Angeles'
+        timezone: 'America/Los_Angeles',
+        scheduledFor: '2025-01-01'
       }
     };
     const scheduleVeteran = mount(

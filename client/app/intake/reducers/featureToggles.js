@@ -40,6 +40,9 @@ const updateFromServerFeatures = (state, featureToggles) => {
     },
     vhaClaimReviewEstablishment: {
       $set: Boolean(featureToggles.vhaClaimReviewEstablishment)
+    },
+    removeCompAndPenIntake: {
+      $set: Boolean(featureToggles.removeCompAndPenIntake)
     }
   });
 };
@@ -58,7 +61,8 @@ export const mapDataToFeatureToggle = (data = { featureToggles: {} }) =>
       justificationReason: false,
       updatedAppealForm: false,
       hlrScUnrecognizedClaimants: false,
-      vhaClaimReviewEstablishment: false
+      vhaClaimReviewEstablishment: false,
+      removeCompAndPenIntake: false
     },
     data.featureToggles
   );

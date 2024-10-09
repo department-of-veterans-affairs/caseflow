@@ -12,7 +12,6 @@
   </title>
 
   <script>
-    <%= render "layouts/head_new_relic" %>
     <%= render "layouts/head_google_analytics" %>
   </script>
   <%= render "layouts/head_sentry" %>
@@ -20,10 +19,14 @@
   <%= stylesheet_link_tag 'application', media: 'all' %>
 
 
-<% if !browser.ie? %>
-  <%= env_javascript_include_tag(static: ['webpack-bundle'],
-                                 hot: ['http://localhost:3500/webpack-bundle.js']) %>
-<% end %>
+  <% if !Rails.env.development? && !browser.ie? %>
+    <%= env_javascript_include_tag(static: ['webpack-bundle'],
+                                   hot: ['http://localhost:3500/webpack-bundle.js']) %>
+  <% else %>
+    <%= env_javascript_include_tag(crossorigin: 'anonymous',
+                                   static: ['webpack-bundle'],
+                                   hot: ['http://localhost:3500/webpack-bundle.js']) %>
+  <% end %>
 
   <%= csrf_meta_tags %>
 

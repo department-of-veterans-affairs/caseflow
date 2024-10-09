@@ -116,7 +116,6 @@ describe HearingMapper do
   context ".hearing_fields_to_vacols_codes" do
     let!(:user) { create(:user, :with_vacols_attorney_record) }
     let(:scheduled_datetime) { Time.zone.now + 2.weeks }
-    let!(:scheduled_datetime_formatted) { VacolsHelper.format_datetime_with_utc_timezone(scheduled_datetime) }
 
     subject { HearingMapper.hearing_fields_to_vacols_codes(info) }
 
@@ -140,7 +139,7 @@ describe HearingMapper do
       it "should convert to Vacols values" do
         result = subject
         expect(result[:request_type]).to eq "V"
-        expect(result[:scheduled_for]).to eq scheduled_datetime_formatted
+        expect(result[:scheduled_for]).to eq scheduled_datetime
         expect(result[:notes]).to eq "test notes"
         expect(result[:disposition]).to eq :P
         expect(result[:hold_open]).to eq 60

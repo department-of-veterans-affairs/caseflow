@@ -358,6 +358,38 @@ describe RequestIssuesUpdate, :all_dbs do
         end
       end
 
+      context "when a vha request issue is added and the direct_review appeal has not been distributed" do
+        let(:appeal) { create(:appeal, docket_type: Constants.AMA_DOCKETS.direct_review) }
+        let(:root_task) { create(:root_task, appeal: appeal) }
+        let(:bva_intake) { BvaIntake.singleton }
+        let!(:pre_docket_task) { create(:pre_docket_task, assigned_to: bva_intake) }
+        let(:vha_caregiver_task) do
+          VhaDocumentSearchTask.create!(
+            appeal: pre_docket_task.appeal,
+            parent: pre_docket_task,
+            assigned_at: Time.zone.now,
+            assigned_to: VhaCaregiverSupport.singleton
+          )
+        end
+        let(:distribution_task) do
+          DistributionTask.create!(
+            appeal: appeal,
+            parent: root_task
+          )
+        end
+
+        let(:ri) { create(:request_issue, decision_date: 4.days.ago, benefit_type: "vha", decision_review: appeal) }
+
+        it "does not get added to the sct queue" do
+          vha_caregiver_task.completed!
+          pre_docket_task.completed!
+          expect(subject).to be_truthy
+          expect(distribution_task.status).to eq("assigned")
+          expect(appeal.sct_appeal?).to eq(false)
+          expect(appeal.distributed?).to eq(false)
+        end
+      end
+
       context "when issues contain new issues not in existing issues" do
         let(:request_issues_data) { request_issues_data_with_new_issue }
 
