@@ -222,7 +222,7 @@ describe "SearchQueryService" do
     )
   end
 
-  let(:vacols_decision_date) { 2.weeks.ago }
+  let(:vacols_decision_date) { 2.days.ago }
   let(:vacols_case_attrs) do
     {
       bfkey: ssn,
@@ -241,7 +241,7 @@ describe "SearchQueryService" do
     }
   end
 
-  let(:issues_count) { 5 }
+  let(:issues_count) { 15 }
   let(:vacols_case_issues) do
     create_list(
       :case_issue,
@@ -251,7 +251,7 @@ describe "SearchQueryService" do
     )
   end
 
-  let(:hearings_count) { 5 }
+  let(:hearings_count) { 25 }
   let(:vacols_case_hearings) do
     hearings = create_list(
       :case_hearing,
