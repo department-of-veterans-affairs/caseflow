@@ -153,6 +153,14 @@ class CaseDistributionLeversTestsController < ApplicationController
     send_data csv_data, filename: filename
   end
 
+  def reset_all_appeals
+    RequestStore[:current_user] = current_user
+    DistributionTask.where(status: "assigned").map { |t| t.update!(status: "on_hold") }
+    VACOLS::Case.where(bfcurloc: %w[81 83]).map { |c| c.update!(bfcurloc: "testing") }
+
+    head :ok
+  end
+
   private
 
   def check_environment
