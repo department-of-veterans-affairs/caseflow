@@ -31,6 +31,12 @@ export const correspondenceDetailsReducer = (state = initialState, action = {}) 
         $set: action.payload.tasksUnrelatedToAppealEmpty
       }
     });
+  case ACTIONS.EVIDENCE_SUBMISSION_BANNER:
+    return update(state, {
+      bannerAlert: {
+        $set: action.payload.bannerAlert
+      }
+    });
   default:
     return state;
   }

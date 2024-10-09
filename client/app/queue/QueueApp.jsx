@@ -763,7 +763,7 @@ class QueueApp extends React.PureComponent {
   routedCorrespondenceRemoveWaiveEvidenceModal = (props) => (
     <CorrespondenceRemoveWaiveEvidenceModal
       {...props.match.params}
-      {...this.props}
+      userCssId={this.props.userCssId}
     />
   );
 

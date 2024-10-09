@@ -4,9 +4,18 @@ import CaseDetailsLink from '../CaseDetailsLink';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 import { appealWithDetailSelector, taskSnapshotTasksForAppeal } from '../selectors';
 import { useSelector } from 'react-redux';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import TaskRows from '../components/TaskRows';
+import {
+  setWaiveEvidenceAlertBanner
+} from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
 
 const CorrespondenceAppealTasks = (props) => {
+  const {
+    bannerAlert,
+  } = { ...props };
+
   const veteranFullName = props.correspondence.veteranFullName;
   const appealId = props.appeal.external_id;
   const appeal = useSelector((state) =>
@@ -57,6 +66,15 @@ const CorrespondenceAppealTasks = (props) => {
           </div>
 
         </div>
+        {bannerAlert.message &&
+          <Alert
+            type={bannerAlert.type}
+            title={bannerAlert.title}
+            message={bannerAlert.message}
+            scrollOnAlert={false}
+            lowerMargin
+          />
+        }
         <div className="tasks-added-details">
           <span className="tasks-added-text">Tasks added to appeal</span>
           <div>
@@ -80,8 +98,22 @@ CorrespondenceAppealTasks.propTypes = {
   organizations: PropTypes.array,
   userCssId: PropTypes.string,
   appeal: PropTypes.object,
-  waivableUser: PropTypes.bool
-
+  waivableUser: PropTypes.bool,
+  setWaiveEvidenceAlertBanner: PropTypes.func,
 };
 
-export default CorrespondenceAppealTasks;
+const mapStateToProps = (state) => ({
+  bannerAlert: state.correspondenceDetails.bannerAlert,
+});
+
+
+const mapDispatchToProps = (dispatch) => (
+  bindActionCreators({
+    setWaiveEvidenceAlertBanner,
+  }, dispatch)
+);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(CorrespondenceAppealTasks);

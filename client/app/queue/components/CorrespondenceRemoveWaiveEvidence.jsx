@@ -7,18 +7,36 @@ import { withRouter } from 'react-router-dom';
 import { taskById } from '../selectors';
 import { requestPatch } from '../uiReducer/uiActions';
 import { taskActionData } from '../utils';
+import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import COPY from '../../../COPY';
 import QueueFlowModal from './QueueFlowModal';
 import {
-  setTaskNotRelatedToAppealBanner,
-  completeTaskNotRelatedToAppeal } from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
+  createNewEvidenceWindowTask,
+} from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
 
 /* eslint-disable camelcase */
 const CorrespondenceRemoveWaiveEvidenceModal = (props) => {
+  const { task, correspondenceInfo } = props;
   const taskData = taskActionData(props);
 
   const submit = () => {
-    const correspondence = props.correspondenceInfo;
+    const correspondence = correspondenceInfo;
+    console.log("Taskkkkkkk", task);
+    const remainingTime = task.timerEndsAt;
+    const payload = {
+      data: {
+        appeal_uuid: props.appealId,
+        task: {
+          type: 'EvidenceSubmissionWindowTask',
+          appeal_id: task.appealId,
+          appeal_type: 'Correspondence',
+          remaining_time: remainingTime,
+          status: TASK_STATUSES.completed
+        }
+      }
+    };
+
+    return props.createNewEvidenceWindowTask(payload, correspondence);
 
   };
 
@@ -29,7 +47,7 @@ const CorrespondenceRemoveWaiveEvidenceModal = (props) => {
       {...modalProps}
       title={COPY.CONFIRM_WAIVE_REMOVAL}
       button={COPY.MODAL_CONFIRM_BUTTON}
-      pathAfterSubmit={taskData?.redirect_after ?? `/queue/correspondence/${props.correspondence_uuid}`}
+      pathAfterSubmit={taskData?.redirect_after ?? `/queue/correspondence/${props.appealId}`}
       submit={submit}
     >
       {taskData?.modal_body &&
@@ -45,7 +63,7 @@ const CorrespondenceRemoveWaiveEvidenceModal = (props) => {
 
 CorrespondenceRemoveWaiveEvidenceModal.propTypes = {
   requestPatch: PropTypes.func,
-  completeTaskNotRelatedToAppeal: PropTypes.func,
+  createNewEvidenceWindowTask: PropTypes.func,
   task: PropTypes.shape({
     appeal: PropTypes.shape({
       hasCompletedSctAssignTask: PropTypes.bool
@@ -67,15 +85,14 @@ CorrespondenceRemoveWaiveEvidenceModal.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   task: taskById(state, { taskId: ownProps.taskId }),
-  taskNotRelatedToAppealBanner: state.correspondenceDetails.bannerAlert,
   correspondenceInfo: state.correspondenceDetails.correspondenceInfo,
   showActionsDropdown: state.correspondenceDetails.showActionsDropdown,
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestPatch,
-  setTaskNotRelatedToAppealBanner,
-  completeTaskNotRelatedToAppeal
+  createNewEvidenceWindowTask,
+
 }, dispatch);
 
 export default (withRouter(
