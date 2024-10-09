@@ -1,20 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import NonCompTabs from '../components/NonCompTabs';
-import Button from '../../components/Button';
 import Link from '../../components/Link';
-import { SuccessAlert } from '../components/Alerts';
 import { LeftChevronIcon } from 'app/components/icons/LeftChevronIcon';
-import { ClockIcon } from 'app/components/icons/ClockIcon';
 
-import { DECISION_ISSUE_UPDATE_STATUS } from '../constants';
-import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import NonCompLayout from '../components/NonCompLayout';
-import { ICON_SIZES, COLORS } from 'app/constants/AppConstants';
+import { COLORS } from 'app/constants/AppConstants';
 
-const NonCompSavedSearches = (props) => {
+const NonCompSavedSearches = () => {
 
   const BACK_LINK_TEXT = 'Back to Generate task report';
 
