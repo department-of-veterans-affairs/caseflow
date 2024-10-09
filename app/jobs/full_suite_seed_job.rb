@@ -14,6 +14,7 @@ class FullSuiteSeedJob < CaseflowJob
 
   def perform
     run_full_suite_seeds
+    Rails.logger.info("##### OPTIONAL SEEDS COMPLETED on #{Time.zone.now} ####")
   rescue StandardError => error
     log_error(error)
   end
