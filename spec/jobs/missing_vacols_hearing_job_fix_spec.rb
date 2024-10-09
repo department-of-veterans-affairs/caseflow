@@ -2,7 +2,6 @@
 
 describe MissingVacolsHearingJobFix do
   subject { MissingVacolsHearingJobFix.new }
-
   let!(:hearing) { create(:legacy_hearing, :with_tasks) }
   let!(:hearing2) { create(:legacy_hearing, :with_tasks) }
   let!(:hearing3) { create(:legacy_hearing, :with_tasks) }
