@@ -88,6 +88,7 @@ class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationControl
                                    :contested_rating_issue_diagnostic_code,
                                    :ramp_claim_id,
                                    :rating_issue_associated_at,
+                                   :decision_review_issue_id,
                                    :nonrating_issue_bgs_id,
                                    :nonrating_issue_bgs_source])
   end

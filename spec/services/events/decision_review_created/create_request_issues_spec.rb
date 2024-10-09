@@ -103,10 +103,39 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
       end
     end
 
+    context "when parser_issues.ri_reference_id is nil" do
+      it "raises Caseflow::Error::DecisionReviewCreatedRequestIssuesError" do
+        invalid_payload = retrieve_payload
+        invalid_payload[:request_issues][0][:decision_review_issue_id] = nil
+
+        parser = Events::DecisionReviewCreated::DecisionReviewCreatedParser.new({}, invalid_payload)
+
+        expect do
+          described_class.process!(event: event, parser: parser, epe: epe, decision_review: higher_level_review)
+        end.to raise_error(Caseflow::Error::DecisionReviewCreatedRequestIssuesError, "reference_id cannot be null")
+      end
+
+      it "does not create any RequestIssues when ri_reference_id is nil" do
+        invalid_payload = retrieve_payload
+        invalid_payload[:request_issues][0][:decision_review_issue_id] = nil
+
+        parser = Events::DecisionReviewCreated::DecisionReviewCreatedParser.new({}, invalid_payload)
+
+        expect do
+          described_class.process!(event: event, parser: parser, epe: epe, decision_review: higher_level_review)
+        end.to raise_error(Caseflow::Error::DecisionReviewCreatedRequestIssuesError)
+
+        # Ensure no RequestIssues or EventRecords are created
+        expect(RequestIssue.count).to eq(0)
+        expect(EventRecord.count).to eq(0)
+      end
+    end
+
     def retrieve_payload
       {
         "request_issues": [
           {
+            "decision_review_issue_id": "1",
             "benefit_type": "pension",
             "contested_issue_description": "service connection for arthritis denied",
             "contention_reference_id": 4_542_785,
@@ -134,6 +163,7 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
             "nonrating_issue_bgs_source": "Test Source"
           },
           {
+            "decision_review_issue_id": "2",
             "benefit_type": "pension",
             "contested_issue_description": "PTSD",
             "contention_reference_id": 123_456,
