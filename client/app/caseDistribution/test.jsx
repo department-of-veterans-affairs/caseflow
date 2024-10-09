@@ -176,52 +176,22 @@ class CaseDistributionTest extends React.PureComponent {
     });
   };
 
-  // reseedGenericFullSuiteAppealsSeeds = () => {
-  //   this.setState({ isReseedingOptionalSeeds: true });
-  //   ApiUtil.post('/test/optional_seed').then((response) => {
-  //     const appealCount = response.body.seeds_added || 0;
-  //     const currentTime = new Date().toLocaleString();
-
-  //     this.setState({
-  //       isReseedingOptionalSeeds: false,
-  //       showAlert: true,
-  //       alertMsg: `${COPY.TEST_RESEED_GENERIC_FULL_SUITE_APPEALS_ALERTMSG.replace(
-  //         '{count}', appealCount)} ${currentTime}`,
-  //     });
-  //   }, (err) => {
-  //     console.warn(err);
-  //     this.setState({
-  //       isReseedingOptionalSeeds: false,
-  //       showAlert: true,
-  //       alertMsg: err,
-  //       alertType: 'error',
-  //     });
-  //   });
-  // };
-
-  reseedGenericFullSuiteAppealsSeeds = async () => {
-    try {
-      this.setState({ isReseedingOptionalSeeds: true });
-
-      const response = await ApiUtil.post('/test/optional_seed');
-      const appealCount = response.body.seeds_added || 0;
-      const currentTime = new Date().toLocaleString();
-
+  reseedGenericFullSuiteAppealsSeeds = () => {
+    this.setState({ isReseedingOptionalSeeds: true });
+    ApiUtil.post('/case_distribution_levers_tests/run_full_suite_seeds').then(() => {
       this.setState({
         isReseedingOptionalSeeds: false,
         showAlert: true,
-        alertMsg: `${COPY.TEST_RESEED_GENERIC_FULL_SUITE_APPEALS_ALERTMSG.
-          replace('{count}', appealCount)} ${currentTime}`,
+        alertMsg: 'Successfully Completed Full Suite Seed Job.',
       });
-    } catch (err) {
+    }, (err) => {
       console.warn(err);
       this.setState({
         isReseedingOptionalSeeds: false,
         showAlert: true,
         alertMsg: err,
-        alertType: 'error',
       });
-    }
+    });
   };
 
   render() {

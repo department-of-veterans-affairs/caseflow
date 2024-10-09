@@ -85,6 +85,17 @@ class CaseDistributionLeversTestsController < ApplicationController
     head :ok
   end
 
+  def run_full_suite_seeds
+    result = FullSuiteSeedJob.perform_now
+
+    unless result
+      render json: { error: "Job failed" }, status: :unprocessable_entity
+      return
+    end
+
+    head :ok
+  end
+
   def appeals_distributed
     # change this to the correct class
     csv_data = AppealsDistributed.process
