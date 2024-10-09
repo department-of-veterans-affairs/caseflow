@@ -10,9 +10,11 @@ class AppealsDistributed
     receipt_date: "Receipt Date",
     ready_for_distribution_at: "Ready for Distribution at",
     distributed_at: "Distributed At",
+    original_judge: "Original Judge",
     hearing_judge: "Hearing Judge",
     veteran_file_number: "Veteran File number",
-    veteran_name: "Veteran"
+    veteran_name: "Veteran",
+    affinity_start_date: "Affinity Start Date"
   }.freeze
 
   def self.generate_rows(record)
@@ -73,9 +75,11 @@ class AppealsDistributed
       receipt_date: appeal.receipt_date,
       ready_for_distribution_at: distributed_case.ready_at,
       distributed_at: distributed_case.created_at,
+      original_judge: appeal.cavc? ? ama_cavc_original_deciding_judge(appeal) : nil,
       hearing_judge: hearing_judge,
       veteran_file_number: appeal.veteran_file_number,
-      veteran_name: appeal.veteran&.name.to_s
+      veteran_name: appeal.veteran&.name.to_s,
+      affinity_start_date: appeal.appeal_affinity&.affinity_start_date
     }
   end
 
@@ -94,11 +98,16 @@ class AppealsDistributed
   end
 
   # For each Legacy appeal get its distributed case and use ActiveRecord relationships to get fields
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def self.legacy_appeal(case_record, aod, distributed_cases)
     distributed_case = distributed_cases.filter { |dc| dc.case_id == case_record.bfkey }.first
     correspondent_record = case_record.correspondent
     folder_record = case_record.folder
+    judge_mem_id = VACOLS::Case.includes(:folder).where(folder: { tinum: folder_record.tinum },
+                                                        bfddec: case_record.bfdpdcn).first.bfmemid
+    original_judge = VACOLS::Staff.find_by(sattyid: judge_mem_id)
     veteran_name = FullName.new(correspondent_record.snamef, nil, correspondent_record.snamel).to_s
+    appeal_affinity = case_record.appeal_affinity
 
     {
       docket_number: folder_record.tinum,
@@ -108,9 +117,19 @@ class AppealsDistributed
       receipt_date: normalize_vacols_date(case_record.bfd19),
       ready_for_distribution_at: distributed_case.ready_at,
       distributed_at: distributed_case.created_at,
+      original_judge: original_judge&.sdomainid,
       hearing_judge: case_record.case_hearings.first&.staff&.sdomainid,
       veteran_file_number: correspondent_record.ssn || case_record.bfcorlid,
-      veteran_name: veteran_name
+      veteran_name: veteran_name,
+      affinity_start_date: appeal_affinity&.affinity_start_date
     }
+  end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+
+  def self.ama_cavc_original_deciding_judge(appeal)
+    source_appeal_id = CavcRemand.find_by(remand_appeal: appeal).source_appeal_id
+
+    Task.find_by(appeal_id: source_appeal_id, appeal_type: Appeal.name, type: JudgeDecisionReviewTask.name)
+      &.assigned_to&.css_id
   end
 end
