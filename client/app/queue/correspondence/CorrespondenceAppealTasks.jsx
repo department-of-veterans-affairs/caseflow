@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import TaskRows from '../components/TaskRows';
+import Alert from '../../components/Alert';
 import {
   setWaiveEvidenceAlertBanner
 } from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
