@@ -137,6 +137,1103 @@ exports[`QueueTable BodyRows Matches snapshot with default props 1`] = `
 </tbody>
 `;
 
+exports[`QueueTable DatePicker filter Back end filtering renders in a queue table correctly 1`] = `
+<div>
+  <div
+    class="cf-table-wrapper"
+  >
+    <div
+      class="cf-pagination"
+    >
+      <div
+        class="cf-pagination-summary"
+      >
+        Viewing 1-5 of 5 total
+      </div>
+      <div
+        class="cf-pagination-pages"
+      />
+    </div>
+    <table
+      aria-describedby="case-table-description"
+      aria-label="Appeals"
+      class="usa-table-borderless undefined"
+      id="case-table-description"
+      role="grid"
+    >
+      <thead>
+        <tr
+          role="row"
+        >
+          <th
+            aria-labelledby="header-id"
+            class="testClasses"
+            role="columnheader"
+            scope="col"
+          >
+            <span
+              aria-label="ID"
+              data-css-9shxm7=""
+            >
+              <span
+                id="header-id"
+              >
+                ID
+              </span>
+            </span>
+          </th>
+          <th
+            aria-labelledby="header-date"
+            class="testClasses"
+            role="columnheader"
+            scope="col"
+          >
+            <span
+              aria-label="Date"
+              data-css-9shxm7=""
+            >
+              <span
+                id="header-date"
+              >
+                Date
+              </span>
+              <span
+                data-css-tidn98=""
+              >
+                <svg
+                  aria-label="filter by date"
+                  class="table-icon unselected-filter-icon"
+                  height="20"
+                  role="button"
+                  tabindex="0"
+                  viewBox="0 0 21 21"
+                >
+                  <g
+                    fill="none"
+                    fill-rule="evenodd"
+                    stroke="none"
+                    stroke-width="1"
+                  >
+                    <g>
+                      <rect
+                        class="unselected-filter-icon-border-1"
+                        fill="#fff"
+                        fill-rule="nonzero"
+                        height="20"
+                        rx="2"
+                        stroke="#0071bc"
+                        width="20"
+                        x="0.5"
+                        y="0.5"
+                      />
+                      <path
+                        class="unselected-filter-icon-inner-1"
+                        d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667 11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667 9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2 4.69666834,5.83333333 5.01323019,5.83333333 L15.9697874,5.83333333 C16.303936,5.83333333 16.4446301,6.2 16.2335889,6.4 Z"
+                        fill="#0071bc"
+                      />
+                    </g>
+                  </g>
+                </svg>
+                <div
+                  class="date-picker left"
+                  data-css-f2bff0=""
+                >
+                  <div
+                    class="clear-wrapper"
+                  >
+                    <span>
+                      <button
+                        class="testClasses"
+                        id="button-Clear-filter"
+                        type="button"
+                      >
+                        Clear filter
+                      </button>
+                    </span>
+                  </div>
+                  <div
+                    class="input-wrapper"
+                  >
+                    <div
+                      class=""
+                    >
+                      <div
+                        class="testClasses"
+                      >
+                        <label
+                          class="testClasses"
+                          for="date-filter-parameters"
+                          id="date-filter-parameters-label"
+                        >
+                          <span>
+                            Date filter parameters
+                          </span>
+                        </label>
+                        <div
+                          class="cf-select"
+                        >
+                          <div
+                            class=" css-2b097c-container"
+                          >
+                            <div
+                              class="cf-select__control css-yk16xz-control"
+                            >
+                              <div
+                                class="cf-select__value-container css-g1d714-ValueContainer"
+                              >
+                                <div
+                                  class="cf-select__placeholder css-1wa3eu0-placeholder"
+                                >
+                                  Select...
+                                </div>
+                                <div
+                                  class="css-81nyic-Input"
+                                >
+                                  <div
+                                    class="cf-select__input"
+                                    style="display: inline-block;"
+                                  >
+                                    <input
+                                      aria-autocomplete="list"
+                                      aria-expanded="false"
+                                      aria-haspopup="true"
+                                      aria-labelledby="date-filter-parameters-label"
+                                      aria-owns="date-filter-parameters-listbox"
+                                      autocapitalize="none"
+                                      autocomplete="off"
+                                      autocorrect="off"
+                                      id="date-filter-parameters"
+                                      role="combobox"
+                                      spellcheck="false"
+                                      style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                                      tabindex="0"
+                                      type="text"
+                                      value=""
+                                    />
+                                    <div
+                                      style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                              <div
+                                class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                              >
+                                <span
+                                  class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                                />
+                                <div
+                                  aria-hidden="true"
+                                  class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                                >
+                                  <svg
+                                    aria-hidden="true"
+                                    class="css-6q0nyr-Svg"
+                                    focusable="false"
+                                    height="20"
+                                    viewBox="0 0 20 20"
+                                    width="20"
+                                  >
+                                    <path
+                                      d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                                    />
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <input
+                              name="Date filter parameters"
+                              type="hidden"
+                              value=""
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="button-wrapper"
+                  >
+                    <button
+                      disabled=""
+                    >
+                      Apply Filter
+                    </button>
+                  </div>
+                </div>
+              </span>
+            </span>
+          </th>
+        </tr>
+      </thead>
+      <tbody
+        class=""
+      >
+        <tr
+          class="testClasses"
+          id="table-row-1"
+          role="row"
+        >
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            1
+          </td>
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            5/1/2024
+          </td>
+        </tr>
+        <tr
+          class="testClasses"
+          id="table-row-2"
+          role="row"
+        >
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            2
+          </td>
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            5/2/2024
+          </td>
+        </tr>
+        <tr
+          class="testClasses"
+          id="table-row-3"
+          role="row"
+        >
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            3
+          </td>
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            5/3/2024
+          </td>
+        </tr>
+        <tr
+          class="testClasses"
+          id="table-row-4"
+          role="row"
+        >
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            4
+          </td>
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            5/4/2024
+          </td>
+        </tr>
+        <tr
+          class="testClasses"
+          id="table-row-5"
+          role="row"
+        >
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            5
+          </td>
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            5/5/2024
+          </td>
+        </tr>
+      </tbody>
+      <tfoot />
+    </table>
+    <div
+      class="cf-pagination"
+    >
+      <div
+        class="cf-pagination-summary"
+      >
+        Viewing 1-5 of 5 total
+      </div>
+      <div
+        class="cf-pagination-pages"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`QueueTable DatePicker filter Front end filtering renders in a queue table correctly 1`] = `
+<div>
+  <div
+    class="cf-table-wrapper"
+  >
+    <div
+      class="cf-pagination"
+    >
+      <div
+        class="cf-pagination-summary"
+      >
+        Viewing 1-15 of 20 total
+      </div>
+      <div
+        class="cf-pagination-pages"
+      >
+        <button
+          aria-label="Previous Page"
+          disabled=""
+        >
+          Previous
+        </button>
+        <button
+          aria-current="page"
+          aria-label="Page 1"
+          class="cf-current-page"
+          name="page-button-0"
+        >
+          1
+        </button>
+        <button
+          aria-label="Page 2"
+          class=""
+          name="page-button-1"
+        >
+          2
+        </button>
+        <button
+          aria-label="Next Page"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+    <table
+      aria-describedby="case-table-description"
+      aria-label="Appeals"
+      class="usa-table-borderless undefined"
+      id="case-table-description"
+      role="grid"
+    >
+      <thead>
+        <tr
+          role="row"
+        >
+          <th
+            aria-labelledby="header-id"
+            aria-sort="ascending"
+            class="testClasses"
+            role="columnheader"
+            scope="col"
+          >
+            <span
+              aria-label="ID"
+              data-css-9shxm7=""
+            >
+              <span
+                id="header-id"
+              >
+                ID
+              </span>
+              <span
+                aria-label="Sort by ID"
+                data-css-hwg41t=""
+                role="button"
+                tabindex="0"
+              >
+                <svg
+                  class="table-icon"
+                  height="17"
+                  version="1.1"
+                  viewBox="0 0 13 16"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g
+                    fill="none"
+                    fill-rule="evenodd"
+                    stroke="none"
+                    stroke-width="1"
+                  >
+                    <g
+                      fill-rule="nonzero"
+                    >
+                      <g
+                        fill="#d6d7d9"
+                        transform="translate(2.000000, 1.000000)"
+                      >
+                        <g
+                          transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                        >
+                          <path
+                            d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                          />
+                        </g>
+                      </g>
+                      <g
+                        fill="#0071bc"
+                        transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+                      >
+                        <g
+                          transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                        >
+                          <path
+                            d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                          />
+                        </g>
+                      </g>
+                    </g>
+                  </g>
+                </svg>
+              </span>
+            </span>
+          </th>
+          <th
+            aria-labelledby="header-date"
+            class="testClasses"
+            role="columnheader"
+            scope="col"
+          >
+            <span
+              aria-label="Date"
+              data-css-9shxm7=""
+            >
+              <span
+                id="header-date"
+              >
+                Date
+              </span>
+              <span
+                aria-label="Sort by Date"
+                data-css-hwg41t=""
+                role="button"
+                tabindex="0"
+              >
+                <svg
+                  class="table-icon"
+                  height="17"
+                  version="1.1"
+                  viewBox="0 0 13 16"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g
+                    fill="none"
+                    fill-rule="evenodd"
+                    stroke="none"
+                    stroke-width="1"
+                  >
+                    <g
+                      fill-rule="nonzero"
+                    >
+                      <g
+                        fill="#d6d7d9"
+                        transform="translate(2.000000, 1.000000)"
+                      >
+                        <g
+                          transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                        >
+                          <path
+                            d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                          />
+                        </g>
+                      </g>
+                      <g
+                        fill="#d6d7d9"
+                        transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+                      >
+                        <g
+                          transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                        >
+                          <path
+                            d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                          />
+                        </g>
+                      </g>
+                    </g>
+                  </g>
+                </svg>
+              </span>
+              <span
+                data-css-tidn98=""
+              >
+                <svg
+                  aria-label="filter by date"
+                  class="table-icon unselected-filter-icon"
+                  height="20"
+                  role="button"
+                  tabindex="0"
+                  viewBox="0 0 21 21"
+                >
+                  <g
+                    fill="none"
+                    fill-rule="evenodd"
+                    stroke="none"
+                    stroke-width="1"
+                  >
+                    <g>
+                      <rect
+                        class="unselected-filter-icon-border-1"
+                        fill="#fff"
+                        fill-rule="nonzero"
+                        height="20"
+                        rx="2"
+                        stroke="#0071bc"
+                        width="20"
+                        x="0.5"
+                        y="0.5"
+                      />
+                      <path
+                        class="unselected-filter-icon-inner-1"
+                        d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667 11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667 9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2 4.69666834,5.83333333 5.01323019,5.83333333 L15.9697874,5.83333333 C16.303936,5.83333333 16.4446301,6.2 16.2335889,6.4 Z"
+                        fill="#0071bc"
+                      />
+                    </g>
+                  </g>
+                </svg>
+                <div
+                  class="date-picker left"
+                  data-css-f2bff0=""
+                >
+                  <div
+                    class="clear-wrapper"
+                  >
+                    <span>
+                      <button
+                        class="testClasses"
+                        id="button-Clear-filter"
+                        type="button"
+                      >
+                        Clear filter
+                      </button>
+                    </span>
+                  </div>
+                  <div
+                    class="input-wrapper"
+                  >
+                    <div
+                      class=""
+                    >
+                      <div
+                        class="testClasses"
+                      >
+                        <label
+                          class="testClasses"
+                          for="date-filter-parameters"
+                          id="date-filter-parameters-label"
+                        >
+                          <span>
+                            Date filter parameters
+                          </span>
+                        </label>
+                        <div
+                          class="cf-select"
+                        >
+                          <div
+                            class=" css-2b097c-container"
+                          >
+                            <div
+                              class="cf-select__control css-yk16xz-control"
+                            >
+                              <div
+                                class="cf-select__value-container css-g1d714-ValueContainer"
+                              >
+                                <div
+                                  class="cf-select__placeholder css-1wa3eu0-placeholder"
+                                >
+                                  Select...
+                                </div>
+                                <div
+                                  class="css-81nyic-Input"
+                                >
+                                  <div
+                                    class="cf-select__input"
+                                    style="display: inline-block;"
+                                  >
+                                    <input
+                                      aria-autocomplete="list"
+                                      aria-expanded="false"
+                                      aria-haspopup="true"
+                                      aria-labelledby="date-filter-parameters-label"
+                                      aria-owns="date-filter-parameters-listbox"
+                                      autocapitalize="none"
+                                      autocomplete="off"
+                                      autocorrect="off"
+                                      id="date-filter-parameters"
+                                      role="combobox"
+                                      spellcheck="false"
+                                      style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                                      tabindex="0"
+                                      type="text"
+                                      value=""
+                                    />
+                                    <div
+                                      style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                              <div
+                                class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                              >
+                                <span
+                                  class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                                />
+                                <div
+                                  aria-hidden="true"
+                                  class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                                >
+                                  <svg
+                                    aria-hidden="true"
+                                    class="css-6q0nyr-Svg"
+                                    focusable="false"
+                                    height="20"
+                                    viewBox="0 0 20 20"
+                                    width="20"
+                                  >
+                                    <path
+                                      d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                                    />
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <input
+                              name="Date filter parameters"
+                              type="hidden"
+                              value=""
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="button-wrapper"
+                  >
+                    <button
+                      disabled=""
+                    >
+                      Apply Filter
+                    </button>
+                  </div>
+                </div>
+              </span>
+            </span>
+          </th>
+        </tr>
+      </thead>
+      <tbody
+        class=""
+      >
+        <tr
+          class="testClasses"
+          id="table-row-1"
+          role="row"
+        >
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            1
+          </td>
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            5/1/2024
+          </td>
+        </tr>
+        <tr
+          class="testClasses"
+          id="table-row-2"
+          role="row"
+        >
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            2
+          </td>
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            5/2/2024
+          </td>
+        </tr>
+        <tr
+          class="testClasses"
+          id="table-row-3"
+          role="row"
+        >
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            3
+          </td>
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            5/3/2024
+          </td>
+        </tr>
+        <tr
+          class="testClasses"
+          id="table-row-4"
+          role="row"
+        >
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            4
+          </td>
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            5/4/2024
+          </td>
+        </tr>
+        <tr
+          class="testClasses"
+          id="table-row-5"
+          role="row"
+        >
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            5
+          </td>
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            5/5/2024
+          </td>
+        </tr>
+        <tr
+          class="testClasses"
+          id="table-row-6"
+          role="row"
+        >
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            6
+          </td>
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            5/6/2024
+          </td>
+        </tr>
+        <tr
+          class="testClasses"
+          id="table-row-7"
+          role="row"
+        >
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            7
+          </td>
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            5/7/2024
+          </td>
+        </tr>
+        <tr
+          class="testClasses"
+          id="table-row-8"
+          role="row"
+        >
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            8
+          </td>
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            5/8/2024
+          </td>
+        </tr>
+        <tr
+          class="testClasses"
+          id="table-row-9"
+          role="row"
+        >
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            9
+          </td>
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            5/9/2024
+          </td>
+        </tr>
+        <tr
+          class="testClasses"
+          id="table-row-10"
+          role="row"
+        >
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            10
+          </td>
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            5/10/2024
+          </td>
+        </tr>
+        <tr
+          class="testClasses"
+          id="table-row-11"
+          role="row"
+        >
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            11
+          </td>
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            5/11/2024
+          </td>
+        </tr>
+        <tr
+          class="testClasses"
+          id="table-row-12"
+          role="row"
+        >
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            12
+          </td>
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            5/12/2024
+          </td>
+        </tr>
+        <tr
+          class="testClasses"
+          id="table-row-13"
+          role="row"
+        >
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            13
+          </td>
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            5/13/2024
+          </td>
+        </tr>
+        <tr
+          class="testClasses"
+          id="table-row-14"
+          role="row"
+        >
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            14
+          </td>
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            5/14/2024
+          </td>
+        </tr>
+        <tr
+          class="testClasses"
+          id="table-row-15"
+          role="row"
+        >
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            15
+          </td>
+          <td
+            class="testClasses"
+            colspan="1"
+            role="gridcell"
+            tabindex="-1"
+          >
+            5/15/2024
+          </td>
+        </tr>
+      </tbody>
+      <tfoot />
+    </table>
+    <div
+      class="cf-pagination"
+    >
+      <div
+        class="cf-pagination-summary"
+      >
+        Viewing 1-15 of 20 total
+      </div>
+      <div
+        class="cf-pagination-pages"
+      >
+        <button
+          aria-label="Previous Page"
+          disabled=""
+        >
+          Previous
+        </button>
+        <button
+          aria-current="page"
+          aria-label="Page 1"
+          class="cf-current-page"
+          name="page-button-0"
+        >
+          1
+        </button>
+        <button
+          aria-label="Page 2"
+          class=""
+          name="page-button-1"
+        >
+          2
+        </button>
+        <button
+          aria-label="Next Page"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`QueueTable FooterRow Matches snapshot with default props 1`] = `
 <tfoot>
   <Row
@@ -220,6 +1317,7 @@ exports[`QueueTable HeaderRow Can filter when not using task pages API and filte
         </span>
         <TableFilter
           columnName="type"
+          dateFilter={false}
           enableFilter={true}
           enableFilterTextTransform={true}
           header="Third"
@@ -307,6 +1405,7 @@ exports[`QueueTable HeaderRow Can filter when not using task pages API and getti
         </span>
         <TableFilter
           columnName="type"
+          dateFilter={false}
           enableFilterTextTransform={true}
           getFilterValues={[MockFunction]}
           header="Third"
@@ -398,6 +1497,7 @@ exports[`QueueTable HeaderRow Can filter when using task pages API and column ha
           enableFilterTextTransform={true}
           filterOptions={Array []}
           filterOptionsFromApi={Array []}
+          filterType=""
           header="Third"
           tableData={
             Array [
@@ -968,6 +2068,7 @@ exports[`QueueTable render() Can filter rows 1`] = `
                 </span>
                 <TableFilter
                   columnName="type"
+                  dateFilter={false}
                   enableFilter={true}
                   enableFilterTextTransform={true}
                   filteredByList={Object {}}
