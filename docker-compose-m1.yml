@@ -1,4 +1,3 @@
-version: '3'
 services:
   appeals-redis:
     container_name: appeals-redis
@@ -19,7 +18,8 @@ services:
     environment:
      - POSTGRES_USER=postgres
      - POSTGRES_PASSWORD=postgres
-    network_mode: host
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   appeals-localstack-aws:
     platform: linux/amd64
