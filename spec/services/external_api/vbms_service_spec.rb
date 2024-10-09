@@ -192,7 +192,7 @@ describe ExternalApi::VBMSService do
           source: "my_source",
           document_type_id: 1,
           document_type: "test",
-          subject: "testing1",
+          document_subject: "testing1",
           new_mail: true
         )
       end
