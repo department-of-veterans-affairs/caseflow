@@ -27,13 +27,8 @@ jobs:
       - name: retrieve ecr password and store as secret
         if: steps.acquire-credentials.outcome == 'success'
         run: |
-          sudo apt install python3-venv
-          python3 -m venv .venv
-          source .venv/bin/activate
-
-          pip install -r .github/workflows/requirements.txt
-
-          python .github/workflows/ecr_password_updater.py
+          pip3 install -r .github/workflows/requirements.txt
+          python3 .github/workflows/ecr_password_updater.py
         env:
           AWS_ACCESS_KEY_ID: ${{ steps.acquire-credentials.outputs.aws-access-key-id }}
           AWS_SECRET_ACCESS_KEY: ${{ steps.acquire-credentials.outputs.aws-secret-access-key }}
