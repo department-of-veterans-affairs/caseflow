@@ -27,7 +27,7 @@ jobs:
       - name: retrieve ecr password and store as secret
         if: steps.acquire-credentials.outcome == 'success'
         run: |
-          pip3 install -r .github/workflows/requirements.txt
+          pip3 install -r .github/workflows/requirements.txt --break-system-packages
           python3 .github/workflows/ecr_password_updater.py
         env:
           AWS_ACCESS_KEY_ID: ${{ steps.acquire-credentials.outputs.aws-access-key-id }}
