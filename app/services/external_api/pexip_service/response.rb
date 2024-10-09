@@ -21,6 +21,7 @@ class ExternalApi::PexipService::Response
   private
 
   # :nocov:
+  # rubocop:disable Metrics/CyclomaticComplexity
   def check_for_error
     return if success?
 
@@ -34,10 +35,15 @@ class ExternalApi::PexipService::Response
       Caseflow::Error::PexipNotFoundError.new(code: code, message: msg)
     when 405
       Caseflow::Error::PexipMethodNotAllowedError.new(code: code, message: msg)
+    when 503
+      Caseflow::Error::PexipServiceNotReachableError.new(code: code, message: "Pexip Service is currently not
+      available")
     else
+
       Caseflow::Error::PexipApiError.new(code: code, message: msg)
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def error_message
     return "No error message from Pexip" if resp.raw_body.empty?
