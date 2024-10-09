@@ -167,7 +167,7 @@ FactoryBot.define do
         create(:request_issue,
                benefit_type: "vha",
                nonrating_issue_category: "Caregiver | Other",
-               nonrating_issue_description: "VHA - Caregiver ",
+               nonrating_issue_description: "VHA - Caregiver",
                decision_review: higher_level_review,
                decision_date: 1.month.ago)
 

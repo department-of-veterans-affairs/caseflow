@@ -49,6 +49,10 @@ describe NotificationInitializationJob, type: :job do
         )
       end
 
+      before do
+        InitialTasksFactory.new(appeal_state.appeal).create_root_and_sub_tasks!
+      end
+
       it "enqueues an SendNotificationJob" do
         expect { subject }.to have_enqueued_job(SendNotificationJob)
       end

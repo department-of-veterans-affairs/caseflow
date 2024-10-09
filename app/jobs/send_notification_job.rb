@@ -43,12 +43,11 @@ class SendNotificationJob < CaseflowJob
 
   class << self
     def queue_name_suffix
-      ApplicationController.dependencies_faked? ? :send_notifications : :"send_notifications.fifo"
+      :"send_notifications.fifo"
     end
   end
 
   # Must receive JSON string as argument
-
   def perform(message_json)
     ensure_current_user_is_set
 
@@ -57,37 +56,18 @@ class SendNotificationJob < CaseflowJob
 
       @message = validate_message(JSON.parse(message_json, object_class: OpenStruct))
 
-      transaction_wrapper do
+      ActiveRecord::Base.transaction do
         @notification_audit = find_or_create_notification_audit
         update_notification_statuses
         send_to_va_notify if message_status_valid?
       end
     rescue StandardError => error
-      if Rails.deploy_env?(:prodtest) && error.in?(DISCARD_ERRORS)
-        transaction_wrapper do
-          @notification_audit = find_or_create_notification_audit
-        end
-      end
-
       log_error(error)
       raise error
     end
   end
 
   private
-
-  # Conditionally wraps database operations in a transaction block depending on whether
-  #   the current environment is ProdTest. The choice to not have ProdTest queries utilize
-  #   a transction is due to how unlikely it will be for us to have an operation VA Notify
-  #   integration in that environment due to this environment having production-replicated
-  #   data and us not wanting to inadvertently transmit messages to actual recipients.
-  #
-  #   The lack of a transaction block will prevent rollbacks on the records created in the
-  #     notifications table and allow for observations around notification accuracy to be
-  #     more easily obtained.
-  def transaction_wrapper
-    ActiveRecord::Base.transaction { yield }
-  end
 
   def event_type
     message.template_name

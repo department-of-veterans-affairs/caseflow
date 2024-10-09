@@ -181,6 +181,30 @@ FactoryBot.define do
       end
     end
 
+    trait :non_ssc_avlj_user do
+      after(:create) do |user|
+        create(:staff, :non_ssc_avlj, user: user)
+      end
+    end
+
+    trait :ssc_avlj_user do
+      after(:create) do |user|
+        create(:staff, :ssc_avlj, user: user)
+      end
+    end
+
+    trait :vlj_user do
+      after(:create) do |user|
+        create(:staff, :vlj, user: user)
+      end
+    end
+
+    trait :inactive_non_ssc_avlj_user do
+      after(:create) do |user|
+        create(:staff, :inactive_non_ssc_avlj, user: user)
+      end
+    end
+
     after(:create) do |user, evaluator|
       if evaluator.vacols_uniq_id
         create(:staff, slogid: evaluator.vacols_uniq_id, user: user)

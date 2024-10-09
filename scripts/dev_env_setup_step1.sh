@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # This script automates the Developer Setup described here:
-# https://github.com/department-of-veterans-affairs/caseflow/blob/master/README.md#developer-setup
+# https://github.com/department-of-veterans-affairs/caseflow/blob/main/README.md#developer-setup
 
 # It is okay to run this script multiple times.
 # Only Mac has been tested.

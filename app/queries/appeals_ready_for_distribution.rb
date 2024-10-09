@@ -12,7 +12,8 @@ class AppealsReadyForDistribution
     target_distro_date: "Target Distro Date",
     days_before_goal_date: "Days Before Goal Date",
     hearing_judge: "Hearing Judge",
-    original_judge: "Original Deciding Judge",
+    original_judge_id: "Original Deciding Judge ID",
+    original_judge_name: "Original Deciding Judge",
     veteran_file_number: "Veteran File number",
     veteran_name: "Veteran",
     affinity_start_date: "Affinity Start Date"
@@ -54,24 +55,35 @@ class AppealsReadyForDistribution
 
   def self.legacy_rows(appeals, sym)
     appeals.map do |appeal|
-      appeal_affinity = AppealAffinity.find_by(case_id: appeal["bfkey"], case_type: "VACOLS::Case")
-
-      {
-        docket_number: appeal["tinum"],
-        docket: sym.to_s,
-        aod: appeal["aod"] == 1,
-        cavc: appeal["cavc"] == 1,
-        receipt_date: appeal["bfd19"],
-        ready_for_distribution_at: appeal["bfdloout"],
-        target_distro_date: "N/A",
-        days_before_goal_date: "N/A",
-        hearing_judge: FullName.new(appeal["vlj_namef"], nil, appeal["vlj_namel"]).to_s,
-        original_judge: appeal["prev_deciding_judge"].nil? ? nil : legacy_original_deciding_judge(appeal),
-        veteran_file_number: appeal["ssn"] || appeal["bfcorlid"],
-        veteran_name: FullName.new(appeal["snamef"], nil, appeal["snamel"]).to_s,
-        affinity_start_date: appeal_affinity&.affinity_start_date
-      }
+      build_legacy_appeal_row(appeal, sym)
     end
+  end
+
+  def self.build_legacy_appeal_row(appeal, sym)
+    hearing_judge = FullName.new(appeal["vlj_namef"], nil, appeal["vlj_namel"]).to_s
+    veteran_name = FullName.new(appeal["snamef"], nil, appeal["snamel"]).to_s
+
+    {
+      docket_number: appeal["tinum"],
+      docket: sym.to_s,
+      aod: appeal["aod"] == 1,
+      cavc: appeal["cavc"] == 1,
+      receipt_date: appeal["bfd19"],
+      ready_for_distribution_at: appeal["bfdloout"],
+      target_distro_date: "N/A",
+      days_before_goal_date: "N/A",
+      hearing_judge: hearing_judge,
+      original_judge_id: legacy_original_deciding_judge(appeal),
+      original_judge_name: legacy_original_deciding_judge_name(appeal),
+      veteran_file_number: appeal["ssn"] || appeal["bfcorlid"],
+      veteran_name: veteran_name,
+      affinity_start_date: fetch_affinity_start_date(appeal["bfkey"])
+    }
+  end
+
+  def self.fetch_affinity_start_date(case_id)
+    appeal_affinity = AppealAffinity.find_by(case_id: case_id, case_type: "VACOLS::Case")
+    appeal_affinity&.affinity_start_date
   end
 
   def self.ama_rows(appeals, docket, sym)
@@ -81,6 +93,7 @@ class AppealsReadyForDistribution
       # only look for hearings that were held
       hearing_judge = with_held_hearings(appeal)
       priority_appeal = appeal.aod || appeal.cavc
+
       {
         docket_number: appeal.docket_number,
         docket: sym.to_s,
@@ -139,5 +152,10 @@ class AppealsReadyForDistribution
   def self.legacy_original_deciding_judge(appeal)
     staff = VACOLS::Staff.find_by(sattyid: appeal["prev_deciding_judge"])
     staff&.sdomainid || appeal["prev_deciding_judge"]
+  end
+
+  def self.legacy_original_deciding_judge_name(appeal)
+    staff = VACOLS::Staff.find_by(sattyid: appeal["prev_deciding_judge"])
+    FullName.new(staff["snamef"], nil, staff["snamel"]).to_s if !staff.nil?
   end
 end

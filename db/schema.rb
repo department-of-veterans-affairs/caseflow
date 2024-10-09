@@ -1450,6 +1450,7 @@ ActiveRecord::Schema.define(version: 2024_08_28_165652) do
     t.string "email_notification_content", comment: "Full Email Text Content of Notification"
     t.string "email_notification_external_id", comment: "VA Notify Notification Id for the email notification send through their API "
     t.string "email_notification_status", comment: "Status of the Email Notification"
+    t.string "email_status_reason", comment: "Context around why this VA Notify notification is in the email status"
     t.date "event_date", null: false, comment: "Date of Event"
     t.string "event_type", null: false, comment: "Type of Event"
     t.bigint "notifiable_id"
@@ -1465,6 +1466,7 @@ ActiveRecord::Schema.define(version: 2024_08_28_165652) do
     t.string "sms_notification_status", comment: "Status of SMS/Text Notification"
     t.string "sms_response_content", comment: "Message body of the sms notification response."
     t.datetime "sms_response_time", comment: "Date and Time of the sms notification response."
+    t.string "sms_status_reason", comment: "Context around why this VA Notify notification is in the sms status"
     t.datetime "updated_at", comment: "TImestamp of when Notification was Updated"
     t.index ["appeals_id", "appeals_type"], name: "index_appeals_notifications_on_appeals_id_and_appeals_type"
     t.index ["email_notification_external_id"], name: "index_notifications_on_email_notification_external_id"
@@ -1738,6 +1740,16 @@ ActiveRecord::Schema.define(version: 2024_08_28_165652) do
     t.index ["user_id"], name: "index_request_issues_updates_on_user_id"
   end
 
+  create_table "returned_appeal_jobs", force: :cascade do |t|
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "errored_at"
+    t.text "returned_appeals", default: [], array: true
+    t.datetime "started_at"
+    t.json "stats"
+    t.datetime "updated_at", null: false
+  end
+
   create_table "schedule_periods", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "end_date", null: false
@@ -1865,11 +1877,13 @@ ActiveRecord::Schema.define(version: 2024_08_28_165652) do
     t.boolean "filed_by_va_gov", comment: "Indicates whether or not this form came from VA.gov"
     t.boolean "legacy_opt_in_approved", comment: "Indicates whether a Veteran opted to withdraw their Supplemental Claim request issues from the legacy system if a matching issue is found. If there is a matching legacy issue and it is not withdrawn, then that issue is ineligible to be a new request issue and a contention will not be created for it."
     t.date "receipt_date", comment: "The date that the Supplemental Claim form was received by central mail. Only issues decided prior to the receipt date will show up as contestable issues.  It is also the claim date for any associated end products that are established. Supplemental Claims do not have the same timeliness restriction on contestable issues as Appeals and Higher Level Reviews."
+    t.string "type", default: "SupplementalClaim", null: false, comment: "The class name for the single table inheritance type of Supplemental Claim for example Remand"
     t.datetime "updated_at"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false, comment: "The universally unique identifier for the Supplemental Claim. Can be used to link to the claim after it is completed."
     t.string "veteran_file_number", null: false, comment: "PII. The file number of the Veteran that the Supplemental Claim is for."
     t.boolean "veteran_is_not_claimant", comment: "Indicates whether the Veteran is the claimant on the Supplemental Claim form, or if the claimant is someone else like a spouse or a child. Must be TRUE if the Veteran is deceased."
     t.index ["decision_review_remanded_type", "decision_review_remanded_id"], name: "index_decision_issues_on_decision_review_remanded"
+    t.index ["type"], name: "index_supplemental_claims_on_type"
     t.index ["updated_at"], name: "index_supplemental_claims_on_updated_at"
     t.index ["uuid"], name: "index_supplemental_claims_on_uuid"
     t.index ["veteran_file_number"], name: "index_supplemental_claims_on_veteran_file_number"

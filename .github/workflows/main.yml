@@ -1,7 +1,7 @@
-name: PRs to master
-on: 
+name: PRs to main
+on:
   pull_request:
-    branches: [master]
+    branches: [main]
     types: [closed]
 jobs:
   merge-master-back-to-dev:
@@ -14,10 +14,10 @@ jobs:
       run: |
           git config --local user.email "jeremy.shields@va.gov"
           git config --local user.name "Jeremy Shields"
-    - name: Merge master back to dev
+    - name: Merge main back to dev
       run: |
           git fetch --unshallow
           git checkout development
           git pull
-          git merge -Xtheirs --no-ff master -m "Auto-merge master back to dev"
+          git merge -Xtheirs --no-ff main -m "Auto-merge main back to dev"
           git push

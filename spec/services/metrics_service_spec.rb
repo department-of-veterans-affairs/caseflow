@@ -63,7 +63,7 @@ describe MetricsService do
               service: service,
               endpoint: name
             },
-            sent_to: [["rails_console"], "datadog", "dynatrace"],
+            sent_to: [["rails_console"], "dynatrace"],
             sent_to_info: {
               metric_group: "service",
               metric_name: "request_latency",

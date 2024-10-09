@@ -4,7 +4,7 @@ import { TimeSlotButton } from 'app/hearings/components/scheduleHearing/TimeSlot
 import { render } from '@testing-library/react';
 import { roTimezones, formatTimeSlotLabel } from 'app/hearings/utils';
 
-const time = '08:15';
+const time = '15:15 PM';
 const hearingDayDate = '2025-01-01';
 const issueCount = 2;
 const poaName = 'Something';

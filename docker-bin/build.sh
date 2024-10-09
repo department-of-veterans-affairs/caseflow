@@ -41,8 +41,6 @@ fi
 cd ../../
 printf "commit: `git rev-parse HEAD`\ndate: `git log -1 --format=%cd`" > config/build_version.yml
 
-credstash -t appeals-credstash get datadog.api.key > config/datadog.key
-
 cp /etc/ssl/certs/ca-certificates.crt docker-bin/ca-certs/cacert.pem
 
 # Build Docker
@@ -50,7 +48,6 @@ echo -e "\tCreating Caseflow App Docker Image"
 docker build -t caseflow .
 result=$?
 echo -e "\tCleaning Up..."
-rm -rf config/datadog.key
 rm -rf docker-bin/oracle_libs
 if [ $result == 0 ]; then
   echo -e "\tBuilding Caseflow Docker App: Completed"

@@ -3,7 +3,7 @@
 require "rails_helper"
 
 describe IhpTasksFactory, :postgres do
-  let(:appeal) { create(:appeal) }
+  let(:appeal) { create(:appeal, :active) }
   let(:parent_task) { create(:task, appeal: appeal) }
   let(:ihp_tasks_factory) { IhpTasksFactory.new(parent_task) }
 

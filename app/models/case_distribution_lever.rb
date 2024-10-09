@@ -27,6 +27,7 @@ class CaseDistributionLever < ApplicationRecord
     #{Constants.DISTRIBUTION.ama_hearing_docket_time_goals}
     #{Constants.DISTRIBUTION.ama_hearing_start_distribution_prior_to_goals}
     #{Constants.DISTRIBUTION.ama_evidence_submission_start_distribution_prior_to_goals}
+    #{Constants.DISTRIBUTION.nonsscavlj_number_of_appeals_to_move}
   ).freeze
 
   FLOAT_LEVERS = %W(

@@ -7,7 +7,6 @@ class CaseflowJob < ApplicationJob
     job.start_time = Time.zone.now
   end
 
-  # Automatically report runtime to DataDog if job does not explicitly report to DataDog.
   # Note: This block is not called if an error occurs when `perform` is executed --
   # see https://stackoverflow.com/questions/50263787/does-active-job-call-after-perform-when-perform-raises-an-error
   after_perform do |job|

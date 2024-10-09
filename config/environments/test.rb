@@ -135,6 +135,9 @@ Rails.application.configure do
   # One time Appeal States migration for Legacy & AMA Appeal Batch Sizes
   ENV["STATE_MIGRATION_JOB_BATCH_SIZE"] ||= "1000"
 
+  # Syncing decided appeals in select batch sizes
+  ENV["VACOLS_QUERY_BATCH_SIZE"] ||= "800"
+
   # Travel Board Sync Batch Size
   ENV["TRAVEL_BOARD_HEARING_SYNC_BATCH_LIMIT"] ||= "250"
 
@@ -156,4 +159,7 @@ Rails.application.configure do
 
   # Dynatrace variables
   ENV["STATSD_ENV"] = "test"
+
+  config.sqs_create_queues = true
+  config.sqs_endpoint = ENV["CI"] ? 'http://localstack:4566' : 'http://localhost:4566'
 end

@@ -26,7 +26,7 @@ class BusinessLineReporter
         csv << [
           business_line.name,
           task.appeal_id,
-          task.appeal_type,
+          task.appeal.class.review_title,
           task.appeal.claimant&.name,
           task.appeal.request_issues.size,
           task.appeal.decision_issues.size,

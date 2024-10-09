@@ -23,10 +23,23 @@ module AppellantNotification
     end
   end
 
+  class InactiveAppealError < StandardError
+    def initialize(appeal_id, message = "The appeal status is inactive")
+      super(message + " for appeal with id #{appeal_id}")
+    end
+
+    def status
+      "Inactive"
+    end
+  end
+
   class NoAppealError < StandardError; end
 
-  def self.handle_errors(appeal)
+  def self.handle_errors(appeal, template_name)
     fail NoAppealError if appeal.nil?
+    if template_name == Constants.EVENT_TYPE_FILTERS.quarterly_notification && !appeal.active?
+      fail InactiveAppealError, appeal.external_id
+    end
 
     message_attributes = {}
     message_attributes[:appeal_type] = appeal.class.to_s
@@ -68,7 +81,7 @@ module AppellantNotification
   end
 
   def self.create_payload(appeal, template_name, appeal_status = nil)
-    message_attributes = AppellantNotification.handle_errors(appeal)
+    message_attributes = AppellantNotification.handle_errors(appeal, template_name)
     VANotifySendMessageTemplate.new(message_attributes, template_name, appeal_status)
   end
 

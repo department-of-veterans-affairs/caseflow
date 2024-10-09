@@ -3,8 +3,6 @@
 class Api::ApplicationController < ActionController::Base
   protect_from_forgery with: :null_session
 
-  include TrackRequestId
-
   before_action :strict_transport_security
 
   before_action :setup_fakes,

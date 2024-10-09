@@ -145,11 +145,11 @@ export const getDate = (date) => {
   return moment(date).format('YYYY-MM-DD');
 };
 
-export const getDisplayTime = (scheduledTimeString, timezone) => {
-  const val = scheduledTimeString ? moment(scheduledTimeString, 'HH:mm').format('h:mm a') : '';
+export const getDisplayTime = (dateString, scheduledTimeString, timezone) => {
+  const val = scheduledTimeString ? moment(scheduledTimeString, 'HH:mm a').format('h:mm A') : '';
 
   if (timezone) {
-    const tz = moment().tz(timezone).
+    const tz = moment(dateString).tz(timezone).
       format('z');
 
     return `${val} ${tz}`;

@@ -133,7 +133,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     end
 
     it "renders a page with the grouped levers and lever history" do
-      lever_keys = %w[static batch affinity docket_distribution_prior docket_time_goal docket_levers]
+      lever_keys = %w[static batch affinity docket_distribution_prior docket_time_goal docket_levers internal]
       User.authenticate!(user: lever_user)
       OrganizationsUser.make_user_admin(lever_user, CDAControlGroup.singleton)
       get "levers"
