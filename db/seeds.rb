@@ -79,6 +79,7 @@ class SeedDB
     call_and_log_seed_step Seeds::TranscriptionFiles
     call_and_log_seed_step Seeds::TranscriptionPackages
   end
+
 end
 
 SeedDB.new.seed
