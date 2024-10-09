@@ -106,6 +106,9 @@ class BusinessLine < Organization
       "SupplementalClaim" => Task.arel_table[:appeal_type]
         .eq("SupplementalClaim")
         .and(Task.arel_table[:type].eq(DecisionReviewTask.name))
+        .and(Arel.sql("sub_type").not_eq("Remand")),
+      "Remand" => Arel.sql("sub_type").eq("Remand")
+        .and(Task.arel_table[:type].eq(DecisionReviewTask.name))
     }.freeze
 
     DEFAULT_ORDERING_HASH = {
@@ -122,6 +125,15 @@ class BusinessLine < Organization
         sort_by: :closed_at
       }
     }.freeze
+
+    USER_TABLE_ALIASES = [
+      :intake_users,
+      :update_users,
+      :decision_users,
+      :decision_users_completed_by,
+      :requestor,
+      :decider
+    ].freeze
 
     def initialize(query_type: :in_progress, parent: business_line, query_params: {})
       @query_type = query_type
@@ -141,42 +153,76 @@ class BusinessLine < Organization
         .order(order_clause)
     end
 
-    def task_type_count
-      Task.select(Task.arel_table[:type])
-        .from(combined_decision_review_tasks_query)
-        .group(Task.arel_table[:type], Task.arel_table[:appeal_type])
-        .count
+    def task_type_query_helper(join_association)
+      Task.send(parent.tasks_query_type[query_type])
+        .select("tasks.id AS task_id, tasks.type AS task_type")
+        .joins(join_association)
+        .joins(issue_modification_request_join)
+        .where(query_constraints)
+        .where(issue_modification_request_filter)
+    end
+
+    def task_type_board_grant_helper
+      Task.send(parent.tasks_query_type[query_type])
+        .select("tasks.id AS task_id, tasks.type AS task_type, 'Appeal' AS decision_review_type")
+        .joins(board_grant_effectuation_task_appeals_requests_join)
+        .joins(issue_modification_request_join)
+        .where(board_grant_effectuation_task_constraints)
+        .where(issue_modification_request_filter)
+    end
+
+    def issue_type_query_helper(join_association)
+      Task.send(parent.tasks_query_type[query_type])
+        .select("tasks.id as task_id, request_issues.nonrating_issue_category AS issue_category")
+        .joins(join_association)
+        .joins(issue_modification_request_join)
+        .where(query_constraints)
+        .where(issue_modification_request_filter)
     end
 
     # rubocop:disable Metrics/MethodLength
-    # rubocop:disable Metrics/AbcSize
+    def task_type_count
+      appeals_query = task_type_query_helper(ama_appeal: :request_issues)
+        .select("'Appeal' AS decision_review_type")
+      hlr_query = task_type_query_helper(higher_level_review: :request_issues)
+        .select("'HigherLevelReview' AS decision_review_type")
+      sc_query = task_type_query_helper(supplemental_claim: :request_issues)
+        .select("supplemental_claims.type AS decision_review_type")
+      board_grant_query = task_type_board_grant_helper
+
+      task_count = ActiveRecord::Base.connection.execute <<-SQL
+        WITH task_review_issues AS (
+            #{hlr_query.to_sql}
+          UNION
+            #{sc_query.to_sql}
+          UNION
+            #{appeals_query.to_sql}
+          UNION
+            #{board_grant_query.to_sql}
+        )
+        SELECT task_type, decision_review_type, COUNT(1)
+        FROM task_review_issues
+        GROUP BY task_type, decision_review_type;
+      SQL
+
+      task_count.reduce({}) do |acc, item|
+        key = [item["task_type"], item["decision_review_type"]]
+        acc[key] = (acc[key] || 0) + item["count"]
+        acc
+      end
+    end
+
     def issue_type_count
-      shared_select_statement = "tasks.id as tasks_id, request_issues.nonrating_issue_category as issue_category"
-      appeals_query = Task.send(parent.tasks_query_type[query_type])
-        .select(shared_select_statement)
-        .joins(ama_appeal: :request_issues)
-        .joins(issue_modification_request_join)
-        .where(query_constraints)
-        .where(issue_modification_request_filter)
-      hlr_query = Task.send(parent.tasks_query_type[query_type])
-        .select(shared_select_statement)
-        .joins(supplemental_claim: :request_issues)
-        .joins(issue_modification_request_join)
-        .where(query_constraints)
-        .where(issue_modification_request_filter)
-      sc_query = Task.send(parent.tasks_query_type[query_type])
-        .select(shared_select_statement)
-        .joins(higher_level_review: :request_issues)
-        .joins(issue_modification_request_join)
-        .where(query_constraints)
-        .where(issue_modification_request_filter)
+      appeals_query = issue_type_query_helper(ama_appeal: :request_issues)
+      hlr_query = issue_type_query_helper(higher_level_review: :request_issues)
+      sc_query = issue_type_query_helper(supplemental_claim: :request_issues)
 
       nonrating_issue_count = ActiveRecord::Base.connection.execute <<-SQL
         WITH task_review_issues AS (
             #{hlr_query.to_sql}
-          UNION ALL
+          UNION
             #{sc_query.to_sql}
-          UNION ALL
+          UNION
             #{appeals_query.to_sql}
         )
         SELECT issue_category, COUNT(1) AS nonrating_issue_count
@@ -198,19 +244,19 @@ class BusinessLine < Organization
 
       issue_count_options
     end
-    # rubocop:enable Metrics/AbcSize
 
     def change_history_rows
       # Generate all of the filter queries to be used in both the HLR and SC block
       sql = Arel.sql(change_history_sql_filter_array.join(" "))
       sanitized_filters = ActiveRecord::Base.sanitize_sql_array([sql])
+      sc_type_clauses = ActiveRecord::Base.sanitize_sql_array([sc_type_filter])
 
       change_history_sql_block = <<-SQL
         WITH versions_agg AS NOT MATERIALIZED (
           SELECT
               versions.item_id,
               versions.item_type,
-              ARRAY_AGG(versions.object_changes ORDER BY versions.id) AS object_changes_array,
+              STRING_AGG(versions.object_changes, '|||' ORDER BY versions.id) AS object_changes_array,
               MAX(CASE
                   WHEN versions.object_changes LIKE '%closed_at:%' THEN versions.whodunnit
                   ELSE NULL
@@ -223,8 +269,48 @@ class BusinessLine < Organization
             AND tasks.assigned_to_id = '#{parent.id.to_i}'
           GROUP BY
               versions.item_id, versions.item_type
+        ), imr_version_agg AS (SELECT
+              versions.item_id,
+              versions.item_type,
+              STRING_AGG(versions.object, '|||' ORDER BY versions.id) AS object_array,
+              STRING_AGG(versions.object_changes, '|||' ORDER BY versions.id) AS object_changes_array
+          FROM
+              versions
+          INNER JOIN issue_modification_requests ON issue_modification_requests.id = versions.item_id
+          WHERE versions.item_type = 'IssueModificationRequest'
+          GROUP BY
+              versions.item_id, versions.item_type
+        ), imr_distinct AS (
+            SELECT DISTINCT ON (imr_cte.id)
+                imr_cte.id,
+                imr_cte.decided_at,
+                imr_cte.created_at,
+                imr_cte.decision_review_type,
+                imr_cte.decision_review_id,
+                imr_cte.status,
+                imr_cte.updated_at
+            FROM issue_modification_requests imr_cte
+        ), imr_lead_decided AS (
+            SELECT id,
+                  decision_review_id,
+                  LEAD(
+                    CASE
+                      WHEN status = 'cancelled' THEN updated_at
+                      ELSE decided_at
+                    END,
+                    1,
+                    '9999-12-31 23:59:59' -- Fake value to indicate out of bounds
+                  ) OVER (PARTITION BY decision_review_id, decision_review_type ORDER BY decided_at, created_at DESC) AS next_decided_or_cancelled_at
+            FROM imr_distinct
+        ), imr_lead_created AS (
+            SELECT id,
+                LEAD(created_at, 1, '9999-12-31 23:59:59') OVER (PARTITION BY decision_review_id, decision_review_type ORDER BY created_at ASC) AS next_created_at
+            FROM imr_distinct
         )
-        SELECT tasks.id AS task_id, tasks.status AS task_status, request_issues.id AS request_issue_id,
+        SELECT tasks.id AS task_id,
+          check_imr_current_status.is_assigned_present,
+          tasks.status AS task_status,
+          request_issues.id AS request_issue_id,
           request_issues_updates.created_at AS request_issue_update_time, decision_issues.description AS decision_description,
           request_issues.benefit_type AS request_issue_benefit_type, request_issues_updates.id AS request_issue_update_id,
           request_issues.created_at AS request_issue_created_at, request_decision_issues.created_at AS request_decision_created_at,
@@ -247,7 +333,38 @@ class BusinessLine < Organization
             NULLIF(CONCAT(unrecognized_party_details.name, ' ', unrecognized_party_details.last_name), ' '),
             NULLIF(CONCAT(people.first_name, ' ', people.last_name), ' '),
             bgs_attorneys.name
-          ) AS claimant_name
+          ) AS claimant_name,
+          'HigherLevelReview' AS type_classifier,
+          imr.id AS issue_modification_request_id,
+          imr.nonrating_issue_category AS requested_issue_type,
+          imr.nonrating_issue_description As requested_issue_description,
+          imr.remove_original_issue,
+          imr.request_reason AS modification_request_reason,
+          imr.decision_date AS requested_decision_date,
+          imr.request_type AS request_type,
+          imr.status AS issue_modification_request_status,
+          imr.decision_reason AS decision_reason,
+          imr.decider_id decider_id,
+          imr.requestor_id as requestor_id,
+          CASE WHEN imr.status = 'cancelled' THEN imr.updated_at ELSE imr.decided_at END AS decided_at,
+          imr.created_at AS issue_modification_request_created_at,
+          imr.updated_at AS issue_modification_request_updated_at,
+          imr.edited_at AS issue_modification_request_edited_at,
+          imr.withdrawal_date AS issue_modification_request_withdrawal_date,
+          imr.decision_review_id AS decision_review_id,
+          imr.decision_review_type AS decision_review_type,
+          requestor.full_name AS requestor,
+          requestor.station_id AS requestor_station_id,
+          requestor.css_id AS requestor_css_id,
+          decider.full_name AS decider,
+          decider.station_id AS decider_station_id,
+          decider.css_id AS decider_css_id,
+          itv.object_changes_array AS imr_versions,
+          LAG(imr.created_at, 1) OVER (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.created_at) AS previous_imr_created_at,
+          LAG(CASE WHEN imr.status = 'cancelled' THEN imr.updated_at ELSE imr.decided_at END) OVER (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY CASE WHEN imr.status = 'cancelled' THEN imr.updated_at ELSE imr.decided_at END) AS previous_imr_decided_at,
+          itv.object_array as previous_state_array,
+          imr_lead_decided.next_decided_or_cancelled_at,
+          imr_lead_created.next_created_at
         FROM tasks
         INNER JOIN request_issues ON request_issues.decision_review_type = tasks.appeal_type
         AND request_issues.decision_review_id = tasks.appeal_id
@@ -257,6 +374,18 @@ class BusinessLine < Organization
         AND intakes.detail_id = tasks.appeal_id
         LEFT JOIN request_issues_updates ON request_issues_updates.review_type = tasks.appeal_type
         AND request_issues_updates.review_id = tasks.appeal_id
+        LEFT JOIN LATERAL (
+          SELECT *
+          FROM issue_modification_requests imr
+          WHERE imr.decision_review_id = tasks.appeal_id
+            AND imr.decision_review_type = 'HigherLevelReview'
+            AND (
+                imr.request_issue_id = request_issues.id
+                OR imr.request_type = 'addition'
+            )
+        ) imr ON true
+        LEFT JOIN imr_lead_decided ON imr_lead_decided.id = imr.id
+        LEFT JOIN imr_lead_created ON imr_lead_created.id = imr.id
         LEFT JOIN request_decision_issues ON request_decision_issues.request_issue_id = request_issues.id
         LEFT JOIN decision_issues ON decision_issues.decision_review_id = tasks.appeal_id
         AND decision_issues.decision_review_type = tasks.appeal_type AND decision_issues.id = request_decision_issues.decision_issue_id
@@ -271,62 +400,136 @@ class BusinessLine < Organization
         LEFT JOIN users update_users ON request_issues_updates.user_id = update_users.id
         LEFT JOIN users decision_users ON decision_users.id = tv.version_closed_by_id::int
         LEFT JOIN users decision_users_completed_by ON decision_users_completed_by.id = tasks.completed_by_id
+        LEFT JOIN users requestor ON imr.requestor_id = requestor.id
+        LEFT JOIN users decider ON imr.decider_id = decider.id
+        LEFT JOIN imr_version_agg itv ON itv.item_type = 'IssueModificationRequest' AND itv.item_id = imr.id
+        LEFT JOIN LATERAL (
+             SELECT CASE
+           WHEN EXISTS (
+             SELECT 1
+             FROM issue_modification_requests imr
+             WHERE imr.decision_review_id = request_issues.decision_review_id
+             AND imr.decision_review_type = 'HigherLevelReview'
+               AND imr.status = 'assigned'
+           ) THEN true
+           ELSE false
+       END AS is_assigned_present
+         ) check_imr_current_status on true
         WHERE tasks.type = 'DecisionReviewTask'
         AND tasks.assigned_to_type = 'Organization'
         AND tasks.assigned_to_id = '#{parent.id.to_i}'
         #{sanitized_filters}
-        UNION ALL
-        SELECT tasks.id AS task_id, tasks.status AS task_status, request_issues.id AS request_issue_id,
-          request_issues_updates.created_at AS request_issue_update_time, decision_issues.description AS decision_description,
-          request_issues.benefit_type AS request_issue_benefit_type, request_issues_updates.id AS request_issue_update_id,
-          request_issues.created_at AS request_issue_created_at, request_decision_issues.created_at AS request_decision_created_at,
-          intakes.completed_at AS intake_completed_at, update_users.full_name AS update_user_name, tasks.created_at AS task_created_at,
-          intake_users.full_name AS intake_user_name, update_users.station_id AS update_user_station_id, tasks.closed_at AS task_closed_at,
-          intake_users.station_id AS intake_user_station_id, decision_issues.created_at AS decision_created_at,
-          COALESCE(decision_users.station_id, decision_users_completed_by.station_id) AS decision_user_station_id,
-          COALESCE(decision_users.full_name, decision_users_completed_by.full_name) AS decision_user_name,
-          COALESCE(decision_users.css_id, decision_users_completed_by.css_id) AS decision_user_css_id,
-          intake_users.css_id AS intake_user_css_id, update_users.css_id AS update_user_css_id,
-          request_issues_updates.before_request_issue_ids, request_issues_updates.after_request_issue_ids,
-          request_issues_updates.withdrawn_request_issue_ids, request_issues_updates.edited_request_issue_ids,
-          decision_issues.caseflow_decision_date, request_issues.decision_date_added_at,
-          tasks.appeal_type, tasks.appeal_id, request_issues.nonrating_issue_category, request_issues.nonrating_issue_description,
-          request_issues.decision_date, decision_issues.disposition, tasks.assigned_at, request_issues.unidentified_issue_text,
-          request_decision_issues.decision_issue_id, request_issues.closed_at AS request_issue_closed_at,
-          tv.object_changes_array AS task_versions, (CURRENT_TIMESTAMP::date - tasks.assigned_at::date) AS days_waiting,
-          COALESCE(intakes.veteran_file_number, supplemental_claims.veteran_file_number) AS veteran_file_number,
-          COALESCE(
-            NULLIF(CONCAT(unrecognized_party_details.name, ' ', unrecognized_party_details.last_name), ' '),
-            NULLIF(CONCAT(people.first_name, ' ', people.last_name), ' '),
-            bgs_attorneys.name
-          ) AS claimant_name
-        FROM tasks
-        INNER JOIN request_issues ON request_issues.decision_review_type = tasks.appeal_type
-        AND request_issues.decision_review_id = tasks.appeal_id
-        INNER JOIN supplemental_claims ON tasks.appeal_type = 'SupplementalClaim'
-        AND tasks.appeal_id = supplemental_claims.id
-        LEFT JOIN intakes ON tasks.appeal_type = intakes.detail_type
-        AND intakes.detail_id = tasks.appeal_id
-        LEFT JOIN request_issues_updates ON request_issues_updates.review_type = tasks.appeal_type
-        AND request_issues_updates.review_id = tasks.appeal_id
-        LEFT JOIN request_decision_issues ON request_decision_issues.request_issue_id = request_issues.id
-        LEFT JOIN decision_issues ON decision_issues.decision_review_id = tasks.appeal_id
-        AND decision_issues.decision_review_type = tasks.appeal_type AND decision_issues.id = request_decision_issues.decision_issue_id
-        LEFT JOIN claimants ON claimants.decision_review_id = tasks.appeal_id
-        AND claimants.decision_review_type = tasks.appeal_type
-        LEFT JOIN versions_agg tv ON tv.item_type = 'Task' AND tv.item_id = tasks.id
-        LEFT JOIN people ON claimants.participant_id = people.participant_id
-        LEFT JOIN bgs_attorneys ON claimants.participant_id = bgs_attorneys.participant_id
-        LEFT JOIN unrecognized_appellants ON claimants.id = unrecognized_appellants.claimant_id
-        LEFT JOIN unrecognized_party_details ON unrecognized_appellants.unrecognized_party_detail_id = unrecognized_party_details.id
-        LEFT JOIN users intake_users ON intakes.user_id = intake_users.id
-        LEFT JOIN users update_users ON request_issues_updates.user_id = update_users.id
-        LEFT JOIN users decision_users ON decision_users.id = tv.version_closed_by_id::int
-        LEFT JOIN users decision_users_completed_by ON decision_users_completed_by.id = tasks.completed_by_id
-        WHERE tasks.type = 'DecisionReviewTask'
-        AND tasks.assigned_to_type = 'Organization'
-        AND tasks.assigned_to_id = '#{parent.id.to_i}'
-        #{sanitized_filters}
+      UNION ALL
+      SELECT tasks.id AS task_id, check_imr_current_status.is_assigned_present, tasks.status AS task_status, request_issues.id AS request_issue_id,
+        request_issues_updates.created_at AS request_issue_update_time, decision_issues.description AS decision_description,
+        request_issues.benefit_type AS request_issue_benefit_type, request_issues_updates.id AS request_issue_update_id,
+        request_issues.created_at AS request_issue_created_at, request_decision_issues.created_at AS request_decision_created_at,
+        intakes.completed_at AS intake_completed_at, update_users.full_name AS update_user_name, tasks.created_at AS task_created_at,
+        intake_users.full_name AS intake_user_name, update_users.station_id AS update_user_station_id, tasks.closed_at AS task_closed_at,
+        intake_users.station_id AS intake_user_station_id, decision_issues.created_at AS decision_created_at,
+        COALESCE(decision_users.station_id, decision_users_completed_by.station_id) AS decision_user_station_id,
+        COALESCE(decision_users.full_name, decision_users_completed_by.full_name) AS decision_user_name,
+        COALESCE(decision_users.css_id, decision_users_completed_by.css_id) AS decision_user_css_id,
+        intake_users.css_id AS intake_user_css_id, update_users.css_id AS update_user_css_id,
+        request_issues_updates.before_request_issue_ids, request_issues_updates.after_request_issue_ids,
+        request_issues_updates.withdrawn_request_issue_ids, request_issues_updates.edited_request_issue_ids,
+        decision_issues.caseflow_decision_date, request_issues.decision_date_added_at,
+        tasks.appeal_type, tasks.appeal_id, request_issues.nonrating_issue_category, request_issues.nonrating_issue_description,
+        request_issues.decision_date, decision_issues.disposition, tasks.assigned_at, request_issues.unidentified_issue_text,
+        request_decision_issues.decision_issue_id, request_issues.closed_at AS request_issue_closed_at,
+        tv.object_changes_array AS task_versions, (CURRENT_TIMESTAMP::date - tasks.assigned_at::date) AS days_waiting,
+        COALESCE(intakes.veteran_file_number, supplemental_claims.veteran_file_number) AS veteran_file_number,
+        COALESCE(
+          NULLIF(CONCAT(unrecognized_party_details.name, ' ', unrecognized_party_details.last_name), ' '),
+          NULLIF(CONCAT(people.first_name, ' ', people.last_name), ' '),
+          bgs_attorneys.name
+        ) AS claimant_name,
+         supplemental_claims.type AS type_classifier,
+         imr.id AS issue_modification_request_id,
+         imr.nonrating_issue_category AS requested_issue_type,
+         imr.nonrating_issue_description As requested_issue_description,
+         imr.remove_original_issue,
+         imr.request_reason AS modification_request_reason,
+         imr.decision_date AS requested_decision_date,
+         imr.request_type AS request_type,
+         imr.status AS issue_modification_request_status,
+         imr.decision_reason AS decision_reason,
+         imr.decider_id AS decider_id,
+         imr.requestor_id AS requestor_id,
+         CASE WHEN imr.status = 'cancelled' THEN imr.updated_at ELSE imr.decided_at END AS decided_at,
+         imr.created_at AS issue_modification_request_created_at,
+         imr.updated_at  AS issue_modification_request_updated_at,
+         imr.edited_at AS issue_modification_request_edited_at,
+         imr.withdrawal_date  AS issue_modification_request_withdrawal_date,
+         imr.decision_review_id  AS decision_review_id,
+         imr.decision_review_type AS decision_review_type,
+         requestor.full_name AS requestor,
+         requestor.station_id AS requestor_station_id,
+         requestor.css_id AS requestor_css_id,
+         decider.full_name AS decider,
+         decider.station_id AS decider_station_id,
+         decider.css_id AS decider_css_id,
+         itv.object_changes_array AS imr_versions,
+         LAG(imr.created_at, 1) OVER (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY imr.created_at) AS previous_imr_created_at,
+         LAG(CASE WHEN imr.status = 'cancelled' THEN imr.updated_at ELSE imr.decided_at END) OVER (PARTITION BY tasks.id, imr.decision_review_id, imr.decision_review_type ORDER BY CASE WHEN imr.status = 'cancelled' THEN imr.updated_at ELSE imr.decided_at END) AS previous_imr_decided_at,
+         itv.object_array as previous_state_array,
+         imr_lead_decided.next_decided_or_cancelled_at,
+         imr_lead_created.next_created_at
+      FROM tasks
+      INNER JOIN request_issues ON request_issues.decision_review_type = tasks.appeal_type
+      AND request_issues.decision_review_id = tasks.appeal_id
+      INNER JOIN supplemental_claims ON tasks.appeal_type = 'SupplementalClaim'
+      AND tasks.appeal_id = supplemental_claims.id
+      LEFT JOIN intakes ON tasks.appeal_type = intakes.detail_type
+      AND intakes.detail_id = tasks.appeal_id
+      LEFT JOIN request_issues_updates ON request_issues_updates.review_type = tasks.appeal_type
+      AND request_issues_updates.review_id = tasks.appeal_id
+      LEFT JOIN LATERAL (
+        SELECT *
+        FROM issue_modification_requests imr
+        WHERE imr.decision_review_id = tasks.appeal_id
+          AND imr.decision_review_type = 'SupplementalClaim'
+          AND (
+              imr.request_issue_id = request_issues.id
+              OR imr.request_type = 'addition'
+          )
+      ) imr ON true
+      LEFT JOIN imr_lead_decided ON imr_lead_decided.id = imr.id
+      LEFT JOIN imr_lead_created ON imr_lead_created.id = imr.id
+      LEFT JOIN request_decision_issues ON request_decision_issues.request_issue_id = request_issues.id
+      LEFT JOIN decision_issues ON decision_issues.decision_review_id = tasks.appeal_id
+      AND decision_issues.decision_review_type = tasks.appeal_type AND decision_issues.id = request_decision_issues.decision_issue_id
+      LEFT JOIN claimants ON claimants.decision_review_id = tasks.appeal_id
+      AND claimants.decision_review_type = tasks.appeal_type
+      LEFT JOIN versions_agg tv ON tv.item_type = 'Task' AND tv.item_id = tasks.id
+      LEFT JOIN people ON claimants.participant_id = people.participant_id
+      LEFT JOIN bgs_attorneys ON claimants.participant_id = bgs_attorneys.participant_id
+      LEFT JOIN unrecognized_appellants ON claimants.id = unrecognized_appellants.claimant_id
+      LEFT JOIN unrecognized_party_details ON unrecognized_appellants.unrecognized_party_detail_id = unrecognized_party_details.id
+      LEFT JOIN users intake_users ON intakes.user_id = intake_users.id
+      LEFT JOIN users update_users ON request_issues_updates.user_id = update_users.id
+      LEFT JOIN users decision_users ON decision_users.id = tv.version_closed_by_id::int
+      LEFT JOIN users decision_users_completed_by ON decision_users_completed_by.id = tasks.completed_by_id
+      LEFT JOIN users requestor ON imr.requestor_id  = requestor.id
+      LEFT JOIN users decider ON  imr.decider_id  = decider.id
+      LEFT JOIN imr_version_agg itv ON itv.item_type = 'IssueModificationRequest' AND itv.item_id = imr.id
+      LEFT JOIN LATERAL (
+             SELECT CASE
+           WHEN EXISTS (
+             SELECT 1
+             FROM issue_modification_requests imr
+             WHERE imr.decision_review_id = request_issues.decision_review_id
+             AND imr.decision_review_type = 'SupplementalClaim'
+               AND imr.status = 'assigned'
+           ) THEN true
+           ELSE false
+       END AS is_assigned_present
+         ) check_imr_current_status on true
+      WHERE tasks.type = 'DecisionReviewTask'
+      AND tasks.assigned_to_type = 'Organization'
+      AND tasks.assigned_to_id = '#{parent.id.to_i}'
+      #{sanitized_filters}
+      #{sc_type_clauses}
       SQL
 
       ActiveRecord::Base.transaction do
@@ -358,17 +561,63 @@ class BusinessLine < Organization
 
     def task_status_filter
       if query_params[:task_status].present?
-        " AND #{where_clause_from_array(Task, :status, query_params[:task_status]).to_sql}"
+        task_specific_status_filter
       else
         " AND tasks.status IN ('assigned', 'in_progress', 'on_hold', 'completed', 'cancelled') "
       end
     end
 
+    def task_specific_status_filter
+      if query_params[:task_status].include?("pending")
+        task_status_pending_filter
+      else
+        task_status_without_pending_filter
+      end
+    end
+
+    def task_status_pending_filter
+      <<-SQL
+       AND (
+        (imr.id IS NOT NULL AND imr.status = 'assigned')
+        OR #{where_clause_from_array(Task, :status, query_params[:task_status].uniq).to_sql}
+       )
+      SQL
+    end
+
+    def task_status_without_pending_filter
+      <<-SQL
+         AND NOT EXISTS(
+             SELECT decision_review_id FROM issue_modification_requests WHERE
+             issue_modification_requests.status = 'assigned'
+             AND issue_modification_requests.decision_review_id = tasks.appeal_id
+             AND tasks.appeal_type = issue_modification_requests.decision_review_type)
+        AND #{where_clause_from_array(Task, :status, query_params[:task_status].uniq).to_sql}
+      SQL
+    end
+
     def claim_type_filter
       if query_params[:claim_type].present?
-        " AND #{where_clause_from_array(Task, :appeal_type, query_params[:claim_type]).to_sql}"
+        temp_claim_types = query_params[:claim_type].dup
+
+        if query_params[:claim_type].include?(Remand.name)
+          temp_claim_types.push "SupplementalClaim"
+        end
+
+        " AND #{where_clause_from_array(Task, :appeal_type, temp_claim_types).to_sql} "
       else
-        " AND tasks.appeal_type IN ('HigherLevelReview', 'SupplementalClaim') "
+        " AND tasks.appeal_type IN ('HigherLevelReview', 'SupplementalClaim' ) "
+      end
+    end
+
+    def sc_type_filter
+      if query_params[:claim_type].present?
+        if query_params[:claim_type].include?(Remand.name) || query_params[:claim_type].include?(SupplementalClaim.name)
+          " AND #{where_clause_from_array(SupplementalClaim, :type, query_params[:claim_type]).to_sql} "
+        else
+          ""
+        end
+      else
+        ""
       end
     end
 
@@ -421,19 +670,16 @@ class BusinessLine < Organization
       end
     end
 
-    # rubocop:disable Metrics/AbcSize
     def station_id_filter
       if query_params[:facilities].present?
+        conditions = USER_TABLE_ALIASES.map do |alias_name|
+          User.arel_table.alias(alias_name)[:station_id].in(query_params[:facilities]).to_sql
+        end
+
         <<-SQL
           AND
           (
-            #{User.arel_table.alias(:intake_users)[:station_id].in(query_params[:facilities]).to_sql}
-            OR
-            #{User.arel_table.alias(:update_users)[:station_id].in(query_params[:facilities]).to_sql}
-            OR
-            #{User.arel_table.alias(:decision_users)[:station_id].in(query_params[:facilities]).to_sql}
-            OR
-            #{User.arel_table.alias(:decision_users_completed_by)[:station_id].in(query_params[:facilities]).to_sql}
+            #{conditions.join(' OR ')}
           )
         SQL
       end
@@ -441,21 +687,18 @@ class BusinessLine < Organization
 
     def user_css_id_filter
       if query_params[:personnel].present?
+        conditions = USER_TABLE_ALIASES.map do |alias_name|
+          User.arel_table.alias(alias_name)[:css_id].in(query_params[:personnel]).to_sql
+        end
+
         <<-SQL
           AND
           (
-            #{User.arel_table.alias(:intake_users)[:css_id].in(query_params[:personnel]).to_sql}
-            OR
-            #{User.arel_table.alias(:update_users)[:css_id].in(query_params[:personnel]).to_sql}
-            OR
-            #{User.arel_table.alias(:decision_users)[:css_id].in(query_params[:personnel]).to_sql}
-            OR
-            #{User.arel_table.alias(:decision_users_completed_by)[:css_id].in(query_params[:personnel]).to_sql}
+            #{conditions.join(' OR ')}
           )
         SQL
       end
     end
-    # rubocop:enable Metrics/AbcSize
 
     #################### End of Change history filter helpers ########################
 
@@ -629,7 +872,7 @@ class BusinessLine < Organization
     def group_by_columns
       "tasks.id, uuid, veterans.participant_id, veterans.ssn, veterans.first_name, veterans.last_name, "\
       "unrecognized_party_details.name, unrecognized_party_details.last_name, people.first_name, people.last_name, "\
-      "veteran_is_not_claimant, bgs_attorneys.name"
+      "veteran_is_not_claimant, bgs_attorneys.name, sub_type"
     end
 
     # Uses an array to insert the searched text into all of the searchable fields since it's the same text for all
@@ -639,21 +882,26 @@ class BusinessLine < Organization
     end
 
     def higher_level_reviews_on_request_issues
-      decision_reviews_on_request_issues(higher_level_review: :request_issues)
+      sub_type_alias = "'HigherLevelReview' AS sub_type"
+      decision_reviews_on_request_issues({ higher_level_review: :request_issues }, sub_type_alias)
     end
 
     def supplemental_claims_on_request_issues
-      decision_reviews_on_request_issues(supplemental_claim: :request_issues)
+      sub_type_alias = "supplemental_claims.type AS sub_type"
+      decision_reviews_on_request_issues({ supplemental_claim: :request_issues }, sub_type_alias)
     end
 
     def appeals_on_request_issues
-      decision_reviews_on_request_issues(ama_appeal: :request_issues)
+      sub_type_alias = "'Appeal' as sub_type"
+      decision_reviews_on_request_issues({ ama_appeal: :request_issues }, sub_type_alias)
     end
 
     # Specific case for BoardEffectuationGrantTasks to include them in the result set
     # if the :board_grant_effectuation_task FeatureToggle is enabled for the current user.
     def board_grant_effectuation_tasks
+      sub_type_alias = "'Appeal' as sub_type"
       decision_reviews_on_request_issues(board_grant_effectuation_task_appeals_requests_join,
+                                         sub_type_alias,
                                          board_grant_effectuation_task_constraints)
     end
 
@@ -668,8 +916,8 @@ class BusinessLine < Organization
       appeals_on_request_issues
     end
 
-    def decision_reviews_on_request_issues(join_constraint, where_constraints = query_constraints)
-      Task.select(union_select_statements)
+    def decision_reviews_on_request_issues(join_constraint, subclass_type_alias, where_constraints = query_constraints)
+      Task.select(union_select_statements.append(subclass_type_alias))
         .send(parent.tasks_query_type[query_type])
         .joins(join_constraint)
         .joins(*union_query_join_clauses)
