@@ -36,11 +36,6 @@ NonCompSavedSearches.propTypes = {
 
 const SavedSearches = connect(
   (state) => ({
-    isBusinessLineAdmin: state.nonComp.isBusinessLineAdmin,
-    businessLine: state.nonComp.businessLine,
-    canGenerateClaimHistory: state.nonComp.businessLineConfig.canGenerateClaimHistory,
-    decisionIssuesStatus: state.nonComp.decisionIssuesStatus,
-    businessLineUrl: state.nonComp.businessLineUrl
   })
 )(NonCompSavedSearches);
 
