@@ -1732,3 +1732,47 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   padding-top: 0;
 }
 
+.add-task-modal-container {
+  .task-selection-dropdown-box {
+    margin-bottom: 1.5rem;
+  }
+
+  .task-selection-title {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+
+  .add-task-dropdown-style {
+    width: 100%;
+  }
+
+  .add-autotext-button {
+    margin-top: 1rem;
+    color: #0071bc;
+  }
+
+  .remove-task-button {
+    color: #e31c3d;
+    float: right;
+    margin-top: 1rem;
+  }
+}
+
+.select-container-styles {
+  margin-bottom: 1.5rem;
+}
+
+.new-tasks-gray-border-styling {
+  border: 1px solid #d6d7d9;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.gray-border {
+  border: 1px solid #d6d7d9;
+  padding: 1.5rem;
+}
+
+.margin-bottom-for-add-task-view {
+  margin-bottom: 2rem;
+}
