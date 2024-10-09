@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import React from 'react';
 import * as queueTable from 'app/queue/QueueTable';
 import FilterSummary from 'app/components/FilterSummary';
@@ -29,6 +30,16 @@ import classnames from 'classnames';
 import { times } from 'lodash';
 import LoadingScreen from 'app/components/LoadingScreen';
 import Pagination from 'app/components/Pagination/Pagination';
+import {
+  selectFromDropdown,
+  clickSubmissionButton,
+  enterInputValue
+} from '../queue/components/modalUtils';
+import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react';
+import { datePickerFilterValue } from 'app/components/DatePicker';
+import { encodeQueryParams } from 'app/util/QueryParamsUtil';
+import { when } from 'jest-when';
+import ApiUtil from 'app/util/ApiUtil';
 
 jest.mock('classnames');
 
@@ -544,4 +555,349 @@ describe('QueueTable', () => {
       expect(table.state('filterByList')).toEqual(undefined);
     });
   });
+
+  describe('DatePicker filter', () => {
+    const records = [
+      { id: 1, date: '5/1/2024' },
+      { id: 2, date: '5/2/2024' },
+      { id: 3, date: '5/3/2024' },
+      { id: 4, date: '5/4/2024' },
+      { id: 5, date: '5/5/2024' },
+      { id: 6, date: '5/6/2024' },
+      { id: 7, date: '5/7/2024' },
+      { id: 8, date: '5/8/2024' },
+      { id: 9, date: '5/9/2024' },
+      { id: 10, date: '5/10/2024' },
+      { id: 11, date: '5/11/2024' },
+      { id: 12, date: '5/12/2024' },
+      { id: 13, date: '5/13/2024' },
+      { id: 14, date: '5/14/2024' },
+      { id: 15, date: '5/15/2024' },
+      { id: 16, date: '5/16/2024' },
+      { id: 17, date: '5/17/2024' },
+      { id: 18, date: '5/18/2024' },
+      { id: 19, date: '5/19/2024' },
+      { id: 20, date: '5/20/2024' }
+    ];
+
+    const columns = [{
+      header: 'ID',
+      name: 'id',
+      enableFilter: false,
+      anyFiltersAreSet: false,
+      label: 'filter by id',
+      columnName: 'id',
+      valueName: 'ID',
+      valueFunction: (row) => row.id,
+      getSortValue: (row) => row.id
+    }, {
+      header: 'Date',
+      name: 'date',
+      enableFilter: true,
+      anyFiltersAreSet: true,
+      label: 'filter by date',
+      columnName: 'date',
+      tableData: records,
+      valueName: 'Date',
+      valueFunction: (row) => row.date,
+      getSortValue: (row) => row.date,
+      filterType: 'date-picker',
+      filterSettings: {
+        buttons: false,
+        position: 'left'
+      },
+      customFilterMethod: datePickerFilterValue
+    }];
+
+    const openFilter = async (container) => {
+      const svg = container.querySelectorAll('svg');
+
+      const filter = svg[svg.length - 1];
+
+      fireEvent.click(filter);
+      await waitFor(() => {
+        expect(screen.getByText('Date filter parameters')).toBeInTheDocument();
+      });
+    };
+
+    const getTableDates = (container) => {
+      const tds = container.querySelectorAll('td');
+      let dates = [];
+
+      for (let i = 0; i < tds.length; i += 2) {
+        dates.push(tds[i + 1].innerHTML.trim());
+      }
+
+      return dates;
+    };
+
+    describe('Front end filtering', () => {
+
+      const setupFrontend = () => {
+
+        return render(<QueueTable
+          columns={columns}
+          rowObjects={records}
+          enablePagination
+          casesPerPage={15}
+          anyFiltersAreSet
+          getKeyForRow={(_, row) => row.id}
+          defaultSort={{
+            sortColName: 'id',
+            sortAscending: true
+          }}
+        />);
+      };
+
+      it('renders in a queue table correctly', async () => {
+        const { container } = setupFrontend();
+
+        openFilter(container);
+
+        expect(container).toMatchSnapshot();
+
+      });
+
+      it('filters between dates', async () => {
+        const { container } = setupFrontend();
+
+        expect(screen.getAllByText('Viewing 1-15 of 20 total')[0]).toBeInTheDocument();
+
+        openFilter(container);
+
+        selectFromDropdown('Date filter parameters', 'Between these dates');
+
+        enterInputValue('start-date', '2024-05-01');
+        enterInputValue('end-date', '2024-05-10');
+
+        clickSubmissionButton('Apply Filter');
+
+        expect(screen.getAllByText('Viewing 1-10 of 10 total')[0]).toBeInTheDocument();
+
+        expect(getTableDates(container)).toEqual([
+          '5/1/2024',
+          '5/2/2024',
+          '5/3/2024',
+          '5/4/2024',
+          '5/5/2024',
+          '5/6/2024',
+          '5/7/2024',
+          '5/8/2024',
+          '5/9/2024',
+          '5/10/2024'
+        ]);
+      });
+
+      it('filters before date', async () => {
+        const { container } = setupFrontend();
+
+        expect(screen.getAllByText('Viewing 1-15 of 20 total')[0]).toBeInTheDocument();
+
+        openFilter(container);
+
+        selectFromDropdown('Date filter parameters', 'Before this date');
+
+        enterInputValue('start-date', '2024-05-10');
+
+        clickSubmissionButton('Apply Filter');
+
+        expect(screen.getAllByText('Viewing 1-9 of 9 total')[0]).toBeInTheDocument();
+
+        expect(getTableDates(container)).toEqual([
+          '5/1/2024',
+          '5/2/2024',
+          '5/3/2024',
+          '5/4/2024',
+          '5/5/2024',
+          '5/6/2024',
+          '5/7/2024',
+          '5/8/2024',
+          '5/9/2024'
+        ]);
+      });
+
+      it('filters after date', async () => {
+        const { container } = setupFrontend();
+
+        expect(screen.getAllByText('Viewing 1-15 of 20 total')[0]).toBeInTheDocument();
+
+        openFilter(container);
+
+        selectFromDropdown('Date filter parameters', 'After this date');
+
+        enterInputValue('start-date', '2024-05-15');
+
+        clickSubmissionButton('Apply Filter');
+
+        expect(screen.getAllByText('Viewing 1-5 of 5 total')[0]).toBeInTheDocument();
+
+        expect(getTableDates(container)).toEqual([
+          '5/16/2024',
+          '5/17/2024',
+          '5/18/2024',
+          '5/19/2024',
+          '5/20/2024'
+        ]);
+      });
+
+      it('filters on date', async () => {
+        const { container } = setupFrontend();
+
+        expect(screen.getAllByText('Viewing 1-15 of 20 total')[0]).toBeInTheDocument();
+
+        openFilter(container);
+
+        selectFromDropdown('Date filter parameters', 'On this date');
+
+        enterInputValue('start-date', '2024-05-15');
+
+        clickSubmissionButton('Apply Filter');
+
+        expect(screen.getAllByText('Viewing 1-1 of 1 total')[0]).toBeInTheDocument();
+
+        expect(getTableDates(container)).toEqual([
+          '5/15/2024'
+        ]);
+      });
+
+      it('allows the filter to be cleared', async () => {
+        const { container } = setupFrontend();
+
+        expect(screen.getAllByText('Viewing 1-15 of 20 total')[0]).toBeInTheDocument();
+
+        openFilter(container);
+
+        selectFromDropdown('Date filter parameters', 'On this date');
+
+        enterInputValue('start-date', '2024-05-15');
+
+        clickSubmissionButton('Apply Filter');
+
+        expect(screen.getAllByText('Viewing 1-1 of 1 total')[0]).toBeInTheDocument();
+
+        openFilter(container);
+
+        clickSubmissionButton('Clear filter');
+
+        expect(screen.getAllByText('Viewing 1-15 of 20 total')[0]).toBeInTheDocument();
+      });
+
+    });
+
+    describe('Back end filtering', () => {
+      beforeEach(async () => {
+        ApiUtil.get = jest.fn();
+
+        when(ApiUtil.get).calledWith('/example/endpoint?&page=1').
+          mockResolvedValue(({
+            body: {
+              task_page_count: 1,
+              tasks: {
+                data: [
+                  records[0],
+                  records[1],
+                  records[2],
+                  records[3],
+                  records[4]
+                ]
+              },
+              tasks_per_page: 15,
+              total_task_count: 5
+            }
+          }));
+
+        when(ApiUtil.get).calledWith('/example/endpoint?&page=1&filter%5B%5D=col%3Ddate%26val%3Don%2C2024-05-15%2C').
+          mockResolvedValue(({
+            body: {
+              task_page_count: 1,
+              tasks: {
+                data: [
+                  records[0],
+                  records[1],
+                  records[2]
+                ]
+              },
+              tasks_per_page: 15,
+              total_task_count: 3
+            }
+          }));
+
+      });
+
+      afterEach(() => {
+        cleanup();
+        jest.clearAllMocks();
+      });
+
+      const getUrlParams = (query) =>
+        Array.from(new URLSearchParams(query)).reduce((pValue, [kValue, vValue]) =>
+          Object.assign({}, pValue, {
+            [kValue]: pValue[kValue] ? (Array.isArray(pValue[kValue]) ?
+              pValue[kValue] : [pValue[kValue]]).concat(vValue) : vValue
+          }), {});
+
+      const setupBackend = () => {
+        return render(<QueueTable
+          columns={columns}
+          rowObjects={[]}
+          enablePagination
+          casesPerPage={15}
+          useTaskPagesApi
+          taskPagesApiEndpoint={`/example/endpoint${encodeQueryParams()}`}
+          anyFiltersAreSet
+          tabPaginationOptions={getUrlParams(window.location.search)}
+          getKeyForRow={(_, row) => row.id}
+          skipCache
+        />
+        );
+      };
+
+      it('renders in a queue table correctly', async () => {
+        const { container } = setupBackend();
+
+        await waitFor(() =>
+          expect(screen.getAllByText('Viewing 1-5 of 5 total')[0]).toBeInTheDocument()
+        );
+
+        openFilter(container);
+
+        expect(container).toMatchSnapshot();
+
+      });
+
+      it('updates url params correctly on apply and reset', async () => {
+        const { container } = setupBackend();
+
+        expect(ApiUtil.get).toHaveBeenCalledWith('/example/endpoint?&page=1');
+
+        await waitFor(() =>
+          expect(screen.getAllByText('Viewing 1-5 of 5 total')[0]).toBeInTheDocument()
+        );
+
+        openFilter(container);
+
+        selectFromDropdown('Date filter parameters', 'On this date');
+
+        enterInputValue('start-date', '2024-05-15');
+
+        clickSubmissionButton('Apply Filter');
+
+        expect(ApiUtil.get).toHaveBeenCalledWith(
+          '/example/endpoint?&page=1&filter%5B%5D=col%3Ddate%26val%3Don%2C2024-05-15%2C');
+
+        await waitFor(() =>
+          expect(screen.getAllByText('Viewing 1-3 of 3 total')[0]).toBeInTheDocument()
+        );
+
+        openFilter(container);
+
+        clickSubmissionButton('Clear filter');
+
+        expect(ApiUtil.get).toHaveBeenLastCalledWith('/example/endpoint?&page=1');
+
+      });
+
+    });
+  });
+
 });
