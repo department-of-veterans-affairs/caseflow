@@ -36,9 +36,14 @@ class WorkQueue::CorrespondenceAppealsSerializer
   end
 
   attribute :task_added_data do |object|
+    # include waivable evidence window tasks
+    evidence_window_task = object.appeal.tasks.find_by(type: EvidenceSubmissionWindowTask.name)
+
+    tasks = object.tasks.uniq
+    tasks << evidence_window_task if evidence_window_task&.waivable?
     AmaAndLegacyTaskSerializer.create_and_preload_legacy_appeals(
       params: { user: RequestStore[:current_user], role: "generic" },
-      tasks: object.tasks,
+      tasks: tasks,
       ama_serializer: WorkQueue::TaskSerializer
     ).call
   end
