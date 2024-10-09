@@ -16,7 +16,7 @@ class Events::DecisionReviewUpdated::UpdateClaimReview
 
       if parser.detail_type == "HigherLevelReview"
         # fetch the EPE and use it to get the source (i.e. HLR)
-        hlr = EndProductEstablishment.find_by(reference_id: parser.end_product_establishment_reference_id)&.source
+        hlr = claim_review
         hlr.update!(
           informal_conference: parser.claim_review_informal_conference,
           same_office: parser.claim_review_same_office
