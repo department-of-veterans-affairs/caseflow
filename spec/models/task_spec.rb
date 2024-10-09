@@ -13,13 +13,13 @@ describe Task, :all_dbs do
       let(:judge_task) { create(:ama_judge_assign_task, :completed, parent: root_task) }
       let!(:attorney_task) { create(:ama_attorney_task, :completed, parent: judge_task) }
 
-      subject { root_task.structure(:id, :status) }
+      subject { root_task.structure([bva_task, judge_task, attorney_task], :id, :status) }
 
       it "outputs the task structure" do
-        root_key = "#{root_task.type} #{root_task.id}, #{root_task.status}".to_sym
-        judge_key = "#{judge_task.type} #{judge_task.id}, #{judge_task.status}".to_sym
-        bva_key = "#{bva_task.type} #{bva_task.id}, #{bva_task.status}".to_sym
-        attorney_key = "#{attorney_task.type} #{attorney_task.id}, #{attorney_task.status}".to_sym
+        root_key = "#{root_task.type} #{root_task.status}".to_sym
+        judge_key = "#{judge_task.type} #{judge_task.status}".to_sym
+        bva_key = "#{bva_task.type} #{bva_task.status}".to_sym
+        attorney_key = "#{attorney_task.type} #{attorney_task.status}".to_sym
 
         expect(subject.key?(root_key)).to be_truthy
         expect(subject[root_key].count).to eq 2
