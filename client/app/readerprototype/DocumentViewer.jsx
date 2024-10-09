@@ -41,8 +41,9 @@ const DocumentViewer = (props) => {
         event.preventDefault();
         setShowSearchBar(false);
       }
+      const metaKey = navigator.appVersion.includes('Win') ? 'ctrlKey' : 'metaKey';
 
-      if (event.metaKey && event.code === 'KeyF') {
+      if (event[metaKey] && event.code === 'KeyF') {
         event.preventDefault();
         setShowSearchBar(true);
       }
