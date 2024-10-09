@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Transcription < CaseflowRecord
-  self.ignored_columns = ["hearing_id"]
 
   belongs_to :hearing, polymorphic: true
   belongs_to :transcription_contractor
