@@ -26,6 +26,7 @@ import Alert from '../../../components/Alert';
 import ApiUtil from '../../../util/ApiUtil';
 import CorrespondenceEditGeneralInformationModal from '../../components/CorrespondenceEditGeneralInformationModal';
 import CorrespondenceAppealTasks from '../CorrespondenceAppealTasks';
+import AddTaskModalCorrespondenceDetails from '../intake/components/TasksAppeals/AddTaskModalCorrespondenceDetails';
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
@@ -57,6 +58,16 @@ const CorrespondenceDetails = (props) => {
   const [sortedPriorMail, setSortedPriorMail] = useState([]);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isTasksUnrelatedSectionExpanded, setIsTasksUnrelatedSectionExpanded] = useState(false);
+
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
 
   // Initialize checkbox states
   useEffect(() => {
@@ -507,6 +518,25 @@ const CorrespondenceDetails = (props) => {
     <div className="correspondence-existing-appeals">
       <div className="left-section">
         <h2>Tasks not related to an appeal</h2>
+          <Button
+            type="button"
+            onClick={handleOpenModal} // Open the modal on button click
+            name="addTaskOpen"
+            classNames={['cf-left-side']}
+          >
+            + Add task
+          </Button>
+
+      {/* Render the modal */}
+      <AddTaskModalCorrespondenceDetails
+        title="Add Task"
+        isOpen={isModalOpen}
+        handleClose={handleCloseModal}
+      >
+        {/* Content inside the modal */}
+        <p>This is where you can add the task details.</p>
+        {/* Add a form or other content here as needed */}
+      </AddTaskModalCorrespondenceDetails>
       </div>
       <div className="toggleButton-plus-or-minus">
         <Button
