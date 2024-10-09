@@ -1,6 +1,5 @@
 module Seeds
   class Transcriptions < Base
-
     def seed!
       create_transcriptions
     end
