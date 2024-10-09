@@ -22,7 +22,6 @@ export const setWaiveEvidenceAlertBanner = (bannerDetails) => (dispatch) => {
     type: ACTIONS.SET_WAIVE_EVIDENCE_ALERT_BANNER,
     payload: {
       bannerAlert: {
-        title: bannerDetails.title,
         message: bannerDetails.message,
         type: bannerDetails.type
       }

@@ -67,15 +67,16 @@ const CorrespondenceAppealTasks = (props) => {
           </div>
 
         </div>
-        {bannerAlert.message &&
-          <Alert
-            type={bannerAlert.type}
-            title={bannerAlert.title}
-            message={bannerAlert.message}
-            scrollOnAlert={false}
-            lowerMargin
-          />
-        }
+        <div className="tasks-added-details">
+          {appeal && bannerAlert.message &&
+            <Alert
+              type={bannerAlert.type}
+              message={bannerAlert.message}
+              scrollOnAlert={false}
+            />
+          }
+
+        </div>
         <div className="tasks-added-details">
           <span className="tasks-added-text">Tasks added to appeal</span>
           <div>
