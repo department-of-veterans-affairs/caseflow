@@ -33,7 +33,7 @@ class Events::DecisionReviewUpdated
             reference_id: parser.end_product_establishment_reference_id
           )&.source
 
-          Events::DecisionReviewUpdated::UpdateInformalConference.process!(event: event, parser: parser)
+          # Events::DecisionReviewUpdated::UpdateInformalConference.process!(event: event, parser: parser)
           Events::DecisionReviewUpdated::UpdateClaimReview.process!(event: event, parser: parser)
           Events::DecisionReviewUpdated::UpdateEndProductEstablishment.process!(event: event, parser: parser)
           RequestIssuesUpdateEvent.new(user: user, review: review, parser: parser, event: event).perform!

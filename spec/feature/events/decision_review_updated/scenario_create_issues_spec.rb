@@ -10,6 +10,14 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
     let(:review) { epe.source }
     let!(:existing_request_issue) { create(:request_issue, decision_review: review, reference_id: "6789") }
 
+    def logical_date_converter(logical_date_int)
+      return nil if logical_date_int.nil? || logical_date_int.to_i.days == 0
+
+      base_date = Date.new(1970, 1, 1)
+      converted_date = base_date + logical_date_int.to_i.days
+      converted_date
+    end
+
     def json_test_payload
       {
         "event_id": 214_786,
@@ -59,11 +67,11 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
             "untimely_exemption_notes": "some notes",
             "edited_description": nil,
             "vacols_id": "some_id",
-            "vacols_sequence_id": "some_sequence_id",
+            "vacols_sequence_id": "100_1",
             "nonrating_issue_bgs_id": "some_bgs_id",
             "type": "RequestIssue",
             "decision_review_issue_id": 1234,
-            "contention_reference_id": 123_456,
+            "contention_reference_id": "123_456",
             "benefit_type": "compensation",
             "contested_issue_description": "some_description",
             "contested_rating_issue_profile_date": "122255",
@@ -118,6 +126,33 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
         expect(request_issue_update.withdrawn_request_issue_ids).to eq([])
         expect(new_request_issue.event_records.last.info["update_type"]).to eq("A")
         expect(new_request_issue.event_records.last.info["record_data"]["id"]).to eq(new_request_issue.id)
+        expect(new_request_issue.benefit_type).to eq("compensation")
+        expect(new_request_issue.contested_issue_description).to eq("some_description")
+        # expect(new_request_issue.contested_rating_issue_reference_id).to eq("6789")
+        # expect(new_request_issue.contested_rating_issue_diagnostic_code).to eq("9411")
+        expect(new_request_issue.contested_rating_decision_reference_id).to eq(nil)
+        expect(new_request_issue.contested_decision_issue_id).to eq(nil)
+        expect(new_request_issue.untimely_exemption).to eq(false)
+        expect(new_request_issue.untimely_exemption_notes).to eq("some notes")
+        expect(new_request_issue.ineligible_due_to_id).to eq(nil)
+        # expect(new_request_issue.ineligible_reason).to eq(nil)
+        expect(new_request_issue.is_unidentified).to eq(true)
+        expect(new_request_issue.nonrating_issue_bgs_source).to eq(nil)
+        expect(new_request_issue.ramp_claim_id).to eq(nil)
+        expect(new_request_issue.nonrating_issue_description).to eq(nil)
+        # expect(new_request_issue.decision_date).to eq(Date.parse("19568").)
+        expect(new_request_issue.rating_issue_associated_at).to eq(nil)
+        expect(new_request_issue.ramp_claim_id).to eq(nil)
+        expect(new_request_issue.is_unidentified).to eq(true)
+        expect(new_request_issue.nonrating_issue_bgs_id).to eq("some_bgs_id")
+        expect(new_request_issue.contention_reference_id).to eq(123_456)
+        # expect(new_request_issue.contested_rating_issue_profile_date).to eq("122255")
+        expect(new_request_issue.unidentified_issue_text).to eq("An unidentified issue added during the edit")
+        expect(new_request_issue.edited_description).to eq("")
+        expect(new_request_issue.vacols_id).to eq("some_id")
+        expect(new_request_issue.vacols_sequence_id).to eq(1001)
+        expect(new_request_issue.contested_rating_issue_reference_id).to eq(nil)
+        expect(new_request_issue.contested_rating_issue_diagnostic_code).to eq("9411")
       end
     end
   end
