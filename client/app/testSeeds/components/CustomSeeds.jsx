@@ -73,7 +73,7 @@ const CustomSeeds = () => {
           break;
 
         case 'AOD based on age':
-          obj.aod_based_on_age = Number(colValue)
+          obj.aod_based_on_age = Number(colValue);
           break;
 
         case 'Regional Office':
