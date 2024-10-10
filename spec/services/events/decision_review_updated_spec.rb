@@ -85,12 +85,6 @@ describe Events::DecisionReviewUpdated do
       subject
     end
 
-    it "updates informal conference" do
-      expect(Events::DecisionReviewUpdated::UpdateInformalConference).to receive(:process!)
-        .with(event: event, parser: parser)
-      subject
-    end
-
     it "updates claim review" do
       expect(Events::DecisionReviewUpdated::UpdateClaimReview).to receive(:process!).with(event: event, parser: parser)
       subject
