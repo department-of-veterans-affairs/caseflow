@@ -143,6 +143,16 @@ describe "SearchQueryService" do
 
           expect(search_results.length).to eq(1)
         end
+
+        it "finds with blank appellant" do
+          AdvanceOnDocketMotion.first.destroy
+          VeteranClaimant.first.person.destroy
+          VeteranClaimant.first.destroy
+
+          search_results = subject.search_by_docket_number
+
+          expect(search_results.length).to eq(1)
+        end
       end
 
       context "finds by file number" do
@@ -181,172 +191,195 @@ describe "SearchQueryService" do
     end
   end
 
-  let(:veteran_address) do
-    {
-      addrs_one_txt: nil,
-      addrs_two_txt: nil,
-      addrs_three_txt: nil,
-      city_nm: nil,
-      cntry_nm: nil,
-      postal_cd: nil,
-      zip_prefix_nbr: nil,
-      ptcpnt_addrs_type_nm: nil
-    }
-  end
-
-  let(:legacy_appeal) do
-    create(
-      :legacy_appeal,
-      vbms_id: ssn,
-      vacols_case: vacols_case,
-      veteran_address: veteran_address
-    )
-  end
-
-  let(:judge) do
-    create(
-      :staff,
-      :hearing_judge,
-      snamel: Faker::Name.last_name,
-      snamef: Faker::Name.first_name
-    )
-  end
-
-  # must be created first for legacy_appeal factory to find it
-  let!(:veteran) do
-    create(
-      :veteran,
-      file_number: ssn,
-      first_name: veteran_first_name,
-      last_name: veteran_last_name
-    )
-  end
-
-  let(:vacols_decision_date) { 2.days.ago }
-  let(:vacols_case_attrs) do
-    {
-      bfkey: ssn,
-      bfcorkey: ssn,
-      bfac: "1",
-      bfcorlid: "100000099",
-      bfcurloc: "CASEFLOW",
-      bfddec: vacols_decision_date,
-      bfmpro: "ACT"
-
-      # bfregoff: "RO18",
-      # bfdloout: "2024-03-26T11:13:32.000Z",
-      # bfcallup: "",
-      # bfhr: "2",
-      # bfdocind: "T",
-    }
-  end
-
-  let(:issues_count) { 15 }
-  let(:vacols_case_issues) do
-    create_list(
-      :case_issue,
-      issues_count,
-      isspact: "Y",
-      issmst: "Y"
-    )
-  end
-
-  let(:hearings_count) { 25 }
-  let(:vacols_case_hearings) do
-    hearings = create_list(
-      :case_hearing,
-      hearings_count
-    )
-
-    hearings.map do |hearing|
-      hearing.board_member = judge.sattyid
-      hearing.save
+  context "when appeal is a legacy appeal with data in vacols and caseflow" do
+    let(:veteran_address) do
+      {
+        addrs_one_txt: nil,
+        addrs_two_txt: nil,
+        addrs_three_txt: nil,
+        city_nm: nil,
+        cntry_nm: nil,
+        postal_cd: nil,
+        zip_prefix_nbr: nil,
+        ptcpnt_addrs_type_nm: nil
+      }
     end
 
-    hearings
-  end
+    let(:vacols_case) { nil }
 
-  let(:vacols_correspondent) do
-    create(:correspondent, vacols_correspondent_attrs)
-  end
+    let(:legacy_appeal) do
+      create(
+        :legacy_appeal,
+        vbms_id: ssn,
+        vacols_case: vacols_case,
+        veteran_address: veteran_address
+      )
+    end
 
-  let(:vacols_folder) do
-    build(:folder)
-  end
+    let(:judge) do
+      create(
+        :staff,
+        :hearing_judge,
+        snamel: Faker::Name.last_name,
+        snamef: Faker::Name.first_name
+      )
+    end
 
-  let(:vacols_case) do
-    create(
-      :case,
+    # must be created first for legacy_appeal factory to find it
+    let!(:veteran) do
+      create(
+        :veteran,
+        file_number: ssn,
+        first_name: veteran_first_name,
+        last_name: veteran_last_name
+      )
+    end
+
+    let(:vacols_decision_date) { 2.days.ago }
+    let(:vacols_case_attrs) do
       {
-        correspondent: vacols_correspondent,
-        case_issues: vacols_case_issues,
-        case_hearings: vacols_case_hearings,
-        folder: vacols_folder
-      }.merge(vacols_case_attrs)
-    )
-  end
+        bfkey: ssn,
+        bfcorkey: ssn,
+        bfac: "1",
+        bfcorlid: "100000099",
+        bfcurloc: "CASEFLOW",
+        bfddec: vacols_decision_date,
+        bfmpro: "ACT"
 
-  context "when appeal is a legacy appeal with data in vacols and caseflow" do
-    context "when veteran is claimant" do
-      let(:vacols_correspondent_attrs) do
-        {
-          sspare2: veteran_first_name,
-          sspare1: veteran_last_name,
-          snamel: veteran_last_name,
-          snamef: veteran_first_name,
-          stafkey: ssn
-        }
+        # bfregoff: "RO18",
+        # bfdloout: "2024-03-26T11:13:32.000Z",
+        # bfcallup: "",
+        # bfhr: "2",
+        # bfdocind: "T",
+      }
+    end
+
+    let(:issues_count) { 15 }
+    let(:vacols_case_issues) do
+      create_list(
+        :case_issue,
+        issues_count,
+        isspact: "Y",
+        issmst: "Y"
+      )
+    end
+
+    let(:hearings_count) { 25 }
+    let(:vacols_case_hearings) do
+      hearings = create_list(
+        :case_hearing,
+        hearings_count
+      )
+
+      hearings.map do |hearing|
+        hearing.board_member = judge.sattyid
+        hearing.save
       end
 
-      let!(:claimant) do
-        create(
-          :claimant,
-          type: "VeteranClaimant",
-          decision_review: legacy_appeal
-        )
-      end
+      hearings
+    end
 
-      subject { SearchQueryService.new(file_number: ssn) }
+    let(:vacols_correspondent) do
+      create(:correspondent, vacols_correspondent_attrs)
+    end
 
+    let(:vacols_folder) do
+      build(:folder)
+    end
+
+    let!(:claimant) do
+      create(
+        :claimant,
+        type: "VeteranClaimant",
+        decision_review: legacy_appeal
+      )
+    end
+
+    subject { SearchQueryService.new(file_number: ssn) }
+
+    context "when vacols case record does not exist" do
       it "finds by file number" do
         search_results = subject.search_by_veteran_file_number
         result = search_results.first.api_response
 
         expect(result.id).to be
         expect(result.type).to eq "legacy_appeal"
+      end
+    end
 
-        attributes = result.attributes
-        expect(attributes.docket_name).to eq "legacy"
-        expect(attributes.aod).to be_falsy
-        expect(attributes.appellant_full_name).to eq veteran_full_name
-        expect(attributes.assigned_to_location).to eq legacy_appeal.assigned_to_location
-        expect(attributes.caseflow_veteran_id).to eq veteran.id
-        expect(attributes.decision_date).to eq AppealRepository.normalize_vacols_date(vacols_decision_date)
-        expect(attributes.docket_name).to eq "legacy"
-        expect(attributes.docket_number).to eq vacols_folder.tinum
-        expect(attributes.external_id).to eq vacols_case.id
-        expect(attributes.hearings.length).to eq hearings_count
-        expect(attributes.hearings.first[:held_by]).to eq "#{judge.snamef} #{judge.snamel}"
-        expect(attributes.issues.length).to eq issues_count
-        expect(attributes.mst).to be_truthy
-        expect(attributes.pact).to be_truthy
-        expect(attributes.paper_case).to eq "Paper"
-        expect(attributes.status).to eq "Active"
-        expect(attributes.veteran_appellant_deceased).to be_falsy
-        expect(attributes.veteran_file_number).to eq ssn
-        expect(attributes.veteran_full_name).to eq veteran_full_name
-        expect(attributes.withdrawn).to be_falsy
+    context "when vacols case record exists" do
+      let(:vacols_case) do
+        create(
+          :case,
+          {
+            correspondent: vacols_correspondent,
+            case_issues: vacols_case_issues,
+            case_hearings: vacols_case_hearings,
+            folder: vacols_folder
+          }.merge(vacols_case_attrs)
+        )
       end
 
-      context "finds by veteran ids" do
-        subject { SearchQueryService.new(veteran_ids: [veteran.id]) }
+      context "when veteran is claimant" do
+        let(:vacols_correspondent_attrs) do
+          {
+            sspare2: veteran_first_name,
+            sspare1: veteran_last_name,
+            snamel: veteran_last_name,
+            snamef: veteran_first_name,
+            stafkey: ssn
+          }
+        end
 
-        it "finds by veteran ids" do
-          search_results = subject.search_by_veteran_ids
+        it "handles regional office not found" do
+          allow(RegionalOffice).to receive(:find!).and_raise(RegionalOffice::NotFoundError)
+          search_results = subject.search_by_veteran_file_number
           result = search_results.first.api_response
 
           expect(result.id).to be
           expect(result.type).to eq "legacy_appeal"
+        end
+
+        it "finds by file number" do
+          search_results = subject.search_by_veteran_file_number
+          result = search_results.first.api_response
+
+          expect(result.id).to be
+          expect(result.type).to eq "legacy_appeal"
+
+          attributes = result.attributes
+          expect(attributes.docket_name).to eq "legacy"
+          expect(attributes.aod).to be_falsy
+          expect(attributes.appellant_full_name).to eq veteran_full_name
+          expect(attributes.assigned_to_location).to eq legacy_appeal.assigned_to_location
+          expect(attributes.caseflow_veteran_id).to eq veteran.id
+          expect(attributes.decision_date).to eq AppealRepository.normalize_vacols_date(vacols_decision_date)
+          expect(attributes.docket_name).to eq "legacy"
+          expect(attributes.docket_number).to eq vacols_folder.tinum
+          expect(attributes.external_id).to eq vacols_case.id
+          expect(attributes.hearings.length).to eq hearings_count
+          expect(attributes.hearings.first[:held_by]).to eq "#{judge.snamef} #{judge.snamel}"
+          expect(attributes.issues.length).to eq issues_count
+          expect(attributes.mst).to be_truthy
+          expect(attributes.pact).to be_truthy
+          expect(attributes.paper_case).to eq "Paper"
+          expect(attributes.status).to eq "Active"
+          expect(attributes.veteran_appellant_deceased).to be_falsy
+          expect(attributes.veteran_file_number).to eq ssn
+          expect(attributes.veteran_full_name).to eq veteran_full_name
+          expect(attributes.withdrawn).to be_falsy
+        end
+
+        context "finds by veteran ids" do
+          subject { SearchQueryService.new(veteran_ids: [veteran.id]) }
+
+          it "finds by veteran ids" do
+            search_results = subject.search_by_veteran_ids
+            result = search_results.first.api_response
+
+            expect(result.id).to be
+            expect(result.type).to eq "legacy_appeal"
+          end
         end
       end
     end

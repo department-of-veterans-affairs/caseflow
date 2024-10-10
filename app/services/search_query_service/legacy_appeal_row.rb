@@ -102,7 +102,7 @@ class SearchQueryService::LegacyAppealRow
 
     def regional_office(ro_key)
       RegionalOffice.find!(ro_key)
-    rescue NotFoundError
+    rescue RegionalOffice::NotFoundError
       nil
     end
   end
