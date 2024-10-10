@@ -725,6 +725,8 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
         next true if !ineligible_judges_sattyids.include?(appeal["vlj"])
       end
 
+      next true if appeal["prev_deciding_judge"].nil? && !ineligible_judges_sattyids.include?(appeal["vlj"])
+
       next if ineligible_or_excluded_deciding_judge?(appeal, excluded_judges_attorney_ids)
 
       if case_affinity_days_lever_value_is_selected?(lever_value)
@@ -755,6 +757,8 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
         next if appeal["vlj"] == judge_sattyid
         next true if !ineligible_judges_sattyids.include?(appeal["vlj"])
       end
+
+      next true if appeal["prev_deciding_judge"].nil? && !ineligible_judges_sattyids.include?(appeal["vlj"])
 
       next if ineligible_or_excluded_deciding_judge?(appeal, excluded_judges_attorney_ids)
 
@@ -787,6 +791,8 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
         next if appeal["vlj"] == judge_sattyid
         next true if !ineligible_judges_sattyids.include?(appeal["vlj"])
       end
+
+      next true if appeal["prev_deciding_judge"].nil? && !ineligible_judges_sattyids.include?(appeal["vlj"])
 
       next if ineligible_or_excluded_deciding_judge?(appeal, excluded_judges_attorney_ids)
 
