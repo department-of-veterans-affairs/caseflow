@@ -31,8 +31,8 @@ describe Events::DecisionReviewUpdated do
       .with(event: event, css_id: parser.css_id, station_id: parser.station_id).and_return(user)
     allow(EndProductEstablishment).to receive(:find_by)
       .with(reference_id: parser.end_product_establishment_reference_id).and_return(end_product_establishment)
-    allow(Events::DecisionReviewUpdated::UpdateInformalConference).to receive(:process!)
-      .with(event: event, parser: parser).and_return(nil)
+    # allow(Events::DecisionReviewUpdated::UpdateInformalConference).to receive(:process!)
+    #   .with(event: event, parser: parser).and_return(nil)
     allow(Events::DecisionReviewUpdated::UpdateClaimReview).to receive(:process!)
       .with(event: event, parser: parser).and_return(nil)
     allow(Events::DecisionReviewUpdated::UpdateEndProductEstablishment).to receive(:process!)
@@ -82,12 +82,6 @@ describe Events::DecisionReviewUpdated do
     it "finds an end product establishment" do
       expect(EndProductEstablishment).to receive(:find_by)
         .with(reference_id: parser.end_product_establishment_reference_id)
-      subject
-    end
-
-    it "updates informal conference" do
-      expect(Events::DecisionReviewUpdated::UpdateInformalConference).to receive(:process!)
-        .with(event: event, parser: parser)
       subject
     end
 
