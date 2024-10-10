@@ -17,6 +17,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   has_many :decided_membership_requests, class_name: "MembershipRequest", foreign_key: :decider_id
   has_many :messages
   has_many :unrecognized_appellants, foreign_key: :created_by_id
+  has_many :saved_searches, dependent: :destroy
   has_one :event_record, as: :evented_record
   has_one :vacols_user, class_name: "CachedUser", foreign_key: :sdomainid, primary_key: :css_id
   has_one :vacols_staff, class_name: "VACOLS::Staff", foreign_key: :sdomainid, primary_key: :css_id
