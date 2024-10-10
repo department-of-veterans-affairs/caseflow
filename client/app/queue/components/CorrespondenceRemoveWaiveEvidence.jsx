@@ -18,15 +18,14 @@ import {
 const CorrespondenceRemoveWaiveEvidenceModal = (props) => {
   const { task, correspondenceInfo } = props;
   const taskData = taskActionData(props);
-
+  const correspondence = correspondenceInfo;
   const submit = () => {
-    const correspondence = correspondenceInfo;
-    console.log("Taskkkkkkk", task);
     const remainingTime = task.timerEndsAt;
     const payload = {
       data: {
         appeal_uuid: props.appealId,
         task: {
+          instructions: taskData?.instructions,
           type: 'EvidenceSubmissionWindowTask',
           appeal_id: task.appealId,
           appeal_type: 'Correspondence',
@@ -36,7 +35,7 @@ const CorrespondenceRemoveWaiveEvidenceModal = (props) => {
       }
     };
 
-    return props.createNewEvidenceWindowTask(payload, correspondence);
+    return props.createNewEvidenceWindowTask(payload, correspondence, task.appealId);
 
   };
 
@@ -47,7 +46,7 @@ const CorrespondenceRemoveWaiveEvidenceModal = (props) => {
       {...modalProps}
       title={COPY.CONFIRM_WAIVE_REMOVAL}
       button={COPY.MODAL_CONFIRM_BUTTON}
-      pathAfterSubmit={taskData?.redirect_after ?? `/queue/correspondence/${props.appealId}`}
+      pathAfterSubmit={`/queue/correspondence/${correspondence.uuid}`}
       submit={submit}
     >
       {taskData?.modal_body &&
