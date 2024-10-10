@@ -1,19 +1,12 @@
 import React from 'react';
-import CombinedNonCompReducer from '../reducers';
 import { Provider } from 'react-redux';
-import { applyMiddleware, createStore, compose } from 'redux';
 import { MemoryRouter as Router } from 'react-router-dom';
 
-import thunk from 'redux-thunk';
-
 import SavedSearches from './SavedSearches';
+import createNonCompStore from 'test/app/nonComp/nonCompStoreCreator';
 
 const ReduxDecorator = (Story, { args: { data: { props } } }) => {
-  const store = createStore(
-    CombinedNonCompReducer,
-    props,
-    compose(applyMiddleware(thunk))
-  );
+  const store = createNonCompStore(props);
 
   return <Provider store={store} >
     <Router>

@@ -1,8 +1,6 @@
 import React from 'react';
 import { axe } from 'jest-axe';
 import { Provider } from 'react-redux';
-import thunk from 'redux-thunk';
-import { applyMiddleware, createStore, compose } from 'redux';
 import userEvent from '@testing-library/user-event';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import selectEvent from 'react-select-event';
@@ -10,14 +8,10 @@ import { MemoryRouter as Router } from 'react-router-dom';
 
 import ReportPage from 'app/nonComp/pages/ReportPage';
 import { getVhaUsers } from 'test/helpers/reportPageHelper';
-import CombinedNonCompReducer from 'app/nonComp/reducers';
+import createNonCompStore from './nonCompStoreCreator';
 
 const setup = (storeValues = { nonComp: { businessLineUrl: 'vha' } }) => {
-  const store = createStore(
-    CombinedNonCompReducer,
-    storeValues,
-    compose(applyMiddleware(thunk))
-  );
+  const store = createNonCompStore(storeValues);
 
   return render(
     <Provider store={store}>
