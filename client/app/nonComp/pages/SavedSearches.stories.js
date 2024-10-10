@@ -8,11 +8,7 @@ import thunk from 'redux-thunk';
 
 import SavedSearches from './SavedSearches';
 
-const ReduxDecorator = (Story, options) => {
-  const props = {
-    ...options.args.data
-  };
-
+const ReduxDecorator = (Story, { args: { data: { props } } }) => {
   const store = createStore(
     CombinedNonCompReducer,
     props,
