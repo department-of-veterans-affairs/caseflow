@@ -1,102 +1,51 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`FnodBanner renders correctly 1`] = `
-<FnodBanner
-  appeal={
-    Object {
-      "veteranDateOfDeath": "2019-03-17",
-      "veteranFullName": "Jane Doe",
-      "veteran_appellant_deceased": true,
-    }
-  }
->
+<DocumentFragment>
   <div>
-    <Alert
-      fixed={false}
-      message={
-        <div>
-          <strong>
-            Source:
-          </strong>
-           
-          VBMS
-           
-          <span
-            data-css-tn55bb=""
-          >
-            |
-          </span>
-          <strong>
-             Date of Death:
-          </strong>
-           
-          03/17/2019
-           
-          <span
-            data-css-tn55bb=""
-          >
-            |
-          </span>
-          <strong>
-             Veteran Name:
-          </strong>
-           
-          Jane Doe
-        </div>
-      }
-      scrollOnAlert={true}
-      title="Veteran Date of Death Reported"
-      type="info"
+    <div
+      class="usa-alert usa-alert-info"
+      role="alert"
     >
       <div
-        className="usa-alert usa-alert-info"
-        role="alert"
+        class="usa-alert-body"
       >
-        <div
-          className="usa-alert-body"
+        <h2
+          class="usa-alert-heading"
         >
-          <h2
-            className="usa-alert-heading"
-          >
-            Veteran Date of Death Reported
-          </h2>
-          <div
-            className="usa-alert-text"
-          >
-            <div>
-              <strong>
-                Source:
-              </strong>
-               
-              VBMS
-               
-              <span
-                data-css-tn55bb=""
-              >
-                |
-              </span>
-              <strong>
-                 Date of Death:
-              </strong>
-               
-              03/17/2019
-               
-              <span
-                data-css-tn55bb=""
-              >
-                |
-              </span>
-              <strong>
-                 Veteran Name:
-              </strong>
-               
-              Jane Doe
-            </div>
+          Veteran Date of Death Reported
+        </h2>
+        <div
+          class="usa-alert-text"
+        >
+          <div>
+            <strong>
+              Source:
+            </strong>
+             VBMS 
+            <span
+              data-css-tn55bb=""
+            >
+              |
+            </span>
+            <strong>
+               Date of Death:
+            </strong>
+             03/17/2019 
+            <span
+              data-css-tn55bb=""
+            >
+              |
+            </span>
+            <strong>
+               Veteran Name:
+            </strong>
+             Jane Doe
           </div>
         </div>
       </div>
-    </Alert>
+    </div>
     <br />
   </div>
-</FnodBanner>
+</DocumentFragment>
 `;

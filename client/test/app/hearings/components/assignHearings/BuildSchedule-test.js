@@ -1,11 +1,11 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import BuildSchedule from '../../../../../../client/app/hearings/components/BuildSchedule';
 
 describe('BuildSchedule', () => {
   it('renders table with upload history', () => {
-    const wrapper = mount(<MemoryRouter><BuildSchedule
+    render(<MemoryRouter><BuildSchedule
       pastUploads={[
         {
           startDate: '10/01/2018',
@@ -19,14 +19,14 @@ describe('BuildSchedule', () => {
       ]}
     /></MemoryRouter>);
 
-    expect(wrapper.text().includes('Judge')).toBe(true);
-    expect(wrapper.text().includes('07/03/2018')).toBe(true);
-    expect(wrapper.text().includes('Justin Madigan')).toBe(true);
-    expect(wrapper.text().includes('Download')).toBe(true);
+    expect(screen.getByText('Judge')).toBeInTheDocument();
+    expect(screen.getByText('07/03/2018')).toBeInTheDocument();
+    expect(screen.getByText('Justin Madigan')).toBeInTheDocument();
+    expect(screen.getByText('Download')).toBeInTheDocument();
   });
 
   it('renders a success alert when a schedule period has been created', () => {
-    const wrapper = mount(<MemoryRouter><BuildSchedule
+    render(<MemoryRouter><BuildSchedule
       pastUploads={[
         {
           startDate: '10/01/2018',
@@ -45,6 +45,6 @@ describe('BuildSchedule', () => {
       }}
     /></MemoryRouter>);
 
-    expect(wrapper.text().includes('You have successfully assigned judges to hearings')).toBe(true);
+    expect(screen.getByText('You have successfully assigned judges to hearings between 07/04/2018 and 07/26/2018')).toBeInTheDocument();
   });
 });
