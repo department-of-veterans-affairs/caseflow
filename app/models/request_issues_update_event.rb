@@ -85,6 +85,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     true
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def update_data_not_processed_in_base_class!(request_issue, issue_data)
     request_issue.update(
       contested_issue_description:
@@ -103,6 +104,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
         request_issue.contested_rating_issue_diagnostic_code
     )
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   # Set the closed_at date and closed_status for removed issues based on the event data
   def update_removed_issues!
