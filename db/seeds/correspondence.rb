@@ -143,6 +143,9 @@ module Seeds
     def create_queue_correspondences(user)
       veterans = create_veterans
       veterans.each do |veteran|
+        # Creating Inactive Appeals that have a RootTask with the status of canceled
+        create_inactive_appeals_for_user(user, veteran)
+
         # Correspondences with unassigned ReviewPackageTask
         create_correspondence_with_unassigned_review_package_task(user, veteran)
 
@@ -172,9 +175,6 @@ module Seeds
 
         # Correspondences with the CorrespondenceRootTask with the status of canceled
         create_correspondence_with_canceled_root_task(user, veteran)
-
-        # Creating Inactive Appeals that have a RootTask with the status of canceled
-        create_inactive_appeals_for_user(user, veteran)
 
         # Correspondences with the tasks for CAVC and Congress Interest
         create_cavc_mailtask(user, veteran)
@@ -302,13 +302,13 @@ module Seeds
 
     def create_inactive_appeals_for_user(user, veteran = {})
       # creating two appeals with cancelled root task
-      2.times do
+      3.times do
         appeal = create(:appeal, veteran: veteran)
         InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
         appeal.root_task.update!(status: Constants.TASK_STATUSES.cancelled)
       end
       # creating two appeals with completed root task
-      2.times do
+      3.times do
         appeal = create(:appeal, veteran: veteran)
         InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
         appeal.root_task.update!(status: Constants.TASK_STATUSES.completed)
