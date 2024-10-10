@@ -208,6 +208,18 @@ class DatePicker extends React.PureComponent {
     if (mode !== 'between') {
       this.setState({ endDate: '' });
     }
+    if (mode === 'last7') {
+      this.quickButtons(7);
+    }
+    if (mode === 'last30') {
+      this.quickButtons(30);
+    }
+    if (mode === 'last365') {
+      this.quickButtons(365);
+    }
+    if (mode === 'all') {
+      this.clearFilter();
+    }
   }
 
   quickButtons = (option) => {
@@ -232,6 +244,21 @@ class DatePicker extends React.PureComponent {
   }
 
   render() {
+    const options = [
+      { value: 'between', label: COPY.DATE_PICKER_DROPDOWN_BETWEEN },
+      { value: 'before', label: COPY.DATE_PICKER_DROPDOWN_BEFORE },
+      { value: 'after', label: COPY.DATE_PICKER_DROPDOWN_AFTER },
+      { value: 'on', label: COPY.DATE_PICKER_DROPDOWN_ON }
+    ];
+
+    if (this.props.settings.options === 'vha') {
+      options.push(
+        { value: 'last7', label: COPY.DATE_PICKER_DROPDOWN_7 },
+        { value: 'last30', label: COPY.DATE_PICKER_DROPDOWN_30 },
+        { value: 'last365', label: COPY.DATE_PICKER_DROPDOWN_365 },
+        { value: 'all', label: COPY.DATE_PICKER_DROPDOWN_ALL });
+    }
+
     return <span {...datePickerStyle} ref={(rootElem) => {
       this.rootElem = rootElem;
     }}>
@@ -257,12 +284,7 @@ class DatePicker extends React.PureComponent {
             <div className="input-wrapper">
               <SearchableDropdown
                 name={COPY.DATE_PICKER_DROPDOWN_LABEL}
-                options={[
-                  { value: 'between', label: COPY.DATE_PICKER_DROPDOWN_BETWEEN },
-                  { value: 'before', label: COPY.DATE_PICKER_DROPDOWN_BEFORE },
-                  { value: 'after', label: COPY.DATE_PICKER_DROPDOWN_AFTER },
-                  { value: 'on', label: COPY.DATE_PICKER_DROPDOWN_ON }
-                ]}
+                options={options}
                 searchable
                 onChange={(option) => this.updateMode(option.value)}
                 filterOption={() => true}
