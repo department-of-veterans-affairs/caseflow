@@ -227,6 +227,7 @@ export const PAGE_TITLES = {
   CORRESPONDENCE_DETAILS: 'Correspondence Details',
   EDIT_GENERAL_INFORMATION: 'Edit General Information',
   ASSIGN_CORR_TASK_TO_TEAM: 'Assign Task',
+  REMOVE_WAIVE_EVIDENCE_WINDOW: 'Confirm waive removal'
 };
 
 export const CUSTOM_HOLD_DURATION_TEXT = 'Custom';

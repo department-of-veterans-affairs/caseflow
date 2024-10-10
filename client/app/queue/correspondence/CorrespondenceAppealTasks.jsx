@@ -4,9 +4,19 @@ import CaseDetailsLink from '../CaseDetailsLink';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 import { appealWithDetailSelector, taskSnapshotTasksForAppeal } from '../selectors';
 import { useSelector } from 'react-redux';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import TaskRows from '../components/TaskRows';
+import Alert from '../../components/Alert';
+import {
+  setWaiveEvidenceAlertBanner
+} from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
 
 const CorrespondenceAppealTasks = (props) => {
+  const {
+    bannerAlert,
+  } = { ...props };
+
   const veteranFullName = props.correspondence.veteranFullName;
   const appealId = props.appeal.external_id;
   const appeal = useSelector((state) =>
@@ -58,6 +68,16 @@ const CorrespondenceAppealTasks = (props) => {
 
         </div>
         <div className="tasks-added-details">
+          {appeal && bannerAlert.message && bannerAlert.appealId.toString() === appeal.id.toString() &&
+          (
+              <Alert
+                type={bannerAlert.type}
+                message={bannerAlert.message}
+                scrollOnAlert={false}
+              />
+          )}
+        </div>
+        <div className="tasks-added-details">
           <span className="tasks-added-text">Tasks added to appeal</span>
           <div>
             <TaskRows appeal={appeal}
@@ -80,8 +100,22 @@ CorrespondenceAppealTasks.propTypes = {
   organizations: PropTypes.array,
   userCssId: PropTypes.string,
   appeal: PropTypes.object,
-  waivableUser: PropTypes.bool
-
+  waivableUser: PropTypes.bool,
+  setWaiveEvidenceAlertBanner: PropTypes.func
 };
 
-export default CorrespondenceAppealTasks;
+const mapStateToProps = (state) => ({
+  bannerAlert: state.correspondenceDetails.bannerAlert,
+});
+
+
+const mapDispatchToProps = (dispatch) => (
+  bindActionCreators({
+    setWaiveEvidenceAlertBanner,
+  }, dispatch)
+);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(CorrespondenceAppealTasks);

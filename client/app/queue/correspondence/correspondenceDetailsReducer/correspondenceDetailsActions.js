@@ -17,6 +17,50 @@ export const setTaskNotRelatedToAppealBanner = (bannerDetails) => (dispatch) => 
   });
 };
 
+export const setWaiveEvidenceAlertBanner = (bannerDetails) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.SET_WAIVE_EVIDENCE_ALERT_BANNER,
+    payload: {
+      bannerAlert: {
+        taskId: bannerDetails.taskId,
+        message: bannerDetails.message,
+        type: bannerDetails.type
+      }
+    }
+  });
+};
+
+export const createNewEvidenceWindowTask = (payload, correspondence, appealId) => (dispatch) => {
+  return ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/waive_evidence_submission_window_task`, payload).
+    then((response) => {
+      console.log("response: " + JSON.stringify(response));
+      console.log("response.data.task_id: " + appealId);
+      dispatch({
+        type: ACTIONS.EVIDENCE_SUBMISSION_BANNER,
+        payload: {
+          bannerAlert: {
+            appealId: appealId,
+            title: CORRESPONDENCE_DETAILS_BANNERS.evidenceWindowBanner.title,
+            message: sprintf(CORRESPONDENCE_DETAILS_BANNERS.evidenceWindowBanner.message),
+            type: CORRESPONDENCE_DETAILS_BANNERS.evidenceWindowBanner.type
+          }
+        }
+      });
+      dispatch({
+        type: ACTIONS.CORRESPONDENCE_INFO,
+        payload: {
+          correspondence
+        }
+      });
+    }).
+    catch((error) => {
+      const errorMessage = error?.response?.body?.message ?
+        error.response.body.message.replace(/^Error:\s*/, '') :
+        error.message;
+        console.error(errorMessage);
+    });
+};
+
 export const cancelTaskNotRelatedToAppeal = (taskID, taskName, teamName, correspondence, payload) => (dispatch) => {
 
   return ApiUtil.patch(`/queue/correspondence/tasks/${taskID}/cancel`, payload).
