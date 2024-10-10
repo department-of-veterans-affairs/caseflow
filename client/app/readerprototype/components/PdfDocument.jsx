@@ -9,11 +9,14 @@ import ApiUtil from '../../util/ApiUtil';
 import Page from './Page';
 import TextLayer from './TextLayer';
 import DocumentLoadError from './DocumentLoadError';
+import { useDispatch } from 'react-redux';
+import { selectCurrentPdf } from 'app/reader/Documents/DocumentsActions';
 
-const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel, onLoad }) => {
+const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel }) => {
   const [isDocumentLoadError, setIsDocumentLoadError] = useState(false);
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
+  const dispatch = useDispatch();
 
   const containerStyle = {
     width: '100%',
@@ -29,7 +32,6 @@ const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel, onLoad }) => {
     const getDocData = async () => {
       setPdfDoc(null);
       setPdfPages([]);
-      onLoad(true);
       const requestOptions = {
         cache: true,
         withCredentials: true,
@@ -40,7 +42,6 @@ const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel, onLoad }) => {
         return response.body;
       });
 
-      onLoad(false);
       const docProxy = await getDocument({ data: byteArr }).promise;
 
       if (docProxy) {
@@ -73,6 +74,10 @@ const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel, onLoad }) => {
     getPdfData();
   }, [pdfDoc]);
 
+  useEffect(() => {
+    dispatch(selectCurrentPdf(doc.id));
+  }, [doc.id]);
+
   return (
     <div id="pdfContainer" style={containerStyle}>
       {isDocumentLoadError && <DocumentLoadError doc={doc} />}
@@ -103,7 +108,6 @@ PdfDocument.propTypes = {
   rotateDeg: PropTypes.string,
   setNumPages: PropTypes.func,
   zoomLevel: PropTypes.number,
-  onLoad: PropTypes.func,
 };
 
 export default PdfDocument;
