@@ -1527,5 +1527,9 @@
   "DATE_PICKER_DROPDOWN_ON": "On this date",
   "DATE_PICKER_CLEAR": "Clear filter",
   "DATE_PICKER_DROPDOWN_LABEL": "Date filter parameters",
-  "DATE_PICKER_QUICK_BUTTON_30": "Last 30 days"
+  "DATE_PICKER_QUICK_BUTTON_30": "Last 30 days",
+  "DATE_PICKER_DROPDOWN_7": "Last 7 days",
+  "DATE_PICKER_DROPDOWN_30": "Last 30 days",
+  "DATE_PICKER_DROPDOWN_365": "Last 365 days",
+  "DATE_PICKER_DROPDOWN_ALL": "View All"
 }
