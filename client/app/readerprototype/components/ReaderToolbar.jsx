@@ -10,8 +10,7 @@ import { LeftChevronIcon } from '../../components/icons/LeftChevronIcon';
 import { RotateIcon } from '../../components/icons/RotateIcon';
 import { SearchIcon } from '../../components/icons/SearchIcon';
 import DocumentCategoryIcons from '../../reader/DocumentCategoryIcons';
-
-import { handleClickDocumentTypeLink, openDownloadLink } from '../util/documentUtil';
+import { CATEGORIES } from '../util/readerConstants';
 
 const ReaderToolbar = ({
   resetZoomLevel,
@@ -40,6 +39,15 @@ const ReaderToolbar = ({
       return;
     }
     toggleSearchBar(true);
+  };
+
+  const handleClickDocumentTypeLink = () => {
+    window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'document-type-link');
+  };
+
+  const openDownloadLink = () => {
+    window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'download');
+    window.open(`${doc.content_url}?type=${doc.type}&download=true`);
   };
 
   return (
