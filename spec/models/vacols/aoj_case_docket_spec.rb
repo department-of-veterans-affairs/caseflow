@@ -864,7 +864,7 @@ describe VACOLS::AojCaseDocket, :all_dbs do
         expect(
           VACOLS::AojCaseDocket.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, 100).count
         )
-          .to eq(18)
+          .to eq(17)
 
         # ensure that excluded judge recieves their tied cases which would not go to default judge
         expect(VACOLS::AojCaseDocket.distribute_nonpriority_appeals(excl_judge_caseflow, "any", 100, nil, false, true)
@@ -1394,7 +1394,7 @@ describe VACOLS::AojCaseDocket, :all_dbs do
 
         expect(new_hearing_judge_cases.map { |c| c["bfkey"] }.sort)
           .to match_array([
-            case_1, case_2, case_3, case_4, case_5, case_9, case_10, case_12, case_13
+            case_1, case_2, case_3, case_4, case_5, case_10, case_12, case_13
           ].map { |c| c["bfkey"].to_i.to_s }.sort)
 
         expect(tied_judge_cases.map { |c| c["bfkey"] }.sort)
@@ -1404,7 +1404,7 @@ describe VACOLS::AojCaseDocket, :all_dbs do
 
         expect(other_judge_cases.map { |c| c["bfkey"] }.sort)
           .to match_array([
-            case_7, case_8, case_9, case_10, case_12, case_13
+            case_7, case_8, case_10, case_12, case_13
           ].map { |c| c["bfkey"].to_i.to_s }.sort)
 
         # For case distribution levers set to infinite
@@ -1444,7 +1444,7 @@ describe VACOLS::AojCaseDocket, :all_dbs do
 
         expect(new_hearing_judge_omit.map { |c| c["bfkey"] }.sort)
           .to match_array([
-            case_1, case_2, case_3, case_4, case_5, case_7, case_8, case_9, case_10, case_11, case_12, case_13
+            case_1, case_2, case_3, case_4, case_5, case_7, case_8, case_10, case_11, case_12, case_13
           ].map { |c| c["bfkey"].to_i.to_s }.sort)
 
         expect(tied_judge_omit.map { |c| c["bfkey"] }.sort)
@@ -1454,7 +1454,7 @@ describe VACOLS::AojCaseDocket, :all_dbs do
 
         expect(other_judge_omit.map { |c| c["bfkey"] }.sort)
           .to match_array([
-            case_7, case_8, case_9, case_10, case_11, case_12, case_13
+            case_7, case_8, case_10, case_11, case_12, case_13
           ].map { |c| c["bfkey"].to_i.to_s }.sort)
       end
     end
