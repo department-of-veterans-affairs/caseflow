@@ -91,7 +91,7 @@ class CaseDistributionLeversTestsController < ApplicationController
     thread = Thread.new do
       begin
         result = FullSuiteSeedJob.perform_now
-      rescue => error
+      rescue StandardError => error
         result = { error: error.message }
       end
     end
