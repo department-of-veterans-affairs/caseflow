@@ -10,11 +10,13 @@ import {
   veteranParticipantIdColumn,
   veteranSsnColumn,
   decisionReviewTypeColumn,
-  pendingIssueModificationColumn
+  pendingIssueModificationColumn,
+  vhaTaskCompletedDateColumn
 } from './TaskTableColumns';
 import {
   issueCountColumn,
-  issueTypesColumn
+  issueTypesColumn,
+  taskCompletedDateColumn
 } from '../../queue/components/TaskTableColumns';
 import {
   buildDecisionReviewFilterInformation,
@@ -92,7 +94,8 @@ class TaskTableTabUnconnected extends React.PureComponent {
       ...issueTypesColumn(),
       filterOptions: parseFilterOptions(this.props.filterableTaskIssueTypes)
     },
-    this.state.tabName === 'pending' ? pendingIssueModificationColumn() : null
+    this.state.tabName === 'pending' ? pendingIssueModificationColumn() : null,
+    this.props.businessLineUrl === 'vha' ? vhaTaskCompletedDateColumn() : taskCompletedDateColumn()
   ].filter((column) => column !== null);
 
   enabledTaskFilters = () => extractEnabledTaskFilters(
