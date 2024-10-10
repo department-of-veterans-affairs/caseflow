@@ -1612,6 +1612,12 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 .task-added-header {
   font-weight: bold;
 }
+.number-of-issues-header {
+  font-weight: bold;
+  span {
+    padding-left: 10px;
+  }
+}
 
 .correspondence-tasks-added {
   background-color: $color-gray-inverse-base;
@@ -1640,12 +1646,17 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   display: block;
 }
 
+.case-details-header-badge,
 .case-details-badge {
   display: flex;
   width: fit-content;
   flex-grow: 1;
   padding: 3px;
   background-color: $color-white;
+}
+.case-details-header-badge {
+  flex-grow: unset;
+  margin: 12px 17px 12px 2px;
 }
 
 .link-icon-container {
