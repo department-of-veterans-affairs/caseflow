@@ -132,8 +132,8 @@ group :test, :development, :demo, :make_docs do
   gem "rails-erd"
   gem "rb-readline"
   gem "rspec"
-  gem "rspec-rails"
   # For CircleCI test metadata analysis
+  gem "rspec-rails"
   gem "rspec_junit_formatter"
   gem "rswag-specs"
   gem "rubocop", "= 0.83", require: false
