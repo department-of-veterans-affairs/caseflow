@@ -140,8 +140,6 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
         expect(new_request_issue.nonrating_issue_bgs_source).to eq(nil)
         expect(new_request_issue.ramp_claim_id).to eq(nil)
         expect(new_request_issue.nonrating_issue_description).to eq(nil)
-        expect(new_request_issue.closed_at).to eq(nil)
-        expect(new_request_issue.closed_status).to eq(nil)
         # expect(new_request_issue.decision_date).to eq(Date.parse("19568").)
         expect(new_request_issue.rating_issue_associated_at).to eq(nil)
         expect(new_request_issue.ramp_claim_id).to eq(nil)

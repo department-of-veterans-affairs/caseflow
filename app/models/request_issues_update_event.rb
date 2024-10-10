@@ -95,13 +95,12 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
         issue_data[:nonrating_issue_description] || request_issue.nonrating_issue_description,
       contention_updated_at: issue_data[:edited_description] ? @parser.end_product_establishment_last_synced_at : nil,
       contention_reference_id: issue_data[:contention_reference_id].to_i || request_issue.contention_reference_id,
-      ineligible_reason: issue_data[:ineligible_reason],
-      closed_at: issue_data[:closed_at],
-      closed_status: issue_data[:closed_status],
-      nonrating_issue_bgs_id: issue_data[:nonrating_issue_bgs_id],
-      unidentified_issue_text: issue_data[:unidentified_issue_text],
-      vacols_sequence_id: issue_data[:vacols_sequence_id],
-      contested_rating_issue_diagnostic_code: issue_data[:contested_rating_issue_diagnostic_code]
+      ineligible_reason: issue_data[:ineligible_reason] || request_issue.ineligible_reason,
+      nonrating_issue_bgs_id: issue_data[:nonrating_issue_bgs_id] || request_issue.nonrating_issue_bgs_id,
+      unidentified_issue_text: issue_data[:unidentified_issue_text] || request_issue.unidentified_issue_text,
+      vacols_sequence_id: issue_data[:vacols_sequence_id] || request_issue.vacols_sequence_id,
+      contested_rating_issue_diagnostic_code: issue_data[:contested_rating_issue_diagnostic_code] ||
+        request_issue.contested_rating_issue_diagnostic_code
     )
   end
 
