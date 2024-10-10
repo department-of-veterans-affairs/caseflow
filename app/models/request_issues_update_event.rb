@@ -74,25 +74,37 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   def process_request_issues_data!
     return true if after_issues.empty?
 
-    all_updated_issues.each do |request_issue|
+    (added_issues + edited_issues).each do |request_issue|
       issue_data =
         @request_issues_data.find { |data| data[:reference_id] == request_issue.reference_id }
 
       next if issue_data.nil?
 
-      request_issue.update(
-        contested_issue_description:
-          issue_data[:contested_issue_description] || request_issue.contested_issue_description,
-        nonrating_issue_category:
-          issue_data[:nonrating_issue_category] || request_issue.nonrating_issue_category,
-        nonrating_issue_description:
-          issue_data[:nonrating_issue_description] || request_issue.nonrating_issue_description,
-        contention_updated_at: @parser.end_product_establishment_last_synced_at,
-        contention_reference_id: issue_data[:contention_reference_id]
-      )
+      update_data_not_processed_in_base_class!(request_issue, issue_data)
     end
     true
   end
+
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  def update_data_not_processed_in_base_class!(request_issue, issue_data)
+    request_issue.update(
+      contested_issue_description:
+        issue_data[:contested_issue_description] || request_issue.contested_issue_description,
+      nonrating_issue_category:
+        issue_data[:nonrating_issue_category] || request_issue.nonrating_issue_category,
+      nonrating_issue_description:
+        issue_data[:nonrating_issue_description] || request_issue.nonrating_issue_description,
+      contention_updated_at: issue_data[:edited_description] ? @parser.end_product_establishment_last_synced_at : nil,
+      contention_reference_id: issue_data[:contention_reference_id].to_i || request_issue.contention_reference_id,
+      ineligible_reason: issue_data[:ineligible_reason] || request_issue.ineligible_reason,
+      nonrating_issue_bgs_id: issue_data[:nonrating_issue_bgs_id] || request_issue.nonrating_issue_bgs_id,
+      unidentified_issue_text: issue_data[:unidentified_issue_text] || request_issue.unidentified_issue_text,
+      vacols_sequence_id: issue_data[:vacols_sequence_id] || request_issue.vacols_sequence_id,
+      contested_rating_issue_diagnostic_code: issue_data[:contested_rating_issue_diagnostic_code] ||
+        request_issue.contested_rating_issue_diagnostic_code
+    )
+  end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   # Set the closed_at date and closed_status for removed issues based on the event data
   def update_removed_issues!
@@ -221,7 +233,11 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   # Note that removed issues are not included in the request_issues_data
   # This is to ensure all removed issues are derived from the (before - after) comparison in base class
   def add_existing_review_issues
-    @review.request_issues.each do |request_issue|
+    before_issues = @review.request_issues.active_or_ineligible.select(&:persisted?)
+
+    return @request_issues_data if before_issues.empty?
+
+    before_issues.each do |request_issue|
       # Skip if the request issue is already in the request_issues_data
       next if @request_issues_data.find do |data|
         data[:reference_id] == request_issue.reference_id ||
