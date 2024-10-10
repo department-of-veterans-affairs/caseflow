@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SavedSearch < CaseflowRecord
   belongs_to :user
 
