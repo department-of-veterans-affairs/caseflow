@@ -1,10 +1,8 @@
 import React from 'react';
-import { connect, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import Link from '../../components/Link';
 import { LeftChevronIcon } from 'app/components/icons/LeftChevronIcon';
-
-import PropTypes from 'prop-types';
 
 import NonCompLayout from '../components/NonCompLayout';
 import { COLORS } from 'app/constants/AppConstants';
