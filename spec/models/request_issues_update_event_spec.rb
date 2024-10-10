@@ -377,6 +377,14 @@ RSpec.describe RequestIssuesUpdateEvent, type: :model do
       expect(existing_request_issue.nonrating_issue_description).to eq(issue_payload[:nonrating_issue_description])
       expect(existing_request_issue.contention_updated_at).to eq(parser.end_product_establishment_last_synced_at)
       expect(existing_request_issue.contention_reference_id).to eq(issue_payload[:contention_reference_id])
+      expect(existing_request_issue.ineligible_reason).to eq(issue_payload[:ineligible_reason])
+      expect(existing_request_issue.closed_status).to eq(issue_payload[:closed_status])
+      expect(existing_request_issue.nonrating_issue_bgs_id).to eq(issue_payload[:nonrating_issue_bgs_id])
+      expect(existing_request_issue.unidentified_issue_text).to eq(issue_payload[:unidentified_issue_text])
+      expect(existing_request_issue.vacols_sequence_id).to eq(issue_payload[:vacols_sequence_id])
+      expect(existing_request_issue.contested_rating_issue_diagnostic_code).to eq(
+        issue_payload[:contested_rating_issue_diagnostic_code]
+      )
     end
 
     it "does not update fields if they are not in the payload" do
