@@ -303,6 +303,7 @@ Rails.application.routes.draw do
     post 'edit_ep', on: :member
   end
   match '/supplemental_claims/:claim_id/edit/:any' => 'supplemental_claims#edit', via: [:get]
+  get '/remands(/*path)', to: redirect('/supplemental_claims/%{path}')
 
   resources :decision_reviews, param: :business_line_slug do
     resources :tasks, controller: :decision_reviews, param: :task_id, only: [:show, :update] do
