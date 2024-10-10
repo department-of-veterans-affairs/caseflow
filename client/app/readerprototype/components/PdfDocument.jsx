@@ -5,13 +5,15 @@ import Layer from './Comments/Layer';
 import { GlobalWorkerOptions, getDocument } from 'pdfjs-dist';
 GlobalWorkerOptions.workerSrc = '/pdfjs/pdf.worker.min.js';
 
-import ApiUtil from '../../util/ApiUtil';
+// Using progressUtil instead of ApiUtil
+// import ApiUtil from '../../util/ApiUtil';
 import Page from './Page';
 import TextLayer from './TextLayer';
 import DocumentLoadError from './DocumentLoadError';
 import { useDispatch } from 'react-redux';
 import { selectCurrentPdf } from 'app/reader/Documents/DocumentsActions';
 import { storeMetrics } from '../../util/Metrics';
+import { downloadWithProgress } from '../util/progressUtil';
 
 const PdfDocument = ({
   currentPage,
@@ -23,6 +25,8 @@ const PdfDocument = ({
   zoomLevel }) => {
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
+  // New state for download progress
+  const [downloadProgress, setDownloadProgress] = useState(0);
   const dispatch = useDispatch();
   const pdfMetrics = useRef({ renderedPageCount: 0, renderedTimeTotal: 0 });
   const [allPagesRendered, setAllPagesRendered] = useState(false);
@@ -105,31 +109,52 @@ const PdfDocument = ({
       setPdfPages([]);
       setAllPagesRendered(false);
       setMetricsLogged(false);
-      const requestOptions = {
-        cache: true,
-        withCredentials: true,
-        timeout: true,
-        responseType: 'arraybuffer',
-      };
+      // Using progressUtil now, don't need:
+      // const requestOptions = {
+      //   cache: true,
+      //   withCredentials: true,
+      //   timeout: true,
+      //   responseType: 'arraybuffer',
+      // };
 
       pdfMetrics.current.getStartTime = new Date().getTime();
-      const byteArr = await ApiUtil.get(doc.content_url, requestOptions).then((response) => {
-        return response.body;
-      });
 
-      pdfMetrics.current.getEndTime = new Date().getTime();
-      const docProxy = await getDocument({ data: byteArr, pdfBug: true, verbosity: 0 }).promise;
+      // const byteArr = await ApiUtil.get(doc.content_url, requestOptions).then((response) => {
+      //   return response.body;
+      // });
+      try {
+        const byteArr = await downloadWithProgress(doc.content_url, {
+          onProgress: (progress) => {
+            setDownloadProgress(progress);
+          },
+          onSuccess: () => {
+            console.log('File downloaded successfully');
+          },
+          onFailure: (error) => {
+            console.error(`ERROR with getting doc data: ${error}`);
+            setIsDocumentLoadError(true);
+          },
+        });
 
-      if (docProxy) {
-        setPdfDoc(docProxy);
-        setNumPages(docProxy.numPages);
+        pdfMetrics.current.getEndTime = new Date().getTime();
+        const docProxy = await getDocument({ data: byteArr, pdfBug: true, verbosity: 0 }).promise;
+
+        if (docProxy) {
+          setPdfDoc(docProxy);
+          setNumPages(docProxy.numPages);
+        }
+      } catch (error) {
+        console.error(`ERROR with getting doc data: ${error}`);
+        setIsDocumentLoadError(true);
       }
     };
-
-    getDocData().catch((error) => {
-      console.error(`ERROR with getting doc data: ${error}`);
-      setIsDocumentLoadError(true);
-    });
+    getDocData();
+    // Have a try block now, so don't need:
+    //
+    // getDocData().catch((error) => {
+    //   console.error(`ERROR with getting doc data: ${error}`);
+    //   setIsDocumentLoadError(true);
+    // });
   }, [doc.content_url]);
 
   useEffect(() => {
@@ -176,6 +201,13 @@ const PdfDocument = ({
   return (
     <div id="pdfContainer" style={containerStyle}>
       {isDocumentLoadError && <DocumentLoadError doc={doc} />}
+
+      {downloadProgress > 0 && downloadProgress < 100  && (
+        <div style={{ textAlign: 'center', padding: '10px '}}>
+          Downloading: {downloadProgress.toFixed(2)}%
+        </div>
+      )}
+
       {pdfPages.map((page, index) => (
         <Page
           scale={zoomLevel}
