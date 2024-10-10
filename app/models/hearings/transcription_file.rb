@@ -14,11 +14,7 @@ class Hearings::TranscriptionFile < CaseflowRecord
 
   scope :filterable_values, lambda {
     select("
-      transcription_files.id AS id,
-      transcription_files.docket_number,
-      transcription_files.hearing_type AS hearing_type,
-      transcription_files.hearing_id AS hearing_id,
-      transcription_files.file_status,
+      transcription_files.*,
       (CASE WHEN aod_based_on_age IS NOT NULL THEN aod_based_on_age ELSE false END) AS aod_based_on_age,
       (CASE WHEN aodm.granted IS NOT NULL THEN aodm.granted ELSE false END) AS aod_motion_granted,
       scheduled_for,
@@ -45,7 +41,13 @@ class Hearings::TranscriptionFile < CaseflowRecord
 
   scope :unassigned, -> { where(file_status: Constants.TRANSCRIPTION_FILE_STATUSES.upload.success) }
 
+  scope :completed, lambda {
+    where(file_status: ["Successful upload (AWS)", "Failed Retrieval (BOX)", "Overdue"])
+  }
+
   scope :filter_by_hearing_type, ->(values) { where("hearing_type IN (?)", values) }
+
+  scope :filter_by_status, ->(values) { where("file_status IN (?)", values) }
 
   scope :filter_by_types, lambda { |values|
     filter_parts = []

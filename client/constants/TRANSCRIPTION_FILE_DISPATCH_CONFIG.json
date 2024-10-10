@@ -20,21 +20,27 @@
       "filterable": true,
       "anyFiltersAreSet": true,
       "sorting_table": "appeals",
-      "sorting_columns": ["type"]
+      "sorting_columns": [
+        "type"
+      ]
     },
     "HEARING_DATE": {
       "name": "hearingDateColumn",
       "filterable": true,
       "anyFiltersAreSet": true,
       "sorting_table": "hearings",
-      "sorting_columns": ["hearing_date"]
+      "sorting_columns": [
+        "hearing_date"
+      ]
     },
     "HEARING_TYPE": {
       "name": "hearingTypeColumn",
       "filterable": true,
       "anyFiltersAreSet": true,
       "sorting_table": "hearings",
-      "sorting_columns": ["hearing_type"]
+      "sorting_columns": [
+        "hearing_type"
+      ]
     },
     "WORK_ORDER": {
       "name": "workOrderColumn",
@@ -50,6 +56,11 @@
       "name": "dateSentColumn",
       "filterable": true,
       "anyFiltersAreSet": true
+    },
+    "RETURN_DATE": {
+      "name": "returnDateColumn",
+      "filterable": false,
+      "anyFiltersAreSet": false
     },
     "EXPECTED_RETURN_DATE": {
       "name": "expectedReturnDateColumn",
