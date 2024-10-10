@@ -100,7 +100,7 @@ const DocumentViewer = (props) => {
 
   return (
     <>
-      <Helmet>
+      <Helmet key={doc?.id}>
         <title>{`${(doc?.type) || ''} | Document Viewer | Caseflow Reader`}</title>
       </Helmet>
       <div id="prototype-reader" className="cf-pdf-page-container">
