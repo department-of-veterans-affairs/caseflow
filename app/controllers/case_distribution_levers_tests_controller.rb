@@ -86,10 +86,22 @@ class CaseDistributionLeversTestsController < ApplicationController
   end
 
   def run_full_suite_seeds
-    result = FullSuiteSeedJob.perform_now
+    result = nil
 
-    unless result
-      render json: { error: "Job failed" }, status: :unprocessable_entity
+    thread = Thread.new do
+      begin
+        result = FullSuiteSeedJob.perform_now
+      rescue => error
+        result = { error: error.message }
+      end
+    end
+
+    unless thread.join(30) # Will return nil if the thread is still alive after 30 seconds
+      return head :ok
+    end
+
+    if result.is_a?(Hash) && result[:error]
+      render json: { error: result[:error] }, status: :unprocessable_entity
       return
     end
 
