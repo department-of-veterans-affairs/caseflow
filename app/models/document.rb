@@ -103,13 +103,21 @@ class Document < CaseflowRecord
   end
 
   def self.from_vbms_document(vbms_document, file_number)
-    new(type: type_from_vbms_type(vbms_document.doc_type),
-        alt_types: (vbms_document.alt_doc_types || []).map { |type| ALT_TYPES[type] },
-        received_at: vbms_document.received_at,
-        upload_date: vbms_document.upload_date,
-        vbms_document_id: vbms_document.document_id,
-        filename: vbms_document.filename,
-        file_number: file_number)
+    document = new(
+      type: type_from_vbms_type(vbms_document.doc_type),
+      alt_types: (vbms_document.alt_doc_types || []).map { |type| ALT_TYPES[type] },
+      received_at: vbms_document.received_at,
+      upload_date: vbms_document.upload_date,
+      vbms_document_id: vbms_document.document_id,
+      filename: vbms_document.filename,
+      file_number: file_number
+    )
+
+    if FeatureToggle.enabled?(:use_ce_api)
+      document.assign_attributes(series_id: vbms_document.series_id)
+    end
+
+    document
   end
 
   def self.type_id(type)

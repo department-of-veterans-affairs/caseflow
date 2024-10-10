@@ -52,6 +52,10 @@ class FetchDocumentsForReaderJob
     # of the error the class name and  documents for appeal.id
   rescue Caseflow::Error::EfolderError => error
     Rails.logger.error "FetchDocumentsForReaderJob error #{error.class.name} fetching docs for appeal #{appeal.id}"
+  rescue BGS::SensitivityLevelCheckFailure => error
+    error_message = "#{error} - #{user.css_id} does not have adequate sensitivity level access for #{appeal.id}"
+    Rails.logger.error error_message
+    Raven.capture_exception(error: error_message)
   end
 
   # setups the debug context
