@@ -2,8 +2,8 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# This file is the source Rails uses to define your schema when running `rails
-# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
 # be faster and is potentially less error prone than running all of your
 # migrations from scratch. Old migrations may fail to apply correctly if those
 # migrations use external dependencies or application code.
@@ -840,6 +840,8 @@ ActiveRecord::Schema.define(version: 2024_09_06_174831) do
   end
 
   create_table "distribution_stats", comment: "A database table to store a snapshot of variables used during a case distribution event", force: :cascade do |t|
+    t.json "aoj_legacy_priority_stats", comment: "Priority statistics for AOJ Legacy Docket"
+    t.json "aoj_legacy_stats", comment: "Statistics for AOJ Legacy Docket"
     t.datetime "created_at", null: false
     t.json "direct_review_priority_stats", comment: "Priority statistics for Direct Review Docket"
     t.json "direct_review_stats", comment: "Statistics for Direct Review Docket"
