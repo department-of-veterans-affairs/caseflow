@@ -35,7 +35,7 @@ describe('CaseDistributionTest Component reseedGenericFullSuiteAppealsSeeds', ()
 
     wrapper.update();
 
-    expect(mockPost).toHaveBeenCalledWith('/test/optional_seed');
+    expect(mockPost).toHaveBeenCalledWith('/case_distribution_levers_tests/run_full_suite_seeds');
 
     expect(wrapper.find(CaseDistributionTest).state('isReseedingOptionalSeeds')).toBe(false);
     expect(wrapper.find(CaseDistributionTest).state('showAlert')).toBe(true);
@@ -55,7 +55,7 @@ describe('CaseDistributionTest Component reseedGenericFullSuiteAppealsSeeds', ()
 
     wrapper.update();
 
-    expect(mockPost).toHaveBeenCalledWith('/test/optional_seed');
+    expect(mockPost).toHaveBeenCalledWith('/case_distribution_levers_tests/run_full_suite_seeds');
 
     expect(wrapper.find(CaseDistributionTest).state('isReseedingOptionalSeeds')).toBe(false);
     expect(wrapper.find(CaseDistributionTest).state('showAlert')).toBe(true);
