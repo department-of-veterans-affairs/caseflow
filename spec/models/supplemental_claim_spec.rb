@@ -209,20 +209,41 @@ describe SupplementalClaim, :postgres do
         benefit_type: benefit_type
       )
 
-      expect(RequestIssue.find_by(
-               decision_review: supplemental_claim,
-               contested_decision_issue_id: already_contested_remanded_di.id,
-               contested_rating_issue_reference_id: already_contested_remanded_di.rating_issue_reference_id,
-               contested_rating_issue_profile_date: already_contested_remanded_di.rating_profile_date,
-               contested_issue_description: already_contested_remanded_di.description,
-               benefit_type: benefit_type
-             )).to be_nil
+      expect(
+        RequestIssue.find_by(
+          decision_review: supplemental_claim,
+          contested_decision_issue_id: already_contested_remanded_di.id,
+          contested_rating_issue_reference_id: already_contested_remanded_di.rating_issue_reference_id,
+          contested_rating_issue_profile_date: already_contested_remanded_di.rating_profile_date,
+          contested_issue_description: already_contested_remanded_di.description,
+          benefit_type: benefit_type
+        )
+      ).to be_nil
     end
 
     it "doesn't create duplicate remand issues" do
       supplemental_claim.create_remand_issues!
 
       expect { subject }.to_not change(supplemental_claim.request_issues, :count)
+    end
+
+    context "with invalid descriptions" do
+      let!(:decision_issue_invalid_character) do
+        create(
+          :decision_issue,
+          disposition: "remanded",
+          benefit_type: benefit_type,
+          decision_review: decision_review_remanded,
+          rating_issue_reference_id: "1234",
+          description: "Invalid: \u{00A7} \u{2600} \u{2603} \u{260E} \u{2615}"
+        )
+      end
+
+      it "sanitizes invalid characters" do
+        supplemental_claim.create_remand_issues!
+
+        expect(supplemental_claim.request_issues.last.valid?).to be true
+      end
     end
   end
 

@@ -19,7 +19,6 @@ import { formatDateStr } from 'app/util/DateUtil';
 import { VHA_PRE_DOCKET_ISSUE_BANNER, VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER } from 'app/../COPY';
 import Checkbox from '../../components/Checkbox';
 import { generateSkipButton } from '../util/buttonUtils';
-import descriptionValidator from '../../util/validators/DescriptionValidator';
 
 const NO_MATCH_TEXT = 'None of these match';
 
@@ -56,8 +55,7 @@ class NonratingRequestIssueModal extends React.Component {
       isTaskInProgress: props.intakeData.taskInProgress,
       mstChecked: false,
       pactChecked: false,
-      dateError: '',
-      descriptionError: ''
+      dateError: ''
     };
   }
 
@@ -103,8 +101,7 @@ class NonratingRequestIssueModal extends React.Component {
 
   descriptionOnChange = (value) => {
     this.setState({
-      description: value,
-      descriptionError: descriptionValidator()(value)
+      description: value
     });
   };
 
@@ -232,7 +229,7 @@ class NonratingRequestIssueModal extends React.Component {
         classNames: ['usa-button', 'add-issue'],
         name: this.props.submitText,
         onClick: this.onAddIssue,
-        disabled: this.requiredFieldsMissing() || Boolean(this.state.dateError) || Boolean(this.state.descriptionError)
+        disabled: this.requiredFieldsMissing() || Boolean(this.state.dateError)
       }
     ];
 
@@ -317,13 +314,7 @@ class NonratingRequestIssueModal extends React.Component {
           />
         </div>
 
-        <TextField
-          name="Issue description"
-          strongLabel
-          value={description}
-          onChange={this.descriptionOnChange}
-          errorMessage={this.state.descriptionError}
-        />
+        <TextField name="Issue description" strongLabel value={description} onChange={this.descriptionOnChange} />
       </React.Fragment>
     );
   }

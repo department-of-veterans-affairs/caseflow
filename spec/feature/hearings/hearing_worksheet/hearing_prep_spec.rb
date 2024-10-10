@@ -14,7 +14,7 @@ RSpec.feature "Hearing worksheet for Hearing Prep", :all_dbs do
     visit "/hearings/" + legacy_hearing.external_id.to_s + "/worksheet"
 
     expect(page).to have_content("HEARING TYPE\nVideo")
-    expect(page).to have_content("DOCKET\nL\n" + legacy_hearing.docket_number)
+    expect(page).to have_content("Docket #" + legacy_hearing.docket_number)
     expect(page.title).to eq legacy_hearing.veteran_fi_last_formatted + "'s Hearing Worksheet"
   end
 
