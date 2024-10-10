@@ -10,7 +10,7 @@ import Page from './Page';
 import TextLayer from './TextLayer';
 import DocumentLoadError from './DocumentLoadError';
 
-const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel, onLoad }) => {
+const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel }) => {
   const [isDocumentLoadError, setIsDocumentLoadError] = useState(false);
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
@@ -20,16 +20,17 @@ const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel, onLoad }) => {
     height: '100%',
     overflow: 'auto',
     paddingTop: '10px',
+    paddingLeft: '6px',
+    paddingRight: '6px',
     alignContent: 'start',
     justifyContent: 'center',
-    gap: '5rem',
+    gap: '8rem',
   };
 
   useEffect(() => {
     const getDocData = async () => {
       setPdfDoc(null);
       setPdfPages([]);
-      onLoad(true);
       const requestOptions = {
         cache: true,
         withCredentials: true,
@@ -40,7 +41,6 @@ const PdfDocument = ({ doc, rotateDeg, setNumPages, zoomLevel, onLoad }) => {
         return response.body;
       });
 
-      onLoad(false);
       const docProxy = await getDocument({ data: byteArr }).promise;
 
       if (docProxy) {
@@ -103,7 +103,6 @@ PdfDocument.propTypes = {
   rotateDeg: PropTypes.string,
   setNumPages: PropTypes.func,
   zoomLevel: PropTypes.number,
-  onLoad: PropTypes.func,
 };
 
 export default PdfDocument;
