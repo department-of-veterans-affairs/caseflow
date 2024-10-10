@@ -203,7 +203,6 @@ class RequestIssue < CaseflowRecord
     def from_intake_data(data, decision_review: nil)
       attrs = attributes_from_intake_data(data)
       attrs = attrs.merge(decision_review: decision_review) if decision_review
-
       new(attrs).tap(&:validate_eligibility!)
     end
 
@@ -633,6 +632,8 @@ class RequestIssue < CaseflowRecord
   end
 
   def close_if_ineligible!
+    return if issue_from_event?
+
     close!(status: :ineligible) if ineligible_reason?
   end
 
@@ -1180,6 +1181,10 @@ class RequestIssue < CaseflowRecord
   def set_decision_date_added_at
     self.decision_date_added_at = created_at
     save!
+  end
+
+  def issue_from_event?
+    (Time.current - decision_review.event_records.last.created_at).abs <= 1
   end
 end
 # rubocop:enable Metrics/ClassLength
