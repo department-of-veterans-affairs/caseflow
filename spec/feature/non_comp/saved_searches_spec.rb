@@ -18,7 +18,7 @@ feature "Saved Searches", :postgres do
 
   it "can navigate back to report page" do
     click_link "Back to Generate task report"
-    expect(current_url).to include("/decision_reviews/vha/report/")
+    expect(current_url).to include("/decision_reviews/vha/report")
     expect(current_url).not_to include("searches")
   end
 end
