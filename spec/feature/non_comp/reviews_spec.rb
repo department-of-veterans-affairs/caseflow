@@ -985,6 +985,47 @@ feature "NonComp Reviews Queue", :postgres do
     end
   end
 
+  context "Completed Date filtering" do
+    it "is filterable by the completed date column" do
+      visit BASE_URL
+      expect(page).to have_content("Veterans Health Administration")
+      click_on "Completed Tasks"
+      # TODO: Change this to last 7 days
+      expect(page).to have_content("Cases completed:")
+      find("[aria-label='Filter by completed date']").click
+      expect(page).to have_content("Date filter parameters")
+      submit_button = find("button", text: "Apply Filter")
+
+      expect(submit_button[:disabled]).to eq "true"
+      # TODO: Figure out how to do this via helpers so it's not so gross
+      page.find(".cf-select__control", match: :first).click
+      page.all("cf-select__option")
+      all_date_filter_options = [
+        "Between these dates",
+        "Before this date",
+        "After this date",
+        "On this date",
+        "Last 7 days",
+        "Last 30 days",
+        "Last 365 days",
+        "View All"
+      ]
+      all_date_filter_options.each do |date_filter_option|
+        expect(page).to have_content(date_filter_option)
+      end
+      # TODO: match all of the options here
+      find("div", class: "cf-select__option", text: "Before this date", exact_text: true).click
+
+      fill_in "Date", with: "01/01/2019"
+      expect(submit_button[:disabled]).to eq "false"
+      submit_button.click
+
+      expect(page).to have_content("Cases completed (Before this date 2019-01-01)")
+      expect(page).to have_content("Date Completed (1)")
+      expect(page).to have_content("Viewing 0-0 of 0 total")
+    end
+  end
+
   context "get params should not get appended to URL when QueueTable is loading and user navigates to Generate report pages." do # rubocop:disable Layout/LineLength
     before do
       create_list(:higher_level_review_vha_task, 30, assigned_to: non_comp_org)

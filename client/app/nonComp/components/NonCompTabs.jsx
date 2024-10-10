@@ -8,6 +8,7 @@ import COPY from '../../../COPY';
 import TaskTableTab from './TaskTableTab';
 import useLocalFilterStorage from '../hooks/useLocalFilterStorage';
 import { mapValues, sumBy } from 'lodash';
+import { sprintf } from 'sprintf-js';
 
 const NonCompTabsUnconnected = (props) => {
   const [localFilter, setFilter] = useLocalFilterStorage('nonCompFilter', []);
@@ -46,6 +47,37 @@ const NonCompTabsUnconnected = (props) => {
   const taskCounts = useMemo(() => (
     mapValues(props.taskFilterDetails, (obj) => sumBy(Object.values(obj)))
   ), [props.taskFilterDetails]);
+
+  const buildCompletedTabDescriptionFromFilter = (filters) => {
+    const completedDateFilter = filters.find((value) => value.includes('col=completedDateColumn'));
+
+    if (completedDateFilter) {
+      const match = completedDateFilter.match(/val=([^&]*)/);
+
+      if (match) {
+        const dateFilter = match[1];
+        const [mode, startDate = null, endDate = null] = dateFilter.split(',');
+
+        // Object that defines how to build the string based on the mode
+        const completedDateFilterModeHandlers = {
+          before: `Before this date ${startDate}`,
+          after: `After this date ${startDate}`,
+          on: `On this date ${startDate}`,
+          between: `Between this ${startDate} and that ${endDate}`,
+          last_7_days: 'Last 7 Days',
+          last_30_days: 'Last 30 Days',
+          last_365_days: 'Last 365 Days'
+        };
+
+        return sprintf(COPY.VHA_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION_WITH_FILTER,
+          completedDateFilterModeHandlers[mode]);
+      }
+
+    }
+
+    return COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION;
+
+  };
 
   const ALL_TABS = {
     incomplete: {
@@ -97,7 +129,7 @@ const NonCompTabsUnconnected = (props) => {
         {...(isVhaBusinessLine ? { onHistoryUpdate } : {})}
         filterableTaskTypes={props.taskFilterDetails.completed}
         filterableTaskIssueTypes={props.taskFilterDetails.completed_issue_types}
-        description={COPY.QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION}
+        description={buildCompletedTabDescriptionFromFilter(filter)}
         predefinedColumns={{ includeCompletedDate: true }} />
     }
   };
