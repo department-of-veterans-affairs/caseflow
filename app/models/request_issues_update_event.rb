@@ -232,7 +232,11 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   # Note that removed issues are not included in the request_issues_data
   # This is to ensure all removed issues are derived from the (before - after) comparison in base class
   def add_existing_review_issues
-    @review.request_issues.each do |request_issue|
+    before_issues = @review.request_issues.active_or_ineligible.select(&:persisted?)
+
+    return @request_issues_data if before_issues.empty?
+
+    before_issues.each do |request_issue|
       # Skip if the request issue is already in the request_issues_data
       next if @request_issues_data.find do |data|
         data[:reference_id] == request_issue.reference_id ||
