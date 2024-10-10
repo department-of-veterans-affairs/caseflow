@@ -113,7 +113,9 @@ class Hearings::TranscriptionFilesController < ApplicationController
       locked_at = nil
     end
 
-    Hearings::TranscriptionFile.where(id: lockable_file_ids).update_all(locked_by_id: locked_by_id, locked_at: locked_at)
+    Hearings::TranscriptionFile.where(id: lockable_file_ids).update_all(
+      locked_by_id: locked_by_id, locked_at: locked_at
+    )
 
     locked
   end

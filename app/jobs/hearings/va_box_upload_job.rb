@@ -149,7 +149,9 @@ class Hearings::VaBoxUploadJob < CaseflowJob
   # rubocop:enable Metrics/ParameterLists, Metrics/MethodLength
 
   def update_transcription_files(hearing, file_info, transcription_package)
-    Hearings::TranscriptionFile.where(hearing_id: hearing[:hearing_id], hearing_type: hearing[:hearing_type]).update_all(
+    Hearings::TranscriptionFile.where(
+      hearing_id: hearing[:hearing_id], hearing_type: hearing[:hearing_type]
+    ).update_all(
       date_upload_box: Time.current,
       updated_by_id: RequestStore[:current_user].id,
       expected_return_date: file_info[:return_date],

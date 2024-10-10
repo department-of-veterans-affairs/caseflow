@@ -51,11 +51,12 @@ class Fakes::VaBoxService
 
   def download_file(id, tmp_folder)
     if id == "1111111111111"
-      raise StandardError
+      fail StandardError
     end
+
     file_extension = File.extname(tmp_folder).delete(".").to_s
     FileUtils.mkdir_p(File.dirname(tmp_folder)) unless Dir.exist?(file_extension)
-    File.open("#{tmp_folder}", "w") { |f| f.write "test" }
+    File.open(tmp_folder.to_s, "w") { |f| f.write "test" }
   end
 
   private
