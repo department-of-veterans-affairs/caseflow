@@ -80,7 +80,7 @@ const NonCompReviewsPage = ({
             <Button
               classNames={secondaryButtonClassNames}
               onClick={() => {
-                history.push(`${businessLineUrl}/report/`);
+                history.push(`${businessLineUrl}/report`);
               }}
               styling={compReviewButtonStyling}
             >
