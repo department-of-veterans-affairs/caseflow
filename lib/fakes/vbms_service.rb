@@ -78,8 +78,6 @@ class Fakes::VBMSService
   end
 
   def self.fetch_document_series_for(appeal)
-    verify_current_user_veteran_access(appeal.veteran)
-
     Document.where(file_number: appeal.veteran_file_number).flat_map do |document|
       (0..document.id % 3).map do |index|
         OpenStruct.new(
@@ -239,9 +237,5 @@ class Fakes::VBMSService
     self.manifest_vbms_fetched_at = nil
     self.manifest_vva_fetched_at = nil
     self.end_product_claim_ids_by_file_number = nil
-  end
-
-  def self.verify_current_user_veteran_access(veteran)
-    # fail BGS::SensitivityLevelCheckFailure, "User does not have permission to access this information"
   end
 end
