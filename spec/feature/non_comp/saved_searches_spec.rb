@@ -12,13 +12,14 @@ feature "Saved Searches", :postgres do
     visit vha_saved_searches_url
   end
 
-  it "saved searches should be accessable to VHA Admin user" do
-    expect(page).to have_content("Saved Searches")
-  end
-
-  it "can navigate back to report page" do
-    click_link "Back to Generate task report"
-    expect(current_url).to include("/decision_reviews/vha/report")
-    expect(current_url).not_to include("searches")
+  it "admin user" do
+    step "saved searches should be accessable to VHA Admin user" do
+      expect(page).to have_content("Saved Searches")
+    end
+    step "can navigate back to report page" do
+      click_link "Back to Generate task report"
+      expect(current_url).to include("/decision_reviews/vha/report")
+      expect(current_url).not_to include("searches")
+    end
   end
 end

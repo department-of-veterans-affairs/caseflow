@@ -6,10 +6,10 @@ import { LeftChevronIcon } from 'app/components/icons/LeftChevronIcon';
 
 import NonCompLayout from '../components/NonCompLayout';
 import { COLORS } from 'app/constants/AppConstants';
+import SAVED_SEARCHES_COPY from 'constants/SAVED_SEARCHES_COPY';
 
 const SavedSearches = () => {
 
-  const BACK_LINK_TEXT = 'Back to Generate task report';
   const businessLineUrl = useSelector((state) => state.nonComp.businessLineUrl);
 
   return (
@@ -17,7 +17,7 @@ const SavedSearches = () => {
       <div className="saved-search-back-link">
         <Link to={`/${businessLineUrl}/report`}>
           <div className="saved-search-link-text">
-            <LeftChevronIcon size={21} color={COLORS.PRIMARY} />&nbsp;<b>{BACK_LINK_TEXT}</b>
+            <LeftChevronIcon size={21} color={COLORS.PRIMARY} />&nbsp;<b>{SAVED_SEARCHES_COPY.BACK_LINK_TEXT}</b>
           </div>
         </Link>
       </div>
