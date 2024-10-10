@@ -25,40 +25,113 @@ class ExternalApi::VBMSService
   def self.fetch_document_file(document)
     DBService.release_db_connections
 
-    @vbms_client ||= init_vbms_client
+    if FeatureToggle.enabled?(:use_ce_api)
+      verify_current_user_veteran_file_number_access(document.file_number)
+      VeteranFileFetcher.get_document_content(
+        doc_series_id: document.series_id,
+        claim_evidence_request: claim_evidence_request
+      )
+    else
+      @vbms_client ||= init_vbms_client
 
-    vbms_id = document.vbms_document_id
-    request = VBMS::Requests::GetDocumentContent.new(vbms_id)
+      vbms_id = document.vbms_document_id
+      request = VBMS::Requests::GetDocumentContent.new(vbms_id)
 
-    result = send_and_log_request(vbms_id, request)
-    result&.content
+      result = send_and_log_request(vbms_id, request)
+      result&.content
+    end
   end
 
   def self.fetch_documents_for(appeal, _user = nil)
-    ExternalApi::VbmsDocumentsForAppeal.new(file_number: appeal.veteran_file_number).fetch
+    if FeatureToggle.enabled?(:use_ce_api)
+      verify_current_user_veteran_access(appeal.veteran)
+
+      response = VeteranFileFetcher.fetch_veteran_file_list(
+        veteran_file_number: appeal.veteran_file_number,
+        claim_evidence_request: claim_evidence_request
+      )
+      documents = JsonApiResponseAdapter.new.adapt_fetch_document_series_for(response)
+      {
+        manifest_vbms_fetched_at: nil,
+        manifest_vva_fetched_at: nil,
+        documents: DocumentsFromVbmsDocuments.new(documents: documents, file_number: appeal.veteran_file_number).call
+      }
+    else
+      ExternalApi::VbmsDocumentsForAppeal.new(file_number: appeal.veteran_file_number).fetch
+    end
   end
 
   def self.fetch_document_series_for(appeal)
-    ExternalApi::VbmsDocumentSeriesForAppeal.new(file_number: appeal.veteran_file_number).fetch
+    if FeatureToggle.enabled?(:use_ce_api)
+      verify_current_user_veteran_access(appeal.veteran)
+      response = VeteranFileFetcher.fetch_veteran_file_list(
+        veteran_file_number: appeal.veteran_file_number,
+        claim_evidence_request: claim_evidence_request
+      )
+      JsonApiResponseAdapter.new.adapt_fetch_document_series_for(response)
+    else
+      ExternalApi::VbmsDocumentSeriesForAppeal.new(file_number: appeal.veteran_file_number).fetch
+    end
   end
 
   def self.update_document_in_vbms(appeal, uploadable_document)
-    @vbms_client ||= init_vbms_client
-    response = initialize_update(appeal, uploadable_document)
-    update_document(appeal.veteran_file_number, response.updated_document_token, uploadable_document.pdf_location)
+    update_document(appeal, uploadable_document)
   end
 
+  # rubocop:disable Metrics/MethodLength
   def self.upload_document_to_vbms(appeal, uploadable_document)
-    @vbms_client ||= init_vbms_client
-    response = initialize_upload(appeal, uploadable_document)
-    upload_document(appeal.veteran_file_number, response.upload_token, uploadable_document.pdf_location)
+    if FeatureToggle.enabled?(:use_ce_api)
+      filename = SecureRandom.uuid + File.basename(uploadable_document.pdf_location)
+      file_upload_payload = ClaimEvidenceFileUploadPayload.new(
+        content_name: filename,
+        content_source: uploadable_document.source,
+        date_va_received_document: Time.current.strftime("%Y-%m-%d"),
+        document_type_id: uploadable_document.document_type_id,
+        subject: uploadable_document.document_type,
+        new_mail: true
+      )
+      response = VeteranFileUploader.upload_veteran_file(
+        file_path: uploadable_document.pdf_location,
+        claim_evidence_request: claim_evidence_request,
+        veteran_file_number: appeal.veteran_file_number,
+        doc_info: file_upload_payload
+      )
+      JsonApiResponseAdapter.new.adapt_upload_document(response)
+    else
+      @vbms_client ||= init_vbms_client
+      response = initialize_upload(appeal, uploadable_document)
+      upload_document(appeal.veteran_file_number, response.upload_token, uploadable_document.pdf_location)
+    end
   end
+  # rubocop:enable Metrics/MethodLength
 
+  # rubocop:disable Metrics/MethodLength
   def self.upload_document_to_vbms_veteran(veteran_file_number, uploadable_document)
-    @vbms_client ||= init_vbms_client
-    response = initialize_upload_veteran(veteran_file_number, uploadable_document)
-    upload_document(veteran_file_number, response.upload_token, uploadable_document.pdf_location)
+    if FeatureToggle.enabled?(:use_ce_api)
+      filename = SecureRandom.uuid + File.basename(uploadable_document.pdf_location)
+      file_upload_payload = ClaimEvidenceFileUploadPayload.new(
+        content_name: filename,
+        content_source: uploadable_document.source,
+        date_va_received_document: Time.current.strftime("%Y-%m-%d"),
+        document_type_id: uploadable_document.document_type_id,
+        subject: uploadable_document.document_subject.presence || uploadable_document.document_type,
+        new_mail: true
+      )
+
+      response = VeteranFileUploader.upload_veteran_file(
+        file_path: uploadable_document.pdf_location,
+        claim_evidence_request: claim_evidence_request,
+        veteran_file_number: veteran_file_number,
+        doc_info: file_upload_payload
+      )
+      JsonApiResponseAdapter.new.adapt_upload_document(response)
+    else
+      @vbms_client ||= init_vbms_client
+      response = initialize_upload_veteran(veteran_file_number, uploadable_document)
+      upload_document(veteran_file_number, response.upload_token, uploadable_document.pdf_location)
+    end
   end
+  # rubocop:enable Metrics/MethodLength
 
   def self.initialize_upload(appeal, uploadable_document)
     content_hash = Digest::SHA1.hexdigest(File.read(uploadable_document.pdf_location))
@@ -94,11 +167,13 @@ class ExternalApi::VBMSService
   end
 
   def self.upload_document(vbms_id, upload_token, filepath)
-    request = VBMS::Requests::UploadDocument.new(
-      upload_token: upload_token,
-      filepath: filepath
-    )
-    send_and_log_request(vbms_id, request)
+    if !FeatureToggle.enabled?(:use_ce_api)
+      request = VBMS::Requests::UploadDocument.new(
+        upload_token: upload_token,
+        filepath: filepath
+      )
+      send_and_log_request(vbms_id, request)
+    end
   end
 
   def self.initialize_update(appeal, uploadable_document)
@@ -112,13 +187,37 @@ class ExternalApi::VBMSService
     send_and_log_request(appeal.veteran_file_number, request)
   end
 
-  def self.update_document(vbms_id, upload_token, filepath)
-    request = VBMS::Requests::UpdateDocument.new(
-      upload_token: upload_token,
-      filepath: filepath
-    )
-    send_and_log_request(vbms_id, request)
+  # rubocop:disable Metrics/MethodLength
+  def self.update_document(appeal, uploadable_document)
+    if FeatureToggle.enabled?(:use_ce_api)
+      file_update_payload = ClaimEvidenceFileUpdatePayload.new(
+        date_va_received_document: Time.current.strftime("%Y-%m-%d"),
+        document_type_id: uploadable_document.document_type_id,
+        file_content_path: uploadable_document.pdf_location,
+        file_content_source: uploadable_document.source,
+        subject: uploadable_document.document_subject.presence || uploadable_document.document_type
+      )
+
+      file_uuid = uploadable_document.document_series_reference_id.delete("{}")
+
+      response = VeteranFileUpdater.update_veteran_file(
+        veteran_file_number: appeal.veteran_file_number,
+        claim_evidence_request: claim_evidence_request,
+        file_uuid: file_uuid,
+        file_update_payload: file_update_payload
+      )
+      JsonApiResponseAdapter.new.adapt_update_document(response)
+    else
+      @vbms_client ||= init_vbms_client
+      response = initialize_update(appeal, uploadable_document)
+      request = VBMS::Requests::UpdateDocument.new(
+        upload_token: response.updated_document_token,
+        filepath: uploadable_document.pdf_location
+      )
+      send_and_log_request(appeal.veteran_file_number, request)
+    end
   end
+  # rubocop:enable Metrics/MethodLength
 
   def self.clean_document(location)
     File.delete(location)
@@ -245,5 +344,37 @@ class ExternalApi::VBMSService
                           name: name) do
       service.call(file_number: vbms_id)
     end
+  end
+
+  def self.verify_current_user_veteran_access(veteran)
+    current_user = RequestStore[:current_user]
+
+    # Non-UI invocations (i.e., jobs) may not set the current user,
+    # in which case we do not need to check sensitivity
+    return if current_user.blank?
+
+    fail BGS::SensitivityLevelCheckFailure, "User does not have permission to access this information" unless
+      SensitivityChecker.new(current_user).sensitivity_levels_compatible?(
+        user: current_user,
+        veteran: veteran
+      )
+  end
+
+  def self.verify_current_user_veteran_file_number_access(file_number)
+    return if file_number.blank?
+
+    veteran = Veteran.find_by_file_number_or_ssn(file_number)
+    verify_current_user_veteran_access(veteran)
+  end
+
+  def self.claim_evidence_request
+    ClaimEvidenceRequest.new(
+      user_css_id: send_user_info? ? RequestStore[:current_user].css_id : ENV['CLAIM_EVIDENCE_VBMS_USER'],
+      station_id: send_user_info? ? RequestStore[:current_user].station_id : ENV['CLAIM_EVIDENCE_STATION_ID'],
+    )
+  end
+
+  def self.send_user_info?
+    RequestStore[:current_user].present? && FeatureToggle.enabled?(:send_current_user_cred_to_ce_api)
   end
 end
