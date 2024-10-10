@@ -1748,9 +1748,10 @@ ActiveRecord::Schema.define(version: 2024_10_07_150227) do
     t.datetime "started_at"
     t.json "stats"
     t.datetime "updated_at", null: false
+  end
   create_table "saved_searches", force: :cascade do |t|
     t.datetime "created_at", precision: 6, null: false
-    t.json "saved_search", comment: "saved search data to store for the generate task report"
+    t.json "saved_search", default: {}, comment: "saved search data to store for the generate task report"
     t.text "search_description"
     t.string "search_name"
     t.datetime "updated_at", precision: 6, null: false
