@@ -9,7 +9,7 @@ class ApplicationController < ApplicationBaseController
   before_action :set_raven_user
   before_action :verify_authentication
   before_action :set_paper_trail_whodunnit
-  before_action :deny_vso_access, except: [:unauthorized, :feedback]
+  before_action :deny_vso_access, except: [:unauthorized, :feedback, :under_construction]
   before_action :set_no_cache_headers
 
   rescue_from StandardError do |e|
@@ -32,6 +32,12 @@ class ApplicationController < ApplicationBaseController
     else
       render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: :bad_request
     end
+  end
+
+  rescue_from BGS::SensitivityLevelCheckFailure do |e|
+    render json: {
+      status: e.message
+    }, status: :forbidden
   end
 
   private
@@ -196,7 +202,12 @@ class ApplicationController < ApplicationBaseController
   def manage_teams_menu_items
     current_user.administered_teams.map do |team|
       {
-        title: "#{team.name} team management",
+        title:
+          if team.type == InboundOpsTeam.singleton.type
+            "#{team.name} management"
+          else
+            "#{team.name} team management"
+          end,
         link: team.user_admin_path
       }
     end

@@ -51,6 +51,13 @@
   "CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL": "Switch views",
   "CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CASES_LABEL": "Your cases",
   "CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL": "%s team cases",
+  "CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES": "Correspondence Cases",
+  "CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CORRESPONDENCE_LABEL": "Your Correspondence",
+  "CASE_LIST_TABLE_PACKAGE_DOCUMENT_TYPE_COLUMN_TITLE": "Package Document Type",
+  "TITLE_MODAL_EDIT_DOCUMENT_TYPE_CORRESPONDENCE": "Edit document type",
+  "TEXT_MODAL_EDIT_DOCUMENT_TYPE_CORRESPONDENCE": "Change the document type of the selected document.",
+  "ORIGINAL_DOC_EDIT_DOCUMENT_TYPE_CORRESPONDENCE": "Original document type",
+  "NEW_DOC_EDIT_DOCUMENT_TYPE_CORRESPONDENCE": "New document type",
   "CASE_LIST_TABLE_EMPTY_TEXT": "This Veteran has no appeals at this time.",
   "CASE_LIST_TABLE_TOTAL_DAYS_COLUMN_TITLE": "Total Days",
   "CASE_LIST_TABLE_BOARD_INTAKE": "Board Intake",
@@ -79,6 +86,49 @@
   "OTHER_REVIEWS_TABLE_ESTABLISHING": "Establishing...",
   "OTHER_REVIEWS_TABLE_SYNCING_DECISIONS": "Syncing decisions...",
   "OTHER_REVIEWS_TABLE_SYNCING_DECISIONS_ERROR": "Decisions sync failed. Support notified.",
+  "CORRESPONDENCE_REVIEW_PACKAGE_TITLE": "Review Package",
+  "CORRESPONDENCE_REVIEW_PACKAGE_SUB_TITLE": "Review the mail package details below. If the document type is NOD, select the appropriate action needed for the form.",
+  "CORRESPONDENCE_REVIEW_CMP_INFO_TITLE": "CMP Information",
+  "CORRESPONDENCE_INTAKE_FORM_SUBMIT_MODAL_TITLE": "Confirm submission",
+  "CORRESPONDENCE_INTAKE_FORM_SUBMIT_MODAL_BODY": "Submitting the correspondence record will upload the mail package to the eFolder.  Make sure that all information is correct before submitting.",
+  "CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER_TITLE": "The correspondence's documents have failed to upload to the eFolder",
+  "CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER_TEXT": "You can upload it from this page to the veteran's eFolder at a later time.",
+  "CORRESPONDENCE_QUEUE_PACKAGE_ACTION_SUCCESS": {
+    "REASSIGN": {
+      "APPROVE": {
+        "TITLE": "You have successfully reassigned a mail record for %s",
+        "MESSAGE": "Please go to your individual queue to see any self assigned correspondence."
+      },
+      "REJECT": {
+        "TITLE": "You have successfully rejected a package request for %s",
+        "MESSAGE": "The package will be re-assigned to the user that sent the request."
+      }
+    },
+    "REMOVE": {
+      "APPROVE": {
+        "TITLE": "You have successfully removed a mail package for %s",
+        "MESSAGE": "The package has been removed from Caseflow and must be manually uploaded again from the Centralized Mail Portal, if it needs to be processed."
+      },
+      "REJECT": {
+        "TITLE": "You have successfully rejected a package request for %s",
+        "MESSAGE": "The package will be re-assigned to the user that sent the request."
+      }
+    }
+  },
+  "CORRESPONDENCE_QUEUE_PACKAGE_ACTION_DECISION_OPTIONS": {
+    "APPROVE": "approve",
+    "REJECT": "reject"
+  },
+  "CORRESPONDENCE_OTHER_MOTION_TASK_COMPLETE": "%s task has been marked complete. If you have made a mistake, please email %s for any changes.",
+  "CORRESPONDENCE_OTHER_MOTION_MODAL_DETAIL": "Provide context and instructions for the action",
+  "CORRESPONDENCE_COMPLETE_TASK_CONFIRMATION": "Task for %s's case has been completed",
+  "CORRESPONDENCE_COMPLETE_TASK_CONFIRMATION_DETAIL": "Task for %s's case has been completed",
+  "CORRESPONDENCE_EDIT_GENERAL_INFORMATION_MODAL_TITLE": "Edit general information",
+  "CORRESPONDENCE_EDIT_GENERAL_INFORMATION_MODAL_VADOR": "VA DOR",
+  "CORRESPONDENCE_EDIT_GENERAL_INFORMATION_MODAL_TYPE": "Correspondence type",
+  "CORRESPONDENCE_EDIT_GENERAL_INFORMATION_MODAL_NOTES": "Notes",
+  "CORRESPONDENCE_EDIT_GENERAL_INFORMATION_MODAL_DETAIL": "Correspondence has been updated",
+  "DOCUMENT_PREVIEW": "Document Preview",
   "TASK_SNAPSHOT_ABOUT_BOX_TITLE": "About the case",
   "TASK_SNAPSHOT_ABOUT_BOX_HEARING_REQUEST_TYPE_LABEL": "Hearing Type",
   "TASK_SNAPSHOT_ABOUT_BOX_TYPE_LABEL": "Appeal Stream Type",
@@ -661,6 +711,7 @@
   "ASSIGN_TASK_TITLE": "Assign task",
   "ASSIGN_TASK_BUTTON": "Assign task",
   "ASSIGN_TASK_TO_TITLE": "Assign task to %s",
+  "REASSIGN_TASK_TITLE": "Re-assign to person",
   "NOTIFY_OGC_OF": "Notify OGC of %s",
   "PULAC_CERULLO_MODAL_TITLE": "Notify Litigation Support of Possible Conflict of Jurisdiction",
   "PULAC_CERULLO_MODAL_BODY_1": "This case will be assigned to a team who will determine if there is a conflict of jurisdiction.",
@@ -774,7 +825,7 @@
   "USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_TEXT": "User Name or CSS ID to add",
   "USER_MANAGEMENT_EDIT_USER_IN_ORG_LABEL": "Edit current team members",
   "USER_MANAGEMENT_ADMIN_RIGHTS_HEADING": "Add / Remove admin rights: ",
-  "USER_MANAGEMENT_ADMIN_RIGHTS_DESCRIPTION": "Determines which users have access to the team queue and the ability to manage the team membership.",
+  "USER_MANAGEMENT_ADMIN_RIGHTS_DESCRIPTION": "Grants the ability to manage team membership and perform superuser actions.",
   "USER_MANAGEMENT_REMOVE_USER_HEADING": "Remove from team: ",
   "USER_MANAGEMENT_JUDGE_TEAM_REMOVE_USER_DESCRIPTION": "Remove an attorney from this judge team. Judges may not be removed from their own judge team.",
   "USER_MANAGEMENT_REMOVE_USER_DESCRIPTION": "Remove a user from this team.",
@@ -785,6 +836,7 @@
   "USER_MANAGEMENT_GIVE_USER_ADMIN_RIGHTS_BUTTON_TEXT": "Add admin rights",
   "USER_MANAGEMENT_REMOVE_USER_ADMIN_RIGHTS_BUTTON_TEXT": "Remove admin rights",
   "USER_MANAGEMENT_REMOVE_USER_FROM_ORG_BUTTON_TEXT": "Remove from team",
+  "USER_MANAGEMENT_SELECT_HEARINGS_CONFERENCE_TYPE": "Schedule hearings using:",
   "MEMBERSHIP_REQUEST_ACTION_SUCCESS_TITLE": "You successfully %s %s's request",
   "MEMBERSHIP_REQUEST_ACTION_SUCCESS_MESSAGE": "The user was %s regular member access to %s.",
   "VHA_MEMBERSHIP_REQUEST_AUTOMATIC_VHA_ACCESS_NOTE": "Note: If you are requesting specialized access and are not a member of the general VHA group, you will automatically be given access to the general VHA group if your request is approved.",
@@ -1215,8 +1267,9 @@
   "VLJ_VIRTUAL_HEARING_LINK_LABEL": "VLJ Link",
   "GUEST_VIRTUAL_HEARING_LINK_LABEL": "Guest Link",
   "REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL": "Virtual Hearing Link",
-  "VLJ_VIRTUAL_HEARINGS_LINK_TEXT": "Start Virtual Hearing",
-  "GUEST_VIRTUAL_HEARINGS_LINK_TEXT": "Join Virtual Hearing",
+  "HC_VIRTUAL_HEARING_LINK_LABEL": "Hearing Coordinator Link",
+  "VLJ_VIRTUAL_HEARINGS_LINK_TEXT": "Start Hearing",
+  "GUEST_VIRTUAL_HEARINGS_LINK_TEXT": "Join Hearing",
   "PIN_KEY_MISSING_ERROR_MESSAGE": "Cannot generate a virtual hearing URL without a valid PIN key",
   "URL_HOST_MISSING_ERROR_MESSAGE": "Cannot generate a virtual hearing URL without a valid URL host",
   "URL_PATH_MISSING_ERROR_MESSAGE": "Cannot generate a virtual hearing URL without a valid URL path",
@@ -1427,6 +1480,52 @@
   "POA_SUCCESSFULLY_REFRESH_MESSAGE": "Successfully refreshed. No power of attorney information was found at this time.",
   "POA_UPDATED_SUCCESSFULLY": "POA Updated Successfully",
   "EMPLOYER_IDENTIFICATION_NUMBER": "Employer Identification Number",
+  "PACKAGE_ACTION_MERGE_DESCRIPTION": "By confirming, you will send a request for the supervisor to take action on the following package:",
+  "PACKAGE_ACTION_MERGE_TITLE": "Request merge",
+  "PACKAGE_ACTION_MERGE_TEXTAREA_LABEL": "Reason for merge",
+  "PACKAGE_ACTION_MERGE_RADIO_LABEL": "Select a reason for merging this package.",
+  "PACKAGE_ACTION_MODAL_DESCRIPTION": "By confirming, you will send a request for the supervisor to take action on the following package:",
+  "PACKAGE_ACTION_REMOVAL_TITLE": "Request package removal",
+  "PACKAGE_ACTION_REMOVAL_TEXTAREA_LABEL": "Provide a reason for removal",
+  "PACKAGE_ACTION_REASSIGN_DESCRIPTION": "By confirming, you will send a request for the supervisor to take action on the following package:",
+  "PACKAGE_ACTION_REASSIGN_TITLE":"Request package reassignment",
+  "PACKAGE_ACTION_REASSIGN_TEXTAREA_LABEL":"Provide a reason for reassignment",
+  "PACKAGE_ACTION_SPLIT_TEXTAREA_LABEL":"Reason for split",
+  "PACKAGE_ACTION_SPLIT_TITLE": "Request split package",
+  "CORRESPONDENCE_DOC_UPLOAD_FAILED_HEADER": "The correspondence's documents have failed to upload to the eFolder",
+  "CORRESPONDENCE_DOC_UPLOAD_FAILED_MESSAGE": "You can upload it from this page to the veteran's eFolder at a later time.",
+  "CORRESPONDENCE_HEADER_REMOVE_PACKAGE": "Review request",
+  "CORRESPONDENCE_TITLE_REMOVE_PACKAGE": "Reason for removal:",
+  "CORRESPONDENCE_TITLE_REASSIGN_PACKAGE": "Reason for reassign:",
+  "CORRRESPONDENCE_LABEL_OPTION_REMOVE_PACKAGE": " Choose whether to approve the request for removal or reject it.",
+  "CORRRESPONDENCE_LABEL_OPTION_REASSIGN_PACKAGE": " Choose whether to approve the request for reassign or reject it.",
+  "CORRRESPONDENCE_TEXT_REMOVE_PACKAGE": "\nThis is the reason for removal provided by the general user.",
+  "CORRRESPONDENCE_SECOND_TEXT_REMOVE_PACKAGE": "\nThis is the reason for removal provided by the user that submitted the request.",
+  "CORRESPONDENCE_TITLE_REMOVE_PACKAGE_REASON_REJECT": "Provide a reason for rejection",
+  "CORRESPONDENCE_TITLE_REMOVE_PACKAGE_BANNER": "You have successfully removed a mail package for %s",
+  "CORRESPONDENCE_TITLE_REMOVE_PACKAGE_MESSAGE": "You have successfully submitted removal request for %s",
+  "CORRESPONDENCE_TITLE_SPLIT_PACKAGE_MESSAGE": "You have successfully submitted split request for %s",
+  "CORRESPONDENCE_TITLE_REASSIGNMENT_PACKAGE_MESSAGE": "You have successfully submitted reassignment request for %s",
+  "CORRESPONDENCE_TITLE_MERGE_PACKAGE_MESSAGE": "You have successfully submitted merge request for %s",
+  "CORRESPONDENCE_MESSAGE_REMOVE_PACKAGE_BANNER": "The package has been removed from Caseflow and must be manually uploaded again from the Centralized Mail Portal, if it needs to be processed.",
+  "CORRESPONDENCE_PACKAGE_ACTION_DESCRIPTION": "A supervisor will review your request and split if warranted.",
+  "UNDER_CONSTRUCTION_MESSAGE": "This page is under construction.",
+  "CORRESPONDENCE_READONLY_BANNER_HEADER": "This package has a pending request",
+  "CORRESPONDENCE_READONLY_BANNER_MESSAGE": "Any further actions cannot be made on this package until a supervisor or superuser reviews the request.",
+  "CORRESPONDENCE_READONLY_SUPERVISOR_BANNER_MESSAGE": "Any further actions cannot be made on this package until a supervisor reviews the request.",
+  "ASSOCIATED_WITH_CLAIMS_FOLDER_MAIL_TASK_LABEL": "Associated with Claims Folder",
+  "CORRESPONDENCE_CASES_REMOVE_PACKAGE_MODAL_TITLE": "Review request",
+  "CORRESPONDENCE_CASES_REASSIGN_PACKAGE_MODAL_TITLE": "Review request",
+  "CORRESPONDENCE_CASES_ASSIGN_TASK_MODAL_INSTRUCTIONS_TITLE": "Provide context and instructions for this action",
+  "CORRESPONDENCE_CASES_ASSIGN_TO_PERSON_MODAL_INSTRUCTIONS_TITLE": "Provide instructions and context for this change",
+  "VACOLS_UPDATED_MAIL_TASK_LABEL": "VACOLS updated",
+  "AUTO_ASSIGN_CORRESPONDENCES_BUTTON": "Auto assign correspondences",
+  "BAAA_NO_UNASSIGNED_CORRESPONDENCE": "There are no correspondences available for assignment",
+  "BAAA_USERS_MAX_QUEUE_REACHED": "Queues have reached maximum capacity for all team members",
+  "BAAA_SUCCESS_MESSAGE": "Team members were assigned correspondences based on auto-assignment rules",
+  "BAAA_FAILED_TITLE": "Auto-assignment for correspondence has failed",
+  "BAAA_UNSUCCESSFUL_TITLE": "Auto-assignment for correspondence could not be completed",
+  "BAAA_ERROR_MESSAGE": "Please try again at a later time or contact the Help Desk",
   "MOVE_TO_SCT_MODAL_TITLE": "Move appeal to SCT queue",
   "MOVE_TO_SCT_MODAL_BODY": "One or more Specialty Case Team (SCT) issues have been added and the appeal will now be routed to the SCT queue.",
   "MOVE_TO_DISTRIBUTION_MODAL_TITLE": "Move appeal to regular distribution",
@@ -1568,6 +1667,21 @@
   "TEST_SEEDS_RUN_SEEDS": "Scenario Seeds",
   "TEST_SEEDS_CUSTOM_SEEDS": "Custom Seeds",
   "VHA_BANNER_FOR_NEWLY_APPROVED_REQUESTED_ISSUE": "This is a new issue based on a requested issue addition.",
+  "CORRESPONDENCE_ADMIN": {
+    "HEADER": "Correspondence admin",
+    "SUB_HEADER": "Correspondence generation process",
+    "DESCRIPTION": "All generated correspondence will be assigned out using the auto assign algorithm. If any correspondence were not assigned due to users not meeting the rules/permissions, they will be placed in the unassigned tab",
+    "COUNT_LABEL": "Enter the number of correspondence to be generated (Value must be between 1 and 40):",
+    "SUBMIT_BUTTON_TEXT": "Generate correspondence",
+    "INVALID_ERROR": {
+      "TITLE": "Invalid file numbers",
+      "MESSAGE": "The following Veteran file number(s) were invalid. Please enter valid file number(s) and try again: "
+    },
+    "SUCCESS": {
+      "TITLE": "You have successfully generated correspondence",
+      "MESSAGE": " correspondence have been created for the following Veteran file number(s): "
+    }
+  },
   "ISSUE_MODIFICATION_REQUESTS": {
     "ADDITION": {
       "REQUEST_TYPE": "addition",
@@ -1593,5 +1707,14 @@
   },
   "VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_NON_ADMIN": "Requests for issue modifications have been submitted for this case. Dispositions cannot be made until a VHA admin completes review of the requested changes.",
   "VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_ADMIN": "Requests for issue modifications have been submitted for this case. Dispositions cannot be made until a VHA admin completes review of the requested changes. Click the \"Edit issues\" button above to review the issue modification requests.",
-  "REMANDS_NOT_EDITABLE": "Remands can not be edited."
+  "REMANDS_NOT_EDITABLE": "Remands can not be edited.",
+  "CORRESPONDENCE_DETAILS": {
+    "COMPLETED_MAIL_TASKS": "Completed Mail Tasks",
+    "NO_COMPLETED_MAIL_TASKS": "No previously completed mail tasks prior to intake.",
+    "SAVE_CHANGES_BANNER": {
+      "MESSAGE": "You have successfully saved changes to this page",
+      "TYPE": "success"
+    }
+  },
+  "ALL_CORRESPONDENCES": "All Correspondence"
 }

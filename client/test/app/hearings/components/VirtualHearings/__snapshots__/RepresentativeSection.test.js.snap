@@ -26,6 +26,7 @@ exports[`RepresentativeSection Displays timezone when showTimezoneField is passe
       "centralOfficeTimeString": "04:00",
       "claimantId": 604,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 0,
       "disposition": null,
       "dispositionEditable": true,
@@ -107,6 +108,7 @@ exports[`RepresentativeSection Displays timezone when showTimezoneField is passe
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -206,11 +208,6 @@ SAN FRANCISCO, CA 94103
                   "index": -0,
                   "label": "Pacific Time (US & Canada) (3:00 AM)",
                   "value": "America/Los_Angeles",
-                },
-                Object {
-                  "index": 2.4,
-                  "label": "Indiana (East) (6:00 AM)",
-                  "value": "America/Indiana/Indianapolis",
                 },
                 Object {
                   "index": 2.4,
@@ -526,6 +523,11 @@ SAN FRANCISCO, CA 94103
                   "index": 280,
                   "label": "Baghdad (2:00 PM)",
                   "value": "Asia/Baghdad",
+                },
+                Object {
+                  "index": 340,
+                  "label": "Indiana (East) (6:00 AM)",
+                  "value": "America/Indiana/Indianapolis",
                 },
                 Object {
                   "index": 340,
@@ -956,10 +958,10 @@ SAN FRANCISCO, CA 94103
             styling={
               Object {
                 "& .cf-select__menu-list": Object {
-                  "& > :nth-child(10)": Object {
+                  "& > :nth-child(9)": Object {
                     "borderBottom": "1px solid grey",
                   },
-                  "height": "390px !important",
+                  "height": "351px !important",
                   "maxHeight": "none",
                   "overflowY": "auto",
                 },
@@ -972,7 +974,7 @@ SAN FRANCISCO, CA 94103
             >
               <div
                 className="cf-form-dropdown dropdown-representativeTz"
-                data-css-1gh7024=""
+                data-css-1dzedb9=""
               >
                 <label
                   className="question-label"
@@ -1048,11 +1050,6 @@ SAN FRANCISCO, CA 94103
                           "index": -0,
                           "label": "Pacific Time (US & Canada) (3:00 AM)",
                           "value": "America/Los_Angeles",
-                        },
-                        Object {
-                          "index": 2.4,
-                          "label": "Indiana (East) (6:00 AM)",
-                          "value": "America/Indiana/Indianapolis",
                         },
                         Object {
                           "index": 2.4,
@@ -1368,6 +1365,11 @@ SAN FRANCISCO, CA 94103
                           "index": 280,
                           "label": "Baghdad (2:00 PM)",
                           "value": "Asia/Baghdad",
+                        },
+                        Object {
+                          "index": 340,
+                          "label": "Indiana (East) (6:00 AM)",
+                          "value": "America/Indiana/Indianapolis",
                         },
                         Object {
                           "index": 340,
@@ -1880,11 +1882,6 @@ SAN FRANCISCO, CA 94103
                           },
                           Object {
                             "index": 2.4,
-                            "label": "Indiana (East) (6:00 AM)",
-                            "value": "America/Indiana/Indianapolis",
-                          },
-                          Object {
-                            "index": 2.4,
                             "label": "Puerto Rico (7:00 AM)",
                             "value": "America/Puerto_Rico",
                           },
@@ -2197,6 +2194,11 @@ SAN FRANCISCO, CA 94103
                             "index": 280,
                             "label": "Baghdad (2:00 PM)",
                             "value": "Asia/Baghdad",
+                          },
+                          Object {
+                            "index": 340,
+                            "label": "Indiana (East) (6:00 AM)",
+                            "value": "America/Indiana/Indianapolis",
                           },
                           Object {
                             "index": 340,
@@ -2683,11 +2685,6 @@ SAN FRANCISCO, CA 94103
                             },
                             Object {
                               "index": 2.4,
-                              "label": "Indiana (East) (6:00 AM)",
-                              "value": "America/Indiana/Indianapolis",
-                            },
-                            Object {
-                              "index": 2.4,
                               "label": "Puerto Rico (7:00 AM)",
                               "value": "America/Puerto_Rico",
                             },
@@ -3000,6 +2997,11 @@ SAN FRANCISCO, CA 94103
                               "index": 280,
                               "label": "Baghdad (2:00 PM)",
                               "value": "Asia/Baghdad",
+                            },
+                            Object {
+                              "index": 340,
+                              "label": "Indiana (East) (6:00 AM)",
+                              "value": "America/Indiana/Indianapolis",
                             },
                             Object {
                               "index": 340,
@@ -3499,11 +3501,6 @@ SAN FRANCISCO, CA 94103
                               },
                               Object {
                                 "index": 2.4,
-                                "label": "Indiana (East) (6:00 AM)",
-                                "value": "America/Indiana/Indianapolis",
-                              },
-                              Object {
-                                "index": 2.4,
                                 "label": "Puerto Rico (7:00 AM)",
                                 "value": "America/Puerto_Rico",
                               },
@@ -3816,6 +3813,11 @@ SAN FRANCISCO, CA 94103
                                 "index": 280,
                                 "label": "Baghdad (2:00 PM)",
                                 "value": "Asia/Baghdad",
+                              },
+                              Object {
+                                "index": 340,
+                                "label": "Indiana (East) (6:00 AM)",
+                                "value": "America/Indiana/Indianapolis",
                               },
                               Object {
                                 "index": 340,
@@ -4351,11 +4353,6 @@ SAN FRANCISCO, CA 94103
                                   },
                                   Object {
                                     "index": 2.4,
-                                    "label": "Indiana (East) (6:00 AM)",
-                                    "value": "America/Indiana/Indianapolis",
-                                  },
-                                  Object {
-                                    "index": 2.4,
                                     "label": "Puerto Rico (7:00 AM)",
                                     "value": "America/Puerto_Rico",
                                   },
@@ -4668,6 +4665,11 @@ SAN FRANCISCO, CA 94103
                                     "index": 280,
                                     "label": "Baghdad (2:00 PM)",
                                     "value": "Asia/Baghdad",
+                                  },
+                                  Object {
+                                    "index": 340,
+                                    "label": "Indiana (East) (6:00 AM)",
+                                    "value": "America/Indiana/Indianapolis",
                                   },
                                   Object {
                                     "index": 340,
@@ -5167,11 +5169,6 @@ SAN FRANCISCO, CA 94103
                                     },
                                     Object {
                                       "index": 2.4,
-                                      "label": "Indiana (East) (6:00 AM)",
-                                      "value": "America/Indiana/Indianapolis",
-                                    },
-                                    Object {
-                                      "index": 2.4,
                                       "label": "Puerto Rico (7:00 AM)",
                                       "value": "America/Puerto_Rico",
                                     },
@@ -5484,6 +5481,11 @@ SAN FRANCISCO, CA 94103
                                       "index": 280,
                                       "label": "Baghdad (2:00 PM)",
                                       "value": "Asia/Baghdad",
+                                    },
+                                    Object {
+                                      "index": 340,
+                                      "label": "Indiana (East) (6:00 AM)",
+                                      "value": "America/Indiana/Indianapolis",
                                     },
                                     Object {
                                       "index": 340,
@@ -6027,11 +6029,6 @@ SAN FRANCISCO, CA 94103
                                         },
                                         Object {
                                           "index": 2.4,
-                                          "label": "Indiana (East) (6:00 AM)",
-                                          "value": "America/Indiana/Indianapolis",
-                                        },
-                                        Object {
-                                          "index": 2.4,
                                           "label": "Puerto Rico (7:00 AM)",
                                           "value": "America/Puerto_Rico",
                                         },
@@ -6344,6 +6341,11 @@ SAN FRANCISCO, CA 94103
                                           "index": 280,
                                           "label": "Baghdad (2:00 PM)",
                                           "value": "Asia/Baghdad",
+                                        },
+                                        Object {
+                                          "index": 340,
+                                          "label": "Indiana (East) (6:00 AM)",
+                                          "value": "America/Indiana/Indianapolis",
                                         },
                                         Object {
                                           "index": 340,
@@ -6843,11 +6845,6 @@ SAN FRANCISCO, CA 94103
                                           },
                                           Object {
                                             "index": 2.4,
-                                            "label": "Indiana (East) (6:00 AM)",
-                                            "value": "America/Indiana/Indianapolis",
-                                          },
-                                          Object {
-                                            "index": 2.4,
                                             "label": "Puerto Rico (7:00 AM)",
                                             "value": "America/Puerto_Rico",
                                           },
@@ -7160,6 +7157,11 @@ SAN FRANCISCO, CA 94103
                                             "index": 280,
                                             "label": "Baghdad (2:00 PM)",
                                             "value": "Asia/Baghdad",
+                                          },
+                                          Object {
+                                            "index": 340,
+                                            "label": "Indiana (East) (6:00 AM)",
+                                            "value": "America/Indiana/Indianapolis",
                                           },
                                           Object {
                                             "index": 340,
@@ -7695,11 +7697,6 @@ SAN FRANCISCO, CA 94103
                                               },
                                               Object {
                                                 "index": 2.4,
-                                                "label": "Indiana (East) (6:00 AM)",
-                                                "value": "America/Indiana/Indianapolis",
-                                              },
-                                              Object {
-                                                "index": 2.4,
                                                 "label": "Puerto Rico (7:00 AM)",
                                                 "value": "America/Puerto_Rico",
                                               },
@@ -8012,6 +8009,11 @@ SAN FRANCISCO, CA 94103
                                                 "index": 280,
                                                 "label": "Baghdad (2:00 PM)",
                                                 "value": "Asia/Baghdad",
+                                              },
+                                              Object {
+                                                "index": 340,
+                                                "label": "Indiana (East) (6:00 AM)",
+                                                "value": "America/Indiana/Indianapolis",
                                               },
                                               Object {
                                                 "index": 340,
@@ -8511,11 +8513,6 @@ SAN FRANCISCO, CA 94103
                                                 },
                                                 Object {
                                                   "index": 2.4,
-                                                  "label": "Indiana (East) (6:00 AM)",
-                                                  "value": "America/Indiana/Indianapolis",
-                                                },
-                                                Object {
-                                                  "index": 2.4,
                                                   "label": "Puerto Rico (7:00 AM)",
                                                   "value": "America/Puerto_Rico",
                                                 },
@@ -8828,6 +8825,11 @@ SAN FRANCISCO, CA 94103
                                                   "index": 280,
                                                   "label": "Baghdad (2:00 PM)",
                                                   "value": "Asia/Baghdad",
+                                                },
+                                                Object {
+                                                  "index": 340,
+                                                  "label": "Indiana (East) (6:00 AM)",
+                                                  "value": "America/Indiana/Indianapolis",
                                                 },
                                                 Object {
                                                   "index": 340,
@@ -9415,11 +9417,6 @@ SAN FRANCISCO, CA 94103
                                                 },
                                                 Object {
                                                   "index": 2.4,
-                                                  "label": "Indiana (East) (6:00 AM)",
-                                                  "value": "America/Indiana/Indianapolis",
-                                                },
-                                                Object {
-                                                  "index": 2.4,
                                                   "label": "Puerto Rico (7:00 AM)",
                                                   "value": "America/Puerto_Rico",
                                                 },
@@ -9732,6 +9729,11 @@ SAN FRANCISCO, CA 94103
                                                   "index": 280,
                                                   "label": "Baghdad (2:00 PM)",
                                                   "value": "Asia/Baghdad",
+                                                },
+                                                Object {
+                                                  "index": 340,
+                                                  "label": "Indiana (East) (6:00 AM)",
+                                                  "value": "America/Indiana/Indianapolis",
                                                 },
                                                 Object {
                                                   "index": 340,
@@ -10209,7 +10211,7 @@ SAN FRANCISCO, CA 94103
                                             aria-autocomplete="list"
                                             aria-expanded={false}
                                             aria-haspopup={true}
-                                            aria-labelledby="representative-tz-label"
+                                            aria-label="Pacific Time (US & Canada) (3:00 AM)"
                                             aria-owns="representative-tz-listbox"
                                             autoCapitalize="none"
                                             autoComplete="off"
@@ -10296,11 +10298,6 @@ SAN FRANCISCO, CA 94103
                                                     "index": -0,
                                                     "label": "Pacific Time (US & Canada) (3:00 AM)",
                                                     "value": "America/Los_Angeles",
-                                                  },
-                                                  Object {
-                                                    "index": 2.4,
-                                                    "label": "Indiana (East) (6:00 AM)",
-                                                    "value": "America/Indiana/Indianapolis",
                                                   },
                                                   Object {
                                                     "index": 2.4,
@@ -10616,6 +10613,11 @@ SAN FRANCISCO, CA 94103
                                                     "index": 280,
                                                     "label": "Baghdad (2:00 PM)",
                                                     "value": "Asia/Baghdad",
+                                                  },
+                                                  Object {
+                                                    "index": 340,
+                                                    "label": "Indiana (East) (6:00 AM)",
+                                                    "value": "America/Indiana/Indianapolis",
                                                   },
                                                   Object {
                                                     "index": 340,
@@ -11105,7 +11107,7 @@ SAN FRANCISCO, CA 94103
                                                   aria-autocomplete="list"
                                                   aria-expanded={false}
                                                   aria-haspopup={true}
-                                                  aria-labelledby="representative-tz-label"
+                                                  aria-label="Pacific Time (US & Canada) (3:00 AM)"
                                                   aria-owns="representative-tz-listbox"
                                                   autoCapitalize="none"
                                                   autoComplete="off"
@@ -11149,7 +11151,7 @@ SAN FRANCISCO, CA 94103
                                                       aria-autocomplete="list"
                                                       aria-expanded={false}
                                                       aria-haspopup={true}
-                                                      aria-labelledby="representative-tz-label"
+                                                      aria-label="Pacific Time (US & Canada) (3:00 AM)"
                                                       aria-owns="representative-tz-listbox"
                                                       autoCapitalize="none"
                                                       autoComplete="off"
@@ -11235,11 +11237,6 @@ SAN FRANCISCO, CA 94103
                                           "index": -0,
                                           "label": "Pacific Time (US & Canada) (3:00 AM)",
                                           "value": "America/Los_Angeles",
-                                        },
-                                        Object {
-                                          "index": 2.4,
-                                          "label": "Indiana (East) (6:00 AM)",
-                                          "value": "America/Indiana/Indianapolis",
                                         },
                                         Object {
                                           "index": 2.4,
@@ -11555,6 +11552,11 @@ SAN FRANCISCO, CA 94103
                                           "index": 280,
                                           "label": "Baghdad (2:00 PM)",
                                           "value": "Asia/Baghdad",
+                                        },
+                                        Object {
+                                          "index": 340,
+                                          "label": "Indiana (East) (6:00 AM)",
+                                          "value": "America/Indiana/Indianapolis",
                                         },
                                         Object {
                                           "index": 340,
@@ -12054,11 +12056,6 @@ SAN FRANCISCO, CA 94103
                                           },
                                           Object {
                                             "index": 2.4,
-                                            "label": "Indiana (East) (6:00 AM)",
-                                            "value": "America/Indiana/Indianapolis",
-                                          },
-                                          Object {
-                                            "index": 2.4,
                                             "label": "Puerto Rico (7:00 AM)",
                                             "value": "America/Puerto_Rico",
                                           },
@@ -12371,6 +12368,11 @@ SAN FRANCISCO, CA 94103
                                             "index": 280,
                                             "label": "Baghdad (2:00 PM)",
                                             "value": "Asia/Baghdad",
+                                          },
+                                          Object {
+                                            "index": 340,
+                                            "label": "Indiana (East) (6:00 AM)",
+                                            "value": "America/Indiana/Indianapolis",
                                           },
                                           Object {
                                             "index": 340,
@@ -12896,11 +12898,6 @@ SAN FRANCISCO, CA 94103
                                               },
                                               Object {
                                                 "index": 2.4,
-                                                "label": "Indiana (East) (6:00 AM)",
-                                                "value": "America/Indiana/Indianapolis",
-                                              },
-                                              Object {
-                                                "index": 2.4,
                                                 "label": "Puerto Rico (7:00 AM)",
                                                 "value": "America/Puerto_Rico",
                                               },
@@ -13213,6 +13210,11 @@ SAN FRANCISCO, CA 94103
                                                 "index": 280,
                                                 "label": "Baghdad (2:00 PM)",
                                                 "value": "Asia/Baghdad",
+                                              },
+                                              Object {
+                                                "index": 340,
+                                                "label": "Indiana (East) (6:00 AM)",
+                                                "value": "America/Indiana/Indianapolis",
                                               },
                                               Object {
                                                 "index": 340,
@@ -13712,11 +13714,6 @@ SAN FRANCISCO, CA 94103
                                                 },
                                                 Object {
                                                   "index": 2.4,
-                                                  "label": "Indiana (East) (6:00 AM)",
-                                                  "value": "America/Indiana/Indianapolis",
-                                                },
-                                                Object {
-                                                  "index": 2.4,
                                                   "label": "Puerto Rico (7:00 AM)",
                                                   "value": "America/Puerto_Rico",
                                                 },
@@ -14029,6 +14026,11 @@ SAN FRANCISCO, CA 94103
                                                   "index": 280,
                                                   "label": "Baghdad (2:00 PM)",
                                                   "value": "Asia/Baghdad",
+                                                },
+                                                Object {
+                                                  "index": 340,
+                                                  "label": "Indiana (East) (6:00 AM)",
+                                                  "value": "America/Indiana/Indianapolis",
                                                 },
                                                 Object {
                                                   "index": 340,
@@ -14565,11 +14567,6 @@ SAN FRANCISCO, CA 94103
                                               },
                                               Object {
                                                 "index": 2.4,
-                                                "label": "Indiana (East) (6:00 AM)",
-                                                "value": "America/Indiana/Indianapolis",
-                                              },
-                                              Object {
-                                                "index": 2.4,
                                                 "label": "Puerto Rico (7:00 AM)",
                                                 "value": "America/Puerto_Rico",
                                               },
@@ -14882,6 +14879,11 @@ SAN FRANCISCO, CA 94103
                                                 "index": 280,
                                                 "label": "Baghdad (2:00 PM)",
                                                 "value": "Asia/Baghdad",
+                                              },
+                                              Object {
+                                                "index": 340,
+                                                "label": "Indiana (East) (6:00 AM)",
+                                                "value": "America/Indiana/Indianapolis",
                                               },
                                               Object {
                                                 "index": 340,
@@ -15381,11 +15383,6 @@ SAN FRANCISCO, CA 94103
                                                 },
                                                 Object {
                                                   "index": 2.4,
-                                                  "label": "Indiana (East) (6:00 AM)",
-                                                  "value": "America/Indiana/Indianapolis",
-                                                },
-                                                Object {
-                                                  "index": 2.4,
                                                   "label": "Puerto Rico (7:00 AM)",
                                                   "value": "America/Puerto_Rico",
                                                 },
@@ -15698,6 +15695,11 @@ SAN FRANCISCO, CA 94103
                                                   "index": 280,
                                                   "label": "Baghdad (2:00 PM)",
                                                   "value": "Asia/Baghdad",
+                                                },
+                                                Object {
+                                                  "index": 340,
+                                                  "label": "Indiana (East) (6:00 AM)",
+                                                  "value": "America/Indiana/Indianapolis",
                                                 },
                                                 Object {
                                                   "index": 340,
@@ -16377,6 +16379,7 @@ exports[`RepresentativeSection Does not allow editing emails when read-only 1`] 
       "centralOfficeTimeString": "04:00",
       "claimantId": 604,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 0,
       "disposition": null,
       "dispositionEditable": true,
@@ -16458,6 +16461,7 @@ exports[`RepresentativeSection Does not allow editing emails when read-only 1`] 
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -16570,6 +16574,7 @@ exports[`RepresentativeSection Does not display address when formFieldsOnly = tr
       "centralOfficeTimeString": "04:00",
       "claimantId": 604,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 0,
       "disposition": null,
       "dispositionEditable": true,
@@ -16650,6 +16655,7 @@ exports[`RepresentativeSection Does not display address when formFieldsOnly = tr
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -16799,6 +16805,7 @@ exports[`RepresentativeSection Matches snapshot with default props 1`] = `
       "centralOfficeTimeString": "04:00",
       "claimantId": 604,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 0,
       "disposition": null,
       "dispositionEditable": true,
@@ -16879,6 +16886,7 @@ exports[`RepresentativeSection Matches snapshot with default props 1`] = `
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -17038,6 +17046,7 @@ exports[`RepresentativeSection Shows Representative name when representative add
       "centralOfficeTimeString": "03:30",
       "claimantId": 4,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 1,
       "disposition": null,
       "dispositionEditable": true,
@@ -17073,6 +17082,7 @@ exports[`RepresentativeSection Shows Representative name when representative add
         "fullName": "Aaron Judge_HearingsAndCases Abshire",
         "id": 3,
         "lastLoginAt": null,
+        "meetingType": "pexip",
         "roles": Object {},
         "selectedRegionalOffice": null,
         "stationId": "101",
@@ -17117,6 +17127,7 @@ exports[`RepresentativeSection Shows Representative name when representative add
         "appellantEmail": "Bob.Smith@test.com",
         "appellantTz": "America/Denver",
         "clientHost": "care.evn.va.gov",
+        "conferenceProvider": "pexip",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
         "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -17144,6 +17155,7 @@ exports[`RepresentativeSection Shows Representative name when representative add
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -17297,6 +17309,7 @@ exports[`RepresentativeSection Shows Representative not present message when no 
       "centralOfficeTimeString": "03:30",
       "claimantId": 4,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 1,
       "disposition": null,
       "dispositionEditable": true,
@@ -17332,6 +17345,7 @@ exports[`RepresentativeSection Shows Representative not present message when no 
         "fullName": "Aaron Judge_HearingsAndCases Abshire",
         "id": 3,
         "lastLoginAt": null,
+        "meetingType": "pexip",
         "roles": Object {},
         "selectedRegionalOffice": null,
         "stationId": "101",
@@ -17375,6 +17389,7 @@ exports[`RepresentativeSection Shows Representative not present message when no 
         "appellantEmail": "Bob.Smith@test.com",
         "appellantTz": "America/Denver",
         "clientHost": "care.evn.va.gov",
+        "conferenceProvider": "pexip",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
         "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -17402,6 +17417,7 @@ exports[`RepresentativeSection Shows Representative not present message when no 
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
