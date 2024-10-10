@@ -20,6 +20,9 @@ export const initialState = {
   userCssId: '',
   userInfo: null,
   organizations: [],
+  isInboundOpsTeamUser: false,
+  isInboundOpsSupervisor: false,
+  isInboundOpsSuperuser: false,
   activeOrganization: {
     id: null,
     name: null,
@@ -99,6 +102,10 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
   case ACTIONS.SET_USER_IS_COB_ADMIN:
     return update(state, {
       userIsCobAdmin: { $set: action.payload.userIsCobAdmin }
+    });
+  case ACTIONS.SET_CONFERENCE_PROVIDER:
+    return update(state, {
+      conferenceProvider: { $set: action.payload.conferenceProvider }
     });
   case ACTIONS.SET_CAN_EDIT_CAVC_REMANDS:
     return update(state, {
@@ -252,6 +259,24 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
       },
       selectedAssignee: {
         $set: null
+      }
+    });
+  case ACTIONS.SET_INBOUND_OPS_TEAM_USER:
+    return update(state, {
+      isInboundOpsTeamUser: {
+        $set: action.payload.isInboundOpsTeamUser
+      }
+    });
+  case ACTIONS.SET_INBOUND_OPS_SUPERVISOR:
+    return update(state, {
+      isInboundOpsSupervisor: {
+        $set: action.payload.isInboundOpsSupervisor
+      }
+    });
+  case ACTIONS.SET_INBOUND_OPS_SUPERUSER:
+    return update(state, {
+      isInboundOpsSuperuser: {
+        $set: action.payload.isInboundOpsSuperuser
       }
     });
   case ACTIONS.SET_ORGANIZATIONS:
