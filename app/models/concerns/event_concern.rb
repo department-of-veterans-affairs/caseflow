@@ -10,6 +10,10 @@ module EventConcern
     event_record.present?
   end
 
+  def from_decision_review_event?
+    from_event?
+  end
+
   # Check if this object is associated with a DecisionReviewCreatedEvent
   def from_decision_review_created_event?
     if from_event?

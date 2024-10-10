@@ -852,6 +852,13 @@ class RequestIssue < CaseflowRecord
     decision_review&.from_decision_review_created_event?
   end
 
+  def issue_from_event?
+    decision_review&.from_decision_review_event?
+    # if !decision_review.is_a?(Appeal) && !decision_review.event_records.blank?
+    #   (Time.current - decision_review.event_records.last.created_at).abs <= 1
+    # end
+  end
+
   private
 
   def create_legacy_issue!
@@ -1181,10 +1188,6 @@ class RequestIssue < CaseflowRecord
   def set_decision_date_added_at
     self.decision_date_added_at = created_at
     save!
-  end
-
-  def issue_from_event?
-    (Time.current - decision_review.event_records.last.created_at).abs <= 1
   end
 end
 # rubocop:enable Metrics/ClassLength
