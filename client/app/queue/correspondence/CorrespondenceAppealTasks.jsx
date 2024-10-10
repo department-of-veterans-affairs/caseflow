@@ -101,7 +101,7 @@ CorrespondenceAppealTasks.propTypes = {
   userCssId: PropTypes.string,
   appeal: PropTypes.object,
   waivableUser: PropTypes.bool,
-  setWaiveEvidenceAlertBanner: PropTypes.func,
+  setWaiveEvidenceAlertBanner: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
