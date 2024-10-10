@@ -27,7 +27,6 @@ const ReaderSearchBar = () => {
         mark.classList.add('highlighted');
         mark.scrollIntoView({
           block: 'center',
-          behavior: 'smooth',
         });
       }
     });
