@@ -14,9 +14,17 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
     let!(:vacols_issue2) { create(:case_issue, issseq: 2) }
     let!(:vacols_issue3) { create(:case_issue, issseq: 3) }
     let!(:vacols_case) do
-      create(:case, :status_active, bfcurloc: "77", bfkey: "VACOLSTEST", case_issues: [vacols_issue1, vacols_issue2, vacols_issue3])
-    end
-
+      create(
+        :case,
+        :status_active,
+        bfcurloc: "77",
+        bfkey: "VACOLSTEST",
+        case_issues: [
+          vacols_issue1,
+          vacols_issue2,
+          vacols_issue3
+        ]
+      )
     def json_test_payload
       {
         "event_id": "123",
