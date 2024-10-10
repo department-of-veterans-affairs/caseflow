@@ -13,7 +13,7 @@ class Hearings::TranscriptionFilesController < ApplicationController
   end
 
   def transcription_file_tasks
-    @transcription_files = TranscriptionFile.filterable_values
+    @transcription_files = Hearings::TranscriptionFile.filterable_values
     select_based_on_tab
     apply_filters
     setup_pagination
@@ -84,7 +84,7 @@ class Hearings::TranscriptionFilesController < ApplicationController
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def locked
-    locked_files = TranscriptionFile.locked.preload(:locked_by)
+    locked_files = Hearings::TranscriptionFile.locked.preload(:locked_by)
     files = []
     locked_files.each do |file|
       status = file.locked_by_id == current_user.id ? "selected" : "locked"
@@ -96,7 +96,7 @@ class Hearings::TranscriptionFilesController < ApplicationController
   end
 
   def lock
-    files = TranscriptionFile.where(id: params[:file_ids])
+    files = Hearings::TranscriptionFile.where(id: params[:file_ids])
     status = params[:status] && params[:status].to_s == "true" ? true : false
     lockable_file_ids = []
     files.each do |file|
@@ -113,7 +113,9 @@ class Hearings::TranscriptionFilesController < ApplicationController
       locked_at = nil
     end
 
-    TranscriptionFile.where(id: lockable_file_ids).update_all(locked_by_id: locked_by_id, locked_at: locked_at)
+    Hearings::TranscriptionFile.where(id: lockable_file_ids).update_all(
+      locked_by_id: locked_by_id, locked_at: locked_at
+    )
 
     locked
   end
@@ -129,7 +131,7 @@ class Hearings::TranscriptionFilesController < ApplicationController
   def selected_files_info
     files = []
     ids = params[:file_ids].split(",")
-    TranscriptionFile.where(id: ids).filterable_values.each do |transcription_file|
+    Hearings::TranscriptionFile.where(id: ids).filterable_values.each do |transcription_file|
       hearing = transcription_file.hearing
       files << {
         id: transcription_file.id,
@@ -151,7 +153,7 @@ class Hearings::TranscriptionFilesController < ApplicationController
   private
 
   def file
-    @file ||= TranscriptionFile.find(params[:file_id])
+    @file ||= Hearings::TranscriptionFile.find(params[:file_id])
   end
 
   def select_based_on_tab

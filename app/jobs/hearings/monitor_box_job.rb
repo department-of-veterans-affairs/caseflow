@@ -23,22 +23,27 @@ class Hearings::MonitorBoxJob < ApplicationJob
   end
 
   def perform
-    poll_box_dot_com_for_new_files
+    files = poll_box_dot_com_for_new_files
+    files.count > 0 ? download_box_files(files) : true
   rescue StandardError => error
     log_error(error)
     raise error
-  end
-
-  private
-
-  def box_parent_folder_id
-    ENV["BOX_PARENT_FOLDER_ID"]
   end
 
   def poll_box_dot_com_for_new_files
     files = net_new_files
 
     files_with_permitted_keys(files)
+  end
+
+  def download_box_files(files)
+    Hearings::VaBoxDownloadJob.perform_later(files)
+  end
+
+  private
+
+  def box_parent_folder_id
+    ENV["BOX_PARENT_FOLDER_ID"]
   end
 
   def files_with_permitted_keys(files)
@@ -58,7 +63,7 @@ class Hearings::MonitorBoxJob < ApplicationJob
   end
 
   def most_recent_returned_file_time
-    ::TranscriptionFile.maximum(:date_returned_box)
+    Hearings::TranscriptionFile.maximum(:date_returned_box)
   end
 
   def find_webex_formatted_files(files)

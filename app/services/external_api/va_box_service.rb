@@ -18,14 +18,17 @@ class ExternalApi::VaBoxService
 
   def download_file(file_id, destination_path)
     uri = "#{FILES_URI}/#{file_id}/content"
-
     response = box_conn.get(uri)
 
-    if response.success? || response.status == 302
+    if response.success?
       File.open(destination_path, "wb") do |file|
         file.write(response.body)
       end
       Rails.logger.info("File downloaded successfully to #{destination_path}")
+    elsif response.status == 302
+
+      redirect_url = response.headers["location"]
+      follow_redirect_and_download(redirect_url, destination_path)
     else
       Rails.logger.info("Failed to download the file. Response code: #{response.status}")
       Rails.logger.info("Response body: #{response.body}")
@@ -89,6 +92,21 @@ class ExternalApi::VaBoxService
   end
 
   private
+
+  def follow_redirect_and_download(url, destination_path)
+    redirect_response = Faraday.get(url)
+
+    if redirect_response.status == 200
+      File.open(destination_path, "wb") do |file|
+        file.write(redirect_response.body)
+      end
+      Rails.logger.info("File downloaded successfully to #{destination_path} via redirect")
+    else
+      Rails.logger.info(
+        "Failed to download file from redirect. Status: #{redirect_response.status}, Body: #{redirect_response.body}"
+      )
+    end
+  end
 
   def fetch_access_token
     response = fetch_jwt_access_token
