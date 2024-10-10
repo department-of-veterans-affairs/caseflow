@@ -312,6 +312,7 @@ Rails.application.routes.draw do
       end
     end
     get "report", to: "decision_reviews#generate_report", on: :member, as: :report, format: false
+    get "report/searches", to: "decision_reviews#generate_report", on: :member, as: :saved_searches, format: false
     get "/(*all)", to: "decision_reviews#index"
   end
 
