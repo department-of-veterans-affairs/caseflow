@@ -1,23 +1,24 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 
 import Button from '../../components/Button';
 import TextField from '../../components/TextField';
+import { FilterNoOutlineIcon } from '../../components/icons/FilterNoOutlineIcon';
 import { PageArrowLeftIcon } from '../../components/icons/PageArrowLeftIcon';
 import { PageArrowRightIcon } from '../../components/icons/PageArrowRightIcon';
+import { docListIsFiltered, getFilteredDocIds } from '../../reader/selectors';
+import { annotationPlacement } from '../selectors';
 
 const ReaderFooter = ({
   currentPage,
-  docCount,
-  nextDocId,
+  docId,
   numPages,
-  prevDocId,
   setCurrentPage,
-  selectedDocIndex,
-  showNextDocument,
-  showPreviousDocument,
-  disablePreviousNext,
+  showPdf,
 }) => {
+  const { isPlacingAnnotation } = useSelector(annotationPlacement);
+
   const isValidInputPageNumber = (pageNumber) => {
     if (!isNaN(pageNumber) && pageNumber % 1 === 0) {
 
@@ -47,16 +48,37 @@ const ReaderFooter = ({
     }
   };
 
+  const isDocListFiltered = useSelector((state) => docListIsFiltered(state));
+
+  const filteredDocIds = useSelector(getFilteredDocIds);
+  const currentDocIndex = filteredDocIds.indexOf(docId);
+  const getPrevDocId = () => filteredDocIds?.[currentDocIndex - 1];
+  const getNextDocId = () => filteredDocIds?.[currentDocIndex + 1];
+
+  useEffect(() => {
+    const keyHandler = (event) => {
+      if (event.key === 'ArrowLeft' && !isPlacingAnnotation) {
+        showPdf(getPrevDocId())();
+      }
+      if (event.key === 'ArrowRight' && !isPlacingAnnotation) {
+        showPdf(getNextDocId())();
+      }
+    };
+
+    window.addEventListener('keydown', keyHandler);
+
+    return () => window.removeEventListener('keydown', keyHandler);
+  }, [currentDocIndex, isPlacingAnnotation]);
+
   return (
     <div id="prototype-footer" className="cf-pdf-footer cf-pdf-toolbar">
       <div className="cf-pdf-footer-buttons-left">
-        {prevDocId && (
+        {getPrevDocId() && (
           <Button
             name="previous"
             classNames={['cf-pdf-button']}
-            onClick={showPreviousDocument}
+            onClick={showPdf(getPrevDocId())}
             ariaLabel="previous PDF"
-            disabled={disablePreviousNext}
           >
             <PageArrowLeftIcon />
             <span className="left-button-label">Previous</span>
@@ -86,18 +108,17 @@ const ReaderFooter = ({
           |
         </span>
         <span className="doc-list-progress-indicator">
-          Document {selectedDocIndex + 1} of {docCount}
+          { isDocListFiltered && <FilterNoOutlineIcon /> } Document {currentDocIndex + 1} of {filteredDocIds.length}
         </span>
       </div>
 
       <div className="cf-pdf-footer-buttons-right">
-        {nextDocId && (
+        {getNextDocId() && (
           <Button
             name="next"
             classNames={['cf-pdf-button cf-right-side']}
-            onClick={showNextDocument}
+            onClick={showPdf(getNextDocId())}
             ariaLabel="next PDF"
-            disabled={disablePreviousNext}
           >
             <span className="right-button-label">Next</span>
             <PageArrowRightIcon />
@@ -110,15 +131,10 @@ const ReaderFooter = ({
 
 ReaderFooter.propTypes = {
   currentPage: PropTypes.number,
-  docCount: PropTypes.number,
-  nextDocId: PropTypes.number,
+  docId: PropTypes.number,
   numPages: PropTypes.number,
-  prevDocId: PropTypes.number,
   setCurrentPage: PropTypes.func,
-  selectedDocIndex: PropTypes.number,
-  showNextDocument: PropTypes.func,
-  showPreviousDocument: PropTypes.func,
-  disablePreviousNext: PropTypes.bool,
+  showPdf: PropTypes.func,
 };
 
 export default ReaderFooter;

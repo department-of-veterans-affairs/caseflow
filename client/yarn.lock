@@ -5454,6 +5454,11 @@ bcrypt-pbkdf@^1.0.0:
   dependencies:
     tweetnacl "^0.14.3"
 
+bdd-lazy-var@^2.6.1:
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/bdd-lazy-var/-/bdd-lazy-var-2.6.1.tgz#ca03fb36d68c5a507c0ba9a4d53160b899e6b7cb"
+  integrity sha512-X3ADwcFji/IHIrYJhTTpaiWhoOx4pl4whdAx1dmvdeUPsMUb7fVYFvf/Q33VEAEAVkEwi5rgNSZ0Y9oOVeQV+A==
+
 better-opn@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/better-opn/-/better-opn-2.1.1.tgz#94a55b4695dc79288f31d7d0e5f658320759f7c6"
