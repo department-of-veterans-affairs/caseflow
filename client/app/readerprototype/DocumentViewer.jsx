@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
-
+import { Helmet } from 'react-helmet';
 import PdfDocument from './components/PdfDocument';
 import ReaderFooter from './components/ReaderFooter';
 import ReaderSearchBar from './components/ReaderSearchBar';
@@ -29,8 +29,6 @@ const DocumentViewer = (props) => {
   const currentDocumentId = Number(props.match.params.docId);
   const doc = props.allDocuments.find((x) => x.id === currentDocumentId);
 
-  document.title = `${(doc && doc.type) || ''} | Document Viewer | Caseflow Reader`;
-
   useEffect(() => {
     setShowSearchBar(false);
   }, [currentDocumentId]);
@@ -41,8 +39,9 @@ const DocumentViewer = (props) => {
         event.preventDefault();
         setShowSearchBar(false);
       }
+      const metaKey = navigator.appVersion.includes('Win') ? 'ctrlKey' : 'metaKey';
 
-      if (event.metaKey && event.code === 'KeyF') {
+      if (event[metaKey] && event.code === 'KeyF') {
         event.preventDefault();
         setShowSearchBar(true);
       }
@@ -100,56 +99,61 @@ const DocumentViewer = (props) => {
   }, [doc.id, dispatch]);
 
   return (
-    <div id="prototype-reader" className="cf-pdf-page-container">
-      <div id="prototype-reader-main">
-        <ReaderToolbar
-          disableZoomIn={props.zoomLevel === ZOOM_LEVEL_MAX}
-          disableZoomOut={props.zoomLevel === ZOOM_LEVEL_MIN}
-          doc={doc}
-          documentPathBase={props.documentPathBase}
-          resetZoomLevel={() => props.onZoomChange(100)}
-          rotateDocument={() => setRotateDeg(getRotationDeg(rotateDeg))}
-          setZoomInLevel={handleZoomIn}
-          setZoomOutLevel={handleZoomOut}
-          showClaimsFolderNavigation={props.allDocuments.length > 1}
-          showSearchBar={showSearchBar}
-          toggleSearchBar={setShowSearchBar}
-          showSideBar={showSideBar}
-          toggleSideBar={() => dispatch(togglePdfSidebar())}
-          zoomLevel={props.zoomLevel}
-        />
-        {showSearchBar && <ReaderSearchBar />}
-        <div className="cf-pdf-scroll-view" onScroll={getPageNumFromScrollTop}>
-          <PdfDocument
-            currentPage={currentPage}
+    <>
+      <Helmet>
+        <title>{`${(doc?.type) || ''} | Document Viewer | Caseflow Reader`}</title>
+      </Helmet>
+      <div id="prototype-reader" className="cf-pdf-page-container">
+        <div id="prototype-reader-main">
+          <ReaderToolbar
+            disableZoomIn={props.zoomLevel === ZOOM_LEVEL_MAX}
+            disableZoomOut={props.zoomLevel === ZOOM_LEVEL_MIN}
             doc={doc}
-            isDocumentLoadError={isDocumentLoadError}
-            rotateDeg={rotateDeg}
-            setIsDocumentLoadError={setIsDocumentLoadError}
-            setNumPages={setNumPages}
+            documentPathBase={props.documentPathBase}
+            resetZoomLevel={() => props.onZoomChange(100)}
+            rotateDocument={() => setRotateDeg(getRotationDeg(rotateDeg))}
+            setZoomInLevel={handleZoomIn}
+            setZoomOutLevel={handleZoomOut}
+            showClaimsFolderNavigation={props.allDocuments.length > 1}
+            showSearchBar={showSearchBar}
+            toggleSearchBar={setShowSearchBar}
+            showSideBar={showSideBar}
+            toggleSideBar={() => dispatch(togglePdfSidebar())}
             zoomLevel={props.zoomLevel}
           />
+          {showSearchBar && <ReaderSearchBar />}
+          <div className="cf-pdf-scroll-view" onScroll={getPageNumFromScrollTop}>
+            <PdfDocument
+              currentPage={currentPage}
+              doc={doc}
+              isDocumentLoadError={isDocumentLoadError}
+              rotateDeg={rotateDeg}
+              setIsDocumentLoadError={setIsDocumentLoadError}
+              setNumPages={setNumPages}
+              zoomLevel={props.zoomLevel}
+            />
+          </div>
+          <ReaderFooter
+            currentPage={currentPage}
+            docId={doc.id}
+            isDocumentLoadError={isDocumentLoadError}
+            numPages={numPages}
+            setCurrentPage={() => setCurrentPage()}
+            showPdf={props.showPdf}
+          />
         </div>
-        <ReaderFooter
-          currentPage={currentPage}
-          docId={doc.id}
-          isDocumentLoadError={isDocumentLoadError}
-          numPages={numPages}
-          setCurrentPage={() => setCurrentPage()}
-          showPdf={props.showPdf}
-        />
+        {showSideBar && (
+          <ReaderSidebar
+            doc={doc}
+            showSideBar={showSideBar}
+            toggleSideBar={() => dispatch(togglePdfSidebar())}
+            vacolsId={props.match.params.vacolsId}
+          />
+        )}
+        <DeleteModal documentId={currentDocumentId} />
+        <ShareModal />
       </div>
-      {showSideBar && (
-        <ReaderSidebar
-          doc={doc}
-          showSideBar={showSideBar}
-          toggleSideBar={() => dispatch(togglePdfSidebar())}
-          vacolsId={props.match.params.vacolsId}
-        />
-      )}
-      <DeleteModal documentId={currentDocumentId} />
-      <ShareModal />
-    </div>
+    </>
   );
 };
 

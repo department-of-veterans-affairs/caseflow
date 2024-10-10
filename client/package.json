@@ -112,6 +112,7 @@
     "react-csv": "^1.1.1",
     "react-dom": "^16.13.1",
     "react-draft-wysiwyg": "^1.12.11",
+    "react-helmet": "^6.1.0",
     "react-highlight-words": "^0.8.0",
     "react-hook-form": "^6.14.2",
     "react-markdown": "^5.0.2",
