@@ -11,6 +11,7 @@ import ReportPage from 'app/nonComp/pages/ReportPage';
 import selectEvent from 'react-select-event';
 import { getVhaUsers } from 'test/helpers/reportPageHelper';
 import CombinedNonCompReducer from 'app/nonComp/reducers';
+import { MemoryRouter as Router } from 'react-router-dom';
 
 import REPORT_TYPE_CONSTANTS from 'constants/REPORT_TYPE_CONSTANTS';
 
@@ -24,7 +25,9 @@ describe('ReportPage', () => {
 
     return render(
       <Provider store={store}>
-        <ReportPage />
+        <Router>
+          <ReportPage />
+        </Router>
       </Provider>
     );
   };
@@ -89,7 +92,9 @@ describe('ReportPage', () => {
 
       render(
         <Provider store={store}>
-          <ReportPage history={history} />
+          <Router>
+            <ReportPage history={history} />
+          </Router>
         </Provider>
       );
 

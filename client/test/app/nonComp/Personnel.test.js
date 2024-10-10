@@ -6,6 +6,7 @@ import { applyMiddleware, createStore, compose } from 'redux';
 import userEvent from '@testing-library/user-event';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import selectEvent from 'react-select-event';
+import { MemoryRouter as Router } from 'react-router-dom';
 
 import ReportPage from 'app/nonComp/pages/ReportPage';
 import { getVhaUsers } from 'test/helpers/reportPageHelper';
@@ -20,7 +21,9 @@ const setup = (storeValues = { nonComp: { businessLineUrl: 'vha' } }) => {
 
   return render(
     <Provider store={store}>
-      <ReportPage />
+      <Router>
+        <ReportPage />
+      </Router>
     </Provider>
   );
 };

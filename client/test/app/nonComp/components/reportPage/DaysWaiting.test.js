@@ -3,6 +3,7 @@ import { axe } from 'jest-axe';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import { applyMiddleware, createStore, compose } from 'redux';
+import { MemoryRouter as Router } from 'react-router-dom';
 
 import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react';
@@ -21,7 +22,9 @@ describe('DaysWaiting', () => {
 
     return render(
       <Provider store={store}>
-        <ReportPage />
+        <Router>
+          <ReportPage />
+        </Router>
       </Provider>
     );
   };
