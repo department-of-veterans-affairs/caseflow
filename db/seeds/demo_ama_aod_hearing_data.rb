@@ -6,6 +6,13 @@ module Seeds
       @seed_count = ENV["SEED_COUNT"].to_i
       @days_ago = ENV["DAYS_AGO"].to_i.days.ago
       @hearing_judge = find_or_create_demo_seed_judge(ENV['JUDGE_CSS_ID'])
+      @disposition = ENV["DISPOSITION"]
+      @hearing_type = ENV["HEARING_TYPE"]
+      @hearing_date = ENV["HEARING_DATE"]
+      @aod_based_on_age = ENV["AOD_BASED_ON_AGE"]
+      @closest_regional_office = ENV["CLOSEST_REGIONAL_OFFICE"]
+      @uuid = ENV["UUID"]
+      @docket = ENV["DOCKET"]
     end
 
     def seed!
@@ -17,7 +24,7 @@ module Seeds
 
     def create_ama_aod_hearing
       Timecop.travel(@days_ago)
-      create(
+      @appeal = create(
           :appeal,
           :hearing_docket,
           :with_post_intake_tasks,
@@ -27,9 +34,30 @@ module Seeds
           veteran: create_demo_veteran_for_docket,
           receipt_date: @days_ago,
           tied_judge: @hearing_judge,
-          adding_user: User.first
+          adding_user: User.first,
         )
+      update_data
       Timecop.return
+    end
+
+    def update_data
+      appeal_data = {}
+      appeal_data[:aod_based_on_age] = @aod_based_on_age if @aod_based_on_age.present?
+      appeal_data[:closest_regional_office] = @closest_regional_office if @closest_regional_office.present?
+      appeal_data[:uuid] = @uuid if @uuid.present?
+      appeal_data[:docket_type] = @docket if @docket.present?
+      @appeal.update!(appeal_data) if appeal_data.present?
+
+      hearing = @appeal.hearings.first
+      if hearing
+        hearing.update!(disposition: @disposition) if @disposition.present?
+        hearing_day = hearing.hearing_day
+        if hearing_day
+          hearing_day.request_type = @hearing_type if @hearing_type.present?
+          hearing_day.scheduled_for = @hearing_date if @hearing_date.present?
+          hearing_day.save!
+        end
+      end
     end
 
     #TODO: put the below into helper module
