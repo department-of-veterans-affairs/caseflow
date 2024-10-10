@@ -227,5 +227,3 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
     end
   end
 end
-
-# rubocop:enable Style/NumericLiterals
