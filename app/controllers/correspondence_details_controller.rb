@@ -172,7 +172,7 @@ class CorrespondenceDetailsController < CorrespondenceController
 
     # Create a new EvidenceSubmissionWindowTask and associate it with the correspondence appeal
     ActiveRecord::Base.transaction do
-      remaining_time = Time.parse(params[:task][:remaining_time])
+      remaining_time = Time.zone.parse(params[:task][:remaining_time])
       assigned_at = remaining_time
 
       task = EvidenceSubmissionWindowTask.create!(
@@ -181,7 +181,6 @@ class CorrespondenceDetailsController < CorrespondenceController
         assigned_to: MailTeam.singleton,
         assigned_at: assigned_at,
         instructions: params[:task][:instructions]
-
       )
       CorrespondencesAppealsTask.create!(correspondence_appeal: correspondence_appeal, task: task)
     end
