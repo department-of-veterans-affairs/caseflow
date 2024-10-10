@@ -34,6 +34,12 @@ class ApplicationController < ApplicationBaseController
     end
   end
 
+  rescue_from BGS::SensitivityLevelCheckFailure do |e|
+    render json: {
+      status: e.message
+    }, status: :forbidden
+  end
+
   private
 
   def deny_non_bva_admins
