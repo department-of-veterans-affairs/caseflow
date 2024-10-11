@@ -26,7 +26,7 @@ feature "NonComp Report Page", :postgres do
 
     step "should have a link that leads to saved searches" do
       click_link "View saved searches"
-      expect(page).to have_content("SavedSearches")
+      expect(page).to have_content("Saved Searches")
     end
   end
 
