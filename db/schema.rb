@@ -1751,9 +1751,9 @@ ActiveRecord::Schema.define(version: 2024_10_07_150227) do
   end
   create_table "saved_searches", force: :cascade do |t|
     t.datetime "created_at", precision: 6, null: false
+    t.text "description"
+    t.string "name"
     t.json "saved_search", default: {}, comment: "saved search data to store for the generate task report"
-    t.text "search_description"
-    t.string "search_name"
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "user_id"
     t.index ["user_id"], name: "index_saved_searches_on_user_id"

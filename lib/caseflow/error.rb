@@ -43,7 +43,7 @@ module Caseflow::Error
   class ErrorOpenModifyingExistingRequest < SerializableError; end
   class ErrorApprovingExistingRequest < SerializableError; end
   class ErrorDenyingExistingRequest < SerializableError; end
-  class MaximunSavedSearches < SerializableError; end
+  class MaximumSavedSearches < SerializableError; end
   class VaDotGovRequestError < VaDotGovAPIError; end
   class VaDotGovServerError < VaDotGovAPIError; end
   class VaDotGovLimitError < VaDotGovAPIError; end
