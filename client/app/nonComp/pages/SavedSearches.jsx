@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import Link from '../../components/Link';
+import Link from 'app/components/Link';
 import { LeftChevronIcon } from 'app/components/icons/LeftChevronIcon';
 
 import NonCompLayout from '../components/NonCompLayout';
@@ -29,9 +29,6 @@ const SavedSearches = () => {
     </div>
 
   );
-};
-
-SavedSearches.propTypes = {
 };
 
 export default SavedSearches;
