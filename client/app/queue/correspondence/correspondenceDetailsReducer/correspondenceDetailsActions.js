@@ -269,6 +269,15 @@ export const setTasksUnrelatedToAppealEmpty = (tasksUnrelatedToAppealEmpty) => (
   });
 };
 
+export const setUnrelatedTaskList = (unrelatedTaskList) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.UNRELATED_TASK_LIST,
+    payload: {
+      unrelatedTaskList
+    }
+  });
+};
+
 export const updateCorrespondenceInfo = (correspondence) =>
   (dispatch) => {
     dispatch({
