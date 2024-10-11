@@ -6,28 +6,45 @@ import TextareaField from '../../../../../components/TextareaField';
 import Select from 'react-select';
 import { INTAKE_FORM_TASK_TYPES } from '../../../../constants';
 import ApiUtil from 'app/util/ApiUtil';
+import { useDispatch, useSelector } from 'react-redux'; // Import hooks for Redux
+import { setUnrelatedTaskList } from '../../../correspondenceDetailsReducer/correspondenceDetailsActions';
 
 const AddTaskModalCorrespondenceDetails = ({
   isOpen,
   handleClose,
   correspondence,
   task,
-  // taskUpdatedCallback,
   displayRemoveCheck,
   removeTask,
 }) => {
+  const dispatch = useDispatch();
+
+  // Redux state for unrelatedTaskList
+  const unrelatedTaskList = useSelector((state) => state.correspondenceDetails.unrelatedTaskList);
+
   const [taskTypeOptions, setTaskTypeOptions] = useState([]);
   const [taskContent, setTaskContent] = useState(''); // State to track the task content
   const [selectedTaskType, setSelectedTaskType] = useState(null); // State to track the selected task type
 
-  // Extract the labels from INTAKE_FORM_TASK_TYPES.unrelatedToAppeal for use in Select component
+  // Function to filter out the task options based on the unrelatedTaskList, ensuring case-insensitive comparison
+  const getFilteredTaskTypeOptions = () => {
+    return INTAKE_FORM_TASK_TYPES.unrelatedToAppeal
+      .filter((option) =>
+        !unrelatedTaskList.some(
+          (task) => task.label.toLowerCase() === option.label.toLowerCase()
+        ) // Exclude already added tasks with case-insensitive comparison
+      )
+
+      .map((option) => ({
+        value: option.value,
+        label: option.label,
+      }));
+  };
+
+  // Recalculate task options every time the component loads or unrelatedTaskList changes
   useEffect(() => {
-    const allTaskTypeOptions = INTAKE_FORM_TASK_TYPES.unrelatedToAppeal.map((option) => ({
-      value: option.value,
-      label: option.label,
-    }));
-    setTaskTypeOptions(allTaskTypeOptions);
-  }, []);
+    setTaskTypeOptions(getFilteredTaskTypeOptions());
+  }, [unrelatedTaskList]); // Run every time unrelatedTaskList updates
 
   // Function to update task type based on user selection
   const updateTaskType = (newType) => {
@@ -42,28 +59,30 @@ const AddTaskModalCorrespondenceDetails = ({
   // Function to handle the "Confirm" button click
   const handleConfirm = async () => {
     if (selectedTaskType && taskContent) {
-      const patchData = {
-        tasks_not_related_to_appeal: [
-          {
-            klass: selectedTaskType.klass,
-            assigned_to: selectedTaskType.assigned_to,
-            content: taskContent,
-          },
-        ],
+      const newTask = {
+        klass: selectedTaskType.klass,
+        assigned_to: selectedTaskType.assigned_to,
+        content: taskContent,
+        label: taskTypeOptions.find((option) => option.value === selectedTaskType)?.label, // Store label for new task
       };
 
-      // Send the API request with the task data
+      const patchData = {
+        tasks_not_related_to_appeal: [newTask],
+      };
+
       try {
-        console.log(patchData);
         await ApiUtil.patch(
-          `/queue/correspondence/${correspondence.uuid}/update_correspondence`, // Use correspondence.uuid here
+          `/queue/correspondence/${correspondence.uuid}/update_correspondence`,
           { data: patchData }
         );
-        // If successful, call onSubmit and close the modal
+
+        // Dispatch action to append the new task to unrelatedTaskList in Redux
+        dispatch(setUnrelatedTaskList([...unrelatedTaskList, newTask]));
+
+        // Close the modal after the task is successfully added
         handleClose();
       } catch (error) {
-        // Handle error
-        console.error(error);
+        console.error('Error adding task:', error);
       }
     }
   };
@@ -78,7 +97,8 @@ const AddTaskModalCorrespondenceDetails = ({
       closeHandler={handleClose}
       confirmButton={
         <Button
-          onClick={handleConfirm} // Call the handleConfirm function when clicking Confirm
+        // Call the handleConfirm function when clicking Confirm
+          onClick={handleConfirm}
         >
           Confirm
         </Button>
@@ -94,6 +114,7 @@ const AddTaskModalCorrespondenceDetails = ({
           <label className="task-selection-title">Task</label>
           <Select
             placeholder="Select..."
+            // Filtered task options
             options={taskTypeOptions}
             onChange={updateTaskType}
             className="add-task-dropdown-style"
@@ -128,7 +149,6 @@ AddTaskModalCorrespondenceDetails.propTypes = {
   correspondence: PropTypes.object.isRequired,
   onSubmit: PropTypes.func.isRequired,
   task: PropTypes.object.isRequired,
-  taskUpdatedCallback: PropTypes.func.isRequired,
   displayRemoveCheck: PropTypes.bool.isRequired,
   removeTask: PropTypes.func.isRequired,
 };
