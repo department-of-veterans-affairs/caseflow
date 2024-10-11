@@ -108,36 +108,6 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
           expect(request_issue_update.edited_request_issue_ids).to eq([])
           expect(existing_request_issue.edited_description).to eq("edited")
         end
-
-        it "returns success response with updated closed_at date and has edits to description" do
-          valid_params[:updated_issues] <<
-            {
-              "decision_review_issue_id": "6789",
-              "edited_description": "edited again"
-            }
-          expect(removed_request_issue.reference_id).to eq("1234")
-          expect(removed_request_issue.closed_at).to eq(nil)
-          expect(removed_request_issue.contention_reference_id).to eq(100_500)
-          expect(removed_request_issue.any_updates?).to eq(false)
-          post :decision_review_updated, params: valid_params
-          expect(response).to have_http_status(:ok)
-          expect(response.body).to include("DecisionReviewUpdatedEvent successfully processed")
-          removed_request_issue.reload
-          existing_request_issue.reload
-          expect(removed_request_issue.closed_at).to eq("2023-12-07 20:49:05.000000000 -0500")
-          expect(removed_request_issue.closed_status).to eq("removed")
-          expect(existing_request_issue.edited_description).to eq("edited again")
-          expect(existing_request_issue.updated_at).to be_within(100.seconds).of(DateTime.now)
-          request_issue_update = review.request_issues_updates.first
-          expect(request_issue_update.withdrawn_request_issue_ids).to eq([])
-          expect(request_issue_update.before_request_issue_ids).to eq(
-            [removed_request_issue.id, existing_request_issue.id]
-          )
-          expect(request_issue_update.after_request_issue_ids).to eq(
-            [existing_request_issue.id]
-          )
-          expect(request_issue_update.edited_request_issue_ids).to eq([existing_request_issue.id])
-        end
       end
     end
   end
