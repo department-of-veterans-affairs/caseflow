@@ -164,25 +164,23 @@ class CorrespondenceDetailsController < CorrespondenceController
   end
 
   def waive_evidence_submission_window_task
+    task = EvidenceSubmissionWindowTask.find_by_id(params[:task][:task_id])
     appeal = Appeal.find_by_uuid(params[:appeal_uuid])
-    return render json: { error: "Appeal not found" }, status: :not_found unless appeal
 
     correspondence_appeal = @correspondence.correspondence_appeals.find_by(appeal_id: appeal.id)
-    return render json: { error: "Correspondence appeal not found" }, status: :not_found unless correspondence_appeal
 
     # Create a new EvidenceSubmissionWindowTask and associate it with the correspondence appeal
     ActiveRecord::Base.transaction do
-      remaining_time = Time.find_zone("UTC").parse(params[:task][:remaining_time])
-      end_date = remaining_time
-
-      task = EvidenceSubmissionWindowTask.create!(
+      eswt = EvidenceSubmissionWindowTask.create!(
         appeal: appeal,
-        parent: appeal.root_task,
+        parent: appeal.tasks.find_by(type: DistributionTask.name),
         assigned_to: MailTeam.singleton,
-        end_date: end_date,
+        end_date: task.timer_ends_at.to_date,
         instructions: params[:task][:instructions]
       )
-      CorrespondencesAppealsTask.create!(correspondence_appeal: correspondence_appeal, task: task)
+      task_timer = TaskTimer.where(task: task).order(:id).last
+      task_timer.update!(submitted_at: Time.zone.now)
+      CorrespondencesAppealsTask.create!(correspondence_appeal: correspondence_appeal, task: eswt)
     end
 
     render json: { correspondence: serialized_correspondence }, status: :created

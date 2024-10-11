@@ -25,6 +25,7 @@ const CorrespondenceRemoveWaiveEvidenceModal = (props) => {
       data: {
         appeal_uuid: props.appealId,
         task: {
+          task_id: task.id,
           instructions: task.instructions,
           type: 'EvidenceSubmissionWindowTask',
           appeal_id: task.appealId,
