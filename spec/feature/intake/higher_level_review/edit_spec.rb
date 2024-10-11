@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require "byebug"
 
 feature "Higher Level Review Edit issues", :all_dbs do
   include IntakeHelpers
@@ -1737,7 +1738,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
         after { FeatureToggle.disable!(:remove_comp_and_pen_intake) }
 
-        it "Add Issue, Edit claim label and Requested issues dropdown are disabled" do
+        it "Requested issues dropdown is disabled" do
           visit "higher_level_reviews/#{higher_level_review_disable.uuid}/edit"
 
           disabled_status = page.evaluate_script("document.getElementById('issue-action-0').disabled")
@@ -1746,8 +1747,24 @@ feature "Higher Level Review Edit issues", :all_dbs do
           expect(page).to have_css(".cf-select--is-disabled")
           expect(page).to have_css(".cf-select__control--is-disabled")
           expect(page).to have_content(benefit_type.capitalize)
-          expect(page).to have_button("Add issue", disabled: true)
+        end
+
+        it "Edit claim label button is disabled" do
+          visit "higher_level_reviews/#{higher_level_review_disable.uuid}/edit"
+
           expect(page).to have_button("Edit claim label", disabled: true)
+        end
+
+        it "Add Issue button is disabled" do
+          visit "higher_level_reviews/#{higher_level_review_disable.uuid}/edit"
+
+          expect(page).to have_button("Add issue", disabled: true)
+        end
+
+        it "Edit contention title button is disabled" do
+          visit "higher_level_reviews/#{higher_level_review_disable.uuid}/edit"
+
+          expect(page).to have_button("Edit contention title", disabled: true)
         end
       end
     end
