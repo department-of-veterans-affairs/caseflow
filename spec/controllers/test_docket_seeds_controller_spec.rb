@@ -38,7 +38,13 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
                 seed_type: "ama-aod-hearing-seeds",
                 seed_count: "1",
                 days_ago: "30",
-                judge_css_id: "TEST30JUDGE"
+                judge_css_id: "TEST30JUDGE",
+                aod_based_on_age: true,
+                closest_regional_office: "R10",
+                hearing_type: "R",
+                hearing_date: 2.days.ago,
+                uuid: "c64aadf7-7edd-45c1-b4b3-d79997f28827",
+                docket: Constants.AMA_DOCKETS.hearing
               }
             ]
 
@@ -53,6 +59,10 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
             expect(hearing_case.receipt_date).to eq(Date.parse(30.days.ago.to_s))
             expect(Date.parse(hearing_case.tasks.where(type: "DistributionTask").first.assigned_at.to_s))
               .to eq(Date.parse(30.days.ago.to_s))
+            expect(hearing_case.aod_based_on_age).to be_truthy
+            expect(hearing_case.closest_regional_office).to eq("R10")
+            expect(hearing_case.uuid).to eq("c64aadf7-7edd-45c1-b4b3-d79997f28827")
+            expect(hearing_case.docket_type).to eq("hearing")
           end
 
           it "creates a 365 day old AMA AOD Hearing case" do

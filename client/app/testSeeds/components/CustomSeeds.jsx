@@ -60,6 +60,34 @@ const CustomSeeds = () => {
           obj.judge_css_id = colValue;
           break;
 
+        case 'Disposition':
+          obj.disposition = colValue;
+          break;
+
+        case 'Hearing Type':
+          obj.hearing_type = colValue;
+          break;
+
+        case 'Date/Time of Hearing':
+          obj.hearing_date = colValue;
+          break;
+
+        case 'AOD based on age':
+          obj.aod_based_on_age = Number(colValue);
+          break;
+
+        case 'Regional Office':
+          obj.closest_regional_office = colValue;
+          break;
+
+        case 'UUID':
+          obj.uuid = colValue;
+          break;
+
+        case 'Docket':
+          obj.docket = colValue;
+          break;
+
         default:
           break;
         }
@@ -214,6 +242,13 @@ const CustomSeeds = () => {
                 <th className={cx('table-header-styling')}>Amount</th>
                 <th className={cx('table-header-styling')}>Days Ago</th>
                 <th className={cx('table-header-styling')}>Associated Judge</th>
+                <th className={cx('table-header-styling')}>Disposition</th>
+                <th className={cx('table-header-styling')}>Hearing Type</th>
+                <th className={cx('table-header-styling')}>Date/Time of Hearing</th>
+                <th className={cx('table-header-styling')}>AOD based on age</th>
+                <th className={cx('table-header-styling')}>Regional Office</th>
+                <th className={cx('table-header-styling')}>UUID</th>
+                <th className={cx('table-header-styling')}>Docket</th>
                 <th className={cx('table-header-styling')}>
                   <div>
                     <Button onClick={() => resetPreviewSeeds()} name="reset form" />
@@ -228,6 +263,13 @@ const CustomSeeds = () => {
                   <td>{obj.seed_count} Cases</td>
                   <td>{obj.days_ago} Days Ago</td>
                   <td>{obj.judge_css_id}</td>
+                  <td>{obj.disposition}</td>
+                  <td>{obj.hearing_type}</td>
+                  <td>{obj.hearing_date}</td>
+                  <td>{obj.aod_based_on_age}</td>
+                  <td>{obj.closest_regional_office}</td>
+                  <td>{obj.uuid}</td>
+                  <td>{obj.docket}</td>
                   <td>
                     <div>
                       <span id={`del-preview-row-${index}`} onClick={() => removePreviewSeed(obj, index)}>

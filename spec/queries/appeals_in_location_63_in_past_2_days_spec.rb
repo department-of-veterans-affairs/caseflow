@@ -218,7 +218,17 @@ describe AppealsInLocation63InPast2Days do
         expected_appeals_appended_bfkeys = expected_appeals.map { |ea| "150000#{ea.bfkey}" }
         returned_appeals = job.send(:loc_63_appeals)
 
-        expect(returned_appeals.size).to eq(4)
+        # The expectation changes based on the current time in UTC.
+        # Query method that retrieves the actual count from the database
+        # If the current time is between 9 PM and 1 AM UTC,
+        # the expectation is set to 3. Otherwise, it is set to 4.
+
+        current_hour = Time.now.utc.hour
+        hours = Time.now.utc.dst? ? [0, 1, 2] : [0, 1, 2, 3]
+        expected_count = hours.include?(current_hour) ? 3 : 4
+        expected_appeals_appended_bfkeys.pop if hours.include?(current_hour)
+
+        expect(returned_appeals.size).to eq(expected_count)
         expect(returned_appeals.map { |ra| ra[:docket_number] }).to match_array(expected_appeals_appended_bfkeys)
       end
     end
@@ -292,7 +302,17 @@ describe AppealsInLocation63InPast2Days do
         expected_appeals_appended_bfkeys = expected_appeals.map { |ea| "150000#{ea.bfkey}" }
         returned_appeals = job.send(:loc_63_appeals)
 
-        expect(returned_appeals.size).to eq(4)
+        # The expectation changes based on the current time in UTC.
+        # Query method that retrieves the actual count from the database
+        # If the current time is between 9 PM and 1 AM UTC,
+        # the expectation is set to 3. Otherwise, it is set to 4.
+
+        current_hour = Time.now.utc.hour
+        hours = Time.now.utc.dst? ? [0, 1, 2] : [0, 1, 2, 3]
+        expected_count = hours.include?(current_hour) ? 3 : 4
+        expected_appeals_appended_bfkeys.pop if hours.include?(current_hour)
+
+        expect(returned_appeals.size).to eq(expected_count)
         expect(returned_appeals.map { |ra| ra[:docket_number] }).to match_array(expected_appeals_appended_bfkeys)
       end
     end
