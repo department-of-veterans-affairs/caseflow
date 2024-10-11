@@ -313,11 +313,6 @@ class ClaimReview < DecisionReview
     intake&.from_decision_review_created_event? || false
   end
 
-  def from_decision_review_event?
-    # refer back to the associated Intake to see if both objects came from DRCE
-    intake&.from_decision_review_event? || false
-  end
-
   def sct_appeal?
     false
   end

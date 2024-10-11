@@ -632,7 +632,7 @@ class RequestIssue < CaseflowRecord
   end
 
   def close_if_ineligible!
-    return if issue_from_event?
+    return if event_records.any?
 
     close!(status: :ineligible) if ineligible_reason?
   end
@@ -850,13 +850,6 @@ class RequestIssue < CaseflowRecord
   def from_decision_review_created_event?
     # refer back to the associated Intake to see if both objects came from DRCE
     decision_review&.from_decision_review_created_event?
-  end
-
-  # checks if update came from event
-  def issue_from_event?
-    if !decision_review.is_a?(Appeal)
-      decision_review&.from_decision_review_event?
-    end
   end
 
   private

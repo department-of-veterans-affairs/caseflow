@@ -120,7 +120,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
           expect(ineligible_to_eligible_request_issue.contention_removed_at).to be_within(1.second).of(DateTime.now)
           expect(ineligible_to_eligible_request_issue.contention_reference_id).to eq(100_500)
           post :decision_review_updated, params: valid_params
-          expect(response).to have_http_status(:ok)
+          expect(response).to have_http_status(:created)
           expect(response.body).to include("DecisionReviewUpdatedEvent successfully processed")
           ineligible_to_eligible_request_issue.reload
 
@@ -245,7 +245,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
           expect(eligible_to_ineligible_request_issue.closed_status).to eq(nil)
           expect(eligible_to_ineligible_request_issue.reference_id).to eq("1234")
           post :decision_review_updated, params: valid_params
-          expect(response).to have_http_status(:ok)
+          expect(response).to have_http_status(:created)
           expect(response.body).to include("DecisionReviewUpdatedEvent successfully processed")
           eligible_to_ineligible_request_issue.reload
           expect(eligible_to_ineligible_request_issue.ineligible_reason).to eq("appeal_to_appeal")
@@ -368,7 +368,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
           expect(ineligible_to_ineligible_request_issue.closed_status).to eq("ineligible")
           expect(ineligible_to_ineligible_request_issue.reference_id).to eq("1234")
           post :decision_review_updated, params: valid_params
-          expect(response).to have_http_status(:ok)
+          expect(response).to have_http_status(:created)
           expect(response.body).to include("DecisionReviewUpdatedEvent successfully processed")
           ineligible_to_ineligible_request_issue.reload
           expect(ineligible_to_ineligible_request_issue.ineligible_reason).to eq("appeal_to_appeal")
