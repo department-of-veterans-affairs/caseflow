@@ -9,6 +9,7 @@ import TaskTableTab from './TaskTableTab';
 import useLocalFilterStorage from '../hooks/useLocalFilterStorage';
 import { mapValues, sumBy } from 'lodash';
 import { sprintf } from 'sprintf-js';
+import { formatDateStr } from '../../util/DateUtil';
 
 const NonCompTabsUnconnected = (props) => {
   const [localFilter, setFilter] = useLocalFilterStorage('nonCompFilter', []);
@@ -58,12 +59,16 @@ const NonCompTabsUnconnected = (props) => {
         const dateFilter = match[1];
         const [mode, startDate = null, endDate = null] = dateFilter.split(',');
 
+        const formattedStartDate = startDate ? formatDateStr(startDate) : '';
+
+        const formattedEndDate = endDate ? formatDateStr(endDate) : '';
+
         // Object that defines how to build the string based on the mode
         const completedDateFilterModeHandlers = {
-          before: `Before this date ${startDate}`,
-          after: `After this date ${startDate}`,
-          on: `On this date ${startDate}`,
-          between: `Between this ${startDate} and that ${endDate}`,
+          before: `Before this date ${formattedStartDate}`,
+          after: `After this date ${formattedStartDate}`,
+          on: `On this date ${formattedStartDate}`,
+          between: `Between this ${formattedStartDate} and that ${formattedEndDate}`,
           last_7_days: 'Last 7 Days',
           last_30_days: 'Last 30 Days',
           last_365_days: 'Last 365 Days'

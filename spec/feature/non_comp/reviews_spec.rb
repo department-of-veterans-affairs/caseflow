@@ -88,7 +88,7 @@ feature "NonComp Reviews Queue", :postgres do
              :completed,
              appeal: hlr_c,
              assigned_to: non_comp_org,
-             closed_at: 2.days.ago)
+             closed_at: 3.days.ago)
     ]
   end
 
@@ -428,7 +428,7 @@ feature "NonComp Reviews Queue", :postgres do
       click_button("tasks-organization-queue-tab-3")
 
       later_date = Time.zone.now.strftime("%m/%d/%y")
-      earlier_date = 2.days.ago.strftime("%m/%d/%y")
+      earlier_date = 3.days.ago.strftime("%m/%d/%y")
 
       order_buttons[:date_completed].click
       expect(page).to have_current_path(
@@ -990,16 +990,25 @@ feature "NonComp Reviews Queue", :postgres do
       visit BASE_URL
       expect(page).to have_content("Veterans Health Administration")
       click_on "Completed Tasks"
-      # TODO: Change this to last 7 days
+
+      # Swap these on once the Last 7 days pre filter is added back
+      # expect(page).to have_content("Cases completed (Last 7 Days)")
+      # expect(page).to have_content("Date Completed (1)")
+      # expect(page).to have_content("Viewing 1-2 of 2 total")
+
+      # Remove these 3 once Last 7 days pre filter is added back
       expect(page).to have_content("Cases completed:")
+      expect(page).to_not have_content("Date Completed (1)")
+      expect(page).to have_content("Viewing 1-3 of 3 total")
+
       find("[aria-label='Filter by completed date']").click
       expect(page).to have_content("Date filter parameters")
       submit_button = find("button", text: "Apply Filter")
 
       expect(submit_button[:disabled]).to eq "true"
-      # TODO: Figure out how to do this via helpers so it's not so gross
       page.find(".cf-select__control", match: :first).click
       page.all("cf-select__option")
+      # Verify that all the date picker options are available
       all_date_filter_options = [
         "Between these dates",
         "Before this date",
@@ -1013,16 +1022,49 @@ feature "NonComp Reviews Queue", :postgres do
       all_date_filter_options.each do |date_filter_option|
         expect(page).to have_content(date_filter_option)
       end
-      # TODO: match all of the options here
       find("div", class: "cf-select__option", text: "Before this date", exact_text: true).click
 
-      fill_in "Date", with: "01/01/2019"
+      one_day_ago_date_string = 1.day.ago.strftime("%m/%d/%Y")
+      fill_in "Date", with: one_day_ago_date_string
       expect(submit_button[:disabled]).to eq "false"
       submit_button.click
 
-      expect(page).to have_content("Cases completed (Before this date 2019-01-01)")
+      expect(page).to have_content("Cases completed (Before this date #{one_day_ago_date_string})")
       expect(page).to have_content("Date Completed (1)")
-      expect(page).to have_content("Viewing 0-0 of 0 total")
+      expect(page).to have_content("Viewing 1-2 of 2 total")
+      find("[aria-label='Filter by completed date. Filtering by before,#{1.day.ago.strftime('%Y-%m-%d')},']").click
+      page.find(".cf-select__control", match: :first).click
+      find("div", class: "cf-select__option", text: "After this date", exact_text: true).click
+      find("button", text: "Apply Filter").click
+
+      expect(page).to have_content("Cases completed (After this date #{one_day_ago_date_string})")
+      expect(page).to have_content("Date Completed (1)")
+      expect(page).to have_content("Viewing 1-1 of 1 total")
+
+      click_on "Clear all filters"
+
+      # Swap these on once the Last 7 days pre filter is added back
+      # expect(page).to have_content("Cases completed (Last 7 Days)")
+      # expect(page).to have_content("Date Completed (1)")
+      # expect(page).to have_content("Viewing 1-2 of 2 total")
+
+      # Remove these 3 once Last 7 days pre filter is added back
+      expect(page).to have_content("Cases completed:")
+      expect(page).to_not have_content("Date Completed (1)")
+      expect(page).to have_content("Viewing 1-3 of 3 total")
+
+      find("[aria-label='Filter by completed date']").click
+      expect(page).to have_content("Date filter parameters")
+      submit_button = find("button", text: "Apply Filter")
+
+      expect(submit_button[:disabled]).to eq "true"
+      page.find(".cf-select__control", match: :first).click
+      find("div", class: "cf-select__option", text: "Last 30 days", exact_text: true).click
+      submit_button.click
+
+      expect(page).to have_content("Cases completed (Last 30 Days)")
+      expect(page).to have_content("Date Completed (1)")
+      expect(page).to have_content("Viewing 1-3 of 3 total")
     end
   end
 
