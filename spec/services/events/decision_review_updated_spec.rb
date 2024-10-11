@@ -38,7 +38,7 @@ describe Events::DecisionReviewUpdated do
     allow(Events::DecisionReviewUpdated::UpdateEndProductEstablishment).to receive(:process!)
       .with(event: event, parser: parser).and_return(nil)
     allow(RequestIssuesUpdateEvent).to receive(:new)
-      .with(user: user, review: review, parser: parser, event: event)
+      .with(user: user, review: review, parser: parser, event: event, epe: end_product_establishment)
       .and_return(double("RequestIssuesUpdateEvent", perform!: nil))
   end
 
@@ -98,7 +98,7 @@ describe Events::DecisionReviewUpdated do
 
     it "updates request issues" do
       expect(RequestIssuesUpdateEvent).to receive(:new)
-        .with(user: user, review: review, parser: parser, event: event)
+        .with(user: user, review: review, parser: parser, event: event, epe: end_product_establishment)
         .and_return(double("RequestIssuesUpdateEvent", perform!: nil))
       subject
     end
@@ -114,7 +114,8 @@ describe Events::DecisionReviewUpdated do
 
     before do
       allow(RequestIssuesUpdateEvent).to receive(:new)
-        .with(user: user, review: review, parser: parser, event: event).and_raise(standard_error)
+        .with(user: user, review: review, parser: parser, event: event, epe: end_product_establishment)
+        .and_raise(standard_error)
       allow(Rails.logger).to receive(:error)
     end
 
