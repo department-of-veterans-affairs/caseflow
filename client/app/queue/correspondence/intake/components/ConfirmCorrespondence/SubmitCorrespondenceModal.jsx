@@ -76,7 +76,7 @@ export const SubmitCorrespondenceModal = ({
     let status;
 
     console.log(submitData);
-    await ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/inake`, { data: submitData }).
+    await ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/intake`, { data: submitData }).
       then((response) => {
         status = response.status;
       }).
