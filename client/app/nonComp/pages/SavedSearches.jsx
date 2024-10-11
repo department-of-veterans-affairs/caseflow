@@ -22,7 +22,7 @@ const SavedSearches = () => {
         </Link>
       </div>
 
-      <NonCompLayout >
+      <NonCompLayout>
         <h1>Saved Searches</h1>
         Select a search you previously saved or look for ones others have saved by switching between the tabs.
       </NonCompLayout>
