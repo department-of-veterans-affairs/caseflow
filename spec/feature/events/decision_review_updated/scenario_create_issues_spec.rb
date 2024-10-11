@@ -9,9 +9,6 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
     let!(:epe) { create(:end_product_establishment, :active_hlr, reference_id: 12_345_678) }
     let(:review) { epe.source }
     let!(:existing_request_issue) { create(:request_issue, decision_review: review, reference_id: "6789") }
-    let!(:event) { DecisionReviewCreatedEvent.create!(reference_id: "2") }
-    # let!(:request_issue) { RequestIssue.new(benefit_type: "compensation", decision_review: review) }
-    let!(:request_issue_event_record) { EventRecord.create!(event: event, evented_record: existing_request_issue) }
 
     def logical_date_converter(logical_date_int)
       return nil if logical_date_int.nil? || logical_date_int.to_i.days == 0

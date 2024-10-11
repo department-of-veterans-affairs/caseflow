@@ -7,7 +7,6 @@
 
 # rubocop:disable Metrics/ClassLength
 class RequestIssue < CaseflowRecord
-  include EventConcern
   include Asyncable
   include HasBusinessLine
   include DecisionSyncable
