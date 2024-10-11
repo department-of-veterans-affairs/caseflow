@@ -6,7 +6,7 @@ import TextareaField from '../../../../../components/TextareaField';
 import Select from 'react-select';
 import { INTAKE_FORM_TASK_TYPES } from '../../../../constants';
 import ApiUtil from 'app/util/ApiUtil';
-import { useDispatch, useSelector } from 'react-redux'; // Import hooks for Redux
+import { useDispatch, useSelector } from 'react-redux';
 import { setUnrelatedTaskList } from '../../../correspondenceDetailsReducer/correspondenceDetailsActions';
 
 const AddTaskModalCorrespondenceDetails = ({
@@ -23,19 +23,22 @@ const AddTaskModalCorrespondenceDetails = ({
   const unrelatedTaskList = useSelector((state) => state.correspondenceDetails.unrelatedTaskList);
 
   const [taskTypeOptions, setTaskTypeOptions] = useState([]);
-  const [taskContent, setTaskContent] = useState(''); // State to track the task content
-  const [selectedTaskType, setSelectedTaskType] = useState(null); // State to track the selected task type
+  // State to track the task content
+  const [taskContent, setTaskContent] = useState('');
+  // State to track the selected task type
+  const [selectedTaskType, setSelectedTaskType] = useState(null);
 
   // Function to filter out the task options based on the unrelatedTaskList, ensuring case-insensitive comparison
   const getFilteredTaskTypeOptions = () => {
-    return INTAKE_FORM_TASK_TYPES.unrelatedToAppeal
-      .filter((option) =>
+    return INTAKE_FORM_TASK_TYPES.unrelatedToAppeal.
+      filter((option) =>
         !unrelatedTaskList.some(
-          (task) => task.label.toLowerCase() === option.label.toLowerCase()
-        ) // Exclude already added tasks with case-insensitive comparison
-      )
+          // Exclude already added tasks with case-insensitive comparison
+          (exitsingTask) => exitsingTask.label.toLowerCase() === option.label.toLowerCase()
+        )
+      ).
 
-      .map((option) => ({
+      map((option) => ({
         value: option.value,
         label: option.label,
       }));
@@ -44,16 +47,19 @@ const AddTaskModalCorrespondenceDetails = ({
   // Recalculate task options every time the component loads or unrelatedTaskList changes
   useEffect(() => {
     setTaskTypeOptions(getFilteredTaskTypeOptions());
-  }, [unrelatedTaskList]); // Run every time unrelatedTaskList updates
+    // Run every time unrelatedTaskList updates
+  }, [unrelatedTaskList]);
 
   // Function to update task type based on user selection
   const updateTaskType = (newType) => {
-    setSelectedTaskType(newType.value); // Set the selected task type (klass, assigned_to)
+    // Set the selected task type (klass, assigned_to)
+    setSelectedTaskType(newType.value);
   };
 
   // Function to update task content when user types in the TextareaField
   const updateTaskContent = (newContent) => {
-    setTaskContent(newContent); // Update task content state
+    // Update task content state
+    setTaskContent(newContent);
   };
 
   // Function to handle the "Confirm" button click
@@ -63,7 +69,8 @@ const AddTaskModalCorrespondenceDetails = ({
         klass: selectedTaskType.klass,
         assigned_to: selectedTaskType.assigned_to,
         content: taskContent,
-        label: taskTypeOptions.find((option) => option.value === selectedTaskType)?.label, // Store label for new task
+        // Store label for new task
+        label: taskTypeOptions.find((option) => option.value === selectedTaskType)?.label,
       };
 
       const patchData = {
@@ -125,8 +132,10 @@ const AddTaskModalCorrespondenceDetails = ({
         <TextareaField
           name="content"
           label="Provide context and instruction on this task"
-          value={taskContent} // Bind the TextareaField to taskContent state
-          onChange={updateTaskContent} // Call updateTaskContent when content changes
+          // Bind the TextareaField to taskContent state
+          value={taskContent}
+          // Call updateTaskContent when content changes
+          onChange={updateTaskContent}
         />
 
         {displayRemoveCheck && (
