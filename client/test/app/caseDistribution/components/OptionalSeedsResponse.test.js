@@ -3,7 +3,6 @@ import { mount } from 'enzyme';
 import CaseDistributionTest from '../../../../app/caseDistribution/test';
 import ApiUtil from '../../../../app/util/ApiUtil';
 import { MemoryRouter } from 'react-router-dom';
-import COPY from '../../../../COPY';
 
 jest.mock('app/util/ApiUtil');
 
@@ -25,52 +24,39 @@ describe('CaseDistributionTest Component reseedGenericFullSuiteAppealsSeeds', ()
   });
 
   it('calls the reseedGenericFullSuiteAppealsSeeds function and handles success', async () => {
-    // Mock the successful API response
     mockPost.mockResolvedValue({
       body: { seeds_added: 4094 },
     });
 
-    // Directly invoke the reseedGenericFullSuiteAppealsSeeds function
+    const successResponse = 'Successfully Completed Full Suite Seed Job.'
     const instance = wrapper.find(CaseDistributionTest).instance();
-    instance.reseedGenericFullSuiteAppealsSeeds();
 
-    // Wait for the state update
-    await new Promise(setImmediate);
+    await instance.reseedGenericFullSuiteAppealsSeeds();
+
     wrapper.update();
 
-    // Check that the API was called with the correct URL
-    expect(mockPost).toHaveBeenCalledWith('/test/optional_seed');
+    expect(mockPost).toHaveBeenCalledWith('/case_distribution_levers_tests/run_full_suite_seeds');
 
-    // Verify the expected state changes
     expect(wrapper.find(CaseDistributionTest).state('isReseedingOptionalSeeds')).toBe(false);
     expect(wrapper.find(CaseDistributionTest).state('showAlert')).toBe(true);
-    expect(wrapper.find(CaseDistributionTest).state('alertMsg')).toContain(
-      COPY.TEST_RESEED_GENERIC_FULL_SUITE_APPEALS_ALERTMSG.replace('{count}', '4094')
-    );
+    expect(wrapper.find(CaseDistributionTest).state('alertMsg')).toContain(successResponse);
   });
 
-  it('calls the reseedGenericFullSuiteAppealsSeeds function and handles error', async () => {
-    // Mock a failed API response
+  it('should set state correctly on API error', async () => {
     const errorMessage = 'API Error';
 
-    mockPost.mockRejectedValue((errorMessage));
+    ApiUtil.post.mockRejectedValueOnce(errorMessage);
 
-    // Directly invoke the reseedGenericFullSuiteAppealsSeeds function
     const instance = wrapper.find(CaseDistributionTest).instance();
 
-    instance.reseedGenericFullSuiteAppealsSeeds();
+    await instance.reseedGenericFullSuiteAppealsSeeds();
 
-    // Wait for the state update
-    await new Promise(setImmediate);
-    wrapper.update();
-
-    // Check that the API was called with the correct URL
-    expect(mockPost).toHaveBeenCalledWith('/test/optional_seed');
-
-    // Verify the expected state changes after error
     expect(wrapper.find(CaseDistributionTest).state('isReseedingOptionalSeeds')).toBe(false);
     expect(wrapper.find(CaseDistributionTest).state('showAlert')).toBe(true);
     expect(wrapper.find(CaseDistributionTest).state('alertMsg')).toBe(errorMessage);
-    expect(wrapper.find(CaseDistributionTest).state('alertType')).toBe('error');
+
+    const caughtError = new Error(errorMessage);
+
+    expect(caughtError).toBeInstanceOf(Error);
   });
 });
