@@ -465,7 +465,6 @@ const CorrespondenceDetails = (props) => {
               organizations={props.organizations}
               userCssId={props.userCssId}
               appeal={taskAdded.appeal.data.attributes}
-              externalId={taskAdded.appeal.data.externalId}
               waivableUser={props.isInboundOpsSuperuser || props.isInboundOpsSupervisor}
             />
           )
