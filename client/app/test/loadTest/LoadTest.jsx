@@ -26,9 +26,8 @@ export default function LoadTest(props) {
 }
 
 /*
-This file acts as a container to the LoadTestForm. While I know this strategy is not conventional,
-as the developer that was assigned this front-end task, I stumbled my way to get this completed. Consider
-this a note on what the overall behavior of this portion of the app is.
+This file acts as a container to the LoadTestForm. Consider this a note on what the overall behavior of this
+portion of the app is.
 
 The component tree is as follows:
     -LoadTestForm // the actual form for the load test. The onSubmit happens here when the button is clicked.

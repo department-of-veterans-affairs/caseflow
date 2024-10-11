@@ -8,14 +8,12 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 
 import FeatureToggleConfiguration from './FeatureToggleConfiguration';
 import FunctionConfiguration from './FunctionConfiguration';
-import Checkbox from '../../components/Checkbox';
 import OFFICE_INFO from '../../../constants/REGIONAL_OFFICE_FOR_CSS_STATION';
-// import { register } from 'module';
+import OrgCheckboxSection from './OrgCheckboxSection';
 
 export default function UserConfiguration(props) {
   const [stationSelected, setStationSelected] = useState('');
   const [isSelectedStation, stationIsSelected] = useState(false);
-  const [selectedOrganizations, setSelectedOrganizations] = useState({});
   const [isSelectedOffice, officeIsSelected] = useState(false);
   const [officeSelected, setOfficeSelected] = useState('');
 
@@ -24,7 +22,6 @@ export default function UserConfiguration(props) {
 
   const functionsAvailable = props.form_values.functions_available;
   const featureToggles = props.featuresList;
-  const allOrganizations = props.form_values.all_organizations;
   const currentState = props.currentState;
   const updateState = props.updateState;
 
@@ -43,59 +40,6 @@ export default function UserConfiguration(props) {
         }
       }
     );
-  };
-
-  const handleOrganizationSelect = (org) => {
-    setSelectedOrganizations((prev) => {
-      const updatedSelections = { ...prev };
-
-      if (updatedSelections[org]) {
-        delete updatedSelections[org];
-        delete updatedSelections[`${org}-admin`];
-      } else {
-        updatedSelections[org] = true;
-      }
-      updateState(
-        {
-          ...currentState,
-          user: {
-            ...currentState.user,
-            user: {
-              ...currentState.user.user,
-              organizations: [updatedSelections]
-            }
-          }
-        }
-      );
-
-      return updatedSelections;
-    });
-  };
-
-  const handleAdminChange = (org) => {
-    setSelectedOrganizations((prev) => {
-      const updatedSelections = { ...prev };
-
-      if (updatedSelections[`${org}-admin`]) {
-        delete updatedSelections[`${org}-admin`];
-      } else {
-        updatedSelections[`${org}-admin`] = true;
-      }
-      updateState(
-        {
-          ...currentState,
-          user: {
-            ...currentState.user,
-            user: {
-              ...currentState.user.user,
-              organizations: updatedSelections
-            }
-          }
-        }
-      );
-
-      return updatedSelections;
-    });
   };
 
   Object.entries(OFFICE_INFO).forEach((info) => {
@@ -176,27 +120,7 @@ export default function UserConfiguration(props) {
               <br />
               <p>Organizations</p>
               <div className="load-test-container">
-                {allOrganizations.map((org) => (
-                  <div className="load-test-container-checkbox test-class-sizing" key={org}>
-                    <Checkbox
-                      label={org}
-                      name={org}
-                      isChecked={Boolean(selectedOrganizations[org])}
-                      onChange={() => handleOrganizationSelect(org)}
-                    />
-                    <div style={{ marginLeft: '20px' }}>
-                      {selectedOrganizations[org] && (
-                        <Checkbox
-                          label="Admin"
-                          name={`${org}-admin`}
-                          isChecked={Boolean(selectedOrganizations[`${org}-admin`])}
-                          onChange={() => handleAdminChange(org)}
-                          style={{ marginLeft: '20px' }}
-                        />
-                      )}
-                    </div>
-                  </div>
-                ))}
+                <OrgCheckboxSection {...props} />
               </div>
               <br />
               <h2><strong>Functions</strong></h2>
