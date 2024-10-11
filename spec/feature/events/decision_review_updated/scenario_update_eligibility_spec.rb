@@ -17,6 +17,11 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
                contested_issue_description: "original description", nonrating_issue_category: "original category",
                nonrating_issue_description: "original nonrating description", contention_reference_id: 100_500)
       end
+      let!(:event2) { DecisionReviewCreatedEvent.create!(reference_id: "2") }
+      let!(:request_issue_event_record) do
+        EventRecord.create!(event: event2,
+                            evented_record: ineligible_to_eligible_request_issue)
+      end
 
       def json_test_payload
         {
@@ -123,7 +128,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
           expect(response).to have_http_status(:created)
           expect(response.body).to include("DecisionReviewUpdatedEvent successfully processed")
           ineligible_to_eligible_request_issue.reload
-
+          expect(ineligible_to_eligible_request_issue.event_records.count).to eq(2)
           expect(ineligible_to_eligible_request_issue.ineligible_reason).to eq(nil)
           expect(ineligible_to_eligible_request_issue.contested_issue_description).to eq("UPDATED DESCRIPTION")
           expect(ineligible_to_eligible_request_issue.nonrating_issue_category).to eq("Military Retired Pay UPDATED")

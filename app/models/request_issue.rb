@@ -7,6 +7,7 @@
 
 # rubocop:disable Metrics/ClassLength
 class RequestIssue < CaseflowRecord
+  include EventConcern
   include Asyncable
   include HasBusinessLine
   include DecisionSyncable
@@ -128,6 +129,7 @@ class RequestIssue < CaseflowRecord
 
   class << self
     # the umbrella term "rating" here is generalized to the type of EP it refers to.
+
     def rating
       rating_issue.or(rating_decision).or(unidentified)
     end
@@ -632,7 +634,7 @@ class RequestIssue < CaseflowRecord
   end
 
   def close_if_ineligible!
-    return if event_records.any?
+    return if reference_id.present?
 
     close!(status: :ineligible) if ineligible_reason?
   end

@@ -7,7 +7,7 @@ module EventConcern
   # Check if this object is associated with any Event, regardless of type
   # check if this object exists in the Event Records table
   def from_event?
-    event_record.present?
+    event_record.present? || event_records.any?
   end
 
   # Check if this object is associated with a DecisionReviewCreatedEvent
