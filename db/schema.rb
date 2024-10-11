@@ -2425,6 +2425,7 @@ ActiveRecord::Schema.define(version: 2024_10_07_150227) do
   add_foreign_key "request_issues", "request_issues", column: "corrected_by_request_issue_id"
   add_foreign_key "request_issues", "request_issues", column: "ineligible_due_to_id"
   add_foreign_key "request_issues_updates", "users"
+  add_foreign_key "saved_searches", "users"
   add_foreign_key "schedule_periods", "users"
   add_foreign_key "sent_hearing_admin_email_events", "sent_hearing_email_events"
   add_foreign_key "sent_hearing_email_events", "hearing_email_recipients", column: "email_recipient_id"
