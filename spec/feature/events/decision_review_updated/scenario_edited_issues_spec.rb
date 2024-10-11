@@ -8,7 +8,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
     let(:api_key) { ApiKey.create!(consumer_name: "API TEST TOKEN") }
     let!(:epe) { create(:end_product_establishment, :active_hlr, reference_id: 12_345_678) }
     let(:review) { epe.source }
-    let!(:existing_request_issue) { create(:request_issue, decision_review: review, reference_id: "1234") }
+    let!(:existing_request_issue) { create(:request_issue, :ineligible, decision_review: review, reference_id: "1234") }
 
     def json_test_payload
       {
@@ -54,7 +54,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
             "original_caseflow_request_issue_id": 1,
             "contested_rating_decision_reference_id": 1,
             "contested_rating_issue_reference_id": 2,
-            "contested_decision_issue_id": 3,
+            "contested_decision_issue_id": nil,
             "untimely_exemption": false,
             "untimely_exemption_notes": "some notes",
             "edited_description": "DIC: Service connection denied (UPDATED)",
@@ -169,7 +169,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
           "original_caseflow_request_issue_id": 2,
           "contested_rating_decision_reference_id": 1,
           "contested_rating_issue_reference_id": 2,
-          "contested_decision_issue_id": 3,
+          "contested_decision_issue_id": nil,
           "untimely_exemption": false,
           "untimely_exemption_notes": "some notes",
           "edited_description": "DIC: Service connection denied 2 (UPDATED)",
