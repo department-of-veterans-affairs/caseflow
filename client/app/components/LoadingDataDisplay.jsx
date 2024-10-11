@@ -35,7 +35,7 @@ const accessDeniedMsg = <div>
   <br />
   If you have any questions or need assistance with the request form linked above,
   please contact the Restricted Portfolio Management team at
-  <a href="mailto:VBA.RPM@va.gov">VBA.RPM@va.gov</a>.
+  &nbsp;<a href="mailto:VBA.RPM@va.gov">VBA.RPM@va.gov</a>.
 </div>;
 
 const duplicateNumberTitle = { title: COPY.DUPLICATE_PHONE_NUMBER_TITLE };
