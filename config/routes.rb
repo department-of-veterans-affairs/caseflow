@@ -43,6 +43,7 @@ Rails.application.routes.draw do
       post 'run_demo_non_avlj_appeals'
       post 'run_demo_docket_priority'
       post 'run_return_legacy_appeals_to_board'
+      post 'run_full_suite_seeds'
     end
   end
 
