@@ -85,6 +85,29 @@ class CaseDistributionLeversTestsController < ApplicationController
     head :ok
   end
 
+  def run_full_suite_seeds
+    result = nil
+
+    thread = Thread.new do
+      begin
+        result = FullSuiteSeedJob.perform_now
+      rescue StandardError => error
+        result = { error: error.message }
+      end
+    end
+
+    unless thread.join(30) # Will return nil if the thread is still alive after 30 seconds
+      return head :ok
+    end
+
+    if result.is_a?(Hash) && result[:error]
+      render json: { error: result[:error] }, status: :unprocessable_entity
+      return
+    end
+
+    head :ok
+  end
+
   def appeals_distributed
     # change this to the correct class
     csv_data = AppealsDistributed.process
