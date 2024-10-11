@@ -518,25 +518,22 @@ const CorrespondenceDetails = (props) => {
     <div className="correspondence-existing-appeals">
       <div className="left-section">
         <h2>Tasks not related to an appeal</h2>
-          <Button
-            type="button"
-            onClick={handleOpenModal} // Open the modal on button click
-            name="addTaskOpen"
-            classNames={['cf-left-side']}
-          >
+        <Button
+          type="button"
+          onClick={handleOpenModal}
+          name="addTaskOpen"
+          classNames={['cf-left-side']}
+        >
             + Add task
-          </Button>
+        </Button>
 
-      {/* Render the modal */}
-      <AddTaskModalCorrespondenceDetails
-        title="Add Task"
-        isOpen={isModalOpen}
-        handleClose={handleCloseModal}
-      >
-        {/* Content inside the modal */}
-        <p>This is where you can add the task details.</p>
-        {/* Add a form or other content here as needed */}
-      </AddTaskModalCorrespondenceDetails>
+        {/* Render the modal */}
+        <AddTaskModalCorrespondenceDetails
+          title="Add Task"
+          isOpen={isModalOpen}
+          handleClose={handleCloseModal}
+          correspondence={props.correspondence}
+        />
       </div>
       <div className="toggleButton-plus-or-minus">
         <Button
