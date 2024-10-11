@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 RSpec.describe Hearings::VaBoxDownloadJob, type: :job do
+  let(:hearing) { create(:hearing) }
+
   let(:file_info) do
     [{
-      name: "242551_6_Hearing.pdf",
+      name: "#{hearing.docket_number}_#{hearing.id}_Hearing.pdf",
       id: "1640086158231",
       created_at: "2024-09-05T061314-0700",
       modified_at: "2024-09-05T061314-0700"
