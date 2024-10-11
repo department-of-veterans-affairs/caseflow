@@ -35,10 +35,8 @@ export const setWaiveEvidenceAlertBanner = (bannerDetails) => (dispatch) => {
 export const createNewEvidenceWindowTask = (payload, correspondence, appealId) => (dispatch) => {
   return ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/waive_evidence_submission_window_task`, payload)
     .then((response) => {
-      console.log("response: " + JSON.stringify(response));
-      console.log("response.data.task_id: " + appealId);
-      responseCorrespondence = response.data.correspondence;
-      console.log("responseCorrespondence: " + JSON.stringify(responseCorrespondence));
+      const responseData = JSON.parse(response.text);
+      const responseCorrespondence = responseData.correspondence;
 
       // Dispatch the banner alert to the store
       dispatch({
@@ -61,16 +59,20 @@ export const createNewEvidenceWindowTask = (payload, correspondence, appealId) =
       });
 
       const corAppealTasks = [];
-      responseCorrespondence.correspondenceAppeals.forEach((corAppeal) => {
+      responseCorrespondence.correspondenceAppeals.map((corAppeal) => {
         dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal.appeal.data])));
-        corAppeal.taskAddedData.data.forEach((taskData) => {
+        corAppeal.taskAddedData.data.map((taskData) => {
+          const formattedTask = {};
+
+          formattedTask[taskData.id] = taskData;
+
           corAppealTasks.push(taskData);
         });
       });
-
+      // // load appeal tasks into the store
       const preparedTasks = prepareTasksForStore(corAppealTasks);
       dispatch(onReceiveTasks({
-        amaTasks: preparedTasks,
+        amaTasks: preparedTasks
       }));
     })
 
