@@ -937,7 +937,7 @@ RSpec.feature "Hearing Details", :all_dbs do
 
         click_button("Save")
 
-        expect(page).to have_content(expected_alert, wait: 90)
+        expect(page).to have_content(expected_alert)
       end
 
       context "when hearing already has transcription details" do
@@ -968,7 +968,7 @@ RSpec.feature "Hearing Details", :all_dbs do
             click_dropdown(name: "problemType", index: 0)
             click_button("Save")
 
-            expect(page).to have_content(expected_alert, wait: 90)
+            expect(page).to have_content(expected_alert)
 
             visit "hearings/#{hearing.external_id}/details"
 
