@@ -79,7 +79,6 @@ CorrespondenceRemoveWaiveEvidenceModal.propTypes = {
   }),
   task_id: PropTypes.string,
   correspondence_uuid: PropTypes.string,
-  correspondenceInfo: PropTypes.func,
   team: PropTypes.string
 };
 
