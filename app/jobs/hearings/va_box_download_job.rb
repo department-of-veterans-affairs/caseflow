@@ -64,11 +64,15 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
   end
 
   def create_transcription_file_record(current_information, file_status, aws_link)
-    if current_information["hearing_type"] == "Hearing"
-      transcription_id = Hearing.find(current_information["id"])&.transcription&.id
-    elsif current_information["hearing_type"] == "LegacyHearing"
-      transcription_id = LegacyHearing.find(current_information["id"])&.transcription&.id
+    transcription_id = current_information["hearing_type"].constantize.find(
+      current_information["id"]
+    ).transcription&.id
+
+    unless transcription_id
+      fail StandardError, "Transcription for #{current_information['hearing_type']} \
+        - ID: #{current_information['id']} does not exist."
     end
+
     Hearings::TranscriptionFile.create!(
       hearing_id: current_information["id"],
       hearing_type: current_information["hearing_type"],
