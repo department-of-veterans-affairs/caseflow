@@ -59,9 +59,10 @@ class EvidenceSubmissionWindowTask < Task
 
   # only inbound ops superusers/supervisors can waive the Evidence Window task.
   def waivable?
+    return false if RequestStore[:current_user].blank?
+
     current_user = RequestStore[:current_user]
 
-    return false if current_user.blank?
     return false unless current_user.inbound_ops_team_superuser? ||
                         current_user.inbound_ops_team_supervisor?
 
