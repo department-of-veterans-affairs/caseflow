@@ -41,13 +41,14 @@ const CorrespondenceRemoveWaiveEvidenceModal = (props) => {
   };
 
   const modalProps = {};
+  const uuid = props.match.params.uuid;
 
   return (
     <QueueFlowModal
       {...modalProps}
       title={COPY.CONFIRM_WAIVE_REMOVAL}
       button={COPY.MODAL_CONFIRM_BUTTON}
-      pathAfterSubmit={`/queue/correspondence/${correspondence.uuid}`}
+      pathAfterSubmit={`/queue/correspondence/${uuid}`}
       submit={submit}
     >
       {taskData?.modal_body &&
