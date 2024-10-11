@@ -47,6 +47,7 @@ class CorrespondenceDetailsController < CorrespondenceController
 
   def set_instance_variables
     @correspondence = serialized_correspondence
+    @correspondence_uuid = @correspondence[:uuid]
 
     # Group related variables into a single hash
     @correspondence_details = {
@@ -179,7 +180,7 @@ class CorrespondenceDetailsController < CorrespondenceController
         instructions: params[:task][:instructions]
       )
       task_timer = TaskTimer.where(task: task).order(:id).last
-      task_timer.update!(submitted_at: Time.zone.now)
+      task_timer.update!(submitted_at: Time.zone.now.round(3))
       CorrespondencesAppealsTask.create!(correspondence_appeal: correspondence_appeal, task: eswt)
     end
 

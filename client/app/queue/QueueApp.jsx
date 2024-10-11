@@ -763,7 +763,7 @@ class QueueApp extends React.PureComponent {
   routedCorrespondenceRemoveWaiveEvidenceModal = (props) => (
     <CorrespondenceRemoveWaiveEvidenceModal
       {...props.match.params}
-      userCssId={this.props.userCssId}
+      correspondence_uuid={this.props.correspondence_uuid}
     />
   );
 
@@ -1701,6 +1701,7 @@ QueueApp.propTypes = {
   userPermissions: PropTypes.array,
   configUrl: PropTypes.string,
   correspondenceResponseLetters: PropTypes.array,
+  correspondenceUuid: PropTypes.string,
 };
 
 const mapStateToProps = (state) => ({

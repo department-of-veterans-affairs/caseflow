@@ -498,6 +498,7 @@ const CorrespondenceDetails = (props) => {
               userCssId={props.userCssId}
               appeal={taskAdded.appeal.data.attributes}
               waivableUser={props.isInboundOpsSuperuser || props.isInboundOpsSupervisor}
+              correspondence_uuid={props.correspondence_uuid}
             />
           )
           )}
@@ -933,7 +934,8 @@ CorrespondenceDetails.propTypes = {
   inboundOpsTeamUsers: PropTypes.array,
   addLetterCheck: PropTypes.bool,
   updateCorrespondenceInfo: PropTypes.func,
-  correspondenceTypes: PropTypes.array
+  correspondenceTypes: PropTypes.array,
+  correspondence_uuid: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({
