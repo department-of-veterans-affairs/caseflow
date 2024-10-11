@@ -29,14 +29,16 @@ class Events::DecisionReviewUpdated
             station_id: parser.station_id
           )
 
-          review = EndProductEstablishment.find_by(
+          epe = EndProductEstablishment.find_by(
             reference_id: parser.end_product_establishment_reference_id
-          )&.source
+          )
+
+          review = epe&.source
 
           # Events::DecisionReviewUpdated::UpdateInformalConference.process!(event: event, parser: parser)
           Events::DecisionReviewUpdated::UpdateClaimReview.process!(event: event, parser: parser)
           Events::DecisionReviewUpdated::UpdateEndProductEstablishment.process!(event: event, parser: parser)
-          RequestIssuesUpdateEvent.new(user: user, review: review, parser: parser, event: event).perform!
+          RequestIssuesUpdateEvent.new(user: user, review: review, parser: parser, event: event, epe: epe).perform!
           # Update the Event after all operations have completed
           event.update!(completed_at: Time.now.in_time_zone, error: nil, info: { "event_payload" => payload })
         end
