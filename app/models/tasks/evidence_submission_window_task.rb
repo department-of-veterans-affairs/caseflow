@@ -57,6 +57,28 @@ class EvidenceSubmissionWindowTask < Task
     [self]
   end
 
+  # only inbound ops superusers/supervisors can waive the Evidence Window task.
+  def waivable?
+    return false unless RequestStore[:current_user].inbound_ops_team_superuser? ||
+                        RequestStore[:current_user].inbound_ops_team_supervisor?
+
+    assigned_at > 90.days.ago && status == Constants.TASK_STATUSES.completed
+  end
+
+  def actions_available?(_user)
+    return true if waivable?
+
+    super
+  end
+
+  def available_actions(_user)
+    if waivable?
+      return [Constants.TASK_ACTIONS.REMOVE_WAIVE_EVIDENCE_WINDOW.to_h]
+    end
+
+    []
+  end
+
   private
 
   def set_assignee

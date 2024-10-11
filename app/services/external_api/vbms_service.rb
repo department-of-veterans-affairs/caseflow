@@ -369,8 +369,8 @@ class ExternalApi::VBMSService
 
   def self.claim_evidence_request
     ClaimEvidenceRequest.new(
-      user_css_id: send_user_info? ? RequestStore[:current_user].css_id : ENV['CLAIM_EVIDENCE_VBMS_USER'],
-      station_id: send_user_info? ? RequestStore[:current_user].station_id : ENV['CLAIM_EVIDENCE_STATION_ID'],
+      user_css_id: send_user_info? ? RequestStore[:current_user].css_id : ENV["CLAIM_EVIDENCE_VBMS_USER"],
+      station_id: send_user_info? ? RequestStore[:current_user].station_id : ENV["CLAIM_EVIDENCE_STATION_ID"]
     )
   end
 

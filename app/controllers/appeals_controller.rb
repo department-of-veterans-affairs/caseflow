@@ -42,7 +42,7 @@ class AppealsController < ApplicationController
       format.html { render template: "queue/index" }
       format.json do
         result = CaseSearchResultsForCaseflowVeteranId.new(
-          caseflow_veteran_ids: params[:veteran_ids]&.split(","), user: current_user
+          caseflow_veteran_ids: appeals_controller_params[:veteran_ids]&.split(","), user: current_user
         ).search_call
 
         render_search_results_as_json(result)
@@ -52,7 +52,7 @@ class AppealsController < ApplicationController
 
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def fetch_notification_list
-    appeals_id = params[:appeals_id]
+    appeals_id = appeals_controller_params[:appeals_id]
     respond_to do |format|
       format.json do
         results = find_notifications_by_appeals_id(appeals_id)
@@ -138,7 +138,7 @@ class AppealsController < ApplicationController
       format.html { render template: "queue/index" }
       format.json do
         if appeal.accessible?
-          id = params[:appeal_id]
+          id = url_appeal_uuid
           MetricsService.record("Get appeal information for ID #{id}",
                                 service: :queue,
                                 name: "AppealsController.show") do
@@ -162,16 +162,15 @@ class AppealsController < ApplicationController
   helper_method :appeal, :url_appeal_uuid
 
   def appeal
-    @appeal ||= Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
+    @appeal ||= Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(url_appeal_uuid)
   end
 
   def url_appeal_uuid
-    params[:appeal_id]
+    params.permit(:appeal_id)[:appeal_id]
   end
 
   def update
     if appeal.is_a?(LegacyAppeal) && feature_enabled?(:legacy_mst_pact_identification)
-
       legacy_mst_pact_updates
     elsif request_issues_update.perform!
       set_flash_success_message
@@ -187,7 +186,49 @@ class AppealsController < ApplicationController
     end
   end
 
+  def active_evidence_submissions
+    appeal = Appeal.find(url_appeal_uuid)
+    render json: appeal.evidence_submission_task
+  end
+
   private
+
+  REQUEST_ISSUE_PARAMS = %w[
+    request_issue_id
+    rating_issue_reference_id
+    rating_decision_reference_id
+    rating_issue_profile_date
+    notes
+    ramp_claim_id
+    vacols_id
+    vacols_sequence_id
+    contested_decision_issue_id
+    vbms_mst_status
+    vbms_pact_status
+    rating_issue_diagnostic_code
+    mst_status_update_reason_notes
+    pact_status_update_reason_notes
+    benefit_type
+    nonrating_issue_category
+    decision_text
+    decision_date
+    ineligible_due_to_id
+    ineligible_reason
+    withdrawal_date
+    is_predocket_needed
+    mst_status
+    pact_status
+  ].freeze
+
+  def appeals_controller_params
+    params.permit(
+      :appeal_id,
+      :any,
+      :appeals_id,
+      :veteran_ids,
+      request_issues: REQUEST_ISSUE_PARAMS
+    )
+  end
 
   def create_subtasks!
     # if cc appeal, create SendInitialNotificationLetterTask
@@ -216,7 +257,7 @@ class AppealsController < ApplicationController
     @request_issues_update ||= RequestIssuesUpdate.new(
       user: current_user,
       review: appeal,
-      request_issues_data: params[:request_issues]
+      request_issues_data: appeals_controller_params[:request_issues]
     )
   end
 
@@ -284,7 +325,7 @@ class AppealsController < ApplicationController
     pact_removed = 0
     # get edited issues from params and reject new issues without id
     if !appeal.is_a?(LegacyAppeal)
-      existing_issues = params[:request_issues].reject { |iss| iss[:request_issue_id].nil? }
+      existing_issues = appeals_controller_params[:request_issues].reject { |iss| iss[:request_issue_id].nil? }
 
       # get added issues
       new_issues = request_issues_update.after_issues - request_issues_update.before_issues
@@ -448,7 +489,7 @@ class AppealsController < ApplicationController
     # close out any tasks that might be open
     open_issue_task = Task.where(
       assigned_to: SpecialIssueEditTeam.singleton
-    ).where(status: "assigned").where(appeal: appeal)
+    ).where(status: Constants.TASK_STATUSES.assigned).where(appeal: appeal)
     open_issue_task[0].delete unless open_issue_task.empty?
 
     task = IssuesUpdateTask.create!(

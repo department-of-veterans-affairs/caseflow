@@ -9,7 +9,7 @@ class ApplicationController < ApplicationBaseController
   before_action :set_raven_user
   before_action :verify_authentication
   before_action :set_paper_trail_whodunnit
-  before_action :deny_vso_access, except: [:unauthorized, :feedback]
+  before_action :deny_vso_access, except: [:unauthorized, :feedback, :under_construction]
   before_action :set_no_cache_headers
 
   rescue_from StandardError do |e|
@@ -202,7 +202,12 @@ class ApplicationController < ApplicationBaseController
   def manage_teams_menu_items
     current_user.administered_teams.map do |team|
       {
-        title: "#{team.name} team management",
+        title:
+          if team.type == InboundOpsTeam.singleton.type
+            "#{team.name} management"
+          else
+            "#{team.name} team management"
+          end,
         link: team.user_admin_path
       }
     end
@@ -227,6 +232,7 @@ class ApplicationController < ApplicationBaseController
     add_team_management_items(admin_urls)
     add_user_management_items(admin_urls)
     add_case_distribution_item(admin_urls)
+    add_test_seeds_item(admin_urls)
 
     admin_urls.flatten
   end

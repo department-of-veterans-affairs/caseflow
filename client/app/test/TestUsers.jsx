@@ -153,6 +153,11 @@ export default function TestUsers(props) {
 
           return <li key={name} aria-labelledby={name}>
             <a href={linkRoute} id={name} role="link" aria-label={readableName}>{readableName}</a>
+            {name === 'case_distribution_dashboard' && (
+              <span>
+            &ensp;- Includes options to seed appeals
+              </span>
+            )}
           </li>;
         })}
       </ul>
