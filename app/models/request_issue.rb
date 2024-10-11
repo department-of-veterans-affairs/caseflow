@@ -853,8 +853,10 @@ class RequestIssue < CaseflowRecord
   end
 
   def issue_from_event?
-    decision_review&.from_decision_review_event?
-    # if !decision_review.is_a?(Appeal) && !decision_review.event_records.blank?
+    if !decision_review.is_a?(Appeal)
+      decision_review&.from_decision_review_event?
+    end
+     # if !decision_review.is_a?(Appeal) && !decision_review.event_records.blank?
     #   (Time.current - decision_review.event_records.last.created_at).abs <= 1
     # end
   end
