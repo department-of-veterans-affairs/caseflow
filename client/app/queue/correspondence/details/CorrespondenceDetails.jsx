@@ -74,7 +74,8 @@ const CorrespondenceDetails = (props) => {
 
   useEffect(() => {
     if (correspondence.tasksUnrelatedToAppeal.length > 0) {
-      dispatch(setUnrelatedTaskList(correspondence.tasksUnrelatedToAppeal)); // Dispatch the action to store tasks
+      // Dispatch the action to store tasks
+      dispatch(setUnrelatedTaskList(correspondence.tasksUnrelatedToAppeal));
     }
   }, [dispatch, correspondence.tasksUnrelatedToAppeal]);
 
