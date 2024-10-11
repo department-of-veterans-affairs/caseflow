@@ -183,6 +183,7 @@ class NonCompDispositions extends React.PureComponent {
     const displayRequestIssueModification = (!displayPOAComponent || isBusinessLineAdmin);
 
     const decisionHasPendingRequestIssues = task.pending_issue_modification_count > 0;
+    const receiptDate = formatDateStrUtc(appeal.receiptDate, 'YYYY-MM-DD');
 
     if (!task.closed_at) {
       completeDiv = <React.Fragment>
@@ -282,6 +283,8 @@ class NonCompDispositions extends React.PureComponent {
               value={decisionDate}
               onChange={this.handleDecisionDate}
               readOnly={disableIssueFields}
+              minDate={receiptDate}
+              noFutureDates
               type="date"
             />
           </InlineForm>
