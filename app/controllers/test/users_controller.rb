@@ -115,8 +115,15 @@ class Test::UsersController < ApplicationController
   def optional_seed
     return unless Rails.deploy_env?(:demo)
 
-    system "bundle exec rake db:seed:optional"
-    head :ok
+    output = `bundle exec rake db:seed:optional`
+
+    # Using named capture groups and conditional assignment
+    seeds_added = if output =~ /(?<count>\d+) APPEALS_ADDED/
+                    Regexp.last_match[:count].to_i
+                  else
+                    0
+                  end
+    render json: { message: "Seeds added successfully", seeds_added: seeds_added }, status: :ok
   end
 
   def toggle_feature
