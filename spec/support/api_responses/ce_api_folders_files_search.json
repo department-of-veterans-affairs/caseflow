@@ -1,0 +1,84 @@
+{
+  "page": {
+    "totalPages": 1,
+    "requestedResultsPerPage": 20,
+    "currentPage": 1,
+    "totalResults": 2
+  },
+  "files": [
+    {
+      "owner": {
+        "type": "VETERAN",
+        "id": "123456789"
+      },
+      "uuid": "23e7ae3b-5489-4fa9-b6e3-b1f953287138",
+      "currentVersionUuid": "03223945-468b-4e8a-b79b-82fa73c2d2d9",
+      "currentVersion": {
+        "systemData": {
+          "uploadedDateTime": "2018-03-08T14:21:40",
+          "contentName": "20180308091849 - codesheet.pdf",
+          "mimeType": "application/pdf",
+          "uploadSource": "RATING"
+        },
+        "providerData": {
+          "subject": "Rating Decision - Codesheet",
+          "documentTypeId": 338,
+          "ocrStatus": "Failure to Process",
+          "newMail": false,
+          "bookmarks": {
+            "VBA": {
+              "isDefaultRealm": true
+            }
+          },
+          "systemSource": "RATING",
+          "isAnnotated": false,
+          "modifiedDateTime": "2018-03-08T14:21:40",
+          "numberOfContentions": 0,
+          "readByCurrentUser": false,
+          "dateVaReceivedDocument": "2018-03-08",
+          "hasContentionAnnotations": false,
+          "contentSource": "VBMS-R",
+          "actionable": false,
+          "lastOpenedDocument": false
+        }
+      }
+    },
+    {
+      "owner": {
+        "type": "VETERAN",
+        "id": "123456789"
+      },
+      "uuid": "a001424d-99f9-4a96-977d-ee06ec4ef3a7",
+      "currentVersionUuid": "7d6afd8c-3bf7-4224-93ae-e1f07ac43c71",
+      "currentVersion": {
+        "systemData": {
+          "uploadedDateTime": "2018-03-08T14:21:43",
+          "contentName": "20180308091852 - narrative.pdf",
+          "mimeType": "application/pdf",
+          "uploadSource": "RATING"
+        },
+        "providerData": {
+          "subject": "Rating Decision - Narrative",
+          "documentTypeId": 339,
+          "ocrStatus": "Failure to Process",
+          "newMail": false,
+          "bookmarks": {
+            "VBA": {
+              "isDefaultRealm": true
+            }
+          },
+          "systemSource": "RATING",
+          "isAnnotated": false,
+          "modifiedDateTime": "2018-03-08T14:21:43",
+          "numberOfContentions": 0,
+          "readByCurrentUser": false,
+          "dateVaReceivedDocument": "2018-12-08",
+          "hasContentionAnnotations": false,
+          "contentSource": "VBMS-R",
+          "actionable": false,
+          "lastOpenedDocument": false
+        }
+      }
+    }
+  ]
+}
