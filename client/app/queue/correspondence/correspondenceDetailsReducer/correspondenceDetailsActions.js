@@ -1,6 +1,8 @@
 import { ACTIONS } from './correspondenceDetailsConstants';
 import ApiUtil from '../../../util/ApiUtil';
 import { sprintf } from 'sprintf-js';
+import { prepareAppealForStore, prepareTasksForStore } from '../../utils';
+import { onReceiveTasks, onReceiveAppealDetails } from '../../QueueActions';
 // eslint-disable-next-line import/extensions
 import CORRESPONDENCE_DETAILS_BANNERS from '../../../../constants/CORRESPONDENCE_DETAILS_BANNERS.json';
 
@@ -31,10 +33,14 @@ export const setWaiveEvidenceAlertBanner = (bannerDetails) => (dispatch) => {
 };
 
 export const createNewEvidenceWindowTask = (payload, correspondence, appealId) => (dispatch) => {
-  return ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/waive_evidence_submission_window_task`, payload).
-    then((response) => {
+  return ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/waive_evidence_submission_window_task`, payload)
+    .then((response) => {
       console.log("response: " + JSON.stringify(response));
       console.log("response.data.task_id: " + appealId);
+      responseCorrespondence = response.data.correspondence;
+      console.log("responseCorrespondence: " + JSON.stringify(responseCorrespondence));
+
+      // Dispatch the banner alert to the store
       dispatch({
         type: ACTIONS.EVIDENCE_SUBMISSION_BANNER,
         payload: {
@@ -46,18 +52,33 @@ export const createNewEvidenceWindowTask = (payload, correspondence, appealId) =
           }
         }
       });
+
       dispatch({
         type: ACTIONS.CORRESPONDENCE_INFO,
         payload: {
-          correspondence
+          responseCorrespondence
         }
       });
-    }).
-    catch((error) => {
-      const errorMessage = error?.response?.body?.message ?
-        error.response.body.message.replace(/^Error:\s*/, '') :
-        error.message;
-        console.error(errorMessage);
+
+      const corAppealTasks = [];
+      responseCorrespondence.correspondenceAppeals.forEach((corAppeal) => {
+        dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal.appeal.data])));
+        corAppeal.taskAddedData.data.forEach((taskData) => {
+          corAppealTasks.push(taskData);
+        });
+      });
+
+      const preparedTasks = prepareTasksForStore(corAppealTasks);
+      dispatch(onReceiveTasks({
+        amaTasks: preparedTasks,
+      }));
+    })
+
+    .catch((error) => {
+      const errorMessage = error?.response?.body?.message
+        ? error.response.body.message.replace(/^Error:\s*/, '')
+        : error.message;
+      console.error(errorMessage);
     });
 };
 

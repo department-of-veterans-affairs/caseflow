@@ -11,8 +11,6 @@ import { updateCorrespondenceInfo } from './../correspondenceDetailsReducer/corr
 import CorrespondenceResponseLetters from './CorrespondenceResponseLetters';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
-import { prepareAppealForStore, prepareTasksForStore } from 'app/queue/utils';
-import { onReceiveTasks, onReceiveAppealDetails } from '../../QueueActions';
 import moment from 'moment';
 import Pagination from 'app/components/Pagination/Pagination';
 import Table from 'app/components/Table';
@@ -384,32 +382,6 @@ const CorrespondenceDetails = (props) => {
     sortAppeals(initialSelectedAppeals);
   }, []);
 
-  useEffect(() => {
-    dispatch(updateCorrespondenceInfo(correspondence));
-    // load appeals related to the correspondence into the store
-    const corAppealTasks = [];
-
-    props.correspondence.correspondenceAppeals.map((corAppeal) => {
-      dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal.appeal.data])));
-
-      corAppeal.taskAddedData.data.map((taskData) => {
-        const formattedTask = {};
-
-        formattedTask[taskData.id] = taskData;
-
-        corAppealTasks.push(taskData);
-      });
-
-    });
-    // // load appeal tasks into the store
-    const preparedTasks = prepareTasksForStore(corAppealTasks);
-
-    dispatch(onReceiveTasks({
-      amaTasks: preparedTasks
-    }));
-
-  }, []);
-
   const isTasksUnrelatedToAppealEmpty = () => {
     if (props.tasksUnrelatedToAppealEmpty === true) {
       return 'Completed';
@@ -493,6 +465,7 @@ const CorrespondenceDetails = (props) => {
               organizations={props.organizations}
               userCssId={props.userCssId}
               appeal={taskAdded.appeal.data.attributes}
+              externalId={taskAdded.appeal.data.externalId}
               waivableUser={props.isInboundOpsSuperuser || props.isInboundOpsSupervisor}
             />
           )
