@@ -46,7 +46,8 @@
       "rating_issue_associated_at": null,
       "ramp_claim_id": null,
       "is_unidentified": true,
-      "nonrating_issue_bgs_source": null
+      "nonrating_issue_bgs_source": null,
+      "veteran_participant_id": "1826209"
     }
   ],
   "updated_issues": [
@@ -79,7 +80,8 @@
       "rating_issue_associated_at": null,
       "ramp_claim_id": null,
       "is_unidentified": true,
-      "nonrating_issue_bgs_source": null
+      "nonrating_issue_bgs_source": null,
+      "veteran_participant_id": "1826209"
     }
   ],
   "removed_issues": [
@@ -112,7 +114,8 @@
       "rating_issue_associated_at": null,
       "ramp_claim_id": null,
       "is_unidentified": true,
-      "nonrating_issue_bgs_source": null
+      "nonrating_issue_bgs_source": null,
+      "veteran_participant_id": "1826209"
     }
   ],
   "withdrawn_issues": [
@@ -145,7 +148,8 @@
       "rating_issue_associated_at": null,
       "ramp_claim_id": null,
       "is_unidentified": true,
-      "nonrating_issue_bgs_source": null
+      "nonrating_issue_bgs_source": null,
+      "veteran_participant_id": "1826209"
     }
   ],
   "ineligible_to_eligible_issues": [
@@ -178,7 +182,8 @@
       "rating_issue_associated_at": null,
       "ramp_claim_id": null,
       "is_unidentified": true,
-      "nonrating_issue_bgs_source": null
+      "nonrating_issue_bgs_source": null,
+      "veteran_participant_id": "1826209"
     }
   ],
   "eligible_to_ineligible_issues": [
@@ -211,7 +216,8 @@
       "rating_issue_associated_at": null,
       "ramp_claim_id": null,
       "is_unidentified": true,
-      "nonrating_issue_bgs_source": null
+      "nonrating_issue_bgs_source": null,
+      "veteran_participant_id": "1826209"
     }
   ],
   "ineligible_to_ineligible_issues": [
@@ -244,7 +250,8 @@
       "rating_issue_associated_at": null,
       "ramp_claim_id": null,
       "is_unidentified": true,
-      "nonrating_issue_bgs_source": null
+      "nonrating_issue_bgs_source": null,
+      "veteran_participant_id": "1826209"
     }
   ]
 }

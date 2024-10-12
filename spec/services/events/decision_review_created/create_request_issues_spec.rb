@@ -7,6 +7,15 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
   let!(:epe) { create(:end_product_establishment) }
   let!(:higher_level_review) { create(:higher_level_review) }
   let!(:payload) { Events::DecisionReviewCreated::DecisionReviewCreatedParser.example_response }
+  let!(:legacy_appeal) { create(:legacy_appeal) }
+
+  before do
+    allow(described_class).to receive(:vacols_issue).and_return(Issue.new)
+    allow_any_instance_of(Issue).to receive(:vacols_sequence_id).and_return(1)
+    allow_any_instance_of(Issue).to receive(:disposition_id).and_return("O")
+    allow_any_instance_of(Issue).to receive(:disposition_date).and_return(Time.zone.now)
+    allow_any_instance_of(Issue).to receive(:legacy_appeal).and_return(legacy_appeal)
+  end
 
   describe "#process!" do
     subject { described_class }

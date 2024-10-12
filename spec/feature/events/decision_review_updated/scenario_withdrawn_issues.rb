@@ -81,7 +81,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
               "nonrating_issue_category": nil,
               "nonrating_issue_description": nil,
               "closed_at": 1_702_000_145_000,
-              "closed_status": nil,
+              "closed_status": "withdrawn",
               "contested_rating_issue_diagnostic_code": nil,
               "rating_issue_associated_at": nil,
               "ramp_claim_id": nil,
