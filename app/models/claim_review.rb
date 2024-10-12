@@ -332,7 +332,7 @@ class ClaimReview < DecisionReview
     # filter for only request issues that have a nil reference_id,
     # this will filter out any request issues from AMA Event
     request_issues
-      .select(&:reference_id.nil?)
+      .select { |issue| issue.reference_id.nil? }
       .select(&:open?)
       .select(&:contention_missing?)
       .each(&:remove!)
