@@ -34,6 +34,8 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     newly_withdrawn_issues = process_withdrawn_issues! || []
     newly_removed_issues = update_removed_issues! || []
 
+    process_legacy_issues!
+
     after_issues = (before_request_issues + newly_created_issues - newly_removed_issues).uniq
 
     update!(
@@ -67,9 +69,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(issue_data)
       request_issue = find_request_issue(parser_issue)
       before_data = request_issue.attributes
-      request_issue.update(
-        edited_description: parser_issue.ri_edited_description
-      )
+      update_request_issue!(request_issue, parser_issue)
       add_event_record(request_issue, "U", before_data)
       newly_updated_issues << request_issue
     end
@@ -123,7 +123,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       untimely_exemption: parser_issue.ri_untimely_exemption,
       untimely_exemption_notes: parser_issue.ri_untimely_exemption_notes,
       benefit_type: parser_issue.ri_benefit_type,
-      veteran_participant_id: @parser.veteran_participant_id
+      veteran_participant_id: parser_issue.ri_veteran_participant_id
     )
   end
   # rubocop:enable Metrics/MethodLength
@@ -155,10 +155,12 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(issue_data)
       request_issue = find_request_issue(parser_issue)
       before_data = request_issue.attributes
+      request_issue.remove!
       update_request_issue!(request_issue, parser_issue)
       request_issue.update(
         contention_removed_at: @parser.end_product_establishment_last_synced_at
       )
+
       add_event_record(request_issue, "E2I", before_data)
     end
   end
@@ -186,13 +188,11 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       request_issue = find_request_issue(parser_issue)
       before_data = request_issue.attributes
       update_request_issue!(request_issue, parser_issue)
-      request_issue.update(
-        contention_removed_at: @parser.end_product_establishment_last_synced_at
-      )
       add_event_record(request_issue, "I2I", before_data)
     end
   end
 
+  # rubocop:disable Metrics/MethodLength
   def find_request_issue(parser_issue)
     request_issue = RequestIssue.find_by(reference_id: parser_issue.ri_reference_id)
 
@@ -206,6 +206,15 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     end
 
     if request_issue.nil?
+      contention_issue = RequestIssue.find_by(contention_reference_id: parser_issue.ri_contention_reference_id)
+
+      if contention_issue
+        contention_issue.update!(reference_id: parser_issue.ri_reference_id)
+        request_issue = contention_issue
+      end
+    end
+
+    if request_issue.nil?
       fail(
         Caseflow::Error::DecisionReviewUpdateMissingIssueError,
         "Reference ID: #{parser_issue.ri_reference_id}, " \
@@ -215,6 +224,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
 
     request_issue
   end
+  # rubocop:enable Metrics/MethodLength
 
   def add_event_record(request_issue, update_type, before_data)
     EventRecord.create!(
@@ -241,7 +251,6 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       if parser_issues.ri_reference_id.nil?
         fail Caseflow::Error::DecisionReviewCreatedRequestIssuesError, "reference_id cannot be null"
       end
-
       ri = RequestIssue.create!(
         reference_id: parser_issues.ri_reference_id,
         benefit_type: parser_issues.ri_benefit_type,
@@ -271,7 +280,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
         nonrating_issue_bgs_id: parser_issues.ri_nonrating_issue_bgs_id,
         nonrating_issue_bgs_source: parser_issues.ri_nonrating_issue_bgs_source,
         end_product_establishment_id: @epe.id,
-        veteran_participant_id: @parser.veteran_participant_id,
+        veteran_participant_id: parser_issues.ri_veteran_participant_id,
         decision_review: @review
       )
       add_event_record(ri, "A", nil)

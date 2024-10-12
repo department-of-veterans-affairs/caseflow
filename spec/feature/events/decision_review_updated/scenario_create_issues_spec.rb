@@ -33,12 +33,6 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
           "type": "HigherLevelReviewIntake",
           "detail_type": "HigherLevelReview"
         },
-        "veteran": {
-          "participant_id": "1826209",
-          "bgs_last_synced_at": 1_708_533_584_000,
-          "name_suffix": nil,
-          "date_of_death": nil
-        },
         "claimant": {
           "payee_code": "00",
           "type": "VeteranClaimant",
@@ -87,7 +81,8 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
             "rating_issue_associated_at": nil,
             "ramp_claim_id": nil,
             "is_unidentified": true,
-            "nonrating_issue_bgs_source": nil
+            "nonrating_issue_bgs_source": nil,
+            "veteran_participant_id": "1826209"
           }
         ],
         "updated_issues": [],
