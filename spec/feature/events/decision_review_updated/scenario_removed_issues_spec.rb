@@ -90,7 +90,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
           expect(removed_request_issue.any_updates?).to eq(false)
           expect(existing_request_issue.edited_description).to eq("edited")
           post :decision_review_updated, params: valid_params
-          expect(response).to have_http_status(:ok)
+          expect(response).to have_http_status(:created)
           expect(response.body).to include("DecisionReviewUpdatedEvent successfully processed")
           removed_request_issue.reload
           expect(removed_request_issue.closed_at).to eq("2023-12-07 20:49:05.000000000 -0500")

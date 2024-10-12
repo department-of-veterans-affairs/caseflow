@@ -55,7 +55,7 @@ class Api::Events::V1::DecisionReviewUpdatedController < Api::ApplicationControl
     headers = request.headers
     consumer_and_claim_ids = { consumer_event_id: consumer_event_id, reference_id: claim_id }
     ::Events::DecisionReviewUpdated.update!(consumer_and_claim_ids, headers, dru_params)
-    render json: { message: "DecisionReviewUpdatedEvent successfully processed" }, status: :ok
+    render json: { message: "DecisionReviewUpdatedEvent successfully processed" }, status: :created
   rescue Caseflow::Error::RedisLockFailed => error
     render json: { message: error.message }, status: :conflict
   rescue StandardError => error

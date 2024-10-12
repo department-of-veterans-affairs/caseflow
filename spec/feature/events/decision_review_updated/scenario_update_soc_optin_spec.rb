@@ -71,14 +71,14 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
       it "updates the HLR accordingly" do
         request.headers["Authorization"] = "Token #{api_key.key_string}"
         post :decision_review_updated, params: valid_params
-        expect(response).to have_http_status(:ok)
+        expect(response).to have_http_status(:created)
         hlr.reload
         expect(hlr.legacy_opt_in_approved).to eq(true)
       end
       it "also updates SC's accordingly" do
         request.headers["Authorization"] = "Token #{api_key.key_string}"
         post :decision_review_updated, params: valid_params_2
-        expect(response).to have_http_status(:ok)
+        expect(response).to have_http_status(:created)
         sc.reload
         expect(sc.legacy_opt_in_approved).to eq(true)
       end

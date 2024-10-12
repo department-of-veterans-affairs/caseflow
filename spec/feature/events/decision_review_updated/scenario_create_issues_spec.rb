@@ -112,7 +112,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
         request.headers["Authorization"] = "Token token=#{api_key.key_string}"
         expect(existing_request_issue.edited_description).to_not eq("DIC: Service connection denied (UPDATED)")
         post :decision_review_updated, params: valid_params
-        expect(response).to have_http_status(:ok)
+        expect(response).to have_http_status(:created)
         expect(response.body).to include("DecisionReviewUpdatedEvent successfully processed")
         existing_request_issue.reload
         expect(existing_request_issue.any_updates?).to eq(true)

@@ -17,6 +17,11 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
                contested_issue_description: "original description", nonrating_issue_category: "original category",
                nonrating_issue_description: "original nonrating description", contention_reference_id: 100_500)
       end
+      let!(:event2) { DecisionReviewCreatedEvent.create!(reference_id: "2") }
+      let!(:request_issue_event_record) do
+        EventRecord.create!(event: event2,
+                            evented_record: ineligible_to_eligible_request_issue)
+      end
 
       def json_test_payload
         {
@@ -120,10 +125,10 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
           expect(ineligible_to_eligible_request_issue.contention_removed_at).to be_within(1.second).of(DateTime.now)
           expect(ineligible_to_eligible_request_issue.contention_reference_id).to eq(100_500)
           post :decision_review_updated, params: valid_params
-          expect(response).to have_http_status(:ok)
+          expect(response).to have_http_status(:created)
           expect(response.body).to include("DecisionReviewUpdatedEvent successfully processed")
           ineligible_to_eligible_request_issue.reload
-
+          expect(ineligible_to_eligible_request_issue.event_records.count).to eq(2)
           expect(ineligible_to_eligible_request_issue.ineligible_reason).to eq(nil)
           expect(ineligible_to_eligible_request_issue.contested_issue_description).to eq("UPDATED DESCRIPTION")
           expect(ineligible_to_eligible_request_issue.nonrating_issue_category).to eq("Military Retired Pay UPDATED")
@@ -245,7 +250,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
           expect(eligible_to_ineligible_request_issue.closed_status).to eq(nil)
           expect(eligible_to_ineligible_request_issue.reference_id).to eq("1234")
           post :decision_review_updated, params: valid_params
-          expect(response).to have_http_status(:ok)
+          expect(response).to have_http_status(:created)
           expect(response.body).to include("DecisionReviewUpdatedEvent successfully processed")
           eligible_to_ineligible_request_issue.reload
           expect(eligible_to_ineligible_request_issue.ineligible_reason).to eq("appeal_to_appeal")
@@ -368,7 +373,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
           expect(ineligible_to_ineligible_request_issue.closed_status).to eq("ineligible")
           expect(ineligible_to_ineligible_request_issue.reference_id).to eq("1234")
           post :decision_review_updated, params: valid_params
-          expect(response).to have_http_status(:ok)
+          expect(response).to have_http_status(:created)
           expect(response.body).to include("DecisionReviewUpdatedEvent successfully processed")
           ineligible_to_ineligible_request_issue.reload
           expect(ineligible_to_ineligible_request_issue.ineligible_reason).to eq("appeal_to_appeal")
