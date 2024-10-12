@@ -176,6 +176,16 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       request_issue.update(
         contention_removed_at: nil
       )
+
+      # LegacyIssue
+      if vacols_ids_exist?(request_issue)
+        legacy_issue = create_legacy_issue_backfill(request_issue)
+
+        # LegacyIssueOptin
+        if optin?(@review) && request_issue.ineligible_reason.blank?
+          create_legacy_optin_backfill(request_issue, legacy_issue)
+        end
+      end
       add_event_record(request_issue, "I2E", before_data)
     end
   end
@@ -255,7 +265,6 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
         reference_id: parser_issues.ri_reference_id,
         benefit_type: parser_issues.ri_benefit_type,
         contested_issue_description: parser_issues.ri_contested_issue_description,
-        contention_updated_at: @parser.end_product_establishment_last_synced_at,
         contention_reference_id: parser_issues.ri_contention_reference_id,
         contested_rating_decision_reference_id: parser_issues.ri_contested_rating_decision_reference_id,
         contested_rating_issue_profile_date: parser_issues.ri_contested_rating_issue_profile_date,
