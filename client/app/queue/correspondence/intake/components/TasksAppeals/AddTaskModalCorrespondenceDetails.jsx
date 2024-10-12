@@ -71,6 +71,10 @@ const AddTaskModalCorrespondenceDetails = ({
         content: taskContent,
         // Store label for new task
         label: taskTypeOptions.find((option) => option.value === selectedTaskType)?.label,
+        // Add current date as assignedOn
+        assignedOn: new Date().toISOString(),
+        // Map taskContent to instructions array
+        instructions: [taskContent],
       };
 
       const patchData = {
