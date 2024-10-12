@@ -66,8 +66,11 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     @parser.updated_issues.each do |issue_data|
       parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(issue_data)
       request_issue = find_request_issue(parser_issue)
-      update_request_issue!(request_issue, parser_issue)
-      add_event_record(request_issue, "U")
+      before_data = request_issue.attributes
+      request_issue.update(
+        edited_description: parser_issue.ri_edited_description
+      )
+      add_event_record(request_issue, "U", before_data)
       newly_updated_issues << request_issue
     end
 
@@ -79,8 +82,10 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     @parser.withdrawn_issues.each do |issue_data|
       parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(issue_data)
       request_issue = find_request_issue(parser_issue)
+      before_data = request_issue.attributes
+      update_request_issue!(request_issue, parser_issue)
       request_issue.withdraw!(parser_issue.ri_closed_at)
-      add_event_record(request_issue, "W")
+      add_event_record(request_issue, "W", before_data)
       newly_withdrawn_issues << request_issue
     end
 
@@ -117,7 +122,8 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       is_unidentified: parser_issue.ri_is_unidentified,
       untimely_exemption: parser_issue.ri_untimely_exemption,
       untimely_exemption_notes: parser_issue.ri_untimely_exemption_notes,
-      benefit_type: parser_issue.ri_benefit_type
+      benefit_type: parser_issue.ri_benefit_type,
+      veteran_participant_id: @parser.veteran_participant_id
     )
   end
   # rubocop:enable Metrics/MethodLength
@@ -129,14 +135,13 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     @parser.removed_issues.each do |issue_data|
       parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(issue_data)
       request_issue = find_request_issue(parser_issue)
+      before_data = request_issue.attributes
       request_issue.remove!
+      update_request_issue!(request_issue, parser_issue)
       request_issue.update(
-        closed_at: parser_issue.ri_closed_at,
-        closed_status: parser_issue.ri_closed_status,
-        contention_removed_at: @parser.end_product_establishment_last_synced_at,
-        contention_updated_at: @parser.end_product_establishment_last_synced_at
+        contention_removed_at: @parser.end_product_establishment_last_synced_at
       )
-      add_event_record(request_issue, "R")
+      add_event_record(request_issue, "R", before_data)
       newly_removed_issues << request_issue
     end
 
@@ -149,21 +154,12 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     @parser.eligible_to_ineligible_issues.each do |issue_data|
       parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(issue_data)
       request_issue = find_request_issue(parser_issue)
-
+      before_data = request_issue.attributes
+      update_request_issue!(request_issue, parser_issue)
       request_issue.update(
-        ineligible_reason: parser_issue.ri_ineligible_reason,
-        closed_at: parser_issue.ri_closed_at,
-        contested_issue_description: parser_issue.ri_contested_issue_description ||
-          request_issue.contested_issue_description,
-        nonrating_issue_category: parser_issue.ri_nonrating_issue_category ||
-          request_issue.nonrating_issue_category,
-        nonrating_issue_description: parser_issue.ri_nonrating_issue_description ||
-          request_issue.nonrating_issue_description,
-        contention_removed_at: @parser.end_product_establishment_last_synced_at,
-        contention_updated_at: @parser.end_product_establishment_last_synced_at,
-        contention_reference_id: parser_issue.ri_contention_reference_id
+        contention_removed_at: @parser.end_product_establishment_last_synced_at
       )
-      add_event_record(request_issue, "E2I")
+      add_event_record(request_issue, "E2I", before_data)
     end
   end
 
@@ -173,21 +169,12 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     @parser.ineligible_to_eligible_issues.each do |issue_data|
       parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(issue_data)
       request_issue = find_request_issue(parser_issue)
+      before_data = request_issue.attributes
+      update_request_issue!(request_issue, parser_issue)
       request_issue.update(
-        ineligible_reason: nil,
-        closed_status: nil,
-        closed_at: nil,
-        contention_reference_id: parser_issue.ri_contention_reference_id,
-        contention_removed_at: nil,
-        contested_issue_description: parser_issue.ri_contested_issue_description ||
-          request_issue.contested_issue_description,
-        nonrating_issue_category: parser_issue.ri_nonrating_issue_category ||
-          request_issue.nonrating_issue_category,
-        nonrating_issue_description: parser_issue.ri_nonrating_issue_description ||
-          request_issue.nonrating_issue_description,
-        contention_updated_at: @parser.end_product_establishment_last_synced_at
+        contention_removed_at: nil
       )
-      add_event_record(request_issue, "I2E")
+      add_event_record(request_issue, "I2E", before_data)
     end
   end
 
@@ -197,21 +184,12 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     @parser.ineligible_to_ineligible_issues.each do |issue_data|
       parser_issue = Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser.new(issue_data)
       request_issue = find_request_issue(parser_issue)
-
+      before_data = request_issue.attributes
+      update_request_issue!(request_issue, parser_issue)
       request_issue.update(
-        ineligible_reason: parser_issue.ri_ineligible_reason,
-        closed_at: parser_issue.ri_closed_at,
-        contested_issue_description: parser_issue.ri_contested_issue_description ||
-          request_issue.contested_issue_description,
-        nonrating_issue_category: parser_issue.ri_nonrating_issue_category ||
-          request_issue.nonrating_issue_category,
-        nonrating_issue_description: parser_issue.ri_nonrating_issue_description ||
-          request_issue.nonrating_issue_description,
-        contention_removed_at: @parser.end_product_establishment_last_synced_at,
-        contention_updated_at: @parser.end_product_establishment_last_synced_at,
-        contention_reference_id: parser_issue.ri_contention_reference_id
+        contention_removed_at: @parser.end_product_establishment_last_synced_at
       )
-      add_event_record(request_issue, "I2I")
+      add_event_record(request_issue, "I2I", before_data)
     end
   end
 
@@ -238,11 +216,15 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     request_issue
   end
 
-  def add_event_record(request_issue, update_type)
+  def add_event_record(request_issue, update_type, before_data)
     EventRecord.create!(
       event: @event,
       evented_record: request_issue,
-      info: { update_type: update_type, record_data: request_issue }
+      info: {
+        update_type: update_type,
+        record_data: request_issue,
+        before_data: before_data
+      }
     )
   end
 
@@ -264,6 +246,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
         reference_id: parser_issues.ri_reference_id,
         benefit_type: parser_issues.ri_benefit_type,
         contested_issue_description: parser_issues.ri_contested_issue_description,
+        contention_updated_at: @parser.end_product_establishment_last_synced_at,
         contention_reference_id: parser_issues.ri_contention_reference_id,
         contested_rating_decision_reference_id: parser_issues.ri_contested_rating_decision_reference_id,
         contested_rating_issue_profile_date: parser_issues.ri_contested_rating_issue_profile_date,
@@ -291,7 +274,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
         veteran_participant_id: @parser.veteran_participant_id,
         decision_review: @review
       )
-      add_event_record(ri, "A")
+      add_event_record(ri, "A", nil)
       newly_created_issues.push(ri)
 
       # LegacyIssue
@@ -323,7 +306,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       vacols_id: request_issue.vacols_id,
       vacols_sequence_id: request_issue.vacols_sequence_id
     )
-    add_event_record(li, "A")
+    add_event_record(li, "A", nil)
     li
   end
 
@@ -332,7 +315,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       request_issue_id: request_issue.id,
       egacy_issue: legacy_issue
     )
-    add_event_record(optin, "A")
+    add_event_record(optin, "A", nil)
     optin
   end
 end

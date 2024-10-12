@@ -112,7 +112,7 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedParser
   end
 
   def veteran_participant_id
-    @payload.dig(:veteran_participant_id)
+    @payload.dig(:veteran, :participant_id).presence
   end
 
   def file_number

@@ -103,6 +103,7 @@ class Api::Events::V1::DecisionReviewUpdatedController < Api::ApplicationControl
         :synced_status,
         :last_synced_at
       ],
+      veteran: [:participant_id],
       added_issues: REQUEST_ISSUE_ATTRIBUTES,
       updated_issues: REQUEST_ISSUE_ATTRIBUTES,
       removed_issues: REQUEST_ISSUE_ATTRIBUTES,
