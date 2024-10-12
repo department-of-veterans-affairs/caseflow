@@ -98,6 +98,16 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
       json_test_payload
     end
 
+    let!(:legacy_appeal) { create(:legacy_appeal) }
+
+    before do
+      allow_any_instance_of(RequestIssuesUpdateEvent).to receive(:vacols_issue).and_return(Issue.new)
+      allow_any_instance_of(Issue).to receive(:vacols_sequence_id).and_return(1)
+      allow_any_instance_of(Issue).to receive(:disposition_id).and_return("O")
+      allow_any_instance_of(Issue).to receive(:disposition_date).and_return(Time.zone.now)
+      allow_any_instance_of(Issue).to receive(:legacy_appeal).and_return(legacy_appeal)
+    end
+
     context "add issue with already existing issue" do
       before do
         request.headers["Authorization"] = "Token token=#{api_key.key_string}"
@@ -147,7 +157,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
         expect(new_request_issue.contested_rating_issue_reference_id).to eq(nil)
         expect(new_request_issue.contested_rating_issue_diagnostic_code).to eq("9411")
         expect(new_request_issue.veteran_participant_id).to eq("1826209")
-        expect(new_request_issue.contention_updated_at).to be
+        expect(new_request_issue.contention_updated_at).to eq(nil)
       end
     end
   end

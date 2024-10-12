@@ -23,6 +23,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     )
   end
 
+  # rubocop:disable Metrics/MethodLength
   def perform!
     process_eligible_to_ineligible_issues!
     process_ineligible_to_eligible_issues!
@@ -37,7 +38,6 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     process_legacy_issues!
 
     after_issues = (before_request_issues + newly_created_issues - newly_removed_issues).uniq
-
     update!(
       before_request_issue_ids: before_request_issues.map(&:id),
       after_request_issue_ids: after_issues.map(&:id),
@@ -51,6 +51,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     process_job
     true
   end
+  # rubocop:enable Metrics/MethodLength
 
   # Override the base class's process_job method to set the status to attempted and processed
   def process_job
@@ -178,15 +179,36 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       )
 
       # LegacyIssue
-      if vacols_ids_exist?(request_issue)
-        legacy_issue = create_legacy_issue_backfill(request_issue)
-
-        # LegacyIssueOptin
-        if optin?(@review) && request_issue.ineligible_reason.blank?
-          create_legacy_optin_backfill(request_issue, legacy_issue)
-        end
-      end
+      process_legacy_issues_for_ineligible_to_eligible!(request_issue, parser_issue)
       add_event_record(request_issue, "I2E", before_data)
+    end
+  end
+
+  def process_legacy_issues_for_ineligible_to_eligible!(request_issue, parser_issue)
+    if vacols_ids_exist?(request_issue)
+      legacy_issue = LegacyIssue.find_by(
+        request_issue_id: request_issue.id,
+        vacols_id: parser_issue.ri_vacols_id,
+        vacols_sequence_id: parser_issue.ri_vacols_sequence_id
+      )
+      reset_or_create_legacy_issue!(legacy_issue, request_issue)
+    end
+  end
+
+  def reset_or_create_legacy_issue!(legacy_issue, request_issue)
+    if legacy_issue && optin?(@review) && request_issue.ineligible_reason.blank?
+      legacy_issue.legacy_issue_optin.update!(
+        optin_processed_at: nil,
+        rollback_processed_at: nil,
+        rollback_created_at: nil
+      )
+    else
+      legacy_issue = create_legacy_issue_backfill(request_issue)
+
+      # LegacyIssueOptin
+      if optin?(@review) && request_issue.ineligible_reason.blank?
+        create_legacy_optin_backfill(request_issue, legacy_issue)
+      end
     end
   end
 
@@ -261,6 +283,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       if parser_issues.ri_reference_id.nil?
         fail Caseflow::Error::DecisionReviewCreatedRequestIssuesError, "reference_id cannot be null"
       end
+
       ri = RequestIssue.create!(
         reference_id: parser_issues.ri_reference_id,
         benefit_type: parser_issues.ri_benefit_type,
@@ -329,11 +352,23 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   end
 
   def create_legacy_optin_backfill(request_issue, legacy_issue)
+    vacols_issue = vacols_issue(request_issue.vacols_id, request_issue.vacols_sequence_id)
     optin = LegacyIssueOptin.create!(
-      request_issue_id: request_issue.id,
-      egacy_issue: legacy_issue
+      request_issue: request_issue,
+      original_disposition_code: vacols_issue.disposition_id,
+      original_disposition_date: vacols_issue.disposition_date,
+      legacy_issue: legacy_issue,
+      original_legacy_appeal_decision_date: vacols_issue&.legacy_appeal&.decision_date,
+      original_legacy_appeal_disposition_code: vacols_issue&.legacy_appeal&.case_record&.bfdc,
+      folder_decision_date: vacols_issue&.legacy_appeal&.case_record&.folder&.tidcls
     )
     add_event_record(optin, "A", nil)
     optin
+  end
+
+  def vacols_issue(vacols_id, vacols_sequence_id)
+    AppealRepository.issues(vacols_id).find do |issue|
+      issue.vacols_sequence_id == vacols_sequence_id
+    end
   end
 end
