@@ -33,12 +33,6 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
           "type": "HigherLevelReviewIntake",
           "detail_type": "HigherLevelReview"
         },
-        "veteran": {
-          "participant_id": "1826209",
-          "bgs_last_synced_at": 1_708_533_584_000,
-          "name_suffix": nil,
-          "date_of_death": nil
-        },
         "claimant": {
           "payee_code": "00",
           "type": "VeteranClaimant",
@@ -87,7 +81,8 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
             "rating_issue_associated_at": nil,
             "ramp_claim_id": nil,
             "is_unidentified": true,
-            "nonrating_issue_bgs_source": nil
+            "nonrating_issue_bgs_source": nil,
+            "veteran_participant_id": "1826209"
           }
         ],
         "updated_issues": [],
@@ -101,6 +96,16 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
 
     let!(:valid_params) do
       json_test_payload
+    end
+
+    let!(:legacy_appeal) { create(:legacy_appeal) }
+
+    before do
+      allow_any_instance_of(RequestIssuesUpdateEvent).to receive(:vacols_issue).and_return(Issue.new)
+      allow_any_instance_of(Issue).to receive(:vacols_sequence_id).and_return(1)
+      allow_any_instance_of(Issue).to receive(:disposition_id).and_return("O")
+      allow_any_instance_of(Issue).to receive(:disposition_date).and_return(Time.zone.now)
+      allow_any_instance_of(Issue).to receive(:legacy_appeal).and_return(legacy_appeal)
     end
 
     context "add issue with already existing issue" do
@@ -128,31 +133,31 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
         expect(new_request_issue.event_records.last.info["record_data"]["id"]).to eq(new_request_issue.id)
         expect(new_request_issue.benefit_type).to eq("compensation")
         expect(new_request_issue.contested_issue_description).to eq("some_description")
-        # expect(new_request_issue.contested_rating_issue_reference_id).to eq("6789")
-        # expect(new_request_issue.contested_rating_issue_diagnostic_code).to eq("9411")
+        expect(new_request_issue.contested_rating_issue_diagnostic_code).to eq("9411")
         expect(new_request_issue.contested_rating_decision_reference_id).to eq(nil)
         expect(new_request_issue.contested_decision_issue_id).to eq(nil)
         expect(new_request_issue.untimely_exemption).to eq(false)
         expect(new_request_issue.untimely_exemption_notes).to eq("some notes")
         expect(new_request_issue.ineligible_due_to_id).to eq(nil)
-        # expect(new_request_issue.ineligible_reason).to eq(nil)
+        expect(new_request_issue.ineligible_reason).to eq(nil)
         expect(new_request_issue.is_unidentified).to eq(true)
         expect(new_request_issue.nonrating_issue_bgs_source).to eq(nil)
         expect(new_request_issue.ramp_claim_id).to eq(nil)
         expect(new_request_issue.nonrating_issue_description).to eq(nil)
-        # expect(new_request_issue.decision_date).to eq(Date.parse("19568").)
+        expect(new_request_issue.decision_date).to be_a(Date)
         # expect(new_request_issue.rating_issue_associated_at).to eq(nil)
         expect(new_request_issue.ramp_claim_id).to eq(nil)
         expect(new_request_issue.is_unidentified).to eq(true)
         expect(new_request_issue.nonrating_issue_bgs_id).to eq("some_bgs_id")
         expect(new_request_issue.contention_reference_id).to eq(123_456)
-        # expect(new_request_issue.contested_rating_issue_profile_date).to eq("122255")
         expect(new_request_issue.unidentified_issue_text).to eq("An unidentified issue added during the edit")
         expect(new_request_issue.edited_description).to eq(nil)
         expect(new_request_issue.vacols_id).to eq("some_id")
         expect(new_request_issue.vacols_sequence_id).to eq(1001)
         expect(new_request_issue.contested_rating_issue_reference_id).to eq(nil)
         expect(new_request_issue.contested_rating_issue_diagnostic_code).to eq("9411")
+        expect(new_request_issue.veteran_participant_id).to eq("1826209")
+        expect(new_request_issue.contention_updated_at).to eq(nil)
       end
     end
   end
