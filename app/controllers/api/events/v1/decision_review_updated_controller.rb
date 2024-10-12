@@ -46,7 +46,8 @@ class Api::Events::V1::DecisionReviewUpdatedController < Api::ApplicationControl
     :rating_issue_associated_at,
     :ramp_claim_id,
     :is_unidentified,
-    :nonrating_issue_bgs_source
+    :nonrating_issue_bgs_source,
+    :veteran_participant_id
   ].freeze
 
   def decision_review_updated
