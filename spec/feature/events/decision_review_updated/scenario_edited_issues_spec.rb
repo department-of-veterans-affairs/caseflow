@@ -102,7 +102,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
       it "returns success response whith updated edited_description" do
         expect(existing_request_issue.edited_description).to_not eq("DIC: Service connection denied (UPDATED)")
         post :decision_review_updated, params: valid_params
-        expect(response).to have_http_status(:ok)
+        expect(response).to have_http_status(:created)
         expect(response.body).to include("DecisionReviewUpdatedEvent successfully processed")
         existing_request_issue.reload
         expect(existing_request_issue.edited_description).to eq("DIC: Service connection denied (UPDATED)")
@@ -124,7 +124,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
         expect(RequestIssue.find_by(reference_id: "6789")).to be
         expect(existing_request_issue.edited_description).to_not eq("DIC: Service connection denied (UPDATED)")
         post :decision_review_updated, params: valid_params
-        expect(response).to have_http_status(:ok)
+        expect(response).to have_http_status(:created)
         expect(response.body).to include("DecisionReviewUpdatedEvent successfully processed")
         existing_request_issue.reload
         expect(existing_request_issue.edited_description).to eq("DIC: Service connection denied (UPDATED)")
@@ -202,7 +202,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
         expect(existing_request_issue.edited_description).to_not eq("DIC: Service connection denied (UPDATED)")
         expect(existing_request_issue_2.edited_description).to_not eq("DIC: Service connection denied 2 (UPDATED)")
         post :decision_review_updated, params: valid_params
-        expect(response).to have_http_status(:ok)
+        expect(response).to have_http_status(:created)
         expect(response.body).to include("DecisionReviewUpdatedEvent successfully processed")
         existing_request_issue.reload
         existing_request_issue_2.reload

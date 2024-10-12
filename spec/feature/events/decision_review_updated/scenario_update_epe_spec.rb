@@ -49,7 +49,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
       it "updates the EPE accordingly" do
         request.headers["Authorization"] = "Token #{api_key.key_string}"
         post :decision_review_updated, params: valid_params
-        expect(response).to have_http_status(:ok)
+        expect(response).to have_http_status(:created)
         epe.reload
         expect(epe.code).to eq("030HLRR")
         expect(epe.synced_status).to eq("RFD")

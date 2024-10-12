@@ -128,6 +128,7 @@ class RequestIssue < CaseflowRecord
 
   class << self
     # the umbrella term "rating" here is generalized to the type of EP it refers to.
+
     def rating
       rating_issue.or(rating_decision).or(unidentified)
     end
@@ -203,7 +204,6 @@ class RequestIssue < CaseflowRecord
     def from_intake_data(data, decision_review: nil)
       attrs = attributes_from_intake_data(data)
       attrs = attrs.merge(decision_review: decision_review) if decision_review
-
       new(attrs).tap(&:validate_eligibility!)
     end
 
@@ -633,6 +633,8 @@ class RequestIssue < CaseflowRecord
   end
 
   def close_if_ineligible!
+    return if reference_id.present?
+
     close!(status: :ineligible) if ineligible_reason?
   end
 
