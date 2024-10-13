@@ -328,6 +328,7 @@ class ClaimReview < DecisionReview
   end
 
   def verify_contentions
+
     # any open request_issues that have contention_reference_id pointers that no longer resolve should be removed.
     # filter for only request issues that have a nil reference_id,
     # this will filter out any request issues from AMA Event
