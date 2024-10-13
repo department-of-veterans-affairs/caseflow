@@ -12,8 +12,8 @@ describe SqsService do
     subject { SqsService.find_queue_url_by_name(name: queue_name, check_fifo: false) }
 
     context "FIFO" do
-      let!(:fifo) { true }
-      let!(:queue_name) { "my_fifo_queue" }
+      let(:fifo) { true }
+      let(:queue_name) { "my_fifo_queue" }
 
       it "the queue is found and is validated to be a FIFO queue" do
         expect(subject { SqsService.find_queue_url_by_name(name: queue_name, check_fifo: true) })
@@ -33,8 +33,8 @@ describe SqsService do
     end
 
     context "non-FIFO" do
-      let!(:fifo) { false }
-      let!(:queue_name) { "my_normal_queue" }
+      let(:fifo) { false }
+      let(:queue_name) { "my_normal_queue" }
 
       it "the queue is found" do
         is_expected.to include("caseflow_test_my_normal_queue")
