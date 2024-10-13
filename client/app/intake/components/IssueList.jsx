@@ -120,7 +120,8 @@ export default class IssuesList extends React.Component {
       userCanEditIntakeIssues,
       editPage,
       featureToggles,
-      disableIssueActions
+      disableIssueActions,
+      disableEditingForCompAndPen
     } = this.props;
 
     return <div className="issues">
@@ -181,7 +182,7 @@ export default class IssuesList extends React.Component {
                   onChange={(option) => onClickIssueAction(issue.index, option.value)}
                   searchable={false}
                   doubleArrow
-                  readOnly={disableIssueActions}
+                  readOnly={disableIssueActions || disableEditingForCompAndPen}
                 /> }
                 {!editPage && <Button
                   onClick={() => onClickIssueAction(issue.index)}
@@ -208,7 +209,8 @@ export default class IssuesList extends React.Component {
               /> : null}
             {editableContentionText && <EditContentionTitle
               issue= {issue}
-              issueIdx={issue.index} />}
+              issueIdx={issue.index}
+              disableEditingForCompAndPen={disableEditingForCompAndPen} />}
           </div>;
         })}
       </div>
@@ -228,5 +230,6 @@ IssuesList.propTypes = {
   showRequestIssueUpdateOptions: PropTypes.bool,
   editPage: PropTypes.bool,
   featureToggles: PropTypes.object,
-  disableIssueActions: PropTypes.bool
+  disableIssueActions: PropTypes.bool,
+  disableEditingForCompAndPen: PropTypes.bool
 };
