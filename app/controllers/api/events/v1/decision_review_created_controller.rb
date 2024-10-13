@@ -90,7 +90,8 @@ class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationControl
                                    :rating_issue_associated_at,
                                    :decision_review_issue_id,
                                    :nonrating_issue_bgs_id,
-                                   :nonrating_issue_bgs_source])
+                                   :nonrating_issue_bgs_source,
+                                   :veteran_participant_id])
   end
   # rubocop:enable Metrics/MethodLength
 end
