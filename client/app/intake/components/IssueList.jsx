@@ -209,7 +209,8 @@ export default class IssuesList extends React.Component {
               /> : null}
             {editableContentionText && <EditContentionTitle
               issue= {issue}
-              issueIdx={issue.index} />}
+              issueIdx={issue.index}
+              disableEditingForCompAndPen={disableEditingForCompAndPen} />}
           </div>;
         })}
       </div>
