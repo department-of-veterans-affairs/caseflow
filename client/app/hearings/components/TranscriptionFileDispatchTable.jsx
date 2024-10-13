@@ -136,10 +136,10 @@ export const TranscriptionFileDispatchTable = ({
    * Adds custom url params to the params used for pagination
    * @returns The url params needed to handle pagination
    */
-  const qs = encodeQueryParams({
+  const qs = encodeQueryParams(searchValue ? {
     tab: statusFilter[0],
     search: searchValue
-  });
+  } : { tab: statusFilter[0] });
 
   /**
    * Sets the correct API endpoint based on the tab we're in
@@ -314,4 +314,5 @@ TranscriptionFileDispatchTable.propTypes = {
   selectAll: PropTypes.func,
   selectFilesForPackage: PropTypes.func,
   openModal: PropTypes.func,
+  searchValue: PropTypes.string
 };
