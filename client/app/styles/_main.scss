@@ -243,6 +243,12 @@ nav {
   background-color: inherit;
 }
 
+.cf-icon-external-link {
+  path {
+    fill: $cf-link;
+  }
+}
+
 .cf-tab-window-body {
   padding-top: 20px;
   border: 1px solid $color-gray-light;
@@ -410,4 +416,8 @@ select {
     position: fixed;
     transform: translateX(0);
   }
+}
+
+.gray-border {
+  border: 2px solid $color-gray-lighter;
 }
