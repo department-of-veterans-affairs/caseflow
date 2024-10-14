@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-require 'pry'
 
 describe CorrespondenceIntakeProcessor do
   subject(:described) { described_class.new }
@@ -64,13 +63,17 @@ describe CorrespondenceIntakeProcessor do
     end
   end
 
-  describe "#update_correspondence" do 
+  describe "#update_correspondence" do
     context "when Correspondence is found" do
       it "executes update_correspondence successfully" do
-        expect_any_instance_of(described_class).to receive(:create_correspondence_relations).with(intake_params, correspondence.id, true)
-        expect_any_instance_of(described_class).to receive(:link_appeals_to_correspondence).with(intake_params, correspondence.id)
-        expect_any_instance_of(described_class).to receive(:unlink_appeals_to_correspondence).with(intake_params, correspondence)
-        expect_any_instance_of(described_class).to receive(:remove_correspondence_relations).with(intake_params, correspondence)
+        expect_any_instance_of(described_class)
+          .to receive(:create_correspondence_relations).with(intake_params, correspondence.id, true)
+        expect_any_instance_of(described_class)
+          .to receive(:link_appeals_to_correspondence).with(intake_params, correspondence.id)
+        expect_any_instance_of(described_class)
+          .to receive(:unlink_appeals_to_correspondence).with(intake_params, correspondence)
+        expect_any_instance_of(described_class)
+          .to receive(:remove_correspondence_relations).with(intake_params, correspondence)
         result = subject.update_correspondence(intake_params)
         expect(result).to be true
       end
