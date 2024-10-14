@@ -17,7 +17,7 @@ describe HearingTimeService, :all_dbs do
     end
   end
 
-  context "with a legacy hearing and a hearing scheduled for 12:00pm PT" do
+  context "with a legacy hearing and an AMA hearing" do
     include_context "legacy_hearing"
 
     let!(:hearing) { create(:hearing, regional_office: "RO43", scheduled_time: "12:00 PM") }
@@ -44,6 +44,61 @@ describe HearingTimeService, :all_dbs do
       it "converts time to local time in HH:mm string" do
         expect(LegacyHearing.first.time.scheduled_time_string).to eq("12:00 PM Pacific Time (US & Canada)")
         expect(hearing.time.scheduled_time_string).to eq("12:00 PM Pacific Time (US & Canada)")
+      end
+
+      context "For special timezones" do
+        let(:hearing_time) do
+          HearingDatetimeService.prepare_datetime_for_storage(
+            date: "2025-01-01",
+            time_string: "3:00 PM Eastern Time (US & Canada)"
+          )
+        end
+
+        subject { hearing.scheduled_time_string }
+
+        context "Legacy Hearing" do
+          context "Set to take place in Boise, ID" do
+            let(:hearing) do
+              create(
+                :legacy_hearing,
+                regional_office: "RO47",
+                scheduled_for: Time.use_zone("America/New_York") { Time.zone.now.change(hour: 15, min: 0) }
+              )
+            end
+
+            it { is_expected.to eq "3:00 PM Mountain Time (US & Canada)" }
+          end
+
+          context "Set to take place in Louisville, KY" do
+            let(:hearing) do
+              create(
+                :legacy_hearing,
+                regional_office: "RO27",
+                scheduled_for: Time.use_zone("America/New_York") { Time.zone.now.change(hour: 15, min: 0) }
+              )
+            end
+
+            it { is_expected.to eq "3:00 PM Eastern Time (US & Canada)" }
+          end
+        end
+
+        context "AMA Hearing" do
+          context "Set to take place in Boise, ID" do
+            let(:hearing) do
+              create(:hearing, regional_office: "RO47", scheduled_time: "3:00 PM")
+            end
+
+            it { is_expected.to eq "3:00 PM Mountain Time (US & Canada)" }
+          end
+
+          context "Set to take place in Louisville, KY" do
+            let(:hearing) do
+              create(:hearing, regional_office: "RO27", scheduled_time: "3:00 PM")
+            end
+
+            it { is_expected.to eq "3:00 PM Eastern Time (US & Canada)" }
+          end
+        end
       end
     end
 
