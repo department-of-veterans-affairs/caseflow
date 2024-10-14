@@ -802,7 +802,7 @@ const CorrespondenceDetails = (props) => {
 
       tempCor.relatedCorrespondenceIds = priorMailIds;
 
-      return ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/create_correspondence_relations`, payload).
+      return ApiUtil.patch(`/queue/correspondence/${correspondence.uuid}/update_correspondence`, payload).
         then(() => {
           props.updateCorrespondenceInfo(tempCor);
           setRelatedCorrespondenceIds([...relatedCorrespondenceIds, ...priorMailIds]);
@@ -828,14 +828,14 @@ const CorrespondenceDetails = (props) => {
 
       const payload = {
         data: {
-          selected_appeal_ids: appealsSelected,
+          related_appeal_ids: appealsSelected,
           unselected_appeal_ids: unSelectedAppeals
         }
       };
 
-      return ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/save_correspondence_appeals`, payload).
+      return ApiUtil.patch(`/queue/correspondence/${correspondence.uuid}/update_correspondence`, payload).
         then((resp) => {
-          const appealIds = resp.body;
+          const appealIds = resp.body.related_appeals;
 
           setSelectedAppeals(appealIds);
           setInitialSelectedAppeals(appealIds);

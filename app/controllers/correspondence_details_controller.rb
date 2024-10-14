@@ -128,7 +128,7 @@ class CorrespondenceDetailsController < CorrespondenceController
 
   def update_correspondence
     if correspondence_intake_processor.update_correspondence(params)
-      render json: {}, status: :created
+      render json: { related_appeals: @correspondence.appeal_ids }, status: :created
     else
       render json: { error: "Failed to update records" }, status: :bad_request
     end
@@ -140,26 +140,6 @@ class CorrespondenceDetailsController < CorrespondenceController
         correspondence_id: corr_id,
         related_correspondence_id: @correspondence.id
       )
-    end
-  end
-
-  def save_correspondence_appeals
-    if params[:selected_appeal_ids].present?
-      params[:selected_appeal_ids].each do |appeal_id|
-        @correspondence.correspondence_appeals.find_or_create_by(appeal_id: appeal_id)
-      end
-    end
-    if params[:unselected_appeal_ids].present?
-      correspondence_appeals_to_delete = @correspondence.correspondence_appeals
-        .where(appeal_id: params[:unselected_appeal_ids])
-
-      CorrespondencesAppealsTask.where(correspondence_appeal_id: correspondence_appeals_to_delete.pluck(:id)).delete_all
-
-      correspondence_appeals_to_delete.delete_all
-    end
-    respond_to do |format|
-      format.html
-      format.json { render json: @correspondence.appeal_ids, status: :ok }
     end
   end
 
