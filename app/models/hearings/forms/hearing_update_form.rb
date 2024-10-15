@@ -13,9 +13,11 @@ class HearingUpdateForm < BaseHearingUpdateForm
   protected
 
   def update_hearing
-    Transcription.find_or_create_by(hearing: hearing) unless transcription_attributes.blank?
-    # a new HearingLocation is created here if hearing_location_attributes is present
-    hearing.update!(hearing_updates)
+    if transcription_attributes.present?
+      transcription = Transcription.find_or_create_by(hearing_type: hearing.class.name, hearing_id: hearing.id)
+      transcription.update!(transcription_attributes)
+    end
+    hearing.update!(hearing_updates.except(:transcription_attributes))
     update_advance_on_docket_motion unless advance_on_docket_motion_attributes.blank?
   end
 
@@ -67,10 +69,28 @@ class HearingUpdateForm < BaseHearingUpdateForm
       summary: summary,
       transcript_requested: transcript_requested,
       transcript_sent_date: transcript_sent_date,
-      transcription_attributes: transcription_attributes,
+      # transcription_attributes: transcription_attributes,
       witness: witness,
       email_recipients_attributes: email_recipients_attributes
     }.compact
   end
   # rubocop:enable Metrics/MethodLength
 end
+
+
+  # def update_hearing
+  #   byebug
+  #   if transcription_attributes.present?
+  #     transcription = Transcription.find_or_initialize_by(hearing_type: hearing.class.name, hearing_id: hearing.id)
+  #     puts "Transcription before update: #{transcription.inspect}"
+  #     transcription.update!(transcription_attributes)
+  #     puts "Transcription after update: #{transcription.inspect}"
+  #   end
+
+  #   # Debugging for hearing updates
+  #   puts "Hearing before update: #{hearing.inspect}"
+  #   hearing.update!(hearing_updates.except(:transcription_attributes))
+  #   puts "Hearing after update: #{hearing.inspect}"
+
+  #   update_advance_on_docket_motion unless advance_on_docket_motion_attributes.blank?
+  # end
