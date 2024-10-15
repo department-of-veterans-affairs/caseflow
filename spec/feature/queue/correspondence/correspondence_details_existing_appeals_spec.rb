@@ -53,7 +53,10 @@ RSpec.feature("Tasks related to an existing Appeal - In Correspondence Details P
       expect(page).to have_content("Confirm waive removal")
       expect(page).to have_content("Once confirmed, the waive evidence window will be removed.")
       click_button("Confirm")
-      expect(page).to have_content("The waive evidence window request has been removed from the \"Evidence submission window\" task")
+      expect(page).to have_content(
+        "The waive evidence window request has been removed from the " \
+        "\"Evidence submission window\" task"
+      )
     end
   end
 end
