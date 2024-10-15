@@ -163,7 +163,8 @@ TaskTableTabUnconnected.propTypes = {
   filterableTaskTypes: PropTypes.object,
   filterableTaskIssueTypes: PropTypes.object,
   onHistoryUpdate: PropTypes.func,
-  tabName: PropTypes.string
+  tabName: PropTypes.string,
+  businessLineUrl: PropTypes.string
 };
 
 const TaskTableTab = connect(
