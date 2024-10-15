@@ -67,15 +67,17 @@ const CorrespondenceAppealTasks = (props) => {
           </div>
 
         </div>
-        <div className="tasks-added-details">
-          {appeal && bannerAlert.message && bannerAlert.appealId.toString() === appeal.id.toString() &&
-          (
-              <Alert
-                type={bannerAlert.type}
-                message={bannerAlert.message}
-                scrollOnAlert={false}
-              />
-          )}
+        <div className="tasks-added-details tasks-added-waive-banner-alert">
+          <div className="waive-banner-alert">
+            {appeal && bannerAlert.message && bannerAlert.appealId.toString() === appeal.id.toString() &&
+            (
+                <Alert
+                  type={bannerAlert.type}
+                  message={bannerAlert.message}
+                  scrollOnAlert={false}
+                />
+            )}
+          </div>
         </div>
         <div className="tasks-added-details">
           <span className="tasks-added-text">Tasks added to appeal</span>
