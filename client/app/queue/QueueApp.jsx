@@ -96,7 +96,7 @@ import CorrespondenceReviewPackage from './correspondence/ReviewPackage/Correspo
 import CorrespondenceIntake from './correspondence/intake/components/CorrespondenceIntake';
 import CorrespondenceAssignTaskModal from './components/CorrespondenceAssignTaskModal';
 import CorrespondenceAssignTeamModal from './components/CorrespondenceAssignTeamModal';
-import CorrespondenceRemoveWaiveEvidenceModal from './components/CorrespondenceRemoveWaiveEvidence.jsx';
+import CorrespondenceRemoveWaiveEvidenceModal from './components/CorrespondenceRemoveWaiveEvidence';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_TITLES } from './constants';
@@ -1701,7 +1701,7 @@ QueueApp.propTypes = {
   userPermissions: PropTypes.array,
   configUrl: PropTypes.string,
   correspondenceResponseLetters: PropTypes.array,
-  correspondenceUuid: PropTypes.string,
+  correspondence_uuid: PropTypes.string,
 };
 
 const mapStateToProps = (state) => ({

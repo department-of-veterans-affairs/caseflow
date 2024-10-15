@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -20,7 +20,6 @@ const CorrespondenceRemoveWaiveEvidenceModal = (props) => {
   const taskData = taskActionData(props);
   const correspondence = correspondenceInfo;
   const submit = () => {
-    const remainingTime = task.timerEndsAt;
     const payload = {
       data: {
         appeal_uuid: props.appealId,
@@ -30,7 +29,6 @@ const CorrespondenceRemoveWaiveEvidenceModal = (props) => {
           type: 'EvidenceSubmissionWindowTask',
           appeal_id: task.appealId,
           appeal_type: 'Correspondence',
-          remaining_time: remainingTime,
           status: TASK_STATUSES.completed
         }
       }
@@ -71,7 +69,9 @@ CorrespondenceRemoveWaiveEvidenceModal.propTypes = {
     assignedTo: PropTypes.shape({
       type: PropTypes.string
     }),
-    taskId: PropTypes.string,
+    appealId: PropTypes.string,
+    id: PropTypes.string,
+    instructions: PropTypes.string,
     uniqueId: PropTypes.string,
     type: PropTypes.string,
     label: PropTypes.string,
@@ -79,7 +79,9 @@ CorrespondenceRemoveWaiveEvidenceModal.propTypes = {
   }),
   task_id: PropTypes.string,
   correspondence_uuid: PropTypes.string,
-  team: PropTypes.string
+  team: PropTypes.string,
+  correspondenceInfo: PropTypes.func,
+  appealId: PropTypes.string,
 };
 
 const mapStateToProps = (state, ownProps) => ({
