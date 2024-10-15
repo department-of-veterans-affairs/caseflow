@@ -20,6 +20,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     @genpop_distributions = distribute_genpop_priority_appeals
 
     perform_later_or_now(UpdateAppealAffinityDatesJob)
+    perform_later_or_now(ReturnLegacyAppealsToBoardJob)
 
     slack_service.send_notification(generate_report.join("\n"), self.class.name)
   rescue StandardError => error

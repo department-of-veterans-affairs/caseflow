@@ -30,7 +30,7 @@ RSpec.describe Api::V1::JobsController, :postgres, type: :controller do
 
     # needed to reach 90% test coverage
     it "should successfully run a job" do
-      expect(HeartbeatTasksJob.perform_now).to eq true
+      expect(HeartbeatTasksJob.perform_now).to eq 53
     end
   end
 

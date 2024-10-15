@@ -137,13 +137,6 @@ See debugging steps as well as more information about FACOLS in our [wiki](https
 Review the [FACOLS documentation](docs/FACOLS.md) for details.
 
 ## Monitoring  #######################################################
-We use NewRelic to monitor the app. By default, it's disabled locally. To enable it, do:
-
-```
-NEW_RELIC_LICENSE_KEY='<key as displayed on NewRelic.com>' NEW_RELIC_AGENT_ENABLED=true bundle exec foreman start
-```
-
-You may wish to do this if you are debugging our NewRelic integration, for instance.
 
 ---
 

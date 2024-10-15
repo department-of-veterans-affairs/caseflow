@@ -91,7 +91,7 @@ describe "AssocationWrapper" do
           [:attorney_case_reviews, false, false, "task_id", "attorney_case_review_id", nil],
           [:task_timers, false, false, "task_id", "task_timer_id", nil],
           # has_one declared in Task
-          [:cached_appeal, false, true, :appeal_id, "cached_appeal_id", nil]
+          [:cached_appeal, false, true, "appeal_id", "cached_appeal_id", nil]
         ]
       end
     end
