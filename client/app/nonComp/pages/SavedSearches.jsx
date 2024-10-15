@@ -19,7 +19,6 @@ const SavedSearches = () => {
   const ALL_TABS = [
     {
       key: 'my_saved_searches',
-      disable: false,
       label: 'My saved searches',
       // this section will later changed to backend call
       page: <SearchTable
@@ -29,7 +28,6 @@ const SavedSearches = () => {
     },
     {
       key: 'all_saved_searches',
-      disable: false,
       label: 'All saved searches',
       page: <SearchTable
         eventRows={savedSearchesData.savedSearches.rows}

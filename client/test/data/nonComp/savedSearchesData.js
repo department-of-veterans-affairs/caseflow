@@ -214,6 +214,70 @@ export default {
             start_date: '2024-10-07T06:00:00.000Z'
           }
         }
+      },
+      {
+        id: 13,
+        name: 'Search Name4',
+        description: 'Search Description4 is interesting to be done.',
+        createdAt: '2024-07-13',
+        userId: 14,
+        userCssId: 'VHAADMIN3',
+        userFullName: 'VHAADMIN3',
+        saved_params: {
+          report_type: 'event_type_action',
+          timing: {
+            range: 'after',
+            start_date: '2024-10-07T06:00:00.000Z'
+          }
+        }
+      },
+      {
+        id: 14,
+        name: 'Search Name4',
+        description: 'Search Description4 is interesting to be done.',
+        createdAt: '2024-07-13',
+        userId: 14,
+        userCssId: 'VHAADMIN3',
+        userFullName: 'VHAADMIN3',
+        saved_params: {
+          report_type: 'event_type_action',
+          timing: {
+            range: 'after',
+            start_date: '2024-10-07T06:00:00.000Z'
+          }
+        }
+      },
+      {
+        id: 15,
+        name: 'Search Name4',
+        description: 'Search Description4 is interesting to be done.',
+        createdAt: '2024-07-13',
+        userId: 14,
+        userCssId: 'VHAADMIN3',
+        userFullName: 'VHAADMIN3',
+        saved_params: {
+          report_type: 'event_type_action',
+          timing: {
+            range: 'after',
+            start_date: '2024-10-07T06:00:00.000Z'
+          }
+        }
+      },
+      {
+        id: 16,
+        name: 'Search Name4',
+        description: 'Search Description4 is interesting to be done.',
+        createdAt: '2024-07-13',
+        userId: 14,
+        userCssId: 'VHAADMIN3',
+        userFullName: 'VHAADMIN3',
+        saved_params: {
+          report_type: 'event_type_action',
+          timing: {
+            range: 'after',
+            start_date: '2024-10-07T06:00:00.000Z'
+          }
+        }
       }
     ],
     fetchIndividualHistory: {

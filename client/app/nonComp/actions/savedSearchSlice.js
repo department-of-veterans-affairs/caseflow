@@ -1,18 +1,18 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  row: []
+  selectedSearch: {}
 };
 
 const savedSearchSlice = createSlice({
   name: 'savedSearch',
   initialState,
   reducers: {
-    setSavedParams: (state, action) => {
-      state.row = action.payload;
+    selectSavedSearch: (state, action) => {
+      state.selectedSearch = action.payload;
     }
   }
 });
 
 export default savedSearchSlice.reducer;
-export const { setSavedParams } = savedSearchSlice.actions;
+export const { selectSavedSearch } = savedSearchSlice.actions;

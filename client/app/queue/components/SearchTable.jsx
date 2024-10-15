@@ -1,62 +1,50 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-
 import QueueTable from '../../queue/QueueTable';
-
 import RadioField from 'app/components/RadioField';
-import { setSavedParams } from '../../nonComp/actions/savedSearchSlice';
+import { selectSavedSearch } from '../../nonComp/actions/savedSearchSlice';
 
 export const SearchTable = ({ eventRows, searchPageApiEndpoint }) => {
   const dispatch = useDispatch();
-  const value = useSelector((state) => state.savedSearch.row.id);
-  const onChange = (row) => {
-    dispatch(setSavedParams(row));
+  const onSavedSearchChange = (row) => {
+    dispatch(selectSavedSearch(row));
   };
 
   const columns = [
     {
-      name: '',
-      header: '',
+      ariaLabel: 'Select search column',
       valueFunction: (row) => <RadioField
-        name={`row-${row.id}`}
-        options={[{ value: row.id }]}
+        name="savedSearchRadioFieldGroup"
+        label="Select search"
+        options={[{ value: row.id.toString() }]}
         hideLabel
-        strongLabel
-        value={value}
-        // onChange={onChange}
-        onChange={(val) => onChange(row, val)}
+        onChange={() => onSavedSearchChange(row)}
         vertical
       />
     },
     { name: 'searchName',
       header: 'Search Name',
-      columnName: 'searchName',
       getSortValue: (row) => row.name,
-      valueName: 'name',
       valueFunction: (row) => row.name,
     },
     { name: 'savedDate',
       header: 'Saved Date',
-      columnName: 'savedDate',
       getSortValue: (row) => row.createdAt,
-      valueName: 'createdAt',
       valueFunction: (row) => row.createdAt,
     },
     { name: 'admin',
       header: 'Admin',
-      columnName: 'Admin',
       getSortValue: (row) => row.userCssId,
-      valueName: 'userCssId',
       valueFunction: (row) => row.userCssId,
     },
-    { name: 'searchDescription',
-      header: 'Search Description',
-      columnName: 'searchDescription',
-      valueName: 'description',
+    { name: 'description',
+      header: 'Description',
       valueFunction: (row) => row.description
     }
   ];
+
+  // getKeyForRow = (index, task) => task.id
 
   return (<QueueTable
     id="saved_search_table"
@@ -64,7 +52,8 @@ export const SearchTable = ({ eventRows, searchPageApiEndpoint }) => {
     rowObjects={eventRows}
     useTaskPagesApi={false}
     enablePagination
-    casesPerPage={10}
+    casesPerPage={15}
+    getKeyForRow={(index) => index}
     taskPageApiEndpoint={searchPageApiEndpoint}
     defaultSort= {{
       sortColName: 'savedDate',
