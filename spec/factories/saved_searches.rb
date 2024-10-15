@@ -3,8 +3,8 @@
 FactoryBot.define do
   factory :saved_search do
     association :user
-    search_name { Faker::Lorem.sentence(word_count: 3) }
-    search_description { Faker::Lorem.paragraph }
+    name { Faker::Lorem.sentence(word_count: 3) }
+    description { Faker::Lorem.paragraph }
     saved_search do
       {
         report_type: "event_type_action",
