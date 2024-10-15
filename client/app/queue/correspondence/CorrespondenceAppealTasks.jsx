@@ -82,7 +82,9 @@ const CorrespondenceAppealTasks = (props) => {
         <div className="tasks-added-details">
           <span className="tasks-added-text">Tasks added to appeal</span>
           <div>
-            <TaskRows appeal={appeal}
+            <TaskRows
+              key={appeal.id.toString()}
+              appeal={appeal}
               taskList={tasks}
               timeline={false}
               editNodDateEnabled={false}
