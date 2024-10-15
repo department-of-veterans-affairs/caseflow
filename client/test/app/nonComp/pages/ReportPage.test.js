@@ -1,8 +1,6 @@
 import React from 'react';
 import { axe } from 'jest-axe';
 import { Provider } from 'react-redux';
-import thunk from 'redux-thunk';
-import { applyMiddleware, createStore, compose } from 'redux';
 
 import userEvent from '@testing-library/user-event';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
@@ -10,22 +8,21 @@ import { createMemoryHistory } from 'history';
 import ReportPage from 'app/nonComp/pages/ReportPage';
 import selectEvent from 'react-select-event';
 import { getVhaUsers } from 'test/helpers/reportPageHelper';
-import CombinedNonCompReducer from 'app/nonComp/reducers';
+import { MemoryRouter as Router } from 'react-router-dom';
+import createNonCompStore from '../nonCompStoreCreator';
 
 import REPORT_TYPE_CONSTANTS from 'constants/REPORT_TYPE_CONSTANTS';
 import * as ERRORS from 'constants/REPORT_PAGE_VALIDATION_ERRORS';
 
 describe('ReportPage', () => {
   const setup = (storeValues = {}) => {
-    const store = createStore(
-      CombinedNonCompReducer,
-      storeValues,
-      compose(applyMiddleware(thunk))
-    );
+    const store = createNonCompStore(storeValues);
 
     return render(
       <Provider store={store}>
-        <ReportPage />
+        <Router>
+          <ReportPage />
+        </Router>
       </Provider>
     );
   };
@@ -82,15 +79,13 @@ describe('ReportPage', () => {
       const history = createMemoryHistory();
       const storeValues = {};
 
-      const store = createStore(
-        CombinedNonCompReducer,
-        storeValues,
-        compose(applyMiddleware(thunk))
-      );
+      const store = createNonCompStore(storeValues);
 
       render(
         <Provider store={store}>
-          <ReportPage history={history} />
+          <Router>
+            <ReportPage history={history} />
+          </Router>
         </Provider>
       );
 
