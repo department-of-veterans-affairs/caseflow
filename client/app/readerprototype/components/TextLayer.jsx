@@ -1,11 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import * as PDFJS from 'pdfjs-dist';
 
 // Similar to the behavior in Page.jsx, we need to manipulate height and width
 // to ensure the container properly handles rotations and keeps the text layer aligned
 // with the pdf below it.
-const TextLayer = (props) => {
+const TextLayer = memo((props) => {
   const { page, zoomLevel, rotation } = props;
 
   // We need to prevent multiple renderings of text to prevent doubling up. Without
@@ -67,7 +67,7 @@ const TextLayer = (props) => {
   }, [textLayerRef.current]);
 
   return <div ref={textLayerRef} className="cf-pdf-pdfjs-textLayer" style={textLayerStyle} />;
-};
+});
 
 TextLayer.propTypes = {
   page: PropTypes.any,
