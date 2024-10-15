@@ -1,8 +1,8 @@
 import { ACTIONS } from './correspondenceDetailsConstants';
 import ApiUtil from '../../../util/ApiUtil';
 import { sprintf } from 'sprintf-js';
-import { prepareAppealForStore, prepareTasksForStore } from '../../utils';
-import { onReceiveTasks, onReceiveAppealDetails } from '../../QueueActions';
+import { prepareTasksForStore } from '../../utils';
+import { onReceiveTasks, deleteTask } from '../../QueueActions';
 // eslint-disable-next-line import/extensions
 import CORRESPONDENCE_DETAILS_BANNERS from '../../../../constants/CORRESPONDENCE_DETAILS_BANNERS.json';
 
@@ -33,17 +33,20 @@ export const setWaiveEvidenceAlertBanner = (bannerDetails) => (dispatch) => {
 };
 
 export const createNewEvidenceWindowTask = (payload, correspondence, appealId) => (dispatch) => {
-  return ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/waive_evidence_submission_window_task`, payload)
-    .then((response) => {
+  return ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/waive_evidence_submission_window_task`, payload).
+    then((response) => {
       const responseData = JSON.parse(response.text);
-      const responseCorrespondence = responseData.correspondence;
+      const responseTasks = responseData.tasks.data;
+
+      dispatch(deleteTask(payload.data.task.task_id));
+
 
       // Dispatch the banner alert to the store
       dispatch({
         type: ACTIONS.EVIDENCE_SUBMISSION_BANNER,
         payload: {
           bannerAlert: {
-            appealId: appealId,
+            appealId,
             title: CORRESPONDENCE_DETAILS_BANNERS.evidenceWindowBanner.title,
             message: sprintf(CORRESPONDENCE_DETAILS_BANNERS.evidenceWindowBanner.message),
             type: CORRESPONDENCE_DETAILS_BANNERS.evidenceWindowBanner.type
@@ -51,35 +54,20 @@ export const createNewEvidenceWindowTask = (payload, correspondence, appealId) =
         }
       });
 
-      dispatch({
-        type: ACTIONS.CORRESPONDENCE_INFO,
-        payload: {
-          responseCorrespondence
-        }
-      });
+      console.log(`appeal tasks: ${JSON.stringify(responseTasks, 1, 1)}`)
+      // overwrite all correspondence_appeal_tasks in the store with values from response
+      const preparedTasks = prepareTasksForStore(responseTasks);
 
-      const corAppealTasks = [];
-      responseCorrespondence.correspondenceAppeals.map((corAppeal) => {
-        dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal.appeal.data])));
-        corAppeal.taskAddedData.data.map((taskData) => {
-          const formattedTask = {};
-
-          formattedTask[taskData.id] = taskData;
-
-          corAppealTasks.push(taskData);
-        });
-      });
-      // // load appeal tasks into the store
-      const preparedTasks = prepareTasksForStore(corAppealTasks);
       dispatch(onReceiveTasks({
         amaTasks: preparedTasks
       }));
-    })
+    }).
 
-    .catch((error) => {
-      const errorMessage = error?.response?.body?.message
-        ? error.response.body.message.replace(/^Error:\s*/, '')
-        : error.message;
+    catch((error) => {
+      const errorMessage = error?.response?.body?.message ?
+        error.response.body.message.replace(/^Error:\s*/, '') :
+        error.message;
+
       console.error(errorMessage);
     });
 };
@@ -318,7 +306,7 @@ export const submitLetterResponse = (payload, correspondence) => (dispatch) => {
     then((response) => {
       const responseLetters = response.body.responseLetters;
 
-      correspondence.correspondenceResponseLetters = responseLetters
+      correspondence.correspondenceResponseLetters = responseLetters;
 
       dispatch({
         type: ACTIONS.CORRESPONDENCE_INFO,

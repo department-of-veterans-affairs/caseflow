@@ -75,7 +75,7 @@ const CorrespondenceDetails = (props) => {
   }, [priorMail]);
 
   useEffect(() => {
-    dispatch(updateCorrespondenceInfo(correspondence));
+    setAppealTaskKey((key) => key + 1);
   }, [correspondenceInfo]);
 
   const toggleSection = () => {
@@ -389,30 +389,26 @@ const CorrespondenceDetails = (props) => {
     sortAppeals(initialSelectedAppeals);
   }, []);
 
-  useEffect(() => {
-    dispatch(updateCorrespondenceInfo(correspondence));
-    // load appeals related to the correspondence into the store
-    const corAppealTasks = [];
+  // useEffect(() => {
+  //   dispatch(updateCorrespondenceInfo(correspondence));
+  //   // load appeals related to the correspondence into the store
+  //   const corAppealTasks = [];
 
-    props.correspondence.correspondenceAppeals.map((corAppeal) => {
-      dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal.appeal.data])));
-      corAppeal.taskAddedData.data.map((taskData) => {
-        const formattedTask = {};
+  //   props.correspondence.correspondenceAppeals.map((corAppeal) => {
+  //     dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal.appeal.data])));
+  //     corAppeal.taskAddedData.data.map((taskData) => {
+  //       corAppealTasks.push(taskData);
+  //     });
 
-        formattedTask[taskData.id] = taskData;
+  //   });
+  //   // // load appeal tasks into the store
+  //   const preparedTasks = prepareTasksForStore(corAppealTasks);
 
-        corAppealTasks.push(taskData);
-      });
+  //   dispatch(onReceiveTasks({
+  //     amaTasks: preparedTasks
+  //   }));
 
-    });
-    // // load appeal tasks into the store
-    const preparedTasks = prepareTasksForStore(corAppealTasks);
-
-    dispatch(onReceiveTasks({
-      amaTasks: preparedTasks
-    }));
-
-  }, []);
+  // }, []);
 
   const isTasksUnrelatedToAppealEmpty = () => {
     if (props.tasksUnrelatedToAppealEmpty === true) {
@@ -492,6 +488,7 @@ const CorrespondenceDetails = (props) => {
           )}
           {(props.correspondence.correspondenceAppeals.map((taskAdded) =>
             <CorrespondenceAppealTasks
+              key={appealTaskKey + taskAdded.id}
               task_added={taskAdded}
               correspondence={props.correspondence}
               organizations={props.organizations}
