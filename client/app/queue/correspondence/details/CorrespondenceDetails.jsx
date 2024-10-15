@@ -75,7 +75,7 @@ const CorrespondenceDetails = (props) => {
   }, [priorMail]);
 
   useEffect(() => {
-    dispatch(updateCorrespondenceInfo(correspondence));
+    setAppealTaskKey((key) => key + 1);
   }, [correspondenceInfo]);
 
   const toggleSection = () => {
@@ -394,13 +394,14 @@ const CorrespondenceDetails = (props) => {
     // load appeals related to the correspondence into the store
     const corAppealTasks = [];
 
+    // return if appeals already loaded into store
+    if (Object.keys(props.appealsFromStore).length > 0) {
+      return;
+    }
+
     props.correspondence.correspondenceAppeals.map((corAppeal) => {
       dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal.appeal.data])));
       corAppeal.taskAddedData.data.map((taskData) => {
-        const formattedTask = {};
-
-        formattedTask[taskData.id] = taskData;
-
         corAppealTasks.push(taskData);
       });
 
@@ -492,6 +493,7 @@ const CorrespondenceDetails = (props) => {
           )}
           {(props.correspondence.correspondenceAppeals.map((taskAdded) =>
             <CorrespondenceAppealTasks
+              key={appealTaskKey + taskAdded.id}
               task_added={taskAdded}
               correspondence={props.correspondence}
               organizations={props.organizations}
@@ -935,12 +937,14 @@ CorrespondenceDetails.propTypes = {
   addLetterCheck: PropTypes.bool,
   updateCorrespondenceInfo: PropTypes.func,
   correspondenceTypes: PropTypes.array,
-  correspondence_uuid: PropTypes.string
+  correspondence_uuid: PropTypes.string,
+  appealsFromStore: PropTypes.object
 };
 
 const mapStateToProps = (state) => ({
   correspondenceInfo: state.correspondenceDetails.correspondenceInfo,
-  tasksUnrelatedToAppealEmpty: state.correspondenceDetails.tasksUnrelatedToAppealEmpty
+  tasksUnrelatedToAppealEmpty: state.correspondenceDetails.tasksUnrelatedToAppealEmpty,
+  appealsFromStore: state.queue.appeals
 });
 
 const mapDispatchToProps = (dispatch) => (
