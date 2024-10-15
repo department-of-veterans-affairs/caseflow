@@ -56,7 +56,7 @@ class FetchDocumentsForReaderJob
   rescue BGS::SensitivityLevelCheckFailure => error
     error_message = "#{error} - #{user.css_id} does not have adequate sensitivity level access for #{appeal.id}"
     Rails.logger.error error_message
-    Raven.capture_exception(error: error)
+    Raven.capture_exception(error)
   end
 
   # setups the debug context

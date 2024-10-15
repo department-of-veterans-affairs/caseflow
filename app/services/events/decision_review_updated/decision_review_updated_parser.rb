@@ -103,18 +103,6 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedParser
     @payload.dig(:decision_review_type)
   end
 
-  def veteran_first_name
-    @payload.dig(:veteran_first_name)
-  end
-
-  def veteran_last_name
-    @payload.dig(:veteran_last_name)
-  end
-
-  def veteran_participant_id
-    @payload.dig(:veteran_participant_id)
-  end
-
   def file_number
     @payload.dig(:file_number)
   end

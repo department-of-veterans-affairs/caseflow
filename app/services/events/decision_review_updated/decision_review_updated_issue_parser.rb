@@ -128,4 +128,8 @@ class Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser
   def ri_original_caseflow_request_issue_id
     @issue.dig(:original_caseflow_request_issue_id)
   end
+
+  def ri_veteran_participant_id
+    @issue.dig(:veteran_participant_id).presence
+  end
 end

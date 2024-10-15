@@ -81,7 +81,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
               "nonrating_issue_category": nil,
               "nonrating_issue_description": nil,
               "closed_at": 1_702_000_145_000,
-              "closed_status": nil,
+              "closed_status": "withdrawn",
               "contested_rating_issue_diagnostic_code": nil,
               "rating_issue_associated_at": nil,
               "ramp_claim_id": nil,
@@ -113,7 +113,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
           expect(withdrawn_request_issue.contention_reference_id).to eq(100_500)
           expect(withdrawn_request_issue.any_updates?).to eq(false)
           post :decision_review_updated, params: valid_params
-          expect(response).to have_http_status(:ok)
+          expect(response).to have_http_status(:created)
           expect(response.body).to include("DecisionReviewUpdatedEvent successfully processed")
           withdrawn_request_issue.reload
           expect(withdrawn_request_issue.closed_at).to eq("2023-12-07 20:49:05.000000000 -0500")

@@ -51,7 +51,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
         expect(hlr.informal_conference).to be_nil
         expect(hlr.same_office).to be_nil
         post :decision_review_updated, params: valid_params
-        expect(response).to have_http_status(:ok)
+        expect(response).to have_http_status(:created)
         hlr.reload
         expect(hlr.informal_conference).to eq(true)
         expect(hlr.same_office).to eq(true)
