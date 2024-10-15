@@ -58,7 +58,9 @@ const ReaderSearchBar = () => {
   // handle keyboard control of search results
   useEffect(() => {
     const keyHandler = (event) => {
-      if (event.metaKey && event.code === 'KeyG') {
+      const metaKey = navigator.appVersion.includes('Win') ? 'ctrlKey' : 'metaKey';
+
+      if (event[metaKey] && event.code === 'KeyG') {
         event.preventDefault();
         if (event.shiftKey) {
           previous();

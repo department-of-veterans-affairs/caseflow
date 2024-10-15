@@ -12,11 +12,10 @@ const TextLayer = memo((props) => {
   // tracking this, the search bar will report double the number of found instances
   const [hasRenderedText, setHasRenderedText] = useState(false);
 
-  const viewport = page.getViewport({ scale: zoomLevel / 100 });
+  const viewport = page.getViewport({ scale: 1 });
   const textLayerRef = useRef(null);
   let positionX = 0;
   let positionY = 0;
-  const fullSizeViewport = page.getViewport({ scale: 1 });
 
   if (rotation.includes('90')) {
     positionX = viewport.height;
@@ -30,8 +29,8 @@ const TextLayer = memo((props) => {
   }
 
   const textLayerStyle = {
-    width: `${fullSizeViewport.width}px`,
-    height: `${fullSizeViewport.height}px`,
+    width: `${viewport.width}px`,
+    height: `${viewport.height}px`,
     transformOrigin: 'left top',
     opacity: 1,
     position: 'absolute',
