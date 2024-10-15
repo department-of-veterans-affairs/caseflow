@@ -27,6 +27,8 @@ const AddTaskModalCorrespondenceDetails = ({
   const [taskContent, setTaskContent] = useState('');
   // State to track the selected task type
   const [selectedTaskType, setSelectedTaskType] = useState(null);
+  // State to track if the Next button should be disabled
+  const [isNextDisabled, setIsNextDisabled] = useState(true);
 
   // Function to filter out the task options based on the unrelatedTaskList, ensuring case-insensitive comparison
   const getFilteredTaskTypeOptions = () => {
@@ -34,10 +36,9 @@ const AddTaskModalCorrespondenceDetails = ({
       filter((option) =>
         !unrelatedTaskList.some(
           // Exclude already added tasks with case-insensitive comparison
-          (exitsingTask) => exitsingTask.label.toLowerCase() === option.label.toLowerCase()
+          (existingTask) => existingTask.label.toLowerCase() === option.label.toLowerCase()
         )
       ).
-
       map((option) => ({
         value: option.value,
         label: option.label,
@@ -47,8 +48,12 @@ const AddTaskModalCorrespondenceDetails = ({
   // Recalculate task options every time the component loads or unrelatedTaskList changes
   useEffect(() => {
     setTaskTypeOptions(getFilteredTaskTypeOptions());
-    // Run every time unrelatedTaskList updates
   }, [unrelatedTaskList]);
+
+  // Check if the Next button should be disabled or enabled
+  useEffect(() => {
+    setIsNextDisabled(!(selectedTaskType && taskContent));
+  }, [selectedTaskType, taskContent]);
 
   // Function to update task type based on user selection
   const updateTaskType = (newType) => {
@@ -60,10 +65,11 @@ const AddTaskModalCorrespondenceDetails = ({
   const updateTaskContent = (newContent) => {
     // Update task content state
     setTaskContent(newContent);
+
   };
 
-  // Function to handle the "Confirm" button click
-  const handleConfirm = async () => {
+  // Function to handle the "Next" button click
+  const handleNext = async () => {
     if (selectedTaskType && taskContent) {
       const newTask = {
         klass: selectedTaskType.klass,
@@ -90,6 +96,8 @@ const AddTaskModalCorrespondenceDetails = ({
         // Dispatch action to append the new task to unrelatedTaskList in Redux
         dispatch(setUnrelatedTaskList([...unrelatedTaskList, newTask]));
 
+        setTaskContent('');
+
         // Close the modal after the task is successfully added
         handleClose();
       } catch (error) {
@@ -108,10 +116,12 @@ const AddTaskModalCorrespondenceDetails = ({
       closeHandler={handleClose}
       confirmButton={
         <Button
-        // Call the handleConfirm function when clicking Confirm
-          onClick={handleConfirm}
+        // Call the handleNext function when clicking Next
+          onClick={handleNext}
+          // Disable the Next button until both fields are filled
+          disabled={isNextDisabled}
         >
-          Confirm
+          Next
         </Button>
       }
       cancelButton={
