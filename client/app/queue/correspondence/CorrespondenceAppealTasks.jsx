@@ -5,7 +5,7 @@ import DocketTypeBadge from '../../components/DocketTypeBadge';
 import { appealWithDetailSelector, taskSnapshotTasksForAppeal } from '../selectors';
 import { useSelector } from 'react-redux';
 import TaskRows from '../components/TaskRows';
-import Button from "components/Button";
+import Button from '../../components/Button';
 
 const CorrespondenceAppealTasks = (props) => {
   const veteranFullName = props.correspondence.veteranFullName;
