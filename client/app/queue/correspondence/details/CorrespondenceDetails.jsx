@@ -562,8 +562,6 @@ const CorrespondenceDetails = (props) => {
           organizations={props.organizations}
           userCssId={props.userCssId}
           correspondence={props.correspondence}
-          // Use unrelatedTaskList from Redux
-          tasksToDisplay={unrelatedTaskList}
         />
       </div>
     )}

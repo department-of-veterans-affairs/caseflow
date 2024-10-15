@@ -7,7 +7,7 @@ import Select from 'react-select';
 import { INTAKE_FORM_TASK_TYPES } from '../../../../constants';
 import ApiUtil from 'app/util/ApiUtil';
 import { useDispatch, useSelector } from 'react-redux';
-import { setUnrelatedTaskList } from '../../../correspondenceDetailsReducer/correspondenceDetailsActions';
+import { setUnrelatedTaskList, updateCorrespondenceInfo } from '../../../correspondenceDetailsReducer/correspondenceDetailsActions';
 
 const AddTaskModalCorrespondenceDetails = ({
   isOpen,
@@ -91,10 +91,15 @@ const AddTaskModalCorrespondenceDetails = ({
         await ApiUtil.patch(
           `/queue/correspondence/${correspondence.uuid}/update_correspondence`,
           { data: patchData }
-        );
+        ).then((response) => {
+          const updatedCorrespondence = response.body.correspondence;
+
+          dispatch(updateCorrespondenceInfo(updatedCorrespondence));
+
+        });
 
         // Dispatch action to append the new task to unrelatedTaskList in Redux
-        dispatch(setUnrelatedTaskList([...unrelatedTaskList, newTask]));
+        // dispatch(setUnrelatedTaskList([...unrelatedTaskList, newTask]));
 
         setTaskContent('');
 
