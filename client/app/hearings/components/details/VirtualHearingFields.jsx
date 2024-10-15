@@ -21,7 +21,7 @@ export const VirtualHearingFields = ({ hearing, virtualHearing }) => {
       header="Hearing Links"
     >
       <div {...css({ marginTop: '1.5rem' })}>
-        <strong>{StringUtil.capitalizeFirst(hearing?.conferenceProvider) || 'Pexip' } Hearing</strong>
+        <strong>{StringUtil.capitalizeFirst(hearing?.conferenceProvider || 'Pexip')} Hearing</strong>
       </div>
       <HearingLinks
         user={user}
