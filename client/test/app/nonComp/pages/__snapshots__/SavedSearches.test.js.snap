@@ -1,0 +1,403 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SavedSearches renders correctly renders correctly 1`] = `
+<div>
+  <div
+    class="saved-search-content-spacing"
+  >
+    <div
+      class="saved-search-back-link"
+    >
+      <a
+        href="/undefined/report"
+      >
+        <div
+          class="saved-search-link-text"
+        >
+          <svg
+            class="fa-chevron-left"
+            height="21"
+            version="1.1"
+            viewBox="0 0 11 17"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <g
+              fill="none"
+              fill-rule="evenodd"
+              stroke="none"
+              stroke-width="1"
+            >
+              <g
+                fill="#0071bc"
+                fill-rule="nonzero"
+                id="chevron-left-white"
+              >
+                <path
+                  d="M10.148056,7.63345458 L3.83667957,1.36581253 C3.60425101,1.12190379 3.31401199,1 2.9653861,1 C2.6167602,1 2.32652118,1.12203868 2.09409262,1.36581253 L1.35839094,2.08799554 C1.11955406,2.32549717 1.00013563,2.61418827 1.00013563,2.95437235 C1.00013563,3.28811559 1.11952016,3.5802463 1.35839094,3.83049472 L6.06300954,8.50003372 L1.3581875,13.1791834 C1.11941844,13.416685 1,13.7053761 1,14.0455939 C1,14.3793034 1.11938453,14.6715353 1.3581875,14.9216826 L2.09395699,15.6437644 C2.33275996,15.881266 2.62330414,16 2.96525047,16 C3.30733242,16 3.59780879,15.881266 3.83654395,15.6437644 L10.148056,9.37612237 C10.3869607,9.12580651 10.5064808,8.83374324 10.5064808,8.5 C10.5065147,8.15981592 10.3869607,7.87095621 10.148056,7.63345458 Z"
+                  id="Shape"
+                  transform="translate(5.753240, 8.500000) scale(-1, 1) translate(-5.753240, -8.500000) "
+                />
+              </g>
+            </g>
+          </svg>
+           
+          <b>
+            Back to Generate task report
+          </b>
+        </div>
+      </a>
+    </div>
+    <div>
+      <section
+        class="cf-app-segment cf-app-segment--alt"
+      >
+        <div>
+          <h1>
+            Saved Searches
+          </h1>
+          <div>
+            Select a search you previously saved or look for ones others have saved by switching between the tabs.
+          </div>
+          <div
+            class="cf-tab-navigation"
+            role="tablist"
+          >
+            <button
+              aria-controls="saved-search-queue-tabpanel-0"
+              aria-selected="true"
+              class="cf-tab tab cf-active"
+              data-value="0"
+              id="saved-search-queue-tab-0"
+              role="tab"
+              tabindex="0"
+            >
+              <div>
+                <span>
+                  
+                  <span>
+                    My saved searches
+                  </span>
+                  
+                </span>
+              </div>
+            </button>
+            <button
+              aria-controls="saved-search-queue-tabpanel-1"
+              aria-selected="false"
+              class="cf-tab tab"
+              data-value="1"
+              id="saved-search-queue-tab-1"
+              role="tab"
+              tabindex="-1"
+            >
+              <div>
+                <span>
+                  
+                  <span>
+                    All saved searches
+                  </span>
+                  
+                </span>
+              </div>
+            </button>
+          </div>
+          <div
+            class="cf-tab-window-body-full-screen tabContent"
+          >
+            <div
+              aria-hidden="false"
+              class="tabPanel active"
+              id="saved-search-queue-tabpanel-0"
+              role="tabpanel"
+            >
+              <div
+                class="cf-table-wrapper"
+              >
+                <div
+                  class="cf-pagination"
+                >
+                  <div
+                    class="cf-pagination-summary"
+                  >
+                    Viewing 0-0 of 0 total
+                  </div>
+                  <div
+                    class="cf-pagination-pages"
+                  />
+                </div>
+                <table
+                  aria-describedby="case-table-description"
+                  aria-label="Appeals"
+                  class="usa-table-borderless undefined"
+                  id="saved_search_table"
+                  role="grid"
+                >
+                  <thead>
+                    <tr
+                      role="row"
+                    >
+                      <th
+                        class=""
+                        role="columnheader"
+                        scope="col"
+                      >
+                        <span
+                          aria-label=""
+                          data-css-9shxm7=""
+                        >
+                          <span />
+                        </span>
+                      </th>
+                      <th
+                        aria-labelledby="header-searchName"
+                        class=""
+                        role="columnheader"
+                        scope="col"
+                      >
+                        <span
+                          aria-label="Search Name"
+                          data-css-9shxm7=""
+                        >
+                          <span
+                            id="header-searchName"
+                          >
+                            Search Name
+                          </span>
+                          <span
+                            aria-label="Sort by Search Name"
+                            data-css-ilmt4b=""
+                            role="button"
+                            tabindex="0"
+                          >
+                            <svg
+                              class="table-icon"
+                              height="17"
+                              version="1.1"
+                              viewBox="0 0 13 16"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <g
+                                fill="none"
+                                fill-rule="evenodd"
+                                stroke="none"
+                                stroke-width="1"
+                              >
+                                <g
+                                  fill-rule="nonzero"
+                                >
+                                  <g
+                                    fill="#d6d7d9"
+                                    transform="translate(2.000000, 1.000000)"
+                                  >
+                                    <g
+                                      transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                                    >
+                                      <path
+                                        d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                      />
+                                    </g>
+                                  </g>
+                                  <g
+                                    fill="#d6d7d9"
+                                    transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+                                  >
+                                    <g
+                                      transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                                    >
+                                      <path
+                                        d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                      />
+                                    </g>
+                                  </g>
+                                </g>
+                              </g>
+                            </svg>
+                          </span>
+                        </span>
+                      </th>
+                      <th
+                        aria-labelledby="header-savedDate"
+                        aria-sort="descending"
+                        class=""
+                        role="columnheader"
+                        scope="col"
+                      >
+                        <span
+                          aria-label="Saved Date"
+                          data-css-9shxm7=""
+                        >
+                          <span
+                            id="header-savedDate"
+                          >
+                            Saved Date
+                          </span>
+                          <span
+                            aria-label="Sort by Saved Date"
+                            data-css-ilmt4b=""
+                            role="button"
+                            tabindex="0"
+                          >
+                            <svg
+                              class="table-icon"
+                              height="17"
+                              version="1.1"
+                              viewBox="0 0 13 16"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <g
+                                fill="none"
+                                fill-rule="evenodd"
+                                stroke="none"
+                                stroke-width="1"
+                              >
+                                <g
+                                  fill-rule="nonzero"
+                                >
+                                  <g
+                                    fill="#0071bc"
+                                    transform="translate(2.000000, 1.000000)"
+                                  >
+                                    <g
+                                      transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                                    >
+                                      <path
+                                        d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                      />
+                                    </g>
+                                  </g>
+                                  <g
+                                    fill="#d6d7d9"
+                                    transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+                                  >
+                                    <g
+                                      transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                                    >
+                                      <path
+                                        d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                      />
+                                    </g>
+                                  </g>
+                                </g>
+                              </g>
+                            </svg>
+                          </span>
+                        </span>
+                      </th>
+                      <th
+                        aria-labelledby="header-admin"
+                        class=""
+                        role="columnheader"
+                        scope="col"
+                      >
+                        <span
+                          aria-label="Admin"
+                          data-css-9shxm7=""
+                        >
+                          <span
+                            id="header-admin"
+                          >
+                            Admin
+                          </span>
+                          <span
+                            aria-label="Sort by Admin"
+                            data-css-ilmt4b=""
+                            role="button"
+                            tabindex="0"
+                          >
+                            <svg
+                              class="table-icon"
+                              height="17"
+                              version="1.1"
+                              viewBox="0 0 13 16"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <g
+                                fill="none"
+                                fill-rule="evenodd"
+                                stroke="none"
+                                stroke-width="1"
+                              >
+                                <g
+                                  fill-rule="nonzero"
+                                >
+                                  <g
+                                    fill="#d6d7d9"
+                                    transform="translate(2.000000, 1.000000)"
+                                  >
+                                    <g
+                                      transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                                    >
+                                      <path
+                                        d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                      />
+                                    </g>
+                                  </g>
+                                  <g
+                                    fill="#d6d7d9"
+                                    transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+                                  >
+                                    <g
+                                      transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                                    >
+                                      <path
+                                        d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                      />
+                                    </g>
+                                  </g>
+                                </g>
+                              </g>
+                            </svg>
+                          </span>
+                        </span>
+                      </th>
+                      <th
+                        aria-labelledby="header-searchDescription"
+                        class=""
+                        role="columnheader"
+                        scope="col"
+                      >
+                        <span
+                          aria-label="Search Description"
+                          data-css-9shxm7=""
+                        >
+                          <span
+                            id="header-searchDescription"
+                          >
+                            Search Description
+                          </span>
+                        </span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody
+                    class=""
+                  />
+                  <tfoot />
+                </table>
+                <div
+                  class="cf-pagination"
+                >
+                  <div
+                    class="cf-pagination-summary"
+                  >
+                    Viewing 0-0 of 0 total
+                  </div>
+                  <div
+                    class="cf-pagination-pages"
+                  />
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="tabPanel"
+              id="saved-search-queue-tabpanel-1"
+              role="tabpanel"
+            />
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+`;

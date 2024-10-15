@@ -1,37 +1,29 @@
 import React from 'react';
 import { axe } from 'jest-axe';
 import { Provider } from 'react-redux';
-import thunk from 'redux-thunk';
-import { applyMiddleware, createStore, compose } from 'redux';
 
-import userEvent from '@testing-library/user-event';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { createMemoryHistory } from 'history';
-// import savedSearch from 'app/nonComp/pages/ReportPage';
-import SavedSearchPage from 'app/nonComp/pages/SavedSearchPage';
-import selectEvent from 'react-select-event';
+import { render, screen } from '@testing-library/react';
+import { MemoryRouter as Router } from 'react-router-dom';
 
-import CombinedNonCompReducer from 'app/nonComp/reducers';
+import SavedSearches from 'app/nonComp/pages/SavedSearches';
+import createNonCompStore from 'test/app/nonComp/nonCompStoreCreator';
 
-import REPORT_TYPE_CONSTANTS from 'constants/REPORT_TYPE_CONSTANTS';
+describe('SavedSearches', () => {
 
-describe('SavedSearchPage', () => {
   const setup = (storeValues = {}) => {
-    const store = createStore(
-      CombinedNonCompReducer,
-      storeValues,
-      compose(applyMiddleware(thunk))
-    );
+    const store = createNonCompStore(storeValues);
 
     return render(
       <Provider store={store}>
-        <SavedSearchPage />
+        <Router>
+          <SavedSearches />
+        </Router>
       </Provider>
     );
   };
 
   const SearchPageDescription =
-    'Select a search you previously saved or look for ones others have saved by switching between tabs.';
+    'Select a search you previously saved or look for ones others have saved by switching between the tabs.';
 
   const checkTableHeaders = () => {
     const expectedHeaders = ['', 'Search Name', 'Saved Date', 'Admin', 'Search Description'];

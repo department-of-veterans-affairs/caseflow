@@ -13,7 +13,6 @@ import TaskPage from './pages/TaskPage';
 import ReportPage from './pages/ReportPage';
 import SavedSearches from './pages/SavedSearches';
 import ClaimHistoryPage from './pages/ClaimHistoryPage';
-import SavedSearchPage from './pages/SavedSearchPage';
 import CombinedNonCompReducer, { mapDataToInitialState } from './reducers';
 
 class NonComp extends React.PureComponent {
@@ -69,12 +68,6 @@ class NonComp extends React.PureComponent {
                   path="/:businessLineSlug"
                   title={`${appName} Reviews | Caseflow`}
                   component={ReviewPage}
-                />
-                <PageRoute
-                  exact
-                  path="/:businessLineSlug/report/saved_search"
-                  title={`${appName} Generate Task Report | Caseflow`}
-                  component={SavedSearchPage}
                 />
               </AppFrame>
             </NavigationBar>
