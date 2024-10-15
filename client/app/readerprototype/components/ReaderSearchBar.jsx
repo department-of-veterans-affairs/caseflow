@@ -60,7 +60,7 @@ const ReaderSearchBar = () => {
     const keyHandler = (event) => {
       const metaKey = navigator.appVersion.includes('Win') ? 'ctrlKey' : 'metaKey';
 
-      if (metaKey && event.code === 'KeyG') {
+      if (event[metaKey] && event.code === 'KeyG') {
         event.preventDefault();
         if (event.shiftKey) {
           previous();
