@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "mail_task"
-
 RSpec.describe Tasks::ChangeTypeController, :postgres, type: :controller do
   describe "POST tasks/change_type/:id" do
     let(:user) { create(:user) }
