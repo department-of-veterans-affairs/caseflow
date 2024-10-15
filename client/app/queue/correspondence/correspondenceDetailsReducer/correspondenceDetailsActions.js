@@ -2,7 +2,7 @@ import { ACTIONS } from './correspondenceDetailsConstants';
 import ApiUtil from '../../../util/ApiUtil';
 import { sprintf } from 'sprintf-js';
 import { prepareTasksForStore } from '../../utils';
-import { onReceiveTasks, deleteTask } from '../../QueueActions';
+import { onReceiveTasks, deleteAmaTask } from '../../QueueActions';
 // eslint-disable-next-line import/extensions
 import CORRESPONDENCE_DETAILS_BANNERS from '../../../../constants/CORRESPONDENCE_DETAILS_BANNERS.json';
 
@@ -38,8 +38,10 @@ export const createNewEvidenceWindowTask = (payload, correspondence, appealId) =
       const responseData = JSON.parse(response.text);
       const responseTasks = responseData.tasks.data;
 
-      dispatch(deleteTask(payload.data.task.task_id));
-
+      // remove old task from store
+      dispatch(deleteAmaTask(
+        payload.data.task.task_id
+      ));
 
       // Dispatch the banner alert to the store
       dispatch({
