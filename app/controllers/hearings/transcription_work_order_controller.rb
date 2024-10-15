@@ -37,8 +37,9 @@ class Hearings::TranscriptionWorkOrderController < ApplicationController
       TranscriptionPackage.cancel_by_task_number(@task_number)
       TranscriptionFile.reset_files(@task_number)
     rescue StandardError => error
-      log_error(error, extra: { task_number: @task_number })
-      Rails.logger.error("Error in unassigning work order: #{error.message}")
+      Rails.logger.error(
+        "Error in unassigning work order for task number #{@task_number}: #{error.message}"
+      )
     end
   end
 
