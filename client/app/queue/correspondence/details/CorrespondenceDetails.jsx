@@ -389,26 +389,26 @@ const CorrespondenceDetails = (props) => {
     sortAppeals(initialSelectedAppeals);
   }, []);
 
-  // useEffect(() => {
-  //   dispatch(updateCorrespondenceInfo(correspondence));
-  //   // load appeals related to the correspondence into the store
-  //   const corAppealTasks = [];
+  useEffect(() => {
+    dispatch(updateCorrespondenceInfo(correspondence));
+    // load appeals related to the correspondence into the store
+    const corAppealTasks = [];
 
-  //   props.correspondence.correspondenceAppeals.map((corAppeal) => {
-  //     dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal.appeal.data])));
-  //     corAppeal.taskAddedData.data.map((taskData) => {
-  //       corAppealTasks.push(taskData);
-  //     });
+    props.correspondence.correspondenceAppeals.map((corAppeal) => {
+      dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal.appeal.data])));
+      corAppeal.taskAddedData.data.map((taskData) => {
+        corAppealTasks.push(taskData);
+      });
 
-  //   });
-  //   // // load appeal tasks into the store
-  //   const preparedTasks = prepareTasksForStore(corAppealTasks);
+    });
+    // // load appeal tasks into the store
+    const preparedTasks = prepareTasksForStore(corAppealTasks);
 
-  //   dispatch(onReceiveTasks({
-  //     amaTasks: preparedTasks
-  //   }));
+    dispatch(onReceiveTasks({
+      amaTasks: preparedTasks
+    }));
 
-  // }, []);
+  }, []);
 
   const isTasksUnrelatedToAppealEmpty = () => {
     if (props.tasksUnrelatedToAppealEmpty === true) {
