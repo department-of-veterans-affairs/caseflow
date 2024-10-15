@@ -7,7 +7,9 @@ import PropTypes from 'prop-types';
 import TabWindow from '../../../components/TabWindow';
 import CopyTextButton from '../../../components/CopyTextButton';
 import CorrespondenceCaseTimeline from '../CorrespondenceCaseTimeline';
-import { updateCorrespondenceInfo } from './../correspondenceDetailsReducer/correspondenceDetailsActions';
+import {
+  updateCorrespondenceInfo,
+  setUnrelatedTaskList } from './../correspondenceDetailsReducer/correspondenceDetailsActions';
 import CorrespondenceResponseLetters from './CorrespondenceResponseLetters';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
@@ -25,10 +27,12 @@ import Alert from '../../../components/Alert';
 import ApiUtil from '../../../util/ApiUtil';
 import CorrespondenceEditGeneralInformationModal from '../../components/CorrespondenceEditGeneralInformationModal';
 import CorrespondenceAppealTasks from '../CorrespondenceAppealTasks';
+import AddTaskModalCorrespondenceDetails from '../intake/components/TasksAppeals/AddTaskModalCorrespondenceDetails';
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
   const correspondence = props.correspondence;
+  const unrelatedTaskList = props.unrelatedTaskList;
   const correspondenceInfo = props.correspondenceInfo;
   const mailTasks = props.correspondence.mailTasks;
   const allCorrespondences = props.correspondence.all_correspondences;
@@ -56,6 +60,23 @@ const CorrespondenceDetails = (props) => {
   const [sortedPriorMail, setSortedPriorMail] = useState([]);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isTasksUnrelatedSectionExpanded, setIsTasksUnrelatedSectionExpanded] = useState(false);
+
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
+
+  useEffect(() => {
+    if (correspondence.tasksUnrelatedToAppeal.length > 0) {
+      // Dispatch the action to store tasks
+      dispatch(setUnrelatedTaskList(correspondence.tasksUnrelatedToAppeal));
+    }
+  }, [dispatch, correspondence.tasksUnrelatedToAppeal]);
 
   // Initialize checkbox states
   useEffect(() => {
@@ -507,6 +528,22 @@ const CorrespondenceDetails = (props) => {
     <div className="correspondence-existing-appeals">
       <div className="left-section">
         <h2>Tasks not related to an appeal</h2>
+        <Button
+          type="button"
+          onClick={handleOpenModal}
+          name="addTaskOpen"
+          classNames={['cf-left-side']}
+        >
+            + Add task
+        </Button>
+
+        {/* Render the modal */}
+        <AddTaskModalCorrespondenceDetails
+          title="Add Task"
+          isOpen={isModalOpen}
+          handleClose={handleCloseModal}
+          correspondence={props.correspondence}
+        />
       </div>
       <div className="toggleButton-plus-or-minus">
         <Button
@@ -525,7 +562,6 @@ const CorrespondenceDetails = (props) => {
           organizations={props.organizations}
           userCssId={props.userCssId}
           correspondence={props.correspondence}
-          tasksToDisplay={props.correspondence.tasksUnrelatedToAppeal}
         />
       </div>
     )}
@@ -929,17 +965,20 @@ CorrespondenceDetails.propTypes = {
   inboundOpsTeamUsers: PropTypes.array,
   addLetterCheck: PropTypes.bool,
   updateCorrespondenceInfo: PropTypes.func,
-  correspondenceTypes: PropTypes.array
+  correspondenceTypes: PropTypes.array,
+  unrelatedTaskList: PropTypes.array,
 };
 
 const mapStateToProps = (state) => ({
   correspondenceInfo: state.correspondenceDetails.correspondenceInfo,
-  tasksUnrelatedToAppealEmpty: state.correspondenceDetails.tasksUnrelatedToAppealEmpty
+  tasksUnrelatedToAppealEmpty: state.correspondenceDetails.tasksUnrelatedToAppealEmpty,
+  unrelatedTaskList: state.correspondenceDetails.unrelatedTaskList,
 });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    updateCorrespondenceInfo
+    updateCorrespondenceInfo,
+    setUnrelatedTaskList
   }, dispatch)
 );
 

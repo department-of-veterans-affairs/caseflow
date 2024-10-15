@@ -128,7 +128,7 @@ class CorrespondenceDetailsController < CorrespondenceController
 
   def update_correspondence
     if correspondence_intake_processor.update_correspondence(params)
-      render json: {}, status: :created
+      render json: { correspondence: serialized_correspondence }, status: :created
     else
       render json: { error: "Failed to update records" }, status: :bad_request
     end
