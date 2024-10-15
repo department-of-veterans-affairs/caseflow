@@ -77,6 +77,10 @@ class TaskTableTabUnconnected extends React.PureComponent {
     return claimantColumnObject;
   };
 
+  getDateCompletedColumn = (businessLineUrl) => {
+    return businessLineUrl === 'vha' ? vhaTaskCompletedDateColumn() : taskCompletedDateColumn();
+  };
+
   getTableColumns = () => [
     this.claimantColumnHelper(),
     {
@@ -95,7 +99,7 @@ class TaskTableTabUnconnected extends React.PureComponent {
       filterOptions: parseFilterOptions(this.props.filterableTaskIssueTypes)
     },
     this.state.tabName === 'pending' ? pendingIssueModificationColumn() : null,
-    this.props.businessLineUrl === 'vha' ? vhaTaskCompletedDateColumn() : taskCompletedDateColumn()
+    this.state.tabName === 'completed' ? this.getDateCompletedColumn(this.props.businessLineUrl) : null,
   ].filter((column) => column !== null);
 
   enabledTaskFilters = () => extractEnabledTaskFilters(
