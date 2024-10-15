@@ -1,4 +1,4 @@
 #!/bin/sh
 
 LATEST_DEPLOY_TAG=`git tag --list 'deployed/*' | sort -r | head -1`
-git log --pretty=format:"%h%x09%an%x09%x09%s" $LATEST_DEPLOY_TAG...master
+git log --pretty=format:"%h%x09%an%x09%x09%s" $LATEST_DEPLOY_TAG...main

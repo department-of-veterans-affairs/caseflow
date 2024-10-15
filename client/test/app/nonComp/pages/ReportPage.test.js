@@ -1,8 +1,6 @@
 import React from 'react';
 import { axe } from 'jest-axe';
 import { Provider } from 'react-redux';
-import thunk from 'redux-thunk';
-import { applyMiddleware, createStore, compose } from 'redux';
 
 import userEvent from '@testing-library/user-event';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
@@ -10,21 +8,21 @@ import { createMemoryHistory } from 'history';
 import ReportPage from 'app/nonComp/pages/ReportPage';
 import selectEvent from 'react-select-event';
 import { getVhaUsers } from 'test/helpers/reportPageHelper';
-import CombinedNonCompReducer from 'app/nonComp/reducers';
+import { MemoryRouter as Router } from 'react-router-dom';
+import createNonCompStore from '../nonCompStoreCreator';
 
 import REPORT_TYPE_CONSTANTS from 'constants/REPORT_TYPE_CONSTANTS';
+import * as ERRORS from 'constants/REPORT_PAGE_VALIDATION_ERRORS';
 
 describe('ReportPage', () => {
   const setup = (storeValues = {}) => {
-    const store = createStore(
-      CombinedNonCompReducer,
-      storeValues,
-      compose(applyMiddleware(thunk))
-    );
+    const store = createNonCompStore(storeValues);
 
     return render(
       <Provider store={store}>
-        <ReportPage />
+        <Router>
+          <ReportPage />
+        </Router>
       </Provider>
     );
   };
@@ -81,15 +79,13 @@ describe('ReportPage', () => {
       const history = createMemoryHistory();
       const storeValues = {};
 
-      const store = createStore(
-        CombinedNonCompReducer,
-        storeValues,
-        compose(applyMiddleware(thunk))
-      );
+      const store = createNonCompStore(storeValues);
 
       render(
         <Provider store={store}>
-          <ReportPage history={history} />
+          <Router>
+            <ReportPage history={history} />
+          </Router>
         </Provider>
       );
 
@@ -195,28 +191,34 @@ describe('ReportPage', () => {
 
     it('shows the correct checkbox fields', async () => {
       await navigateToConditionInput('Decision Review Type');
+      const dropdown = screen.getByLabelText('Decision Review Type');
 
+      await selectEvent.select(dropdown, ['Higher-Level Reviews']);
+      expect(screen.getByText('Higher-Level Reviews')).toBeInTheDocument();
+
+      await selectEvent.select(dropdown, ['Supplemental Claims']);
+      expect(screen.getByText('Supplemental Claims')).toBeInTheDocument();
+
+      await selectEvent.select(dropdown, ['Remands']);
       expect(screen.getByText('Higher-Level Reviews')).toBeInTheDocument();
       expect(screen.getByText('Supplemental Claims')).toBeInTheDocument();
+      expect(screen.getByText('Remands')).toBeInTheDocument();
     });
 
-    it('clicking the checkbox should toggle the checked status', async () => {
+    it('renders an error if no selection is made', async () => {
       await navigateToConditionInput('Decision Review Type');
 
-      const checkbox = screen.getByLabelText('Higher-Level Reviews');
+      const generateTaskReport = screen.getByRole('button', { name: 'Generate task report' });
 
-      await userEvent.click(checkbox);
-      expect(checkbox.checked).toEqual(true);
+      expect(generateTaskReport).not.toHaveClass('usa-button-disabled');
 
-      await userEvent.click(checkbox);
-      expect(checkbox.checked).toEqual(false);
+      // Wait for the validation text to appear before making assertions
+      await fireEvent.click(generateTaskReport);
+      await waitFor(() => {
+        const validationText = screen.getByText('Please select at least one option');
 
-    });
-
-    it('should render an error if no checkbox is checked', async () => {
-      await navigateToConditionInput('Decision Review Type');
-      expect(screen.getByText('Higher-Level Reviews')).toBeInTheDocument();
-      await checkForValidationText('Please select at least one option');
+        expect(validationText).toBeInTheDocument();
+      });
     });
   });
 
@@ -375,7 +377,7 @@ describe('ReportPage', () => {
 
     });
 
-    it('should add 10 checkboxes when radio Specific Events/ Actions is clicked', async () => {
+    it('should add 19 checkboxes when radio Specific Events/ Actions is clicked', async () => {
       setup();
 
       await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
@@ -386,9 +388,17 @@ describe('ReportPage', () => {
       expect(specificEvents.length).toBe(1);
 
       fireEvent.click(screen.getByLabelText('Specific Events / Actions'));
-      expect(screen.getAllByRole('checkbox').length).toBe(10);
+      expect(screen.getAllByRole('checkbox').length).toBe(19);
 
-      REPORT_TYPE_CONSTANTS.SPECTIFIC_EVENT_OPTIONS.forEach((option) => {
+      REPORT_TYPE_CONSTANTS.SPECIFIC_EVENT_OPTIONS[0].system.forEach((option) => {
+        expect(screen.getAllByText(option.label)).toBeTruthy();
+      });
+
+      REPORT_TYPE_CONSTANTS.SPECIFIC_EVENT_OPTIONS[0].general.forEach((option) => {
+        expect(screen.getAllByText(option.label)).toBeTruthy();
+      });
+
+      REPORT_TYPE_CONSTANTS.SPECIFIC_EVENT_OPTIONS[0].requests.forEach((option) => {
         expect(screen.getAllByText(option.label)).toBeTruthy();
       });
     });
@@ -407,14 +417,14 @@ describe('ReportPage', () => {
 
         fireEvent.click(screen.getByLabelText('Specific Events / Actions'));
 
-        expect(screen.getAllByRole('checkbox').length).toBe(10);
+        expect(screen.getAllByRole('checkbox').length).toBe(19);
 
         const generateTaskReport = screen.getByRole('button', { name: /Generate task report/i });
 
         await userEvent.click(generateTaskReport);
 
         await waitFor(() => {
-          expect(screen.getAllByText('Please select at least one option').length).toBe(1);
+          expect(screen.getAllByText(ERRORS.AT_LEAST_ONE_CHECKBOX_OPTION).length).toBe(1);
         });
 
       });
@@ -430,7 +440,7 @@ describe('ReportPage', () => {
       expect(specificEvents.length).toBe(1);
 
       fireEvent.click(screen.getByLabelText('Specific Status'));
-      expect(screen.getAllByRole('checkbox').length).toBe(4);
+      expect(screen.getAllByRole('checkbox').length).toBe(5);
 
       REPORT_TYPE_CONSTANTS.SPECIFIC_STATUS_OPTIONS.map((option) =>
         expect(screen.getAllByText(option.label)).toBeTruthy()

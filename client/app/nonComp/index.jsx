@@ -11,6 +11,7 @@ import { FlashAlerts } from './components/Alerts';
 import ReviewPage from './pages/ReviewPage';
 import TaskPage from './pages/TaskPage';
 import ReportPage from './pages/ReportPage';
+import SavedSearches from './pages/SavedSearches';
 import ClaimHistoryPage from './pages/ClaimHistoryPage';
 import SavedSearchPage from './pages/SavedSearchPage';
 import CombinedNonCompReducer, { mapDataToInitialState } from './reducers';
@@ -56,6 +57,12 @@ class NonComp extends React.PureComponent {
                   path="/:businessLineSlug/report"
                   title={`${appName} Generate Task Report | Caseflow`}
                   component={ReportPage}
+                />
+                <PageRoute
+                  exact
+                  path="/:businessLineSlug/report/searches"
+                  title={`${appName} Saved Searches | Caseflow`}
+                  component={SavedSearches}
                 />
                 <PageRoute
                   exact

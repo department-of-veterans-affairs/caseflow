@@ -2,7 +2,7 @@
 
 class RouteDocsController < ApplicationController
   class DocumentedRoute
-    SOURCE_URL_PREFIX = "https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/controllers/"
+    SOURCE_URL_PREFIX = "https://github.com/department-of-veterans-affairs/caseflow/blob/main/app/controllers/"
 
     attr_reader :rails_route
 

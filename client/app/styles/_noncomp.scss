@@ -151,6 +151,17 @@ $validation-error-color: #cd2026;
   right: 0;
 }
 
+.report-page-header {
+  display: flex;
+
+  justify-content: space-between;
+
+  a {
+    margin-bottom: 30px;
+    line-height: normal;
+  }
+}
+
 .report-page-segment {
   display: flex;
   flex-wrap: wrap;
@@ -280,5 +291,28 @@ $validation-error-color: #cd2026;
 
   .cf-noncomp-search {
     max-width: 65%;
+  }
+}
+
+.saved-search-back-link {
+  margin-top: 20px;
+
+  a {
+    display: block;
+
+    svg {
+      margin-right: 5px;
+    }
+  }
+}
+
+.saved-search-link-text {
+  display: flex;
+  align-items: center;
+}
+
+.saved-search-content-spacing {
+  .cf-app-segment:first-child {
+    margin-top: 20px;
   }
 }

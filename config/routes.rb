@@ -302,6 +302,7 @@ Rails.application.routes.draw do
     post 'edit_ep', on: :member
   end
   match '/supplemental_claims/:claim_id/edit/:any' => 'supplemental_claims#edit', via: [:get]
+  get '/remands(/*path)', to: redirect('/supplemental_claims/%{path}')
 
   resources :decision_reviews, param: :business_line_slug do
     resources :tasks, controller: :decision_reviews, param: :task_id, only: [:show, :update] do
@@ -312,6 +313,7 @@ Rails.application.routes.draw do
       end
     end
     get "report", to: "decision_reviews#generate_report", on: :member, as: :report, format: false
+    get "report/searches", to: "decision_reviews#generate_report", on: :member, as: :saved_searches, format: false
     get "/(*all)", to: "decision_reviews#index"
   end
 
