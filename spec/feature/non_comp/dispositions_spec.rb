@@ -83,6 +83,7 @@ feature "NonComp Dispositions Task Page", :postgres do
     let(:business_line_url) { "decision_reviews/nca" }
     let(:dispositions_url) { "#{business_line_url}/tasks/#{in_progress_task.id}" }
     let(:arbitrary_decision_date) { "01/01/2019" }
+    let(:valid_decision_date) { decision_review.created_at.strftime("%m/%d/%Y") }
 
     let(:vet_id_column_value) { veteran.ssn }
 
@@ -161,7 +162,7 @@ feature "NonComp Dispositions Task Page", :postgres do
       end
 
       scenario "only date is set" do
-        fill_in "decision-date", with: arbitrary_decision_date
+        fill_in "decision-date", with: valid_decision_date
         expect(page).to have_button("Complete", disabled: true)
       end
 
@@ -175,6 +176,9 @@ feature "NonComp Dispositions Task Page", :postgres do
 
       scenario "both disposition and date are set" do
         fill_in "decision-date", with: arbitrary_decision_date
+        expect(page).to have_text("Decision date must be between Form Receipt Date")
+        fill_in "decision-date", with: valid_decision_date
+
         fill_in_disposition(0, "Granted")
         fill_in_disposition(1, "DTA Error", "test description")
         fill_in_disposition(2, "Denied", "denied")
@@ -193,10 +197,7 @@ feature "NonComp Dispositions Task Page", :postgres do
       fill_in_disposition(0, "Granted")
       fill_in_disposition(1, "DTA Error", "test description")
       fill_in_disposition(2, "Denied", "denied")
-      fill_in "decision-date", with: arbitrary_decision_date
-
-      expect(page).to have_text("Decision date must be between Form Receipt Date")
-      fill_in "decision-date", with: in_progress_task.appeal.created_at.strftime("%m/%d/%Y")
+      fill_in "decision-date", with: valid_decision_date
 
       # save
       expect(page).to have_button("Complete", disabled: false)
@@ -227,7 +228,7 @@ feature "NonComp Dispositions Task Page", :postgres do
       find_disabled_disposition("Denied", "denied")
 
       # decision date should be saved
-      expect(page).to have_css("input[value='#{arbitrary_decision_date.to_date.strftime('%Y-%m-%d')}']")
+      expect(page).to have_css("input[value='#{valid_decision_date.to_date.strftime('%Y-%m-%d')}']")
     end
 
     context "when there is an error saving" do
@@ -241,7 +242,7 @@ feature "NonComp Dispositions Task Page", :postgres do
         fill_in_disposition(0, "Granted")
         fill_in_disposition(1, "Granted", "test description")
         fill_in_disposition(2, "Denied", "denied")
-        fill_in "decision-date", with: arbitrary_decision_date
+        fill_in "decision-date", with: valid_decision_date
 
         click_on "Complete"
         expect(page).to have_content("Something went wrong")
