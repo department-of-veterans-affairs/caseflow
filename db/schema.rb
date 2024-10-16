@@ -2,15 +2,15 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# This file is the source Rails uses to define your schema when running `rails
-# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
 # be faster and is potentially less error prone than running all of your
 # migrations from scratch. Old migrations may fail to apply correctly if those
 # migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_08_28_165652) do
+ActiveRecord::Schema.define(version: 2024_10_12_181521) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -721,6 +721,8 @@ ActiveRecord::Schema.define(version: 2024_08_28_165652) do
   end
 
   create_table "distribution_stats", comment: "A database table to store a snapshot of variables used during a case distribution event", force: :cascade do |t|
+    t.json "aoj_legacy_priority_stats", comment: "Priority statistics for AOJ Legacy Docket"
+    t.json "aoj_legacy_stats", comment: "Statistics for AOJ Legacy Docket"
     t.datetime "created_at", null: false
     t.json "direct_review_priority_stats", comment: "Priority statistics for Direct Review Docket"
     t.json "direct_review_stats", comment: "Statistics for Direct Review Docket"
@@ -885,8 +887,10 @@ ActiveRecord::Schema.define(version: 2024_08_28_165652) do
     t.integer "event_id", null: false, comment: "ID of the Event that created or updated this record."
     t.bigint "evented_record_id", null: false
     t.string "evented_record_type", null: false
+    t.jsonb "info", default: {}
     t.datetime "updated_at", null: false, comment: "Automatic timestamp whenever the record changes"
     t.index ["evented_record_type", "evented_record_id"], name: "index_event_record_on_evented_record"
+    t.index ["info"], name: "index_event_records_on_info", using: :gin
   end
 
   create_table "events", comment: "Stores events from the Appeals-Consumer application that are processed by Caseflow", force: :cascade do |t|
@@ -1691,6 +1695,7 @@ ActiveRecord::Schema.define(version: 2024_08_28_165652) do
     t.text "pact_status_update_reason_notes", comment: "The reason for why Request Issue is Promise to Address Comprehensive Toxics (PACT) Act"
     t.string "ramp_claim_id", comment: "If a rating issue was created as a result of an issue intaken for a RAMP Review, it will be connected to the former RAMP issue by its End Product's claim ID."
     t.datetime "rating_issue_associated_at", comment: "Timestamp when a contention and its contested rating issue are associated in VBMS."
+    t.string "reference_id", comment: "The ID of the decision review issue record internal to C&P."
     t.string "split_issue_status", comment: "If a request issue is part of a split, on_hold status applies to the original request issues while active are request issues on splitted appeals"
     t.string "type", default: "RequestIssue", comment: "Determines whether the issue is a rating issue or a nonrating issue"
     t.string "unidentified_issue_text", comment: "User entered description if the request issue is neither a rating or a nonrating issue"
@@ -1712,6 +1717,7 @@ ActiveRecord::Schema.define(version: 2024_08_28_165652) do
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
     t.index ["ineligible_due_to_id"], name: "index_request_issues_on_ineligible_due_to_id"
     t.index ["ineligible_reason"], name: "index_request_issues_on_ineligible_reason"
+    t.index ["reference_id"], name: "index_request_issues_on_reference_id"
     t.index ["updated_at"], name: "index_request_issues_on_updated_at"
     t.index ["veteran_participant_id"], name: "index_veteran_participant_id"
   end
@@ -2103,46 +2109,6 @@ ActiveRecord::Schema.define(version: 2024_08_28_165652) do
     t.index ["created_by_id"], name: "index_vbms_distributions_on_created_by_id"
     t.index ["updated_by_id"], name: "index_vbms_distributions_on_updated_by_id"
     t.index ["vbms_communication_package_id"], name: "index_vbms_distributions_on_vbms_communication_package_id"
-  end
-
-  create_table "vbms_ext_claim", primary_key: "CLAIM_ID", id: :decimal, precision: 38, force: :cascade do |t|
-    t.string "ALLOW_POA_ACCESS", limit: 5
-    t.decimal "CLAIMANT_PERSON_ID", precision: 38
-    t.datetime "CLAIM_DATE"
-    t.string "CLAIM_SOJ", limit: 25
-    t.integer "CONTENTION_COUNT"
-    t.datetime "CREATEDDT", null: false
-    t.string "EP_CODE", limit: 25
-    t.datetime "ESTABLISHMENT_DATE"
-    t.datetime "EXPIRATIONDT"
-    t.string "INTAKE_SITE", limit: 25
-    t.datetime "LASTUPDATEDT", null: false
-    t.string "LEVEL_STATUS_CODE", limit: 25
-    t.datetime "LIFECYCLE_STATUS_CHANGE_DATE"
-    t.string "LIFECYCLE_STATUS_NAME", limit: 50
-    t.string "ORGANIZATION_NAME", limit: 100
-    t.string "ORGANIZATION_SOJ", limit: 25
-    t.string "PAYEE_CODE", limit: 25
-    t.string "POA_CODE", limit: 25
-    t.integer "PREVENT_AUDIT_TRIG", limit: 2, default: 0, null: false
-    t.string "PRE_DISCHARGE_IND", limit: 5
-    t.string "PRE_DISCHARGE_TYPE_CODE", limit: 10
-    t.string "PRIORITY", limit: 10
-    t.string "PROGRAM_TYPE_CODE", limit: 10
-    t.string "RATING_SOJ", limit: 25
-    t.string "SERVICE_TYPE_CODE", limit: 10
-    t.string "SUBMITTER_APPLICATION_CODE", limit: 25
-    t.string "SUBMITTER_ROLE_CODE", limit: 25
-    t.datetime "SUSPENSE_DATE"
-    t.string "SUSPENSE_REASON_CODE", limit: 25
-    t.string "SUSPENSE_REASON_COMMENTS", limit: 1000
-    t.decimal "SYNC_ID", precision: 38, null: false
-    t.string "TEMPORARY_CLAIM_SOJ", limit: 25
-    t.string "TYPE_CODE", limit: 25
-    t.decimal "VERSION", precision: 38, null: false
-    t.decimal "VETERAN_PERSON_ID", precision: 15
-    t.index ["CLAIM_ID"], name: "claim_id_index"
-    t.index ["LEVEL_STATUS_CODE"], name: "level_status_code_index"
   end
 
   create_table "vbms_uploaded_documents", force: :cascade do |t|
