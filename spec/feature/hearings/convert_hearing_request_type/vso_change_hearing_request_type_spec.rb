@@ -278,6 +278,8 @@ RSpec.feature "Convert hearing request type" do
             expect(page).to have_content("Video")
             expect(page).to have_link(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)
             click_link(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)
+            expect(page).to have_content("Convert to Virtual Hearing")
+            expect(page).to have_content(COPY::CONVERT_HEARING_TYPE_SUBTITLE_3)
             expect(page).to have_current_path("/hearings/#{appeal.hearings.first.uuid}/details")
           end
         end
