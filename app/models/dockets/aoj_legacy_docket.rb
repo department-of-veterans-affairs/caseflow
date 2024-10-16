@@ -44,15 +44,20 @@ class AojLegacyDocket < LegacyDocket
   end
 
   def age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
+    return [] unless ready_priority_nonpriority_legacy_appeals(priority: true)
+
     LegacyAppeal.aoj_appeal_repository.age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
   end
 
   def age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
+    return [] unless ready_priority_nonpriority_legacy_appeals(priority: false)
+
     LegacyAppeal.aoj_appeal_repository.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
   end
 
   def distribute_priority_appeals(distribution, style: "push", genpop: "any", limit: 1)
     return [] unless should_distribute?(distribution, style: style, genpop: genpop)
+    return [] unless ready_priority_nonpriority_legacy_appeals(priority: true)
 
     LegacyAppeal.aoj_appeal_repository.distribute_priority_appeals(distribution.judge, genpop, limit).map do |record|
       next unless existing_distribution_case_may_be_redistributed?(record["bfkey"], distribution)
@@ -71,7 +76,7 @@ class AojLegacyDocket < LegacyDocket
                                      limit: 1,
                                      bust_backlog: false)
     return [] unless should_distribute?(distribution, style: style, genpop: genpop)
-
+    return [] unless ready_priority_nonpriority_legacy_appeals(priority: false)
     return [] if !range.nil? && range <= 0
 
     LegacyAppeal.aoj_appeal_repository.distribute_nonpriority_appeals(
