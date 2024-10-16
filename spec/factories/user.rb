@@ -205,6 +205,12 @@ FactoryBot.define do
       end
     end
 
+    trait :with_saved_search_reports do
+      after(:create) do |user|
+        create(:saved_search, :saved_search_one, user: user)
+      end
+    end
+
     after(:create) do |user, evaluator|
       if evaluator.vacols_uniq_id
         create(:staff, slogid: evaluator.vacols_uniq_id, user: user)
