@@ -1,0 +1,3 @@
+class ReviewTranscriptTask < Task
+
+end
