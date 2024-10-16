@@ -26,7 +26,7 @@ describe('SavedSearches', () => {
     'Select a search you previously saved or look for ones others have saved by switching between the tabs.';
 
   const checkTableHeaders = () => {
-    const expectedHeaders = ['', 'Search Name', 'Saved Date', 'Admin', 'Search Description'];
+    const expectedHeaders = ['', 'Search Name', 'Saved Date', 'Admin', 'Description'];
 
     const columnHeaders = screen.getAllByRole('columnheader');
 

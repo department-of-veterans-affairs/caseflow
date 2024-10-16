@@ -149,7 +149,6 @@ exports[`SavedSearches renders correctly renders correctly 1`] = `
                         </span>
                       </th>
                       <th
-                        aria-labelledby="header-searchName"
                         class=""
                         role="columnheader"
                         scope="col"
@@ -158,9 +157,7 @@ exports[`SavedSearches renders correctly renders correctly 1`] = `
                           aria-label="Search Name"
                           data-css-9shxm7=""
                         >
-                          <span
-                            id="header-searchName"
-                          >
+                          <span>
                             Search Name
                           </span>
                           <span
@@ -216,7 +213,6 @@ exports[`SavedSearches renders correctly renders correctly 1`] = `
                         </span>
                       </th>
                       <th
-                        aria-labelledby="header-savedDate"
                         aria-sort="descending"
                         class=""
                         role="columnheader"
@@ -226,9 +222,7 @@ exports[`SavedSearches renders correctly renders correctly 1`] = `
                           aria-label="Saved Date"
                           data-css-9shxm7=""
                         >
-                          <span
-                            id="header-savedDate"
-                          >
+                          <span>
                             Saved Date
                           </span>
                           <span
@@ -284,7 +278,6 @@ exports[`SavedSearches renders correctly renders correctly 1`] = `
                         </span>
                       </th>
                       <th
-                        aria-labelledby="header-admin"
                         class=""
                         role="columnheader"
                         scope="col"
@@ -293,9 +286,7 @@ exports[`SavedSearches renders correctly renders correctly 1`] = `
                           aria-label="Admin"
                           data-css-9shxm7=""
                         >
-                          <span
-                            id="header-admin"
-                          >
+                          <span>
                             Admin
                           </span>
                           <span
@@ -351,19 +342,16 @@ exports[`SavedSearches renders correctly renders correctly 1`] = `
                         </span>
                       </th>
                       <th
-                        aria-labelledby="header-searchDescription"
                         class=""
                         role="columnheader"
                         scope="col"
                       >
                         <span
-                          aria-label="Search Description"
+                          aria-label="Description"
                           data-css-9shxm7=""
                         >
-                          <span
-                            id="header-searchDescription"
-                          >
-                            Search Description
+                          <span>
+                            Description
                           </span>
                         </span>
                       </th>

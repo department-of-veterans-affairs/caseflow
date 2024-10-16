@@ -4,8 +4,9 @@ import PropTypes from 'prop-types';
 import QueueTable from '../../queue/QueueTable';
 import RadioField from 'app/components/RadioField';
 import { selectSavedSearch } from '../../nonComp/actions/savedSearchSlice';
+import moment from 'moment';
 
-export const SearchTable = ({ eventRows, searchPageApiEndpoint }) => {
+export const SearchTable = ({ eventRows }) => {
   const dispatch = useDispatch();
   const onSavedSearchChange = (row) => {
     dispatch(selectSavedSearch(row));
@@ -13,7 +14,6 @@ export const SearchTable = ({ eventRows, searchPageApiEndpoint }) => {
 
   const columns = [
     {
-      ariaLabel: 'Select search column',
       valueFunction: (row) => <RadioField
         name="savedSearchRadioFieldGroup"
         label="Select search"
@@ -30,13 +30,13 @@ export const SearchTable = ({ eventRows, searchPageApiEndpoint }) => {
     },
     { name: 'savedDate',
       header: 'Saved Date',
-      getSortValue: (row) => row.createdAt,
-      valueFunction: (row) => row.createdAt,
+      getSortValue: (row) => moment(row.createdAt).format('MM/DD/YYYY'),
+      valueFunction: (row) => moment(row.createdAt).format('MM/DD/YYYY'),
     },
     { name: 'admin',
       header: 'Admin',
-      getSortValue: (row) => row.userCssId,
-      valueFunction: (row) => row.userCssId,
+      getSortValue: (row) => `${row.userFullName} (${row.userCssId})`,
+      valueFunction: (row) => `${row.userFullName} (${row.userCssId})`,
     },
     { name: 'description',
       header: 'Description',
@@ -44,17 +44,12 @@ export const SearchTable = ({ eventRows, searchPageApiEndpoint }) => {
     }
   ];
 
-  // getKeyForRow = (index, task) => task.id
-
   return (<QueueTable
     id="saved_search_table"
     columns={columns}
     rowObjects={eventRows}
-    useTaskPagesApi={false}
     enablePagination
-    casesPerPage={15}
     getKeyForRow={(index) => index}
-    taskPageApiEndpoint={searchPageApiEndpoint}
     defaultSort= {{
       sortColName: 'savedDate',
       sortAscending: false
