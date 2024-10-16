@@ -285,8 +285,8 @@ module Seeds
     end
 
     def create_inactive_appeals(veteran)
-       # creating three appeals with cancelled root task
-       3.times do
+      # creating three appeals with cancelled root task
+      3.times do
         appeal = create(:appeal, veteran: veteran)
         InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
         appeal.root_task.update!(status: Constants.TASK_STATUSES.cancelled)
@@ -300,7 +300,7 @@ module Seeds
       end
     end
 
-    def create_inactive_appeals_for_user(user, veteran = {})
+    def create_inactive_appeals_for_user(_user, veteran = {})
       # creating two appeals with cancelled root task
       3.times do
         appeal = create(:appeal, veteran: veteran)
