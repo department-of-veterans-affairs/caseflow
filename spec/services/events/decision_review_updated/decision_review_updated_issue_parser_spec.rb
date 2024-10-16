@@ -33,22 +33,7 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser d
       nonrating_issue_bgs_source: "CORP_AWARD_ATTORNEY_FEE",
       type: "RequestIssue",
       original_caseflow_request_issue_id: 679,
-      decision: [
-        {
-          id: 1738,
-          award_event_id: 679,
-          category: "decision",
-          contention_id: 35,
-          decision_source: "the source",
-          decision_recorded_time: nil,
-          decision_text: "",
-          description: nil,
-          disposition: nil,
-          dta_error_explanation: nil,
-          rating_profile_date: nil,
-          decision_finalized_time: nil
-        }
-      ]
+      veteran_participant_id: "1826209"
     }
   end
 
@@ -219,6 +204,12 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedIssueParser d
   describe "#original_caseflow_request_issue_id" do
     it "returns the original caseflow request issue id" do
       expect(subject.ri_original_caseflow_request_issue_id).to eq(679)
+    end
+  end
+
+  describe "#ri_veteran_participant_id" do
+    it "returns the veteran_participant_id" do
+      expect(subject.ri_veteran_participant_id).to eq("1826209")
     end
   end
 

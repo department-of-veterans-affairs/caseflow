@@ -58,10 +58,35 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
           "updated_issues": [],
           "removed_issues": [
             {
-              "original_caseflow_request_issue_id": 1,
-              "decision_review_issue_id": 1234,
               "closed_at": 1_702_000_145_000,
-              "closed_status": "removed"
+              "closed_status": "removed",
+              "original_caseflow_request_issue_id": 1,
+              "contested_rating_decision_reference_id": 1,
+              "contested_rating_issue_reference_id": 2,
+              "contested_decision_issue_id": nil,
+              "untimely_exemption": false,
+              "untimely_exemption_notes": "some notes",
+              "edited_description": "DIC: Service connection denied (UPDATED)",
+              "vacols_id": "some_id",
+              "vacols_sequence_id": "some_sequence_id",
+              "nonrating_issue_bgs_id": "some_bgs_id",
+              "type": "RequestIssue",
+              "decision_review_issue_id": 1234,
+              "contention_reference_id": 123_457,
+              "benefit_type": "compensation",
+              "contested_issue_description": "some_description",
+              "contested_rating_issue_profile_date": "122255",
+              "decision_date": 19_568,
+              "ineligible_due_to_id": nil,
+              "ineligible_reason": nil,
+              "unidentified_issue_text": "An unidentified issue added during the edit",
+              "nonrating_issue_category": nil,
+              "nonrating_issue_description": nil,
+              "contested_rating_issue_diagnostic_code": "9411",
+              "rating_issue_associated_at": nil,
+              "ramp_claim_id": nil,
+              "is_unidentified": true,
+              "nonrating_issue_bgs_source": nil
             }
           ],
           "withdrawn_issues": [],
@@ -90,7 +115,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
           expect(removed_request_issue.any_updates?).to eq(false)
           expect(existing_request_issue.edited_description).to eq("edited")
           post :decision_review_updated, params: valid_params
-          expect(response).to have_http_status(:ok)
+          expect(response).to have_http_status(:created)
           expect(response.body).to include("DecisionReviewUpdatedEvent successfully processed")
           removed_request_issue.reload
           expect(removed_request_issue.closed_at).to eq("2023-12-07 20:49:05.000000000 -0500")

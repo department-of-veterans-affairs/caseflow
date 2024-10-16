@@ -50,7 +50,8 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
       untimely_exemption: false,
       untimely_exemption_notes: nil,
       vacols_id: nil,
-      vacols_sequence_id: nil
+      vacols_sequence_id: nil,
+      veteran_participant_id: "1826209"
     }]
   end
 
@@ -84,7 +85,8 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
       untimely_exemption: false,
       untimely_exemption_notes: nil,
       vacols_id: nil,
-      vacols_sequence_id: nil
+      vacols_sequence_id: nil,
+      veteran_participant_id: "1826209"
     }]
   end
 
@@ -118,7 +120,8 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
       untimely_exemption: false,
       untimely_exemption_notes: nil,
       vacols_id: nil,
-      vacols_sequence_id: nil
+      vacols_sequence_id: nil,
+      veteran_participant_id: "1826209"
     }]
   end
 
@@ -152,7 +155,8 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
       untimely_exemption: false,
       untimely_exemption_notes: nil,
       vacols_id: nil,
-      vacols_sequence_id: nil
+      vacols_sequence_id: nil,
+      veteran_participant_id: "1826209"
     }]
   end
 
@@ -186,7 +190,8 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
       untimely_exemption: false,
       untimely_exemption_notes: nil,
       vacols_id: nil,
-      vacols_sequence_id: nil
+      vacols_sequence_id: nil,
+      veteran_participant_id: "1826209"
     }]
   end
 
@@ -220,7 +225,8 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
       untimely_exemption: false,
       untimely_exemption_notes: nil,
       vacols_id: nil,
-      vacols_sequence_id: nil
+      vacols_sequence_id: nil,
+      veteran_participant_id: "1826209"
     }]
   end
 
@@ -254,7 +260,8 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
       untimely_exemption: false,
       untimely_exemption_notes: nil,
       vacols_id: nil,
-      vacols_sequence_id: nil
+      vacols_sequence_id: nil,
+      veteran_participant_id: "1826209"
     }]
   end
 
@@ -377,24 +384,6 @@ RSpec.describe Events::DecisionReviewUpdated::DecisionReviewUpdatedParser do
     describe "decision_review_type" do
       it "returns the correct decision_review_type" do
         expect(subject.decision_review_type).to eq(payload["decision_review_type"])
-      end
-    end
-
-    describe "veteran_first_name" do
-      it "returns the correct veteran_first_name" do
-        expect(subject.veteran_first_name).to eq(payload["veteran_first_name"])
-      end
-    end
-
-    describe "veteran_last_name" do
-      it "returns the correct veteran_last_name" do
-        expect(subject.veteran_last_name).to eq(payload["veteran_last_name"])
-      end
-    end
-
-    describe "veteran_participant_id" do
-      it "returns the correct veteran_participant_id" do
-        expect(subject.veteran_participant_id).to eq(payload["veteran_participant_id"])
       end
     end
 
