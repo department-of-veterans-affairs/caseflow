@@ -44,6 +44,7 @@ const CorrespondenceDetails = (props) => {
   const priorMail = correspondence.prior_mail;
   // eslint-disable-next-line max-len
   const [relatedCorrespondenceIds, setRelatedCorrespondenceIds] = useState(props.correspondence.relatedCorrespondenceIds);
+  // Ki - selected appeals are the ones selected with the checkboxes -- taskRelatedAppealsIds<-selectedAppeals
   const [initialSelectedAppeals, setInitialSelectedAppeals] = useState(correspondence.correspondenceAppealIds);
   const [selectedAppeals, setSelectedAppeals] = useState(correspondence.correspondenceAppealIds);
   const [unSelectedAppeals, setUnSelectedAppeals] = useState([]);
@@ -56,6 +57,7 @@ const CorrespondenceDetails = (props) => {
   const [sortedPriorMail, setSortedPriorMail] = useState([]);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isTasksUnrelatedSectionExpanded, setIsTasksUnrelatedSectionExpanded] = useState(false);
+  // const [linkedAppeals, setLinkedAppeals] = useState([]);
 
   // Initialize checkbox states
   useEffect(() => {
@@ -72,6 +74,12 @@ const CorrespondenceDetails = (props) => {
     // Initialize sortedPriorMail with the initial priorMail list
     setSortedPriorMail(priorMail);
   }, [priorMail]);
+
+  // useEffect(() => {
+  //   const linkedAppealList = [...linkedAppeals, initialSelectedAppeals, selectedAppeals];
+
+  //   setLinkedAppeals(linkedAppealList);
+  // });
 
   const toggleSection = () => {
     setIsExpanded((prev) => !prev);
@@ -358,6 +366,12 @@ const CorrespondenceDetails = (props) => {
     setDisableSubmitButton(isButtonDisabled());
   }, [selectedAppeals, initialSelectedAppeals]);
 
+  useEffect(() => {
+    if (selectedAppeals?.length !== initialSelectedAppeals?.length) {
+      dispatch(updateCorrespondenceInfo(correspondence));
+    }
+  }, [selectedAppeals, initialSelectedAppeals]);
+
   const sortAppeals = (selectedList) => {
     let filteredAppeals = [];
     let unfilteredAppeals = [];
@@ -486,16 +500,47 @@ const CorrespondenceDetails = (props) => {
               />
             </AppSegment>
           )}
-          {(props.correspondence.correspondenceAppeals.map((taskAdded) =>
-            <CorrespondenceAppealTasks
-              task_added={taskAdded}
-              correspondence={props.correspondence}
-              organizations={props.organizations}
-              userCssId={props.userCssId}
-              appeal={taskAdded.appeal.data.attributes}
-              waivableUser={props.isInboundOpsSuperuser || props.isInboundOpsSupervisor}
-            />
-          )
+          {(props.correspondence.correspondenceAppeals || props.correspondenceInfo.correspondenceAppeals) && (
+            <div>
+              {/* {(props.correspondence.correspondenceAppeals.map((taskAdded) =>
+                <div className="correspondence-linked-appeals">
+                  <div className="correspondence-linked-appeals-title-bar">
+                    <h2>"Linked appeal:"</h2>
+                    <AppSegment filledBackground noMarginTop>
+                      <span className="case-details-badge">
+                        <DocketTypeBadge name={taskAdded.appealType} />
+                        <CaseDetailsLink
+                          appeal={{ externalId: taskAdded.appealUuid }}
+                          getLinkText={() => taskAdded.docketNumber}
+                          task={taskAdded}
+
+                          linkOpensInNewTab
+                        />
+                      </span>
+                    </AppSegment>
+                  </div>
+                  <CorrespondenceAppealTasks
+                    task_added={taskAdded}
+                    correspondence={props.correspondence}
+                    organizations={props.organizations}
+                    userCssId={props.userCssId}
+                    appeal={taskAdded.appeal.data.attributes}
+                    waivableUser={props.isInboundOpsSuperuser || props.isInboundOpsSupervisor}
+                  />
+                </div>
+              ))} */}
+              {(props.correspondenceInfo?.correspondenceAppeals?.map((taskAdded) =>
+                <CorrespondenceAppealTasks
+                  task_added={taskAdded}
+                  correspondence={props.correspondence}
+                  organizations={props.organizations}
+                  userCssId={props.userCssId}
+                  appeal={taskAdded.appeal.data.attributes}
+                  waivableUser={props.isInboundOpsSuperuser || props.isInboundOpsSupervisor}
+                />
+              )
+              )}
+            </div>
           )}
         </div>
       </React.Fragment>

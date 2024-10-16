@@ -94,7 +94,10 @@ const CorrespondenceAppealTasks = (props) => {
 
           </div>
           <div className="tasks-added-details">
-            <span className="tasks-added-text">Tasks added to appeal</span>
+            {props.task_added.CorrespondenceAppealTasks ?
+              <span className="tasks-added-text">Tasks added to appeal</span> :
+              <span className="tasks-added-text-alternate">There are no tasks on this appeal.</span>
+            }
             <div>
               <TaskRows appeal={appeal}
                 taskList={tasks}
