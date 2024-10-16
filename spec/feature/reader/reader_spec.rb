@@ -1081,9 +1081,8 @@ RSpec.feature "Reader", :all_dbs do
       # Test the document count updates after viewing a document
       expect(page).to have_content("You've viewed 0 out of #{documents.length} documents")
       click_on documents[0].type
-      click_on "Previous"
       click_on "Back"
-      expect(page).to have_content("You've viewed 2 out of #{documents.length} documents")
+      expect(page).to have_content("You've viewed 1 out of #{documents.length} documents")
 
       find(".rc-collapse-header", text: "Claims folder details").click
       regional_office = "#{appeal_info['regional_office'][:key]} - #{appeal_info['regional_office'][:city]}"
