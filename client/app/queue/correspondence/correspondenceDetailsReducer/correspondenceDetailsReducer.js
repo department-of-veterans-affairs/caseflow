@@ -4,6 +4,7 @@ import { ACTIONS } from './correspondenceDetailsConstants';
 export const initialState = {
 
   bannerAlert: {},
+  waiveEvidenceAlertBanner: {},
   correspondenceInfo: {
     tasksUnrelatedToAppeal: {}
   },
@@ -33,8 +34,8 @@ export const correspondenceDetailsReducer = (state = initialState, action = {}) 
     });
   case ACTIONS.EVIDENCE_SUBMISSION_BANNER:
     return update(state, {
-      bannerAlert: {
-        $set: action.payload.bannerAlert
+      waiveEvidenceAlertBanner: {
+        $set: action.payload.waiveEvidenceAlertBanner
       }
     });
   default:

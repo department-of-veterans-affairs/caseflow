@@ -23,7 +23,7 @@ export const setWaiveEvidenceAlertBanner = (bannerDetails) => (dispatch) => {
   dispatch({
     type: ACTIONS.SET_WAIVE_EVIDENCE_ALERT_BANNER,
     payload: {
-      bannerAlert: {
+      waiveEvidenceAlertBanner: {
         taskId: bannerDetails.taskId,
         message: bannerDetails.message,
         type: bannerDetails.type
@@ -47,7 +47,7 @@ export const createNewEvidenceWindowTask = (payload, correspondence, appealId) =
       dispatch({
         type: ACTIONS.EVIDENCE_SUBMISSION_BANNER,
         payload: {
-          bannerAlert: {
+          waiveEvidenceAlertBanner: {
             appealId,
             title: CORRESPONDENCE_DETAILS_BANNERS.evidenceWindowBanner.title,
             message: sprintf(CORRESPONDENCE_DETAILS_BANNERS.evidenceWindowBanner.message),

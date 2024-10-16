@@ -14,7 +14,7 @@ import {
 
 const CorrespondenceAppealTasks = (props) => {
   const {
-    bannerAlert,
+    waiveEvidenceAlertBanner,
   } = { ...props };
 
   const veteranFullName = props.correspondence.veteranFullName;
@@ -67,16 +67,20 @@ const CorrespondenceAppealTasks = (props) => {
           </div>
 
         </div>
-        <div className="tasks-added-details tasks-added-waive-banner-alert">
+        <div className="tasks-added-waive-banner-alert">
           <div className="waive-banner-alert">
-            {appeal && bannerAlert.message && bannerAlert.appealId.toString() === appeal.id.toString() &&
-            (
+            {appeal &&
+            waiveEvidenceAlertBanner &&
+            waiveEvidenceAlertBanner.message &&
+            waiveEvidenceAlertBanner.appealId &&
+            appeal.id &&
+            waiveEvidenceAlertBanner.appealId.toString() === appeal.id.toString() && (
                 <Alert
-                  type={bannerAlert.type}
-                  message={bannerAlert.message}
+                  type={waiveEvidenceAlertBanner.type}
+                  message={waiveEvidenceAlertBanner.message}
                   scrollOnAlert={false}
                 />
-            )}
+              )}
           </div>
         </div>
         <div className="tasks-added-details">
@@ -109,7 +113,7 @@ CorrespondenceAppealTasks.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  bannerAlert: state.correspondenceDetails.bannerAlert,
+  waiveEvidenceAlertBanner: state.correspondenceDetails.waiveEvidenceAlertBanner,
 });
 
 
