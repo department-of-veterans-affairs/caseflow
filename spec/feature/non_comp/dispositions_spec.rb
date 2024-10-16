@@ -195,6 +195,8 @@ feature "NonComp Dispositions Task Page", :postgres do
       fill_in_disposition(2, "Denied", "denied")
       fill_in "decision-date", with: arbitrary_decision_date
 
+      expect(page).to have_text("Decision date must be between Form Receipt Date")
+
       # save
       expect(page).to have_button("Complete", disabled: false)
       click_on "Complete"

@@ -9,7 +9,7 @@ const DEFAULT_TEXT = 'mm/dd/yyyy';
 export const DateSelector = (props) => {
   const [dateError, setDateError] = useState(null);
 
-  const { dateValidator, futureDate } = ValidatorsUtil;
+  const { dateValidator } = ValidatorsUtil;
 
   const {
     errorMessage,
@@ -35,9 +35,10 @@ export const DateSelector = (props) => {
         return COPY.DATE_SELECTOR_INVALID_DATE_ERROR;
       }
 
-      if (noFutureDates && futureDate(date)) {
-        return COPY.DATE_SELECTOR_FUTURE_DATE_ERROR;
-      }
+      /* Will be refactored in tech debt */
+      // if (noFutureDates && futureDate(date)) {
+      //   return COPY.DATE_SELECTOR_FUTURE_DATE_ERROR;
+      // }
 
       if (validationError) {
         return validationError(date);

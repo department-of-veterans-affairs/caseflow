@@ -7,17 +7,22 @@ $validation-error-color: #cd2026;
   margin: 2rem -2rem;
 
   .cf-inline-form {
-    line-height: 2em;
+    line-height: 2.5em;
 
     .usa-input-error-message {
-      font-weight: 500;
+      font-weight: bold;
+      padding-left: 1rem;
     }
 
     .cf-date-error {
       input {
-        border: 1px solid $color-secondary-dark;
+        border: 2px solid $color-secondary-dark;
       }
     }
+  }
+
+  .cf-form-textinput {
+    margin-top: 0rem;
   }
 }
 
