@@ -89,6 +89,11 @@ export const completedColumns = (columns) => {
   return { DOCKET_NUMBER, TYPES, HEARING_DATE, EXPECTED_RETURN_DATE, RETURN_DATE, CONTRACTOR, STATUS, WORK_ORDER };
 };
 
+export const allColumns = (columns) => {
+  const { DOCKET_NUMBER, TYPES, HEARING_DATE, RETURN_DATE, UPLOAD_DATE,  CONTRACTOR, STATUS, WORK_ORDER } = columns;
+
+  return { DOCKET_NUMBER, TYPES, HEARING_DATE, RETURN_DATE, UPLOAD_DATE, CONTRACTOR, STATUS, WORK_ORDER };
+};
 /**
  * A mini template component for transcription settings link
  */
@@ -222,7 +227,13 @@ export const tabConfig = (openModal, selectFilesForPackage, files) => [
           </div>
         </div>
       </div>
-      <div style={styles.tableWrapper}></div>
+      <div style={styles.tableWrapper}>
+        <TranscriptionFileDispatchTable
+          columns={allColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
+          statusFilter={['All']}
+          selectFilesForPackage={selectFilesForPackage}
+        />
+      </div>
     </>
   }
 ];

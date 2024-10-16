@@ -15,7 +15,8 @@ import {
   contractorColumn,
   statusColumn,
   unassignColumn,
-  returnDateColumn
+  returnDateColumn,
+  uploadDateColumn
 } from './TranscriptionFileDispatchTableColumns';
 import { css } from 'glamor';
 import { encodeQueryParams } from '../../util/QueryParamsUtil';
@@ -144,7 +145,7 @@ export const TranscriptionFileDispatchTable = ({
    * @returns The url string
    */
   const apiEndpoint = () => {
-    if (!statusFilter || statusFilter[0] === 'Unassigned' || statusFilter[0] === 'Completed') {
+    if (!statusFilter || statusFilter[0] === 'Unassigned' || statusFilter[0] === 'Completed' || statusFilter[0] === 'All') {
       return `/hearings/transcription_files/transcription_file_tasks${qs}`;
     } else if (statusFilter[0] === 'Assigned') {
       return `/hearings/transcription_packages/transcription_package_tasks${qs}`;
@@ -230,6 +231,7 @@ export const TranscriptionFileDispatchTable = ({
       contractorColumn: contractorColumn(contractors),
       statusColumn: statusColumn(statusFilter[0]),
       unassignColumn: unassignColumn(unassignPackage),
+      uploadDateColumn: uploadDateColumn(),
     };
 
     return functionForColumn[column.name];

@@ -67,6 +67,11 @@
       "filterable": true,
       "anyFiltersAreSet": true
     },
+    "UPLOAD_DATE": {
+      "name": "uploadDateColumn",
+      "filterable": true,
+      "anyFiltersAreSet": true
+    },
     "CONTRACTOR": {
       "name": "contractorColumn",
       "filterable": true,

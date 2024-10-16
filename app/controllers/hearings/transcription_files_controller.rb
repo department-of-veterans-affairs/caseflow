@@ -226,8 +226,8 @@ class Hearings::TranscriptionFilesController < ApplicationController
         hearingType: transcription_file.hearing_type,
         fileStatus: transcription_file.file_status
       }
-
       task = add_completed_tab_fields(task, transcription_file) if params[:tab] == "Completed"
+      task = add_all_tab_fields(task, transcription_file) if params[:tab] == "All"
       tasks << task
     end
     tasks
@@ -239,6 +239,17 @@ class Hearings::TranscriptionFilesController < ApplicationController
         workOrder: transcription_file.transcription&.task_number,
         expectedReturnDate: transcription_file&.transcription&.transcription_package
           &.expected_return_date&.to_formatted_s(:short_date),
+        returnDate: transcription_file.date_returned_box&.to_formatted_s(:short_date),
+        contractor: transcription_file&.transcription&.transcription_package&.contractor&.name
+      }
+    )
+  end
+
+  def add_all_tab_fields(task, transcription_file)
+    task.merge(
+      {
+        workOrder: transcription_file.transcription&.task_number,
+        uploadDate: transcription_file&.date_returned_box&.to_formatted_s(:short_date),
         returnDate: transcription_file.date_returned_box&.to_formatted_s(:short_date),
         contractor: transcription_file&.transcription&.transcription_package&.contractor&.name
       }
