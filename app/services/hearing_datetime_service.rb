@@ -81,9 +81,6 @@ class HearingDatetimeService
   # @return [String]
   def scheduled_time_string
     tz = ActiveSupport::TimeZone::MAPPING.key(@hearing.scheduled_in_timezone)
-    tz ||= ActiveSupport::TimeZone::MAPPING.key(
-      TIMEZONE_ALIASES[@hearing.scheduled_in_timezone]
-    )
 
     "#{local_time.strftime('%l:%M %p')} #{tz}".lstrip
   end

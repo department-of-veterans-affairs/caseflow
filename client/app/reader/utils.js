@@ -48,7 +48,7 @@ export const rotateCoordinates = ({ x, y }, container, rotation) => {
   case 180:
     rotatedCoords = { x: container.width - x, y: container.height - y };
     break;
-  case 270:
+  case 27:
     rotatedCoords = { x: container.height - y, y: x };
     break;
   default:
@@ -80,7 +80,6 @@ export const getPageCoordinatesOfMouseEventPrototype = (event, container, scale,
     rotation
   );
 };
-
 /**
  * immutability-helper takes two arguments: an object and a spec for how to change it:
  *

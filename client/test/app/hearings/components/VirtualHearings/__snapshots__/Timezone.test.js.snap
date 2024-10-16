@@ -57,6 +57,11 @@ exports[`Timezone Can set timezone 1`] = `
         },
         Object {
           "index": 2.4,
+          "label": "Indiana (East) (8:15 AM)",
+          "value": "America/Indiana/Indianapolis",
+        },
+        Object {
+          "index": 2.4,
           "label": "Puerto Rico (9:15 AM)",
           "value": "America/Puerto_Rico",
         },
@@ -369,11 +374,6 @@ exports[`Timezone Can set timezone 1`] = `
           "index": 280,
           "label": "Baghdad (4:15 PM)",
           "value": "Asia/Baghdad",
-        },
-        Object {
-          "index": 340,
-          "label": "Indiana (East) (8:15 AM)",
-          "value": "America/Indiana/Indianapolis",
         },
         Object {
           "index": 340,
@@ -803,10 +803,10 @@ exports[`Timezone Can set timezone 1`] = `
     styling={
       Object {
         "& .cf-select__menu-list": Object {
-          "& > :nth-child(9)": Object {
+          "& > :nth-child(10)": Object {
             "borderBottom": "1px solid grey",
           },
-          "height": "351px !important",
+          "height": "390px !important",
           "maxHeight": "none",
           "overflowY": "auto",
         },
@@ -819,7 +819,7 @@ exports[`Timezone Can set timezone 1`] = `
     >
       <div
         className="cf-form-dropdown dropdown-tz"
-        data-css-1dzedb9=""
+        data-css-1gh7024=""
       >
         <label
           className="question-label"
@@ -887,6 +887,11 @@ exports[`Timezone Can set timezone 1`] = `
                   "index": -0,
                   "label": "Pacific Time (US & Canada) (5:15 AM)",
                   "value": "America/Los_Angeles",
+                },
+                Object {
+                  "index": 2.4,
+                  "label": "Indiana (East) (8:15 AM)",
+                  "value": "America/Indiana/Indianapolis",
                 },
                 Object {
                   "index": 2.4,
@@ -1202,11 +1207,6 @@ exports[`Timezone Can set timezone 1`] = `
                   "index": 280,
                   "label": "Baghdad (4:15 PM)",
                   "value": "Asia/Baghdad",
-                },
-                Object {
-                  "index": 340,
-                  "label": "Indiana (East) (8:15 AM)",
-                  "value": "America/Indiana/Indianapolis",
                 },
                 Object {
                   "index": 340,
@@ -1719,6 +1719,11 @@ exports[`Timezone Can set timezone 1`] = `
                   },
                   Object {
                     "index": 2.4,
+                    "label": "Indiana (East) (8:15 AM)",
+                    "value": "America/Indiana/Indianapolis",
+                  },
+                  Object {
+                    "index": 2.4,
                     "label": "Puerto Rico (9:15 AM)",
                     "value": "America/Puerto_Rico",
                   },
@@ -2031,11 +2036,6 @@ exports[`Timezone Can set timezone 1`] = `
                     "index": 280,
                     "label": "Baghdad (4:15 PM)",
                     "value": "Asia/Baghdad",
-                  },
-                  Object {
-                    "index": 340,
-                    "label": "Indiana (East) (8:15 AM)",
-                    "value": "America/Indiana/Indianapolis",
                   },
                   Object {
                     "index": 340,
@@ -2522,6 +2522,11 @@ exports[`Timezone Can set timezone 1`] = `
                     },
                     Object {
                       "index": 2.4,
+                      "label": "Indiana (East) (8:15 AM)",
+                      "value": "America/Indiana/Indianapolis",
+                    },
+                    Object {
+                      "index": 2.4,
                       "label": "Puerto Rico (9:15 AM)",
                       "value": "America/Puerto_Rico",
                     },
@@ -2834,11 +2839,6 @@ exports[`Timezone Can set timezone 1`] = `
                       "index": 280,
                       "label": "Baghdad (4:15 PM)",
                       "value": "Asia/Baghdad",
-                    },
-                    Object {
-                      "index": 340,
-                      "label": "Indiana (East) (8:15 AM)",
-                      "value": "America/Indiana/Indianapolis",
                     },
                     Object {
                       "index": 340,
@@ -3338,6 +3338,11 @@ exports[`Timezone Can set timezone 1`] = `
                       },
                       Object {
                         "index": 2.4,
+                        "label": "Indiana (East) (8:15 AM)",
+                        "value": "America/Indiana/Indianapolis",
+                      },
+                      Object {
+                        "index": 2.4,
                         "label": "Puerto Rico (9:15 AM)",
                         "value": "America/Puerto_Rico",
                       },
@@ -3650,11 +3655,6 @@ exports[`Timezone Can set timezone 1`] = `
                         "index": 280,
                         "label": "Baghdad (4:15 PM)",
                         "value": "Asia/Baghdad",
-                      },
-                      Object {
-                        "index": 340,
-                        "label": "Indiana (East) (8:15 AM)",
-                        "value": "America/Indiana/Indianapolis",
                       },
                       Object {
                         "index": 340,
@@ -4190,6 +4190,11 @@ exports[`Timezone Can set timezone 1`] = `
                           },
                           Object {
                             "index": 2.4,
+                            "label": "Indiana (East) (8:15 AM)",
+                            "value": "America/Indiana/Indianapolis",
+                          },
+                          Object {
+                            "index": 2.4,
                             "label": "Puerto Rico (9:15 AM)",
                             "value": "America/Puerto_Rico",
                           },
@@ -4502,11 +4507,6 @@ exports[`Timezone Can set timezone 1`] = `
                             "index": 280,
                             "label": "Baghdad (4:15 PM)",
                             "value": "Asia/Baghdad",
-                          },
-                          Object {
-                            "index": 340,
-                            "label": "Indiana (East) (8:15 AM)",
-                            "value": "America/Indiana/Indianapolis",
                           },
                           Object {
                             "index": 340,
@@ -5006,6 +5006,11 @@ exports[`Timezone Can set timezone 1`] = `
                             },
                             Object {
                               "index": 2.4,
+                              "label": "Indiana (East) (8:15 AM)",
+                              "value": "America/Indiana/Indianapolis",
+                            },
+                            Object {
+                              "index": 2.4,
                               "label": "Puerto Rico (9:15 AM)",
                               "value": "America/Puerto_Rico",
                             },
@@ -5318,11 +5323,6 @@ exports[`Timezone Can set timezone 1`] = `
                               "index": 280,
                               "label": "Baghdad (4:15 PM)",
                               "value": "Asia/Baghdad",
-                            },
-                            Object {
-                              "index": 340,
-                              "label": "Indiana (East) (8:15 AM)",
-                              "value": "America/Indiana/Indianapolis",
                             },
                             Object {
                               "index": 340,
@@ -5866,6 +5866,11 @@ exports[`Timezone Can set timezone 1`] = `
                                 },
                                 Object {
                                   "index": 2.4,
+                                  "label": "Indiana (East) (8:15 AM)",
+                                  "value": "America/Indiana/Indianapolis",
+                                },
+                                Object {
+                                  "index": 2.4,
                                   "label": "Puerto Rico (9:15 AM)",
                                   "value": "America/Puerto_Rico",
                                 },
@@ -6178,11 +6183,6 @@ exports[`Timezone Can set timezone 1`] = `
                                   "index": 280,
                                   "label": "Baghdad (4:15 PM)",
                                   "value": "Asia/Baghdad",
-                                },
-                                Object {
-                                  "index": 340,
-                                  "label": "Indiana (East) (8:15 AM)",
-                                  "value": "America/Indiana/Indianapolis",
                                 },
                                 Object {
                                   "index": 340,
@@ -6682,6 +6682,11 @@ exports[`Timezone Can set timezone 1`] = `
                                   },
                                   Object {
                                     "index": 2.4,
+                                    "label": "Indiana (East) (8:15 AM)",
+                                    "value": "America/Indiana/Indianapolis",
+                                  },
+                                  Object {
+                                    "index": 2.4,
                                     "label": "Puerto Rico (9:15 AM)",
                                     "value": "America/Puerto_Rico",
                                   },
@@ -6994,11 +6999,6 @@ exports[`Timezone Can set timezone 1`] = `
                                     "index": 280,
                                     "label": "Baghdad (4:15 PM)",
                                     "value": "Asia/Baghdad",
-                                  },
-                                  Object {
-                                    "index": 340,
-                                    "label": "Indiana (East) (8:15 AM)",
-                                    "value": "America/Indiana/Indianapolis",
                                   },
                                   Object {
                                     "index": 340,
@@ -7534,6 +7534,11 @@ exports[`Timezone Can set timezone 1`] = `
                                       },
                                       Object {
                                         "index": 2.4,
+                                        "label": "Indiana (East) (8:15 AM)",
+                                        "value": "America/Indiana/Indianapolis",
+                                      },
+                                      Object {
+                                        "index": 2.4,
                                         "label": "Puerto Rico (9:15 AM)",
                                         "value": "America/Puerto_Rico",
                                       },
@@ -7846,11 +7851,6 @@ exports[`Timezone Can set timezone 1`] = `
                                         "index": 280,
                                         "label": "Baghdad (4:15 PM)",
                                         "value": "Asia/Baghdad",
-                                      },
-                                      Object {
-                                        "index": 340,
-                                        "label": "Indiana (East) (8:15 AM)",
-                                        "value": "America/Indiana/Indianapolis",
                                       },
                                       Object {
                                         "index": 340,
@@ -8350,6 +8350,11 @@ exports[`Timezone Can set timezone 1`] = `
                                         },
                                         Object {
                                           "index": 2.4,
+                                          "label": "Indiana (East) (8:15 AM)",
+                                          "value": "America/Indiana/Indianapolis",
+                                        },
+                                        Object {
+                                          "index": 2.4,
                                           "label": "Puerto Rico (9:15 AM)",
                                           "value": "America/Puerto_Rico",
                                         },
@@ -8662,11 +8667,6 @@ exports[`Timezone Can set timezone 1`] = `
                                           "index": 280,
                                           "label": "Baghdad (4:15 PM)",
                                           "value": "Asia/Baghdad",
-                                        },
-                                        Object {
-                                          "index": 340,
-                                          "label": "Indiana (East) (8:15 AM)",
-                                          "value": "America/Indiana/Indianapolis",
                                         },
                                         Object {
                                           "index": 340,
@@ -9254,6 +9254,11 @@ exports[`Timezone Can set timezone 1`] = `
                                         },
                                         Object {
                                           "index": 2.4,
+                                          "label": "Indiana (East) (8:15 AM)",
+                                          "value": "America/Indiana/Indianapolis",
+                                        },
+                                        Object {
+                                          "index": 2.4,
                                           "label": "Puerto Rico (9:15 AM)",
                                           "value": "America/Puerto_Rico",
                                         },
@@ -9566,11 +9571,6 @@ exports[`Timezone Can set timezone 1`] = `
                                           "index": 280,
                                           "label": "Baghdad (4:15 PM)",
                                           "value": "Asia/Baghdad",
-                                        },
-                                        Object {
-                                          "index": 340,
-                                          "label": "Indiana (East) (8:15 AM)",
-                                          "value": "America/Indiana/Indianapolis",
                                         },
                                         Object {
                                           "index": 340,
@@ -10138,6 +10138,11 @@ exports[`Timezone Can set timezone 1`] = `
                                           },
                                           Object {
                                             "index": 2.4,
+                                            "label": "Indiana (East) (8:15 AM)",
+                                            "value": "America/Indiana/Indianapolis",
+                                          },
+                                          Object {
+                                            "index": 2.4,
                                             "label": "Puerto Rico (9:15 AM)",
                                             "value": "America/Puerto_Rico",
                                           },
@@ -10450,11 +10455,6 @@ exports[`Timezone Can set timezone 1`] = `
                                             "index": 280,
                                             "label": "Baghdad (4:15 PM)",
                                             "value": "Asia/Baghdad",
-                                          },
-                                          Object {
-                                            "index": 340,
-                                            "label": "Indiana (East) (8:15 AM)",
-                                            "value": "America/Indiana/Indianapolis",
                                           },
                                           Object {
                                             "index": 340,
@@ -11077,6 +11077,11 @@ exports[`Timezone Can set timezone 1`] = `
                                 },
                                 Object {
                                   "index": 2.4,
+                                  "label": "Indiana (East) (8:15 AM)",
+                                  "value": "America/Indiana/Indianapolis",
+                                },
+                                Object {
+                                  "index": 2.4,
                                   "label": "Puerto Rico (9:15 AM)",
                                   "value": "America/Puerto_Rico",
                                 },
@@ -11389,11 +11394,6 @@ exports[`Timezone Can set timezone 1`] = `
                                   "index": 280,
                                   "label": "Baghdad (4:15 PM)",
                                   "value": "Asia/Baghdad",
-                                },
-                                Object {
-                                  "index": 340,
-                                  "label": "Indiana (East) (8:15 AM)",
-                                  "value": "America/Indiana/Indianapolis",
                                 },
                                 Object {
                                   "index": 340,
@@ -11893,6 +11893,11 @@ exports[`Timezone Can set timezone 1`] = `
                                   },
                                   Object {
                                     "index": 2.4,
+                                    "label": "Indiana (East) (8:15 AM)",
+                                    "value": "America/Indiana/Indianapolis",
+                                  },
+                                  Object {
+                                    "index": 2.4,
                                     "label": "Puerto Rico (9:15 AM)",
                                     "value": "America/Puerto_Rico",
                                   },
@@ -12205,11 +12210,6 @@ exports[`Timezone Can set timezone 1`] = `
                                     "index": 280,
                                     "label": "Baghdad (4:15 PM)",
                                     "value": "Asia/Baghdad",
-                                  },
-                                  Object {
-                                    "index": 340,
-                                    "label": "Indiana (East) (8:15 AM)",
-                                    "value": "America/Indiana/Indianapolis",
                                   },
                                   Object {
                                     "index": 340,
@@ -12735,6 +12735,11 @@ exports[`Timezone Can set timezone 1`] = `
                                       },
                                       Object {
                                         "index": 2.4,
+                                        "label": "Indiana (East) (8:15 AM)",
+                                        "value": "America/Indiana/Indianapolis",
+                                      },
+                                      Object {
+                                        "index": 2.4,
                                         "label": "Puerto Rico (9:15 AM)",
                                         "value": "America/Puerto_Rico",
                                       },
@@ -13047,11 +13052,6 @@ exports[`Timezone Can set timezone 1`] = `
                                         "index": 280,
                                         "label": "Baghdad (4:15 PM)",
                                         "value": "Asia/Baghdad",
-                                      },
-                                      Object {
-                                        "index": 340,
-                                        "label": "Indiana (East) (8:15 AM)",
-                                        "value": "America/Indiana/Indianapolis",
                                       },
                                       Object {
                                         "index": 340,
@@ -13551,6 +13551,11 @@ exports[`Timezone Can set timezone 1`] = `
                                         },
                                         Object {
                                           "index": 2.4,
+                                          "label": "Indiana (East) (8:15 AM)",
+                                          "value": "America/Indiana/Indianapolis",
+                                        },
+                                        Object {
+                                          "index": 2.4,
                                           "label": "Puerto Rico (9:15 AM)",
                                           "value": "America/Puerto_Rico",
                                         },
@@ -13863,11 +13868,6 @@ exports[`Timezone Can set timezone 1`] = `
                                           "index": 280,
                                           "label": "Baghdad (4:15 PM)",
                                           "value": "Asia/Baghdad",
-                                        },
-                                        Object {
-                                          "index": 340,
-                                          "label": "Indiana (East) (8:15 AM)",
-                                          "value": "America/Indiana/Indianapolis",
                                         },
                                         Object {
                                           "index": 340,
@@ -14404,6 +14404,11 @@ exports[`Timezone Can set timezone 1`] = `
                                       },
                                       Object {
                                         "index": 2.4,
+                                        "label": "Indiana (East) (8:15 AM)",
+                                        "value": "America/Indiana/Indianapolis",
+                                      },
+                                      Object {
+                                        "index": 2.4,
                                         "label": "Puerto Rico (9:15 AM)",
                                         "value": "America/Puerto_Rico",
                                       },
@@ -14716,11 +14721,6 @@ exports[`Timezone Can set timezone 1`] = `
                                         "index": 280,
                                         "label": "Baghdad (4:15 PM)",
                                         "value": "Asia/Baghdad",
-                                      },
-                                      Object {
-                                        "index": 340,
-                                        "label": "Indiana (East) (8:15 AM)",
-                                        "value": "America/Indiana/Indianapolis",
                                       },
                                       Object {
                                         "index": 340,
@@ -15220,6 +15220,11 @@ exports[`Timezone Can set timezone 1`] = `
                                         },
                                         Object {
                                           "index": 2.4,
+                                          "label": "Indiana (East) (8:15 AM)",
+                                          "value": "America/Indiana/Indianapolis",
+                                        },
+                                        Object {
+                                          "index": 2.4,
                                           "label": "Puerto Rico (9:15 AM)",
                                           "value": "America/Puerto_Rico",
                                         },
@@ -15532,11 +15537,6 @@ exports[`Timezone Can set timezone 1`] = `
                                           "index": 280,
                                           "label": "Baghdad (4:15 PM)",
                                           "value": "Asia/Baghdad",
-                                        },
-                                        Object {
-                                          "index": 340,
-                                          "label": "Indiana (East) (8:15 AM)",
-                                          "value": "America/Indiana/Indianapolis",
                                         },
                                         Object {
                                           "index": 340,
@@ -16138,6 +16138,11 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
         },
         Object {
           "index": 2.4,
+          "label": "Indiana (East) (8:15 AM)",
+          "value": "America/Indiana/Indianapolis",
+        },
+        Object {
+          "index": 2.4,
           "label": "Puerto Rico (9:15 AM)",
           "value": "America/Puerto_Rico",
         },
@@ -16450,11 +16455,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
           "index": 280,
           "label": "Baghdad (4:15 PM)",
           "value": "Asia/Baghdad",
-        },
-        Object {
-          "index": 340,
-          "label": "Indiana (East) (8:15 AM)",
-          "value": "America/Indiana/Indianapolis",
         },
         Object {
           "index": 340,
@@ -16884,10 +16884,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
     styling={
       Object {
         "& .cf-select__menu-list": Object {
-          "& > :nth-child(9)": Object {
+          "& > :nth-child(10)": Object {
             "borderBottom": "1px solid grey",
           },
-          "height": "351px !important",
+          "height": "390px !important",
           "maxHeight": "none",
           "overflowY": "auto",
         },
@@ -16900,7 +16900,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
     >
       <div
         className="cf-form-dropdown dropdown-Timezone"
-        data-css-1dzedb9=""
+        data-css-1gh7024=""
       >
         <label
           className="question-label"
@@ -16968,6 +16968,11 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                   "index": -0,
                   "label": "Pacific Time (US & Canada) (5:15 AM)",
                   "value": "America/Los_Angeles",
+                },
+                Object {
+                  "index": 2.4,
+                  "label": "Indiana (East) (8:15 AM)",
+                  "value": "America/Indiana/Indianapolis",
                 },
                 Object {
                   "index": 2.4,
@@ -17283,11 +17288,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                   "index": 280,
                   "label": "Baghdad (4:15 PM)",
                   "value": "Asia/Baghdad",
-                },
-                Object {
-                  "index": 340,
-                  "label": "Indiana (East) (8:15 AM)",
-                  "value": "America/Indiana/Indianapolis",
                 },
                 Object {
                   "index": 340,
@@ -17794,6 +17794,11 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                   },
                   Object {
                     "index": 2.4,
+                    "label": "Indiana (East) (8:15 AM)",
+                    "value": "America/Indiana/Indianapolis",
+                  },
+                  Object {
+                    "index": 2.4,
                     "label": "Puerto Rico (9:15 AM)",
                     "value": "America/Puerto_Rico",
                   },
@@ -18106,11 +18111,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                     "index": 280,
                     "label": "Baghdad (4:15 PM)",
                     "value": "Asia/Baghdad",
-                  },
-                  Object {
-                    "index": 340,
-                    "label": "Indiana (East) (8:15 AM)",
-                    "value": "America/Indiana/Indianapolis",
                   },
                   Object {
                     "index": 340,
@@ -18591,6 +18591,11 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                     },
                     Object {
                       "index": 2.4,
+                      "label": "Indiana (East) (8:15 AM)",
+                      "value": "America/Indiana/Indianapolis",
+                    },
+                    Object {
+                      "index": 2.4,
                       "label": "Puerto Rico (9:15 AM)",
                       "value": "America/Puerto_Rico",
                     },
@@ -18903,11 +18908,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                       "index": 280,
                       "label": "Baghdad (4:15 PM)",
                       "value": "Asia/Baghdad",
-                    },
-                    Object {
-                      "index": 340,
-                      "label": "Indiana (East) (8:15 AM)",
-                      "value": "America/Indiana/Indianapolis",
                     },
                     Object {
                       "index": 340,
@@ -19407,6 +19407,11 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                       },
                       Object {
                         "index": 2.4,
+                        "label": "Indiana (East) (8:15 AM)",
+                        "value": "America/Indiana/Indianapolis",
+                      },
+                      Object {
+                        "index": 2.4,
                         "label": "Puerto Rico (9:15 AM)",
                         "value": "America/Puerto_Rico",
                       },
@@ -19719,11 +19724,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                         "index": 280,
                         "label": "Baghdad (4:15 PM)",
                         "value": "Asia/Baghdad",
-                      },
-                      Object {
-                        "index": 340,
-                        "label": "Indiana (East) (8:15 AM)",
-                        "value": "America/Indiana/Indianapolis",
                       },
                       Object {
                         "index": 340,
@@ -20255,6 +20255,11 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                           },
                           Object {
                             "index": 2.4,
+                            "label": "Indiana (East) (8:15 AM)",
+                            "value": "America/Indiana/Indianapolis",
+                          },
+                          Object {
+                            "index": 2.4,
                             "label": "Puerto Rico (9:15 AM)",
                             "value": "America/Puerto_Rico",
                           },
@@ -20567,11 +20572,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                             "index": 280,
                             "label": "Baghdad (4:15 PM)",
                             "value": "Asia/Baghdad",
-                          },
-                          Object {
-                            "index": 340,
-                            "label": "Indiana (East) (8:15 AM)",
-                            "value": "America/Indiana/Indianapolis",
                           },
                           Object {
                             "index": 340,
@@ -21071,6 +21071,11 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                             },
                             Object {
                               "index": 2.4,
+                              "label": "Indiana (East) (8:15 AM)",
+                              "value": "America/Indiana/Indianapolis",
+                            },
+                            Object {
+                              "index": 2.4,
                               "label": "Puerto Rico (9:15 AM)",
                               "value": "America/Puerto_Rico",
                             },
@@ -21383,11 +21388,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                               "index": 280,
                               "label": "Baghdad (4:15 PM)",
                               "value": "Asia/Baghdad",
-                            },
-                            Object {
-                              "index": 340,
-                              "label": "Indiana (East) (8:15 AM)",
-                              "value": "America/Indiana/Indianapolis",
                             },
                             Object {
                               "index": 340,
@@ -21927,6 +21927,11 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                 },
                                 Object {
                                   "index": 2.4,
+                                  "label": "Indiana (East) (8:15 AM)",
+                                  "value": "America/Indiana/Indianapolis",
+                                },
+                                Object {
+                                  "index": 2.4,
                                   "label": "Puerto Rico (9:15 AM)",
                                   "value": "America/Puerto_Rico",
                                 },
@@ -22239,11 +22244,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                   "index": 280,
                                   "label": "Baghdad (4:15 PM)",
                                   "value": "Asia/Baghdad",
-                                },
-                                Object {
-                                  "index": 340,
-                                  "label": "Indiana (East) (8:15 AM)",
-                                  "value": "America/Indiana/Indianapolis",
                                 },
                                 Object {
                                   "index": 340,
@@ -22743,6 +22743,11 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                   },
                                   Object {
                                     "index": 2.4,
+                                    "label": "Indiana (East) (8:15 AM)",
+                                    "value": "America/Indiana/Indianapolis",
+                                  },
+                                  Object {
+                                    "index": 2.4,
                                     "label": "Puerto Rico (9:15 AM)",
                                     "value": "America/Puerto_Rico",
                                   },
@@ -23055,11 +23060,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                     "index": 280,
                                     "label": "Baghdad (4:15 PM)",
                                     "value": "Asia/Baghdad",
-                                  },
-                                  Object {
-                                    "index": 340,
-                                    "label": "Indiana (East) (8:15 AM)",
-                                    "value": "America/Indiana/Indianapolis",
                                   },
                                   Object {
                                     "index": 340,
@@ -23586,6 +23586,11 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                       },
                                       Object {
                                         "index": 2.4,
+                                        "label": "Indiana (East) (8:15 AM)",
+                                        "value": "America/Indiana/Indianapolis",
+                                      },
+                                      Object {
+                                        "index": 2.4,
                                         "label": "Puerto Rico (9:15 AM)",
                                         "value": "America/Puerto_Rico",
                                       },
@@ -23898,11 +23903,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                         "index": 280,
                                         "label": "Baghdad (4:15 PM)",
                                         "value": "Asia/Baghdad",
-                                      },
-                                      Object {
-                                        "index": 340,
-                                        "label": "Indiana (East) (8:15 AM)",
-                                        "value": "America/Indiana/Indianapolis",
                                       },
                                       Object {
                                         "index": 340,
@@ -24402,6 +24402,11 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                         },
                                         Object {
                                           "index": 2.4,
+                                          "label": "Indiana (East) (8:15 AM)",
+                                          "value": "America/Indiana/Indianapolis",
+                                        },
+                                        Object {
+                                          "index": 2.4,
                                           "label": "Puerto Rico (9:15 AM)",
                                           "value": "America/Puerto_Rico",
                                         },
@@ -24714,11 +24719,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                           "index": 280,
                                           "label": "Baghdad (4:15 PM)",
                                           "value": "Asia/Baghdad",
-                                        },
-                                        Object {
-                                          "index": 340,
-                                          "label": "Indiana (East) (8:15 AM)",
-                                          "value": "America/Indiana/Indianapolis",
                                         },
                                         Object {
                                           "index": 340,
@@ -25298,6 +25298,11 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                         },
                                         Object {
                                           "index": 2.4,
+                                          "label": "Indiana (East) (8:15 AM)",
+                                          "value": "America/Indiana/Indianapolis",
+                                        },
+                                        Object {
+                                          "index": 2.4,
                                           "label": "Puerto Rico (9:15 AM)",
                                           "value": "America/Puerto_Rico",
                                         },
@@ -25610,11 +25615,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                           "index": 280,
                                           "label": "Baghdad (4:15 PM)",
                                           "value": "Asia/Baghdad",
-                                        },
-                                        Object {
-                                          "index": 340,
-                                          "label": "Indiana (East) (8:15 AM)",
-                                          "value": "America/Indiana/Indianapolis",
                                         },
                                         Object {
                                           "index": 340,
@@ -26178,6 +26178,11 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                           },
                                           Object {
                                             "index": 2.4,
+                                            "label": "Indiana (East) (8:15 AM)",
+                                            "value": "America/Indiana/Indianapolis",
+                                          },
+                                          Object {
+                                            "index": 2.4,
                                             "label": "Puerto Rico (9:15 AM)",
                                             "value": "America/Puerto_Rico",
                                           },
@@ -26490,11 +26495,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                             "index": 280,
                                             "label": "Baghdad (4:15 PM)",
                                             "value": "Asia/Baghdad",
-                                          },
-                                          Object {
-                                            "index": 340,
-                                            "label": "Indiana (East) (8:15 AM)",
-                                            "value": "America/Indiana/Indianapolis",
                                           },
                                           Object {
                                             "index": 340,
@@ -27113,6 +27113,11 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                 },
                                 Object {
                                   "index": 2.4,
+                                  "label": "Indiana (East) (8:15 AM)",
+                                  "value": "America/Indiana/Indianapolis",
+                                },
+                                Object {
+                                  "index": 2.4,
                                   "label": "Puerto Rico (9:15 AM)",
                                   "value": "America/Puerto_Rico",
                                 },
@@ -27425,11 +27430,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                   "index": 280,
                                   "label": "Baghdad (4:15 PM)",
                                   "value": "Asia/Baghdad",
-                                },
-                                Object {
-                                  "index": 340,
-                                  "label": "Indiana (East) (8:15 AM)",
-                                  "value": "America/Indiana/Indianapolis",
                                 },
                                 Object {
                                   "index": 340,
@@ -27929,6 +27929,11 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                   },
                                   Object {
                                     "index": 2.4,
+                                    "label": "Indiana (East) (8:15 AM)",
+                                    "value": "America/Indiana/Indianapolis",
+                                  },
+                                  Object {
+                                    "index": 2.4,
                                     "label": "Puerto Rico (9:15 AM)",
                                     "value": "America/Puerto_Rico",
                                   },
@@ -28241,11 +28246,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                     "index": 280,
                                     "label": "Baghdad (4:15 PM)",
                                     "value": "Asia/Baghdad",
-                                  },
-                                  Object {
-                                    "index": 340,
-                                    "label": "Indiana (East) (8:15 AM)",
-                                    "value": "America/Indiana/Indianapolis",
                                   },
                                   Object {
                                     "index": 340,
@@ -28767,6 +28767,11 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                       },
                                       Object {
                                         "index": 2.4,
+                                        "label": "Indiana (East) (8:15 AM)",
+                                        "value": "America/Indiana/Indianapolis",
+                                      },
+                                      Object {
+                                        "index": 2.4,
                                         "label": "Puerto Rico (9:15 AM)",
                                         "value": "America/Puerto_Rico",
                                       },
@@ -29079,11 +29084,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                         "index": 280,
                                         "label": "Baghdad (4:15 PM)",
                                         "value": "Asia/Baghdad",
-                                      },
-                                      Object {
-                                        "index": 340,
-                                        "label": "Indiana (East) (8:15 AM)",
-                                        "value": "America/Indiana/Indianapolis",
                                       },
                                       Object {
                                         "index": 340,
@@ -29583,6 +29583,11 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                         },
                                         Object {
                                           "index": 2.4,
+                                          "label": "Indiana (East) (8:15 AM)",
+                                          "value": "America/Indiana/Indianapolis",
+                                        },
+                                        Object {
+                                          "index": 2.4,
                                           "label": "Puerto Rico (9:15 AM)",
                                           "value": "America/Puerto_Rico",
                                         },
@@ -29895,11 +29900,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                           "index": 280,
                                           "label": "Baghdad (4:15 PM)",
                                           "value": "Asia/Baghdad",
-                                        },
-                                        Object {
-                                          "index": 340,
-                                          "label": "Indiana (East) (8:15 AM)",
-                                          "value": "America/Indiana/Indianapolis",
                                         },
                                         Object {
                                           "index": 340,
@@ -30432,6 +30432,11 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                       },
                                       Object {
                                         "index": 2.4,
+                                        "label": "Indiana (East) (8:15 AM)",
+                                        "value": "America/Indiana/Indianapolis",
+                                      },
+                                      Object {
+                                        "index": 2.4,
                                         "label": "Puerto Rico (9:15 AM)",
                                         "value": "America/Puerto_Rico",
                                       },
@@ -30744,11 +30749,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                         "index": 280,
                                         "label": "Baghdad (4:15 PM)",
                                         "value": "Asia/Baghdad",
-                                      },
-                                      Object {
-                                        "index": 340,
-                                        "label": "Indiana (East) (8:15 AM)",
-                                        "value": "America/Indiana/Indianapolis",
                                       },
                                       Object {
                                         "index": 340,
@@ -31248,6 +31248,11 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                         },
                                         Object {
                                           "index": 2.4,
+                                          "label": "Indiana (East) (8:15 AM)",
+                                          "value": "America/Indiana/Indianapolis",
+                                        },
+                                        Object {
+                                          "index": 2.4,
                                           "label": "Puerto Rico (9:15 AM)",
                                           "value": "America/Puerto_Rico",
                                         },
@@ -31560,11 +31565,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                           "index": 280,
                                           "label": "Baghdad (4:15 PM)",
                                           "value": "Asia/Baghdad",
-                                        },
-                                        Object {
-                                          "index": 340,
-                                          "label": "Indiana (East) (8:15 AM)",
-                                          "value": "America/Indiana/Indianapolis",
                                         },
                                         Object {
                                           "index": 340,
@@ -32163,6 +32163,11 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
         },
         Object {
           "index": 2.4,
+          "label": "Indiana (East) (8:15 AM)",
+          "value": "America/Indiana/Indianapolis",
+        },
+        Object {
+          "index": 2.4,
           "label": "Puerto Rico (9:15 AM)",
           "value": "America/Puerto_Rico",
         },
@@ -32475,11 +32480,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
           "index": 280,
           "label": "Baghdad (4:15 PM)",
           "value": "Asia/Baghdad",
-        },
-        Object {
-          "index": 340,
-          "label": "Indiana (East) (8:15 AM)",
-          "value": "America/Indiana/Indianapolis",
         },
         Object {
           "index": 340,
@@ -32910,10 +32910,10 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
     styling={
       Object {
         "& .cf-select__menu-list": Object {
-          "& > :nth-child(9)": Object {
+          "& > :nth-child(10)": Object {
             "borderBottom": "1px solid grey",
           },
-          "height": "351px !important",
+          "height": "390px !important",
           "maxHeight": "none",
           "overflowY": "auto",
         },
@@ -32926,7 +32926,7 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
     >
       <div
         className="cf-form-dropdown dropdown-Timezone"
-        data-css-1dzedb9=""
+        data-css-1gh7024=""
       >
         <label
           className="question-label"
@@ -32995,6 +32995,11 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                   "index": -0,
                   "label": "Pacific Time (US & Canada) (5:15 AM)",
                   "value": "America/Los_Angeles",
+                },
+                Object {
+                  "index": 2.4,
+                  "label": "Indiana (East) (8:15 AM)",
+                  "value": "America/Indiana/Indianapolis",
                 },
                 Object {
                   "index": 2.4,
@@ -33310,11 +33315,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                   "index": 280,
                   "label": "Baghdad (4:15 PM)",
                   "value": "Asia/Baghdad",
-                },
-                Object {
-                  "index": 340,
-                  "label": "Indiana (East) (8:15 AM)",
-                  "value": "America/Indiana/Indianapolis",
                 },
                 Object {
                   "index": 340,
@@ -33821,6 +33821,11 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                   },
                   Object {
                     "index": 2.4,
+                    "label": "Indiana (East) (8:15 AM)",
+                    "value": "America/Indiana/Indianapolis",
+                  },
+                  Object {
+                    "index": 2.4,
                     "label": "Puerto Rico (9:15 AM)",
                     "value": "America/Puerto_Rico",
                   },
@@ -34133,11 +34138,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                     "index": 280,
                     "label": "Baghdad (4:15 PM)",
                     "value": "Asia/Baghdad",
-                  },
-                  Object {
-                    "index": 340,
-                    "label": "Indiana (East) (8:15 AM)",
-                    "value": "America/Indiana/Indianapolis",
                   },
                   Object {
                     "index": 340,
@@ -34618,6 +34618,11 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                     },
                     Object {
                       "index": 2.4,
+                      "label": "Indiana (East) (8:15 AM)",
+                      "value": "America/Indiana/Indianapolis",
+                    },
+                    Object {
+                      "index": 2.4,
                       "label": "Puerto Rico (9:15 AM)",
                       "value": "America/Puerto_Rico",
                     },
@@ -34930,11 +34935,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                       "index": 280,
                       "label": "Baghdad (4:15 PM)",
                       "value": "Asia/Baghdad",
-                    },
-                    Object {
-                      "index": 340,
-                      "label": "Indiana (East) (8:15 AM)",
-                      "value": "America/Indiana/Indianapolis",
                     },
                     Object {
                       "index": 340,
@@ -35434,6 +35434,11 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                       },
                       Object {
                         "index": 2.4,
+                        "label": "Indiana (East) (8:15 AM)",
+                        "value": "America/Indiana/Indianapolis",
+                      },
+                      Object {
+                        "index": 2.4,
                         "label": "Puerto Rico (9:15 AM)",
                         "value": "America/Puerto_Rico",
                       },
@@ -35746,11 +35751,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                         "index": 280,
                         "label": "Baghdad (4:15 PM)",
                         "value": "Asia/Baghdad",
-                      },
-                      Object {
-                        "index": 340,
-                        "label": "Indiana (East) (8:15 AM)",
-                        "value": "America/Indiana/Indianapolis",
                       },
                       Object {
                         "index": 340,
@@ -36282,6 +36282,11 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                           },
                           Object {
                             "index": 2.4,
+                            "label": "Indiana (East) (8:15 AM)",
+                            "value": "America/Indiana/Indianapolis",
+                          },
+                          Object {
+                            "index": 2.4,
                             "label": "Puerto Rico (9:15 AM)",
                             "value": "America/Puerto_Rico",
                           },
@@ -36594,11 +36599,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                             "index": 280,
                             "label": "Baghdad (4:15 PM)",
                             "value": "Asia/Baghdad",
-                          },
-                          Object {
-                            "index": 340,
-                            "label": "Indiana (East) (8:15 AM)",
-                            "value": "America/Indiana/Indianapolis",
                           },
                           Object {
                             "index": 340,
@@ -37098,6 +37098,11 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                             },
                             Object {
                               "index": 2.4,
+                              "label": "Indiana (East) (8:15 AM)",
+                              "value": "America/Indiana/Indianapolis",
+                            },
+                            Object {
+                              "index": 2.4,
                               "label": "Puerto Rico (9:15 AM)",
                               "value": "America/Puerto_Rico",
                             },
@@ -37410,11 +37415,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                               "index": 280,
                               "label": "Baghdad (4:15 PM)",
                               "value": "Asia/Baghdad",
-                            },
-                            Object {
-                              "index": 340,
-                              "label": "Indiana (East) (8:15 AM)",
-                              "value": "America/Indiana/Indianapolis",
                             },
                             Object {
                               "index": 340,
@@ -37954,6 +37954,11 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                 },
                                 Object {
                                   "index": 2.4,
+                                  "label": "Indiana (East) (8:15 AM)",
+                                  "value": "America/Indiana/Indianapolis",
+                                },
+                                Object {
+                                  "index": 2.4,
                                   "label": "Puerto Rico (9:15 AM)",
                                   "value": "America/Puerto_Rico",
                                 },
@@ -38266,11 +38271,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                   "index": 280,
                                   "label": "Baghdad (4:15 PM)",
                                   "value": "Asia/Baghdad",
-                                },
-                                Object {
-                                  "index": 340,
-                                  "label": "Indiana (East) (8:15 AM)",
-                                  "value": "America/Indiana/Indianapolis",
                                 },
                                 Object {
                                   "index": 340,
@@ -38770,6 +38770,11 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                   },
                                   Object {
                                     "index": 2.4,
+                                    "label": "Indiana (East) (8:15 AM)",
+                                    "value": "America/Indiana/Indianapolis",
+                                  },
+                                  Object {
+                                    "index": 2.4,
                                     "label": "Puerto Rico (9:15 AM)",
                                     "value": "America/Puerto_Rico",
                                   },
@@ -39082,11 +39087,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                     "index": 280,
                                     "label": "Baghdad (4:15 PM)",
                                     "value": "Asia/Baghdad",
-                                  },
-                                  Object {
-                                    "index": 340,
-                                    "label": "Indiana (East) (8:15 AM)",
-                                    "value": "America/Indiana/Indianapolis",
                                   },
                                   Object {
                                     "index": 340,
@@ -39613,6 +39613,11 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                       },
                                       Object {
                                         "index": 2.4,
+                                        "label": "Indiana (East) (8:15 AM)",
+                                        "value": "America/Indiana/Indianapolis",
+                                      },
+                                      Object {
+                                        "index": 2.4,
                                         "label": "Puerto Rico (9:15 AM)",
                                         "value": "America/Puerto_Rico",
                                       },
@@ -39925,11 +39930,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                         "index": 280,
                                         "label": "Baghdad (4:15 PM)",
                                         "value": "Asia/Baghdad",
-                                      },
-                                      Object {
-                                        "index": 340,
-                                        "label": "Indiana (East) (8:15 AM)",
-                                        "value": "America/Indiana/Indianapolis",
                                       },
                                       Object {
                                         "index": 340,
@@ -40429,6 +40429,11 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                         },
                                         Object {
                                           "index": 2.4,
+                                          "label": "Indiana (East) (8:15 AM)",
+                                          "value": "America/Indiana/Indianapolis",
+                                        },
+                                        Object {
+                                          "index": 2.4,
                                           "label": "Puerto Rico (9:15 AM)",
                                           "value": "America/Puerto_Rico",
                                         },
@@ -40741,11 +40746,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                           "index": 280,
                                           "label": "Baghdad (4:15 PM)",
                                           "value": "Asia/Baghdad",
-                                        },
-                                        Object {
-                                          "index": 340,
-                                          "label": "Indiana (East) (8:15 AM)",
-                                          "value": "America/Indiana/Indianapolis",
                                         },
                                         Object {
                                           "index": 340,
@@ -41324,6 +41324,11 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                 },
                                 Object {
                                   "index": 2.4,
+                                  "label": "Indiana (East) (8:15 AM)",
+                                  "value": "America/Indiana/Indianapolis",
+                                },
+                                Object {
+                                  "index": 2.4,
                                   "label": "Puerto Rico (9:15 AM)",
                                   "value": "America/Puerto_Rico",
                                 },
@@ -41636,11 +41641,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                   "index": 280,
                                   "label": "Baghdad (4:15 PM)",
                                   "value": "Asia/Baghdad",
-                                },
-                                Object {
-                                  "index": 340,
-                                  "label": "Indiana (East) (8:15 AM)",
-                                  "value": "America/Indiana/Indianapolis",
                                 },
                                 Object {
                                   "index": 340,
@@ -42140,6 +42140,11 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                   },
                                   Object {
                                     "index": 2.4,
+                                    "label": "Indiana (East) (8:15 AM)",
+                                    "value": "America/Indiana/Indianapolis",
+                                  },
+                                  Object {
+                                    "index": 2.4,
                                     "label": "Puerto Rico (9:15 AM)",
                                     "value": "America/Puerto_Rico",
                                   },
@@ -42452,11 +42457,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                     "index": 280,
                                     "label": "Baghdad (4:15 PM)",
                                     "value": "Asia/Baghdad",
-                                  },
-                                  Object {
-                                    "index": 340,
-                                    "label": "Indiana (East) (8:15 AM)",
-                                    "value": "America/Indiana/Indianapolis",
                                   },
                                   Object {
                                     "index": 340,
@@ -42978,6 +42978,11 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                       },
                                       Object {
                                         "index": 2.4,
+                                        "label": "Indiana (East) (8:15 AM)",
+                                        "value": "America/Indiana/Indianapolis",
+                                      },
+                                      Object {
+                                        "index": 2.4,
                                         "label": "Puerto Rico (9:15 AM)",
                                         "value": "America/Puerto_Rico",
                                       },
@@ -43290,11 +43295,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                         "index": 280,
                                         "label": "Baghdad (4:15 PM)",
                                         "value": "Asia/Baghdad",
-                                      },
-                                      Object {
-                                        "index": 340,
-                                        "label": "Indiana (East) (8:15 AM)",
-                                        "value": "America/Indiana/Indianapolis",
                                       },
                                       Object {
                                         "index": 340,
@@ -43794,6 +43794,11 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                         },
                                         Object {
                                           "index": 2.4,
+                                          "label": "Indiana (East) (8:15 AM)",
+                                          "value": "America/Indiana/Indianapolis",
+                                        },
+                                        Object {
+                                          "index": 2.4,
                                           "label": "Puerto Rico (9:15 AM)",
                                           "value": "America/Puerto_Rico",
                                         },
@@ -44106,11 +44111,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                           "index": 280,
                                           "label": "Baghdad (4:15 PM)",
                                           "value": "Asia/Baghdad",
-                                        },
-                                        Object {
-                                          "index": 340,
-                                          "label": "Indiana (East) (8:15 AM)",
-                                          "value": "America/Indiana/Indianapolis",
                                         },
                                         Object {
                                           "index": 340,
@@ -44643,6 +44643,11 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                       },
                                       Object {
                                         "index": 2.4,
+                                        "label": "Indiana (East) (8:15 AM)",
+                                        "value": "America/Indiana/Indianapolis",
+                                      },
+                                      Object {
+                                        "index": 2.4,
                                         "label": "Puerto Rico (9:15 AM)",
                                         "value": "America/Puerto_Rico",
                                       },
@@ -44955,11 +44960,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                         "index": 280,
                                         "label": "Baghdad (4:15 PM)",
                                         "value": "Asia/Baghdad",
-                                      },
-                                      Object {
-                                        "index": 340,
-                                        "label": "Indiana (East) (8:15 AM)",
-                                        "value": "America/Indiana/Indianapolis",
                                       },
                                       Object {
                                         "index": 340,
@@ -45459,6 +45459,11 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                         },
                                         Object {
                                           "index": 2.4,
+                                          "label": "Indiana (East) (8:15 AM)",
+                                          "value": "America/Indiana/Indianapolis",
+                                        },
+                                        Object {
+                                          "index": 2.4,
                                           "label": "Puerto Rico (9:15 AM)",
                                           "value": "America/Puerto_Rico",
                                         },
@@ -45771,11 +45776,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                           "index": 280,
                                           "label": "Baghdad (4:15 PM)",
                                           "value": "Asia/Baghdad",
-                                        },
-                                        Object {
-                                          "index": 340,
-                                          "label": "Indiana (East) (8:15 AM)",
-                                          "value": "America/Indiana/Indianapolis",
                                         },
                                         Object {
                                           "index": 340,
@@ -46368,6 +46368,11 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
         },
         Object {
           "index": 2.4,
+          "label": "Indiana (East) (11:15 AM)",
+          "value": "America/Indiana/Indianapolis",
+        },
+        Object {
+          "index": 2.4,
           "label": "Puerto Rico (12:15 PM)",
           "value": "America/Puerto_Rico",
         },
@@ -46680,11 +46685,6 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
           "index": 280,
           "label": "Baghdad (7:15 PM)",
           "value": "Asia/Baghdad",
-        },
-        Object {
-          "index": 340,
-          "label": "Indiana (East) (11:15 AM)",
-          "value": "America/Indiana/Indianapolis",
         },
         Object {
           "index": 340,
@@ -47114,10 +47114,10 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
     styling={
       Object {
         "& .cf-select__menu-list": Object {
-          "& > :nth-child(9)": Object {
+          "& > :nth-child(10)": Object {
             "borderBottom": "1px solid grey",
           },
-          "height": "351px !important",
+          "height": "390px !important",
           "maxHeight": "none",
           "overflowY": "auto",
         },
@@ -47130,7 +47130,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
     >
       <div
         className="cf-form-dropdown dropdown-Timezone"
-        data-css-1dzedb9=""
+        data-css-1gh7024=""
       >
         <label
           className="question-label"
@@ -47198,6 +47198,11 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                   "index": -0,
                   "label": "Pacific Time (US & Canada) (8:15 AM)",
                   "value": "America/Los_Angeles",
+                },
+                Object {
+                  "index": 2.4,
+                  "label": "Indiana (East) (11:15 AM)",
+                  "value": "America/Indiana/Indianapolis",
                 },
                 Object {
                   "index": 2.4,
@@ -47513,11 +47518,6 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                   "index": 280,
                   "label": "Baghdad (7:15 PM)",
                   "value": "Asia/Baghdad",
-                },
-                Object {
-                  "index": 340,
-                  "label": "Indiana (East) (11:15 AM)",
-                  "value": "America/Indiana/Indianapolis",
                 },
                 Object {
                   "index": 340,
@@ -48024,6 +48024,11 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                   },
                   Object {
                     "index": 2.4,
+                    "label": "Indiana (East) (11:15 AM)",
+                    "value": "America/Indiana/Indianapolis",
+                  },
+                  Object {
+                    "index": 2.4,
                     "label": "Puerto Rico (12:15 PM)",
                     "value": "America/Puerto_Rico",
                   },
@@ -48336,11 +48341,6 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                     "index": 280,
                     "label": "Baghdad (7:15 PM)",
                     "value": "Asia/Baghdad",
-                  },
-                  Object {
-                    "index": 340,
-                    "label": "Indiana (East) (11:15 AM)",
-                    "value": "America/Indiana/Indianapolis",
                   },
                   Object {
                     "index": 340,
@@ -48821,6 +48821,11 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                     },
                     Object {
                       "index": 2.4,
+                      "label": "Indiana (East) (11:15 AM)",
+                      "value": "America/Indiana/Indianapolis",
+                    },
+                    Object {
+                      "index": 2.4,
                       "label": "Puerto Rico (12:15 PM)",
                       "value": "America/Puerto_Rico",
                     },
@@ -49133,11 +49138,6 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                       "index": 280,
                       "label": "Baghdad (7:15 PM)",
                       "value": "Asia/Baghdad",
-                    },
-                    Object {
-                      "index": 340,
-                      "label": "Indiana (East) (11:15 AM)",
-                      "value": "America/Indiana/Indianapolis",
                     },
                     Object {
                       "index": 340,
@@ -49637,6 +49637,11 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                       },
                       Object {
                         "index": 2.4,
+                        "label": "Indiana (East) (11:15 AM)",
+                        "value": "America/Indiana/Indianapolis",
+                      },
+                      Object {
+                        "index": 2.4,
                         "label": "Puerto Rico (12:15 PM)",
                         "value": "America/Puerto_Rico",
                       },
@@ -49949,11 +49954,6 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                         "index": 280,
                         "label": "Baghdad (7:15 PM)",
                         "value": "Asia/Baghdad",
-                      },
-                      Object {
-                        "index": 340,
-                        "label": "Indiana (East) (11:15 AM)",
-                        "value": "America/Indiana/Indianapolis",
                       },
                       Object {
                         "index": 340,
@@ -50485,6 +50485,11 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                           },
                           Object {
                             "index": 2.4,
+                            "label": "Indiana (East) (11:15 AM)",
+                            "value": "America/Indiana/Indianapolis",
+                          },
+                          Object {
+                            "index": 2.4,
                             "label": "Puerto Rico (12:15 PM)",
                             "value": "America/Puerto_Rico",
                           },
@@ -50797,11 +50802,6 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                             "index": 280,
                             "label": "Baghdad (7:15 PM)",
                             "value": "Asia/Baghdad",
-                          },
-                          Object {
-                            "index": 340,
-                            "label": "Indiana (East) (11:15 AM)",
-                            "value": "America/Indiana/Indianapolis",
                           },
                           Object {
                             "index": 340,
@@ -51301,6 +51301,11 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                             },
                             Object {
                               "index": 2.4,
+                              "label": "Indiana (East) (11:15 AM)",
+                              "value": "America/Indiana/Indianapolis",
+                            },
+                            Object {
+                              "index": 2.4,
                               "label": "Puerto Rico (12:15 PM)",
                               "value": "America/Puerto_Rico",
                             },
@@ -51613,11 +51618,6 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                               "index": 280,
                               "label": "Baghdad (7:15 PM)",
                               "value": "Asia/Baghdad",
-                            },
-                            Object {
-                              "index": 340,
-                              "label": "Indiana (East) (11:15 AM)",
-                              "value": "America/Indiana/Indianapolis",
                             },
                             Object {
                               "index": 340,
@@ -52157,6 +52157,11 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                                 },
                                 Object {
                                   "index": 2.4,
+                                  "label": "Indiana (East) (11:15 AM)",
+                                  "value": "America/Indiana/Indianapolis",
+                                },
+                                Object {
+                                  "index": 2.4,
                                   "label": "Puerto Rico (12:15 PM)",
                                   "value": "America/Puerto_Rico",
                                 },
@@ -52469,11 +52474,6 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                                   "index": 280,
                                   "label": "Baghdad (7:15 PM)",
                                   "value": "Asia/Baghdad",
-                                },
-                                Object {
-                                  "index": 340,
-                                  "label": "Indiana (East) (11:15 AM)",
-                                  "value": "America/Indiana/Indianapolis",
                                 },
                                 Object {
                                   "index": 340,
@@ -52973,6 +52973,11 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                                   },
                                   Object {
                                     "index": 2.4,
+                                    "label": "Indiana (East) (11:15 AM)",
+                                    "value": "America/Indiana/Indianapolis",
+                                  },
+                                  Object {
+                                    "index": 2.4,
                                     "label": "Puerto Rico (12:15 PM)",
                                     "value": "America/Puerto_Rico",
                                   },
@@ -53285,11 +53290,6 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                                     "index": 280,
                                     "label": "Baghdad (7:15 PM)",
                                     "value": "Asia/Baghdad",
-                                  },
-                                  Object {
-                                    "index": 340,
-                                    "label": "Indiana (East) (11:15 AM)",
-                                    "value": "America/Indiana/Indianapolis",
                                   },
                                   Object {
                                     "index": 340,
@@ -53816,6 +53816,11 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                                       },
                                       Object {
                                         "index": 2.4,
+                                        "label": "Indiana (East) (11:15 AM)",
+                                        "value": "America/Indiana/Indianapolis",
+                                      },
+                                      Object {
+                                        "index": 2.4,
                                         "label": "Puerto Rico (12:15 PM)",
                                         "value": "America/Puerto_Rico",
                                       },
@@ -54128,11 +54133,6 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                                         "index": 280,
                                         "label": "Baghdad (7:15 PM)",
                                         "value": "Asia/Baghdad",
-                                      },
-                                      Object {
-                                        "index": 340,
-                                        "label": "Indiana (East) (11:15 AM)",
-                                        "value": "America/Indiana/Indianapolis",
                                       },
                                       Object {
                                         "index": 340,
@@ -54632,6 +54632,11 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                                         },
                                         Object {
                                           "index": 2.4,
+                                          "label": "Indiana (East) (11:15 AM)",
+                                          "value": "America/Indiana/Indianapolis",
+                                        },
+                                        Object {
+                                          "index": 2.4,
                                           "label": "Puerto Rico (12:15 PM)",
                                           "value": "America/Puerto_Rico",
                                         },
@@ -54944,11 +54949,6 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                                           "index": 280,
                                           "label": "Baghdad (7:15 PM)",
                                           "value": "Asia/Baghdad",
-                                        },
-                                        Object {
-                                          "index": 340,
-                                          "label": "Indiana (East) (11:15 AM)",
-                                          "value": "America/Indiana/Indianapolis",
                                         },
                                         Object {
                                           "index": 340,
@@ -55528,6 +55528,11 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                                         },
                                         Object {
                                           "index": 2.4,
+                                          "label": "Indiana (East) (11:15 AM)",
+                                          "value": "America/Indiana/Indianapolis",
+                                        },
+                                        Object {
+                                          "index": 2.4,
                                           "label": "Puerto Rico (12:15 PM)",
                                           "value": "America/Puerto_Rico",
                                         },
@@ -55840,11 +55845,6 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                                           "index": 280,
                                           "label": "Baghdad (7:15 PM)",
                                           "value": "Asia/Baghdad",
-                                        },
-                                        Object {
-                                          "index": 340,
-                                          "label": "Indiana (East) (11:15 AM)",
-                                          "value": "America/Indiana/Indianapolis",
                                         },
                                         Object {
                                           "index": 340,
@@ -56408,6 +56408,11 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                                           },
                                           Object {
                                             "index": 2.4,
+                                            "label": "Indiana (East) (11:15 AM)",
+                                            "value": "America/Indiana/Indianapolis",
+                                          },
+                                          Object {
+                                            "index": 2.4,
                                             "label": "Puerto Rico (12:15 PM)",
                                             "value": "America/Puerto_Rico",
                                           },
@@ -56720,11 +56725,6 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                                             "index": 280,
                                             "label": "Baghdad (7:15 PM)",
                                             "value": "Asia/Baghdad",
-                                          },
-                                          Object {
-                                            "index": 340,
-                                            "label": "Indiana (East) (11:15 AM)",
-                                            "value": "America/Indiana/Indianapolis",
                                           },
                                           Object {
                                             "index": 340,
@@ -57343,6 +57343,11 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                                 },
                                 Object {
                                   "index": 2.4,
+                                  "label": "Indiana (East) (11:15 AM)",
+                                  "value": "America/Indiana/Indianapolis",
+                                },
+                                Object {
+                                  "index": 2.4,
                                   "label": "Puerto Rico (12:15 PM)",
                                   "value": "America/Puerto_Rico",
                                 },
@@ -57655,11 +57660,6 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                                   "index": 280,
                                   "label": "Baghdad (7:15 PM)",
                                   "value": "Asia/Baghdad",
-                                },
-                                Object {
-                                  "index": 340,
-                                  "label": "Indiana (East) (11:15 AM)",
-                                  "value": "America/Indiana/Indianapolis",
                                 },
                                 Object {
                                   "index": 340,
@@ -58159,6 +58159,11 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                                   },
                                   Object {
                                     "index": 2.4,
+                                    "label": "Indiana (East) (11:15 AM)",
+                                    "value": "America/Indiana/Indianapolis",
+                                  },
+                                  Object {
+                                    "index": 2.4,
                                     "label": "Puerto Rico (12:15 PM)",
                                     "value": "America/Puerto_Rico",
                                   },
@@ -58471,11 +58476,6 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                                     "index": 280,
                                     "label": "Baghdad (7:15 PM)",
                                     "value": "Asia/Baghdad",
-                                  },
-                                  Object {
-                                    "index": 340,
-                                    "label": "Indiana (East) (11:15 AM)",
-                                    "value": "America/Indiana/Indianapolis",
                                   },
                                   Object {
                                     "index": 340,
@@ -58997,6 +58997,11 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                                       },
                                       Object {
                                         "index": 2.4,
+                                        "label": "Indiana (East) (11:15 AM)",
+                                        "value": "America/Indiana/Indianapolis",
+                                      },
+                                      Object {
+                                        "index": 2.4,
                                         "label": "Puerto Rico (12:15 PM)",
                                         "value": "America/Puerto_Rico",
                                       },
@@ -59309,11 +59314,6 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                                         "index": 280,
                                         "label": "Baghdad (7:15 PM)",
                                         "value": "Asia/Baghdad",
-                                      },
-                                      Object {
-                                        "index": 340,
-                                        "label": "Indiana (East) (11:15 AM)",
-                                        "value": "America/Indiana/Indianapolis",
                                       },
                                       Object {
                                         "index": 340,
@@ -59813,6 +59813,11 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                                         },
                                         Object {
                                           "index": 2.4,
+                                          "label": "Indiana (East) (11:15 AM)",
+                                          "value": "America/Indiana/Indianapolis",
+                                        },
+                                        Object {
+                                          "index": 2.4,
                                           "label": "Puerto Rico (12:15 PM)",
                                           "value": "America/Puerto_Rico",
                                         },
@@ -60125,11 +60130,6 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                                           "index": 280,
                                           "label": "Baghdad (7:15 PM)",
                                           "value": "Asia/Baghdad",
-                                        },
-                                        Object {
-                                          "index": 340,
-                                          "label": "Indiana (East) (11:15 AM)",
-                                          "value": "America/Indiana/Indianapolis",
                                         },
                                         Object {
                                           "index": 340,
@@ -60662,6 +60662,11 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                                       },
                                       Object {
                                         "index": 2.4,
+                                        "label": "Indiana (East) (11:15 AM)",
+                                        "value": "America/Indiana/Indianapolis",
+                                      },
+                                      Object {
+                                        "index": 2.4,
                                         "label": "Puerto Rico (12:15 PM)",
                                         "value": "America/Puerto_Rico",
                                       },
@@ -60974,11 +60979,6 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                                         "index": 280,
                                         "label": "Baghdad (7:15 PM)",
                                         "value": "Asia/Baghdad",
-                                      },
-                                      Object {
-                                        "index": 340,
-                                        "label": "Indiana (East) (11:15 AM)",
-                                        "value": "America/Indiana/Indianapolis",
                                       },
                                       Object {
                                         "index": 340,
@@ -61478,6 +61478,11 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                                         },
                                         Object {
                                           "index": 2.4,
+                                          "label": "Indiana (East) (11:15 AM)",
+                                          "value": "America/Indiana/Indianapolis",
+                                        },
+                                        Object {
+                                          "index": 2.4,
                                           "label": "Puerto Rico (12:15 PM)",
                                           "value": "America/Puerto_Rico",
                                         },
@@ -61790,11 +61795,6 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                                           "index": 280,
                                           "label": "Baghdad (7:15 PM)",
                                           "value": "Asia/Baghdad",
-                                        },
-                                        Object {
-                                          "index": 340,
-                                          "label": "Indiana (East) (11:15 AM)",
-                                          "value": "America/Indiana/Indianapolis",
                                         },
                                         Object {
                                           "index": 340,
@@ -62384,6 +62384,11 @@ exports[`Timezone Matches snapshot with default props 1`] = `
       },
       Object {
         "index": 2.4,
+        "label": "Indiana (East) (8:15 AM)",
+        "value": "America/Indiana/Indianapolis",
+      },
+      Object {
+        "index": 2.4,
         "label": "Puerto Rico (9:15 AM)",
         "value": "America/Puerto_Rico",
       },
@@ -62696,11 +62701,6 @@ exports[`Timezone Matches snapshot with default props 1`] = `
         "index": 280,
         "label": "Baghdad (4:15 PM)",
         "value": "Asia/Baghdad",
-      },
-      Object {
-        "index": 340,
-        "label": "Indiana (East) (8:15 AM)",
-        "value": "America/Indiana/Indianapolis",
       },
       Object {
         "index": 340,
@@ -63130,10 +63130,10 @@ exports[`Timezone Matches snapshot with default props 1`] = `
   styling={
     Object {
       "& .cf-select__menu-list": Object {
-        "& > :nth-child(9)": Object {
+        "& > :nth-child(10)": Object {
           "borderBottom": "1px solid grey",
         },
-        "height": "351px !important",
+        "height": "390px !important",
         "maxHeight": "none",
         "overflowY": "auto",
       },
@@ -63183,6 +63183,11 @@ exports[`Timezone Respects required prop 1`] = `
           "index": -0,
           "label": "Pacific Time (US & Canada) (5:15 AM)",
           "value": "America/Los_Angeles",
+        },
+        Object {
+          "index": 2.4,
+          "label": "Indiana (East) (8:15 AM)",
+          "value": "America/Indiana/Indianapolis",
         },
         Object {
           "index": 2.4,
@@ -63498,11 +63503,6 @@ exports[`Timezone Respects required prop 1`] = `
           "index": 280,
           "label": "Baghdad (4:15 PM)",
           "value": "Asia/Baghdad",
-        },
-        Object {
-          "index": 340,
-          "label": "Indiana (East) (8:15 AM)",
-          "value": "America/Indiana/Indianapolis",
         },
         Object {
           "index": 340,
@@ -63933,10 +63933,10 @@ exports[`Timezone Respects required prop 1`] = `
     styling={
       Object {
         "& .cf-select__menu-list": Object {
-          "& > :nth-child(9)": Object {
+          "& > :nth-child(10)": Object {
             "borderBottom": "1px solid grey",
           },
-          "height": "351px !important",
+          "height": "390px !important",
           "maxHeight": "none",
           "overflowY": "auto",
         },
@@ -63949,7 +63949,7 @@ exports[`Timezone Respects required prop 1`] = `
     >
       <div
         className="cf-form-dropdown dropdown-Timezone"
-        data-css-1dzedb9=""
+        data-css-1gh7024=""
       >
         <label
           className="question-label"
@@ -64023,6 +64023,11 @@ exports[`Timezone Respects required prop 1`] = `
                   "index": -0,
                   "label": "Pacific Time (US & Canada) (5:15 AM)",
                   "value": "America/Los_Angeles",
+                },
+                Object {
+                  "index": 2.4,
+                  "label": "Indiana (East) (8:15 AM)",
+                  "value": "America/Indiana/Indianapolis",
                 },
                 Object {
                   "index": 2.4,
@@ -64338,11 +64343,6 @@ exports[`Timezone Respects required prop 1`] = `
                   "index": 280,
                   "label": "Baghdad (4:15 PM)",
                   "value": "Asia/Baghdad",
-                },
-                Object {
-                  "index": 340,
-                  "label": "Indiana (East) (8:15 AM)",
-                  "value": "America/Indiana/Indianapolis",
                 },
                 Object {
                   "index": 340,
@@ -64849,6 +64849,11 @@ exports[`Timezone Respects required prop 1`] = `
                   },
                   Object {
                     "index": 2.4,
+                    "label": "Indiana (East) (8:15 AM)",
+                    "value": "America/Indiana/Indianapolis",
+                  },
+                  Object {
+                    "index": 2.4,
                     "label": "Puerto Rico (9:15 AM)",
                     "value": "America/Puerto_Rico",
                   },
@@ -65161,11 +65166,6 @@ exports[`Timezone Respects required prop 1`] = `
                     "index": 280,
                     "label": "Baghdad (4:15 PM)",
                     "value": "Asia/Baghdad",
-                  },
-                  Object {
-                    "index": 340,
-                    "label": "Indiana (East) (8:15 AM)",
-                    "value": "America/Indiana/Indianapolis",
                   },
                   Object {
                     "index": 340,
@@ -65646,6 +65646,11 @@ exports[`Timezone Respects required prop 1`] = `
                     },
                     Object {
                       "index": 2.4,
+                      "label": "Indiana (East) (8:15 AM)",
+                      "value": "America/Indiana/Indianapolis",
+                    },
+                    Object {
+                      "index": 2.4,
                       "label": "Puerto Rico (9:15 AM)",
                       "value": "America/Puerto_Rico",
                     },
@@ -65958,11 +65963,6 @@ exports[`Timezone Respects required prop 1`] = `
                       "index": 280,
                       "label": "Baghdad (4:15 PM)",
                       "value": "Asia/Baghdad",
-                    },
-                    Object {
-                      "index": 340,
-                      "label": "Indiana (East) (8:15 AM)",
-                      "value": "America/Indiana/Indianapolis",
                     },
                     Object {
                       "index": 340,
@@ -66462,6 +66462,11 @@ exports[`Timezone Respects required prop 1`] = `
                       },
                       Object {
                         "index": 2.4,
+                        "label": "Indiana (East) (8:15 AM)",
+                        "value": "America/Indiana/Indianapolis",
+                      },
+                      Object {
+                        "index": 2.4,
                         "label": "Puerto Rico (9:15 AM)",
                         "value": "America/Puerto_Rico",
                       },
@@ -66774,11 +66779,6 @@ exports[`Timezone Respects required prop 1`] = `
                         "index": 280,
                         "label": "Baghdad (4:15 PM)",
                         "value": "Asia/Baghdad",
-                      },
-                      Object {
-                        "index": 340,
-                        "label": "Indiana (East) (8:15 AM)",
-                        "value": "America/Indiana/Indianapolis",
                       },
                       Object {
                         "index": 340,
@@ -67310,6 +67310,11 @@ exports[`Timezone Respects required prop 1`] = `
                           },
                           Object {
                             "index": 2.4,
+                            "label": "Indiana (East) (8:15 AM)",
+                            "value": "America/Indiana/Indianapolis",
+                          },
+                          Object {
+                            "index": 2.4,
                             "label": "Puerto Rico (9:15 AM)",
                             "value": "America/Puerto_Rico",
                           },
@@ -67622,11 +67627,6 @@ exports[`Timezone Respects required prop 1`] = `
                             "index": 280,
                             "label": "Baghdad (4:15 PM)",
                             "value": "Asia/Baghdad",
-                          },
-                          Object {
-                            "index": 340,
-                            "label": "Indiana (East) (8:15 AM)",
-                            "value": "America/Indiana/Indianapolis",
                           },
                           Object {
                             "index": 340,
@@ -68126,6 +68126,11 @@ exports[`Timezone Respects required prop 1`] = `
                             },
                             Object {
                               "index": 2.4,
+                              "label": "Indiana (East) (8:15 AM)",
+                              "value": "America/Indiana/Indianapolis",
+                            },
+                            Object {
+                              "index": 2.4,
                               "label": "Puerto Rico (9:15 AM)",
                               "value": "America/Puerto_Rico",
                             },
@@ -68438,11 +68443,6 @@ exports[`Timezone Respects required prop 1`] = `
                               "index": 280,
                               "label": "Baghdad (4:15 PM)",
                               "value": "Asia/Baghdad",
-                            },
-                            Object {
-                              "index": 340,
-                              "label": "Indiana (East) (8:15 AM)",
-                              "value": "America/Indiana/Indianapolis",
                             },
                             Object {
                               "index": 340,
@@ -68982,6 +68982,11 @@ exports[`Timezone Respects required prop 1`] = `
                                 },
                                 Object {
                                   "index": 2.4,
+                                  "label": "Indiana (East) (8:15 AM)",
+                                  "value": "America/Indiana/Indianapolis",
+                                },
+                                Object {
+                                  "index": 2.4,
                                   "label": "Puerto Rico (9:15 AM)",
                                   "value": "America/Puerto_Rico",
                                 },
@@ -69294,11 +69299,6 @@ exports[`Timezone Respects required prop 1`] = `
                                   "index": 280,
                                   "label": "Baghdad (4:15 PM)",
                                   "value": "Asia/Baghdad",
-                                },
-                                Object {
-                                  "index": 340,
-                                  "label": "Indiana (East) (8:15 AM)",
-                                  "value": "America/Indiana/Indianapolis",
                                 },
                                 Object {
                                   "index": 340,
@@ -69798,6 +69798,11 @@ exports[`Timezone Respects required prop 1`] = `
                                   },
                                   Object {
                                     "index": 2.4,
+                                    "label": "Indiana (East) (8:15 AM)",
+                                    "value": "America/Indiana/Indianapolis",
+                                  },
+                                  Object {
+                                    "index": 2.4,
                                     "label": "Puerto Rico (9:15 AM)",
                                     "value": "America/Puerto_Rico",
                                   },
@@ -70110,11 +70115,6 @@ exports[`Timezone Respects required prop 1`] = `
                                     "index": 280,
                                     "label": "Baghdad (4:15 PM)",
                                     "value": "Asia/Baghdad",
-                                  },
-                                  Object {
-                                    "index": 340,
-                                    "label": "Indiana (East) (8:15 AM)",
-                                    "value": "America/Indiana/Indianapolis",
                                   },
                                   Object {
                                     "index": 340,
@@ -70641,6 +70641,11 @@ exports[`Timezone Respects required prop 1`] = `
                                       },
                                       Object {
                                         "index": 2.4,
+                                        "label": "Indiana (East) (8:15 AM)",
+                                        "value": "America/Indiana/Indianapolis",
+                                      },
+                                      Object {
+                                        "index": 2.4,
                                         "label": "Puerto Rico (9:15 AM)",
                                         "value": "America/Puerto_Rico",
                                       },
@@ -70953,11 +70958,6 @@ exports[`Timezone Respects required prop 1`] = `
                                         "index": 280,
                                         "label": "Baghdad (4:15 PM)",
                                         "value": "Asia/Baghdad",
-                                      },
-                                      Object {
-                                        "index": 340,
-                                        "label": "Indiana (East) (8:15 AM)",
-                                        "value": "America/Indiana/Indianapolis",
                                       },
                                       Object {
                                         "index": 340,
@@ -71457,6 +71457,11 @@ exports[`Timezone Respects required prop 1`] = `
                                         },
                                         Object {
                                           "index": 2.4,
+                                          "label": "Indiana (East) (8:15 AM)",
+                                          "value": "America/Indiana/Indianapolis",
+                                        },
+                                        Object {
+                                          "index": 2.4,
                                           "label": "Puerto Rico (9:15 AM)",
                                           "value": "America/Puerto_Rico",
                                         },
@@ -71769,11 +71774,6 @@ exports[`Timezone Respects required prop 1`] = `
                                           "index": 280,
                                           "label": "Baghdad (4:15 PM)",
                                           "value": "Asia/Baghdad",
-                                        },
-                                        Object {
-                                          "index": 340,
-                                          "label": "Indiana (East) (8:15 AM)",
-                                          "value": "America/Indiana/Indianapolis",
                                         },
                                         Object {
                                           "index": 340,
@@ -72353,6 +72353,11 @@ exports[`Timezone Respects required prop 1`] = `
                                         },
                                         Object {
                                           "index": 2.4,
+                                          "label": "Indiana (East) (8:15 AM)",
+                                          "value": "America/Indiana/Indianapolis",
+                                        },
+                                        Object {
+                                          "index": 2.4,
                                           "label": "Puerto Rico (9:15 AM)",
                                           "value": "America/Puerto_Rico",
                                         },
@@ -72665,11 +72670,6 @@ exports[`Timezone Respects required prop 1`] = `
                                           "index": 280,
                                           "label": "Baghdad (4:15 PM)",
                                           "value": "Asia/Baghdad",
-                                        },
-                                        Object {
-                                          "index": 340,
-                                          "label": "Indiana (East) (8:15 AM)",
-                                          "value": "America/Indiana/Indianapolis",
                                         },
                                         Object {
                                           "index": 340,
@@ -73233,6 +73233,11 @@ exports[`Timezone Respects required prop 1`] = `
                                           },
                                           Object {
                                             "index": 2.4,
+                                            "label": "Indiana (East) (8:15 AM)",
+                                            "value": "America/Indiana/Indianapolis",
+                                          },
+                                          Object {
+                                            "index": 2.4,
                                             "label": "Puerto Rico (9:15 AM)",
                                             "value": "America/Puerto_Rico",
                                           },
@@ -73545,11 +73550,6 @@ exports[`Timezone Respects required prop 1`] = `
                                             "index": 280,
                                             "label": "Baghdad (4:15 PM)",
                                             "value": "Asia/Baghdad",
-                                          },
-                                          Object {
-                                            "index": 340,
-                                            "label": "Indiana (East) (8:15 AM)",
-                                            "value": "America/Indiana/Indianapolis",
                                           },
                                           Object {
                                             "index": 340,
@@ -74168,6 +74168,11 @@ exports[`Timezone Respects required prop 1`] = `
                                 },
                                 Object {
                                   "index": 2.4,
+                                  "label": "Indiana (East) (8:15 AM)",
+                                  "value": "America/Indiana/Indianapolis",
+                                },
+                                Object {
+                                  "index": 2.4,
                                   "label": "Puerto Rico (9:15 AM)",
                                   "value": "America/Puerto_Rico",
                                 },
@@ -74480,11 +74485,6 @@ exports[`Timezone Respects required prop 1`] = `
                                   "index": 280,
                                   "label": "Baghdad (4:15 PM)",
                                   "value": "Asia/Baghdad",
-                                },
-                                Object {
-                                  "index": 340,
-                                  "label": "Indiana (East) (8:15 AM)",
-                                  "value": "America/Indiana/Indianapolis",
                                 },
                                 Object {
                                   "index": 340,
@@ -74984,6 +74984,11 @@ exports[`Timezone Respects required prop 1`] = `
                                   },
                                   Object {
                                     "index": 2.4,
+                                    "label": "Indiana (East) (8:15 AM)",
+                                    "value": "America/Indiana/Indianapolis",
+                                  },
+                                  Object {
+                                    "index": 2.4,
                                     "label": "Puerto Rico (9:15 AM)",
                                     "value": "America/Puerto_Rico",
                                   },
@@ -75296,11 +75301,6 @@ exports[`Timezone Respects required prop 1`] = `
                                     "index": 280,
                                     "label": "Baghdad (4:15 PM)",
                                     "value": "Asia/Baghdad",
-                                  },
-                                  Object {
-                                    "index": 340,
-                                    "label": "Indiana (East) (8:15 AM)",
-                                    "value": "America/Indiana/Indianapolis",
                                   },
                                   Object {
                                     "index": 340,
@@ -75822,6 +75822,11 @@ exports[`Timezone Respects required prop 1`] = `
                                       },
                                       Object {
                                         "index": 2.4,
+                                        "label": "Indiana (East) (8:15 AM)",
+                                        "value": "America/Indiana/Indianapolis",
+                                      },
+                                      Object {
+                                        "index": 2.4,
                                         "label": "Puerto Rico (9:15 AM)",
                                         "value": "America/Puerto_Rico",
                                       },
@@ -76134,11 +76139,6 @@ exports[`Timezone Respects required prop 1`] = `
                                         "index": 280,
                                         "label": "Baghdad (4:15 PM)",
                                         "value": "Asia/Baghdad",
-                                      },
-                                      Object {
-                                        "index": 340,
-                                        "label": "Indiana (East) (8:15 AM)",
-                                        "value": "America/Indiana/Indianapolis",
                                       },
                                       Object {
                                         "index": 340,
@@ -76638,6 +76638,11 @@ exports[`Timezone Respects required prop 1`] = `
                                         },
                                         Object {
                                           "index": 2.4,
+                                          "label": "Indiana (East) (8:15 AM)",
+                                          "value": "America/Indiana/Indianapolis",
+                                        },
+                                        Object {
+                                          "index": 2.4,
                                           "label": "Puerto Rico (9:15 AM)",
                                           "value": "America/Puerto_Rico",
                                         },
@@ -76950,11 +76955,6 @@ exports[`Timezone Respects required prop 1`] = `
                                           "index": 280,
                                           "label": "Baghdad (4:15 PM)",
                                           "value": "Asia/Baghdad",
-                                        },
-                                        Object {
-                                          "index": 340,
-                                          "label": "Indiana (East) (8:15 AM)",
-                                          "value": "America/Indiana/Indianapolis",
                                         },
                                         Object {
                                           "index": 340,
@@ -77487,6 +77487,11 @@ exports[`Timezone Respects required prop 1`] = `
                                       },
                                       Object {
                                         "index": 2.4,
+                                        "label": "Indiana (East) (8:15 AM)",
+                                        "value": "America/Indiana/Indianapolis",
+                                      },
+                                      Object {
+                                        "index": 2.4,
                                         "label": "Puerto Rico (9:15 AM)",
                                         "value": "America/Puerto_Rico",
                                       },
@@ -77799,11 +77804,6 @@ exports[`Timezone Respects required prop 1`] = `
                                         "index": 280,
                                         "label": "Baghdad (4:15 PM)",
                                         "value": "Asia/Baghdad",
-                                      },
-                                      Object {
-                                        "index": 340,
-                                        "label": "Indiana (East) (8:15 AM)",
-                                        "value": "America/Indiana/Indianapolis",
                                       },
                                       Object {
                                         "index": 340,
@@ -78303,6 +78303,11 @@ exports[`Timezone Respects required prop 1`] = `
                                         },
                                         Object {
                                           "index": 2.4,
+                                          "label": "Indiana (East) (8:15 AM)",
+                                          "value": "America/Indiana/Indianapolis",
+                                        },
+                                        Object {
+                                          "index": 2.4,
                                           "label": "Puerto Rico (9:15 AM)",
                                           "value": "America/Puerto_Rico",
                                         },
@@ -78615,11 +78620,6 @@ exports[`Timezone Respects required prop 1`] = `
                                           "index": 280,
                                           "label": "Baghdad (4:15 PM)",
                                           "value": "Asia/Baghdad",
-                                        },
-                                        Object {
-                                          "index": 340,
-                                          "label": "Indiana (East) (8:15 AM)",
-                                          "value": "America/Indiana/Indianapolis",
                                         },
                                         Object {
                                           "index": 340,
