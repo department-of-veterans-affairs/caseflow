@@ -35,7 +35,7 @@
 #   # pulled latest from github? try:
 #   % make install migrate
 #
-#   # get fully up to date with main on origin and all deps & db?
+#   # get fully up to date with master on origin and all deps & db?
 #   % make update
 #
 # Hopefully the targets are easy enough to remember to make this useful to others.
@@ -240,7 +240,7 @@ migrate: external-db-remove etl-migrate etl-test-prepare db-migrate ## Migrate a
 
 rollback: etl-rollback db-rollback	## Rollback all Rails databases
 
-fresh:  ## https://github.com/imsky/git-fresh - updates local main to match origin, stashes changes, prunes remote branches
+fresh:  ## https://github.com/imsky/git-fresh - updates local master to match origin, stashes changes, prunes remote branches
 	git fresh
 
 reset: reset-dbs seed-dbs enable-feature-flags ## Resets databases and enable feature flags
@@ -261,9 +261,6 @@ seed-dbs:	## Seed all databases
 	bundle exec rake spec:setup_vacols
 	bundle exec rake db:seed
 
-setup-metabase:
-	./metabase/metabase_api_script.sh
-
 enable-feature-flags: ## enable all feature flags
 	bundle exec rails runner scripts/enable_features_dev.rb
 
@@ -275,7 +272,7 @@ client-install:  ## Installs javascript dependencies
 
 install: bundle-install client-install  ## Installs all dependencies
 
-update: fresh install migrate  ## Get fully up to date with origin main - pulls origin, installs all deps and runs any db migrations
+update: fresh install migrate  ## Get fully up to date with origin master - pulls origin, installs all deps and runs any db migrations
 
 client-build-test client-test:  ## Builds webpack for tests
 	cd client && yarn run build:test

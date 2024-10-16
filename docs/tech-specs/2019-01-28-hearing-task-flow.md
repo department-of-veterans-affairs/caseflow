@@ -1,11 +1,11 @@
-This document was moved from [appeals-team](https://github.com/department-of-veterans-affairs/appeals-team/blob/main/Project%20Folders/Caseflow%20Projects/Hearings/Hearing%20Schedule/Tech%20Specs/HearingTaskFlow.md).
+This document was moved from [appeals-team](https://github.com/department-of-veterans-affairs/appeals-team/blob/master/Project%20Folders/Caseflow%20Projects/Hearings/Hearing%20Schedule/Tech%20Specs/HearingTaskFlow.md).
 
 ## Hearing Task Flow
 
-Owner: Sharon Warner
-Date: 2019-01-28
-Reviewer(s):
-Review by:
+Owner: Sharon Warner  
+Date: 2019-01-28  
+Reviewer(s):   
+Review by:   
 
 ## Task Hierarchy
 ![](2019-01-28-hearing-task-flow.png)
@@ -71,26 +71,26 @@ Review by:
 
 While most of the hearings associated tasks can be completed through the queue framework, the disposition task can only be completed through either the hearing prep daily docket or the hearing schedule daily docket. Because users may not understand the consequences of selecting dispositions on these pages, we will put safeguards in place to ensure we're not unnecessarily creating and deleting tasks.
 
-***Disposition Job***
+***Disposition Job***  
 When a user marks a hearing as canceled, no show, or held, we will immediately save the disposition to the hearings table, but we will not take any task actions to move the appeal forward. The disposition will remain editable in the UI.
 
 We will create an overnight job to pull in all appeals with 1) open DispositionTasks that are not on hold, and 2) a hearing with a disposition that was not held that day (hearing coordinators and judges regularly update dispositions the day after a hearing was schedule). This job will perform the necessary actions described above to move appeals forward.
 
-***Postponed Hearings***
+***Postponed Hearings***  
 When a user marks a hearing as postponed, we will both mark the hearing as postponed in the database and immediately create the necessary tasks to move the appeal forward. We are differentiating this case because postponing a hearing can require immediate action on the resulting tasks from the hearings management branch.
 
-***UI***
+***UI***  
 The hearing prep and hearing schedule daily dockets will be updated such that the hearing dispositions are only editable if either 1) the appeal's DispositionTask is open and not on hold or 2) the appeal does not have a DispositionTask (legacy hearings scheduled prior to 2/1). We will also remove the autosave feature from the hearing prep daily docket and implement a save button.
 
 ## VACOLS Locations for Legacy Appeals
 
-***Appeals in Location 57***
+***Appeals in Location 57***  
 We will run a job to continuously move appeals from location 57 to Caseflow. There should never be any appeal in location 57 that 1) has requested a video or CO hearing and 2) does not have an open hearing, for more than an hour.
 
-***Appeals in Locations 36/38***
+***Appeals in Locations 36/38***  
 The hearings management branch will need to move appeals out of locations 36 and 38 as their associated hearings are held. We will no longer be putting appeals in these locations.
 
-***Appeals in Location 'Caseflow'***
+***Appeals in Location 'Caseflow'***  
 We will add alerts in Looker to ensure that appeals do not get lost in Caseflow. The ticket for this is [here](https://github.com/department-of-veterans-affairs/caseflow/issues/8992).
 
 ## Open Questions

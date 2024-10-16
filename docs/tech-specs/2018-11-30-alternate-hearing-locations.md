@@ -1,10 +1,10 @@
-This document was moved from [appeals-team](https://github.com/department-of-veterans-affairs/appeals-team/blob/main/Project%20Folders/Caseflow%20Projects/Hearings/Hearing%20Schedule/Tech%20Specs/AlternateHearingLocations.md).
+This document was moved from [appeals-team](https://github.com/department-of-veterans-affairs/appeals-team/blob/master/Project%20Folders/Caseflow%20Projects/Hearings/Hearing%20Schedule/Tech%20Specs/AlternateHearingLocations.md).
 
 ## Alternate Hearing Locations
 
-Owner: Andrew Lomax
-Date: 2018-11-30
-Reviewer(s): Sharon Warner
+Owner: Andrew Lomax  
+Date: 2018-11-30  
+Reviewer(s): Sharon Warner  
 Review by: 2018-11-30
 
 ## Context
@@ -17,7 +17,7 @@ We have compiled a list of all alternate hearing locations for each RO and need 
   - Assign Hearings page
 
 ## Overview
-[Research](https://github.com/department-of-veterans-affairs/caseflow/issues/7507)
+[Research](https://github.com/department-of-veterans-affairs/caseflow/issues/7507)  
 [Facility Locator API](https://github.com/department-of-veterans-affairs/caseflow/issues/7545)
 
 #### Necessary data
