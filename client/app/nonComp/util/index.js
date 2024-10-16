@@ -109,6 +109,11 @@ const parseDecisionReviewTypeFilterOptions = (taskCounts, enabledFilters) =>
         value: 'BoardGrantEffectuationTask',
         displayText: `Board Grant (${taskCount})`
       };
+    } else if (key.includes('Remand')) {
+      taskInfo = {
+        value: 'Remand',
+        displayText: `Remand (${taskCount})`
+      };
     }
 
     return { ...taskInfo, checked: enabledFilters?.includes(taskInfo.value) || false };
