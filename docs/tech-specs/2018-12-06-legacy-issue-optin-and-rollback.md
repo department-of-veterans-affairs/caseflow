@@ -1,4 +1,4 @@
-This document was moved from [appeals-team](https://github.com/department-of-veterans-affairs/appeals-team/blob/master/Project%20Folders/Caseflow%20Projects/Intake/Tech%20Specs/legacy-issue-optin-and-rollback.md).
+This document was moved from [appeals-team](https://github.com/department-of-veterans-affairs/appeals-team/blob/main/Project%20Folders/Caseflow%20Projects/Intake/Tech%20Specs/legacy-issue-optin-and-rollback.md).
 
 # Legacy issue opt-in and rollback
 
@@ -25,7 +25,7 @@ This requires overwriting the existing disposition.
 We still need to determine how to approach remanded issues.  Here are three proposals.
 
 ### 1
-Create a different follow up post-remand appeal for each issue closed (one appeal for each issue).  Store which post-remand appeal gets created for each issue.  
+Create a different follow up post-remand appeal for each issue closed (one appeal for each issue).  Store which post-remand appeal gets created for each issue.
 
 If all of the issues on the appeal are closed, close the appeal.  This would mean that all of the issues on the appeal are closed, or if the issue has a disposition of "3", then it is associated with a post-remand appeal.
 
