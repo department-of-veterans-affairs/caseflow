@@ -30,7 +30,7 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
         request.headers["Authorization"] = "Token token=#{api_key.key_string}"
         load_headers
         redis = Redis.new(url: Rails.application.secrets.redis_url_cache)
-        lock_key = "RedisMutex:EndProductEstablishment:123566"
+        lock_key = "RedisMutex:EndProductEstablishment:#{JSON.parse(payload)['claim_id']}"
         redis.set(lock_key, "lock is set", nx: true, ex: 5.seconds)
         post :decision_review_created, params: JSON.parse(payload)
         expect(response).to have_http_status(:conflict)

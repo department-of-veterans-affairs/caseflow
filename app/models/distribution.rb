@@ -45,6 +45,8 @@ class Distribution < CaseflowRecord
       update!(status: "completed", completed_at: Time.zone.now, statistics: completed_statistics(ama_stats))
 
       record_distribution_stats(ama_stats)
+
+      CaseDistributionLever.clear_distribution_lever_cache
     end
   rescue StandardError => error
     process_error(error)

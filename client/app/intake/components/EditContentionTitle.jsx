@@ -12,6 +12,7 @@ export const EditContentionTitle = ({
   issue,
   issueIdx,
   setEditContentionText: callback,
+  disableEditingForCompAndPen,
 }) => {
   const { text, editedDescription, notes } = issue;
   const [editing, setEditing] = useState(false);
@@ -38,6 +39,7 @@ export const EditContentionTitle = ({
           <Button
             onClick={toggleEdit}
             classNames={['cf-btn-link', 'edit-contention-issue']}
+            disabled={disableEditingForCompAndPen}
           >
             {COPY.INTAKE_EDIT_TITLE}
           </Button>
@@ -106,6 +108,7 @@ EditContentionTitle.propTypes = {
    * Callback with two arguments: issue index and new value
    */
   setEditContentionText: PropTypes.func,
+  disableEditingForCompAndPen: PropTypes.bool,
 };
 
 const mapDispatchToProps = (dispatch) =>

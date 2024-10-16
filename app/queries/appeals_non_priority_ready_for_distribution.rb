@@ -45,7 +45,7 @@ class AppealsNonPriorityReadyForDistribution < AppealsReadyForDistribution
           # appeals = docket.ready_to_distribute_appeals.select { |appeal| appeal["aod"] == 0 }
           # legacy_rows(appeals, docket, sym)
         else
-          appeals = docket.ready_priority_nonpriority_appeals(priority: false, ready: true)
+          appeals = docket.ready_priority_nonpriority_appeals(priority: false, ready: true, not_affinity: true)
           ama_rows(appeals, docket, sym)
         end
       end

@@ -376,6 +376,43 @@ describe HearingRequestDocket, :postgres do
     end
   end
 
+  context "#affinity_date_count" do
+    let!(:hearing_judge) do
+      create(:user, :judge, :with_vacols_judge_record)
+    end
+    let!(:hearing_docket_appeal) do
+      create(:appeal, :hearing_docket, :held_hearing_and_ready_to_distribute,
+             :with_appeal_affinity, tied_judge: hearing_judge)
+    end
+    let!(:aod_hearing_docket_appeal) do
+      create(:appeal, :hearing_docket, :advanced_on_docket_due_to_age, :held_hearing_and_ready_to_distribute,
+             :with_appeal_affinity, tied_judge: hearing_judge)
+    end
+    let!(:hearing_lever) do
+      create(:case_distribution_lever, :ama_hearing_case_affinity_days)
+    end
+    let!(:aod_hearing_lever) do
+      create(:case_distribution_lever, :ama_hearing_case_aod_affinity_days)
+    end
+    let!(:hearing_request_instance) { HearingRequestDocket.new }
+
+    context "for nonpriority" do
+      subject { hearing_request_instance.affinity_date_count(true, false) }
+
+      it "correctly accounts for affinities to judges based on most recently held hearing" do
+        expect(subject).to eq(1)
+      end
+    end
+
+    context "for priority" do
+      subject { hearing_request_instance.affinity_date_count(true, true) }
+
+      it "correctly accounts for affinities to judges based on most recently held hearing" do
+        expect(subject).to eq(1)
+      end
+    end
+  end
+
   context "#distribute_appeals" do
     let!(:requesting_judge_no_attorneys) { create(:user, :judge, :with_vacols_judge_record) }
     let!(:requesting_judge_with_attorneys) { create(:user, :judge, :with_vacols_judge_record) }

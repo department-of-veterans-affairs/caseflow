@@ -6,6 +6,7 @@ export const FilterNoOutlineIcon = (props) => {
   const { color, size, className } = props;
 
   return <svg height={size} viewBox="0 0 12 14" className={className}>
+    <title >filtered indicator</title>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g fillRule="nonzero" fill={color}>
         <g id="filter-filled-tool-symbol" transform="translate(6.000000, 7.000000)
