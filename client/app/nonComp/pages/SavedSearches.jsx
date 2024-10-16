@@ -7,10 +7,34 @@ import { LeftChevronIcon } from 'app/components/icons/LeftChevronIcon';
 import NonCompLayout from '../components/NonCompLayout';
 import { COLORS } from 'app/constants/AppConstants';
 import SAVED_SEARCHES_COPY from 'constants/SAVED_SEARCHES_COPY';
+import TabWindow from 'app/components/TabWindow';
+import SearchTable from 'app/queue/components/SearchTable';
+import savedSearchesData from 'test/data/nonComp/savedSearchesData';
 
 const SavedSearches = () => {
 
   const businessLineUrl = useSelector((state) => state.nonComp.businessLineUrl);
+  const currentUserCssId = useSelector((state) => state.nonComp.currentUserCssId);
+
+  const ALL_TABS = [
+    {
+      key: 'my_saved_searches',
+      label: 'My saved searches',
+      // this section will later changed to backend call
+      page: <SearchTable
+        eventRows={savedSearchesData.savedSearches.rows.filter((rows) => rows.userCssId === currentUserCssId)}
+        searchPageApiEndPoint
+      />
+    },
+    {
+      key: 'all_saved_searches',
+      label: 'All saved searches',
+      page: <SearchTable
+        eventRows={savedSearchesData.savedSearches.rows}
+        searchPageApiEndPoint
+      />
+    }
+  ];
 
   return (
     <div className="saved-search-content-spacing">
@@ -24,7 +48,10 @@ const SavedSearches = () => {
 
       <NonCompLayout>
         <h1>Saved Searches</h1>
-        Select a search you previously saved or look for ones others have saved by switching between the tabs.
+        <div>
+          Select a search you previously saved or look for ones others have saved by switching between the tabs.
+        </div>
+        <TabWindow name="saved-search-queue" tabs={ALL_TABS} />
       </NonCompLayout>
     </div>
 

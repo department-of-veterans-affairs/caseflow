@@ -9,6 +9,7 @@
     serverNonComp: {
       businessLine: business_line.name,
       businessLineUrl: business_line.url,
+      currentUserCssId: current_user.css_id,
       featureToggles: {
         decisionReviewQueueSsnColumn: FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: current_user),
         poa_button_refresh: FeatureToggle.enabled?(:poa_button_refresh, user: current_user),
