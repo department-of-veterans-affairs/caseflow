@@ -84,7 +84,7 @@ feature "NonComp Dispositions Task Page", :postgres do
     let(:business_line_url) { "decision_reviews/nca" }
     let(:dispositions_url) { "#{business_line_url}/tasks/#{in_progress_task.id}" }
     let(:arbitrary_decision_date) { "01/01/2019" }
-    let(:valid_decision_date) { decision_review.created_at.strftime("%m/%d/%Y") }
+    let(:valid_decision_date) { decision_review.created_at.strftime("%m/%d") }
 
     let(:vet_id_column_value) { veteran.ssn }
 
@@ -177,12 +177,14 @@ feature "NonComp Dispositions Task Page", :postgres do
 
       scenario "both disposition and date are set" do
         fill_in "decision-date", with: arbitrary_decision_date
-        expect(page).to have_text("Decision date must be between Form Receipt Date")
-        fill_in "decision-date", with: valid_decision_date
 
         fill_in_disposition(0, "Granted")
         fill_in_disposition(1, "DTA Error", "test description")
         fill_in_disposition(2, "Denied", "denied")
+
+        expect(page).to have_text("Decision date must be between Form Receipt Date")
+        expect(page).to have_button("Complete", disabled: true)
+        fill_in "decision-date", with: valid_decision_date
 
         expect(page).to have_button("Complete", disabled: false)
       end
