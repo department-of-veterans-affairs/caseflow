@@ -10,7 +10,7 @@ describe Hearings::DownloadTranscriptionFileJob do
     let(:appeal_id) { hearing.appeal.uuid }
     let(:file_name) { "#{docket_number}_#{hearing.id}_#{hearing.class}.#{file_type}" }
     let(:tmp_location) { File.join(Rails.root, "tmp", "transcription_files", file_type, file_name) }
-    let(:transcription_file) { TranscriptionFile.find_by(file_name: file_name) }
+    let(:transcription_file) { Hearings::TranscriptionFile.find_by(file_name: file_name) }
     let(:s3_sub_bucket) { "vaec-appeals-caseflow" }
     let(:folder_name) { (Rails.deploy_env == :prod) ? s3_sub_bucket : "#{s3_sub_bucket}-#{Rails.deploy_env}" }
     let(:s3_sub_folders) do
@@ -31,7 +31,7 @@ describe Hearings::DownloadTranscriptionFileJob do
 
     shared_examples "all file types" do
       it "saves downloaded file to correct tmp sub-directory" do
-        allow_any_instance_of(TranscriptionFile).to receive(:clean_up_tmp_location).and_return(nil)
+        allow_any_instance_of(Hearings::TranscriptionFile).to receive(:clean_up_tmp_location).and_return(nil)
         subject
         expect(File.exist?(tmp_location)).to be true
       end
@@ -59,7 +59,7 @@ describe Hearings::DownloadTranscriptionFileJob do
 
       it "raises error and creates TranscriptionFileRecord" do
         expect { subject }.to raise_error(download_error)
-          .and change(TranscriptionFile, :count).by(1)
+          .and change(Hearings::TranscriptionFile, :count).by(1)
       end
 
       it "updates file_status of TranscriptionFile record, leaves date_receipt_recording nil" do
@@ -83,7 +83,7 @@ describe Hearings::DownloadTranscriptionFileJob do
           let(:file_status) { Constants.TRANSCRIPTION_FILE_STATUSES.upload.success }
 
           it "creates new TranscriptionFile record" do
-            expect { subject }.to change(TranscriptionFile, :count).by(1)
+            expect { subject }.to change(Hearings::TranscriptionFile, :count).by(1)
             expect(transcription_file.file_type).to eq(file_type)
           end
 
@@ -115,7 +115,7 @@ describe Hearings::DownloadTranscriptionFileJob do
       let(:conversion_type) { "rtf" }
       let(:converted_file_name) { file_name.gsub(file_type, conversion_type) }
       let(:converted_tmp_location) { tmp_location.gsub(file_type, conversion_type) }
-      let(:converted_transcription_file) { TranscriptionFile.find_by(file_name: converted_file_name) }
+      let(:converted_transcription_file) { Hearings::TranscriptionFile.find_by(file_name: converted_file_name) }
       let(:converted_s3_location) { "#{folder_name}/#{s3_sub_folders[conversion_type.to_sym]}/#{converted_file_name}" }
 
       context "successful download from Webex, upload to S3, and conversion to rtf" do
@@ -127,7 +127,7 @@ describe Hearings::DownloadTranscriptionFileJob do
         after { File.delete(converted_tmp_location) if File.exist?(converted_tmp_location) }
 
         it "creates two new TranscriptionFile records" do
-          expect { subject }.to change(TranscriptionFile, :count).by(2)
+          expect { subject }.to change(Hearings::TranscriptionFile, :count).by(2)
           expect(transcription_file.file_type).to eq(file_type)
           expect(converted_transcription_file.file_type).to eq(conversion_type)
         end
@@ -165,7 +165,7 @@ describe Hearings::DownloadTranscriptionFileJob do
         end
 
         it "creates three new TranscriptionFile records" do
-          expect { subject }.to change(TranscriptionFile, :count).by(3)
+          expect { subject }.to change(Hearings::TranscriptionFile, :count).by(3)
           expect(transcription_file.file_type).to eq(file_type)
           expect(converted_transcription_file.file_type).to eq(conversion_type)
         end
@@ -196,13 +196,13 @@ describe Hearings::DownloadTranscriptionFileJob do
         end
 
         it "raises error and creates TranscriptionFileRecord" do
-          expect { subject }.to raise_error(conversion_error).and change(TranscriptionFile, :count).by(1)
+          expect { subject }.to raise_error(conversion_error).and change(Hearings::TranscriptionFile, :count).by(1)
           expect(transcription_file.file_type).to eq(file_type)
         end
 
         it "saves downloaded file to correct tmp sub-directory" do
           expect { subject }.to raise_error(conversion_error)
-          allow_any_instance_of(TranscriptionFile).to receive(:clean_up_tmp_location).and_return(nil)
+          allow_any_instance_of(Hearings::TranscriptionFile).to receive(:clean_up_tmp_location).and_return(nil)
           expect(File.exist?(tmp_location)).to be true
         end
 
@@ -230,7 +230,7 @@ describe Hearings::DownloadTranscriptionFileJob do
         let(:file_name_error) { Hearings::DownloadTranscriptionFileJob::FileNameError }
 
         before do
-          allow_any_instance_of(TranscriptionFile).to receive(:clean_up_tmp_location).and_return(nil)
+          allow_any_instance_of(Hearings::TranscriptionFile).to receive(:clean_up_tmp_location).and_return(nil)
         end
 
         shared_examples "sends email template" do
@@ -264,7 +264,7 @@ describe Hearings::DownloadTranscriptionFileJob do
           end
 
           before do
-            allow_any_instance_of(TranscriptionFile).to receive(:upload_to_s3!)
+            allow_any_instance_of(Hearings::TranscriptionFile).to receive(:upload_to_s3!)
               .and_raise(upload_error)
           end
 
