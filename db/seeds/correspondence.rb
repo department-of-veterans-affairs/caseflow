@@ -143,7 +143,7 @@ module Seeds
     def create_queue_correspondences(user)
       veterans = create_veterans
       veterans.each do |veteran|
-        # Creating Inactive Appeals that have a RootTask with the status of canceled
+        # Creating inactive appeals that have a RootTask with the status of canceled
         create_inactive_appeals_for_user(user, veteran)
 
         # Correspondences with unassigned ReviewPackageTask
