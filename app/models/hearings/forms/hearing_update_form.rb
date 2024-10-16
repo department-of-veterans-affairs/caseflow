@@ -76,21 +76,3 @@ class HearingUpdateForm < BaseHearingUpdateForm
   end
   # rubocop:enable Metrics/MethodLength
 end
-
-
-  # def update_hearing
-  #   byebug
-  #   if transcription_attributes.present?
-  #     transcription = Transcription.find_or_initialize_by(hearing_type: hearing.class.name, hearing_id: hearing.id)
-  #     puts "Transcription before update: #{transcription.inspect}"
-  #     transcription.update!(transcription_attributes)
-  #     puts "Transcription after update: #{transcription.inspect}"
-  #   end
-
-  #   # Debugging for hearing updates
-  #   puts "Hearing before update: #{hearing.inspect}"
-  #   hearing.update!(hearing_updates.except(:transcription_attributes))
-  #   puts "Hearing after update: #{hearing.inspect}"
-
-  #   update_advance_on_docket_motion unless advance_on_docket_motion_attributes.blank?
-  # end
