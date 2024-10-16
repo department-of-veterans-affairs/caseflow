@@ -13,6 +13,7 @@
 ActiveRecord::Schema.define(version: 2024_10_08_145227) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "oracle_fdw"
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
 
@@ -2452,14 +2453,37 @@ ActiveRecord::Schema.define(version: 2024_10_08_145227) do
   add_foreign_key "vso_configs", "organizations"
   add_foreign_key "worksheet_issues", "legacy_appeals", column: "appeal_id"
 
+  create_view "remands", sql_definition: <<-SQL
+      SELECT supplemental_claims.id,
+      supplemental_claims.benefit_type,
+      supplemental_claims.created_at,
+      supplemental_claims.decision_review_remanded_id,
+      supplemental_claims.decision_review_remanded_type,
+      supplemental_claims.establishment_attempted_at,
+      supplemental_claims.establishment_canceled_at,
+      supplemental_claims.establishment_error,
+      supplemental_claims.establishment_last_submitted_at,
+      supplemental_claims.establishment_processed_at,
+      supplemental_claims.establishment_submitted_at,
+      supplemental_claims.filed_by_va_gov,
+      supplemental_claims.legacy_opt_in_approved,
+      supplemental_claims.receipt_date,
+      supplemental_claims.updated_at,
+      supplemental_claims.uuid,
+      supplemental_claims.veteran_file_number,
+      supplemental_claims.veteran_is_not_claimant,
+      supplemental_claims.type
+     FROM supplemental_claims
+    WHERE ((supplemental_claims.type)::text = 'Remand'::text);
+  SQL
   create_view "national_hearing_queue_entries", materialized: true, sql_definition: <<-SQL
-      SELECT a.id AS appeal_id,
+      SELECT appeals.id AS appeal_id,
       'appeal'::text AS appeal_type,
-      COALESCE(a.changed_hearing_request_type, a.original_hearing_request_type) AS hearing_request_type,
-      a.receipt_date,
-      a.uuid AS external_id,
-      a.stream_type AS appeal_stream,
-      a.stream_docket_number AS docket_number
-     FROM appeals a;
+      COALESCE(appeals.changed_hearing_request_type, appeals.original_hearing_request_type) AS hearing_request_type,
+      appeals.receipt_date,
+      appeals.uuid AS external_id,
+      appeals.stream_type AS appeal_stream,
+      appeals.stream_docket_number AS docket_number
+     FROM appeals;
   SQL
 end
