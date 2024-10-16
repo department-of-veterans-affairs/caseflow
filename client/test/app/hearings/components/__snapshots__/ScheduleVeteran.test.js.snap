@@ -1,0 +1,5183 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ScheduleVeteranForm Displayes Unschedules Notes input 1`] = `
+<DocumentFragment>
+  <div
+    class="usa-width-one-whole schedule-veteran-details"
+  >
+    <div
+      class="usa-width-one-fourth schedule-veteran-appeal-info-container"
+    >
+      <div
+        class="schedule-veteran-appeals-info"
+      >
+        <h2>
+          Abellona Valtas
+        </h2>
+        <div
+          data-css-atv6j6=""
+        >
+          <pre>
+            9999 MISSION ST
+SAN FRANCISCO, CA 94103
+          </pre>
+        </div>
+        <div
+          data-css-acl5jg=""
+        >
+          <strong>
+            Issues
+          </strong>
+          00
+        </div>
+        <div
+          class="schedule-veteran-appeals-info-stream"
+          data-css-acl5jg=""
+        >
+          <strong>
+            Appeal Stream
+          </strong>
+          <pre>
+            <span>
+              Original
+            </span>
+          </pre>
+        </div>
+        <div
+          class="appeal-information-docket-type-badge"
+          data-css-acl5jg=""
+        >
+          <strong>
+            Docket Number
+          </strong>
+          <div>
+            <span
+              aria-describedby="badge-200805-541"
+              aria-label=""
+              currentitem="false"
+              data-css-2moai0=""
+              data-event="focus mouseenter"
+              data-event-off="mouseleave keydown"
+              data-for="badge-200805-541"
+              data-tip="true"
+              tabindex="0"
+            >
+              H
+            </span>
+            <span
+              data-css-1u6dx7t=""
+            >
+              <div
+                class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+                data-id="tooltip"
+                id="badge-200805-541"
+                role="tooltip"
+              >
+                <style>
+                  
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+                </style>
+                Hearing Request
+              </div>
+            </span>
+            200805-541
+          </div>
+        </div>
+        <div
+          style="display: flex; justify-content: left; margin-left: -1rem;"
+        />
+        <div
+          data-css-1a5irm0=""
+        >
+          <strong>
+            Power Of Attorney
+          </strong>
+          <pre>
+            No representative
+9999 MISSION ST
+SAN FRANCISCO, CA 94103
+          </pre>
+        </div>
+      </div>
+    </div>
+    <div
+      class="usa-width-one-half"
+    >
+      <div>
+        <div
+          class="cf-form-textarea"
+          data-css-1tc952m=""
+        >
+          <label
+            class="question-label"
+            data-css-42cjjw=""
+            for="null-unscheduled-notes"
+          >
+            <strong>
+              <span>
+                Notes
+              </span>
+            </strong>
+          </label>
+          <textarea
+            id="null-unscheduled-notes"
+            maxlength="1000"
+            name="null-unscheduled-notes"
+          />
+        </div>
+      </div>
+      <div
+        class="cf-help-divider usa-width-one-whole"
+      />
+      <div
+        class="usa-width-one-whole"
+      >
+        <div
+          class=""
+        >
+          <div
+            class="cf-form-dropdown dropdown-hearingType"
+          >
+            <label
+              class="question-label"
+              for="hearing-type"
+              id="hearing-type-label"
+            >
+              <strong>
+                <span>
+                  Hearing Type
+                </span>
+              </strong>
+            </label>
+            <div
+              class="cf-select"
+            >
+              <div
+                class=" css-2b097c-container"
+              >
+                <div
+                  class="cf-select__control css-yk16xz-control"
+                >
+                  <div
+                    class="cf-select__value-container css-g1d714-ValueContainer"
+                  >
+                    <div
+                      class="cf-select__placeholder css-1wa3eu0-placeholder"
+                    >
+                      Select...
+                    </div>
+                    <div
+                      class="css-81nyic-Input"
+                    >
+                      <div
+                        class="cf-select__input"
+                        style="display: inline-block;"
+                      >
+                        <input
+                          aria-autocomplete="list"
+                          aria-expanded="false"
+                          aria-haspopup="true"
+                          aria-labelledby="hearing-type-label"
+                          aria-owns="hearing-type-listbox"
+                          autocapitalize="none"
+                          autocomplete="off"
+                          autocorrect="off"
+                          id="hearing-type"
+                          role="combobox"
+                          spellcheck="false"
+                          style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                          tabindex="0"
+                          type="text"
+                          value=""
+                        />
+                        <div
+                          style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                  >
+                    <span
+                      class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                    />
+                    <div
+                      aria-hidden="true"
+                      class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="css-6q0nyr-Svg"
+                        focusable="false"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        width="20"
+                      >
+                        <path
+                          d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <input
+                  name="hearingType"
+                  type="hidden"
+                  value=""
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="usa-width-one-whole"
+        data-css-1jfbwxw=""
+      >
+        <div
+          data-css-1jfbwxw=""
+        >
+          <div
+            class=""
+          >
+            <div
+              class="cf-form-dropdown dropdown-regionalOffice"
+            >
+              <label
+                class="question-label"
+                for="regional-office"
+                id="regional-office-label"
+              >
+                <strong>
+                  <span>
+                    Regional Office
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
+              >
+                <div
+                  class=" css-2b097c-container"
+                >
+                  <div
+                    class="cf-select__control css-yk16xz-control"
+                  >
+                    <div
+                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                    >
+                      <div
+                        class="cf-select__single-value css-1uccc91-singleValue"
+                      />
+                      <div
+                        class="css-81nyic-Input"
+                      >
+                        <div
+                          class="cf-select__input"
+                          style="display: inline-block;"
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-labelledby="regional-office-label"
+                            aria-owns="regional-office-listbox"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            id="regional-office"
+                            role="combobox"
+                            spellcheck="false"
+                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-6q0nyr-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <input
+                    name="regionalOffice"
+                    type="hidden"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`ScheduleVeteranForm Displays HearingTime when video is selected and halfDay is false 1`] = `
+<DocumentFragment>
+  <div
+    class="usa-width-one-whole schedule-veteran-details"
+  >
+    <div
+      class="usa-width-one-fourth schedule-veteran-appeal-info-container"
+    >
+      <div
+        class="schedule-veteran-appeals-info"
+      >
+        <h2>
+          Abellona Valtas
+        </h2>
+        <div
+          data-css-atv6j6=""
+        >
+          <pre>
+            9999 MISSION ST
+SAN FRANCISCO, CA 94103
+          </pre>
+        </div>
+        <div
+          data-css-acl5jg=""
+        >
+          <strong>
+            Issues
+          </strong>
+          00
+        </div>
+        <div
+          class="schedule-veteran-appeals-info-stream"
+          data-css-acl5jg=""
+        >
+          <strong>
+            Appeal Stream
+          </strong>
+          <pre>
+            <span>
+              Original
+            </span>
+          </pre>
+        </div>
+        <div
+          class="appeal-information-docket-type-badge"
+          data-css-acl5jg=""
+        >
+          <strong>
+            Docket Number
+          </strong>
+          <div>
+            <span
+              aria-describedby="badge-200805-541"
+              aria-label=""
+              currentitem="false"
+              data-css-2moai0=""
+              data-event="focus mouseenter"
+              data-event-off="mouseleave keydown"
+              data-for="badge-200805-541"
+              data-tip="true"
+              tabindex="0"
+            >
+              H
+            </span>
+            <span
+              data-css-1u6dx7t=""
+            >
+              <div
+                class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+                data-id="tooltip"
+                id="badge-200805-541"
+                role="tooltip"
+              >
+                <style>
+                  
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+                </style>
+                Hearing Request
+              </div>
+            </span>
+            200805-541
+          </div>
+        </div>
+        <div
+          style="display: flex; justify-content: left; margin-left: -1rem;"
+        />
+        <div
+          data-css-1a5irm0=""
+        >
+          <strong>
+            Power Of Attorney
+          </strong>
+          <pre>
+            No representative
+9999 MISSION ST
+SAN FRANCISCO, CA 94103
+          </pre>
+        </div>
+      </div>
+    </div>
+    <div
+      class="usa-width-one-half"
+    >
+      <div>
+        <div
+          class="cf-form-textarea"
+          data-css-1tc952m=""
+        >
+          <label
+            class="question-label"
+            data-css-42cjjw=""
+            for="undefined-unscheduled-notes"
+          >
+            <strong>
+              <span>
+                Notes
+              </span>
+            </strong>
+          </label>
+          <textarea
+            id="undefined-unscheduled-notes"
+            maxlength="1000"
+            name="undefined-unscheduled-notes"
+          />
+        </div>
+      </div>
+      <div
+        class="cf-help-divider usa-width-one-whole"
+      />
+      <div
+        class="usa-width-one-whole"
+      >
+        <div
+          class=""
+        >
+          <div
+            class="cf-form-dropdown dropdown-hearingType"
+          >
+            <label
+              class="question-label"
+              for="hearing-type"
+              id="hearing-type-label"
+            >
+              <strong>
+                <span>
+                  Hearing Type
+                </span>
+              </strong>
+            </label>
+            <div
+              class="cf-select"
+            >
+              <div
+                class=" css-2b097c-container"
+              >
+                <div
+                  class="cf-select__control css-yk16xz-control"
+                >
+                  <div
+                    class="cf-select__value-container css-g1d714-ValueContainer"
+                  >
+                    <div
+                      class="cf-select__placeholder css-1wa3eu0-placeholder"
+                    >
+                      Select...
+                    </div>
+                    <div
+                      class="css-81nyic-Input"
+                    >
+                      <div
+                        class="cf-select__input"
+                        style="display: inline-block;"
+                      >
+                        <input
+                          aria-autocomplete="list"
+                          aria-expanded="false"
+                          aria-haspopup="true"
+                          aria-labelledby="hearing-type-label"
+                          aria-owns="hearing-type-listbox"
+                          autocapitalize="none"
+                          autocomplete="off"
+                          autocorrect="off"
+                          id="hearing-type"
+                          role="combobox"
+                          spellcheck="false"
+                          style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                          tabindex="0"
+                          type="text"
+                          value=""
+                        />
+                        <div
+                          style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                  >
+                    <span
+                      class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                    />
+                    <div
+                      aria-hidden="true"
+                      class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="css-6q0nyr-Svg"
+                        focusable="false"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        width="20"
+                      >
+                        <path
+                          d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <input
+                  name="hearingType"
+                  type="hidden"
+                  value=""
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="usa-width-one-whole"
+        data-css-1jfbwxw=""
+      >
+        <div
+          data-css-1jfbwxw=""
+        >
+          <div
+            class=""
+          >
+            <div
+              class="cf-form-dropdown dropdown-regionalOffice"
+            >
+              <label
+                class="question-label"
+                for="regional-office"
+                id="regional-office-label"
+              >
+                <strong>
+                  <span>
+                    Regional Office
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
+              >
+                <div
+                  class=" css-2b097c-container"
+                >
+                  <div
+                    class="cf-select__control css-yk16xz-control"
+                  >
+                    <div
+                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                    >
+                      <div
+                        class="cf-select__single-value css-1uccc91-singleValue"
+                      >
+                        St. Petersburg regional office
+                      </div>
+                      <div
+                        class="css-81nyic-Input"
+                      >
+                        <div
+                          class="cf-select__input"
+                          style="display: inline-block;"
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-labelledby="regional-office-label"
+                            aria-owns="regional-office-listbox"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            id="regional-office"
+                            role="combobox"
+                            spellcheck="false"
+                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-6q0nyr-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <input
+                    name="regionalOffice"
+                    type="hidden"
+                    value="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          data-css-1jfbwxw=""
+        >
+          <div
+            class=""
+          >
+            <div
+              class="cf-form-dropdown dropdown-appealHearingLocation"
+            >
+              <label
+                class="question-label"
+                for="appeal-hearing-location"
+                id="appeal-hearing-location-label"
+              >
+                <strong>
+                  <span>
+                    Hearing Location
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
+              >
+                <div
+                  class=" css-2b097c-container"
+                >
+                  <div
+                    class="cf-select__control css-yk16xz-control"
+                  >
+                    <div
+                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                    >
+                      <div
+                        class="cf-select__single-value css-1uccc91-singleValue"
+                      />
+                      <div
+                        class="css-81nyic-Input"
+                      >
+                        <div
+                          class="cf-select__input"
+                          style="display: inline-block;"
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-labelledby="appeal-hearing-location-label"
+                            aria-owns="appeal-hearing-location-listbox"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            id="appeal-hearing-location"
+                            role="combobox"
+                            spellcheck="false"
+                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-6q0nyr-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <input
+                    name="appealHearingLocation"
+                    type="hidden"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          data-css-1jfbwxw=""
+        >
+          <div
+            class=""
+          >
+            <div
+              class="cf-form-dropdown dropdown-hearingDate"
+            >
+              <label
+                class="question-label"
+                for="hearing-date"
+                id="hearing-date-label"
+              >
+                <strong>
+                  <span>
+                    Hearing Date
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
+              >
+                <div
+                  class=" css-2b097c-container"
+                >
+                  <div
+                    class="cf-select__control css-yk16xz-control"
+                  >
+                    <div
+                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                    >
+                      <div
+                        class="cf-select__single-value css-1uccc91-singleValue"
+                      >
+                         
+                      </div>
+                      <div
+                        class="css-81nyic-Input"
+                      >
+                        <div
+                          class="cf-select__input"
+                          style="display: inline-block;"
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-labelledby="hearing-date-label"
+                            aria-owns="hearing-date-listbox"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            id="hearing-date"
+                            role="combobox"
+                            spellcheck="false"
+                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-6q0nyr-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <input
+                    name="hearingDate"
+                    type="hidden"
+                    value="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          data-css-1jfbwxw=""
+        >
+          <span
+            data-css-1042gbc=""
+            data-css-q4lgq9=""
+          >
+            <fieldset
+              class="usa-fieldset-inputs cf-form-radio "
+            >
+              <legend
+                class=""
+              >
+                <strong>
+                  <span>
+                    Hearing Time 
+                  </span>
+                </strong>
+              </legend>
+              <div
+                class="cf-form-radio-options"
+              >
+                <div
+                  class="cf-form-radio-option"
+                >
+                  <input
+                    id="hearingTime0_8:30 AM Pacific Time (US & Canada)"
+                    name="hearingTime0"
+                    type="radio"
+                    value="8:30 AM Pacific Time (US & Canada)"
+                  />
+                  <label
+                    class=""
+                    for="hearingTime0_8:30 AM Pacific Time (US & Canada)"
+                  >
+                    8:30 AM Pacific Time (US & Canada) / 11:30 AM Eastern Time (US & Canada)
+                  </label>
+                </div>
+                <div
+                  class="cf-form-radio-option"
+                >
+                  <input
+                    id="hearingTime0_12:30 PM Pacific Time (US & Canada)"
+                    name="hearingTime0"
+                    type="radio"
+                    value="12:30 PM Pacific Time (US & Canada)"
+                  />
+                  <label
+                    class=""
+                    for="hearingTime0_12:30 PM Pacific Time (US & Canada)"
+                  >
+                    12:30 PM Pacific Time (US & Canada) / 3:30 PM Eastern Time (US & Canada)
+                  </label>
+                </div>
+                <div
+                  class="cf-form-radio-option"
+                >
+                  <input
+                    checked=""
+                    id="hearingTime0_Other"
+                    name="hearingTime0"
+                    type="radio"
+                    value="Other"
+                  />
+                  <label
+                    class=""
+                    for="hearingTime0_Other"
+                  >
+                    Other
+                  </label>
+                </div>
+              </div>
+            </fieldset>
+          </span>
+          <div
+            class=""
+          >
+            <div
+              class="cf-form-dropdown dropdown-optionalHearingTime0"
+            >
+              <label
+                class="question-label usa-sr-only"
+                for="optional-hearing-time-0"
+                id="optional-hearing-time-0-label"
+              >
+                <strong>
+                  <span>
+                    Hearing Time
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
+              >
+                <div
+                  class=" css-2b097c-container"
+                >
+                  <div
+                    class="cf-select__control css-yk16xz-control"
+                  >
+                    <div
+                      class="cf-select__value-container css-g1d714-ValueContainer"
+                    >
+                      <div
+                        class="cf-select__placeholder css-1wa3eu0-placeholder"
+                      >
+                        Select a time
+                      </div>
+                      <div
+                        class="css-81nyic-Input"
+                      >
+                        <div
+                          class="cf-select__input"
+                          style="display: inline-block;"
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-labelledby="optional-hearing-time-0-label"
+                            aria-owns="optional-hearing-time-0-listbox"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            id="optional-hearing-time-0"
+                            role="combobox"
+                            spellcheck="false"
+                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-6q0nyr-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <input
+                    name="optionalHearingTime0"
+                    type="hidden"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`ScheduleVeteranForm Displays ReadOnlyHearingTimeWithZone when video is selected and halfDay is true 1`] = `
+<DocumentFragment>
+  <div
+    class="usa-width-one-whole schedule-veteran-details"
+  >
+    <div
+      class="usa-width-one-fourth schedule-veteran-appeal-info-container"
+    >
+      <div
+        class="schedule-veteran-appeals-info"
+      >
+        <h2>
+          Abellona Valtas
+        </h2>
+        <div
+          data-css-atv6j6=""
+        >
+          <pre>
+            9999 MISSION ST
+SAN FRANCISCO, CA 94103
+          </pre>
+        </div>
+        <div
+          data-css-acl5jg=""
+        >
+          <strong>
+            Issues
+          </strong>
+          00
+        </div>
+        <div
+          class="schedule-veteran-appeals-info-stream"
+          data-css-acl5jg=""
+        >
+          <strong>
+            Appeal Stream
+          </strong>
+          <pre>
+            <span>
+              Original
+            </span>
+          </pre>
+        </div>
+        <div
+          class="appeal-information-docket-type-badge"
+          data-css-acl5jg=""
+        >
+          <strong>
+            Docket Number
+          </strong>
+          <div>
+            <span
+              aria-describedby="badge-200805-541"
+              aria-label=""
+              currentitem="false"
+              data-css-2moai0=""
+              data-event="focus mouseenter"
+              data-event-off="mouseleave keydown"
+              data-for="badge-200805-541"
+              data-tip="true"
+              tabindex="0"
+            >
+              H
+            </span>
+            <span
+              data-css-1u6dx7t=""
+            >
+              <div
+                class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+                data-id="tooltip"
+                id="badge-200805-541"
+                role="tooltip"
+              >
+                <style>
+                  
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+                </style>
+                Hearing Request
+              </div>
+            </span>
+            200805-541
+          </div>
+        </div>
+        <div
+          style="display: flex; justify-content: left; margin-left: -1rem;"
+        />
+        <div
+          data-css-1a5irm0=""
+        >
+          <strong>
+            Power Of Attorney
+          </strong>
+          <pre>
+            No representative
+9999 MISSION ST
+SAN FRANCISCO, CA 94103
+          </pre>
+        </div>
+      </div>
+    </div>
+    <div
+      class="usa-width-one-half"
+    >
+      <div>
+        <div
+          class="cf-form-textarea"
+          data-css-1tc952m=""
+        >
+          <label
+            class="question-label"
+            data-css-42cjjw=""
+            for="undefined-unscheduled-notes"
+          >
+            <strong>
+              <span>
+                Notes
+              </span>
+            </strong>
+          </label>
+          <textarea
+            id="undefined-unscheduled-notes"
+            maxlength="1000"
+            name="undefined-unscheduled-notes"
+          />
+        </div>
+      </div>
+      <div
+        class="cf-help-divider usa-width-one-whole"
+      />
+      <div
+        class="usa-width-one-whole"
+      >
+        <div
+          class=""
+        >
+          <div
+            class="cf-form-dropdown dropdown-hearingType"
+          >
+            <label
+              class="question-label"
+              for="hearing-type"
+              id="hearing-type-label"
+            >
+              <strong>
+                <span>
+                  Hearing Type
+                </span>
+              </strong>
+            </label>
+            <div
+              class="cf-select"
+            >
+              <div
+                class=" css-2b097c-container"
+              >
+                <div
+                  class="cf-select__control css-yk16xz-control"
+                >
+                  <div
+                    class="cf-select__value-container css-g1d714-ValueContainer"
+                  >
+                    <div
+                      class="cf-select__placeholder css-1wa3eu0-placeholder"
+                    >
+                      Select...
+                    </div>
+                    <div
+                      class="css-81nyic-Input"
+                    >
+                      <div
+                        class="cf-select__input"
+                        style="display: inline-block;"
+                      >
+                        <input
+                          aria-autocomplete="list"
+                          aria-expanded="false"
+                          aria-haspopup="true"
+                          aria-labelledby="hearing-type-label"
+                          aria-owns="hearing-type-listbox"
+                          autocapitalize="none"
+                          autocomplete="off"
+                          autocorrect="off"
+                          id="hearing-type"
+                          role="combobox"
+                          spellcheck="false"
+                          style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                          tabindex="0"
+                          type="text"
+                          value=""
+                        />
+                        <div
+                          style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                  >
+                    <span
+                      class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                    />
+                    <div
+                      aria-hidden="true"
+                      class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="css-6q0nyr-Svg"
+                        focusable="false"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        width="20"
+                      >
+                        <path
+                          d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <input
+                  name="hearingType"
+                  type="hidden"
+                  value=""
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="usa-width-one-whole"
+        data-css-1jfbwxw=""
+      >
+        <div
+          data-css-1jfbwxw=""
+        >
+          <div
+            class=""
+          >
+            <div
+              class="cf-form-dropdown dropdown-regionalOffice"
+            >
+              <label
+                class="question-label"
+                for="regional-office"
+                id="regional-office-label"
+              >
+                <strong>
+                  <span>
+                    Regional Office
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
+              >
+                <div
+                  class=" css-2b097c-container"
+                >
+                  <div
+                    class="cf-select__control css-yk16xz-control"
+                  >
+                    <div
+                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                    >
+                      <div
+                        class="cf-select__single-value css-1uccc91-singleValue"
+                      >
+                        St. Petersburg regional office
+                      </div>
+                      <div
+                        class="css-81nyic-Input"
+                      >
+                        <div
+                          class="cf-select__input"
+                          style="display: inline-block;"
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-labelledby="regional-office-label"
+                            aria-owns="regional-office-listbox"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            id="regional-office"
+                            role="combobox"
+                            spellcheck="false"
+                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-6q0nyr-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <input
+                    name="regionalOffice"
+                    type="hidden"
+                    value="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          data-css-1jfbwxw=""
+        >
+          <div
+            class=""
+          >
+            <div
+              class="cf-form-dropdown dropdown-appealHearingLocation"
+            >
+              <label
+                class="question-label"
+                for="appeal-hearing-location"
+                id="appeal-hearing-location-label"
+              >
+                <strong>
+                  <span>
+                    Hearing Location
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
+              >
+                <div
+                  class=" css-2b097c-container"
+                >
+                  <div
+                    class="cf-select__control css-yk16xz-control"
+                  >
+                    <div
+                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                    >
+                      <div
+                        class="cf-select__single-value css-1uccc91-singleValue"
+                      />
+                      <div
+                        class="css-81nyic-Input"
+                      >
+                        <div
+                          class="cf-select__input"
+                          style="display: inline-block;"
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-labelledby="appeal-hearing-location-label"
+                            aria-owns="appeal-hearing-location-listbox"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            id="appeal-hearing-location"
+                            role="combobox"
+                            spellcheck="false"
+                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-6q0nyr-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <input
+                    name="appealHearingLocation"
+                    type="hidden"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          data-css-1jfbwxw=""
+        >
+          <div
+            class=""
+          >
+            <div
+              class="cf-form-dropdown dropdown-hearingDate"
+            >
+              <label
+                class="question-label"
+                for="hearing-date"
+                id="hearing-date-label"
+              >
+                <strong>
+                  <span>
+                    Hearing Date
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
+              >
+                <div
+                  class=" css-2b097c-container"
+                >
+                  <div
+                    class="cf-select__control css-yk16xz-control"
+                  >
+                    <div
+                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                    >
+                      <div
+                        class="cf-select__single-value css-1uccc91-singleValue"
+                      >
+                         
+                      </div>
+                      <div
+                        class="css-81nyic-Input"
+                      >
+                        <div
+                          class="cf-select__input"
+                          style="display: inline-block;"
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-labelledby="hearing-date-label"
+                            aria-owns="hearing-date-listbox"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            id="hearing-date"
+                            role="combobox"
+                            spellcheck="false"
+                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-6q0nyr-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <input
+                    name="hearingDate"
+                    type="hidden"
+                    value="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          data-css-1jfbwxw=""
+        >
+          <div
+            data-css-1a5irm0=""
+          >
+            <strong>
+              Hearing Time
+            </strong>
+            <pre>
+              8:30 AM Pacific / 11:30 AM Eastern
+            </pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`ScheduleVeteranForm Displays Virtual Hearing form fields when type is changed to Virtual 1`] = `
+<DocumentFragment>
+  <div
+    class="usa-width-one-whole schedule-veteran-details"
+  >
+    <div
+      class="usa-width-one-fourth schedule-veteran-appeal-info-container"
+    >
+      <div
+        class="schedule-veteran-appeals-info"
+      >
+        <h2>
+          Abellona Valtas
+        </h2>
+        <div
+          data-css-atv6j6=""
+        >
+          <pre>
+            9999 MISSION ST
+SAN FRANCISCO, CA 94103
+          </pre>
+        </div>
+        <div
+          data-css-acl5jg=""
+        >
+          <strong>
+            Issues
+          </strong>
+          00
+        </div>
+        <div
+          class="schedule-veteran-appeals-info-stream"
+          data-css-acl5jg=""
+        >
+          <strong>
+            Appeal Stream
+          </strong>
+          <pre>
+            <span>
+              Original
+            </span>
+          </pre>
+        </div>
+        <div
+          class="appeal-information-docket-type-badge"
+          data-css-acl5jg=""
+        >
+          <strong>
+            Docket Number
+          </strong>
+          <div>
+            <span
+              aria-describedby="badge-200805-541"
+              aria-label=""
+              currentitem="false"
+              data-css-2moai0=""
+              data-event="focus mouseenter"
+              data-event-off="mouseleave keydown"
+              data-for="badge-200805-541"
+              data-tip="true"
+              tabindex="0"
+            >
+              H
+            </span>
+            <span
+              data-css-1u6dx7t=""
+            >
+              <div
+                class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+                data-id="tooltip"
+                id="badge-200805-541"
+                role="tooltip"
+              >
+                <style>
+                  
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+                </style>
+                Hearing Request
+              </div>
+            </span>
+            200805-541
+          </div>
+        </div>
+        <div
+          style="display: flex; justify-content: left; margin-left: -1rem;"
+        />
+        <div
+          data-css-1a5irm0=""
+        >
+          <strong>
+            Power Of Attorney
+          </strong>
+          <pre>
+            No representative
+9999 MISSION ST
+SAN FRANCISCO, CA 94103
+          </pre>
+        </div>
+      </div>
+    </div>
+    <div
+      class="usa-width-one-half"
+    >
+      <div>
+        <div
+          class="cf-form-textarea"
+          data-css-1tc952m=""
+        >
+          <label
+            class="question-label"
+            data-css-42cjjw=""
+            for="undefined-unscheduled-notes"
+          >
+            <strong>
+              <span>
+                Notes
+              </span>
+            </strong>
+          </label>
+          <textarea
+            id="undefined-unscheduled-notes"
+            maxlength="1000"
+            name="undefined-unscheduled-notes"
+          />
+        </div>
+      </div>
+      <div
+        class="cf-help-divider usa-width-one-whole"
+      />
+      <div
+        class="usa-width-one-whole"
+      >
+        <div
+          class=""
+        >
+          <div
+            class="cf-form-dropdown dropdown-hearingType"
+          >
+            <label
+              class="question-label"
+              for="hearing-type"
+              id="hearing-type-label"
+            >
+              <strong>
+                <span>
+                  Hearing Type
+                </span>
+              </strong>
+            </label>
+            <div
+              class="cf-select"
+            >
+              <div
+                class=" css-2b097c-container"
+              >
+                <div
+                  class="cf-select__control css-yk16xz-control"
+                >
+                  <div
+                    class="cf-select__value-container css-g1d714-ValueContainer"
+                  >
+                    <div
+                      class="cf-select__placeholder css-1wa3eu0-placeholder"
+                    >
+                      Select...
+                    </div>
+                    <div
+                      class="css-81nyic-Input"
+                    >
+                      <div
+                        class="cf-select__input"
+                        style="display: inline-block;"
+                      >
+                        <input
+                          aria-autocomplete="list"
+                          aria-expanded="false"
+                          aria-haspopup="true"
+                          aria-labelledby="hearing-type-label"
+                          aria-owns="hearing-type-listbox"
+                          autocapitalize="none"
+                          autocomplete="off"
+                          autocorrect="off"
+                          id="hearing-type"
+                          role="combobox"
+                          spellcheck="false"
+                          style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                          tabindex="0"
+                          type="text"
+                          value=""
+                        />
+                        <div
+                          style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                  >
+                    <span
+                      class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                    />
+                    <div
+                      aria-hidden="true"
+                      class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="css-6q0nyr-Svg"
+                        focusable="false"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        width="20"
+                      >
+                        <path
+                          d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <input
+                  name="hearingType"
+                  type="hidden"
+                  value=""
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="usa-width-one-whole"
+        data-css-1jfbwxw=""
+      >
+        <div
+          data-css-acl5jg=""
+        >
+          <strong>
+            Hearing Location
+          </strong>
+          <pre>
+            Virtual
+          </pre>
+        </div>
+        <div
+          data-css-1jfbwxw=""
+        >
+          <div
+            class=""
+          >
+            <div
+              class="cf-form-dropdown dropdown-regionalOffice"
+            >
+              <label
+                class="question-label"
+                for="regional-office"
+                id="regional-office-label"
+              >
+                <strong>
+                  <span>
+                    Regional Office
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
+              >
+                <div
+                  class=" css-2b097c-container"
+                >
+                  <div
+                    class="cf-select__control css-yk16xz-control"
+                  >
+                    <div
+                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                    >
+                      <div
+                        class="cf-select__single-value css-1uccc91-singleValue"
+                      >
+                        Central
+                      </div>
+                      <div
+                        class="css-81nyic-Input"
+                      >
+                        <div
+                          class="cf-select__input"
+                          style="display: inline-block;"
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-labelledby="regional-office-label"
+                            aria-owns="regional-office-listbox"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            id="regional-office"
+                            role="combobox"
+                            spellcheck="false"
+                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 0; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-6q0nyr-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <input
+                    name="regionalOffice"
+                    type="hidden"
+                    value="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          data-css-1jfbwxw=""
+        >
+          <div
+            class=""
+          >
+            <div
+              class="cf-form-dropdown dropdown-hearingDate"
+            >
+              <label
+                class="question-label"
+                for="hearing-date"
+                id="hearing-date-label"
+              >
+                <strong>
+                  <span>
+                    <span
+                      data-css-dy8x77=""
+                    >
+                      <div>
+                        <div
+                          class="cf-loading-button-symbol cf-small-loader-symbol"
+                        >
+                          <svg
+                            class="cf-react-icon-loading-back"
+                            height="15px"
+                            viewBox="0 0 500 500"
+                            width="15px"
+                          >
+                            <path
+                              d="M249.9,362c-6.5,0-12.8,1.2-18.9,3.5l-34.4,13.3l12.7,28.8l33-12.8c2.4-0.9,5-1.4,7.5-1.4s5.1,0.5,7.5,1.4 l33.2,12.8l12.7-28.8l-34.6-13.4C262.7,363.2,256.4,362,249.9,362 M418.9,319.9l-28.8,12.7l19.1,49.6c3.5,9,0.1,15.9-2.1,19.3 c-4,5.8-10.4,9.3-17.2,9.3h0c-2.6,0-5.2-0.5-7.7-1.5l-49.5-19.1L320,418.9l50.9,19.7c6.2,2.4,12.6,3.6,19,3.6h0 c17.1,0,33.2-8.6,43.1-23c9.8-14.3,11.9-32,5.5-48.3L418.9,319.9 M81,319.9l-19.7,51c-6.3,16.4-4.3,34,5.5,48.3 c9.9,14.4,26,23,43.1,23c6.4,0,12.9-1.2,19-3.6l51-19.7l-12.7-28.8l-49.5,19.1c-2.5,1-5.1,1.4-7.6,1.4c-6.8,0-13.3-3.4-17.3-9.3 c-2.3-3.3-5.6-10.3-2.1-19.2l19.1-49.6L81,319.9 M121.1,196.6l-28.8,12.7l12.8,33.1c1.9,4.9,1.9,10.2,0,15.1l-12.8,33.1l28.8,12.7 l13.3-34.5c4.7-12.2,4.7-25.6,0-37.7L121.1,196.6 M378.8,196.5l-13.3,34.5c-4.7,12.2-4.7,25.6,0,37.7l13.3,34.5l28.8-12.7 l-12.8-33.1c-1.9-4.9-1.9-10.2,0-15.1l12.8-33.1L378.8,196.5 M290.6,92.3l-33.2,12.8c-2.4,0.9-5,1.4-7.5,1.4 c-2.6,0-5.1-0.5-7.5-1.4l-33-12.7l-12.7,28.8l34.4,13.3c6,2.3,12.4,3.5,18.8,3.5c6.4,0,12.8-1.2,18.9-3.5l34.6-13.4L290.6,92.3 M110,57.8c-17.1,0-33.2,8.6-43.1,23c-9.8,14.3-11.9,32-5.5,48.3L81,180l28.8-12.7l-19.1-49.4c-3.5-9-0.1-15.9,2.1-19.2 c4-5.9,10.5-9.3,17.3-9.3c2.5,0,5.1,0.5,7.6,1.4l49.5,19.1L180,81.1l-50.9-19.7C122.9,59,116.5,57.8,110,57.8 M389.9,57.8 c-6.4,0-12.9,1.2-19,3.6L319.9,81l12.7,28.8l49.5-19.1c2.5-1,5.1-1.4,7.6-1.4c6.8,0,13.3,3.4,17.3,9.3c2.3,3.3,5.6,10.3,2.1,19.2 l-19.1,49.5l28.8,12.7l19.7-50.9c6.3-16.4,4.3-34-5.5-48.3C423.1,66.3,407,57.8,389.9,57.8M303.4,378.9l-12.7,28.8l29.3,11.3l12.7-28.8L303.4,378.9 M196.6,378.8l-29.3,11.3l12.7,28.8l29.3-11.3 L196.6,378.8 M407.6,290.6l-28.8,12.7l11.3,29.3l28.8-12.7L407.6,290.6 M92.4,290.5L81,319.9l28.8,12.7l11.3-29.3L92.4,290.5 M109.8,167.2L81,180l11.3,29.3l28.8-12.7L109.8,167.2 M390.1,167.2l-11.3,29.3l28.8,12.7l11.3-29.3L390.1,167.2 M180,81.1 l-12.7,28.8l29.3,11.3l12.7-28.8L180,81.1 M319.9,81l-29.3,11.3l12.7,28.8l29.3-11.3L319.9,81"
+                              fill="#844e9f"
+                              fill-opacity="1"
+                              opacity="1"
+                            />
+                          </svg>
+                          <svg
+                            class="cf-react-icon-loading-front"
+                            height="15px"
+                            style="margin-left: -15px;"
+                            viewBox="0 0 500 500"
+                            width="15px"
+                          >
+                            <path
+                              d="M209.3,407.5L180,418.9l22.1,50C210.6,488.1,229,500,250,500s39.4-11.9,47.9-31.1l22.1-49.9l-29.3-11.3 l-21.5,48.5c-3.5,7.8-10.6,12.5-19.1,12.5c-8.5,0-15.7-4.7-19.1-12.5L209.3,407.5 M378.8,303.3l-33.8,15 c-11.9,5.3-21.4,14.7-26.7,26.7l-15,33.9l29.3,11.3l14.4-32.5c2.1-4.8,5.9-8.6,10.7-10.7l32.4-14.3L378.8,303.3 M121.1,303.3 l-11.3,29.3l32.4,14.4c4.8,2.1,8.6,5.9,10.7,10.7l14.4,32.5l29.3-11.3l-15-33.9c-5.3-11.9-14.8-21.4-26.7-26.7L121.1,303.3 M81,180 l-49.9,22.1C11.9,210.6,0,228.9,0,249.9c0,21,11.9,39.4,31.1,47.9L81,319.9l11.3-29.3l-48.5-21.5c-7.8-3.5-12.5-10.6-12.5-19.1 c0-8.5,4.7-15.7,12.5-19.1l48.5-21.5L81,180 M418.9,179.9l-11.3,29.3l48.6,21.5c7.8,3.5,12.5,10.6,12.5,19.1 c0,8.5-4.7,15.7-12.5,19.1l-48.6,21.5l11.3,29.3l50-22.1c19.2-8.5,31.1-26.9,31.1-47.9s-11.9-39.4-31.1-47.9L418.9,179.9 M167.3,109.8L153,142.2c-2.1,4.8-5.9,8.6-10.7,10.7l-32.5,14.4l11.3,29.3l33.9-15c11.9-5.3,21.4-14.7,26.7-26.7l14.9-33.7 L167.3,109.8 M332.7,109.8l-29.3,11.3l15,33.8c5.3,11.9,14.7,21.4,26.7,26.7l33.8,15l11.3-29.3l-32.4-14.4 c-4.8-2.1-8.6-5.9-10.7-10.7L332.7,109.8 M250,0c-21,0-39.4,11.9-47.9,31.2L180,81.1l29.3,11.3l21.5-48.5 c3.5-7.8,10.6-12.5,19.1-12.5c8.5,0,15.7,4.7,19.1,12.5l21.5,48.5L319.9,81l-22.1-49.9C289.3,11.9,271,0,250,0M303.4,378.9l-12.7,28.8l29.3,11.3l12.7-28.8L303.4,378.9 M196.6,378.8l-29.3,11.3l12.7,28.8l29.3-11.3 L196.6,378.8 M407.6,290.6l-28.8,12.7l11.3,29.3l28.8-12.7L407.6,290.6 M92.4,290.5L81,319.9l28.8,12.7l11.3-29.3L92.4,290.5 M109.8,167.2L81,180l11.3,29.3l28.8-12.7L109.8,167.2 M390.1,167.2l-11.3,29.3l28.8,12.7l11.3-29.3L390.1,167.2 M180,81.1 l-12.7,28.8l29.3,11.3l12.7-28.8L180,81.1 M319.9,81l-29.3,11.3l12.7,28.8l29.3-11.3L319.9,81"
+                              fill="#323a45"
+                              fill-opacity=".25"
+                              opacity="1"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                      Finding upcoming hearing dates for this regional office...
+                    </span>
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
+              >
+                <div
+                  class=" css-2b097c-container"
+                >
+                  <div
+                    class="cf-select__control css-yk16xz-control"
+                  >
+                    <div
+                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                    >
+                      <div
+                        class="cf-select__single-value css-1uccc91-singleValue"
+                      />
+                      <div
+                        class="css-81nyic-Input"
+                      >
+                        <div
+                          class="cf-select__input"
+                          style="display: inline-block;"
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-labelledby="hearing-date-label"
+                            aria-owns="hearing-date-listbox"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            id="hearing-date"
+                            role="combobox"
+                            spellcheck="false"
+                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-6q0nyr-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <input
+                    name="hearingDate"
+                    type="hidden"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="cf-help-divider usa-width-one-whole"
+      />
+      <div
+        class="usa-width-one-whole"
+      >
+        <h2>
+          Email Notifications 
+        </h2>
+        <p>
+          When you schedule the hearing, the undefined, POA, and Judge will receive an email with connection information for the virtual hearing.
+        </p>
+        <div
+          data-css-1jfbwxw=""
+        />
+        <strong>
+           
+        </strong>
+        <div
+          class="usa-grid css-1jfbwxw"
+        >
+          <div
+            class="usa-width-one-whole"
+          >
+            <div
+              class=""
+            >
+              <div
+                class="cf-form-dropdown dropdown-appellantTz"
+                data-css-1dzedb9=""
+              >
+                <label
+                  class="question-label"
+                  for="appellant-tz"
+                  id="appellant-tz-label"
+                >
+                  <strong>
+                    <span>
+                      undefined Timezone
+                      <span
+                        class="cf-required"
+                      >
+                        Required
+                      </span>
+                    </span>
+                  </strong>
+                </label>
+                <div
+                  class="cf-select"
+                >
+                  <div
+                    class=" css-2b097c-container"
+                  >
+                    <div
+                      class="cf-select__control css-yk16xz-control"
+                    >
+                      <div
+                        class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                      >
+                        <div
+                          class="cf-select__single-value css-1uccc91-singleValue"
+                        >
+                          Mountain Time (US & Canada)
+                        </div>
+                        <div
+                          class="css-81nyic-Input"
+                        >
+                          <div
+                            class="cf-select__input"
+                            style="display: inline-block;"
+                          >
+                            <input
+                              aria-autocomplete="list"
+                              aria-expanded="false"
+                              aria-haspopup="true"
+                              aria-labelledby="appellant-tz-label"
+                              aria-owns="appellant-tz-listbox"
+                              autocapitalize="none"
+                              autocomplete="off"
+                              autocorrect="off"
+                              id="appellant-tz"
+                              role="combobox"
+                              spellcheck="false"
+                              style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                              tabindex="0"
+                              type="text"
+                              value=""
+                            />
+                            <div
+                              style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                      >
+                        <span
+                          class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                        />
+                        <div
+                          aria-hidden="true"
+                          class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            class="css-6q0nyr-Svg"
+                            focusable="false"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            width="20"
+                          >
+                            <path
+                              d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                    <input
+                      name="appellantTz"
+                      type="hidden"
+                      value="America/Denver"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="helper-text"
+            >
+              The hearing time in email notifications is calculated based on the timezone.
+            </div>
+          </div>
+        </div>
+        <div
+          class="usa-grid css-1jfbwxw"
+          id="email-section"
+        >
+          <div
+            class="usa-width-one-whole"
+          >
+            <div
+              class="cf-form-textinput cf-inline-field   "
+            >
+              <label
+                for="undefined Email (for these notifications only)"
+              >
+                <strong>
+                  <span>
+                    undefined Email (for these notifications only)
+                    <span
+                      class="cf-required"
+                    >
+                      Required
+                    </span>
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="input-container"
+              >
+                <input
+                  class="cf-form-textinput cf-inline-field"
+                  id="undefined Email (for these notifications only)"
+                  name="undefined Email (for these notifications only)"
+                  type="text"
+                  value="Bob.Smith@test.com"
+                />
+              </div>
+            </div>
+            <div
+              class="helper-text"
+            >
+              This email address will be used to send notifications for this hearing only.
+            </div>
+          </div>
+        </div>
+        <div
+          data-css-1jfbwxw=""
+        />
+        <strong>
+           Power of Attorney (POA)
+        </strong>
+        <div
+          data-css-1a5irm0=""
+        >
+          <pre>
+            PARALYZED VETERANS OF AMERICA, INC.
+          </pre>
+        </div>
+        <div
+          class="usa-grid css-1jfbwxw"
+        >
+          <div
+            class="usa-width-one-whole"
+          >
+            <div
+              class=""
+            >
+              <div
+                class="cf-form-dropdown dropdown-representativeTz"
+                data-css-1dzedb9=""
+              >
+                <label
+                  class="question-label"
+                  for="representative-tz"
+                  id="representative-tz-label"
+                >
+                  <strong>
+                    <span>
+                      POA/Representative Timezone
+                      <span
+                        class="cf-required"
+                      >
+                        Required
+                      </span>
+                    </span>
+                  </strong>
+                </label>
+                <div
+                  class="cf-select"
+                >
+                  <div
+                    class=" css-2b097c-container"
+                  >
+                    <div
+                      class="cf-select__control css-yk16xz-control"
+                    >
+                      <div
+                        class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                      >
+                        <div
+                          class="cf-select__single-value css-1uccc91-singleValue"
+                        >
+                          Pacific Time (US & Canada)
+                        </div>
+                        <div
+                          class="css-81nyic-Input"
+                        >
+                          <div
+                            class="cf-select__input"
+                            style="display: inline-block;"
+                          >
+                            <input
+                              aria-autocomplete="list"
+                              aria-expanded="false"
+                              aria-haspopup="true"
+                              aria-labelledby="representative-tz-label"
+                              aria-owns="representative-tz-listbox"
+                              autocapitalize="none"
+                              autocomplete="off"
+                              autocorrect="off"
+                              id="representative-tz"
+                              role="combobox"
+                              spellcheck="false"
+                              style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                              tabindex="0"
+                              type="text"
+                              value=""
+                            />
+                            <div
+                              style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                      >
+                        <span
+                          class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                        />
+                        <div
+                          aria-hidden="true"
+                          class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            class="css-6q0nyr-Svg"
+                            focusable="false"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            width="20"
+                          >
+                            <path
+                              d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                    <input
+                      name="representativeTz"
+                      type="hidden"
+                      value="America/Los_Angeles"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="helper-text"
+            >
+              The hearing time in email notifications is calculated based on the timezone.
+            </div>
+          </div>
+        </div>
+        <div
+          class="usa-grid css-1jfbwxw"
+        >
+          <div
+            class="usa-width-one-whole"
+          >
+            <div
+              class="cf-form-textinput cf-inline-field   "
+            >
+              <label
+                for="POA/Representative Email (for these notifications only)"
+              >
+                <strong>
+                  <span>
+                    POA/Representative Email (for these notifications only)
+                    <span
+                      class="cf-optional"
+                    >
+                      Optional
+                    </span>
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="input-container"
+              >
+                <input
+                  class="cf-form-textinput cf-inline-field"
+                  id="POA/Representative Email (for these notifications only)"
+                  name="POA/Representative Email (for these notifications only)"
+                  type="text"
+                  value="tom.brady@caseflow.gov"
+                />
+              </div>
+            </div>
+            <div
+              class="helper-text"
+            >
+              This email address will be used to send notifications for this hearing only.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`ScheduleVeteranForm Displays error messages when errors are present 1`] = `
+<DocumentFragment>
+  <div
+    class="usa-width-one-whole schedule-veteran-details"
+  >
+    <div
+      class="usa-width-one-fourth schedule-veteran-appeal-info-container"
+    >
+      <div
+        class="schedule-veteran-appeals-info"
+      >
+        <h2>
+          Abellona Valtas
+        </h2>
+        <div
+          data-css-atv6j6=""
+        >
+          <pre>
+            9999 MISSION ST
+SAN FRANCISCO, CA 94103
+          </pre>
+        </div>
+        <div
+          data-css-acl5jg=""
+        >
+          <strong>
+            Issues
+          </strong>
+          00
+        </div>
+        <div
+          class="schedule-veteran-appeals-info-stream"
+          data-css-acl5jg=""
+        >
+          <strong>
+            Appeal Stream
+          </strong>
+          <pre>
+            <span>
+              Original
+            </span>
+          </pre>
+        </div>
+        <div
+          class="appeal-information-docket-type-badge"
+          data-css-acl5jg=""
+        >
+          <strong>
+            Docket Number
+          </strong>
+          <div>
+            <span
+              aria-describedby="badge-200805-541"
+              aria-label=""
+              currentitem="false"
+              data-css-2moai0=""
+              data-event="focus mouseenter"
+              data-event-off="mouseleave keydown"
+              data-for="badge-200805-541"
+              data-tip="true"
+              tabindex="0"
+            >
+              H
+            </span>
+            <span
+              data-css-1u6dx7t=""
+            >
+              <div
+                class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+                data-id="tooltip"
+                id="badge-200805-541"
+                role="tooltip"
+              >
+                <style>
+                  
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+                </style>
+                Hearing Request
+              </div>
+            </span>
+            200805-541
+          </div>
+        </div>
+        <div
+          style="display: flex; justify-content: left; margin-left: -1rem;"
+        />
+        <div
+          data-css-1a5irm0=""
+        >
+          <strong>
+            Power Of Attorney
+          </strong>
+          <pre>
+            No representative
+9999 MISSION ST
+SAN FRANCISCO, CA 94103
+          </pre>
+        </div>
+      </div>
+    </div>
+    <div
+      class="usa-width-one-half"
+    >
+      <div>
+        <div
+          class="cf-form-textarea"
+          data-css-1tc952m=""
+        >
+          <label
+            class="question-label"
+            data-css-42cjjw=""
+            for="undefined-unscheduled-notes"
+          >
+            <strong>
+              <span>
+                Notes
+              </span>
+            </strong>
+          </label>
+          <textarea
+            id="undefined-unscheduled-notes"
+            maxlength="1000"
+            name="undefined-unscheduled-notes"
+          />
+        </div>
+      </div>
+      <div
+        class="cf-help-divider usa-width-one-whole"
+      />
+      <div
+        class="usa-width-one-whole"
+      >
+        <div
+          class=""
+        >
+          <div
+            class="cf-form-dropdown dropdown-hearingType"
+          >
+            <label
+              class="question-label"
+              for="hearing-type"
+              id="hearing-type-label"
+            >
+              <strong>
+                <span>
+                  Hearing Type
+                </span>
+              </strong>
+            </label>
+            <div
+              class="cf-select"
+            >
+              <div
+                class=" css-2b097c-container"
+              >
+                <div
+                  class="cf-select__control css-yk16xz-control"
+                >
+                  <div
+                    class="cf-select__value-container css-g1d714-ValueContainer"
+                  >
+                    <div
+                      class="cf-select__placeholder css-1wa3eu0-placeholder"
+                    >
+                      Select...
+                    </div>
+                    <div
+                      class="css-81nyic-Input"
+                    >
+                      <div
+                        class="cf-select__input"
+                        style="display: inline-block;"
+                      >
+                        <input
+                          aria-autocomplete="list"
+                          aria-expanded="false"
+                          aria-haspopup="true"
+                          aria-labelledby="hearing-type-label"
+                          aria-owns="hearing-type-listbox"
+                          autocapitalize="none"
+                          autocomplete="off"
+                          autocorrect="off"
+                          id="hearing-type"
+                          role="combobox"
+                          spellcheck="false"
+                          style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                          tabindex="0"
+                          type="text"
+                          value=""
+                        />
+                        <div
+                          style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                  >
+                    <span
+                      class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                    />
+                    <div
+                      aria-hidden="true"
+                      class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="css-6q0nyr-Svg"
+                        focusable="false"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        width="20"
+                      >
+                        <path
+                          d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <input
+                  name="hearingType"
+                  type="hidden"
+                  value=""
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="usa-width-one-whole"
+        data-css-1jfbwxw=""
+      >
+        <div
+          data-css-1jfbwxw=""
+        >
+          <div
+            class=""
+          >
+            <div
+              class="cf-form-dropdown dropdown-regionalOffice"
+            >
+              <label
+                class="question-label"
+                for="regional-office"
+                id="regional-office-label"
+              >
+                <strong>
+                  <span>
+                    Regional Office
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
+              >
+                <div
+                  class=" css-2b097c-container"
+                >
+                  <div
+                    class="cf-select__control css-yk16xz-control"
+                  >
+                    <div
+                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                    >
+                      <div
+                        class="cf-select__single-value css-1uccc91-singleValue"
+                      >
+                        St. Petersburg regional office
+                      </div>
+                      <div
+                        class="css-81nyic-Input"
+                      >
+                        <div
+                          class="cf-select__input"
+                          style="display: inline-block;"
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-labelledby="regional-office-label"
+                            aria-owns="regional-office-listbox"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            id="regional-office"
+                            role="combobox"
+                            spellcheck="false"
+                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-6q0nyr-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <input
+                    name="regionalOffice"
+                    type="hidden"
+                    value="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          data-css-1jfbwxw=""
+        >
+          <div
+            class=""
+          >
+            <div
+              class="cf-form-dropdown dropdown-appealHearingLocation"
+            >
+              <label
+                class="question-label"
+                for="appeal-hearing-location"
+                id="appeal-hearing-location-label"
+              >
+                <strong>
+                  <span>
+                    Hearing Location
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
+              >
+                <div
+                  class=" css-2b097c-container"
+                >
+                  <div
+                    class="cf-select__control css-yk16xz-control"
+                  >
+                    <div
+                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                    >
+                      <div
+                        class="cf-select__single-value css-1uccc91-singleValue"
+                      />
+                      <div
+                        class="css-81nyic-Input"
+                      >
+                        <div
+                          class="cf-select__input"
+                          style="display: inline-block;"
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-labelledby="appeal-hearing-location-label"
+                            aria-owns="appeal-hearing-location-listbox"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            id="appeal-hearing-location"
+                            role="combobox"
+                            spellcheck="false"
+                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-6q0nyr-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <input
+                    name="appealHearingLocation"
+                    type="hidden"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          data-css-1jfbwxw=""
+        >
+          <div
+            class="usa-input-error"
+          >
+            <div
+              class="cf-form-dropdown dropdown-hearingDate"
+            >
+              <label
+                class="question-label"
+                for="hearing-date"
+                id="hearing-date-label"
+              >
+                <strong>
+                  <span>
+                    Hearing Date
+                  </span>
+                </strong>
+              </label>
+              <span
+                class="usa-input-error-message"
+                tabindex="0"
+              >
+                Please select hearing day
+              </span>
+              <div
+                class="cf-select"
+              >
+                <div
+                  class=" css-2b097c-container"
+                >
+                  <div
+                    class="cf-select__control css-yk16xz-control"
+                  >
+                    <div
+                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                    >
+                      <div
+                        class="cf-select__single-value css-1uccc91-singleValue"
+                      >
+                         
+                      </div>
+                      <div
+                        class="css-81nyic-Input"
+                      >
+                        <div
+                          class="cf-select__input"
+                          style="display: inline-block;"
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-labelledby="hearing-date-label"
+                            aria-owns="hearing-date-listbox"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            id="hearing-date"
+                            role="combobox"
+                            spellcheck="false"
+                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-6q0nyr-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <input
+                    name="hearingDate"
+                    type="hidden"
+                    value="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`ScheduleVeteranForm Displays hearing form when regional office is selected 1`] = `
+<DocumentFragment>
+  <div
+    class="usa-width-one-whole schedule-veteran-details"
+  >
+    <div
+      class="usa-width-one-fourth schedule-veteran-appeal-info-container"
+    >
+      <div
+        class="schedule-veteran-appeals-info"
+      >
+        <h2>
+          Abellona Valtas
+        </h2>
+        <div
+          data-css-atv6j6=""
+        >
+          <pre>
+            9999 MISSION ST
+SAN FRANCISCO, CA 94103
+          </pre>
+        </div>
+        <div
+          data-css-acl5jg=""
+        >
+          <strong>
+            Issues
+          </strong>
+          00
+        </div>
+        <div
+          class="schedule-veteran-appeals-info-stream"
+          data-css-acl5jg=""
+        >
+          <strong>
+            Appeal Stream
+          </strong>
+          <pre>
+            <span>
+              Original
+            </span>
+          </pre>
+        </div>
+        <div
+          class="appeal-information-docket-type-badge"
+          data-css-acl5jg=""
+        >
+          <strong>
+            Docket Number
+          </strong>
+          <div>
+            <span
+              aria-describedby="badge-200805-541"
+              aria-label=""
+              currentitem="false"
+              data-css-2moai0=""
+              data-event="focus mouseenter"
+              data-event-off="mouseleave keydown"
+              data-for="badge-200805-541"
+              data-tip="true"
+              tabindex="0"
+            >
+              H
+            </span>
+            <span
+              data-css-1u6dx7t=""
+            >
+              <div
+                class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+                data-id="tooltip"
+                id="badge-200805-541"
+                role="tooltip"
+              >
+                <style>
+                  
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+                </style>
+                Hearing Request
+              </div>
+            </span>
+            200805-541
+          </div>
+        </div>
+        <div
+          style="display: flex; justify-content: left; margin-left: -1rem;"
+        />
+        <div
+          data-css-1a5irm0=""
+        >
+          <strong>
+            Power Of Attorney
+          </strong>
+          <pre>
+            No representative
+9999 MISSION ST
+SAN FRANCISCO, CA 94103
+          </pre>
+        </div>
+      </div>
+    </div>
+    <div
+      class="usa-width-one-half"
+    >
+      <div>
+        <div
+          class="cf-form-textarea"
+          data-css-1tc952m=""
+        >
+          <label
+            class="question-label"
+            data-css-42cjjw=""
+            for="undefined-unscheduled-notes"
+          >
+            <strong>
+              <span>
+                Notes
+              </span>
+            </strong>
+          </label>
+          <textarea
+            id="undefined-unscheduled-notes"
+            maxlength="1000"
+            name="undefined-unscheduled-notes"
+          />
+        </div>
+      </div>
+      <div
+        class="cf-help-divider usa-width-one-whole"
+      />
+      <div
+        class="usa-width-one-whole"
+      >
+        <div
+          class=""
+        >
+          <div
+            class="cf-form-dropdown dropdown-hearingType"
+          >
+            <label
+              class="question-label"
+              for="hearing-type"
+              id="hearing-type-label"
+            >
+              <strong>
+                <span>
+                  Hearing Type
+                </span>
+              </strong>
+            </label>
+            <div
+              class="cf-select"
+            >
+              <div
+                class=" css-2b097c-container"
+              >
+                <div
+                  class="cf-select__control css-yk16xz-control"
+                >
+                  <div
+                    class="cf-select__value-container css-g1d714-ValueContainer"
+                  >
+                    <div
+                      class="cf-select__placeholder css-1wa3eu0-placeholder"
+                    >
+                      Select...
+                    </div>
+                    <div
+                      class="css-81nyic-Input"
+                    >
+                      <div
+                        class="cf-select__input"
+                        style="display: inline-block;"
+                      >
+                        <input
+                          aria-autocomplete="list"
+                          aria-expanded="false"
+                          aria-haspopup="true"
+                          aria-labelledby="hearing-type-label"
+                          aria-owns="hearing-type-listbox"
+                          autocapitalize="none"
+                          autocomplete="off"
+                          autocorrect="off"
+                          id="hearing-type"
+                          role="combobox"
+                          spellcheck="false"
+                          style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                          tabindex="0"
+                          type="text"
+                          value=""
+                        />
+                        <div
+                          style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                  >
+                    <span
+                      class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                    />
+                    <div
+                      aria-hidden="true"
+                      class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="css-6q0nyr-Svg"
+                        focusable="false"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        width="20"
+                      >
+                        <path
+                          d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <input
+                  name="hearingType"
+                  type="hidden"
+                  value=""
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="usa-width-one-whole"
+        data-css-1jfbwxw=""
+      >
+        <div
+          data-css-1jfbwxw=""
+        >
+          <div
+            class=""
+          >
+            <div
+              class="cf-form-dropdown dropdown-regionalOffice"
+            >
+              <label
+                class="question-label"
+                for="regional-office"
+                id="regional-office-label"
+              >
+                <strong>
+                  <span>
+                    Regional Office
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
+              >
+                <div
+                  class=" css-2b097c-container"
+                >
+                  <div
+                    class="cf-select__control css-yk16xz-control"
+                  >
+                    <div
+                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                    >
+                      <div
+                        class="cf-select__single-value css-1uccc91-singleValue"
+                      >
+                        St. Petersburg regional office
+                      </div>
+                      <div
+                        class="css-81nyic-Input"
+                      >
+                        <div
+                          class="cf-select__input"
+                          style="display: inline-block;"
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-labelledby="regional-office-label"
+                            aria-owns="regional-office-listbox"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            id="regional-office"
+                            role="combobox"
+                            spellcheck="false"
+                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-6q0nyr-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <input
+                    name="regionalOffice"
+                    type="hidden"
+                    value="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          data-css-1jfbwxw=""
+        >
+          <div
+            class=""
+          >
+            <div
+              class="cf-form-dropdown dropdown-appealHearingLocation"
+            >
+              <label
+                class="question-label"
+                for="appeal-hearing-location"
+                id="appeal-hearing-location-label"
+              >
+                <strong>
+                  <span>
+                    Hearing Location
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
+              >
+                <div
+                  class=" css-2b097c-container"
+                >
+                  <div
+                    class="cf-select__control css-yk16xz-control"
+                  >
+                    <div
+                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                    >
+                      <div
+                        class="cf-select__single-value css-1uccc91-singleValue"
+                      />
+                      <div
+                        class="css-81nyic-Input"
+                      >
+                        <div
+                          class="cf-select__input"
+                          style="display: inline-block;"
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-labelledby="appeal-hearing-location-label"
+                            aria-owns="appeal-hearing-location-listbox"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            id="appeal-hearing-location"
+                            role="combobox"
+                            spellcheck="false"
+                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-6q0nyr-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <input
+                    name="appealHearingLocation"
+                    type="hidden"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          data-css-1jfbwxw=""
+        >
+          <div
+            class=""
+          >
+            <div
+              class="cf-form-dropdown dropdown-hearingDate"
+            >
+              <label
+                class="question-label"
+                for="hearing-date"
+                id="hearing-date-label"
+              >
+                <strong>
+                  <span>
+                    Hearing Date
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
+              >
+                <div
+                  class=" css-2b097c-container"
+                >
+                  <div
+                    class="cf-select__control css-yk16xz-control"
+                  >
+                    <div
+                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                    >
+                      <div
+                        class="cf-select__single-value css-1uccc91-singleValue"
+                      >
+                         
+                      </div>
+                      <div
+                        class="css-81nyic-Input"
+                      >
+                        <div
+                          class="cf-select__input"
+                          style="display: inline-block;"
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-labelledby="hearing-date-label"
+                            aria-owns="hearing-date-listbox"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            id="hearing-date"
+                            role="combobox"
+                            spellcheck="false"
+                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-6q0nyr-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <input
+                    name="hearingDate"
+                    type="hidden"
+                    value="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`ScheduleVeteranForm Matches snapshot with default props 1`] = `
+<DocumentFragment>
+  <div
+    class="usa-width-one-whole schedule-veteran-details"
+  >
+    <div
+      class="usa-width-one-fourth schedule-veteran-appeal-info-container"
+    >
+      <div
+        class="schedule-veteran-appeals-info"
+      >
+        <h2>
+          Abellona Valtas
+        </h2>
+        <div
+          data-css-atv6j6=""
+        >
+          <pre>
+            9999 MISSION ST
+SAN FRANCISCO, CA 94103
+          </pre>
+        </div>
+        <div
+          data-css-acl5jg=""
+        >
+          <strong>
+            Issues
+          </strong>
+          00
+        </div>
+        <div
+          class="schedule-veteran-appeals-info-stream"
+          data-css-acl5jg=""
+        >
+          <strong>
+            Appeal Stream
+          </strong>
+          <pre>
+            <span>
+              Original
+            </span>
+          </pre>
+        </div>
+        <div
+          class="appeal-information-docket-type-badge"
+          data-css-acl5jg=""
+        >
+          <strong>
+            Docket Number
+          </strong>
+          <div>
+            <span
+              aria-describedby="badge-200805-541"
+              aria-label=""
+              currentitem="false"
+              data-css-2moai0=""
+              data-event="focus mouseenter"
+              data-event-off="mouseleave keydown"
+              data-for="badge-200805-541"
+              data-tip="true"
+              tabindex="0"
+            >
+              H
+            </span>
+            <span
+              data-css-1u6dx7t=""
+            >
+              <div
+                class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+                data-id="tooltip"
+                id="badge-200805-541"
+                role="tooltip"
+              >
+                <style>
+                  
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+                </style>
+                Hearing Request
+              </div>
+            </span>
+            200805-541
+          </div>
+        </div>
+        <div
+          style="display: flex; justify-content: left; margin-left: -1rem;"
+        />
+        <div
+          data-css-1a5irm0=""
+        >
+          <strong>
+            Power Of Attorney
+          </strong>
+          <pre>
+            No representative
+9999 MISSION ST
+SAN FRANCISCO, CA 94103
+          </pre>
+        </div>
+      </div>
+    </div>
+    <div
+      class="usa-width-one-half"
+    >
+      <div>
+        <div
+          class="cf-form-textarea"
+          data-css-1tc952m=""
+        >
+          <label
+            class="question-label"
+            data-css-42cjjw=""
+            for="undefined-unscheduled-notes"
+          >
+            <strong>
+              <span>
+                Notes
+              </span>
+            </strong>
+          </label>
+          <textarea
+            id="undefined-unscheduled-notes"
+            maxlength="1000"
+            name="undefined-unscheduled-notes"
+          />
+        </div>
+      </div>
+      <div
+        class="cf-help-divider usa-width-one-whole"
+      />
+      <div
+        class="usa-width-one-whole"
+      >
+        <div
+          class=""
+        >
+          <div
+            class="cf-form-dropdown dropdown-hearingType"
+          >
+            <label
+              class="question-label"
+              for="hearing-type"
+              id="hearing-type-label"
+            >
+              <strong>
+                <span>
+                  Hearing Type
+                </span>
+              </strong>
+            </label>
+            <div
+              class="cf-select"
+            >
+              <div
+                class=" css-2b097c-container"
+              >
+                <div
+                  class="cf-select__control css-yk16xz-control"
+                >
+                  <div
+                    class="cf-select__value-container css-g1d714-ValueContainer"
+                  >
+                    <div
+                      class="cf-select__placeholder css-1wa3eu0-placeholder"
+                    >
+                      Select...
+                    </div>
+                    <div
+                      class="css-81nyic-Input"
+                    >
+                      <div
+                        class="cf-select__input"
+                        style="display: inline-block;"
+                      >
+                        <input
+                          aria-autocomplete="list"
+                          aria-expanded="false"
+                          aria-haspopup="true"
+                          aria-labelledby="hearing-type-label"
+                          aria-owns="hearing-type-listbox"
+                          autocapitalize="none"
+                          autocomplete="off"
+                          autocorrect="off"
+                          id="hearing-type"
+                          role="combobox"
+                          spellcheck="false"
+                          style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                          tabindex="0"
+                          type="text"
+                          value=""
+                        />
+                        <div
+                          style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                  >
+                    <span
+                      class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                    />
+                    <div
+                      aria-hidden="true"
+                      class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="css-6q0nyr-Svg"
+                        focusable="false"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        width="20"
+                      >
+                        <path
+                          d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <input
+                  name="hearingType"
+                  type="hidden"
+                  value=""
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="usa-width-one-whole"
+        data-css-1jfbwxw=""
+      >
+        <div
+          data-css-1jfbwxw=""
+        >
+          <div
+            class=""
+          >
+            <div
+              class="cf-form-dropdown dropdown-regionalOffice"
+            >
+              <label
+                class="question-label"
+                for="regional-office"
+                id="regional-office-label"
+              >
+                <strong>
+                  <span>
+                    Regional Office
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
+              >
+                <div
+                  class=" css-2b097c-container"
+                >
+                  <div
+                    class="cf-select__control css-yk16xz-control"
+                  >
+                    <div
+                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                    >
+                      <div
+                        class="cf-select__single-value css-1uccc91-singleValue"
+                      />
+                      <div
+                        class="css-81nyic-Input"
+                      >
+                        <div
+                          class="cf-select__input"
+                          style="display: inline-block;"
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-labelledby="regional-office-label"
+                            aria-owns="regional-office-listbox"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            id="regional-office"
+                            role="combobox"
+                            spellcheck="false"
+                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-6q0nyr-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <input
+                    name="regionalOffice"
+                    type="hidden"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`ScheduleVeteranForm RO dropdown includes Virtual Hearings as option is type is selected as Virtual 1`] = `
+<DocumentFragment>
+  <div
+    class="usa-width-one-whole schedule-veteran-details"
+  >
+    <div
+      class="usa-width-one-fourth schedule-veteran-appeal-info-container"
+    >
+      <div
+        class="schedule-veteran-appeals-info"
+      >
+        <h2>
+          Abellona Valtas
+        </h2>
+        <div
+          data-css-atv6j6=""
+        >
+          <pre>
+            9999 MISSION ST
+SAN FRANCISCO, CA 94103
+          </pre>
+        </div>
+        <div
+          data-css-acl5jg=""
+        >
+          <strong>
+            Issues
+          </strong>
+          00
+        </div>
+        <div
+          class="schedule-veteran-appeals-info-stream"
+          data-css-acl5jg=""
+        >
+          <strong>
+            Appeal Stream
+          </strong>
+          <pre>
+            <span>
+              Original
+            </span>
+          </pre>
+        </div>
+        <div
+          class="appeal-information-docket-type-badge"
+          data-css-acl5jg=""
+        >
+          <strong>
+            Docket Number
+          </strong>
+          <div>
+            <span
+              aria-describedby="badge-200805-541"
+              aria-label=""
+              currentitem="false"
+              data-css-2moai0=""
+              data-event="focus mouseenter"
+              data-event-off="mouseleave keydown"
+              data-for="badge-200805-541"
+              data-tip="true"
+              tabindex="0"
+            >
+              H
+            </span>
+            <span
+              data-css-1u6dx7t=""
+            >
+              <div
+                class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+                data-id="tooltip"
+                id="badge-200805-541"
+                role="tooltip"
+              >
+                <style>
+                  
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+                </style>
+                Hearing Request
+              </div>
+            </span>
+            200805-541
+          </div>
+        </div>
+        <div
+          style="display: flex; justify-content: left; margin-left: -1rem;"
+        />
+        <div
+          data-css-1a5irm0=""
+        >
+          <strong>
+            Power Of Attorney
+          </strong>
+          <pre>
+            No representative
+9999 MISSION ST
+SAN FRANCISCO, CA 94103
+          </pre>
+        </div>
+      </div>
+    </div>
+    <div
+      class="usa-width-one-half"
+    >
+      <div>
+        <div
+          class="cf-form-textarea"
+          data-css-1tc952m=""
+        >
+          <label
+            class="question-label"
+            data-css-42cjjw=""
+            for="undefined-unscheduled-notes"
+          >
+            <strong>
+              <span>
+                Notes
+              </span>
+            </strong>
+          </label>
+          <textarea
+            id="undefined-unscheduled-notes"
+            maxlength="1000"
+            name="undefined-unscheduled-notes"
+          />
+        </div>
+      </div>
+      <div
+        class="cf-help-divider usa-width-one-whole"
+      />
+      <div
+        class="usa-width-one-whole"
+      >
+        <div
+          class=""
+        >
+          <div
+            class="cf-form-dropdown dropdown-hearingType"
+          >
+            <label
+              class="question-label"
+              for="hearing-type"
+              id="hearing-type-label"
+            >
+              <strong>
+                <span>
+                  Hearing Type
+                </span>
+              </strong>
+            </label>
+            <div
+              class="cf-select"
+            >
+              <div
+                class=" css-2b097c-container"
+              >
+                <div
+                  class="cf-select__control css-yk16xz-control"
+                >
+                  <div
+                    class="cf-select__value-container css-g1d714-ValueContainer"
+                  >
+                    <div
+                      class="cf-select__placeholder css-1wa3eu0-placeholder"
+                    >
+                      Select...
+                    </div>
+                    <div
+                      class="css-81nyic-Input"
+                    >
+                      <div
+                        class="cf-select__input"
+                        style="display: inline-block;"
+                      >
+                        <input
+                          aria-autocomplete="list"
+                          aria-expanded="false"
+                          aria-haspopup="true"
+                          aria-labelledby="hearing-type-label"
+                          aria-owns="hearing-type-listbox"
+                          autocapitalize="none"
+                          autocomplete="off"
+                          autocorrect="off"
+                          id="hearing-type"
+                          role="combobox"
+                          spellcheck="false"
+                          style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                          tabindex="0"
+                          type="text"
+                          value=""
+                        />
+                        <div
+                          style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                  >
+                    <span
+                      class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                    />
+                    <div
+                      aria-hidden="true"
+                      class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="css-6q0nyr-Svg"
+                        focusable="false"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        width="20"
+                      >
+                        <path
+                          d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <input
+                  name="hearingType"
+                  type="hidden"
+                  value=""
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="usa-width-one-whole"
+        data-css-1jfbwxw=""
+      >
+        <div
+          data-css-acl5jg=""
+        >
+          <strong>
+            Hearing Location
+          </strong>
+          <pre>
+            Virtual
+          </pre>
+        </div>
+        <div
+          data-css-1jfbwxw=""
+        >
+          <div
+            class=""
+          >
+            <div
+              class="cf-form-dropdown dropdown-regionalOffice"
+            >
+              <label
+                class="question-label"
+                for="regional-office"
+                id="regional-office-label"
+              >
+                <strong>
+                  <span>
+                    Regional Office
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
+              >
+                <div
+                  class=" css-2b097c-container"
+                >
+                  <div
+                    class="cf-select__control css-yk16xz-control"
+                  >
+                    <div
+                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                    >
+                      <div
+                        class="cf-select__single-value css-1uccc91-singleValue"
+                      />
+                      <div
+                        class="css-81nyic-Input"
+                      >
+                        <div
+                          class="cf-select__input"
+                          style="display: inline-block;"
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-labelledby="regional-office-label"
+                            aria-owns="regional-office-listbox"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            id="regional-office"
+                            role="combobox"
+                            spellcheck="false"
+                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-6q0nyr-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <input
+                    name="regionalOffice"
+                    type="hidden"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="cf-help-divider usa-width-one-whole"
+      />
+      <div
+        class="usa-width-one-whole"
+      >
+        <h2>
+          Email Notifications 
+        </h2>
+        <p>
+          When you schedule the hearing, the undefined, POA, and Judge will receive an email with connection information for the virtual hearing.
+        </p>
+        <div
+          data-css-1jfbwxw=""
+        />
+        <strong>
+           
+        </strong>
+        <div
+          class="usa-grid css-1jfbwxw"
+        >
+          <div
+            class="usa-width-one-whole"
+          >
+            <div
+              class=""
+            >
+              <div
+                class="cf-form-dropdown dropdown-appellantTz"
+                data-css-1dzedb9=""
+              >
+                <label
+                  class="question-label"
+                  for="appellant-tz"
+                  id="appellant-tz-label"
+                >
+                  <strong>
+                    <span>
+                      undefined Timezone
+                      <span
+                        class="cf-required"
+                      >
+                        Required
+                      </span>
+                    </span>
+                  </strong>
+                </label>
+                <div
+                  class="cf-select"
+                >
+                  <div
+                    class=" css-2b097c-container"
+                  >
+                    <div
+                      class="cf-select__control css-yk16xz-control"
+                    >
+                      <div
+                        class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                      >
+                        <div
+                          class="cf-select__single-value css-1uccc91-singleValue"
+                        >
+                          Pacific Time (US & Canada)
+                        </div>
+                        <div
+                          class="css-81nyic-Input"
+                        >
+                          <div
+                            class="cf-select__input"
+                            style="display: inline-block;"
+                          >
+                            <input
+                              aria-autocomplete="list"
+                              aria-expanded="false"
+                              aria-haspopup="true"
+                              aria-labelledby="appellant-tz-label"
+                              aria-owns="appellant-tz-listbox"
+                              autocapitalize="none"
+                              autocomplete="off"
+                              autocorrect="off"
+                              id="appellant-tz"
+                              role="combobox"
+                              spellcheck="false"
+                              style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                              tabindex="0"
+                              type="text"
+                              value=""
+                            />
+                            <div
+                              style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                      >
+                        <span
+                          class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                        />
+                        <div
+                          aria-hidden="true"
+                          class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            class="css-6q0nyr-Svg"
+                            focusable="false"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            width="20"
+                          >
+                            <path
+                              d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                    <input
+                      name="appellantTz"
+                      type="hidden"
+                      value="America/Los_Angeles"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="helper-text"
+            >
+              The hearing time in email notifications is calculated based on the timezone.
+            </div>
+          </div>
+        </div>
+        <div
+          class="usa-grid css-1jfbwxw"
+          id="email-section"
+        >
+          <div
+            class="usa-width-one-whole"
+          >
+            <div
+              class="cf-form-textinput cf-inline-field   "
+            >
+              <label
+                for="undefined Email (for these notifications only)"
+              >
+                <strong>
+                  <span>
+                    undefined Email (for these notifications only)
+                    <span
+                      class="cf-required"
+                    >
+                      Required
+                    </span>
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="input-container"
+              >
+                <input
+                  class="cf-form-textinput cf-inline-field"
+                  id="undefined Email (for these notifications only)"
+                  name="undefined Email (for these notifications only)"
+                  type="text"
+                  value=""
+                />
+              </div>
+            </div>
+            <div
+              class="helper-text"
+            >
+              This email address will be used to send notifications for this hearing only.
+            </div>
+          </div>
+        </div>
+        <div
+          data-css-1jfbwxw=""
+        />
+        <strong>
+           Power of Attorney (POA)
+        </strong>
+        <div
+          data-css-1a5irm0=""
+        >
+          <pre>
+            PARALYZED VETERANS OF AMERICA, INC.
+          </pre>
+        </div>
+        <div
+          class="usa-grid css-1jfbwxw"
+        >
+          <div
+            class="usa-width-one-whole"
+          >
+            <div
+              class=""
+            >
+              <div
+                class="cf-form-dropdown dropdown-representativeTz"
+                data-css-1dzedb9=""
+              >
+                <label
+                  class="question-label"
+                  for="representative-tz"
+                  id="representative-tz-label"
+                >
+                  <strong>
+                    <span>
+                      POA/Representative Timezone
+                      <span
+                        class="cf-optional"
+                      >
+                        Optional
+                      </span>
+                    </span>
+                  </strong>
+                </label>
+                <div
+                  class="cf-select"
+                >
+                  <div
+                    class=" css-2b097c-container"
+                  >
+                    <div
+                      class="cf-select__control css-yk16xz-control"
+                    >
+                      <div
+                        class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                      >
+                        <div
+                          class="cf-select__single-value css-1uccc91-singleValue"
+                        >
+                          Pacific Time (US & Canada)
+                        </div>
+                        <div
+                          class="css-81nyic-Input"
+                        >
+                          <div
+                            class="cf-select__input"
+                            style="display: inline-block;"
+                          >
+                            <input
+                              aria-autocomplete="list"
+                              aria-expanded="false"
+                              aria-haspopup="true"
+                              aria-labelledby="representative-tz-label"
+                              aria-owns="representative-tz-listbox"
+                              autocapitalize="none"
+                              autocomplete="off"
+                              autocorrect="off"
+                              id="representative-tz"
+                              role="combobox"
+                              spellcheck="false"
+                              style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                              tabindex="0"
+                              type="text"
+                              value=""
+                            />
+                            <div
+                              style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                      >
+                        <span
+                          class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                        />
+                        <div
+                          aria-hidden="true"
+                          class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            class="css-6q0nyr-Svg"
+                            focusable="false"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            width="20"
+                          >
+                            <path
+                              d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                    <input
+                      name="representativeTz"
+                      type="hidden"
+                      value="America/Los_Angeles"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="helper-text"
+            >
+              The hearing time in email notifications is calculated based on the timezone.
+            </div>
+          </div>
+        </div>
+        <div
+          class="usa-grid css-1jfbwxw"
+        >
+          <div
+            class="usa-width-one-whole"
+          >
+            <div
+              class="cf-form-textinput cf-inline-field   "
+            >
+              <label
+                for="POA/Representative Email (for these notifications only)"
+              >
+                <strong>
+                  <span>
+                    POA/Representative Email (for these notifications only)
+                    <span
+                      class="cf-optional"
+                    >
+                      Optional
+                    </span>
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="input-container"
+              >
+                <input
+                  class="cf-form-textinput cf-inline-field"
+                  id="POA/Representative Email (for these notifications only)"
+                  name="POA/Representative Email (for these notifications only)"
+                  type="text"
+                  value=""
+                />
+              </div>
+            </div>
+            <div
+              class="helper-text"
+            >
+              This email address will be used to send notifications for this hearing only.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
