@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
@@ -8,7 +10,12 @@ import { applyMiddleware, createStore } from 'redux';
 import rootReducer from 'app/queue/reducers';
 import thunk from 'redux-thunk';
 import moment from 'moment';
-import { prepareAppealForSearchStore, sortCaseTimelineEvents } from 'app/queue/utils';
+import {
+  prepareAppealForSearchStore,
+  prepareAppealForStore,
+  prepareTasksForStore,
+  sortCaseTimelineEvents
+} from 'app/queue/utils';
 import { MemoryRouter, Route } from 'react-router-dom';
 import { within } from '@testing-library/dom';
 import { tasksUnrelatedToAnAppeal } from 'test/data/queue/taskActionModals/taskActionModalData';
@@ -21,6 +28,8 @@ jest.mock('redux', () => ({
 
 jest.mock('app/queue/utils', () => ({
   prepareAppealForSearchStore: jest.fn(),
+  prepareAppealForStore: jest.fn(),
+  prepareTasksForStore: jest.fn(),
   sortCaseTimelineEvents: jest.fn()
 }));
 
@@ -112,7 +121,7 @@ let props = {
         appealUuid: 'b36f1011-a34b-413b-a2b9-90fe0d8b2927',
         appealType: 'evidence_submission',
         numberOfIssues: 2,
-        taskAddedData: [],
+        taskAddedData: { data: [] },
         status: 'Pending',
         assignedTo: null,
         correspondence: {
@@ -121,6 +130,150 @@ let props = {
           correspondence_id: 322,
           created_at: '2024-08-14T10:53:47.213-04:00',
           updated_at: '2024-08-14T10:53:47.213-04:00'
+        },
+        appeal: {
+          data: {
+            id: 2392,
+            type: 'appeal',
+            attributes: {
+              assigned_attorney: null,
+              assigned_judge: null,
+              appellant_hearing_email_recipient: null,
+              representative_hearing_email_recipient: null,
+              appellant_email_address: 'Bob.Smithkling@test.com',
+              current_user_email: 'america@example.com',
+              current_user_timezone: 'America/New_York',
+              contested_claim: false,
+              mst: null,
+              pact: false,
+              issues: [],
+              status: 'not_distributed',
+              decision_issues: [],
+              substitute_appellant_claimant_options: [
+                {
+                  displayText: 'BOB VANCE, Spouse',
+                  value: 'CLAIMANT_WITH_PVA_AS_VSO'
+                },
+                {
+                  displayText: 'CATHY SMITH, Child',
+                  value: '1129318238'
+                },
+                {
+                  displayText: 'TOM BRADY, Child',
+                  value: 'no-such-pid'
+                }
+              ],
+              nod_date_updates: [],
+              can_edit_request_issues: false,
+              hearings: [],
+              withdrawn: false,
+              removed: false,
+              overtime: false,
+              veteran_appellant_deceased: false,
+              assigned_to_location: 'Mail',
+              distributed_to_a_judge: false,
+              completed_hearing_on_previous_appeal: false,
+              appellant_is_not_veteran: false,
+              appellant_full_name: 'Bob Smithkling',
+              appellant_first_name: 'Bob',
+              appellant_middle_name: null,
+              appellant_last_name: 'Smithkling',
+              appellant_suffix: null,
+              appellant_date_of_birth: '1994-09-10',
+              appellant_address: {
+                address_line_1: '9999 MISSION ST',
+                address_line_2: 'UBER',
+                address_line_3: 'APT 2',
+                city: 'SAN FRANCISCO',
+                zip: '94103',
+                country: 'USA',
+                state: 'CA'
+              },
+              appellant_phone_number: null,
+              appellant_tz: 'America/Los_Angeles',
+              appellant_relationship: 'Veteran',
+              appellant_type: 'VeteranClaimant',
+              appellant_party_type: null,
+              unrecognized_appellant_id: null,
+              has_poa: {
+                id: 69,
+                authzn_change_clmant_addrs_ind: null,
+                authzn_poa_access_ind: null,
+                claimant_participant_id: '650000069',
+                created_at: '2024-09-10T14:24:18.372-04:00',
+                file_number: '00001234',
+                last_synced_at: '2024-09-10T14:24:18.372-04:00',
+                legacy_poa_cd: '100',
+                poa_participant_id: '600153863',
+                representative_name: 'Clarence Darrow',
+                representative_type: 'Attorney',
+                updated_at: '2024-09-10T14:24:18.372-04:00'
+              },
+              cavc_remand: null,
+              show_post_cavc_stream_msg: false,
+              remand_source_appeal_id: null,
+              remand_judge_name: null,
+              appellant_substitution: null,
+              substitutions: [],
+              veteran_death_date: null,
+              veteran_file_number: '550000069',
+              veteran_participant_id: '650000069',
+              efolder_link: 'https://vefs-claimevidence-ui-uat.stage.bip.va.gov',
+              veteran_full_name: 'Bob Smithkling',
+              closest_regional_office: null,
+              closest_regional_office_label: null,
+              available_hearing_locations: [],
+              external_id: 'a175fdeb-4714-4f8e-8a31-35a983cdb590',
+              type: 'Original',
+              vacate_type: null,
+              aod: false,
+              docket_name: 'evidence_submission',
+              docket_number: '240909-2392',
+              docket_range_date: null,
+              decision_date: null,
+              nod_date: '2024-09-09',
+              withdrawal_date: null,
+              certification_date: null,
+              paper_case: false,
+              regional_office: null,
+              caseflow_veteran_id: 180,
+              document_id: null,
+              attorney_case_review_id: null,
+              attorney_case_rewrite_details: {
+                note_from_attorney: null,
+                untimely_evidence: null
+              },
+              can_edit_document_id: false,
+              readable_hearing_request_type: null,
+              readable_original_hearing_request_type: null,
+              docket_switch: null,
+              switched_dockets: [],
+              has_notifications: false,
+              cavc_remands_with_dashboard: 0,
+              evidence_submission_task: {
+                id: 18233,
+                appeal_id: 2392,
+                appeal_type: 'Appeal',
+                assigned_at: '2024-09-10T14:24:18.454-04:00',
+                assigned_by_id: null,
+                assigned_to_id: 16,
+                assigned_to_type: 'Organization',
+                cancellation_reason: null,
+                cancelled_by_id: null,
+                closed_at: null,
+                completed_by_id: null,
+                created_at: '2024-09-10T14:24:18.454-04:00',
+                instructions: [],
+                parent_id: 18232,
+                placed_on_hold_at: null,
+                started_at: null,
+                status: 'assigned',
+                updated_at: '2024-09-10T14:24:18.454-04:00'
+              },
+              has_completed_sct_assign_task: false,
+              waivable: false
+            }
+          }
         }
       },
       {
@@ -155,7 +308,7 @@ let props = {
         appealUuid: 'a9b2523e-880d-4ef4-9f12-eae9d593631d',
         appealType: 'evidence_submission',
         numberOfIssues: 2,
-        taskAddedData: [
+        taskAddedData: { data: [
           {
             assigned_at: '2024-08-14T10:53:47.560-04:00',
             assigned_to: 'Hearing Admin',
@@ -165,7 +318,7 @@ let props = {
             ],
             type: 'Change of address'
           }
-        ],
+        ] },
         status: 'Pending',
         assignedTo: {
           id: 39,
@@ -188,6 +341,15 @@ let props = {
           correspondence_id: 322,
           created_at: '2024-08-14T10:53:47.217-04:00',
           updated_at: '2024-08-14T10:53:47.217-04:00'
+        },
+        appeal: {
+          data: {
+            id: 2392,
+            type: 'appeal',
+            attributes: {
+              external_id: 'a9b2523e-880d-4ef4-9f12-eae9d593631d',
+            }
+          }
         }
       },
       {
@@ -229,7 +391,7 @@ let props = {
         appealUuid: '7bd8281d-3b6e-442f-8e44-21b033f7049e',
         appealType: 'evidence_submission',
         numberOfIssues: 2,
-        taskAddedData: [
+        taskAddedData: { data: [
           {
             assigned_at: '2024-08-14T10:53:47.656-04:00',
             assigned_to: 'VLJ Support Staff',
@@ -248,7 +410,7 @@ let props = {
             ],
             type: 'Congressional interest'
           }
-        ],
+        ] },
         status: 'Pending',
         assignedTo: {
           id: 8,
@@ -271,9 +433,19 @@ let props = {
           correspondence_id: 322,
           created_at: '2024-08-14T10:53:47.221-04:00',
           updated_at: '2024-08-14T10:53:47.221-04:00'
+        },
+        appeal: {
+          data: {
+            id: 2392,
+            type: 'appeal',
+            attributes: {
+              external_id: '7bd8281d-3b6e-442f-8e44-21b033f7049e',
+            }
+          }
         }
       }
     ],
+    correspondenceAppealIds: [1, 2],
 
     appeals_information:
       [
@@ -300,6 +472,12 @@ describe('CorrespondenceDetails', () => {
     prepareAppealForSearchStore.mockReturnValue({
       appeals: {},
       appealDetails: {}
+    });
+    prepareAppealForStore.mockReturnValue({
+      // mock return value
+    });
+    prepareTasksForStore.mockReturnValue({
+      // mock return value
     });
     sortCaseTimelineEvents.mockReturnValue(
       tasksUnrelatedToAnAppeal
@@ -345,10 +523,10 @@ describe('CorrespondenceDetails', () => {
 
     let collapsibleButtons = document.getElementsByClassName('plus-symbol');
 
-    expect(collapsibleButtons.length).toBe(2);
+    expect(collapsibleButtons.length).toBe(5);
     fireEvent.click(collapsibleButtons[0]);
 
-    expect(document.getElementsByClassName('plus-symbol').length).toBe(1);
+    expect(document.getElementsByClassName('plus-symbol').length).toBe(4);
     // Existing Appeals Table and Columns
     fireEvent.click(existingAppealButton);
     expect(screen.getByText('Existing appeals')).toBeInTheDocument();
@@ -360,12 +538,26 @@ describe('CorrespondenceDetails', () => {
     expect(screen.getByText('Appeal Location')).toBeInTheDocument();
     expect(screen.getByText('View veteran documents')).toBeInTheDocument();
 
+    // Linked Appeals Section when collapsed
+    expect(screen.queryByText('Tasks added to appeal')).not.toBeInTheDocument();
+
+    expect(screen.getByText('240714-253')).toBeInTheDocument();
+    expect(screen.getByText('240714-254')).toBeInTheDocument();
+
+    expect(screen.queryByText('DOCKET NUMBER')).not.toBeInTheDocument();
+    expect(screen.queryByText('APPELLANT NAME')).not.toBeInTheDocument();
+    expect(screen.queryByText('APPEAL STREAM TYPE')).not.toBeInTheDocument();
+    expect(screen.queryByText('NUMBER OF ISSUES')).not.toBeInTheDocument();
+    expect(screen.queryByText('STATUS')).not.toBeInTheDocument();
+    expect(screen.queryByText('ASSIGNED TO')).not.toBeInTheDocument();
+
+    // Linked Appeals Sections
     collapsibleButtons = document.getElementsByClassName('plus-symbol');
     fireEvent.click(collapsibleButtons[0]);
 
     expect(document.getElementsByClassName('plus-symbol').length).toBe(0);
 
-    // Appeals related
+    // Appeals related within Linked Appeals Sections
     const existingAppeals = screen.getAllByText('Tasks added to appeal').length;
 
     expect(existingAppeals).toBe(3);
@@ -374,7 +566,7 @@ describe('CorrespondenceDetails', () => {
     expect(screen.getByText('VLJ Support Staff')).toBeInTheDocument();
     expect(screen.getByText('Hearing Admin')).toBeInTheDocument();
 
-    // Appeals related
+    // Appeals related within Linked Appeals Sections
     const tasksAddedTextCount = screen.getAllByText('Tasks added to appeal').length;
 
     expect(tasksAddedTextCount).toBe(3);
@@ -498,6 +690,12 @@ describe('Correspondence details without beforeEach', () => {
       appeals: {},
       appealDetails: {}
     });
+    prepareAppealForStore.mockReturnValue({
+      // mock return value
+    });
+    prepareTasksForStore.mockReturnValue({
+      // mock return value
+    });
     sortCaseTimelineEvents.mockReturnValue(
       tasksUnrelatedToAnAppeal
     );
@@ -518,3 +716,5 @@ describe('Correspondence details without beforeEach', () => {
     expect(screen.queryByText('Save changes')).not.toBeInTheDocument();
   });
 });
+
+/* eslint-enable max-lines */
