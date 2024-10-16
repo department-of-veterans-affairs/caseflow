@@ -166,7 +166,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   #
   # Returns: TranscriptionFile object
   def find_or_create_transcription_file(file_name_arg = file_name)
-    TranscriptionFile.find_or_create_by(
+    Hearings::TranscriptionFile.find_or_create_by(
       file_name: file_name_arg,
       hearing_id: hearing.id,
       hearing_type: hearing.class.name,
