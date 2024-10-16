@@ -9,20 +9,20 @@ class UpdateTranscriptionsForPolymorphicHearing < ActiveRecord::Migration[6.1]
       end
 
       # Remove the existing hearing_id column
-      remove_column :transcriptions, :hearing_id
+      safety_assured { remove_column :transcriptions, :hearing_id }
+
+      # Add polymorphic reference named "hearing" without index
+      add_reference :transcriptions, :hearing, polymorphic: true, index: false
+
+      # Add the index concurrently
+      add_index :transcriptions, [:hearing_type, :hearing_id], algorithm: :concurrently
     end
-
-    # Add polymorphic reference named "hearing" without index
-    add_reference :transcriptions, :hearing, polymorphic: true, index: false
-
-    # Add the index concurrently
-    add_index :transcriptions, [:hearing_type, :hearing_id], algorithm: :concurrently
   end
 
   def down
     safety_assured do
       # Remove the polymorphic reference
-      remove_reference :transcriptions, :hearing, polymorphic: true, index: false
+      safety_assured { remove_reference :transcriptions, :hearing, polymorphic: true, index: false }
 
       # Add back the hearing_id column
       add_column :transcriptions, :hearing_id, :bigint, comment: "Hearing ID; use as FK to hearings"
