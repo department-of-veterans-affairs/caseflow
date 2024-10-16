@@ -13,7 +13,6 @@
 ActiveRecord::Schema.define(version: 2024_10_08_145227) do
 
   # These are extensions that must be enabled in order to support this database
-  enable_extension "oracle_fdw"
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
 
