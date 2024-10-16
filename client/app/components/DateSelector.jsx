@@ -35,11 +35,7 @@ export const DateSelector = (props) => {
         return COPY.DATE_SELECTOR_INVALID_DATE_ERROR;
       }
 
-      if (noFutureDates && minDate) {
-        return null;
-      }
-
-      if (noFutureDates && futureDate(date)) {
+      if (noFutureDates && futureDate(date) && !minDate) {
         return COPY.DATE_SELECTOR_FUTURE_DATE_ERROR;
       }
 

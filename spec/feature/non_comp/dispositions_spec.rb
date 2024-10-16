@@ -196,6 +196,7 @@ feature "NonComp Dispositions Task Page", :postgres do
       fill_in "decision-date", with: arbitrary_decision_date
 
       expect(page).to have_text("Decision date must be between Form Receipt Date")
+      fill_in "decision-date", with: in_progress_task.appeal.created_at.strftime("%m/%d/%Y")
 
       # save
       expect(page).to have_button("Complete", disabled: false)
