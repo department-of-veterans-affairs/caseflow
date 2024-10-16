@@ -721,6 +721,8 @@ ActiveRecord::Schema.define(version: 2024_10_12_181521) do
   end
 
   create_table "distribution_stats", comment: "A database table to store a snapshot of variables used during a case distribution event", force: :cascade do |t|
+    t.json "aoj_legacy_priority_stats", comment: "Priority statistics for AOJ Legacy Docket"
+    t.json "aoj_legacy_stats", comment: "Statistics for AOJ Legacy Docket"
     t.datetime "created_at", null: false
     t.json "direct_review_priority_stats", comment: "Priority statistics for Direct Review Docket"
     t.json "direct_review_stats", comment: "Statistics for Direct Review Docket"
