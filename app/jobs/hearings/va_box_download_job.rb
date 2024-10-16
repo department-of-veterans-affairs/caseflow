@@ -2,7 +2,6 @@
 
 class Hearings::VaBoxDownloadJob < CaseflowJob
   queue_as :low_priority
-
   S3_BUCKET = "vaec-appeals-caseflow"
 
   class BoxDownloadError < StandardError; end
@@ -36,7 +35,6 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
   end
 
   def update_database(current_information, file_status)
-
     transcription_records = Hearings::TranscriptionFile.where(
       hearing_id: current_information["id"].to_i,
       hearing_type: current_information["hearing_type"],
@@ -47,16 +45,21 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
     transcript_text_path = (current_extension == "pdf") ? "transcript_pdf" : "transcript_text"
     aws_link = create_link_aws(current_information, file_status, transcript_text_path)
 
-
     if transcription_records.count > 0
       update_transcription_file_record(transcription_records, current_information, file_status, aws_link)
     else
       create_transcription_file_record(current_information, file_status, aws_link)
     end
 
-    if current_information["hearing_type"] == 'Hearing'
+    modified_task_tree(current_information, file_status)
+  rescue ActiveRecord::RecordInvalid => error
+    Rails.logger.error "Failed to create transcription file: #{error.message}"
+  end
+
+  def modified_task_tree(current_information, file_status)
+    if current_information["hearing_type"] == "Hearing"
       current_hearing = Hearing.find(current_information["id"].to_i)
-      if current_hearing.disposition == 'held'
+      if current_hearing.disposition == "held"
         create_review_transcript_task(current_hearing.appeal_id, file_status)
       end
     else
@@ -64,13 +67,10 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
       current_vacols_id = current_legacy_hearing.current_vacols_id
       current_appeal_id = current_legacy_hearing.appeal_id
       hearing_record = VACOLS::CaseHearing.for_appeals(current_vacols_id)
-      if hearing_record.hearing_disp == 'H'
+      if hearing_record.hearing_disp == "H"
         create_review_transcript_task(current_appeal_id, file_status)
       end
     end
-
-  rescue ActiveRecord::RecordInvalid => error
-    Rails.logger.error "Failed to create transcription file: #{error.message}"
   end
 
   def create_review_transcript_task(appeal_id, file_status)
@@ -93,8 +93,7 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
   end
 
   def create_transcription_file_record(current_information, file_status, aws_link)
-
-    if current_information["hearing_type"] == 'Hearing'
+    if current_information["hearing_type"] == "Hearing"
       transcription_id = current_information["hearing_type"].constantize.find(
         current_information["id"]
       ).transcription&.id
@@ -110,6 +109,10 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
         - ID: #{current_information['id']} does not exist."
     end
 
+    add_transcription_file_record(current_information, file_status, aws_link, transcription_id)
+  end
+
+  def add_transcription_file_record(current_information, file_status, aws_link, transcription_id)
     Hearings::TranscriptionFile.create!(
       hearing_id: current_information["id"],
       hearing_type: current_information["hearing_type"],
