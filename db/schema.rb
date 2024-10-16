@@ -2,15 +2,15 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# This file is the source Rails uses to define your schema when running `rails
-# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
 # be faster and is potentially less error prone than running all of your
 # migrations from scratch. Old migrations may fail to apply correctly if those
 # migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_08_28_165652) do
+ActiveRecord::Schema.define(version: 2024_10_07_150227) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1749,6 +1749,15 @@ ActiveRecord::Schema.define(version: 2024_08_28_165652) do
     t.json "stats"
     t.datetime "updated_at", null: false
   end
+  create_table "saved_searches", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.text "description"
+    t.string "name"
+    t.json "saved_search", default: {}, comment: "saved search data to store for the generate task report"
+    t.datetime "updated_at", precision: 6, null: false
+    t.bigint "user_id"
+    t.index ["user_id"], name: "index_saved_searches_on_user_id"
+  end
 
   create_table "schedule_periods", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -2418,6 +2427,7 @@ ActiveRecord::Schema.define(version: 2024_08_28_165652) do
   add_foreign_key "request_issues", "request_issues", column: "corrected_by_request_issue_id"
   add_foreign_key "request_issues", "request_issues", column: "ineligible_due_to_id"
   add_foreign_key "request_issues_updates", "users"
+  add_foreign_key "saved_searches", "users"
   add_foreign_key "schedule_periods", "users"
   add_foreign_key "sent_hearing_admin_email_events", "sent_hearing_email_events"
   add_foreign_key "sent_hearing_email_events", "hearing_email_recipients", column: "email_recipient_id"
