@@ -130,7 +130,7 @@ Run each line is a separate command, run them one at a time
 
 24. Close and restart VS Code
 
-25. branch should be up to date with master (```git checkout master```, ```git pull```)
+25. branch should be up to date with main (```git checkout main```, ```git pull```)
 
 26. ```cd ~/appeals/caseflow in terminal```
 
