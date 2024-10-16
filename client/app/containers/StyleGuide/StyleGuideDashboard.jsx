@@ -8,7 +8,7 @@ export default class StyleGuideDashboard extends React.PureComponent {
       <StyleGuideComponentTitle
         title="Dashboard"
         id="dashboard"
-        link="-efolder/blob/main/app/views/stats/show.html.erb"
+        link="-efolder/blob/master/app/views/stats/show.html.erb"
         isExternalLink
       />
       <p>

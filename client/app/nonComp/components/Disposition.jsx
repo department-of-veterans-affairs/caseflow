@@ -177,8 +177,6 @@ class NonCompDispositions extends React.PureComponent {
     }
 
     let editIssuesLink = null;
-    const editIssuesDisabled = task.type === 'Remand';
-    const editIssuesButtonType = editIssuesDisabled ? 'disabled' : 'secondary';
     const displayPOAComponent = task.business_line === 'vha';
     const displayRequestIssueModification = (!displayPOAComponent || isBusinessLineAdmin);
 
@@ -196,17 +194,9 @@ class NonCompDispositions extends React.PureComponent {
       </React.Fragment>;
 
       editIssuesLink = (displayRequestIssueModification) ? <React.Fragment>
-        <Link
-          button={editIssuesButtonType}
-          href={appeal.editIssuesUrl}>
-          Edit Issues
-        </Link>
+        <Link button="secondary" href={appeal.editIssuesUrl}>Edit Issues</Link>
       </React.Fragment> : <React.Fragment>
-        <Link
-          button={editIssuesButtonType}
-          href={appeal.editIssuesUrl}>
-          Request issue modification
-        </Link>
+        <Link button="secondary" href={appeal.editIssuesUrl}>Request issue modification</Link>
         <Button disabled>Edit Issues</Button>
       </React.Fragment>;
     }
@@ -247,11 +237,6 @@ class NonCompDispositions extends React.PureComponent {
             {isBusinessLineAdmin && decisionHasPendingRequestIssues ? null :
               <div className="usa-width-one-whole" style={{ paddingBottom: '30px' }} >{decisionHeaderText}</div>
             }
-            {editIssuesDisabled ?
-              <div className="usa-width-one-whole">
-
-                <Alert type="info" messageStyling={messageStyling} message={COPY.REMANDS_NOT_EDITABLE} />
-              </div> : null}
             {decisionHasPendingRequestIssues ?
               <div className="usa-width-one-whole">
                 <Alert type="info" messageStyling={messageStyling} message={bannerDecisionBannerText} />

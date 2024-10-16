@@ -47,10 +47,6 @@
       "id": "incomplete"
     },
     {
-      "label": "Pending",
-      "id": "pending"
-    },
-    {
       "label": "In Progress",
       "id": "in_progress"
     },
@@ -63,90 +59,46 @@
       "id": "cancelled"
     }
   ],
-  "SPECIFIC_EVENT_OPTIONS": [
+  "SPECTIFIC_EVENT_OPTIONS": [
     {
-      "system": [
-        {
-          "label": "Claim created",
-          "id":"claim_created"
-        },
-        {
-          "label": "Claim closed",
-          "id":"claim_closed"
-        },
-        {
-          "label": "Claim status - Incomplete",
-          "id":"claim_status_incomplete"
-        },
-        {
-          "label": "Claim status - Pending",
-          "id":"claim_status_pending"
-        },
-        {
-          "label": "Claim status - In progress",
-          "id":"claim_status_inprogress"
-        }
-      ],
-      "general": [
-        {
-          "label": "Added decision date",
-          "id": "added_decision_date"
-        },
-        {
-          "label": "Added issue",
-          "id": "added_issue"
-        },
-        {
-          "label": "Added issue - No decision date",
-          "id":"added_issue_no_decision_date"
-        },
-        {
-          "label": "Removed issue",
-          "id":"removed_issue"
-        },
-        {
-          "label": "Withdrew issue",
-          "id":"withdrew_issue"
-        },
-        {
-          "label": "Completed disposition",
-          "id":"completed_disposition"
-        }
-      ],
-      "requests": [
-        {
-          "label": "Requested issue modification",
-          "id":"requested_issue_modification"
-        },
-        {
-          "label": "Requested issue addition",
-          "id":"requested_issue_addition"
-        },
-        {
-          "label": "Requested issue removal",
-          "id":"requested_issue_removal"
-        },
-        {
-          "label": "Requested issue withdrawal",
-          "id":"requested_issue_withdrawal"
-        },
-        {
-          "label": "Approval of request",
-          "id":"approval_of_request"
-        },
-        {
-          "label": "Rejection of request",
-          "id":"rejection_of_request"
-        },
-        {
-          "label": "Cancellation of request",
-          "id":"cancellation_of_request"
-        },
-        {
-          "label": "Edit of request",
-          "id":"edit_of_request"
-        }
-      ]
+      "label": "Added decision date",
+      "id": "added_decision_date"
+    },
+    {
+      "label": "Added issue",
+      "id": "added_issue"
+    },
+    {
+      "label": "Added issue - No decision date",
+      "id":"added_issue_no_decision_date"
+    },
+    {
+      "label": "Claim created",
+      "id":"claim_created"
+    },
+    {
+      "label": "Claim closed",
+      "id":"claim_closed"
+    },
+    {
+      "label": "Claim status - Incomplete",
+      "id":"claim_status_incomplete"
+    },
+    {
+      "label": "Claim status - In progress",
+      "id":"claim_status_inprogress"
+    },
+    {
+      "label": "Completed disposition",
+      "id":"completed_disposition"
+    },
+    {
+      "label": "Removed issue",
+      "id":"removed_issue"
+    },
+    {
+      "label": "Withdrew issue",
+      "id":"withdrew_issue"
     }
   ],
   "TIMING_SPECIFIC_OPTIONS": [
