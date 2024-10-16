@@ -33,7 +33,8 @@ export class DecisionReviewer extends React.PureComponent {
     super(props);
 
     this.state = {
-      isCommentLabelSelected: false
+      isCommentLabelSelected: false,
+      zoomLevel: 100
     };
 
     this.routedPdfListView.displayName = 'RoutedPdfListView';
@@ -81,6 +82,10 @@ export class DecisionReviewer extends React.PureComponent {
       // category filter every time routedPdfListView renders.
       props.location.search = '';
     }
+  };
+
+  updateZoomLevel = (newZoomLevel) => {
+    this.setState({ zoomLevel: newZoomLevel });
   };
 
   routedPdfListView = (props) => {
@@ -142,6 +147,8 @@ export class DecisionReviewer extends React.PureComponent {
         allDocuments={_.values(this.props.storeDocuments)}
         showPdf={this.showPdf(props.history, vacolsId)}
         documentPathBase={`/${vacolsId}/documents`}
+        zoomLevel={this.state.zoomLevel}
+        onZoomChange={this.updateZoomLevel}
         {...props}
       />
     </ReaderLoadingScreen>
