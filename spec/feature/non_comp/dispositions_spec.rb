@@ -50,7 +50,8 @@ feature "NonComp Dispositions Task Page", :postgres do
         veteran_file_number: veteran.file_number,
         benefit_type: non_comp_org.url,
         veteran_is_not_claimant: false,
-        claimant_type: :veteran_claimant
+        claimant_type: :veteran_claimant,
+        created_at: Time.zone.now
       )
     end
 
