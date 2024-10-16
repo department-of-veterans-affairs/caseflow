@@ -966,6 +966,8 @@ RSpec.feature "Hearing Details", :all_dbs do
 
           step "changing only problem type preserves already populated fields" do
             click_dropdown(name: "problemType", index: 0)
+            find("label", text: "Yes, Transcript Requested").click
+            fill_in "copySentDate", with: "04052019"
             click_button("Save")
 
             expect(page).to have_content(expected_alert, wait: 10)
@@ -978,7 +980,7 @@ RSpec.feature "Hearing Details", :all_dbs do
             expect(
               find_field(Constants.TRANSCRIPTION_REQUESTED_REMEDIES.NEW_HEARING, visible: false)
             ).to be_checked
-            expect(Transcription.count).to be(2)
+            expect(Transcription.count).to be(1)
           end
 
           step "changing notes preserves already populated fields and doesn't create new transcription" do
