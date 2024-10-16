@@ -127,9 +127,11 @@ class NonCompDispositions extends React.PureComponent {
   }
 
   validateDecisionDate = () => {
-    const dateIsValid =
-      Boolean((Date.parse(this.state.decisionDate) > new Date(formatDateStrUtc(this.props.appeal.receiptDate))) &&
-      Boolean(Date.parse(this.state.decisionDate) < new Date()));
+    const decisionDate = formatDateStr(this.state.decisionDate);
+    const receiptDate = formatDateStr(this.props.appeal.receiptDate);
+
+    const dateIsValid = Boolean((new Date(decisionDate)) >= new Date(receiptDate)) &&
+      Boolean(Date.parse(decisionDate) < new Date());
 
     if (dateIsValid) {
       this.setState({ errorMessage: '' });
