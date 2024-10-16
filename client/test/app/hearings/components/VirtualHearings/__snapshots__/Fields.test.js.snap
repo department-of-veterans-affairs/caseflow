@@ -163,11 +163,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                     },
                     Object {
                       "index": 2.4,
-                      "label": "Indiana (East) (8:15 AM)",
-                      "value": "America/Indiana/Indianapolis",
-                    },
-                    Object {
-                      "index": 2.4,
                       "label": "Puerto Rico (8:15 AM)",
                       "value": "America/Puerto_Rico",
                     },
@@ -480,6 +475,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                       "index": 280,
                       "label": "Baghdad (3:15 PM)",
                       "value": "Asia/Baghdad",
+                    },
+                    Object {
+                      "index": 340,
+                      "label": "Indiana (East) (8:15 AM)",
+                      "value": "America/Indiana/Indianapolis",
                     },
                     Object {
                       "index": 340,
@@ -910,10 +910,10 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                 styling={
                   Object {
                     "& .cf-select__menu-list": Object {
-                      "& > :nth-child(10)": Object {
+                      "& > :nth-child(9)": Object {
                         "borderBottom": "1px solid grey",
                       },
-                      "height": "390px !important",
+                      "height": "351px !important",
                       "maxHeight": "none",
                       "overflowY": "auto",
                     },
@@ -926,7 +926,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                 >
                   <div
                     className="cf-form-dropdown dropdown-appellantTz"
-                    data-css-1gh7024=""
+                    data-css-1dzedb9=""
                   >
                     <label
                       className="question-label"
@@ -1002,11 +1002,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                               "index": -0,
                               "label": "Pacific Time (US & Canada) (5:15 AM)",
                               "value": "America/Los_Angeles",
-                            },
-                            Object {
-                              "index": 2.4,
-                              "label": "Indiana (East) (8:15 AM)",
-                              "value": "America/Indiana/Indianapolis",
                             },
                             Object {
                               "index": 2.4,
@@ -1322,6 +1317,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                               "index": 280,
                               "label": "Baghdad (3:15 PM)",
                               "value": "Asia/Baghdad",
+                            },
+                            Object {
+                              "index": 340,
+                              "label": "Indiana (East) (8:15 AM)",
+                              "value": "America/Indiana/Indianapolis",
                             },
                             Object {
                               "index": 340,
@@ -1834,11 +1834,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                               },
                               Object {
                                 "index": 2.4,
-                                "label": "Indiana (East) (8:15 AM)",
-                                "value": "America/Indiana/Indianapolis",
-                              },
-                              Object {
-                                "index": 2.4,
                                 "label": "Puerto Rico (8:15 AM)",
                                 "value": "America/Puerto_Rico",
                               },
@@ -2151,6 +2146,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                 "index": 280,
                                 "label": "Baghdad (3:15 PM)",
                                 "value": "Asia/Baghdad",
+                              },
+                              Object {
+                                "index": 340,
+                                "label": "Indiana (East) (8:15 AM)",
+                                "value": "America/Indiana/Indianapolis",
                               },
                               Object {
                                 "index": 340,
@@ -2637,11 +2637,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                 },
                                 Object {
                                   "index": 2.4,
-                                  "label": "Indiana (East) (8:15 AM)",
-                                  "value": "America/Indiana/Indianapolis",
-                                },
-                                Object {
-                                  "index": 2.4,
                                   "label": "Puerto Rico (8:15 AM)",
                                   "value": "America/Puerto_Rico",
                                 },
@@ -2954,6 +2949,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                   "index": 280,
                                   "label": "Baghdad (3:15 PM)",
                                   "value": "Asia/Baghdad",
+                                },
+                                Object {
+                                  "index": 340,
+                                  "label": "Indiana (East) (8:15 AM)",
+                                  "value": "America/Indiana/Indianapolis",
                                 },
                                 Object {
                                   "index": 340,
@@ -3453,11 +3453,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                   },
                                   Object {
                                     "index": 2.4,
-                                    "label": "Indiana (East) (8:15 AM)",
-                                    "value": "America/Indiana/Indianapolis",
-                                  },
-                                  Object {
-                                    "index": 2.4,
                                     "label": "Puerto Rico (8:15 AM)",
                                     "value": "America/Puerto_Rico",
                                   },
@@ -3770,6 +3765,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                     "index": 280,
                                     "label": "Baghdad (3:15 PM)",
                                     "value": "Asia/Baghdad",
+                                  },
+                                  Object {
+                                    "index": 340,
+                                    "label": "Indiana (East) (8:15 AM)",
+                                    "value": "America/Indiana/Indianapolis",
                                   },
                                   Object {
                                     "index": 340,
@@ -4305,11 +4305,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                       },
                                       Object {
                                         "index": 2.4,
-                                        "label": "Indiana (East) (8:15 AM)",
-                                        "value": "America/Indiana/Indianapolis",
-                                      },
-                                      Object {
-                                        "index": 2.4,
                                         "label": "Puerto Rico (8:15 AM)",
                                         "value": "America/Puerto_Rico",
                                       },
@@ -4622,6 +4617,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                         "index": 280,
                                         "label": "Baghdad (3:15 PM)",
                                         "value": "Asia/Baghdad",
+                                      },
+                                      Object {
+                                        "index": 340,
+                                        "label": "Indiana (East) (8:15 AM)",
+                                        "value": "America/Indiana/Indianapolis",
                                       },
                                       Object {
                                         "index": 340,
@@ -5121,11 +5121,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                         },
                                         Object {
                                           "index": 2.4,
-                                          "label": "Indiana (East) (8:15 AM)",
-                                          "value": "America/Indiana/Indianapolis",
-                                        },
-                                        Object {
-                                          "index": 2.4,
                                           "label": "Puerto Rico (8:15 AM)",
                                           "value": "America/Puerto_Rico",
                                         },
@@ -5438,6 +5433,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                           "index": 280,
                                           "label": "Baghdad (3:15 PM)",
                                           "value": "Asia/Baghdad",
+                                        },
+                                        Object {
+                                          "index": 340,
+                                          "label": "Indiana (East) (8:15 AM)",
+                                          "value": "America/Indiana/Indianapolis",
                                         },
                                         Object {
                                           "index": 340,
@@ -5981,11 +5981,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                             },
                                             Object {
                                               "index": 2.4,
-                                              "label": "Indiana (East) (8:15 AM)",
-                                              "value": "America/Indiana/Indianapolis",
-                                            },
-                                            Object {
-                                              "index": 2.4,
                                               "label": "Puerto Rico (8:15 AM)",
                                               "value": "America/Puerto_Rico",
                                             },
@@ -6298,6 +6293,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                               "index": 280,
                                               "label": "Baghdad (3:15 PM)",
                                               "value": "Asia/Baghdad",
+                                            },
+                                            Object {
+                                              "index": 340,
+                                              "label": "Indiana (East) (8:15 AM)",
+                                              "value": "America/Indiana/Indianapolis",
                                             },
                                             Object {
                                               "index": 340,
@@ -6797,11 +6797,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                               },
                                               Object {
                                                 "index": 2.4,
-                                                "label": "Indiana (East) (8:15 AM)",
-                                                "value": "America/Indiana/Indianapolis",
-                                              },
-                                              Object {
-                                                "index": 2.4,
                                                 "label": "Puerto Rico (8:15 AM)",
                                                 "value": "America/Puerto_Rico",
                                               },
@@ -7114,6 +7109,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                 "index": 280,
                                                 "label": "Baghdad (3:15 PM)",
                                                 "value": "Asia/Baghdad",
+                                              },
+                                              Object {
+                                                "index": 340,
+                                                "label": "Indiana (East) (8:15 AM)",
+                                                "value": "America/Indiana/Indianapolis",
                                               },
                                               Object {
                                                 "index": 340,
@@ -7649,11 +7649,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                   },
                                                   Object {
                                                     "index": 2.4,
-                                                    "label": "Indiana (East) (8:15 AM)",
-                                                    "value": "America/Indiana/Indianapolis",
-                                                  },
-                                                  Object {
-                                                    "index": 2.4,
                                                     "label": "Puerto Rico (8:15 AM)",
                                                     "value": "America/Puerto_Rico",
                                                   },
@@ -7966,6 +7961,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                     "index": 280,
                                                     "label": "Baghdad (3:15 PM)",
                                                     "value": "Asia/Baghdad",
+                                                  },
+                                                  Object {
+                                                    "index": 340,
+                                                    "label": "Indiana (East) (8:15 AM)",
+                                                    "value": "America/Indiana/Indianapolis",
                                                   },
                                                   Object {
                                                     "index": 340,
@@ -8465,11 +8465,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                     },
                                                     Object {
                                                       "index": 2.4,
-                                                      "label": "Indiana (East) (8:15 AM)",
-                                                      "value": "America/Indiana/Indianapolis",
-                                                    },
-                                                    Object {
-                                                      "index": 2.4,
                                                       "label": "Puerto Rico (8:15 AM)",
                                                       "value": "America/Puerto_Rico",
                                                     },
@@ -8782,6 +8777,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                       "index": 280,
                                                       "label": "Baghdad (3:15 PM)",
                                                       "value": "Asia/Baghdad",
+                                                    },
+                                                    Object {
+                                                      "index": 340,
+                                                      "label": "Indiana (East) (8:15 AM)",
+                                                      "value": "America/Indiana/Indianapolis",
                                                     },
                                                     Object {
                                                       "index": 340,
@@ -9369,11 +9369,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                     },
                                                     Object {
                                                       "index": 2.4,
-                                                      "label": "Indiana (East) (8:15 AM)",
-                                                      "value": "America/Indiana/Indianapolis",
-                                                    },
-                                                    Object {
-                                                      "index": 2.4,
                                                       "label": "Puerto Rico (8:15 AM)",
                                                       "value": "America/Puerto_Rico",
                                                     },
@@ -9686,6 +9681,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                       "index": 280,
                                                       "label": "Baghdad (3:15 PM)",
                                                       "value": "Asia/Baghdad",
+                                                    },
+                                                    Object {
+                                                      "index": 340,
+                                                      "label": "Indiana (East) (8:15 AM)",
+                                                      "value": "America/Indiana/Indianapolis",
                                                     },
                                                     Object {
                                                       "index": 340,
@@ -10253,11 +10253,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                       },
                                                       Object {
                                                         "index": 2.4,
-                                                        "label": "Indiana (East) (8:15 AM)",
-                                                        "value": "America/Indiana/Indianapolis",
-                                                      },
-                                                      Object {
-                                                        "index": 2.4,
                                                         "label": "Puerto Rico (8:15 AM)",
                                                         "value": "America/Puerto_Rico",
                                                       },
@@ -10570,6 +10565,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                         "index": 280,
                                                         "label": "Baghdad (3:15 PM)",
                                                         "value": "Asia/Baghdad",
+                                                      },
+                                                      Object {
+                                                        "index": 340,
+                                                        "label": "Indiana (East) (8:15 AM)",
+                                                        "value": "America/Indiana/Indianapolis",
                                                       },
                                                       Object {
                                                         "index": 340,
@@ -11192,11 +11192,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                             },
                                             Object {
                                               "index": 2.4,
-                                              "label": "Indiana (East) (8:15 AM)",
-                                              "value": "America/Indiana/Indianapolis",
-                                            },
-                                            Object {
-                                              "index": 2.4,
                                               "label": "Puerto Rico (8:15 AM)",
                                               "value": "America/Puerto_Rico",
                                             },
@@ -11509,6 +11504,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                               "index": 280,
                                               "label": "Baghdad (3:15 PM)",
                                               "value": "Asia/Baghdad",
+                                            },
+                                            Object {
+                                              "index": 340,
+                                              "label": "Indiana (East) (8:15 AM)",
+                                              "value": "America/Indiana/Indianapolis",
                                             },
                                             Object {
                                               "index": 340,
@@ -12008,11 +12008,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                               },
                                               Object {
                                                 "index": 2.4,
-                                                "label": "Indiana (East) (8:15 AM)",
-                                                "value": "America/Indiana/Indianapolis",
-                                              },
-                                              Object {
-                                                "index": 2.4,
                                                 "label": "Puerto Rico (8:15 AM)",
                                                 "value": "America/Puerto_Rico",
                                               },
@@ -12325,6 +12320,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                 "index": 280,
                                                 "label": "Baghdad (3:15 PM)",
                                                 "value": "Asia/Baghdad",
+                                              },
+                                              Object {
+                                                "index": 340,
+                                                "label": "Indiana (East) (8:15 AM)",
+                                                "value": "America/Indiana/Indianapolis",
                                               },
                                               Object {
                                                 "index": 340,
@@ -12850,11 +12850,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                   },
                                                   Object {
                                                     "index": 2.4,
-                                                    "label": "Indiana (East) (8:15 AM)",
-                                                    "value": "America/Indiana/Indianapolis",
-                                                  },
-                                                  Object {
-                                                    "index": 2.4,
                                                     "label": "Puerto Rico (8:15 AM)",
                                                     "value": "America/Puerto_Rico",
                                                   },
@@ -13167,6 +13162,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                     "index": 280,
                                                     "label": "Baghdad (3:15 PM)",
                                                     "value": "Asia/Baghdad",
+                                                  },
+                                                  Object {
+                                                    "index": 340,
+                                                    "label": "Indiana (East) (8:15 AM)",
+                                                    "value": "America/Indiana/Indianapolis",
                                                   },
                                                   Object {
                                                     "index": 340,
@@ -13666,11 +13666,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                     },
                                                     Object {
                                                       "index": 2.4,
-                                                      "label": "Indiana (East) (8:15 AM)",
-                                                      "value": "America/Indiana/Indianapolis",
-                                                    },
-                                                    Object {
-                                                      "index": 2.4,
                                                       "label": "Puerto Rico (8:15 AM)",
                                                       "value": "America/Puerto_Rico",
                                                     },
@@ -13983,6 +13978,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                       "index": 280,
                                                       "label": "Baghdad (3:15 PM)",
                                                       "value": "Asia/Baghdad",
+                                                    },
+                                                    Object {
+                                                      "index": 340,
+                                                      "label": "Indiana (East) (8:15 AM)",
+                                                      "value": "America/Indiana/Indianapolis",
                                                     },
                                                     Object {
                                                       "index": 340,
@@ -14519,11 +14519,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                   },
                                                   Object {
                                                     "index": 2.4,
-                                                    "label": "Indiana (East) (8:15 AM)",
-                                                    "value": "America/Indiana/Indianapolis",
-                                                  },
-                                                  Object {
-                                                    "index": 2.4,
                                                     "label": "Puerto Rico (8:15 AM)",
                                                     "value": "America/Puerto_Rico",
                                                   },
@@ -14836,6 +14831,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                     "index": 280,
                                                     "label": "Baghdad (3:15 PM)",
                                                     "value": "Asia/Baghdad",
+                                                  },
+                                                  Object {
+                                                    "index": 340,
+                                                    "label": "Indiana (East) (8:15 AM)",
+                                                    "value": "America/Indiana/Indianapolis",
                                                   },
                                                   Object {
                                                     "index": 340,
@@ -15335,11 +15335,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                     },
                                                     Object {
                                                       "index": 2.4,
-                                                      "label": "Indiana (East) (8:15 AM)",
-                                                      "value": "America/Indiana/Indianapolis",
-                                                    },
-                                                    Object {
-                                                      "index": 2.4,
                                                       "label": "Puerto Rico (8:15 AM)",
                                                       "value": "America/Puerto_Rico",
                                                     },
@@ -15652,6 +15647,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                       "index": 280,
                                                       "label": "Baghdad (3:15 PM)",
                                                       "value": "Asia/Baghdad",
+                                                    },
+                                                    Object {
+                                                      "index": 340,
+                                                      "label": "Indiana (East) (8:15 AM)",
+                                                      "value": "America/Indiana/Indianapolis",
                                                     },
                                                     Object {
                                                       "index": 340,
@@ -16360,11 +16360,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                     },
                     Object {
                       "index": 2.4,
-                      "label": "Indiana (East) (8:15 AM)",
-                      "value": "America/Indiana/Indianapolis",
-                    },
-                    Object {
-                      "index": 2.4,
                       "label": "Puerto Rico (8:15 AM)",
                       "value": "America/Puerto_Rico",
                     },
@@ -16677,6 +16672,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                       "index": 280,
                       "label": "Baghdad (3:15 PM)",
                       "value": "Asia/Baghdad",
+                    },
+                    Object {
+                      "index": 340,
+                      "label": "Indiana (East) (8:15 AM)",
+                      "value": "America/Indiana/Indianapolis",
                     },
                     Object {
                       "index": 340,
@@ -17107,10 +17107,10 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                 styling={
                   Object {
                     "& .cf-select__menu-list": Object {
-                      "& > :nth-child(10)": Object {
+                      "& > :nth-child(9)": Object {
                         "borderBottom": "1px solid grey",
                       },
-                      "height": "390px !important",
+                      "height": "351px !important",
                       "maxHeight": "none",
                       "overflowY": "auto",
                     },
@@ -17123,7 +17123,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                 >
                   <div
                     className="cf-form-dropdown dropdown-representativeTz"
-                    data-css-1gh7024=""
+                    data-css-1dzedb9=""
                   >
                     <label
                       className="question-label"
@@ -17199,11 +17199,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                               "index": -0,
                               "label": "Pacific Time (US & Canada) (5:15 AM)",
                               "value": "America/Los_Angeles",
-                            },
-                            Object {
-                              "index": 2.4,
-                              "label": "Indiana (East) (8:15 AM)",
-                              "value": "America/Indiana/Indianapolis",
                             },
                             Object {
                               "index": 2.4,
@@ -17519,6 +17514,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                               "index": 280,
                               "label": "Baghdad (3:15 PM)",
                               "value": "Asia/Baghdad",
+                            },
+                            Object {
+                              "index": 340,
+                              "label": "Indiana (East) (8:15 AM)",
+                              "value": "America/Indiana/Indianapolis",
                             },
                             Object {
                               "index": 340,
@@ -18031,11 +18031,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                               },
                               Object {
                                 "index": 2.4,
-                                "label": "Indiana (East) (8:15 AM)",
-                                "value": "America/Indiana/Indianapolis",
-                              },
-                              Object {
-                                "index": 2.4,
                                 "label": "Puerto Rico (8:15 AM)",
                                 "value": "America/Puerto_Rico",
                               },
@@ -18348,6 +18343,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                 "index": 280,
                                 "label": "Baghdad (3:15 PM)",
                                 "value": "Asia/Baghdad",
+                              },
+                              Object {
+                                "index": 340,
+                                "label": "Indiana (East) (8:15 AM)",
+                                "value": "America/Indiana/Indianapolis",
                               },
                               Object {
                                 "index": 340,
@@ -18834,11 +18834,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                 },
                                 Object {
                                   "index": 2.4,
-                                  "label": "Indiana (East) (8:15 AM)",
-                                  "value": "America/Indiana/Indianapolis",
-                                },
-                                Object {
-                                  "index": 2.4,
                                   "label": "Puerto Rico (8:15 AM)",
                                   "value": "America/Puerto_Rico",
                                 },
@@ -19151,6 +19146,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                   "index": 280,
                                   "label": "Baghdad (3:15 PM)",
                                   "value": "Asia/Baghdad",
+                                },
+                                Object {
+                                  "index": 340,
+                                  "label": "Indiana (East) (8:15 AM)",
+                                  "value": "America/Indiana/Indianapolis",
                                 },
                                 Object {
                                   "index": 340,
@@ -19650,11 +19650,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                   },
                                   Object {
                                     "index": 2.4,
-                                    "label": "Indiana (East) (8:15 AM)",
-                                    "value": "America/Indiana/Indianapolis",
-                                  },
-                                  Object {
-                                    "index": 2.4,
                                     "label": "Puerto Rico (8:15 AM)",
                                     "value": "America/Puerto_Rico",
                                   },
@@ -19967,6 +19962,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                     "index": 280,
                                     "label": "Baghdad (3:15 PM)",
                                     "value": "Asia/Baghdad",
+                                  },
+                                  Object {
+                                    "index": 340,
+                                    "label": "Indiana (East) (8:15 AM)",
+                                    "value": "America/Indiana/Indianapolis",
                                   },
                                   Object {
                                     "index": 340,
@@ -20502,11 +20502,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                       },
                                       Object {
                                         "index": 2.4,
-                                        "label": "Indiana (East) (8:15 AM)",
-                                        "value": "America/Indiana/Indianapolis",
-                                      },
-                                      Object {
-                                        "index": 2.4,
                                         "label": "Puerto Rico (8:15 AM)",
                                         "value": "America/Puerto_Rico",
                                       },
@@ -20819,6 +20814,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                         "index": 280,
                                         "label": "Baghdad (3:15 PM)",
                                         "value": "Asia/Baghdad",
+                                      },
+                                      Object {
+                                        "index": 340,
+                                        "label": "Indiana (East) (8:15 AM)",
+                                        "value": "America/Indiana/Indianapolis",
                                       },
                                       Object {
                                         "index": 340,
@@ -21318,11 +21318,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                         },
                                         Object {
                                           "index": 2.4,
-                                          "label": "Indiana (East) (8:15 AM)",
-                                          "value": "America/Indiana/Indianapolis",
-                                        },
-                                        Object {
-                                          "index": 2.4,
                                           "label": "Puerto Rico (8:15 AM)",
                                           "value": "America/Puerto_Rico",
                                         },
@@ -21635,6 +21630,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                           "index": 280,
                                           "label": "Baghdad (3:15 PM)",
                                           "value": "Asia/Baghdad",
+                                        },
+                                        Object {
+                                          "index": 340,
+                                          "label": "Indiana (East) (8:15 AM)",
+                                          "value": "America/Indiana/Indianapolis",
                                         },
                                         Object {
                                           "index": 340,
@@ -22178,11 +22178,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                             },
                                             Object {
                                               "index": 2.4,
-                                              "label": "Indiana (East) (8:15 AM)",
-                                              "value": "America/Indiana/Indianapolis",
-                                            },
-                                            Object {
-                                              "index": 2.4,
                                               "label": "Puerto Rico (8:15 AM)",
                                               "value": "America/Puerto_Rico",
                                             },
@@ -22495,6 +22490,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                               "index": 280,
                                               "label": "Baghdad (3:15 PM)",
                                               "value": "Asia/Baghdad",
+                                            },
+                                            Object {
+                                              "index": 340,
+                                              "label": "Indiana (East) (8:15 AM)",
+                                              "value": "America/Indiana/Indianapolis",
                                             },
                                             Object {
                                               "index": 340,
@@ -22994,11 +22994,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                               },
                                               Object {
                                                 "index": 2.4,
-                                                "label": "Indiana (East) (8:15 AM)",
-                                                "value": "America/Indiana/Indianapolis",
-                                              },
-                                              Object {
-                                                "index": 2.4,
                                                 "label": "Puerto Rico (8:15 AM)",
                                                 "value": "America/Puerto_Rico",
                                               },
@@ -23311,6 +23306,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                 "index": 280,
                                                 "label": "Baghdad (3:15 PM)",
                                                 "value": "Asia/Baghdad",
+                                              },
+                                              Object {
+                                                "index": 340,
+                                                "label": "Indiana (East) (8:15 AM)",
+                                                "value": "America/Indiana/Indianapolis",
                                               },
                                               Object {
                                                 "index": 340,
@@ -23846,11 +23846,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                   },
                                                   Object {
                                                     "index": 2.4,
-                                                    "label": "Indiana (East) (8:15 AM)",
-                                                    "value": "America/Indiana/Indianapolis",
-                                                  },
-                                                  Object {
-                                                    "index": 2.4,
                                                     "label": "Puerto Rico (8:15 AM)",
                                                     "value": "America/Puerto_Rico",
                                                   },
@@ -24163,6 +24158,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                     "index": 280,
                                                     "label": "Baghdad (3:15 PM)",
                                                     "value": "Asia/Baghdad",
+                                                  },
+                                                  Object {
+                                                    "index": 340,
+                                                    "label": "Indiana (East) (8:15 AM)",
+                                                    "value": "America/Indiana/Indianapolis",
                                                   },
                                                   Object {
                                                     "index": 340,
@@ -24662,11 +24662,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                     },
                                                     Object {
                                                       "index": 2.4,
-                                                      "label": "Indiana (East) (8:15 AM)",
-                                                      "value": "America/Indiana/Indianapolis",
-                                                    },
-                                                    Object {
-                                                      "index": 2.4,
                                                       "label": "Puerto Rico (8:15 AM)",
                                                       "value": "America/Puerto_Rico",
                                                     },
@@ -24979,6 +24974,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                       "index": 280,
                                                       "label": "Baghdad (3:15 PM)",
                                                       "value": "Asia/Baghdad",
+                                                    },
+                                                    Object {
+                                                      "index": 340,
+                                                      "label": "Indiana (East) (8:15 AM)",
+                                                      "value": "America/Indiana/Indianapolis",
                                                     },
                                                     Object {
                                                       "index": 340,
@@ -25566,11 +25566,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                     },
                                                     Object {
                                                       "index": 2.4,
-                                                      "label": "Indiana (East) (8:15 AM)",
-                                                      "value": "America/Indiana/Indianapolis",
-                                                    },
-                                                    Object {
-                                                      "index": 2.4,
                                                       "label": "Puerto Rico (8:15 AM)",
                                                       "value": "America/Puerto_Rico",
                                                     },
@@ -25883,6 +25878,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                       "index": 280,
                                                       "label": "Baghdad (3:15 PM)",
                                                       "value": "Asia/Baghdad",
+                                                    },
+                                                    Object {
+                                                      "index": 340,
+                                                      "label": "Indiana (East) (8:15 AM)",
+                                                      "value": "America/Indiana/Indianapolis",
                                                     },
                                                     Object {
                                                       "index": 340,
@@ -26450,11 +26450,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                       },
                                                       Object {
                                                         "index": 2.4,
-                                                        "label": "Indiana (East) (8:15 AM)",
-                                                        "value": "America/Indiana/Indianapolis",
-                                                      },
-                                                      Object {
-                                                        "index": 2.4,
                                                         "label": "Puerto Rico (8:15 AM)",
                                                         "value": "America/Puerto_Rico",
                                                       },
@@ -26767,6 +26762,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                         "index": 280,
                                                         "label": "Baghdad (3:15 PM)",
                                                         "value": "Asia/Baghdad",
+                                                      },
+                                                      Object {
+                                                        "index": 340,
+                                                        "label": "Indiana (East) (8:15 AM)",
+                                                        "value": "America/Indiana/Indianapolis",
                                                       },
                                                       Object {
                                                         "index": 340,
@@ -27389,11 +27389,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                             },
                                             Object {
                                               "index": 2.4,
-                                              "label": "Indiana (East) (8:15 AM)",
-                                              "value": "America/Indiana/Indianapolis",
-                                            },
-                                            Object {
-                                              "index": 2.4,
                                               "label": "Puerto Rico (8:15 AM)",
                                               "value": "America/Puerto_Rico",
                                             },
@@ -27706,6 +27701,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                               "index": 280,
                                               "label": "Baghdad (3:15 PM)",
                                               "value": "Asia/Baghdad",
+                                            },
+                                            Object {
+                                              "index": 340,
+                                              "label": "Indiana (East) (8:15 AM)",
+                                              "value": "America/Indiana/Indianapolis",
                                             },
                                             Object {
                                               "index": 340,
@@ -28205,11 +28205,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                               },
                                               Object {
                                                 "index": 2.4,
-                                                "label": "Indiana (East) (8:15 AM)",
-                                                "value": "America/Indiana/Indianapolis",
-                                              },
-                                              Object {
-                                                "index": 2.4,
                                                 "label": "Puerto Rico (8:15 AM)",
                                                 "value": "America/Puerto_Rico",
                                               },
@@ -28522,6 +28517,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                 "index": 280,
                                                 "label": "Baghdad (3:15 PM)",
                                                 "value": "Asia/Baghdad",
+                                              },
+                                              Object {
+                                                "index": 340,
+                                                "label": "Indiana (East) (8:15 AM)",
+                                                "value": "America/Indiana/Indianapolis",
                                               },
                                               Object {
                                                 "index": 340,
@@ -29047,11 +29047,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                   },
                                                   Object {
                                                     "index": 2.4,
-                                                    "label": "Indiana (East) (8:15 AM)",
-                                                    "value": "America/Indiana/Indianapolis",
-                                                  },
-                                                  Object {
-                                                    "index": 2.4,
                                                     "label": "Puerto Rico (8:15 AM)",
                                                     "value": "America/Puerto_Rico",
                                                   },
@@ -29364,6 +29359,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                     "index": 280,
                                                     "label": "Baghdad (3:15 PM)",
                                                     "value": "Asia/Baghdad",
+                                                  },
+                                                  Object {
+                                                    "index": 340,
+                                                    "label": "Indiana (East) (8:15 AM)",
+                                                    "value": "America/Indiana/Indianapolis",
                                                   },
                                                   Object {
                                                     "index": 340,
@@ -29863,11 +29863,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                     },
                                                     Object {
                                                       "index": 2.4,
-                                                      "label": "Indiana (East) (8:15 AM)",
-                                                      "value": "America/Indiana/Indianapolis",
-                                                    },
-                                                    Object {
-                                                      "index": 2.4,
                                                       "label": "Puerto Rico (8:15 AM)",
                                                       "value": "America/Puerto_Rico",
                                                     },
@@ -30180,6 +30175,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                       "index": 280,
                                                       "label": "Baghdad (3:15 PM)",
                                                       "value": "Asia/Baghdad",
+                                                    },
+                                                    Object {
+                                                      "index": 340,
+                                                      "label": "Indiana (East) (8:15 AM)",
+                                                      "value": "America/Indiana/Indianapolis",
                                                     },
                                                     Object {
                                                       "index": 340,
@@ -30716,11 +30716,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                   },
                                                   Object {
                                                     "index": 2.4,
-                                                    "label": "Indiana (East) (8:15 AM)",
-                                                    "value": "America/Indiana/Indianapolis",
-                                                  },
-                                                  Object {
-                                                    "index": 2.4,
                                                     "label": "Puerto Rico (8:15 AM)",
                                                     "value": "America/Puerto_Rico",
                                                   },
@@ -31033,6 +31028,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                     "index": 280,
                                                     "label": "Baghdad (3:15 PM)",
                                                     "value": "Asia/Baghdad",
+                                                  },
+                                                  Object {
+                                                    "index": 340,
+                                                    "label": "Indiana (East) (8:15 AM)",
+                                                    "value": "America/Indiana/Indianapolis",
                                                   },
                                                   Object {
                                                     "index": 340,
@@ -31532,11 +31532,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                     },
                                                     Object {
                                                       "index": 2.4,
-                                                      "label": "Indiana (East) (8:15 AM)",
-                                                      "value": "America/Indiana/Indianapolis",
-                                                    },
-                                                    Object {
-                                                      "index": 2.4,
                                                       "label": "Puerto Rico (8:15 AM)",
                                                       "value": "America/Puerto_Rico",
                                                     },
@@ -31849,6 +31844,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                       "index": 280,
                                                       "label": "Baghdad (3:15 PM)",
                                                       "value": "Asia/Baghdad",
+                                                    },
+                                                    Object {
+                                                      "index": 340,
+                                                      "label": "Indiana (East) (8:15 AM)",
+                                                      "value": "America/Indiana/Indianapolis",
                                                     },
                                                     Object {
                                                       "index": 340,
@@ -32670,11 +32670,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                     },
                     Object {
                       "index": 2.4,
-                      "label": "Indiana (East) (8:15 AM)",
-                      "value": "America/Indiana/Indianapolis",
-                    },
-                    Object {
-                      "index": 2.4,
                       "label": "Puerto Rico (8:15 AM)",
                       "value": "America/Puerto_Rico",
                     },
@@ -32987,6 +32982,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                       "index": 280,
                       "label": "Baghdad (3:15 PM)",
                       "value": "Asia/Baghdad",
+                    },
+                    Object {
+                      "index": 340,
+                      "label": "Indiana (East) (8:15 AM)",
+                      "value": "America/Indiana/Indianapolis",
                     },
                     Object {
                       "index": 340,
@@ -33417,10 +33417,10 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                 styling={
                   Object {
                     "& .cf-select__menu-list": Object {
-                      "& > :nth-child(10)": Object {
+                      "& > :nth-child(9)": Object {
                         "borderBottom": "1px solid grey",
                       },
-                      "height": "390px !important",
+                      "height": "351px !important",
                       "maxHeight": "none",
                       "overflowY": "auto",
                     },
@@ -33433,7 +33433,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                 >
                   <div
                     className="cf-form-dropdown dropdown-appellantTz"
-                    data-css-1gh7024=""
+                    data-css-1dzedb9=""
                   >
                     <label
                       className="question-label"
@@ -33509,11 +33509,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                               "index": -0,
                               "label": "Pacific Time (US & Canada) (5:15 AM)",
                               "value": "America/Los_Angeles",
-                            },
-                            Object {
-                              "index": 2.4,
-                              "label": "Indiana (East) (8:15 AM)",
-                              "value": "America/Indiana/Indianapolis",
                             },
                             Object {
                               "index": 2.4,
@@ -33829,6 +33824,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                               "index": 280,
                               "label": "Baghdad (3:15 PM)",
                               "value": "Asia/Baghdad",
+                            },
+                            Object {
+                              "index": 340,
+                              "label": "Indiana (East) (8:15 AM)",
+                              "value": "America/Indiana/Indianapolis",
                             },
                             Object {
                               "index": 340,
@@ -34341,11 +34341,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                               },
                               Object {
                                 "index": 2.4,
-                                "label": "Indiana (East) (8:15 AM)",
-                                "value": "America/Indiana/Indianapolis",
-                              },
-                              Object {
-                                "index": 2.4,
                                 "label": "Puerto Rico (8:15 AM)",
                                 "value": "America/Puerto_Rico",
                               },
@@ -34658,6 +34653,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                 "index": 280,
                                 "label": "Baghdad (3:15 PM)",
                                 "value": "Asia/Baghdad",
+                              },
+                              Object {
+                                "index": 340,
+                                "label": "Indiana (East) (8:15 AM)",
+                                "value": "America/Indiana/Indianapolis",
                               },
                               Object {
                                 "index": 340,
@@ -35144,11 +35144,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                 },
                                 Object {
                                   "index": 2.4,
-                                  "label": "Indiana (East) (8:15 AM)",
-                                  "value": "America/Indiana/Indianapolis",
-                                },
-                                Object {
-                                  "index": 2.4,
                                   "label": "Puerto Rico (8:15 AM)",
                                   "value": "America/Puerto_Rico",
                                 },
@@ -35461,6 +35456,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                   "index": 280,
                                   "label": "Baghdad (3:15 PM)",
                                   "value": "Asia/Baghdad",
+                                },
+                                Object {
+                                  "index": 340,
+                                  "label": "Indiana (East) (8:15 AM)",
+                                  "value": "America/Indiana/Indianapolis",
                                 },
                                 Object {
                                   "index": 340,
@@ -35960,11 +35960,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                   },
                                   Object {
                                     "index": 2.4,
-                                    "label": "Indiana (East) (8:15 AM)",
-                                    "value": "America/Indiana/Indianapolis",
-                                  },
-                                  Object {
-                                    "index": 2.4,
                                     "label": "Puerto Rico (8:15 AM)",
                                     "value": "America/Puerto_Rico",
                                   },
@@ -36277,6 +36272,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                     "index": 280,
                                     "label": "Baghdad (3:15 PM)",
                                     "value": "Asia/Baghdad",
+                                  },
+                                  Object {
+                                    "index": 340,
+                                    "label": "Indiana (East) (8:15 AM)",
+                                    "value": "America/Indiana/Indianapolis",
                                   },
                                   Object {
                                     "index": 340,
@@ -36812,11 +36812,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                       },
                                       Object {
                                         "index": 2.4,
-                                        "label": "Indiana (East) (8:15 AM)",
-                                        "value": "America/Indiana/Indianapolis",
-                                      },
-                                      Object {
-                                        "index": 2.4,
                                         "label": "Puerto Rico (8:15 AM)",
                                         "value": "America/Puerto_Rico",
                                       },
@@ -37129,6 +37124,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                         "index": 280,
                                         "label": "Baghdad (3:15 PM)",
                                         "value": "Asia/Baghdad",
+                                      },
+                                      Object {
+                                        "index": 340,
+                                        "label": "Indiana (East) (8:15 AM)",
+                                        "value": "America/Indiana/Indianapolis",
                                       },
                                       Object {
                                         "index": 340,
@@ -37628,11 +37628,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                         },
                                         Object {
                                           "index": 2.4,
-                                          "label": "Indiana (East) (8:15 AM)",
-                                          "value": "America/Indiana/Indianapolis",
-                                        },
-                                        Object {
-                                          "index": 2.4,
                                           "label": "Puerto Rico (8:15 AM)",
                                           "value": "America/Puerto_Rico",
                                         },
@@ -37945,6 +37940,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                           "index": 280,
                                           "label": "Baghdad (3:15 PM)",
                                           "value": "Asia/Baghdad",
+                                        },
+                                        Object {
+                                          "index": 340,
+                                          "label": "Indiana (East) (8:15 AM)",
+                                          "value": "America/Indiana/Indianapolis",
                                         },
                                         Object {
                                           "index": 340,
@@ -38488,11 +38488,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                             },
                                             Object {
                                               "index": 2.4,
-                                              "label": "Indiana (East) (8:15 AM)",
-                                              "value": "America/Indiana/Indianapolis",
-                                            },
-                                            Object {
-                                              "index": 2.4,
                                               "label": "Puerto Rico (8:15 AM)",
                                               "value": "America/Puerto_Rico",
                                             },
@@ -38805,6 +38800,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                               "index": 280,
                                               "label": "Baghdad (3:15 PM)",
                                               "value": "Asia/Baghdad",
+                                            },
+                                            Object {
+                                              "index": 340,
+                                              "label": "Indiana (East) (8:15 AM)",
+                                              "value": "America/Indiana/Indianapolis",
                                             },
                                             Object {
                                               "index": 340,
@@ -39304,11 +39304,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                               },
                                               Object {
                                                 "index": 2.4,
-                                                "label": "Indiana (East) (8:15 AM)",
-                                                "value": "America/Indiana/Indianapolis",
-                                              },
-                                              Object {
-                                                "index": 2.4,
                                                 "label": "Puerto Rico (8:15 AM)",
                                                 "value": "America/Puerto_Rico",
                                               },
@@ -39621,6 +39616,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                 "index": 280,
                                                 "label": "Baghdad (3:15 PM)",
                                                 "value": "Asia/Baghdad",
+                                              },
+                                              Object {
+                                                "index": 340,
+                                                "label": "Indiana (East) (8:15 AM)",
+                                                "value": "America/Indiana/Indianapolis",
                                               },
                                               Object {
                                                 "index": 340,
@@ -40156,11 +40156,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                   },
                                                   Object {
                                                     "index": 2.4,
-                                                    "label": "Indiana (East) (8:15 AM)",
-                                                    "value": "America/Indiana/Indianapolis",
-                                                  },
-                                                  Object {
-                                                    "index": 2.4,
                                                     "label": "Puerto Rico (8:15 AM)",
                                                     "value": "America/Puerto_Rico",
                                                   },
@@ -40473,6 +40468,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                     "index": 280,
                                                     "label": "Baghdad (3:15 PM)",
                                                     "value": "Asia/Baghdad",
+                                                  },
+                                                  Object {
+                                                    "index": 340,
+                                                    "label": "Indiana (East) (8:15 AM)",
+                                                    "value": "America/Indiana/Indianapolis",
                                                   },
                                                   Object {
                                                     "index": 340,
@@ -40972,11 +40972,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                     },
                                                     Object {
                                                       "index": 2.4,
-                                                      "label": "Indiana (East) (8:15 AM)",
-                                                      "value": "America/Indiana/Indianapolis",
-                                                    },
-                                                    Object {
-                                                      "index": 2.4,
                                                       "label": "Puerto Rico (8:15 AM)",
                                                       "value": "America/Puerto_Rico",
                                                     },
@@ -41289,6 +41284,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                       "index": 280,
                                                       "label": "Baghdad (3:15 PM)",
                                                       "value": "Asia/Baghdad",
+                                                    },
+                                                    Object {
+                                                      "index": 340,
+                                                      "label": "Indiana (East) (8:15 AM)",
+                                                      "value": "America/Indiana/Indianapolis",
                                                     },
                                                     Object {
                                                       "index": 340,
@@ -41876,11 +41876,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                     },
                                                     Object {
                                                       "index": 2.4,
-                                                      "label": "Indiana (East) (8:15 AM)",
-                                                      "value": "America/Indiana/Indianapolis",
-                                                    },
-                                                    Object {
-                                                      "index": 2.4,
                                                       "label": "Puerto Rico (8:15 AM)",
                                                       "value": "America/Puerto_Rico",
                                                     },
@@ -42193,6 +42188,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                       "index": 280,
                                                       "label": "Baghdad (3:15 PM)",
                                                       "value": "Asia/Baghdad",
+                                                    },
+                                                    Object {
+                                                      "index": 340,
+                                                      "label": "Indiana (East) (8:15 AM)",
+                                                      "value": "America/Indiana/Indianapolis",
                                                     },
                                                     Object {
                                                       "index": 340,
@@ -42760,11 +42760,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                       },
                                                       Object {
                                                         "index": 2.4,
-                                                        "label": "Indiana (East) (8:15 AM)",
-                                                        "value": "America/Indiana/Indianapolis",
-                                                      },
-                                                      Object {
-                                                        "index": 2.4,
                                                         "label": "Puerto Rico (8:15 AM)",
                                                         "value": "America/Puerto_Rico",
                                                       },
@@ -43077,6 +43072,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                         "index": 280,
                                                         "label": "Baghdad (3:15 PM)",
                                                         "value": "Asia/Baghdad",
+                                                      },
+                                                      Object {
+                                                        "index": 340,
+                                                        "label": "Indiana (East) (8:15 AM)",
+                                                        "value": "America/Indiana/Indianapolis",
                                                       },
                                                       Object {
                                                         "index": 340,
@@ -43699,11 +43699,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                             },
                                             Object {
                                               "index": 2.4,
-                                              "label": "Indiana (East) (8:15 AM)",
-                                              "value": "America/Indiana/Indianapolis",
-                                            },
-                                            Object {
-                                              "index": 2.4,
                                               "label": "Puerto Rico (8:15 AM)",
                                               "value": "America/Puerto_Rico",
                                             },
@@ -44016,6 +44011,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                               "index": 280,
                                               "label": "Baghdad (3:15 PM)",
                                               "value": "Asia/Baghdad",
+                                            },
+                                            Object {
+                                              "index": 340,
+                                              "label": "Indiana (East) (8:15 AM)",
+                                              "value": "America/Indiana/Indianapolis",
                                             },
                                             Object {
                                               "index": 340,
@@ -44515,11 +44515,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                               },
                                               Object {
                                                 "index": 2.4,
-                                                "label": "Indiana (East) (8:15 AM)",
-                                                "value": "America/Indiana/Indianapolis",
-                                              },
-                                              Object {
-                                                "index": 2.4,
                                                 "label": "Puerto Rico (8:15 AM)",
                                                 "value": "America/Puerto_Rico",
                                               },
@@ -44832,6 +44827,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                 "index": 280,
                                                 "label": "Baghdad (3:15 PM)",
                                                 "value": "Asia/Baghdad",
+                                              },
+                                              Object {
+                                                "index": 340,
+                                                "label": "Indiana (East) (8:15 AM)",
+                                                "value": "America/Indiana/Indianapolis",
                                               },
                                               Object {
                                                 "index": 340,
@@ -45357,11 +45357,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                   },
                                                   Object {
                                                     "index": 2.4,
-                                                    "label": "Indiana (East) (8:15 AM)",
-                                                    "value": "America/Indiana/Indianapolis",
-                                                  },
-                                                  Object {
-                                                    "index": 2.4,
                                                     "label": "Puerto Rico (8:15 AM)",
                                                     "value": "America/Puerto_Rico",
                                                   },
@@ -45674,6 +45669,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                     "index": 280,
                                                     "label": "Baghdad (3:15 PM)",
                                                     "value": "Asia/Baghdad",
+                                                  },
+                                                  Object {
+                                                    "index": 340,
+                                                    "label": "Indiana (East) (8:15 AM)",
+                                                    "value": "America/Indiana/Indianapolis",
                                                   },
                                                   Object {
                                                     "index": 340,
@@ -46173,11 +46173,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                     },
                                                     Object {
                                                       "index": 2.4,
-                                                      "label": "Indiana (East) (8:15 AM)",
-                                                      "value": "America/Indiana/Indianapolis",
-                                                    },
-                                                    Object {
-                                                      "index": 2.4,
                                                       "label": "Puerto Rico (8:15 AM)",
                                                       "value": "America/Puerto_Rico",
                                                     },
@@ -46490,6 +46485,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                       "index": 280,
                                                       "label": "Baghdad (3:15 PM)",
                                                       "value": "Asia/Baghdad",
+                                                    },
+                                                    Object {
+                                                      "index": 340,
+                                                      "label": "Indiana (East) (8:15 AM)",
+                                                      "value": "America/Indiana/Indianapolis",
                                                     },
                                                     Object {
                                                       "index": 340,
@@ -47026,11 +47026,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                   },
                                                   Object {
                                                     "index": 2.4,
-                                                    "label": "Indiana (East) (8:15 AM)",
-                                                    "value": "America/Indiana/Indianapolis",
-                                                  },
-                                                  Object {
-                                                    "index": 2.4,
                                                     "label": "Puerto Rico (8:15 AM)",
                                                     "value": "America/Puerto_Rico",
                                                   },
@@ -47343,6 +47338,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                     "index": 280,
                                                     "label": "Baghdad (3:15 PM)",
                                                     "value": "Asia/Baghdad",
+                                                  },
+                                                  Object {
+                                                    "index": 340,
+                                                    "label": "Indiana (East) (8:15 AM)",
+                                                    "value": "America/Indiana/Indianapolis",
                                                   },
                                                   Object {
                                                     "index": 340,
@@ -47842,11 +47842,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                     },
                                                     Object {
                                                       "index": 2.4,
-                                                      "label": "Indiana (East) (8:15 AM)",
-                                                      "value": "America/Indiana/Indianapolis",
-                                                    },
-                                                    Object {
-                                                      "index": 2.4,
                                                       "label": "Puerto Rico (8:15 AM)",
                                                       "value": "America/Puerto_Rico",
                                                     },
@@ -48159,6 +48154,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                       "index": 280,
                                                       "label": "Baghdad (3:15 PM)",
                                                       "value": "Asia/Baghdad",
+                                                    },
+                                                    Object {
+                                                      "index": 340,
+                                                      "label": "Indiana (East) (8:15 AM)",
+                                                      "value": "America/Indiana/Indianapolis",
                                                     },
                                                     Object {
                                                       "index": 340,
@@ -48867,11 +48867,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                     },
                     Object {
                       "index": 2.4,
-                      "label": "Indiana (East) (8:15 AM)",
-                      "value": "America/Indiana/Indianapolis",
-                    },
-                    Object {
-                      "index": 2.4,
                       "label": "Puerto Rico (8:15 AM)",
                       "value": "America/Puerto_Rico",
                     },
@@ -49184,6 +49179,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                       "index": 280,
                       "label": "Baghdad (3:15 PM)",
                       "value": "Asia/Baghdad",
+                    },
+                    Object {
+                      "index": 340,
+                      "label": "Indiana (East) (8:15 AM)",
+                      "value": "America/Indiana/Indianapolis",
                     },
                     Object {
                       "index": 340,
@@ -49614,10 +49614,10 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                 styling={
                   Object {
                     "& .cf-select__menu-list": Object {
-                      "& > :nth-child(10)": Object {
+                      "& > :nth-child(9)": Object {
                         "borderBottom": "1px solid grey",
                       },
-                      "height": "390px !important",
+                      "height": "351px !important",
                       "maxHeight": "none",
                       "overflowY": "auto",
                     },
@@ -49630,7 +49630,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                 >
                   <div
                     className="cf-form-dropdown dropdown-representativeTz"
-                    data-css-1gh7024=""
+                    data-css-1dzedb9=""
                   >
                     <label
                       className="question-label"
@@ -49706,11 +49706,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                               "index": -0,
                               "label": "Pacific Time (US & Canada) (5:15 AM)",
                               "value": "America/Los_Angeles",
-                            },
-                            Object {
-                              "index": 2.4,
-                              "label": "Indiana (East) (8:15 AM)",
-                              "value": "America/Indiana/Indianapolis",
                             },
                             Object {
                               "index": 2.4,
@@ -50026,6 +50021,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                               "index": 280,
                               "label": "Baghdad (3:15 PM)",
                               "value": "Asia/Baghdad",
+                            },
+                            Object {
+                              "index": 340,
+                              "label": "Indiana (East) (8:15 AM)",
+                              "value": "America/Indiana/Indianapolis",
                             },
                             Object {
                               "index": 340,
@@ -50538,11 +50538,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                               },
                               Object {
                                 "index": 2.4,
-                                "label": "Indiana (East) (8:15 AM)",
-                                "value": "America/Indiana/Indianapolis",
-                              },
-                              Object {
-                                "index": 2.4,
                                 "label": "Puerto Rico (8:15 AM)",
                                 "value": "America/Puerto_Rico",
                               },
@@ -50855,6 +50850,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                 "index": 280,
                                 "label": "Baghdad (3:15 PM)",
                                 "value": "Asia/Baghdad",
+                              },
+                              Object {
+                                "index": 340,
+                                "label": "Indiana (East) (8:15 AM)",
+                                "value": "America/Indiana/Indianapolis",
                               },
                               Object {
                                 "index": 340,
@@ -51341,11 +51341,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                 },
                                 Object {
                                   "index": 2.4,
-                                  "label": "Indiana (East) (8:15 AM)",
-                                  "value": "America/Indiana/Indianapolis",
-                                },
-                                Object {
-                                  "index": 2.4,
                                   "label": "Puerto Rico (8:15 AM)",
                                   "value": "America/Puerto_Rico",
                                 },
@@ -51658,6 +51653,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                   "index": 280,
                                   "label": "Baghdad (3:15 PM)",
                                   "value": "Asia/Baghdad",
+                                },
+                                Object {
+                                  "index": 340,
+                                  "label": "Indiana (East) (8:15 AM)",
+                                  "value": "America/Indiana/Indianapolis",
                                 },
                                 Object {
                                   "index": 340,
@@ -52157,11 +52157,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                   },
                                   Object {
                                     "index": 2.4,
-                                    "label": "Indiana (East) (8:15 AM)",
-                                    "value": "America/Indiana/Indianapolis",
-                                  },
-                                  Object {
-                                    "index": 2.4,
                                     "label": "Puerto Rico (8:15 AM)",
                                     "value": "America/Puerto_Rico",
                                   },
@@ -52474,6 +52469,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                     "index": 280,
                                     "label": "Baghdad (3:15 PM)",
                                     "value": "Asia/Baghdad",
+                                  },
+                                  Object {
+                                    "index": 340,
+                                    "label": "Indiana (East) (8:15 AM)",
+                                    "value": "America/Indiana/Indianapolis",
                                   },
                                   Object {
                                     "index": 340,
@@ -53009,11 +53009,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                       },
                                       Object {
                                         "index": 2.4,
-                                        "label": "Indiana (East) (8:15 AM)",
-                                        "value": "America/Indiana/Indianapolis",
-                                      },
-                                      Object {
-                                        "index": 2.4,
                                         "label": "Puerto Rico (8:15 AM)",
                                         "value": "America/Puerto_Rico",
                                       },
@@ -53326,6 +53321,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                         "index": 280,
                                         "label": "Baghdad (3:15 PM)",
                                         "value": "Asia/Baghdad",
+                                      },
+                                      Object {
+                                        "index": 340,
+                                        "label": "Indiana (East) (8:15 AM)",
+                                        "value": "America/Indiana/Indianapolis",
                                       },
                                       Object {
                                         "index": 340,
@@ -53825,11 +53825,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                         },
                                         Object {
                                           "index": 2.4,
-                                          "label": "Indiana (East) (8:15 AM)",
-                                          "value": "America/Indiana/Indianapolis",
-                                        },
-                                        Object {
-                                          "index": 2.4,
                                           "label": "Puerto Rico (8:15 AM)",
                                           "value": "America/Puerto_Rico",
                                         },
@@ -54142,6 +54137,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                           "index": 280,
                                           "label": "Baghdad (3:15 PM)",
                                           "value": "Asia/Baghdad",
+                                        },
+                                        Object {
+                                          "index": 340,
+                                          "label": "Indiana (East) (8:15 AM)",
+                                          "value": "America/Indiana/Indianapolis",
                                         },
                                         Object {
                                           "index": 340,
@@ -54685,11 +54685,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                             },
                                             Object {
                                               "index": 2.4,
-                                              "label": "Indiana (East) (8:15 AM)",
-                                              "value": "America/Indiana/Indianapolis",
-                                            },
-                                            Object {
-                                              "index": 2.4,
                                               "label": "Puerto Rico (8:15 AM)",
                                               "value": "America/Puerto_Rico",
                                             },
@@ -55002,6 +54997,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                               "index": 280,
                                               "label": "Baghdad (3:15 PM)",
                                               "value": "Asia/Baghdad",
+                                            },
+                                            Object {
+                                              "index": 340,
+                                              "label": "Indiana (East) (8:15 AM)",
+                                              "value": "America/Indiana/Indianapolis",
                                             },
                                             Object {
                                               "index": 340,
@@ -55501,11 +55501,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                               },
                                               Object {
                                                 "index": 2.4,
-                                                "label": "Indiana (East) (8:15 AM)",
-                                                "value": "America/Indiana/Indianapolis",
-                                              },
-                                              Object {
-                                                "index": 2.4,
                                                 "label": "Puerto Rico (8:15 AM)",
                                                 "value": "America/Puerto_Rico",
                                               },
@@ -55818,6 +55813,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                 "index": 280,
                                                 "label": "Baghdad (3:15 PM)",
                                                 "value": "Asia/Baghdad",
+                                              },
+                                              Object {
+                                                "index": 340,
+                                                "label": "Indiana (East) (8:15 AM)",
+                                                "value": "America/Indiana/Indianapolis",
                                               },
                                               Object {
                                                 "index": 340,
@@ -56353,11 +56353,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                   },
                                                   Object {
                                                     "index": 2.4,
-                                                    "label": "Indiana (East) (8:15 AM)",
-                                                    "value": "America/Indiana/Indianapolis",
-                                                  },
-                                                  Object {
-                                                    "index": 2.4,
                                                     "label": "Puerto Rico (8:15 AM)",
                                                     "value": "America/Puerto_Rico",
                                                   },
@@ -56670,6 +56665,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                     "index": 280,
                                                     "label": "Baghdad (3:15 PM)",
                                                     "value": "Asia/Baghdad",
+                                                  },
+                                                  Object {
+                                                    "index": 340,
+                                                    "label": "Indiana (East) (8:15 AM)",
+                                                    "value": "America/Indiana/Indianapolis",
                                                   },
                                                   Object {
                                                     "index": 340,
@@ -57169,11 +57169,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                     },
                                                     Object {
                                                       "index": 2.4,
-                                                      "label": "Indiana (East) (8:15 AM)",
-                                                      "value": "America/Indiana/Indianapolis",
-                                                    },
-                                                    Object {
-                                                      "index": 2.4,
                                                       "label": "Puerto Rico (8:15 AM)",
                                                       "value": "America/Puerto_Rico",
                                                     },
@@ -57486,6 +57481,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                       "index": 280,
                                                       "label": "Baghdad (3:15 PM)",
                                                       "value": "Asia/Baghdad",
+                                                    },
+                                                    Object {
+                                                      "index": 340,
+                                                      "label": "Indiana (East) (8:15 AM)",
+                                                      "value": "America/Indiana/Indianapolis",
                                                     },
                                                     Object {
                                                       "index": 340,
@@ -58073,11 +58073,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                     },
                                                     Object {
                                                       "index": 2.4,
-                                                      "label": "Indiana (East) (8:15 AM)",
-                                                      "value": "America/Indiana/Indianapolis",
-                                                    },
-                                                    Object {
-                                                      "index": 2.4,
                                                       "label": "Puerto Rico (8:15 AM)",
                                                       "value": "America/Puerto_Rico",
                                                     },
@@ -58390,6 +58385,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                       "index": 280,
                                                       "label": "Baghdad (3:15 PM)",
                                                       "value": "Asia/Baghdad",
+                                                    },
+                                                    Object {
+                                                      "index": 340,
+                                                      "label": "Indiana (East) (8:15 AM)",
+                                                      "value": "America/Indiana/Indianapolis",
                                                     },
                                                     Object {
                                                       "index": 340,
@@ -58957,11 +58957,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                       },
                                                       Object {
                                                         "index": 2.4,
-                                                        "label": "Indiana (East) (8:15 AM)",
-                                                        "value": "America/Indiana/Indianapolis",
-                                                      },
-                                                      Object {
-                                                        "index": 2.4,
                                                         "label": "Puerto Rico (8:15 AM)",
                                                         "value": "America/Puerto_Rico",
                                                       },
@@ -59274,6 +59269,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                         "index": 280,
                                                         "label": "Baghdad (3:15 PM)",
                                                         "value": "Asia/Baghdad",
+                                                      },
+                                                      Object {
+                                                        "index": 340,
+                                                        "label": "Indiana (East) (8:15 AM)",
+                                                        "value": "America/Indiana/Indianapolis",
                                                       },
                                                       Object {
                                                         "index": 340,
@@ -59896,11 +59896,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                             },
                                             Object {
                                               "index": 2.4,
-                                              "label": "Indiana (East) (8:15 AM)",
-                                              "value": "America/Indiana/Indianapolis",
-                                            },
-                                            Object {
-                                              "index": 2.4,
                                               "label": "Puerto Rico (8:15 AM)",
                                               "value": "America/Puerto_Rico",
                                             },
@@ -60213,6 +60208,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                               "index": 280,
                                               "label": "Baghdad (3:15 PM)",
                                               "value": "Asia/Baghdad",
+                                            },
+                                            Object {
+                                              "index": 340,
+                                              "label": "Indiana (East) (8:15 AM)",
+                                              "value": "America/Indiana/Indianapolis",
                                             },
                                             Object {
                                               "index": 340,
@@ -60712,11 +60712,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                               },
                                               Object {
                                                 "index": 2.4,
-                                                "label": "Indiana (East) (8:15 AM)",
-                                                "value": "America/Indiana/Indianapolis",
-                                              },
-                                              Object {
-                                                "index": 2.4,
                                                 "label": "Puerto Rico (8:15 AM)",
                                                 "value": "America/Puerto_Rico",
                                               },
@@ -61029,6 +61024,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                 "index": 280,
                                                 "label": "Baghdad (3:15 PM)",
                                                 "value": "Asia/Baghdad",
+                                              },
+                                              Object {
+                                                "index": 340,
+                                                "label": "Indiana (East) (8:15 AM)",
+                                                "value": "America/Indiana/Indianapolis",
                                               },
                                               Object {
                                                 "index": 340,
@@ -61554,11 +61554,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                   },
                                                   Object {
                                                     "index": 2.4,
-                                                    "label": "Indiana (East) (8:15 AM)",
-                                                    "value": "America/Indiana/Indianapolis",
-                                                  },
-                                                  Object {
-                                                    "index": 2.4,
                                                     "label": "Puerto Rico (8:15 AM)",
                                                     "value": "America/Puerto_Rico",
                                                   },
@@ -61871,6 +61866,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                     "index": 280,
                                                     "label": "Baghdad (3:15 PM)",
                                                     "value": "Asia/Baghdad",
+                                                  },
+                                                  Object {
+                                                    "index": 340,
+                                                    "label": "Indiana (East) (8:15 AM)",
+                                                    "value": "America/Indiana/Indianapolis",
                                                   },
                                                   Object {
                                                     "index": 340,
@@ -62370,11 +62370,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                     },
                                                     Object {
                                                       "index": 2.4,
-                                                      "label": "Indiana (East) (8:15 AM)",
-                                                      "value": "America/Indiana/Indianapolis",
-                                                    },
-                                                    Object {
-                                                      "index": 2.4,
                                                       "label": "Puerto Rico (8:15 AM)",
                                                       "value": "America/Puerto_Rico",
                                                     },
@@ -62687,6 +62682,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                       "index": 280,
                                                       "label": "Baghdad (3:15 PM)",
                                                       "value": "Asia/Baghdad",
+                                                    },
+                                                    Object {
+                                                      "index": 340,
+                                                      "label": "Indiana (East) (8:15 AM)",
+                                                      "value": "America/Indiana/Indianapolis",
                                                     },
                                                     Object {
                                                       "index": 340,
@@ -63223,11 +63223,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                   },
                                                   Object {
                                                     "index": 2.4,
-                                                    "label": "Indiana (East) (8:15 AM)",
-                                                    "value": "America/Indiana/Indianapolis",
-                                                  },
-                                                  Object {
-                                                    "index": 2.4,
                                                     "label": "Puerto Rico (8:15 AM)",
                                                     "value": "America/Puerto_Rico",
                                                   },
@@ -63540,6 +63535,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                     "index": 280,
                                                     "label": "Baghdad (3:15 PM)",
                                                     "value": "Asia/Baghdad",
+                                                  },
+                                                  Object {
+                                                    "index": 340,
+                                                    "label": "Indiana (East) (8:15 AM)",
+                                                    "value": "America/Indiana/Indianapolis",
                                                   },
                                                   Object {
                                                     "index": 340,
@@ -64039,11 +64039,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                     },
                                                     Object {
                                                       "index": 2.4,
-                                                      "label": "Indiana (East) (8:15 AM)",
-                                                      "value": "America/Indiana/Indianapolis",
-                                                    },
-                                                    Object {
-                                                      "index": 2.4,
                                                       "label": "Puerto Rico (8:15 AM)",
                                                       "value": "America/Puerto_Rico",
                                                     },
@@ -64356,6 +64351,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                       "index": 280,
                                                       "label": "Baghdad (3:15 PM)",
                                                       "value": "Asia/Baghdad",
+                                                    },
+                                                    Object {
+                                                      "index": 340,
+                                                      "label": "Indiana (East) (8:15 AM)",
+                                                      "value": "America/Indiana/Indianapolis",
                                                     },
                                                     Object {
                                                       "index": 340,

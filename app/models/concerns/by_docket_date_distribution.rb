@@ -60,6 +60,8 @@ module ByDocketDateDistribution
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def ama_statistics
     docket_counts = {
+      aoj_legacy_priority_stats: {},
+      aoj_legacy_stats: {},
       direct_review_priority_stats: {},
       direct_review_stats: {},
       evidence_submission_priority_stats: {},
