@@ -21,6 +21,7 @@ export const SearchTable = ({ eventRows }) => {
         hideLabel
         onChange={() => onSavedSearchChange(row)}
         vertical
+        optionsStyling={{ marginLeft: 5 }}
       />
     },
     { name: 'searchName',
