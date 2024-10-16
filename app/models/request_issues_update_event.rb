@@ -196,7 +196,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   end
 
   def reset_or_create_legacy_issue!(legacy_issue, request_issue)
-    if legacy_issue && optin? && request_issue.ineligible_reason.blank?
+    if legacy_issue && optin?(@review) && request_issue.ineligible_reason.blank?
       legacy_issue.legacy_issue_optin.update!(
         optin_processed_at: nil,
         rollback_processed_at: nil,
@@ -206,7 +206,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       legacy_issue = create_legacy_issue_backfill(request_issue)
 
       # LegacyIssueOptin
-      if optin? && request_issue.ineligible_reason.blank?
+      if optin?(@review) && request_issue.ineligible_reason.blank?
         create_legacy_optin_backfill(request_issue, legacy_issue)
       end
     end
@@ -323,7 +323,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
         legacy_issue = create_legacy_issue_backfill(ri)
 
         # LegacyIssueOptin
-        if optin? && ri.ineligible_reason.blank?
+        if optin?(@review) && ri.ineligible_reason.blank?
           create_legacy_optin_backfill(ri, legacy_issue)
         end
       end
@@ -337,8 +337,8 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     request_issue.vacols_id.present? && request_issue.vacols_sequence_id.present?
   end
 
-  def optin?
-    ActiveModel::Type::Boolean.new.cast(@parser.claim_review_legacy_opt_in_approved)
+  def optin?(decision_review)
+    decision_review.legacy_opt_in_approved?
   end
 
   def create_legacy_issue_backfill(request_issue)
