@@ -25,7 +25,7 @@ if git.modified_files.grep(/app\/services\//).any?
   )
 end
 
-# Don't let testing shortcuts get into main by accident
+# Don't let testing shortcuts get into master by accident
 if `git diff #{github.base_commit} spec/ | grep -E '(:focus => true)|(focus: true)'`.length > 1
   fail("focus: true is left in test")
 end

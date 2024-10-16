@@ -11,8 +11,6 @@ module DownloadHelpers
 
   def downloads
     Dir.entries(WORKDIR)
-      .reject { |f| f == "." || f == ".." }
-      .map { |file| File.join(WORKDIR, file) }
   end
 
   def download
@@ -39,6 +37,6 @@ module DownloadHelpers
   end
 
   def clear_downloads
-    FileUtils.rm_rf(Dir.glob(File.join(WORKDIR, "*")))
+    FileUtils.rm_f(downloads)
   end
 end

@@ -264,7 +264,6 @@ describe HigherLevelReview, :postgres do
         expect(supplemental_claim).to_not be_nil
         expect(supplemental_claim.establishment_submitted_at).to_not be_nil
         expect(supplemental_claim.request_issues.count).to eq(2)
-        expect(supplemental_claim.type).to eq(SupplementalClaim.name)
 
         first_dta_request_issue = RequestIssue.find_by(
           decision_review: supplemental_claim,
@@ -333,7 +332,6 @@ describe HigherLevelReview, :postgres do
               caseflow_decision_date.to_date + vbms_offset -
               SupplementalClaim.processing_retry_interval_hours.hours + 1.minute
             )
-            expect(dta_sc.type).to eq(SupplementalClaim.name)
             expect do
               subject
             end.to_not have_enqueued_job(DecisionReviewProcessJob)

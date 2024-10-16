@@ -79,7 +79,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
         expect(response.status).to eq 200
         expect(response.headers["Content-Type"]).to include "text/csv"
         expect(response.body).to start_with("business_line")
-        expect(response.body.match?(task.appeal.class.review_title)).to eq true
+        expect(response.body.match?(task.appeal_type)).to eq true
       end
     end
   end
@@ -306,23 +306,6 @@ describe DecisionReviewsController, :postgres, type: :controller do
       end
     end
 
-    let!(:in_progress_remand_tasks) do
-      (0...10).map do |task_num|
-        task = create(
-          :remand_task,
-          assigned_to: non_comp_org,
-          assigned_at: task_num.minutes.ago + 1.minute.ago
-        )
-        task.appeal.update!(veteran_file_number: veteran.file_number)
-        create(:request_issue, :nonrating, decision_review: task.appeal, benefit_type: non_comp_org.url)
-
-        # Generate some random request issues for testing issue type filters
-        generate_request_issues(task, non_comp_org)
-
-        task
-      end
-    end
-
     let!(:completed_hlr_tasks) do
       (1..20).map do |task_num|
         task = create(
@@ -350,29 +333,6 @@ describe DecisionReviewsController, :postgres, type: :controller do
       (1..20).map do |task_num|
         task = create(
           :supplemental_claim_task,
-          assigned_to: non_comp_org,
-          assigned_at: task_num.days.ago,
-          closed_at: (2 * task_num).hours.ago
-        )
-        task.completed!
-        # Explicitly set the closed_at time again to try to avoid test flakiness
-        task.closed_at = Time.zone.now - (2 * task_num).hours
-        task.appeal.update!(veteran_file_number: veteran.file_number)
-        create(:request_issue, :nonrating, decision_review: task.appeal, benefit_type: non_comp_org.url)
-
-        # Generate some random request issues for testing issue type filters
-        generate_request_issues(task, non_comp_org)
-
-        task.save
-        # Attempt to reload after save to avoid potential test flakiness
-        task.reload
-      end
-    end
-
-    let!(:completed_remand_tasks) do
-      (1..10).map do |task_num|
-        task = create(
-          :remand_task,
           assigned_to: non_comp_org,
           assigned_at: task_num.days.ago,
           closed_at: (2 * task_num).hours.ago
@@ -430,23 +390,6 @@ describe DecisionReviewsController, :postgres, type: :controller do
           end
         ).to be true
       end
-
-      it "Only Remand Tasks are shown when filtered" do
-        get :index,
-            params: query_params.merge(
-              filter: ["col=decisionReviewType&val=Remand"],
-              page: 1
-            ),
-            format: :json
-
-        response_body = JSON.parse(response.body)
-
-        expect(
-          response_body["tasks"]["data"].all? do |task|
-            task["type"] == "decision_review_task" && task["attributes"]["type"] == "Remand"
-          end
-        ).to be true
-      end
     end
 
     shared_examples "issue type query filtering" do
@@ -495,9 +438,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
         }
       end
 
-      let(:in_progress_tasks) do
-        in_progress_hlr_tasks + on_hold_hlr_tasks + in_progress_sc_tasks + in_progress_remand_tasks
-      end
+      let(:in_progress_tasks) { in_progress_hlr_tasks + on_hold_hlr_tasks + in_progress_sc_tasks }
 
       include_examples "task query filtering"
       include_examples "issue type query filtering"
@@ -510,30 +451,30 @@ describe DecisionReviewsController, :postgres, type: :controller do
         expect(response.status).to eq(200)
         response_body = JSON.parse(response.body)
 
-        expect(response_body["total_task_count"]).to eq 94
+        expect(response_body["total_task_count"]).to eq 84
         expect(response_body["tasks_per_page"]).to eq 15
-        expect(response_body["task_page_count"]).to eq 7
+        expect(response_body["task_page_count"]).to eq 6
 
         expect(
           task_ids_from_response_body(response_body)
         ).to match_array task_ids_from_seed(in_progress_tasks, (0...15), :assigned_at)
       end
 
-      it "page 7 displays last 4 tasks" do
-        query_params[:page] = 7
+      it "page 6 displays last 9 tasks" do
+        query_params[:page] = 6
 
         subject
 
         expect(response.status).to eq(200)
         response_body = JSON.parse(response.body)
 
-        expect(response_body["total_task_count"]).to eq 94
+        expect(response_body["total_task_count"]).to eq 84
         expect(response_body["tasks_per_page"]).to eq 15
-        expect(response_body["task_page_count"]).to eq 7
+        expect(response_body["task_page_count"]).to eq 6
 
         expect(
           task_ids_from_response_body(response_body)
-        ).to match_array task_ids_from_seed(in_progress_tasks, (-4..in_progress_tasks.size), :assigned_at)
+        ).to match_array task_ids_from_seed(in_progress_tasks, (-9..in_progress_tasks.size), :assigned_at)
       end
     end
 
@@ -545,7 +486,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
         }
       end
 
-      let(:completed_tasks) { completed_sc_tasks + completed_hlr_tasks + completed_remand_tasks }
+      let(:completed_tasks) { completed_sc_tasks + completed_hlr_tasks }
 
       include_examples "task query filtering"
       include_examples "issue type query filtering"
@@ -558,34 +499,34 @@ describe DecisionReviewsController, :postgres, type: :controller do
         expect(response.status).to eq(200)
         response_body = JSON.parse(response.body)
 
-        expect(response_body["total_task_count"]).to eq 50
+        expect(response_body["total_task_count"]).to eq 40
         expect(response_body["tasks_per_page"]).to eq 15
-        expect(response_body["task_page_count"]).to eq 4
+        expect(response_body["task_page_count"]).to eq 3
 
         expect(
           task_ids_from_response_body(response_body)
         ).to match_array task_ids_from_seed(completed_tasks, (0...15), :closed_at)
       end
 
-      it "page 4 displays last 5 tasks" do
-        query_params[:page] = 4
+      it "page 3 displays last 10 tasks" do
+        query_params[:page] = 3
 
         subject
 
         expect(response.status).to eq(200)
         response_body = JSON.parse(response.body)
 
-        expect(response_body["total_task_count"]).to eq 50
+        expect(response_body["total_task_count"]).to eq 40
         expect(response_body["tasks_per_page"]).to eq 15
-        expect(response_body["task_page_count"]).to eq 4
+        expect(response_body["task_page_count"]).to eq 3
 
         expect(
           task_ids_from_response_body(response_body)
-        ).to match_array task_ids_from_seed(completed_tasks, (-5..completed_tasks.size), :closed_at)
+        ).to match_array task_ids_from_seed(completed_tasks, (-10..completed_tasks.size), :closed_at)
       end
     end
 
-    context "vha org with incomplete tasks" do
+    context "vha org incomplete_tasks" do
       let(:non_comp_org) { VhaBusinessLine.singleton }
 
       context "incomplete_tasks" do
@@ -663,7 +604,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
         end
 
         # The Vha Businessline in_progress should not include on_hold since it uses active for the tasks query
-        let(:in_progress_tasks) { in_progress_hlr_tasks + in_progress_sc_tasks + in_progress_remand_tasks }
+        let(:in_progress_tasks) { in_progress_hlr_tasks + in_progress_sc_tasks }
 
         it "page 1 displays first 15 tasks" do
           query_params[:page] = 1
@@ -673,7 +614,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
           expect(response.status).to eq(200)
           response_body = JSON.parse(response.body)
 
-          expect(response_body["total_task_count"]).to eq 74
+          expect(response_body["total_task_count"]).to eq 64
           expect(response_body["tasks_per_page"]).to eq 15
           expect(response_body["task_page_count"]).to eq 5
 
@@ -880,44 +821,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
         end
 
         let!(:task_event) do
-          create(:issue_modification_request,
-                 :with_higher_level_review_with_decision,
-                 :edit_of_request,
-                 :update_decider,
-                 :with_request_issue,
-                 nonrating_issue_category: "Medical and Dental Care Reimbursement")
-        end
-
-        let!(:issue_modification_request_modification) do
-          create(:issue_modification_request,
-                 :with_request_issue,
-                 request_type: "modification",
-                 decision_review: task_event.decision_review)
-        end
-
-        let!(:issue_modification_request_withdrawal) do
-          create(:issue_modification_request,
-                 :with_request_issue,
-                 :withdrawal,
-                 decision_review: task_event.decision_review)
-        end
-
-        let!(:issue_modification_request_removal) do
-          create(:issue_modification_request,
-                 :with_request_issue,
-                 request_type: "removal",
-                 decision_review: task_event.decision_review)
-        end
-        let!(:issue_modification_request_cancel) do
-          create(:issue_modification_request,
-                 :cancel_of_request,
-                 decision_review: task_event.decision_review)
-        end
-
-        let(:task_id) { task_event.decision_review.tasks.ids[0] }
-
-        let!(:remand_task_event) do
-          create(:remand_vha_task)
+          create(:higher_level_review_vha_task_with_decision)
         end
 
         let!(:remand_task_event) do
@@ -925,7 +829,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
         end
 
         it "should return task details" do
-          get :history, params: { task_id: task_id, decision_review_business_line_slug: vha_org.url },
+          get :history, params: { task_id: task_event.id, decision_review_business_line_slug: vha_org.url },
                         format: :json
 
           expect(response.status).to eq 200
@@ -933,38 +837,11 @@ describe DecisionReviewsController, :postgres, type: :controller do
           res = JSON.parse(response.body)
 
           expected_events = [
-            { "taskID" => task_id, "eventType" => "added_issue", "claimType" => "Higher-Level Review",
+            { "taskID" => task_event.id, "eventType" => "added_issue", "claimType" => "Higher-Level Review",
               "readableEventType" => "Added issue" },
             { "eventType" => "claim_creation", "readableEventType" => "Claim created" },
             { "eventType" => "in_progress", "readableEventType" => "Claim status - In progress" },
-            { "eventType" => "completed_disposition", "readableEventType" => "Completed disposition" },
-            { "eventType" => "addition", "readableEventType" => "Requested issue addition" },
-            { "eventType" => "pending", "readableEventType" => "Claim status - Pending" },
-            { "eventType" => "request_approved", "readableEventType" => "Approval of request - issue addition" },
-            { "eventType" => "request_edited", "readableEventType" => "Edit of request - issue addition" },
-            { "eventType" => "modification", "readableEventType" => "Requested issue modification" },
-            { "eventType" => "removal", "readableEventType" => "Requested issue removal" },
-            { "eventType" => "request_cancelled", "readableEventType" => "Cancellation of request" },
-            { "eventType" => "withdrawal", "readableEventType" => "Requested issue withdrawal" }
-          ]
-
-          expected_events.each do |expected_attributes|
-            expect(res).to include(
-              a_hash_including("attributes" => a_hash_including(expected_attributes))
-            )
-          end
-        end
-
-        it "should return remand task details" do
-          get :history, params: { task_id: remand_task_event.id, decision_review_business_line_slug: vha_org.url },
-                        format: :json
-
-          expect(response.status).to eq 200
-
-          res = JSON.parse(response.body)
-
-          expected_events = [
-            { "taskID" => remand_task_event.id, "eventType" => "added_issue", "claimType" => "Remand" }
+            { "eventType" => "completed_disposition", "readableEventType" => "Completed disposition" }
           ]
 
           expected_events.each do |expected_attributes|
@@ -1088,7 +965,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
           params = { business_line_slug: non_comp_org.url }.merge(generate_report_filters.except("report_type"))
           get :generate_report, format: :csv, params: params
           expect(response).to have_http_status(:bad_request)
-          expect(response.media_type).to eq("application/json")
+          expect(response.content_type).to eq("application/json; charset=utf-8")
           json_response = JSON.parse(response.body)
           expect(json_response["error"]).to eq("param is missing or the value is empty: reportType")
         end
