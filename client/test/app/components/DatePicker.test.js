@@ -1,10 +1,11 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 
 import {
   selectFromDropdown,
   clickSubmissionButton,
-  enterInputValue
+  enterInputValue,
+  openFilter
 } from '../queue/components/modalUtils';
 
 import { axe } from 'jest-axe';
@@ -23,17 +24,6 @@ describe('DatePicker', () => {
       label="date-picker"
       onChange={handleChange} {...props}
     />);
-  };
-
-  const openFilter = async (container) => {
-    const svg = container.querySelectorAll('svg');
-
-    const filter = svg[svg.length - 1];
-
-    fireEvent.click(filter);
-    await waitFor(() => {
-      expect(screen.getByText('Date filter parameters')).toBeInTheDocument();
-    });
   };
 
   it('renders default state correctly', async () => {

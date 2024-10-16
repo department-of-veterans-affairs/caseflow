@@ -33,9 +33,10 @@ import Pagination from 'app/components/Pagination/Pagination';
 import {
   selectFromDropdown,
   clickSubmissionButton,
-  enterInputValue
+  enterInputValue,
+  openFilter
 } from '../queue/components/modalUtils';
-import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react';
+import { render, screen, waitFor, cleanup } from '@testing-library/react';
 import { datePickerFilterValue } from 'app/components/DatePicker';
 import { encodeQueryParams } from 'app/util/QueryParamsUtil';
 import { when } from 'jest-when';
@@ -608,17 +609,6 @@ describe('QueueTable', () => {
       },
       customFilterMethod: datePickerFilterValue
     }];
-
-    const openFilter = async (container) => {
-      const svg = container.querySelectorAll('svg');
-
-      const filter = svg[svg.length - 1];
-
-      fireEvent.click(filter);
-      await waitFor(() => {
-        expect(screen.getByText('Date filter parameters')).toBeInTheDocument();
-      });
-    };
 
     const getTableDates = (container) => {
       const tds = container.querySelectorAll('td');
