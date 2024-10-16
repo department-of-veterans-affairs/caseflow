@@ -25,6 +25,7 @@ describe "AssocationWrapper" do
           [:ama_appeal, "Appeal", "Appeal", nil, nil],
           [:legacy_appeal, "LegacyAppeal", "LegacyAppeal", nil, nil],
           [:higher_level_review, "HigherLevelReview", "HigherLevelReview", nil, nil],
+          [:remand, "Remand", "Remand", nil, nil],
           [:supplemental_claim, "SupplementalClaim", "SupplementalClaim", nil, nil],
           [:correspondence, "Correspondence", "Correspondence", nil, nil],
           [:attorney_case_reviews, "AttorneyCaseReview", nil, nil, nil],
@@ -51,7 +52,8 @@ describe "AssocationWrapper" do
           [:task_timers, nil],
           [:correspondences_appeals_task, nil],
           [:correspondence_appeal, nil],
-          [:cached_appeal, nil]
+          [:cached_appeal, nil],
+          [:remand, nil]
         ]
         expect(subject.select_associations.map { |assoc| [assoc.name, assoc.options[:foreign_key]] }).to match_array [
           [:versions, nil],
@@ -71,7 +73,8 @@ describe "AssocationWrapper" do
           [:task_timers, nil],
           [:correspondences_appeals_task, nil],
           [:correspondence_appeal, nil],
-          [:cached_appeal, :appeal_id]
+          [:cached_appeal, :appeal_id],
+          [:remand, "appeal_id"]
         ]
 
         map_foreign_keys = lambda { |assoc|
@@ -96,6 +99,8 @@ describe "AssocationWrapper" do
           [:higher_level_review, true, false, "appeal_id", "higher_level_review_id", nil],
           [:supplemental_claim, true, false, "appeal_id", "supplemental_claim_id", nil],
           [:correspondence, true, false, "appeal_id", "correspondence_id", nil],
+          # Polymorphic `belongs_to :appeal`-related STI associations
+          [:remand, true, false, "appeal_id", "remand_id", nil],
           # has_many declared in Task
           # Note: JudgeCaseReview is not listed; that `belongs_to` association can be traced from JudgeCaseReview
           [:attorney_case_reviews, false, false, "task_id", "attorney_case_review_id", nil],

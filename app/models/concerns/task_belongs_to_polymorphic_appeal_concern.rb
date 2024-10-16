@@ -2,6 +2,8 @@
 
 module TaskBelongsToPolymorphicAppealConcern
   extend ActiveSupport::Concern
+  include DecisionReviewPolymorphicHelper
+  include DecisionReviewPolymorphicSTIHelper
 
   included do
     belongs_to :appeal, polymorphic: true
@@ -31,5 +33,7 @@ module TaskBelongsToPolymorphicAppealConcern
     scope :higher_level_review, -> { where(appeal_type: "HigherLevelReview") }
     scope :supplemental_claim, -> { where(appeal_type: "SupplementalClaim") }
     scope :correspondence, -> { where(appeal_type: "Correspondence") }
+    define_polymorphic_decision_review_associations(:appeal, :tasks)
+    define_polymorphic_decision_review_sti_associations(:appeal, :tasks)
   end
 end
