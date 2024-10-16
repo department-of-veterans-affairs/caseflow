@@ -17,7 +17,7 @@ class HearingUpdateForm < BaseHearingUpdateForm
       transcription = Transcription.find_or_create_by(hearing_type: hearing.class.name, hearing_id: hearing.id)
       transcription.update!(transcription_attributes)
     end
-    hearing.update!(hearing_updates.except(:transcription_attributes))
+    hearing.update!(hearing_updates)
     update_advance_on_docket_motion unless advance_on_docket_motion_attributes.blank?
   end
 
@@ -69,7 +69,6 @@ class HearingUpdateForm < BaseHearingUpdateForm
       summary: summary,
       transcript_requested: transcript_requested,
       transcript_sent_date: transcript_sent_date,
-      # transcription_attributes: transcription_attributes,
       witness: witness,
       email_recipients_attributes: email_recipients_attributes
     }.compact
