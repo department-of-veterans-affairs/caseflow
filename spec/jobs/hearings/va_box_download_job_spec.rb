@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Hearings::VaBoxDownloadJob, type: :job do
   let(:hearing) { create(:hearing) }
   let(:ama_file_id) { "1640086158231" }
