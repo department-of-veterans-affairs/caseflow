@@ -124,15 +124,17 @@ const PdfDocument = ({
       // });
       try {
         const byteArr = await downloadWithProgress(doc.content_url, {
-          onProgress: (progress) => {
-            setDownloadProgress(progress);
+          onProgress: (percent) => {
+            setDownloadProgress(percent);
           },
           onSuccess: () => {
             console.log('File downloaded successfully');
+            setDownloadProgress(null);
           },
           onFailure: (error) => {
             console.error(`ERROR with getting doc data: ${error}`);
             setIsDocumentLoadError(true);
+            setDownloadProgress(null);
           },
         });
 
@@ -146,6 +148,7 @@ const PdfDocument = ({
       } catch (error) {
         console.error(`ERROR with getting doc data: ${error}`);
         setIsDocumentLoadError(true);
+        setDownloadProgress(null);
       }
     };
     getDocData();
@@ -204,7 +207,7 @@ const PdfDocument = ({
 
       {downloadProgress > 0 && downloadProgress < 100  && (
         <div style={{ textAlign: 'center', padding: '10px '}}>
-          Downloading: {downloadProgress.toFixed(2)}%
+          Downloading: {downloadProgress}%
         </div>
       )}
 

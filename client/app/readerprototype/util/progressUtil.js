@@ -7,7 +7,11 @@ export const downloadWithProgress = (url, options = {}) => {
       .responseType('arraybuffer')
       .on('progress', (event) => {
         if (event.direction === 'download' && options.onProgress) {
-          options.onProgress(event.percent);
+          console.log(event);
+          // const totalSize = event.currentTarget.response.byteLength;
+          const totalSize = 198180; // hardcoded size of file for now, using doc10 for testing
+          const percent = Math.round((event.loaded / totalSize) * 100);
+          options.onProgress(percent);
         }
       })
       .end((err, res) => {
