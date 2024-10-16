@@ -308,6 +308,16 @@ const CorrespondenceDetails = (props) => {
     return viewAllCorrespondence ? 'Hide all correspondence' : 'View all correspondence';
   };
 
+  const createLinkedAppeal = (appealId) => {
+    const selectedAppeal = correspondenceInfo.appeals_information.find((appeal) => appeal.id === appealId);
+    const corAppeals = correspondenceInfo.correspondenceAppeals;
+    const cor = correspondenceInfo;
+
+    corAppeals.push(selectedAppeal);
+    cor.correspondenceAppeals = corAppeals;
+    dispatch(updateCorrespondenceInfo(cor));
+  };
+
   const allCorrespondencesList = () => {
     return viewAllCorrespondence && (
       <div className="all-correspondences">
@@ -344,6 +354,9 @@ const CorrespondenceDetails = (props) => {
         setUnSelectedAppeals(filtedAppeals);
       }
       setSelectedAppeals([...selectedAppeals, appealId]);
+
+      // add appeal to redux store
+      createLinkedAppeal(appealId);
     } else {
       if (selectedAppeals?.includes(appealId)) {
         const filtedAppeals = selectedAppeals.filter((item) => item !== appealId);
@@ -404,7 +417,7 @@ const CorrespondenceDetails = (props) => {
     const corAppealTasks = [];
 
     props.correspondence.correspondenceAppeals.map((corAppeal) => {
-      dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal.appeal.data])));
+      dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal.appeal?.data])));
 
       corAppeal.taskAddedData.data.map((taskData) => {
         const formattedTask = {};
