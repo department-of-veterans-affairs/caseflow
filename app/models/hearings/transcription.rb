@@ -2,6 +2,7 @@
 
 class Transcription < CaseflowRecord
   belongs_to :hearing, polymorphic: true
+  belongs_to :legacy_hearing
   belongs_to :transcription_contractor
   has_many :transcription_files
   belongs_to :transcription_package, foreign_key: :task_number, primary_key: :task_number
