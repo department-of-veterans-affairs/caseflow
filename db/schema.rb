@@ -13,6 +13,7 @@
 ActiveRecord::Schema.define(version: 2024_10_08_145227) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "oracle_fdw"
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
 
@@ -2452,6 +2453,16 @@ ActiveRecord::Schema.define(version: 2024_10_08_145227) do
   add_foreign_key "vso_configs", "organizations"
   add_foreign_key "worksheet_issues", "legacy_appeals", column: "appeal_id"
 
+  create_view "national_hearing_queue_entries", materialized: true, sql_definition: <<-SQL
+      SELECT a.id AS appeal_id,
+      'appeal'::text AS appeal_type,
+      COALESCE(a.changed_hearing_request_type, a.original_hearing_request_type) AS hearing_request_type,
+      a.receipt_date,
+      a.uuid AS external_id,
+      a.stream_type AS appeal_stream,
+      a.stream_docket_number AS docket_number
+     FROM appeals a;
+  SQL
   create_view "remands", sql_definition: <<-SQL
       SELECT supplemental_claims.id,
       supplemental_claims.benefit_type,
@@ -2474,15 +2485,5 @@ ActiveRecord::Schema.define(version: 2024_10_08_145227) do
       supplemental_claims.type
      FROM supplemental_claims
     WHERE ((supplemental_claims.type)::text = 'Remand'::text);
-  SQL
-  create_view "national_hearing_queue_entries", materialized: true, sql_definition: <<-SQL
-      SELECT appeals.id AS appeal_id,
-      'appeal'::text AS appeal_type,
-      COALESCE(appeals.changed_hearing_request_type, appeals.original_hearing_request_type) AS hearing_request_type,
-      appeals.receipt_date,
-      appeals.uuid AS external_id,
-      appeals.stream_type AS appeal_stream,
-      appeals.stream_docket_number AS docket_number
-     FROM appeals;
   SQL
 end
