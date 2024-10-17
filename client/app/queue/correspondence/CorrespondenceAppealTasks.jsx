@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import CaseDetailsLink from '../CaseDetailsLink';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
@@ -26,11 +26,26 @@ const CorrespondenceAppealTasks = (props) => {
   const tasks = useSelector((state) =>
     taskSnapshotTasksForAppeal(state, { appealId })
   );
-  const [isLinkedAppealExpanded, setIsLinkedAppealExpanded] = useState(false);
+  const [isLinkedAppealExpanded, setIsLinkedAppealExpanded] = useState({});
 
-  const toggleLinkedAppealSection = () => {
-    setIsLinkedAppealExpanded((prev) => !prev);
+  const toggleLinkedAppealSection = (appealId) => {
+    setIsLinkedAppealExpanded((prev) => ({
+      ...prev,
+      [appealId]: !prev[appealId],
+    }));
   };
+
+  useEffect(() => {
+    if (
+      waiveEvidenceAlertBanner?.message &&
+      waiveEvidenceAlertBanner.appealId?.toString() === appeal.id?.toString()
+    ) {
+      setIsLinkedAppealExpanded((prev) => ({
+        ...prev,
+        [appeal.id]: true,
+      }));
+    }
+  }, [waiveEvidenceAlertBanner, appeal]);
 
   return (
     <>
@@ -53,16 +68,16 @@ const CorrespondenceAppealTasks = (props) => {
         </div>
         <div className="toggleButton-plus-or-minus">
           <Button
-            onClick={toggleLinkedAppealSection}
+            onClick={() => toggleLinkedAppealSection(appeal.id)}
             linkStyling
             aria-label="Toggle section"
-            aria-expanded={isLinkedAppealExpanded}
+            aria-expanded={isLinkedAppealExpanded[appeal.id] || false}
           >
-            {isLinkedAppealExpanded ? '_' : <span className="plus-symbol">+</span>}
+            {isLinkedAppealExpanded[appeal.id] ? '_' : <span className="plus-symbol">+</span>}
           </Button>
         </div>
       </div>
-      {isLinkedAppealExpanded && (
+      {isLinkedAppealExpanded[appeal.id] && (
         <div className="tasks-added-container">
           <div className="correspondence-tasks-added ">
             <div className="corr-tasks-added-col first-row">
