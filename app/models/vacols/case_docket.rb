@@ -831,7 +831,9 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
   def self.cavc_affinity_filter(appeals, judge_sattyid, cavc_affinity_lever_value, excluded_judges_attorney_ids)
-    appeal_affinities = AppealAffinity.where(case_id: appeals.pluck("bfkey"), case_type: "VACOLS::Case").pluck(:case_id, :affinity_start_date).to_h
+    appeal_affinities =
+      AppealAffinity.where(case_id: appeals.pluck("bfkey"), case_type: "VACOLS::Case")
+        .pluck(:case_id, :affinity_start_date).to_h
 
     appeals.reject! do |appeal|
       next if tied_to_or_not_cavc?(appeal, judge_sattyid)
@@ -866,7 +868,9 @@ class VACOLS::CaseDocket < VACOLS::Record
   end
 
   def self.cavc_aod_affinity_filter(appeals, judge_sattyid, cavc_aod_affinity_lever_value, excluded_judges_attorney_ids)
-    appeal_affinities = AppealAffinity.where(case_id: appeals.pluck("bfkey"), case_type: "VACOLS::Case").pluck(:case_id, :affinity_start_date).to_h
+    appeal_affinities =
+      AppealAffinity.where(case_id: appeals.pluck("bfkey"), case_type: "VACOLS::Case")
+        .pluck(:case_id, :affinity_start_date).to_h
 
     appeals.reject! do |appeal|
       # {will skip if not CAVC AOD || if CAVC AOD being distributed to tied_to judge || if not tied to any judge}
@@ -1026,7 +1030,9 @@ class VACOLS::CaseDocket < VACOLS::Record
     fmtd_query = sanitize_sql_array([query])
 
     appeals = conn.exec_query(fmtd_query).to_a
-    appeal_affinities = AppealAffinity.where(case_id: appeals.pluck("bfkey"), case_type: "VACOLS::Case").pluck(:case_id, :affinity_start_date).to_h
+    appeal_affinities =
+      AppealAffinity.where(case_id: appeals.pluck("bfkey"), case_type: "VACOLS::Case")
+        .pluck(:case_id, :affinity_start_date).to_h
 
     if in_window
       appeals.select! do |appeal|
