@@ -21,7 +21,6 @@ import SplitButtons from './components/SplitButtons';
 import IntakeAppealContext from './components/IntakeAppealContext';
 import ReviewAppealView from '../intake/pages/ReviewAppealView';
 import PendingIssueModificationBanner from './components/PendingIssueModificationRequestBanner';
-import EditDisabledBanner from './components/EditDisabledBanner';
 
 const textAlignRightStyling = css({
   textAlign: 'right',
@@ -102,19 +101,8 @@ export const IntakeEditFrame = (props) => {
     return 'This appeal has been outcoded and the issues are no longer editable.';
   };
 
-  const disableEditingForCompensationAndPension = () => {
-    const disabledEditBenefitTypes = ['compensation', 'pension'];
-    const isBenefitTypeDisabled = disabledEditBenefitTypes.includes(props.serverIntake.benefitType);
-
-    return props.featureToggles.removeCompAndPenIntake && isBenefitTypeDisabled;
-  };
-
   const displayDecisionDateMessage = () => {
     return 'One or more request issues lack a decision date. Please contact the Caseflow team via the VA Enterprise Service Desk at 855-673-4357 or create a YourIT ticket to correct these issues.'; // eslint-disable-line max-len
-  };
-
-  const displayEditDisabledBanner = () => {
-    return disableEditingForCompensationAndPension() ? EditDisabledBanner : null;
   };
 
   const { veteran, formType } = props.serverIntake;
@@ -154,26 +142,13 @@ export const IntakeEditFrame = (props) => {
                 title="Edit Claim Issues | Caseflow Intake"
                 component={PendingIssueModificationBanner}
               />
-              <PageRoute
-                exact
-                path={PAGE_PATHS.BEGIN}
-                title="Edit Claim Issues | Caseflow Intake"
-                component={displayEditDisabledBanner()}
-              />
               <AppSegment filledBackground>
                 <div>
                   <PageRoute
                     exact
                     path={PAGE_PATHS.BEGIN}
                     title="Edit Claim Issues | Caseflow Intake"
-                    component={() => {
-                      return (
-                        <EditAddIssuesPage
-                          {...props}
-                          disableEditingForCompAndPen={disableEditingForCompensationAndPension()}
-                        />
-                      );
-                    }}
+                    component={EditAddIssuesPage}
                   />
                   <PageRoute
                     exact
@@ -303,8 +278,7 @@ IntakeEditFrame.propTypes = {
     asyncJobUrl: PropTypes.string,
     hasClearedNonratingEp: PropTypes.bool,
     hasClearedRatingEp: PropTypes.bool,
-    requestIssues: PropTypes.array,
-    benefitType: PropTypes.string
+    requestIssues: PropTypes.array
   }),
   dropdownUrls: PropTypes.array,
   applicationUrls: PropTypes.array,
@@ -314,8 +288,7 @@ IntakeEditFrame.propTypes = {
   user: PropTypes.string,
   isLegacy: PropTypes.bool,
   routerTestProps: PropTypes.object,
-  router: PropTypes.object,
-  featureToggles: PropTypes.object
+  router: PropTypes.object
 };
 
 export default IntakeEditFrame;

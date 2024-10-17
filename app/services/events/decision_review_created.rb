@@ -12,25 +12,25 @@ class Events::DecisionReviewCreated
   #                 # with the one who held the lock and failed to unlock. (default: 10)
 
   class << self
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Lint/UselessAssignment
     def create!(params, headers, payload)
       consumer_event_id = params[:consumer_event_id]
-      claim_id = params[:claim_id]
+      reference_id = params[:reference_id]
       return if Event.exists_and_is_completed?(consumer_event_id)
 
       redis = Redis.new(url: Rails.application.secrets.redis_url_cache)
 
       # exit out if Key is already in Redis Cache
-      if redis.exists("RedisMutex:EndProductEstablishment:#{claim_id}")
+      if redis.exists("RedisMutex:EndProductEstablishment:#{reference_id}")
         fail Caseflow::Error::RedisLockFailed,
-             message: "Key RedisMutex:EndProductEstablishment:#{claim_id} is already in the Redis Cache"
+             message: "Key RedisMutex:EndProductEstablishment:#{reference_id} is already in the Redis Cache"
       end
 
-      # key => "EndProductEstablishment:reference_id" aka "claim ID"
-      # Use the consumer_event_id to retrieve/create the Event object
-      event = find_or_create_event(consumer_event_id)
+      RedisMutex.with_lock("EndProductEstablishment:#{reference_id}", block: 60, expire: 100) do
+        # key => "EndProductEstablishment:reference_id" aka "claim ID"
+        # Use the consumer_event_id to retrieve/create the Event object
+        event = find_or_create_event(consumer_event_id)
 
-      RedisMutex.with_lock("EndProductEstablishment:#{claim_id}", block: 60, expire: 100) do
         ActiveRecord::Base.transaction do
           # Initialize the Parser object that will be passed around as an argument
           parser = Events::DecisionReviewCreated::DecisionReviewCreatedParser.new(headers, payload)
@@ -72,30 +72,24 @@ class Events::DecisionReviewCreated
           Events::DecisionReviewCreated::UpdateVacolsOnOptin.process!(decision_review: decision_review)
 
           # Update the Event after all backfills have completed
-          event.update!(completed_at: Time.now.in_time_zone, error: nil, info: { "event_payload" => payload })
+          event.update!(completed_at: Time.now.in_time_zone, error: nil, info: {})
         end
       end
     rescue Caseflow::Error::RedisLockFailed => error
-      Rails.logger.error("Key RedisMutex:EndProductEstablishment:#{claim_id} is already in the Redis Cache")
+      Rails.logger.error("Key RedisMutex:EndProductEstablishment:#{reference_id} is already in the Redis Cache")
+      event = Event.find_by(reference_id: consumer_event_id)
       event&.update!(error: error.message)
       raise error
     rescue RedisMutex::LockError => error
-      Rails.logger.error("Failed to acquire lock for Claim ID: #{claim_id}! This Event is being"\
+      Rails.logger.error("Failed to acquire lock for Claim ID: #{reference_id}! This Event is being"\
                          " processed. Please try again later.")
-      event&.update!(error: error.message)
-      raise error
     rescue StandardError => error
       Rails.logger.error("#{error.class} : #{error.message}")
-      event&.update!(error: "#{error.class} : #{error.message}", info:
-        {
-          "failed_claim_id" => claim_id,
-          "error" => error.message,
-          "error_class" => error.class.name,
-          "error_backtrace" => error.backtrace
-        })
+      event = Event.find_by(reference_id: consumer_event_id)
+      event&.update!(error: "#{error.class} : #{error.message}", info: { "failed_claim_id" => reference_id })
       raise error
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Lint/UselessAssignment
 
     # Check if there's already a CF Event that references that Appeals-Consumer EventID
     # We will update the existing Event instead of creating a new one

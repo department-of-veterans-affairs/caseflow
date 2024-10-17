@@ -3,22 +3,22 @@
 describe Events::DecisionReviewCreated do
   let!(:consumer_event_id) { "123" }
   let!(:event) { instance_double(Event) }
-  let!(:claim_id) { "2001" }
+  let!(:reference_id) { "2001" }
   let(:event_created) { DecisionReviewCreatedEvent.create!(reference_id: consumer_event_id, completed_at: nil) }
   let!(:completed_event) { DecisionReviewCreatedEvent.create!(reference_id: "999", completed_at: Time.zone.now) }
   let!(:json_payload) { read_json_payload }
   let!(:headers) { sample_headers }
   let!(:parser) { Events::DecisionReviewCreated::DecisionReviewCreatedParser.load_example }
-  let!(:params) { { consumer_event_id: consumer_event_id, claim_id: claim_id } }
+  let!(:params) { { consumer_event_id: consumer_event_id, reference_id: reference_id } }
 
   describe "#create!" do
     subject { described_class.create!(params, headers, read_json_payload) }
 
     context "When event is completed info field returns to default state" do
-      it "event field is only payload" do
+      it "event field is an empty json object" do
         subject # runs and completes the process
         completed = DecisionReviewCreatedEvent.find_by(reference_id: consumer_event_id)
-        expect(completed.info).to eq({ "event_payload" => json_payload })
+        expect(completed.info).to eq({})
       end
     end
 
@@ -29,16 +29,16 @@ describe Events::DecisionReviewCreated do
 
       it "logs the error message" do
         expect(Rails.logger).to receive(:error)
-          .with("Failed to acquire lock for Claim ID: #{claim_id}! This Event is being"\
+          .with("Failed to acquire lock for Claim ID: #{reference_id}! This Event is being"\
                 " processed. Please try again later.")
-        expect { subject }.to raise_error(RedisMutex::LockError)
+        subject
       end
     end
 
     context "when lock Key is already in the Redis Cache" do
       it "throws a RedisLockFailed error" do
         redis = Redis.new(url: Rails.application.secrets.redis_url_cache)
-        lock_key = "RedisMutex:EndProductEstablishment:#{claim_id}"
+        lock_key = "RedisMutex:EndProductEstablishment:#{reference_id}"
         redis.set(lock_key, "lock is set", nx: true, ex: 5.seconds)
         expect { subject }.to raise_error(Caseflow::Error::RedisLockFailed)
         redis.del(lock_key)
@@ -78,25 +78,14 @@ describe Events::DecisionReviewCreated do
         expect(Rails.logger).to receive(:error) do |message|
           expect(message).to include(standard_error.message)
         end
-        expect { described_class.create!(params, headers, read_json_payload) }
+        expect { described_class.create!(params, headers, json_payload) }
           .to raise_error(StandardError)
       end
 
       it "logs the error and updates the event" do
         expect(Rails.logger).to receive(:error).with(/#{standard_error}/)
 
-        expect { described_class.create!(params, headers, read_json_payload) }.to raise_error(StandardError)
-      end
-
-      it "records an error at the event level" do
-        expect { described_class.create!(params, headers, read_json_payload) }
-          .to raise_error(standard_error)
-        event = DecisionReviewCreatedEvent.find_by(reference_id: consumer_event_id)
-        expect(event.error).to eq("#{standard_error.class} : #{standard_error.message}")
-        expect(event.info["failed_claim_id"]).to eq(claim_id)
-        expect(event.info["error"]).to eq(standard_error.message)
-        expect(event.info["error_class"]).to eq("StandardError")
-        expect(event.info["error_backtrace"]).to be_present
+        expect { subject.create!(consumer_event_id, reference_id) }.to raise_error(StandardError)
       end
     end
   end

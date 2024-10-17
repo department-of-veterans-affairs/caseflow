@@ -3,7 +3,7 @@
 class LegacyIssueOptin < CaseflowRecord
   belongs_to :request_issue
   belongs_to :legacy_issue
-  has_many :event_records, as: :evented_record
+  has_one :event_record, as: :evented_record
 
   VACOLS_DISPOSITION_CODE = "O" # oh not zero
   REMAND_DISPOSITION_CODES = %w[3 L].freeze
