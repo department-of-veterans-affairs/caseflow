@@ -703,7 +703,7 @@ class DocumentsTable extends React.Component {
             File Size
           </div>
         ),
-        valueFunction: () => <DocSizeIndicator docSize={""} />,
+        valueFunction: () => <DocSizeIndicator docSize="" />,
       },
     ];
   };
