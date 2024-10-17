@@ -5,7 +5,7 @@ source ENV["GEM_SERVER_URL"] || "https://rubygems.org"
 
 # State machine
 gem "aasm", "4.11.0"
-gem "activerecord-import", "1.0.3"
+gem "activerecord-import", "1.3.0"
 gem "acts_as_tree"
 
 # amoeba gem for cloning appeals
@@ -71,7 +71,7 @@ gem "pg", "~> 1.5.7", platforms: :ruby
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
 gem "puma", "5.6.4"
 gem "rack", "~> 2.2.6.2"
-gem "rails", "6.1.7.7"
+gem "rails", "7.0.8.5"
 # Used to colorize output for rake tasks
 gem "rainbow"
 gem "rcredstash", "~> 1.1.0"
@@ -94,7 +94,7 @@ gem "shoryuken", "3.1.11"
 gem "statsd-instrument"
 gem "stringex", require: false
 # catch problematic migrations at development/test time
-gem "strong_migrations"
+gem "strong_migrations", "~> 0.8.0"
 # print trees
 gem "tty-tree"
 gem "tzinfo", "~> 2.0"
@@ -106,14 +106,14 @@ gem "ziptz"
 
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
-  gem "activerecord-oracle_enhanced-adapter", "~> 6.1.0"
+  gem "activerecord-oracle_enhanced-adapter", "~> 7.0.0"
   gem "ruby-oci8", "~> 2.2.14"
 end
 
 group :test, :development, :demo, :make_docs do
   # Security scanners
   gem "brakeman"
-  gem "bullet", "~> 6.1.0"
+  gem "bullet", "~> 7.0.0"
   gem "bundler-audit"
   # Testing tools
   gem "capybara"
