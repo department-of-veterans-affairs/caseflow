@@ -8,11 +8,22 @@ import {
   legacyHearing,
   amaHearing,
   defaultHearing,
-  virtualHearing
+  virtualHearing,
+  amaWebexHearing,
+  legacyWebexHearing
 } from 'test/data';
 
 import Details from 'app/hearings/components/Details';
-import { Wrapper, customRender } from '../../../helpers/testHelpers';
+import DetailsForm from 'app/hearings/components/details/DetailsForm';
+import HearingTypeDropdown from 'app/hearings/components/details/HearingTypeDropdown';
+import SearchableDropdown from 'app/components/SearchableDropdown';
+import TranscriptionDetailsInputs from 'app/hearings/components/details/TranscriptionDetailsInputs';
+import TranscriptionProblemInputs from 'app/hearings/components/details/TranscriptionProblemInputs';
+import TranscriptionRequestInputs from 'app/hearings/components/details/TranscriptionRequestInputs';
+import TranscriptionFilesTable from 'app/hearings/components/details/TranscriptionFilesTable';
+import EmailConfirmationModal from 'app/hearings/components/EmailConfirmationModal';
+import toJson from 'enzyme-to-json';
+
 // Define the function spies
 const saveHearingSpy = jest.fn();
 const setHearingSpy = jest.fn();
@@ -56,7 +67,12 @@ describe('Details', () => {
     expect(screen.getAllByRole('heading', {name: convertRegex("Hearing Details")}).length).toBeGreaterThan(0);
 
     // Ensure that the virtualHearing form is not displayed by default
-    expect(screen.queryByRole('heading', {name: "Virtual Hearing Links"})).toBeNull();
+    expect(details.find(VirtualHearingFields).prop('virtualHearing')).toEqual(
+      null
+    );
+    // VirtualHearingFields will always show for any virtual or non virtual hearing
+    // as we move forward with Webex integration
+    expect(details.find(VirtualHearingFields).children()).toHaveLength(1);
 
     // Ensure the transcription section is displayed by default for ama hearings
     expect(screen.getByRole('heading', {name: "Transcription Details"})).toBeInTheDocument();
@@ -247,46 +263,136 @@ describe('Details', () => {
     expect(asFragment()).toMatchSnapshot();
   });
 
-  test('Does not display transcription section for legacy hearings', () => {
-    const {asFragment} = customRender(
-      <Details
-        hearing={legacyHearing}
-        saveHearing={saveHearingSpy}
-        setHearing={setHearingSpy}
-        goBack={goBackSpy}
-        onReceiveAlerts={onReceiveAlertsSpy}
-        onReceiveTransitioningAlert={onReceiveTransitioningAlertSpy}
-        transitionAlert={transitionAlertSpy}
-      />,
-      {
-        wrapper: Wrapper,
-        wrapperProps: {
-          store: detailsStore,
-          user: anyUser,
-          hearing: legacyHearing
-        },
-      }
-    );
+  describe('TranscriptiomFormSection', () => {
+    describe('pexip hearing', () => {
+      test('Displays transcription section but not transcription files table for AMA hearings', () => {
+        const details = mount(
+          <Details
+            hearing={amaHearing}
+            saveHearing={saveHearingSpy}
+            setHearing={setHearingSpy}
+            goBack={goBackSpy}
+            onReceiveAlerts={onReceiveAlertsSpy}
+            onReceiveTransitioningAlert={onReceiveTransitioningAlertSpy}
+            transitionAlert={transitionAlertSpy}
+          />,
+          {
+            wrappingComponent: hearingDetailsWrapper(
+              anyUser,
+              amaHearing
+            ),
+            wrappingComponentProps: { store: detailsStore },
+          }
+        );
 
-    const veteranName = `${legacyHearing.veteranFirstName} ${legacyHearing.veteranLastName}`;
+        expect(details.find(TranscriptionFormSection)).toHaveLength(1);
+        expect(details.find(TranscriptionDetailsInputs)).toHaveLength(1);
+        expect(details.find(TranscriptionProblemInputs)).toHaveLength(1);
+        expect(details.find(TranscriptionRequestInputs)).toHaveLength(1);
+        expect(details.find(TranscriptionFilesTable)).toHaveLength(0);
+      });
 
-    // // Assertions
-    expect(screen.getByRole('heading', {name: `${veteranName}'s Hearing Details`})).toBeInTheDocument();
-    expect(screen.getByRole('heading', {name: "Hearing Details"})).toBeInTheDocument();
+      test('Does not display transcription section for legacy hearings', () => {
+        const details = mount(
+          <Details
+            hearing={legacyHearing}
+            saveHearing={saveHearingSpy}
+            setHearing={setHearingSpy}
+            goBack={goBackSpy}
+            onReceiveAlerts={onReceiveAlertsSpy}
+            onReceiveTransitioningAlert={onReceiveTransitioningAlertSpy}
+            transitionAlert={transitionAlertSpy}
+          />,
+          {
+            wrappingComponent: hearingDetailsWrapper(
+              anyUser,
+              legacyHearing
+            ),
+            wrappingComponentProps: { store: detailsStore },
+          }
+        );
 
-    // Ensure that the virtualHearing form is not displayed by default
-    expect(screen.queryByRole('heading', {name: "Virtual Hearing Links"})).toBeNull();
+        // Assertions
+        expect(details.find(DetailsHeader)).toHaveLength(1);
+        expect(details.find(DetailsForm)).toHaveLength(1);
 
-    // Ensure the transcription form is not displayed for legacy hearings
-    expect(screen.queryByRole('heading', {name: "Transcription Details"})).not.toBeInTheDocument();
+        // Ensure that the virtualHearing form is not displayed by default
+        expect(details.find(VirtualHearingFields).prop('virtualHearing')).toEqual(
+          null
+        );
+        // VirtualHearingFields will always show for any virtual or non virtual hearing
+        // as we move forward with Webex integration
+        expect(details.find(VirtualHearingFields).children()).toHaveLength(1);
+
+        // Ensure the transcription form is not displayed for legacy hearings
+        expect(screen.queryByRole('heading', {name: "Transcription Details"})).not.toBeInTheDocument();
     expect(screen.queryByRole('heading', {name: "Transcription Problem"})).not.toBeInTheDocument();
     expect(screen.queryByRole('heading', {name: "Transcription Request"})).not.toBeInTheDocument();
+        // expect(details.find(TranscriptionFilesTable)).toHaveLength(0);
 
-    // Ensure the save and cancel buttons are present
-    expect(screen.getByRole('button', {name: "Cancel"})).toBeInTheDocument();
+        // Ensure the save and cancel buttons are present
+        expect(screen.getByRole('button', {name: "Cancel"})).toBeInTheDocument();
     expect(screen.getByRole('button', {name: "Save"})).toBeInTheDocument();
 
-    expect(asFragment()).toMatchSnapshot();
+        expect(asFragment()).toMatchSnapshot();
+      });
+    });
+
+    describe('webex hearing', () => {
+      test('Displays transcription section, including transcription files table, for AMA hearings', () => {
+        const details = mount(
+          <Details
+            hearing={amaWebexHearing}
+            saveHearing={saveHearingSpy}
+            setHearing={setHearingSpy}
+            goBack={goBackSpy}
+            onReceiveAlerts={onReceiveAlertsSpy}
+            onReceiveTransitioningAlert={onReceiveTransitioningAlertSpy}
+            transitionAlert={transitionAlertSpy}
+          />,
+          {
+            wrappingComponent: hearingDetailsWrapper(
+              anyUser,
+              amaWebexHearing
+            ),
+            wrappingComponentProps: { store: detailsStore },
+          }
+        );
+
+        expect(details.find(TranscriptionFormSection)).toHaveLength(1);
+        expect(details.find(TranscriptionDetailsInputs)).toHaveLength(1);
+        expect(details.find(TranscriptionProblemInputs)).toHaveLength(1);
+        expect(details.find(TranscriptionRequestInputs)).toHaveLength(1);
+        expect(details.find(TranscriptionFilesTable)).toHaveLength(1);
+      });
+
+      test('Only displays transcription files table, and not other transcription form inputs, for legacy hearings', () => {
+        const details = mount(
+          <Details
+            hearing={legacyWebexHearing}
+            saveHearing={saveHearingSpy}
+            setHearing={setHearingSpy}
+            goBack={goBackSpy}
+            onReceiveAlerts={onReceiveAlertsSpy}
+            onReceiveTransitioningAlert={onReceiveTransitioningAlertSpy}
+            transitionAlert={transitionAlertSpy}
+          />,
+          {
+            wrappingComponent: hearingDetailsWrapper(
+              anyUser,
+              legacyWebexHearing
+            ),
+            wrappingComponentProps: { store: detailsStore },
+          }
+        );
+
+        expect(details.find(TranscriptionFormSection)).toHaveLength(1);
+        expect(details.find(TranscriptionDetailsInputs)).toHaveLength(0);
+        expect(details.find(TranscriptionProblemInputs)).toHaveLength(0);
+        expect(details.find(TranscriptionRequestInputs)).toHaveLength(0);
+        expect(details.find(TranscriptionFilesTable)).toHaveLength(1);
+      });
+    });
   });
 
   test('Displays VirtualHearing details when there is a virtual hearing', () => {
