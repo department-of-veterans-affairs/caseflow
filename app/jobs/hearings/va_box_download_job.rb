@@ -58,7 +58,7 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
 
   def modified_task_tree(current_information, file_status)
     if current_information["hearing_type"] == "Hearing"
-      current_hearing = Hearing.find(current_information["id"].to_i)
+      current_hearing = Hearing.find(current_information["id"])
       if current_hearing.disposition == "held"
         create_review_transcript_task(current_hearing.appeal_id, file_status)
       end
@@ -94,9 +94,7 @@ class Hearings::VaBoxDownloadJob < CaseflowJob
 
   def create_transcription_file_record(current_information, file_status, aws_link)
     if current_information["hearing_type"] == "Hearing"
-      transcription_id = current_information["hearing_type"].constantize.find(
-        current_information["id"]
-      ).transcription&.id
+      transcription_id = Hearing.find(current_information["id"]).transcription&.id
     else
       current_legacy_hearing = LegacyHearing.find(current_information["id"].to_i)
       current_vacols_id = current_legacy_hearing.current_vacols_id
