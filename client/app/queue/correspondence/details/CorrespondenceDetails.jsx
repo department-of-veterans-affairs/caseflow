@@ -73,6 +73,28 @@ const CorrespondenceDetails = (props) => {
     setSortedPriorMail(priorMail);
   }, [priorMail]);
 
+  const sortAppeals = (selectedList) => {
+    let filteredAppeals = [];
+    let unfilteredAppeals = [];
+
+    correspondence.appeals_information.map((appeal) => {
+      if (selectedList?.includes(Number(appeal.id))) {
+        filteredAppeals.push(appeal);
+      } else {
+        unfilteredAppeals.push(appeal);
+      }
+
+      return true;
+    });
+
+    filteredAppeals = filteredAppeals.sort((leftAppeal, rightAppeal) => leftAppeal.id - rightAppeal.id);
+    unfilteredAppeals = unfilteredAppeals.sort((leftAppeal, rightAppeal) => leftAppeal.id - rightAppeal.id);
+
+    const sortedAppeals = filteredAppeals.concat(unfilteredAppeals);
+
+    setAppealsToDisplay(sortedAppeals);
+  };
+
   const toggleSection = () => {
     setIsExpanded((prev) => !prev);
   };
@@ -132,13 +154,14 @@ const CorrespondenceDetails = (props) => {
     try {
     // Helper function to check for success response
       const isSuccess = (response) => response.ok;
-      
+
       // Send PATCH request to add checked relations if necessary
       // If no checked items, POST is already successful
       let patchSuccess = false;
 
       const updateAppeals = (response) => {
         const appealIds = response.body.related_appeals;
+
         setSelectedAppeals(appealIds);
         setInitialSelectedAppeals(appealIds);
         sortAppeals(appealIds);
@@ -347,28 +370,6 @@ const CorrespondenceDetails = (props) => {
 
     setDisableSubmitButton(isButtonDisabled());
   }, [selectedAppeals, initialSelectedAppeals]);
-
-  const sortAppeals = (selectedList) => {
-    let filteredAppeals = [];
-    let unfilteredAppeals = [];
-
-    correspondence.appeals_information.map((appeal) => {
-      if (selectedList?.includes(Number(appeal.id))) {
-        filteredAppeals.push(appeal);
-      } else {
-        unfilteredAppeals.push(appeal);
-      }
-
-      return true;
-    });
-
-    filteredAppeals = filteredAppeals.sort((leftAppeal, rightAppeal) => leftAppeal.id - rightAppeal.id);
-    unfilteredAppeals = unfilteredAppeals.sort((leftAppeal, rightAppeal) => leftAppeal.id - rightAppeal.id);
-
-    const sortedAppeals = filteredAppeals.concat(unfilteredAppeals);
-
-    setAppealsToDisplay(sortedAppeals);
-  };
 
   useEffect(() => {
     sortAppeals(initialSelectedAppeals);
