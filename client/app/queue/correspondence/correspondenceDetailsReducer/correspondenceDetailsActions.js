@@ -56,7 +56,6 @@ export const createNewEvidenceWindowTask = (payload, correspondence, appealId) =
         }
       });
 
-      console.log(`appeal tasks: ${JSON.stringify(responseTasks, 1, 1)}`)
       // overwrite all correspondence_appeal_tasks in the store with values from response
       const preparedTasks = prepareTasksForStore(responseTasks);
 

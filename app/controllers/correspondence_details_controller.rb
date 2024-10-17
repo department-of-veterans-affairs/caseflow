@@ -165,10 +165,10 @@ class CorrespondenceDetailsController < CorrespondenceController
   end
 
   def waive_evidence_submission_window_task
-    task = EvidenceSubmissionWindowTask.find_by_id(params[:task][:task_id])
-    appeal = Appeal.find_by_uuid(params[:appeal_uuid])
+    task = EvidenceSubmissionWindowTask.find_by_id(task_params[:task_id])
+    appeal = Appeal.find_by_uuid(appeal_params[:appeal_uuid])
     correspondence_appeal = @correspondence.correspondence_appeals.find_by(appeal_id: appeal.id)
-    instructions = params[:task][:instructions]
+    instructions = task_params[:instructions]
 
     # Create a new EvidenceSubmissionWindowTask and associate it with the correspondence appeal
     ActiveRecord::Base.transaction do
@@ -182,6 +182,14 @@ class CorrespondenceDetailsController < CorrespondenceController
   end
 
   private
+
+  def task_params
+    params.require(:task).permit(:task_id, { instructions: [] }, :type, :appeal_id, :appeal_type, :status)
+  end
+
+  def appeal_params
+    params.permit(:appeal_uuid)
+  end
 
   def sort_response_letters(response_letters)
     response_letters.sort_by do |letter|
