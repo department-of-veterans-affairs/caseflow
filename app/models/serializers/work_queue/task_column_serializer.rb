@@ -174,8 +174,8 @@ class WorkQueue::TaskColumnSerializer
     if serialize_attribute?(params, columns)
       {
         css_id: assignee.try(:css_id),
-        is_organization: assignee.is_a?(Organization),
         name: assignee.is_a?(Organization) ? assignee.name : assignee.css_id,
+        is_organization: assignee.is_a?(Organization),
         type: assignee.class.name,
         id: assignee.id
       }

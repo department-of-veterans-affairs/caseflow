@@ -4,5 +4,6 @@
   "on_hold": "on_hold",
   "completed": "completed",
   "cancelled": "cancelled",
-  "splited": "splited"
+  "splited": "splited",
+  "unassigned": "unassigned"
 }
