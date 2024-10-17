@@ -145,6 +145,7 @@ describe VACOLS::CaseDocket, :all_dbs do
   end
 
   context ".counts_by_priority_and_readiness" do
+    # this should not be included in the count
     let!(:aoj_appeal) { create(:legacy_aoj_appeal) }
 
     subject { VACOLS::CaseDocket.counts_by_priority_and_readiness }
