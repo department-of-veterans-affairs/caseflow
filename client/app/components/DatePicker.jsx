@@ -275,7 +275,7 @@ class DatePicker extends React.PureComponent {
   showStartDate = () => {
     const quickSelectOptions = [];
 
-    vhaAdditionalOptions.values().every((option) =>
+    vhaAdditionalOptions.forEach((option) =>
       quickSelectOptions.push(option.value));
 
     if (quickSelectOptions.includes(this.state.mode)) {
@@ -286,7 +286,7 @@ class DatePicker extends React.PureComponent {
   }
 
   getOptions = () => {
-    if (this.props.settings.options === 'vha') {
+    if (this.props.settings?.options === 'vha') {
       const newArray = defaultOptions.concat(vhaAdditionalOptions);
 
       return newArray;
