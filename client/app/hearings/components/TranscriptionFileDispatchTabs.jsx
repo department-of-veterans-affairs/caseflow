@@ -84,7 +84,8 @@ export const assignedColumns = (columns) => {
  * @returns An object for configuring the table
  */
 export const completedColumns = (columns) => {
-  const { DOCKET_NUMBER, TYPES, HEARING_DATE, EXPECTED_RETURN_DATE, RETURN_DATE, CONTRACTOR, STATUS, WORK_ORDER } = columns;
+  const { DOCKET_NUMBER, TYPES, HEARING_DATE, EXPECTED_RETURN_DATE,
+    RETURN_DATE, CONTRACTOR, STATUS, WORK_ORDER } = columns;
 
   return { DOCKET_NUMBER, TYPES, HEARING_DATE, EXPECTED_RETURN_DATE, RETURN_DATE, CONTRACTOR, STATUS, WORK_ORDER };
 };
