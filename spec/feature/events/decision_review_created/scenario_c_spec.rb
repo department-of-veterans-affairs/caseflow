@@ -64,7 +64,6 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
         },
         "request_issues": [
           {
-            "decision_review_issue_id": 1,
             "benefit_type": "compensation",
             "contested_issue_description": nil,
             "contention_reference_id": 7905752,

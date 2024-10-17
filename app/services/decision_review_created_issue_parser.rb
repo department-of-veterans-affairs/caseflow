@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser
+class DecisionReviewCreatedIssueParser
   include ParserHelper
   attr_reader :issue
 
@@ -8,16 +8,12 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser
     @issue = issue
   end
 
-  def ri_reference_id
-    @issue.dig(:decision_review_issue_id)
-  end
-
   def ri_benefit_type
-    @issue.dig(:benefit_type).presence
+    @issue.dig(:benefit_type)
   end
 
   def ri_contested_issue_description
-    @issue.dig(:contested_issue_description).presence
+    @issue.dig(:contested_issue_description)
   end
 
   def ri_contention_reference_id
@@ -25,15 +21,15 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser
   end
 
   def ri_contested_rating_decision_reference_id
-    @issue.dig(:contested_rating_decision_reference_id).presence
+    @issue.dig(:contested_rating_decision_reference_id)
   end
 
   def ri_contested_rating_issue_profile_date
-    @issue.dig(:contested_rating_issue_profile_date).presence
+    @issue.dig(:contested_rating_issue_profile_date)
   end
 
   def ri_contested_rating_issue_reference_id
-    @issue.dig(:contested_rating_issue_reference_id).presence
+    @issue.dig(:contested_rating_issue_reference_id)
   end
 
   def ri_contested_decision_issue_id
@@ -50,7 +46,7 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser
   end
 
   def ri_ineligible_reason
-    @issue.dig(:ineligible_reason).presence
+    @issue.dig(:ineligible_reason)
   end
 
   def ri_is_unidentified
@@ -58,7 +54,7 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser
   end
 
   def ri_unidentified_issue_text
-    @issue.dig(:unidentified_issue_text).presence
+    @issue.dig(:unidentified_issue_text)
   end
 
   def ri_nonrating_issue_category
@@ -66,7 +62,7 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser
   end
 
   def ri_nonrating_issue_description
-    @issue.dig(:nonrating_issue_description).presence
+    @issue.dig(:nonrating_issue_description)
   end
 
   def ri_untimely_exemption
@@ -74,11 +70,11 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser
   end
 
   def ri_untimely_exemption_notes
-    @issue.dig(:untimely_exemption_notes).presence
+    @issue.dig(:untimely_exemption_notes)
   end
 
   def ri_vacols_id
-    @issue.dig(:vacols_id).presence
+    @issue.dig(:vacols_id)
   end
 
   def ri_vacols_sequence_id
@@ -86,12 +82,11 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser
   end
 
   def ri_closed_at
-    ri_closed_at_in_ms = @issue.dig(:closed_at)
-    convert_milliseconds_to_datetime(ri_closed_at_in_ms)
+    @issue.dig(:closed_at)
   end
 
   def ri_closed_status
-    @issue.dig(:closed_status).presence
+    @issue.dig(:closed_status)
   end
 
   def ri_contested_rating_issue_diagnostic_code
@@ -99,7 +94,7 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser
   end
 
   def ri_ramp_claim_id
-    @issue.dig(:ramp_claim_id).presence
+    @issue.dig(:ramp_claim_id)
   end
 
   def ri_rating_issue_associated_at
@@ -108,10 +103,10 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser
   end
 
   def ri_nonrating_issue_bgs_id
-    @issue.dig(:nonrating_issue_bgs_id).presence
+    @issue.dig(:nonrating_issue_bgs_id)
   end
 
   def ri_nonrating_issue_bgs_source
-    @issue.dig(:nonrating_issue_bgs_source).presence
+    @issue.dig(:nonrating_issue_bgs_source)
   end
 end

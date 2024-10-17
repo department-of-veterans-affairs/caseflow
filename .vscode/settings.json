@@ -8,5 +8,4 @@
   "files.insertFinalNewline": true,
   "files.trimTrailingWhitespace": true,
   "git.autofetch": true,
-  "makefile.configureOnOpen": false,
 }

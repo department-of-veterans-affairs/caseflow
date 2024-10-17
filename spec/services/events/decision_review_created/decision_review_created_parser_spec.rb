@@ -101,7 +101,7 @@ describe Events::DecisionReviewCreated::DecisionReviewCreatedParser do
       total_issues = parser.request_issues
       expect(total_issues.count).to eq(1)
       issue = total_issues.first
-      parser_issues = Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser.new(issue)
+      parser_issues = DecisionReviewCreatedIssueParser.new(issue)
       expect(parser_issues.ri_benefit_type).to eq response_hash.request_issues.first["benefit_type"]
       expect(parser_issues.ri_benefit_type).to eq response_hash.request_issues.first["benefit_type"]
       expect(parser_issues.ri_contested_issue_description).to eq response_hash.request_issues.first["contested_issue_description"]
@@ -193,64 +193,6 @@ describe Events::DecisionReviewCreated::DecisionReviewCreatedParser do
           expect(issue[:nonrating_issue_category]).to eq("Unknown Issue Category")
         end
       end
-    end
-  end
-
-  context "when parsing payload with empty string values" do
-    let(:empty_string_payload) do
-      {
-        css_id: "",
-        detail_type: "",
-        station: "",
-        veteran: { participant_id: "" },
-        claimant: { payee_code: "", name_suffix: "" },
-        claim_review: { benefit_type: "", receipt_date: "", establishment_submitted_at: "" },
-        end_product_establishment: { benefit_type_code: "", claim_date: "", code: "" }
-      }
-    end
-
-    let(:headers) { sample_headers }
-
-    subject { described_class.new(headers, empty_string_payload) }
-
-    it "parses css_id as nil when empty string" do
-      expect(subject.css_id).to be_nil
-    end
-
-    it "parses detail_type as nil when empty string" do
-      expect(subject.detail_type).to be_nil
-    end
-
-    it "parses station_id as nil when empty string" do
-      expect(subject.station_id).to be_nil
-    end
-
-    it "parses veteran participant_id as nil when empty string" do
-      expect(subject.veteran_participant_id).to be_nil
-    end
-
-    it "parses claimant payee_code as nil when empty string" do
-      expect(subject.claimant_payee_code).to be_nil
-    end
-
-    it "parses claimant name_suffix as nil when empty string" do
-      expect(subject.claimant_name_suffix).to be_nil
-    end
-
-    it "parses claim_review benefit_type as nil when empty string" do
-      expect(subject.claim_review_benefit_type).to be_nil
-    end
-
-    it "parses end_product_establishment benefit_type_code as nil when empty string" do
-      expect(subject.epe_benefit_type_code).to be_nil
-    end
-
-    it "parses end_product_establishment claim_date as nil when empty string" do
-      expect(subject.epe_claim_date).to be_nil
-    end
-
-    it "parses end_product_establishment code as nil when empty string" do
-      expect(subject.epe_code).to be_nil
     end
   end
 
