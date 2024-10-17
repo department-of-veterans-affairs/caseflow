@@ -7,7 +7,7 @@ exports[`Timezone Can set timezone 1`] = `
   >
     <div
       class="cf-form-dropdown dropdown-Timezone"
-      data-css-1gh7024=""
+      data-css-1dzedb9=""
     >
       <label
         class="question-label"
@@ -111,7 +111,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
   >
     <div
       class="cf-form-dropdown dropdown-Timezone"
-      data-css-1gh7024=""
+      data-css-1dzedb9=""
     >
       <label
         class="question-label"
@@ -255,7 +255,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Indiana (East)
+                Puerto Rico
               </div>
               <div
                 aria-disabled="false"
@@ -264,7 +264,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Puerto Rico
+                Arizona
               </div>
               <div
                 aria-disabled="false"
@@ -273,7 +273,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Arizona
+                Alaska
               </div>
               <div
                 aria-disabled="false"
@@ -282,7 +282,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Alaska
+                Philippine Standard Time
               </div>
               <div
                 aria-disabled="false"
@@ -291,7 +291,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Philippine Standard Time
+                Hawaii
               </div>
               <div
                 aria-disabled="false"
@@ -300,7 +300,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Hawaii
+                Azores
               </div>
               <div
                 aria-disabled="false"
@@ -309,7 +309,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Azores
+                Monrovia
               </div>
               <div
                 aria-disabled="false"
@@ -318,7 +318,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Monrovia
+                UTC
               </div>
               <div
                 aria-disabled="false"
@@ -327,7 +327,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                UTC
+                Cape Verde Is.
               </div>
               <div
                 aria-disabled="false"
@@ -336,7 +336,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Cape Verde Is.
+                Dublin
               </div>
               <div
                 aria-disabled="false"
@@ -345,7 +345,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Dublin
+                Edinburgh
               </div>
               <div
                 aria-disabled="false"
@@ -354,7 +354,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Edinburgh
+                Lisbon
               </div>
               <div
                 aria-disabled="false"
@@ -363,7 +363,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Lisbon
+                London
               </div>
               <div
                 aria-disabled="false"
@@ -372,7 +372,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                London
+                Casablanca
               </div>
               <div
                 aria-disabled="false"
@@ -381,7 +381,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Casablanca
+                West Central Africa
               </div>
               <div
                 aria-disabled="false"
@@ -390,7 +390,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                West Central Africa
+                Greenland
               </div>
               <div
                 aria-disabled="false"
@@ -399,7 +399,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Greenland
+                Mid-Atlantic
               </div>
               <div
                 aria-disabled="false"
@@ -408,7 +408,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Mid-Atlantic
+                Belgrade
               </div>
               <div
                 aria-disabled="false"
@@ -417,7 +417,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Belgrade
+                Bratislava
               </div>
               <div
                 aria-disabled="false"
@@ -426,7 +426,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Bratislava
+                Budapest
               </div>
               <div
                 aria-disabled="false"
@@ -435,7 +435,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Budapest
+                Ljubljana
               </div>
               <div
                 aria-disabled="false"
@@ -444,7 +444,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Ljubljana
+                Prague
               </div>
               <div
                 aria-disabled="false"
@@ -453,7 +453,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Prague
+                Sarajevo
               </div>
               <div
                 aria-disabled="false"
@@ -462,7 +462,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Sarajevo
+                Skopje
               </div>
               <div
                 aria-disabled="false"
@@ -471,7 +471,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Skopje
+                Warsaw
               </div>
               <div
                 aria-disabled="false"
@@ -480,7 +480,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Warsaw
+                Zagreb
               </div>
               <div
                 aria-disabled="false"
@@ -489,7 +489,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Zagreb
+                Brussels
               </div>
               <div
                 aria-disabled="false"
@@ -498,7 +498,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Brussels
+                Copenhagen
               </div>
               <div
                 aria-disabled="false"
@@ -507,7 +507,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Copenhagen
+                Madrid
               </div>
               <div
                 aria-disabled="false"
@@ -516,7 +516,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Madrid
+                Paris
               </div>
               <div
                 aria-disabled="false"
@@ -525,7 +525,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Paris
+                Amsterdam
               </div>
               <div
                 aria-disabled="false"
@@ -534,7 +534,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Amsterdam
+                Berlin
               </div>
               <div
                 aria-disabled="false"
@@ -543,7 +543,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Berlin
+                Bern
               </div>
               <div
                 aria-disabled="false"
@@ -552,7 +552,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Bern
+                Zurich
               </div>
               <div
                 aria-disabled="false"
@@ -561,7 +561,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Zurich
+                Rome
               </div>
               <div
                 aria-disabled="false"
@@ -570,7 +570,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Rome
+                Stockholm
               </div>
               <div
                 aria-disabled="false"
@@ -579,7 +579,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Stockholm
+                Vienna
               </div>
               <div
                 aria-disabled="false"
@@ -588,7 +588,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Vienna
+                Cairo
               </div>
               <div
                 aria-disabled="false"
@@ -597,7 +597,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Cairo
+                Harare
               </div>
               <div
                 aria-disabled="false"
@@ -606,7 +606,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Harare
+                Pretoria
               </div>
               <div
                 aria-disabled="false"
@@ -615,7 +615,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Pretoria
+                Kaliningrad
               </div>
               <div
                 aria-disabled="false"
@@ -624,7 +624,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Kaliningrad
+                Newfoundland
               </div>
               <div
                 aria-disabled="false"
@@ -633,7 +633,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Newfoundland
+                Atlantic Time (Canada)
               </div>
               <div
                 aria-disabled="false"
@@ -642,7 +642,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Atlantic Time (Canada)
+                Brasilia
               </div>
               <div
                 aria-disabled="false"
@@ -651,7 +651,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Brasilia
+                Buenos Aires
               </div>
               <div
                 aria-disabled="false"
@@ -660,7 +660,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Buenos Aires
+                Montevideo
               </div>
               <div
                 aria-disabled="false"
@@ -669,7 +669,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Montevideo
+                Bucharest
               </div>
               <div
                 aria-disabled="false"
@@ -678,7 +678,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Bucharest
+                Helsinki
               </div>
               <div
                 aria-disabled="false"
@@ -687,7 +687,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Helsinki
+                Kyiv
               </div>
               <div
                 aria-disabled="false"
@@ -696,7 +696,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Kyiv
+                Riga
               </div>
               <div
                 aria-disabled="false"
@@ -705,7 +705,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Riga
+                Sofia
               </div>
               <div
                 aria-disabled="false"
@@ -714,7 +714,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Sofia
+                Tallinn
               </div>
               <div
                 aria-disabled="false"
@@ -723,7 +723,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Tallinn
+                Vilnius
               </div>
               <div
                 aria-disabled="false"
@@ -732,7 +732,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Vilnius
+                Athens
               </div>
               <div
                 aria-disabled="false"
@@ -741,7 +741,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Athens
+                Istanbul
               </div>
               <div
                 aria-disabled="false"
@@ -750,7 +750,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Istanbul
+                Minsk
               </div>
               <div
                 aria-disabled="false"
@@ -759,7 +759,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Minsk
+                Jerusalem
               </div>
               <div
                 aria-disabled="false"
@@ -768,7 +768,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Jerusalem
+                Moscow
               </div>
               <div
                 aria-disabled="false"
@@ -777,7 +777,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Moscow
+                St. Petersburg
               </div>
               <div
                 aria-disabled="false"
@@ -786,7 +786,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                St. Petersburg
+                Kuwait
               </div>
               <div
                 aria-disabled="false"
@@ -795,7 +795,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Kuwait
+                Riyadh
               </div>
               <div
                 aria-disabled="false"
@@ -804,7 +804,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Riyadh
+                Nairobi
               </div>
               <div
                 aria-disabled="false"
@@ -813,7 +813,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Nairobi
+                Baghdad
               </div>
               <div
                 aria-disabled="false"
@@ -822,7 +822,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Baghdad
+                Indiana (East)
               </div>
               <div
                 aria-disabled="false"
@@ -1601,7 +1601,7 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
   >
     <div
       class="cf-form-dropdown dropdown-Timezone"
-      data-css-1gh7024=""
+      data-css-1dzedb9=""
     >
       <label
         class="question-label"
@@ -1680,7 +1680,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
   >
     <div
       class="cf-form-dropdown dropdown-Timezone"
-      data-css-1gh7024=""
+      data-css-1dzedb9=""
     >
       <label
         class="question-label"
@@ -1824,7 +1824,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Indiana (East)
+                Puerto Rico
               </div>
               <div
                 aria-disabled="false"
@@ -1833,7 +1833,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Puerto Rico
+                Arizona
               </div>
               <div
                 aria-disabled="false"
@@ -1842,7 +1842,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Arizona
+                Alaska
               </div>
               <div
                 aria-disabled="false"
@@ -1851,7 +1851,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Alaska
+                Philippine Standard Time
               </div>
               <div
                 aria-disabled="false"
@@ -1860,7 +1860,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Philippine Standard Time
+                Hawaii
               </div>
               <div
                 aria-disabled="false"
@@ -1869,7 +1869,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Hawaii
+                Azores
               </div>
               <div
                 aria-disabled="false"
@@ -1878,7 +1878,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Azores
+                Monrovia
               </div>
               <div
                 aria-disabled="false"
@@ -1887,7 +1887,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Monrovia
+                UTC
               </div>
               <div
                 aria-disabled="false"
@@ -1896,7 +1896,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                UTC
+                Cape Verde Is.
               </div>
               <div
                 aria-disabled="false"
@@ -1905,7 +1905,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Cape Verde Is.
+                Dublin
               </div>
               <div
                 aria-disabled="false"
@@ -1914,7 +1914,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Dublin
+                Edinburgh
               </div>
               <div
                 aria-disabled="false"
@@ -1923,7 +1923,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Edinburgh
+                Lisbon
               </div>
               <div
                 aria-disabled="false"
@@ -1932,7 +1932,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Lisbon
+                London
               </div>
               <div
                 aria-disabled="false"
@@ -1941,7 +1941,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                London
+                Casablanca
               </div>
               <div
                 aria-disabled="false"
@@ -1950,7 +1950,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Casablanca
+                West Central Africa
               </div>
               <div
                 aria-disabled="false"
@@ -1959,7 +1959,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                West Central Africa
+                Greenland
               </div>
               <div
                 aria-disabled="false"
@@ -1968,7 +1968,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Greenland
+                Mid-Atlantic
               </div>
               <div
                 aria-disabled="false"
@@ -1977,7 +1977,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Mid-Atlantic
+                Belgrade
               </div>
               <div
                 aria-disabled="false"
@@ -1986,7 +1986,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Belgrade
+                Bratislava
               </div>
               <div
                 aria-disabled="false"
@@ -1995,7 +1995,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Bratislava
+                Budapest
               </div>
               <div
                 aria-disabled="false"
@@ -2004,7 +2004,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Budapest
+                Ljubljana
               </div>
               <div
                 aria-disabled="false"
@@ -2013,7 +2013,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Ljubljana
+                Prague
               </div>
               <div
                 aria-disabled="false"
@@ -2022,7 +2022,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Prague
+                Sarajevo
               </div>
               <div
                 aria-disabled="false"
@@ -2031,7 +2031,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Sarajevo
+                Skopje
               </div>
               <div
                 aria-disabled="false"
@@ -2040,7 +2040,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Skopje
+                Warsaw
               </div>
               <div
                 aria-disabled="false"
@@ -2049,7 +2049,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Warsaw
+                Zagreb
               </div>
               <div
                 aria-disabled="false"
@@ -2058,7 +2058,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Zagreb
+                Brussels
               </div>
               <div
                 aria-disabled="false"
@@ -2067,7 +2067,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Brussels
+                Copenhagen
               </div>
               <div
                 aria-disabled="false"
@@ -2076,7 +2076,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Copenhagen
+                Madrid
               </div>
               <div
                 aria-disabled="false"
@@ -2085,7 +2085,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Madrid
+                Paris
               </div>
               <div
                 aria-disabled="false"
@@ -2094,7 +2094,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Paris
+                Amsterdam
               </div>
               <div
                 aria-disabled="false"
@@ -2103,7 +2103,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Amsterdam
+                Berlin
               </div>
               <div
                 aria-disabled="false"
@@ -2112,7 +2112,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Berlin
+                Bern
               </div>
               <div
                 aria-disabled="false"
@@ -2121,7 +2121,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Bern
+                Zurich
               </div>
               <div
                 aria-disabled="false"
@@ -2130,7 +2130,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Zurich
+                Rome
               </div>
               <div
                 aria-disabled="false"
@@ -2139,7 +2139,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Rome
+                Stockholm
               </div>
               <div
                 aria-disabled="false"
@@ -2148,7 +2148,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Stockholm
+                Vienna
               </div>
               <div
                 aria-disabled="false"
@@ -2157,7 +2157,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Vienna
+                Cairo
               </div>
               <div
                 aria-disabled="false"
@@ -2166,7 +2166,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Cairo
+                Harare
               </div>
               <div
                 aria-disabled="false"
@@ -2175,7 +2175,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Harare
+                Pretoria
               </div>
               <div
                 aria-disabled="false"
@@ -2184,7 +2184,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Pretoria
+                Kaliningrad
               </div>
               <div
                 aria-disabled="false"
@@ -2193,7 +2193,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Kaliningrad
+                Newfoundland
               </div>
               <div
                 aria-disabled="false"
@@ -2202,7 +2202,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Newfoundland
+                Atlantic Time (Canada)
               </div>
               <div
                 aria-disabled="false"
@@ -2211,7 +2211,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Atlantic Time (Canada)
+                Brasilia
               </div>
               <div
                 aria-disabled="false"
@@ -2220,7 +2220,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Brasilia
+                Buenos Aires
               </div>
               <div
                 aria-disabled="false"
@@ -2229,7 +2229,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Buenos Aires
+                Montevideo
               </div>
               <div
                 aria-disabled="false"
@@ -2238,7 +2238,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Montevideo
+                Bucharest
               </div>
               <div
                 aria-disabled="false"
@@ -2247,7 +2247,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Bucharest
+                Helsinki
               </div>
               <div
                 aria-disabled="false"
@@ -2256,7 +2256,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Helsinki
+                Kyiv
               </div>
               <div
                 aria-disabled="false"
@@ -2265,7 +2265,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Kyiv
+                Riga
               </div>
               <div
                 aria-disabled="false"
@@ -2274,7 +2274,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Riga
+                Sofia
               </div>
               <div
                 aria-disabled="false"
@@ -2283,7 +2283,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Sofia
+                Tallinn
               </div>
               <div
                 aria-disabled="false"
@@ -2292,7 +2292,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Tallinn
+                Vilnius
               </div>
               <div
                 aria-disabled="false"
@@ -2301,7 +2301,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Vilnius
+                Athens
               </div>
               <div
                 aria-disabled="false"
@@ -2310,7 +2310,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Athens
+                Istanbul
               </div>
               <div
                 aria-disabled="false"
@@ -2319,7 +2319,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Istanbul
+                Minsk
               </div>
               <div
                 aria-disabled="false"
@@ -2328,7 +2328,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Minsk
+                Jerusalem
               </div>
               <div
                 aria-disabled="false"
@@ -2337,7 +2337,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Jerusalem
+                Moscow
               </div>
               <div
                 aria-disabled="false"
@@ -2346,7 +2346,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Moscow
+                St. Petersburg
               </div>
               <div
                 aria-disabled="false"
@@ -2355,7 +2355,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                St. Petersburg
+                Kuwait
               </div>
               <div
                 aria-disabled="false"
@@ -2364,7 +2364,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Kuwait
+                Riyadh
               </div>
               <div
                 aria-disabled="false"
@@ -2373,7 +2373,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Riyadh
+                Nairobi
               </div>
               <div
                 aria-disabled="false"
@@ -2382,7 +2382,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Nairobi
+                Baghdad
               </div>
               <div
                 aria-disabled="false"
@@ -2391,7 +2391,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                 role="option"
                 tabindex="-1"
               >
-                Baghdad
+                Indiana (East)
               </div>
               <div
                 aria-disabled="false"
@@ -3170,7 +3170,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
   >
     <div
       class="cf-form-dropdown dropdown-Timezone"
-      data-css-1gh7024=""
+      data-css-1dzedb9=""
     >
       <label
         class="question-label"
@@ -3314,7 +3314,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Indiana (East)
+                Puerto Rico
               </div>
               <div
                 aria-disabled="false"
@@ -3323,7 +3323,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Puerto Rico
+                Arizona
               </div>
               <div
                 aria-disabled="false"
@@ -3332,7 +3332,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Arizona
+                Alaska
               </div>
               <div
                 aria-disabled="false"
@@ -3341,7 +3341,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Alaska
+                Philippine Standard Time
               </div>
               <div
                 aria-disabled="false"
@@ -3350,7 +3350,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Philippine Standard Time
+                Hawaii
               </div>
               <div
                 aria-disabled="false"
@@ -3359,7 +3359,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Hawaii
+                Azores
               </div>
               <div
                 aria-disabled="false"
@@ -3368,7 +3368,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Azores
+                Monrovia
               </div>
               <div
                 aria-disabled="false"
@@ -3377,7 +3377,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Monrovia
+                UTC
               </div>
               <div
                 aria-disabled="false"
@@ -3386,7 +3386,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                UTC
+                Cape Verde Is.
               </div>
               <div
                 aria-disabled="false"
@@ -3395,7 +3395,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Cape Verde Is.
+                Dublin
               </div>
               <div
                 aria-disabled="false"
@@ -3404,7 +3404,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Dublin
+                Edinburgh
               </div>
               <div
                 aria-disabled="false"
@@ -3413,7 +3413,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Edinburgh
+                Lisbon
               </div>
               <div
                 aria-disabled="false"
@@ -3422,7 +3422,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Lisbon
+                London
               </div>
               <div
                 aria-disabled="false"
@@ -3431,7 +3431,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                London
+                Casablanca
               </div>
               <div
                 aria-disabled="false"
@@ -3440,7 +3440,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Casablanca
+                West Central Africa
               </div>
               <div
                 aria-disabled="false"
@@ -3449,7 +3449,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                West Central Africa
+                Greenland
               </div>
               <div
                 aria-disabled="false"
@@ -3458,7 +3458,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Greenland
+                Mid-Atlantic
               </div>
               <div
                 aria-disabled="false"
@@ -3467,7 +3467,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Mid-Atlantic
+                Belgrade
               </div>
               <div
                 aria-disabled="false"
@@ -3476,7 +3476,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Belgrade
+                Bratislava
               </div>
               <div
                 aria-disabled="false"
@@ -3485,7 +3485,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Bratislava
+                Budapest
               </div>
               <div
                 aria-disabled="false"
@@ -3494,7 +3494,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Budapest
+                Ljubljana
               </div>
               <div
                 aria-disabled="false"
@@ -3503,7 +3503,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Ljubljana
+                Prague
               </div>
               <div
                 aria-disabled="false"
@@ -3512,7 +3512,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Prague
+                Sarajevo
               </div>
               <div
                 aria-disabled="false"
@@ -3521,7 +3521,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Sarajevo
+                Skopje
               </div>
               <div
                 aria-disabled="false"
@@ -3530,7 +3530,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Skopje
+                Warsaw
               </div>
               <div
                 aria-disabled="false"
@@ -3539,7 +3539,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Warsaw
+                Zagreb
               </div>
               <div
                 aria-disabled="false"
@@ -3548,7 +3548,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Zagreb
+                Brussels
               </div>
               <div
                 aria-disabled="false"
@@ -3557,7 +3557,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Brussels
+                Copenhagen
               </div>
               <div
                 aria-disabled="false"
@@ -3566,7 +3566,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Copenhagen
+                Madrid
               </div>
               <div
                 aria-disabled="false"
@@ -3575,7 +3575,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Madrid
+                Paris
               </div>
               <div
                 aria-disabled="false"
@@ -3584,7 +3584,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Paris
+                Amsterdam
               </div>
               <div
                 aria-disabled="false"
@@ -3593,7 +3593,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Amsterdam
+                Berlin
               </div>
               <div
                 aria-disabled="false"
@@ -3602,7 +3602,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Berlin
+                Bern
               </div>
               <div
                 aria-disabled="false"
@@ -3611,7 +3611,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Bern
+                Zurich
               </div>
               <div
                 aria-disabled="false"
@@ -3620,7 +3620,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Zurich
+                Rome
               </div>
               <div
                 aria-disabled="false"
@@ -3629,7 +3629,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Rome
+                Stockholm
               </div>
               <div
                 aria-disabled="false"
@@ -3638,7 +3638,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Stockholm
+                Vienna
               </div>
               <div
                 aria-disabled="false"
@@ -3647,7 +3647,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Vienna
+                Cairo
               </div>
               <div
                 aria-disabled="false"
@@ -3656,7 +3656,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Cairo
+                Harare
               </div>
               <div
                 aria-disabled="false"
@@ -3665,7 +3665,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Harare
+                Pretoria
               </div>
               <div
                 aria-disabled="false"
@@ -3674,7 +3674,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Pretoria
+                Kaliningrad
               </div>
               <div
                 aria-disabled="false"
@@ -3683,7 +3683,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Kaliningrad
+                Newfoundland
               </div>
               <div
                 aria-disabled="false"
@@ -3692,7 +3692,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Newfoundland
+                Atlantic Time (Canada)
               </div>
               <div
                 aria-disabled="false"
@@ -3701,7 +3701,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Atlantic Time (Canada)
+                Brasilia
               </div>
               <div
                 aria-disabled="false"
@@ -3710,7 +3710,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Brasilia
+                Buenos Aires
               </div>
               <div
                 aria-disabled="false"
@@ -3719,7 +3719,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Buenos Aires
+                Montevideo
               </div>
               <div
                 aria-disabled="false"
@@ -3728,7 +3728,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Montevideo
+                Bucharest
               </div>
               <div
                 aria-disabled="false"
@@ -3737,7 +3737,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Bucharest
+                Helsinki
               </div>
               <div
                 aria-disabled="false"
@@ -3746,7 +3746,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Helsinki
+                Kyiv
               </div>
               <div
                 aria-disabled="false"
@@ -3755,7 +3755,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Kyiv
+                Riga
               </div>
               <div
                 aria-disabled="false"
@@ -3764,7 +3764,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Riga
+                Sofia
               </div>
               <div
                 aria-disabled="false"
@@ -3773,7 +3773,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Sofia
+                Tallinn
               </div>
               <div
                 aria-disabled="false"
@@ -3782,7 +3782,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Tallinn
+                Vilnius
               </div>
               <div
                 aria-disabled="false"
@@ -3791,7 +3791,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Vilnius
+                Athens
               </div>
               <div
                 aria-disabled="false"
@@ -3800,7 +3800,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Athens
+                Istanbul
               </div>
               <div
                 aria-disabled="false"
@@ -3809,7 +3809,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Istanbul
+                Minsk
               </div>
               <div
                 aria-disabled="false"
@@ -3818,7 +3818,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Minsk
+                Jerusalem
               </div>
               <div
                 aria-disabled="false"
@@ -3827,7 +3827,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Jerusalem
+                Moscow
               </div>
               <div
                 aria-disabled="false"
@@ -3836,7 +3836,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Moscow
+                St. Petersburg
               </div>
               <div
                 aria-disabled="false"
@@ -3845,7 +3845,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                St. Petersburg
+                Kuwait
               </div>
               <div
                 aria-disabled="false"
@@ -3854,7 +3854,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Kuwait
+                Riyadh
               </div>
               <div
                 aria-disabled="false"
@@ -3863,7 +3863,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Riyadh
+                Nairobi
               </div>
               <div
                 aria-disabled="false"
@@ -3872,7 +3872,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Nairobi
+                Baghdad
               </div>
               <div
                 aria-disabled="false"
@@ -3881,7 +3881,7 @@ exports[`Timezone Matches snapshot with default props 1`] = `
                 role="option"
                 tabindex="-1"
               >
-                Baghdad
+                Indiana (East)
               </div>
               <div
                 aria-disabled="false"
@@ -4660,7 +4660,7 @@ exports[`Timezone Respects required prop 1`] = `
   >
     <div
       class="cf-form-dropdown dropdown-Timezone"
-      data-css-1gh7024=""
+      data-css-1dzedb9=""
     >
       <label
         class="question-label"

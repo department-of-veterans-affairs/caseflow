@@ -488,7 +488,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
           >
             <div
               class="cf-form-dropdown dropdown-appellantTz"
-              data-css-1gh7024=""
+              data-css-1dzedb9=""
             >
               <label
                 class="question-label"
@@ -648,7 +648,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
           >
             <div
               class="cf-form-dropdown dropdown-representativeTz"
-              data-css-1gh7024=""
+              data-css-1dzedb9=""
             >
               <label
                 class="question-label"
@@ -1796,7 +1796,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
           >
             <div
               class="cf-form-dropdown dropdown-appellantTz"
-              data-css-1gh7024=""
+              data-css-1dzedb9=""
             >
               <label
                 class="question-label"
@@ -1956,7 +1956,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
           >
             <div
               class="cf-form-dropdown dropdown-representativeTz"
-              data-css-1gh7024=""
+              data-css-1dzedb9=""
             >
               <label
                 class="question-label"
@@ -3076,7 +3076,7 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
           >
             <div
               class="cf-form-dropdown dropdown-appellantTz"
-              data-css-1gh7024=""
+              data-css-1dzedb9=""
             >
               <label
                 class="question-label"
@@ -3236,7 +3236,7 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
           >
             <div
               class="cf-form-dropdown dropdown-representativeTz"
-              data-css-1gh7024=""
+              data-css-1dzedb9=""
             >
               <label
                 class="question-label"
