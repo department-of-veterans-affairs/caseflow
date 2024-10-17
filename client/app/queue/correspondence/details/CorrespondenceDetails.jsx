@@ -44,7 +44,6 @@ const CorrespondenceDetails = (props) => {
   const priorMail = correspondence.prior_mail;
   // eslint-disable-next-line max-len
   const [relatedCorrespondenceIds, setRelatedCorrespondenceIds] = useState(props.correspondence.relatedCorrespondenceIds);
-  // Ki - selected appeals are the ones selected with the checkboxes -- taskRelatedAppealsIds<-selectedAppeals
   const [initialSelectedAppeals, setInitialSelectedAppeals] = useState(correspondence.correspondenceAppealIds);
   const [selectedAppeals, setSelectedAppeals] = useState(correspondence.correspondenceAppealIds);
   const [unSelectedAppeals, setUnSelectedAppeals] = useState([]);
@@ -74,12 +73,6 @@ const CorrespondenceDetails = (props) => {
     // Initialize sortedPriorMail with the initial priorMail list
     setSortedPriorMail(priorMail);
   }, [priorMail]);
-
-  // useEffect(() => {
-  //   const linkedAppealList = [...linkedAppeals, initialSelectedAppeals, selectedAppeals];
-
-  //   setLinkedAppeals(linkedAppealList);
-  // });
 
   const toggleSection = () => {
     setIsExpanded((prev) => !prev);
@@ -318,6 +311,15 @@ const CorrespondenceDetails = (props) => {
     dispatch(updateCorrespondenceInfo(cor));
   };
 
+  const unlinkLinkedAppeal = (appealId) => {
+    const selectedAppeal = correspondenceInfo.appeals_information.find((appeal) => appeal.id === appealId);
+    const corAppeals = correspondenceInfo.correspondenceAppeals.filter((appeal) => appeal.id !== selectedAppeal.id);
+    const cor = correspondenceInfo;
+
+    cor.correspondenceAppeals = corAppeals;
+    dispatch(updateCorrespondenceInfo(cor));
+  };
+
   const allCorrespondencesList = () => {
     return viewAllCorrespondence && (
       <div className="all-correspondences">
@@ -364,6 +366,7 @@ const CorrespondenceDetails = (props) => {
         setSelectedAppeals(filtedAppeals);
       }
       setUnSelectedAppeals([...unSelectedAppeals, appealId]);
+      unlinkLinkedAppeal(appealId);
     }
   };
 
@@ -373,16 +376,10 @@ const CorrespondenceDetails = (props) => {
         return false;
       }
 
-      return initialSelectedAppeals.every((appeal) => selectedAppeals.includes(appeal));
+      return initialSelectedAppeals?.every((appeal) => selectedAppeals.includes(appeal));
     };
 
     setDisableSubmitButton(isButtonDisabled());
-  }, [selectedAppeals, initialSelectedAppeals]);
-
-  useEffect(() => {
-    if (selectedAppeals?.length !== initialSelectedAppeals?.length) {
-      dispatch(updateCorrespondenceInfo(correspondence));
-    }
   }, [selectedAppeals, initialSelectedAppeals]);
 
   const sortAppeals = (selectedList) => {
@@ -416,10 +413,16 @@ const CorrespondenceDetails = (props) => {
     // load appeals related to the correspondence into the store
     const corAppealTasks = [];
 
-    props.correspondence.correspondenceAppeals.map((corAppeal) => {
-      dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal.appeal?.data])));
+    // return if appeals already loaded into store
+    if (Object.keys(props.appealsFromStore).length > 0) {
+      return;
+    }
 
-      corAppeal.taskAddedData.data.map((taskData) => {
+    // Ki - Stuff for saving appeals to store things
+    props.correspondence.correspondenceAppeals.map((corAppeal) => {
+      dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal?.appeal?.data])));
+
+      corAppeal?.taskAddedData?.data.map((taskData) => {
         const formattedTask = {};
 
         formattedTask[taskData.id] = taskData;
@@ -515,33 +518,6 @@ const CorrespondenceDetails = (props) => {
           )}
           {(props.correspondence.correspondenceAppeals || props.correspondenceInfo.correspondenceAppeals) && (
             <div>
-              {/* {(props.correspondence.correspondenceAppeals.map((taskAdded) =>
-                <div className="correspondence-linked-appeals">
-                  <div className="correspondence-linked-appeals-title-bar">
-                    <h2>"Linked appeal:"</h2>
-                    <AppSegment filledBackground noMarginTop>
-                      <span className="case-details-badge">
-                        <DocketTypeBadge name={taskAdded.appealType} />
-                        <CaseDetailsLink
-                          appeal={{ externalId: taskAdded.appealUuid }}
-                          getLinkText={() => taskAdded.docketNumber}
-                          task={taskAdded}
-
-                          linkOpensInNewTab
-                        />
-                      </span>
-                    </AppSegment>
-                  </div>
-                  <CorrespondenceAppealTasks
-                    task_added={taskAdded}
-                    correspondence={props.correspondence}
-                    organizations={props.organizations}
-                    userCssId={props.userCssId}
-                    appeal={taskAdded.appeal.data.attributes}
-                    waivableUser={props.isInboundOpsSuperuser || props.isInboundOpsSupervisor}
-                  />
-                </div>
-              ))} */}
               {(props.correspondenceInfo?.correspondenceAppeals?.map((taskAdded) =>
                 <CorrespondenceAppealTasks
                   task_added={taskAdded}
@@ -987,12 +963,14 @@ CorrespondenceDetails.propTypes = {
   inboundOpsTeamUsers: PropTypes.array,
   addLetterCheck: PropTypes.bool,
   updateCorrespondenceInfo: PropTypes.func,
-  correspondenceTypes: PropTypes.array
+  correspondenceTypes: PropTypes.array,
+  appealsFromStore: PropTypes.object
 };
 
 const mapStateToProps = (state) => ({
   correspondenceInfo: state.correspondenceDetails.correspondenceInfo,
-  tasksUnrelatedToAppealEmpty: state.correspondenceDetails.tasksUnrelatedToAppealEmpty
+  tasksUnrelatedToAppealEmpty: state.correspondenceDetails.tasksUnrelatedToAppealEmpty,
+  appealsFromStore: state.queue.appeals
 });
 
 const mapDispatchToProps = (dispatch) => (

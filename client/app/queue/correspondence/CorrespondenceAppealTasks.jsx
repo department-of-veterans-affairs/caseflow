@@ -31,7 +31,8 @@ const CorrespondenceAppealTasks = (props) => {
           <div className="case-details-header-badge">
             <DocketTypeBadge name={props.task_added.appealType} />
             <CaseDetailsLink
-              appeal={{ externalId: props.task_added.appealUuid }}
+              appeal={props.task_added?.appealUuid ?
+                { externalId: props.task_added?.appealUuid } : { externalId: props.task_added?.externalId }}
               getLinkText={() => props.task_added.docketNumber}
               task={props.task_added}
 
@@ -62,7 +63,8 @@ const CorrespondenceAppealTasks = (props) => {
               <span className="case-details-badge">
                 <DocketTypeBadge name={props.task_added.appealType} />
                 <CaseDetailsLink
-                  appeal={{ externalId: props.task_added.appealUuid }}
+                  appeal={props.task_added?.appealUuid ?
+                    { externalId: props.task_added?.appealUuid } : { externalId: props.task_added?.externalId }}
                   getLinkText={() => props.task_added.docketNumber}
                   task={props.task_added}
 
@@ -94,19 +96,23 @@ const CorrespondenceAppealTasks = (props) => {
 
           </div>
           <div className="tasks-added-details">
-            {props.task_added.CorrespondenceAppealTasks ?
-              <span className="tasks-added-text">Tasks added to appeal</span> :
+            {appeal && props.task_added.CorrespondenceAppealTasks ?
+              (<div>
+                <span className="tasks-added-text">Tasks added to appeal</span>
+                <TaskRows
+                  appeal={appeal}
+                  taskList={tasks}
+                  timeline={false}
+                  editNodDateEnabled={false}
+                  hideDropdown
+                  waivableUser={props.waivableUser}
+                />
+              </div>) :
               <span className="tasks-added-text-alternate">There are no tasks on this appeal.</span>
             }
-            <div>
-              <TaskRows appeal={appeal}
-                taskList={tasks}
-                timeline={false}
-                editNodDateEnabled={false}
-                hideDropdown
-                waivableUser={props.waivableUser}
-              />
-            </div>
+            {appeal ? '' :
+              <span className="tasks-added-text-alternate">
+                The linked appeal must be saved before tasks can be added.</span>}
           </div>
         </div>
       )}
