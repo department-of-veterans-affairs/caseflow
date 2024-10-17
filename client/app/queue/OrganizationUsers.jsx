@@ -18,33 +18,7 @@ import COPY from '../../COPY';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import MembershipRequestTable from './MembershipRequestTable';
 import { flushSync } from 'react-dom';
-
-const userStyle = css({
-  margin: '.5rem 0 .5rem',
-  padding: '.5rem 0 .5rem',
-  listStyle: 'none'
-});
-const topUserStyle = css({
-  borderTop: '.1rem solid gray',
-  margin: '.5rem 0 .5rem',
-  padding: '1rem 0 .5rem',
-  listStyle: 'none'
-});
-const topUserBorder = css({
-  borderBottom: '.1rem solid gray',
-});
-const buttonStyle = css({
-  paddingRight: '1rem',
-  display: 'inline-block'
-});
-const buttonContainerStyle = css({
-  borderBottom: '1rem solid gray',
-  borderWidth: '1px',
-  padding: '.5rem 0 2rem',
-});
-const listStyle = css({
-  listStyle: 'none'
-});
+import SelectConferenceTypeRadioField from './SelectConferenceTypeRadioField';
 
 export default class OrganizationUsers extends React.PureComponent {
   constructor(props) {
