@@ -269,10 +269,10 @@ RSpec.feature "Convert hearing request type" do
             click_dropdown(name: "hearingDate", index: 1)
             click_dropdown(name: "optionalHearingTime0", index: 0)
             click_button(text: "Schedule")
+            expect(page).to have_content("You have successfully assigned")
           end
 
           step "navigate to the hearings form" do
-            appeal = Appeal.last
             User.authenticate!(user: vso_user)
             visit "queue/appeals/#{appeal.uuid}"
             expect(page).to have_content("Video")
