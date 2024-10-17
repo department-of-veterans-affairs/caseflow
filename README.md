@@ -156,7 +156,7 @@ First you'll need to install ansible-vault and credstash.
 pip install ansible-vault
 pip install credstash
 ```
-For more credstash setup, follow [the doc](https://github.com/department-of-veterans-affairs/appeals-deployment/blob/master/docs/credstash.md#using-credstash)
+For more credstash setup, follow [the doc](https://github.com/department-of-veterans-affairs/appeals-deployment/blob/main/docs/credstash.md#using-credstash)
 
 We'll need to obtain the Ansible vault password using credstash:
 
@@ -267,8 +267,8 @@ Rails.cache.write(:degraded_service_banner, :auto)
 
 We have a lot of technical documentation spread over a lot of different repositories. Here is a non-exhaustive mapping of where to find documentation:
 
-- [Local Caseflow Setup](https://github.com/department-of-veterans-affairs/caseflow/tree/master/docs)
+- [Local Caseflow Setup](https://github.com/department-of-veterans-affairs/caseflow/tree/main/docs)
 - [Test data setup in lower environments](https://github.com/department-of-veterans-affairs/appeals-qa/tree/master/docs)
-- [Caseflow specific devops documentation](https://github.com/department-of-veterans-affairs/appeals-deployment/tree/master/docs) This folder also contains our [first responder manual](https://github.com/department-of-veterans-affairs/appeals-deployment/blob/master/docs/first-responder-manual.md), which is super in understanding our production systems.
+- [Caseflow specific devops documentation](https://github.com/department-of-veterans-affairs/appeals-deployment/tree/main/docs) This folder also contains our [first responder manual](https://github.com/department-of-veterans-affairs/appeals-deployment/blob/main/docs/first-responder-manual.md), which is super in understanding our production systems.
 - [Non-Caseflow specific devops documentation](https://github.com/department-of-veterans-affairs/devops/tree/master/docs). This documentation is shared with the vets.gov team, so not all of it is relevant.
-- [Project documentation](https://github.com/department-of-veterans-affairs/appeals-design-research/tree/master/Project%20Folders)
+- [Project documentation](https://github.com/department-of-veterans-affairs/appeals-design-research/tree/main/Project%20Folders)

@@ -12,27 +12,28 @@ describe "AssocationWrapper" do
       end
       it "returns associations with other tables" do
         expect(subject.select_associations.map do |assoc|
-          [assoc.name, assoc.class_name, assoc.options[:class_name], assoc.polymorphic?, assoc.foreign_type]
-        end).to match_array [
-          [:versions, "PaperTrail::Version", "PaperTrail::Version", nil, nil],
-          [:parent, "Task", "Task", nil, nil],
-          [:children, "Task", "Task", nil, nil],
-          [:assigned_to, "AssignedTo", nil, true, "assigned_to_type"],
-          [:assigned_by, "User", "User", nil, nil],
-          [:cancelled_by, "User", "User", nil, nil],
-          [:completed_by, "User", "User", nil, nil],
-          [:appeal, "Appeal", nil, true, "appeal_type"],
-          [:ama_appeal, "Appeal", "Appeal", nil, nil],
-          [:legacy_appeal, "LegacyAppeal", "LegacyAppeal", nil, nil],
-          [:higher_level_review, "HigherLevelReview", "HigherLevelReview", nil, nil],
-          [:supplemental_claim, "SupplementalClaim", "SupplementalClaim", nil, nil],
-          [:correspondence, "Correspondence", "Correspondence", nil, nil],
-          [:attorney_case_reviews, "AttorneyCaseReview", nil, nil, nil],
-          [:task_timers, "TaskTimer", nil, nil, nil],
-          [:correspondences_appeals_task, "CorrespondencesAppealsTask", nil, nil, nil],
-          [:correspondence_appeal, "CorrespondenceAppeal", nil, nil, nil],
-          [:cached_appeal, "CachedAppeal", nil, nil, nil]
-        ]
+                 [assoc.name, assoc.class_name, assoc.options[:class_name], assoc.polymorphic?, assoc.foreign_type]
+               end).to match_array [
+                 [:versions, "PaperTrail::Version", "PaperTrail::Version", nil, nil],
+                 [:parent, "Task", "Task", nil, nil],
+                 [:children, "Task", "Task", nil, nil],
+                 [:assigned_to, "AssignedTo", nil, true, "assigned_to_type"],
+                 [:assigned_by, "User", "User", nil, nil],
+                 [:cancelled_by, "User", "User", nil, nil],
+                 [:completed_by, "User", "User", nil, nil],
+                 [:appeal, "Appeal", nil, true, "appeal_type"],
+                 [:ama_appeal, "Appeal", "Appeal", nil, nil],
+                 [:legacy_appeal, "LegacyAppeal", "LegacyAppeal", nil, nil],
+                 [:supplemental_claim, "SupplementalClaim", "SupplementalClaim", nil, nil],
+                 [:higher_level_review, "HigherLevelReview", "HigherLevelReview", nil, nil],
+                 [:remand, "Remand", "Remand", nil, nil],
+                 [:attorney_case_reviews, "AttorneyCaseReview", nil, nil, nil],
+                 [:task_timers, "TaskTimer", nil, nil, nil],
+                 [:correspondence, "Correspondence", "Correspondence", nil, nil],
+                 [:correspondences_appeals_task, "CorrespondencesAppealsTask", nil, nil, nil],
+                 [:correspondence_appeal, "CorrespondenceAppeal", nil, nil, nil],
+                 [:cached_appeal, "CachedAppeal", nil, nil, nil]
+               ]
         expect(subject.select_associations.map { |assoc| [assoc.name, assoc.options[:primary_key]] }).to match_array [
           [:versions, nil],
           [:parent, "id"],
@@ -51,7 +52,8 @@ describe "AssocationWrapper" do
           [:task_timers, nil],
           [:correspondences_appeals_task, nil],
           [:correspondence_appeal, nil],
-          [:cached_appeal, nil]
+          [:cached_appeal, nil],
+          [:remand, nil]
         ]
         expect(subject.select_associations.map { |assoc| [assoc.name, assoc.options[:foreign_key]] }).to match_array [
           [:versions, nil],
@@ -71,7 +73,8 @@ describe "AssocationWrapper" do
           [:task_timers, nil],
           [:correspondences_appeals_task, nil],
           [:correspondence_appeal, nil],
-          [:cached_appeal, :appeal_id]
+          [:cached_appeal, :appeal_id],
+          [:remand, "appeal_id"]
         ]
 
         map_foreign_keys = lambda { |assoc|
@@ -96,6 +99,8 @@ describe "AssocationWrapper" do
           [:higher_level_review, true, false, "appeal_id", "higher_level_review_id", nil],
           [:supplemental_claim, true, false, "appeal_id", "supplemental_claim_id", nil],
           [:correspondence, true, false, "appeal_id", "correspondence_id", nil],
+          # Polymorphic `belongs_to :appeal`-related STI associations
+          [:remand, true, false, "appeal_id", "remand_id", nil],
           # has_many declared in Task
           # Note: JudgeCaseReview is not listed; that `belongs_to` association can be traced from JudgeCaseReview
           [:attorney_case_reviews, false, false, "task_id", "attorney_case_review_id", nil],

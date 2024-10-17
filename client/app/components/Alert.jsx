@@ -21,11 +21,14 @@ export default class Alert extends React.Component {
 
     const typeClass = `usa-alert-${type}`;
 
-    const className = classnames('usa-alert', typeClass, {
-      'usa-alert-slim': !title,
-      fixed,
-      'cf-margin-bottom-2rem': lowerMargin,
-    });
+    const className = classnames('usa-alert',
+      typeClass,
+      {
+        'usa-alert-slim': !title,
+        fixed,
+        'cf-margin-bottom-2rem': lowerMargin,
+      },
+    );
 
     return (
       <div role="alert" className={className} {...styling}>

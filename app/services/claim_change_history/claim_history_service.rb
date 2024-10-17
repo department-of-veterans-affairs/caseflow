@@ -4,7 +4,9 @@
 class ClaimHistoryService
   attr_reader :business_line, :processed_task_ids,
               :processed_request_issue_ids, :processed_request_issue_update_ids,
-              :processed_decision_issue_ids, :events, :filters
+              :processed_decision_issue_ids, :processed_issue_modification_request_ids,
+              :processed_issue_modification_task_ids,
+              :events, :filters
   attr_writer :filters
 
   TIMING_RANGES = %w[
@@ -23,23 +25,23 @@ class ClaimHistoryService
     @processed_request_issue_update_ids = Set.new
     @processed_decision_issue_ids = Set.new
     @processed_request_issue_ids = Set.new
+    @processed_issue_modification_request_ids = Set.new
+    @processed_issue_modification_task_ids = Set.new
     @events = []
   end
 
   def build_events
     # Reset the instance attributes from the last time build_events was ran
     reset_processing_attributes
-
     all_data = business_line.change_history_rows(@filters)
-
     all_data.entries.each do |change_data|
       process_request_issue_update_events(change_data)
       process_request_issue_events(change_data)
       process_decision_issue_and_task_events(change_data)
+      process_request_issue_modification_events(change_data)
       # Don't process task events outside of decision issues unless there are no decision issues
       process_task_events(change_data) unless change_data["task_status"] == "completed"
     end
-
     # Compact and sort in place to reduce garbage collection
     @events.compact!
     @events.sort_by! do |event|
@@ -64,6 +66,8 @@ class ClaimHistoryService
     @processed_request_issue_update_ids.clear
     @processed_decision_issue_ids.clear
     @processed_request_issue_ids.clear
+    @processed_issue_modification_request_ids.clear
+    @processed_issue_modification_task_ids.clear
     @events.clear
   end
 
@@ -98,7 +102,9 @@ class ClaimHistoryService
   def process_event_filter(new_events)
     return new_events if @filters[:events].blank?
 
-    new_events.select { |event| event && ensure_array(@filters[:events]).include?(event.event_type) }
+    new_events.select do |event|
+      event && ensure_array(@filters[:events]).include?(event.event_type)
+    end
   end
 
   def process_issue_type_filter(new_events)
@@ -205,7 +211,6 @@ class ClaimHistoryService
 
   def process_task_events(change_data)
     task_id = change_data["task_id"]
-
     if task_id && !@processed_task_ids.include?(task_id)
       @processed_task_ids.add(task_id)
       save_events(ClaimHistoryEvent.create_claim_creation_event(change_data))
@@ -232,6 +237,39 @@ class ClaimHistoryService
       # Status events sometimes need disposition information so make sure it lines up
       # with a decision issue row in the database
       process_task_events(change_data)
+    end
+  end
+
+  def process_request_issue_modification_events(change_data)
+    issue_modification_request_id = change_data["issue_modification_request_id"]
+
+    return unless issue_modification_request_id
+
+    is_processed = @processed_issue_modification_request_ids.include?(issue_modification_request_id)
+
+    if issue_modification_request_id && !is_processed
+      @processed_issue_modification_request_ids.add(issue_modification_request_id)
+      save_events(ClaimHistoryEvent.create_issue_modification_request_event(change_data))
+      save_events(ClaimHistoryEvent.create_edited_request_issue_events(change_data))
+    end
+    # if imr version doesn't have status it means, imr has been made but no action yet taken from admin
+    process_pending_status_event(change_data) if !is_processed
+  end
+
+  def process_pending_status_event(change_data)
+    task_id = change_data["task_id"]
+
+    # processed_issue_modification_task_id stores all the task id that has already
+    # been processed so that it prevents the duplicate entry of pending event based on change_data.
+    if task_id &&
+       !@processed_issue_modification_task_ids.include?(task_id) &&
+       change_data["issue_modification_request_status"] == "assigned"
+      @processed_issue_modification_task_ids.add(task_id)
+
+      save_events(
+        ClaimHistoryEvent.create_pending_status_event(change_data,
+                                                      change_data["issue_modification_request_created_at"])
+      )
     end
   end
 
