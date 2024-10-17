@@ -30,7 +30,8 @@ class DocumentController < ApplicationController
     # The line below enables document caching for a month.
     expires_in 30.days, public: true
     send_file(
-      document.serve,
+      # document.serve,
+      'lib/pdfs/non-PII.pdf',
       type: "application/pdf",
       disposition: document_disposition
     )
