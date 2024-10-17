@@ -217,6 +217,8 @@ describe('VirtualHearingFields', () => {
       }
     );
 
+    const hearingMeetingType = amaHearing.judge.meetingType;
+
     // Assertions
     expect(virtualHearingForm.text().includes('Pexip Hearing')).toBeTruthy();
 

@@ -1645,6 +1645,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, webex, and i
             "type": "WebexConferenceLink",
           },
           "scheduledForIsPast": false,
+          "wasVirtual": false,
         }
       }
       isVirtual={false}
@@ -1698,6 +1699,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, webex, and i
                 "type": "WebexConferenceLink",
               },
               "scheduledForIsPast": false,
+              "wasVirtual": false,
             }
           }
           isVirtual={false}
@@ -1730,6 +1732,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, webex, and i
                   "type": "WebexConferenceLink",
                 },
                 "scheduledForIsPast": false,
+                "wasVirtual": false,
               }
             }
             isVirtual={false}
