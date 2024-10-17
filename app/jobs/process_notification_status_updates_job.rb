@@ -62,7 +62,7 @@ class ProcessNotificationStatusUpdatesJob < CaseflowJob
   #  and consume the data in order to persist VA Notify status updates to the
   #  the notifications table.
   #
-  # @see https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/controllers/api/v1/va_notify_controller.rb
+  # @see https://github.com/department-of-veterans-affairs/caseflow/blob/main/app/controllers/api/v1/va_notify_controller.rb
   #
   # @return [Integer]
   #   The number of messages that were attempted to be processed in a batch.

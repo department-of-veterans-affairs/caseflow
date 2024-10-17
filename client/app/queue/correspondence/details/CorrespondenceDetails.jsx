@@ -20,7 +20,6 @@ import { ExternalLinkIcon } from 'app/components/icons/ExternalLinkIcon';
 import { COLORS } from 'app/constants/AppConstants';
 import Checkbox from 'app/components/Checkbox';
 import CorrespondencePaginationWrapper from 'app/queue/correspondence/CorrespondencePaginationWrapper';
-
 import Button from '../../../components/Button';
 import Alert from '../../../components/Alert';
 import ApiUtil from '../../../util/ApiUtil';
@@ -494,6 +493,7 @@ const CorrespondenceDetails = (props) => {
               organizations={props.organizations}
               userCssId={props.userCssId}
               appeal={taskAdded.appeal.data.attributes}
+              waivableUser={props.isInboundOpsSuperuser || props.isInboundOpsSupervisor}
             />
           )
           )}
