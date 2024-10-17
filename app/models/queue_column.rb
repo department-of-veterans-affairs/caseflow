@@ -130,8 +130,8 @@ class QueueColumn
     where_hash = tasks.where_values_hash
     # Try to grab assigned to from the task association.
     # If it's not available, then extract it from the active record relation object
-    tasks&.first&.assigned_to ||
-      where_hash["assigned_to_type"].try(:constantize)&.find_by(id: where_hash["assigned_to_id"])
+    where_hash["assigned_to_type"].try(:constantize)&.find_by(id: where_hash["assigned_to_id"]) ||
+      tasks&.first&.assigned_to
   end
 
   # :reek:FeatureEnvy
