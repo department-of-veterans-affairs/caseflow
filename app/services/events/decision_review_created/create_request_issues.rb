@@ -24,8 +24,14 @@ class Events::DecisionReviewCreated::CreateRequestIssues
 
       request_issues&.each do |issue|
         # create backfill RI object using extracted values
-        parser_issues = DecisionReviewCreatedIssueParser.new(issue)
+        parser_issues = Events::DecisionReviewCreated::DecisionReviewCreatedIssueParser.new(issue)
+
+        if parser_issues.ri_reference_id.nil?
+          fail Caseflow::Error::DecisionReviewCreatedRequestIssuesError, "reference_id cannot be null"
+        end
+
         ri = RequestIssue.create!(
+          reference_id: parser_issues.ri_reference_id,
           benefit_type: parser_issues.ri_benefit_type,
           contested_issue_description: parser_issues.ri_contested_issue_description,
           contention_reference_id: parser_issues.ri_contention_reference_id,
@@ -73,7 +79,11 @@ class Events::DecisionReviewCreated::CreateRequestIssues
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     def create_event_record(event, issue)
-      EventRecord.create!(event: event, evented_record: issue)
+      EventRecord.create!(
+        event: event,
+        evented_record: issue,
+        info: { update_type: "I", record_data: issue }
+      )
     end
 
     # Legacy issue checks
@@ -95,9 +105,23 @@ class Events::DecisionReviewCreated::CreateRequestIssues
     end
 
     def create_legacy_optin_backfill(event, request_issue, legacy_issue)
-      optin = LegacyIssueOptin.create!(request_issue_id: request_issue.id,
-                                       legacy_issue: legacy_issue)
+      vacols_issue = vacols_issue(request_issue.vacols_id, request_issue.vacols_sequence_id)
+      optin = LegacyIssueOptin.create!(
+        request_issue: request_issue,
+        original_disposition_code: vacols_issue.disposition_id,
+        original_disposition_date: vacols_issue.disposition_date,
+        legacy_issue: legacy_issue,
+        original_legacy_appeal_decision_date: vacols_issue&.legacy_appeal&.decision_date,
+        original_legacy_appeal_disposition_code: vacols_issue&.legacy_appeal&.case_record&.bfdc,
+        folder_decision_date: vacols_issue&.legacy_appeal&.case_record&.folder&.tidcls
+      )
       create_event_record(event, optin)
+    end
+
+    def vacols_issue(vacols_id, vacols_sequence_id)
+      AppealRepository.issues(vacols_id).find do |issue|
+        issue.vacols_sequence_id == vacols_sequence_id
+      end
     end
   end
 end

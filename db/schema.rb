@@ -2,15 +2,15 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# This file is the source Rails uses to define your schema when running `rails
-# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
 # be faster and is potentially less error prone than running all of your
 # migrations from scratch. Old migrations may fail to apply correctly if those
 # migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_08_28_165652) do
+ActiveRecord::Schema.define(version: 2024_10_12_181521) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -893,8 +893,10 @@ ActiveRecord::Schema.define(version: 2024_08_28_165652) do
     t.integer "event_id", null: false, comment: "ID of the Event that created or updated this record."
     t.bigint "evented_record_id", null: false
     t.string "evented_record_type", null: false
+    t.jsonb "info", default: {}
     t.datetime "updated_at", null: false, comment: "Automatic timestamp whenever the record changes"
     t.index ["evented_record_type", "evented_record_id"], name: "index_event_record_on_evented_record"
+    t.index ["info"], name: "index_event_records_on_info", using: :gin
   end
 
   create_table "events", comment: "Stores events from the Appeals-Consumer application that are processed by Caseflow", force: :cascade do |t|
@@ -1706,6 +1708,7 @@ ActiveRecord::Schema.define(version: 2024_08_28_165652) do
     t.text "pact_status_update_reason_notes", comment: "The reason for why Request Issue is Promise to Address Comprehensive Toxics (PACT) Act"
     t.string "ramp_claim_id", comment: "If a rating issue was created as a result of an issue intaken for a RAMP Review, it will be connected to the former RAMP issue by its End Product's claim ID."
     t.datetime "rating_issue_associated_at", comment: "Timestamp when a contention and its contested rating issue are associated in VBMS."
+    t.string "reference_id", comment: "The ID of the decision review issue record internal to C&P."
     t.string "split_issue_status", comment: "If a request issue is part of a split, on_hold status applies to the original request issues while active are request issues on splitted appeals"
     t.string "type", default: "RequestIssue", comment: "Determines whether the issue is a rating issue or a nonrating issue"
     t.string "unidentified_issue_text", comment: "User entered description if the request issue is neither a rating or a nonrating issue"
@@ -1727,6 +1730,7 @@ ActiveRecord::Schema.define(version: 2024_08_28_165652) do
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
     t.index ["ineligible_due_to_id"], name: "index_request_issues_on_ineligible_due_to_id"
     t.index ["ineligible_reason"], name: "index_request_issues_on_ineligible_reason"
+    t.index ["reference_id"], name: "index_request_issues_on_reference_id"
     t.index ["updated_at"], name: "index_request_issues_on_updated_at"
     t.index ["veteran_participant_id"], name: "index_veteran_participant_id"
   end
