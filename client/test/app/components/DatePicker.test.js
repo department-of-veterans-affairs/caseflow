@@ -147,7 +147,7 @@ describe('DatePicker', () => {
   it('quick select options can select last 7 days', async () => {
     jest.spyOn(Date, 'now').mockReturnValue('2024-01-17T03:00:00.000-04:00');
 
-    const { container } = setup();
+    const { container } = setup({ settings: { options: 'vha' } });
 
     openFilter(container);
 
@@ -160,7 +160,7 @@ describe('DatePicker', () => {
   it('quick select options can select last 30 days', async () => {
     jest.spyOn(Date, 'now').mockReturnValue('2024-01-17T03:00:00.000-04:00');
 
-    const { container } = setup();
+    const { container } = setup({ settings: { options: 'vha' } });
 
     openFilter(container);
 
@@ -173,7 +173,7 @@ describe('DatePicker', () => {
   it('quick select options can select last 365 days', async () => {
     jest.spyOn(Date, 'now').mockReturnValue('2024-01-17T03:00:00.000-04:00');
 
-    const { container } = setup();
+    const { container } = setup({ settings: { options: 'vha' } });
 
     openFilter(container);
 
