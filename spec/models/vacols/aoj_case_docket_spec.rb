@@ -151,6 +151,9 @@ describe VACOLS::AojCaseDocket, :all_dbs do
   end
 
   context ".counts_by_priority_and_readiness" do
+    # this should not be included in the count
+    let!(:original_appeal) { create(:case, :ready_for_distribution) }
+
     subject { VACOLS::AojCaseDocket.counts_by_priority_and_readiness }
     it "creates counts grouped by priority and readiness" do
       expect(subject).to match_array([

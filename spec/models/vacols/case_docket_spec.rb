@@ -145,6 +145,8 @@ describe VACOLS::CaseDocket, :all_dbs do
   end
 
   context ".counts_by_priority_and_readiness" do
+    let!(:aoj_appeal) { create(:legacy_aoj_appeal) }
+
     subject { VACOLS::CaseDocket.counts_by_priority_and_readiness }
     it "creates counts grouped by priority and readiness" do
       expect(subject).to match_array([
