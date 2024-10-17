@@ -262,6 +262,57 @@ describe ByDocketDateDistribution, :all_dbs do
       end
     end
 
+    context "when individual docket statistics are toggled off" do
+      before do
+        FeatureToggle.enable!("disable_legacy_distribution_stats")
+        FeatureToggle.enable!("disable_direct_review_distribution_stats")
+        FeatureToggle.enable!("disable_evidence_submission_distribution_stats")
+        FeatureToggle.enable!("disable_hearing_distribution_stats")
+        FeatureToggle.enable!("disable_aoj_legacy_distribution_stats")
+      end
+
+      after do
+        FeatureToggle.disable!("disable_legacy_distribution_stats")
+        FeatureToggle.disable!("disable_direct_review_distribution_stats")
+        FeatureToggle.disable!("disable_evidence_submission_distribution_stats")
+        FeatureToggle.disable!("disable_hearing_distribution_stats")
+        FeatureToggle.disable!("disable_aoj_legacy_distribution_stats")
+      end
+
+      it "does not attempt to generate individual docket statistics" do
+        ama_statistics = @new_acd.send(:ama_statistics)
+        statistics = ama_statistics[:statistics]
+
+        expect(statistics).to have_key(:batch_size)
+        expect(statistics).to have_key(:total_batch_size)
+        expect(statistics).to have_key(:priority_target)
+        expect(statistics).to have_key(:priority_count)
+        expect(statistics).to have_key(:nonpriority_count)
+        expect(statistics).to have_key(:nonpriority_iterations)
+        expect(statistics).to have_key(:sct_appeals)
+
+        ineligible_judge_stats = ama_statistics[:ineligible_judge_stats]
+        expect(ineligible_judge_stats).to have_key(:distributed_cases_tied_to_ineligible_judges)
+
+        judge_stats = ama_statistics[:judge_stats]
+
+        expect(judge_stats).to have_key(:team_size)
+        expect(judge_stats).to have_key(:ama_judge_assigned_tasks)
+        expect(judge_stats).to have_key(:legacy_assigned_tasks)
+        expect(judge_stats).to have_key(:settings)
+
+        @new_acd.dockets.each_key do |sym|
+          expect(ama_statistics).to have_key("#{sym}_priority_stats".to_sym)
+          priority_stats = ama_statistics["#{sym}_priority_stats".to_sym]
+          expect(priority_stats).to be_empty
+
+          expect(ama_statistics).to have_key("#{sym}_stats".to_sym)
+          nonpriority_stats = ama_statistics["#{sym}_stats".to_sym]
+          expect(nonpriority_stats).to be_empty
+        end
+      end
+    end
+
     context "handles errors without stopping a distribution" do
       let(:appeal) { create(:appeal) }
 
