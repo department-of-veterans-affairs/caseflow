@@ -74,8 +74,13 @@ RSpec.describe TranscriptionWorkOrder, type: :model do
       TranscriptionPackage.create!(task_number: task_number, status: "Assigned")
     end
 
+    let!(:hearing) { create(:hearing) }
     let!(:transcription) do
-      Transcription.create!(task_number: task_number)
+      Transcription.create!(
+        task_number: task_number,
+        hearing: hearing,
+        hearing_type: "Hearing"
+      )
     end
 
     let!(:transcription_file) do

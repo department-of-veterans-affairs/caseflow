@@ -30,6 +30,9 @@ RSpec.describe Hearings::VaBoxDownloadJob, type: :job do
   before do
     allow(ExternalApi::VaBoxService).to receive(:new)
       .and_return(Fakes::VaBoxService.new)
+
+    # Ensure a Transcription record exists for the hearing
+    create(:transcription, hearing: hearing)
   end
 
   # # see data setup in Fakes::VaBoxService for expectations

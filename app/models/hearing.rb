@@ -45,6 +45,7 @@ class Hearing < CaseflowRecord
   belongs_to :judge, class_name: "User"
   belongs_to :created_by, class_name: "User"
   has_one :transcription, -> { order(created_at: :desc) }
+  has_many :transcriptions, as: :hearing
   has_many :hearing_views, as: :hearing
   has_one :hearing_location, as: :hearing
   has_many :hearing_issue_notes
