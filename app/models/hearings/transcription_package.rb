@@ -31,6 +31,8 @@ class TranscriptionPackage < CaseflowRecord
 
   scope :filter_by_status, ->(values) { where(status: values) }
 
+  scope :search, ->(search) { where("LOWER(task_number) LIKE :query", query: "%#{search.downcase.strip}%") }
+
   scope :order_by_field, ->(direction, field_name) { order(Arel.sql(field_name + " " + direction)) }
 
   scope :with_status_overdue_or_sent, -> { joins(:contractor).where(status: ["Overdue", "Successful Upload (BOX)"]) }
