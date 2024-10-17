@@ -209,11 +209,6 @@ SAN FRANCISCO, CA 94103
                 },
                 Object {
                   "index": 2.4,
-                  "label": "Indiana (East) (6:00 AM)",
-                  "value": "America/Indiana/Indianapolis",
-                },
-                Object {
-                  "index": 2.4,
                   "label": "Puerto Rico (7:00 AM)",
                   "value": "America/Puerto_Rico",
                 },
@@ -526,6 +521,11 @@ SAN FRANCISCO, CA 94103
                   "index": 280,
                   "label": "Baghdad (2:00 PM)",
                   "value": "Asia/Baghdad",
+                },
+                Object {
+                  "index": 340,
+                  "label": "Indiana (East) (6:00 AM)",
+                  "value": "America/Indiana/Indianapolis",
                 },
                 Object {
                   "index": 340,
@@ -956,10 +956,10 @@ SAN FRANCISCO, CA 94103
             styling={
               Object {
                 "& .cf-select__menu-list": Object {
-                  "& > :nth-child(10)": Object {
+                  "& > :nth-child(9)": Object {
                     "borderBottom": "1px solid grey",
                   },
-                  "height": "390px !important",
+                  "height": "351px !important",
                   "maxHeight": "none",
                   "overflowY": "auto",
                 },
@@ -972,7 +972,7 @@ SAN FRANCISCO, CA 94103
             >
               <div
                 className="cf-form-dropdown dropdown-representativeTz"
-                data-css-1gh7024=""
+                data-css-1dzedb9=""
               >
                 <label
                   className="question-label"
@@ -1048,11 +1048,6 @@ SAN FRANCISCO, CA 94103
                           "index": -0,
                           "label": "Pacific Time (US & Canada) (3:00 AM)",
                           "value": "America/Los_Angeles",
-                        },
-                        Object {
-                          "index": 2.4,
-                          "label": "Indiana (East) (6:00 AM)",
-                          "value": "America/Indiana/Indianapolis",
                         },
                         Object {
                           "index": 2.4,
@@ -1368,6 +1363,11 @@ SAN FRANCISCO, CA 94103
                           "index": 280,
                           "label": "Baghdad (2:00 PM)",
                           "value": "Asia/Baghdad",
+                        },
+                        Object {
+                          "index": 340,
+                          "label": "Indiana (East) (6:00 AM)",
+                          "value": "America/Indiana/Indianapolis",
                         },
                         Object {
                           "index": 340,
@@ -1880,11 +1880,6 @@ SAN FRANCISCO, CA 94103
                           },
                           Object {
                             "index": 2.4,
-                            "label": "Indiana (East) (6:00 AM)",
-                            "value": "America/Indiana/Indianapolis",
-                          },
-                          Object {
-                            "index": 2.4,
                             "label": "Puerto Rico (7:00 AM)",
                             "value": "America/Puerto_Rico",
                           },
@@ -2197,6 +2192,11 @@ SAN FRANCISCO, CA 94103
                             "index": 280,
                             "label": "Baghdad (2:00 PM)",
                             "value": "Asia/Baghdad",
+                          },
+                          Object {
+                            "index": 340,
+                            "label": "Indiana (East) (6:00 AM)",
+                            "value": "America/Indiana/Indianapolis",
                           },
                           Object {
                             "index": 340,
@@ -2683,11 +2683,6 @@ SAN FRANCISCO, CA 94103
                             },
                             Object {
                               "index": 2.4,
-                              "label": "Indiana (East) (6:00 AM)",
-                              "value": "America/Indiana/Indianapolis",
-                            },
-                            Object {
-                              "index": 2.4,
                               "label": "Puerto Rico (7:00 AM)",
                               "value": "America/Puerto_Rico",
                             },
@@ -3000,6 +2995,11 @@ SAN FRANCISCO, CA 94103
                               "index": 280,
                               "label": "Baghdad (2:00 PM)",
                               "value": "Asia/Baghdad",
+                            },
+                            Object {
+                              "index": 340,
+                              "label": "Indiana (East) (6:00 AM)",
+                              "value": "America/Indiana/Indianapolis",
                             },
                             Object {
                               "index": 340,
@@ -3499,11 +3499,6 @@ SAN FRANCISCO, CA 94103
                               },
                               Object {
                                 "index": 2.4,
-                                "label": "Indiana (East) (6:00 AM)",
-                                "value": "America/Indiana/Indianapolis",
-                              },
-                              Object {
-                                "index": 2.4,
                                 "label": "Puerto Rico (7:00 AM)",
                                 "value": "America/Puerto_Rico",
                               },
@@ -3816,6 +3811,11 @@ SAN FRANCISCO, CA 94103
                                 "index": 280,
                                 "label": "Baghdad (2:00 PM)",
                                 "value": "Asia/Baghdad",
+                              },
+                              Object {
+                                "index": 340,
+                                "label": "Indiana (East) (6:00 AM)",
+                                "value": "America/Indiana/Indianapolis",
                               },
                               Object {
                                 "index": 340,
@@ -4351,11 +4351,6 @@ SAN FRANCISCO, CA 94103
                                   },
                                   Object {
                                     "index": 2.4,
-                                    "label": "Indiana (East) (6:00 AM)",
-                                    "value": "America/Indiana/Indianapolis",
-                                  },
-                                  Object {
-                                    "index": 2.4,
                                     "label": "Puerto Rico (7:00 AM)",
                                     "value": "America/Puerto_Rico",
                                   },
@@ -4668,6 +4663,11 @@ SAN FRANCISCO, CA 94103
                                     "index": 280,
                                     "label": "Baghdad (2:00 PM)",
                                     "value": "Asia/Baghdad",
+                                  },
+                                  Object {
+                                    "index": 340,
+                                    "label": "Indiana (East) (6:00 AM)",
+                                    "value": "America/Indiana/Indianapolis",
                                   },
                                   Object {
                                     "index": 340,
@@ -5167,11 +5167,6 @@ SAN FRANCISCO, CA 94103
                                     },
                                     Object {
                                       "index": 2.4,
-                                      "label": "Indiana (East) (6:00 AM)",
-                                      "value": "America/Indiana/Indianapolis",
-                                    },
-                                    Object {
-                                      "index": 2.4,
                                       "label": "Puerto Rico (7:00 AM)",
                                       "value": "America/Puerto_Rico",
                                     },
@@ -5484,6 +5479,11 @@ SAN FRANCISCO, CA 94103
                                       "index": 280,
                                       "label": "Baghdad (2:00 PM)",
                                       "value": "Asia/Baghdad",
+                                    },
+                                    Object {
+                                      "index": 340,
+                                      "label": "Indiana (East) (6:00 AM)",
+                                      "value": "America/Indiana/Indianapolis",
                                     },
                                     Object {
                                       "index": 340,
@@ -6027,11 +6027,6 @@ SAN FRANCISCO, CA 94103
                                         },
                                         Object {
                                           "index": 2.4,
-                                          "label": "Indiana (East) (6:00 AM)",
-                                          "value": "America/Indiana/Indianapolis",
-                                        },
-                                        Object {
-                                          "index": 2.4,
                                           "label": "Puerto Rico (7:00 AM)",
                                           "value": "America/Puerto_Rico",
                                         },
@@ -6344,6 +6339,11 @@ SAN FRANCISCO, CA 94103
                                           "index": 280,
                                           "label": "Baghdad (2:00 PM)",
                                           "value": "Asia/Baghdad",
+                                        },
+                                        Object {
+                                          "index": 340,
+                                          "label": "Indiana (East) (6:00 AM)",
+                                          "value": "America/Indiana/Indianapolis",
                                         },
                                         Object {
                                           "index": 340,
@@ -6843,11 +6843,6 @@ SAN FRANCISCO, CA 94103
                                           },
                                           Object {
                                             "index": 2.4,
-                                            "label": "Indiana (East) (6:00 AM)",
-                                            "value": "America/Indiana/Indianapolis",
-                                          },
-                                          Object {
-                                            "index": 2.4,
                                             "label": "Puerto Rico (7:00 AM)",
                                             "value": "America/Puerto_Rico",
                                           },
@@ -7160,6 +7155,11 @@ SAN FRANCISCO, CA 94103
                                             "index": 280,
                                             "label": "Baghdad (2:00 PM)",
                                             "value": "Asia/Baghdad",
+                                          },
+                                          Object {
+                                            "index": 340,
+                                            "label": "Indiana (East) (6:00 AM)",
+                                            "value": "America/Indiana/Indianapolis",
                                           },
                                           Object {
                                             "index": 340,
@@ -7695,11 +7695,6 @@ SAN FRANCISCO, CA 94103
                                               },
                                               Object {
                                                 "index": 2.4,
-                                                "label": "Indiana (East) (6:00 AM)",
-                                                "value": "America/Indiana/Indianapolis",
-                                              },
-                                              Object {
-                                                "index": 2.4,
                                                 "label": "Puerto Rico (7:00 AM)",
                                                 "value": "America/Puerto_Rico",
                                               },
@@ -8012,6 +8007,11 @@ SAN FRANCISCO, CA 94103
                                                 "index": 280,
                                                 "label": "Baghdad (2:00 PM)",
                                                 "value": "Asia/Baghdad",
+                                              },
+                                              Object {
+                                                "index": 340,
+                                                "label": "Indiana (East) (6:00 AM)",
+                                                "value": "America/Indiana/Indianapolis",
                                               },
                                               Object {
                                                 "index": 340,
@@ -8511,11 +8511,6 @@ SAN FRANCISCO, CA 94103
                                                 },
                                                 Object {
                                                   "index": 2.4,
-                                                  "label": "Indiana (East) (6:00 AM)",
-                                                  "value": "America/Indiana/Indianapolis",
-                                                },
-                                                Object {
-                                                  "index": 2.4,
                                                   "label": "Puerto Rico (7:00 AM)",
                                                   "value": "America/Puerto_Rico",
                                                 },
@@ -8828,6 +8823,11 @@ SAN FRANCISCO, CA 94103
                                                   "index": 280,
                                                   "label": "Baghdad (2:00 PM)",
                                                   "value": "Asia/Baghdad",
+                                                },
+                                                Object {
+                                                  "index": 340,
+                                                  "label": "Indiana (East) (6:00 AM)",
+                                                  "value": "America/Indiana/Indianapolis",
                                                 },
                                                 Object {
                                                   "index": 340,
@@ -9415,11 +9415,6 @@ SAN FRANCISCO, CA 94103
                                                 },
                                                 Object {
                                                   "index": 2.4,
-                                                  "label": "Indiana (East) (6:00 AM)",
-                                                  "value": "America/Indiana/Indianapolis",
-                                                },
-                                                Object {
-                                                  "index": 2.4,
                                                   "label": "Puerto Rico (7:00 AM)",
                                                   "value": "America/Puerto_Rico",
                                                 },
@@ -9732,6 +9727,11 @@ SAN FRANCISCO, CA 94103
                                                   "index": 280,
                                                   "label": "Baghdad (2:00 PM)",
                                                   "value": "Asia/Baghdad",
+                                                },
+                                                Object {
+                                                  "index": 340,
+                                                  "label": "Indiana (East) (6:00 AM)",
+                                                  "value": "America/Indiana/Indianapolis",
                                                 },
                                                 Object {
                                                   "index": 340,
@@ -10299,11 +10299,6 @@ SAN FRANCISCO, CA 94103
                                                   },
                                                   Object {
                                                     "index": 2.4,
-                                                    "label": "Indiana (East) (6:00 AM)",
-                                                    "value": "America/Indiana/Indianapolis",
-                                                  },
-                                                  Object {
-                                                    "index": 2.4,
                                                     "label": "Puerto Rico (7:00 AM)",
                                                     "value": "America/Puerto_Rico",
                                                   },
@@ -10616,6 +10611,11 @@ SAN FRANCISCO, CA 94103
                                                     "index": 280,
                                                     "label": "Baghdad (2:00 PM)",
                                                     "value": "Asia/Baghdad",
+                                                  },
+                                                  Object {
+                                                    "index": 340,
+                                                    "label": "Indiana (East) (6:00 AM)",
+                                                    "value": "America/Indiana/Indianapolis",
                                                   },
                                                   Object {
                                                     "index": 340,
@@ -11238,11 +11238,6 @@ SAN FRANCISCO, CA 94103
                                         },
                                         Object {
                                           "index": 2.4,
-                                          "label": "Indiana (East) (6:00 AM)",
-                                          "value": "America/Indiana/Indianapolis",
-                                        },
-                                        Object {
-                                          "index": 2.4,
                                           "label": "Puerto Rico (7:00 AM)",
                                           "value": "America/Puerto_Rico",
                                         },
@@ -11555,6 +11550,11 @@ SAN FRANCISCO, CA 94103
                                           "index": 280,
                                           "label": "Baghdad (2:00 PM)",
                                           "value": "Asia/Baghdad",
+                                        },
+                                        Object {
+                                          "index": 340,
+                                          "label": "Indiana (East) (6:00 AM)",
+                                          "value": "America/Indiana/Indianapolis",
                                         },
                                         Object {
                                           "index": 340,
@@ -12054,11 +12054,6 @@ SAN FRANCISCO, CA 94103
                                           },
                                           Object {
                                             "index": 2.4,
-                                            "label": "Indiana (East) (6:00 AM)",
-                                            "value": "America/Indiana/Indianapolis",
-                                          },
-                                          Object {
-                                            "index": 2.4,
                                             "label": "Puerto Rico (7:00 AM)",
                                             "value": "America/Puerto_Rico",
                                           },
@@ -12371,6 +12366,11 @@ SAN FRANCISCO, CA 94103
                                             "index": 280,
                                             "label": "Baghdad (2:00 PM)",
                                             "value": "Asia/Baghdad",
+                                          },
+                                          Object {
+                                            "index": 340,
+                                            "label": "Indiana (East) (6:00 AM)",
+                                            "value": "America/Indiana/Indianapolis",
                                           },
                                           Object {
                                             "index": 340,
@@ -12896,11 +12896,6 @@ SAN FRANCISCO, CA 94103
                                               },
                                               Object {
                                                 "index": 2.4,
-                                                "label": "Indiana (East) (6:00 AM)",
-                                                "value": "America/Indiana/Indianapolis",
-                                              },
-                                              Object {
-                                                "index": 2.4,
                                                 "label": "Puerto Rico (7:00 AM)",
                                                 "value": "America/Puerto_Rico",
                                               },
@@ -13213,6 +13208,11 @@ SAN FRANCISCO, CA 94103
                                                 "index": 280,
                                                 "label": "Baghdad (2:00 PM)",
                                                 "value": "Asia/Baghdad",
+                                              },
+                                              Object {
+                                                "index": 340,
+                                                "label": "Indiana (East) (6:00 AM)",
+                                                "value": "America/Indiana/Indianapolis",
                                               },
                                               Object {
                                                 "index": 340,
@@ -13712,11 +13712,6 @@ SAN FRANCISCO, CA 94103
                                                 },
                                                 Object {
                                                   "index": 2.4,
-                                                  "label": "Indiana (East) (6:00 AM)",
-                                                  "value": "America/Indiana/Indianapolis",
-                                                },
-                                                Object {
-                                                  "index": 2.4,
                                                   "label": "Puerto Rico (7:00 AM)",
                                                   "value": "America/Puerto_Rico",
                                                 },
@@ -14029,6 +14024,11 @@ SAN FRANCISCO, CA 94103
                                                   "index": 280,
                                                   "label": "Baghdad (2:00 PM)",
                                                   "value": "Asia/Baghdad",
+                                                },
+                                                Object {
+                                                  "index": 340,
+                                                  "label": "Indiana (East) (6:00 AM)",
+                                                  "value": "America/Indiana/Indianapolis",
                                                 },
                                                 Object {
                                                   "index": 340,
@@ -14565,11 +14565,6 @@ SAN FRANCISCO, CA 94103
                                               },
                                               Object {
                                                 "index": 2.4,
-                                                "label": "Indiana (East) (6:00 AM)",
-                                                "value": "America/Indiana/Indianapolis",
-                                              },
-                                              Object {
-                                                "index": 2.4,
                                                 "label": "Puerto Rico (7:00 AM)",
                                                 "value": "America/Puerto_Rico",
                                               },
@@ -14882,6 +14877,11 @@ SAN FRANCISCO, CA 94103
                                                 "index": 280,
                                                 "label": "Baghdad (2:00 PM)",
                                                 "value": "Asia/Baghdad",
+                                              },
+                                              Object {
+                                                "index": 340,
+                                                "label": "Indiana (East) (6:00 AM)",
+                                                "value": "America/Indiana/Indianapolis",
                                               },
                                               Object {
                                                 "index": 340,
@@ -15381,11 +15381,6 @@ SAN FRANCISCO, CA 94103
                                                 },
                                                 Object {
                                                   "index": 2.4,
-                                                  "label": "Indiana (East) (6:00 AM)",
-                                                  "value": "America/Indiana/Indianapolis",
-                                                },
-                                                Object {
-                                                  "index": 2.4,
                                                   "label": "Puerto Rico (7:00 AM)",
                                                   "value": "America/Puerto_Rico",
                                                 },
@@ -15698,6 +15693,11 @@ SAN FRANCISCO, CA 94103
                                                   "index": 280,
                                                   "label": "Baghdad (2:00 PM)",
                                                   "value": "Asia/Baghdad",
+                                                },
+                                                Object {
+                                                  "index": 340,
+                                                  "label": "Indiana (East) (6:00 AM)",
+                                                  "value": "America/Indiana/Indianapolis",
                                                 },
                                                 Object {
                                                   "index": 340,
