@@ -157,7 +157,7 @@ describe('DatePicker', () => {
 
     clickSubmissionButton('Apply Filter');
 
-    expect(handleChange).toHaveBeenCalledWith('last7,Wed Jan 10 2024 02:00:00 GMT-0500');
+    expect(handleChange).toHaveBeenCalledWith('last7,Wed Jan 10 2024 02:00:00 GMT-0500,');
   });
 
   it('quick select options can select last 30 days', async () => {
@@ -173,11 +173,11 @@ describe('DatePicker', () => {
 
     clickSubmissionButton('Apply Filter');
 
-    expect(handleChange).toHaveBeenCalledWith('last30,Mon Dec 18 2023 02:00:00 GMT-0500');
+    expect(handleChange).toHaveBeenCalledWith('last30,Mon Dec 18 2023 02:00:00 GMT-0500,');
   });
 
   it('quick select options can select last 365 days', async () => {
-    jest.spyOn(Date, 'now').mockReturnValue('2024-01-17T03:00:00.000-04:00');
+    jest.spyOn(Date, 'now').mockReturnValue('2024-01-17T03:00:00.000-04:00,');
 
     const { container } = setup({ settings: { options: 'vha' } });
 
@@ -189,7 +189,7 @@ describe('DatePicker', () => {
 
     clickSubmissionButton('Apply Filter');
 
-    expect(handleChange).toHaveBeenCalledWith('last365,Tue Jan 17 2023 02:00:00 GMT-0500');
+    expect(handleChange).toHaveBeenCalledWith('last365,Tue Jan 17 2023 02:00:00 GMT-0500,');
   });
 
   describe('datePickerFilterValue', () => {
