@@ -1676,6 +1676,15 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   margin-left: 40px;
 }
 
+.tasks-added-waive-banner-alert {
+  margin-left: 40px;
+  width: 95%;
+}
+
+.waive-banner-alert .usa-alert.usa-alert-slim {
+  padding-top: 4px;
+}
+
 .grayLineStyling {
   width: 5px;
   background: $color-gray;

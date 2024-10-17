@@ -1,6 +1,8 @@
 import { ACTIONS } from './correspondenceDetailsConstants';
 import ApiUtil from '../../../util/ApiUtil';
 import { sprintf } from 'sprintf-js';
+import { prepareTasksForStore } from '../../utils';
+import { onReceiveTasks, deleteAmaTask } from '../../QueueActions';
 // eslint-disable-next-line import/extensions
 import CORRESPONDENCE_DETAILS_BANNERS from '../../../../constants/CORRESPONDENCE_DETAILS_BANNERS.json';
 
@@ -15,6 +17,60 @@ export const setTaskNotRelatedToAppealBanner = (bannerDetails) => (dispatch) => 
       }
     }
   });
+};
+
+export const setWaiveEvidenceAlertBanner = (bannerDetails) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.SET_WAIVE_EVIDENCE_ALERT_BANNER,
+    payload: {
+      waiveEvidenceAlertBanner: {
+        taskId: bannerDetails.taskId,
+        message: bannerDetails.message,
+        type: bannerDetails.type
+      }
+    }
+  });
+};
+
+export const createNewEvidenceWindowTask = (payload, correspondence, appealId) => (dispatch) => {
+  return ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/waive_evidence_submission_window_task`, payload).
+    then((response) => {
+      const responseData = JSON.parse(response.text);
+      const responseTasks = responseData.tasks.data;
+
+      // remove old task from store
+      dispatch(deleteAmaTask(
+        payload.data.task.task_id
+      ));
+
+      // Dispatch the banner alert to the store
+      dispatch({
+        type: ACTIONS.EVIDENCE_SUBMISSION_BANNER,
+        payload: {
+          waiveEvidenceAlertBanner: {
+            appealId,
+            title: CORRESPONDENCE_DETAILS_BANNERS.evidenceWindowBanner.title,
+            message: sprintf(CORRESPONDENCE_DETAILS_BANNERS.evidenceWindowBanner.message),
+            type: CORRESPONDENCE_DETAILS_BANNERS.evidenceWindowBanner.type
+          }
+        }
+      });
+
+      // overwrite all correspondence_appeal_tasks in the store with values from response
+      const preparedTasks = prepareTasksForStore(responseTasks);
+
+      dispatch(onReceiveTasks({
+        amaTasks: preparedTasks
+      }));
+    }).
+
+    catch((error) => {
+      const errorMessage = error?.response?.body?.message ?
+        error.response.body.message.replace(/^Error:\s*/, '') :
+        error.message;
+
+      console.error(errorMessage);
+    });
 };
 
 export const cancelTaskNotRelatedToAppeal = (taskID, taskName, teamName, correspondence, payload) => (dispatch) => {
@@ -251,7 +307,7 @@ export const submitLetterResponse = (payload, correspondence) => (dispatch) => {
     then((response) => {
       const responseLetters = response.body.responseLetters;
 
-      correspondence.correspondenceResponseLetters = responseLetters
+      correspondence.correspondenceResponseLetters = responseLetters;
 
       dispatch({
         type: ACTIONS.CORRESPONDENCE_INFO,

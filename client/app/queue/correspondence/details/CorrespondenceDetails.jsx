@@ -56,7 +56,7 @@ const CorrespondenceDetails = (props) => {
   const [sortedPriorMail, setSortedPriorMail] = useState([]);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isTasksUnrelatedSectionExpanded, setIsTasksUnrelatedSectionExpanded] = useState(false);
-  // const [linkedAppeals, setLinkedAppeals] = useState([]);
+  const [appealTaskKey, setAppealTaskKey] = useState(0);
 
   // Initialize checkbox states
   useEffect(() => {
@@ -73,6 +73,10 @@ const CorrespondenceDetails = (props) => {
     // Initialize sortedPriorMail with the initial priorMail list
     setSortedPriorMail(priorMail);
   }, [priorMail]);
+
+  useEffect(() => {
+    setAppealTaskKey((key) => key + 1);
+  }, [correspondenceInfo]);
 
   const sortAppeals = (selectedList) => {
     let filteredAppeals = [];
@@ -507,25 +511,27 @@ const CorrespondenceDetails = (props) => {
               />
             </AppSegment>
           )}
-          {(props.correspondence.correspondenceAppeals || props.correspondenceInfo.correspondenceAppeals) && (
+          {(props.correspondenceInfo.correspondenceAppeals) && (
             <div>
               {(props.correspondenceInfo?.correspondenceAppeals?.map((taskAdded) =>
                 <CorrespondenceAppealTasks
+                  key={appealTaskKey + taskAdded.id}
                   task_added={taskAdded}
                   correspondence={props.correspondence}
                   organizations={props.organizations}
                   userCssId={props.userCssId}
                   appeal={taskAdded.appeal.data.attributes}
                   waivableUser={props.isInboundOpsSuperuser || props.isInboundOpsSupervisor}
+                  correspondence_uuid={props.correspondence_uuid}
                 />
-              )
-              )}
+              ))}
             </div>
           )}
         </div>
       </React.Fragment>
     );
   };
+
   const correspondenceAndAppealTaskComponents = <>
     {correspondenceTasks()}
 
@@ -814,7 +820,7 @@ const CorrespondenceDetails = (props) => {
   const saveChanges = () => {
     if (isAdminNotLoggedIn() === false) {
       handlepriorMailUpdate();
-    } else if (selectedPriorMail.length > 0 || selectedAppeals.length > 0 || unSelectedAppeals.length > 0 ) {
+    } else if (selectedPriorMail.length > 0 || selectedAppeals.length > 0 || unSelectedAppeals.length > 0) {
       const appealsSelected = selectedAppeals.filter((val) => !correspondence.correspondenceAppealIds.includes(val));
       const priorMailIds = selectedPriorMail.map((mail) => mail.id);
       const payload = {
@@ -929,6 +935,7 @@ CorrespondenceDetails.propTypes = {
   addLetterCheck: PropTypes.bool,
   updateCorrespondenceInfo: PropTypes.func,
   correspondenceTypes: PropTypes.array,
+  correspondence_uuid: PropTypes.string,
   appealsFromStore: PropTypes.object
 };
 

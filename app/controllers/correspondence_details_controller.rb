@@ -47,6 +47,7 @@ class CorrespondenceDetailsController < CorrespondenceController
 
   def set_instance_variables
     @correspondence = serialized_correspondence
+    @correspondence_uuid = @correspondence[:uuid]
 
     # Group related variables into a single hash
     @correspondence_details = {
@@ -143,7 +144,32 @@ class CorrespondenceDetailsController < CorrespondenceController
     end
   end
 
+  def waive_evidence_submission_window_task
+    task = EvidenceSubmissionWindowTask.find_by_id(task_params[:task_id])
+    appeal = Appeal.find_by_uuid(appeal_params[:appeal_uuid])
+    correspondence_appeal = @correspondence.correspondence_appeals.find_by(appeal_id: appeal.id)
+    instructions = task_params[:instructions]
+
+    # Create a new EvidenceSubmissionWindowTask and associate it with the correspondence appeal
+    ActiveRecord::Base.transaction do
+      create_new_evidence_submission_task(task, appeal, correspondence_appeal, instructions)
+      # prepare correspondence_appeal tasks for frontend
+      tasks = appeals_tasks_for_frontend(correspondence_appeal)
+
+      # return updated correspondence_appeal_tasks for the appeal
+      render json: { tasks: json_appeal_tasks(tasks) }, status: :created
+    end
+  end
+
   private
+
+  def task_params
+    params.require(:task).permit(:task_id, { instructions: [] }, :type, :appeal_id, :appeal_type, :status)
+  end
+
+  def appeal_params
+    params.permit(:appeal_uuid)
+  end
 
   def intake_processor_params
     params.permit(
@@ -181,6 +207,37 @@ class CorrespondenceDetailsController < CorrespondenceController
     end
 
     { appeals_information: serialized_appeals }
+  end
+
+  def create_new_evidence_submission_task(task, appeal, correspondence_appeal, instructions)
+    eswt = EvidenceSubmissionWindowTask.create!(
+      appeal: appeal,
+      parent: appeal.tasks.find_by(type: DistributionTask.name),
+      assigned_to: MailTeam.singleton,
+      end_date: task.timer_ends_at.to_date,
+      instructions: instructions
+    )
+    task_timer = TaskTimer.where(task: task).order(:id).last
+    task_timer.update!(submitted_at: Time.zone.now.round(3))
+    CorrespondencesAppealsTask.create!(correspondence_appeal: correspondence_appeal, task: eswt)
+  end
+
+  def appeals_tasks_for_frontend(cor_appeal)
+    # include waivable evidence window tasks
+    evidence_window_task = cor_appeal.appeal.tasks.find_by(type: EvidenceSubmissionWindowTask.name)
+
+    tasks = cor_appeal.tasks.uniq
+    tasks << evidence_window_task if evidence_window_task&.waivable?
+
+    tasks
+  end
+
+  def json_appeal_tasks(tasks, ama_serializer: WorkQueue::TaskSerializer)
+    AmaAndLegacyTaskSerializer.create_and_preload_legacy_appeals(
+      params: { user: current_user, role: "generic" },
+      tasks: tasks,
+      ama_serializer: ama_serializer
+    ).call
   end
 
   def mail_tasks

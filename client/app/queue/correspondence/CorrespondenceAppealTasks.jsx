@@ -1,13 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import CaseDetailsLink from '../CaseDetailsLink';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 import { appealWithDetailSelector, taskSnapshotTasksForAppeal } from '../selectors';
-import { useSelector } from 'react-redux';
+import { useSelector, connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import TaskRows from '../components/TaskRows';
+import Alert from '../../components/Alert';
+import {
+  setWaiveEvidenceAlertBanner
+} from '../correspondence/correspondenceDetailsReducer/correspondenceDetailsActions';
 import Button from '../../components/Button';
 
 const CorrespondenceAppealTasks = (props) => {
+  const {
+    waiveEvidenceAlertBanner,
+  } = { ...props };
+
   const veteranFullName = props.correspondence.veteranFullName;
   const appealId = props.appeal.external_id;
   const appeal = useSelector((state) =>
@@ -17,11 +26,26 @@ const CorrespondenceAppealTasks = (props) => {
   const tasks = useSelector((state) =>
     taskSnapshotTasksForAppeal(state, { appealId })
   );
-  const [isLinkedAppealExpanded, setIsLinkedAppealExpanded] = useState(false);
+  const [isLinkedAppealExpanded, setIsLinkedAppealExpanded] = useState({});
 
-  const toggleLinkedAppealSection = () => {
-    setIsLinkedAppealExpanded((prev) => !prev);
+  const toggleLinkedAppealSection = (appealId) => {
+    setIsLinkedAppealExpanded((prev) => ({
+      ...prev,
+      [appealId]: !prev[appealId],
+    }));
   };
+
+  useEffect(() => {
+    if (
+      waiveEvidenceAlertBanner?.message &&
+      waiveEvidenceAlertBanner.appealId?.toString() === appeal.id?.toString()
+    ) {
+      setIsLinkedAppealExpanded((prev) => ({
+        ...prev,
+        [appeal.id]: true,
+      }));
+    }
+  }, [waiveEvidenceAlertBanner, appeal]);
 
   return (
     <>
@@ -35,7 +59,6 @@ const CorrespondenceAppealTasks = (props) => {
                 { externalId: props.task_added?.appealUuid } : { externalId: props.task_added?.externalId }}
               getLinkText={() => props.task_added.docketNumber}
               task={props.task_added}
-
               linkOpensInNewTab
             />
           </div>
@@ -46,16 +69,16 @@ const CorrespondenceAppealTasks = (props) => {
         </div>
         <div className="toggleButton-plus-or-minus">
           <Button
-            onClick={toggleLinkedAppealSection}
+            onClick={() => toggleLinkedAppealSection(appeal.id)}
             linkStyling
             aria-label="Toggle section"
-            aria-expanded={isLinkedAppealExpanded}
+            aria-expanded={isLinkedAppealExpanded[appeal.id] || false}
           >
-            {isLinkedAppealExpanded ? '_' : <span className="plus-symbol">+</span>}
+            {isLinkedAppealExpanded[appeal.id] ? '_' : <span className="plus-symbol">+</span>}
           </Button>
         </div>
       </div>
-      {isLinkedAppealExpanded && (
+      {isLinkedAppealExpanded[appeal.id] && (
         <div className="tasks-added-container">
           <div className="correspondence-tasks-added ">
             <div className="corr-tasks-added-col first-row">
@@ -95,6 +118,22 @@ const CorrespondenceAppealTasks = (props) => {
             </div>
 
           </div>
+          <div className="tasks-added-waive-banner-alert">
+            <div className="waive-banner-alert">
+              {appeal &&
+              waiveEvidenceAlertBanner &&
+              waiveEvidenceAlertBanner.message &&
+              waiveEvidenceAlertBanner.appealId &&
+              appeal.id &&
+              waiveEvidenceAlertBanner.appealId.toString() === appeal.id.toString() && (
+                  <Alert
+                    type={waiveEvidenceAlertBanner.type}
+                    message={waiveEvidenceAlertBanner.message}
+                    scrollOnAlert={false}
+                  />
+                )}
+            </div>
+          </div>
           <div className="tasks-added-details">
             {appeal && props.task_added.CorrespondenceAppealTasks ?
               (<div>
@@ -126,8 +165,22 @@ CorrespondenceAppealTasks.propTypes = {
   organizations: PropTypes.array,
   userCssId: PropTypes.string,
   appeal: PropTypes.object,
-  waivableUser: PropTypes.bool
-
+  waivableUser: PropTypes.bool,
+  setWaiveEvidenceAlertBanner: PropTypes.func
 };
 
-export default CorrespondenceAppealTasks;
+const mapStateToProps = (state) => ({
+  waiveEvidenceAlertBanner: state.correspondenceDetails.waiveEvidenceAlertBanner,
+});
+
+
+const mapDispatchToProps = (dispatch) => (
+  bindActionCreators({
+    setWaiveEvidenceAlertBanner,
+  }, dispatch)
+);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(CorrespondenceAppealTasks);
