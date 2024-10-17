@@ -154,7 +154,10 @@ describe('DatePicker', () => {
     selectFromDropdown('Date filter parameters', 'Last 7 days');
 
     expect(screen.queryByText('mm/dd/yyyy')).not.toBeInTheDocument();
-    expect(handleChange).toHaveBeenCalledWith('between,2024-01-10,2024-01-17', false);
+
+    clickSubmissionButton('Appy');
+
+    expect(handleChange).toHaveBeenCalledWith('last7,Wed Jan 10 2024 02:00:00 GMT-0500');
   });
 
   it('quick select options can select last 30 days', async () => {
@@ -167,7 +170,10 @@ describe('DatePicker', () => {
     selectFromDropdown('Date filter parameters', 'Last 30 days');
 
     expect(screen.queryByText('mm/dd/yyyy')).not.toBeInTheDocument();
-    expect(handleChange).toHaveBeenCalledWith('between,2023-12-18,2024-01-17', false);
+
+    clickSubmissionButton('Appy');
+
+    expect(handleChange).toHaveBeenCalledWith('last30,Mon Dec 18 2023 02:00:00 GMT-0500');
   });
 
   it('quick select options can select last 365 days', async () => {
@@ -180,7 +186,10 @@ describe('DatePicker', () => {
     selectFromDropdown('Date filter parameters', 'Last 365 days');
 
     expect(screen.queryByText('mm/dd/yyyy')).not.toBeInTheDocument();
-    expect(handleChange).toHaveBeenCalledWith('between,2023-01-16,2024-01-17', false);
+
+    clickSubmissionButton('Appy');
+
+    expect(handleChange).toHaveBeenCalledWith('last365,Tue Jan 17 2023 02:00:00 GMT-0500');
   });
 
   describe('datePickerFilterValue', () => {
