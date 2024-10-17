@@ -147,7 +147,7 @@ describe('DatePicker', () => {
   it('quick select options can select last 7 days', async () => {
     jest.spyOn(Date, 'now').mockReturnValue('2024-01-17T03:00:00.000-04:00');
 
-    const { container } = setup({ settings: { options: 'vha' } });
+    const { container } = setup({ settings: { additionalOptions: true } });
 
     openFilter(container);
 
@@ -163,7 +163,7 @@ describe('DatePicker', () => {
   it('quick select options can select last 30 days', async () => {
     jest.spyOn(Date, 'now').mockReturnValue('2024-01-17T03:00:00.000-04:00');
 
-    const { container } = setup({ settings: { options: 'vha' } });
+    const { container } = setup({ settings: { additionalOptions: true } });
 
     openFilter(container);
 
@@ -179,7 +179,7 @@ describe('DatePicker', () => {
   it('quick select options can select last 365 days', async () => {
     jest.spyOn(Date, 'now').mockReturnValue('2024-01-17T03:00:00.000-04:00');
 
-    const { container } = setup({ settings: { options: 'vha' } });
+    const { container } = setup({ settings: { additionalOptions: true } });
 
     openFilter(container);
 
@@ -190,6 +190,19 @@ describe('DatePicker', () => {
     clickSubmissionButton('Apply Filter');
 
     expect(handleChange).toHaveBeenCalledWith('last365,Tue Jan 17 2023 02:00:00 GMT-0500,');
+  });
+
+  it('disables Apply Filter button if between is selected and the start date is after the end date', () => {
+    const { container } = setup();
+
+    openFilter(container);
+
+    selectFromDropdown('Date filter parameters', 'Between these dates');
+
+    enterInputValue('start-date', '2024-01-17');
+    enterInputValue('end-date', '2020-05-14');
+
+    expect(screen.queryByRole('button', { name: 'Apply Filter' })).toBeDisabled();
   });
 
   describe('datePickerFilterValue', () => {
