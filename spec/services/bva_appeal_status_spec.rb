@@ -18,7 +18,7 @@ describe BVAAppealStatus, :all_dbs do
         status = pair.first
         sort_key = pair.last
         appeal = Appeal.find(appeal_id)
-        appeal_status = described_class.new(appeal: appeal)
+        appeal_status = described_class.new(tasks: appeal.tasks)
 
         expect(appeal_status.to_s).to eq(status)
         expect(appeal_status.to_i).to eq(sort_key.to_i + 1) # our sort keys are 1-based
