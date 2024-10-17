@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import COPY from '../../../COPY';
 import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
+import { DateString } from '../../util/DateUtil';
 
 export const claimantColumn = () => {
   return {
@@ -58,5 +59,26 @@ export const pendingIssueModificationColumn = () => {
     valueFunction: (task) => task.appeal.pendingIssueModificationCount,
     backendCanSort: true,
     getSortValue: (task) => task.appeal.pendingIssueModificationCount
+  };
+};
+
+export const vhaTaskCompletedDateColumn = () => {
+  return {
+    header: COPY.CASE_LIST_TABLE_COMPLETED_ON_DATE_COLUMN_TITLE,
+    name: 'completedOnDateColumn',
+    valueFunction: (task) => task.closedAt ? <DateString date={task.closedAt} /> : null,
+    backendCanSort: true,
+    enableFilter: true,
+    anyFiltersAreSet: true,
+    filterType: 'date-picker',
+    filterSettings: {
+      buttons: false,
+      position: 'right',
+      additionalOptions: true,
+    },
+    columnName: 'closedAt',
+    valueName: 'closedAt',
+    label: 'Date Completed',
+    getSortValue: (task) => task.closedAt ? new Date(task.closedAt) : null
   };
 };
