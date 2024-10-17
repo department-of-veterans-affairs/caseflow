@@ -127,7 +127,7 @@ class CorrespondenceDetailsController < CorrespondenceController
   end
 
   def update_correspondence
-    if correspondence_intake_processor.update_correspondence(params)
+    if correspondence_intake_processor.update_correspondence(intake_processor_params)
       render json: { related_appeals: @correspondence.appeal_ids }, status: :created
     else
       render json: { error: "Failed to update records" }, status: :bad_request
@@ -144,6 +144,16 @@ class CorrespondenceDetailsController < CorrespondenceController
   end
 
   private
+
+  def intake_processor_params
+    params.permit(
+      :correspondence_uuid,
+      related_correspondence_uuids: [],
+      correspondence_relations: [:uuid],
+      related_appeal_ids: [],
+      unselected_appeal_ids: []
+    )
+  end
 
   def sort_response_letters(response_letters)
     response_letters.sort_by do |letter|

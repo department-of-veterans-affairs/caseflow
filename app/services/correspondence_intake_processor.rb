@@ -74,7 +74,6 @@ class CorrespondenceIntakeProcessor
   end
 
   def create_correspondence_relations(intake_params, correspondence_id, direct_id = false)
-    Rails.logger.debug "intaaake rela #{intake_params}"
     intake_params[:related_correspondence_uuids]&.map do |uuid|
       CorrespondenceRelation.create!(
         correspondence_id: correspondence_id,
@@ -138,7 +137,6 @@ class CorrespondenceIntakeProcessor
   end
 
   def link_appeals_to_correspondence(intake_params, correspondence_id)
-    Rails.logger.debug "relaaated appeals  #{intake_params}"
     intake_params[:related_appeal_ids]&.map do |appeal_id|
       CorrespondenceAppeal.find_or_create_by(correspondence_id: correspondence_id, appeal_id: appeal_id)
     end
