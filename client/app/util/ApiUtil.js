@@ -167,6 +167,15 @@ const httpMethods = {
       timeout(timeoutSettings).
       on('error', (err) => errorHandling(url, err, 'GET', options));
 
+    if (typeof options.onProgress === 'function') {
+      promise.on('progress', (event) => {
+        const loaded = event.loaded;
+        const total = event.total || 17448335; // hardcode size of file here
+
+        options.onProgress({ loaded, total });
+      });
+    }
+
     if (options.responseType) {
       promise.responseType(options.responseType);
     }
