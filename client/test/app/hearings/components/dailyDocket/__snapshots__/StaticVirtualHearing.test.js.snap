@@ -375,3 +375,13 @@ exports[`StaticVirtualHearing renders correctly 1`] = `
   </div>
 </div>
 `;
+
+exports[`StaticVirtualHearing renders past hearing correctly 1`] = `
+<div>
+  <div>
+    <span>
+      undefined: N/A
+    </span>
+  </div>
+</div>
+`;
