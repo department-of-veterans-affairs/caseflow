@@ -115,18 +115,21 @@ export const datePickerFilterValue = (rowValue, filterValues) => {
 
         pick = rowDate >= startDate && rowDate <= endDate;
       } else if (mode === 'last7') {
-        const startDate = moment().subtract(7, 'days');
+        const startDate = moment().subtract(7, 'days').
+          valueOf();
         const endDate = moment();
 
         pick = rowDate >= startDate && rowDate <= endDate;
       } else if (mode === 'last30') {
-        const startDate = moment().subtract(30, 'days');
+        const startDate = moment().subtract(30, 'days').
+          valueOf();
         const endDate = moment();
 
         pick = rowDate >= startDate && rowDate <= endDate;
       } else if (mode === 'last365') {
-        const startDate = moment().subtract(365, 'days');
-        const endDate = moment();
+        const startDate = moment().subtract(365, 'days').
+          valueOf();
+        const endDate = moment().valueOf();
 
         pick = rowDate >= startDate && rowDate <= endDate;
       }
@@ -212,7 +215,14 @@ class DatePicker extends React.PureComponent {
     let disabled = true;
 
     if (this.state.mode === 'between') {
-      disabled = this.state.startDate === '' || this.state.endDate === '';
+      if (this.state.startDate === '' || this.state.endDate === '') {
+        disabled = true;
+      } else {
+        const startDate = moment(`${this.state.startDate} 00:00:00`).valueOf();
+        const endDate = moment(`${this.state.endDate} 23:59:59`).valueOf();
+
+        disabled = startDate >= endDate;
+      }
     } else if (this.state.mode !== '') {
       disabled = this.state.startDate === '';
     }
