@@ -8,6 +8,7 @@ class Correspondence < CaseflowRecord
   has_paper_trail
   include PrintsTaskTree
   include AppealableCorrespondence
+  include CorrespondenceBelongsToPolymorphicAppealConcern
 
   has_many :correspondence_documents, dependent: :destroy
   has_many :correspondence_appeals, dependent: :destroy
