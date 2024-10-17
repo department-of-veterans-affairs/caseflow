@@ -712,7 +712,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
     appeal_affinities = get_appeal_affinities(appeals)
 
     appeals.reject! do |appeal|
-      # {will skip if not AOJ AOD || if AOJ AOD being distributed to tied_to judge || if not tied to any judge}
+      # will skip if not AOJ || if AOJ being distributed to tied_to judge || if not tied to any judge
       next if tied_to_or_not_aoj_nonpriority?(appeal, judge_sattyid)
 
       next common_affinity_filter_logic(
@@ -725,6 +725,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
     appeal_affinities = get_appeal_affinities(appeals)
 
     appeals.reject! do |appeal|
+      # will skip if not AOJ CAVC || if AOJ CAVC being distributed to tied_to judge || if not tied to any judge
       next if tied_to_or_not_cavc?(appeal, judge_sattyid)
 
       next common_affinity_filter_logic(
@@ -737,7 +738,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
     appeal_affinities = get_appeal_affinities(appeals)
 
     appeals.reject! do |appeal|
-      # {will skip if not AOJ AOD || if AOJ AOD being distributed to tied_to judge || if not tied to any judge}
+      # will skip if not AOJ AOD || if AOJ AOD being distributed to tied_to judge || if not tied to any judge
       next if tied_to_or_not_aoj_aod?(appeal, judge_sattyid)
 
       next common_affinity_filter_logic(

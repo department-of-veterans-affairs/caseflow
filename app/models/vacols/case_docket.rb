@@ -834,6 +834,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     appeal_affinities = get_appeal_affinities(appeals)
 
     appeals.reject! do |appeal|
+      # will skip if not CAVC || if CAVC being distributed to tied_to judge || if not tied to any judge
       next if tied_to_or_not_cavc?(appeal, judge_sattyid)
 
       next common_affinity_filter_logic(
@@ -846,7 +847,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     appeal_affinities = get_appeal_affinities(appeals)
 
     appeals.reject! do |appeal|
-      # {will skip if not CAVC AOD || if CAVC AOD being distributed to tied_to judge || if not tied to any judge}
+      # will skip if not CAVC AOD || if CAVC AOD being distributed to tied_to judge || if not tied to any judge
       next if tied_to_or_not_cavc_aod?(appeal, judge_sattyid)
 
       next common_affinity_filter_logic(
