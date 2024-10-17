@@ -56,6 +56,7 @@ const CorrespondenceDetails = (props) => {
   const [sortedPriorMail, setSortedPriorMail] = useState([]);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isTasksUnrelatedSectionExpanded, setIsTasksUnrelatedSectionExpanded] = useState(false);
+  const [appealTaskKey, setAppealTaskKey] = useState(0);
 
   // Initialize checkbox states
   useEffect(() => {
@@ -72,6 +73,10 @@ const CorrespondenceDetails = (props) => {
     // Initialize sortedPriorMail with the initial priorMail list
     setSortedPriorMail(priorMail);
   }, [priorMail]);
+
+  useEffect(() => {
+    setAppealTaskKey((key) => key + 1);
+  }, [correspondenceInfo]);
 
   const sortAppeals = (selectedList) => {
     let filteredAppeals = [];
@@ -380,14 +385,14 @@ const CorrespondenceDetails = (props) => {
     // load appeals related to the correspondence into the store
     const corAppealTasks = [];
 
+    // return if appeals already loaded into store
+    if (Object.keys(props.appealsFromStore).length > 0) {
+      return;
+    }
+
     props.correspondence.correspondenceAppeals.map((corAppeal) => {
       dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal.appeal.data])));
-
       corAppeal.taskAddedData.data.map((taskData) => {
-        const formattedTask = {};
-
-        formattedTask[taskData.id] = taskData;
-
         corAppealTasks.push(taskData);
       });
 
@@ -479,12 +484,14 @@ const CorrespondenceDetails = (props) => {
           )}
           {(props.correspondence.correspondenceAppeals.map((taskAdded) =>
             <CorrespondenceAppealTasks
+              key={appealTaskKey + taskAdded.id}
               task_added={taskAdded}
               correspondence={props.correspondence}
               organizations={props.organizations}
               userCssId={props.userCssId}
               appeal={taskAdded.appeal.data.attributes}
               waivableUser={props.isInboundOpsSuperuser || props.isInboundOpsSupervisor}
+              correspondence_uuid={props.correspondence_uuid}
             />
           )
           )}
@@ -894,12 +901,15 @@ CorrespondenceDetails.propTypes = {
   inboundOpsTeamUsers: PropTypes.array,
   addLetterCheck: PropTypes.bool,
   updateCorrespondenceInfo: PropTypes.func,
-  correspondenceTypes: PropTypes.array
+  correspondenceTypes: PropTypes.array,
+  correspondence_uuid: PropTypes.string,
+  appealsFromStore: PropTypes.object
 };
 
 const mapStateToProps = (state) => ({
   correspondenceInfo: state.correspondenceDetails.correspondenceInfo,
-  tasksUnrelatedToAppealEmpty: state.correspondenceDetails.tasksUnrelatedToAppealEmpty
+  tasksUnrelatedToAppealEmpty: state.correspondenceDetails.tasksUnrelatedToAppealEmpty,
+  appealsFromStore: state.queue.appeals
 });
 
 const mapDispatchToProps = (dispatch) => (
