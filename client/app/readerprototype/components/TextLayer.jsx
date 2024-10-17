@@ -11,21 +11,21 @@ const TextLayer = memo((props) => {
   // We need to prevent multiple renderings of text to prevent doubling up. Without
   // tracking this, the search bar will report double the number of found instances
   const [hasRenderedText, setHasRenderedText] = useState(false);
-
+  const scale = zoomLevel / 100;
   const viewport = page.getViewport({ scale: 1 });
   const textLayerRef = useRef(null);
   let positionX = 0;
   let positionY = 0;
 
   if (rotation.includes('90')) {
-    positionX = viewport.height;
+    positionX = viewport.height * scale;
   }
   if (rotation.includes('180')) {
-    positionX = viewport.width;
-    positionY = viewport.height;
+    positionX = viewport.width * scale;
+    positionY = viewport.height * scale;
   }
   if (rotation.includes('270')) {
-    positionY = viewport.width;
+    positionY = viewport.width * scale;
   }
 
   const textLayerStyle = {
@@ -37,7 +37,7 @@ const TextLayer = memo((props) => {
     top: `${positionY}px`,
     left: `${positionX}px`,
     rotate: rotation,
-    transform: `scale(${zoomLevel / 100})`,
+    transform: `scale(${scale})`,
   };
 
   useEffect(() => {
