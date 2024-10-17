@@ -2865,6 +2865,7 @@ exports[`Details Displays VirtualHearing details when there is a virtual hearing
           <div
             data-css-19plkw7=""
             data-css-1fmltfu=""
+            data-testid="link-containers"
           >
             <div
               data-css-tx10g=""
@@ -4866,6 +4867,7 @@ exports[`Details Does not display EmailConfirmationModal when updating transcrip
           <div
             data-css-19plkw7=""
             data-css-1fmltfu=""
+            data-testid="link-containers"
           >
             <div
               data-css-tx10g=""
@@ -6864,6 +6866,7 @@ exports[`Details Matches snapshot with default props 1`] = `
           <div
             data-css-19plkw7=""
             data-css-1fmltfu=""
+            data-testid="link-containers"
           >
             <div
               data-css-tx10g=""
@@ -8677,6 +8680,7 @@ exports[`Details TranscriptiomFormSection pexip hearing Does not display transcr
           <div
             data-css-19plkw7=""
             data-css-1fmltfu=""
+            data-testid="link-containers"
           >
             <div
               data-css-tx10g=""
