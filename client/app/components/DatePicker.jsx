@@ -237,16 +237,14 @@ class DatePicker extends React.PureComponent {
     if (mode !== 'between') {
       this.setState({ endDate: '' });
     }
+
     if (mode === 'last7') {
       this.setState({ startDate: moment().subtract(7, 'days') });
-    }
-    if (mode === 'last30') {
+    } else if (mode === 'last30') {
       this.setState({ startDate: moment().subtract(30, 'days') });
-    }
-    if (mode === 'last365') {
+    } else if (mode === 'last365') {
       this.setState({ startDate: moment().subtract(365, 'days') });
-    }
-    if (mode === 'all') {
+    } else if (mode === 'all') {
       this.clearFilter();
     }
   }
@@ -273,7 +271,7 @@ class DatePicker extends React.PureComponent {
   }
 
   getOptions = () => {
-    if (this.props.settings?.options === 'additional') {
+    if (this.props.settings?.additionalOptions) {
       const options = defaultOptions.concat(additionalOptions);
 
       return options;
