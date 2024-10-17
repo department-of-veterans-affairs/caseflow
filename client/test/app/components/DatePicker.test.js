@@ -155,7 +155,7 @@ describe('DatePicker', () => {
 
     expect(screen.queryByText('mm/dd/yyyy')).not.toBeInTheDocument();
 
-    clickSubmissionButton('Apply');
+    clickSubmissionButton('Apply Filter');
 
     expect(handleChange).toHaveBeenCalledWith('last7,Wed Jan 10 2024 02:00:00 GMT-0500');
   });
@@ -171,7 +171,7 @@ describe('DatePicker', () => {
 
     expect(screen.queryByText('mm/dd/yyyy')).not.toBeInTheDocument();
 
-    clickSubmissionButton('Apply');
+    clickSubmissionButton('Apply Filter');
 
     expect(handleChange).toHaveBeenCalledWith('last30,Mon Dec 18 2023 02:00:00 GMT-0500');
   });
@@ -187,7 +187,7 @@ describe('DatePicker', () => {
 
     expect(screen.queryByText('mm/dd/yyyy')).not.toBeInTheDocument();
 
-    clickSubmissionButton('Apply');
+    clickSubmissionButton('Apply Filter');
 
     expect(handleChange).toHaveBeenCalledWith('last365,Tue Jan 17 2023 02:00:00 GMT-0500');
   });
