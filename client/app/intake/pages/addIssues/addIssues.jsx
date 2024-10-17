@@ -460,6 +460,7 @@ class AddIssuesPage extends React.Component {
               legacyStyling={false}
               classNames={['usa-button-secondary']}
               onClick={() => this.onClickAddIssue()}
+              disabled={this.props.disableEditingForCompAndPen}
             >
               + Add issue
             </Button>,
@@ -481,7 +482,7 @@ class AddIssuesPage extends React.Component {
               legacyStyling={false}
               dangerStyling
               onClick={() => this.onClickAddIssue()}
-              disabled={disableIssueActions}
+              disabled={disableIssueActions || this.props.disableEditingForCompAndPen}
             >
               + Add issue
             </Button>)}
@@ -622,7 +623,7 @@ class AddIssuesPage extends React.Component {
               <Button
                 classNames={['usa-button-secondary']}
                 onClick={() => this.openEditClaimLabelModal(endProductCode)}
-                disabled={editDisabled}
+                disabled={editDisabled || this.props.disableEditingForCompAndPen}
               >
                 Edit claim label
               </Button>
@@ -669,6 +670,7 @@ class AddIssuesPage extends React.Component {
             issueSectionRow({
               ...issueSectionRowProps,
               fieldTitle: 'Requested issues',
+              disableEditingForCompAndPen: this.props.disableEditingForCompAndPen,
               disableIssueActions
             }),
           );
@@ -676,7 +678,8 @@ class AddIssuesPage extends React.Component {
           rowObjects = rowObjects.concat(
             issueSectionRow({
               ...issueSectionRowProps,
-              fieldTitle: 'Withdrawn issues'
+              fieldTitle: 'Withdrawn issues',
+              disableEditingForCompAndPen: this.props.disableEditingForCompAndPen
             }),
           );
         } else {
@@ -684,7 +687,8 @@ class AddIssuesPage extends React.Component {
           rowObjects = rowObjects.concat(
             issueSectionRow({
               ...issueSectionRowProps,
-              fieldTitle: ' '
+              fieldTitle: ' ',
+              disableEditingForCompAndPen: this.props.disableEditingForCompAndPen
             }),
           );
         }
@@ -920,7 +924,8 @@ AddIssuesPage.propTypes = {
   userCanWithdrawIssues: PropTypes.bool,
   userCanEditIntakeIssues: PropTypes.bool,
   userCanSplitAppeal: PropTypes.bool,
-  isLegacy: PropTypes.bool
+  isLegacy: PropTypes.bool,
+  disableEditingForCompAndPen: PropTypes.bool
 };
 
 export const IntakeAddIssuesPage = connect(
