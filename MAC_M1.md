@@ -187,10 +187,10 @@ Running Caseflow
 	  2. that you are using arm64 brew by doing `which brew` and ensuring the output is `/opt/homebrew/bin/brew`
 3. Open caseflow in VSCode (optional), or navigate to the caseflow directory in your terminal and:
 	  1. `brew install yarn`
-4. Ensure you are on main branch and up to date by running
-    1. ```git checkout main```
+4. Ensure you are on master branch and up to date by running
+    1. ```git checkout master```
     2. ```git fetch```
-    3. ```git pull origin main```
+    3. ```git pull origin master```
 5. Start Vacols UTM VM (if not already running)
 6. run `make up-m1` to create the docker containers and volumes
 7. run `make reset` to (re)create and seed the database; this takes a while (~45 minutes)

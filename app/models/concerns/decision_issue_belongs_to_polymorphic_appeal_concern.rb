@@ -2,11 +2,24 @@
 
 module DecisionIssueBelongsToPolymorphicAppealConcern
   extend ActiveSupport::Concern
-  include DecisionReviewPolymorphicHelper
 
   included do
-    define_polymorphic_decision_review_associations(:decision_review,
-                                                    :decision_issues,
-                                                    %w[Appeal HigherLevelReview SupplementalClaim])
+    belongs_to :decision_review, polymorphic: true
+
+    belongs_to :ama_appeal,
+               -> { where(decision_issues: { decision_review_type: "Appeal" }) },
+               class_name: "Appeal", foreign_key: "decision_review_id", optional: true
+
+    belongs_to :higher_level_review,
+               -> { where(decision_issues: { decision_review_type: "HigherLevelReview" }) },
+               class_name: "HigherLevelReview", foreign_key: "decision_review_id", optional: true
+
+    belongs_to :supplemental_claim,
+               -> { where(decision_issues: { decision_review_type: "SupplementalClaim" }) },
+               class_name: "SupplementalClaim", foreign_key: "decision_review_id", optional: true
+
+    scope :ama, -> { where(decision_review_type: "Appeal") }
+    scope :higher_level_review, -> { where(decision_review_type: "HigherLevelReview") }
+    scope :supplemental_claim, -> { where(decision_review_type: "SupplementalClaim") }
   end
 end

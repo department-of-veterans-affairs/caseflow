@@ -1,4 +1,4 @@
-This document was moved from [appeals-team](https://github.com/department-of-veterans-affairs/appeals-team/blob/main/Project%20Folders/Caseflow%20Projects/Hearings/Telehearings/tech-specs/Integrating%20Caseflow%20with%20Pexip.md).
+This document was moved from [appeals-team](https://github.com/department-of-veterans-affairs/appeals-team/blob/master/Project%20Folders/Caseflow%20Projects/Hearings/Telehearings/tech-specs/Integrating%20Caseflow%20with%20Pexip.md).
 
 # Integration with Pexip for Virtual Hearings
 
@@ -15,7 +15,7 @@ There is an additional component to email the participants of the conference tha
   - [Epic](https://app.zenhub.com/workspaces/caseflow-5915dd178f67e20b5553ba0c/issues/department-of-veterans-affairs/caseflow/11132)
   - [Tech Spec](https://app.zenhub.com/workspace/o/department-of-veterans-affairs/caseflow/issues/12012)
   - [Implementation](https://app.zenhub.com/workspace/o/department-of-veterans-affairs/caseflow/issues/11730)
-
+  
 ### Resources
 
   - [Pexip homepage](https://www.pexip.com)
@@ -26,7 +26,7 @@ There is an additional component to email the participants of the conference tha
   - [Pexip browser support](https://docs.pexip.com/admin/interoperability.htm)
   - [Slack Thread on Deployment](https://dsva.slack.com/archives/CAM9FJ85P/p1570459327417500)
   - [Mapping Host to IP](https://github.com/department-of-veterans-affairs/appeals-deployment/blob/2b67911264124e41e887cf810f735c0d1eb8c493/ansible/vars/va-services.yml)
-
+  
 ## Overview
 
 To support the BVA's video conferencing initiative, Caseflow will need to be able to manage Pexip conferences from creation to deletion using the Pexip API.
@@ -348,7 +348,7 @@ Where:
 
 The URL must always include `https://<address>/webapp/?` But the remainder of the fields are optional. If a field is not specified in the URL, the user joining the conference will be asked to fill in the appropriate fields in a form before joining the conference.
 
-We can pre-fill some or all of these fields and allow participants the participants to review and make changes before joining or we can format the URL so that the participants are taken straight into the conference. The latter is preferable as we will display a link on the hearing docket for judges and send emails containing the URL with detailed instructions to all participants.
+We can pre-fill some or all of these fields and allow participants the participants to review and make changes before joining or we can format the URL so that the participants are taken straight into the conference. The latter is preferable as we will display a link on the hearing docket for judges and send emails containing the URL with detailed instructions to all participants. 
 
 ### Deleting Conferences for Past Hearings
 

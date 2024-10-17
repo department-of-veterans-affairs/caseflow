@@ -20,7 +20,7 @@ export default class StyleGuideComponentTitle extends React.PureComponent {
         // isExternalLink is for any code sample that's outside the StyleGuide container directory
         baseUrl = 'https://github.com/department-of-veterans-affairs/caseflow';
       } else {
-        baseUrl = 'https://github.com/department-of-veterans-affairs/caseflow/blob/main/client/app/containers/StyleGuide/';
+        baseUrl = 'https://github.com/department-of-veterans-affairs/caseflow/blob/master/client/app/containers/StyleGuide/';
       }
       /* eslint-enable max-len */
 

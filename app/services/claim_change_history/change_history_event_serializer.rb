@@ -24,27 +24,4 @@ class ChangeHistoryEventSerializer
       withdrawalRequestDate: object.withdrawal_request_date
     }
   end
-
-  attribute :modificationRequestDetails do |object|
-    {
-      requestType: object.request_type,
-      benefitType: object.benefit_type,
-      newIssueType: object.new_issue_type,
-      newIssueDescription: object.new_issue_description,
-      newDecisionDate: object.new_decision_date,
-      modificationRequestReason: object.modification_request_reason,
-      issueModificationRequestWithdrawalDate: object.issue_modification_request_withdrawal_date,
-      removeOriginalIssue: object.remove_original_issue,
-      issueModificationRequestStatus: object.issue_modification_request_status,
-      requestor: object.requestor,
-      decider: object.decider,
-      decidedAtDate: object.decided_at_date,
-      decisionReason: object.decision_reason,
-      previousIssueType: object.previous_issue_type,
-      previousIssueDescription: object.previous_issue_description,
-      previousDecisionDate: object.previous_decision_date,
-      previousModificationRequestReason: object.previous_modification_request_reason,
-      previousWithdrawalDate: object.previous_withdrawal_date
-    }
-  end
 end
