@@ -708,7 +708,6 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
     appeals
   end
 
-  # rubocop:disable Metrics/AbcSize
   def self.aoj_affinity_filter(appeals, judge_sattyid, lever_value, excluded_judges_attorney_ids)
     appeal_affinities = get_appeal_affinities(appeals)
 
@@ -716,7 +715,9 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
       # {will skip if not AOJ AOD || if AOJ AOD being distributed to tied_to judge || if not tied to any judge}
       next if tied_to_or_not_aoj_nonpriority?(appeal, judge_sattyid)
 
-      next common_affinity_filter_logic(appeal, judge_sattyid, lever_value, excluded_judges_attorney_ids, appeal_affinities)
+      next common_affinity_filter_logic(
+        appeal, judge_sattyid, lever_value, excluded_judges_attorney_ids, appeal_affinities
+      )
     end
   end
 
@@ -726,7 +727,9 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
     appeals.reject! do |appeal|
       next if tied_to_or_not_cavc?(appeal, judge_sattyid)
 
-      next common_affinity_filter_logic(appeal, judge_sattyid, aoj_cavc_affinity_lever_value, excluded_judges_attorney_ids, appeal_affinities)
+      next common_affinity_filter_logic(
+        appeal, judge_sattyid, aoj_cavc_affinity_lever_value, excluded_judges_attorney_ids, appeal_affinities
+      )
     end
   end
 
@@ -737,10 +740,11 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
       # {will skip if not AOJ AOD || if AOJ AOD being distributed to tied_to judge || if not tied to any judge}
       next if tied_to_or_not_aoj_aod?(appeal, judge_sattyid)
 
-      next common_affinity_filter_logic(appeal, judge_sattyid, lever_value, excluded_judges_attorney_ids, appeal_affinities)
+      next common_affinity_filter_logic(
+        appeal, judge_sattyid, lever_value, excluded_judges_attorney_ids, appeal_affinities
+      )
     end
   end
-  # rubocop:enable Metrics/AbcSize
 
   def self.tied_to_or_not_aoj_nonpriority?(appeal, judge_sattyid)
     (appeal["prev_type_action"] == "7" || appeal["aod"] == 1) ||

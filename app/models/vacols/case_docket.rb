@@ -829,28 +829,31 @@ class VACOLS::CaseDocket < VACOLS::Record
     FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
-  def self.cavc_affinity_filter(appeals, judge_sattyid, cavc_affinity_lever_value, excluded_judges_attorney_ids)
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  def self.cavc_affinity_filter(appeals, judge_sattyid, lever_value, excluded_judges_attorney_ids)
     appeal_affinities = get_appeal_affinities(appeals)
 
     appeals.reject! do |appeal|
       next if tied_to_or_not_cavc?(appeal, judge_sattyid)
 
-      next common_affinity_filter_logic(appeal, judge_sattyid, cavc_affinity_lever_value, excluded_judges_attorney_ids, appeal_affinities)
+      next common_affinity_filter_logic(
+        appeal, judge_sattyid, lever_value, excluded_judges_attorney_ids, appeal_affinities
+      )
     end
   end
 
-  def self.cavc_aod_affinity_filter(appeals, judge_sattyid, cavc_aod_affinity_lever_value, excluded_judges_attorney_ids)
+  def self.cavc_aod_affinity_filter(appeals, judge_sattyid, lever_value, excluded_judges_attorney_ids)
     appeal_affinities = get_appeal_affinities(appeals)
 
     appeals.reject! do |appeal|
       # {will skip if not CAVC AOD || if CAVC AOD being distributed to tied_to judge || if not tied to any judge}
       next if tied_to_or_not_cavc_aod?(appeal, judge_sattyid)
 
-      next common_affinity_filter_logic(appeal, judge_sattyid, cavc_aod_affinity_lever_value, excluded_judges_attorney_ids, appeal_affinities)
+      next common_affinity_filter_logic(
+        appeal, judge_sattyid, lever_value, excluded_judges_attorney_ids, appeal_affinities
+      )
     end
   end
-  # rubocop:enable Metrics/MethodLength
 
   def self.tied_to_or_not_cavc?(appeal, judge_sattyid)
     (appeal["bfac"] != "7" || appeal["aod"] != 0) ||
@@ -870,7 +873,9 @@ class VACOLS::CaseDocket < VACOLS::Record
       (appeal["vlj"].nil? && appeal["prev_deciding_judge"].nil?)
   end
 
-  def self.common_affinity_filter_logic(appeal, judge_sattyid, lever_value, excluded_judges_attorney_ids, appeal_affinities)
+  def self.common_affinity_filter_logic(
+    appeal, judge_sattyid, lever_value, excluded_judges_attorney_ids, appeal_affinities
+  )
     if not_distributing_to_tied_judge?(appeal, judge_sattyid)
       return if ineligible_judges_sattyids&.include?(appeal["vlj"])
 
