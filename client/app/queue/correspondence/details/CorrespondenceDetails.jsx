@@ -119,55 +119,47 @@ const CorrespondenceDetails = (props) => {
         return mail.id;
       });
 
-    // Data for the PATCH request to remove unchecked relations
-    const patchData = {
-      correspondence_uuid: correspondence.uuid,
-      correspondence_relations: uncheckedCheckboxes
-    };
+    const appealsSelected = selectedAppeals.filter((val) => !correspondence.correspondenceAppealIds.includes(val));
 
     // Data for the POST request to add checked relations
     const postData = {
-      priorMailIds: checkedCheckboxes
+      related_correspondence_uuids: checkedCheckboxes,
+      correspondence_relations: uncheckedCheckboxes,
+      related_appeal_ids: appealsSelected,
+      unselected_appeal_ids: unSelectedAppeals
     };
 
     try {
     // Helper function to check for success response
       const isSuccess = (response) => response.ok;
-
-      // Send PATCH request to remove unchecked relations if necessary
-      // If no unchecked items, PATCH is already successful
-      let patchSuccess = uncheckedCheckboxes.length === 0;
-
-      if (uncheckedCheckboxes.length > 0) {
-      // Send PATCH request to update the backend
-        const patchResponse = await ApiUtil.patch(
-        `/queue/correspondence/${correspondence.uuid}/update_correspondence`,
-        { data: patchData }
-        );
-
-        // Check for general success status (any 2xx status)
-        patchSuccess = isSuccess(patchResponse);
-        console.log('PATCH successful:', patchResponse.status); // eslint-disable-line no-console
-      }
-
-      // Send POST request to add checked relations if necessary
+      
+      // Send PATCH request to add checked relations if necessary
       // If no checked items, POST is already successful
-      let postSuccess = checkedCheckboxes.length === 0;
+      let patchSuccess = false;
+
+      const updateAppeals = (response) => {
+        const appealIds = response.body.related_appeals;
+        setSelectedAppeals(appealIds);
+        setInitialSelectedAppeals(appealIds);
+        sortAppeals(appealIds);
+        setAppealTableKey((key) => key + 1);
+      }
 
       if (checkedCheckboxes.length > 0) {
       // Send POST request to create relations
-        const postResponse = await ApiUtil.post(
-        `/queue/correspondence/${correspondence.uuid}/create_correspondence_relations`,
+        const patchResponse = await ApiUtil.patch(
+        `/queue/correspondence/${correspondence.uuid}/update_correspondence`,
         { data: postData }
         );
 
         // Check for general success status (any 2xx status)
-        postSuccess = isSuccess(postResponse);
-        console.log('POST successful:', postResponse.status); // eslint-disable-line no-console
+        patchSuccess = isSuccess(patchResponse);
+        updateAppeals(patchResponse)
+        console.log('POST successful:', patchResponse.status); // eslint-disable-line no-console
       }
 
       // Only show success banner if both PATCH and POST requests succeeded
-      if (patchSuccess && postSuccess) {
+      if (patchSuccess) {
         setShowSuccessBanner(true);
       }
 
@@ -789,12 +781,14 @@ const CorrespondenceDetails = (props) => {
   const saveChanges = () => {
     if (isAdminNotLoggedIn() === false) {
       handlepriorMailUpdate();
-    } else if (selectedPriorMail.length > 0) {
-
+    } else if (selectedPriorMail.length > 0 || selectedAppeals.length > 0 || unSelectedAppeals.length > 0 ) {
+      const appealsSelected = selectedAppeals.filter((val) => !correspondence.correspondenceAppealIds.includes(val));
       const priorMailIds = selectedPriorMail.map((mail) => mail.id);
       const payload = {
         data: {
-          priorMailIds: selectedPriorMail.map((mail) => mail.id)
+          related_correspondence_uuids: selectedPriorMail.map((mail) => mail.id),
+          related_appeal_ids: appealsSelected,
+          unselected_appeal_ids: unSelectedAppeals
         }
       };
 
@@ -803,46 +797,18 @@ const CorrespondenceDetails = (props) => {
       tempCor.relatedCorrespondenceIds = priorMailIds;
 
       return ApiUtil.patch(`/queue/correspondence/${correspondence.uuid}/update_correspondence`, payload).
-        then(() => {
-          props.updateCorrespondenceInfo(tempCor);
-          setRelatedCorrespondenceIds([...relatedCorrespondenceIds, ...priorMailIds]);
-          setShowSuccessBanner(true);
-          setSelectedPriorMail([]);
-          setDisableSubmitButton(true);
-          window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-          });
-        }).
-        catch((error) => {
-          const errorMessage = error?.response?.body?.message ?
-            error.response.body.message.replace(/^Error:\s*/, '') :
-            error.message;
-
-          console.error(errorMessage);
-        });
-    }
-
-    if (selectedAppeals.length > 0 || unSelectedAppeals.length > 0) {
-      const appealsSelected = selectedAppeals.filter((val) => !correspondence.correspondenceAppealIds.includes(val));
-
-      const payload = {
-        data: {
-          related_appeal_ids: appealsSelected,
-          unselected_appeal_ids: unSelectedAppeals
-        }
-      };
-
-      return ApiUtil.patch(`/queue/correspondence/${correspondence.uuid}/update_correspondence`, payload).
         then((resp) => {
           const appealIds = resp.body.related_appeals;
 
           setSelectedAppeals(appealIds);
           setInitialSelectedAppeals(appealIds);
           sortAppeals(appealIds);
-          setShowSuccessBanner(true);
-          setDisableSubmitButton(true);
           setAppealTableKey((key) => key + 1);
+          props.updateCorrespondenceInfo(tempCor);
+          setRelatedCorrespondenceIds([...relatedCorrespondenceIds, ...priorMailIds]);
+          setShowSuccessBanner(true);
+          setSelectedPriorMail([]);
+          setDisableSubmitButton(true);
           window.scrollTo({
             top: 0,
             behavior: 'smooth'
