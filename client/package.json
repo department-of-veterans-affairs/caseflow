@@ -89,6 +89,7 @@
     "expose-loader": "^0.7.3",
     "faker": "^4.1.0",
     "file-loader": "^2.0.0",
+    "filesize": "^10.1.6",
     "font-awesome": "^4.7.0",
     "glamor": "^2.20.40",
     "history": "^4.5.1",
