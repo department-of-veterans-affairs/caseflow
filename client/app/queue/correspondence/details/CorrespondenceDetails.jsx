@@ -145,18 +145,16 @@ const CorrespondenceDetails = (props) => {
         setAppealTableKey((key) => key + 1);
       }
 
-      if (checkedCheckboxes.length > 0) {
       // Send POST request to create relations
-        const patchResponse = await ApiUtil.patch(
-        `/queue/correspondence/${correspondence.uuid}/update_correspondence`,
-        { data: postData }
-        );
+      const patchResponse = await ApiUtil.patch(
+      `/queue/correspondence/${correspondence.uuid}/update_correspondence`,
+      { data: postData }
+      );
 
-        // Check for general success status (any 2xx status)
-        patchSuccess = isSuccess(patchResponse);
-        updateAppeals(patchResponse)
-        console.log('POST successful:', patchResponse.status); // eslint-disable-line no-console
-      }
+      // Check for general success status (any 2xx status)
+      patchSuccess = isSuccess(patchResponse);
+      updateAppeals(patchResponse)
+      console.log('POST successful:', patchResponse.status); // eslint-disable-line no-console
 
       // Only show success banner if both PATCH and POST requests succeeded
       if (patchSuccess) {
