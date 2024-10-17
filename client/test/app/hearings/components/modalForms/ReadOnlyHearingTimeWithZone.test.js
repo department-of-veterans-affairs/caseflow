@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { ReadOnlyHearingTimeWithZone } from 'app/hearings/components/modalForms/ReadOnlyHearingTimeWithZone';
-import { ReadOnly } from 'app/hearings/components/details/ReadOnly';
 
 import { render, screen } from '@testing-library/react';
 import moment from 'moment-timezone/moment-timezone';
