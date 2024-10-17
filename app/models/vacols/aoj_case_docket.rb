@@ -710,9 +710,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
 
   # rubocop:disable Metrics/AbcSize
   def self.aoj_affinity_filter(appeals, judge_sattyid, lever_value, excluded_judges_attorney_ids)
-    appeal_affinities =
-      AppealAffinity.where(case_id: appeals.pluck("bfkey"), case_type: "VACOLS::Case")
-        .pluck(:case_id, :affinity_start_date).to_h
+    appeal_affinities = get_appeal_affinities(appeals)
 
     appeals.reject! do |appeal|
       # {will skip if not AOJ AOD || if AOJ AOD being distributed to tied_to judge || if not tied to any judge}
@@ -748,9 +746,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
   end
 
   def self.aoj_cavc_affinity_filter(appeals, judge_sattyid, aoj_cavc_affinity_lever_value, excluded_judges_attorney_ids)
-    appeal_affinities =
-      AppealAffinity.where(case_id: appeals.pluck("bfkey"), case_type: "VACOLS::Case")
-        .pluck(:case_id, :affinity_start_date).to_h
+    appeal_affinities = get_appeal_affinities(appeals)
 
     appeals.reject! do |appeal|
       next if tied_to_or_not_cavc?(appeal, judge_sattyid)
@@ -785,9 +781,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
   end
 
   def self.aoj_aod_affinity_filter(appeals, judge_sattyid, lever_value, excluded_judges_attorney_ids)
-    appeal_affinities =
-      AppealAffinity.where(case_id: appeals.pluck("bfkey"), case_type: "VACOLS::Case")
-        .pluck(:case_id, :affinity_start_date).to_h
+    appeal_affinities = get_appeal_affinities(appeals)
 
     appeals.reject! do |appeal|
       # {will skip if not AOJ AOD || if AOJ AOD being distributed to tied_to judge || if not tied to any judge}
@@ -861,7 +855,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength
 
-  # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity, Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity
   def self.priority_appeals_affinity_date_count(in_window)
     conn = connection
     aoj_cavc_affinity_lever_value = CaseDistributionLever.aoj_cavc_affinity_days
@@ -875,9 +869,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
     fmtd_query = sanitize_sql_array([query])
 
     appeals = conn.exec_query(fmtd_query).to_a
-    appeal_affinities =
-      AppealAffinity.where(case_id: appeals.pluck("bfkey"), case_type: "VACOLS::Case")
-        .pluck(:case_id, :affinity_start_date).to_h
+    appeal_affinities = get_appeal_affinities(appeals)
 
     if in_window
       appeals.select! do |appeal|
@@ -898,7 +890,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
     end
     appeals
   end
-  # rubocop:enable Metrics/PerceivedComplexity, Metrics/AbcSize
+  # rubocop:enable Metrics/PerceivedComplexity
 
   def self.non_priority_appeals_affinity_date_count(in_window)
     conn = connection
@@ -912,9 +904,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
     fmtd_query = sanitize_sql_array([query])
 
     appeals = conn.exec_query(fmtd_query).to_a
-    appeal_affinities =
-      AppealAffinity.where(case_id: appeals.pluck("bfkey"), case_type: "VACOLS::Case")
-        .pluck(:case_id, :affinity_start_date).to_h
+    appeal_affinities = get_appeal_affinities(appeals)
 
     if in_window
       appeals.select! do |appeal|
