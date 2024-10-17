@@ -74,7 +74,7 @@ export const vhaTaskCompletedDateColumn = () => {
     filterSettings: {
       buttons: false,
       position: 'right',
-      options: 'vha'
+      options: 'additional'
     },
     columnName: 'closedAt',
     valueName: 'Date Completed',
