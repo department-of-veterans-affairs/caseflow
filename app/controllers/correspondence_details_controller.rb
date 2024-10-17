@@ -144,26 +144,6 @@ class CorrespondenceDetailsController < CorrespondenceController
     end
   end
 
-  def save_correspondence_appeals
-    if params[:selected_appeal_ids].present?
-      params[:selected_appeal_ids].each do |appeal_id|
-        @correspondence.correspondence_appeals.find_or_create_by(appeal_id: appeal_id)
-      end
-    end
-    if params[:unselected_appeal_ids].present?
-      correspondence_appeals_to_delete = @correspondence.correspondence_appeals
-        .where(appeal_id: params[:unselected_appeal_ids])
-
-      CorrespondencesAppealsTask.where(correspondence_appeal_id: correspondence_appeals_to_delete.pluck(:id)).delete_all
-
-      correspondence_appeals_to_delete.delete_all
-    end
-    respond_to do |format|
-      format.html
-      format.json { render json: @correspondence.appeal_ids, status: :ok }
-    end
-  end
-
   def waive_evidence_submission_window_task
     task = EvidenceSubmissionWindowTask.find_by_id(task_params[:task_id])
     appeal = Appeal.find_by_uuid(appeal_params[:appeal_uuid])
