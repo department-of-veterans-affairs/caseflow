@@ -2462,27 +2462,4 @@ ActiveRecord::Schema.define(version: 2024_10_08_145227) do
       a.stream_docket_number AS docket_number
      FROM appeals a;
   SQL
-  create_view "remands", sql_definition: <<-SQL
-      SELECT supplemental_claims.id,
-      supplemental_claims.benefit_type,
-      supplemental_claims.created_at,
-      supplemental_claims.decision_review_remanded_id,
-      supplemental_claims.decision_review_remanded_type,
-      supplemental_claims.establishment_attempted_at,
-      supplemental_claims.establishment_canceled_at,
-      supplemental_claims.establishment_error,
-      supplemental_claims.establishment_last_submitted_at,
-      supplemental_claims.establishment_processed_at,
-      supplemental_claims.establishment_submitted_at,
-      supplemental_claims.filed_by_va_gov,
-      supplemental_claims.legacy_opt_in_approved,
-      supplemental_claims.receipt_date,
-      supplemental_claims.updated_at,
-      supplemental_claims.uuid,
-      supplemental_claims.veteran_file_number,
-      supplemental_claims.veteran_is_not_claimant,
-      supplemental_claims.type
-     FROM supplemental_claims
-    WHERE ((supplemental_claims.type)::text = 'Remand'::text);
-  SQL
 end

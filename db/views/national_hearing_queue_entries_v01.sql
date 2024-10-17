@@ -10,3 +10,6 @@ SELECT
     appeals.stream_type as appeal_stream,
     appeals.stream_docket_number as docket_number
 FROM appeals
+JOIN tasks on tasks.decision_review_type = 'Appeal' and tasks.decision_review_id = appeals.id
+where tasks.type = 'ScheduleHearingTask'
+  and tasks.status in ('assigned', 'in_progress', 'on_hold');
