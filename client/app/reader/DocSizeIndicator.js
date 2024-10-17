@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { filesize } from 'filesize';
 
 const DocSizeIndicator = (props) => {
   return (
-    <span>{props.docSize}</span>
+    <span>{filesize(props.docSize)}</span>
   );
 };
 
