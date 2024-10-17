@@ -18,7 +18,7 @@ RSpec.describe Hearings::VaBoxDownloadJob, type: :job do
 
   let(:file_info) do
     [
-      create_file_info(hearing, ama_file_id),
+      create_file_info(hearing, ama_file_id)
 
       # TODO: Uncomment after APPEALS-59937 has been completed
       # create_file_info(legacy_hearing, legacy_file_id)

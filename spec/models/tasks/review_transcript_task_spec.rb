@@ -4,7 +4,7 @@ describe ReviewTranscriptTask, :all_dbs do
   describe "creation" do
     let(:user) { create(:user) }
     let(:appeal) { create(:appeal) }
-    let(:org) { create(:organization)}
+    let(:org) { create(:organization) }
 
     it "can be assigned to user" do
       task = ReviewTranscriptTask.create(
