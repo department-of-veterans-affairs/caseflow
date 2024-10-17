@@ -74,7 +74,7 @@ const defaultOptions = [
   { value: 'on', label: COPY.DATE_PICKER_DROPDOWN_ON }
 ];
 
-const vhaAdditionalOptions = [
+const additionalOptions = [
   { value: 'last7', label: COPY.DATE_PICKER_DROPDOWN_7 },
   { value: 'last30', label: COPY.DATE_PICKER_DROPDOWN_30 },
   { value: 'last365', label: COPY.DATE_PICKER_DROPDOWN_365 },
@@ -272,24 +272,11 @@ class DatePicker extends React.PureComponent {
     this.hideDropdown();
   }
 
-  showStartDate = () => {
-    const quickSelectOptions = [];
-
-    vhaAdditionalOptions.forEach((option) =>
-      quickSelectOptions.push(option.value));
-
-    if (quickSelectOptions.includes(this.state.mode)) {
-      return false;
-    }
-
-    return true;
-  }
-
   getOptions = () => {
-    if (this.props.settings?.options === 'vha') {
-      const newArray = defaultOptions.concat(vhaAdditionalOptions);
+    if (this.props.settings?.options === 'additional') {
+      const options = defaultOptions.concat(additionalOptions);
 
-      return newArray;
+      return options;
     }
 
     return defaultOptions;
@@ -328,7 +315,8 @@ class DatePicker extends React.PureComponent {
                 value={this.state.mode} />
             </div>
 
-            {this.showStartDate() ?
+            {additionalOptions.some((option) => option.value === this.state.mode) ?
+              null :
               <div className="input-wrapper">
                 <label aria-label="start-date"
                   htmlFor="start-date">
@@ -340,8 +328,7 @@ class DatePicker extends React.PureComponent {
                   type="date"
                   onChange={(event) => this.setState({ startDate: event.target.value })}
                 />
-              </div> :
-              null
+              </div>
             }
 
             {this.state.mode === 'between' &&
@@ -358,7 +345,8 @@ class DatePicker extends React.PureComponent {
             }
             <div className="button-wrapper">
               <button disabled={this.buttonDisabled()}
-                onClick={() => this.apply()}>{COPY.DATE_PICKER_APPLY}</button>
+                onClick={() => this.apply()}>{COPY.DATE_PICKER_APPLY}
+              </button>
             </div>
           </div>
       }
