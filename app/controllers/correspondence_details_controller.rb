@@ -127,8 +127,8 @@ class CorrespondenceDetailsController < CorrespondenceController
   end
 
   def update_correspondence
-    if correspondence_intake_processor.update_correspondence(params)
-      render json: {}, status: :created
+    if correspondence_intake_processor.update_correspondence(intake_processor_params)
+      render json: { related_appeals: @correspondence.appeal_ids }, status: :created
     else
       render json: { error: "Failed to update records" }, status: :bad_request
     end
@@ -143,27 +143,17 @@ class CorrespondenceDetailsController < CorrespondenceController
     end
   end
 
-  def save_correspondence_appeals
-    if params[:selected_appeal_ids].present?
-      params[:selected_appeal_ids].each do |appeal_id|
-        @correspondence.correspondence_appeals.find_or_create_by(appeal_id: appeal_id)
-      end
-    end
-    if params[:unselected_appeal_ids].present?
-      correspondence_appeals_to_delete = @correspondence.correspondence_appeals
-        .where(appeal_id: params[:unselected_appeal_ids])
-
-      CorrespondencesAppealsTask.where(correspondence_appeal_id: correspondence_appeals_to_delete.pluck(:id)).delete_all
-
-      correspondence_appeals_to_delete.delete_all
-    end
-    respond_to do |format|
-      format.html
-      format.json { render json: @correspondence.appeal_ids, status: :ok }
-    end
-  end
-
   private
+
+  def intake_processor_params
+    params.permit(
+      :correspondence_uuid,
+      related_correspondence_uuids: [],
+      correspondence_relations: [:uuid],
+      related_appeal_ids: [],
+      unselected_appeal_ids: []
+    )
+  end
 
   def sort_response_letters(response_letters)
     response_letters.sort_by do |letter|
