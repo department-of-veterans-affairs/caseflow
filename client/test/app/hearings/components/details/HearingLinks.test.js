@@ -8,8 +8,12 @@ import { render, screen } from '@testing-library/react';
 import COPY from 'COPY';
 
 describe('HearingLinks', () => {
-  test('Matches snapshot with default props when passed in', () => {
-    render(<HearingLinks />);
+  test('Matches snapshot when hearing is virtual, pexip, and in progress', () => {
+    const hearing = {
+      scheduledForIsPast: false,
+      conferenceProvider: 'pexip',
+      isVirtual: true
+    };
 
     const {asFragment} = render(
       <HearingLinks
@@ -51,8 +55,12 @@ describe('HearingLinks', () => {
     expect(spanElements.length).toBe(3);
   });
 
-    const elementsWithTestId = screen.queryByTestId("strong-element-test-id");
-    expect(elementsWithTestId).toBeNull();
+  test('Matches snapshot when hearing is virtual, webex, and in progress', () => {
+    const hearing = {
+      scheduledForIsPast: false,
+      isVirtual: true,
+      conferenceProvider: 'webex'
+    };
 
     const {asFragment} = render(
       <HearingLinks
