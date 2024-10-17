@@ -831,6 +831,8 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
   def self.cavc_affinity_filter(appeals, judge_sattyid, cavc_affinity_lever_value, excluded_judges_attorney_ids)
+    appeal_affinities = AppealAffinity.where(case_id: appeals.pluck("bfkey"), case_type: "VACOLS::Case").pluck(:case_id, :affinity_start_date).to_h
+
     appeals.reject! do |appeal|
       next if tied_to_or_not_cavc?(appeal, judge_sattyid)
 
@@ -852,7 +854,7 @@ class VACOLS::CaseDocket < VACOLS::Record
       if case_affinity_days_lever_value_is_selected?(cavc_affinity_lever_value)
         next if appeal["prev_deciding_judge"] == judge_sattyid
 
-        reject_due_to_affinity?(appeal, cavc_affinity_lever_value)
+        reject_due_to_affinity?(appeal_affinities[appeal["bfkey"]], cavc_affinity_lever_value)
       elsif cavc_affinity_lever_value == Constants.ACD_LEVERS.infinite
         next if deciding_judge_ineligible_with_no_hearings_after_decision(appeal) || appeal["prev_deciding_judge"].nil?
 
@@ -864,6 +866,8 @@ class VACOLS::CaseDocket < VACOLS::Record
   end
 
   def self.cavc_aod_affinity_filter(appeals, judge_sattyid, cavc_aod_affinity_lever_value, excluded_judges_attorney_ids)
+    appeal_affinities = AppealAffinity.where(case_id: appeals.pluck("bfkey"), case_type: "VACOLS::Case").pluck(:case_id, :affinity_start_date).to_h
+
     appeals.reject! do |appeal|
       # {will skip if not CAVC AOD || if CAVC AOD being distributed to tied_to judge || if not tied to any judge}
       next if tied_to_or_not_cavc_aod?(appeal, judge_sattyid)
@@ -886,7 +890,7 @@ class VACOLS::CaseDocket < VACOLS::Record
       if case_affinity_days_lever_value_is_selected?(cavc_aod_affinity_lever_value)
         next if appeal["prev_deciding_judge"] == judge_sattyid
 
-        reject_due_to_affinity?(appeal, cavc_aod_affinity_lever_value)
+        reject_due_to_affinity?(appeal_affinities[appeal["bfkey"]], cavc_aod_affinity_lever_value)
       elsif cavc_aod_affinity_lever_value == Constants.ACD_LEVERS.infinite
         next if deciding_judge_ineligible_with_no_hearings_after_decision(appeal) || appeal["prev_deciding_judge"].nil?
 
@@ -935,10 +939,8 @@ class VACOLS::CaseDocket < VACOLS::Record
         excluded_judges_attorney_ids&.include?(appeal["prev_deciding_judge"]))
   end
 
-  def self.reject_due_to_affinity?(appeal, lever)
-    appeal_affinity = VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity
-    appeal_affinity&.affinity_start_date.nil? ||
-      (appeal_affinity.affinity_start_date > lever.to_i.days.ago)
+  def self.reject_due_to_affinity?(appeal_affinity, lever_value)
+    appeal_affinity.nil? || appeal_affinity > lever_value.to_i.days.ago
   end
 
   def self.deciding_judge_ineligible_with_no_hearings_after_decision(appeal)
@@ -1024,13 +1026,14 @@ class VACOLS::CaseDocket < VACOLS::Record
     fmtd_query = sanitize_sql_array([query])
 
     appeals = conn.exec_query(fmtd_query).to_a
+    appeal_affinities = AppealAffinity.where(case_id: appeals.pluck("bfkey"), case_type: "VACOLS::Case").pluck(:case_id, :affinity_start_date).to_h
 
     if in_window
       appeals.select! do |appeal|
         if appeal["bfac"] == "7" && appeal["aod"] == 0
-          reject_due_to_affinity?(appeal, cavc_affinity_lever_value)
+          reject_due_to_affinity?(appeal_affinities[appeal["bfkey"]], cavc_affinity_lever_value)
         elsif appeal["bfac"] == "7" && appeal["aod"] == 1
-          reject_due_to_affinity?(appeal, cavc_aod_affinity_lever_value)
+          reject_due_to_affinity?(appeal_affinities[appeal["bfkey"]], cavc_aod_affinity_lever_value)
         elsif appeal["bfac"] != "7"
           false
         end
@@ -1038,9 +1041,9 @@ class VACOLS::CaseDocket < VACOLS::Record
     else
       appeals.reject! do |appeal|
         if appeal["bfac"] == "7" && appeal["aod"] == 0
-          reject_due_to_affinity?(appeal, cavc_affinity_lever_value)
+          reject_due_to_affinity?(appeal_affinities[appeal["bfkey"]], cavc_affinity_lever_value)
         elsif appeal["bfac"] == "7" && appeal["aod"] == 1
-          reject_due_to_affinity?(appeal, cavc_aod_affinity_lever_value)
+          reject_due_to_affinity?(appeal_affinities[appeal["bfkey"]], cavc_aod_affinity_lever_value)
         elsif appeal["bfac"] != "7"
           false
         end

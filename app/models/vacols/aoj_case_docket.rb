@@ -848,10 +848,6 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket # rubocop:disable Metrics/Class
     Rails.cache.fetch("case_distribution_ineligible_judges")&.pluck(:sattyid)&.reject(&:blank?) || []
   end
 
-  def self.reject_due_to_affinity?(appeal_affinity, lever_value)
-    appeal_affinity.nil? || appeal_affinity > lever_value.to_i.days.ago
-  end
-
   def self.excluded_judges_sattyids
     VACOLS::Staff.where(sdomainid: JudgeTeam.active
         .where(exclude_appeals_from_affinity: true)
