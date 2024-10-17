@@ -30,6 +30,20 @@ describe('FeatureToggleConfiguration', () => {
   it('renders the FeatureToggleConfiguration component', async () => {
     const mockProps = {
       featureToggle: 'Feature1',
+      currentState: {
+        scenarios: [],
+        user: {
+          user: {
+            station_id: '',
+            regional_office: '',
+            roles: [],
+            functions: {},
+            organizations: [],
+            feature_toggles: {}
+          }
+        }
+      },
+      updateState: jest.fn()
     };
 
     renderFeatureToggleConfiguration(mockProps);

@@ -1,44 +1,42 @@
-import React from 'react';
-import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import AppFrame from '../../components/AppFrame';
-import { BrowserRouter } from 'react-router-dom';
-import { css } from 'glamor';
+/* eslint-disable max-lines, max-len */
 
-import Button from '../../components/Button';
-
-import UserConfiguration from './UserConfiguration';
-import ScenarioConfigurations from './ScenarioConfigurations';
+import React, { useState } from 'react';
+import LoadTestForm from './LoadTestForm';
 
 export default function LoadTest(props) {
+  const [state, setUpdatedState] = useState(
+    {
+      scenarios: [],
+      user: {
+        user: {
+          station_id: '',
+          regional_office: '',
+          roles: [],
+          functions: {},
+          organizations: [],
+          feature_toggles: {}
+        }
+      }
+    }
+  );
 
-  return <BrowserRouter>
-    <div>
-      <AppFrame>
-        <AppSegment filledBackground>
-          <h1>Test Target Configuration</h1>
-          <UserConfiguration {...props} />
-          <br />
-          <h2>Scenario Groups</h2>
-          <ScenarioConfigurations />
-        </AppSegment>
-        <div {...css({ overflow: 'hidden' })}>
-          <Button
-            id="Cancel"
-            name="Cancel"
-            linkStyling
-            styling={css({ float: 'left', paddingLeft: 0, paddingRight: 0 })}
-          >
-            Cancel
-          </Button>
-          <span {...css({ float: 'right' })}>
-            <Button
-              id="Submit"
-              name="Submit"
-              className="usa-button"
-            />
-          </span>
-        </div>
-      </AppFrame>
-    </div>
-  </BrowserRouter>;
+  return <div>
+    <LoadTestForm {...props} currentState={state} updateState={setUpdatedState} />
+  </div>;
 }
+
+/*
+This file acts as a container to the LoadTestForm. Consider this a note on what the overall behavior of this
+portion of the app is.
+
+The component tree is as follows:
+    -LoadTestForm // the actual form for the load test. The onSubmit happens here when the button is clicked.
+      the body of the POST request is set up here as well through the use of the currentState method.
+        -UserConfiguration and Scenario Configurations are rendered through the LoadTestForm. Both making
+          use of the updateState and currentState methods.
+
+State is created in this file and then passed in to the rendered component,
+  both the getter and setter methods that will provide updates to state as
+  the changes are made in the form. As selections happen, state wil be updated providing an 'easy'
+  way to create the body for the POST request.
+*/

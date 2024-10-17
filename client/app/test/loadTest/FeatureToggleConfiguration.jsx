@@ -1,33 +1,59 @@
 /* eslint-disable max-lines, max-len */
 
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 import Checkbox from '../../components/Checkbox';
 
-export default function FeatureToggleConfiguration(props) {
-  const [isChecked, featureIsChecked] = useState(false);
+const FeatureToggleConfiguration = ({ featureToggle, currentState, updateState }) => {
+  const handleFeatureToggleSelect = (selectedFeature, value) => {
+    const currentFeatureToggles = currentState.user.user.feature_toggles;
+    let featureToggleObjCopy = {};
 
-  let feature = props.featureToggle;
+    if (value) {
+      const updatedFeatureToggles = {
+        ...currentFeatureToggles,
+        [selectedFeature]: value
+      };
 
-  const onChangeHandle = () => {
-    featureIsChecked(!isChecked);
+      featureToggleObjCopy = updatedFeatureToggles;
+    } else {
+      // eslint-disable-next-line no-unused-vars
+      const { [selectedFeature]: removedValue, ...updatedFeatureToggles } = currentFeatureToggles;
+
+      featureToggleObjCopy = updatedFeatureToggles;
+    }
+
+    updateState({
+      ...currentState,
+      user: {
+        ...currentState.user,
+        user: {
+          ...currentState.user.user,
+          feature_toggles: featureToggleObjCopy
+        }
+      }
+    });
   };
 
   return (
     <div className="load-test-container-checkbox">
       <Checkbox
-        label={feature}
-        name={feature}
-        onChange={() => {
-          onChangeHandle();
+        label={featureToggle}
+        name={featureToggle}
+        onChange={(value) => {
+          handleFeatureToggleSelect(featureToggle, value);
         }}
-        value={isChecked}
+        isChecked={Boolean(currentState.user.user.feature_toggles[featureToggle] ?? false)}
       />
     </div>
   );
-}
+};
 
 FeatureToggleConfiguration.propTypes = {
-  featureToggle: PropTypes.string
+  featureToggle: PropTypes.string,
+  currentState: PropTypes.object,
+  updateState: PropTypes.func
 };
+
+export default FeatureToggleConfiguration;

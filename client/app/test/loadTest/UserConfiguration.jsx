@@ -8,17 +8,39 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 
 import FeatureToggleConfiguration from './FeatureToggleConfiguration';
 import FunctionConfiguration from './FunctionConfiguration';
-import OrganizationDropdown from './OrganizationDropdown';
-import OFFICE_INFO from '../../../constants/REGIONAL_OFFICE_FOR_CSS_STATION.json';
+import OFFICE_INFO from '../../../constants/REGIONAL_OFFICE_FOR_CSS_STATION';
+import OrgCheckboxSection from './OrgCheckboxSection';
 
 export default function UserConfiguration(props) {
-  const [isSelectedStation, stationIsSelected] = useState(false);
   const [stationSelected, setStationSelected] = useState('');
+  const [isSelectedStation, stationIsSelected] = useState(false);
   const [isSelectedOffice, officeIsSelected] = useState(false);
   const [officeSelected, setOfficeSelected] = useState('');
 
   const filteredStations = [];
   const stationsMapping = new Map();
+
+  const functionsAvailable = props.form_values.functions_available;
+  const featureToggles = props.featuresList;
+  const currentState = props.currentState;
+  const updateState = props.updateState;
+
+  const handleStationSelect = ({ value }) => {
+    stationIsSelected(true);
+    setStationSelected(value);
+    updateState(
+      {
+        ...currentState,
+        user: {
+          ...currentState.user,
+          user: {
+            ...currentState.user.user,
+            station_id: value
+          }
+        }
+      }
+    );
+  };
 
   Object.entries(OFFICE_INFO).forEach((info) => {
     if (info[1] !== 'NA') {
@@ -29,11 +51,6 @@ export default function UserConfiguration(props) {
       filteredStations.push({ value: info[0], label: info[0] });
     }
   });
-
-  const handleStationSelect = ({ value }) => {
-    stationIsSelected(true);
-    setStationSelected(value);
-  };
 
   const stationAssignedOffices = OFFICE_INFO[stationSelected];
 
@@ -55,10 +72,19 @@ export default function UserConfiguration(props) {
   const handleOfficeSelect = ({ value }) => {
     officeIsSelected(true);
     setOfficeSelected(value);
+    props.updateState(
+      {
+        ...currentState,
+        user: {
+          ...currentState.user,
+          user: {
+            ...currentState.user.user,
+            regional_office: value
+          }
+        }
+      }
+    );
   };
-
-  const functionsAvailable = props.form_values.functions_available;
-  const featureToggles = props.featuresList;
 
   featureToggles.sort();
 
@@ -90,32 +116,38 @@ export default function UserConfiguration(props) {
             value={officeSelected}
           />
           { isSelectedOffice &&
-          (<div>
-            <br />
-            <p>Organizations</p>
-            <OrganizationDropdown {...props} />
-            <br />
-            <h2><strong>Functions</strong></h2>
-            <div className="load-test-container test-class-sizing">
-              {functionsAvailable.map((functionOption) => (
-                <FunctionConfiguration
-                  key={functionOption}
-                  functionOption={functionOption}
-                />
-              ))}
+            (<div>
+              <br />
+              <p>Organizations</p>
+              <div className="load-test-container">
+                <OrgCheckboxSection {...props} />
+              </div>
+              <br />
+              <h2><strong>Functions</strong></h2>
+              <div className="load-test-container test-class-sizing">
+                {functionsAvailable.map((functionOption) => (
+                  <FunctionConfiguration
+                    key={functionOption}
+                    functionOption={functionOption}
+                    currentState={currentState}
+                    updateState={props.updateState}
+                  />
+                ))}
+              </div>
+              <br />
+              <h2><strong>Feature Toggles</strong></h2>
+              <div className="load-test-container test-class-sizing">
+                {featureToggles.map((featureToggle) => (
+                  <FeatureToggleConfiguration
+                    key={featureToggle}
+                    featureToggle={featureToggle}
+                    currentState={currentState}
+                    updateState={props.updateState}
+                  />
+                ))}
+              </div>
             </div>
-            <br />
-            <h2><strong>Feature Toggles</strong></h2>
-            <div className="load-test-container test-class-sizing">
-              {featureToggles.map((featureToggle) => (
-                <FeatureToggleConfiguration
-                  key={featureToggle}
-                  featureToggle={featureToggle}
-                />
-              ))}
-            </div>
-          </div>
-          )}
+            )}
         </div>
         )}
     </div>
@@ -123,7 +155,11 @@ export default function UserConfiguration(props) {
 }
 
 UserConfiguration.propTypes = {
+  all_organizations: PropTypes.array,
   featuresList: PropTypes.array,
   form_values: PropTypes.object,
-  functions_available: PropTypes.array
+  functions_available: PropTypes.array,
+  register: PropTypes.func,
+  currentState: PropTypes.object,
+  updateState: PropTypes.func
 };
