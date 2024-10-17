@@ -144,6 +144,7 @@ export const tabConfig = (
               onChange={search.onChange}
               onSubmit={search.onSubmit}
               submitUsingEnterKey
+              defaultValue={search.value}
             />
           </div>
         </div>
@@ -176,6 +177,7 @@ export const tabConfig = (
               onChange={search.onChange}
               onSubmit={search.onSubmit}
               submitUsingEnterKey
+              defaultValue={search.value}
             />
           </div>
         </div>
@@ -209,6 +211,7 @@ export const tabConfig = (
               onChange={search.onChange}
               onSubmit={search.onSubmit}
               submitUsingEnterKey
+              defaultValue={search.value}
             />
           </div>
         </div>
@@ -241,6 +244,7 @@ export const tabConfig = (
               onChange={search.onChange}
               onSubmit={search.onSubmit}
               submitUsingEnterKey
+              defaultValue={search.value}
             />
           </div>
         </div>

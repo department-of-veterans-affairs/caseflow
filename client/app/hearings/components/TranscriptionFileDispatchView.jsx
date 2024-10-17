@@ -33,9 +33,6 @@ export const TranscriptionFileDispatchView = ({ organizations }) => {
   const [modalConfig, setModalConfig] = useState({ opened: false, type: '' });
   const [contractors, setContractors] = useState({ transcription_contractors: [], return_dates: ['---', '---'] });
 
-  const [searchValue, setSearchValue] = useState('');
-  const [searchInput, setSearchInput] = useState('');
-
   const tabFromUrl = () => {
     const params = getQueryParams(window.location.search);
     let page = 0;
@@ -50,7 +47,22 @@ export const TranscriptionFileDispatchView = ({ organizations }) => {
 
     return page;
   };
+
   const [currentTab] = useState(tabFromUrl());
+
+  const searchFromUrl = () => {
+    let search = '';
+    const params = getQueryParams(window.location.search);
+
+    if (params.search) {
+      search = params.search;
+    }
+
+    return search;
+  };
+
+  const [searchValue, setSearchValue] = useState(searchFromUrl());
+  const [searchInput, setSearchInput] = useState('');
 
   /**
    * Fetches available contractors
