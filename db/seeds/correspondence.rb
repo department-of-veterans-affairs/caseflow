@@ -127,6 +127,10 @@ module Seeds
         @file_number += 1
         @participant_id += 1
         veteran = create(:veteran, file_number: @file_number, participant_id: @participant_id)
+
+        # Creating inactive appeals for each veteran
+        create_inactive_appeals(veteran)
+
         35.times do
           appeal = create(:appeal, veteran: veteran)
           InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
@@ -139,6 +143,9 @@ module Seeds
     def create_queue_correspondences(user)
       veterans = create_veterans
       veterans.each do |veteran|
+        # Creating inactive appeals that have a RootTask with the status of canceled
+        create_inactive_appeals_for_user(user, veteran)
+
         # Correspondences with unassigned ReviewPackageTask
         create_correspondence_with_unassigned_review_package_task(user, veteran)
 
@@ -168,9 +175,6 @@ module Seeds
 
         # Correspondences with the CorrespondenceRootTask with the status of canceled
         create_correspondence_with_canceled_root_task(user, veteran)
-
-        # Creating Inactive Appeals that have a RootTask with the status of canceled
-        create_inactive_appeals(user, veteran)
 
         # Correspondences with the tasks for CAVC and Congress Interest
         create_cavc_mailtask(user, veteran)
@@ -280,15 +284,31 @@ module Seeds
       corres.root_task.update!(status: Constants.TASK_STATUSES.cancelled)
     end
 
-    def create_inactive_appeals(user, veteran = {})
+    def create_inactive_appeals(veteran)
+      # creating three appeals with cancelled root task
+      3.times do
+        appeal = create(:appeal, veteran: veteran)
+        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+        appeal.root_task.update!(status: Constants.TASK_STATUSES.cancelled)
+      end
+
+      # creating three appeals with completed root task
+      3.times do
+        appeal = create(:appeal, veteran: veteran)
+        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+        appeal.root_task.update!(status: Constants.TASK_STATUSES.completed)
+      end
+    end
+
+    def create_inactive_appeals_for_user(_user, veteran = {})
       # creating two appeals with cancelled root task
-      2.times do
+      3.times do
         appeal = create(:appeal, veteran: veteran)
         InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
         appeal.root_task.update!(status: Constants.TASK_STATUSES.cancelled)
       end
       # creating two appeals with completed root task
-      2.times do
+      3.times do
         appeal = create(:appeal, veteran: veteran)
         InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
         appeal.root_task.update!(status: Constants.TASK_STATUSES.completed)
