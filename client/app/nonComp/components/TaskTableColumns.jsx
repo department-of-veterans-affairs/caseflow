@@ -74,10 +74,10 @@ export const vhaTaskCompletedDateColumn = () => {
     filterSettings: {
       buttons: false,
       position: 'right',
-      options: 'additional'
+      additionalOptions: true,
     },
     columnName: 'closedAt',
-    valueName: 'Date Completed',
+    valueName: 'closedAt',
     label: 'Date Completed',
     getSortValue: (task) => task.closedAt ? new Date(task.closedAt) : null
   };
