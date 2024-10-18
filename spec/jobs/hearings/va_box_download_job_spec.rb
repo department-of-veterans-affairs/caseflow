@@ -2,7 +2,7 @@
 
 RSpec.describe Hearings::VaBoxDownloadJob, type: :job do
   let(:hearing) { create(:hearing) }
-  let(:ama_file_id) { "1640086158231" }
+  let(:ama_file_id) { "164008615821" }
 
   let(:legacy_hearing) { create(:legacy_hearing) }
   let(:legacy_file_id) { "1640086158232" }
@@ -31,8 +31,8 @@ RSpec.describe Hearings::VaBoxDownloadJob, type: :job do
     allow(ExternalApi::VaBoxService).to receive(:new)
       .and_return(Fakes::VaBoxService.new)
 
-    # Ensure a Transcription record exists for the hearing
-    create(:transcription, hearing: hearing)
+    Transcription.create(hearing_id: hearing.id)
+
   end
 
   # # see data setup in Fakes::VaBoxService for expectations
