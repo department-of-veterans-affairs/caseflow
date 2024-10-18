@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ReviewTranscriptTask < Task
+  before_validation :set_assignee
+
   USER_ACTIONS = [
     Constants.TASK_ACTIONS.TRANSCRIPT_NO_ERRORS_FOUND.to_h,
     Constants.TASK_ACTIONS.TRANSCRIPT_ERRORS_FOUND_AND_CORRECTED.to_h,
@@ -19,5 +21,9 @@ class ReviewTranscriptTask < Task
 
   def default_instructions
     COPY::REVIEW_TRANSCRIPT_TASK_DEFAULT_INSTRUCTIONS
+  end
+
+  def set_assignee
+    self.assigned_to ||= HearingAdmin.singleton
   end
 end
