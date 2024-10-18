@@ -23,19 +23,25 @@ describe('DocumentsTable', () => {
 
       expect(rowObjects).toEqual([
         {
+          fileSize: expect.any(Number),
           id: 12,
           listComments: true
         },
         {
+          fileSize: expect.any(Number),
           id: 15,
           listComments: true
         },
         {
+          fileSize: expect.any(Number),
           id: 15,
           listComments: true,
           isComment: true
         },
-        { id: 20 }
+        {
+          fileSize: expect.any(Number),
+          id: 20,
+        },
       ]);
     }
   );
