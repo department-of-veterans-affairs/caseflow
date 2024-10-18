@@ -624,6 +624,7 @@ describe('QueueTable', () => {
     describe('Front end filtering', () => {
 
       const setupFrontend = () => {
+        jest.spyOn(Date, 'now').mockReturnValue('2024-10-18T15:37:00.000-04:00');
 
         return render(<QueueTable
           columns={columns}
