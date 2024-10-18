@@ -1613,6 +1613,14 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   font-weight: bold;
 }
 
+.number-of-issues-header {
+  font-weight: bold;
+
+  span {
+    padding-left: 10px;
+  }
+}
+
 .correspondence-tasks-added {
   background-color: $color-gray-inverse-base;
   padding-left: 2%;
@@ -1640,6 +1648,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   display: block;
 }
 
+.case-details-header-badge,
 .case-details-badge {
   display: flex;
   width: fit-content;
@@ -1648,12 +1657,26 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   background-color: $color-white;
 }
 
+.case-details-header-badge {
+  flex-grow: unset;
+  margin: 12px 17px 12px 2px;
+}
+
 .link-icon-container {
   display: flex;
 }
 
 .tasks-added-details {
   margin-left: 40px;
+}
+
+.tasks-added-waive-banner-alert {
+  margin-left: 40px;
+  width: 95%;
+}
+
+.waive-banner-alert .usa-alert.usa-alert-slim {
+  padding-top: 4px;
 }
 
 .grayLineStyling {

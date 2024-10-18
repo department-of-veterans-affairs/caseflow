@@ -22,6 +22,7 @@
     responseMessage: @response_message,
     organizations: @correspondence_details[:organizations],
     correspondenceResponseLetters: @correspondence_response_letters,
+    correspondence_uuid: @correspondence_uuid,
     addLetterCheck: true,
     featureToggles: {
       correspondence_queue: FeatureToggle.enabled?(:correspondence_queue, user: current_user)

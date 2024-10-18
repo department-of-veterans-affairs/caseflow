@@ -27,7 +27,10 @@ class CorrespondenceIntakeProcessor
     fail "Correspondence not found" if correspondence.blank?
 
     ActiveRecord::Base.transaction do
-      # Existing method to remove correspondence relations
+      create_correspondence_relations(intake_params, correspondence.id, true)
+      link_appeals_to_correspondence(intake_params, correspondence.id)
+      unlink_appeals_to_correspondence(intake_params, correspondence)
+      # Ensure relations removal logic is in place
       remove_correspondence_relations(intake_params, correspondence)
 
       # Method to add a task unrelated to appeals
@@ -73,13 +76,19 @@ class CorrespondenceIntakeProcessor
     false
   end
 
-  def create_correspondence_relations(intake_params, correspondence_id)
+  def create_correspondence_relations(intake_params, correspondence_id, direct_id = false)
     intake_params[:related_correspondence_uuids]&.map do |uuid|
       CorrespondenceRelation.create!(
         correspondence_id: correspondence_id,
-        related_correspondence_id: Correspondence.find_by(uuid: uuid)&.id
+        related_correspondence_id: related_correspondence_id(uuid, direct_id)
       )
     end
+  end
+
+  def related_correspondence_id(uuid, direct_id)
+    return uuid if direct_id
+
+    Correspondence.find_by(uuid: uuid)&.id
   end
 
   def remove_correspondence_relations(intake_params, correspondence)
@@ -119,6 +128,15 @@ class CorrespondenceIntakeProcessor
         user_id: current_user.id
       )
     end
+  end
+
+  def unlink_appeals_to_correspondence(intake_params, correspondence)
+    return unless intake_params[:unselected_appeal_ids]
+
+    correspondence_appeals_to_delete = correspondence.correspondence_appeals
+      .where(appeal_id: intake_params[:unselected_appeal_ids])
+    CorrespondencesAppealsTask.where(correspondence_appeal_id: correspondence_appeals_to_delete.pluck(:id)).delete_all
+    correspondence_appeals_to_delete.delete_all
   end
 
   def link_appeals_to_correspondence(intake_params, correspondence_id)
