@@ -171,7 +171,7 @@ const CorrespondenceDetails = (props) => {
         setInitialSelectedAppeals(appealIds);
         sortAppeals(appealIds);
         setAppealTableKey((key) => key + 1);
-      }
+      };
 
       // Send POST request to create relations
       const patchResponse = await ApiUtil.patch(
@@ -181,7 +181,7 @@ const CorrespondenceDetails = (props) => {
 
       // Check for general success status (any 2xx status)
       patchSuccess = isSuccess(patchResponse);
-      updateAppeals(patchResponse)
+      updateAppeals(patchResponse);
       console.log('POST successful:', patchResponse.status); // eslint-disable-line no-console
 
       // Only show success banner if both PATCH and POST requests succeeded
@@ -318,6 +318,25 @@ const CorrespondenceDetails = (props) => {
     return viewAllCorrespondence ? 'Hide all correspondence' : 'View all correspondence';
   };
 
+  const createLinkedAppeal = (appealId) => {
+    const selectedAppeal = correspondenceInfo.appeals_information.find((appeal) => appeal.id === appealId);
+    const corAppeals = correspondenceInfo.correspondenceAppeals;
+    const cor = correspondenceInfo;
+
+    corAppeals.push(selectedAppeal);
+    cor.correspondenceAppeals = corAppeals;
+    dispatch(updateCorrespondenceInfo(cor));
+  };
+
+  const unlinkLinkedAppeal = (appealId) => {
+    const selectedAppeal = correspondenceInfo.appeals_information.find((appeal) => appeal.id === appealId);
+    const corAppeals = correspondenceInfo.correspondenceAppeals.filter((appeal) => appeal.id !== selectedAppeal.id);
+    const cor = correspondenceInfo;
+
+    cor.correspondenceAppeals = corAppeals;
+    dispatch(updateCorrespondenceInfo(cor));
+  };
+
   const allCorrespondencesList = () => {
     return viewAllCorrespondence && (
       <div className="all-correspondences">
@@ -354,6 +373,9 @@ const CorrespondenceDetails = (props) => {
         setUnSelectedAppeals(filtedAppeals);
       }
       setSelectedAppeals([...selectedAppeals, appealId]);
+
+      // add appeal to redux store
+      createLinkedAppeal(appealId);
     } else {
       if (selectedAppeals?.includes(appealId)) {
         const filtedAppeals = selectedAppeals.filter((item) => item !== appealId);
@@ -361,6 +383,7 @@ const CorrespondenceDetails = (props) => {
         setSelectedAppeals(filtedAppeals);
       }
       setUnSelectedAppeals([...unSelectedAppeals, appealId]);
+      unlinkLinkedAppeal(appealId);
     }
   };
 
@@ -370,7 +393,7 @@ const CorrespondenceDetails = (props) => {
         return false;
       }
 
-      return initialSelectedAppeals.every((appeal) => selectedAppeals.includes(appeal));
+      return initialSelectedAppeals?.every((appeal) => selectedAppeals.includes(appeal));
     };
 
     setDisableSubmitButton(isButtonDisabled());
@@ -390,9 +413,11 @@ const CorrespondenceDetails = (props) => {
       return;
     }
 
+    // Ki - Stuff for saving appeals to store things
     props.correspondence.correspondenceAppeals.map((corAppeal) => {
-      dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal.appeal.data])));
-      corAppeal.taskAddedData.data.map((taskData) => {
+      dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal?.appeal?.data])));
+
+      corAppeal?.taskAddedData?.data.map((taskData) => {
         corAppealTasks.push(taskData);
       });
 
@@ -482,23 +507,27 @@ const CorrespondenceDetails = (props) => {
               />
             </AppSegment>
           )}
-          {(props.correspondence.correspondenceAppeals.map((taskAdded) =>
-            <CorrespondenceAppealTasks
-              key={appealTaskKey + taskAdded.id}
-              task_added={taskAdded}
-              correspondence={props.correspondence}
-              organizations={props.organizations}
-              userCssId={props.userCssId}
-              appeal={taskAdded.appeal.data.attributes}
-              waivableUser={props.isInboundOpsSuperuser || props.isInboundOpsSupervisor}
-              correspondence_uuid={props.correspondence_uuid}
-            />
-          )
+          {(props.correspondenceInfo.correspondenceAppeals) && (
+            <div>
+              {(props.correspondenceInfo?.correspondenceAppeals?.map((taskAdded) =>
+                <CorrespondenceAppealTasks
+                  key={appealTaskKey + taskAdded.id}
+                  task_added={taskAdded}
+                  correspondence={props.correspondence}
+                  organizations={props.organizations}
+                  userCssId={props.userCssId}
+                  appeal={taskAdded.appeal.data.attributes}
+                  waivableUser={props.isInboundOpsSuperuser || props.isInboundOpsSupervisor}
+                  correspondence_uuid={props.correspondence_uuid}
+                />
+              ))}
+            </div>
           )}
         </div>
       </React.Fragment>
     );
   };
+
   const correspondenceAndAppealTaskComponents = <>
     {correspondenceTasks()}
 
@@ -787,7 +816,7 @@ const CorrespondenceDetails = (props) => {
   const saveChanges = () => {
     if (isAdminNotLoggedIn() === false) {
       handlepriorMailUpdate();
-    } else if (selectedPriorMail.length > 0 || selectedAppeals.length > 0 || unSelectedAppeals.length > 0 ) {
+    } else if (selectedPriorMail.length > 0 || selectedAppeals.length > 0 || unSelectedAppeals.length > 0) {
       const appealsSelected = selectedAppeals.filter((val) => !correspondence.correspondenceAppealIds.includes(val));
       const priorMailIds = selectedPriorMail.map((mail) => mail.id);
       const payload = {
