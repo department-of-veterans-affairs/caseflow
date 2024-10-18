@@ -110,10 +110,15 @@ const PdfDocument = ({
         withCredentials: true,
         timeout: true,
         responseType: 'arraybuffer',
-        onProgress: ({ loaded, total }) => {
-          const percentage = (loaded / total) * 100;
+        onProgress: ({ loaded }) => {
+          let percentage = 0;
+
+          if (doc.file_size > 0) {
+            percentage = (loaded / doc.file_size) * 100;
+          }
 
           console.log(`** Downloaded %${percentage.toFixed(0)} `);
+
         }
       };
 
