@@ -171,7 +171,7 @@ const CorrespondenceDetails = (props) => {
         setInitialSelectedAppeals(appealIds);
         sortAppeals(appealIds);
         setAppealTableKey((key) => key + 1);
-      }
+      };
 
       // Send POST request to create relations
       const patchResponse = await ApiUtil.patch(
@@ -520,9 +520,9 @@ const CorrespondenceDetails = (props) => {
                   waivableUser={props.isInboundOpsSuperuser || props.isInboundOpsSupervisor}
                   correspondence_uuid={props.correspondence_uuid}
                 />
-              ))};
+              ))}
             </div>
-          )};
+          )}
         </div>
       </React.Fragment>
     );

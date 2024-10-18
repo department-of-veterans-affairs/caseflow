@@ -38,7 +38,7 @@ const CorrespondenceAppealTasks = (props) => {
   useEffect(() => {
     if (
       waiveEvidenceAlertBanner?.message &&
-      waiveEvidenceAlertBanner.appealId?.toString() === appeal.id?.toString()
+      waiveEvidenceAlertBanner?.appealId?.toString() === appeal?.id?.toString()
     ) {
       setIsLinkedAppealExpanded((prev) => ({
         ...prev,
@@ -69,16 +69,16 @@ const CorrespondenceAppealTasks = (props) => {
         </div>
         <div className="toggleButton-plus-or-minus">
           <Button
-            onClick={() => toggleLinkedAppealSection(appeal.id)}
+            onClick={() => toggleLinkedAppealSection(appeal?.id)}
             linkStyling
             aria-label="Toggle section"
-            aria-expanded={isLinkedAppealExpanded[appeal.id] || false}
+            aria-expanded={isLinkedAppealExpanded[appeal?.id] || false}
           >
-            {isLinkedAppealExpanded[appeal.id] ? '_' : <span className="plus-symbol">+</span>}
+            {isLinkedAppealExpanded[appeal?.id] ? '_' : <span className="plus-symbol">+</span>}
           </Button>
         </div>
       </div>
-      {isLinkedAppealExpanded[appeal.id] && (
+      {isLinkedAppealExpanded[appeal?.id] && (
         <div className="tasks-added-container">
           <div className="correspondence-tasks-added ">
             <div className="corr-tasks-added-col first-row">
@@ -121,17 +121,17 @@ const CorrespondenceAppealTasks = (props) => {
           <div className="tasks-added-waive-banner-alert">
             <div className="waive-banner-alert">
               {appeal &&
-              waiveEvidenceAlertBanner &&
-              waiveEvidenceAlertBanner.message &&
-              waiveEvidenceAlertBanner.appealId &&
-              appeal.id &&
-              waiveEvidenceAlertBanner.appealId.toString() === appeal.id.toString() && (
-                  <Alert
-                    type={waiveEvidenceAlertBanner.type}
-                    message={waiveEvidenceAlertBanner.message}
-                    scrollOnAlert={false}
-                  />
-                )}
+                waiveEvidenceAlertBanner &&
+                waiveEvidenceAlertBanner.message &&
+                waiveEvidenceAlertBanner.appealId &&
+                appeal?.id &&
+                waiveEvidenceAlertBanner?.appealId.toString() === appeal?.id.toString() && (
+                <Alert
+                  type={waiveEvidenceAlertBanner.type}
+                  message={waiveEvidenceAlertBanner.message}
+                  scrollOnAlert={false}
+                />
+              )}
             </div>
           </div>
           <div className="tasks-added-details">
@@ -172,7 +172,6 @@ CorrespondenceAppealTasks.propTypes = {
 const mapStateToProps = (state) => ({
   waiveEvidenceAlertBanner: state.correspondenceDetails.waiveEvidenceAlertBanner,
 });
-
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
