@@ -3,6 +3,7 @@ import { update } from '../../util/ReducerUtil';
 import { combineReducers } from 'redux';
 import orgUserReducer from '../actions/usersSlice';
 import changeHistoryReducer from '../actions/changeHistorySlice';
+import savedSearchReducer from '../actions/savedSearchSlice';
 import { timeFunction } from '../../util/PerfDebug';
 
 export const mapDataToInitialState = function(props = {}) {
@@ -99,7 +100,8 @@ export const nonCompReducer = (state = mapDataToInitialState, action) => {
 const combinedReducer = combineReducers({
   nonComp: nonCompReducer,
   orgUsers: orgUserReducer,
-  changeHistory: changeHistoryReducer
+  changeHistory: changeHistoryReducer,
+  savedSearch: savedSearchReducer
 });
 
 export default timeFunction(
