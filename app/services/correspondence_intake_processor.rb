@@ -27,8 +27,14 @@ class CorrespondenceIntakeProcessor
     fail "Correspondence not found" if correspondence.blank?
 
     ActiveRecord::Base.transaction do
+      create_correspondence_relations(intake_params, correspondence.id, true)
+      link_appeals_to_correspondence(intake_params, correspondence.id)
+      unlink_appeals_to_correspondence(intake_params, correspondence)
       # Ensure relations removal logic is in place
       remove_correspondence_relations(intake_params, correspondence)
+
+      # Method to add a task unrelated to appeals
+      add_task_not_related_to_appeals(intake_params, correspondence)
 
       # Additional logic to update correspondence fields if necessary (optional)
     end
@@ -70,13 +76,19 @@ class CorrespondenceIntakeProcessor
     false
   end
 
-  def create_correspondence_relations(intake_params, correspondence_id)
+  def create_correspondence_relations(intake_params, correspondence_id, direct_id = false)
     intake_params[:related_correspondence_uuids]&.map do |uuid|
       CorrespondenceRelation.create!(
         correspondence_id: correspondence_id,
-        related_correspondence_id: Correspondence.find_by(uuid: uuid)&.id
+        related_correspondence_id: related_correspondence_id(uuid, direct_id)
       )
     end
+  end
+
+  def related_correspondence_id(uuid, direct_id)
+    return uuid if direct_id
+
+    Correspondence.find_by(uuid: uuid)&.id
   end
 
   def remove_correspondence_relations(intake_params, correspondence)
@@ -116,6 +128,15 @@ class CorrespondenceIntakeProcessor
         user_id: current_user.id
       )
     end
+  end
+
+  def unlink_appeals_to_correspondence(intake_params, correspondence)
+    return unless intake_params[:unselected_appeal_ids]
+
+    correspondence_appeals_to_delete = correspondence.correspondence_appeals
+      .where(appeal_id: intake_params[:unselected_appeal_ids])
+    CorrespondencesAppealsTask.where(correspondence_appeal_id: correspondence_appeals_to_delete.pluck(:id)).delete_all
+    correspondence_appeals_to_delete.delete_all
   end
 
   def link_appeals_to_correspondence(intake_params, correspondence_id)
@@ -177,6 +198,26 @@ class CorrespondenceIntakeProcessor
       )
     end
   end
+
+    # Add a task not related to appeals
+    def add_task_not_related_to_appeals(intake_params, correspondence)
+      unrelated_task_data = intake_params[:tasks_not_related_to_appeal]
+
+      # Ensure the task data is present
+      return if unrelated_task_data.blank? || unrelated_task_data.empty?
+
+      unrelated_task_data.each do |data|
+        # Create the task using provided parameters
+        task_class_for_task_unrelated(data).create_from_params(
+          {
+            parent_id: correspondence.root_task.id,
+            assigned_to: class_for_assigned_to(data[:assigned_to]).singleton,
+            instructions: data[:content]
+          },
+          RequestStore.store[:current_user] || User.system_user
+        )
+      end
+    end
 
   def create_mail_tasks(intake_params, correspondence, current_user)
     mail_task_data = intake_params[:mail_tasks]

@@ -96,6 +96,7 @@ import CorrespondenceReviewPackage from './correspondence/ReviewPackage/Correspo
 import CorrespondenceIntake from './correspondence/intake/components/CorrespondenceIntake';
 import CorrespondenceAssignTaskModal from './components/CorrespondenceAssignTaskModal';
 import CorrespondenceAssignTeamModal from './components/CorrespondenceAssignTeamModal';
+import CorrespondenceRemoveWaiveEvidenceModal from './components/CorrespondenceRemoveWaiveEvidence';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_TITLES } from './constants';
@@ -759,6 +760,13 @@ class QueueApp extends React.PureComponent {
     />
   );
 
+  routedCorrespondenceRemoveWaiveEvidenceModal = (props) => (
+    <CorrespondenceRemoveWaiveEvidenceModal
+      {...props.match.params}
+      correspondence_uuid={this.props.correspondence_uuid}
+    />
+  );
+
   routedCorrespondenceEditGeneralInformationModal = (props) => (
     <CorrespondenceEditGeneralInformationModal {...props.match.params}
       {...this.props}
@@ -1040,6 +1048,17 @@ class QueueApp extends React.PureComponent {
               }
               title={`${PAGE_TITLES.ASSIGN_CORR_TASK_TO_TEAM} | Caseflow`}
               render={this.routedCorrespondenceAssignTeamModal}
+            />
+
+            <PageRoute
+              exact
+              path={
+                '/queue/appeals/:appealId/tasks/:taskId/' +
+            `(${TASK_ACTIONS.REMOVE_WAIVE_EVIDENCE_WINDOW.value
+            })`
+              }
+              title={`${PAGE_TITLES.REMOVE_WAIVE_EVIDENCE_WINDOW}`}
+              render={this.routedCorrespondenceRemoveWaiveEvidenceModal}
             />
 
             <PageRoute
@@ -1682,6 +1701,7 @@ QueueApp.propTypes = {
   userPermissions: PropTypes.array,
   configUrl: PropTypes.string,
   correspondenceResponseLetters: PropTypes.array,
+  correspondence_uuid: PropTypes.string,
 };
 
 const mapStateToProps = (state) => ({

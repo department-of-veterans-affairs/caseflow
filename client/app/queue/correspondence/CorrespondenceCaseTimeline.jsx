@@ -6,37 +6,38 @@ import CorrespondenceTaskRows from './CorrespondenceTaskRows';
 import Alert from '../../components/Alert';
 import {
   setTaskNotRelatedToAppealBanner,
-  setTasksUnrelatedToAppealEmpty } from './correspondenceDetailsReducer/correspondenceDetailsActions';
+  setTasksUnrelatedToAppealEmpty,
+  setUnrelatedTaskList
+} from './correspondenceDetailsReducer/correspondenceDetailsActions';
 
 const CorrespondenceCaseTimeline = (props) => {
-
-  const { taskNotRelatedToAppealBanner, correspondenceInfo } = props;
+  const { taskNotRelatedToAppealBanner, correspondenceInfo, unrelatedTaskList } = props;
 
   useEffect(() => {
+    if (unrelatedTaskList.length === 0 && correspondenceInfo.tasksUnrelatedToAppeal.length > 0) {
+      props.setUnrelatedTaskList(correspondenceInfo.tasksUnrelatedToAppeal);
+    }
 
     if (correspondenceInfo.tasksUnrelatedToAppeal.length === 0) {
       props.setTasksUnrelatedToAppealEmpty(true);
     }
-
-  }, []);
+  }, [correspondenceInfo.tasksUnrelatedToAppeal, unrelatedTaskList.length]);
 
   return (
     <React.Fragment>
-      { (Object.keys(taskNotRelatedToAppealBanner).length > 0) && (
+      {(Object.keys(taskNotRelatedToAppealBanner).length > 0) && (
         <div className="correspondence-details-alert-banner">
-          <Alert
-            type={taskNotRelatedToAppealBanner.type}>
+          <Alert type={taskNotRelatedToAppealBanner.type}>
             {taskNotRelatedToAppealBanner.message}
           </Alert>
         </div>
-
       )}
       <table id="case-timeline-table" summary="layout table">
         <tbody>
           <CorrespondenceTaskRows
             organizations={props.organizations}
             correspondence={props.correspondence}
-            taskList={correspondenceInfo.tasksUnrelatedToAppeal}
+            taskList={unrelatedTaskList}
             statusSplit
           />
         </tbody>
@@ -47,27 +48,30 @@ const CorrespondenceCaseTimeline = (props) => {
 
 CorrespondenceCaseTimeline.propTypes = {
   loadCorrespondence: PropTypes.func,
+  setUnrelatedTaskList: PropTypes.func,
   setTasksUnrelatedToAppealEmpty: PropTypes.func,
   correspondence: PropTypes.object,
   correspondenceInfo: PropTypes.object,
   taskNotRelatedToAppealBanner: PropTypes.object,
+  unrelatedTaskList: PropTypes.array,
   organizations: PropTypes.array,
   tasksToDisplay: PropTypes.array,
   userCssId: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({
-  correspondences: state.intakeCorrespondence.correspondences,
   taskNotRelatedToAppealBanner: state.correspondenceDetails.bannerAlert,
   correspondenceInfo: state.correspondenceDetails.correspondenceInfo,
   tasksUnrelatedToAppeal: state.correspondenceDetails.tasksUnrelatedToAppeal,
   tasksUnrelatedToAppealEmpty: state.correspondenceDetails.tasksUnrelatedToAppealEmpty,
+  unrelatedTaskList: state.correspondenceDetails.unrelatedTaskList,
 });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
     setTaskNotRelatedToAppealBanner,
-    setTasksUnrelatedToAppealEmpty
+    setTasksUnrelatedToAppealEmpty,
+    setUnrelatedTaskList
   }, dispatch)
 );
 

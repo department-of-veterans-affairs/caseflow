@@ -7,7 +7,9 @@ import PropTypes from 'prop-types';
 import TabWindow from '../../../components/TabWindow';
 import CopyTextButton from '../../../components/CopyTextButton';
 import CorrespondenceCaseTimeline from '../CorrespondenceCaseTimeline';
-import { updateCorrespondenceInfo } from './../correspondenceDetailsReducer/correspondenceDetailsActions';
+import {
+  updateCorrespondenceInfo,
+  setUnrelatedTaskList } from './../correspondenceDetailsReducer/correspondenceDetailsActions';
 import CorrespondenceResponseLetters from './CorrespondenceResponseLetters';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
@@ -25,10 +27,12 @@ import Alert from '../../../components/Alert';
 import ApiUtil from '../../../util/ApiUtil';
 import CorrespondenceEditGeneralInformationModal from '../../components/CorrespondenceEditGeneralInformationModal';
 import CorrespondenceAppealTasks from '../CorrespondenceAppealTasks';
+import AddTaskModalCorrespondenceDetails from '../intake/components/TasksAppeals/AddTaskModalCorrespondenceDetails';
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
   const correspondence = props.correspondence;
+  const unrelatedTaskList = props.unrelatedTaskList;
   const correspondenceInfo = props.correspondenceInfo;
   const mailTasks = props.correspondence.mailTasks;
   const allCorrespondences = props.correspondence.all_correspondences;
@@ -56,6 +60,24 @@ const CorrespondenceDetails = (props) => {
   const [sortedPriorMail, setSortedPriorMail] = useState([]);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isTasksUnrelatedSectionExpanded, setIsTasksUnrelatedSectionExpanded] = useState(false);
+  const [appealTaskKey, setAppealTaskKey] = useState(0);
+
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
+
+  useEffect(() => {
+    if (correspondence.tasksUnrelatedToAppeal.length > 0) {
+      // Dispatch the action to store tasks
+      dispatch(setUnrelatedTaskList(correspondence.tasksUnrelatedToAppeal));
+    }
+  }, [dispatch, correspondence.tasksUnrelatedToAppeal]);
 
   // Initialize checkbox states
   useEffect(() => {
@@ -72,6 +94,32 @@ const CorrespondenceDetails = (props) => {
     // Initialize sortedPriorMail with the initial priorMail list
     setSortedPriorMail(priorMail);
   }, [priorMail]);
+
+  useEffect(() => {
+    setAppealTaskKey((key) => key + 1);
+  }, [correspondenceInfo]);
+
+  const sortAppeals = (selectedList) => {
+    let filteredAppeals = [];
+    let unfilteredAppeals = [];
+
+    correspondence.appeals_information.map((appeal) => {
+      if (selectedList?.includes(Number(appeal.id))) {
+        filteredAppeals.push(appeal);
+      } else {
+        unfilteredAppeals.push(appeal);
+      }
+
+      return true;
+    });
+
+    filteredAppeals = filteredAppeals.sort((leftAppeal, rightAppeal) => leftAppeal.id - rightAppeal.id);
+    unfilteredAppeals = unfilteredAppeals.sort((leftAppeal, rightAppeal) => leftAppeal.id - rightAppeal.id);
+
+    const sortedAppeals = filteredAppeals.concat(unfilteredAppeals);
+
+    setAppealsToDisplay(sortedAppeals);
+  };
 
   const toggleSection = () => {
     setIsExpanded((prev) => !prev);
@@ -119,55 +167,46 @@ const CorrespondenceDetails = (props) => {
         return mail.id;
       });
 
-    // Data for the PATCH request to remove unchecked relations
-    const patchData = {
-      correspondence_uuid: correspondence.uuid,
-      correspondence_relations: uncheckedCheckboxes
-    };
+    const appealsSelected = selectedAppeals.filter((val) => !correspondence.correspondenceAppealIds.includes(val));
 
     // Data for the POST request to add checked relations
     const postData = {
-      priorMailIds: checkedCheckboxes
+      related_correspondence_uuids: checkedCheckboxes,
+      correspondence_relations: uncheckedCheckboxes,
+      related_appeal_ids: appealsSelected,
+      unselected_appeal_ids: unSelectedAppeals
     };
 
     try {
     // Helper function to check for success response
       const isSuccess = (response) => response.ok;
 
-      // Send PATCH request to remove unchecked relations if necessary
-      // If no unchecked items, PATCH is already successful
-      let patchSuccess = uncheckedCheckboxes.length === 0;
-
-      if (uncheckedCheckboxes.length > 0) {
-      // Send PATCH request to update the backend
-        const patchResponse = await ApiUtil.patch(
-        `/queue/correspondence/${correspondence.uuid}/update_correspondence`,
-        { data: patchData }
-        );
-
-        // Check for general success status (any 2xx status)
-        patchSuccess = isSuccess(patchResponse);
-        console.log('PATCH successful:', patchResponse.status); // eslint-disable-line no-console
-      }
-
-      // Send POST request to add checked relations if necessary
+      // Send PATCH request to add checked relations if necessary
       // If no checked items, POST is already successful
-      let postSuccess = checkedCheckboxes.length === 0;
+      let patchSuccess = false;
 
-      if (checkedCheckboxes.length > 0) {
-      // Send POST request to create relations
-        const postResponse = await ApiUtil.post(
-        `/queue/correspondence/${correspondence.uuid}/create_correspondence_relations`,
-        { data: postData }
-        );
+      const updateAppeals = (response) => {
+        const appealIds = response.body.related_appeals;
 
-        // Check for general success status (any 2xx status)
-        postSuccess = isSuccess(postResponse);
-        console.log('POST successful:', postResponse.status); // eslint-disable-line no-console
+        setSelectedAppeals(appealIds);
+        setInitialSelectedAppeals(appealIds);
+        sortAppeals(appealIds);
+        setAppealTableKey((key) => key + 1);
       }
+
+      // Send POST request to create relations
+      const patchResponse = await ApiUtil.patch(
+      `/queue/correspondence/${correspondence.uuid}/update_correspondence`,
+      { data: postData }
+      );
+
+      // Check for general success status (any 2xx status)
+      patchSuccess = isSuccess(patchResponse);
+      updateAppeals(patchResponse)
+      console.log('POST successful:', patchResponse.status); // eslint-disable-line no-console
 
       // Only show success banner if both PATCH and POST requests succeeded
-      if (patchSuccess && postSuccess) {
+      if (patchSuccess) {
         setShowSuccessBanner(true);
       }
 
@@ -358,28 +397,6 @@ const CorrespondenceDetails = (props) => {
     setDisableSubmitButton(isButtonDisabled());
   }, [selectedAppeals, initialSelectedAppeals]);
 
-  const sortAppeals = (selectedList) => {
-    let filteredAppeals = [];
-    let unfilteredAppeals = [];
-
-    correspondence.appeals_information.map((appeal) => {
-      if (selectedList?.includes(Number(appeal.id))) {
-        filteredAppeals.push(appeal);
-      } else {
-        unfilteredAppeals.push(appeal);
-      }
-
-      return true;
-    });
-
-    filteredAppeals = filteredAppeals.sort((leftAppeal, rightAppeal) => leftAppeal.id - rightAppeal.id);
-    unfilteredAppeals = unfilteredAppeals.sort((leftAppeal, rightAppeal) => leftAppeal.id - rightAppeal.id);
-
-    const sortedAppeals = filteredAppeals.concat(unfilteredAppeals);
-
-    setAppealsToDisplay(sortedAppeals);
-  };
-
   useEffect(() => {
     sortAppeals(initialSelectedAppeals);
   }, []);
@@ -389,14 +406,14 @@ const CorrespondenceDetails = (props) => {
     // load appeals related to the correspondence into the store
     const corAppealTasks = [];
 
+    // return if appeals already loaded into store
+    if (Object.keys(props.appealsFromStore).length > 0) {
+      return;
+    }
+
     props.correspondence.correspondenceAppeals.map((corAppeal) => {
       dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal.appeal.data])));
-
       corAppeal.taskAddedData.data.map((taskData) => {
-        const formattedTask = {};
-
-        formattedTask[taskData.id] = taskData;
-
         corAppealTasks.push(taskData);
       });
 
@@ -488,12 +505,14 @@ const CorrespondenceDetails = (props) => {
           )}
           {(props.correspondence.correspondenceAppeals.map((taskAdded) =>
             <CorrespondenceAppealTasks
+              key={appealTaskKey + taskAdded.id}
               task_added={taskAdded}
               correspondence={props.correspondence}
               organizations={props.organizations}
               userCssId={props.userCssId}
               appeal={taskAdded.appeal.data.attributes}
               waivableUser={props.isInboundOpsSuperuser || props.isInboundOpsSupervisor}
+              correspondence_uuid={props.correspondence_uuid}
             />
           )
           )}
@@ -507,6 +526,22 @@ const CorrespondenceDetails = (props) => {
     <div className="correspondence-existing-appeals">
       <div className="left-section">
         <h2>Tasks not related to an appeal</h2>
+        <Button
+          type="button"
+          onClick={handleOpenModal}
+          name="addTaskOpen"
+          classNames={['cf-left-side']}
+        >
+            + Add task
+        </Button>
+
+        {/* Render the modal */}
+        <AddTaskModalCorrespondenceDetails
+          title="Add Task"
+          isOpen={isModalOpen}
+          handleClose={handleCloseModal}
+          correspondence={props.correspondence}
+        />
       </div>
       <div className="toggleButton-plus-or-minus">
         <Button
@@ -525,7 +560,6 @@ const CorrespondenceDetails = (props) => {
           organizations={props.organizations}
           userCssId={props.userCssId}
           correspondence={props.correspondence}
-          tasksToDisplay={props.correspondence.tasksUnrelatedToAppeal}
         />
       </div>
     )}
@@ -789,12 +823,14 @@ const CorrespondenceDetails = (props) => {
   const saveChanges = () => {
     if (isAdminNotLoggedIn() === false) {
       handlepriorMailUpdate();
-    } else if (selectedPriorMail.length > 0) {
-
+    } else if (selectedPriorMail.length > 0 || selectedAppeals.length > 0 || unSelectedAppeals.length > 0 ) {
+      const appealsSelected = selectedAppeals.filter((val) => !correspondence.correspondenceAppealIds.includes(val));
       const priorMailIds = selectedPriorMail.map((mail) => mail.id);
       const payload = {
         data: {
-          priorMailIds: selectedPriorMail.map((mail) => mail.id)
+          related_correspondence_uuids: selectedPriorMail.map((mail) => mail.id),
+          related_appeal_ids: appealsSelected,
+          unselected_appeal_ids: unSelectedAppeals
         }
       };
 
@@ -802,47 +838,19 @@ const CorrespondenceDetails = (props) => {
 
       tempCor.relatedCorrespondenceIds = priorMailIds;
 
-      return ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/create_correspondence_relations`, payload).
-        then(() => {
+      return ApiUtil.patch(`/queue/correspondence/${correspondence.uuid}/update_correspondence`, payload).
+        then((resp) => {
+          const appealIds = resp.body.related_appeals;
+
+          setSelectedAppeals(appealIds);
+          setInitialSelectedAppeals(appealIds);
+          sortAppeals(appealIds);
+          setAppealTableKey((key) => key + 1);
           props.updateCorrespondenceInfo(tempCor);
           setRelatedCorrespondenceIds([...relatedCorrespondenceIds, ...priorMailIds]);
           setShowSuccessBanner(true);
           setSelectedPriorMail([]);
           setDisableSubmitButton(true);
-          window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-          });
-        }).
-        catch((error) => {
-          const errorMessage = error?.response?.body?.message ?
-            error.response.body.message.replace(/^Error:\s*/, '') :
-            error.message;
-
-          console.error(errorMessage);
-        });
-    }
-
-    if (selectedAppeals.length > 0 || unSelectedAppeals.length > 0) {
-      const appealsSelected = selectedAppeals.filter((val) => !correspondence.correspondenceAppealIds.includes(val));
-
-      const payload = {
-        data: {
-          selected_appeal_ids: appealsSelected,
-          unselected_appeal_ids: unSelectedAppeals
-        }
-      };
-
-      return ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/save_correspondence_appeals`, payload).
-        then((resp) => {
-          const appealIds = resp.body;
-
-          setSelectedAppeals(appealIds);
-          setInitialSelectedAppeals(appealIds);
-          sortAppeals(appealIds);
-          setShowSuccessBanner(true);
-          setDisableSubmitButton(true);
-          setAppealTableKey((key) => key + 1);
           window.scrollTo({
             top: 0,
             behavior: 'smooth'
@@ -929,17 +937,23 @@ CorrespondenceDetails.propTypes = {
   inboundOpsTeamUsers: PropTypes.array,
   addLetterCheck: PropTypes.bool,
   updateCorrespondenceInfo: PropTypes.func,
-  correspondenceTypes: PropTypes.array
+  correspondenceTypes: PropTypes.array,
+  unrelatedTaskList: PropTypes.array,
+  correspondence_uuid: PropTypes.string,
+  appealsFromStore: PropTypes.object
 };
 
 const mapStateToProps = (state) => ({
   correspondenceInfo: state.correspondenceDetails.correspondenceInfo,
-  tasksUnrelatedToAppealEmpty: state.correspondenceDetails.tasksUnrelatedToAppealEmpty
+  tasksUnrelatedToAppealEmpty: state.correspondenceDetails.tasksUnrelatedToAppealEmpty,
+  unrelatedTaskList: state.correspondenceDetails.unrelatedTaskList,
+  appealsFromStore: state.queue.appeals
 });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    updateCorrespondenceInfo
+    updateCorrespondenceInfo,
+    setUnrelatedTaskList
   }, dispatch)
 );
 

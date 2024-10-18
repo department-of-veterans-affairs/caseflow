@@ -145,6 +145,12 @@ const deleteTask = (state, action) => {
   });
 };
 
+const deleteAmaTask = (state, action) => {
+  return update(state, {
+    amaTasks: { $unset: action.payload.taskId }
+  });
+};
+
 const clearAppealDetails = (state, action) => {
   return update(state, {
     appealDetails: { $unset: action.payload.appealId }
@@ -757,6 +763,7 @@ export const workQueueReducer = createReducer({
   [ACTIONS.DELETE_APPEAL]: deleteAppeal,
   [ACTIONS.CLEAR_APPEAL]: clearAppealDetails,
   [ACTIONS.DELETE_TASK]: deleteTask,
+  [ACTIONS.DELETE_AMA_TASK]: deleteAmaTask,
   [ACTIONS.EDIT_APPEAL]: editAppeal,
   [ACTIONS.EDIT_NOD_DATE_UPDATES]: editNodDateUpdates,
   [ACTIONS.SET_OVERTIME]: setOvertime,
