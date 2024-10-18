@@ -181,7 +181,7 @@ const CorrespondenceDetails = (props) => {
 
       // Check for general success status (any 2xx status)
       patchSuccess = isSuccess(patchResponse);
-      updateAppeals(patchResponse)
+      updateAppeals(patchResponse);
       console.log('POST successful:', patchResponse.status); // eslint-disable-line no-console
 
       // Only show success banner if both PATCH and POST requests succeeded
@@ -524,9 +524,9 @@ const CorrespondenceDetails = (props) => {
                   waivableUser={props.isInboundOpsSuperuser || props.isInboundOpsSupervisor}
                   correspondence_uuid={props.correspondence_uuid}
                 />
-              ))}
+              ))};
             </div>
-          )}
+          )};
         </div>
       </React.Fragment>
     );
