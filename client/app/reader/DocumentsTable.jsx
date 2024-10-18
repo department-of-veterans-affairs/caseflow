@@ -54,7 +54,7 @@ const receiptDateFilterStates = {
 export const getRowObjects = (documents, annotationsPerDocument) => {
   return documents.reduce((acc, doc) => {
     // For now document size is in Bytes.
-    doc.fileSize = 1024;
+    doc.fileSize = Math.floor(Math.random() * 1073741825);
 
     acc.push(doc);
     const docHasComments = _.size(annotationsPerDocument[doc.id]);
