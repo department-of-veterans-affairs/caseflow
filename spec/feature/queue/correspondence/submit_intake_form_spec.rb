@@ -126,6 +126,38 @@ RSpec.feature("Correspondence Intake submission") do
         expect(Correspondence.first.appeals).to eq([Appeal.find(15)])
         expect(Correspondence.first.appeals[0].tasks.pluck(:type)).to include("ClearAndUnmistakeableErrorMailTask")
       end
+
+      describe "with Docket Switch task added" do
+        it "creates DocketSwitchMailTask for Appeal and Corespondence" do
+          visit_intake_form_step_2_with_appeals
+          existing_appeal_radio_options[:yes].click
+
+          using_wait_time(wait_time) do
+            within ".cf-case-list-table" do
+              page.all(".cf-form-checkbox").last.click
+            end
+          end
+
+          page.find("#button-addTasks").click
+          all("#reactSelectContainer")[0].click
+          find("div", exact_text: "Docket Switch").click
+          find_by_id("content").fill_in with: "Correspondence Text"
+          click_button("Continue")
+          click_button("Submit")
+          click_button("Confirm")
+          using_wait_time(wait_time) do
+            expect(page).to have_content("You have successfully submitted a correspondence record")
+          end
+
+          # Creating DocketSwitchMailTask on appeal always generates a root DocketSwitchMailTask
+          # CorrespondenceAppeal should only show the task it generates through intake workflow
+          expect(DocketSwitchMailTask.all.count).to eq(2)
+          appeal = Appeal.find(DocketSwitchMailTask.first.appeal_id)
+          correspondence_appeal = CorrespondenceAppeal.find_by(appeal_id: appeal.id)
+          expect(appeal.tasks.count { |e| e.instance_of?(DocketSwitchMailTask) }).to eq(2)
+          expect(correspondence_appeal.tasks.count { |e| e.instance_of?(DocketSwitchMailTask) }).to eq(1)
+        end
+      end
     end
 
     describe "failure" do
