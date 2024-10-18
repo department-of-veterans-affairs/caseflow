@@ -3,23 +3,6 @@
 require "ostruct"
 require "csv"
 
-class VBMSCaseflowLogger
-  def self.log(event, data)
-    case event
-    when :request
-      status = data[:response_code]
-      name = data[:request].class.name
-
-      if status != 200
-        Rails.logger.error(
-          "VBMS HTTP Error #{status} " \
-          "(#{name}) #{data[:response_body]}"
-        )
-      end
-    end
-  end
-end
-
 class Fakes::VBMSService
   HOLD_REQUEST_TIMEOUT_SECONDS = 2
 
