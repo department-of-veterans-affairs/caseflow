@@ -958,7 +958,7 @@ describe ClaimHistoryService do
         context "equal to number of days" do
           let(:filters) { { days_waiting: { number_of_days: 5, operator: "=" } } }
 
-          it "should only return events for tasks that match the days waiting filter", skip: "Flakey test" do
+          it "should only return events for tasks that match the days waiting filter" do
             subject
             expect(service_instance.events.map(&:event_type)).to contain_exactly(*expected_hlr_event_types)
           end
