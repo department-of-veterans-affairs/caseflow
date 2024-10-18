@@ -128,7 +128,7 @@ RSpec.feature("Correspondence Intake submission") do
       end
 
       describe "with Docket Switch task added" do
-        it "creates DocketSwitchMailTask for Appeal and Corespondence" do
+        before do
           visit_intake_form_step_2_with_appeals
           existing_appeal_radio_options[:yes].click
 
@@ -148,7 +148,9 @@ RSpec.feature("Correspondence Intake submission") do
           using_wait_time(wait_time) do
             expect(page).to have_content("You have successfully submitted a correspondence record")
           end
+        end
 
+        it "creates DocketSwitchMailTask for Appeal and Corespondence" do
           # Creating DocketSwitchMailTask on appeal always generates a root DocketSwitchMailTask
           # CorrespondenceAppeal should only show the task it generates through intake workflow
           expect(DocketSwitchMailTask.all.count).to eq(2)
@@ -156,6 +158,13 @@ RSpec.feature("Correspondence Intake submission") do
           correspondence_appeal = CorrespondenceAppeal.find_by(appeal_id: appeal.id)
           expect(appeal.tasks.count { |e| e.instance_of?(DocketSwitchMailTask) }).to eq(2)
           expect(correspondence_appeal.tasks.count { |e| e.instance_of?(DocketSwitchMailTask) }).to eq(1)
+        end
+
+        it "allows InboundOpsTeam user to assign DocketSwitchMailTask to ClerkOfTheBoard organization" do
+          docket_assigner = User.find(DocketSwitchMailTask.last.assigned_by_id)
+          docket_assignee = Organization.find(DocketSwitchMailTask.last.assigned_to_id)
+          expect(docket_assigner.organizations).to include(InboundOpsTeam)
+          expect(docket_assignee.class).to eq(ClerkOfTheBoard)
         end
       end
     end
