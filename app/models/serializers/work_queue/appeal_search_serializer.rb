@@ -22,6 +22,8 @@ class WorkQueue::AppealSearchSerializer
 
   attribute :pact, &:pact?
 
+  attribute :active, &:active?
+
   attribute :issues do |object|
     object.request_issues.active_or_decided_or_withdrawn.includes(:remand_reasons).map do |issue|
       {
@@ -148,6 +150,16 @@ class WorkQueue::AppealSearchSerializer
 
   attribute :caseflow_veteran_id do |object|
     object.veteran ? object.veteran.id : nil
+  end
+
+  attribute :docket_switch do |object|
+    if object.docket_switch
+      WorkQueue::DocketSwitchSerializer.new(object.docket_switch).serializable_hash[:data][:attributes]
+    end
+  end
+
+  attribute :evidence_submission_task do |object|
+    object.tasks.find_by(type: "EvidenceSubmissionWindowTask", status: Constants.TASK_STATUSES.assigned)
   end
 
   attribute :readable_hearing_request_type, &:readable_current_hearing_request_type

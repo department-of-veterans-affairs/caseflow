@@ -2002,4 +2002,228 @@ describe Task, :all_dbs do
       end
     end
   end
+
+  describe "Correspondence Tasks" do
+    let(:user) { create(:inbound_ops_team_supervisor) }
+
+    before do
+      User.authenticate!(user: user)
+    end
+
+    context "Correspondence Intake Task" do
+      it "has a task_url" do
+        correspondence = create(:correspondence)
+        cit = create(
+          :correspondence_intake_task,
+          appeal: correspondence,
+          appeal_type: Correspondence.name,
+          assigned_to: create(:user)
+        )
+        expect(cit.task_url).to eq("/queue/correspondence/#{cit.correspondence.uuid}/intake")
+      end
+    end
+
+    context "Review Package Task" do
+      it "has a task_url" do
+        correspondence = create(:correspondence)
+        rpt = ReviewPackageTask.find_or_create_by(
+          appeal_id: correspondence.id,
+          assigned_to: InboundOpsTeam.singleton,
+          appeal_type: Correspondence.name
+        )
+
+        expect(rpt.task_url).to eq("/queue/correspondence/#{correspondence.uuid}/review_package")
+      end
+    end
+
+    context "eFolder Upload Failed Task" do
+      it "can have a parent review package task" do
+        correspondence = create(:correspondence)
+        rpt = ReviewPackageTask.find_or_create_by(
+          appeal_id: correspondence.id,
+          assigned_to: InboundOpsTeam.singleton,
+          appeal_type: Correspondence.name
+        )
+
+        uft = EfolderUploadFailedTask.create(
+          appeal_id: correspondence.id,
+          assigned_to: InboundOpsTeam.singleton,
+          appeal_type: Correspondence.name,
+          parent_id: rpt.id
+        )
+
+        expect(uft).to be_a(EfolderUploadFailedTask)
+        expect(uft.parent).to be_a(ReviewPackageTask)
+      end
+
+      it "can have a parent correspondence intake task" do
+        correspondence = create(:correspondence)
+        cit = CorrespondenceIntakeTask.create_from_params(correspondence.root_task, user)
+
+        uft = EfolderUploadFailedTask.create(
+          appeal_id: correspondence.id,
+          assigned_to: InboundOpsTeam.singleton,
+          appeal_type: Correspondence.name,
+          parent_id: cit.id
+        )
+
+        expect(uft).to be_a(EfolderUploadFailedTask)
+        expect(uft.parent).to be_a(CorrespondenceIntakeTask)
+      end
+    end
+
+    context "package action tasks" do
+      let(:correspondence) { create(:correspondence) }
+      let(:user2) { create(:user) }
+
+      before do
+        InboundOpsTeam.singleton.add_user(user2)
+      end
+
+      describe "reassign package tasks" do
+        let(:reassign_pt) do
+          ReassignPackageTask.create!(
+            parent_id: correspondence.review_package_task.id,
+            appeal_id: correspondence&.id,
+            appeal_type: Correspondence.name,
+            assigned_to: InboundOpsTeam.singleton,
+            assigned_by: user2
+          )
+        end
+
+        it "approve" do
+          expect(reassign_pt.status).to eq Constants.TASK_STATUSES.assigned
+          expect(reassign_pt.closed_at).to eq nil
+          expect(reassign_pt.completed_by).to eq nil
+          expect(reassign_pt.assigned_to_id).to eq Organization.first.id
+          expect(reassign_pt.assigned_to).to eq Organization.first
+          expect(reassign_pt.parent.status).to eq Constants.TASK_STATUSES.unassigned
+          expect(reassign_pt.parent.closed_at).to eq nil
+          expect(reassign_pt.parent.completed_by).to eq nil
+
+          reassign_pt.approve(user, user2)
+
+          expect(reassign_pt.completed_by).to eq user
+          expect(reassign_pt.assigned_to_id).to eq user.id
+          expect(reassign_pt.assigned_to).to eq user
+          expect(reassign_pt.closed_at).to_not eq nil
+          expect(reassign_pt.status).to eq Constants.TASK_STATUSES.completed
+          expect(reassign_pt.parent.status).to eq Constants.TASK_STATUSES.completed
+          expect(reassign_pt.parent.closed_at).to_not eq nil
+          expect(reassign_pt.parent.completed_by).to eq user
+        end
+
+        it "reject" do
+          expect(reassign_pt.status).to eq Constants.TASK_STATUSES.assigned
+          expect(reassign_pt.closed_at).to eq nil
+          expect(reassign_pt.completed_by).to eq nil
+          expect(reassign_pt.instructions).to eq []
+          expect(reassign_pt.parent.assigned_to_type).to eq("Organization")
+          expect(reassign_pt.parent.status).to eq Constants.TASK_STATUSES.unassigned
+
+          rejection_reason = "testo debuggo reason for rejection"
+          reassign_pt.reject(user, rejection_reason)
+
+          expect(reassign_pt.completed_by_id).to eq user.id
+          expect(reassign_pt.closed_at).to_not eq nil
+          expect(reassign_pt.status).to eq Constants.TASK_STATUSES.completed
+          expect(reassign_pt.instructions).to eq [rejection_reason]
+          expect(reassign_pt.parent.assigned_to_type).to eq("User")
+          expect(reassign_pt.parent.status).to eq Constants.TASK_STATUSES.in_progress
+        end
+      end
+
+      describe "remove package tasks" do
+        let(:remove_pt) do
+          RemovePackageTask.create!(
+            parent_id: correspondence.review_package_task.id,
+            appeal_id: correspondence&.id,
+            appeal_type: Correspondence.name,
+            assigned_to: InboundOpsTeam.singleton,
+            assigned_by: user2
+          )
+        end
+
+        it "approve" do
+          expect(remove_pt.completed_by_id).to eq nil
+          expect(remove_pt.status).to eq Constants.TASK_STATUSES.assigned
+
+          remove_pt.approve(user)
+          expect(remove_pt.completed_by_id).to eq user.id
+          expect(remove_pt.status).to eq Constants.TASK_STATUSES.cancelled
+        end
+
+        it "reject" do
+          expect(remove_pt.completed_by_id).to eq nil
+          expect(remove_pt.closed_at).to eq nil
+          expect(remove_pt.status).to eq Constants.TASK_STATUSES.assigned
+          expect(remove_pt.instructions).to eq []
+          expect(remove_pt.parent.status).to eq Constants.TASK_STATUSES.unassigned
+
+          rejection_reason = "testo debuggo reason for rejection"
+          remove_pt.reject(user, rejection_reason)
+
+          expect(remove_pt.completed_by_id).to eq user.id
+          expect(remove_pt.closed_at).to_not eq nil
+          expect(remove_pt.status).to eq Constants.TASK_STATUSES.completed
+          expect(remove_pt.instructions).to eq [rejection_reason]
+          expect(remove_pt.parent.status).to eq Constants.TASK_STATUSES.in_progress
+        end
+      end
+
+      it "verifies no other open package action task on correspondence before creation" do
+        correspondence = create(:correspondence)
+        parent_task = correspondence.review_package_task
+        reassign_pt = ReassignPackageTask.create!(
+          parent_id: parent_task&.id,
+          appeal_id: correspondence&.id,
+          appeal_type: Correspondence.name,
+          assigned_to: InboundOpsTeam.singleton
+        )
+
+        # creation ok with no pre-existing package action task
+        expect(reassign_pt).to be_a(ReassignPackageTask)
+
+        # creation fails due to pre-existing package action task
+        expect do
+          RemovePackageTask.create!(
+            parent_id: parent_task&.id,
+            appeal_id: correspondence&.id,
+            appeal_type: Correspondence.name,
+            assigned_to: InboundOpsTeam.singleton
+          )
+        end.to raise_error(Caseflow::Error::MultipleOpenTasksOfSameTypeError)
+
+        # creation fails due to pre-existing package action task
+        expect do
+          SplitPackageTask.create!(
+            parent_id: parent_task&.id,
+            appeal_id: correspondence&.id,
+            appeal_type: Correspondence.name,
+            assigned_to: InboundOpsTeam.singleton
+          )
+        end.to raise_error(Caseflow::Error::MultipleOpenTasksOfSameTypeError)
+
+        # creation fails due to pre-existing package action task
+        expect do
+          MergePackageTask.create!(
+            parent_id: parent_task&.id,
+            appeal_id: correspondence&.id,
+            appeal_type: Correspondence.name,
+            assigned_to: InboundOpsTeam.singleton
+          )
+        end.to raise_error(Caseflow::Error::MultipleOpenTasksOfSameTypeError)
+
+        reassign_pt.update!(status: Constants.TASK_STATUSES.completed)
+
+        # creation ok due to pre-existing package action task status update
+        expect(RemovePackageTask.create!(
+                 parent_id: parent_task&.id,
+                 appeal_id: correspondence&.id,
+                 appeal_type: Correspondence.name,
+                 assigned_to: InboundOpsTeam.singleton
+               )).to be_a(RemovePackageTask)
+      end
+    end
+  end
 end
