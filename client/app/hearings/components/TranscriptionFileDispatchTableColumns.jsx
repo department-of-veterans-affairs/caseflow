@@ -246,7 +246,7 @@ export const hearingTypeColumn = () => {
       <div>{row.hearingType === 'LegacyHearing' ? 'Legacy' : 'AMA'}</div>
     ),
     filterOptions: [
-      { value: 'Hearing', displayText: 'Hearing' },
+      { value: 'Hearing', displayText: 'AMA' },
       { value: 'LegacyHearing', displayText: 'Legacy' },
     ],
     backendCanSort: true,
