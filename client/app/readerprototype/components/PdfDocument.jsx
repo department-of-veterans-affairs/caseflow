@@ -110,6 +110,16 @@ const PdfDocument = ({
         withCredentials: true,
         timeout: true,
         responseType: 'arraybuffer',
+        onProgress: ({ loaded }) => {
+          let percentage = 0;
+
+          if (doc.file_size > 0) {
+            percentage = (loaded / doc.file_size) * 100;
+          }
+
+          console.log(`** Downloaded %${percentage.toFixed(0)} `);
+
+        }
       };
 
       pdfMetrics.current.getStartTime = new Date().getTime();
