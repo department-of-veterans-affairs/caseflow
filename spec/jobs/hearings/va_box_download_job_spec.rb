@@ -32,6 +32,7 @@ RSpec.describe Hearings::VaBoxDownloadJob, type: :job do
       .and_return(Fakes::VaBoxService.new)
 
     Transcription.create(hearing_id: hearing.id)
+
   end
 
   # # see data setup in Fakes::VaBoxService for expectations
