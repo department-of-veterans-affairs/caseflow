@@ -5,9 +5,9 @@ import Button from '../../../../../components/Button';
 import TextareaField from '../../../../../components/TextareaField';
 import Select from 'react-select';
 import { INTAKE_FORM_TASK_TYPES } from '../../../../constants';
-import ApiUtil from 'app/util/ApiUtil';
 import { useDispatch, useSelector } from 'react-redux';
-import { setUnrelatedTaskList, updateCorrespondenceInfo } from '../../../correspondenceDetailsReducer/correspondenceDetailsActions';
+import { addTaskNotRelatedToAppeal } from '../../../correspondenceDetailsReducer/correspondenceDetailsActions';
+import { maxWidthFormInput } from '../../../../../hearings/components/details/style';
 
 const AddTaskModalCorrespondenceDetails = ({
   isOpen,
@@ -29,6 +29,8 @@ const AddTaskModalCorrespondenceDetails = ({
   const [selectedTaskType, setSelectedTaskType] = useState(null);
   // State to track if the Next button should be disabled
   const [isNextDisabled, setIsNextDisabled] = useState(true);
+  // State to track the loading status
+  const [isLoading, setIsLoading] = useState(false);
 
   // Function to filter out the task options based on the unrelatedTaskList, ensuring case-insensitive comparison
   const getFilteredTaskTypeOptions = () => {
@@ -45,15 +47,15 @@ const AddTaskModalCorrespondenceDetails = ({
       }));
   };
 
-  // Recalculate task options every time the component loads or unrelatedTaskList changes
   useEffect(() => {
     setTaskTypeOptions(getFilteredTaskTypeOptions());
   }, [unrelatedTaskList]);
 
   // Check if the Next button should be disabled or enabled
   useEffect(() => {
-    setIsNextDisabled(!(selectedTaskType && taskContent));
-  }, [selectedTaskType, taskContent]);
+    // Disable if loading
+    setIsNextDisabled(!(selectedTaskType && taskContent) || isLoading);
+  }, [selectedTaskType, taskContent, isLoading]);
 
   // Function to update task type based on user selection
   const updateTaskType = (newType) => {
@@ -65,7 +67,6 @@ const AddTaskModalCorrespondenceDetails = ({
   const updateTaskContent = (newContent) => {
     // Update task content state
     setTaskContent(newContent);
-
   };
 
   // Function to handle the "Next" button click
@@ -83,31 +84,26 @@ const AddTaskModalCorrespondenceDetails = ({
         instructions: [taskContent],
       };
 
-      const patchData = {
-        tasks_not_related_to_appeal: [newTask],
-      };
+      // Set loading state to true to disable the button
+      setIsLoading(true);
 
-      try {
-        await ApiUtil.patch(
-          `/queue/correspondence/${correspondence.uuid}/update_correspondence`,
-          { data: patchData }
-        ).then((response) => {
-          const updatedCorrespondence = response.body.correspondence;
+      // Dispatch the action to add the task and wait for it to complete
+      dispatch(addTaskNotRelatedToAppeal(correspondence, newTask)).
+        then(() => {
+          // Clear the TextAreaField and reset selection after successful submission
+          setTaskContent('');
+          setSelectedTaskType(null);
 
-          dispatch(updateCorrespondenceInfo(updatedCorrespondence));
-
+          // Close the modal only after the patch request has succeeded
+          handleClose();
+        }).
+        catch((error) => {
+          console.error('Error while adding task:', error);
+        }).
+        finally(() => {
+          // Reset loading state after request is finished
+          setIsLoading(false);
         });
-
-        // Dispatch action to append the new task to unrelatedTaskList in Redux
-        // dispatch(setUnrelatedTaskList([...unrelatedTaskList, newTask]));
-
-        setTaskContent('');
-
-        // Close the modal after the task is successfully added
-        handleClose();
-      } catch (error) {
-        console.error('Error adding task:', error);
-      }
     }
   };
 
@@ -121,16 +117,16 @@ const AddTaskModalCorrespondenceDetails = ({
       closeHandler={handleClose}
       confirmButton={
         <Button
-        // Call the handleNext function when clicking Next
+          // Call the handleNext function when clicking Next
           onClick={handleNext}
-          // Disable the Next button until both fields are filled
+          // Disable the Next button until both fields are filled or request is loading
           disabled={isNextDisabled}
         >
-          Next
+          {isLoading ? 'Loading...' : 'Next'}
         </Button>
       }
       cancelButton={
-        <Button linkStyling onClick={handleClose}>
+        <Button linkStyling onClick={handleClose} disabled={isLoading}>
           Cancel
         </Button>
       }
@@ -145,6 +141,8 @@ const AddTaskModalCorrespondenceDetails = ({
             onChange={updateTaskType}
             className="add-task-dropdown-style"
             aria-label="dropdown"
+            // Ensure Select value is cleared on reset
+            value={taskTypeOptions.find((taskOption) => taskOption.value === selectedTaskType)}
           />
         </div>
 
@@ -155,6 +153,8 @@ const AddTaskModalCorrespondenceDetails = ({
           value={taskContent}
           // Call updateTaskContent when content changes
           onChange={updateTaskContent}
+          classNames={['task-selection-dropdown-box']}
+          styling= {maxWidthFormInput}
         />
 
         {displayRemoveCheck && (
