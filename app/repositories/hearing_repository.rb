@@ -74,6 +74,7 @@ class HearingRepository
       if hearing.id > 100 && ApplicationController.dependencies_faked?
         Transcription.create!(
           hearing_id: hearing.id,
+          hearing_type: hearing.class.name,
           task_number: "5001",
           transcriber: "Real Contractor",
           sent_to_transcriber_date: Time.zone.today,
