@@ -260,7 +260,7 @@ class DatePicker extends React.PureComponent {
     } else if (mode === 'last365') {
       this.setState({ startDate: moment().subtract(365, 'days') });
     } else if (mode === 'all') {
-      this.clearFilter();
+      this.setState({ startDate: moment().subtract(300, 'years') });
     }
   }
 
