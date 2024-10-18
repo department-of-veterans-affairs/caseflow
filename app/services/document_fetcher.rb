@@ -53,11 +53,20 @@ class DocumentFetcher
     existing_vbms_doc_ver_ids = Document.where(vbms_document_id: vbms_doc_ver_ids).pluck(:vbms_document_id)
     docs_to_update, docs_to_create = split_docs(documents, existing_vbms_doc_ver_ids)
 
+    Rails.logger.info("docs_to_create pre import and pre
+      bulk_merge_and_save: #{docs_to_create}
+      docs_to_update: #{docs_to_update}")
+
     # Update existing docs
     updated_docs = Document.bulk_merge_and_save(docs_to_update)
 
+    Rails.logger.info("Docs to create post bulk_merge_and_save
+      and pre Document.import: #{docs_to_create}
+      updated_docs: #{updated_docs}
+      ")
     # Create new docs that don't exist
     Document.import(docs_to_create)
+    Rails.logger.info("Docs to create post import: #{docs_to_create}")
 
     # For newly created documents that have a series_id, copy over the metadata (annotations, tags, category labels)
     # from the latest version of the document (i.e., the latest id having the same series_id) in Caseflow.
@@ -65,6 +74,7 @@ class DocumentFetcher
     series_id_docs = Document.where(vbms_document_id: docs_to_create.select(&:series_id).pluck(:vbms_document_id))
     copy_metadata_from_document(series_id_docs, vbms_doc_ver_ids)
     created_docs = retrieve_created_docs_including_nondb_attributes(docs_to_create)
+    Rails.logger.info("Updated Docs: #{updated_docs}, created_docs: #{created_docs}")
 
     updated_docs + created_docs
   end
@@ -108,6 +118,7 @@ class DocumentFetcher
     created_docs = Document.where(vbms_document_id: docs_to_create.pluck(:vbms_document_id))
     created_docs.map do |doc|
       fetched_doc = docs_to_create_hash[doc.vbms_document_id]
+      Rails.logger.info("doc BEFORE assign_nondatabase_attributes: #{doc}")
       doc.assign_nondatabase_attributes(fetched_doc)
     end
   end

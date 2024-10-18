@@ -7,6 +7,7 @@ class FetchEfolderDocumentCountJob < CaseflowJob
   def perform(file_number:, user:)
     RequestStore.store[:current_user] = user
 
+    Rails.logger.info("Starting FetchEfolderDocumentCountJob: file_number: #{file_number}, user: #{user}")
     ExternalApi::EfolderService.fetch_document_count(file_number, user)
   end
 end
