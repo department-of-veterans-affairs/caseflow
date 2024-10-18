@@ -51,8 +51,6 @@ const receiptDateFilterStates = {
 
 };
 
-
-
 export const getRowObjects = (documents, annotationsPerDocument) => {
   return documents.reduce((acc, doc) => {
     // For now document size is in Bytes.
