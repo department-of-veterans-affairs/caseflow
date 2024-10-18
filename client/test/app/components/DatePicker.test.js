@@ -1,10 +1,11 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 
 import {
   selectFromDropdown,
   clickSubmissionButton,
-  enterInputValue
+  enterInputValue,
+  openFilter
 } from '../queue/components/modalUtils';
 
 import { axe } from 'jest-axe';
@@ -23,17 +24,6 @@ describe('DatePicker', () => {
       label="date-picker"
       onChange={handleChange} {...props}
     />);
-  };
-
-  const openFilter = async (container) => {
-    const svg = container.querySelectorAll('svg');
-
-    const filter = svg[svg.length - 1];
-
-    fireEvent.click(filter);
-    await waitFor(() => {
-      expect(screen.getByText('Date filter parameters')).toBeInTheDocument();
-    });
   };
 
   it('renders default state correctly', async () => {
@@ -152,6 +142,67 @@ describe('DatePicker', () => {
     clickSubmissionButton('Last 30 days');
 
     expect(handleChange).toHaveBeenCalledWith('between,2023-12-18,2024-01-17', false);
+  });
+
+  it('quick select options can select last 7 days', async () => {
+    jest.spyOn(Date, 'now').mockReturnValue('2024-01-17T03:00:00.000-04:00');
+
+    const { container } = setup({ settings: { additionalOptions: true } });
+
+    openFilter(container);
+
+    selectFromDropdown('Date filter parameters', 'Last 7 days');
+
+    expect(screen.queryByText('mm/dd/yyyy')).not.toBeInTheDocument();
+
+    clickSubmissionButton('Apply Filter');
+
+    expect(handleChange).toHaveBeenCalledWith('last7,Wed Jan 10 2024 02:00:00 GMT-0500,');
+  });
+
+  it('quick select options can select last 30 days', async () => {
+    jest.spyOn(Date, 'now').mockReturnValue('2024-01-17T03:00:00.000-04:00');
+
+    const { container } = setup({ settings: { additionalOptions: true } });
+
+    openFilter(container);
+
+    selectFromDropdown('Date filter parameters', 'Last 30 days');
+
+    expect(screen.queryByText('mm/dd/yyyy')).not.toBeInTheDocument();
+
+    clickSubmissionButton('Apply Filter');
+
+    expect(handleChange).toHaveBeenCalledWith('last30,Mon Dec 18 2023 02:00:00 GMT-0500,');
+  });
+
+  it('quick select options can select last 365 days', async () => {
+    jest.spyOn(Date, 'now').mockReturnValue('2024-01-17T03:00:00.000-04:00');
+
+    const { container } = setup({ settings: { additionalOptions: true } });
+
+    openFilter(container);
+
+    selectFromDropdown('Date filter parameters', 'Last 365 days');
+
+    expect(screen.queryByText('mm/dd/yyyy')).not.toBeInTheDocument();
+
+    clickSubmissionButton('Apply Filter');
+
+    expect(handleChange).toHaveBeenCalledWith('last365,Tue Jan 17 2023 02:00:00 GMT-0500,');
+  });
+
+  it('disables Apply Filter button if between is selected and the start date is after the end date', () => {
+    const { container } = setup();
+
+    openFilter(container);
+
+    selectFromDropdown('Date filter parameters', 'Between these dates');
+
+    enterInputValue('start-date', '2024-01-17');
+    enterInputValue('end-date', '2020-05-14');
+
+    expect(screen.queryByRole('button', { name: 'Apply Filter' })).toBeDisabled();
   });
 
   describe('datePickerFilterValue', () => {
