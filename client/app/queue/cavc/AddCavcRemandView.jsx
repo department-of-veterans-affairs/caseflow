@@ -235,6 +235,7 @@ const AddCavcRemandView = (props) => {
     if (!validateDateNotInPriorNodOrDod(val)) {
       setMinSubstitutionDateError(true);
       setFutureSubstitutionDateError(false);
+    // eslint-disable-next-line no-negated-condition
     } else if (!validateDateNotInFuture(val)) {
       setMinSubstitutionDateError(false);
       setFutureSubstitutionDateError(true);

@@ -1,4 +1,5 @@
 import React from 'react';
+import { flushSync } from 'react-dom';
 import { css } from 'glamor';
 import { sprintf } from 'sprintf-js';
 
@@ -33,6 +34,7 @@ export default class UserManagement extends React.PureComponent {
   // Search functions
   asyncLoadUser = (inputValue) => {
     // don't search till we have min length input
+
     if (inputValue.length < 2) {
       this.setState({ remainingUsers: [] });
 
@@ -42,7 +44,9 @@ export default class UserManagement extends React.PureComponent {
     return ApiUtil.get(`/users?css_id=${inputValue}`).then((response) => {
       const users = response.body.users.data;
 
-      this.setState({ remainingUsers: users });
+      flushSync(() => {
+        this.setState({ remainingUsers: users });
+      });
 
       return this.dropdownOptions();
     });
@@ -68,7 +72,7 @@ export default class UserManagement extends React.PureComponent {
         }
       });
     });
-  }
+  };
 
   // Status functions
 
