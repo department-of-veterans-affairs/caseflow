@@ -418,10 +418,6 @@ const CorrespondenceDetails = (props) => {
       dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal?.appeal?.data])));
 
       corAppeal?.taskAddedData?.data.map((taskData) => {
-        const formattedTask = {};
-
-        formattedTask[taskData.id] = taskData;
-
         corAppealTasks.push(taskData);
       });
 
