@@ -138,8 +138,9 @@ const AddTaskModalCorrespondenceDetails = ({
             placeholder="Select..."
             // Filtered task options
             options={taskTypeOptions}
-            onChange={updateTaskType}
+            classNamePrefix="react-select"
             className="add-task-dropdown-style"
+            onChange={updateTaskType}
             aria-label="dropdown"
             // Ensure Select value is cleared on reset
             value={taskTypeOptions.find((taskOption) => taskOption.value === selectedTaskType)}
