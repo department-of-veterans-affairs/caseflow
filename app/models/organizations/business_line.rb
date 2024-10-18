@@ -326,7 +326,7 @@ class BusinessLine < Organization
           tasks.appeal_type, tasks.appeal_id, request_issues.nonrating_issue_category, request_issues.nonrating_issue_description,
           request_issues.decision_date, decision_issues.disposition, tasks.assigned_at, request_issues.unidentified_issue_text,
           request_decision_issues.decision_issue_id, request_issues.closed_at AS request_issue_closed_at,
-          tv.object_changes_array AS task_versions, (CURRENT_TIMESTAMP::date - tasks.assigned_at::date) AS days_waiting,
+          tv.object_changes_array AS task_versions, ('#{Time.zone.now}'::date - tasks.assigned_at::date) AS days_waiting,
           COALESCE(intakes.veteran_file_number, higher_level_reviews.veteran_file_number) AS veteran_file_number,
           COALESCE(
             NULLIF(CONCAT(unrecognized_party_details.name, ' ', unrecognized_party_details.last_name), ' '),
@@ -436,7 +436,7 @@ class BusinessLine < Organization
         tasks.appeal_type, tasks.appeal_id, request_issues.nonrating_issue_category, request_issues.nonrating_issue_description,
         request_issues.decision_date, decision_issues.disposition, tasks.assigned_at, request_issues.unidentified_issue_text,
         request_decision_issues.decision_issue_id, request_issues.closed_at AS request_issue_closed_at,
-        tv.object_changes_array AS task_versions, (CURRENT_TIMESTAMP::date - tasks.assigned_at::date) AS days_waiting,
+        tv.object_changes_array AS task_versions, ('#{Time.zone.now}'::date - tasks.assigned_at::date) AS days_waiting,
         COALESCE(intakes.veteran_file_number, supplemental_claims.veteran_file_number) AS veteran_file_number,
         COALESCE(
           NULLIF(CONCAT(unrecognized_party_details.name, ' ', unrecognized_party_details.last_name), ' '),
@@ -657,13 +657,13 @@ class BusinessLine < Organization
         case operator
         when ">", "<", "="
           <<-SQL
-            AND (CURRENT_TIMESTAMP::date - tasks.assigned_at::date)::integer #{operator} '#{number_of_days.to_i}'
+            AND ('#{Time.zone.now}'::date - tasks.assigned_at::date)::integer #{operator} '#{number_of_days.to_i}'
           SQL
         when "between"
           end_days = query_params[:days_waiting][:end_days]
           <<-SQL
-            AND (CURRENT_TIMESTAMP::date - tasks.assigned_at::date)::integer BETWEEN '#{number_of_days.to_i}' AND '#{end_days.to_i}'
-            AND (CURRENT_TIMESTAMP::date - tasks.assigned_at::date)::integer BETWEEN '#{number_of_days.to_i}' AND '#{end_days.to_i}'
+            AND ('#{Time.zone.now}'::date - tasks.assigned_at::date)::integer BETWEEN '#{number_of_days.to_i}' AND '#{end_days.to_i}'
+            AND ('#{Time.zone.now}'::date - tasks.assigned_at::date)::integer BETWEEN '#{number_of_days.to_i}' AND '#{end_days.to_i}'
           SQL
         end
       end
