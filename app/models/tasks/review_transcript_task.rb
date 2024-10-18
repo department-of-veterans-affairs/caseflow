@@ -1,21 +1,29 @@
-class ReviewTranscriptTask < Task
+# frozen_string_literal: true
 
+class ReviewTranscriptTask < Task
   before_validation :set_assignee
 
   USER_ACTIONS = [
-    Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h,
-    Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
-    Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
-    Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+    Constants.TASK_ACTIONS.TRANSCRIPT_NO_ERRORS_FOUND.to_h,
+    Constants.TASK_ACTIONS.TRANSCRIPT_ERRORS_FOUND_AND_CORRECTED.to_h,
+    Constants.TASK_ACTIONS.CANCEL_REVIEW_TRANSCRIPT_TASK.to_h
   ].freeze
+
+  def label
+    COPY::REVIEW_TRANSCRIPT_TASK_LABEL
+  end
 
   def available_actions(user)
     return USER_ACTIONS if assigned_to == user
+
     []
+  end
+
+  def default_instructions
+    COPY::REVIEW_TRANSCRIPT_TASK_DEFAULT_INSTRUCTIONS
   end
 
   def set_assignee
     self.assigned_to ||= HearingAdmin.singleton
   end
-
 end

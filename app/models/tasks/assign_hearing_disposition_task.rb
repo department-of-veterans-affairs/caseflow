@@ -132,7 +132,20 @@ class AssignHearingDispositionTask < Task
     end
 
     if appeal.is_a?(LegacyAppeal)
-      update!(status: Constants.TASK_STATUSES.completed)
+      # Create ReviewTranscriptTask here
+      # ReviewTransciptTask is created as child of Root Task with Status as in_progress and
+      # ChangeHearingDispositionTask is updated to on_hold.
+      # ReviewTranscriptTask is set be Completed when the Currently active task actions are selected and submited.
+      # For Legacy appeals we need to check the HEARSCHED table for folder_nr column as it has relation with
+      # BRIEFF table bfkey column which is the appeal_id
+      ReviewTranscriptTask.create!(
+        appeal: appeal,
+        parent: appeal.root_task,
+        assigned_to: TranscriptionTeam.singleton,
+        assigned_by: User.system_user,
+        status: Constants.TASK_STATUSES.in_progress
+      )
+      update!(status: Constants.TASK_STATUSES.on_hold)
 
       [] # Not creating any tasks, just updating self
     else
@@ -299,6 +312,7 @@ class AssignHearingDispositionTask < Task
   end
 
   def create_transcription_and_maybe_evidence_submission_window_tasks
+    # binding.pry
     transcription_task = TranscriptionTask.create!(
       appeal: appeal,
       parent: self,
