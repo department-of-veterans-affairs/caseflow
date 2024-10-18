@@ -43,15 +43,16 @@ describe('VirtualHearingFields', () => {
     );
 
     // Assertions
-    const virtualHearingFrom  = screen.queryByRole('heading', { name: /Virtual Hearing Links/i });
-    expect(virtualHearingFrom).not.toBeInTheDocument();
+    const virtualHearingForm  = screen.getByRole('heading', { name: /Hearing Links/i });
+    expect(virtualHearingForm).toBeInTheDocument();
+    expect(screen.getByText('Pexip Hearing')).toBeInTheDocument();
 
     expect(asFragment()).toMatchSnapshot();
   });
 
   test('Shows only hearing links with no virtualHearing', () => {
     // Run the test
-    const { asFragment, container } = customRender(
+    const { asFragment } = customRender(
       <VirtualHearingFields
         update={updateSpy}
         hearing={amaHearing}
@@ -63,10 +64,10 @@ describe('VirtualHearingFields', () => {
     );
 
     // Assertions
-    const virtualHearingFrom  = screen.getByRole('heading', { name: /Virtual Hearing Links/i });
-    expect(virtualHearingFrom).toBeInTheDocument();
+    const virtualHearingForm  = screen.getByRole('heading', { name: /Hearing Links/i });
+    expect(virtualHearingForm).toBeInTheDocument();
 
-    // Test HearingLinks presence
+    // // Test HearingLinks presence
     const guestLink = screen.getByText('Guest Link:');
     expect(guestLink).toBeInTheDocument();
 
@@ -75,7 +76,7 @@ describe('VirtualHearingFields', () => {
 
   test('Shows hearing details with virtualHearing', () => {
     // Run the test
-    const { asFragment, container } = customRender(
+    const { asFragment } = customRender(
       <VirtualHearingFields
         update={updateSpy}
         hearing={amaHearing}
@@ -88,14 +89,70 @@ describe('VirtualHearingFields', () => {
     );
 
     // Assertions
-    const virtualHearingFrom  = screen.getByRole('heading', { name: /Virtual Hearing Links/i });
-    expect(virtualHearingFrom).toBeInTheDocument();
+    const virtualHearingForm  = screen.getByRole('heading', { name: /Hearing Links/i });
+    expect(virtualHearingForm).toBeInTheDocument();
 
     // Test HearingLinks presence
     const guestLink = screen.getByText(/Guest Link:/);
     expect(guestLink).toBeInTheDocument();
 
-    // expect(virtualHearingForm).toMatchSnapshot();
+    const links = screen.getAllByRole('button');
+    expect(links).toHaveLength(1);
+
+    expect(asFragment()).toMatchSnapshot();
+  });
+
+  test('Renders webex conference when conference provider is webex', () => {
+    const webexHearing = {
+      ...amaHearing,
+      conferenceProvider: 'webex'
+    };
+
+    // Run the test
+    const { asFragment } = customRender(
+      <VirtualHearingFields
+        update={updateSpy}
+        hearing={webexHearing}
+        virtualHearing={{
+          ...virtualHearing.virtualHearing,
+          conferenceProvider: 'webex'
+        }}
+      />,
+      {
+        wrapper: Wrapper,
+        wrapperProps: { user: anyUser, hearing: webexHearing, store: detailsStore }
+      }
+    );
+
+    // Assertions
+    expect(screen.getByText('Webex Hearing')).toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
+  });
+
+  test('Renders pexip conference when conference provider is pexip', () => {
+    const webexHearing = {
+      ...amaHearing,
+      conferenceProvider: 'pexip'
+    };
+
+    // Run the test
+    const { asFragment } = customRender(
+      <VirtualHearingFields
+        update={updateSpy}
+        hearing={webexHearing}
+        virtualHearing={{
+          ...virtualHearing.virtualHearing,
+          conferenceProvider: 'pexip'
+        }}
+      />,
+      {
+        wrapper: Wrapper,
+        wrapperProps: { user: anyUser, hearing: webexHearing, store: detailsStore }
+      }
+    );
+
+    // Assertions
+    expect(screen.getByText('Pexip Hearing')).toBeInTheDocument();
     expect(asFragment()).toMatchSnapshot();
   });
 });

@@ -5,6 +5,7 @@ import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { isUndefined, isNil, isEmpty, omitBy, get } from 'lodash';
+import StringUtil from 'app/util/StringUtil';
 
 import HEARING_DISPOSITION_TYPES from '../../../../constants/HEARING_DISPOSITION_TYPES';
 
@@ -273,9 +274,11 @@ class DailyDocketRow extends React.Component {
   isLegacyHearing = () => this.props.hearing?.docketName === 'legacy';
 
   conferenceLinkOnClick = () => {
-    const { conferenceLink } = this.props;
+    const { conferenceLink, hearing } = this.props;
 
-    window.open(conferenceLink?.hostLink, 'Recording Session').focus();
+    const link = hearing.conferenceProvider === 'webex' ? hearing.nonVirtualConferenceLink : conferenceLink;
+
+    window.open(link?.hostLink, 'Recording Session').focus();
   }
 
   getInputProps = () => {
@@ -375,11 +378,18 @@ class DailyDocketRow extends React.Component {
     return (
       <div {...inputSpacing}>
         {hearing?.isVirtual && <StaticVirtualHearing hearing={hearing} user={user} />}
-        {hearing?.isVirtual !== true && userJudgeOrCoordinator(user, hearing) && <Button
+        {hearing?.isVirtual !== true && !hearing?.scheduledForIsPast && userJudgeOrCoordinator(user, hearing) && <Button
           classNames={['usa-button-secondary']}
           type="button"
           disabled={this.props.conferenceLinkError}
-          onClick={this.conferenceLinkOnClick} > Connect to Recording System</Button>}
+          onClick={this.conferenceLinkOnClick} > Connect to Recording System</Button> }
+        {hearing?.isVirtual !== true && hearing?.scheduledForIsPast && userJudgeOrCoordinator(user, hearing) && <div>
+          <span>
+            Host Link: N/A
+          </span></div> }
+        {<div >
+          <b>{StringUtil.capitalizeFirst(hearing?.conferenceProvider || 'Pexip')} hearing</b>
+        </div>}
         <DispositionDropdown
           {...inputProps}
           cancelUpdate={this.cancelUpdate}
@@ -495,7 +505,11 @@ DailyDocketRow.propTypes = {
     externalId: PropTypes.string,
     disposition: PropTypes.string,
     scheduledForIsPast: PropTypes.bool,
-    scheduledTimeString: PropTypes.string
+    scheduledTimeString: PropTypes.string,
+    conferenceProvider: PropTypes.string,
+    nonVirtualConferenceLink: PropTypes.shape({
+      hostLink: PropTypes.string
+    })
   }),
   user: PropTypes.shape({
     userCanAssignHearingSchedule: PropTypes.bool,

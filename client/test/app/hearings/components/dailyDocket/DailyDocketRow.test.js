@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen, fireEvent, render } from '@testing-library/react';
+import { screen, fireEvent, render, waitFor } from '@testing-library/react';
 import { axe } from 'jest-axe';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { Provider } from 'react-redux';
@@ -184,7 +184,7 @@ describe('DailyDocketRow', () => {
 
 describe('Test Conference Link Button', () => {
   store = createStore(dailyDocketReducer);
-  it('Test click event', () => {
+  it('Test click event', async () => {
     const { container } = render(
       <Provider store={store}>
         <Router>
@@ -206,7 +206,11 @@ describe('Test Conference Link Button', () => {
     fireEvent.click(button);
 
     // Check if window.open was called with the correct arguments
-    expect(mockOpen).toHaveBeenCalledWith(dailyDocketPropsHearingIsVirtual.conferenceLink.hostLink, 'Recording Session');
+    expect(mockOpen).toHaveBeenCalledWith(
+      dailyDocketPropsHearingNotVirtualJudgeUser.hearing.nonVirtualConferenceLink.hostLink,
+      'Recording Session'
+    )
+    expect(mockOpen).toHaveBeenCalledTimes(1);
     expect(mockFocus).toHaveBeenCalled();
   });
 });

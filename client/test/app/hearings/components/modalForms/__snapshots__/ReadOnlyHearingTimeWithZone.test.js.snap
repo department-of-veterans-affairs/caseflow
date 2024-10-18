@@ -74,7 +74,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
       Hearing Time
     </strong>
     <pre>
-      Invalid date Indiana (East) / Invalid date Eastern
+      Invalid date Eastern
     </pre>
   </div>
 </DocumentFragment>
@@ -154,7 +154,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
       Hearing Time
     </strong>
     <pre>
-      Invalid date Indiana (East) / Invalid date Eastern
+      Invalid date Eastern
     </pre>
   </div>
 </DocumentFragment>
@@ -234,7 +234,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
       Hearing Time
     </strong>
     <pre>
-      Invalid date Indiana (East) / Invalid date Eastern
+      Invalid date Eastern
     </pre>
   </div>
 </DocumentFragment>
