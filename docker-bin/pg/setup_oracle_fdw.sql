@@ -1,0 +1,363 @@
+-- Enable oracle_fdw extension
+CREATE EXTENSION oracle_fdw;
+
+-- Print extension version
+SELECT oracle_diag ();
+
+-- Create Caseflow Database
+-- Skip if you aren't running this as part of an initialization script.
+CREATE DATABASE caseflow_certification_development OWNER postgres ENCODING UTF8;
+
+-- #####################
+-- Init foreign server
+-- #####################
+
+-- Create the foreign server
+CREATE SERVER vacols_sv FOREIGN DATA WRAPPER oracle_fdw OPTIONS (
+    dbserver 'localhost:1521/BVAP'
+);
+
+GRANT USAGE ON FOREIGN SERVER vacols_sv TO postgres;
+
+-- Create a user mapping to the foreign server
+CREATE USER MAPPING FOR postgres SERVER vacols_sv OPTIONS (
+    USER 'VACOLS_DEV',
+    PASSWORD 'VACOLS_DEV'
+);
+
+-- #####################
+-- Create foreign tables
+-- #####################
+
+-- Switch to Caseflow database
+\c caseflow_certification_development
+
+-- BRIEFF Table
+CREATE FOREIGN
+TABLE IF NOT EXISTS f_vacols_brieff (
+    BFKEY varchar(12) OPTIONS (key 'true') NOT NULL,
+    BFDDEC date,
+    BFCORKEY varchar(16),
+    BFCORLID varchar(16),
+    BFDCN varchar(6),
+    BFDOCIND varchar(1),
+    BFPDNUM varchar(12),
+    BFDPDCN date,
+    BFORGTIC varchar(12),
+    BFDORG date,
+    BFDTHURB date,
+    BFDNOD date,
+    BFDSOC date,
+    BFD19 date,
+    BF41STAT date,
+    BFMSTAT varchar(1),
+    BFMPRO varchar(3),
+    BFDMCON date,
+    BFREGOFF varchar(16),
+    BFISSNR varchar(1),
+    BFRDMREF varchar(1),
+    BFCASEV varchar(4),
+    BFCASEVA varchar(4),
+    BFCASEVB varchar(4),
+    BFCASEVC varchar(4),
+    BFBOARD varchar(10),
+    BFBSASGN date,
+    BFATTID varchar(16),
+    BFDASGN date,
+    BFCCLKID varchar(16),
+    BFDQRSNT date,
+    BFDLOCIN date,
+    BFDLOOUT date,
+    BFSTASGN varchar(16),
+    BFCURLOC varchar(16),
+    BFNRCOPY varchar(4),
+    BFMEMID varchar(16),
+    BFDMEM date,
+    BFNRCI varchar(5),
+    BFCALLUP char(1),
+    BFCALLYYMM varchar(4),
+    BFHINES varchar(2),
+    BFDCFLD1 varchar(2),
+    BFDCFLD2 varchar(2),
+    BFDCFLD3 varchar(2),
+    BFAC varchar(1),
+    BFDC varchar(1),
+    BFHA varchar(1),
+    BFIC varchar(2),
+    BFIO varchar(2),
+    BFMS varchar(1),
+    BFOC varchar(1),
+    BFSH varchar(1),
+    BFSO varchar(1),
+    BFHR varchar(1),
+    BFST varchar(1),
+    BFDRODEC date,
+    BFSSOC1 date,
+    BFSSOC2 date,
+    BFSSOC3 date,
+    BFSSOC4 date,
+    BFSSOC5 date,
+    BFDTB date,
+    BFTBIND varchar(1),
+    BFDCUE date,
+    BFDDVIN date,
+    BFDDVOUT date,
+    BFDDVWRK date,
+    BFDDVDSP date,
+    BFDDVRET date,
+    BFDDRO date,
+    BFDROID varchar(3),
+    BFDRORTR varchar(1),
+    BFRO1 varchar(4),
+    BFLOT varchar(2),
+    BFBOX varchar(4),
+    BFDTBREADY date,
+    BFARC varchar(4),
+    BFDARCIN date,
+    BFDARCOUT date,
+    BFARCDISP varchar(1),
+    BFSUB varchar(1),
+    BFROCDOC varchar(1),
+    BFDROCKET date,
+    BFDCERTOOL date
+) SERVER vacols_sv OPTIONS (
+    SCHEMA 'VACOLS_DEV',
+    TABLE 'BRIEFF'
+);
+
+-- FOLDER Table
+CREATE FOREIGN
+TABLE IF NOT EXISTS f_vacols_folder (
+    TICKNUM varchar(12) OPTIONS (key 'true') NOT NULL,
+    TICORKEY varchar(16),
+    TISTKEY varchar(16),
+    TINUM varchar(20),
+    TIFILOC varchar(20),
+    TIADDRTO varchar(10),
+    TITRNUM varchar(20),
+    TICUKEY varchar(10),
+    TIDSNT date,
+    TIDRECV date,
+    TIDDUE date,
+    TIDCLS date,
+    TIWPPTR varchar(250),
+    TIWPPTRT varchar(2),
+    TIADUSER varchar(16),
+    TIADTIME date,
+    TIMDUSER varchar(16),
+    TIMDTIME date,
+    TICLSTME date,
+    TIRESP1 varchar(5),
+    TIKEYWRD varchar(250),
+    TIACTIVE varchar(1),
+    TISPARE1 varchar(30),
+    TISPARE2 varchar(20),
+    TISPARE3 varchar(30),
+    TIREAD1 varchar(28),
+    TIREAD2 varchar(16),
+    TIMT varchar(10),
+    TISUBJ1 varchar(1),
+    TISUBJ varchar(1),
+    TISUBJ2 varchar(1),
+    TISYS varchar(16),
+    TIAGOR varchar(1),
+    TIASBT varchar(1),
+    TIGWUI varchar(1),
+    TIHEPC varchar(1),
+    TIAIDS varchar(1),
+    TIMGAS varchar(1),
+    TIPTSD varchar(1),
+    TIRADB varchar(1),
+    TIRADN varchar(1),
+    TISARC varchar(1),
+    TISEXH varchar(1),
+    TITOBA varchar(1),
+    TINOSC varchar(1),
+    TI38US varchar(1),
+    TINNME varchar(1),
+    TINWGR varchar(1),
+    TIPRES varchar(1),
+    TITRTM varchar(1),
+    TINOOT varchar(1),
+    TIOCTIME date,
+    TIOCUSER varchar(16),
+    TIDKTIME date,
+    TIDKUSER varchar(16),
+    TIPULAC date,
+    TICERULLO date,
+    TIPLNOD varchar(1),
+    TIPLWAIVER varchar(1),
+    TIPLEXPRESS varchar(1),
+    TISNL varchar(1),
+    TIVBMS varchar(1),
+    TICLCW varchar(1)
+) SERVER vacols_sv OPTIONS (
+    SCHEMA 'VACOLS_DEV',
+    TABLE 'FOLDER'
+);
+
+-- HEARSCHED Table
+CREATE FOREIGN
+TABLE IF NOT EXISTS f_vacols_hearsched (
+    HEARING_PKSEQ integer OPTIONS (key 'true') NOT NULL,
+    HEARING_TYPE varchar(1),
+    FOLDER_NR varchar(12),
+    HEARING_date date,
+    HEARING_DISP varchar(1),
+    BOARD_MEMBER varchar(20),
+    NOTES1 varchar(1000),
+    TEAM varchar(2),
+    ROOM varchar(4),
+    REP_STATE varchar(2),
+    MDUSER varchar(16),
+    MDTIME date,
+    REQdate date,
+    CLSdate date,
+    RECMED varchar(1),
+    CONSENT date,
+    CONRET date,
+    CONTAPES varchar(1),
+    TRANREQ varchar(1),
+    TRANSENT date,
+    WBTAPES smallint,
+    WBBACKUP varchar(1),
+    WBSENT date,
+    RECPROB varchar(1),
+    TASKNO varchar(7),
+    ADDUSER varchar(16),
+    ADDTIME date,
+    AOD varchar(1),
+    HOLDDAYS smallint,
+    VDKEY varchar(12),
+    REPNAME varchar(25),
+    VDBVAPOC varchar(40),
+    VDROPOC varchar(40),
+    CANCELdate date,
+    ADDON varchar(1)
+) SERVER vacols_sv OPTIONS (
+    SCHEMA 'VACOLS_DEV',
+    TABLE 'HEARSCHED'
+);
+
+-- CORRES Table
+CREATE FOREIGN
+TABLE IF NOT EXISTS f_vacols_corres (
+    STAFKEY varchar(16) OPTIONS (key 'true') NOT NULL,
+    SUSRPW varchar(16),
+    SUSRSEC varchar(5),
+    SUSRTYP varchar(10),
+    SSALUT varchar(15),
+    SNAMEF varchar(24),
+    SNAMEMI varchar(4),
+    SNAMEL varchar(60),
+    SLOGID varchar(16),
+    STITLE varchar(40),
+    SORG varchar(50),
+    SDEPT varchar(50),
+    SADDRNUM varchar(10),
+    SADDRST1 varchar(60),
+    SADDRST2 varchar(60),
+    SADDRCTY varchar(20),
+    SADDRSTT varchar(4),
+    SADDRCNTY varchar(20),
+    SADDRZIP varchar(10),
+    STELW varchar(20),
+    STELWEX varchar(20),
+    STELFAX varchar(20),
+    STELH varchar(20),
+    STADUSER varchar(16),
+    STADTIME date,
+    STMDUSER varchar(16),
+    STMDTIME date,
+    STC1 integer,
+    STC2 integer,
+    STC3 integer,
+    STC4 integer,
+    SNOTES varchar(80),
+    SORC1 integer,
+    SORC2 integer,
+    SORC3 integer,
+    SORC4 integer,
+    SACTIVE varchar(1),
+    SSYS varchar(16),
+    SSPARE1 varchar(20),
+    SSPARE2 varchar(20),
+    SSPARE3 varchar(20),
+    SSPARE4 varchar(10),
+    SSN varchar(9),
+    SFNOD date,
+    SDOB date,
+    SGENDER varchar(1),
+    SHOMELESS varchar(1),
+    STERMILL varchar(1),
+    SFINHARD varchar(1),
+    SADVAGE varchar(1),
+    SMOH varchar(1),
+    SVSI varchar(1),
+    SPOW varchar(1),
+    SALS varchar(1),
+    SPGWV varchar(1),
+    SINCAR varchar(1)
+) SERVER vacols_sv OPTIONS (
+    SCHEMA 'VACOLS_DEV',
+    TABLE 'CORRES'
+);
+
+-- REP Table
+CREATE FOREIGN
+TABLE IF NOT EXISTS f_vacols_rep (
+    REPKEY varchar(12) OPTIONS (key 'true') NOT NULL,
+    REPADDTIME date,
+    REPTYPE varchar(1),
+    REPSO varchar(1),
+    REPLAST varchar(40),
+    REPFIRST varchar(24),
+    REPMI varchar(4),
+    REPSUF varchar(4),
+    REPADDR1 varchar(50),
+    REPADDR2 varchar(100),
+    REPCITY varchar(20),
+    REPST varchar(4),
+    REPZIP varchar(10),
+    REPPHONE varchar(20),
+    REPNOTES varchar(50),
+    REPMODUSER varchar(16),
+    REPMODTIME date,
+    REPDIRPAY varchar(1),
+    REPDFEE date,
+    REPFEERECV date,
+    REPLASTDOC date,
+    REPFEEDISP date,
+    REPCORKEY varchar(16),
+    REPACKNW date
+) SERVER vacols_sv OPTIONS (
+    SCHEMA 'VACOLS_DEV',
+    TABLE 'REP'
+);
+
+-- ISSUES Table
+CREATE FOREIGN
+TABLE IF NOT EXISTS f_vacols_issues (
+    ISSKEY varchar(12),
+    ISSSEQ smallint,
+    ISSPROG varchar(6),
+    ISSCODE varchar(6),
+    ISSLEV1 varchar(6),
+    ISSLEV2 varchar(6),
+    ISSLEV3 varchar(6),
+    ISSDC varchar(1),
+    ISSDCLS date,
+    ISSADTIME date,
+    ISSADUSER varchar(16),
+    ISSMDTIME date,
+    ISSMDUSER varchar(16),
+    ISSDESC varchar(100),
+    ISSSEL varchar(1),
+    ISSGR varchar(1),
+    ISSDEV varchar(2),
+    ISSMST varchar(1),
+    ISSPACT varchar(1)
+) SERVER vacols_sv OPTIONS (
+    SCHEMA 'VACOLS_DEV',
+    TABLE 'ISSUES'
+);
