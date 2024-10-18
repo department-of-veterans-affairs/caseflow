@@ -268,7 +268,8 @@ RSpec.feature "Convert hearing request type" do
             click_dropdown(name: "appealHearingLocation", index: 0)
             click_dropdown(name: "hearingDate", index: 1)
             click_dropdown(name: "optionalHearingTime0", index: 0)
-            click_button(text: "Schedule")
+            safe_click("#button-Schedule")
+
             expect(page).to have_content("You have successfully assigned")
           end
 
@@ -299,7 +300,7 @@ RSpec.feature "Convert hearing request type" do
             click_dropdown(name: "appealHearingLocation", index: 0)
             click_dropdown(name: "hearingDate", index: 0)
             click_dropdown(name: "optionalHearingTime0", index: 0)
-            click_button(text: "Schedule")
+            safe_click("#button-Schedule")
           end
 
           step "vso user" do
