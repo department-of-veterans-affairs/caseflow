@@ -43,7 +43,7 @@ const Tooltip = (props) => {
   return (
     <React.Fragment>
       {React.cloneElement(props.children, tooltipProps)}
-      <span {...tooltipStyling}>
+      <span {...tooltipStyling} data-testid="tooltip-testid">
         <ReactTooltip
           effect="solid"
           id={id}

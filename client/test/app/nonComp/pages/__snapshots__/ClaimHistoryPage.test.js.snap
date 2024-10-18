@@ -6,7 +6,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
     class="individual-claim-history"
   >
     <div
-      class="sc-bdfBwQ bDdaSe"
+      class="sc-aXZVg jmTClw"
     >
        
       <a
@@ -29,6 +29,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
           </h1>
           <div
             class="cf-table-wrapper"
+            data-testid="queue-table-data-testid"
           >
             <div
               class="cf-pagination"
@@ -95,6 +96,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                               fill-rule="nonzero"
                             >
                               <g
+                                data-testid="topColorGroup"
                                 fill="#0071bc"
                                 transform="translate(2.000000, 1.000000)"
                               >
@@ -107,6 +109,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                                 </g>
                               </g>
                               <g
+                                data-testid="bottomColorGroup"
                                 fill="#d6d7d9"
                                 transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                               >
@@ -162,6 +165,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                               fill-rule="nonzero"
                             >
                               <g
+                                data-testid="topColorGroup"
                                 fill="#d6d7d9"
                                 transform="translate(2.000000, 1.000000)"
                               >
@@ -174,6 +178,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                                 </g>
                               </g>
                               <g
+                                data-testid="bottomColorGroup"
                                 fill="#d6d7d9"
                                 transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                               >
@@ -191,6 +196,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                       </span>
                       <span
                         data-css-ilmt4b=""
+                        data-testid="table-filter-testid"
                       >
                         <svg
                           aria-label="Filter by User"
@@ -267,6 +273,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                               fill-rule="nonzero"
                             >
                               <g
+                                data-testid="topColorGroup"
                                 fill="#d6d7d9"
                                 transform="translate(2.000000, 1.000000)"
                               >
@@ -279,6 +286,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                                 </g>
                               </g>
                               <g
+                                data-testid="bottomColorGroup"
                                 fill="#d6d7d9"
                                 transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                               >
@@ -296,6 +304,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                       </span>
                       <span
                         data-css-ilmt4b=""
+                        data-testid="table-filter-testid"
                       >
                         <svg
                           aria-label="Filter by Activity"

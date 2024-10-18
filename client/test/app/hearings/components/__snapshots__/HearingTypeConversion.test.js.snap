@@ -1,512 +1,144 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
-<HearingTypeConversionProvider>
-  <HearingTypeConversion
-    appeal={
-      Object {
-        "appellantAddress": Object {
-          "address_line_1": "9999 MISSION ST",
-          "address_line_2": "UBER",
-          "address_line_3": "APT 2",
-          "city": "SAN FRANCISCO",
-          "country": "USA",
-          "state": "CA",
-          "zip": "94103",
-        },
-        "appellantFullName": "Abellona Valtas",
-        "appellantIsNotVeteran": false,
-        "appellantRelationship": "Spouse",
-        "appellantTz": "America/New_York",
-        "assignedAttorney": null,
-        "assignedJudge": null,
-        "assignedToLocation": "Hearing Admin",
-        "attorneyCaseRewriteDetails": Object {
-          "note_from_attorney": null,
-          "untimely_evidence": null,
-        },
-        "availableHearingLocations": Array [],
-        "canEditDocumentId": false,
-        "canEditRequestIssues": false,
-        "caseReviewId": null,
-        "caseType": "Original",
-        "caseflowVeteranId": 541,
-        "certificationDate": null,
-        "closestRegionalOffice": null,
-        "closestRegionalOfficeLabel": "Nashville Regional office",
-        "completedHearingOnPreviousAppeal": false,
-        "decisionDate": null,
-        "decisionIssues": Array [
-          Object {
-            "description": "This is a description of the decision",
-            "id": 1,
-          },
-          Object {
-            "description": "This is a description of another decision",
-            "id": 2,
-          },
-        ],
-        "docketName": "Legacy",
-        "docketNumber": "200805-541",
-        "documentID": null,
-        "externalId": "1234456",
-        "hearings": Array [],
-        "id": "1",
-        "isAdvancedOnDocket": false,
-        "isLegacyAppeal": true,
-        "isPaperCase": false,
-        "issueCount": 0,
-        "issues": Array [],
-        "nodDate": "2020-08-05",
-        "overtime": false,
-        "powerOfAttorney": Object {
-          "representative_address": Object {
-            "address_line_1": "9999 MISSION ST",
-            "address_line_2": "UBER",
-            "address_line_3": "APT 2",
-            "city": "SAN FRANCISCO",
-            "country": "USA",
-            "state": "CA",
-            "zip": "94103",
-          },
-          "representative_email_address": "tom.brady@caseflow.gov",
-          "representative_name": "Clarence Darrow",
-          "representative_type": "Attorney",
-        },
-        "readableHearingRequestType": "Travel",
-        "readableOriginalHearingRequestType": "Travel",
-        "regionalOffice": null,
-        "removed": false,
-        "status": "not_distributed",
-        "vacateType": null,
-        "veteranDateOfDeath": null,
-        "veteranFileNumber": "123456789",
-        "veteranFullName": "Abellona Valtas",
-        "veteranInfo": Object {
-          "veteran": Object {
-            "address": Object {
-              "address_line_1": "1234 Main Street",
-              "address_line_2": null,
-              "address_line_3": null,
-              "city": "Orlando",
-              "country": "USA",
-              "state": "FL",
-              "zip": "12345",
-            },
-            "date_of_birth": "01/10/1935",
-            "date_of_death": null,
-            "email_address": "Abellona.Valtas@test.com",
-            "full_name": "Abellona Valtas",
-            "gender": "M",
-          },
-        },
-        "withdrawn": false,
-      }
-    }
-    type="Virtual"
+<DocumentFragment>
+  <section
+    class="cf-app-segment cf-app-segment--alt"
   >
-    <HearingTypeConversionForm
-      appeal={
-        Object {
-          "appellantAddress": Object {
-            "address_line_1": "9999 MISSION ST",
-            "address_line_2": "UBER",
-            "address_line_3": "APT 2",
-            "city": "SAN FRANCISCO",
-            "country": "USA",
-            "state": "CA",
-            "zip": "94103",
-          },
-          "appellantFullName": "Abellona Valtas",
-          "appellantIsNotVeteran": false,
-          "appellantRelationship": "Spouse",
-          "appellantTz": "America/New_York",
-          "assignedAttorney": null,
-          "assignedJudge": null,
-          "assignedToLocation": "Hearing Admin",
-          "attorneyCaseRewriteDetails": Object {
-            "note_from_attorney": null,
-            "untimely_evidence": null,
-          },
-          "availableHearingLocations": Array [],
-          "canEditDocumentId": false,
-          "canEditRequestIssues": false,
-          "caseReviewId": null,
-          "caseType": "Original",
-          "caseflowVeteranId": 541,
-          "certificationDate": null,
-          "closestRegionalOffice": null,
-          "closestRegionalOfficeLabel": "Nashville Regional office",
-          "completedHearingOnPreviousAppeal": false,
-          "decisionDate": null,
-          "decisionIssues": Array [
-            Object {
-              "description": "This is a description of the decision",
-              "id": 1,
-            },
-            Object {
-              "description": "This is a description of another decision",
-              "id": 2,
-            },
-          ],
-          "docketName": "Legacy",
-          "docketNumber": "200805-541",
-          "documentID": null,
-          "externalId": "1234456",
-          "hearings": Array [],
-          "id": "1",
-          "isAdvancedOnDocket": false,
-          "isLegacyAppeal": true,
-          "isPaperCase": false,
-          "issueCount": 0,
-          "issues": Array [],
-          "nodDate": "2020-08-05",
-          "overtime": false,
-          "powerOfAttorney": Object {
-            "representative_address": Object {
-              "address_line_1": "9999 MISSION ST",
-              "address_line_2": "UBER",
-              "address_line_3": "APT 2",
-              "city": "SAN FRANCISCO",
-              "country": "USA",
-              "state": "CA",
-              "zip": "94103",
-            },
-            "representative_email_address": "tom.brady@caseflow.gov",
-            "representative_name": "Clarence Darrow",
-            "representative_type": "Attorney",
-          },
-          "readableHearingRequestType": "Travel",
-          "readableOriginalHearingRequestType": "Travel",
-          "regionalOffice": null,
-          "removed": false,
-          "status": "not_distributed",
-          "vacateType": null,
-          "veteranDateOfDeath": null,
-          "veteranFileNumber": "123456789",
-          "veteranFullName": "Abellona Valtas",
-          "veteranInfo": Object {
-            "veteran": Object {
-              "address": Object {
-                "address_line_1": "1234 Main Street",
-                "address_line_2": null,
-                "address_line_3": null,
-                "city": "Orlando",
-                "country": "USA",
-                "state": "FL",
-                "zip": "12345",
-              },
-              "date_of_birth": "01/10/1935",
-              "date_of_death": null,
-              "email_address": "Abellona.Valtas@test.com",
-              "full_name": "Abellona Valtas",
-              "gender": "M",
-            },
-          },
-          "withdrawn": false,
-        }
-      }
-      isLoading={false}
-      onCancel={[Function]}
-      onSubmit={[Function]}
-      type="Virtual"
+    <h1
+      class="cf-margin-bottom-0"
     >
-      <AppSegment
-        filledBackground={true}
+      Convert Hearing To Virtual
+    </h1>
+    <p>
+      The hearing request will appear in the scheduling queue for the 
+      <strong>
+        Nashville Regional office
+      </strong>
+      .
+    </p>
+    <div
+      class="helper-text"
+    >
+      Review and update the following information in VBMS if needed. Caseflow won't send email notifications until you schedule the hearing.
+    </div>
+    <div
+      data-css-1jfbwxw=""
+    />
+    <h2>
+      Veteran
+    </h2>
+    <div
+      data-css-1a5irm0=""
+      data-testid="read-only-testid"
+    >
+      <strong>
+        Veteran Name
+      </strong>
+      <pre>
+        Abellona Valtas
+      </pre>
+    </div>
+    <div
+      class="usa-grid css-1jfbwxw"
+      id="email-section"
+    >
+      <div
+        class="usa-width-one-half"
       >
-        <section
-          className="cf-app-segment cf-app-segment--alt"
+        <div
+          data-css-1a5irm0=""
+          data-testid="read-only-testid"
         >
-          <h1
-            className="cf-margin-bottom-0"
-          >
-            Convert Hearing To Virtual
-          </h1>
-          <p
-            dangerouslySetInnerHTML={
-              Object {
-                "__html": "The hearing request will appear in the scheduling queue for the <strong>Nashville Regional office</strong>.",
-              }
-            }
-          />
-          <HelperText
-            label="Review and update the following information in VBMS if needed. Caseflow won't send email notifications until you schedule the hearing."
+          <strong>
+            Veteran Email (for these notifications only)
+          </strong>
+          <pre>
+            None
+          </pre>
+        </div>
+        <div>
+          <div
+            class="usa-alert usa-alert-info usa-alert-slim"
+            role="alert"
           >
             <div
-              className="helper-text"
+              class="usa-alert-body"
             >
-              Review and update the following information in VBMS if needed. Caseflow won't send email notifications until you schedule the hearing.
+              <div
+                class="usa-alert-text"
+              >
+                If you have the Veteran's email address, enter it in VBMS. The email will be required to send notifications when you schedule the hearing.
+              </div>
             </div>
-          </HelperText>
-          <AppellantSection
-            appellantTitle="Veteran"
-            hearing={
-              Object {
-                "appellantFullName": "Abellona Valtas",
-                "appellantIsNotVeteran": false,
-                "representative": "Clarence Darrow",
-                "representativeType": "Attorney",
-                "veteranFullName": "Abellona Valtas",
-              }
-            }
-            readOnly={true}
-            schedulingToVirtual={true}
-            showDivider={false}
-            showMissingEmailAlert={true}
-            showOnlyAppellantName={true}
-            type="Virtual"
-            virtualHearing={
-              Object {
-                "appellantEmail": "Abellona.Valtas@test.com",
-                "representativeEmail": "tom.brady@caseflow.gov",
-              }
-            }
-          >
-            <VirtualHearingSection
-              formFieldsOnly={false}
-              hide={false}
-              label="Veteran"
-              showDivider={false}
-            >
-              <div
-                data-css-1jfbwxw=""
-              />
-              <h2>
-                Veteran
-              </h2>
-              <ReadOnly
-                label="Veteran Name"
-                text="Abellona Valtas"
-              >
-                <div
-                  data-css-1a5irm0=""
-                >
-                  <strong>
-                    Veteran Name
-                  </strong>
-                  <pre>
-                    Abellona Valtas
-                  </pre>
-                </div>
-              </ReadOnly>
-              <div
-                className="usa-grid css-1jfbwxw"
-                id="email-section"
-              >
-                <div
-                  className="usa-width-one-half"
-                >
-                  <HearingEmail
-                    helperLabel="This email address will be used to send notifications for this hearing only."
-                    label="Veteran Email (for these notifications only)"
-                    optional={false}
-                    readOnly={true}
-                    required={true}
-                    showHelper={true}
-                    type="Virtual"
-                  >
-                    <ReadOnly
-                      label="Veteran Email (for these notifications only)"
-                      text="None"
-                    >
-                      <div
-                        data-css-1a5irm0=""
-                      >
-                        <strong>
-                          Veteran Email (for these notifications only)
-                        </strong>
-                        <pre>
-                          None
-                        </pre>
-                      </div>
-                    </ReadOnly>
-                  </HearingEmail>
-                  <div>
-                    <Alert
-                      fixed={false}
-                      message="If you have the Veteran's email address, enter it in VBMS. The email will be required to send notifications when you schedule the hearing."
-                      scrollOnAlert={false}
-                      type="info"
-                    >
-                      <div
-                        className="usa-alert usa-alert-info usa-alert-slim"
-                        role="alert"
-                      >
-                        <div
-                          className="usa-alert-body"
-                        >
-                          <div
-                            className="usa-alert-text"
-                          >
-                            If you have the Veteran's email address, enter it in VBMS. The email will be required to send notifications when you schedule the hearing.
-                          </div>
-                        </div>
-                      </div>
-                    </Alert>
-                  </div>
-                </div>
-              </div>
-            </VirtualHearingSection>
-          </AppellantSection>
-          <RepresentativeSection
-            appellantTitle="Veteran"
-            formFieldsOnly={false}
-            hearing={
-              Object {
-                "appellantFullName": "Abellona Valtas",
-                "appellantIsNotVeteran": false,
-                "representative": "Clarence Darrow",
-                "representativeType": "Attorney",
-                "veteranFullName": "Abellona Valtas",
-              }
-            }
-            readOnly={true}
-            schedulingToVirtual={true}
-            showDivider={true}
-            showMissingEmailAlert={true}
-            showOnlyAppellantName={true}
-            type="Virtual"
-            virtualHearing={
-              Object {
-                "appellantEmail": "Abellona.Valtas@test.com",
-                "representativeEmail": "tom.brady@caseflow.gov",
-              }
-            }
-          >
-            <VirtualHearingSection
-              formFieldsOnly={false}
-              hide={false}
-              label="Power of Attorney (POA)"
-              showDivider={true}
-            >
-              <div
-                className="cf-help-divider"
-              />
-              <h2>
-                Power of Attorney (POA)
-              </h2>
-              <AddressLine
-                label="Attorney"
-                name="Clarence Darrow"
-              >
-                <ReadOnly
-                  label="Attorney"
-                  text="Clarence Darrow
-"
-                >
-                  <div
-                    data-css-1a5irm0=""
-                  >
-                    <strong>
-                      Attorney
-                    </strong>
-                    <pre>
-                      Clarence Darrow
-
-                    </pre>
-                  </div>
-                </ReadOnly>
-              </AddressLine>
-              <div
-                className="usa-grid css-1jfbwxw"
-              >
-                <div
-                  className="usa-width-one-half"
-                >
-                  <HearingEmail
-                    helperLabel="This email address will be used to send notifications for this hearing only."
-                    label="POA/Representative Email (for these notifications only)"
-                    optional={true}
-                    readOnly={true}
-                    showHelper={true}
-                    type="Virtual"
-                  >
-                    <ReadOnly
-                      label="POA/Representative Email (for these notifications only)"
-                      text="None"
-                    >
-                      <div
-                        data-css-1a5irm0=""
-                      >
-                        <strong>
-                          POA/Representative Email (for these notifications only)
-                        </strong>
-                        <pre>
-                          None
-                        </pre>
-                      </div>
-                    </ReadOnly>
-                  </HearingEmail>
-                </div>
-              </div>
-            </VirtualHearingSection>
-          </RepresentativeSection>
-        </section>
-      </AppSegment>
-      <div
-        data-css-1jfbwxw=""
-      >
-        <Button
-          classNames={
-            Array [
-              "cf-submit",
-            ]
-          }
-          linkStyling={true}
-          loading={false}
-          name="Cancel"
-          onClick={[Function]}
-          styling={
-            Object {
-              "data-css-14x0t8z": "",
-            }
-          }
-          type="button"
-          willNeverBeLoading={false}
-        >
-          <span>
-            <button
-              className="cf-submit cf-btn-link usa-button"
-              data-css-14x0t8z=""
-              id="button-Cancel"
-              onClick={[Function]}
-              type="button"
-            >
-              Cancel
-            </button>
-          </span>
-        </Button>
-        <span
-          data-css-jf1dde=""
-        >
-          <Button
-            className="usa-button"
-            classNames={
-              Array [
-                "cf-submit",
-              ]
-            }
-            linkStyling={false}
-            loading={false}
-            name="Convert Hearing To Virtual"
-            onClick={[Function]}
-            type="button"
-            willNeverBeLoading={false}
-          >
-            <span>
-              <button
-                className="cf-submit usa-button"
-                id="button-Convert-Hearing-To-Virtual"
-                onClick={[Function]}
-                type="button"
-              >
-                Convert Hearing To Virtual
-              </button>
-            </span>
-          </Button>
-        </span>
+          </div>
+        </div>
       </div>
-    </HearingTypeConversionForm>
-  </HearingTypeConversion>
-</HearingTypeConversionProvider>
+    </div>
+    <div
+      class="cf-help-divider"
+    />
+    <h2>
+      Power of Attorney (POA)
+    </h2>
+    <div
+      data-css-1a5irm0=""
+      data-testid="read-only-testid"
+    >
+      <strong>
+        Attorney
+      </strong>
+      <pre>
+        Clarence Darrow
+
+      </pre>
+    </div>
+    <div
+      class="usa-grid css-1jfbwxw"
+    >
+      <div
+        class="usa-width-one-half"
+      >
+        <div
+          data-css-1a5irm0=""
+          data-testid="read-only-testid"
+        >
+          <strong>
+            POA/Representative Email (for these notifications only)
+          </strong>
+          <pre>
+            None
+          </pre>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div
+    data-css-1jfbwxw=""
+  >
+    <span>
+      <button
+        class="cf-submit cf-btn-link usa-button"
+        data-css-14x0t8z=""
+        id="button-Cancel"
+        type="button"
+      >
+        Cancel
+      </button>
+    </span>
+    <span
+      data-css-jf1dde=""
+    >
+      <span>
+        <button
+          class="cf-submit usa-button"
+          id="button-Convert-Hearing-To-Virtual"
+          type="button"
+        >
+          Convert Hearing To Virtual
+        </button>
+      </span>
+    </span>
+  </div>
+</DocumentFragment>
 `;
