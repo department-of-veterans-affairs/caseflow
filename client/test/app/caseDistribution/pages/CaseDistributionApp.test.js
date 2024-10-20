@@ -12,7 +12,7 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import rootReducer from 'app/caseDistribution/reducers/root';
 import thunk from 'redux-thunk';
-import { logRoles, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 
 
 describe('render Case Distribution Application', () => {

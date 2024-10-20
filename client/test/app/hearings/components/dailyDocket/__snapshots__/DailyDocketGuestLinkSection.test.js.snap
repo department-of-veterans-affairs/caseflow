@@ -1,49 +1,76 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`HearingDayInfoButton renders correctly 1`] = `
+exports[`DailyDocketGuestLinkSection renders correctly for hearing admins and hearing management users 1`] = `
 <div>
-  <span>
-    <button
-      class="unselected-hearing-day-info-button cf-btn-link usa-button"
-      data-css-1fa3cif=""
-      type="button"
+  <div
+    style="display: grid; grid-template-columns: 1fr 1.8fr; background-color: rgb(241, 241, 241); padding: 1em 0px 0px 1em; margin-left: -40px; margin-right: -40px;"
+  >
+    <h3>
+      Guest links for non-virtual hearings
+    </h3>
+    <div
+      style="display: flex; flex-wrap: wrap; justify-content: space-around;"
     >
-      <div>
-        <div
-          data-css-16v9b8i=""
+      <h3>
+        Conference Room
+        :
+        <span
+          style="font-weight: normal;"
+        >
+          BVA0000001@caseflow.va.gov
+        </span>
+      </h3>
+      <h3>
+        PIN
+        :
+        <span
+          style="font-weight: normal;"
+        >
+          3998472
+          #
+        </span>
+      </h3>
+      <h3>
+        <button
+          aria-describedby="tooltip-Copy Guest Link"
+          aria-label=""
+          class="cf-apppeal-id"
+          currentitem="false"
+          data-css-cjlnsd=""
+          data-event="focus mouseenter"
+          data-event-off="mouseleave keydown"
+          data-for="tooltip-Copy Guest Link"
+          data-tip="true"
+          tabindex="0"
+          type="submit"
+        >
+          Copy Guest Link
+           
+          <svg
+            class=""
+            height="17"
+            viewBox="0 0 21 21"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M13.346 2.578h-2.664v-1.29C10.682.585 10.08 0 9.35 0H6.66c-.728 0-1.33.584-1.33 1.29v1.288H2.663v2.577h10.682V2.578zm-4.02 0H6.66v-1.29h2.665v1.29zm6.685 3.89V3.234a.665.665 0 0 0-.678-.656H14v1.29h.68v2.576H6.66v9.046H1.333V3.867h.68v-1.29H.678a.665.665 0 0 0-.68.657v12.913c0 .365.302.656.68.656h6.006v3.867h9.35l3.996-3.867V6.468h-4.02zm0 12.378v-2.043h2.112l-2.11 2.043zm2.665-3.356H14.68v3.867H7.992v-11.6h10.682v7.733z"
+              fill="#5b616b"
+              fill-rule="evenodd"
+            />
+          </svg>
+        </button>
+        <span
+          data-css-1qgqh7a=""
+          data-testid="tooltip-testid"
         >
           <div
-            data-css-1o3wy7o=""
+            class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+            data-id="tooltip"
+            id="tooltip-Copy Guest Link"
+            role="tooltip"
           >
-            Mon Apr 12
-          </div>
-          <div
-            data-css-5bhwlq=""
-          >
-            <span
-              aria-describedby="hearing-day-undefined"
-              aria-label=""
-              currentitem="false"
-              data-event="focus mouseenter"
-              data-event-off="mouseleave keydown"
-              data-for="hearing-day-undefined"
-              data-tip="true"
-              tabindex="-1"
-            >
-              Video · VLJ Jerengal, Jonas
-            </span>
-            <span
-              data-css-10mgax4=""
-              data-testid="tooltip-testid"
-            >
-              <div
-                class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
-                data-id="tooltip"
-                id="hearing-day-undefined"
-                role="tooltip"
-              >
-                <style>
-                  
+            <style>
+              
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -118,76 +145,87 @@ exports[`HearingDayInfoButton renders correctly 1`] = `
         border-right-width: 6px;
     }
   
-                </style>
-                VLJ Jerengal, Jonas
-              </div>
-            </span>
+            </style>
+            Click to copy
           </div>
-        </div>
-        <div
-          data-css-1fnaqki=""
-        >
-          <div
-            data-css-lrak98=""
-          >
-            0 of 8
-          </div>
-          <div
-            data-css-heqg99=""
-          >
-            scheduled
-          </div>
-        </div>
-      </div>
-    </button>
-  </span>
+        </span>
+      </h3>
+    </div>
+  </div>
 </div>
 `;
 
-exports[`HearingDayInfoButton renders the Docket readable request type when Docket is type Virtual 1`] = `
+exports[`DailyDocketGuestLinkSection renders correctly for non hearing admins and hearing management users 1`] = `
 <div>
-  <span>
-    <button
-      class="unselected-hearing-day-info-button cf-btn-link usa-button"
-      data-css-1fa3cif=""
-      type="button"
+  <div
+    style="display: grid; grid-template-columns: 1fr 1.8fr; background-color: rgb(241, 241, 241); padding: 1em 0px 0px 1em; margin-left: -40px; margin-right: -40px;"
+  >
+    <h3>
+      Guest links for non-virtual hearings
+    </h3>
+    <div
+      style="display: flex; flex-wrap: wrap; justify-content: space-around;"
     >
-      <div>
-        <div
-          data-css-16v9b8i=""
+      <h3>
+        Conference Room
+        :
+        <span
+          style="font-weight: normal;"
+        >
+          BVA0000001@caseflow.va.gov
+        </span>
+      </h3>
+      <h3>
+        PIN
+        :
+        <span
+          style="font-weight: normal;"
+        >
+          3998472
+          #
+        </span>
+      </h3>
+      <h3>
+        <button
+          aria-describedby="tooltip-Copy Guest Link"
+          aria-label=""
+          class="cf-apppeal-id"
+          currentitem="false"
+          data-css-cjlnsd=""
+          data-event="focus mouseenter"
+          data-event-off="mouseleave keydown"
+          data-for="tooltip-Copy Guest Link"
+          data-tip="true"
+          tabindex="0"
+          type="submit"
+        >
+          Copy Guest Link
+           
+          <svg
+            class=""
+            height="17"
+            viewBox="0 0 21 21"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M13.346 2.578h-2.664v-1.29C10.682.585 10.08 0 9.35 0H6.66c-.728 0-1.33.584-1.33 1.29v1.288H2.663v2.577h10.682V2.578zm-4.02 0H6.66v-1.29h2.665v1.29zm6.685 3.89V3.234a.665.665 0 0 0-.678-.656H14v1.29h.68v2.576H6.66v9.046H1.333V3.867h.68v-1.29H.678a.665.665 0 0 0-.68.657v12.913c0 .365.302.656.68.656h6.006v3.867h9.35l3.996-3.867V6.468h-4.02zm0 12.378v-2.043h2.112l-2.11 2.043zm2.665-3.356H14.68v3.867H7.992v-11.6h10.682v7.733z"
+              fill="#5b616b"
+              fill-rule="evenodd"
+            />
+          </svg>
+        </button>
+        <span
+          data-css-1qgqh7a=""
+          data-testid="tooltip-testid"
         >
           <div
-            data-css-1o3wy7o=""
+            class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+            data-id="tooltip"
+            id="tooltip-Copy Guest Link"
+            role="tooltip"
           >
-            Mon Apr 12
-          </div>
-          <div
-            data-css-5bhwlq=""
-          >
-            <span
-              aria-describedby="hearing-day-undefined"
-              aria-label=""
-              currentitem="false"
-              data-event="focus mouseenter"
-              data-event-off="mouseleave keydown"
-              data-for="hearing-day-undefined"
-              data-tip="true"
-              tabindex="-1"
-            >
-              Video · VLJ Jerengal, Jonas
-            </span>
-            <span
-              data-css-10mgax4=""
-              data-testid="tooltip-testid"
-            >
-              <div
-                class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
-                data-id="tooltip"
-                id="hearing-day-undefined"
-                role="tooltip"
-              >
-                <style>
-                  
+            <style>
+              
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -262,28 +300,12 @@ exports[`HearingDayInfoButton renders the Docket readable request type when Dock
         border-right-width: 6px;
     }
   
-                </style>
-                VLJ Jerengal, Jonas
-              </div>
-            </span>
+            </style>
+            Click to copy
           </div>
-        </div>
-        <div
-          data-css-1fnaqki=""
-        >
-          <div
-            data-css-lrak98=""
-          >
-            0 of 8
-          </div>
-          <div
-            data-css-heqg99=""
-          >
-            scheduled
-          </div>
-        </div>
-      </div>
-    </button>
-  </span>
+        </span>
+      </h3>
+    </div>
+  </div>
 </div>
 `;

@@ -10,6 +10,7 @@ exports[`RepresentativeSection Displays timezone when showTimezoneField is passe
   </h2>
   <div
     data-css-1a5irm0=""
+    data-testid="read-only-testid"
   >
     <pre>
       PARALYZED VETERANS OF AMERICA, INC.
@@ -161,6 +162,7 @@ exports[`RepresentativeSection Does not allow editing emails when read-only 1`] 
   </h2>
   <div
     data-css-1a5irm0=""
+    data-testid="read-only-testid"
   >
     <pre>
       PARALYZED VETERANS OF AMERICA, INC.
@@ -176,6 +178,7 @@ SAN FRANCISCO, CA 94103
     >
       <div
         data-css-1a5irm0=""
+        data-testid="read-only-testid"
       >
         <strong>
           POA/Representative Email (for these notifications only)
@@ -199,6 +202,7 @@ exports[`RepresentativeSection Does not display address when formFieldsOnly = tr
   </strong>
   <div
     data-css-1a5irm0=""
+    data-testid="read-only-testid"
   >
     <pre>
       PARALYZED VETERANS OF AMERICA, INC.
@@ -259,6 +263,7 @@ exports[`RepresentativeSection Matches snapshot with default props 1`] = `
   </h2>
   <div
     data-css-1a5irm0=""
+    data-testid="read-only-testid"
   >
     <pre>
       PARALYZED VETERANS OF AMERICA, INC.
@@ -321,6 +326,7 @@ exports[`RepresentativeSection Shows Representative name when representative add
   </h2>
   <div
     data-css-1a5irm0=""
+    data-testid="read-only-testid"
   >
     <pre>
       PARALYZED VETERANS OF AMERICA, INC.
@@ -382,6 +388,7 @@ exports[`RepresentativeSection Shows Representative not present message when no 
   </h2>
   <div
     data-css-1a5irm0=""
+    data-testid="read-only-testid"
   >
     <pre>
       The Veteran does not have a representative recorded in VBMS
