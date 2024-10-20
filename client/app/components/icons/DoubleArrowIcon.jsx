@@ -8,7 +8,7 @@ export const DoubleArrowIcon = (props) => {
   return <svg height={size} className={className} viewBox="0 0 13 16" version="1.1" xmlns="http://www.w3.org/2000/svg">
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g fillRule="nonzero">
-        <g fill={topColor} transform="translate(2.000000, 1.000000)">
+        <g fill={topColor} transform="translate(2.000000, 1.000000)" data-testid="topColorGroup">
           <g transform="translate(5.000000, 2.666667) scale(-1, 1)
           rotate(-180.000000) translate(-5.000000, -2.666667) ">
             <path d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307
@@ -23,7 +23,7 @@ export const DoubleArrowIcon = (props) => {
           </g>
         </g>
         <g fill={bottomColor} transform="translate(7.000000, 11.666667) scale(1, -1)
-        translate(-7.000000, -11.666667) translate(2.000000, 9.000000)">
+        translate(-7.000000, -11.666667) translate(2.000000, 9.000000)" data-testid="bottomColorGroup">
           <g transform="translate(5.000000, 2.666667) scale(-1, 1)
           rotate(-180.000000) translate(-5.000000, -2.666667) ">
             <path d="M9.48148147,0.592592593 C9.48148147,0.75308642

@@ -1,4 +1,5 @@
 import userEvent from '@testing-library/user-event';
+import { fireEvent } from '@testing-library/react';
 import { screen } from '@testing-library/react';
 import * as uiActions from 'app/queue/uiReducer/uiActions';
 
@@ -91,9 +92,11 @@ export const enterModalRadioOptions = (radioSelection) => {
 export const selectFromDropdown = async (dropdownName, dropdownSelection) => {
   const dropdown = screen.getByRole('combobox', { name: dropdownName });
 
-  userEvent.click(dropdown);
+  fireEvent.keyDown(dropdown, { key: 'ArrowDown' });
 
-  userEvent.click(screen.getByRole('option', { name: dropdownSelection }));
+  const option = screen.getByRole('option', { name: dropdownSelection });
+
+  fireEvent.click(option);
 };
 
 /**

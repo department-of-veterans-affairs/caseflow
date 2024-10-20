@@ -4,6 +4,7 @@ exports[`NotificationTable matches snapshot 1`] = `
 <div>
   <div
     class="cf-table-wrapper"
+    data-testid="queue-table-data-testid"
   >
     <div
       class="cf-pagination"
@@ -45,6 +46,7 @@ exports[`NotificationTable matches snapshot 1`] = `
               </span>
               <span
                 data-css-ilmt4b=""
+                data-testid="table-filter-testid"
               >
                 <svg
                   aria-label="Filter by event type"
@@ -122,6 +124,7 @@ exports[`NotificationTable matches snapshot 1`] = `
                       fill-rule="nonzero"
                     >
                       <g
+                        data-testid="topColorGroup"
                         fill="#d6d7d9"
                         transform="translate(2.000000, 1.000000)"
                       >
@@ -134,6 +137,7 @@ exports[`NotificationTable matches snapshot 1`] = `
                         </g>
                       </g>
                       <g
+                        data-testid="bottomColorGroup"
                         fill="#0071bc"
                         transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                       >
@@ -168,6 +172,7 @@ exports[`NotificationTable matches snapshot 1`] = `
               </span>
               <span
                 data-css-ilmt4b=""
+                data-testid="table-filter-testid"
               >
                 <svg
                   aria-label="Filter by notification type"
@@ -223,6 +228,7 @@ exports[`NotificationTable matches snapshot 1`] = `
               </span>
               <span
                 data-css-ilmt4b=""
+                data-testid="table-filter-testid"
               >
                 <svg
                   aria-label="Filter by recipient information column"
@@ -278,6 +284,7 @@ exports[`NotificationTable matches snapshot 1`] = `
               </span>
               <span
                 data-css-ilmt4b=""
+                data-testid="table-filter-testid"
               >
                 <svg
                   aria-label="Filter by status column"

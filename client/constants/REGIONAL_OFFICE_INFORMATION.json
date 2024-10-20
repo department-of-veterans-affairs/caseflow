@@ -184,7 +184,7 @@
     "timezone": "America/Chicago",
     "hold_hearings": true,
     "facility_locator_id": "vba_320",
-    "alternate_locations": ["vc_0720V", "vc_0719V", "vha_626GF"]
+    "alternate_locations": ["vc_0719V"]
   },
   "RO21": {
     "label": "New Orleans regional office",

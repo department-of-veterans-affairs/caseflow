@@ -48,7 +48,7 @@ const List = (props) => {
 };
 
 List.propTypes = {
-  annotations: PropTypes.object,
+  annotations: PropTypes.array,
   onSelect: PropTypes.func,
   selectedAnnotationId: PropTypes.number,
 };
