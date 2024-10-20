@@ -1969,9 +1969,6 @@ describe LegacyAppeal, :all_dbs do
   context "#contested_claim" do
     subject { appeal.contested_claim }
 
-    before { FeatureToggle.enable!(:indicator_for_contested_claims) }
-    after { FeatureToggle.disable!(:indicator_for_contested_claims) }
-
     context "when there is no representative" do
       let(:vacols_case) { create(:case) }
       it { is_expected.to eq false }
