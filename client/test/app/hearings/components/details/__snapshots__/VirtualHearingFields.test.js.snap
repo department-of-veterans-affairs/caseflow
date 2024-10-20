@@ -30,7 +30,7 @@ exports[`VirtualHearingFields Matches snapshot with default props 1`] = `
           id="guest-hearings-link"
         >
           <strong>
-            Guest Link:
+            Guest Link: 
           </strong>
           <span>
             N/A
@@ -39,7 +39,7 @@ exports[`VirtualHearingFields Matches snapshot with default props 1`] = `
             data-css-1abghdv=""
           >
             <strong>
-              Conference Room:
+              Conference Room: 
             </strong>
             N/A
           </div>
@@ -47,7 +47,7 @@ exports[`VirtualHearingFields Matches snapshot with default props 1`] = `
             data-css-6aejb2=""
           >
             <strong>
-              PIN:
+              PIN: 
             </strong>
             N/A
           </div>
@@ -90,7 +90,7 @@ exports[`VirtualHearingFields Matches snapshot with default props 1`] = `
               role="tooltip"
             >
               <style>
-
+                
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -164,7 +164,7 @@ exports[`VirtualHearingFields Matches snapshot with default props 1`] = `
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
               </style>
               Click to copy
             </div>
@@ -206,7 +206,7 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
           id="guest-hearings-link"
         >
           <strong>
-            Guest Link:
+            Guest Link: 
           </strong>
           <a
             href="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
@@ -259,17 +259,17 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
             data-css-1abghdv=""
           >
             <strong>
-              Conference Room:
+              Conference Room: 
             </strong>
-            N/A
+            BVA0000009@care.evn.va.gov
           </div>
           <div
             data-css-6aejb2=""
           >
             <strong>
-              PIN:
+              PIN: 
             </strong>
-            N/A
+            2684353125#
           </div>
           <button
             aria-describedby="tooltip-Copy Guest Link"
@@ -309,7 +309,7 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
               role="tooltip"
             >
               <style>
-
+                
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -383,7 +383,7 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
               </style>
               Click to copy
             </div>
@@ -425,7 +425,7 @@ exports[`VirtualHearingFields Renders webex conference when conference provider 
           id="guest-hearings-link"
         >
           <strong>
-            Guest Link:
+            Guest Link: 
           </strong>
           <a
             href="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
@@ -518,7 +518,7 @@ exports[`VirtualHearingFields Renders webex conference when conference provider 
               role="tooltip"
             >
               <style>
-
+                
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -592,7 +592,7 @@ exports[`VirtualHearingFields Renders webex conference when conference provider 
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
               </style>
               Click to copy
             </div>
@@ -634,7 +634,7 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
           id="guest-hearings-link"
         >
           <strong>
-            Guest Link:
+            Guest Link: 
           </strong>
           <a
             href="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
@@ -687,7 +687,7 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
             data-css-1abghdv=""
           >
             <strong>
-              Conference Room:
+              Conference Room: 
             </strong>
             BVA0000009@care.evn.va.gov
           </div>
@@ -695,7 +695,7 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
             data-css-6aejb2=""
           >
             <strong>
-              PIN:
+              PIN: 
             </strong>
             2684353125#
           </div>
@@ -709,7 +709,6 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
             data-event-off="mouseleave keydown"
             data-for="tooltip-Copy Guest Link"
             data-tip="true"
-            disabled=""
             tabindex="0"
             type="submit"
           >
@@ -738,7 +737,7 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
               role="tooltip"
             >
               <style>
-
+                
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -812,7 +811,7 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
               </style>
               Click to copy
             </div>
@@ -854,7 +853,7 @@ exports[`VirtualHearingFields Shows only hearing links with no virtualHearing 1`
           id="guest-hearings-link"
         >
           <strong>
-            Guest Link:
+            Guest Link: 
           </strong>
           <span>
             N/A
@@ -863,7 +862,7 @@ exports[`VirtualHearingFields Shows only hearing links with no virtualHearing 1`
             data-css-1abghdv=""
           >
             <strong>
-              Conference Room:
+              Conference Room: 
             </strong>
             N/A
           </div>
@@ -871,7 +870,7 @@ exports[`VirtualHearingFields Shows only hearing links with no virtualHearing 1`
             data-css-6aejb2=""
           >
             <strong>
-              PIN:
+              PIN: 
             </strong>
             N/A
           </div>
@@ -914,7 +913,7 @@ exports[`VirtualHearingFields Shows only hearing links with no virtualHearing 1`
               role="tooltip"
             >
               <style>
-
+                
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -988,7 +987,7 @@ exports[`VirtualHearingFields Shows only hearing links with no virtualHearing 1`
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
               </style>
               Click to copy
             </div>

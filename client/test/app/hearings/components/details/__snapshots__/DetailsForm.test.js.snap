@@ -433,7 +433,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                 >
                   Yes, Waive 90 Day Evidence Hold
                 </span>
-
+                 
               </label>
             </div>
           </div>
@@ -1332,7 +1332,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
           >
             <strong>
               <span>
-                Requested Remedy
+                Requested Remedy 
               </span>
             </strong>
           </legend>
@@ -1445,7 +1445,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                 >
                   Yes, Transcript Requested
                 </span>
-
+                 
               </label>
             </div>
           </div>
@@ -1916,7 +1916,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                 >
                   Yes, Waive 90 Day Evidence Hold
                 </span>
-
+                 
               </label>
             </div>
           </div>
@@ -2815,7 +2815,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
           >
             <strong>
               <span>
-                Requested Remedy
+                Requested Remedy 
               </span>
             </strong>
           </legend>
@@ -2928,7 +2928,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                 >
                   Yes, Transcript Requested
                 </span>
-
+                 
               </label>
             </div>
           </div>
@@ -3604,6 +3604,32 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                 for="appellant-tz"
                 id="appellant-tz-label"
               >
+                <strong>
+                  <span>
+                    Veteran Timezone
+                    <span
+                      class="cf-optional"
+                    >
+                      Optional
+                    </span>
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
+              >
+                <div
+                  class=" css-2b097c-container"
+                >
+                  <div
+                    class="cf-select__control css-yk16xz-control"
+                  >
+                    <div
+                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                    >
+                      <div
+                        class="cf-select__single-value css-1uccc91-singleValue"
+                      >
                         Pacific Time (US & Canada) (3:00 AM)
                       </div>
                       <div

@@ -15,18 +15,18 @@ exports[`EmailConfirmationModal ChangeFromVirtual sub-component Displays Hearing
     data-testid="datetime-testid"
   >
     <strong>
-      Hearing Date:
+      Hearing Date: 
     </strong>
     07/06/2020
     <br />
     <strong>
-      Hearing Time:
+      Hearing Time: 
     </strong>
     6:00 AM Eastern Time (US & Canada)
   </div>
   <div>
     <strong>
-      Location:
+      Location: 
     </strong>
     Somewhere
   </div>
@@ -91,12 +91,12 @@ exports[`EmailConfirmationModal ChangeFromVirtual sub-component Displays ReadOnl
     data-testid="datetime-testid"
   >
     <strong>
-      Hearing Date:
+      Hearing Date: 
     </strong>
     07/06/2020
     <br />
     <strong>
-      Hearing Time:
+      Hearing Time: 
     </strong>
     6:00 AM Eastern Time (US & Canada)
   </div>
@@ -161,12 +161,12 @@ exports[`EmailConfirmationModal ChangeHearingTime sub-component Displays ReadOnl
     data-testid="datetime-testid"
   >
     <strong>
-      Hearing Date:
+      Hearing Date: 
     </strong>
     07/06/2020
     <br />
     <strong>
-      Hearing Time:
+      Hearing Time: 
     </strong>
     6:00 AM Eastern Time (US & Canada)
   </div>
@@ -231,12 +231,12 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays appellant
     data-testid="datetime-testid"
   >
     <strong>
-      Hearing Date:
+      Hearing Date: 
     </strong>
     07/06/2020
     <br />
     <strong>
-      Hearing Time:
+      Hearing Time: 
     </strong>
     6:00 AM Eastern Time (US & Canada)
   </div>
@@ -295,7 +295,7 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays appellant
     </div>
   </div>
   <p>
-    Changes to the Veteran and POA / Representative emails will be used to send notifications
+    Changes to the Veteran and POA / Representative emails will be used to send notifications 
     <strong>
       for this hearing only
     </strong>
@@ -310,12 +310,12 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays input for
     data-testid="datetime-testid"
   >
     <strong>
-      Hearing Date:
+      Hearing Date: 
     </strong>
     07/06/2020
     <br />
     <strong>
-      Hearing Time:
+      Hearing Time: 
     </strong>
     6:00 AM Eastern Time (US & Canada)
   </div>
@@ -368,7 +368,7 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays input for
     </div>
   </div>
   <p>
-    Changes to the Veteran and POA / Representative emails will be used to send notifications
+    Changes to the Veteran and POA / Representative emails will be used to send notifications 
     <strong>
       for this hearing only
     </strong>
@@ -383,12 +383,12 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays represent
     data-testid="datetime-testid"
   >
     <strong>
-      Hearing Date:
+      Hearing Date: 
     </strong>
     07/06/2020
     <br />
     <strong>
-      Hearing Time:
+      Hearing Time: 
     </strong>
     6:00 AM Eastern Time (US & Canada)
   </div>
@@ -447,7 +447,7 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays represent
     </div>
   </div>
   <p>
-    Changes to the Veteran and POA / Representative emails will be used to send notifications
+    Changes to the Veteran and POA / Representative emails will be used to send notifications 
     <strong>
       for this hearing only
     </strong>
@@ -462,12 +462,12 @@ exports[`EmailConfirmationModal DateTime sub-component Displays divider for form
     data-testid="datetime-testid"
   >
     <strong>
-      Hearing Date:
+      Hearing Date: 
     </strong>
     07/11/2020
     <br />
     <strong>
-      Hearing Time:
+      Hearing Time: 
     </strong>
     8:30 AM Eastern Time (US & Canada)
     <div
@@ -483,12 +483,12 @@ exports[`EmailConfirmationModal DateTime sub-component Displays formatted hearin
     data-testid="datetime-testid"
   >
     <strong>
-      Hearing Date:
+      Hearing Date: 
     </strong>
     07/06/2020
     <br />
     <strong>
-      Hearing Time:
+      Hearing Time: 
     </strong>
     6:00 AM Eastern Time (US & Canada)
   </div>
@@ -671,12 +671,12 @@ exports[`EmailConfirmationModal Displays ChangeFromVirtual component when type i
               data-testid="datetime-testid"
             >
               <strong>
-                Hearing Date:
+                Hearing Date: 
               </strong>
               07/06/2020
               <br />
               <strong>
-                Hearing Time:
+                Hearing Time: 
               </strong>
               6:00 AM Eastern Time (US & Canada)
             </div>
@@ -837,12 +837,12 @@ exports[`EmailConfirmationModal Displays ChangeHearingTime component when type i
               data-testid="datetime-testid"
             >
               <strong>
-                Hearing Date:
+                Hearing Date: 
               </strong>
               07/06/2020
               <br />
               <strong>
-                Hearing Time:
+                Hearing Time: 
               </strong>
               6:00 AM Eastern Time (US & Canada)
             </div>
@@ -1003,12 +1003,12 @@ exports[`EmailConfirmationModal Matches snapshot with default props 1`] = `
               data-testid="datetime-testid"
             >
               <strong>
-                Hearing Date:
+                Hearing Date: 
               </strong>
               07/06/2020
               <br />
               <strong>
-                Hearing Time:
+                Hearing Time: 
               </strong>
               6:00 AM Eastern Time (US & Canada)
             </div>
@@ -1063,7 +1063,7 @@ exports[`EmailConfirmationModal Matches snapshot with default props 1`] = `
               </div>
             </div>
             <p>
-              Changes to the Veteran and POA / Representative emails will be used to send notifications
+              Changes to the Veteran and POA / Representative emails will be used to send notifications 
               <strong>
                 for this hearing only
               </strong>

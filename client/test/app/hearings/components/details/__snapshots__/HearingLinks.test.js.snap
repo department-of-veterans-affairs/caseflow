@@ -12,7 +12,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
       id="vlj-hearings-link"
     >
       <strong>
-        VLJ Link:
+        VLJ Link: 
       </strong>
       <a
         href="https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0001094@example.va.gov&pin=1073526&role=host"
@@ -65,7 +65,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
         data-css-1abghdv=""
       >
         <strong>
-          Conference Room:
+          Conference Room: 
         </strong>
         BVA0001094@example.va.gov
       </div>
@@ -73,7 +73,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
         data-css-6aejb2=""
       >
         <strong>
-          PIN:
+          PIN: 
         </strong>
         1073526
       </div>
@@ -115,7 +115,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
           role="tooltip"
         >
           <style>
-
+            
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -189,7 +189,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
           </style>
           Click to copy
         </div>
@@ -200,7 +200,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
       id="hc-hearings-link"
     >
       <strong>
-        Hearing Coordinator Link:
+        Hearing Coordinator Link: 
       </strong>
       <a
         href="https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0001094@example.va.gov&pin=1073526&role=host"
@@ -253,7 +253,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
         data-css-1abghdv=""
       >
         <strong>
-          Conference Room:
+          Conference Room: 
         </strong>
         BVA0001094@example.va.gov
       </div>
@@ -261,7 +261,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
         data-css-6aejb2=""
       >
         <strong>
-          PIN:
+          PIN: 
         </strong>
         1073526
       </div>
@@ -303,7 +303,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
           role="tooltip"
         >
           <style>
-
+            
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -377,7 +377,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
           </style>
           Click to copy
         </div>
@@ -388,7 +388,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
       id="guest-hearings-link"
     >
       <strong>
-        Guest Link:
+        Guest Link: 
       </strong>
       <a
         href="https://example.va.gov/sample/?conference=BVA0001094@example.va.gov&pin=1342380867&callType=video"
@@ -441,7 +441,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
         data-css-1abghdv=""
       >
         <strong>
-          Conference Room:
+          Conference Room: 
         </strong>
         BVA0001094@example.va.gov
       </div>
@@ -449,7 +449,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
         data-css-6aejb2=""
       >
         <strong>
-          PIN:
+          PIN: 
         </strong>
         1342380867
       </div>
@@ -491,7 +491,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
           role="tooltip"
         >
           <style>
-
+            
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -565,7 +565,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
           </style>
           Click to copy
         </div>
@@ -587,7 +587,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, webex, and i
       id="vlj-hearings-link"
     >
       <strong>
-        VLJ Link:
+        VLJ Link: 
       </strong>
       <a
         href="https://instant-usgov.webex.com/visit/owhuy7m"
@@ -680,7 +680,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, webex, and i
           role="tooltip"
         >
           <style>
-
+            
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -754,7 +754,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, webex, and i
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
           </style>
           Click to copy
         </div>
@@ -765,7 +765,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, webex, and i
       id="hc-hearings-link"
     >
       <strong>
-        Hearing Coordinator Link:
+        Hearing Coordinator Link: 
       </strong>
       <a
         href="https://instant-usgov.webex.com/visit/yqju5qi"
@@ -858,7 +858,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, webex, and i
           role="tooltip"
         >
           <style>
-
+            
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -932,7 +932,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, webex, and i
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
           </style>
           Click to copy
         </div>
@@ -943,7 +943,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, webex, and i
       id="guest-hearings-link"
     >
       <strong>
-        Guest Link:
+        Guest Link: 
       </strong>
       <a
         href="https://instant-usgov.webex.com/visit/m9p1k56"
@@ -1036,7 +1036,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, webex, and i
           role="tooltip"
         >
           <style>
-
+            
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -1110,7 +1110,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, webex, and i
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
           </style>
           Click to copy
         </div>
@@ -1132,7 +1132,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, pexip, and in pr
       id="vlj-hearings-link"
     >
       <strong>
-        VLJ Link:
+        VLJ Link: 
       </strong>
       <a
         href="https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000031@example.va.gov&pin=2949749&role=host"
@@ -1185,7 +1185,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, pexip, and in pr
         data-css-1abghdv=""
       >
         <strong>
-          Conference Room:
+          Conference Room: 
         </strong>
         BVA#00000001@localhost
       </div>
@@ -1193,7 +1193,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, pexip, and in pr
         data-css-6aejb2=""
       >
         <strong>
-          PIN:
+          PIN: 
         </strong>
         1234567890#
       </div>
@@ -1235,7 +1235,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, pexip, and in pr
           role="tooltip"
         >
           <style>
-
+            
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -1309,7 +1309,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, pexip, and in pr
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
           </style>
           Click to copy
         </div>
@@ -1320,7 +1320,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, pexip, and in pr
       id="hc-hearings-link"
     >
       <strong>
-        Hearing Coordinator Link:
+        Hearing Coordinator Link: 
       </strong>
       <a
         href="https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000031@example.va.gov&pin=2949749&role=host"
@@ -1373,7 +1373,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, pexip, and in pr
         data-css-1abghdv=""
       >
         <strong>
-          Conference Room:
+          Conference Room: 
         </strong>
         BVA#00000001@localhost
       </div>
@@ -1381,7 +1381,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, pexip, and in pr
         data-css-6aejb2=""
       >
         <strong>
-          PIN:
+          PIN: 
         </strong>
         1234567890#
       </div>
@@ -1423,7 +1423,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, pexip, and in pr
           role="tooltip"
         >
           <style>
-
+            
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -1497,7 +1497,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, pexip, and in pr
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
           </style>
           Click to copy
         </div>
@@ -1508,7 +1508,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, pexip, and in pr
       id="guest-hearings-link"
     >
       <strong>
-        Guest Link:
+        Guest Link: 
       </strong>
       <a
         href="https://example.va.gov/sample/?conference=BVA0000130@example.va.gov&pin=9523850278&callType=video"
@@ -1561,7 +1561,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, pexip, and in pr
         data-css-1abghdv=""
       >
         <strong>
-          Conference Room:
+          Conference Room: 
         </strong>
         BVA#00000001@localhost
       </div>
@@ -1569,7 +1569,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, pexip, and in pr
         data-css-6aejb2=""
       >
         <strong>
-          PIN:
+          PIN: 
         </strong>
         12345678#
       </div>
@@ -1611,7 +1611,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, pexip, and in pr
           role="tooltip"
         >
           <style>
-
+            
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -1685,7 +1685,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, pexip, and in pr
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
           </style>
           Click to copy
         </div>
@@ -1707,7 +1707,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, webex, and in pr
       id="vlj-hearings-link"
     >
       <strong>
-        VLJ Link:
+        VLJ Link: 
       </strong>
       <a
         href="https://instant-usgov.webex.com/visit/5iqlapj"
@@ -1800,7 +1800,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, webex, and in pr
           role="tooltip"
         >
           <style>
-
+            
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -1874,7 +1874,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, webex, and in pr
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
           </style>
           Click to copy
         </div>
@@ -1885,7 +1885,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, webex, and in pr
       id="hc-hearings-link"
     >
       <strong>
-        Hearing Coordinator Link:
+        Hearing Coordinator Link: 
       </strong>
       <a
         href="https://instant-usgov.webex.com/visit/u2f4ls3"
@@ -1978,7 +1978,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, webex, and in pr
           role="tooltip"
         >
           <style>
-
+            
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -2052,7 +2052,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, webex, and in pr
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
           </style>
           Click to copy
         </div>
@@ -2063,7 +2063,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, webex, and in pr
       id="guest-hearings-link"
     >
       <strong>
-        Guest Link:
+        Guest Link: 
       </strong>
       <a
         href="https://instant-usgov.webex.com/visit/w9hjxwa"
@@ -2156,7 +2156,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, webex, and in pr
           role="tooltip"
         >
           <style>
-
+            
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -2230,7 +2230,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, webex, and in pr
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
           </style>
           Click to copy
         </div>
@@ -2252,7 +2252,7 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
       id="vlj-hearings-link"
     >
       <strong>
-        VLJ Link:
+        VLJ Link: 
       </strong>
       <span>
         N/A
@@ -2261,7 +2261,7 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
         data-css-1abghdv=""
       >
         <strong>
-          Conference Room:
+          Conference Room: 
         </strong>
         N/A
       </div>
@@ -2269,7 +2269,7 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
         data-css-6aejb2=""
       >
         <strong>
-          PIN:
+          PIN: 
         </strong>
         N/A
       </div>
@@ -2312,7 +2312,7 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
           role="tooltip"
         >
           <style>
-
+            
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -2386,7 +2386,7 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
           </style>
           Click to copy
         </div>
@@ -2397,7 +2397,7 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
       id="hc-hearings-link"
     >
       <strong>
-        Hearing Coordinator Link:
+        Hearing Coordinator Link: 
       </strong>
       <span>
         N/A
@@ -2406,7 +2406,7 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
         data-css-1abghdv=""
       >
         <strong>
-          Conference Room:
+          Conference Room: 
         </strong>
         N/A
       </div>
@@ -2414,7 +2414,7 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
         data-css-6aejb2=""
       >
         <strong>
-          PIN:
+          PIN: 
         </strong>
         N/A
       </div>
@@ -2457,7 +2457,7 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
           role="tooltip"
         >
           <style>
-
+            
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -2531,7 +2531,7 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
           </style>
           Click to copy
         </div>
@@ -2542,7 +2542,7 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
       id="guest-hearings-link"
     >
       <strong>
-        Guest Link:
+        Guest Link: 
       </strong>
       <span>
         N/A
@@ -2551,7 +2551,7 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
         data-css-1abghdv=""
       >
         <strong>
-          Conference Room:
+          Conference Room: 
         </strong>
         N/A
       </div>
@@ -2559,7 +2559,7 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
         data-css-6aejb2=""
       >
         <strong>
-          PIN:
+          PIN: 
         </strong>
         N/A
       </div>
@@ -2602,7 +2602,7 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
           role="tooltip"
         >
           <style>
-
+            
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -2676,7 +2676,7 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
           </style>
           Click to copy
         </div>
@@ -2698,7 +2698,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
       id="guest-hearings-link"
     >
       <strong>
-        Guest Link:
+        Guest Link: 
       </strong>
       <a
         href="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
@@ -2751,7 +2751,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
         data-css-1abghdv=""
       >
         <strong>
-          Conference Room:
+          Conference Room: 
         </strong>
         BVA0000009@care.evn.va.gov
       </div>
@@ -2759,7 +2759,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
         data-css-6aejb2=""
       >
         <strong>
-          PIN:
+          PIN: 
         </strong>
         2684353125#
       </div>
@@ -2801,7 +2801,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
           role="tooltip"
         >
           <style>
-
+            
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -2875,7 +2875,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
           </style>
           Click to copy
         </div>

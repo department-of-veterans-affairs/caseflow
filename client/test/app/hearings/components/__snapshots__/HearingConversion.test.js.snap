@@ -43,7 +43,7 @@ exports[`HearingConversion Displays email fields when hearing type is switched f
               >
                 <strong>
                   <span>
-                    Hearing Time
+                    Hearing Time 
                   </span>
                 </strong>
               </legend>

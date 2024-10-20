@@ -31,6 +31,34 @@ SAN FRANCISCO, CA 94103
           class="cf-form-dropdown dropdown-representativeTz"
           data-css-1dzedb9=""
         >
+          <label
+            class="question-label"
+            for="representative-tz"
+            id="representative-tz-label"
+          >
+            <strong>
+              <span>
+                POA/Representative Timezone
+                <span
+                  class="cf-optional"
+                >
+                  Optional
+                </span>
+              </span>
+            </strong>
+          </label>
+          <div
+            class="cf-select"
+          >
+            <div
+              class=" css-2b097c-container"
+            >
+              <div
+                class="cf-select__control css-yk16xz-control"
+              >
+                <div
+                  class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                >
                   <div
                     class="cf-select__single-value css-1uccc91-singleValue"
                   >
