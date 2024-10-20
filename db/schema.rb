@@ -1761,12 +1761,12 @@ ActiveRecord::Schema.define(version: 2024_10_12_181521) do
 
   create_table "returned_appeal_jobs", force: :cascade do |t|
     t.datetime "completed_at"
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: 6, null: false
     t.datetime "errored_at"
     t.text "returned_appeals", default: [], array: true
     t.datetime "started_at"
     t.json "stats"
-    t.datetime "updated_at", null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "schedule_periods", force: :cascade do |t|
@@ -2148,7 +2148,7 @@ ActiveRecord::Schema.define(version: 2024_10_12_181521) do
     t.index ["vbms_communication_package_id"], name: "index_vbms_distributions_on_vbms_communication_package_id"
   end
 
-  create_table "vbms_ext_claim", primary_key: "CLAIM_ID", id: :decimal, precision: 38, force: :cascade do |t|
+  create_table "vbms_ext_claim", primary_key: "CLAIM_ID", id: { type: :decimal, precision: 38 }, force: :cascade do |t|
     t.string "ALLOW_POA_ACCESS", limit: 5
     t.decimal "CLAIMANT_PERSON_ID", precision: 38
     t.datetime "CLAIM_DATE"
