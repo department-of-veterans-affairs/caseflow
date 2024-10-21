@@ -22,14 +22,15 @@ describe('ReadOnlyHearingTimeWithZone', () => {
         'America/Los_Angeles',
         'America/Denver',
         'America/Chicago',
-        'America/Indiana/Indianapolis'
+        'America/Indiana/Indianapolis',
+        'America/Boise'
       ];
 
       timezones.forEach((timezone) => {
         const hearingStartTime = moment(startTime).tz(timezone).format('HH:mm')
         const {asFragment} = render(
           <ReadOnlyHearingTimeWithZone
-            hearingStartTime={hearingStartTime ?? null}
+            hearingStartTime={startTimeInEasternTime ?? null}
             timezone={timezone}
             onRender={jest.fn()}
           />
@@ -54,7 +55,7 @@ describe('ReadOnlyHearingTimeWithZone', () => {
             expect(textElements).not.toHaveLength(0);
           }
         }
-      })
-    })
+      });
+    });
   });
 });

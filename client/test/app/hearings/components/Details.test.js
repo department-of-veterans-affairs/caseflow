@@ -11,6 +11,8 @@ import {
   virtualHearing,
   amaWebexHearing,
   legacyWebexHearing
+  amaWebexHearing,
+  legacyWebexHearing
 } from 'test/data';
 import Details from 'app/hearings/components/Details';
 

@@ -82,7 +82,7 @@ exports[`DailyDocketRow renders correctly for non virtual, DVC  1`] = `
                     Accessibility hack
                   </span>
                 </span>
-                 
+
               </label>
             </div>
           </div>
@@ -131,7 +131,7 @@ exports[`DailyDocketRow renders correctly for non virtual, DVC  1`] = `
             role="tooltip"
           >
             <style>
-              
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -205,13 +205,13 @@ exports[`DailyDocketRow renders correctly for non virtual, DVC  1`] = `
         border-right-style: solid;
         border-right-width: 6px;
     }
-  
+
             </style>
             Hearing Request
           </div>
         </span>
         220428-968
-         
+
         <br />
         <br />
         <div
@@ -262,6 +262,12 @@ exports[`DailyDocketRow renders correctly for non virtual, DVC  1`] = `
              Connect to Recording System
           </button>
         </span>
+        <div>
+          <b>
+            Pexip
+             hearing
+          </b>
+        </div>
         <div>
           <div
             class=""
@@ -386,7 +392,7 @@ exports[`DailyDocketRow renders correctly for non virtual, DVC  1`] = `
                 >
                   Yes, Waive 90 Day Hold
                 </span>
-                 
+
               </label>
             </div>
           </div>
@@ -415,7 +421,7 @@ exports[`DailyDocketRow renders correctly for non virtual, DVC  1`] = `
                 >
                   Transcript Requested
                 </span>
-                 
+
               </label>
             </div>
           </div>
@@ -723,7 +729,7 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
             role="tooltip"
           >
             <style>
-              
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -797,13 +803,13 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
         border-right-style: solid;
         border-right-width: 6px;
     }
-  
+
             </style>
             Hearing Request
           </div>
         </span>
         220428-968
-         
+
         <br />
         <br />
         <div
@@ -854,6 +860,12 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
              Connect to Recording System
           </button>
         </span>
+        <div>
+          <b>
+            Webex
+             hearing
+          </b>
+        </div>
         <div>
           <div
             class=""
@@ -978,7 +990,7 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
                 >
                   Transcript Requested
                 </span>
-                 
+
               </label>
             </div>
           </div>
@@ -994,7 +1006,7 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
             <a
               href="/ae4c4050-36e8-4df2-83a4-839cf73725dc/details"
             >
-              Edit Hearing Details
+              Hearing Details and links
               <span
                 data-css-1qcxu9b=""
               >
@@ -1175,9 +1187,9 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
             data-css-1rsr754=""
           >
             Fri 4/29/2022
-             
+
             <br />
-             
+
             <br />
           </div>
         </div>
@@ -1193,7 +1205,7 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
               <strong>
                 <span>
                   Hearing Time
-                   
+
                 </span>
               </strong>
             </legend>
@@ -1204,14 +1216,13 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
                 class="cf-form-radio-option"
               >
                 <input
-                  disabled=""
                   id="hearingTime0_8:30 AM Central Time (US & Canada)"
                   name="hearingTime0"
                   type="radio"
                   value="8:30 AM Central Time (US & Canada)"
                 />
                 <label
-                  class="disabled"
+                  class=""
                   for="hearingTime0_8:30 AM Central Time (US & Canada)"
                 >
                   8:30 AM Central Time (US & Canada) / 9:30 AM Eastern Time (US & Canada)
@@ -1221,14 +1232,13 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
                 class="cf-form-radio-option"
               >
                 <input
-                  disabled=""
                   id="hearingTime0_12:30 PM Central Time (US & Canada)"
                   name="hearingTime0"
                   type="radio"
                   value="12:30 PM Central Time (US & Canada)"
                 />
                 <label
-                  class="disabled"
+                  class=""
                   for="hearingTime0_12:30 PM Central Time (US & Canada)"
                 >
                   12:30 PM Central Time (US & Canada) / 1:30 PM Eastern Time (US & Canada)
@@ -1239,14 +1249,13 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
               >
                 <input
                   checked=""
-                  disabled=""
                   id="hearingTime0_Other"
                   name="hearingTime0"
                   type="radio"
                   value="Other"
                 />
                 <label
-                  class="disabled"
+                  class=""
                   for="hearingTime0_Other"
                 >
                   Other
@@ -1276,10 +1285,10 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
               class="cf-select"
             >
               <div
-                class="cf-select--is-disabled css-14jk2my-container"
+                class=" css-2b097c-container"
               >
                 <div
-                  class="cf-select__control cf-select__control--is-disabled css-1fhf3k1-control"
+                  class="cf-select__control css-yk16xz-control"
                 >
                   <div
                     class="cf-select__value-container css-g1d714-ValueContainer"
@@ -1289,21 +1298,41 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
                     >
                       Select a time
                     </div>
-                    <input
-                      aria-autocomplete="list"
-                      class="css-62g3xt-dummyInput"
-                      disabled=""
-                      id="optional-hearing-time-0"
-                      readonly=""
-                      tabindex="0"
-                      value=""
-                    />
+                    <div
+                      class="css-81nyic-Input"
+                    >
+                      <div
+                        class="cf-select__input"
+                        style="display: inline-block;"
+                      >
+                        <input
+                          aria-autocomplete="list"
+                          aria-expanded="false"
+                          aria-haspopup="true"
+                          aria-labelledby="optional-hearing-time-0-label"
+                          aria-owns="optional-hearing-time-0-listbox"
+                          autocapitalize="none"
+                          autocomplete="off"
+                          autocorrect="off"
+                          id="optional-hearing-time-0"
+                          role="combobox"
+                          spellcheck="false"
+                          style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                          tabindex="0"
+                          type="text"
+                          value=""
+                        />
+                        <div
+                          style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                        />
+                      </div>
+                    </div>
                   </div>
                   <div
                     class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
                   >
                     <span
-                      class="cf-select__indicator-separator css-109onse-indicatorSeparator"
+                      class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
                     />
                     <div
                       aria-hidden="true"
@@ -1324,6 +1353,11 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
                     </div>
                   </div>
                 </div>
+                <input
+                  name="optionalHearingTime0"
+                  type="hidden"
+                  value=""
+                />
               </div>
             </div>
           </div>
@@ -1385,7 +1419,7 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
             role="tooltip"
           >
             <style>
-              
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -1459,13 +1493,13 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
         border-right-style: solid;
         border-right-width: 6px;
     }
-  
+
             </style>
             Hearing Request
           </div>
         </span>
         220428-968
-         
+
         <br />
         <br />
         <div
@@ -1508,6 +1542,12 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
       <div
         data-css-leaxad=""
       >
+        <div>
+          <b>
+            Pexip
+             hearing
+          </b>
+        </div>
         <div>
           <div
             class=""
@@ -1632,7 +1672,7 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
                 >
                   Transcript Requested
                 </span>
-                 
+
               </label>
             </div>
           </div>
@@ -1779,9 +1819,9 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
             data-css-1rsr754=""
           >
             Fri 4/29/2022
-             
+
             <br />
-             
+
             <br />
           </div>
         </div>
@@ -1797,7 +1837,7 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
               <strong>
                 <span>
                   Hearing Time
-                   
+
                 </span>
               </strong>
             </legend>
@@ -1808,14 +1848,13 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
                 class="cf-form-radio-option"
               >
                 <input
-                  disabled=""
                   id="hearingTime0_8:30 AM Central Time (US & Canada)"
                   name="hearingTime0"
                   type="radio"
                   value="8:30 AM Central Time (US & Canada)"
                 />
                 <label
-                  class="disabled"
+                  class=""
                   for="hearingTime0_8:30 AM Central Time (US & Canada)"
                 >
                   8:30 AM Central Time (US & Canada) / 9:30 AM Eastern Time (US & Canada)
@@ -1825,14 +1864,13 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
                 class="cf-form-radio-option"
               >
                 <input
-                  disabled=""
                   id="hearingTime0_12:30 PM Central Time (US & Canada)"
                   name="hearingTime0"
                   type="radio"
                   value="12:30 PM Central Time (US & Canada)"
                 />
                 <label
-                  class="disabled"
+                  class=""
                   for="hearingTime0_12:30 PM Central Time (US & Canada)"
                 >
                   12:30 PM Central Time (US & Canada) / 1:30 PM Eastern Time (US & Canada)
@@ -1843,14 +1881,13 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
               >
                 <input
                   checked=""
-                  disabled=""
                   id="hearingTime0_Other"
                   name="hearingTime0"
                   type="radio"
                   value="Other"
                 />
                 <label
-                  class="disabled"
+                  class=""
                   for="hearingTime0_Other"
                 >
                   Other
@@ -1880,10 +1917,10 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
               class="cf-select"
             >
               <div
-                class="cf-select--is-disabled css-14jk2my-container"
+                class=" css-2b097c-container"
               >
                 <div
-                  class="cf-select__control cf-select__control--is-disabled css-1fhf3k1-control"
+                  class="cf-select__control css-yk16xz-control"
                 >
                   <div
                     class="cf-select__value-container css-g1d714-ValueContainer"
@@ -1893,21 +1930,41 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
                     >
                       Select a time
                     </div>
-                    <input
-                      aria-autocomplete="list"
-                      class="css-62g3xt-dummyInput"
-                      disabled=""
-                      id="optional-hearing-time-0"
-                      readonly=""
-                      tabindex="0"
-                      value=""
-                    />
+                    <div
+                      class="css-81nyic-Input"
+                    >
+                      <div
+                        class="cf-select__input"
+                        style="display: inline-block;"
+                      >
+                        <input
+                          aria-autocomplete="list"
+                          aria-expanded="false"
+                          aria-haspopup="true"
+                          aria-labelledby="optional-hearing-time-0-label"
+                          aria-owns="optional-hearing-time-0-listbox"
+                          autocapitalize="none"
+                          autocomplete="off"
+                          autocorrect="off"
+                          id="optional-hearing-time-0"
+                          role="combobox"
+                          spellcheck="false"
+                          style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                          tabindex="0"
+                          type="text"
+                          value=""
+                        />
+                        <div
+                          style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                        />
+                      </div>
+                    </div>
                   </div>
                   <div
                     class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
                   >
                     <span
-                      class="cf-select__indicator-separator css-109onse-indicatorSeparator"
+                      class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
                     />
                     <div
                       aria-hidden="true"
@@ -1928,6 +1985,11 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
                     </div>
                   </div>
                 </div>
+                <input
+                  name="optionalHearingTime0"
+                  type="hidden"
+                  value=""
+                />
               </div>
             </div>
           </div>
@@ -1971,7 +2033,7 @@ exports[`DailyDocketRow renders correctly for non virtual, attorney 1`] = `
                     Accessibility hack
                   </span>
                 </span>
-                 
+
               </label>
             </div>
           </div>
@@ -2020,7 +2082,7 @@ exports[`DailyDocketRow renders correctly for non virtual, attorney 1`] = `
             role="tooltip"
           >
             <style>
-              
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -2094,13 +2156,13 @@ exports[`DailyDocketRow renders correctly for non virtual, attorney 1`] = `
         border-right-style: solid;
         border-right-width: 6px;
     }
-  
+
             </style>
             Hearing Request
           </div>
         </span>
         220428-968
-         
+
         <br />
         <br />
         <div
@@ -2151,6 +2213,12 @@ exports[`DailyDocketRow renders correctly for non virtual, attorney 1`] = `
              Connect to Recording System
           </button>
         </span>
+        <div>
+          <b>
+            Pexip
+             hearing
+          </b>
+        </div>
         <div>
           <div
             class=""
@@ -2275,7 +2343,7 @@ exports[`DailyDocketRow renders correctly for non virtual, attorney 1`] = `
                 >
                   Yes, Waive 90 Day Hold
                 </span>
-                 
+
               </label>
             </div>
           </div>
@@ -2304,7 +2372,7 @@ exports[`DailyDocketRow renders correctly for non virtual, attorney 1`] = `
                 >
                   Transcript Requested
                 </span>
-                 
+
               </label>
             </div>
           </div>
@@ -2612,7 +2680,7 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
             role="tooltip"
           >
             <style>
-              
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -2686,13 +2754,13 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
         border-right-style: solid;
         border-right-width: 6px;
     }
-  
+
             </style>
             Hearing Request
           </div>
         </span>
         220428-968
-         
+
         <br />
         <br />
         <div
@@ -2743,6 +2811,12 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
              Connect to Recording System
           </button>
         </span>
+        <div>
+          <b>
+            Webex
+             hearing
+          </b>
+        </div>
         <div>
           <div
             class=""
@@ -2867,7 +2941,7 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
                 >
                   Transcript Requested
                 </span>
-                 
+
               </label>
             </div>
           </div>
@@ -2883,7 +2957,7 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
             <a
               href="/ae4c4050-36e8-4df2-83a4-839cf73725dc/details"
             >
-              Edit Hearing Details
+              Hearing Details and links
               <span
                 data-css-1qcxu9b=""
               >
@@ -3064,9 +3138,9 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
             data-css-1rsr754=""
           >
             Fri 4/29/2022
-             
+
             <br />
-             
+
             <br />
           </div>
         </div>
@@ -3082,7 +3156,7 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
               <strong>
                 <span>
                   Hearing Time
-                   
+
                 </span>
               </strong>
             </legend>
@@ -3093,14 +3167,13 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
                 class="cf-form-radio-option"
               >
                 <input
-                  disabled=""
                   id="hearingTime0_8:30 AM Central Time (US & Canada)"
                   name="hearingTime0"
                   type="radio"
                   value="8:30 AM Central Time (US & Canada)"
                 />
                 <label
-                  class="disabled"
+                  class=""
                   for="hearingTime0_8:30 AM Central Time (US & Canada)"
                 >
                   8:30 AM Central Time (US & Canada) / 9:30 AM Eastern Time (US & Canada)
@@ -3110,14 +3183,13 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
                 class="cf-form-radio-option"
               >
                 <input
-                  disabled=""
                   id="hearingTime0_12:30 PM Central Time (US & Canada)"
                   name="hearingTime0"
                   type="radio"
                   value="12:30 PM Central Time (US & Canada)"
                 />
                 <label
-                  class="disabled"
+                  class=""
                   for="hearingTime0_12:30 PM Central Time (US & Canada)"
                 >
                   12:30 PM Central Time (US & Canada) / 1:30 PM Eastern Time (US & Canada)
@@ -3128,14 +3200,13 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
               >
                 <input
                   checked=""
-                  disabled=""
                   id="hearingTime0_Other"
                   name="hearingTime0"
                   type="radio"
                   value="Other"
                 />
                 <label
-                  class="disabled"
+                  class=""
                   for="hearingTime0_Other"
                 >
                   Other
@@ -3165,10 +3236,10 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
               class="cf-select"
             >
               <div
-                class="cf-select--is-disabled css-14jk2my-container"
+                class=" css-2b097c-container"
               >
                 <div
-                  class="cf-select__control cf-select__control--is-disabled css-1fhf3k1-control"
+                  class="cf-select__control css-yk16xz-control"
                 >
                   <div
                     class="cf-select__value-container css-g1d714-ValueContainer"
@@ -3178,21 +3249,41 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
                     >
                       Select a time
                     </div>
-                    <input
-                      aria-autocomplete="list"
-                      class="css-62g3xt-dummyInput"
-                      disabled=""
-                      id="optional-hearing-time-0"
-                      readonly=""
-                      tabindex="0"
-                      value=""
-                    />
+                    <div
+                      class="css-81nyic-Input"
+                    >
+                      <div
+                        class="cf-select__input"
+                        style="display: inline-block;"
+                      >
+                        <input
+                          aria-autocomplete="list"
+                          aria-expanded="false"
+                          aria-haspopup="true"
+                          aria-labelledby="optional-hearing-time-0-label"
+                          aria-owns="optional-hearing-time-0-listbox"
+                          autocapitalize="none"
+                          autocomplete="off"
+                          autocorrect="off"
+                          id="optional-hearing-time-0"
+                          role="combobox"
+                          spellcheck="false"
+                          style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                          tabindex="0"
+                          type="text"
+                          value=""
+                        />
+                        <div
+                          style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                        />
+                      </div>
+                    </div>
                   </div>
                   <div
                     class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
                   >
                     <span
-                      class="cf-select__indicator-separator css-109onse-indicatorSeparator"
+                      class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
                     />
                     <div
                       aria-hidden="true"
@@ -3213,6 +3304,11 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
                     </div>
                   </div>
                 </div>
+                <input
+                  name="optionalHearingTime0"
+                  type="hidden"
+                  value=""
+                />
               </div>
             </div>
           </div>
@@ -3256,7 +3352,7 @@ exports[`DailyDocketRow renders correctly for non virtual, judge 1`] = `
                     Accessibility hack
                   </span>
                 </span>
-                 
+
               </label>
             </div>
           </div>
@@ -3305,7 +3401,7 @@ exports[`DailyDocketRow renders correctly for non virtual, judge 1`] = `
             role="tooltip"
           >
             <style>
-              
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -3379,13 +3475,13 @@ exports[`DailyDocketRow renders correctly for non virtual, judge 1`] = `
         border-right-style: solid;
         border-right-width: 6px;
     }
-  
+
             </style>
             Hearing Request
           </div>
         </span>
         220428-968
-         
+
         <br />
         <br />
         <div
@@ -3436,6 +3532,12 @@ exports[`DailyDocketRow renders correctly for non virtual, judge 1`] = `
              Connect to Recording System
           </button>
         </span>
+        <div>
+          <b>
+            Webex
+             hearing
+          </b>
+        </div>
         <div>
           <div
             class=""
@@ -3560,7 +3662,7 @@ exports[`DailyDocketRow renders correctly for non virtual, judge 1`] = `
                 >
                   Yes, Waive 90 Day Hold
                 </span>
-                 
+
               </label>
             </div>
           </div>
@@ -3589,7 +3691,7 @@ exports[`DailyDocketRow renders correctly for non virtual, judge 1`] = `
                 >
                   Transcript Requested
                 </span>
-                 
+
               </label>
             </div>
           </div>
@@ -3897,7 +3999,7 @@ exports[`DailyDocketRow renders correctly for virtual 1`] = `
             role="tooltip"
           >
             <style>
-              
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -3971,13 +4073,13 @@ exports[`DailyDocketRow renders correctly for virtual 1`] = `
         border-right-style: solid;
         border-right-width: 6px;
     }
-  
+
             </style>
             Hearing Request
           </div>
         </span>
         220428-970
-         
+
         <br />
         <br />
         <div
@@ -4193,7 +4295,7 @@ exports[`DailyDocketRow renders correctly for virtual 1`] = `
                 >
                   Transcript Requested
                 </span>
-                 
+
               </label>
             </div>
           </div>
@@ -4209,7 +4311,7 @@ exports[`DailyDocketRow renders correctly for virtual 1`] = `
             <a
               href="/3c170697-2c52-4bad-b7bd-2ccf44f0c44c/details"
             >
-              Edit Hearing Details
+              Hearing Details and links
               <span
                 data-css-1qcxu9b=""
               >
@@ -4390,9 +4492,9 @@ exports[`DailyDocketRow renders correctly for virtual 1`] = `
             data-css-1rsr754=""
           >
             Fri 4/29/2022
-             
+
             <br />
-             
+
             <br />
           </div>
         </div>
