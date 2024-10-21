@@ -234,9 +234,10 @@ class Test::LoadTestsController < ApplicationController
     end
   end
 
-  # Only accessible from non-prod environment
+  # Only accessible from prod-test environment
   def check_environment
-    return render status: :not_found if Rails.deploy_env == :production
+    return true if Rails.env.test?
+    redirect_to "/unathorized"
   end
 
   # Private: Generates headers for request to Jenkins to kick off load test pipeline
