@@ -25,6 +25,7 @@ describe CorrespondenceIntakeProcessor do
       before do
         expect(mock_doc_uploader).to receive(:upload_documents_to_claim_evidence)
           .with(correspondence, current_user, parent_task).and_return(true)
+
       end
 
       it "succeeds and completes the parent task and its children" do
