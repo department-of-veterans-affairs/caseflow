@@ -352,11 +352,9 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
                   stroke="none"
                   stroke-width="1"
                 >
-                  <span>
-                    N/A
-                  </span>
-                  <div
-                    data-css-1abghdv=""
+                  <g
+                    fill="#0071bc"
+                    fill-rule="nonzero"
                   >
                     <strong>
                       Conference Room:
