@@ -3956,7 +3956,9 @@ exports[`EmailConfirmationModal ChangeHearingTime sub-component Displays ReadOnl
 
 exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays appellant email error when present 1`] = `
 <DocumentFragment>
-  <div>
+  <div
+    data-testid="datetime-testid"
+  >
     <strong>
       Hearing Date: 
     </strong>
@@ -4095,7 +4097,7 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays input for
     </div>
   </div>
   <p>
-    Changes to the Veteran and POA / Representative emails will be used to send notifications
+    Changes to the Veteran and POA / Representative emails will be used to send notifications 
     <strong>
       for this hearing only
     </strong>
@@ -4106,7 +4108,9 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays input for
 
 exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays representative email error when present 1`] = `
 <DocumentFragment>
-  <div>
+  <div
+    data-testid="datetime-testid"
+  >
     <strong>
       Hearing Date: 
     </strong>
@@ -4183,7 +4187,9 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays represent
 
 exports[`EmailConfirmationModal DateTime sub-component Displays divider for formerly Central hearings 1`] = `
 <DocumentFragment>
-  <div>
+  <div
+    data-testid="datetime-testid"
+  >
     <strong>
       Hearing Date: 
     </strong>
@@ -5428,7 +5434,9 @@ exports[`EmailConfirmationModal Displays ChangeFromVirtual component when type i
               </li>
             </ul>
             <p />
-            <div>
+            <div
+              data-testid="datetime-testid"
+            >
               <strong>
                 Hearing Date: 
               </strong>
@@ -6220,7 +6228,9 @@ exports[`EmailConfirmationModal Displays ChangeHearingTime component when type i
             <p>
               Email notifications will be sent to the Veteran, POA / Representative, and VLJ.
             </p>
-            <div>
+            <div
+              data-testid="datetime-testid"
+            >
               <strong>
                 Hearing Date: 
               </strong>
@@ -6925,7 +6935,9 @@ exports[`EmailConfirmationModal Matches snapshot with default props 1`] = `
             <p>
               Email notifications will be sent to the Veteran, POA / Representative, and VLJ.
             </p>
-            <div>
+            <div
+              data-testid="datetime-testid"
+            >
               <strong>
                 Hearing Date: 
               </strong>

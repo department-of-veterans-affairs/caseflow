@@ -14893,7 +14893,6 @@ exports[`ScheduleVeteranForm Displayes Unschedules Notes input 1`] = `
 <DocumentFragment>
   <div
     class="usa-width-one-whole schedule-veteran-details"
-    data-testid="schedule-veteran-form"
   >
     <div
       class="usa-width-one-fourth schedule-veteran-appeal-info-container"
@@ -14906,7 +14905,6 @@ exports[`ScheduleVeteranForm Displayes Unschedules Notes input 1`] = `
         </h2>
         <div
           data-css-atv6j6=""
-          data-testid="read-only-testid"
         >
           <pre>
             9999 MISSION ST
@@ -14915,7 +14913,6 @@ SAN FRANCISCO, CA 94103
         </div>
         <div
           data-css-acl5jg=""
-          data-testid="read-only-testid"
         >
           <strong>
             Issues
@@ -14925,7 +14922,6 @@ SAN FRANCISCO, CA 94103
         <div
           class="schedule-veteran-appeals-info-stream"
           data-css-acl5jg=""
-          data-testid="read-only-testid"
         >
           <strong>
             Appeal Stream
@@ -14939,7 +14935,6 @@ SAN FRANCISCO, CA 94103
         <div
           class="appeal-information-docket-type-badge"
           data-css-acl5jg=""
-          data-testid="read-only-testid"
         >
           <strong>
             Docket Number
@@ -14960,7 +14955,6 @@ SAN FRANCISCO, CA 94103
             </span>
             <span
               data-css-1u6dx7t=""
-              data-testid="tooltip-testid"
             >
               <div
                 class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -15056,7 +15050,6 @@ SAN FRANCISCO, CA 94103
         />
         <div
           data-css-1a5irm0=""
-          data-testid="read-only-testid"
         >
           <strong>
             Power Of Attorney
@@ -15210,6 +15203,9 @@ SAN FRANCISCO, CA 94103
           <div
             class=""
           >
+            <h2>
+              Abellona Valtas
+            </h2>
             <div
               class="cf-form-dropdown dropdown-regionalOffice"
             >
@@ -15314,7 +15310,6 @@ exports[`ScheduleVeteranForm Displays HearingTime when video is selected and hal
 <DocumentFragment>
   <div
     class="usa-width-one-whole schedule-veteran-details"
-    data-testid="schedule-veteran-form"
   >
     <div
       class="usa-width-one-fourth schedule-veteran-appeal-info-container"
@@ -15327,7 +15322,6 @@ exports[`ScheduleVeteranForm Displays HearingTime when video is selected and hal
         </h2>
         <div
           data-css-atv6j6=""
-          data-testid="read-only-testid"
         >
           <pre>
             9999 MISSION ST
@@ -15336,7 +15330,6 @@ SAN FRANCISCO, CA 94103
         </div>
         <div
           data-css-acl5jg=""
-          data-testid="read-only-testid"
         >
           <strong>
             Issues
@@ -15346,7 +15339,6 @@ SAN FRANCISCO, CA 94103
         <div
           class="schedule-veteran-appeals-info-stream"
           data-css-acl5jg=""
-          data-testid="read-only-testid"
         >
           <strong>
             Appeal Stream
@@ -15360,7 +15352,6 @@ SAN FRANCISCO, CA 94103
         <div
           class="appeal-information-docket-type-badge"
           data-css-acl5jg=""
-          data-testid="read-only-testid"
         >
           <strong>
             Docket Number
@@ -15381,7 +15372,6 @@ SAN FRANCISCO, CA 94103
             </span>
             <span
               data-css-1u6dx7t=""
-              data-testid="tooltip-testid"
             >
               <div
                 class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -15477,7 +15467,6 @@ SAN FRANCISCO, CA 94103
         />
         <div
           data-css-1a5irm0=""
-          data-testid="read-only-testid"
         >
           <strong>
             Power Of Attorney
@@ -38047,6 +38036,7 @@ SAN FRANCISCO, CA 94103
             />
             <div
               data-css-1a5irm0=""
+              data-testid="read-only-testid"
             >
               <strong>
                 Power Of Attorney
@@ -38316,11 +38306,10 @@ SAN FRANCISCO, CA 94103
 </DocumentFragment>
 `;
 
-exports[`ScheduleVeteranForm Matches snapshot with default props 1`] = `
+exports[`ScheduleVeteranForm RO dropdown includes Virtual Hearings as option is type is selected as Virtual 1`] = `
 <DocumentFragment>
   <div
     class="usa-width-one-whole schedule-veteran-details"
-    data-testid="schedule-veteran-form"
   >
     <div
       class="usa-width-one-fourth schedule-veteran-appeal-info-container"
@@ -38333,7 +38322,6 @@ exports[`ScheduleVeteranForm Matches snapshot with default props 1`] = `
         </h2>
         <div
           data-css-atv6j6=""
-          data-testid="read-only-testid"
         >
           <pre>
             9999 MISSION ST
@@ -38342,7 +38330,6 @@ SAN FRANCISCO, CA 94103
         </div>
         <div
           data-css-acl5jg=""
-          data-testid="read-only-testid"
         >
           <strong>
             Issues
@@ -38352,7 +38339,6 @@ SAN FRANCISCO, CA 94103
         <div
           class="schedule-veteran-appeals-info-stream"
           data-css-acl5jg=""
-          data-testid="read-only-testid"
         >
           <strong>
             Appeal Stream
@@ -38366,7 +38352,6 @@ SAN FRANCISCO, CA 94103
         <div
           class="appeal-information-docket-type-badge"
           data-css-acl5jg=""
-          data-testid="read-only-testid"
         >
           <strong>
             Docket Number
@@ -38387,7 +38372,6 @@ SAN FRANCISCO, CA 94103
             </span>
             <span
               data-css-1u6dx7t=""
-              data-testid="tooltip-testid"
             >
               <div
                 class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -38483,7 +38467,6 @@ SAN FRANCISCO, CA 94103
         />
         <div
           data-css-1a5irm0=""
-          data-testid="read-only-testid"
         >
           <strong>
             Power Of Attorney
@@ -39218,7 +39201,7 @@ SAN FRANCISCO, CA 94103
                         <div
                           class="cf-select__single-value css-1uccc91-singleValue"
                         >
-                          Virtual
+                          Pacific Time (US & Canada)
                         </div>
                         <div
                           class="css-81nyic-Input"
@@ -39231,12 +39214,12 @@ SAN FRANCISCO, CA 94103
                               aria-autocomplete="list"
                               aria-expanded="false"
                               aria-haspopup="true"
-                              aria-labelledby="hearing-type-label"
-                              aria-owns="hearing-type-listbox"
+                              aria-labelledby="appellant-tz-label"
+                              aria-owns="appellant-tz-listbox"
                               autocapitalize="none"
                               autocomplete="off"
                               autocorrect="off"
-                              id="hearing-type"
+                              id="appellant-tz"
                               role="combobox"
                               spellcheck="false"
                               style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
@@ -39276,784 +39259,238 @@ SAN FRANCISCO, CA 94103
                       </div>
                     </div>
                     <input
-                      name="hearingType"
+                      name="appellantTz"
                       type="hidden"
-                      value="true"
+                      value="America/Los_Angeles"
                     />
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div
-            class="usa-width-one-whole"
-            data-css-1jfbwxw=""
-          >
             <div
-              data-css-acl5jg=""
+              class="helper-text"
             >
-              <strong>
-                Hearing Location
-              </strong>
-              <pre>
-                Virtual
-              </pre>
-            </div>
-            <div
-              data-css-1jfbwxw=""
-            >
-              <div
-                class=""
-              >
-                <div
-                  class="cf-form-dropdown dropdown-regionalOffice"
-                >
-                  <label
-                    class="question-label"
-                    for="regional-office"
-                    id="regional-office-label"
-                  >
-                    <strong>
-                      <span>
-                        Regional Office
-                      </span>
-                    </strong>
-                  </label>
-                  <div
-                    class="cf-select"
-                  >
-                    <div
-                      class=" css-2b097c-container"
-                    >
-                      <div
-                        class="cf-select__control css-yk16xz-control"
-                      >
-                        <div
-                          class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
-                        >
-                          <div
-                            class="cf-select__single-value css-1uccc91-singleValue"
-                          >
-                            St. Petersburg regional office
-                          </div>
-                          <div
-                            class="css-81nyic-Input"
-                          >
-                            <div
-                              class="cf-select__input"
-                              style="display: inline-block;"
-                            >
-                              <input
-                                aria-autocomplete="list"
-                                aria-expanded="false"
-                                aria-haspopup="true"
-                                aria-labelledby="regional-office-label"
-                                aria-owns="regional-office-listbox"
-                                autocapitalize="none"
-                                autocomplete="off"
-                                autocorrect="off"
-                                id="regional-office"
-                                role="combobox"
-                                spellcheck="false"
-                                style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
-                                tabindex="0"
-                                type="text"
-                                value=""
-                              />
-                              <div
-                                style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                        <div
-                          class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
-                        >
-                          <span
-                            class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
-                          />
-                          <div
-                            aria-hidden="true"
-                            class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
-                          >
-                            <svg
-                              aria-hidden="true"
-                              class="css-6q0nyr-Svg"
-                              focusable="false"
-                              height="20"
-                              viewBox="0 0 20 20"
-                              width="20"
-                            >
-                              <path
-                                d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
-                              />
-                            </svg>
-                          </div>
-                        </div>
-                      </div>
-                      <input
-                        name="regionalOffice"
-                        type="hidden"
-                        value="[object Object]"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div
-              data-css-1jfbwxw=""
-            >
-              <div
-                class=""
-              >
-                <div
-                  class="cf-form-dropdown dropdown-hearingDate"
-                >
-                  <label
-                    class="question-label"
-                    for="hearing-date"
-                    id="hearing-date-label"
-                  >
-                    <strong>
-                      <span>
-                        Hearing Date
-                      </span>
-                    </strong>
-                  </label>
-                  <div
-                    class="cf-select"
-                  >
-                    <div
-                      class=" css-2b097c-container"
-                    >
-                      <div
-                        class="cf-select__control css-yk16xz-control"
-                      >
-                        <div
-                          class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
-                        >
-                          <div
-                            class="cf-select__single-value css-1uccc91-singleValue"
-                          >
-                            08/15/2020 (0/12)
-                          </div>
-                          <div
-                            class="css-81nyic-Input"
-                          >
-                            <div
-                              class="cf-select__input"
-                              style="display: inline-block;"
-                            >
-                              <input
-                                aria-autocomplete="list"
-                                aria-expanded="false"
-                                aria-haspopup="true"
-                                aria-labelledby="hearing-date-label"
-                                aria-owns="hearing-date-listbox"
-                                autocapitalize="none"
-                                autocomplete="off"
-                                autocorrect="off"
-                                id="hearing-date"
-                                role="combobox"
-                                spellcheck="false"
-                                style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
-                                tabindex="0"
-                                type="text"
-                                value=""
-                              />
-                              <div
-                                style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                        <div
-                          class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
-                        >
-                          <span
-                            class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
-                          />
-                          <div
-                            aria-hidden="true"
-                            class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
-                          >
-                            <svg
-                              aria-hidden="true"
-                              class="css-6q0nyr-Svg"
-                              focusable="false"
-                              height="20"
-                              viewBox="0 0 20 20"
-                              width="20"
-                            >
-                              <path
-                                d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
-                              />
-                            </svg>
-                          </div>
-                        </div>
-                      </div>
-                      <input
-                        name="hearingDate"
-                        type="hidden"
-                        value="[object Object]"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div
-              data-css-1jfbwxw=""
-            >
-              <span
-                data-css-1042gbc=""
-                data-css-q4lgq9=""
-              >
-                <fieldset
-                  class="usa-fieldset-inputs cf-form-radio "
-                >
-                  <legend
-                    class=""
-                  >
-                    <strong>
-                      <span>
-                        Hearing Time
-                      </span>
-                    </strong>
-                  </legend>
-                  <div
-                    class="cf-form-radio-options"
-                  >
-                    <div
-                      class="cf-form-radio-option"
-                    >
-                      <input
-                        id="hearingTime0_08:30"
-                        name="hearingTime0"
-                        type="radio"
-                        value="08:30"
-                      />
-                      <label
-                        class=""
-                        for="hearingTime0_08:30"
-                      >
-                        8:30 AM Eastern Time (US & Canada)
-                      </label>
-                    </div>
-                    <div
-                      class="cf-form-radio-option"
-                    >
-                      <input
-                        id="hearingTime0_12:30"
-                        name="hearingTime0"
-                        type="radio"
-                        value="12:30"
-                      />
-                      <label
-                        class=""
-                        for="hearingTime0_12:30"
-                      >
-                        12:30 PM Eastern Time (US & Canada)
-                      </label>
-                    </div>
-                    <div
-                      class="cf-form-radio-option"
-                    >
-                      <input
-                        checked=""
-                        id="hearingTime0_other"
-                        name="hearingTime0"
-                        type="radio"
-                        value="other"
-                      />
-                      <label
-                        class=""
-                        for="hearingTime0_other"
-                      >
-                        Other
-                      </label>
-                    </div>
-                  </div>
-                </fieldset>
-              </span>
-              <div
-                class=""
-              >
-                <div
-                  class="cf-form-dropdown dropdown-optionalHearingTime0"
-                >
-                  <label
-                    class="question-label usa-sr-only"
-                    for="optional-hearing-time-0"
-                    id="optional-hearing-time-0-label"
-                  >
-                    <strong>
-                      <span>
-                        Hearing Time
-                      </span>
-                    </strong>
-                  </label>
-                  <div
-                    class="cf-select"
-                  >
-                    <div
-                      class=" css-2b097c-container"
-                    >
-                      <div
-                        class="cf-select__control css-yk16xz-control"
-                      >
-                        <div
-                          class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
-                        >
-                          <div
-                            class="cf-select__single-value css-1uccc91-singleValue"
-                          >
-                            8:45 AM Eastern Time (US & Canada)
-                          </div>
-                          <div
-                            class="css-81nyic-Input"
-                          >
-                            <div
-                              class="cf-select__input"
-                              style="display: inline-block;"
-                            >
-                              <input
-                                aria-autocomplete="list"
-                                aria-expanded="false"
-                                aria-haspopup="true"
-                                aria-labelledby="optional-hearing-time-0-label"
-                                aria-owns="optional-hearing-time-0-listbox"
-                                autocapitalize="none"
-                                autocomplete="off"
-                                autocorrect="off"
-                                id="optional-hearing-time-0"
-                                role="combobox"
-                                spellcheck="false"
-                                style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
-                                tabindex="0"
-                                type="text"
-                                value=""
-                              />
-                              <div
-                                style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                        <div
-                          class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
-                        >
-                          <span
-                            class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
-                          />
-                          <div
-                            aria-hidden="true"
-                            class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
-                          >
-                            <svg
-                              aria-hidden="true"
-                              class="css-6q0nyr-Svg"
-                              focusable="false"
-                              height="20"
-                              viewBox="0 0 20 20"
-                              width="20"
-                            >
-                              <path
-                                d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
-                              />
-                            </svg>
-                          </div>
-                        </div>
-                      </div>
-                      <input
-                        name="optionalHearingTime0"
-                        type="hidden"
-                        value="08:45"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
+              The hearing time in email notifications is calculated based on the timezone.
             </div>
           </div>
-          <div
-            class="cf-help-divider usa-width-one-whole"
-          />
+        </div>
+        <div
+          class="usa-grid css-1jfbwxw"
+          id="email-section"
+        >
           <div
             class="usa-width-one-whole"
           >
-            <h2>
-              Email Notifications
-            </h2>
-            <p>
-              When you schedule the hearing, the Veteran and Judge will receive an email with connection information for the virtual hearing.
-            </p>
             <div
-              data-css-1jfbwxw=""
-            />
-            <strong>
-               Veteran
-            </strong>
-            <div
-              class="usa-grid css-1jfbwxw"
+              class="cf-form-textinput cf-inline-field   "
             >
-              <div
-                class="usa-width-one-whole"
+              <label
+                for="undefined Email (for these notifications only)"
               >
-                <div
-                  class=""
-                >
-                  <div
-                    class="cf-form-dropdown dropdown-appellantTz"
-                    data-css-1gh7024=""
-                  >
-                    <label
-                      class="question-label"
-                      for="appellant-tz"
-                      id="appellant-tz-label"
+                <strong>
+                  <span>
+                    undefined Email (for these notifications only)
+                    <span
+                      class="cf-required"
                     >
-                      <strong>
-                        <span>
-                          Veteran Timezone
-                          <span
-                            class="cf-required"
-                          >
-                            Required
-                          </span>
-                        </span>
-                      </strong>
-                    </label>
-                    <div
-                      class="cf-select"
-                    >
-                      <div
-                        class=" css-2b097c-container"
-                      >
-                        <div
-                          class="cf-select__control css-yk16xz-control"
-                        >
-                          <div
-                            class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
-                          >
-                            <div
-                              class="cf-select__single-value css-1uccc91-singleValue"
-                            >
-                              Mountain Time (US & Canada) (6:45 AM)
-                            </div>
-                            <div
-                              class="css-81nyic-Input"
-                            >
-                              <div
-                                class="cf-select__input"
-                                style="display: inline-block;"
-                              >
-                                <input
-                                  aria-autocomplete="list"
-                                  aria-expanded="false"
-                                  aria-haspopup="true"
-                                  aria-labelledby="appellant-tz-label"
-                                  aria-owns="appellant-tz-listbox"
-                                  autocapitalize="none"
-                                  autocomplete="off"
-                                  autocorrect="off"
-                                  id="appellant-tz"
-                                  role="combobox"
-                                  spellcheck="false"
-                                  style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
-                                  tabindex="0"
-                                  type="text"
-                                  value=""
-                                />
-                                <div
-                                  style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
-                                />
-                              </div>
-                            </div>
-                          </div>
-                          <div
-                            class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
-                          >
-                            <span
-                              class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
-                            />
-                            <div
-                              aria-hidden="true"
-                              class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
-                            >
-                              <svg
-                                aria-hidden="true"
-                                class="css-6q0nyr-Svg"
-                                focusable="false"
-                                height="20"
-                                viewBox="0 0 20 20"
-                                width="20"
-                              >
-                                <path
-                                  d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
-                                />
-                              </svg>
-                            </div>
-                          </div>
-                        </div>
-                        <input
-                          name="appellantTz"
-                          type="hidden"
-                          value="America/Denver"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  class="helper-text"
-                >
-                  The hearing time in email notifications is calculated based on the timezone.
-                </div>
+                      Required
+                    </span>
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="input-container"
+              >
+                <input
+                  class="cf-form-textinput cf-inline-field"
+                  id="undefined Email (for these notifications only)"
+                  name="undefined Email (for these notifications only)"
+                  type="text"
+                  value=""
+                />
               </div>
             </div>
             <div
-              class="usa-grid css-1jfbwxw"
-              id="email-section"
+              class="helper-text"
+            >
+              This email address will be used to send notifications for this hearing only.
+            </div>
+          </div>
+        </div>
+        <div
+          data-css-1jfbwxw=""
+        />
+        <strong>
+           Power of Attorney (POA)
+        </strong>
+        <div
+          data-css-1a5irm0=""
+        >
+          <pre>
+            PARALYZED VETERANS OF AMERICA, INC.
+          </pre>
+        </div>
+        <div
+          class="usa-grid css-1jfbwxw"
+        >
+          <div
+            class="usa-width-one-whole"
+          >
+            <div
+              class=""
             >
               <div
-                class="usa-width-one-whole"
+                class="cf-form-dropdown dropdown-representativeTz"
+                data-css-1dzedb9=""
               >
-                <div
-                  class="cf-form-textinput cf-inline-field   "
+                <label
+                  class="question-label"
+                  for="representative-tz"
+                  id="representative-tz-label"
                 >
-                  <label
-                    for="Veteran Email (for these notifications only)"
-                  >
-                    <strong>
-                      <span>
-                        Veteran Email (for these notifications only)
-                        <span
-                          class="cf-required"
-                        >
-                          Required
-                        </span>
+                  <strong>
+                    <span>
+                      POA/Representative Timezone
+                      <span
+                        class="cf-optional"
+                      >
+                        Optional
                       </span>
-                    </strong>
-                  </label>
+                    </span>
+                  </strong>
+                </label>
+                <div
+                  class="cf-select"
+                >
                   <div
-                    class="input-container"
+                    class=" css-2b097c-container"
                   >
+                    <div
+                      class="cf-select__control css-yk16xz-control"
+                    >
+                      <div
+                        class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                      >
+                        <div
+                          class="cf-select__single-value css-1uccc91-singleValue"
+                        >
+                          Pacific Time (US & Canada)
+                        </div>
+                        <div
+                          class="css-81nyic-Input"
+                        >
+                          <div
+                            class="cf-select__input"
+                            style="display: inline-block;"
+                          >
+                            <input
+                              aria-autocomplete="list"
+                              aria-expanded="false"
+                              aria-haspopup="true"
+                              aria-labelledby="representative-tz-label"
+                              aria-owns="representative-tz-listbox"
+                              autocapitalize="none"
+                              autocomplete="off"
+                              autocorrect="off"
+                              id="representative-tz"
+                              role="combobox"
+                              spellcheck="false"
+                              style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                              tabindex="0"
+                              type="text"
+                              value=""
+                            />
+                            <div
+                              style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                      >
+                        <span
+                          class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                        />
+                        <div
+                          aria-hidden="true"
+                          class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            class="css-6q0nyr-Svg"
+                            focusable="false"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            width="20"
+                          >
+                            <path
+                              d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
                     <input
-                      class="cf-form-textinput cf-inline-field"
-                      id="Veteran Email (for these notifications only)"
-                      name="Veteran Email (for these notifications only)"
-                      type="text"
-                      value="Bob.Smith@test.com"
+                      name="representativeTz"
+                      type="hidden"
+                      value="America/Los_Angeles"
                     />
                   </div>
                 </div>
-                <div
-                  class="helper-text"
-                >
-                  This email address will be used to send notifications for this hearing only.
-                </div>
               </div>
             </div>
             <div
-              data-css-1jfbwxw=""
-            />
-            <strong>
-               Power of Attorney (POA)
-            </strong>
-            <div
-              data-css-1a5irm0=""
+              class="helper-text"
             >
-              <pre>
-                The Veteran does not have a representative recorded in VBMS
-              </pre>
+              The hearing time in email notifications is calculated based on the timezone.
             </div>
+          </div>
+        </div>
+        <div
+          class="usa-grid css-1jfbwxw"
+        >
+          <div
+            class="usa-width-one-whole"
+          >
             <div
-              class="usa-grid css-1jfbwxw"
+              class="cf-form-textinput cf-inline-field   "
             >
-              <div
-                class="usa-width-one-whole"
+              <label
+                for="POA/Representative Email (for these notifications only)"
               >
-                <div
-                  class=""
-                >
-                  <div
-                    class="cf-form-dropdown dropdown-representativeTz"
-                    data-css-1gh7024=""
-                  >
-                    <label
-                      class="question-label"
-                      for="representative-tz"
-                      id="representative-tz-label"
+                <strong>
+                  <span>
+                    POA/Representative Email (for these notifications only)
+                    <span
+                      class="cf-optional"
                     >
-                      <strong>
-                        <span>
-                          POA/Representative Timezone
-                          <span
-                            class="cf-required"
-                          >
-                            Required
-                          </span>
-                        </span>
-                      </strong>
-                    </label>
-                    <div
-                      class="cf-select"
-                    >
-                      <div
-                        class=" css-2b097c-container"
-                      >
-                        <div
-                          class="cf-select__control css-yk16xz-control"
-                        >
-                          <div
-                            class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
-                          >
-                            <div
-                              class="cf-select__single-value css-1uccc91-singleValue"
-                            >
-                              Pacific Time (US & Canada) (5:45 AM)
-                            </div>
-                            <div
-                              class="css-81nyic-Input"
-                            >
-                              <div
-                                class="cf-select__input"
-                                style="display: inline-block;"
-                              >
-                                <input
-                                  aria-autocomplete="list"
-                                  aria-expanded="false"
-                                  aria-haspopup="true"
-                                  aria-labelledby="representative-tz-label"
-                                  aria-owns="representative-tz-listbox"
-                                  autocapitalize="none"
-                                  autocomplete="off"
-                                  autocorrect="off"
-                                  id="representative-tz"
-                                  role="combobox"
-                                  spellcheck="false"
-                                  style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
-                                  tabindex="0"
-                                  type="text"
-                                  value=""
-                                />
-                                <div
-                                  style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
-                                />
-                              </div>
-                            </div>
-                          </div>
-                          <div
-                            class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
-                          >
-                            <span
-                              class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
-                            />
-                            <div
-                              aria-hidden="true"
-                              class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
-                            >
-                              <svg
-                                aria-hidden="true"
-                                class="css-6q0nyr-Svg"
-                                focusable="false"
-                                height="20"
-                                viewBox="0 0 20 20"
-                                width="20"
-                              >
-                                <path
-                                  d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
-                                />
-                              </svg>
-                            </div>
-                          </div>
-                        </div>
-                        <input
-                          name="representativeTz"
-                          type="hidden"
-                          value="America/Los_Angeles"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  class="helper-text"
-                >
-                  The hearing time in email notifications is calculated based on the timezone.
-                </div>
+                      Optional
+                    </span>
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="input-container"
+              >
+                <input
+                  class="cf-form-textinput cf-inline-field"
+                  id="POA/Representative Email (for these notifications only)"
+                  name="POA/Representative Email (for these notifications only)"
+                  type="text"
+                  value=""
+                />
               </div>
             </div>
             <div
-              class="usa-grid css-1jfbwxw"
+              class="helper-text"
             >
-              <div
-                class="usa-width-one-whole"
-              >
-                <div
-                  class="cf-form-textinput cf-inline-field   "
-                >
-                  <label
-                    for="POA/Representative Email (for these notifications only)"
-                  >
-                    <strong>
-                      <span>
-                        POA/Representative Email (for these notifications only)
-                        <span
-                          class="cf-optional"
-                        >
-                          Optional
-                        </span>
-                      </span>
-                    </strong>
-                  </label>
-                  <div
-                    class="input-container"
-                  >
-                    <input
-                      class="cf-form-textinput cf-inline-field"
-                      id="POA/Representative Email (for these notifications only)"
-                      name="POA/Representative Email (for these notifications only)"
-                      type="text"
-                      value="tom.brady@caseflow.gov"
-                    />
-                  </div>
-                </div>
-                <div
-                  class="helper-text"
-                >
-                  This email address will be used to send notifications for this hearing only.
-                </div>
-              </div>
+              This email address will be used to send notifications for this hearing only.
             </div>
           </div>
         </div>
       </div>
-    </section>
-    <span>
-      <button
-        class="cf-submit cf-btn-link usa-button"
-        data-css-14x0t8z=""
-        id="button-Cancel"
-        type="button"
-      >
-        Cancel
-      </button>
-    </span>
-    <span
-      data-css-jf1dde=""
-    >
-      <span>
-        <button
-          class="cf-submit usa-button"
-          id="button-Schedule"
-          type="button"
-        >
-          Schedule
-        </button>
-      </span>
-    </span>
+    </div>
   </div>
 </DocumentFragment>
 `;
