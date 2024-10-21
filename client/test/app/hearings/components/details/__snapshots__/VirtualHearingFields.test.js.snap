@@ -23,6 +23,7 @@ exports[`VirtualHearingFields Matches snapshot with default props 1`] = `
       <div
         data-css-19plkw7=""
         data-css-1fmltfu=""
+        data-testid="link-containers"
       >
         <div
           data-css-tx10g=""
@@ -198,6 +199,7 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
       <div
         data-css-19plkw7=""
         data-css-1fmltfu=""
+        data-testid="link-containers"
       >
         <div
           data-css-tx10g=""
@@ -416,6 +418,7 @@ exports[`VirtualHearingFields Renders webex conference when conference provider 
       <div
         data-css-19plkw7=""
         data-css-1fmltfu=""
+        data-testid="link-containers"
       >
         <div
           data-css-tx10g=""
@@ -624,6 +627,7 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
       <div
         data-css-19plkw7=""
         data-css-1fmltfu=""
+        data-testid="link-containers"
       >
         <div
           data-css-tx10g=""
@@ -842,6 +846,7 @@ exports[`VirtualHearingFields Shows only hearing links with no virtualHearing 1`
       <div
         data-css-19plkw7=""
         data-css-1fmltfu=""
+        data-testid="link-containers"
       >
         <div
           data-css-tx10g=""
