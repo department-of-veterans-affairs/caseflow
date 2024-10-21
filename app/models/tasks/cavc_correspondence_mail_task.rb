@@ -32,9 +32,16 @@ class CavcCorrespondenceMailTask < MailTask
     []
   end
 
+  def self.create_from_params(params, user)
+    @assigned_by = user
+    super(params, user)
+  end
+
   private
 
   def cavc_appeal_stream
+    return if check_inbound_ops_team_user
+
     if !appeal.cavc?
       fail Caseflow::Error::ActionForbiddenError,
            message: "CAVC Correspondence can only be added to Court Remand Appeals."
@@ -42,10 +49,18 @@ class CavcCorrespondenceMailTask < MailTask
   end
 
   def appeal_at_cavc_lit_support
+    return if check_inbound_ops_team_user
+
     if !open_cavc_task
       fail Caseflow::Error::ActionForbiddenError,
            message: "CAVC Correspondence can only be added while the appeal is with CAVC Litigation Support."
     end
+  end
+
+  def check_inbound_ops_team_user
+    assigned_by&.inbound_ops_team_user? ||
+      assigned_by&.inbound_ops_team_supervisor? ||
+      assigned_by&.inbound_ops_team_superuser?
   end
 
   def open_cavc_task
