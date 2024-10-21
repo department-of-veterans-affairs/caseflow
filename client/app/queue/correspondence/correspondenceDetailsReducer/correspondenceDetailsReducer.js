@@ -8,7 +8,8 @@ export const initialState = {
   correspondenceInfo: {
     tasksUnrelatedToAppeal: {}
   },
-  tasksUnrelatedToAppealEmpty: false
+  tasksUnrelatedToAppealEmpty: false,
+  unrelatedTaskList: []
 };
 
 export const correspondenceDetailsReducer = (state = initialState, action = {}) => {
@@ -30,6 +31,12 @@ export const correspondenceDetailsReducer = (state = initialState, action = {}) 
     return update(state, {
       tasksUnrelatedToAppealEmpty: {
         $set: action.payload.tasksUnrelatedToAppealEmpty
+      }
+    });
+  case ACTIONS.UNRELATED_TASK_LIST:
+    return update(state, {
+      unrelatedTaskList: {
+        $set: action.payload.unrelatedTaskList
       }
     });
   case ACTIONS.EVIDENCE_SUBMISSION_BANNER:
