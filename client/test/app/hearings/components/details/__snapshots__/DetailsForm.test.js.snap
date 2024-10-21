@@ -433,7 +433,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                 >
                   Yes, Waive 90 Day Evidence Hold
                 </span>
-                 
+
               </label>
             </div>
           </div>
@@ -1330,7 +1330,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
           >
             <strong>
               <span>
-                Requested Remedy 
+                Requested Remedy
               </span>
             </strong>
           </legend>
@@ -1443,7 +1443,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                 >
                   Yes, Transcript Requested
                 </span>
-                 
+
               </label>
             </div>
           </div>
@@ -1951,7 +1951,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                 >
                   Yes, Waive 90 Day Evidence Hold
                 </span>
-                 
+
               </label>
             </div>
           </div>
@@ -2848,7 +2848,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
           >
             <strong>
               <span>
-                Requested Remedy 
+                Requested Remedy
               </span>
             </strong>
           </legend>
@@ -2961,7 +2961,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                 >
                   Yes, Transcript Requested
                 </span>
-                 
+
               </label>
             </div>
           </div>
