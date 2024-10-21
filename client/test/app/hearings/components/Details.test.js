@@ -11,8 +11,6 @@ import {
   virtualHearing,
   amaWebexHearing,
   legacyWebexHearing
-  amaWebexHearing,
-  legacyWebexHearing
 } from 'test/data';
 import Details from 'app/hearings/components/Details';
 
@@ -24,14 +22,6 @@ const onReceiveAlertsSpy = jest.fn();
 const onReceiveTransitioningAlertSpy = jest.fn();
 const transitionAlertSpy = jest.fn();
 const mockSubmit = jest.fn(() => Promise.resolve());
-
-const convertRegex = (str) => {
-  return new RegExp(str, 'i');
-}
-
-const convertRegex = (str) => {
-  return new RegExp(str, 'i');
-}
 
 const convertRegex = (str) => {
   return new RegExp(str, 'i');
