@@ -7,10 +7,8 @@ class Hearings::TranscriptionPackagesController < ApplicationController
   def transcription_package_tasks
     # Initial filter to get only the transcription packages with statuses 'Sent-Overdue' and 'Sent'
     @transcription_packages = TranscriptionPackage.with_status_overdue_or_sent
-    # Apply additional filters
+    apply_search
     apply_filters
-
-    # Setup pagination and sorting
     setup_pagination
     apply_sorting
 
@@ -20,6 +18,12 @@ class Hearings::TranscriptionPackagesController < ApplicationController
       tasks_per_page: @page_size,
       total_task_count: @total_count
     }
+  end
+
+  def apply_search
+    return if params[:search].blank?
+
+    @transcription_packages = @transcription_packages.search(params[:search])
   end
 
   # rubocop:disable Metrics/MethodLength
