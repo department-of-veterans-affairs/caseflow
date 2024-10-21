@@ -1053,12 +1053,16 @@ describe ClaimHistoryService do
 
         it "should only return the last event for each task" do
           subject
-          expected_event_types = [
-            :completed,
-            :in_progress,
-            :request_approved
-          ]
-          expect(service_instance.events.map(&:event_type)).to contain_exactly(*expected_event_types)
+          result_event_types = service_instance.events.map(&:event_type)
+          # Check that :completed and :request_approved are present since those were forced to the end in the setup
+          expect(result_event_types).to include(:completed, :request_approved)
+
+          # Check that either :in_progress or :added_issue is present since they are the exact same timestamp
+          # and it's not always deterministic
+          expect(result_event_types).to include(:in_progress).or include(:added_issue)
+
+          # Ensure there are exactly 3 events, one for each task
+          expect(result_event_types.size).to eq(3)
         end
       end
 
