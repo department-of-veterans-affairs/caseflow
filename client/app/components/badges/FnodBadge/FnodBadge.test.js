@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
@@ -9,7 +9,6 @@ import FnodBadge from './FnodBadge';
 import { tooltipListStyling } from 'app/components/badges/style';
 import { DateString } from 'app/util/DateUtil';
 import COPY from 'COPY';
-import Badge from '../Badge';
 
 describe('FnodBadge', () => {
 
@@ -40,7 +39,7 @@ describe('FnodBadge', () => {
     );
   };
 
-  it.only('renders correctly', () => {
+  it('renders correctly', () => {
     const store = getStore();
     const { asFragment } = render(setupFnodBadge(store));
 

@@ -90,7 +90,13 @@ describe('AddCavcRemandView', () => {
   });
 
   describe('Are judgement and mandate dates provided?', () => {
-    const {container} = setup({ appealId, reversalToggled: true, mdrToggled: true, dismissalToggled: true });
+    let container;
+
+    beforeEach(() => {
+      const setupResult = setup({ appealId, reversalToggled: true, mdrToggled: true, dismissalToggled: true });
+
+      container = setupResult.container;
+    });
     it('does not appear for Remand type (default case)', () => {
       expect(container.querySelector('#remand-provided-toggle_true')).not.toBeInTheDocument();
     });
@@ -121,7 +127,7 @@ describe('AddCavcRemandView', () => {
     });
 
     describe('reversal_cavc_remand', () => {
-      it.only('hides reversal when not toggled', () => {
+      it('hides reversal when not toggled', () => {
         const {container} = setup({ appealId, reversalToggled: false });
         expect(container.querySelector('#type-options_straight_reversal')).not.toBeInTheDocument();
       });
@@ -335,7 +341,7 @@ describe('AddCavcRemandView', () => {
     describe('issue selection validations', () => {
       const error = COPY.CAVC_ALL_ISSUES_ERROR;
 
-      it.only('does not show error when any issue is not selected', () => {
+      it('does not show error when any issue is not selected', () => {
         const {container} = setup({ appealId });
 
         const input2 = container.querySelector('input[id="2"]');
