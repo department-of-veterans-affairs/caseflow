@@ -1,36 +1,9 @@
--- Enable oracle_fdw extension
-CREATE EXTENSION oracle_fdw;
-
--- Print extension version
-SELECT oracle_diag ();
-
--- Create Caseflow Database
--- Skip if you aren't running this as part of an initialization script.
-CREATE DATABASE caseflow_certification_development OWNER postgres ENCODING UTF8;
-
--- #####################
--- Init foreign server
--- #####################
-
--- Create the foreign server
-CREATE SERVER vacols_sv FOREIGN DATA WRAPPER oracle_fdw OPTIONS (
-    dbserver 'localhost:1521/BVAP'
-);
-
-GRANT USAGE ON FOREIGN SERVER vacols_sv TO postgres;
-
--- Create a user mapping to the foreign server
-CREATE USER MAPPING FOR postgres SERVER vacols_sv OPTIONS (
-    USER 'VACOLS_DEV',
-    PASSWORD 'VACOLS_DEV'
-);
-
 -- #####################
 -- Create foreign tables
 -- #####################
 
--- Switch to Caseflow database
-\c caseflow_certification_development
+-- Uncomment the line below to switch to Caseflow database
+-- \c caseflow_certification_development
 
 -- BRIEFF Table
 CREATE FOREIGN
