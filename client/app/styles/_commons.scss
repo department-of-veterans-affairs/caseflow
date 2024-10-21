@@ -733,6 +733,17 @@ form {
   display: none;
 }
 
+.cf-file-input {
+  border: 1px dashed #adadad;
+  display: block;
+  margin-top: .5rem;
+  margin-bottom: 2rem;
+  position: relative;
+  text-align: center;
+  width: 100%;
+  padding: 2rem;
+}
+
 //------ Buttons --------*/
 [type='submit'],
 [type='button'],
