@@ -53,6 +53,18 @@ describe('DailyDocketRow', () => {
     expect(container).toMatchSnapshot();
   });
 
+  it('connect to recording renders correctly', () => {
+    render(
+      <Provider store={store}>
+        <Router>
+          <DailyDocketRow {...dailyDocketPropsHearingNotVirtualJudgeUser} />
+        </Router>
+      </Provider>
+    );
+
+    expect(screen.getByRole('button', { class: 'usa-button-secondary usa-button', name: 'Connect to Recording System' })).toBeInTheDocument();
+  });
+
   it('renders correctly for non virtual, attorney', () => {
     const { container } = render(
       <Provider store={store}>
@@ -185,7 +197,7 @@ describe('DailyDocketRow', () => {
 describe('Test Conference Link Button', () => {
   store = createStore(dailyDocketReducer);
   it('Test click event', () => {
-    const { container } = render(
+    render(
       <Provider store={store}>
         <Router>
           <DailyDocketRow
@@ -206,7 +218,8 @@ describe('Test Conference Link Button', () => {
     fireEvent.click(button);
 
     // Check if window.open was called with the correct arguments
-    expect(mockOpen).toHaveBeenCalledWith(dailyDocketPropsHearingIsVirtual.conferenceLink.hostLink, 'Recording Session');
+    expect(mockOpen).toHaveBeenCalledWith(dailyDocketPropsHearingNotVirtualJudgeUser.hearing.nonVirtualConferenceLink.hostLink, 'Recording Session');
+    expect(mockOpen).toHaveBeenCalledTimes(1);
     expect(mockFocus).toHaveBeenCalled();
   });
 });

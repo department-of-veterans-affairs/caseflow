@@ -808,6 +808,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
     >
       <div
         data-css-1fmltfu=""
+        data-testid="transcription-details-inputs"
       >
         <div
           class="cf-form-textinput   "
@@ -935,6 +936,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
       </div>
       <div
         data-css-1fmltfu=""
+        data-testid="transcription-details-date-inputs"
       >
         <div
           class="cf-form-textinput   "
@@ -1023,6 +1025,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
       </h3>
       <div
         data-css-1fmltfu=""
+        data-testid="transcription-problem-inputs"
       >
         <div
           class=""
@@ -1245,6 +1248,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
       </h3>
       <div
         data-css-1fmltfu=""
+        data-testid="transcription-request-inputs"
       >
         <div>
           <strong>
@@ -2116,6 +2120,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
     >
       <div
         data-css-1fmltfu=""
+        data-testid="transcription-details-inputs"
       >
         <div
           class="cf-form-textinput   "
@@ -2243,6 +2248,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
       </div>
       <div
         data-css-1fmltfu=""
+        data-testid="transcription-details-date-inputs"
       >
         <div
           class="cf-form-textinput   "
@@ -2331,6 +2337,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
       </h3>
       <div
         data-css-1fmltfu=""
+        data-testid="transcription-problem-inputs"
       >
         <div
           class=""
@@ -2553,6 +2560,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
       </h3>
       <div
         data-css-1fmltfu=""
+        data-testid="transcription-request-inputs"
       >
         <div>
           <strong>
