@@ -32,6 +32,7 @@ exports[`VirtualHearingFields Matches snapshot with default props 1`] = `
       >
         <div
           data-css-tx10g=""
+          id="guest-hearings-link"
         >
           <strong>
             Pexip
@@ -901,114 +902,8 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
             href="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
             target="_blank"
           >
-            <LinkContainer
-              hearing={
-                Object {
-                  "advanceOnDocketMotion": null,
-                  "aod": false,
-                  "appealExternalId": "0bf0263c-d863-4405-9b2e-f55cff77c6c4",
-                  "appealId": 613,
-                  "appellantAddressLine1": "9999 MISSION ST",
-                  "appellantCity": "SAN FRANCISCO",
-                  "appellantEmailAddress": "tom.brady@caseflow.gov",
-                  "appellantFirstName": "Tom",
-                  "appellantIsNotVeteran": false,
-                  "appellantLastName": "Brady",
-                  "appellantRelationship": "Spouse",
-                  "appellantState": "CA",
-                  "appellantTz": "America/Los_Angeles",
-                  "appellantZip": "94103",
-                  "availableHearingLocations": Object {},
-                  "bvaPoc": null,
-                  "caseType": "Original",
-                  "centralOfficeTimeString": "04:00",
-                  "claimantId": 604,
-                  "closestRegionalOffice": null,
-                  "conferenceProvider": "pexip",
-                  "currentIssueCount": 0,
-                  "disposition": null,
-                  "dispositionEditable": true,
-                  "docketName": "hearing",
-                  "docketNumber": "200624-614",
-                  "emailEvents": Array [],
-                  "evidenceWindowWaived": false,
-                  "externalId": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
-                  "hearingDayId": 11,
-                  "id": 10,
-                  "isVirtual": false,
-                  "judge": Object {
-                    "createdAt": "2020-06-25T11:00:43.257-04:00",
-                    "cssId": "BVAAABSHIRE",
-                    "displayName": "BVAAABSHIRE (VACO)",
-                    "efolderDocumentsFetchedAt": null,
-                    "email": null,
-                    "fullName": "Aaron Judge_HearingsAndCases Abshire",
-                    "id": 3,
-                    "lastLoginAt": null,
-                    "roles": Object {},
-                    "selectedRegionalOffice": null,
-                    "stationId": "101",
-                    "status": "active",
-                    "statusUpdatedAt": null,
-                    "updatedAt": "2020-06-25T11:00:43.257-04:00",
-                  },
-                  "judgeId": "3",
-                  "location": null,
-                  "militaryService": "",
-                  "notes": null,
-                  "paperCase": false,
-                  "poaName": "AMERICAN LEGION",
-                  "prepped": null,
-                  "readableLocation": null,
-                  "readableRequestType": "Video",
-                  "regionalOfficeKey": "RO17",
-                  "regionalOfficeName": "St. Petersburg regional office",
-                  "regionalOfficeTimezone": "America/New_York",
-                  "representative": "PARALYZED VETERANS OF AMERICA, INC.",
-                  "representativeAddress": Object {
-                    "addressLine1": "9999 MISSION ST",
-                    "city": "SAN FRANCISCO",
-                    "state": "CA",
-                    "zip": "94103",
-                  },
-                  "representativeEmailAddress": "tom.brady@caseflow.gov",
-                  "representativeName": null,
-                  "representativeTz": "America/Los_Angeles",
-                  "room": "1",
-                  "scheduledFor": "2020-07-06T06:00:00.000-04:00",
-                  "scheduledForIsPast": false,
-                  "scheduledTime": "2000-01-01T06:00:00.000-05:00",
-                  "scheduledTimeString": "06:00",
-                  "summary": null,
-                  "transcriptRequested": null,
-                  "transcription": Object {},
-                  "uuid": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
-                  "veteranAge": 85,
-                  "veteranEmailAddress": "John.Smith@test.com",
-                  "veteranFileNumber": "100000005",
-                  "veteranFirstName": "John",
-                  "veteranGender": "M",
-                  "veteranLastName": "Smith",
-                  "virtualHearing": null,
-                  "wasVirtual": false,
-                  "witness": null,
-                  "worksheetIssues": Object {},
-                }
-              }
-              isVirtual={false}
-              label="Guest Link"
-              linkText="Join Hearing"
-              role="Guest"
-              user={
-                Object {
-                  "addressCity": "Washington",
-                  "addressLine1": "123 Fake St.",
-                  "addressState": "DC",
-                  "addressZip": "20001",
-                  "name": "John Smith",
-                }
-              }
-              wasVirtual={false}
+            <strong
+              data-testid="strong-element-test-id"
             >
               Join Hearing
             </strong>
@@ -1023,117 +918,11 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
                 viewBox="0 0 18 16"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <strong>
-                  Guest Link
-                  :
-                </strong>
-                <VirtualHearingLinkDetails
-                  hearing={
-                    Object {
-                      "advanceOnDocketMotion": null,
-                      "aod": false,
-                      "appealExternalId": "0bf0263c-d863-4405-9b2e-f55cff77c6c4",
-                      "appealId": 613,
-                      "appellantAddressLine1": "9999 MISSION ST",
-                      "appellantCity": "SAN FRANCISCO",
-                      "appellantEmailAddress": "tom.brady@caseflow.gov",
-                      "appellantFirstName": "Tom",
-                      "appellantIsNotVeteran": false,
-                      "appellantLastName": "Brady",
-                      "appellantRelationship": "Spouse",
-                      "appellantState": "CA",
-                      "appellantTz": "America/Los_Angeles",
-                      "appellantZip": "94103",
-                      "availableHearingLocations": Object {},
-                      "bvaPoc": null,
-                      "caseType": "Original",
-                      "centralOfficeTimeString": "04:00",
-                      "claimantId": 604,
-                      "closestRegionalOffice": null,
-                      "conferenceProvider": "pexip",
-                      "currentIssueCount": 0,
-                      "disposition": null,
-                      "dispositionEditable": true,
-                      "docketName": "hearing",
-                      "docketNumber": "200624-614",
-                      "emailEvents": Array [],
-                      "evidenceWindowWaived": false,
-                      "externalId": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
-                      "hearingDayId": 11,
-                      "id": 10,
-                      "isVirtual": false,
-                      "judge": Object {
-                        "createdAt": "2020-06-25T11:00:43.257-04:00",
-                        "cssId": "BVAAABSHIRE",
-                        "displayName": "BVAAABSHIRE (VACO)",
-                        "efolderDocumentsFetchedAt": null,
-                        "email": null,
-                        "fullName": "Aaron Judge_HearingsAndCases Abshire",
-                        "id": 3,
-                        "lastLoginAt": null,
-                        "roles": Object {},
-                        "selectedRegionalOffice": null,
-                        "stationId": "101",
-                        "status": "active",
-                        "statusUpdatedAt": null,
-                        "updatedAt": "2020-06-25T11:00:43.257-04:00",
-                      },
-                      "judgeId": "3",
-                      "location": null,
-                      "militaryService": "",
-                      "notes": null,
-                      "paperCase": false,
-                      "poaName": "AMERICAN LEGION",
-                      "prepped": null,
-                      "readableLocation": null,
-                      "readableRequestType": "Video",
-                      "regionalOfficeKey": "RO17",
-                      "regionalOfficeName": "St. Petersburg regional office",
-                      "regionalOfficeTimezone": "America/New_York",
-                      "representative": "PARALYZED VETERANS OF AMERICA, INC.",
-                      "representativeAddress": Object {
-                        "addressLine1": "9999 MISSION ST",
-                        "city": "SAN FRANCISCO",
-                        "state": "CA",
-                        "zip": "94103",
-                      },
-                      "representativeEmailAddress": "tom.brady@caseflow.gov",
-                      "representativeName": null,
-                      "representativeTz": "America/Los_Angeles",
-                      "room": "1",
-                      "scheduledFor": "2020-07-06T06:00:00.000-04:00",
-                      "scheduledForIsPast": false,
-                      "scheduledTime": "2000-01-01T06:00:00.000-05:00",
-                      "scheduledTimeString": "06:00",
-                      "summary": null,
-                      "transcriptRequested": null,
-                      "transcription": Object {},
-                      "uuid": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
-                      "veteranAge": 85,
-                      "veteranEmailAddress": "John.Smith@test.com",
-                      "veteranFileNumber": "100000005",
-                      "veteranFirstName": "John",
-                      "veteranGender": "M",
-                      "veteranLastName": "Smith",
-                      "virtualHearing": null,
-                      "wasVirtual": false,
-                      "witness": null,
-                      "worksheetIssues": Object {},
-                    }
-                  }
-                  isVirtual={false}
-                  label="Join Hearing"
-                  role="Guest"
-                  user={
-                    Object {
-                      "addressCity": "Washington",
-                      "addressLine1": "123 Fake St.",
-                      "addressState": "DC",
-                      "addressZip": "20001",
-                      "name": "John Smith",
-                    }
-                  }
-                  wasVirtual={false}
+                <g
+                  fill="none"
+                  fill-rule="evenodd"
+                  stroke="none"
+                  stroke-width="1"
                 >
                   <span>
                     N/A
@@ -1353,6 +1142,7 @@ exports[`VirtualHearingFields Renders webex conference when conference provider 
       >
         <div
           data-css-tx10g=""
+          id="guest-hearings-link"
         >
           <strong>
             Pexip
