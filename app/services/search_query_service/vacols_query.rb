@@ -29,7 +29,7 @@ class SearchQueryService::VacolsQuery
             'held_by_first_name' value "s".snamef,
             'held_by_last_name' value "s".snamel,
             'notes' value "h".notes1
-          RETURNING CLOB) RETURNING CLOB)
+          ) returning CLOB)
           from hearsched "h"
           left outer join staff "s" on "s".sattyid = "h".board_member
           where "h".folder_nr="cases".bfkey
@@ -65,7 +65,7 @@ class SearchQueryService::VacolsQuery
                 "vft".ftdesc else "iss".lev3_desc
               end
             end
-          RETURNING CLOB) RETURNING CLOB)
+          ) RETURNING CLOB)
           from issues "i"
           inner join issref "iss"
             on "i".issprog = "iss".prog_code
