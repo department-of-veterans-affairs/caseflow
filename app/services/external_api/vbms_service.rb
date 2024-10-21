@@ -394,12 +394,11 @@ class ExternalApi::VBMSService
   end
 
   class << self
-
     private
 
     def send_claim_evidence_request(class_name:, class_method:, method_args:)
       class_name.public_send(class_method, **method_args)
-    rescue StandardError => e
+    rescue StandardError => error
       current_user = RequestStore[:current_user]
       user_sensitivity_level = if current_user.present?
                                  SensitivityChecker.new(current_user).sensitivity_level_for_user(current_user)
@@ -411,9 +410,9 @@ class ExternalApi::VBMSService
         user_sensitivity_level: user_sensitivity_level,
         error_uuid: SecureRandom.uuid
       }
-      ErrorHandlers::ClaimEvidenceApiErrorHandler.new.handle_error(error: e, error_details: error_details)
+      ErrorHandlers::ClaimEvidenceApiErrorHandler.new.handle_error(error: error, error_details: error_details)
 
-      return nil
+      nil
     end
   end
 end
