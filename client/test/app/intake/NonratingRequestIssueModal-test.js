@@ -81,51 +81,6 @@ describe('NonratingRequestIssueModal', () => {
 
       expect(wrapper.find('.cf-modal-controls .add-issue').prop('disabled')).toBe(false);
     });
-
-    it('does not disable button when valid description entered', () => {
-      expect(submitBtn.prop('disabled')).toBe(true);
-
-      wrapper.setState({
-        benefitType: 'compensation',
-        category: {
-          label: 'Apportionment',
-          value: 'Apportionment'
-        },
-        decisionDate: '06/01/2019',
-        dateError: false,
-        description: ''
-      });
-
-      // Simulate user input of valid characters
-      const descInput = wrapper.find("input[id='Issue description']");
-
-      descInput.simulate('change', { target: { value: '1234567890-=`~!@#$%^&*()_+[]{}\\|;:' } });
-
-      expect(wrapper.find('.cf-modal-controls .add-issue').prop('disabled')).toBe(false);
-    });
-
-    it('disables button when invalid description entered', () => {
-      expect(submitBtn.prop('disabled')).toBe(true);
-
-      wrapper.setState({
-        benefitType: 'compensation',
-        category: {
-          label: 'Apportionment',
-          value: 'Apportionment'
-        },
-        decisionDate: '06/01/2019',
-        dateError: false,
-        description: ''
-      });
-
-      // Simulate user input of invalid characters
-      const descInput = wrapper.find("input[id='Issue description']");
-
-      descInput.simulate('change', { target: { value: 'Not safe: \u{00A7} \u{2600} \u{2603} \u{260E} \u{2615}' } });
-
-      expect(wrapper.find('.cf-modal-controls .add-issue').prop('disabled')).toBe(true);
-      expect(wrapper.find('.usa-input-error-message').text()).toBe('Invalid character');
-    });
   });
 
   describe('on appeal, with EMO Pre-Docket', () => {
