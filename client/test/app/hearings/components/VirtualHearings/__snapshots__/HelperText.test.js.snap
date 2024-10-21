@@ -1,9 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`HelperText Matches snapshot with default props 1`] = `
-<div
-  className="helper-text"
->
-  Something helpful
-</div>
+<DocumentFragment>
+  <div
+    class="helper-text"
+  >
+    Something helpful
+  </div>
+</DocumentFragment>
 `;

@@ -834,6 +834,7 @@ export default class QueueTable extends React.PureComponent {
         ref={(div) => {
           this.elementForFocus = div;
         }}
+        data-testid="queue-table-data-testid"
       >
         <FilterSummary
           filteredByList={this.state.filteredByList}

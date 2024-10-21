@@ -95,16 +95,18 @@ RSpec.feature "Admin UI" do
 
       step "cancelling lever changes resets values" do
         # Capybara locally is not setting clearing the field prior to entering the new value so fill with ""
-        fill_in ama_direct_reviews_field, with: ""
+        clear_field_completely(ama_direct_reviews_field)
+        clear_field_completely(alternative_batch_size_field)
 
-        fill_in ama_direct_reviews_field, with: "123"
+        set_field_value_with_delay(ama_direct_reviews_field, "123")
         expect(page).to have_field(ama_direct_reviews_field, with: "123")
+
         click_cancel_button
         expect(page).to have_field(ama_direct_reviews_field, with: "365")
 
-        fill_in ama_direct_reviews_field, with: "123"
-        fill_in alternative_batch_size_field, with: ""
-        fill_in alternative_batch_size_field, with: "12"
+        set_field_value_with_delay(ama_direct_reviews_field, "123")
+        set_field_value_with_delay(alternative_batch_size_field, "12")
+
         expect(page).to have_field(ama_direct_reviews_field, with: "123")
         expect(page).to have_field(alternative_batch_size_field, with: "12")
 
@@ -114,8 +116,12 @@ RSpec.feature "Admin UI" do
       end
 
       step "cancelling changes on confirm modal returns user to page without resetting the values in the fields" do
-        fill_in ama_direct_reviews_field, with: "123"
-        fill_in alternative_batch_size_field, with: "13"
+        clear_field_completely(ama_direct_reviews_field)
+        clear_field_completely(alternative_batch_size_field)
+
+        set_field_value_with_delay(ama_direct_reviews_field, "123")
+        set_field_value_with_delay(alternative_batch_size_field, "13")
+
         expect(page).to have_field(ama_direct_reviews_field, with: "123")
         expect(page).to have_field(alternative_batch_size_field, with: "13")
 
@@ -143,9 +149,11 @@ RSpec.feature "Admin UI" do
         expect(find("#lever-history-table").has_no_content?("300 days")).to eq(true)
 
         # Change two levers at once to satisfy a previously separate test
-        fill_in ama_direct_reviews_field, with: ""
-        fill_in ama_direct_reviews_field, with: "123"
-        fill_in ama_evidence_submissions_field, with: "456"
+        clear_field_completely(ama_direct_reviews_field)
+        clear_field_completely(ama_evidence_submissions_field)
+
+        set_field_value_with_delay(ama_direct_reviews_field, "123")
+        set_field_value_with_delay(ama_evidence_submissions_field, "456")
         click_save_button
         click_modal_confirm_button
         expect(page).to have_content(COPY::CASE_DISTRIBUTION_SUCCESS_BANNER_TITLE)
@@ -165,9 +173,13 @@ RSpec.feature "Admin UI" do
         expect(page).to have_field("#{batch_size_per_attorney}-field", readonly: false)
         expect(page).to have_field("#{request_more_cases_minimum}-field", readonly: false)
 
-        fill_in "#{alternate_batch_size}-field", with: "ABC"
-        fill_in "#{batch_size_per_attorney}-field", with: "-1"
-        fill_in "#{request_more_cases_minimum}-field", with: "(*&)"
+        clear_field_completely("#{batch_size_per_attorney}-field")
+        clear_field_completely("#{request_more_cases_minimum}-field")
+        clear_field_completely("#{alternate_batch_size}-field")
+
+        set_field_value_with_delay("#{alternate_batch_size}-field", "ABC")
+        set_field_value_with_delay("#{batch_size_per_attorney}-field", "-1")
+        set_field_value_with_delay("#{request_more_cases_minimum}-field", "(*&)")
 
         expect(page).to have_field("#{alternate_batch_size}-field", with: "")
         expect(page).to have_field("#{batch_size_per_attorney}-field", with: "1")
@@ -178,9 +190,13 @@ RSpec.feature "Admin UI" do
       end
 
       step "batch size lever section errors clear with valid inputs" do
-        fill_in "#{alternate_batch_size}-field", with: "42"
-        fill_in "#{batch_size_per_attorney}-field", with: "32"
-        fill_in "#{request_more_cases_minimum}-field", with: "25"
+        clear_field_completely("#{batch_size_per_attorney}-field")
+        clear_field_completely("#{request_more_cases_minimum}-field")
+        clear_field_completely("#{alternate_batch_size}-field")
+
+        set_field_value_with_delay("#{alternate_batch_size}-field", "42")
+        set_field_value_with_delay("#{batch_size_per_attorney}-field", "32")
+        set_field_value_with_delay("#{request_more_cases_minimum}-field", "25")
 
         expect(page).not_to have_content(EMPTY_ERROR_MESSAGE)
       end
@@ -201,5 +217,36 @@ RSpec.feature "Admin UI" do
 
   def click_modal_cancel_button
     find("#save-modal-cancel").click
+  end
+
+  # Added this method to handle the delay in setting the field value
+  # Possibly caused by issue with Chromdirver and Capybara not allowing the
+  # field to be cleared before setting the new value
+  # Issue causes the field to be set with the previous value and the new value
+  # In addition to each individual character needing being sent with a delay
+  def set_field_value_with_delay(field_id, value)
+    area = find("##{field_id}")
+    area.click
+    area.native.clear # Clear the field using the native clear method
+
+    # Send keys with delay
+    value.each_char do |char|
+      area.send_keys char
+    end
+  end
+
+  # This method ensures that the field is cleared completely and no lingering values are present
+  def clear_field_completely(field)
+    max_attempts = 10
+    attempts = 0
+
+    while find_field(field).value.present? && attempts < max_attempts
+      find_field(field).set("")
+      attempts += 1
+    end
+
+    if attempts == max_attempts
+      fail "Failed to clear the field after #{max_attempts} attempts"
+    end
   end
 end
