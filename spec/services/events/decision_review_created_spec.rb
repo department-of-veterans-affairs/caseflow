@@ -22,6 +22,7 @@ describe Events::DecisionReviewCreated do
       end
     end
 
+    # codeclimate:disable DuplicatedCode
     context "when lock acquisition fails" do
       before do
         allow(RedisMutex).to receive(:with_lock).and_raise(RedisMutex::LockError)
@@ -35,6 +36,7 @@ describe Events::DecisionReviewCreated do
       end
     end
 
+    # codeclimate:disable DuplicatedCode
     context "when lock Key is already in the Redis Cache" do
       it "throws a RedisLockFailed error" do
         redis = Redis.new(url: Rails.application.secrets.redis_url_cache)
@@ -44,6 +46,7 @@ describe Events::DecisionReviewCreated do
         redis.del(lock_key)
       end
     end
+    # codeclimate:enable DuplicatedCode
 
     context "when creation is successful" do
       it "should create a new Event instance" do
