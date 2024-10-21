@@ -45,7 +45,7 @@ class AppealsReadyForDistribution
     docket_coordinator.dockets
       .flat_map do |sym, docket|
         appeals = docket.ready_to_distribute_appeals
-        if sym == :legacy
+        if [:legacy, :aoj_legacy].include?(sym)
           legacy_rows(appeals, sym)
         else
           ama_rows(appeals, docket, sym)
@@ -150,11 +150,15 @@ class AppealsReadyForDistribution
   end
 
   def self.legacy_original_deciding_judge(appeal)
+    return if appeal["prev_deciding_judge"].nil?
+
     staff = VACOLS::Staff.find_by(sattyid: appeal["prev_deciding_judge"])
     staff&.sdomainid || appeal["prev_deciding_judge"]
   end
 
   def self.legacy_original_deciding_judge_name(appeal)
+    return nil if appeal["prev_deciding_judge"].nil?
+
     staff = VACOLS::Staff.find_by(sattyid: appeal["prev_deciding_judge"])
     FullName.new(staff["snamef"], nil, staff["snamel"]).to_s if !staff.nil?
   end

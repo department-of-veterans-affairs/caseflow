@@ -80,6 +80,18 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
     end
   end
 
+  context "aoj case docket is called" do
+    let!(:non_ssc_avlj_user_1) { create(:user, :non_ssc_avlj_user).vacols_staff }
+    let!(:legacy_aoj_appeal) { create(:legacy_aoj_appeal, judge: non_ssc_avlj_user_1) }
+
+    before { Seeds::CaseDistributionLevers.new.seed! }
+
+    it "runs eligible and moved appeals with AOJ Dockets" do
+      described_class.perform_now
+      expect(legacy_aoj_appeal.reload.bfcurloc).to eq("63")
+    end
+  end
+
   describe "#non_ssc_avljs" do
     let(:job) { described_class.new }
 
