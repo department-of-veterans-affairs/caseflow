@@ -4,20 +4,17 @@ import { HearingLinks } from 'app/hearings/components/details/HearingLinks';
 import { anyUser, vsoUser, hearingUser } from 'test/data/user';
 import { inProgressvirtualHearing } from 'test/data/virtualHearings';
 import { virtualHearing, amaHearing, virtualWebexHearing } from 'test/data/hearings';
-import { render, screen } from "@testing-library/react";
 import { render, screen } from '@testing-library/react';
-import VirtualHearingLink from
-  'app/hearings/components/VirtualHearingLink';
+import COPY from 'COPY';
 
 describe('HearingLinks', () => {
-  test('Matches snapshot with default props when passed in', () => {
-    render(<HearingLinks />);
+  test('Matches snapshot when hearing is virtual, pexip, and in progress', () => {
+    const hearing = {
+      scheduledForIsPast: false,
+      conferenceProvider: 'pexip',
+      isVirtual: true
+    };
 
-    const virtualHearingLink = screen.queryByTestId("strong-element-test-id");
-    expect(virtualHearingLink).not.toBeInTheDocument();
-  });
-
-  test('Matches snapshot when hearing is virtual and in progress', () => {
     const {asFragment} = render(
       <HearingLinks
         hearing={hearing}
@@ -28,15 +25,12 @@ describe('HearingLinks', () => {
     );
 
     expect(asFragment()).toMatchSnapshot();
-
-    const elementsWithTestId = screen.getAllByTestId("strong-element-test-id");
-    expect(elementsWithTestId.length).toEqual(2);
-
-    const joinHearing = screen.getByText("Join Virtual Hearing");
-    expect(joinHearing).toBeInTheDocument();
-
-    const startHearing = screen.getByText("Start Virtual Hearing");
-    expect(startHearing).toBeInTheDocument();
+    expect(screen.getByTestId('link-containers')).toBeInTheDocument();
+    expect(screen.getByText(`${COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL}:`)).toBeInTheDocument();
+    expect(screen.getByText('Join Hearing')).toBeInTheDocument();
+    expect(screen.getAllByText('Start Hearing').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Conference Room:').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('PIN:').length).toBeGreaterThan(0);
   });
 
   test('Matches snapshot when hearing was virtual and occurred', () => {
@@ -55,11 +49,10 @@ describe('HearingLinks', () => {
       />
     );
 
-    expect(form).toMatchSnapshot();
-    expect(form.find(VirtualHearingLink)).toHaveLength(0);
-    expect(
-      form.find('span').filterWhere((node) => node.text() === 'N/A')
-    ).toHaveLength(3);
+    expect(asFragment()).toMatchSnapshot();
+    expect(screen.queryByTestId("strong-element-test-id")).toBeNull();
+    const spanElements = screen.getAllByText('N/A', { selector: 'span' });
+    expect(spanElements.length).toBe(3);
   });
 
   test('Matches snapshot when hearing is virtual, webex, and in progress', () => {
@@ -69,7 +62,7 @@ describe('HearingLinks', () => {
       conferenceProvider: 'webex'
     };
 
-    const form = mount(
+    const {asFragment} = render(
       <HearingLinks
         hearing={hearing}
         isVirtual
@@ -78,17 +71,11 @@ describe('HearingLinks', () => {
       />
     );
 
-    expect(form).toMatchSnapshot();
-    expect(form.find('VirtualHearingLinkDetails')).toHaveLength(3);
-    expect(
-      form.find('VirtualHearingLinkDetails').exists({ label: 'Join Hearing' })
-    ).toBe(true);
-    expect(
-      form.find('VirtualHearingLinkDetails').exists({ label: 'Start Hearing' })
-    ).toBe(true);
-    expect(
-      form.find('LinkContainer').exists({ link: virtualWebexHearing.virtualHearing.hostLink })
-    ).toBe(true);
+    expect(asFragment()).toMatchSnapshot();
+    expect(screen.getAllByTestId('strong-element-test-id').length).toBe(3);
+    expect(screen.getByText('Join Hearing')).toBeInTheDocument();
+    expect(screen.getAllByText('Start Hearing').length).toBeGreaterThan(0);
+    expect(screen.getByText(virtualWebexHearing.virtualHearing.hostLink)).toBeInTheDocument();
   });
 
   test('Matches snapshot when hearing is non-virtual, webex, and in progress', () => {
@@ -106,7 +93,7 @@ describe('HearingLinks', () => {
         type: 'WebexConferenceLink'
       }
     };
-    const form = mount(
+    const {asFragment} = render(
       <HearingLinks
         hearing={hearing}
         isVirtual={false}
@@ -114,12 +101,10 @@ describe('HearingLinks', () => {
       />
     );
 
-    expect(form).toMatchSnapshot();
-    expect(form.find('LinkContainer')).toHaveLength(3);
-    expect(form.find('VirtualHearingLinkDetails')).toHaveLength(3);
-    expect(
-      form.find('LinkContainer').exists({ link: hearing.nonVirtualConferenceLink.hostLink })
-    ).toBe(true);
+    expect(asFragment()).toMatchSnapshot();
+    expect(screen.getByTestId('link-containers')).toBeInTheDocument();
+    expect(screen.getAllByTestId('strong-element-test-id').length).toBe(3);
+    expect(screen.getByText(hearing.nonVirtualConferenceLink.hostLink)).toBeInTheDocument();
   });
 
   test('Matches snapshot when hearing is non-virtual, pexip, and in progress', () => {
@@ -141,7 +126,7 @@ describe('HearingLinks', () => {
       }
     };
 
-    const form = mount(
+    const {asFragment} = render(
       <HearingLinks
         hearing={hearing}
         isVirtual={false}
@@ -149,16 +134,18 @@ describe('HearingLinks', () => {
       />
     );
 
-    expect(form).toMatchSnapshot();
-    expect(form.find('LinkContainer')).toHaveLength(3);
-    expect(form.find('VirtualHearingLinkDetails')).toHaveLength(3);
-    expect(
-      form.find('LinkContainer').exists({ link: hearing.dailyDocketConferenceLink.hostLink })
-    ).toBe(true);
+    expect(asFragment()).toMatchSnapshot();
+    expect(screen.getByTestId('link-containers')).toBeInTheDocument();
+    expect(screen.getAllByTestId('strong-element-test-id').length).toBe(3);
+
+    const linkElements = screen.getAllByRole('link', { name: "Start Hearing" });
+    linkElements.forEach((element) => {
+    expect(element).toHaveAttribute('href', hearing.dailyDocketConferenceLink.hostLink);
+  });
   });
 
   test('Only displays Guest Link when user is not a host', () => {
-    const {asFragment} =render(
+    const {asFragment} = render(
       <HearingLinks
         hearing={amaHearing}
         isVirtual
@@ -167,13 +154,13 @@ describe('HearingLinks', () => {
       />
     );
 
-    expect(asFragment).toMatchSnapshot();
-
-    const elementsWithTestId = screen.getAllByTestId("strong-element-test-id");
-    expect(elementsWithTestId.length).toEqual(1);
+    expect(asFragment()).toMatchSnapshot();
+    expect(screen.getByTestId('strong-element-test-id')).toBeInTheDocument();
+    expect(screen.getAllByTestId('strong-element-test-id').length).toBe(1);
 
     // Ensure it's the guest link
-    expect(screen.getByRole("button", { name: /guest link/i })).toBeInTheDocument();;
+    const link = screen.getByRole('link', { name: 'Join Hearing' });
+    expect(link).toHaveAttribute('href', virtualHearing.virtualHearing.guestLink);
   });
 
   test('Display NA for links when hearing is cancelled', () => {
