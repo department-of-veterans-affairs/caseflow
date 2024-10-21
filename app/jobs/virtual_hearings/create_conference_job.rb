@@ -50,21 +50,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
       hearing_type: kwargs[:hearing_type]
     }
 
-    job.log_error(exception, extra: extra)
-  end
-
-  # Retry if Webex returns an invalid response.
-  retry_on(Caseflow::Error::WebexApiError, attempts: 5, wait: :exponentially_longer) do |job, exception|
-    Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
-
-    kwargs = job.arguments.first
-    extra = {
-      application: job.class.app_name.to_s,
-      hearing_id: kwargs[:hearing_id],
-      hearing_type: kwargs[:hearing_type]
-    }
-
-    job.log_error(exception, extra: extra)
+    Raven.capture_exception(exception, extra: extra)
   end
 
   # Log the timezone of the job. This is primarily used for debugging context around times
@@ -137,45 +123,41 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
     Rails.logger.info("Establishment Updated At: (#{virtual_hearing.establishment.updated_at})")
   end
 
-  def create_conference_metrics_tags
+  def create_conference_tags
     custom_metric_info.merge(attrs: { hearing_id: virtual_hearing.hearing_id })
   end
 
   def create_conference
-    return generate_links_and_pins if virtual_hearing.conference_provider == "pexip"
+    if FeatureToggle.enabled?(:virtual_hearings_use_new_links, user: virtual_hearing.updated_by)
+      generate_links_and_pins
+    else
+      assign_virtual_hearing_alias_and_pins if should_initialize_alias_and_pins?
 
-    create_webex_conference
-  end
+      Rails.logger.info(
+        "Trying to create conference for hearing (#{virtual_hearing.hearing_type} " \
+        "[#{virtual_hearing.hearing_id}])..."
+      )
 
-  def create_webex_conference
-    Rails.logger.info(
-      "Trying to create Webex conference for hearing (#{virtual_hearing.hearing_type} " \
-      "[#{virtual_hearing.hearing_id}])..."
-    )
+      pexip_response = create_pexip_conference
 
-    create_webex_conference_response = create_new_conference
+      Rails.logger.info("Pexip response: #{pexip_response.inspect}")
 
-    Rails.logger.info("Create Webex Conference Response: #{create_webex_conference_response.inspect}")
+      if pexip_response.error
+        error_display = pexip_error_display(pexip_response)
 
-    conference_creation_error(create_webex_conference_response) if create_webex_conference_response.error
+        Rails.logger.error("CreateConferenceJob failed: #{error_display}")
 
-    MetricsService.increment_counter(metric_name: "created_conference.successful", **create_conference_metrics_tags)
+        virtual_hearing.establishment.update_error!(error_display)
 
-    virtual_hearing.update(
-      host_hearing_link: create_webex_conference_response.host_link,
-      co_host_hearing_link: create_webex_conference_response.co_host_link,
-      guest_hearing_link: create_webex_conference_response.guest_link
-    )
-  end
+        MetricsService.increment_counter(metric_name: "created_conference.failed", **create_conference_tags)
 
-  def conference_creation_error(create_conference_response)
-    error_display = error_display(create_conference_response)
+        fail pexip_response.error
+      end
 
-    MetricsService.increment_counter(metric_name: "created_conference.failed", **create_conference_metrics_tags)
+      MetricsService.increment_counter(metric_name: "created_conference.successful", **create_conference_tags)
 
-    virtual_hearing.establishment.update_error!(error_display)
-
-    fail create_conference_response.error
+      virtual_hearing.update(conference_id: pexip_response.data[:conference_id])
+    end
   end
 
   def send_emails(email_type)
@@ -186,16 +168,20 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
       ).call
     rescue StandardError => error
       extra = { application: "hearings", email_type: email_type, virtual_hearing_id: virtual_hearing.id }
-      log_error(error, extra: extra)
+      Raven.capture_exception(error, extra: extra)
     end
   end
 
-  def error_display(response)
+  def pexip_error_display(response)
     "(#{response.error.code}) #{response.error.message}"
   end
 
-  def create_new_conference
-    client(virtual_hearing).create_conference(virtual_hearing)
+  def create_pexip_conference
+    client.create_conference(
+      host_pin: virtual_hearing.host_pin,
+      guest_pin: virtual_hearing.guest_pin,
+      name: virtual_hearing.alias
+    )
   end
 
   def should_initialize_alias_and_pins?
@@ -221,7 +207,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
       "[#{virtual_hearing.hearing_id}])..."
     )
     begin
-      link_service = VirtualHearings::PexipLinkService.new
+      link_service = VirtualHearings::LinkService.new
       virtual_hearing.update!(
         host_hearing_link: link_service.host_link,
         guest_hearing_link: link_service.guest_link,
@@ -230,7 +216,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
         alias_with_host: link_service.alias_with_host
       )
     rescue StandardError => error
-      log_error(error)
+      Raven.capture_exception(error: error)
       raise VirtualHearingLinkGenerationFailed
     end
   end

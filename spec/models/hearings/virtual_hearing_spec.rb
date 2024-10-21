@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "models/hearings_shared_examples"
-
 describe VirtualHearing do
   URL_HOST = "example.va.gov"
   URL_PATH = "/sample"
@@ -35,7 +33,20 @@ describe VirtualHearing do
     end
   end
 
-  shared_context "virtual hearing created with link generation" do
+  shared_context "virtual hearing created with new link generation" do
+    let(:virtual_hearing) do
+      build(
+        :virtual_hearing,
+        :link_generation_initialized,
+        hearing: build(
+          :hearing,
+          hearing_day: build(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:central])
+        )
+      )
+    end
+  end
+
+  shared_context "virtual hearing not created with new link generation" do
     let(:virtual_hearing) do
       build(
         :virtual_hearing,
@@ -91,9 +102,9 @@ describe VirtualHearing do
 
     it "returns the aliased pins when set" do
       expect(virtual_hearing_aliased[:guest_pin]).to eq nil
-      expect(virtual_hearing_aliased.guest_pin.to_s.length).to eq 10
+      expect(virtual_hearing_aliased.guest_pin.to_s.length).to eq 11
       expect(virtual_hearing_aliased[:host_pin]).to eq nil
-      expect(virtual_hearing_aliased.host_pin.to_s.length).to eq 7
+      expect(virtual_hearing_aliased.host_pin.to_s.length).to eq 8
     end
   end
 
@@ -220,7 +231,6 @@ describe VirtualHearing do
         expect(subject).to eq(status)
       end
     end
-
     subject { virtual_hearing.status }
 
     context "cancelled" do
@@ -256,8 +266,15 @@ describe VirtualHearing do
     end
 
     context "active" do
-      include_context "virtual hearing created with link generation"
-      include_examples "returns correct status", :active
+      context "vh created with new link generation" do
+        include_context "virtual hearing created with new link generation"
+        include_examples "returns correct status", :active
+      end
+
+      context "vh not created with new link generation" do
+        include_context "virtual hearing not created with new link generation"
+        include_examples "returns correct status", :active
+      end
     end
 
     context "pending" do
@@ -282,199 +299,87 @@ describe VirtualHearing do
       allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return URL_PATH
     end
 
-    include_context "virtual hearing created with link generation"
+    context "with old link generation virtual hearing" do
+      include_context "virtual hearing not created with new link generation"
 
-    it "rebuilds and saves the links as expected" do
-      # update virtual_hearing with old-style link
-      old_style_host_link = "https://example.va.gov/sample/?conference=BVA0000001@example.va.gov" \
-                            "&name=Judge&pin=3998472&callType=video&join=1"
-      old_style_guest_link = "https://example.va.gov/sample/?conference=BVA0000001@example.va.gov" \
-                              "&name=Guest&pin=7470125694&callType=video&join=1"
-      virtual_hearing.update!(host_hearing_link: old_style_host_link, guest_hearing_link: old_style_guest_link)
+      it "raises an error" do
+        virtual_hearing.update!(alias_with_host: "BVA#{virtual_hearing.alias_name}@nowhere.va.gov")
+        virtual_hearing.reload
 
-      virtual_hearing.reload
-      expect(virtual_hearing.host_hearing_link).to eq old_style_host_link
-      expect(virtual_hearing.guest_hearing_link).to eq old_style_guest_link
+        expect { virtual_hearing.rebuild_and_save_links }
+          .to raise_error(VirtualHearing::LinkMismatchError)
+      end
 
-      alias_with_host = virtual_hearing.alias_with_host
-      host_pin_long = virtual_hearing.host_pin_long
-      guest_pin_long = virtual_hearing.guest_pin_long
+      context "with a virtual hearing that has a nil alias_with_host" do
+        it "raises an error" do
+          virtual_hearing.update!(alias_with_host: nil)
+          virtual_hearing.reload
 
-      virtual_hearing.rebuild_and_save_links
-      virtual_hearing.reload
+          expect { virtual_hearing.rebuild_and_save_links }.to raise_error(VirtualHearing::NoAliasWithHostPresentError)
+        end
+      end
+    end
 
-      current_style_host_link = "https://example.va.gov/sample/?conference=BVA0000001@example.va.gov" \
-                            "&pin=3998472&callType=video"
-      current_style_guest_link = "https://example.va.gov/sample/?conference=BVA0000001@example.va.gov" \
-                              "&pin=7470125694&callType=video"
+    context "with new link generation virtual hearing" do
+      include_context "virtual hearing created with new link generation"
 
-      expect(virtual_hearing.host_hearing_link).not_to eq old_style_host_link
-      expect(virtual_hearing.guest_hearing_link).not_to eq old_style_guest_link
-      expect(virtual_hearing.host_hearing_link).to eq current_style_host_link
-      expect(virtual_hearing.guest_hearing_link).to eq current_style_guest_link
+      it "rebuilds and saves the links as expected" do
+        # update virtual_hearing with old-style link
+        old_style_host_link = "https://example.va.gov/sample/?conference=BVA0000001@example.va.gov" \
+                              "&name=Judge&pin=3998472&callType=video&join=1"
+        old_style_guest_link = "https://example.va.gov/sample/?conference=BVA0000001@example.va.gov" \
+                               "&name=Guest&pin=7470125694&callType=video&join=1"
+        virtual_hearing.update!(host_hearing_link: old_style_host_link, guest_hearing_link: old_style_guest_link)
 
-      # these pass because the values hard-coded into the virtual hearing factory
-      # with trait :initialized are consistent with the values
-      # algorithmically generated by VirtualHearings::PexipLinkService
-      expect(virtual_hearing.host_hearing_link).to include alias_with_host
-      expect(virtual_hearing.host_hearing_link).to include host_pin_long
+        virtual_hearing.reload
+        expect(virtual_hearing.host_hearing_link).to eq old_style_host_link
+        expect(virtual_hearing.guest_hearing_link).to eq old_style_guest_link
 
-      expect(virtual_hearing.guest_hearing_link).to include alias_with_host
-      expect(virtual_hearing.guest_hearing_link).to include guest_pin_long
+        alias_with_host = virtual_hearing.alias_with_host
+        host_pin_long = virtual_hearing.host_pin_long
+        guest_pin_long = virtual_hearing.guest_pin_long
+
+        virtual_hearing.rebuild_and_save_links
+        virtual_hearing.reload
+
+        current_style_host_link = "https://example.va.gov/sample/?conference=BVA0000001@example.va.gov" \
+                              "&pin=3998472&callType=video"
+        current_style_guest_link = "https://example.va.gov/sample/?conference=BVA0000001@example.va.gov" \
+                               "&pin=7470125694&callType=video"
+
+        expect(virtual_hearing.host_hearing_link).not_to eq old_style_host_link
+        expect(virtual_hearing.guest_hearing_link).not_to eq old_style_guest_link
+        expect(virtual_hearing.host_hearing_link).to eq current_style_host_link
+        expect(virtual_hearing.guest_hearing_link).to eq current_style_guest_link
+
+        # these pass because the values hard-coded into the virtual hearing factory
+        # with trait link_generation_initialized are consistent with the values
+        # algorithmically generated by VirtualHearings::LinkService
+        expect(virtual_hearing.host_hearing_link).to include alias_with_host
+        expect(virtual_hearing.host_hearing_link).to include host_pin_long
+
+        expect(virtual_hearing.guest_hearing_link).to include alias_with_host
+        expect(virtual_hearing.guest_hearing_link).to include guest_pin_long
+      end
     end
 
     context "#test_link" do
-      context "vh created with link generation" do
+      context "vh created with new link generation" do
         def link(name)
           "https://#{URL_HOST}#{URL_PATH}?conference=test_call&name=#{name}&join=1"
         end
 
+        include_context "virtual hearing created with new link generation"
         include_examples "all test link behaviors"
       end
 
-      context "for a webex conference" do
-        let(:virtual_hearing) do
-          create(:virtual_hearing).tap { |vh| vh.meeting_type.update!(service_name: "webex") }
+      context "vh not created with new link generation" do
+        def link(name)
+          "https://care.va.gov/webapp2/conference/test_call?name=#{name}&join=1"
         end
 
-        it "returns the webex test link" do
-          expect(virtual_hearing.test_link(nil)).to eq "https://instant-usgov.webex.com/mediatest"
-        end
-      end
-    end
-  end
-
-  shared_examples "Hearings inherit conf providers from provider of original scheduler at time of creation" do
-    it "original_scheduler creates the virtual hearing" do
-      virtual_hearing = create(
-        :virtual_hearing,
-        :initialized,
-        hearing: hearing,
-        created_by: original_scheduler
-      )
-
-      expect(virtual_hearing.conference_provider).to eq hearing.conference_provider
-      expect(virtual_hearing.conference_provider).to eq original_scheduler.conference_provider
-    end
-
-    it "User with different conference provider than the original scheduler creates the virtual hearing" do
-      virtual_hearing = create(
-        :virtual_hearing,
-        :initialized,
-        hearing: hearing,
-        created_by: other_user
-      )
-
-      expect(virtual_hearing.conference_provider).to eq hearing.conference_provider
-      expect(virtual_hearing.conference_provider).to_not eq other_user.conference_provider
-    end
-
-    it "Original user's provider changes between time they schedule hearing and a virtual hearing" do
-      original_scheduler.meeting_type.update!(service_name: other_user.conference_provider)
-
-      virtual_hearing = create(
-        :virtual_hearing,
-        :initialized,
-        hearing: hearing,
-        created_by: original_scheduler
-      )
-
-      expect(virtual_hearing.conference_provider).to eq hearing.conference_provider
-      expect(virtual_hearing.conference_provider).to_not eq other_user.conference_provider
-      expect(virtual_hearing.conference_provider).to_not eq original_scheduler.conference_provider
-    end
-  end
-
-  shared_context "Pexip user is original schedulder" do
-    let(:original_scheduler) { pexip_user }
-    let(:other_user) { webex_user }
-    let!(:hearing) { create(hearing_type, adding_user: original_scheduler) }
-  end
-
-  shared_context "Webex user is original schedulder" do
-    let(:original_scheduler) { webex_user }
-    let(:other_user) { pexip_user }
-    let!(:hearing) { create(hearing_type, adding_user: original_scheduler) }
-  end
-
-  context "#conference_provider" do
-    include_context "Pexip and Webex Users"
-
-    context "For a legacy hearing" do
-      let(:hearing_type) { :legacy_hearing }
-
-      context "Pexip hearing begets a Pexip virtual hearing" do
-        include_context "Pexip user is original schedulder"
-
-        include_examples "Hearings inherit conf providers from provider of original scheduler at time of creation"
-      end
-
-      context "Webex hearing begets a Webex virtual hearing" do
-        include_context "Webex user is original schedulder"
-
-        include_examples "Hearings inherit conf providers from provider of original scheduler at time of creation"
-      end
-    end
-
-    context "For an AMA hearing" do
-      let(:hearing_type) { :hearing }
-
-      context "Pexip hearing begets a Pexip virtual hearing" do
-        include_context "Pexip user is original schedulder"
-
-        include_examples "Hearings inherit conf providers from provider of original scheduler at time of creation"
-      end
-
-      context "Webex hearing begets a Webex virtual hearing" do
-        include_context "Webex user is original schedulder"
-
-        include_examples "Hearings inherit conf providers from provider of original scheduler at time of creation"
-      end
-    end
-  end
-
-  context "#subject_for_conference" do
-    let(:expected_date) { "Sep 22, 2023" }
-    let(:expected_date_parsed) { Date.parse(expected_date) }
-    let(:hearing_day) do
-      build(:hearing_day, scheduled_for: expected_date_parsed)
-    end
-    let(:virtual_hearing) { create(:virtual_hearing, hearing: hearing) }
-
-    shared_examples "subject for conference" do
-      it "returns the expected meeting conference details" do
-        is_expected.to eq("#{hearing.docket_number}_#{hearing.id}_#{hearing.class.name}")
-      end
-    end
-
-    context "For an AMA Hearing" do
-      let(:hearing) { create(:hearing, hearing_day: hearing_day) }
-      subject { virtual_hearing.subject_for_conference }
-
-      include_examples "subject for conference"
-    end
-
-    context "For a Legacy Hearing" do
-      let(:hearing) { create(:legacy_hearing, hearing_day: hearing_day) }
-      subject { virtual_hearing.subject_for_conference }
-
-      include_examples "subject for conference"
-    end
-
-    context "nbf and exp" do
-      let(:hearing) { create(:hearing, hearing_day: hearing_day) }
-      subject { virtual_hearing.nbf }
-
-      it "returns correct nbf" do
-        expect subject == 1_695_355_200
-      end
-
-      before do
-        subject { virtual_hearing.exp }
-      end
-
-      it "returns correct exp" do
-        expect subject == 1_695_427_199
+        include_context "virtual hearing not created with new link generation"
+        include_examples "all test link behaviors"
       end
     end
   end

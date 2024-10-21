@@ -37,11 +37,7 @@ class LegacyHearingSerializer
   attribute :contested_claim do |hearing|
     hearing.appeal.contested_claim
   end
-  attribute :conference_provider
   attribute :current_issue_count
-  attribute :daily_docket_conference_link do |hearing|
-    HearingDaySerializer.serialize_conference_link(hearing.daily_docket_conference_link)
-  end
   attribute :disposition
   attribute :disposition_editable
   attribute :docket_name
@@ -62,11 +58,6 @@ class LegacyHearingSerializer
   attribute :judge_id
   attribute :location
   attribute :military_service, if: for_worksheet
-  attribute :non_virtual_conference_link do |object|
-    if !object.non_virtual_conference_link.nil?
-      ConferenceLinkSerializer.new(object.non_virtual_conference_link).serializable_hash[:data][:attributes]
-    end
-  end
   attribute :notes
   attribute :paper_case do |object|
     object.appeal.paper_case?
@@ -93,11 +84,6 @@ class LegacyHearingSerializer
   attribute :submission_window_end, if: for_worksheet, &:calculate_submission_window
   attribute :summary
   attribute :transcript_requested
-  attribute :transcription_files, if: for_worksheet do |hearing|
-    if hearing.conference_provider == "webex"
-      hearing.serialized_transcription_files
-    end
-  end
   attribute :user_id
   attribute :vacols_id, if: for_worksheet
   attribute :vbms_id

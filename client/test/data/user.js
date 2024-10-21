@@ -25,17 +25,6 @@ export const vsoUser = {
   userCanAssignHearingSchedule: false
 };
 
-export const hearingUser = {
-  ...userWithJudgeRole,
-  userIsHearingAdmin: true,
-  userIsHearingManagment: true,
-  userCanAddVirtualHearingDays: true,
-  userCanAssignHearingSchedule: true,
-  userCanBuildHearingSchedule: true,
-  userCanViewFnodBadgeInHearings: true,
-  userCanViewHearingSchedule: true
-};
-
 const attyTemplate = ({ id }) => {
   const name = faker.name.findName();
 

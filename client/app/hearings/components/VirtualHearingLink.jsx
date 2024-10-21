@@ -9,19 +9,22 @@ import { ExternalLinkIcon } from '../../components/icons/ExternalLinkIcon';
 const ICON_POSITION_FIX = css({ position: 'relative', top: 1 });
 
 const VirtualHearingLink = ({
+  isVirtual,
   newWindow,
   link,
+  virtualHearing,
   label
 }) => {
+  if (!isVirtual) {
+    return null;
+  }
+
   return (
-    <Link
-      href={link}
-      target={newWindow ? '_blank' : '_self'}
-    >
+    <Link href={link} target={newWindow ? '_blank' : '_self'}>
       <strong>{label}</strong>
       <span {...ICON_POSITION_FIX}>
         &nbsp;
-        <ExternalLinkIcon color={COLORS.PRIMARY} />
+        <ExternalLinkIcon color={virtualHearing.jobCompleted ? COLORS.PRIMARY : COLORS.GREY_MEDIUM} />
       </span>
     </Link>
   );
@@ -44,12 +47,7 @@ VirtualHearingLink.propTypes = {
     aliasWithHost: PropTypes.string,
     jobCompleted: PropTypes.bool
   }).isRequired,
-  label: PropTypes.string,
-  hearing: PropTypes.shape({
-    dailyDocketConferenceLink: PropTypes.shape({
-      coHostLink: PropTypes.string
-    })
-  })
+  label: PropTypes.string
 };
 
 VirtualHearingLink.defaultProps = {

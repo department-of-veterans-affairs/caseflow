@@ -64,7 +64,7 @@ describe VirtualHearingRepository, :all_dbs do
       end
 
       context "for a virtual hearing created with new link generation" do
-        let(:virtual_hearing) { create(:virtual_hearing, :initialized, hearing: hearing) }
+        let(:virtual_hearing) { create(:virtual_hearing, :link_generation_initialized, hearing: hearing) }
 
         it "does not return the virtual hearing" do
           expect(subject).to eq []
@@ -130,7 +130,7 @@ describe VirtualHearingRepository, :all_dbs do
       end
 
       context "for a virtual hearing created with new link generation" do
-        let(:virtual_hearing) { create(:virtual_hearing, :initialized, hearing: hearing) }
+        let(:virtual_hearing) { create(:virtual_hearing, :link_generation_initialized, hearing: hearing) }
 
         it "does not return the virtual hearing" do
           expect(subject).to eq []
@@ -192,7 +192,7 @@ describe VirtualHearingRepository, :all_dbs do
       let!(:vh_with_all_pending_emails) do
         create(
           :virtual_hearing,
-          :initialized,
+          :link_generation_initialized,
           status: :active,
           hearing: create(:hearing)
         )
@@ -200,7 +200,7 @@ describe VirtualHearingRepository, :all_dbs do
       let!(:vh_in_good_state) do
         create(
           :virtual_hearing,
-          :initialized,
+          :link_generation_initialized,
           :all_emails_sent,
           hearing: create(:hearing)
         )

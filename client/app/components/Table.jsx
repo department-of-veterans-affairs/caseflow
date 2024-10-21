@@ -312,7 +312,7 @@ BodyRows.propTypes = {
   tbodyRef: PropTypes.func,
   id: PropTypes.string,
   getKeyForRow: PropTypes.func,
-  bodyStyling: PropTypes.object
+  bodyStyling: PropTypes.array
 };
 
 FooterRow.propTypes = {
@@ -342,5 +342,5 @@ Table.propTypes = {
     sortAscending: PropTypes.bool
   }),
   bodyClassName: PropTypes.string,
-  bodyStyling: PropTypes.object
+  bodyStyling: PropTypes.array
 };

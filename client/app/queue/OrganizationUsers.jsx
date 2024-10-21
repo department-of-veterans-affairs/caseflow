@@ -1,9 +1,8 @@
-/* eslint-disable max-lines */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable max-len */
-
 import React from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'glamor';
 import { sprintf } from 'sprintf-js';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
@@ -17,7 +16,33 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import COPY from '../../COPY';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import MembershipRequestTable from './MembershipRequestTable';
-import SelectConferenceTypeRadioField from './SelectConferenceTypeRadioField';
+
+const userStyle = css({
+  margin: '.5rem 0 .5rem',
+  padding: '.5rem 0 .5rem',
+  listStyle: 'none'
+});
+const topUserStyle = css({
+  borderTop: '.1rem solid gray',
+  margin: '.5rem 0 .5rem',
+  padding: '1rem 0 .5rem',
+  listStyle: 'none'
+});
+const topUserBorder = css({
+  borderBottom: '.1rem solid gray',
+});
+const buttonStyle = css({
+  paddingRight: '1rem',
+  display: 'inline-block'
+});
+const buttonContainerStyle = css({
+  borderBottom: '1rem solid gray',
+  borderWidth: '1px',
+  padding: '.5rem 0 2rem',
+});
+const listStyle = css({
+  listStyle: 'none'
+});
 
 export default class OrganizationUsers extends React.PureComponent {
   constructor(props) {
@@ -201,7 +226,7 @@ export default class OrganizationUsers extends React.PureComponent {
   }
 
   adminButton = (user, admin) =>
-    <div className="button-style"><Button
+    <div {...buttonStyle}><Button
       name={admin ? COPY.USER_MANAGEMENT_REMOVE_USER_ADMIN_RIGHTS_BUTTON_TEXT : COPY.USER_MANAGEMENT_GIVE_USER_ADMIN_RIGHTS_BUTTON_TEXT}
       id={admin ? `Remove-admin-rights-${user.id}` : `Add-team-admin-${user.id}`}
       classNames={admin ? ['usa-button-secondary'] : ['usa-button-primary']}
@@ -209,7 +234,7 @@ export default class OrganizationUsers extends React.PureComponent {
       onClick={this.modifyAdminRights(user, !admin)} /></div>
 
   removeUserButton = (user) =>
-    <div className="button-style"><Button
+    <div {...buttonStyle}><Button
       name={COPY.USER_MANAGEMENT_REMOVE_USER_FROM_ORG_BUTTON_TEXT}
       id={`Remove-user-${user.id}`}
       classNames={['usa-button-secondary']}
@@ -233,50 +258,24 @@ getFilteredUsers = () => {
   mainContent = () => {
     const judgeTeam = this.state.judgeTeam;
     const dvcTeam = this.state.dvcTeam;
-    const listOfUsers = this.getFilteredUsers().map((user) => {
+    const listOfUsers = this.getFilteredUsers().map((user, i) => {
       const { dvc, admin } = user.attributes;
-      const { conferenceSelectionVisibility } = this.props;
+      const style = i === 0 ? topUserStyle : userStyle;
 
-      return (
-        <React.Fragment key={user.id}>
-          <li key={user.id} className="user-list-item">
-            <div className="title-buttons">
-              { this.formatName(user) }
-              { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
-              { dvcTeam && dvc && <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong> }
-              { judgeTeam && !admin && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
-              { (judgeTeam || dvcTeam) && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> }
-
-              {
-                (judgeTeam || dvcTeam) && admin ?
-                  null :
-                  <div>
-                    { (judgeTeam || dvcTeam) ? '' : this.adminButton(user, admin) }
-                    { this.removeUserButton(user) }
-                  </div>
-              }
-
-            </div>
-            {this.state.organizationName === 'Hearings Management' &&
-                    conferenceSelectionVisibility && (
-              <div className="button-style">
-                <div>
-                  <SelectConferenceTypeRadioField
-                    key={`${user.id}-conference-selection`}
-                    name={user.id}
-                    conferenceProvider={
-                      user.attributes.conference_provider
-                    }
-                    organization={this.props.organization}
-                    user={user}
-                  />
-                </div>
-              </div>
-            )}
-
-          </li>
-        </React.Fragment>
-      );
+      return <React.Fragment key={user.id}>
+        <li key={user.id} {...style}>{this.formatName(user)}
+          { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
+          { dvcTeam && dvc && <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong> }
+          { judgeTeam && !admin && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
+          { (judgeTeam || dvcTeam) && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> }
+        </li>
+        { (judgeTeam || dvcTeam) && admin ?
+          <div {...topUserBorder}></div> :
+          <div {...buttonContainerStyle}>
+            { (judgeTeam || dvcTeam) ? '' : this.adminButton(user, admin) }
+            { this.removeUserButton(user) }
+          </div> }
+      </React.Fragment>;
     });
 
     const handleSearchChange = (value) => {
@@ -293,27 +292,26 @@ getFilteredUsers = () => {
 
     return <React.Fragment>
       <h2>{COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_LABEL}</h2>
-      <div className="add-dropdown">
-        <SearchableDropdown
-          name={COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_NAME}
-          hideLabel
-          searchable
-          clearOnSelect
-          readOnly={Boolean(this.state.addingUser)}
-          placeholder={
-            this.state.addingUser ?
+      <SearchableDropdown
+        name={COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_NAME}
+        hideLabel
+        searchable
+        clearOnSelect
+        readOnly={Boolean(this.state.addingUser)}
+        placeholder={
+          this.state.addingUser ?
             `${COPY.USER_MANAGEMENT_ADD_USER_LOADING_MESSAGE} ${this.formatName(this.state.addingUser)}` :
-              COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_TEXT
-          }
-          noResultsText={COPY.TEAM_MANAGEMENT_DROPDOWN_LABEL}
-          value={null}
-          onChange={this.addUser}
-          async={this.asyncLoadUser} />
-      </div>
+            COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_TEXT
+        }
+        noResultsText={COPY.TEAM_MANAGEMENT_DROPDOWN_LABEL}
+        value={null}
+        onChange={this.addUser}
+        async={this.asyncLoadUser} />
+      <br />
       <div>
         <div>
           <h2>{COPY.USER_MANAGEMENT_EDIT_USER_IN_ORG_LABEL}</h2>
-          <ul className="instruction-list">
+          <ul {...listStyle}>
             { (judgeTeam || dvcTeam) ? '' : <li><strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_HEADING}</strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_DESCRIPTION}</li> }
             <li><strong>{COPY.USER_MANAGEMENT_REMOVE_USER_HEADING}</strong>{ judgeTeam ?
               COPY.USER_MANAGEMENT_JUDGE_TEAM_REMOVE_USER_DESCRIPTION :
@@ -336,7 +334,7 @@ getFilteredUsers = () => {
           </div>
         </div>
         { listOfUsers.length > 0 ? (
-          <ul className="user-list">{listOfUsers}</ul>
+          <ul>{listOfUsers}</ul>
         ) : (
           <>
             <p className="no-results-found-styling">No results found</p>
@@ -344,6 +342,7 @@ getFilteredUsers = () => {
           </>
         )
         }
+
       </div>
     </React.Fragment>;
   }
@@ -415,6 +414,5 @@ getFilteredUsers = () => {
 }
 
 OrganizationUsers.propTypes = {
-  organization: PropTypes.string,
-  conferenceSelectionVisibility: PropTypes.bool
+  organization: PropTypes.string
 };

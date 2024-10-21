@@ -3,12 +3,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 // Local Dependencies
-import {
-  setTimeSlots,
-  TIMEZONES_WITH_LUNCHBREAK,
-  regionalOfficeDetails,
-  getFriendlyZoneName
-} from '../../utils';
+import { setTimeSlots, TIMEZONES_WITH_LUNCHBREAK, regionalOfficeDetails } from '../../utils';
 import { TimeSlotButton } from './TimeSlotButton';
 import Button from '../../../components/Button';
 import SmallLoader from '../../../components/SmallLoader';
@@ -64,12 +59,8 @@ export const TimeSlot = ({
   const handleChange = (time, custom = false) => {
     setSelected(time);
     setIsCustomTime(custom);
-
-    // Handles aliased timezones, like America/Boise => Mountain Time.
-    const friendlyZone = getFriendlyZoneName(roTimezone);
     // Time zone name is expected in tasks#update. Similar to HearingTime component
-    const tzName = Object.keys(TIMEZONES).find((key) =>
-      TIMEZONES[key] === friendlyZone) || 'Eastern Time (US & Canada)';
+    const tzName = Object.keys(TIMEZONES).find((key) => TIMEZONES[key] === roTimezone) || 'Eastern Time (US & Canada)';
 
     onChange('scheduledTimeString', `${time.tz(roTimezone).format('h:mm A')} ${tzName}`);
   };

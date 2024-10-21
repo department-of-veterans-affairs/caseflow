@@ -102,29 +102,6 @@ RSpec.describe HearingDatetimeService do
     end
   end
 
-  shared_examples "Special timezones checks" do
-    let(:hearing_time) do
-      HearingDatetimeService.prepare_datetime_for_storage(
-        date: "2025-01-01",
-        time_string: "12:00 PM Eastern Time (US & Canada)"
-      )
-    end
-
-    subject { hearing.scheduled_time_string }
-
-    context "For a Boise hearing" do
-      let(:zone_name) { "America/Boise" }
-
-      it { is_expected.to eq "10:00 AM Mountain Time (US & Canada)" }
-    end
-
-    context "For a Louisville hearing" do
-      let(:zone_name) { "America/Kentucky/Louisville" }
-
-      it { is_expected.to eq "12:00 PM Eastern Time (US & Canada)" }
-    end
-  end
-
   context "instance methods" do
     let(:summer_date) { "2030-06-01".to_date }
     let(:winter_date) { "2030-12-01".to_date }
@@ -255,24 +232,7 @@ RSpec.describe HearingDatetimeService do
           expect(time_service.scheduled_time_string).to eq(expected_string)
         end
       end
-
-      context "For special timezones" do
-        let(:hearing) do
-          create(
-            :hearing,
-            scheduled_in_timezone: zone_name,
-            scheduled_datetime: hearing_time,
-            hearing_day: create(
-              :hearing_day,
-              scheduled_for: "2025-01-01"
-            )
-          )
-        end
-
-        include_examples "Special timezones checks"
-      end
     end
-
     context "hearing is Legacy" do
       describe "local_time" do
         it "returns the scheduled_for value for a hearing" do
@@ -313,23 +273,6 @@ RSpec.describe HearingDatetimeService do
           expected_string = "#{legacy_hearing.scheduled_for.strftime('%l:%M %p')} Pacific Time (US & Canada)".lstrip
 
           expect(time_service.scheduled_time_string).to eq(expected_string)
-        end
-
-        context "For special timezones" do
-          let(:hearing) do
-            create(
-              :legacy_hearing,
-              scheduled_in_timezone: zone_name,
-              hearing_day: create(
-                :hearing_day,
-                scheduled_for: "2025-01-01"
-              )
-            ).tap do |hear|
-              VACOLS::CaseHearing.find(hear.external_id).update!(hearing_date: hearing_time)
-            end
-          end
-
-          include_examples "Special timezones checks"
         end
       end
 

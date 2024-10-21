@@ -1,36 +1,27 @@
 import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
-import { css } from 'glamor';
 
 import { ContentSection } from '../../../components/ContentSection';
 import { HearingLinks } from './HearingLinks';
 import { HearingsUserContext } from '../../contexts/HearingsUserContext';
-import StringUtil from '../../../util/StringUtil';
 
 export const VirtualHearingFields = ({ hearing, virtualHearing }) => {
+  if (!hearing?.isVirtual && !hearing?.wasVirtual) {
+    return null;
+  }
+
   const user = useContext(HearingsUserContext);
-
-  const checkCancelled = () => {
-    const disposition = ['postponed', 'cancelled', 'scheduled_in_error'];
-
-    return disposition.includes(hearing?.disposition);
-  };
 
   return (
     <ContentSection
-      header="Hearing Links"
+      header={`${hearing?.wasVirtual ? 'Previous ' : ''}Virtual Hearing Links`}
     >
-      <div {...css({ marginTop: '1.5rem' })}>
-        <strong>{StringUtil.capitalizeFirst(hearing?.conferenceProvider || 'Pexip')} Hearing</strong>
-      </div>
       <HearingLinks
         user={user}
         hearing={hearing}
         virtualHearing={virtualHearing}
-        scheduledForIsPast={hearing?.scheduledForIsPast}
         isVirtual={hearing?.isVirtual}
         wasVirtual={hearing?.wasVirtual}
-        isCancelled={checkCancelled()}
       />
     </ContentSection>
   );
@@ -44,8 +35,7 @@ VirtualHearingFields.propTypes = {
     appellantIsNotVeteran: PropTypes.bool,
     scheduledForIsPast: PropTypes.bool,
     wasVirtual: PropTypes.bool,
-    isVirtual: PropTypes.bool,
-    conferenceProvider: PropTypes.string
+    isVirtual: PropTypes.bool
   }),
   initialHearing: PropTypes.shape({
     virtualHearing: PropTypes.object
@@ -54,7 +44,7 @@ VirtualHearingFields.propTypes = {
   virtualHearing: PropTypes.shape({
     appellantEmail: PropTypes.string,
     representativeEmail: PropTypes.string,
-    jobCompleted: PropTypes.bool,
+    jobCompleted: PropTypes.bool
   }),
   errors: PropTypes.shape({
     appellantEmail: PropTypes.string,

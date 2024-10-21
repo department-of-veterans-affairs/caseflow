@@ -694,6 +694,15 @@
       "zip" : "38132",
       "timezone" : "America/Kentucky/Louisville"
    },
+   "vc_0720V" : {
+      "address_1" : "1645 Downtown West Blvd #28",
+      "address_2" : null,
+      "address_3" : null,
+      "city" : "Knoxville",
+      "state" : "TN",
+      "zip" : "37919",
+      "timezone" : "America/Chicago"
+   },
    "vc_0737V" : {
       "address_1" : "400 Veterans Ave",
       "address_2" : "Bldg. 3",
@@ -990,6 +999,15 @@
       "state" : "KY",
       "zip" : "42101-4905",
       "timezone" : "America/Kentucky/Louisville"
+   },
+   "vha_626GF" : {
+      "address_1" : "6098 Debra Road",
+      "address_2" : null,
+      "address_3" : "6200 Building, Suite 5200",
+      "city" : "Chattanooga",
+      "state" : "TN",
+      "zip" : "37411-5702",
+      "timezone" : "America/Chicago"
    },
    "vha_626GH" : {
       "address_1" : "851 South Willow Avenue",

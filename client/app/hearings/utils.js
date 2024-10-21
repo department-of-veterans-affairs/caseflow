@@ -219,11 +219,6 @@ export const virtualHearingLinkLabelFull = (role) =>
     COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL_FULL :
     COPY.REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL;
 
-export const virtualHearingScheduledDatePassedLabelFull = (role) =>
-role === VIRTUAL_HEARING_HOST ?
-`${COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL_FULL}: N/A` :
-`${COPY.REPRESENTATIVE_VIRTUAL_HEARING_PASSED_LABEL}: N/A`;
-
 export const pollVirtualHearingData = (hearingId, onSuccess) => (
   // Did not specify retryCount so if api call fails, it'll stop polling.
   // If need to retry on failure, pass in retryCount

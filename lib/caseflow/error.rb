@@ -424,20 +424,10 @@ module Caseflow::Error
   class IdtApiError < StandardError; end
   class InvalidOneTimeKey < IdtApiError; end
 
-  class ConferenceCreationError < SerializableError; end
-  class MeetingTypeNotFoundError < ConferenceCreationError; end
-
-  class PexipApiError < ConferenceCreationError; end
+  class PexipApiError < SerializableError; end
   class PexipNotFoundError < PexipApiError; end
   class PexipBadRequestError < PexipApiError; end
   class PexipMethodNotAllowedError < PexipApiError; end
-  class PexipServiceNotReachableError < PexipApiError; end
-
-  class WebexApiError < ConferenceCreationError; end
-  class WebexNotFoundError < WebexApiError; end
-  class WebexBadRequestError < WebexApiError; end
-  class WebexMethodNotAllowedError < WebexApiError; end
-  class WebexInvalidTokenError < ConferenceCreationError; end
 
   class WorkModeCouldNotUpdateError < StandardError; end
 

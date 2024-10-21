@@ -20,12 +20,19 @@ FactoryBot.define do
     representative_tz { nil }
     association :created_by, factory: :user
     association :updated_by, factory: :user
+    establishment { build(:virtual_hearing_establishment) }
     guest_pin_long { nil }
     created_at { Time.zone.now }
     updated_at { Time.zone.now }
 
     transient do
       status { nil }
+    end
+
+    trait :initialized do
+      alias_name { format("%07<id>d", id: rand(99..10_001)) }
+      conference_id { rand(1..9) }
+      after(:build, &:generate_conference_pins)
     end
 
     trait :timezones_initialized do
@@ -39,7 +46,7 @@ FactoryBot.define do
       judge_email_sent { true }
     end
 
-    trait :initialized do
+    trait :link_generation_initialized do
       alias_with_host { "BVA0000001@example.va.gov" }
       host_pin_long { "3998472" }
       guest_pin_long { "7470125694" }
@@ -62,7 +69,7 @@ FactoryBot.define do
     end
 
     after(:create) do |virtual_hearing, evaluator|
-      build(:virtual_hearing_establishment, virtual_hearing: virtual_hearing).save!
+      virtual_hearing.establishment.save!
 
       if evaluator.status == :cancelled
         virtual_hearing.cancel!
