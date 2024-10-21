@@ -146,6 +146,11 @@ describe('TranscriptionFileDispatch', () => {
         '/hearings/transcription_files/transcription_file_tasks?tab=Completed&page=1'
       ).
       mockResolvedValue(mockCompletedTranscriptionFilesResponse);
+    when(ApiUtil.get).
+      calledWith(
+        '/hearings/transcription_files/transcription_file_tasks?tab=All&page=1'
+      ).
+      mockResolvedValue(mockCompletedTranscriptionFilesResponse);
   });
 
   afterEach(() => {
