@@ -56,7 +56,6 @@ describe('VirtualHearingFields', () => {
       <VirtualHearingFields
         update={updateSpy}
         hearing={amaHearing}
-        virtualHearing={amaHearing.virtualHearing}
       />,
       {
         wrapper: Wrapper,
@@ -89,8 +88,6 @@ describe('VirtualHearingFields', () => {
       }
     );
 
-    const hearingMeetingType = amaHearing.judge.meetingType;
-
     // Assertions
     const virtualHearingForm = screen.getByRole('heading', { name: /Hearing Links/i });
     expect(virtualHearingForm).toBeInTheDocument();
@@ -104,10 +101,11 @@ describe('VirtualHearingFields', () => {
     // Test HearingLinks presence
     const guestLink = screen.getByText(/Guest Link:/);
     expect(guestLink).toBeInTheDocument();
-    expect(hearingMeetingType).toBeTruthy();
-    expect(hearingMeetingType).toStrictEqual('pexip' || 'webex');
 
-    expect(virtualHearingForm).toMatchSnapshot();
+    const links = screen.getAllByRole('button');
+    expect(links).toHaveLength(1);
+
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Renders webex conference when conference provider is webex', () => {
@@ -117,7 +115,7 @@ describe('VirtualHearingFields', () => {
     };
 
     // Run the test
-    const virtualHearingForm = mount(
+    const { asFragment } = customRender(
       <VirtualHearingFields
         update={updateSpy}
         hearing={webexHearing}
@@ -126,17 +124,15 @@ describe('VirtualHearingFields', () => {
           conferenceProvider: 'webex'
         }}
       />,
-
       {
-        wrappingComponent: hearingDetailsWrapper(anyUser, webexHearing),
-        wrappingComponentProps: { store: detailsStore }
+        wrapper: Wrapper,
+        wrapperProps: { user: anyUser, hearing: webexHearing, store: detailsStore }
       }
     );
 
     // Assertions
-    expect(virtualHearingForm.text().includes('Webex Hearing')).toBeTruthy();
-
-    expect(virtualHearingForm).toMatchSnapshot();
+    expect(screen.getByText('Webex Hearing')).toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Renders pexip conference when conference provider is pexip', () => {
@@ -146,7 +142,7 @@ describe('VirtualHearingFields', () => {
     };
 
     // Run the test
-    const virtualHearingForm = mount(
+    const { asFragment } = customRender(
       <VirtualHearingFields
         update={updateSpy}
         hearing={webexHearing}
@@ -155,10 +151,9 @@ describe('VirtualHearingFields', () => {
           conferenceProvider: 'pexip'
         }}
       />,
-
       {
-        wrappingComponent: hearingDetailsWrapper(anyUser, webexHearing),
-        wrappingComponentProps: { store: detailsStore }
+        wrapper: Wrapper,
+        wrapperProps: { user: anyUser, hearing: webexHearing, store: detailsStore }
       }
     );
 
