@@ -50,7 +50,7 @@ class Hearings::TranscriptionFile < CaseflowRecord
     where(file_status: ["Successful upload (AWS)", "Failed Retrieval (BOX)", "Overdue"])
   }
 
-  scope :filter_by_hearing_type, ->(values) { where("hearing_type IN (?)", values) }
+  scope :filter_by_hearing_type, ->(values) { where("transcription_files.hearing_type IN (?)", values) }
 
   scope :filter_by_status, ->(values) { where("file_status IN (?)", values) }
 
@@ -64,7 +64,8 @@ class Hearings::TranscriptionFile < CaseflowRecord
       else
         stream_types << value
         filter_parts <<
-          "((hearing_type = 'Hearing' AND stream_type IN (?)) OR hearing_type = 'LegacyHearing')"
+          "((transcription_files.hearing_type = 'Hearing' AND stream_type IN (?)) OR
+            transcription_files.hearing_type = 'LegacyHearing')"
       end
     end
     where(filter_parts.join(" OR "), stream_types)

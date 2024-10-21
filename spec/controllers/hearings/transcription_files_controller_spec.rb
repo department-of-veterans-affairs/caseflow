@@ -382,8 +382,6 @@ RSpec.describe Hearings::TranscriptionFilesController do
         total_task_count: 1
       }.to_json
 
-      puts response.body
-
       expect(response.status).to eq(200)
       expect(response.body).to eq(expected_response)
     end
