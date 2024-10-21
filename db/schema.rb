@@ -2,8 +2,8 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# This file is the source Rails uses to define your schema when running `rails
-# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
 # be faster and is potentially less error prone than running all of your
 # migrations from scratch. Old migrations may fail to apply correctly if those
 # migrations use external dependencies or application code.
@@ -2028,11 +2028,11 @@ ActiveRecord::Schema.define(version: 2024_08_28_165652) do
     t.boolean "filed_by_va_gov", comment: "Indicates whether or not this form came from VA.gov"
     t.boolean "legacy_opt_in_approved", comment: "Indicates whether a Veteran opted to withdraw their Supplemental Claim request issues from the legacy system if a matching issue is found. If there is a matching legacy issue and it is not withdrawn, then that issue is ineligible to be a new request issue and a contention will not be created for it."
     t.date "receipt_date", comment: "The date that the Supplemental Claim form was received by central mail. Only issues decided prior to the receipt date will show up as contestable issues.  It is also the claim date for any associated end products that are established. Supplemental Claims do not have the same timeliness restriction on contestable issues as Appeals and Higher Level Reviews."
-    t.string "type", default: "SupplementalClaim", null: false, comment: "The class name for the single table inheritance type of Supplemental Claim for example Remand"
     t.datetime "updated_at"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false, comment: "The universally unique identifier for the Supplemental Claim. Can be used to link to the claim after it is completed."
     t.string "veteran_file_number", null: false, comment: "PII. The file number of the Veteran that the Supplemental Claim is for."
     t.boolean "veteran_is_not_claimant", comment: "Indicates whether the Veteran is the claimant on the Supplemental Claim form, or if the claimant is someone else like a spouse or a child. Must be TRUE if the Veteran is deceased."
+    t.string "type", default: "SupplementalClaim", null: false, comment: "The class name for the single table inheritance type of Supplemental Claim for example Remand"
     t.index ["decision_review_remanded_type", "decision_review_remanded_id"], name: "index_decision_issues_on_decision_review_remanded"
     t.index ["type"], name: "index_supplemental_claims_on_type"
     t.index ["updated_at"], name: "index_supplemental_claims_on_updated_at"
@@ -2262,42 +2262,42 @@ ActiveRecord::Schema.define(version: 2024_08_28_165652) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "vbms_ext_claim", primary_key: "CLAIM_ID", id: :decimal, precision: 38, force: :cascade do |t|
-    t.string "ALLOW_POA_ACCESS", limit: 5
-    t.decimal "CLAIMANT_PERSON_ID", precision: 38
+  create_table "vbms_ext_claim", primary_key: "CLAIM_ID", id: { type: :decimal, precision: 38 }, force: :cascade do |t|
     t.datetime "CLAIM_DATE"
-    t.string "CLAIM_SOJ", limit: 25
-    t.integer "CONTENTION_COUNT"
-    t.datetime "CREATEDDT", null: false
     t.string "EP_CODE", limit: 25
-    t.datetime "ESTABLISHMENT_DATE"
-    t.datetime "EXPIRATIONDT"
-    t.string "INTAKE_SITE", limit: 25
-    t.datetime "LASTUPDATEDT", null: false
-    t.string "LEVEL_STATUS_CODE", limit: 25
-    t.datetime "LIFECYCLE_STATUS_CHANGE_DATE"
-    t.string "LIFECYCLE_STATUS_NAME", limit: 50
-    t.string "ORGANIZATION_NAME", limit: 100
-    t.string "ORGANIZATION_SOJ", limit: 25
-    t.string "PAYEE_CODE", limit: 25
-    t.string "POA_CODE", limit: 25
-    t.integer "PREVENT_AUDIT_TRIG", limit: 2, default: 0, null: false
-    t.string "PRE_DISCHARGE_IND", limit: 5
-    t.string "PRE_DISCHARGE_TYPE_CODE", limit: 10
-    t.string "PRIORITY", limit: 10
-    t.string "PROGRAM_TYPE_CODE", limit: 10
-    t.string "RATING_SOJ", limit: 25
-    t.string "SERVICE_TYPE_CODE", limit: 10
-    t.string "SUBMITTER_APPLICATION_CODE", limit: 25
-    t.string "SUBMITTER_ROLE_CODE", limit: 25
     t.datetime "SUSPENSE_DATE"
     t.string "SUSPENSE_REASON_CODE", limit: 25
     t.string "SUSPENSE_REASON_COMMENTS", limit: 1000
-    t.decimal "SYNC_ID", precision: 38, null: false
+    t.decimal "CLAIMANT_PERSON_ID", precision: 38
+    t.integer "CONTENTION_COUNT"
+    t.string "CLAIM_SOJ", limit: 25
     t.string "TEMPORARY_CLAIM_SOJ", limit: 25
+    t.string "PRIORITY", limit: 10
     t.string "TYPE_CODE", limit: 25
-    t.decimal "VERSION", precision: 38, null: false
+    t.string "LIFECYCLE_STATUS_NAME", limit: 50
+    t.string "LEVEL_STATUS_CODE", limit: 25
+    t.string "SUBMITTER_APPLICATION_CODE", limit: 25
+    t.string "SUBMITTER_ROLE_CODE", limit: 25
     t.decimal "VETERAN_PERSON_ID", precision: 15
+    t.datetime "ESTABLISHMENT_DATE"
+    t.string "INTAKE_SITE", limit: 25
+    t.string "PAYEE_CODE", limit: 25
+    t.decimal "SYNC_ID", precision: 38, null: false
+    t.datetime "CREATEDDT", null: false
+    t.datetime "LASTUPDATEDT", null: false
+    t.datetime "EXPIRATIONDT"
+    t.decimal "VERSION", precision: 38, null: false
+    t.datetime "LIFECYCLE_STATUS_CHANGE_DATE"
+    t.string "RATING_SOJ", limit: 25
+    t.string "PROGRAM_TYPE_CODE", limit: 10
+    t.string "SERVICE_TYPE_CODE", limit: 10
+    t.integer "PREVENT_AUDIT_TRIG", limit: 2, default: 0, null: false
+    t.string "PRE_DISCHARGE_TYPE_CODE", limit: 10
+    t.string "PRE_DISCHARGE_IND", limit: 5
+    t.string "ORGANIZATION_NAME", limit: 100
+    t.string "ORGANIZATION_SOJ", limit: 25
+    t.string "ALLOW_POA_ACCESS", limit: 5
+    t.string "POA_CODE", limit: 25
     t.index ["CLAIM_ID"], name: "claim_id_index"
     t.index ["LEVEL_STATUS_CODE"], name: "level_status_code_index"
   end
