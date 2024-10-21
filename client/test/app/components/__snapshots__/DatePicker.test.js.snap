@@ -157,6 +157,22 @@ exports[`DatePicker renders default state correctly 1`] = `
         </div>
       </div>
       <div
+        class="input-wrapper"
+      >
+        <label
+          aria-label="start-date"
+          for="start-date"
+        >
+          Date
+        </label>
+        <input
+          id="start-date"
+          name="start-date"
+          type="date"
+          value=""
+        />
+      </div>
+      <div
         class="button-wrapper"
       >
         <button

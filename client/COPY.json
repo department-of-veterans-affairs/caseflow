@@ -1517,5 +1517,20 @@
   },
   "VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_NON_ADMIN": "Requests for issue modifications have been submitted for this case. Dispositions cannot be made until a VHA admin completes review of the requested changes.",
   "VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_ADMIN": "Requests for issue modifications have been submitted for this case. Dispositions cannot be made until a VHA admin completes review of the requested changes. Click the \"Edit issues\" button above to review the issue modification requests.",
-  "REMANDS_NOT_EDITABLE": "Remands can not be edited."
+  "REMANDS_NOT_EDITABLE": "Remands can not be edited.",
+  "DATE_PICKER_APPLY": "Apply Filter",
+  "DATE_PICKER_TO": "To",
+  "DATE_PICKER_FROM": "From",
+  "DATE_PICKER_DATE": "Date",
+  "DATE_PICKER_DROPDOWN_BETWEEN": "Between these dates",
+  "DATE_PICKER_DROPDOWN_BEFORE": "Before this date",
+  "DATE_PICKER_DROPDOWN_AFTER": "After this date",
+  "DATE_PICKER_DROPDOWN_ON": "On this date",
+  "DATE_PICKER_CLEAR": "Clear filter",
+  "DATE_PICKER_DROPDOWN_LABEL": "Date filter parameters",
+  "DATE_PICKER_QUICK_BUTTON_30": "Last 30 days",
+  "DATE_PICKER_DROPDOWN_7": "Last 7 days",
+  "DATE_PICKER_DROPDOWN_30": "Last 30 days",
+  "DATE_PICKER_DROPDOWN_365": "Last 365 days",
+  "DATE_PICKER_DROPDOWN_ALL": "View All"
 }
