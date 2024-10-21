@@ -10,7 +10,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
       Hearing Time
     </strong>
     <pre>
-      Invalid date Eastern
+      8:30 AM Eastern
     </pre>
   </div>
 </DocumentFragment>
@@ -26,7 +26,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
       Hearing Time
     </strong>
     <pre>
-      Invalid date Pacific / Invalid date Eastern
+      8:30 AM Pacific / 11:30 AM Eastern
     </pre>
   </div>
 </DocumentFragment>
@@ -42,7 +42,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
       Hearing Time
     </strong>
     <pre>
-      Invalid date Mountain / Invalid date Eastern
+      8:30 AM Mountain / 10:30 AM Eastern
     </pre>
   </div>
 </DocumentFragment>
@@ -58,7 +58,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
       Hearing Time
     </strong>
     <pre>
-      Invalid date Central / Invalid date Eastern
+      8:30 AM Central / 9:30 AM Eastern
     </pre>
   </div>
 </DocumentFragment>
@@ -74,7 +74,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
       Hearing Time
     </strong>
     <pre>
-      Invalid date Indiana (East) / Invalid date Eastern
+      8:30 AM Eastern
     </pre>
   </div>
 </DocumentFragment>
@@ -90,7 +90,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
       Hearing Time
     </strong>
     <pre>
-      Invalid date Eastern
+      8:30 AM Mountain / 10:30 AM Eastern
     </pre>
   </div>
 </DocumentFragment>
@@ -106,7 +106,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
       Hearing Time
     </strong>
     <pre>
-      Invalid date Pacific / Invalid date Eastern
+      12:30 PM Eastern
     </pre>
   </div>
 </DocumentFragment>
@@ -122,7 +122,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
       Hearing Time
     </strong>
     <pre>
-      Invalid date Mountain / Invalid date Eastern
+      12:30 PM Pacific / 3:30 PM Eastern
     </pre>
   </div>
 </DocumentFragment>
@@ -138,7 +138,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
       Hearing Time
     </strong>
     <pre>
-      Invalid date Central / Invalid date Eastern
+      12:30 PM Mountain / 2:30 PM Eastern
     </pre>
   </div>
 </DocumentFragment>
@@ -154,7 +154,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
       Hearing Time
     </strong>
     <pre>
-      Invalid date Indiana (East) / Invalid date Eastern
+      12:30 PM Central / 1:30 PM Eastern
     </pre>
   </div>
 </DocumentFragment>
@@ -170,7 +170,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
       Hearing Time
     </strong>
     <pre>
-      Invalid date Eastern
+      12:30 PM Eastern
     </pre>
   </div>
 </DocumentFragment>
@@ -186,7 +186,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
       Hearing Time
     </strong>
     <pre>
-      Invalid date Pacific / Invalid date Eastern
+      12:30 PM Mountain / 2:30 PM Eastern
     </pre>
   </div>
 </DocumentFragment>
@@ -202,7 +202,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
       Hearing Time
     </strong>
     <pre>
-      Invalid date Mountain / Invalid date Eastern
+      8:25 PM Eastern
     </pre>
   </div>
 </DocumentFragment>
@@ -218,7 +218,7 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
       Hearing Time
     </strong>
     <pre>
-      Invalid date Central / Invalid date Eastern
+      8:25 PM Pacific / 11:25 PM Eastern
     </pre>
   </div>
 </DocumentFragment>
@@ -234,7 +234,55 @@ exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTim
       Hearing Time
     </strong>
     <pre>
-      Invalid date Indiana (East) / Invalid date Eastern
+      8:25 PM Mountain / 10:25 PM Eastern
+    </pre>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTime prop has value 16`] = `
+<DocumentFragment>
+  <div
+    data-css-1a5irm0=""
+    data-testid="read-only-testid"
+  >
+    <strong>
+      Hearing Time
+    </strong>
+    <pre>
+      8:25 PM Central / 9:25 PM Eastern
+    </pre>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTime prop has value 17`] = `
+<DocumentFragment>
+  <div
+    data-css-1a5irm0=""
+    data-testid="read-only-testid"
+  >
+    <strong>
+      Hearing Time
+    </strong>
+    <pre>
+      8:25 PM Eastern
+    </pre>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`ReadOnlyHearingTimeWithZone Displays readonly time when hearingStartTime prop has value 18`] = `
+<DocumentFragment>
+  <div
+    data-css-1a5irm0=""
+    data-testid="read-only-testid"
+  >
+    <strong>
+      Hearing Time
+    </strong>
+    <pre>
+      8:25 PM Mountain / 10:25 PM Eastern
     </pre>
   </div>
 </DocumentFragment>

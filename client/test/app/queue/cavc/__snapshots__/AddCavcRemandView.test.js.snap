@@ -430,6 +430,9 @@ exports[`AddCavcRemandView renders correctly 1`] = `
         name="context-and-instructions-textBox"
       />
     </div>
+    <h1>
+      THIS IS TYPE: remand
+    </h1>
   </section>
   <div
     data-css-63oe3q=""

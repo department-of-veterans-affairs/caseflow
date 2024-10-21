@@ -782,7 +782,6 @@ exports[`QueueTable render() Can sort rows 1`] = `
           role="row"
         >
           <th
-            class="testClasses"
             role="columnheader"
             scope="col"
           >
@@ -796,7 +795,6 @@ exports[`QueueTable render() Can sort rows 1`] = `
             </span>
           </th>
           <th
-            class="testClasses"
             role="columnheader"
             scope="col"
           >
@@ -810,7 +808,6 @@ exports[`QueueTable render() Can sort rows 1`] = `
             </span>
           </th>
           <th
-            class="testClasses"
             role="columnheader"
             scope="col"
           >
@@ -823,7 +820,7 @@ exports[`QueueTable render() Can sort rows 1`] = `
               </span>
               <span
                 aria-label="Sort by Third"
-                data-css-hwg41t=""
+                data-css-ilmt4b=""
                 role="button"
                 tabindex="0"
               >
@@ -881,12 +878,10 @@ exports[`QueueTable render() Can sort rows 1`] = `
         class=""
       >
         <tr
-          class="testClasses"
           id="table-row-0"
           role="row"
         >
           <td
-            class="testClasses"
             colspan="1"
             role="gridcell"
             tabindex="-1"
@@ -894,7 +889,6 @@ exports[`QueueTable render() Can sort rows 1`] = `
             First column
           </td>
           <td
-            class="testClasses"
             colspan="1"
             role="gridcell"
             tabindex="-1"
@@ -902,7 +896,6 @@ exports[`QueueTable render() Can sort rows 1`] = `
             Second column
           </td>
           <td
-            class="testClasses"
             colspan="1"
             role="gridcell"
             tabindex="-1"
@@ -911,12 +904,10 @@ exports[`QueueTable render() Can sort rows 1`] = `
           </td>
         </tr>
         <tr
-          class="testClasses"
           id="table-row-1"
           role="row"
         >
           <td
-            class="testClasses"
             colspan="1"
             role="gridcell"
             tabindex="-1"
@@ -924,7 +915,6 @@ exports[`QueueTable render() Can sort rows 1`] = `
             First column second row
           </td>
           <td
-            class="testClasses"
             colspan="1"
             role="gridcell"
             tabindex="-1"
@@ -932,7 +922,6 @@ exports[`QueueTable render() Can sort rows 1`] = `
             Second column second row
           </td>
           <td
-            class="testClasses"
             colspan="1"
             role="gridcell"
             tabindex="-1"
@@ -941,12 +930,10 @@ exports[`QueueTable render() Can sort rows 1`] = `
           </td>
         </tr>
         <tr
-          class="testClasses"
           id="table-row-2"
           role="row"
         >
           <td
-            class="testClasses"
             colspan="1"
             role="gridcell"
             tabindex="-1"
@@ -954,7 +941,6 @@ exports[`QueueTable render() Can sort rows 1`] = `
             First column third row
           </td>
           <td
-            class="testClasses"
             colspan="1"
             role="gridcell"
             tabindex="-1"
@@ -962,7 +948,6 @@ exports[`QueueTable render() Can sort rows 1`] = `
             Second column third row
           </td>
           <td
-            class="testClasses"
             colspan="1"
             role="gridcell"
             tabindex="-1"
