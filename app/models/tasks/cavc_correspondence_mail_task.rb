@@ -58,9 +58,7 @@ class CavcCorrespondenceMailTask < MailTask
   end
 
   def check_inbound_ops_team_user
-    assigned_by&.inbound_ops_team_user? ||
-      assigned_by&.inbound_ops_team_supervisor? ||
-      assigned_by&.inbound_ops_team_superuser?
+    InboundOpsTeam.singleton.user_has_access?(assigned_by)
   end
 
   def open_cavc_task
