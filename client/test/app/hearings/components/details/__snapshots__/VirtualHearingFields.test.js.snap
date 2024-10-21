@@ -310,6 +310,13 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
         </strong>
       </div>
       <div
+        data-css-tx10g=""
+      >
+        <strong>
+          Pexip Hearing
+        </strong>
+      </div>
+      <div
         data-css-19plkw7=""
         data-css-1fmltfu=""
         data-testid="link-containers"
