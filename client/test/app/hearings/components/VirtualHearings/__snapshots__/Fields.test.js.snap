@@ -101,32 +101,22 @@ exports[`Fields Display timezone and divider for Central 1`] = `
 >
   <ContentSection>
     <div
-      className="cf-app-segment"
+      data-css-1571z6o=""
     >
-      <h2
-        data-css-3rhuy2=""
-      />
       <div
-        data-css-1571z6o=""
+        class="usa-grid"
+        id="email-section"
       >
         <div
-          className="usa-grid"
-          id="email-section"
+          class="usa-width-one-third"
+          data-css-150oin1=""
         >
           <div
-            className="usa-width-one-third"
-            data-css-150oin1=""
+            class=""
           >
-            <Timezone
-              hearingDayDate="2020-07-06"
-              label="Veteran Timezone"
-              name="appellantTz"
-              onChange={[Function]}
-              optional={true}
-              readOnly={false}
-              required={false}
-              time="8:15 AM Eastern Time (US & Canada)"
-              value="America/Los_Angeles"
+            <div
+              class="cf-form-dropdown dropdown-appellantTz"
+              data-css-1gh7024=""
             >
               <SearchableDropdown
                 clearOnSelect={false}
@@ -922,37 +912,14 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                 value="America/Los_Angeles"
               >
                 <div
-                  className=""
+                  class=" css-2b097c-container"
                 >
                   <div
                     className="cf-form-dropdown dropdown-appellantTz"
                     data-css-1dzedb9=""
                   >
-                    <label
-                      className="question-label"
-                      htmlFor="appellant-tz"
-                      id="appellant-tz-label"
-                    >
-                      <strong>
-                        <FormLabel
-                          label="Veteran Timezone"
-                          name="Veteran Timezone"
-                          optional={true}
-                          required={false}
-                        >
-                          <span>
-                            Veteran Timezone
-                            <span
-                              className="cf-optional"
-                            >
-                              Optional
-                            </span>
-                          </span>
-                        </FormLabel>
-                      </strong>
-                    </label>
                     <div
-                      className="cf-select"
+                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
                     >
                       <StateManager
                         cache={false}
@@ -16206,124 +16173,29 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                       </StateManager>
                     </div>
                   </div>
+                  <input
+                    name="appellantTz"
+                    type="hidden"
+                    value="America/Los_Angeles"
+                  />
                 </div>
-              </SearchableDropdown>
-            </Timezone>
-            <HelperText
-              label="The hearing time in email notifications is calculated based on the timezone."
-            >
-              <div
-                className="helper-text"
-              >
-                The hearing time in email notifications is calculated based on the timezone.
               </div>
-            </HelperText>
+            </div>
           </div>
           <div
-            className="usa-width-one-third"
+            class="helper-text"
           >
-            <HearingEmail
-              disabled={false}
-              email="tom.brady@caseflow.gov"
-              emailType="appellantEmailAddress"
-              helperLabel="This email address will be used to send notifications for this hearing only."
-              label="Veteran Email"
-              optional={true}
-              required={false}
-              showHelper={true}
-            >
-              <TextField
-                className={
-                  Array [
-                    "cf-form-textinput cf-inline-field",
-                  ]
-                }
-                name="Veteran Email"
-                onChange={[Function]}
-                optional={true}
-                readOnly={false}
-                required={false}
-                strongLabel={true}
-                type="text"
-                useAriaLabel={false}
-                value="tom.brady@caseflow.gov"
-              >
-                <div
-                  className="cf-form-textinput cf-inline-field   "
-                >
-                  <label
-                    htmlFor="Veteran Email"
-                  >
-                    <strong>
-                      <FormLabel
-                        name="Veteran Email"
-                        optional={true}
-                        required={false}
-                      >
-                        <span>
-                          Veteran Email
-                          <span
-                            className="cf-optional"
-                          >
-                            Optional
-                          </span>
-                        </span>
-                      </FormLabel>
-                    </strong>
-                  </label>
-                  <div
-                    className="input-container"
-                  >
-                    <input
-                      aria-readonly={false}
-                      className={
-                        Array [
-                          "cf-form-textinput cf-inline-field",
-                        ]
-                      }
-                      id="Veteran Email"
-                      name="Veteran Email"
-                      onBlur={[Function]}
-                      onChange={[Function]}
-                      readOnly={false}
-                      type="text"
-                      value="tom.brady@caseflow.gov"
-                    />
-                  </div>
-                </div>
-              </TextField>
-              <HelperText
-                label="This email address will be used to send notifications for this hearing only."
-              >
-                <div
-                  className="helper-text"
-                >
-                  This email address will be used to send notifications for this hearing only.
-                </div>
-              </HelperText>
-            </HearingEmail>
+            The hearing time in email notifications is calculated based on the timezone.
           </div>
         </div>
         <div
-          className="cf-help-divider"
-        />
-        <div
-          className="usa-grid css-1jfbwxw"
+          class="usa-width-one-third"
         >
           <div
-            className="usa-width-one-third"
-            data-css-150oin1=""
+            class="cf-form-textinput cf-inline-field   "
           >
-            <Timezone
-              hearingDayDate="2020-07-06"
-              label="POA/Representative Timezone"
-              name="representativeTz"
-              onChange={[Function]}
-              optional={false}
-              readOnly={false}
-              required={true}
-              time="8:15 AM Eastern Time (US & Canada)"
-              value="America/Los_Angeles"
+            <label
+              for="Veteran Email"
             >
               <SearchableDropdown
                 clearOnSelect={false}
@@ -32409,102 +32281,186 @@ exports[`Fields Display timezone and divider for Central 1`] = `
             <HelperText
               label="The hearing time in email notifications is calculated based on the timezone."
             >
-              <div
-                className="helper-text"
-              >
-                The hearing time in email notifications is calculated based on the timezone.
-              </div>
-            </HelperText>
+              <input
+                aria-readonly="false"
+                class="cf-form-textinput cf-inline-field"
+                id="Veteran Email"
+                name="Veteran Email"
+                type="text"
+                value="tom.brady@caseflow.gov"
+              />
+            </div>
           </div>
           <div
-            className="usa-width-one-third"
+            class="helper-text"
           >
-            <HearingEmail
-              disabled={false}
-              email="tom.brady@caseflow.gov"
-              emailType="representativeEmailAddress"
-              helperLabel="This email address will be used to send notifications for this hearing only."
-              label="POA/Representative Email"
-              optional={true}
-              showHelper={true}
-              update={[Function]}
+            This email address will be used to send notifications for this hearing only.
+          </div>
+        </div>
+      </div>
+      <div
+        class="cf-help-divider"
+      />
+      <div
+        class="usa-grid css-1jfbwxw"
+      >
+        <div
+          class="usa-width-one-third"
+          data-css-150oin1=""
+        >
+          <div
+            class=""
+          >
+            <div
+              class="cf-form-dropdown dropdown-representativeTz"
+              data-css-1gh7024=""
             >
-              <TextField
-                className={
-                  Array [
-                    "cf-form-textinput cf-inline-field",
-                  ]
-                }
-                name="POA/Representative Email"
-                onChange={[Function]}
-                optional={true}
-                readOnly={false}
-                required={false}
-                strongLabel={true}
-                type="text"
-                useAriaLabel={false}
-                value="tom.brady@caseflow.gov"
+              <label
+                class="question-label"
+                for="representative-tz"
+                id="representative-tz-label"
+              >
+                <strong>
+                  <span>
+                    POA/Representative Timezone
+                    <span
+                      class="cf-required"
+                    >
+                      Required
+                    </span>
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
               >
                 <div
-                  className="cf-form-textinput cf-inline-field   "
+                  class=" css-2b097c-container"
                 >
-                  <label
-                    htmlFor="POA/Representative Email"
-                  >
-                    <strong>
-                      <FormLabel
-                        name="POA/Representative Email"
-                        optional={true}
-                        required={false}
-                      >
-                        <span>
-                          POA/Representative Email
-                          <span
-                            className="cf-optional"
-                          >
-                            Optional
-                          </span>
-                        </span>
-                      </FormLabel>
-                    </strong>
-                  </label>
                   <div
-                    className="input-container"
+                    class="cf-select__control css-yk16xz-control"
                   >
-                    <input
-                      aria-readonly={false}
-                      className={
-                        Array [
-                          "cf-form-textinput cf-inline-field",
-                        ]
-                      }
-                      id="POA/Representative Email"
-                      name="POA/Representative Email"
-                      onBlur={[Function]}
-                      onChange={[Function]}
-                      readOnly={false}
-                      type="text"
-                      value="tom.brady@caseflow.gov"
-                    />
+                    <div
+                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                    >
+                      <div
+                        class="cf-select__single-value css-1uccc91-singleValue"
+                      >
+                        Pacific Time (US & Canada) (5:15 AM)
+                      </div>
+                      <div
+                        class="css-81nyic-Input"
+                      >
+                        <div
+                          class="cf-select__input"
+                          style="display: inline-block;"
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-labelledby="representative-tz-label"
+                            aria-owns="representative-tz-listbox"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            id="representative-tz"
+                            role="combobox"
+                            spellcheck="false"
+                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-6q0nyr-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
                   </div>
+                  <input
+                    name="representativeTz"
+                    type="hidden"
+                    value="America/Los_Angeles"
+                  />
                 </div>
-              </TextField>
-              <HelperText
-                label="This email address will be used to send notifications for this hearing only."
-              >
-                <div
-                  className="helper-text"
-                >
-                  This email address will be used to send notifications for this hearing only.
-                </div>
-              </HelperText>
-            </HearingEmail>
+              </div>
+            </div>
+          </div>
+          <div
+            class="helper-text"
+          >
+            The hearing time in email notifications is calculated based on the timezone.
+          </div>
+        </div>
+        <div
+          class="usa-width-one-third"
+        >
+          <div
+            class="cf-form-textinput cf-inline-field   "
+          >
+            <label
+              for="POA/Representative Email"
+            >
+              <strong>
+                <span>
+                  POA/Representative Email
+                  <span
+                    class="cf-optional"
+                  >
+                    Optional
+                  </span>
+                </span>
+              </strong>
+            </label>
+            <div
+              class="input-container"
+            >
+              <input
+                aria-readonly="false"
+                class="cf-form-textinput cf-inline-field"
+                id="POA/Representative Email"
+                name="POA/Representative Email"
+                type="text"
+                value="tom.brady@caseflow.gov"
+              />
+            </div>
+          </div>
+          <div
+            class="helper-text"
+          >
+            This email address will be used to send notifications for this hearing only.
           </div>
         </div>
       </div>
     </div>
-  </ContentSection>
-</EmailNotificationFields>
+  </div>
+</div>
 `;
 
 exports[`Fields Display timezone and divider for Video 1`] = `
@@ -32608,32 +32564,22 @@ exports[`Fields Display timezone and divider for Video 1`] = `
 >
   <ContentSection>
     <div
-      className="cf-app-segment"
+      data-css-1571z6o=""
     >
-      <h2
-        data-css-3rhuy2=""
-      />
       <div
-        data-css-1571z6o=""
+        class="usa-grid"
+        id="email-section"
       >
         <div
-          className="usa-grid"
-          id="email-section"
+          class="usa-width-one-third"
+          data-css-150oin1=""
         >
           <div
-            className="usa-width-one-third"
-            data-css-150oin1=""
+            class=""
           >
-            <Timezone
-              hearingDayDate="2020-07-06"
-              label="Veteran Timezone"
-              name="appellantTz"
-              onChange={[Function]}
-              optional={true}
-              readOnly={false}
-              required={false}
-              time="8:15 AM Eastern Time (US & Canada)"
-              value="America/Los_Angeles"
+            <div
+              class="cf-form-dropdown dropdown-appellantTz"
+              data-css-1gh7024=""
             >
               <SearchableDropdown
                 clearOnSelect={false}
@@ -33429,37 +33375,14 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                 value="America/Los_Angeles"
               >
                 <div
-                  className=""
+                  class=" css-2b097c-container"
                 >
                   <div
                     className="cf-form-dropdown dropdown-appellantTz"
                     data-css-1dzedb9=""
                   >
-                    <label
-                      className="question-label"
-                      htmlFor="appellant-tz"
-                      id="appellant-tz-label"
-                    >
-                      <strong>
-                        <FormLabel
-                          label="Veteran Timezone"
-                          name="Veteran Timezone"
-                          optional={true}
-                          required={false}
-                        >
-                          <span>
-                            Veteran Timezone
-                            <span
-                              className="cf-optional"
-                            >
-                              Optional
-                            </span>
-                          </span>
-                        </FormLabel>
-                      </strong>
-                    </label>
                     <div
-                      className="cf-select"
+                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
                     >
                       <StateManager
                         cache={false}
@@ -48713,124 +48636,29 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                       </StateManager>
                     </div>
                   </div>
+                  <input
+                    name="appellantTz"
+                    type="hidden"
+                    value="America/Los_Angeles"
+                  />
                 </div>
-              </SearchableDropdown>
-            </Timezone>
-            <HelperText
-              label="The hearing time in email notifications is calculated based on the timezone."
-            >
-              <div
-                className="helper-text"
-              >
-                The hearing time in email notifications is calculated based on the timezone.
               </div>
-            </HelperText>
+            </div>
           </div>
           <div
-            className="usa-width-one-third"
+            class="helper-text"
           >
-            <HearingEmail
-              disabled={false}
-              email="tom.brady@caseflow.gov"
-              emailType="appellantEmailAddress"
-              helperLabel="This email address will be used to send notifications for this hearing only."
-              label="Veteran Email"
-              optional={true}
-              required={false}
-              showHelper={true}
-            >
-              <TextField
-                className={
-                  Array [
-                    "cf-form-textinput cf-inline-field",
-                  ]
-                }
-                name="Veteran Email"
-                onChange={[Function]}
-                optional={true}
-                readOnly={false}
-                required={false}
-                strongLabel={true}
-                type="text"
-                useAriaLabel={false}
-                value="tom.brady@caseflow.gov"
-              >
-                <div
-                  className="cf-form-textinput cf-inline-field   "
-                >
-                  <label
-                    htmlFor="Veteran Email"
-                  >
-                    <strong>
-                      <FormLabel
-                        name="Veteran Email"
-                        optional={true}
-                        required={false}
-                      >
-                        <span>
-                          Veteran Email
-                          <span
-                            className="cf-optional"
-                          >
-                            Optional
-                          </span>
-                        </span>
-                      </FormLabel>
-                    </strong>
-                  </label>
-                  <div
-                    className="input-container"
-                  >
-                    <input
-                      aria-readonly={false}
-                      className={
-                        Array [
-                          "cf-form-textinput cf-inline-field",
-                        ]
-                      }
-                      id="Veteran Email"
-                      name="Veteran Email"
-                      onBlur={[Function]}
-                      onChange={[Function]}
-                      readOnly={false}
-                      type="text"
-                      value="tom.brady@caseflow.gov"
-                    />
-                  </div>
-                </div>
-              </TextField>
-              <HelperText
-                label="This email address will be used to send notifications for this hearing only."
-              >
-                <div
-                  className="helper-text"
-                >
-                  This email address will be used to send notifications for this hearing only.
-                </div>
-              </HelperText>
-            </HearingEmail>
+            The hearing time in email notifications is calculated based on the timezone.
           </div>
         </div>
         <div
-          className="cf-help-divider"
-        />
-        <div
-          className="usa-grid css-1jfbwxw"
+          class="usa-width-one-third"
         >
           <div
-            className="usa-width-one-third"
-            data-css-150oin1=""
+            class="cf-form-textinput cf-inline-field   "
           >
-            <Timezone
-              hearingDayDate="2020-07-06"
-              label="POA/Representative Timezone"
-              name="representativeTz"
-              onChange={[Function]}
-              optional={false}
-              readOnly={false}
-              required={true}
-              time="8:15 AM Eastern Time (US & Canada)"
-              value="America/Los_Angeles"
+            <label
+              for="Veteran Email"
             >
               <SearchableDropdown
                 clearOnSelect={false}
@@ -64916,100 +64744,184 @@ exports[`Fields Display timezone and divider for Video 1`] = `
             <HelperText
               label="The hearing time in email notifications is calculated based on the timezone."
             >
-              <div
-                className="helper-text"
-              >
-                The hearing time in email notifications is calculated based on the timezone.
-              </div>
-            </HelperText>
+              <input
+                aria-readonly="false"
+                class="cf-form-textinput cf-inline-field"
+                id="Veteran Email"
+                name="Veteran Email"
+                type="text"
+                value="tom.brady@caseflow.gov"
+              />
+            </div>
           </div>
           <div
-            className="usa-width-one-third"
+            class="helper-text"
           >
-            <HearingEmail
-              disabled={false}
-              email="tom.brady@caseflow.gov"
-              emailType="representativeEmailAddress"
-              helperLabel="This email address will be used to send notifications for this hearing only."
-              label="POA/Representative Email"
-              optional={true}
-              showHelper={true}
-              update={[Function]}
+            This email address will be used to send notifications for this hearing only.
+          </div>
+        </div>
+      </div>
+      <div
+        class="cf-help-divider"
+      />
+      <div
+        class="usa-grid css-1jfbwxw"
+      >
+        <div
+          class="usa-width-one-third"
+          data-css-150oin1=""
+        >
+          <div
+            class=""
+          >
+            <div
+              class="cf-form-dropdown dropdown-representativeTz"
+              data-css-1gh7024=""
             >
-              <TextField
-                className={
-                  Array [
-                    "cf-form-textinput cf-inline-field",
-                  ]
-                }
-                name="POA/Representative Email"
-                onChange={[Function]}
-                optional={true}
-                readOnly={false}
-                required={false}
-                strongLabel={true}
-                type="text"
-                useAriaLabel={false}
-                value="tom.brady@caseflow.gov"
+              <label
+                class="question-label"
+                for="representative-tz"
+                id="representative-tz-label"
+              >
+                <strong>
+                  <span>
+                    POA/Representative Timezone
+                    <span
+                      class="cf-required"
+                    >
+                      Required
+                    </span>
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
               >
                 <div
-                  className="cf-form-textinput cf-inline-field   "
+                  class=" css-2b097c-container"
                 >
-                  <label
-                    htmlFor="POA/Representative Email"
-                  >
-                    <strong>
-                      <FormLabel
-                        name="POA/Representative Email"
-                        optional={true}
-                        required={false}
-                      >
-                        <span>
-                          POA/Representative Email
-                          <span
-                            className="cf-optional"
-                          >
-                            Optional
-                          </span>
-                        </span>
-                      </FormLabel>
-                    </strong>
-                  </label>
                   <div
-                    className="input-container"
+                    class="cf-select__control css-yk16xz-control"
                   >
-                    <input
-                      aria-readonly={false}
-                      className={
-                        Array [
-                          "cf-form-textinput cf-inline-field",
-                        ]
-                      }
-                      id="POA/Representative Email"
-                      name="POA/Representative Email"
-                      onBlur={[Function]}
-                      onChange={[Function]}
-                      readOnly={false}
-                      type="text"
-                      value="tom.brady@caseflow.gov"
-                    />
+                    <div
+                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                    >
+                      <div
+                        class="cf-select__single-value css-1uccc91-singleValue"
+                      >
+                        Pacific Time (US & Canada) (5:15 AM)
+                      </div>
+                      <div
+                        class="css-81nyic-Input"
+                      >
+                        <div
+                          class="cf-select__input"
+                          style="display: inline-block;"
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-labelledby="representative-tz-label"
+                            aria-owns="representative-tz-listbox"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            id="representative-tz"
+                            role="combobox"
+                            spellcheck="false"
+                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-6q0nyr-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
                   </div>
+                  <input
+                    name="representativeTz"
+                    type="hidden"
+                    value="America/Los_Angeles"
+                  />
                 </div>
-              </TextField>
-              <HelperText
-                label="This email address will be used to send notifications for this hearing only."
-              >
-                <div
-                  className="helper-text"
-                >
-                  This email address will be used to send notifications for this hearing only.
-                </div>
-              </HelperText>
-            </HearingEmail>
+              </div>
+            </div>
+          </div>
+          <div
+            class="helper-text"
+          >
+            The hearing time in email notifications is calculated based on the timezone.
+          </div>
+        </div>
+        <div
+          class="usa-width-one-third"
+        >
+          <div
+            class="cf-form-textinput cf-inline-field   "
+          >
+            <label
+              for="POA/Representative Email"
+            >
+              <strong>
+                <span>
+                  POA/Representative Email
+                  <span
+                    class="cf-optional"
+                  >
+                    Optional
+                  </span>
+                </span>
+              </strong>
+            </label>
+            <div
+              class="input-container"
+            >
+              <input
+                aria-readonly="false"
+                class="cf-form-textinput cf-inline-field"
+                id="POA/Representative Email"
+                name="POA/Representative Email"
+                type="text"
+                value="tom.brady@caseflow.gov"
+              />
+            </div>
+          </div>
+          <div
+            class="helper-text"
+          >
+            This email address will be used to send notifications for this hearing only.
           </div>
         </div>
       </div>
     </div>
-  </ContentSection>
-</EmailNotificationFields>
+  </div>
+</div>
 `;

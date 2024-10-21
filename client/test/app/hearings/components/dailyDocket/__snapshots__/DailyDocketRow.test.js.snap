@@ -9,7 +9,6 @@ exports[`DailyDocketRow renders banner correctly for conference link error 1`] =
       data-css-1ogvp9u=""
     >
       <div>
-        
         <div
           class="cf-loading-button-symbol cf-small-loader-symbol"
         >
@@ -83,7 +82,7 @@ exports[`DailyDocketRow renders correctly for non virtual, DVC  1`] = `
                     Accessibility hack
                   </span>
                 </span>
-                 
+
               </label>
             </div>
           </div>
@@ -123,6 +122,7 @@ exports[`DailyDocketRow renders correctly for non virtual, DVC  1`] = `
         </span>
         <span
           data-css-ypm9ui=""
+          data-testid="tooltip-testid"
         >
           <div
             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -131,7 +131,7 @@ exports[`DailyDocketRow renders correctly for non virtual, DVC  1`] = `
             role="tooltip"
           >
             <style>
-              
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -205,13 +205,13 @@ exports[`DailyDocketRow renders correctly for non virtual, DVC  1`] = `
         border-right-style: solid;
         border-right-width: 6px;
     }
-  
+
             </style>
             Hearing Request
           </div>
         </span>
         220428-968
-         
+
         <br />
         <br />
         <div
@@ -392,7 +392,7 @@ exports[`DailyDocketRow renders correctly for non virtual, DVC  1`] = `
                 >
                   Yes, Waive 90 Day Hold
                 </span>
-                 
+
               </label>
             </div>
           </div>
@@ -421,7 +421,7 @@ exports[`DailyDocketRow renders correctly for non virtual, DVC  1`] = `
                 >
                   Transcript Requested
                 </span>
-                 
+
               </label>
             </div>
           </div>
@@ -720,6 +720,7 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
         </span>
         <span
           data-css-ypm9ui=""
+          data-testid="tooltip-testid"
         >
           <div
             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -728,7 +729,7 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
             role="tooltip"
           >
             <style>
-              
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -802,13 +803,13 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
         border-right-style: solid;
         border-right-width: 6px;
     }
-  
+
             </style>
             Hearing Request
           </div>
         </span>
         220428-968
-         
+
         <br />
         <br />
         <div
@@ -989,7 +990,7 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
                 >
                   Transcript Requested
                 </span>
-                 
+
               </label>
             </div>
           </div>
@@ -1186,9 +1187,9 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
             data-css-1rsr754=""
           >
             Fri 4/29/2022
-             
+
             <br />
-             
+
             <br />
           </div>
         </div>
@@ -1204,7 +1205,7 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
               <strong>
                 <span>
                   Hearing Time
-                   
+
                 </span>
               </strong>
             </legend>
@@ -1409,6 +1410,7 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
         </span>
         <span
           data-css-ypm9ui=""
+          data-testid="tooltip-testid"
         >
           <div
             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -1417,7 +1419,7 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
             role="tooltip"
           >
             <style>
-              
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -1491,13 +1493,13 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
         border-right-style: solid;
         border-right-width: 6px;
     }
-  
+
             </style>
             Hearing Request
           </div>
         </span>
         220428-968
-         
+
         <br />
         <br />
         <div
@@ -1670,7 +1672,7 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
                 >
                   Transcript Requested
                 </span>
-                 
+
               </label>
             </div>
           </div>
@@ -1817,9 +1819,9 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
             data-css-1rsr754=""
           >
             Fri 4/29/2022
-             
+
             <br />
-             
+
             <br />
           </div>
         </div>
@@ -1835,7 +1837,7 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
               <strong>
                 <span>
                   Hearing Time
-                   
+
                 </span>
               </strong>
             </legend>
@@ -2031,7 +2033,7 @@ exports[`DailyDocketRow renders correctly for non virtual, attorney 1`] = `
                     Accessibility hack
                   </span>
                 </span>
-                 
+
               </label>
             </div>
           </div>
@@ -2071,6 +2073,7 @@ exports[`DailyDocketRow renders correctly for non virtual, attorney 1`] = `
         </span>
         <span
           data-css-ypm9ui=""
+          data-testid="tooltip-testid"
         >
           <div
             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -2079,7 +2082,7 @@ exports[`DailyDocketRow renders correctly for non virtual, attorney 1`] = `
             role="tooltip"
           >
             <style>
-              
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -2153,13 +2156,13 @@ exports[`DailyDocketRow renders correctly for non virtual, attorney 1`] = `
         border-right-style: solid;
         border-right-width: 6px;
     }
-  
+
             </style>
             Hearing Request
           </div>
         </span>
         220428-968
-         
+
         <br />
         <br />
         <div
@@ -2340,7 +2343,7 @@ exports[`DailyDocketRow renders correctly for non virtual, attorney 1`] = `
                 >
                   Yes, Waive 90 Day Hold
                 </span>
-                 
+
               </label>
             </div>
           </div>
@@ -2369,7 +2372,7 @@ exports[`DailyDocketRow renders correctly for non virtual, attorney 1`] = `
                 >
                   Transcript Requested
                 </span>
-                 
+
               </label>
             </div>
           </div>
@@ -2668,6 +2671,7 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
         </span>
         <span
           data-css-ypm9ui=""
+          data-testid="tooltip-testid"
         >
           <div
             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -2676,7 +2680,7 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
             role="tooltip"
           >
             <style>
-              
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -2750,13 +2754,13 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
         border-right-style: solid;
         border-right-width: 6px;
     }
-  
+
             </style>
             Hearing Request
           </div>
         </span>
         220428-968
-         
+
         <br />
         <br />
         <div
@@ -2937,7 +2941,7 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
                 >
                   Transcript Requested
                 </span>
-                 
+
               </label>
             </div>
           </div>
@@ -3134,9 +3138,9 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
             data-css-1rsr754=""
           >
             Fri 4/29/2022
-             
+
             <br />
-             
+
             <br />
           </div>
         </div>
@@ -3152,7 +3156,7 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
               <strong>
                 <span>
                   Hearing Time
-                   
+
                 </span>
               </strong>
             </legend>
@@ -3348,7 +3352,7 @@ exports[`DailyDocketRow renders correctly for non virtual, judge 1`] = `
                     Accessibility hack
                   </span>
                 </span>
-                 
+
               </label>
             </div>
           </div>
@@ -3388,6 +3392,7 @@ exports[`DailyDocketRow renders correctly for non virtual, judge 1`] = `
         </span>
         <span
           data-css-ypm9ui=""
+          data-testid="tooltip-testid"
         >
           <div
             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -3396,7 +3401,7 @@ exports[`DailyDocketRow renders correctly for non virtual, judge 1`] = `
             role="tooltip"
           >
             <style>
-              
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -3470,13 +3475,13 @@ exports[`DailyDocketRow renders correctly for non virtual, judge 1`] = `
         border-right-style: solid;
         border-right-width: 6px;
     }
-  
+
             </style>
             Hearing Request
           </div>
         </span>
         220428-968
-         
+
         <br />
         <br />
         <div
@@ -3657,7 +3662,7 @@ exports[`DailyDocketRow renders correctly for non virtual, judge 1`] = `
                 >
                   Yes, Waive 90 Day Hold
                 </span>
-                 
+
               </label>
             </div>
           </div>
@@ -3686,7 +3691,7 @@ exports[`DailyDocketRow renders correctly for non virtual, judge 1`] = `
                 >
                   Transcript Requested
                 </span>
-                 
+
               </label>
             </div>
           </div>
@@ -3985,6 +3990,7 @@ exports[`DailyDocketRow renders correctly for virtual 1`] = `
         </span>
         <span
           data-css-1e67hgq=""
+          data-testid="tooltip-testid"
         >
           <div
             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -3993,7 +3999,7 @@ exports[`DailyDocketRow renders correctly for virtual 1`] = `
             role="tooltip"
           >
             <style>
-              
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -4067,13 +4073,13 @@ exports[`DailyDocketRow renders correctly for virtual 1`] = `
         border-right-style: solid;
         border-right-width: 6px;
     }
-  
+
             </style>
             Hearing Request
           </div>
         </span>
         220428-970
-         
+
         <br />
         <br />
         <div
@@ -4251,7 +4257,7 @@ exports[`DailyDocketRow renders correctly for virtual 1`] = `
                 >
                   Transcript Requested
                 </span>
-                 
+
               </label>
             </div>
           </div>
@@ -4448,9 +4454,9 @@ exports[`DailyDocketRow renders correctly for virtual 1`] = `
             data-css-1rsr754=""
           >
             Fri 4/29/2022
-             
+
             <br />
-             
+
             <br />
           </div>
         </div>

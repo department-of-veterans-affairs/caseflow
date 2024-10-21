@@ -1,11 +1,8 @@
 import React from 'react';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
-import { DetailsHeader } from 'app/hearings/components/details/DetailsHeader';
-import { HearingConversion } from 'app/hearings/components/HearingConversion';
-import { TranscriptionFormSection } from 'app/hearings/components/details/TranscriptionFormSection';
-import { VirtualHearingFields } from 'app/hearings/components/details/VirtualHearingFields';
-import { detailsStore, hearingDetailsWrapper } from 'test/data/stores/hearingsStore';
-import { mount } from 'enzyme';
+import { detailsStore } from 'test/data/stores/hearingsStore';
 import {
   anyUser,
   legacyHearing,
@@ -15,8 +12,7 @@ import {
   amaWebexHearing,
   legacyWebexHearing
 } from 'test/data';
-import Button from 'app/components/Button';
-import DateSelector from 'app/components/DateSelector';
+
 import Details from 'app/hearings/components/Details';
 import DetailsForm from 'app/hearings/components/details/DetailsForm';
 import HearingTypeDropdown from 'app/hearings/components/details/HearingTypeDropdown';
@@ -35,21 +31,15 @@ const goBackSpy = jest.fn();
 const onReceiveAlertsSpy = jest.fn();
 const onReceiveTransitioningAlertSpy = jest.fn();
 const transitionAlertSpy = jest.fn();
+const mockSubmit = jest.fn(() => Promise.resolve());
 
-const detailButtonsTest = (node) => {
-  node.find(Button).map((n, i) => {
-    // Expect the cancel button first
-    if (i === 0) {
-      return expect(n.prop('name')).toEqual('Cancel');
-    }
-
-    return expect(n.prop('name')).toEqual('Save');
-  });
-};
+const convertRegex = (str) => {
+  return new RegExp(str, 'i');
+}
 
 describe('Details', () => {
   test('Matches snapshot with default props', () => {
-    const details = mount(
+    const {asFragment} = customRender(
       <Details
         hearing={defaultHearing}
         saveHearing={saveHearingSpy}
@@ -60,17 +50,21 @@ describe('Details', () => {
         transitionAlert={transitionAlertSpy}
       />,
       {
-        wrappingComponent: hearingDetailsWrapper(
-          anyUser,
-          defaultHearing
-        ),
-        wrappingComponentProps: { store: detailsStore },
+        wrapper: Wrapper,
+        wrapperProps: {
+          store: detailsStore,
+          user: anyUser,
+          hearing: defaultHearing
+        },
       }
     );
 
+    const veteranName = `${defaultHearing.veteranFirstName} ${defaultHearing.veteranLastName}`;
     // Assertions
-    expect(details.find(DetailsHeader)).toHaveLength(1);
-    expect(details.find(DetailsForm)).toHaveLength(1);
+    expect(screen.getByText(convertRegex(veteranName))).toBeInTheDocument();
+    expect(screen.getByRole('heading', {name: convertRegex(veteranName)})).toBeInTheDocument();
+    expect(screen.getAllByText(convertRegex("Hearing Details")).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole('heading', {name: convertRegex("Hearing Details")}).length).toBeGreaterThan(0);
 
     // Ensure that the virtualHearing form is not displayed by default
     expect(details.find(VirtualHearingFields).prop('virtualHearing')).toEqual(
@@ -81,16 +75,20 @@ describe('Details', () => {
     expect(details.find(VirtualHearingFields).children()).toHaveLength(1);
 
     // Ensure the transcription section is displayed by default for ama hearings
-    expect(details.find(TranscriptionFormSection)).toHaveLength(1);
+    expect(screen.getByRole('heading', {name: "Transcription Details"})).toBeInTheDocument();
+    expect(screen.getByRole('heading', {name: "Transcription Problem"})).toBeInTheDocument();
+    expect(screen.getByRole('heading', {name: "Transcription Request"})).toBeInTheDocument();
 
     // Ensure the save and cancel buttons are present
-    detailButtonsTest(details);
+    expect(screen.getByRole('button', {name: "Cancel"})).toBeInTheDocument();
+    expect(screen.getByRole('button', {name: "Save"})).toBeInTheDocument();
 
-    expect(details).toMatchSnapshot();
+    // expect(details).toMatchSnapshot();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Displays HearingConversion when converting from central', () => {
-    const details = mount(
+    const {asFragment} = customRender(
       <Details
         hearing={amaHearing}
         saveHearing={saveHearingSpy}
@@ -101,29 +99,38 @@ describe('Details', () => {
         transitionAlert={transitionAlertSpy}
       />,
       {
-        wrappingComponent: hearingDetailsWrapper(
-          anyUser,
-          amaHearing
-        ),
-        wrappingComponentProps: { store: detailsStore },
+        wrapper: Wrapper,
+        wrapperProps: {
+          store: detailsStore,
+          user: anyUser,
+          hearing: amaHearing
+        },
       }
     );
-    const dropdown = details.find(HearingTypeDropdown).find(SearchableDropdown);
+
+    const dropdown = screen.getByRole('combobox', {name: "Hearing Type"});
+
+    expect(screen.getByRole('heading', {name: "Email Notifications"})).toBeInTheDocument();
+    expect(screen.queryByRole('heading', {name: "Convert to Central Hearing"})).not.toBeInTheDocument()
 
     // Change the value of the hearing type
-    dropdown.find('Select').simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
-    dropdown.find('Select').simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
-    dropdown.find('Select').simulate('keyDown', { key: 'Enter', keyCode: 13 });
+    fireEvent.keyDown(dropdown, { key: 'ArrowDown' });
+    fireEvent.keyDown(dropdown, { key: 'ArrowDown' });
+    fireEvent.keyDown(dropdown, { key: 'Enter' });
 
     // Ensure the modal is displayed
-    expect(details.find(EmailConfirmationModal)).toHaveLength(0);
-    expect(details.find(HearingConversion)).toHaveLength(1);
+    expect(screen.queryByRole('heading', {name: "Email Notifications"})).not.toBeInTheDocument();
+    expect(screen.getByRole('heading', {name: "Convert to Central Hearing"})).toBeInTheDocument();
+    expect(screen.queryByLabelText("POA/Representative Hearing Time")).toBeNull();
+    expect(screen.queryByLabelText("POA/Representative Email")).toBeNull();
+    expect(screen.queryByLabelText("Veteran Hearing Time")).toBeNull();
+    expect(screen.queryByLabelText("Appellant Hearing Time")).toBeNull();
 
-    expect(toJson(details, { noKey: true })).toMatchSnapshot();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Displays HearingConversion when converting from video', () => {
-    const details = mount(
+    const {asFragment} = customRender(
       <Details
         hearing={defaultHearing}
         saveHearing={saveHearingSpy}
@@ -134,33 +141,39 @@ describe('Details', () => {
         transitionAlert={transitionAlertSpy}
       />,
       {
-        wrappingComponent: hearingDetailsWrapper(
-          anyUser,
-          defaultHearing
-        ),
-        wrappingComponentProps: { store: detailsStore },
+        wrapper: Wrapper,
+        wrapperProps: {
+          store: detailsStore,
+          user: anyUser,
+          hearing: defaultHearing
+        },
       }
     );
-    const dropdown = details.find(HearingTypeDropdown).find(SearchableDropdown);
+
+    const dropdown = screen.getByRole('combobox', {name: "Hearing Type"});
+
+    expect(screen.getByRole('heading', {name: "Email Notifications"})).toBeInTheDocument();
+    expect(screen.queryByRole('heading', {name: "Convert to Virtual Hearing"})).not.toBeInTheDocument()
 
     // Change the value of the hearing type
-    dropdown.
-      find('Select').
-      simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
-    dropdown.
-      find('Select').
-      simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
-    dropdown.find('Select').simulate('keyDown', { key: 'Enter', keyCode: 13 });
+    fireEvent.keyDown(dropdown, { key: 'ArrowDown' });
+    fireEvent.keyDown(dropdown, { key: 'ArrowDown' });
+    fireEvent.keyDown(dropdown, { key: 'Enter' });
 
     // Ensure the modal is displayed
-    expect(details.find(EmailConfirmationModal)).toHaveLength(0);
-    expect(details.find(HearingConversion)).toHaveLength(1);
+    expect(screen.queryByRole('heading', {name: "Email Notifications"})).not.toBeInTheDocument();
+    expect(screen.getByRole('heading', {name: "Convert to Virtual Hearing"})).toBeInTheDocument()
+    expect(screen.queryByLabelText("POA/Representative Hearing Time")).toBeNull();
+    expect(screen.queryByLabelText("POA/Representative Email")).toBeNull();
+    expect(screen.queryByLabelText("Veteran Hearing Time")).toBeNull();
+    expect(screen.queryByLabelText("Appellant Hearing Time")).toBeNull();
 
-    expect(details).toMatchSnapshot();
+    // expect(details).toMatchSnapshot();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Displays HearingConversion when converting from virtual', () => {
-    const details = mount(
+    const {asFragment} = customRender(
       <Details
         hearing={virtualHearing}
         saveHearing={saveHearingSpy}
@@ -171,31 +184,33 @@ describe('Details', () => {
         transitionAlert={transitionAlertSpy}
       />,
       {
-        wrappingComponent: hearingDetailsWrapper(
-          anyUser,
-          defaultHearing
-        ),
-        wrappingComponentProps: { store: detailsStore },
+        wrapper: Wrapper,
+        wrapperProps: {
+          store: detailsStore,
+          user: anyUser,
+          hearing: defaultHearing
+        },
       }
     );
-    const dropdown = details.find(HearingTypeDropdown).find(SearchableDropdown);
+
+    const dropdown = screen.getByRole('combobox', {name: "Hearing Type"});
+
+    expect(screen.getByRole('heading', {name: "Email Notifications"})).toBeInTheDocument();
+    expect(screen.queryByRole('heading', {name: "Convert to Virtual Hearing"})).not.toBeInTheDocument()
 
     // Change the value of the hearing type
-    dropdown.
-      find('Select').
-      simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
-    dropdown.
-      find('Select').
-      simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
-    dropdown.find('Select').simulate('keyDown', { key: 'Enter', keyCode: 13 });
+    fireEvent.keyDown(dropdown, { key: 'ArrowDown' });
+    fireEvent.keyDown(dropdown, { key: 'ArrowDown' });
+    fireEvent.keyDown(dropdown, { key: 'Enter' });
 
-    expect(details.find(HearingConversion)).toHaveLength(1);
+    expect(screen.queryByRole('heading', {name: "Email Notifications"})).not.toBeInTheDocument();
+    expect(screen.getByRole('heading', {name: "Convert to Virtual Hearing"})).toBeInTheDocument()
 
-    expect(toJson(details, { noKey: true })).toMatchSnapshot();
+    expect(asFragment()).toMatchSnapshot();
   });
 
-  test('Does not display EmailConfirmationModal when updating transcription details with AMA virtual hearing', () => {
-    const details = mount(
+  test('Does not display EmailConfirmationModal when updating transcription details with AMA virtual hearing', async () => {
+    const {container, asFragment} = customRender(
       <Details
         hearing={amaHearing}
         saveHearing={saveHearingSpy}
@@ -204,29 +219,40 @@ describe('Details', () => {
         onReceiveAlerts={onReceiveAlertsSpy}
         onReceiveTransitioningAlert={onReceiveTransitioningAlertSpy}
         transitionAlert={transitionAlertSpy}
+        submit={mockSubmit}
       />,
       {
-        wrappingComponent: hearingDetailsWrapper(
-          anyUser,
-          amaHearing
-        ),
-        wrappingComponentProps: { store: detailsStore },
+        wrapper: Wrapper,
+        wrapperProps: {
+          store: detailsStore,
+          user: anyUser,
+          hearing: amaHearing
+        },
       }
     );
 
     // Update the transcription sent date field
-    details.
-      find(TranscriptionRequestInputs).
-      find(DateSelector).
-      find('input').
-      simulate('change', { target: { value: '07/25/2020' } });
+    let dateSelector = container.querySelector('#copySentDate');
+    fireEvent.change(dateSelector, { target: { value: '2020-07-25' } });
 
-    // Click save
-    details.
-      find(Button).
-      findWhere((node) => node.prop('name') === 'Save').
-      find('button').
-      simulate('click');
+    // Verify the date change
+    dateSelector = container.querySelector('#copySentDate');
+    expect(dateSelector.value).toBe('2020-07-25');
+
+    // Click the save button
+    const saveButton = screen.getByRole('button', { name: /Save/i });
+    userEvent.click(saveButton);
+
+    // Wait for and check the loading state of saving the hearing
+    await waitFor(() => {
+      const loadingButtonDecision = screen.getByRole('button', { name: /Loading.../i });
+      expect(loadingButtonDecision).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Loading...' })).toBeInTheDocument();
+      expect(loadingButtonDecision).toBeDisabled();
+    });
+
+    dateSelector = container.querySelector('#copySentDate');
+    expect(dateSelector.value).toBe('2020-07-25');
 
     // Ensure the modal is not displayed
     expect(details.exists(EmailConfirmationModal)).toEqual(false);
@@ -364,7 +390,7 @@ describe('Details', () => {
   });
 
   test('Displays VirtualHearing details when there is a virtual hearing', () => {
-    const details = mount(
+    const {asFragment} = customRender(
       <Details
         hearing={amaHearing}
         saveHearing={saveHearingSpy}
@@ -375,22 +401,22 @@ describe('Details', () => {
         transitionAlert={transitionAlertSpy}
       />,
       {
-        wrappingComponent: hearingDetailsWrapper(
-          anyUser,
-          amaHearing
-        ),
-        wrappingComponentProps: { store: detailsStore },
+        wrapper: Wrapper,
+        wrapperProps: {
+          store: detailsStore,
+          user: anyUser,
+          hearing: amaHearing
+        },
       }
     );
 
     // Ensure that the virtualHearing form is not displayed by default
-    expect(details.find(VirtualHearingFields).prop('virtualHearing')).toEqual(
-      amaHearing.virtualHearing
-    );
-    expect(details.find(VirtualHearingFields).children().length).toBeGreaterThan(
-      0
-    );
-
-    expect(toJson(details, { noKey: true })).toMatchSnapshot();
+    expect(screen.getByRole('heading', {name: "Virtual Hearing Links"})).toBeInTheDocument();
+    expect(screen.getByText(convertRegex(amaHearing.virtualHearing.appellantEmail))).toBeInTheDocument();
+    expect(screen.getByText(convertRegex(amaHearing.virtualHearing.appellantEmail))).toBeInTheDocument();
+    expect(screen.getByText(convertRegex(amaHearing.virtualHearing.representativeEmail))).toBeInTheDocument();
+    expect(screen.getByText(convertRegex(amaHearing.virtualHearing.aliasWithHost))).toBeInTheDocument();
+    expect(screen.getByText(convertRegex(amaHearing.virtualHearing.guestPin))).toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
   });
 });

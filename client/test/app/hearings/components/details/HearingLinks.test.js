@@ -160,7 +160,7 @@ describe('HearingLinks', () => {
   });
 
   test('Only displays Guest Link when user is not a host', () => {
-    const form = mount(
+    const {asFragment} =render(
       <HearingLinks
         hearing={amaHearing}
         isVirtual
@@ -169,8 +169,11 @@ describe('HearingLinks', () => {
       />
     );
 
-    expect(form).toMatchSnapshot();
-    expect(form.find(VirtualHearingLink)).toHaveLength(1);
+    expect(asFragment).toMatchSnapshot();
+
+    const elementsWithTestId = screen.getAllByTestId("strong-element-test-id");
+    expect(elementsWithTestId.length).toEqual(1);
+
     // Ensure it's the guest link
     expect(form.find(VirtualHearingLink).prop('link')).toEqual(amaHearing.virtualHearing.guestLink);
   });

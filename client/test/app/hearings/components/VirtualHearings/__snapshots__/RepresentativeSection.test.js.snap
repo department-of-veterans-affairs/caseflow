@@ -129,52 +129,24 @@ exports[`RepresentativeSection Displays timezone when showTimezoneField is passe
     label="Power of Attorney (POA)"
     showDivider={true}
   >
-    <div
-      className="cf-help-divider"
-    />
-    <h2>
-      Power of Attorney (POA)
-    </h2>
-    <AddressLine
-      addressCity="SAN FRANCISCO"
-      addressLine1="9999 MISSION ST"
-      addressState="CA"
-      addressZip="94103"
-      name="PARALYZED VETERANS OF AMERICA, INC."
-    >
-      <ReadOnly
-        text="PARALYZED VETERANS OF AMERICA, INC.
-9999 MISSION ST
-SAN FRANCISCO, CA 94103"
-      >
-        <div
-          data-css-1a5irm0=""
-        >
-          <pre>
-            PARALYZED VETERANS OF AMERICA, INC.
+    <pre>
+      PARALYZED VETERANS OF AMERICA, INC.
 9999 MISSION ST
 SAN FRANCISCO, CA 94103
-          </pre>
-        </div>
-      </ReadOnly>
-    </AddressLine>
+    </pre>
+  </div>
+  <div
+    class="usa-grid css-1jfbwxw"
+  >
     <div
-      className="usa-grid css-1jfbwxw"
+      class="usa-width-one-half"
     >
       <div
-        className="usa-width-one-half"
+        class=""
       >
-        <Timezone
-          hearingDayDate="2025-01-01"
-          label="POA/Representative Timezone"
-          name="representativeTz"
-          onChange={[Function]}
-          optional={true}
-          readOnly={false}
-          required={false}
-          roTimezone="America/New_York"
-          time="06:00"
-          value="America/Los_Angeles"
+        <div
+          class="cf-form-dropdown dropdown-representativeTz"
+          data-css-1gh7024=""
         >
           <SearchableDropdown
             clearOnSelect={false}
@@ -970,37 +942,14 @@ SAN FRANCISCO, CA 94103
             value="America/Los_Angeles"
           >
             <div
-              className=""
+              class=" css-2b097c-container"
             >
               <div
                 className="cf-form-dropdown dropdown-representativeTz"
                 data-css-1dzedb9=""
               >
-                <label
-                  className="question-label"
-                  htmlFor="representative-tz"
-                  id="representative-tz-label"
-                >
-                  <strong>
-                    <FormLabel
-                      label="POA/Representative Timezone"
-                      name="POA/Representative Timezone"
-                      optional={true}
-                      required={false}
-                    >
-                      <span>
-                        POA/Representative Timezone
-                        <span
-                          className="cf-optional"
-                        >
-                          Optional
-                        </span>
-                      </span>
-                    </FormLabel>
-                  </strong>
-                </label>
                 <div
-                  className="cf-select"
+                  class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
                 >
                   <StateManager
                     cache={false}
@@ -16254,103 +16203,65 @@ SAN FRANCISCO, CA 94103
                   </StateManager>
                 </div>
               </div>
+              <input
+                name="representativeTz"
+                type="hidden"
+                value="America/Los_Angeles"
+              />
             </div>
-          </SearchableDropdown>
-        </Timezone>
-        <HelperText
-          label="The hearing time in email notifications is calculated based on the timezone."
-        >
-          <div
-            className="helper-text"
-          >
-            The hearing time in email notifications is calculated based on the timezone.
           </div>
-        </HelperText>
+        </div>
+      </div>
+      <div
+        class="helper-text"
+      >
+        The hearing time in email notifications is calculated based on the timezone.
       </div>
     </div>
+  </div>
+  <div
+    class="usa-grid css-1jfbwxw"
+  >
     <div
-      className="usa-grid css-1jfbwxw"
+      class="usa-width-one-half"
     >
       <div
-        className="usa-width-one-half"
+        class="cf-form-textinput cf-inline-field   "
       >
-        <HearingEmail
-          helperLabel="This email address will be used to send notifications for this hearing only."
-          label="POA/Representative Email (for these notifications only)"
-          optional={true}
-          showHelper={true}
-          type="change_to_virtual"
-          update={[MockFunction]}
+        <label
+          for="POA/Representative Email (for these notifications only)"
         >
-          <TextField
-            className={
-              Array [
-                "cf-form-textinput cf-inline-field",
-              ]
-            }
+          <strong>
+            <span>
+              POA/Representative Email (for these notifications only)
+              <span
+                class="cf-optional"
+              >
+                Optional
+              </span>
+            </span>
+          </strong>
+        </label>
+        <div
+          class="input-container"
+        >
+          <input
+            class="cf-form-textinput cf-inline-field"
+            id="POA/Representative Email (for these notifications only)"
             name="POA/Representative Email (for these notifications only)"
-            onChange={[Function]}
-            optional={true}
-            required={false}
-            strongLabel={true}
             type="text"
-            useAriaLabel={false}
-          >
-            <div
-              className="cf-form-textinput cf-inline-field   "
-            >
-              <label
-                htmlFor="POA/Representative Email (for these notifications only)"
-              >
-                <strong>
-                  <FormLabel
-                    name="POA/Representative Email (for these notifications only)"
-                    optional={true}
-                    required={false}
-                  >
-                    <span>
-                      POA/Representative Email (for these notifications only)
-                      <span
-                        className="cf-optional"
-                      >
-                        Optional
-                      </span>
-                    </span>
-                  </FormLabel>
-                </strong>
-              </label>
-              <div
-                className="input-container"
-              >
-                <input
-                  className={
-                    Array [
-                      "cf-form-textinput cf-inline-field",
-                    ]
-                  }
-                  id="POA/Representative Email (for these notifications only)"
-                  name="POA/Representative Email (for these notifications only)"
-                  onBlur={[Function]}
-                  onChange={[Function]}
-                  type="text"
-                />
-              </div>
-            </div>
-          </TextField>
-          <HelperText
-            label="This email address will be used to send notifications for this hearing only."
-          >
-            <div
-              className="helper-text"
-            >
-              This email address will be used to send notifications for this hearing only.
-            </div>
-          </HelperText>
-        </HearingEmail>
+            value=""
+          />
+        </div>
+      </div>
+      <div
+        class="helper-text"
+      >
+        This email address will be used to send notifications for this hearing only.
       </div>
     </div>
-  </VirtualHearingSection>
-</RepresentativeSection>
+  </div>
+</DocumentFragment>
 `;
 
 exports[`RepresentativeSection Does not allow editing emails when read-only 1`] = `
@@ -16482,70 +16393,32 @@ exports[`RepresentativeSection Does not allow editing emails when read-only 1`] 
     label="Power of Attorney (POA)"
     showDivider={true}
   >
-    <div
-      className="cf-help-divider"
-    />
-    <h2>
-      Power of Attorney (POA)
-    </h2>
-    <AddressLine
-      addressCity="SAN FRANCISCO"
-      addressLine1="9999 MISSION ST"
-      addressState="CA"
-      addressZip="94103"
-      name="PARALYZED VETERANS OF AMERICA, INC."
-    >
-      <ReadOnly
-        text="PARALYZED VETERANS OF AMERICA, INC.
-9999 MISSION ST
-SAN FRANCISCO, CA 94103"
-      >
-        <div
-          data-css-1a5irm0=""
-        >
-          <pre>
-            PARALYZED VETERANS OF AMERICA, INC.
+    <pre>
+      PARALYZED VETERANS OF AMERICA, INC.
 9999 MISSION ST
 SAN FRANCISCO, CA 94103
-          </pre>
-        </div>
-      </ReadOnly>
-    </AddressLine>
+    </pre>
+  </div>
+  <div
+    class="usa-grid css-1jfbwxw"
+  >
     <div
-      className="usa-grid css-1jfbwxw"
+      class="usa-width-one-half"
     >
       <div
-        className="usa-width-one-half"
+        data-css-1a5irm0=""
+        data-testid="read-only-testid"
       >
-        <HearingEmail
-          helperLabel="This email address will be used to send notifications for this hearing only."
-          label="POA/Representative Email (for these notifications only)"
-          optional={true}
-          readOnly={true}
-          showHelper={true}
-          type="change_to_virtual"
-          update={[MockFunction]}
-        >
-          <ReadOnly
-            label="POA/Representative Email (for these notifications only)"
-            text="None"
-          >
-            <div
-              data-css-1a5irm0=""
-            >
-              <strong>
-                POA/Representative Email (for these notifications only)
-              </strong>
-              <pre>
-                None
-              </pre>
-            </div>
-          </ReadOnly>
-        </HearingEmail>
+        <strong>
+          POA/Representative Email (for these notifications only)
+        </strong>
+        <pre>
+          None
+        </pre>
       </div>
     </div>
-  </VirtualHearingSection>
-</RepresentativeSection>
+  </div>
+</DocumentFragment>
 `;
 
 exports[`RepresentativeSection Does not display address when formFieldsOnly = true 1`] = `
@@ -16677,106 +16550,45 @@ exports[`RepresentativeSection Does not display address when formFieldsOnly = tr
     showDivider={true}
   >
     <div
-      className="cf-help-divider"
-    />
-    <strong>
-       
-      Power of Attorney (POA)
-    </strong>
-    <ReadOnly
-      text="PARALYZED VETERANS OF AMERICA, INC."
+      class="usa-width-one-half"
     >
       <div
-        data-css-1a5irm0=""
+        class="cf-form-textinput cf-inline-field   "
       >
-        <pre>
-          PARALYZED VETERANS OF AMERICA, INC.
-        </pre>
-      </div>
-    </ReadOnly>
-    <div
-      className="usa-grid css-1jfbwxw"
-    >
-      <div
-        className="usa-width-one-half"
-      >
-        <HearingEmail
-          helperLabel="This email address will be used to send notifications for this hearing only."
-          label="POA/Representative Email (for these notifications only)"
-          optional={true}
-          showHelper={true}
-          type="change_to_virtual"
-          update={[MockFunction]}
+        <label
+          for="POA/Representative Email (for these notifications only)"
         >
-          <TextField
-            className={
-              Array [
-                "cf-form-textinput cf-inline-field",
-              ]
-            }
+          <strong>
+            <span>
+              POA/Representative Email (for these notifications only)
+              <span
+                class="cf-optional"
+              >
+                Optional
+              </span>
+            </span>
+          </strong>
+        </label>
+        <div
+          class="input-container"
+        >
+          <input
+            class="cf-form-textinput cf-inline-field"
+            id="POA/Representative Email (for these notifications only)"
             name="POA/Representative Email (for these notifications only)"
-            onChange={[Function]}
-            optional={true}
-            required={false}
-            strongLabel={true}
             type="text"
-            useAriaLabel={false}
-          >
-            <div
-              className="cf-form-textinput cf-inline-field   "
-            >
-              <label
-                htmlFor="POA/Representative Email (for these notifications only)"
-              >
-                <strong>
-                  <FormLabel
-                    name="POA/Representative Email (for these notifications only)"
-                    optional={true}
-                    required={false}
-                  >
-                    <span>
-                      POA/Representative Email (for these notifications only)
-                      <span
-                        className="cf-optional"
-                      >
-                        Optional
-                      </span>
-                    </span>
-                  </FormLabel>
-                </strong>
-              </label>
-              <div
-                className="input-container"
-              >
-                <input
-                  className={
-                    Array [
-                      "cf-form-textinput cf-inline-field",
-                    ]
-                  }
-                  id="POA/Representative Email (for these notifications only)"
-                  name="POA/Representative Email (for these notifications only)"
-                  onBlur={[Function]}
-                  onChange={[Function]}
-                  type="text"
-                />
-              </div>
-            </div>
-          </TextField>
-          <HelperText
-            label="This email address will be used to send notifications for this hearing only."
-          >
-            <div
-              className="helper-text"
-            >
-              This email address will be used to send notifications for this hearing only.
-            </div>
-          </HelperText>
-        </HearingEmail>
+            value=""
+          />
+        </div>
+      </div>
+      <div
+        class="helper-text"
+      >
+        This email address will be used to send notifications for this hearing only.
       </div>
     </div>
-  </VirtualHearingSection>
-</RepresentativeSection>
+  </div>
+</DocumentFragment>
 `;
 
 exports[`RepresentativeSection Matches snapshot with default props 1`] = `
@@ -16907,118 +16719,55 @@ exports[`RepresentativeSection Matches snapshot with default props 1`] = `
     label="Power of Attorney (POA)"
     showDivider={true}
   >
-    <div
-      className="cf-help-divider"
-    />
-    <h2>
-      Power of Attorney (POA)
-    </h2>
-    <AddressLine
-      addressCity="SAN FRANCISCO"
-      addressLine1="9999 MISSION ST"
-      addressState="CA"
-      addressZip="94103"
-      name="PARALYZED VETERANS OF AMERICA, INC."
-    >
-      <ReadOnly
-        text="PARALYZED VETERANS OF AMERICA, INC.
-9999 MISSION ST
-SAN FRANCISCO, CA 94103"
-      >
-        <div
-          data-css-1a5irm0=""
-        >
-          <pre>
-            PARALYZED VETERANS OF AMERICA, INC.
+    <pre>
+      PARALYZED VETERANS OF AMERICA, INC.
 9999 MISSION ST
 SAN FRANCISCO, CA 94103
-          </pre>
-        </div>
-      </ReadOnly>
-    </AddressLine>
+    </pre>
+  </div>
+  <div
+    class="usa-grid css-1jfbwxw"
+  >
     <div
-      className="usa-grid css-1jfbwxw"
+      class="usa-width-one-half"
     >
       <div
-        className="usa-width-one-half"
+        class="cf-form-textinput cf-inline-field   "
       >
-        <HearingEmail
-          helperLabel="This email address will be used to send notifications for this hearing only."
-          label="POA/Representative Email (for these notifications only)"
-          optional={true}
-          showHelper={true}
-          type="change_to_virtual"
-          update={[MockFunction]}
+        <label
+          for="POA/Representative Email (for these notifications only)"
         >
-          <TextField
-            className={
-              Array [
-                "cf-form-textinput cf-inline-field",
-              ]
-            }
+          <strong>
+            <span>
+              POA/Representative Email (for these notifications only)
+              <span
+                class="cf-optional"
+              >
+                Optional
+              </span>
+            </span>
+          </strong>
+        </label>
+        <div
+          class="input-container"
+        >
+          <input
+            class="cf-form-textinput cf-inline-field"
+            id="POA/Representative Email (for these notifications only)"
             name="POA/Representative Email (for these notifications only)"
-            onChange={[Function]}
-            optional={true}
-            required={false}
-            strongLabel={true}
             type="text"
-            useAriaLabel={false}
-          >
-            <div
-              className="cf-form-textinput cf-inline-field   "
-            >
-              <label
-                htmlFor="POA/Representative Email (for these notifications only)"
-              >
-                <strong>
-                  <FormLabel
-                    name="POA/Representative Email (for these notifications only)"
-                    optional={true}
-                    required={false}
-                  >
-                    <span>
-                      POA/Representative Email (for these notifications only)
-                      <span
-                        className="cf-optional"
-                      >
-                        Optional
-                      </span>
-                    </span>
-                  </FormLabel>
-                </strong>
-              </label>
-              <div
-                className="input-container"
-              >
-                <input
-                  className={
-                    Array [
-                      "cf-form-textinput cf-inline-field",
-                    ]
-                  }
-                  id="POA/Representative Email (for these notifications only)"
-                  name="POA/Representative Email (for these notifications only)"
-                  onBlur={[Function]}
-                  onChange={[Function]}
-                  type="text"
-                />
-              </div>
-            </div>
-          </TextField>
-          <HelperText
-            label="This email address will be used to send notifications for this hearing only."
-          >
-            <div
-              className="helper-text"
-            >
-              This email address will be used to send notifications for this hearing only.
-            </div>
-          </HelperText>
-        </HearingEmail>
+            value=""
+          />
+        </div>
+      </div>
+      <div
+        class="helper-text"
+      >
+        This email address will be used to send notifications for this hearing only.
       </div>
     </div>
-  </VirtualHearingSection>
-</RepresentativeSection>
+  </div>
+</DocumentFragment>
 `;
 
 exports[`RepresentativeSection Shows Representative name when representative address blank 1`] = `
@@ -17177,111 +16926,45 @@ exports[`RepresentativeSection Shows Representative name when representative add
     showDivider={true}
   >
     <div
-      className="cf-help-divider"
-    />
-    <h2>
-      Power of Attorney (POA)
-    </h2>
-    <AddressLine
-      name="PARALYZED VETERANS OF AMERICA, INC."
-    >
-      <ReadOnly
-        text="PARALYZED VETERANS OF AMERICA, INC.
-"
-      >
-        <div
-          data-css-1a5irm0=""
-        >
-          <pre>
-            PARALYZED VETERANS OF AMERICA, INC.
-
-          </pre>
-        </div>
-      </ReadOnly>
-    </AddressLine>
-    <div
-      className="usa-grid css-1jfbwxw"
+      class="usa-width-one-half"
     >
       <div
-        className="usa-width-one-half"
+        class="cf-form-textinput cf-inline-field   "
       >
-        <HearingEmail
-          helperLabel="This email address will be used to send notifications for this hearing only."
-          label="POA/Representative Email (for these notifications only)"
-          optional={true}
-          showHelper={true}
-          type="change_to_virtual"
-          update={[MockFunction]}
+        <label
+          for="POA/Representative Email (for these notifications only)"
         >
-          <TextField
-            className={
-              Array [
-                "cf-form-textinput cf-inline-field",
-              ]
-            }
+          <strong>
+            <span>
+              POA/Representative Email (for these notifications only)
+              <span
+                class="cf-optional"
+              >
+                Optional
+              </span>
+            </span>
+          </strong>
+        </label>
+        <div
+          class="input-container"
+        >
+          <input
+            class="cf-form-textinput cf-inline-field"
+            id="POA/Representative Email (for these notifications only)"
             name="POA/Representative Email (for these notifications only)"
-            onChange={[Function]}
-            optional={true}
-            required={false}
-            strongLabel={true}
             type="text"
-            useAriaLabel={false}
-          >
-            <div
-              className="cf-form-textinput cf-inline-field   "
-            >
-              <label
-                htmlFor="POA/Representative Email (for these notifications only)"
-              >
-                <strong>
-                  <FormLabel
-                    name="POA/Representative Email (for these notifications only)"
-                    optional={true}
-                    required={false}
-                  >
-                    <span>
-                      POA/Representative Email (for these notifications only)
-                      <span
-                        className="cf-optional"
-                      >
-                        Optional
-                      </span>
-                    </span>
-                  </FormLabel>
-                </strong>
-              </label>
-              <div
-                className="input-container"
-              >
-                <input
-                  className={
-                    Array [
-                      "cf-form-textinput cf-inline-field",
-                    ]
-                  }
-                  id="POA/Representative Email (for these notifications only)"
-                  name="POA/Representative Email (for these notifications only)"
-                  onBlur={[Function]}
-                  onChange={[Function]}
-                  type="text"
-                />
-              </div>
-            </div>
-          </TextField>
-          <HelperText
-            label="This email address will be used to send notifications for this hearing only."
-          >
-            <div
-              className="helper-text"
-            >
-              This email address will be used to send notifications for this hearing only.
-            </div>
-          </HelperText>
-        </HearingEmail>
+            value=""
+          />
+        </div>
+      </div>
+      <div
+        class="helper-text"
+      >
+        This email address will be used to send notifications for this hearing only.
       </div>
     </div>
-  </VirtualHearingSection>
-</RepresentativeSection>
+  </div>
+</DocumentFragment>
 `;
 
 exports[`RepresentativeSection Shows Representative not present message when no representative 1`] = `
@@ -17439,103 +17122,43 @@ exports[`RepresentativeSection Shows Representative not present message when no 
     showDivider={true}
   >
     <div
-      className="cf-help-divider"
-    />
-    <h2>
-      Power of Attorney (POA)
-    </h2>
-    <ReadOnly
-      text="The Veteran does not have a representative recorded in VBMS"
+      class="usa-width-one-half"
     >
       <div
-        data-css-1a5irm0=""
+        class="cf-form-textinput cf-inline-field   "
       >
-        <pre>
-          The Veteran does not have a representative recorded in VBMS
-        </pre>
-      </div>
-    </ReadOnly>
-    <div
-      className="usa-grid css-1jfbwxw"
-    >
-      <div
-        className="usa-width-one-half"
-      >
-        <HearingEmail
-          helperLabel="This email address will be used to send notifications for this hearing only."
-          label="POA/Representative Email (for these notifications only)"
-          optional={true}
-          showHelper={true}
-          type="change_to_virtual"
-          update={[MockFunction]}
+        <label
+          for="POA/Representative Email (for these notifications only)"
         >
-          <TextField
-            className={
-              Array [
-                "cf-form-textinput cf-inline-field",
-              ]
-            }
+          <strong>
+            <span>
+              POA/Representative Email (for these notifications only)
+              <span
+                class="cf-optional"
+              >
+                Optional
+              </span>
+            </span>
+          </strong>
+        </label>
+        <div
+          class="input-container"
+        >
+          <input
+            class="cf-form-textinput cf-inline-field"
+            id="POA/Representative Email (for these notifications only)"
             name="POA/Representative Email (for these notifications only)"
-            onChange={[Function]}
-            optional={true}
-            required={false}
-            strongLabel={true}
             type="text"
-            useAriaLabel={false}
-          >
-            <div
-              className="cf-form-textinput cf-inline-field   "
-            >
-              <label
-                htmlFor="POA/Representative Email (for these notifications only)"
-              >
-                <strong>
-                  <FormLabel
-                    name="POA/Representative Email (for these notifications only)"
-                    optional={true}
-                    required={false}
-                  >
-                    <span>
-                      POA/Representative Email (for these notifications only)
-                      <span
-                        className="cf-optional"
-                      >
-                        Optional
-                      </span>
-                    </span>
-                  </FormLabel>
-                </strong>
-              </label>
-              <div
-                className="input-container"
-              >
-                <input
-                  className={
-                    Array [
-                      "cf-form-textinput cf-inline-field",
-                    ]
-                  }
-                  id="POA/Representative Email (for these notifications only)"
-                  name="POA/Representative Email (for these notifications only)"
-                  onBlur={[Function]}
-                  onChange={[Function]}
-                  type="text"
-                />
-              </div>
-            </div>
-          </TextField>
-          <HelperText
-            label="This email address will be used to send notifications for this hearing only."
-          >
-            <div
-              className="helper-text"
-            >
-              This email address will be used to send notifications for this hearing only.
-            </div>
-          </HelperText>
-        </HearingEmail>
+            value=""
+          />
+        </div>
+      </div>
+      <div
+        class="helper-text"
+      >
+        This email address will be used to send notifications for this hearing only.
       </div>
     </div>
-  </VirtualHearingSection>
-</RepresentativeSection>
+  </div>
+</DocumentFragment>
 `;

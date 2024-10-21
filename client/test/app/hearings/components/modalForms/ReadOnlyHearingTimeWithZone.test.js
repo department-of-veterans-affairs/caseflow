@@ -2,7 +2,8 @@ import React from 'react';
 
 import { ReadOnlyHearingTimeWithZone } from 'app/hearings/components/modalForms/ReadOnlyHearingTimeWithZone';
 import { ReadOnly } from 'app/hearings/components/details/ReadOnly';
-import { mount } from 'enzyme';
+
+import { render, screen } from '@testing-library/react';
 import moment from 'moment-timezone/moment-timezone';
 import { shortZoneName } from 'app/hearings/utils';
 
@@ -50,15 +51,15 @@ describe('ReadOnlyHearingTimeWithZone', () => {
 
         expect(form).toMatchSnapshot();
         if (hearingStartTime === null) {
-          expect(form.exists('ReadOnly')).toBe(false);
+          expect(screen.queryByText('Hearing Time')).toBeNull();
         } else {
           expect(form.exists('ReadOnly')).toBe(true);
           const dateTime = moment(startTimeInEasternTime).tz(timezone);
 
           if (zoneName === 'Eastern') {
-            expect(
-              form.find(ReadOnly).prop('text')
-            ).toEqual(`${dateTime.format('h:mm A')} ${zoneName}`);
+            const expectedText = `${dateTime.format('h:mm A')} ${zoneName}`;
+            const textElements = screen.queryAllByText(expectedText);
+            expect(textElements).not.toHaveLength(0);
           } else {
             expect(
               form.find(ReadOnly).prop('text')

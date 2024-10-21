@@ -3753,7 +3753,475 @@ exports[`EmailConfirmationModal DateTime sub-component Displays formatted hearin
     </strong>
     6:00 AM Eastern Time (US & Canada)
   </div>
-</DateTime>
+  <div>
+    <strong>
+      Location: 
+    </strong>
+    Somewhere
+  </div>
+  <div
+    data-css-18v9q72=""
+    data-testid="read-only-emails-testid"
+  >
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
+    >
+      <strong>
+        Veteran Hearing Time
+      </strong>
+      <pre>
+        3:00 AM Pacific Time (US & Canada)
+      </pre>
+    </div>
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
+    >
+      <strong>
+        Veteran Email
+      </strong>
+      <pre>
+        tom.brady@caseflow.gov
+      </pre>
+    </div>
+    <div
+      class="cf-help-divider"
+    />
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
+    >
+      <strong>
+        POA/Representative Hearing Time
+      </strong>
+      <pre>
+        3:00 AM Pacific Time (US & Canada)
+      </pre>
+    </div>
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
+    >
+      <strong>
+        POA/Representative Email
+      </strong>
+      <pre>
+        tom.brady@caseflow.gov
+      </pre>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`EmailConfirmationModal ChangeFromVirtual sub-component Displays ReadOnlyEmails 1`] = `
+<DocumentFragment>
+  <div
+    data-testid="datetime-testid"
+  >
+    <strong>
+      Hearing Date: 
+    </strong>
+    07/06/2020
+    <br />
+    <strong>
+      Hearing Time: 
+    </strong>
+    6:00 AM Eastern Time (US & Canada)
+  </div>
+  <div
+    data-css-18v9q72=""
+    data-testid="read-only-emails-testid"
+  >
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
+    >
+      <strong>
+        Veteran Hearing Time
+      </strong>
+      <pre>
+        3:00 AM Pacific Time (US & Canada)
+      </pre>
+    </div>
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
+    >
+      <strong>
+        Veteran Email
+      </strong>
+      <pre>
+        tom.brady@caseflow.gov
+      </pre>
+    </div>
+    <div
+      class="cf-help-divider"
+    />
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
+    >
+      <strong>
+        POA/Representative Hearing Time
+      </strong>
+      <pre>
+        3:00 AM Pacific Time (US & Canada)
+      </pre>
+    </div>
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
+    >
+      <strong>
+        POA/Representative Email
+      </strong>
+      <pre>
+        tom.brady@caseflow.gov
+      </pre>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`EmailConfirmationModal ChangeHearingTime sub-component Displays ReadOnlyEmails component 1`] = `
+<DocumentFragment>
+  <div
+    data-testid="datetime-testid"
+  >
+    <strong>
+      Hearing Date: 
+    </strong>
+    07/06/2020
+    <br />
+    <strong>
+      Hearing Time: 
+    </strong>
+    6:00 AM Eastern Time (US & Canada)
+  </div>
+  <div
+    data-css-18v9q72=""
+    data-testid="read-only-emails-testid"
+  >
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
+    >
+      <strong>
+        Veteran Hearing Time
+      </strong>
+      <pre>
+        3:00 AM Pacific Time (US & Canada)
+      </pre>
+    </div>
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
+    >
+      <strong>
+        Veteran Email
+      </strong>
+      <pre>
+        tom.brady@caseflow.gov
+      </pre>
+    </div>
+    <div
+      class="cf-help-divider"
+    />
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
+    >
+      <strong>
+        POA/Representative Hearing Time
+      </strong>
+      <pre>
+        3:00 AM Pacific Time (US & Canada)
+      </pre>
+    </div>
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
+    >
+      <strong>
+        POA/Representative Email
+      </strong>
+      <pre>
+        tom.brady@caseflow.gov
+      </pre>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays appellant email error when present 1`] = `
+<DocumentFragment>
+  <div
+    data-testid="datetime-testid"
+  >
+    <strong>
+      Hearing Date: 
+    </strong>
+    07/06/2020
+    <br />
+    <strong>
+      Hearing Time: 
+    </strong>
+    6:00 AM Eastern Time (US & Canada)
+  </div>
+  <div
+    class="cf-form-textinput  usa-input-error "
+  >
+    <label
+      for="appellant-email"
+    >
+      <strong>
+        <span>
+          Veteran Email
+        </span>
+      </strong>
+    </label>
+    <span
+      class="usa-input-error-message"
+      tabindex="0"
+    >
+      Something went wrong...
+    </span>
+    <div
+      class="input-container"
+    >
+      <input
+        class="cf-form-textinput"
+        id="appellant-email"
+        name="appellant-email"
+        type="text"
+        value="Bob.Smith@test.com"
+      />
+    </div>
+  </div>
+  <div
+    class="cf-form-textinput   "
+  >
+    <label
+      for="representative-email"
+    >
+      <strong>
+        <span>
+          POA/Representative Email
+        </span>
+      </strong>
+    </label>
+    <div
+      class="input-container"
+    >
+      <input
+        class="cf-form-textinput"
+        id="representative-email"
+        name="representative-email"
+        type="text"
+        value="tom.brady@caseflow.gov"
+      />
+    </div>
+  </div>
+  <p>
+    Changes to the Veteran and POA / Representative emails will be used to send notifications
+    <strong>
+      for this hearing only
+    </strong>
+    .
+  </p>
+</DocumentFragment>
+`;
+
+exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays input for appellant and representative email 1`] = `
+<DocumentFragment>
+  <div
+    data-testid="datetime-testid"
+  >
+    <strong>
+      Hearing Date: 
+    </strong>
+    07/06/2020
+    <br />
+    <strong>
+      Hearing Time: 
+    </strong>
+    6:00 AM Eastern Time (US & Canada)
+  </div>
+  <div
+    class="cf-form-textinput   "
+  >
+    <label
+      for="appellant-email"
+    >
+      <strong>
+        <span>
+          Veteran Email
+        </span>
+      </strong>
+    </label>
+    <div
+      class="input-container"
+    >
+      <input
+        class="cf-form-textinput"
+        id="appellant-email"
+        name="appellant-email"
+        type="text"
+        value="Bob.Smith@test.com"
+      />
+    </div>
+  </div>
+  <div
+    class="cf-form-textinput   "
+  >
+    <label
+      for="representative-email"
+    >
+      <strong>
+        <span>
+          POA/Representative Email
+        </span>
+      </strong>
+    </label>
+    <div
+      class="input-container"
+    >
+      <input
+        class="cf-form-textinput"
+        id="representative-email"
+        name="representative-email"
+        type="text"
+        value="tom.brady@caseflow.gov"
+      />
+    </div>
+  </div>
+  <p>
+    Changes to the Veteran and POA / Representative emails will be used to send notifications
+    <strong>
+      for this hearing only
+    </strong>
+    .
+  </p>
+</DocumentFragment>
+`;
+
+exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays representative email error when present 1`] = `
+<DocumentFragment>
+  <div
+    data-testid="datetime-testid"
+  >
+    <strong>
+      Hearing Date: 
+    </strong>
+    07/06/2020
+    <br />
+    <strong>
+      Hearing Time: 
+    </strong>
+    6:00 AM Eastern Time (US & Canada)
+  </div>
+  <div
+    class="cf-form-textinput   "
+  >
+    <label
+      for="appellant-email"
+    >
+      <strong>
+        <span>
+          Veteran Email
+        </span>
+      </strong>
+    </label>
+    <div
+      class="input-container"
+    >
+      <input
+        class="cf-form-textinput"
+        id="appellant-email"
+        name="appellant-email"
+        type="text"
+        value="Bob.Smith@test.com"
+      />
+    </div>
+  </div>
+  <div
+    class="cf-form-textinput  usa-input-error "
+  >
+    <label
+      for="representative-email"
+    >
+      <strong>
+        <span>
+          POA/Representative Email
+        </span>
+      </strong>
+    </label>
+    <span
+      class="usa-input-error-message"
+      tabindex="0"
+    >
+      Something went wrong...
+    </span>
+    <div
+      class="input-container"
+    >
+      <input
+        class="cf-form-textinput"
+        id="representative-email"
+        name="representative-email"
+        type="text"
+        value="tom.brady@caseflow.gov"
+      />
+    </div>
+  </div>
+  <p>
+    Changes to the Veteran and POA / Representative emails will be used to send notifications
+    <strong>
+      for this hearing only
+    </strong>
+    .
+  </p>
+</DocumentFragment>
+`;
+
+exports[`EmailConfirmationModal DateTime sub-component Displays divider for formerly Central hearings 1`] = `
+<DocumentFragment>
+  <div
+    data-testid="datetime-testid"
+  >
+    <strong>
+      Hearing Date: 
+    </strong>
+    07/11/2020
+    <br />
+    <strong>
+      Hearing Time: 
+    </strong>
+    8:30 AM Eastern Time (US & Canada)
+    <div
+      class="cf-help-divider"
+    />
+  </div>
+</DocumentFragment>
+`;
+
+exports[`EmailConfirmationModal DateTime sub-component Displays formatted hearing date and time 1`] = `
+<DocumentFragment>
+  <div
+    data-testid="datetime-testid"
+  >
+    <strong>
+      Hearing Date: 
+    </strong>
+    07/06/2020
+    <br />
+    <strong>
+      Hearing Time: 
+    </strong>
+    6:00 AM Eastern Time (US & Canada)
+  </div>
+</DocumentFragment>
 `;
 
 exports[`EmailConfirmationModal Displays ChangeEmailOrTimezone component when type is change_email_or_timezone 1`] = `
@@ -3892,138 +4360,42 @@ exports[`EmailConfirmationModal Displays ChangeEmailOrTimezone component when ty
   }
 >
   <div>
-    <Modal
-      buttons={Array []}
-      cancelButton={
-        <Button
-          classNames={
-            Array [
-              "cf-submit",
-            ]
-          }
-          disabled={false}
-          linkStyling={true}
-          loading={false}
-          name="cancel-virtual-hearing"
-          onClick={[Function]}
-          type="button"
-          willNeverBeLoading={false}
-        >
-          Cancel
-        </Button>
-      }
-      className=""
-      closeHandler={[Function]}
-      confirmButton={
-        <Button
-          classNames={
-            Array [
-              "usa-button-secondary",
-            ]
-          }
-          disabled={false}
-          linkStyling={false}
-          loading={false}
-          name="submit-virtual-hearing"
-          onClick={[Function]}
-          type="button"
-          willNeverBeLoading={false}
-        >
-          Update and Send Email
-        </Button>
-      }
-      scrollLock={true}
-      title="Update Timezone"
+    <section
+      aria-describedby="modal_id-desc"
+      aria-labelledby="modal_id-title"
+      aria-modal="true"
+      class="cf-modal active "
+      id="modal_id"
+      role="dialog"
     >
-      <section
-        aria-describedby="modal_id-desc"
-        aria-labelledby="modal_id-title"
-        aria-modal="true"
-        className="cf-modal active "
-        id="modal_id"
-        role="dialog"
+      <div
+        class="cf-modal-body"
+        id=""
       >
-        <TouchProvider>
-          <ScrollLock
-            accountForScrollbars={true}
-          >
-            <Sheet
-              styles="body {
-      box-sizing: border-box !important;
-      overflow: hidden !important;
-      position: relative !important;
-      
-      padding-right: 1024px !important;
-    }"
-            />
-          </ScrollLock>
-        </TouchProvider>
-        <div
-          className="cf-modal-body"
-          id=""
+        <button
+          class="cf-modal-close"
+          id="Update-Timezone-button-id-close"
+          type="button"
         >
-          <button
-            className="cf-modal-close"
-            id="Update-Timezone-button-id-close"
-            onClick={[Function]}
-            type="button"
+          <span
+            class="usa-sr-only"
           >
-            <span
-              className="usa-sr-only"
-            >
-              Close
-            </span>
-            <CloseIcon
-              className="cf-icon-close"
-              color="#212121"
-              size={55}
-            >
-              <svg
-                className="cf-icon-close"
-                height={55}
-                viewBox="0 0 55 55"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <title>
-                  close
-                </title>
-                <g
-                  fill="#212121"
-                >
-                  <path
-                    d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
-                  />
-                </g>
-              </svg>
-            </CloseIcon>
-          </button>
-          <div
-            style={
-              Object {
-                "display": "flex",
-                "flexWrap": "wrap",
-              }
-            }
+            Close
+          </span>
+          <svg
+            class="cf-icon-close"
+            height="55"
+            viewBox="0 0 55 55"
+            xmlns="http://www.w3.org/2000/svg"
           >
-            <h1
-              id="modal_id-title"
-              style={
-                Object {
-                  "flex": 1,
-                }
-              }
+            <title>
+              close
+            </title>
+            <g
+              fill="#212121"
             >
-              Update Timezone
-            </h1>
-            <div
-              data-css-2flkvz=""
-            >
-              <p
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "An email notification for the hearing will be sent to:",
-                  }
-                }
+              <path
+                d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
               />
               <ChangeEmailOrTimezone
                 appellantEmailError={null}
@@ -4312,74 +4684,59 @@ exports[`EmailConfirmationModal Displays ChangeEmailOrTimezone component when ty
           <div
             className="cf-modal-controls"
           >
-            <div>
-              <span
-                className="cf-push-right"
-              >
-                <Button
-                  classNames={
-                    Array [
-                      "usa-button-secondary",
-                    ]
-                  }
-                  disabled={false}
-                  linkStyling={false}
-                  loading={false}
-                  name="submit-virtual-hearing"
-                  onClick={[Function]}
-                  type="button"
-                  willNeverBeLoading={false}
-                >
-                  <span>
-                    <button
-                      className="usa-button-secondary usa-button"
-                      disabled={false}
-                      id="button-submit-virtual-hearing"
-                      onClick={[Function]}
-                      type="button"
-                    >
-                      Update and Send Email
-                    </button>
-                  </span>
-                </Button>
-              </span>
-              <span
-                className="cf-push-left"
-              >
-                <Button
-                  classNames={
-                    Array [
-                      "cf-submit",
-                    ]
-                  }
-                  disabled={false}
-                  linkStyling={true}
-                  loading={false}
-                  name="cancel-virtual-hearing"
-                  onClick={[Function]}
-                  type="button"
-                  willNeverBeLoading={false}
-                >
-                  <span>
-                    <button
-                      className="cf-submit cf-btn-link usa-button"
-                      disabled={false}
-                      id="button-cancel-virtual-hearing"
-                      onClick={[Function]}
-                      type="button"
-                    >
-                      Cancel
-                    </button>
-                  </span>
-                </Button>
-              </span>
-            </div>
+            Update Timezone
+          </h1>
+          <div
+            data-css-2flkvz=""
+          >
+            <p>
+              An email notification for the hearing will be sent to:
+            </p>
+            <div
+              data-css-18v9q72=""
+              data-testid="read-only-emails-testid"
+            />
           </div>
         </div>
-      </section>
-    </Modal>
+        <div
+          class="cf-modal-divider"
+        />
+        <div
+          class="cf-modal-controls"
+        >
+          <div>
+            <span
+              class="cf-push-right"
+            >
+              <span>
+                <button
+                  class="usa-button-secondary usa-button"
+                  id="button-submit-virtual-hearing"
+                  type="button"
+                >
+                  Update and Send Email
+                </button>
+              </span>
+            </span>
+            <span
+              class="cf-push-left"
+            >
+              <span>
+                <button
+                  class="cf-submit cf-btn-link usa-button"
+                  id="button-cancel-virtual-hearing"
+                  type="button"
+                >
+                  Cancel
+                </button>
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
-</EmailConfirmationModal>
+</DocumentFragment>
 `;
 
 exports[`EmailConfirmationModal Displays ChangeFromVirtual component when type is change_from_virtual 1`] = `
@@ -4518,138 +4875,42 @@ exports[`EmailConfirmationModal Displays ChangeFromVirtual component when type i
   }
 >
   <div>
-    <Modal
-      buttons={Array []}
-      cancelButton={
-        <Button
-          classNames={
-            Array [
-              "cf-submit",
-            ]
-          }
-          disabled={false}
-          linkStyling={true}
-          loading={false}
-          name="cancel-virtual-hearing"
-          onClick={[Function]}
-          type="button"
-          willNeverBeLoading={false}
-        >
-          Cancel
-        </Button>
-      }
-      className=""
-      closeHandler={[Function]}
-      confirmButton={
-        <Button
-          classNames={
-            Array [
-              "usa-button-secondary",
-            ]
-          }
-          disabled={false}
-          linkStyling={false}
-          loading={false}
-          name="submit-virtual-hearing"
-          onClick={[Function]}
-          type="button"
-          willNeverBeLoading={false}
-        >
-          Change and Send Email
-        </Button>
-      }
-      scrollLock={true}
-      title="Change to Video Hearing"
+    <section
+      aria-describedby="modal_id-desc"
+      aria-labelledby="modal_id-title"
+      aria-modal="true"
+      class="cf-modal active "
+      id="modal_id"
+      role="dialog"
     >
-      <section
-        aria-describedby="modal_id-desc"
-        aria-labelledby="modal_id-title"
-        aria-modal="true"
-        className="cf-modal active "
-        id="modal_id"
-        role="dialog"
+      <div
+        class="cf-modal-body"
+        id=""
       >
-        <TouchProvider>
-          <ScrollLock
-            accountForScrollbars={true}
-          >
-            <Sheet
-              styles="body {
-      box-sizing: border-box !important;
-      overflow: hidden !important;
-      position: relative !important;
-      
-      padding-right: 1024px !important;
-    }"
-            />
-          </ScrollLock>
-        </TouchProvider>
-        <div
-          className="cf-modal-body"
-          id=""
+        <button
+          class="cf-modal-close"
+          id="Change-to-Video-Hearing-button-id-close"
+          type="button"
         >
-          <button
-            className="cf-modal-close"
-            id="Change-to-Video-Hearing-button-id-close"
-            onClick={[Function]}
-            type="button"
+          <span
+            class="usa-sr-only"
           >
-            <span
-              className="usa-sr-only"
-            >
-              Close
-            </span>
-            <CloseIcon
-              className="cf-icon-close"
-              color="#212121"
-              size={55}
-            >
-              <svg
-                className="cf-icon-close"
-                height={55}
-                viewBox="0 0 55 55"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <title>
-                  close
-                </title>
-                <g
-                  fill="#212121"
-                >
-                  <path
-                    d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
-                  />
-                </g>
-              </svg>
-            </CloseIcon>
-          </button>
-          <div
-            style={
-              Object {
-                "display": "flex",
-                "flexWrap": "wrap",
-              }
-            }
+            Close
+          </span>
+          <svg
+            class="cf-icon-close"
+            height="55"
+            viewBox="0 0 55 55"
+            xmlns="http://www.w3.org/2000/svg"
           >
-            <h1
-              id="modal_id-title"
-              style={
-                Object {
-                  "flex": 1,
-                }
-              }
+            <title>
+              close
+            </title>
+            <g
+              fill="#212121"
             >
-              Change to Video Hearing
-            </h1>
-            <div
-              data-css-2flkvz=""
-            >
-              <p
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "Emails will be sent to the Veteran and POA/Representative to notify them that:<ul><li>The hearing format has been changed to Video, and their Virtual hearing URL is no longer valid</li><li>They must appear in-person at their designated Regional Office or alternate hearing location</li></ul>",
-                  }
-                }
+              <path
+                d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
               />
               <ChangeFromVirtual
                 appellantEmailError={null}
@@ -5156,74 +5417,129 @@ exports[`EmailConfirmationModal Displays ChangeFromVirtual component when type i
           <div
             className="cf-modal-controls"
           >
-            <div>
-              <span
-                className="cf-push-right"
+            Change to Video Hearing
+          </h1>
+          <div
+            data-css-2flkvz=""
+          >
+            <p>
+              Emails will be sent to the Veteran and POA/Representative to notify them that:
+            </p>
+            <ul>
+              <li>
+                The hearing format has been changed to Video, and their Virtual hearing URL is no longer valid
+              </li>
+              <li>
+                They must appear in-person at their designated Regional Office or alternate hearing location
+              </li>
+            </ul>
+            <p />
+            <div
+              data-testid="datetime-testid"
+            >
+              <strong>
+                Hearing Date: 
+              </strong>
+              07/06/2020
+              <br />
+              <strong>
+                Hearing Time: 
+              </strong>
+              6:00 AM Eastern Time (US & Canada)
+            </div>
+            <div
+              data-css-18v9q72=""
+              data-testid="read-only-emails-testid"
+            >
+              <div
+                data-css-acl5jg=""
+                data-testid="read-only-testid"
               >
-                <Button
-                  classNames={
-                    Array [
-                      "usa-button-secondary",
-                    ]
-                  }
-                  disabled={false}
-                  linkStyling={false}
-                  loading={false}
-                  name="submit-virtual-hearing"
-                  onClick={[Function]}
-                  type="button"
-                  willNeverBeLoading={false}
-                >
-                  <span>
-                    <button
-                      className="usa-button-secondary usa-button"
-                      disabled={false}
-                      id="button-submit-virtual-hearing"
-                      onClick={[Function]}
-                      type="button"
-                    >
-                      Change and Send Email
-                    </button>
-                  </span>
-                </Button>
-              </span>
-              <span
-                className="cf-push-left"
+                <strong>
+                  Veteran Hearing Time
+                </strong>
+                <pre>
+                  3:00 AM Pacific Time (US & Canada)
+                </pre>
+              </div>
+              <div
+                data-css-acl5jg=""
+                data-testid="read-only-testid"
               >
-                <Button
-                  classNames={
-                    Array [
-                      "cf-submit",
-                    ]
-                  }
-                  disabled={false}
-                  linkStyling={true}
-                  loading={false}
-                  name="cancel-virtual-hearing"
-                  onClick={[Function]}
-                  type="button"
-                  willNeverBeLoading={false}
-                >
-                  <span>
-                    <button
-                      className="cf-submit cf-btn-link usa-button"
-                      disabled={false}
-                      id="button-cancel-virtual-hearing"
-                      onClick={[Function]}
-                      type="button"
-                    >
-                      Cancel
-                    </button>
-                  </span>
-                </Button>
-              </span>
+                <strong>
+                  Veteran Email
+                </strong>
+                <pre>
+                  tom.brady@caseflow.gov
+                </pre>
+              </div>
+              <div
+                class="cf-help-divider"
+              />
+              <div
+                data-css-acl5jg=""
+                data-testid="read-only-testid"
+              >
+                <strong>
+                  POA/Representative Hearing Time
+                </strong>
+                <pre>
+                  3:00 AM Pacific Time (US & Canada)
+                </pre>
+              </div>
+              <div
+                data-css-acl5jg=""
+                data-testid="read-only-testid"
+              >
+                <strong>
+                  POA/Representative Email
+                </strong>
+                <pre>
+                  tom.brady@caseflow.gov
+                </pre>
+              </div>
             </div>
           </div>
         </div>
-      </section>
-    </Modal>
+        <div
+          class="cf-modal-divider"
+        />
+        <div
+          class="cf-modal-controls"
+        >
+          <div>
+            <span
+              class="cf-push-right"
+            >
+              <span>
+                <button
+                  class="usa-button-secondary usa-button"
+                  id="button-submit-virtual-hearing"
+                  type="button"
+                >
+                  Change and Send Email
+                </button>
+              </span>
+            </span>
+            <span
+              class="cf-push-left"
+            >
+              <span>
+                <button
+                  class="cf-submit cf-btn-link usa-button"
+                  id="button-cancel-virtual-hearing"
+                  type="button"
+                >
+                  Cancel
+                </button>
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
-</EmailConfirmationModal>
+</DocumentFragment>
 `;
 
 exports[`EmailConfirmationModal Displays ChangeHearingTime component when type is change_hearing_time 1`] = `
@@ -5362,138 +5678,42 @@ exports[`EmailConfirmationModal Displays ChangeHearingTime component when type i
   }
 >
   <div>
-    <Modal
-      buttons={Array []}
-      cancelButton={
-        <Button
-          classNames={
-            Array [
-              "cf-submit",
-            ]
-          }
-          disabled={false}
-          linkStyling={true}
-          loading={false}
-          name="cancel-virtual-hearing"
-          onClick={[Function]}
-          type="button"
-          willNeverBeLoading={false}
-        >
-          Cancel
-        </Button>
-      }
-      className=""
-      closeHandler={[Function]}
-      confirmButton={
-        <Button
-          classNames={
-            Array [
-              "usa-button-secondary",
-            ]
-          }
-          disabled={false}
-          linkStyling={false}
-          loading={false}
-          name="submit-virtual-hearing"
-          onClick={[Function]}
-          type="button"
-          willNeverBeLoading={false}
-        >
-          Update Hearing Time
-        </Button>
-      }
-      scrollLock={true}
-      title="Update Hearing Time"
+    <section
+      aria-describedby="modal_id-desc"
+      aria-labelledby="modal_id-title"
+      aria-modal="true"
+      class="cf-modal active "
+      id="modal_id"
+      role="dialog"
     >
-      <section
-        aria-describedby="modal_id-desc"
-        aria-labelledby="modal_id-title"
-        aria-modal="true"
-        className="cf-modal active "
-        id="modal_id"
-        role="dialog"
+      <div
+        class="cf-modal-body"
+        id=""
       >
-        <TouchProvider>
-          <ScrollLock
-            accountForScrollbars={true}
-          >
-            <Sheet
-              styles="body {
-      box-sizing: border-box !important;
-      overflow: hidden !important;
-      position: relative !important;
-      
-      padding-right: 1024px !important;
-    }"
-            />
-          </ScrollLock>
-        </TouchProvider>
-        <div
-          className="cf-modal-body"
-          id=""
+        <button
+          class="cf-modal-close"
+          id="Update-Hearing-Time-button-id-close"
+          type="button"
         >
-          <button
-            className="cf-modal-close"
-            id="Update-Hearing-Time-button-id-close"
-            onClick={[Function]}
-            type="button"
+          <span
+            class="usa-sr-only"
           >
-            <span
-              className="usa-sr-only"
-            >
-              Close
-            </span>
-            <CloseIcon
-              className="cf-icon-close"
-              color="#212121"
-              size={55}
-            >
-              <svg
-                className="cf-icon-close"
-                height={55}
-                viewBox="0 0 55 55"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <title>
-                  close
-                </title>
-                <g
-                  fill="#212121"
-                >
-                  <path
-                    d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
-                  />
-                </g>
-              </svg>
-            </CloseIcon>
-          </button>
-          <div
-            style={
-              Object {
-                "display": "flex",
-                "flexWrap": "wrap",
-              }
-            }
+            Close
+          </span>
+          <svg
+            class="cf-icon-close"
+            height="55"
+            viewBox="0 0 55 55"
+            xmlns="http://www.w3.org/2000/svg"
           >
-            <h1
-              id="modal_id-title"
-              style={
-                Object {
-                  "flex": 1,
-                }
-              }
+            <title>
+              close
+            </title>
+            <g
+              fill="#212121"
             >
-              Update Hearing Time
-            </h1>
-            <div
-              data-css-2flkvz=""
-            >
-              <p
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "Email notifications will be sent to the Veteran, POA / Representative, and VLJ.",
-                  }
-                }
+              <path
+                d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
               />
               <ChangeHearingTime
                 appellantEmailError={null}
@@ -6000,74 +6220,120 @@ exports[`EmailConfirmationModal Displays ChangeHearingTime component when type i
           <div
             className="cf-modal-controls"
           >
-            <div>
-              <span
-                className="cf-push-right"
+            Update Hearing Time
+          </h1>
+          <div
+            data-css-2flkvz=""
+          >
+            <p>
+              Email notifications will be sent to the Veteran, POA / Representative, and VLJ.
+            </p>
+            <div
+              data-testid="datetime-testid"
+            >
+              <strong>
+                Hearing Date: 
+              </strong>
+              07/06/2020
+              <br />
+              <strong>
+                Hearing Time: 
+              </strong>
+              6:00 AM Eastern Time (US & Canada)
+            </div>
+            <div
+              data-css-18v9q72=""
+              data-testid="read-only-emails-testid"
+            >
+              <div
+                data-css-acl5jg=""
+                data-testid="read-only-testid"
               >
-                <Button
-                  classNames={
-                    Array [
-                      "usa-button-secondary",
-                    ]
-                  }
-                  disabled={false}
-                  linkStyling={false}
-                  loading={false}
-                  name="submit-virtual-hearing"
-                  onClick={[Function]}
-                  type="button"
-                  willNeverBeLoading={false}
-                >
-                  <span>
-                    <button
-                      className="usa-button-secondary usa-button"
-                      disabled={false}
-                      id="button-submit-virtual-hearing"
-                      onClick={[Function]}
-                      type="button"
-                    >
-                      Update Hearing Time
-                    </button>
-                  </span>
-                </Button>
-              </span>
-              <span
-                className="cf-push-left"
+                <strong>
+                  Veteran Hearing Time
+                </strong>
+                <pre>
+                  3:00 AM Pacific Time (US & Canada)
+                </pre>
+              </div>
+              <div
+                data-css-acl5jg=""
+                data-testid="read-only-testid"
               >
-                <Button
-                  classNames={
-                    Array [
-                      "cf-submit",
-                    ]
-                  }
-                  disabled={false}
-                  linkStyling={true}
-                  loading={false}
-                  name="cancel-virtual-hearing"
-                  onClick={[Function]}
-                  type="button"
-                  willNeverBeLoading={false}
-                >
-                  <span>
-                    <button
-                      className="cf-submit cf-btn-link usa-button"
-                      disabled={false}
-                      id="button-cancel-virtual-hearing"
-                      onClick={[Function]}
-                      type="button"
-                    >
-                      Cancel
-                    </button>
-                  </span>
-                </Button>
-              </span>
+                <strong>
+                  Veteran Email
+                </strong>
+                <pre>
+                  tom.brady@caseflow.gov
+                </pre>
+              </div>
+              <div
+                class="cf-help-divider"
+              />
+              <div
+                data-css-acl5jg=""
+                data-testid="read-only-testid"
+              >
+                <strong>
+                  POA/Representative Hearing Time
+                </strong>
+                <pre>
+                  3:00 AM Pacific Time (US & Canada)
+                </pre>
+              </div>
+              <div
+                data-css-acl5jg=""
+                data-testid="read-only-testid"
+              >
+                <strong>
+                  POA/Representative Email
+                </strong>
+                <pre>
+                  tom.brady@caseflow.gov
+                </pre>
+              </div>
             </div>
           </div>
         </div>
-      </section>
-    </Modal>
+        <div
+          class="cf-modal-divider"
+        />
+        <div
+          class="cf-modal-controls"
+        >
+          <div>
+            <span
+              class="cf-push-right"
+            >
+              <span>
+                <button
+                  class="usa-button-secondary usa-button"
+                  id="button-submit-virtual-hearing"
+                  type="button"
+                >
+                  Update Hearing Time
+                </button>
+              </span>
+            </span>
+            <span
+              class="cf-push-left"
+            >
+              <span>
+                <button
+                  class="cf-submit cf-btn-link usa-button"
+                  id="button-cancel-virtual-hearing"
+                  type="button"
+                >
+                  Cancel
+                </button>
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
-</EmailConfirmationModal>
+</DocumentFragment>
 `;
 
 exports[`EmailConfirmationModal Matches snapshot with default props 1`] = `
@@ -6206,138 +6472,42 @@ exports[`EmailConfirmationModal Matches snapshot with default props 1`] = `
   }
 >
   <div>
-    <Modal
-      buttons={Array []}
-      cancelButton={
-        <Button
-          classNames={
-            Array [
-              "cf-submit",
-            ]
-          }
-          disabled={false}
-          linkStyling={true}
-          loading={false}
-          name="cancel-virtual-hearing"
-          onClick={[Function]}
-          type="button"
-          willNeverBeLoading={false}
-        >
-          Cancel
-        </Button>
-      }
-      className=""
-      closeHandler={[Function]}
-      confirmButton={
-        <Button
-          classNames={
-            Array [
-              "usa-button-secondary",
-            ]
-          }
-          disabled={false}
-          linkStyling={false}
-          loading={false}
-          name="submit-virtual-hearing"
-          onClick={[Function]}
-          type="button"
-          willNeverBeLoading={false}
-        >
-          Change and Send Email
-        </Button>
-      }
-      scrollLock={true}
-      title="Change to Virtual Hearing"
+    <section
+      aria-describedby="modal_id-desc"
+      aria-labelledby="modal_id-title"
+      aria-modal="true"
+      class="cf-modal active "
+      id="modal_id"
+      role="dialog"
     >
-      <section
-        aria-describedby="modal_id-desc"
-        aria-labelledby="modal_id-title"
-        aria-modal="true"
-        className="cf-modal active "
-        id="modal_id"
-        role="dialog"
+      <div
+        class="cf-modal-body"
+        id=""
       >
-        <TouchProvider>
-          <ScrollLock
-            accountForScrollbars={true}
-          >
-            <Sheet
-              styles="body {
-      box-sizing: border-box !important;
-      overflow: hidden !important;
-      position: relative !important;
-      
-      padding-right: 1024px !important;
-    }"
-            />
-          </ScrollLock>
-        </TouchProvider>
-        <div
-          className="cf-modal-body"
-          id=""
+        <button
+          class="cf-modal-close"
+          id="Change-to-Virtual-Hearing-button-id-close"
+          type="button"
         >
-          <button
-            className="cf-modal-close"
-            id="Change-to-Virtual-Hearing-button-id-close"
-            onClick={[Function]}
-            type="button"
+          <span
+            class="usa-sr-only"
           >
-            <span
-              className="usa-sr-only"
-            >
-              Close
-            </span>
-            <CloseIcon
-              className="cf-icon-close"
-              color="#212121"
-              size={55}
-            >
-              <svg
-                className="cf-icon-close"
-                height={55}
-                viewBox="0 0 55 55"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <title>
-                  close
-                </title>
-                <g
-                  fill="#212121"
-                >
-                  <path
-                    d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
-                  />
-                </g>
-              </svg>
-            </CloseIcon>
-          </button>
-          <div
-            style={
-              Object {
-                "display": "flex",
-                "flexWrap": "wrap",
-              }
-            }
+            Close
+          </span>
+          <svg
+            class="cf-icon-close"
+            height="55"
+            viewBox="0 0 55 55"
+            xmlns="http://www.w3.org/2000/svg"
           >
-            <h1
-              id="modal_id-title"
-              style={
-                Object {
-                  "flex": 1,
-                }
-              }
+            <title>
+              close
+            </title>
+            <g
+              fill="#212121"
             >
-              Change to Virtual Hearing
-            </h1>
-            <div
-              data-css-2flkvz=""
-            >
-              <p
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "Email notifications will be sent to the Veteran, POA / Representative, and VLJ.",
-                  }
-                }
+              <path
+                d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
               />
               <ChangeToVirtual
                 appellantEmailError={null}
@@ -6757,74 +6927,125 @@ exports[`EmailConfirmationModal Matches snapshot with default props 1`] = `
           <div
             className="cf-modal-controls"
           >
-            <div>
-              <span
-                className="cf-push-right"
-              >
-                <Button
-                  classNames={
-                    Array [
-                      "usa-button-secondary",
-                    ]
-                  }
-                  disabled={false}
-                  linkStyling={false}
-                  loading={false}
-                  name="submit-virtual-hearing"
-                  onClick={[Function]}
-                  type="button"
-                  willNeverBeLoading={false}
-                >
-                  <span>
-                    <button
-                      className="usa-button-secondary usa-button"
-                      disabled={false}
-                      id="button-submit-virtual-hearing"
-                      onClick={[Function]}
-                      type="button"
-                    >
-                      Change and Send Email
-                    </button>
-                  </span>
-                </Button>
-              </span>
-              <span
-                className="cf-push-left"
-              >
-                <Button
-                  classNames={
-                    Array [
-                      "cf-submit",
-                    ]
-                  }
-                  disabled={false}
-                  linkStyling={true}
-                  loading={false}
-                  name="cancel-virtual-hearing"
-                  onClick={[Function]}
-                  type="button"
-                  willNeverBeLoading={false}
-                >
-                  <span>
-                    <button
-                      className="cf-submit cf-btn-link usa-button"
-                      disabled={false}
-                      id="button-cancel-virtual-hearing"
-                      onClick={[Function]}
-                      type="button"
-                    >
-                      Cancel
-                    </button>
-                  </span>
-                </Button>
-              </span>
+            Change to Virtual Hearing
+          </h1>
+          <div
+            data-css-2flkvz=""
+          >
+            <p>
+              Email notifications will be sent to the Veteran, POA / Representative, and VLJ.
+            </p>
+            <div
+              data-testid="datetime-testid"
+            >
+              <strong>
+                Hearing Date: 
+              </strong>
+              07/06/2020
+              <br />
+              <strong>
+                Hearing Time: 
+              </strong>
+              6:00 AM Eastern Time (US & Canada)
             </div>
+            <div
+              class="cf-form-textinput   "
+            >
+              <label
+                for="appellant-email"
+              >
+                <strong>
+                  <span>
+                    Veteran Email
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="input-container"
+              >
+                <input
+                  aria-readonly="false"
+                  class="cf-form-textinput"
+                  id="appellant-email"
+                  name="appellant-email"
+                  type="text"
+                  value="Bob.Smith@test.com"
+                />
+              </div>
+            </div>
+            <div
+              class="cf-form-textinput   "
+            >
+              <label
+                for="representative-email"
+              >
+                <strong>
+                  <span>
+                    POA/Representative Email
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="input-container"
+              >
+                <input
+                  aria-readonly="false"
+                  class="cf-form-textinput"
+                  id="representative-email"
+                  name="representative-email"
+                  type="text"
+                  value="tom.brady@caseflow.gov"
+                />
+              </div>
+            </div>
+            <p>
+              Changes to the Veteran and POA / Representative emails will be used to send notifications
+              <strong>
+                for this hearing only
+              </strong>
+              .
+            </p>
           </div>
         </div>
-      </section>
-    </Modal>
+        <div
+          class="cf-modal-divider"
+        />
+        <div
+          class="cf-modal-controls"
+        >
+          <div>
+            <span
+              class="cf-push-right"
+            >
+              <span>
+                <button
+                  class="usa-button-secondary usa-button"
+                  id="button-submit-virtual-hearing"
+                  type="button"
+                >
+                  Change and Send Email
+                </button>
+              </span>
+            </span>
+            <span
+              class="cf-push-left"
+            >
+              <span>
+                <button
+                  class="cf-submit cf-btn-link usa-button"
+                  id="button-cancel-virtual-hearing"
+                  type="button"
+                >
+                  Cancel
+                </button>
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
-</EmailConfirmationModal>
+</DocumentFragment>
 `;
 
 exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays Section divider when appellant email and POA/Representative timezone edited 1`] = `
@@ -6983,76 +7204,57 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
 >
   <div
     data-css-18v9q72=""
+    data-testid="read-only-emails-testid"
   >
-    <ReadOnly
-      label="Veteran Hearing Time"
-      spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
-    >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Veteran Hearing Time
-        </strong>
-        <pre>
-          8:30 AM Eastern Time (US & Canada)
-        </pre>
-      </div>
-    </ReadOnly>
-    <ReadOnly
-      label="Veteran Email"
-      spacing={15}
-      text="tom.brady@caseflow.gov"
-    >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Veteran Email
-        </strong>
-        <pre>
-          tom.brady@caseflow.gov
-        </pre>
-      </div>
-    </ReadOnly>
     <div
-      className="cf-help-divider"
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
+    >
+      <strong>
+        Veteran Hearing Time
+      </strong>
+      <pre>
+        8:30 AM Eastern Time (US & Canada)
+      </pre>
+    </div>
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
+    >
+      <strong>
+        Veteran Email
+      </strong>
+      <pre>
+        tom.brady@caseflow.gov
+      </pre>
+    </div>
+    <div
+      class="cf-help-divider"
     />
-    <ReadOnly
-      label="POA/Representative Hearing Time"
-      spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
     >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          POA/Representative Hearing Time
-        </strong>
-        <pre>
-          8:30 AM Eastern Time (US & Canada)
-        </pre>
-      </div>
-    </ReadOnly>
-    <ReadOnly
-      label="POA/Representative Email"
-      spacing={15}
-      text="tom.brady@caseflow.gov"
+      <strong>
+        POA/Representative Hearing Time
+      </strong>
+      <pre>
+        8:30 AM Eastern Time (US & Canada)
+      </pre>
+    </div>
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
     >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          POA/Representative Email
-        </strong>
-        <pre>
-          tom.brady@caseflow.gov
-        </pre>
-      </div>
-    </ReadOnly>
+      <strong>
+        POA/Representative Email
+      </strong>
+      <pre>
+        tom.brady@caseflow.gov
+      </pre>
+    </div>
   </div>
-</ReadOnlyEmails>
+</DocumentFragment>
 `;
 
 exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays Section divider when appellant timezone and POA/Representative email edited 1`] = `
@@ -7211,76 +7413,57 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
 >
   <div
     data-css-18v9q72=""
+    data-testid="read-only-emails-testid"
   >
-    <ReadOnly
-      label="Veteran Hearing Time"
-      spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
-    >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Veteran Hearing Time
-        </strong>
-        <pre>
-          8:30 AM Eastern Time (US & Canada)
-        </pre>
-      </div>
-    </ReadOnly>
-    <ReadOnly
-      label="Veteran Email"
-      spacing={15}
-      text="tom.brady@caseflow.gov"
-    >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Veteran Email
-        </strong>
-        <pre>
-          tom.brady@caseflow.gov
-        </pre>
-      </div>
-    </ReadOnly>
     <div
-      className="cf-help-divider"
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
+    >
+      <strong>
+        Veteran Hearing Time
+      </strong>
+      <pre>
+        8:30 AM Eastern Time (US & Canada)
+      </pre>
+    </div>
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
+    >
+      <strong>
+        Veteran Email
+      </strong>
+      <pre>
+        tom.brady@caseflow.gov
+      </pre>
+    </div>
+    <div
+      class="cf-help-divider"
     />
-    <ReadOnly
-      label="POA/Representative Hearing Time"
-      spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
     >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          POA/Representative Hearing Time
-        </strong>
-        <pre>
-          8:30 AM Eastern Time (US & Canada)
-        </pre>
-      </div>
-    </ReadOnly>
-    <ReadOnly
-      label="POA/Representative Email"
-      spacing={15}
-      text="tom.brady@caseflow.gov"
+      <strong>
+        POA/Representative Hearing Time
+      </strong>
+      <pre>
+        8:30 AM Eastern Time (US & Canada)
+      </pre>
+    </div>
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
     >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          POA/Representative Email
-        </strong>
-        <pre>
-          tom.brady@caseflow.gov
-        </pre>
-      </div>
-    </ReadOnly>
+      <strong>
+        POA/Representative Email
+      </strong>
+      <pre>
+        tom.brady@caseflow.gov
+      </pre>
+    </div>
   </div>
-</ReadOnlyEmails>
+</DocumentFragment>
 `;
 
 exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays both representative email/time and appellant email/time when both timezones are edited 1`] = `
@@ -7439,76 +7622,57 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
 >
   <div
     data-css-18v9q72=""
+    data-testid="read-only-emails-testid"
   >
-    <ReadOnly
-      label="Veteran Hearing Time"
-      spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
-    >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Veteran Hearing Time
-        </strong>
-        <pre>
-          8:30 AM Eastern Time (US & Canada)
-        </pre>
-      </div>
-    </ReadOnly>
-    <ReadOnly
-      label="Veteran Email"
-      spacing={15}
-      text="tom.brady@caseflow.gov"
-    >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Veteran Email
-        </strong>
-        <pre>
-          tom.brady@caseflow.gov
-        </pre>
-      </div>
-    </ReadOnly>
     <div
-      className="cf-help-divider"
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
+    >
+      <strong>
+        Veteran Hearing Time
+      </strong>
+      <pre>
+        8:30 AM Eastern Time (US & Canada)
+      </pre>
+    </div>
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
+    >
+      <strong>
+        Veteran Email
+      </strong>
+      <pre>
+        tom.brady@caseflow.gov
+      </pre>
+    </div>
+    <div
+      class="cf-help-divider"
     />
-    <ReadOnly
-      label="POA/Representative Hearing Time"
-      spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
     >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          POA/Representative Hearing Time
-        </strong>
-        <pre>
-          8:30 AM Eastern Time (US & Canada)
-        </pre>
-      </div>
-    </ReadOnly>
-    <ReadOnly
-      label="POA/Representative Email"
-      spacing={15}
-      text="tom.brady@caseflow.gov"
+      <strong>
+        POA/Representative Hearing Time
+      </strong>
+      <pre>
+        8:30 AM Eastern Time (US & Canada)
+      </pre>
+    </div>
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
     >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          POA/Representative Email
-        </strong>
-        <pre>
-          tom.brady@caseflow.gov
-        </pre>
-      </div>
-    </ReadOnly>
+      <strong>
+        POA/Representative Email
+      </strong>
+      <pre>
+        tom.brady@caseflow.gov
+      </pre>
+    </div>
   </div>
-</ReadOnlyEmails>
+</DocumentFragment>
 `;
 
 exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays both representative email/time and appellant email/time when showAllEmails is true 1`] = `
@@ -7666,76 +7830,57 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
 >
   <div
     data-css-18v9q72=""
+    data-testid="read-only-emails-testid"
   >
-    <ReadOnly
-      label="Veteran Hearing Time"
-      spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
-    >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Veteran Hearing Time
-        </strong>
-        <pre>
-          8:30 AM Eastern Time (US & Canada)
-        </pre>
-      </div>
-    </ReadOnly>
-    <ReadOnly
-      label="Veteran Email"
-      spacing={15}
-      text="tom.brady@caseflow.gov"
-    >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Veteran Email
-        </strong>
-        <pre>
-          tom.brady@caseflow.gov
-        </pre>
-      </div>
-    </ReadOnly>
     <div
-      className="cf-help-divider"
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
+    >
+      <strong>
+        Veteran Hearing Time
+      </strong>
+      <pre>
+        8:30 AM Eastern Time (US & Canada)
+      </pre>
+    </div>
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
+    >
+      <strong>
+        Veteran Email
+      </strong>
+      <pre>
+        tom.brady@caseflow.gov
+      </pre>
+    </div>
+    <div
+      class="cf-help-divider"
     />
-    <ReadOnly
-      label="POA/Representative Hearing Time"
-      spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
     >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          POA/Representative Hearing Time
-        </strong>
-        <pre>
-          8:30 AM Eastern Time (US & Canada)
-        </pre>
-      </div>
-    </ReadOnly>
-    <ReadOnly
-      label="POA/Representative Email"
-      spacing={15}
-      text="tom.brady@caseflow.gov"
+      <strong>
+        POA/Representative Hearing Time
+      </strong>
+      <pre>
+        8:30 AM Eastern Time (US & Canada)
+      </pre>
+    </div>
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
     >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          POA/Representative Email
-        </strong>
-        <pre>
-          tom.brady@caseflow.gov
-        </pre>
-      </div>
-    </ReadOnly>
+      <strong>
+        POA/Representative Email
+      </strong>
+      <pre>
+        tom.brady@caseflow.gov
+      </pre>
+    </div>
   </div>
-</ReadOnlyEmails>
+</DocumentFragment>
 `;
 
 exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays only appellant email when appellantEmailEdited 1`] = `
@@ -7893,41 +8038,32 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
 >
   <div
     data-css-18v9q72=""
+    data-testid="read-only-emails-testid"
   >
-    <ReadOnly
-      label="Veteran Hearing Time"
-      spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
     >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Veteran Hearing Time
-        </strong>
-        <pre>
-          8:30 AM Eastern Time (US & Canada)
-        </pre>
-      </div>
-    </ReadOnly>
-    <ReadOnly
-      label="Veteran Email"
-      spacing={15}
-      text="tom.brady@caseflow.gov"
+      <strong>
+        Veteran Hearing Time
+      </strong>
+      <pre>
+        8:30 AM Eastern Time (US & Canada)
+      </pre>
+    </div>
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
     >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Veteran Email
-        </strong>
-        <pre>
-          tom.brady@caseflow.gov
-        </pre>
-      </div>
-    </ReadOnly>
+      <strong>
+        Veteran Email
+      </strong>
+      <pre>
+        tom.brady@caseflow.gov
+      </pre>
+    </div>
   </div>
-</ReadOnlyEmails>
+</DocumentFragment>
 `;
 
 exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays only representative email when representativeEmailEdited 1`] = `
@@ -8085,41 +8221,32 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
 >
   <div
     data-css-18v9q72=""
+    data-testid="read-only-emails-testid"
   >
-    <ReadOnly
-      label="POA/Representative Hearing Time"
-      spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
     >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          POA/Representative Hearing Time
-        </strong>
-        <pre>
-          8:30 AM Eastern Time (US & Canada)
-        </pre>
-      </div>
-    </ReadOnly>
-    <ReadOnly
-      label="POA/Representative Email"
-      spacing={15}
-      text="tom.brady@caseflow.gov"
+      <strong>
+        POA/Representative Hearing Time
+      </strong>
+      <pre>
+        8:30 AM Eastern Time (US & Canada)
+      </pre>
+    </div>
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
     >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          POA/Representative Email
-        </strong>
-        <pre>
-          tom.brady@caseflow.gov
-        </pre>
-      </div>
-    </ReadOnly>
+      <strong>
+        POA/Representative Email
+      </strong>
+      <pre>
+        tom.brady@caseflow.gov
+      </pre>
+    </div>
   </div>
-</ReadOnlyEmails>
+</DocumentFragment>
 `;
 
 exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Virtual Hearing Does not display Section divider when only POA/Representative timezone edited 1`] = `
@@ -8277,41 +8404,32 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
 >
   <div
     data-css-18v9q72=""
+    data-testid="read-only-emails-testid"
   >
-    <ReadOnly
-      label="POA/Representative Hearing Time"
-      spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
     >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          POA/Representative Hearing Time
-        </strong>
-        <pre>
-          8:30 AM Eastern Time (US & Canada)
-        </pre>
-      </div>
-    </ReadOnly>
-    <ReadOnly
-      label="POA/Representative Email"
-      spacing={15}
-      text="tom.brady@caseflow.gov"
+      <strong>
+        POA/Representative Hearing Time
+      </strong>
+      <pre>
+        8:30 AM Eastern Time (US & Canada)
+      </pre>
+    </div>
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
     >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          POA/Representative Email
-        </strong>
-        <pre>
-          tom.brady@caseflow.gov
-        </pre>
-      </div>
-    </ReadOnly>
+      <strong>
+        POA/Representative Email
+      </strong>
+      <pre>
+        tom.brady@caseflow.gov
+      </pre>
+    </div>
   </div>
-</ReadOnlyEmails>
+</DocumentFragment>
 `;
 
 exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Virtual Hearing Does not display Section divider when only appellant timezone edited 1`] = `
@@ -8469,41 +8587,32 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
 >
   <div
     data-css-18v9q72=""
+    data-testid="read-only-emails-testid"
   >
-    <ReadOnly
-      label="Veteran Hearing Time"
-      spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
     >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Veteran Hearing Time
-        </strong>
-        <pre>
-          8:30 AM Eastern Time (US & Canada)
-        </pre>
-      </div>
-    </ReadOnly>
-    <ReadOnly
-      label="Veteran Email"
-      spacing={15}
-      text="tom.brady@caseflow.gov"
+      <strong>
+        Veteran Hearing Time
+      </strong>
+      <pre>
+        8:30 AM Eastern Time (US & Canada)
+      </pre>
+    </div>
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
     >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Veteran Email
-        </strong>
-        <pre>
-          tom.brady@caseflow.gov
-        </pre>
-      </div>
-    </ReadOnly>
+      <strong>
+        Veteran Email
+      </strong>
+      <pre>
+        tom.brady@caseflow.gov
+      </pre>
+    </div>
   </div>
-</ReadOnlyEmails>
+</DocumentFragment>
 `;
 
 exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays Section divider when appellant email and POA/Representative timezone edited 1`] = `
@@ -8674,76 +8783,57 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
 >
   <div
     data-css-18v9q72=""
+    data-testid="read-only-emails-testid"
   >
-    <ReadOnly
-      label="Veteran Hearing Time"
-      spacing={15}
-      text="3:00 AM Pacific Time (US & Canada)"
-    >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Veteran Hearing Time
-        </strong>
-        <pre>
-          3:00 AM Pacific Time (US & Canada)
-        </pre>
-      </div>
-    </ReadOnly>
-    <ReadOnly
-      label="Veteran Email"
-      spacing={15}
-      text="tom.brady@caseflow.gov"
-    >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Veteran Email
-        </strong>
-        <pre>
-          tom.brady@caseflow.gov
-        </pre>
-      </div>
-    </ReadOnly>
     <div
-      className="cf-help-divider"
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
+    >
+      <strong>
+        Veteran Hearing Time
+      </strong>
+      <pre>
+        3:00 AM Pacific Time (US & Canada)
+      </pre>
+    </div>
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
+    >
+      <strong>
+        Veteran Email
+      </strong>
+      <pre>
+        tom.brady@caseflow.gov
+      </pre>
+    </div>
+    <div
+      class="cf-help-divider"
     />
-    <ReadOnly
-      label="POA/Representative Hearing Time"
-      spacing={15}
-      text="3:00 AM Pacific Time (US & Canada)"
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
     >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          POA/Representative Hearing Time
-        </strong>
-        <pre>
-          3:00 AM Pacific Time (US & Canada)
-        </pre>
-      </div>
-    </ReadOnly>
-    <ReadOnly
-      label="POA/Representative Email"
-      spacing={15}
-      text="tom.brady@caseflow.gov"
+      <strong>
+        POA/Representative Hearing Time
+      </strong>
+      <pre>
+        3:00 AM Pacific Time (US & Canada)
+      </pre>
+    </div>
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
     >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          POA/Representative Email
-        </strong>
-        <pre>
-          tom.brady@caseflow.gov
-        </pre>
-      </div>
-    </ReadOnly>
+      <strong>
+        POA/Representative Email
+      </strong>
+      <pre>
+        tom.brady@caseflow.gov
+      </pre>
+    </div>
   </div>
-</ReadOnlyEmails>
+</DocumentFragment>
 `;
 
 exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays Section divider when appellant timezone and POA/Representative email edited 1`] = `
@@ -8914,76 +9004,57 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
 >
   <div
     data-css-18v9q72=""
+    data-testid="read-only-emails-testid"
   >
-    <ReadOnly
-      label="Veteran Hearing Time"
-      spacing={15}
-      text="3:00 AM Pacific Time (US & Canada)"
-    >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Veteran Hearing Time
-        </strong>
-        <pre>
-          3:00 AM Pacific Time (US & Canada)
-        </pre>
-      </div>
-    </ReadOnly>
-    <ReadOnly
-      label="Veteran Email"
-      spacing={15}
-      text="tom.brady@caseflow.gov"
-    >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Veteran Email
-        </strong>
-        <pre>
-          tom.brady@caseflow.gov
-        </pre>
-      </div>
-    </ReadOnly>
     <div
-      className="cf-help-divider"
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
+    >
+      <strong>
+        Veteran Hearing Time
+      </strong>
+      <pre>
+        3:00 AM Pacific Time (US & Canada)
+      </pre>
+    </div>
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
+    >
+      <strong>
+        Veteran Email
+      </strong>
+      <pre>
+        tom.brady@caseflow.gov
+      </pre>
+    </div>
+    <div
+      class="cf-help-divider"
     />
-    <ReadOnly
-      label="POA/Representative Hearing Time"
-      spacing={15}
-      text="3:00 AM Pacific Time (US & Canada)"
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
     >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          POA/Representative Hearing Time
-        </strong>
-        <pre>
-          3:00 AM Pacific Time (US & Canada)
-        </pre>
-      </div>
-    </ReadOnly>
-    <ReadOnly
-      label="POA/Representative Email"
-      spacing={15}
-      text="tom.brady@caseflow.gov"
+      <strong>
+        POA/Representative Hearing Time
+      </strong>
+      <pre>
+        3:00 AM Pacific Time (US & Canada)
+      </pre>
+    </div>
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
     >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          POA/Representative Email
-        </strong>
-        <pre>
-          tom.brady@caseflow.gov
-        </pre>
-      </div>
-    </ReadOnly>
+      <strong>
+        POA/Representative Email
+      </strong>
+      <pre>
+        tom.brady@caseflow.gov
+      </pre>
+    </div>
   </div>
-</ReadOnlyEmails>
+</DocumentFragment>
 `;
 
 exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays both representative email/time and appellant email/time when both timezones are edited 1`] = `
@@ -9154,76 +9225,57 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
 >
   <div
     data-css-18v9q72=""
+    data-testid="read-only-emails-testid"
   >
-    <ReadOnly
-      label="Veteran Hearing Time"
-      spacing={15}
-      text="3:00 AM Pacific Time (US & Canada)"
-    >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Veteran Hearing Time
-        </strong>
-        <pre>
-          3:00 AM Pacific Time (US & Canada)
-        </pre>
-      </div>
-    </ReadOnly>
-    <ReadOnly
-      label="Veteran Email"
-      spacing={15}
-      text="tom.brady@caseflow.gov"
-    >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Veteran Email
-        </strong>
-        <pre>
-          tom.brady@caseflow.gov
-        </pre>
-      </div>
-    </ReadOnly>
     <div
-      className="cf-help-divider"
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
+    >
+      <strong>
+        Veteran Hearing Time
+      </strong>
+      <pre>
+        3:00 AM Pacific Time (US & Canada)
+      </pre>
+    </div>
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
+    >
+      <strong>
+        Veteran Email
+      </strong>
+      <pre>
+        tom.brady@caseflow.gov
+      </pre>
+    </div>
+    <div
+      class="cf-help-divider"
     />
-    <ReadOnly
-      label="POA/Representative Hearing Time"
-      spacing={15}
-      text="3:00 AM Pacific Time (US & Canada)"
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
     >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          POA/Representative Hearing Time
-        </strong>
-        <pre>
-          3:00 AM Pacific Time (US & Canada)
-        </pre>
-      </div>
-    </ReadOnly>
-    <ReadOnly
-      label="POA/Representative Email"
-      spacing={15}
-      text="tom.brady@caseflow.gov"
+      <strong>
+        POA/Representative Hearing Time
+      </strong>
+      <pre>
+        3:00 AM Pacific Time (US & Canada)
+      </pre>
+    </div>
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
     >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          POA/Representative Email
-        </strong>
-        <pre>
-          tom.brady@caseflow.gov
-        </pre>
-      </div>
-    </ReadOnly>
+      <strong>
+        POA/Representative Email
+      </strong>
+      <pre>
+        tom.brady@caseflow.gov
+      </pre>
+    </div>
   </div>
-</ReadOnlyEmails>
+</DocumentFragment>
 `;
 
 exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays both representative email/time and appellant email/time when showAllEmails is true 1`] = `
@@ -9393,76 +9445,57 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
 >
   <div
     data-css-18v9q72=""
+    data-testid="read-only-emails-testid"
   >
-    <ReadOnly
-      label="Veteran Hearing Time"
-      spacing={15}
-      text="3:00 AM Pacific Time (US & Canada)"
-    >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Veteran Hearing Time
-        </strong>
-        <pre>
-          3:00 AM Pacific Time (US & Canada)
-        </pre>
-      </div>
-    </ReadOnly>
-    <ReadOnly
-      label="Veteran Email"
-      spacing={15}
-      text="tom.brady@caseflow.gov"
-    >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Veteran Email
-        </strong>
-        <pre>
-          tom.brady@caseflow.gov
-        </pre>
-      </div>
-    </ReadOnly>
     <div
-      className="cf-help-divider"
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
+    >
+      <strong>
+        Veteran Hearing Time
+      </strong>
+      <pre>
+        3:00 AM Pacific Time (US & Canada)
+      </pre>
+    </div>
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
+    >
+      <strong>
+        Veteran Email
+      </strong>
+      <pre>
+        tom.brady@caseflow.gov
+      </pre>
+    </div>
+    <div
+      class="cf-help-divider"
     />
-    <ReadOnly
-      label="POA/Representative Hearing Time"
-      spacing={15}
-      text="3:00 AM Pacific Time (US & Canada)"
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
     >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          POA/Representative Hearing Time
-        </strong>
-        <pre>
-          3:00 AM Pacific Time (US & Canada)
-        </pre>
-      </div>
-    </ReadOnly>
-    <ReadOnly
-      label="POA/Representative Email"
-      spacing={15}
-      text="tom.brady@caseflow.gov"
+      <strong>
+        POA/Representative Hearing Time
+      </strong>
+      <pre>
+        3:00 AM Pacific Time (US & Canada)
+      </pre>
+    </div>
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
     >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          POA/Representative Email
-        </strong>
-        <pre>
-          tom.brady@caseflow.gov
-        </pre>
-      </div>
-    </ReadOnly>
+      <strong>
+        POA/Representative Email
+      </strong>
+      <pre>
+        tom.brady@caseflow.gov
+      </pre>
+    </div>
   </div>
-</ReadOnlyEmails>
+</DocumentFragment>
 `;
 
 exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays only appellant email when appellantEmailEdited 1`] = `
@@ -9632,41 +9665,32 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
 >
   <div
     data-css-18v9q72=""
+    data-testid="read-only-emails-testid"
   >
-    <ReadOnly
-      label="Veteran Hearing Time"
-      spacing={15}
-      text="3:00 AM Pacific Time (US & Canada)"
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
     >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Veteran Hearing Time
-        </strong>
-        <pre>
-          3:00 AM Pacific Time (US & Canada)
-        </pre>
-      </div>
-    </ReadOnly>
-    <ReadOnly
-      label="Veteran Email"
-      spacing={15}
-      text="tom.brady@caseflow.gov"
+      <strong>
+        Veteran Hearing Time
+      </strong>
+      <pre>
+        3:00 AM Pacific Time (US & Canada)
+      </pre>
+    </div>
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
     >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Veteran Email
-        </strong>
-        <pre>
-          tom.brady@caseflow.gov
-        </pre>
-      </div>
-    </ReadOnly>
+      <strong>
+        Veteran Email
+      </strong>
+      <pre>
+        tom.brady@caseflow.gov
+      </pre>
+    </div>
   </div>
-</ReadOnlyEmails>
+</DocumentFragment>
 `;
 
 exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays only representative email when representativeEmailEdited 1`] = `
@@ -9836,41 +9860,32 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
 >
   <div
     data-css-18v9q72=""
+    data-testid="read-only-emails-testid"
   >
-    <ReadOnly
-      label="POA/Representative Hearing Time"
-      spacing={15}
-      text="3:00 AM Pacific Time (US & Canada)"
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
     >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          POA/Representative Hearing Time
-        </strong>
-        <pre>
-          3:00 AM Pacific Time (US & Canada)
-        </pre>
-      </div>
-    </ReadOnly>
-    <ReadOnly
-      label="POA/Representative Email"
-      spacing={15}
-      text="tom.brady@caseflow.gov"
+      <strong>
+        POA/Representative Hearing Time
+      </strong>
+      <pre>
+        3:00 AM Pacific Time (US & Canada)
+      </pre>
+    </div>
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
     >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          POA/Representative Email
-        </strong>
-        <pre>
-          tom.brady@caseflow.gov
-        </pre>
-      </div>
-    </ReadOnly>
+      <strong>
+        POA/Representative Email
+      </strong>
+      <pre>
+        tom.brady@caseflow.gov
+      </pre>
+    </div>
   </div>
-</ReadOnlyEmails>
+</DocumentFragment>
 `;
 
 exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virtual Hearing Does not display Section divider when only POA/Representative timezone edited 1`] = `
@@ -10040,41 +10055,32 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
 >
   <div
     data-css-18v9q72=""
+    data-testid="read-only-emails-testid"
   >
-    <ReadOnly
-      label="POA/Representative Hearing Time"
-      spacing={15}
-      text="3:00 AM Pacific Time (US & Canada)"
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
     >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          POA/Representative Hearing Time
-        </strong>
-        <pre>
-          3:00 AM Pacific Time (US & Canada)
-        </pre>
-      </div>
-    </ReadOnly>
-    <ReadOnly
-      label="POA/Representative Email"
-      spacing={15}
-      text="tom.brady@caseflow.gov"
+      <strong>
+        POA/Representative Hearing Time
+      </strong>
+      <pre>
+        3:00 AM Pacific Time (US & Canada)
+      </pre>
+    </div>
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
     >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          POA/Representative Email
-        </strong>
-        <pre>
-          tom.brady@caseflow.gov
-        </pre>
-      </div>
-    </ReadOnly>
+      <strong>
+        POA/Representative Email
+      </strong>
+      <pre>
+        tom.brady@caseflow.gov
+      </pre>
+    </div>
   </div>
-</ReadOnlyEmails>
+</DocumentFragment>
 `;
 
 exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virtual Hearing Does not display Section divider when only appellant timezone edited 1`] = `
@@ -10244,39 +10250,30 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
 >
   <div
     data-css-18v9q72=""
+    data-testid="read-only-emails-testid"
   >
-    <ReadOnly
-      label="Veteran Hearing Time"
-      spacing={15}
-      text="3:00 AM Pacific Time (US & Canada)"
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
     >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Veteran Hearing Time
-        </strong>
-        <pre>
-          3:00 AM Pacific Time (US & Canada)
-        </pre>
-      </div>
-    </ReadOnly>
-    <ReadOnly
-      label="Veteran Email"
-      spacing={15}
-      text="tom.brady@caseflow.gov"
+      <strong>
+        Veteran Hearing Time
+      </strong>
+      <pre>
+        3:00 AM Pacific Time (US & Canada)
+      </pre>
+    </div>
+    <div
+      data-css-acl5jg=""
+      data-testid="read-only-testid"
     >
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Veteran Email
-        </strong>
-        <pre>
-          tom.brady@caseflow.gov
-        </pre>
-      </div>
-    </ReadOnly>
+      <strong>
+        Veteran Email
+      </strong>
+      <pre>
+        tom.brady@caseflow.gov
+      </pre>
+    </div>
   </div>
-</ReadOnlyEmails>
+</DocumentFragment>
 `;
