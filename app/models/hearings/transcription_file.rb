@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Hearings::TranscriptionFile < CaseflowRecord
+class TranscriptionFile < CaseflowRecord
   belongs_to :hearing, polymorphic: true
 
   belongs_to :transcription
