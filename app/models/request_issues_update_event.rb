@@ -94,6 +94,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   end
 
   # rubocop:disable Metrics/MethodLength
+  # codeclimate:disable CodeReuse/ActiveRecord
   def update_request_issue!(request_issue, parser_issue)
     request_issue.update(
       ineligible_reason: parser_issue.ri_ineligible_reason,
@@ -128,6 +129,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     )
   end
   # rubocop:enable Metrics/MethodLength
+  # codeclimate:enable CodeReuse/ActiveRecord
 
   # Set the closed_at date and closed_status for removed issues based on the event data
   def update_removed_issues!
@@ -225,6 +227,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   end
 
   # rubocop:disable Metrics/MethodLength
+  # codeclimate:disable CodeReuse/ActiveRecord
   def find_request_issue(parser_issue)
     request_issue = RequestIssue.find_by(reference_id: parser_issue.ri_reference_id)
 
@@ -257,6 +260,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     request_issue
   end
   # rubocop:enable Metrics/MethodLength
+  # codeclimate:enable CodeReuse/ActiveRecord
 
   def add_event_record(request_issue, update_type, before_data)
     EventRecord.create!(
@@ -272,6 +276,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
 
   # iterate through the array of issues and create backfill object from each one
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  # codeclimate:disable CodeReuse/ActiveRecord
   def create_request_issue_backfill
     request_issues = @parser.added_issues
     newly_created_issues = []
@@ -331,16 +336,20 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     newly_created_issues
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+  # codeclimate:enable CodeReuse/ActiveRecord
 
   # Legacy issue checks
+  # codeclimate:disable CodeReuse/ActiveRecord
   def vacols_ids_exist?(request_issue)
     request_issue.vacols_id.present? && request_issue.vacols_sequence_id.present?
   end
+  # codeclimate:enable CodeReuse/ActiveRecord
 
   def optin?
     ActiveModel::Type::Boolean.new.cast(@parser.claim_review_legacy_opt_in_approved)
   end
 
+  # codeclimate:disable CodeReuse/ActiveRecord
   def create_legacy_issue_backfill(request_issue)
     li = LegacyIssue.create!(
       request_issue_id: request_issue.id,
@@ -350,7 +359,9 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     add_event_record(li, "A", nil)
     li
   end
+  # codeclimate:enable CodeReuse/ActiveRecord
 
+  # codeclimate:disable CodeReuse/ActiveRecord
   def create_legacy_optin_backfill(request_issue, legacy_issue)
     vacols_issue = vacols_issue(request_issue.vacols_id, request_issue.vacols_sequence_id)
     optin = LegacyIssueOptin.create!(
@@ -365,10 +376,13 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     add_event_record(optin, "A", nil)
     optin
   end
+  # codeclimate:enable CodeReuse/ActiveRecord
 
+  # codeclimate:disable CodeReuse/ActiveRecord
   def vacols_issue(vacols_id, vacols_sequence_id)
     AppealRepository.issues(vacols_id).find do |issue|
       issue.vacols_sequence_id == vacols_sequence_id
     end
   end
+  # codeclimate:enable CodeReuse/ActiveRecord
 end

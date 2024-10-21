@@ -104,6 +104,7 @@ class Events::DecisionReviewCreated::CreateRequestIssues
       li
     end
 
+    # codeclimate:disable DuplicatedCode
     def create_legacy_optin_backfill(event, request_issue, legacy_issue)
       vacols_issue = vacols_issue(request_issue.vacols_id, request_issue.vacols_sequence_id)
       optin = LegacyIssueOptin.create!(
@@ -117,6 +118,7 @@ class Events::DecisionReviewCreated::CreateRequestIssues
       )
       create_event_record(event, optin)
     end
+    # codeclimate:enable DuplicatedCode
 
     def vacols_issue(vacols_id, vacols_sequence_id)
       AppealRepository.issues(vacols_id).find do |issue|

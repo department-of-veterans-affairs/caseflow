@@ -10,6 +10,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
     let(:review) { epe.source }
     let!(:existing_request_issue) { create(:request_issue, decision_review: review, reference_id: "6789") }
 
+    # codeclimate:disable DuplicatedCode
     def logical_date_converter(logical_date_int)
       return nil if logical_date_int.nil? || logical_date_int.to_i.days == 0
 
@@ -17,6 +18,7 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
       converted_date = base_date + logical_date_int.to_i.days
       converted_date
     end
+    # codeclimate:enable DuplicatedCode
 
     def json_test_payload
       {

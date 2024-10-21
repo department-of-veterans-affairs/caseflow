@@ -151,6 +151,7 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
                                          "decision_review_created_example.json")))
   end
 
+  # codeclimate:disable DuplicatedCode
   def load_headers
     request.headers["X-VA-Vet-SSN"] = "123456789"
     request.headers["X-VA-File-Number"] = "77799777"
@@ -158,4 +159,5 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
     request.headers["X-VA-Vet-Last-Name"] = "Smith"
     request.headers["X-VA-Vet-Middle-Name"] = "Alexander"
   end
+  # codeclimate:enable DuplicatedCode
 end
