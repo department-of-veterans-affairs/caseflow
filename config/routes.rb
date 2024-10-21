@@ -313,7 +313,7 @@ Rails.application.routes.draw do
       end
     end
     get "report", to: "decision_reviews#generate_report", on: :member, as: :report, format: false
-    get "report/searches", to: "decision_reviews#generate_report", on: :member, as: :saved_searches, format: false
+    get "report/searches", to: "saved_searches#index"
     get "/(*all)", to: "decision_reviews#index"
   end
 
@@ -334,11 +334,8 @@ Rails.application.routes.draw do
     patch "/messages/:id", to: "inbox#update"
   end
 
-  resources :saved_searches, only: [:index]
+  resources :saved_searches, only: [:create, :destroy]
   resources :users, only: [:index, :update] do
-    resources :saved_searches, only: [:create, :destroy]
-    resource :saved_searches, only: [:show]
-      
     resources :task_pages, only: [:index], controller: 'users/task_pages'
     get 'represented_organizations', on: :member
   end
