@@ -4,13 +4,11 @@
 # :reek:FeatureEnvy
 class CorrespondenceIntakeProcessor
   def process_intake(intake_params, current_user)
-    correspondence = Correspondence.find_by(uuid: intake_params[:correspondence_uuid])
-
-    fail "Correspondence not found" if correspondence.blank?
+    correspondence = find_correspondence(intake_params[:correspondence_uuid])
 
     parent_task = CorrespondenceIntakeTask.find_by(appeal_id: correspondence.id)
 
-    return false if !correspondence_documents_efolder_uploader.upload_documents_to_claim_evidence(
+    return false unless correspondence_documents_efolder_uploader.upload_documents_to_claim_evidence(
       correspondence,
       current_user,
       parent_task
@@ -21,10 +19,7 @@ class CorrespondenceIntakeProcessor
 
   def update_correspondence(intake_params)
     # Fetch the correspondence using the UUID from the intake params
-    correspondence = Correspondence.find_by(uuid: intake_params[:correspondence_uuid])
-
-    # Fail if correspondence is not found
-    fail "Correspondence not found" if correspondence.blank?
+    correspondence = find_correspondence(intake_params[:correspondence_uuid])
 
     ActiveRecord::Base.transaction do
       create_correspondence_relations(intake_params, correspondence.id, true)
@@ -32,13 +27,9 @@ class CorrespondenceIntakeProcessor
       unlink_appeals_to_correspondence(intake_params, correspondence)
       # Ensure relations removal logic is in place
       remove_correspondence_relations(intake_params, correspondence)
-
       # Method to add a task unrelated to appeals
       add_task_not_related_to_appeals(intake_params, correspondence)
-
-      # Additional logic to update correspondence fields if necessary (optional)
     end
-
     # Return success after successful update
     true
   rescue StandardError => error
@@ -47,14 +38,17 @@ class CorrespondenceIntakeProcessor
   end
 
   def create_letter(params, _current_user)
-    correspondence = Correspondence.find_by(uuid: params[:correspondence_uuid])
-
-    fail "Correspondence not found" if correspondence.blank?
-
+    correspondence = find_correspondence(params[:correspondence_uuid])
     create_response_letter(params, correspondence.id)
   end
 
   private
+
+  def find_correspondence(uuid)
+    correspondence = Correspondence.find_by(uuid: uuid)
+    fail "Correspondence not found" if correspondence.blank?
+    correspondence
+  end
 
   # :reek:LongParameterList
   def do_upload_success_actions(parent_task, intake_params, correspondence, current_user)
@@ -199,25 +193,25 @@ class CorrespondenceIntakeProcessor
     end
   end
 
-    # Add a task not related to appeals
-    def add_task_not_related_to_appeals(intake_params, correspondence)
-      unrelated_task_data = intake_params[:tasks_not_related_to_appeal]
+  # Add a task not related to appeals
+  def add_task_not_related_to_appeals(intake_params, correspondence)
+    unrelated_task_data = intake_params[:tasks_not_related_to_appeal]
 
-      # Ensure the task data is present
-      return if unrelated_task_data.blank? || unrelated_task_data.empty?
+    # Ensure the task data is present
+    return if unrelated_task_data.blank? || unrelated_task_data.empty?
 
-      unrelated_task_data.each do |data|
-        # Create the task using provided parameters
-        task_class_for_task_unrelated(data).create_from_params(
-          {
-            parent_id: correspondence.root_task.id,
-            assigned_to: class_for_assigned_to(data[:assigned_to]).singleton,
-            instructions: data[:content]
-          },
-          RequestStore.store[:current_user] || User.system_user
-        )
-      end
+    unrelated_task_data.each do |data|
+      # Create the task using provided parameters
+      task_class_for_task_unrelated(data).create_from_params(
+        {
+          parent_id: correspondence.root_task.id,
+          assigned_to: class_for_assigned_to(data[:assigned_to]).singleton,
+          instructions: data[:content]
+        },
+        RequestStore.store[:current_user] || User.system_user
+      )
     end
+  end
 
   def create_mail_tasks(intake_params, correspondence, current_user)
     mail_task_data = intake_params[:mail_tasks]

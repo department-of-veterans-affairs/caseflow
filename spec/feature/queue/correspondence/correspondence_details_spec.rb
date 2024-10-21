@@ -290,7 +290,7 @@ RSpec.feature("The Correspondence Details page") do
     end
   end
 
-  context "correspongiub" do
+  context "Adding a new task not related to appeal" do
     let(:current_user) { create(:inbound_ops_team_supervisor) }
     let(:correspondences) do
       (0..1).map do |i|
@@ -321,19 +321,19 @@ RSpec.feature("The Correspondence Details page") do
       )
     end
 
-    it "properly removes prior mail relationship from corespondence" do
+    it "Adds a new task not related to appeal on Correspondence Details page" do
       visit "/queue/correspondence/#{correspondence.uuid}"
-      all('.plus-symbol')[1].click
-      click_button('+ Add task')
-      expect(page).to have_selector('h1', text: 'Add New Task')
-      expect(page).to have_selector('.add-task-modal-container')
-      expect(page).to have_field('content')
-      find('.add-task-dropdown-style').click
-      find('.react-select__option', text: 'Congressional Interest').click
-      fill_in 'content', with: 'Test'
-      click_button 'Next'
+      all(".plus-symbol")[1].click
+      click_button("+ Add task")
+      expect(page).to have_selector("h1", text: "Add New Task")
+      expect(page).to have_selector(".add-task-modal-container")
+      expect(page).to have_field("content")
+      find(".add-task-dropdown-style").click
+      find(".react-select__option", text: "Congressional Interest").click
+      fill_in "content", with: "Test"
+      click_button "Next"
       using_wait_time(10) do
-        expect(page).to have_content('Congressional Interest')
+        expect(page).to have_content("Congressional Interest")
       end
     end
   end
