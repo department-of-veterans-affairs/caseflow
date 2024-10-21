@@ -1,79 +1,35 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`IntakeBadge renders correctly 1`] = `
-<Provider
-  store={
-    Object {
-      "dispatch": [Function],
-      "getState": [Function],
-      "replaceReducer": [Function],
-      "subscribe": [Function],
-      Symbol(observable): [Function],
-    }
-  }
->
-  <IntakeBadge
-    review={
-      Object {
-        "intakeFromVbms": true,
-      }
-    }
+<DocumentFragment>
+  <div
+    class="cf-vbms-badge"
   >
-    <Badge
-      ariaLabel="VBMS Intake"
-      color="#844E9F"
-      displayName="VBMS"
-      id="vbms-undefined"
-      name="vbms"
-      tooltipText="Case was intaken through VBMS"
+    <span
+      aria-describedby="badge-vbms-undefined"
+      aria-label="VBMS Intake"
+      currentitem="false"
+      data-css-j1ndum=""
+      data-event="focus mouseenter"
+      data-event-off="mouseleave keydown"
+      data-for="badge-vbms-undefined"
+      data-tip="true"
+      tabindex="0"
+    >
+      VBMS
+    </span>
+    <span
+      data-css-131kpwj=""
+      data-testid="tooltip-testid"
     >
       <div
-        className="cf-vbms-badge"
+        class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+        data-id="tooltip"
+        id="badge-vbms-undefined"
+        role="tooltip"
       >
-        <Tooltip
-          ariaLabel="VBMS Intake"
-          id="badge-vbms-undefined"
-          position="bottom"
-          text="Case was intaken through VBMS"
-        >
-          <span
-            aria-describedby="badge-vbms-undefined"
-            aria-label="VBMS Intake"
-            data-css-j1ndum=""
-            data-event="focus mouseenter"
-            data-event-off="mouseleave keydown"
-            data-for="badge-vbms-undefined"
-            data-tip={true}
-            tabIndex={0}
-          >
-            VBMS
-          </span>
-          <span
-            data-css-131kpwj=""
-          >
-            <ReactTooltip
-              className="cf-tooltip"
-              clickable={false}
-              effect="solid"
-              id="badge-vbms-undefined"
-              insecure={true}
-              multiline={true}
-              offset={Object {}}
-              place="bottom"
-              resizeHide={true}
-              role="tooltip"
-              wrapper="div"
-            >
-              <div
-                className="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
-                data-id="tooltip"
-                id="badge-vbms-undefined"
-                role="tooltip"
-              >
-                <style
-                  dangerouslySetInnerHTML={
-                    Object {
-                      "__html": "
+        <style>
+          
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -147,17 +103,11 @@ exports[`IntakeBadge renders correctly 1`] = `
         border-right-style: solid;
         border-right-width: 6px;
     }
-  ",
-                    }
-                  }
-                />
-                Case was intaken through VBMS
-              </div>
-            </ReactTooltip>
-          </span>
-        </Tooltip>
+  
+        </style>
+        Case was intaken through VBMS
       </div>
-    </Badge>
-  </IntakeBadge>
-</Provider>
+    </span>
+  </div>
+</DocumentFragment>
 `;

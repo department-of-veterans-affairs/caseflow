@@ -1,18 +1,30 @@
 import React from 'react';
-import { shallow } from 'enzyme';
-import sinon from 'sinon';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { WrappingComponent } from '../establishClaim/WrappingComponent';
 
 import { PdfUI } from '../../../app/reader/PdfUI';
 
 const DOCUMENT_PATH_BASE = '/reader/appeal/reader_id1';
 
+jest.mock('../../../app/reader/Pdf', () => {
+  return function MockPdf({ onPageChange }) {
+    return <div data-testid="mock-pdf" onClick={() => onPageChange(2, 3)} />;
+  };
+});
+
+jest.mock('../../../app/reader/PdfFile', () => {
+  return function MockPdfFile({ onPageChange }) {
+    return <div data-testid="mock-pdf-file" onClick={() => onPageChange(2, 3)} />;
+  };
+});
+
 /* eslint-disable no-unused-expressions */
 describe('PdfUI', () => {
   describe('shallow create PdfUI', () => {
-    let wrapper;
+    let setup;
     let doc;
 
-    beforeEach(() => {
+    // beforeEach(() => {
       doc = {
         filename: 'My PDF',
         id: 3,
@@ -20,79 +32,139 @@ describe('PdfUI', () => {
         receivedAt: '1/2/2017'
       };
 
-      wrapper = shallow(<PdfUI
-        doc={doc}
-        file="test.pdf"
-        filteredDocIds={[3]}
-        id="pdf"
-        pdfWorker="noworker"
-        documentPathBase={DOCUMENT_PATH_BASE}
-        showClaimsFolderNavigation={false}
-        featureToggles={{ search: true }}
-      />);
-    });
+      setup = (props) => {
+        return render(<PdfUI
+          doc={doc}
+          file="test.pdf"
+          filteredDocIds={[3]}
+          id="pdf"
+          pdfWorker="noworker"
+          documentPathBase={DOCUMENT_PATH_BASE}
+          showClaimsFolderNavigation={false}
+          featureToggles={{ search: true }}
+          {...props}
+        />, { wrapper: WrappingComponent });
+        };
+    // });
 
     describe('.render', () => {
       it('renders the outer div', () => {
-        expect(wrapper.find('.cf-pdf-container')).toHaveLength(1);
+        const {container} = setup();
+        expect(container.querySelector('.cf-pdf-container')).toBeInTheDocument();
+        // expect(wrapper.find('.cf-pdf-container')).toHaveLength(1);
       });
 
       it('renders the title as a link', () => {
-        expect(wrapper.find('Link').find({ name: 'newTab' }).
-          children().
-          text()).toBe(`${doc.type}<ExternalLinkIcon />`);
-        expect(wrapper.find('Link').find({ name: 'newTab' }).
-          first().
-          props().target).toBe('_blank');
+        setup();
+        const newTab = screen.getByRole('link', {name: 'open document in new tab'});
+
+        expect(newTab).toBeInTheDocument();
+        expect(newTab.id).toBe('newTab');
+        expect(newTab.target).toBe('_blank');
+        expect(screen.getByRole('link', {name: 'open document in new tab'})).toBeInTheDocument();
+        expect(screen.getByText(doc.type)).toBeInTheDocument();
       });
 
       it('does not render the page number when pdf has not been rendered', () => {
-        expect(wrapper.text().includes('Page 1 of 1')).toBe(false);
-        expect(wrapper.text().includes('Loading document')).toBe(true);
+        setup();
+        expect(screen.queryByText('Page 1 of 1')).toBeNull();
+        expect(screen.getByText('Loading document...')).toBeInTheDocument();
       });
 
       it('renders the zoom buttons', () => {
-        expect(wrapper.find({ name: 'zoomOut' })).toHaveLength(1);
-        expect(wrapper.find({ name: 'zoomIn' })).toHaveLength(1);
+        setup();
+        expect(screen.getByRole('button', {name: 'zoom out'})).toBeInTheDocument();
+        expect(screen.getByRole('button', {name: 'zoom in'})).toBeInTheDocument();
       });
 
       it('renders the search button', () => {
-        expect(wrapper.find({ name: 'search' })).toHaveLength(1);
+        setup();
+        expect(screen.getByRole('button', {name: 'search text'})).toBeInTheDocument();
       });
 
       describe('when showClaimsFolderNavigation is true', () => {
         it('renders the back button that directs to claims folder', () => {
-          expect(wrapper.find({ name: 'backToClaimsFolder' })).toHaveLength(0);
+          const {rerender} = setup();
 
-          wrapper.setProps({ showClaimsFolderNavigation: true });
-          expect(wrapper.find({ name: 'backToClaimsFolder' })).toHaveLength(1);
+          expect(screen.queryByRole('link', {name: 'Back'})).not.toBeInTheDocument();
+
+          const newProps = {
+            showClaimsFolderNavigation: true
+            }
+
+            rerender(<PdfUI
+              doc={doc}
+              file="test.pdf"
+              filteredDocIds={[3]}
+              id="pdf"
+              pdfWorker="noworker"
+              documentPathBase={DOCUMENT_PATH_BASE}
+              showClaimsFolderNavigation={false}
+              featureToggles={{ search: true }}
+              {...newProps}
+              />, { wrapper: WrappingComponent }
+              );
+
+            expect(screen.getByRole('link', {name: 'Back'})).toBeInTheDocument();
         });
       });
     });
 
+
     describe('.onPageChange', () => {
       it('updates the state', () => {
-        let currentPage = 2;
-        let fitToScreenZoom = 3;
+        setup();
+        const mockPdf = screen.getByTestId('mock-pdf');
+        fireEvent.click(mockPdf);
 
-        wrapper.instance().onPageChange(currentPage, fitToScreenZoom);
-        expect(wrapper.state('currentPage')).toBe(currentPage);
-        expect(wrapper.state('fitToScreenZoom')).toBe(fitToScreenZoom);
+        const pdfUiComponent = screen.getByTestId('pdf-ui');
+
+        const currentPageTest = pdfUiComponent.getAttribute('cp-test');
+        const fitToScreenZoomTest = pdfUiComponent.getAttribute('ftsz-test');
+
+        expect(currentPageTest).toBe('2');
+        expect(fitToScreenZoomTest).toBe('3');
+
+        // // Simulate changing the page number input
+        // fireEvent.change(pageNumberInput, { target: { value: '3' } });
+
+        // // Simulate pressing the "Enter" key to change the page
+        // fireEvent.keyPress(pageNumberInput, { key: 'Enter', code: 'Enter', charCode: 13 });
+
+        // // Verify that the page number is updated correctly
+        // expect(pageNumberInput.value).toBe('3');
+      });
+    });
+
+    describe('changing the page number', () => {
+      it('updates the value of the page number', () => {
+        setup({
+          numPages: 10,
+        });
+        const pageNumberInput = screen.getByRole('textbox', { name: 'Page' });
+        expect(pageNumberInput.value).toBe('1');
+
+        fireEvent.change(pageNumberInput, { target: { value: '3' } });
+        fireEvent.keyPress(pageNumberInput, { key: 'Enter' });
+
+        expect(pageNumberInput.value).toBe('3');
       });
     });
 
     describe('clicking', () => {
       describe('backToClaimsFolder', () => {
         it('calls the stopPlacingAnnotation props', () => {
-          const mockStopPlacingAnnotationClick = sinon.spy();
+          const mockStopPlacingAnnotationClick = jest.fn();
 
-          wrapper.setProps({
+          setup({
             showClaimsFolderNavigation: true,
             stopPlacingAnnotation: mockStopPlacingAnnotationClick
           });
-          wrapper.find({ name: 'backToClaimsFolder' }).simulate('click');
 
-          expect(mockStopPlacingAnnotationClick.calledOnce).toBe(true);
+          const backToClaimsFolderButton = screen.getByRole('link', {name: 'Back'});
+          fireEvent.click(backToClaimsFolderButton);
+
+          expect(mockStopPlacingAnnotationClick).toHaveBeenCalled();
         });
       });
     });

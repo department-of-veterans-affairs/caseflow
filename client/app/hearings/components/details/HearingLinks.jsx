@@ -143,7 +143,7 @@ export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, u
   const links = getLinks();
 
   return (
-    <div {...rowThirds} {...hearingLinksContainer}>
+    <div {...rowThirds} {...hearingLinksContainer} data-testid="link-containers">
       {showHostLink && (
         <>
           <LinkContainer
