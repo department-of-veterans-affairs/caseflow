@@ -39,7 +39,8 @@ class SearchQueryService
       else
         vacols_row = vacols_results.find { |result| result["vacols_id"] == row["external_id"] }
 
-        Rails.logger.warn(no_vacols_record_warning(result)) if vacols_row.blank?
+        Rails.logger.warn(no_vacols_record_warning(row)) if vacols_row.blank?
+
         LegacyAppealRow.new(row, vacols_row || null_vacols_row).search_response
       end
     end
@@ -50,14 +51,21 @@ class SearchQueryService
   end
 
   def no_vacols_record_warning(result)
+    searching_by =
+      if file_number.present?
+        "file_number #{file_number}"
+      elsif veteran_ids.present?
+        "veteran_ids #{veteran_ids.join(',')}"
+      elsif docket_number.present?
+        "docket_number #{docket_number}"
+      end
+
     <<-WARN
       No corresponding VACOLS record found for appeal with:
         id: #{result['id']}
         vacols_id: #{result['vacols_id']}
       searching with:
-        #{file_number.present? "file_number #{file_number}"} \
-        #{veteran_ids.present? "veteran_ids #{veteran_ids.join(',')}"} \
-        #{file_number.present? "docket_number #{docket_number}"}
+        #{searching_by}
     WARN
   end
 

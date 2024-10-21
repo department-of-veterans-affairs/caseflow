@@ -71,7 +71,7 @@ class SearchQueryService::AppealRow
   # rubocop:enable Metrics/MethodLength
 
   def appellant_date_of_birth
-    if appellant.person.present?
+    if appellant&.person.present?
       Date.parse appellant.person.try(:[], "date_of_birth")
     end
   rescue TypeError
@@ -91,7 +91,7 @@ class SearchQueryService::AppealRow
   end
 
   def appellant_person
-    appellant.person || {}
+    appellant&.person || {}
   end
 
   def appellant
