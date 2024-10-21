@@ -1,20 +1,24 @@
 # frozen_string_literal: true
 
 class BusinessLineReporter
-  attr_reader :business_line
+  attr_reader :business_line, :filters
 
   BUSINESS_LINE_OPTIONS = %w[business_line appeal_id appeal_type claimant_name request_issues_count
                              decision_issues_count veteran_file_number intake_user_id
                              task_type task_id tasks_url task_assigned_to created_at closed_at].freeze
 
-  def initialize(business_line)
+  def initialize(business_line, filters = nil)
     @business_line = business_line
+    @filters = { filters: filters }
   end
 
   def tasks
-    business_line.tasks.completed.includes(
+    # business_line.tasks.completed.includes(
+    #   [:assigned_to, appeal: [:request_issues, :decision_issues, intake: [:user]]]
+    # ).order(id: :asc)
+    business_line.completed_tasks(filters).includes(
       [:assigned_to, appeal: [:request_issues, :decision_issues, intake: [:user]]]
-    ).order(id: :asc)
+    )
   end
 
   # rubocop:disable Metrics/AbcSize
