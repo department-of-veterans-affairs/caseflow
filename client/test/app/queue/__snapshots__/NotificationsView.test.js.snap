@@ -25,12 +25,11 @@ exports[`NotificationsTest matches snapshot 1`] = `
             aria-label=""
             class="cf-apppeal-id"
             currentitem="false"
-            data-css-p6dv0b=""
+            data-css-cjlnsd=""
             data-event="focus mouseenter"
             data-event-off="mouseleave keydown"
             data-for="tooltip-200000161"
             data-tip="true"
-            disabled=""
             tabindex="0"
             type="submit"
           >

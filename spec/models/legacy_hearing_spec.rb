@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "models/concerns/has_virtual_hearing_examples"
-require "models/hearings_shared_examples"
 
 describe LegacyHearing, :all_dbs do
   it_should_behave_like "a model that can have a virtual hearing" do
@@ -868,13 +867,5 @@ describe LegacyHearing, :all_dbs do
         include_context "returns existing recipient"
       end
     end
-  end
-
-  context "#conference_provider" do
-    let(:hearing_type) { :legacy_hearing }
-
-    include_context "Pexip and Webex Users"
-
-    include_examples "Conference provider values are transferred between base entity and new hearings"
   end
 end

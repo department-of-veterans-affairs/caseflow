@@ -24,18 +24,5 @@ FactoryBot.define do
       request_type { HearingDay::REQUEST_TYPES[:virtual] }
       room { nil }
     end
-
-    trait :future_with_link do
-      after(:create) do |hearing_day|
-        create(:pexip_conference_link, hearing_day: hearing_day)
-      end
-    end
-
-    trait :past_with_link do
-      scheduled_for { 10.days.ago.to_formatted_s.split(" ")[0] }
-      after(:create) do |hearing_day|
-        create(:pexip_conference_link, hearing_day: hearing_day)
-      end
-    end
   end
 end

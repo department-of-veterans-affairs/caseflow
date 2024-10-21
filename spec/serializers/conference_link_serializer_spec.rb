@@ -11,9 +11,16 @@ describe ConferenceLinkSerializer, :all_dbs do
   end
 
   let(:hearing_day) { create(:hearing_day) }
-  let(:hearing) { create(:hearing) }
+  let(:conference_link) { create(:conference_link, hearing_day_id: hearing_day.id) }
 
-  shared_examples "Serialized conferenced link attributes meet expectations" do
+  context "Converting conference link to hash" do
+    subject { described_class.new(conference_link) }
+    before do
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return "mysecretkey"
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return "example.va.gov"
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return "/sample"
+    end
+
     it "calling serializable_hash gets result" do
       expect(subject.serializable_hash[:data][:attributes]).not_to eq(nil)
     end
@@ -28,22 +35,6 @@ describe ConferenceLinkSerializer, :all_dbs do
 
     it "calling serializable_hash return alias" do
       expect(subject.serializable_hash[:data][:attributes][:alias]).to eq(conference_link.alias_with_host)
-    end
-  end
-
-  context "Converting conference link to hash" do
-    subject { described_class.new(conference_link) }
-
-    context "With a Pexip conference link" do
-      let(:conference_link) { create(:pexip_conference_link, hearing_day: hearing_day) }
-
-      include_examples "Serialized conferenced link attributes meet expectations"
-    end
-
-    context "With a Webex conference link" do
-      let(:conference_link) { create(:webex_conference_link, hearing: hearing) }
-
-      include_examples "Serialized conferenced link attributes meet expectations"
     end
   end
 

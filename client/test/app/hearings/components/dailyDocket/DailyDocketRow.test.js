@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { axe } from 'jest-axe';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { Provider } from 'react-redux';
@@ -36,7 +36,7 @@ describe('DailyDocketRow', () => {
 
     expect(container).toMatchSnapshot();
   });
-
+  // noelle's area
   it('renders correctly for non virtual, judge', () => {
     const { container } = render(
       <Provider store={store}>
@@ -47,18 +47,6 @@ describe('DailyDocketRow', () => {
     );
 
     expect(container).toMatchSnapshot();
-  });
-
-  it('connect to recording renders correctly', () => {
-    render(
-      <Provider store={store}>
-        <Router>
-          <DailyDocketRow {...dailyDocketPropsHearingNotVirtualJudgeUser} />
-        </Router>
-      </Provider>
-    );
-
-    expect(screen.getByRole('button', { class: 'usa-button-secondary usa-button', name: 'Connect to Recording System' })).toBeInTheDocument();
   });
 
   it('renders correctly for non virtual, attorney', () => {

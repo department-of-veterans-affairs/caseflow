@@ -25,7 +25,6 @@
     canEditCavcDashboards: current_user.can_edit_cavc_dashboards?,
     canViewCavcDashboards: current_user.can_view_cavc_dashboards?,
     userIsCobAdmin: ClerkOfTheBoard.singleton.admins.include?(current_user),
-    conferenceProvider: current_user.conference_provider,
     featureToggles: {
       collect_video_and_central_emails: FeatureToggle.enabled?(:collect_video_and_central_emails, user: current_user),
       enable_hearing_time_slots: FeatureToggle.enabled?(:enable_hearing_time_slots, user: current_user),
@@ -61,8 +60,6 @@
       cc_appeal_workflow: FeatureToggle.enabled?(:cc_appeal_workflow, user: current_user),
       metricsBrowserError: FeatureToggle.enabled?(:metrics_browser_error, user: current_user),
       cc_vacatur_visibility: FeatureToggle.enabled?(:cc_vacatur_visibility, user: current_user),
-      conference_selection_visibility: (FeatureToggle.enabled?(:pexip_conference_service) &&
-        FeatureToggle.enabled?(:webex_conference_service)),
       additional_remand_reasons: FeatureToggle.enabled?(:additional_remand_reasons, user: current_user),
       acd_cases_tied_to_judges_no_longer_with_board: FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board, user: current_user),
       admin_case_distribution: FeatureToggle.enabled?(:admin_case_distribution, user: current_user),

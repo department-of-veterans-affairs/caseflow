@@ -68,7 +68,6 @@ Rails.application.configure do
   # config.active_job.queue_name_prefix = "caseflow_certification_production"
 
   config.action_mailer.perform_caching = false
-  config.action_mailer.show_previews = false
 
   config.action_mailer.delivery_method = :govdelivery_tms
   config.action_mailer.govdelivery_tms_settings = {

@@ -345,7 +345,7 @@ export const formattedLevers = [
     id: 12,
     item: 'lever_13',
     title: 'AOJ AOD Affinity Days',
-    description: 'Sets the number of days legacy remand Returned appeals that are also AOD (and may or may not have been CAVC at one time) respect the affinity before distributing the appeal to any available judge. Affects appeals with hearing held when the remanding judge is not the hearing judge, or any legacy AOD + AOD appeal with no hearing held (whether or not it had been CAVC at one time).',
+    description: 'Sets the number of days legacy remand Returned appeals that are also AOD (and may or may not have been CAVC at one time) respect the affinity before distributing the appeal to any available jduge. Affects appeals with hearing held when the remanding judge is not the hearing judge, or any legacy AOD + AOD appeal with no hearing held (whether or not it had been CAVC at one time).',
     data_type: ACD_LEVERS.data_types.radio,
     value: ACD_LEVERS.value,
     unit: ACD_LEVERS.days,

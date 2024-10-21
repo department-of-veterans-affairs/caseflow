@@ -5,7 +5,6 @@
 ##
 module HearingConcern
   extend ActiveSupport::Concern
-  include RunAsyncable
 
   CLOSED_HEARING_DISPOSITIONS = [
     Constants.HEARING_DISPOSITION_TYPES.postponed,
@@ -102,52 +101,5 @@ module HearingConcern
     end
 
     end_date
-  end
-
-  def subject_for_conference
-    "#{docket_number}_#{id}_#{self.class}"
-  end
-
-  def nbf
-    scheduled_for.beginning_of_day.to_i
-  end
-
-  def exp
-    scheduled_for.end_of_day.to_i
-  end
-
-  # Returns the new 1:1 conference link object for legacy and ama hearings
-  # that are non virtual and have a webex meeting type
-  def non_virtual_conference_link
-    ConferenceLink.find_by(hearing: self)
-  end
-
-  # Associate hearing with transcription files across multiple dockets and order accordingly
-  def transcription_files_by_docket_number
-    # Remove hyphen in case of counter at end of file name to allow for alphabetical sort
-    transcription_files.sort_by { |file| file.file_name.split("-").join }.group_by(&:docket_number).values
-  end
-
-  # Group transcription files by docket number before mapping through nested array and serializing
-  def serialized_transcription_files
-    transcription_files_by_docket_number.map do |file_groups|
-      file_groups.map do |file|
-        TranscriptionFileSerializer.new(file).serializable_hash[:data][:attributes]
-      end
-    end
-  end
-
-  def start_non_virtual_hearing_job?
-    disposition.nil? && conference_provider == "webex" &&
-      virtual_hearing.nil? && ConferenceLink.find_by(hearing: self).nil?
-  end
-
-  def start_non_virtual_hearing_job
-    perform_later_or_now(Hearings::CreateNonVirtualConferenceJob, hearing: self)
-  end
-
-  # Complexity of create schedule hearing task was too large - had to break out
-  def maybe_create_non_virtual_conference
-    start_non_virtual_hearing_job if start_non_virtual_hearing_job?
   end
 end

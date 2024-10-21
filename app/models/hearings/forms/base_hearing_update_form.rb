@@ -128,24 +128,14 @@ class BaseHearingUpdateForm
   end
 
   def start_async_job
-    # If converting hearing from virtual to non-virtual
     if start_async_job? && virtual_hearing_cancelled?
       perform_later_or_now(VirtualHearings::DeleteConferencesJob)
-      maybe_start_activate_non_virtual_job
-    # If converting hearing from non-virtual to virtual
     elsif start_async_job?
-      start_activate_virtual_job
+      start_activate_job
     end
   end
 
-  # If a Webex hearing, activate new Webex conference links when converting from virtual to non-virtual
-  def maybe_start_activate_non_virtual_job
-    return unless hearing.conference_provider == "webex"
-
-    perform_later_or_now(Hearings::CreateNonVirtualConferenceJob, hearing: hearing)
-  end
-
-  def start_activate_virtual_job
+  def start_activate_job
     hearing.virtual_hearing.establishment.submit_for_processing!
 
     job_args = {

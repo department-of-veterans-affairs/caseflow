@@ -117,14 +117,12 @@ const DetailsForm = (props) => {
         initialRepresentativeTz={initialHearing?.representativeTz}
       />
 
-      {/* Don't render Transcription Details section if Legacy Hearing AND Pexip conference provider*/}
-      {!(isLegacy && hearing.conferenceProvider === 'pexip') && (
+      {!isLegacy && (
         <TranscriptionFormSection
           hearing={hearing}
           readOnly={readOnly}
           transcription={hearing.transcription}
           update={update}
-          isLegacy={isLegacy}
         />
       )}
     </React.Fragment>
@@ -142,8 +140,7 @@ DetailsForm.propTypes = {
     wasVirtual: PropTypes.bool,
     isVirtual: PropTypes.bool,
     scheduledTimeString: PropTypes.string,
-    readableRequestType: PropTypes.string,
-    conferenceProvider: PropTypes.string
+    readableRequestType: PropTypes.string
   }),
   initialHearing: PropTypes.shape({
     virtualHearing: PropTypes.object

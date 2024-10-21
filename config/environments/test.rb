@@ -157,21 +157,6 @@ Rails.application.configure do
   ENV["PACMAN_API_TOKEN_ISSUER"] ||= "issuer-of-our-token"
   ENV["PACMAN_API_SYS_ACCOUNT"] ||= "CSS_ID_OF_OUR_ACCOUNT"
 
-  # Webex environment variables
-  ENV["WEBEX_PORT"] ||= "443"
-  ENV["WEBEX_HOST_IC"] ||= "mtg-broker."
-  ENV["WEBEX_HOST_MAIN"] ||= "api-usgov."
-  ENV["WEBEX_HOST_STATS"] ||= "status."
-  ENV["WEBEX_DOMAIN_IC"] ||= "gov.ciscospark.com"
-  ENV["WEBEX_DOMAIN_MAIN"] ||= "webex.com"
-  ENV["WEBEX_API_IC"] ||= "/api/v2/joseencrypt"
-  ENV["WEBEX_API_MAIN"] ||= "/v1/"
-
-  # Pexip environment variables
-  ENV["VIRTUAL_HEARING_PIN_KEY"] ||= "mysecretkey"
-  ENV["VIRTUAL_HEARING_URL_HOST"] ||= "example.va.gov"
-  ENV["VIRTUAL_HEARING_URL_PATH"] ||= "/sample"
-
   # Dynatrace variables
   ENV["STATSD_ENV"] = "test"
 

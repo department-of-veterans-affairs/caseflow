@@ -3,7 +3,6 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { axe } from 'jest-axe';
 
 import { amaHearing } from 'test/data/hearings';
-import { amaHearingPast } from 'test/data/hearings';
 import { anyUser, vsoUser } from 'test/data/user';
 
 import COPY from '../../../../../COPY';
@@ -15,10 +14,6 @@ describe('StaticVirtualHearing', () => {
     hearing: amaHearing
   };
 
-  const pastHearingProps = {
-    user: anyUser,
-    hearing: amaHearingPast
-  };
 
   it('renders correctly', () => {
     const { container } = render(<StaticVirtualHearing {...defaultProps} />);
@@ -26,21 +21,8 @@ describe('StaticVirtualHearing', () => {
     expect(container).toMatchSnapshot();
   })
 
-  it('renders past hearing correctly', () => {
-    const { container } = render(<StaticVirtualHearing {...pastHearingProps} />);
-
-    expect(container).toMatchSnapshot();
-  })
-
   it('passes a11y testing', async () => {
     const { container } = render(<StaticVirtualHearing {...defaultProps} />);
-
-    const results = await axe(container);
-    expect(results).toHaveNoViolations();
-  })
-
-  it('passes a11y testing for past hearing', async () => {
-    const { container } = render(<StaticVirtualHearing {...pastHearingProps} />);
 
     const results = await axe(container);
     expect(results).toHaveNoViolations();

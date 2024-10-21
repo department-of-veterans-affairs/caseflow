@@ -29,18 +29,14 @@ describe ExternalApi::PexipService do
         "enable_overlay_text": true,
         "force_presenter_into_main": true,
         "ivr_theme": "/api/admin/configuration/v1/ivr_theme/13/",
-        "guest_pin": "5678901",
+        "guest_pin": "5678901234#",
         "name": "BVA1111111",
-        "pin": "1234567",
+        "pin": "1234567#",
         "tag": "CASEFLOW"
       }
     end
 
-    let(:virtual_hearing) do
-      create(:virtual_hearing, host_pin: "1234567", guest_pin: "5678901", alias: "1111111")
-    end
-
-    subject { pexip_service.create_conference(virtual_hearing) }
+    subject { pexip_service.create_conference(host_pin: "1234567#", guest_pin: "5678901234#", name: "1111111") }
 
     let(:success_create_resp) do
       HTTPI::Response.new(201, { "Location" => "api/admin/configuration/v1/conference/1234" }, {})
@@ -93,11 +89,8 @@ describe ExternalApi::PexipService do
   end
 
   describe "#delete_conference" do
-    let(:virtual_hearing) do
-      create(:virtual_hearing, conference_id: "123")
-    end
+    subject { pexip_service.delete_conference(conference_id: "123") }
 
-    subject { pexip_service.delete_conference(virtual_hearing) }
     let(:success_del_resp) { HTTPI::Response.new(204, {}, {}) }
     let(:error_del_resp) { HTTPI::Response.new(404, {}, {}) }
 
