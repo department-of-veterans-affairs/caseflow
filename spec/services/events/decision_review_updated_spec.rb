@@ -47,7 +47,9 @@ describe Events::DecisionReviewUpdated do
 
     context "when lock acquisition fails" do
       before do
-        allow(RedisMutex).to receive(:with_lock).and_raise(RedisMutex::LockError)
+        # raise the error with message
+        lock_error_message = "Lock acquisition failed in context when lock acquisition fails"
+        allow(RedisMutex).to receive(:with_lock).and_raise(RedisMutex::LockError.new(lock_error_message))
       end
 
       it "logs the error message" do
@@ -58,13 +60,20 @@ describe Events::DecisionReviewUpdated do
       end
     end
 
-    context "when lock Key is already in the Redis Cache" do
-      it "throws a RedisLockFailed error" do
-        redis = Redis.new(url: Rails.application.secrets.redis_url_cache)
-        lock_key = "RedisMutex:EndProductEstablishment:#{claim_id}"
+    context "when lock key is already in the Redis cache" do
+      let(:redis) { Redis.new(url: Rails.application.secrets.redis_url_cache) }
+      let(:lock_key) { "RedisMutex:EndProductEstablishment:#{claim_id}" }
+
+      before do
         redis.set(lock_key, "lock is set", nx: true, ex: 5.seconds)
-        expect { subject }.to raise_error(Caseflow::Error::RedisLockFailed)
+      end
+
+      after do
         redis.del(lock_key)
+      end
+
+      it "raises a RedisLockFailed error" do
+        expect { subject }.to raise_error(Caseflow::Error::RedisLockFailed)
       end
     end
 

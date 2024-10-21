@@ -59,8 +59,7 @@ describe Events::DecisionReviewCreated::CreateEpEstablishment do
       year = logical_date_int / 100_00
       month = (logical_date_int % 100_00) / 100
       day = logical_date_int % 100
-      date = Date.new(year, month, day)
-      date
+      Date.new(year, month, day)
     end
 
     context "when an error occurs" do

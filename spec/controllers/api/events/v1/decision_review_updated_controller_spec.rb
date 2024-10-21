@@ -154,10 +154,10 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
   end
 
   def load_headers
-    request.headers["X-VA-Vet-SSN"] = "123456789"
-    request.headers["X-VA-File-Number"] = "77799777"
-    request.headers["X-VA-Vet-First-Name"] = "John"
-    request.headers["X-VA-Vet-Last-Name"] = "Smith"
-    request.headers["X-VA-Vet-Middle-Name"] = "Alexander"
+    request.headers["X-VA-Vet-SSN"] = "12345678"
+    request.headers["X-VA-Vet-First-Name"] = "Johnatan"
+    request.headers["X-VA-File-Number"] = "7779977"
+    request.headers["X-VA-Vet-Middle-Name"] = "Aleksander"
+    request.headers["X-VA-Vet-Last-Name"] = "Smiths"
   end
 end
