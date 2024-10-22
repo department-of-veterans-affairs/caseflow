@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe SavedSearchesController, :postgres, type: :controller do
-  let(:user) { create(:user, :vha_admin_user, :with_saved_search_reports)}
+  let(:user) { create(:user, :vha_admin_user, :with_saved_search_reports) }
   let(:saved_search) { create(:saved_search, user: user) }
 
   let(:default_user) { create(:user) }
@@ -37,9 +37,8 @@ describe SavedSearchesController, :postgres, type: :controller do
 
     context "VHA user creating saved search" do
       it "should create search" do
-        expect{
-          post :create, params: valid_params
-        }.to change(SavedSearch, :count).by(1)
+        expect { post :create, params: valid_params }
+          .to change(SavedSearch, :count).by(1)
 
         expect(response).to have_http_status(:created)
       end
@@ -57,7 +56,7 @@ describe SavedSearchesController, :postgres, type: :controller do
 
     context "VHA user saved search not exists" do
       it "retunrs a not found error" do
-        delete :destroy, params: { id: 0}
+        delete :destroy, params: { id: 0 }
 
         expect(response).to have_http_status(:not_found)
       end

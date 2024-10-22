@@ -22,7 +22,7 @@ const SavedSearches = () => {
       label: 'My saved searches',
       // this section will later changed to backend call
       page: <SearchTable
-        eventRows={savedSearchesData.savedSearches.rows.filter((rows) => rows.userCssId === currentUserCssId)}
+        eventRows={savedSearchesData.savedSearches.all.filter((rows) => rows.userCssId === currentUserCssId)}
         searchPageApiEndPoint
       />
     },
@@ -30,7 +30,7 @@ const SavedSearches = () => {
       key: 'all_saved',
       label: 'All saved searches',
       page: <SearchTable
-        eventRows={savedSearchesData.savedSearches.rows}
+        eventRows={savedSearchesData.savedSearches.all}
         searchPageApiEndPoint
       />
     }
