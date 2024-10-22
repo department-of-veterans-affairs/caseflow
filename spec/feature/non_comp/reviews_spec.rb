@@ -252,7 +252,9 @@ feature "NonComp Reviews Queue", :postgres do
       )
 
       click_on "Completed Tasks"
-      expect(page).to have_content("Higher-Level Review", count: 2)
+      # expect(page).to have_content("Higher-Level Review", count: 2)
+      # Remove this once the pre filter 7 days is added back
+      expect(page).to have_content("Higher-Level Review", count: 3)
       expect(page).to have_content("Date Completed")
 
       decision_date = hlr_b.tasks.first.closed_at.strftime("%m/%d/%y")
@@ -428,7 +430,9 @@ feature "NonComp Reviews Queue", :postgres do
       click_button("tasks-organization-queue-tab-3")
 
       later_date = Time.zone.now.strftime("%m/%d/%y")
-      earlier_date = 3.days.ago.strftime("%m/%d/%y")
+      # earlier_date = 3.days.ago.strftime("%m/%d/%y")
+      # Remove this one the pre filter 7 days is added
+      earlier_date = 7.days.ago.strftime("%m/%d/%y")
 
       order_buttons[:date_completed].click
       expect(page).to have_current_path(
