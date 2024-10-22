@@ -228,7 +228,7 @@ jobs:
           touch log/selenium-chrome.log
           chmod -R 777 ${GITHUB_WORKSPACE}
           export GHA_NODE_INDEX=${{matrix.ci_node_index}}
-          runuser -u circleci bundle exec rake "knapsack_pro:queue:rspec[--format documentation --format RSpec::Github::Formatter --tty]"
+          ./ci-bin/ci-test
       # --format RSpec::Github::Formatter use in Rspec-github gem, adds more detailed info to GHA "Annotations"
       # --tty forces Rspec to produce color
       # circleci is the USER
