@@ -15,7 +15,7 @@ export default {
   savedSearches: {
     status: 'idle',
     error: null,
-    rows: [
+    all: [
       {
         id: 1,
         name: 'Search Name',
@@ -279,6 +279,9 @@ export default {
           }
         }
       }
+    ],
+    my: [
+
     ],
     fetchIndividualHistory: {
       status: 'succeeded'

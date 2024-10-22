@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 class SavedSearchesController < ApplicationController
   include ValidationConcern
 
-  before_action :verify_access, :react_routed
+  before_action :react_routed, :verify_vha_admin
 
   PERMITTED_PARAMS = [
     :name,
@@ -10,15 +12,31 @@ class SavedSearchesController < ApplicationController
   ].freeze
 
   def index
+    searches = SavedSearch.all_saved_searches
+    my_search = SavedSearch.my_saved_searches(current_user)
     respond_to do |format|
       format.html { render "index" }
-      format.json { render_saved_search_tab }
+      format.json do
+        render json:
+         { all_searches: SavedSearchSerializer.new(searches).serializable_hash[:data],
+           user_searches: SavedSearchSerializer.new(my_search).serializable_hash[:data] }
+      end
+    end
+  end
+
+  def show
+    search = SavedSearch.find_by_id(params[:id])
+    respond_to do |format|
+      format.html { render "show" }
+      format.json { render json: SavedSearchSerializer.new(search).serializable_hash[:data] }
     end
   end
 
   def create
     @search = current_user.saved_searches.new(save_search_create_params)
-    return render json:  { message: "Search has been successfully created" }, status: :created if @search.save
+
+    return render json: { message: "Search has been successfully created" }, status: :created if @search.save
+
     render json:  { message: "Error creating save search" }, status: :unprocessable_entity
   end
 
@@ -30,55 +48,21 @@ class SavedSearchesController < ApplicationController
 
   private
 
-  def business_line
-    @business_line ||= BusinessLine.find_by(url: params[:business_line_slug])
-  end
-
   def save_search_create_params
     params.require(:search).permit(PERMITTED_PARAMS)
   end
 
-  def allowed_params
-    params.permit(
-      :business_line_slug,
-      :tab
-    )
+  def verify_vha_admin
+    return true if current_user.vha_business_line_admin_user?
+
+    redirect_to_unauthorized
   end
 
-  def verify_access
-    return false unless business_line
-    return true if current_user.admin?
-    return true if current_user.can?("Admin Intake")
-    return true if business_line.user_has_access?(current_user)
-
+  def redirect_to_unauthorized
     Rails.logger.info("User with roles #{current_user.roles.join(', ')} "\
       "couldn't access #{request.original_url}")
 
     session["return_to"] = request.original_url
     redirect_to "/unauthorized"
-    # verify_authorized_roles("Mail Intake", "Admin Intake")
-    # return true if business_line.user_has_access?(current_user)
-  end
-
-  def render_saved_search_tab
-    tab_name = allowed_params[:tab]
-    searches = case tab_name
-               when "my_saved_searches" then SavedSearch.my_saved_searches(current_user)
-               when "all_saved_searches" then SavedSearch.all_saved_searches
-               when nil
-                 return missing_tab_parameter_error
-               else
-                 return unrecognized_tab_name_error
-               end
-
-    render json: SavedSearchSerializer.new(searches)
-  end
-
-  def missing_tab_parameter_error
-    render json: { error: "'tab' parameter is required." }, status: :bad_request
-  end
-
-  def unrecognized_tab_name_error
-    render json: { error: "Tab name provided could not be found" }, status: :not_found
   end
 end
