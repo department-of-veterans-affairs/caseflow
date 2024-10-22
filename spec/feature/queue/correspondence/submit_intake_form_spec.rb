@@ -167,6 +167,45 @@ RSpec.feature("Correspondence Intake submission") do
           expect(docket_assignee.class).to eq(ClerkOfTheBoard)
         end
       end
+
+      describe "with Cavc Correspondence Mail Task added" do
+        before do
+          visit_intake_form_step_2_with_appeals
+          existing_appeal_radio_options[:yes].click
+
+          using_wait_time(wait_time) do
+            within ".cf-case-list-table" do
+              page.all(".cf-form-checkbox").last.click
+            end
+          end
+
+          page.find("#button-addTasks").click
+          all("#reactSelectContainer")[0].click
+          find("div", exact_text: "CAVC Correspondence").click
+          find_by_id("content").fill_in with: "Correspondence Text"
+          click_button("Continue")
+          click_button("Submit")
+          click_button("Confirm")
+          using_wait_time(wait_time) do
+            expect(page).to have_content("You have successfully submitted a correspondence record")
+          end
+        end
+
+        it "creates CavcCorrespondenceMailTask for Appeal and Corespondence" do
+          expect(CavcCorrespondenceMailTask.all.count).to eq(2)
+          appeal = Appeal.find(CavcCorrespondenceMailTask.first.appeal_id)
+          correspondence_appeal = CorrespondenceAppeal.find_by(appeal_id: appeal.id)
+          expect(appeal.tasks.count { |e| e.instance_of?(CavcCorrespondenceMailTask) }).to eq(2)
+          expect(correspondence_appeal.tasks.count { |e| e.instance_of?(CavcCorrespondenceMailTask) }).to eq(1)
+        end
+
+        it "allows InboundOpsTeam user to assign CavcCorrespondenceMailTask to CavcLitigationSupport organization" do
+          assigner = User.find(CavcCorrespondenceMailTask.last.assigned_by_id)
+          assignee = Organization.find(CavcCorrespondenceMailTask.last.assigned_to_id)
+          expect(assigner.organizations).to include(InboundOpsTeam)
+          expect(assignee.class).to eq(CavcLitigationSupport)
+        end
+      end
     end
 
     describe "failure" do
