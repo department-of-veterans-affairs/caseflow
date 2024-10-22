@@ -425,10 +425,20 @@ module Caseflow::Error
   class IdtApiError < StandardError; end
   class InvalidOneTimeKey < IdtApiError; end
 
-  class PexipApiError < SerializableError; end
+  class ConferenceCreationError < SerializableError; end
+  class MeetingTypeNotFoundError < ConferenceCreationError; end
+
+  class PexipApiError < ConferenceCreationError; end
   class PexipNotFoundError < PexipApiError; end
   class PexipBadRequestError < PexipApiError; end
   class PexipMethodNotAllowedError < PexipApiError; end
+  class PexipServiceNotReachableError < PexipApiError; end
+
+  class WebexApiError < ConferenceCreationError; end
+  class WebexNotFoundError < WebexApiError; end
+  class WebexBadRequestError < WebexApiError; end
+  class WebexMethodNotAllowedError < WebexApiError; end
+  class WebexInvalidTokenError < ConferenceCreationError; end
 
   class WorkModeCouldNotUpdateError < StandardError; end
 
@@ -505,7 +515,21 @@ module Caseflow::Error
   class DecisionReviewCreatedCreateClaimReviewError < StandardError; end
   class DecisionReviewCreatedEpEstablishmentError < StandardError; end
   class DecisionReviewCreatedRequestIssuesError < StandardError; end
-
+  class DecisionReviewUpdatedRequestIssuesError < StandardError; end
+  class DecisionReviewUpdatedInformalConferenceError < StandardError; end
+  class DecisionReviewUpdateMissingReviewError < StandardError; end
+  class DecisionReviewUpdateMissingIssueError < StandardError
+    def initialize(reference_id)
+      super("Request issue not found for REFERENCE_ID: #{reference_id}")
+    end
+  end
+  class DecisionReviewUpdateMismatchedRemovedIssuesError < StandardError
+    def initialize(msg = "Decision review update mismatched removed issues")
+      super(msg)
+    end
+  end
+  class DecisionReviewUpdatedClaimReviewError < StandardError; end
+  class DecisionReviewUpdatedEndProductEstablishmentError < StandardError; end
   class MaximumBatchSizeViolationError < StandardError
     def initialize(msg = "The batch size of jobs must not exceed 10")
       super(msg)
