@@ -1142,9 +1142,9 @@ class BusinessLine < Organization
         "after" => ">",
         "before" => "<",
         "on" => "=",
-        "last_7_days" => "last_7_days",
-        "last_30_days" => "last_30_days",
-        "last_365_days" => "last_365_days"
+        "last7" => "last_7_days",
+        "last30" => "last_30_days",
+        "last365" => "last_365_days"
       }[mode]
     end
   end

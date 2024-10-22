@@ -65,7 +65,7 @@ export const pendingIssueModificationColumn = () => {
 export const vhaTaskCompletedDateColumn = () => {
   return {
     header: COPY.CASE_LIST_TABLE_COMPLETED_ON_DATE_COLUMN_TITLE,
-    name: 'completedOnDateColumn',
+    name: 'completedDateColumn',
     valueFunction: (task) => task.closedAt ? <DateString date={task.closedAt} /> : null,
     backendCanSort: true,
     enableFilter: true,

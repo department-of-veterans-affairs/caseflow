@@ -9,7 +9,7 @@ const useLocalFilterStorage = (key, defaultValue) => {
       return defaultValue;
     }
 
-    const regex = /col=[^&]+&val=[^,]+(?:,[^&]+)*(?=,|$)/g;
+    const regex = /col=[^&]+&val=[^,]+(?:,[^&,]+)*(?=,|$)/g;
     const columnsWithValues = [...storedValue.matchAll(regex)].map((match) => match[0]);
 
     return compact(columnsWithValues);

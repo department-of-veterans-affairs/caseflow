@@ -69,15 +69,17 @@ const NonCompTabsUnconnected = (props) => {
           after: `After this date ${formattedStartDate}`,
           on: `On this date ${formattedStartDate}`,
           between: `Between this ${formattedStartDate} and that ${formattedEndDate}`,
-          last_7_days: 'Last 7 Days',
-          last_30_days: 'Last 30 Days',
-          last_365_days: 'Last 365 Days'
+          last7: 'Last 7 Days',
+          last30: 'Last 30 Days',
+          last365: 'Last 365 Days'
         };
 
         return sprintf(COPY.VHA_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION_WITH_FILTER,
           completedDateFilterModeHandlers[mode]);
       }
 
+    } else if (!isVhaBusinessLine) {
+      return COPY.QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION;
     }
 
     return COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION;

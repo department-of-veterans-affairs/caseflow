@@ -446,7 +446,7 @@ describe BusinessLine do
         end
 
         let(:task_filters) do
-          ["col=completedDateColumn&val=last_7_days,,"]
+          ["col=completedDateColumn&val=last7,,"]
         end
 
         it "should filter the tasks for a closed at in the last 7 days" do
@@ -482,7 +482,7 @@ describe BusinessLine do
         end
 
         let(:task_filters) do
-          ["col=completedDateColumn&val=last_30_days,,"]
+          ["col=completedDateColumn&val=last30,,"]
         end
 
         it "should filter the tasks for a closed at in the last 30 days" do
@@ -519,7 +519,7 @@ describe BusinessLine do
         end
 
         let(:task_filters) do
-          ["col=completedDateColumn&val=last_365_days,,"]
+          ["col=completedDateColumn&val=last365,,"]
         end
 
         it "should filter the tasks for a closed at in the last 365 days" do
