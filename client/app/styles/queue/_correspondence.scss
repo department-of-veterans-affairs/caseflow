@@ -1322,6 +1322,18 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   margin-bottom: 30px;
 }
 
+.correspondence-response-letters {
+  .cf-modal-divider {
+    padding-bottom: 0;
+  }
+
+  .cf-modal-controls {
+    .cf-push-left {
+      padding-left: 0;
+    }
+  }
+}
+
 .new-letter-container {
   display: inline-block;
   padding: 2rem;
@@ -1344,10 +1356,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 
 .details-page-letter-container {
   float: left;
-  height: 540px;
   width: 100%;
-  overflow: auto;
-  padding: 18px;
   position: relative;
 }
 
