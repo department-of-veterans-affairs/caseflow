@@ -32,7 +32,6 @@ import AddTaskModalCorrespondenceDetails from '../intake/components/TasksAppeals
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
   const correspondence = props.correspondence;
-  const unrelatedTaskList = props.unrelatedTaskList;
   const correspondenceInfo = props.correspondenceInfo;
   const mailTasks = props.correspondence.mailTasks;
   const allCorrespondences = props.correspondence.all_correspondences;
@@ -938,7 +937,6 @@ CorrespondenceDetails.propTypes = {
   addLetterCheck: PropTypes.bool,
   updateCorrespondenceInfo: PropTypes.func,
   correspondenceTypes: PropTypes.array,
-  unrelatedTaskList: PropTypes.array,
   correspondence_uuid: PropTypes.string,
   appealsFromStore: PropTypes.object
 };
