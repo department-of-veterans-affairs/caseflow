@@ -11,10 +11,17 @@ class SensitivityChecker
     bgs_service.sensitivity_level_for_user(user) >=
       bgs_service.sensitivity_level_for_veteran(veteran)
   rescue StandardError => error
-    error_uuid = SecureRandom.uuid
-    Raven.capture_exception(error, extra: { error_uuid: error_uuid })
+    report_error(error)
 
     false
+  end
+
+  def sensitivity_level_for_user(user)
+    bgs_service.sensitivity_level_for_user(user)
+  rescue StandardError => error
+    report_error(error)
+
+    nil
   end
 
   private
@@ -28,5 +35,18 @@ class SensitivityChecker
     RequestStore.store[:current_user] ||= current_user
 
     @bgs_service = BGSService.new
+  end
+
+  def error_handler
+    @error_handler ||= ErrorHandlers::ClaimEvidenceApiErrorHandler.new
+  end
+
+  def report_error(error)
+    error_details = {
+      user_css_id: RequestStore[:current_user]&.css_id || "User is not set in RequestStore",
+      user_sensitivity_level: "Error occurred in SensitivityChecker",
+      error_uuid: SecureRandom.uuid
+    }
+    error_handler.handle_error(error: error, error_details: error_details)
   end
 end

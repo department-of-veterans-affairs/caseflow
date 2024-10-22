@@ -6,9 +6,10 @@ class ExternalApi::VBMSService
 
     if FeatureToggle.enabled?(:use_ce_api)
       verify_current_user_veteran_file_number_access(document.file_number)
-      VeteranFileFetcher.get_document_content(
-        doc_series_id: document.series_id,
-        claim_evidence_request: claim_evidence_request
+      send_claim_evidence_request(
+        class_name: VeteranFileFetcher,
+        class_method: :get_document_content,
+        method_args: { doc_series_id: document.series_id, claim_evidence_request: claim_evidence_request }
       )
     else
       @vbms_client ||= init_vbms_client
@@ -25,9 +26,10 @@ class ExternalApi::VBMSService
     if FeatureToggle.enabled?(:use_ce_api)
       verify_current_user_veteran_access(appeal.veteran)
 
-      response = VeteranFileFetcher.fetch_veteran_file_list(
-        veteran_file_number: appeal.veteran_file_number,
-        claim_evidence_request: claim_evidence_request
+      response = send_claim_evidence_request(
+        class_name: VeteranFileFetcher,
+        class_method: :fetch_veteran_file_list,
+        method_args: { veteran_file_number: appeal.veteran_file_number, claim_evidence_request: claim_evidence_request }
       )
       documents = JsonApiResponseAdapter.new.adapt_fetch_document_series_for(response)
       {
@@ -43,9 +45,10 @@ class ExternalApi::VBMSService
   def self.fetch_document_series_for(appeal)
     if FeatureToggle.enabled?(:use_ce_api)
       verify_current_user_veteran_access(appeal.veteran)
-      response = VeteranFileFetcher.fetch_veteran_file_list(
-        veteran_file_number: appeal.veteran_file_number,
-        claim_evidence_request: claim_evidence_request
+      response = send_claim_evidence_request(
+        class_name: VeteranFileFetcher,
+        class_method: :fetch_veteran_file_list,
+        method_args: { veteran_file_number: appeal.veteran_file_number, claim_evidence_request: claim_evidence_request }
       )
       JsonApiResponseAdapter.new.adapt_fetch_document_series_for(response)
     else
@@ -69,11 +72,15 @@ class ExternalApi::VBMSService
         subject: uploadable_document.document_type,
         new_mail: true
       )
-      response = VeteranFileUploader.upload_veteran_file(
-        file_path: uploadable_document.pdf_location,
-        claim_evidence_request: claim_evidence_request,
-        veteran_file_number: appeal.veteran_file_number,
-        doc_info: file_upload_payload
+      response = send_claim_evidence_request(
+        class_name: VeteranFileUploader,
+        class_method: :upload_veteran_file,
+        method_args: {
+          file_path: uploadable_document.pdf_location,
+          claim_evidence_request: claim_evidence_request,
+          veteran_file_number: appeal.veteran_file_number,
+          doc_info: file_upload_payload
+        }
       )
       JsonApiResponseAdapter.new.adapt_upload_document(response)
     else
@@ -97,11 +104,15 @@ class ExternalApi::VBMSService
         new_mail: true
       )
 
-      response = VeteranFileUploader.upload_veteran_file(
-        file_path: uploadable_document.pdf_location,
-        claim_evidence_request: claim_evidence_request,
-        veteran_file_number: veteran_file_number,
-        doc_info: file_upload_payload
+      response = send_claim_evidence_request(
+        class_name: VeteranFileUploader,
+        class_method: :upload_veteran_file,
+        method_args: {
+          file_path: uploadable_document.pdf_location,
+          claim_evidence_request: claim_evidence_request,
+          veteran_file_number: veteran_file_number,
+          doc_info: file_upload_payload
+        }
       )
       JsonApiResponseAdapter.new.adapt_upload_document(response)
     else
@@ -179,11 +190,15 @@ class ExternalApi::VBMSService
 
       file_uuid = uploadable_document.document_series_reference_id.delete("{}")
 
-      response = VeteranFileUpdater.update_veteran_file(
-        veteran_file_number: appeal.veteran_file_number,
-        claim_evidence_request: claim_evidence_request,
-        file_uuid: file_uuid,
-        file_update_payload: file_update_payload
+      response = send_claim_evidence_request(
+        class_name: VeteranFileUpdater,
+        class_method: :update_veteran_file,
+        method_args: {
+          veteran_file_number: appeal.veteran_file_number,
+          claim_evidence_request: claim_evidence_request,
+          file_uuid: file_uuid,
+          file_update_payload: file_update_payload
+        }
       )
       JsonApiResponseAdapter.new.adapt_update_document(response)
     else
@@ -355,5 +370,28 @@ class ExternalApi::VBMSService
 
   def self.send_user_info?
     RequestStore[:current_user].present? && FeatureToggle.enabled?(:send_current_user_cred_to_ce_api)
+  end
+
+  class << self
+    private
+
+    def send_claim_evidence_request(class_name:, class_method:, method_args:)
+      class_name.public_send(class_method, **method_args)
+    rescue StandardError => error
+      current_user = RequestStore[:current_user]
+      user_sensitivity_level = if current_user.present?
+                                 SensitivityChecker.new(current_user).sensitivity_level_for_user(current_user)
+                               else
+                                 "User is not set in the RequestStore"
+                               end
+      error_details = {
+        user_css_id: current_user&.css_id || "User is not set in the RequestStore",
+        user_sensitivity_level: user_sensitivity_level,
+        error_uuid: SecureRandom.uuid
+      }
+      ErrorHandlers::ClaimEvidenceApiErrorHandler.new.handle_error(error: error, error_details: error_details)
+
+      nil
+    end
   end
 end
