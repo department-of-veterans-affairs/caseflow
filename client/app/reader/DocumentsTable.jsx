@@ -11,6 +11,7 @@ import TagTableColumn from './TagTableColumn';
 import Table from '../components/Table';
 import Button from '../components/Button';
 import CommentIndicator from './CommentIndicator';
+import DocSizeIndicator from './DocSizeIndicator';
 import DropdownFilter from '../components/DropdownFilter';
 import { bindActionCreators } from 'redux';
 import Highlight from '../components/Highlight';
@@ -694,6 +695,15 @@ class DocumentsTable extends React.Component {
           </div>
         ),
         valueFunction: (doc) => <CommentIndicator docId={doc.id} />,
+      },
+      {
+        cellClass: 'comments-column',
+        header: (
+          <div id="comments-header" className="document-list-header-comments table-header-label">
+            File Size
+          </div>
+        ),
+        valueFunction: () => <DocSizeIndicator docSize="" />,
       },
     ];
   };
