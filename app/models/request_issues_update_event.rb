@@ -333,11 +333,11 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   # Legacy issue checks
-  def vacols_ids_exist?(request_issue)
+  def self.vacols_ids_exist?(request_issue)
     request_issue.vacols_id.present? && request_issue.vacols_sequence_id.present?
   end
 
-  def optin?
+  def self.optin?
     ActiveModel::Type::Boolean.new.cast(@parser.claim_review_legacy_opt_in_approved)
   end
 
@@ -353,7 +353,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
 
   def create_legacy_optin_backfill(request_issue, legacy_issue)
     vacols_issue = vacols_issue(request_issue.vacols_id, request_issue.vacols_sequence_id)
-    optin = LegacyIssueOptin.create!(
+    legacy_optin = LegacyIssueOptin.create!(
       request_issue: request_issue,
       original_disposition_code: vacols_issue.disposition_id,
       original_disposition_date: vacols_issue.disposition_date,
@@ -362,11 +362,11 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
       original_legacy_appeal_disposition_code: vacols_issue&.legacy_appeal&.case_record&.bfdc,
       folder_decision_date: vacols_issue&.legacy_appeal&.case_record&.folder&.tidcls
     )
-    add_event_record(optin, "A", nil)
-    optin
+    add_event_record(legacy_optin, "A", nil)
+    legacy_optin
   end
 
-  def vacols_issue(vacols_id, vacols_sequence_id)
+  def self.vacols_issue(vacols_id, vacols_sequence_id)
     AppealRepository.issues(vacols_id).find do |issue|
       issue.vacols_sequence_id == vacols_sequence_id
     end
