@@ -333,11 +333,11 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   # Legacy issue checks
-  def self.vacols_ids_exist?(request_issue)
+  def vacols_ids_exist?(request_issue)
     request_issue.vacols_id.present? && request_issue.vacols_sequence_id.present?
   end
 
-  def self.optin?
+  def optin?
     ActiveModel::Type::Boolean.new.cast(@parser.claim_review_legacy_opt_in_approved)
   end
 
@@ -366,7 +366,7 @@ class RequestIssuesUpdateEvent < RequestIssuesUpdate
     legacy_optin
   end
 
-  def self.vacols_issue(vacols_id, vacols_sequence_id)
+  def vacols_issue(vacols_id, vacols_sequence_id)
     AppealRepository.issues(vacols_id).find do |issue|
       issue.vacols_sequence_id == vacols_sequence_id
     end
