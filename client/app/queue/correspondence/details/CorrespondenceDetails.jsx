@@ -792,7 +792,11 @@ const CorrespondenceDetails = (props) => {
     if (isReturnToQueue) {
       setShowModal(!showModal);
     } else {
-      history.goBack();
+      if (history.length > 1) {
+        history.goBack();
+      } else {
+        window.location.href = '/queue';
+      }
     }
   };
 
