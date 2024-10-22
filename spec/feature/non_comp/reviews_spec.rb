@@ -432,7 +432,7 @@ feature "NonComp Reviews Queue", :postgres do
 
       order_buttons[:date_completed].click
       expect(page).to have_current_path(
-        "#{BASE_URL}?tab=completed&page=1&sort_by=completedDateColumn&order=desc"
+        "#{BASE_URL}?tab=completed&page=1&sort_by=completedOnDateColumn&order=desc"
       )
 
       table_rows = current_table_rows
