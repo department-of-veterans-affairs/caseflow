@@ -9,7 +9,6 @@ import { TranscriptionFileDispatchTable } from './TranscriptionFileDispatchTable
 import { css } from 'glamor';
 import TRANSCRIPTION_FILE_DISPATCH_CONFIG from '../../../constants/TRANSCRIPTION_FILE_DISPATCH_CONFIG';
 import { sprintf } from 'sprintf-js';
-import { getQueryParams } from '../../util/QueryParamsUtil';
 
 const styles = {
   tabColumns: {
@@ -112,7 +111,9 @@ const TranscriptionSettingsLink = () => (
 );
 
 // This maps the component to render for each tab
-export const tabConfig = (openModal, selectFilesForPackage, files, handleSearchBarChange, handleSearchBarSubmit) => [
+export const tabConfig = (
+  openModal, selectFilesForPackage, files, search
+) => [
   {
     label: COPY.CASE_LIST_TABLE_UNASSIGNED_LABEL,
     page: <>
@@ -139,19 +140,19 @@ export const tabConfig = (openModal, selectFilesForPackage, files, handleSearchB
               id="transcription-table-search"
               isSearchAhead
               title={COPY.TRANSCRIPTION_FILE_DISPATCH_UNASSIGNED_TAB_SEARCH}
-              onChange={handleSearchBarChange}
-              onSubmit={handleSearchBarSubmit}
+              onChange={search.onChange}
+              onSubmit={search.onSubmit}
               submitUsingEnterKey
             />
           </div>
         </div>
       </div>
-      <div style={styles.tableWrapper}>
+      <div style={styles.tableWrapper} key={search.value}>
         <TranscriptionFileDispatchTable
           columns={unassignedColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
           statusFilter={['Unassigned']}
           selectFilesForPackage={selectFilesForPackage}
-          searchValue={getQueryParams(window.location.search).search}
+          searchValue={search.value}
         />
       </div>
     </>
@@ -171,16 +172,20 @@ export const tabConfig = (openModal, selectFilesForPackage, files, handleSearchB
               id="transcription-table-search"
               isSearchAhead
               title={COPY.TRANSCRIPTION_FILE_DISPATCH_ASSIGNED_TAB_SEARCH}
+              onChange={search.onChange}
+              onSubmit={search.onSubmit}
+              submitUsingEnterKey
             />
           </div>
         </div>
       </div>
-      <div style={styles.tableWrapper}>
+      <div style={styles.tableWrapper} key={search.value}>
         <TranscriptionFileDispatchTable
           columns={assignedColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
           statusFilter={['Assigned']}
           selectFilesForPackage={selectFilesForPackage}
           openModal={openModal}
+          searchValue={search.value}
         />
       </div>
     </>
@@ -200,15 +205,19 @@ export const tabConfig = (openModal, selectFilesForPackage, files, handleSearchB
               id="transcription-table-search"
               isSearchAhead
               title={COPY.TRANSCRIPTION_FILE_DISPATCH_COMPLETED_TAB_SEARCH}
+              onChange={search.onChange}
+              onSubmit={search.onSubmit}
+              submitUsingEnterKey
             />
           </div>
         </div>
       </div>
-      <div style={styles.tableWrapper}>
+      <div style={styles.tableWrapper} key={search.value}>
         <TranscriptionFileDispatchTable
           columns={completedColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
           statusFilter={['Completed']}
           selectFilesForPackage={selectFilesForPackage}
+          searchValue={search.value}
         />
       </div>
     </>
@@ -228,11 +237,14 @@ export const tabConfig = (openModal, selectFilesForPackage, files, handleSearchB
               id="transcription-table-search"
               isSearchAhead
               title={COPY.TRANSCRIPTION_FILE_DISPATCH_ALL_TAB_SEARCH}
+              onChange={search.onChange}
+              onSubmit={search.onSubmit}
+              submitUsingEnterKey
             />
           </div>
         </div>
       </div>
-      <div style={styles.tableWrapper}>
+      <div style={styles.tableWrapper} key={search.value}>
         <TranscriptionFileDispatchTable
           columns={allColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
           statusFilter={['All']}

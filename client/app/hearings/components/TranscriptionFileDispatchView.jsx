@@ -33,6 +33,9 @@ export const TranscriptionFileDispatchView = ({ organizations }) => {
   const [modalConfig, setModalConfig] = useState({ opened: false, type: '' });
   const [contractors, setContractors] = useState({ transcription_contractors: [], return_dates: ['---', '---'] });
 
+  const [searchValue, setSearchValue] = useState('');
+  const [searchInput, setSearchInput] = useState('');
+
   const tabFromUrl = () => {
     const params = getQueryParams(window.location.search);
     let page = 0;
@@ -108,31 +111,32 @@ export const TranscriptionFileDispatchView = ({ organizations }) => {
   };
 
   const onTabChange = () => {
-    // reset pagenation and filtering settings when tab changes
+    // reset pagenation, filtering and search settings when tab changes
     const base = `${window.location.origin}${window.location.pathname}`;
     const params = getQueryParams(window.location.search);
     const qs = encodeQueryParams({ tab: params.tab, page: 1 });
+
+    setSearchValue('');
 
     history.pushState('', '', `${base}${qs}`);
   };
 
   const handleSearchBarChange = (input) => {
-    const base = `${window.location.origin}${window.location.pathname}`;
-    const params = getQueryParams(window.location.search);
-    const qs = encodeQueryParams({
-      tab: params.tab,
-      filter: params.filter,
-      sort_by: params.sort_by,
-      order: params.order,
-      page: 1,
-      search: input
-    });
-
-    history.replaceState('', '', `${base}${qs}`);
+    // save value for use on search submit
+    setSearchInput(input);
   };
 
   const handleSearchBarSubmit = () => {
-    location.reload();
+    // use saved search input value and update URL params and pass search to children
+
+    const currentParams = new URLSearchParams(window.location.search);
+
+    currentParams.set('search', searchInput);
+    const qs = currentParams.toString();
+
+    history.replaceState('', '', `?${qs}`);
+
+    setSearchValue(searchInput);
   };
 
   useEffect(() => {
@@ -163,8 +167,11 @@ export const TranscriptionFileDispatchView = ({ organizations }) => {
             openModal,
             selectFilesForPackage,
             selectedFiles.length,
-            handleSearchBarChange,
-            handleSearchBarSubmit
+            {
+              value: searchValue,
+              onChange: handleSearchBarChange,
+              onSubmit: handleSearchBarSubmit
+            }
           )}
         />
         { modalConfig.opened && renderModal(modalConfig)}
