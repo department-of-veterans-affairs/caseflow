@@ -12,7 +12,7 @@ import CorrespondenceResponseLetters from './CorrespondenceResponseLetters';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
 import { prepareAppealForStore, prepareTasksForStore } from 'app/queue/utils';
-import { onReceiveTasks, onReceiveAppealDetails } from '../../QueueActions';
+import { onReceiveTasks, onReceiveAppealDetails, deleteAppeal } from '../../QueueActions';
 import moment from 'moment';
 import Pagination from 'app/components/Pagination/Pagination';
 import Table from 'app/components/Table';
@@ -177,7 +177,32 @@ const CorrespondenceDetails = (props) => {
       const patchResponse = await ApiUtil.patch(
       `/queue/correspondence/${correspondence.uuid}/update_correspondence`,
       { data: postData }
-      );
+      ).
+        then((resp) => {
+          const appealIds = resp.body.related_appeals;
+          const correspondenceAppeals = resp.body.correspondence_appeals;
+
+          if (Object.keys(props.appealsFromStore).length < 1) {
+            return;
+          }
+
+          // Removes all entries in the queue.appeals redux store
+          Object.entries(props.appealsFromStore).forEach(
+            ([, value]) => dispatch(deleteAppeal((value.externalId)))
+          );
+
+          // Updates the queue.appeals redux store to match all correspondenceAppeals on Save
+          correspondenceAppeals.map((corAppeal) => {
+            dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal?.appeal?.data])));
+          });
+
+          sortAppeals(appealIds);
+
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        });
 
       // Check for general success status (any 2xx status)
       patchSuccess = isSuccess(patchResponse);
@@ -413,7 +438,6 @@ const CorrespondenceDetails = (props) => {
       return;
     }
 
-    // Ki - Stuff for saving appeals to store things
     props.correspondence.correspondenceAppeals.map((corAppeal) => {
       dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal?.appeal?.data])));
 
@@ -834,16 +858,28 @@ const CorrespondenceDetails = (props) => {
       return ApiUtil.patch(`/queue/correspondence/${correspondence.uuid}/update_correspondence`, payload).
         then((resp) => {
           const appealIds = resp.body.related_appeals;
+          const correspondenceAppeals = resp.body.correspondence_appeals;
 
           setSelectedAppeals(appealIds);
           setInitialSelectedAppeals(appealIds);
-          sortAppeals(appealIds);
           setAppealTableKey((key) => key + 1);
           props.updateCorrespondenceInfo(tempCor);
           setRelatedCorrespondenceIds([...relatedCorrespondenceIds, ...priorMailIds]);
           setShowSuccessBanner(true);
           setSelectedPriorMail([]);
           setDisableSubmitButton(true);
+
+          // Removes all entries in the queue.appeals redux store
+          Object.entries(props.appealsFromStore).forEach(
+            ([, value]) => dispatch(deleteAppeal((value.externalId)))
+          );
+
+          // Updates the queue.appeals redux store to match all correspondenceAppeals on Save
+          correspondenceAppeals.map((corAppeal) => {
+            dispatch(onReceiveAppealDetails(prepareAppealForStore([corAppeal?.appeal?.data])));
+          });
+
+          sortAppeals(appealIds);
           window.scrollTo({
             top: 0,
             behavior: 'smooth'
@@ -932,7 +968,8 @@ CorrespondenceDetails.propTypes = {
   updateCorrespondenceInfo: PropTypes.func,
   correspondenceTypes: PropTypes.array,
   correspondence_uuid: PropTypes.string,
-  appealsFromStore: PropTypes.object
+  appealsFromStore: PropTypes.object,
+  deleteAppeal: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
@@ -943,7 +980,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    updateCorrespondenceInfo
+    updateCorrespondenceInfo,
+    deleteAppeal
   }, dispatch)
 );
 
