@@ -23,9 +23,9 @@ class SavedSearchesController < ApplicationController
   end
 
   def destroy
-    @search = current_user.saved_searches.find(id: params[:id])
+    @search = current_user.saved_searches.find(params[:id])
     @search.destroy!
-    render(json: { status: :no_content })
+    render json: { status: :ok }
   end
 
   private
