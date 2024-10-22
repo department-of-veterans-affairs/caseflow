@@ -13,12 +13,16 @@ class BusinessLineReporter
   end
 
   def tasks
-    # business_line.tasks.completed.includes(
-    #   [:assigned_to, appeal: [:request_issues, :decision_issues, intake: [:user]]]
-    # ).order(id: :asc)
-    business_line.completed_tasks(filters).includes(
-      [:assigned_to, appeal: [:request_issues, :decision_issues, intake: [:user]]]
-    )
+    # If it is the VhaBusinessLine use the decision review queue task methods since they support the filters
+    if business_line.is_a?(VhaBusinessLine)
+      business_line.completed_tasks(filters).includes(
+        [:assigned_to, appeal: [:request_issues, :decision_issues, intake: [:user]]]
+      )
+    else
+      business_line.tasks.completed.includes(
+        [:assigned_to, appeal: [:request_issues, :decision_issues, intake: [:user]]]
+      ).order(id: :asc)
+    end
   end
 
   # rubocop:disable Metrics/AbcSize
