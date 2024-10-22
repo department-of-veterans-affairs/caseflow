@@ -7,6 +7,15 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
   let!(:epe) { create(:end_product_establishment) }
   let!(:higher_level_review) { create(:higher_level_review) }
   let!(:payload) { Events::DecisionReviewCreated::DecisionReviewCreatedParser.example_response }
+  let!(:legacy_appeal) { create(:legacy_appeal) }
+
+  before do
+    allow(described_class).to receive(:vacols_issue).and_return(Issue.new)
+    allow_any_instance_of(Issue).to receive(:vacols_sequence_id).and_return(1)
+    allow_any_instance_of(Issue).to receive(:disposition_id).and_return("O")
+    allow_any_instance_of(Issue).to receive(:disposition_date).and_return(Time.zone.now)
+    allow_any_instance_of(Issue).to receive(:legacy_appeal).and_return(legacy_appeal)
+  end
 
   describe "#process!" do
     subject { described_class }
@@ -21,8 +30,8 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
         expect(backfilled_issues.count).to eq(2)
         expect(RequestIssue.count).to eq(2)
         expect(EventRecord.count).to eq(2)
-        expect(backfilled_issues.first.event_record).to eq(EventRecord.first)
-        expect(backfilled_issues.last.event_record).to eq(EventRecord.last)
+        expect(backfilled_issues.first.event_records.first).to eq(EventRecord.first)
+        expect(backfilled_issues.last.event_records.first).to eq(EventRecord.last)
 
         # check if attributes match
         ri1 = backfilled_issues.first
@@ -91,6 +100,8 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
         expect(LegacyIssue.count).to eq(1)
         expect(LegacyIssueOptin.count).to eq(1)
         expect(EventRecord.count).to eq(3)
+        expect(backfilled_issues.first.event_records.first.info["update_type"]).to eq("I")
+        expect(backfilled_issues.first.event_records.first.info["record_data"]["reference_id"]).to eq("1")
       end
     end
 
@@ -103,10 +114,39 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
       end
     end
 
+    context "when parser_issues.ri_reference_id is nil" do
+      it "raises Caseflow::Error::DecisionReviewCreatedRequestIssuesError" do
+        invalid_payload = retrieve_payload
+        invalid_payload[:request_issues][0][:decision_review_issue_id] = nil
+
+        parser = Events::DecisionReviewCreated::DecisionReviewCreatedParser.new({}, invalid_payload)
+
+        expect do
+          described_class.process!(event: event, parser: parser, epe: epe, decision_review: higher_level_review)
+        end.to raise_error(Caseflow::Error::DecisionReviewCreatedRequestIssuesError, "reference_id cannot be null")
+      end
+
+      it "does not create any RequestIssues when ri_reference_id is nil" do
+        invalid_payload = retrieve_payload
+        invalid_payload[:request_issues][0][:decision_review_issue_id] = nil
+
+        parser = Events::DecisionReviewCreated::DecisionReviewCreatedParser.new({}, invalid_payload)
+
+        expect do
+          described_class.process!(event: event, parser: parser, epe: epe, decision_review: higher_level_review)
+        end.to raise_error(Caseflow::Error::DecisionReviewCreatedRequestIssuesError)
+
+        # Ensure no RequestIssues or EventRecords are created
+        expect(RequestIssue.count).to eq(0)
+        expect(EventRecord.count).to eq(0)
+      end
+    end
+
     def retrieve_payload
       {
         "request_issues": [
           {
+            "decision_review_issue_id": "1",
             "benefit_type": "pension",
             "contested_issue_description": "service connection for arthritis denied",
             "contention_reference_id": 4_542_785,
@@ -134,6 +174,7 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
             "nonrating_issue_bgs_source": "Test Source"
           },
           {
+            "decision_review_issue_id": "2",
             "benefit_type": "pension",
             "contested_issue_description": "PTSD",
             "contention_reference_id": 123_456,

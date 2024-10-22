@@ -3,6 +3,7 @@
 class EventRecord < CaseflowRecord
   belongs_to :event
   belongs_to :evented_record, polymorphic: true
+  store_accessor :info
 
   validate :valid_evented_record
 
