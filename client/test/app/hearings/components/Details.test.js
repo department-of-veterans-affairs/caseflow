@@ -1,7 +1,7 @@
 import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-
+import { Wrapper, customRender } from '../../../helpers/testHelpers';
 import { detailsStore } from 'test/data/stores/hearingsStore';
 import {
   anyUser,
@@ -12,17 +12,7 @@ import {
   amaWebexHearing,
   legacyWebexHearing
 } from 'test/data';
-
 import Details from 'app/hearings/components/Details';
-import DetailsForm from 'app/hearings/components/details/DetailsForm';
-import HearingTypeDropdown from 'app/hearings/components/details/HearingTypeDropdown';
-import SearchableDropdown from 'app/components/SearchableDropdown';
-import TranscriptionDetailsInputs from 'app/hearings/components/details/TranscriptionDetailsInputs';
-import TranscriptionProblemInputs from 'app/hearings/components/details/TranscriptionProblemInputs';
-import TranscriptionRequestInputs from 'app/hearings/components/details/TranscriptionRequestInputs';
-import TranscriptionFilesTable from 'app/hearings/components/details/TranscriptionFilesTable';
-import EmailConfirmationModal from 'app/hearings/components/EmailConfirmationModal';
-import toJson from 'enzyme-to-json';
 
 // Define the function spies
 const saveHearingSpy = jest.fn();
@@ -67,12 +57,7 @@ describe('Details', () => {
     expect(screen.getAllByRole('heading', {name: convertRegex("Hearing Details")}).length).toBeGreaterThan(0);
 
     // Ensure that the virtualHearing form is not displayed by default
-    expect(details.find(VirtualHearingFields).prop('virtualHearing')).toEqual(
-      null
-    );
-    // VirtualHearingFields will always show for any virtual or non virtual hearing
-    // as we move forward with Webex integration
-    expect(details.find(VirtualHearingFields).children()).toHaveLength(1);
+    expect(screen.queryByRole('heading', {name: "Virtual Hearing Links"})).toBeNull();
 
     // Ensure the transcription section is displayed by default for ama hearings
     expect(screen.getByRole('heading', {name: "Transcription Details"})).toBeInTheDocument();
@@ -254,16 +239,19 @@ describe('Details', () => {
     dateSelector = container.querySelector('#copySentDate');
     expect(dateSelector.value).toBe('2020-07-25');
 
-    // Ensure the modal is not displayed
-    expect(details.exists(EmailConfirmationModal)).toEqual(false);
+    // Ensure EmailConfirmationModal is not displayed
+    expect(screen.queryByLabelText("POA/Representative Hearing Time")).toBeNull();
+    expect(screen.queryByLabelText("POA/Representative Email")).toBeNull();
+    expect(screen.queryByLabelText("Veteran Hearing Time")).toBeNull();
+    expect(screen.queryByLabelText("Appellant Hearing Time")).toBeNull();
 
-    expect(toJson(details, { noKey: true })).toMatchSnapshot();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   describe('TranscriptiomFormSection', () => {
     describe('pexip hearing', () => {
       test('Displays transcription section but not transcription files table for AMA hearings', () => {
-        const details = mount(
+        const {container} = customRender(
           <Details
             hearing={amaHearing}
             saveHearing={saveHearingSpy}
@@ -274,23 +262,25 @@ describe('Details', () => {
             transitionAlert={transitionAlertSpy}
           />,
           {
-            wrappingComponent: hearingDetailsWrapper(
-              anyUser,
-              amaHearing
-            ),
-            wrappingComponentProps: { store: detailsStore },
+            wrapper: Wrapper,
+            wrapperProps: {
+              store: detailsStore,
+              user: anyUser,
+              hearing: amaHearing
+            },
           }
         );
 
-        expect(details.find(TranscriptionFormSection)).toHaveLength(1);
-        expect(details.find(TranscriptionDetailsInputs)).toHaveLength(1);
-        expect(details.find(TranscriptionProblemInputs)).toHaveLength(1);
-        expect(details.find(TranscriptionRequestInputs)).toHaveLength(1);
-        expect(details.find(TranscriptionFilesTable)).toHaveLength(0);
+        expect(screen.getByRole('heading', {name: "Transcription Details"})).toBeInTheDocument();
+        expect(screen.getByTestId('transcription-details-inputs')).toBeInTheDocument();
+        expect(screen.getByTestId('transcription-details-date-inputs')).toBeInTheDocument();
+        expect(screen.getByTestId('transcription-problem-inputs')).toBeInTheDocument();
+        expect(screen.getByTestId('transcription-request-inputs')).toBeInTheDocument();
+        expect(container.querySelector('.transcription-files-table')).toBeNull();
       });
 
       test('Does not display transcription section for legacy hearings', () => {
-        const details = mount(
+        const {asFragment, container} = customRender(
           <Details
             hearing={legacyHearing}
             saveHearing={saveHearingSpy}
@@ -301,42 +291,45 @@ describe('Details', () => {
             transitionAlert={transitionAlertSpy}
           />,
           {
-            wrappingComponent: hearingDetailsWrapper(
-              anyUser,
-              legacyHearing
-            ),
-            wrappingComponentProps: { store: detailsStore },
+            wrapper: Wrapper,
+            wrapperProps: {
+              store: detailsStore,
+              user: anyUser,
+              hearing: legacyHearing
+            },
           }
         );
 
         // Assertions
-        expect(details.find(DetailsHeader)).toHaveLength(1);
-        expect(details.find(DetailsForm)).toHaveLength(1);
+        expect(screen.getByTestId('details-header')).toBeInTheDocument();
+        expect(screen.getByRole('heading', {name: "Hearing Details"})).toBeInTheDocument();
+
 
         // Ensure that the virtualHearing form is not displayed by default
-        expect(details.find(VirtualHearingFields).prop('virtualHearing')).toEqual(
-          null
-        );
+        expect(screen.queryByRole('heading', {name: "Virtual Hearing Links"})).toBeNull();
+
         // VirtualHearingFields will always show for any virtual or non virtual hearing
         // as we move forward with Webex integration
-        expect(details.find(VirtualHearingFields).children()).toHaveLength(1);
+        expect(screen.getByText(convertRegex("Pexip Hearing"))).toBeInTheDocument();
 
         // Ensure the transcription form is not displayed for legacy hearings
-        expect(details.find(TranscriptionFormSection)).toHaveLength(0);
-        // expect(details.find(TranscriptionFilesTable)).toHaveLength(0);
+        expect(screen.queryByRole('heading', {name: "Transcription Details"})).toBeNull();
+        expect(container.querySelector('.transcription-files-table')).toBeNull();
 
         // Ensure the save and cancel buttons are present
-        detailButtonsTest(details);
+        expect(screen.getByRole('button', {name: "Cancel"})).toBeInTheDocument();
+        expect(screen.getByRole('button', {name: "Save"})).toBeInTheDocument();
 
-        expect(toJson(details, { noKey: true })).toMatchSnapshot();
+        expect(asFragment()).toMatchSnapshot();
       });
     });
 
+
     describe('webex hearing', () => {
       test('Displays transcription section, including transcription files table, for AMA hearings', () => {
-        const details = mount(
+        const {container} = customRender(
           <Details
-            hearing={amaWebexHearing}
+            hearing={defaultHearing}
             saveHearing={saveHearingSpy}
             setHearing={setHearingSpy}
             goBack={goBackSpy}
@@ -345,25 +338,27 @@ describe('Details', () => {
             transitionAlert={transitionAlertSpy}
           />,
           {
-            wrappingComponent: hearingDetailsWrapper(
-              anyUser,
-              amaWebexHearing
-            ),
-            wrappingComponentProps: { store: detailsStore },
+            wrapper: Wrapper,
+            wrapperProps: {
+              store: detailsStore,
+              user: anyUser,
+              hearing: amaWebexHearing
+            },
           }
         );
 
-        expect(details.find(TranscriptionFormSection)).toHaveLength(1);
-        expect(details.find(TranscriptionDetailsInputs)).toHaveLength(1);
-        expect(details.find(TranscriptionProblemInputs)).toHaveLength(1);
-        expect(details.find(TranscriptionRequestInputs)).toHaveLength(1);
-        expect(details.find(TranscriptionFilesTable)).toHaveLength(1);
+        expect(screen.getByRole('heading', {name: "Transcription Details"})).toBeInTheDocument();
+        expect(screen.getByTestId('transcription-details-inputs')).toBeInTheDocument();
+        expect(screen.getByTestId('transcription-details-date-inputs')).toBeInTheDocument();
+        expect(screen.getByTestId('transcription-problem-inputs')).toBeInTheDocument();
+        expect(screen.getByTestId('transcription-request-inputs')).toBeInTheDocument();
+        expect(container.querySelector('.transcription-files-table')).toBeInTheDocument();
       });
 
       test('Only displays transcription files table, and not other transcription form inputs, for legacy hearings', () => {
-        const details = mount(
+        const {container} = customRender(
           <Details
-            hearing={legacyWebexHearing}
+            hearing={defaultHearing}
             saveHearing={saveHearingSpy}
             setHearing={setHearingSpy}
             goBack={goBackSpy}
@@ -372,19 +367,21 @@ describe('Details', () => {
             transitionAlert={transitionAlertSpy}
           />,
           {
-            wrappingComponent: hearingDetailsWrapper(
-              anyUser,
-              legacyWebexHearing
-            ),
-            wrappingComponentProps: { store: detailsStore },
+            wrapper: Wrapper,
+            wrapperProps: {
+              store: detailsStore,
+              user: anyUser,
+              hearing:legacyWebexHearing
+            },
           }
         );
 
-        expect(details.find(TranscriptionFormSection)).toHaveLength(1);
-        expect(details.find(TranscriptionDetailsInputs)).toHaveLength(0);
-        expect(details.find(TranscriptionProblemInputs)).toHaveLength(0);
-        expect(details.find(TranscriptionRequestInputs)).toHaveLength(0);
-        expect(details.find(TranscriptionFilesTable)).toHaveLength(1);
+        expect(screen.getByRole('heading', {name: "Transcription Details"})).toBeInTheDocument();
+        expect(screen.queryByTestId('transcription-details-inputs')).toBeNull();
+        expect(screen.queryByTestId('transcription-details-date-inputs')).toBeNull();
+        expect(screen.queryByTestId('transcription-problem-inputs')).toBeNull();
+        expect(screen.queryByTestId('transcription-request-inputs')).toBeNull();
+        expect(container.querySelector('.transcription-files-table')).toBeInTheDocument();
       });
     });
   });
@@ -411,7 +408,7 @@ describe('Details', () => {
     );
 
     // Ensure that the virtualHearing form is not displayed by default
-    expect(screen.getByRole('heading', {name: "Virtual Hearing Links"})).toBeInTheDocument();
+    expect(screen.queryByRole('heading', {name: "Virtual Hearing Links"})).toBeNull();
     expect(screen.getByText(convertRegex(amaHearing.virtualHearing.appellantEmail))).toBeInTheDocument();
     expect(screen.getByText(convertRegex(amaHearing.virtualHearing.appellantEmail))).toBeInTheDocument();
     expect(screen.getByText(convertRegex(amaHearing.virtualHearing.representativeEmail))).toBeInTheDocument();

@@ -197,11 +197,11 @@ describe('DailyDocketRow', () => {
 describe('Test Conference Link Button', () => {
   store = createStore(dailyDocketReducer);
   it('Test click event', () => {
-    const { container } = render(
+    render(
       <Provider store={store}>
         <Router>
           <DailyDocketRow
-          {...dailyDocketPropsHearingNotVirtualJudgeUser}
+            {...dailyDocketPropsHearingNotVirtualJudgeUser}
           />
         </Router>
       </Provider>
@@ -218,7 +218,8 @@ describe('Test Conference Link Button', () => {
     fireEvent.click(button);
 
     // Check if window.open was called with the correct arguments
-    expect(mockOpen).toHaveBeenCalledWith(dailyDocketPropsHearingIsVirtual.conferenceLink.hostLink, 'Recording Session');
+    expect(mockOpen).toHaveBeenCalledWith(dailyDocketPropsHearingNotVirtualJudgeUser.hearing.nonVirtualConferenceLink.hostLink, 'Recording Session');
+    expect(mockOpen).toHaveBeenCalledTimes(1);
     expect(mockFocus).toHaveBeenCalled();
   });
 });
