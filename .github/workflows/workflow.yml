@@ -228,6 +228,7 @@ jobs:
           touch log/selenium-chrome.log
           chmod -R 777 ${GITHUB_WORKSPACE}
           export GHA_NODE_INDEX=${{matrix.ci_node_index}}
+          chmod +x ./ci-bin/ci-test
           ./ci-bin/ci-test
       # --format RSpec::Github::Formatter use in Rspec-github gem, adds more detailed info to GHA "Annotations"
       # --tty forces Rspec to produce color
