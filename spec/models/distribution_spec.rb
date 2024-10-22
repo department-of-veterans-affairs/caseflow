@@ -183,14 +183,17 @@ describe Distribution, :all_dbs do
         .with(status: :started, started_at: Time.zone.now)
         .exactly(1).times
       expect(new_distribution).to receive(:update!)
-        .with(status: "completed", completed_at: Time.zone.now, statistics: result_stats)
+        .with(status: "completed", completed_at: Time.zone.now)
+        .exactly(1).times
+      expect(new_distribution).to receive(:update!)
+        .with(statistics: result_stats)
         .exactly(1).times
 
       new_distribution.distribute!
     end
 
-    it "updates status to error if an error is thrown and sends slack notification", skip: "flaky" do
-      allow(new_distribution).to receive(:num_oldest_priority_appeals_for_judge_by_docket).and_raise(StandardError)
+    it "updates status to error if an error is thrown and sends slack notification" do
+      allow(new_distribution).to receive(:batch_size).and_raise(StandardError)
       expect_any_instance_of(SlackService).to receive(:send_notification).exactly(1).times
 
       expect { new_distribution.distribute! }.to raise_error(StandardError)
