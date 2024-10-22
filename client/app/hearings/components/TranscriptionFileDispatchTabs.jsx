@@ -254,6 +254,7 @@ export const tabConfig = (
           columns={allColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
           statusFilter={['All']}
           selectFilesForPackage={selectFilesForPackage}
+          searchValue={search.value}
         />
       </div>
     </>
