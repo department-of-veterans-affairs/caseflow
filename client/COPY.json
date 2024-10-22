@@ -966,6 +966,7 @@
   "INTAKE_EDIT_ISSUE_DECISION_DATE": "Decision date: ",
   "INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT": "Only VHA team members can establish Higher Level Reviews and Supplemental Claims with VHA issues. If you have a VHA claim, please return the packet to the main “VHA” queue in the Centralized Mail Portal or send downloaded documents to %s.",
   "INTAKE_REMOVE_COMP_AND_PEN": "Higher Level Reviews and Supplemental Claims with Compensation and Pension & Survivor's Benefits are now handled through VBMS and are no longer established through Caseflow",
+  "INTAKE_EDIT_DISABLED_COMP_AND_PEN":"Higher Level Reviews and Supplemental Claims for Compensation and Pension Claims are now managed in VBMS. They can no longer be edited in Caseflow",
   "VHA_BENEFIT_EMAIL_ADDRESS": "VHABENEFITAPPEALS@va.gov",
   "VHA_CAREGIVER_SUPPORT_EMAIL_ADDRESS": "VHA.CSPAppeals@va.gov",
   "VHA_PAYMENT_OPERATIONS_EMAIL_ADDRESS": "VHA10D1B3R2Appeals@va.gov",
@@ -1528,5 +1529,9 @@
   "DATE_PICKER_DROPDOWN_ON": "On this date",
   "DATE_PICKER_CLEAR": "Clear filter",
   "DATE_PICKER_DROPDOWN_LABEL": "Date filter parameters",
-  "DATE_PICKER_QUICK_BUTTON_30": "Last 30 days"
+  "DATE_PICKER_QUICK_BUTTON_30": "Last 30 days",
+  "DATE_PICKER_DROPDOWN_7": "Last 7 days",
+  "DATE_PICKER_DROPDOWN_30": "Last 30 days",
+  "DATE_PICKER_DROPDOWN_365": "Last 365 days",
+  "DATE_PICKER_DROPDOWN_ALL": "View All"
 }

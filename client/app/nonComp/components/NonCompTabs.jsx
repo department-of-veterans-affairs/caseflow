@@ -135,7 +135,7 @@ const NonCompTabsUnconnected = (props) => {
         filterableTaskTypes={props.taskFilterDetails.completed}
         filterableTaskIssueTypes={props.taskFilterDetails.completed_issue_types}
         description={buildCompletedTabDescriptionFromFilter(filter)}
-        predefinedColumns={{ includeCompletedDate: true }} />
+        tabName="completed" />
     }
   };
 
