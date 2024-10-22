@@ -62,7 +62,6 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
 
       context "when update is successful" do
         before do
-          load_headers
           allow(Events::DecisionReviewUpdated).to receive(:update!).with(event, request.headers, dru_params)
         end
 
@@ -151,13 +150,5 @@ RSpec.describe Api::Events::V1::DecisionReviewUpdatedController, type: :controll
         expect(JSON.parse(response.body)).to eq({ "message" => "Something went wrong" })
       end
     end
-  end
-
-  def load_headers
-    request.headers["X-VA-Vet-SSN"] = "12345678"
-    request.headers["X-VA-Vet-First-Name"] = "Johnatan"
-    request.headers["X-VA-File-Number"] = "7779977"
-    request.headers["X-VA-Vet-Middle-Name"] = "Aleksander"
-    request.headers["X-VA-Vet-Last-Name"] = "Smiths"
   end
 end
