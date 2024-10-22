@@ -432,7 +432,7 @@ feature "NonComp Reviews Queue", :postgres do
 
       order_buttons[:date_completed].click
       expect(page).to have_current_path(
-        "#{BASE_URL}?tab=completed&page=1&sort_by=completedOnDateColumn&order=desc"
+        "#{BASE_URL}?tab=completed&page=1&sort_by=completedDateColumn&order=desc"
       )
 
       table_rows = current_table_rows
@@ -581,7 +581,9 @@ feature "NonComp Reviews Queue", :postgres do
 
       # Verify the filter counts for the completed tab
       click_on "Completed Tasks"
-      expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION)
+      expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION)
+      # Turn this back on after last 7 days prefilter is added
+      # expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION)
       find("[aria-label='Filter by issue type']").click
       expect(page).to have_content("Apportionment (1)")
       expect(page).to have_content("Camp Lejune Family Member (1)")
