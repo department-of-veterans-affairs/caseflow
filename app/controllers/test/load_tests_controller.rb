@@ -237,7 +237,8 @@ class Test::LoadTestsController < ApplicationController
   # Only accessible from prod-test environment
   def check_environment
     return true if Rails.env.test?
-    redirect_to "/unathorized"
+
+    redirect_to "/unauthorized"
   end
 
   # Private: Generates headers for request to Jenkins to kick off load test pipeline
