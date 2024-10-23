@@ -20,7 +20,8 @@ const AddTaskModalCorrespondenceDetails = ({
   const dispatch = useDispatch();
 
   // Redux state for unrelatedTaskList
-  const unrelatedTaskList = useSelector((state) => state.correspondenceDetails.unrelatedTaskList);
+  // eslint-disable-next-line max-len
+  const unrelatedTaskList = useSelector((state) => state.correspondenceDetails.correspondenceInfo.tasksUnrelatedToAppeal);
 
   const [taskTypeOptions, setTaskTypeOptions] = useState([]);
   // State to track the task content

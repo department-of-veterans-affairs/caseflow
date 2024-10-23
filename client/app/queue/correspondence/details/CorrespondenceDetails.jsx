@@ -7,9 +7,7 @@ import PropTypes from 'prop-types';
 import TabWindow from '../../../components/TabWindow';
 import CopyTextButton from '../../../components/CopyTextButton';
 import CorrespondenceCaseTimeline from '../CorrespondenceCaseTimeline';
-import {
-  updateCorrespondenceInfo,
-  setUnrelatedTaskList } from './../correspondenceDetailsReducer/correspondenceDetailsActions';
+import {updateCorrespondenceInfo} from './../correspondenceDetailsReducer/correspondenceDetailsActions';
 import CorrespondenceResponseLetters from './CorrespondenceResponseLetters';
 import COPY from '../../../../COPY';
 import CaseListTable from 'app/queue/CaseListTable';
@@ -70,13 +68,6 @@ const CorrespondenceDetails = (props) => {
   const handleCloseModal = () => {
     setModalOpen(false);
   };
-
-  useEffect(() => {
-    if (correspondence.tasksUnrelatedToAppeal.length > 0) {
-      // Dispatch the action to store tasks
-      dispatch(setUnrelatedTaskList(correspondence.tasksUnrelatedToAppeal));
-    }
-  }, [dispatch, correspondence.tasksUnrelatedToAppeal]);
 
   // Initialize checkbox states
   useEffect(() => {
@@ -944,14 +935,12 @@ CorrespondenceDetails.propTypes = {
 const mapStateToProps = (state) => ({
   correspondenceInfo: state.correspondenceDetails.correspondenceInfo,
   tasksUnrelatedToAppealEmpty: state.correspondenceDetails.tasksUnrelatedToAppealEmpty,
-  unrelatedTaskList: state.correspondenceDetails.unrelatedTaskList,
   appealsFromStore: state.queue.appeals
 });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    updateCorrespondenceInfo,
-    setUnrelatedTaskList
+    updateCorrespondenceInfo
   }, dispatch)
 );
 

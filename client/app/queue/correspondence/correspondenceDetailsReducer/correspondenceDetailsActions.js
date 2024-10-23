@@ -325,15 +325,6 @@ export const setTasksUnrelatedToAppealEmpty = (tasksUnrelatedToAppealEmpty) => (
   });
 };
 
-export const setUnrelatedTaskList = (unrelatedTaskList) => (dispatch) => {
-  dispatch({
-    type: ACTIONS.UNRELATED_TASK_LIST,
-    payload: {
-      unrelatedTaskList
-    }
-  });
-};
-
 // Add task not related to appeal
 export const addTaskNotRelatedToAppeal = (correspondence, taskData) => (dispatch) => {
   const patchData = {
@@ -358,14 +349,6 @@ export const addTaskNotRelatedToAppeal = (correspondence, taskData) => (dispatch
         type: ACTIONS.CORRESPONDENCE_INFO,
         payload: {
           correspondence: updatedCorrespondence
-        }
-      });
-
-      // Dispatch action to update the unrelated task list
-      dispatch({
-        type: ACTIONS.UNRELATED_TASK_LIST,
-        payload: {
-          unrelatedTaskList: updatedCorrespondence.tasksUnrelatedToAppeal
         }
       });
 
