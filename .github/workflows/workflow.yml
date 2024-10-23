@@ -196,14 +196,14 @@ jobs:
           && rm dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz
 
       - name: Wait for the Postgres Database to Boot
-        run: dockerize -wait tcp://localhost:5432 -timeout 1m
+        run: dockerize -wait tcp://postgres:5432 -timeout 1m
 
       - name: "Wait for FACOLS"
         run: bundle exec rake local:vacols:wait_for_connection
 
 
       - name: Install Postgres Extensions
-        run: psql -h localhost -U postgres -d caseflow_certification_test -a -f docker-bin/pg/setup_extensions_test.sql
+        run: psql -h postgres -U postgres -d caseflow_certification_test -a -f docker-bin/pg/setup_extensions_test.sql
 
       - name: Postgres Database Schema Setup
         run: |
