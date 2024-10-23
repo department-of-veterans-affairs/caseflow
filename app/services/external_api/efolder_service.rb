@@ -15,12 +15,16 @@ class ExternalApi::EfolderService
 
     # if it's in the cache return it.
     doc_count = Rails.cache.fetch(document_count_cache_key(file_number))
+    Rails.logger.info("Checking cache for doc_count. Doc Count: #{doc_count}")
+
     return doc_count if doc_count
 
     # if not in the cache, start a bg job to cache it.
     # set flag to indicate we've started bg job so we don't start multiple.
     # give the bg job 15 minutes to complete before starting another.
     Rails.cache.fetch(efolder_doc_count_bgjob_key, expires_in: 15.minutes) do
+      Rails.logger.info("Starting FetchEfolderDocumentCountJob")
+
       FetchEfolderDocumentCountJob.perform_later(file_number: file_number, user: user)
     end
 
