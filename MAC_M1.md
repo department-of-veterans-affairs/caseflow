@@ -157,6 +157,8 @@ Note: If you run into errors installing any versions of openssl, see the "Instal
     2. run `rbenv rehash`
     3. run `gem install bundler -v $(grep -A 1 "BUNDLED WITH" Gemfile.lock | tail -n 1)`
     4. run `gem install pg:1.1.4 -- --with-pg-config=/Applications/Postgres.app/Contents/Versions/latest/bin/pg_config`
+      * If the above doesn't work try this
+      * `gem install pg:1.1.4 -- --with-cflags="-Wno-error=implicit-function-declaration -Wno-error=incompatible-function-pointer-types" --with-pg-config=/Applications/Postgres.app/Contents/Versions/latest/bin/pg_config --with-cppflags="-Wno-compound-token-split-by-macro"`
     5. Install v8@3.15 by doing the following (these steps assume that vi/vim is the default editor):
         1. run `HOMEBREW_NO_INSTALL_FROM_API=1 brew edit v8@3.15`
         2. go to line 21 in the editor by typing `:21`
@@ -546,6 +548,26 @@ OpenSSL
     1. `brew link --force openssl@1.1`
     2. If the one above doesn’t work run: `brew link openssl@1.1 --force`
     * Note: don't link openssl@3 unless you run into issues farther in the setup
+
+Python workarounds
+Sometimes you may encounter Python build errors. This may be the case with SSL. Attempt the below to fix this issue
+1. `brew uninstall python --ignore-dependencies`
+2. `brew uninstall pyenv`
+3. `brew update`
+4. `brew upgrade`
+5. `brew cleanup --prune=all`
+6. `brew doctor` (fixed a few warnings but don't think this was necessary)
+7. `brew install python@3.12` (re-installing what I removed in step 1)
+8. `brew install pyenv`
+9. `pyenv rehash`
+10. `pyenv install -v 2.7.18`
+
+Adding to your path to avoid swapping from rosetta to non-rosetta
+`if [[ "$(arch)" != "i386" ]]; then
+  export PATH=/opt/homebrew/bin:/usr/local/homebrew/bin:${PATH}
+else
+  export PATH=/usr/local/homebrew/bin:/opt/homebrew/bin:${PATH}
+fi`
 
 Installing Ruby via Rbenv
 ---
