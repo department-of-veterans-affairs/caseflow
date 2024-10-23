@@ -33,7 +33,7 @@ class SearchQueryService::LegacyAppealRow
       caseflow_veteran_id: search_row["veteran_id"],
       decision_date: decision_date,
       docket_name: "legacy",
-      docket_number: vacols_row["tinum"],
+      docket_number: docket_number,
       external_id: vacols_row["vacols_id"],
       hearings: hearings,
       issues: issues,
@@ -51,6 +51,10 @@ class SearchQueryService::LegacyAppealRow
     )
   end
   # rubocop:enable Metrics/MethodLength
+
+  def docket_number
+    vacols_row["tinum"].presence || "Missing Docket Number"
+  end
 
   def hearings
     vacols_json_array("hearings").map do |attrs|
@@ -75,17 +79,23 @@ class SearchQueryService::LegacyAppealRow
         type: type,
         created_at: nil,
         scheduled_in_timezone: nil,
-        date: HearingMapper.datetime_based_on_type(
-          datetime: attributes["date"],
-          regional_office: regional_office(attributes["venue"]),
-          type: attributes["type"]
-        )
+        date: hearing_date
       }
     end
 
     private
 
     attr_reader :attributes
+
+    def hearing_date
+      if attributes["date"].present?
+        HearingMapper.datetime_based_on_type(
+          datetime: attributes["date"],
+          regional_office: regional_office(attributes["venue"]),
+          type: attributes["type"]
+        )
+      end
+    end
 
     def type
       Hearing::HEARING_TYPES[attributes["hearing_type"]&.to_sym]
@@ -161,11 +171,15 @@ class SearchQueryService::LegacyAppealRow
   end
 
   def appellant_full_name
-    FullName.new(vacols_row["sspare2"], "", vacols_row["sspare1"]).to_s
+    FullName.new(
+      vacols_row["sspare2"],
+      vacols_row["sspare3"],
+      vacols_row["sspare1"]
+    ).to_s.upcase
   end
 
   def veteran_full_name
-    FullName.new(vacols_row["snamef"], "", vacols_row["snamel"]).to_s
+    FullName.new(vacols_row["snamef"], vacols_row["snamemi"], vacols_row["snamel"]).to_s
   end
 
   def aod
