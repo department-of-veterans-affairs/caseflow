@@ -23,6 +23,11 @@ feature "NonComp Report Page", :postgres do
     # visit vha_report_url
     expect(page).to have_content("Generate task report")
     expect(page).to have_content("Type of report")
+
+    step "should have a link that leads to saved searches" do
+      click_link "View saved searches"
+      expect(page).to have_content("Saved Searches")
+    end
   end
 
   it "when report type dropdown is changed, the submit button should be enabled" do
