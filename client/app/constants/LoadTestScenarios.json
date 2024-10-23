@@ -1,4 +1,15 @@
 [
+  {"scenario": "hearingDayJSON",
+    "targetType": [],
+    "targetId": ""
+  },
+  {"scenario": "supplementalClaimsEdit",
+    "targetType": [{
+      "value": "supplementalClaim",
+      "label": "Supplemental Claim"
+    }],
+    "targetId": "SupplementalClaim uuid"
+  },
   {"scenario": "higherLevelReviewPage",
     "targetType": [{
       "value": "higherLevelReview",

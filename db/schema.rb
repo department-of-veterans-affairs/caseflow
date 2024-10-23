@@ -615,28 +615,20 @@ ActiveRecord::Schema.define(version: 2024_10_12_181521) do
   create_table "conference_links", force: :cascade do |t|
     t.string "alias", comment: "Alias of the conference"
     t.string "alias_with_host", comment: "Alieas of the conference for the host"
-    t.string "co_host_link"
     t.boolean "conference_deleted", default: false, null: false, comment: "Flag to represent if a con ference has been deleted"
-    t.string "conference_id", comment: "Id of the conference"
+    t.integer "conference_id", comment: "Id of the conference"
     t.datetime "created_at", null: false, comment: "Date and Time of creation"
     t.bigint "created_by_id", null: false, comment: "User id of the user who created the record. FK on User table"
-    t.datetime "deleted_at", comment: "Needed column to make use of the paranoia gem."
     t.string "guest_hearing_link", comment: "Guest link for hearing daily docket."
     t.string "guest_pin_long", comment: "Pin provided for the guest, allowing them entry into the video conference."
-    t.bigint "hearing_day_id", comment: "The associated hearing day id"
-    t.bigint "hearing_id", comment: "ID of the hearing associated with this record"
-    t.string "hearing_type", comment: "Type of hearing associated with this record"
+    t.bigint "hearing_day_id", null: false, comment: "The associated hearing day id"
     t.string "host_link", comment: "Conference link generated from external conference service"
     t.integer "host_pin", comment: "Pin for the host of the conference to get into the conference"
     t.string "host_pin_long", limit: 8, comment: "Generated host pin stored as a string"
-    t.string "type", comment: "Pexip or Webex conference link"
     t.datetime "updated_at", comment: "Date and Time record was last updated"
     t.bigint "updated_by_id", comment: "user id of the user to last update the record. FK on the User table"
     t.index ["created_by_id"], name: "index_created_by_id"
-    t.index ["deleted_at"], name: "index_conference_links_on_deleted_at"
     t.index ["hearing_day_id"], name: "index_conference_links_on_hearing_day_id"
-    t.index ["hearing_id", "hearing_type"], name: "index_conference_links_on_hearing_id_and_hearing_type"
-    t.index ["type"], name: "index_conference_links_on_type"
     t.index ["updated_by_id"], name: "index_updated_by_id"
   end
 
@@ -893,8 +885,8 @@ ActiveRecord::Schema.define(version: 2024_10_12_181521) do
     t.integer "event_id", null: false, comment: "ID of the Event that created or updated this record."
     t.bigint "evented_record_id", null: false
     t.string "evented_record_type", null: false
-    t.jsonb "info", default: {}
     t.datetime "updated_at", null: false, comment: "Automatic timestamp whenever the record changes"
+    t.jsonb "info", default: {}
     t.index ["evented_record_type", "evented_record_id"], name: "index_event_record_on_evented_record"
     t.index ["info"], name: "index_event_records_on_info", using: :gin
   end
@@ -1355,13 +1347,6 @@ ActiveRecord::Schema.define(version: 2024_10_12_181521) do
     t.index ["request_issue_id"], name: "index_legacy_issues_on_request_issue_id"
   end
 
-  create_table "meeting_types", force: :cascade do |t|
-    t.bigint "conferenceable_id"
-    t.string "conferenceable_type"
-    t.integer "service_name", default: 0, comment: "Pexip or Webex Instant Connect"
-    t.index ["conferenceable_type", "conferenceable_id"], name: "conferenceable_association_idx"
-  end
-
   create_table "membership_requests", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "decided_at", comment: "The date and time when the deider user made a decision about the membership request"
@@ -1708,7 +1693,6 @@ ActiveRecord::Schema.define(version: 2024_10_12_181521) do
     t.text "pact_status_update_reason_notes", comment: "The reason for why Request Issue is Promise to Address Comprehensive Toxics (PACT) Act"
     t.string "ramp_claim_id", comment: "If a rating issue was created as a result of an issue intaken for a RAMP Review, it will be connected to the former RAMP issue by its End Product's claim ID."
     t.datetime "rating_issue_associated_at", comment: "Timestamp when a contention and its contested rating issue are associated in VBMS."
-    t.string "reference_id", comment: "The ID of the decision review issue record internal to C&P."
     t.string "split_issue_status", comment: "If a request issue is part of a split, on_hold status applies to the original request issues while active are request issues on splitted appeals"
     t.string "type", default: "RequestIssue", comment: "Determines whether the issue is a rating issue or a nonrating issue"
     t.string "unidentified_issue_text", comment: "User entered description if the request issue is neither a rating or a nonrating issue"
@@ -1721,6 +1705,7 @@ ActiveRecord::Schema.define(version: 2024_10_12_181521) do
     t.boolean "vbms_pact_status", default: false, comment: "Indicates if issue is related to Promise to Address Comprehensive Toxics (PACT) Act and was imported from VBMS"
     t.boolean "verified_unidentified_issue", comment: "A verified unidentified issue allows an issue whose rating data is missing to be intaken as a regular rating issue. In order to be marked as verified, a VSR needs to confirm that they were able to find the record of the decision for the issue."
     t.string "veteran_participant_id", comment: "The veteran participant ID. This should be unique in upstream systems and used in the future to reconcile duplicates."
+    t.string "reference_id", comment: "The ID of the decision review issue record internal to C&P."
     t.index ["closed_at"], name: "index_request_issues_on_closed_at"
     t.index ["contention_reference_id"], name: "index_request_issues_on_contention_reference_id", unique: true
     t.index ["contested_decision_issue_id"], name: "index_request_issues_on_contested_decision_issue_id"
@@ -1979,51 +1964,8 @@ ActiveRecord::Schema.define(version: 2024_10_12_181521) do
     t.index ["updated_at"], name: "index_team_quotas_on_updated_at"
   end
 
-  create_table "transcription_contractors", force: :cascade do |t|
-    t.datetime "created_at", precision: 6, null: false
-    t.integer "current_goal", default: 0, comment: "The current weeks goal of hearings to send for transcribing"
-    t.datetime "deleted_at"
-    t.string "directory", null: false, comment: "The qat contract house box.com folder full path"
-    t.string "email", comment: "The qat contract house contact email address"
-    t.boolean "inactive", default: false, null: false, comment: "Indicates if the qat is active or not inactive equates to not displayed in ui"
-    t.boolean "is_available_for_work", default: false, null: false, comment: "Work Stoppage flag to indicate if a qat is available or not to take work"
-    t.string "name", null: false, comment: "The qat contract house name"
-    t.string "phone", comment: "The qat contract house contact phone number"
-    t.string "poc", comment: "The qat contract house poc name"
-    t.integer "previous_goal", default: 0, comment: "The previous weeks goal of hearings to send for transcribing"
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["deleted_at"], name: "index_transcription_contractors_on_deleted_at"
-    t.index ["inactive"], name: "index_transcription_contractors_on_inactive"
-  end
-
-  create_table "transcription_files", force: :cascade do |t|
-    t.string "aws_link", comment: "Link to be used by HMB to download original or transformed file"
-    t.datetime "created_at", null: false
-    t.bigint "created_by_id", comment: "The user who created the transcription record"
-    t.datetime "date_converted", comment: "Timestamp when file was converted from vtt to rtf"
-    t.datetime "date_receipt_webex", comment: "Timestamp when file was added to webex"
-    t.datetime "date_upload_aws", comment: "Timestamp when file was loaded to AWS"
-    t.datetime "date_upload_box", comment: "Timestamp when file was added to box"
-    t.string "docket_number", null: false, comment: "Docket number of associated hearing"
-    t.string "file_name", null: false, comment: "File name, with extension, of the transcription file migrated by caseflow"
-    t.string "file_status", comment: "Status of the file, could be one of nil, 'Successful retrieval (Webex), Failed retrieval (Webex), Sucessful conversion, Failed conversion, Successful upload (AWS), Failed upload (AWS)'"
-    t.string "file_type", null: false, comment: "One of mp4, vtt, mp3, rtf, pdf, xls"
-    t.bigint "hearing_id", null: false, comment: "ID of the hearing associated with this record"
-    t.string "hearing_type", null: false, comment: "Type of hearing associated with this record"
-    t.datetime "updated_at", null: false
-    t.bigint "updated_by_id", comment: "The user who most recently updated the transcription file"
-    t.index ["aws_link"], name: "index_transcription_files_on_aws_link"
-    t.index ["docket_number"], name: "index_transcription_files_on_docket_number"
-    t.index ["file_name", "docket_number", "hearing_id", "hearing_type"], name: "idx_transcription_files_on_file_name_and_docket_num_and_hearing", unique: true
-    t.index ["file_type"], name: "index_transcription_files_on_file_type"
-    t.index ["hearing_id", "hearing_type", "docket_number"], name: "index_transcription_files_on_docket_number_and_hearing"
-    t.index ["hearing_id", "hearing_type"], name: "index_transcription_files_on_hearing_id_and_hearing_type"
-  end
-
   create_table "transcriptions", force: :cascade do |t|
     t.datetime "created_at", comment: "Automatic timestamp of when transcription was created"
-    t.bigint "created_by_id"
-    t.datetime "deleted_at", comment: "acts_as_paranoid in the model"
     t.date "expected_return_date", comment: "Expected date when transcription would be returned by the transcriber"
     t.bigint "hearing_id", comment: "Hearing ID; use as FK to hearings"
     t.date "problem_notice_sent_date", comment: "Date when notice of problem with recording was sent to appellant"
@@ -2032,14 +1974,9 @@ ActiveRecord::Schema.define(version: 2024_10_12_181521) do
     t.date "sent_to_transcriber_date", comment: "Date when the recording was sent to transcriber"
     t.string "task_number", comment: "Number associated with transcription"
     t.string "transcriber", comment: "Contractor who will transcribe the recording; i.e, 'Genesis Government Solutions, Inc.', 'Jamison Professional Services', etc"
-    t.bigint "transcription_contractor_id"
-    t.string "transcription_status", comment: "Possible values: 'unassigned', 'in_transcription', 'completed', 'completed_overdue'"
     t.datetime "updated_at", comment: "Automatic timestamp of when transcription was updated"
-    t.bigint "updated_by_id"
     t.date "uploaded_to_vbms_date", comment: "Date when the hearing transcription was uploaded to VBMS"
-    t.index ["deleted_at"], name: "index_transcriptions_on_deleted_at"
     t.index ["hearing_id"], name: "index_transcriptions_on_hearing_id"
-    t.index ["transcription_contractor_id"], name: "index_transcriptions_on_transcription_contractor_id"
     t.index ["updated_at"], name: "index_transcriptions_on_updated_at"
   end
 
@@ -2172,42 +2109,42 @@ ActiveRecord::Schema.define(version: 2024_10_12_181521) do
     t.index ["vbms_communication_package_id"], name: "index_vbms_distributions_on_vbms_communication_package_id"
   end
 
-  create_table "vbms_ext_claim", primary_key: "CLAIM_ID", id: :decimal, precision: 38, force: :cascade do |t|
-    t.string "ALLOW_POA_ACCESS", limit: 5
-    t.decimal "CLAIMANT_PERSON_ID", precision: 38
+  create_table "vbms_ext_claim", primary_key: "CLAIM_ID", id: { type: :decimal, precision: 38 }, force: :cascade do |t|
     t.datetime "CLAIM_DATE"
-    t.string "CLAIM_SOJ", limit: 25
-    t.integer "CONTENTION_COUNT"
-    t.datetime "CREATEDDT", null: false
     t.string "EP_CODE", limit: 25
-    t.datetime "ESTABLISHMENT_DATE"
-    t.datetime "EXPIRATIONDT"
-    t.string "INTAKE_SITE", limit: 25
-    t.datetime "LASTUPDATEDT", null: false
-    t.string "LEVEL_STATUS_CODE", limit: 25
-    t.datetime "LIFECYCLE_STATUS_CHANGE_DATE"
-    t.string "LIFECYCLE_STATUS_NAME", limit: 50
-    t.string "ORGANIZATION_NAME", limit: 100
-    t.string "ORGANIZATION_SOJ", limit: 25
-    t.string "PAYEE_CODE", limit: 25
-    t.string "POA_CODE", limit: 25
-    t.integer "PREVENT_AUDIT_TRIG", limit: 2, default: 0, null: false
-    t.string "PRE_DISCHARGE_IND", limit: 5
-    t.string "PRE_DISCHARGE_TYPE_CODE", limit: 10
-    t.string "PRIORITY", limit: 10
-    t.string "PROGRAM_TYPE_CODE", limit: 10
-    t.string "RATING_SOJ", limit: 25
-    t.string "SERVICE_TYPE_CODE", limit: 10
-    t.string "SUBMITTER_APPLICATION_CODE", limit: 25
-    t.string "SUBMITTER_ROLE_CODE", limit: 25
     t.datetime "SUSPENSE_DATE"
     t.string "SUSPENSE_REASON_CODE", limit: 25
     t.string "SUSPENSE_REASON_COMMENTS", limit: 1000
-    t.decimal "SYNC_ID", precision: 38, null: false
+    t.decimal "CLAIMANT_PERSON_ID", precision: 38
+    t.integer "CONTENTION_COUNT"
+    t.string "CLAIM_SOJ", limit: 25
     t.string "TEMPORARY_CLAIM_SOJ", limit: 25
+    t.string "PRIORITY", limit: 10
     t.string "TYPE_CODE", limit: 25
-    t.decimal "VERSION", precision: 38, null: false
+    t.string "LIFECYCLE_STATUS_NAME", limit: 50
+    t.string "LEVEL_STATUS_CODE", limit: 25
+    t.string "SUBMITTER_APPLICATION_CODE", limit: 25
+    t.string "SUBMITTER_ROLE_CODE", limit: 25
     t.decimal "VETERAN_PERSON_ID", precision: 15
+    t.datetime "ESTABLISHMENT_DATE"
+    t.string "INTAKE_SITE", limit: 25
+    t.string "PAYEE_CODE", limit: 25
+    t.decimal "SYNC_ID", precision: 38, null: false
+    t.datetime "CREATEDDT", null: false
+    t.datetime "LASTUPDATEDT", null: false
+    t.datetime "EXPIRATIONDT"
+    t.decimal "VERSION", precision: 38, null: false
+    t.datetime "LIFECYCLE_STATUS_CHANGE_DATE"
+    t.string "RATING_SOJ", limit: 25
+    t.string "PROGRAM_TYPE_CODE", limit: 10
+    t.string "SERVICE_TYPE_CODE", limit: 10
+    t.integer "PREVENT_AUDIT_TRIG", limit: 2, default: 0, null: false
+    t.string "PRE_DISCHARGE_TYPE_CODE", limit: 10
+    t.string "PRE_DISCHARGE_IND", limit: 5
+    t.string "ORGANIZATION_NAME", limit: 100
+    t.string "ORGANIZATION_SOJ", limit: 25
+    t.string "ALLOW_POA_ACCESS", limit: 5
+    t.string "POA_CODE", limit: 25
     t.index ["CLAIM_ID"], name: "claim_id_index"
     t.index ["LEVEL_STATUS_CODE"], name: "level_status_code_index"
   end
@@ -2289,9 +2226,8 @@ ActiveRecord::Schema.define(version: 2024_10_12_181521) do
     t.boolean "appellant_email_sent", default: false, null: false, comment: "Determines whether or not a notification email was sent to the appellant"
     t.datetime "appellant_reminder_sent_at", comment: "The datetime the last reminder email was sent to the appellant."
     t.string "appellant_tz", limit: 50, comment: "Stores appellant timezone"
-    t.string "co_host_hearing_link"
     t.boolean "conference_deleted", default: false, null: false, comment: "Whether or not the conference was deleted from Pexip"
-    t.string "conference_id", comment: "ID of conference from Pexip"
+    t.integer "conference_id", comment: "ID of conference from Pexip"
     t.datetime "created_at", null: false, comment: "Automatic timestamp of when virtual hearing was created"
     t.bigint "created_by_id", null: false, comment: "User who created the virtual hearing"
     t.string "guest_hearing_link", comment: "Link used by appellants and/or representatives to join virtual hearing conference"
@@ -2498,9 +2434,6 @@ ActiveRecord::Schema.define(version: 2024_10_12_181521) do
   add_foreign_key "tasks", "users", column: "assigned_by_id"
   add_foreign_key "tasks", "users", column: "cancelled_by_id"
   add_foreign_key "transcriptions", "hearings"
-  add_foreign_key "transcriptions", "transcription_contractors"
-  add_foreign_key "transcriptions", "users", column: "created_by_id"
-  add_foreign_key "transcriptions", "users", column: "updated_by_id"
   add_foreign_key "unrecognized_appellants", "claimants"
   add_foreign_key "unrecognized_appellants", "not_listed_power_of_attorneys"
   add_foreign_key "unrecognized_appellants", "unrecognized_appellants", column: "current_version_id"
