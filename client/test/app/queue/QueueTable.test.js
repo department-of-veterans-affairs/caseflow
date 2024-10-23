@@ -1,7 +1,6 @@
 import React from 'react';
 import * as queueTable from 'app/queue/QueueTable';
-import FilterSummary from 'app/components/FilterSummary';
-import { shallow, mount } from 'enzyme';
+import { render, screen, fireEvent } from '@testing-library/react';
 import {
   initState,
   columns,
@@ -20,31 +19,18 @@ import {
   footerColumns,
   baseColumns
 } from 'test/data';
-import Tooltip from 'app/components/Tooltip';
-import { DoubleArrowIcon } from 'app/components/icons/DoubleArrowIcon';
-import TableFilter from 'app/components/TableFilter';
 import { COLORS, LOGO_COLORS } from 'app/constants/AppConstants';
 import * as glamor from 'glamor';
 import classnames from 'classnames';
-import { times } from 'lodash';
-import LoadingScreen from 'app/components/LoadingScreen';
-import Pagination from 'app/components/Pagination/Pagination';
+import { get, times } from 'lodash';
 
 jest.mock('classnames');
 
-const { default: QueueTable, HeaderRow, BodyRows, FooterRow, Row } = queueTable;
+jest.mock('app/util/ApiUtil', () => ({
+  get: jest.fn().mockResolvedValue({})
+}));
 
-const ColumnContent = ({ label, filter, sort, filterProps, headerStyle, iconStyle }) => (
-  <span {...headerStyle}>
-    <span>{label}</span>
-    {sort && (
-      <span {...iconStyle} aria-label={`Sort by ${label}`} role="button" tabIndex="0">
-        <DoubleArrowIcon />
-      </span>
-    )}
-    {filter && <TableFilter {...filterProps} />}
-  </span>
-);
+const { default: QueueTable, HeaderRow, BodyRows, FooterRow, Row } = queueTable;
 
 describe('QueueTable', () => {
   describe('Local Methods', () => {
@@ -157,21 +143,27 @@ describe('QueueTable', () => {
       glamor.hover.mockReturnValue('test-class');
 
       // Run the test
-      const header = shallow(<HeaderRow columns={columns} rowObjects={createTask(3)} />);
+      const {asFragment} = render(
+        <HeaderRow
+          columns={columns}
+          rowObjects={createTask(3)}
+          />
+        );
 
       // Assertions
-      expect(header).toMatchSnapshot();
-      expect(header.find('tr')).toHaveLength(1);
-      expect(header.find('tr').prop('role')).toEqual('row');
-      expect(header.find('th')).toHaveLength(3);
+      expect(asFragment()).toMatchSnapshot();
+      expect(screen.getByRole('row')).toBeInTheDocument();
+      expect(screen.getByRole('row')).toHaveAttribute('role', 'row');
+      expect(screen.getAllByRole('columnheader')).toHaveLength(3);
 
-      // Test each header individually
-      header.find('th').map((element, i) => {
-        expect(element.prop('role')).toEqual('columnheader');
-        expect(element.containsMatchingElement(ColumnContent({ label: columns[i].header, headerStyle }))).toEqual(true);
+      // // Test each header individually
+      columns.forEach((column, i) => {
+        const columnHeader = screen.getAllByRole('columnheader')[i];
+        expect(columnHeader).toHaveAttribute('role', 'columnheader');
+        expect(columnHeader).toHaveTextContent(column.header);
       });
 
-      // Test the CSS classes
+      // // Test the CSS classes
       expect(glamor.css).toHaveBeenNthCalledWith(1, { display: 'table-row' });
       expect(glamor.css).toHaveBeenNthCalledWith(
         2,
@@ -191,34 +183,52 @@ describe('QueueTable', () => {
       const sortMock = jest.fn();
 
       // Run the test
-      const header = shallow(<HeaderRow setSortOrder={sortMock} columns={sortColumns} rowObjects={tableData} />);
+      const {asFragment, container, rerender} = render(
+        <HeaderRow
+          setSortOrder={sortMock}
+          columns={sortColumns}
+          rowObjects={tableData}
+          />
+        );
 
       // Find the sort button
-      header.
-        find('tr').
-        childAt(2).
-        childAt(0).
-        childAt(1).
-        simulate('click');
+      const sortButton = screen.getByRole('button', { name: 'Sort by Third' });
+      fireEvent.click(sortButton);
 
       // Assertions
-      expect(header).toMatchSnapshot();
-      expect(header.find(DoubleArrowIcon)).toHaveLength(1);
+      expect(asFragment()).toMatchSnapshot();
+      expect(container.querySelector('.table-icon')).toBeInTheDocument();
       expect(sortMock).toHaveBeenCalledWith(sortColumns[2].name);
 
       // Test sorting colors
-      expect(header.find(DoubleArrowIcon).prop('topColor')).toEqual(COLORS.GREY_LIGHT);
-      expect(header.find(DoubleArrowIcon).prop('bottomColor')).toEqual(COLORS.GREY_LIGHT);
+      expect(screen.getByTestId('topColorGroup')).toHaveAttribute('fill', COLORS.GREY_LIGHT);
+      expect(screen.getByTestId('bottomColorGroup')).toHaveAttribute('fill', COLORS.GREY_LIGHT);
 
       // Test Ascending the sort order
-      header.setProps({ sortColName: 'type', sortAscending: true });
-      expect(header.find(DoubleArrowIcon).prop('topColor')).toEqual(COLORS.GREY_LIGHT);
-      expect(header.find(DoubleArrowIcon).prop('bottomColor')).toEqual(COLORS.PRIMARY);
+      rerender(
+        <HeaderRow
+          setSortOrder={sortMock}
+          columns={sortColumns}
+          rowObjects={tableData}
+          sortColName='type'
+          sortAscending={true}
+          />
+      )
+      expect(screen.getByTestId('topColorGroup')).toHaveAttribute('fill', COLORS.GREY_LIGHT);
+      expect(screen.getByTestId('bottomColorGroup')).toHaveAttribute('fill', COLORS.PRIMARY);
 
       // Test Descending the sort order
-      header.setProps({ sortColName: 'type', sortAscending: false });
-      expect(header.find(DoubleArrowIcon).prop('topColor')).toEqual(COLORS.PRIMARY);
-      expect(header.find(DoubleArrowIcon).prop('bottomColor')).toEqual(COLORS.GREY_LIGHT);
+      rerender(
+        <HeaderRow
+          setSortOrder={sortMock}
+          columns={sortColumns}
+          rowObjects={tableData}
+          sortColName='type'
+          sortAscending={false}
+          />
+      )
+      expect(screen.getByTestId('topColorGroup')).toHaveAttribute('fill', COLORS.PRIMARY);
+      expect(screen.getByTestId('bottomColorGroup')).toHaveAttribute('fill', COLORS.GREY_LIGHT);
     });
 
     test('Can sort when the backend can sort and getting column sort value', () => {
@@ -226,73 +236,119 @@ describe('QueueTable', () => {
       const sortMock = jest.fn();
 
       // Run the test
-      const header = shallow(
-        <HeaderRow useTaskPagesApi setSortOrder={sortMock} columns={backendSortColumns} rowObjects={tableData} />
+      const {asFragment, container, rerender} = render(
+        <HeaderRow
+          useTaskPagesApi
+          setSortOrder={sortMock}
+          columns={backendSortColumns}
+          rowObjects={tableData}
+        />
       );
 
       // Find the sort button
-      header.
-        find('tr').
-        childAt(2).
-        childAt(0).
-        childAt(1).
-        simulate('click');
+      const sortButton = screen.getByRole('button', { name: 'Sort by Third' });
+      fireEvent.click(sortButton);
 
       // Assertions
-      expect(header).toMatchSnapshot();
-      expect(header.find(DoubleArrowIcon)).toHaveLength(1);
+      expect(asFragment()).toMatchSnapshot();
+      expect(container.querySelector('.table-icon')).toBeInTheDocument();
       expect(sortMock).toHaveBeenCalledWith(backendSortColumns[2].name);
 
       // Test sorting colors
-      expect(header.find(DoubleArrowIcon).prop('topColor')).toEqual(COLORS.GREY_LIGHT);
-      expect(header.find(DoubleArrowIcon).prop('bottomColor')).toEqual(COLORS.GREY_LIGHT);
+      expect(screen.getByTestId('topColorGroup')).toHaveAttribute('fill', COLORS.GREY_LIGHT);
+      expect(screen.getByTestId('bottomColorGroup')).toHaveAttribute('fill', COLORS.GREY_LIGHT);
 
       // Test Ascending the sort order
-      header.setProps({ sortColName: 'type', sortAscending: true });
-      expect(header.find(DoubleArrowIcon).prop('topColor')).toEqual(COLORS.GREY_LIGHT);
-      expect(header.find(DoubleArrowIcon).prop('bottomColor')).toEqual(COLORS.PRIMARY);
+      rerender(
+        <HeaderRow
+          setSortOrder={sortMock}
+          columns={sortColumns}
+          rowObjects={tableData}
+          sortColName='type'
+          sortAscending={true}
+          />
+      )
+      expect(screen.getByTestId('topColorGroup')).toHaveAttribute('fill', COLORS.GREY_LIGHT);
+      expect(screen.getByTestId('bottomColorGroup')).toHaveAttribute('fill', COLORS.PRIMARY);
 
       // Test Descending the sort order
-      header.setProps({ sortColName: 'type', sortAscending: false });
-      expect(header.find(DoubleArrowIcon).prop('topColor')).toEqual(COLORS.PRIMARY);
-      expect(header.find(DoubleArrowIcon).prop('bottomColor')).toEqual(COLORS.GREY_LIGHT);
+      rerender(
+        <HeaderRow
+          setSortOrder={sortMock}
+          columns={sortColumns}
+          rowObjects={tableData}
+          sortColName='type'
+          sortAscending={false}
+          />
+      )
+      expect(screen.getByTestId('topColorGroup')).toHaveAttribute('fill', COLORS.PRIMARY);
+      expect(screen.getByTestId('bottomColorGroup')).toHaveAttribute('fill', COLORS.GREY_LIGHT);
     });
 
     test('Can filter when not using task pages API and filtering is enabled', () => {
+      const filteredByList = {}
       // Run the test
-      const header = shallow(<HeaderRow columns={filterColumns} rowObjects={tableData} />);
+      const {asFragment} = render(
+        <HeaderRow
+          columns={filterColumns}
+          rowObjects={tableData}
+          filteredByList={filteredByList}
+        />
+      );
 
       // Assertions
-      expect(header).toMatchSnapshot();
-      expect(header.find(TableFilter)).toHaveLength(1);
+      expect(asFragment()).toMatchSnapshot();
+      expect(screen.getByTestId('table-filter-testid')).toBeInTheDocument();
     });
 
     test('Can filter when not using task pages API and getting filter values', () => {
+      const filteredByList = {}
       // Run the test
-      const header = shallow(<HeaderRow columns={filterColumnsWithValues} rowObjects={tableData} />);
+      const {asFragment} = render(
+        <HeaderRow
+        columns={filterColumnsWithValues}
+        rowObjects={tableData}
+        filteredByList={filteredByList}
+        />
+      );
 
       // Assertions
-      expect(header).toMatchSnapshot();
-      expect(header.find(TableFilter)).toHaveLength(1);
+      expect(asFragment()).toMatchSnapshot();
+      expect(screen.getByTestId('table-filter-testid')).toBeInTheDocument();
     });
 
     test('Can filter when using task pages API and column has filter options', () => {
+      const filteredByList = {}
       // Run the test
-      const header = shallow(<HeaderRow useTaskPagesApi columns={filterColumnsWithOptions} rowObjects={tableData} />);
+      const {asFragment} = render(
+        <HeaderRow
+          useTaskPagesApi
+          columns={filterColumnsWithOptions}
+          rowObjects={tableData}
+          filteredByList={filteredByList}
+          />
+        );
+
 
       // Assertions
-      expect(header).toMatchSnapshot();
-      expect(header.find(TableFilter)).toHaveLength(1);
+      expect(asFragment()).toMatchSnapshot();
+      expect(screen.getByTestId('table-filter-testid')).toBeInTheDocument();
     });
 
     test('Renders tooltip when present on the column', () => {
       // Run the test
-      const header = shallow(<HeaderRow useTaskPagesApi columns={columnsWithTooltip} rowObjects={tableData} />);
+      const {asFragment} = render(
+        <HeaderRow
+        useTaskPagesApi
+        columns={columnsWithTooltip}
+        rowObjects={tableData}
+        />
+      );
 
       // Assertions
-      expect(header).toMatchSnapshot();
-      expect(header.find(Tooltip)).toHaveLength(1);
-      expect(header.find(Tooltip).prop('text')).toEqual(columnsWithTooltip[2].tooltip);
+      expect(asFragment()).toMatchSnapshot();
+      expect(screen.getByTestId('tooltip-testid')).toBeInTheDocument();
+      expect(screen.getByText(columnsWithTooltip[2].header)).toBeInTheDocument();
     });
   });
 
@@ -302,20 +358,27 @@ describe('QueueTable', () => {
       const rowClassNames = jest.fn().mockReturnValue('test');
 
       // Run the test
-      const row = shallow(
-        <Row rowClassNames={rowClassNames} columns={baseColumns} rowObjects={tableData} rowObject={tableData[0]} />
+      const {asFragment}= render(
+        <Row
+        rowClassNames={rowClassNames}
+        columns={baseColumns}
+        rowObjects={tableData}
+        rowObject={tableData[0]}
+        />
       );
 
       // Assertions
-      expect(row).toMatchSnapshot();
-      expect(row.find('tr')).toHaveLength(1);
-      expect(row.find('tr').prop('role')).toEqual('row');
-      expect(row.find('td')).toHaveLength(2);
+      expect(asFragment()).toMatchSnapshot();
+
+      expect(screen.getByRole('row')).toBeInTheDocument();
+      expect(screen.getByRole('row')).toHaveAttribute('role', 'row');
+      expect(screen.getAllByRole('gridcell')).toHaveLength(2);
 
       // Test each cell individually
-      row.find('td').map((element, i) => {
-        expect(element.prop('role')).toEqual('gridcell');
-        expect(element.text()).toEqual(tableData[0][baseColumns[i].valueName]);
+      const cells = screen.getAllByRole('gridcell');
+      cells.forEach((cell, i) => {
+        expect(cell).toHaveAttribute('role', 'gridcell');
+        expect(cell).toHaveTextContent(tableData[0][baseColumns[i].valueName]);
       });
     });
 
@@ -324,7 +387,7 @@ describe('QueueTable', () => {
       const rowClassNames = jest.fn().mockReturnValue('test');
 
       // Run the test
-      const row = shallow(
+      const {asFragment}= render(
         <Row
           footer
           rowClassNames={rowClassNames}
@@ -335,13 +398,8 @@ describe('QueueTable', () => {
       );
 
       // Assertions
-      expect(row).toMatchSnapshot();
-      expect(
-        row.
-          find('tr').
-          childAt(2).
-          text()
-      ).toEqual(footerColumns[2].footer);
+      expect(asFragment()).toMatchSnapshot();
+      expect(screen.getByText(footerColumns[2].footer)).toBeInTheDocument();
     });
   });
 
@@ -351,14 +409,22 @@ describe('QueueTable', () => {
     test('Matches snapshot with default props', () => {
       // Setup the test
       const getKeyForRow = jest.fn();
+      const mockRowClassNames = jest.fn().mockReturnValue('some-class-name');
 
       // Run the test
-      const body = shallow(<BodyRows getKeyForRow={getKeyForRow} columns={filterColumns} rowObjects={tableData} />);
+      const {asFragment, container} = render(
+        <BodyRows
+          getKeyForRow={getKeyForRow}
+          columns={filterColumns}
+          rowObjects={tableData}
+          rowClassNames={mockRowClassNames}
+          />
+        );
 
       // Assertions
-      expect(body).toMatchSnapshot();
-      expect(body.find('tbody')).toHaveLength(1);
-      expect(body.find(Row)).toHaveLength(3);
+      expect(asFragment()).toMatchSnapshot();
+      expect(container.querySelector('tbody')).toBeInTheDocument();
+      expect(screen.getAllByRole('row')).toHaveLength(3);
       times(tableData.length).map((index) => {
         expect(getKeyForRow).toHaveBeenNthCalledWith(index + 1, index, tableData[index]);
       });
@@ -370,100 +436,161 @@ describe('QueueTable', () => {
 
     test('Matches snapshot with default props', () => {
       // Run the test
-      const footer = shallow(<FooterRow columns={footerColumns} />);
+      const {container, asFragment} = render(
+        <FooterRow
+        columns={footerColumns}
+        />
+      );
 
       // Assertions
-      expect(footer).toMatchSnapshot();
-      expect(footer.find('tfoot')).toHaveLength(1);
-      expect(footer.find(Row)).toHaveLength(1);
+      expect(asFragment()).toMatchSnapshot();
+      expect(container.querySelector('tfoot')).toBeInTheDocument();
+      expect(container.querySelector('#table-row-footer')).toBeInTheDocument();
     });
 
     test('Renders no footer when not present in the column', () => {
       // Run the test
-      const footer = shallow(<FooterRow columns={baseColumns} />);
+      const {container, asFragment} = render(
+        <FooterRow
+        columns={baseColumns}
+        />
+      );
 
       // Assertions
-      expect(footer).toMatchSnapshot();
-      expect(footer.find('tfoot')).toHaveLength(1);
-      expect(footer.find(Row)).toHaveLength(0);
-      expect(footer.children()).toHaveLength(0);
+      expect(asFragment()).toMatchSnapshot();
+      expect(container.querySelector('tfoot')).toBeInTheDocument();
+      expect(container.querySelector('#table-row-footer')).not.toBeInTheDocument();
     });
   });
 
   describe('Class Methods', () => {
-    let instance, table;
+    const getFiberNode = (element) => {
+      const key = Object.keys(element).find(key => key.startsWith('__reactFiber$'));
+      return element[key];
+    };
 
-    beforeEach(() => {
-      // Mount the component to test methods against
-      table = shallow(<QueueTable columns={columns} rowObjects={createTask(3)} summary={summary} slowReRendersAreOk />);
-      instance = table.instance();
+    function extractPropsAndState(fiberNode) {
+      if (!fiberNode) return null;
 
-      // Spy on the instance methods
-      jest.spyOn(instance, 'initialState');
-    });
+      // Traverse up the tree to find the relevant component node
+      while (fiberNode.return) {
+        fiberNode = fiberNode.return;
+        if (fiberNode.memoizedProps && fiberNode.memoizedState) {
+          return {
+            pendingProps: fiberNode.pendingProps,
+            memoizedProps: fiberNode.memoizedProps,
+            memoizedState: fiberNode.memoizedState,
+          };
+        }
+      }
+      return null;
+    }
 
     test('function initialState(paginationOptions) returns state', () => {
-      // Run the test
-      const result = instance.initialState();
+      // Setup the test
+      render(
+        <QueueTable
+          columns={columns}
+          rowObjects={createTask(3)}
+          summary={summary}
+          slowReRendersAreOk
+        />
+      );
 
+      const queueTable = screen.getByTestId('queue-table-data-testid');
+      const fiberNode = getFiberNode(queueTable);
+      const extractedData = extractPropsAndState(fiberNode);
+      const memoizedState = extractedData.memoizedState;
       // Assertions
-      expect(result).toEqual(initState);
+      Object.entries(initState).forEach(([key, value]) => {
+        expect(memoizedState).toHaveProperty(key, value);
+      });
     });
 
     test('function initialState(paginationOptions) returns state with default sort when set', () => {
       // Setup the test
-      table.setProps({ defaultSort: { test: '' } });
-      table.update();
+      render(
+        <QueueTable
+          columns={columns}
+          rowObjects={createTask(3)}
+          summary={summary}
+          slowReRendersAreOk
+          defaultSort={{ test: '' }}
+        />
+      );
 
-      // Run the test
-      const result = instance.initialState();
+      const queueTable = screen.getByTestId('queue-table-data-testid');
+      const fiberNode = getFiberNode(queueTable);
+      const extractedData = extractPropsAndState(fiberNode);
+      const memoizedState = extractedData.memoizedState;
 
       // Assertions
-      expect(result).toEqual({
-        ...initState,
-        test: ''
+      Object.entries(initState).forEach(([key, value]) => {
+        expect(memoizedState).toHaveProperty(key, value);
       });
+      expect(memoizedState).toHaveProperty('test', '');
     });
 
     test('function initialState(paginationOptions) returns state with loading component when loading', () => {
+      const paginationOptions = {
+        needsTaskRequest: true,
+      };
+      const taskPagesApiEndpoint = 'https://example.com/api/taskPages?param=value';
       // Setup the test
-      table.setProps({ useTaskPagesApi: true });
-      table.update();
+      render(
+        <QueueTable
+          columns={columns}
+          rowObjects={createTask(3)}
+          summary={summary}
+          slowReRendersAreOk
+          defaultSort={{ test: '' }}
+          useTaskPagesApi={true}
+          paginationOptions={paginationOptions}
+          taskPagesApiEndpoint={taskPagesApiEndpoint}
+        />
+      );
 
-      // Run the test
-      const result = instance.initialState({ needsTaskRequest: true });
+      const queueTable = screen.getByTestId('queue-table-data-testid');
+      const fiberNode = getFiberNode(queueTable);
+      const extractedData = extractPropsAndState(fiberNode);
+      const memoizedState = extractedData.memoizedState;
 
       // Assertions
-      expect(result).toEqual({
-        ...initState,
-        needsTaskRequest: true,
-        loadingComponent: <LoadingScreen spinnerColor={LOGO_COLORS.QUEUE.ACCENT} />
+      Object.entries(initState).forEach(([key, value]) => {
+        if (key !== 'loadingComponent') {
+          expect(memoizedState).toHaveProperty(key, value);
+        }
       });
+
+      const { props: { spinnerColor } } = memoizedState.loadingComponent;
+      expect(spinnerColor).toBe(LOGO_COLORS.QUEUE.ACCENT);
+
+      expect(memoizedState).toHaveProperty('needsTaskRequest', true);
+      expect(memoizedState).toHaveProperty('test', '');
     });
   });
 
   describe('render()', () => {
     test('Matches snapshot with default props', () => {
       // Setup the test
-      const table = shallow(
+      const {container, asFragment} = render(
         <QueueTable columns={columns} rowObjects={createTask(3)} summary={summary} slowReRendersAreOk />
       );
 
       // Assertions
-      expect(table).toMatchSnapshot();
-      expect(table.find(HeaderRow)).toHaveLength(1);
-      expect(table.find(BodyRows)).toHaveLength(1);
-      expect(table.find(FooterRow)).toHaveLength(1);
-      expect(table.find(FilterSummary)).toHaveLength(1);
+      expect(asFragment()).toMatchSnapshot();
+      expect(container.querySelector('thead')).toBeInTheDocument();
+      expect(container.querySelector('tbody')).toBeInTheDocument();
+      expect(container.querySelector('tfoot')).toBeInTheDocument();
 
-      // Negative tests
-      expect(table.find(TableFilter)).toHaveLength(0);
-      expect(table.find(DoubleArrowIcon)).toHaveLength(0);
+      // // Negative tests
+      expect(screen.queryByTestId('table-filter-testid')).not.toBeInTheDocument();
+      expect(container.querySelector('.table-icon')).not.toBeInTheDocument();
     });
 
     test('Renders pagination when set', () => {
       // Setup the test
-      const table = mount(
+      const { container, asFragment} = render(
         <QueueTable
           enablePagination
           columns={columns}
@@ -474,74 +601,108 @@ describe('QueueTable', () => {
       );
 
       // Assertions
-      expect(table).toMatchSnapshot();
-      expect(table.find(Pagination)).toHaveLength(2);
-      expect(table.find(Row)).toHaveLength(15);
-      expect(table.state('currentPage')).toEqual(0);
+      expect(asFragment()).toMatchSnapshot();
+
+      const pagination = container.querySelectorAll('.cf-pagination');
+      expect(pagination).toHaveLength(2);
+
+      const rows = [];
+      for (let rowId = 0; rowId <= 14; rowId++) {
+        const rowElement = container.querySelector(`#table-row-${rowId}`);
+        rows.push(rowElement);
+        expect(rowElement).toBeInTheDocument();
+      }
+      expect(rows).toHaveLength(15);
+      expect(screen.getAllByText('Viewing 1-15 of 20 total')).not.toBeNull();
 
       // Change the page
-      table.
-        find('.cf-pagination-pages').
-        first().
-        childAt(3).
-        simulate('click');
-      expect(table.find(Row)).toHaveLength(5);
-      expect(table.state('currentPage')).toEqual(1);
+      const nextButton = screen.getAllByRole('button', { name: 'Next Page' });
+      fireEvent.click(nextButton[0]);
+
+      const rows2 = [];
+      for (let rowId = 0; rowId <= 4; rowId++) {
+        const rowElement = container.querySelector(`#table-row-${rowId}`);
+        rows2.push(rowElement);
+        expect(rowElement).toBeInTheDocument();
+        }
+      expect(rows2).toHaveLength(5);
+      expect(screen.getAllByText('Viewing 16-20 of 20 total')).not.toBeNull();
     });
 
     test('Renders loading component instead of body when loading data', () => {
       // Setup the test
-      const table = mount(
+      const useTaskPagesApi = true;
+      const paginationOptions = {
+        needsTaskRequest: true,
+      };
+      const taskPagesApiEndpoint = 'https://example.com/api/taskPages?param=value';
+
+      const { container, asFragment} = render(
         <QueueTable
-          enablePagination
-          columns={columns}
-          rowObjects={createTask(20)}
-          summary={summary}
-          slowReRendersAreOk
+        enablePagination
+        columns={columns}
+        rowObjects={createTask(20)}
+        summary={summary}
+        slowReRendersAreOk
+        useTaskPagesApi={useTaskPagesApi}
+        paginationOptions={paginationOptions}
+        taskPagesApiEndpoint={taskPagesApiEndpoint}
         />
       );
 
-      table.setState({ loadingComponent: <LoadingScreen /> });
-
-      // Assertions
-      expect(table).toMatchSnapshot();
-      expect(table.find(HeaderRow)).toHaveLength(0);
-      expect(table.find(BodyRows)).toHaveLength(0);
-      expect(table.find(FooterRow)).toHaveLength(0);
-      expect(table.find(LoadingScreen)).toHaveLength(1);
+      // // Assertions
+      expect(asFragment()).toMatchSnapshot();
+      expect(container.querySelector('thead')).not.toBeInTheDocument();
+      expect(container.querySelector('tbody')).not.toBeInTheDocument();
+      expect(container.querySelector('tfoot')).not.toBeInTheDocument();
+      expect(container.querySelector('.cf-loading-button-symbol')).toBeInTheDocument();
+      expect(container.querySelector('.cf-react-icon-loading-front')).toBeInTheDocument();
+      expect(container.querySelector('.cf-react-icon-loading-back')).toBeInTheDocument();
     });
 
     test('Can sort rows', () => {
       // Setup the test
-      const table = mount(
+      const {container, asFragment} = render(
         <QueueTable columns={sortColumns} rowObjects={tableData} summary={summary} slowReRendersAreOk />
       );
 
       // Assertions
-      expect(table).toMatchSnapshot();
-      expect(table.state('sortColName')).toEqual(null);
-      expect(table.state('sortAscending')).toEqual(true);
+      expect(asFragment()).toMatchSnapshot();
+      expect(container.querySelector('.table-icon')).toBeInTheDocument();
 
-      // Simulate sorting the table
-      table.find({ 'aria-label': 'Sort by Third' }).simulate('click');
-      expect(table.state('sortColName')).toEqual('type');
-      expect(table.state('sortAscending')).toEqual(false);
+      const thirdColumn = screen.getByRole('columnheader', { name: 'Third' });
+      expect(thirdColumn).toBeInTheDocument();
+      expect(thirdColumn.getAttribute('aria-sort')).toBeNull();
 
-      // Update the sorting again
-      table.find({ 'aria-label': 'Sort by Third' }).simulate('click');
-      expect(table.state('sortColName')).toEqual('type');
-      expect(table.state('sortAscending')).toEqual(true);
+      const sortByThird = screen.getByRole('button', { name: 'Sort by Third' });
+      fireEvent.click(sortByThird);
+      expect(thirdColumn.getAttribute('aria-sort')).toEqual('descending');
+
+      fireEvent.click(sortByThird);
+      expect(thirdColumn.getAttribute('aria-sort')).toEqual('ascending');
+
+      fireEvent.click(sortByThird);
+      expect(thirdColumn.getAttribute('aria-sort')).toEqual('descending');
     });
 
     test('Can filter rows', () => {
       // Setup the test
-      const table = mount(
+      const { container, asFragment} = render(
         <QueueTable columns={filterColumns} rowObjects={tableData} summary={summary} slowReRendersAreOk />
       );
 
+      const filterButton = screen.getByRole('button');
       // Assertions
-      expect(table).toMatchSnapshot();
-      expect(table.state('filterByList')).toEqual(undefined);
+      expect(asFragment()).toMatchSnapshot();
+      expect(screen.getByTestId('table-filter-testid')).toBeInTheDocument();
+      expect(filterButton).toBeInTheDocument();
+      expect(container.querySelector('.cf-dropdown-filter')).toBeNull();
+      expect(screen.queryAllByRole('checkbox')).toHaveLength(0);
+
+      fireEvent.click(filterButton);
+
+      expect(container.querySelector('.cf-dropdown-filter')).toBeInTheDocument();
+      expect(screen.queryAllByRole('checkbox')).toHaveLength(3);
     });
   });
 });
