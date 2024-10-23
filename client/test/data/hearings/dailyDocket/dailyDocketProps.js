@@ -60,7 +60,13 @@ export const dailyDocketPropsHearingNotVirtualJudgeUser = {
     witness: null,
     worksheetIssues: '{0: {…}, 1: {…}, 10: {…}, 11: {…}, 2: {…}, 3: {…}, …}',
     veteranDateOfDeathInfo: null,
-    hearingDispositionTaskId: 3257
+    hearingDispositionTaskId: 3257,
+    nonVirtualConferenceLink: {
+      hostPin: '2949749',
+      // eslint-disable-next-line max-len
+      hostLink: 'https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000031@example.va.gov&pin=2949749&role=host',
+      alias: null
+    }
   },
   hearingId: 'ae4c4050-36e8-4df2-83a4-839cf73725dc',
   index: 0,
