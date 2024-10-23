@@ -449,7 +449,7 @@ class RequestIssue < CaseflowRecord
 
   def fetch_removed_by_user
     if removed?
-      relevant_update = request_issues_updates.find do |update|
+      relevant_update = request_issues_updates&.find do |update|
         update.removed_issues.any? { |issue| issue.id == id }
       end
 
