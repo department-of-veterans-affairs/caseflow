@@ -51,7 +51,7 @@ const CorrespondenceAppealTasks = (props) => {
     <>
       <div className="correspondence-existing-appeals">
         <div className="left-section">
-          <h2>Linked appeal:</h2>
+          <h2>Linked Appeal:</h2>
           <div className="case-details-header-badge">
             <DocketTypeBadge name={props.task_added.appealType} />
             <CaseDetailsLink

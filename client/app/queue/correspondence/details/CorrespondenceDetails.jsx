@@ -438,7 +438,7 @@ const CorrespondenceDetails = (props) => {
         </div>
         <div className="correspondence-existing-appeals">
           <div className="left-section">
-            <h2>Existing appeals</h2>
+            <h2>Existing Appeals</h2>
             <div className="correspondence-details-view-documents">
               <a
                 rel="noopener noreferrer"
@@ -504,7 +504,7 @@ const CorrespondenceDetails = (props) => {
 
     <div className="correspondence-existing-appeals">
       <div className="left-section">
-        <h2>Tasks not related to an appeal</h2>
+        <h2>Task not related to an Appeal</h2>
       </div>
       <div className="toggleButton-plus-or-minus">
         <Button
