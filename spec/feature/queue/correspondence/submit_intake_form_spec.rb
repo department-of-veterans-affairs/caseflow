@@ -240,4 +240,63 @@ RSpec.feature("Correspondence Intake submission") do
       end
     end
   end
+
+  context "user adds tasks related to inactive appeals" do
+    let(:tasks_json) { JSON.parse!(File.read("client/constants/QUEUE_INTAKE_FORM_TASK_TYPES.json")) }
+    let(:inactive_appeal_tasks) { tasks_json["relatedToAppealInactive"] }
+    let(:inactive_appeal_tasks_count) { tasks_json["relatedToAppealInactive"].length }
+    let(:max_new_tasks) { 4 }
+
+    before do
+      # Need to add user to BvaDispatch - new BvaDispatch tasks are automatically assigned to users
+      BvaDispatch.singleton.add_user(create(:user))
+
+      # Visit page with inactive appeals
+      visit_intake_form_step_2_with_inactive_appeals
+      existing_appeal_radio_options[:yes].click
+      using_wait_time(wait_time) do
+        within ".cf-case-list-table" do
+          appeal_checkboxes = page.all(".cf-form-checkbox")[0, (inactive_appeal_tasks_count / max_new_tasks).ceil]
+          appeal_checkboxes.each(&:click)
+        end
+      end
+
+      # Add a new task for each existing related to inactive appeal task
+      add_task_buttons = page.all("#button-addTasks")
+      add_task_buttons.each { |button| max_new_tasks.times { button.click } }
+
+      # Select each unique related to inactive appeal task
+      react_select_containers = page.all("#reactSelectContainer")
+      react_select_containers.each_with_index do |select_container, index|
+        select_container.click
+        using_wait_time(wait_time) do
+          within "div[class*=MenuList]" do
+            # Take out with CAVC Mail Task changes 273 - 277
+            # replace line 278, exact_text: with inactive_appeal_tasks[index]["label"]
+            text_match = if inactive_appeal_tasks[index]["label"] == "CAVC Correspondence"
+                           "Other Motion"
+                         else
+                           inactive_appeal_tasks[index]["label"]
+                         end
+            find("div", exact_text: text_match).click
+          end
+        end
+      end
+
+      # Fill in all the required text boxes for all tasks
+      task_text_content_boxes = page.all("textarea#content")
+      task_text_content_boxes.each { |box| box.fill_in with: "Correspondence Text" }
+
+      click_button("Continue")
+      click_button("Submit")
+      click_button("Confirm")
+      using_wait_time(wait_time) do
+        expect(page).to have_content("You have successfully submitted a correspondence record")
+      end
+    end
+
+    it "creates the associated mail task and mail root task" do
+      true
+    end
+  end
 end
