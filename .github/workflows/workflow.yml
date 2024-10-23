@@ -74,7 +74,7 @@ jobs:
         NODE_ENV: test
         BUNDLE_PATH: vendor/bundle
         COVERAGE_DIR: /home/circleci/coverage-${{matrix.ci_node_index}} #circleci is the USER
-        POSTGRES_HOST: localhost
+        POSTGRES_HOST: postgres
         POSTGRES_USER: postgres
         POSTGRES_PASSWORD: postgres
         KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES: true
