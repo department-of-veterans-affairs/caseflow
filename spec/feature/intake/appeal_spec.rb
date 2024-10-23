@@ -358,6 +358,18 @@ feature "Appeal Intake", :all_dbs do
 
       click_intake_finish
     end
+
+    scenario "validate decision date" do
+      start_appeal(veteran_no_ratings)
+      visit "/intake/add_issues"
+      click_intake_add_issue
+
+      fill_in "Issue category", with: "Apportionment"
+      find("#issue-category").send_keys :enter
+
+      fill_in "Decision date", with: Time.zone.tomorrow.to_date.mdY
+      expect(page).to have_content("Decision date cannot be in the future")
+    end
   end
 
   scenario "Add / Remove Issues page" do
@@ -662,7 +674,7 @@ feature "Appeal Intake", :all_dbs do
     end
   end
 
-  it "Shows a review error when something goes wrong" do
+  it "Shows an error while adding issues when something goes wrong" do
     start_appeal(veteran_with_ratings)
     visit "/intake/add_issues"
 
@@ -678,7 +690,7 @@ feature "Appeal Intake", :all_dbs do
     expect(page).to have_current_path("/intake/add_issues")
   end
 
-  scenario "canceling an appeal intake" do
+  scenario "canceling an intake" do
     _, intake = start_appeal(veteran)
     visit "/intake/add_issues"
 
@@ -688,15 +700,19 @@ feature "Appeal Intake", :all_dbs do
     safe_click ".close-modal"
     expect(page).to_not have_css("#modal_id-title")
     safe_click "#cancel-intake"
+
     expect(page).to have_button("Cancel intake", disabled: true)
+
     within_fieldset("Please select the reason you are canceling this intake.") do
       find("label", text: "System error").click
     end
     expect(page).to have_button("Cancel intake", disabled: false)
+
     within_fieldset("Please select the reason you are canceling this intake.") do
       find("label", text: "Other").click
     end
     expect(page).to have_button("Cancel intake", disabled: true)
+
     fill_in "Tell us more about your situation.", with: "blue!"
     expect(page).to have_button("Cancel intake", disabled: false)
     safe_click ".confirm-cancel"
