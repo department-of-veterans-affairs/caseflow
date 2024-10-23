@@ -3,7 +3,7 @@
 RSpec.feature "Test Users for Demo", :postgres do
   before do
     # Switch user only works in demo
-    allow(Rails).to receive(:deploy_env?).and_return(:demo)
+    ENV["DEPLOY_ENV"] = "development"
     BGSService.end_product_records = { default: BGSService.all_grants }
 
     3.times { create(:user) }
