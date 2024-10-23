@@ -310,13 +310,6 @@ RSpec.feature("Correspondence Intake submission") do
         select_container.click
         using_wait_time(wait_time) do
           within "div[class*=MenuList]" do
-            # # Take out with CAVC Mail Task changes 273 - 277
-            # # replace line 278, exact_text: with inactive_appeal_tasks[index]["label"]
-            # text_match = if inactive_appeal_tasks[index]["label"] == "CAVC Correspondence"
-            #                "Other Motion"
-            #              else
-            #                inactive_appeal_tasks[index]["label"]
-            #              end
             find("div", exact_text: inactive_appeal_tasks[index]["label"]).click
           end
         end
