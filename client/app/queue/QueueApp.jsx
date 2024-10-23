@@ -686,7 +686,11 @@ class QueueApp extends React.PureComponent {
   );
 
   routedErrorsFoundAndCorrectedModal = (props) => (
-    <ErrorsFoundAndCorrectedModal modalType="errors_found_and_corrected"{...props.match.params} />
+    <ErrorsFoundAndCorrectedModal
+      modalType="errors_found_and_corrected"
+      {...props.match.params}
+      closeModal={() => props.history.goBack()}
+    />
   );
 
   queueName = () =>
