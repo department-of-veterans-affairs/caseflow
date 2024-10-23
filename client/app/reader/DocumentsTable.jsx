@@ -53,9 +53,6 @@ const receiptDateFilterStates = {
 
 export const getRowObjects = (documents, annotationsPerDocument) => {
   return documents.reduce((acc, doc) => {
-    // For now document size is in Bytes.
-    doc.fileSize = Math.floor(Math.random() * 1073741825);
-
     acc.push(doc);
     const docHasComments = _.size(annotationsPerDocument[doc.id]);
 
@@ -706,7 +703,7 @@ class DocumentsTable extends React.Component {
             File Size
           </div>
         ),
-        valueFunction: (doc) => <DocSizeIndicator docSize={doc.fileSize} />,
+        valueFunction: (doc) => <DocSizeIndicator docSize={doc.file_size} />,
       },
     ];
   };
