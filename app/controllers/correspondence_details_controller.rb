@@ -177,7 +177,15 @@ class CorrespondenceDetailsController < CorrespondenceController
       related_correspondence_uuids: [],
       correspondence_relations: [:uuid],
       related_appeal_ids: [],
-      unselected_appeal_ids: []
+      unselected_appeal_ids: [],
+      tasks_not_related_to_appeal: [
+        :klass,
+        :assigned_to,
+        :content,
+        :label,
+        :assignedOn,
+        :instructions
+      ]
     )
   end
 

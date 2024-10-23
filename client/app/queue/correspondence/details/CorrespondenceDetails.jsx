@@ -191,7 +191,7 @@ const CorrespondenceDetails = (props) => {
         setInitialSelectedAppeals(appealIds);
         sortAppeals(appealIds);
         setAppealTableKey((key) => key + 1);
-      }
+      };
 
       // Send POST request to create relations
       const patchResponse = await ApiUtil.patch(
@@ -201,7 +201,7 @@ const CorrespondenceDetails = (props) => {
 
       // Check for general success status (any 2xx status)
       patchSuccess = isSuccess(patchResponse);
-      updateAppeals(patchResponse)
+      updateAppeals(patchResponse);
       console.log('POST successful:', patchResponse.status); // eslint-disable-line no-console
 
       // Only show success banner if both PATCH and POST requests succeeded
@@ -822,7 +822,7 @@ const CorrespondenceDetails = (props) => {
   const saveChanges = () => {
     if (isAdminNotLoggedIn() === false) {
       handlepriorMailUpdate();
-    } else if (selectedPriorMail.length > 0 || selectedAppeals.length > 0 || unSelectedAppeals.length > 0 ) {
+    } else if (selectedPriorMail.length > 0 || selectedAppeals.length > 0 || unSelectedAppeals.length > 0) {
       const appealsSelected = selectedAppeals.filter((val) => !correspondence.correspondenceAppealIds.includes(val));
       const priorMailIds = selectedPriorMail.map((mail) => mail.id);
       const payload = {

@@ -336,7 +336,16 @@ export const setUnrelatedTaskList = (unrelatedTaskList) => (dispatch) => {
 
 // Add task not related to appeal
 export const addTaskNotRelatedToAppeal = (correspondence, taskData) => (dispatch) => {
-  const patchData = { tasks_not_related_to_appeal: [taskData] };
+  const patchData = {
+    tasks_not_related_to_appeal: [{
+      klass: taskData.klass,
+      assigned_to: taskData.assigned_to,
+      content: taskData.content,
+      label: taskData.label,
+      assignedOn: taskData.assignedOn,
+      instructions: taskData.instructions
+    }]
+  };
 
   // Return a promise so that the caller can await the result
   return ApiUtil.patch(`/queue/correspondence/${correspondence.uuid}/update_correspondence`, { data: patchData }).
