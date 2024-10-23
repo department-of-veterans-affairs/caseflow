@@ -29,9 +29,13 @@ const ErrorsFoundAndCorrectedModal = (props) => {
   };
 
   const submit = () => {
-    // setLoading(true);
-    console.log(selectedFile);
-    console.log(notes);
+    // This is where we will send the backend request to upload to VBMS
+    // selectedFile.file contains the base64 encoded string containing the PDF
+    // selectedFile.fileName contains the file's name only.
+    //
+    // Not sure yet what we're doing with the notes: maybe saving to the ReviewTranscriptTask instructions,
+    // in which case we'll need to send props.taskId along with the request.
+    setLoading(true);
   };
 
   const handleFileChange = (file) => {
