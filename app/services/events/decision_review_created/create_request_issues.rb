@@ -3,6 +3,7 @@
 # Service Class that will be utilized by Events::DecisionReviewCreated to create Request Issues
 # when an Event is received using the data sent from VBMS
 class Events::DecisionReviewCreated::CreateRequestIssues
+  include LegacyIssueOptinCreator
   class << self
     def process!(params)
       create_request_issue_backfill(params)

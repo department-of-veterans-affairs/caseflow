@@ -10,6 +10,7 @@
 # but need to be part of the data sent to the base class to ensure
 # the correct before and after issues are calculated
 class RequestIssuesUpdateEvent < RequestIssuesUpdate
+  include LegacyIssueOptinCreator
   def initialize(review:, user:, parser:, event:, epe:)
     @event = event
     @parser = parser
