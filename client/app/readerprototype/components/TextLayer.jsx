@@ -53,10 +53,9 @@ const TextLayer = memo((props) => {
           });
           setHasRenderedText(true);
         }).
-        catch((error) => {
+        catch(() => {
           // this catch is necessary to prevent the error: TypeError: Cannot read properties of null
           // (reading 'ownerDocument')
-          console.error(`text layer ${error}`);
         });
     };
 
