@@ -1085,7 +1085,7 @@ class BusinessLine < Organization
     end
 
     def closed_at_filter_predicate(filters)
-      return "" if filters.nil?
+      return "" if filters.blank?
 
       closed_at_filter = locate_closed_at_filter(filters)
 

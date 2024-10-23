@@ -1035,7 +1035,7 @@ feature "NonComp Reviews Queue", :postgres do
       expect(submit_button[:disabled]).to eq "false"
       submit_button.click
 
-      expect(page).to have_content("Cases completed (Before this date #{one_day_ago_date_string})")
+      expect(page).to have_content("Cases completed (Before #{one_day_ago_date_string})")
       expect(page).to have_content("Date Completed (1)")
       expect(page).to have_content("Viewing 1-2 of 2 total")
       find("[aria-label='Filter by completed date. Filtering by before,#{1.day.ago.strftime('%Y-%m-%d')},']").click
@@ -1043,7 +1043,7 @@ feature "NonComp Reviews Queue", :postgres do
       find("div", class: "cf-select__option", text: "After this date", exact_text: true).click
       find("button", text: "Apply Filter").click
 
-      expect(page).to have_content("Cases completed (After this date #{one_day_ago_date_string})")
+      expect(page).to have_content("Cases completed (After #{one_day_ago_date_string})")
       expect(page).to have_content("Date Completed (1)")
       expect(page).to have_content("Viewing 1-1 of 1 total")
 

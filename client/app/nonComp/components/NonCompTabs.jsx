@@ -65,10 +65,10 @@ const NonCompTabsUnconnected = (props) => {
 
         // Object that defines how to build the string based on the mode
         const completedDateFilterModeHandlers = {
-          before: `Before this date ${formattedStartDate}`,
-          after: `After this date ${formattedStartDate}`,
-          on: `On this date ${formattedStartDate}`,
-          between: `Between this ${formattedStartDate} and that ${formattedEndDate}`,
+          before: `Before ${formattedStartDate}`,
+          after: `After ${formattedStartDate}`,
+          on: `On ${formattedStartDate}`,
+          between: `Between ${formattedStartDate} and ${formattedEndDate}`,
           last7: 'Last 7 Days',
           last30: 'Last 30 Days',
           last365: 'Last 365 Days'
