@@ -13,3 +13,8 @@ it('handles empty strings', () => {
 
   expect(container).toHaveTextContent('0 B');
 });
+it('handles null', () => {
+  const { container } = render(<DocSizeIndicator docSize={null} />);
+
+  expect(container).toHaveTextContent('0 B');
+});
