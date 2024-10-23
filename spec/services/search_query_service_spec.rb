@@ -350,7 +350,7 @@ describe "SearchQueryService" do
           attributes = result.attributes
           expect(attributes.docket_name).to eq "legacy"
           expect(attributes.aod).to be_falsy
-          expect(attributes.appellant_full_name).to eq veteran_full_name
+          expect(attributes.appellant_full_name).to eq veteran_full_name.upcase
           expect(attributes.assigned_to_location).to eq legacy_appeal.assigned_to_location
           expect(attributes.caseflow_veteran_id).to eq veteran.id
           expect(attributes.decision_date).to eq AppealRepository.normalize_vacols_date(vacols_decision_date)
