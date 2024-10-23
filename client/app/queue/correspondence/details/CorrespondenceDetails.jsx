@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { useHistory } from 'react-router';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import TabWindow from '../../../components/TabWindow';
@@ -28,6 +29,7 @@ import CorrespondenceAppealTasks from '../CorrespondenceAppealTasks';
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const correspondence = props.correspondence;
   const correspondenceInfo = props.correspondenceInfo;
   const mailTasks = props.correspondence.mailTasks;
@@ -57,6 +59,8 @@ const CorrespondenceDetails = (props) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isTasksUnrelatedSectionExpanded, setIsTasksUnrelatedSectionExpanded] = useState(false);
   const [appealTaskKey, setAppealTaskKey] = useState(0);
+  const [showModal, setShowModal] = useState(false);
+  const [isReturnToQueue, setIsReturnToQueue] = useState(false);
 
   // Initialize checkbox states
   useEffect(() => {
@@ -784,6 +788,20 @@ const CorrespondenceDetails = (props) => {
     }
   ];
 
+  const handleModalClose = () => {
+    if (isReturnToQueue) {
+      setShowModal(!showModal);
+    } else {
+      if (props.isInboundOpsSuperuser || props.isInboundOpsSupervisor) {
+        window.location.href = '/queue/correspondence/team';
+      } else if (props.isInboundOpsUser) {
+        window.location.href = '/queue/correspondence/team';
+      } else {
+        window.location.href = '/queue';
+      }
+    }
+  };
+
   const saveChanges = () => {
     if (isAdminNotLoggedIn() === false) {
       handlepriorMailUpdate();
@@ -870,19 +888,28 @@ const CorrespondenceDetails = (props) => {
           tabs={tabList}
         />
       </AppSegment>
-      {
-        // eslint-disable-next-line max-len
-        (props.isInboundOpsUser || props.isInboundOpsSuperuser || props.isInboundOpsSupervisor) && <div className="margin-top-for-add-task-view">
-          <Button
-            type="button"
-            onClick={() => saveChanges()}
-            disabled={disableSubmitButton}
-            name="save-changes"
-            classNames={['cf-right-side']}>
-          Save changes
-          </Button>
+      <div className="margin-top-for-add-task-view">
+        <div className="cf-push-left">
+              <Button
+                name="Return to queue"
+                classNames={['cf-btn-link']}
+                onClick={handleModalClose}
+              />
         </div>
-      }
+        {
+          // eslint-disable-next-line max-len
+          (props.isInboundOpsUser || props.isInboundOpsSuperuser || props.isInboundOpsSupervisor) && <div>
+            <Button
+              type="button"
+              onClick={() => saveChanges()}
+              disabled={disableSubmitButton}
+              name="save-changes"
+              classNames={['cf-right-side']}>
+            Save changes
+            </Button>
+          </div>
+        }
+      </div>
     </>
   );
 };
