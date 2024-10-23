@@ -92,25 +92,18 @@ if [[ ! -z "$jsxCommits" || ! -z "$jsCommits" ]]; then
   echo "running jest tests for $jsCommits"; echo "";
   # use SCRIPT_DIR to get to appeals/client/test
   cd "$SCRIPT_DIR"
-  cd ../client
-
 
   # check for autofix option in parameters
   # run -o for autofix jest and update snapshots
   for var in "$@"
   do
     if [ "$var" == "autofix" ]; then
-      yarn jest $var
+      cd ../client && yarn jest $var
       yarn jest --updateSnapshot
-          else
-      yarn jest
+    else
+      cd ../client && yarn jest
     fi
   done
-
-  if [ $# -eq 0 ]
-    then
-      yarn jest
-  fi
 
   # run lint:fix
   yarn run lint:fix
