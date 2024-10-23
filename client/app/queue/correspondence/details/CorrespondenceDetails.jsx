@@ -792,12 +792,10 @@ const CorrespondenceDetails = (props) => {
     if (isReturnToQueue) {
       setShowModal(!showModal);
     } else {
-      if (history.length > 1) {
-        history.goBack();
-      } else if (props.isInboundOpsSuperuser || props.isInboundOpsSupervisor) {
+      if (props.isInboundOpsSuperuser || props.isInboundOpsSupervisor) {
         window.location.href = '/queue/correspondence/team';
       } else if (props.isInboundOpsUser) {
-        window.location.href = '/queue/correspondence';
+        window.location.href = '/queue/correspondence/team';
       } else {
         window.location.href = '/queue';
       }
