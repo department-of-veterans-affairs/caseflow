@@ -1,4 +1,8 @@
 [
+  {"scenario": "hearingDayJSON",
+    "targetType": [],
+    "targetId": ""
+  },
   {"scenario": "supplementalClaimsEdit",
     "targetType": [{
       "value": "supplementalClaim",
