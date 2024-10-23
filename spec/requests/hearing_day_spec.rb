@@ -180,10 +180,10 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
          { request_type: HearingDay::REQUEST_TYPES[:travel], scheduled_for: "13-Jun-2019 08:30:00.000-4:00",
            regional_office: "RO27", room: "4" }]
       )
-      Generators::Vacols::TravelBoardSchedule.create(tbyear: 2019, tbstdate: "2019-01-30 00:00:00",
+      Generators::VACOLS::TravelBoardSchedule.create(tbyear: 2019, tbstdate: "2019-01-30 00:00:00",
                                                      tbenddate: "2019-02-03 00:00:00", tbmem1: "111")
-      Generators::Vacols::Staff.create(sattyid: "111")
-      Generators::Vacols::Staff.create(sattyid: "105", sdomainid: "BVARTONY", snamel: "Randall", snamef: "Tony")
+      Generators::VACOLS::Staff.create(sattyid: "111")
+      Generators::VACOLS::Staff.create(sattyid: "105", sdomainid: "BVARTONY", snamel: "Randall", snamef: "Tony")
     end
 
     it "Get hearings for specified date range" do
@@ -212,9 +212,9 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
          { request_type: HearingDay::REQUEST_TYPES[:travel], scheduled_for: "8-Jun-2019 09:00:00.000-4:00",
            room: "3", regional_office: "RO27" }]
       )
-      Generators::Vacols::TravelBoardSchedule.create(tbyear: 2019, tbstdate: "2019-01-30 00:00:00",
+      Generators::VACOLS::TravelBoardSchedule.create(tbyear: 2019, tbstdate: "2019-01-30 00:00:00",
                                                      tbenddate: "2019-02-03 00:00:00", tbmem1: "111")
-      Generators::Vacols::Staff.create(sattyid: "111")
+      Generators::VACOLS::Staff.create(sattyid: "111")
     end
 
     it "Get hearings for RO" do
@@ -233,7 +233,7 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
     let!(:staff) { create(:staff, stafkey: "RO04", stc2: 2, stc3: 3, stc4: 4) }
     let!(:hearings) do
       RequestStore[:current_user] = user
-      Generators::Vacols::Staff.create(sattyid: "111")
+      Generators::VACOLS::Staff.create(sattyid: "111")
       HearingDay.create(
         [{ request_type: HearingDay::REQUEST_TYPES[:video], scheduled_for: "7-Mar-2019 09:00:00.000-4:00",
            room: "1", regional_office: "RO04" },

@@ -13,7 +13,6 @@ module CaseflowCertification
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.1
-    config.autoloader = :classic
 
     # Configuration for the application, engines, and railties goes here.
     #
@@ -135,9 +134,113 @@ module CaseflowCertification
     # setup the deploy env environment variable
     ENV['DEPLOY_ENV'] ||= Rails.env
 
-    config.eager_load_paths << Rails.root.join('lib')
-    config.eager_load_paths += Dir[Rails.root.join('app', 'models', '{**}', '{**}')]
-    config.eager_load_paths += Dir[Rails.root.join('app', 'serializers', '{**}')]
+    # ------------------------------------------------------------------------------------------------------------------
+    # Autoloading & Eager loading
+    # ------------------------------------------------------------------------------------------------------------------
+
+    # Uncomment the line below to enable autoloader logging for troubleshooting
+    # Rails.autoloaders.log!
+
+    Rails.autoloaders.each do |autoloader|
+      autoloader.inflector.inflect(
+        "amo_metrics_report_job" => "AMOMetricsReportJob",
+        "appeals_for_poa" => "AppealsForPOA",
+        "bgs_service" => "BGSService",
+        "bgs_service_concern" => "BGSServiceConcern",
+        "bgs_service_grants" => "BGSServiceGrants",
+        "bgs_service_poa" => "BGSServicePOA",
+        "bgs_service_record_maker" => "BGSServiceRecordMaker",
+        "bva_appeal_status" => "BVAAppealStatus",
+        "cavc_case_decision" => "CAVCCaseDecision",
+        "cavc_decision" => "CAVCDecision",
+        "cavc_decision_repository" => "CAVCDecisionRepository",
+        "cda_control_group" => "CDAControlGroup",
+        "db_service" => "DBService",
+        "decision_review_polymorphic_sti_helper" => "DecisionReviewPolymorphicSTIHelper",
+        "duplicate_veteran_participant_id_finder" => "DuplicateVeteranParticipantIDFinder",
+        "etl" => "ETL",
+        "etl_builder_job" => "ETLBuilderJob",
+        "etl_classes" => "ETLClasses",
+        "hlr_status_serializer" => "HLRStatusSerializer",
+        "mpi_service" => "MPIService",
+        "sc_status_serializer" => "SCStatusSerializer",
+        "sync_attributes_with_bgs" => "SyncAttributesWithBGS",
+        "update_poa_concern" => "UpdatePOAConcern",
+        "va_dot_gov_service" => "VADotGovService",
+        "va_notify_send_message_template" => "VANotifySendMessageTemplate",
+        "va_notify_service" => "VANotifyService",
+        "vacols" => "VACOLS",
+        "vacols_csv_reader" => "VacolsCSVReader",
+        "vbms_caseflow_logger" => "VBMSCaseflowLogger",
+        "vbms_request" => "VBMSRequest",
+        "vbms_service" => "VBMSService",
+        "veteran_record_requests_open_for_vre_query" => "VeteranRecordRequestsOpenForVREQuery",
+      )
+    end
+
+    config.autoload_paths += [
+      "#{root}/lib",
+    ]
+
+    config.eager_load_paths += [
+      "#{root}/lib",
+    ]
+
+    # Ensure that all STI models are eager loaded, even when eager loading is disabled for the environment.
+    #   Single Table Inheritance doesn't play well with lazy loading: Active Record has to be aware of STI hierarchies
+    #   to work correctly, but when lazy loading, classes are only loaded only on demand.
+    #   To address this fundamental mismatch, we need to preload STIs when eager loading is disabled.
+    #
+    # See https://guides.rubyonrails.org/autoloading_and_reloading_constants.html#single-table-inheritance
+    unless config.eager_load
+      Rails.application.config.to_prepare do
+        # [TECH DEBT] Because we have so many STI models, it was deemed more pragmatic in the moment to just preload the
+        #   entire models directory. In the future, we may wish to consider a more targeted approach, such as moving all
+        #   STI models into their own dedicated sub-directories and then selectively preloading them instead.
+        Rails.autoloaders.main.eager_load_dir("#{Rails.root}/app/models")
+      end
+    end
+
+    Rails.autoloaders.main.collapse(
+      "#{root}/app/jobs/batch_processes",
+      "#{root}/app/models/batch_processes",
+      "#{root}/app/models/dockets",
+      "#{root}/app/models/events",
+      "#{root}/app/models/external_models",
+      "#{root}/app/models/hearings",
+      "#{root}/app/models/hearings/forms",
+      "#{root}/app/models/legacy_tasks",
+      "#{root}/app/models/mixins",
+      "#{root}/app/models/organizations",
+      "#{root}/app/models/prepend",
+      "#{root}/app/models/prepend/va_notify",
+      "#{root}/app/models/priority_queues",
+      "#{root}/app/models/queue_tabs",
+      "#{root}/app/models/queues",
+      "#{root}/app/models/serializers",
+      "#{root}/app/models/tasks",
+      "#{root}/app/models/tasks/docket_switch",
+      "#{root}/app/models/tasks/hearing_mail_tasks",
+      "#{root}/app/models/tasks/pre_docket",
+      "#{root}/app/models/tasks/special_case_movement",
+      "#{root}/app/models/validators",
+      "#{root}/app/models/vanotify",
+      "#{root}/app/serializers/case_distribution",
+      "#{root}/app/serializers/hearings",
+      "#{root}/app/services/claim_change_history",
+      "#{root}/lib/helpers",
+    )
+
+    Rails.autoloaders.main.ignore(
+      "#{root}/app/jobs/middleware",
+      "#{root}/lib/assets",
+      "#{root}/lib/pdfs",
+      "#{root}/lib/tasks",
+      "#{root}/lib/deprecation_warnings.rb",
+      "#{root}/lib/helpers/console_methods.rb"
+    )
+
+    # ==================================================================================================================
 
     config.exceptions_app = self.routes
 
