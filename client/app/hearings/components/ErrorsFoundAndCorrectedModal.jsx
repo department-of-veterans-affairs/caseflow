@@ -29,13 +29,25 @@ const ErrorsFoundAndCorrectedModal = (props) => {
   };
 
   const submit = () => {
-    // This is where we will send the backend request to upload to VBMS
-    // selectedFile.file contains the base64 encoded string containing the PDF
+    // W.I.P.
+    // This is where we will send the backend request to upload to VBMS.
+    // selectedFile.file contains the base64 encoded string containing the PDF.
     // selectedFile.fileName contains the file's name only.
     //
     // Not sure yet what we're doing with the notes: maybe saving to the ReviewTranscriptTask instructions,
     // in which case we'll need to send props.taskId along with the request.
-    setLoading(true);
+    const requestParams = {
+      file_info: {
+        file: selectedFile.file,
+        file_name: selectedFile.fileName
+      },
+      task_info: {
+        instructions: notes,
+        task_id: props.taskId
+      }
+    };
+
+    // setLoading(true);
   };
 
   const handleFileChange = (file) => {
@@ -101,7 +113,8 @@ const ErrorsFoundAndCorrectedModal = (props) => {
 };
 
 ErrorsFoundAndCorrectedModal.propTypes = {
-  closeModal: PropTypes.func
+  closeModal: PropTypes.func,
+  taskId: PropTypes.string
 };
 
 export default ErrorsFoundAndCorrectedModal;
