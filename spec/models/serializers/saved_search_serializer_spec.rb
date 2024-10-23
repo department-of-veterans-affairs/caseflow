@@ -9,7 +9,8 @@ describe SavedSearchSerializer, :postgres do
         user: user,
         name: "my_first_search",
         description: "my first search",
-        saved_search: "{report_type: 'event_type_action'}")
+        saved_search: "{report_type: 'event_type_action'}"
+      )
     end
 
     subject { described_class.new(saved_search) }
