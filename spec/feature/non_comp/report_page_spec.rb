@@ -46,6 +46,8 @@ feature "NonComp Report Page", :postgres do
       create(:higher_level_review_vha_task_with_decision)
       create(:higher_level_review_vha_task_with_decision)
       create(:supplemental_claim_vha_task_with_decision)
+
+      Timecop.travel(8.hours.from_now)
     end
 
     it "should submit several types of event reports successfully and generate csvs for each submission" do
