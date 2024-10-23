@@ -20,6 +20,19 @@ jobs:
     runs-on: ubuntu-8-cores-latest
     timeout-minutes: 45
     services:
+      postgres:
+        image: 065403089830.dkr.ecr.us-gov-west-1.amazonaws.com/caseflow-postgres-ci:14.9
+        credentials:
+          username: AWS
+          password: ${{ secrets.VAEC_ECR_PASSWORD }}
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: caseflow_certification_test
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
       redis:
         image: redis:4.0.10
         ports:
@@ -78,44 +91,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-
-      - name: Build Postgres Image
-        run: |
-          docker build . --file docker-bin/pg/Dockerfile --tag caseflow-postgres:latest
-
-      - name: Run the Postgres Container
-        run: docker run -p 5432:5432 caseflow-postgres:latest -d
-
-      - name: Install Dockerize
-        run: |
-          DOCKERIZE_VERSION="v0.6.1"
-          wget https://github.com/jwilder/dockerize/releases/download/${DOCKERIZE_VERSION}/dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz \
-          && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz \
-          && rm dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz
-
-      - name: Wait for the Postgres Database to Boot
-        run: dockerize -wait tcp://localhost:5432 -timeout 1m
-
-      - name: "Wait for FACOLS"
-        run: bundle exec rake local:vacols:wait_for_connection
-
-      - name: Postgres Database Schema Setup
-        run: |
-          bundle exec rake db:create:etl db:schema:load:etl
-          bundle exec rake db:create:primary db:schema:load:primary
-          make -f Makefile.example external-db-create
-        # added line to create external table(s) that are needed for tests
-
-      # We don't want to seed DBs here because DatabaseCleaner just truncates it anyway. The setup_vacols
-      # rake task needs to be run because it adds data to two tables that are ignored by DBCleaner
-      - name: Seed the VACOLS database
-        run: bundle exec rake spec:setup_vacols
-
-      - name: Install Postgres Extensions
-        run: psql -h localhost -U postgres -d caseflow_certification_test -a -f docker-bin/pg/setup_extensions_test.sql
-
-      - name: Set Up Foreign Tables
-        run: psql -h localhost -U postgres -d caseflow_certification_test -a -f local/sql/create_foreign_tables_for_vacols.sql
 
       - name: install node version
         uses: actions/setup-node@v4
@@ -212,6 +187,38 @@ jobs:
         with:
           key: bundler-gems
           path: vendor/bundle
+
+      - name: Install Dockerize
+        run: |
+          DOCKERIZE_VERSION="v0.6.1"
+          wget https://github.com/jwilder/dockerize/releases/download/${DOCKERIZE_VERSION}/dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz \
+          && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz \
+          && rm dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz
+
+      - name: Wait for the Postgres Database to Boot
+        run: dockerize -wait tcp://localhost:5432 -timeout 1m
+
+      - name: "Wait for FACOLS"
+        run: bundle exec rake local:vacols:wait_for_connection
+
+
+      - name: Install Postgres Extensions
+        run: psql -h localhost -U postgres -d caseflow_certification_test -a -f docker-bin/pg/setup_extensions_test.sql
+
+      - name: Postgres Database Schema Setup
+        run: |
+          bundle exec rake db:create:etl db:schema:load:etl
+          bundle exec rake db:create:primary db:schema:load:primary
+          make -f Makefile.example external-db-create
+        # added line to create external table(s) that are needed for tests
+
+      # We don't want to seed DBs here because DatabaseCleaner just truncates it anyway. The setup_vacols
+      # rake task needs to be run because it adds data to two tables that are ignored by DBCleaner
+      - name: Seed the VACOLS database
+        run: bundle exec rake spec:setup_vacols
+
+      - name: Set Up Foreign Tables
+        run: psql -h localhost -U postgres -d caseflow_certification_test -a -f local/sql/create_foreign_tables_for_vacols.sql
 
       - name: "Wait for localstack"
         run: dockerize -wait tcp://localstack:4566 -timeout 30s
