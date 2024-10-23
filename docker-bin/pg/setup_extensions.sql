@@ -9,6 +9,6 @@ GRANT USAGE ON FOREIGN SERVER vacols_sv TO postgres;
 
 -- Create a user mapping to the foreign server
 CREATE USER MAPPING FOR postgres SERVER vacols_sv OPTIONS (
-    USER VACOLS_DEV,
-    PASSWORD VACOLS_DEV
+    USER 'VACOLS_DEV',
+    PASSWORD 'VACOLS_DEV'
 );
