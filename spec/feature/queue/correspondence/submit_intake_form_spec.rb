@@ -310,14 +310,14 @@ RSpec.feature("Correspondence Intake submission") do
         select_container.click
         using_wait_time(wait_time) do
           within "div[class*=MenuList]" do
-            # Take out with CAVC Mail Task changes 273 - 277
-            # replace line 278, exact_text: with inactive_appeal_tasks[index]["label"]
-            text_match = if inactive_appeal_tasks[index]["label"] == "CAVC Correspondence"
-                           "Other Motion"
-                         else
-                           inactive_appeal_tasks[index]["label"]
-                         end
-            find("div", exact_text: text_match).click
+            # # Take out with CAVC Mail Task changes 273 - 277
+            # # replace line 278, exact_text: with inactive_appeal_tasks[index]["label"]
+            # text_match = if inactive_appeal_tasks[index]["label"] == "CAVC Correspondence"
+            #                "Other Motion"
+            #              else
+            #                inactive_appeal_tasks[index]["label"]
+            #              end
+            find("div", exact_text: inactive_appeal_tasks[index]["label"]).click
           end
         end
       end
@@ -334,8 +334,14 @@ RSpec.feature("Correspondence Intake submission") do
       end
     end
 
-    it "creates the associated mail task and mail root task" do
-      true
+    it "creates and associates each task related to an inactive appeal" do
+      correspondence_appeals = CorrespondenceAppeal.where(correspondence_id: Correspondence.first.id)
+      created_tasks = correspondence_appeals.each_with_object([]) do |appeal, arr|
+        tasks = appeal.tasks
+        tasks.each { |task| arr << task.class.to_s }
+      end
+      klasses = inactive_appeal_tasks.map { |json_obj| json_obj["value"]["klass"] }
+      expect(klasses).to eq(created_tasks)
     end
   end
 end
