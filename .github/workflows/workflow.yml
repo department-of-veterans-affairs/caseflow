@@ -204,15 +204,15 @@ jobs:
       - name: "Install psql"
         run: sudo apt-get install -y postgresql-client
 
-      - name: Install Postgres Extensions
-        run: psql -h postgres -U postgres -d caseflow_certification_test -a -f docker-bin/pg/setup_extensions_test.sql
-
       - name: Postgres Database Schema Setup
         run: |
           bundle exec rake db:create:etl db:schema:load:etl
           bundle exec rake db:create:primary db:schema:load:primary
           make -f Makefile.example external-db-create
         # added line to create external table(s) that are needed for tests
+
+      - name: Install Postgres Extensions
+        run: psql -h postgres -U postgres -d caseflow_certification_test -a -f docker-bin/pg/setup_extensions_test.sql
 
       # We don't want to seed DBs here because DatabaseCleaner just truncates it anyway. The setup_vacols
       # rake task needs to be run because it adds data to two tables that are ignored by DBCleaner
