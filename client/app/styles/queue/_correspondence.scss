@@ -1669,6 +1669,27 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 .case-details-header-badge {
   flex-grow: unset;
   margin: 12px 17px 12px 2px;
+
+  a {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .cf-pdf-external-link-icon {
+      display: flex;
+      align-items: center;
+    }
+  }
+}
+
+.existing-appeals-table {
+  a {
+    color: $color-blue;
+    .cf-pdf-external-link-icon {
+      display: inline-flex;
+      align-items: center;
+    }
+  }
 }
 
 .link-icon-container {

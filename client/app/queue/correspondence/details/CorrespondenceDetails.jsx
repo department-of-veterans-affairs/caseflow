@@ -463,7 +463,7 @@ const CorrespondenceDetails = (props) => {
             </Button>
           </div>
         </div>
-        <div className="collapse-section-container">
+        <div className="collapse-section-container existing-appeals-table">
           {isExpanded && (
             <AppSegment filledBackground noMarginTop>
               <p className="correspondence-details-p">
@@ -477,6 +477,7 @@ const CorrespondenceDetails = (props) => {
                 taskRelatedAppealIds={selectedAppeals}
                 initialAppealIds={initialSelectedAppeals}
                 enableTopPagination
+                linkOpensInNewTab
                 userAccess={userAccess}
                 checkboxOnChange={appealCheckboxOnChange}
               />
