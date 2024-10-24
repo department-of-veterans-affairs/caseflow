@@ -25,8 +25,13 @@ class Docket
 
     if ready
       scope = scope.ready_for_distribution
-      scope = adjust_for_genpop(scope, genpop, judge) if judge.present? && !use_by_docket_date?
-      scope = adjust_for_affinity(scope, judge) if judge.present? && FeatureToggle.enabled?(:acd_exclude_from_affinity)
+
+      # adjust for non_genpop for distributing non_genpop appeals during the push priority job only
+      if genpop == "not_genpop" && judge.present?
+        scope = only_non_genpop_appeals_for_push_job(scope, judge)
+      elsif judge.present?
+        scope = adjust_for_affinity(scope, judge)
+      end
     end
 
     return scoped_for_priority(scope) if priority == true
@@ -205,8 +210,8 @@ class Docket
   private
 
   # :reek:ControlParameter
-  def adjust_for_genpop(scope, genpop, judge)
-    (genpop == "not_genpop") ? scope.non_genpop_for_judge(judge) : scope.genpop
+  def only_non_genpop_appeals_for_push_job(scope, judge)
+    scope.non_genpop_with_case_distribution_lever(judge)
   end
 
   def adjust_for_affinity(scope, judge)

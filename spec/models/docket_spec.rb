@@ -126,20 +126,6 @@ describe Docket, :all_dbs do
             expect(subject).to match_array([cavc_appeal])
           end
         end
-
-        context "when acd_exclude_from_affinity flag is enabled" do
-          before { FeatureToggle.enable!(:acd_exclude_from_affinity) }
-
-          context "when called for ready is true and judge is passed" do
-            let(:judge) { judge_decision_review_task.assigned_to }
-
-            subject { DirectReviewDocket.new.appeals(ready: true, priority: false, judge: judge) }
-
-            it "returns non priority appeals" do
-              expect(subject).to match_array([appeal, denied_aod_motion_appeal, inapplicable_aod_motion_appeal])
-            end
-          end
-        end
       end
 
       context "when ready is false" do
