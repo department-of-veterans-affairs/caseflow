@@ -8,6 +8,7 @@ export default {
   decorators: [],
   args: {
     text: 'Lorem ipsum',
+    textToCopy: 'Lorem ipsum',
     label: 'accessible label text'
   }
 };

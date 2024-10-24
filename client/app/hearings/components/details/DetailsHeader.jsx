@@ -93,7 +93,7 @@ export const DetailsHeader = (
           {`${veteranFirstName} ${veteranLastName}'s Hearing Details`}
         </h1>
         <div>
-          Veteran ID: <CopyTextButton text={veteranFileNumber} label="Veteran ID" />
+          Veteran ID: <CopyTextButton text={veteranFileNumber} textToCopy={veteranFileNumber} label="Veteran ID" />
         </div>
         <div style={{ display: 'inline-flex' }}>
           <MstBadge appeal={hearing} />
