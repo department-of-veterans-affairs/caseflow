@@ -5,7 +5,6 @@ import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
 
 import TextareaField from '../components/TextareaField';
-import Alert from '../components/Alert';
 
 import { highlightInvalidFormItems, requestPatch } from './uiReducer/uiActions';
 import { setAppealAttrs, onReceiveAmaTasks } from './QueueActions';
