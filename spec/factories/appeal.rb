@@ -143,7 +143,7 @@ FactoryBot.define do
       stream_type { Constants.AMA_STREAM_TYPES.court_remand }
       transient do
         remand_subtype { Constants.CAVC_REMAND_SUBTYPES.jmpr }
-        judge { JudgeTeam.first&.judge || create(:user, :judge, :with_vacols_judge_record) }
+        judge { JudgeTeam.first&.judge || create(:user, :with_vacols_judge_record) }
       end
       initialize_with do
         cavc_remand = create(:cavc_remand,
