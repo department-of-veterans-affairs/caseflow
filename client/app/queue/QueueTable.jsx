@@ -663,7 +663,7 @@ export default class QueueTable extends React.PureComponent {
     const responseFromCache = this.props.useReduxCache ? this.props.reduxCache[endpointUrl] :
       this.state.cachedResponses[endpointUrl];
 
-    if (responseFromCache && !this.props.skipCache) {
+    if (responseFromCache) {
       this.setState({ tasksFromApi: responseFromCache.tasks });
 
       return Promise.resolve(true);
@@ -677,17 +677,11 @@ export default class QueueTable extends React.PureComponent {
           tasks: { data: tasks }
         } = response.body;
 
-        let preparedTasks = tasks;
+        const preparedTasks = tasksWithAppealsFromRawTasks(tasks);
 
-        // modify data from raw tasks if prepareTasks is true
-        if (this.props.prepareTasks) {
-          preparedTasks = tasksWithAppealsFromRawTasks(tasks);
-        }
-
-        const preparedResponse = Object.assign({ ...response.body }, { tasks: preparedTasks });
+        const preparedResponse = Object.assign(response.body, { tasks: preparedTasks });
 
         this.setState({
-          // cachedResponses: { ...this.state.cachedResponses, [endpointUrl]: preparedResponse },
           ...(!this.props.useReduxCache && {
             cachedResponses: {
               ...this.state.cachedResponses,
@@ -697,10 +691,6 @@ export default class QueueTable extends React.PureComponent {
           tasksFromApi: preparedTasks,
           loadingComponent: null
         });
-
-        if (this.props.onTableDataUpdated) {
-          this.props.onTableDataUpdated(preparedTasks);
-        }
 
         if (this.props.useReduxCache) {
           this.props.updateReduxCache({ key: endpointUrl, value: preparedResponse });
@@ -903,9 +893,6 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
   }),
   onHistoryUpdate: PropTypes.func,
   preserveFilter: PropTypes.bool,
-  prepareTasks: PropTypes.bool,
-  onTableDataUpdated: PropTypes.func,
-  skipCache: PropTypes.bool,
   useReduxCache: PropTypes.bool,
   reduxCache: PropTypes.object,
   updateReduxCache: PropTypes.func
